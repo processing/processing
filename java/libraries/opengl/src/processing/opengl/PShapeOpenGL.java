@@ -1664,6 +1664,14 @@ public class PShapeOpenGL extends PShape {
     transform(SCALE, x, y, z);
   }  
 
+  
+  public void applyMatrix(PMatrix2D source) {
+    transform(MATRIX, source.m00, source.m01, 0, source.m02,
+                      source.m10, source.m11, 0, source.m12,
+                      0, 0, 1, 0,
+                      0, 0, 0, 1);
+  }
+  
 
   public void applyMatrix(float n00, float n01, float n02,
                           float n10, float n11, float n12) {
@@ -1821,15 +1829,24 @@ public class PShapeOpenGL extends PShape {
   public void bezierVertex(float x2, float y2,
                            float x3, float y3,
                            float x4, float y4) {
-    bezierVertex(x2, y2, 0,
-                 x3, y3, 0,
-                 x4, y4, 0);
+    bezierVertexImpl(x2, y2, 0,
+                     x3, y3, 0,
+                     x4, y4, 0);
   }
   
-  
+
   public void bezierVertex(float x2, float y2, float z2,
                            float x3, float y3, float z3,
                            float x4, float y4, float z4) {
+    bezierVertexImpl(x2, y2, z2,
+                     x3, y3, z3,
+                     x4, y4, z4);
+  }
+  
+  
+  protected void bezierVertexImpl(float x2, float y2, float z2,
+                                  float x3, float y3, float z3,
+                                  float x4, float y4, float z4) {
     inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
                       ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);
@@ -1842,13 +1859,20 @@ public class PShapeOpenGL extends PShape {
   
   public void quadraticVertex(float cx, float cy,
                               float x3, float y3) {
-    quadraticVertex(cx, cy, 0,
-                    x3, y3, 0);
+    quadraticVertexImpl(cx, cy, 0,
+                        x3, y3, 0);
   }  
-  
+
   
   public void quadraticVertex(float cx, float cy, float cz,
                               float x3, float y3, float z3) {
+    quadraticVertexImpl(cx, cy, cz,
+                        x3, y3, z3);    
+  }
+  
+  
+  protected void quadraticVertexImpl(float cx, float cy, float cz,
+                                     float x3, float y3, float z3) {
     inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
                       ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);    
@@ -1878,11 +1902,16 @@ public class PShapeOpenGL extends PShape {
   
   
   public void curveVertex(float x, float y) {
-    curveVertex(x, y, 0);
+    curveVertexImpl(x, y, 0);
   }  
 
   
   public void curveVertex(float x, float y, float z) {
+    curveVertexImpl(x, y, z);
+  }
+  
+  
+  protected void curveVertexImpl(float x, float y, float z) {
     inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
                       ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);
@@ -3313,7 +3342,8 @@ public class PShapeOpenGL extends PShape {
   
   
   protected boolean startStrokeCache(int n) {  
-    return n == firstLineIndexCache || n == firstPointIndexCache;
+    return texture != null && (n == firstLineIndexCache || n == firstPointIndexCache);
+//    return n == firstLineIndexCache || n == firstPointIndexCache;
   }
 
   

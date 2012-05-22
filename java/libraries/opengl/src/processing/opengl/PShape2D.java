@@ -39,6 +39,12 @@ public class PShape2D extends PShapeOpenGL {
     return false;
   }
   
+  ///////////////////////////////////////////////////////////  
+  
+  //
+  
+  // Drawing methods  
+  
   public void vertex(float x, float y, float z) {
     PGraphics.showDepthWarningXYZ("vertex");
   }
@@ -46,6 +52,33 @@ public class PShape2D extends PShapeOpenGL {
   public void vertex(float x, float y, float z, float u, float v) {
     PGraphics.showDepthWarningXYZ("vertex");
   }  
+  
+  ///////////////////////////////////////////////////////////  
+  
+  //
+  
+  // Bezier curves   
+  
+  public void bezierVertex(float x2, float y2, float z2,
+                           float x3, float y3, float z3,
+                           float x4, float y4, float z4) {
+    PGraphics.showDepthWarningXYZ("bezierVertex");
+  }
+
+  public void quadraticVertex(float x2, float y2, float z2,
+                         float x4, float y4, float z4) {
+    PGraphics.showDepthWarningXYZ("quadVertex");
+  }  
+
+  public void curveVertex(float x, float y, float z) {
+    PGraphics.showDepthWarningXYZ("curveVertex");
+  }    
+  
+  ///////////////////////////////////////////////////////////  
+  
+  //
+  
+  // Geometric transformations  
   
   public void translate(float tx, float ty, float tz) {
     PGraphics.showVariationWarning("translate");
@@ -78,10 +111,16 @@ public class PShape2D extends PShapeOpenGL {
     PGraphics.showDepthWarningXYZ("scale");
   }
   
+  ///////////////////////////////////////////////////////////  
+  
+  //
+  
+  // Setters/getters of individual vertices  
+
   public float getVertexZ(int index) {
     PGraphics.showDepthWarningXYZ("getVertexZ");
     return 0;
-  }
+  }  
   
   public void setVertex(int index, float x, float y) {
     super.setVertex(index, x, y, 0);
