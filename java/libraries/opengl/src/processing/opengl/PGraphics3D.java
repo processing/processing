@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 
 import processing.core.PApplet;
+import processing.core.PGraphics;
 import processing.core.PImage;
 import processing.core.PShape;
 import processing.core.PVector;
@@ -37,18 +38,151 @@ public class PGraphics3D extends PGraphicsOpenGL {
 
   // RENDERER SUPPORT QUERIES
   
+  
   public boolean is2D() {
     return false;
   }
 
+  
   public boolean is3D() {
     return true;
   }    
   
+  
   //////////////////////////////////////////////////////////////
 
-  // SHAPE CREATORS
+  // SHAPE I/O
+  
 
+  static protected boolean isSupportedExtension(String extension) {
+    return extension.equals("obj");
+  }
+
+
+  static protected PShape loadShapeImpl(PGraphics pg, String filename, String ext) {
+    ArrayList<PVector> vertices = new ArrayList<PVector>(); 
+    ArrayList<PVector> normals = new ArrayList<PVector>();
+    ArrayList<PVector> textures = new ArrayList<PVector>();
+    ArrayList<OBJFace> faces = new ArrayList<OBJFace>();
+    ArrayList<OBJMaterial> materials = new ArrayList<OBJMaterial>();    
+    
+    BufferedReader reader = pg.parent.createReader(filename);
+    parseOBJ(pg.parent, reader, vertices, normals, textures, faces, materials);
+
+    int prevColorMode = pg.colorMode;
+    float prevColorModeX = pg.colorModeX; 
+    float prevColorModeY = pg.colorModeY; 
+    float prevColorModeZ = pg.colorModeZ;
+    float prevColorModeA = pg.colorModeA;
+    boolean prevStroke = pg.stroke;
+    int prevTextureMode = pg.textureMode;
+    pg.colorMode(RGB, 1);
+    pg.stroke = false;        
+    pg.textureMode = NORMAL;    
+    
+    // The OBJ geometry is stored in a group shape, 
+    // with each face in a separate child geometry
+    // shape.
+    PShape root = createShapeImpl(pg.parent, GROUP);
+    
+    int mtlIdxCur = -1;
+    OBJMaterial mtl = null;    
+    for (int i = 0; i < faces.size(); i++) {
+      OBJFace face = faces.get(i);
+      
+      // Getting current material.
+      if (mtlIdxCur != face.matIdx) {
+        mtlIdxCur = PApplet.max(0, face.matIdx); // To make sure that at least we get the default material.        
+        mtl = materials.get(mtlIdxCur);
+      }
+
+      // Creating child shape for current face.
+      PShape child;
+      if (face.vertIdx.size() == 3) {
+        child = createShapeImpl(pg.parent, TRIANGLES);   // Face is a triangle, so using appropriate shape kind.
+      } else if (face.vertIdx.size() == 4) {
+        child = createShapeImpl(pg.parent, QUADS);       // Face is a quad, so using appropriate shape kind.
+      } else {
+        child = createShapeImpl(pg.parent, POLYGON);      // Face is a general polygon
+      }      
+      
+      // Setting material properties for the new face
+      child.fill(mtl.kd.x, mtl.kd.y, mtl.kd.z);
+      child.ambient(mtl.ka.x, mtl.ka.y, mtl.ka.z);
+      child.specular(mtl.ks.x, mtl.ks.y, mtl.ks.z);
+      child.shininess(mtl.ns);      
+      if (mtl.kdMap != null) {
+        // If current material is textured, then tinting the texture using the diffuse color.
+        child.tint(mtl.kd.x, mtl.kd.y, mtl.kd.z, mtl.d);
+      }
+      
+      for (int j = 0; j < face.vertIdx.size(); j++){
+        int vertIdx, normIdx;
+        PVector vert, norms;
+
+        vert = norms = null;
+        
+        vertIdx = face.vertIdx.get(j).intValue() - 1;
+        vert = vertices.get(vertIdx);
+        
+        if (j < face.normIdx.size()) {
+          normIdx = face.normIdx.get(j).intValue() - 1;
+          if (-1 < normIdx) {
+            norms = normals.get(normIdx);  
+          }
+        }
+        
+        if (mtl != null && mtl.kdMap != null) {
+          // This face is textured.
+          int texIdx;
+          PVector tex = null; 
+          
+          if (j < face.texIdx.size()) {
+            texIdx = face.texIdx.get(j).intValue() - 1;
+            if (-1 < texIdx) {
+              tex = textures.get(texIdx);  
+            }
+          }
+          
+          child.texture(mtl.kdMap);
+          if (norms != null) {
+            child.normal(norms.x, norms.y, norms.z);
+          }
+          if (tex != null) {
+            child.vertex(vert.x, vert.y, vert.z, tex.x, tex.y);  
+          } else {
+            child.vertex(vert.x, vert.y, vert.z);
+          }
+        } else {
+          // This face is not textured.
+          if (norms != null) {
+            child.normal(norms.x, norms.y, norms.z);
+          }
+          child.vertex(vert.x, vert.y, vert.z);          
+        }
+      } 
+      
+      child.end(CLOSE);
+      root.addChild(child);      
+    }
+    
+    pg.colorMode(prevColorMode, prevColorModeX, prevColorModeY, prevColorModeZ, prevColorModeA);    
+    pg.stroke = prevStroke;
+    pg.textureMode = prevTextureMode; 
+    
+    return root;
+  }  
+  
+  
+  //////////////////////////////////////////////////////////////
+
+  // SHAPE CREATION
+
+  
+  public PShape createShape(PShape source) {
+    return PShape3D.createShape(parent, source);    
+  }  
+  
 
   public PShape createShape() {
     return createShape(POLYGON);
@@ -56,6 +190,16 @@ public class PGraphics3D extends PGraphicsOpenGL {
 
 
   public PShape createShape(int type) {
+    return createShapeImpl(parent, type);
+  }
+
+  
+  public PShape createShape(int kind, float... p) {
+    return createShapeImpl(parent, kind, p);
+  }  
+  
+
+  static protected PShape3D createShapeImpl(PApplet parent, int type) {
     PShape3D shape = null;
     if (type == PShape.GROUP) {
       shape = new PShape3D(parent, PShape.GROUP);
@@ -88,9 +232,9 @@ public class PGraphics3D extends PGraphicsOpenGL {
     }
     return shape;
   }
-
-
-  public PShape createShape(int kind, float... p) {
+  
+  
+  static protected PShape3D createShapeImpl(PApplet parent, int kind, float... p) {
     PShape3D shape = null;
     int len = p.length;
 
@@ -171,135 +315,15 @@ public class PGraphics3D extends PGraphicsOpenGL {
   
   //////////////////////////////////////////////////////////////
 
-  // SHAPE I/O
+  // OBJ LOADING  
+
   
-
-  protected String[] getSupportedShapeFormats() {
-    return new String[] { "obj" };  
-  }
-
-
-  public PShape loadShape(String filename) {
-    ArrayList<PVector> vertices = new ArrayList<PVector>(); 
-    ArrayList<PVector> normals = new ArrayList<PVector>();
-    ArrayList<PVector> textures = new ArrayList<PVector>();
-    ArrayList<OBJFace> faces = new ArrayList<OBJFace>();
-    ArrayList<OBJMaterial> materials = new ArrayList<OBJMaterial>();    
-    
-    BufferedReader reader = parent.createReader(filename);
-    parseOBJ(reader, vertices, normals, textures, faces, materials);
-
-    int prevColorMode = pg.colorMode;
-    float prevColorModeX = pg.colorModeX; 
-    float prevColorModeY = pg.colorModeY; 
-    float prevColorModeZ = pg.colorModeZ;
-    float prevColorModeA = pg.colorModeA;
-    boolean prevStroke = pg.stroke;
-    int prevTextureMode = pg.textureMode;
-    pg.colorMode(RGB, 1);
-    pg.stroke = false;        
-    pg.textureMode = NORMAL;
-    
-    
-    // The OBJ geometry is stored in a group shape, 
-    // with each face in a separate child geometry
-    // shape.
-    PShape root = createShape(GROUP);
-    
-    int mtlIdxCur = -1;
-    OBJMaterial mtl = null;    
-    for (int i = 0; i < faces.size(); i++) {
-      OBJFace face = faces.get(i);
-      
-      // Getting current material.
-      if (mtlIdxCur != face.matIdx) {
-        mtlIdxCur = PApplet.max(0, face.matIdx); // To make sure that at least we get the default material.        
-        mtl = materials.get(mtlIdxCur);
-      }
-
-      // Creating child shape for current face.
-      PShape child;
-      if (face.vertIdx.size() == 3) {
-        child = createShape(TRIANGLES);    // Face is a triangle, so using appropriate shape kind.
-      } else if (face.vertIdx.size() == 4) {
-        child = createShape(QUADS);        // Face is a quad, so using appropriate shape kind.
-      } else {
-        child = createShape(POLYGON);      // Face is a general polygon
-      }      
-      
-      // Setting material properties for the new face
-      child.fill(mtl.kd.x, mtl.kd.y, mtl.kd.z);
-      child.ambient(mtl.ka.x, mtl.ka.y, mtl.ka.z);
-      child.specular(mtl.ks.x, mtl.ks.y, mtl.ks.z);
-      child.shininess(mtl.ns);      
-      if (mtl.kdMap != null) {
-        // If current material is textured, then tinting the texture using the diffuse color.
-        child.tint(mtl.kd.x, mtl.kd.y, mtl.kd.z, mtl.d);
-      }
-      
-      for (int j = 0; j < face.vertIdx.size(); j++){
-        int vertIdx, normIdx;
-        PVector vert, norms;
-
-        vert = norms = null;
-        
-        vertIdx = face.vertIdx.get(j).intValue() - 1;
-        vert = vertices.get(vertIdx);
-        
-        if (j < face.normIdx.size()) {
-          normIdx = face.normIdx.get(j).intValue() - 1;
-          if (-1 < normIdx) {
-            norms = normals.get(normIdx);  
-          }
-        }
-        
-        if (mtl != null && mtl.kdMap != null) {
-          // This face is textured.
-          int texIdx;
-          PVector tex = null; 
-          
-          if (j < face.texIdx.size()) {
-            texIdx = face.texIdx.get(j).intValue() - 1;
-            if (-1 < texIdx) {
-              tex = textures.get(texIdx);  
-            }
-          }
-          
-          child.texture(mtl.kdMap);
-          if (norms != null) {
-            child.normal(norms.x, norms.y, norms.z);
-          }
-          if (tex != null) {
-            child.vertex(vert.x, vert.y, vert.z, tex.x, tex.y);  
-          } else {
-            child.vertex(vert.x, vert.y, vert.z);
-          }
-        } else {
-          // This face is not textured.
-          if (norms != null) {
-            child.normal(norms.x, norms.y, norms.z);
-          }
-          child.vertex(vert.x, vert.y, vert.z);          
-        }
-      } 
-      
-      child.end(CLOSE);
-      root.addChild(child);      
-    }
-    
-    pg.colorMode(prevColorMode, prevColorModeX, prevColorModeY, prevColorModeZ, prevColorModeA);    
-    pg.stroke = prevStroke;
-    pg.textureMode = prevTextureMode; 
-    
-    return root;
-  }
-  
-
-  protected void parseOBJ(BufferedReader reader, ArrayList<PVector> vertices, 
-                                                 ArrayList<PVector> normals, 
-                                                 ArrayList<PVector> textures, 
-                                                 ArrayList<OBJFace> faces, 
-                                                 ArrayList<OBJMaterial> materials) {
+  static protected void parseOBJ(PApplet parent,
+                                 BufferedReader reader, ArrayList<PVector> vertices, 
+                                                        ArrayList<PVector> normals, 
+                                                        ArrayList<PVector> textures, 
+                                                        ArrayList<OBJFace> faces, 
+                                                        ArrayList<OBJMaterial> materials) {
     Hashtable<String, Integer> mtlTable  = new Hashtable<String, Integer>();
     int mtlIdxCur = -1;
     boolean readv, readvn, readvt;
@@ -360,7 +384,7 @@ public class PGraphics3D extends PGraphicsOpenGL {
             if (elements[1] != null) {
               BufferedReader mreader = parent.createReader(elements[1]);
               if (mreader != null) {
-                parseMTL(mreader, materials, mtlTable);
+                parseMTL(parent, mreader, materials, mtlTable);
               }
             }
           } else if (elements[0].equals("g")) {            
@@ -446,7 +470,10 @@ public class PGraphics3D extends PGraphicsOpenGL {
     }
   }
   
-  protected void parseMTL(BufferedReader reader, ArrayList<OBJMaterial> materials, Hashtable<String, Integer> materialsHash) {
+  
+  static protected void parseMTL(PApplet parent,
+                                 BufferedReader reader, ArrayList<OBJMaterial> materials, 
+                                                        Hashtable<String, Integer> materialsHash) {
     try {
       String line;
       OBJMaterial currentMtl = null;
@@ -498,8 +525,9 @@ public class PGraphics3D extends PGraphicsOpenGL {
     }    
   }
   
+  
   // Stores a face from an OBJ file
-  protected class OBJFace {
+  static protected class OBJFace {
     ArrayList<Integer> vertIdx;
     ArrayList<Integer> texIdx;
     ArrayList<Integer> normIdx;
@@ -517,7 +545,7 @@ public class PGraphics3D extends PGraphicsOpenGL {
   
   
   // Stores a material defined in an MTL file.
-  protected class OBJMaterial {
+  static protected class OBJMaterial {
     String name;
     PVector ka;
     PVector kd;

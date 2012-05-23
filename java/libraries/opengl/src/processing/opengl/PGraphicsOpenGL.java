@@ -2177,6 +2177,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void tessellate(int mode) {
+    tessellator.set3D(is3D());
     tessellator.setInGeometry(inGeo);
     tessellator.setTessGeometry(tessGeo);
     tessellator.setFill(fill || textureImage != null);
@@ -2186,7 +2187,7 @@ public class PGraphicsOpenGL extends PGraphics {
     tessellator.setStrokeCap(strokeCap);
     tessellator.setStrokeJoin(strokeJoin);
     tessellator.setTexCache(texCache, textureImage0, textureImage);
-
+    
     if (shape == POINTS) {
       tessellator.tessellatePoints();
     } else if (shape == LINES) {
@@ -2231,6 +2232,7 @@ public class PGraphicsOpenGL extends PGraphics {
       }
     }
     
+    tessellator.set3D(is3D());
     tessellator.setInGeometry(inGeo);
     tessellator.setTessGeometry(tessGeo);
     tessellator.setFill(fill || textureImage != null);
@@ -2239,7 +2241,7 @@ public class PGraphicsOpenGL extends PGraphics {
     tessellator.setStrokeWeight(strokeWeight);
     tessellator.setStrokeCap(strokeCap);
     tessellator.setStrokeJoin(strokeJoin);
-    tessellator.setTexCache(texCache, textureImage0, textureImage); 
+    tessellator.setTexCache(texCache, textureImage0, textureImage);    
 
     if (stroke && defaultEdges && edges == null) inGeo.addTrianglesEdges();
     if (normalMode == NORMAL_MODE_AUTO) inGeo.calcTrianglesNormals();
@@ -3071,6 +3073,24 @@ public class PGraphicsOpenGL extends PGraphics {
       shape.draw(this);
 
       popMatrix();
+    }
+  }
+  
+  
+  //////////////////////////////////////////////////////////////
+
+  // SHAPE I/O
+
+  
+  public PShape loadShape(String filename) {
+    String ext = PApplet.getExtension(filename);    
+    if (PGraphics2D.isSupportedExtension(ext)) {
+      return PGraphics2D.loadShapeImpl(this, filename, ext);
+    } if (PGraphics3D.isSupportedExtension(ext)) {
+      return PGraphics3D.loadShapeImpl(this, filename, ext);
+    } else {
+      PGraphics.showWarning("Unsupported format");
+      return null;
     }
   }
 
@@ -9101,6 +9121,7 @@ public class PGraphicsOpenGL extends PGraphics {
     PGL.Tessellator gluTess;
     TessellatorCallback callback;
     
+    boolean is2D, is3D;
     boolean fill;
     boolean stroke;
     int strokeColor;
@@ -9122,6 +9143,8 @@ public class PGraphicsOpenGL extends PGraphics {
       callback = new TessellatorCallback();
       gluTess = pgl.createTessellator(callback);
       rawIndices = new int[512];
+      is2D = false;
+      is3D = true;
     }
     
     void setInGeometry(InGeometry in) {
@@ -9169,6 +9192,16 @@ public class PGraphicsOpenGL extends PGraphics {
       this.newTexImage = newTexImage;
     }
 
+    void set3D(boolean value) {
+      if (value) {
+        is2D = false;
+        is3D = true;
+      } else {
+        is2D = true;
+        is3D = false;        
+      }
+    }    
+    
     // -----------------------------------------------------------------
     //
     // Point tessellation    
@@ -9193,9 +9226,9 @@ public class PGraphicsOpenGL extends PGraphics {
         }        
         int nvertTot = nPtVert * nInVert;
         int nindTot = 3 * (nPtVert - 1) * nInVert;
-        if (is3D()) { 
+        if (is3D) { 
           tessellateRoundPoints3D(nvertTot, nindTot, nPtVert);
-        } else if (is2D()) {
+        } else if (is2D) {
           beginNoTex();
           tessellateRoundPoints2D(nvertTot, nindTot, nPtVert);
           endNoTex();      
@@ -9334,9 +9367,9 @@ public class PGraphicsOpenGL extends PGraphics {
         // So the quad is formed by 4 triangles, each requires
         // 3 indices.
         int nindTot = 12 * quadCount;        
-        if (is3D()) { 
+        if (is3D) { 
           tessellateSquarePoints3D(nvertTot, nindTot);        
-        } else if (is2D()) {
+        } else if (is2D) {
           beginNoTex();
           tessellateSquarePoints2D(nvertTot, nindTot);
           endNoTex();
@@ -9467,9 +9500,9 @@ public class PGraphicsOpenGL extends PGraphics {
         // Each stroke line has 4 vertices, defining 2 triangles, which
         // require 3 indices to specify their connectivities.        
         int nind = lineCount * 2 * 3;        
-        if (is3D()) {          
+        if (is3D) {          
           tessellateLines3D(nvert, nind, lineCount);
-        } else if (is2D()) {
+        } else if (is2D) {
           beginNoTex();
           tessellateLines2D(nvert, nind, lineCount);
           endNoTex();
@@ -9536,9 +9569,9 @@ public class PGraphicsOpenGL extends PGraphics {
         int lineCount = nInVert - 1;  
         int nvert = lineCount * 4;
         int nind = lineCount * 2 * 3;                
-        if (is3D()) {
+        if (is3D) {
           tessellateLineStrip3D(nvert, nind, lineCount);
-        } else if (is2D()) {
+        } else if (is2D) {
           beginNoTex();
           tessellateLineStrip2D(nvert, nind, lineCount);
           endNoTex();
@@ -9606,9 +9639,9 @@ public class PGraphicsOpenGL extends PGraphics {
         int lineCount = nInVert;
         int nvert = lineCount * 4;
         int nind = lineCount * 2 * 3;        
-        if (is3D()) {
+        if (is3D) {
           tessellateLineLoop3D(nvert, nind, lineCount);
-        } else if (is2D()) {
+        } else if (is2D) {
           beginNoTex();  
           tessellateLineLoop2D(nvert, nind, lineCount);
           endNoTex();
@@ -9676,9 +9709,9 @@ public class PGraphicsOpenGL extends PGraphics {
       if (stroke) {
         int nInVert = in.getNumLineVertices();
         int nInInd = in.getNumLineIndices();       
-        if (is3D()) {
+        if (is3D) {
           tessellateEdges3D(nInVert, nInInd);
-        } else if (is2D()) {
+        } else if (is2D) {
           beginNoTex();
           tessellateEdges2D(nInVert, nInInd);
           endNoTex();

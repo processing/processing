@@ -272,8 +272,10 @@ public class PShapeOpenGL extends PShape {
   protected int firstModifiedPointAttribute;
   protected int lastModifiedPointAttribute;  
   
+  
   PShapeOpenGL() {    
   }
+  
   
   public PShapeOpenGL(PApplet parent, int family) {
     pg = (PGraphicsOpenGL)parent.g;
@@ -2558,8 +2560,17 @@ public class PShapeOpenGL extends PShape {
     int[] color = tessGeo.polyColors;
     float[] uv = tessGeo.polyTexcoords;
     short[] indices = tessGeo.polyIndices;
+
+    PShape tess;
+    if (is3D()) {
+      tess = PGraphics3D.createShapeImpl(pg.parent, TRIANGLES);  
+    } else if (is2D()) {
+      tess = PGraphics2D.createShapeImpl(pg.parent, TRIANGLES);
+    } else {
+      PGraphics.showWarning("This shape is not either 2D or 3D!");
+      return null;
+    }
     
-    PShape tess = pg.createShape(TRIANGLES);
     tess.noStroke();
     
     IndexCache cache = tessGeo.polyIndexCache;
@@ -2721,6 +2732,7 @@ public class PShapeOpenGL extends PShape {
         // duplication.
         inGeo.clearEdges();
         
+        tessellator.set3D(is3D());
         tessellator.setInGeometry(inGeo);
         tessellator.setTessGeometry(tessGeo);
         tessellator.setFill(fill || texture != null);
