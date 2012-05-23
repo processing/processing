@@ -3424,19 +3424,19 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   public void applyMatrix(PMatrix2D source) {
-    applyMatrixImpl(source.m00, source.m01, source.m02, 0,
-                    source.m10, source.m11, source.m12, 0,
-                             0,          0,          1, 0,
-                             0,          0,          0, 1);
+    applyMatrixImpl(source.m00, source.m01, 0, source.m02,
+                    source.m10, source.m11, 0, source.m12,
+                             0,          0, 1, 0,
+                             0,          0, 0, 1);
   }
 
 
   public void applyMatrix(float n00, float n01, float n02,
                           float n10, float n11, float n12) {
-    applyMatrixImpl(n00, n01, n02, 0,
-                    n10, n11, n12, 0,
-                      0,   0,   1, 0,
-                      0,   0,   0, 1);
+    applyMatrixImpl(n00, n01, 0, n02,
+                    n10, n11, 0, n12,
+                      0,   0, 1,   0,
+                      0,   0, 0,   1);
   }
 
 
