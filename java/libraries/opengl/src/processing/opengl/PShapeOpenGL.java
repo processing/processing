@@ -3064,8 +3064,6 @@ public class PShapeOpenGL extends PShape {
     inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
                       ambientColor, specularColor, emissiveColor, shininess);
     
-    boolean insideContour = false;
-
     if (vertexCodeCount == 0) {  // each point is a simple vertex
       if (vertices[0].length == 2) {  // tesellating 2D vertices
         for (int i = 0; i < vertexCount; i++) {
@@ -3078,7 +3076,7 @@ public class PShapeOpenGL extends PShape {
       }
     } else {  // coded set of vertices
       int index = 0;
-      int code = VERTEX;
+      int code = BREAK;
       
       if (vertices[0].length == 2) {  // tessellating a 2D path
 
@@ -3115,10 +3113,7 @@ public class PShapeOpenGL extends PShape {
             index++;
 
           case BREAK:
-            if (insideContour) {
-              code = BREAK;
-            }            
-            insideContour = true;
+            code = BREAK;
           }
         }
       } else {  // tessellating a 3D path
@@ -3156,10 +3151,7 @@ public class PShapeOpenGL extends PShape {
             index++;
 
           case BREAK:
-            if (insideContour) {
-              code = BREAK;
-            }            
-            insideContour = true;
+            code = BREAK;
           }
         }
       }
