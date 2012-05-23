@@ -39,7 +39,7 @@ void draw() {
  
 void keyPressed() {
   if(key==' ') build();
-  if(!online)saveFrame("bezPatch.png");
+  saveFrame("bezPatch.png");
 }
  
 void build() {
