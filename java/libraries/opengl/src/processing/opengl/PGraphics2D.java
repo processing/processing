@@ -22,8 +22,16 @@
 
 package processing.opengl;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.zip.GZIPInputStream;
+
+import processing.core.PApplet;
+import processing.core.PGraphics;
 import processing.core.PMatrix3D;
 import processing.core.PShape;
+import processing.core.PShapeSVG;
+import processing.data.XML;
 
 public class PGraphics2D extends PGraphicsOpenGL {
   
@@ -44,17 +52,110 @@ public class PGraphics2D extends PGraphicsOpenGL {
     return false;
   }  
   
+  
   //////////////////////////////////////////////////////////////
 
-  // SHAPE CREATORS
+  // SHAPE
+  
+  
+  public void shape(PShape shape) {
+    if (shape.is2D()) {
+      super.shape(shape);
+    } else {
+      showWarning("The shape object is not 2D, cannot be displayed with this renderer"); 
+    }
+  }
+  
+  
+  public void shape(PShape shape, float x, float y) {
+    if (shape.is2D()) {
+      super.shape(shape, x, y);
+    } else {
+      showWarning("The shape object is not 2D, cannot be displayed with this renderer"); 
+    }    
+  }
+  
+  
+  public void shape(PShape shape, float a, float b, float c, float d) {
+    if (shape.is2D()) {
+      super.shape(shape, a, b, c, d);
+    } else {
+      showWarning("The shape object is not 2D, cannot be displayed with this renderer"); 
+    }     
+  }
+  
+  
+  public void shape(PShape shape, float x, float y, float z) {
+    showDepthWarningXYZ("shape");  
+  }
+  
+  
+  public void shape(PShape shape, float x, float y, float z, float c, float d, float e) {
+    showDepthWarningXYZ("shape"); 
+  }
+  
+  
+  //////////////////////////////////////////////////////////////
+
+  // SHAPE I/O
+  
+  
+  static protected boolean isSupportedExtension(String extension) {
+    return extension.equals("svg") || extension.equals("svgz");
+  }
 
 
+  static protected PShape2D loadShapeImpl(PGraphics pg, String filename, String extension) {
+    PShapeSVG svg = null;
+    
+    if (extension.equals("svg")) {
+      svg = new PShapeSVG(pg.parent, filename);
+
+    } else if (extension.equals("svgz")) {
+      try {
+        InputStream input = new GZIPInputStream(pg.parent.createInput(filename));
+        XML xml = new XML(PApplet.createReader(input));
+        svg = new PShapeSVG(xml);
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
+      
+    if (svg != null) {
+      PShape2D p2d = PShape2D.createShape(pg.parent, svg);  
+      return p2d;
+    } else {
+      return null;
+    }
+  }
+  
+
+  //////////////////////////////////////////////////////////////
+
+  // SHAPE CREATION
+  
+  
+  public PShape createShape(PShape source) {
+    return PShape2D.createShape(parent, source);    
+  }
+
+  
   public PShape createShape() {
     return createShape(POLYGON);
   }
 
 
   public PShape createShape(int type) {
+    return createShapeImpl(parent, type);
+  }
+  
+  
+  public PShape createShape(int kind, float... p) {
+    return createShapeImpl(parent, kind, p);  
+  }
+  
+    
+  static protected PShape2D createShapeImpl(PApplet parent, int type) {
     PShape2D shape = null;
     if (type == PShape.GROUP) {
       shape = new PShape2D(parent, PShape.GROUP);
@@ -89,7 +190,7 @@ public class PGraphics2D extends PGraphicsOpenGL {
   }
 
 
-  public PShape createShape(int kind, float... p) {
+  static protected PShape2D createShapeImpl(PApplet parent, int kind, float... p) {
     PShape2D shape = null;
     int len = p.length;
 
@@ -156,27 +257,7 @@ public class PGraphics2D extends PGraphicsOpenGL {
 
     return shape;
   }  
-  
-  //////////////////////////////////////////////////////////////
-
-  // SHAPE I/O
-  
-  protected String[] getSupportedShapeFormats() {
-    return new String[] { "svg" };  
-  }
-
-
-  public PShape loadShape(String filename) {
-    // TODO: loadShape in PApplet probably needs to be 
-    //       re-implemented.
-    PShape svg = parent.loadShape(filename);  
     
-    // TODO: rework base API in PShape to do this...
-    PShape2D p2d = (PShape2D) svg.copy(this);
-    
-    return p2d;
-  }
-  
   
   //////////////////////////////////////////////////////////////
 

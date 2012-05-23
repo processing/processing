@@ -24,6 +24,7 @@ package processing.opengl;
 
 import processing.core.PApplet;
 import processing.core.PGraphics;
+import processing.core.PShape;
 
 public class PShape2D extends PShapeOpenGL {
   
@@ -38,6 +39,44 @@ public class PShape2D extends PShapeOpenGL {
   public boolean is3D() {
     return false;
   }
+
+  
+  ////////////////////////////////////////////////////////////////////////
+  //
+  // Shape copy  
+  
+  
+  static public PShape2D createShape(PApplet parent, PShape src) {
+    PShape2D dest = null;
+    if (src.getFamily() == GROUP) {
+      dest = PGraphics2D.createShapeImpl(parent, GROUP);
+      PShape2D.copyGroup(parent, src, dest);      
+    } else if (src.getFamily() == PRIMITIVE) {
+      dest = PGraphics2D.createShapeImpl(parent, src.getKind(), src.getParams());
+      PShape.copyPrimitive(src, dest);
+    } else if (src.getFamily() == GEOMETRY) {
+      dest = PGraphics2D.createShapeImpl(parent, src.getKind());
+      PShape.copyGeometry(src, dest);
+    } else if (src.getFamily() == PATH) {
+      dest = PGraphics2D.createShapeImpl(parent, PATH);
+      PShape.copyPath(src, dest);
+    }
+    dest.setName(src.getName());
+    return dest;
+  }  
+  
+  
+  static public void copyGroup(PApplet parent, PShape src, PShape dest) {
+    copyMatrix(src, dest);
+    copyStyles(src, dest);
+    copyImage(src, dest);
+        
+    for (int i = 0; i < src.getChildCount(); i++) {
+      PShape c = PShape2D.createShape(parent, src.getChild(i));
+      dest.addChild(c);
+    }
+  }  
+  
   
   ///////////////////////////////////////////////////////////  
   
