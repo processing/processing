@@ -395,11 +395,6 @@ public class PShape implements PConstants {
     //checkBounds();
     return depth;
   }
-
-
-  public PVector getCenter() {
-    return new PVector();
-  }
   
 
   /**
