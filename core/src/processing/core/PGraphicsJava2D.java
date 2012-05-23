@@ -26,8 +26,12 @@ package processing.core;
 import java.awt.*;
 import java.awt.geom.*;
 import java.awt.image.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
+import java.util.zip.GZIPInputStream;
 
+import processing.data.XML;
 
 /**
  * Subclass for PGraphics that implements the graphics API using Java2D.
@@ -1103,7 +1107,35 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 
   //public void shape(PShape shape, float x, float y, float c, float d)
 
+  
+  //////////////////////////////////////////////////////////////
 
+  // SHAPE I/O  
+  
+  
+  public PShape loadShape(String filename) {
+    String extension = PApplet.getExtension(filename);
+    
+    PShapeSVG svg = null;
+    
+    if (extension.equals("svg")) {
+      svg = new PShapeSVG(parent, filename);
+
+    } else if (extension.equals("svgz")) {
+      try {
+        InputStream input = new GZIPInputStream(parent.createInput(filename));
+        XML xml = new XML(PApplet.createReader(input));
+        svg = new PShapeSVG(xml);
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    } else {
+      PGraphics.showWarning("Unsupported format");
+    }
+      
+    return svg;
+  }
+  
 
   //////////////////////////////////////////////////////////////
 

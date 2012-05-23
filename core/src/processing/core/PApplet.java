@@ -5277,86 +5277,6 @@ public class PApplet extends Applet
   }
 
 
-
-  //////////////////////////////////////////////////////////////
-
-  // SHAPE I/O
-
-
- /**
-   * ( begin auto-generated from loadShape.xml )
-   *
-   * Loads vector shapes into a variable of type <b>PShape</b>. Currently,
-   * only SVG files may be loaded. To load correctly, the file must be
-   * located in the data directory of the current sketch. In most cases,
-   * <b>loadShape()</b> should be used inside <b>setup()</b> because loading
-   * shapes inside <b>draw()</b> will reduce the speed of a sketch.<br/>
-   * <br/> <b>filename</b> parameter can also be a URL to a file found
-   * online. For security reasons, a Processing sketch found online can only
-   * download files from the same server from which it came. Getting around
-   * this restriction requires a <a
-   * href="http://wiki.processing.org/w/Sign_an_Applet">signed
-   * applet</a>.<br/>
-   * <br/> a shape is not loaded successfully, the <b>null</b> value is
-   * returned and an error message will be printed to the console. The error
-   * message does not halt the program, however the null value may cause a
-   * NullPointerException if your code does not check whether the value
-   * returned from <b>loadShape()</b> is null.
-   *
-   * ( end auto-generated )
-   *
-   * @webref shape:loading_displaying
-   * @param filename name of the file to load
-   * @see PShape#PShape
-   * @see PGraphics#shape(PShape, float, float, float, float)
-   * @see PGraphics#shapeMode(int)
-   */
-  public PShape loadShape(String filename) {
-    String extension;
-
-    String lower = filename.toLowerCase();
-    int dot = filename.lastIndexOf('.');
-    if (dot == -1) {
-      extension = "unknown";  // no extension found
-    }
-    extension = lower.substring(dot + 1);
-
-    // check for, and strip any parameters on the url, i.e.
-    // filename.jpg?blah=blah&something=that
-    int question = extension.indexOf('?');
-    if (question != -1) {
-      extension = extension.substring(0, question);
-    }
-
-    if (extension.equals("svg")) {
-      return new PShapeSVG(this, filename);
-
-    } else if (extension.equals("svgz")) {
-      try {
-        InputStream input = new GZIPInputStream(createInput(filename));
-        XML xml = new XML(createReader(input));
-        return new PShapeSVG(xml);
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-    } else {
-      // Loading the formats supported by the renderer.
-
-      String[] loadShapeFormats = g.getSupportedShapeFormats();
-
-      if (loadShapeFormats != null) {
-        for (int i = 0; i < loadShapeFormats.length; i++) {
-          if (extension.equals(loadShapeFormats[i])) {
-            return g.loadShape(filename);
-          }
-        }
-      }
-    }
-
-    return null;
-  }
-
-
   //////////////////////////////////////////////////////////////
 
   // DATA I/O
@@ -6741,6 +6661,26 @@ public class PApplet extends Applet
   }
 
 
+  static public String getExtension(String filename) {
+    String extension;
+
+    String lower = filename.toLowerCase();
+    int dot = filename.lastIndexOf('.');
+    if (dot == -1) {
+      extension = "unknown";  // no extension found
+    }
+    extension = lower.substring(dot + 1);
+
+    // check for, and strip any parameters on the url, i.e.
+    // filename.jpg?blah=blah&something=that
+    int question = extension.indexOf('?');
+    if (question != -1) {
+      extension = extension.substring(0, question);
+    }
+    
+    return extension;
+  }
+  
 
   //////////////////////////////////////////////////////////////
 
@@ -10149,6 +10089,37 @@ public class PApplet extends Applet
   public void noClip() {
     if (recorder != null) recorder.noClip();
     g.noClip();
+  }
+
+
+  public void blendMode(int mode) {
+    if (recorder != null) recorder.blendMode(mode);
+    g.blendMode(mode);
+  }
+
+
+  public PShape loadShape(String filename) {
+    return g.loadShape(filename);
+  }
+
+
+  public PShape createShape(PShape source) {
+    return g.createShape(source);
+  }
+
+
+  public PShape createShape() {
+    return g.createShape();
+  }
+
+
+  public PShape createShape(int type) {
+    return g.createShape(type);
+  }
+
+
+  public PShape createShape(int kind, float... p) {
+    return g.createShape(kind, p);
   }
 
 
@@ -13839,27 +13810,6 @@ public class PApplet extends Applet
    */
   public boolean isGL() {
     return g.isGL();
-  }
-
-
-  public PShape createShape() {
-    return g.createShape();
-  }
-
-
-  public PShape createShape(int type) {
-    return g.createShape(type);
-  }
-
-
-  public PShape createShape(int kind, float... p) {
-    return g.createShape(kind, p);
-  }
-
-
-  public void blendMode(int mode) {
-    if (recorder != null) recorder.blendMode(mode);
-    g.blendMode(mode);
   }
 
 
