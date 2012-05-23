@@ -34,9 +34,9 @@ class Particle {
     float speed = random(0.5,4);
     velocity = new PVector(cos(a), sin(a));
     velocity.mult(speed);
-    lifespan = 255;
-    PVector center = part.getCenter();
-    part.translate(x - center.x, y - center.y); 
+    lifespan = 255;   
+    part.resetMatrix();
+    part.translate(x, y); 
   }
   
   boolean isDead() {
