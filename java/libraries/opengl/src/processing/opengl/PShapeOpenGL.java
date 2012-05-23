@@ -1683,8 +1683,8 @@ public class PShapeOpenGL extends PShape {
   public void applyMatrix(PMatrix2D source) {
     transform(MATRIX, source.m00, source.m01, 0, source.m02,
                       source.m10, source.m11, 0, source.m12,
-                      0, 0, 1, 0,
-                      0, 0, 0, 1);
+                               0,          0, 1,          0,
+                               0,          0, 0,          1);
   }
   
 
