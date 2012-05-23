@@ -769,6 +769,7 @@ public class PShape implements PConstants {
       res = g.createShape(PATH);
       copyPath(res);
     }
+    res.setName(name);
     return res;
   }
 
