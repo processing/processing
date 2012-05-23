@@ -35,7 +35,6 @@ import processing.core.PVector;
 import java.net.URL;
 import java.nio.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.EmptyStackException;
 import java.util.HashMap;
@@ -1948,7 +1947,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
     inGeo.clear();
 
-    breakShape = false;
+    breakShape = true;
     defaultEdges = true;
 
     textureImage0 = textureImage;
@@ -2035,6 +2034,7 @@ public class PGraphicsOpenGL extends PGraphics {
       return;
     }
     openContour = true;
+    breakShape = true;
   }
 
 
@@ -2043,8 +2043,7 @@ public class PGraphicsOpenGL extends PGraphics {
       showWarning("P3D: Need to call beginContour() first.");
       return;
     }
-    openContour = false;
-    breakShape = true;
+    openContour = false;    
   }
 
 
