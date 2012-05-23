@@ -532,21 +532,6 @@ public class PShapeOpenGL extends PShape {
     depth = max.z - min.z;    
     return depth;
   }  
-
-  
-  public PVector getCenter() {
-    PVector center = new PVector();
-    int count = 0;
-    if (shapeEnded) {
-      count = getVertexSum(center, count);
-      if (0 < count) {
-        center.x /= count;
-        center.y /= count;
-        center.z /= count;
-      }    
-    }
-    return center;
-  }  
   
   
   protected void getVertexMin(PVector min) {
