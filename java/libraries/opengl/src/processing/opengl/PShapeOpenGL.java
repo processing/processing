@@ -1739,15 +1739,6 @@ public class PShapeOpenGL extends PShape {
   
   protected void transformImpl(int type, int ncoords, float... args) {
     if (shapeEnded) {
-      if (family == GROUP) {
-        updateTessellation();
-        // The tessellation is not updated for geometry/primitive shapes
-        // because a common situation is shapes not still tessellated
-        // but being transformed before adding them to the parent group
-        // shape. If each shape is tessellated individually, then the process
-        // is significantly slower than tessellating all the geometry in a single 
-        // batch when calling tessellate() on the root shape.
-      }
       checkMatrix(ncoords);
       calcTransform(type, ncoords, args);      
       if (tessellated) {
@@ -2723,7 +2714,7 @@ public class PShapeOpenGL extends PShape {
         child.tessellateImpl();
       }
     } else {   
-      if (shapeEnded) {
+      if (shapeEnded) {        
         // If the geometry was tessellated previously, then
         // the edges information will still be stored in the
         // input object, so it needs to be removed to avoid
@@ -3227,14 +3218,14 @@ public class PShapeOpenGL extends PShape {
       // Recursively aggregating the child shapes.
       hasPolys = false;
       hasLines = false;
-      hasPoints = false;      
+      hasPoints = false;
       for (int i = 0; i < childCount; i++) {        
         PShapeOpenGL child = (PShapeOpenGL) children[i];
         child.aggregateImpl();
         hasPolys |= child.hasPolys;
         hasLines |= child.hasLines; 
         hasPoints |= child.hasPoints; 
-      }    
+      } 
     } else { // LEAF SHAPE (family either GEOMETRY, PATH or PRIMITIVE)
       hasPolys = -1 < firstPolyIndexCache && -1 < lastPolyIndexCache;
       hasLines = -1 < firstLineIndexCache && -1 < lastLineIndexCache; 
@@ -3301,13 +3292,12 @@ public class PShapeOpenGL extends PShape {
             }
           }
         }
+        
+        // Updating the first and last poly vertices for this group shape.
+        if (i == 0) firstPolyVertex = child.firstPolyVertex;
+        if (i == childCount - 1) lastPolyVertex = child.lastPolyVertex;        
       }
       lastPolyIndexCache = gindex;
-      
-      if (-1 < firstPolyIndexCache && -1 < lastPolyIndexCache) {
-        firstPolyVertex = cache.vertexOffset[firstPolyIndexCache]; 
-        lastPolyVertex = cache.vertexOffset[lastPolyIndexCache] + cache.vertexCount[lastPolyIndexCache] - 1;
-      }      
     } else {
       // The index cache is updated in order to reflect the fact that all 
       // the vertices will be stored in a single VBO in the root shape.
@@ -3350,11 +3340,12 @@ public class PShapeOpenGL extends PShape {
   
   protected boolean startStrokeCache(int n) {  
     return texture != null && (n == firstLineIndexCache || n == firstPointIndexCache);
-//    return n == firstLineIndexCache || n == firstPointIndexCache;
   }
 
   
   protected void firstStrokeVertex(int n) {
+    // TODO: this is probably not correct, but needs to be fixed together with the
+    // updateStrokeWeight(), etc.
     if (n == firstLineIndexCache) {
       firstLineVertex = lastLineVertex = root.polyVertexOffset;
     }
@@ -3397,13 +3388,12 @@ public class PShapeOpenGL extends PShape {
             }
           }
         }
+        
+        // Updating the first and last line vertices for this group shape.
+        if (i == 0) firstLineVertex = child.firstLineVertex;
+        if (i == childCount - 1) lastLineVertex = child.lastLineVertex;           
       }
       lastLineIndexCache = gindex;
-      
-      if (-1 < firstLineIndexCache && -1 < lastLineIndexCache) {
-        firstLineVertex = cache.vertexOffset[firstLineIndexCache]; 
-        lastLineVertex = cache.vertexOffset[lastLineIndexCache] + cache.vertexCount[lastLineIndexCache] - 1;
-      }      
     } else {      
       firstLineVertex = lastLineVertex = cache.vertexOffset[firstLineIndexCache];
       for (int n = firstLineIndexCache; n <= lastLineIndexCache; n++) {
@@ -3456,13 +3446,12 @@ public class PShapeOpenGL extends PShape {
             }
           }
         }
+        
+        // Updating the first and last point vertices for this group shape.
+        if (i == 0) firstPointVertex = child.firstPointVertex;
+        if (i == childCount - 1) lastPointVertex = child.lastPointVertex;         
       }
-      lastPointIndexCache = gindex;
-      
-      if (-1 < firstPointIndexCache && -1 < lastPointIndexCache) {
-        firstPointVertex = cache.vertexOffset[firstPointIndexCache]; 
-        lastPointVertex = cache.vertexOffset[lastPointIndexCache] + cache.vertexCount[lastPointIndexCache] - 1;
-      }       
+      lastPointIndexCache = gindex;    
     } else {
       firstPointVertex = lastPointVertex = cache.vertexOffset[firstPointIndexCache];
       for (int n = firstPointIndexCache; n <= lastPointIndexCache; n++) {
@@ -4291,7 +4280,7 @@ public class PShapeOpenGL extends PShape {
     PolyShader shader = null;
     IndexCache cache = tessGeo.polyIndexCache;
     for (int n = firstPolyIndexCache; n <= lastPolyIndexCache; n++) {
-      if (tex != null && (is3D() || (firstLineIndexCache == -1 || n < firstLineIndexCache) && 
+      if (is3D() || (tex != null && (firstLineIndexCache == -1 || n < firstLineIndexCache) && 
                                     (firstPointIndexCache == -1 || n < firstPointIndexCache))) {
         // Rendering fill triangles, which can be lit and textured.
         if (!renderingFill) {
