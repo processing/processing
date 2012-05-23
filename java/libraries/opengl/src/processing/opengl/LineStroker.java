@@ -27,8 +27,7 @@ package processing.opengl;
 
 import processing.core.PMatrix2D;
 
-public class LineStroker /*extends LineSink*/ {
-//  private LineSink output;
+public class LineStroker  {
   private LineStroker output;
 //  private int lineWidth;
   private int capStyle;
@@ -88,7 +87,7 @@ public class LineStroker /*extends LineSink*/ {
    * Constructs a <code>LineStroker</code>.
    * 
    * @param output
-   *          an output <code>LineSink</code>.
+   *          an output <code>LineStroker</code>.
    * @param lineWidth
    *          the desired line width in pixels, in S15.16 format.
    * @param capStyle
@@ -105,7 +104,6 @@ public class LineStroker /*extends LineSink*/ {
    *          required in order to produce consistently shaped end caps and
    *          joins.
    */
-//  public LineStroker(LineSink output, int lineWidth, int capStyle, int joinStyle,
   public LineStroker(LineStroker output, int lineWidth, int capStyle, int joinStyle,
                  int miterLimit, PMatrix2D transform) {
     setOutput(output);
@@ -113,12 +111,11 @@ public class LineStroker /*extends LineSink*/ {
   }
 
   /**
-   * Sets the output <code>LineSink</code> of this <code>LineStroker</code>.
+   * Sets the output <code>LineStroker</code> of this <code>LineStroker</code>.
    * 
    * @param output
-   *          an output <code>LineSink</code>.
+   *          an output <code>LineStroker</code>.
    */
-//  public void setOutput(LineSink output) {
   public void setOutput(LineStroker output) {
     this.output = output;
   }
