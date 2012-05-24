@@ -396,6 +396,28 @@ public class PShape implements PConstants {
     return depth;
   }
   
+  
+  
+  // TODO: need to discuss about these two (four).
+  public PVector getTop() {
+    return getTop(null);
+  }  
+  
+  
+  public PVector getTop(PVector top) {
+    return top;
+  }
+
+  
+  public PVector getBottom() {
+    return getBottom(null);
+  }  
+  
+  
+  public PVector getBottom(PVector bottom) {
+    return bottom;
+  } 
+  
 
   /**
    * Return true if this shape is 2D. Defaults to true.

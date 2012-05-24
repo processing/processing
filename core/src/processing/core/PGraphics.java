@@ -544,6 +544,8 @@ public class PGraphics extends PImage implements PConstants {
    * based on the IMAGE or NORMALIZED.
    */
   public int textureMode;
+  
+  public int textureWrap;
 
   /**
    * Current horizontal coordinate for texture, will always
@@ -1063,7 +1065,20 @@ public class PGraphics extends PImage implements PConstants {
     this.textureMode = mode;
   }
 
-
+  
+  // TODO: use this setting in GL renderer.
+  public void textureWrap(int wrap) {
+    this.textureWrap = wrap;
+  }
+  
+  
+  // TODO: do we need something like this to choose between
+  // point, linear and trilinear texture sampling?
+  //public void textureQualityt(int quality) {
+  //  this.textureQuality = quality;
+  //}
+  
+  
   /**
    * ( begin auto-generated from texture.xml )
    *

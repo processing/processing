@@ -534,6 +534,26 @@ public class PShapeOpenGL extends PShape {
   }  
   
   
+  public PVector getTop(PVector top) {
+    if (top == null) {
+      top = new PVector();
+    }
+    top.set(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY);
+    getVertexMin(top);
+    return top;
+  }
+
+  
+  public PVector getBottom(PVector bottom) {
+    if (bottom == null) {
+      bottom = new PVector();
+    }
+    bottom.set(Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY);
+    getVertexMax(bottom);
+    return bottom;
+  }   
+  
+  
   protected void getVertexMin(PVector min) {
     updateTessellation();
     
@@ -3266,7 +3286,7 @@ public class PShapeOpenGL extends PShape {
 
       firstPolyIndexCache = lastPolyIndexCache = -1;
       int gindex = -1; 
-          
+      
       for (int i = 0; i < childCount; i++) {        
         PShapeOpenGL child = (PShapeOpenGL) children[i];
         
@@ -3291,8 +3311,13 @@ public class PShapeOpenGL extends PShape {
         }
         
         // Updating the first and last poly vertices for this group shape.
-        if (i == 0) firstPolyVertex = child.firstPolyVertex;
-        if (i == childCount - 1) lastPolyVertex = child.lastPolyVertex;        
+        if (-1 < child.firstPolyVertex) {
+          if (firstPolyVertex == -1) firstPolyVertex = Integer.MAX_VALUE; 
+          firstPolyVertex = PApplet.min(firstPolyVertex, child.firstPolyVertex);
+        }
+        if (-1 < child.lastPolyVertex) {
+          lastPolyVertex = PApplet.max(lastPolyVertex, child.lastPolyVertex);        
+        }
       }
       lastPolyIndexCache = gindex;
     } else {
@@ -3387,8 +3412,13 @@ public class PShapeOpenGL extends PShape {
         }
         
         // Updating the first and last line vertices for this group shape.
-        if (i == 0) firstLineVertex = child.firstLineVertex;
-        if (i == childCount - 1) lastLineVertex = child.lastLineVertex;           
+        if (-1 < child.firstLineVertex) {
+          if (firstLineVertex == -1) firstLineVertex = Integer.MAX_VALUE; 
+          firstLineVertex = PApplet.min(firstLineVertex, child.firstLineVertex);
+        }
+        if (-1 < child.lastLineVertex) {
+          lastLineVertex = PApplet.max(lastLineVertex, child.lastLineVertex);        
+        }
       }
       lastLineIndexCache = gindex;
     } else {      
@@ -3444,9 +3474,14 @@ public class PShapeOpenGL extends PShape {
           }
         }
         
-        // Updating the first and last point vertices for this group shape.
-        if (i == 0) firstPointVertex = child.firstPointVertex;
-        if (i == childCount - 1) lastPointVertex = child.lastPointVertex;         
+        // Updating the first and last point vertices for this group shape.       
+        if (-1 < child.firstPointVertex) {
+          if (firstPointVertex == -1) firstPointVertex = Integer.MAX_VALUE; 
+          firstPointVertex = PApplet.min(firstPointVertex, child.firstPointVertex);
+        }
+        if (-1 < child.lastPointVertex) {
+          lastPointVertex = PApplet.max(lastPointVertex, child.lastPointVertex);        
+        }        
       }
       lastPointIndexCache = gindex;    
     } else {
