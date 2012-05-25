@@ -9939,6 +9939,12 @@ public class PApplet extends Applet
   }
 
 
+  public void textureWrap(int wrap) {
+    if (recorder != null) recorder.textureWrap(wrap);
+    g.textureWrap(wrap);
+  }
+
+
   /**
    * ( begin auto-generated from texture.xml )
    *
