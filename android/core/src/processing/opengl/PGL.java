@@ -106,6 +106,11 @@ public class PGL {
    */
   public static final float MIN_CAPS_JOINS_WEIGHT = 2.f; 
   
+  /** Maximum length of linear paths to be stroked with the 
+   * full algorithm that generates accurate caps and joins. 
+   */  
+  public static final int MAX_CAPS_JOINS_LENGTH = 500; 
+  
   /** Minimum array size to use arrayCopy method(). **/
   static protected final int MIN_ARRAYCOPY_SIZE = 2;    
   
@@ -225,10 +230,11 @@ public class PGL {
   public static final int GL_TRIANGLE_STRIP = GLES20.GL_TRIANGLE_STRIP;
   public static final int GL_TRIANGLES      = GLES20.GL_TRIANGLES;  
   
-  public static final int GL_VENDOR     = GLES20.GL_VENDOR;
-  public static final int GL_RENDERER   = GLES20.GL_RENDERER;
-  public static final int GL_VERSION    = GLES20.GL_VERSION;
-  public static final int GL_EXTENSIONS = GLES20.GL_EXTENSIONS;
+  public static final int GL_VENDOR                   = GLES20.GL_VENDOR;
+  public static final int GL_RENDERER                 = GLES20.GL_RENDERER;
+  public static final int GL_VERSION                  = GLES20.GL_VERSION;
+  public static final int GL_EXTENSIONS               = GLES20.GL_EXTENSIONS;
+  public static final int GL_SHADING_LANGUAGE_VERSION = GLES20.GL_SHADING_LANGUAGE_VERSION;
     
   public static final int GL_MAX_TEXTURE_SIZE         = GLES20.GL_MAX_TEXTURE_SIZE;
   public static final int GL_MAX_SAMPLES              = -1;
