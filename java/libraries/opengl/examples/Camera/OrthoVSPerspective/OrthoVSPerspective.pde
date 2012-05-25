@@ -31,7 +31,7 @@ void draw()
     perspective(fov, float(width)/float(height), 
                 cameraZ/2.0, cameraZ*2.0); 
   } else {
-    ortho(0, width, 0, height, -200, +200);
+    ortho(-width/2, width/2, -height/2, height/2, 0, 400);
   }
   
   translate(width/2, height/2, 0);

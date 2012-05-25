@@ -3873,15 +3873,6 @@ public class PGraphicsOpenGL extends PGraphics {
                     float near, float far) {
     // Flushing geometry with a different perspective configuration.
     flush();
-
-    float halfw = 0.5f * (right - left);
-    float halfh = 0.5f * (top - bottom);
-
-    left -= halfw;
-    right -= halfw;
-
-    bottom -= halfh;
-    top -= halfh;
     
     float x = 2.0f / (right - left);
     float y = 2.0f / (top - bottom);
