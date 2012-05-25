@@ -5351,7 +5351,7 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  public void resetShader(int kind) {
+  public void defaultShader(int kind) {
     if (kind == POLY_SHADER_SIMPLE) {
       if (defPolyShaderSimple == null || defPolyShaderSimple.contextIsOutdated()) {
         defPolyShaderSimple = new PolyShaderSimple(parent, defPolyShaderVertSimpleURL, defPolyShaderFragNoTexURL);

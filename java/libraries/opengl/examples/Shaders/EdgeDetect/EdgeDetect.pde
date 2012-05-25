@@ -7,7 +7,7 @@
 PImage img;
 PShader shader;
 PGraphicsOpenGL pg;  
-boolean usingShader;
+boolean customShader;
   
 void setup() {
   size(400, 400, P3D);
@@ -16,7 +16,7 @@ void setup() {
   pg = (PGraphicsOpenGL)g;
   shader = pg.loadShader("edges.glsl", POLY_SHADER_TEX);
   pg.setShader(shader, POLY_SHADER_TEX);
-  usingShader = true;
+  customShader = true;
 }
 
 public void draw() {
@@ -24,11 +24,11 @@ public void draw() {
 }
   
 public void keyPressed() {
-  if (usingShader) {
-    pg.resetShader(POLY_SHADER_TEX);
-    usingShader = false;
+  if (customShader) {
+    pg.defaultShader(POLY_SHADER_TEX);
+    customShader = false;
   } else {
     pg.setShader(shader, POLY_SHADER_TEX);
-    usingShader = true;
+    customShader = true;
   }
 }
