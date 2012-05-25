@@ -405,6 +405,9 @@ public class PShape implements PConstants {
   
   
   public PVector getTop(PVector top) {
+    if (top == null) {
+      top = new PVector();
+    }
     return top;
   }
 
@@ -415,6 +418,9 @@ public class PShape implements PConstants {
   
   
   public PVector getBottom(PVector bottom) {
+    if (bottom == null) {
+      bottom = new PVector();
+    }    
     return bottom;
   } 
   
