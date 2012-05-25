@@ -235,7 +235,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   /** Projection matrix stack **/
   protected Stack<PMatrix3D> projectionStack;
-
+  
   // ........................................................
 
   // Lights:
@@ -9122,6 +9122,7 @@ public class PGraphicsOpenGL extends PGraphics {
     TessellatorCallback callback;
     
     boolean is2D, is3D;
+    boolean accurate2DStrokes;
     boolean fill;
     boolean stroke;
     int strokeColor;
@@ -9145,6 +9146,7 @@ public class PGraphicsOpenGL extends PGraphics {
       rawIndices = new int[512];
       is2D = false;
       is3D = true;
+      accurate2DStrokes = true;
     }
     
     void setInGeometry(InGeometry in) {
@@ -9194,13 +9196,17 @@ public class PGraphicsOpenGL extends PGraphics {
 
     void set3D(boolean value) {
       if (value) {
-        is2D = false;
-        is3D = true;
+        this.is2D = false;
+        this.is3D = true;
       } else {
-        is2D = true;
-        is3D = false;        
+        this.is2D = true;
+        this.is3D = false;        
       }
-    }    
+    }
+    
+    void setAccurate2DStrokes(boolean accurate) {
+      this.accurate2DStrokes = accurate;
+    }
     
     // -----------------------------------------------------------------
     //
@@ -9530,8 +9536,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
     void tessellateLines2D(int nvert, int nind, int lineCount) {
       int first = in.firstVertex;
-      // 2D renderer, the stroke geometry is stored in the poly array for accurate depth sorting
-      if (strokeWeight < PGL.MIN_CAPS_JOINS_WEIGHT) { // no caps, joins
+      if (noCapsJoins(nvert)) {
         tess.polyVertexCheck(nvert);
         tess.polyIndexCheck(nind);
         int index = in.renderMode == RETAINED ? tess.polyIndexCache.addNew() : tess.polyIndexCache.getLast();
@@ -9598,8 +9603,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     void tessellateLineStrip2D(int nvert, int nind, int lineCount) {
-      // 2D renderer, the stroke geometry is stored in the poly array for accurate depth sorting
-      if (strokeWeight < PGL.MIN_CAPS_JOINS_WEIGHT) {  // no caps, joins
+      if (noCapsJoins(nvert)) {
         tess.polyVertexCheck(nvert);
         tess.polyIndexCheck(nind);
         int index = in.renderMode == RETAINED ? tess.polyIndexCache.addNew() : tess.polyIndexCache.getLast();
@@ -9669,7 +9673,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     void tessellateLineLoop2D(int nvert, int nind, int lineCount) {
-      if (strokeWeight < PGL.MIN_CAPS_JOINS_WEIGHT) { // no caps, joins
+      if (noCapsJoins(nvert)) {
         tess.polyVertexCheck(nvert);
         tess.polyIndexCheck(nind);
         int index = in.renderMode == RETAINED ? tess.polyIndexCache.addNew() : tess.polyIndexCache.getLast();
@@ -9708,7 +9712,7 @@ public class PGraphicsOpenGL extends PGraphics {
     void tessellateEdges() {
       if (stroke) {
         int nInVert = in.getNumLineVertices();
-        int nInInd = in.getNumLineIndices();       
+        int nInInd = in.getNumLineIndices();        
         if (is3D) {
           tessellateEdges3D(nInVert, nInInd);
         } else if (is2D) {
@@ -9736,7 +9740,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     
     void tessellateEdges2D(int nInVert, int nInInd) {
-      if (strokeWeight < PGL.MIN_CAPS_JOINS_WEIGHT) { // no caps, edges
+      if (noCapsJoins(nInVert)) {
         tess.polyVertexCheck(nInVert);
         tess.polyIndexCheck(nInInd);
         int index = in.renderMode == RETAINED ? tess.polyIndexCache.addNew() : tess.polyIndexCache.getLast();
@@ -9896,6 +9900,32 @@ public class PGraphicsOpenGL extends PGraphics {
       return index;
     }  
     
+    boolean noCapsJoins(int nInVert) {
+      if (!accurate2DStrokes) {
+        return true;
+      } else if (PGL.MAX_CAPS_JOINS_LENGTH <= nInVert) {
+        // The line path is too long, so it could make the GLU tess
+        // to run out of memory, so full caps and joins are disabled.
+        return true;        
+      } else if (tess.renderMode == RETAINED) {
+        // In retained mode we want to have the better possible stroke
+        // because we don't know beforehand how much the shape will be 
+        // zoomed-in.
+        return false;
+      } else {
+        // In the immediate mode case, we first calculate the (volumetric)
+        // scaling factor that is associated to the current modelview
+        // matrix, which is given by the absolute value of its determinant:
+        PMatrix3D tr = modelview;  
+        float volumeScaleFactor = Math.abs(tr.m00 * (tr.m11 * tr.m22 - tr.m12 * tr.m21) +
+                                           tr.m01 * (tr.m12 * tr.m20 - tr.m10 * tr.m22) +
+                                           tr.m02 * (tr.m10 * tr.m21 - tr.m11 * tr.m20));
+        float linearScaleFactor = (float) Math.pow(volumeScaleFactor, 1.0f / 3.0f);
+        // The stroke weight is scaled so it correspons to the current 
+        // "zoom level" being applied on the geometry due to scaling:
+        return linearScaleFactor * strokeWeight < PGL.MIN_CAPS_JOINS_WEIGHT;
+      }
+    }    
     
     // -----------------------------------------------------------------
     //
