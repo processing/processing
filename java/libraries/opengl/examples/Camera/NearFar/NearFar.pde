@@ -54,7 +54,7 @@ void draw() {
   if (usingPerspective) {
     perspective(cameraFOV, float(width)/float(height), cameraNear, cameraFar);
   } else {
-    ortho(0, width, 0, height, cameraNear, cameraFar);
+    ortho(-width/2, width/2, -height/2, height/2, cameraNear, cameraFar);
   }
 
   pushMatrix();
