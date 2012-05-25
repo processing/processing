@@ -112,9 +112,14 @@ public class PGL {
   public static final int MAX_FONT_TEX_SIZE = 256;
 
   /** Minimum stroke weight needed to apply the full path stroking
-   * algorithm that properly generates caps and joing. 
+   * algorithm that properly generates caps and joins. 
    */
   public static final float MIN_CAPS_JOINS_WEIGHT = 1.5f;
+  
+  /** Maximum length of linear paths to be stroked with the 
+   * full algorithm that generates accurate caps and joins. 
+   */  
+  public static final int MAX_CAPS_JOINS_LENGTH = 5000;
   
   /** Minimum array size to use arrayCopy method(). **/
   static protected final int MIN_ARRAYCOPY_SIZE = 2;
