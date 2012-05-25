@@ -2737,7 +2737,6 @@ public class PShapeOpenGL extends PShape {
         // duplication.
         inGeo.clearEdges();
         
-        tessellator.set3D(is3D());
         tessellator.setInGeometry(inGeo);
         tessellator.setTessGeometry(tessGeo);
         tessellator.setFill(fill || texture != null);
@@ -2747,6 +2746,8 @@ public class PShapeOpenGL extends PShape {
         tessellator.setStrokeCap(strokeCap);
         tessellator.setStrokeJoin(strokeJoin);     
         tessellator.setTexCache(null, null, null);
+        tessellator.setTransform(matrix);
+        tessellator.set3D(is3D());            
         
         if (family == GEOMETRY) {
           // The tessellation maps are used to associate input

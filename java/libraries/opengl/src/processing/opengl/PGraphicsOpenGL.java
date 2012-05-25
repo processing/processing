@@ -2176,17 +2176,18 @@ public class PGraphicsOpenGL extends PGraphics {
   // protected void sort()
 
 
-  protected void tessellate(int mode) {
-    tessellator.set3D(is3D());
+  protected void tessellate(int mode) {        
     tessellator.setInGeometry(inGeo);
-    tessellator.setTessGeometry(tessGeo);
+    tessellator.setTessGeometry(tessGeo);    
     tessellator.setFill(fill || textureImage != null);
     tessellator.setStroke(stroke);
     tessellator.setStrokeColor(strokeColor);
     tessellator.setStrokeWeight(strokeWeight);
     tessellator.setStrokeCap(strokeCap);
     tessellator.setStrokeJoin(strokeJoin);
-    tessellator.setTexCache(texCache, textureImage0, textureImage);
+    tessellator.setTexCache(texCache, textureImage0, textureImage);        
+    tessellator.setTransform(modelview);
+    tessellator.set3D(is3D());
     
     if (shape == POINTS) {
       tessellator.tessellatePoints();
@@ -2231,8 +2232,7 @@ public class PGraphicsOpenGL extends PGraphics {
         inGeo.addEdge(i0, i1, n == 0, n == nedges - 1);            
       }
     }
-    
-    tessellator.set3D(is3D());
+        
     tessellator.setInGeometry(inGeo);
     tessellator.setTessGeometry(tessGeo);
     tessellator.setFill(fill || textureImage != null);
@@ -2241,7 +2241,9 @@ public class PGraphicsOpenGL extends PGraphics {
     tessellator.setStrokeWeight(strokeWeight);
     tessellator.setStrokeCap(strokeCap);
     tessellator.setStrokeJoin(strokeJoin);
-    tessellator.setTexCache(texCache, textureImage0, textureImage);    
+    tessellator.setTexCache(texCache, textureImage0, textureImage);
+    tessellator.setTransform(modelview);
+    tessellator.set3D(is3D());    
 
     if (stroke && defaultEdges && edges == null) inGeo.addTrianglesEdges();
     if (normalMode == NORMAL_MODE_AUTO) inGeo.calcTrianglesNormals();
@@ -6701,11 +6703,11 @@ public class PGraphicsOpenGL extends PGraphics {
       return vertices[3 * (vertexCount - 1) + 2];
     }
     
-    int getNumLineVertices() {
+    int getNumEdgeVertices() {
       return 4 * (lastEdge - firstEdge + 1);
     }
 
-    int getNumLineIndices() {
+    int getNumEdgeIndices() {
       return 6 * (lastEdge - firstEdge + 1);
     }    
     
@@ -9121,14 +9123,16 @@ public class PGraphicsOpenGL extends PGraphics {
     PGL.Tessellator gluTess;
     TessellatorCallback callback;
     
-    boolean is2D, is3D;
-    boolean accurate2DStrokes;
     boolean fill;
     boolean stroke;
     int strokeColor;
     float strokeWeight;
     int strokeJoin;
     int strokeCap;
+    boolean accurate2DStrokes;
+
+    PMatrix transform;
+    boolean is2D, is3D;    
     
     int[] rawIndices;
     int rawSize;
@@ -9144,9 +9148,10 @@ public class PGraphicsOpenGL extends PGraphics {
       callback = new TessellatorCallback();
       gluTess = pgl.createTessellator(callback);
       rawIndices = new int[512];
-      is2D = false;
-      is3D = true;
       accurate2DStrokes = true;
+      transform = null;
+      is2D = false;
+      is3D = true;      
     }
     
     void setInGeometry(InGeometry in) {
@@ -9188,6 +9193,10 @@ public class PGraphicsOpenGL extends PGraphics {
       this.strokeCap = strokeCap;
     }
     
+    void setAccurate2DStrokes(boolean accurate) {
+      this.accurate2DStrokes = accurate;
+    }    
+    
     void setTexCache(TexCache texCache, PImage prevTexImage, PImage newTexImage) {
       this.texCache = texCache;
       this.prevTexImage = prevTexImage;
@@ -9204,8 +9213,8 @@ public class PGraphicsOpenGL extends PGraphics {
       }
     }
     
-    void setAccurate2DStrokes(boolean accurate) {
-      this.accurate2DStrokes = accurate;
+    void setTransform(PMatrix transform) {
+      this.transform = transform;
     }
     
     // -----------------------------------------------------------------
@@ -9499,24 +9508,25 @@ public class PGraphicsOpenGL extends PGraphics {
     void tessellateLines() {
       int nInVert = in.lastVertex - in.firstVertex + 1;      
       if (stroke && 2 <= nInVert) {
-        // Each individual line is form3ed by two consecutive input vertices.
-        int lineCount = nInVert / 2;        
-        // Lines are made up of 4 vertices defining the quad. 
-        int nvert = lineCount * 4;
-        // Each stroke line has 4 vertices, defining 2 triangles, which
-        // require 3 indices to specify their connectivities.        
-        int nind = lineCount * 2 * 3;        
+        // Each individual line is formed by two consecutive input vertices.
+        int lineCount = nInVert / 2;                
         if (is3D) {          
-          tessellateLines3D(nvert, nind, lineCount);
+          tessellateLines3D(lineCount);
         } else if (is2D) {
           beginNoTex();
-          tessellateLines2D(nvert, nind, lineCount);
+          tessellateLines2D(lineCount);
           endNoTex();
         }
       }
     }
     
-    void tessellateLines3D(int nvert, int nind, int lineCount) {
+    void tessellateLines3D(int lineCount) {
+      // Lines are made up of 4 vertices defining the quad. 
+      int nvert = lineCount * 4;
+      // Each stroke line has 4 vertices, defining 2 triangles, which
+      // require 3 indices to specify their connectivities.        
+      int nind = lineCount * 2 * 3;
+      
       int first = in.firstVertex;
       tess.lineVertexCheck(nvert);
       tess.lineIndexCheck(nind);
@@ -9534,7 +9544,10 @@ public class PGraphicsOpenGL extends PGraphics {
 //    }      
     }
 
-    void tessellateLines2D(int nvert, int nind, int lineCount) {
+    void tessellateLines2D(int lineCount) { 
+      int nvert = lineCount * 4;        
+      int nind = lineCount * 2 * 3;
+      
       int first = in.firstVertex;
       if (noCapsJoins(nvert)) {
         tess.polyVertexCheck(nvert);
@@ -9572,19 +9585,20 @@ public class PGraphicsOpenGL extends PGraphics {
       int nInVert = in.lastVertex - in.firstVertex + 1;      
       if (stroke && 2 <= nInVert) {
         int lineCount = nInVert - 1;  
-        int nvert = lineCount * 4;
-        int nind = lineCount * 2 * 3;                
         if (is3D) {
-          tessellateLineStrip3D(nvert, nind, lineCount);
+          tessellateLineStrip3D(lineCount);
         } else if (is2D) {
           beginNoTex();
-          tessellateLineStrip2D(nvert, nind, lineCount);
+          tessellateLineStrip2D(lineCount);
           endNoTex();
         }  
       }
     }
     
-    void tessellateLineStrip3D(int nvert, int nind, int lineCount) {
+    void tessellateLineStrip3D(int lineCount) {
+      int nvert = lineCount * 4;
+      int nind = lineCount * 2 * 3;                
+
       tess.lineVertexCheck(nvert);
       tess.lineIndexCheck(nind);
       int index = in.renderMode == RETAINED ? tess.lineIndexCache.addNew() : tess.lineIndexCache.getLast();
@@ -9602,7 +9616,10 @@ public class PGraphicsOpenGL extends PGraphics {
 //    }       
     }
 
-    void tessellateLineStrip2D(int nvert, int nind, int lineCount) {
+    void tessellateLineStrip2D(int lineCount) {
+      int nvert = lineCount * 4;
+      int nind = lineCount * 2 * 3;                
+
       if (noCapsJoins(nvert)) {
         tess.polyVertexCheck(nvert);
         tess.polyIndexCheck(nind);
@@ -9641,19 +9658,20 @@ public class PGraphicsOpenGL extends PGraphics {
       int nInVert = in.lastVertex - in.firstVertex + 1;
       if (stroke && 2 <= nInVert) {
         int lineCount = nInVert;
-        int nvert = lineCount * 4;
-        int nind = lineCount * 2 * 3;        
         if (is3D) {
-          tessellateLineLoop3D(nvert, nind, lineCount);
+          tessellateLineLoop3D(lineCount);
         } else if (is2D) {
           beginNoTex();  
-          tessellateLineLoop2D(nvert, nind, lineCount);
+          tessellateLineLoop2D(lineCount);
           endNoTex();
         }          
       }      
     }    
     
-    void tessellateLineLoop3D(int nvert, int nind, int lineCount) {
+    void tessellateLineLoop3D(int lineCount) {
+      int nvert = lineCount * 4;
+      int nind = lineCount * 2 * 3;        
+      
       tess.lineVertexCheck(nvert);
       tess.lineIndexCheck(nind);
       int index = in.renderMode == RETAINED ? tess.lineIndexCache.addNew() : tess.lineIndexCache.getLast();
@@ -9672,7 +9690,10 @@ public class PGraphicsOpenGL extends PGraphics {
 //    }                
     }
 
-    void tessellateLineLoop2D(int nvert, int nind, int lineCount) {
+    void tessellateLineLoop2D(int lineCount) {
+      int nvert = lineCount * 4;
+      int nind = lineCount * 2 * 3;
+      
       if (noCapsJoins(nvert)) {
         tess.polyVertexCheck(nvert);
         tess.polyIndexCheck(nind);
@@ -9710,20 +9731,21 @@ public class PGraphicsOpenGL extends PGraphics {
     }    
     
     void tessellateEdges() {
-      if (stroke) {
-        int nInVert = in.getNumLineVertices();
-        int nInInd = in.getNumLineIndices();        
+      if (stroke) {        
         if (is3D) {
-          tessellateEdges3D(nInVert, nInInd);
+          tessellateEdges3D();
         } else if (is2D) {
           beginNoTex();
-          tessellateEdges2D(nInVert, nInInd);
+          tessellateEdges2D();
           endNoTex();
         }
       }
     }
     
-    void tessellateEdges3D(int nInVert, int nInInd) {
+    void tessellateEdges3D() {
+      int nInVert = in.getNumEdgeVertices();
+      int nInInd = in.getNumEdgeIndices();
+      
       tess.lineVertexCheck(nInVert);
       tess.lineIndexCheck(nInInd);
       int index = in.renderMode == RETAINED ? tess.lineIndexCache.addNew() : tess.lineIndexCache.getLast();
@@ -9739,15 +9761,20 @@ public class PGraphicsOpenGL extends PGraphics {
 //    }               
     }
     
-    void tessellateEdges2D(int nInVert, int nInInd) {
+    void tessellateEdges2D() {
+      int nInVert = in.getNumEdgeVertices();            
       if (noCapsJoins(nInVert)) {
+        int nInInd = in.getNumEdgeIndices();
+        
         tess.polyVertexCheck(nInVert);
         tess.polyIndexCheck(nInInd);
         int index = in.renderMode == RETAINED ? tess.polyIndexCache.addNew() : tess.polyIndexCache.getLast();
         firstLineIndexCache = index;            
         for (int i = in.firstEdge; i <= in.lastEdge; i++) {
           int[] edge = in.edges[i];
-          index = addLine2D(edge[0], edge[1], index, true);
+          int i0 = edge[0];
+          int i1 = edge[1];
+          index = addLine2D(i0, i1, index, true);
         }
         lastLineIndexCache = lastPolyIndexCache = index;          
 //      NEW TESSMAP API        
@@ -9898,7 +9925,7 @@ public class PGraphicsOpenGL extends PGraphics {
       
       cache.incCounts(index, 6, 4);
       return index;
-    }  
+    }
     
     boolean noCapsJoins(int nInVert) {
       if (!accurate2DStrokes) {
@@ -9907,23 +9934,29 @@ public class PGraphicsOpenGL extends PGraphics {
         // The line path is too long, so it could make the GLU tess
         // to run out of memory, so full caps and joins are disabled.
         return true;        
-      } else if (tess.renderMode == RETAINED) {
-        // In retained mode we want to have the better possible stroke
-        // because we don't know beforehand how much the shape will be 
-        // zoomed-in.
-        return false;
       } else {
-        // In the immediate mode case, we first calculate the (volumetric)
-        // scaling factor that is associated to the current modelview
-        // matrix, which is given by the absolute value of its determinant:
-        PMatrix3D tr = modelview;  
-        float volumeScaleFactor = Math.abs(tr.m00 * (tr.m11 * tr.m22 - tr.m12 * tr.m21) +
-                                           tr.m01 * (tr.m12 * tr.m20 - tr.m10 * tr.m22) +
-                                           tr.m02 * (tr.m10 * tr.m21 - tr.m11 * tr.m20));
-        float linearScaleFactor = (float) Math.pow(volumeScaleFactor, 1.0f / 3.0f);
+        // We first calculate the (volumetric) scaling factor that is associated 
+        // to the current transformation matrix, which is given by the absolute 
+        // value of its determinant:        
+        float scaleFactor = 1;
+        
+        if (transform != null) {
+          if (transform instanceof PMatrix2D) {
+            PMatrix2D tr = (PMatrix2D)transform;
+            float areaScaleFactor = Math.abs(tr.m00 * tr.m11 - tr.m01 * tr.m10);          
+            scaleFactor = (float) Math.sqrt(areaScaleFactor);
+          } else if (transform instanceof PMatrix3D) {
+            PMatrix3D tr = (PMatrix3D)transform;
+            float volumeScaleFactor = Math.abs(tr.m00 * (tr.m11 * tr.m22 - tr.m12 * tr.m21) +
+                                               tr.m01 * (tr.m12 * tr.m20 - tr.m10 * tr.m22) +
+                                               tr.m02 * (tr.m10 * tr.m21 - tr.m11 * tr.m20));
+            scaleFactor = (float) Math.pow(volumeScaleFactor, 1.0f / 3.0f);          
+          }          
+        }
+        
         // The stroke weight is scaled so it correspons to the current 
         // "zoom level" being applied on the geometry due to scaling:
-        return linearScaleFactor * strokeWeight < PGL.MIN_CAPS_JOINS_WEIGHT;
+        return scaleFactor * strokeWeight < PGL.MIN_CAPS_JOINS_WEIGHT;
       }
     }    
     
