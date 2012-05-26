@@ -1,8 +1,7 @@
 // Robot 1: Draw from "Getting Started with Processing" 
 // by Reas & Fry. O'Reilly / Make 2010
 
-size(720, 480, P3D);
-hint(ENABLE_ACCURATE_2D);
+size(720, 480, P2D);
 smooth();
 strokeWeight(2);
 background(204);
@@ -39,4 +38,3 @@ fill(153);                  // Set fill to light gray
 ellipse(263, 148, 5, 5);    // Small eye 1
 ellipse(296, 130, 4, 4);    // Small eye 2
 ellipse(305, 162, 3, 3);    // Small eye 3
-
