@@ -13,7 +13,8 @@ float outerRad;
 float innerRad;
 
 void setup() {
-  size(640, 360, P3D);
+  size(640, 360, P2D);
+  smooth(4);
   background(204);
   x = width/2;
   y = height/2;

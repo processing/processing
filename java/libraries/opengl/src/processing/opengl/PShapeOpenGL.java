@@ -361,8 +361,7 @@ public class PShapeOpenGL extends PShape {
         
         super.addChild(c3d);
         c3d.updateRoot(root);
-        root.tessellated = false;
-        tessellated = false;
+        markForTessellation();
         
         if (c3d.family == GROUP) {
           if (c3d.textures != null) {
@@ -859,8 +858,7 @@ public class PShapeOpenGL extends PShape {
                  ambientColor, specularColor, emissiveColor, shininess,
                  vertexCode());    
     
-    root.tessellated = false;
-    tessellated = false;  
+    markForTessellation();
   }
   
   
@@ -912,8 +910,7 @@ public class PShapeOpenGL extends PShape {
     inGeo.trim();
     
     isClosed = mode == CLOSE;    
-    root.tessellated = false;
-    tessellated = false;
+    markForTessellation();
     shapeEnded = true;
   }  
   
@@ -925,8 +922,7 @@ public class PShapeOpenGL extends PShape {
     }
     
     super.setParams(source);
-    root.tessellated = false;
-    tessellated = false;
+    markForTessellation();
     shapeEnded = true;
   }
   
@@ -938,8 +934,7 @@ public class PShapeOpenGL extends PShape {
     }
     
     super.setPath(vcount, verts, ccount, codes);
-    root.tessellated = false;
-    tessellated = false;
+    markForTessellation();
     shapeEnded = true;    
   }
 
@@ -981,8 +976,7 @@ public class PShapeOpenGL extends PShape {
           // Changing the stroke weight on a 2D shape needs a 
           // re-tesellation in order to replace the old line
           // geometry.          
-          root.tessellated = false;
-          tessellated = false;
+          markForTessellation();
         }
       }
       
@@ -997,8 +991,7 @@ public class PShapeOpenGL extends PShape {
           // Changing the stroke weight on a 2D shape needs a 
           // re-tesellation in order to replace the old point
           // geometry.
-          root.tessellated = false;
-          tessellated = false;
+          markForTessellation();
         }        
       }            
     }    
@@ -1016,8 +1009,7 @@ public class PShapeOpenGL extends PShape {
         // Changing the stroke join on a 2D shape needs a 
         // re-tesellation in order to replace the old join
         // geometry.
-        root.tessellated = false;
-        tessellated = false;           
+        markForTessellation();      
       }      
       strokeJoin = join;
     }        
@@ -1035,8 +1027,7 @@ public class PShapeOpenGL extends PShape {
         // Changing the stroke cap on a 2D shape needs a 
         // re-tesellation in order to replace the old cap 
         // geometry.
-        root.tessellated = false;
-        tessellated = false;        
+        markForTessellation();     
       }
       strokeCap = cap;      
     }    
@@ -1181,8 +1172,7 @@ public class PShapeOpenGL extends PShape {
         // Disabling stroke on a shape previously with
         // stroke needs a re-tesellation in order to remove
         // the additional geometry of lines and/or points.
-        root.tessellated = false;
-        tessellated = false;
+        markForTessellation();
         stroke = false;
       }      
       updateStrokeColor(0x0);
@@ -1276,8 +1266,7 @@ public class PShapeOpenGL extends PShape {
       // Enabling stroke on a shape previously without
       // stroke needs a re-tessellation in order to incorporate
       // the additional geometry of lines and/or points.
-      root.tessellated = false;
-      tessellated = false;
+      markForTessellation();
       stroke = true;
     }         
     updateStrokeColor(calcColor);
@@ -2014,12 +2003,11 @@ public class PShapeOpenGL extends PShape {
   }
   
   
-  public void setVertex(int index, float x, float y, float z) {
-    root.tessellated = false;
-    tessellated = false;
+  public void setVertex(int index, float x, float y, float z) {    
     inGeo.vertices[3 * index + 0] = x;
     inGeo.vertices[3 * index + 1] = y;
     inGeo.vertices[3 * index + 2] = z;
+    markForTessellation();
   }
   
   
@@ -2049,12 +2037,11 @@ public class PShapeOpenGL extends PShape {
   }    
   
   
-  public void setNormal(int index, float nx, float ny, float nz) {
-    root.tessellated = false;
-    tessellated = false;
+  public void setNormal(int index, float nx, float ny, float nz) {    
     inGeo.normals[3 * index + 0] = nx;
     inGeo.normals[3 * index + 1] = ny;
-    inGeo.normals[3 * index + 2] = nz;      
+    inGeo.normals[3 * index + 2] = nz;
+    markForTessellation();
   }
   
   
@@ -2068,11 +2055,10 @@ public class PShapeOpenGL extends PShape {
   }  
   
   
-  public void setTextureUV(int index, float u, float v) {
-    root.tessellated = false;
-    tessellated = false;
+  public void setTextureUV(int index, float u, float v) {    
     inGeo.texcoords[2 * index + 0] = u;
     inGeo.texcoords[2 * index + 1] = v;
+    markForTessellation();
   }
   
   
@@ -2081,10 +2067,9 @@ public class PShapeOpenGL extends PShape {
   }
 
   
-  public void setFill(int index, int fill) {
-    root.tessellated = false;
-    tessellated = false;    
+  public void setFill(int index, int fill) {        
     inGeo.colors[index] = PGL.javaToNativeARGB(fill);
+    markForTessellation();
   }  
   
   
@@ -2093,10 +2078,9 @@ public class PShapeOpenGL extends PShape {
   }
 
   
-  public void setStroke(int index, int stroke) {
-    root.tessellated = false;
-    tessellated = false;    
+  public void setStroke(int index, int stroke) {    
     inGeo.strokeColors[index] = PGL.javaToNativeARGB(stroke);
+    markForTessellation();
   }  
   
   
@@ -2105,10 +2089,9 @@ public class PShapeOpenGL extends PShape {
   }
   
 
-  public void setStrokeWeight(int index, float weight) {
-    root.tessellated = false;
-    tessellated = false;    
+  public void setStrokeWeight(int index, float weight) {    
     inGeo.strokeWeights[index] = weight;
+    markForTessellation();
   }   
 
   
@@ -2117,10 +2100,9 @@ public class PShapeOpenGL extends PShape {
   }
 
   
-  public void setAmbient(int index, int ambient) {
-    root.tessellated = false;
-    tessellated = false;    
+  public void setAmbient(int index, int ambient) {    
     inGeo.ambient[index] = PGL.javaToNativeARGB(ambient);
+    markForTessellation();
   }    
   
   public int getSpecular(int index) {
@@ -2128,10 +2110,9 @@ public class PShapeOpenGL extends PShape {
   }
 
   
-  public void setSpecular(int index, int specular) {
-    root.tessellated = false;
-    tessellated = false;    
+  public void setSpecular(int index, int specular) {    
     inGeo.specular[index] = PGL.javaToNativeARGB(specular);
+    markForTessellation();
   }    
     
   
@@ -2140,10 +2121,9 @@ public class PShapeOpenGL extends PShape {
   }
 
   
-  public void setEmissive(int index, int emissive) {
-    root.tessellated = false;
-    tessellated = false;    
+  public void setEmissive(int index, int emissive) {    
     inGeo.emissive[index] = PGL.javaToNativeARGB(emissive);
+    markForTessellation();
   }     
   
   
@@ -2152,10 +2132,9 @@ public class PShapeOpenGL extends PShape {
   }
 
   
-  public void setShininess(int index, float shine) {
-    root.tessellated = false;
-    tessellated = false;    
+  public void setShininess(int index, float shine) {    
     inGeo.shininess[index] = shine;
+    markForTessellation();
   }
   
   
@@ -2260,6 +2239,11 @@ public class PShapeOpenGL extends PShape {
     }
   }
   
+  
+  protected void markForTessellation() {
+    root.tessellated = false;
+    tessellated = false;
+  }
   
   protected void tessellate() {
     if (root == this && parent == null) {      
