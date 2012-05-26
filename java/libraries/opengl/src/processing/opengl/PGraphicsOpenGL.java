@@ -51,6 +51,9 @@ public class PGraphicsOpenGL extends PGraphics {
   public PGL pgl;
 
   /** The PApplet renderer. For the primary surface, pg == this. */
+  // TODO: make static and rename to onscreen, and add current that 
+  // gets updated in beginDraw() to hold wherever the current renderer
+  // is.
   protected PGraphicsOpenGL pg;
 
   // ........................................................
@@ -3342,12 +3345,12 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     float norm2 = v0 * v0 + v1 * v1 + v2 * v2;
-    if (norm2 < EPSILON) {
+    if (zero(norm2)) {
       // The vector is zero, cannot apply rotation.
       return;
     }    
     
-    if (Math.abs(norm2 - 1) > EPSILON) {
+    if (diff(norm2, 1)) {
       // The rotation vector is not normalized.
       float norm = PApplet.sqrt(norm2);
       v0 /= norm;
@@ -3575,7 +3578,32 @@ public class PGraphicsOpenGL extends PGraphics {
     projection.set(mat);
   }
 
+  
+  //////////////////////////////////////////////////////////////
 
+  // Some float math utilities
+
+  
+  protected static boolean same(float a, float b) {
+    return Math.abs(a - b) < PGL.FLOAT_EPS;
+  }
+  
+  
+  protected static boolean diff(float a, float b) {
+    return PGL.FLOAT_EPS <= Math.abs(a - b);
+  }
+
+  
+  protected static boolean zero(float a) {
+    return Math.abs(a) < PGL.FLOAT_EPS;
+  }  
+  
+  
+  protected static boolean nonZero(float a) {
+    return PGL.FLOAT_EPS <= Math.abs(a);
+  }  
+
+  
   //////////////////////////////////////////////////////////////
 
   // CAMERA
@@ -3767,7 +3795,7 @@ public class PGraphicsOpenGL extends PGraphics {
     float z1 = eyeY - centerY;
     float z2 = eyeZ - centerZ;
     float mag = PApplet.sqrt(z0 * z0 + z1 * z1 + z2 * z2);
-    if (mag != 0) {
+    if (nonZero(mag)) {
       z0 /= mag;
       z1 /= mag;
       z2 /= mag;
@@ -3794,14 +3822,14 @@ public class PGraphicsOpenGL extends PGraphics {
     // Cross product gives area of parallelogram, which is < 1.0 for
     // non-perpendicular unit-length vectors; so normalize x, y here:
     mag = PApplet.sqrt(x0 * x0 + x1 * x1 + x2 * x2);
-    if (mag != 0) {
+    if (nonZero(mag)) {
       x0 /= mag;
       x1 /= mag;
       x2 /= mag;
     }
 
     mag = PApplet.sqrt(y0 * y0 + y1 * y1 + y2 * y2);
-    if (mag != 0) {
+    if (nonZero(mag)) {
       y0 /= mag;
       y1 /= mag;
       y2 /= mag;
@@ -4005,7 +4033,7 @@ public class PGraphicsOpenGL extends PGraphics {
     float ox = projection.m00 * x + projection.m01 * y + projection.m02 * z + projection.m03 * w;
     float ow = projection.m30 * x + projection.m31 * y + projection.m32 * z + projection.m33 * w;
 
-    if (ow != 0) {
+    if (nonZero(ow)) {
       ox /= ow;
     }
     float sx = width * (1 + ox) / 2.0f;
@@ -4026,7 +4054,7 @@ public class PGraphicsOpenGL extends PGraphics {
     float oy = projection.m10 * x + projection.m11 * y + projection.m12 * z + projection.m13 * w;
     float ow = projection.m30 * x + projection.m31 * y + projection.m32 * z + projection.m33 * w;
 
-    if (ow != 0) {
+    if (nonZero(ow)) {
       oy /= ow;
     }
     float sy = height * (1 + oy) / 2.0f;
@@ -4049,7 +4077,7 @@ public class PGraphicsOpenGL extends PGraphics {
     float oz = projection.m20 * x + projection.m21 * y + projection.m22 * z + projection.m23 * w;
     float ow = projection.m30 * x + projection.m31 * y + projection.m32 * z + projection.m33 * w;
 
-    if (ow != 0) {
+    if (nonZero(ow)) {
       oz /= ow;
     }
     float sz = (oz + 1) / 2.0f;
@@ -4066,7 +4094,7 @@ public class PGraphicsOpenGL extends PGraphics {
     float ox = cameraInv.m00 * ax + cameraInv.m01 * ay + cameraInv.m02 * az + cameraInv.m03 * aw;
     float ow = cameraInv.m30 * ax + cameraInv.m31 * ay + cameraInv.m32 * az + cameraInv.m33 * aw;
 
-    return (ow != 0) ? ox / ow : ox;
+    return nonZero(ow) ? ox / ow : ox;
   }
 
 
@@ -4079,7 +4107,7 @@ public class PGraphicsOpenGL extends PGraphics {
     float oy = cameraInv.m10 * ax + cameraInv.m11 * ay + cameraInv.m12 * az + cameraInv.m13 * aw;
     float ow = cameraInv.m30 * ax + cameraInv.m31 * ay + cameraInv.m32 * az + cameraInv.m33 * aw;
 
-    return (ow != 0) ? oy / ow : oy;
+    return nonZero(ow) ? oy / ow : oy;
   }
 
 
@@ -4092,7 +4120,7 @@ public class PGraphicsOpenGL extends PGraphics {
     float oz = cameraInv.m20 * ax + cameraInv.m21 * ay + cameraInv.m22 * az + cameraInv.m23 * aw;
     float ow = cameraInv.m30 * ax + cameraInv.m31 * ay + cameraInv.m32 * az + cameraInv.m33 * aw;
 
-    return (ow != 0) ? oz / ow : oz;
+    return nonZero(ow) ? oz / ow : oz;
   }
 
   // STYLES
@@ -7532,28 +7560,28 @@ public class PGraphicsOpenGL extends PGraphics {
       if (br > maxRounding) br = maxRounding;
       if (bl > maxRounding) bl = maxRounding;      
             
-      if (tr != 0) {
+      if (nonZero(tr)) {
         addVertex(c-tr, b, VERTEX);
         addQuadraticVertex(c, b, 0, c, b+tr, 0,
                            fill, stroke, detail, VERTEX);
       } else {
         addVertex(c, b, VERTEX);
       }
-      if (br != 0) {
+      if (nonZero(br)) {
         addVertex(c, d-br, VERTEX);
         addQuadraticVertex(c, d, 0, c-br, d, 0,
                            fill, stroke, detail, VERTEX);
       } else {
         addVertex(c, d, VERTEX);
       }
-      if (bl != 0) {
+      if (nonZero(bl)) {
         addVertex(a+bl, d, VERTEX);
         addQuadraticVertex(a, d, 0, a, d-bl, 0,
                            fill, stroke, detail, VERTEX);
       } else {
         addVertex(a, d, VERTEX);
       }
-      if (tl != 0) {
+      if (nonZero(tl)) {
         addVertex(a, b+tl, VERTEX);
         addQuadraticVertex(a, b, 0, a+tl, b, 0,
                            fill, stroke, detail, VERTEX);
@@ -7602,11 +7630,12 @@ public class PGraphicsOpenGL extends PGraphics {
       float centerX = x + radiusH;
       float centerY = y + radiusV;
 
+      // should call screenX/Y using current renderer.
       float sx1 = screenX(x, y);
       float sy1 = screenY(x, y);
       float sx2 = screenX(x + w, y + h);
       float sy2 = screenY(x + w, y + h);
-
+      
       int accuracy = PApplet.max(MIN_POINT_ACCURACY, (int) (TWO_PI * PApplet.dist(sx1, sy1, sx2, sy2) / 20));
       float inc = (float) PGraphicsOpenGL.SINCOS_LENGTH / accuracy;
 

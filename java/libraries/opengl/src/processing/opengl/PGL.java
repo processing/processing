@@ -137,7 +137,7 @@ public class PGL {
 
     FLOAT_EPS = eps;
   }
-
+  
   /**
    * Set to true if the host system is big endian (PowerPC, MIPS, SPARC), false
    * if little endian (x86 Intel for Mac or PC).
