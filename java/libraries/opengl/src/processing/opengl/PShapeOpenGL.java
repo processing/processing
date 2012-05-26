@@ -2017,94 +2017,6 @@ public class PShapeOpenGL extends PShape {
   public void setVertex(int index, float x, float y, float z) {
     root.tessellated = false;
     tessellated = false;
-    
-    /*
-    if (tessellated) {
-    int[] indices;
-    int[] indices1;
-    float[] vertices;
-    float[] attribs;    
-          
-    if (havePoints) {
-      indices = inGeo.tessMap.pointIndices[index];
-      vertices = tessGeo.pointVertices;      
-      for (int i = 0; i < indices.length; i++) {
-        int tessIdx = indices[i];        
-        vertices[4 * tessIdx + 0] = x;
-        vertices[4 * tessIdx + 1] = y;
-        vertices[4 * tessIdx + 2] = z;
-        root.setModifiedPointVertices(tessIdx, tessIdx);
-      } 
-    }
-    
-    if (haveLines) {
-      indices = inGeo.tessMap.lineIndices0[index];
-      indices1 = inGeo.tessMap.lineIndices1[index];      
-      vertices = tessGeo.lineVertices;
-      attribs = tessGeo.lineDirWidths;
-      for (int i = 0; i < indices.length; i++) {
-        int tessIdx = indices[i];        
-        vertices[4 * tessIdx + 0] = x;
-        vertices[4 * tessIdx + 1] = y;
-        vertices[4 * tessIdx + 2] = z;
-        root.setModifiedLineVertices(tessIdx, tessIdx);
-        
-        int tessIdx1 = indices1[i];        
-        attribs[4 * tessIdx1 + 0] = x;
-        attribs[4 * tessIdx1 + 1] = y;
-        attribs[4 * tessIdx1 + 2] = z;
-        root.setModifiedLineAttributes(tessIdx1, tessIdx1);
-      }     
-    }
-    
-    if (haveFill) {
-      vertices = tessGeo.polyVertices;
-      if (-1 < inGeo.tessMap.firstFillIndex) {
-        // 1-1 mapping, only need to offset the input index
-        int tessIdx = inGeo.tessMap.firstFillIndex + index;
-        vertices[4 * tessIdx + 0] = x;
-        vertices[4 * tessIdx + 1] = y;
-        vertices[4 * tessIdx + 2] = z;
-        root.setModifiedFillVertices(tessIdx, tessIdx);
-      } else {
-        // Multi-valued mapping. Going through all the tess
-        // vertices affected by inIdx.
-        float x0 = inGeo.vertices[4 * index + 0];
-        float y0 = inGeo.vertices[4 * index + 1];
-        float z0 = inGeo.vertices[4 * index + 2];        
-        indices = inGeo.tessMap.fillIndices[index];
-        float[] weights = inGeo.tessMap.fillWeights[index];
-        for (int i = 0; i < indices.length; i++) {
-          // tessIdx is a linear combination of input vertices,
-          // including inIdx:
-          // tessVert[tessIdx] = SUM(i from I, inVert[i]), inIdx in I
-          // For example:
-          // xt = w0 * x0 + w1 * x1 + w2 * x2
-          // If x2 changes from x2 to x2', then the new value of xt is:
-          // xt' = w0 * x0 + w1 * x1 + w2 * x2' =
-          //     = w0 * x0 + w1 * x1 + w2 * x2' + w2 * x2 - w2 * x2 
-          //     = xt + w2 * (x2' - x2)
-          // This explains the calculations below:
-          int tessIdx = indices[i];
-          if (-1 < tessIdx) {          
-            float weight = weights[i];          
-            float tx0 = vertices[4 * tessIdx + 0];
-            float ty0 = vertices[4 * tessIdx + 1];
-            float tz0 = vertices[4 * tessIdx + 2];        
-            vertices[4 * tessIdx + 0] = tx0 + weight * (x - x0);
-            vertices[4 * tessIdx + 1] = ty0 + weight * (y - y0);
-            vertices[4 * tessIdx + 2] = tz0 + weight * (z - z0);       
-            root.setModifiedFillVertices(tessIdx, tessIdx);
-          } else {
-            root.forceTessellation = true;
-            break;
-          }
-        }    
-      }  
-    }
-    
-    }
-*/
     inGeo.vertices[3 * index + 0] = x;
     inGeo.vertices[3 * index + 1] = y;
     inGeo.vertices[3 * index + 2] = z;
@@ -2140,51 +2052,6 @@ public class PShapeOpenGL extends PShape {
   public void setNormal(int index, float nx, float ny, float nz) {
     root.tessellated = false;
     tessellated = false;
-    
-    /*
-    if (haveFill) {
-      float[] normals = tessGeo.polyNormals;
-      
-      if (-1 < inGeo.tessMap.firstFillIndex) {
-        int tessIdx = inGeo.tessMap.firstFillIndex + index;
-        normals[3 * tessIdx + 0] = nx;
-        normals[3 * tessIdx + 1] = ny;
-        normals[3 * tessIdx + 2] = nz;
-        root.setModifiedFillNormals(tessIdx, tessIdx);
-      } else {
-        float nx0 = inGeo.normals[3 * index + 0];
-        float ny0 = inGeo.normals[3 * index + 1];
-        float nz0 = inGeo.normals[3 * index + 2];        
-        int[] indices = inGeo.tessMap.fillIndices[index];
-        float[] weights = inGeo.tessMap.fillWeights[index];
-        for (int i = 0; i < indices.length; i++) {
-          int tessIdx = indices[i];
-          if (-1 < tessIdx) { 
-            float weight = weights[i];
-            float tnx0 = normals[3 * tessIdx + 0];
-            float tny0 = normals[3 * tessIdx + 1];
-            float tnz0 = normals[3 * tessIdx + 2];        
-            float tnx = tnx0 + weight * (nx - nx0);
-            float tny = tny0 + weight * (ny - ny0);
-            float tnz = tnz0 + weight * (nz - nz0);
-            
-            // Making sure that the new normal vector is indeed
-            // normalized.
-            float sum = tnx * tnx + tny * tny + tnz * tnz;
-            float len = PApplet.sqrt(sum);
-            tnx /= len;
-            tny /= len;
-            tnz /= len;
-             
-            normals[3 * tessIdx + 0] = tnx;
-            normals[3 * tessIdx + 1] = tny;
-            normals[3 * tessIdx + 2] = tnz;
-            root.setModifiedFillNormals(tessIdx, tessIdx);
-          }
-        }    
-      }          
-    }
-    */
     inGeo.normals[3 * index + 0] = nx;
     inGeo.normals[3 * index + 1] = ny;
     inGeo.normals[3 * index + 2] = nz;      
@@ -2204,37 +2071,6 @@ public class PShapeOpenGL extends PShape {
   public void setTextureUV(int index, float u, float v) {
     root.tessellated = false;
     tessellated = false;
-    
-    /*
-    if (haveFill) {
-      float[] texcoords = tessGeo.polyTexcoords;
-      
-      if (-1 < inGeo.tessMap.firstFillIndex) {
-        int tessIdx = inGeo.tessMap.firstFillIndex + index;
-        tessGeo.polyTexcoords[2 * tessIdx + 0] = u;
-        tessGeo.polyTexcoords[2 * tessIdx + 1] = v;
-        root.setModifiedFillTexcoords(tessIdx, tessIdx);
-      } else {       
-        float u0 = inGeo.texcoords[2 * index + 0];
-        float v0 = inGeo.texcoords[2 * index + 1];
-        int[] indices = inGeo.tessMap.fillIndices[index];
-        float[] weights = inGeo.tessMap.fillWeights[index];
-        for (int i = 0; i < indices.length; i++) {
-          int tessIdx = indices[i];
-          if (-1 < tessIdx) { 
-            float weight = weights[i];
-            float tu0 = texcoords[2 * tessIdx + 0];
-            float tv0 = texcoords[2 * tessIdx + 1];        
-            float tu = tu0 + weight * (u - u0);
-            float tv = tv0 + weight * (v - v0);           
-            texcoords[2 * tessIdx + 0] = tu;
-            texcoords[2 * tessIdx + 1] = tv;
-            root.setModifiedFillTexcoords(tessIdx, tessIdx);
-          }
-        }        
-      }       
-    }    
-    */
     inGeo.texcoords[2 * index + 0] = u;
     inGeo.texcoords[2 * index + 1] = v;
   }
@@ -2248,30 +2084,7 @@ public class PShapeOpenGL extends PShape {
   public void setFill(int index, int fill) {
     root.tessellated = false;
     tessellated = false;    
-    fill = PGL.javaToNativeARGB(fill);
-/*
-    if (haveFill) {
-      int[] colors = tessGeo.polyColors;
-      
-      if (-1 < inGeo.tessMap.firstFillIndex) {
-        int tessIdx = inGeo.tessMap.firstFillIndex + index;
-        colors[tessIdx] = fill;
-        root.setModifiedFillColors(tessIdx, tessIdx);
-      } else {
-        int[] indices = inGeo.tessMap.fillIndices[index];
-        float[] weights = inGeo.tessMap.fillWeights[index];
-        int fill0 = inGeo.colors[index];
-        setColorARGB(colors, fill, fill0, indices, weights);   
-        for (int i = 0; i < indices.length; i++) {
-          int tessIdx = indices[i];
-          if (-1 < tessIdx) {           
-            root.setModifiedFillColors(tessIdx, indices[i]);
-          }
-        }        
-      }  
-    }
-    */
-    inGeo.colors[index] = fill;
+    inGeo.colors[index] = PGL.javaToNativeARGB(fill);
   }  
   
   
@@ -2283,35 +2096,7 @@ public class PShapeOpenGL extends PShape {
   public void setStroke(int index, int stroke) {
     root.tessellated = false;
     tessellated = false;    
-    stroke = PGL.javaToNativeARGB(stroke);
-    /*         
-    if (havePoints) {
-      int[] indices = inGeo.tessMap.pointIndices[index];
-      int[] colors = tessGeo.pointColors; 
-      for (int i = 0; i < indices.length; i++) {
-        int tessIdx = indices[i];
-        colors[tessIdx] = stroke;
-        root.setModifiedPointColors(tessIdx, tessIdx);
-      } 
-    }
-      
-    if (haveLines) {
-      int[] colors = tessGeo.lineColors;      
-      int[] indices = inGeo.tessMap.lineIndices0[index];       
-      for (int i = 0; i < indices.length; i++) {
-        int tessIdx = indices[i];
-        colors[tessIdx] = stroke;
-        root.setModifiedLineColors(tessIdx, tessIdx);
-      }
-      indices = inGeo.tessMap.lineIndices1[index];       
-      for (int i = 0; i < indices.length; i++) {
-        int tessIdx = indices[i];
-        colors[tessIdx] = stroke;
-        root.setModifiedLineColors(tessIdx, tessIdx);
-      }  
-    }    
-    */
-    inGeo.strokeColors[index] = stroke;
+    inGeo.strokeColors[index] = PGL.javaToNativeARGB(stroke);
   }  
   
   
@@ -2323,42 +2108,6 @@ public class PShapeOpenGL extends PShape {
   public void setStrokeWeight(int index, float weight) {
     root.tessellated = false;
     tessellated = false;    
-        /*
-    if (havePoints || haveLines) {
-      int[] indices;
-      float[] attribs;      
-      
-      float weight0 = inGeo.sweights[index]; 
-      float resizeFactor = weight / weight0;
-      
-      if (havePoints) {
-        indices = inGeo.tessMap.pointIndices[index];
-        attribs = tessGeo.pointSizes; 
-        for (int i = 0; i < indices.length; i++) {
-          int tessIdx = indices[i];
-          attribs[2 * tessIdx + 0] *= resizeFactor;
-          attribs[2 * tessIdx + 1] *= resizeFactor;
-          root.setModifiedPointAttributes(tessIdx, tessIdx);
-        }      
-      }
-      
-      if (haveLines) {
-        attribs = tessGeo.lineDirWidths;
-        indices = inGeo.tessMap.lineIndices0[index];
-        for (int i = 0; i < indices.length; i++) {
-          int tessIdx = indices[i];
-          attribs[4 * tessIdx + 3] *= resizeFactor;
-          root.setModifiedLineAttributes(tessIdx, tessIdx);
-        }
-        indices = inGeo.tessMap.lineIndices1[index];
-        for (int i = 0; i < indices.length; i++) {
-          int tessIdx = indices[i];
-          attribs[4 * tessIdx + 3] *= resizeFactor;
-          root.setModifiedLineAttributes(tessIdx, tessIdx);
-        }
-      }
-    }
-    */
     inGeo.strokeWeights[index] = weight;
   }   
 
@@ -2371,30 +2120,7 @@ public class PShapeOpenGL extends PShape {
   public void setAmbient(int index, int ambient) {
     root.tessellated = false;
     tessellated = false;    
-    ambient = PGL.javaToNativeARGB(ambient);
-    /*
-    if (haveFill) {
-      int[] colors = tessGeo.polyAmbient;
-      
-      if (-1 < inGeo.tessMap.firstFillIndex) {
-        int tessIdx = inGeo.tessMap.firstFillIndex + index;
-        colors[tessIdx] = ambient;
-        root.setModifiedFillAmbient(tessIdx, tessIdx);
-      } else {
-        int[] indices = inGeo.tessMap.fillIndices[index];
-        float[] weights = inGeo.tessMap.fillWeights[index];
-        int ambient0 = inGeo.ambient[index];
-        setColorRGB(colors, ambient, ambient0, indices, weights);
-        for (int i = 0; i < indices.length; i++) {
-          int tessIdx = indices[i];
-          if (-1 < tessIdx) { 
-            root.setModifiedFillAmbient(tessIdx, indices[i]);  
-          }                    
-        }        
-      }  
-    }
-    */
-    inGeo.ambient[index] = ambient;
+    inGeo.ambient[index] = PGL.javaToNativeARGB(ambient);
   }    
   
   public int getSpecular(int index) {
@@ -2405,30 +2131,7 @@ public class PShapeOpenGL extends PShape {
   public void setSpecular(int index, int specular) {
     root.tessellated = false;
     tessellated = false;    
-    specular = PGL.javaToNativeARGB(specular);
-    /*
-    if (haveFill) {
-      int[] colors = tessGeo.polySpecular;
-      
-      if (-1 < inGeo.tessMap.firstFillIndex) {
-        int tessIdx = inGeo.tessMap.firstFillIndex + index;
-        colors[tessIdx] = specular;
-        root.setModifiedFillSpecular(tessIdx, tessIdx);
-      } else {
-        int[] indices = inGeo.tessMap.fillIndices[index];
-        float[] weights = inGeo.tessMap.fillWeights[index];
-        int specular0 = inGeo.specular[index];
-        setColorRGB(colors, specular, specular0, indices, weights);
-        for (int i = 0; i < indices.length; i++) {
-          int tessIdx = indices[i];
-          if (-1 < tessIdx) {           
-            root.setModifiedFillSpecular(tessIdx, indices[i]);
-          }
-        }        
-      }  
-    }
-    */
-    inGeo.specular[index] = specular;
+    inGeo.specular[index] = PGL.javaToNativeARGB(specular);
   }    
     
   
@@ -2440,30 +2143,7 @@ public class PShapeOpenGL extends PShape {
   public void setEmissive(int index, int emissive) {
     root.tessellated = false;
     tessellated = false;    
-    emissive = PGL.javaToNativeARGB(emissive);
-    /*
-    if (haveFill) {
-      int[] colors = tessGeo.polyEmissive;
-      
-      if (-1 < inGeo.tessMap.firstFillIndex) {
-        int tessIdx = inGeo.tessMap.firstFillIndex + index;
-        colors[tessIdx] = emissive;
-        root.setModifiedFillEmissive(tessIdx, tessIdx);
-      } else {
-        int[] indices = inGeo.tessMap.fillIndices[index];
-        float[] weights = inGeo.tessMap.fillWeights[index];
-        int emissive0 = inGeo.emissive[index];
-        setColorRGB(colors, emissive, emissive0, indices, weights);
-        for (int i = 0; i < indices.length; i++) {
-          int tessIdx = indices[i];
-          if (-1 < tessIdx) {           
-            root.setModifiedFillEmissive(tessIdx, indices[i]);
-          }
-        }        
-      }  
-    }
-    */
-    inGeo.emissive[index] = emissive;
+    inGeo.emissive[index] = PGL.javaToNativeARGB(emissive);
   }     
   
   
@@ -2475,94 +2155,9 @@ public class PShapeOpenGL extends PShape {
   public void setShininess(int index, float shine) {
     root.tessellated = false;
     tessellated = false;    
-    /*
-    if (haveFill) {
-      float[] shininess = tessGeo.polyShininess;
-      
-      if (-1 < inGeo.tessMap.firstFillIndex) {
-        int tessIdx = inGeo.tessMap.firstFillIndex + index;
-        shininess[tessIdx] = shine;
-        root.setModifiedFillShininess(tessIdx, tessIdx);
-      } else {
-        float shine0 = inGeo.shininess[index];
-        int[] indices = inGeo.tessMap.fillIndices[index];
-        float[] weights = inGeo.tessMap.fillWeights[index];
-        for (int i = 0; i < indices.length; i++) {
-          int tessIdx = indices[i];
-          if (-1 < tessIdx) {  
-            float weight = weights[i];
-            float tshine0 = shininess[tessIdx];
-            float tshine = tshine0 + weight * (shine - shine0);          
-            shininess[tessIdx] = tshine;
-            root.setModifiedFillShininess(tessIdx, tessIdx);
-          }
-        }    
-      }
-    }    
-    */
     inGeo.shininess[index] = shine;
   }
   
-  /*
-  protected void setColorARGB(int[] colors, int fill, int fill0, int[] indices, float[] weights) {
-    float a = (fill >> 24) & 0xFF;
-    float r = (fill >> 16) & 0xFF;
-    float g = (fill >>  8) & 0xFF;
-    float b = (fill >>  0) & 0xFF;
-    
-    float a0 = (fill0 >> 24) & 0xFF;
-    float r0 = (fill0 >> 16) & 0xFF;
-    float g0 = (fill0 >>  8) & 0xFF;
-    float b0 = (fill0 >>  0) & 0xFF;
-
-    for (int i = 0; i < indices.length; i++) {
-      int tessIdx = indices[i];
-      if (-1 < tessIdx) {
-        float weight = weights[i];
-        int tfill0 = colors[tessIdx];          
-        float ta0 = (tfill0 >> 24) & 0xFF;
-        float tr0 = (tfill0 >> 16) & 0xFF;
-        float tg0 = (tfill0 >>  8) & 0xFF;
-        float tb0 = (tfill0 >>  0) & 0xFF;
-        
-        int ta = (int) (ta0 + weight * (a - a0));
-        int tr = (int) (tr0 + weight * (r - r0));
-        int tg = (int) (tg0 + weight * (g - g0));
-        int tb = (int) (tb0 + weight * (b - b0));
-         
-        colors[tessIdx] = (ta << 24) | (tr << 16) | (tg << 8) | tb;
-      }
-    }       
-  }
-  
-  
-  protected void setColorRGB(int[] colors, int fill, int fill0, int[] indices, float[] weights) {
-    float r = (fill >> 16) & 0xFF;
-    float g = (fill >>  8) & 0xFF;
-    float b = (fill >>  0) & 0xFF;
-    
-    float r0 = (fill0 >> 16) & 0xFF;
-    float g0 = (fill0 >>  8) & 0xFF;
-    float b0 = (fill0 >>  0) & 0xFF;
-
-    for (int i = 0; i < indices.length; i++) {
-      int tessIdx = indices[i];
-      if (-1 < tessIdx) {
-        float weight = weights[i];
-        int tfill0 = colors[tessIdx];          
-        float tr0 = (tfill0 >> 16) & 0xFF;
-        float tg0 = (tfill0 >>  8) & 0xFF;
-        float tb0 = (tfill0 >>  0) & 0xFF;
-        
-        int tr = (int) (tr0 + weight * (r - r0));
-        int tg = (int) (tg0 + weight * (g - g0));
-        int tb = (int) (tb0 + weight * (b - b0));
-         
-        colors[tessIdx] = 0xff000000 | (tr << 16) | (tg << 8) | tb;
-      }
-    }       
-  }      
-  */
   
   ///////////////////////////////////////////////////////////  
   
@@ -2681,7 +2276,7 @@ public class PShapeOpenGL extends PShape {
       tessGeo.trim(); 
       
       modified = false;
-      needBufferInit = true;           
+      needBufferInit = true;   
       
       modifiedPolyVertices = false;
       modifiedPolyColors = false;
@@ -2770,12 +2365,6 @@ public class PShapeOpenGL extends PShape {
         tessellator.set3D(is3D());            
         
         if (family == GEOMETRY) {
-          // The tessellation maps are used to associate input
-          // vertices with the corresponding tessellated vertices.
-          // This correspondence might not be one-to-one, in the
-          // case of lines and polygon shapes for example.
-          inGeo.initTessMap(tessGeo);
-          
           if (kind == POINTS) {
             tessellator.tessellatePoints();    
           } else if (kind == LINES) {
@@ -2841,8 +2430,6 @@ public class PShapeOpenGL extends PShape {
         if (texture != null && parent != null) {
           ((PShapeOpenGL)parent).addTexture(texture);
         }
-        
-        inGeo.compactTessMap();
 
         firstPolyIndexCache = tessellator.firstPolyIndexCache;
         lastPolyIndexCache = tessellator.lastPolyIndexCache;
@@ -2876,8 +2463,7 @@ public class PShapeOpenGL extends PShape {
     inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
                       ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);
-    inGeo.addPoint(x, y, z, fill, stroke);    
-    inGeo.initTessMap(tessGeo);    
+    inGeo.addPoint(x, y, z, fill, stroke);      
     tessellator.tessellatePoints();   
   }
   
@@ -2904,8 +2490,7 @@ public class PShapeOpenGL extends PShape {
     inGeo.setNormal(normalX, normalY, normalZ);
     inGeo.addLine(x1, y1, z1,
                   x2, y2, z2,
-                  fill, stroke);    
-    inGeo.initTessMap(tessGeo);    
+                  fill, stroke);   
     tessellator.tessellateLines();  
   }
   
@@ -2929,8 +2514,7 @@ public class PShapeOpenGL extends PShape {
     inGeo.addTriangle(x1, y1, 0,
                       x2, y2, 0,
                       x3, y3, 0,
-                      fill, stroke);    
-    inGeo.initTessMap(tessGeo);    
+                      fill, stroke);   
     tessellator.tessellateTriangles();    
   }
   
@@ -2958,8 +2542,7 @@ public class PShapeOpenGL extends PShape {
                x2, y2, 0,
                x3, y3, 0,
                x4, y4, 0,
-               fill, stroke);    
-    inGeo.initTessMap(tessGeo);    
+               fill, stroke);
     tessellator.tessellateQuads();     
   }  
   
@@ -3000,13 +2583,11 @@ public class PShapeOpenGL extends PShape {
     if (rounded) {
       inGeo.addRect(a, b, c, d,
                     tl, tr, br, bl,
-                    fill, stroke, bezierDetail, rectMode);       
-      inGeo.initTessMap(tessGeo);      
+                    fill, stroke, bezierDetail, rectMode);
       tessellator.tessellatePolygon(false, true, true);      
     } else {
       inGeo.addRect(a, b, c, d,
-                   fill, stroke, rectMode);    
-      inGeo.initTessMap(tessGeo);
+                   fill, stroke, rectMode);
       tessellator.tessellateQuads();      
     }   
   }
@@ -3026,7 +2607,6 @@ public class PShapeOpenGL extends PShape {
                       ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);    
     inGeo.addEllipse(a, b, c, d, fill, stroke, ellipseMode);
-    inGeo.initTessMap(tessGeo);
     tessellator.tessellateTriangleFan(); 
   }
   
@@ -3048,7 +2628,6 @@ public class PShapeOpenGL extends PShape {
                       ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);
     inGeo.addArc(a, b, c, d, start, stop, fill, stroke, ellipseMode);
-    inGeo.initTessMap(tessGeo);
     tessellator.tessellateTriangleFan();    
   }
   
@@ -3065,8 +2644,7 @@ public class PShapeOpenGL extends PShape {
         
     inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
                       ambientColor, specularColor, emissiveColor, shininess);    
-    inGeo.addBox(w, h, d, fill, stroke);   
-    inGeo.initTessMap(tessGeo);    
+    inGeo.addBox(w, h, d, fill, stroke);    
     tessellator.tessellateQuads();     
   }
   
@@ -3082,8 +2660,7 @@ public class PShapeOpenGL extends PShape {
     
     inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
                       ambientColor, specularColor, emissiveColor, shininess); 
-    int[] indices = inGeo.addSphere(r, nu, nv, fill, stroke);   
-    inGeo.initTessMap(tessGeo);
+    int[] indices = inGeo.addSphere(r, nu, nv, fill, stroke);
     tessellator.tessellateTriangles(indices);               
   }
   
@@ -3187,8 +2764,7 @@ public class PShapeOpenGL extends PShape {
       }
     }
     
-    if (stroke) inGeo.addPolygonEdges(isClosed);
-    inGeo.initTessMap(tessGeo);  
+    if (stroke) inGeo.addPolygonEdges(isClosed);  
     tessellator.tessellatePolygon(false, isClosed, true);    
   }  
   
