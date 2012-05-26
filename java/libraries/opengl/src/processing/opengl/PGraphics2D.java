@@ -39,18 +39,35 @@ public class PGraphics2D extends PGraphicsOpenGL {
     super();
     hints[ENABLE_PERSPECTIVE_CORRECTED_LINES] = false;
   }
+  
 
   //////////////////////////////////////////////////////////////
 
   // RENDERER SUPPORT QUERIES
   
+  
   public boolean is2D() {
     return true;
   }
 
+  
   public boolean is3D() {
     return false;
   }  
+  
+  
+  //////////////////////////////////////////////////////////////
+
+  // HINTS
+
+  
+  public void hint(int which) {
+    if (which == ENABLE_PERSPECTIVE_CORRECTED_LINES) {
+      showWarning("2D lines cannot be perspective-corrected.");
+      return;
+    }
+    super.hint(which);
+  }
   
   
   //////////////////////////////////////////////////////////////
