@@ -50,11 +50,11 @@ public class PGraphicsOpenGL extends PGraphics {
   /** Interface between Processing and OpenGL */
   public PGL pgl;
 
-  /** The PApplet renderer. For the primary surface, pg == this. */
-  // TODO: make static and rename to onscreen, and add current that 
-  // gets updated in beginDraw() to hold wherever the current renderer
-  // is.
-  protected PGraphicsOpenGL pg;
+  /** The main PApplet renderer. */
+  protected static PGraphicsOpenGL pgPrimary = null;
+  
+  /** The renderer currenty in use. */
+  protected static PGraphicsOpenGL pgCurrent = null;
 
   // ........................................................
 
@@ -393,7 +393,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   public PGraphicsOpenGL() {
     pgl = new PGL(this);
-    pg = null;
+    
 
     if (tessellator == null) {
       tessellator = new Tessellator();
@@ -1071,19 +1071,19 @@ public class PGraphicsOpenGL extends PGraphics {
       pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPolyTexcoordBufferID);
       pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 2 * sizef, null, PGL.GL_STATIC_DRAW);
 
-      glPolyAmbientBufferID = pg.createVertexBufferObject(polyBuffersContext.code());
+      glPolyAmbientBufferID = pgPrimary.createVertexBufferObject(polyBuffersContext.code());
       pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPolyAmbientBufferID);
       pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, PGL.GL_STATIC_DRAW);
 
-      glPolySpecularBufferID = pg.createVertexBufferObject(polyBuffersContext.code());
+      glPolySpecularBufferID = pgPrimary.createVertexBufferObject(polyBuffersContext.code());
       pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPolySpecularBufferID);
       pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, PGL.GL_STATIC_DRAW);
 
-      glPolyEmissiveBufferID = pg.createVertexBufferObject(polyBuffersContext.code());
+      glPolyEmissiveBufferID = pgPrimary.createVertexBufferObject(polyBuffersContext.code());
       pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPolyEmissiveBufferID);
       pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, PGL.GL_STATIC_DRAW);
 
-      glPolyShininessBufferID = pg.createVertexBufferObject(polyBuffersContext.code());
+      glPolyShininessBufferID = pgPrimary.createVertexBufferObject(polyBuffersContext.code());
       pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPolyShininessBufferID);
       pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizef, null, PGL.GL_STATIC_DRAW);
 
@@ -1384,6 +1384,16 @@ public class PGraphicsOpenGL extends PGraphics {
       return;
     }
 
+    if (pgCurrent != pgPrimary && this != pgPrimary) {
+      // It seems that the user is trying to start
+      // another beginDraw()/endDraw() block for an
+      // offscreen surface, still drawing on another
+      // offscreen surface. This situation is not
+      // catched by the drawing check above.
+      showWarning("P3D: Already called beginDraw() for another P3D object.");
+      return;      
+    }    
+    
     if (!glParamsRead) {
       getGLParameters();
     }
@@ -1412,13 +1422,15 @@ public class PGraphicsOpenGL extends PGraphics {
       } else {
         setFramebuffer(offscreenFramebuffer);
       }
-      pgl.updateOffscreen(pg.pgl);
+      pgl.updateOffscreen(pgPrimary.pgl);
       pgl.glDrawBuffer(PGL.GL_COLOR_ATTACHMENT0);      
     }
 
     // We are ready to go!
-
     report("top beginDraw()");
+    
+    drawing = true;    
+    pgCurrent = this;
 
     inGeo.clear();
     tessGeo.clear();
@@ -1474,8 +1486,8 @@ public class PGraphicsOpenGL extends PGraphics {
       if (texture != null) {
         // The screen texture should be deleted because it
         // corresponds to the old window size.
-        this.removeCache(pg);
-        this.removeParams(pg);
+        this.removeCache(pgPrimary);
+        this.removeParams(pgPrimary);
         texture = null;
         loadTexture();
       }
@@ -1531,7 +1543,7 @@ public class PGraphicsOpenGL extends PGraphics {
     if (primarySurface) {
       pgl.beginOnscreenDraw(clearColorBuffer);
     } else {
-      pgl.beginOffscreenDraw(pg.clearColorBuffer);
+      pgl.beginOffscreenDraw(pgPrimary.clearColorBuffer);
 
       // Just in case the texture was recreated (in a resize event for example)
       offscreenFramebuffer.setColorBuffer(texture);
@@ -1547,8 +1559,7 @@ public class PGraphicsOpenGL extends PGraphics {
     } else {
       pgl.glDepthMask(true);
     }
-
-    drawing = true;
+    
     pixelsOp = OP_NONE;
 
     modified = false;
@@ -1592,7 +1603,7 @@ public class PGraphicsOpenGL extends PGraphics {
         offscreenFramebufferMultisample.copy(offscreenFramebuffer);
       }
       
-      if (!pgl.initialized || !pg.pgl.initialized || parent.frameCount == 0) {
+      if (!pgl.initialized || !pgPrimary.pgl.initialized || parent.frameCount == 0) {
         // If the primary surface is re-initialized, this offscreen 
         // surface needs to save its contents into the pixels array
         // so they can be restored after the FBOs are recreated.
@@ -1608,13 +1619,22 @@ public class PGraphicsOpenGL extends PGraphics {
       
       popFramebuffer();
 
-      pgl.endOffscreenDraw(pg.clearColorBuffer0);
+      pgl.endOffscreenDraw(pgPrimary.clearColorBuffer0);
 
-      pg.restoreGL();
+      pgPrimary.restoreGL();
     }
 
-    drawing = false;
-
+    // Done!
+    drawing = false;    
+    if (pgCurrent == pgPrimary) {
+      // Done with the main surface
+      pgCurrent = null;
+    } else {
+      // Done with an offscreen surface,
+      // going back to onscreen drawing.
+      pgCurrent = pgPrimary;
+    }
+    
     report("bot endDraw()");
   }
 
@@ -1693,7 +1713,7 @@ public class PGraphicsOpenGL extends PGraphics {
         if (offscreenNotCurrent) {
           pushFramebuffer();
           setFramebuffer(offscreenFramebuffer);
-          pgl.updateOffscreen(pg.pgl);
+          pgl.updateOffscreen(pgPrimary.pgl);
         }
         pgl.glReadBuffer(PGL.GL_COLOR_ATTACHMENT0);
       } else {
@@ -1711,7 +1731,7 @@ public class PGraphicsOpenGL extends PGraphics {
           } else {
             setFramebuffer(offscreenFramebuffer);
           }
-          pgl.updateOffscreen(pg.pgl);
+          pgl.updateOffscreen(pgPrimary.pgl);
         }
         pgl.glDrawBuffer(PGL.GL_COLOR_ATTACHMENT0);
       }
@@ -3145,7 +3165,7 @@ public class PGraphicsOpenGL extends PGraphics {
    * Implementation of actual drawing for a line of text.
    */
   protected void textLineImpl(char buffer[], int start, int stop, float x, float y) {
-    textTex = (PFontTexture)textFont.getCache(pg);
+    textTex = (PFontTexture)textFont.getCache(pgPrimary);
     if (textTex == null) {
       textTex = new PFontTexture(parent, textFont, maxTextureSize, maxTextureSize);
       textFont.setCache(this, textTex);
@@ -4839,8 +4859,8 @@ public class PGraphicsOpenGL extends PGraphics {
       PTexture.Parameters params = PTexture.newParameters(ARGB, sampling);
       texture = new PTexture(parent, width, height, params);
       texture.setFlippedY(true);
-      this.setCache(pg, texture);
-      this.setParams(pg, params);
+      this.setCache(pgPrimary, texture);
+      this.setParams(pgPrimary, params);
     }
   }
 
@@ -5117,7 +5137,7 @@ public class PGraphicsOpenGL extends PGraphics {
    * @param img the image to have a texture metadata associated to it
    */
   public PTexture getTexture(PImage img) {
-    PTexture tex = (PTexture)img.getCache(pg);
+    PTexture tex = (PTexture)img.getCache(pgPrimary);
     if (tex == null) {
       tex = addTexture(img);
     } else {
@@ -5146,10 +5166,10 @@ public class PGraphicsOpenGL extends PGraphics {
    * @param img the image to have a texture metadata associated to it
    */
   protected PTexture addTexture(PImage img) {
-    PTexture.Parameters params = (PTexture.Parameters)img.getParams(pg);
+    PTexture.Parameters params = (PTexture.Parameters)img.getParams(pgPrimary);
     if (params == null) {
       params = PTexture.newParameters();
-      img.setParams(pg, params);
+      img.setParams(pgPrimary, params);
     }
     if (img.parent == null) {
       img.parent = parent;
@@ -5157,7 +5177,7 @@ public class PGraphicsOpenGL extends PGraphics {
     PTexture tex = new PTexture(img.parent, img.width, img.height, params);
     img.loadPixels();
     if (img.pixels != null) tex.set(img.pixels);
-    img.setCache(pg, tex);
+    img.setCache(pgPrimary, tex);
     return tex;
   }
 
@@ -5170,7 +5190,7 @@ public class PGraphicsOpenGL extends PGraphics {
     img.width = tex.width;
     img.height = tex.height;
     img.format = ARGB;
-    img.setCache(pg, tex);
+    img.setCache(pgPrimary, tex);
     return img;
   }
 
@@ -5204,15 +5224,17 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void initPrimary() {
     pgl.initPrimarySurface(quality);
-    pg = this;
+    if (pgPrimary == null) {
+      pgPrimary = this;
+    }
   }
 
 
   protected void initOffscreen() {
     // Getting the context and capabilities from the main renderer.
-    pg = (PGraphicsOpenGL)parent.g;
-    pgl.initOffscreenSurface(pg.pgl);
-    pgl.updateOffscreen(pg.pgl);
+    pgPrimary = (PGraphicsOpenGL)parent.g;
+    pgl.initOffscreenSurface(pgPrimary.pgl);
+    pgl.updateOffscreen(pgPrimary.pgl);
     
     loadTextureImpl(BILINEAR);
     
@@ -6151,7 +6173,7 @@ public class PGraphicsOpenGL extends PGraphics {
       PTexture tex = null;
 
       if (img != null) {
-        tex = pg.getTexture(img);
+        tex = pgPrimary.getTexture(img);
         if (tex != null) {
           tex.bind();
           tex0 = tex;
@@ -6171,7 +6193,7 @@ public class PGraphicsOpenGL extends PGraphics {
         for (int i = 0; i < size; i++) {
           PImage img = textures[i];
           if (img != null) {
-            PTexture tex = pg.getTexture(img);
+            PTexture tex = pgPrimary.getTexture(img);
             if (tex != null) {
               tex.unbind();
             }
@@ -6182,7 +6204,7 @@ public class PGraphicsOpenGL extends PGraphics {
         for (int i = 0; i < size; i++) {
           PImage img = textures[i];
           if (img != null) {
-            PTexture tex = pg.getTexture(img);
+            PTexture tex = pgPrimary.getTexture(img);
             if (tex != null) {
               pgl.disableTexturing(tex.glTarget);
             }
@@ -7631,10 +7653,10 @@ public class PGraphicsOpenGL extends PGraphics {
       float centerY = y + radiusV;
 
       // should call screenX/Y using current renderer.
-      float sx1 = screenX(x, y);
-      float sy1 = screenY(x, y);
-      float sx2 = screenX(x + w, y + h);
-      float sy2 = screenY(x + w, y + h);
+      float sx1 = pgCurrent.screenX(x, y);
+      float sy1 = pgCurrent.screenY(x, y);
+      float sx2 = pgCurrent.screenX(x + w, y + h);
+      float sy2 = pgCurrent.screenY(x + w, y + h);
       
       int accuracy = PApplet.max(MIN_POINT_ACCURACY, (int) (TWO_PI * PApplet.dist(sx1, sy1, sx2, sy2) / 20));
       float inc = (float) PGraphicsOpenGL.SINCOS_LENGTH / accuracy;
