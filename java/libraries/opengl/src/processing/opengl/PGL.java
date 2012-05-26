@@ -1376,6 +1376,8 @@ public class PGL {
       enableTexturing(target);
       glActiveTexture(GL_TEXTURE0);
       glBindTexture(target, id);
+                
+      glBindBuffer(GL_ARRAY_BUFFER, 0); // Making sure that no VBO is bound at this point.
       
       texData.position(0);
       glVertexAttribPointer(texVertLoc, 2, GL_FLOAT, false, 4 * SIZEOF_FLOAT, texData);
@@ -1451,6 +1453,8 @@ public class PGL {
       rectData.rewind();
       rectData.put(rectCoords);
 
+      glBindBuffer(GL_ARRAY_BUFFER, 0); // Making sure that no VBO is bound at this point.
+      
       rectData.position(0);
       glVertexAttribPointer(rectVertLoc, 2, GL_FLOAT, false, 2 * SIZEOF_FLOAT, rectData);
 

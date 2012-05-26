@@ -155,6 +155,7 @@ public class PShader {
   public void start() {    
     init();  
     pgl.glUseProgram(programObject);
+    active = true;
   }
 
   
@@ -163,6 +164,7 @@ public class PShader {
    */
   public void stop() {
     pgl.glUseProgram(0);
+    active = false;
   }    
   
   
