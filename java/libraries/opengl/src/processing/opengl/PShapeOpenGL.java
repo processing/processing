@@ -1,3 +1,4 @@
+/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
   Part of the Processing project - http://processing.org
@@ -163,7 +164,6 @@ public class PShapeOpenGL extends PShape {
   
   protected boolean tessellated;
   protected boolean needBufferInit;
-  protected boolean forceTessellation;
   
   protected boolean isSolid;
   protected boolean isClosed;
@@ -955,23 +955,20 @@ public class PShapeOpenGL extends PShape {
         PShapeOpenGL child = (PShapeOpenGL) children[i];        
         child.strokeWeight(weight);
       }
-    } else {
-      if (fullyStroked() && strokeWeight != weight) {
-        // Changing the stroke weight on a fully stroked
-        // shape needs a re-tesellation in order to replace
-        // the old stroke geometry.
-        root.tessellated = false;           
-      }          
-      float prevStrokeWeight = strokeWeight; 
-      strokeWeight = weight;
-      updateStrokeWeight(prevStrokeWeight);
+    } else {      
+      updateStrokeWeight(weight);
     }    
   }
   
   
-  protected void updateStrokeWeight(float prevStrokeWeight) {
+  protected void updateStrokeWeight(float newWeight) {
+    if (PGraphicsOpenGL.same(strokeWeight, newWeight)) return;
+    float oldWeight = strokeWeight; 
+    strokeWeight = newWeight;
+    
     if (shapeEnded && tessellated && (hasLines || hasPoints)) {      
-      float resizeFactor = strokeWeight / prevStrokeWeight;
+      float resizeFactor = newWeight / oldWeight;
+            
       Arrays.fill(inGeo.strokeWeights, 0, inGeo.vertexCount, strokeWeight);    
             
       if (hasLines) {        
@@ -981,7 +978,10 @@ public class PShapeOpenGL extends PShape {
           }        
           root.setModifiedLineAttributes(firstLineVertex, lastLineVertex);
         } else if (is2D()) {
-          // TODO: implement...
+          // Changing the stroke weight on a 2D shape needs a 
+          // re-tesellation in order to replace the old line
+          // geometry.          
+          root.tessellated = false;
         }
       }
       
@@ -993,7 +993,10 @@ public class PShapeOpenGL extends PShape {
           }        
           root.setModifiedPointAttributes(firstPointVertex, lastPointVertex);
         } else if (is2D()) {
-       // TODO: implement...
+          // Changing the stroke weight on a 2D shape needs a 
+          // re-tesellation in order to replace the old point
+          // geometry.
+          root.tessellated = false;
         }        
       }            
     }    
@@ -1007,10 +1010,10 @@ public class PShapeOpenGL extends PShape {
         child.strokeJoin(join);
       }
     } else {
-      if (fullyStroked() && strokeJoin != join) {
-        // Changing the stroke join on a shape fully stroked
-        // shape needs a re-tesellation in order to replace
-        // the old join geometry.
+      if (is2D() && strokeJoin != join) {
+        // Changing the stroke join on a 2D shape needs a 
+        // re-tesellation in order to replace the old join
+        // geometry.
         root.tessellated = false;           
       }      
       strokeJoin = join;
@@ -1025,21 +1028,16 @@ public class PShapeOpenGL extends PShape {
         child.strokeCap(cap);
       }
     } else {
-      if (fullyStroked() && strokeCap != cap) {
-        // Changing the stroke cap on a fully stroked
-        // shape needs a re-tesellation in order to replace
-        // the old cap geometry.
+      if (is2D() && strokeCap != cap) {
+        // Changing the stroke cap on a 2D shape needs a 
+        // re-tesellation in order to replace the old cap 
+        // geometry.
         root.tessellated = false;        
       }
       strokeCap = cap;      
     }    
   }
     
-  
-  protected boolean fullyStroked() {
-    return is2D() && strokeWeight > PGL.MIN_CAPS_JOINS_WEIGHT;
-  }
-  
   
   //////////////////////////////////////////////////////////////
 
@@ -1054,8 +1052,7 @@ public class PShapeOpenGL extends PShape {
       }      
     } else {
       fill = false;
-      fillColor = 0x0;
-      updateFillColor();      
+      updateFillColor(0x0);
     }
   }
 
@@ -1068,7 +1065,7 @@ public class PShapeOpenGL extends PShape {
       }      
     } else {
       colorCalc(rgb);
-      fillFromCalc();        
+      fillFromCalc();
     }
   }
 
@@ -1094,7 +1091,7 @@ public class PShapeOpenGL extends PShape {
       }      
     } else {
       colorCalc(gray);
-      fillFromCalc();      
+      fillFromCalc();
     }
   }
 
@@ -1136,16 +1133,18 @@ public class PShapeOpenGL extends PShape {
       fillFromCalc();
     }    
   }
-  
 
+  
   protected void fillFromCalc() {
     fill = true;
-    fillColor = calcColor;
-    updateFillColor();  
-  }
-
+    updateFillColor(calcColor);
+  }  
   
-  protected void updateFillColor() {
+  
+  protected void updateFillColor(int newFillColor) {
+    if (fillColor == newFillColor) return;
+    fillColor = newFillColor;
+    
     if (shapeEnded && tessellated && hasPolys && texture == null) {
       Arrays.fill(inGeo.colors, 0, inGeo.vertexCount, PGL.javaToNativeARGB(fillColor));
       if (is3D()) {
@@ -1178,11 +1177,10 @@ public class PShapeOpenGL extends PShape {
         // Disabling stroke on a shape previously with
         // stroke needs a re-tesellation in order to remove
         // the additional geometry of lines and/or points.
-        root.tessellated = false;        
-      }
-      stroke = false;
-      strokeColor = 0x0;
-      updateStrokeColor();
+        root.tessellated = false;
+        stroke = false;
+      }      
+      updateStrokeColor(0x0);
       if (is2D() && parent != null) {
         ((PShapeOpenGL)parent).strokedTexture(false);
       }
@@ -1275,16 +1273,18 @@ public class PShapeOpenGL extends PShape {
       // the additional geometry of lines and/or points.
       root.tessellated = false;
       stroke = true;
-    }     
-    strokeColor = calcColor;
-    updateStrokeColor();
+    }         
+    updateStrokeColor(calcColor);
     if (is2D() && texture != null && parent != null) {
       ((PShapeOpenGL)parent).strokedTexture(true);
     }
   }
 
   
-  protected void updateStrokeColor() {
+  protected void updateStrokeColor(int newStrokeColor) {    
+    if (strokeColor == newStrokeColor) return;
+    strokeColor = newStrokeColor;
+    
     if (shapeEnded && tessellated && (hasLines || hasPoints)) {
       Arrays.fill(inGeo.strokeColors, 0, inGeo.vertexCount, PGL.javaToNativeARGB(strokeColor));
             
@@ -1306,8 +1306,7 @@ public class PShapeOpenGL extends PShape {
           Arrays.fill(tessGeo.polyColors, firstPointVertex, lastPointVertex + 1, PGL.javaToNativeARGB(strokeColor));
           root.setModifiedPolyColors(firstPointVertex, lastPointVertex);          
         }
-      }
-      
+      }      
     }    
   }  
 
@@ -1325,8 +1324,7 @@ public class PShapeOpenGL extends PShape {
       }      
     } else {
       tint = false;
-      tintColor = 0x0;
-      updateTintColor();      
+      updateTintColor(0x0);      
     }   
   }  
   
@@ -1411,19 +1409,25 @@ public class PShapeOpenGL extends PShape {
   
   protected void tintFromCalc() {
     tint = true;
-    tintColor = calcColor;
-    updateTintColor();  
+    updateTintColor(calcColor);  
   }  
   
   
-  protected void updateTintColor() {    
+  protected void updateTintColor(int newTintColor) {
+    if (tintColor == newTintColor) return;
+    tintColor = newTintColor;
+    
     if (shapeEnded && tessellated && hasPolys && texture != null) {
       Arrays.fill(inGeo.colors, 0, inGeo.vertexCount, PGL.javaToNativeARGB(tintColor));
       if (is3D()) {
         Arrays.fill(tessGeo.polyColors, firstPolyVertex, lastPolyVertex + 1, PGL.javaToNativeARGB(tintColor));      
         root.setModifiedPolyColors(firstPolyVertex, lastPolyVertex);
       } else if (is2D()) {
-     // TODO: implement...
+        int last1 = lastPolyVertex + 1;
+        if (-1 < firstLineVertex) last1 = firstLineVertex;
+        if (-1 < firstPointVertex) last1 = firstPointVertex;
+        Arrays.fill(tessGeo.polyColors, firstPolyVertex, last1, PGL.javaToNativeARGB(tintColor));      
+        root.setModifiedPolyColors(firstPolyVertex, last1 - 1);        
       }
     }
   }
@@ -1474,19 +1478,25 @@ public class PShapeOpenGL extends PShape {
   
   
   protected void ambientFromCalc() {
-    ambientColor = calcColor;
-    updateAmbientColor();      
+    updateAmbientColor(calcColor);      
   }
   
 
-  protected void updateAmbientColor() {    
+  protected void updateAmbientColor(int newAmbientColor) {   
+    if (ambientColor == newAmbientColor) return;
+    ambientColor = newAmbientColor;
+    
     if (shapeEnded && tessellated && hasPolys) {
       Arrays.fill(inGeo.ambient, 0, inGeo.vertexCount, PGL.javaToNativeARGB(ambientColor));
       if (is3D()) {
         Arrays.fill(tessGeo.polyAmbient, firstPolyVertex, lastPolyVertex = 1, PGL.javaToNativeARGB(ambientColor));      
         root.setModifiedPolyAmbient(firstPolyVertex, lastPolyVertex);
       } else if (is2D()) {
-     // TODO: implement...
+        int last1 = lastPolyVertex + 1;
+        if (-1 < firstLineVertex) last1 = firstLineVertex;
+        if (-1 < firstPointVertex) last1 = firstPointVertex;
+        Arrays.fill(tessGeo.polyAmbient, firstPolyVertex, last1, PGL.javaToNativeARGB(ambientColor));      
+        root.setModifiedPolyColors(firstPolyVertex, last1 - 1);   
       }
     }      
   }
@@ -1537,19 +1547,25 @@ public class PShapeOpenGL extends PShape {
   
   
   protected void specularFromCalc() {
-    specularColor = calcColor;
-    updateSpecularColor();    
+    updateSpecularColor(calcColor);    
   }
 
   
-  protected void updateSpecularColor() {
+  protected void updateSpecularColor(int newSpecularColor) {
+    if (specularColor == newSpecularColor) return;
+    specularColor = newSpecularColor;
+    
     if (shapeEnded && tessellated && hasPolys) {
       Arrays.fill(inGeo.specular, 0, inGeo.vertexCount, PGL.javaToNativeARGB(specularColor));
       if (is3D()) {
         Arrays.fill(tessGeo.polySpecular, firstPolyVertex, lastPolyVertex + 1, PGL.javaToNativeARGB(specularColor));      
         root.setModifiedPolySpecular(firstPolyVertex, lastPolyVertex);
       } else if (is2D()) {
-     // TODO: implement...
+        int last1 = lastPolyVertex + 1;
+        if (-1 < firstLineVertex) last1 = firstLineVertex;
+        if (-1 < firstPointVertex) last1 = firstPointVertex;
+        Arrays.fill(tessGeo.polySpecular, firstPolyVertex, last1, PGL.javaToNativeARGB(specularColor));      
+        root.setModifiedPolyColors(firstPolyVertex, last1 - 1);
       }      
     }
   }
@@ -1600,19 +1616,25 @@ public class PShapeOpenGL extends PShape {
   
   
   protected void emissiveFromCalc() {
-    emissiveColor = calcColor;
-    updateEmissiveColor();     
+    updateEmissiveColor(calcColor);     
   }
 
   
-  protected void updateEmissiveColor() {   
+  protected void updateEmissiveColor(int newEmissiveColor) {   
+    if (emissiveColor == newEmissiveColor) return;
+    emissiveColor = newEmissiveColor;    
+    
     if (shapeEnded && tessellated && 0 < tessGeo.polyVertexCount) {
       Arrays.fill(inGeo.emissive, 0, inGeo.vertexCount, PGL.javaToNativeARGB(emissiveColor));      
       if (is3D()) {
         Arrays.fill(tessGeo.polyEmissive, firstPolyVertex, lastPolyVertex + 1, PGL.javaToNativeARGB(emissiveColor));      
         root.setModifiedPolyEmissive(firstPolyVertex, lastPolyVertex);
       } else if (is2D()) {
-     // TODO: implement...
+        int last1 = lastPolyVertex + 1;
+        if (-1 < firstLineVertex) last1 = firstLineVertex;
+        if (-1 < firstPointVertex) last1 = firstPointVertex;
+        Arrays.fill(tessGeo.polyEmissive, firstPolyVertex, last1, PGL.javaToNativeARGB(emissiveColor));      
+        root.setModifiedPolyColors(firstPolyVertex, last1 - 1);
       }
     }    
   }
@@ -1630,20 +1652,26 @@ public class PShapeOpenGL extends PShape {
         child.shininess(shine);        
       }      
     } else {
-      shininess = shine;
-      updateShininessFactor();    
+      updateShininessFactor(shine);    
     }       
   }
   
   
-  protected void updateShininessFactor() {
+  protected void updateShininessFactor(float newShininess) {
+    if (PGraphicsOpenGL.same(shininess, newShininess)) return;
+    shininess = newShininess;  
+    
     if (shapeEnded && tessellated && hasPolys) {
       Arrays.fill(inGeo.shininess, 0, inGeo.vertexCount, shininess);
       if (is3D()) {
         Arrays.fill(tessGeo.polyShininess, firstPolyVertex, lastPolyVertex + 1, shininess);      
         root.setModifiedPolyShininess(firstPolyVertex, lastPolyVertex);
       } else if (is2D()) {
-     // TODO: implement...
+        int last1 = lastPolyVertex + 1;
+        if (-1 < firstLineVertex) last1 = firstLineVertex;
+        if (-1 < firstPointVertex) last1 = firstPointVertex;
+        Arrays.fill(tessGeo.polyShininess, firstPolyVertex, last1, shininess);      
+        root.setModifiedPolyColors(firstPolyVertex, last1 - 1);
       }
     }
   }
@@ -1950,8 +1978,6 @@ public class PShapeOpenGL extends PShape {
   
   
   public PVector getVertex(int index, PVector vec) {
-    updateTessellation();
-    
     if (vec == null) {
       vec = new PVector();
     }
@@ -1963,22 +1989,16 @@ public class PShapeOpenGL extends PShape {
   
   
   public float getVertexX(int index) {
-    updateTessellation();
-    
     return inGeo.vertices[3 * index + 0];
   }
   
   
   public float getVertexY(int index) {
-    updateTessellation();
-    
     return inGeo.vertices[3 * index + 1];
   }
   
   
   public float getVertexZ(int index) {
-    updateTessellation();
-    
     return inGeo.vertices[3 * index + 2];
   }
   
@@ -1989,9 +2009,8 @@ public class PShapeOpenGL extends PShape {
   
   
   public void setVertex(int index, float x, float y, float z) {
-    updateTessellation();
-    
     /*
+    if (tessellated) {
     int[] indices;
     int[] indices1;
     float[] vertices;
@@ -2074,6 +2093,8 @@ public class PShapeOpenGL extends PShape {
         }    
       }  
     }
+    
+    }
 */
     inGeo.vertices[3 * index + 0] = x;
     inGeo.vertices[3 * index + 1] = y;
@@ -2082,8 +2103,6 @@ public class PShapeOpenGL extends PShape {
   
   
   public PVector getNormal(int index, PVector vec) {
-    updateTessellation();
-    
     if (vec == null) {
       vec = new PVector();
     }
@@ -2095,28 +2114,21 @@ public class PShapeOpenGL extends PShape {
   
   
   public float getNormalX(int index) {
-    updateTessellation();
-    
     return inGeo.normals[3 * index + 0];
   }
 
   
   public float getNormalY(int index) {
-    updateTessellation();
-    
     return inGeo.normals[3 * index + 1];
   }  
 
   
   public float getNormalZ(int index) {
-    updateTessellation();
-    
     return inGeo.normals[3 * index + 2];
   }    
   
   
   public void setNormal(int index, float nx, float ny, float nz) {
-    updateTessellation();
     /*
     if (haveFill) {
       float[] normals = tessGeo.polyNormals;
@@ -2168,21 +2180,16 @@ public class PShapeOpenGL extends PShape {
   
   
   public float getTextureU(int index) {
-    updateTessellation();
-    
     return inGeo.texcoords[2 * index + 0];
   }
 
   
   public float getTextureV(int index) {
-    updateTessellation();
-    
     return inGeo.texcoords[2 * index + 1];
   }  
   
   
   public void setTextureUV(int index, float u, float v) {
-    updateTessellation();
     /*
     if (haveFill) {
       float[] texcoords = tessGeo.polyTexcoords;
@@ -2219,15 +2226,11 @@ public class PShapeOpenGL extends PShape {
   
   
   public int getFill(int index) {
-    updateTessellation();
-    
     return PGL.nativeToJavaARGB(inGeo.colors[index]);
   }
 
   
   public void setFill(int index, int fill) {    
-    updateTessellation();    
-    
     fill = PGL.javaToNativeARGB(fill);
 /*
     if (haveFill) {
@@ -2256,15 +2259,11 @@ public class PShapeOpenGL extends PShape {
   
   
   public int getStroke(int index) {
-    updateTessellation();
-    
     return PGL.nativeToJavaARGB(inGeo.strokeColors[index]);
   }
 
   
   public void setStroke(int index, int stroke) {
-    updateTessellation();
-   
     stroke = PGL.javaToNativeARGB(stroke);
     /*         
     if (havePoints) {
@@ -2298,14 +2297,11 @@ public class PShapeOpenGL extends PShape {
   
   
   public float getStrokeWeight(int index) {
-    updateTessellation();
-    
     return inGeo.strokeWeights[index];
   }
   
 
   public void setStrokeWeight(int index, float weight) {
-    updateTessellation();
         /*
     if (havePoints || haveLines) {
       int[] indices;
@@ -2347,15 +2343,11 @@ public class PShapeOpenGL extends PShape {
 
   
   public int getAmbient(int index) {
-    updateTessellation();
-    
     return PGL.nativeToJavaARGB(inGeo.ambient[index]);
   }
 
   
   public void setAmbient(int index, int ambient) {
-    updateTessellation();
-    
     ambient = PGL.javaToNativeARGB(ambient);
     /*
     if (haveFill) {
@@ -2383,15 +2375,11 @@ public class PShapeOpenGL extends PShape {
   }    
   
   public int getSpecular(int index) {
-    updateTessellation();
-    
     return PGL.nativeToJavaARGB(inGeo.specular[index]);
   }
 
   
   public void setSpecular(int index, int specular) {
-    updateTessellation();
-    
     specular = PGL.javaToNativeARGB(specular);
     /*
     if (haveFill) {
@@ -2420,15 +2408,11 @@ public class PShapeOpenGL extends PShape {
     
   
   public int getEmissive(int index) {
-    updateTessellation();
-    
     return PGL.nativeToJavaARGB(inGeo.emissive[index]);
   }
 
   
   public void setEmissive(int index, int emissive) {
-    updateTessellation();
-    
     emissive = PGL.javaToNativeARGB(emissive);
     /*
     if (haveFill) {
@@ -2457,14 +2441,11 @@ public class PShapeOpenGL extends PShape {
   
   
   public float getShininess(int index) {
-    updateTessellation();
-    
     return inGeo.shininess[index];
   }
 
   
   public void setShininess(int index, float shine) {
-    updateTessellation();
     /*
     if (haveFill) {
       float[] shininess = tessGeo.polyShininess;
@@ -2560,7 +2541,6 @@ public class PShapeOpenGL extends PShape {
   
   // Tessellated geometry getter.
   
-  // TODO: in 2D mode, put fill, line and point vertices in separate subshapes.
   public PShape getTessellation() {
     updateTessellation();
     
@@ -2578,8 +2558,7 @@ public class PShapeOpenGL extends PShape {
     } else {
       PGraphics.showWarning("This shape is not either 2D or 3D!");
       return null;
-    }
-    
+    }    
     tess.noStroke();
     
     IndexCache cache = tessGeo.polyIndexCache;
@@ -2593,29 +2572,48 @@ public class PShapeOpenGL extends PShape {
         int i1 = voffset + indices[3 * tr + 1];
         int i2 = voffset + indices[3 * tr + 2];
 
-        float x0 = vertices[4 * i0 + 0], y0 = vertices[4 * i0 + 1], z0 = vertices[4 * i0 + 2];
-        float x1 = vertices[4 * i1 + 0], y1 = vertices[4 * i1 + 1], z1 = vertices[4 * i1 + 2];
-        float x2 = vertices[4 * i2 + 0], y2 = vertices[4 * i2 + 1], z2 = vertices[4 * i2 + 2];
-        
-        float nx0 = normals[3 * i0 + 0], ny0 = normals[3 * i0 + 1], nz0 = normals[3 * i0 + 2];
-        float nx1 = normals[3 * i1 + 0], ny1 = normals[3 * i1 + 1], nz1 = normals[3 * i1 + 2];
-        float nx2 = normals[3 * i2 + 0], ny2 = normals[3 * i2 + 1], nz2 = normals[3 * i2 + 2];
-                
-        int argb0 = PGL.nativeToJavaARGB(color[i0]);
-        int argb1 = PGL.nativeToJavaARGB(color[i1]);
-        int argb2 = PGL.nativeToJavaARGB(color[i2]);        
-        
-        tess.fill(argb0);
-        tess.normal(nx0, ny0, nz0);
-        tess.vertex(x0, y0, z0, uv[2 * i0 + 0], uv[2 * i0 + 1]);
-        
-        tess.fill(argb1);
-        tess.normal(nx1, ny1, nz1);
-        tess.vertex(x1, y1, z1, uv[2 * i1 + 0], uv[2 * i1 + 1]);
-        
-        tess.fill(argb2);
-        tess.normal(nx2, ny2, nz2);
-        tess.vertex(x2, y2, z2, uv[2 * i2 + 0], uv[2 * i2 + 1]);                      
+        if (is3D()) {
+          float x0 = vertices[4 * i0 + 0], y0 = vertices[4 * i0 + 1], z0 = vertices[4 * i0 + 2];
+          float x1 = vertices[4 * i1 + 0], y1 = vertices[4 * i1 + 1], z1 = vertices[4 * i1 + 2];
+          float x2 = vertices[4 * i2 + 0], y2 = vertices[4 * i2 + 1], z2 = vertices[4 * i2 + 2];
+          
+          float nx0 = normals[3 * i0 + 0], ny0 = normals[3 * i0 + 1], nz0 = normals[3 * i0 + 2];
+          float nx1 = normals[3 * i1 + 0], ny1 = normals[3 * i1 + 1], nz1 = normals[3 * i1 + 2];
+          float nx2 = normals[3 * i2 + 0], ny2 = normals[3 * i2 + 1], nz2 = normals[3 * i2 + 2];
+                  
+          int argb0 = PGL.nativeToJavaARGB(color[i0]);
+          int argb1 = PGL.nativeToJavaARGB(color[i1]);
+          int argb2 = PGL.nativeToJavaARGB(color[i2]);        
+          
+          tess.fill(argb0);
+          tess.normal(nx0, ny0, nz0);
+          tess.vertex(x0, y0, z0, uv[2 * i0 + 0], uv[2 * i0 + 1]);
+          
+          tess.fill(argb1);
+          tess.normal(nx1, ny1, nz1);
+          tess.vertex(x1, y1, z1, uv[2 * i1 + 0], uv[2 * i1 + 1]);
+          
+          tess.fill(argb2);
+          tess.normal(nx2, ny2, nz2);
+          tess.vertex(x2, y2, z2, uv[2 * i2 + 0], uv[2 * i2 + 1]);          
+        } else if (is2D()) {
+          float x0 = vertices[4 * i0 + 0], y0 = vertices[4 * i0 + 1];
+          float x1 = vertices[4 * i1 + 0], y1 = vertices[4 * i1 + 1];
+          float x2 = vertices[4 * i2 + 0], y2 = vertices[4 * i2 + 1];
+                  
+          int argb0 = PGL.nativeToJavaARGB(color[i0]);
+          int argb1 = PGL.nativeToJavaARGB(color[i1]);
+          int argb2 = PGL.nativeToJavaARGB(color[i2]);        
+          
+          tess.fill(argb0);
+          tess.vertex(x0, y0, uv[2 * i0 + 0], uv[2 * i0 + 1]);
+          
+          tess.fill(argb1);
+          tess.vertex(x1, y1, uv[2 * i1 + 0], uv[2 * i1 + 1]);
+          
+          tess.fill(argb2);
+          tess.vertex(x2, y2, uv[2 * i2 + 0], uv[2 * i2 + 1]);          
+        }
       }
     }
     tess.end();
@@ -2639,14 +2637,6 @@ public class PShapeOpenGL extends PShape {
   }
   
   
-  protected void updateTessellation(boolean force) {
-    if (force || !root.tessellated || root.contextIsOutdated()) {
-      root.tessellate();
-      root.aggregate();
-    }
-  }
-  
-  
   protected void tessellate() {
     if (root == this && parent == null) {      
       if (tessGeo == null) {
@@ -2661,11 +2651,8 @@ public class PShapeOpenGL extends PShape {
       // larger than the vertex counts.        
       tessGeo.trim(); 
       
-      needBufferInit = true;
-      
-      forceTessellation = false;
-      
       modified = false;
+      needBufferInit = true;           
       
       modifiedPolyVertices = false;
       modifiedPolyColors = false;
@@ -3371,8 +3358,6 @@ public class PShapeOpenGL extends PShape {
 
   
   protected void setFirstStrokeVertex(int n, int vert) {
-    // TODO: this is probably not correct, but needs to be fixed together with the
-    // updateStrokeWeight(), etc.
     if (n == firstLineIndexCache && firstLineVertex == -1) {
       firstLineVertex = lastLineVertex = vert;
     }
@@ -4218,7 +4203,7 @@ public class PShapeOpenGL extends PShape {
     if (visible) {      
       pre(g);
       
-      updateTessellation(root.forceTessellation);      
+      updateTessellation();      
       updateGeometry();
       
       if (family == GROUP) {        
