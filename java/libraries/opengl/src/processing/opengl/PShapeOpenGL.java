@@ -982,6 +982,7 @@ public class PShapeOpenGL extends PShape {
           // re-tesellation in order to replace the old line
           // geometry.          
           root.tessellated = false;
+          tessellated = false;
         }
       }
       
@@ -997,6 +998,7 @@ public class PShapeOpenGL extends PShape {
           // re-tesellation in order to replace the old point
           // geometry.
           root.tessellated = false;
+          tessellated = false;
         }        
       }            
     }    
@@ -1014,7 +1016,8 @@ public class PShapeOpenGL extends PShape {
         // Changing the stroke join on a 2D shape needs a 
         // re-tesellation in order to replace the old join
         // geometry.
-        root.tessellated = false;           
+        root.tessellated = false;
+        tessellated = false;           
       }      
       strokeJoin = join;
     }        
@@ -1032,7 +1035,8 @@ public class PShapeOpenGL extends PShape {
         // Changing the stroke cap on a 2D shape needs a 
         // re-tesellation in order to replace the old cap 
         // geometry.
-        root.tessellated = false;        
+        root.tessellated = false;
+        tessellated = false;        
       }
       strokeCap = cap;      
     }    
@@ -1178,6 +1182,7 @@ public class PShapeOpenGL extends PShape {
         // stroke needs a re-tesellation in order to remove
         // the additional geometry of lines and/or points.
         root.tessellated = false;
+        tessellated = false;
         stroke = false;
       }      
       updateStrokeColor(0x0);
@@ -1272,6 +1277,7 @@ public class PShapeOpenGL extends PShape {
       // stroke needs a re-tessellation in order to incorporate
       // the additional geometry of lines and/or points.
       root.tessellated = false;
+      tessellated = false;
       stroke = true;
     }         
     updateStrokeColor(calcColor);
@@ -2009,6 +2015,9 @@ public class PShapeOpenGL extends PShape {
   
   
   public void setVertex(int index, float x, float y, float z) {
+    root.tessellated = false;
+    tessellated = false;
+    
     /*
     if (tessellated) {
     int[] indices;
@@ -2129,6 +2138,9 @@ public class PShapeOpenGL extends PShape {
   
   
   public void setNormal(int index, float nx, float ny, float nz) {
+    root.tessellated = false;
+    tessellated = false;
+    
     /*
     if (haveFill) {
       float[] normals = tessGeo.polyNormals;
@@ -2190,6 +2202,9 @@ public class PShapeOpenGL extends PShape {
   
   
   public void setTextureUV(int index, float u, float v) {
+    root.tessellated = false;
+    tessellated = false;
+    
     /*
     if (haveFill) {
       float[] texcoords = tessGeo.polyTexcoords;
@@ -2230,7 +2245,9 @@ public class PShapeOpenGL extends PShape {
   }
 
   
-  public void setFill(int index, int fill) {    
+  public void setFill(int index, int fill) {
+    root.tessellated = false;
+    tessellated = false;    
     fill = PGL.javaToNativeARGB(fill);
 /*
     if (haveFill) {
@@ -2264,6 +2281,8 @@ public class PShapeOpenGL extends PShape {
 
   
   public void setStroke(int index, int stroke) {
+    root.tessellated = false;
+    tessellated = false;    
     stroke = PGL.javaToNativeARGB(stroke);
     /*         
     if (havePoints) {
@@ -2302,6 +2321,8 @@ public class PShapeOpenGL extends PShape {
   
 
   public void setStrokeWeight(int index, float weight) {
+    root.tessellated = false;
+    tessellated = false;    
         /*
     if (havePoints || haveLines) {
       int[] indices;
@@ -2348,6 +2369,8 @@ public class PShapeOpenGL extends PShape {
 
   
   public void setAmbient(int index, int ambient) {
+    root.tessellated = false;
+    tessellated = false;    
     ambient = PGL.javaToNativeARGB(ambient);
     /*
     if (haveFill) {
@@ -2380,6 +2403,8 @@ public class PShapeOpenGL extends PShape {
 
   
   public void setSpecular(int index, int specular) {
+    root.tessellated = false;
+    tessellated = false;    
     specular = PGL.javaToNativeARGB(specular);
     /*
     if (haveFill) {
@@ -2407,12 +2432,14 @@ public class PShapeOpenGL extends PShape {
   }    
     
   
-  public int getEmissive(int index) {
+  public int getEmissive(int index) {    
     return PGL.nativeToJavaARGB(inGeo.emissive[index]);
   }
 
   
   public void setEmissive(int index, int emissive) {
+    root.tessellated = false;
+    tessellated = false;    
     emissive = PGL.javaToNativeARGB(emissive);
     /*
     if (haveFill) {
@@ -2446,6 +2473,8 @@ public class PShapeOpenGL extends PShape {
 
   
   public void setShininess(int index, float shine) {
+    root.tessellated = false;
+    tessellated = false;    
     /*
     if (haveFill) {
       float[] shininess = tessGeo.polyShininess;
@@ -4595,7 +4624,8 @@ public class PShapeOpenGL extends PShape {
         int perim;
         if (0 < size) { // round point
           weight = +size / 0.5f;
-          perim = PApplet.max(PGraphicsOpenGL.MIN_POINT_ACCURACY, (int) (TWO_PI * weight / 20)) + 1;          
+          perim = PApplet.max(PGraphicsOpenGL.MIN_POINT_ACCURACY, 
+                              (int) (TWO_PI * weight / PGraphicsOpenGL.POINT_ACCURACY_FACTOR)) + 1;          
         } else {        // Square point
           weight = -size / 0.5f;
           perim = 5;          
