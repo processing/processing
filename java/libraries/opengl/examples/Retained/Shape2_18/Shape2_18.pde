@@ -1,4 +1,4 @@
-size(100, 100, P3D);
+size(100, 100, P2D);
 smooth();
 
 PShape obj = createShape();

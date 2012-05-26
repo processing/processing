@@ -3,8 +3,7 @@
 
 import processing.pdf.*;
 
-size(720, 480, P3D);
-hint(ENABLE_ACCURATE_2D);
+size(720, 480, P2D);
 smooth();
 strokeWeight(2);
 background(204);
