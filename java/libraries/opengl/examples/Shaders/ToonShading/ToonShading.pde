@@ -13,8 +13,8 @@ public void setup() {
   fill(204);
 
   pg = (PGraphicsOpenGL)g;
-  shader = pg.loadShader("ToonVert.glsl", "ToonFrag.glsl", POLY_SHADER_LIT);
-  pg.setShader(shader, POLY_SHADER_LIT);
+  shader = pg.loadShader("ToonVert.glsl", "ToonFrag.glsl", LIGHT_SHADER);
+  pg.setShader(shader, LIGHT_SHADER);
   customShader = true;
 }
 
@@ -30,11 +30,11 @@ public void draw() {
 
 public void keyPressed() {
   if (customShader) {
-    pg.defaultShader(POLY_SHADER_LIT);
+    pg.defaultShader(LIGHT_SHADER);
     customShader = false;
   } 
   else {
-    pg.setShader(shader, POLY_SHADER_LIT);
+    pg.setShader(shader, LIGHT_SHADER);
     customShader = true;
   }
 }

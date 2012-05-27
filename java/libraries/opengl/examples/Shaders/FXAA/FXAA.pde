@@ -17,8 +17,8 @@ void setup() {
   canvas.noSmooth();
     
   pg = (PGraphicsOpenGL) g;
-  shader = pg.loadShader("fxaa.glsl", POLY_SHADER_TEX);
-  pg.setShader(shader, POLY_SHADER_TEX);
+  shader = pg.loadShader("fxaa.glsl", TEXTURE_SHADER);
+  pg.setShader(shader, TEXTURE_SHADER);
   println("FXAA shader is enabled");
   usingShader = true;
   
@@ -42,11 +42,11 @@ public void draw() {
   
 public void keyPressed() {
   if (usingShader) {
-    pg.defaultShader(POLY_SHADER_TEX);
+    pg.defaultShader(TEXTURE_SHADER);
     println("FXAA shader is disabled");
     usingShader = false;
   } else {
-    pg.setShader(shader, POLY_SHADER_TEX);
+    pg.setShader(shader, TEXTURE_SHADER);
     println("FXAA shader is enabled");
     usingShader = true;
   }
