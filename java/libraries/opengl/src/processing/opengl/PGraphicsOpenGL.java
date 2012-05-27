@@ -9323,6 +9323,7 @@ public class PGraphicsOpenGL extends PGraphics {
         tess.polyIndexCheck(nind);
         int index = in.renderMode == RETAINED ? tess.polyIndexCache.addNew() : tess.polyIndexCache.getLast();
         firstLineIndexCache = index;
+        if (firstPolyIndexCache == -1) firstPolyIndexCache = index; // If the geometry has no fill, needs the first poly index.
         for (int ln = 0; ln < lineCount; ln++) {
           int i0 = first + 2 * ln + 0;
           int i1 = first + 2 * ln + 1;
@@ -9381,6 +9382,7 @@ public class PGraphicsOpenGL extends PGraphics {
         tess.polyIndexCheck(nind);
         int index = in.renderMode == RETAINED ? tess.polyIndexCache.addNew() : tess.polyIndexCache.getLast();
         firstLineIndexCache = index;
+        if (firstPolyIndexCache == -1) firstPolyIndexCache = index; // If the geometry has no fill, needs the first poly index.
         int i0 = in.firstVertex;
         for (int ln = 0; ln < lineCount; ln++) {
           int i1 = in.firstVertex + ln + 1;
@@ -9441,6 +9443,7 @@ public class PGraphicsOpenGL extends PGraphics {
         tess.polyIndexCheck(nind);
         int index = in.renderMode == RETAINED ? tess.polyIndexCache.addNew() : tess.polyIndexCache.getLast();
         firstLineIndexCache = index;
+        if (firstPolyIndexCache == -1) firstPolyIndexCache = index; // If the geometry has no fill, needs the first poly index.
         int i0 = in.firstVertex;
         for (int ln = 0; ln < lineCount - 1; ln++) {
           int i1 = in.firstVertex + ln + 1;
@@ -9498,6 +9501,7 @@ public class PGraphicsOpenGL extends PGraphics {
         tess.polyIndexCheck(nInInd);
         int index = in.renderMode == RETAINED ? tess.polyIndexCache.addNew() : tess.polyIndexCache.getLast();
         firstLineIndexCache = index;            
+        if (firstPolyIndexCache == -1) firstPolyIndexCache = index; // If the geometry has no fill, needs the first poly index.
         for (int i = in.firstEdge; i <= in.lastEdge; i++) {
           int[] edge = in.edges[i];
           int i0 = edge[0];
@@ -9591,11 +9595,9 @@ public class PGraphicsOpenGL extends PGraphics {
       }
       int iidx = cache.indexOffset[index] + cache.indexCount[index];
       int vidx = cache.vertexOffset[index] + cache.vertexCount[index];
-      int color;
-      float weight;
       
-      color = constStroke ? strokeColor : in.strokeColors[i0];
-      weight = constStroke ? strokeWeight : in.strokeWeights[i0];
+      int color = constStroke ? strokeColor : in.strokeColors[i0];
+      float weight = constStroke ? strokeWeight : in.strokeWeights[i0];
       
       float x0 = in.vertices[3 * i0 + 0];
       float y0 = in.vertices[3 * i0 + 1];
@@ -9607,8 +9609,11 @@ public class PGraphicsOpenGL extends PGraphics {
       float dirx = x1 - x0;
       float diry = y1 - y0;
       float llen = PApplet.sqrt(dirx * dirx + diry * diry);
-      float normx = -diry / llen;
-      float normy = +dirx / llen;
+      float normx = 0, normy = 0; 
+      if (nonZero(llen)) {
+        normx = -diry / llen;
+        normy = +dirx / llen;        
+      }
       
       tess.setPolyVertex(vidx, x0 + normx * weight/2, y0 + normy * weight/2, 0, color); 
       tess.polyIndices[iidx++] = (short) (count + 0);      
@@ -9617,9 +9622,11 @@ public class PGraphicsOpenGL extends PGraphics {
       tess.setPolyVertex(vidx, x0 - normx * weight/2, y0 - normy * weight/2, 0, color);
       tess.polyIndices[iidx++] = (short) (count + 1);
       
-      color = constStroke ? strokeColor : in.strokeColors[i1];
-      weight = constStroke ? strokeWeight : in.strokeWeights[i1];
-      
+      if (!constStroke) {
+        color =  in.strokeColors[i1];
+        weight = in.strokeWeights[i1];
+      }
+ 
       vidx++;
       tess.setPolyVertex(vidx, x1 - normx * weight/2, y1 - normy * weight/2, 0, color);
       tess.polyIndices[iidx++] = (short) (count + 2);
