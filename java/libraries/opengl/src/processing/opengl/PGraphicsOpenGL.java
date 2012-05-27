@@ -5349,9 +5349,9 @@ public class PGraphicsOpenGL extends PGraphics {
       return new PolyShaderTex(parent, vertFilename, fragFilename);
     } else if (kind == FULL_SHADER) {
       return new PolyShaderFull(parent, vertFilename, fragFilename);
-    } else if (kind == LINE_SHADER) {
+    } else if (kind == LINE3D_SHADER) {
       return new LineShader(parent, vertFilename, fragFilename);
-    } else if (kind == POINT_SHADER) {
+    } else if (kind == POINT3D_SHADER) {
       return new PointShader(parent, vertFilename, fragFilename);
     } else {
       PGraphics.showWarning("Wrong shader type");
@@ -5374,10 +5374,10 @@ public class PGraphicsOpenGL extends PGraphics {
     } else if (kind == FULL_SHADER) {
       shader = new PolyShaderFull(parent);
       shader.setVertexShader(defPolyShaderVertFullURL);
-    } else if (kind == LINE_SHADER) {
+    } else if (kind == LINE3D_SHADER) {
       shader = new LineShader(parent);
       shader.setVertexShader(defLineShaderVertURL);
-    } else if (kind == POINT_SHADER) {
+    } else if (kind == POINT3D_SHADER) {
       shader = new PointShader(parent);
       shader.setVertexShader(defPointShaderVertURL);
     } else {
@@ -5398,9 +5398,9 @@ public class PGraphicsOpenGL extends PGraphics {
       polyShaderTex = (PolyShaderTex) shader;
     } else if (kind == FULL_SHADER) {
       polyShaderFull = (PolyShaderFull) shader;
-    } else if (kind == LINE_SHADER) {
+    } else if (kind == LINE3D_SHADER) {
       lineShader = (LineShader) shader;
-    } else if (kind == POINT_SHADER) {
+    } else if (kind == POINT3D_SHADER) {
       pointShader = (PointShader) shader;
     } else {
       PGraphics.showWarning("Wrong shader type");
@@ -5429,12 +5429,12 @@ public class PGraphicsOpenGL extends PGraphics {
         defPolyShaderFull = new PolyShaderFull(parent, defPolyShaderVertFullURL, defPolyShaderFragTexURL);
       }
       polyShaderFull = defPolyShaderFull;
-    } else if (kind == LINE_SHADER) {
+    } else if (kind == LINE3D_SHADER) {
       if (defLineShader == null || defLineShader.contextIsOutdated()) {
         defLineShader = new LineShader(parent, defLineShaderVertURL, defLineShaderFragURL);
       }
       lineShader = defLineShader;
-    } else if (kind == POINT_SHADER) {
+    } else if (kind == POINT3D_SHADER) {
       if (defPointShader == null || defPointShader.contextIsOutdated()) {
         defPointShader = new PointShader(parent, defPointShaderVertURL, defPointShaderFragURL);
       }
