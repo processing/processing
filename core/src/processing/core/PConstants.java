@@ -444,6 +444,7 @@ public interface PConstants {
   public static final int BILINEAR = 3;
   /** This constant identifies the linear/linear function to build mipmaps  */
   public static final int TRILINEAR = 4;
+  
   /** This constant identifies the clamp-to-edge wrapping mode */
   public static final int CLAMP = 0;
   /** This constant identifies the repeat wrapping mode */
