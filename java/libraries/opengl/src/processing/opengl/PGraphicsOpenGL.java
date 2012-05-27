@@ -5183,6 +5183,8 @@ public class PGraphicsOpenGL extends PGraphics {
     PTexture.Parameters params = (PTexture.Parameters)img.getParams(pgPrimary);
     if (params == null) {
       params = PTexture.newParameters();
+      params.wrapU = textureWrap;
+      params.wrapV = textureWrap;
       img.setParams(pgPrimary, params);
     }
     if (img.parent == null) {
