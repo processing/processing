@@ -457,8 +457,8 @@ public interface PConstants {
   static public final int LIGHT_SHADER   = 1;
   static public final int TEXTURE_SHADER = 2;
   static public final int FULL_SHADER    = 3;
-  static public final int LINE_SHADER    = 4;
-  static public final int POINT_SHADER   = 5;
+  static public final int LINE3D_SHADER  = 4;
+  static public final int POINT3D_SHADER = 5;
   
   
   // stroke modes
