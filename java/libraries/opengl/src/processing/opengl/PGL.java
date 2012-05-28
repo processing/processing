@@ -191,10 +191,11 @@ public class PGL {
   public static final int GL_UNSIGNED_SHORT = GL.GL_UNSIGNED_SHORT;
   public static final int GL_FLOAT          = GL.GL_FLOAT;
 
-  public static final int GL_NEAREST              = GL.GL_NEAREST;
-  public static final int GL_LINEAR               = GL.GL_LINEAR;
-  public static final int GL_LINEAR_MIPMAP_LINEAR = GL.GL_LINEAR_MIPMAP_LINEAR;
-
+  public static final int GL_NEAREST               = GL.GL_NEAREST;
+  public static final int GL_LINEAR                = GL.GL_LINEAR;
+  public static final int GL_LINEAR_MIPMAP_NEAREST = GL.GL_LINEAR_MIPMAP_NEAREST;
+  public static final int GL_LINEAR_MIPMAP_LINEAR  = GL.GL_LINEAR_MIPMAP_LINEAR;  
+  
   public static final int GL_CLAMP_TO_EDGE = GL.GL_CLAMP_TO_EDGE;
   public static final int GL_REPEAT        = GL.GL_REPEAT;
 

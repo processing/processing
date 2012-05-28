@@ -543,9 +543,10 @@ public class PGraphics extends PImage implements PConstants {
    * vertex() calls will be based on coordinates that are
    * based on the IMAGE or NORMALIZED.
    */
-  public int textureMode;
+  public int textureMode    = IMAGE;
   
-  public int textureWrap;
+  public int textureWrap    = CLAMP;
+  public int textureQuality = BEST;
 
   /**
    * Current horizontal coordinate for texture, will always
@@ -1066,17 +1067,14 @@ public class PGraphics extends PImage implements PConstants {
   }
 
   
-  // TODO: use this setting in GL renderer.
   public void textureWrap(int wrap) {
     this.textureWrap = wrap;
   }
   
   
-  // TODO: do we need something like this to choose between
-  // point, linear and trilinear texture sampling?
-  //public void textureQualityt(int quality) {
-  //  this.textureQuality = quality;
-  //}
+  public void textureQuality(int quality) {
+    this.textureQuality = quality;
+  }
   
   
   /**
