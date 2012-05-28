@@ -9945,6 +9945,12 @@ public class PApplet extends Applet
   }
 
 
+  public void textureQuality(int quality) {
+    if (recorder != null) recorder.textureQuality(quality);
+    g.textureQuality(quality);
+  }
+
+
   /**
    * ( begin auto-generated from texture.xml )
    *

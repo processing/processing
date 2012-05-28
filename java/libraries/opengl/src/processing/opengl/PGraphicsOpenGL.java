@@ -53,7 +53,7 @@ public class PGraphicsOpenGL extends PGraphics {
   /** The main PApplet renderer. */
   protected static PGraphicsOpenGL pgPrimary = null;
   
-  /** The renderer currenty in use. */
+  /** The renderer currently in use. */
   protected static PGraphicsOpenGL pgCurrent = null;
 
   // ........................................................
@@ -116,7 +116,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   /** Extensions used by Processing */
   static public boolean npotTexSupported;
-  static public boolean mipmapGeneration;
+  static public boolean autoMipmapGenSupported;
   static public boolean fboMultisampleSupported;
   static public boolean packedDepthStencilSupported;
   static public boolean blendEqSupported;
@@ -3181,12 +3181,12 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void textLineImpl(char buffer[], int start, int stop, float x, float y) {
     textTex = (PFontTexture)textFont.getCache(pgPrimary);
     if (textTex == null) {
-      textTex = new PFontTexture(parent, textFont, maxTextureSize, maxTextureSize);
+      textTex = new PFontTexture(parent, textFont, maxTextureSize, maxTextureSize, is3D());
       textFont.setCache(this, textTex);
     } else {
       if (textTex.contextIsOutdated()) {
         textTex = new PFontTexture(parent, textFont, PApplet.min(PGL.MAX_FONT_TEX_SIZE, maxTextureSize),
-                                                     PApplet.min(PGL.MAX_FONT_TEX_SIZE, maxTextureSize));
+                                                     PApplet.min(PGL.MAX_FONT_TEX_SIZE, maxTextureSize), is3D());
         textFont.setCache(this, textTex);
       }
     }
@@ -4870,7 +4870,7 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void loadTextureImpl(int sampling) {
     if (width == 0 || height == 0) return;
     if (texture == null || texture.contextIsOutdated()) {
-      PTexture.Parameters params = PTexture.newParameters(ARGB, sampling);
+      PTexture.Parameters params = new PTexture.Parameters(ARGB, sampling);
       texture = new PTexture(parent, width, height, params);
       texture.setFlippedY(true);
       this.setCache(pgPrimary, texture);
@@ -5182,7 +5182,26 @@ public class PGraphicsOpenGL extends PGraphics {
   protected PTexture addTexture(PImage img) {
     PTexture.Parameters params = (PTexture.Parameters)img.getParams(pgPrimary);
     if (params == null) {
-      params = PTexture.newParameters();
+      params = new PTexture.Parameters();   
+      if (hints[DISABLE_TEXTURE_MIPMAPS]) {
+        params.mipmaps = false;
+      } else {
+        params.mipmaps = true;
+      }      
+      if (textureQuality == LOW) {
+        params.sampling = POINT;  
+      } else if (textureQuality == MEDIUM) {
+        params.sampling = LINEAR;  
+      } else if (textureQuality == HIGH) {
+        params.sampling = BILINEAR;
+      } else if (textureQuality == BEST) {
+        if (params.mipmaps) {
+          params.sampling = TRILINEAR;
+        } else {
+          params.sampling = BILINEAR;
+          PGraphics.showWarning("BEST texture quality requires mipmaps, will switch to HIGH.");
+        }        
+      }         
       params.wrapU = textureWrap;
       params.wrapV = textureWrap;
       img.setParams(pgPrimary, params);
@@ -5295,12 +5314,11 @@ public class PGraphicsOpenGL extends PGraphics {
     OPENGL_VENDOR     = pgl.glGetString(PGL.GL_VENDOR);
     OPENGL_RENDERER   = pgl.glGetString(PGL.GL_RENDERER);
     OPENGL_VERSION    = pgl.glGetString(PGL.GL_VERSION);
-    OPENGL_VERSION    = pgl.glGetString(PGL.GL_VERSION);
     OPENGL_EXTENSIONS = pgl.glGetString(PGL.GL_EXTENSIONS);
     GLSL_VERSION      = pgl.glGetString(PGL.GL_SHADING_LANGUAGE_VERSION);
 
     npotTexSupported            = -1 < OPENGL_EXTENSIONS.indexOf("texture_non_power_of_two");
-    mipmapGeneration            = -1 < OPENGL_EXTENSIONS.indexOf("generate_mipmap");
+    autoMipmapGenSupported      = -1 < OPENGL_EXTENSIONS.indexOf("generate_mipmap");
     fboMultisampleSupported     = -1 < OPENGL_EXTENSIONS.indexOf("framebuffer_multisample");
     packedDepthStencilSupported = -1 < OPENGL_EXTENSIONS.indexOf("packed_depth_stencil");
 
