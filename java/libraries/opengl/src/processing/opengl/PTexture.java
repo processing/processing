@@ -249,17 +249,72 @@ public class PTexture implements PConstants {
     pgl.glBindTexture(glTarget, glID);
                 
     if (usingMipmaps) {
-      if (PGraphicsOpenGL.mipmapGeneration) {
+      if (PGraphicsOpenGL.autoMipmapGenSupported) {
         // Automatic mipmap generation.
         int[] rgbaPixels = new int[w * h];
         convertToRGBA(pixels, rgbaPixels, format, w, h);
         setTexels(rgbaPixels, x, y, w, h);        
         pgl.glGenerateMipmap(glTarget);
         rgbaPixels = null;
-      } else {
-        // TODO: Manual mipmap generation.
-        // Open source implementation of gluBuild2DMipmaps here:
-        // http://code.google.com/p/glues/source/browse/trunk/glues/source/glues_mipmap.c
+      } else {       
+        // TODO: finish manual mipmap generation, replacing Bitmap with AWT's BufferedImage,
+        // making it work in npot textures (embed npot tex into larger pot tex?), subregions,
+        // and moving GLUtils.texImage2D (originally from Android SDK) into PGL.
+        // Actually, this whole code should go into PGL, so the Android implementation can
+        // use Bitmap, and desktop use BufferedImage.
+        
+        /*
+        if (w != width || h != height) {
+          System.err.println("Sorry but I don't know how to generate mipmaps for a subregion.");
+          return;
+        }
+        
+        // Code by Mike Miller obtained from here:
+        // http://insanitydesign.com/wp/2009/08/01/android-opengl-es-mipmaps/
+        int w0 = glWidth;
+        int h0 = glHeight;        
+        int[] argbPixels = new int[w0 * h0];
+        convertToARGB(pixels, argbPixels, format);
+        int level = 0;
+        int denom = 1;
+        
+        // We create a Bitmap because then we use its built-in filtered downsampling
+        // functionality.
+        Bitmap bitmap = Bitmap.createBitmap(w0, h0, Config.ARGB_8888);
+        bitmap.setPixels(argbPixels, 0, w0, 0, 0, w0, h0);
+              
+        while (w0 >= 1 || h0 >= 1) {
+          //First of all, generate the texture from our bitmap and set it to the according level
+          GLUtils.texImage2D(glTarget, level, bitmap, 0);
+          
+          // We are done.
+          if (w0 == 1 && h0 == 1) {
+            break;
+          }
+ 
+          // Increase the mipmap level
+          level++;
+          denom *= 2;
+ 
+          // Downsampling bitmap. We must eventually arrive to the 1x1 level,
+          // and if the width and height are different, there will be a few 1D
+          // texture levels just before. 
+          // This update formula also allows for NPOT resolutions.
+          w0 = PApplet.max(1, PApplet.floor((float)glWidth / denom));
+          h0 = PApplet.max(1, PApplet.floor((float)glHeight / denom));
+          // (see getScaledInstance in AWT Image)
+          Bitmap bitmap2 = Bitmap.createScaledBitmap(bitmap, w0, h0, true);
+ 
+          // Clean up
+          bitmap.recycle();
+          bitmap = bitmap2;
+        }
+      */
+        
+        int[] rgbaPixels = new int[w * h];
+        convertToRGBA(pixels, rgbaPixels, format, w, h);
+        setTexels(rgbaPixels, x, y, w, h);
+        rgbaPixels = null;        
       }      
     } else {
       int[] rgbaPixels = new int[w * h];
@@ -904,14 +959,26 @@ public class PTexture implements PConstants {
       res.format = ALPHA;
     }
     
-    if (glMinFilter == PGL.GL_NEAREST)  {
+    if (glMagFilter == PGL.GL_NEAREST && glMinFilter == PGL.GL_NEAREST) {
       res.sampling = POINT;
-    } else if (glMinFilter == PGL.GL_LINEAR)  {
+      res.mipmaps = false;
+    } else if (glMagFilter == PGL.GL_NEAREST && glMinFilter == PGL.GL_LINEAR)  {
+      res.sampling = LINEAR;
+      res.mipmaps = false;
+    } else if (glMagFilter == PGL.GL_NEAREST && glMinFilter == PGL.GL_LINEAR_MIPMAP_NEAREST)  {
+      res.sampling = LINEAR;
+      res.mipmaps = true;       
+    } else if (glMagFilter == PGL.GL_LINEAR && glMinFilter == PGL.GL_LINEAR)  {
       res.sampling = BILINEAR;
-    } else if (glMinFilter == PGL.GL_LINEAR_MIPMAP_LINEAR) {
+      res.mipmaps = false;
+    } else if (glMagFilter == PGL.GL_LINEAR && glMinFilter == PGL.GL_LINEAR_MIPMAP_NEAREST)  {
+      res.sampling = BILINEAR;
+      res.mipmaps = true;
+    } else if (glMagFilter == PGL.GL_LINEAR && glMinFilter == PGL.GL_LINEAR_MIPMAP_LINEAR) {
       res.sampling = TRILINEAR;
+      res.mipmaps = true;     
     }
-
+    
     if (glWrapS == PGL.GL_CLAMP_TO_EDGE) {
       res.wrapU = CLAMP;  
     } else if (glWrapS == PGL.GL_REPEAT) {
@@ -937,7 +1004,7 @@ public class PTexture implements PConstants {
     if (params.target == TEXTURE2D)  {
         glTarget = PGL.GL_TEXTURE_2D;
     } else {
-      throw new RuntimeException("OPENGL2: Unknown texture target");     
+      throw new RuntimeException("Unknown texture target");     
     }
     
     if (params.format == RGB)  {
@@ -947,20 +1014,23 @@ public class PTexture implements PConstants {
     } else  if (params.format == ALPHA) {
       glFormat = PGL.GL_ALPHA;
     } else {
-      throw new RuntimeException("OPENGL2: Unknown texture format");     
+      throw new RuntimeException("Unknown texture format");     
     }
     
     if (params.sampling == POINT) {
       glMagFilter = PGL.GL_NEAREST;
       glMinFilter = PGL.GL_NEAREST;
+    } else if (params.sampling == LINEAR)  {
+      glMagFilter = PGL.GL_NEAREST;
+      glMinFilter = params.mipmaps ? PGL.GL_LINEAR_MIPMAP_NEAREST : PGL.GL_LINEAR;      
     } else if (params.sampling == BILINEAR)  {
       glMagFilter = PGL.GL_LINEAR;
-      glMinFilter = PGL.GL_LINEAR;
+      glMinFilter = params.mipmaps ? PGL.GL_LINEAR_MIPMAP_NEAREST : PGL.GL_LINEAR;
     } else if (params.sampling == TRILINEAR)  {
       glMagFilter = PGL.GL_LINEAR;
-      glMinFilter = PGL.GL_LINEAR_MIPMAP_LINEAR;      
+      glMinFilter = PGL.GL_LINEAR_MIPMAP_LINEAR;
     } else {
-      throw new RuntimeException("OPENGL2: Unknown texture filtering mode");     
+      throw new RuntimeException("Unknown texture filtering mode");     
     }
     
     if (params.wrapU == CLAMP) {
@@ -968,7 +1038,7 @@ public class PTexture implements PConstants {
     } else if (params.wrapU == REPEAT)  {
       glWrapS = PGL.GL_REPEAT;
     } else {
-      throw new RuntimeException("OPENGL2: Unknown wrapping mode");     
+      throw new RuntimeException("Unknown wrapping mode");     
     }
     
     if (params.wrapV == CLAMP) {
@@ -976,10 +1046,11 @@ public class PTexture implements PConstants {
     } else if (params.wrapV == REPEAT)  {
       glWrapT = PGL.GL_REPEAT;
     } else {
-      throw new RuntimeException("OPENGL2: Unknown wrapping mode");     
+      throw new RuntimeException("Unknown wrapping mode");     
     }
     
-    usingMipmaps = glMinFilter == PGL.GL_LINEAR_MIPMAP_LINEAR;
+    usingMipmaps = glMinFilter == PGL.GL_LINEAR_MIPMAP_NEAREST || 
+                   glMinFilter == PGL.GL_LINEAR_MIPMAP_LINEAR;
     
     flippedX = false;
     flippedY = false;    
@@ -989,27 +1060,7 @@ public class PTexture implements PConstants {
   /////////////////////////////////////////////////////////////////////////// 
 
   // Parameters object  
-  
-  
-  static public Parameters newParameters() {
-    return new Parameters();  
-  }
-  
 
-  static public Parameters newParameters(int format) {
-    return new Parameters(format);  
-  }    
-
-  
-  static public Parameters newParameters(int format, int sampling) {
-    return new Parameters(format, sampling);  
-  }        
-      
-
-  static public Parameters newParameters(Parameters params) {
-    return new Parameters(params);  
-  }
-  
   
   /**
    * This class stores the parameters for a texture: target, internal format, minimization filter
@@ -1027,9 +1078,14 @@ public class PTexture implements PConstants {
     public int format;
       
     /**
-     * Texture filtering (POINT, BILINEAR or TRILINEAR).
+     * Texture filtering (POINT, LINEAR, BILINEAR or TRILINEAR).
      */
     public int sampling;
+    
+    /**
+     * Use mipmaps or not.
+     */    
+    public boolean mipmaps;
     
     /**
      * Wrapping mode along U.
@@ -1042,12 +1098,13 @@ public class PTexture implements PConstants {
     public int wrapV;
     
     /**
-     * Creates an instance of GLTextureParameters, setting all the parameters to default values.
+     * Sets all the parameters to default values.
      */
     public Parameters() {
       this.target = TEXTURE2D;
       this.format = ARGB;
       this.sampling = BILINEAR;
+      this.mipmaps = true;
       this.wrapU = CLAMP;
       this.wrapV = CLAMP;
     }
@@ -1056,6 +1113,7 @@ public class PTexture implements PConstants {
       this.target = TEXTURE2D;
       this.format = format;
       this.sampling = BILINEAR;   
+      this.mipmaps = true;
       this.wrapU = CLAMP;
       this.wrapV = CLAMP;
     }
@@ -1064,16 +1122,22 @@ public class PTexture implements PConstants {
       this.target = TEXTURE2D;
       this.format = format;
       this.sampling = sampling;
+      this.mipmaps = true;
       this.wrapU = CLAMP;
       this.wrapV = CLAMP;      
     }
     
+    public Parameters(int format, int sampling, boolean mipmaps) {
+      this.target = TEXTURE2D;
+      this.format = format;
+      this.sampling = sampling;
+      this.mipmaps = mipmaps;
+      this.wrapU = CLAMP;
+      this.wrapV = CLAMP;      
+    }    
+    
     public Parameters(Parameters src) {
-      this.target = src.target;
-      this.format = src.format;
-      this.sampling = src.sampling;
-      this.wrapU = src.wrapU;
-      this.wrapV = src.wrapV;
+      set(src);
     }
     
     public void set(int format) {
@@ -1085,10 +1149,17 @@ public class PTexture implements PConstants {
       this.sampling = sampling;
     }
     
+    public void set(int format, int sampling, boolean mipmaps) {
+      this.format = format;
+      this.sampling = sampling;
+      this.mipmaps = mipmaps;
+    }    
+    
     public void set(Parameters src) {
       this.target = src.target;
       this.format = src.format;
       this.sampling = src.sampling;
+      this.mipmaps = src.mipmaps;
       this.wrapU = src.wrapU;
       this.wrapV = src.wrapV;      
     }    
