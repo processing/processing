@@ -1,4 +1,4 @@
-float boxSize = 50;
+float boxSize = 40;
 float margin = boxSize*2;
 float depth = 400;
 color boxFill;

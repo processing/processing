@@ -23,7 +23,7 @@ int tmpYp[];
 
 
 void setup() {
-  size(displayWidth, displayHeight, P3D);
+  size(displayWidth, displayHeight, P2D);
   background(0, 0, 0);
   noStroke();
 
