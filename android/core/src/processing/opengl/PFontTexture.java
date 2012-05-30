@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-08 Ben Fry and Casey Reas
+  Copyright (c) 2011-12 Ben Fry and Casey Reas
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -23,10 +23,12 @@
 
 package processing.opengl;
 
+import processing.core.PApplet;
+import processing.core.PConstants;
+import processing.core.PFont;
+import processing.core.PImage;
+
 import java.util.HashMap;
-
-import processing.core.*;
-
 
 /**
  * All the infrastructure needed for optimized font rendering 
@@ -50,6 +52,7 @@ class PFontTexture implements PConstants {
   protected PGraphicsOpenGL pg;
   protected PGL pgl;              
   protected PFont font;
+  protected boolean is3D;
 
   protected int maxTexWidth;
   protected int maxTexHeight;
@@ -63,11 +66,12 @@ class PFontTexture implements PConstants {
   protected TextureInfo[] glyphTexinfos; 
   protected HashMap<PFont.Glyph, TextureInfo> texinfoMap;  
   
-  public PFontTexture(PApplet parent, PFont font, int maxw, int maxh) {
+  public PFontTexture(PApplet parent, PFont font, int maxw, int maxh, boolean is3D) {
     this.parent = parent;
     this.font = font;    
     pg = (PGraphicsOpenGL)parent.g;
     pgl = pg.pgl;
+    this.is3D = is3D;
     
     initTexture(maxw, maxh);
   }    
@@ -113,7 +117,17 @@ class PFontTexture implements PConstants {
       resize = false;
     }
     
-    PTexture tex = new PTexture(parent, w, h, new PTexture.Parameters(ARGB, BILINEAR));
+    PTexture tex;
+    if (is3D) {
+      // Bilinear sampling ensures that the texture doesn't look pixelated either
+      // when it is magnified or minified...
+      tex = new PTexture(parent, w, h, new PTexture.Parameters(ARGB, BILINEAR, false));
+    } else {
+      // ...however, the effect of bilinear sampling is to add some blurriness to the text
+      // in its original size. In 2D, we assume that text will be shown at its original
+      // size, so linear sampling is chosen instead (which only affects minimized text).
+      tex = new PTexture(parent, w, h, new PTexture.Parameters(ARGB, LINEAR, false));
+    }
 
     if (textures == null) {
       textures = new PTexture[1];

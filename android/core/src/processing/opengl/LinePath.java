@@ -1,3 +1,5 @@
+/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+
 /*
  * Copyright 2006 Sun Microsystems, Inc.  All Rights Reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
@@ -23,7 +25,7 @@
  * have any questions.
  */
 
-package processing.opengl.geom;
+package processing.opengl;
 
 import processing.core.PMatrix2D;
 
@@ -392,7 +394,7 @@ public class LinePath {
                                            float miterlimit, PMatrix2D transform) {
     final LinePath dest = new LinePath();
 
-    strokeTo(src, weight, caps, join, miterlimit, transform, new LineSink() {
+    strokeTo(src, weight, caps, join, miterlimit, transform, new LineStroker() {
       public void moveTo(int x0, int y0) {
         dest.moveTo(S15_16ToFloat(x0), S15_16ToFloat(y0));
       }
@@ -418,7 +420,7 @@ public class LinePath {
   
   private static void strokeTo(LinePath src, float width, int caps, int join,
                                float miterlimit, PMatrix2D transform,
-                               LineSink lsink) {
+                               LineStroker lsink) {
     lsink = new LineStroker(lsink, FloatToS15_16(width), caps, join,
                             FloatToS15_16(miterlimit),
                             transform == null ? identity : transform);
@@ -428,7 +430,7 @@ public class LinePath {
   }
   
     
-  private static void pathTo(PathIterator pi, LineSink lsink) {
+  private static void pathTo(PathIterator pi, LineStroker lsink) {
     float coords[] = new float[2];
     while (!pi.isDone()) {
       switch (pi.currentSegment(coords)) {

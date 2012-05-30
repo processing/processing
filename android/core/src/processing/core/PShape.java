@@ -337,12 +337,21 @@ public class PShape implements PConstants {
   
 
   /**
+   * Return true if this shape is 2D. Defaults to true.
+   */  
+  public boolean is2D() {
+    return true;
+  }
+  
+  
+  /**
    * Return true if this shape is 3D. Defaults to false.
    */
   public boolean is3D() {
     return false;
   }
 
+  
   ///////////////////////////////////////////////////////////  
   
   //
@@ -663,120 +672,125 @@ public class PShape implements PConstants {
       g.popStyle();
     }
   }
-
   
   
   ////////////////////////////////////////////////////////////////////////
   //
-  // The new copy methods to put an SVG into a PShape3D, for example
+  // Shape copy
   
-  public PShape copy(PGraphics g) {
-    PShape res = null;
-    if (family == GROUP) {
-      res = g.createShape(GROUP);
-      copyGroup(g, res);      
-    } else if (family == PRIMITIVE) {
-      res = g.createShape(kind, params);
-      copyPrimitive(res);
-    } else if (family == GEOMETRY) {
-      res = g.createShape(kind);
-      copyGeometry(res);
-    } else if (family == PATH) {
-      res = g.createShape(PATH);
-      copyPath(res);
+  
+  static public PShape createShape(PApplet parent, PShape src) {
+    PShape dest = null;
+    if (src.family == GROUP) {
+      dest = parent.createShape(GROUP);
+      PShape.copyGroup(parent, src, dest);      
+    } else if (src.family == PRIMITIVE) {
+      dest = parent.createShape(src.kind, src.params);
+      PShape.copyPrimitive(src, dest);
+    } else if (src.family == GEOMETRY) {
+      dest = parent.createShape(src.kind);
+      PShape.copyGeometry(src, dest);
+    } else if (src.family == PATH) {
+      dest = parent.createShape(PATH);
+      PShape.copyPath(src, dest);
     }
-    return res;
+    dest.setName(src.name);
+    return dest;
   }
 
   
-  protected void copyGroup(PGraphics g, PShape s) {
-    if (matrix != null) {
-      s.applyMatrix(matrix);  
-    }
-    copyStyles(s);
-    copyImage(s);
-    for (int i = 0; i < childCount; i++) {
-      PShape c = children[i].copy(g);
-      s.addChild(c);
+  static public void copyGroup(PApplet parent, PShape src, PShape dest) {
+    copyMatrix(src, dest);
+    copyStyles(src, dest);
+    copyImage(src, dest);
+    for (int i = 0; i < src.childCount; i++) {
+      PShape c = PShape.createShape(parent, src.children[i]);
+      dest.addChild(c);
     }
   }
   
   
-  protected void copyPrimitive(PShape s) {
-    if (matrix != null) {
-      s.applyMatrix(matrix);  
-    }
-    copyStyles(s);
-    copyImage(s);
+  static public void copyPrimitive(PShape src, PShape dest) {
+    copyMatrix(src, dest);    
+    copyStyles(src, dest);
+    copyImage(src, dest);
   }
   
-  protected void copyGeometry(PShape s) {
-    if (matrix != null) {
-      s.applyMatrix(matrix);  
-    }
-    copyStyles(s);
-    copyImage(s);
+  
+  static public void copyGeometry(PShape src, PShape dest) {
+    copyMatrix(src, dest);    
+    copyStyles(src, dest);
+    copyImage(src, dest);
     
-    if (style) {
-      for (int i = 0; i < vertexCount; i++) {
-        float[] vert = vertices[i];
+    if (src.style) {
+      for (int i = 0; i < src.vertexCount; i++) {
+        float[] vert = src.vertices[i];
+        
+        // Do we need to copy these as well?
 //        s.ambient(vert[AR] * 255, vert[AG] * 255, vert[AB] * 255);
 //        s.specular(vert[SPR] * 255, vert[SPG] * 255, vert[SPB] * 255);
 //        s.emissive(vert[ER] * 255, vert[EG] * 255, vert[EB] * 255);
 //        s.shininess(vert[SHINE]);
         
-        s.normal(vert[NX], vert[NY], vert[NZ]);
-        s.vertex(vert[X], vert[Y], vert[Z], vert[U], vert[V]);        
+        dest.normal(vert[NX], vert[NY], vert[NZ]);
+        dest.vertex(vert[X], vert[Y], vert[Z], vert[U], vert[V]);        
       }
     } else {
-      for (int i = 0; i < vertexCount; i++) {
-        float[] vert = vertices[i];
+      for (int i = 0; i < src.vertexCount; i++) {
+        float[] vert = src.vertices[i];
         if (vert[PGraphics.Z] == 0) {
-          s.vertex(vert[X], vert[Y]);
+          dest.vertex(vert[X], vert[Y]);
         } else {
-          s.vertex(vert[X], vert[Y], vert[Z]);
+          dest.vertex(vert[X], vert[Y], vert[Z]);
         }
       }
     }
     
-    s.end();  
+    dest.end();  
   }
   
-  protected void copyPath(PShape s) {
-    if (matrix != null) {
-      s.applyMatrix(matrix);  
-    }
-    copyStyles(s);
-    copyImage(s);
-    s.close = close;
-    s.setPath(vertexCount, vertices, vertexCodeCount, vertexCodes);
-    
+  
+  static public void copyPath(PShape src, PShape dest) {
+    copyMatrix(src, dest);    
+    copyStyles(src, dest);
+    copyImage(src, dest);
+    dest.close = src.close;
+    dest.setPath(src.vertexCount, src.vertices, src.vertexCodeCount, src.vertexCodes);    
   }
   
-  protected void copyStyles(PShape s) {
-    if (stroke) {
-      s.stroke = true;
-      s.strokeColor = strokeColor;
-      s.strokeWeight = strokeWeight;
-      s.strokeCap = strokeCap;
-      s.strokeJoin = strokeJoin;
+  
+  static public void copyMatrix(PShape src, PShape dest) {
+    if (src.matrix != null) {
+      dest.applyMatrix(src.matrix);  
+    }    
+  }
+  
+  static public void copyStyles(PShape src, PShape dest) {
+    if (src.stroke) {
+      dest.stroke = true;
+      dest.strokeColor = src.strokeColor;
+      dest.strokeWeight = src.strokeWeight;
+      dest.strokeCap = src.strokeCap;
+      dest.strokeJoin = src.strokeJoin;
     } else {
-      s.stroke = false;
+      dest.stroke = false;
     }
 
-    if (fill) {
-      s.fill = true;
-      s.fillColor = fillColor;
+    if (src.fill) {
+      dest.fill = true;
+      dest.fillColor = src.fillColor;
     } else {
-      s.fill = false;
+      dest.fill = false;
     }
   } 
   
-  protected void copyImage(PShape s) {
-    if (image != null) {
-      s.texture(image);
+  
+  static public void copyImage(PShape src, PShape dest) {
+    if (src.image != null) {
+      dest.texture(src.image);
     }    
   }
+
   
   ////////////////////////////////////////////////////////////////////////
   

@@ -577,7 +577,7 @@ public interface PConstants {
   static final int DISABLE_TEXTURE_MIPMAPS             =  11;
   static final int ENABLE_TEXTURE_MIPMAPS              = -11;
   
-  static final int HINT_COUNT                  =  12;
+  static final int HINT_COUNT                          =  12;
 
   // error messages
 
