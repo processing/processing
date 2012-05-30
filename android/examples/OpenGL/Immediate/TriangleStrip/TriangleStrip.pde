@@ -13,7 +13,7 @@ float outerRad;
 float innerRad;
 
 void setup() {
-  size(640, 360, P3D);
+  size(640, 360, P2D);
   orientation(LANDSCAPE);
   background(204);
   x = width/2;

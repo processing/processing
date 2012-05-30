@@ -5,7 +5,7 @@
 
 PShader shader;
 PGraphicsOpenGL pg;  
-boolean usingShader;  
+boolean customShader;  
 
 public void setup() {
   size(400, 400, P3D);
@@ -13,9 +13,9 @@ public void setup() {
   fill(204);
 
   pg = (PGraphicsOpenGL)g;
-  shader = pg.loadShader("ToonVert.glsl", "ToonFrag.glsl", FILL_SHADER_LIT);
-  pg.setShader(shader, FILL_SHADER_LIT);
-  usingShader = true;
+  shader = pg.loadShader("ToonVert.glsl", "ToonFrag.glsl", LIGHT_SHADER);
+  pg.setShader(shader, LIGHT_SHADER);
+  customShader = true;
 }
 
 public void draw() {
@@ -28,14 +28,15 @@ public void draw() {
   sphere(80);
 }  
 
-public void keyPressed() {
-  if (usingShader) {
-    pg.resetShader(FILL_SHADER_LIT);
-    usingShader = false;
-  } 
-  else {
-    pg.setShader(shader, FILL_SHADER_LIT);
-    usingShader = true;
+public void mousePressed() {
+  if (dist(mouseX, mouseY, width/2, height/2) < 80) {
+    if (customShader) {
+      pg.defaultShader(LIGHT_SHADER);
+      customShader = false;
+    } 
+    else {
+      pg.setShader(shader, LIGHT_SHADER);
+      customShader = true;
+    }  
   }
 }
-

@@ -1,10 +1,8 @@
 // Robot 1: Draw from "Getting Started with Processing" 
 // by Reas & Fry. O'Reilly / Make 2010
 
-size(720, 480, P3D);
+size(720, 480, P2D);
 orientation(LANDSCAPE);
-hint(ENABLE_ACCURATE_2D);
-smooth();
 strokeWeight(2);
 background(204);
 ellipseMode(RADIUS);
