@@ -43,34 +43,43 @@ vec4 windowToClipVector(vec2 window, vec4 viewport, float clip_w) {
   
 void main() {
   vec4 pos_p = inVertex;
-  vec4 pos_q = vec4(inLine.xyz, 1);
-    
-  vec4 v_p = modelviewMatrix * pos_p;
+  vec4 v_p = modelviewMatrix * pos_p;  
+  // Moving vertices slightly toward the camera
+  // to avoid depth-fighting with the fill triangles.
+  // Discussed here:
+  // http://www.opengl.org/discussion_boards/ubbthreads.php?ubb=showflat&Number=252848  
+  v_p.xyz = v_p.xyz * 0.99;
   vec4 clip_p = projectionMatrix * v_p;
-   
-  vec4 v_q = modelviewMatrix * pos_q;  
-  vec4 clip_q = projectionMatrix * v_q; 
-  
-  vec3 window_p = clipToWindow(clip_p, viewport); 
-  vec3 window_q = clipToWindow(clip_q, viewport); 
-  vec3 tangent = window_q - window_p;
-  
-  float segment_length = length(tangent.xy);  
-  vec2 perp = normalize(vec2(-tangent.y, tangent.x));
   float thickness = inLine.w;
-  vec2 window_offset = perp * thickness;
+  
+  if (thickness != 0.0) {  
+    vec4 pos_q = vec4(inLine.xyz, 1);
+    vec4 v_q = modelviewMatrix * pos_q;
+    v_q.xyz = v_q.xyz * 0.99;  
+    vec4 clip_q = projectionMatrix * v_q; 
+  
+    vec3 window_p = clipToWindow(clip_p, viewport); 
+    vec3 window_q = clipToWindow(clip_q, viewport); 
+    vec3 tangent = window_q - window_p;
+  
+    float segment_length = length(tangent.xy);  
+    vec2 perp = normalize(vec2(-tangent.y, tangent.x));
+    vec2 window_offset = perp * thickness;
 
-  if (0 < perspective) {
-    // Perspective correction (lines will look thiner as they move away 
-    // from the view position).  
-    gl_Position.xy = clip_p.xy + window_offset.xy;
-    gl_Position.zw = clip_p.zw;
+    if (0 < perspective) {
+      // Perspective correction (lines will look thiner as they move away 
+      // from the view position).  
+      gl_Position.xy = clip_p.xy + window_offset.xy;
+      gl_Position.zw = clip_p.zw;
+    } else {
+      // No perspective correction.	
+      float clip_p_w = clip_p.w;
+      vec4 offset_p = windowToClipVector(window_offset, viewport, clip_p_w);
+      gl_Position = clip_p + offset_p;
+    }  
   } else {
-    // No perspective correction.	
-    float clip_p_w = clip_p.w;
-    vec4 offset_p = windowToClipVector(window_offset, viewport, clip_p_w);
-    gl_Position = clip_p + offset_p;
-  }  
+    gl_Position = clip_p;
+  }
   
   vertColor = inColor;
 }
