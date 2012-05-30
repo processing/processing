@@ -461,8 +461,10 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
     if (sketchRenderer().equals(JAVA2D)) {
       surfaceView = new SketchSurfaceView(this, sw, sh);
+    } else if (sketchRenderer().equals(P2D) || sketchRenderer().equals(P2D)) {
+      surfaceView = new SketchSurfaceViewGL(this, sw, sh, false);
     } else if (sketchRenderer().equals(P2D) || sketchRenderer().equals(P3D)) {
-      surfaceView = new SketchSurfaceViewGL(this, sw, sh);
+      surfaceView = new SketchSurfaceViewGL(this, sw, sh, true);
     }
 //    g = ((SketchSurfaceView) surfaceView).getGraphics();
 
@@ -773,7 +775,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
     SurfaceHolder surfaceHolder;
 
 
-    public SketchSurfaceViewGL(Context context, int wide, int high) {
+    public SketchSurfaceViewGL(Context context, int wide, int high, boolean is3D) {
       super(context);
 
       // Check if the system supports OpenGL ES 2.0.
@@ -794,7 +796,11 @@ public class PApplet extends Activity implements PConstants, Runnable {
       // null. This is required because PApplet.onResume events (which call
       // this.onResume() and thus require a valid renderer) are triggered
       // before surfaceChanged() is ever called.
-      g3 = new PGraphicsOpenGL();
+      if (is3D) {
+        g3 = new PGraphics3D();  
+      } else {
+        g3 = new PGraphics2D();
+      }      
       g3.setParent(PApplet.this);
       g3.setPrimary(true);
       // Set semi-arbitrary size; will be set properly when surfaceChanged() called
@@ -3776,60 +3782,6 @@ public class PApplet extends Activity implements PConstants, Runnable {
     }
   }
 
-
-
-  //////////////////////////////////////////////////////////////
-
-  // SHAPE I/O
-
-
-  /**
-   * Load a geometry from a file as a PShape (either an SVG or OBJ file).
-   */
-  public PShape loadShape(String filename) {
-    String extension;
-
-    String lower = filename.toLowerCase();
-    int dot = filename.lastIndexOf('.');
-    if (dot == -1) {
-      extension = "unknown";  // no extension found
-    }
-    extension = lower.substring(dot + 1);
-
-    // check for, and strip any parameters on the url, i.e.
-    // filename.jpg?blah=blah&something=that
-    int question = extension.indexOf('?');
-    if (question != -1) {
-      extension = extension.substring(0, question);
-    }
-
-    if (extension.equals("svg")) {
-      return new PShapeSVG(this, filename);
-
-    } else if (extension.equals("svgz")) {
-      try {
-        InputStream input = new GZIPInputStream(createInput(filename));
-        XML xml = new XML(createReader(input));
-        return new PShapeSVG(xml);
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-    } else {
-      // Loading the formats supported by the renderer.
-
-      String[] loadShapeFormats = g.getSupportedShapeFormats();
-
-      if (loadShapeFormats != null) {
-        for (int i = 0; i < loadShapeFormats.length; i++) {
-          if (extension.equals(loadShapeFormats[i])) {
-            return g.loadShape(filename);
-          }
-        }
-      }
-    }
-
-    return null;
-  }
 
 
   //////////////////////////////////////////////////////////////
@@ -7384,7 +7336,47 @@ public class PApplet extends Activity implements PConstants, Runnable {
     g.endShape(mode);
   }
 
+  
+  public void clip(float a, float b, float c, float d) {
+    g.clip(a, b, c, d);
+  }
 
+
+  public void noClip() {
+    g.noClip();
+  }
+
+
+  public void blendMode(int mode) {
+    g.blendMode(mode);
+  }
+
+
+  public PShape loadShape(String filename) {
+    return g.loadShape(filename);
+  }
+
+
+  public PShape createShape(PShape source) {
+    return g.createShape(source);
+  }
+
+
+  public PShape createShape() {
+    return g.createShape();
+  }
+
+
+  public PShape createShape(int type) {
+    return g.createShape(type);
+  }
+
+
+  public PShape createShape(int kind, float... p) {
+    return g.createShape(kind, p);
+  }
+ 
+  
   public void bezierVertex(float x2, float y2,
                            float x3, float y3,
                            float x4, float y4) {
@@ -8323,26 +8315,6 @@ public class PApplet extends Activity implements PConstants, Runnable {
    */
   public boolean isGL() {
     return g.isGL();
-  }
-
-
-  public PShape createShape() {
-    return g.createShape();
-  }
-
-
-  public PShape createShape(int type) {
-    return g.createShape(type);
-  }
-
-
-  public PShape createShape(int kind, float... p) {
-    return g.createShape(kind, p);
-  }
-
-
-  public void blendMode(int mode) {
-    g.blendMode(mode);
   }
 
 
