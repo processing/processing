@@ -9642,27 +9642,23 @@ public class PGraphicsOpenGL extends PGraphics {
       color0 = color = constStroke ? strokeColor : in.strokeColors[i0];
       weight = constStroke ? strokeWeight : in.strokeWeights[i0];
       
-      // TODO: vidx++ could be directly in the setLineVertex() call.
-      tess.setLineVertex(vidx, in, i0, i1, color, +weight/2);
+      tess.setLineVertex(vidx++, in, i0, i1, color, +weight/2);
       tess.lineIndices[iidx++] = (short) (count + 0);      
-      
-      vidx++;
-      tess.setLineVertex(vidx, in, i0, i1, color, -weight/2);
+            
+      tess.setLineVertex(vidx++, in, i0, i1, color, -weight/2);
       tess.lineIndices[iidx++] = (short) (count + 1);
       
       color = constStroke ? strokeColor : in.strokeColors[i1];
       weight = constStroke ? strokeWeight : in.strokeWeights[i1];
       
-      vidx++;
-      tess.setLineVertex(vidx, in, i1, i0, color, -weight/2);
+      tess.setLineVertex(vidx++, in, i1, i0, color, -weight/2);
       tess.lineIndices[iidx++] = (short) (count + 2);
       
       // Starting a new triangle re-using prev vertices.
       tess.lineIndices[iidx++] = (short) (count + 2);      
       tess.lineIndices[iidx++] = (short) (count + 1);
 
-      vidx++;
-      tess.setLineVertex(vidx, in, i1, i0, color, +weight/2);
+      tess.setLineVertex(vidx++, in, i1, i0, color, +weight/2);
       tess.lineIndices[iidx++] = (short) (count + 3);
       
       cache.incCounts(index, 6, 4);
@@ -9670,7 +9666,7 @@ public class PGraphicsOpenGL extends PGraphics {
       if (lastInd != null) {
         if (-1 < lastInd[0] && -1 < lastInd[1]) {
           // Adding bevel triangles
-          tess.setLineVertex(vidx + 1, in, i0, color0);
+          tess.setLineVertex(vidx, in, i0, color0);
           
           tess.lineIndices[iidx++] = (short) (count + 4);
           tess.lineIndices[iidx++] = lastInd[0];
@@ -9678,7 +9674,7 @@ public class PGraphicsOpenGL extends PGraphics {
           
           tess.lineIndices[iidx++] = (short) (count + 4);
           tess.lineIndices[iidx++] = lastInd[1];
-          tess.lineIndices[iidx++] = (short) (count + 1);           
+          tess.lineIndices[iidx  ] = (short) (count + 1);           
           
           cache.incCounts(index, 6, 1);
         }
@@ -9723,11 +9719,10 @@ public class PGraphicsOpenGL extends PGraphics {
         normy = +dirx / llen;        
       }
       
-      tess.setPolyVertex(vidx, x0 + normx * weight/2, y0 + normy * weight/2, 0, color); 
+      tess.setPolyVertex(vidx++, x0 + normx * weight/2, y0 + normy * weight/2, 0, color); 
       tess.polyIndices[iidx++] = (short) (count + 0);      
       
-      vidx++;
-      tess.setPolyVertex(vidx, x0 - normx * weight/2, y0 - normy * weight/2, 0, color);
+      tess.setPolyVertex(vidx++, x0 - normx * weight/2, y0 - normy * weight/2, 0, color);
       tess.polyIndices[iidx++] = (short) (count + 1);
       
       if (!constStroke) {
@@ -9735,16 +9730,14 @@ public class PGraphicsOpenGL extends PGraphics {
         weight = in.strokeWeights[i1];
       }
  
-      vidx++;
-      tess.setPolyVertex(vidx, x1 - normx * weight/2, y1 - normy * weight/2, 0, color);
+      tess.setPolyVertex(vidx++, x1 - normx * weight/2, y1 - normy * weight/2, 0, color);
       tess.polyIndices[iidx++] = (short) (count + 2);
       
       // Starting a new triangle re-using prev vertices.
       tess.polyIndices[iidx++] = (short) (count + 2);      
       tess.polyIndices[iidx++] = (short) (count + 0);
 
-      vidx++;
-      tess.setPolyVertex(vidx, x1 + normx * weight/2, y1 + normy * weight/2, 0, color);
+      tess.setPolyVertex(vidx++, x1 + normx * weight/2, y1 + normy * weight/2, 0, color);
       tess.polyIndices[iidx++] = (short) (count + 3);   
       
       cache.incCounts(index, 6, 4);
