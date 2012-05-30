@@ -109,7 +109,7 @@ public class PGL {
   /** Maximum length of linear paths to be stroked with the 
    * full algorithm that generates accurate caps and joins. 
    */  
-  public static final int MAX_CAPS_JOINS_LENGTH = 500; 
+  public static final int MAX_CAPS_JOINS_LENGTH = 1000; 
   
   /** Minimum array size to use arrayCopy method(). **/
   static protected final int MIN_ARRAYCOPY_SIZE = 2;    
@@ -184,9 +184,10 @@ public class PGL {
   public static final int GL_UNSIGNED_SHORT = GLES20.GL_UNSIGNED_SHORT;
   public static final int GL_FLOAT          = GLES20.GL_FLOAT;
   
-  public static final int GL_NEAREST              = GLES20.GL_NEAREST;
-  public static final int GL_LINEAR               = GLES20.GL_LINEAR;
-  public static final int GL_LINEAR_MIPMAP_LINEAR = GLES20.GL_LINEAR_MIPMAP_LINEAR;
+  public static final int GL_NEAREST               = GLES20.GL_NEAREST;
+  public static final int GL_LINEAR                = GLES20.GL_LINEAR;
+  public static final int GL_LINEAR_MIPMAP_NEAREST = GLES20.GL_LINEAR_MIPMAP_NEAREST;
+  public static final int GL_LINEAR_MIPMAP_LINEAR  = GLES20.GL_LINEAR_MIPMAP_LINEAR; 
   
   public static final int GL_CLAMP_TO_EDGE = GLES20.GL_CLAMP_TO_EDGE;
   public static final int GL_REPEAT        = GLES20.GL_REPEAT;

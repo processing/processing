@@ -4854,6 +4854,26 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
+  static public String getExtension(String filename) {
+    String extension;
+
+    String lower = filename.toLowerCase();
+    int dot = filename.lastIndexOf('.');
+    if (dot == -1) {
+      extension = "unknown";  // no extension found
+    }
+    extension = lower.substring(dot + 1);
+
+    // check for, and strip any parameters on the url, i.e.
+    // filename.jpg?blah=blah&something=that
+    int question = extension.indexOf('?');
+    if (question != -1) {
+      extension = extension.substring(0, question);
+    }
+    
+    return extension;
+  }  
+
 
   //////////////////////////////////////////////////////////////
 
