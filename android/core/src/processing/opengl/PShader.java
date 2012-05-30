@@ -3,12 +3,12 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2011 Andres Colubri
-  Copyright (c) 2010 Ben Fry and Casey Reas
+  Copyright (c) 2011-12 Ben Fry and Casey Reas
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -19,16 +19,13 @@
   Public License along with this library; if not, write to the
   Free Software Foundation, Inc., 59 Temple Place, Suite 330,
   Boston, MA  02111-1307  USA
- */
+*/
 
 package processing.opengl;
 
+import processing.core.*;
 import java.io.IOException;
 import java.net.URL;
-
-import processing.core.PApplet;
-import processing.core.PGraphics;
-
 
 /**
  * This class encapsulates a GLSL shader program, including a vertex 
@@ -54,6 +51,8 @@ public class PShader {
   protected int vertexShader;
   protected int fragmentShader;  
 
+  protected boolean active;
+  
   public PShader() {
     parent = null;
     pg = null;
@@ -67,7 +66,9 @@ public class PShader {
     
     programObject = 0;
     vertexShader = 0;
-    fragmentShader = 0;      
+    fragmentShader = 0;
+    
+    active = false;
   }
     
   public PShader(PApplet parent) {
@@ -154,6 +155,7 @@ public class PShader {
   public void start() {    
     init();  
     pgl.glUseProgram(programObject);
+    active = true;
   }
 
   
@@ -162,7 +164,16 @@ public class PShader {
    */
   public void stop() {
     pgl.glUseProgram(0);
+    active = false;
   }    
+  
+  
+  /**
+   * Returns true if the shader is running, false otherwise.
+   */
+  public boolean active() {
+    return active;
+  }
   
   
   /**

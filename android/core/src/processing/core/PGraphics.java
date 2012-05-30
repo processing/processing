@@ -127,7 +127,7 @@ public class PGraphics extends PImage implements PConstants {
   public boolean smooth = false;
 
   /// the anti-aliasing level for renderers that support it
-  protected int antialias;  
+  protected int quality;  
   
   // ........................................................
 
@@ -517,8 +517,11 @@ public class PGraphics extends PImage implements PConstants {
    * vertex() calls will be based on coordinates that are
    * based on the IMAGE or NORMALIZED.
    */
-  public int textureMode;
+  public int textureMode = IMAGE;
 
+  public int textureWrap    = CLAMP;
+  public int textureQuality = BEST;  
+  
   /**
    * Current horizontal coordinate for texture, will always
    * be between 0 and 1, even if using textureMode(IMAGE).
@@ -5048,7 +5051,7 @@ public class PGraphics extends PImage implements PConstants {
    * Display a warning that the specified method is only available with 3D.
    * @param method The method name (no parentheses)
    */
-  static protected void showDepthWarning(String method) {
+  static public void showDepthWarning(String method) {
     showWarning(method + "() can only be used with a renderer that " +
                 "supports 3D, such as P3D or OPENGL.");
   }
@@ -5059,7 +5062,7 @@ public class PGraphics extends PImage implements PConstants {
    * can only be used with x and y parameters in this renderer.
    * @param method The method name (no parentheses)
    */
-  static protected void showDepthWarningXYZ(String method) {
+  static public void showDepthWarningXYZ(String method) {
     showWarning(method + "() with x, y, and z coordinates " +
                 "can only be used with a renderer that " +
                 "supports 3D, such as P3D or OPENGL. " +
@@ -5070,7 +5073,7 @@ public class PGraphics extends PImage implements PConstants {
   /**
    * Display a warning that the specified method is simply unavailable.
    */
-  static protected void showMethodWarning(String method) {
+  static public void showMethodWarning(String method) {
     showWarning(method + "() is not available with this renderer.");
   }
 
@@ -5080,7 +5083,7 @@ public class PGraphics extends PImage implements PConstants {
    * other variations are). For instance, if vertex(x, y, u, v) is not
    * available, but vertex(x, y) is just fine.
    */
-  static protected void showVariationWarning(String str) {
+  static public void showVariationWarning(String str) {
     showWarning(str + " is not available with this renderer.");
   }
 
@@ -5090,7 +5093,7 @@ public class PGraphics extends PImage implements PConstants {
    * that it could be either a completely missing function, although other
    * variations of it may still work properly.
    */
-  static protected void showMissingWarning(String method) {
+  static public void showMissingWarning(String method) {
     showWarning(method + "(), or this particular variation of it, " +
                 "is not available with this renderer.");
   }
