@@ -5412,6 +5412,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   public void setShader(PShader shader, int kind) {
+    flush(); // Flushing geometry with a different shader.
     if (kind == FLAT_SHADER) {
       polyFlatShader = (PolyFlatShader) shader;
     } else if (kind == LIGHT_SHADER) {
@@ -5431,6 +5432,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   public void defaultShader(int kind) {
+    flush(); // Flushing geometry with a different shader.
     if (kind == FLAT_SHADER) {
       if (defPolyFlatShader == null || defPolyFlatShader.contextIsOutdated()) {
         defPolyFlatShader = new PolyFlatShader(parent, defPolyFlatShaderVertURL, defPolyNoTexShaderFragURL);
