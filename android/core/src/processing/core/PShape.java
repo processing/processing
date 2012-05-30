@@ -331,9 +331,31 @@ public class PShape implements PConstants {
   }
 
   
-  public PVector getCenter() {
-    return new PVector();
+  // TODO: need to discuss about these two (four).
+  public PVector getTop() {
+    return getTop(null);
   }  
+  
+  
+  public PVector getTop(PVector top) {
+    if (top == null) {
+      top = new PVector();
+    }
+    return top;
+  }
+
+  
+  public PVector getBottom() {
+    return getBottom(null);
+  }  
+  
+  
+  public PVector getBottom(PVector bottom) {
+    if (bottom == null) {
+      bottom = new PVector();
+    }    
+    return bottom;
+  } 
   
 
   /**
