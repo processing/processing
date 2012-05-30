@@ -8,9 +8,7 @@
 PShape svg;
 
 void setup() {
-  size(640, 360);
-  // Looks weird with P3D renderer?
-  // size(640, 360,P3D);
+  size(640, 360, P2D);
   smooth();
   // Load the SVG
   svg = loadShape("star.svg");

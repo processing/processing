@@ -3,6 +3,7 @@
 class Particle {
 
   // Velocity
+  PVector center;
   PVector velocity;
   // Lifespane is tied to alpha
   float lifespan;
@@ -15,7 +16,7 @@ class Particle {
   // A single force
   PVector gravity = new PVector(0, 0.1);
 
-  Particle() {
+  Particle() {    
     partSize = random(10, 60);
     // The particle is a textured quad
     part = createShape(QUAD);
@@ -28,6 +29,9 @@ class Particle {
     part.vertex(-partSize/2, +partSize/2, 0, sprite.height);
     part.end();
 
+    // Initialize center vector
+    center = new PVector(); 
+    
     // Set the particle starting location
     rebirth(width/2, height/2);
   }
@@ -45,14 +49,17 @@ class Particle {
     // Set lifespan
     lifespan = 255;
     // Set location using translate
-    PVector center = part.getCenter();
-    part.translate(x - center.x, y - center.y);
+    part.resetMatrix();
+    part.translate(x, y); 
+    
+    // Update center vector
+    center.set(x, y, 0);
   }
 
-  // Is it off the screen?
+  // Is it off the screen, or its lifespan is over?
   boolean isDead() {
-    PVector center = part.getCenter();
-    if (center.y > height+50) {
+    if (center.x > width  || center.x < 0 || 
+        center.y > height || center.y < 0 || lifespan < 0) {
       return true;
     } 
     else {
@@ -62,12 +69,13 @@ class Particle {
 
   void update() {
     // Decrease life
-    lifespan = lifespan - 4;
+    lifespan = lifespan - 1;
     // Apply gravity
     velocity.add(gravity);
     part.tint(255, lifespan);
     // Move the particle according to its velocity
     part.translate(velocity.x, velocity.y);
+    // and also update the center
+    center.add(velocity);
   }
 }
-
