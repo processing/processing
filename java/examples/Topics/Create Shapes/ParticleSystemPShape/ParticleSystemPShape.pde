@@ -25,7 +25,7 @@ void setup() {
 
 void draw () {
   background(0);
-  // Update an dipsplay system
+  // Update and display system
   ps.update();
   ps.display();
   
@@ -38,5 +38,4 @@ void draw () {
   text("Frame rate: " + int(frameRate),10,20);
   
 }
-
 
