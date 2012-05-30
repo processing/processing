@@ -7142,7 +7142,8 @@ public class PGraphicsOpenGL extends PGraphics {
           int i1 = first + ln + 1;
           if (breaks[i0]) contour0 = i0;
           if (i1 == lnMax || breaks[i1]) {
-            // We are at the end of a contour.
+            // We are either at the end of a contour or at the end of the
+            // edge path.
             if (closed) {
               // Draw line to the first vertex of the current contour,
               // if the polygon is closed.
@@ -7155,7 +7156,8 @@ public class PGraphicsOpenGL extends PGraphics {
             // We might start a new contour in the next iteration.
             begin = true;
           } else if (!breaks[i1]) {
-            addEdge(i0, i1, begin, false);
+            boolean end = i1 + 1 < lnMax && breaks[i1 + 1];
+            addEdge(i0, i1, begin, end);
             begin = false;
           }
         }
@@ -9492,8 +9494,8 @@ public class PGraphicsOpenGL extends PGraphics {
     }    
     
     void tessellateLineLoop3D(int lineCount) {
-      // FIXME: This calculation doesn't add the bevel join between
-      // the first and last vertex.
+      // This calculation doesn't add the bevel join between
+      // the first and last vertex, need to fix.
       int nvert = lineCount * 4 + (lineCount - 1);
       int nind = lineCount * 2 * 3 + (lineCount - 1) * 2 * 3;
       
@@ -9556,6 +9558,8 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     
     void tessellateEdges3D() {
+      // This calculation doesn't add the bevel join between
+      // the first and last vertex, need to fix.
       int nInVert = in.getNumEdgeVertices(true);
       int nInInd = in.getNumEdgeIndices(true);
       
