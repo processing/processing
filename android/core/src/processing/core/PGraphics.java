@@ -1230,7 +1230,66 @@ public class PGraphics extends PImage implements PConstants {
   public void endShape(int mode) {
   }
 
+  
+  public void clip(float a, float b, float c, float d) {
+    showMissingWarning("clip");
+  }
 
+  
+  public void noClip() {
+    showMissingWarning("noClip");
+  }
+
+  
+  //////////////////////////////////////////////////////////////
+
+  // BLEND
+  
+  
+  public void blendMode(int mode) {
+    showMissingWarning("blendMode");
+  }
+  
+
+  //////////////////////////////////////////////////////////////
+
+  // SHAPE I/O
+  
+
+  public PShape loadShape(String filename) {
+    showMissingWarning("loadShape");
+    return null;    
+  }
+  
+
+  //////////////////////////////////////////////////////////////
+
+  // SHAPE CREATION
+  
+  
+  public PShape createShape(PShape source) {
+    showMissingWarning("createShape");
+    return null;    
+  }
+  
+  
+  public PShape createShape() {
+    showMissingWarning("createShape");
+    return null;
+  }
+
+  
+  public PShape createShape(int type) {
+    showMissingWarning("createShape");
+    return null;
+  }
+
+  
+  public PShape createShape(int kind, float... p) {
+    showMissingWarning("createShape");
+    return null;
+  }  
+  
 
   //////////////////////////////////////////////////////////////
 
@@ -5172,37 +5231,4 @@ public class PGraphics extends PImage implements PConstants {
   public boolean isGL() {
     return false;
   }   
-  
-  //////////////////////////////////////////////////////////////
-
-  // New API:
-
-  public PShape createShape() {
-    showMissingWarning("createShape");
-    return null;
-  }  
-
-  public PShape createShape(int type) {
-    showMissingWarning("createShape");
-    return null;
-  }  
-  
-  public PShape createShape(int kind, float... p) {
-    showMissingWarning("createShape");
-    return null;    
-  }
-
-  public PShape loadShape(String filename) { // ignore
-    showMissingWarning("loadShape");
-    return null;    
-  }  
-  
-  protected String[] getSupportedShapeFormats() {
-    showMissingWarning("getSupportedShapeFormats");
-    return null;
-  }
-
-  public void blendMode(int mode) {
-    showMissingWarning("blendMode");
-  }
 }
