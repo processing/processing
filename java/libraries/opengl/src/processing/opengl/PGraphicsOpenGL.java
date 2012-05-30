@@ -2542,21 +2542,23 @@ public class PGraphicsOpenGL extends PGraphics {
       int icount = cache.indexCount[n];
       int voffset = cache.vertexOffset[n];    
           
-      // TODO: fix this, as it doesn't consider the vertices now taken up
-      // by the bevel joins.
       for (int ln = ioffset / 6; ln < (ioffset + icount) / 6; ln++) {
         // Each line segment is defined by six indices since its
         // formed by two triangles. We only need the first and last
-        // vertices.
+        // vertices. 
+        // This bunch of vertices could also be the bevel triangles,
+        // with we detect this situation by looking at the line weight.
         int i0 = voffset + indices[6 * ln + 0];
         int i1 = voffset + indices[6 * ln + 5];
+        float sw0 = 2 * attribs[4 * i0 + 3];
+        float sw1 = 2 * attribs[4 * i1 + 3];
         
+        if (zero(sw0)) continue; // Bevel triangles, skip. 
+                
         float[] pt0 = {0, 0, 0, 0};
         float[] pt1 = {0, 0, 0, 0};        
         int argb0 = PGL.nativeToJavaARGB(color[i0]);
         int argb1 = PGL.nativeToJavaARGB(color[i1]);
-        float sw0 = 2 * attribs[4 * i0 + 3];
-        float sw1 = 2 * attribs[4 * i1 + 3];
           
         if (flushMode == FLUSH_CONTINUOUSLY || hints[DISABLE_TRANSFORM_CACHE]) {
           float[] src0 = {0, 0, 0, 0};
