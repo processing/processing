@@ -2542,6 +2542,8 @@ public class PGraphicsOpenGL extends PGraphics {
       int icount = cache.indexCount[n];
       int voffset = cache.vertexOffset[n];    
           
+      // TODO: fix this, as it doesn't consider the vertices now taken up
+      // by the bevel joins.
       for (int ln = ioffset / 6; ln < (ioffset + icount) / 6; ln++) {
         // Each line segment is defined by six indices since its
         // formed by two triangles. We only need the first and last
@@ -6567,12 +6569,32 @@ public class PGraphicsOpenGL extends PGraphics {
       return vertices[3 * (vertexCount - 1) + 2];
     }
     
-    int getNumEdgeVertices() {
-      return 4 * (lastEdge - firstEdge + 1);
+    int getNumEdgeVertices(boolean bevel) {
+      int segVert = 4 * (lastEdge - firstEdge + 1);
+      int bevVert = 0;
+      if (bevel) {
+        for (int i = firstEdge; i <= lastEdge; i++) {
+          int[] edge = edges[i];
+          if (edge[2] == EDGE_MIDDLE || edge[2] == EDGE_START) {
+            bevVert++;  
+          }
+        }
+      }
+      return segVert + bevVert;
     }
 
-    int getNumEdgeIndices() {
-      return 6 * (lastEdge - firstEdge + 1);
+    int getNumEdgeIndices(boolean bevel) {
+      int segInd = 6 * (lastEdge - firstEdge + 1);
+      int bevInd = 0;
+      if (bevel) {
+        for (int i = firstEdge; i <= lastEdge; i++) {
+          int[] edge = edges[i];
+          if (edge[2] == EDGE_MIDDLE || edge[2] == EDGE_START) {
+            bevInd += 6;  
+          }
+        }          
+      } 
+      return segInd + bevInd;
     }    
     
     void getVertexMin(PVector v) {
@@ -8490,6 +8512,38 @@ public class PGraphicsOpenGL extends PGraphics {
     //
     // Add line geometry
     
+    void setLineVertex(int tessIdx, InGeometry in, int inIdx0, int rgba) {
+      int index;
+
+      index = 3 * inIdx0;
+      float x0 = in.vertices[index++];
+      float y0 = in.vertices[index++];
+      float z0 = in.vertices[index  ];
+      
+      if (renderMode == IMMEDIATE && flushMode == FLUSH_WHEN_FULL && !hints[DISABLE_TRANSFORM_CACHE]) {
+        PMatrix3D mm = modelview;
+
+        index = 4 * tessIdx;
+        lineVertices[index++] = x0 * mm.m00 + y0 * mm.m01 + z0 * mm.m02 + mm.m03;
+        lineVertices[index++] = x0 * mm.m10 + y0 * mm.m11 + z0 * mm.m12 + mm.m13;
+        lineVertices[index++] = x0 * mm.m20 + y0 * mm.m21 + z0 * mm.m22 + mm.m23;
+        lineVertices[index  ] = x0 * mm.m30 + y0 * mm.m31 + z0 * mm.m32 + mm.m33;
+      } else {
+        index = 4 * tessIdx;
+        lineVertices[index++] = x0;
+        lineVertices[index++] = y0;
+        lineVertices[index++] = z0;
+        lineVertices[index  ] = 1;
+      }
+      
+      lineColors[tessIdx] = rgba;    
+      index = 4 * tessIdx;
+      lineAttribs[index++] = 0;
+      lineAttribs[index++] = 0;
+      lineAttribs[index++] = 0;      
+      lineAttribs[index  ] = 0;      
+    }
+    
     // Sets line vertex with index tessIdx using the data from input vertices inIdx0 and inIdx1.
     void setLineVertex(int tessIdx, InGeometry in, int inIdx0, int inIdx1, int rgba, float weight) {
       int index;
@@ -9328,7 +9382,7 @@ public class PGraphicsOpenGL extends PGraphics {
       for (int ln = 0; ln < lineCount; ln++) {
         int i0 = first + 2 * ln + 0;
         int i1 = first + 2 * ln + 1;
-        index = addLine3D(i0, i1, index, false);
+        index = addLine3D(i0, i1, index, null, false);
       }
       lastLineIndexCache = index;                  
     }
@@ -9376,18 +9430,19 @@ public class PGraphicsOpenGL extends PGraphics {
       }
     }
     
-    void tessellateLineStrip3D(int lineCount) {
-      int nvert = lineCount * 4;
-      int nind = lineCount * 2 * 3;                
-
+    void tessellateLineStrip3D(int lineCount) {      
+      int nvert = lineCount * 4 + (lineCount - 1); // (lineCount - 1) for the bevel triangles
+      int nind = lineCount * 2 * 3 + (lineCount - 1) * 2 * 3; // same thing               
+      
       tess.lineVertexCheck(nvert);
       tess.lineIndexCheck(nind);
       int index = in.renderMode == RETAINED ? tess.lineIndexCache.addNew() : tess.lineIndexCache.getLast();
       firstLineIndexCache = index;
       int i0 = in.firstVertex;
+      short[] lastInd = {-1, -1};
       for (int ln = 0; ln < lineCount; ln++) {
         int i1 = in.firstVertex + ln + 1;
-        index = addLine3D(i0, i1, index, false);
+        index = addLine3D(i0, i1, index, lastInd, false);        
         i0 = i1;
       }         
       lastLineIndexCache = index;          
@@ -9437,20 +9492,23 @@ public class PGraphicsOpenGL extends PGraphics {
     }    
     
     void tessellateLineLoop3D(int lineCount) {
-      int nvert = lineCount * 4;
-      int nind = lineCount * 2 * 3;        
+      // FIXME: This calculation doesn't add the bevel join between
+      // the first and last vertex.
+      int nvert = lineCount * 4 + (lineCount - 1);
+      int nind = lineCount * 2 * 3 + (lineCount - 1) * 2 * 3;
       
       tess.lineVertexCheck(nvert);
       tess.lineIndexCheck(nind);
       int index = in.renderMode == RETAINED ? tess.lineIndexCache.addNew() : tess.lineIndexCache.getLast();
       firstLineIndexCache = index;
       int i0 = in.firstVertex;
+      short[] lastInd = {-1, -1};
       for (int ln = 0; ln < lineCount - 1; ln++) {
         int i1 = in.firstVertex + ln + 1;
-        index = addLine3D(i0, i1, index, false);
+        index = addLine3D(i0, i1, index, lastInd, false);
         i0 = i1;
       }
-      index = addLine3D(in.lastVertex, in.firstVertex, index, false);
+      index = addLine3D(in.lastVertex, in.firstVertex, index, lastInd, false);
       lastLineIndexCache = index;          
     }
 
@@ -9498,24 +9556,31 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     
     void tessellateEdges3D() {
-      int nInVert = in.getNumEdgeVertices();
-      int nInInd = in.getNumEdgeIndices();
+      int nInVert = in.getNumEdgeVertices(true);
+      int nInInd = in.getNumEdgeIndices(true);
       
       tess.lineVertexCheck(nInVert);
       tess.lineIndexCheck(nInInd);
       int index = in.renderMode == RETAINED ? tess.lineIndexCache.addNew() : tess.lineIndexCache.getLast();
       firstLineIndexCache = index;
+      short[] lastInd = {-1, -1};
       for (int i = in.firstEdge; i <= in.lastEdge; i++) {
         int[] edge = in.edges[i];
-        index = addLine3D(edge[0], edge[1], index, true);
+        int i0 = edge[0];
+        int i1 = edge[1];        
+        index = addLine3D(i0, i1, index, lastInd, true);        
+        if (edge[2] == EDGE_STOP || edge[2] == EDGE_SINGLE) {
+          // No join with next line segment.
+          lastInd[0] = lastInd[1] = -1; 
+        }
       }
       lastLineIndexCache = index;          
     }
     
     void tessellateEdges2D() {
-      int nInVert = in.getNumEdgeVertices();            
+      int nInVert = in.getNumEdgeVertices(false);            
       if (noCapsJoins(nInVert)) {
-        int nInInd = in.getNumEdgeIndices();
+        int nInInd = in.getNumEdgeIndices(false);
         
         tess.polyVertexCheck(nInVert);
         tess.polyIndexCheck(nInInd);
@@ -9557,25 +9622,27 @@ public class PGraphicsOpenGL extends PGraphics {
         tessellateLinePath(path);             
       }      
     }
-
+    
     // Adding the data that defines a quad starting at vertex i0 and
     // ending at i1.
-    int addLine3D(int i0, int i1, int index, boolean constStroke) {
+    int addLine3D(int i0, int i1, int index, short[] lastInd, boolean constStroke) {
       IndexCache cache = tess.lineIndexCache;
       int count = cache.vertexCount[index];
-      if (PGL.MAX_VERTEX_INDEX1 <= count + 4) {
+      boolean addBevel = lastInd != null && -1 < lastInd[0] && -1 < lastInd[1];      
+      if (PGL.MAX_VERTEX_INDEX1 <= count + 4 + (addBevel ? 1 : 0)) {
         // We need to start a new index block for this line.
         index = cache.addNew();
         count = 0;
       }
       int iidx = cache.indexOffset[index] + cache.indexCount[index];
       int vidx = cache.vertexOffset[index] + cache.vertexCount[index];
-      int color;
+      int color, color0;
       float weight;
       
-      color = constStroke ? strokeColor : in.strokeColors[i0];
+      color0 = color = constStroke ? strokeColor : in.strokeColors[i0];
       weight = constStroke ? strokeWeight : in.strokeWeights[i0];
       
+      // TODO: vidx++ could be directly in the setLineVertex() call.
       tess.setLineVertex(vidx, in, i0, i1, color, +weight/2);
       tess.lineIndices[iidx++] = (short) (count + 0);      
       
@@ -9599,9 +9666,30 @@ public class PGraphicsOpenGL extends PGraphics {
       tess.lineIndices[iidx++] = (short) (count + 3);
       
       cache.incCounts(index, 6, 4);
-      return index;
-    }    
+      
+      if (lastInd != null) {
+        if (-1 < lastInd[0] && -1 < lastInd[1]) {
+          // Adding bevel triangles
+          tess.setLineVertex(vidx + 1, in, i0, color0);
+          
+          tess.lineIndices[iidx++] = (short) (count + 4);
+          tess.lineIndices[iidx++] = lastInd[0];
+          tess.lineIndices[iidx++] = (short) (count + 0);          
+          
+          tess.lineIndices[iidx++] = (short) (count + 4);
+          tess.lineIndices[iidx++] = lastInd[1];
+          tess.lineIndices[iidx++] = (short) (count + 1);           
+          
+          cache.incCounts(index, 6, 1);
+        }
         
+        // Vertices for next bevel
+        lastInd[0] = (short) (count + 2);
+        lastInd[1] = (short) (count + 3);
+      }      
+      return index;
+    } 
+    
     // Adding the data that defines a quad starting at vertex i0 and
     // ending at i1, in the case of pure 2D renderers (line geometry
     // is added to the poly arrays).
