@@ -1715,10 +1715,8 @@ public class PShapeOpenGL extends PShape {
 
   
   public void applyMatrix(PMatrix2D source) {
-    transform(MATRIX, source.m00, source.m01, 0, source.m02,
-                      source.m10, source.m11, 0, source.m12,
-                               0,          0, 1,          0,
-                               0,          0, 0,          1);
+    transform(MATRIX, source.m00, source.m01, source.m02,
+                      source.m10, source.m11, source.m12);    
   }
   
 
@@ -1772,13 +1770,11 @@ public class PShapeOpenGL extends PShape {
   
   
   protected void transformImpl(int type, int ncoords, float... args) {
-    if (shapeEnded) {
-      checkMatrix(ncoords);
-      calcTransform(type, ncoords, args);      
-      if (tessellated) {
-        applyMatrixImpl(transform);
-      }
-    }          
+    checkMatrix(ncoords);
+    calcTransform(type, ncoords, args);      
+    if (tessellated) {
+      applyMatrixImpl(transform);
+    }
   }
   
   
