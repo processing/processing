@@ -1022,15 +1022,15 @@ public class PTexture implements PConstants {
       glMinFilter = PGL.GL_NEAREST;
     } else if (params.sampling == LINEAR)  {
       glMagFilter = PGL.GL_NEAREST;
-      glMinFilter = params.mipmaps ? PGL.GL_LINEAR_MIPMAP_NEAREST : PGL.GL_LINEAR;      
+      glMinFilter = params.mipmaps && PGL.MIPMAPS_ENABLED ? PGL.GL_LINEAR_MIPMAP_NEAREST : PGL.GL_LINEAR;      
     } else if (params.sampling == BILINEAR)  {
       glMagFilter = PGL.GL_LINEAR;
-      glMinFilter = params.mipmaps ? PGL.GL_LINEAR_MIPMAP_NEAREST : PGL.GL_LINEAR;
+      glMinFilter = params.mipmaps && PGL.MIPMAPS_ENABLED ? PGL.GL_LINEAR_MIPMAP_NEAREST : PGL.GL_LINEAR;
     } else if (params.sampling == TRILINEAR)  {
       glMagFilter = PGL.GL_LINEAR;
-      glMinFilter = PGL.GL_LINEAR_MIPMAP_LINEAR;
+      glMinFilter = params.mipmaps && PGL.MIPMAPS_ENABLED ? PGL.GL_LINEAR_MIPMAP_LINEAR : PGL.GL_LINEAR;
     } else {
-      throw new RuntimeException("Unknown texture filtering mode");     
+      throw new RuntimeException("Unknown texture filtering mode");    
     }
     
     if (params.wrapU == CLAMP) {

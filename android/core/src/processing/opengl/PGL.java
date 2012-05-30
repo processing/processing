@@ -114,6 +114,9 @@ public class PGL {
   /** Minimum array size to use arrayCopy method(). **/
   static protected final int MIN_ARRAYCOPY_SIZE = 2;    
   
+  /** Enables/disables mipmap use. **/
+  static protected final boolean MIPMAPS_ENABLED = false;    
+  
   /** Machine Epsilon for float precision. **/
   static public float FLOAT_EPS = Float.MIN_VALUE;
   // Calculation of the Machine Epsilon for float precision. From:
