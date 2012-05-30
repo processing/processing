@@ -7667,20 +7667,20 @@ public class PGraphicsOpenGL extends PGraphics {
       }
       
       if (stroke) {
-        addEdge(0, 1, true, false);
-        addEdge(1, 2, false, false);
-        addEdge(2, 3, false, false);
-        addEdge(3, 0, false, false);
+        addEdge(0, 1, true, true);
+        addEdge(1, 2, true, true);
+        addEdge(2, 3, true, true);
+        addEdge(3, 0, true, true);
                 
-        addEdge(0,  9, false, false);
-        addEdge(1,  8, false, false);
-        addEdge(2, 11, false, false);
-        addEdge(3, 10, false, false);
+        addEdge(0,  9, true, true);
+        addEdge(1,  8, true, true);
+        addEdge(2, 11, true, true);
+        addEdge(3, 10, true, true);
         
-        addEdge( 8,  9, false, false);
-        addEdge( 9, 10, false, false);
-        addEdge(10, 11, false, false);
-        addEdge(11,  8, false, true);        
+        addEdge( 8,  9, true, true);
+        addEdge( 9, 10, true, true);
+        addEdge(10, 11, true, true);
+        addEdge(11,  8, true, true);        
       }
     }
     
@@ -7739,8 +7739,8 @@ public class PGraphicsOpenGL extends PGraphics {
         indices[3 * i + 1] = i0;
         indices[3 * i + 2] = i1 + 1;
         
-        addEdge(i0, i1, i == 0, false);
-        addEdge(i1, i1 + 1, false, false);        
+        addEdge(i0, i1, true, true);
+        addEdge(i1, i1 + 1, true, true);        
       }
       indCount += 3 * detailU;
       
@@ -7775,9 +7775,9 @@ public class PGraphicsOpenGL extends PGraphics {
           indices[indCount + 6 * i + 4] = i0 + 1;
           indices[indCount + 6 * i + 5] = i1 + 1;
           
-          addEdge(i0, i1, false, false);
-          addEdge(i1, i1 + 1, false, false);
-          addEdge(i0 + 1, i1, false, false);
+          addEdge(i0, i1, true, true);
+          addEdge(i1, i1 + 1, true, true);
+          addEdge(i0 + 1, i1, true, true);
         }
         indCount += 6 * detailU;
         indices[indCount + 0] = vert1;
@@ -7785,8 +7785,8 @@ public class PGraphicsOpenGL extends PGraphics {
         indices[indCount + 2] = vert1 - 1;
         indCount += 3;
         
-        addEdge(vert1 - detailU, vert1 - 1, false, false);
-        addEdge(vert1 - 1, vert1, false, false);        
+        addEdge(vert1 - detailU, vert1 - 1, true, true);
+        addEdge(vert1 - 1, vert1, true, true);        
       }
             
       // Northern cap -------------------------------------------------------
@@ -7810,8 +7810,8 @@ public class PGraphicsOpenGL extends PGraphics {
         indices[indCount + 3 * i + 1] = i1;
         indices[indCount + 3 * i + 2] = i0 + 1;
         
-        addEdge(i0, i0 + 1, false, false);
-        addEdge(i0, i1, false, i == detailU - 1);        
+        addEdge(i0, i0 + 1, true, true);
+        addEdge(i0, i1, true, true);        
       }
       indCount += 3 * detailU;      
       
