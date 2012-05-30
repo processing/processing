@@ -459,12 +459,12 @@ public class PApplet extends Activity implements PConstants, Runnable {
     int sw = sketchWidth();
     int sh = sketchHeight();
 
-    if (sketchRenderer().equals(P2D)) {
-      surfaceView = new SketchSurfaceView2D(this, sw, sh);
-    } else if (sketchRenderer().equals(P3D)) {
-      surfaceView = new SketchSurfaceView3D(this, sw, sh);
+    if (sketchRenderer().equals(JAVA2D)) {
+      surfaceView = new SketchSurfaceView(this, sw, sh);
+    } else if (sketchRenderer().equals(P2D) || sketchRenderer().equals(P3D)) {
+      surfaceView = new SketchSurfaceViewGL(this, sw, sh);
     }
-    g = ((SketchSurfaceView) surfaceView).getGraphics();
+//    g = ((SketchSurfaceView) surfaceView).getGraphics();
 
 //    surfaceView.setLayoutParams(new LayoutParams(sketchWidth(), sketchHeight()));
 
@@ -658,21 +658,21 @@ public class PApplet extends Activity implements PConstants, Runnable {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  public interface SketchSurfaceView {
-    public PGraphics getGraphics();
-  }
+//  public interface SketchSurfaceView {
+//    public PGraphics getGraphics();
+//  }
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  public class SketchSurfaceView2D extends SurfaceView
-  implements SketchSurfaceView, SurfaceHolder.Callback {
+  public class SketchSurfaceView extends SurfaceView
+  implements /*SketchSurfaceView,*/ SurfaceHolder.Callback {
     PGraphicsAndroid2D g2;
     SurfaceHolder surfaceHolder;
 
 
-    public SketchSurfaceView2D(Context context, int wide, int high) {
+    public SketchSurfaceView(Context context, int wide, int high) {
       super(context);
 
 //      println("surface holder");
@@ -692,7 +692,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
       // Set the value for 'g' once everything is ready (otherwise rendering
       // may attempt before setSize(), setParent() etc)
 //      g = newGraphics;
-
+      g = g2;  // assign the g object for the PApplet
+      
 //      println("setting focusable, requesting focus");
       setFocusable(true);
       setFocusableInTouchMode(true);
@@ -701,9 +702,9 @@ public class PApplet extends Activity implements PConstants, Runnable {
     }
 
 
-    public PGraphics getGraphics() {
-      return g2;
-    }
+//    public PGraphics getGraphics() {
+//      return g2;
+//    }
 
 
     // part of SurfaceHolder.Callback
@@ -767,12 +768,12 @@ public class PApplet extends Activity implements PConstants, Runnable {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  public class SketchSurfaceView3D extends GLSurfaceView implements SketchSurfaceView {
+  public class SketchSurfaceViewGL extends GLSurfaceView /*implements SketchSurfaceView*/ {
     PGraphicsOpenGL g3;
     SurfaceHolder surfaceHolder;
 
 
-    public SketchSurfaceView3D(Context context, int wide, int high) {
+    public SketchSurfaceViewGL(Context context, int wide, int high) {
       super(context);
 
       // Check if the system supports OpenGL ES 2.0.
@@ -837,6 +838,9 @@ public class PApplet extends Activity implements PConstants, Runnable {
       // The renderer can be set only once.
       setRenderer(g3.pgl.getRenderer());
       setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+      
+      // assign this g to the PApplet
+      g = g3;
 
       setFocusable(true);
       setFocusableInTouchMode(true);
