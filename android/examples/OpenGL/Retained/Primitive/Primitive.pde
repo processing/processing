@@ -3,7 +3,7 @@ boolean filled = true;
 boolean stroked = true;  
   
 public void setup() {
-  size(400, 400, P3D);
+  size(400, 400, P2D);
   frameRate(60);
  
   fill(255, 0, 0);
