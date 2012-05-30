@@ -4738,7 +4738,7 @@ public class PGraphicsOpenGL extends PGraphics {
       readPixels();
 
       if (primarySurface) {
-        loadTextureImpl(POINT);
+        loadTextureImpl(POINT, false);
         pixelsToTexture();
       }
     }
@@ -4791,7 +4791,7 @@ public class PGraphicsOpenGL extends PGraphics {
     
     // Copying pixel buffer to screen texture...
     if (primarySurface) {
-      loadTextureImpl(POINT);  // (first making sure that the screen texture is valid).
+      loadTextureImpl(POINT, false);  // (first making sure that the screen texture is valid).
     }
     pgl.copyToTexture(texture.glTarget, texture.glFormat, texture.glID,
                       x, y, w, h, IntBuffer.wrap(rgbaPixels));
@@ -4853,7 +4853,7 @@ public class PGraphicsOpenGL extends PGraphics {
   // array, and then the pixels array into the screen texture.
   public void loadTexture() {
     if (primarySurface) {
-      loadTextureImpl(POINT);
+      loadTextureImpl(POINT, false);
       loadPixels();
       pixelsToTexture();
     }
@@ -4869,10 +4869,10 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  protected void loadTextureImpl(int sampling) {
+  protected void loadTextureImpl(int sampling, boolean mipmap) {
     if (width == 0 || height == 0) return;
     if (texture == null || texture.contextIsOutdated()) {
-      PTexture.Parameters params = new PTexture.Parameters(ARGB, sampling);
+      PTexture.Parameters params = new PTexture.Parameters(ARGB, sampling, mipmap);
       texture = new PTexture(parent, width, height, params);
       texture.setFlippedY(true);
       this.setCache(pgPrimary, texture);
@@ -5273,7 +5273,7 @@ public class PGraphicsOpenGL extends PGraphics {
     pgl.initOffscreenSurface(pgPrimary.pgl);
     pgl.updateOffscreen(pgPrimary.pgl);
     
-    loadTextureImpl(BILINEAR);
+    loadTextureImpl(BILINEAR, false);
     
     // In case of reinitialization (for example, when the smooth level
     // is changed), we make sure that all the OpenGL resources associated
