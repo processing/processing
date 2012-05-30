@@ -5,9 +5,12 @@
 // Press any key to enable/disable the shader.
 
 PGraphics canvas;
+boolean drawing = false;
 PGraphicsOpenGL pg;
 PShader shader;
 boolean usingShader;
+String message;
+float msgLen;
   
 void setup() {
   size(1280, 800, P2D);
@@ -19,7 +22,6 @@ void setup() {
   pg = (PGraphicsOpenGL) g;
   shader = pg.loadShader("fxaa.glsl", TEXTURE_SHADER);
   pg.setShader(shader, TEXTURE_SHADER);
-  println("FXAA shader is enabled");
   usingShader = true;
   
   canvas.beginDraw();
@@ -28,27 +30,65 @@ void setup() {
   canvas.strokeWeight(15);
   canvas.strokeCap(ROUND);
   canvas.endDraw();
+  
+  PFont font = createFont("Arial", 18);
+  textFont(font);  
+  updateMessage();
+  
+  drawing = false;
 }
 
 public void draw() {
-  canvas.beginDraw();
-  if (1 < dist(mouseX, mouseY, pmouseX, pmouseY)) {
-    canvas.line(pmouseX, pmouseY, mouseX, mouseY);
+  if (drawing) {
+    canvas.beginDraw();
+    if (1 < dist(mouseX, mouseY, pmouseX, pmouseY)) {
+      canvas.line(pmouseX, pmouseY, mouseX, mouseY);
+    }
+    canvas.endDraw();
   }
-  canvas.endDraw();
   
   image(canvas, 0, 0);
+  
+  drawMessage();
 }
   
-public void keyPressed() {
-  if (usingShader) {
-    pg.defaultShader(TEXTURE_SHADER);
-    println("FXAA shader is disabled");
-    usingShader = false;
+public void mousePressed() {
+  if (!drawing && width - msgLen < mouseX && height - 23 < mouseY) {
+    if (usingShader) {
+      pg.defaultShader(TEXTURE_SHADER);
+      usingShader = false;
+    } else {
+      pg.setShader(shader, TEXTURE_SHADER);
+      usingShader = true;
+    }
+    updateMessage();    
   } else {
-    pg.setShader(shader, TEXTURE_SHADER);
-    println("FXAA shader is enabled");
-    usingShader = true;
+    drawing = true;   
   }
 }
 
+void mouseReleased() {
+  drawing = false;
+}
+
+void updateMessage() {
+  if (usingShader) {
+    message = "Anti-aliasing enabled";      
+  } else {
+    message = "Anti-aliasing disabled";
+  }
+  msgLen = textWidth(message);
+}
+
+void drawMessage() {
+  if (usingShader) {
+    // We need the default texture shader to 
+    // render text.
+    pg.defaultShader(TEXTURE_SHADER);
+  }
+  fill(0);
+  text(message, width - msgLen, height - 5);
+  if (usingShader) {
+    pg.setShader(shader, TEXTURE_SHADER);
+  }
+}

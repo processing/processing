@@ -28,14 +28,16 @@ public void draw() {
   sphere(80);
 }  
 
-public void keyPressed() {
-  if (customShader) {
-    pg.defaultShader(LIGHT_SHADER);
-    customShader = false;
-  } 
-  else {
-    pg.setShader(shader, LIGHT_SHADER);
-    customShader = true;
+public void mousePressed() {
+  if (dist(mouseX, mouseY, width/2, height/2) < 80) {
+    if (customShader) {
+      pg.defaultShader(LIGHT_SHADER);
+      customShader = false;
+    } 
+    else {
+      pg.setShader(shader, LIGHT_SHADER);
+      customShader = true;
+    }  
   }
 }
 
