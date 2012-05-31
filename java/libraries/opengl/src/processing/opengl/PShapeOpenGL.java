@@ -3872,7 +3872,7 @@ public class PShapeOpenGL extends PShape {
     
   
   protected void renderPolys(PGraphicsOpenGL g, PImage textureImage) {
-    PTexture tex = null;
+    Texture tex = null;
     if (textureImage != null) {
       tex = g.getTexture(textureImage);      
       if (tex != null) {

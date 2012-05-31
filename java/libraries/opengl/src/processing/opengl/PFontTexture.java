@@ -59,7 +59,7 @@ class PFontTexture implements PConstants {
   protected int offsetX;
   protected int offsetY;
   protected int lineHeight;
-  protected PTexture[] textures = null;
+  protected Texture[] textures = null;
   protected PImage[] images = null;
   protected int currentTex;
   protected int lastTex; 
@@ -117,20 +117,20 @@ class PFontTexture implements PConstants {
       resize = false;
     }
     
-    PTexture tex;
+    Texture tex;
     if (is3D) {
       // Bilinear sampling ensures that the texture doesn't look pixelated either
       // when it is magnified or minified...
-      tex = new PTexture(parent, w, h, new PTexture.Parameters(ARGB, BILINEAR, false));
+      tex = new Texture(parent, w, h, new Texture.Parameters(ARGB, Texture.BILINEAR, false));
     } else {
       // ...however, the effect of bilinear sampling is to add some blurriness to the text
       // in its original size. In 2D, we assume that text will be shown at its original
       // size, so linear sampling is chosen instead (which only affects minimized text).
-      tex = new PTexture(parent, w, h, new PTexture.Parameters(ARGB, LINEAR, false));
+      tex = new Texture(parent, w, h, new Texture.Parameters(ARGB, Texture.LINEAR, false));
     }
 
     if (textures == null) {
-      textures = new PTexture[1];
+      textures = new Texture[1];
       textures[0] = tex;
       images = new PImage[1];      
       images[0] = pg.wrapTexture(tex); 
@@ -139,7 +139,7 @@ class PFontTexture implements PConstants {
       // Replacing old smaller texture with larger one.
       // But first we must copy the contents of the older
       // texture into the new one.
-      PTexture tex0 = textures[currentTex];
+      Texture tex0 = textures[currentTex];
       tex.put(tex0);
       textures[currentTex] = tex;
       
@@ -148,8 +148,8 @@ class PFontTexture implements PConstants {
       images[currentTex].height = tex.height;
     } else {
       // Adding new texture to the list.
-      PTexture[] tempTex = textures;
-      textures = new PTexture[textures.length + 1];
+      Texture[] tempTex = textures;
+      textures = new Texture[textures.length + 1];
       PApplet.arrayCopy(tempTex, textures, tempTex.length);
       textures[tempTex.length] = tex;
       currentTex = textures.length - 1;
