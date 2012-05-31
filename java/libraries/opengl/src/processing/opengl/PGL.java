@@ -479,7 +479,6 @@ public class PGL {
 
 
   public void initPrimarySurface(int antialias) {
-    /*
     needFBO = false;
     String osName = System.getProperty("os.name");
     if (osName.equals("Mac OS X")) {
@@ -487,7 +486,7 @@ public class PGL {
       String[] parts = version.split("\\.");
       if (2 <= parts.length) {
         int num = Integer.parseInt(parts[1]);
-        if (7 <= num && 1 < pg.quality && numSamples != pg.quality) {          
+        if (7 <= num && 1 < pg.quality) {          
           // We are on OSX Lion or newer, where JOGL doesn't properly
           // support multisampling. As a temporary hack, we handle our
           // own multisampled FBO for onscreen rendering with anti-aliasing.
@@ -497,13 +496,6 @@ public class PGL {
         }
       }
     } 
-    */
-    needFBO = false;
-    if (1 < pg.quality && numSamples != pg.quality) {
-      needFBO = true;
-      if (colorFBO[0] != 0) releaseFBO();
-      colorFBO[0] = 0;
-    }
     
     if (profile == null) {
       profile = GLProfile.getDefault();
@@ -534,6 +526,7 @@ public class PGL {
     caps.setDepthBits(24);
     caps.setStencilBits(8);
     caps.setAlphaBits(8);
+    caps.setBackgroundOpaque(true);
 
     if (toolkit == AWT) {
       canvasAWT = new GLCanvas(caps);
