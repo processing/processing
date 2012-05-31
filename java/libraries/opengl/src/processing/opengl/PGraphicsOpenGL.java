@@ -46,7 +46,18 @@ import java.util.Stack;
  * OpenGL renderer.
  *
  */
-public class PGraphicsOpenGL extends PGraphics {  
+public class PGraphicsOpenGL extends PGraphics { 
+  // shaders
+  static public final int FLAT_SHADER    = 0;
+  static public final int LIGHT_SHADER   = 1;
+  static public final int TEXTURE_SHADER = 2;
+  static public final int FULL_SHADER    = 3;
+  static public final int LINE3D_SHADER  = 4;
+  static public final int POINT3D_SHADER = 5;
+  
+  public int textureWrap    = Texture.CLAMP;
+  public int textureQuality = Texture.BEST;
+  
   /** Interface between Processing and OpenGL */
   public PGL pgl;
 
@@ -311,16 +322,16 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // Framebuffer stack:
 
-  static protected Stack<PFramebuffer> fbStack;
-  static protected PFramebuffer screenFramebuffer;
-  static protected PFramebuffer currentFramebuffer;
+  static protected Stack<FrameBuffer> fbStack;
+  static protected FrameBuffer screenFramebuffer;
+  static protected FrameBuffer currentFramebuffer;
 
   // .......................................................
 
   // Offscreen rendering:
 
-  protected PFramebuffer offscreenFramebuffer;
-  protected PFramebuffer offscreenFramebufferMultisample;
+  protected FrameBuffer offscreenFramebuffer;
+  protected FrameBuffer offscreenFramebufferMultisample;
   protected boolean offscreenMultisample;
 
   protected boolean offscreenNotCurrent;
@@ -331,7 +342,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   /** A handy reference to the PTexture bound to the drawing surface
    * (off or on-screen) */
-  protected PTexture texture;
+  protected Texture texture;
 
   /** IntBuffer wrapping the pixels array. */
   protected IntBuffer pixelBuffer;
@@ -1038,7 +1049,7 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  public void setFramebuffer(PFramebuffer fbo) {
+  public void setFramebuffer(FrameBuffer fbo) {
     currentFramebuffer = fbo;
     currentFramebuffer.bind();
   }
@@ -1893,9 +1904,9 @@ public class PGraphicsOpenGL extends PGraphics {
     clearColorBuffer = false;
 
     if (fbStack == null) {
-      fbStack = new Stack<PFramebuffer>();
+      fbStack = new Stack<FrameBuffer>();
 
-      screenFramebuffer = new PFramebuffer(parent, width, height, true);
+      screenFramebuffer = new FrameBuffer(parent, width, height, true);
       setFramebuffer(screenFramebuffer);
     }
 
@@ -2039,6 +2050,17 @@ public class PGraphicsOpenGL extends PGraphics {
       flush();
     }    
   }
+
+  
+  public void textureWrap(int wrap) {
+    this.textureWrap = wrap;
+  }
+  
+  
+  public void textureQuality(int quality) {
+    this.textureQuality = quality;
+  }
+    
 
   public void texture(PImage image) {
     if (flushMode == FLUSH_WHEN_FULL && hints[DISABLE_TEXTURE_CACHE] &&
@@ -2357,7 +2379,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
     texCache.beginRender();
     for (int i = 0; i < texCache.size; i++) {
-      PTexture tex = texCache.getTexture(i);
+      Texture tex = texCache.getTexture(i);
 
       // If the renderer is 2D, then lights should always be false,
       // so no need to worry about that.
@@ -4876,8 +4898,8 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void loadTextureImpl(int sampling, boolean mipmap) {
     if (width == 0 || height == 0) return;
     if (texture == null || texture.contextIsOutdated()) {
-      PTexture.Parameters params = new PTexture.Parameters(ARGB, sampling, mipmap);
-      texture = new PTexture(parent, width, height, params);
+      Texture.Parameters params = new Texture.Parameters(ARGB, sampling, mipmap);
+      texture = new Texture(parent, width, height, params);
       texture.setFlippedY(true);
       this.setCache(pgPrimary, texture);
       this.setParams(pgPrimary, params);
@@ -5144,7 +5166,7 @@ public class PGraphicsOpenGL extends PGraphics {
    * drawing surface, making sure is updated to reflect the current contents
    * off the screen (or offscreen drawing surface).
    */
-  public PTexture getTexture() {
+  public Texture getTexture() {
     loadTexture();
     return texture;
   }
@@ -5156,8 +5178,8 @@ public class PGraphicsOpenGL extends PGraphics {
    *
    * @param img the image to have a texture metadata associated to it
    */
-  public PTexture getTexture(PImage img) {
-    PTexture tex = (PTexture)img.getCache(pgPrimary);
+  public Texture getTexture(PImage img) {
+    Texture tex = (Texture)img.getCache(pgPrimary);
     if (tex == null) {
       tex = addTexture(img);
     } else {
@@ -5185,26 +5207,26 @@ public class PGraphicsOpenGL extends PGraphics {
    * to the metadata cache of the image.
    * @param img the image to have a texture metadata associated to it
    */
-  protected PTexture addTexture(PImage img) {
-    PTexture.Parameters params = (PTexture.Parameters)img.getParams(pgPrimary);
+  protected Texture addTexture(PImage img) {
+    Texture.Parameters params = (Texture.Parameters)img.getParams(pgPrimary);
     if (params == null) {
-      params = new PTexture.Parameters();   
+      params = new Texture.Parameters();   
       if (hints[DISABLE_TEXTURE_MIPMAPS]) {
         params.mipmaps = false;
       } else {
         params.mipmaps = true;
       }      
-      if (textureQuality == LOW) {
+      if (textureQuality == Texture.LOW) {
         params.sampling = POINT;  
-      } else if (textureQuality == MEDIUM) {
-        params.sampling = LINEAR;  
-      } else if (textureQuality == HIGH) {
-        params.sampling = BILINEAR;
-      } else if (textureQuality == BEST) {
+      } else if (textureQuality == Texture.MEDIUM) {
+        params.sampling = Texture.LINEAR;  
+      } else if (textureQuality == Texture.HIGH) {
+        params.sampling = Texture.BILINEAR;
+      } else if (textureQuality == Texture.BEST) {
         if (params.mipmaps) {
-          params.sampling = TRILINEAR;
+          params.sampling = Texture.TRILINEAR;
         } else {
-          params.sampling = BILINEAR;
+          params.sampling = Texture.BILINEAR;
           PGraphics.showWarning("BEST texture quality requires mipmaps, will switch to HIGH.");
         }        
       }         
@@ -5215,7 +5237,7 @@ public class PGraphicsOpenGL extends PGraphics {
     if (img.parent == null) {
       img.parent = parent;
     }
-    PTexture tex = new PTexture(img.parent, img.width, img.height, params);
+    Texture tex = new Texture(img.parent, img.width, img.height, params);
     img.loadPixels();
     if (img.pixels != null) tex.set(img.pixels);
     img.setCache(pgPrimary, tex);
@@ -5223,7 +5245,7 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  protected PImage wrapTexture(PTexture tex) {
+  protected PImage wrapTexture(Texture tex) {
     // We don't use the PImage(int width, int height, int mode) constructor to
     // avoid initializing the pixels array.
     PImage img = new PImage();
@@ -5236,7 +5258,7 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  protected void updateTexture(PImage img, PTexture tex) {
+  protected void updateTexture(PImage img, Texture tex) {
     if (tex != null) {
       int x = img.getModifiedX1();
       int y = img.getModifiedY1();
@@ -5277,7 +5299,7 @@ public class PGraphicsOpenGL extends PGraphics {
     pgl.initOffscreenSurface(pgPrimary.pgl);
     pgl.updateOffscreen(pgPrimary.pgl);
     
-    loadTextureImpl(BILINEAR, false);
+    loadTextureImpl(Texture.BILINEAR, false);
     
     // In case of reinitialization (for example, when the smooth level
     // is changed), we make sure that all the OpenGL resources associated
@@ -5290,7 +5312,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     if (PGraphicsOpenGL.fboMultisampleSupported && 1 < quality) {
-      offscreenFramebufferMultisample = new PFramebuffer(parent, texture.glWidth, texture.glHeight, quality, 0,
+      offscreenFramebufferMultisample = new FrameBuffer(parent, texture.glWidth, texture.glHeight, quality, 0,
                                                          depthBits, stencilBits,
                                                          depthBits == 24 && stencilBits == 8 && packedDepthStencilSupported, false);
 
@@ -5299,13 +5321,13 @@ public class PGraphicsOpenGL extends PGraphics {
 
       // The offscreen framebuffer where the multisampled image is finally drawn to doesn't
       // need depth and stencil buffers since they are part of the multisampled framebuffer.
-      offscreenFramebuffer = new PFramebuffer(parent, texture.glWidth, texture.glHeight, 1, 1,
+      offscreenFramebuffer = new FrameBuffer(parent, texture.glWidth, texture.glHeight, 1, 1,
                                               0, 0,
                                               false, false);
 
     } else {
       quality = 0;
-      offscreenFramebuffer = new PFramebuffer(parent, texture.glWidth, texture.glHeight, 1, 1,
+      offscreenFramebuffer = new FrameBuffer(parent, texture.glWidth, texture.glHeight, 1, 1,
                                               depthBits, stencilBits,
                                               depthBits == 24 && stencilBits == 8 && packedDepthStencilSupported, false);
       offscreenMultisample = false;
@@ -5586,7 +5608,7 @@ public class PGraphicsOpenGL extends PGraphics {
     public void setEmissiveAttribute(int vboId, int size, int type, int stride, int offset) { }
     public void setShininessAttribute(int vboId, int size, int type, int stride, int offset) { }
     public void setTexcoordAttribute(int vboId, int size, int type, int stride, int offset) { }
-    public void setTexture(PTexture tex) { }
+    public void setTexture(Texture tex) { }
   }
 
 
@@ -5824,7 +5846,7 @@ public class PGraphicsOpenGL extends PGraphics {
       setAttribute(inTexcoordLoc, vboId, size, type, false, stride, offset);
     }
 
-    public void setTexture(PTexture tex) {
+    public void setTexture(Texture tex) {
       float scaleu = 1;
       float scalev = 1;
       float dispu  = 0;
@@ -5909,7 +5931,7 @@ public class PGraphicsOpenGL extends PGraphics {
       setAttribute(inTexcoordLoc, vboId, size, type, false, stride, offset);
     }
 
-    public void setTexture(PTexture tex) {
+    public void setTexture(Texture tex) {
       float scaleu = 1;
       float scalev = 1;
       float dispu  = 0;
@@ -6172,7 +6194,7 @@ public class PGraphicsOpenGL extends PGraphics {
     int[] firstCache;
     int[] lastCache;
     boolean hasTexture;
-    PTexture tex0;
+    Texture tex0;
 
     TexCache() {
       allocate();
@@ -6210,9 +6232,9 @@ public class PGraphicsOpenGL extends PGraphics {
       return textures[i];
     }
     
-    PTexture getTexture(int i) {
+    Texture getTexture(int i) {
       PImage img = textures[i];
-      PTexture tex = null;
+      Texture tex = null;
 
       if (img != null) {
         tex = pgPrimary.getTexture(img);
@@ -6235,7 +6257,7 @@ public class PGraphicsOpenGL extends PGraphics {
         for (int i = 0; i < size; i++) {
           PImage img = textures[i];
           if (img != null) {
-            PTexture tex = pgPrimary.getTexture(img);
+            Texture tex = pgPrimary.getTexture(img);
             if (tex != null) {
               tex.unbind();
             }
@@ -6246,7 +6268,7 @@ public class PGraphicsOpenGL extends PGraphics {
         for (int i = 0; i < size; i++) {
           PImage img = textures[i];
           if (img != null) {
-            PTexture tex = pgPrimary.getTexture(img);
+            Texture tex = pgPrimary.getTexture(img);
             if (tex != null) {
               pgl.disableTexturing(tex.glTarget);
             }
