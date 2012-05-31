@@ -646,6 +646,9 @@ public class PGL {
 
   
   public boolean primaryIsDoubleBuffered() {
+    // When using the multisampled FBO, the color
+    // FBO is single buffered as it has only one
+    // texture bound to it.
     return !needFBO;
   }
   
@@ -666,7 +669,6 @@ public class PGL {
 
   public void beginOnscreenDraw(boolean clear) {
     if (needFBO) {
-      System.out.println("multisampled offscreen rendering...");
       // Render the scene to the mutisampled buffer...
       gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, multiFBO[0]);    
       gl2x.glDrawBuffer(GL.GL_COLOR_ATTACHMENT0);
