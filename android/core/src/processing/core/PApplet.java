@@ -461,8 +461,6 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
     if (sketchRenderer().equals(JAVA2D)) {
       surfaceView = new SketchSurfaceView(this, sw, sh);
-    } else if (sketchRenderer().equals(P2D) || sketchRenderer().equals(P2D)) {
-      surfaceView = new SketchSurfaceViewGL(this, sw, sh, false);
     } else if (sketchRenderer().equals(P2D) || sketchRenderer().equals(P3D)) {
       surfaceView = new SketchSurfaceViewGL(this, sw, sh, true);
     }
@@ -695,7 +693,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
       // may attempt before setSize(), setParent() etc)
 //      g = newGraphics;
       g = g2;  // assign the g object for the PApplet
-      
+
 //      println("setting focusable, requesting focus");
       setFocusable(true);
       setFocusableInTouchMode(true);
@@ -797,10 +795,10 @@ public class PApplet extends Activity implements PConstants, Runnable {
       // this.onResume() and thus require a valid renderer) are triggered
       // before surfaceChanged() is ever called.
       if (is3D) {
-        g3 = new PGraphics3D();  
+        g3 = new PGraphics3D();
       } else {
         g3 = new PGraphics2D();
-      }      
+      }
       g3.setParent(PApplet.this);
       g3.setPrimary(true);
       // Set semi-arbitrary size; will be set properly when surfaceChanged() called
@@ -844,7 +842,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
       // The renderer can be set only once.
       setRenderer(g3.pgl.getRenderer());
       setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
-      
+
       // assign this g to the PApplet
       g = g3;
 
@@ -1021,7 +1019,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
 
   public String sketchRenderer() {
-    return P2D;
+    return JAVA2D;
   }
 
 
@@ -1495,7 +1493,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 */
   }
 
-  
+
   public PGraphics createGraphics(int iwidth, int iheight) {
     return createGraphics(iwidth, iheight, JAVA2D);
   }
@@ -3793,17 +3791,17 @@ public class PApplet extends Activity implements PConstants, Runnable {
     return new XML(this, filename);
   }
 
-  
+
   static public XML loadXML(File file) {
     return new XML(file);
   }
 
-  
+
   public Table loadTable(String filename) {
     return new Table(this, filename);
   }
 
-  
+
   static public Table loadTable(File file) {
     return new Table(file);
   }
@@ -4826,9 +4824,9 @@ public class PApplet extends Activity implements PConstants, Runnable {
     if (question != -1) {
       extension = extension.substring(0, question);
     }
-    
+
     return extension;
-  }  
+  }
 
 
   //////////////////////////////////////////////////////////////
@@ -7336,7 +7334,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
     g.endShape(mode);
   }
 
-  
+
   public void clip(float a, float b, float c, float d) {
     g.clip(a, b, c, d);
   }
@@ -7375,8 +7373,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
   public PShape createShape(int kind, float... p) {
     return g.createShape(kind, p);
   }
- 
-  
+
+
   public void bezierVertex(float x2, float y2,
                            float x3, float y3,
                            float x4, float y4) {
