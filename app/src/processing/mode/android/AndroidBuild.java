@@ -270,7 +270,7 @@ class AndroidBuild extends JavaBuild {
   // (which contains our friend processing-core.jar) unless your current
   // working directory is the same as the build file. So this is an unpleasant
   // workaround, at least until things are fixed or we hear of a better way.
-  protected boolean antBuild() throws SketchException {
+  protected boolean antBuild_dexworkaround() throws SketchException {
     try {
 //      ProcessHelper helper = new ProcessHelper(tmpFolder, new String[] { "ant", target });
       // Windows doesn't include full paths, so make 'em happen.
@@ -345,7 +345,7 @@ class AndroidBuild extends JavaBuild {
   */
 
 
-  protected boolean antBuild_normal() throws SketchException {
+  protected boolean antBuild() throws SketchException {
 //    System.setProperty("user.dir", tmpFolder.getAbsolutePath());  // oh why not { because it doesn't help }
     final Project p = new Project();
 //    p.setBaseDir(tmpFolder);  // doesn't seem to do anything

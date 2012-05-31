@@ -43,8 +43,7 @@ public class JavaScriptMode extends Mode
 		try {
 			loadKeywords(); // in JavaMode, sets tokenMarker
 			loadAdditionalKeywords( 
-				new File( base.getContentFile("modes/java"), 
-						  "keywords.txt" ),
+				new File(Base.getContentFile("modes/java"), "keywords.txt" ),
 				tokenMarker
 			);
 		} 
