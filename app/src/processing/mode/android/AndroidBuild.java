@@ -270,6 +270,8 @@ class AndroidBuild extends JavaBuild {
   // (which contains our friend processing-core.jar) unless your current
   // working directory is the same as the build file. So this is an unpleasant
   // workaround, at least until things are fixed or we hear of a better way.
+  // This was fixed in SDK 19 (and Processing revision 0205) so we've now
+  // disabled this portion of the code.
   protected boolean antBuild_dexworkaround() throws SketchException {
     try {
 //      ProcessHelper helper = new ProcessHelper(tmpFolder, new String[] { "ant", target });
@@ -364,9 +366,9 @@ class AndroidBuild extends JavaBuild {
     consoleLogger.setErrorPrintStream(System.err);
     consoleLogger.setOutputPrintStream(System.out);  // ? uncommented before
     // WARN, INFO, VERBOSE, DEBUG
-    //consoleLogger.setMessageOutputLevel(Project.MSG_ERR);
+    consoleLogger.setMessageOutputLevel(Project.MSG_ERR);
 //    consoleLogger.setMessageOutputLevel(Project.MSG_INFO);
-    consoleLogger.setMessageOutputLevel(Project.MSG_DEBUG);
+//    consoleLogger.setMessageOutputLevel(Project.MSG_DEBUG);
     p.addBuildListener(consoleLogger);
 
     // This logger is used to pick up javac errors to be parsed into
