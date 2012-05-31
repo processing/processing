@@ -545,9 +545,6 @@ public class PGraphics extends PImage implements PConstants {
    */
   public int textureMode    = IMAGE;
   
-  public int textureWrap    = CLAMP;
-  public int textureQuality = BEST;
-
   /**
    * Current horizontal coordinate for texture, will always
    * be between 0 and 1, even if using textureMode(IMAGE).
@@ -1066,16 +1063,6 @@ public class PGraphics extends PImage implements PConstants {
     this.textureMode = mode;
   }
 
-  
-  public void textureWrap(int wrap) {
-    this.textureWrap = wrap;
-  }
-  
-  
-  public void textureQuality(int quality) {
-    this.textureQuality = quality;
-  }
-  
   
   /**
    * ( begin auto-generated from texture.xml )
