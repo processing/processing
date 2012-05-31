@@ -498,6 +498,11 @@ public class PGL {
   }  
   
   
+  public boolean primaryIsDoubleBuffered() {
+    return true;
+  }
+  
+  
   ///////////////////////////////////////////////////////////////////////////////////
   
   // Frame rendering  

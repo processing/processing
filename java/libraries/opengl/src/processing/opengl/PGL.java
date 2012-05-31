@@ -354,6 +354,19 @@ public class PGL {
   protected boolean setFramerate = false;
 
   ///////////////////////////////////////////////////////////////////////////////////
+  
+  // FBO for anti-aliased rendering  
+  
+  protected boolean needFBO = false;
+  protected int fboWidth, fboHeight;  
+  protected int numSamples;
+  protected int[] colorTex = { 0 };
+  protected int[] colorFBO = { 0 };
+  protected int[] multiFBO = { 0 };
+  protected int[] colorRenderBuffer = { 0 };
+  protected int[] packedDepthStencil = { 0 };
+  
+  ///////////////////////////////////////////////////////////////////////////////////
 
   // Texture rendering
 
@@ -466,6 +479,32 @@ public class PGL {
 
 
   public void initPrimarySurface(int antialias) {
+    /*
+    needFBO = false;
+    String osName = System.getProperty("os.name");
+    if (osName.equals("Mac OS X")) {
+      String version = System.getProperty("os.version");
+      String[] parts = version.split("\\.");
+      if (2 <= parts.length) {
+        int num = Integer.parseInt(parts[1]);
+        if (7 <= num && 1 < pg.quality && numSamples != pg.quality) {          
+          // We are on OSX Lion or newer, where JOGL doesn't properly
+          // support multisampling. As a temporary hack, we handle our
+          // own multisampled FBO for onscreen rendering with anti-aliasing.
+          needFBO = true;  
+          if (colorFBO[0] != 0) releaseFBO();
+          colorFBO[0] = 0;
+        }
+      }
+    } 
+    */
+    needFBO = false;
+    if (1 < pg.quality && numSamples != pg.quality) {
+      needFBO = true;
+      if (colorFBO[0] != 0) releaseFBO();
+      colorFBO[0] = 0;
+    }
+    
     if (profile == null) {
       profile = GLProfile.getDefault();
     } else {
@@ -486,7 +525,7 @@ public class PGL {
 
     // Setting up the desired GL capabilities;
     GLCapabilities caps = new GLCapabilities(profile);
-    if (1 < antialias) {
+    if (1 < antialias && !needFBO) {
       caps.setSampleBuffers(true);
       caps.setNumSamples(antialias);
     } else {
@@ -544,6 +583,65 @@ public class PGL {
     if (!setFramerate) {
       setFramerate(targetFramerate);
     }
+    
+    if (needFBO && colorFBO[0] == 0) {
+      numSamples = pg.quality;
+      
+      String ext = gl.glGetString(GL.GL_EXTENSIONS); 
+      if (-1 < ext.indexOf("texture_non_power_of_two")) {
+        fboWidth = pg.width;
+        fboHeight = pg.height;
+      } else {
+        fboWidth = PGL.nextPowerOfTwo(pg.width);
+        fboHeight = PGL.nextPowerOfTwo(pg.height);
+      }            
+      if (ext.indexOf("packed_depth_stencil") == -1 || gl2x == null) {
+        // We could add additional code to handle the lack of the packed depth+stencil extension, later... maybe.
+        throw new RuntimeException("Catastrophic error: cannot create multisampled surface for rendering... sorry!"); 
+      }
+      
+      // Create the color texture...
+      gl.glGenTextures(1, colorTex, 0);
+      gl.glBindTexture(GL.GL_TEXTURE_2D, colorTex[0]);    
+      gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);    
+      gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
+      gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE);
+      gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP_TO_EDGE);
+      gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, fboWidth, fboHeight, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, null);
+      initTexture(GL.GL_TEXTURE_2D, GL.GL_RGBA, fboWidth, fboHeight);    
+      gl.glBindTexture(GL.GL_TEXTURE_2D, 0);      
+     
+      // ...and attach to the color framebuffer.
+      gl.glGenFramebuffers(1, colorFBO, 0); 
+      gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, colorFBO[0]);
+      gl.glFramebufferTexture2D(GL.GL_FRAMEBUFFER, GL.GL_COLOR_ATTACHMENT0, GL.GL_TEXTURE_2D, colorTex[0], 0);
+      gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, 0);
+      
+      // Now, creating mutisampled FBO with packed depth and stencil buffers.      
+      gl.glGenFramebuffers(1, multiFBO, 0);
+      gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, multiFBO[0]);
+      
+      // color render buffer...
+      gl.glGenRenderbuffers(1, colorRenderBuffer, 0);
+      gl.glBindRenderbuffer(GL.GL_RENDERBUFFER, colorRenderBuffer[0]);      
+      gl2x.glRenderbufferStorageMultisample(GL.GL_RENDERBUFFER, numSamples, GL.GL_RGBA8, fboWidth, fboHeight);
+      gl.glFramebufferRenderbuffer(GL.GL_FRAMEBUFFER, GL.GL_COLOR_ATTACHMENT0, GL.GL_RENDERBUFFER, colorRenderBuffer[0]);
+      
+      // packed depth+stencil buffer...
+      gl.glGenRenderbuffers(1, packedDepthStencil, 0);
+      gl.glBindRenderbuffer(GL.GL_RENDERBUFFER, packedDepthStencil[0]);      
+      gl2x.glRenderbufferStorageMultisample(GL.GL_RENDERBUFFER, numSamples, GL.GL_DEPTH24_STENCIL8, fboWidth, fboHeight);
+      gl.glFramebufferRenderbuffer(GL.GL_FRAMEBUFFER, GL.GL_DEPTH_ATTACHMENT, GL.GL_RENDERBUFFER, packedDepthStencil[0]);
+      gl.glFramebufferRenderbuffer(GL.GL_FRAMEBUFFER, GL.GL_STENCIL_ATTACHMENT, GL.GL_RENDERBUFFER, packedDepthStencil[0]);      
+      
+      // All set with multisampled FBO!
+      gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, 0);
+      
+      // The screen framebuffer is the color FBO just created. We need
+      // to update the screenFramebuffer object so when the  framebuffer 
+      // is popped back to the screen, the correct id is set.
+      PGraphicsOpenGL.screenFramebuffer.glFboID = colorFBO[0];      
+    }
   }
 
 
@@ -553,6 +651,20 @@ public class PGL {
     gl2x = primary.gl2x;
   }
 
+  
+  public boolean primaryIsDoubleBuffered() {
+    return !needFBO;
+  }
+  
+  
+  protected void releaseFBO() {    
+    gl.glDeleteTextures(1, colorTex, 0);
+    gl.glDeleteFramebuffers(1, colorFBO, 0);    
+    gl.glDeleteFramebuffers(1, multiFBO, 0);
+    gl.glDeleteRenderbuffers(1, colorRenderBuffer, 0);
+    gl.glDeleteRenderbuffers(1, packedDepthStencil, 0);
+  }
+  
 
   ///////////////////////////////////////////////////////////////////////////////////
 
@@ -560,10 +672,36 @@ public class PGL {
 
 
   public void beginOnscreenDraw(boolean clear) {
+    if (needFBO) {
+      System.out.println("multisampled offscreen rendering...");
+      // Render the scene to the mutisampled buffer...
+      gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, multiFBO[0]);    
+      gl2x.glDrawBuffer(GL.GL_COLOR_ATTACHMENT0);
+      
+      // Now the screen buffer is the multisample FBO.
+      PGraphicsOpenGL.screenFramebuffer.glFboID = multiFBO[0];
+    }
   }
 
 
   public void endOnscreenDraw(boolean clear0) {
+    if (needFBO) {
+      // Blit the contents of the multisampled FBO into the color FBO:
+      gl.glBindFramebuffer(GL2.GL_READ_FRAMEBUFFER, multiFBO[0]);
+      gl.glBindFramebuffer(GL2.GL_DRAW_FRAMEBUFFER, colorFBO[0]);
+      gl2x.glBlitFramebuffer(0, 0, fboWidth, fboHeight,
+                             0, 0, fboWidth, fboHeight, 
+                             GL.GL_COLOR_BUFFER_BIT, GL.GL_NEAREST);
+            
+      gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, 0);
+      
+      // And finally write the color texture to the screen.
+      gl.glClearColor(0, 0, 0, 0);
+      gl.glClear(GL.GL_DEPTH_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT);      
+      drawTexture(GL.GL_TEXTURE_2D, colorTex[0], fboWidth, fboHeight, 0, 0, pg.width, pg.height, 0, 0, pg.width, pg.height);
+      
+      PGraphicsOpenGL.screenFramebuffer.glFboID = colorFBO[0];       
+    }
   }
 
 

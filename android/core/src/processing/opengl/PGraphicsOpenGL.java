@@ -1706,12 +1706,14 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void beginPixelsOp(int op) {
     if (primarySurface) {
-      // We read or write from the back buffer, where all the 
-      // drawing in the current frame is taking place.
-      if (op == OP_READ) {
-        pgl.glReadBuffer(PGL.GL_BACK);
-      } else {
-        pgl.glDrawBuffer(PGL.GL_BACK);
+      if (pgl.primaryIsDoubleBuffered()) {
+        // We read or write from the back buffer, where all the 
+        // drawing in the current frame is taking place.
+        if (op == OP_READ) {
+          pgl.glReadBuffer(PGL.GL_BACK);
+        } else {
+          pgl.glDrawBuffer(PGL.GL_BACK);
+        }
       }
       offscreenNotCurrent = false;
     } else {
