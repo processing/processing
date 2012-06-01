@@ -804,41 +804,9 @@ public class PApplet extends Activity implements PConstants, Runnable {
       // Set semi-arbitrary size; will be set properly when surfaceChanged() called
       g3.setSize(wide, high);
 
-      String depth = sketchColorDepth();
-      if (!depth.equals(DEFAULT_COLOR_DEPTH)) {
-        // Setting user specified color depth. Otherwise, we let the
-        // device to choose the configuration it pleases.
-
-        if (sketchTranslucency()) {
-          surfaceHolder.setFormat(PixelFormat.TRANSLUCENT);
-        }
-
-        String list[] = depth.split(":");
-        int val[] = {4, 4, 4, 4, 16, 0};
-        if (3 < list.length) {
-          // Getting RGBA bits.
-          for (int i = 0; i < 4; i++) {
-            val[i] = parseInt(list[i]);
-          }
-        }
-        if (4 < list.length) {
-          // Getting depth bits.
-          val[4] = parseInt(list[4]);
-        }
-        if (5 < list.length) {
-          // Getting stencil bits.
-          val[5] = parseInt(list[5]);
-        }
-
-        // We use our own context factory and config chooser to set the desired RGBA and depth+stencil
-        // bits.
-        setEGLContextFactory(g3.pgl.getContextFactory());
-        setEGLConfigChooser(g3.pgl.getConfigChooser(val[0], val[1], val[2], val[3], val[4], val[5]));
-      } else {
-        // Tells the default EGLContextFactory and EGLConfigChooser to create an GLES2 context.
-        setEGLContextClientVersion(2);
-      }
-
+      // Tells the default EGLContextFactory and EGLConfigChooser to create an GLES2 context.
+      setEGLContextClientVersion(2);
+ 
       // The renderer can be set only once.
       setRenderer(g3.pgl.getRenderer());
       setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
@@ -1020,16 +988,6 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
   public String sketchRenderer() {
     return JAVA2D;
-  }
-
-
-  public boolean sketchTranslucency() {
-    return true;
-  }
-
-  
-  public String sketchColorDepth() {
-    return DEFAULT_COLOR_DEPTH;
   }
 
   
