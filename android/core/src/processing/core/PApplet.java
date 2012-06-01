@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-10 Ben Fry and Casey Reas
+  Copyright (c) 2004-12 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This library is free software; you can redistribute it and/or
@@ -804,7 +804,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
       // Set semi-arbitrary size; will be set properly when surfaceChanged() called
       g3.setSize(wide, high);
 
-      String depth = sketchColordepth();
+      String depth = sketchColorDepth();
       if (!depth.equals(DEFAULT_COLOR_DEPTH)) {
         // Setting user specified color depth. Otherwise, we let the
         // device to choose the configuration it pleases.
@@ -1027,10 +1027,12 @@ public class PApplet extends Activity implements PConstants, Runnable {
     return true;
   }
 
-  public String sketchColordepth() {
+  
+  public String sketchColorDepth() {
     return DEFAULT_COLOR_DEPTH;
   }
 
+  
   public void orientation(int which) {
     if (which == PORTRAIT) {
       setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
