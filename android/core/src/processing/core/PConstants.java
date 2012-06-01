@@ -109,11 +109,6 @@ public interface PConstants {
 
   // built-in rendering options
 
-  static final String DEFAULT_COLOR_DEPTH = "DEFAULT";
-  static final String LOW_COLOR_DEPTH = "4:4:4:4:16:0";
-  static final String MEDIUM_COLOR_DEPTH = "8:8:8:8:16:0";
-  static final String HIGH_COLOR_DEPTH = "8:8:8:8:24:8";
-
   static final String JAVA2D = "processing.core.PGraphicsAndroid2D";
   static final String P2D = "processing.opengl.PGraphics2D";
   static final String P3D = "processing.opengl.PGraphics3D";
