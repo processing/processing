@@ -38,7 +38,7 @@ import java.util.NoSuchElementException;
  * By Andres Colubri
  * 
  */
-public class PTexture implements PConstants { 
+public class Texture implements PConstants { 
   public int width, height;
       
   protected PApplet parent;           // The Processing applet
@@ -65,7 +65,7 @@ public class PTexture implements PConstants {
   protected boolean flippedY;
 
   protected int[] tempPixels = null;
-  protected PFramebuffer tempFbo = null;
+  protected FrameBuffer tempFbo = null;
   
   protected Object bufferSource;
   protected LinkedList<BufferData> bufferCache = null;
@@ -84,7 +84,7 @@ public class PTexture implements PConstants {
    * @param width  int
    * @param height  int
    */  
-  public PTexture(PApplet parent, int width, int height) {
+  public Texture(PApplet parent, int width, int height) {
     this(parent, width, height, new Parameters());
   }
     
@@ -97,7 +97,7 @@ public class PTexture implements PConstants {
    * @param height int 
    * @param params Parameters       
    */  
-  public PTexture(PApplet parent, int width, int height, Object params) { 
+  public Texture(PApplet parent, int width, int height, Object params) { 
     this.parent = parent;
        
     pg = (PGraphicsOpenGL)parent.g;
@@ -168,7 +168,7 @@ public class PTexture implements PConstants {
     release();
     
     // Creating new texture with the appropriate size.
-    PTexture tex = new PTexture(parent, wide, high, getParameters());
+    Texture tex = new Texture(parent, wide, high, getParameters());
     
     // Copying the contents of this texture into tex.
     tex.set(this);
@@ -198,23 +198,23 @@ public class PTexture implements PConstants {
 
   
   public void set(PImage img) {
-    PTexture tex = (PTexture)img.getCache(pg);
+    Texture tex = (Texture)img.getCache(pg);
     set(tex);
   }
   
   
   public void set(PImage img, int x, int y, int w, int h) {
-    PTexture tex = (PTexture)img.getCache(pg);
+    Texture tex = (Texture)img.getCache(pg);
     set(tex, x, y, w, h);
   }
   
   
-  public void set(PTexture tex) {
+  public void set(Texture tex) {
     copyTexels(tex, 0, 0, tex.width, tex.height, true);
   }
   
   
-  public void set(PTexture tex, int x, int y, int w, int h) {
+  public void set(Texture tex, int x, int y, int w, int h) {
     copyTexels(tex, x, y, w, h, true);
   }  
 
@@ -346,7 +346,7 @@ public class PTexture implements PConstants {
     int size = glWidth * glHeight;
         
     if (tempFbo == null) {
-      tempFbo = new PFramebuffer(parent, glWidth, glHeight);
+      tempFbo = new FrameBuffer(parent, glWidth, glHeight);
     }
     
     // Attaching the texture to the color buffer of a FBO, binding the FBO and reading the pixels
@@ -374,12 +374,12 @@ public class PTexture implements PConstants {
   // destination).
   
   
-  public void put(PTexture tex) {
+  public void put(Texture tex) {
     copyTexels(tex, 0, 0, tex.width, tex.height, false);
   }  
 
   
-  public void put(PTexture tex, int x, int y, int w, int h) {
+  public void put(Texture tex, int x, int y, int w, int h) {
     copyTexels(tex, x, y, w, h, false);
   }   
     
@@ -863,13 +863,13 @@ public class PTexture implements PConstants {
   
   
   // Copies source texture tex into this.
-  protected void copyTexels(PTexture tex, int x, int y, int w, int h, boolean scale) {
+  protected void copyTexels(Texture tex, int x, int y, int w, int h, boolean scale) {
     if (tex == null) {
       throw new RuntimeException("PTexture: source texture is null");
     }        
     
     if (tempFbo == null) {
-      tempFbo = new PFramebuffer(parent, glWidth, glHeight);
+      tempFbo = new FrameBuffer(parent, glWidth, glHeight);
     }
     
     // This texture is the color (destination) buffer of the FBO. 
@@ -911,7 +911,7 @@ public class PTexture implements PConstants {
     pgl.glTexSubImage2D(glTarget, level, x, y, w, h, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, buffer);
   }
   
-  protected void copyObject(PTexture src) {
+  protected void copyObject(Texture src) {
     // The OpenGL texture of this object is replaced with the one from the source object, 
     // so we delete the former to avoid resource wasting.
     release(); 
