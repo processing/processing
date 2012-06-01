@@ -174,7 +174,7 @@ public class JavaMode extends Mode {
   
   public Runner handleRun(Sketch sketch, RunnerListener listener) throws SketchException {
     JavaBuild build = new JavaBuild(sketch);
-    String appletClassName = build.build();
+    String appletClassName = build.build(false);
     if (appletClassName != null) {
       final Runner runtime = new Runner(build, listener);
       new Thread(new Runnable() {
@@ -190,7 +190,7 @@ public class JavaMode extends Mode {
 
   public Runner handlePresent(Sketch sketch, RunnerListener listener) throws SketchException {
     JavaBuild build = new JavaBuild(sketch);
-    String appletClassName = build.build();
+    String appletClassName = build.build(false);
     if (appletClassName != null) {
       final Runner runtime = new Runner(build, listener);
       new Thread(new Runnable() {

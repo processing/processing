@@ -162,6 +162,7 @@ public class AndroidPreprocessor extends PdePreprocessor {
 
     if ((mode == Mode.STATIC) || (mode == Mode.ACTIVE)) {
       out.println();
+      
       if (sketchWidth != null) {
         out.println(indent + "public int sketchWidth() { return " + sketchWidth + "; }");
       }

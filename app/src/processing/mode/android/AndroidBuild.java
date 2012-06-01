@@ -125,8 +125,9 @@ class AndroidBuild extends JavaBuild {
 //    if (sizeInfo == null) {
 //      throw new SketchException("Could not parse the size() command.");
 //    }
+    // On Android, this init will throw a SketchException if there's a problem with size()
     preproc.initSketchSize(sketch.getMainProgram());
-    sketchClassName = preprocess(srcFolder, manifest.getPackageName(), preproc);
+    sketchClassName = preprocess(srcFolder, manifest.getPackageName(), preproc, false);
     if (sketchClassName != null) {
       File tempManifest = new File(tmpFolder, "AndroidManifest.xml");
       manifest.writeBuild(tempManifest, sketchClassName, target.equals("debug"));

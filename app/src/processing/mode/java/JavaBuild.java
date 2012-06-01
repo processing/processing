@@ -121,8 +121,8 @@ public class JavaBuild {
    * @return null if compilation failed, main class name if not
    * @throws RunnerException
    */
-  public String build() throws SketchException {
-    return build(sketch.makeTempFolder(), sketch.makeTempFolder());
+  public String build(boolean sizeWarning) throws SketchException {
+    return build(sketch.makeTempFolder(), sketch.makeTempFolder(), sizeWarning);
   }
 
 
@@ -135,7 +135,7 @@ public class JavaBuild {
    *
    * @return null if compilation failed, main class name if not
    */
-  public String build(File srcFolder, File binFolder) throws SketchException {
+  public String build(File srcFolder, File binFolder, boolean sizeWarning) throws SketchException {
     this.srcFolder = srcFolder;
     this.binFolder = binFolder;
 
@@ -143,7 +143,7 @@ public class JavaBuild {
 //    Base.openFolder(binFolder);
 
     // run the preprocessor
-    String classNameFound = preprocess(srcFolder);
+    String classNameFound = preprocess(srcFolder, sizeWarning);
 
     // compile the program. errors will happen as a RunnerException
     // that will bubble up to whomever called build().
@@ -183,8 +183,8 @@ public class JavaBuild {
 //  }
 
 
-  public String preprocess(File srcFolder) throws SketchException {
-    return preprocess(srcFolder, null, new PdePreprocessor(sketch.getName()));
+  public String preprocess(File srcFolder, boolean sizeWarning) throws SketchException {
+    return preprocess(srcFolder, null, new PdePreprocessor(sketch.getName()), sizeWarning);
   }
 
 
@@ -197,7 +197,8 @@ public class JavaBuild {
    */
   public String preprocess(File srcFolder,
                            String packageName,
-                           PdePreprocessor preprocessor) throws SketchException {
+                           PdePreprocessor preprocessor, 
+                           boolean sizeWarning) throws SketchException {
     // make sure the user isn't playing "hide the sketch folder"
     sketch.ensureExistence();
 
@@ -246,7 +247,7 @@ public class JavaBuild {
     // if this fella is OpenGL, and if so, to add the import. It's messy and
     // gross and someday we'll just always include OpenGL.
     String[] sizeInfo =
-      preprocessor.initSketchSize(sketch.getMainProgram());
+      preprocessor.initSketchSize(sketch.getMainProgram(), sizeWarning);
       //PdePreprocessor.parseSketchSize(sketch.getMainProgram(), false);
     if (sizeInfo != null) {
       String sketchRenderer = sizeInfo[3];
@@ -710,7 +711,7 @@ public class JavaBuild {
 
     srcFolder = sketch.makeTempFolder();
     binFolder = sketch.makeTempFolder();
-    String foundName = build(srcFolder, binFolder);
+    String foundName = build(srcFolder, binFolder, true);
 
     // (already reported) error during export, exit this function
     if (foundName == null) return false;
@@ -1042,7 +1043,7 @@ public class JavaBuild {
     // not redoing the compilation for each platform. In particular, though,
     // importedLibraries won't be set until the preprocessing has finished,
     // so we have to do that before the stuff below.
-    String foundName = build();
+    String foundName = build(true);
 
     // (already reported) error during export, exit this function
     if (foundName == null) return false;
