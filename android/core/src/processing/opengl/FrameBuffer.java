@@ -39,7 +39,7 @@ import java.nio.IntBuffer;
  * By Andres Colubri.
  */
 
-public class PFramebuffer implements PConstants {  
+public class FrameBuffer implements PConstants {  
   protected PApplet parent;
   protected PGraphicsOpenGL pg;
   protected PGL pgl;
@@ -61,22 +61,22 @@ public class PFramebuffer implements PConstants {
   protected int nsamples;
   
   protected int numColorBuffers;
-  protected PTexture[] colorBufferTex;
+  protected Texture[] colorBufferTex;
 
   protected boolean screenFb;
   protected boolean noDepth;  
    
   protected IntBuffer pixelBuffer;
 
-  PFramebuffer(PApplet parent, int w, int h) {
+  FrameBuffer(PApplet parent, int w, int h) {
     this(parent, w, h, 1, 1, 0, 0, false, false);
   }  
   
-  PFramebuffer(PApplet parent, int w, int h, boolean screen) {    
+  FrameBuffer(PApplet parent, int w, int h, boolean screen) {    
     this(parent, w, h, 1, 1, 0, 0, false, screen);
   }
 
-  PFramebuffer(PApplet parent, int w, int h, int samples, int colorBuffers, 
+  FrameBuffer(PApplet parent, int w, int h, int samples, int colorBuffers, 
                int depthBits, int stencilBits, boolean packedDepthStencil, 
                boolean screen) {
     this.parent = parent;
@@ -109,7 +109,7 @@ public class PFramebuffer implements PConstants {
     }
         
     numColorBuffers = colorBuffers;
-    colorBufferTex = new PTexture[numColorBuffers];
+    colorBufferTex = new Texture[numColorBuffers];
     for (int i = 0; i < numColorBuffers; i++) {
       colorBufferTex[i] = null;
     }    
@@ -171,7 +171,7 @@ public class PFramebuffer implements PConstants {
     pg.popFramebuffer();    
   }
   
-  public void copy(PFramebuffer dest) {
+  public void copy(FrameBuffer dest) {
     pgl.glBindFramebuffer(PGL.GL_READ_FRAMEBUFFER, this.glFboID);
     pgl.glBindFramebuffer(PGL.GL_DRAW_FRAMEBUFFER, dest.glFboID);
     pgl.glBlitFramebuffer(0, 0, this.width, this.height,
@@ -228,17 +228,17 @@ public class PFramebuffer implements PConstants {
   // Color buffer setters.
   
   
-  public void setColorBuffer(PTexture tex) {
-    setColorBuffers(new PTexture[] { tex }, 1);
+  public void setColorBuffer(Texture tex) {
+    setColorBuffers(new Texture[] { tex }, 1);
   }
   
 
-  public void setColorBuffers(PTexture[] textures) {
+  public void setColorBuffers(Texture[] textures) {
     setColorBuffers(textures, textures.length);
   }
   
   
-  public void setColorBuffers(PTexture[] textures, int n) {
+  public void setColorBuffers(Texture[] textures, int n) {
     if (screenFb) return;
 
     if (numColorBuffers != PApplet.min(n, textures.length)) {
