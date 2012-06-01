@@ -1,29 +1,4 @@
-0205 android
-X finish xml writing on android
-X   http://stackoverflow.com/questions/2290945/writing-xml-on-android
-X   consider switch to android 2.2 as the minimum
-X screenWidth/Height replaced with displayWidth/Height
-X   update this on the Wiki page
-X docs: P2D and P3D are now OpenGL variations
-X Android mode is broken on Windows in Processing 2.0a5
-o   file a bug for this w/ Google
-X   http://code.google.com/p/processing/issues/detail?id=1022
-
-andres
-A GL2 specific code in Processing 2.0a5 break P3D on GLES2 hardware
-A   http://code.google.com/p/processing/issues/detail?id=1029
-A OpenGL/ES requires precision specifier on float types
-A   http://code.google.com/p/processing/issues/detail?id=1035
-A loadshape with obj file broken in 2.05a android mode.
-A   http://code.google.com/p/processing/issues/detail?id=1048
-A camera() and arc() don't work together
-A   http://code.google.com/p/processing/issues/detail?id=751
-
-earlier
-X remove unnecessary processing.xml.* code from android-core
-X   http://code.google.com/p/processing/issues/detail?id=214
-X remove unnecessary processing.xml.* code from android-core
-X   http://code.google.com/p/processing/issues/detail?id=214
+0206 android
 
 
 _ Android OPENGL renderer + JAVA2D PGraphics results in PTexture exception
