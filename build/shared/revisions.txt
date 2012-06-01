@@ -1,3 +1,149 @@
+PROCESSING 2.0a6 (REV 0205) - 1 June 2012
+
+Lots of changes since the last update as we move closer to beta.
+
+Major updates for 2.0 can be seen on the Changes page of the Wiki:
+http://wiki.processing.org/w/Changes
+
+[ changes ]
+
++ Lots of updates to how full screen, multiple displays, etc work:
+  http://wiki.processing.org/w/Window_Size_and_Full_Screen
+
++ Added an option for selecting the default display inside Preferences.
+
++ P2D and P3D are now variations of the OpenGL renderer. 
+
++ XML and Table are now part of the processing.data.* package. 
+  There's also new loadTable() and loadXML() methods in PApplet.
+
+[ bug fixes ]
+
++ Renaming .pde to .java (or vice versa) complains
+  http://code.google.com/p/processing/issues/detail?id=776
+  regression from: http://processing.org/bugs/bugzilla/543.html
+
++ handleFindReference in Editor.java should be public for alternative modes (?)
+  http://code.google.com/p/processing/issues/detail?id=713
+
++ Base.listFiles does not list recursively if extension is given
+  http://code.google.com/p/processing/issues/detail?id=718
+
++ ByteUnderflowException thrown and Font not reported
+  http://code.google.com/p/processing/issues/detail?id=442
+
++ Convert tabs to spaces when pasting text
+  http://code.google.com/p/processing/issues/detail?id=69
+
++ Fixed up some of the error messages inside Compiler.
+
++ When internal tools crash, don't add them to the menu
+  (prevents the PDE from locking up on startup).
+
+[ fixed earlier ] 
+
++ Export reports "Could not copy source file" (even though it works)
+  http://code.google.com/p/processing/issues/detail?id=638
+
++ Preferences window not visible on taskbar
+  http://code.google.com/p/processing/issues/detail?id=63
+
++ Paste value into color picker tool does not update box-slider
+  http://code.google.com/p/processing/issues/detail?id=68
+
++ Unable to access Javascript examples
+  http://code.google.com/p/processing/issues/detail?id=909
+
++ Closing sketch file closes applet
+  http://code.google.com/p/processing/issues/detail?id=606
+
+[ core ]
+
++ Add support for println(long) because it was converting the type to float
+  http://code.google.com/p/processing/issues/detail?id=969
+
++ createGraphics for JAVA2D generates the wrong error msg w/ w/h <= 0
+  http://code.google.com/p/processing/issues/detail?id=983
+
++ Removed NanoXML, added save() method, other wish list features.
+  http://code.google.com/p/processing/issues/detail?id=904
+
++ Fix whitespace issue with XML
+  http://code.google.com/p/processing/issues/detail?id=975
+
++ Make displayWidth/Height work properly with multiple screen.
+  (In the past, screen.width and screen.height just returned the default
+  display size, not necessarily the display being used.) 
+
++ Built in Hansi's full screen API for OS X, so that sketches can use
+  full screen without exclusive mode. See the Wiki for details.
+  http://wiki.processing.org/w/Window_Size_and_Full_Screen
+
++ Now attempts detect when a sketch's size is the full screen, 
+  and if so removes the frame border, etc.
+
++ --display option now works properly (on OS X and elsewhere)
+  http://code.google.com/p/processing/issues/detail?id=71
+
+[ OpenGL by Andres ] 
+
++ polygon shapes without fill slowdown render progressively
+  http://code.google.com/p/processing/issues/detail?id=1028
+
++ screenY(x,y,z) returns incorrect coordinate
+  http://code.google.com/p/processing/issues/detail?id=1007
+
++ lights() behaving differently with OPENGL2 than original OPENGL
+  http://code.google.com/p/processing/issues/detail?id=619
+
++ directionalLight() is wrong on box()
+  http://code.google.com/p/processing/issues/detail?id=966
+
++ PShape3D uses a lot of memory
+  http://code.google.com/p/processing/issues/detail?id=1046
+
++ triangle in first ring of sphere() not being made properly
+  http://code.google.com/p/processing/issues/detail?id=1005
+
++ beginRaw() not working with 3D
+  http://code.google.com/p/processing/issues/detail?id=744
+
++ set() in 3D does not work on 2.0a5
+  http://code.google.com/p/processing/issues/detail?id=1069
+
++ frustum() and ortho() broken in P3D
+  http://code.google.com/p/processing/issues/detail?id=867
+
++ get() with OPENGL is grabbing the wrong part of the image
+  http://code.google.com/p/processing/issues/detail?id=191
+
++ OpenGL noSmooth() does not work
+  http://code.google.com/p/processing/issues/detail?id=328
+
+[ android ] 
+
++ Android SDK Tools revision 19 (later may work too) are required.
+
++ Android mode no longer broken on Windows. Google has fixed the bug, 
+  but you'll need to use the latest SDK.
+  http://code.google.com/p/processing/issues/detail?id=1022
+
++ GL2 specific code in Processing 2.0a5 break P3D on GLES2 hardware
+  http://code.google.com/p/processing/issues/detail?id=1029
+
++ OpenGL/ES requires precision specifier on float types
+  http://code.google.com/p/processing/issues/detail?id=1035
+
++ loadShape() with obj files was broken in 2.0a5
+  http://code.google.com/p/processing/issues/detail?id=1048
+
++ camera() and arc() now work together
+  http://code.google.com/p/processing/issues/detail?id=751
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING 2.0a5 (REV 0204) - 23 March 2012
 
 Major updates in this release include a huge revamp of the OpenGL library
