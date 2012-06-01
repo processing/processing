@@ -28,6 +28,10 @@ o   pro: can write out error messages (or output)
 o   con: loses cross platform ability
 o   but: open() is platform specific anyway, ppl can use exec()
 X   deciding no, open() would talk to the launcher, not the app
+X size(640, 480, P3D ); -> doesn't pick up as a P3D sketch
+X too many warnings re: use of size() command
+X   fjen complaint about size(), update with links to new docs:
+X   http://code.google.com/p/processing/issues/detail?id=1071
 
 fixed earlier
 X Export reports "Could not copy source file" (even though it works)
@@ -65,13 +69,20 @@ X   if no window color set, then don't apply it
 o also add option for FSEM or not
 X   nope, FSEM too buggy and error-prone
 
-_ size(640, 480, P3D ); -> doesn't pick up as a P3D sketch
-_ too many warnings re: use of size() command
-_ fjen complaint about size(), update with links to new docs:
-_   http://code.google.com/p/processing/issues/detail?id=1071
-_ setAntiAlias() should instead just use parent.smooth
-_ antialias -> smoothMode(), smoothQuality(), quality()
-_   NEAREST, BILINEAR, BICUBIC, or 0, 2, 4? (need 8x too, so maybe numbers)
+o find in reference issues
+o   if() and for() don't work, they look for for_.html instead of for.html
+o   XMLElement is not linked for find in ref
+o   the ? operator is not in find in ref (no ref page either?)
+o update keywords generator script on the site
+o   perhaps move this closer to the dev process?
+o move reference folder around so that it matches site organization
+o   otherwise several links break on the main faq page
+o discuss i18n issues and proper system (?)
+o look through 404 issues on the site
+o TRIANGLE_STRIP not highlighted for "find in reference"
+o   nor is it listed on the reference page
+o   so students can't find the ref for it
+o   needs to link TRIANGLE_STRIP to the beginShape() reference
 
 recent/open
 X add EditorState class, device-aware placement
@@ -140,20 +151,6 @@ _   but don't do this with untitled, cuz it kinda stinks
 _   this is too weird--just put examples into individual zip files
 _   mark example files as untitled
 _   though will that require the sketch to be saved before export?
-o find in reference issues
-o   if() and for() don't work, they look for for_.html instead of for.html
-o   XMLElement is not linked for find in ref
-o   the ? operator is not in find in ref (no ref page either?)
-o update keywords generator script on the site
-o   perhaps move this closer to the dev process?
-o move reference folder around so that it matches site organization
-o   otherwise several links break on the main faq page
-o discuss i18n issues and proper system (?)
-o look through 404 issues on the site
-o TRIANGLE_STRIP not highlighted for "find in reference"
-o   nor is it listed on the reference page
-o   so students can't find the ref for it
-o   needs to link TRIANGLE_STRIP to the beginShape() reference
 
 
 2.0 / command line

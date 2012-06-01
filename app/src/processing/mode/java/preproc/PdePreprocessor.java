@@ -183,8 +183,8 @@ public class PdePreprocessor {
   }
 
 
-  public String[] initSketchSize(String code) throws SketchException {
-    String[] info = parseSketchSize(code, true);
+  public String[] initSketchSize(String code, boolean sizeWarning) throws SketchException {
+    String[] info = parseSketchSize(code, sizeWarning);
     if (info != null) {
       sizeStatement = info[0];
       sketchWidth = info[1];
@@ -249,8 +249,11 @@ public class PdePreprocessor {
         return null;
       }
 
+      // Remove additional space 'round the renderer
+      matches[3] = matches[3].trim();
+
       // if the renderer entry is empty, set it to null
-      if (matches[3].trim().length() == 0) {
+      if (matches[3].length() == 0) {
         matches[3] = null;
       }
       return matches;
@@ -832,13 +835,25 @@ public class PdePreprocessor {
 
     if ((mode == Mode.STATIC) || (mode == Mode.ACTIVE)) {
       if (sketchWidth != null && !hasMethod("sketchWidth")) {
-        out.println(indent + "public int sketchWidth() { return " + sketchWidth + "; }");
+        // Only include if it's a number (a variable will be a problem)
+        if (PApplet.parseInt(sketchWidth, -1) != -1 || sketchWidth.equals("displayWidth")) {  
+          out.println(indent + "public int sketchWidth() { return " + sketchWidth + "; }");
+        }
       }
       if (sketchHeight != null && !hasMethod("sketchHeight")) {
-        out.println(indent + "public int sketchHeight() { return " + sketchHeight + "; }");
+        // Only include if it's a number
+        if (PApplet.parseInt(sketchHeight, -1) != -1 || sketchHeight.equals("displayHeight")) {  
+          out.println(indent + "public int sketchHeight() { return " + sketchHeight + "; }");
+        }
       }
       if (sketchRenderer != null && !hasMethod("sketchRenderer")) {
-        out.println(indent + "public String sketchRenderer() { return " + sketchRenderer + "; }");
+        // Only include if it's a known renderer (otherwise it might be a variable)
+        if (sketchRenderer.equals("P2D") || 
+            sketchRenderer.equals("P3D") || 
+            sketchRenderer.equals("OPENGL") ||
+            sketchRenderer.equals("JAVA2D")) {
+          out.println(indent + "public String sketchRenderer() { return " + sketchRenderer + "; }");
+        }
       }
 
       if (!hasMethod("main")) {

@@ -11,23 +11,19 @@ X   loadXML and loadTable are now in desktop
 o trimming text on URLs?
 o   http://code.google.com/p/processing/issues/detail?id=715
 X change screenWidth/Height to displayWidth/Height
-_   update wiki.processing.org/w/Window_Size_and_Full_Screen
-_ docs: P2D and P3D are now OpenGL variations
+X   update wiki.processing.org/w/Window_Size_and_Full_Screen
 X add createGraphics() with no renderer param to point to JAVA2D
 X   also added to Android
-_   add to docs
 X removals
 X   CENTER_RADIUS, CENTER_DIAMETER, NORMALIZED 
 X   text(x, y, w, h, z)
 X   textX/Y/Z variables
-_   update changes Wiki
-_ let's remove 'online'
+X   update changes Wiki
+X let's remove 'online'
 X   changed to 'appletViewer'
-_   doesn't test net connection to see if 'online'
-_   only tests whether running inside an applet viewer
 X registerSize() has been removed
-_   it hasn't worked for a while, also not a good way to get updates on size
-_   use pre() or something like that instead
+X   it hasn't worked for a while, also not a good way to get updates on size
+X   use pre() or something like that instead
 o displayWidth/Height not set until just before setup
 o   don't use size(displayWidth, displayHeight) anymore
 o   to do full screen, should use: 
@@ -101,11 +97,6 @@ o vectors shouldn't be exposed, need to expose attr lists as arrays
 o   or also add a method for getting the vectors?
 X   no longer an issue post-NanoXML
 X several other items under the LIBRARIES / XML section below
-_ hasChildren()? 
-_   http://code.google.com/p/processing/issues/detail?id=1045
-
-X test what happens with NPE in OpenGL, does the error make sense?
-_   nope, it doesn't, need to clean this up
 
 sort out full screen issues
 X make screenWidth and screenHeight work properly with multiple screens
@@ -151,6 +142,22 @@ o full screen not working on snow leopard
 X   fix build script to include the jnilib, also add more error checks
 X screenX and screenY are both already taken, so not including vars for them
 X   decide on naming for the next release
+
+
+docs (2.0a6)
+_ 'online' has been changed to 'appletViewer'
+_   doesn't test net connection to see if 'online'
+_   only tests whether running inside an applet viewer
+_ createGraphics() with no renderer param to point to JAVA2D
+_ docs: P2D and P3D are now OpenGL variations
+
+_ setAntiAlias() should instead just use parent.smooth
+_ antialias -> smoothMode(), smoothQuality(), quality()
+_   NEAREST, BILINEAR, BICUBIC, or 0, 2, 4? (need 8x too, so maybe numbers)
+_ add hasChildren() to XML library?
+_   http://code.google.com/p/processing/issues/detail?id=1045
+X test what happens with NPE in OpenGL, does the error make sense?
+_   nope, it doesn't, need to clean this up
 
 _ move requestFocusInWindow() to safter EDT place
 _ look into using BufferStrategy again to improve performance
