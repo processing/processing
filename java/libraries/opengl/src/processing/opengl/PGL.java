@@ -347,7 +347,7 @@ public class PGL {
   protected PGLListener listener;
 
   /** Animator to drive the rendering thread in NEWT */
-  protected NEWTAnimator animator;
+  protected GLAnimator animator;
 
   /** Desired target framerate */
   protected float targetFramerate = 60;
@@ -543,7 +543,7 @@ public class PGL {
       capabilities = canvasAWT.getChosenGLCapabilities();
       canvas = canvasAWT;
     } else if (toolkit == NEWT) {
-      window = GLWindow.create(capabilities);
+      window = GLWindow.create(caps);
       canvasNEWT = new NewtCanvasAWT(window);
 
       pg.parent.setLayout(new BorderLayout());
@@ -553,7 +553,7 @@ public class PGL {
 
       listener = new PGLListener();
       window.addGLEventListener(listener);
-      animator = new NEWTAnimator(window);
+      animator = new GLAnimator(window);
       animator.start();
 
       capabilities = window.getChosenGLCapabilities();
@@ -2001,8 +2001,8 @@ public class PGL {
 
   /** Animator subclass to drive render loop when using NEWT.
    **/
-  protected static class NEWTAnimator extends AnimatorBase {
-    private static int count = 0;
+  protected static class GLAnimator extends AnimatorBase {
+//    private static int count = 0;
     private Timer timer = null;
     private TimerTask task = null;
     private volatile boolean shouldRun;
@@ -2014,7 +2014,7 @@ public class PGL {
     /** Creates an CustomAnimator with an initial drawable to
      * animate.
      */
-    public NEWTAnimator(GLAutoDrawable drawable) {
+    public GLAnimator(GLAutoDrawable drawable) {
       if (drawable != null) {
         add(drawable);
       }
@@ -2048,15 +2048,15 @@ public class PGL {
       }
 
       task = new TimerTask() {
-        private boolean firstRun = true;
+//        private boolean firstRun = true;
         public void run() {
-          if (firstRun) {
-            Thread.currentThread().setName("NEWT-RenderQueue-" + count);
-            firstRun = false;
-            count++;
-          }
-          if (NEWTAnimator.this.shouldRun) {
-            NEWTAnimator.this.animThread = Thread.currentThread();
+//          if (firstRun) {
+//            Thread.currentThread().setName("NEWT-RenderQueue-" + count);
+//            firstRun = false;
+//            count++;
+//          }
+          if (GLAnimator.this.shouldRun) {
+            GLAnimator.this.animThread = Thread.currentThread();
             // display impl. uses synchronized block on the animator instance
             display();
             synchronized (this) {
