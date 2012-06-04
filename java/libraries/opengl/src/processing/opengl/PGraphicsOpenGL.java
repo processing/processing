@@ -47,17 +47,6 @@ import java.util.Stack;
  *
  */
 public class PGraphicsOpenGL extends PGraphics { 
-  // shaders
-  static public final int FLAT_SHADER    = 0;
-  static public final int LIGHT_SHADER   = 1;
-  static public final int TEXTURE_SHADER = 2;
-  static public final int FULL_SHADER    = 3;
-  static public final int LINE3D_SHADER  = 4;
-  static public final int POINT3D_SHADER = 5;
-  
-  public int textureWrap    = Texture.CLAMP;
-  public int textureQuality = Texture.BEST;
-  
   /** Interface between Processing and OpenGL */
   public PGL pgl;
 
@@ -299,6 +288,13 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected boolean lightsAllocated = false;
 
+  // ........................................................
+
+  // Texturing:  
+  
+  public int textureWrap    = Texture.CLAMP;
+  public int textureQuality = Texture.BEST;  
+  
   // ........................................................
 
   // Blending:
@@ -5387,17 +5383,17 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   public PShader loadShader(String vertFilename, String fragFilename, int kind) {
-    if (kind == FLAT_SHADER) {
+    if (kind == PShader.FLAT_SHADER) {
       return new PolyFlatShader(parent, vertFilename, fragFilename);
-    } else if (kind == LIGHT_SHADER) {
+    } else if (kind == PShader.LIGHT_SHADER) {
       return new PolyLightShader(parent, vertFilename, fragFilename);
-    } else if (kind == TEXTURE_SHADER) {
+    } else if (kind == PShader.TEXTURE_SHADER) {
       return new PolyTexShader(parent, vertFilename, fragFilename);
-    } else if (kind == FULL_SHADER) {
+    } else if (kind == PShader.FULL_SHADER) {
       return new PolyFullShader(parent, vertFilename, fragFilename);
-    } else if (kind == LINE3D_SHADER) {
+    } else if (kind == PShader.LINE3D_SHADER) {
       return new LineShader(parent, vertFilename, fragFilename);
-    } else if (kind == POINT3D_SHADER) {
+    } else if (kind == PShader.POINT3D_SHADER) {
       return new PointShader(parent, vertFilename, fragFilename);
     } else {
       PGraphics.showWarning("Wrong shader type");
@@ -5408,22 +5404,22 @@ public class PGraphicsOpenGL extends PGraphics {
 
   public PShader loadShader(String fragFilename, int kind) {
     PShader shader;
-    if (kind == FLAT_SHADER) {
+    if (kind == PShader.FLAT_SHADER) {
       shader = new PolyFlatShader(parent);
       shader.setVertexShader(defPolyFlatShaderVertURL);
-    } else if (kind == LIGHT_SHADER) {
+    } else if (kind == PShader.LIGHT_SHADER) {
       shader = new PolyLightShader(parent);
       shader.setVertexShader(defPolyLightShaderVertURL);
-    } else if (kind == TEXTURE_SHADER) {
+    } else if (kind == PShader.TEXTURE_SHADER) {
       shader = new PolyTexShader(parent);
       shader.setVertexShader(defPolyTexShaderVertURL);
-    } else if (kind == FULL_SHADER) {
+    } else if (kind == PShader.FULL_SHADER) {
       shader = new PolyFullShader(parent);
       shader.setVertexShader(defPolyFullShaderVertURL);
-    } else if (kind == LINE3D_SHADER) {
+    } else if (kind == PShader.LINE3D_SHADER) {
       shader = new LineShader(parent);
       shader.setVertexShader(defLineShaderVertURL);
-    } else if (kind == POINT3D_SHADER) {
+    } else if (kind == PShader.POINT3D_SHADER) {
       shader = new PointShader(parent);
       shader.setVertexShader(defPointShaderVertURL);
     } else {
@@ -5437,17 +5433,17 @@ public class PGraphicsOpenGL extends PGraphics {
 
   public void setShader(PShader shader, int kind) {
     flush(); // Flushing geometry with a different shader.
-    if (kind == FLAT_SHADER) {
+    if (kind == PShader.FLAT_SHADER) {
       polyFlatShader = (PolyFlatShader) shader;
-    } else if (kind == LIGHT_SHADER) {
+    } else if (kind == PShader.LIGHT_SHADER) {
       polyLightShader = (PolyLightShader) shader;
-    } else if (kind == TEXTURE_SHADER) {
+    } else if (kind == PShader.TEXTURE_SHADER) {
       polyTexShader = (PolyTexShader) shader;
-    } else if (kind == FULL_SHADER) {
+    } else if (kind == PShader.FULL_SHADER) {
       polyFullShader = (PolyFullShader) shader;
-    } else if (kind == LINE3D_SHADER) {
+    } else if (kind == PShader.LINE3D_SHADER) {
       lineShader = (LineShader) shader;
-    } else if (kind == POINT3D_SHADER) {
+    } else if (kind == PShader.POINT3D_SHADER) {
       pointShader = (PointShader) shader;
     } else {
       PGraphics.showWarning("Wrong shader type");
@@ -5457,32 +5453,32 @@ public class PGraphicsOpenGL extends PGraphics {
 
   public void defaultShader(int kind) {
     flush(); // Flushing geometry with a different shader.
-    if (kind == FLAT_SHADER) {
+    if (kind == PShader.FLAT_SHADER) {
       if (defPolyFlatShader == null || defPolyFlatShader.contextIsOutdated()) {
         defPolyFlatShader = new PolyFlatShader(parent, defPolyFlatShaderVertURL, defPolyNoTexShaderFragURL);
       }
       polyFlatShader = defPolyFlatShader;
-    } else if (kind == LIGHT_SHADER) {
+    } else if (kind == PShader.LIGHT_SHADER) {
       if (defPolyLightShader == null || defPolyLightShader.contextIsOutdated()) {
         defPolyLightShader = new PolyLightShader(parent, defPolyLightShaderVertURL, defPolyNoTexShaderFragURL);
       }
       polyLightShader = defPolyLightShader;
-    } else if (kind == TEXTURE_SHADER) {
+    } else if (kind == PShader.TEXTURE_SHADER) {
       if (defPolyTexShader == null || defPolyTexShader.contextIsOutdated()) {
         defPolyTexShader = new PolyTexShader(parent, defPolyTexShaderVertURL, defPolyTexShaderFragURL);
       }
       polyTexShader = defPolyTexShader;
-    } else if (kind == FULL_SHADER) {
+    } else if (kind == PShader.FULL_SHADER) {
       if (defPolyFullShader == null || defPolyFullShader.contextIsOutdated()) {
         defPolyFullShader = new PolyFullShader(parent, defPolyFullShaderVertURL, defPolyTexShaderFragURL);
       }
       polyFullShader = defPolyFullShader;
-    } else if (kind == LINE3D_SHADER) {
+    } else if (kind == PShader.LINE3D_SHADER) {
       if (defLineShader == null || defLineShader.contextIsOutdated()) {
         defLineShader = new LineShader(parent, defLineShaderVertURL, defLineShaderFragURL);
       }
       lineShader = defLineShader;
-    } else if (kind == POINT3D_SHADER) {
+    } else if (kind == PShader.POINT3D_SHADER) {
       if (defPointShader == null || defPointShader.contextIsOutdated()) {
         defPointShader = new PointShader(parent, defPointShaderVertURL, defPointShaderFragURL);
       }
