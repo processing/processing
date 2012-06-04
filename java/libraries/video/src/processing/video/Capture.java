@@ -703,12 +703,9 @@ public class Capture extends PImage implements PConstants {
       if (!fps.equals("")) {
         fpsStr = ", " + fps + "fps";
       }      
-      PGraphics.showWarning("The requested resolution of " + reqWidth + "x" + reqHeight + fpsStr + " is not supported by selected the capture device.");
-      PGraphics.showWarning("Use one of the following resolutions instead:");
-      for (int i = 0; i < resolutions.size(); i++) {
-        Resolution res = resolutions.get(i);
-        PGraphics.showWarning(res.toString());
-      }
+      throw new RuntimeException("The requested resolution of " + reqWidth + "x" + reqHeight + fpsStr + 
+                                 " is not supported by the selected capture device. " +
+                                 "Get list of supported resolutions with the resolutions() method.");
     }     
   }
   
@@ -812,7 +809,7 @@ public class Capture extends PImage implements PConstants {
   // Buffer source interface. 
 
   /**
-   * Disables automatic use of hardware acceleration to play video for OpenGL-based 
+   * Disables automatic use of hardware acceleration to play video with OpenGL-based 
    * renderers.
    * 
    */   
