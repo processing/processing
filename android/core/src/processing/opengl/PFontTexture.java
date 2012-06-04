@@ -121,12 +121,12 @@ class PFontTexture implements PConstants {
     if (is3D) {
       // Bilinear sampling ensures that the texture doesn't look pixelated either
       // when it is magnified or minified...
-      tex = new Texture(parent, w, h, new Texture.Parameters(ARGB, BILINEAR, false));
+      tex = new Texture(parent, w, h, new Texture.Parameters(ARGB, Texture.BILINEAR, false));
     } else {
       // ...however, the effect of bilinear sampling is to add some blurriness to the text
       // in its original size. In 2D, we assume that text will be shown at its original
       // size, so linear sampling is chosen instead (which only affects minimized text).
-      tex = new Texture(parent, w, h, new Texture.Parameters(ARGB, LINEAR, false));
+      tex = new Texture(parent, w, h, new Texture.Parameters(ARGB, Texture.LINEAR, false));
     }
 
     if (textures == null) {
