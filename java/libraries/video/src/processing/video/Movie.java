@@ -52,6 +52,8 @@ import org.gstreamer.elements.*;
  * @usage application
  */
 public class Movie extends PImage implements PConstants {
+  public static String[] supportedProtocols = { "http" }; 
+  
   protected String filename;
   
   protected boolean playing = false;
@@ -681,18 +683,21 @@ public class Movie extends PImage implements PConstants {
           e.printStackTrace();
         }
       }
-
-      // Network read...      
-      if (gplayer == null && filename.startsWith("http://")) {
-        try {
-          PApplet.println("network read");
-          gplayer = new PlayBin2("Movie Player");            
-          gplayer.setURI(URI.create(filename));
-        } catch (Exception e) {
-          e.printStackTrace();
-        }      
-      }
-      
+            
+      if (gplayer == null) { 
+        // Try network read...       
+        for (int i = 0; i < supportedProtocols.length; i++) {
+          if (filename.startsWith(supportedProtocols[i] + "://")) {                
+            try {
+              gplayer = new PlayBin2("Movie Player");            
+              gplayer.setURI(URI.create(filename));
+              break;
+            } catch (Exception e) {
+              e.printStackTrace();
+            }     
+          }
+        }
+      }      
     } catch (SecurityException se) {
       // online, whups. catch the security exception out here rather than
       // doing it three times (or whatever) for each of the cases above.
