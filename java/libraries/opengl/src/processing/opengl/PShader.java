@@ -34,12 +34,12 @@ import java.net.URL;
  */
 public class PShader {
   // shaders constants
-  static public final int FLAT_SHADER    = 0;
-  static public final int LIGHT_SHADER   = 1;
-  static public final int TEXTURE_SHADER = 2;
-  static public final int FULL_SHADER    = 3;
-  static public final int LINE3D_SHADER  = 4;
-  static public final int POINT3D_SHADER = 5;
+  static public final int FLAT     = 0;
+  static public final int LIT      = 1;
+  static public final int TEXTURED = 2;
+  static public final int FULL     = 3;
+  static public final int LINE     = 4;
+  static public final int POINT    = 5;
   
   protected PApplet parent;
   protected PGraphicsOpenGL pg; 
