@@ -41,6 +41,8 @@ import java.util.NoSuchElementException;
 public class Texture implements PConstants { 
   public int width, height;
       
+  // texture constants
+  
   /** 
    * This constant identifies the texture target GL_TEXTURE_2D, that is, 
    * textures with normalized coordinates 
@@ -71,7 +73,6 @@ public class Texture implements PConstants {
   public static final int CLAMP = 0;
   /** This constant identifies the repeat wrapping mode */
   public static final int REPEAT = 1;
-
   
   protected PApplet parent;           // The Processing applet
   protected PGraphicsOpenGL pg;       // The main renderer
