@@ -33,6 +33,14 @@ import java.net.URL;
  * (http://www.hardcorepawn.com/)
  */
 public class PShader {
+  // shaders constants  
+  static public final int FLAT_SHADER    = 0;
+  static public final int LIGHT_SHADER   = 1;
+  static public final int TEXTURE_SHADER = 2;
+  static public final int FULL_SHADER    = 3;
+  static public final int LINE3D_SHADER  = 4;
+  static public final int POINT3D_SHADER = 5;
+  
   protected PApplet parent;
   protected PGraphicsOpenGL pg; 
   protected PGL pgl;

@@ -40,6 +40,37 @@ import java.util.NoSuchElementException;
  */
 public class Texture implements PConstants { 
   public int width, height;
+
+  // texture constants
+  
+  /** This constant identifies the texture target GL_TEXTURE_2D, that is, 
+   * textures with normalized coordinates */
+  public static final int TEXTURE2D = 0;
+  
+  /** Texture quality constants */
+  public static final int LOW = 0;
+  public static final int MEDIUM = 1;
+  public static final int HIGH = 2;
+  public static final int BEST = 3;  
+
+  /** Point sampling: both magnification and minification filtering are set to nearest */
+  //public static final int POINT = 2; // shared with shape feature
+  /** Linear sampling: magnification filtering is nearest, minification set to linear */
+  public static final int LINEAR = 3;  
+  /** Bilinear sampling: both magnification filtering is set to linear and minification  
+   * either to linear-mipmap-nearest (linear interplation is used within a mipmap, but 
+   * not between different mipmaps). */
+  public static final int BILINEAR = 4;
+  /** Trilinear sampling: magnification filtering set to linear, minification to 
+   * linear-mipmap-linear, which offers the best mipmap quality since linear 
+   * interpolation to compute the value in each of two maps and then interpolates linearly 
+   * between these two value. */
+  public static final int TRILINEAR = 5;
+  
+  /** This constant identifies the clamp-to-edge wrapping mode */
+  public static final int CLAMP = 0;
+  /** This constant identifies the repeat wrapping mode */
+  public static final int REPEAT = 1;  
       
   protected PApplet parent;           // The Processing applet
   protected PGraphicsOpenGL pg;       // The main renderer
