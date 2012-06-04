@@ -703,9 +703,13 @@ public class Capture extends PImage implements PConstants {
       if (!fps.equals("")) {
         fpsStr = ", " + fps + "fps";
       }      
+      String helpStr = "Use one of the following resolutions instead:\n";
+      for (int i = 0; i < resolutions.size(); i++) {
+        Resolution res = resolutions.get(i);
+        helpStr += res.toString() + '\n';
+      }      
       throw new RuntimeException("The requested resolution of " + reqWidth + "x" + reqHeight + fpsStr + 
-                                 " is not supported by the selected capture device. " +
-                                 "Get list of supported resolutions with the resolutions() method.");
+                                 " is not supported by the selected capture device.\n" + helpStr);
     }     
   }
   
