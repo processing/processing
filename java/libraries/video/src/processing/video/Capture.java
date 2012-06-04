@@ -3,8 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2011 Andres Colubri
-  Copyright (c) 2004-09 Ben Fry and Casey Reas
+  Copyright (c) 2004-12 Ben Fry and Casey Reas
   The previous version of this code was developed by Hernando Barragan
 
   This library is free software; you can redistribute it and/or
@@ -589,6 +588,11 @@ public class Capture extends PImage implements PConstants {
                                HashMap<String, Object> properties, String frameRate) {
     this.parent = parent;
 
+    String[] cameras = list(sourceName);
+    if (cameras.length == 0) {
+      throw new RuntimeException("There are no cameras available for capture.");
+    } 
+    
     Video.init();
 
     // register methods
@@ -688,8 +692,7 @@ public class Capture extends PImage implements PConstants {
     boolean suppRes = false;
     for (int i = 0; i < resolutions.size(); i++) {
       Resolution res = resolutions.get(i);
-      if (reqWidth == res.width && reqHeight == res.height && 
-          fps.equals("") || fps.equals(res.fpsString)) {
+      if (reqWidth == res.width && reqHeight == res.height && (fps.equals("") || fps.equals(res.fpsString))) {
         suppRes = true;
         break;
       }
