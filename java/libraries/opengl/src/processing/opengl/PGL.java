@@ -458,23 +458,25 @@ public class PGL {
 
 
   public void setFramerate(float framerate) {
-    if (60 < framerate) {
-      // Disables v-sync
-      gl.setSwapInterval(0);
-    } else if (30 < framerate) {
-      gl.setSwapInterval(1);
-    } else {
-      gl.setSwapInterval(2);
+    if (targetFramerate != framerate) {
+      if (60 < framerate) {
+        // Disables v-sync
+        gl.setSwapInterval(0);
+      } else if (30 < framerate) {
+        gl.setSwapInterval(1);
+      } else {
+        gl.setSwapInterval(2);
+      }
+      if ((60 < framerate && targetFramerate <= 60) ||
+          (framerate <= 60 && 60 < targetFramerate)) {
+        // Enabling/disabling v-sync, we force a
+        // surface reinitialization to avoid screen
+        // no-paint issue observed on MacOSX.
+        initialized = false;
+      }
+      targetFramerate = framerate;
+      setFramerate = true;
     }
-    if ((60 < framerate && targetFramerate <= 60) ||
-        (framerate <= 60 && 60 < targetFramerate)) {
-      // Enabling/disabling v-sync, we force a
-      // surface reinitialization to avoid screen
-      // no-paint issue observed on MacOSX.
-      initialized = false;
-    }
-    targetFramerate = framerate;
-    setFramerate = true;
   }
 
 
