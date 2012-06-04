@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2011 Andres Colubri
+  Copyright (c) 2011-12 Ben Fry and Casey Reas
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -29,7 +29,7 @@ import com.sun.jna.Platform;
 
 class LibraryPath {
   // This method returns the folder inside which the gstreamer library folder
-  // should be located.
+  // is located.
   String get() {
     URL url = this.getClass().getResource("LibraryPath.class");
     if (url != null) {

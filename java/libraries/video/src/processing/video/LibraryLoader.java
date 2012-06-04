@@ -3,8 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2011 Andres Colubri
-  Based on code by Tal Shalif
+  Copyright (c) 2011-12 Ben Fry and Casey Reas
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -31,6 +30,12 @@ import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.Platform;
  
+/**
+ * This class loads the gstreamer native libraries.
+ * By Andres Colubri
+ * Based on code by Tal Shalif
+ * 
+ */
 public class LibraryLoader {
 
   public interface DummyLibrary extends Library {
