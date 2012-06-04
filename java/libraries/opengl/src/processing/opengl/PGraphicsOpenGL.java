@@ -5383,17 +5383,17 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   public PShader loadShader(String vertFilename, String fragFilename, int kind) {
-    if (kind == PShader.FLAT_SHADER) {
+    if (kind == PShader.FLAT) {
       return new PolyFlatShader(parent, vertFilename, fragFilename);
-    } else if (kind == PShader.LIGHT_SHADER) {
+    } else if (kind == PShader.LIT) {
       return new PolyLightShader(parent, vertFilename, fragFilename);
-    } else if (kind == PShader.TEXTURE_SHADER) {
+    } else if (kind == PShader.TEXTURED) {
       return new PolyTexShader(parent, vertFilename, fragFilename);
-    } else if (kind == PShader.FULL_SHADER) {
+    } else if (kind == PShader.FULL) {
       return new PolyFullShader(parent, vertFilename, fragFilename);
-    } else if (kind == PShader.LINE3D_SHADER) {
+    } else if (kind == PShader.LINE) {
       return new LineShader(parent, vertFilename, fragFilename);
-    } else if (kind == PShader.POINT3D_SHADER) {
+    } else if (kind == PShader.POINT) {
       return new PointShader(parent, vertFilename, fragFilename);
     } else {
       PGraphics.showWarning("Wrong shader type");
@@ -5404,22 +5404,22 @@ public class PGraphicsOpenGL extends PGraphics {
 
   public PShader loadShader(String fragFilename, int kind) {
     PShader shader;
-    if (kind == PShader.FLAT_SHADER) {
+    if (kind == PShader.FLAT) {
       shader = new PolyFlatShader(parent);
       shader.setVertexShader(defPolyFlatShaderVertURL);
-    } else if (kind == PShader.LIGHT_SHADER) {
+    } else if (kind == PShader.LIT) {
       shader = new PolyLightShader(parent);
       shader.setVertexShader(defPolyLightShaderVertURL);
-    } else if (kind == PShader.TEXTURE_SHADER) {
+    } else if (kind == PShader.TEXTURED) {
       shader = new PolyTexShader(parent);
       shader.setVertexShader(defPolyTexShaderVertURL);
-    } else if (kind == PShader.FULL_SHADER) {
+    } else if (kind == PShader.FULL) {
       shader = new PolyFullShader(parent);
       shader.setVertexShader(defPolyFullShaderVertURL);
-    } else if (kind == PShader.LINE3D_SHADER) {
+    } else if (kind == PShader.LINE) {
       shader = new LineShader(parent);
       shader.setVertexShader(defLineShaderVertURL);
-    } else if (kind == PShader.POINT3D_SHADER) {
+    } else if (kind == PShader.POINT) {
       shader = new PointShader(parent);
       shader.setVertexShader(defPointShaderVertURL);
     } else {
@@ -5433,17 +5433,17 @@ public class PGraphicsOpenGL extends PGraphics {
 
   public void setShader(PShader shader, int kind) {
     flush(); // Flushing geometry with a different shader.
-    if (kind == PShader.FLAT_SHADER) {
+    if (kind == PShader.FLAT) {
       polyFlatShader = (PolyFlatShader) shader;
-    } else if (kind == PShader.LIGHT_SHADER) {
+    } else if (kind == PShader.LIT) {
       polyLightShader = (PolyLightShader) shader;
-    } else if (kind == PShader.TEXTURE_SHADER) {
+    } else if (kind == PShader.TEXTURED) {
       polyTexShader = (PolyTexShader) shader;
-    } else if (kind == PShader.FULL_SHADER) {
+    } else if (kind == PShader.FULL) {
       polyFullShader = (PolyFullShader) shader;
-    } else if (kind == PShader.LINE3D_SHADER) {
+    } else if (kind == PShader.LINE) {
       lineShader = (LineShader) shader;
-    } else if (kind == PShader.POINT3D_SHADER) {
+    } else if (kind == PShader.POINT) {
       pointShader = (PointShader) shader;
     } else {
       PGraphics.showWarning("Wrong shader type");
@@ -5453,32 +5453,32 @@ public class PGraphicsOpenGL extends PGraphics {
 
   public void defaultShader(int kind) {
     flush(); // Flushing geometry with a different shader.
-    if (kind == PShader.FLAT_SHADER) {
+    if (kind == PShader.FLAT) {
       if (defPolyFlatShader == null || defPolyFlatShader.contextIsOutdated()) {
         defPolyFlatShader = new PolyFlatShader(parent, defPolyFlatShaderVertURL, defPolyNoTexShaderFragURL);
       }
       polyFlatShader = defPolyFlatShader;
-    } else if (kind == PShader.LIGHT_SHADER) {
+    } else if (kind == PShader.LIT) {
       if (defPolyLightShader == null || defPolyLightShader.contextIsOutdated()) {
         defPolyLightShader = new PolyLightShader(parent, defPolyLightShaderVertURL, defPolyNoTexShaderFragURL);
       }
       polyLightShader = defPolyLightShader;
-    } else if (kind == PShader.TEXTURE_SHADER) {
+    } else if (kind == PShader.TEXTURED) {
       if (defPolyTexShader == null || defPolyTexShader.contextIsOutdated()) {
         defPolyTexShader = new PolyTexShader(parent, defPolyTexShaderVertURL, defPolyTexShaderFragURL);
       }
       polyTexShader = defPolyTexShader;
-    } else if (kind == PShader.FULL_SHADER) {
+    } else if (kind == PShader.FULL) {
       if (defPolyFullShader == null || defPolyFullShader.contextIsOutdated()) {
         defPolyFullShader = new PolyFullShader(parent, defPolyFullShaderVertURL, defPolyTexShaderFragURL);
       }
       polyFullShader = defPolyFullShader;
-    } else if (kind == PShader.LINE3D_SHADER) {
+    } else if (kind == PShader.LINE) {
       if (defLineShader == null || defLineShader.contextIsOutdated()) {
         defLineShader = new LineShader(parent, defLineShaderVertURL, defLineShaderFragURL);
       }
       lineShader = defLineShader;
-    } else if (kind == PShader.POINT3D_SHADER) {
+    } else if (kind == PShader.POINT) {
       if (defPointShader == null || defPointShader.contextIsOutdated()) {
         defPointShader = new PointShader(parent, defPointShaderVertURL, defPointShaderFragURL);
       }
