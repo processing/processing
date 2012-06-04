@@ -344,8 +344,6 @@ public interface PConstants {
   static final int NORMAL = 1;
   /** texture coordinates based on image width/height */
   static final int IMAGE  = 2;
-
-  
   
 
   // text placement modes
@@ -373,47 +371,6 @@ public interface PConstants {
   
   // text alignment modes
   // are inherited from LEFT, CENTER, RIGHT  
-
-  // textures
-  
-  /** This constant identifies the texture target GL_TEXTURE_2D, that is, 
-   * textures with normalized coordinates */
-  public static final int TEXTURE2D = 0;
-  
-  /** Texture quality constants */
-  public static final int LOW = 0;
-  public static final int MEDIUM = 1;
-  public static final int HIGH = 2;
-  public static final int BEST = 3;  
-
-  /** Point sampling: both magnification and minification filtering are set to nearest */
-  //public static final int POINT = 2; // shared with shape feature
-  /** Linear sampling: magnification filtering is nearest, minification set to linear */
-  public static final int LINEAR = 3;  
-  /** Bilinear sampling: both magnification filtering is set to linear and minification  
-   * either to linear-mipmap-nearest (linear interplation is used within a mipmap, but 
-   * not between different mipmaps). */
-  public static final int BILINEAR = 4;
-  /** Trilinear sampling: magnification filtering set to linear, minification to 
-   * linear-mipmap-linear, which offers the best mipmap quality since linear 
-   * interpolation to compute the value in each of two maps and then interpolates linearly 
-   * between these two value. */
-  public static final int TRILINEAR = 5;
-  
-  /** This constant identifies the clamp-to-edge wrapping mode */
-  public static final int CLAMP = 0;
-  /** This constant identifies the repeat wrapping mode */
-  public static final int REPEAT = 1;
-    
-  
-  // shaders
-  
-  static public final int FLAT_SHADER    = 0;
-  static public final int LIGHT_SHADER   = 1;
-  static public final int TEXTURE_SHADER = 2;
-  static public final int FULL_SHADER    = 3;
-  static public final int LINE3D_SHADER  = 4;
-  static public final int POINT3D_SHADER = 5;
   
   
   // stroke modes
