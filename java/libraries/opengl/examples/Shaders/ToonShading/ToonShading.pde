@@ -14,7 +14,7 @@ public void setup() {
 
   pg = (PGraphicsOpenGL)g;
   shader = pg.loadShader("ToonVert.glsl", "ToonFrag.glsl", PShader.LIT);
-  pg.setShader(shader, PShader.LIT));
+  pg.setShader(shader, PShader.LIT);
   customShader = true;
 }
 
@@ -31,11 +31,11 @@ public void draw() {
 public void mousePressed() {
   if (dist(mouseX, mouseY, width/2, height/2) < 80) {
     if (customShader) {
-      pg.defaultShader(PShader.LIT));
+      pg.defaultShader(PShader.LIT);
       customShader = false;
     } 
     else {
-      pg.setShader(shader, PShader.LIT));
+      pg.setShader(shader, PShader.LIT);
       customShader = true;
     }  
   }
