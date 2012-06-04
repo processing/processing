@@ -517,10 +517,7 @@ public class PGraphics extends PImage implements PConstants {
    * vertex() calls will be based on coordinates that are
    * based on the IMAGE or NORMALIZED.
    */
-  public int textureMode = IMAGE;
-
-  public int textureWrap    = CLAMP;
-  public int textureQuality = BEST;  
+  public int textureMode = IMAGE;  
   
   /**
    * Current horizontal coordinate for texture, will always
