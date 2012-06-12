@@ -853,6 +853,8 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
                         quality == 4 ?
                         RenderingHints.VALUE_INTERPOLATION_BICUBIC :
                         RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+//    g2.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION,
+//                        RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
   }
 
 
@@ -1107,17 +1109,17 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 
   //public void shape(PShape shape, float x, float y, float c, float d)
 
-  
+
   //////////////////////////////////////////////////////////////
 
-  // SHAPE I/O  
-  
-  
+  // SHAPE I/O
+
+
   public PShape loadShape(String filename) {
     String extension = PApplet.getExtension(filename);
-    
+
     PShapeSVG svg = null;
-    
+
     if (extension.equals("svg")) {
       svg = new PShapeSVG(parent, filename);
 
@@ -1132,10 +1134,10 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
     } else {
       PGraphics.showWarning("Unsupported format");
     }
-      
+
     return svg;
   }
-  
+
 
   //////////////////////////////////////////////////////////////
 
