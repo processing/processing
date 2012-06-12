@@ -655,7 +655,12 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref environment
    */
-  public boolean appletViewer = false;
+  @Deprecated 
+  public boolean online = false;
+  // This is deprecated because it's poorly named (and even more poorly 
+  // understood). Further, we'll probably be removing applets soon, in which
+  // case this won't work at all. If you want this feature, you can check
+  // whether getAppletContext() returns null.
 
   /**
    * Time in milliseconds when the applet was started.
@@ -833,9 +838,9 @@ public class PApplet extends Applet
 
     try {
       getAppletContext();
-      appletViewer = true;
+      online = true;
     } catch (NullPointerException e) {
-      appletViewer = false;
+      online = false;
     }
 
     try {
@@ -1819,7 +1824,7 @@ public class PApplet extends Applet
       sizeMethods.handle(methodArgs);
      */
 
-    if (!appletViewer) {
+    if (!online) {
       start();
     }
     
@@ -2951,7 +2956,7 @@ public class PApplet extends Applet
    * @param name name of the param to read
    */
   public String param(String name) {
-    if (appletViewer) {
+    if (online) {
       return getParameter(name);
 
     } else {
@@ -2979,7 +2984,7 @@ public class PApplet extends Applet
    * @param value any valid String
    */
   public void status(String value) {
-    if (appletViewer) {
+    if (online) {
       showStatus(value);
 
     } else {
@@ -3017,7 +3022,7 @@ public class PApplet extends Applet
    *
    */
   public void link(String url, String target) {
-    if (appletViewer) {
+    if (online) {
       try {
         if (target == null) {
           getAppletContext().showDocument(new URL(url));
