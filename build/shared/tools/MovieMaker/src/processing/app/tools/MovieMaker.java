@@ -15,6 +15,7 @@ import ch.randelshofer.gui.datatransfer.FileTextFieldTransferHandler;
 import ch.randelshofer.media.mp3.MP3AudioInputStream;
 import ch.randelshofer.media.quicktime.QuickTimeWriter;
 
+import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -76,13 +77,13 @@ public class MovieMaker extends JFrame implements Tool {
 
 
   public void run() {
-//    System.out.println("calling run() for MovieMaker");
+//    System.out.println("calling run() for MovieMaker " + EventQueue.isDispatchThread());
     setVisible(true);
   }
 
 
   public void init(Editor editor) {
-//    System.out.println("calling init for MovieMaker");
+//    System.out.println("calling init for MovieMaker " + EventQueue.isDispatchThread());
 //    this.editor = editor;
     initComponents();
 
@@ -907,7 +908,7 @@ public class MovieMaker extends JFrame implements Tool {
 //   * @param args the command line arguments
 //   */
   public static void main(String args[]) {
-    java.awt.EventQueue.invokeLater(new Runnable() {
+    EventQueue.invokeLater(new Runnable() {
       public void run() {
         MovieMaker m = new MovieMaker();
         m.init(null);
