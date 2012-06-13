@@ -26,10 +26,8 @@ PFont font;
 float fontSize = 1.5;
 
 
-public void setup() {
-  size(640, 480, P3D);
-  // Or run full screen, more fun! Use with Sketch -> Present
-  //size(screen.width, screen.height, OPENGL);
+void setup() {
+  size(640, 480, P2D);
 
   // Uses the default video input, see the reference if this causes an error
   video = new Capture(this, 160, 120);
@@ -59,7 +57,7 @@ public void setup() {
 }
 
 
-public void captureEvent(Capture c) {
+void captureEvent(Capture c) {
   c.read();
 }
 
@@ -76,6 +74,7 @@ void draw() {
   textFont(font, fontSize);
 
   int index = 0;
+  video.loadPixels();
   for (int y = 1; y < video.height; y++) {
 
     // Move down for next line
@@ -127,7 +126,7 @@ void draw() {
  * 'g' grabs an image and saves the frame to a tiff image
  * 'f' and 'F' increase and decrease the font size
  */
-public void keyPressed() {
+void keyPressed() {
   switch (key) {
     case 'g': saveFrame(); break;
     case 'c': cheatScreen = !cheatScreen; break;

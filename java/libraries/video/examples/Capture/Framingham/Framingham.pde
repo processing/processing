@@ -1,3 +1,5 @@
+// Currently broken with the P2D renderer.
+
 /**
  * Framingham
  * by Ben Fry.
@@ -18,7 +20,7 @@ int[] scoot;
 
 
 void setup() {
-  size(640, 480, P3D);
+  size(640, 480, P2D);
 
   // Uses the default video input, see the reference if this causes an error
   video = new Capture(this, 160, 120);
@@ -39,6 +41,7 @@ void draw() {
   // By using video.available, only the frame rate need be set inside setup()
   if (video.available()) {
     video.read();
+    video.loadPixels();
     set(video.width*column, video.height*lastRow, video);
     column++;
     if (column == columnCount) {

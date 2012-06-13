@@ -34,9 +34,8 @@ boolean motion;
 boolean blobby = false;
 
 
-public void setup() {
+void setup() {
   size(640, 480, P3D);
-  //size(screen.width, screen.height, OPENGL);
 
   video = new Capture(this, 160, 120);
   video.start();
@@ -84,6 +83,7 @@ void draw() {
   }
 
   noStroke();
+  video.loadPixels();
   for (int i = 0; i < count; i++) {
     int pixelColor = video.pixels[i];
     int r = (pixelColor >> 16) & 0xff;
@@ -133,7 +133,6 @@ void draw() {
 
 void captureEvent(Capture c) {
   c.read();
-  c.loadPixels();
 }
 
 
@@ -200,7 +199,7 @@ void wireCone(float radius, float height, int stepX, int stepY) {
   noFill();
   pushMatrix();
   translate(0, 0, height);
-  ellipseMode(CENTER_RADIUS);
+  ellipseMode(CENTER);
   ellipse(0, 0, radius, radius);
   popMatrix();
 }

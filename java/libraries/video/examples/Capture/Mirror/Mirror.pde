@@ -17,7 +17,7 @@ Capture video;
 
 
 void setup() {
-  size(640, 480, P3D);
+  size(640, 480, P2D);
   frameRate(30);
   cols = width / cellSize;
   rows = height / cellSize;

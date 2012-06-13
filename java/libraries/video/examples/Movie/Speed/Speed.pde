@@ -10,7 +10,7 @@ import processing.video.*;
 
 Movie movie;
 
-public void setup() {
+void setup() {
   size(320, 240);
   background(0);
   movie = new Movie(this, "balloon.ogg");
@@ -20,11 +20,11 @@ public void setup() {
   textFont(font, 24);
 }
 
-public void movieEvent(Movie movie) {
+void movieEvent(Movie movie) {
   movie.read();  
 }
 
-public void draw() {    
+void draw() {    
   image(movie, 0, 0, width, height);
     
   float newSpeed = map(mouseX, 0, width, 0.1, 2);
