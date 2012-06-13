@@ -16,7 +16,7 @@ int buffer[];
 
 
 void setup() {
-  size(600, 400);
+  size(600, 400, P2D);
 
   // Uses the default video input, see the reference if this causes an error
   video = new Capture(this, 160, 120);

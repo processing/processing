@@ -9,7 +9,7 @@ import processing.video.*;
 Capture cam;
 
 void setup() {
-  size(640, 480);
+  size(640, 480, P2D);
 
   String[] cameras = Capture.list();
   

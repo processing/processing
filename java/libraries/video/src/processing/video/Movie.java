@@ -80,7 +80,7 @@ public class Movie extends PImage implements PConstants {
   protected boolean seeking = false;  
   
   protected boolean useBufferSink = false;
-  protected boolean useGLSink = true;  
+//  protected boolean useGLSink = true;  
   protected Object bufferSink;
   protected Method sinkCopyMethod;
   protected Method sinkSetMethod;
@@ -528,11 +528,7 @@ public class Movie extends PImage implements PConstants {
       // which is already playing since we are in read().
       fps = getSourceFrameRate();
     }
-    
-    // We loadPixels() first to ensure that at least we always have a non-null
-    // pixels array, even if without any valid image inside.
-    loadPixels();
-    
+        
     if (useBufferSink) { // The native buffer from gstreamer is copied to the buffer sink.
       if (natBuffer == null) {         
         return;
@@ -540,7 +536,7 @@ public class Movie extends PImage implements PConstants {
     
       if (firstFrame) {
         super.init(bufWidth, bufHeight, ARGB);
-        loadPixels();
+        //loadPixels();
         firstFrame = false;
       }      
       
@@ -568,7 +564,8 @@ public class Movie extends PImage implements PConstants {
       }    
     
       if (firstFrame) {
-        resize(bufWidth, bufHeight);      
+        //resize(bufWidth, bufHeight);
+        super.init(bufWidth, bufHeight, RGB);
         firstFrame = false;
       }
     
@@ -726,7 +723,7 @@ public class Movie extends PImage implements PConstants {
   }
   
   protected void initSink() {
-    if (bufferSink != null || (useGLSink && parent.g.isGL())) {
+    if (bufferSink != null || (Video.useGLBufferSink && parent.g.isGL())) {
       useBufferSink = true;
     
       if (bufferSink != null) {
@@ -758,9 +755,7 @@ public class Movie extends PImage implements PConstants {
           }
         });
       
-      // Setting direct buffer passing in the video sink, so no new buffers are created
-      // and disposed by the GC on each frame (thanks to Octavi Estape for pointing 
-      // out this one).      
+      // Setting direct buffer passing in the video sink.
       rgbSink.setPassDirectBuffer(Video.passDirectBuffer);
       gplayer.setVideoSink(rgbSink);
       // The setVideoSink() method sets the videoSink as a property of the PlayBin,
@@ -859,9 +854,9 @@ public class Movie extends PImage implements PConstants {
    * renderers.
    * 
    */   
-  public void noGL() {
-    useGLSink = false;
-  }  
+//  public void noGL() {
+//    useGLSink = false;
+//  }  
   
   /**
    * Sets the object to use as destination for the frames read from the stream.
@@ -885,6 +880,10 @@ public class Movie extends PImage implements PConstants {
     bufferSink = sink;
     copyMask = mask;
   }  
+
+  public boolean hasBufferSink() {
+    return bufferSink != null;
+  } 
   
   public synchronized void disposeBuffer(Object buf) {
     ((Buffer)buf).dispose();
