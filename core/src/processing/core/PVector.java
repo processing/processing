@@ -201,16 +201,33 @@ public class PVector implements Serializable {
    * Make a new 2D unit vector with a random direction
    */
   static public PVector random2D() {
-    return fromAngle((float)(Math.random()*Math.PI*2),null);
+    return random2D(null,null);
   }
 
+  /**
+   * Make a new 2D unit vector with a random direction
+   * using Processing's current random number generator
+   * @param parent current PApplet instance
+   */
+  static public PVector random2D(PApplet parent) {
+    return random2D(null,parent);
+  }
+
+  /**
+   * Set a 2D vector to a random unit vector with a random direction
+   * @param target the target vector (if null, a new vector will be created)
+   */
+  static public PVector random2D(PVector target) {
+    return random2D(target,null);
+  }
 
   /**
    * Make a new 2D unit vector with a random direction
    * @param target the target vector (if null, a new vector will be created)
    */
-  static public PVector random2D(PVector target) {
-    return fromAngle((float)(Math.random()*Math.PI*2),target);
+  static public PVector random2D(PVector target, PApplet parent) {
+    if (parent == null) return fromAngle((float)(Math.random()*Math.PI*2),target); 
+    else                return fromAngle(parent.random(PConstants.TWO_PI),target);
   }
 
 
@@ -218,25 +235,48 @@ public class PVector implements Serializable {
    * Make a new 3D unit vector with a random direction
    */
   static public PVector random3D() {
-    return random3D(null);
+    return random3D(null,null);
   }
 
+  /**
+   * Make a new 3D unit vector with a random direction
+   * using Processing's current random number generator
+   * @param parent current PApplet instance
+
+   */
+  static public PVector random3D(PApplet parent) {
+    return random3D(null,parent);
+  }
+
+  /**
+   * Set a 3D vector to a random unit vector with a random direction
+   * @param target the target vector (if null, a new vector will be created)
+   */
+  static public PVector random3D(PVector target) {
+    return random3D(target,null);
+  }
 
   /**
    * Make a new 3D unit vector with a random direction
    * @param target the target vector (if null, a new vector will be created)
    */
-  static public PVector random3D(PVector target) {
-    if (target == null) {
-      // Picking random point on a sphere using Equal Area Projection
-      float angle = (float) (Math.random()*Math.PI*2);
-      float vz = (float) (Math.random()*2-1);
-      float vx = (float) (Math.sqrt(1-vz*vz)*Math.cos(angle));
-      float vy = (float) (Math.sqrt(1-vz*vz)*Math.sin(angle));
-      target = new PVector(vx, vy, vz);
-      target.normalize();
+  static public PVector random3D(PVector target, PApplet parent) {
+    float angle;
+    float vz;
+    if (parent == null) {
+      angle = (float) (Math.random()*Math.PI*2);
+      vz    = (float) (Math.random()*2-1);
     } else {
-      target.set((float) Math.random() * 2 - 1, (float) Math.random() * 2 - 1, (float) Math.random() * 2 - 1);
+      angle = parent.random(PConstants.TWO_PI);
+      vz    = parent.random(-1,1);
+    }
+    float vx = (float) (Math.sqrt(1-vz*vz)*Math.cos(angle));
+    float vy = (float) (Math.sqrt(1-vz*vz)*Math.sin(angle));
+    if (target == null) {
+      target = new PVector(vx, vy, vz);
+      //target.normalize(); // Should be unecessary
+    } else {
+      target.set(vx,vy,vz);
     }
     return target;
   }
@@ -263,8 +303,6 @@ public class PVector implements Serializable {
     }
     return target;
   }
-
-
 
   /**
    * ( begin auto-generated from PVector_get.xml )
