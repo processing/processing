@@ -39,12 +39,11 @@ import java.util.NoSuchElementException;
  * 
  */
 public class Texture implements PConstants { 
-  public int width, height;
-
   // texture constants
-  
-  /** This constant identifies the texture target GL_TEXTURE_2D, that is, 
-   * textures with normalized coordinates */
+  /** 
+   * This constant identifies the texture target GL_TEXTURE_2D, that is, 
+   * textures with normalized coordinates 
+   */
   public static final int TEXTURE2D = 0;
   
   /** Texture quality constants */
@@ -70,13 +69,10 @@ public class Texture implements PConstants {
   /** This constant identifies the clamp-to-edge wrapping mode */
   public static final int CLAMP = 0;
   /** This constant identifies the repeat wrapping mode */
-  public static final int REPEAT = 1;  
-      
-  protected PApplet parent;           // The Processing applet
-  protected PGraphicsOpenGL pg;       // The main renderer
-  protected PGL pgl;                  // The interface between Processing and OpenGL.
-  protected PGL.Context context;      // The context that created this texture.
-  
+  public static final int REPEAT = 1;
+
+  public int width, height;
+
   // These are public but use at your own risk!
   public int glID; 
   public int glTarget;
@@ -86,7 +82,12 @@ public class Texture implements PConstants {
   public int glWrapS; 
   public int glWrapT;  
   public int glWidth;
-  public int glHeight;
+  public int glHeight; 
+  
+  protected PApplet parent;           // The Processing applet
+  protected PGraphicsOpenGL pg;       // The main renderer
+  protected PGL pgl;                  // The interface between Processing and OpenGL.
+  protected PGL.Context context;      // The context that created this texture.
   
   protected boolean usingMipmaps; 
   protected float maxTexcoordU;
@@ -95,9 +96,11 @@ public class Texture implements PConstants {
   protected boolean flippedX;   
   protected boolean flippedY;
 
-  protected int[] tempPixels = null;
   protected FrameBuffer tempFbo = null;
-  
+
+  /** modified portion of the texture */
+  protected boolean modified;
+    
   protected Object bufferSource;
   protected LinkedList<BufferData> bufferCache = null;
   protected Method disposeBufferMethod;
@@ -209,7 +212,6 @@ public class Texture implements PConstants {
     
     // Nullifying some utility objects so they are recreated with the appropriate
     // size when needed.
-    tempPixels = null;
     tempFbo = null;
   }
 
@@ -368,13 +370,12 @@ public class Texture implements PConstants {
    * Copy texture to pixels. Involves video memory to main memory transfer (slow).
    */   
   public void get(int[] pixels) {
-    // TODO: here is ok to create a new pixels array, or an error/warning
-    // should be thrown instead?
-    if ((pixels == null) || (pixels.length != width * height)) {
-      pixels = new int[width * height];
+    if (pixels == null) {
+      throw new RuntimeException("Trying to copy texture to null pixels array");
     }
-        
-    int size = glWidth * glHeight;
+    if (pixels.length != width * height) {
+      throw new RuntimeException("Trying to copy texture to pixels array of wrong size");
+    }
         
     if (tempFbo == null) {
       tempFbo = new FrameBuffer(parent, glWidth, glHeight);
@@ -388,12 +389,9 @@ public class Texture implements PConstants {
     tempFbo.readPixels();
     pg.popFramebuffer();
     
-    if (tempPixels == null) {
-      tempPixels = new int[size];
-    }
-    tempFbo.getPixels(tempPixels);
+    tempFbo.getPixels(pixels);
+    convertToARGB(pixels);
     
-    convertToARGB(tempPixels, pixels);
     if (flippedX) flipArrayOnX(pixels, 1);
     if (flippedY) flipArrayOnY(pixels, 1);    
   }
@@ -495,6 +493,26 @@ public class Texture implements PConstants {
     pgl.glBindTexture(glTarget, 0);    
   }  
   
+  //////////////////////////////////////////////////////////////
+
+  // Modified flag
+
+
+  public boolean isModified() {
+    return modified;
+  }
+
+
+  public void setModified() {
+    modified = true;
+  }
+
+
+  public void setModified(boolean m) {
+    modified = m;
+  } 
+  
+  
   ////////////////////////////////////////////////////////////
   
   // Buffer sink interface.
@@ -522,7 +540,10 @@ public class Texture implements PConstants {
       }  
     }
   }
-  
+    
+  public boolean hasBufferSource() {
+    return bufferSource != null;
+  }
   
   public boolean hasBuffers() {
     return bufferSource != null && bufferCache != null && 0 < bufferCache.size();
@@ -541,7 +562,7 @@ public class Texture implements PConstants {
       if ((data.w != width) || (data.h != height)) {
         init(data.w, data.h);
       }
-      bind();      
+      bind();
       setTexels(data.rgbBuf, 0, 0, width, height);
       unbind();
       
@@ -553,6 +574,34 @@ public class Texture implements PConstants {
     }    
   }
  
+  
+  protected boolean bufferUpdate(int[] pixels) {
+    //PApplet.println("buffer update with pix");
+    BufferData data = null;
+    try {
+      data = bufferCache.remove(0);
+    } catch (NoSuchElementException ex) {
+      PGraphics.showWarning("PTexture: don't have pixel data to copy to texture");
+    }
+    
+    if (data != null) {
+      if ((data.w != width) || (data.h != height)) {
+        init(data.w, data.h);
+      }
+      bind();      
+      setTexels(data.rgbBuf, 0, 0, width, height);
+      unbind();
+      
+      data.rgbBuf.get(pixels);
+      convertToARGB(pixels);
+      
+      data.dispose();
+      
+      return true;        
+    } else {
+      return false;
+    }    
+  }
   
   protected void getSourceMethods() {
     try {
@@ -713,7 +762,8 @@ public class Texture implements PConstants {
    * @param intArray int[]
    * @param intArray int[]   
    * @param arrayFormat int
-   */    
+   */  
+  /*
   protected void convertToARGB(int[] intArray, int[] tIntArray, int arrayFormat) {
     int t = 0; 
     int p = 0;
@@ -758,15 +808,14 @@ public class Texture implements PConstants {
     }
 
   }
-
+*/
   
   /**
-   * Reorders an OpenGL pixel array (RGBA) into ARGB. The input array must be
-   * of size glWidth * glHeight, while the resulting array of size width * height.
-   * @param intArray int[]
+   * Reorders an OpenGL pixel array (RGBA) into ARGB. The array must be
+   * of size width * height.
    * @param intArray int[]       
    */    
-  protected void convertToARGB(int[] intArray, int[] tIntArray) {
+  protected void convertToARGB(int[] intArray) {
     int t = 0; 
     int p = 0;
     if (PGL.BIG_ENDIAN) {
@@ -776,9 +825,8 @@ public class Texture implements PConstants {
       for (int y = 0; y < height; y++) {
         for (int x = 0; x < width; x++) {
           int pixel = intArray[p++];
-          tIntArray[t++] = (pixel >> 8) | ((pixel << 24) & 0xFF000000);
+          intArray[t++] = (pixel >> 8) | ((pixel << 24) & 0xFF000000);
         }
-        p += glWidth - width;
       }
 
     } else {  
@@ -788,16 +836,15 @@ public class Texture implements PConstants {
       for (int y = 0; y < height; y++) {
         for (int x = 0; x < width; x++) {
           int pixel = intArray[p++];
-          tIntArray[t++] = ((pixel & 0xFF) << 16) |
+          intArray[t++] = ((pixel & 0xFF) << 16) |
                            ((pixel & 0xFF0000) >> 16) |
                            (pixel & 0xFF00FF00);
                      
         }
-        p += glWidth - width;
       }
-
     }
   }  
+
   
   
   ///////////////////////////////////////////////////////////  
@@ -979,7 +1026,7 @@ public class Texture implements PConstants {
     Parameters res = new Parameters();
     
     if (glTarget == PGL.GL_TEXTURE_2D)  {
-        res.target = TEXTURE2D;
+      res.target = TEXTURE2D;
     }
     
     if (glFormat == PGL.GL_RGB)  {
@@ -1061,7 +1108,7 @@ public class Texture implements PConstants {
       glMagFilter = PGL.GL_LINEAR;
       glMinFilter = params.mipmaps && PGL.MIPMAPS_ENABLED ? PGL.GL_LINEAR_MIPMAP_LINEAR : PGL.GL_LINEAR;
     } else {
-      throw new RuntimeException("Unknown texture filtering mode");     
+      throw new RuntimeException("Unknown texture filtering mode");    
     }
     
     if (params.wrapU == CLAMP) {
@@ -1165,7 +1212,7 @@ public class Texture implements PConstants {
       this.mipmaps = mipmaps;
       this.wrapU = CLAMP;
       this.wrapV = CLAMP;      
-    }    
+    }
     
     public Parameters(Parameters src) {
       set(src);

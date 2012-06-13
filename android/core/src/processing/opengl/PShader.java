@@ -24,6 +24,7 @@
 package processing.opengl;
 
 import processing.core.*;
+
 import java.io.IOException;
 import java.net.URL;
 
@@ -33,7 +34,7 @@ import java.net.URL;
  * (http://www.hardcorepawn.com/)
  */
 public class PShader {
-  // shaders constants  
+  // shaders constants
   static public final int FLAT     = 0;
   static public final int LIT      = 1;
   static public final int TEXTURED = 2;
