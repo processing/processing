@@ -206,7 +206,7 @@ public class FrameBuffer implements PConstants {
   
   public void getPixels(int[] pixels) {
     if (pixelBuffer != null) {
-      pixelBuffer.get(pixels);
+      pixelBuffer.get(pixels, 0, pixels.length);
       pixelBuffer.rewind();    
     }
   }

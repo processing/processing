@@ -5196,7 +5196,42 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     return tex;
   }
-
+  
+  
+  /**
+   * Copies the contents of the texture bound to img to its pixels array.
+   * @param img the image to have a texture metadata associated to it
+   */
+  /*
+  public void loadPixels(PImage img) {
+    if (img.pixels == null) {
+      img.pixels = new int[img.width * img.height];
+    }    
+    
+    Texture tex = (Texture)img.getCache(pgPrimary);
+    if (tex == null) {
+      tex = addTexture(img);
+    } else {
+      if (tex.contextIsOutdated()) {
+        tex = addTexture(img);
+      }
+      
+      if (tex.hasBuffers()) {
+        // Updates the texture AND the pixels
+        // array of the image at the same time,
+        // getting the pixels directly from the
+        // buffer data (avoiding expenive transfer
+        // beteeen video and main memory).
+        tex.bufferUpdate(img.pixels);
+      }
+      
+      if (tex.isModified()) {
+        // Regular pixel copy from texture.
+        tex.get(img.pixels);
+      }
+    }
+  }
+  */
 
   /**
    * This utility method creates a texture for the provided image, and adds it
@@ -5234,7 +5269,9 @@ public class PGraphicsOpenGL extends PGraphics {
       img.parent = parent;
     }
     Texture tex = new Texture(img.parent, img.width, img.height, params);
-    img.loadPixels();
+    if (img.pixels == null) {
+      img.loadPixels();
+    }
     if (img.pixels != null) tex.set(img.pixels);
     img.setCache(pgPrimary, tex);
     return tex;
