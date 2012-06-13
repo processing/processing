@@ -7317,7 +7317,15 @@ public class PGraphics extends PImage implements PConstants {
     return 0;
   }
 
+  //////////////////////////////////////////////////////////////
 
+  // IMAGE PIXELS
+  
+  /*
+  public void loadPixels(PImage img) { // ignore    
+  }
+  */
+  
 
   //////////////////////////////////////////////////////////////
 
