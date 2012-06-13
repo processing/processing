@@ -475,6 +475,19 @@ public class PImage implements PConstants, Cloneable {
    * @usage web_application
    */
   public void loadPixels() {  // ignore
+    /*
+    if (cacheMap == null) {
+      if (parent != null) {
+        parent.g.loadPixels(this);
+      } else {
+        PGraphics.showWarning("Cannot load pixels because this image object doesn't have a parent");
+      }
+    } else {
+      for (PGraphics pg: cacheMap.keySet()) {
+        pg.loadPixels(this);  
+      }      
+    }
+    */
   }
 
   public void updatePixels() {  // ignore
