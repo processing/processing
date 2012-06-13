@@ -19,8 +19,8 @@ int[] bright;
 int increment = 5;
 
 
-public void setup() {
-  size(800, 600, P3D);
+void setup() {
+  size(800, 600, P2D);
 
   noCursor();
   // Uses the default video input, see the reference if this causes an error
@@ -38,9 +38,10 @@ public void setup() {
 }
 
 
-public void draw() {
+void draw() {
   if (video.available()) {
     video.read();
+    video.loadPixels();
     
     background(0);
     noStroke();
@@ -84,7 +85,7 @@ public void draw() {
 }
 
 
-public void keyPressed() {
+void keyPressed() {
   if (key == 'g') {
     saveFrame();
   } else if (key == 'c') {

@@ -109,7 +109,7 @@ public class Capture extends PImage implements PConstants {
   protected int reqHeight;  
   
   protected boolean useBufferSink = false;
-  protected boolean useGLSink = true;  
+//  protected boolean useGLSink = true;  
   protected Object bufferSink;
   protected Method sinkCopyMethod;
   protected Method sinkSetMethod;
@@ -253,7 +253,7 @@ public class Capture extends PImage implements PConstants {
    * 
    * @return boolean
    */   
-  public boolean newFrame() {
+  public synchronized boolean newFrame() {
     boolean res = newFrame;
     newFrame = false;
     return res;
@@ -338,9 +338,9 @@ public class Capture extends PImage implements PConstants {
    * @usage web_application
    */
   public synchronized void read() {
-    // We loadPixels() first to ensure that at least we always have a non-null
-    // pixels array, even if without any valid image inside.
-    loadPixels();
+//    if (pixels == null) {
+//      pixels = new int[width * height];
+//    }
     
     if (useBufferSink) { // The native buffer from gstreamer is copied to the buffer sink.
       if (natBuffer == null) {         
@@ -349,7 +349,7 @@ public class Capture extends PImage implements PConstants {
     
       if (firstFrame) {
         super.init(bufWidth, bufHeight, ARGB);
-        loadPixels();
+        //loadPixels();
         firstFrame = false;
       }      
       
@@ -378,7 +378,7 @@ public class Capture extends PImage implements PConstants {
       
       if (firstFrame) {
         super.init(bufWidth, bufHeight, RGB);
-        loadPixels();
+        //loadPixels();
         firstFrame = false;
       }
       
@@ -631,7 +631,7 @@ public class Capture extends PImage implements PConstants {
       fpsStr = ", framerate=" + fps;
     }    
     
-    if (bufferSink != null || (useGLSink && parent.g.isGL())) {
+    if (bufferSink != null || (Video.useGLBufferSink && parent.g.isGL())) {
       useBufferSink = true;
       
       if (bufferSink != null) {
@@ -671,10 +671,9 @@ public class Capture extends PImage implements PConstants {
             public void rgbFrame(int w, int h, IntBuffer buffer) {
               invokeEvent(w, h, buffer);
             }
-          });    
-      // Setting direct buffer passing in the video sink, so no new buffers are created
-      // and disposed by the GC on each frame (thanks to Octavi Estape for pointing 
-      // out this one).
+          });
+      
+      // Setting direct buffer passing in the video sink.
       rgbSink.setPassDirectBuffer(Video.passDirectBuffer);      
       
       // No need for rgbSink.dispose(), because the addMany() doesn't increment the
@@ -817,9 +816,9 @@ public class Capture extends PImage implements PConstants {
    * renderers.
    * 
    */   
-  public void noGL() {
-    useGLSink = false;
-  }  
+//  public void noGL() {
+//    useGLSink = false;
+//  }  
   
   /**
    * Sets the object to use as destination for the frames read from the stream.
@@ -843,6 +842,10 @@ public class Capture extends PImage implements PConstants {
     bufferSink = sink;
     copyMask = mask;
   }  
+  
+  public boolean hasBufferSink() {
+    return bufferSink != null;
+  }
   
   public synchronized void disposeBuffer(Object buf) {
     ((Buffer)buf).dispose();

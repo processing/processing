@@ -18,18 +18,18 @@ import processing.video.*;
 Movie myMovie;
 boolean speedSet = false;
 
-public void setup() {
+void setup() {
   size(320, 240);
   background(0);
   myMovie = new Movie(this, "balloon.ogg");
   myMovie.play();
 }
 
-public void movieEvent(Movie myMovie) {
+void movieEvent(Movie myMovie) {
   myMovie.read();  
 }
 
-public void draw() {
+void draw() {
   if (myMovie.ready()) {
     if (!speedSet) {
       // Setting the speed should be done only once,
