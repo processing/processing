@@ -204,7 +204,7 @@ class PFontTexture implements PConstants {
   
   public void updateGlyphsTexCoords() {
     // loop over current glyphs.
-    for (int i = 0; i < font.getGlyphCount(); i++) {
+    for (int i = 0; i < glyphTexinfos.length; i++) {
       TextureInfo tinfo = glyphTexinfos[i];
       if (tinfo != null && tinfo.texIndex == currentTex) { 
         tinfo.updateUV();
