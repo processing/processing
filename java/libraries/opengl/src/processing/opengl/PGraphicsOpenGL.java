@@ -292,8 +292,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // Texturing:  
   
-  public int textureWrap    = Texture.CLAMP;
-  public int textureQuality = Texture.BEST;  
+  public int textureWrap     = Texture.CLAMP; 
+  public int textureSampling = Texture.TRILINEAR;
   
   // ........................................................
 
@@ -2050,13 +2050,13 @@ public class PGraphicsOpenGL extends PGraphics {
   public void textureWrap(int wrap) {
     this.textureWrap = wrap;
   }
-  
-  
-  public void textureQuality(int quality) {
-    this.textureQuality = quality;
-  }
-    
 
+  
+  public void textureSampling(int sampling) {
+    this.textureSampling = sampling;
+  }
+
+  
   public void texture(PImage image) {
     if (flushMode == FLUSH_WHEN_FULL && hints[DISABLE_TEXTURE_CACHE] &&
         image != textureImage0) {
@@ -5256,19 +5256,10 @@ public class PGraphicsOpenGL extends PGraphics {
       } else {
         params.mipmaps = true;
       }      
-      if (textureQuality == Texture.LOW) {
-        params.sampling = POINT;  
-      } else if (textureQuality == Texture.MEDIUM) {
-        params.sampling = Texture.LINEAR;  
-      } else if (textureQuality == Texture.HIGH) {
+      params.sampling = textureSampling;        
+      if (params.sampling == Texture.TRILINEAR && !params.mipmaps) {
         params.sampling = Texture.BILINEAR;
-      } else if (textureQuality == Texture.BEST) {
-        if (params.mipmaps) {
-          params.sampling = Texture.TRILINEAR;
-        } else {
-          params.sampling = Texture.BILINEAR;
-          PGraphics.showWarning("BEST texture quality requires mipmaps, will switch to HIGH.");
-        }        
+        PGraphics.showWarning("TRILINEAR texture sampling requires mipmaps, which are disabled. Will use BILINEAR instead.");
       }         
       params.wrapU = textureWrap;
       params.wrapV = textureWrap;
