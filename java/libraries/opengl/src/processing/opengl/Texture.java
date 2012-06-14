@@ -40,17 +40,15 @@ import java.util.NoSuchElementException;
  */
 public class Texture implements PConstants { 
   // texture constants
-  /** 
-   * This constant identifies the texture target GL_TEXTURE_2D, that is, 
-   * textures with normalized coordinates 
-   */
-  public static final int TEXTURE2D = 0;
   
-  /** Texture quality constants */
-  public static final int LOW = 0;
-  public static final int MEDIUM = 1;
-  public static final int HIGH = 2;
-  public static final int BEST = 3;  
+  /** 
+   * Texture with normalized UV.  
+   */
+  public static final int TEX2D   = 0;
+  /** 
+   * Texture with un-normalized UV.  
+   */
+  public static final int TEXRECT = 1;
 
   /** Point sampling: both magnification and minification filtering are set to nearest */
   //public static final int POINT = 2; // shared with shape feature
@@ -1026,7 +1024,7 @@ public class Texture implements PConstants {
     Parameters res = new Parameters();
     
     if (glTarget == PGL.GL_TEXTURE_2D)  {
-      res.target = TEXTURE2D;
+      res.target = TEX2D;
     }
     
     if (glFormat == PGL.GL_RGB)  {
@@ -1079,7 +1077,7 @@ public class Texture implements PConstants {
    * @param params GLTextureParameters
    */   
   protected void setParameters(Parameters params) {    
-    if (params.target == TEXTURE2D)  {
+    if (params.target == TEX2D)  {
         glTarget = PGL.GL_TEXTURE_2D;
     } else {
       throw new RuntimeException("Unknown texture target");     
@@ -1179,7 +1177,7 @@ public class Texture implements PConstants {
      * Sets all the parameters to default values.
      */
     public Parameters() {
-      this.target = TEXTURE2D;
+      this.target = TEX2D;
       this.format = ARGB;
       this.sampling = BILINEAR;
       this.mipmaps = true;
@@ -1188,7 +1186,7 @@ public class Texture implements PConstants {
     }
       
     public Parameters(int format) {
-      this.target = TEXTURE2D;
+      this.target = TEX2D;
       this.format = format;
       this.sampling = BILINEAR;   
       this.mipmaps = true;
@@ -1197,7 +1195,7 @@ public class Texture implements PConstants {
     }
 
     public Parameters(int format, int sampling) {
-      this.target = TEXTURE2D;
+      this.target = TEX2D;
       this.format = format;
       this.sampling = sampling;
       this.mipmaps = true;
@@ -1206,7 +1204,7 @@ public class Texture implements PConstants {
     }
     
     public Parameters(int format, int sampling, boolean mipmaps) {
-      this.target = TEXTURE2D;
+      this.target = TEX2D;
       this.format = format;
       this.sampling = sampling;
       this.mipmaps = mipmaps;
