@@ -1094,7 +1094,7 @@ public class Texture implements PConstants {
     } else {
       throw new RuntimeException("Unknown texture format");     
     }
-    
+
     if (params.sampling == POINT) {
       glMagFilter = PGL.GL_NEAREST;
       glMinFilter = PGL.GL_NEAREST;

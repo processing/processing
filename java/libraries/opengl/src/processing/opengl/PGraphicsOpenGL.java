@@ -1515,13 +1515,12 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     if (sizeChanged) {
-      // defaults to perspective, if the user has setup up their
-      // own projection, they'll need to fix it after resize anyway.
-      // this helps the people who haven't set up their own projection.
-      perspective();
-
-      // set up the default camera and initializes modelview matrix.
-      camera();
+      // Sets the default projection and camera (initializes modelview). 
+      // If the user has setup up their own projection, they'll need 
+      // to fix it after resize anyway. This helps the people who haven't 
+      // set up their own projection.        
+      defaultPerspective();
+      defaultCamera();
 
       // clear the flag
       sizeChanged = false;
@@ -3268,15 +3267,15 @@ public class PGraphicsOpenGL extends PGraphics {
       }
 
       if (textMode == MODEL) {
-        float high = glyph.height / (float) textFont.getSize();
-        float bwidth = glyph.width / (float) textFont.getSize();
+        float high    = glyph.height     / (float) textFont.getSize();
+        float bwidth  = glyph.width      / (float) textFont.getSize();
         float lextent = glyph.leftExtent / (float) textFont.getSize();
-        float textent = glyph.topExtent / (float) textFont.getSize();
+        float textent = glyph.topExtent  / (float) textFont.getSize();
 
         float x1 = x + lextent * textSize;
         float y1 = y - textent * textSize;
         float x2 = x1 + bwidth * textSize;
-        float y2 = y1 + high * textSize;
+        float y2 = y1 + high * textSize;        
 
         textCharModelImpl(tinfo, x1, y1, x2, y2);
       }
@@ -3298,6 +3297,15 @@ public class PGraphicsOpenGL extends PGraphics {
     vertex(x1, y1, info.u1, info.v1);
     vertex(x0, y1, info.u0, info.v1);
     endShape();
+    
+    if (PApplet.abs(info.crop[2]) != PApplet.abs(x1 - x0)) {    
+      PApplet.println("X: " + PApplet.abs(x1 - x0) + ": " + PApplet.abs(info.crop[2]));
+    }
+    if (PApplet.abs(info.crop[3]) != PApplet.abs(y1 - y0)) {
+      PApplet.println("Y: " + PApplet.abs(y1 - y0) + ": " + PApplet.abs(info.crop[3]));  
+    }
+    
+    
   }
 
 
@@ -3920,6 +3928,11 @@ public class PGraphicsOpenGL extends PGraphics {
     camera.print();
   }
 
+  
+  protected void defaultCamera() {
+    camera();  
+  }
+  
 
   //////////////////////////////////////////////////////////////
 
@@ -3931,7 +3944,7 @@ public class PGraphicsOpenGL extends PGraphics {
    * orthographic projection.
    */
   public void ortho() {
-    ortho(0, width, 0, height, cameraNear, cameraFar);
+    ortho(-width/2, +width/2, -height/2, +height/2, cameraNear, cameraFar);
   }
 
 
@@ -4039,7 +4052,7 @@ public class PGraphicsOpenGL extends PGraphics {
     calcProjmodelview();
   }
 
-
+  
   /**
    * Print the current projection matrix.
    */
@@ -4048,6 +4061,11 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
+  protected void defaultPerspective() {    
+    perspective();
+  }  
+  
+  
   //////////////////////////////////////////////////////////////
 
   // SCREEN AND MODEL COORDS
@@ -5332,7 +5350,8 @@ public class PGraphicsOpenGL extends PGraphics {
     pgl.initOffscreenSurface(pgPrimary.pgl);
     pgl.updateOffscreen(pgPrimary.pgl);
     
-    loadTextureImpl(Texture.BILINEAR, false);
+    //loadTextureImpl(Texture.BILINEAR, false);
+    loadTextureImpl(Texture.POINT, false);
     
     // In case of reinitialization (for example, when the smooth level
     // is changed), we make sure that all the OpenGL resources associated

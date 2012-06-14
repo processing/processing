@@ -269,7 +269,7 @@ class PFontTexture implements PConstants {
         rgba[t++] = 0xFFFFFF00; // Set the leftmost pixel in this row as blank
         for (int x = 0; x < glyph.width; x++) {
           rgba[t++] = 0xFFFFFF00 | glyph.image.pixels[p++];
-        }        
+        }
         rgba[t++] = 0xFFFFFF00; // Set the rightmost pixel in this row as blank
       }
       java.util.Arrays.fill(rgba, (h - 1) * w, h * w, 0xFFFFFF00); // Set the last row to blank pixels.
@@ -342,7 +342,6 @@ class PFontTexture implements PConstants {
     public float u0, u1;
     public float v0, v1;
     public int[] pixels;
-
     
     public TextureInfo(int tidx, int cropX, int cropY, int cropW, int cropH, int[] pix) {
       texIndex = tidx;      
