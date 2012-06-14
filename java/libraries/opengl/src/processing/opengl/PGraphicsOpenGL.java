@@ -3297,15 +3297,6 @@ public class PGraphicsOpenGL extends PGraphics {
     vertex(x1, y1, info.u1, info.v1);
     vertex(x0, y1, info.u0, info.v1);
     endShape();
-    
-    if (PApplet.abs(info.crop[2]) != PApplet.abs(x1 - x0)) {    
-      PApplet.println("X: " + PApplet.abs(x1 - x0) + ": " + PApplet.abs(info.crop[2]));
-    }
-    if (PApplet.abs(info.crop[3]) != PApplet.abs(y1 - y0)) {
-      PApplet.println("Y: " + PApplet.abs(y1 - y0) + ": " + PApplet.abs(info.crop[3]));  
-    }
-    
-    
   }
 
 
@@ -5350,8 +5341,7 @@ public class PGraphicsOpenGL extends PGraphics {
     pgl.initOffscreenSurface(pgPrimary.pgl);
     pgl.updateOffscreen(pgPrimary.pgl);
     
-    //loadTextureImpl(Texture.BILINEAR, false);
-    loadTextureImpl(Texture.POINT, false);
+    loadTextureImpl(Texture.BILINEAR, false);
     
     // In case of reinitialization (for example, when the smooth level
     // is changed), we make sure that all the OpenGL resources associated
