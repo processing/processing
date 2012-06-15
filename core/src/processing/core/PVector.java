@@ -196,9 +196,17 @@ public class PVector implements Serializable {
   }
 
 
-
   /**
-   * Make a new 2D unit vector with a random direction
+   * ( begin auto-generated from PVector_random2D.xml )
+   * 
+   * Make a new 2D unit vector with a random direction.  If you pass in "this"
+   * as an argument, it will use the PApplet's random number generator.  You can
+   * also pass in a target PVector to fill.
+   * 
+   * @webref pvector:method
+   * @usage web_application
+   * @return the random PVector
+   * @brief Make a new 2D unit vector with a random direction.
    */
   static public PVector random2D() {
     return random2D(null,null);
@@ -208,6 +216,7 @@ public class PVector implements Serializable {
    * Make a new 2D unit vector with a random direction
    * using Processing's current random number generator
    * @param parent current PApplet instance
+   * @return the random PVector
    */
   static public PVector random2D(PApplet parent) {
     return random2D(null,parent);
@@ -216,6 +225,7 @@ public class PVector implements Serializable {
   /**
    * Set a 2D vector to a random unit vector with a random direction
    * @param target the target vector (if null, a new vector will be created)
+   * @return the random PVector
    */
   static public PVector random2D(PVector target) {
     return random2D(target,null);
@@ -223,16 +233,26 @@ public class PVector implements Serializable {
 
   /**
    * Make a new 2D unit vector with a random direction
+   * @param parent current PApplet instance
    * @param target the target vector (if null, a new vector will be created)
+   * @return the random PVector
    */
   static public PVector random2D(PVector target, PApplet parent) {
     if (parent == null) return fromAngle((float)(Math.random()*Math.PI*2),target); 
     else                return fromAngle(parent.random(PConstants.TWO_PI),target);
   }
 
-
   /**
-   * Make a new 3D unit vector with a random direction
+   * ( begin auto-generated from PVector_random3D.xml )
+   * 
+   * Make a new 3D unit vector with a random direction.  If you pass in "this"
+   * as an argument, it will use the PApplet's random number generator.  You can
+   * also pass in a target PVector to fill.
+   * 
+   * @webref pvector:method
+   * @usage web_application
+   * @return the random PVector
+   * @brief Make a new 3D unit vector with a random direction.
    */
   static public PVector random3D() {
     return random3D(null,null);
@@ -242,7 +262,7 @@ public class PVector implements Serializable {
    * Make a new 3D unit vector with a random direction
    * using Processing's current random number generator
    * @param parent current PApplet instance
-
+   * @return the random PVector
    */
   static public PVector random3D(PApplet parent) {
     return random3D(null,parent);
@@ -251,6 +271,7 @@ public class PVector implements Serializable {
   /**
    * Set a 3D vector to a random unit vector with a random direction
    * @param target the target vector (if null, a new vector will be created)
+   * @return the random PVector
    */
   static public PVector random3D(PVector target) {
     return random3D(target,null);
@@ -259,6 +280,8 @@ public class PVector implements Serializable {
   /**
    * Make a new 3D unit vector with a random direction
    * @param target the target vector (if null, a new vector will be created)
+   * @param parent current PApplet instance
+   * @return the random PVector
    */
   static public PVector random3D(PVector target, PApplet parent) {
     float angle;
@@ -274,7 +297,7 @@ public class PVector implements Serializable {
     float vy = (float) (Math.sqrt(1-vz*vz)*Math.sin(angle));
     if (target == null) {
       target = new PVector(vx, vy, vz);
-      //target.normalize(); // Should be unecessary
+      //target.normalize(); // Should be unnecessary
     } else {
       target.set(vx,vy,vz);
     }
@@ -282,8 +305,17 @@ public class PVector implements Serializable {
   }
 
   /**
-   * Make a new 2D unit vector from an angle
+   * ( begin auto-generated from PVector_sub.xml )
+   * 
+   * Make a new 2D unit vector from an angle.
+   * 
+   * ( end auto-generated )
+   * 
+   * @webref pvector:method
+   * @usage web_application
+   * @brief Make a new 2D unit vector from an angle
    * @param angle the angle
+   * @return the new unit PVector
    */
   static public PVector fromAngle(float angle) {
     return fromAngle(angle,null);
@@ -294,6 +326,7 @@ public class PVector implements Serializable {
    * Make a new 2D unit vector from an angle
    * @param angle the angle
    * @param target the target vector (if null, a new vector will be created)
+   * @return the PVector
    */
   static public PVector fromAngle(float angle, PVector target) {
     if (target == null) {
@@ -348,18 +381,27 @@ public class PVector implements Serializable {
    * @webref pvector:method
    * @usage web_application
    * @brief Calculate the magnitude of the vector
+   * @return magnitude (length) of the vector
    */
   public float mag() {
     return (float) Math.sqrt(x*x + y*y + z*z);
   }
 
   /**
-   * Calculate  the squared magnitude of the vector
+   * ( begin auto-generated from PVector_mag.xml )
+   * 
+   * Calculates the squared magnitude of the vector and returns the result 
+   * as a float (this is simply the equation <em>(x*x + y*y + z*z)</em>.)
    * Faster if the real length is not required in the 
    * case of comparing vectors, etc.
    * 
-   * @webref
+   * ( end auto-generated )
+   * 
+   * @webref pvector:method
+   * @usage web_application
+   * @brief Calculate the magnitude of the vector
    * @return squared magnitude of the vector
+   *
    */
   public float magSq() {
     return (x*x + y*y + z*z);
@@ -428,7 +470,7 @@ public class PVector implements Serializable {
    * 
    * Subtracts x, y, and z components from a vector, subtracts one vector 
    * from another, or subtracts two independent vectors. The version of the 
-   * method that substracts two vectors is a static method and returns a 
+   * method that subtracts two vectors is a static method and returns a 
    * PVector, the others have no return value -- they act directly on the 
    * vector. See the examples for more context.
    * 
@@ -806,7 +848,10 @@ public class PVector implements Serializable {
    * 
    * ( end auto-generated )
    * 
+   * @webref pvector:method
+   * @usage web_application
    * @param len the new length for this vector
+   * @brief Set the magnitude of the vector
    */
   public void setMag(float len) {
     normalize();
@@ -826,34 +871,32 @@ public class PVector implements Serializable {
   }
 
   /**
+   * ( begin auto-generated from PVector_setMag.xml )
+   * 
    * Calculate the angle of rotation for this vector (only 2D vectors)
+   * 
+   * ( end auto-generated )
+   * 
+   * @webref pvector:method
+   * @usage web_application
    * @return the angle of rotation
+   * @brief SCalculate the angle of rotation for this vector
    */
   public float heading2D() {
     float angle = (float) Math.atan2(-y, x);
     return -1*angle;
   }
 
-
-   * @webref pvector:method
-   * @usage web_application
-   * @brief Normalize the vector to a length of 1
-   */
-  public void normalize() {
-    float m = mag();
-    if (m != 0 && m != 1) {
-      div(m);
-    }
-  }
-  
   /**
    * ( begin auto-generated from PVector_rotate.xml )
    * 
-   * Normalize the vector to length 1 (make it a unit vector).
+   * Rotate the vector by an angle (only 2D vectors), magnitude remains the same
    * 
    * ( end auto-generated )
    * 
-   * Rotate the vector by an angle (only 2D vectors), magnitude remains the same
+   * @webref pvector:method
+   * @usage web_application
+   * @brief Rotate the vector by an angle (2D only)
    * @param theta the angle of rotation
    */
   public void rotate(float theta) {
@@ -863,8 +906,17 @@ public class PVector implements Serializable {
     y = xTemp*PApplet.sin(theta) + y*PApplet.cos(theta);
   }
 
+ 
   /**
+   * ( begin auto-generated from PVector_rotate.xml )
+   * 
    * Linear interpolate the vector to another vector
+   * 
+   * ( end auto-generated )
+   * 
+   * @webref pvector:method
+   * @usage web_application
+   * @brief Linear interpolate the vector to another vector
    * @param v the vector to lerp to
    * @param amt  The amt parameter is the amount to interpolate between the two vectors where 1.0 equal to the new vector
    * 0.1 is very near the new vector, 0.5 is half-way in between.
@@ -874,7 +926,7 @@ public class PVector implements Serializable {
     y = PApplet.lerp(y,v.y,amt);
     z = PApplet.lerp(z,v.z,amt);
   }
-  
+
   /**
    * Linear interpolate between two vectors (returns a new PVector object)
    * @param v1 the vector
