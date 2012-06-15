@@ -6529,7 +6529,7 @@ public class PGraphicsOpenGL extends PGraphics {
     InGeometry(int mode) {
       renderMode = mode;
       allocate();
-    }
+    }    
 
     // -----------------------------------------------------------------
     //
@@ -7084,6 +7084,53 @@ public class PGraphicsOpenGL extends PGraphics {
       curveVertexCount = savedCount;
     }
 
+    // Returns the vertex data in the PGraphics double array format.
+    float[][] getVertexData() {      
+      float[][] data = new float[vertexCount][VERTEX_FIELD_COUNT];
+      for (int i = 0; i < vertexCount; i++) {
+        float[] vert = data[i];
+        
+        vert[X] = vertices[3 * i + 0];
+        vert[Y] = vertices[3 * i + 1];
+        vert[Z] = vertices[3 * i + 2];
+
+        vert[R] = ((colors[i] >> 16) & 0xFF) / 255.0f;
+        vert[G] = ((colors[i] >>  8) & 0xFF) / 255.0f;
+        vert[B] = ((colors[i] >>  0) & 0xFF) / 255.0f;
+        vert[A] = ((colors[i] >> 24) & 0xFF) / 255.0f;
+          
+        vert[U] = texcoords[2 * i + 0];
+        vert[V] = texcoords[2 * i + 1];
+
+        vert[NX] = normals[3 * i + 0];
+        vert[NY] = normals[3 * i + 1];
+        vert[NZ] = normals[3 * i + 2];
+          
+        vert[SR] = ((strokeColors[i] >> 16) & 0xFF) / 255.0f;
+        vert[SG] = ((strokeColors[i] >>  8) & 0xFF) / 255.0f;
+        vert[SB] = ((strokeColors[i] >>  0) & 0xFF) / 255.0f;
+        vert[SA] = ((strokeColors[i] >> 24) & 0xFF) / 255.0f;
+
+        vert[SW] = strokeWeights[i];   
+          
+        vert[AR] = ((ambient[i] >> 16) & 0xFF) / 255.0f;
+        vert[AG] = ((ambient[i] >>  8) & 0xFF) / 255.0f;
+        vert[AB] = ((ambient[i] >>  0) & 0xFF) / 255.0f;
+
+        vert[SPR] = ((specular[i] >> 16) & 0xFF) / 255.0f;
+        vert[SPG] = ((specular[i] >>  8) & 0xFF) / 255.0f;
+        vert[SPB] = ((specular[i] >>  0) & 0xFF) / 255.0f;
+
+        vert[ER] = ((emissive[i] >> 16) & 0xFF) / 255.0f;
+        vert[EG] = ((emissive[i] >>  8) & 0xFF) / 255.0f;
+        vert[EB] = ((emissive[i] >>  0) & 0xFF) / 255.0f;
+
+        vert[SHINE] = shininess[i];        
+      }
+            
+      return data;
+    }    
+    
     // -----------------------------------------------------------------
     //
     // Edges    
@@ -7873,7 +7920,7 @@ public class PGraphicsOpenGL extends PGraphics {
       indCount += 3 * detailU;      
       
       return indices;
-    } 
+    }    
   }
 
   
