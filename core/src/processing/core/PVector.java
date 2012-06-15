@@ -847,20 +847,43 @@ public class PVector implements Serializable {
 
   /**
    * Linear interpolate the vector to another vector
-   * @param PVector the vector to lerp to
+   * @param v the vector to lerp to
    * @param amt  The amt parameter is the amount to interpolate between the two vectors where 1.0 equal to the new vector
    * 0.1 is very near the new vector, 0.5 is half-way in between.
    */
   public void lerp(PVector v, float amt) {
     x = PApplet.lerp(x,v.x,amt);
     y = PApplet.lerp(y,v.y,amt);
+    z = PApplet.lerp(z,v.z,amt);
+  }
+  
+  /**
+   * Linear interpolate between two vectors (returns a new PVector object)
+   * @param v1 the vector
+   * @param v2 the vector to lerp to
+   * @param amt  The amt parameter is the amount to interpolate between the two vectors where 1.0 equal to the new vector
+   * 0.1 is very near the new vector, 0.5 is half-way in between.
+   * @return the resulting lerped PVector
+   */
+  public static PVector lerp(PVector v1, PVector v2, float amt) {
+    PVector v = v1.get();
+    v.lerp(v2, amt);
+    return v;
   }
 
+  /**
+   * Linear interpolate the vector to x,y,z values
+   * @param x the x component to lerp to
+   * @param y the y component to lerp to
+   * @param z the z component to lerp to
+   * @param amt  The amt parameter is the amount to interpolate between the two vectors where 1.0 equal to the new vector
+   * 0.1 is very near the new vector, 0.5 is half-way in between.
+   */
   public void lerp(float x, float y, float z, float amt) {
     this.x = PApplet.lerp(this.x,x,amt);
     this.y = PApplet.lerp(this.y,y,amt);
+    this.z = PApplet.lerp(this.z,z,amt);
   }
-
 
   /**
    * ( begin auto-generated from PVector_angleBetween.xml )
