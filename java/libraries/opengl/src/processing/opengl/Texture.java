@@ -51,7 +51,7 @@ public class Texture implements PConstants {
   public static final int TEXRECT = 1;
 
   /** Point sampling: both magnification and minification filtering are set to nearest */
-  //public static final int POINT = 2; // shared with shape feature
+  public static final int POINT = 2;
   /** Linear sampling: magnification filtering is nearest, minification set to linear */
   public static final int LINEAR = 3;  
   /** Bilinear sampling: both magnification filtering is set to linear and minification  
