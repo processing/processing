@@ -834,7 +834,25 @@ public class PVector implements Serializable {
     return -1*angle;
   }
 
+
+   * @webref pvector:method
+   * @usage web_application
+   * @brief Normalize the vector to a length of 1
+   */
+  public void normalize() {
+    float m = mag();
+    if (m != 0 && m != 1) {
+      div(m);
+    }
+  }
+  
   /**
+   * ( begin auto-generated from PVector_rotate.xml )
+   * 
+   * Normalize the vector to length 1 (make it a unit vector).
+   * 
+   * ( end auto-generated )
+   * 
    * Rotate the vector by an angle (only 2D vectors), magnitude remains the same
    * @param theta the angle of rotation
    */
