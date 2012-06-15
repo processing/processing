@@ -3744,31 +3744,35 @@ public class PShapeOpenGL extends PShape {
   
   // Applies the styles of g.
   protected void styles(PGraphics g) {
-    if (stroke) {
-      stroke(g.strokeColor);
-      strokeWeight(g.strokeWeight);
-      
-      // These two don't to nothing probably:
-      strokeCap(g.strokeCap);
-      strokeJoin(g.strokeJoin);
-    } else {
-      noStroke();
-    }
+    if (g instanceof PGraphicsOpenGL) {
+      if (stroke) {
+        stroke(g.strokeColor);
+        strokeWeight(g.strokeWeight);
+        
+        // These two don't to nothing probably:
+        strokeCap(g.strokeCap);
+        strokeJoin(g.strokeJoin);
+      } else {
+        noStroke();
+      }
 
-    if (fill) {      
-      fill(g.fillColor);
+      if (fill) {      
+        fill(g.fillColor);
+      } else {
+        noFill();
+      }    
+      
+      ambient(g.ambientColor);  
+      specular(g.specularColor);  
+      emissive(g.emissiveColor);
+      shininess(g.shininess);   
+      
+      // What about other style parameters, such as rectMode, etc?
+      // These should force a tessellation update, same as stroke
+      // cap and weight... right?      
     } else {
-      noFill();
-    }    
-    
-    ambient(g.ambientColor);  
-    specular(g.specularColor);  
-    emissive(g.emissiveColor);
-    shininess(g.shininess);   
-    
-    // What about other style parameters, such as rectMode, etc?
-    // These should force a tessellation update, same as stroke
-    // cap and weight... right?
+      super.styles(g);
+    }
   }
   
   
@@ -3785,31 +3789,39 @@ public class PShapeOpenGL extends PShape {
   
   
   public void draw(PGraphics g) {
-    if (visible) {      
-      pre(g);
-      
-      updateTessellation();      
-      updateGeometry();
-      
-      if (family == GROUP) {        
-        if (fragmentedGroup(g)) {
-          for (int i = 0; i < childCount; i++) {
-            ((PShapeOpenGL) children[i]).draw(g);
-          }        
-        } else {          
-          PImage tex = null;
-          if (textures != null && textures.size() == 1) {
-            tex = (PImage)textures.toArray()[0];
+    if (g instanceof PGraphicsOpenGL) {
+      if (visible) {      
+        pre(g);
+        
+        updateTessellation();      
+        updateGeometry();
+        
+        if (family == GROUP) {        
+          if (fragmentedGroup(g)) {
+            for (int i = 0; i < childCount; i++) {
+              ((PShapeOpenGL) children[i]).draw(g);
+            }        
+          } else {          
+            PImage tex = null;
+            if (textures != null && textures.size() == 1) {
+              tex = (PImage)textures.toArray()[0];
+            }
+            render((PGraphicsOpenGL)g, tex);
           }
-          render((PGraphicsOpenGL)g, tex);
+                
+        } else {
+          render((PGraphicsOpenGL)g, texture);
         }
-              
-      } else {
-        render((PGraphicsOpenGL)g, texture);
-      }
-      
-      post(g);
-    }
+        
+        post(g);
+      }      
+    } else {
+      // The renderer is not PGraphicsOpenGL, which probably
+      // means that the draw() method is being called by the 
+      // recorder. We just use the default drawing from the
+      // parent class.
+      super.draw(g);  
+    }    
   }
 
   
@@ -3826,15 +3838,34 @@ public class PShapeOpenGL extends PShape {
   
   
   protected void pre(PGraphics g) {
-    if (!style) {
-      styles(g);
+    if (g instanceof PGraphicsOpenGL) {
+      if (!style) {
+        styles(g);
+      }      
+    } else {
+      super.pre(g);
     }
   }
   
   
   public void post(PGraphics g) {
+    if (g instanceof PGraphicsOpenGL) {
+    } else {
+      super.post(g);
+    }    
   }  
   
+  
+  protected void drawGeometry(PGraphics g) {
+    vertexCount = inGeo.vertexCount;
+    vertices = inGeo.getVertexData(); 
+       
+    super.drawGeometry(g);
+    
+    vertexCount = 0;
+    vertices = null;    
+  }
+
   
   // Render the geometry stored in the root shape as VBOs, for the vertices 
   // corresponding to this shape. Sometimes we can have root == this.
