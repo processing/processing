@@ -4030,15 +4030,16 @@ public class PGraphicsOpenGL extends PGraphics {
     // Flushing geometry with a different perspective configuration.
     flush();
 
+    float n2 = 2 * znear;    
     float w = right - left;
     float h = top - bottom;
     float d = zfar - znear;
-    float n2 = 2 * znear;
-    projection.set(n2/w,       0,  (right + left) / w,                0,
-                      0, -n2 / h,  (top + bottom) / h,                0,
-                      0,       0, -(zfar + znear) / d, -(n2 * zfar) / d,
-                      0,       0,                  -1,                0);
-    
+
+    projection.set(n2 / w,       0,  (right + left) / w,                0,
+                        0, -n2 / h,  (top + bottom) / h,                0,
+                        0,       0, -(zfar + znear) / d, -(n2 * zfar) / d,
+                        0,       0,                  -1,                0);
+
     calcProjmodelview();
   }
 
@@ -7112,6 +7113,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
         vert[SW] = strokeWeights[i];   
           
+        /*  
+        // Android doesn't have these:
         vert[AR] = ((ambient[i] >> 16) & 0xFF) / 255.0f;
         vert[AG] = ((ambient[i] >>  8) & 0xFF) / 255.0f;
         vert[AB] = ((ambient[i] >>  0) & 0xFF) / 255.0f;
@@ -7124,7 +7127,9 @@ public class PGraphicsOpenGL extends PGraphics {
         vert[EG] = ((emissive[i] >>  8) & 0xFF) / 255.0f;
         vert[EB] = ((emissive[i] >>  0) & 0xFF) / 255.0f;
 
-        vert[SHINE] = shininess[i];        
+        vert[SHINE] = shininess[i];  
+        */      
+       
       }
             
       return data;

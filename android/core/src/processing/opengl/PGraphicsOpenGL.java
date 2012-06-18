@@ -293,8 +293,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // Texturing:  
   
-  public int textureWrap    = Texture.CLAMP;
-  public int textureQuality = Texture.BEST;  
+  public int textureWrap     = Texture.CLAMP; 
+  public int textureSampling = Texture.TRILINEAR;
   
   // ........................................................
 
@@ -446,7 +446,10 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  //public void setParent(PApplet parent)  // PGraphics
+  public void setParent(PApplet parent)  {
+    super.setParent(parent);
+    quality = parent.sketchQuality();
+  }
 
 
   public void setPrimary(boolean primary) {
@@ -1516,13 +1519,12 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     if (sizeChanged) {
-      // defaults to perspective, if the user has setup up their
-      // own projection, they'll need to fix it after resize anyway.
-      // this helps the people who haven't set up their own projection.
-      perspective();
-
-      // set up the default camera and initializes modelview matrix.
-      camera();
+      // Sets the default projection and camera (initializes modelview). 
+      // If the user has setup up their own projection, they'll need 
+      // to fix it after resize anyway. This helps the people who haven't 
+      // set up their own projection.        
+      defaultPerspective();
+      defaultCamera();
 
       // clear the flag
       sizeChanged = false;
@@ -1687,9 +1689,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
     if (quality < 2) {
       pgl.glDisable(PGL.GL_MULTISAMPLE);
-//      pgl.glEnable(PGL.GL_POINT_SMOOTH);
-//      pgl.glEnable(PGL.GL_LINE_SMOOTH);
-//      pgl.glEnable(PGL.GL_POLYGON_SMOOTH);
     } else {
       pgl.glEnable(PGL.GL_MULTISAMPLE);
       pgl.glDisable(PGL.GL_POINT_SMOOTH);
@@ -2052,13 +2051,13 @@ public class PGraphicsOpenGL extends PGraphics {
   public void textureWrap(int wrap) {
     this.textureWrap = wrap;
   }
-  
-  
-  public void textureQuality(int quality) {
-    this.textureQuality = quality;
-  }
-    
 
+  
+  public void textureSampling(int sampling) {
+    this.textureSampling = sampling;
+  }
+
+  
   public void texture(PImage image) {
     if (flushMode == FLUSH_WHEN_FULL && hints[DISABLE_TEXTURE_CACHE] &&
         image != textureImage0) {
@@ -3269,15 +3268,15 @@ public class PGraphicsOpenGL extends PGraphics {
       }
 
       if (textMode == MODEL) {
-        float high = glyph.height / (float) textFont.getSize();
-        float bwidth = glyph.width / (float) textFont.getSize();
+        float high    = glyph.height     / (float) textFont.getSize();
+        float bwidth  = glyph.width      / (float) textFont.getSize();
         float lextent = glyph.leftExtent / (float) textFont.getSize();
-        float textent = glyph.topExtent / (float) textFont.getSize();
+        float textent = glyph.topExtent  / (float) textFont.getSize();
 
         float x1 = x + lextent * textSize;
         float y1 = y - textent * textSize;
         float x2 = x1 + bwidth * textSize;
-        float y2 = y1 + high * textSize;
+        float y2 = y1 + high * textSize;        
 
         textCharModelImpl(tinfo, x1, y1, x2, y2);
       }
@@ -3921,6 +3920,11 @@ public class PGraphicsOpenGL extends PGraphics {
     camera.print();
   }
 
+  
+  protected void defaultCamera() {
+    camera();  
+  }
+  
 
   //////////////////////////////////////////////////////////////
 
@@ -3932,7 +3936,7 @@ public class PGraphicsOpenGL extends PGraphics {
    * orthographic projection.
    */
   public void ortho() {
-    ortho(0, width, 0, height, cameraNear, cameraFar);
+    ortho(-width/2, +width/2, -height/2, +height/2, cameraNear, cameraFar);
   }
 
 
@@ -3961,19 +3965,21 @@ public class PGraphicsOpenGL extends PGraphics {
     // Flushing geometry with a different perspective configuration.
     flush();
     
-    float x = 2.0f / (right - left);
-    float y = 2.0f / (top - bottom);
+    float x = +2.0f / (right - left);
+    float y = +2.0f / (top - bottom);
     float z = -2.0f / (far - near);
 
     float tx = -(right + left) / (right - left);
     float ty = -(top + bottom) / (top - bottom);
-    float tz = -(far + near) / (far - near);
+    float tz = -(far + near)   / (far - near);
 
     // The minus sign is needed to invert the Y axis.
     projection.set(x,  0, 0, tx,
                    0, -y, 0, ty,
                    0,  0, z, tz,
                    0,  0, 0,  1);
+    
+    calcProjmodelview();
   }
 
 
@@ -4025,22 +4031,20 @@ public class PGraphicsOpenGL extends PGraphics {
     // Flushing geometry with a different perspective configuration.
     flush();
 
-    float temp, temp2, temp3, temp4;
-    temp = 2.0f * znear;
-    temp2 = right - left;
-    temp3 = top - bottom;
-    temp4 = zfar - znear;
+    float n2 = 2 * znear;    
+    float w = right - left;
+    float h = top - bottom;
+    float d = zfar - znear;
 
-    // The minus sign in the temp / temp3 term is to invert the Y axis.
-    projection.set(temp / temp2,              0,  (right + left) / temp2,                      0,
-                              0,  -temp / temp3,  (top + bottom) / temp3,                      0,
-                              0,              0, (-zfar - znear) / temp4, (-temp * zfar) / temp4,
-                              0,              0,                      -1,                      1);
+    projection.set(n2 / w,       0,  (right + left) / w,                0,
+                        0, -n2 / h,  (top + bottom) / h,                0,
+                        0,       0, -(zfar + znear) / d, -(n2 * zfar) / d,
+                        0,       0,                  -1,                0);
 
     calcProjmodelview();
   }
 
-
+  
   /**
    * Print the current projection matrix.
    */
@@ -4049,6 +4053,11 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
+  protected void defaultPerspective() {    
+    perspective();
+  }  
+  
+  
   //////////////////////////////////////////////////////////////
 
   // SCREEN AND MODEL COORDS
@@ -5248,19 +5257,10 @@ public class PGraphicsOpenGL extends PGraphics {
       } else {
         params.mipmaps = true;
       }      
-      if (textureQuality == Texture.LOW) {
-        params.sampling = POINT;  
-      } else if (textureQuality == Texture.MEDIUM) {
-        params.sampling = Texture.LINEAR;  
-      } else if (textureQuality == Texture.HIGH) {
+      params.sampling = textureSampling;        
+      if (params.sampling == Texture.TRILINEAR && !params.mipmaps) {
         params.sampling = Texture.BILINEAR;
-      } else if (textureQuality == Texture.BEST) {
-        if (params.mipmaps) {
-          params.sampling = Texture.TRILINEAR;
-        } else {
-          params.sampling = Texture.BILINEAR;
-          PGraphics.showWarning("BEST texture quality requires mipmaps, will switch to HIGH.");
-        }        
+        PGraphics.showWarning("TRILINEAR texture sampling requires mipmaps, which are disabled. Will use BILINEAR instead.");
       }         
       params.wrapU = textureWrap;
       params.wrapV = textureWrap;
@@ -6530,7 +6530,7 @@ public class PGraphicsOpenGL extends PGraphics {
     InGeometry(int mode) {
       renderMode = mode;
       allocate();
-    }
+    }    
 
     // -----------------------------------------------------------------
     //
@@ -7085,6 +7085,57 @@ public class PGraphicsOpenGL extends PGraphics {
       curveVertexCount = savedCount;
     }
 
+    // Returns the vertex data in the PGraphics double array format.
+    float[][] getVertexData() {      
+      float[][] data = new float[vertexCount][VERTEX_FIELD_COUNT];
+      for (int i = 0; i < vertexCount; i++) {
+        float[] vert = data[i];
+        
+        vert[X] = vertices[3 * i + 0];
+        vert[Y] = vertices[3 * i + 1];
+        vert[Z] = vertices[3 * i + 2];
+
+        vert[R] = ((colors[i] >> 16) & 0xFF) / 255.0f;
+        vert[G] = ((colors[i] >>  8) & 0xFF) / 255.0f;
+        vert[B] = ((colors[i] >>  0) & 0xFF) / 255.0f;
+        vert[A] = ((colors[i] >> 24) & 0xFF) / 255.0f;
+          
+        vert[U] = texcoords[2 * i + 0];
+        vert[V] = texcoords[2 * i + 1];
+
+        vert[NX] = normals[3 * i + 0];
+        vert[NY] = normals[3 * i + 1];
+        vert[NZ] = normals[3 * i + 2];
+          
+        vert[SR] = ((strokeColors[i] >> 16) & 0xFF) / 255.0f;
+        vert[SG] = ((strokeColors[i] >>  8) & 0xFF) / 255.0f;
+        vert[SB] = ((strokeColors[i] >>  0) & 0xFF) / 255.0f;
+        vert[SA] = ((strokeColors[i] >> 24) & 0xFF) / 255.0f;
+
+        vert[SW] = strokeWeights[i];   
+          
+        /*  
+        // Android doesn't have these:
+        vert[AR] = ((ambient[i] >> 16) & 0xFF) / 255.0f;
+        vert[AG] = ((ambient[i] >>  8) & 0xFF) / 255.0f;
+        vert[AB] = ((ambient[i] >>  0) & 0xFF) / 255.0f;
+
+        vert[SPR] = ((specular[i] >> 16) & 0xFF) / 255.0f;
+        vert[SPG] = ((specular[i] >>  8) & 0xFF) / 255.0f;
+        vert[SPB] = ((specular[i] >>  0) & 0xFF) / 255.0f;
+
+        vert[ER] = ((emissive[i] >> 16) & 0xFF) / 255.0f;
+        vert[EG] = ((emissive[i] >>  8) & 0xFF) / 255.0f;
+        vert[EB] = ((emissive[i] >>  0) & 0xFF) / 255.0f;
+
+        vert[SHINE] = shininess[i];  
+        */      
+       
+      }
+            
+      return data;
+    }    
+    
     // -----------------------------------------------------------------
     //
     // Edges    
@@ -7874,7 +7925,7 @@ public class PGraphicsOpenGL extends PGraphics {
       indCount += 3 * detailU;      
       
       return indices;
-    } 
+    }    
   }
 
   
