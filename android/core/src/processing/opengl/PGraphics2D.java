@@ -68,6 +68,82 @@ public class PGraphics2D extends PGraphicsOpenGL {
     }
     super.hint(which);
   }
+
+  
+  //////////////////////////////////////////////////////////////
+
+  // PROJECTION
+  
+  
+  public void ortho() {
+    showMethodWarning("ortho");
+  }
+  
+  
+  public void ortho(float left, float right,
+                    float bottom, float top) {
+    showMethodWarning("ortho");
+  }
+  
+  
+  public void ortho(float left, float right,
+                    float bottom, float top,
+                    float near, float far) {
+    showMethodWarning("ortho");
+  }
+  
+  
+  public void perspective() {
+    showMethodWarning("perspective");
+  }  
+  
+  
+  public void perspective(float fov, float aspect, float zNear, float zFar) {
+    showMethodWarning("perspective");
+  }
+  
+  
+  public void frustum(float left, float right, float bottom, float top,
+                      float znear, float zfar) {
+    showMethodWarning("frustum");
+  }
+  
+  
+  protected void defaultPerspective() {    
+    super.ortho(-width/2, +width/2, -height/2, +height/2, cameraNear, cameraFar);
+  }
+  
+  
+  //////////////////////////////////////////////////////////////
+
+  // CAMERA
+  
+  
+  public void beginCamera() {
+    showMethodWarning("beginCamera");
+  }
+  
+  
+  public void endCamera() {
+    showMethodWarning("endCamera");
+  }
+  
+  
+  public void camera() {
+    showMethodWarning("camera");
+  }
+  
+  
+  public void camera(float eyeX, float eyeY, float eyeZ,
+                     float centerX, float centerY, float centerZ,
+                     float upX, float upY, float upZ) {
+    showMethodWarning("camera");
+  }
+  
+
+  protected void defaultCamera() {    
+    super.camera(cameraX, cameraY, cameraZ, cameraX, cameraY, 0, 0, 1, 0);
+  }
   
   
   //////////////////////////////////////////////////////////////

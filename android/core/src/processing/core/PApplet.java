@@ -976,6 +976,11 @@ public class PApplet extends Activity implements PConstants, Runnable {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
+  public int sketchQuality() {
+    return 1;
+  }
+  
+  
   public int sketchWidth() {
     return displayWidth;
   }

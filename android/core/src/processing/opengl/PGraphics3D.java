@@ -51,6 +51,26 @@ public class PGraphics3D extends PGraphicsOpenGL {
   
   //////////////////////////////////////////////////////////////
 
+  // PROJECTION
+  
+  
+  protected void defaultPerspective() {    
+    perspective();
+  }
+  
+  
+  //////////////////////////////////////////////////////////////
+
+  // CAMERA
+  
+  
+  protected void defaultCamera() {    
+    camera();
+  }  
+  
+  
+  //////////////////////////////////////////////////////////////
+
   // SHAPE I/O
   
 
