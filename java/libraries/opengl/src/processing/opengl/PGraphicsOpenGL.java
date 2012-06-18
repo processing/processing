@@ -445,7 +445,10 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  //public void setParent(PApplet parent)  // PGraphics
+  public void setParent(PApplet parent)  {
+    super.setParent(parent);
+    quality = parent.sketchQuality();
+  }
 
 
   public void setPrimary(boolean primary) {
@@ -1685,9 +1688,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
     if (quality < 2) {
       pgl.glDisable(PGL.GL_MULTISAMPLE);
-//      pgl.glEnable(PGL.GL_POINT_SMOOTH);
-//      pgl.glEnable(PGL.GL_LINE_SMOOTH);
-//      pgl.glEnable(PGL.GL_POLYGON_SMOOTH);
     } else {
       pgl.glEnable(PGL.GL_MULTISAMPLE);
       pgl.glDisable(PGL.GL_POINT_SMOOTH);
@@ -3964,13 +3964,13 @@ public class PGraphicsOpenGL extends PGraphics {
     // Flushing geometry with a different perspective configuration.
     flush();
     
-    float x = 2.0f / (right - left);
-    float y = 2.0f / (top - bottom);
+    float x = +2.0f / (right - left);
+    float y = +2.0f / (top - bottom);
     float z = -2.0f / (far - near);
 
     float tx = -(right + left) / (right - left);
     float ty = -(top + bottom) / (top - bottom);
-    float tz = -(far + near) / (far - near);
+    float tz = -(far + near)   / (far - near);
 
     // The minus sign is needed to invert the Y axis.
     projection.set(x,  0, 0, tx,
@@ -4030,11 +4030,14 @@ public class PGraphicsOpenGL extends PGraphics {
     // Flushing geometry with a different perspective configuration.
     flush();
 
-    //System.out.println(projection);
-    projection.set((2*znear)/(right-left),                       0,  (right+left)/(right-left),                           0,
-                                        0, -(2*znear)/(top-bottom),  (top+bottom)/(top-bottom),                           0,
-                                        0,                       0, -(zfar+znear)/(zfar-znear),-(2*zfar*znear)/(zfar-znear),
-                                        0,                       0,                          -1,                          0);
+    float w = right - left;
+    float h = top - bottom;
+    float d = zfar - znear;
+    float n2 = 2 * znear;
+    projection.set(n2/w,       0,  (right + left) / w,                0,
+                      0, -n2 / h,  (top + bottom) / h,                0,
+                      0,       0, -(zfar + znear) / d, -(n2 * zfar) / d,
+                      0,       0,                  -1,                0);
     
     calcProjmodelview();
   }
