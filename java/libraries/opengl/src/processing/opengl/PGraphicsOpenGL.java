@@ -3977,6 +3977,8 @@ public class PGraphicsOpenGL extends PGraphics {
                    0, -y, 0, ty,
                    0,  0, z, tz,
                    0,  0, 0,  1);
+    
+    calcProjmodelview();
   }
 
 
@@ -4028,18 +4030,12 @@ public class PGraphicsOpenGL extends PGraphics {
     // Flushing geometry with a different perspective configuration.
     flush();
 
-    float temp, temp2, temp3, temp4;
-    temp = 2.0f * znear;
-    temp2 = right - left;
-    temp3 = top - bottom;
-    temp4 = zfar - znear;
-
-    // The minus sign in the temp / temp3 term is to invert the Y axis.
-    projection.set(temp / temp2,              0,  (right + left) / temp2,                      0,
-                              0,  -temp / temp3,  (top + bottom) / temp3,                      0,
-                              0,              0, (-zfar - znear) / temp4, (-temp * zfar) / temp4,
-                              0,              0,                      -1,                      1);
-
+    //System.out.println(projection);
+    projection.set((2*znear)/(right-left),                       0,  (right+left)/(right-left),                           0,
+                                        0, -(2*znear)/(top-bottom),  (top+bottom)/(top-bottom),                           0,
+                                        0,                       0, -(zfar+znear)/(zfar-znear),-(2*zfar*znear)/(zfar-znear),
+                                        0,                       0,                          -1,                          0);
+    
     calcProjmodelview();
   }
 
