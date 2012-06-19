@@ -43,7 +43,14 @@ public class PShader {
   static public final int POINT    = 5;
   
   protected PApplet parent;
-  protected PGraphicsOpenGL pg; 
+  // The main renderer associated to the parent PApplet.
+  protected PGraphicsOpenGL pgMain;  
+  // We need a reference to the renderer since a shader might
+  // be called by different renderers within a single application
+  // (the one corresponding to the main surface, or other offscreen
+  // renderers).
+  protected PGraphicsOpenGL pgCurrent;
+  
   protected PGL pgl;
   protected PGL.Context context;      // The context that created this shader.
 
@@ -62,9 +69,10 @@ public class PShader {
 
   protected boolean active;
   
+  
   public PShader() {
     parent = null;
-    pg = null;
+    pgMain = null;
     pgl = null;
     context = null;
     
@@ -80,13 +88,15 @@ public class PShader {
     active = false;
   }
     
+  
   public PShader(PApplet parent) {
     this();
     this.parent = parent;
-    pg = (PGraphicsOpenGL) parent.g;
-    pgl = pg.pgl;
+    pgMain = (PGraphicsOpenGL) parent.g;
+    pgl = pgMain.pgl;
     context = pgl.createEmptyContext();
   }  
+  
   
   /**
    * Creates a shader program using the specified vertex and fragment
@@ -98,8 +108,8 @@ public class PShader {
    */
   public PShader(PApplet parent, String vertFilename, String fragFilename) {
     this.parent = parent;
-    pg = (PGraphicsOpenGL) parent.g;
-    pgl = pg.pgl;    
+    pgMain = (PGraphicsOpenGL) parent.g;
+    pgl = pgMain.pgl;    
     
     this.vertexURL = null;
     this.fragmentURL = null;
@@ -111,10 +121,11 @@ public class PShader {
     fragmentShader = 0;      
   }
   
+  
   public PShader(PApplet parent, URL vertURL, URL fragURL) {
     this.parent = parent;
-    pg = (PGraphicsOpenGL) parent.g;
-    pgl = pg.pgl;    
+    pgMain = (PGraphicsOpenGL) parent.g;
+    pgl = pgMain.pgl;    
 
     this.vertexURL = vertURL;
     this.fragmentURL = fragURL;    
@@ -126,37 +137,43 @@ public class PShader {
     fragmentShader = 0;      
   }  
   
+  
   protected void finalize() throws Throwable {
     try {
       if (vertexShader != 0) {
-        pg.finalizeGLSLVertShaderObject(vertexShader, context.code());
+        pgMain.finalizeGLSLVertShaderObject(vertexShader, context.code());
       }
       if (fragmentShader != 0) {
-        pg.finalizeGLSLFragShaderObject(fragmentShader, context.code());
+        pgMain.finalizeGLSLFragShaderObject(fragmentShader, context.code());
       }
       if (programObject != 0) {
-        pg.finalizeGLSLProgramObject(programObject, context.code());
+        pgMain.finalizeGLSLProgramObject(programObject, context.code());
       }
     } finally {
       super.finalize();
     }
   }
   
+  
   public void setVertexShader(String vertFilename) {
     this.vertexFilename = vertFilename;
   }
 
+  
   public void setVertexShader(URL vertURL) {
     this.vertexURL = vertURL;    
   }  
+  
   
   public void setFragmentShader(String fragFilename) {
     this.fragmentFilename = fragFilename;    
   }
 
+  
   public void setFragmentShader(URL fragURL) {
     this.fragmentURL = fragURL;        
   }
+  
   
   /**
    * Starts the execution of the shader program.
@@ -209,19 +226,27 @@ public class PShader {
   }
 
   
+  public void setAttribute(int loc, int vboId, int size, int type, boolean normalized, int stride, int offset) {
+    if (-1 < loc) {
+      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, vboId);
+      pgl.glVertexAttribPointer(loc, size, type, normalized, stride, offset);
+    }
+  }  
+  
+  
   public void setIntUniform(int loc, int x) {
     if (-1 < loc) {
       pgl.glUniform1i(loc, x);
     }
   }  
-
+  
   
   public void set1FloatUniform(int loc, float x) {
     if (-1 < loc) {
       pgl.glUniform1f(loc, x);
     }
   }  
-  
+
   
   public void set2FloatUniform(int loc, float x, float y) {
     if (-1 < loc) {
@@ -293,6 +318,10 @@ public class PShader {
   }    
 
   
+  /*
+  // The individal attribute setters are not really needed,
+  // read this:
+  // http://stackoverflow.com/questions/7718976/what-is-glvertexattrib-versus-glvertexattribpointer-used-for
   public void set1FloatAttribute(int loc, float x) {
     if (-1 < loc) {
       pgl.glVertexAttrib1f(loc, x);
@@ -319,11 +348,13 @@ public class PShader {
       pgl.glVertexAttrib4f(loc, x, y, z, w);
     }
   }
+  */  
+ 
     
   protected void init() {
     if (programObject == 0 || contextIsOutdated()) {
       context = pgl.getCurrentContext();
-      programObject = pg.createGLSLProgramObject(context.code());
+      programObject = pgMain.createGLSLProgramObject(context.code());
       
       boolean hasVert = false;            
       if (vertexFilename != null) {
@@ -383,9 +414,9 @@ public class PShader {
   protected boolean contextIsOutdated() {
     boolean outdated = !pgl.contextIsCurrent(context);
     if (outdated) {
-      pg.removeGLSLProgramObject(programObject, context.code());
-      pg.removeGLSLVertShaderObject(vertexShader, context.code());
-      pg.removeGLSLFragShaderObject(fragmentShader, context.code());
+      pgMain.removeGLSLProgramObject(programObject, context.code());
+      pgMain.removeGLSLVertShaderObject(vertexShader, context.code());
+      pgMain.removeGLSLFragShaderObject(fragmentShader, context.code());
       
       programObject = 0;
       vertexShader = 0;
@@ -404,6 +435,7 @@ public class PShader {
     vertexShaderSource = PApplet.join(parent.loadStrings(filename), "\n");
     return vertexShaderSource != null;
   }
+  
 
   /**
    * Loads and compiles the vertex shader contained in the URL.
@@ -420,6 +452,7 @@ public class PShader {
     }
   }  
     
+  
   /**
    * Loads and compiles the fragment shader contained in file.
    * 
@@ -429,6 +462,7 @@ public class PShader {
     fragmentShaderSource = PApplet.join(parent.loadStrings(filename), "\n");
     return fragmentShaderSource != null;
   }  
+  
   
   /**
    * Loads and compiles the fragment shader contained in the URL.
@@ -445,11 +479,12 @@ public class PShader {
     }
   }  
   
+  
   /**
    * @param shaderSource a string containing the shader's code
    */
   protected boolean compileVertexShader() {
-    vertexShader = pg.createGLSLVertShaderObject(context.code());
+    vertexShader = pgMain.createGLSLVertShaderObject(context.code());
     
     pgl.glShaderSource(vertexShader, vertexShaderSource);
     pgl.glCompileShader(vertexShader);
@@ -469,7 +504,7 @@ public class PShader {
    * @param shaderSource a string containing the shader's code
    */
   protected boolean compileFragmentShader() {
-    fragmentShader = pg.createGLSLFragShaderObject(context.code());
+    fragmentShader = pgMain.createGLSLFragShaderObject(context.code());
     
     pgl.glShaderSource(fragmentShader, fragmentShaderSource);
     pgl.glCompileShader(fragmentShader);
@@ -485,17 +520,27 @@ public class PShader {
   }
 
   
+  protected void setRenderer(PGraphicsOpenGL pg) {
+    pgCurrent = pg;
+  }
+
+  protected void loadAttributes() { }
+ 
+  
+  protected void loadUniforms() { }  
+  
+  
   protected void release() {
     if (vertexShader != 0) {
-      pg.deleteGLSLVertShaderObject(vertexShader, context.code());
+      pgMain.deleteGLSLVertShaderObject(vertexShader, context.code());
       vertexShader = 0;
     }
     if (fragmentShader != 0) {
-      pg.deleteGLSLFragShaderObject(fragmentShader, context.code());
+      pgMain.deleteGLSLFragShaderObject(fragmentShader, context.code());
       fragmentShader = 0;
     }
     if (programObject != 0) {
-      pg.deleteGLSLProgramObject(programObject, context.code());
+      pgMain.deleteGLSLProgramObject(programObject, context.code());
       programObject = 0;
     }
   }  
