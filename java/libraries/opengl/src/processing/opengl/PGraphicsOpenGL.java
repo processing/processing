@@ -5601,12 +5601,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected class PolyShader extends PShader {
-    // We need a reference to the renderer since a shader might
-    // be called by different renderers within a single application
-    // (the one corresponding to the main surface, or other offscreen
-    // renderers).
-    protected PGraphicsOpenGL renderer;
-
     public PolyShader(PApplet parent) {
       super(parent);
     }
@@ -5617,20 +5611,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
     public PolyShader(PApplet parent, URL vertURL, URL fragURL) {
       super(parent, vertURL, fragURL);
-    }
-
-    public void setRenderer(PGraphicsOpenGL pg) {
-      this.renderer = pg;
-    }
-
-    public void loadAttributes() { }
-    public void loadUniforms() { }
-
-    public void setAttribute(int loc, int vboId, int size, int type, boolean normalized, int stride, int offset) {
-      if (-1 < loc) {
-        pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, vboId);
-        pgl.glVertexAttribPointer(loc, size, type, normalized, stride, offset);
-      }
     }
 
     public void setVertexAttribute(int vboId, int size, int type, int stride, int offset) { }
@@ -5686,9 +5666,9 @@ public class PGraphicsOpenGL extends PGraphics {
       if (-1 < inVertexLoc) pgl.glEnableVertexAttribArray(inVertexLoc);
       if (-1 < inColorLoc)  pgl.glEnableVertexAttribArray(inColorLoc);
 
-      if (renderer != null) {
-        renderer.updateGLProjmodelview();
-        set4x4MatUniform(projmodelviewMatrixLoc, renderer.glProjmodelview);
+      if (pgCurrent != null) {
+        pgCurrent.updateGLProjmodelview();
+        set4x4MatUniform(projmodelviewMatrixLoc, pgCurrent.glProjmodelview);
       }
     }
 
@@ -5804,24 +5784,24 @@ public class PGraphicsOpenGL extends PGraphics {
       if (-1 < inEmissiveLoc) pgl.glEnableVertexAttribArray(inEmissiveLoc);
       if (-1 < inShineLoc)    pgl.glEnableVertexAttribArray(inShineLoc);
 
-      if (renderer != null) {
-        renderer.updateGLProjmodelview();
-        set4x4MatUniform(projmodelviewMatrixLoc, renderer.glProjmodelview);
+      if (pgCurrent != null) {
+        pgCurrent.updateGLProjmodelview();
+        set4x4MatUniform(projmodelviewMatrixLoc, pgCurrent.glProjmodelview);
 
-        renderer.updateGLModelview();
-        set4x4MatUniform(modelviewMatrixLoc, renderer.glModelview);
+        pgCurrent.updateGLModelview();
+        set4x4MatUniform(modelviewMatrixLoc, pgCurrent.glModelview);
 
-        renderer.updateGLNormal();
-        set3x3MatUniform(normalMatrixLoc, renderer.glNormal);
+        pgCurrent.updateGLNormal();
+        set3x3MatUniform(normalMatrixLoc, pgCurrent.glNormal);
 
-        setIntUniform(lightCountLoc, renderer.lightCount);
-        set4FloatVecUniform(lightPositionLoc, renderer.lightPosition);
-        set3FloatVecUniform(lightNormalLoc, renderer.lightNormal);
-        set3FloatVecUniform(lightAmbientLoc, renderer.lightAmbient);
-        set3FloatVecUniform(lightDiffuseLoc, renderer.lightDiffuse);
-        set3FloatVecUniform(lightSpecularLoc, renderer.lightSpecular);
-        set3FloatVecUniform(lightFalloffCoefficientsLoc, renderer.lightFalloffCoefficients);
-        set2FloatVecUniform(lightSpotParametersLoc, renderer.lightSpotParameters);
+        setIntUniform(lightCountLoc, pgCurrent.lightCount);
+        set4FloatVecUniform(lightPositionLoc, pgCurrent.lightPosition);
+        set3FloatVecUniform(lightNormalLoc, pgCurrent.lightNormal);
+        set3FloatVecUniform(lightAmbientLoc, pgCurrent.lightAmbient);
+        set3FloatVecUniform(lightDiffuseLoc, pgCurrent.lightDiffuse);
+        set3FloatVecUniform(lightSpecularLoc, pgCurrent.lightSpecular);
+        set3FloatVecUniform(lightFalloffCoefficientsLoc, pgCurrent.lightFalloffCoefficients);
+        set2FloatVecUniform(lightSpotParametersLoc, pgCurrent.lightSpotParameters);
       }
     }
 
@@ -10037,6 +10017,12 @@ public class PGraphicsOpenGL extends PGraphics {
     // previous group. Since the index groups are by definition disjoint,
     // these vertices need to be duplicated at the end of the corresponding
     // region in the vertex array.
+    //
+    // Also to keep in mind, the ordering of the indices affects performance
+    // take a look at some of this references:
+    // http://gameangst.com/?p=9
+    // http://home.comcast.net/~tom_forsyth/papers/fast_vert_cache_opt.html
+    // http://www.ludicon.com/castano/blog/2009/02/optimal-grid-rendering/
     void partitionRawIndices() {
       tess.polyIndexCheck(rawSize);
       int offset = tess.firstPolyIndex; 
