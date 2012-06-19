@@ -7665,7 +7665,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
       float centerX = x + hr;
       float centerY = y + vr;
-
       
       int startLUT = (int) (0.5f + (start / TWO_PI) * SINCOS_LENGTH);
       int stopLUT = (int) (0.5f + (stop / TWO_PI) * SINCOS_LENGTH);
@@ -7685,8 +7684,8 @@ public class PGraphicsOpenGL extends PGraphics {
                         centerY + sinLUT[ii] * vr,
                         VERTEX);
         
-        if (0 < i) {
-          if (stroke) addEdge(pidx, idx, i == 1, false);
+        if (startLUT < i) {
+          if (stroke) addEdge(pidx, idx, i == startLUT + 1, false);
         }
 
         pidx = idx;        
@@ -7695,7 +7694,6 @@ public class PGraphicsOpenGL extends PGraphics {
       idx = addVertex(centerX + cosLUT[stopLUT % SINCOS_LENGTH] * hr,
                       centerY + sinLUT[stopLUT % SINCOS_LENGTH] * vr,
                       VERTEX);
-      if (stroke) addEdge(pidx, idx, false, true);
     }    
 
     void addBox(float w, float h, float d,
