@@ -385,8 +385,6 @@ public class PGraphicsOpenGL extends PGraphics {
   static protected final int EDGE_START  = 1;
   static protected final int EDGE_STOP   = 2;
   static protected final int EDGE_SINGLE = 3;
-  
-  protected boolean perspectiveCorrectedLines = false;
 
   /** Used in round point and ellipse tessellation. The
    * number of subdivisions per round point or ellipse is
@@ -1555,8 +1553,6 @@ public class PGraphicsOpenGL extends PGraphics {
     // The current normal vector is set to be parallel to the Z axis.
     normalX = normalY = normalZ = 0;
 
-    perspectiveCorrectedLines = hints[ENABLE_PERSPECTIVE_CORRECTED_LINES];
-
     // Clear depth and stencil buffers.
     pgl.glDepthMask(true);
     pgl.glClearColor(0, 0, 0, 0);
@@ -1970,13 +1966,11 @@ public class PGraphicsOpenGL extends PGraphics {
         // We flush the geometry using the previous line setting.
         flush();
       }
-      perspectiveCorrectedLines = false;
     } else if (which == ENABLE_PERSPECTIVE_CORRECTED_LINES) {
       if (0 < tessGeo.lineVertexCount && 0 < tessGeo.lineIndexCount) {
         // We flush the geometry using the previous line setting.
         flush();
       }
-      perspectiveCorrectedLines = true;
     }
   }
 
@@ -5993,13 +5987,12 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected class LineShader extends PShader {
-    protected PGraphicsOpenGL renderer;
-
     protected int projectionMatrixLoc;
     protected int modelviewMatrixLoc;
 
     protected int viewportLoc;
     protected int perspectiveLoc;
+    protected int zfactorLoc;
 
     protected int inVertexLoc;
     protected int inColorLoc;
@@ -6017,10 +6010,6 @@ public class PGraphicsOpenGL extends PGraphics {
       super(parent, vertURL, fragURL);
     }
 
-    public void setRenderer(PGraphicsOpenGL pg) {
-      this.renderer = pg;
-    }
-
     public void loadAttributes() {
       inVertexLoc = getAttribLocation("inVertex");
       inColorLoc = getAttribLocation("inColor");
@@ -6033,6 +6022,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
       viewportLoc = getUniformLocation("viewport");
       perspectiveLoc = getUniformLocation("perspective");
+      zfactorLoc = getUniformLocation("zfactor");
     }
 
     public void setAttribute(int loc, int vboId, int size, int type, boolean normalized, int stride, int offset) {
@@ -6059,17 +6049,27 @@ public class PGraphicsOpenGL extends PGraphics {
       if (-1 < inColorLoc)  pgl.glEnableVertexAttribArray(inColorLoc);
       if (-1 < inAttribLoc) pgl.glEnableVertexAttribArray(inAttribLoc);
 
-      if (renderer != null) {
-        renderer.updateGLProjection();
-        set4x4MatUniform(projectionMatrixLoc, renderer.glProjection);
+      if (pgCurrent != null) {
+        pgCurrent.updateGLProjection();
+        set4x4MatUniform(projectionMatrixLoc, pgCurrent.glProjection);
 
-        renderer.updateGLModelview();
-        set4x4MatUniform(modelviewMatrixLoc, renderer.glModelview);
+        pgCurrent.updateGLModelview();
+        set4x4MatUniform(modelviewMatrixLoc, pgCurrent.glModelview);
 
-        set4FloatUniform(viewportLoc, renderer.viewport[0], renderer.viewport[1], renderer.viewport[2], renderer.viewport[3]);
+        set4FloatUniform(viewportLoc, pgCurrent.viewport[0], pgCurrent.viewport[1], pgCurrent.viewport[2], pgCurrent.viewport[3]);
+        
+        if (pgCurrent.hintEnabled(ENABLE_PERSPECTIVE_CORRECTED_LINES)) {        
+          setIntUniform(perspectiveLoc, 1);  
+        } else {
+          setIntUniform(perspectiveLoc, 0);
+        }
+        
+        if (pgCurrent.hintEnabled(ENABLE_ACCURATE_2D)) {
+          set1FloatUniform(zfactorLoc, 1);
+        } else {
+          set1FloatUniform(zfactorLoc, 0.99f);
+        }        
       }
-
-      setIntUniform(perspectiveLoc, perspectiveCorrectedLines ? 1 : 0);
     }
 
     public void stop() {
@@ -6085,8 +6085,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected class PointShader extends PShader {
-    protected PGraphicsOpenGL renderer;
-
     protected int projectionMatrixLoc;
     protected int modelviewMatrixLoc;
 
@@ -6104,10 +6102,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
     public PointShader(PApplet parent, URL vertURL, URL fragURL) {
       super(parent, vertURL, fragURL);
-    }
-
-    public void setRenderer(PGraphicsOpenGL pg) {
-      this.renderer = pg;
     }
 
     public void loadAttributes() {
@@ -6145,12 +6139,12 @@ public class PGraphicsOpenGL extends PGraphics {
       if (-1 < inColorLoc)  pgl.glEnableVertexAttribArray(inColorLoc);
       if (-1 < inPointLoc)  pgl.glEnableVertexAttribArray(inPointLoc);
 
-      if (renderer != null) {
-        renderer.updateGLProjection();
-        set4x4MatUniform(projectionMatrixLoc, renderer.glProjection);
+      if (pgCurrent != null) {
+        pgCurrent.updateGLProjection();
+        set4x4MatUniform(projectionMatrixLoc, pgCurrent.glProjection);
 
-        renderer.updateGLModelview();
-        set4x4MatUniform(modelviewMatrixLoc, renderer.glModelview);
+        pgCurrent.updateGLModelview();
+        set4x4MatUniform(modelviewMatrixLoc, pgCurrent.glModelview);
       }
     }
 

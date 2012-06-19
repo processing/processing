@@ -23,6 +23,7 @@ uniform mat4 projectionMatrix;
 
 uniform vec4 viewport;
 uniform int perspective;
+uniform float zfactor;
 
 attribute vec4 inVertex;
 attribute vec4 inColor;
@@ -44,18 +45,18 @@ vec4 windowToClipVector(vec2 window, vec4 viewport, float clip_w) {
 void main() {
   vec4 pos_p = inVertex;
   vec4 v_p = modelviewMatrix * pos_p;  
-  // Moving vertices slightly toward the camera
+  // Moving vertices slightly toward the camera (if zfactor < 1)
   // to avoid depth-fighting with the fill triangles.
   // Discussed here:
   // http://www.opengl.org/discussion_boards/ubbthreads.php?ubb=showflat&Number=252848  
-  v_p.xyz = v_p.xyz * 0.99;
+  v_p.xyz = v_p.xyz * zfactor;
   vec4 clip_p = projectionMatrix * v_p;
   float thickness = inLine.w;
   
   if (thickness != 0.0) {  
     vec4 pos_q = vec4(inLine.xyz, 1);
     vec4 v_q = modelviewMatrix * pos_q;
-    v_q.xyz = v_q.xyz * 0.99;  
+    v_q.xyz = v_q.xyz * zfactor;  
     vec4 clip_q = projectionMatrix * v_q; 
   
     vec3 window_p = clipToWindow(clip_p, viewport); 
