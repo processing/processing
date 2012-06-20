@@ -222,6 +222,9 @@ public class PGraphicsOpenGL extends PGraphics {
   protected float[] glProjmodelview;
   protected float[] glNormal;
 
+  // Useful to have around.
+  static protected PMatrix3D identity = new PMatrix3D();
+  
   protected boolean matricesAllocated = false;
 
   /**
@@ -236,6 +239,12 @@ public class PGraphicsOpenGL extends PGraphics {
   /** Inverse modelview matrix stack **/
   protected Stack<PMatrix3D> modelviewInvStack;
 
+  /** Camera matrix stack **/
+  protected Stack<PMatrix3D> cameraStack;
+
+  /** Inverse camera matrix stack **/
+  protected Stack<PMatrix3D> cameraInvStack;  
+  
   /** Projection matrix stack **/
   protected Stack<PMatrix3D> projectionStack;
   
@@ -1527,10 +1536,8 @@ public class PGraphicsOpenGL extends PGraphics {
       // clear the flag
       sizeChanged = false;
     } else {
-      // The camera and projection matrices, saved when calling camera() and frustrum()
-      // are set as the current modelview and projection matrices. This is done to
-      // remove any additional modelview transformation (and less likely, projection
-      // transformations) applied by the user after setting the camera and/or projection
+      // Eliminating any user's transformations by going back to the
+      // original camera setup.      
       modelview.set(camera);
       modelviewInv.set(cameraInv);
       calcProjmodelview();
@@ -1870,7 +1877,7 @@ public class PGraphicsOpenGL extends PGraphics {
     // The normal matrix is the transpose of the inverse of the
     // modelview (remember that gl matrices are column-major,
     // meaning that elements 0, 1, 2 are the first column,
-    // 3, 4, 5 the second, etc.:
+    // 3, 4, 5 the second, etc.):
     glNormal[0] = modelviewInv.m00;
     glNormal[1] = modelviewInv.m01;
     glNormal[2] = modelviewInv.m02;
@@ -1911,7 +1918,13 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     if (modelviewInvStack == null) {
       modelviewInvStack = new Stack<PMatrix3D>();
+    }    
+    if (cameraStack == null) {
+      cameraStack = new Stack<PMatrix3D>();
     }
+    if (cameraInvStack == null) {
+      cameraInvStack = new Stack<PMatrix3D>();
+    }    
     if (projectionStack == null) {
       projectionStack = new Stack<PMatrix3D>();
     }
@@ -2321,12 +2334,18 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     if (hasPoints || hasLines || hasPolys) {
+      PMatrix3D modelview0 = null; 
+      PMatrix3D modelviewInv0 = null;      
       if (flushMode == FLUSH_WHEN_FULL && !hints[DISABLE_TRANSFORM_CACHE]) {
         // The modelview transformation has been applied already to the
         // tessellated vertices, so we set the OpenGL modelview matrix as
         // the identity to avoid applying the model transformations twice.
-        pushMatrix();
-        resetMatrix();
+        // We save the modelview objects and temporarily use the identity 
+        // static matrix to avoid calling pushMatrix(), resetMatrix(), popMatrix().
+        modelview0 = modelview; 
+        modelviewInv0 = modelviewInv;
+        modelview = modelviewInv = identity;
+        projmodelview.set(projection);
       }
 
       if (hasPolys) {
@@ -2353,7 +2372,8 @@ public class PGraphicsOpenGL extends PGraphics {
       }
 
       if (flushMode == FLUSH_WHEN_FULL && !hints[DISABLE_TRANSFORM_CACHE]) {
-        popMatrix();
+        modelview = modelview0; 
+        modelviewInv = modelviewInv0;
       }
     }
 
@@ -3306,7 +3326,9 @@ public class PGraphicsOpenGL extends PGraphics {
 
   public void pushMatrix() {
     modelviewStack.push(new PMatrix3D(modelview));
-    modelviewInvStack.push(new PMatrix3D(modelviewInv));
+    modelviewInvStack.push(new PMatrix3D(modelviewInv));    
+    cameraStack.push(new PMatrix3D(camera));
+    cameraInvStack.push(new PMatrix3D(cameraInv));
   }
 
 
@@ -3322,6 +3344,12 @@ public class PGraphicsOpenGL extends PGraphics {
     mat = modelviewInvStack.pop();
     modelviewInv.set(mat);
 
+    mat = cameraStack.pop();
+    camera.set(mat);
+
+    mat = cameraInvStack.pop();
+    cameraInv.set(mat);    
+    
     calcProjmodelview();
   }
 
@@ -3501,9 +3529,14 @@ public class PGraphicsOpenGL extends PGraphics {
     modelview.reset();
     modelviewInv.reset();
     projmodelview.set(projection);
+    
+    // For consistency, since modelview = camera * [all other transformations]
+    // the camera matrix should be set to the identity as well:    
+    camera.reset();
+    cameraInv.reset();
   }
 
-
+  
   public void applyMatrix(PMatrix2D source) {
     applyMatrixImpl(source.m00, source.m01, 0, source.m02,
                     source.m10, source.m11, 0, source.m12,
@@ -3554,6 +3587,9 @@ public class PGraphicsOpenGL extends PGraphics {
                     n10, n11, n12, n13,
                     n20, n21, n22, n23,
                     n30, n31, n32, n33);
+    modelviewInv.set(modelview);
+    modelviewInv.invert();
+    
     projmodelview.apply(n00, n01, n02, n03,
                         n10, n11, n12, n13,
                         n20, n21, n22, n23,
