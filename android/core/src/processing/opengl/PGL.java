@@ -1092,6 +1092,16 @@ public class PGL {
   }
   
   
+  public void glClearDepth(float d) {
+    GLES20.glClearDepthf(d);
+  }  
+
+  
+  public void glClearStencil(int s) {
+    GLES20.glClearStencil(s);
+  }
+  
+  
   public void glClearColor(float r, float g, float b, float a) {
     GLES20.glClearColor(r, g, b, a);    
   }

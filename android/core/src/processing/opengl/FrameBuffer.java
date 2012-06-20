@@ -166,8 +166,12 @@ public class FrameBuffer implements PConstants {
   public void clear() {
     pg.pushFramebuffer();
     pg.setFramebuffer(this);
+    pgl.glClearDepth(1);
+    pgl.glClear(PGL.GL_DEPTH_BUFFER_BIT);
+    pgl.glClearStencil(0);
+    pgl.glClear(PGL.GL_STENCIL_BUFFER_BIT);
     pgl.glClearColor(0, 0, 0, 0);
-    pgl.glClear(PGL.GL_COLOR_BUFFER_BIT | PGL.GL_DEPTH_BUFFER_BIT | PGL.GL_STENCIL_BUFFER_BIT); 
+    pgl.glClear(PGL.GL_COLOR_BUFFER_BIT); 
     pg.popFramebuffer();    
   }
   
