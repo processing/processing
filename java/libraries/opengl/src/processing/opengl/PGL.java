@@ -709,8 +709,12 @@ public class PGL {
       gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, 0);
       
       // And finally write the color texture to the screen.
-      gl.glClearColor(0, 0, 0, 0);
-      gl.glClear(GL.GL_DEPTH_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT);      
+      glClearDepth(1);
+      glClear(GL_DEPTH_BUFFER_BIT);
+      glClearStencil(0);
+      glClear(GL_STENCIL_BUFFER_BIT);
+      glClearColor(0, 0, 0, 0);
+      glClear(GL_COLOR_BUFFER_BIT);       
       drawTexture(GL.GL_TEXTURE_2D, colorTex[0], fboWidth, fboHeight, 0, 0, pg.width, pg.height, 0, 0, pg.width, pg.height);
       
       PGraphicsOpenGL.screenFramebuffer.glFboID = colorFBO[0];       
@@ -1277,7 +1281,17 @@ public class PGL {
     }
   }
 
+  
+  public void glClearDepth(float d) {
+    gl.glClearDepthf(d);
+  }  
 
+  
+  public void glClearStencil(int s) {
+    gl.glClearStencil(s);
+  }
+  
+  
   public void glClearColor(float r, float g, float b, float a) {
     gl.glClearColor(r, g, b, a);
   }

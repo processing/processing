@@ -1425,6 +1425,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
     if (primarySurface) {
       pgl.updatePrimary();
+      pgl.glDrawBuffer(PGL.GL_BACK);
     } else {
       if (!pgl.initialized) {
         initOffscreen();
@@ -1555,8 +1556,10 @@ public class PGraphicsOpenGL extends PGraphics {
 
     // Clear depth and stencil buffers.
     pgl.glDepthMask(true);
-    pgl.glClearColor(0, 0, 0, 0);
-    pgl.glClear(PGL.GL_DEPTH_BUFFER_BIT | PGL.GL_STENCIL_BUFFER_BIT);
+    pgl.glClearDepth(1);
+    pgl.glClear(PGL.GL_DEPTH_BUFFER_BIT);
+    pgl.glClearStencil(0);
+    pgl.glClear(PGL.GL_STENCIL_BUFFER_BIT);
 
     if (primarySurface) {
       pgl.beginOnscreenDraw(clearColorBuffer);
@@ -1703,6 +1706,8 @@ public class PGraphicsOpenGL extends PGraphics {
     } else {
       pgl.glDepthMask(true);
     }
+    
+    pgl.glDrawBuffer(PGL.GL_BACK);
   }
 
 
@@ -4642,9 +4647,9 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void backgroundImpl() {
     flush();
-
+        
     pgl.glDepthMask(true);
-    pgl.glClearColor(0, 0, 0, 0);
+    pgl.glClearDepth(1);
     pgl.glClear(PGL.GL_DEPTH_BUFFER_BIT);
     if (hints[DISABLE_DEPTH_MASK]) {
       pgl.glDepthMask(false);
@@ -4652,11 +4657,14 @@ public class PGraphicsOpenGL extends PGraphics {
       pgl.glDepthMask(true);
     }
 
+    pgl.glClearStencil(0);
+    pgl.glClear(PGL.GL_STENCIL_BUFFER_BIT);      
+    
     pgl.glClearColor(backgroundR, backgroundG, backgroundB, backgroundA);
     pgl.glClear(PGL.GL_COLOR_BUFFER_BIT);
     if (0 < parent.frameCount) {
       clearColorBuffer = true;
-    }
+    }     
   }
 
 
