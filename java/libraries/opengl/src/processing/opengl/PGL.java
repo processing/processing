@@ -654,6 +654,10 @@ public class PGL {
       // to update the screenFramebuffer object so when the  framebuffer 
       // is popped back to the screen, the correct id is set.
       PGraphicsOpenGL.screenFramebuffer.glFboID = colorFBO[0];      
+    } else {
+      // To make sure that the default screen buffer is used, specially after
+      // doing screen rendering on an FBO (the OSX 10.7+ above).
+      PGraphicsOpenGL.screenFramebuffer.glFboID = 0;
     }
   }
 

@@ -1434,7 +1434,9 @@ public class PGraphicsOpenGL extends PGraphics {
 
     if (primarySurface) {
       pgl.updatePrimary();
-      pgl.glDrawBuffer(PGL.GL_BACK);
+      if (pgl.primaryIsDoubleBuffered()) {
+        pgl.glDrawBuffer(PGL.GL_BACK);
+      }
     } else {
       if (!pgl.initialized) {
         initOffscreen();
@@ -1630,22 +1632,7 @@ public class PGraphicsOpenGL extends PGraphics {
         offscreenFramebufferMultisample.copy(offscreenFramebuffer);
       }
       
-      if (!pgl.initialized || !pgPrimary.pgl.initialized || parent.frameCount == 0) {
-        // If the primary surface is re-initialized, this offscreen 
-        // surface needs to save its contents into the pixels array
-        // so they can be restored after the FBOs are recreated.
-        // Note that a consequence of how this is code works, is that
-        // if the user changes th smooth level of the primary surface
-        // in the middle of draw, but after drawing the offscreen surfaces
-        // then these won't be restored in the next frame since their 
-        // endDraw() calls didn't pick up any change in the initialization
-        // state of the primary surface.        
-        saveSurfaceToPixels();
-        restoreSurface = true;
-      }      
-      
-      popFramebuffer();
-      
+      /*
       // Make the offscreen color buffer opaque so it doesn't show      
       // the background when drawn on the main surface. 
       if (offscreenMultisample) {
@@ -1658,13 +1645,30 @@ public class PGraphicsOpenGL extends PGraphics {
       pgl.glColorMask(true, true, true, true);
       if (offscreenMultisample) {
         popFramebuffer();
+      }  
+      */
+      
+      if (!pgl.initialized || !pgPrimary.pgl.initialized || parent.frameCount == 0) {
+        // If the primary surface is re-initialized, this offscreen 
+        // surface needs to save its contents into the pixels array
+        // so they can be restored after the FBOs are recreated.
+        // Note that a consequence of how this is code works, is that
+        // if the user changes the smooth level of the primary surface
+        // in the middle of draw, but after drawing the offscreen surfaces
+        // then these won't be restored in the next frame since their 
+        // endDraw() calls didn't pick up any change in the initialization
+        // state of the primary surface.        
+        saveSurfaceToPixels();
+        restoreSurface = true;
       }      
       
-      pgl.endOffscreenDraw(pgPrimary.clearColorBuffer0);
+      popFramebuffer();
 
+      pgl.endOffscreenDraw(pgPrimary.clearColorBuffer0);
+      
       pgPrimary.restoreGL();
     }
-
+    
     // Done!
     drawing = false;    
     if (pgCurrent == pgPrimary) {
@@ -1727,7 +1731,9 @@ public class PGraphicsOpenGL extends PGraphics {
       pgl.glDepthMask(true);
     }
     
-    pgl.glDrawBuffer(PGL.GL_BACK);
+    if (pgl.primaryIsDoubleBuffered()) {
+      pgl.glDrawBuffer(PGL.GL_BACK);
+    }
   }
 
 
@@ -2387,6 +2393,7 @@ public class PGraphicsOpenGL extends PGraphics {
       if (flushMode == FLUSH_WHEN_FULL && !hints[DISABLE_TRANSFORM_CACHE]) {
         modelview = modelview0; 
         modelviewInv = modelviewInv0;
+        calcProjmodelview();        
       }
     }
 
@@ -3549,7 +3556,7 @@ public class PGraphicsOpenGL extends PGraphics {
     cameraInv.reset();
   }
 
-  
+
   public void applyMatrix(PMatrix2D source) {
     applyMatrixImpl(source.m00, source.m01, 0, source.m02,
                     source.m10, source.m11, 0, source.m12,
@@ -4696,7 +4703,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void backgroundImpl() {
     flush();
-        
+
     pgl.glDepthMask(true);
     pgl.glClearDepth(1);
     pgl.glClear(PGL.GL_DEPTH_BUFFER_BIT);
@@ -4705,12 +4712,12 @@ public class PGraphicsOpenGL extends PGraphics {
     } else {
       pgl.glDepthMask(true);
     }
-    
+
     pgl.glClearColor(backgroundR, backgroundG, backgroundB, backgroundA);
     pgl.glClear(PGL.GL_COLOR_BUFFER_BIT);
     if (0 < parent.frameCount) {
       clearColorBuffer = true;
-    }     
+    }
   }
 
 
