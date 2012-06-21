@@ -113,7 +113,7 @@ class PFontTexture implements PConstants {
       h = PApplet.min(2 * textures[currentTex].glHeight, maxTexHeight);
       resize = true;
     } else {
-      h = PApplet.min(PGraphicsOpenGL.maxTextureSize, maxTexHeight / 4);
+      h = PApplet.min(PGraphicsOpenGL.maxTextureSize, PGL.MAX_FONT_TEX_SIZE / 2, maxTexHeight / 4);
       resize = false;
     }
     
