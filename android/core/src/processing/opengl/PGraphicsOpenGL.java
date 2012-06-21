@@ -31,7 +31,6 @@ import processing.core.PMatrix2D;
 import processing.core.PMatrix3D;
 import processing.core.PShape;
 import processing.core.PVector;
-import processing.opengl.PGraphicsOpenGL.Tessellator.TessellatorCallback;
 
 import java.net.URL;
 import java.nio.*;
