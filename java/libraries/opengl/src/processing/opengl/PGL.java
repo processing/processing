@@ -84,11 +84,11 @@ public class PGL {
   static final int INDEX_TYPE = GL.GL_UNSIGNED_SHORT;
 
   /** Initial sizes for arrays of input and tessellated data. */
-  public static final int DEFAULT_IN_VERTICES = 64;
-  public static final int DEFAULT_IN_EDGES = 128;
-  public static final int DEFAULT_IN_TEXTURES = 64;
+  public static final int DEFAULT_IN_VERTICES   = 64;
+  public static final int DEFAULT_IN_EDGES      = 128;
+  public static final int DEFAULT_IN_TEXTURES   = 64;
   public static final int DEFAULT_TESS_VERTICES = 64;
-  public static final int DEFAULT_TESS_INDICES = 128;
+  public static final int DEFAULT_TESS_INDICES  = 128;
 
   /** Maximum lights by default is 8, the minimum defined by OpenGL. */
   public static final int MAX_LIGHTS = 8;
@@ -97,7 +97,7 @@ public class PGL {
    * indices to be of type unsigned short. Since Java only supports signed
    * shorts as primitive type we have 2^15 = 32768 as the maximum number of  
    * vertices that can be referred to within a single VBO. */
-  public static final int MAX_VERTEX_INDEX = 32767;
+  public static final int MAX_VERTEX_INDEX  = 32767;
   public static final int MAX_VERTEX_INDEX1 = MAX_VERTEX_INDEX + 1;
   
   /** Count of tessellated fill, line or point vertices that will 
@@ -109,7 +109,7 @@ public class PGL {
   public static final int FLUSH_VERTEX_COUNT = MAX_VERTEX_INDEX1; 
   
   /** Maximum dimension of a texture used to hold font data. **/
-  public static final int MAX_FONT_TEX_SIZE = 256;
+  public static final int MAX_FONT_TEX_SIZE = 1024;
 
   /** Minimum stroke weight needed to apply the full path stroking
    * algorithm that properly generates caps and joins. 
@@ -359,7 +359,7 @@ public class PGL {
   
   // FBO for anti-aliased rendering  
   
-  protected boolean needFBO = false;
+  protected boolean needScreenFBO = false;
   protected int fboWidth, fboHeight;  
   protected int numSamples;
   protected int[] colorTex = { 0 };
@@ -497,7 +497,7 @@ public class PGL {
 
 
   public void initPrimarySurface(int antialias) {
-    needFBO = false;
+    needScreenFBO = false;
     if (colorFBO[0] != 0) {
       releaseFBO();
       colorFBO[0] = 0;
@@ -512,7 +512,7 @@ public class PGL {
           // We are on OSX Lion or newer, where JOGL doesn't properly
           // support multisampling. As a temporary hack, we handle our
           // own multisampled FBO for onscreen rendering with anti-aliasing.
-          needFBO = true;  
+          needScreenFBO = true;  
         }
       }
     } 
@@ -537,7 +537,7 @@ public class PGL {
 
     // Setting up the desired GL capabilities;
     GLCapabilities caps = new GLCapabilities(profile);
-    if (1 < antialias && !needFBO) {
+    if (1 < antialias && !needScreenFBO) {
       caps.setSampleBuffers(true);
       caps.setNumSamples(antialias);
     } else {
@@ -597,7 +597,7 @@ public class PGL {
       setFramerate(targetFramerate);
     }
     
-    if (needFBO && colorFBO[0] == 0) {
+    if (needScreenFBO && colorFBO[0] == 0) {
       numSamples = pg.quality;
       
       String ext = gl.glGetString(GL.GL_EXTENSIONS); 
@@ -621,13 +621,17 @@ public class PGL {
       gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE);
       gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP_TO_EDGE);
       gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, fboWidth, fboHeight, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, null);
-      initTexture(GL.GL_TEXTURE_2D, GL.GL_RGBA, fboWidth, fboHeight);    
       gl.glBindTexture(GL.GL_TEXTURE_2D, 0);      
      
       // ...and attach to the color framebuffer.
       gl.glGenFramebuffers(1, colorFBO, 0); 
       gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, colorFBO[0]);
       gl.glFramebufferTexture2D(GL.GL_FRAMEBUFFER, GL.GL_COLOR_ATTACHMENT0, GL.GL_TEXTURE_2D, colorTex[0], 0);
+      
+      // Clear the color buffer in the color FBO
+      gl.glClearColor(0, 0, 0, 0);
+      gl.glClear(GL.GL_COLOR_BUFFER_BIT);      
+      
       gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, 0);
       
       // Now, creating mutisampled FBO with packed depth and stencil buffers.      
@@ -646,6 +650,12 @@ public class PGL {
       gl2x.glRenderbufferStorageMultisample(GL.GL_RENDERBUFFER, numSamples, GL.GL_DEPTH24_STENCIL8, fboWidth, fboHeight);
       gl.glFramebufferRenderbuffer(GL.GL_FRAMEBUFFER, GL.GL_DEPTH_ATTACHMENT, GL.GL_RENDERBUFFER, packedDepthStencil[0]);
       gl.glFramebufferRenderbuffer(GL.GL_FRAMEBUFFER, GL.GL_STENCIL_ATTACHMENT, GL.GL_RENDERBUFFER, packedDepthStencil[0]);      
+            
+      // Clear all the buffers in the multisample FBO
+      gl.glClearDepth(1);
+      gl.glClearStencil(0);
+      gl.glClearColor(0, 0, 0, 0);
+      gl.glClear(GL.GL_DEPTH_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT | GL.GL_COLOR_BUFFER_BIT);
       
       // All set with multisampled FBO!
       gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, 0);
@@ -673,7 +683,7 @@ public class PGL {
     // When using the multisampled FBO, the color
     // FBO is single buffered as it has only one
     // texture bound to it.
-    return !needFBO;
+    return !needScreenFBO;
   }
   
   
@@ -692,7 +702,7 @@ public class PGL {
 
 
   public void beginOnscreenDraw(boolean clear) {
-    if (needFBO) {
+    if (needScreenFBO) {
       // Render the scene to the mutisampled buffer...
       gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, multiFBO[0]);    
       gl2x.glDrawBuffer(GL.GL_COLOR_ATTACHMENT0);
@@ -704,7 +714,7 @@ public class PGL {
 
 
   public void endOnscreenDraw(boolean clear0) {
-    if (needFBO) {
+    if (needScreenFBO) {
       // Blit the contents of the multisampled FBO into the color FBO:
       gl.glBindFramebuffer(GL2.GL_READ_FRAMEBUFFER, multiFBO[0]);
       gl.glBindFramebuffer(GL2.GL_DRAW_FRAMEBUFFER, colorFBO[0]);
