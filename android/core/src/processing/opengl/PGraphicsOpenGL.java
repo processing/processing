@@ -36,11 +36,9 @@ import java.net.URL;
 import java.nio.*;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.EmptyStackException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.Stack;
 
 /**
  * OpenGL renderer.
@@ -332,7 +330,10 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // Framebuffer stack:
 
-  static protected Stack<FrameBuffer> fbStack;
+  static protected final int FB_STACK_DEPTH = 16;
+  
+  static protected int fbStackDepth;  
+  static protected FrameBuffer[] fbStack = new FrameBuffer[FB_STACK_DEPTH];
   static protected FrameBuffer screenFramebuffer;
   static protected FrameBuffer currentFramebuffer;
 
@@ -1056,7 +1057,11 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   public void pushFramebuffer() {
-    fbStack.push(currentFramebuffer);
+    if (fbStackDepth == FB_STACK_DEPTH) {
+      throw new RuntimeException("Too many pushFramebuffer calls");
+    }
+    fbStack[fbStackDepth] = currentFramebuffer;
+    fbStackDepth++;    
   }
 
 
@@ -1066,14 +1071,14 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  public void popFramebuffer() {
-    try {
-      currentFramebuffer.finish();
-      currentFramebuffer = fbStack.pop();
-      currentFramebuffer.bind();
-    } catch (EmptyStackException e) {
-      PGraphics.showWarning("P3D: Empty framebuffer stack");
+  public void popFramebuffer() {    
+    if (fbStackDepth == 0) {
+      throw new RuntimeException("popFramebuffer call is unbalanced.");
     }
+    fbStackDepth--;
+    currentFramebuffer.finish();
+    currentFramebuffer = fbStack[fbStackDepth];
+    currentFramebuffer.bind();
   }
 
 
@@ -1928,9 +1933,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
     clearColorBuffer = false;
 
-    if (fbStack == null) {
-      fbStack = new Stack<FrameBuffer>();
-
+    if (screenFramebuffer == null) {
       screenFramebuffer = new FrameBuffer(parent, width, height, true);
       setFramebuffer(screenFramebuffer);
     }
