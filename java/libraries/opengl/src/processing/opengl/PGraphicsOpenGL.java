@@ -1630,22 +1630,6 @@ public class PGraphicsOpenGL extends PGraphics {
         offscreenFramebufferMultisample.copy(offscreenFramebuffer);
       }
       
-      if (!pgl.initialized || !pgPrimary.pgl.initialized || parent.frameCount == 0) {
-        // If the primary surface is re-initialized, this offscreen 
-        // surface needs to save its contents into the pixels array
-        // so they can be restored after the FBOs are recreated.
-        // Note that a consequence of how this is code works, is that
-        // if the user changes th smooth level of the primary surface
-        // in the middle of draw, but after drawing the offscreen surfaces
-        // then these won't be restored in the next frame since their 
-        // endDraw() calls didn't pick up any change in the initialization
-        // state of the primary surface.        
-        saveSurfaceToPixels();
-        restoreSurface = true;
-      }      
-      
-      popFramebuffer();
-      
       // Make the offscreen color buffer opaque so it doesn't show      
       // the background when drawn on the main surface. 
       if (offscreenMultisample) {
@@ -1658,7 +1642,23 @@ public class PGraphicsOpenGL extends PGraphics {
       pgl.glColorMask(true, true, true, true);
       if (offscreenMultisample) {
         popFramebuffer();
+      }  
+    
+      if (!pgl.initialized || !pgPrimary.pgl.initialized || parent.frameCount == 0) {
+        // If the primary surface is re-initialized, this offscreen 
+        // surface needs to save its contents into the pixels array
+        // so they can be restored after the FBOs are recreated.
+        // Note that a consequence of how this is code works, is that
+        // if the user changes the smooth level of the primary surface
+        // in the middle of draw, but after drawing the offscreen surfaces
+        // then these won't be restored in the next frame since their 
+        // endDraw() calls didn't pick up any change in the initialization
+        // state of the primary surface.        
+        saveSurfaceToPixels();
+        restoreSurface = true;
       }      
+      
+      popFramebuffer();
       
       pgl.endOffscreenDraw(pgPrimary.clearColorBuffer0);
 
