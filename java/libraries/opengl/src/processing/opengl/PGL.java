@@ -1288,6 +1288,11 @@ public class PGL {
     gl.glClearStencil(s);
   }
 
+  
+  public void glColorMask(boolean wr, boolean wg, boolean wb, boolean wa) {
+    gl.glColorMask(wr, wg, wb, wa);
+  }
+  
 
   public void glClearColor(float r, float g, float b, float a) {
     gl.glClearColor(r, g, b, a);
