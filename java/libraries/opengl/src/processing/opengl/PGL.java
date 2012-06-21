@@ -359,6 +359,7 @@ public class PGL {
   
   // FBO for anti-aliased rendering  
   
+  public static final boolean ENABLE_SMOOTH_LION_HACK = true;
   protected boolean needScreenFBO = false;
   protected int fboWidth, fboHeight;  
   protected int numSamples;
@@ -497,25 +498,27 @@ public class PGL {
 
 
   public void initPrimarySurface(int antialias) {
-    needScreenFBO = false;
-    if (colorFBO[0] != 0) {
-      releaseFBO();
-      colorFBO[0] = 0;
-    }    
-    String osName = System.getProperty("os.name");
-    if (osName.equals("Mac OS X")) {
-      String version = System.getProperty("os.version");
-      String[] parts = version.split("\\.");
-      if (2 <= parts.length) {
-        int num = Integer.parseInt(parts[1]);
-        if (7 <= num && 1 < pg.quality) {          
-          // We are on OSX Lion or newer, where JOGL doesn't properly
-          // support multisampling. As a temporary hack, we handle our
-          // own multisampled FBO for onscreen rendering with anti-aliasing.
-          needScreenFBO = true;  
+    if (ENABLE_SMOOTH_LION_HACK) {
+      needScreenFBO = false;
+      if (colorFBO[0] != 0) {
+        releaseFBO();
+        colorFBO[0] = 0;
+      }    
+      String osName = System.getProperty("os.name");
+      if (osName.equals("Mac OS X")) {
+        String version = System.getProperty("os.version");
+        String[] parts = version.split("\\.");
+        if (2 <= parts.length) {
+          int num = Integer.parseInt(parts[1]);
+          if (7 <= num && 1 < pg.quality) {          
+            // We are on OSX Lion or newer, where JOGL doesn't properly
+            // support multisampling. As a temporary hack, we handle our
+            // own multisampled FBO for onscreen rendering with anti-aliasing.
+            needScreenFBO = true;  
+          }
         }
-      }
-    } 
+      } 
+    }
     
     if (profile == null) {
       profile = GLProfile.getDefault();
@@ -658,11 +661,10 @@ public class PGL {
       gl.glClear(GL.GL_DEPTH_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT | GL.GL_COLOR_BUFFER_BIT);
       
       // All set with multisampled FBO!
-      gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, 0);
-      
       // The screen framebuffer is the color FBO just created. We need
       // to update the screenFramebuffer object so when the  framebuffer 
       // is popped back to the screen, the correct id is set.
+      gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, colorFBO[0]);
       PGraphicsOpenGL.screenFramebuffer.glFboID = colorFBO[0];      
     } else {
       // To make sure that the default screen buffer is used, specially after
@@ -683,7 +685,7 @@ public class PGL {
     // When using the multisampled FBO, the color
     // FBO is single buffered as it has only one
     // texture bound to it.
-    return !needScreenFBO;
+    return colorFBO[0] == 0;
   }
   
   
@@ -702,7 +704,7 @@ public class PGL {
 
 
   public void beginOnscreenDraw(boolean clear) {
-    if (needScreenFBO) {
+    if (colorFBO[0] != 0) {
       // Render the scene to the mutisampled buffer...
       gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, multiFBO[0]);    
       gl2x.glDrawBuffer(GL.GL_COLOR_ATTACHMENT0);
@@ -714,22 +716,23 @@ public class PGL {
 
 
   public void endOnscreenDraw(boolean clear0) {
-    if (needScreenFBO) {
+    if (colorFBO[0] != 0) {
       // Blit the contents of the multisampled FBO into the color FBO:
       gl.glBindFramebuffer(GL2.GL_READ_FRAMEBUFFER, multiFBO[0]);
       gl.glBindFramebuffer(GL2.GL_DRAW_FRAMEBUFFER, colorFBO[0]);
       gl2x.glBlitFramebuffer(0, 0, fboWidth, fboHeight,
                              0, 0, fboWidth, fboHeight, 
                              GL.GL_COLOR_BUFFER_BIT, GL.GL_NEAREST);
-            
-      gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, 0);
-      
+
       // And finally write the color texture to the screen.
+      gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, 0);      
       gl.glClearDepth(1);
       gl.glClearColor(0, 0, 0, 0);
       gl.glClear(GL.GL_DEPTH_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT);      
       drawTexture(GL.GL_TEXTURE_2D, colorTex[0], fboWidth, fboHeight, 0, 0, pg.width, pg.height, 0, 0, pg.width, pg.height);
-      
+
+      // Leaving the color FBO currently bound as the screen FB.
+      gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, colorFBO[0]);
       PGraphicsOpenGL.screenFramebuffer.glFboID = colorFBO[0];       
     }
   }
@@ -2114,7 +2117,7 @@ public class PGL {
 
   // Java specific stuff
 
-
+  
   protected class PGLListener implements GLEventListener {
     @Override
     public void display(GLAutoDrawable adrawable) {
@@ -2142,9 +2145,15 @@ public class PGL {
     }
 
     @Override
-    public void reshape(GLAutoDrawable adrawable, int x, int y, int w, int h) {
+    public void reshape(GLAutoDrawable adrawable, int x, int y, int w, int h) {      
       drawable = adrawable;
-      context = adrawable.getContext();
+      context = adrawable.getContext();      
+
+      if (colorFBO[0] != 0) {
+        // The screen FBO hack needs the FBO to be recreated when starting
+        // and after resizing.
+        colorFBO[0] = 0;
+      }      
     }
   }
 
