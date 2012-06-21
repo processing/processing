@@ -1632,7 +1632,6 @@ public class PGraphicsOpenGL extends PGraphics {
         offscreenFramebufferMultisample.copy(offscreenFramebuffer);
       }
       
-      /*
       // Make the offscreen color buffer opaque so it doesn't show      
       // the background when drawn on the main surface. 
       if (offscreenMultisample) {
@@ -1646,7 +1645,6 @@ public class PGraphicsOpenGL extends PGraphics {
       if (offscreenMultisample) {
         popFramebuffer();
       }  
-      */
       
       if (!pgl.initialized || !pgPrimary.pgl.initialized || parent.frameCount == 0) {
         // If the primary surface is re-initialized, this offscreen 
