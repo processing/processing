@@ -232,21 +232,26 @@ public class PGraphicsOpenGL extends PGraphics {
    * will be reset in beginDraw().
    */
   protected boolean sizeChanged;
-
+    
+  static protected final int MATRIX_STACK_DEPTH = 32;
+  
+  protected int modelviewStackDepth;
+  protected int projectionStackDepth;
+  
   /** Modelview matrix stack **/
-  protected Stack<PMatrix3D> modelviewStack;
-
+  protected float[][] modelviewStack = new float[MATRIX_STACK_DEPTH][16];
+  
   /** Inverse modelview matrix stack **/
-  protected Stack<PMatrix3D> modelviewInvStack;
+  protected float[][] modelviewInvStack = new float[MATRIX_STACK_DEPTH][16];
 
   /** Camera matrix stack **/
-  protected Stack<PMatrix3D> cameraStack;
+  protected float[][] cameraStack = new float[MATRIX_STACK_DEPTH][16];
 
   /** Inverse camera matrix stack **/
-  protected Stack<PMatrix3D> cameraInvStack;  
+  protected float[][] cameraInvStack = new float[MATRIX_STACK_DEPTH][16];
   
   /** Projection matrix stack **/
-  protected Stack<PMatrix3D> projectionStack;
+  protected float[][] projectionStack = new float[MATRIX_STACK_DEPTH][16];
   
   // ........................................................
 
@@ -1930,22 +1935,6 @@ public class PGraphicsOpenGL extends PGraphics {
       setFramebuffer(screenFramebuffer);
     }
 
-    if (modelviewStack == null) {
-      modelviewStack = new Stack<PMatrix3D>();
-    }
-    if (modelviewInvStack == null) {
-      modelviewInvStack = new Stack<PMatrix3D>();
-    }    
-    if (cameraStack == null) {
-      cameraStack = new Stack<PMatrix3D>();
-    }
-    if (cameraInvStack == null) {
-      cameraInvStack = new Stack<PMatrix3D>();
-    }    
-    if (projectionStack == null) {
-      projectionStack = new Stack<PMatrix3D>();
-    }
-
     // easiest for beginners
     textureMode(IMAGE);
 
@@ -3342,11 +3331,15 @@ public class PGraphicsOpenGL extends PGraphics {
   // MATRIX STACK
 
 
-  public void pushMatrix() {
-    modelviewStack.push(new PMatrix3D(modelview));
-    modelviewInvStack.push(new PMatrix3D(modelviewInv));    
-    cameraStack.push(new PMatrix3D(camera));
-    cameraInvStack.push(new PMatrix3D(cameraInv));
+  public void pushMatrix() {    
+    if (modelviewStackDepth == MATRIX_STACK_DEPTH) {
+      throw new RuntimeException(ERROR_PUSHMATRIX_OVERFLOW);
+    }
+    modelview.get(modelviewStack[modelviewStackDepth]);
+    modelviewInv.get(modelviewInvStack[modelviewStackDepth]);
+    camera.get(cameraStack[modelviewStackDepth]);
+    cameraInv.get(cameraInvStack[modelviewStackDepth]);    
+    modelviewStackDepth++;
   }
 
 
@@ -3354,20 +3347,15 @@ public class PGraphicsOpenGL extends PGraphics {
     if (hints[DISABLE_TRANSFORM_CACHE]) {
       flush();
     }
-    PMatrix3D mat;
-
-    mat = modelviewStack.pop();
-    modelview.set(mat);
-
-    mat = modelviewInvStack.pop();
-    modelviewInv.set(mat);
-
-    mat = cameraStack.pop();
-    camera.set(mat);
-
-    mat = cameraInvStack.pop();
-    cameraInv.set(mat);    
     
+    if (modelviewStackDepth == 0) {
+      throw new RuntimeException(ERROR_PUSHMATRIX_UNDERFLOW);
+    }
+    modelviewStackDepth--;
+    modelview.set(modelviewStack[modelviewStackDepth]);
+    modelviewInv.set(modelviewInvStack[modelviewStackDepth]);
+    camera.set(cameraStack[modelviewStackDepth]);
+    cameraInv.set(cameraInvStack[modelviewStackDepth]);    
     calcProjmodelview();
   }
 
@@ -3669,13 +3657,20 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   public void pushProjection() {
-    projectionStack.push(new PMatrix3D(projection));
+    if (projectionStackDepth == MATRIX_STACK_DEPTH) {
+      throw new RuntimeException(ERROR_PUSHMATRIX_OVERFLOW);
+    }
+    projection.get(projectionStack[projectionStackDepth]);
+    projectionStackDepth++;    
   }
 
 
   public void popProjection() {
-    PMatrix3D mat = projectionStack.pop();
-    projection.set(mat);
+    if (projectionStackDepth == 0) {
+      throw new RuntimeException(ERROR_PUSHMATRIX_UNDERFLOW);
+    }
+    projectionStackDepth--;
+    projection.set(projectionStack[projectionStackDepth]);    
   }
 
 
