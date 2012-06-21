@@ -31,6 +31,7 @@ import processing.core.PMatrix2D;
 import processing.core.PMatrix3D;
 import processing.core.PShape;
 import processing.core.PVector;
+import processing.opengl.PGraphicsOpenGL.Tessellator.TessellatorCallback;
 
 import java.net.URL;
 import java.nio.*;
@@ -1564,9 +1565,8 @@ public class PGraphicsOpenGL extends PGraphics {
     // Clear depth and stencil buffers.
     pgl.glDepthMask(true);
     pgl.glClearDepth(1);
-    pgl.glClear(PGL.GL_DEPTH_BUFFER_BIT);
     pgl.glClearStencil(0);
-    pgl.glClear(PGL.GL_STENCIL_BUFFER_BIT);
+    pgl.glClear(PGL.GL_DEPTH_BUFFER_BIT | PGL.GL_STENCIL_BUFFER_BIT);
 
     if (primarySurface) {
       pgl.beginOnscreenDraw(clearColorBuffer);
@@ -1646,7 +1646,21 @@ public class PGraphicsOpenGL extends PGraphics {
       }      
       
       popFramebuffer();
-
+      
+      // Make the offscreen color buffer opaque so it doesn't show      
+      // the background when drawn on the main surface. 
+      if (offscreenMultisample) {
+        pushFramebuffer();
+        setFramebuffer(offscreenFramebuffer);
+      }      
+      pgl.glColorMask(false, false, false, true);
+      pgl.glClearColor(0, 0, 0, 1);
+      pgl.glClear(PGL.GL_COLOR_BUFFER_BIT);
+      pgl.glColorMask(true, true, true, true);
+      if (offscreenMultisample) {
+        popFramebuffer();
+      }      
+      
       pgl.endOffscreenDraw(pgPrimary.clearColorBuffer0);
 
       pgPrimary.restoreGL();
@@ -4692,9 +4706,6 @@ public class PGraphicsOpenGL extends PGraphics {
     } else {
       pgl.glDepthMask(true);
     }
-
-    pgl.glClearStencil(0);
-    pgl.glClear(PGL.GL_STENCIL_BUFFER_BIT);      
     
     pgl.glClearColor(backgroundR, backgroundG, backgroundB, backgroundA);
     pgl.glClear(PGL.GL_COLOR_BUFFER_BIT);
