@@ -776,7 +776,7 @@ public class PShapeOpenGL extends PShape {
     }
     
     if (openContour) {
-      PGraphics.showWarning("P3D: Already called beginContour().");
+      PGraphics.showWarning("Already called beginContour().");
       return;
     }    
     openContour = true;    
@@ -790,7 +790,7 @@ public class PShapeOpenGL extends PShape {
     }
     
     if (!openContour) {
-      PGraphics.showWarning("P3D: Need to call beginContour() first.");
+      PGraphics.showWarning("Need to call beginContour() first.");
       return;      
     }
     openContour = false;    

@@ -1420,7 +1420,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   public void beginDraw() {
     if (drawing) {
-      showWarning("P3D: Already called beginDraw().");
+      showWarning("Already called beginDraw().");
       return;
     }
 
@@ -1430,7 +1430,7 @@ public class PGraphicsOpenGL extends PGraphics {
       // offscreen surface, still drawing on another
       // offscreen surface. This situation is not
       // catched by the drawing check above.
-      showWarning("P3D: Already called beginDraw() for another P3D object.");
+      showWarning("Already called beginDraw() for another PGraphicsOpenGL object.");
       return;      
     }    
     
@@ -1618,7 +1618,7 @@ public class PGraphicsOpenGL extends PGraphics {
     flush();
 
     if (!drawing) {
-      showWarning("P3D: Cannot call endDraw() before beginDraw().");
+      showWarning("Cannot call endDraw() before beginDraw().");
       return;
     }
     
@@ -2106,7 +2106,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   public void beginContour() {
     if (openContour) {
-      showWarning("P3D: Already called beginContour().");
+      showWarning("Already called beginContour().");
       return;
     }
     openContour = true;
@@ -2116,7 +2116,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   public void endContour() {
     if (!openContour) {
-      showWarning("P3D: Need to call beginContour() first.");
+      showWarning("Need to call beginContour() first.");
       return;
     }
     openContour = false;    
@@ -9251,7 +9251,7 @@ public class PGraphicsOpenGL extends PGraphics {
         int nPtVert = PApplet.max(MIN_POINT_ACCURACY, 
                                   (int) (TWO_PI * strokeWeight / POINT_ACCURACY_FACTOR)) + 1;
         if (PGL.MAX_VERTEX_INDEX1 <= nPtVert) {
-          throw new RuntimeException("P3D: error in point tessellation.");
+          throw new RuntimeException("Error in point tessellation.");
         }        
         updateTex();
         int nvertTot = nPtVert * nInVert;
@@ -10519,7 +10519,7 @@ public class PGraphicsOpenGL extends PGraphics {
             
             vertCount++;
           } else {
-            throw new RuntimeException("P3D: the tessellator is generating too many vertices, reduce complexity of shape.");
+            throw new RuntimeException("The tessellator is generating too many vertices, reduce complexity of shape.");
           }
 
         } else {
