@@ -1434,7 +1434,9 @@ public class PGraphicsOpenGL extends PGraphics {
 
     if (primarySurface) {
       pgl.updatePrimary();
-      pgl.glDrawBuffer(PGL.GL_BACK);
+      if (pgl.primaryIsDoubleBuffered()) {
+        pgl.glDrawBuffer(PGL.GL_BACK);
+      }
     } else {
       if (!pgl.initialized) {
         initOffscreen();
@@ -1630,6 +1632,7 @@ public class PGraphicsOpenGL extends PGraphics {
         offscreenFramebufferMultisample.copy(offscreenFramebuffer);
       }
       
+      /*
       // Make the offscreen color buffer opaque so it doesn't show      
       // the background when drawn on the main surface. 
       if (offscreenMultisample) {
@@ -1643,7 +1646,8 @@ public class PGraphicsOpenGL extends PGraphics {
       if (offscreenMultisample) {
         popFramebuffer();
       }  
-    
+      */
+      
       if (!pgl.initialized || !pgPrimary.pgl.initialized || parent.frameCount == 0) {
         // If the primary surface is re-initialized, this offscreen 
         // surface needs to save its contents into the pixels array
@@ -1661,10 +1665,10 @@ public class PGraphicsOpenGL extends PGraphics {
       popFramebuffer();
 
       pgl.endOffscreenDraw(pgPrimary.clearColorBuffer0);
-
+      
       pgPrimary.restoreGL();
     }
-
+    
     // Done!
     drawing = false;    
     if (pgCurrent == pgPrimary) {
@@ -1727,7 +1731,9 @@ public class PGraphicsOpenGL extends PGraphics {
       pgl.glDepthMask(true);
     }
     
-    pgl.glDrawBuffer(PGL.GL_BACK);
+    if (pgl.primaryIsDoubleBuffered()) {
+      pgl.glDrawBuffer(PGL.GL_BACK);
+    }
   }
 
 
