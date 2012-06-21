@@ -1102,6 +1102,11 @@ public class PGL {
   }
   
   
+  public void glColorMask(boolean wr, boolean wg, boolean wb, boolean wa) {
+    GLES20.glColorMask(wr, wg, wb, wa);
+  }
+  
+  
   public void glClearColor(float r, float g, float b, float a) {
     GLES20.glClearColor(r, g, b, a);    
   }
