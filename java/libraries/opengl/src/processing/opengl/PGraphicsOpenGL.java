@@ -1645,7 +1645,21 @@ public class PGraphicsOpenGL extends PGraphics {
       }      
       
       popFramebuffer();
-
+      
+      // Make the offscreen color buffer opaque so it doesn't show      
+      // the background when drawn on the main surface. 
+      if (offscreenMultisample) {
+        pushFramebuffer();
+        setFramebuffer(offscreenFramebuffer);
+      }      
+      pgl.glColorMask(false, false, false, true);
+      pgl.glClearColor(0, 0, 0, 1);
+      pgl.glClear(PGL.GL_COLOR_BUFFER_BIT);
+      pgl.glColorMask(true, true, true, true);
+      if (offscreenMultisample) {
+        popFramebuffer();
+      }      
+      
       pgl.endOffscreenDraw(pgPrimary.clearColorBuffer0);
 
       pgPrimary.restoreGL();
