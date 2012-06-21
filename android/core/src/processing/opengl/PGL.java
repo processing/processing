@@ -71,14 +71,11 @@ public class PGL {
   static final int INDEX_TYPE = GLES20.GL_UNSIGNED_SHORT;
 
   /** Initial sizes for arrays of input and tessellated data. */
-  public static final int DEFAULT_IN_VERTICES = 16;
-  public static final int DEFAULT_IN_EDGES = 32;
-  public static final int DEFAULT_IN_TEXTURES = 16;
+  public static final int DEFAULT_IN_VERTICES   = 16;
+  public static final int DEFAULT_IN_EDGES      = 32;
+  public static final int DEFAULT_IN_TEXTURES   = 16;
   public static final int DEFAULT_TESS_VERTICES = 16;
-  public static final int DEFAULT_TESS_INDICES = 32;  
-  
-  /** Initial sizes for vertex cache used in PShape3D. */
-  public static final int DEFAULT_VERTEX_CACHE_SIZE = 256;
+  public static final int DEFAULT_TESS_INDICES  = 32;  
   
   /** Maximum lights by default is 8, the minimum defined by OpenGL. */   
   public static final int MAX_LIGHTS = 8;
@@ -87,7 +84,7 @@ public class PGL {
    * indices to be of type unsigned short. Since Java only supports signed
    * shorts as primitive type we have 2^15 = 32768 as the maximum number of  
    * vertices that can be referred to within a single VBO. */
-  public static final int MAX_VERTEX_INDEX = 32767;
+  public static final int MAX_VERTEX_INDEX  = 32767;
   public static final int MAX_VERTEX_INDEX1 = MAX_VERTEX_INDEX + 1;
   
   /** Count of tessellated fill, line or point vertices that will 
@@ -99,7 +96,7 @@ public class PGL {
   public static final int FLUSH_VERTEX_COUNT = MAX_VERTEX_INDEX1; 
 
   /** Maximum dimension of a texture used to hold font data. **/
-  public static final int MAX_FONT_TEX_SIZE = 256;
+  public static final int MAX_FONT_TEX_SIZE = 512;
   
   /** Minimum stroke weight needed to apply the full path stroking
    * algorithm that properly generates caps and joing. 
