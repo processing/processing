@@ -498,6 +498,10 @@ public class PGL {
 
   public void initPrimarySurface(int antialias) {
     needFBO = false;
+    if (colorFBO[0] != 0) {
+      releaseFBO();
+      colorFBO[0] = 0;
+    }    
     String osName = System.getProperty("os.name");
     if (osName.equals("Mac OS X")) {
       String version = System.getProperty("os.version");
@@ -509,8 +513,6 @@ public class PGL {
           // support multisampling. As a temporary hack, we handle our
           // own multisampled FBO for onscreen rendering with anti-aliasing.
           needFBO = true;  
-          if (colorFBO[0] != 0) releaseFBO();
-          colorFBO[0] = 0;
         }
       }
     } 
