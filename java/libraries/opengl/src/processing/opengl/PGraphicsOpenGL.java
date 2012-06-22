@@ -5438,7 +5438,7 @@ public class PGraphicsOpenGL extends PGraphics {
     try {
       pgl.glBlendEquation(PGL.GL_FUNC_ADD);
       blendEqSupported = true;
-    } catch (UnsupportedOperationException e) {
+    } catch (Exception e) {
       blendEqSupported = false;
     }
 
