@@ -501,7 +501,7 @@ public class PGL {
     if (ENABLE_SMOOTH_LION_HACK) {
       needScreenFBO = false;
       if (colorFBO[0] != 0) {
-        releaseFBO();
+        releaseScreenFBO();
         colorFBO[0] = 0;
       }    
       String osName = System.getProperty("os.name");
@@ -689,7 +689,24 @@ public class PGL {
   }
   
   
-  protected void releaseFBO() {    
+  public boolean usingPrimaryFBO() {
+    return colorFBO[0] != 0;
+  }
+  
+  
+  public void bindPrimaryColorFBO() {
+    gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, colorFBO[0]);
+    PGraphicsOpenGL.screenFramebuffer.glFboID = colorFBO[0];
+  }
+
+  
+  public void bindPrimaryMultiFBO() {
+    gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, multiFBO[0]);   
+    PGraphicsOpenGL.screenFramebuffer.glFboID = multiFBO[0];
+  }
+  
+  
+  protected void releaseScreenFBO() {    
     gl.glDeleteTextures(1, colorTex, 0);
     gl.glDeleteFramebuffers(1, colorFBO, 0);    
     gl.glDeleteFramebuffers(1, multiFBO, 0);
