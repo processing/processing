@@ -1693,6 +1693,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   public PGL beginPGL() {
+    flush();
     return pgl;
   }
 
