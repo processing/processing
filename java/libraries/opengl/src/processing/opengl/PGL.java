@@ -1813,26 +1813,17 @@ public class PGL {
     }
     return ret;
   }
-
-
-  static public int javaToNativeARGB(int color) {
-    if (BIG_ENDIAN) {
-      return ((color >> 24) & 0xff) | 
-             ((color << 8) & 0xffffff00);
-    } else {
-      return (color & 0xff000000) | 
-             ((color << 16) & 0xff0000) | 
-             (color & 0xff00) | 
-             ((color >> 16) & 0xff);
-    }
-  }
   
   
+  /**
+   * Converts input native OpenGL value (RGBA on big endian, ABGR on little 
+   * endian) to Java ARGB.
+   */  
   static public int nativeToJavaARGB(int color) {
-    if (BIG_ENDIAN) {
+    if (BIG_ENDIAN) { // RGBA to ARGB
       return (color & 0xff000000) |
              ((color >> 8) & 0x00ffffff);
-    } else {
+    } else { // ABGR to ARGB
       return (color & 0xff000000) |
              ((color << 16) & 0xff0000) |
              (color & 0xff00) |
@@ -1842,76 +1833,18 @@ public class PGL {
   
   
   /**
-   * Convert native OpenGL format into palatable ARGB format. This function
-   * leaves alone (ignores) the alpha component. Also flips the image
-   * vertically, since images are upside-down in GL.
-   */
-  static public void nativeToJavaRGB(int[] pixels, int width, int height) {
-    int index = 0;
-    int yindex = (height - 1) * width;
-    for (int y = 0; y < height / 2; y++) {
-      if (BIG_ENDIAN) {
-        for (int x = 0; x < width; x++) {
-          int temp = pixels[index];
-          // ignores alpha component, just sets it opaque
-          pixels[index] = 0xff000000 | ((pixels[yindex] >> 8) & 0x00ffffff);
-          pixels[yindex] = 0xff000000 | ((temp >> 8) & 0x00ffffff);
-          index++;
-          yindex++;
-        }
-      } else { // LITTLE_ENDIAN, convert ABGR to ARGB
-        for (int x = 0; x < width; x++) {
-          int temp = pixels[index];
-          // identical to endPixels because only two
-          // components are being swapped
-          pixels[index] = 0xff000000 | ((pixels[yindex] << 16) & 0xff0000) |
-                                       (pixels[yindex] & 0xff00) |
-                                       ((pixels[yindex] >> 16) & 0xff);
-          pixels[yindex] = 0xff000000 | ((temp << 16) & 0xff0000) |
-                                        (temp & 0xff00) |
-                                        ((temp >> 16) & 0xff);
-          index++;
-          yindex++;
-        }
-      }
-      yindex -= width * 2;
-    }
-
-    // When height is an odd number, the middle line needs to be
-    // endian swapped, but not y-swapped.
-    // http://dev.processing.org/bugs/show_bug.cgi?id=944
-    if ((height % 2) == 1) {
-      index = (height / 2) * width;
-      if (BIG_ENDIAN) {
-        for (int x = 0; x < width; x++) {
-          pixels[index] = 0xff000000 | ((pixels[index] >> 8) & 0x00ffffff);
-          index++;
-        }
-      } else {
-        for (int x = 0; x < width; x++) {
-          pixels[index] = 0xff000000 | ((pixels[index] << 16) & 0xff0000) |
-                                       (pixels[index] & 0xff00) |
-                                       ((pixels[index] >> 16) & 0xff);
-          index++;
-        }
-      }
-    }
-  }
-
-
-  /**
-   * Convert native OpenGL format into palatable ARGB format. This function
-   * leaves alone (ignores) the alpha component. Also flips the image
-   * vertically, since images are upside-down in GL.
-   */
+   * Converts input array of native OpenGL values (RGBA on big endian, ABGR on little
+   * endian) representing an image of width x height resolution to Java ARGB.
+   * It also rearranges the elements in the array so that the image is flipped 
+   * vertically.
+   */ 
   static public void nativeToJavaARGB(int[] pixels, int width, int height) {
     int index = 0;
     int yindex = (height - 1) * width;
     for (int y = 0; y < height / 2; y++) {
-      if (BIG_ENDIAN) {
+      if (BIG_ENDIAN) { // RGBA to ARGB
         for (int x = 0; x < width; x++) {
           int temp = pixels[index];
-          // ignores alpha component, just sets it opaque
           pixels[index] = (pixels[yindex] & 0xff000000) |
                           ((pixels[yindex] >> 8) & 0x00ffffff);
           pixels[yindex] = (temp & 0xff000000) |
@@ -1919,7 +1852,7 @@ public class PGL {
           index++;
           yindex++;
         }
-      } else { // LITTLE_ENDIAN, convert ABGR to ARGB
+      } else { // ABGR to ARGB
         for (int x = 0; x < width; x++) {
           int temp = pixels[index];
           pixels[index] = (pixels[yindex] & 0xff000000) |
@@ -1937,15 +1870,16 @@ public class PGL {
       yindex -= width * 2;
     }
 
+    // Flips image
     if ((height % 2) == 1) {
       index = (height / 2) * width;
-      if (BIG_ENDIAN) {
+      if (BIG_ENDIAN) { // RGBA to ARGB
         for (int x = 0; x < width; x++) {
           pixels[index] = (pixels[index] & 0xff000000) |
                           ((pixels[index] >> 8) & 0x00ffffff);
           index++;
         }
-      } else {
+      } else { // ABGR to ARGB
         for (int x = 0; x < width; x++) {
           pixels[index] = (pixels[index] & 0xff000000) |
                           ((pixels[index] << 16) & 0xff0000) |
@@ -1955,30 +1889,44 @@ public class PGL {
         }
       }
     }
-  }
-
-
+  }  
+  
+  
   /**
-   * Convert ARGB (Java/Processing) data to native OpenGL format. This function
-   * leaves alone (ignores) the alpha component. Also flips the image
-   * vertically, since images are upside-down in GL.
-   */
-  static public void javaToNativeRGB(int[] pixels, int width, int height) {
+   * Converts input native OpenGL value (RGBA on big endian, ABGR on little 
+   * endian) to Java RGB, so that the alpha component of the result is set
+   * to opaque (255).
+   */   
+  static public int nativeToJavaRGB(int color) {
+    if (BIG_ENDIAN) { // RGBA to ARGB
+      return ((color << 8) & 0xffffff00) | 0xff;
+    } else { // ABGR to ARGB
+       return 0xff000000 | ((color << 16) & 0xff0000) |
+                           (color & 0xff00) |
+                           ((color >> 16) & 0xff);
+    }
+  }
+  
+  
+  /**
+   * Converts input array of native OpenGL values (RGBA on big endian, ABGR on little
+   * endian) representing an image of width x height resolution to Java RGB,
+   * so that the alpha component of all pixels is set to opaque (255). It also 
+   * rearranges the elements in the array so that the image is flipped vertically.
+   */   
+  static public void nativeToJavaRGB(int[] pixels, int width, int height) {
     int index = 0;
     int yindex = (height - 1) * width;
     for (int y = 0; y < height / 2; y++) {
-      if (BIG_ENDIAN) {
-        // and convert ARGB back to opengl RGBA components (big endian)
+      if (BIG_ENDIAN) { // RGBA to ARGB
         for (int x = 0; x < width; x++) {
           int temp = pixels[index];
-          pixels[index] = ((pixels[yindex] << 8) & 0xffffff00) | 0xff;
-          pixels[yindex] = ((temp << 8) & 0xffffff00) | 0xff;
+          pixels[index] = 0xff000000 | ((pixels[yindex] >> 8) & 0x00ffffff);
+          pixels[yindex] = 0xff000000 | ((temp >> 8) & 0x00ffffff);
           index++;
           yindex++;
         }
-
-      } else {
-        // convert ARGB back to native little endian ABGR
+      } else { // ABGR to ARGB
         for (int x = 0; x < width; x++) {
           int temp = pixels[index];
           pixels[index] = 0xff000000 | ((pixels[yindex] << 16) & 0xff0000) |
@@ -1994,14 +1942,15 @@ public class PGL {
       yindex -= width * 2;
     }
 
+    // Flips image
     if ((height % 2) == 1) {
       index = (height / 2) * width;
-      if (BIG_ENDIAN) {
+      if (BIG_ENDIAN) { // RGBA to ARGB
         for (int x = 0; x < width; x++) {
-          pixels[index] = ((pixels[index] << 8) & 0xffffff00) | 0xff;
+          pixels[index] = 0xff000000 | ((pixels[index] >> 8) & 0x00ffffff);
           index++;
         }
-      } else {
+      } else { // ABGR to ARGB
         for (int x = 0; x < width; x++) {
           pixels[index] = 0xff000000 | ((pixels[index] << 16) & 0xff0000) |
                                        (pixels[index] & 0xff00) |
@@ -2012,17 +1961,35 @@ public class PGL {
     }
   }
 
-
+  
   /**
-   * Convert Java ARGB to native OpenGL format. Also flips the image vertically,
-   * since images are upside-down in GL.
+   * Converts input Java ARGB value to native OpenGL format (RGBA on big endian,
+   * BGRA on little endian).
    */
+  static public int javaToNativeARGB(int color) {
+    if (BIG_ENDIAN) { // ARGB to RGBA
+      return ((color >> 24) & 0xff) | 
+             ((color << 8) & 0xffffff00);
+    } else { // ARGB to ABGR
+      return (color & 0xff000000) | 
+             ((color << 16) & 0xff0000) | 
+             (color & 0xff00) | 
+             ((color >> 16) & 0xff);
+    }
+  }  
+  
+  
+  /**
+   * Converts input array of Java ARGB values representing an image of width x height
+   * resolution to native OpenGL format (RGBA on big endian, BGRA on little endian).
+   * It also rearranges the elements in the array so that the image is flipped 
+   * vertically.
+   */  
   static public void javaToNativeARGB(int[] pixels, int width, int height) {
     int index = 0;
     int yindex = (height - 1) * width;
     for (int y = 0; y < height / 2; y++) {
-      if (BIG_ENDIAN) {
-        // and convert ARGB back to opengl RGBA components (big endian)
+      if (BIG_ENDIAN) { // ARGB to RGBA
         for (int x = 0; x < width; x++) {
           int temp = pixels[index];
           pixels[index] = ((pixels[yindex] >> 24) & 0xff) |
@@ -2033,8 +2000,7 @@ public class PGL {
           yindex++;
         }
 
-      } else {
-        // convert ARGB back to native little endian ABGR
+      } else { // ARGB to ABGR
         for (int x = 0; x < width; x++) {
           int temp = pixels[index];
           pixels[index] = (pixels[yindex] & 0xff000000) |
@@ -2052,20 +2018,91 @@ public class PGL {
       yindex -= width * 2;
     }
 
+    // Flips image
     if ((height % 2) == 1) {
       index = (height / 2) * width;
-      if (BIG_ENDIAN) {
+      if (BIG_ENDIAN) { // ARGB to RGBA
         for (int x = 0; x < width; x++) {
           pixels[index] = ((pixels[index] >> 24) & 0xff) |
                           ((pixels[index] << 8) & 0xffffff00);
           index++;
         }
-      } else {
+      } else { // ARGB to ABGR
         for (int x = 0; x < width; x++) {
           pixels[index] = (pixels[index] & 0xff000000) |
                           ((pixels[index] << 16) & 0xff0000) |
                           (pixels[index] & 0xff00) |
                           ((pixels[index] >> 16) & 0xff);
+          index++;
+        }
+      }
+    }
+  }
+  
+  
+  /**
+   * Converts input Java ARGB value to native OpenGL format (RGBA on big endian,
+   * BGRA on little endian), setting alpha component to opaque (255).
+   */  
+  static public int javaToNativeRGB(int color) {
+    if (BIG_ENDIAN) { // ARGB to RGBA
+        return ((color << 8) & 0xffffff00) | 0xff;
+    } else { // ARGB to ABGR
+        return 0xff000000 | ((color << 16) & 0xff0000) |
+                            (color & 0xff00) |
+                            ((color >> 16) & 0xff);
+    }    
+  }    
+
+  
+  /**
+   * Converts input array of Java ARGB values representing an image of width x height
+   * resolution to native OpenGL format (RGBA on big endian, BGRA on little endian),
+   * while setting alpha component of all pixels to opaque (255). It also rearranges 
+   * the elements in the array so that the image is flipped vertically.
+   */ 
+  static public void javaToNativeRGB(int[] pixels, int width, int height) {
+    int index = 0;
+    int yindex = (height - 1) * width;
+    for (int y = 0; y < height / 2; y++) {
+      if (BIG_ENDIAN) { // ARGB to RGBA        
+        for (int x = 0; x < width; x++) {
+          int temp = pixels[index];
+          pixels[index] = ((pixels[yindex] << 8) & 0xffffff00) | 0xff;
+          pixels[yindex] = ((temp << 8) & 0xffffff00) | 0xff;
+          index++;
+          yindex++;
+        }
+
+      } else {        
+        for (int x = 0; x < width; x++) { // ARGB to ABGR
+          int temp = pixels[index];
+          pixels[index] = 0xff000000 | ((pixels[yindex] << 16) & 0xff0000) |
+                                       (pixels[yindex] & 0xff00) |
+                                       ((pixels[yindex] >> 16) & 0xff);
+          pixels[yindex] = 0xff000000 | ((temp << 16) & 0xff0000) |
+                                        (temp & 0xff00) |
+                                        ((temp >> 16) & 0xff);
+          index++;
+          yindex++;
+        }
+      }
+      yindex -= width * 2;
+    }
+
+    // Flips image
+    if ((height % 2) == 1) { // ARGB to RGBA 
+      index = (height / 2) * width;
+      if (BIG_ENDIAN) {
+        for (int x = 0; x < width; x++) {
+          pixels[index] = ((pixels[index] << 8) & 0xffffff00) | 0xff;
+          index++;
+        }
+      } else { // ARGB to ABGR
+        for (int x = 0; x < width; x++) {
+          pixels[index] = 0xff000000 | ((pixels[index] << 16) & 0xff0000) |
+                                       (pixels[index] & 0xff00) |
+                                       ((pixels[index] >> 16) & 0xff);
           index++;
         }
       }
