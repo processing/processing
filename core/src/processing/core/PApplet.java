@@ -12327,8 +12327,8 @@ public class PApplet extends Applet
    * @param right right coordinate of the clipping plane
    * @param bottom bottom coordinate of the clipping plane
    * @param top top coordinate of the clipping plane
-   * @param near near component of the clipping plane
-   * @param far far component of the clipping plane
+   * @param near near component of the clipping plane; must be greater than zero
+   * @param far far component of the clipping plane; must be greater than near value
    * @see PGraphics#camera(float, float, float, float, float, float, float, float, float)
    * @see PGraphics#endCamera()
    * @see PGraphics#perspective(float, float, float, float)
