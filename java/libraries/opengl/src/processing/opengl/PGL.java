@@ -359,8 +359,8 @@ public class PGL {
   
   // FBO for anti-aliased rendering  
   
-  public static final boolean ENABLE_SMOOTH_OSX_HACK = true;
-  public static final int MIN_OSX_VER_FOR_SMOOTH_HACK = 6;
+  public static final boolean ENABLE_OSX_SCREEN_FBO  = true;
+  public static final int MIN_OSX_VER_FOR_SCREEN_FBO = 6;
   protected boolean needScreenFBO = false;
   protected int fboWidth, fboHeight;  
   protected int numSamples;
@@ -499,7 +499,7 @@ public class PGL {
 
 
   public void initPrimarySurface(int antialias) {
-    if (ENABLE_SMOOTH_OSX_HACK) {
+    if (ENABLE_OSX_SCREEN_FBO) {
       needScreenFBO = false;
       if (colorFBO[0] != 0) {
         releaseScreenFBO();
@@ -511,7 +511,7 @@ public class PGL {
         String[] parts = version.split("\\.");
         if (2 <= parts.length) {
           int num = Integer.parseInt(parts[1]);
-          if (MIN_OSX_VER_FOR_SMOOTH_HACK <= num && 1 < pg.quality) {          
+          if (MIN_OSX_VER_FOR_SCREEN_FBO <= num && 1 < pg.quality) {          
             // We are on OSX Lion or newer, where JOGL doesn't properly
             // support multisampling. As a temporary hack, we handle our
             // own multisampled FBO for onscreen rendering with anti-aliasing.
