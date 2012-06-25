@@ -1552,13 +1552,17 @@ public class PGL {
     }
     
     if (0 < tex2DShaderProgram) {
+      // The texture overwrites anything drawn earlier.
+      boolean[] depthTest = new boolean[1];
+      glGetBooleanv(GL_DEPTH_TEST, depthTest, 0);
+      glDisable(GL_DEPTH_TEST);
+      
       // When drawing the texture we don't write to the
       // depth mask, so the texture remains in the background
       // and can be occluded by anything drawn later, even if
       // if it is behind it.
-      boolean[] val = new boolean[1];
-      glGetBooleanv(GL_DEPTH_WRITEMASK, val, 0);
-      boolean writeMask = val[0];
+      boolean[] depthMask = new boolean[1];
+      glGetBooleanv(GL_DEPTH_WRITEMASK, depthMask, 0);
       glDepthMask(false);
       
       glUseProgram(tex2DShaderProgram);
@@ -1613,7 +1617,12 @@ public class PGL {
 
       glUseProgram(0);
 
-      glDepthMask(writeMask);
+      if (depthTest[0]) {
+        glEnable(GL_DEPTH_TEST);
+      } else {
+        glDisable(GL_DEPTH_TEST);
+      }      
+      glDepthMask(depthMask[0]);
     }
   }
 
@@ -1640,13 +1649,17 @@ public class PGL {
     }
     
     if (0 < texRectShaderProgram) {
+      // The texture overwrites anything drawn earlier.
+      boolean[] depthTest = new boolean[1];
+      glGetBooleanv(GL_DEPTH_TEST, depthTest, 0);
+      glDisable(GL_DEPTH_TEST);
+      
       // When drawing the texture we don't write to the
       // depth mask, so the texture remains in the background
       // and can be occluded by anything drawn later, even if
       // if it is behind it.
-      boolean[] val = new boolean[1];
-      glGetBooleanv(GL_DEPTH_WRITEMASK, val, 0);
-      boolean writeMask = val[0];
+      boolean[] depthMask = new boolean[1];
+      glGetBooleanv(GL_DEPTH_WRITEMASK, depthMask, 0);
       glDepthMask(false);
       
       glUseProgram(texRectShaderProgram);
@@ -1701,7 +1714,12 @@ public class PGL {
 
       glUseProgram(0);
 
-      glDepthMask(writeMask);
+      if (depthTest[0]) {
+        glEnable(GL_DEPTH_TEST);
+      } else {
+        glDisable(GL_DEPTH_TEST);
+      }      
+      glDepthMask(depthMask[0]);
     }
   }
 
@@ -1724,13 +1742,17 @@ public class PGL {
     }
 
     if (0 < rectShaderProgram) {
+      // The rectangle overwrites anything drawn earlier.
+      boolean[] depthTest = new boolean[1];
+      glGetBooleanv(GL_DEPTH_TEST, depthTest, 0);
+      glDisable(GL_DEPTH_TEST);  
+      
       // When drawing the rectangle we don't write to the
       // depth mask, so the rectangle remains in the background
       // and can be occluded by anything drawn later, even if
       // if it is behind it.
-      boolean[] val = new boolean[1];
-      glGetBooleanv(GL_DEPTH_WRITEMASK, val, 0);
-      boolean writeMask = val[0];
+      boolean[] depthMask = new boolean[1];
+      glGetBooleanv(GL_DEPTH_WRITEMASK, depthMask, 0);
       glDepthMask(false);
 
       glUseProgram(rectShaderProgram);
@@ -1771,7 +1793,12 @@ public class PGL {
 
       glUseProgram(0);
 
-      glDepthMask(writeMask);
+      if (depthTest[0]) {
+        glEnable(GL_DEPTH_TEST);
+      } else {
+        glDisable(GL_DEPTH_TEST);
+      }      
+      glDepthMask(depthMask[0]);
     }
   }
 
