@@ -375,6 +375,11 @@ public class PGraphicsOpenGL extends PGraphics {
   /** Used to indicate an OpenGL surface recreation */
   protected boolean restoreSurface = false;
   
+  /** Used to detect continuous use of the smooth/noSmooth functions */
+  protected boolean smoothDisabled = false;
+  protected int smoothCallCount = 0;
+  protected int lastSmoothCall = -10;  
+  
   /** Type of pixels operation. */
   static protected final int OP_NONE = 0;
   static protected final int OP_READ = 1;
@@ -3096,8 +3101,10 @@ public class PGraphicsOpenGL extends PGraphics {
     smooth(2);
   }
 
-
+  
   public void smooth(int level) {
+    if (smoothDisabled) return;
+    
     smooth = true;
 
     if (maxSamples < level) {
@@ -3108,6 +3115,15 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     if (quality != level) {
+      smoothCallCount++;
+      if (parent.frameCount - lastSmoothCall < 30 && 5 < smoothCallCount) {
+        smoothDisabled = true;
+        PGraphics.showWarning("The smooth/noSmooth functions are being called too often.\n" +
+                              "This results in screen flickering, so they will be disabled\n" +
+                              "for the rest of the sketch's execution.");
+      }
+      lastSmoothCall = parent.frameCount;
+        
       quality = level;
       if (quality == 1) {
         quality = 0;
@@ -3120,9 +3136,20 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   public void noSmooth() {
+    if (smoothDisabled) return;
+    
     smooth = false;
 
     if (1 < quality) {
+      smoothCallCount++;
+      if (parent.frameCount - lastSmoothCall < 30 && 5 < smoothCallCount) {
+        smoothDisabled = true;
+        PGraphics.showWarning("The smooth/noSmooth functions are being called too often.\n" +
+                              "This results in screen flickering, so they will be disabled\n" +
+                              "for the rest of the sketch's execution.");
+      }
+      lastSmoothCall = parent.frameCount;
+      
       quality = 0;
       // This will trigger a surface restart next time
       // requestDraw() is called.
