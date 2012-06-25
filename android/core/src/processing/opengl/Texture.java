@@ -272,7 +272,7 @@ public class Texture implements PConstants {
       return;
     }    
     if (pixels.length != w * h) {
-      PGraphics.showWarning("The pixels array has the wrong length. It should be " + w * h);
+      PGraphics.showWarning("The pixels array has a length of " + pixels.length + ", but it should be " + w * h);
       return;
     }
     
