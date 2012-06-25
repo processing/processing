@@ -4868,6 +4868,8 @@ public class PGraphicsOpenGL extends PGraphics {
       readPixels();
       
       if (primarySurface) {
+        // Copy pixels to the texture associated to the primary surface 
+        // so both are in sync.
         loadTextureImpl(POINT, false);
         pixelsToTexture();
       }
