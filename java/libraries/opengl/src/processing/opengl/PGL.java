@@ -361,6 +361,7 @@ public class PGL {
   
   public static final boolean ENABLE_OSX_SCREEN_FBO  = true;
   public static final int MIN_OSX_VER_FOR_SCREEN_FBO = 6;
+  public static final int MIN_SAMPLES_FOR_SCREEN_FBO = 1;
   protected boolean needScreenFBO = false;
   protected int fboWidth, fboHeight;  
   protected int numSamples;
@@ -511,10 +512,13 @@ public class PGL {
         String[] parts = version.split("\\.");
         if (2 <= parts.length) {
           int num = Integer.parseInt(parts[1]);
-          if (MIN_OSX_VER_FOR_SCREEN_FBO <= num && 1 < pg.quality) {          
-            // We are on OSX Lion or newer, where JOGL doesn't properly
-            // support multisampling. As a temporary hack, we handle our
-            // own multisampled FBO for onscreen rendering with anti-aliasing.
+          if (MIN_OSX_VER_FOR_SCREEN_FBO <= num && 
+              MIN_SAMPLES_FOR_SCREEN_FBO <= qualityToSamples(pg.quality)) {
+            // Using an FBO for screen drawing works better than the
+            // screen framebuffer.
+            // This fixes the problem of antialiasing on Lion or newer,
+            // the flickering associated to glReadPixels calls on             
+            // 10.6+, and it is in fact faster.
             needScreenFBO = true;  
           }
         }
@@ -602,7 +606,7 @@ public class PGL {
     }
     
     if (needScreenFBO && colorFBO[0] == 0) {
-      numSamples = pg.quality;
+      numSamples = qualityToSamples(pg.quality);      
       
       String ext = gl.glGetString(GL.GL_EXTENSIONS); 
       if (-1 < ext.indexOf("texture_non_power_of_two")) {
@@ -723,7 +727,18 @@ public class PGL {
     gl.glDeleteRenderbuffers(1, packedDepthStencil, 0);
   }
   
+  
+  protected int qualityToSamples(int quality) {
+    if (quality <= 1) {
+      return 1;
+    } else {
+      // Number of samples is always an even number:
+      int n = 2 * (quality / 2);
+      return n;
+    }
+  }
 
+  
   ///////////////////////////////////////////////////////////////////////////////////
 
   // Frame rendering
