@@ -370,6 +370,7 @@ public class PGL {
   protected int[] multiFBO = { 0 };
   protected int[] colorRenderBuffer = { 0 };
   protected int[] packedDepthStencil = { 0 };
+  protected int contextHashCode;
   
   ///////////////////////////////////////////////////////////////////////////////////
 
@@ -502,10 +503,7 @@ public class PGL {
   public void initPrimarySurface(int antialias) {
     if (ENABLE_OSX_SCREEN_FBO) {
       needScreenFBO = false;
-      if (colorFBO[0] != 0) {
-        releaseScreenFBO();
-        colorFBO[0] = 0;
-      }    
+      colorFBO[0] = 0;  
       String osName = System.getProperty("os.name");
       if (osName.equals("Mac OS X")) {
         String version = System.getProperty("os.version");
@@ -621,6 +619,8 @@ public class PGL {
         throw new RuntimeException("Catastrophic error: cannot create multisampled surface for rendering... sorry!"); 
       }
       
+      contextHashCode = context.hashCode();
+      
       // Create the color texture...
       gl.glGenTextures(1, colorTex, 0);
       gl.glBindTexture(GL.GL_TEXTURE_2D, colorTex[0]);    
@@ -719,7 +719,7 @@ public class PGL {
   }
   
   
-  protected void releaseScreenFBO() {    
+  protected void releaseScreenFBO() {
     gl.glDeleteTextures(1, colorTex, 0);
     gl.glDeleteFramebuffers(1, colorFBO, 0);    
     gl.glDeleteFramebuffers(1, multiFBO, 0);
