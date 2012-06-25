@@ -423,7 +423,7 @@ public class PGraphics2D extends PGraphicsOpenGL {
   // MATRIX TRANSFORMATIONS  
   
   public void translate(float tx, float ty, float tz) {
-    showVariationWarning("translate");
+    showDepthWarningXYZ("translate");
   }
   
   public void rotateX(float angle) {
