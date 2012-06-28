@@ -27,6 +27,7 @@ import processing.core.*;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
 
 /**
  * This class encapsulates a GLSL shader program, including a vertex 
@@ -69,6 +70,7 @@ public class PShader {
 
   protected boolean active;
   
+  protected HashMap<Integer, UniformValue> uniformValues = null;
   
   public PShader() {
     parent = null;
@@ -173,22 +175,112 @@ public class PShader {
   public void setFragmentShader(URL fragURL) {
     this.fragmentURL = fragURL;        
   }
+
+  
+  public void setUniform(String name, int x) {    
+    setUniformImpl(name, INT1, new int[] { x });
+  }
+  
+  public void setUniform(String name, int x, int y) {
+    setUniformImpl(name, INT2, new int[] { x, y });
+  }
+  
+  public void setUniform(String name, int x, int y, int z) {
+    setUniformImpl(name, INT3, new int[] { x, y, z });
+  }
+  
+  public void setUniform(String name, int x, int y, int z, int w) {
+    setUniformImpl(name, INT4, new int[] { x, y, z });
+  }
+  
+  public void setUniform(String name, float x) {
+    setUniformImpl(name, FLOAT1, new float[] { x });
+  }
+  
+  public void setUniform(String name, float x, float y) {
+    setUniformImpl(name, FLOAT2, new float[] { x, y });
+  }
+  
+  public void setUniform(String name, float x, float y, float z) {
+    setUniformImpl(name, FLOAT3, new float[] { x, y, z });
+  }
+  
+  public void setUniform(String name, float x, float y, float z, float w) {
+    setUniformImpl(name, FLOAT4, new float[] { x, y, z, w });
+  }
+  
+  public void setUniform(String name, PVector vec) {
+    setUniformImpl(name, FLOAT3, new float[] { vec.x, vec.y, vec.z });
+  }
+  
+  public void setUniform(String name, int[] vec) {
+    setUniformImpl(name, INT1VEC, vec);
+  }   
+  
+  public void setUniform(String name, float[] vec) {
+    setUniform(name, vec, 1);
+  }  
+  
+  public void setUniform(String name, float[] vec, int ncoords) {    
+    if (ncoords == 1) {
+      setUniformImpl(name, FLOAT1VEC, vec);
+    } else if (ncoords == 2) {
+      setUniformImpl(name, FLOAT2VEC, vec);
+    } else if (ncoords == 3) {
+      setUniformImpl(name, FLOAT3VEC, vec);
+    } else if (ncoords == 4) {
+      setUniformImpl(name, FLOAT4VEC, vec);
+    } else if (4 < ncoords) {
+      PGraphics.showWarning("Only up to 4 coordinates per element are supported.");
+    } else {
+      PGraphics.showWarning("Wrong number of coordinates: it is negative!.");
+    }
+  }
+  
+  public void setUniform(String name, PMatrix2D mat) {
+    float[] matv = { mat.m00, mat.m01, 
+                     mat.m10, mat.m11 };
+    setUniformImpl(name, MAT2x2, matv);
+  }
+  
+  public void setUniform(String name, PMatrix3D mat) {
+    setUniform(name, mat, false);
+  }
+  
+  public void setUniform(String name, PMatrix3D mat, boolean use3x3) {
+    if (use3x3) {
+      float[] matv = { mat.m00, mat.m01, mat.m02, 
+                       mat.m10, mat.m11, mat.m12,
+                       mat.m20, mat.m21, mat.m22 };
+      setUniformImpl(name, MAT3x3, matv);
+    } else {
+      float[] matv = { mat.m00, mat.m01, mat.m02, mat.m03, 
+                       mat.m10, mat.m11, mat.m12, mat.m13,
+                       mat.m20, mat.m21, mat.m22, mat.m23, 
+                       mat.m30, mat.m31, mat.m32, mat.m33 };
+      setUniformImpl(name, MAT4x4, matv);      
+    }
+  }
+  
+  
+  
   
   
   /**
    * Starts the execution of the shader program.
    */
-  public void start() {    
+  protected void start() {    
     init();  
     pgl.glUseProgram(programObject);
     active = true;
+    consumeUniforms();
   }
 
   
   /**
    * Stops the execution of the shader program.
    */
-  public void stop() {
+  protected void stop() {
     pgl.glUseProgram(0);
     active = false;
   }    
@@ -197,7 +289,7 @@ public class PShader {
   /**
    * Returns true if the shader is running, false otherwise.
    */
-  public boolean active() {
+  protected boolean active() {
     return active;
   }
   
@@ -208,7 +300,7 @@ public class PShader {
    * @param name String
    * @return int
    */
-  public int getAttribLocation(String name) {
+  protected int getAttribLocation(String name) {
     init();    
     return pgl.glGetAttribLocation(programObject, name);
   }
@@ -220,13 +312,13 @@ public class PShader {
    * @param name String
    * @return int
    */
-  public int getUniformLocation(String name) {
+  protected int getUniformLocation(String name) {
     init();
     return pgl.glGetUniformLocation(programObject, name);
   }
 
   
-  public void setAttribute(int loc, int vboId, int size, int type, boolean normalized, int stride, int offset) {
+  protected void setAttribute(int loc, int vboId, int size, int type, boolean normalized, int stride, int offset) {
     if (-1 < loc) {
       pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, vboId);
       pgl.glVertexAttribPointer(loc, size, type, normalized, stride, offset);
@@ -234,84 +326,111 @@ public class PShader {
   }  
   
   
-  public void setIntUniform(int loc, int x) {
+  protected void set1IntUniform(int loc, int x) {
     if (-1 < loc) {
       pgl.glUniform1i(loc, x);
     }
   }  
+
+  
+  protected void set2IntUniform(int loc, int x, int y) {
+    if (-1 < loc) {
+      pgl.glUniform2i(loc, x, y);
+    }
+  }    
+
+  
+  protected void set3IntUniform(int loc, int x, int y, int z) {
+    if (-1 < loc) {
+      pgl.glUniform3i(loc, x, y, z);
+    }
+  }      
+
+  
+  protected void set4IntUniform(int loc, int x, int y, int z, int w) {
+    if (-1 < loc) {
+      pgl.glUniform4i(loc, x, y, z, w);
+    }
+  }      
   
   
-  public void set1FloatUniform(int loc, float x) {
+  protected void set1FloatUniform(int loc, float x) {
     if (-1 < loc) {
       pgl.glUniform1f(loc, x);
     }
   }  
-
   
-  public void set2FloatUniform(int loc, float x, float y) {
+  protected void set2FloatUniform(int loc, float x, float y) {
     if (-1 < loc) {
       pgl.glUniform2f(loc, x, y);  
     }
   }    
   
 
-  public void set3FloatUniform(int loc, float x, float y, float z) {
+  protected void set3FloatUniform(int loc, float x, float y, float z) {
     if (-1 < loc) {
       pgl.glUniform3f(loc, x, y, z);  
     }    
   }  
 
   
-  public void set4FloatUniform(int loc, float x, float y, float z, float w) {
+  protected void set4FloatUniform(int loc, float x, float y, float z, float w) {
     if (-1 < loc) {
       pgl.glUniform4f(loc, x, y, z, w);
     }
   }   
   
   
-  public void set1FloatVecUniform(int loc, float[] vec) {
+  protected void set1IntVecUniform(int loc, int[] vec) {
+    if (-1 < loc) {
+      pgl.glUniform1iv(loc, vec.length, vec, 0);
+    }
+  }  
+  
+  
+  protected void set1FloatVecUniform(int loc, float[] vec) {
     if (-1 < loc) {
       pgl.glUniform1fv(loc, vec.length, vec, 0);
     }
   }
   
   
-  public void set2FloatVecUniform(int loc, float[] vec) {
+  protected void set2FloatVecUniform(int loc, float[] vec) {
     if (-1 < loc) {
       pgl.glUniform2fv(loc, vec.length / 2, vec, 0);
     }
   }
 
   
-  public void set3FloatVecUniform(int loc, float[] vec) {
+  protected void set3FloatVecUniform(int loc, float[] vec) {
     if (-1 < loc) {
       pgl.glUniform3fv(loc, vec.length / 3, vec, 0);
     }
   }  
 
   
-  public void set4FloatVecUniform(int loc, float[] vec) {
+  protected void set4FloatVecUniform(int loc, float[] vec) {
     if (-1 < loc) {
       pgl.glUniform4fv(loc, vec.length / 4, vec, 0);
     }
   }    
   
   
-  public void set2x2MatUniform(int loc, float[] mat) {
+  protected void set2x2MatUniform(int loc, float[] mat) {
     if (-1 < loc) {
       pgl.glUniformMatrix2fv(loc, 1, false, mat, 0);
     }
   }    
   
 
-  public void set3x3MatUniform(int loc, float[] mat) {
+  protected void set3x3MatUniform(int loc, float[] mat) {
     if (-1 < loc) {
       pgl.glUniformMatrix3fv(loc, 1, false, mat, 0);
     }
   }
   
   
-  public void set4x4MatUniform(int loc, float[] mat) {
+  protected void set4x4MatUniform(int loc, float[] mat) {
     if (-1 < loc) {
       pgl.glUniformMatrix4fv(loc, 1, false, mat, 0);
     }
@@ -322,6 +441,7 @@ public class PShader {
   // The individal attribute setters are not really needed,
   // read this:
   // http://stackoverflow.com/questions/7718976/what-is-glvertexattrib-versus-glvertexattribpointer-used-for
+  / except for setting the 
   public void set1FloatAttribute(int loc, float x) {
     if (-1 < loc) {
       pgl.glVertexAttrib1f(loc, x);
@@ -350,6 +470,77 @@ public class PShader {
   }
   */  
  
+  protected void setUniformImpl(String name, int type, Object value) {
+    int loc = getUniformLocation(name);
+    if (-1 < loc) {
+      if (uniformValues == null) {
+        uniformValues = new HashMap<Integer, UniformValue>();        
+      }
+      uniformValues.put(loc, new UniformValue(type, value));      
+    } else {
+      PGraphics.showWarning("The shader doesn't have the uniform " + name);
+    }    
+  }  
+  
+  
+  protected void consumeUniforms() {
+    if (uniformValues != null && 0 < uniformValues.size()) {
+      for (Integer loc: uniformValues.keySet()) {        
+        UniformValue val = uniformValues.get(loc);        
+        if (val.type == INT1) {
+          int[] v = ((int[])val.value);
+          pgl.glUniform1i(loc, v[0]); 
+        } else if (val.type == INT2) {
+          int[] v = ((int[])val.value);
+          pgl.glUniform2i(loc, v[0], v[1]); 
+        } else if (val.type == INT3) {
+          int[] v = ((int[])val.value);
+          pgl.glUniform3i(loc, v[0], v[1], v[2]); 
+        } else if (val.type == INT4) {
+          int[] v = ((int[])val.value);
+          pgl.glUniform4i(loc, v[0], v[1], v[2], v[4]); 
+        } else if (val.type == FLOAT1) {
+          float[] v = ((float[])val.value);
+          pgl.glUniform1f(loc, v[0]);          
+        } else if (val.type == FLOAT2) {
+          float[] v = ((float[])val.value);
+          pgl.glUniform2f(loc, v[0], v[1]);          
+        } else if (val.type == FLOAT3) {
+          float[] v = ((float[])val.value);
+          pgl.glUniform3f(loc, v[0], v[1], v[2]);           
+        } else if (val.type == FLOAT4) {
+          float[] v = ((float[])val.value);
+          pgl.glUniform4f(loc, v[0], v[1], v[2], v[3]);
+        } else if (val.type == INT1VEC) {
+          int[] v = ((int[])val.value);
+          pgl.glUniform1iv(loc, v.length, v, 0);          
+        } else if (val.type == FLOAT1VEC) {
+          float[] v = ((float[])val.value);
+          pgl.glUniform1fv(loc, v.length, v, 0);  
+        } else if (val.type == FLOAT2VEC) {
+          float[] v = ((float[])val.value);
+          pgl.glUniform2fv(loc, v.length / 2, v, 0);
+        } else if (val.type == FLOAT3VEC) {
+          float[] v = ((float[])val.value);
+          pgl.glUniform3fv(loc, v.length / 3, v, 0);          
+        } else if (val.type == FLOAT4VEC) {
+          float[] v = ((float[])val.value);
+          pgl.glUniform4fv(loc, v.length / 4, v, 0);          
+        } else if (val.type == MAT2x2) {
+          float[] v = ((float[])val.value);
+          pgl.glUniformMatrix2fv(loc, 1, false, v, 0);          
+        } else if (val.type == MAT3x3) {
+          float[] v = ((float[])val.value);
+          pgl.glUniformMatrix3fv(loc, 1, false, v, 0);          
+        } else if (val.type == MAT4x4) {
+          float[] v = ((float[])val.value);
+          pgl.glUniformMatrix4fv(loc, 1, false, v, 0);          
+        }
+      }
+      uniformValues.clear();
+    }
+  }
+  
     
   protected void init() {
     if (programObject == 0 || contextIsOutdated()) {
@@ -543,5 +734,32 @@ public class PShader {
       pgMain.deleteGLSLProgramObject(programObject, context.code());
       programObject = 0;
     }
+  }
+  
+  static protected final int INT1      = 0;
+  static protected final int INT2      = 1;
+  static protected final int INT3      = 2;
+  static protected final int INT4      = 3;
+  static protected final int FLOAT1    = 4;
+  static protected final int FLOAT2    = 5;
+  static protected final int FLOAT3    = 6;
+  static protected final int FLOAT4    = 7;  
+  static protected final int INT1VEC   = 8;
+  static protected final int FLOAT1VEC = 9;
+  static protected final int FLOAT2VEC = 10;
+  static protected final int FLOAT3VEC = 11;
+  static protected final int FLOAT4VEC = 12;  
+  static protected final int MAT2x2    = 13;
+  static protected final int MAT3x3    = 14;
+  static protected final int MAT4x4    = 15;
+  
+  protected class UniformValue {
+    int type;
+    Object value;
+
+    UniformValue(int type, Object value) {
+      this.type = type;
+      this.value = value;
+    }    
   }  
 }
