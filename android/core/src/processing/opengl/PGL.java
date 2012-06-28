@@ -943,6 +943,21 @@ public class PGL {
   }
   
   
+  public void glUniform2i(int loc, int value0, int value1) {
+    GLES20.glUniform2i(loc, value0, value1);
+  }  
+
+  
+  public void glUniform3i(int loc, int value0, int value1, int value2) {
+    GLES20.glUniform3i(loc, value0, value1, value2);
+  }    
+  
+
+  public void glUniform4i(int loc, int value0, int value1, int value2, int value3) {
+    GLES20.glUniform4i(loc, value0, value1, value2, value3);
+  }      
+    
+  
   public void glUniform1f(int loc, float value) {
     GLES20.glUniform1f(loc, value);  
   }    
