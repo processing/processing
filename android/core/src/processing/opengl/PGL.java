@@ -978,6 +978,11 @@ public class PGL {
   }
   
   
+  public void glUniform1iv(int loc, int count, int[] v, int offset) {
+    GLES20.glUniform1iv(loc, count, v, offset);
+  } 
+  
+  
   public void glUniform1fv(int loc, int count, float[] v, int offset) {
     GLES20.glUniform1fv(loc, count, v, offset);
   }    
