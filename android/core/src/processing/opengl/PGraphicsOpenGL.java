@@ -5895,7 +5895,7 @@ public class PGraphicsOpenGL extends PGraphics {
         pgCurrent.updateGLNormal();
         set3x3MatUniform(normalMatrixLoc, pgCurrent.glNormal);
 
-        setIntUniform(lightCountLoc, pgCurrent.lightCount);
+        set1IntUniform(lightCountLoc, pgCurrent.lightCount);
         set4FloatVecUniform(lightPositionLoc, pgCurrent.lightPosition);
         set3FloatVecUniform(lightNormalLoc, pgCurrent.lightNormal);
         set3FloatVecUniform(lightAmbientLoc, pgCurrent.lightAmbient);
@@ -6166,9 +6166,9 @@ public class PGraphicsOpenGL extends PGraphics {
         set4FloatUniform(viewportLoc, pgCurrent.viewport[0], pgCurrent.viewport[1], pgCurrent.viewport[2], pgCurrent.viewport[3]);
         
         if (pgCurrent.hintEnabled(ENABLE_PERSPECTIVE_CORRECTED_LINES)) {        
-          setIntUniform(perspectiveLoc, 1);  
+          set1IntUniform(perspectiveLoc, 1);  
         } else {
-          setIntUniform(perspectiveLoc, 0);
+          set1IntUniform(perspectiveLoc, 0);
         }
         
         if (pgCurrent.hintEnabled(ENABLE_ACCURATE_2D)) {
