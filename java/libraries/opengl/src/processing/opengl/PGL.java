@@ -1198,6 +1198,21 @@ public class PGL {
   }
   
   
+  public void glUniform2iv(int loc, int count, int[] v, int offset) {
+    gl2.glUniform2iv(loc, count, v, offset);
+  }
+  
+
+  public void glUniform3iv(int loc, int count, int[] v, int offset) {
+    gl2.glUniform3iv(loc, count, v, offset);
+  }
+  
+
+  public void glUniform4iv(int loc, int count, int[] v, int offset) {
+    gl2.glUniform4iv(loc, count, v, offset);
+  }  
+  
+  
   public void glUniform1fv(int loc, int count, float[] v, int offset) {
     gl2.glUniform1fv(loc, count, v, offset);
   }
