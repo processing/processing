@@ -5769,7 +5769,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
       if (pgCurrent != null) {
         pgCurrent.updateGLProjmodelview();
-        set4x4MatUniform(projmodelviewMatrixLoc, pgCurrent.glProjmodelview);
+        setMat4Uniform(projmodelviewMatrixLoc, pgCurrent.glProjmodelview);
       }
     }
 
@@ -5887,22 +5887,22 @@ public class PGraphicsOpenGL extends PGraphics {
 
       if (pgCurrent != null) {
         pgCurrent.updateGLProjmodelview();
-        set4x4MatUniform(projmodelviewMatrixLoc, pgCurrent.glProjmodelview);
+        setMat4Uniform(projmodelviewMatrixLoc, pgCurrent.glProjmodelview);
 
         pgCurrent.updateGLModelview();
-        set4x4MatUniform(modelviewMatrixLoc, pgCurrent.glModelview);
+        setMat4Uniform(modelviewMatrixLoc, pgCurrent.glModelview);
 
         pgCurrent.updateGLNormal();
-        set3x3MatUniform(normalMatrixLoc, pgCurrent.glNormal);
+        setMat3Uniform(normalMatrixLoc, pgCurrent.glNormal);
 
-        set1IntUniform(lightCountLoc, pgCurrent.lightCount);
-        set4FloatVecUniform(lightPositionLoc, pgCurrent.lightPosition);
-        set3FloatVecUniform(lightNormalLoc, pgCurrent.lightNormal);
-        set3FloatVecUniform(lightAmbientLoc, pgCurrent.lightAmbient);
-        set3FloatVecUniform(lightDiffuseLoc, pgCurrent.lightDiffuse);
-        set3FloatVecUniform(lightSpecularLoc, pgCurrent.lightSpecular);
-        set3FloatVecUniform(lightFalloffCoefficientsLoc, pgCurrent.lightFalloffCoefficients);
-        set2FloatVecUniform(lightSpotParametersLoc, pgCurrent.lightSpotParameters);
+        setIntUniform(lightCountLoc, pgCurrent.lightCount);
+        setFloatVecUniform(lightPositionLoc, pgCurrent.lightPosition, 4);
+        setFloatVecUniform(lightNormalLoc, pgCurrent.lightNormal, 3);
+        setFloatVecUniform(lightAmbientLoc, pgCurrent.lightAmbient, 3);
+        setFloatVecUniform(lightDiffuseLoc, pgCurrent.lightDiffuse, 3);
+        setFloatVecUniform(lightSpecularLoc, pgCurrent.lightSpecular, 3);
+        setFloatVecUniform(lightFalloffCoefficientsLoc, pgCurrent.lightFalloffCoefficients, 3);
+        setFloatVecUniform(lightSpotParametersLoc, pgCurrent.lightSpotParameters, 2);
       }
     }
 
@@ -5989,9 +5989,9 @@ public class PGraphicsOpenGL extends PGraphics {
       tcmat[1] = 0;      tcmat[5] = scalev; tcmat[ 9] = 0; tcmat[13] = dispv;
       tcmat[2] = 0;      tcmat[6] = 0;      tcmat[10] = 0; tcmat[14] = 0;
       tcmat[3] = 0;      tcmat[7] = 0;      tcmat[11] = 0; tcmat[15] = 0;
-      set4x4MatUniform(texcoordMatrixLoc, tcmat);
+      setMat4Uniform(texcoordMatrixLoc, tcmat);
 
-      set2FloatUniform(texcoordOffsetLoc, 1.0f / tex.width, 1.0f / tex.height);
+      setFloatUniform(texcoordOffsetLoc, 1.0f / tex.width, 1.0f / tex.height);
     }
 
     public void start() {
@@ -6074,9 +6074,9 @@ public class PGraphicsOpenGL extends PGraphics {
       tcmat[1] = 0;      tcmat[5] = scalev; tcmat[ 9] = 0; tcmat[13] = dispv;
       tcmat[2] = 0;      tcmat[6] = 0;      tcmat[10] = 0; tcmat[14] = 0;
       tcmat[3] = 0;      tcmat[7] = 0;      tcmat[11] = 0; tcmat[15] = 0;
-      set4x4MatUniform(texcoordMatrixLoc, tcmat);
+      setMat4Uniform(texcoordMatrixLoc, tcmat);
 
-      set2FloatUniform(texcoordOffsetLoc, 1.0f / tex.width, 1.0f / tex.height);
+      setFloatUniform(texcoordOffsetLoc, 1.0f / tex.width, 1.0f / tex.height);
     }
 
     public void start() {
@@ -6158,23 +6158,23 @@ public class PGraphicsOpenGL extends PGraphics {
 
       if (pgCurrent != null) {
         pgCurrent.updateGLProjection();
-        set4x4MatUniform(projectionMatrixLoc, pgCurrent.glProjection);
+        setMat4Uniform(projectionMatrixLoc, pgCurrent.glProjection);
 
         pgCurrent.updateGLModelview();
-        set4x4MatUniform(modelviewMatrixLoc, pgCurrent.glModelview);
+        setMat4Uniform(modelviewMatrixLoc, pgCurrent.glModelview);
 
-        set4FloatUniform(viewportLoc, pgCurrent.viewport[0], pgCurrent.viewport[1], pgCurrent.viewport[2], pgCurrent.viewport[3]);
+        setFloatUniform(viewportLoc, pgCurrent.viewport[0], pgCurrent.viewport[1], pgCurrent.viewport[2], pgCurrent.viewport[3]);
         
         if (pgCurrent.hintEnabled(ENABLE_PERSPECTIVE_CORRECTED_LINES)) {        
-          set1IntUniform(perspectiveLoc, 1);  
+          setIntUniform(perspectiveLoc, 1);  
         } else {
-          set1IntUniform(perspectiveLoc, 0);
+          setIntUniform(perspectiveLoc, 0);
         }
         
         if (pgCurrent.hintEnabled(ENABLE_ACCURATE_2D)) {
-          set1FloatUniform(zfactorLoc, 1);
+          setFloatUniform(zfactorLoc, 1);
         } else {
-          set1FloatUniform(zfactorLoc, 0.99f);
+          setFloatUniform(zfactorLoc, 0.99f);
         }        
       }
     }
@@ -6248,10 +6248,10 @@ public class PGraphicsOpenGL extends PGraphics {
 
       if (pgCurrent != null) {
         pgCurrent.updateGLProjection();
-        set4x4MatUniform(projectionMatrixLoc, pgCurrent.glProjection);
+        setMat4Uniform(projectionMatrixLoc, pgCurrent.glProjection);
 
         pgCurrent.updateGLModelview();
-        set4x4MatUniform(modelviewMatrixLoc, pgCurrent.glModelview);
+        setMat4Uniform(modelviewMatrixLoc, pgCurrent.glModelview);
       }
     }
 
