@@ -319,6 +319,10 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected boolean clip = false;
 
+  /** Clipping rectangle. */
+  protected int[] clipRect = {0, 0, 0, 0};
+ 
+  
   // ........................................................
 
   // Text:
@@ -391,7 +395,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   /** Viewport dimensions. */
   protected int[] viewport = {0, 0, 0, 0};
-
+  
   /** Used to register calls to glClear. */
   protected boolean clearColorBuffer;
   protected boolean clearColorBuffer0;
@@ -1596,6 +1600,14 @@ public class PGraphicsOpenGL extends PGraphics {
 
       // Just in case the texture was recreated (in a resize event for example)
       offscreenFramebuffer.setColorBuffer(texture);
+      
+      // Restoring the clipping configuration of the offscreen surface.
+      if (clip) {
+        pgl.glEnable(PGL.GL_SCISSOR_TEST);
+        pgl.glScissor(clipRect[0], clipRect[1], clipRect[2], clipRect[3]);
+      } else {
+        pgl.glDisable(PGL.GL_SCISSOR_TEST);
+      }       
     }
 
     if (restoreSurface) {
@@ -1738,7 +1750,13 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     pgl.glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
-
+    if (clip) {
+      pgl.glEnable(PGL.GL_SCISSOR_TEST);
+      pgl.glScissor(clipRect[0], clipRect[1], clipRect[2], clipRect[3]);
+    } else {
+      pgl.glDisable(PGL.GL_SCISSOR_TEST);
+    }
+        
     pgl.glFrontFace(PGL.GL_CW);
     pgl.glDisable(PGL.GL_CULL_FACE);
 
@@ -2254,7 +2272,11 @@ public class PGraphicsOpenGL extends PGraphics {
     pgl.glEnable(PGL.GL_SCISSOR_TEST);
 
     float h = y2 - y1;
-    pgl.glScissor((int)x1, (int)(height - y1 - h), (int)(x2 - x1), (int)h);
+    clipRect[0] = (int)x1;
+    clipRect[1] = (int)(height - y1 - h);
+    clipRect[2] = (int)(x2 - x1); 
+    clipRect[3] = (int)h;    
+    pgl.glScissor(clipRect[0], clipRect[1], clipRect[2], clipRect[3]);
 
     clip = true;
   }
