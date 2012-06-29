@@ -63,7 +63,7 @@ public class PGL {
   public static int AWT  = 0; // http://jogamp.org/wiki/index.php/Using_JOGL_in_AWT_SWT_and_Swing
   public static int NEWT = 1; // http://jogamp.org/jogl/doc/NEWT-Overview.html
 
-  public static int toolkit = AWT;
+  public static int toolkit = NEWT;
 
   /** Size of a short (in bytes). */
   static final int SIZEOF_SHORT = Short.SIZE / 8;
