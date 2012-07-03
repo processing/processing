@@ -5749,8 +5749,10 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected class PolyFlatShader extends PolyShader {
-    protected int projmodelviewMatrixLoc;
-
+    protected int projmodelviewMatrixLoc;    
+    protected int modelviewMatrixLoc;    
+    protected int projectionMatrixLoc;
+    
     protected int inVertexLoc;
     protected int inColorLoc;
 
@@ -5773,6 +5775,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
     public void loadUniforms() {
       projmodelviewMatrixLoc = getUniformLocation("projmodelviewMatrix");
+      modelviewMatrixLoc = getUniformLocation("modelviewMatrix");
+      projectionMatrixLoc = getUniformLocation("projectionMatrix");            
     }
 
     public void setVertexAttribute(int vboId, int size, int type, int stride, int offset) {
@@ -5790,9 +5794,21 @@ public class PGraphicsOpenGL extends PGraphics {
       if (-1 < inColorLoc)  pgl.glEnableVertexAttribArray(inColorLoc);
 
       if (pgCurrent != null) {
-        pgCurrent.updateGLProjmodelview();
-        setMat4Uniform(projmodelviewMatrixLoc, pgCurrent.glProjmodelview);
-      }
+        if (-1 < projmodelviewMatrixLoc) {
+          pgCurrent.updateGLProjmodelview();
+          setMat4Uniform(projmodelviewMatrixLoc, pgCurrent.glProjmodelview);
+        }
+
+        if (-1 < modelviewMatrixLoc) {
+          pgCurrent.updateGLModelview();
+          setMat4Uniform(modelviewMatrixLoc, pgCurrent.glModelview);
+        }        
+        
+        if (-1 < projectionMatrixLoc) {
+          pgCurrent.updateGLProjection();
+          setMat4Uniform(projectionMatrixLoc, pgCurrent.glProjection);
+        }
+      }      
     }
 
     public void stop() {
@@ -5809,6 +5825,7 @@ public class PGraphicsOpenGL extends PGraphics {
   protected class PolyLightShader extends PolyShader {
     protected int projmodelviewMatrixLoc;
     protected int modelviewMatrixLoc;
+    protected int projectionMatrixLoc;
     protected int normalMatrixLoc;
 
     protected int lightCountLoc;
@@ -5855,6 +5872,7 @@ public class PGraphicsOpenGL extends PGraphics {
     public void loadUniforms() {
       projmodelviewMatrixLoc = getUniformLocation("projmodelviewMatrix");
       modelviewMatrixLoc = getUniformLocation("modelviewMatrix");
+      projectionMatrixLoc = getUniformLocation("projectionMatrix");
       normalMatrixLoc = getUniformLocation("normalMatrix");
 
       lightCountLoc = getUniformLocation("lightCount");
@@ -5908,14 +5926,25 @@ public class PGraphicsOpenGL extends PGraphics {
       if (-1 < inShineLoc)    pgl.glEnableVertexAttribArray(inShineLoc);
 
       if (pgCurrent != null) {
-        pgCurrent.updateGLProjmodelview();
-        setMat4Uniform(projmodelviewMatrixLoc, pgCurrent.glProjmodelview);
+        if (-1 < projmodelviewMatrixLoc) {
+          pgCurrent.updateGLProjmodelview();
+          setMat4Uniform(projmodelviewMatrixLoc, pgCurrent.glProjmodelview);
+        }
 
-        pgCurrent.updateGLModelview();
-        setMat4Uniform(modelviewMatrixLoc, pgCurrent.glModelview);
+        if (-1 < modelviewMatrixLoc) {
+          pgCurrent.updateGLModelview();
+          setMat4Uniform(modelviewMatrixLoc, pgCurrent.glModelview);
+        }
 
-        pgCurrent.updateGLNormal();
-        setMat3Uniform(normalMatrixLoc, pgCurrent.glNormal);
+        if (-1 < projectionMatrixLoc) {
+          pgCurrent.updateGLProjection();
+          setMat4Uniform(projectionMatrixLoc, pgCurrent.glProjection);
+        }          
+        
+        if (-1 < normalMatrixLoc) {
+          pgCurrent.updateGLNormal();
+          setMat3Uniform(normalMatrixLoc, pgCurrent.glNormal);
+        }
 
         setIntUniform(lightCountLoc, pgCurrent.lightCount);
         setFloatVecUniform(lightPositionLoc, pgCurrent.lightPosition, 4);
@@ -6003,16 +6032,17 @@ public class PGraphicsOpenGL extends PGraphics {
       scalev *= tex.maxTexcoordV;
       dispv  *= tex.maxTexcoordV;
 
-      if (tcmat == null) {
-        tcmat = new float[16];
+      if (-1 < texcoordMatrixLoc) {
+        if (tcmat == null) {
+          tcmat = new float[16];
+        }
+        tcmat[0] = scaleu; tcmat[4] = 0;      tcmat[ 8] = 0; tcmat[12] = dispu;
+        tcmat[1] = 0;      tcmat[5] = scalev; tcmat[ 9] = 0; tcmat[13] = dispv;
+        tcmat[2] = 0;      tcmat[6] = 0;      tcmat[10] = 0; tcmat[14] = 0;
+        tcmat[3] = 0;      tcmat[7] = 0;      tcmat[11] = 0; tcmat[15] = 0;
+        setMat4Uniform(texcoordMatrixLoc, tcmat);
       }
-
-      tcmat[0] = scaleu; tcmat[4] = 0;      tcmat[ 8] = 0; tcmat[12] = dispu;
-      tcmat[1] = 0;      tcmat[5] = scalev; tcmat[ 9] = 0; tcmat[13] = dispv;
-      tcmat[2] = 0;      tcmat[6] = 0;      tcmat[10] = 0; tcmat[14] = 0;
-      tcmat[3] = 0;      tcmat[7] = 0;      tcmat[11] = 0; tcmat[15] = 0;
-      setMat4Uniform(texcoordMatrixLoc, tcmat);
-
+      
       setFloatUniform(texcoordOffsetLoc, 1.0f / tex.width, 1.0f / tex.height);
     }
 
@@ -6088,16 +6118,17 @@ public class PGraphicsOpenGL extends PGraphics {
       scalev *= tex.maxTexcoordV;
       dispv  *= tex.maxTexcoordV;
 
-      if (tcmat == null) {
-        tcmat = new float[16];
+      if (-1 < texcoordMatrixLoc) {
+        if (tcmat == null) {
+          tcmat = new float[16];
+        }
+        tcmat[0] = scaleu; tcmat[4] = 0;      tcmat[ 8] = 0; tcmat[12] = dispu;
+        tcmat[1] = 0;      tcmat[5] = scalev; tcmat[ 9] = 0; tcmat[13] = dispv;
+        tcmat[2] = 0;      tcmat[6] = 0;      tcmat[10] = 0; tcmat[14] = 0;
+        tcmat[3] = 0;      tcmat[7] = 0;      tcmat[11] = 0; tcmat[15] = 0;
+        setMat4Uniform(texcoordMatrixLoc, tcmat);
       }
-
-      tcmat[0] = scaleu; tcmat[4] = 0;      tcmat[ 8] = 0; tcmat[12] = dispu;
-      tcmat[1] = 0;      tcmat[5] = scalev; tcmat[ 9] = 0; tcmat[13] = dispv;
-      tcmat[2] = 0;      tcmat[6] = 0;      tcmat[10] = 0; tcmat[14] = 0;
-      tcmat[3] = 0;      tcmat[7] = 0;      tcmat[11] = 0; tcmat[15] = 0;
-      setMat4Uniform(texcoordMatrixLoc, tcmat);
-
+      
       setFloatUniform(texcoordOffsetLoc, 1.0f / tex.width, 1.0f / tex.height);
     }
 
@@ -6116,8 +6147,9 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected class LineShader extends PShader {
-    protected int projectionMatrixLoc;
+    protected int projmodelviewMatrixLoc;
     protected int modelviewMatrixLoc;
+    protected int projectionMatrixLoc;
 
     protected int viewportLoc;
     protected int perspectiveLoc;
@@ -6146,8 +6178,9 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     public void loadUniforms() {
-      projectionMatrixLoc = getUniformLocation("projectionMatrix");
+      projmodelviewMatrixLoc = getUniformLocation("projmodelviewMatrix");
       modelviewMatrixLoc = getUniformLocation("modelviewMatrix");
+      projectionMatrixLoc = getUniformLocation("projectionMatrix");
 
       viewportLoc = getUniformLocation("viewport");
       perspectiveLoc = getUniformLocation("perspective");
@@ -6179,11 +6212,20 @@ public class PGraphicsOpenGL extends PGraphics {
       if (-1 < inAttribLoc) pgl.glEnableVertexAttribArray(inAttribLoc);
 
       if (pgCurrent != null) {
-        pgCurrent.updateGLProjection();
-        setMat4Uniform(projectionMatrixLoc, pgCurrent.glProjection);
-
-        pgCurrent.updateGLModelview();
-        setMat4Uniform(modelviewMatrixLoc, pgCurrent.glModelview);
+        if (-1 < projmodelviewMatrixLoc) {
+          pgCurrent.updateGLProjmodelview();
+          setMat4Uniform(projmodelviewMatrixLoc, pgCurrent.glProjmodelview);
+        }
+        
+        if (-1 < modelviewMatrixLoc) {
+          pgCurrent.updateGLModelview();
+          setMat4Uniform(modelviewMatrixLoc, pgCurrent.glModelview);
+        }
+        
+        if (-1 < projectionMatrixLoc) {
+          pgCurrent.updateGLProjection();
+          setMat4Uniform(projectionMatrixLoc, pgCurrent.glProjection);
+        }
 
         setFloatUniform(viewportLoc, pgCurrent.viewport[0], pgCurrent.viewport[1], pgCurrent.viewport[2], pgCurrent.viewport[3]);
         
@@ -6214,8 +6256,9 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected class PointShader extends PShader {
-    protected int projectionMatrixLoc;
+    protected int projmodelviewMatrixLoc;
     protected int modelviewMatrixLoc;
+    protected int projectionMatrixLoc;    
 
     protected int inVertexLoc;
     protected int inColorLoc;
@@ -6240,8 +6283,9 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     public void loadUniforms() {
-      projectionMatrixLoc = getUniformLocation("projectionMatrix");
+      projmodelviewMatrixLoc = getUniformLocation("projmodelviewMatrix");
       modelviewMatrixLoc = getUniformLocation("modelviewMatrix");
+      projectionMatrixLoc = getUniformLocation("projectionMatrix");      
     }
 
     public void setAttribute(int loc, int vboId, int size, int type, boolean normalized, int stride, int offset) {
@@ -6269,11 +6313,20 @@ public class PGraphicsOpenGL extends PGraphics {
       if (-1 < inPointLoc)  pgl.glEnableVertexAttribArray(inPointLoc);
 
       if (pgCurrent != null) {
-        pgCurrent.updateGLProjection();
-        setMat4Uniform(projectionMatrixLoc, pgCurrent.glProjection);
-
-        pgCurrent.updateGLModelview();
-        setMat4Uniform(modelviewMatrixLoc, pgCurrent.glModelview);
+        if (-1 < projmodelviewMatrixLoc) {
+          pgCurrent.updateGLProjmodelview();
+          setMat4Uniform(projmodelviewMatrixLoc, pgCurrent.glProjmodelview);
+        }
+        
+        if (-1 < modelviewMatrixLoc) {
+          pgCurrent.updateGLModelview();
+          setMat4Uniform(modelviewMatrixLoc, pgCurrent.glModelview);
+        }
+        
+        if (-1 < projectionMatrixLoc) {
+          pgCurrent.updateGLProjection();
+          setMat4Uniform(projectionMatrixLoc, pgCurrent.glProjection);
+        }
       }
     }
 
