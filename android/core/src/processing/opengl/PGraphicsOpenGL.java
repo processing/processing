@@ -10270,9 +10270,9 @@ public class PGraphicsOpenGL extends PGraphics {
             ArrayList<Integer> inDupList = new ArrayList<Integer>(inDupSet);            
             Collections.sort(inDupList);
             for (int i = inInd0; i <= inInd1; i++) {
-              int ri = tess.polyIndices[i];
+              int ri = tess.polyIndices[offset + i];
               if (ri < 0) {
-                tess.polyIndices[i] = (short) (inMaxRel + 1 + inDupList.indexOf(ri));
+                tess.polyIndices[offset + i] = (short) (inMaxRel + 1 + inDupList.indexOf(ri));
               }
             }
             
