@@ -110,7 +110,7 @@ public class PGraphics2D extends PGraphicsOpenGL {
   
   
   protected void defaultPerspective() {    
-    super.ortho(-width/2, +width/2, -height/2, +height/2, cameraNear, cameraFar);
+    super.ortho(-width/2, +width/2, -height/2, +height/2, -1, +1);
   }
   
   
@@ -141,8 +141,8 @@ public class PGraphics2D extends PGraphicsOpenGL {
   }
   
 
-  protected void defaultCamera() {    
-    super.camera(cameraX, cameraY, cameraZ, cameraX, cameraY, 0, 0, 1, 0);
+  protected void defaultCamera() {  
+    super.camera(width/2, height/2);
   }
   
   

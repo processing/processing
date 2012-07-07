@@ -3605,6 +3605,10 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   public void resetMatrix() {
+    if (hints[DISABLE_TRANSFORM_CACHE]) {
+      flush();
+    }
+    
     modelview.reset();
     modelviewInv.reset();
     projmodelview.set(projection);
@@ -3988,14 +3992,14 @@ public class PGraphicsOpenGL extends PGraphics {
     float y2 = upZ;
 
     // Computing X vector as Y cross Z
-    float x0 = y1 * z2 - y2 * z1;
+    float x0 =  y1 * z2 - y2 * z1;
     float x1 = -y0 * z2 + y2 * z0;
-    float x2 = y0 * z1 - y1 * z0;
+    float x2 =  y0 * z1 - y1 * z0;
 
     // Recompute Y = Z cross X
-    y0 = z1 * x2 - z2 * x1;
+    y0 =  z1 * x2 - z2 * x1;
     y1 = -z0 * x2 + z2 * x0;
-    y2 = z0 * x1 - z1 * x0;
+    y2 =  z0 * x1 - z1 * x0;
 
     // Cross product gives area of parallelogram, which is < 1.0 for
     // non-perpendicular unit-length vectors; so normalize x, y here:
@@ -4032,6 +4036,21 @@ public class PGraphicsOpenGL extends PGraphics {
     calcProjmodelview();
   }
 
+
+  // Sets a camera for 2D rendering, which only involves centering
+  public void camera(float centerX, float centerY) {
+    modelview.reset();
+    modelview.translate(-centerX, -centerY);
+
+    modelviewInv.set(modelview);
+    modelviewInv.invert();
+
+    camera.set(modelview);
+    cameraInv.set(modelviewInv);
+
+    calcProjmodelview();    
+  }
+  
 
   /**
    * Print the current camera matrix.
@@ -8999,7 +9018,7 @@ public class PGraphicsOpenGL extends PGraphics {
           polyVertices[index++] = x * mm.m10 + y * mm.m11 + z * mm.m12 + mm.m13;
           polyVertices[index++] = x * mm.m20 + y * mm.m21 + z * mm.m22 + mm.m23;
           polyVertices[index  ] = x * mm.m30 + y * mm.m31 + z * mm.m32 + mm.m33;
-
+          
           index = 3 * tessIdx;
           polyNormals[index++] = nx * nm.m00 + ny * nm.m10 + nz * nm.m20;
           polyNormals[index++] = nx * nm.m01 + ny * nm.m11 + nz * nm.m21;
