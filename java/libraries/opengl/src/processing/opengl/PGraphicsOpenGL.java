@@ -7405,48 +7405,43 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     void addPolygonEdges(boolean closed) {
-      // Count number of edge segments in the perimeter.
-      int edgeCount = 0;
-      int lnMax = lastVertex - firstVertex + 1;
-      int first = firstVertex;
-      int contour0 = first;
-      if (!closed) lnMax--;
-      for (int ln = 0; ln < lnMax; ln++) {
-        int i = first + ln + 1;
-        if ((i == lnMax || breaks[i]) && closed) {
-          i = first + ln;
-        }
-        if (!breaks[i]) {
-          edgeCount++;
-        }
-      }
-
-      if (0 < edgeCount) {
-        boolean begin = true;
-        contour0 = first;
-        for (int ln = 0; ln < lnMax; ln++) {
-          int i0 = first + ln;
-          int i1 = first + ln + 1;
-          if (breaks[i0]) contour0 = i0;
-          if (i1 == lnMax || breaks[i1]) {
-            // We are either at the end of a contour or at the end of the
-            // edge path.
-            if (closed) {
-              // Draw line to the first vertex of the current contour,
-              // if the polygon is closed.
-              i0 = first + ln;
-              i1 = contour0;
-              addEdge(i0, i1, begin, true);
-            } else if (!breaks[i1]) {
-              addEdge(i0, i1, begin, false);
-            }
-            // We might start a new contour in the next iteration.
-            begin = true;
-          } else if (!breaks[i1]) {
-            boolean end = i1 + 1 < lnMax && breaks[i1 + 1];
-            addEdge(i0, i1, begin, end);
-            begin = false;
+      int start = firstVertex;
+      boolean begin = true;
+      for (int i = firstVertex + 1; i <= lastVertex; i++) {
+        if (breaks[i]) {          
+          if (closed) {
+            // Closing previous contour.
+            addEdge(i - 1, start, begin, true);
           }
+          
+          // Starting new contour.
+          start = i;
+          begin = true;
+        } else {
+          if (i == lastVertex) {
+            if (closed && start + 1 < i) {
+              // Closing the end of the last contour, if it
+              // has more than 1 segment.
+              addEdge(i - 1, i, begin, false);
+              addEdge(i, start, false, true);
+            } else {
+              // Leaving the last contour open.
+              addEdge(i - 1, i, begin, true);
+            }
+          } else {
+          
+            if (i < lastVertex && breaks[i + 1] && !closed) {
+              // A new contour starts at the next vertex and 
+              // the polygon is not closed, so this is the last
+              // segment of the current contour.
+              addEdge(i - 1, i, begin, true);
+            } else {
+              // The current contour does not end at vertex i.
+              addEdge(i - 1, i, begin, false);  
+            }
+          }
+          
+          begin = false;
         }
       }
     }        
