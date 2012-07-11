@@ -758,13 +758,15 @@ public class PGL {
 
   public void endOnscreenDraw(boolean clear0) {
     if (colorFBO[0] != 0) {
+      gl.glDisable(GL.GL_BLEND);
+      
       // Blit the contents of the multisampled FBO into the color FBO:
       gl.glBindFramebuffer(GL2.GL_READ_FRAMEBUFFER, multiFBO[0]);
       gl.glBindFramebuffer(GL2.GL_DRAW_FRAMEBUFFER, colorFBO[0]);
       gl2x.glBlitFramebuffer(0, 0, fboWidth, fboHeight,
                              0, 0, fboWidth, fboHeight, 
                              GL.GL_COLOR_BUFFER_BIT, GL.GL_NEAREST);
-
+      
       // And finally write the color texture to the screen.
       gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, 0);      
       gl.glClearDepth(1);
