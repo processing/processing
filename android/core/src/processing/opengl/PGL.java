@@ -557,8 +557,6 @@ public class PGL {
   
   public void endOnscreenDraw(boolean clear0) {
     if (!clear0) {
-      GLES20.glDisable(GLES20.GL_BLEND);
-      
       // We are in the primary surface, and no clear mode, this means that the current
       // contents of the front buffer needs to be used in the next frame as the background.
       GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0); 
@@ -567,7 +565,8 @@ public class PGL {
       GLES20.glClearColor(0, 0, 0, 0);
       GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);      
       
-      // Render current front texture to screen.
+      // Render current front texture to screen, without blending.
+      GLES20.glDisable(GLES20.GL_BLEND);
       drawTexture(GLES20.GL_TEXTURE_2D, colorTex[frontTex], texWidth, texHeight, 0, 0, pg.width, pg.height, 0, 0, pg.width, pg.height);
       
       // Swapping front and back textures.
