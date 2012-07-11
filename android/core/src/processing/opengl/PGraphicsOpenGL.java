@@ -9778,7 +9778,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }    
     
     void tessellateLineLoop3D(int lineCount) {
-      // This calculation doesn't add the bevel join between
+      // TODO: This calculation doesn't add the bevel join between
       // the first and last vertex, need to fix.
       int nvert = lineCount * 4 + (lineCount - 1);
       int nind = lineCount * 2 * 3 + (lineCount - 1) * 2 * 3;
@@ -9916,11 +9916,13 @@ public class PGraphicsOpenGL extends PGraphics {
     int addLine3D(int i0, int i1, int index, short[] lastInd, boolean constStroke) {
       IndexCache cache = tess.lineIndexCache;
       int count = cache.vertexCount[index];
-      boolean addBevel = lastInd != null && -1 < lastInd[0] && -1 < lastInd[1];      
+      boolean addBevel = lastInd != null && -1 < lastInd[0] && -1 < lastInd[1]; 
+      boolean newCache = false;
       if (PGL.MAX_VERTEX_INDEX1 <= count + 4 + (addBevel ? 1 : 0)) {
         // We need to start a new index block for this line.
         index = cache.addNew();
         count = 0;
+        newCache = true;
       }
       int iidx = cache.indexOffset[index] + cache.indexCount[index];
       int vidx = cache.vertexOffset[index] + cache.vertexCount[index];
@@ -9956,13 +9958,27 @@ public class PGraphicsOpenGL extends PGraphics {
           // Adding bevel triangles
           tess.setLineVertex(vidx, in, i0, color0);
           
-          tess.lineIndices[iidx++] = (short) (count + 4);
-          tess.lineIndices[iidx++] = lastInd[0];
-          tess.lineIndices[iidx++] = (short) (count + 0);          
-          
-          tess.lineIndices[iidx++] = (short) (count + 4);
-          tess.lineIndices[iidx++] = lastInd[1];
-          tess.lineIndices[iidx  ] = (short) (count + 1);           
+          if (newCache) {
+            PGraphics.showWarning("Stroke path is too long, some bevel triangles won't be added.");
+            
+            // TODO: Fix this situation, the vertices from the previous cache block
+            // should be copied in the newly created one.
+            tess.lineIndices[iidx++] = (short) (count + 4);
+            tess.lineIndices[iidx++] = (short) (count + 0);
+            tess.lineIndices[iidx++] = (short) (count + 0);          
+            
+            tess.lineIndices[iidx++] = (short) (count + 4);
+            tess.lineIndices[iidx++] = (short) (count + 1);
+            tess.lineIndices[iidx  ] = (short) (count + 1);            
+          } else {
+            tess.lineIndices[iidx++] = (short) (count + 4);
+            tess.lineIndices[iidx++] = lastInd[0];
+            tess.lineIndices[iidx++] = (short) (count + 0);          
+            
+            tess.lineIndices[iidx++] = (short) (count + 4);
+            tess.lineIndices[iidx++] = lastInd[1];
+            tess.lineIndices[iidx  ] = (short) (count + 1);
+          }
           
           cache.incCounts(index, 6, 1);
         }
@@ -10566,7 +10582,7 @@ public class PGraphicsOpenGL extends PGraphics {
       public void end() {
         if (PGL.MAX_VERTEX_INDEX1 <= vertFirst + vertCount) {
           // We need a new index block for the new batch of
-          // vertices resulting from this primitive. tessCount can
+          // vertices resulting from this primitive. tessVert can
           // be safely assumed here to be less or equal than
           // MAX_VERTEX_INDEX1 because the condition was checked
           // every time a new vertex was emitted (see vertex() below).
