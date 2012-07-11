@@ -557,6 +557,8 @@ public class PGL {
   
   public void endOnscreenDraw(boolean clear0) {
     if (!clear0) {
+      GLES20.glDisable(GLES20.GL_BLEND);
+      
       // We are in the primary surface, and no clear mode, this means that the current
       // contents of the front buffer needs to be used in the next frame as the background.
       GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0); 
