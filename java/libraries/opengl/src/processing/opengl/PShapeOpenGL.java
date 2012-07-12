@@ -3921,7 +3921,7 @@ public class PShapeOpenGL extends PShape {
         // Rendering fill triangles, which can be lit and textured.
         if (!renderingFill) {
           shader = g.getPolyShader(g.lights, tex != null);
-          shader.start();
+          shader.bind();
           renderingFill = true;
         }
       } else {
@@ -3933,14 +3933,14 @@ public class PShapeOpenGL extends PShape {
             tex = null;
           }
           
-          if (shader != null && shader.active()) {
-            shader.stop();  
+          if (shader != null && shader.bound()) {
+            shader.unbind();  
           }
           
           // If the renderer is 2D, then g.lights should always be false,
           // so no need to worry about that.          
           shader = g.getPolyShader(g.lights, false);
-          shader.start();
+          shader.bind();
           
           renderingFill = false;
           renderingStroke = true;
@@ -3972,8 +3972,8 @@ public class PShapeOpenGL extends PShape {
       pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
     } 
     
-    if (shader != null && shader.active()) {
-      shader.stop();  
+    if (shader != null && shader.bound()) {
+      shader.unbind();  
     }
     
     if (tex != null) {
@@ -4074,7 +4074,7 @@ public class PShapeOpenGL extends PShape {
   
   protected void renderLines(PGraphicsOpenGL g) {
     LineShader shader = g.getLineShader();
-    shader.start(); 
+    shader.bind(); 
     
     IndexCache cache = tessGeo.lineIndexCache;
     for (int n = firstLineIndexCache; n <= lastLineIndexCache; n++) {     
@@ -4091,7 +4091,7 @@ public class PShapeOpenGL extends PShape {
       pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);      
     }
     
-    shader.stop();
+    shader.unbind();
   }  
 
   
@@ -4168,7 +4168,7 @@ public class PShapeOpenGL extends PShape {
   
   protected void renderPoints(PGraphicsOpenGL g) {
     PointShader shader = g.getPointShader();
-    shader.start(); 
+    shader.bind(); 
     
     IndexCache cache = tessGeo.pointIndexCache;    
     for (int n = firstPointIndexCache; n <= lastPointIndexCache; n++) {     
@@ -4185,7 +4185,7 @@ public class PShapeOpenGL extends PShape {
       pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);      
     }
     
-    shader.stop();
+    shader.unbind();
   }  
 
 
