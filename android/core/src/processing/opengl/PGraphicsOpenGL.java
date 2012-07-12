@@ -2456,7 +2456,7 @@ public class PGraphicsOpenGL extends PGraphics {
       // If the renderer is 2D, then lights should always be false,
       // so no need to worry about that.
       PolyShader shader = getPolyShader(lights, tex != null);
-      shader.start();
+      shader.bind();
        
       int first = texCache.firstCache[i];
       int last = texCache.lastCache[i];
@@ -2489,7 +2489,7 @@ public class PGraphicsOpenGL extends PGraphics {
         pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
       }
 
-      shader.stop();
+      shader.unbind();
     }
     texCache.endRender();
     unbindPolyBuffers();
@@ -2598,7 +2598,7 @@ public class PGraphicsOpenGL extends PGraphics {
     updateLineBuffers();
 
     LineShader shader = getLineShader();
-    shader.start();
+    shader.bind();
 
     IndexCache cache = tessGeo.lineIndexCache;
     for (int n = 0; n < cache.size; n++) {     
@@ -2615,7 +2615,7 @@ public class PGraphicsOpenGL extends PGraphics {
       pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
     }
     
-    shader.stop();
+    shader.unbind();
     unbindLineBuffers();
   }
 
@@ -2696,7 +2696,7 @@ public class PGraphicsOpenGL extends PGraphics {
     updatePointBuffers();
 
     PointShader shader = getPointShader();
-    shader.start();
+    shader.bind();
 
     IndexCache cache = tessGeo.pointIndexCache;
     for (int n = 0; n < cache.size; n++) {     
@@ -2713,7 +2713,7 @@ public class PGraphicsOpenGL extends PGraphics {
       pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 
-    shader.stop();
+    shader.unbind();
     unbindPointBuffers();
   }
 
@@ -5629,7 +5629,68 @@ public class PGraphicsOpenGL extends PGraphics {
     }
   }
 
+  
+  public PShader getShader(int kind) {
+    PShader shader;
+    if (kind == PShader.FLAT) {
+      if (polyFlatShader == null) {
+        if (defPolyFlatShader == null) {
+          defPolyFlatShader = new PolyFlatShader(parent, defPolyFlatShaderVertURL, defPolyNoTexShaderFragURL);
+        }          
+        polyFlatShader = defPolyFlatShader;          
+      }      
+      shader = polyFlatShader;
+    } else if (kind == PShader.LIT) {
+      if (polyLightShader == null) {
+        if (defPolyLightShader == null) {
+          defPolyLightShader = new PolyLightShader(parent, defPolyLightShaderVertURL, defPolyNoTexShaderFragURL);
+        }          
+        polyLightShader = defPolyLightShader;
+      }      
+      shader = polyLightShader;
+    } else if (kind == PShader.TEXTURED) {
+      if (polyTexShader == null) {
+        if (defPolyTexShader == null) {
+          defPolyTexShader = new PolyTexShader(parent, defPolyTexShaderVertURL, defPolyTexShaderFragURL);
+        }          
+        polyTexShader = defPolyTexShader;
+      }      
+      shader = polyTexShader;
+    } else if (kind == PShader.FULL) {
+      if (polyFullShader == null) {
+        if (defPolyFullShader == null) {
+          defPolyFullShader = new PolyFullShader(parent, defPolyFullShaderVertURL, defPolyTexShaderFragURL);
+        }          
+        polyFullShader = defPolyFullShader;
+      }      
+      shader = polyFullShader;
+    } else if (kind == PShader.LINE) {
+      if (lineShader == null) {
+        if (defLineShader == null) {
+          defLineShader = new LineShader(parent, defLineShaderVertURL, defLineShaderFragURL);
+        }      
+        lineShader = defLineShader;
+      }      
+      shader = lineShader;
+    } else if (kind == PShader.POINT) {
+      if (pointShader == null) {
+        if (defPointShader == null) {
+          defPointShader = new PointShader(parent, defPointShaderVertURL, defPointShaderFragURL);
+        }      
+        pointShader = defPointShader;
+      }      
+      shader = pointShader;
+    } else {
+      PGraphics.showWarning("Wrong shader type");
+      return null;
+    }
+    shader.setRenderer(this);
+    shader.loadAttributes();
+    shader.loadUniforms();
+    return shader;
+  }
 
+  
   public void defaultShader(int kind) {
     flush(); // Flushing geometry with a different shader.
     if (kind == PShader.FLAT) {
@@ -5806,8 +5867,8 @@ public class PGraphicsOpenGL extends PGraphics {
       setAttribute(inColorLoc, vboId, size, type, true, stride, offset);
     }
 
-    public void start() {
-      super.start();
+    public void bind() {
+      super.bind();
 
       if (-1 < inVertexLoc) pgl.glEnableVertexAttribArray(inVertexLoc);
       if (-1 < inColorLoc)  pgl.glEnableVertexAttribArray(inColorLoc);
@@ -5830,13 +5891,13 @@ public class PGraphicsOpenGL extends PGraphics {
       }      
     }
 
-    public void stop() {
+    public void unbind() {
       if (-1 < inVertexLoc) pgl.glDisableVertexAttribArray(inVertexLoc);
       if (-1 < inColorLoc)  pgl.glDisableVertexAttribArray(inColorLoc);
 
       pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
 
-      super.stop();
+      super.unbind();
     }
   }
 
@@ -5932,8 +5993,8 @@ public class PGraphicsOpenGL extends PGraphics {
       setAttribute(inShineLoc, vboId, size, type, false, stride, offset);
     }
 
-    public void start() {
-      super.start();
+    public void bind() {
+      super.bind();
 
       if (-1 < inVertexLoc) pgl.glEnableVertexAttribArray(inVertexLoc);
       if (-1 < inColorLoc)  pgl.glEnableVertexAttribArray(inColorLoc);
@@ -5976,7 +6037,7 @@ public class PGraphicsOpenGL extends PGraphics {
       }
     }
 
-    public void stop() {
+    public void unbind() {
       if (-1 < inVertexLoc) pgl.glDisableVertexAttribArray(inVertexLoc);
       if (-1 < inColorLoc)  pgl.glDisableVertexAttribArray(inColorLoc);
       if (-1 < inNormalLoc) pgl.glDisableVertexAttribArray(inNormalLoc);
@@ -5988,7 +6049,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
       pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
 
-      super.stop();
+      super.unbind();
     }
   }
 
@@ -6065,16 +6126,16 @@ public class PGraphicsOpenGL extends PGraphics {
       setFloatUniform(texcoordOffsetLoc, 1.0f / tex.width, 1.0f / tex.height);
     }
 
-    public void start() {
-      super.start();
+    public void bind() {
+      super.bind();
 
       if (-1 < inTexcoordLoc) pgl.glEnableVertexAttribArray(inTexcoordLoc);
     }
 
-    public void stop() {
+    public void unbind() {
       if (-1 < inTexcoordLoc) pgl.glDisableVertexAttribArray(inTexcoordLoc);
 
-      super.stop();
+      super.unbind();
     }
   }
 
@@ -6151,16 +6212,16 @@ public class PGraphicsOpenGL extends PGraphics {
       setFloatUniform(texcoordOffsetLoc, 1.0f / tex.width, 1.0f / tex.height);
     }
 
-    public void start() {
-      super.start();
+    public void bind() {
+      super.bind();
 
       if (-1 < inTexcoordLoc) pgl.glEnableVertexAttribArray(inTexcoordLoc);
     }
 
-    public void stop() {
+    public void unbind() {
       if (-1 < inTexcoordLoc) pgl.glDisableVertexAttribArray(inTexcoordLoc);
 
-      super.stop();
+      super.unbind();
     }
   }
 
@@ -6223,8 +6284,8 @@ public class PGraphicsOpenGL extends PGraphics {
       setAttribute(inAttribLoc, vboId, size, type, false, stride, offset);
     }
 
-    public void start() {
-      super.start();
+    public void bind() {
+      super.bind();
 
       if (-1 < inVertexLoc) pgl.glEnableVertexAttribArray(inVertexLoc);
       if (-1 < inColorLoc)  pgl.glEnableVertexAttribArray(inColorLoc);
@@ -6262,14 +6323,14 @@ public class PGraphicsOpenGL extends PGraphics {
       }
     }
 
-    public void stop() {
+    public void unbind() {
       if (-1 < inVertexLoc) pgl.glDisableVertexAttribArray(inVertexLoc);
       if (-1 < inColorLoc)  pgl.glDisableVertexAttribArray(inColorLoc);
       if (-1 < inAttribLoc) pgl.glDisableVertexAttribArray(inAttribLoc);
 
       pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
 
-      super.stop();
+      super.unbind();
     }
   }
 
@@ -6324,8 +6385,8 @@ public class PGraphicsOpenGL extends PGraphics {
       setAttribute(inPointLoc, vboId, size, type, false, stride, offset);
     }
 
-    public void start() {
-      super.start();
+    public void bind() {
+      super.bind();
 
       if (-1 < inVertexLoc) pgl.glEnableVertexAttribArray(inVertexLoc);
       if (-1 < inColorLoc)  pgl.glEnableVertexAttribArray(inColorLoc);
@@ -6349,14 +6410,14 @@ public class PGraphicsOpenGL extends PGraphics {
       }
     }
 
-    public void stop() {
+    public void unbind() {
       if (-1 < inVertexLoc) pgl.glDisableVertexAttribArray(inVertexLoc);
       if (-1 < inColorLoc)  pgl.glDisableVertexAttribArray(inColorLoc);
       if (-1 < inPointLoc)  pgl.glDisableVertexAttribArray(inPointLoc);
 
       pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
 
-      super.stop();
+      super.unbind();
     }
   }
 
