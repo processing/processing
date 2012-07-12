@@ -60,28 +60,28 @@ import com.jogamp.opengl.util.AnimatorBase;
  */
 public class PGL {
   // The two windowing toolkits available to use in JOGL:
-  public static int AWT  = 0; // http://jogamp.org/wiki/index.php/Using_JOGL_in_AWT_SWT_and_Swing
-  public static int NEWT = 1; // http://jogamp.org/jogl/doc/NEWT-Overview.html
+  public static final int AWT  = 0; // http://jogamp.org/wiki/index.php/Using_JOGL_in_AWT_SWT_and_Swing
+  public static final int NEWT = 1; // http://jogamp.org/jogl/doc/NEWT-Overview.html
 
   public static int toolkit = AWT;
 
   /** Size of a short (in bytes). */
-  static final int SIZEOF_SHORT = Short.SIZE / 8;
+  public static final int SIZEOF_SHORT = Short.SIZE / 8;
 
   /** Size of an int (in bytes). */
-  static final int SIZEOF_INT = Integer.SIZE / 8;
+  public static final int SIZEOF_INT = Integer.SIZE / 8;
 
   /** Size of a float (in bytes). */
-  static final int SIZEOF_FLOAT = Float.SIZE / 8;
+  public static final int SIZEOF_FLOAT = Float.SIZE / 8;
 
   /** Size of a byte (in bytes). */
-  static final int SIZEOF_BYTE = Byte.SIZE / 8;
+  public static final int SIZEOF_BYTE = Byte.SIZE / 8;
   
   /** Size of a vertex index. */
-  static final int SIZEOF_INDEX = SIZEOF_SHORT;
+  public static final int SIZEOF_INDEX = SIZEOF_SHORT;
 
   /** Type of a vertex index. */
-  static final int INDEX_TYPE = GL.GL_UNSIGNED_SHORT;
+  public static final int INDEX_TYPE = GL.GL_UNSIGNED_SHORT;
 
   /** Initial sizes for arrays of input and tessellated data. */
   public static final int DEFAULT_IN_VERTICES   = 64;
@@ -122,13 +122,13 @@ public class PGL {
   public static final int MAX_CAPS_JOINS_LENGTH = 5000;
   
   /** Minimum array size to use arrayCopy method(). **/
-  static protected final int MIN_ARRAYCOPY_SIZE = 2;
+  protected static final int MIN_ARRAYCOPY_SIZE = 2;
 
   /** Enables/disables mipmap use. **/
-  static protected final boolean MIPMAPS_ENABLED = true;  
+  protected static final boolean MIPMAPS_ENABLED = true;  
   
   /** Machine Epsilon for float precision. **/
-  static public float FLOAT_EPS = Float.MIN_VALUE;
+  public static float FLOAT_EPS = Float.MIN_VALUE;
   // Calculation of the Machine Epsilon for float precision. From:
   // http://en.wikipedia.org/wiki/Machine_epsilon#Approximation_using_Java
   static {
@@ -145,7 +145,7 @@ public class PGL {
    * Set to true if the host system is big endian (PowerPC, MIPS, SPARC), false
    * if little endian (x86 Intel for Mac or PC).
    */
-  static public boolean BIG_ENDIAN = ByteOrder.nativeOrder() == ByteOrder.BIG_ENDIAN;
+  public static boolean BIG_ENDIAN = ByteOrder.nativeOrder() == ByteOrder.BIG_ENDIAN;
 
   protected static final String SHADER_PREPROCESSOR_DIRECTIVE = "#ifdef GL_ES\n" +
                                                                 "precision mediump float;\n" +
@@ -1642,7 +1642,7 @@ public class PGL {
     }
     
     if (texData == null) {
-      texData = ByteBuffer.allocateDirect(texCoords.length * SIZEOF_FLOAT).order(ByteOrder.nativeOrder()).asFloatBuffer();
+      texData = allocateDirectFloatBuffer(texCoords.length);
     }
     
     if (0 < tex2DShaderProgram) {
@@ -1739,7 +1739,7 @@ public class PGL {
     }
     
     if (texData == null) {
-      texData = ByteBuffer.allocateDirect(texCoords.length * SIZEOF_FLOAT).order(ByteOrder.nativeOrder()).asFloatBuffer();
+      texData = allocateDirectFloatBuffer(texCoords.length);
     }
     
     if (0 < texRectShaderProgram) {
@@ -1830,7 +1830,7 @@ public class PGL {
         rectVertLoc = glGetAttribLocation(rectShaderProgram, "inVertex");
         rectColorLoc = glGetUniformLocation(rectShaderProgram, "rectColor");
       }
-      rectData = ByteBuffer.allocateDirect(rectCoords.length * SIZEOF_FLOAT).order(ByteOrder.nativeOrder()).asFloatBuffer();
+      rectData = allocateDirectFloatBuffer(rectCoords.length);
       loadedRectShader = true;
       rectShaderContext = context;
     }
@@ -1927,7 +1927,7 @@ public class PGL {
 
 
   // bit shifting this might be more efficient
-  static public int nextPowerOfTwo(int val) {
+  public static int nextPowerOfTwo(int val) {
     int ret = 1;
     while (ret < val) {
       ret <<= 1;
@@ -1940,7 +1940,7 @@ public class PGL {
    * Converts input native OpenGL value (RGBA on big endian, ABGR on little 
    * endian) to Java ARGB.
    */  
-  static public int nativeToJavaARGB(int color) {
+  public static int nativeToJavaARGB(int color) {
     if (BIG_ENDIAN) { // RGBA to ARGB
       return (color & 0xff000000) |
              ((color >> 8) & 0x00ffffff);
@@ -1959,7 +1959,7 @@ public class PGL {
    * It also rearranges the elements in the array so that the image is flipped 
    * vertically.
    */ 
-  static public void nativeToJavaARGB(int[] pixels, int width, int height) {
+  public static void nativeToJavaARGB(int[] pixels, int width, int height) {
     int index = 0;
     int yindex = (height - 1) * width;
     for (int y = 0; y < height / 2; y++) {
@@ -2018,7 +2018,7 @@ public class PGL {
    * endian) to Java RGB, so that the alpha component of the result is set
    * to opaque (255).
    */   
-  static public int nativeToJavaRGB(int color) {
+  public static int nativeToJavaRGB(int color) {
     if (BIG_ENDIAN) { // RGBA to ARGB
       return ((color << 8) & 0xffffff00) | 0xff;
     } else { // ABGR to ARGB
@@ -2035,7 +2035,7 @@ public class PGL {
    * so that the alpha component of all pixels is set to opaque (255). It also 
    * rearranges the elements in the array so that the image is flipped vertically.
    */   
-  static public void nativeToJavaRGB(int[] pixels, int width, int height) {
+  public static void nativeToJavaRGB(int[] pixels, int width, int height) {
     int index = 0;
     int yindex = (height - 1) * width;
     for (int y = 0; y < height / 2; y++) {
@@ -2087,7 +2087,7 @@ public class PGL {
    * Converts input Java ARGB value to native OpenGL format (RGBA on big endian,
    * BGRA on little endian).
    */
-  static public int javaToNativeARGB(int color) {
+  public static int javaToNativeARGB(int color) {
     if (BIG_ENDIAN) { // ARGB to RGBA
       return ((color >> 24) & 0xff) | 
              ((color << 8) & 0xffffff00);
@@ -2106,7 +2106,7 @@ public class PGL {
    * It also rearranges the elements in the array so that the image is flipped 
    * vertically.
    */  
-  static public void javaToNativeARGB(int[] pixels, int width, int height) {
+  public static void javaToNativeARGB(int[] pixels, int width, int height) {
     int index = 0;
     int yindex = (height - 1) * width;
     for (int y = 0; y < height / 2; y++) {
@@ -2165,7 +2165,7 @@ public class PGL {
    * Converts input Java ARGB value to native OpenGL format (RGBA on big endian,
    * BGRA on little endian), setting alpha component to opaque (255).
    */  
-  static public int javaToNativeRGB(int color) {
+  public static int javaToNativeRGB(int color) {
     if (BIG_ENDIAN) { // ARGB to RGBA
         return ((color << 8) & 0xffffff00) | 0xff;
     } else { // ARGB to ABGR
@@ -2182,7 +2182,7 @@ public class PGL {
    * while setting alpha component of all pixels to opaque (255). It also rearranges 
    * the elements in the array so that the image is flipped vertically.
    */ 
-  static public void javaToNativeRGB(int[] pixels, int width, int height) {
+  public static void javaToNativeRGB(int[] pixels, int width, int height) {
     int index = 0;
     int yindex = (height - 1) * width;
     for (int y = 0; y < height / 2; y++) {
@@ -2288,6 +2288,21 @@ public class PGL {
   }
 
 
+  public static ByteBuffer allocateDirectByteBuffer(int size) {
+    return ByteBuffer.allocateDirect(size * SIZEOF_BYTE).order(ByteOrder.nativeOrder());
+  }  
+  
+  
+  public static IntBuffer allocateDirectIntBuffer(int size) {
+    return ByteBuffer.allocateDirect(size * SIZEOF_INT).order(ByteOrder.nativeOrder()).asIntBuffer();
+  }  
+  
+  
+  public static FloatBuffer allocateDirectFloatBuffer(int size) {
+    return ByteBuffer.allocateDirect(size * SIZEOF_FLOAT).order(ByteOrder.nativeOrder()).asFloatBuffer();
+  }
+  
+  
   ///////////////////////////////////////////////////////////////////////////////////
 
   // Java specific stuff

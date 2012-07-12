@@ -55,6 +55,10 @@ public class PShader {
   protected PGL pgl;
   protected PGL.Context context;      // The context that created this shader.
 
+  public int glProgramObjectID;
+  public int glVertexShaderID;
+  public int glFragmentShaderID;  
+   
   protected URL vertexURL;
   protected URL fragmentURL;
   
@@ -64,11 +68,7 @@ public class PShader {
   protected String vertexShaderSource;
   protected String fragmentShaderSource;
   
-  protected int programObject;
-  protected int vertexShader;
-  protected int fragmentShader;  
-
-  protected boolean active;
+  protected boolean bound;
   
   protected HashMap<Integer, UniformValue> uniformValues = null;
   
@@ -83,11 +83,11 @@ public class PShader {
     this.vertexFilename = null;
     this.fragmentFilename = null;    
     
-    programObject = 0;
-    vertexShader = 0;
-    fragmentShader = 0;
+    glProgramObjectID = 0;
+    glVertexShaderID = 0;
+    glFragmentShaderID = 0;
     
-    active = false;
+    bound = false;
   }
     
   
@@ -118,9 +118,9 @@ public class PShader {
     this.vertexFilename = vertFilename;
     this.fragmentFilename = fragFilename;    
     
-    programObject = 0;
-    vertexShader = 0;
-    fragmentShader = 0;      
+    glProgramObjectID = 0;
+    glVertexShaderID = 0;
+    glFragmentShaderID = 0;      
   }
   
   
@@ -134,22 +134,22 @@ public class PShader {
     this.vertexFilename = null;
     this.fragmentFilename = null;
     
-    programObject = 0;
-    vertexShader = 0;
-    fragmentShader = 0;      
+    glProgramObjectID = 0;
+    glVertexShaderID = 0;
+    glFragmentShaderID = 0;      
   }  
   
   
   protected void finalize() throws Throwable {
     try {
-      if (vertexShader != 0) {
-        pgMain.finalizeGLSLVertShaderObject(vertexShader, context.code());
+      if (glVertexShaderID != 0) {
+        pgMain.finalizeGLSLVertShaderObject(glVertexShaderID, context.code());
       }
-      if (fragmentShader != 0) {
-        pgMain.finalizeGLSLFragShaderObject(fragmentShader, context.code());
+      if (glFragmentShaderID != 0) {
+        pgMain.finalizeGLSLFragShaderObject(glFragmentShaderID, context.code());
       }
-      if (programObject != 0) {
-        pgMain.finalizeGLSLProgramObject(programObject, context.code());
+      if (glProgramObjectID != 0) {
+        pgMain.finalizeGLSLProgramObject(glProgramObjectID, context.code());
       }
     } finally {
       super.finalize();
@@ -176,6 +176,34 @@ public class PShader {
     this.fragmentURL = fragURL;        
   }
 
+  
+  /**
+   * Initializes (if needed) and binds the shader program.
+   */
+  public void bind() {
+    init();
+    pgl.glUseProgram(glProgramObjectID);
+    bound = true;
+    consumeUniforms();
+  }
+
+  
+  /**
+   * Unbinds the shader program.
+   */
+  public void unbind() {
+    pgl.glUseProgram(0);
+    bound = false;
+  }
+  
+  
+  /**
+   * Returns true if the shader is bound, false otherwise.
+   */
+  public boolean bound() {
+    return bound;
+  }
+  
   
   public void setUniform(String name, int x) {    
     setUniformImpl(name, UniformValue.INT1, new int[] { x });
@@ -295,34 +323,6 @@ public class PShader {
   
   
   /**
-   * Starts the execution of the shader program.
-   */
-  protected void start() {    
-    init();  
-    pgl.glUseProgram(programObject);
-    active = true;
-    consumeUniforms();
-  }
-
-  
-  /**
-   * Stops the execution of the shader program.
-   */
-  protected void stop() {
-    pgl.glUseProgram(0);
-    active = false;
-  }    
-  
-  
-  /**
-   * Returns true if the shader is running, false otherwise.
-   */
-  protected boolean active() {
-    return active;
-  }
-  
-  
-  /**
    * Returns the ID location of the attribute parameter given its name.
    * 
    * @param name String
@@ -330,7 +330,7 @@ public class PShader {
    */
   protected int getAttribLocation(String name) {
     init();    
-    return pgl.glGetAttribLocation(programObject, name);
+    return pgl.glGetAttribLocation(glProgramObjectID, name);
   }
 
   
@@ -342,7 +342,7 @@ public class PShader {
    */
   protected int getUniformLocation(String name) {
     init();
-    return pgl.glGetUniformLocation(programObject, name);
+    return pgl.glGetUniformLocation(glProgramObjectID, name);
   }
 
   
@@ -575,9 +575,9 @@ public class PShader {
   
     
   protected void init() {
-    if (programObject == 0 || contextIsOutdated()) {
+    if (glProgramObjectID == 0 || contextIsOutdated()) {
       context = pgl.getCurrentContext();
-      programObject = pgMain.createGLSLProgramObject(context.code());
+      glProgramObjectID = pgMain.createGLSLProgramObject(context.code());
       
       boolean hasVert = false;            
       if (vertexFilename != null) {
@@ -609,25 +609,25 @@ public class PShader {
       
       if (vertRes && fragRes) {
         if (hasVert) {
-          pgl.glAttachShader(programObject, vertexShader);
+          pgl.glAttachShader(glProgramObjectID, glVertexShaderID);
         }
         if (hasFrag) {
-          pgl.glAttachShader(programObject, fragmentShader);
+          pgl.glAttachShader(glProgramObjectID, glFragmentShaderID);
         }
-        pgl.glLinkProgram(programObject);
+        pgl.glLinkProgram(glProgramObjectID);
         
         int[] linked = new int[1];
-        pgl.glGetProgramiv(programObject, PGL.GL_LINK_STATUS, linked, 0);        
+        pgl.glGetProgramiv(glProgramObjectID, PGL.GL_LINK_STATUS, linked, 0);        
         if (linked[0] == PGL.GL_FALSE) {
-          PGraphics.showException("Cannot link shader program:\n" + pgl.glGetProgramInfoLog(programObject));
+          PGraphics.showException("Cannot link shader program:\n" + pgl.glGetProgramInfoLog(glProgramObjectID));
         }
         
-        pgl.glValidateProgram(programObject);
+        pgl.glValidateProgram(glProgramObjectID);
         
         int[] validated = new int[1];
-        pgl.glGetProgramiv(programObject, PGL.GL_VALIDATE_STATUS, validated, 0);        
+        pgl.glGetProgramiv(glProgramObjectID, PGL.GL_VALIDATE_STATUS, validated, 0);        
         if (validated[0] == PGL.GL_FALSE) {
-          PGraphics.showException("Cannot validate shader program:\n" + pgl.glGetProgramInfoLog(programObject));
+          PGraphics.showException("Cannot validate shader program:\n" + pgl.glGetProgramInfoLog(glProgramObjectID));
         }        
       }
     }
@@ -637,13 +637,13 @@ public class PShader {
   protected boolean contextIsOutdated() {
     boolean outdated = !pgl.contextIsCurrent(context);
     if (outdated) {
-      pgMain.removeGLSLProgramObject(programObject, context.code());
-      pgMain.removeGLSLVertShaderObject(vertexShader, context.code());
-      pgMain.removeGLSLFragShaderObject(fragmentShader, context.code());
+      pgMain.removeGLSLProgramObject(glProgramObjectID, context.code());
+      pgMain.removeGLSLVertShaderObject(glVertexShaderID, context.code());
+      pgMain.removeGLSLFragShaderObject(glFragmentShaderID, context.code());
       
-      programObject = 0;
-      vertexShader = 0;
-      fragmentShader = 0;
+      glProgramObjectID = 0;
+      glVertexShaderID = 0;
+      glFragmentShaderID = 0;
     }
     return outdated;
   }
@@ -707,15 +707,15 @@ public class PShader {
    * @param shaderSource a string containing the shader's code
    */
   protected boolean compileVertexShader() {
-    vertexShader = pgMain.createGLSLVertShaderObject(context.code());
+    glVertexShaderID = pgMain.createGLSLVertShaderObject(context.code());
     
-    pgl.glShaderSource(vertexShader, vertexShaderSource);
-    pgl.glCompileShader(vertexShader);
+    pgl.glShaderSource(glVertexShaderID, vertexShaderSource);
+    pgl.glCompileShader(glVertexShaderID);
     
     int[] compiled = new int[1];
-    pgl.glGetShaderiv(vertexShader, PGL.GL_COMPILE_STATUS, compiled, 0);        
+    pgl.glGetShaderiv(glVertexShaderID, PGL.GL_COMPILE_STATUS, compiled, 0);        
     if (compiled[0] == PGL.GL_FALSE) {
-      PGraphics.showException("Cannot compile vertex shader:\n" + pgl.glGetShaderInfoLog(vertexShader));
+      PGraphics.showException("Cannot compile vertex shader:\n" + pgl.glGetShaderInfoLog(glVertexShaderID));
       return false;
     } else {
       return true;
@@ -727,15 +727,15 @@ public class PShader {
    * @param shaderSource a string containing the shader's code
    */
   protected boolean compileFragmentShader() {
-    fragmentShader = pgMain.createGLSLFragShaderObject(context.code());
+    glFragmentShaderID = pgMain.createGLSLFragShaderObject(context.code());
     
-    pgl.glShaderSource(fragmentShader, fragmentShaderSource);
-    pgl.glCompileShader(fragmentShader);
+    pgl.glShaderSource(glFragmentShaderID, fragmentShaderSource);
+    pgl.glCompileShader(glFragmentShaderID);
     
     int[] compiled = new int[1];
-    pgl.glGetShaderiv(fragmentShader, PGL.GL_COMPILE_STATUS, compiled, 0);
+    pgl.glGetShaderiv(glFragmentShaderID, PGL.GL_COMPILE_STATUS, compiled, 0);
     if (compiled[0] == PGL.GL_FALSE) {
-      PGraphics.showException("Cannot compile fragment shader:\n" + pgl.glGetShaderInfoLog(fragmentShader));      
+      PGraphics.showException("Cannot compile fragment shader:\n" + pgl.glGetShaderInfoLog(glFragmentShaderID));      
       return false;
     } else {
       return true;
@@ -754,17 +754,17 @@ public class PShader {
   
   
   protected void release() {
-    if (vertexShader != 0) {
-      pgMain.deleteGLSLVertShaderObject(vertexShader, context.code());
-      vertexShader = 0;
+    if (glVertexShaderID != 0) {
+      pgMain.deleteGLSLVertShaderObject(glVertexShaderID, context.code());
+      glVertexShaderID = 0;
     }
-    if (fragmentShader != 0) {
-      pgMain.deleteGLSLFragShaderObject(fragmentShader, context.code());
-      fragmentShader = 0;
+    if (glFragmentShaderID != 0) {
+      pgMain.deleteGLSLFragShaderObject(glFragmentShaderID, context.code());
+      glFragmentShaderID = 0;
     }
-    if (programObject != 0) {
-      pgMain.deleteGLSLProgramObject(programObject, context.code());
-      programObject = 0;
+    if (glProgramObjectID != 0) {
+      pgMain.deleteGLSLProgramObject(glProgramObjectID, context.code());
+      glProgramObjectID = 0;
     }
   }
 
