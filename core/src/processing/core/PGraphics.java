@@ -3326,7 +3326,10 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-
+  public void initCache(PImage img) { // ignore
+  }
+  
+  
   //////////////////////////////////////////////////////////////
 
   // SHAPE

@@ -475,10 +475,11 @@ public class PImage implements PConstants, Cloneable {
    * @usage web_application
    */
   public void loadPixels() {  // ignore
-    if (pixels == null) {
-      pixels = new int[width * height];
-    }    
+    if (pixels == null || pixels.length != width*height) {
+      pixels = new int[width*height];
+    }
     
+    parent.g.initCache(this);
     if (cacheMap != null) {
       for (PGraphics pg: cacheMap.keySet()) {
         Object obj = cacheMap.get(pg);
@@ -490,7 +491,7 @@ public class PImage implements PConstants, Cloneable {
         }
         
         if (loadPixelsMethod != null) {
-          try {            
+          try {
             loadPixelsMethod.invoke(obj, new Object[] { pixels });
           } catch (Exception e) {
             e.printStackTrace();

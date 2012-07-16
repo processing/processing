@@ -5389,6 +5389,18 @@ public class PGraphicsOpenGL extends PGraphics {
     return tex;
   }
   
+  
+  public void initCache(PImage img) {
+    Texture tex = (Texture)img.getCache(pgPrimary);
+    if (tex == null) {
+      tex = addTexture(img);
+    } else {
+      if (tex.contextIsOutdated()) {
+        tex = addTexture(img);
+      }
+    }
+  }
+  
 
   /**
    * This utility method creates a texture for the provided image, and adds it
@@ -5424,7 +5436,7 @@ public class PGraphicsOpenGL extends PGraphics {
     img.setCache(pgPrimary, tex);
     return tex;
   }
-
+  
   
   protected Texture addTexture(PImage img, Texture.Parameters params) {
     Texture tex = new Texture(img.parent, img.width, img.height, params);
