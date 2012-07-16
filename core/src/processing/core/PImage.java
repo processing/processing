@@ -479,6 +479,7 @@ public class PImage implements PConstants, Cloneable {
       pixels = new int[width*height];
     }
     
+    if (parent == null) return;    
     parent.g.initCache(this);
     if (cacheMap != null) {
       for (PGraphics pg: cacheMap.keySet()) {
