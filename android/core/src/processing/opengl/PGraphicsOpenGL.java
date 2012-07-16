@@ -489,7 +489,12 @@ public class PGraphicsOpenGL extends PGraphics {
     pgl.setFramerate(framerate);
   }
 
+  
+  public void setToolkit(int toolkit) {
+    pgl.setToolkit(toolkit);
+  }
 
+  
   public void setSize(int iwidth, int iheight) {
     resized = (0 < width && width != iwidth) || (0 < height && height != iwidth);
 
@@ -1693,7 +1698,9 @@ public class PGraphicsOpenGL extends PGraphics {
       }      
       
       popFramebuffer();
-
+      
+      texture.updateTexels(); // Mark all texels in screen texture as modified.
+      
       pgl.endOffscreenDraw(pgPrimary.clearColorBuffer0);
       
       pgPrimary.restoreGL();
@@ -3743,6 +3750,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   public void popProjection() {
+    flush(); // The geometry with the old projection matrix needs to be drawn now
+    
     if (projectionStackDepth == 0) {
       throw new RuntimeException(ERROR_PUSHMATRIX_UNDERFLOW);
     }
@@ -3752,11 +3761,13 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   public void applyProjection(PMatrix3D mat) {
+    flush();
     projection.apply(mat);
   }
 
 
   public void setProjection(PMatrix3D mat) {
+    flush();
     projection.set(mat);
   }
 
@@ -4947,7 +4958,7 @@ public class PGraphicsOpenGL extends PGraphics {
     pgl.glReadPixels(0, 0, width, height, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, pixelBuffer);    
     endPixelsOp();
     
-    PGL.nativeToJavaARGB(pixels, width, height);    
+    PGL.nativeToJavaARGB(pixels, width, height);
   }
   
   
@@ -5026,22 +5037,52 @@ public class PGraphicsOpenGL extends PGraphics {
   // array, and then the pixels array into the screen texture.
   public void loadTexture() {
     if (primarySurface) {
-      loadTextureImpl(POINT, false);
+      loadTextureImpl(Texture.POINT, false);
       loadPixels();
       pixelsToTexture();
     }
   }
 
-
-  // Draws wherever it is in the screen texture right now to the screen.
-  public void updateTexture() {
+  
+  // Draws wherever it is in the screen texture right now to the display.
+  public void updateDisplay() {
     flush();
     beginPixelsOp(OP_WRITE);
     drawTexture();
     endPixelsOp();
   }
+  
 
+  // Uses the texture in img as the color buffer for this surface.
+  public void setTexture(PImage img) {
+    if (width != img.width || height != img.height) {
+      PGraphics.showWarning("Resolution of image is different from PGraphics object");
+      return;
+    }
+    
+    if (texture == null || texture != img.getCache(pgPrimary)) {
+      Texture.Parameters params;
+      if (primarySurface) {
+        params = new Texture.Parameters(ARGB, Texture.POINT, false);
+      } else {
+        params = new Texture.Parameters(ARGB, Texture.BILINEAR, false);
+      }
+              
+      texture = addTexture(img, params);
+        
+      texture.setFlippedY(true);
+      this.setCache(pgPrimary, texture);
+      this.setParams(pgPrimary, params);
+      
+      if (!primarySurface && offscreenFramebuffer != null) {
+        // Attach as the color buffer for this offscreen surface
+        offscreenFramebuffer.setColorBuffer(texture);
+        offscreenFramebuffer.clear();
+      } 
+    }
+  }
 
+  
   protected void loadTextureImpl(int sampling, boolean mipmap) {
     if (width == 0 || height == 0) return;
     if (texture == null || texture.contextIsOutdated()) {
@@ -5052,8 +5093,8 @@ public class PGraphicsOpenGL extends PGraphics {
       this.setParams(pgPrimary, params);
     }
   }
-
-
+  
+  
   protected void drawTexture() {
     pgl.drawTexture(texture.glTarget, texture.glID,
                     texture.glWidth, texture.glHeight,
@@ -5348,41 +5389,6 @@ public class PGraphicsOpenGL extends PGraphics {
     return tex;
   }
   
-  
-  /**
-   * Copies the contents of the texture bound to img to its pixels array.
-   * @param img the image to have a texture metadata associated to it
-   */
-  /*
-  public void loadPixels(PImage img) {
-    if (img.pixels == null) {
-      img.pixels = new int[img.width * img.height];
-    }    
-    
-    Texture tex = (Texture)img.getCache(pgPrimary);
-    if (tex == null) {
-      tex = addTexture(img);
-    } else {
-      if (tex.contextIsOutdated()) {
-        tex = addTexture(img);
-      }
-      
-      if (tex.hasBuffers()) {
-        // Updates the texture AND the pixels
-        // array of the image at the same time,
-        // getting the pixels directly from the
-        // buffer data (avoiding expenive transfer
-        // beteeen video and main memory).
-        tex.bufferUpdate(img.pixels);
-      }
-      
-      if (tex.isModified()) {
-        // Regular pixel copy from texture.
-        tex.get(img.pixels);
-      }
-    }
-  }
-  */
 
   /**
    * This utility method creates a texture for the provided image, and adds it
@@ -5419,7 +5425,18 @@ public class PGraphicsOpenGL extends PGraphics {
     return tex;
   }
 
+  
+  protected Texture addTexture(PImage img, Texture.Parameters params) {
+    Texture tex = new Texture(img.parent, img.width, img.height, params);
+    if (img.pixels == null) {
+      img.loadPixels();
+    }
+    if (img.pixels != null) tex.set(img.pixels);
+    img.setCache(pgPrimary, tex);
+    return tex;    
+  }
 
+  
   protected PImage wrapTexture(Texture tex) {
     // We don't use the PImage(int width, int height, int mode) constructor to
     // avoid initializing the pixels array.

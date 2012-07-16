@@ -338,10 +338,6 @@ public class Capture extends PImage implements PConstants {
    * @usage web_application
    */
   public synchronized void read() {
-//    if (pixels == null) {
-//      pixels = new int[width * height];
-//    }
-    
     if (useBufferSink) { // The native buffer from gstreamer is copied to the buffer sink.
       if (natBuffer == null) {         
         return;
@@ -349,7 +345,6 @@ public class Capture extends PImage implements PConstants {
     
       if (firstFrame) {
         super.init(bufWidth, bufHeight, ARGB);
-        //loadPixels();
         firstFrame = false;
       }      
       
@@ -365,6 +360,7 @@ public class Capture extends PImage implements PConstants {
       ByteBuffer byteBuffer = natBuffer.getByteBuffer();
       
       try {
+        PApplet.println("copy buffer to sink...");
         sinkCopyMethod.invoke(bufferSink, new Object[] { natBuffer, byteBuffer, bufWidth, bufHeight });
       } catch (Exception e) {
         e.printStackTrace();

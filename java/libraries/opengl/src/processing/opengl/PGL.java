@@ -63,8 +63,6 @@ public class PGL {
   public static final int AWT  = 0; // http://jogamp.org/wiki/index.php/Using_JOGL_in_AWT_SWT_and_Swing
   public static final int NEWT = 1; // http://jogamp.org/jogl/doc/NEWT-Overview.html
 
-  public static int toolkit = AWT;
-
   /** Size of a short (in bytes). */
   public static final int SIZEOF_SHORT = Short.SIZE / 8;
 
@@ -321,6 +319,9 @@ public class PGL {
   /** Whether OpenGL has been initialized or not */
   public boolean initialized;
 
+  /** Windowing toolkit */ 
+  public static int toolkit = AWT;
+  
   /** Selected GL profile */
   public GLProfile profile;
 
@@ -349,7 +350,7 @@ public class PGL {
   protected PGLListener listener;
 
   /** Animator to drive the rendering thread in NEWT */
-  protected GLAnimator animator;
+  protected PGLAnimator animator;
 
   /** Desired target framerate */
   protected float targetFramerate = 60;
@@ -500,6 +501,14 @@ public class PGL {
   }
 
 
+  public void setToolkit(int toolkit) {
+    if (PGL.toolkit != toolkit) {
+      PGL.toolkit = toolkit;
+      this.initialized = false;
+    }
+  }
+  
+  
   public void initPrimarySurface(int antialias) {
     if (ENABLE_OSX_SCREEN_FBO) {
       needScreenFBO = false;
@@ -527,11 +536,15 @@ public class PGL {
       profile = GLProfile.getDefault();
     } else {
       // Restarting...
-      if (toolkit == AWT) {
+      if (canvasAWT != null) {
+        // TODO: Even if the GLCanvas is put inside an animator, the rendering runs 
+        // inside the EDT, ask the JOGL guys about this.
+//        animator.stop();
+//        animator.remove(canvasAWT);        
         canvasAWT.removeGLEventListener(listener);
         pg.parent.removeListeners(canvasAWT);
         pg.parent.remove(canvasAWT);
-      } else if (toolkit == NEWT) {
+      } else if (canvasNEWT != null) {
         animator.stop();
         animator.remove(window);
         window.removeGLEventListener(listener);
@@ -565,9 +578,12 @@ public class PGL {
 
       listener = new PGLListener();
       canvasAWT.addGLEventListener(listener);
-
+//      animator = new PGLAnimator(canvasAWT);
+//      animator.start();
+      
       capabilities = canvasAWT.getChosenGLCapabilities();
       canvas = canvasAWT;
+      canvasNEWT = null;
     } else if (toolkit == NEWT) {
       window = GLWindow.create(caps);
       canvasNEWT = new NewtCanvasAWT(window);
@@ -579,11 +595,12 @@ public class PGL {
 
       listener = new PGLListener();
       window.addGLEventListener(listener);
-      animator = new GLAnimator(window);
+      animator = new PGLAnimator(window);
       animator.start();
 
       capabilities = window.getChosenGLCapabilities();
       canvas = canvasNEWT;
+      canvasAWT = null;
     }
 
     initialized = true;
@@ -829,11 +846,14 @@ public class PGL {
 
   public void requestDraw() {
     if (initialized) {
+      //animator.requestDisplay();
+      
       if (toolkit == AWT) {
         canvasAWT.display();
       } else if (toolkit == NEWT) {
         animator.requestDisplay();
       }
+      
     }
   }
 
@@ -2350,20 +2370,20 @@ public class PGL {
 
   /** Animator subclass to drive render loop when using NEWT.
    **/
-  protected static class GLAnimator extends AnimatorBase {
-//    private static int count = 0;
+  protected static class PGLAnimator extends AnimatorBase {
+    private static int count = 0;
     private Timer timer = null;
     private TimerTask task = null;
     private volatile boolean shouldRun;
 
     protected String getBaseName(String prefix) {
-      return prefix + "PGLAnimator" ;
+      return prefix + "PGLAnimator";
     }
 
     /** Creates an CustomAnimator with an initial drawable to
      * animate.
      */
-    public GLAnimator(GLAutoDrawable drawable) {
+    public PGLAnimator(GLAutoDrawable drawable) {
       if (drawable != null) {
         add(drawable);
       }
@@ -2397,15 +2417,15 @@ public class PGL {
       }
 
       task = new TimerTask() {
-//        private boolean firstRun = true;
+        private boolean firstRun = true;
         public void run() {
-//          if (firstRun) {
-//            Thread.currentThread().setName("NEWT-RenderQueue-" + count);
-//            firstRun = false;
-//            count++;
-//          }
-          if (GLAnimator.this.shouldRun) {
-            GLAnimator.this.animThread = Thread.currentThread();
+          if (firstRun) {
+            Thread.currentThread().setName("PGL-RenderQueue-" + count);
+            firstRun = false;
+            count++;
+          }
+          if (PGLAnimator.this.shouldRun) {
+            PGLAnimator.this.animThread = Thread.currentThread();
             // display impl. uses synchronized block on the animator instance
             display();
             synchronized (this) {
