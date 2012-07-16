@@ -362,15 +362,19 @@ public class PGL {
   
   public static final boolean ENABLE_OSX_SCREEN_FBO  = true;
   public static final int MIN_OSX_VER_FOR_SCREEN_FBO = 6;
-  public static final int MIN_SAMPLES_FOR_SCREEN_FBO = 1;
+  public static final int MIN_SAMPLES_FOR_SCREEN_FBO = 1;  
   protected boolean needScreenFBO = false;
   protected int fboWidth, fboHeight;  
   protected int numSamples;
-  protected int[] colorTex = { 0 };
-  protected int[] colorFBO = { 0 };
-  protected int[] multiFBO = { 0 };
-  protected int[] colorRenderBuffer = { 0 };
-  protected int[] packedDepthStencil = { 0 };
+  protected boolean multisample;
+  protected boolean packedDepthStencil;
+  protected int[] glColorTexID = { 0 };
+  protected int[] glColorFboID = { 0 };
+  protected int[] glMultiFboID = { 0 };
+  protected int[] glColorRenderBufferID = { 0 };
+  protected int[] glPackedDepthStencilID = { 0 };
+  protected int[] glDepthBufferID = { 0 };
+  protected int[] glStencilBufferID = { 0 };
   protected int contextHashCode;
   
   ///////////////////////////////////////////////////////////////////////////////////
@@ -512,7 +516,7 @@ public class PGL {
   public void initPrimarySurface(int antialias) {
     if (ENABLE_OSX_SCREEN_FBO) {
       needScreenFBO = false;
-      colorFBO[0] = 0;  
+      glColorFboID[0] = 0;  
       String osName = System.getProperty("os.name");
       if (osName.equals("Mac OS X")) {
         String version = System.getProperty("os.version");
@@ -620,7 +624,7 @@ public class PGL {
       setFramerate(targetFramerate);
     }
     
-    if (needScreenFBO && colorFBO[0] == 0) {
+    if (needScreenFBO && glColorFboID[0] == 0) {
       numSamples = qualityToSamples(pg.quality);      
       
       String ext = gl.glGetString(GL.GL_EXTENSIONS); 
@@ -630,17 +634,19 @@ public class PGL {
       } else {
         fboWidth = PGL.nextPowerOfTwo(pg.width);
         fboHeight = PGL.nextPowerOfTwo(pg.height);
-      }            
-      if (ext.indexOf("packed_depth_stencil") == -1 || gl2x == null) {
+      }   
+      multisample = 1 < numSamples;
+      if (multisample && gl2x == null) {
         // We could add additional code to handle the lack of the packed depth+stencil extension, later... maybe.
-        throw new RuntimeException("Catastrophic error: cannot create multisampled surface for rendering... sorry!"); 
-      }
+        throw new RuntimeException("Doesn't have the OpenGL extensions necessary for multisampling."); 
+      }      
+      packedDepthStencil = ext.indexOf("packed_depth_stencil") != -1;
       
       contextHashCode = context.hashCode();
       
       // Create the color texture...
-      gl.glGenTextures(1, colorTex, 0);
-      gl.glBindTexture(GL.GL_TEXTURE_2D, colorTex[0]);    
+      gl.glGenTextures(1, glColorTexID, 0);
+      gl.glBindTexture(GL.GL_TEXTURE_2D, glColorTexID[0]);    
       gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);    
       gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
       gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE);
@@ -649,35 +655,49 @@ public class PGL {
       gl.glBindTexture(GL.GL_TEXTURE_2D, 0);      
      
       // ...and attach to the color framebuffer.
-      gl.glGenFramebuffers(1, colorFBO, 0); 
-      gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, colorFBO[0]);
-      gl.glFramebufferTexture2D(GL.GL_FRAMEBUFFER, GL.GL_COLOR_ATTACHMENT0, GL.GL_TEXTURE_2D, colorTex[0], 0);
+      gl.glGenFramebuffers(1, glColorFboID, 0); 
+      gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, glColorFboID[0]);
+      gl.glFramebufferTexture2D(GL.GL_FRAMEBUFFER, GL.GL_COLOR_ATTACHMENT0, GL.GL_TEXTURE_2D, glColorTexID[0], 0);
       
       // Clear the color buffer in the color FBO
       gl.glClearColor(0, 0, 0, 0);
       gl.glClear(GL.GL_COLOR_BUFFER_BIT);      
       
-      if (1 < numSamples) {
+      if (multisample) {
         // We need multisampled FBO:
         
         gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, 0);
       
         // Now, creating mutisampled FBO with packed depth and stencil buffers.      
-        gl.glGenFramebuffers(1, multiFBO, 0);
-        gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, multiFBO[0]);
+        gl.glGenFramebuffers(1, glMultiFboID, 0);
+        gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, glMultiFboID[0]);
       
         // color render buffer...
-        gl.glGenRenderbuffers(1, colorRenderBuffer, 0);
-        gl.glBindRenderbuffer(GL.GL_RENDERBUFFER, colorRenderBuffer[0]);      
+        gl.glGenRenderbuffers(1, glColorRenderBufferID, 0);
+        gl.glBindRenderbuffer(GL.GL_RENDERBUFFER, glColorRenderBufferID[0]);      
         gl2x.glRenderbufferStorageMultisample(GL.GL_RENDERBUFFER, numSamples, GL.GL_RGBA8, fboWidth, fboHeight);
-        gl.glFramebufferRenderbuffer(GL.GL_FRAMEBUFFER, GL.GL_COLOR_ATTACHMENT0, GL.GL_RENDERBUFFER, colorRenderBuffer[0]);
+        gl.glFramebufferRenderbuffer(GL.GL_FRAMEBUFFER, GL.GL_COLOR_ATTACHMENT0, GL.GL_RENDERBUFFER, glColorRenderBufferID[0]);
       
-        // packed depth+stencil buffer...
-        gl.glGenRenderbuffers(1, packedDepthStencil, 0);
-        gl.glBindRenderbuffer(GL.GL_RENDERBUFFER, packedDepthStencil[0]);      
-        gl2x.glRenderbufferStorageMultisample(GL.GL_RENDERBUFFER, numSamples, GL.GL_DEPTH24_STENCIL8, fboWidth, fboHeight);
-        gl.glFramebufferRenderbuffer(GL.GL_FRAMEBUFFER, GL.GL_DEPTH_ATTACHMENT, GL.GL_RENDERBUFFER, packedDepthStencil[0]);
-        gl.glFramebufferRenderbuffer(GL.GL_FRAMEBUFFER, GL.GL_STENCIL_ATTACHMENT, GL.GL_RENDERBUFFER, packedDepthStencil[0]);      
+        if (packedDepthStencil) { 
+          // packed depth+stencil buffer...
+          gl.glGenRenderbuffers(1, glPackedDepthStencilID, 0);
+          gl.glBindRenderbuffer(GL.GL_RENDERBUFFER, glPackedDepthStencilID[0]);      
+          gl2x.glRenderbufferStorageMultisample(GL.GL_RENDERBUFFER, numSamples, GL.GL_DEPTH24_STENCIL8, fboWidth, fboHeight);
+          gl.glFramebufferRenderbuffer(GL.GL_FRAMEBUFFER, GL.GL_DEPTH_ATTACHMENT, GL.GL_RENDERBUFFER, glPackedDepthStencilID[0]);
+          gl.glFramebufferRenderbuffer(GL.GL_FRAMEBUFFER, GL.GL_STENCIL_ATTACHMENT, GL.GL_RENDERBUFFER, glPackedDepthStencilID[0]);
+        } else {
+          // Separate depth and stencil buffers...
+          gl.glGenRenderbuffers(1, glDepthBufferID, 0);
+          gl.glBindRenderbuffer(GL.GL_RENDERBUFFER, glDepthBufferID[0]);
+          gl2x.glRenderbufferStorageMultisample(GL.GL_RENDERBUFFER, numSamples, GL.GL_DEPTH_COMPONENT24, fboWidth, fboHeight);          
+          gl.glFramebufferRenderbuffer(GL.GL_FRAMEBUFFER, GL.GL_DEPTH_ATTACHMENT, GL.GL_RENDERBUFFER, glDepthBufferID[0]);
+                    
+          // TODO: separate depth buffer doesn't work, either in multisampled or single sample setups
+//          gl.glGenRenderbuffers(1, glStencilBufferID, 0);
+//          gl.glBindRenderbuffer(GL.GL_RENDERBUFFER, glStencilBufferID[0]);
+//          gl2x.glRenderbufferStorageMultisample(GL.GL_RENDERBUFFER, numSamples, GL.GL_STENCIL_INDEX8, fboWidth, fboHeight);          
+//          gl.glFramebufferRenderbuffer(GL.GL_FRAMEBUFFER, GL.GL_STENCIL_ATTACHMENT, GL.GL_RENDERBUFFER, glStencilBufferID[0]);
+        }
             
         // Clear all the buffers in the multisample FBO
         gl.glClearDepth(1);
@@ -686,14 +706,28 @@ public class PGL {
         gl.glClear(GL.GL_DEPTH_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT | GL.GL_COLOR_BUFFER_BIT);
         
         // All set with multisampled FBO!
-        gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, colorFBO[0]);
+        gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, glColorFboID[0]);
       } else {
-        // packed depth+stencil buffer...
-        gl.glGenRenderbuffers(1, packedDepthStencil, 0);
-        gl.glBindRenderbuffer(GL.GL_RENDERBUFFER, packedDepthStencil[0]);      
-        gl2x.glRenderbufferStorage(GL.GL_RENDERBUFFER, GL.GL_DEPTH24_STENCIL8, fboWidth, fboHeight);
-        gl.glFramebufferRenderbuffer(GL.GL_FRAMEBUFFER, GL.GL_DEPTH_ATTACHMENT, GL.GL_RENDERBUFFER, packedDepthStencil[0]);
-        gl.glFramebufferRenderbuffer(GL.GL_FRAMEBUFFER, GL.GL_STENCIL_ATTACHMENT, GL.GL_RENDERBUFFER, packedDepthStencil[0]);
+        if (packedDepthStencil) { 
+          // packed depth+stencil buffer...
+          gl.glGenRenderbuffers(1, glPackedDepthStencilID, 0);
+          gl.glBindRenderbuffer(GL.GL_RENDERBUFFER, glPackedDepthStencilID[0]);      
+          gl.glRenderbufferStorage(GL.GL_RENDERBUFFER, GL.GL_DEPTH24_STENCIL8, fboWidth, fboHeight);
+          gl.glFramebufferRenderbuffer(GL.GL_FRAMEBUFFER, GL.GL_DEPTH_ATTACHMENT, GL.GL_RENDERBUFFER, glPackedDepthStencilID[0]);
+          gl.glFramebufferRenderbuffer(GL.GL_FRAMEBUFFER, GL.GL_STENCIL_ATTACHMENT, GL.GL_RENDERBUFFER, glPackedDepthStencilID[0]);
+        } else {
+          // Separate depth and stencil buffers...
+          gl.glGenRenderbuffers(1, glDepthBufferID, 0);
+          gl.glBindRenderbuffer(GL.GL_RENDERBUFFER, glDepthBufferID[0]);
+          gl.glRenderbufferStorage(GL.GL_RENDERBUFFER, GL.GL_DEPTH_COMPONENT24, fboWidth, fboHeight);          
+          gl.glFramebufferRenderbuffer(GL.GL_FRAMEBUFFER, GL.GL_DEPTH_ATTACHMENT, GL.GL_RENDERBUFFER, glDepthBufferID[0]);
+                    
+          // TODO: separate depth buffer doesn't work, either in multisampled or single sample setups
+//          gl.glGenRenderbuffers(1, glStencilBufferID, 0);
+//          gl.glBindRenderbuffer(GL.GL_RENDERBUFFER, glStencilBufferID[0]);
+//          gl.glRenderbufferStorage(GL.GL_RENDERBUFFER, GL.GL_STENCIL_INDEX8, fboWidth, fboHeight);          
+//          gl.glFramebufferRenderbuffer(GL.GL_FRAMEBUFFER, GL.GL_STENCIL_ATTACHMENT, GL.GL_RENDERBUFFER, glStencilBufferID[0]);
+        }
         
         // Clear all the buffers in the color FBO
         gl.glClearDepth(1);
@@ -704,7 +738,7 @@ public class PGL {
       // The screen framebuffer is the color FBO just created. We need
       // to update the screenFramebuffer object so when the framebuffer 
       // is popped back to the screen, the correct id is set.      
-      PGraphicsOpenGL.screenFramebuffer.glFboID = colorFBO[0];      
+      PGraphicsOpenGL.screenFramebuffer.glFboID = glColorFboID[0];      
     } else {
       // To make sure that the default screen buffer is used, specially after
       // doing screen rendering on an FBO (the OSX 10.7+ above).
@@ -724,46 +758,51 @@ public class PGL {
     // When using the multisampled FBO, the color
     // FBO is single buffered as it has only one
     // texture bound to it.
-    return colorFBO[0] == 0;
+    return glColorFboID[0] == 0;
   }
   
   
   public boolean usingPrimaryFBO() {
-    return colorFBO[0] != 0;
+    return glColorFboID[0] != 0;
   }
   
   
   public void bindPrimaryColorFBO() {
-    if (1 < numSamples) {
+    if (multisample) {
       // Blit the contents of the multisampled FBO into the color FBO,
       // so the later is up to date.
-      gl.glBindFramebuffer(GL2.GL_READ_FRAMEBUFFER, multiFBO[0]);
-      gl.glBindFramebuffer(GL2.GL_DRAW_FRAMEBUFFER, colorFBO[0]);
+      gl.glBindFramebuffer(GL2.GL_READ_FRAMEBUFFER, glMultiFboID[0]);
+      gl.glBindFramebuffer(GL2.GL_DRAW_FRAMEBUFFER, glColorFboID[0]);
       gl2x.glBlitFramebuffer(0, 0, fboWidth, fboHeight,
                              0, 0, fboWidth, fboHeight, 
                              GL.GL_COLOR_BUFFER_BIT, GL.GL_NEAREST);
     }
     
-    gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, colorFBO[0]);
-    PGraphicsOpenGL.screenFramebuffer.glFboID = colorFBO[0];
+    gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, glColorFboID[0]);
+    PGraphicsOpenGL.screenFramebuffer.glFboID = glColorFboID[0];
   }
 
   
   public void bindPrimaryMultiFBO() {
-    if (1 < numSamples) {
-      gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, multiFBO[0]);   
-      PGraphicsOpenGL.screenFramebuffer.glFboID = multiFBO[0];
+    if (multisample) {
+      gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, glMultiFboID[0]);   
+      PGraphicsOpenGL.screenFramebuffer.glFboID = glMultiFboID[0];
     }
   }
   
   
   protected void releaseScreenFBO() {
-    gl.glDeleteTextures(1, colorTex, 0);
-    gl.glDeleteFramebuffers(1, colorFBO, 0);    
-    gl.glDeleteRenderbuffers(1, packedDepthStencil, 0);
-    if (1 < numSamples) {
-      gl.glDeleteFramebuffers(1, multiFBO, 0);
-      gl.glDeleteRenderbuffers(1, colorRenderBuffer, 0);
+    gl.glDeleteTextures(1, glColorTexID, 0);
+    gl.glDeleteFramebuffers(1, glColorFboID, 0);
+    if (packedDepthStencil) {
+      gl.glDeleteRenderbuffers(1, glPackedDepthStencilID, 0);
+    } else {
+      gl.glDeleteRenderbuffers(1, glDepthBufferID, 0);
+      gl.glDeleteRenderbuffers(1, glStencilBufferID, 0);
+    }
+    if (multisample) {
+      gl.glDeleteFramebuffers(1, glMultiFboID, 0);
+      gl.glDeleteRenderbuffers(1, glColorRenderBufferID, 0);
     }    
   }
   
@@ -785,30 +824,30 @@ public class PGL {
 
 
   public void beginOnscreenDraw(boolean clear) {
-    if (colorFBO[0] != 0) {
-      if (1 < numSamples) {
+    if (glColorFboID[0] != 0) {
+      if (multisample) {
         // Render the scene to the mutisampled buffer...
-        gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, multiFBO[0]);    
+        gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, glMultiFboID[0]);    
         gl2x.glDrawBuffer(GL.GL_COLOR_ATTACHMENT0);
         
         // Now the screen buffer is the multisample FBO.
-        PGraphicsOpenGL.screenFramebuffer.glFboID = multiFBO[0];
+        PGraphicsOpenGL.screenFramebuffer.glFboID = glMultiFboID[0];
       } else {
-        gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, colorFBO[0]);
-        gl2x.glDrawBuffer(GL.GL_COLOR_ATTACHMENT0);
+        gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, glColorFboID[0]);
+        if (gl2x != null) gl2x.glDrawBuffer(GL.GL_COLOR_ATTACHMENT0);
         
-        PGraphicsOpenGL.screenFramebuffer.glFboID = colorFBO[0];
+        PGraphicsOpenGL.screenFramebuffer.glFboID = glColorFboID[0];
       }
     }
   }
 
 
   public void endOnscreenDraw(boolean clear0) {
-    if (colorFBO[0] != 0) {
-      if (1 < numSamples) {
+    if (glColorFboID[0] != 0) {
+      if (multisample) {
         // Blit the contents of the multisampled FBO into the color FBO:
-        gl.glBindFramebuffer(GL2.GL_READ_FRAMEBUFFER, multiFBO[0]);
-        gl.glBindFramebuffer(GL2.GL_DRAW_FRAMEBUFFER, colorFBO[0]);
+        gl.glBindFramebuffer(GL2.GL_READ_FRAMEBUFFER, glMultiFboID[0]);
+        gl.glBindFramebuffer(GL2.GL_DRAW_FRAMEBUFFER, glColorFboID[0]);
         gl2x.glBlitFramebuffer(0, 0, fboWidth, fboHeight,
                                0, 0, fboWidth, fboHeight, 
                                GL.GL_COLOR_BUFFER_BIT, GL.GL_NEAREST);
@@ -822,11 +861,11 @@ public class PGL {
       gl.glClear(GL.GL_DEPTH_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT);
       
       gl.glDisable(GL.GL_BLEND);
-      drawTexture(GL.GL_TEXTURE_2D, colorTex[0], fboWidth, fboHeight, 0, 0, pg.width, pg.height, 0, 0, pg.width, pg.height);
+      drawTexture(GL.GL_TEXTURE_2D, glColorTexID[0], fboWidth, fboHeight, 0, 0, pg.width, pg.height, 0, 0, pg.width, pg.height);
 
       // Leaving the color FBO currently bound as the screen FB.
-      gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, colorFBO[0]);
-      PGraphicsOpenGL.screenFramebuffer.glFboID = colorFBO[0];       
+      gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, glColorFboID[0]);
+      PGraphicsOpenGL.screenFramebuffer.glFboID = glColorFboID[0];       
     }
   }
 
@@ -2359,10 +2398,10 @@ public class PGL {
       drawable = adrawable;
       context = adrawable.getContext();      
 
-      if (colorFBO[0] != 0) {
+      if (glColorFboID[0] != 0) {
         // The screen FBO hack needs the FBO to be recreated when starting
         // and after resizing.
-        colorFBO[0] = 0;
+        glColorFboID[0] = 0;
       }      
     }
   }
