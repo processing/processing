@@ -475,25 +475,37 @@ public class PImage implements PConstants, Cloneable {
    * @usage web_application
    */
   public void loadPixels() {  // ignore
-    /*
-    if (cacheMap == null) {
-      if (parent != null) {
-        parent.g.loadPixels(this);
-      } else {
-        PGraphics.showWarning("Cannot load pixels because this image object doesn't have a parent");
-      }
-    } else {
+    if (pixels == null) {
+      pixels = new int[width * height];
+    }    
+    
+    if (cacheMap != null) {
       for (PGraphics pg: cacheMap.keySet()) {
-        pg.loadPixels(this);  
+        Object obj = cacheMap.get(pg);
+        
+        Method loadPixelsMethod = null;
+        try {      
+          loadPixelsMethod = obj.getClass().getMethod("loadPixels", new Class[] { int[].class });         
+        } catch (Exception e) {          
+        }
+        
+        if (loadPixelsMethod != null) {
+          try {            
+            loadPixelsMethod.invoke(obj, new Object[] { pixels });
+          } catch (Exception e) {
+            e.printStackTrace();
+          }
+        }
       }      
     }
-    */
   }
 
+  
   public void updatePixels() {  // ignore
     updatePixelsImpl(0, 0, width, height);
   }
 
+  
   /**
    * ( begin auto-generated from PImage_updatePixels.xml )
    * 
@@ -526,16 +538,6 @@ public class PImage implements PConstants, Cloneable {
    * @param h height
    */
   public void updatePixels(int x, int y, int w, int h) {  // ignore
-//    if (imageMode == CORNER) {  // x2, y2 are w/h
-//      x2 += x1;
-//      y2 += y1;
-//
-//    } else if (imageMode == CENTER) {
-//      x1 -= x2 / 2;
-//      y1 -= y2 / 2;
-//      x2 += x1;
-//      y2 += y1;
-//    }
     updatePixelsImpl(x, y, w, h);
   }
 

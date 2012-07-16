@@ -536,7 +536,6 @@ public class Movie extends PImage implements PConstants {
     
       if (firstFrame) {
         super.init(bufWidth, bufHeight, ARGB);
-        //loadPixels();
         firstFrame = false;
       }      
       
@@ -564,7 +563,6 @@ public class Movie extends PImage implements PConstants {
       }    
     
       if (firstFrame) {
-        //resize(bufWidth, bufHeight);
         super.init(bufWidth, bufHeight, RGB);
         firstFrame = false;
       }
