@@ -205,57 +205,57 @@ public class PShader {
   }
   
   
-  public void setUniform(String name, int x) {    
+  public void set(String name, int x) {    
     setUniformImpl(name, UniformValue.INT1, new int[] { x });
   }
   
   
-  public void setUniform(String name, int x, int y) {
+  public void set(String name, int x, int y) {
     setUniformImpl(name, UniformValue.INT2, new int[] { x, y });
   }
   
   
-  public void setUniform(String name, int x, int y, int z) {
+  public void set(String name, int x, int y, int z) {
     setUniformImpl(name, UniformValue.INT3, new int[] { x, y, z });
   }
   
   
-  public void setUniform(String name, int x, int y, int z, int w) {
+  public void set(String name, int x, int y, int z, int w) {
     setUniformImpl(name, UniformValue.INT4, new int[] { x, y, z });
   }
   
   
-  public void setUniform(String name, float x) {
+  public void set(String name, float x) {
     setUniformImpl(name, UniformValue.FLOAT1, new float[] { x });
   }
   
   
-  public void setUniform(String name, float x, float y) {
+  public void set(String name, float x, float y) {
     setUniformImpl(name, UniformValue.FLOAT2, new float[] { x, y });
   }
   
   
-  public void setUniform(String name, float x, float y, float z) {
+  public void set(String name, float x, float y, float z) {
     setUniformImpl(name, UniformValue.FLOAT3, new float[] { x, y, z });
   }
   
   
-  public void setUniform(String name, float x, float y, float z, float w) {
+  public void set(String name, float x, float y, float z, float w) {
     setUniformImpl(name, UniformValue.FLOAT4, new float[] { x, y, z, w });
   }
   
   
-  public void setUniform(String name, PVector vec) {
+  public void set(String name, PVector vec) {
     setUniformImpl(name, UniformValue.FLOAT3, new float[] { vec.x, vec.y, vec.z });
   }
   
   
-  public void setUniform(String name, int[] vec) {
-    setUniform(name, vec, 1);
+  public void set(String name, int[] vec) {
+    set(name, vec, 1);
   }   
 
   
-  public void setUniform(String name, int[] vec, int ncoords) {
+  public void set(String name, int[] vec, int ncoords) {
     if (ncoords == 1) {
       setUniformImpl(name, UniformValue.INT1VEC, vec);
     } else if (ncoords == 2) {
@@ -272,12 +272,12 @@ public class PShader {
   }     
   
   
-  public void setUniform(String name, float[] vec) {
-    setUniform(name, vec, 1);
+  public void set(String name, float[] vec) {
+    set(name, vec, 1);
   }  
   
   
-  public void setUniform(String name, float[] vec, int ncoords) {    
+  public void set(String name, float[] vec, int ncoords) {    
     if (ncoords == 1) {
       setUniformImpl(name, UniformValue.FLOAT1VEC, vec);
     } else if (ncoords == 2) {
@@ -294,19 +294,19 @@ public class PShader {
   }
   
   
-  public void setUniform(String name, PMatrix2D mat) {
+  public void set(String name, PMatrix2D mat) {
     float[] matv = { mat.m00, mat.m01, 
                      mat.m10, mat.m11 };
     setUniformImpl(name, UniformValue.MAT2, matv);
   }
   
   
-  public void setUniform(String name, PMatrix3D mat) {
-    setUniform(name, mat, false);
+  public void set(String name, PMatrix3D mat) {
+    set(name, mat, false);
   }
   
   
-  public void setUniform(String name, PMatrix3D mat, boolean use3x3) {
+  public void set(String name, PMatrix3D mat, boolean use3x3) {
     if (use3x3) {
       float[] matv = { mat.m00, mat.m01, mat.m02, 
                        mat.m10, mat.m11, mat.m12,
