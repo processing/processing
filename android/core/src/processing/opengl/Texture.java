@@ -411,7 +411,6 @@ public class Texture implements PConstants {
     }
     
     if (isModified()) {
-      PApplet.println("Getting pixels from texture...");
       // Regular pixel copy from texture.
       get(pixels);
     }
@@ -591,8 +590,6 @@ public class Texture implements PConstants {
       if (y2 < my1) my1 = PApplet.max(0, y2);
       if (y2 > my2) my2 = PApplet.min(height - 1, y2);
     }
-    
-    PApplet.println("Marking texels @" + x + "," + y + " " + w + "x" + h + " as updated");
   }
 
   
