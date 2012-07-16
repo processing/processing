@@ -352,6 +352,7 @@ public class PImage implements PConstants, Cloneable {
     }
     
     
+    parent.g.initCache(this);
     if (cacheMap != null) {
       for (PGraphics pg: cacheMap.keySet()) {
         Object obj = cacheMap.get(pg);
@@ -370,7 +371,7 @@ public class PImage implements PConstants, Cloneable {
           }
         }
       }      
-    }    
+    }  
   }
 
 

@@ -360,7 +360,6 @@ public class Capture extends PImage implements PConstants {
       ByteBuffer byteBuffer = natBuffer.getByteBuffer();
       
       try {
-        PApplet.println("copy buffer to sink...");
         sinkCopyMethod.invoke(bufferSink, new Object[] { natBuffer, byteBuffer, bufWidth, bufHeight });
       } catch (Exception e) {
         e.printStackTrace();
