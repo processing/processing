@@ -15,19 +15,19 @@ void setup() {
 
   PGraphicsOpenGL pg = (PGraphicsOpenGL)g;
   fisheye = pg.loadShader("FishEye.glsl", PShader.TEXTURED);
-  fisheye.setUniform("aperture", 180.0);
+  fisheye.set("aperture", 180.0);
   pg.setShader(fisheye, PShader.TEXTURED);
   usingFishEye = true;
   
   glossy = pg.loadShader("GlossyVert.glsl", "GlossyFrag.glsl", PShader.LIT);  
-  glossy.setUniform("AmbientColour", 0, 0, 0);
-  glossy.setUniform("DiffuseColour", 0.9, 0.2, 0.2);
-  glossy.setUniform("SpecularColour", 1.0, 1.0, 1.0);
-  glossy.setUniform("AmbientIntensity", 1.0);
-  glossy.setUniform("DiffuseIntensity", 1.0);
-  glossy.setUniform("SpecularIntensity", 0.7);
-  glossy.setUniform("Roughness", 0.7);
-  glossy.setUniform("Sharpness", 0.0);
+  glossy.set("AmbientColour", 0, 0, 0);
+  glossy.set("DiffuseColour", 0.9, 0.2, 0.2);
+  glossy.set("SpecularColour", 1.0, 1.0, 1.0);
+  glossy.set("AmbientIntensity", 1.0);
+  glossy.set("DiffuseIntensity", 1.0);
+  glossy.set("SpecularIntensity", 0.7);
+  glossy.set("Roughness", 0.7);
+  glossy.set("Sharpness", 0.0);
   ((PGraphicsOpenGL)canvas).setShader(glossy, PShader.LIT);
   
   ball = createShape(SPHERE, 50);
