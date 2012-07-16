@@ -414,6 +414,10 @@ public class PGL {
   }
   
   
+  public void setToolkit(int toolkit) {
+  }
+  
+  
   public void initPrimarySurface(int antialias) {
     // We do the initialization in updatePrimary() because
     // at the moment initPrimarySurface() gets called we 

@@ -96,8 +96,9 @@ public class Texture implements PConstants {
 
   protected FrameBuffer tempFbo = null;
 
-  /** modified portion of the texture */
+  /** Modified portion of the texture */
   protected boolean modified;
+  protected int mx1, my1, mx2, my2;
     
   protected Object bufferSource;
   protected LinkedList<BufferData> bufferCache = null;
@@ -355,7 +356,9 @@ public class Texture implements PConstants {
     }
 
     pgl.glBindTexture(glTarget, 0);
-    pgl.disableTexturing(glTarget);        
+    pgl.disableTexturing(glTarget);
+    
+    updateTexels(x, y, w, h);        
   }  
   
   
@@ -394,6 +397,27 @@ public class Texture implements PConstants {
     if (flippedY) flipArrayOnY(pixels, 1);    
   }
 
+  
+  /**
+   * Copies the contents of the texture to the pixels array.
+   * @param pixels
+   */
+  public void loadPixels(int[] pixels) {
+    if (hasBuffers()) {
+      // Updates the texture AND the pixels array of the image at the same time,
+      // getting the pixels directly from the buffer data (and thus avoiding expensive 
+      // transfer between video and main memory).
+      bufferUpdate(pixels);
+    }
+    
+    if (isModified()) {
+      // Regular pixel copy from texture.
+      get(pixels);
+    }
+    
+    setModified(false);
+  }
+  
   
   ////////////////////////////////////////////////////////////
   
@@ -481,15 +505,18 @@ public class Texture implements PConstants {
   
   // Bind/unbind  
   
+  
   public void bind() {
     pgl.enableTexturing(glTarget);
     pgl.glBindTexture(glTarget, glID);
   }
   
+  
   public void unbind() {
     pgl.enableTexturing(glTarget);
     pgl.glBindTexture(glTarget, 0);    
   }  
+  
   
   //////////////////////////////////////////////////////////////
 
@@ -509,7 +536,62 @@ public class Texture implements PConstants {
   public void setModified(boolean m) {
     modified = m;
   } 
+
   
+  public int getModifiedX1() {
+    return mx1;
+  }
+
+  
+  public int getModifiedX2() {
+    return mx2;
+  }
+
+  
+  public int getModifiedY1() {
+    return my1;
+  }
+
+  
+  public int getModifiedY2() {
+    return my2;
+  }  
+ 
+
+  public void updateTexels() {
+    updateTexelsImpl(0, 0, width, height);
+  }  
+  
+  
+  public void updateTexels(int x, int y, int w, int h) {
+    updateTexelsImpl(x, y, w, h);
+  }
+
+  
+  protected void updateTexelsImpl(int x, int y, int w, int h) {
+    int x2 = x + w;
+    int y2 = y + h;
+
+    if (!modified) {
+      mx1 = PApplet.max(0, x);
+      mx2 = PApplet.min(width - 1, x2);
+      my1 = PApplet.max(0, y);
+      my2 = PApplet.min(height - 1, y2);
+      modified = true;
+
+    } else {
+      if (x < mx1) mx1 = PApplet.max(0, x);
+      if (x > mx2) mx2 = PApplet.min(width - 1, x);
+      if (y < my1) my1 = PApplet.max(0, y);
+      if (y > my2) my2 = y;
+
+      if (x2 < mx1) mx1 = PApplet.max(0, x2);
+      if (x2 > mx2) mx2 = PApplet.min(width - 1, x2);
+      if (y2 < my1) my1 = PApplet.max(0, y2);
+      if (y2 > my2) my2 = PApplet.min(height - 1, y2);
+    }
+  }
+
   
   ////////////////////////////////////////////////////////////
   
@@ -538,10 +620,12 @@ public class Texture implements PConstants {
       }  
     }
   }
-    
+  
+  
   public boolean hasBufferSource() {
     return bufferSource != null;
   }
+  
   
   public boolean hasBuffers() {
     return bufferSource != null && bufferCache != null && 0 < bufferCache.size();
@@ -571,10 +655,9 @@ public class Texture implements PConstants {
       return false;
     }    
   }
- 
-  
+
+
   protected boolean bufferUpdate(int[] pixels) {
-    //PApplet.println("buffer update with pix");
     BufferData data = null;
     try {
       data = bufferCache.remove(0);
@@ -600,6 +683,7 @@ public class Texture implements PConstants {
       return false;
     }    
   }
+
   
   protected void getSourceMethods() {
     try {
@@ -608,6 +692,7 @@ public class Texture implements PConstants {
       throw new RuntimeException("PTexture: provided source object doesn't have a disposeBuffer method.");
     }        
   }
+  
   
   ////////////////////////////////////////////////////////////     
  
@@ -933,6 +1018,7 @@ public class Texture implements PConstants {
     return outdated;
   }
   
+  
   ///////////////////////////////////////////////////////////  
 
   // Utilities.    
@@ -969,23 +1055,31 @@ public class Texture implements PConstants {
                                               x, y, w, h, x, y, w, h);
     }
     pg.popFramebuffer();
+    updateTexels(x, y, w, h);
   }  
+  
   
   protected void setTexels(int[] pix, int x, int y, int w, int h) {
     setTexels(pix, 0, x, y, w, h);
   }
   
+  
   protected void setTexels(int[] pix, int level, int x, int y, int w, int h) {
     pgl.glTexSubImage2D(glTarget, level, x, y, w, h, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, IntBuffer.wrap(pix));
+    updateTexels(x, y, w, h);
   }
 
+  
   protected void setTexels(IntBuffer buffer, int x, int y, int w, int h) {
     setTexels(buffer, 0, x, y, w, h);
   }  
   
+  
   protected void setTexels(IntBuffer buffer, int level, int x, int y, int w, int h) {
     pgl.glTexSubImage2D(glTarget, level, x, y, w, h, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, buffer);
+    updateTexels(x, y, w, h);
   }
+  
   
   protected void copyObject(Texture src) {
     // The OpenGL texture of this object is replaced with the one from the source object, 
@@ -1014,7 +1108,8 @@ public class Texture implements PConstants {
     flippedX = src.flippedX;   
     flippedY = src.flippedY;
   }
-    
+  
+  
   ///////////////////////////////////////////////////////////  
   
   // Parameter handling

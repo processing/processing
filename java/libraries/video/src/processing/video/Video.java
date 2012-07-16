@@ -73,7 +73,7 @@ public class Video implements PConstants {
   // can improve performance significantly, since the video frames are automatically
   // copied into the texture without passing through the pixels arrays, as well as 
   // having the color conversion into RGBA handled natively by gstreamer.
-  public static boolean useGLBufferSink = false;  
+  public static boolean useGLBufferSink = true;  
   
   // Path that the video library will use to load the gstreamer native libs from.
   // It is buit either from the system or local paths.
