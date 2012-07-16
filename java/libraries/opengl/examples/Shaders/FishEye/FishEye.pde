@@ -10,7 +10,7 @@ void setup() {
 
   PGraphicsOpenGL pg = (PGraphicsOpenGL)g;
   fisheye = pg.loadShader("FishEye.glsl", PShader.TEXTURED);
-  fisheye.setUniform("aperture", 180.0);
+  fisheye.set("aperture", 180.0);
   pg.setShader(fisheye, PShader.TEXTURED);
 }
 

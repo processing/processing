@@ -48,10 +48,10 @@ public void draw() {
   if (enabled) {
     pg.setShader(shader, PShader.LIT);
    
-    shader.setUniform("Scale", scaleR, scaleG, scaleB);
-    shader.setUniform("Offset", offsetR, offsetG, offsetB);
-    shader.setUniform("Register", registerR, registerG, registerB);
-    shader.setUniform("Size", sizeR, sizeG, sizeB);
+    shader.set("Scale", scaleR, scaleG, scaleB);
+    shader.set("Offset", offsetR, offsetG, offsetB);
+    shader.set("Register", registerR, registerG, registerB);
+    shader.set("Size", sizeR, sizeG, sizeB);
   } else {
     pg.defaultShader(PShader.LIT); 
   }
