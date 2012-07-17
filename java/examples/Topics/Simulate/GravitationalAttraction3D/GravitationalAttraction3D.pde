@@ -8,6 +8,11 @@
  * m2 --> mass of object #2
  * d ---> distance between objects
  * F = (G*m1*m2)/(d*d)
+ *
+ * For the basics of working with PVector, see
+ * http://processing.org/learning/pvector/
+ * as well as examples in Topics/Vectors/
+ * 
  */
 
 // A bunch of planets
