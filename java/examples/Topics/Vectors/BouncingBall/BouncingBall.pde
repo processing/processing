@@ -3,7 +3,8 @@
  * by Daniel Shiffman.  
  * 
  * Demonstration of using vectors to control motion of body
- * This example is not object-oriented (see AccelerationWithVectors and ForcesWithVectors for OOP)
+ * This example is not object-oriented
+ * See AccelerationWithVectors for an example of how to simulate motion using vectors in an object
  */
  
 PVector location;  // Location of shape
