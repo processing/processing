@@ -4,7 +4,7 @@
  * How to load an SVG into a PShape 
  */
 
-// PShapoe object
+// PShape object
 PShape svg;
 
 void setup() {

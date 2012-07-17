@@ -5,16 +5,21 @@
  * Demonstration of multiple force acting on bodies (Mover class)
  * Bodies experience gravity continuously
  * Bodies experience fluid resistance when in "water"
+ *
+ * For the basics of working with PVector, see
+ * http://processing.org/learning/pvector/
+ * as well as examples in Topics/Vectors/
+ * 
  */
 
 // Five moving bodies
-Mover[] movers = new Mover[5];
+Mover[] movers = new Mover[10];
 
 // Liquid
 Liquid liquid;
 
 void setup() {
-  size(360, 640);
+  size(640, 360);
   smooth();
   reset();
   // Create liquid object
@@ -60,7 +65,7 @@ void mousePressed() {
 // Restart all the Mover objects randomly
 void reset() {
   for (int i = 0; i < movers.length; i++) {
-    movers[i] = new Mover(random(1, 5), 40+i*70, 0);
+    movers[i] = new Mover(random(0.5, 3), 40+i*70, 0);
   }
 }
 
