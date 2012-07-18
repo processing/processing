@@ -8,10 +8,9 @@ void setup() {
   size(400, 400, P3D);  
   canvas = createGraphics(400, 400, P3D);
 
-  PGraphicsOpenGL pg = (PGraphicsOpenGL)g;
-  fisheye = pg.loadShader("FishEye.glsl", PShader.TEXTURED);
+  fisheye = (PShader)loadShader("FishEye.glsl", PShader.TEXTURED);
   fisheye.set("aperture", 180.0);
-  pg.setShader(fisheye, PShader.TEXTURED);
+  shader(fisheye, PShader.TEXTURED);
 }
 
 void draw() {
@@ -36,4 +35,3 @@ void draw() {
   // it was set as the PShader.TEXTURED shader of the main surface.
   image(canvas, 0, 0, width, height);
 }
-

@@ -71,8 +71,7 @@ public class Texture implements PConstants {
 
   public int width, height;
 
-  // These are public but use at your own risk!
-  public int glID; 
+  public int glName; 
   public int glTarget;
   public int glFormat;
   public int glMinFilter;  
@@ -137,7 +136,7 @@ public class Texture implements PConstants {
     pgl = pg.pgl;    
     context = pgl.createEmptyContext();
     
-    glID = 0;
+    glName = 0;
      
     init(width, height, (Parameters)params);    
   } 
@@ -145,8 +144,8 @@ public class Texture implements PConstants {
   
   protected void finalize() throws Throwable {
     try {
-      if (glID != 0) {
-        pg.finalizeTextureObject(glID, context.code());
+      if (glName != 0) {
+        pg.finalizeTextureObject(glName, context.code());
       }
     } finally {
       super.finalize();
@@ -168,7 +167,7 @@ public class Texture implements PConstants {
    */
   public void init(int width, int height) {
     Parameters params;
-    if (0 < glID) {
+    if (0 < glName) {
       // Re-initializing a pre-existing texture.
       // We use the current parameters as default:
       params = getParameters();      
@@ -220,7 +219,7 @@ public class Texture implements PConstants {
    * @return boolean
    */  
   public boolean available()  {
-    return 0 < glID;
+    return 0 < glName;
   }
 
   
@@ -278,7 +277,7 @@ public class Texture implements PConstants {
     }
     
     pgl.enableTexturing(glTarget);
-    pgl.glBindTexture(glTarget, glID);
+    pgl.glBindTexture(glTarget, glName);
                 
     if (usingMipmaps) {
       if (PGraphicsOpenGL.autoMipmapGenSupported) {
@@ -508,7 +507,7 @@ public class Texture implements PConstants {
   
   public void bind() {
     pgl.enableTexturing(glTarget);
-    pgl.glBindTexture(glTarget, glID);
+    pgl.glBindTexture(glTarget, glName);
   }
   
   
@@ -972,9 +971,9 @@ public class Texture implements PConstants {
     pgl.enableTexturing(glTarget);
     
     context = pgl.getCurrentContext();    
-    glID = pg.createTextureObject(context.code());    
+    glName = pg.createTextureObject(context.code());    
     
-    pgl.glBindTexture(glTarget, glID);    
+    pgl.glBindTexture(glTarget, glName);    
     pgl.glTexParameterf(glTarget, PGL.GL_TEXTURE_MIN_FILTER, glMinFilter);    
     pgl.glTexParameterf(glTarget, PGL.GL_TEXTURE_MAG_FILTER, glMagFilter);
     pgl.glTexParameterf(glTarget, PGL.GL_TEXTURE_WRAP_S, glWrapS);
@@ -996,9 +995,9 @@ public class Texture implements PConstants {
    * Marks the texture object for deletion.
    */
   protected void release() {    
-    if (glID != 0) {      
-      pg.finalizeTextureObject(glID, context.code());
-      glID = 0;
+    if (glName != 0) {      
+      pg.finalizeTextureObject(glName, context.code());
+      glName = 0;
     }    
   }
 
@@ -1009,11 +1008,11 @@ public class Texture implements PConstants {
       // Removing the texture object from the renderer's list so it
       // doesn't get deleted by OpenGL. The texture object was 
       // automatically disposed when the old context was destroyed.
-      pg.removeTextureObject(glID, context.code());
+      pg.removeTextureObject(glName, context.code());
       
       // And then set the id to zero, so it doesn't try to be
       // deleted when the object's finalizer is invoked by the GC.
-      glID = 0;     
+      glName = 0;     
     }
     return outdated;
   }
@@ -1044,14 +1043,14 @@ public class Texture implements PConstants {
     if (scale) {
       // Rendering tex into "this", and scaling the source rectangle
       // to cover the entire destination region.
-      pgl.drawTexture(tex.glTarget, tex.glID, tex.glWidth, tex.glHeight,
+      pgl.drawTexture(tex.glTarget, tex.glName, tex.glWidth, tex.glHeight,
                                               x, y, w, h, 0, 0, width, height);
       
     } else {
       // Rendering tex into "this" but without scaling so the contents 
       // of the source texture fall in the corresponding texels of the
       // destination.
-      pgl.drawTexture(tex.glTarget, tex.glID, tex.glWidth, tex.glHeight,
+      pgl.drawTexture(tex.glTarget, tex.glName, tex.glWidth, tex.glHeight,
                                               x, y, w, h, x, y, w, h);
     }
     pg.popFramebuffer();
@@ -1092,7 +1091,7 @@ public class Texture implements PConstants {
     parent = src.parent;
     pg = src.pg;
     
-    glID = src.glID;
+    glName = src.glName;
     glTarget = src.glTarget;
     glFormat = src.glFormat;
     glMinFilter = src.glMinFilter;  

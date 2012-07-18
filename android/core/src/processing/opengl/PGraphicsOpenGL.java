@@ -77,29 +77,29 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // VBOs for immediate rendering:
 
-  public int glPolyVertexBufferID;
-  public int glPolyColorBufferID;
-  public int glPolyNormalBufferID;
-  public int glPolyTexcoordBufferID;
-  public int glPolyAmbientBufferID;
-  public int glPolySpecularBufferID;
-  public int glPolyEmissiveBufferID;
-  public int glPolyShininessBufferID;
-  public int glPolyIndexBufferID;
+  public int glPolyVertex;
+  public int glPolyColor;
+  public int glPolyNormal;
+  public int glPolyTexcoord;
+  public int glPolyAmbient;
+  public int glPolySpecular;
+  public int glPolyEmissive;
+  public int glPolyShininess;
+  public int glPolyIndex;
   protected boolean polyBuffersCreated = false;
   protected PGL.Context polyBuffersContext;
 
-  public int glLineVertexBufferID;
-  public int glLineColorBufferID;
-  public int glLineAttribBufferID;
-  public int glLineIndexBufferID;
+  public int glLineVertex;
+  public int glLineColor;
+  public int glLineAttrib;
+  public int glLineIndex;
   protected boolean lineBuffersCreated = false;
   protected PGL.Context lineBuffersContext;
 
-  public int glPointVertexBufferID;
-  public int glPointColorBufferID;
-  public int glPointAttribBufferID;
-  public int glPointIndexBufferID;
+  public int glPointVertex;
+  public int glPointColor;
+  public int glPointAttrib;
+  public int glPointIndex;
   protected boolean pointBuffersCreated = false;
   protected PGL.Context pointBuffersContext;
 
@@ -358,6 +358,10 @@ public class PGraphicsOpenGL extends PGraphics {
   /** A handy reference to the PTexture bound to the drawing surface
    * (off or on-screen) */
   protected Texture texture;
+  
+  /** Used to create a temporary copy of the color buffer of this  
+   * rendering surface when applying a filter */
+  protected Texture textureCopy;
 
   /** IntBuffer wrapping the pixels array. */
   protected IntBuffer pixelBuffer;
@@ -445,25 +449,25 @@ public class PGraphicsOpenGL extends PGraphics {
     tessGeo = newTessGeometry(IMMEDIATE);
     texCache = newTexCache();
 
-    glPolyVertexBufferID = 0;
-    glPolyColorBufferID = 0;
-    glPolyNormalBufferID = 0;
-    glPolyTexcoordBufferID = 0;
-    glPolyAmbientBufferID = 0;
-    glPolySpecularBufferID = 0;
-    glPolyEmissiveBufferID = 0;
-    glPolyShininessBufferID = 0;
-    glPolyIndexBufferID = 0;
+    glPolyVertex = 0;
+    glPolyColor = 0;
+    glPolyNormal = 0;
+    glPolyTexcoord = 0;
+    glPolyAmbient = 0;
+    glPolySpecular = 0;
+    glPolyEmissive = 0;
+    glPolyShininess = 0;
+    glPolyIndex = 0;
 
-    glLineVertexBufferID = 0;
-    glLineColorBufferID = 0;
-    glLineAttribBufferID = 0;
-    glLineIndexBufferID = 0;
+    glLineVertex = 0;
+    glLineColor = 0;
+    glLineAttrib = 0;
+    glLineIndex = 0;
 
-    glPointVertexBufferID = 0;
-    glPointColorBufferID = 0;
-    glPointAttribBufferID = 0;
-    glPointIndexBufferID = 0;
+    glPointVertex = 0;
+    glPointColor = 0;
+    glPointAttrib = 0;
+    glPointIndex = 0;
   }
 
 
@@ -1114,42 +1118,42 @@ public class PGraphicsOpenGL extends PGraphics {
       int sizei = INIT_VERTEX_BUFFER_SIZE * PGL.SIZEOF_INT;
       int sizex = INIT_INDEX_BUFFER_SIZE * PGL.SIZEOF_INDEX;
 
-      glPolyVertexBufferID = createVertexBufferObject(polyBuffersContext.code());
-      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPolyVertexBufferID);
+      glPolyVertex = createVertexBufferObject(polyBuffersContext.code());
+      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPolyVertex);
       pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, null, PGL.GL_STATIC_DRAW);
 
-      glPolyColorBufferID = createVertexBufferObject(polyBuffersContext.code());
-      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPolyColorBufferID);
+      glPolyColor = createVertexBufferObject(polyBuffersContext.code());
+      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPolyColor);
       pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, PGL.GL_STATIC_DRAW);
 
-      glPolyNormalBufferID = createVertexBufferObject(polyBuffersContext.code());
-      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPolyNormalBufferID);
+      glPolyNormal = createVertexBufferObject(polyBuffersContext.code());
+      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPolyNormal);
       pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, null, PGL.GL_STATIC_DRAW);
 
-      glPolyTexcoordBufferID = createVertexBufferObject(polyBuffersContext.code());
-      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPolyTexcoordBufferID);
+      glPolyTexcoord = createVertexBufferObject(polyBuffersContext.code());
+      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPolyTexcoord);
       pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 2 * sizef, null, PGL.GL_STATIC_DRAW);
 
-      glPolyAmbientBufferID = pgPrimary.createVertexBufferObject(polyBuffersContext.code());
-      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPolyAmbientBufferID);
+      glPolyAmbient = pgPrimary.createVertexBufferObject(polyBuffersContext.code());
+      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPolyAmbient);
       pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, PGL.GL_STATIC_DRAW);
 
-      glPolySpecularBufferID = pgPrimary.createVertexBufferObject(polyBuffersContext.code());
-      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPolySpecularBufferID);
+      glPolySpecular = pgPrimary.createVertexBufferObject(polyBuffersContext.code());
+      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPolySpecular);
       pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, PGL.GL_STATIC_DRAW);
 
-      glPolyEmissiveBufferID = pgPrimary.createVertexBufferObject(polyBuffersContext.code());
-      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPolyEmissiveBufferID);
+      glPolyEmissive = pgPrimary.createVertexBufferObject(polyBuffersContext.code());
+      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPolyEmissive);
       pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, PGL.GL_STATIC_DRAW);
 
-      glPolyShininessBufferID = pgPrimary.createVertexBufferObject(polyBuffersContext.code());
-      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPolyShininessBufferID);
+      glPolyShininess = pgPrimary.createVertexBufferObject(polyBuffersContext.code());
+      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPolyShininess);
       pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizef, null, PGL.GL_STATIC_DRAW);
 
       pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
 
-      glPolyIndexBufferID = createVertexBufferObject(polyBuffersContext.code());
-      pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glPolyIndexBufferID);
+      glPolyIndex = createVertexBufferObject(polyBuffersContext.code());
+      pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glPolyIndex);
       pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, sizex, null, PGL.GL_STATIC_DRAW);
 
       pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -1166,36 +1170,36 @@ public class PGraphicsOpenGL extends PGraphics {
     int sizef = size * PGL.SIZEOF_FLOAT;
     int sizei = size * PGL.SIZEOF_INT;
 
-    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPolyVertexBufferID);
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPolyVertex);
     pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 4 * sizef, FloatBuffer.wrap(tessGeo.polyVertices, 0, 4 * size), PGL.GL_STATIC_DRAW);
 
-    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPolyColorBufferID);
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPolyColor);
     pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, IntBuffer.wrap(tessGeo.polyColors, 0, size), PGL.GL_STATIC_DRAW);
 
     if (lit) {
-      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPolyNormalBufferID);
+      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPolyNormal);
       pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, FloatBuffer.wrap(tessGeo.polyNormals, 0, 3 * size), PGL.GL_STATIC_DRAW);
 
-      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPolyAmbientBufferID);
+      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPolyAmbient);
       pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, IntBuffer.wrap(tessGeo.polyAmbient, 0, size), PGL.GL_STATIC_DRAW);
 
-      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPolySpecularBufferID);
+      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPolySpecular);
       pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, IntBuffer.wrap(tessGeo.polySpecular, 0, size), PGL.GL_STATIC_DRAW);
 
-      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPolyEmissiveBufferID);
+      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPolyEmissive);
       pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, IntBuffer.wrap(tessGeo.polyEmissive, 0, size), PGL.GL_STATIC_DRAW);
 
 
-      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPolyShininessBufferID);
+      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPolyShininess);
       pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizef, FloatBuffer.wrap(tessGeo.polyShininess, 0, size), PGL.GL_STATIC_DRAW);
     }
 
     if (tex) {
-      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPolyTexcoordBufferID);
+      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPolyTexcoord);
       pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 2 * sizef, FloatBuffer.wrap(tessGeo.polyTexcoords, 0, 2 * size), PGL.GL_STATIC_DRAW);
     }
     
-    pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glPolyIndexBufferID);
+    pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glPolyIndex);
     pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, tessGeo.polyIndexCount * PGL.SIZEOF_INDEX,
                      ShortBuffer.wrap(tessGeo.polyIndices, 0, tessGeo.polyIndexCount), PGL.GL_STATIC_DRAW);     
   }
@@ -1214,32 +1218,32 @@ public class PGraphicsOpenGL extends PGraphics {
   
   protected void deletePolyBuffers() {
     if (polyBuffersCreated) {
-      deleteVertexBufferObject(glPolyVertexBufferID, polyBuffersContext.code());
-      glPolyVertexBufferID = 0;
+      deleteVertexBufferObject(glPolyVertex, polyBuffersContext.code());
+      glPolyVertex = 0;
 
-      deleteVertexBufferObject(glPolyColorBufferID, polyBuffersContext.code());
-      glPolyColorBufferID = 0;
+      deleteVertexBufferObject(glPolyColor, polyBuffersContext.code());
+      glPolyColor = 0;
 
-      deleteVertexBufferObject(glPolyNormalBufferID, polyBuffersContext.code());
-      glPolyNormalBufferID = 0;
+      deleteVertexBufferObject(glPolyNormal, polyBuffersContext.code());
+      glPolyNormal = 0;
 
-      deleteVertexBufferObject(glPolyTexcoordBufferID, polyBuffersContext.code());
-      glPolyTexcoordBufferID = 0;
+      deleteVertexBufferObject(glPolyTexcoord, polyBuffersContext.code());
+      glPolyTexcoord = 0;
 
-      deleteVertexBufferObject(glPolyAmbientBufferID, polyBuffersContext.code());
-      glPolyAmbientBufferID = 0;
+      deleteVertexBufferObject(glPolyAmbient, polyBuffersContext.code());
+      glPolyAmbient = 0;
 
-      deleteVertexBufferObject(glPolySpecularBufferID, polyBuffersContext.code());
-      glPolySpecularBufferID = 0;
+      deleteVertexBufferObject(glPolySpecular, polyBuffersContext.code());
+      glPolySpecular = 0;
 
-      deleteVertexBufferObject(glPolyEmissiveBufferID, polyBuffersContext.code());
-      glPolyEmissiveBufferID = 0;
+      deleteVertexBufferObject(glPolyEmissive, polyBuffersContext.code());
+      glPolyEmissive = 0;
 
-      deleteVertexBufferObject(glPolyShininessBufferID, polyBuffersContext.code());
-      glPolyShininessBufferID = 0;
+      deleteVertexBufferObject(glPolyShininess, polyBuffersContext.code());
+      glPolyShininess = 0;
 
-      deleteVertexBufferObject(glPolyIndexBufferID, polyBuffersContext.code());
-      glPolyIndexBufferID = 0;    
+      deleteVertexBufferObject(glPolyIndex, polyBuffersContext.code());
+      glPolyIndex = 0;    
       
       polyBuffersCreated = false;
     }
@@ -1254,23 +1258,23 @@ public class PGraphicsOpenGL extends PGraphics {
       int sizei = INIT_VERTEX_BUFFER_SIZE * PGL.SIZEOF_INT;
       int sizex = INIT_INDEX_BUFFER_SIZE * PGL.SIZEOF_INDEX;
 
-      glLineVertexBufferID = createVertexBufferObject(lineBuffersContext.code());
+      glLineVertex = createVertexBufferObject(lineBuffersContext.code());
 
-      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineVertexBufferID);
+      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineVertex);
       pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, null, PGL.GL_STATIC_DRAW);
 
-      glLineColorBufferID = createVertexBufferObject(lineBuffersContext.code());
-      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineColorBufferID);
+      glLineColor = createVertexBufferObject(lineBuffersContext.code());
+      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineColor);
       pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, PGL.GL_STATIC_DRAW);
 
-      glLineAttribBufferID = createVertexBufferObject(lineBuffersContext.code());
-      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineAttribBufferID);
+      glLineAttrib = createVertexBufferObject(lineBuffersContext.code());
+      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineAttrib);
       pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 4 * sizef, null, PGL.GL_STATIC_DRAW);
 
       pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
 
-      glLineIndexBufferID = createVertexBufferObject(lineBuffersContext.code());
-      pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glLineIndexBufferID);
+      glLineIndex = createVertexBufferObject(lineBuffersContext.code());
+      pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glLineIndex);
       pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, sizex, null, PGL.GL_STATIC_DRAW);
 
       pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -1287,16 +1291,16 @@ public class PGraphicsOpenGL extends PGraphics {
     int sizef = size * PGL.SIZEOF_FLOAT;
     int sizei = size * PGL.SIZEOF_INT;
 
-    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineVertexBufferID);
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineVertex);
     pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 4 * sizef, FloatBuffer.wrap(tessGeo.lineVertices, 0, 4 * size), PGL.GL_STATIC_DRAW);
 
-    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineColorBufferID);
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineColor);
     pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, IntBuffer.wrap(tessGeo.lineColors, 0, size), PGL.GL_STATIC_DRAW);
 
-    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineAttribBufferID);
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineAttrib);
     pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 4 * sizef, FloatBuffer.wrap(tessGeo.lineAttribs, 0, 4 * size), PGL.GL_STATIC_DRAW);
 
-    pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glLineIndexBufferID);
+    pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glLineIndex);
     pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, tessGeo.lineIndexCount * PGL.SIZEOF_INDEX,
                      ShortBuffer.wrap(tessGeo.lineIndices, 0, tessGeo.lineIndexCount), PGL.GL_STATIC_DRAW);
   }
@@ -1315,17 +1319,17 @@ public class PGraphicsOpenGL extends PGraphics {
   
   protected void deleteLineBuffers() {
     if (lineBuffersCreated) {
-      deleteVertexBufferObject(glLineVertexBufferID, lineBuffersContext.code());
-      glLineVertexBufferID = 0;
+      deleteVertexBufferObject(glLineVertex, lineBuffersContext.code());
+      glLineVertex = 0;
 
-      deleteVertexBufferObject(glLineColorBufferID, lineBuffersContext.code());
-      glLineColorBufferID = 0;
+      deleteVertexBufferObject(glLineColor, lineBuffersContext.code());
+      glLineColor = 0;
 
-      deleteVertexBufferObject(glLineAttribBufferID, lineBuffersContext.code());
-      glLineAttribBufferID = 0;
+      deleteVertexBufferObject(glLineAttrib, lineBuffersContext.code());
+      glLineAttrib = 0;
 
-      deleteVertexBufferObject(glLineIndexBufferID, lineBuffersContext.code());
-      glLineIndexBufferID = 0;
+      deleteVertexBufferObject(glLineIndex, lineBuffersContext.code());
+      glLineIndex = 0;
       
       lineBuffersCreated = false;
     }
@@ -1340,22 +1344,22 @@ public class PGraphicsOpenGL extends PGraphics {
       int sizei = INIT_VERTEX_BUFFER_SIZE * PGL.SIZEOF_INT;
       int sizex = INIT_INDEX_BUFFER_SIZE * PGL.SIZEOF_INDEX;      
 
-      glPointVertexBufferID = createVertexBufferObject(pointBuffersContext.code());
-      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointVertexBufferID);
+      glPointVertex = createVertexBufferObject(pointBuffersContext.code());
+      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointVertex);
       pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, null, PGL.GL_STATIC_DRAW);
 
-      glPointColorBufferID = createVertexBufferObject(pointBuffersContext.code());
-      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointColorBufferID);
+      glPointColor = createVertexBufferObject(pointBuffersContext.code());
+      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointColor);
       pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, PGL.GL_STATIC_DRAW);
 
-      glPointAttribBufferID = createVertexBufferObject(pointBuffersContext.code());
-      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointAttribBufferID);
+      glPointAttrib = createVertexBufferObject(pointBuffersContext.code());
+      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointAttrib);
       pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 2 * sizef, null, PGL.GL_STATIC_DRAW);
 
       pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
 
-      glPointIndexBufferID = createVertexBufferObject(pointBuffersContext.code());
-      pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glPointIndexBufferID);
+      glPointIndex = createVertexBufferObject(pointBuffersContext.code());
+      pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glPointIndex);
       pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, sizex, null, PGL.GL_STATIC_DRAW);
 
       pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -1372,16 +1376,16 @@ public class PGraphicsOpenGL extends PGraphics {
     int sizef = size * PGL.SIZEOF_FLOAT;
     int sizei = size * PGL.SIZEOF_INT;
 
-    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointVertexBufferID);
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointVertex);
     pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 4 * sizef, FloatBuffer.wrap(tessGeo.pointVertices, 0, 4 * size), PGL.GL_STATIC_DRAW);
 
-    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointColorBufferID);
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointColor);
     pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, IntBuffer.wrap(tessGeo.pointColors, 0, size), PGL.GL_STATIC_DRAW);
 
-    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointAttribBufferID);
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointAttrib);
     pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 2 * sizef, FloatBuffer.wrap(tessGeo.pointAttribs, 0, 2 * size), PGL.GL_STATIC_DRAW);
 
-    pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glPointIndexBufferID);
+    pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glPointIndex);
     pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, tessGeo.pointIndexCount * PGL.SIZEOF_INDEX,
                      ShortBuffer.wrap(tessGeo.pointIndices, 0, tessGeo.pointIndexCount), PGL.GL_STATIC_DRAW);
   }
@@ -1400,17 +1404,17 @@ public class PGraphicsOpenGL extends PGraphics {
   
   protected void deletePointBuffers() {
     if (pointBuffersCreated) {
-      deleteVertexBufferObject(glPointVertexBufferID, pointBuffersContext.code());
-      glPointVertexBufferID = 0;
+      deleteVertexBufferObject(glPointVertex, pointBuffersContext.code());
+      glPointVertex = 0;
 
-      deleteVertexBufferObject(glPointColorBufferID, pointBuffersContext.code());
-      glPointColorBufferID = 0;
+      deleteVertexBufferObject(glPointColor, pointBuffersContext.code());
+      glPointColor = 0;
 
-      deleteVertexBufferObject(glPointAttribBufferID, pointBuffersContext.code());
-      glPointAttribBufferID = 0;
+      deleteVertexBufferObject(glPointAttrib, pointBuffersContext.code());
+      glPointAttrib = 0;
 
-      deleteVertexBufferObject(glPointIndexBufferID, pointBuffersContext.code());
-      glPointIndexBufferID = 0;
+      deleteVertexBufferObject(glPointIndex, pointBuffersContext.code());
+      glPointIndex = 0;
       
       pointBuffersCreated = false;
     }
@@ -2475,23 +2479,23 @@ public class PGraphicsOpenGL extends PGraphics {
                                  cache.indexOffset[n] + cache.indexCount[n] - ioffset;        
         int voffset = cache.vertexOffset[n];
 
-        shader.setVertexAttribute(glPolyVertexBufferID, 4, PGL.GL_FLOAT, 0, 4 * voffset * PGL.SIZEOF_FLOAT);
-        shader.setColorAttribute(glPolyColorBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * voffset * PGL.SIZEOF_BYTE);
+        shader.setVertexAttribute(glPolyVertex, 4, PGL.GL_FLOAT, 0, 4 * voffset * PGL.SIZEOF_FLOAT);
+        shader.setColorAttribute(glPolyColor, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * voffset * PGL.SIZEOF_BYTE);
         
         if (lights) {
-          shader.setNormalAttribute(glPolyNormalBufferID, 3, PGL.GL_FLOAT, 0, 3 * voffset * PGL.SIZEOF_FLOAT);
-          shader.setAmbientAttribute(glPolyAmbientBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * voffset * PGL.SIZEOF_BYTE);
-          shader.setSpecularAttribute(glPolySpecularBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * voffset * PGL.SIZEOF_BYTE);
-          shader.setEmissiveAttribute(glPolyEmissiveBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * voffset * PGL.SIZEOF_BYTE);
-          shader.setShininessAttribute(glPolyShininessBufferID, 1, PGL.GL_FLOAT, 0, voffset * PGL.SIZEOF_FLOAT);
+          shader.setNormalAttribute(glPolyNormal, 3, PGL.GL_FLOAT, 0, 3 * voffset * PGL.SIZEOF_FLOAT);
+          shader.setAmbientAttribute(glPolyAmbient, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * voffset * PGL.SIZEOF_BYTE);
+          shader.setSpecularAttribute(glPolySpecular, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * voffset * PGL.SIZEOF_BYTE);
+          shader.setEmissiveAttribute(glPolyEmissive, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * voffset * PGL.SIZEOF_BYTE);
+          shader.setShininessAttribute(glPolyShininess, 1, PGL.GL_FLOAT, 0, voffset * PGL.SIZEOF_FLOAT);
         }
         
         if (tex != null) {
-          shader.setTexcoordAttribute(glPolyTexcoordBufferID, 2, PGL.GL_FLOAT, 0, 2 * voffset * PGL.SIZEOF_FLOAT);
+          shader.setTexcoordAttribute(glPolyTexcoord, 2, PGL.GL_FLOAT, 0, 2 * voffset * PGL.SIZEOF_FLOAT);
           shader.setTexture(tex);
         }
         
-        pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glPolyIndexBufferID);
+        pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glPolyIndex);
         pgl.glDrawElements(PGL.GL_TRIANGLES, icount, PGL.INDEX_TYPE, ioffset * PGL.SIZEOF_INDEX);
         pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
       }
@@ -2613,11 +2617,11 @@ public class PGraphicsOpenGL extends PGraphics {
       int icount = cache.indexCount[n];
       int voffset = cache.vertexOffset[n];
       
-      shader.setVertexAttribute(glLineVertexBufferID, 4, PGL.GL_FLOAT, 0, 4 * voffset * PGL.SIZEOF_FLOAT);
-      shader.setColorAttribute(glLineColorBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * voffset * PGL.SIZEOF_BYTE);
-      shader.setLineAttribute(glLineAttribBufferID, 4, PGL.GL_FLOAT, 0, 4 * voffset * PGL.SIZEOF_FLOAT);
+      shader.setVertexAttribute(glLineVertex, 4, PGL.GL_FLOAT, 0, 4 * voffset * PGL.SIZEOF_FLOAT);
+      shader.setColorAttribute(glLineColor, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * voffset * PGL.SIZEOF_BYTE);
+      shader.setLineAttribute(glLineAttrib, 4, PGL.GL_FLOAT, 0, 4 * voffset * PGL.SIZEOF_FLOAT);
 
-      pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glLineIndexBufferID);
+      pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glLineIndex);
       pgl.glDrawElements(PGL.GL_TRIANGLES, icount, PGL.INDEX_TYPE, ioffset * PGL.SIZEOF_INDEX);
       pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
     }
@@ -2711,11 +2715,11 @@ public class PGraphicsOpenGL extends PGraphics {
       int icount = cache.indexCount[n];
       int voffset = cache.vertexOffset[n];
 
-      shader.setVertexAttribute(glPointVertexBufferID, 4, PGL.GL_FLOAT, 0, 4 * voffset * PGL.SIZEOF_FLOAT);
-      shader.setColorAttribute(glPointColorBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * voffset * PGL.SIZEOF_BYTE);
-      shader.setPointAttribute(glPointAttribBufferID, 2, PGL.GL_FLOAT, 0, 2 * voffset * PGL.SIZEOF_FLOAT);
+      shader.setVertexAttribute(glPointVertex, 4, PGL.GL_FLOAT, 0, 4 * voffset * PGL.SIZEOF_FLOAT);
+      shader.setColorAttribute(glPointColor, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * voffset * PGL.SIZEOF_BYTE);
+      shader.setPointAttribute(glPointAttrib, 2, PGL.GL_FLOAT, 0, 2 * voffset * PGL.SIZEOF_FLOAT);
 
-      pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glPointIndexBufferID);
+      pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glPointIndex);
       pgl.glDrawElements(PGL.GL_TRIANGLES, icount, PGL.INDEX_TYPE, ioffset * PGL.SIZEOF_INDEX);
       pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
     }
@@ -4977,7 +4981,7 @@ public class PGraphicsOpenGL extends PGraphics {
     if (primarySurface) {
       loadTextureImpl(POINT, false);  // (first making sure that the screen texture is valid).
     }    
-    pgl.copyToTexture(texture.glTarget, texture.glFormat, texture.glID,
+    pgl.copyToTexture(texture.glTarget, texture.glFormat, texture.glName,
                       x, y, w, h, IntBuffer.wrap(rgbaPixels));
     
     if (primarySurface || offscreenMultisample) {
@@ -5096,14 +5100,14 @@ public class PGraphicsOpenGL extends PGraphics {
   
   
   protected void drawTexture() {
-    pgl.drawTexture(texture.glTarget, texture.glID,
+    pgl.drawTexture(texture.glTarget, texture.glName,
                     texture.glWidth, texture.glHeight,
                     0, 0, width, height);
   }
 
 
   protected void drawTexture(int x, int y, int w, int h) {
-    pgl.drawTexture(texture.glTarget, texture.glID,
+    pgl.drawTexture(texture.glTarget, texture.glName,
                     texture.glWidth, texture.glHeight,
                     x, y, x + w, y + h);
   }
@@ -5193,6 +5197,57 @@ public class PGraphicsOpenGL extends PGraphics {
     PImage temp = get();
     temp.filter(kind, param);
     set(0, 0, temp);
+  }
+  
+  
+  public void filter(Object shader) {
+    if (!(shader instanceof PolyTexShader)) {
+      PGraphics.showWarning("Object is not a valid shader");
+      return;
+    }
+    
+    PolyTexShader texShader = (PolyTexShader)shader;
+    
+//    if (shader instanceof FilterShader) {
+//      
+//    }
+    
+     if (primarySurface) {
+    
+    
+     } else {
+       if (textureCopy == null) {         
+         Texture.Parameters params = new Texture.Parameters(ARGB, Texture.BILINEAR, false);
+         textureCopy = new Texture(parent, width, height, params);
+         textureCopy.setFlippedY(true);                  
+       }
+       
+       flush();
+       
+       // Disable writing to the depth buffer, so that after applying the filter we can
+       // still use the depth information to properly add geometry to the scene.
+       
+       offscreenFramebuffer.setColorBuffer(textureCopy);
+       offscreenFramebuffer.clear();
+       
+       // Disable depth test so the texture overwrites everything else.
+       
+       beginPGL();
+       pgl.drawTexture(texture.glTarget, texture.glName,
+                       texture.glWidth, texture.glHeight,
+                       0, 0, width, height);       
+       endPGL();
+
+       offscreenFramebuffer.setColorBuffer(texture);
+       offscreenFramebuffer.clear();
+       
+       beginPGL();       
+       pgl.drawTextureCustom(textureCopy.glTarget, textureCopy.glName,
+                             textureCopy.glWidth, textureCopy.glHeight,
+                             0, 0, width, height, texShader.glProgram);       
+       endPGL();              
+     }
+   
   }
 
 
@@ -5367,38 +5422,31 @@ public class PGraphicsOpenGL extends PGraphics {
    * @param img the image to have a texture metadata associated to it
    */
   public Texture getTexture(PImage img) {
-    Texture tex = (Texture)img.getCache(pgPrimary);
-    if (tex == null) {
-      tex = addTexture(img);
-    } else {
-      if (tex.contextIsOutdated()) {
-        tex = addTexture(img);
+    Texture tex = (Texture)initCache(img);
+    
+    if (img.isModified()) {
+      if (img.width != tex.width || img.height != tex.height) {
+        tex.init(img.width, img.height);
       }
+      updateTexture(img, tex);
+    }
 
-      if (img.isModified()) {
-        if (img.width != tex.width || img.height != tex.height) {
-          tex.init(img.width, img.height);
-        }
-        updateTexture(img, tex);
-      }
-
-      if (tex.hasBuffers()) {
-        tex.bufferUpdate();
-      }
+    if (tex.hasBuffers()) {
+      tex.bufferUpdate();
     }
     return tex;
   }
   
   
-  public void initCache(PImage img) {
+  public Object initCache(PImage img) {
     Texture tex = (Texture)img.getCache(pgPrimary);
-    if (tex == null) {
+    if (tex == null || tex.contextIsOutdated()) {
       tex = addTexture(img);
-    } else {
-      if (tex.contextIsOutdated()) {
-        tex = addTexture(img);
+      if (img.pixels != null) {
+        tex.set(img.pixels);
       }
-    }
+    }   
+    return tex;
   }
   
 
@@ -5419,32 +5467,22 @@ public class PGraphicsOpenGL extends PGraphics {
       params.sampling = textureSampling;        
       if (params.sampling == Texture.TRILINEAR && !params.mipmaps) {
         params.sampling = Texture.BILINEAR;
-        PGraphics.showWarning("TRILINEAR texture sampling requires mipmaps, which are disabled. Will use BILINEAR instead.");
+        PGraphics.showWarning("TRILINEAR texture sampling requires mipmaps, which are disabled. I will use BILINEAR instead.");
       }         
       params.wrapU = textureWrap;
-      params.wrapV = textureWrap;
-      img.setParams(pgPrimary, params);
-    }
-    if (img.parent == null) {
-      img.parent = parent;
-    }
-    Texture tex = new Texture(img.parent, img.width, img.height, params);
-    if (img.pixels == null) {
-      img.loadPixels();
-    }
-    if (img.pixels != null) tex.set(img.pixels);
-    img.setCache(pgPrimary, tex);
-    return tex;
+      params.wrapV = textureWrap;      
+    } 
+    return addTexture(img, params);
   }
   
   
   protected Texture addTexture(PImage img, Texture.Parameters params) {
-    Texture tex = new Texture(img.parent, img.width, img.height, params);
-    if (img.pixels == null) {
-      img.loadPixels();
+    if (img.parent == null) {
+      img.parent = parent;
     }
-    if (img.pixels != null) tex.set(img.pixels);
+    Texture tex = new Texture(img.parent, img.width, img.height, params);
     img.setCache(pgPrimary, tex);
+    img.setParams(pgPrimary, params);
     return tex;    
   }
 
@@ -5458,6 +5496,7 @@ public class PGraphicsOpenGL extends PGraphics {
     img.height = tex.height;
     img.format = ARGB;
     img.setCache(pgPrimary, tex);
+    img.setParams(pgPrimary, tex.getParameters());
     return img;
   }
 
@@ -5590,8 +5629,8 @@ public class PGraphicsOpenGL extends PGraphics {
   // SHADER HANDLING
 
 
-  public PShader loadShader(String vertFilename, String fragFilename, int kind) {
-    if (kind == PShader.FLAT) {
+  public Object loadShader(String vertFilename, String fragFilename, int kind) {
+    if (kind == PShader.FLAT) { 
       return new PolyFlatShader(parent, vertFilename, fragFilename);
     } else if (kind == PShader.LIT) {
       return new PolyLightShader(parent, vertFilename, fragFilename);
@@ -5610,7 +5649,7 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  public PShader loadShader(String fragFilename, int kind) {
+  public Object loadShader(String fragFilename, int kind) {
     PShader shader;
     if (kind == PShader.FLAT) {
       shader = new PolyFlatShader(parent);
@@ -5637,9 +5676,23 @@ public class PGraphicsOpenGL extends PGraphics {
     shader.setFragmentShader(fragFilename);
     return shader;
   }
+  
+  
+  public Object loadShader(String vertFilename, String fragFilename) {
+    return loadShader(vertFilename, fragFilename, PShader.TEXTURED);
+  }
+  
+  
+  public Object loadShader(String fragFilename) {
+    return loadShader(fragFilename, PShader.TEXTURED);
+  }
 
 
-  public void setShader(PShader shader, int kind) {
+  public void shader(Object shader, int kind) {
+    if (!(shader instanceof PShader)) {
+      PGraphics.showWarning("Object is not a valid shader!");
+      return;
+    }
     flush(); // Flushing geometry with a different shader.
     if (kind == PShader.FLAT) {
       polyFlatShader = (PolyFlatShader) shader;
@@ -5659,7 +5712,45 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
   
-  public PShader getShader(int kind) {
+  public void resetShader(int kind) {
+    flush(); // Flushing geometry with a different shader.
+    if (kind == PShader.FLAT) {
+      if (defPolyFlatShader == null) {
+        defPolyFlatShader = new PolyFlatShader(parent, defPolyFlatShaderVertURL, defPolyNoTexShaderFragURL);
+      }
+      polyFlatShader = defPolyFlatShader;
+    } else if (kind == PShader.LIT) {
+      if (defPolyLightShader == null) {
+        defPolyLightShader = new PolyLightShader(parent, defPolyLightShaderVertURL, defPolyNoTexShaderFragURL);
+      }
+      polyLightShader = defPolyLightShader;
+    } else if (kind == PShader.TEXTURED) {
+      if (defPolyTexShader == null) {
+        defPolyTexShader = new PolyTexShader(parent, defPolyTexShaderVertURL, defPolyTexShaderFragURL);
+      }
+      polyTexShader = defPolyTexShader;
+    } else if (kind == PShader.FULL) {
+      if (defPolyFullShader == null) {
+        defPolyFullShader = new PolyFullShader(parent, defPolyFullShaderVertURL, defPolyTexShaderFragURL);
+      }
+      polyFullShader = defPolyFullShader;
+    } else if (kind == PShader.LINE) {
+      if (defLineShader == null) {
+        defLineShader = new LineShader(parent, defLineShaderVertURL, defLineShaderFragURL);
+      }
+      lineShader = defLineShader;
+    } else if (kind == PShader.POINT) {
+      if (defPointShader == null) {
+        defPointShader = new PointShader(parent, defPointShaderVertURL, defPointShaderFragURL);
+      }
+      pointShader = defPointShader;
+    } else {
+      PGraphics.showWarning("Wrong shader type");
+    }
+  }
+
+  
+  public Object getShader(int kind) {
     PShader shader;
     if (kind == PShader.FLAT) {
       if (polyFlatShader == null) {
@@ -5717,47 +5808,9 @@ public class PGraphicsOpenGL extends PGraphics {
     shader.loadAttributes();
     shader.loadUniforms();
     return shader;
-  }
+  }  
 
   
-  public void defaultShader(int kind) {
-    flush(); // Flushing geometry with a different shader.
-    if (kind == PShader.FLAT) {
-      if (defPolyFlatShader == null) {
-        defPolyFlatShader = new PolyFlatShader(parent, defPolyFlatShaderVertURL, defPolyNoTexShaderFragURL);
-      }
-      polyFlatShader = defPolyFlatShader;
-    } else if (kind == PShader.LIT) {
-      if (defPolyLightShader == null) {
-        defPolyLightShader = new PolyLightShader(parent, defPolyLightShaderVertURL, defPolyNoTexShaderFragURL);
-      }
-      polyLightShader = defPolyLightShader;
-    } else if (kind == PShader.TEXTURED) {
-      if (defPolyTexShader == null) {
-        defPolyTexShader = new PolyTexShader(parent, defPolyTexShaderVertURL, defPolyTexShaderFragURL);
-      }
-      polyTexShader = defPolyTexShader;
-    } else if (kind == PShader.FULL) {
-      if (defPolyFullShader == null) {
-        defPolyFullShader = new PolyFullShader(parent, defPolyFullShaderVertURL, defPolyTexShaderFragURL);
-      }
-      polyFullShader = defPolyFullShader;
-    } else if (kind == PShader.LINE) {
-      if (defLineShader == null) {
-        defLineShader = new LineShader(parent, defLineShaderVertURL, defLineShaderFragURL);
-      }
-      lineShader = defLineShader;
-    } else if (kind == PShader.POINT) {
-      if (defPointShader == null) {
-        defPointShader = new PointShader(parent, defPointShaderVertURL, defPointShaderFragURL);
-      }
-      pointShader = defPointShader;
-    } else {
-      PGraphics.showWarning("Wrong shader type");
-    }
-  }
-
-
   protected PolyShader getPolyShader(boolean lit, boolean tex) {
     PolyShader shader;
     if (lit) {
@@ -5831,7 +5884,7 @@ public class PGraphicsOpenGL extends PGraphics {
     return pointShader;
   }
 
-
+  
   protected class PolyShader extends PShader {
     public PolyShader(PApplet parent) {
       super(parent);
@@ -5878,22 +5931,22 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     public void loadAttributes() {
-      inVertexLoc = getAttribLocation("inVertex");
-      inColorLoc = getAttribLocation("inColor");
+      inVertexLoc = getAttributeLoc("inVertex");
+      inColorLoc = getAttributeLoc("inColor");
     }
 
     public void loadUniforms() {
-      projmodelviewMatrixLoc = getUniformLocation("projmodelviewMatrix");
-      modelviewMatrixLoc = getUniformLocation("modelviewMatrix");
-      projectionMatrixLoc = getUniformLocation("projectionMatrix");            
+      projmodelviewMatrixLoc = getUniformLoc("projmodelviewMatrix");
+      modelviewMatrixLoc = getUniformLoc("modelviewMatrix");
+      projectionMatrixLoc = getUniformLoc("projectionMatrix");            
     }
 
     public void setVertexAttribute(int vboId, int size, int type, int stride, int offset) {
-      setAttribute(inVertexLoc, vboId, size, type, false, stride, offset);
+      setAttributeVBO(inVertexLoc, vboId, size, type, false, stride, offset);
     }
 
     public void setColorAttribute(int vboId, int size, int type, int stride, int offset) {
-      setAttribute(inColorLoc, vboId, size, type, true, stride, offset);
+      setAttributeVBO(inColorLoc, vboId, size, type, true, stride, offset);
     }
 
     public void bind() {
@@ -5905,17 +5958,17 @@ public class PGraphicsOpenGL extends PGraphics {
       if (pgCurrent != null) {
         if (-1 < projmodelviewMatrixLoc) {
           pgCurrent.updateGLProjmodelview();
-          setMat4Uniform(projmodelviewMatrixLoc, pgCurrent.glProjmodelview);
+          setUniformMatrix(projmodelviewMatrixLoc, pgCurrent.glProjmodelview);
         }
 
         if (-1 < modelviewMatrixLoc) {
           pgCurrent.updateGLModelview();
-          setMat4Uniform(modelviewMatrixLoc, pgCurrent.glModelview);
+          setUniformMatrix(modelviewMatrixLoc, pgCurrent.glModelview);
         }        
         
         if (-1 < projectionMatrixLoc) {
           pgCurrent.updateGLProjection();
-          setMat4Uniform(projectionMatrixLoc, pgCurrent.glProjection);
+          setUniformMatrix(projectionMatrixLoc, pgCurrent.glProjection);
         }
       }      
     }
@@ -5968,58 +6021,58 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     public void loadAttributes() {
-      inVertexLoc = getAttribLocation("inVertex");
-      inColorLoc = getAttribLocation("inColor");
-      inNormalLoc = getAttribLocation("inNormal");
+      inVertexLoc = getAttributeLoc("inVertex");
+      inColorLoc = getAttributeLoc("inColor");
+      inNormalLoc = getAttributeLoc("inNormal");
 
-      inAmbientLoc = getAttribLocation("inAmbient");
-      inSpecularLoc = getAttribLocation("inSpecular");
-      inEmissiveLoc = getAttribLocation("inEmissive");
-      inShineLoc = getAttribLocation("inShine");
+      inAmbientLoc = getAttributeLoc("inAmbient");
+      inSpecularLoc = getAttributeLoc("inSpecular");
+      inEmissiveLoc = getAttributeLoc("inEmissive");
+      inShineLoc = getAttributeLoc("inShine");
     }
 
     public void loadUniforms() {
-      projmodelviewMatrixLoc = getUniformLocation("projmodelviewMatrix");
-      modelviewMatrixLoc = getUniformLocation("modelviewMatrix");
-      projectionMatrixLoc = getUniformLocation("projectionMatrix");
-      normalMatrixLoc = getUniformLocation("normalMatrix");
+      projmodelviewMatrixLoc = getUniformLoc("projmodelviewMatrix");
+      modelviewMatrixLoc = getUniformLoc("modelviewMatrix");
+      projectionMatrixLoc = getUniformLoc("projectionMatrix");
+      normalMatrixLoc = getUniformLoc("normalMatrix");
 
-      lightCountLoc = getUniformLocation("lightCount");
-      lightPositionLoc = getUniformLocation("lightPosition");
-      lightNormalLoc = getUniformLocation("lightNormal");
-      lightAmbientLoc = getUniformLocation("lightAmbient");
-      lightDiffuseLoc = getUniformLocation("lightDiffuse");
-      lightSpecularLoc = getUniformLocation("lightSpecular");
-      lightFalloffCoefficientsLoc = getUniformLocation("lightFalloffCoefficients");
-      lightSpotParametersLoc = getUniformLocation("lightSpotParameters");
+      lightCountLoc = getUniformLoc("lightCount");
+      lightPositionLoc = getUniformLoc("lightPosition");
+      lightNormalLoc = getUniformLoc("lightNormal");
+      lightAmbientLoc = getUniformLoc("lightAmbient");
+      lightDiffuseLoc = getUniformLoc("lightDiffuse");
+      lightSpecularLoc = getUniformLoc("lightSpecular");
+      lightFalloffCoefficientsLoc = getUniformLoc("lightFalloffCoefficients");
+      lightSpotParametersLoc = getUniformLoc("lightSpotParameters");
     }
 
     public void setVertexAttribute(int vboId, int size, int type, int stride, int offset) {
-      setAttribute(inVertexLoc, vboId, size, type, false, stride, offset);
+      setAttributeVBO(inVertexLoc, vboId, size, type, false, stride, offset);
     }
 
     public void setColorAttribute(int vboId, int size, int type, int stride, int offset) {
-      setAttribute(inColorLoc, vboId, size, type, true, stride, offset);
+      setAttributeVBO(inColorLoc, vboId, size, type, true, stride, offset);
     }
 
     public void setNormalAttribute(int vboId, int size, int type, int stride, int offset) {
-      setAttribute(inNormalLoc, vboId, size, type, false, stride, offset);
+      setAttributeVBO(inNormalLoc, vboId, size, type, false, stride, offset);
     }
 
     public void setAmbientAttribute(int vboId, int size, int type, int stride, int offset) {
-      setAttribute(inAmbientLoc, vboId, size, type, true, stride, offset);
+      setAttributeVBO(inAmbientLoc, vboId, size, type, true, stride, offset);
     }
 
     public void setSpecularAttribute(int vboId, int size, int type, int stride, int offset) {
-      setAttribute(inSpecularLoc, vboId, size, type, true, stride, offset);
+      setAttributeVBO(inSpecularLoc, vboId, size, type, true, stride, offset);
     }
 
     public void setEmissiveAttribute(int vboId, int size, int type, int stride, int offset) {
-      setAttribute(inEmissiveLoc, vboId, size, type, true, stride, offset);
+      setAttributeVBO(inEmissiveLoc, vboId, size, type, true, stride, offset);
     }
 
     public void setShininessAttribute(int vboId, int size, int type, int stride, int offset) {
-      setAttribute(inShineLoc, vboId, size, type, false, stride, offset);
+      setAttributeVBO(inShineLoc, vboId, size, type, false, stride, offset);
     }
 
     public void bind() {
@@ -6037,32 +6090,32 @@ public class PGraphicsOpenGL extends PGraphics {
       if (pgCurrent != null) {
         if (-1 < projmodelviewMatrixLoc) {
           pgCurrent.updateGLProjmodelview();
-          setMat4Uniform(projmodelviewMatrixLoc, pgCurrent.glProjmodelview);
+          setUniformMatrix(projmodelviewMatrixLoc, pgCurrent.glProjmodelview);
         }
 
         if (-1 < modelviewMatrixLoc) {
           pgCurrent.updateGLModelview();
-          setMat4Uniform(modelviewMatrixLoc, pgCurrent.glModelview);
+          setUniformMatrix(modelviewMatrixLoc, pgCurrent.glModelview);
         }
 
         if (-1 < projectionMatrixLoc) {
           pgCurrent.updateGLProjection();
-          setMat4Uniform(projectionMatrixLoc, pgCurrent.glProjection);
+          setUniformMatrix(projectionMatrixLoc, pgCurrent.glProjection);
         }          
         
         if (-1 < normalMatrixLoc) {
           pgCurrent.updateGLNormal();
-          setMat3Uniform(normalMatrixLoc, pgCurrent.glNormal);
+          setUniformMatrix(normalMatrixLoc, pgCurrent.glNormal);
         }
 
-        setIntUniform(lightCountLoc, pgCurrent.lightCount);
-        setFloatVecUniform(lightPositionLoc, pgCurrent.lightPosition, 4);
-        setFloatVecUniform(lightNormalLoc, pgCurrent.lightNormal, 3);
-        setFloatVecUniform(lightAmbientLoc, pgCurrent.lightAmbient, 3);
-        setFloatVecUniform(lightDiffuseLoc, pgCurrent.lightDiffuse, 3);
-        setFloatVecUniform(lightSpecularLoc, pgCurrent.lightSpecular, 3);
-        setFloatVecUniform(lightFalloffCoefficientsLoc, pgCurrent.lightFalloffCoefficients, 3);
-        setFloatVecUniform(lightSpotParametersLoc, pgCurrent.lightSpotParameters, 2);
+        setUniformValue(lightCountLoc, pgCurrent.lightCount);
+        setUniformVector(lightPositionLoc, pgCurrent.lightPosition, 4);
+        setUniformVector(lightNormalLoc, pgCurrent.lightNormal, 3);
+        setUniformVector(lightAmbientLoc, pgCurrent.lightAmbient, 3);
+        setUniformVector(lightDiffuseLoc, pgCurrent.lightDiffuse, 3);
+        setUniformVector(lightSpecularLoc, pgCurrent.lightSpecular, 3);
+        setUniformVector(lightFalloffCoefficientsLoc, pgCurrent.lightFalloffCoefficients, 3);
+        setUniformVector(lightSpotParametersLoc, pgCurrent.lightSpotParameters, 2);
       }
     }
 
@@ -6106,18 +6159,18 @@ public class PGraphicsOpenGL extends PGraphics {
     public void loadUniforms() {
       super.loadUniforms();
 
-      texcoordMatrixLoc = getUniformLocation("texcoordMatrix");
-      texcoordOffsetLoc = getUniformLocation("texcoordOffset");
+      texcoordMatrixLoc = getUniformLoc("texcoordMatrix");
+      texcoordOffsetLoc = getUniformLoc("texcoordOffset");
     }
 
     public void loadAttributes() {
       super.loadAttributes();
 
-      inTexcoordLoc = getAttribLocation("inTexcoord");
+      inTexcoordLoc = getAttributeLoc("inTexcoord");
     }
 
     public void setTexcoordAttribute(int vboId, int size, int type, int stride, int offset) {
-      setAttribute(inTexcoordLoc, vboId, size, type, false, stride, offset);
+      setAttributeVBO(inTexcoordLoc, vboId, size, type, false, stride, offset);
     }
 
     public void setTexture(Texture tex) {
@@ -6149,10 +6202,10 @@ public class PGraphicsOpenGL extends PGraphics {
         tcmat[1] = 0;      tcmat[5] = scalev; tcmat[ 9] = 0; tcmat[13] = dispv;
         tcmat[2] = 0;      tcmat[6] = 0;      tcmat[10] = 0; tcmat[14] = 0;
         tcmat[3] = 0;      tcmat[7] = 0;      tcmat[11] = 0; tcmat[15] = 0;
-        setMat4Uniform(texcoordMatrixLoc, tcmat);
+        setUniformMatrix(texcoordMatrixLoc, tcmat);
       }
       
-      setFloatUniform(texcoordOffsetLoc, 1.0f / tex.width, 1.0f / tex.height);
+      setUniformValue(texcoordOffsetLoc, 1.0f / tex.width, 1.0f / tex.height);
     }
 
     public void bind() {
@@ -6168,7 +6221,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
   }
 
-
+  
   protected class PolyFullShader extends PolyLightShader {
     protected int inTexcoordLoc;
 
@@ -6192,18 +6245,18 @@ public class PGraphicsOpenGL extends PGraphics {
     public void loadUniforms() {
       super.loadUniforms();
 
-      texcoordMatrixLoc = getUniformLocation("texcoordMatrix");
-      texcoordOffsetLoc = getUniformLocation("texcoordOffset");
+      texcoordMatrixLoc = getUniformLoc("texcoordMatrix");
+      texcoordOffsetLoc = getUniformLoc("texcoordOffset");
     }
 
     public void loadAttributes() {
       super.loadAttributes();
 
-      inTexcoordLoc = getAttribLocation("inTexcoord");
+      inTexcoordLoc = getAttributeLoc("inTexcoord");
     }
 
     public void setTexcoordAttribute(int vboId, int size, int type, int stride, int offset) {
-      setAttribute(inTexcoordLoc, vboId, size, type, false, stride, offset);
+      setAttributeVBO(inTexcoordLoc, vboId, size, type, false, stride, offset);
     }
 
     public void setTexture(Texture tex) {
@@ -6235,10 +6288,10 @@ public class PGraphicsOpenGL extends PGraphics {
         tcmat[1] = 0;      tcmat[5] = scalev; tcmat[ 9] = 0; tcmat[13] = dispv;
         tcmat[2] = 0;      tcmat[6] = 0;      tcmat[10] = 0; tcmat[14] = 0;
         tcmat[3] = 0;      tcmat[7] = 0;      tcmat[11] = 0; tcmat[15] = 0;
-        setMat4Uniform(texcoordMatrixLoc, tcmat);
+        setUniformMatrix(texcoordMatrixLoc, tcmat);
       }
       
-      setFloatUniform(texcoordOffsetLoc, 1.0f / tex.width, 1.0f / tex.height);
+      setUniformValue(texcoordOffsetLoc, 1.0f / tex.width, 1.0f / tex.height);
     }
 
     public void bind() {
@@ -6281,36 +6334,31 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     public void loadAttributes() {
-      inVertexLoc = getAttribLocation("inVertex");
-      inColorLoc = getAttribLocation("inColor");
-      inAttribLoc = getAttribLocation("inLine");
+      inVertexLoc = getAttributeLoc("inVertex");
+      inColorLoc = getAttributeLoc("inColor");
+      inAttribLoc = getAttributeLoc("inLine");
     }
 
     public void loadUniforms() {
-      projmodelviewMatrixLoc = getUniformLocation("projmodelviewMatrix");
-      modelviewMatrixLoc = getUniformLocation("modelviewMatrix");
-      projectionMatrixLoc = getUniformLocation("projectionMatrix");
+      projmodelviewMatrixLoc = getUniformLoc("projmodelviewMatrix");
+      modelviewMatrixLoc = getUniformLoc("modelviewMatrix");
+      projectionMatrixLoc = getUniformLoc("projectionMatrix");
 
-      viewportLoc = getUniformLocation("viewport");
-      perspectiveLoc = getUniformLocation("perspective");
-      zfactorLoc = getUniformLocation("zfactor");
-    }
-
-    public void setAttribute(int loc, int vboId, int size, int type, boolean normalized, int stride, int offset) {
-      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, vboId);
-      pgl.glVertexAttribPointer(loc, size, type, normalized, stride, offset);
+      viewportLoc = getUniformLoc("viewport");
+      perspectiveLoc = getUniformLoc("perspective");
+      zfactorLoc = getUniformLoc("zfactor");
     }
 
     public void setVertexAttribute(int vboId, int size, int type, int stride, int offset) {
-      setAttribute(inVertexLoc, vboId, size, type, false, stride, offset);
+      setAttributeVBO(inVertexLoc, vboId, size, type, false, stride, offset);
     }
 
     public void setColorAttribute(int vboId, int size, int type, int stride, int offset) {
-      setAttribute(inColorLoc, vboId, size, type, true, stride, offset);
+      setAttributeVBO(inColorLoc, vboId, size, type, true, stride, offset);
     }
 
     public void setLineAttribute(int vboId, int size, int type, int stride, int offset) {
-      setAttribute(inAttribLoc, vboId, size, type, false, stride, offset);
+      setAttributeVBO(inAttribLoc, vboId, size, type, false, stride, offset);
     }
 
     public void bind() {
@@ -6323,31 +6371,35 @@ public class PGraphicsOpenGL extends PGraphics {
       if (pgCurrent != null) {
         if (-1 < projmodelviewMatrixLoc) {
           pgCurrent.updateGLProjmodelview();
-          setMat4Uniform(projmodelviewMatrixLoc, pgCurrent.glProjmodelview);
+          setUniformMatrix(projmodelviewMatrixLoc, pgCurrent.glProjmodelview);
         }
         
         if (-1 < modelviewMatrixLoc) {
           pgCurrent.updateGLModelview();
-          setMat4Uniform(modelviewMatrixLoc, pgCurrent.glModelview);
+          setUniformMatrix(modelviewMatrixLoc, pgCurrent.glModelview);
         }
         
         if (-1 < projectionMatrixLoc) {
           pgCurrent.updateGLProjection();
-          setMat4Uniform(projectionMatrixLoc, pgCurrent.glProjection);
+          setUniformMatrix(projectionMatrixLoc, pgCurrent.glProjection);
         }
 
-        setFloatUniform(viewportLoc, pgCurrent.viewport[0], pgCurrent.viewport[1], pgCurrent.viewport[2], pgCurrent.viewport[3]);
+        float x = pgCurrent.viewport[0]; 
+        float y = pgCurrent.viewport[1]; 
+        float w = pgCurrent.viewport[2];
+        float h = pgCurrent.viewport[3];
+        setUniformValue(viewportLoc, x, y, w, h);
         
         if (pgCurrent.hintEnabled(ENABLE_PERSPECTIVE_CORRECTED_LINES)) {        
-          setIntUniform(perspectiveLoc, 1);  
+          setUniformValue(perspectiveLoc, 1);  
         } else {
-          setIntUniform(perspectiveLoc, 0);
+          setUniformValue(perspectiveLoc, 0);
         }
         
         if (pgCurrent.hintEnabled(ENABLE_ACCURATE_2D)) {
-          setFloatUniform(zfactorLoc, 1);
+          setUniformValue(zfactorLoc, 1.0f);
         } else {
-          setFloatUniform(zfactorLoc, 0.99f);
+          setUniformValue(zfactorLoc, 0.99f);
         }        
       }
     }
@@ -6386,32 +6438,27 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     public void loadAttributes() {
-      inVertexLoc = getAttribLocation("inVertex");
-      inColorLoc = getAttribLocation("inColor");
-      inPointLoc = getAttribLocation("inPoint");
+      inVertexLoc = getAttributeLoc("inVertex");
+      inColorLoc = getAttributeLoc("inColor");
+      inPointLoc = getAttributeLoc("inPoint");
     }
 
     public void loadUniforms() {
-      projmodelviewMatrixLoc = getUniformLocation("projmodelviewMatrix");
-      modelviewMatrixLoc = getUniformLocation("modelviewMatrix");
-      projectionMatrixLoc = getUniformLocation("projectionMatrix");      
-    }
-
-    public void setAttribute(int loc, int vboId, int size, int type, boolean normalized, int stride, int offset) {
-      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, vboId);
-      pgl.glVertexAttribPointer(loc, size, type, normalized, stride, offset);
+      projmodelviewMatrixLoc = getUniformLoc("projmodelviewMatrix");
+      modelviewMatrixLoc = getUniformLoc("modelviewMatrix");
+      projectionMatrixLoc = getUniformLoc("projectionMatrix");      
     }
 
     public void setVertexAttribute(int vboId, int size, int type, int stride, int offset) {
-      setAttribute(inVertexLoc, vboId, size, type, false, stride, offset);
+      setAttributeVBO(inVertexLoc, vboId, size, type, false, stride, offset);
     }
 
     public void setColorAttribute(int vboId, int size, int type, int stride, int offset) {
-      setAttribute(inColorLoc, vboId, size, type, true, stride, offset);
+      setAttributeVBO(inColorLoc, vboId, size, type, true, stride, offset);
     }
 
     public void setPointAttribute(int vboId, int size, int type, int stride, int offset) {
-      setAttribute(inPointLoc, vboId, size, type, false, stride, offset);
+      setAttributeVBO(inPointLoc, vboId, size, type, false, stride, offset);
     }
 
     public void bind() {
@@ -6424,17 +6471,17 @@ public class PGraphicsOpenGL extends PGraphics {
       if (pgCurrent != null) {
         if (-1 < projmodelviewMatrixLoc) {
           pgCurrent.updateGLProjmodelview();
-          setMat4Uniform(projmodelviewMatrixLoc, pgCurrent.glProjmodelview);
+          setUniformMatrix(projmodelviewMatrixLoc, pgCurrent.glProjmodelview);
         }
         
         if (-1 < modelviewMatrixLoc) {
           pgCurrent.updateGLModelview();
-          setMat4Uniform(modelviewMatrixLoc, pgCurrent.glModelview);
+          setUniformMatrix(modelviewMatrixLoc, pgCurrent.glModelview);
         }
         
         if (-1 < projectionMatrixLoc) {
           pgCurrent.updateGLProjection();
-          setMat4Uniform(projectionMatrixLoc, pgCurrent.glProjection);
+          setUniformMatrix(projectionMatrixLoc, pgCurrent.glProjection);
         }
       }
     }
@@ -6450,6 +6497,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
   }
 
+  
   //////////////////////////////////////////////////////////////
 
   // Utils

@@ -488,7 +488,7 @@ public class PGL {
       // to update the screenFramebuffer object so when the
       // framebuffer is popped back to the screen, the correct
       // id is set.
-      PGraphicsOpenGL.screenFramebuffer.glFboID = colorFBO[0];
+      PGraphicsOpenGL.screenFramebuffer.glFbo = colorFBO[0];
       
       initialized = true;
     }    
@@ -512,13 +512,13 @@ public class PGL {
   
   public void bindPrimaryColorFBO() {
     GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, colorFBO[0]);
-    PGraphicsOpenGL.screenFramebuffer.glFboID = colorFBO[0];
+    PGraphicsOpenGL.screenFramebuffer.glFbo = colorFBO[0];
   }
 
   
   public void bindPrimaryMultiFBO() {
     GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, colorFBO[0]);
-    PGraphicsOpenGL.screenFramebuffer.glFboID = colorFBO[0];
+    PGraphicsOpenGL.screenFramebuffer.glFbo = colorFBO[0];
   }  
   
   
@@ -533,7 +533,7 @@ public class PGL {
       // No need for saving front color buffer, etc.
       GLES20.glClearColor(0, 0, 0, 0);
       GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
-      PGraphicsOpenGL.screenFramebuffer.glFboID = 0;
+      PGraphicsOpenGL.screenFramebuffer.glFbo = 0;
     } else {      
       GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, colorFBO[0]);      
       GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0, GLES20.GL_TEXTURE_2D, colorTex[frontTex], 0);
@@ -550,7 +550,7 @@ public class PGL {
         // Render previous draw texture as background.      
         drawTexture(GLES20.GL_TEXTURE_2D, colorTex[backTex], texWidth, texHeight, 0, 0, pg.width, pg.height, 0, 0, pg.width, pg.height);
       }
-      PGraphicsOpenGL.screenFramebuffer.glFboID = colorFBO[0];
+      PGraphicsOpenGL.screenFramebuffer.glFbo  = colorFBO[0];
     }
     
     if (firstOnscreenFrame) {
@@ -1058,6 +1058,26 @@ public class PGL {
   }
   
   
+  public void glVertexAttrib1fv(int loc, float[] v, int offset) {
+    GLES20.glVertexAttrib1fv(loc, v, offset);  
+  }
+
+  
+  public void glVertexAttrib2fv(int loc, float[] v, int offset) {
+    GLES20.glVertexAttrib2fv(loc, v, offset);  
+  }
+
+
+  public void glVertexAttrib3fv(int loc, float[] v, int offset) {
+    GLES20.glVertexAttrib3fv(loc, v, offset);  
+  }
+ 
+
+  public void glVertexAttrib4fv(int loc, float[] v, int offset) {
+    GLES20.glVertexAttrib4fv(loc, v, offset);  
+  }    
+  
+  
   public void glShaderSource(int id, String source) {
     GLES20.glShaderSource(id, source);    
   }
@@ -1433,6 +1453,12 @@ public class PGL {
       }      
       glDepthMask(depthMask[0]);
     }
+  }
+  
+  
+  public void drawTextureCustom(int target, int id, int width, int height,
+                                int X0, int Y0, int X1, int Y1, int program) {
+    // ...
   }
   
   

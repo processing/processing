@@ -10128,6 +10128,43 @@ public class PApplet extends Applet
   }
 
 
+  public Object loadShader(String vertFilename, String fragFilename, int kind) {
+    return g.loadShader(vertFilename, fragFilename, kind);
+  }
+
+
+  public Object loadShader(String fragFilename, int kind) {
+    return g.loadShader(fragFilename, kind);
+  }
+
+
+  public Object loadShader(String vertFilename, String fragFilename) {
+    return g.loadShader(vertFilename, fragFilename);
+  }
+
+
+  public Object loadShader(String fragFilename) {
+    return g.loadShader(fragFilename);
+  }
+
+
+  public void shader(Object shader, int kind) {
+    if (recorder != null) recorder.shader(shader, kind);
+    g.shader(shader, kind);
+  }
+
+
+  public void resetShader(int kind) {
+    if (recorder != null) recorder.resetShader(kind);
+    g.resetShader(kind);
+  }
+
+
+  public Object getShader(int kind) {
+    return g.getShader(kind);
+  }
+
+
   public void bezierVertex(float x2, float y2,
                            float x3, float y3,
                            float x4, float y4) {

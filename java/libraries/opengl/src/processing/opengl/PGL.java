@@ -738,11 +738,11 @@ public class PGL {
       // The screen framebuffer is the color FBO just created. We need
       // to update the screenFramebuffer object so when the framebuffer 
       // is popped back to the screen, the correct id is set.      
-      PGraphicsOpenGL.screenFramebuffer.glFboID = glColorFboID[0];      
+      PGraphicsOpenGL.screenFramebuffer.glFbo = glColorFboID[0];      
     } else {
       // To make sure that the default screen buffer is used, specially after
       // doing screen rendering on an FBO (the OSX 10.7+ above).
-      PGraphicsOpenGL.screenFramebuffer.glFboID = 0;
+      PGraphicsOpenGL.screenFramebuffer.glFbo = 0;
     }
   }
 
@@ -779,14 +779,14 @@ public class PGL {
     }
     
     gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, glColorFboID[0]);
-    PGraphicsOpenGL.screenFramebuffer.glFboID = glColorFboID[0];
+    PGraphicsOpenGL.screenFramebuffer.glFbo = glColorFboID[0];
   }
 
   
   public void bindPrimaryMultiFBO() {
     if (multisample) {
       gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, glMultiFboID[0]);   
-      PGraphicsOpenGL.screenFramebuffer.glFboID = glMultiFboID[0];
+      PGraphicsOpenGL.screenFramebuffer.glFbo = glMultiFboID[0];
     }
   }
   
@@ -831,12 +831,12 @@ public class PGL {
         gl2x.glDrawBuffer(GL.GL_COLOR_ATTACHMENT0);
         
         // Now the screen buffer is the multisample FBO.
-        PGraphicsOpenGL.screenFramebuffer.glFboID = glMultiFboID[0];
+        PGraphicsOpenGL.screenFramebuffer.glFbo = glMultiFboID[0];
       } else {
         gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, glColorFboID[0]);
         if (gl2x != null) gl2x.glDrawBuffer(GL.GL_COLOR_ATTACHMENT0);
         
-        PGraphicsOpenGL.screenFramebuffer.glFboID = glColorFboID[0];
+        PGraphicsOpenGL.screenFramebuffer.glFbo = glColorFboID[0];
       }
     }
   }
@@ -865,7 +865,7 @@ public class PGL {
 
       // Leaving the color FBO currently bound as the screen FB.
       gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, glColorFboID[0]);
-      PGraphicsOpenGL.screenFramebuffer.glFboID = glColorFboID[0];       
+      PGraphicsOpenGL.screenFramebuffer.glFbo = glColorFboID[0];       
     }
   }
 
@@ -1358,9 +1358,29 @@ public class PGL {
 
 
   public void glVertexAttrib4f(int loc, float value0, float value1, float value2, float value3) {
-    gl2.glVertexAttrib4f(loc, value0, value1, value2, value3);
+    gl2.glVertexAttrib4f(loc, value0, value1, value2, value3); 
   }
 
+
+  public void glVertexAttrib1fv(int loc, float[] v, int offset) {
+    gl2.glVertexAttrib1fv(loc, v, offset);  
+  }
+
+  
+  public void glVertexAttrib2fv(int loc, float[] v, int offset) {
+    gl2.glVertexAttrib2fv(loc, v, offset);  
+  }
+
+
+  public void glVertexAttrib3fv(int loc, float[] v, int offset) {
+    gl2.glVertexAttrib3fv(loc, v, offset);  
+  }
+ 
+
+  public void glVertexAttrib4fv(int loc, float[] v, int offset) {
+    gl2.glVertexAttrib4fv(loc, v, offset);  
+  }  
+  
 
   public void glShaderSource(int id, String source) {
     gl2.glShaderSource(id, 1, new String[] { source }, (int[]) null, 0);
@@ -1779,6 +1799,12 @@ public class PGL {
     }
   }
 
+
+  public void drawTextureCustom(int target, int id, int width, int height,
+                                int X0, int Y0, int X1, int Y1, int program) {
+    // ...
+  }
+  
   
   public void drawTextureRect(int id, int width, int height,
                               int texX0, int texY0, int texX1, int texY1,
