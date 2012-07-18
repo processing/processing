@@ -5,8 +5,7 @@ import controlP5.*;
 
 ControlP5 controlP5;
 
-PShader shader;
-PGraphicsOpenGL pg;
+PShader badPrint;
 
 boolean enabled = true;
 float scaleR = 1.0, scaleG = 1.0, scaleB = 1.0;
@@ -20,9 +19,8 @@ public void setup() {
   noStroke();
   fill(204);
 
-  pg = (PGraphicsOpenGL)g;
-  shader = pg.loadShader("BadPrintVert.glsl", "BadPrintFrag.glsl", PShader.LIT);
-  pg.setShader(shader, PShader.LIT);
+  badPrint = (PShader)loadShader("BadPrintVert.glsl", "BadPrintFrag.glsl", PShader.LIT);
+  shader(badPrint, PShader.LIT);
   
   sphereDetail(60);
   
@@ -46,14 +44,14 @@ public void draw() {
   background(0);
   
   if (enabled) {
-    pg.setShader(shader, PShader.LIT);
+    shader(badPrint, PShader.LIT);
    
-    shader.set("Scale", scaleR, scaleG, scaleB);
-    shader.set("Offset", offsetR, offsetG, offsetB);
-    shader.set("Register", registerR, registerG, registerB);
-    shader.set("Size", sizeR, sizeG, sizeB);
+    badPrint.set("Scale", scaleR, scaleG, scaleB);
+    badPrint.set("Offset", offsetR, offsetG, offsetB);
+    badPrint.set("Register", registerR, registerG, registerB);
+    badPrint.set("Size", sizeR, sizeG, sizeB);
   } else {
-    pg.defaultShader(PShader.LIT); 
+    resetShader(PShader.LIT); 
   }
     
   noStroke(); 
@@ -71,4 +69,3 @@ public void draw() {
   controlP5.draw();
   hint(ENABLE_DEPTH_TEST);
 }
-

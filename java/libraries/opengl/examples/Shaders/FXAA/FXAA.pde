@@ -6,8 +6,7 @@
 
 PGraphics canvas;
 boolean drawing = false;
-PGraphicsOpenGL pg;
-PShader shader;
+PShader fxaa;
 boolean usingShader;
 String message;
 float msgLen;
@@ -19,9 +18,8 @@ void setup() {
   canvas = createGraphics(width, height, P2D);
   canvas.noSmooth();
     
-  pg = (PGraphicsOpenGL) g;
-  shader = pg.loadShader("fxaa.glsl", PShader.TEXTURED);
-  pg.setShader(shader, PShader.TEXTURED);
+  fxaa = (PShader)loadShader("fxaa.glsl", PShader.TEXTURED);
+  shader(fxaa, PShader.TEXTURED);
   usingShader = true;
   
   canvas.beginDraw();
@@ -55,10 +53,10 @@ public void draw() {
 public void mousePressed() {
   if (!drawing && width - msgLen < mouseX && height - 23 < mouseY) {
     if (usingShader) {
-      pg.defaultShader(PShader.TEXTURED);
+      resetShader(PShader.TEXTURED);
       usingShader = false;
     } else {
-      pg.setShader(shader, PShader.TEXTURED);
+      shader(fxaa, PShader.TEXTURED);
       usingShader = true;
     }
     updateMessage();    
@@ -84,11 +82,11 @@ void drawMessage() {
   if (usingShader) {
     // We need the default texture shader to 
     // render text.
-    pg.defaultShader(PShader.TEXTURED);
+    resetShader(PShader.TEXTURED);
   }
   fill(0);
   text(message, width - msgLen, height - 5);
   if (usingShader) {
-    pg.setShader(shader, PShader.TEXTURED);
+    shader(fxaa, PShader.TEXTURED);
   }
 }
