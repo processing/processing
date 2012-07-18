@@ -3,8 +3,7 @@
 // Based on the glsl tutorial from lighthouse 3D:
 // http://www.lighthouse3d.com/tutorials/glsl-tutorial/toon-shader-version-ii/
 
-PShader shader;
-PGraphicsOpenGL pg;  
+PShader toon;
 boolean customShader;  
 
 public void setup() {
@@ -12,9 +11,8 @@ public void setup() {
   noStroke();
   fill(204);
 
-  pg = (PGraphicsOpenGL)g;
-  shader = pg.loadShader("ToonVert.glsl", "ToonFrag.glsl", PShader.LIT);
-  pg.setShader(shader, PShader.LIT);
+  toon = (PShader)loadShader("ToonVert.glsl", "ToonFrag.glsl", PShader.LIT);
+  shader(toon, PShader.LIT);
   customShader = true;
 }
 
@@ -31,11 +29,11 @@ public void draw() {
 public void mousePressed() {
   if (dist(mouseX, mouseY, width/2, height/2) < 80) {
     if (customShader) {
-      pg.defaultShader(PShader.LIT);
+      resetShader(PShader.LIT);
       customShader = false;
     } 
     else {
-      pg.setShader(shader, PShader.LIT);
+      shader(toon, PShader.LIT);
       customShader = true;
     }  
   }

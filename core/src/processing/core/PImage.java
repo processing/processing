@@ -479,26 +479,22 @@ public class PImage implements PConstants, Cloneable {
       pixels = new int[width*height];
     }
     
-    if (parent == null) return;    
-    parent.g.initCache(this);
-    if (cacheMap != null) {
-      for (PGraphics pg: cacheMap.keySet()) {
-        Object obj = cacheMap.get(pg);
-        
-        Method loadPixelsMethod = null;
-        try {      
-          loadPixelsMethod = obj.getClass().getMethod("loadPixels", new Class[] { int[].class });         
-        } catch (Exception e) {          
+    if (parent == null) return;
+    Object cache = parent.g.initCache(this);
+    if (cache != null) {
+      Method loadPixelsMethod = null;
+      try {      
+        loadPixelsMethod = cache.getClass().getMethod("loadPixels", new Class[] { int[].class });         
+      } catch (Exception e) {          
+      }
+      
+      if (loadPixelsMethod != null) {
+        try {
+          loadPixelsMethod.invoke(cache, new Object[] { pixels });
+        } catch (Exception e) {
+          e.printStackTrace();
         }
-        
-        if (loadPixelsMethod != null) {
-          try {
-            loadPixelsMethod.invoke(obj, new Object[] { pixels });
-          } catch (Exception e) {
-            e.printStackTrace();
-          }
-        }
-      }      
+      }
     }
   }
 

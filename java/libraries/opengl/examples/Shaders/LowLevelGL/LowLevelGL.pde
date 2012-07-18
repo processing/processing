@@ -4,7 +4,7 @@ import java.nio.FloatBuffer;
 PGraphicsOpenGL pg;
 PGL pgl;
 
-PShader shader;
+PShader flatShader;
 
 int vertLoc;
 int colorLoc;
@@ -19,9 +19,10 @@ void setup() {
   size(400, 400, P3D);
   
   pg = (PGraphicsOpenGL)g;
+  
   // Get the default shader that Processing uses to
   // render flat geometry (w/out textures and lights).
-  shader = pg.getShader(PShader.FLAT);
+  flatShader = (PShader)getShader(PShader.FLAT);
 
   vertices = new float[12];
   vertData = PGL.allocateDirectFloatBuffer(12);
@@ -40,10 +41,10 @@ void draw() {
   updateGeometry();
   
   pgl = pg.beginPGL(); 
-  shader.bind();
+  flatShader.bind();
 
-  vertLoc = pgl.glGetAttribLocation(shader.glProgramObjectID, "inVertex");
-  colorLoc = pgl.glGetAttribLocation(shader.glProgramObjectID, "inColor");
+  vertLoc = pgl.glGetAttribLocation(flatShader.glProgram, "inVertex");
+  colorLoc = pgl.glGetAttribLocation(flatShader.glProgram, "inColor");
   
   pgl.glEnableVertexAttribArray(vertLoc);
   pgl.glEnableVertexAttribArray(colorLoc);
@@ -56,7 +57,7 @@ void draw() {
   pgl.glDisableVertexAttribArray(vertLoc);
   pgl.glDisableVertexAttribArray(colorLoc);
   
-  shader.unbind();  
+  flatShader.unbind();  
   pg.endPGL();
 }
 

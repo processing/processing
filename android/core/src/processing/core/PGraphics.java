@@ -1288,6 +1288,52 @@ public class PGraphics extends PImage implements PConstants {
   }  
   
 
+  
+  //////////////////////////////////////////////////////////////
+
+  // SHADERS
+
+  
+  public Object loadShader(String vertFilename, String fragFilename, int kind) {
+    showMissingWarning("loadShader");
+    return null;
+  }
+
+  
+  public Object loadShader(String fragFilename, int kind) {
+    showMissingWarning("loadShader");
+    return null;
+  }
+  
+  
+  public Object loadShader(String vertFilename, String fragFilename) {
+    showMissingWarning("loadShader");
+    return null;
+  }
+
+  
+  public Object loadShader(String fragFilename) {
+    showMissingWarning("loadShader");
+    return null;
+  }
+  
+  
+  public void shader(Object shader, int kind) {
+    showMissingWarning("shader");    
+  }
+  
+  
+  public void resetShader(int kind) {
+    showMissingWarning("resetShader");
+  }
+  
+  
+  public Object getShader(int kind) {
+    showMissingWarning("getShader");
+    return null;   
+  }
+  
+    
   //////////////////////////////////////////////////////////////
 
   // CURVE/BEZIER VERTEX HANDLING
@@ -2542,8 +2588,9 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  public void initCache(PImage img) { // ignore
-  }  
+  public Object initCache(PImage img) { // ignore
+    return null;
+  }
   
 
   //////////////////////////////////////////////////////////////

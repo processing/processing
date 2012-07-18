@@ -45,11 +45,11 @@ public class FrameBuffer implements PConstants {
   protected PGL pgl;
   protected PGL.Context context;      // The context that created this framebuffer.
   
-  public int glFboID;
-  public int glDepthBufferID;
-  public int glStencilBufferID;
-  public int glDepthStencilBufferID;
-  public int glColorBufferMultisampleID;
+  public int glFbo;
+  public int glDepth;
+  public int glStencil;
+  public int glDepthStencil;
+  public int glMultisample;
   public int width;
   public int height;
 
@@ -84,11 +84,11 @@ public class FrameBuffer implements PConstants {
     pgl = pg.pgl;
     context = pgl.createEmptyContext();
     
-    glFboID = 0;
-    glDepthBufferID = 0;
-    glStencilBufferID = 0;
-    glDepthStencilBufferID = 0;    
-    glColorBufferMultisampleID = 0;
+    glFbo = 0;
+    glDepth = 0;
+    glStencil = 0;
+    glDepthStencil = 0;    
+    glMultisample = 0;
     
     if (screen) {
       // If this framebuffer is used to represent a on-screen buffer,
@@ -143,20 +143,20 @@ public class FrameBuffer implements PConstants {
   
   protected void finalize() throws Throwable {
     try {
-      if (glFboID != 0) {
-        pg.finalizeFrameBufferObject(glFboID, context.code());
+      if (glFbo != 0) {
+        pg.finalizeFrameBufferObject(glFbo, context.code());
       }      
-      if (glDepthBufferID != 0) {
-        pg.finalizeRenderBufferObject(glDepthBufferID, context.code());
+      if (glDepth != 0) {
+        pg.finalizeRenderBufferObject(glDepth, context.code());
       }      
-      if (glStencilBufferID != 0) {
-        pg.finalizeRenderBufferObject(glStencilBufferID, context.code());
+      if (glStencil != 0) {
+        pg.finalizeRenderBufferObject(glStencil, context.code());
       }
-      if (glColorBufferMultisampleID != 0) {
-        pg.finalizeRenderBufferObject(glColorBufferMultisampleID, context.code());
+      if (glMultisample != 0) {
+        pg.finalizeRenderBufferObject(glMultisample, context.code());
       }
-      if (glDepthStencilBufferID != 0) {
-        pg.finalizeRenderBufferObject(glDepthStencilBufferID, context.code());
+      if (glDepthStencil != 0) {
+        pg.finalizeRenderBufferObject(glDepthStencil, context.code());
       }      
     } finally {
       super.finalize();
@@ -174,15 +174,15 @@ public class FrameBuffer implements PConstants {
   }
   
   public void copy(FrameBuffer dest) {
-    pgl.glBindFramebuffer(PGL.GL_READ_FRAMEBUFFER, this.glFboID);
-    pgl.glBindFramebuffer(PGL.GL_DRAW_FRAMEBUFFER, dest.glFboID);
+    pgl.glBindFramebuffer(PGL.GL_READ_FRAMEBUFFER, this.glFbo);
+    pgl.glBindFramebuffer(PGL.GL_DRAW_FRAMEBUFFER, dest.glFbo);
     pgl.glBlitFramebuffer(0, 0, this.width, this.height,
                           0, 0, dest.width, dest.height, 
                           PGL.GL_COLOR_BUFFER_BIT, PGL.GL_NEAREST);
   }
   
   public void bind() {
-    pgl.glBindFramebuffer(PGL.GL_FRAMEBUFFER, glFboID);
+    pgl.glBindFramebuffer(PGL.GL_FRAMEBUFFER, glFbo);
   }
   
   public void disableDepthTest() {
@@ -260,7 +260,7 @@ public class FrameBuffer implements PConstants {
     }
 
     for (int i = 0; i < numColorBuffers; i++) {
-      pgl.glFramebufferTexture2D(PGL.GL_FRAMEBUFFER, PGL.GL_COLOR_ATTACHMENT0 + i, colorBufferTex[i].glTarget, colorBufferTex[i].glID, 0);
+      pgl.glFramebufferTexture2D(PGL.GL_FRAMEBUFFER, PGL.GL_COLOR_ATTACHMENT0 + i, colorBufferTex[i].glTarget, colorBufferTex[i].glName, 0);
     }
 
     pgl.validateFramebuffer();
@@ -280,9 +280,9 @@ public class FrameBuffer implements PConstants {
     context = pgl.getCurrentContext();
     
     if (screenFb) {
-      glFboID = 0;
+      glFbo = 0;
     } else {      
-      glFboID = pg.createFrameBufferObject(context.code());
+      glFbo = pg.createFrameBufferObject(context.code());
     }
     
     // create the rest of the stuff...
@@ -304,25 +304,25 @@ public class FrameBuffer implements PConstants {
   
   
   protected void release() {
-    if (glFboID != 0) {
-      pg.finalizeFrameBufferObject(glFboID, context.code());
-      glFboID = 0;
+    if (glFbo != 0) {
+      pg.finalizeFrameBufferObject(glFbo, context.code());
+      glFbo = 0;
     }
-    if (glDepthBufferID != 0) {
-      pg.finalizeRenderBufferObject(glDepthBufferID, context.code());
-      glDepthBufferID = 0;
+    if (glDepth != 0) {
+      pg.finalizeRenderBufferObject(glDepth, context.code());
+      glDepth = 0;
     }
-    if (glStencilBufferID != 0) {
-      pg.finalizeRenderBufferObject(glStencilBufferID, context.code());
-      glStencilBufferID = 0;
+    if (glStencil != 0) {
+      pg.finalizeRenderBufferObject(glStencil, context.code());
+      glStencil = 0;
     }
-    if (glColorBufferMultisampleID != 0) {
-      pg.finalizeRenderBufferObject(glColorBufferMultisampleID, context.code());
-      glColorBufferMultisampleID = 0;
+    if (glMultisample != 0) {
+      pg.finalizeRenderBufferObject(glMultisample, context.code());
+      glMultisample = 0;
     }
-    if (glDepthStencilBufferID != 0) {
-      pg.finalizeRenderBufferObject(glDepthStencilBufferID, context.code());
-      glDepthStencilBufferID = 0;
+    if (glDepthStencil != 0) {
+      pg.finalizeRenderBufferObject(glDepthStencil, context.code());
+      glDepthStencil = 0;
     }     
   }
   
@@ -330,17 +330,17 @@ public class FrameBuffer implements PConstants {
   protected boolean contextIsOutdated() {
     boolean outdated = !pgl.contextIsCurrent(context);
     if (outdated) {
-      pg.removeFrameBufferObject(glFboID, context.code());
-      pg.removeRenderBufferObject(glDepthBufferID, context.code());
-      pg.removeRenderBufferObject(glStencilBufferID, context.code());
-      pg.removeRenderBufferObject(glDepthStencilBufferID, context.code());
-      pg.removeRenderBufferObject(glColorBufferMultisampleID, context.code());
+      pg.removeFrameBufferObject(glFbo, context.code());
+      pg.removeRenderBufferObject(glDepth, context.code());
+      pg.removeRenderBufferObject(glStencil, context.code());
+      pg.removeRenderBufferObject(glDepthStencil, context.code());
+      pg.removeRenderBufferObject(glMultisample, context.code());
       
-      glFboID = 0;
-      glDepthBufferID = 0;
-      glStencilBufferID = 0;
-      glDepthStencilBufferID = 0;    
-      glColorBufferMultisampleID = 0;
+      glFbo = 0;
+      glDepth = 0;
+      glStencil = 0;
+      glDepthStencil = 0;    
+      glMultisample = 0;
       
       for (int i = 0; i < numColorBuffers; i++) {
         colorBufferTex[i] = null;
@@ -356,10 +356,10 @@ public class FrameBuffer implements PConstants {
     pg.pushFramebuffer();
     pg.setFramebuffer(this);      
 
-    glColorBufferMultisampleID = pg.createRenderBufferObject(context.code());
-    pgl.glBindRenderbuffer(PGL.GL_RENDERBUFFER, glColorBufferMultisampleID);      
+    glMultisample = pg.createRenderBufferObject(context.code());
+    pgl.glBindRenderbuffer(PGL.GL_RENDERBUFFER, glMultisample);      
     pgl.glRenderbufferStorageMultisample(PGL.GL_RENDERBUFFER, nsamples, PGL.GL_RGBA8, width, height);
-    pgl.glFramebufferRenderbuffer(PGL.GL_FRAMEBUFFER, PGL.GL_COLOR_ATTACHMENT0, PGL.GL_RENDERBUFFER, glColorBufferMultisampleID);
+    pgl.glFramebufferRenderbuffer(PGL.GL_FRAMEBUFFER, PGL.GL_COLOR_ATTACHMENT0, PGL.GL_RENDERBUFFER, glMultisample);
     
     pg.popFramebuffer();      
   }
@@ -375,8 +375,8 @@ public class FrameBuffer implements PConstants {
     pg.pushFramebuffer();
     pg.setFramebuffer(this);
     
-    glDepthStencilBufferID = pg.createRenderBufferObject(context.code());
-    pgl.glBindRenderbuffer(PGL.GL_RENDERBUFFER, glDepthStencilBufferID);      
+    glDepthStencil = pg.createRenderBufferObject(context.code());
+    pgl.glBindRenderbuffer(PGL.GL_RENDERBUFFER, glDepthStencil);      
     
     if (multisample) { 
       pgl.glRenderbufferStorageMultisample(PGL.GL_RENDERBUFFER, nsamples, PGL.GL_DEPTH24_STENCIL8, width, height);
@@ -384,8 +384,8 @@ public class FrameBuffer implements PConstants {
       pgl.glRenderbufferStorage(PGL.GL_RENDERBUFFER, PGL.GL_DEPTH24_STENCIL8, width, height);
     }
     
-    pgl.glFramebufferRenderbuffer(PGL.GL_FRAMEBUFFER, PGL.GL_DEPTH_ATTACHMENT, PGL.GL_RENDERBUFFER, glDepthStencilBufferID);
-    pgl.glFramebufferRenderbuffer(PGL.GL_FRAMEBUFFER, PGL.GL_STENCIL_ATTACHMENT, PGL.GL_RENDERBUFFER, glDepthStencilBufferID);
+    pgl.glFramebufferRenderbuffer(PGL.GL_FRAMEBUFFER, PGL.GL_DEPTH_ATTACHMENT, PGL.GL_RENDERBUFFER, glDepthStencil);
+    pgl.glFramebufferRenderbuffer(PGL.GL_FRAMEBUFFER, PGL.GL_STENCIL_ATTACHMENT, PGL.GL_RENDERBUFFER, glDepthStencil);
     
     pg.popFramebuffer();  
   }
@@ -401,8 +401,8 @@ public class FrameBuffer implements PConstants {
     pg.pushFramebuffer();
     pg.setFramebuffer(this);
 
-    glDepthBufferID = pg.createRenderBufferObject(context.code());
-    pgl.glBindRenderbuffer(PGL.GL_RENDERBUFFER, glDepthBufferID);
+    glDepth = pg.createRenderBufferObject(context.code());
+    pgl.glBindRenderbuffer(PGL.GL_RENDERBUFFER, glDepth);
 
     int glConst = PGL.GL_DEPTH_COMPONENT16;
     if (depthBits == 16) {
@@ -419,7 +419,7 @@ public class FrameBuffer implements PConstants {
       pgl.glRenderbufferStorage(PGL.GL_RENDERBUFFER, glConst, width, height);
     }                    
 
-    pgl.glFramebufferRenderbuffer(PGL.GL_FRAMEBUFFER, PGL.GL_DEPTH_ATTACHMENT, PGL.GL_RENDERBUFFER, glDepthBufferID);
+    pgl.glFramebufferRenderbuffer(PGL.GL_FRAMEBUFFER, PGL.GL_DEPTH_ATTACHMENT, PGL.GL_RENDERBUFFER, glDepth);
 
     pg.popFramebuffer();
   }
@@ -435,8 +435,8 @@ public class FrameBuffer implements PConstants {
     pg.pushFramebuffer();
     pg.setFramebuffer(this);
 
-    glStencilBufferID = pg.createRenderBufferObject(context.code());
-    pgl.glBindRenderbuffer(PGL.GL_RENDERBUFFER, glStencilBufferID);
+    glStencil = pg.createRenderBufferObject(context.code());
+    pgl.glBindRenderbuffer(PGL.GL_RENDERBUFFER, glStencil);
 
     int glConst = PGL.GL_STENCIL_INDEX1;
     if (stencilBits == 1) {
@@ -452,7 +452,7 @@ public class FrameBuffer implements PConstants {
       pgl.glRenderbufferStorage(PGL.GL_RENDERBUFFER, glConst, width, height);
     }
     
-    pgl.glFramebufferRenderbuffer(PGL.GL_FRAMEBUFFER, PGL.GL_STENCIL_ATTACHMENT, PGL.GL_RENDERBUFFER, glStencilBufferID);
+    pgl.glFramebufferRenderbuffer(PGL.GL_FRAMEBUFFER, PGL.GL_STENCIL_ATTACHMENT, PGL.GL_RENDERBUFFER, glStencil);
 
     pg.popFramebuffer();
   }  
