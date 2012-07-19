@@ -13,6 +13,7 @@ void setup() {
   s = createShape();
   s.noFill();
   s.stroke(255);
+  s.strokeWeight(2);
   // Exterior part of shape
   s.beginContour();
   s.vertex(-100,-100);
