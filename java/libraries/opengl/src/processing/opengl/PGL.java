@@ -647,10 +647,10 @@ public class PGL {
       // Create the color texture...
       gl.glGenTextures(1, glColorTexID, 0);
       gl.glBindTexture(GL.GL_TEXTURE_2D, glColorTexID[0]);    
-      gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);    
-      gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
-      gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE);
-      gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP_TO_EDGE);
+      gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);    
+      gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
+      gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE);
+      gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP_TO_EDGE);
       gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, fboWidth, fboHeight, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, null);
       gl.glBindTexture(GL.GL_TEXTURE_2D, 0);      
      
@@ -762,10 +762,30 @@ public class PGL {
   }
   
   
-  public boolean usingPrimaryFBO() {
+  public boolean primaryIsFboBacked() {
     return glColorFboID[0] != 0;
   }
   
+
+  public int getFboTexTarget() {
+    return GL.GL_TEXTURE_2D;
+   }  
+  
+  
+  public int getFboTexName() {
+    return glColorTexID[0];
+   }
+  
+  
+  public int getFboWidth() {
+   return fboWidth;
+  }
+
+  
+  public int getFboHeight() {
+    return fboHeight;
+   } 
+
   
   public void bindPrimaryColorFBO() {
     if (multisample) {
@@ -1039,10 +1059,15 @@ public class PGL {
   }
 
 
-  public void glTexParameterf(int target, int param, int value) {
-    gl.glTexParameterf(target, param, value);
+  public void glTexParameteri(int target, int param, int value) {
+    gl.glTexParameteri(target, param, value);
   }
 
+  
+  public void glGetTexParameteriv(int target, int param, int[] values, int offset) {
+    gl.glGetTexParameteriv(target, param, values, offset);
+  }
+  
 
   public void glGenerateMipmap(int target) {
     gl.glGenerateMipmap(target);

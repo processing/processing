@@ -367,8 +367,11 @@ public class PGraphicsOpenGL extends PGraphics {
   protected IntBuffer pixelBuffer;
 
   /** Array to store pixels in OpenGL format. */
-  protected int[] rgbaPixels;
+  protected int[] nativePixels;
 
+  /** IntBuffer wrapping the native pixels array. */
+  protected IntBuffer nativePixelBuffer;
+  
   /** Flag to indicate if the user is manipulating the
    * pixels array through the set()/get() methods */
   protected boolean setgetPixels;
@@ -1796,7 +1799,7 @@ public class PGraphicsOpenGL extends PGraphics {
           pgl.glDrawBuffer(PGL.GL_BACK);
         }
         offscreenNotCurrent = false;
-      } else if (pgl.usingPrimaryFBO()) {
+      } else if (pgl.primaryIsFboBacked()) {
         if (op == OP_READ) {
           // We read from the color FBO, but the multisample FBO is currently bound, so:
           offscreenNotCurrent = true;
@@ -4921,14 +4924,7 @@ public class PGraphicsOpenGL extends PGraphics {
     allocatePixels();
     
     if (!setgetPixels) {
-      readPixels();
-      
-      if (primarySurface) {
-        // Copy pixels to the texture associated to the primary surface 
-        // so both are in sync.
-        loadTextureImpl(POINT, false);
-        pixelsToTexture();
-      }
+      readPixels();      
     }
     
     if (needEndDraw) {
@@ -4970,19 +4966,20 @@ public class PGraphicsOpenGL extends PGraphics {
     int i0 = y * width + x;
     int len = w * h;
       
-    if (rgbaPixels == null || rgbaPixels.length < len) {
-      rgbaPixels = new int[len];
+    if (nativePixels == null || nativePixels.length < len) {
+      nativePixels = new int[len];
+      nativePixelBuffer = IntBuffer.wrap(nativePixels);
     }
 
-    PApplet.arrayCopy(pixels, i0, rgbaPixels, 0, len);    
-    PGL.javaToNativeARGB(rgbaPixels, w, h);
+    PApplet.arrayCopy(pixels, i0, nativePixels, 0, len);    
+    PGL.javaToNativeARGB(nativePixels, w, h);
     
     // Copying pixel buffer to screen texture...
     if (primarySurface) {
       loadTextureImpl(POINT, false);  // (first making sure that the screen texture is valid).
     }    
     pgl.copyToTexture(texture.glTarget, texture.glFormat, texture.glName,
-                      x, y, w, h, IntBuffer.wrap(rgbaPixels));
+                      x, y, w, h, IntBuffer.wrap(nativePixels));
     
     if (primarySurface || offscreenMultisample) {
       // ...and drawing the texture to screen... but only
@@ -5004,7 +5001,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   public int get(int x, int y) {
-    loadPixels();
+    loadPixels();    
     setgetPixels = true;
     return super.get(x, y);
   }
@@ -5041,12 +5038,54 @@ public class PGraphicsOpenGL extends PGraphics {
   // array, and then the pixels array into the screen texture.
   public void loadTexture() {
     if (primarySurface) {
+      boolean needEndDraw = false;
+      if (!drawing) {
+        beginDraw();
+        needEndDraw = true;
+      }
+      
       loadTextureImpl(Texture.POINT, false);
-      loadPixels();
-      pixelsToTexture();
+      
+      flush(); // To make sure the color buffer is updated.
+      
+      if (pgl.primaryIsFboBacked()) {       
+        // Copy the contents of the FBO used by the primary surface into texture, this copy
+        // operation is very fast because it is resolved in the GPU.
+        texture.set(pgl.getFboTexTarget(), pgl.getFboTexName(), pgl.getFboWidth(), pgl.getFboHeight(), width, height);        
+      } else {
+        // Here we go the slow route: we first copy the contents of the color buffer into a pixels array (but we keep it
+        // in native format) and then copy this array into the texture.
+        if (nativePixels == null || nativePixels.length < width * height) {
+          nativePixels = new int[width * height];
+          nativePixelBuffer = IntBuffer.wrap(nativePixels);
+        }
+        
+        beginPixelsOp(OP_READ);             
+        pgl.glReadPixels(0, 0, width, height, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, nativePixelBuffer);    
+        endPixelsOp();
+        
+        texture.setNative(nativePixels, 0, 0, width, height);
+      }
+      
+      if (needEndDraw) {
+        endDraw();
+      } 
     }
   }
 
+  
+  // Just marks the whole texture as updated
+  public void updateTexture() {
+    texture.updateTexels();
+  }  
+  
+  
+  // Marks the specified rectanglular subregion in the texture as
+  // updated.
+  public void updateTexture(int x, int y, int w, int h) {
+    texture.updateTexels(x, y, w, h);
+  }  
+  
   
   // Draws wherever it is in the screen texture right now to the display.
   public void updateDisplay() {
@@ -5065,15 +5104,17 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     
     if (texture == null || texture != img.getCache(pgPrimary)) {
-      Texture.Parameters params;
-      if (primarySurface) {
-        params = new Texture.Parameters(ARGB, Texture.POINT, false);
-      } else {
-        params = new Texture.Parameters(ARGB, Texture.BILINEAR, false);
-      }
-              
-      texture = addTexture(img, params);
-        
+      Texture tex = (Texture)img.getCache(pgPrimary);
+      Texture.Parameters params = tex != null ? tex.getParameters() : null;
+      if (tex == null || tex.contextIsOutdated() || !validSurfaceTex(tex)) {
+        if (primarySurface) {
+          params = new Texture.Parameters(ARGB, Texture.POINT, false);
+        } else {
+          params = new Texture.Parameters(ARGB, Texture.BILINEAR, false);
+        }        
+        tex = addTexture(img, params);
+      } 
+      texture = tex;        
       texture.setFlippedY(true);
       this.setCache(pgPrimary, texture);
       this.setParams(pgPrimary, params);
@@ -5111,17 +5152,17 @@ public class PGraphicsOpenGL extends PGraphics {
                     texture.glWidth, texture.glHeight,
                     x, y, x + w, y + h);
   }
-
-
-  protected void pixelsToTexture() {
-    texture.set(pixels);
-  }
-
-
-  protected void textureToPixels() {
-    texture.get(pixels);
-  }
   
+  
+  protected boolean validSurfaceTex(Texture tex) {
+    Texture.Parameters params = tex.getParameters();    
+    if (primarySurface) {
+      return params.sampling == Texture.POINT && !params.mipmaps; 
+    } else {
+      return params.sampling == Texture.BILINEAR && !params.mipmaps;
+    }    
+  }
+
   
   //////////////////////////////////////////////////////////////
 
