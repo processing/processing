@@ -64,6 +64,5 @@ void draw() {
   // Display the group PShape
   translate(mouseX, mouseY);
   shape(group);
-   
 }
 

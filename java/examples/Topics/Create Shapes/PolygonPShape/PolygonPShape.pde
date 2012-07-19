@@ -16,6 +16,7 @@ void setup() {
   // You can set fill and stroke
   star.fill(102);
   star.stroke(255);
+  star.strokeWeight(2);
   // Here, we are hardcoding a series of vertices
   star.vertex(0, -50);
   star.vertex(14, -20);

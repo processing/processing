@@ -30,6 +30,7 @@ class Wiggler {
     s = createShape();
     s.fill(127);
     s.stroke(0);
+    s.strokeWeight(2);
     for (PVector v : original) {
       s.vertex(v.x, v.y);
     }

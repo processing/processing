@@ -8,13 +8,13 @@
 PShape path;
 
 void setup() {
-  size(640, 360, P2D);
+  size(640, 360, P3D);
   smooth();
   // Create the shape
   path = createShape();
   // Set fill and stroke
   path.noFill();
-  path.stroke(0);
+  path.stroke(255);
   path.strokeWeight(2);
   
   float x = 0;
@@ -29,7 +29,7 @@ void setup() {
 }
 
 void draw() {
-  background(255);
+  background(51);
   // Draw the path at the mouse location
   translate(mouseX, mouseY);
   shape(path);
