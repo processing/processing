@@ -9,7 +9,7 @@
 Wiggler w;
 
 void setup() {
-  size(640, 360, P3D);
+  size(640, 360, P2D);
   smooth();
   w = new Wiggler();
 }

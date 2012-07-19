@@ -15,6 +15,7 @@ class Star {
     // You can set fill and stroke
     s.fill(102);
     s.stroke(255);
+    s.strokeWeight(2);
     // Here, we are hardcoding a series of vertices
     s.vertex(0, -50);
     s.vertex(14, -20);
@@ -33,8 +34,8 @@ class Star {
   void move() {
     // Demonstrating some simple motion
     x++;
-    if (x > width) {
-      x = 0;
+    if (x > width+100) {
+      x = -100;
     }
   }
 
