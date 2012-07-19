@@ -3907,8 +3907,7 @@ public class PShapeOpenGL extends PShape {
     if (textureImage != null) {
       tex = g.getTexture(textureImage);      
       if (tex != null) {
-        pgl.enableTexturing(tex.glTarget);          
-        pgl.glBindTexture(tex.glTarget, tex.glName);        
+        tex.bind();
       }
     }    
     
@@ -3928,8 +3927,7 @@ public class PShapeOpenGL extends PShape {
         // Rendering line or point triangles, which are never lit nor textured.
         if (!renderingStroke) {
           if (tex != null) {
-            pgl.glBindTexture(tex.glTarget, 0); 
-            pgl.disableTexturing(tex.glTarget);
+            tex.unbind();
             tex = null;
           }
           
@@ -3977,8 +3975,7 @@ public class PShapeOpenGL extends PShape {
     }
     
     if (tex != null) {
-      pgl.glBindTexture(tex.glTarget, 0); 
-      pgl.disableTexturing(tex.glTarget);
+      tex.unbind();
     }     
   }  
   
