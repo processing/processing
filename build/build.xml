@@ -28,7 +28,8 @@
 
   <!-- Libraries required for running processing -->
   <fileset dir=".." id="runtime.jars">
-    <include name="core/core.jar" />
+    <!--<include name="core/library/core.jar" />-->
+    <include name="core/library" />
     <include name="app/pde.jar" />
     <include name="app/lib/antlr.jar" />
     <include name="app/lib/ecj.jar" />
