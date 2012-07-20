@@ -79,9 +79,14 @@ public class Library extends InstalledContribution {
   };
 
 
-  public Library(File folder, String subfolder) {
+  public Library(File folder) {
+    this(folder, null);
+  }
+  
+  
+  public Library(File folder, String groupName) {
     super(folder, Library.propertiesFileName);
-    this.group = subfolder;
+    this.group = groupName;
 
     libraryFolder = new File(folder, "library");
     examplesFolder = new File(folder, "examples");
@@ -462,7 +467,7 @@ public class Library extends InstalledContribution {
     discover(folder, librariesFolders);
     
     for (File baseFolder : librariesFolders) {
-      libraries.add(new Library(baseFolder, null));
+      libraries.add(new Library(baseFolder));
     }
     
     String[] list = folder.list(junkFolderFilter);

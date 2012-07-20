@@ -45,6 +45,9 @@ public abstract class Mode {
 
   public ArrayList<Library> coreLibraries;
   public ArrayList<Library> contribLibraries;
+  
+  /** Library folder for core. (Used for OpenGL in particular.) */
+  protected Library coreLibrary;
 
 
   public Mode(Base base, File folder) {
@@ -144,6 +147,11 @@ public abstract class Mode {
   }
 
 
+  public Library getCoreLibrary() {
+    return null;
+  }
+  
+  
   public Library getLibrary(String pkgName) throws SketchException {
     ArrayList<Library> libraries = importToLibraryTable.get(pkgName);
     if (libraries == null) {

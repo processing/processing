@@ -29,6 +29,7 @@ import java.util.HashMap;
 import processing.app.Base;
 import processing.app.Editor;
 import processing.app.EditorState;
+import processing.app.Library;
 import processing.app.Mode;
 import processing.app.RunnerListener;
 import processing.app.Sketch;
@@ -167,7 +168,16 @@ public class JavaMode extends Mode {
       "application.linux"
     };
   }
-
+  
+  
+  public Library getCoreLibrary() {
+    if (coreLibrary == null) {
+      File coreFolder = Base.getContentFile("core");
+      coreLibrary = new Library(coreFolder, null);
+    }
+    return coreLibrary;
+  }
+  
   
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
