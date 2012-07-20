@@ -222,10 +222,10 @@ public class JavaMode extends Mode {
 //  }
   
   
-  public boolean handleExportApplet(Sketch sketch) throws SketchException, IOException {
-    JavaBuild build = new JavaBuild(sketch);
-    return build.exportApplet();
-  }
+//  public boolean handleExportApplet(Sketch sketch) throws SketchException, IOException {
+//    JavaBuild build = new JavaBuild(sketch);
+//    return build.exportApplet();
+//  }
   
   
   public boolean handleExportApplication(Sketch sketch) throws SketchException, IOException {

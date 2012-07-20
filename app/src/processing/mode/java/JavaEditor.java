@@ -196,6 +196,7 @@ public class JavaEditor extends Editor {
    * Made synchronized to (hopefully) avoid problems of people
    * hitting export twice, quickly, and horking things up.
    */
+  /*
   public void handleExportApplet() {
     if (handleExportCheckModified()) {
       toolbar.activate(JavaToolbar.EXPORT);
@@ -215,17 +216,7 @@ public class JavaEditor extends Editor {
       toolbar.deactivate(JavaToolbar.EXPORT);
     }
   }
-
-
-//  public void handleExportApplication() {
-//    toolbar.activate(Toolbar.EXPORT);
-//    try {
-//      jmode.handleExportApplication();
-//    } catch (Exception e) {
-//      statusError(e);
-//    }
-//    toolbar.deactivate(Toolbar.EXPORT);
-//  }
+  */
 
 
   /**
