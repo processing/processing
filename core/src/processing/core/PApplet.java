@@ -10165,6 +10165,12 @@ public class PApplet extends Applet
   }
 
 
+  public void filter(Object shader) {
+    if (recorder != null) recorder.filter(shader);
+    g.filter(shader);
+  }
+
+
   public void bezierVertex(float x2, float y2,
                            float x3, float y3,
                            float x4, float y4) {

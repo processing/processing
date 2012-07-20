@@ -362,13 +362,17 @@ public class PGraphicsOpenGL extends PGraphics {
   /** Used to create a temporary copy of the color buffer of this  
    * rendering surface when applying a filter */
   protected Texture textureCopy;
-
+  protected PImage imageCopy;
+  
   /** IntBuffer wrapping the pixels array. */
   protected IntBuffer pixelBuffer;
 
   /** Array to store pixels in OpenGL format. */
-  protected int[] rgbaPixels;
+  protected int[] nativePixels;
 
+  /** IntBuffer wrapping the native pixels array. */
+  protected IntBuffer nativePixelBuffer;
+  
   /** Flag to indicate if the user is manipulating the
    * pixels array through the set()/get() methods */
   protected boolean setgetPixels;
@@ -1796,7 +1800,7 @@ public class PGraphicsOpenGL extends PGraphics {
           pgl.glDrawBuffer(PGL.GL_BACK);
         }
         offscreenNotCurrent = false;
-      } else if (pgl.usingPrimaryFBO()) {
+      } else if (pgl.primaryIsFboBacked()) {
         if (op == OP_READ) {
           // We read from the color FBO, but the multisample FBO is currently bound, so:
           offscreenNotCurrent = true;
@@ -3690,6 +3694,14 @@ public class PGraphicsOpenGL extends PGraphics {
                         n30, n31, n32, n33);
   }
 
+  
+  protected void begin2D() {
+  }
+  
+
+  protected void end2D() {
+  }   
+  
 
   //////////////////////////////////////////////////////////////
 
@@ -4078,8 +4090,8 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void defaultCamera() {
     camera();  
   }
-  
 
+  
   //////////////////////////////////////////////////////////////
 
   // PROJECTION
@@ -4921,14 +4933,7 @@ public class PGraphicsOpenGL extends PGraphics {
     allocatePixels();
     
     if (!setgetPixels) {
-      readPixels();
-      
-      if (primarySurface) {
-        // Copy pixels to the texture associated to the primary surface 
-        // so both are in sync.
-        loadTextureImpl(POINT, false);
-        pixelsToTexture();
-      }
+      readPixels();      
     }
     
     if (needEndDraw) {
@@ -4970,19 +4975,20 @@ public class PGraphicsOpenGL extends PGraphics {
     int i0 = y * width + x;
     int len = w * h;
       
-    if (rgbaPixels == null || rgbaPixels.length < len) {
-      rgbaPixels = new int[len];
+    if (nativePixels == null || nativePixels.length < len) {
+      nativePixels = new int[len];
+      nativePixelBuffer = IntBuffer.wrap(nativePixels);
     }
 
-    PApplet.arrayCopy(pixels, i0, rgbaPixels, 0, len);    
-    PGL.javaToNativeARGB(rgbaPixels, w, h);
+    PApplet.arrayCopy(pixels, i0, nativePixels, 0, len);    
+    PGL.javaToNativeARGB(nativePixels, w, h);
     
     // Copying pixel buffer to screen texture...
     if (primarySurface) {
       loadTextureImpl(POINT, false);  // (first making sure that the screen texture is valid).
     }    
     pgl.copyToTexture(texture.glTarget, texture.glFormat, texture.glName,
-                      x, y, w, h, IntBuffer.wrap(rgbaPixels));
+                      x, y, w, h, IntBuffer.wrap(nativePixels));
     
     if (primarySurface || offscreenMultisample) {
       // ...and drawing the texture to screen... but only
@@ -5004,7 +5010,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   public int get(int x, int y) {
-    loadPixels();
+    loadPixels();    
     setgetPixels = true;
     return super.get(x, y);
   }
@@ -5040,13 +5046,77 @@ public class PGraphicsOpenGL extends PGraphics {
   // Copies the contents of the color buffer into the pixels
   // array, and then the pixels array into the screen texture.
   public void loadTexture() {
+    boolean needEndDraw = false;
+    if (!drawing) {
+      beginDraw();
+      needEndDraw = true;
+    }
+
+    flush(); // To make sure the color buffer is updated.
+    
     if (primarySurface) {
       loadTextureImpl(Texture.POINT, false);
-      loadPixels();
-      pixelsToTexture();
+      
+      if (pgl.primaryIsFboBacked()) {
+        pgl.bindPrimaryColorFBO();
+        // Copy the contents of the FBO used by the primary surface into texture, this copy
+        // operation is very fast because it is resolved in the GPU.        
+        texture.set(pgl.getFboTexTarget(), pgl.getFboTexName(), pgl.getFboWidth(), pgl.getFboHeight(), width, height);
+        pgl.bindPrimaryMultiFBO();
+      } else {
+        // Here we go the slow route: we first copy the contents of the color buffer into a pixels array (but we keep it
+        // in native format) and then copy this array into the texture.
+        if (nativePixels == null || nativePixels.length < width * height) {
+          nativePixels = new int[width * height];
+          nativePixelBuffer = IntBuffer.wrap(nativePixels);
+        }
+        
+        beginPixelsOp(OP_READ);             
+        pgl.glReadPixels(0, 0, width, height, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, nativePixelBuffer);    
+        endPixelsOp();
+        
+        texture.setNative(nativePixels, 0, 0, width, height);
+      }
+    } else {
+      // We need to copy the contents of the multisampled buffer to the
+      // color buffer, so the later is up-to-date with the last drawing.
+      if (offscreenMultisample) {
+        offscreenFramebufferMultisample.copy(offscreenFramebuffer);
+      }
+      
+      // Make the offscreen color buffer opaque so it doesn't show      
+      // the background when drawn on the main surface. 
+      if (offscreenMultisample) {
+        pushFramebuffer();
+        setFramebuffer(offscreenFramebuffer);
+      }      
+      pgl.glColorMask(false, false, false, true);
+      pgl.glClearColor(0, 0, 0, 1);
+      pgl.glClear(PGL.GL_COLOR_BUFFER_BIT);
+      pgl.glColorMask(true, true, true, true);
+      if (offscreenMultisample) {
+        popFramebuffer();
+      } 
     }
+    
+    if (needEndDraw) {
+      endDraw();
+    }     
   }
 
+  
+  // Just marks the whole texture as updated
+  public void updateTexture() {
+    texture.updateTexels();
+  }  
+  
+  
+  // Marks the specified rectanglular subregion in the texture as
+  // updated.
+  public void updateTexture(int x, int y, int w, int h) {
+    texture.updateTexels(x, y, w, h);
+  }  
+  
   
   // Draws wherever it is in the screen texture right now to the display.
   public void updateDisplay() {
@@ -5065,15 +5135,17 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     
     if (texture == null || texture != img.getCache(pgPrimary)) {
-      Texture.Parameters params;
-      if (primarySurface) {
-        params = new Texture.Parameters(ARGB, Texture.POINT, false);
-      } else {
-        params = new Texture.Parameters(ARGB, Texture.BILINEAR, false);
-      }
-              
-      texture = addTexture(img, params);
-        
+      Texture tex = (Texture)img.getCache(pgPrimary);
+      Texture.Parameters params = tex != null ? tex.getParameters() : null;
+      if (tex == null || tex.contextIsOutdated() || !validSurfaceTex(tex)) {
+        if (primarySurface) {
+          params = new Texture.Parameters(ARGB, Texture.POINT, false);
+        } else {
+          params = new Texture.Parameters(ARGB, Texture.BILINEAR, false);
+        }        
+        tex = addTexture(img, params);
+      } 
+      texture = tex;        
       texture.setFlippedY(true);
       this.setCache(pgPrimary, texture);
       this.setParams(pgPrimary, params);
@@ -5111,17 +5183,17 @@ public class PGraphicsOpenGL extends PGraphics {
                     texture.glWidth, texture.glHeight,
                     x, y, x + w, y + h);
   }
-
-
-  protected void pixelsToTexture() {
-    texture.set(pixels);
-  }
-
-
-  protected void textureToPixels() {
-    texture.get(pixels);
-  }
   
+  
+  protected boolean validSurfaceTex(Texture tex) {
+    Texture.Parameters params = tex.getParameters();    
+    if (primarySurface) {
+      return params.sampling == Texture.POINT && !params.mipmaps; 
+    } else {
+      return params.sampling == Texture.BILINEAR && !params.mipmaps;
+    }    
+  }
+
   
   //////////////////////////////////////////////////////////////
 
@@ -5206,48 +5278,58 @@ public class PGraphicsOpenGL extends PGraphics {
       return;
     }
     
-    PolyTexShader texShader = (PolyTexShader)shader;
-    
-//    if (shader instanceof FilterShader) {
-//      
-//    }
-    
-     if (primarySurface) {
-    
-    
-     } else {
-       if (textureCopy == null) {         
-         Texture.Parameters params = new Texture.Parameters(ARGB, Texture.BILINEAR, false);
-         textureCopy = new Texture(parent, width, height, params);
-         textureCopy.setFlippedY(true);                  
-       }
-       
-       flush();
-       
-       // Disable writing to the depth buffer, so that after applying the filter we can
-       // still use the depth information to properly add geometry to the scene.
-       
-       offscreenFramebuffer.setColorBuffer(textureCopy);
-       offscreenFramebuffer.clear();
-       
-       // Disable depth test so the texture overwrites everything else.
-       
-       beginPGL();
-       pgl.drawTexture(texture.glTarget, texture.glName,
-                       texture.glWidth, texture.glHeight,
-                       0, 0, width, height);       
-       endPGL();
+    loadTexture();
 
-       offscreenFramebuffer.setColorBuffer(texture);
-       offscreenFramebuffer.clear();
-       
-       beginPGL();       
-       pgl.drawTextureCustom(textureCopy.glTarget, textureCopy.glName,
-                             textureCopy.glWidth, textureCopy.glHeight,
-                             0, 0, width, height, texShader.glProgram);       
-       endPGL();              
-     }
-   
+    if (textureCopy == null || textureCopy.width != width || textureCopy.height != height) {         
+      Texture.Parameters params = new Texture.Parameters(ARGB, Texture.POINT, false);
+      textureCopy = new Texture(parent, width, height, params);
+      textureCopy.setFlippedY(true);    
+      imageCopy = wrapTexture(textureCopy);
+    }     
+    textureCopy.set(texture.glTarget, texture.glName, texture.glWidth, texture.glHeight, width, height);
+         
+    // Disable writing to the depth buffer, so that after applying the filter we can
+    // still use the depth information to keep adding geometry to the scene.    
+    pgl.glDepthMask(false);
+    // Also disabling depth testing so the texture is drawn on top of everything that
+    // has been drawn before.
+    pgl.glDisable(PGL.GL_DEPTH_TEST);
+
+    PolyTexShader prevTexShader = polyTexShader;
+    polyTexShader = (PolyTexShader) shader;       
+     
+    boolean prevLights = lights;
+    lights = false;
+    int prevTextureMode = textureMode;
+    textureMode = NORMAL;
+    boolean prevStroke = stroke;
+    stroke = false;
+     
+    // Drawing a textured quad in 2D, covering the entire screen,
+    // with the filter shader applied to it:
+    begin2D();     
+    beginShape(QUADS);
+    texture(imageCopy);
+    vertex(0, 0, 0, 0);
+    vertex(width, 0, 1, 0);
+    vertex(width, height, 1, 1);
+    vertex(0, height, 0, 1);
+    endShape();
+    end2D();
+        
+    // Restoring previous configuration.
+    stroke = prevStroke;
+    lights = prevLights;
+    textureMode = prevTextureMode;
+     
+    polyTexShader = prevTexShader;
+     
+    if (!hints[DISABLE_DEPTH_TEST]) {
+      pgl.glEnable(PGL.GL_DEPTH_TEST);
+    }   
+    if (!hints[DISABLE_DEPTH_MASK]) {
+      pgl.glDepthMask(true);
+    }     
   }
 
 
