@@ -1,5 +1,12 @@
 0206 pde
+_ update to 6u33 (OS X latest)
 
+_ retina support
+Have you added an NSPrincipalClass to your Info.plist, and are using a JavaApplicationStub with 64-bit?
+<key>NSPrincipalClass</key>
+<string>NSApplication</string>
+_ Check out the desktop property. Unfortunately, it won't tell you *which* display is running in HiDPI, but it will stay up-to-date with live display changes (like a Retina-display being plugged and unplugged). If you query the property after each GraphicsEnvironment display change event, you should be able to live switch in and out of HiDPI.
+java.awt.Toolkit.getDefaultToolkit().getDesktopProperty("apple.awt.contentScaleFactor");
 
 recent/open
 X add EditorState class, device-aware placement
