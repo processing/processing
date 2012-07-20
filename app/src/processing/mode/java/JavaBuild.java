@@ -1677,4 +1677,3 @@ public class JavaBuild {
     }
   }
 }
-

@@ -280,7 +280,12 @@ public class EditorConsole extends JScrollPane {
     // components, causing deadlock. Updates are buffered to the console and 
     // displayed at regular intervals on Swing's event-dispatching thread. 
     // (patch by David Mellis)
-    consoleDoc.appendString(what, err ? errStyle : stdStyle);
+    
+    if (err && what.contains("invalid context 0x0")) {
+      // respectfully declining
+    } else {
+      consoleDoc.appendString(what, err ? errStyle : stdStyle);
+    }
   }
 
 

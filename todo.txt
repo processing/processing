@@ -1,5 +1,7 @@
 0206 pde
+X supress "invalid context 0x0" at the console level
 _ update to 6u33 (OS X latest)
+
 
 _ retina support
 Have you added an NSPrincipalClass to your Info.plist, and are using a JavaApplicationStub with 64-bit?
