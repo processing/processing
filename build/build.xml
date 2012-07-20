@@ -29,7 +29,6 @@
   <!-- Libraries required for running processing -->
   <fileset dir=".." id="runtime.jars">
     <!--<include name="core/library/core.jar" />-->
-    <include name="core/library" />
     <include name="app/pde.jar" />
     <include name="app/lib/antlr.jar" />
     <include name="app/lib/ecj.jar" />
@@ -345,6 +344,7 @@
     </copy>
     
     <copy todir="macosx/work/Processing.app/Contents/Resources/Java">
+      <fileset dir=".." includes="core/library/**" />
       <fileset dir="shared" includes="lib/**" />
       <fileset dir="shared" includes="modes/**" />
       <fileset file="shared/revisions.txt" />
@@ -458,6 +458,7 @@
     <mkdir dir="linux/work" />
     
     <copy todir="linux/work">
+      <fileset dir=".." includes="core/library/**" />
       <fileset dir="shared" includes="lib/**" />
       <fileset dir="shared" includes="modes/**" />
       <fileset file="shared/revisions.txt" />
@@ -567,6 +568,7 @@ http://www.gnu.org/software/tar/manual/html_section/transform.html
     </copy>
     
     <copy todir="windows/work">
+      <fileset dir=".." includes="core/library/**" />
       <fileset dir="shared" includes="lib/**" />
       <fileset dir="shared" includes="modes/**" />
       <fileset file="shared/revisions.txt" />

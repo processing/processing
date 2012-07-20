@@ -1,3 +1,4 @@
+/*
 package processing.app.tools;
 
 import java.io.*;
@@ -154,3 +155,4 @@ public class ExportExamples implements Tool {
     return "Export Examples";
   }
 }
+*/
