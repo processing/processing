@@ -3,7 +3,7 @@
 
   <target name="clean" description="Clean out the build directories">
     <delete dir="bin" />
-    <delete file="core.jar" />
+    <delete file="library/core.jar" />
   </target>
   
   <target name="compile" description="Compile">
@@ -33,7 +33,7 @@
   </target>		
 
   <target name="build" depends="compile" description="Build core library">
-    <jar basedir="bin" destfile="core.jar" />
+    <jar basedir="bin" destfile="library/core.jar" />
   </target>
   
 </project>

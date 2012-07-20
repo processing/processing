@@ -8,6 +8,10 @@ Have you added an NSPrincipalClass to your Info.plist, and are using a JavaAppli
 _ Check out the desktop property. Unfortunately, it won't tell you *which* display is running in HiDPI, but it will stay up-to-date with live display changes (like a Retina-display being plugged and unplugged). If you query the property after each GraphicsEnvironment display change event, you should be able to live switch in and out of HiDPI.
 java.awt.Toolkit.getDefaultToolkit().getDesktopProperty("apple.awt.contentScaleFactor");
 
+_ launch moviemaker as separate Java process (to disable Quaqua)
+_ or selectively disable parts to see which is causing the trouble
+_   http://www.randelshofer.ch/quaqua/guide/tailoring.html
+
 recent/open
 X add EditorState class, device-aware placement
 X   get rid of restore sketch feature

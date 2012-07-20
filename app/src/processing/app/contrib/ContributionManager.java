@@ -187,7 +187,7 @@ public class ContributionManager {
   static InstalledContribution create(Base base, Type type, File folder) {
     switch (type) {
     case LIBRARY:
-      return new Library(folder, null);
+      return new Library(folder);
     case LIBRARY_COMPILATION:
       return LibraryCompilation.create(folder);
     case TOOL:

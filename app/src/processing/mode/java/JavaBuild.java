@@ -59,11 +59,9 @@ public class JavaBuild {
    */
   private String javaLibraryPath;
 
-  /**
-   * List of library folders, as figured out during preprocessing.
-   */
+  /** List of library folders, as figured out during preprocessing. */
   private ArrayList<Library> importedLibraries;
-
+  
 
   public JavaBuild(Sketch sketch) {
     this.sketch = sketch;
