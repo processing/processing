@@ -890,7 +890,8 @@ public class PdePreprocessor {
   public String[] getCoreImports() {
     return new String[] {
       "processing.core.*",
-      "processing.data.*"
+      "processing.data.*",
+      "processing.opengl.*"
     };
   }
 
