@@ -294,7 +294,7 @@ public class Texture implements PConstants {
         // Automatic mipmap generation.
         int[] rgbaPixels = new int[w * h];
         convertToRGBA(pixels, rgbaPixels, format, w, h);
-        setNative(rgbaPixels, x, y, w, h);        
+        pgl.glTexSubImage2D(glTarget, 0, x, y, w, h, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, IntBuffer.wrap(rgbaPixels));
         pgl.glGenerateMipmap(glTarget);
         rgbaPixels = null;
       } else {       
@@ -354,13 +354,13 @@ public class Texture implements PConstants {
         
         int[] rgbaPixels = new int[w * h];
         convertToRGBA(pixels, rgbaPixels, format, w, h);
-        setNative(rgbaPixels, x, y, w, h);
+        pgl.glTexSubImage2D(glTarget, 0, x, y, w, h, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, IntBuffer.wrap(rgbaPixels));
         rgbaPixels = null;        
       }      
     } else {
       int[] rgbaPixels = new int[w * h];
       convertToRGBA(pixels, rgbaPixels, format, w, h);
-      setNative(rgbaPixels, x, y, w, h);
+      pgl.glTexSubImage2D(glTarget, 0, x, y, w, h, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, IntBuffer.wrap(rgbaPixels));
       rgbaPixels = null;
     }
 
@@ -704,9 +704,7 @@ public class Texture implements PConstants {
       if ((data.w != width) || (data.h != height)) {
         init(data.w, data.h);
       }
-      bind();
       setNative(data.rgbBuf, 0, 0, width, height);
-      unbind();
       
       data.dispose();
       
@@ -729,9 +727,7 @@ public class Texture implements PConstants {
       if ((data.w != width) || (data.h != height)) {
         init(data.w, data.h);
       }
-      bind();      
       setNative(data.rgbBuf, 0, 0, width, height);
-      unbind();
       
       data.rgbBuf.get(pixels);
       convertToARGB(pixels);
