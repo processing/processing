@@ -148,6 +148,25 @@ public class PGraphics2D extends PGraphicsOpenGL {
   
   //////////////////////////////////////////////////////////////
 
+  // MATRIX MORE!
+  
+  
+  protected void begin2D() {
+    pushProjection();
+    defaultPerspective();
+    pushMatrix();
+    defaultCamera();    
+  }
+  
+
+  protected void end2D() {
+    popMatrix();
+    popProjection();    
+  }  
+
+  
+  //////////////////////////////////////////////////////////////
+
   // SHAPE
   
   

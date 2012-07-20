@@ -1333,7 +1333,12 @@ public class PGraphics extends PImage implements PConstants {
     return null;   
   }
   
-    
+  
+  public void filter(Object shader) {
+    showMissingWarning("filter");
+  } 
+   
+  
   //////////////////////////////////////////////////////////////
 
   // CURVE/BEZIER VERTEX HANDLING

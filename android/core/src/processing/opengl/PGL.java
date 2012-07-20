@@ -451,10 +451,10 @@ public class PGL {
       GLES20.glGenTextures(2, colorTex, 0);        
       for (int i = 0; i < 2; i++) {
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, colorTex[i]);    
-        GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);    
-        GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_NEAREST);
-        GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
-        GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);    
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_NEAREST);
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
         GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, texWidth, texHeight, 0, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, null);
         initTexture(GLES20.GL_TEXTURE_2D, PGL.GL_RGBA, texWidth, texHeight);
       }
@@ -505,14 +505,41 @@ public class PGL {
   }
   
   
-  public boolean usingPrimaryFBO() {
+  public boolean primaryIsFboBacked() {
     return colorFBO[0] != 0;
   }
+  
+  
+  public int getFboTexTarget() {
+    return GLES20.GL_TEXTURE_2D;
+   }  
+  
+  
+  public int getFboTexName() {
+    return colorTex[0];
+   }
+  
+  
+  public int getFboWidth() {
+   return texWidth;
+  }
+
+  
+  public int getFboHeight() {
+    return texHeight;
+   }  
   
   
   public void bindPrimaryColorFBO() {
     GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, colorFBO[0]);
     PGraphicsOpenGL.screenFramebuffer.glFbo = colorFBO[0];
+    
+    // Make the color buffer opaque so it doesn't show      
+    // the background when drawn on top of another surface. 
+    GLES20.glColorMask(false, false, false, true);
+    GLES20.glClearColor(0, 0, 0, 1);
+    GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
+    GLES20.glColorMask(true, true, true, true);    
   }
 
   
@@ -741,10 +768,15 @@ public class PGL {
   }
 
   
-  public void glTexParameterf(int target, int param, int value) {
-    GLES20.glTexParameterf(target, param, value); 
+  public void glTexParameteri(int target, int param, int value) {
+    GLES20.glTexParameteri(target, param, value); 
   }
 
+  
+  public void glGetTexParameteriv(int target, int param, int[] values, int offset) {
+    GLES20.glGetTexParameteriv(target, param, values, offset);
+  }
+ 
   
   public void glGenerateMipmap(int target) {
     GLES20.glGenerateMipmap(target);
