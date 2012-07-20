@@ -397,6 +397,8 @@ public class JavaBuild {
     // grab the imports from the code just preproc'd
 
     importedLibraries = new ArrayList<Library>();
+    importedLibraries.add(mode.getCoreLibrary());
+    
 //    System.out.println("extra imports: " + result.extraImports);
     for (String item : result.extraImports) {
       // remove things up to the last dot
@@ -696,14 +698,17 @@ public class JavaBuild {
   }
 
 
+  /*
   protected boolean exportApplet() throws SketchException, IOException {
     return exportApplet(new File(sketch.getFolder(), "applet"));
   }
+  */
 
 
   /**
    * Handle export to applet.
    */
+  /*
   public boolean exportApplet(File appletFolder) throws SketchException, IOException {
     mode.prepareExportFolder(appletFolder);
 
@@ -767,37 +772,35 @@ public class JavaBuild {
 //      }
 
 
-    /*
-    int wide = PApplet.DEFAULT_WIDTH;
-    int high = PApplet.DEFAULT_HEIGHT;
-    String renderer = "";
-
-    String scrubbed = PdePreprocessor.scrubComments(sketch.getCode(0).getProgram());
-    String[] matches = PApplet.match(scrubbed, PdePreprocessor.SIZE_REGEX);
-
-    if (matches != null) {
-      try {
-        wide = Integer.parseInt(matches[1]);
-        high = Integer.parseInt(matches[2]);
-
-        // Adding back the trim() for 0136 to handle Bug #769
-        if (matches.length == 4) renderer = matches[3].trim();
-        // Actually, matches.length should always be 4...
-
-      } catch (NumberFormatException e) {
-        // found a reference to size, but it didn't
-        // seem to contain numbers
-        final String message =
-          "The size of this applet could not automatically be\n" +
-          "determined from your code. You'll have to edit the\n" +
-          "HTML file to set the size of the applet.\n" +
-          "Use only numeric values (not variables) for the size()\n" +
-          "command. See the size() reference for an explanation.";
-
-        Base.showWarning("Could not find applet size", message, null);
-      }
-    }  // else no size() command found
-    */
+//    int wide = PApplet.DEFAULT_WIDTH;
+//    int high = PApplet.DEFAULT_HEIGHT;
+//    String renderer = "";
+//
+//    String scrubbed = PdePreprocessor.scrubComments(sketch.getCode(0).getProgram());
+//    String[] matches = PApplet.match(scrubbed, PdePreprocessor.SIZE_REGEX);
+//
+//    if (matches != null) {
+//      try {
+//        wide = Integer.parseInt(matches[1]);
+//        high = Integer.parseInt(matches[2]);
+//
+//        // Adding back the trim() for 0136 to handle Bug #769
+//        if (matches.length == 4) renderer = matches[3].trim();
+//        // Actually, matches.length should always be 4...
+//
+//      } catch (NumberFormatException e) {
+//        // found a reference to size, but it didn't
+//        // seem to contain numbers
+//        final String message =
+//          "The size of this applet could not automatically be\n" +
+//          "determined from your code. You'll have to edit the\n" +
+//          "HTML file to set the size of the applet.\n" +
+//          "Use only numeric values (not variables) for the size()\n" +
+//          "command. See the size() reference for an explanation.";
+//
+//        Base.showWarning("Could not find applet size", message, null);
+//      }
+//    }  // else no size() command found
 
     // Grab the Javadoc-style description from the main code.
     String description = "";
@@ -1030,6 +1033,7 @@ public class JavaBuild {
 
     return true;
   }
+  */
 
 
   /**
@@ -1257,13 +1261,13 @@ public class JavaBuild {
     jarListVector.add(sketch.getName() + ".jar");
 
 
-    /// add core.jar to the jar destination folder
-
-    File bagelJar = Base.isMacOS() ?
-      Base.getContentFile("core.jar") :
-      Base.getContentFile("lib/core.jar");
-    Base.copyFile(bagelJar, new File(jarFolder, "core.jar"));
-    jarListVector.add("core.jar");
+//    /// add core.jar to the jar destination folder
+//
+//    File bagelJar = Base.isMacOS() ?
+//      Base.getContentFile("core.jar") :
+//      Base.getContentFile("lib/core.jar");
+//    Base.copyFile(bagelJar, new File(jarFolder, "core.jar"));
+//    jarListVector.add("core.jar");
 
 
     /// add contents of 'library' folders to the export
