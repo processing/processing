@@ -17,11 +17,19 @@
 	   encoding="UTF-8"
 	   includeAntRuntime="false"
 	   debug="true"
-	   srcdir="src" destdir="bin" />
+	   srcdir="src" destdir="bin"
+	   classpath="library/jogl.all.jar; library/gluegen-rt.jar" />
     
-    <!-- copy the jnilib to the bin folder so it's included -->
+    <!-- Copy the jnilib to the bin folder so it's included. -->
     <copy todir="bin/japplemenubar" 
 	  file="src/japplemenubar/libjAppleMenuBar.jnilib" />
+
+    <!-- Copy shaders to bin. (Eclipse does this automatically.) -->
+    <copy todir="bin">
+      <fileset dir="src">
+	<include name="processing/opengl/*.glsl" />
+      </fileset>
+    </copy>
   </target>		
 
   <target name="build" depends="compile" description="Build core library">
