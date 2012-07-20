@@ -54,15 +54,16 @@ public class JavaEditor extends Editor {
         handleExportApplication();
       }
     });
-    String appletTitle = JavaToolbar.getTitle(JavaToolbar.EXPORT, true);
-    JMenuItem exportApplet = Base.newJMenuItemShift(appletTitle, 'E');
-    exportApplet.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        handleExportApplet();
-      }
-    });
+//    String appletTitle = JavaToolbar.getTitle(JavaToolbar.EXPORT, true);
+//    JMenuItem exportApplet = Base.newJMenuItemShift(appletTitle, 'E');
+//    exportApplet.addActionListener(new ActionListener() {
+//      public void actionPerformed(ActionEvent e) {
+//        handleExportApplet();
+//      }
+//    });
 
-    return buildFileMenu(new JMenuItem[] { exportApplication, exportApplet });
+//    return buildFileMenu(new JMenuItem[] { exportApplication, exportApplet });
+    return buildFileMenu(new JMenuItem[] { exportApplication });
   }
 
 

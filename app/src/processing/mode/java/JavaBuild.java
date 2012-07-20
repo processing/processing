@@ -240,25 +240,25 @@ public class JavaBuild {
       }
     }
 
-    // initSketchSize() sets the internal sketchWidth/Height/Renderer vars
-    // in the preprocessor. Those are used in preproc.write() so that they
-    // can be turned into sketchXxxx() methods.
-    // This also returns the size info as an array so that we can figure out
-    // if this fella is OpenGL, and if so, to add the import. It's messy and
-    // gross and someday we'll just always include OpenGL.
-    String[] sizeInfo =
-      preprocessor.initSketchSize(sketch.getMainProgram(), sizeWarning);
-      //PdePreprocessor.parseSketchSize(sketch.getMainProgram(), false);
-    if (sizeInfo != null) {
-      String sketchRenderer = sizeInfo[3];
-      if (sketchRenderer != null) {
-        if (sketchRenderer.equals("P2D") ||
-            sketchRenderer.equals("P3D") ||
-            sketchRenderer.equals("OPENGL")) {
-          bigCode.insert(0, "import processing.opengl.*; ");
-        }
-      }
-    }
+//    // initSketchSize() sets the internal sketchWidth/Height/Renderer vars
+//    // in the preprocessor. Those are used in preproc.write() so that they
+//    // can be turned into sketchXxxx() methods.
+//    // This also returns the size info as an array so that we can figure out
+//    // if this fella is OpenGL, and if so, to add the import. It's messy and
+//    // gross and someday we'll just always include OpenGL.
+//    String[] sizeInfo =
+//      preprocessor.initSketchSize(sketch.getMainProgram(), sizeWarning);
+//      //PdePreprocessor.parseSketchSize(sketch.getMainProgram(), false);
+//    if (sizeInfo != null) {
+//      String sketchRenderer = sizeInfo[3];
+//      if (sketchRenderer != null) {
+//        if (sketchRenderer.equals("P2D") ||
+//            sketchRenderer.equals("P3D") ||
+//            sketchRenderer.equals("OPENGL")) {
+//          bigCode.insert(0, "import processing.opengl.*; ");
+//        }
+//      }
+//    }
 
     PreprocessorResult result;
     try {
