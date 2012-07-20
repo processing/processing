@@ -800,6 +800,13 @@ public class PGL {
     
     gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, glColorFboID[0]);
     PGraphicsOpenGL.screenFramebuffer.glFbo = glColorFboID[0];
+    
+    // Make the color buffer opaque so it doesn't show      
+    // the background when drawn on top of another surface. 
+    gl.glColorMask(false, false, false, true);
+    gl.glClearColor(0, 0, 0, 1);
+    gl.glClear(GL.GL_COLOR_BUFFER_BIT);
+    gl.glColorMask(true, true, true, true);
   }
 
   
@@ -1822,12 +1829,6 @@ public class PGL {
       }      
       glDepthMask(depthMask[0]);
     }
-  }
-
-
-  public void drawTextureCustom(int target, int id, int width, int height,
-                                int X0, int Y0, int X1, int Y1, int program) {
-    // ...
   }
   
   

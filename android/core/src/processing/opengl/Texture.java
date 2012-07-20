@@ -89,6 +89,7 @@ public class Texture implements PConstants {
   protected boolean usingMipmaps; 
   protected float maxTexcoordU;
   protected float maxTexcoordV;
+  protected boolean bound;
   
   protected boolean flippedX;   
   protected boolean flippedY;
@@ -241,14 +242,24 @@ public class Texture implements PConstants {
   
   
   public void set(Texture tex) {
-    copyTexels(tex, 0, 0, tex.width, tex.height, true);
+    copyTexture(tex, 0, 0, tex.width, tex.height, true);
   }
   
   
   public void set(Texture tex, int x, int y, int w, int h) {
-    copyTexels(tex, x, y, w, h, true);
+    copyTexture(tex, x, y, w, h, true);
   }  
 
+  
+  public void set(int texTarget, int texName, int texWidth, int texHeight, int w, int h) {
+    copyTexture(texTarget, texName, texWidth, texHeight, 0, 0, w, h, true);
+  }
+  
+  
+  public void set(int texTarget, int texName, int texWidth, int texHeight, int target, int tex, int x, int y, int w, int h) {
+    copyTexture(texTarget, texName, texWidth, texHeight, x, y, w, h, true);
+  }
+  
   
   public void set(int[] pixels) {
     set(pixels, 0, 0, width, height, ARGB); 
@@ -276,15 +287,14 @@ public class Texture implements PConstants {
       return;
     }
     
-    pgl.enableTexturing(glTarget);
-    pgl.glBindTexture(glTarget, glName);
+    bind();
                 
     if (usingMipmaps) {
       if (PGraphicsOpenGL.autoMipmapGenSupported) {
         // Automatic mipmap generation.
         int[] rgbaPixels = new int[w * h];
         convertToRGBA(pixels, rgbaPixels, format, w, h);
-        setTexels(rgbaPixels, x, y, w, h);        
+        setNative(rgbaPixels, x, y, w, h);        
         pgl.glGenerateMipmap(glTarget);
         rgbaPixels = null;
       } else {       
@@ -344,20 +354,50 @@ public class Texture implements PConstants {
         
         int[] rgbaPixels = new int[w * h];
         convertToRGBA(pixels, rgbaPixels, format, w, h);
-        setTexels(rgbaPixels, x, y, w, h);
+        setNative(rgbaPixels, x, y, w, h);
         rgbaPixels = null;        
       }      
     } else {
       int[] rgbaPixels = new int[w * h];
       convertToRGBA(pixels, rgbaPixels, format, w, h);
-      setTexels(rgbaPixels, x, y, w, h);
+      setNative(rgbaPixels, x, y, w, h);
       rgbaPixels = null;
     }
 
-    pgl.glBindTexture(glTarget, 0);
-    pgl.disableTexturing(glTarget);
+    unbind();
     
     updateTexels(x, y, w, h);        
+  }  
+  
+  
+  ////////////////////////////////////////////////////////////
+  
+  // Native set methods
+  
+  
+  public void setNative(int[] pix, int x, int y, int w, int h) {
+    setNative(pix, 0, x, y, w, h);
+  }
+  
+  
+  public void setNative(int[] pix, int level, int x, int y, int w, int h) {
+    bind();
+    pgl.glTexSubImage2D(glTarget, level, x, y, w, h, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, IntBuffer.wrap(pix));
+    unbind();
+    updateTexels(x, y, w, h);
+  }
+
+  
+  public void setNative(IntBuffer buffer, int x, int y, int w, int h) {
+    setNative(buffer, 0, x, y, w, h);
+  }  
+  
+  
+  public void setNative(IntBuffer buffer, int level, int x, int y, int w, int h) {
+    bind();
+    pgl.glTexSubImage2D(glTarget, level, x, y, w, h, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, buffer);
+    unbind();
+    updateTexels(x, y, w, h);
   }  
   
   
@@ -425,14 +465,24 @@ public class Texture implements PConstants {
   
   
   public void put(Texture tex) {
-    copyTexels(tex, 0, 0, tex.width, tex.height, false);
+    copyTexture(tex, 0, 0, tex.width, tex.height, false);
   }  
 
   
   public void put(Texture tex, int x, int y, int w, int h) {
-    copyTexels(tex, x, y, w, h, false);
+    copyTexture(tex, x, y, w, h, false);
   }   
     
+  
+  public void put(int texTarget, int texName, int texWidth, int texHeight, int w, int h) {
+    copyTexture(texTarget, texName, texWidth, texHeight, 0, 0, w, h, false);
+  }
+  
+  
+  public void put(int texTarget, int texName, int texWidth, int texHeight, int target, int tex, int x, int y, int w, int h) {
+    copyTexture(texTarget, texName, texWidth, texHeight, x, y, w, h, false);
+  }
+ 
     
   ////////////////////////////////////////////////////////////     
  
@@ -505,16 +555,27 @@ public class Texture implements PConstants {
   // Bind/unbind  
   
   
-  public void bind() {
-    pgl.enableTexturing(glTarget);
-    pgl.glBindTexture(glTarget, glName);
+  public void bind() {    
+    if (!bound) {
+      pgl.enableTexturing(glTarget);
+      pgl.glBindTexture(glTarget, glName);
+      bound = true;
+    }
   }
   
   
   public void unbind() {
-    pgl.enableTexturing(glTarget);
-    pgl.glBindTexture(glTarget, 0);    
+    if (bound) {
+      pgl.enableTexturing(glTarget);
+      pgl.glBindTexture(glTarget, 0);
+      bound = false;
+    }
   }  
+  
+  
+  public boolean bound() {
+    return bound;
+  }
   
   
   //////////////////////////////////////////////////////////////
@@ -636,7 +697,7 @@ public class Texture implements PConstants {
     try {
       data = bufferCache.remove(0);
     } catch (NoSuchElementException ex) {
-      PGraphics.showWarning("PTexture: don't have pixel data to copy to texture");
+      PGraphics.showWarning("Don't have pixel data to copy to texture");
     }
     
     if (data != null) {
@@ -644,7 +705,7 @@ public class Texture implements PConstants {
         init(data.w, data.h);
       }
       bind();
-      setTexels(data.rgbBuf, 0, 0, width, height);
+      setNative(data.rgbBuf, 0, 0, width, height);
       unbind();
       
       data.dispose();
@@ -661,7 +722,7 @@ public class Texture implements PConstants {
     try {
       data = bufferCache.remove(0);
     } catch (NoSuchElementException ex) {
-      PGraphics.showWarning("PTexture: don't have pixel data to copy to texture");
+      PGraphics.showWarning("Don't have pixel data to copy to texture");
     }
     
     if (data != null) {
@@ -669,7 +730,7 @@ public class Texture implements PConstants {
         init(data.w, data.h);
       }
       bind();      
-      setTexels(data.rgbBuf, 0, 0, width, height);
+      setNative(data.rgbBuf, 0, 0, width, height);
       unbind();
       
       data.rgbBuf.get(pixels);
@@ -688,7 +749,7 @@ public class Texture implements PConstants {
     try {
       disposeBufferMethod = bufferSource.getClass().getMethod("disposeBuffer", new Class[] { Object.class });
     } catch (Exception e) {
-      throw new RuntimeException("PTexture: provided source object doesn't have a disposeBuffer method.");
+      throw new RuntimeException("Provided source object doesn't have a disposeBuffer method.");
     }        
   }
   
@@ -974,10 +1035,10 @@ public class Texture implements PConstants {
     glName = pg.createTextureObject(context.code());    
     
     pgl.glBindTexture(glTarget, glName);    
-    pgl.glTexParameterf(glTarget, PGL.GL_TEXTURE_MIN_FILTER, glMinFilter);    
-    pgl.glTexParameterf(glTarget, PGL.GL_TEXTURE_MAG_FILTER, glMagFilter);
-    pgl.glTexParameterf(glTarget, PGL.GL_TEXTURE_WRAP_S, glWrapS);
-    pgl.glTexParameterf(glTarget, PGL.GL_TEXTURE_WRAP_T, glWrapT);
+    pgl.glTexParameteri(glTarget, PGL.GL_TEXTURE_MIN_FILTER, glMinFilter);    
+    pgl.glTexParameteri(glTarget, PGL.GL_TEXTURE_MAG_FILTER, glMagFilter);
+    pgl.glTexParameteri(glTarget, PGL.GL_TEXTURE_WRAP_S, glWrapS);
+    pgl.glTexParameteri(glTarget, PGL.GL_TEXTURE_WRAP_T, glWrapT);
     
     // First, we use glTexImage2D to set the full size of the texture (glW/glH might be diff
     // from w/h in the case that the GPU doesn't support NPOT textures)
@@ -988,6 +1049,7 @@ public class Texture implements PConstants {
     
     pgl.glBindTexture(glTarget, 0);
     pgl.disableTexturing(glTarget);
+    bound = false;
   }
   
   
@@ -1024,9 +1086,9 @@ public class Texture implements PConstants {
   
   
   // Copies source texture tex into this.
-  protected void copyTexels(Texture tex, int x, int y, int w, int h, boolean scale) {
+  protected void copyTexture(Texture tex, int x, int y, int w, int h, boolean scale) {
     if (tex == null) {
-      throw new RuntimeException("PTexture: source texture is null");
+      throw new RuntimeException("Source texture is null");
     }        
     
     if (tempFbo == null) {
@@ -1044,39 +1106,48 @@ public class Texture implements PConstants {
       // Rendering tex into "this", and scaling the source rectangle
       // to cover the entire destination region.
       pgl.drawTexture(tex.glTarget, tex.glName, tex.glWidth, tex.glHeight,
-                                              x, y, w, h, 0, 0, width, height);
+                      x, y, w, h, 0, 0, width, height);
       
     } else {
       // Rendering tex into "this" but without scaling so the contents 
       // of the source texture fall in the corresponding texels of the
       // destination.
       pgl.drawTexture(tex.glTarget, tex.glName, tex.glWidth, tex.glHeight,
-                                              x, y, w, h, x, y, w, h);
+                      x, y, w, h, x, y, w, h);
     }
     pg.popFramebuffer();
     updateTexels(x, y, w, h);
   }  
   
   
-  protected void setTexels(int[] pix, int x, int y, int w, int h) {
-    setTexels(pix, 0, x, y, w, h);
-  }
-  
-  
-  protected void setTexels(int[] pix, int level, int x, int y, int w, int h) {
-    pgl.glTexSubImage2D(glTarget, level, x, y, w, h, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, IntBuffer.wrap(pix));
-    updateTexels(x, y, w, h);
-  }
-
-  
-  protected void setTexels(IntBuffer buffer, int x, int y, int w, int h) {
-    setTexels(buffer, 0, x, y, w, h);
-  }  
-  
-  
-  protected void setTexels(IntBuffer buffer, int level, int x, int y, int w, int h) {
-    pgl.glTexSubImage2D(glTarget, level, x, y, w, h, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, buffer);
-    updateTexels(x, y, w, h);
+  // Copies source texture tex into this.
+  protected void copyTexture(int texTarget, int texName, int texWidth, int texHeight, int x, int y, int w, int h, boolean scale) {
+    if (tempFbo == null) {
+      tempFbo = new FrameBuffer(parent, glWidth, glHeight);
+    }
+    
+    // This texture is the color (destination) buffer of the FBO. 
+    tempFbo.setColorBuffer(this);
+    tempFbo.disableDepthTest();
+    
+    // FBO copy:
+    pg.pushFramebuffer();
+    pg.setFramebuffer(tempFbo);
+    if (scale) {
+      // Rendering tex into "this", and scaling the source rectangle
+      // to cover the entire destination region.
+      pgl.drawTexture(texTarget, texName, texWidth, texHeight,
+                      x, y, w, h, 0, 0, width, height);
+      
+    } else {
+      // Rendering tex into "this" but without scaling so the contents 
+      // of the source texture fall in the corresponding texels of the
+      // destination.
+      pgl.drawTexture(texTarget, texName, texWidth, texHeight,
+                      x, y, w, h, x, y, w, h);
+    }
+    pg.popFramebuffer();
+    updateTexels(x, y, w, h);    
   }
   
   
