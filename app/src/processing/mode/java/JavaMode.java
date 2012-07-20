@@ -139,11 +139,11 @@ public class JavaMode extends Mode {
 
 
   public File[] getExampleCategoryFolders() {
-    // Basics, Topics, 3D, Books
+    // Basics, Topics, OpenGL, Books
     return new File[] { 
       new File(examplesFolder, "Basics"),
       new File(examplesFolder, "Topics"),
-      new File(examplesFolder, "3D"),
+      new File(examplesFolder, "OpenGL"),
       new File(examplesFolder, "Books")
     };
   }
