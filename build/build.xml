@@ -463,6 +463,12 @@
       <fileset dir="shared" includes="modes/**" />
       <fileset file="shared/revisions.txt" />
     </copy>
+
+<!--
+    <copy todir="linux/work/lib">
+      <fileset dir=".." includes="core/library/**" />
+    </copy>
+-->
     
     <copy todir="linux/work/lib" flatten="true">
       <fileset refid="runtime.jars" />
@@ -573,7 +579,13 @@ http://www.gnu.org/software/tar/manual/html_section/transform.html
       <fileset dir="shared" includes="modes/**" />
       <fileset file="shared/revisions.txt" />
     </copy>
-    
+
+<!--
+    <copy todir="windows/work/lib">
+      <fileset dir=".." includes="core/library/**" />
+    </copy>
+-->
+
     <antcall target="assemble">
       <param name="target.path" value="windows/work" />
     </antcall>
