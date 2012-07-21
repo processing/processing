@@ -24,6 +24,7 @@
 package processing.core;
 
 import processing.data.*;
+import processing.opengl.PShader;
 
 import java.applet.*;
 import java.awt.*;
@@ -10131,29 +10132,19 @@ public class PApplet extends Applet
   }
 
 
-  public Object loadShader(String vertFilename, String fragFilename, int kind) {
-    return g.loadShader(vertFilename, fragFilename, kind);
+  public PShader loadShader(int kind, String fragFilename, String vertFilename) {
+    return g.loadShader(kind, fragFilename, vertFilename);
   }
 
 
-  public Object loadShader(String fragFilename, int kind) {
-    return g.loadShader(fragFilename, kind);
+  public PShader loadShader(int kind, String fragFilename) {
+    return g.loadShader(kind, fragFilename);
   }
 
 
-  public Object loadShader(String vertFilename, String fragFilename) {
-    return g.loadShader(vertFilename, fragFilename);
-  }
-
-
-  public Object loadShader(String fragFilename) {
-    return g.loadShader(fragFilename);
-  }
-
-
-  public void shader(Object shader, int kind) {
-    if (recorder != null) recorder.shader(shader, kind);
-    g.shader(shader, kind);
+  public void shader(PShader shader) {
+    if (recorder != null) recorder.shader(shader);
+    g.shader(shader);
   }
 
 
@@ -10163,12 +10154,12 @@ public class PApplet extends Applet
   }
 
 
-  public Object getShader(int kind) {
+  public PShader getShader(int kind) {
     return g.getShader(kind);
   }
 
 
-  public void filter(Object shader) {
+  public void filter(PShader shader) {
     if (recorder != null) recorder.filter(shader);
     g.filter(shader);
   }

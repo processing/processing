@@ -27,6 +27,8 @@ package processing.core;
 import java.awt.*;
 import java.util.HashMap;
 
+import processing.opengl.PShader;
+
   /**
    * ( begin auto-generated from PGraphics.xml )
    *
@@ -400,8 +402,8 @@ public class PGraphics extends PImage implements PConstants {
   // ........................................................
 
   /**
-   * Java AWT Image object associated with this renderer. For the 1.0 version 
-   * of P2D and P3D, this was be associated with their MemoryImageSource. 
+   * Java AWT Image object associated with this renderer. For the 1.0 version
+   * of P2D and P3D, this was be associated with their MemoryImageSource.
    * For PGraphicsJava2D, it will be the offscreen drawing buffer.
    */
   public Image image;
@@ -544,7 +546,7 @@ public class PGraphics extends PImage implements PConstants {
    * based on the IMAGE or NORMALIZED.
    */
   public int textureMode    = IMAGE;
-  
+
   /**
    * Current horizontal coordinate for texture, will always
    * be between 0 and 1, even if using textureMode(IMAGE).
@@ -1063,7 +1065,7 @@ public class PGraphics extends PImage implements PConstants {
     this.textureMode = mode;
   }
 
-  
+
   /**
    * ( begin auto-generated from texture.xml )
    *
@@ -1435,121 +1437,110 @@ public class PGraphics extends PImage implements PConstants {
     showMissingWarning("clip");
   }
 
-  
+
   public void noClip() {
     showMissingWarning("noClip");
   }
 
-  
+
   //////////////////////////////////////////////////////////////
 
   // BLEND
-  
-  
+
+
   public void blendMode(int mode) {
     showMissingWarning("blendMode");
   }
-  
+
 
   //////////////////////////////////////////////////////////////
 
   // SHAPE I/O
-  
+
 
   public PShape loadShape(String filename) {
     showMissingWarning("loadShape");
-    return null;    
+    return null;
   }
-  
+
 
   //////////////////////////////////////////////////////////////
 
   // SHAPE CREATION
-  
-  
+
+
   public PShape createShape(PShape source) {
     showMissingWarning("createShape");
-    return null;    
+    return null;
   }
-  
-  
+
+
   public PShape createShape() {
     showMissingWarning("createShape");
     return null;
   }
 
-  
+
   public PShape createShape(int type) {
     showMissingWarning("createShape");
     return null;
   }
 
-  
+
   public PShape createShape(int kind, float... p) {
     showMissingWarning("createShape");
     return null;
-  }  
-  
-  
+  }
+
+
   //////////////////////////////////////////////////////////////
 
   // SHADERS
 
-  
-  public Object loadShader(String vertFilename, String fragFilename, int kind) {
+
+  public PShader loadShader(int kind, String fragFilename, String vertFilename) {
     showMissingWarning("loadShader");
     return null;
   }
 
-  
-  public Object loadShader(String fragFilename, int kind) {
-    showMissingWarning("loadShader");
-    return null;
-  }
-  
-  
-  public Object loadShader(String vertFilename, String fragFilename) {
+
+  public PShader loadShader(int kind, String fragFilename) {
     showMissingWarning("loadShader");
     return null;
   }
 
-  
-  public Object loadShader(String fragFilename) {
-    showMissingWarning("loadShader");
-    return null;
+
+  public void shader(PShader shader) {
+    showMissingWarning("shader");
   }
-  
-  
-  public void shader(Object shader, int kind) {
-    showMissingWarning("shader");    
-  }
-  
-  
+
+
   public void resetShader(int kind) {
     showMissingWarning("resetShader");
   }
-  
-  
-  public Object getShader(int kind) {
+
+
+  public PShader getShader(int kind) {
     showMissingWarning("getShader");
-    return null;   
+    return null;
   }
-  
-  
-  public void filter(Object shader) {
+
+
+  public void filter(PShader shader) {
     showMissingWarning("filter");
   }
-  
-  
+
+
+
   //////////////////////////////////////////////////////////////
 
   // CURVE/BEZIER VERTEX HANDLING
 
-  
+
   protected void bezierVertexCheck() {
     bezierVertexCheck(shape, vertexCount);
   }
-  
+
 
   protected void bezierVertexCheck(int shape, int vertexCount) {
     if (shape == 0 || shape != POLYGON) {
@@ -1692,7 +1683,7 @@ public class PGraphics extends PImage implements PConstants {
   protected void curveVertexCheck() {
     curveVertexCheck(shape);
   }
-  
+
   /**
    * Perform initialization specific to curveVertex(), and handle standard
    * error modes. Can be overridden by subclasses that need the flexibility.
@@ -2624,7 +2615,7 @@ public class PGraphics extends PImage implements PConstants {
     normal(0, 1, 0);
     vertex(0, r, 0);
     endShape();
-    
+
     edge(true);
   }
 
@@ -3257,7 +3248,7 @@ public class PGraphics extends PImage implements PConstants {
                 0, 0, img.width, img.height);
     }
   }
-  
+
   /**
    * @param a x-coordinate of the image
    * @param b y-coordinate of the image
@@ -3379,8 +3370,8 @@ public class PGraphics extends PImage implements PConstants {
   public Object initCache(PImage img) { // ignore
     return null;
   }
-  
-  
+
+
   //////////////////////////////////////////////////////////////
 
   // SHAPE
@@ -6095,7 +6086,7 @@ public class PGraphics extends PImage implements PConstants {
     ambientColor = calcColor;
     ambientR = calcR;
     ambientG = calcG;
-    ambientB = calcB;    
+    ambientB = calcB;
     setAmbient = true;
   }
 
@@ -7370,7 +7361,7 @@ public class PGraphics extends PImage implements PConstants {
     }
     return 0;
   }
-  
+
 
   //////////////////////////////////////////////////////////////
 
@@ -7400,12 +7391,12 @@ public class PGraphics extends PImage implements PConstants {
     }
   }
 
-  
+
   public boolean haveRaw() { // ignore
-    return raw != null; 
+    return raw != null;
   }
-  
-  
+
+
   public PGraphics getRaw() { // ignore
     return raw;
   }

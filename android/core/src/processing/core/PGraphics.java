@@ -25,6 +25,8 @@ package processing.core;
 
 import java.util.HashMap;
 
+import processing.opengl.PShader;
+
 import android.graphics.Bitmap;
 import android.graphics.Color;
 
@@ -1294,49 +1296,38 @@ public class PGraphics extends PImage implements PConstants {
   // SHADERS
 
   
-  public Object loadShader(String vertFilename, String fragFilename, int kind) {
+  public PShader loadShader(int kind, String fragFilename, String vertFilename) {
     showMissingWarning("loadShader");
     return null;
   }
 
-  
-  public Object loadShader(String fragFilename, int kind) {
-    showMissingWarning("loadShader");
-    return null;
-  }
-  
-  
-  public Object loadShader(String vertFilename, String fragFilename) {
+
+  public PShader loadShader(int kind, String fragFilename) {
     showMissingWarning("loadShader");
     return null;
   }
 
-  
-  public Object loadShader(String fragFilename) {
-    showMissingWarning("loadShader");
-    return null;
+
+  public void shader(PShader shader) {
+    showMissingWarning("shader");
   }
-  
-  
-  public void shader(Object shader, int kind) {
-    showMissingWarning("shader");    
-  }
-  
-  
+
+
   public void resetShader(int kind) {
     showMissingWarning("resetShader");
   }
-  
-  
-  public Object getShader(int kind) {
+
+
+  public PShader getShader(int kind) {
     showMissingWarning("getShader");
-    return null;   
+    return null;
   }
-  
-  
-  public void filter(Object shader) {
+
+
+  public void filter(PShader shader) {
     showMissingWarning("filter");
-  } 
+  }  
+  
    
   
   //////////////////////////////////////////////////////////////

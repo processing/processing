@@ -1,6 +1,8 @@
 0206 core (2.0a7)
 X change appletViewer back to 'online'
 
+_ displayWidth/Height not being set properly before setup()
+_   http://code.google.com/p/processing/issues/detail?id=1120
 
 constants/hints
 _ bring PConstants back in line w/ previous 1.5 (can't renumber)
