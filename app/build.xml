@@ -105,29 +105,17 @@
     <fail if="windows" unless="java_tools_found" 
 	  message="The JAVA_HOME variable must be set to the location of a full JDK. For instance, on Windows, this might be c:\jdk1.6.0_19." />
 
-    <javac target="1.5" 
+    <javac target="1.6" 
 	   destdir="bin" 
 	   excludes="**/tools/format/**" 
 	   encoding="UTF-8" 
 	   includeAntRuntime="false" 
-	   classpath="../core/core.jar; ${env.JAVA_HOME}/lib/tools.jar; lib/ant.jar; lib/ant-launcher.jar; lib/antlr.jar; lib/apple.jar; lib/ecj.jar; lib/jna.jar"
+	   classpath="../core/library/core.jar; ${env.JAVA_HOME}/lib/tools.jar; lib/ant.jar; lib/ant-launcher.jar; lib/antlr.jar; lib/apple.jar; lib/ecj.jar; lib/jna.jar"
 	   debug="on"
 	   >
       <src path="src" />
       <src path="generated" />
     </javac>
-<!--
-    <javac target="1.5" 
-	   srcdir="../android/tool/src" 
-	   destdir="bin" 
-	   encoding="UTF-8" 
-	   includeAntRuntime="false" 
-	   classpath="../core/core.jar; ${env.JAVA_HOME}/lib/tools.jar; lib/ant.jar; lib/ant-launcher.jar; lib/antlr.jar; lib/apple.jar; lib/ecj.jar; lib/jna.jar" 
-	   />
-    <copy todir="bin/processing/app/tools/android/data">
-      <fileset dir="../android/tool/src/processing/app/tools/android/data/" />
-    </copy>
--->
   </target>
 
   <target name="build" depends="compile" description="Build PDE">

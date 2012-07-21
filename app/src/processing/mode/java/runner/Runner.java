@@ -220,8 +220,8 @@ public class Runner implements MessageConsumer {
     } else {
       params.add("processing.core.PApplet");
 
-      // get the stored device index (starts at 1)
-      int runDisplay = Preferences.getInteger("run.display") - 1;
+      // get the stored device index (starts at 0)
+      int runDisplay = Preferences.getInteger("run.display");
 
       // If there was a saved location (this guy has been run more than once)
       // then the location will be set to the last position of the sketch window.

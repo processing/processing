@@ -88,6 +88,9 @@ CLASSPATH="$CLASSPATH"${CLASSPATH:+:}"$JDKCP"
 for LIB in "$APPDIR"/lib/*.jar; do
   CLASSPATH="$CLASSPATH"${CLASSPATH:+:}"$LIB"
 done
+for LIB in "$APPDIR"/core/library/*.jar; do
+  CLASSPATH="$CLASSPATH"${CLASSPATH:+:}"$LIB"
+done
 export CLASSPATH
 log CLASSPATH
 

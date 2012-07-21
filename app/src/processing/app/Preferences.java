@@ -278,11 +278,11 @@ public class Preferences {
     fontSizeField.setText(String.valueOf(editorFont.getSize()));
     top += d.height + GUI_BETWEEN;
 
-    
-    // [ ] Use smooth text in editor window 
+
+    // [ ] Use smooth text in editor window
 
     editorAntialiasBox =
-      new JCheckBox("Use smooth text in editor window " + 
+      new JCheckBox("Use smooth text in editor window " +
                     "(requires restart of Processing)");
     pain.add(editorAntialiasBox);
     d = editorAntialiasBox.getPreferredSize();
@@ -291,7 +291,7 @@ public class Preferences {
     right = Math.max(right, left + d.width);
     top += d.height + GUI_BETWEEN;
 
-    
+
     // [ ] Increase maximum available memory to [______] MB
 
     Container memoryBox = Box.createHorizontalBox();
@@ -348,8 +348,8 @@ public class Preferences {
     checkUpdatesBox.setBounds(left, top, d.width + 10, d.height);
     right = Math.max(right, left + d.width);
     top += d.height + GUI_BETWEEN;
-    
-    
+
+
     // Run sketches on display [  1 ]
 
     Container displayBox = Box.createHorizontalBox();
@@ -357,7 +357,7 @@ public class Preferences {
     final String tip = "<html>" +
       "Sets the display where sketches are initially placed.<br>" +
       "As usual, if the sketch window is moved, it will re-open<br>" +
-      "at the same location, however when running in present<br>" + 
+      "at the same location, however when running in present<br>" +
       "(full screen) mode, this display will always be used.";
     displayLabel.setToolTipText(tip);
     displayBox.add(displayLabel);
@@ -381,10 +381,10 @@ public class Preferences {
       right = Math.max(right, left + d.width);
       top += d.height + GUI_BETWEEN;
     }
-    
-    
+
+
     // Launch programs as [ ] 32-bit [ ] 64-bit (Mac OS X only)
-    
+
     if (Base.isMacOS()) {
       box = Box.createHorizontalBox();
       label = new JLabel("Launch programs in  ");
@@ -393,17 +393,17 @@ public class Preferences {
       box.add(bitsThirtyTwoButton);
       bitsSixtyFourButton = new JRadioButton("64-bit mode");
       box.add(bitsSixtyFourButton);
-      
+
       ButtonGroup bg = new ButtonGroup();
       bg.add(bitsThirtyTwoButton);
       bg.add(bitsSixtyFourButton);
-      
+
       pain.add(box);
       d = box.getPreferredSize();
       box.setBounds(left, top, d.width, d.height);
       top += d.height + GUI_BETWEEN;
     }
-    
+
 
     // More preferences are in the ...
 
@@ -543,7 +543,7 @@ public class Preferences {
    */
   protected void applyFrame() {
     setBoolean("editor.antialias", editorAntialiasBox.isSelected());
-    
+
     // put each of the settings into the table
     setBoolean("export.applet.separate_jar_files",
                exportSeparateBox.isSelected());
@@ -571,7 +571,7 @@ public class Preferences {
         displayIndex = d;
       }
     }
-    setInteger("run.display", displayIndex + 1);
+    setInteger("run.display", displayIndex);
 
     setBoolean("run.options.memory", memoryOverrideBox.isSelected());
     int memoryMin = Preferences.getInteger("run.options.memory.initial");
@@ -656,13 +656,13 @@ public class Preferences {
       setSelected(getBoolean("update.check"));
 
     updateDisplayList();
-    int displayNum = getInteger("run.display") - 1;
+    int displayNum = getInteger("run.display");
 //    System.out.println("display is " + displayNum + ", d count is " + displayCount);
     if (displayNum >= 0 && displayNum < displayCount) {
 //      System.out.println("setting num to " + displayNum);
       displaySelectionBox.setSelectedIndex(displayNum);
     }
-    
+
     memoryOverrideBox.
       setSelected(getBoolean("run.options.memory"));
     memoryField.
@@ -681,7 +681,7 @@ public class Preferences {
         bitsThirtyTwoButton.setEnabled(false);
       }
     }
-    
+
     if (autoAssociateBox != null) {
       autoAssociateBox.
         setSelected(getBoolean("platform.auto_file_type_associations"));
@@ -697,7 +697,7 @@ public class Preferences {
 //    displaySelectionBox.removeAll();
     String[] items = new String[displayCount];
     for (int i = 0; i < displayCount; i++) {
-      items[i] = String.valueOf(i + 1);
+      items[i] = String.valueOf(i);
 //      displaySelectionBox.add(String.valueOf(i + 1));
     }
 //    PApplet.println(items);
@@ -706,13 +706,13 @@ public class Preferences {
   }
 
 
-  // Workaround for Apple bullsh*t caused by their not releasing a 32-bit 
+  // Workaround for Apple bullsh*t caused by their not releasing a 32-bit
   // version of Java for Mac OS X 10.5.
 //  static public String checkBits() {
 //    String bits = Preferences.get("run.options.bits");
 //    if (bits == null) {
 //      if (System.getProperty("os.version").startsWith("10.5")) {
-//        bits = "64"; 
+//        bits = "64";
 //      } else {
 //        bits = "32";
 //      }
@@ -720,8 +720,8 @@ public class Preferences {
 //    }
 //    return bits;
 //  }
-  
-  
+
+
   // .................................................................
 
 
@@ -800,8 +800,8 @@ public class Preferences {
   static public void set(String attribute, String value) {
     table.put(attribute, value);
   }
-  
-  
+
+
   static public void unset(String attribute) {
     table.remove(attribute);
   }
