@@ -13,6 +13,11 @@
   <condition property="platform" 
 	     value="linux"><os family="unix" /> </condition>
 
+  <property environment="env" />
+  <condition property="codesign"> 
+    <equals arg1="${env.USER}" arg2="fry" />
+  </condition>
+
   <condition property="target.path" 
 	     value="macosx/work/Processing.app/Contents/Resources/Java">
     <os family="mac" /> 
@@ -359,7 +364,18 @@
     <exec executable="macosx/work/Processing.app/Contents/MacOS/JavaApplicationStub" spawn="true"/>
   </target>
 
-  <target name="macosx-dist" if="macosx" depends="macosx-build,android-dist-check" description="Create a downloadable .zip for the Mac OS X version">
+  <target name="macosx-dist-sign" if="codesign">
+    <exec executable="codesign" dir="macosx/work">
+      <arg value="--force" />
+      <arg value="--sign" />
+      <arg value="Developer ID Application" />
+      <arg value="Processing.app" />
+    </exec>
+  </target>
+
+  <target name="macosx-dist" if="macosx" 
+	  depends="macosx-build,android-dist-check" 
+	  description="Create a downloadable .zip for the Mac OS X version">
 
     <!-- The ant copy command does not preserve permissions. -->
     <chmod file="macosx/work/Processing.app/Contents/MacOS/JavaApplicationStub" perm="ugo+x" />
@@ -368,6 +384,8 @@
 	     token="VERSION" value="${version}" />
     <replace file="macosx/work/Processing.app/Contents/Info.plist"
 	     token="REVISION" value="${revision}" />
+
+    <antcall target="macosx-dist-sign" />
 
     <exec executable="ditto" dir="macosx/work">
       <arg line="-c -k -rsrc . ../processing-${version}-macosx.zip" />
