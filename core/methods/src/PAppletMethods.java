@@ -19,6 +19,7 @@ import org.apache.tools.ant.Task;
 public class PAppletMethods extends Task {
 
   private File baseDir;
+  private boolean includeRecorder;
 
 
   public PAppletMethods() {
@@ -27,6 +28,11 @@ public class PAppletMethods extends Task {
 
   public void setDir(String dir) {
     baseDir = new File(dir);
+  }
+
+
+  public void setRecorder(boolean rec) {
+    includeRecorder = rec;
   }
 
 
@@ -247,7 +253,7 @@ public class PAppletMethods extends Task {
         gline += ");";
         rline += ");";
 
-        if (!gotStatic && returns.equals("")) {
+        if (!gotStatic && returns.equals("") && includeRecorder) {
           out.append(rline);
           out.append('\n');
         }
