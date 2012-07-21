@@ -90,6 +90,11 @@ class AndroidBuild extends JavaBuild {
     if (pkg.startsWith("org.json.")) return true;
     if (pkg.startsWith("org.w3c.dom.")) return true;
     if (pkg.startsWith("org.xml.sax.")) return true;
+
+    if (pkg.startsWith("processing.core.")) return true;
+    if (pkg.startsWith("processing.data.")) return true;
+    if (pkg.startsWith("processing.opengl.")) return true;
+
     return false;
   }
 
