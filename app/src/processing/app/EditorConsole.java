@@ -43,10 +43,10 @@ import java.util.*;
  * or just call println() or whatever directly to systemOut or systemErr.
  * <p />
  * Also note that encodings will not work properly when run from Eclipse. This
- * means that if you use non-ASCII characters in a println() or some such, 
+ * means that if you use non-ASCII characters in a println() or some such,
  * the characters won't print properly in the Processing and/or Eclipse console.
- * It seems that Eclipse's console-grabbing and that of Processing don't 
- * get along with one another. Use 'ant run' to work on encoding-related issues.  
+ * It seems that Eclipse's console-grabbing and that of Processing don't
+ * get along with one another. Use 'ant run' to work on encoding-related issues.
  */
 public class EditorConsole extends JScrollPane {
   Editor editor;
@@ -62,7 +62,7 @@ public class EditorConsole extends JScrollPane {
   // Single static instance shared because there's only one real System.out.
   // Within the input handlers, the currentConsole variable will be used to
   // echo things to the correct location.
-  
+
   static PrintStream systemOut;
   static PrintStream systemErr;
 
@@ -73,7 +73,7 @@ public class EditorConsole extends JScrollPane {
   static OutputStream stderrFile;
 
   static EditorConsole currentConsole;
-  
+
   // For 0185, moved the first init to this static { } block, so that we never
   // have a situation that causes systemOut/Err to not be set properly.
   static {
@@ -83,10 +83,10 @@ public class EditorConsole extends JScrollPane {
     // placing everything inside a try block because this can be a dangerous
     // time for the lights to blink out and crash for and obscure reason.
     try {
-      // Create output files that will have a randomized name. Has to 
-      // be randomized otherwise another instance of Processing (or one of its 
-      // sister IDEs) might collide with the file causing permissions problems. 
-      // The files and folders are not deleted on exit because they may be 
+      // Create output files that will have a randomized name. Has to
+      // be randomized otherwise another instance of Processing (or one of its
+      // sister IDEs) might collide with the file causing permissions problems.
+      // The files and folders are not deleted on exit because they may be
       // needed for debugging or bug reporting.
       SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd");
       String randy = PApplet.nf((int) (1000 * Math.random()), 4);
@@ -101,7 +101,7 @@ public class EditorConsole extends JScrollPane {
 
       consoleOut = new PrintStream(new EditorConsoleStream(false));
       consoleErr = new PrintStream(new EditorConsoleStream(true));
-    
+
       System.setOut(consoleOut);
       System.setErr(consoleErr);
 
@@ -116,13 +116,13 @@ public class EditorConsole extends JScrollPane {
     } catch (Exception e) {
       stdoutFile = null;
       stderrFile = null;
-      
+
       consoleOut = null;
       consoleErr = null;
-      
+
       System.setOut(systemOut);
       System.setErr(systemErr);
-      
+
       e.printStackTrace(systemErr);
     }
   }
@@ -162,8 +162,8 @@ public class EditorConsole extends JScrollPane {
       }
     }).start();
   }
-  
-  
+
+
   /**
    * Change coloring, fonts, etc in response to a mode change.
    */
@@ -210,11 +210,11 @@ public class EditorConsole extends JScrollPane {
     setMinimumSize(new Dimension(1024, (height * 4) + sizeFudge));
   }
 
-  
+
   static public void setEditor(Editor editor) {
     currentConsole = editor.console;
   }
-  
+
 
   /**
    * Close the streams so that the temporary files can be deleted.
@@ -250,8 +250,8 @@ public class EditorConsole extends JScrollPane {
 //    // add text to output document
 //    message(new String(b, offset, length), err, false);
 //  }
-  
-  
+
+
   // added sync for 0091.. not sure if it helps or hinders
   //synchronized public void message(String what, boolean err, boolean advance) {
   synchronized public void message(String what, boolean err) {
@@ -272,17 +272,20 @@ public class EditorConsole extends JScrollPane {
 //      }
 //    }
 
-    // Append a piece of text to the console. Swing components are NOT 
-    // thread-safe, and since the MessageSiphon instantiates new threads, 
-    // and in those callbacks, they often print output to stdout and stderr, 
-    // which are wrapped by EditorConsoleStream and eventually leads to 
-    // EditorConsole.appendText(), which directly updates the Swing text 
-    // components, causing deadlock. Updates are buffered to the console and 
-    // displayed at regular intervals on Swing's event-dispatching thread. 
+    // Append a piece of text to the console. Swing components are NOT
+    // thread-safe, and since the MessageSiphon instantiates new threads,
+    // and in those callbacks, they often print output to stdout and stderr,
+    // which are wrapped by EditorConsoleStream and eventually leads to
+    // EditorConsole.appendText(), which directly updates the Swing text
+    // components, causing deadlock. Updates are buffered to the console and
+    // displayed at regular intervals on Swing's event-dispatching thread.
     // (patch by David Mellis)
-    
-    if (err && what.contains("invalid context 0x0")) {
-      // respectfully declining
+
+    if (err && (what.contains("invalid context 0x0") || (what.contains("invalid drawable")))) {
+      // Respectfully declining... This is a quirk of more recent releases of
+      // Java on Mac OS X, but is widely reported as the source of any other
+      // bug or problem that a user runs into. It may well be a Processing
+      // bug, but until we know, we're suppressing the messages.
     } else {
       consoleDoc.appendString(what, err ? errStyle : stdStyle);
     }
@@ -297,11 +300,11 @@ public class EditorConsole extends JScrollPane {
       // maybe not a good idea in the long run?
     }
   }
-  
-  
+
+
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-  
-  
+
+
   private static class EditorConsoleStream extends OutputStream {
     //static EditorConsole current;
     final boolean err; // whether stderr or stdout

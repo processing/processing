@@ -1,5 +1,5 @@
 0206 pde
-X suppress "invalid context 0x0" at the console level
+X suppress "invalid context 0x0" and "invalid drawable" at the console level
 X launch moviemaker as separate Java process (to disable Quaqua)
 o or selectively disable parts to see which is causing the trouble
 o   http://www.randelshofer.ch/quaqua/guide/tailoring.html

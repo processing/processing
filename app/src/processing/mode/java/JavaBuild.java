@@ -61,7 +61,7 @@ public class JavaBuild {
 
   /** List of library folders, as figured out during preprocessing. */
   private ArrayList<Library> importedLibraries;
-  
+
 
   public JavaBuild(Sketch sketch) {
     this.sketch = sketch;
@@ -195,7 +195,7 @@ public class JavaBuild {
    */
   public String preprocess(File srcFolder,
                            String packageName,
-                           PdePreprocessor preprocessor, 
+                           PdePreprocessor preprocessor,
                            boolean sizeWarning) throws SketchException {
     // make sure the user isn't playing "hide the sketch folder"
     sketch.ensureExistence();
@@ -397,8 +397,12 @@ public class JavaBuild {
     // grab the imports from the code just preproc'd
 
     importedLibraries = new ArrayList<Library>();
-    importedLibraries.add(mode.getCoreLibrary());
-    
+    Library core = mode.getCoreLibrary();
+    if (core != null) {
+      importedLibraries.add(core);
+      classPath += core.getClassPath();
+    }
+
 //    System.out.println("extra imports: " + result.extraImports);
     for (String item : result.extraImports) {
       // remove things up to the last dot
@@ -428,7 +432,7 @@ public class JavaBuild {
             }
           }
         }
-        if (ignorableImport(item)) {
+        if (ignorableImport(item, preprocessor)) {
           found = true;
         }
         if (!found) {
@@ -510,9 +514,26 @@ public class JavaBuild {
    * for libraries that begin with a prefix like javax, since that includes
    * the OpenGL library, even though we're just returning true here, hrm...
    */
-  protected boolean ignorableImport(String pkg) {
+  protected boolean ignorableImport(String pkg, PdePreprocessor preprocessor) {
     if (pkg.startsWith("java.")) return true;
     if (pkg.startsWith("javax.")) return true;
+
+    if (pkg.startsWith("processing.core.")) return true;
+    if (pkg.startsWith("processing.data.")) return true;
+    if (pkg.startsWith("processing.opengl.")) return true;
+
+//    // ignore core, data, and opengl packages
+//    String[] coreImports = preprocessor.getCoreImports();
+//    for (int i = 0; i < coreImports.length; i++) {
+//      String imp = coreImports[i];
+//      if (imp.endsWith(".*")) {
+//        imp = imp.substring(0, imp.length() - 2);
+//      }
+//      if (pkg.startsWith(imp)) {
+//        return true;
+//      }
+//    }
+
     return false;
   }
 
