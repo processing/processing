@@ -1,6 +1,7 @@
 0206 core (2.0a7)
 X change appletViewer back to 'online'
 
+
 constants/hints
 _ bring PConstants back in line w/ previous 1.5 (can't renumber)
 _ consider enable("mipmaps") instead of hint(ENABLE_MIPMAPS)

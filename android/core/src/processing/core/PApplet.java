@@ -7210,41 +7210,119 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
+  /**
+   * Enable a hint option.
+   * <P>
+   * For the most part, hints are temporary api quirks,
+   * for which a proper api hasn't been properly worked out.
+   * for instance SMOOTH_IMAGES existed because smooth()
+   * wasn't yet implemented, but it will soon go away.
+   * <P>
+   * They also exist for obscure features in the graphics
+   * engine, like enabling/disabling single pixel lines
+   * that ignore the zbuffer, the way they do in alphabot.
+   * <P>
+   * Current hint options:
+   * <UL>
+   * <LI><TT>DISABLE_DEPTH_TEST</TT> -
+   * turns off the z-buffer in the P3D or OPENGL renderers.
+   * </UL>
+   */
   public void hint(int which) {
     g.hint(which);
   }
 
 
+  public boolean hintEnabled(int which) {
+    return g.hintEnabled(which);
+  }
+
+
+  /**
+   * Start a new shape of type POLYGON
+   */
   public void beginShape() {
     g.beginShape();
   }
 
 
+  /**
+   * Start a new shape.
+   * <P>
+   * <B>Differences between beginShape() and line() and point() methods.</B>
+   * <P>
+   * beginShape() is intended to be more flexible at the expense of being
+   * a little more complicated to use. it handles more complicated shapes
+   * that can consist of many connected lines (so you get joins) or lines
+   * mixed with curves.
+   * <P>
+   * The line() and point() command are for the far more common cases
+   * (particularly for our audience) that simply need to draw a line
+   * or a point on the screen.
+   * <P>
+   * From the code side of things, line() may or may not call beginShape()
+   * to do the drawing. In the beta code, they do, but in the alpha code,
+   * they did not. they might be implemented one way or the other depending
+   * on tradeoffs of runtime efficiency vs. implementation efficiency &mdash
+   * meaning the speed that things run at vs. the speed it takes me to write
+   * the code and maintain it. for beta, the latter is most important so
+   * that's how things are implemented.
+   */
   public void beginShape(int kind) {
     g.beginShape(kind);
   }
 
 
+  /**
+   * Sets whether the upcoming vertex is part of an edge.
+   * Equivalent to glEdgeFlag(), for people familiar with OpenGL.
+   */
   public void edge(boolean edge) {
     g.edge(edge);
   }
 
 
+  /**
+   * Sets the current normal vector. Only applies with 3D rendering
+   * and inside a beginShape/endShape block.
+   * <P/>
+   * This is for drawing three dimensional shapes and surfaces,
+   * allowing you to specify a vector perpendicular to the surface
+   * of the shape, which determines how lighting affects it.
+   * <P/>
+   * For people familiar with OpenGL, this function is basically
+   * identical to glNormal3f().
+   */
   public void normal(float nx, float ny, float nz) {
     g.normal(nx, ny, nz);
   }
 
 
+  /**
+   * Set texture mode to either to use coordinates based on the IMAGE
+   * (more intuitive for new users) or NORMALIZED (better for advanced chaps)
+   */
   public void textureMode(int mode) {
     g.textureMode(mode);
   }
 
 
+  /**
+   * Set texture image for current shape.
+   * Needs to be called between @see beginShape and @see endShape
+   *
+   * @param image reference to a PImage object
+   */
   public void texture(PImage image) {
     g.texture(image);
   }
 
 
+  /**
+   * Removes texture image for current shape.
+   * Needs to be called between @see beginShape and @see endShape
+   *
+   */
   public void noTexture() {
     g.noTexture();
   }
@@ -7260,6 +7338,11 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
+  /**
+   * Used by renderer subclasses or PShape to efficiently pass in already
+   * formatted vertex information.
+   * @param v vertex parameters, as a float array of length VERTEX_FIELD_COUNT
+   */
   public void vertex(float[] v) {
     g.vertex(v);
   }
@@ -7275,6 +7358,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
+  /** This feature is in testing, do not use or rely upon its implementation */
   public void breakShape() {
     g.breakShape();
   }
@@ -7340,6 +7424,46 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
+  public Object loadShader(String vertFilename, String fragFilename, int kind) {
+    return g.loadShader(vertFilename, fragFilename, kind);
+  }
+
+
+  public Object loadShader(String fragFilename, int kind) {
+    return g.loadShader(fragFilename, kind);
+  }
+
+
+  public Object loadShader(String vertFilename, String fragFilename) {
+    return g.loadShader(vertFilename, fragFilename);
+  }
+
+
+  public Object loadShader(String fragFilename) {
+    return g.loadShader(fragFilename);
+  }
+
+
+  public void shader(Object shader, int kind) {
+    g.shader(shader, kind);
+  }
+
+
+  public void resetShader(int kind) {
+    g.resetShader(kind);
+  }
+
+
+  public Object getShader(int kind) {
+    return g.getShader(kind);
+  }
+
+
+  public void filter(Object shader) {
+    g.filter(shader);
+  }
+
+
   public void bezierVertex(float x2, float y2,
                            float x3, float y3,
                            float x4, float y4) {
@@ -7351,6 +7475,18 @@ public class PApplet extends Activity implements PConstants, Runnable {
                            float x3, float y3, float z3,
                            float x4, float y4, float z4) {
     g.bezierVertex(x2, y2, z2, x3, y3, z3, x4, y4, z4);
+  }
+
+
+  public void quadraticVertex(float cx, float cy,
+                              float x3, float y3) {
+    g.quadraticVertex(cx, cy, x3, y3);
+  }
+
+
+  public void quadraticVertex(float cx, float cy, float cz,
+                              float x3, float y3, float z3) {
+    g.quadraticVertex(cx, cy, cz, x3, y3, z3);
   }
 
 
@@ -7428,6 +7564,15 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
+  /**
+   * Identical parameters and placement to ellipse,
+   * but draws only an arc of that ellipse.
+   * <p/>
+   * start and stop are always radians because angleMode() was goofy.
+   * ellipseMode() sets the placement.
+   * <p/>
+   * also tries to be smart about start < stop.
+   */
   public void arc(float a, float b, float c, float d,
                   float start, float stop) {
     g.arc(a, b, c, d, start, stop);
@@ -7449,21 +7594,81 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
+  /**
+   * Set the detail level for approximating a sphere. The ures and vres params
+   * control the horizontal and vertical resolution.
+   *
+   * Code for sphereDetail() submitted by toxi [031031].
+   * Code for enhanced u/v version from davbol [080801].
+   */
   public void sphereDetail(int ures, int vres) {
     g.sphereDetail(ures, vres);
   }
 
 
+  /**
+   * Draw a sphere with radius r centered at coordinate 0, 0, 0.
+   * <P>
+   * Implementation notes:
+   * <P>
+   * cache all the points of the sphere in a static array
+   * top and bottom are just a bunch of triangles that land
+   * in the center point
+   * <P>
+   * sphere is a series of concentric circles who radii vary
+   * along the shape, based on, er.. cos or something
+   * <PRE>
+   * [toxi 031031] new sphere code. removed all multiplies with
+   * radius, as scale() will take care of that anyway
+   *
+   * [toxi 031223] updated sphere code (removed modulos)
+   * and introduced sphereAt(x,y,z,r)
+   * to avoid additional translate()'s on the user/sketch side
+   *
+   * [davbol 080801] now using separate sphereDetailU/V
+   * </PRE>
+   */
   public void sphere(float r) {
     g.sphere(r);
   }
 
 
+  /**
+   * Evalutes quadratic bezier at point t for points a, b, c, d.
+   * t varies between 0 and 1, and a and d are the on curve points,
+   * b and c are the control points. this can be done once with the
+   * x coordinates and a second time with the y coordinates to get
+   * the location of a bezier curve at t.
+   * <P>
+   * For instance, to convert the following example:<PRE>
+   * stroke(255, 102, 0);
+   * line(85, 20, 10, 10);
+   * line(90, 90, 15, 80);
+   * stroke(0, 0, 0);
+   * bezier(85, 20, 10, 10, 90, 90, 15, 80);
+   *
+   * // draw it in gray, using 10 steps instead of the default 20
+   * // this is a slower way to do it, but useful if you need
+   * // to do things with the coordinates at each step
+   * stroke(128);
+   * beginShape(LINE_STRIP);
+   * for (int i = 0; i <= 10; i++) {
+   *   float t = i / 10.0f;
+   *   float x = bezierPoint(85, 10, 90, 15, t);
+   *   float y = bezierPoint(20, 10, 90, 80, t);
+   *   vertex(x, y);
+   * }
+   * endShape();</PRE>
+   */
   public float bezierPoint(float a, float b, float c, float d, float t) {
     return g.bezierPoint(a, b, c, d, t);
   }
 
 
+  /**
+   * Provide the tangent at the given point on the bezier curve.
+   * Fix from davbol for 0136.
+   */
   public float bezierTangent(float a, float b, float c, float d, float t) {
     return g.bezierTangent(a, b, c, d, t);
   }
@@ -7474,6 +7679,29 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
+  /**
+   * Draw a cubic bezier curve. The first and last points are
+   * the on-curve points. The middle two are the 'control' points,
+   * or 'handles' in an application like Illustrator.
+   * <P>
+   * Identical to typing:
+   * <PRE>beginShape();
+   * vertex(x1, y1);
+   * bezierVertex(x2, y2, x3, y3, x4, y4);
+   * endShape();
+   * </PRE>
+   * In Postscript-speak, this would be:
+   * <PRE>moveto(x1, y1);
+   * curveto(x2, y2, x3, y3, x4, y4);</PRE>
+   * If you were to try and continue that curve like so:
+   * <PRE>curveto(x5, y5, x6, y6, x7, y7);</PRE>
+   * This would be done in processing by adding these statements:
+   * <PRE>bezierVertex(x5, y5, x6, y6, x7, y7)
+   * </PRE>
+   * To draw a quadratic (instead of cubic) curve,
+   * use the control point twice by doubling it:
+   * <PRE>bezier(x1, y1, cx, cy, cx, cy, x2, y2);</PRE>
+   */
   public void bezier(float x1, float y1,
                      float x2, float y2,
                      float x3, float y3,
@@ -7490,11 +7718,20 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
+  /**
+   * Get a location along a catmull-rom curve segment.
+   *
+   * @param t Value between zero and one for how far along the segment
+   */
   public float curvePoint(float a, float b, float c, float d, float t) {
     return g.curvePoint(a, b, c, d, t);
   }
 
 
+  /**
+   * Calculate the tangent at a t value (0..1) on a Catmull-Rom curve.
+   * Code thanks to Dave Bollinger (Bug #715)
+   */
   public float curveTangent(float a, float b, float c, float d, float t) {
     return g.curveTangent(a, b, c, d, t);
   }
@@ -7510,6 +7747,22 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
+  /**
+   * Draws a segment of Catmull-Rom curve.
+   * <P>
+   * As of 0070, this function no longer doubles the first and
+   * last points. The curves are a bit more boring, but it's more
+   * mathematically correct, and properly mirrored in curvePoint().
+   * <P>
+   * Identical to typing out:<PRE>
+   * beginShape();
+   * curveVertex(x1, y1);
+   * curveVertex(x2, y2);
+   * curveVertex(x3, y3);
+   * curveVertex(x4, y4);
+   * endShape();
+   * </PRE>
+   */
   public void curve(float x1, float y1,
                     float x2, float y2,
                     float x3, float y3,
@@ -7526,16 +7779,33 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
+  /**
+   * If true in PImage, use bilinear interpolation for copy()
+   * operations. When inherited by PGraphics, also controls shapes.
+   */
   public void smooth() {
     g.smooth();
   }
 
 
+  public void smooth(int level) {
+    g.smooth(level);
+  }
+
+
+  /**
+   * Disable smoothing. See smooth().
+   */
   public void noSmooth() {
     g.noSmooth();
   }
 
 
+  /**
+   * The mode can only be set to CORNERS, CORNER, and CENTER.
+   * <p/>
+   * Support for CENTER was added in release 0146.
+   */
   public void imageMode(int mode) {
     g.imageMode(mode);
   }
@@ -7551,6 +7821,11 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
+  /**
+   * Draw an image(), also specifying u/v coordinates.
+   * In this method, the  u, v coordinates are always based on image space
+   * location, regardless of the current textureMode().
+   */
   public void image(PImage image,
                     float a, float b, float c, float d,
                     int u1, int v1, int u2, int v2) {
@@ -7558,6 +7833,10 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
+  /**
+   * Set the orientation for the shape() command (like imageMode() or rectMode()).
+   * @param mode Either CORNER, CORNERS, or CENTER.
+   */
   public void shapeMode(int mode) {
     g.shapeMode(mode);
   }
@@ -7568,6 +7847,9 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
+  /**
+   * Convenience method to draw at a particular location.
+   */
   public void shape(PShape shape, float x, float y) {
     g.shape(shape, x, y);
   }
@@ -7588,46 +7870,88 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
+  /**
+   * Sets the alignment of the text to one of LEFT, CENTER, or RIGHT.
+   * This will also reset the vertical text alignment to BASELINE.
+   */
   public void textAlign(int align) {
     g.textAlign(align);
   }
 
 
+  /**
+   * Sets the horizontal and vertical alignment of the text. The horizontal
+   * alignment can be one of LEFT, CENTER, or RIGHT. The vertical alignment
+   * can be TOP, BOTTOM, CENTER, or the BASELINE (the default).
+   */
   public void textAlign(int alignX, int alignY) {
     g.textAlign(alignX, alignY);
   }
 
 
+  /**
+   * Returns the ascent of the current font at the current size.
+   * This is a method, rather than a variable inside the PGraphics object
+   * because it requires calculation.
+   */
   public float textAscent() {
     return g.textAscent();
   }
 
 
+  /**
+   * Returns the descent of the current font at the current size.
+   * This is a method, rather than a variable inside the PGraphics object
+   * because it requires calculation.
+   */
   public float textDescent() {
     return g.textDescent();
   }
 
 
+  /**
+   * Sets the current font. The font's size will be the "natural"
+   * size of this font (the size that was set when using "Create Font").
+   * The leading will also be reset.
+   */
   public void textFont(PFont which) {
     g.textFont(which);
   }
 
 
+  /**
+   * Useful function to set the font and size at the same time.
+   */
   public void textFont(PFont which, float size) {
     g.textFont(which, size);
   }
 
 
+  /**
+   * Set the text leading to a specific value. If using a custom
+   * value for the text leading, you'll have to call textLeading()
+   * again after any calls to textSize().
+   */
   public void textLeading(float leading) {
     g.textLeading(leading);
   }
 
 
+  /**
+   * Sets the text rendering/placement to be either SCREEN (direct
+   * to the screen, exact coordinates, only use the font's original size)
+   * or MODEL (the default, where text is manipulated by translate() and
+   * can have a textSize). The text size cannot be set when using
+   * textMode(SCREEN), because it uses the pixels directly from the font.
+   */
   public void textMode(int mode) {
     g.textMode(mode);
   }
 
 
+  /**
+   * Sets the text size, also resets the value for the leading.
+   */
   public void textSize(float size) {
     g.textSize(size);
   }
@@ -7638,31 +7962,65 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
+  /**
+   * Return the width of a line of text. If the text has multiple
+   * lines, this returns the length of the longest line.
+   */
   public float textWidth(String str) {
     return g.textWidth(str);
   }
 
 
+  /**
+   * Draw a single character on screen.
+   * Extremely slow when used with textMode(SCREEN) and Java 2D,
+   * because loadPixels has to be called first and updatePixels last.
+   */
   public void text(char c, float x, float y) {
     g.text(c, x, y);
   }
 
 
+  /**
+   * Draw a single character on screen (with a z coordinate)
+   */
   public void text(char c, float x, float y, float z) {
     g.text(c, x, y, z);
   }
 
 
+  /**
+   * Draw a chunk of text.
+   * Newlines that are \n (Unix newline or linefeed char, ascii 10)
+   * are honored, but \r (carriage return, Windows and Mac OS) are
+   * ignored.
+   */
   public void text(String str, float x, float y) {
     g.text(str, x, y);
   }
 
 
+  /**
+   * Same as above but with a z coordinate.
+   */
   public void text(String str, float x, float y, float z) {
     g.text(str, x, y, z);
   }
 
 
+  /**
+   * Draw text in a box that is constrained to a particular size.
+   * The current rectMode() determines what the coordinates mean
+   * (whether x1/y1/x2/y2 or x/y/w/h).
+   * <P/>
+   * Note that the x,y coords of the start of the box
+   * will align with the *ascent* of the text, not the baseline,
+   * as is the case for the other text() functions.
+   * <P/>
+   * Newlines that are \n (Unix newline or linefeed char, ascii 10)
+   * are honored, and \r (carriage return, Windows and Mac OS) are
+   * ignored.
+   */
   public void text(String str, float x1, float y1, float x2, float y2) {
     g.text(str, x1, y1, x2, y2);
   }
@@ -7678,6 +8036,13 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
+  /**
+   * This does a basic number formatting, to avoid the
+   * generally ugly appearance of printing floats.
+   * Users who want more control should use their own nf() cmmand,
+   * or if they want the long, ugly version of float,
+   * use String.valueOf() to convert the float to a String first.
+   */
   public void text(float num, float x, float y) {
     g.text(num, x, y);
   }
@@ -7688,76 +8053,135 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
+  /**
+   * Push a copy of the current transformation matrix onto the stack.
+   */
   public void pushMatrix() {
     g.pushMatrix();
   }
 
 
+  /**
+   * Replace the current transformation matrix with the top of the stack.
+   */
   public void popMatrix() {
     g.popMatrix();
   }
 
 
+  /**
+   * Translate in X and Y.
+   */
   public void translate(float tx, float ty) {
     g.translate(tx, ty);
   }
 
 
+  /**
+   * Translate in X, Y, and Z.
+   */
   public void translate(float tx, float ty, float tz) {
     g.translate(tx, ty, tz);
   }
 
 
+  /**
+   * Two dimensional rotation.
+   *
+   * Same as rotateZ (this is identical to a 3D rotation along the z-axis)
+   * but included for clarity. It'd be weird for people drawing 2D graphics
+   * to be using rotateZ. And they might kick our a-- for the confusion.
+   *
+   * <A HREF="http://www.xkcd.com/c184.html">Additional background</A>.
+   */
   public void rotate(float angle) {
     g.rotate(angle);
   }
 
 
+  /**
+   * Rotate around the X axis.
+   */
   public void rotateX(float angle) {
     g.rotateX(angle);
   }
 
 
+  /**
+   * Rotate around the Y axis.
+   */
   public void rotateY(float angle) {
     g.rotateY(angle);
   }
 
 
+  /**
+   * Rotate around the Z axis.
+   *
+   * The functions rotate() and rotateZ() are identical, it's just that it make
+   * sense to have rotate() and then rotateX() and rotateY() when using 3D;
+   * nor does it make sense to use a function called rotateZ() if you're only
+   * doing things in 2D. so we just decided to have them both be the same.
+   */
   public void rotateZ(float angle) {
     g.rotateZ(angle);
   }
 
 
+  /**
+   * Rotate about a vector in space. Same as the glRotatef() function.
+   */
   public void rotate(float angle, float vx, float vy, float vz) {
     g.rotate(angle, vx, vy, vz);
   }
 
 
+  /**
+   * Scale in all dimensions.
+   */
   public void scale(float s) {
     g.scale(s);
   }
 
 
+  /**
+   * Scale in X and Y. Equivalent to scale(sx, sy, 1).
+   *
+   * Not recommended for use in 3D, because the z-dimension is just
+   * scaled by 1, since there's no way to know what else to scale it by.
+   */
   public void scale(float sx, float sy) {
     g.scale(sx, sy);
   }
 
 
+  /**
+   * Scale in X, Y, and Z.
+   */
   public void scale(float x, float y, float z) {
     g.scale(x, y, z);
   }
 
 
+  /**
+   * Shear along X axis
+   */
   public void shearX(float angle) {
     g.shearX(angle);
   }
 
 
+  /**
+   * Skew along Y axis
+   */
   public void shearY(float angle) {
     g.shearY(angle);
   }
 
 
+  /**
+   * Set the current transformation matrix to identity.
+   */
   public void resetMatrix() {
     g.resetMatrix();
   }
@@ -7773,6 +8197,9 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
+  /**
+   * Apply a 3x2 affine transformation matrix.
+   */
   public void applyMatrix(float n00, float n01, float n02,
                           float n10, float n11, float n12) {
     g.applyMatrix(n00, n01, n02, n10, n11, n12);
@@ -7784,6 +8211,9 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
+  /**
+   * Apply a 4x4 transformation matrix.
+   */
   public void applyMatrix(float n00, float n01, float n02, float n03,
                           float n10, float n11, float n12, float n13,
                           float n20, float n21, float n22, float n23,
@@ -7797,31 +8227,51 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
+  /**
+   * Copy the current transformation matrix into the specified target.
+   * Pass in null to create a new matrix.
+   */
   public PMatrix2D getMatrix(PMatrix2D target) {
     return g.getMatrix(target);
   }
 
 
+  /**
+   * Copy the current transformation matrix into the specified target.
+   * Pass in null to create a new matrix.
+   */
   public PMatrix3D getMatrix(PMatrix3D target) {
     return g.getMatrix(target);
   }
 
 
+  /**
+   * Set the current transformation matrix to the contents of another.
+   */
   public void setMatrix(PMatrix source) {
     g.setMatrix(source);
   }
 
 
+  /**
+   * Set the current transformation to the contents of the specified source.
+   */
   public void setMatrix(PMatrix2D source) {
     g.setMatrix(source);
   }
 
 
+  /**
+   * Set the current transformation to the contents of the specified source.
+   */
   public void setMatrix(PMatrix3D source) {
     g.setMatrix(source);
   }
 
 
+  /**
+   * Print the current model (or "transformation") matrix.
+   */
   public void printMatrix() {
     g.printMatrix();
   }
@@ -7858,10 +8308,12 @@ public class PApplet extends Activity implements PConstants, Runnable {
     g.ortho();
   }
 
+
   public void ortho(float left, float right,
                     float bottom, float top) {
     g.ortho(left, right, bottom, top);
   }
+
 
   public void ortho(float left, float right,
                     float bottom, float top,
@@ -7892,41 +8344,91 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
+  /**
+   * Given an x and y coordinate, returns the x position of where
+   * that point would be placed on screen, once affected by translate(),
+   * scale(), or any other transformations.
+   */
   public float screenX(float x, float y) {
     return g.screenX(x, y);
   }
 
 
+  /**
+   * Given an x and y coordinate, returns the y position of where
+   * that point would be placed on screen, once affected by translate(),
+   * scale(), or any other transformations.
+   */
   public float screenY(float x, float y) {
     return g.screenY(x, y);
   }
 
 
+  /**
+   * Maps a three dimensional point to its placement on-screen.
+   * <P>
+   * Given an (x, y, z) coordinate, returns the x position of where
+   * that point would be placed on screen, once affected by translate(),
+   * scale(), or any other transformations.
+   */
   public float screenX(float x, float y, float z) {
     return g.screenX(x, y, z);
   }
 
 
+  /**
+   * Maps a three dimensional point to its placement on-screen.
+   * <P>
+   * Given an (x, y, z) coordinate, returns the y position of where
+   * that point would be placed on screen, once affected by translate(),
+   * scale(), or any other transformations.
+   */
   public float screenY(float x, float y, float z) {
     return g.screenY(x, y, z);
   }
 
 
+  /**
+   * Maps a three dimensional point to its placement on-screen.
+   * <P>
+   * Given an (x, y, z) coordinate, returns its z value.
+   * This value can be used to determine if an (x, y, z) coordinate
+   * is in front or in back of another (x, y, z) coordinate.
+   * The units are based on how the zbuffer is set up, and don't
+   * relate to anything "real". They're only useful for in
+   * comparison to another value obtained from screenZ(),
+   * or directly out of the zbuffer[].
+   */
   public float screenZ(float x, float y, float z) {
     return g.screenZ(x, y, z);
   }
 
 
+  /**
+   * Returns the model space x value for an x, y, z coordinate.
+   * <P>
+   * This will give you a coordinate after it has been transformed
+   * by translate(), rotate(), and camera(), but not yet transformed
+   * by the projection matrix. For instance, his can be useful for
+   * figuring out how points in 3D space relate to the edge
+   * coordinates of a shape.
+   */
   public float modelX(float x, float y, float z) {
     return g.modelX(x, y, z);
   }
 
 
+  /**
+   * Returns the model space y value for an x, y, z coordinate.
+   */
   public float modelY(float x, float y, float z) {
     return g.modelY(x, y, z);
   }
 
 
+  /**
+   * Returns the model space z value for an x, y, z coordinate.
+   */
   public float modelZ(float x, float y, float z) {
     return g.modelZ(x, y, z);
   }
@@ -7967,6 +8469,10 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
+  /**
+   * Set the tint to either a grayscale or ARGB value.
+   * See notes attached to the fill() function.
+   */
   public void stroke(int rgb) {
     g.stroke(rgb);
   }
@@ -8002,6 +8508,9 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
+  /**
+   * Set the tint to either a grayscale or ARGB value.
+   */
   public void tint(int rgb) {
     g.tint(rgb);
   }
@@ -8037,6 +8546,9 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
+  /**
+   * Set the fill to either a grayscale value or an ARGB int.
+   */
   public void fill(int rgb) {
     g.fill(rgb);
   }
@@ -8168,36 +8680,84 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
+  /**
+   * Set the background to a gray or ARGB color.
+   * <p>
+   * For the main drawing surface, the alpha value will be ignored. However,
+   * alpha can be used on PGraphics objects from createGraphics(). This is
+   * the only way to set all the pixels partially transparent, for instance.
+   * <p>
+   * Note that background() should be called before any transformations occur,
+   * because some implementations may require the current transformation matrix
+   * to be identity before drawing.
+   */
   public void background(int rgb) {
     g.background(rgb);
   }
 
 
+  /**
+   * See notes about alpha in background(x, y, z, a).
+   */
   public void background(int rgb, float alpha) {
     g.background(rgb, alpha);
   }
 
 
+  /**
+   * Set the background to a grayscale value, based on the
+   * current colorMode.
+   */
   public void background(float gray) {
     g.background(gray);
   }
 
 
+  /**
+   * See notes about alpha in background(x, y, z, a).
+   */
   public void background(float gray, float alpha) {
     g.background(gray, alpha);
   }
 
 
+  /**
+   * Set the background to an r, g, b or h, s, b value,
+   * based on the current colorMode.
+   */
   public void background(float x, float y, float z) {
     g.background(x, y, z);
   }
 
 
+  /**
+   * Clear the background with a color that includes an alpha value. This can
+   * only be used with objects created by createGraphics(), because the main
+   * drawing surface cannot be set transparent.
+   * <p>
+   * It might be tempting to use this function to partially clear the screen
+   * on each frame, however that's not how this function works. When calling
+   * background(), the pixels will be replaced with pixels that have that level
+   * of transparency. To do a semi-transparent overlay, use fill() with alpha
+   * and draw a rectangle.
+   */
   public void background(float x, float y, float z, float a) {
     g.background(x, y, z, a);
   }
 
 
+  /**
+   * Takes an RGB or ARGB image and sets it as the background.
+   * The width and height of the image must be the same size as the sketch.
+   * Use image.resize(width, height) to make short work of such a task.
+   * <P>
+   * Note that even if the image is set as RGB, the high 8 bits of each pixel
+   * should be set opaque (0xFF000000), because the image data will be copied
+   * directly to the screen, and non-opaque background images may have strange
+   * behavior. Using image.filter(OPAQUE) will handle this easily.
+   * <P>
+   * When using 3D, this will also clear the zbuffer (if it exists).
+   */
   public void background(PImage image) {
     g.background(image);
   }
@@ -8213,6 +8773,15 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
+  /**
+   * Set the colorMode and the maximum values for (r, g, b)
+   * or (h, s, b).
+   * <P>
+   * Note that this doesn't set the maximum for the alpha value,
+   * which might be confusing if for instance you switched to
+   * <PRE>colorMode(HSB, 360, 100, 100);</PRE>
+   * because the alpha values were still between 0 and 255.
+   */
   public void colorMode(int mode, float maxX, float maxY, float maxZ) {
     g.colorMode(mode, maxX, maxY, maxZ);
   }
@@ -8259,109 +8828,308 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
+  /**
+   * Interpolate between two colors, using the current color mode.
+   */
   public int lerpColor(int c1, int c2, float amt) {
     return g.lerpColor(c1, c2, amt);
   }
 
 
+  /**
+   * Interpolate between two colors. Like lerp(), but for the
+   * individual color components of a color supplied as an int value.
+   */
   static public int lerpColor(int c1, int c2, float amt, int mode) {
     return PGraphics.lerpColor(c1, c2, amt, mode);
   }
 
 
+  /**
+   * Display a warning that the specified method is only available with 3D.
+   * @param method The method name (no parentheses)
+   */
+  static public void showDepthWarning(String method) {
+    PGraphics.showDepthWarning(method);
+  }
+
+
+  /**
+   * Display a warning that the specified method that takes x, y, z parameters
+   * can only be used with x and y parameters in this renderer.
+   * @param method The method name (no parentheses)
+   */
+  static public void showDepthWarningXYZ(String method) {
+    PGraphics.showDepthWarningXYZ(method);
+  }
+
+
+  /**
+   * Display a warning that the specified method is simply unavailable.
+   */
+  static public void showMethodWarning(String method) {
+    PGraphics.showMethodWarning(method);
+  }
+
+
+  /**
+   * Error that a particular variation of a method is unavailable (even though
+   * other variations are). For instance, if vertex(x, y, u, v) is not
+   * available, but vertex(x, y) is just fine.
+   */
+  static public void showVariationWarning(String str) {
+    PGraphics.showVariationWarning(str);
+  }
+
+
+  /**
+   * Display a warning that the specified method is not implemented, meaning
+   * that it could be either a completely missing function, although other
+   * variations of it may still work properly.
+   */
+  static public void showMissingWarning(String method) {
+    PGraphics.showMissingWarning(method);
+  }
+
+
+  /**
+   * Return true if this renderer should be drawn to the screen. Defaults to
+   * returning true, since nearly all renderers are on-screen beasts. But can
+   * be overridden for subclasses like PDF so that a window doesn't open up.
+   * <br/> <br/>
+   * A better name? showFrame, displayable, isVisible, visible, shouldDisplay,
+   * what to call this?
+   */
   public boolean displayable() {
     return g.displayable();
   }
 
+
   /**
    * Return true if this renderer does rendering through OpenGL. Defaults to false.
-   */
+   */  
   public boolean isGL() {
     return g.isGL();
   }
 
 
+  public void delete() {
+    g.delete();
+  }
+
+
+  public Bitmap getBitmap() {
+    return g.getBitmap();
+  }
+
+
+  /**
+   * Store data of some kind for a renderer that requires extra metadata of
+   * some kind. Usually this is a renderer-specific representation of the
+   * image data, for instance a BufferedImage with tint() settings applied for
+   * PGraphicsJava2D, or resized image data and OpenGL texture indices for
+   * PGraphicsOpenGL.
+   * @param renderer The PGraphics renderer associated to the image
+   * @param storage The metadata required by the renderer   
+   */
   public void setCache(PGraphics renderer, Object storage) {
     g.setCache(renderer, storage);
   }
 
 
+  /**
+   * Get cache storage data for the specified renderer. Because each renderer
+   * will cache data in different formats, it's necessary to store cache data
+   * keyed by the renderer object. Otherwise, attempting to draw the same
+   * image to both a PGraphicsJava2D and a PGraphicsOpenGL will cause errors.
+   * @param renderer The PGraphics renderer associated to the image
+   * @return metadata stored for the specified renderer
+   */
   public Object getCache(PGraphics renderer) {
     return g.getCache(renderer);
   }
 
 
+  /**
+   * Remove information associated with this renderer from the cache, if any.
+   * @param renderer The PGraphics renderer whose cache data should be removed
+   */
   public void removeCache(PGraphics renderer) {
     g.removeCache(renderer);
   }
 
 
+  /**
+   * Store parameters for a renderer that requires extra metadata of
+   * some kind.
+   * @param renderer The PGraphics renderer associated to the image
+   * @param storage The parameters required by the renderer  
+   */
   public void setParams(PGraphics renderer, Object params) {
     g.setParams(renderer, params);
   }
 
 
+  /**
+   * Get the parameters for the specified renderer.
+   * @param renderer The PGraphics renderer associated to the image
+   * @return parameters stored for the specified renderer
+   */
   public Object getParams(PGraphics renderer) {
     return g.getParams(renderer);
   }
 
 
+  /**
+   * Remove information associated with this renderer from the cache, if any.
+   * @param renderer The PGraphics renderer whose parameters should be removed
+   */
   public void removeParams(PGraphics renderer) {
     g.removeParams(renderer);
   }
 
 
+  /**
+   * Returns an ARGB "color" type (a packed 32 bit int with the color.
+   * If the coordinate is outside the image, zero is returned
+   * (black, but completely transparent).
+   * <P>
+   * If the image is in RGB format (i.e. on a PVideo object),
+   * the value will get its high bits set, just to avoid cases where
+   * they haven't been set already.
+   * <P>
+   * If the image is in ALPHA format, this returns a white with its
+   * alpha value set.
+   * <P>
+   * This function is included primarily for beginners. It is quite
+   * slow because it has to check to see if the x, y that was provided
+   * is inside the bounds, and then has to check to see what image
+   * type it is. If you want things to be more efficient, access the
+   * pixels[] array directly.
+   */
   public int get(int x, int y) {
     return g.get(x, y);
   }
 
 
+  /**
+   * Grab a subsection of a PImage, and copy it into a fresh PImage.
+   * As of release 0149, no longer honors imageMode() for the coordinates.
+   */
   public PImage get(int x, int y, int w, int h) {
     return g.get(x, y, w, h);
   }
 
 
+  /**
+   * Returns a copy of this PImage. Equivalent to get(0, 0, width, height).
+   */
   public PImage get() {
     return g.get();
   }
 
 
+  /**
+   * Set a single pixel to the specified color.
+   */
   public void set(int x, int y, int c) {
     g.set(x, y, c);
   }
 
 
+  /**
+   * Efficient method of drawing an image's pixels directly to this surface.
+   * No variations are employed, meaning that any scale, tint, or imageMode
+   * settings will be ignored.
+   */
   public void set(int x, int y, PImage src) {
     g.set(x, y, src);
   }
 
 
+  /**
+   * Set alpha channel for an image. Black colors in the source
+   * image will make the destination image completely transparent,
+   * and white will make things fully opaque. Gray values will
+   * be in-between steps.
+   * <P>
+   * Strictly speaking the "blue" value from the source image is
+   * used as the alpha color. For a fully grayscale image, this
+   * is correct, but for a color image it's not 100% accurate.
+   * For a more accurate conversion, first use filter(GRAY)
+   * which will make the image into a "correct" grayscake by
+   * performing a proper luminance-based conversion.
+   */
   public void mask(int alpha[]) {
     g.mask(alpha);
   }
 
 
+  /**
+   * Set alpha channel for an image using another image as the source.
+   */
   public void mask(PImage alpha) {
     g.mask(alpha);
   }
 
 
+  /**
+   * Method to apply a variety of basic filters to this image.
+   * <P>
+   * <UL>
+   * <LI>filter(BLUR) provides a basic blur.
+   * <LI>filter(GRAY) converts the image to grayscale based on luminance.
+   * <LI>filter(INVERT) will invert the color components in the image.
+   * <LI>filter(OPAQUE) set all the high bits in the image to opaque
+   * <LI>filter(THRESHOLD) converts the image to black and white.
+   * <LI>filter(DILATE) grow white/light areas
+   * <LI>filter(ERODE) shrink white/light areas
+   * </UL>
+   * Luminance conversion code contributed by
+   * <A HREF="http://www.toxi.co.uk">toxi</A>
+   * <P/>
+   * Gaussian blur code contributed by
+   * <A HREF="http://incubator.quasimondo.com">Mario Klingemann</A>
+   */
   public void filter(int kind) {
     g.filter(kind);
   }
 
 
+  /**
+   * Method to apply a variety of basic filters to this image.
+   * These filters all take a parameter.
+   * <P>
+   * <UL>
+   * <LI>filter(BLUR, int radius) performs a gaussian blur of the
+   * specified radius.
+   * <LI>filter(POSTERIZE, int levels) will posterize the image to
+   * between 2 and 255 levels.
+   * <LI>filter(THRESHOLD, float center) allows you to set the
+   * center point for the threshold. It takes a value from 0 to 1.0.
+   * </UL>
+   * Gaussian blur code contributed by
+   * <A HREF="http://incubator.quasimondo.com">Mario Klingemann</A>
+   * and later updated by toxi for better speed.
+   */
   public void filter(int kind, float param) {
     g.filter(kind, param);
   }
 
 
+  /**
+   * Copy things from one area of this image
+   * to another area in the same image.
+   */
   public void copy(int sx, int sy, int sw, int sh,
                    int dx, int dy, int dw, int dh) {
     g.copy(sx, sy, sw, sh, dx, dy, dw, dh);
   }
 
 
+  /**
+   * Copies area of one image into another PImage object.
+   */
   public void copy(PImage src,
                    int sx, int sy, int sw, int sh,
                    int dx, int dy, int dw, int dh) {
@@ -8369,21 +9137,92 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
+  /**
+   * Blend two colors based on a particular mode.
+   * <UL>
+   * <LI>REPLACE - destination colour equals colour of source pixel: C = A.
+   *     Sometimes called "Normal" or "Copy" in other software.
+   *
+   * <LI>BLEND - linear interpolation of colours:
+   *     <TT>C = A*factor + B</TT>
+   *
+   * <LI>ADD - additive blending with white clip:
+   *     <TT>C = min(A*factor + B, 255)</TT>.
+   *     Clipped to 0..255, Photoshop calls this "Linear Burn",
+   *     and Director calls it "Add Pin".
+   *
+   * <LI>SUBTRACT - substractive blend with black clip:
+   *     <TT>C = max(B - A*factor, 0)</TT>.
+   *     Clipped to 0..255, Photoshop calls this "Linear Dodge",
+   *     and Director calls it "Subtract Pin".
+   *
+   * <LI>DARKEST - only the darkest colour succeeds:
+   *     <TT>C = min(A*factor, B)</TT>.
+   *     Illustrator calls this "Darken".
+   *
+   * <LI>LIGHTEST - only the lightest colour succeeds:
+   *     <TT>C = max(A*factor, B)</TT>.
+   *     Illustrator calls this "Lighten".
+   *
+   * <LI>DIFFERENCE - subtract colors from underlying image.
+   *
+   * <LI>EXCLUSION - similar to DIFFERENCE, but less extreme.
+   *
+   * <LI>MULTIPLY - Multiply the colors, result will always be darker.
+   *
+   * <LI>SCREEN - Opposite multiply, uses inverse values of the colors.
+   *
+   * <LI>OVERLAY - A mix of MULTIPLY and SCREEN. Multiplies dark values,
+   *     and screens light values.
+   *
+   * <LI>HARD_LIGHT - SCREEN when greater than 50% gray, MULTIPLY when lower.
+   *
+   * <LI>SOFT_LIGHT - Mix of DARKEST and LIGHTEST.
+   *     Works like OVERLAY, but not as harsh.
+   *
+   * <LI>DODGE - Lightens light tones and increases contrast, ignores darks.
+   *     Called "Color Dodge" in Illustrator and Photoshop.
+   *
+   * <LI>BURN - Darker areas are applied, increasing contrast, ignores lights.
+   *     Called "Color Burn" in Illustrator and Photoshop.
+   * </UL>
+   * <P>A useful reference for blending modes and their algorithms can be
+   * found in the <A HREF="http://www.w3.org/TR/SVG12/rendering.html">SVG</A>
+   * specification.</P>
+   * <P>It is important to note that Processing uses "fast" code, not
+   * necessarily "correct" code. No biggie, most software does. A nitpicker
+   * can find numerous "off by 1 division" problems in the blend code where
+   * <TT>&gt;&gt;8</TT> or <TT>&gt;&gt;7</TT> is used when strictly speaking
+   * <TT>/255.0</T> or <TT>/127.0</TT> should have been used.</P>
+   * <P>For instance, exclusion (not intended for real-time use) reads
+   * <TT>r1 + r2 - ((2 * r1 * r2) / 255)</TT> because <TT>255 == 1.0</TT>
+   * not <TT>256 == 1.0</TT>. In other words, <TT>(255*255)>>8</TT> is not
+   * the same as <TT>(255*255)/255</TT>. But for real-time use the shifts
+   * are preferrable, and the difference is insignificant for applications
+   * built with Processing.</P>
+   */
   static public int blendColor(int c1, int c2, int mode) {
     return PGraphics.blendColor(c1, c2, mode);
   }
 
 
+  /**
+   * Blends one area of this image to another area.
+   * @see processing.core.PImage#blendColor(int,int,int)
+   */
   public void blend(int sx, int sy, int sw, int sh,
                     int dx, int dy, int dw, int dh, int mode) {
     g.blend(sx, sy, sw, sh, dx, dy, dw, dh, mode);
   }
 
 
+  /**
+   * Copies area of one image into another PImage object.
+   * @see processing.core.PImage#blendColor(int,int,int)
+   */
   public void blend(PImage src,
                     int sx, int sy, int sw, int sh,
                     int dx, int dy, int dw, int dh, int mode) {
     g.blend(src, sx, sy, sw, sh, dx, dy, dw, dh, mode);
   }
 }
-

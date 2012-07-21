@@ -1,4 +1,5 @@
 0206 android
+X add full PAppletMethods implementation to Android
 
 
 _ Android OPENGL renderer + JAVA2D PGraphics results in PTexture exception
