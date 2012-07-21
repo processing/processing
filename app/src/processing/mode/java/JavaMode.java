@@ -45,7 +45,7 @@ public class JavaMode extends Mode {
   // found in the sketchbook)
 //  static public String librariesClassPath;
 
-  
+
   public Editor createEditor(Base base, String path, EditorState state) {
     return new JavaEditor(base, path, state, this);
   }
@@ -60,7 +60,7 @@ public class JavaMode extends Mode {
       Base.showError("Problem loading keywords",
                      "Could not load keywords.txt, please re-install Processing.", e);
     }
-    
+
     /*
     item = newJMenuItem("Export", 'E');
     if (editor != null) {
@@ -116,7 +116,7 @@ public class JavaMode extends Mode {
     }
   }
 
-  
+
   public String getTitle() {
     return "Standard";
   }
@@ -126,50 +126,50 @@ public class JavaMode extends Mode {
 //    return new Toolbar(editor);
 //  }
 
-  
+
 //  public Formatter createFormatter() {
 //    return new AutoFormat();
 //  }
-  
-  
+
+
 //  public Editor createEditor(Base ibase, String path, int[] location) {
 //  }
-  
+
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
   public File[] getExampleCategoryFolders() {
     // Basics, Topics, OpenGL, Books
-    return new File[] { 
+    return new File[] {
       new File(examplesFolder, "Basics"),
       new File(examplesFolder, "Topics"),
       new File(examplesFolder, "OpenGL"),
       new File(examplesFolder, "Books")
     };
   }
-  
+
 
   public String getDefaultExtension() {
     return "pde";
   }
- 
-  
+
+
   public String[] getExtensions() {
     return new String[] { "pde", "java" };
   }
 
-  
+
   public String[] getIgnorable() {
-    return new String[] { 
+    return new String[] {
       "applet",
       "application.macosx",
       "application.windows",
       "application.linux"
     };
   }
-  
-  
+
+
   public Library getCoreLibrary() {
     if (coreLibrary == null) {
       File coreFolder = Base.getContentFile("core");
@@ -177,11 +177,11 @@ public class JavaMode extends Mode {
     }
     return coreLibrary;
   }
-  
-  
+
+
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
-  
+
   public Runner handleRun(Sketch sketch, RunnerListener listener) throws SketchException {
     JavaBuild build = new JavaBuild(sketch);
     String appletClassName = build.build(false);
@@ -208,7 +208,7 @@ public class JavaMode extends Mode {
           runtime.launch(true);
         }
       }).start();
-      return runtime;      
+      return runtime;
     }
     return null;
   }
@@ -220,14 +220,14 @@ public class JavaMode extends Mode {
 //      runtime = null; // will this help?
 //    }
 //  }
-  
-  
+
+
 //  public boolean handleExportApplet(Sketch sketch) throws SketchException, IOException {
 //    JavaBuild build = new JavaBuild(sketch);
 //    return build.exportApplet();
 //  }
-  
-  
+
+
   public boolean handleExportApplication(Sketch sketch) throws SketchException, IOException {
     JavaBuild build = new JavaBuild(sketch);
     return build.exportApplication();

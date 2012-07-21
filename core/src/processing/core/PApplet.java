@@ -655,9 +655,9 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref environment
    */
-  @Deprecated 
+  @Deprecated
   public boolean online = false;
-  // This is deprecated because it's poorly named (and even more poorly 
+  // This is deprecated because it's poorly named (and even more poorly
   // understood). Further, we'll probably be removing applets soon, in which
   // case this won't work at all. If you want this feature, you can check
   // whether getAppletContext() returns null.
@@ -945,7 +945,7 @@ public class PApplet extends Applet
 //    new Exception().printStackTrace(System.out);
 
     paused = false; // unpause the thread
-    
+
     resume();
     resumeMethods.handle();
 
@@ -1827,7 +1827,7 @@ public class PApplet extends Applet
     if (!online) {
       start();
     }
-    
+
     while ((Thread.currentThread() == thread) && !finished) {
       if (paused) {
         debug("PApplet.run() paused, calling object wait...");
@@ -2197,17 +2197,17 @@ public class PApplet extends Applet
     comp.removeKeyListener(this);
     comp.removeFocusListener(this);
   }
-  
 
-  /** 
-   * Call to remove, then add, listeners to a component. 
-   * Avoids issues with double-adding. 
+
+  /**
+   * Call to remove, then add, listeners to a component.
+   * Avoids issues with double-adding.
    */
   public void updateListeners(Component comp) {
     removeListeners(comp);
     addListeners(comp);
   }
-  
+
 
   //////////////////////////////////////////////////////////////
 
@@ -5296,7 +5296,7 @@ public class PApplet extends Applet
     return new XML(file);
   }
 
-  
+
   public Table loadTable(String filename) {
     return new Table(this, filename);
   }
@@ -6682,10 +6682,10 @@ public class PApplet extends Applet
     if (question != -1) {
       extension = extension.substring(0, question);
     }
-    
+
     return extension;
   }
-  
+
 
   //////////////////////////////////////////////////////////////
 
@@ -9156,6 +9156,9 @@ public class PApplet extends Applet
           } else {
             System.err.println("Display " + value + " does not exist, " +
                                "using the default display instead.");
+            for (int i = 0; i < devices.length; i++) {
+              System.err.println(i + " is " + devices[i]);
+            }
           }
 
         } else if (param.equals(ARGS_BGCOLOR)) {
