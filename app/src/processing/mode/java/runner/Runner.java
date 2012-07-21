@@ -236,8 +236,23 @@ public class Runner implements MessageConsumer {
         GraphicsEnvironment ge =
           GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice[] devices = ge.getScreenDevices();
-        GraphicsDevice runDevice =
-          (runDisplay >= 0 && runDisplay < devices.length) ? devices[runDisplay] : editorDevice;
+
+        // Make sure the display set in Preferences actually exists
+        GraphicsDevice runDevice = editorDevice;
+        if (runDisplay >= 0 && runDisplay < devices.length) {
+          runDevice = devices[runDisplay];
+        } else {
+          runDevice = editorDevice;
+          for (int i = 0; i < devices.length; i++) {
+            if (devices[i] == runDevice) {
+              runDisplay = i;
+              break;
+              // Don't set the pref, might be a temporary thing. Users can
+              // open/close Preferences to reset the device themselves.
+//              Preferences.setInteger("run.display", runDisplay);
+            }
+          }
+        }
 
         Point windowLocation = editor.getSketchLocation();
 //        if (windowLocation != null) {
