@@ -7424,28 +7424,18 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
-  public Object loadShader(String vertFilename, String fragFilename, int kind) {
-    return g.loadShader(vertFilename, fragFilename, kind);
+  public PShader loadShader(int kind, String fragFilename, String vertFilename) {
+    return g.loadShader(kind, fragFilename, vertFilename);
   }
 
 
-  public Object loadShader(String fragFilename, int kind) {
-    return g.loadShader(fragFilename, kind);
+  public PShader loadShader(int kind, String fragFilename) {
+    return g.loadShader(kind, fragFilename);
   }
 
 
-  public Object loadShader(String vertFilename, String fragFilename) {
-    return g.loadShader(vertFilename, fragFilename);
-  }
-
-
-  public Object loadShader(String fragFilename) {
-    return g.loadShader(fragFilename);
-  }
-
-
-  public void shader(Object shader, int kind) {
-    g.shader(shader, kind);
+  public void shader(PShader shader) {
+    g.shader(shader);
   }
 
 
@@ -7454,12 +7444,12 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
-  public Object getShader(int kind) {
+  public PShader getShader(int kind) {
     return g.getShader(kind);
   }
 
 
-  public void filter(Object shader) {
+  public void filter(PShader shader) {
     g.filter(shader);
   }
 

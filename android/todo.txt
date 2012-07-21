@@ -1,6 +1,8 @@
 0206 android
 X add full PAppletMethods implementation to Android
 
+_ swap Run on Device and Run on Emulator
+_   http://code.google.com/p/processing/issues/detail?id=1083
 
 _ Android OPENGL renderer + JAVA2D PGraphics results in PTexture exception
 _   http://code.google.com/p/processing/issues/detail?id=1019
