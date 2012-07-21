@@ -6,7 +6,11 @@ o   http://www.randelshofer.ch/quaqua/guide/tailoring.html
 X display device preference tweaking
 
 _ update to 6u33 (OS X latest)
+_ make sure that ...
+_ very slow startup on OS X (library manager et al?)
 
+_ errors when running 32-bit Java on Linux 64
+_   http://code.google.com/p/processing/issues/detail?id=955
 
 _ retina support
 Have you added an NSPrincipalClass to your Info.plist, and are using a JavaApplicationStub with 64-bit?
@@ -89,9 +93,11 @@ _ kill external editor (for all its quirks) in favor of command line?
 _   use external editor needs to enable/disable across all windows
 _   http://code.google.com/p/processing/issues/detail?id=515
 C   Casey says yes kill ext editor and finish command line
+_ use as a way to remove the non-GUI-specifc code from PApplet
+_   so that the builds can run headless
 X could move to java6 and better internal javac support (drop ecj)
 _   decided to use Java 6, so check on Javac usefulness
-_ change command line to just be part of regular distros
+_ change command line to just be part of regular (separate) distros
 _   there's so much platform code in there, it's not worth the extra work
 _   also include update check for logging
 _ command line support is currently broken
