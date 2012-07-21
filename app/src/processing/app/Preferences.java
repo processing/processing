@@ -697,7 +697,7 @@ public class Preferences {
 //    displaySelectionBox.removeAll();
     String[] items = new String[displayCount];
     for (int i = 0; i < displayCount; i++) {
-      items[i] = String.valueOf(i);
+      items[i] = String.valueOf(i + 1);
 //      displaySelectionBox.add(String.valueOf(i + 1));
     }
 //    PApplet.println(items);
