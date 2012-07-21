@@ -10,7 +10,7 @@
     <taskdef name="methods" 
 	     classname="PAppletMethods" 
 	     classpath="methods/methods.jar" />
-    <methods dir="${basedir}/src/processing/core" />
+    <methods dir="${basedir}/src/processing/core" recorder="true" />
 
     <mkdir dir="bin" />
     <javac target="1.6" 

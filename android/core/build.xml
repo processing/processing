@@ -18,6 +18,11 @@
   </target>
 
   <target name="actual_build" if="env.ANDROID_SDK">
+    <taskdef name="methods" 
+	     classname="PAppletMethods" 
+	     classpath="../../core/methods/methods.jar" />
+    <methods dir="${basedir}/src/processing/core" recorder="false" />
+
     <mkdir dir="bin" />
     <javac target="1.5" 
 	   encoding="UTF-8"
