@@ -111,7 +111,7 @@ public class Runner implements MessageConsumer {
 //    this.appletClassName = appletClassName;
   public void launch(boolean presenting) {
     this.presenting = presenting;
-    
+
     // all params have to be stored as separate items,
     // so a growable array needs to be used. i.e. -Xms128m -Xmx1024m
     // will throw an error if it's shoved into a single array element
@@ -211,7 +211,7 @@ public class Runner implements MessageConsumer {
   protected String[] getSketchParams() {
     ArrayList<String> params = new ArrayList<String>();
 
-    // It's dangerous to add your own main() to your code, 
+    // It's dangerous to add your own main() to your code,
     // but if you've done it, we'll respect your right to hang yourself.
     // http://dev.processing.org/bugs/show_bug.cgi?id=1446
     if (build.getFoundMain()) {
@@ -222,7 +222,7 @@ public class Runner implements MessageConsumer {
 
       // get the stored device index (starts at 1)
       int runDisplay = Preferences.getInteger("run.display") - 1;
-      
+
       // If there was a saved location (this guy has been run more than once)
       // then the location will be set to the last position of the sketch window.
       // This will be passed to the PApplet runner using something like
@@ -231,38 +231,38 @@ public class Runner implements MessageConsumer {
       // figure out where to place itself based on the editor location.
       // --editor-location=150,20
       if (editor != null) {  // if running processing-cmd, don't do placement
-        GraphicsDevice editorDevice = 
+        GraphicsDevice editorDevice =
           editor.getGraphicsConfiguration().getDevice();
-        GraphicsEnvironment ge = 
+        GraphicsEnvironment ge =
           GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice[] devices = ge.getScreenDevices();
-        GraphicsDevice runDevice = 
+        GraphicsDevice runDevice =
           (runDisplay >= 0 && runDisplay < devices.length) ? devices[runDisplay] : editorDevice;
 
         Point windowLocation = editor.getSketchLocation();
 //        if (windowLocation != null) {
 //          // could check to make sure the sketch location is on the device
 //          // that's specified in Preferences, but that's going to be annoying
-//          // if you move a sketch to another window, then it keeps jumping 
+//          // if you move a sketch to another window, then it keeps jumping
 //          // back to the specified window.
-////          Rectangle screenRect = 
+////          Rectangle screenRect =
 ////            runDevice.getDefaultConfiguration().getBounds();
 //        }
         if (windowLocation == null) {
           if (editorDevice == runDevice) {
-            // If sketches are to be shown on the same display as the editor, 
-            // provide the editor location so the sketch's main() can place it. 
+            // If sketches are to be shown on the same display as the editor,
+            // provide the editor location so the sketch's main() can place it.
             Point editorLocation = editor.getLocation();
             params.add(PApplet.ARGS_EDITOR_LOCATION + "=" +
                        editorLocation.x + "," + editorLocation.y);
           } else {
-            // The sketch's main() will set a location centered on the new 
+            // The sketch's main() will set a location centered on the new
             // display. It has to happen in main() because the width/height
             // of the sketch are not known here.
 //             Set a location centered on the other display
-//            Rectangle screenRect = 
+//            Rectangle screenRect =
 //              runDevice.getDefaultConfiguration().getBounds();
-//            int runX = 
+//            int runX =
 //            params.add(PApplet.ARGS_LOCATION + "=" + runX + "," + runY);
           }
         } else {
@@ -323,7 +323,7 @@ public class Runner implements MessageConsumer {
         "java -Xrunjdwp:transport=dt_shmem,address=" + addr + ",suspend=y ";
     } else if (Base.isMacOS()) {
       commandArgs =
-        "java -d" + Base.getNativeBits() + //Preferences.get("run.options.bits") +  
+        "java -d" + Base.getNativeBits() + //Preferences.get("run.options.bits") +
         " -Xrunjdwp:transport=dt_socket,address=" + addr + ",suspend=y ";
     }
 
@@ -542,8 +542,8 @@ public class Runner implements MessageConsumer {
   }
 
 
-  public static boolean handleCommonErrors(final String exceptionClass, 
-                                           final String message, 
+  public static boolean handleCommonErrors(final String exceptionClass,
+                                           final String message,
                                            final RunnerListener listener) {
     if (exceptionClass.equals("java.lang.OutOfMemoryError")) {
       if (message.contains("exceeds VM budget")) {
@@ -571,18 +571,15 @@ public class Runner implements MessageConsumer {
 
     } else if (exceptionClass.equals("java.lang.UnsupportedClassVersionError")) {
       listener.statusError("UnsupportedClassVersionError: A library is using code compiled with an unsupported version of Java.");
-      System.err.println("This version of Processing only supports libraries and JAR files compiled for Java 1.5.");
-      System.err.println("A library used by this sketch was compiled for Java 1.6 or later, ");
-      System.err.println("and needs to be recompiled to be compatible with Java 1.5.");
-      
-    } else if (exceptionClass.equals("java.lang.NoSuchMethodError") || 
+      System.err.println("This version of Processing only supports libraries and JAR files compiled for Java 1.6 or earlier.");
+      System.err.println("A library used by this sketch was compiled for Java 1.7 or later, ");
+      System.err.println("and needs to be recompiled to be compatible with Java 1.6.");
+
+    } else if (exceptionClass.equals("java.lang.NoSuchMethodError") ||
                exceptionClass.equals("java.lang.NoSuchFieldError")) {
       listener.statusError(exceptionClass.substring(10) + ": " +
                            "You may be using a library that's incompatible " +
                            "with this version of Processing.");
-    } else if (message != null && 
-               message.equals("ClassNotFoundException: quicktime.std.StdQTException")) {
-      listener.statusError("Could not find QuickTime, please reinstall QuickTime 7 or later.");
     } else {
       return false;
     }
@@ -596,7 +593,7 @@ public class Runner implements MessageConsumer {
   protected void reportException(String message, ObjectReference or, ThreadReference thread) {
     listener.statusError(findException(message, or, thread));
   }
-  
+
 
   /**
    * Move through a list of stack frames, searching for references to code
@@ -618,7 +615,7 @@ public class Runner implements MessageConsumer {
           String filename = null;
           filename = location.sourceName();
           int lineNumber = location.lineNumber() - 1;
-          SketchException rex = 
+          SketchException rex =
             build.placeException(message, filename, lineNumber);
           if (rex != null) {
             return rex;
@@ -653,7 +650,7 @@ public class Runner implements MessageConsumer {
         method = ((ClassType) ref.referenceType()).concreteMethodByName("getLineNumber", "()I");
         IntegerValue intval = (IntegerValue) ref.invokeMethod(thread, method, new ArrayList<Value>(), ObjectReference.INVOKE_SINGLE_THREADED);
         int lineNumber = intval.intValue() - 1;
-        SketchException rex = 
+        SketchException rex =
           build.placeException(message, filename, lineNumber);
         if (rex != null) {
           return rex;
@@ -661,7 +658,7 @@ public class Runner implements MessageConsumer {
       }
     } catch (Exception e) {
       e.printStackTrace();
-    }    
+    }
     // Give up, nothing found inside the pile of stack frames
     SketchException rex = new SketchException(message);
     // exception is being created /here/, so stack trace is not useful
