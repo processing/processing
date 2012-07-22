@@ -22,6 +22,7 @@
     <cp>lib/antlr.jar</cp>
     <cp>lib/ant.jar</cp>
     <cp>lib/ant-launcher.jar</cp>
+    <cp>%EXEDIR%/java/lib/tools.jar</cp>
   </classPath>
   <jre>
     <path>java</path>
