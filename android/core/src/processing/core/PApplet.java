@@ -7210,6 +7210,16 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
+  public PGL beginGL() {
+    return g.beginGL();
+  }
+
+
+  public void endGL() {
+    g.endGL();
+  }
+
+
   /**
    * Enable a hint option.
    * <P>
