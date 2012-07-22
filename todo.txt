@@ -4,19 +4,28 @@ X launch moviemaker as separate Java process (to disable Quaqua)
 o or selectively disable parts to see which is causing the trouble
 o   http://www.randelshofer.ch/quaqua/guide/tailoring.html
 X display device preference tweaking
+X update to 6u33 (OS X latest)
+X modify build scripts to handle 32- and 64-bit versions of Linux
+X errors when running 32-bit Java on Linux 64
+X   http://code.google.com/p/processing/issues/detail?id=955
+X replace launch4j with the standard version
+X   this should take care of most of the launching quirks
+X   http://code.google.com/p/processing/issues/detail?id=943
+X launch4j problem
+o   no crash when double-clicking a sketch and loading it (?)
+X   http://code.google.com/p/processing/issues/detail?id=176
+X   also move back to using non-custom for 2.0 when we can drop QT support
 
-_ update to 6u33 (OS X latest)
-_ very slow startup on OS X (library manager et al?)
+_ revisions.txt should have Windows line endings
+_   change in SVN to be platform specific
+_ add 64-bit Linux version to the next download
 
-_ errors when running 32-bit Java on Linux 64
-_   http://code.google.com/p/processing/issues/detail?id=955
+earlier
+X remove jvm from cvs
+X   use wget to grab it if it doesn't exist
+o   and include an md5hash to see if the file is correct
+X     not necessary -- ant takes care of it
 
-_ retina support
-Have you added an NSPrincipalClass to your Info.plist, and are using a JavaApplicationStub with 64-bit?
-<key>NSPrincipalClass</key>
-<string>NSApplication</string>
-_ Check out the desktop property. Unfortunately, it won't tell you *which* display is running in HiDPI, but it will stay up-to-date with live display changes (like a Retina-display being plugged and unplugged). If you query the property after each GraphicsEnvironment display change event, you should be able to live switch in and out of HiDPI.
-java.awt.Toolkit.getDefaultToolkit().getDesktopProperty("apple.awt.contentScaleFactor");
 
 recent/open
 X add EditorState class, device-aware placement
@@ -234,11 +243,6 @@ _   store them in the PFont itself?
 gsoc
 _ "install library" menu option
 _ see how library installation goes, then possibly do same w/ examples
-
-_ launch4j problem - FIXABLE
-_   no crash when double-clicking a sketch and loading it (?)
-_   http://code.google.com/p/processing/issues/detail?id=176
-_   also move back to using non-custom for 2.0 when we can drop QT support
 
 _ active editor not being set null
 _   in Base.nextEditorLocation(), changed to "editors.size() == 0" 
@@ -1473,9 +1477,6 @@ _   jedit syntax is under mit license
 _     http://www.opensource.org/licenses/mit-license.php
 _ different name for 'lib' folder because of libraries folder?
 _   avoid some confusion for when describing the libraries folder to users
-_ remove jvm from cvs
-_   use wget to grab it if it doesn't exist
-_   and include an md5hash to see if the file is correct
 
 
 DIST / Windows
@@ -1492,6 +1493,13 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=1567
 
 DIST / Mac OS X
 
+_ very slow startup on OS X (library manager et al?)
+_ retina support
+Have you added an NSPrincipalClass to your Info.plist, and are using a JavaApplicationStub with 64-bit?
+<key>NSPrincipalClass</key>
+<string>NSApplication</string>
+_ Check out the desktop property. Unfortunately, it won't tell you *which* display is running in HiDPI, but it will stay up-to-date with live display changes (like a Retina-display being plugged and unplugged). If you query the property after each GraphicsEnvironment display change event, you should be able to live switch in and out of HiDPI.
+java.awt.Toolkit.getDefaultToolkit().getDesktopProperty("apple.awt.contentScaleFactor");
 _ cut/copy/paste while saving a sketch on goes to the editor, not save dialog
 _   http://code.google.com/p/processing/issues/detail?id=997
 _   problem with focus traversal and native windows on OS X
