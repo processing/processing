@@ -504,7 +504,7 @@
       <fileset file="shared/revisions.txt" />
     </copy>
 
-    <property name="launch4j.dir" value="linux/work/shared/launch4j" />
+    <property name="launch4j.dir" value="linux/work/launch4j" />
 
     <!-- rename the version we need -->
     <move file="${launch4j.dir}/bin/windres-linux${sun.arch.data.model}"
@@ -543,7 +543,7 @@
 	  description="Build .tar.gz of linux version">
 
     <property name="jre.file" 
-	      value="jre-tools-6u33-linux${sun.arch.data.model}.tgz"
+	      value="jre-tools-6u33-linux${sun.arch.data.model}.tgz" />
 
     <get src="http://processing.googlecode.com/files/${jre.file}" 
 	 dest="linux/jre.tgz" 
@@ -576,21 +576,24 @@ http://www.gnu.org/software/tar/manual/html_section/transform.html
    <!-- rename the work folder temporarily -->
    <move file="linux/work" tofile="linux/processing-${version}" />
 
+    <property name="linux.dist" value="linux/processing-${version}-linux${sun.arch.data.model}.tgz" />
+
    <exec executable="tar">
      <arg value="--directory=linux" />
-     <arg value="--file=linux/processing-${version}-linux${sun.arch.data.model}.tgz" />
+     <arg value="--file=${linux.dist}" />
      <arg value="-cpz" />
      <arg value="processing-${version}" />
    </exec>
 
    <!-- put... the candle... back -->
+   <!-- (rename the work processing-NNNN version to work) -->
    <move file="linux/processing-${version}" tofile="linux/work" />
 
     <echo>
       =======================================================
       Processing for Linux was built. Grab the archive from   
       
-      linux/processing-${version}-linux.tgz
+      ${linux.dist}
       =======================================================
     </echo>
   </target>
@@ -636,7 +639,7 @@ http://www.gnu.org/software/tar/manual/html_section/transform.html
       <fileset file="shared/revisions.txt" />
     </copy>
 
-    <property name="launch4j.dir" value="windows/work/shared/launch4j" />
+    <property name="launch4j.dir" value="windows/work/launch4j" />
 
     <!-- rename the version we need -->
     <move file="${launch4j.dir}/bin/windres-windows32.exe"
@@ -682,7 +685,7 @@ http://www.gnu.org/software/tar/manual/html_section/transform.html
 	  description="Create .zip files of windows version">
 
     <property name="jre.file" 
-	      value="jre-tools-6u33-windows32.tgz"
+	      value="jre-tools-6u33-windows32.tgz" />
 
     <get src="http://processing.googlecode.com/files/${jre.file}" 
 	 dest="windows/jre.zip" 
