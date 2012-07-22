@@ -25,6 +25,7 @@ package processing.core;
 
 import java.util.HashMap;
 
+import processing.opengl.PGL;
 import processing.opengl.PShader;
 
 import android.graphics.Bitmap;
@@ -674,6 +675,17 @@ public class PGraphics extends PImage implements PConstants {
 
   public void flush() {
     // no-op, mostly for P3D to write sorted stuff
+  }
+  
+  
+  public PGL beginGL() {
+    showMethodWarning("beginGL");
+    return null;
+  }
+
+
+  public void endGL() {
+    showMethodWarning("endGL");
   }
 
 
