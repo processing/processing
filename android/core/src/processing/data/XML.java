@@ -238,6 +238,12 @@ public class XML implements Serializable {
     checkChildren();
     return children.length;
   }
+  
+  
+  public boolean hasChildren() {
+    checkChildren();
+    return children.length > 0;
+  }
 
 
   /**
