@@ -576,7 +576,7 @@ http://www.gnu.org/software/tar/manual/html_section/transform.html
    <!-- rename the work folder temporarily -->
    <move file="linux/work" tofile="linux/processing-${version}" />
 
-    <property name="linux.dist" value="linux/processing-${version}-linux${sun.arch.data.model}.tgz" />
+   <property name="linux.dist" value="linux/processing-${version}-linux${sun.arch.data.model}.tgz" />
 
    <exec executable="tar">
      <arg value="--directory=linux" />
@@ -685,7 +685,7 @@ http://www.gnu.org/software/tar/manual/html_section/transform.html
 	  description="Create .zip files of windows version">
 
     <property name="jre.file" 
-	      value="jre-tools-6u33-windows32.zip" />
+	      value="jre-tools-6u33-windows${sun.arch.data.model}.zip" />
 
     <get src="http://processing.googlecode.com/files/${jre.file}" 
 	 dest="windows/jre.zip" 
@@ -703,23 +703,27 @@ http://www.gnu.org/software/tar/manual/html_section/transform.html
 	 excludes="java/**" />
     -->
 
-    <zip destfile="windows/processing-${version}-windows.zip">
+    <property name="windows.dist" value="windows/processing-${version}-windows{sun.arch.data.model}.zip" />
+
+    <zip destfile="${windows.dist}">
       <zipfileset dir="windows/work" 
 		  prefix="processing-${version}" />
     </zip>
 
+<!-- Expert is too much of a headache. Just nix it for 2.0. -->
+<!--
     <zip destfile="windows/processing-${version}-windows-expert.zip">
       <zipfileset dir="windows/work" 
 		  prefix="processing-${version}" 
 		  excludes="java/**" />
     </zip>
+-->
     
     <echo>
       =======================================================
       Processing for Windows was built. Grab the archive from   
-      
-      windows/processing-${version}-windows.zip
-      windows/processing-${version}-windows-expert.zip
+
+      ${windows.dist}
       =======================================================
     </echo>
   </target>
