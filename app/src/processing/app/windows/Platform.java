@@ -60,20 +60,20 @@ public class Platform extends processing.app.Platform {
     checkPath();
 
     //findJDK();
-    EventQueue.invokeLater(new Runnable() {
-      public void run() {
-        findJDK();
-      }
-    });
+//    EventQueue.invokeLater(new Runnable() {
+//      public void run() {
+//        findJDK();
+//      }
+//    });
   }
 
 
-  protected void findJDK() {
+  static public void findJDK() {
     try {
       String currentVersion =
         Registry.getStringValue(REGISTRY_ROOT_KEY.LOCAL_MACHINE,
-                                "SOFTWARE",
-                                "JavaSoft\\Java Development Kit\\CurrentVersion");
+                                "SOFTWARE\\JavaSoft\\Java Development Kit", "CurrentVersion");
+                                //"SOFTWARE\\JavaSoft\\Java Development Kit\\CurrentVersion", "");
       System.out.println("current version is " + currentVersion);
     } catch (UnsupportedEncodingException uee) {
       uee.printStackTrace();
