@@ -6,7 +6,6 @@ o   http://www.randelshofer.ch/quaqua/guide/tailoring.html
 X display device preference tweaking
 
 _ update to 6u33 (OS X latest)
-_ make sure that ...
 _ very slow startup on OS X (library manager et al?)
 
 _ errors when running 32-bit Java on Linux 64
