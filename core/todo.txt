@@ -1,8 +1,12 @@
 0206 core (2.0a7)
 X change appletViewer back to 'online'
+X begin/endGL added to PGraphics/PApplet
+X add hasChildren() to XML library
+X   http://code.google.com/p/processing/issues/detail?id=1045
 
 _ displayWidth/Height not being set properly before setup()
 _   http://code.google.com/p/processing/issues/detail?id=1120
+X   can't reproduce.. might be Java update, or multi-display issue?
 
 constants/hints
 _ bring PConstants back in line w/ previous 1.5 (can't renumber)
@@ -24,8 +28,6 @@ _   NEAREST, BILINEAR, BICUBIC, or 0, 2, 4? (need 8x too, so maybe numbers)
 _ final decision on pg.setQuality(sketchQuality())
 _   should probably be setQuality(parent.sketchQuality())
 
-_ add hasChildren() to XML library?
-_   http://code.google.com/p/processing/issues/detail?id=1045
 X test what happens with NPE in OpenGL, does the error make sense?
 _   nope, it doesn't, need to clean this up
 

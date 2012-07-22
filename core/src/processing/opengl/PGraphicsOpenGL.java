@@ -1729,18 +1729,18 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  public PGL beginPGL() {
+  public PGL beginGL() {
     flush();
     return pgl;
   }
 
 
-  public void endPGL() {
+  public void endGL() {
     restoreGL();
   }
 
 
-  public void restartPGL() {
+  protected void restartPGL() {
     pgl.initialized = false;
   }
 
@@ -5272,7 +5272,7 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  public void filter(Object shader) {
+  public void filter(PShader shader) {
     if (!(shader instanceof PolyTexShader)) {
       PGraphics.showWarning("Object is not a valid shader");
       return;

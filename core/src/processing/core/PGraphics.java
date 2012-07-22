@@ -27,6 +27,7 @@ package processing.core;
 import java.awt.*;
 import java.util.HashMap;
 
+import processing.opengl.PGL;
 import processing.opengl.PShader;
 
   /**
@@ -716,6 +717,17 @@ public class PGraphics extends PImage implements PConstants {
    * @webref pgraphics:method
    */
   public void endDraw() {  // ignore
+  }
+
+
+  public PGL beginGL() {
+    showMethodWarning("beginGL");
+    return null;
+  }
+
+
+  public void endGL() {
+    showMethodWarning("endGL");
   }
 
 

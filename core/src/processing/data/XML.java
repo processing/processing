@@ -72,7 +72,7 @@ public class XML implements Serializable {
     this(PApplet.createReader(file));
   }
 
-  
+
   public XML(Reader reader) {
     try {
       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -237,6 +237,12 @@ public class XML implements Serializable {
   public int getChildCount() {
     checkChildren();
     return children.length;
+  }
+
+
+  public boolean hasChildren() {
+    checkChildren();
+    return children.length > 0;
   }
 
 
