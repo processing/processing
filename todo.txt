@@ -16,6 +16,12 @@ o   no crash when double-clicking a sketch and loading it (?)
 X   http://code.google.com/p/processing/issues/detail?id=176
 X   also move back to using non-custom for 2.0 when we can drop QT support
 
+_ move initRequirements check for JVM to Runner
+
+_ grab tools.jar from reg keys?
+_ don't mess with reg keys until the app is loaded
+_   NPE causes trouble sometimes
+
 _ revisions.txt should have Windows line endings
 _   change in SVN to be platform specific
 _ add 64-bit Linux version to the next download
