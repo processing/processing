@@ -41,9 +41,6 @@ import processing.app.windows.Registry.REGISTRY_ROOT_KEY;
 import processing.core.PApplet;
 
 
-// HKEY_LOCAL_MACHINE\SOFTWARE\JavaSoft\Java Development Kit\CurrentVersion -> 1.6 (String)
-// HKEY_LOCAL_MACHINE\SOFTWARE\JavaSoft\Java Development Kit\CurrentVersion\1.6\JavaHome -> c:\jdk-1.6.0_05
-
 public class Platform extends processing.app.Platform {
 
   static final String openCommand =
@@ -60,25 +57,57 @@ public class Platform extends processing.app.Platform {
     checkPath();
 
     //findJDK();
-//    EventQueue.invokeLater(new Runnable() {
-//      public void run() {
-//        findJDK();
-//      }
-//    });
+    /*
+    new Thread(new Runnable() {
+      public void run() {
+        try {
+          Thread.sleep(2000);
+        } catch (InterruptedException ie) { }
+        findJDK();
+      }
+    }).start();
+    */
   }
 
 
+// HKEY_LOCAL_MACHINE\SOFTWARE\JavaSoft\Java Development Kit\CurrentVersion -> 1.6 (String)
+// HKEY_LOCAL_MACHINE\SOFTWARE\JavaSoft\Java Development Kit\CurrentVersion\1.6\JavaHome -> c:\jdk-1.6.0_05
+
+  /*
   static public void findJDK() {
     try {
+      String jcpo = System.getProperty("java.home");
+      String jv = System.getProperty("java.version");
+      System.out.println("home and version = " + jcpo + " and " + jv);
+
+      // the last parameter will be anything appearing on the right-hand
+      // side of regedit.
+      final String JDK_KEY = "SOFTWARE\\JavaSoft\\Java Development Kit";
       String currentVersion =
         Registry.getStringValue(REGISTRY_ROOT_KEY.LOCAL_MACHINE,
-                                "SOFTWARE\\JavaSoft\\Java Development Kit", "CurrentVersion");
-                                //"SOFTWARE\\JavaSoft\\Java Development Kit\\CurrentVersion", "");
+                                JDK_KEY,
+                                "CurrentVersion");
       System.out.println("current version is " + currentVersion);
+      if (currentVersion != null) {
+        String javaHome =
+          Registry.getStringValue(REGISTRY_ROOT_KEY.LOCAL_MACHINE,
+                                  JDK_KEY + "\\" + currentVersion,
+                                  "JavaHome");
+        System.out.println("home is where the " + javaHome + " is");
+        if (javaHome != null) {
+          String jcp = System.getProperty("java.class.path");
+          String toolsJar = javaHome + "\\lib\\tools.jar";
+          System.setProperty("java.class.path",
+                             jcp + File.pathSeparator + toolsJar);
+          System.out.println("set jcp to " +
+                             System.getProperty("java.class.path"));
+        }
+      }
     } catch (UnsupportedEncodingException uee) {
       uee.printStackTrace();
     }
   }
+  */
 
 
   /**
