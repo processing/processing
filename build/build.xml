@@ -685,7 +685,7 @@ http://www.gnu.org/software/tar/manual/html_section/transform.html
 	  description="Create .zip files of windows version">
 
     <property name="jre.file" 
-	      value="jre-tools-6u33-windows32.tgz" />
+	      value="jre-tools-6u33-windows32.zip" />
 
     <get src="http://processing.googlecode.com/files/${jre.file}" 
 	 dest="windows/jre.zip" 
