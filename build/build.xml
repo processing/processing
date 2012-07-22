@@ -13,6 +13,8 @@
   <condition property="platform" 
 	     value="linux"><os family="unix" /> </condition>
 
+<!--  <echo message="" />-->
+
   <property environment="env" />
   <condition property="codesign"> 
     <equals arg1="${env.USER}" arg2="fry" />
@@ -350,10 +352,29 @@
     
     <copy todir="macosx/work/Processing.app/Contents/Resources/Java">
       <fileset dir=".." includes="core/library/**" />
+      <fileset dir="shared" includes="launch4j/**" />
       <fileset dir="shared" includes="lib/**" />
       <fileset dir="shared" includes="modes/**" />
       <fileset file="shared/revisions.txt" />
     </copy>
+
+    <property name="launch4j.dir" value="macosx/work/Processing.app/Contents/Resources/Java/launch4j" />
+
+    <!-- rename the version we need -->
+    <move file="${launch4j.dir}/bin/windres-macosx"
+	  tofile="${launch4j.dir}/bin/windres" />
+    <move file="${launch4j.dir}/bin/ld-macosx"
+	  tofile="${launch4j.dir}/bin/ld" />
+
+    <!-- make executable (ant doesn't preserve) -->
+    <chmod perm="ugo+x" file="${launch4j.dir}/bin/windres" />
+    <chmod perm="ugo+x" file="${launch4j.dir}/bin/ld" />
+
+    <!-- remove the others -->
+    <delete>
+      <fileset dir="${launch4j.dir}/bin" includes="ld-*" />
+      <fileset dir="${launch4j.dir}/bin" includes="windres-*" />
+    </delete>
 
     <antcall target="assemble">
       <param name="target.path" value="macosx/work/Processing.app/Contents/Resources/Java" />
@@ -477,16 +498,29 @@
     
     <copy todir="linux/work">
       <fileset dir=".." includes="core/library/**" />
+      <fileset dir="shared" includes="launch4j/**" />
       <fileset dir="shared" includes="lib/**" />
       <fileset dir="shared" includes="modes/**" />
       <fileset file="shared/revisions.txt" />
     </copy>
 
-<!--
-    <copy todir="linux/work/lib">
-      <fileset dir=".." includes="core/library/**" />
-    </copy>
--->
+    <property name="launch4j.dir" value="linux/work/shared/launch4j" />
+
+    <!-- rename the version we need -->
+    <move file="${launch4j.dir}/bin/windres-linux${sun.arch.data.model}"
+	  tofile="${launch4j.dir}/bin/windres" />
+    <move file="${launch4j.dir}/bin/ld-linux${sun.arch.data.model}"
+	  tofile="${launch4j.dir}/bin/ld" />
+
+    <!-- make executable (ant doesn't preserve) -->
+    <chmod perm="ugo+x" file="${launch4j.dir}/bin/windres" />
+    <chmod perm="ugo+x" file="${launch4j.dir}/bin/ld" />
+
+    <!-- remove the others -->
+    <delete>
+      <fileset dir="${launch4j.dir}/bin" includes="ld-*" />
+      <fileset dir="${launch4j.dir}/bin" includes="windres-*" />
+    </delete>
     
     <copy todir="linux/work/lib" flatten="true">
       <fileset refid="runtime.jars" />
@@ -508,7 +542,10 @@
   <target name="linux-dist" depends="linux-build,android-dist-check" 
 	  description="Build .tar.gz of linux version">
 
-    <get src="http://processing.googlecode.com/files/jre-tools-6u29-linux-i586.tgz" 
+    <property name="jre.file" 
+	      value="jre-tools-6u33-linux${sun.arch.data.model}.tgz"
+
+    <get src="http://processing.googlecode.com/files/${jre.file}" 
 	 dest="linux/jre.tgz" 
 	 usetimestamp="true" />
 
@@ -541,7 +578,7 @@ http://www.gnu.org/software/tar/manual/html_section/transform.html
 
    <exec executable="tar">
      <arg value="--directory=linux" />
-     <arg value="--file=linux/processing-${version}-linux.tgz" />
+     <arg value="--file=linux/processing-${version}-linux${sun.arch.data.model}.tgz" />
      <arg value="-cpz" />
      <arg value="processing-${version}" />
    </exec>
@@ -593,22 +630,30 @@ http://www.gnu.org/software/tar/manual/html_section/transform.html
     
     <copy todir="windows/work">
       <fileset dir=".." includes="core/library/**" />
+      <fileset dir="shared" includes="launch4j/**" />
       <fileset dir="shared" includes="lib/**" />
       <fileset dir="shared" includes="modes/**" />
       <fileset file="shared/revisions.txt" />
     </copy>
 
-<!--
-    <copy todir="windows/work/lib">
-      <fileset dir=".." includes="core/library/**" />
-    </copy>
--->
+    <property name="launch4j.dir" value="windows/work/shared/launch4j" />
+
+    <!-- rename the version we need -->
+    <move file="${launch4j.dir}/bin/windres-windows32.exe"
+	  tofile="${launch4j.dir}/bin/windres.exe" />
+    <move file="${launch4j.dir}/bin/ld-windows32.exe"
+	  tofile="${launch4j.dir}/bin/ld.exe" />
+
+    <!-- remove the others -->
+    <delete>
+      <fileset dir="${launch4j.dir}/bin" includes="ld-*" />
+      <fileset dir="${launch4j.dir}/bin" includes="windres-*" />
+    </delete>
 
     <antcall target="assemble">
       <param name="target.path" value="windows/work" />
     </antcall>
     
-    <property name="launch4j.dir" value="windows/launcher/launch4j/" />
     <taskdef name="launch4j" 
 	     classname="net.sf.launch4j.ant.Launch4jTask" 
 	     classpath="${launch4j.dir}/launch4j.jar; ${launch4j.dir}/lib/xstream.jar" />
@@ -636,7 +681,10 @@ http://www.gnu.org/software/tar/manual/html_section/transform.html
   <target name="windows-dist" depends="windows-build,android-dist-check" 
 	  description="Create .zip files of windows version">
 
-    <get src="http://processing.googlecode.com/files/jre-tools-6u29-windows-i586.zip" 
+    <property name="jre.file" 
+	      value="jre-tools-6u33-windows32.tgz"
+
+    <get src="http://processing.googlecode.com/files/${jre.file}" 
 	 dest="windows/jre.zip" 
 	 usetimestamp="true" />
 
