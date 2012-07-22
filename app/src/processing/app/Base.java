@@ -233,11 +233,14 @@ public class Base {
     try {
       Class.forName("com.sun.jdi.VirtualMachine");
     } catch (ClassNotFoundException cnfe) {
+      String cp = System.getProperty("java.class.path").replace(File.pathSeparatorChar, '\n');
+
       Base.openURL("http://wiki.processing.org/w/Supported_Platforms");
       Base.showError("Please install JDK 1.6 or later",
                      "Processing requires a full JDK (not just a JRE)\n" +
                      "to run. Please install JDK 1.6 or later.\n" +
-                     "More information can be found in the reference.", cnfe);
+                     "More information can be found in the reference." +
+                     "\n\n" + cp, cnfe);
     }
   }
 
