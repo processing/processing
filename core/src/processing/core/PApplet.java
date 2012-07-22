@@ -24,7 +24,7 @@
 package processing.core;
 
 import processing.data.*;
-import processing.opengl.PShader;
+import processing.opengl.*;
 
 import java.applet.*;
 import java.awt.*;
@@ -9756,6 +9756,17 @@ public class PApplet extends Applet
   // the PImage and PGraphics source code files.
 
   // public functions for processing.core
+
+
+  public PGL beginGL() {
+    return g.beginGL();
+  }
+
+
+  public void endGL() {
+    if (recorder != null) recorder.endGL();
+    g.endGL();
+  }
 
 
   public void flush() {
