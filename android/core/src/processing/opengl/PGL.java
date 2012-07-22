@@ -316,10 +316,10 @@ public class PGL {
   // FBO for incremental drawing  
   
   protected boolean firstOnscreenFrame = true;
-  protected int texWidth, texHeight;
+  protected int fboWidth, fboHeight;
   protected int backTex, frontTex;  
-  protected int[] colorTex = { 0, 0 };
-  protected int[] colorFBO = { 0 };
+  protected int[] glColorTex = { 0, 0 };
+  protected int[] glColorFbo = { 0 };
     
   ///////////////////////////////////////////////////////////////////////////////////
   
@@ -432,51 +432,62 @@ public class PGL {
   
   
   public void updatePrimary() {    
-    if (!initialized) {
-      int[] depth = { 0 };
-      int[] stencil = { 0 };
-      
+    if (!initialized) {      
       String ext = GLES20.glGetString(GLES20.GL_EXTENSIONS); 
       if (-1 < ext.indexOf("texture_non_power_of_two")) {
-        texWidth = pg.width;
-        texHeight = pg.height;
+        fboWidth = pg.width;
+        fboHeight = pg.height;
       } else {
-        texWidth = PGL.nextPowerOfTwo(pg.width);
-        texHeight = PGL.nextPowerOfTwo(pg.height);
+        fboWidth = PGL.nextPowerOfTwo(pg.width);
+        fboHeight = PGL.nextPowerOfTwo(pg.height);
       }
+      
+      boolean packed = ext.indexOf("packed_depth_stencil") != -1;
       
       // We create the GL resources we need to draw incrementally, ie: not clearing
       // the screen in each frame. Because the way Android handles double buffering
       // we need to handle our own custom buffering using FBOs.
-      GLES20.glGenTextures(2, colorTex, 0);        
+      GLES20.glGenTextures(2, glColorTex, 0);        
       for (int i = 0; i < 2; i++) {
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, colorTex[i]);    
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, glColorTex[i]);    
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);    
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_NEAREST);
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
-        GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, texWidth, texHeight, 0, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, null);
-        initTexture(GLES20.GL_TEXTURE_2D, PGL.GL_RGBA, texWidth, texHeight);
+        GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, fboWidth, fboHeight, 0, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, null);
+        initTexture(GLES20.GL_TEXTURE_2D, PGL.GL_RGBA, fboWidth, fboHeight);
       }
       GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
       
-      GLES20.glGenFramebuffers(1, colorFBO, 0);      
-      GLES20.glGenRenderbuffers(1, depth, 0);       
+      GLES20.glGenFramebuffers(1, glColorFbo, 0);
       
-      GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, colorFBO[0]);
-            
-      GLES20.glBindRenderbuffer(GLES20.GL_RENDERBUFFER, depth[0]);
-      GLES20.glRenderbufferStorage(GLES20.GL_RENDERBUFFER, GLES20.GL_DEPTH_COMPONENT16, texWidth, texHeight);
-      GLES20.glFramebufferRenderbuffer(GLES20.GL_FRAMEBUFFER, GLES20.GL_DEPTH_ATTACHMENT, GLES20.GL_RENDERBUFFER, depth[0]);
-      
-      int[] temp = new int[1];
-      GLES20.glGetIntegerv(GLES20.GL_STENCIL_BITS, temp, 0);    
-      int stencilBits = temp[0];       
-      if (stencilBits == 8) {
-        GLES20.glGenRenderbuffers(1, stencil, 0);
-        GLES20.glBindRenderbuffer(GLES20.GL_RENDERBUFFER, stencil[0]);
-        GLES20.glRenderbufferStorage(GLES20.GL_RENDERBUFFER, GLES20.GL_STENCIL_INDEX8, texWidth, texHeight);
-        GLES20.glFramebufferRenderbuffer(GLES20.GL_FRAMEBUFFER, GLES20.GL_STENCIL_ATTACHMENT, GLES20.GL_RENDERBUFFER, stencil[0]);
+      GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, glColorFbo[0]);
+
+      if (packed) { // packed depth+stencil buffer
+        int[] depthStencil = { 0 };        
+        GLES20.glGenRenderbuffers(1, depthStencil, 0);
+        GLES20.glBindRenderbuffer(GLES20.GL_RENDERBUFFER, depthStencil[0]);
+        GLES20.glRenderbufferStorage(GLES20.GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, fboWidth, fboHeight);
+        GLES20.glFramebufferRenderbuffer(GLES20.GL_FRAMEBUFFER, GLES20.GL_DEPTH_ATTACHMENT, GLES20.GL_RENDERBUFFER, depthStencil[0]);
+        GLES20.glFramebufferRenderbuffer(GLES20.GL_FRAMEBUFFER, GLES20.GL_STENCIL_ATTACHMENT, GLES20.GL_RENDERBUFFER, depthStencil[0]);
+      } else { // separate depth and stencil buffers
+        int[] depth = { 0 };
+        int[] stencil = { 0 };
+
+        GLES20.glGenRenderbuffers(1, depth, 0);
+        GLES20.glBindRenderbuffer(GLES20.GL_RENDERBUFFER, depth[0]);
+        GLES20.glRenderbufferStorage(GLES20.GL_RENDERBUFFER, GLES20.GL_DEPTH_COMPONENT16, fboWidth, fboHeight);
+        GLES20.glFramebufferRenderbuffer(GLES20.GL_FRAMEBUFFER, GLES20.GL_DEPTH_ATTACHMENT, GLES20.GL_RENDERBUFFER, depth[0]);
+        
+        int[] temp = new int[1];
+        GLES20.glGetIntegerv(GLES20.GL_STENCIL_BITS, temp, 0);    
+        int stencilBits = temp[0];       
+        if (stencilBits == 8) {
+          GLES20.glGenRenderbuffers(1, stencil, 0);
+          GLES20.glBindRenderbuffer(GLES20.GL_RENDERBUFFER, stencil[0]);
+          GLES20.glRenderbufferStorage(GLES20.GL_RENDERBUFFER, GLES20.GL_STENCIL_INDEX8, fboWidth, fboHeight);
+          GLES20.glFramebufferRenderbuffer(GLES20.GL_FRAMEBUFFER, GLES20.GL_STENCIL_ATTACHMENT, GLES20.GL_RENDERBUFFER, stencil[0]);
+        }        
       }
       
       GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
@@ -488,7 +499,7 @@ public class PGL {
       // to update the screenFramebuffer object so when the
       // framebuffer is popped back to the screen, the correct
       // id is set.
-      PGraphicsOpenGL.screenFramebuffer.glFbo = colorFBO[0];
+      PGraphicsOpenGL.screenFramebuffer.glFbo = glColorFbo[0];
       
       initialized = true;
     }    
@@ -501,12 +512,12 @@ public class PGL {
   
   
   public boolean primaryIsDoubleBuffered() {
-    return colorFBO[0] == 0;
+    return glColorFbo[0] == 0;
   }
   
   
   public boolean primaryIsFboBacked() {
-    return colorFBO[0] != 0;
+    return glColorFbo[0] != 0;
   }
   
   
@@ -516,23 +527,23 @@ public class PGL {
   
   
   public int getFboTexName() {
-    return colorTex[0];
+    return glColorTex[0];
    }
   
   
   public int getFboWidth() {
-   return texWidth;
+   return fboWidth;
   }
 
   
   public int getFboHeight() {
-    return texHeight;
+    return fboHeight;
    }  
   
   
   public void bindPrimaryColorFBO() {
-    GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, colorFBO[0]);
-    PGraphicsOpenGL.screenFramebuffer.glFbo = colorFBO[0];
+    GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, glColorFbo[0]);
+    PGraphicsOpenGL.screenFramebuffer.glFbo = glColorFbo[0];
     
     // Make the color buffer opaque so it doesn't show      
     // the background when drawn on top of another surface. 
@@ -544,8 +555,8 @@ public class PGL {
 
   
   public void bindPrimaryMultiFBO() {
-    GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, colorFBO[0]);
-    PGraphicsOpenGL.screenFramebuffer.glFbo = colorFBO[0];
+    GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, glColorFbo[0]);
+    PGraphicsOpenGL.screenFramebuffer.glFbo = glColorFbo[0];
   }  
   
   
@@ -562,8 +573,8 @@ public class PGL {
       GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
       PGraphicsOpenGL.screenFramebuffer.glFbo = 0;
     } else {      
-      GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, colorFBO[0]);      
-      GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0, GLES20.GL_TEXTURE_2D, colorTex[frontTex], 0);
+      GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, glColorFbo[0]);      
+      GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0, GLES20.GL_TEXTURE_2D, glColorTex[frontTex], 0);
       validateFramebuffer();      
       
       // We need to save the color buffer after finishing with the rendering of this frame,
@@ -575,9 +586,9 @@ public class PGL {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
       } else {
         // Render previous draw texture as background.      
-        drawTexture(GLES20.GL_TEXTURE_2D, colorTex[backTex], texWidth, texHeight, 0, 0, pg.width, pg.height, 0, 0, pg.width, pg.height);
+        drawTexture(GLES20.GL_TEXTURE_2D, glColorTex[backTex], fboWidth, fboHeight, 0, 0, pg.width, pg.height, 0, 0, pg.width, pg.height);
       }
-      PGraphicsOpenGL.screenFramebuffer.glFbo  = colorFBO[0];
+      PGraphicsOpenGL.screenFramebuffer.glFbo  = glColorFbo[0];
     }
     
     if (firstOnscreenFrame) {
@@ -598,7 +609,7 @@ public class PGL {
       
       // Render current front texture to screen, without blending.
       GLES20.glDisable(GLES20.GL_BLEND);
-      drawTexture(GLES20.GL_TEXTURE_2D, colorTex[frontTex], texWidth, texHeight, 0, 0, pg.width, pg.height, 0, 0, pg.width, pg.height);
+      drawTexture(GLES20.GL_TEXTURE_2D, glColorTex[frontTex], fboWidth, fboHeight, 0, 0, pg.width, pg.height, 0, 0, pg.width, pg.height);
       
       // Swapping front and back textures.
       int temp = frontTex;
