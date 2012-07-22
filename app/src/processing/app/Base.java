@@ -234,7 +234,7 @@ public class Base {
       Class.forName("com.sun.jdi.VirtualMachine");
     } catch (ClassNotFoundException cnfe) {
       //String cp = System.getProperty("java.class.path").replace(File.pathSeparatorChar, '\n');
-      String cp = System.getProperty("boot.class.path").replace(File.pathSeparatorChar, '\n');
+      String cp = System.getProperty("sun.boot.class.path").replace(File.pathSeparatorChar, '\n');
 
       Base.openURL("http://wiki.processing.org/w/Supported_Platforms");
       Base.showError("Please install JDK 1.6 or later",
