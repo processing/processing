@@ -1,7 +1,8 @@
 /*
+
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2011 Ben Fry and Casey Reas
+  Copyright (c) 2011-12 Ben Fry and Casey Reas
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License version 2
@@ -38,26 +39,26 @@ public class AndroidToolbar extends EditorToolbar {
   static protected final int SAVE   = 4;
   static protected final int EXPORT = 5;
 
-  
+
   public AndroidToolbar(Editor editor, Base base) {
     super(editor, base);
   }
-  
-  
+
+
   public void init() {
     Image[][] images = loadImages();
     for (int i = 0; i < 6; i++) {
       addButton(getTitle(i, false), getTitle(i, true), images[i], i == NEW);
     }
   }
-  
-  
+
+
   static public String getTitle(int index, boolean shift) {
     switch (index) {
     case RUN:    return !shift ? "Run in Emulator" : "Run on Device";
     case STOP:   return "Stop";
-    case NEW:    return !shift ? "New" : "New Editor Window";
-    case OPEN:   return !shift ? "Open" : "Open in Another Window";
+    case NEW:    return "New";
+    case OPEN:   return "Open";
     case SAVE:   return "Save";
     case EXPORT: return !shift ? "Export Signed Package" : "Export Android Project";
     }
@@ -68,7 +69,7 @@ public class AndroidToolbar extends EditorToolbar {
   public void handlePressed(MouseEvent e, int sel) {
     boolean shift = e.isShiftDown();
     AndroidEditor aeditor = (AndroidEditor) editor;
-    
+
     switch (sel) {
     case RUN:
       if (shift) {
@@ -89,11 +90,11 @@ public class AndroidToolbar extends EditorToolbar {
       break;
 
     case NEW:
-      if (shift) {
-        base.handleNew();
-      } else {
-        base.handleNewReplace();
-      }
+//      if (shift) {
+      base.handleNew();
+//      } else {
+//        base.handleNewReplace();
+//      }
       break;
 
     case SAVE:

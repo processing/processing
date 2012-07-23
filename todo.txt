@@ -15,16 +15,20 @@ X launch4j problem
 o   no crash when double-clicking a sketch and loading it (?)
 X   http://code.google.com/p/processing/issues/detail?id=176
 X   also move back to using non-custom for 2.0 when we can drop QT support
-
-_ move initRequirements check for JVM to Runner
-
-_ grab tools.jar from reg keys?
-_ don't mess with reg keys until the app is loaded
-_   NPE causes trouble sometimes
+X lots of fighting with Windows registry and launch4j to figure out launcher
+o   grab tools.jar from reg keys?
+_   don't mess with reg keys until the app is loaded
+_     NPE causes trouble sometimes
+o move initRequirements check for JVM to Runner
+X remove the shift designation for new and open to open in same editor or not
+X   code is just getting too messy
 
 _ revisions.txt should have Windows line endings
 _   change in SVN to be platform specific
 _ add 64-bit Linux version to the next download
+_ don't use tmp folder for sketches? 
+_   or restrict more things like "show sketch folder"
+_   don't allow adding files w/o saving
 
 earlier
 X remove jvm from cvs
@@ -35,10 +39,10 @@ X     not necessary -- ant takes care of it
 
 recent/open
 X add EditorState class, device-aware placement
-X   get rid of restore sketch feature
+X get rid of restore sketch feature
 o   remove pref for restoring sketches
-_     make sure this is still around, we want it
-_   implement recent sketches menu
+_   oops, make sure this is still around, we want it
+X implement recent sketches menu
 _ Opening sketch via editor window open-menu ignores mode
 _   http://code.google.com/p/processing/issues/detail?id=1034
 _ don't pollute the recent menu with un-saved sketches
