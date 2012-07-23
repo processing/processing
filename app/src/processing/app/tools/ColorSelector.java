@@ -628,9 +628,9 @@ public class ColorSelector implements Tool, DocumentListener {
   }
 
 
-  static public void main(String[] args) {
-    ColorSelector cs = new ColorSelector();
-    cs.init(null);
-    EventQueue.invokeLater(cs);
-  }
+//  static public void main(String[] args) {
+//    ColorSelector cs = new ColorSelector();
+//    cs.init(null);
+//    EventQueue.invokeLater(cs);
+//  }
 }
