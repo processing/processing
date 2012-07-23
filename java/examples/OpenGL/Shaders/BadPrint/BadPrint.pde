@@ -19,8 +19,8 @@ public void setup() {
   noStroke();
   fill(204);
 
-  badPrint = (PShader)loadShader("BadPrintVert.glsl", "BadPrintFrag.glsl", PShader.LIT);
-  shader(badPrint, PShader.LIT);
+  badPrint = loadShader(PShader.LIT, "BadPrintFrag.glsl", "BadPrintVert.glsl");
+  shader(badPrint);
   
   sphereDetail(60);
   
@@ -44,7 +44,7 @@ public void draw() {
   background(0);
   
   if (enabled) {
-    shader(badPrint, PShader.LIT);
+    shader(badPrint);
    
     badPrint.set("Scale", scaleR, scaleG, scaleB);
     badPrint.set("Offset", offsetR, offsetG, offsetB);

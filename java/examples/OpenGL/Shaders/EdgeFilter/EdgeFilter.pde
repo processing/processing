@@ -2,7 +2,7 @@ PShader edges;
 
 void setup() {
   size(400, 400, P2D);
-  edges = (PShader)loadShader("edges.glsl"); 
+  edges = loadShader(PShader.TEXTURED, "edges.glsl"); 
 }
 
 void draw() {

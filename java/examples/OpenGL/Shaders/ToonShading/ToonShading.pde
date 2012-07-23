@@ -11,8 +11,8 @@ public void setup() {
   noStroke();
   fill(204);
 
-  toon = (PShader)loadShader("ToonVert.glsl", "ToonFrag.glsl", PShader.LIT);
-  shader(toon, PShader.LIT);
+  toon = loadShader(PShader.LIT, "ToonFrag.glsl", "ToonVert.glsl");
+  shader(toon);
   customShader = true;
 }
 
@@ -33,7 +33,7 @@ public void mousePressed() {
       customShader = false;
     } 
     else {
-      shader(toon, PShader.LIT);
+      shader(toon);
       customShader = true;
     }  
   }
