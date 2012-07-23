@@ -7,7 +7,7 @@
 PShape s;
 
 void setup() {
-  size(640, 360, P3D); // Not working in P2D?
+  size(640, 360, P2D);
   smooth();
   // Make a shape
   s = createShape();
