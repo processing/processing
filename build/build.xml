@@ -532,15 +532,6 @@
 
     <copy todir="linux/work" file="linux/processing" />
     <chmod perm="ugo+x" file="linux/work/processing" />
-  </target>
-  
-  <target name="linux-run" depends="linux-build" 
-	  description="Run Linux version">
-    <exec executable="./processing" dir="linux/work" spawn="true"/>
-  </target>
-  
-  <target name="linux-dist" depends="linux-build,android-dist-check" 
-	  description="Build .tar.gz of linux version">
 
     <property name="jre.file" 
 	      value="jre-tools-6u33-linux${sun.arch.data.model}.tgz" />
@@ -555,6 +546,15 @@
 	   src="linux/jre.tgz" 
 	   overwrite="false"/>
 -->
+  </target>
+  
+  <target name="linux-run" depends="linux-build" 
+	  description="Run Linux version">
+    <exec executable="./processing" dir="linux/work" spawn="true"/>
+  </target>
+  
+  <target name="linux-dist" depends="linux-build,android-dist-check" 
+	  description="Build .tar.gz of linux version">
 
 <!--
 http://www.gnu.org/software/tar/manual/html_section/transform.html
@@ -673,6 +673,16 @@ http://www.gnu.org/software/tar/manual/html_section/transform.html
     <chmod perm="ugo+x">
       <fileset dir="windows/work" includes="**/*.html, **/*.dll, **/*.exe" />
     </chmod>
+
+    <!-- starting with 2.0a7, require the local JRE + tools.jar -->
+    <property name="jre.file" 
+	      value="jre-tools-6u33-windows${sun.arch.data.model}.zip" />
+
+    <get src="http://processing.googlecode.com/files/${jre.file}" 
+	 dest="windows/jre.zip" 
+	 usetimestamp="true" />
+
+    <unzip dest="windows/work" src="windows/jre.zip" overwrite="false"/>
   </target>
   
   <target name="windows-run" depends="windows-build" 
@@ -683,16 +693,6 @@ http://www.gnu.org/software/tar/manual/html_section/transform.html
 
   <target name="windows-dist" depends="windows-build,android-dist-check" 
 	  description="Create .zip files of windows version">
-
-    <property name="jre.file" 
-	      value="jre-tools-6u33-windows${sun.arch.data.model}.zip" />
-
-    <get src="http://processing.googlecode.com/files/${jre.file}" 
-	 dest="windows/jre.zip" 
-	 usetimestamp="true" />
-
-    <unzip dest="windows/work" src="windows/jre.zip" overwrite="false"/>
-
     <!--
     <zip basedir="windows/work" 
 	 prefix="processing-${version}"
@@ -703,7 +703,7 @@ http://www.gnu.org/software/tar/manual/html_section/transform.html
 	 excludes="java/**" />
     -->
 
-    <property name="windows.dist" value="windows/processing-${version}-windows{sun.arch.data.model}.zip" />
+    <property name="windows.dist" value="windows/processing-${version}-windows${sun.arch.data.model}.zip" />
 
     <zip destfile="${windows.dist}">
       <zipfileset dir="windows/work" 
