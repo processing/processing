@@ -34,8 +34,8 @@ public class JavaToolbar extends EditorToolbar {
 //  static final String title[] = {
 //    "Run", "Stop", "New", "Open", "Save", "Export"
 //  };
-  
-  /** Titles for each button when the shift key is pressed. */ 
+
+  /** Titles for each button when the shift key is pressed. */
 //  static final String titleShift[] = {
 //    "Present", "Stop", "New Editor Window", "Open in Another Window", "Save", "Export to Application"
 //  };
@@ -51,26 +51,26 @@ public class JavaToolbar extends EditorToolbar {
 //  JPopupMenu popup;
 //  JMenu menu;
 
-  
+
   public JavaToolbar(Editor editor, Base base) {
     super(editor, base);
   }
-  
-  
+
+
   public void init() {
     Image[][] images = loadImages();
     for (int i = 0; i < 6; i++) {
       addButton(getTitle(i, false), getTitle(i, true), images[i], i == NEW);
     }
   }
-  
-  
+
+
   static public String getTitle(int index, boolean shift) {
     switch (index) {
     case RUN:    return !shift ? "Run" : "Present";
     case STOP:   return "Stop";
-    case NEW:    return !shift ? "New" : "New Editor Window";
-    case OPEN:   return !shift ? "Open" : "Open in Another Window";
+    case NEW:    return "New";
+    case OPEN:   return "Open";
     case SAVE:   return "Save";
 //    case EXPORT: return !shift ? "Export Application" : "Export Applet";
     case EXPORT: return "Export Application";
@@ -82,7 +82,7 @@ public class JavaToolbar extends EditorToolbar {
   public void handlePressed(MouseEvent e, int sel) {
     boolean shift = e.isShiftDown();
     JavaEditor jeditor = (JavaEditor) editor;
-    
+
     switch (sel) {
     case RUN:
       if (shift) {
@@ -104,11 +104,11 @@ public class JavaToolbar extends EditorToolbar {
       break;
 
     case NEW:
-      if (shift) {
-        base.handleNew();
-      } else {
-        base.handleNewReplace();
-      }
+//      if (shift) {
+      base.handleNew();
+//      } else {
+//        base.handleNewReplace();
+//      }
       break;
 
     case SAVE:

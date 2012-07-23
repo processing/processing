@@ -155,14 +155,14 @@ public class Base {
 
     initPlatform();
 
-    // Use native popups so they don't look so crappy on osx
+    // Use native popups so they don't look so crappy on OS X
     JPopupMenu.setDefaultLightWeightPopupEnabled(false);
 
     // Don't put anything above this line that might make GUI,
     // because the platform has to be inited properly first.
 
     // Make sure a full JDK is installed
-//    initRequirements();
+    initRequirements();
 
     // run static initialization that grabs all the prefs
     Preferences.init(null);
@@ -234,14 +234,21 @@ public class Base {
       Class.forName("com.sun.jdi.VirtualMachine");
     } catch (ClassNotFoundException cnfe) {
       //String cp = System.getProperty("java.class.path").replace(File.pathSeparatorChar, '\n');
-      String cp = System.getProperty("sun.boot.class.path").replace(File.pathSeparatorChar, '\n');
+//      String cp = System.getProperty("sun.boot.class.path").replace(File.pathSeparatorChar, '\n');
 
       Base.openURL("http://wiki.processing.org/w/Supported_Platforms");
-      Base.showError("Please install JDK 1.6 or later",
-                     "Processing requires a full JDK (not just a JRE)\n" +
-                     "to run. Please install JDK 1.6 or later.\n" +
-                     "More information can be found in the reference." +
-                     "\n\n" + cp, cnfe);
+//      Base.showError("Please install JDK 1.6 or later",
+//                     "Processing requires a full JDK (not just a JRE)\n" +
+//                     "to run. Please install JDK 1.6 or later.\n" +
+//                     "More information can be found on the Wiki." +
+//                     "\n\nJAVA_HOME is currently\n" +
+//                     System.getProperty("java.home") + "\n" +
+//                     "And the CLASSPATH contains\n" + cp, cnfe);
+      Base.showError("Missing required files",
+                     "Processing requires a JRE with tools.jar (or a\n" +
+                     "full JDK) installed in (or linked to) a folder\n" +
+                     "named “java” next to the Processing application.\n" +
+                     "More information can be found on the Wiki.", cnfe);
     }
   }
 
@@ -279,11 +286,11 @@ public class Base {
   }
 
   public Base(String[] args) {
-    recent = new Recent(this);
-//    recentMenu = recent.createMenu();
-
     // Get the sketchbook path, and make sure it's set properly
     determineSketchbookFolder();
+
+    // Needs to happen after the sketchbook folder has been located
+    recent = new Recent(this);
 
     // Delete all modes and tools that have been flagged for deletion before
     // they are initialized by an editor.
@@ -660,10 +667,7 @@ public class Base {
         handleClose(activeEditor, true);
 
         // re-open the sketch
-        Editor editor = handleOpen(mainPath, state);
-        if (editor != null) {
-          editor.untitled = untitled;
-        }
+        /*Editor editor =*/ handleOpen(mainPath, untitled, state);
       }
     }
   }
@@ -757,148 +761,132 @@ public class Base {
     "jul", "aug", "sep", "oct", "nov", "dec"
   };
 
-  /**
-   * Handle creating a sketch folder, return its base .pde file
-   * or null if the operation was canceled.
-   * @param shift whether shift is pressed, which will invert prompt setting
-   * @param noPrompt disable prompt, no matter the setting
-   */
-  protected String createNewUntitled() throws IOException {
-    File newbieDir = null;
-    String newbieName = null;
-
-    // In 0126, untitled sketches will begin in the temp folder,
-    // and then moved to a new location because Save will default to Save As.
-//    File sketchbookDir = getSketchbookFolder();
-    File newbieParentDir = untitledFolder;
-
-    String prefix = Preferences.get("editor.untitled.prefix");
-
-    // Use a generic name like sketch_031008a, the date plus a char
-    int index = 0;
-    String format = Preferences.get("editor.untitled.suffix");
-    String suffix = null;
-    if (format == null) {
-      Calendar cal = Calendar.getInstance();
-      int day = cal.get(Calendar.DAY_OF_MONTH);  // 1..31
-      int month = cal.get(Calendar.MONTH);  // 0..11
-      suffix = months[month] + PApplet.nf(day, 2);
-    } else {
-      //SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd");
-      //SimpleDateFormat formatter = new SimpleDateFormat("MMMdd");
-      //String purty = formatter.format(new Date()).toLowerCase();
-      SimpleDateFormat formatter = new SimpleDateFormat(format);
-      suffix = formatter.format(new Date());
-    }
-    do {
-      if (index == 26) {
-        // In 0159, avoid running past z by sending people outdoors.
-        if (!breakTime) {
-          Base.showWarning("Time for a Break",
-                           "You've reached the limit for auto naming of new sketches\n" +
-                           "for the day. How about going for a walk instead?", null);
-          breakTime = true;
-        } else {
-          Base.showWarning("Sunshine",
-                           "No really, time for some fresh air for you.", null);
-        }
-        return null;
-      }
-      newbieName = prefix + suffix + ((char) ('a' + index));
-      // Also sanitize the name since it might do strange things on
-      // non-English systems that don't use this sort of date format.
-      // http://code.google.com/p/processing/issues/detail?id=283
-      newbieName = Sketch.sanitizeName(newbieName);
-      newbieDir = new File(newbieParentDir, newbieName);
-      index++;
-      // Make sure it's not in the temp folder *and* it's not in the sketchbook
-    } while (newbieDir.exists() || new File(sketchbookFolder, newbieName).exists());
-
-    // Make the directory for the new sketch
-    newbieDir.mkdirs();
-
-    // Make an empty pde file
-    //File newbieFile = new File(newbieDir, newbieName + getExtension());
-    File newbieFile = new File(newbieDir, newbieName + "." + nextMode.getDefaultExtension());
-    new FileOutputStream(newbieFile);  // create the file
-    return newbieFile.getAbsolutePath();
-  }
-
 
   /**
    * Create a new untitled document in a new sketch window.
    */
   public void handleNew() {
     try {
-      String path = createNewUntitled();
-      if (path != null) {
-        Editor editor = handleOpen(path);
-        editor.untitled = true;
+      File newbieDir = null;
+      String newbieName = null;
+
+      // In 0126, untitled sketches will begin in the temp folder,
+      // and then moved to a new location because Save will default to Save As.
+//      File sketchbookDir = getSketchbookFolder();
+      File newbieParentDir = untitledFolder;
+
+      String prefix = Preferences.get("editor.untitled.prefix");
+
+      // Use a generic name like sketch_031008a, the date plus a char
+      int index = 0;
+      String format = Preferences.get("editor.untitled.suffix");
+      String suffix = null;
+      if (format == null) {
+        Calendar cal = Calendar.getInstance();
+        int day = cal.get(Calendar.DAY_OF_MONTH);  // 1..31
+        int month = cal.get(Calendar.MONTH);  // 0..11
+        suffix = months[month] + PApplet.nf(day, 2);
       } else {
-        // happens when user gets to the end of 26 new sketches for the day
-        //System.err.println("untitled went null...");
+        //SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd");
+        //SimpleDateFormat formatter = new SimpleDateFormat("MMMdd");
+        //String purty = formatter.format(new Date()).toLowerCase();
+        SimpleDateFormat formatter = new SimpleDateFormat(format);
+        suffix = formatter.format(new Date());
       }
+      do {
+        if (index == 26) {
+          // In 0159, avoid running past z by sending people outdoors.
+          if (!breakTime) {
+            Base.showWarning("Time for a Break",
+                             "You've reached the limit for auto naming of new sketches\n" +
+                             "for the day. How about going for a walk instead?", null);
+            breakTime = true;
+          } else {
+            Base.showWarning("Sunshine",
+                             "No really, time for some fresh air for you.", null);
+          }
+          return;
+        }
+        newbieName = prefix + suffix + ((char) ('a' + index));
+        // Also sanitize the name since it might do strange things on
+        // non-English systems that don't use this sort of date format.
+        // http://code.google.com/p/processing/issues/detail?id=283
+        newbieName = Sketch.sanitizeName(newbieName);
+        newbieDir = new File(newbieParentDir, newbieName);
+        index++;
+        // Make sure it's not in the temp folder *and* it's not in the sketchbook
+      } while (newbieDir.exists() || new File(sketchbookFolder, newbieName).exists());
+
+      // Make the directory for the new sketch
+      newbieDir.mkdirs();
+
+      // Make an empty pde file
+      File newbieFile =
+        new File(newbieDir, newbieName + "." + nextMode.getDefaultExtension());
+      if (!newbieFile.createNewFile()) {
+        throw new IOException(newbieFile + " already exists.");
+      }
+      String path = newbieFile.getAbsolutePath();
+      /*Editor editor =*/ handleOpen(path, true);
 
     } catch (IOException e) {
-      if (activeEditor != null) {
-        activeEditor.statusError(e);
-      } else {
-        e.printStackTrace();
-      }
+      Base.showWarning("That's new to me",
+                       "A strange and unexplainable error occurred\n" +
+                       "while trying to create a new sketch.", e);
     }
   }
 
 
-  /**
-   * Replace the sketch in the current window with a new untitled document.
-   */
-  public void handleNewReplace() {
-    if (!activeEditor.checkModified()) {
-      return;  // sketch was modified, and user canceled
-    }
-    // Close the running window, avoid window boogers with multiple sketches
-    activeEditor.internalCloseRunner();
-
-    // Actually replace things
-    handleNewReplaceImpl();
-  }
-
-
-  protected void handleNewReplaceImpl() {
-    try {
-      String path = createNewUntitled();
-      if (path != null) {
-        activeEditor.handleOpenInternal(path);
-        activeEditor.untitled = true;
-      }
-//      return true;
-
-    } catch (IOException e) {
-      activeEditor.statusError(e);
-//      return false;
-    }
-  }
+//  /**
+//   * Replace the sketch in the current window with a new untitled document.
+//   */
+//  public void handleNewReplace() {
+//    if (!activeEditor.checkModified()) {
+//      return;  // sketch was modified, and user canceled
+//    }
+//    // Close the running window, avoid window boogers with multiple sketches
+//    activeEditor.internalCloseRunner();
+//
+//    // Actually replace things
+//    handleNewReplaceImpl();
+//  }
 
 
-  /**
-   * Open a sketch, replacing the sketch in the current window.
-   * @param path Location of the primary pde file for the sketch.
-   */
-  public void handleOpenReplace(String path) {
-    if (!activeEditor.checkModified()) {
-      return;  // sketch was modified, and user canceled
-    }
-    // Close the running window, avoid window boogers with multiple sketches
-    activeEditor.internalCloseRunner();
+//  protected void handleNewReplaceImpl() {
+//    try {
+//      String path = createNewUntitled();
+//      if (path != null) {
+//        activeEditor.handleOpenInternal(path);
+//        activeEditor.untitled = true;
+//      }
+////      return true;
+//
+//    } catch (IOException e) {
+//      activeEditor.statusError(e);
+////      return false;
+//    }
+//  }
 
-    boolean loaded = activeEditor.handleOpenInternal(path);
-    if (!loaded) {
-      // replace the document without checking if that's ok
-      handleNewReplaceImpl();
-    } else {
-      recent.handle(activeEditor);
-    }
-  }
+
+//  /**
+//   * Open a sketch, replacing the sketch in the current window.
+//   * @param path Location of the primary pde file for the sketch.
+//   */
+//  public void handleOpenReplace(String path) {
+//    if (!activeEditor.checkModified()) {
+//      return;  // sketch was modified, and user canceled
+//    }
+//    // Close the running window, avoid window boogers with multiple sketches
+//    activeEditor.internalCloseRunner();
+//
+//    boolean loaded = activeEditor.handleOpenInternal(path);
+//    if (!loaded) {
+//      // replace the document without checking if that's ok
+//      handleNewReplaceImpl();
+//    } else {
+//      handleRecent(activeEditor);
+//    }
+//  }
 
 
   /**
@@ -945,20 +933,27 @@ public class Base {
 
 
   /**
+   * Open a sketch from the path specified. Do not use for untitled sketches.
+   */
+  public Editor handleOpen(String path) {
+    return handleOpen(path, false);
+  }
+
+
+  /**
    * Open a sketch in a new window.
    * @param path Path to the pde file for the sketch in question
    * @return the Editor object, so that properties (like 'untitled')
    *         can be set by the caller
    */
-  public Editor handleOpen(String path) {
-    //return handleOpen(path, nextEditorLocation());
-    return handleOpen(path, new EditorState(editors));
+  public Editor handleOpen(String path, boolean untitled) {
+    return handleOpen(path, untitled, new EditorState(editors));
   }
 
 
 //  protected Editor handleOpen(String path, int[] location) {
 //  protected Editor handleOpen(String path, Rectangle bounds, int divider) {
-  protected Editor handleOpen(String path, EditorState state) {
+  protected Editor handleOpen(String path, boolean untitled, EditorState state) {
 //    System.err.println("entering handleOpen " + path);
 
     File file = new File(path);
@@ -978,7 +973,7 @@ public class Base {
       if (editor.getSketch().getMainFilePath().equals(path)) {
         editor.toFront();
         // move back to the top of the recent list
-        recent.handle(editor);
+        handleRecent(editor);
         return editor;
       }
     }
@@ -1047,8 +1042,9 @@ public class Base {
       return null;  // Just walk away quietly
     }
 
+    editor.untitled = untitled;
     editors.add(editor);
-    recent.handle(editor);
+    handleRecent(editor);
 
     // now that we're ready, show the window
     // (don't do earlier, cuz we might move it based on a window being closed)
@@ -1303,11 +1299,6 @@ public class Base {
   }
 
 
-//  public void renameRecent(String oldPath, String newPath) {
-//    recent.handleRename(oldPath, newPath);
-//  }
-
-
   public void handleRecent(Editor editor) {
     recent.handle(editor);
   }
@@ -1356,11 +1347,11 @@ public class Base {
             if ((e.getModifiers() & ActionEvent.SHIFT_MASK) != 0) {
               replace = !replace;
             }
-            if (replace) {
-              handleOpenReplace(path);
-            } else {
-              handleOpen(path);
-            }
+//            if (replace) {
+//              handleOpenReplace(path);
+//            } else {
+            handleOpen(path);
+//            }
           } else {
             showWarning("Sketch Disappeared",
                         "The selected sketch no longer exists.\n" +
