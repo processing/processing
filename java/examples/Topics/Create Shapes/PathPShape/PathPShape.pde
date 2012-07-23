@@ -8,7 +8,7 @@
 PShape path;
 
 void setup() {
-  size(640, 360, P3D);
+  size(640, 360, P2D);
   smooth();
   // Create the shape
   path = createShape();
