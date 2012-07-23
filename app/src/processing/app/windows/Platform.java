@@ -3,7 +3,8 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2008-2009 Ben Fry and Casey Reas
+  Copyright (c) 2012 The Processing Foundation
+  Copyright (c) 2008-2012 Ben Fry and Casey Reas
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -22,7 +23,6 @@
 
 package processing.app.windows;
 
-import java.awt.EventQueue;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
