@@ -49,14 +49,14 @@ void main() {
   // to avoid depth-fighting with the fill triangles.
   // Discussed here:
   // http://www.opengl.org/discussion_boards/ubbthreads.php?ubb=showflat&Number=252848  
-  v_p.xyz = v_p.xyz * zfactor;
+  v_p.z = v_p.z * zfactor;
   vec4 clip_p = projectionMatrix * v_p;
   float thickness = inLine.w;
   
   if (thickness != 0.0) {  
     vec4 pos_q = vec4(inLine.xyz, 1);
     vec4 v_q = modelviewMatrix * pos_q;
-    v_q.xyz = v_q.xyz * zfactor;  
+    v_q.z = v_q.z * zfactor;  
     vec4 clip_q = projectionMatrix * v_q; 
   
     vec3 window_p = clipToWindow(clip_p, viewport); 
