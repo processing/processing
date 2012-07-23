@@ -10133,13 +10133,13 @@ public class PGraphicsOpenGL extends PGraphics {
             path.lineTo(in.vertices[3 * i1 + 0], in.vertices[3 * i1 + 1]);
             break;
           case EDGE_STOP:
-            path.lineTo(in.vertices[3 * i1 + 0], in.vertices[3 * i1 + 1]);
-            path.closePath();
+            path.lineTo(in.vertices[3 * i1 + 0], in.vertices[3 * i1 + 1]);            
+            path.moveTo(in.vertices[3 * i1 + 0], in.vertices[3 * i1 + 1]);
             break;
           case EDGE_SINGLE:
             path.moveTo(in.vertices[3 * i0 + 0], in.vertices[3 * i0 + 1]);
             path.lineTo(in.vertices[3 * i1 + 0], in.vertices[3 * i1 + 1]);
-            path.closePath();
+            path.moveTo(in.vertices[3 * i1 + 0], in.vertices[3 * i1 + 1]);
             break;
           }
         }
