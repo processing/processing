@@ -12,8 +12,8 @@ void setup() {
   size(400, 400, P2D);
   img = loadImage("berlin-1.jpg");
     
-  edges = (PShader)loadShader("edges.glsl", PShader.TEXTURED);
-  shader(edges, PShader.TEXTURED);
+  edges = loadShader(PShader.TEXTURED, "edges.glsl");
+  shader(edges);
   customShader = true;
 }
 
@@ -26,7 +26,7 @@ public void mousePressed() {
     resetShader(PShader.TEXTURED);
     customShader = false;
   } else {
-    shader(edges, PShader.TEXTURED);
+    shader(edges);
     customShader = true;
   }
 }
