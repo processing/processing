@@ -18,8 +18,8 @@ void setup() {
   canvas = createGraphics(width, height, P2D);
   canvas.noSmooth();
     
-  fxaa = (PShader)loadShader("fxaa.glsl", PShader.TEXTURED);
-  shader(fxaa, PShader.TEXTURED);
+  fxaa = loadShader(PShader.TEXTURED, "fxaa.glsl");
+  shader(fxaa);
   usingShader = true;
   
   canvas.beginDraw();
@@ -56,7 +56,7 @@ public void mousePressed() {
       resetShader(PShader.TEXTURED);
       usingShader = false;
     } else {
-      shader(fxaa, PShader.TEXTURED);
+      shader(fxaa);
       usingShader = true;
     }
     updateMessage();    
@@ -87,6 +87,6 @@ void drawMessage() {
   fill(0);
   text(message, width - msgLen, height - 5);
   if (usingShader) {
-    shader(fxaa, PShader.TEXTURED);
+    shader(fxaa);
   }
 }

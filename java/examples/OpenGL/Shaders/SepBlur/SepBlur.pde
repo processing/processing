@@ -8,7 +8,7 @@ PGraphics pass1, pass2;
 void setup() {
   size(200, 200, P2D);
   
-  blur = (PShader)loadShader("blur.glsl", PShader.TEXTURED);
+  blur = loadShader(PShader.TEXTURED, "blur.glsl");
   blur.set("blurSize", 9);
   blur.set("sigma", 5.0f);  
   
@@ -16,11 +16,11 @@ void setup() {
   
   pass1 = createGraphics(width, height, P2D);
   pass1.noSmooth();
-  pass1.shader(blur, PShader.TEXTURED);
+  pass1.shader(blur);
   
   pass2 = createGraphics(width, height, P2D);
   pass2.noSmooth();
-  pass2.shader(blur, PShader.TEXTURED);    
+  pass2.shader(blur);    
 }
 
 void draw() {

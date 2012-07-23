@@ -13,12 +13,12 @@ void setup() {
   size(800, 800, P3D);  
   canvas = createGraphics(800, 800, P3D);
 
-  fisheye = (PShader)loadShader("FishEye.glsl", PShader.TEXTURED);
+  fisheye = loadShader(PShader.TEXTURED, "FishEye.glsl");
   fisheye.set("aperture", 180.0);
-  shader(fisheye, PShader.TEXTURED);
+  shader(fisheye);
   usingFishEye = true;
   
-  glossy = (PShader)loadShader("GlossyVert.glsl", "GlossyFrag.glsl", PShader.LIT);  
+  glossy = loadShader(PShader.LIT, "GlossyFrag.glsl", "GlossyVert.glsl");  
   glossy.set("AmbientColour", 0, 0, 0);
   glossy.set("DiffuseColour", 0.9, 0.2, 0.2);
   glossy.set("SpecularColour", 1.0, 1.0, 1.0);
@@ -27,7 +27,7 @@ void setup() {
   glossy.set("SpecularIntensity", 0.7);
   glossy.set("Roughness", 0.7);
   glossy.set("Sharpness", 0.0);
-  canvas.shader(glossy, PShader.LIT);
+  canvas.shader(glossy);
   
   ball = createShape(SPHERE, 50);
   //ball.fill(200, 50, 50);
@@ -64,7 +64,7 @@ public void mousePressed() {
     resetShader(PShader.TEXTURED);
     usingFishEye = false;
   } else {
-    shader(fisheye, PShader.TEXTURED);
+    shader(fisheye);
     usingFishEye = true;
   }
 }

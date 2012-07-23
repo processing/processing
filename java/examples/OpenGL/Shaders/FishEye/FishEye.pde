@@ -8,9 +8,9 @@ void setup() {
   size(400, 400, P3D);  
   canvas = createGraphics(400, 400, P3D);
 
-  fisheye = (PShader)loadShader("FishEye.glsl", PShader.TEXTURED);
+  fisheye = loadShader(PShader.TEXTURED, "FishEye.glsl");
   fisheye.set("aperture", 180.0);
-  shader(fisheye, PShader.TEXTURED);
+  shader(fisheye);
 }
 
 void draw() {

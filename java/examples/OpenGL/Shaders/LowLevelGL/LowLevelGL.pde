@@ -22,7 +22,7 @@ void setup() {
   
   // Get the default shader that Processing uses to
   // render flat geometry (w/out textures and lights).
-  flatShader = (PShader)getShader(PShader.FLAT);
+  flatShader = getShader(PShader.FLAT);
 
   vertices = new float[12];
   vertData = PGL.allocateDirectFloatBuffer(12);
@@ -40,7 +40,7 @@ void draw() {
   
   updateGeometry();
   
-  pgl = pg.beginPGL(); 
+  pgl = pg.beginGL(); 
   flatShader.bind();
 
   vertLoc = pgl.glGetAttribLocation(flatShader.glProgram, "inVertex");
@@ -58,7 +58,7 @@ void draw() {
   pgl.glDisableVertexAttribArray(colorLoc);
   
   flatShader.unbind();  
-  pg.endPGL();
+  pg.endGL();
 }
 
 void updateGeometry() {

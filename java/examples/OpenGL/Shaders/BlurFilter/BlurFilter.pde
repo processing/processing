@@ -3,7 +3,7 @@ boolean applyFilter = true;
 
 void setup() {
   size(400, 400, P3D);
-  blur = (PShader)loadShader("blur.glsl");
+  blur = loadShader(PShader.TEXTURED, "blur.glsl");
   noStroke(); 
 }
 
