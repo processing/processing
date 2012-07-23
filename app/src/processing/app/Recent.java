@@ -32,7 +32,7 @@ import processing.core.PApplet;
 // dealing with renaming
 //   before sketch save/rename, remove it from the recent list
 //   after sketch save/rename add it to the list
-//   need to do this whether or not
+//   (this is the more straightforward model, otherwise has lots of weird edge cases)
 
 public class Recent {
   static final String FILENAME = "recent.txt";
@@ -40,14 +40,15 @@ public class Recent {
 
   Base base;
   File file;
-  int count;
+  /** How many recent sketches to remember. */
+  int remember;
   ArrayList<Record> records;
   JMenu menu;
 
 
   public Recent(Base base) {
     this.base = base;
-    count = Preferences.getInteger("recent.count");
+    remember = Preferences.getInteger("recent.count");
     file = Base.getSettingsFile(FILENAME);
     menu = new JMenu("Recent Sketches");
 
@@ -106,7 +107,14 @@ public class Recent {
   private void updateMenu() {
     menu.removeAll();
     for (final Record rec : records) {
-      JMenuItem item = new JMenuItem(rec.getName());
+      String purtyPath = new File(rec.getPath()).getParent();
+      String sketchbookPath = base.getSketchbookFolder().getAbsolutePath();
+      if (purtyPath.startsWith(sketchbookPath)) {
+        purtyPath = "sketchbook \u2192 " +
+          purtyPath.substring(sketchbookPath.length() + 1);
+      }
+
+      JMenuItem item = new JMenuItem(rec.getName() + " | " + purtyPath);
       item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           // Base will call handle() (below) which will cause this entry to
@@ -181,18 +189,21 @@ public class Recent {
    */
   synchronized void handle(Editor editor) {
     if (!editor.getSketch().isUntitled()) {
-      // If this is already in the menu, remove it
+      // If this sketch is already in the menu, remove it
       remove(editor);
 
-      if (records.size() == count) {
+      if (records.size() == remember) {
         records.remove(0);  // remove the first entry
       }
 
+//      new Exception("adding to recent: " + editor.getSketch().getMainFilePath()).printStackTrace(System.out);
 //    Record newRec = new Record(editor, editor.getSketch());
 //    records.add(newRec);
       records.add(new Record(editor));
 //    updateMenu();
       save();
+//    } else {
+//      new Exception("NOT adding to recent: " + editor.getSketch().getMainFilePath()).printStackTrace(System.out);
     }
   }
 
@@ -264,6 +275,10 @@ public class Recent {
       String name = path.substring(path.lastIndexOf(File.separatorChar) + 1);
       // Return the name with the extension removed
       return name.substring(0, name.indexOf('.'));
+    }
+
+    String getPath() {
+      return path;
     }
 
 //    String getPath() {

@@ -10,7 +10,7 @@ import processing.app.Editor;
 import processing.app.EditorToolbar;
 
 public class JavaScriptToolbar extends EditorToolbar {
-  
+
   static protected final int RUN    = 0;
   static protected final int STOP   = 1;
 
@@ -20,47 +20,47 @@ public class JavaScriptToolbar extends EditorToolbar {
   static protected final int EXPORT = 5;
 
 
-  static public String getTitle ( int index, boolean shift ) 
+  static public String getTitle ( int index, boolean shift )
   {
-    switch (index) 
+    switch (index)
     {
 	  case RUN:    return "Start server";
       case STOP:   return "Stop server";
-      case NEW:    return !shift ? "New"  : "New Editor Window";
-      case OPEN:   return !shift ? "Open" : "Open in Another Window";
+      case NEW:    return "New";
+      case OPEN:   return "Open";
       case SAVE:   return "Save";
       case EXPORT: return "Export for Web";
     }
     return null;
-  }  
+  }
 
 
-  public JavaScriptToolbar ( Editor editor, Base base ) 
+  public JavaScriptToolbar ( Editor editor, Base base )
   {
     super(editor, base);
   }
 
 
-  public void init () 
+  public void init ()
   {
     Image[][] images = loadImages();
-    for (int i = 0; i < 6; i++) 
+    for (int i = 0; i < 6; i++)
     {
       addButton( getTitle(i, false), getTitle(i, true), images[i], i == NEW );
     }
   }
 
-  public void handlePressed ( MouseEvent e, int index ) 
+  public void handlePressed ( MouseEvent e, int index )
   {
-    boolean shift = e.isShiftDown();
+//    boolean shift = e.isShiftDown();
     JavaScriptEditor jsEditor = (JavaScriptEditor) editor;
 
     switch (index) {
-	
+
 	case RUN:
 		jsEditor.handleStartServer();
 		break;
-		
+
 	case STOP:
 		jsEditor.handleStopServer();
 		break;
@@ -71,13 +71,13 @@ public class JavaScriptToolbar extends EditorToolbar {
       break;
 
     case NEW:
-      if (shift) {
-        base.handleNew();
-      } else {
-        base.handleNewReplace();
-      }
+//      if (shift) {
+      base.handleNew();
+//      } else {
+//        base.handleNewReplace();
+//      }
       break;
-      
+
     case SAVE:
       jsEditor.handleSave(false);
       break;
