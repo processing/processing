@@ -541,11 +541,23 @@
 	 usetimestamp="true" />
 
 <!--	   
+    Cannot use ant version of tar because it doesn't preserve properties.
     <untar compression="gzip" 
 	   dest="linux/work" 
 	   src="linux/jre.tgz" 
 	   overwrite="false"/>
 -->
+
+<!--
+    http://www.gnu.org/software/tar/manual/html_section/transform.html
+-->
+    <exec executable="tar">
+      <arg value="-C" /> <!-- Change directory -->
+      <arg value="linux/work" />
+      <arg value="-xzpf" />
+      <arg value="linux/jre.tgz"/>
+    </exec>
+
   </target>
   
   <target name="linux-run" depends="linux-build" 
@@ -555,17 +567,6 @@
   
   <target name="linux-dist" depends="linux-build,android-dist-check" 
 	  description="Build .tar.gz of linux version">
-
-<!--
-http://www.gnu.org/software/tar/manual/html_section/transform.html
--->
-
-   <exec executable="tar">
-     <arg value="-C" /> <!-- Change directory -->
-     <arg value="linux/work" />
-     <arg value="-xzpf" />
-     <arg value="linux/jre.tgz"/>
-   </exec>
 
 <!--
     <tar compression="gzip" destfile="linux/processing-${version}.tgz">
