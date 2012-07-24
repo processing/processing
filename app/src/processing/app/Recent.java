@@ -112,9 +112,50 @@ public class Recent {
       if (purtyPath.startsWith(sketchbookPath)) {
         purtyPath = "sketchbook \u2192 " +
           purtyPath.substring(sketchbookPath.length() + 1);
+
+      } else {
+        ArrayList<Mode> modes = base.getModeList();
+        for (Mode mode : modes) {
+          File examplesFolder = mode.getExamplesFolder();
+          String examplesPath = examplesFolder.getAbsolutePath();
+          if (purtyPath.startsWith(examplesPath)) {
+            String modePrefix = mode.getTitle();
+            if (mode.getTitle().equals("Standard")) {
+              modePrefix = "";  // "Standard examples" is dorky
+            }
+            purtyPath = modePrefix + "examples \u2192 " +
+              purtyPath.substring(examplesPath.length() + 1);
+            break;
+          }
+
+          if (mode.coreLibraries != null) {
+            for (Library lib : mode.coreLibraries) {
+              examplesFolder = lib.getExamplesFolder();
+              examplesPath = examplesFolder.getAbsolutePath();
+              if (purtyPath.startsWith(examplesPath)) {
+                purtyPath = lib.getName() + " examples \u2192 " +
+                  purtyPath.substring(examplesPath.length() + 1);
+                break;
+              }
+            }
+          }
+
+          if (mode.contribLibraries != null) {
+            for (Library lib : mode.contribLibraries) {
+              examplesFolder = lib.getExamplesFolder();
+              examplesPath = examplesFolder.getAbsolutePath();
+              if (purtyPath.startsWith(examplesPath)) {
+                purtyPath = lib.getName() + " examples \u2192 " +
+                  purtyPath.substring(examplesPath.length() + 1);
+                break;
+              }
+            }
+          }
+        }
       }
 
-      JMenuItem item = new JMenuItem(rec.getName() + " | " + purtyPath);
+//      JMenuItem item = new JMenuItem(rec.getName() + " | " + purtyPath);
+      JMenuItem item = new JMenuItem(purtyPath);
       item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           // Base will call handle() (below) which will cause this entry to
