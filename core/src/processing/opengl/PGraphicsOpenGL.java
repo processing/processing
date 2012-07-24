@@ -5760,50 +5760,28 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-//  public Object loadShader(String vertFilename, String fragFilename) {
-//    return loadShader(vertFilename, fragFilename, PShader.TEXTURED);
-//  }
-//
-//
-//  public Object loadShader(String fragFilename) {
-//    return loadShader(fragFilename, PShader.TEXTURED);
-//  }
+  public PShader loadShader(String fragFilename) {
+    return loadShader(PShader.TEXTURED, fragFilename);
+  }
 
 
   public void shader(PShader shader) {
-//  public void shader(PShader shader, int kind) {
-//    if (!(shader instanceof PShader)) {
-//      PGraphics.showWarning("Object is not a valid shader!");
-//      return;
-//    }
-    flush(); // Flushing geometry with a different shader.
+    flush(); // Flushing geometry drawn with a different shader.
 
     // The ordering below is important, because some of these classes
     // extend others, so multiple instanceof cases will evaluate to 'true'.
-//    if (kind == PShader.FLAT) {
-//  } else if (kind == PShader.TEXTURED) {
     if (shader instanceof PolyTexShader) {
       polyTexShader = (PolyTexShader) shader;
-
     } else if (shader instanceof PolyFlatShader) {
       polyFlatShader = (PolyFlatShader) shader;
-
     } else if (shader instanceof PolyFullShader) {
       polyFullShader = (PolyFullShader) shader;
-
-//    } else if (kind == PShader.LIT) {
     } else if (shader instanceof PolyLightShader) {
       polyLightShader = (PolyLightShader) shader;
-
-//    } else if (kind == PShader.FULL) {
-//    } else if (kind == PShader.LINE) {
     } else if (shader instanceof LineShader) {
       lineShader = (LineShader) shader;
-
-//    } else if (kind == PShader.POINT) {
     } else if (shader instanceof PointShader) {
       pointShader = (PointShader) shader;
-
     } else {
       showWarning("shader() called with an unknown shader type");
     }
@@ -5811,7 +5789,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   public void resetShader(int kind) {
-    flush(); // Flushing geometry with a different shader.
+    flush(); // Flushing geometry drawn with a different shader.
     if (kind == PShader.FLAT) {
       if (defPolyFlatShader == null) {
         defPolyFlatShader = new PolyFlatShader(parent, defPolyFlatShaderVertURL, defPolyNoTexShaderFragURL);
