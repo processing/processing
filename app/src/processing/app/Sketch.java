@@ -95,43 +95,36 @@ public class Sketch {
 
 
   /**
+   * Used by the command-line version to create a sketch object.
+   * @param path location of the main .pde file
+   * @param mode what flavor of sketch we're dealing with.
+   */
+  public Sketch(String path, Mode mode) {
+    this.editor = null;
+    this.mode = mode;
+    load(path);
+  }
+
+
+  /**
    * path is location of the main .pde file, because this is also
    * simplest to use when opening the file from the finder/explorer.
    */
-  public Sketch(Editor editor, String path) throws IOException {
+  public Sketch(String path, Editor editor) throws IOException {
     this.editor = editor;
     this.mode = editor.getMode();
+    load(path);
+  }
 
+
+  protected void load(String path) {
     primaryFile = new File(path);
-
     // get the name of the sketch by chopping .pde or .java
     // off of the main file name
     String mainFilename = primaryFile.getName();
     int suffixLength = mode.getDefaultExtension().length() + 1;
     name = mainFilename.substring(0, mainFilename.length() - suffixLength);
-
-    // lib/build must exist when the application is started
-    // it is added to the CLASSPATH by default, but if it doesn't
-    // exist when the application is started, then java will remove
-    // the entry from the CLASSPATH, causing Runner to fail.
-    //
-    /*
-    tempBuildFolder = new File(TEMP_BUILD_PATH);
-    if (!tempBuildFolder.exists()) {
-      tempBuildFolder.mkdirs();
-      Base.showError("Required folder missing",
-                        "A required folder was missing from \n" +
-                        "from your installation of Processing.\n" +
-                        "It has now been replaced, please restart    \n" +
-                        "the application to complete the repair.", null);
-    }
-    */
-//    tempBuildFolder = Base.getBuildFolder();
-    //Base.addBuildFolderToClassPath();
-
     folder = new File(new File(path).getParent());
-    //System.out.println("sketch dir is " + folder);
-
     load();
   }
 
