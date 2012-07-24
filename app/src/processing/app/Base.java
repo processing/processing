@@ -126,8 +126,8 @@ public class Base {
   private Recent recent;
 //  private JMenu recentMenu;
 
-  protected File sketchbookFolder;
-  protected File toolsFolder;
+  static protected File sketchbookFolder;
+//  protected File toolsFolder;
 
 
   static public void main(final String[] args) {
@@ -166,6 +166,9 @@ public class Base {
 
     // run static initialization that grabs all the prefs
     Preferences.init(null);
+
+    // Get the sketchbook path, and make sure it's set properly
+    locateSketchbookFolder();
 
 //    String filename = args.length > 1 ? args[0] : null;
     if (!SingleInstance.alreadyRunning(args)) {
@@ -265,7 +268,11 @@ public class Base {
                                    getContentFile("modes/javascript"));
 
     coreModes = new Mode[] { javaMode, androidMode, javaScriptMode };
+    for (Mode mode : coreModes) {
+      mode.setupGUI();
+    }
   }
+
 
   /** Instantiates and adds new contributed modes to the contribModes list.
    * Checks for duplicates so the same mode isn't instantiates twice. Does not
@@ -286,8 +293,8 @@ public class Base {
   }
 
   public Base(String[] args) {
-    // Get the sketchbook path, and make sure it's set properly
-    determineSketchbookFolder();
+//    // Get the sketchbook path, and make sure it's set properly
+//    determineSketchbookFolder();
 
     // Delete all modes and tools that have been flagged for deletion before
     // they are initialized by an editor.
@@ -362,11 +369,11 @@ public class Base {
     // menu works on Mac OS X (since it needs examplesFolder to be set).
     platform.init(this);
 
-    toolsFolder = getContentFile("tools");
+//    toolsFolder = getContentFile("tools");
 
 //    // Check if there were previously opened sketches to be restored
-    boolean opened = restoreSketches();
-//    boolean opened = false;
+//    boolean opened = restoreSketches();
+    boolean opened = false;
 
     // Check if any files were passed in on the command line
     for (int i = 0; i < args.length; i++) {
@@ -418,77 +425,77 @@ public class Base {
 //  }
 
 
-  /**
-   * Post-constructor setup for the editor area. Loads the last
-   * sketch that was used (if any), and restores other Editor settings.
-   * The complement to "storePreferences", this is called when the
-   * application is first launched.
-   */
-  protected boolean restoreSketches() {
-//    String lastMode = Preferences.get("last.sketch.mode");
-//    log("setting mode to " + lastMode);
-//    if (lastMode != null) {
-//      for (Mode m : getModeList()) {
-//        if (m.getClass().getName().equals(lastMode)) {
-//          defaultMode = m;
-//        }
-//      }
-//    }
-//    log("default mode set to " + defaultMode.getClass().getName());
-
-    if (Preferences.getBoolean("last.sketch.restore")) {
-      return false;
-    }
-
-    return true;
-
-//    // figure out window placement
-//    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-//    boolean windowPositionValid = true;
+//  /**
+//   * Post-constructor setup for the editor area. Loads the last
+//   * sketch that was used (if any), and restores other Editor settings.
+//   * The complement to "storePreferences", this is called when the
+//   * application is first launched.
+//   */
+//  protected boolean restoreSketches() {
+////    String lastMode = Preferences.get("last.sketch.mode");
+////    log("setting mode to " + lastMode);
+////    if (lastMode != null) {
+////      for (Mode m : getModeList()) {
+////        if (m.getClass().getName().equals(lastMode)) {
+////          defaultMode = m;
+////        }
+////      }
+////    }
+////    log("default mode set to " + defaultMode.getClass().getName());
 //
-//    if (Preferences.get("last.screen.height") != null) {
-//      // if screen size has changed, the window coordinates no longer
-//      // make sense, so don't use them unless they're identical
-//      int screenW = Preferences.getInteger("last.screen.width");
-//      int screenH = Preferences.getInteger("last.screen.height");
-//
-//      if ((screen.width != screenW) || (screen.height != screenH)) {
-//        windowPositionValid = false;
-//      }
-//      /*
-//      int windowX = Preferences.getInteger("last.window.x");
-//      int windowY = Preferences.getInteger("last.window.y");
-//      if ((windowX < 0) || (windowY < 0) ||
-//          (windowX > screenW) || (windowY > screenH)) {
-//        windowPositionValid = false;
-//      }
-//      */
-//    } else {
-//      windowPositionValid = false;
+//    if (Preferences.getBoolean("last.sketch.restore")) {
+//      return false;
 //    }
 //
-//    // Iterate through all sketches that were open last time p5 was running.
-//    // If !windowPositionValid, then ignore the coordinates found for each.
+//    return true;
 //
-//    // Save the sketch path and window placement for each open sketch
-//    int count = Preferences.getInteger("last.sketch.count");
-//    int opened = 0;
-//    for (int i = 0; i < count; i++) {
-//      String path = Preferences.get("last.sketch" + i + ".path");
-//      int[] location;
-//      if (windowPositionValid) {
-//        String locationStr = Preferences.get("last.sketch" + i + ".location");
-//        location = PApplet.parseInt(PApplet.split(locationStr, ','));
-//      } else {
-//        location = nextEditorLocation();
-//      }
-//      // If file did not exist, null will be returned for the Editor
-//      if (handleOpen(path, location) != null) {
-//        opened++;
-//      }
-//    }
-//    return (opened > 0);
-  }
+////    // figure out window placement
+////    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+////    boolean windowPositionValid = true;
+////
+////    if (Preferences.get("last.screen.height") != null) {
+////      // if screen size has changed, the window coordinates no longer
+////      // make sense, so don't use them unless they're identical
+////      int screenW = Preferences.getInteger("last.screen.width");
+////      int screenH = Preferences.getInteger("last.screen.height");
+////
+////      if ((screen.width != screenW) || (screen.height != screenH)) {
+////        windowPositionValid = false;
+////      }
+////      /*
+////      int windowX = Preferences.getInteger("last.window.x");
+////      int windowY = Preferences.getInteger("last.window.y");
+////      if ((windowX < 0) || (windowY < 0) ||
+////          (windowX > screenW) || (windowY > screenH)) {
+////        windowPositionValid = false;
+////      }
+////      */
+////    } else {
+////      windowPositionValid = false;
+////    }
+////
+////    // Iterate through all sketches that were open last time p5 was running.
+////    // If !windowPositionValid, then ignore the coordinates found for each.
+////
+////    // Save the sketch path and window placement for each open sketch
+////    int count = Preferences.getInteger("last.sketch.count");
+////    int opened = 0;
+////    for (int i = 0; i < count; i++) {
+////      String path = Preferences.get("last.sketch" + i + ".path");
+////      int[] location;
+////      if (windowPositionValid) {
+////        String locationStr = Preferences.get("last.sketch" + i + ".location");
+////        location = PApplet.parseInt(PApplet.split(locationStr, ','));
+////      } else {
+////        location = nextEditorLocation();
+////      }
+////      // If file did not exist, null will be returned for the Editor
+////      if (handleOpen(path, location) != null) {
+////        opened++;
+////      }
+////    }
+////    return (opened > 0);
+//  }
 
 
 //  /**
@@ -1823,8 +1830,9 @@ public class Base {
 
 
 //  static public File getToolsFolder() {
-  public File getToolsFolder() {
-    return toolsFolder;
+  static public File getToolsFolder() {
+//    return toolsFolder;
+    return getContentFile("tools");
   }
 
 
@@ -1833,7 +1841,7 @@ public class Base {
 //  }
 
 
-  protected void determineSketchbookFolder() {
+  static public void locateSketchbookFolder() {
     // If a value is at least set, first check to see if the folder exists.
     // If it doesn't, warn the user that the sketchbook folder is being reset.
     String sketchbookPath = Preferences.get("sketchbook.path");
@@ -1879,19 +1887,21 @@ public class Base {
   }
 
 
-  public File getSketchbookLibrariesFolder() {
+  static public File getSketchbookLibrariesFolder() {
 //    return new File(getSketchbookFolder(), "libraries");
     return new File(sketchbookFolder, "libraries");
   }
 
 
-  public File getSketchbookToolsFolder() {
+  static public File getSketchbookToolsFolder() {
     return new File(sketchbookFolder, "tools");
   }
 
-  public File getSketchbookModesFolder() {
+
+  static public File getSketchbookModesFolder() {
     return new File(sketchbookFolder, "modes");
   }
+
 
   static protected File getDefaultSketchbookFolder() {
     File sketchbookFolder = null;

@@ -60,32 +60,6 @@ public class JavaMode extends Mode {
       Base.showError("Problem loading keywords",
                      "Could not load keywords.txt, please re-install Processing.", e);
     }
-
-    /*
-    item = newJMenuItem("Export", 'E');
-    if (editor != null) {
-      item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          editor.handleExport();
-        }
-      });
-    } else {
-      item.setEnabled(false);
-    }
-    fileMenu.add(item);
-
-    item = newJMenuItemShift("Export Application", 'E');
-    if (editor != null) {
-      item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          editor.handleExportApplication();
-        }
-      });
-    } else {
-      item.setEnabled(false);
-    }
-    fileMenu.add(item);
-     */
   }
 
 

@@ -50,6 +50,11 @@ public abstract class Mode {
   protected Library coreLibrary;
 
 
+//  public Mode(Base base, File folder) {
+//    this(base, folder, base.getSketchbookLibrariesFolder());
+//  }
+
+
   public Mode(Base base, File folder) {
     this.base = base;
     this.folder = folder;
@@ -62,7 +67,14 @@ public abstract class Mode {
 //    rebuildToolbarMenu();
     rebuildLibraryList();
 //    rebuildExamplesMenu();
+  }
 
+
+  /**
+   * Setup additional elements that are only required when running
+   * with a GUI, rather than from the command-line.
+   */
+  public void setupGUI() {
     try {
       theme = new Settings(new File(folder, "theme/theme.txt"));
 
@@ -129,20 +141,20 @@ public abstract class Mode {
 
 
   public void rebuildLibraryList() {
-//    System.out.println("rebuildLibraryList()");
-
     // reset the table mapping imports to libraries
-//    importToLibraryTable = new HashMap<String, Library>();
     importToLibraryTable = new HashMap<String, ArrayList<Library>>();
 
     coreLibraries = Library.list(librariesFolder);
-    contribLibraries = Library.list(base.getSketchbookLibrariesFolder());
-
     for (Library lib : coreLibraries) {
       lib.addPackageList(importToLibraryTable);
     }
-    for (Library lib : contribLibraries) {
-      lib.addPackageList(importToLibraryTable);
+
+    File contribLibrariesFolder = Base.getSketchbookLibrariesFolder();
+    if (contribLibrariesFolder != null) {
+      contribLibraries = Library.list(contribLibrariesFolder);
+      for (Library lib : contribLibraries) {
+        lib.addPackageList(importToLibraryTable);
+      }
     }
   }
 
