@@ -10153,6 +10153,11 @@ public class PApplet extends Applet
   }
 
 
+  public PShader loadShader(String fragFilename) {
+    return g.loadShader(fragFilename);
+  }
+
+
   public void shader(PShader shader) {
     if (recorder != null) recorder.shader(shader);
     g.shader(shader);
