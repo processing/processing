@@ -204,6 +204,9 @@ public class PGraphicsOpenGL extends PGraphics {
   /** Flag to indicate that we are inside beginCamera/endCamera block. */
   protected boolean manipulatingCamera;
 
+  /** Flag indicating the use of an ortographics projection matrix. */
+  protected boolean usingOrthoProjection;
+  
   // ........................................................
 
   // All the matrices required for camera and geometry transformations.
@@ -3773,20 +3776,38 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     projectionStackDepth--;
     projection.set(projectionStack[projectionStackDepth]);
+    checkOrthoProjection();
   }
 
 
   public void applyProjection(PMatrix3D mat) {
     flush();
     projection.apply(mat);
+    checkOrthoProjection();
   }
 
 
   public void setProjection(PMatrix3D mat) {
     flush();
     projection.set(mat);
+    checkOrthoProjection();
   }
 
+  
+  protected void checkOrthoProjection() {
+    // If the matrix is of the form:
+    // x, 0, 0, a,
+    // 0, y, 0, b,
+    // 0, 0, z, c,
+    // 0, 0, 0, 1
+    // then the set usingOrthoProjection to true.
+    usingOrthoProjection = zero(projection.m01) && zero(projection.m02) && 
+                           zero(projection.m10) && zero(projection.m12) && 
+                           zero(projection.m20) && zero(projection.m21) &&
+                           zero(projection.m30) && zero(projection.m31) &&
+                           zero(projection.m32) && same(projection.m33, 1);
+  }
+  
 
   //////////////////////////////////////////////////////////////
 
@@ -4146,6 +4167,8 @@ public class PGraphicsOpenGL extends PGraphics {
                    0,  0, 0,  1);
 
     calcProjmodelview();
+    
+    usingOrthoProjection = true;
   }
 
 
@@ -4208,6 +4231,8 @@ public class PGraphicsOpenGL extends PGraphics {
                         0,       0,                  -1,                0);
 
     calcProjmodelview();
+    
+    usingOrthoProjection = false;
   }
 
 
@@ -6391,7 +6416,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
     protected int viewportLoc;
     protected int perspectiveLoc;
-    protected int zfactorLoc;
+    protected int scaleLoc;
 
     protected int inVertexLoc;
     protected int inColorLoc;
@@ -6422,7 +6447,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
       viewportLoc = getUniformLoc("viewport");
       perspectiveLoc = getUniformLoc("perspective");
-      zfactorLoc = getUniformLoc("zfactor");
+      scaleLoc = getUniformLoc("scale");
     }
 
     public void setVertexAttribute(int vboId, int size, int type, int stride, int offset) {
@@ -6472,10 +6497,14 @@ public class PGraphicsOpenGL extends PGraphics {
           setUniformValue(perspectiveLoc, 0);
         }
 
-        if (pgCurrent.hintEnabled(ENABLE_ACCURATE_2D)) {
-          setUniformValue(zfactorLoc, 1.0f);
+        if (pgCurrent.hintEnabled(ENABLE_ACCURATE_2D)) {          
+          setUniformValue(scaleLoc, 1.0f, 1.0f, 1.0f);
         } else {
-          setUniformValue(zfactorLoc, 0.99f);
+          if (usingOrthoProjection) {
+            setUniformValue(scaleLoc, 1.0f, 1.0f, 0.99f);
+          } else {
+            setUniformValue(scaleLoc, 0.99f, 0.99f, 0.99f);
+          }
         }
       }
     }
