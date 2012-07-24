@@ -2007,6 +2007,14 @@ public class PShapeOpenGL extends PShape {
   }
   
   
+  public void setVertex(int index, PVector vec) {
+    inGeo.vertices[3 * index + 0] = vec.x;
+    inGeo.vertices[3 * index + 1] = vec.y;
+    inGeo.vertices[3 * index + 2] = vec.z;
+    markForTessellation();    
+  }
+  
+  
   public PVector getNormal(int index, PVector vec) {
     if (vec == null) {
       vec = new PVector();
