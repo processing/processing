@@ -3,9 +3,8 @@ X change appletViewer back to 'online'
 X begin/endGL added to PGraphics/PApplet
 X add hasChildren() to XML library
 X   http://code.google.com/p/processing/issues/detail?id=1045
-
-_ displayWidth/Height not being set properly before setup()
-_   http://code.google.com/p/processing/issues/detail?id=1120
+X displayWidth/Height not being set properly before setup()
+X   http://code.google.com/p/processing/issues/detail?id=1120
 X   can't reproduce.. might be Java update, or multi-display issue?
 
 constants/hints
