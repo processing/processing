@@ -1115,23 +1115,23 @@ public class JavaBuild {
 
 
   /**
-   * Export to application without GUI.
+   * Export to application without GUI. Also called by the Commander.
    */
-  private boolean exportApplication(File destFolder,
-                                   int exportPlatform,
-                                   int exportBits) throws IOException, SketchException {
+  protected boolean exportApplication(File destFolder,
+                                      int exportPlatform,
+                                      int exportBits) throws IOException, SketchException {
     // TODO this should probably be a dialog box instead of a warning
     // on the terminal. And the message should be written better than this.
     // http://code.google.com/p/processing/issues/detail?id=884
     for (Library library : importedLibraries) {
       if (!library.supportsArch(exportPlatform, exportBits)) {
         String pn = PConstants.platformNames[exportPlatform];
-        System.err.println("The application." + pn + exportBits +
-                           " folder will not be created because no " +
-                           exportBits + "-bit version of " +
-                           library.getName() +
-                           " is available for " + pn);
-        return true;  // don't cancel export for this, just move along
+        Base.showWarning("Quibbles 'n Bits",
+                         "The application." + pn + exportBits +
+                         " folder will not be created\n" +
+                         "because no " + exportBits + "-bit version of " +
+                         library.getName() + " is available for " + pn, null);
+        return true;  // don't cancel all exports for this, just move along
       }
     }
 

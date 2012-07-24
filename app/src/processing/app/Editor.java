@@ -904,8 +904,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
 
   protected void rebuildToolList() {
-    coreTools = ToolContribution.list(base.getToolsFolder(), true);
-    contribTools = ToolContribution.list(base.getSketchbookToolsFolder(), true);
+    coreTools = ToolContribution.list(Base.getToolsFolder(), true);
+    contribTools = ToolContribution.list(Base.getSketchbookToolsFolder(), true);
   }
 
 
@@ -2029,7 +2029,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     }
 
     try {
-      sketch = new Sketch(this, path);
+      sketch = new Sketch(path, this);
     } catch (IOException e) {
       Base.showWarning("Error", "Could not create the sketch.", e);
       return false;
