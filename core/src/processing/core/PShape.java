@@ -1462,6 +1462,13 @@ public class PShape implements PConstants {
   }
   
   
+  public void setVertex(int index, PVector vec) {
+    vertices[index][X] = vec.x;
+    vertices[index][Y] = vec.y;
+    vertices[index][Z] = vec.z;    
+  }
+  
+  
   public PVector getNormal(int index) {
     return getNormal(index, null);
   }
