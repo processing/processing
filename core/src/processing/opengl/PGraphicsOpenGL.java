@@ -3319,12 +3319,12 @@ public class PGraphicsOpenGL extends PGraphics {
     textTex = (PFontTexture)textFont.getCache(pgPrimary);
     if (textTex == null) {
       textTex = new PFontTexture(parent, textFont, maxTextureSize, maxTextureSize, is3D());
-      textFont.setCache(this, textTex);
+      textFont.setCache(pgPrimary, textTex);
     } else {
       if (textTex.contextIsOutdated()) {
         textTex = new PFontTexture(parent, textFont, PApplet.min(PGL.MAX_FONT_TEX_SIZE, maxTextureSize),
                                                      PApplet.min(PGL.MAX_FONT_TEX_SIZE, maxTextureSize), is3D());
-        textFont.setCache(this, textTex);
+        textFont.setCache(pgPrimary, textTex);
       }
     }
     textTex.setFirstTexture();
