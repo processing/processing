@@ -25,9 +25,10 @@ X   code is just getting too messy
 X Opening sketch via editor window open-menu ignores mode
 _   http://code.google.com/p/processing/issues/detail?id=1034
 X add 64-bit Linux version to the next download
+X revisions.txt should have Windows line endings
+X   change in SVN to be platform specific
+X   didn't actually do it
 
-_ revisions.txt should have Windows line endings
-_   change in SVN to be platform specific
 _ don't use tmp folder for sketches? 
 _   or restrict more things like "show sketch folder"
 _   don't allow adding files w/o saving
