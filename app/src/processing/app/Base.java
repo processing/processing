@@ -289,9 +289,6 @@ public class Base {
     // Get the sketchbook path, and make sure it's set properly
     determineSketchbookFolder();
 
-    // Needs to happen after the sketchbook folder has been located
-    recent = new Recent(this);
-
     // Delete all modes and tools that have been flagged for deletion before
     // they are initialized by an editor.
     ArrayList<InstalledContribution> contribs = new ArrayList<InstalledContribution>();
@@ -305,6 +302,11 @@ public class Base {
 
     buildCoreModes();
     rebuildContribModes();
+
+    // Needs to happen after the sketchbook folder has been located.
+    // Also relies on the modes to be loaded so it knows what can be
+    // marked as an example.
+    recent = new Recent(this);
 
     String lastModeIdentifier = Preferences.get("last.sketch.mode");
     if (lastModeIdentifier == null) {
