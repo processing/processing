@@ -556,20 +556,16 @@ public class Texture implements PConstants {
   
   
   public void bind() {    
-    if (!bound) {
-      pgl.enableTexturing(glTarget);
-      pgl.glBindTexture(glTarget, glName);
-      bound = true;
-    }
+    pgl.enableTexturing(glTarget);
+    pgl.glBindTexture(glTarget, glName);
+    bound = true;
   }
   
   
   public void unbind() {
-    if (bound) {
-      pgl.enableTexturing(glTarget);
-      pgl.glBindTexture(glTarget, 0);
-      bound = false;
-    }
+    pgl.enableTexturing(glTarget);
+    pgl.glBindTexture(glTarget, 0);
+    bound = false;
   }  
   
   

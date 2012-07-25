@@ -569,6 +569,7 @@ public class PGL {
     caps.setDepthBits(24);
     caps.setStencilBits(8);
     caps.setAlphaBits(8);
+    //caps.setFBO(false);
     caps.setBackgroundOpaque(true);
 
     if (toolkit == AWT) {
