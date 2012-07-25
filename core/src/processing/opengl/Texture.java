@@ -99,6 +99,8 @@ public class Texture implements PConstants {
   /** Modified portion of the texture */
   protected boolean modified;
   protected int mx1, my1, mx2, my2;
+  
+  protected int[] tempName = { 0 };
     
   protected Object bufferSource;
   protected LinkedList<BufferData> bufferCache = null;
@@ -287,7 +289,12 @@ public class Texture implements PConstants {
       return;
     }
     
-    bind();
+    boolean enabledTex = false;
+    if (!pgl.texturingIsEnabled(glTarget)) {
+      pgl.enableTexturing(glTarget);
+      enabledTex = true;
+    }
+    pgl.glBindTexture(glTarget, glName);
                 
     if (usingMipmaps) {
       if (PGraphicsOpenGL.autoMipmapGenSupported) {
@@ -364,7 +371,10 @@ public class Texture implements PConstants {
       rgbaPixels = null;
     }
 
-    unbind();
+    pgl.glBindTexture(glTarget, 0);
+    if (enabledTex) {
+      pgl.disableTexturing(glTarget);
+    }
     
     updateTexels(x, y, w, h);        
   }  
@@ -381,10 +391,7 @@ public class Texture implements PConstants {
   
   
   public void setNative(int[] pix, int level, int x, int y, int w, int h) {
-    bind();
-    pgl.glTexSubImage2D(glTarget, level, x, y, w, h, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, IntBuffer.wrap(pix));
-    unbind();
-    updateTexels(x, y, w, h);
+    setNative(IntBuffer.wrap(pix), level, x, y, w, h);
   }
 
   
@@ -394,9 +401,17 @@ public class Texture implements PConstants {
   
   
   public void setNative(IntBuffer buffer, int level, int x, int y, int w, int h) {
-    bind();
+    boolean enabledTex = false;
+    if (!pgl.texturingIsEnabled(glTarget)) {
+      pgl.enableTexturing(glTarget);
+      enabledTex = true;
+    }
+    pgl.glBindTexture(glTarget, glName);
     pgl.glTexSubImage2D(glTarget, level, x, y, w, h, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, buffer);
-    unbind();
+    pgl.glBindTexture(glTarget, 0);
+    if (enabledTex) {
+      pgl.disableTexturing(glTarget);
+    }
     updateTexels(x, y, w, h);
   }  
   
@@ -555,21 +570,37 @@ public class Texture implements PConstants {
   // Bind/unbind  
   
   
-  public void bind() {    
-    pgl.enableTexturing(glTarget);
+  public void bind() {
+    // Binding a texture automatically enables texturing for the
+    // texture target from that moment onwards. Unbinding the texture 
+    // won't disable texturing.
+    if (!pgl.texturingIsEnabled(glTarget)) {
+      pgl.enableTexturing(glTarget);
+    }
     pgl.glBindTexture(glTarget, glName);
     bound = true;
   }
   
   
   public void unbind() {
-    pgl.enableTexturing(glTarget);
-    pgl.glBindTexture(glTarget, 0);
+    if (boundTexture() == glName) {
+      // We don't want to unbind another texture
+      // that might be bound instead of this one.
+      if (!pgl.texturingIsEnabled(glTarget)) {
+        pgl.enableTexturing(glTarget); 
+        pgl.glBindTexture(glTarget, 0);
+        pgl.disableTexturing(glTarget); 
+      } else {
+        pgl.glBindTexture(glTarget, 0);
+      }
+    }
     bound = false;
   }  
   
   
   public boolean bound() {
+    // A true result might not necessarily mean that texturing is enabled
+    // (a texture can be bound to the target, but texturing is disabled).
     return bound;
   }
   
@@ -750,6 +781,12 @@ public class Texture implements PConstants {
  
   // Utilities 
         
+  
+  protected int boundTexture() {
+    pgl.glGetIntegerv(glTarget, tempName, 0);    
+    return tempName[0];
+  }
+  
   
   /**
    * Flips intArray along the X axis.
@@ -1020,8 +1057,12 @@ public class Texture implements PConstants {
    */
   protected void allocate() {
     release(); // Just in the case this object is being re-allocated.
-        
-    pgl.enableTexturing(glTarget);
+    
+    boolean enabledTex = false;
+    if (!pgl.texturingIsEnabled(glTarget)) {
+      pgl.enableTexturing(glTarget);
+      enabledTex = true;
+    }
     
     context = pgl.getCurrentContext();    
     glName = pg.createTextureObject(context.code());    
@@ -1040,7 +1081,9 @@ public class Texture implements PConstants {
     pgl.initTexture(glTarget, PGL.GL_RGBA, width, height);
     
     pgl.glBindTexture(glTarget, 0);
-    pgl.disableTexturing(glTarget);
+    if (enabledTex) {
+      pgl.disableTexturing(glTarget);
+    }
     bound = false;
   }
   

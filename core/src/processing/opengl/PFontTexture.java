@@ -167,10 +167,17 @@ class PFontTexture implements PConstants {
   }
 
 
-  public void setFirstTexture() {
+  public void begin() {
     setTexture(0);
   }
 
+  
+  public void end() {
+    for (int i = 0; i < textures.length; i++) {
+      pgl.disableTexturing(textures[i].glTarget);
+    }
+  }
+  
 
   public void setTexture(int idx) {
     if (0 <= idx && idx < textures.length) {
