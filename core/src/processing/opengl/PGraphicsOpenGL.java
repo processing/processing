@@ -204,7 +204,7 @@ public class PGraphicsOpenGL extends PGraphics {
   /** Flag to indicate that we are inside beginCamera/endCamera block. */
   protected boolean manipulatingCamera;
 
-  /** Flag indicating the use of an ortographics projection matrix. */
+  /** Flag indicating the use of an orthographic projection matrix. */
   protected boolean usingOrthoProjection;
   
   // ........................................................
