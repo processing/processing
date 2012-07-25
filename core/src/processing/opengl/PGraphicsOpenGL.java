@@ -3330,7 +3330,7 @@ public class PGraphicsOpenGL extends PGraphics {
         textFont.setCache(pgPrimary, textTex);
       }
     }
-    textTex.setFirstTexture();
+    textTex.begin();
 
     // Saving style parameters modified by text rendering.
     int savedTextureMode = textureMode;
@@ -3369,6 +3369,8 @@ public class PGraphicsOpenGL extends PGraphics {
     // won't be optimal because at the end of each text() call the geometry
     // will be flushed when restoring the user's blend.
     blendMode(savedBlendMode);
+    
+    textTex.end();
   }
 
 
@@ -6646,7 +6648,7 @@ public class PGraphicsOpenGL extends PGraphics {
     int[] lastCache;
     boolean hasTexture;
     Texture tex0;
-
+    
     TexCache() {
       allocate();
     }
@@ -6711,9 +6713,11 @@ public class PGraphicsOpenGL extends PGraphics {
             Texture tex = pgPrimary.getTexture(img);
             if (tex != null) {
               tex.unbind();
+              pgl.disableTexturing(tex.glTarget);
             }
           }
         }
+        /*
         // Disabling texturing for each of the targets used
         // by textures in the cache.
         for (int i = 0; i < size; i++) {
@@ -6725,6 +6729,8 @@ public class PGraphicsOpenGL extends PGraphics {
             }
           }
         }
+        */
+        
       }
     }
 

@@ -183,8 +183,11 @@ public class PGL {
   public static final int GL_FUNC_MAX              = GL2.GL_MAX;
   public static final int GL_FUNC_REVERSE_SUBTRACT = GL.GL_FUNC_REVERSE_SUBTRACT;
 
-  public static final int GL_TEXTURE_2D        = GL.GL_TEXTURE_2D;
-  public static final int GL_TEXTURE_RECTANGLE = GL2.GL_TEXTURE_RECTANGLE;
+  public static final int GL_TEXTURE_2D         = GL.GL_TEXTURE_2D;
+  public static final int GL_TEXTURE_RECTANGLE  = GL2.GL_TEXTURE_RECTANGLE;
+  
+  public static final int GL_TEXTURE_BINDING_2D        = GL.GL_TEXTURE_BINDING_2D;
+  public static final int GL_TEXTURE_BINDING_RECTANGLE = GL2.GL_TEXTURE_BINDING_RECTANGLE;
 
   public static final int GL_RGB            = GL.GL_RGB;
   public static final int GL_RGBA           = GL.GL_RGBA;
@@ -193,7 +196,7 @@ public class PGL {
   public static final int GL_UNSIGNED_BYTE  = GL.GL_UNSIGNED_BYTE;
   public static final int GL_UNSIGNED_SHORT = GL.GL_UNSIGNED_SHORT;
   public static final int GL_FLOAT          = GL.GL_FLOAT;
-
+  
   public static final int GL_NEAREST               = GL.GL_NEAREST;
   public static final int GL_LINEAR                = GL.GL_LINEAR;
   public static final int GL_LINEAR_MIPMAP_NEAREST = GL.GL_LINEAR_MIPMAP_NEAREST;
@@ -356,6 +359,9 @@ public class PGL {
   protected float targetFramerate = 60;
   protected boolean setFramerate = false;
 
+  /** Which texturing targets are enabled */
+  protected static boolean[] texturingTargets = { false, false };
+  
   ///////////////////////////////////////////////////////////////////////////////////
 
   // FBO for anti-aliased rendering
@@ -1694,14 +1700,35 @@ public class PGL {
 
   public void enableTexturing(int target) {
     glEnable(target);
+    if (target == GL_TEXTURE_2D) {
+      texturingTargets[0] = true;
+    } else if (target == GL_TEXTURE_RECTANGLE) {
+      texturingTargets[1] = true;
+    }
   }
 
 
   public void disableTexturing(int target) {
     glDisable(target);
+    if (target == GL_TEXTURE_2D) {
+      texturingTargets[0] = false;
+    } else if (target == GL_TEXTURE_RECTANGLE) {
+      texturingTargets[1] = false;
+    }    
   }
-
-
+  
+  
+  public boolean texturingIsEnabled(int target) {
+    if (target == GL_TEXTURE_2D) {
+      return texturingTargets[0];
+    } else if (target == GL_TEXTURE_RECTANGLE) {
+      return texturingTargets[1];
+    } else {
+      return false;
+    }
+  }
+  
+  
   public void initTexture(int target, int format, int width, int height) {
     int[] texels = new int[width * height];
     glTexSubImage2D(target, 0, 0, 0, width, height, format, GL_UNSIGNED_BYTE, IntBuffer.wrap(texels));
@@ -1709,11 +1736,18 @@ public class PGL {
 
 
   public void copyToTexture(int target, int format, int id, int x, int y, int w, int h, IntBuffer buffer) {
-    enableTexturing(target);
+    glActiveTexture(GL_TEXTURE0);
+    boolean enabledTex = false;
+    if (!texturingIsEnabled(target)) {
+      enableTexturing(target);
+      enabledTex = true;
+    }
     glBindTexture(target, id);
     glTexSubImage2D(target, 0, x, y, w, h, format, GL_UNSIGNED_BYTE, buffer);
     glBindTexture(target, 0);
-    disableTexturing(target);
+    if (enabledTex) {
+      disableTexturing(target);
+    }
   }
 
 
@@ -1802,8 +1836,12 @@ public class PGL {
       texData.rewind();
       texData.put(texCoords);
 
-      enableTexturing(GL_TEXTURE_2D);
       glActiveTexture(GL_TEXTURE0);
+      boolean enabledTex = false;
+      if (!texturingIsEnabled(GL_TEXTURE_2D)) {
+        enableTexturing(GL_TEXTURE_2D);
+        enabledTex = true;
+      }            
       glBindTexture(GL_TEXTURE_2D, id);
 
       glBindBuffer(GL_ARRAY_BUFFER, 0); // Making sure that no VBO is bound at this point.
@@ -1816,7 +1854,9 @@ public class PGL {
       glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
       glBindTexture(GL_TEXTURE_2D, 0);
-      disableTexturing(GL_TEXTURE_2D);
+      if (enabledTex) {
+        disableTexturing(GL_TEXTURE_2D);
+      } 
 
       glDisableVertexAttribArray(tex2DVertLoc);
       glDisableVertexAttribArray(tex2DTCoordLoc);
@@ -1899,8 +1939,12 @@ public class PGL {
       texData.rewind();
       texData.put(texCoords);
 
-      enableTexturing(GL_TEXTURE_RECTANGLE);
       glActiveTexture(GL_TEXTURE0);
+      boolean enabledTex = false;
+      if (!texturingIsEnabled(GL_TEXTURE_RECTANGLE)) {
+        enableTexturing(GL_TEXTURE_RECTANGLE);
+        enabledTex = true;
+      }
       glBindTexture(GL_TEXTURE_RECTANGLE, id);
 
       glBindBuffer(GL_ARRAY_BUFFER, 0); // Making sure that no VBO is bound at this point.
@@ -1913,8 +1957,10 @@ public class PGL {
       glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
       glBindTexture(GL_TEXTURE_RECTANGLE, 0);
-      disableTexturing(GL_TEXTURE_RECTANGLE);
-
+      if (enabledTex) {
+        disableTexturing(GL_TEXTURE_RECTANGLE);
+      }
+      
       glDisableVertexAttribArray(texRectVertLoc);
       glDisableVertexAttribArray(texRectTCoordLoc);
 
