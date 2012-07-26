@@ -1,25 +1,26 @@
-  PShape cube;
+PShape cube;
 
-  public void setup() {
-    size(400, 400, P3D);
+void setup() {
+  size(400, 400, P3D);
+  smooth();
 
-    cube = createShape(BOX, 100);
-  }
+  cube = createShape(BOX, 100);
+}
 
-  public void draw() {
-    background(120);
+void draw() {
+  background(120);
     
-    lights();
+  lights();
     
-    translate(mouseX, mouseY);
-    rotateX(frameCount * 0.01f);
-    rotateY(frameCount * 0.01f);
+  translate(mouseX, mouseY);
+  rotateX(frameCount * 0.01f);
+  rotateY(frameCount * 0.01f);
     
-    shape(cube);    
-  }
+  shape(cube);    
+}
 
-  public void keyPressed() {
-    // Restarts the OpenGL surface. Automatically 
-    // recreates all the current GL resources.
-    ((PGraphicsOpenGL)g).restartPGL();
-  }
+void keyPressed() {
+  // Changing the smooth configuration restarts the OpenGL surface. 
+  // Automatically recreates all the current GL resources.
+  noSmooth();
+}
