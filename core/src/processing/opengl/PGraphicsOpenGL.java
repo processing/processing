@@ -6717,20 +6717,6 @@ public class PGraphicsOpenGL extends PGraphics {
             }
           }
         }
-        /*
-        // Disabling texturing for each of the targets used
-        // by textures in the cache.
-        for (int i = 0; i < size; i++) {
-          PImage img = textures[i];
-          if (img != null) {
-            Texture tex = pgPrimary.getTexture(img);
-            if (tex != null) {
-              pgl.disableTexturing(tex.glTarget);
-            }
-          }
-        }
-        */
-        
       }
     }
 
