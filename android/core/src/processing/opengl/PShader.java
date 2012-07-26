@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 
-
 /**
  * This class encapsulates a GLSL shader program, including a vertex 
  * and a fragment shader. Originally based in the code by JohnG

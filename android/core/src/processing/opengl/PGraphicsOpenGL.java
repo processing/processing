@@ -204,6 +204,9 @@ public class PGraphicsOpenGL extends PGraphics {
   /** Flag to indicate that we are inside beginCamera/endCamera block. */
   protected boolean manipulatingCamera;
 
+  /** Flag indicating the use of an orthographic projection matrix. */
+  protected boolean usingOrthoProjection;
+  
   // ........................................................
 
   // All the matrices required for camera and geometry transformations.
@@ -229,7 +232,7 @@ public class PGraphicsOpenGL extends PGraphics {
    * Marks when changes to the size have occurred, so that the camera
    * will be reset in beginDraw().
    */
-  protected boolean sizeChanged;
+  protected boolean sized;
 
   static protected final int MATRIX_STACK_DEPTH = 32;
 
@@ -508,8 +511,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
     width = iwidth;
     height = iheight;
-//    width1 = width - 1;
-//    height1 = height - 1;
 
     if (pixels != null) {
       // The user is using the pixels array, so we need to resize accordingly
@@ -529,7 +530,7 @@ public class PGraphicsOpenGL extends PGraphics {
     cameraAspect = (float) width / (float) height;
 
     // set this flag so that beginDraw() will do an update to the camera.
-    sizeChanged = true;
+    sized = true;
 
     // Forces a restart of OpenGL so the canvas has the right size.
     pgl.initialized = false;
@@ -1465,10 +1466,11 @@ public class PGraphicsOpenGL extends PGraphics {
       getGLParameters();
     }
 
-    if (!settingsInited) {
-      defaultSettings();
+    if (screenFramebuffer == null) {
+      screenFramebuffer = new FrameBuffer(parent, width, height, true);
+      setFramebuffer(screenFramebuffer);
     }
-
+    
     if (primarySurface) {
       pgl.updatePrimary();
       if (pgl.primaryIsDoubleBuffered()) {
@@ -1495,7 +1497,7 @@ public class PGraphicsOpenGL extends PGraphics {
       pgl.updateOffscreen(pgPrimary.pgl);
       pgl.glDrawBuffer(PGL.GL_COLOR_ATTACHMENT0);
     }
-
+    
     // We are ready to go!
     report("top beginDraw()");
 
@@ -1552,7 +1554,7 @@ public class PGraphicsOpenGL extends PGraphics {
     if (resized) {
       // To avoid having garbage in the screen after a resize,
       // in the case background is not called in draw().
-      background(0);
+      background(backgroundColor);
       if (texture != null) {
         // The screen texture should be deleted because it
         // corresponds to the old window size.
@@ -1564,7 +1566,7 @@ public class PGraphicsOpenGL extends PGraphics {
       resized = false;
     }
 
-    if (sizeChanged) {
+    if (sized) {
       // Sets the default projection and camera (initializes modelview).
       // If the user has setup up their own projection, they'll need
       // to fix it after resize anyway. This helps the people who haven't
@@ -1573,7 +1575,7 @@ public class PGraphicsOpenGL extends PGraphics {
       defaultCamera();
 
       // clear the flag
-      sizeChanged = false;
+      sized = false;
     } else {
       // Eliminating any user's transformations by going back to the
       // original camera setup.
@@ -1623,6 +1625,10 @@ public class PGraphicsOpenGL extends PGraphics {
       }
     }
 
+    if (!settingsInited) {
+      defaultSettings();
+    } 
+    
     if (restoreSurface) {
       restoreSurfaceFromPixels();
       restoreSurface = false;
@@ -1991,11 +1997,6 @@ public class PGraphicsOpenGL extends PGraphics {
     manipulatingCamera = false;
 
     clearColorBuffer = false;
-
-    if (screenFramebuffer == null) {
-      screenFramebuffer = new FrameBuffer(parent, width, height, true);
-      setFramebuffer(screenFramebuffer);
-    }
 
     // easiest for beginners
     textureMode(IMAGE);
@@ -3319,15 +3320,15 @@ public class PGraphicsOpenGL extends PGraphics {
     textTex = (PFontTexture)textFont.getCache(pgPrimary);
     if (textTex == null) {
       textTex = new PFontTexture(parent, textFont, maxTextureSize, maxTextureSize, is3D());
-      textFont.setCache(this, textTex);
+      textFont.setCache(pgPrimary, textTex);
     } else {
       if (textTex.contextIsOutdated()) {
         textTex = new PFontTexture(parent, textFont, PApplet.min(PGL.MAX_FONT_TEX_SIZE, maxTextureSize),
                                                      PApplet.min(PGL.MAX_FONT_TEX_SIZE, maxTextureSize), is3D());
-        textFont.setCache(this, textTex);
+        textFont.setCache(pgPrimary, textTex);
       }
     }
-    textTex.setFirstTexture();
+    textTex.begin();
 
     // Saving style parameters modified by text rendering.
     int savedTextureMode = textureMode;
@@ -3366,6 +3367,8 @@ public class PGraphicsOpenGL extends PGraphics {
     // won't be optimal because at the end of each text() call the geometry
     // will be flushed when restoring the user's blend.
     blendMode(savedBlendMode);
+    
+    textTex.end();
   }
 
 
@@ -3773,20 +3776,38 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     projectionStackDepth--;
     projection.set(projectionStack[projectionStackDepth]);
+    checkOrthoProjection();
   }
 
 
   public void applyProjection(PMatrix3D mat) {
     flush();
     projection.apply(mat);
+    checkOrthoProjection();
   }
 
 
   public void setProjection(PMatrix3D mat) {
     flush();
     projection.set(mat);
+    checkOrthoProjection();
   }
 
+  
+  protected void checkOrthoProjection() {
+    // If the matrix is of the form:
+    // x, 0, 0, a,
+    // 0, y, 0, b,
+    // 0, 0, z, c,
+    // 0, 0, 0, 1
+    // then the set usingOrthoProjection to true.
+    usingOrthoProjection = zero(projection.m01) && zero(projection.m02) && 
+                           zero(projection.m10) && zero(projection.m12) && 
+                           zero(projection.m20) && zero(projection.m21) &&
+                           zero(projection.m30) && zero(projection.m31) &&
+                           zero(projection.m32) && same(projection.m33, 1);
+  }
+  
 
   //////////////////////////////////////////////////////////////
 
@@ -4146,6 +4167,8 @@ public class PGraphicsOpenGL extends PGraphics {
                    0,  0, 0,  1);
 
     calcProjmodelview();
+    
+    usingOrthoProjection = true;
   }
 
 
@@ -4208,6 +4231,8 @@ public class PGraphicsOpenGL extends PGraphics {
                         0,       0,                  -1,                0);
 
     calcProjmodelview();
+    
+    usingOrthoProjection = false;
   }
 
 
@@ -5272,7 +5297,7 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  public void filter(Object shader) {
+  public void filter(PShader shader) {
     if (!(shader instanceof PolyTexShader)) {
       PGraphics.showWarning("Object is not a valid shader");
       return;
@@ -5760,50 +5785,28 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-//  public Object loadShader(String vertFilename, String fragFilename) {
-//    return loadShader(vertFilename, fragFilename, PShader.TEXTURED);
-//  }
-//
-//
-//  public Object loadShader(String fragFilename) {
-//    return loadShader(fragFilename, PShader.TEXTURED);
-//  }
+  public PShader loadShader(String fragFilename) {
+    return loadShader(PShader.TEXTURED, fragFilename);
+  }
 
 
   public void shader(PShader shader) {
-//  public void shader(PShader shader, int kind) {
-//    if (!(shader instanceof PShader)) {
-//      PGraphics.showWarning("Object is not a valid shader!");
-//      return;
-//    }
-    flush(); // Flushing geometry with a different shader.
+    flush(); // Flushing geometry drawn with a different shader.
 
     // The ordering below is important, because some of these classes
     // extend others, so multiple instanceof cases will evaluate to 'true'.
-//    if (kind == PShader.FLAT) {
-//  } else if (kind == PShader.TEXTURED) {
     if (shader instanceof PolyTexShader) {
       polyTexShader = (PolyTexShader) shader;
-
     } else if (shader instanceof PolyFlatShader) {
       polyFlatShader = (PolyFlatShader) shader;
-
     } else if (shader instanceof PolyFullShader) {
       polyFullShader = (PolyFullShader) shader;
-
-//    } else if (kind == PShader.LIT) {
     } else if (shader instanceof PolyLightShader) {
       polyLightShader = (PolyLightShader) shader;
-
-//    } else if (kind == PShader.FULL) {
-//    } else if (kind == PShader.LINE) {
     } else if (shader instanceof LineShader) {
       lineShader = (LineShader) shader;
-
-//    } else if (kind == PShader.POINT) {
     } else if (shader instanceof PointShader) {
       pointShader = (PointShader) shader;
-
     } else {
       showWarning("shader() called with an unknown shader type");
     }
@@ -5811,7 +5814,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   public void resetShader(int kind) {
-    flush(); // Flushing geometry with a different shader.
+    flush(); // Flushing geometry drawn with a different shader.
     if (kind == PShader.FLAT) {
       if (defPolyFlatShader == null) {
         defPolyFlatShader = new PolyFlatShader(parent, defPolyFlatShaderVertURL, defPolyNoTexShaderFragURL);
@@ -6413,7 +6416,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
     protected int viewportLoc;
     protected int perspectiveLoc;
-    protected int zfactorLoc;
+    protected int scaleLoc;
 
     protected int inVertexLoc;
     protected int inColorLoc;
@@ -6444,7 +6447,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
       viewportLoc = getUniformLoc("viewport");
       perspectiveLoc = getUniformLoc("perspective");
-      zfactorLoc = getUniformLoc("zfactor");
+      scaleLoc = getUniformLoc("scale");
     }
 
     public void setVertexAttribute(int vboId, int size, int type, int stride, int offset) {
@@ -6494,10 +6497,14 @@ public class PGraphicsOpenGL extends PGraphics {
           setUniformValue(perspectiveLoc, 0);
         }
 
-        if (pgCurrent.hintEnabled(ENABLE_ACCURATE_2D)) {
-          setUniformValue(zfactorLoc, 1.0f);
+        if (pgCurrent.hintEnabled(ENABLE_ACCURATE_2D)) {          
+          setUniformValue(scaleLoc, 1.0f, 1.0f, 1.0f);
         } else {
-          setUniformValue(zfactorLoc, 0.99f);
+          if (usingOrthoProjection) {
+            setUniformValue(scaleLoc, 1.0f, 1.0f, 0.99f);
+          } else {
+            setUniformValue(scaleLoc, 0.99f, 0.99f, 0.99f);
+          }
         }
       }
     }
@@ -6639,7 +6646,7 @@ public class PGraphicsOpenGL extends PGraphics {
     int[] lastCache;
     boolean hasTexture;
     Texture tex0;
-
+    
     TexCache() {
       allocate();
     }
@@ -6704,16 +6711,6 @@ public class PGraphicsOpenGL extends PGraphics {
             Texture tex = pgPrimary.getTexture(img);
             if (tex != null) {
               tex.unbind();
-            }
-          }
-        }
-        // Disabling texturing for each of the targets used
-        // by textures in the cache.
-        for (int i = 0; i < size; i++) {
-          PImage img = textures[i];
-          if (img != null) {
-            Texture tex = pgPrimary.getTexture(img);
-            if (tex != null) {
               pgl.disableTexturing(tex.glTarget);
             }
           }
@@ -10133,13 +10130,13 @@ public class PGraphicsOpenGL extends PGraphics {
             path.lineTo(in.vertices[3 * i1 + 0], in.vertices[3 * i1 + 1]);
             break;
           case EDGE_STOP:
-            path.lineTo(in.vertices[3 * i1 + 0], in.vertices[3 * i1 + 1]);
-            path.closePath();
+            path.lineTo(in.vertices[3 * i1 + 0], in.vertices[3 * i1 + 1]);            
+            path.moveTo(in.vertices[3 * i1 + 0], in.vertices[3 * i1 + 1]);
             break;
           case EDGE_SINGLE:
             path.moveTo(in.vertices[3 * i0 + 0], in.vertices[3 * i0 + 1]);
             path.lineTo(in.vertices[3 * i1 + 0], in.vertices[3 * i1 + 1]);
-            path.closePath();
+            path.moveTo(in.vertices[3 * i1 + 0], in.vertices[3 * i1 + 1]);
             break;
           }
         }

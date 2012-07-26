@@ -176,6 +176,9 @@ public class PGL {
   public static final int GL_FUNC_REVERSE_SUBTRACT = GLES20.GL_FUNC_REVERSE_SUBTRACT;
   
   public static final int GL_TEXTURE_2D     = GLES20.GL_TEXTURE_2D;
+  
+  public static final int GL_TEXTURE_BINDING_2D        = GLES20.GL_TEXTURE_BINDING_2D;
+  
   public static final int GL_RGB            = GLES20.GL_RGB;
   public static final int GL_RGBA           = GLES20.GL_RGBA;
   public static final int GL_ALPHA          = GLES20.GL_ALPHA;
@@ -311,6 +314,12 @@ public class PGL {
    * analogous to the GLEventListener in JOGL */
   protected AndroidRenderer renderer;
 
+  /** Which texturing targets are enabled */
+  protected static boolean[] texturingTargets = { false }; 
+  
+  /** Which textures are bound to each target */
+  protected static int[] boundTextures = { 0 };
+  
   ///////////////////////////////////////////////////////////////////////////////////
   
   // FBO for incremental drawing  
@@ -766,6 +775,9 @@ public class PGL {
   
   public void glBindTexture(int target, int id) {
     GLES20.glBindTexture(target, id);
+    if (target == GL_TEXTURE_2D) {
+      boundTextures[0] = id;
+    }    
   }
   
   
@@ -1367,10 +1379,34 @@ public class PGL {
   
   
   public void enableTexturing(int target) {
+    if (target == GL_TEXTURE_2D) {
+      texturingTargets[0] = true;
+    }
   }
 
-  
+
   public void disableTexturing(int target) {
+    if (target == GL_TEXTURE_2D) {
+      texturingTargets[0] = false;
+    }    
+  }
+  
+  
+  public boolean texturingIsEnabled(int target) {
+    if (target == GL_TEXTURE_2D) {
+      return texturingTargets[0];
+    } else {
+      return false;
+    }
+  }
+  
+  
+  public boolean textureIsBound(int target, int id) {
+    if (target == GL_TEXTURE_2D) {
+      return boundTextures[0] == id;
+    } else {
+      return false;
+    }    
   }  
   
   
@@ -1390,11 +1426,18 @@ public class PGL {
 
   
   public void copyToTexture(int target, int format, int id, int x, int y, int w, int h, IntBuffer buffer) {           
-    enableTexturing(target);
+    glActiveTexture(GL_TEXTURE0);
+    boolean enabledTex = false;
+    if (!texturingIsEnabled(target)) {
+      enableTexturing(target);
+      enabledTex = true;
+    }
     glBindTexture(target, id);    
     glTexSubImage2D(target, 0, x, y, w, h, format, GL_UNSIGNED_BYTE, buffer);
     glBindTexture(target, 0);
-    disableTexturing(target);
+    if (enabledTex) {
+      disableTexturing(target);
+    }
   }   
    
   
@@ -1470,8 +1513,12 @@ public class PGL {
       texData.rewind();
       texData.put(texCoords);
       
-      enableTexturing(target);
       glActiveTexture(GL_TEXTURE0);
+      boolean enabledTex = false;
+      if (!texturingIsEnabled(GL_TEXTURE_2D)) {
+        enableTexturing(GL_TEXTURE_2D);
+        enabledTex = true;
+      }
       glBindTexture(target, id);
       
       texData.position(0);
@@ -1482,7 +1529,9 @@ public class PGL {
       glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
       
       glBindTexture(target, 0);
-      disableTexturing(target);
+      if (enabledTex) {
+        disableTexturing(GL_TEXTURE_2D);
+      } 
 
       glDisableVertexAttribArray(texVertLoc);
       glDisableVertexAttribArray(texTCoordLoc);
