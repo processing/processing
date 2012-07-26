@@ -25,8 +25,5 @@ void keyPressed() {
   else if (key == '4') pg.smooth(8);
   else if (key == '5') pg.smooth(16);
   else if (key == '6') pg.smooth(32); 
-  else if (key == ' ') {
-    ((PGraphicsOpenGL)g).restartPGL();
-  }
 }
 
