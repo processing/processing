@@ -232,7 +232,7 @@ public class PGraphicsOpenGL extends PGraphics {
    * Marks when changes to the size have occurred, so that the camera
    * will be reset in beginDraw().
    */
-  protected boolean sizeChanged;
+  protected boolean sized;
 
   static protected final int MATRIX_STACK_DEPTH = 32;
 
@@ -511,8 +511,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
     width = iwidth;
     height = iheight;
-//    width1 = width - 1;
-//    height1 = height - 1;
 
     if (pixels != null) {
       // The user is using the pixels array, so we need to resize accordingly
@@ -532,7 +530,7 @@ public class PGraphicsOpenGL extends PGraphics {
     cameraAspect = (float) width / (float) height;
 
     // set this flag so that beginDraw() will do an update to the camera.
-    sizeChanged = true;
+    sized = true;
 
     // Forces a restart of OpenGL so the canvas has the right size.
     pgl.initialized = false;
@@ -1468,10 +1466,11 @@ public class PGraphicsOpenGL extends PGraphics {
       getGLParameters();
     }
 
-    if (!settingsInited) {
-      defaultSettings();
+    if (screenFramebuffer == null) {
+      screenFramebuffer = new FrameBuffer(parent, width, height, true);
+      setFramebuffer(screenFramebuffer);
     }
-
+    
     if (primarySurface) {
       pgl.updatePrimary();
       if (pgl.primaryIsDoubleBuffered()) {
@@ -1498,7 +1497,7 @@ public class PGraphicsOpenGL extends PGraphics {
       pgl.updateOffscreen(pgPrimary.pgl);
       pgl.glDrawBuffer(PGL.GL_COLOR_ATTACHMENT0);
     }
-
+    
     // We are ready to go!
     report("top beginDraw()");
 
@@ -1555,7 +1554,7 @@ public class PGraphicsOpenGL extends PGraphics {
     if (resized) {
       // To avoid having garbage in the screen after a resize,
       // in the case background is not called in draw().
-      background(0);
+      background(backgroundColor);
       if (texture != null) {
         // The screen texture should be deleted because it
         // corresponds to the old window size.
@@ -1567,7 +1566,7 @@ public class PGraphicsOpenGL extends PGraphics {
       resized = false;
     }
 
-    if (sizeChanged) {
+    if (sized) {
       // Sets the default projection and camera (initializes modelview).
       // If the user has setup up their own projection, they'll need
       // to fix it after resize anyway. This helps the people who haven't
@@ -1576,7 +1575,7 @@ public class PGraphicsOpenGL extends PGraphics {
       defaultCamera();
 
       // clear the flag
-      sizeChanged = false;
+      sized = false;
     } else {
       // Eliminating any user's transformations by going back to the
       // original camera setup.
@@ -1626,6 +1625,10 @@ public class PGraphicsOpenGL extends PGraphics {
       }
     }
 
+    if (!settingsInited) {
+      defaultSettings();
+    } 
+    
     if (restoreSurface) {
       restoreSurfaceFromPixels();
       restoreSurface = false;
@@ -1994,11 +1997,6 @@ public class PGraphicsOpenGL extends PGraphics {
     manipulatingCamera = false;
 
     clearColorBuffer = false;
-
-    if (screenFramebuffer == null) {
-      screenFramebuffer = new FrameBuffer(parent, width, height, true);
-      setFramebuffer(screenFramebuffer);
-    }
 
     // easiest for beginners
     textureMode(IMAGE);
