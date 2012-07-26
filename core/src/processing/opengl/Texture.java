@@ -100,8 +100,6 @@ public class Texture implements PConstants {
   protected boolean modified;
   protected int mx1, my1, mx2, my2;
   
-  protected int[] tempName = { 0 };
-    
   protected Object bufferSource;
   protected LinkedList<BufferData> bufferCache = null;
   protected Method disposeBufferMethod;
@@ -583,7 +581,7 @@ public class Texture implements PConstants {
   
   
   public void unbind() {
-    if (boundTexture() == glName) {
+    if (pgl.textureIsBound(glTarget, glName)) {
       // We don't want to unbind another texture
       // that might be bound instead of this one.
       if (!pgl.texturingIsEnabled(glTarget)) {
@@ -781,12 +779,6 @@ public class Texture implements PConstants {
  
   // Utilities 
         
-  
-  protected int boundTexture() {
-    pgl.glGetIntegerv(glTarget, tempName, 0);    
-    return tempName[0];
-  }
-  
   
   /**
    * Flips intArray along the X axis.

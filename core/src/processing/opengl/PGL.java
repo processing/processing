@@ -362,6 +362,9 @@ public class PGL {
   /** Which texturing targets are enabled */
   protected static boolean[] texturingTargets = { false, false };
   
+  /** Which textures are bound to each target */
+  protected static int[] boundTextures = { 0, 0 };
+  
   ///////////////////////////////////////////////////////////////////////////////////
 
   // FBO for anti-aliased rendering
@@ -1060,6 +1063,11 @@ public class PGL {
 
   public void glBindTexture(int target, int id) {
     gl.glBindTexture(target, id);
+    if (target == GL_TEXTURE_2D) {
+      boundTextures[0] = id;
+    } else if (target == GL_TEXTURE_RECTANGLE) {
+      boundTextures[1] = id;
+    }
   }
 
 
@@ -1726,6 +1734,17 @@ public class PGL {
     } else {
       return false;
     }
+  }
+  
+  
+  public boolean textureIsBound(int target, int id) {
+    if (target == GL_TEXTURE_2D) {
+      return boundTextures[0] == id;
+    } else if (target == GL_TEXTURE_RECTANGLE) {
+      return boundTextures[1] == id;
+    } else {
+      return false;
+    }    
   }
   
   
