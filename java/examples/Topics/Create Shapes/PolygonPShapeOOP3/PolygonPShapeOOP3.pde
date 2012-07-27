@@ -18,10 +18,10 @@ void setup() {
   smooth();
   
   shapes[0] = createShape(ELLIPSE,0,0,100,100);
-  shapes[0].fill(0,127);
+  shapes[0].fill(255,127);
   shapes[0].stroke(0);
   shapes[1] = createShape(RECT,0,0,100,100);
-  shapes[1].fill(0,127);
+  shapes[1].fill(255,127);
   shapes[1].stroke(0);
   shapes[2] = createShape();
   shapes[2].fill(0,127);
@@ -45,14 +45,14 @@ void setup() {
   polygons = new ArrayList<Polygon>();
   
   for (int i = 0; i < 25; i++) {
-    int selection = int(random(2));        // Pick a random index
+    int selection = int(random(shapes.length));        // Pick a random index
     Polygon p = new Polygon(shapes[selection]);        // Use corresponding PShape to create Polygon
     polygons.add(p);
   }
 }
 
 void draw() {
-  background(255);
+  background(51);
 
   // Display and move them all
   for (Polygon poly : polygons) {
