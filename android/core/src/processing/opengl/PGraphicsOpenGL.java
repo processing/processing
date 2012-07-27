@@ -34,9 +34,7 @@ import processing.core.PVector;
 
 import java.net.URL;
 import java.nio.*;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -9208,7 +9206,7 @@ public class PGraphicsOpenGL extends PGraphics {
       polySpecular[count] = sp;
       polyEmissive[count] = em;
       polyShininess[count] = shine;
-    }
+    }  
 
     void addPolyVertices(InGeometry in) {
       addPolyVertices(in, in.firstVertex, in.lastVertex);
