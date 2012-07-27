@@ -11,7 +11,7 @@ void setup() {
   smooth();
   // Make a shape
   s = createShape();
-  s.noFill();
+  s.fill(0);
   s.stroke(255);
   s.strokeWeight(2);
   // Exterior part of shape
