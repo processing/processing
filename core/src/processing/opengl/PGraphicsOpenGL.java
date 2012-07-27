@@ -35,6 +35,7 @@ import processing.core.PVector;
 import java.net.URL;
 import java.nio.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9521,6 +9522,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
     int[] rawIndices;
     int rawSize;
+    int[] dupIndices;
+    int dupCount;    
 
     int firstPolyIndexCache;
     int lastPolyIndexCache;
@@ -10471,8 +10474,8 @@ public class PGraphicsOpenGL extends PGraphics {
       int inMaxVertRef = inMaxVert0; // Reference vertex where last break split occurred
       int inMaxVertRel = -1;         // Position of vertices from last range relative to
                                      // split position.
+      dupCount = 0;      
       
-      Set<Integer> inDupSet = null;
       IndexCache cache = tess.polyIndexCache;
       // In retained mode, each shape has with its own cache item, since
       // they should always be available to be rendererd individually, even
@@ -10497,18 +10500,15 @@ public class PGraphicsOpenGL extends PGraphics {
         int count = cache.vertexCount[index];
         int ri0, ri1, ri2;
         if (ii0 < 0) {
-          if (inDupSet == null) inDupSet = new HashSet<Integer>();
-          inDupSet.add(ii0);
+          addDupIndex(ii0);
           ri0 = ii0;
         } else ri0 = count + ii0;
         if (ii1 < 0) {
-          if (inDupSet == null) inDupSet = new HashSet<Integer>();
-          inDupSet.add(ii1);
+          addDupIndex(ii1);
           ri1 = ii1;
         } else ri1 = count + ii1;
         if (ii2 < 0) {
-          if (inDupSet == null) inDupSet = new HashSet<Integer>();
-          inDupSet.add(ii2);
+          addDupIndex(ii2);
           ri2 = ii2;
         } else ri2 = count + ii2;
 
@@ -10521,46 +10521,42 @@ public class PGraphicsOpenGL extends PGraphics {
         inMaxVert0 = PApplet.min(inMaxVert0, PApplet.min(i0, i1, i2));
 
         inMaxVertRel = PApplet.max(inMaxVertRel, PApplet.max(ri0, ri1, ri2));
-        int dup = inDupSet == null ? 0 : inDupSet.size();
 
-        if ((PGL.MAX_VERTEX_INDEX1 - 3 <= inMaxVertRel + dup && inMaxVertRel + dup < PGL.MAX_VERTEX_INDEX1) ||
+        if ((PGL.MAX_VERTEX_INDEX1 - 3 <= inMaxVertRel + dupCount && inMaxVertRel + dupCount < PGL.MAX_VERTEX_INDEX1) ||
             (tr == trCount - 1)) {
           // The vertex indices of the current group are about to
           // surpass the MAX_VERTEX_INDEX limit, or we are at the last triangle
           // so we need to wrap-up things anyways.
 
-          int nondup = 0;
-          if (0 < dup) {
+          int nondupCount = 0;
+          if (0 < dupCount) {
             // Adjusting the negative indices so they correspond to vertices added
             // at the end of the block.
-            ArrayList<Integer> inDupList = new ArrayList<Integer>(inDupSet);
-            Collections.sort(inDupList);
             for (int i = inInd0; i <= inInd1; i++) {
               int ri = tess.polyIndices[offset + i];
               if (ri < 0) {
-                tess.polyIndices[offset + i] = (short) (inMaxVertRel + 1 + inDupList.indexOf(ri));
+                tess.polyIndices[offset + i] = (short) (inMaxVertRel + 1 + dupIndexPos(ri));
               }
             }
 
             if (inMaxVertRef <= inMaxVert1) {
               // Copy non-duplicated vertices from current region first
               tess.addPolyVertices(in, inMaxVertRef, inMaxVert1);
-              nondup = inMaxVert1 - inMaxVertRef + 1;
+              nondupCount = inMaxVert1 - inMaxVertRef + 1;
             }
             
             // Copy duplicated vertices from previous regions last
-            for (int i = 0; i < inDupList.size(); i++) {
-              int ri = inDupList.get(i);
-              tess.addPolyVertex(in, ri + inMaxVertRef);
+            for (int i = 0; i < dupCount; i++) {
+              tess.addPolyVertex(in, dupIndices[i] + inMaxVertRef);
             }
           } else {
             // Copy non-duplicated vertices from current region first
             tess.addPolyVertices(in, inMaxVert0, inMaxVert1);
-            nondup = inMaxVert1 - inMaxVert0 + 1;
+            nondupCount = inMaxVert1 - inMaxVert0 + 1;
           }
 
           // Increment counts:
-          cache.incCounts(index, inInd1 - inInd0 + 1, nondup + dup);
+          cache.incCounts(index, inInd1 - inInd0 + 1, nondupCount + dupCount);
           lastPolyIndexCache = index;
                     
           // Prepare all variables to start next cache:
@@ -10569,9 +10565,52 @@ public class PGraphicsOpenGL extends PGraphics {
           inMaxVertRef = inMaxVert1 + 1;
           inMaxVert0 = inMaxVertRef;
           inInd0 = inInd1 + 1;
-          if (inDupSet != null) inDupSet.clear();
+          if (dupIndices != null) Arrays.fill(dupIndices, 0, dupCount, 0);
+          dupCount = 0;          
         }
       }
+    }
+    
+    void addDupIndex(int idx) {
+      if (dupIndices == null) {
+        dupIndices = new int[16];
+      }
+      if (dupIndices.length == dupCount) {
+        int n = dupCount << 1;
+        
+        int temp[] = new int[n];
+        PApplet.arrayCopy(dupIndices, 0, temp, 0, dupCount);
+        dupIndices = temp;       
+      }
+      
+      if (idx < dupIndices[0]) {
+        // Add at the beginning
+        for (int i = dupCount; i > 0; i--) dupIndices[i] = dupIndices[i - 1];
+        dupIndices[0] = idx;
+        dupCount++;
+      } else if (dupIndices[dupCount - 1] < idx) {
+        // Add at the end
+        dupIndices[dupCount] = idx; 
+        dupCount++;
+      } else {        
+        for (int i = 0; i < dupCount - 1; i++) {
+          if (dupIndices[i] == idx) break;           
+          if (dupIndices[i] < idx && idx < dupIndices[i + 1]) {
+            // Insert between i and i + 1:
+            for (int j = dupCount; j > i + 1; j--) dupIndices[j] = dupIndices[j - 1];
+            dupIndices[i + 1] = idx;
+            dupCount++;
+            break;
+          }
+        }
+      }
+    }
+    
+    int dupIndexPos(int idx) {
+      for (int i = 0; i < dupCount; i++) {
+        if (dupIndices[i] == idx) return i;        
+      }
+      return 0;
     }
 
     void setRawSize(int size) {
