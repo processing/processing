@@ -10328,7 +10328,7 @@ public class PGraphicsOpenGL extends PGraphics {
         for (int i = in.firstVertex; i <= in.lastVertex; i++) {
           rawIndices[idx++] = i;
         }
-        partitionRawIndices();
+        splitRawIndices();
       }
       endTex();
       tessellateEdges();
@@ -10341,7 +10341,7 @@ public class PGraphicsOpenGL extends PGraphics {
         int nInInd = indices.length;
         setRawSize(nInInd);
         PApplet.arrayCopy(indices, rawIndices, nInInd);
-        partitionRawIndices();
+        splitRawIndices();
       }
       endTex();
       tessellateEdges();
@@ -10359,7 +10359,7 @@ public class PGraphicsOpenGL extends PGraphics {
           rawIndices[idx++] = i;
           rawIndices[idx++] = i + 1;
         }
-        partitionRawIndices();
+        splitRawIndices();
       }
       endTex();
       tessellateEdges();
@@ -10382,7 +10382,7 @@ public class PGraphicsOpenGL extends PGraphics {
             rawIndices[idx++] = i - 1;
           }
         }
-        partitionRawIndices();
+        splitRawIndices();
       }
       endTex();
       tessellateEdges();
@@ -10410,7 +10410,7 @@ public class PGraphicsOpenGL extends PGraphics {
           rawIndices[idx++] = i2;
           rawIndices[idx++] = i3;
         }
-        partitionRawIndices();
+        splitRawIndices();
       }
       endTex();
       tessellateEdges();
@@ -10438,13 +10438,13 @@ public class PGraphicsOpenGL extends PGraphics {
           rawIndices[idx++] = i2;
           rawIndices[idx++] = i3;
         }
-        partitionRawIndices();
+        splitRawIndices();
       }
       endTex();
       tessellateEdges();
     }
 
-    // Uses the raw indices to partition the geometry into contiguous
+    // Uses the raw indices to split the geometry into contiguous
     // index groups when the vertex indices become too large. The basic
     // idea of this algorithm is to scan through the array of raw indices
     // in groups of three vertices at the time (since we are always dealing
@@ -10460,14 +10460,18 @@ public class PGraphicsOpenGL extends PGraphics {
     // http://gameangst.com/?p=9
     // http://home.comcast.net/~tom_forsyth/papers/fast_vert_cache_opt.html
     // http://www.ludicon.com/castano/blog/2009/02/optimal-grid-rendering/
-    void partitionRawIndices() {
+    void splitRawIndices() {
       tess.polyIndexCheck(rawSize);
       int offset = tess.firstPolyIndex;
 
+      // Current index and vertex ranges
       int inInd0 = 0, inInd1 = 0;
       int inMaxVert0 = in.firstVertex, inMaxVert1 = in.firstVertex;
-      int inMaxRel = 0;
-
+      
+      int inMaxVertRef = inMaxVert0; // Reference vertex where last break split occurred
+      int inMaxVertRel = -1;         // Position of vertices from last range relative to
+                                     // split position.
+      
       Set<Integer> inDupSet = null;
       IndexCache cache = tess.polyIndexCache;
       // In retained mode, each shape has with its own cache item, since
@@ -10485,9 +10489,9 @@ public class PGraphicsOpenGL extends PGraphics {
         int i2 = rawIndices[3 * tr + 2];
 
         // Vertex indices relative to the last copy position.
-        int ii0 = i0 - inMaxVert0;
-        int ii1 = i1 - inMaxVert0;
-        int ii2 = i2 - inMaxVert0;
+        int ii0 = i0 - inMaxVertRef;
+        int ii1 = i1 - inMaxVertRef;
+        int ii2 = i2 - inMaxVertRef;
 
         // Vertex indices relative to the current group.
         int count = cache.vertexCount[index];
@@ -10513,20 +10517,19 @@ public class PGraphicsOpenGL extends PGraphics {
         tess.polyIndices[offset + 3 * tr + 2] = (short) ri2;
 
         inInd1 = 3 * tr + 2;
-        inMaxVert1 = PApplet.max(i0, i1, i2);
+        inMaxVert1 = PApplet.max(inMaxVert1, PApplet.max(i0, i1, i2));
+        inMaxVert0 = PApplet.min(inMaxVert0, PApplet.min(i0, i1, i2));
 
-        inMaxRel = PApplet.max(inMaxRel, PApplet.max(ri0, ri1, ri2));
+        inMaxVertRel = PApplet.max(inMaxVertRel, PApplet.max(ri0, ri1, ri2));
         int dup = inDupSet == null ? 0 : inDupSet.size();
 
-        if ((PGL.MAX_VERTEX_INDEX1 - 3 <= inMaxRel + dup && inMaxRel + dup < PGL.MAX_VERTEX_INDEX1) ||
+        if ((PGL.MAX_VERTEX_INDEX1 - 3 <= inMaxVertRel + dup && inMaxVertRel + dup < PGL.MAX_VERTEX_INDEX1) ||
             (tr == trCount - 1)) {
           // The vertex indices of the current group are about to
           // surpass the MAX_VERTEX_INDEX limit, or we are at the last triangle
           // so we need to wrap-up things anyways.
 
-          // So, copy vertices in current region first
-          tess.addPolyVertices(in, inMaxVert0, inMaxVert1);
-
+          int nondup = 0;
           if (0 < dup) {
             // Adjusting the negative indices so they correspond to vertices added
             // at the end of the block.
@@ -10535,24 +10538,36 @@ public class PGraphicsOpenGL extends PGraphics {
             for (int i = inInd0; i <= inInd1; i++) {
               int ri = tess.polyIndices[offset + i];
               if (ri < 0) {
-                tess.polyIndices[offset + i] = (short) (inMaxRel + 1 + inDupList.indexOf(ri));
+                tess.polyIndices[offset + i] = (short) (inMaxVertRel + 1 + inDupList.indexOf(ri));
               }
             }
 
+            if (inMaxVertRef <= inMaxVert1) {
+              // Copy non-duplicated vertices from current region first
+              tess.addPolyVertices(in, inMaxVertRef, inMaxVert1);
+              nondup = inMaxVert1 - inMaxVertRef + 1;
+            }
+            
             // Copy duplicated vertices from previous regions last
             for (int i = 0; i < inDupList.size(); i++) {
               int ri = inDupList.get(i);
-              tess.addPolyVertex(in, ri + inMaxVert0);
+              tess.addPolyVertex(in, ri + inMaxVertRef);
             }
+          } else {
+            // Copy non-duplicated vertices from current region first
+            tess.addPolyVertices(in, inMaxVert0, inMaxVert1);
+            nondup = inMaxVert1 - inMaxVert0 + 1;
           }
 
           // Increment counts:
-          cache.incCounts(index, inInd1 - inInd0 + 1, inMaxVert1 - inMaxVert0 + 1 + dup);
+          cache.incCounts(index, inInd1 - inInd0 + 1, nondup + dup);
           lastPolyIndexCache = index;
+                    
+          // Prepare all variables to start next cache:
           index = -1;
-
-          inMaxRel = 0;
-          inMaxVert0 = inMaxVert1 + 1;
+          inMaxVertRel = -1;
+          inMaxVertRef = inMaxVert1 + 1;
+          inMaxVert0 = inMaxVertRef;
           inInd0 = inInd1 + 1;
           if (inDupSet != null) inDupSet.clear();
         }
