@@ -245,48 +245,29 @@ public class EditorConsole extends JScrollPane {
   }
 
 
-//  public void write(byte b[], int offset, int length, boolean err) {
-//    // we could do some cross platform CR/LF mangling here before outputting
-//    // add text to output document
-//    message(new String(b, offset, length), err, false);
-//  }
-
-
-  // added sync for 0091.. not sure if it helps or hinders
-  //synchronized public void message(String what, boolean err, boolean advance) {
   synchronized public void message(String what, boolean err) {
     if (err) {
       systemErr.print(what);
-      //systemErr.print("CE" + what);
     } else {
       systemOut.print(what);
-      //systemOut.print("CO" + what);
     }
-
-//    if (advance) {
-//      appendText("\n", err);
-//      if (err) {
-//        systemErr.println();
-//      } else {
-//        systemOut.println();
-//      }
-//    }
-
-    // Append a piece of text to the console. Swing components are NOT
-    // thread-safe, and since the MessageSiphon instantiates new threads,
-    // and in those callbacks, they often print output to stdout and stderr,
-    // which are wrapped by EditorConsoleStream and eventually leads to
-    // EditorConsole.appendText(), which directly updates the Swing text
-    // components, causing deadlock. Updates are buffered to the console and
-    // displayed at regular intervals on Swing's event-dispatching thread.
-    // (patch by David Mellis)
 
     if (err && (what.contains("invalid context 0x0") || (what.contains("invalid drawable")))) {
       // Respectfully declining... This is a quirk of more recent releases of
       // Java on Mac OS X, but is widely reported as the source of any other
       // bug or problem that a user runs into. It may well be a Processing
       // bug, but until we know, we're suppressing the messages.
+    } else if (err && what.contains("XInitThreads() called for concurrent")) {
+      // "Info: XInitThreads() called for concurrent Thread support" message on Linux
     } else {
+      // Append a piece of text to the console. Swing components are NOT
+      // thread-safe, and since the MessageSiphon instantiates new threads,
+      // and in those callbacks, they often print output to stdout and stderr,
+      // which are wrapped by EditorConsoleStream and eventually leads to
+      // EditorConsole.appendText(), which directly updates the Swing text
+      // components, causing deadlock. Updates are buffered to the console and
+      // displayed at regular intervals on Swing's event-dispatching thread.
+      // (patch by David Mellis)
       consoleDoc.appendString(what, err ? errStyle : stdStyle);
     }
   }

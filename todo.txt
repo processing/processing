@@ -31,6 +31,7 @@ X   didn't actually do it
 o examples button on toolbar? open / recent / sketchbook?
 X switch to using a warning dialog when bits aren't available
 X   http://code.google.com/p/processing/issues/detail?id=884
+X suppress XInitThreads message on Linux with JOGL
 
 _ Linux file chooser is gross (presumably Windows too)
 _   http://code.google.com/p/processing/issues/detail?id=1014
