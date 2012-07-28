@@ -24,8 +24,8 @@
 package processing.app.tools;
 
 import processing.app.*;
+import processing.core.PApplet;
 
-import java.awt.FileDialog;
 import java.io.*;
 import java.text.*;
 import java.util.*;
@@ -95,26 +95,20 @@ public class Archiver implements Tool {
     } while (newbie.exists());
 
     // open up a prompt for where to save this fella
-    FileDialog fd =
-      new FileDialog(editor, "Archive sketch as:", FileDialog.SAVE);
-    fd.setDirectory(parent.getAbsolutePath());
-    fd.setFile(newbie.getName());
-    fd.setVisible(true);
+    PApplet.selectOutput("Archive sketch as...", "fileSelected", newbie, this, editor);
+  }
 
-    String directory = fd.getDirectory();
-    String filename = fd.getFile();
 
-    // only write the file if not canceled
-    if (filename != null) {
-      newbie = new File(directory, filename);
-
+  public void fileSelected(File newbie) {
+    if (newbie != null) {
       try {
         //System.out.println(newbie);
         FileOutputStream zipOutputFile = new FileOutputStream(newbie);
         ZipOutputStream zos = new ZipOutputStream(zipOutputFile);
 
         // recursively fill the zip file
-        buildZip(location, name, zos);
+        File sketchFolder = editor.getSketch().getFolder();
+        buildZip(sketchFolder, sketchFolder.getName(), zos);
 
         // close up the jar file
         zos.flush();

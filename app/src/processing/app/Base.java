@@ -902,21 +902,18 @@ public class Base {
    * Prompt for a sketch to open, and open it in a new window.
    */
   public void handleOpenPrompt() {
-    // get the frontmost window frame for placing file dialog
-    FileDialog fd = new FileDialog(activeEditor,
-                                   "Open a Processing sketch...",
-                                   FileDialog.LOAD);
-    // This was annoying people, so disabled it in 0125.
-    //fd.setDirectory(Preferences.get("sketchbook.path"));
-    //fd.setDirectory(getSketchbookPath());
-
     final ArrayList<String> extensions = new ArrayList<String>();
     for (Mode mode : getModeList()) {
       extensions.add(mode.getDefaultExtension());
     }
 
-    // Only show .pde files as eligible bachelors
-    fd.setFilenameFilter(new FilenameFilter() {
+    final String prompt = "Open a Processing sketch...";
+    if (Preferences.getBoolean("chooser.files.native")) {  // don't use native dialogs on Linux
+      // get the front-most window frame for placing file dialog
+      FileDialog fd = new FileDialog(activeEditor, prompt, FileDialog.LOAD);
+
+      // Only show .pde files as eligible bachelors
+      fd.setFilenameFilter(new FilenameFilter() {
         public boolean accept(File dir, String name) {
           // confirmed to be working properly [fry 110128]
           for (String ext : extensions) {
@@ -928,16 +925,37 @@ public class Base {
         }
       });
 
-    fd.setVisible(true);
+      fd.setVisible(true);
 
-    String directory = fd.getDirectory();
-    String filename = fd.getFile();
+      String directory = fd.getDirectory();
+      String filename = fd.getFile();
+      if (filename != null) {
+        File inputFile = new File(directory, filename);
+        handleOpen(inputFile.getAbsolutePath());
+      }
 
-    // User canceled selection
-    if (filename == null) return;
+    } else {
+      JFileChooser fc = new JFileChooser();
+      fc.setDialogTitle(prompt);
 
-    File inputFile = new File(directory, filename);
-    handleOpen(inputFile.getAbsolutePath());
+      fc.setFileFilter(new javax.swing.filechooser.FileFilter() {
+        public boolean accept(File file) {
+          for (String ext : extensions) {
+            if (file.getName().toLowerCase().endsWith("." + ext)) {
+              return true;
+            }
+          }
+          return false;
+        }
+
+        public String getDescription() {
+          return "Processing Sketch";
+        }
+      });
+      if (fc.showOpenDialog(activeEditor) == JFileChooser.APPROVE_OPTION) {
+        handleOpen(fc.getSelectedFile().getAbsolutePath());
+      }
+    }
   }
 
 
@@ -1935,8 +1953,17 @@ public class Base {
   static protected File promptSketchbookLocation() {
     // Most often this will happen on Linux, so default to their home dir.
     File folder = new File(System.getProperty("user.home"), "sketchbook");
-    String prompt = "Select (or create new) folder for sketches...";
-    folder = Base.selectFolder(prompt, folder, null);
+    String prompt = "Select a folder to place sketches...";
+
+//    FolderSelector fs = new FolderSelector(prompt, folder, new Frame());
+//    folder = fs.getFolder();
+    folder = Base.selectFolder(prompt, folder, new Frame());
+
+//    folder = Base.selectFolder(prompt, folder, null);
+//    PApplet.selectFolder(prompt,
+//                       "promptSketchbookCallback", dflt,
+//                       Preferences.this, dialog);
+
     if (folder == null) {
       System.exit(0);
     }
@@ -1997,45 +2024,84 @@ public class Base {
   // .................................................................
 
 
+//  /**
+//   * Prompt for a folder and return it as a File object (or null).
+//   * Implementation for choosing directories that handles both the
+//   * Mac OS X hack to allow the native AWT file dialog, or uses
+//   * the JFileChooser on other platforms. Mac AWT trick obtained from
+//   * <A HREF="http://lists.apple.com/archives/java-dev/2003/Jul/msg00243.html">this post</A>
+//   * on the OS X Java dev archive which explains the cryptic note in
+//   * Apple's Java 1.4 release docs about the special System property.
+//   */
+//  static public File selectFolder(String prompt, File folder, Frame frame) {
+//    if (Base.isMacOS()) {
+//      if (frame == null) frame = new Frame(); //.pack();
+//      FileDialog fd = new FileDialog(frame, prompt, FileDialog.LOAD);
+//      if (folder != null) {
+//        fd.setDirectory(folder.getParent());
+//        //fd.setFile(folder.getName());
+//      }
+//      System.setProperty("apple.awt.fileDialogForDirectories", "true");
+//      fd.setVisible(true);
+//      System.setProperty("apple.awt.fileDialogForDirectories", "false");
+//      if (fd.getFile() == null) {
+//        return null;
+//      }
+//      return new File(fd.getDirectory(), fd.getFile());
+//
+//    } else {
+//      JFileChooser fc = new JFileChooser();
+//      fc.setDialogTitle(prompt);
+//      if (folder != null) {
+//        fc.setSelectedFile(folder);
+//      }
+//      fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+//
+//      int returned = fc.showOpenDialog(new JDialog());
+//      if (returned == JFileChooser.APPROVE_OPTION) {
+//        return fc.getSelectedFile();
+//      }
+//    }
+//    return null;
+//  }
+
+
+  static class FolderSelector {
+    File folder;
+    boolean ready;
+
+    FolderSelector(String prompt, File defaultFile, Frame parentFrame) {
+      PApplet.selectFolder(prompt, "callback", defaultFile, this, parentFrame);
+    }
+
+    public void callback(File folder) {
+      this.folder = folder;
+      ready = true;
+    }
+
+    boolean isReady() {
+      return ready;
+    }
+
+    /** block until the folder is available */
+    File getFolder() {
+      while (!ready) {
+        try {
+          Thread.sleep(100);
+        } catch (InterruptedException e) { }
+      }
+      return folder;
+    }
+  }
+
+
   /**
-   * Prompt for a fodler and return it as a File object (or null).
-   * Implementation for choosing directories that handles both the
-   * Mac OS X hack to allow the native AWT file dialog, or uses
-   * the JFileChooser on other platforms. Mac AWT trick obtained from
-   * <A HREF="http://lists.apple.com/archives/java-dev/2003/Jul/msg00243.html">this post</A>
-   * on the OS X Java dev archive which explains the cryptic note in
-   * Apple's Java 1.4 release docs about the special System property.
+   * Blocking version of folder selection. Runs and sleeps until an answer
+   * comes back. Avoid using: try to make things work with the async
+   * selectFolder inside PApplet instead.
    */
   static public File selectFolder(String prompt, File folder, Frame frame) {
-    if (Base.isMacOS()) {
-      if (frame == null) frame = new Frame(); //.pack();
-      FileDialog fd = new FileDialog(frame, prompt, FileDialog.LOAD);
-      if (folder != null) {
-        fd.setDirectory(folder.getParent());
-        //fd.setFile(folder.getName());
-      }
-      System.setProperty("apple.awt.fileDialogForDirectories", "true");
-      fd.setVisible(true);
-      System.setProperty("apple.awt.fileDialogForDirectories", "false");
-      if (fd.getFile() == null) {
-        return null;
-      }
-      return new File(fd.getDirectory(), fd.getFile());
-
-    } else {
-      JFileChooser fc = new JFileChooser();
-      fc.setDialogTitle(prompt);
-      if (folder != null) {
-        fc.setSelectedFile(folder);
-      }
-      fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-
-      int returned = fc.showOpenDialog(new JDialog());
-      if (returned == JFileChooser.APPROVE_OPTION) {
-        return fc.getSelectedFile();
-      }
-    }
-    return null;
+    return new FolderSelector(prompt, folder, frame).getFolder();
   }
 
 

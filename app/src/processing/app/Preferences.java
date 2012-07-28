@@ -200,6 +200,8 @@ public class Preferences {
         }
       }
     }
+
+    PApplet.useNativeSelect = Preferences.getBoolean("chooser.files.native");
   }
 
 
@@ -240,11 +242,14 @@ public class Preferences {
     button.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           File dflt = new File(sketchbookLocationField.getText());
-          File file =
-            Base.selectFolder("Select new sketchbook location", dflt, dialog);
-          if (file != null) {
-            sketchbookLocationField.setText(file.getAbsolutePath());
-          }
+          PApplet.selectFolder("Select new sketchbook location",
+                               "sketchbookCallback", dflt,
+                               Preferences.this, dialog);
+//          File file =
+//            Base.selectFolder("Select new sketchbook location", dflt, dialog);
+//          if (file != null) {
+//            sketchbookLocationField.setText(file.getAbsolutePath());
+//          }
         }
       });
     pain.add(button);
@@ -518,6 +523,13 @@ public class Preferences {
           }
         }
       });
+  }
+
+
+  public void sketchbookCallback(File file) {
+    if (file != null) {
+      sketchbookLocationField.setText(file.getAbsolutePath());
+    }
   }
 
 

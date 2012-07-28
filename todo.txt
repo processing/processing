@@ -32,9 +32,9 @@ o examples button on toolbar? open / recent / sketchbook?
 X switch to using a warning dialog when bits aren't available
 X   http://code.google.com/p/processing/issues/detail?id=884
 X suppress XInitThreads message on Linux with JOGL
+X Linux file chooser is gross (presumably Windows too)
+X   http://code.google.com/p/processing/issues/detail?id=1014
 
-_ Linux file chooser is gross (presumably Windows too)
-_   http://code.google.com/p/processing/issues/detail?id=1014
 _ Linux sketchbook selector wasn't working properly at all
 
 o don't use tmp folder for sketches? 
