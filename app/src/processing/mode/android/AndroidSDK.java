@@ -77,23 +77,23 @@ class AndroidSDK {
     path = new File(javaHome, "bin").getCanonicalPath() + File.pathSeparator + path;
 
     p.setenv("PATH", path);
-    
+
     checkDebugCertificate();
   }
-  
-  
+
+
   /**
    * If a debug certificate exists, check its expiration date. If it's expired,
    * remove it so that it doesn't cause problems during the build.
    */
-  protected void checkDebugCertificate() {     
+  protected void checkDebugCertificate() {
     File dotAndroidFolder = new File(System.getProperty("user.home"), ".android");
     File keystoreFile = new File(dotAndroidFolder, "debug.keystore");
     if (keystoreFile.exists()) {
       // keytool -list -v -storepass android -keystore debug.keystore
-      ProcessHelper ph = new ProcessHelper(new String[] { 
-        "keytool", "-list", "-v", 
-        "-storepass", "android", 
+      ProcessHelper ph = new ProcessHelper(new String[] {
+        "keytool", "-list", "-v",
+        "-storepass", "android",
         "-keystore", keystoreFile.getAbsolutePath()
       });
       try {
@@ -106,7 +106,7 @@ class AndroidSDK {
             if (m != null) {
               String timestamp = m[1].trim();
               // "Sun Jan 22 11:09:08 EST 2012"
-              // Hilariously, this is the format of Date.toString(), however 
+              // Hilariously, this is the format of Date.toString(), however
               // it isn't the default for SimpleDateFormat or others. Yay!
               DateFormat df = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
               try {
@@ -230,9 +230,9 @@ class AndroidSDK {
     }
     return null;
   }
-  
-  
-  static public AndroidSDK locate(final Frame window) 
+
+
+  static public AndroidSDK locate(final Frame window)
   throws BadSDKException, IOException {
     final int result = Base.showYesNoQuestion(window, "Android SDK",
       ANDROID_SDK_PRIMARY, ANDROID_SDK_SECONDARY);

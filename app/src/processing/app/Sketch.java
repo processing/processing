@@ -703,12 +703,26 @@ public class Sketch {
   protected boolean saveAs() throws IOException {
     String newParentDir = null;
     String newName = null;
-
-    if (false) {
-      // The Swing file chooser has some upside (i.e. fixes an OS X focus
-      // traversal bug) but is super ugly and not OS native.
+    // TODO rewrite this to use shared version from PApplet
+    final String PROMPT = "Save sketch folder as...";
+    if (Preferences.getBoolean("chooser.files.native")) {
+      // get new name for folder
+      FileDialog fd = new FileDialog(editor, PROMPT, FileDialog.SAVE);
+      if (isReadOnly() || isUntitled()) {
+        // default to the sketchbook folder
+        fd.setDirectory(Preferences.get("sketchbook.path"));
+      } else {
+        // default to the parent folder of where this was
+        fd.setDirectory(folder.getParent());
+      }
+      String oldName = folder.getName();
+      fd.setFile(oldName);
+      fd.setVisible(true);
+      newParentDir = fd.getDirectory();
+      newName = fd.getFile();
+    } else {
       JFileChooser fc = new JFileChooser();
-      fc.setDialogTitle("Save sketch folder as...");
+      fc.setDialogTitle(PROMPT);
       if (isReadOnly() || isUntitled()) {
         // default to the sketchbook folder
         fc.setCurrentDirectory(new File(Preferences.get("sketchbook.path")));
@@ -724,23 +738,6 @@ public class Sketch {
         newParentDir = selection.getParent();
         newName = selection.getName();
       }
-    } else {
-      // get new name for folder
-      FileDialog fd = new FileDialog(editor,
-                                     "Save sketch folder as...",
-                                     FileDialog.SAVE);
-      if (isReadOnly() || isUntitled()) {
-        // default to the sketchbook folder
-        fd.setDirectory(Preferences.get("sketchbook.path"));
-      } else {
-        // default to the parent folder of where this was
-        fd.setDirectory(folder.getParent());
-      }
-      String oldName = folder.getName();
-      fd.setFile(oldName);
-      fd.setVisible(true);
-      newParentDir = fd.getDirectory();
-      newName = fd.getFile();
     }
 
     // user canceled selection
