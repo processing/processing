@@ -54,9 +54,9 @@ public class AndroidEditor extends JavaEditor {
 
 //  private static final String ANDROID_CORE_URL =
 //    "http://processing.googlecode.com/files/" + ANDROID_CORE_FILENAME;
-  
-  
-  
+
+
+
   protected AndroidEditor(Base base, String path, EditorState state, Mode mode) throws Exception {
     super(base, path, state, mode);
     amode = (AndroidMode) mode;
@@ -65,10 +65,10 @@ public class AndroidEditor extends JavaEditor {
     AndroidSDK sdk = amode.loadSDK();
     if (sdk == null) {
       sdk = AndroidSDK.locate(this);
-    }      
+    }
 //    } catch (BadSDKException bse) {
 //      statusError(bse);
-//      
+//
 //    } catch (IOException e) {
 //      statusError(e);
 //    }
@@ -95,11 +95,11 @@ public class AndroidEditor extends JavaEditor {
 
   }
 
-  
+
   public EditorToolbar createToolbar() {
     return new AndroidToolbar(this, base);
   }
-  
+
 
   // inherit from the parent
 //  public Formatter createFormatter() {
@@ -109,7 +109,7 @@ public class AndroidEditor extends JavaEditor {
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
-  
+
   public JMenu buildFileMenu() {
     String exportPkgTitle = AndroidToolbar.getTitle(AndroidToolbar.EXPORT, false);
     JMenuItem exportPackage = Base.newJMenuItem(exportPkgTitle, 'E');
@@ -118,7 +118,7 @@ public class AndroidEditor extends JavaEditor {
         handleExportPackage();
       }
     });
-    
+
     String exportProjectTitle = AndroidToolbar.getTitle(AndroidToolbar.EXPORT, true);
     JMenuItem exportProject = Base.newJMenuItemShift(exportProjectTitle, 'E');
     exportProject.addActionListener(new ActionListener() {
@@ -129,20 +129,20 @@ public class AndroidEditor extends JavaEditor {
 
     return buildFileMenu(new JMenuItem[] { exportPackage, exportProject});
   }
-  
-  
+
+
   public JMenu buildSketchMenu() {
     JMenuItem runItem = Base.newJMenuItem(AndroidToolbar.getTitle(AndroidToolbar.RUN, false), 'R');
     runItem.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          handleRunEmulator();
+          handleRunDevice();
         }
       });
 
     JMenuItem presentItem = Base.newJMenuItemShift(AndroidToolbar.getTitle(AndroidToolbar.RUN, true), 'R');
     presentItem.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          handleRunDevice();
+          handleRunEmulator();
         }
       });
 
@@ -157,17 +157,17 @@ public class AndroidEditor extends JavaEditor {
 
 
   public JMenu buildModeMenu() {
-    JMenu menu = new JMenu("Android");    
+    JMenu menu = new JMenu("Android");
     JMenuItem item;
-    
+
     item = new JMenuItem("Sketch Permissions");
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         new Permissions(sketch);
       }
     });
-    menu.add(item);    
-    
+    menu.add(item);
+
     menu.addSeparator();
 
     item = new JMenuItem("Signing Key Setup");
@@ -178,7 +178,7 @@ public class AndroidEditor extends JavaEditor {
     });
     item.setEnabled(false);
     menu.add(item);
-    
+
     item = new JMenuItem("Android SDK Manager");
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -204,22 +204,22 @@ public class AndroidEditor extends JavaEditor {
         Devices.killAdbServer();
       }
     });
-    menu.add(item);    
-    
+    menu.add(item);
+
     return menu;
   }
-  
+
 
   /**
-   * Uses the main help menu, and adds a few extra options. If/when there's 
-   * Android-specific documentation, we'll switch to that. 
+   * Uses the main help menu, and adds a few extra options. If/when there's
+   * Android-specific documentation, we'll switch to that.
    */
   public JMenu buildHelpMenu() {
     JMenu menu = super.buildHelpMenu();
     JMenuItem item;
-    
+
     menu.addSeparator();
-    
+
     item = new JMenuItem("Processing for Android Wiki");
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -227,8 +227,8 @@ public class AndroidEditor extends JavaEditor {
       }
     });
     menu.add(item);
-    
-    
+
+
     item = new JMenuItem("Android Developers Site");
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -239,7 +239,7 @@ public class AndroidEditor extends JavaEditor {
 
     return menu;
   }
-  
+
 
   /** override the standard grab reference to just show the java reference */
   public void showReference(String filename) {
@@ -248,8 +248,8 @@ public class AndroidEditor extends JavaEditor {
     Base.openURL(file.getAbsolutePath());
   }
 
-  
-  
+
+
 //  protected void updateMode() {
 //    // When the selection is made, the menu will update itself
 //    boolean active = toggleItem.isSelected();
@@ -259,8 +259,8 @@ public class AndroidEditor extends JavaEditor {
 //        rolling = loadAndroid();
 //      }
 //      if (rolling) {
-//        editor.setHandlers(new RunHandler(), new PresentHandler(), 
-//                           new StopHandler(), 
+//        editor.setHandlers(new RunHandler(), new PresentHandler(),
+//                           new StopHandler(),
 //                           new ExportHandler(),  new ExportAppHandler());
 //        build = new AndroidBuild(editor, sdk);
 //        editor.statusNotice("Android mode enabled for this editor window.");
@@ -316,8 +316,8 @@ public class AndroidEditor extends JavaEditor {
 //    }
 //    return true;
 //  }
-  
-  
+
+
   public void statusError(String what) {
     super.statusError(what);
 //    new Exception("deactivating RUN").printStackTrace();
@@ -330,12 +330,12 @@ public class AndroidEditor extends JavaEditor {
     statusEmpty();
   }
 
-  
+
   /**
    * Build the sketch and run it inside an emulator with the debugger.
    */
   public void handleRunEmulator() {
-    new Thread() { 
+    new Thread() {
       public void run() {
         toolbar.activate(AndroidToolbar.RUN);
         startIndeterminate();
@@ -371,7 +371,7 @@ public class AndroidEditor extends JavaEditor {
         }
         stopIndeterminate();
       }
-    }.start();    
+    }.start();
   }
 
 
@@ -381,7 +381,7 @@ public class AndroidEditor extends JavaEditor {
     amode.handleStop(this);
   }
 
-  
+
   /**
    * Create a release build of the sketch and have its apk files ready.
    * If users want a debug build, they can do that from the command line.
@@ -395,7 +395,7 @@ public class AndroidEditor extends JavaEditor {
           statusNotice("Exporting a debug version of the sketch...");
           AndroidBuild build = new AndroidBuild(sketch, amode);
           try {
-            File exportFolder = build.exportProject(); 
+            File exportFolder = build.exportProject();
             if (exportFolder != null) {
               Base.openFolder(exportFolder);
               statusNotice("Done with export.");
@@ -410,7 +410,7 @@ public class AndroidEditor extends JavaEditor {
         }
       }.start();
     }
-    
+
 //    try {
 //      buildReleaseForExport("debug");
 //    } catch (final MonitorCanceled ok) {
@@ -420,7 +420,7 @@ public class AndroidEditor extends JavaEditor {
 //    }
   }
 
-  
+
   /**
    * Create a release build of the sketch and install its apk files on the
    * attached device.
@@ -439,7 +439,7 @@ public class AndroidEditor extends JavaEditor {
 //    } finally {
 //      deactivateExport();
 //    }
-    
+
     // TODO now sign it... lots of fun signing code mess to go here. yay!
 
     // maybe even send it to the device? mmm?

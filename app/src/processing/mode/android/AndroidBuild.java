@@ -272,6 +272,7 @@ class AndroidBuild extends JavaBuild {
   }
 
 
+  /*
   // SDK tools 17 have a problem where 'dex' won't pick up the libs folder
   // (which contains our friend processing-core.jar) unless your current
   // working directory is the same as the build file. So this is an unpleasant
@@ -318,6 +319,8 @@ class AndroidBuild extends JavaBuild {
     }
     return true;
   }
+  */
+
 
   /*
   public class HopefullyTemporaryWorkaround extends org.apache.tools.ant.Main {
@@ -508,32 +511,22 @@ class AndroidBuild extends JavaBuild {
 
     writer.println("<project name=\"" + projectName + "\" default=\"help\">");
 
-    writer.println("  <loadproperties srcFile=\"local.properties\" />");
+    writer.println("  <property file=\"local.properties\" />");
     writer.println("  <property file=\"ant.properties\" />");
+
+    writer.println("  <property environment=\"env\" />");
+    writer.println("  <condition property=\"sdk.dir\" value=\"${env.ANDROID_HOME}\">");
+    writer.println("       <isset property=\"env.ANDROID_HOME\" />");
+    writer.println("  </condition>");
+
     writer.println("  <loadproperties srcFile=\"project.properties\" />");
 
     writer.println("  <fail message=\"sdk.dir is missing. Make sure to generate local.properties using 'android update project'\" unless=\"sdk.dir\" />");
 
+    writer.println("  <import file=\"custom_rules.xml\" optional=\"true\" />");
+
     writer.println("  <!-- version-tag: 1 -->");  // should this be 'custom' instead of 1?
     writer.println("  <import file=\"${sdk.dir}/tools/ant/build.xml\" />");
-
-//    writer.println("  <property file=\"local.properties\"/>");
-//    writer.println("  <property file=\"build.properties\"/>");
-//    writer.println("  <property file=\"default.properties\"/>");
-//
-//    writer.println("  <path id=\"android.antlibs\">");
-//    writer.println("    <pathelement path=\"${sdk.dir}/tools/lib/anttasks.jar\" />");
-//    writer.println("    <pathelement path=\"${sdk.dir}/tools/lib/sdklib.jar\" />");
-//    writer.println("    <pathelement path=\"${sdk.dir}/tools/lib/androidprefs.jar\" />");
-//    writer.println("    <pathelement path=\"${sdk.dir}/tools/lib/apkbuilder.jar\" />");
-//    writer.println("    <pathelement path=\"${sdk.dir}/tools/lib/jarutils.jar\" />");
-//    writer.println("  </path>");
-//
-//    writer.println("  <taskdef name=\"setup\"");
-//    writer.println("           classname=\"com.android.ant.SetupTask\"");
-//    writer.println("           classpathref=\"android.antlibs\" />");
-//
-//    writer.println("  <setup />");
 
     writer.println("</project>");
     writer.flush();
