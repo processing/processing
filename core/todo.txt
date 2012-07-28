@@ -26,7 +26,6 @@ X   http://code.google.com/p/processing/issues/detail?id=1138
 A ortho() causing line and fill to be misaligned
 A  http://code.google.com/p/processing/issues/detail?id=1143
 
-_ clean up PConstants and move things into PGraphics that needn't be available
 
 constants/hints
 _ bring PConstants back in line w/ previous 1.5 (can't renumber)
@@ -50,8 +49,7 @@ _   NEAREST, BILINEAR, BICUBIC, or 0, 2, 4? (need 8x too, so maybe numbers)
 _ final decision on pg.setQuality(sketchQuality())
 _   should probably be setQuality(parent.sketchQuality())
 
-X test what happens with NPE in OpenGL, does the error make sense?
-_   nope, it doesn't, need to clean this up
+_ clean up PConstants and move things into PGraphics that needn't be available
 
 _ move requestFocusInWindow() to safter EDT place
 _ look into using BufferStrategy again to improve performance
