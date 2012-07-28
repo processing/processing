@@ -450,6 +450,11 @@ public class PFont implements PConstants {
   }
   
 
+  public void setSubsetting() {
+    subsetting = true;
+  }
+
+  
   public String getPostScriptName() {
     return psname;
   }
