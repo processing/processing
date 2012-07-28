@@ -1,5 +1,6 @@
 package processing.mode.android;
 
+import java.awt.FileDialog;
 import java.awt.Frame;
 import java.io.File;
 import java.io.IOException;
@@ -8,6 +9,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import processing.app.Base;
@@ -245,11 +247,11 @@ class AndroidSDK {
       throw new BadSDKException("No SDK installed.");
     }
     while (true) {
-      File folder = Base.selectFolder(SELECT_ANDROID_SDK_FOLDER, null, window);
+      // TODO this is really a yucky way to do this stuff. fix it.
+      File folder = selectFolder(SELECT_ANDROID_SDK_FOLDER, null, window);
       if (folder == null) {
         throw new BadSDKException("User canceled attempt to find SDK.");
       }
-
       try {
         final AndroidSDK androidSDK = new AndroidSDK(folder);
         Preferences.set("android.sdk.path", folder.getAbsolutePath());
@@ -259,6 +261,41 @@ class AndroidSDK {
         JOptionPane.showMessageDialog(window, NOT_ANDROID_SDK);
       }
     }
+  }
+
+
+  // this was banished from Base because it encourages bad practice.
+  // TODO figure out a better way to handle the above.
+  static public File selectFolder(String prompt, File folder, Frame frame) {
+    if (Base.isMacOS()) {
+      if (frame == null) frame = new Frame(); //.pack();
+      FileDialog fd = new FileDialog(frame, prompt, FileDialog.LOAD);
+      if (folder != null) {
+        fd.setDirectory(folder.getParent());
+        //fd.setFile(folder.getName());
+      }
+      System.setProperty("apple.awt.fileDialogForDirectories", "true");
+      fd.setVisible(true);
+      System.setProperty("apple.awt.fileDialogForDirectories", "false");
+      if (fd.getFile() == null) {
+        return null;
+      }
+      return new File(fd.getDirectory(), fd.getFile());
+
+    } else {
+      JFileChooser fc = new JFileChooser();
+      fc.setDialogTitle(prompt);
+      if (folder != null) {
+        fc.setSelectedFile(folder);
+      }
+      fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+      int returned = fc.showOpenDialog(frame);
+      if (returned == JFileChooser.APPROVE_OPTION) {
+        return fc.getSelectedFile();
+      }
+    }
+    return null;
   }
 
 

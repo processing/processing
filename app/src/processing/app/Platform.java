@@ -33,44 +33,44 @@ import com.sun.jna.Native;
 /**
  * Used by Base for platform-specific tweaking, for instance finding the
  * sketchbook location using the Windows registry, or OS X event handling.
- * 
- * The methods in this implementation are used by default, and can be 
- * overridden by a subclass, if loaded by Base.main(). 
- * 
+ *
+ * The methods in this implementation are used by default, and can be
+ * overridden by a subclass, if loaded by Base.main().
+ *
  * These methods throw vanilla-flavored Exceptions, so that error handling
- * occurs inside Base. 
- * 
- * There is currently no mechanism for adding new platforms, as the setup is 
- * not automated. We could use getProperty("os.arch") perhaps, but that's 
- * debatable (could be upper/lowercase, have spaces, etc.. basically we don't 
+ * occurs inside Base.
+ *
+ * There is currently no mechanism for adding new platforms, as the setup is
+ * not automated. We could use getProperty("os.arch") perhaps, but that's
+ * debatable (could be upper/lowercase, have spaces, etc.. basically we don't
  * know if name is proper Java package syntax.)
  */
 public class Platform {
   Base base;
-  
-  
+
+
   /**
    * Set the default L & F. While I enjoy the bounty of the sixteen possible
-   * exception types that this UIManager method might throw, I feel that in 
+   * exception types that this UIManager method might throw, I feel that in
    * just this one particular case, I'm being spoiled by those engineers
    * at Sun, those Masters of the Abstractionverse. It leaves me feeling sad
    * and overweight. So instead, I'll pretend that I'm not offered eleven dozen
    * ways to report to the user exactly what went wrong, and I'll bundle them
-   * all into a single catch-all "Exception". Because in the end, all I really 
+   * all into a single catch-all "Exception". Because in the end, all I really
    * care about is whether things worked or not. And even then, I don't care.
-   * 
+   *
    * @throws Exception Just like I said.
    */
   public void setLookAndFeel() throws Exception {
     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
   }
-  
-  
+
+
   public void init(Base base) {
     this.base = base;
   }
-  
-  
+
+
   public File getSettingsFolder() throws Exception {
     // otherwise make a .processing directory int the user's home dir
     File home = new File(System.getProperty("user.home"));
@@ -92,32 +92,32 @@ public class Platform {
     }
     */
   }
-  
+
 
   /**
-   * @return null if not overridden, which will cause a prompt to show instead. 
+   * @return null if not overridden, which will cause a prompt to show instead.
    * @throws Exception
    */
   public File getDefaultSketchbookFolder() throws Exception {
-    return null;
+    return new File(System.getProperty("user.dir"), "sketchbook");
   }
-  
-  
+
+
   public void openURL(String url) throws Exception {
     String launcher = Preferences.get("launcher");
     if (launcher != null) {
       Runtime.getRuntime().exec(new String[] { launcher, url });
     } else {
       showLauncherWarning();
-    } 
+    }
   }
 
 
   public boolean openFolderAvailable() {
     return Preferences.get("launcher") != null;
   }
-  
-  
+
+
   public void openFolder(File file) throws Exception {
     String launcher = Preferences.get("launcher");
     if (launcher != null) {
@@ -127,11 +127,11 @@ public class Platform {
       showLauncherWarning();
     }
   }
-  
-  
-  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  
-  
-  
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
   public interface CLibrary extends Library {
     CLibrary INSTANCE = (CLibrary)Native.loadLibrary("c", CLibrary.class);
     int setenv(String name, String value, int overwrite);
@@ -140,13 +140,13 @@ public class Platform {
     int putenv(String string);
   }
 
-  
+
   public void setenv(String variable, String value) {
     CLibrary clib = CLibrary.INSTANCE;
     clib.setenv(variable, value, 1);
   }
 
-  
+
   public String getenv(String variable) {
     CLibrary clib = CLibrary.INSTANCE;
     return clib.getenv(variable);
@@ -158,15 +158,15 @@ public class Platform {
     return clib.unsetenv(variable);
   }
 
-  
-  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
   protected void showLauncherWarning() {
-    Base.showWarning("No launcher available", 
-                     "Unspecified platform, no launcher available.\n" + 
+    Base.showWarning("No launcher available",
+                     "Unspecified platform, no launcher available.\n" +
                      "To enable opening URLs or folders, add a \n" +
-                     "\"launcher=/path/to/app\" line to preferences.txt", 
+                     "\"launcher=/path/to/app\" line to preferences.txt",
                      null);
   }
 }

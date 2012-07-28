@@ -105,11 +105,33 @@ public class AndroidMode extends JavaMode {
   }
 
 
-  public AndroidSDK loadSDK() throws BadSDKException, IOException {
+//  public AndroidSDK loadSDK() throws BadSDKException, IOException {
+//    if (sdk == null) {
+//      sdk = AndroidSDK.load();
+//    }
+//    return sdk;
+//  }
+
+
+  public void checkSDK(Editor parent) {
     if (sdk == null) {
-      sdk = AndroidSDK.load();
+      try {
+        sdk = AndroidSDK.load();
+        if (sdk == null) {
+          sdk = AndroidSDK.locate(parent);
+        }
+      } catch (BadSDKException e) {
+        e.printStackTrace();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
     }
-    return sdk;
+    if (sdk == null) {
+      Base.showWarning("It's gonna be a bad day",
+                       "The Android SDK could not be loaded.\n" +
+                       "Use of Android mode will be all but disabled.",
+                       null);
+    }
   }
 
 

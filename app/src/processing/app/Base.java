@@ -1928,7 +1928,8 @@ public class Base {
     } catch (Exception e) { }
 
     if (sketchbookFolder == null) {
-      sketchbookFolder = promptSketchbookLocation();
+      showError("No sketchbook",
+                "Problem while trying to get the sketchbook", null);
     }
 
     // create the folder if it doesn't exist already
@@ -1947,33 +1948,33 @@ public class Base {
   }
 
 
-  /**
-   * Check for a new sketchbook location.
-   */
-  static protected File promptSketchbookLocation() {
-    // Most often this will happen on Linux, so default to their home dir.
-    File folder = new File(System.getProperty("user.home"), "sketchbook");
-    String prompt = "Select a folder to place sketches...";
-
-//    FolderSelector fs = new FolderSelector(prompt, folder, new Frame());
-//    folder = fs.getFolder();
-    folder = Base.selectFolder(prompt, folder, new Frame());
-
-//    folder = Base.selectFolder(prompt, folder, null);
-//    PApplet.selectFolder(prompt,
-//                       "promptSketchbookCallback", dflt,
-//                       Preferences.this, dialog);
-
-    if (folder == null) {
-      System.exit(0);
-    }
-    // Create the folder if it doesn't exist already
-    if (!folder.exists()) {
-      folder.mkdirs();
-      return folder;
-    }
-    return folder;
-  }
+//  /**
+//   * Check for a new sketchbook location.
+//   */
+//  static protected File promptSketchbookLocation() {
+//    // Most often this will happen on Linux, so default to their home dir.
+//    File folder = new File(System.getProperty("user.home"), "sketchbook");
+//    String prompt = "Select a folder to place sketches...";
+//
+////    FolderSelector fs = new FolderSelector(prompt, folder, new Frame());
+////    folder = fs.getFolder();
+//    folder = Base.selectFolder(prompt, folder, new Frame());
+//
+////    folder = Base.selectFolder(prompt, folder, null);
+////    PApplet.selectFolder(prompt,
+////                       "promptSketchbookCallback", dflt,
+////                       Preferences.this, dialog);
+//
+//    if (folder == null) {
+//      System.exit(0);
+//    }
+//    // Create the folder if it doesn't exist already
+//    if (!folder.exists()) {
+//      folder.mkdirs();
+//      return folder;
+//    }
+//    return folder;
+//  }
 
 
   // .................................................................
@@ -2066,43 +2067,43 @@ public class Base {
 //  }
 
 
-  static class FolderSelector {
-    File folder;
-    boolean ready;
-
-    FolderSelector(String prompt, File defaultFile, Frame parentFrame) {
-      PApplet.selectFolder(prompt, "callback", defaultFile, this, parentFrame);
-    }
-
-    public void callback(File folder) {
-      this.folder = folder;
-      ready = true;
-    }
-
-    boolean isReady() {
-      return ready;
-    }
-
-    /** block until the folder is available */
-    File getFolder() {
-      while (!ready) {
-        try {
-          Thread.sleep(100);
-        } catch (InterruptedException e) { }
-      }
-      return folder;
-    }
-  }
-
-
-  /**
-   * Blocking version of folder selection. Runs and sleeps until an answer
-   * comes back. Avoid using: try to make things work with the async
-   * selectFolder inside PApplet instead.
-   */
-  static public File selectFolder(String prompt, File folder, Frame frame) {
-    return new FolderSelector(prompt, folder, frame).getFolder();
-  }
+//  static class FolderSelector {
+//    File folder;
+//    boolean ready;
+//
+//    FolderSelector(String prompt, File defaultFile, Frame parentFrame) {
+//      PApplet.selectFolder(prompt, "callback", defaultFile, this, parentFrame);
+//    }
+//
+//    public void callback(File folder) {
+//      this.folder = folder;
+//      ready = true;
+//    }
+//
+//    boolean isReady() {
+//      return ready;
+//    }
+//
+//    /** block until the folder is available */
+//    File getFolder() {
+//      while (!ready) {
+//        try {
+//          Thread.sleep(100);
+//        } catch (InterruptedException e) { }
+//      }
+//      return folder;
+//    }
+//  }
+//
+//
+//  /**
+//   * Blocking version of folder selection. Runs and sleeps until an answer
+//   * comes back. Avoid using: try to make things work with the async
+//   * selectFolder inside PApplet instead.
+//   */
+//  static public File selectFolder(String prompt, File folder, Frame frame) {
+//    return new FolderSelector(prompt, folder, frame).getFolder();
+//  }
 
 
   // .................................................................
