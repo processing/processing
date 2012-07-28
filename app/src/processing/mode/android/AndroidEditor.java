@@ -47,7 +47,7 @@ import processing.core.PApplet;
 
 public class AndroidEditor extends JavaEditor {
 //  private AndroidBuild build;
-  private AndroidMode amode;
+  private AndroidMode androidMode;
 
 //  private static final String ANDROID_CORE_FILENAME =
 //    "processing-android-core-" + Base.VERSION_NAME + ".zip";
@@ -59,19 +59,20 @@ public class AndroidEditor extends JavaEditor {
 
   protected AndroidEditor(Base base, String path, EditorState state, Mode mode) throws Exception {
     super(base, path, state, mode);
-    amode = (AndroidMode) mode;
+    androidMode = (AndroidMode) mode;
+    androidMode.checkSDK(this);
 
-//    try {
-    AndroidSDK sdk = amode.loadSDK();
-    if (sdk == null) {
-      sdk = AndroidSDK.locate(this);
-    }
-//    } catch (BadSDKException bse) {
-//      statusError(bse);
-//
-//    } catch (IOException e) {
-//      statusError(e);
+////    try {
+//    AndroidSDK sdk = amode.loadSDK();
+//    if (sdk == null) {
+//      sdk = AndroidSDK.locate(this);
 //    }
+////    } catch (BadSDKException bse) {
+////      statusError(bse);
+////
+////    } catch (IOException e) {
+////      statusError(e);
+////    }
 
     /*
     if (sdk == null) {
@@ -182,7 +183,7 @@ public class AndroidEditor extends JavaEditor {
     item = new JMenuItem("Android SDK Manager");
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        File file = amode.getSDK().getAndroidTool();
+        File file = androidMode.getSDK().getAndroidTool();
         PApplet.exec(new String[] { file.getAbsolutePath(), "sdk" });
       }
     });
@@ -191,7 +192,7 @@ public class AndroidEditor extends JavaEditor {
     item = new JMenuItem("Android AVD Manager");
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        File file = amode.getSDK().getAndroidTool();
+        File file = androidMode.getSDK().getAndroidTool();
         PApplet.exec(new String[] { file.getAbsolutePath(), "avd" });
       }
     });
@@ -341,7 +342,7 @@ public class AndroidEditor extends JavaEditor {
         startIndeterminate();
         prepareRun();
         try {
-          amode.handleRunEmulator(sketch, AndroidEditor.this);
+          androidMode.handleRunEmulator(sketch, AndroidEditor.this);
         } catch (SketchException e) {
           statusError(e);
         } catch (IOException e) {
@@ -363,7 +364,7 @@ public class AndroidEditor extends JavaEditor {
         startIndeterminate();
         prepareRun();
         try {
-          amode.handleRunDevice(sketch, AndroidEditor.this);
+          androidMode.handleRunDevice(sketch, AndroidEditor.this);
         } catch (SketchException e) {
           statusError(e);
         } catch (IOException e) {
@@ -378,7 +379,7 @@ public class AndroidEditor extends JavaEditor {
   public void handleStop() {
     toolbar.deactivate(AndroidToolbar.RUN);
     stopIndeterminate();
-    amode.handleStop(this);
+    androidMode.handleStop(this);
   }
 
 
@@ -393,7 +394,7 @@ public class AndroidEditor extends JavaEditor {
           toolbar.activate(AndroidToolbar.EXPORT);
           startIndeterminate();
           statusNotice("Exporting a debug version of the sketch...");
-          AndroidBuild build = new AndroidBuild(sketch, amode);
+          AndroidBuild build = new AndroidBuild(sketch, androidMode);
           try {
             File exportFolder = build.exportProject();
             if (exportFolder != null) {
