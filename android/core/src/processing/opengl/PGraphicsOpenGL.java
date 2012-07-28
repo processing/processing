@@ -1451,12 +1451,9 @@ public class PGraphicsOpenGL extends PGraphics {
       return;
     }
 
-    if (pgCurrent != pgPrimary && this != pgPrimary) {
-      // It seems that the user is trying to start
-      // another beginDraw()/endDraw() block for an
-      // offscreen surface, still drawing on another
-      // offscreen surface. This situation is not
-      // catched by the drawing check above.
+    if (pgCurrent != null && !pgCurrent.primarySurface && !this.primarySurface) {
+      // It seems that the user is trying to start another beginDraw()/endDraw() block for an
+      // offscreen surface, still drawing on another offscreen surface.
       showWarning("Already called beginDraw() for another PGraphicsOpenGL object.");
       return;
     }
