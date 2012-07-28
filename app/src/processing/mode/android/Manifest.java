@@ -27,6 +27,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.SAXException;
+
 import processing.app.*;
 import processing.core.PApplet;
 import processing.data.XML;
@@ -195,32 +199,38 @@ public class Manifest {
     save(file);
 
     // load the copy from the build location and start messing with it
-    XML mf = new XML(new FileReader(file));
+    XML mf = null;
+    try {
+      mf = new XML(new FileReader(file));
 
-    // package name, or default
-    String p = mf.getString("package").trim();
-    if (p.length() == 0) {
-      mf.setString("package", defaultPackageName());
-    }
+      // package name, or default
+      String p = mf.getString("package").trim();
+      if (p.length() == 0) {
+        mf.setString("package", defaultPackageName());
+      }
 
-    // app name and label, or the class name
-    XML app = mf.getChild("application");
-    String label = app.getString("android:label");
-    if (label.length() == 0) {
-      app.setString("android:label", className);
-    }
-    app.setString("android:debuggable", debug ? "true" : "false");
+      // app name and label, or the class name
+      XML app = mf.getChild("application");
+      String label = app.getString("android:label");
+      if (label.length() == 0) {
+        app.setString("android:label", className);
+      }
+      app.setString("android:debuggable", debug ? "true" : "false");
 
-    XML activity = app.getChild("activity");
-    // the '.' prefix is just an alias for the full package name
-    // http://developer.android.com/guide/topics/manifest/activity-element.html#name
-    activity.setString("android:name", "." + className);  // this has to be right
+      XML activity = app.getChild("activity");
+      // the '.' prefix is just an alias for the full package name
+      // http://developer.android.com/guide/topics/manifest/activity-element.html#name
+      activity.setString("android:name", "." + className);  // this has to be right
 
-    PrintWriter writer = PApplet.createWriter(file);
-    writer.print(mf.toString());
-    writer.flush();
+      PrintWriter writer = PApplet.createWriter(file);
+      writer.print(mf.toString());
+      writer.flush();
 //    mf.write(writer);
-    writer.close();
+      writer.close();
+
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
 
@@ -254,6 +264,12 @@ public class Manifest {
         xml = new XML(new FileReader(manifestFile));
       } catch (FileNotFoundException e) {
         System.err.println("Could not read " + manifestFile.getAbsolutePath());
+        e.printStackTrace();
+      } catch (IOException e) {
+        e.printStackTrace();
+      } catch (ParserConfigurationException e) {
+        e.printStackTrace();
+      } catch (SAXException e) {
         e.printStackTrace();
       }
     }

@@ -62,23 +62,28 @@ public class XML implements Serializable {
    * Begin parsing XML data passed in from a PApplet. This code
    * wraps exception handling, for more advanced exception handling,
    * use the constructor that takes a Reader or InputStream.
+   * @throws SAXException
+   * @throws ParserConfigurationException
+   * @throws IOException
    */
-  public XML(PApplet parent, String filename) {
+  public XML(PApplet parent, String filename) throws IOException, ParserConfigurationException, SAXException {
     this(parent.createReader(filename));
   }
 
 
-  public XML(File file) {
+  public XML(File file) throws IOException, ParserConfigurationException, SAXException {
     this(PApplet.createReader(file));
   }
 
   
-  public XML(Reader reader) {
-    try {
+  public XML(Reader reader) throws IOException, ParserConfigurationException, SAXException {
       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 
-      // Prevent 503 errors from www.w3.org
-      factory.setAttribute("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+      try {
+        factory.setAttribute("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+      } catch (IllegalArgumentException e) {
+        // ignore this; Android doesn't like it
+      }
 
       // without a validating DTD, this doesn't do anything since it doesn't know what is ignorable
 //      factory.setIgnoringElementContentWhitespace(true);
@@ -109,15 +114,7 @@ public class XML implements Serializable {
 //      for (int i = 0; i < nodeList.getLength(); i++) {
 //      }
 //      print(createWriter("data/1_alt_reparse.html"), document.getDocumentElement(), 0);
-
-    } catch (ParserConfigurationException pce) {
-      pce.printStackTrace();
-    } catch (IOException e1) {
-      e1.printStackTrace();
-    } catch (SAXException e2) {
-      e2.printStackTrace();
     }
-  }
 
 
   // TODO is there a more efficient way of doing this? wow.
@@ -154,7 +151,12 @@ public class XML implements Serializable {
 
 
   static public XML parse(String xml) {
+    try {
     return new XML(new StringReader(xml));
+    } catch (Exception e) {
+      e.printStackTrace();
+      return null;
+    }
   }
 
 

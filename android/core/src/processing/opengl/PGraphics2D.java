@@ -22,7 +22,6 @@
 
 package processing.opengl;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.GZIPInputStream;
 
@@ -220,17 +219,17 @@ public class PGraphics2D extends PGraphicsOpenGL {
   static protected PShape2D loadShapeImpl(PGraphics pg, String filename, String extension) {
     PShapeSVG svg = null;
     
-    if (extension.equals("svg")) {
-      svg = new PShapeSVG(pg.parent, filename);
+    try {
+      if (extension.equals("svg")) {
+        svg = new PShapeSVG(pg.parent, filename);
 
-    } else if (extension.equals("svgz")) {
-      try {
+      } else if (extension.equals("svgz")) {
         InputStream input = new GZIPInputStream(pg.parent.createInput(filename));
         XML xml = new XML(PApplet.createReader(input));
         svg = new PShapeSVG(xml);
-      } catch (IOException e) {
-        e.printStackTrace();
       }
+    } catch (Exception e) {
+      e.printStackTrace();
     }
       
     if (svg != null) {

@@ -1,7 +1,12 @@
 0206 android
 X add full PAppletMethods implementation to Android
-_ swap Run on Device and Run on Emulator
-_   http://code.google.com/p/processing/issues/detail?id=1083
+X swap Run on Device and Run on Emulator
+X   http://code.google.com/p/processing/issues/detail?id=1083
+X XML crash on loading because of desktop-specific attribute
+X   error: "http://apache.org/xml/features/nonvalidating/load-external-dtd"
+X   http://code.google.com/p/processing/issues/detail?id=1128
+X fix problems with XML loading so that PShape works again
+X   http://code.google.com/p/processing/issues/detail?id=1054
 
 _ Android OPENGL renderer + JAVA2D PGraphics results in PTexture exception
 _   http://code.google.com/p/processing/issues/detail?id=1019
