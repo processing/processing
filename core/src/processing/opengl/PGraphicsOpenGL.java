@@ -5548,9 +5548,8 @@ public class PGraphicsOpenGL extends PGraphics {
     Texture tex = (Texture)img.getCache(pgPrimary);
     if (tex == null || tex.contextIsOutdated()) {
       tex = addTexture(img);
-      if (img.pixels != null) {
-        tex.set(img.pixels);
-      }
+      img.loadPixels();
+      tex.set(img.pixels);
     }
     return tex;
   }
