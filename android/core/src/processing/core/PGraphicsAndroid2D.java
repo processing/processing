@@ -22,6 +22,10 @@
 
 package processing.core;
 
+import java.io.InputStream;
+import java.util.zip.GZIPInputStream;
+
+import processing.data.XML;
 import android.graphics.*;
 import android.graphics.Bitmap.Config;
 import android.graphics.Paint.Style;
@@ -1011,6 +1015,34 @@ public class PGraphicsAndroid2D extends PGraphics {
   //public void shape(PShape shape, float x, float y, float c, float d)
 
 
+  //////////////////////////////////////////////////////////////
+
+  // SHAPE I/O
+
+
+  public PShape loadShape(String filename) {
+    String extension = PApplet.getExtension(filename);
+
+    PShapeSVG svg = null;
+
+    if (extension.equals("svg")) {
+      svg = new PShapeSVG(parent, filename);
+
+    } else if (extension.equals("svgz")) {
+      try {
+        InputStream input = new GZIPInputStream(parent.createInput(filename));
+        XML xml = new XML(PApplet.createReader(input));
+        svg = new PShapeSVG(xml);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    } else {
+      PGraphics.showWarning("Unsupported format");
+    }
+
+    return svg;
+  }
+  
 
   //////////////////////////////////////////////////////////////
 
