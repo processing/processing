@@ -154,10 +154,10 @@ public class PShapeSVG extends PShape {
   /**
    * Initializes a new SVG Object with the given filename.
    */
-  public PShapeSVG(PApplet parent, String filename) throws Exception {
+  public PShapeSVG(PApplet parent, String filename) {
     // this will grab the root document, starting <svg ...>
     // the xml version and initial comments are ignored
-    this(new XML(parent, filename));
+    this(parent.loadXML(filename));
   }
 
 
