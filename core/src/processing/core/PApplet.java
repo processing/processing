@@ -40,8 +40,6 @@ import java.util.zip.*;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
-//import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
 
 
 /**
@@ -219,6 +217,14 @@ public class PApplet extends Applet
    */
   static public boolean useQuartz = true;
 
+  /**
+   * Whether to use native (AWT) dialogs for selectInput and selectOutput.
+   * The native dialogs on Linux tend to be pretty awful. With selectFolder()
+   * this is ignored, because there is no native folder selector, except on
+   * Mac OS X. On OS X, the native folder selector will be used unless
+   * useNativeSelect is set to false.
+   */
+  static public boolean useNativeSelect = (platform != LINUX);
 
   /**
    * Modifier flags for the shortcut key used to trigger menus.
@@ -5465,161 +5471,220 @@ public class PApplet extends Applet
   // FILE/FOLDER SELECTION
 
 
-  public File selectedFile;
-  protected Frame parentFrame;
+  private Frame selectFrame;
 
+  private Frame selectFrame() {
+    if (frame != null) {
+      selectFrame = frame;
 
-  protected void checkParentFrame() {
-    if (parentFrame == null) {
+    } else if (selectFrame == null) {
       Component comp = getParent();
       while (comp != null) {
         if (comp instanceof Frame) {
-          parentFrame = (Frame) comp;
+          selectFrame = (Frame) comp;
           break;
         }
         comp = comp.getParent();
       }
       // Who you callin' a hack?
-      if (parentFrame == null) {
-        parentFrame = new Frame();
+      if (selectFrame == null) {
+        selectFrame = new Frame();
       }
     }
+    return selectFrame;
   }
 
 
   /**
    * Open a platform-specific file chooser dialog to select a file for input.
-   * @return full path to the selected file, or null if no selection.
+   * After the selection is made, the selected File will be passed to the
+   * 'callback' function. If the dialog is closed or canceled, null will be
+   * sent to the function, so that the program is not waiting for additional
+   * input. The callback is necessary because of how threading works.
+   *
+   * <pre>
+   * void setup() {
+   *   selectInput("Select a file to process:", "fileSelected");
+   * }
+   *
+   * void fileSelected(File selection) {
+   *   if (selection == null) {
+   *     println("Window was closed or the user hit cancel.");
+   *   } else {
+   *     println("User selected " + fileSeleted.getAbsolutePath());
+   *   }
+   * }
+   * </pre>
+   *
+   * For advanced users, the method must be 'public', which is true for all
+   * methods inside a sketch when run from the PDE, but must explicitly be
+   * set when using Eclipse or other development environments.
+   * @param prompt message to the user
+   * @param callback name of the method to be called when the selection is made
    */
-  public String selectInput() {
-    return selectInput("Select a file...");
+  public void selectInput(String prompt, String callback) {
+    selectInput(prompt, callback, null);
   }
 
 
-  /**
-   * ( begin auto-generated from selectInput.xml )
-   *
-   * Opens a platform-specific file chooser dialog to select a file for
-   * input. This function returns the full path to the selected file as a
-   * <b>String</b>, or <b>null</b> if no selection.
-   *
-   * ( end auto-generated )
-   * @webref input:files
-   * @param prompt message you want the user to see in the file chooser
-   * @see PApplet#selectOutput(String)
-   * @see PApplet#selectFolder(String)
-   */
-  public String selectInput(String prompt) {
-    return selectFileImpl(prompt, FileDialog.LOAD);
+  public void selectInput(String prompt, String callback, File file) {
+    selectInput(prompt, callback, file, this);
   }
 
 
-  /**
-   * Open a platform-specific file save dialog to select a file for output.
-   * @return full path to the file entered, or null if canceled.
-   */
-  public String selectOutput() {
-    return selectOutput("Save as...");
+  public void selectInput(String prompt, String callback,
+                          File file, Object callbackObject) {
+    selectInput(prompt, callback, file, callbackObject, selectFrame());
   }
 
 
-  /**
-   * ( begin auto-generated from selectOutput.xml )
-   *
-   * Open a platform-specific file save dialog to create of select a file for
-   * output. This function returns the full path to the selected file as a
-   * <b>String</b>, or <b>null</b> if no selection. If you select an existing
-   * file, that file will be replaced. Alternatively, you can navigate to a
-   * folder and create a new file to write to.
-   *
-   * ( end auto-generated )
-   * @webref output:files
-   * @param prompt message you want the user to see in the file chooser
-   * @see PApplet#selectInput(String)
-   * @see PApplet#selectFolder(String)
-   */
-  public String selectOutput(String prompt) {
-    return selectFileImpl(prompt, FileDialog.SAVE);
+  static public void selectInput(String prompt, String callbackMethod,
+                                 File file, Object callbackObject, Frame parent) {
+    selectImpl(prompt, callbackMethod, file, callbackObject, parent, FileDialog.LOAD);
   }
 
 
-  protected String selectFileImpl(final String prompt, final int mode) {
-    checkParentFrame();
-
-    try {
-      SwingUtilities.invokeAndWait(new Runnable() {
-        public void run() {
-          FileDialog fileDialog =
-            new FileDialog(parentFrame, prompt, mode);
-          fileDialog.setVisible(true);
-          String directory = fileDialog.getDirectory();
-          String filename = fileDialog.getFile();
-          selectedFile =
-            (filename == null) ? null : new File(directory, filename);
-        }
-      });
-      return (selectedFile == null) ? null : selectedFile.getAbsolutePath();
-
-    } catch (Exception e) {
-      e.printStackTrace();
-      return null;
-    }
+  /** See selectInput() for details. */
+  public void selectOutput(String prompt, String callback) {
+    selectOutput(prompt, callback, null);
   }
 
 
-  public String selectFolder() {
-    return selectFolder("Select a folder...");
+  public void selectOutput(String prompt, String callback, File file) {
+    selectOutput(prompt, callback, file, this);
   }
 
 
-  /**
-   * ( begin auto-generated from selectFolder.xml )
-   *
-   * Opens a platform-specific file chooser dialog to select a folder for
-   * input. This function returns the full path to the selected folder as a
-   * <b>String</b>, or <b>null</b> if no selection.
-   *
-   * ( end auto-generated )
-   * @webref input:files
-   * @param prompt message you want the user to see in the file chooser
-   * @see PApplet#selectOutput(String)
-   * @see PApplet#selectInput(String)
-   */
-  public String selectFolder(final String prompt) {
-    checkParentFrame();
+  public void selectOutput(String prompt, String callback,
+                           File file, Object callbackObject) {
+    selectOutput(prompt, callback, file, callbackObject, selectFrame());
+  }
 
-    try {
-      SwingUtilities.invokeAndWait(new Runnable() {
-        public void run() {
-          if (platform == MACOSX) {
-            FileDialog fileDialog =
-              new FileDialog(parentFrame, prompt, FileDialog.LOAD);
-            System.setProperty("apple.awt.fileDialogForDirectories", "true");
-            fileDialog.setVisible(true);
-            System.setProperty("apple.awt.fileDialogForDirectories", "false");
-            String filename = fileDialog.getFile();
-            selectedFile = (filename == null) ? null :
-              new File(fileDialog.getDirectory(), fileDialog.getFile());
-          } else {
-            JFileChooser fileChooser = new JFileChooser();
-            fileChooser.setDialogTitle(prompt);
-            fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
-            int returned = fileChooser.showOpenDialog(parentFrame);
-            System.out.println(returned);
-            if (returned == JFileChooser.CANCEL_OPTION) {
-              selectedFile = null;
-            } else {
-              selectedFile = fileChooser.getSelectedFile();
-            }
+  static public void selectOutput(String prompt, String callbackMethod,
+                                  File file, Object callbackObject, Frame parent) {
+    selectImpl(prompt, callbackMethod, file, callbackObject, parent, FileDialog.SAVE);
+  }
+
+
+  static protected void selectImpl(final String prompt,
+                                   final String callbackMethod,
+                                   final File defaultSelection,
+                                   final Object callbackObject,
+                                   final Frame parentFrame,
+                                   final int mode) {
+    EventQueue.invokeLater(new Runnable() {
+      public void run() {
+        File selectedFile = null;
+
+        if (useNativeSelect) {
+          FileDialog dialog = new FileDialog(parentFrame, prompt, mode);
+          if (defaultSelection != null) {
+            dialog.setDirectory(defaultSelection.getParent());
+            dialog.setFile(defaultSelection.getName());
+          }
+          dialog.setVisible(true);
+          String directory = dialog.getDirectory();
+          String filename = dialog.getFile();
+          if (filename != null) {
+            selectedFile = new File(directory, filename);
+          }
+
+        } else {
+          JFileChooser chooser = new JFileChooser();
+          chooser.setDialogTitle(prompt);
+          if (defaultSelection != null) {
+            chooser.setSelectedFile(defaultSelection);
+          }
+
+          int result = -1;
+          if (mode == FileDialog.SAVE) {
+            result = chooser.showSaveDialog(parentFrame);
+          } else if (mode == FileDialog.LOAD) {
+            result = chooser.showOpenDialog(parentFrame);
+          }
+          if (result == JFileChooser.APPROVE_OPTION) {
+            selectedFile = chooser.getSelectedFile();
           }
         }
-      });
-      return (selectedFile == null) ? null : selectedFile.getAbsolutePath();
+        selectCallback(selectedFile, callbackMethod, callbackObject);
+      }
+    });
+  }
 
-    } catch (Exception e) {
-      e.printStackTrace();
-      return null;
+
+  /** See selectInput() for details. */
+  public void selectFolder(String prompt, String callback) {
+    selectFolder(prompt, callback, null);
+  }
+
+
+  public void selectFolder(String prompt, String callback, File file) {
+    selectFolder(prompt, callback, file, this);
+  }
+
+
+  public void selectFolder(String prompt, String callback,
+                           File file, Object callbackObject) {
+    selectFolder(prompt, callback, file, callbackObject, selectFrame());
+  }
+
+
+  static public void selectFolder(final String prompt,
+                                  final String callbackMethod,
+                                  final File defaultSelection,
+                                  final Object callbackObject,
+                                  final Frame parentFrame) {
+    EventQueue.invokeLater(new Runnable() {
+      public void run() {
+        File selectedFile = null;
+
+        if (platform == MACOSX && useNativeSelect != false) {
+          FileDialog fileDialog =
+            new FileDialog(parentFrame, prompt, FileDialog.LOAD);
+          System.setProperty("apple.awt.fileDialogForDirectories", "true");
+          fileDialog.setVisible(true);
+          System.setProperty("apple.awt.fileDialogForDirectories", "false");
+          String filename = fileDialog.getFile();
+          if (filename != null) {
+            selectedFile = new File(fileDialog.getDirectory(), fileDialog.getFile());
+          }
+        } else {
+          JFileChooser fileChooser = new JFileChooser();
+          fileChooser.setDialogTitle(prompt);
+          fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+          if (defaultSelection != null) {
+            fileChooser.setSelectedFile(defaultSelection);
+          }
+
+          int result = fileChooser.showOpenDialog(parentFrame);
+          if (result == JFileChooser.APPROVE_OPTION) {
+            selectedFile = fileChooser.getSelectedFile();
+          }
+        }
+        selectCallback(selectedFile, callbackMethod, callbackObject);
+      }
+    });
+  }
+
+
+  static private void selectCallback(File selectedFile,
+                                     String callbackMethod,
+                                     Object callbackObject) {
+    try {
+      Class callbackClass = callbackObject.getClass();
+      Method selectMethod =
+        callbackClass.getMethod(callbackMethod, new Class[] { File.class });
+      selectMethod.invoke(callbackObject, new Object[] { selectedFile });
+
+    } catch (IllegalAccessException iae) {
+      System.err.println(callbackMethod + "() must be public");
+
+    } catch (InvocationTargetException ite) {
+      ite.printStackTrace();
+
+    } catch (NoSuchMethodException nsme) {
+      System.err.println(callbackMethod + "() could not be found");
     }
   }
 
