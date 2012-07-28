@@ -18,7 +18,7 @@
 	   includeAntRuntime="false"
 	   debug="true"
 	   srcdir="src" destdir="bin"
-	   classpath="library/jogl.all.jar; library/gluegen-rt.jar" />
+	   classpath="library/jogl-all.jar; library/gluegen-rt.jar" />
     
     <!-- Copy the jnilib to the bin folder so it's included. -->
     <copy todir="bin/japplemenubar" 
