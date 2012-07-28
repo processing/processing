@@ -7,11 +7,17 @@ X displayWidth/Height not being set properly before setup()
 X   http://code.google.com/p/processing/issues/detail?id=1120
 X   can't reproduce.. might be Java update, or multi-display issue?
 
+3D and OpenGL
+A ortho() causing line and fill to be misaligned
+A  http://code.google.com/p/processing/issues/detail?id=1143
+
 constants/hints
 _ bring PConstants back in line w/ previous 1.5 (can't renumber)
 _ consider enable("mipmaps") instead of hint(ENABLE_MIPMAPS)
 _ hint(DISABLE_LOADPIXELS) -> faster rendering in Java2D
 
+_ loadXML() should return null, new XML() should throw exceptions
+_   http://code.google.com/p/processing/issues/detail?id=1138
 
 docs (2.0a6)
 _ online is there but deprecated
@@ -85,6 +91,7 @@ _     use callbacks instead
 _     need to decide if you specify the function name, or if it's specific
 _ Linux file chooser is gross (presumably Windows too)
 _   http://code.google.com/p/processing/issues/detail?id=1014
+_ Linux sketchbook selector wasn't working properly at all
 
 _ fix edge + 1 issue on stroke/fill for rectangles
 _   http://code.google.com/p/processing/issues/detail?id=509

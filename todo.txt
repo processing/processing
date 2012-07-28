@@ -32,6 +32,10 @@ o examples button on toolbar? open / recent / sketchbook?
 X switch to using a warning dialog when bits aren't available
 X   http://code.google.com/p/processing/issues/detail?id=884
 
+_ Linux file chooser is gross (presumably Windows too)
+_   http://code.google.com/p/processing/issues/detail?id=1014
+_ Linux sketchbook selector wasn't working properly at all
+
 o don't use tmp folder for sketches? 
 _   or restrict more things like "show sketch folder"
 _   don't allow adding files w/o saving

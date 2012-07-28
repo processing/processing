@@ -29,6 +29,7 @@ import java.util.Date;
 import processing.app.Base;
 import processing.app.Editor;
 import processing.app.EditorState;
+import processing.app.Library;
 import processing.app.RunnerListener;
 import processing.app.Sketch;
 import processing.app.SketchException;
@@ -42,10 +43,10 @@ public class AndroidMode extends JavaMode {
 
 
   public AndroidMode(Base base, File folder) {
-    super(base, folder);    
+    super(base, folder);
   }
 
-  
+
   @Override
   public Editor createEditor(Base base, String path, EditorState state) {
     try {
@@ -56,15 +57,15 @@ public class AndroidMode extends JavaMode {
     return null;
   }
 
-  
+
   @Override
   public String getTitle() {
     return "Android";
   }
-  
-  
+
+
   public File[] getExampleCategoryFolders() {
-    return new File[] { 
+    return new File[] {
       new File(examplesFolder, "Basics"),
       new File(examplesFolder, "Topics"),
       new File(examplesFolder, "Sensors"),
@@ -75,7 +76,13 @@ public class AndroidMode extends JavaMode {
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
-  
+
+  /** @return null so that it doesn't try to pass along the desktop version of core.jar */
+  public Library getCoreLibrary() {
+    return null;
+  }
+
+
   protected File getCoreZipLocation() {
     if (coreZipLocation == null) {
       // for debugging only, check to see if this is an svn checkout
@@ -96,40 +103,40 @@ public class AndroidMode extends JavaMode {
     }
     return coreZipLocation;
   }
-  
-  
+
+
   public AndroidSDK loadSDK() throws BadSDKException, IOException {
     if (sdk == null) {
       sdk = AndroidSDK.load();
     }
     return sdk;
   }
-  
-  
+
+
   public AndroidSDK getSDK() {
     return sdk;
   }
-  
-  
+
+
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-  
-  
+
+
   static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMdd.HHmm");
-  
-  
+
+
   static public String getDateStamp() {
     return dateFormat.format(new Date());
   }
 
-  
+
   static public String getDateStamp(long stamp) {
     return dateFormat.format(new Date(stamp));
   }
 
-  
+
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
-  
+
 //  public void handleRun(Sketch sketch, RunnerListener listener) throws SketchException {
 //    JavaBuild build = new JavaBuild(sketch);
 //    String appletClassName = build.build();
@@ -142,13 +149,13 @@ public class AndroidMode extends JavaMode {
     listener.startIndeterminate();
     listener.statusNotice("Starting build...");
     AndroidBuild build = new AndroidBuild(sketch, this);
-    
+
     listener.statusNotice("Building Android project...");
     build.build("debug");
-    
+
     boolean avd = AVD.ensureProperAVD(sdk);
     if (!avd) {
-      SketchException se = 
+      SketchException se =
         new SketchException("Could not create a virtual device for the emulator.");
       se.hideStackTrace();
       throw se;
@@ -158,7 +165,7 @@ public class AndroidMode extends JavaMode {
     runner = new AndroidRunner(build, listener);
     runner.launch(Devices.getInstance().getEmulator());
   }
-  
+
 
   public void handleRunDevice(Sketch sketch, RunnerListener listener) throws SketchException, IOException {
 //    JavaBuild build = new JavaBuild(sketch);
@@ -167,7 +174,7 @@ public class AndroidMode extends JavaMode {
 //      runtime = new Runner(build, listener);
 //      runtime.launch(true);
 //    }
-    
+
 //    try {
 //      runSketchOnDevice(Environment.getInstance().getHardware(), "debug", this);
 //    } catch (final MonitorCanceled ok) {
@@ -177,20 +184,20 @@ public class AndroidMode extends JavaMode {
     listener.startIndeterminate();
     listener.statusNotice("Starting build...");
     AndroidBuild build = new AndroidBuild(sketch, this);
-    
+
     listener.statusNotice("Building Android project...");
     build.build("debug");
-    
+
     listener.statusNotice("Running sketch on device...");
     runner = new AndroidRunner(build, listener);
     runner.launch(Devices.getInstance().getHardware());
   }
-  
-  
+
+
   public void handleStop(RunnerListener listener) {
     listener.statusNotice("");
     listener.stopIndeterminate();
-    
+
 //    if (runtime != null) {
 //      runtime.close();  // kills the window
 //      runtime = null; // will this help?
@@ -200,10 +207,10 @@ public class AndroidMode extends JavaMode {
       runner = null;
     }
   }
-  
-  
+
+
 //  public void handleExport(Sketch sketch, )
-  
+
 
   /*
   protected void buildReleaseForExport(Sketch sketch, String target) throws MonitorCanceled {
@@ -256,8 +263,8 @@ public class AndroidMode extends JavaMode {
       monitor.close();
     }
   }
-  
-  
+
+
   @SuppressWarnings("serial")
   private static class MonitorCanceled extends Exception {
   }

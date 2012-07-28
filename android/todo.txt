@@ -1,6 +1,5 @@
 0206 android
 X add full PAppletMethods implementation to Android
-
 _ swap Run on Device and Run on Emulator
 _   http://code.google.com/p/processing/issues/detail?id=1083
 

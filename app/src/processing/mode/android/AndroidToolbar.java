@@ -55,7 +55,7 @@ public class AndroidToolbar extends EditorToolbar {
 
   static public String getTitle(int index, boolean shift) {
     switch (index) {
-    case RUN:    return !shift ? "Run in Emulator" : "Run on Device";
+    case RUN:    return !shift ? "Run on Device" : "Run in Emulator";
     case STOP:   return "Stop";
     case NEW:    return "New";
     case OPEN:   return "Open";
@@ -72,7 +72,7 @@ public class AndroidToolbar extends EditorToolbar {
 
     switch (sel) {
     case RUN:
-      if (shift) {
+      if (!shift) {
         aeditor.handleRunDevice();
       } else {
         aeditor.handleRunEmulator();
