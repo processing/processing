@@ -1,3 +1,24 @@
+PROCESSING 2.0a7 (REV 0206) - 28 July 2012
+
+[ changes ] 
+
++ Major changes to selectInput(), selectOutput(), and selectFolder(). 
+  See the Wiki: http://wiki.processing.org/w/Changes#Change_and_Removed
+  The changes are there to prevent a threading bug:
+  http://code.google.com/p/processing/issues/detail?id=173
+  http://code.google.com/p/processing/issues/detail?id=931
+  And also include an option to set the default file path:
+  http://code.google.com/p/processing/issues/detail?id=233
+
++ Use Swing file choosers by default on Linux. The default open/save
+  dialogs provided by Java are pretty gruesome, so we're switching to 
+  the Swing JFileChooser instead. To swap the behavior, set 
+  'chooser.files.native' in your preferences.txt file.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING 2.0a6 (REV 0205) - 1 June 2012
 
 Lots of changes since the last update as we move closer to beta.
