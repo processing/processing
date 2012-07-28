@@ -5295,12 +5295,22 @@ public class PApplet extends Applet
 
 
   public XML loadXML(String filename) {
-    return new XML(this, filename);
+    try {
+      return new XML(this, filename);
+    } catch (Exception e) {
+      e.printStackTrace();
+      return null;
+    }
   }
 
 
   static public XML loadXML(File file) {
-    return new XML(file);
+    try {
+      return new XML(file);
+    } catch (Exception e) {
+      e.printStackTrace();
+      return null;
+    }
   }
 
 

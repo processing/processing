@@ -6,7 +6,6 @@ X   http://code.google.com/p/processing/issues/detail?id=1045
 X displayWidth/Height not being set properly before setup()
 X   http://code.google.com/p/processing/issues/detail?id=1120
 X   can't reproduce.. might be Java update, or multi-display issue?
-
 X selectInput() and selectOutput() freezes
 X   http://code.google.com/p/processing/issues/detail?id=173
 o   http://code.google.com/p/processing/issues/detail?id=445
@@ -20,6 +19,8 @@ X     use callbacks instead
 X     need to decide if you specify the function name, or if it's specific
 X Set default path for selectXxxxx() functions
 X   http://code.google.com/p/processing/issues/detail?id=233
+X XML now throws exceptions in its constructor, use loadXML() instead
+X   http://code.google.com/p/processing/issues/detail?id=1138
 
 3D and OpenGL
 A ortho() causing line and fill to be misaligned

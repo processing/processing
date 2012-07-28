@@ -26,7 +26,6 @@ package processing.core;
 import java.awt.*;
 import java.awt.geom.*;
 import java.awt.image.*;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.zip.GZIPInputStream;
@@ -1128,7 +1127,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
         InputStream input = new GZIPInputStream(parent.createInput(filename));
         XML xml = new XML(PApplet.createReader(input));
         svg = new PShapeSVG(xml);
-      } catch (IOException e) {
+      } catch (Exception e) {
         e.printStackTrace();
       }
     } else {
