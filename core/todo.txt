@@ -7,9 +7,25 @@ X displayWidth/Height not being set properly before setup()
 X   http://code.google.com/p/processing/issues/detail?id=1120
 X   can't reproduce.. might be Java update, or multi-display issue?
 
+X selectInput() and selectOutput() freezes
+X   http://code.google.com/p/processing/issues/detail?id=173
+o   http://code.google.com/p/processing/issues/detail?id=445
+X     -> now includes a patch that addresses one specific problem
+X   just nix the function and go with a callback setup
+X   decision: named callback functions
+X   if can't find the function, tell people to put it in the main tab
+X   inputFile() and outputFile() need a fix
+X     remove them from the code, write examples for these
+X     use callbacks instead
+X     need to decide if you specify the function name, or if it's specific
+X Set default path for selectXxxxx() functions
+X   http://code.google.com/p/processing/issues/detail?id=233
+
 3D and OpenGL
 A ortho() causing line and fill to be misaligned
 A  http://code.google.com/p/processing/issues/detail?id=1143
+
+_ clean up PConstants and move things into PGraphics that needn't be available
 
 constants/hints
 _ bring PConstants back in line w/ previous 1.5 (can't renumber)
@@ -77,21 +93,6 @@ _   In reply to c#1, I noticed that dispose() is getting called. stop() isn't.
 _ static mode sketches seem to break ESC... noLoop() problem?
 _   need to find another way to get ESC on static mode
 _   b/c static mode sketches *do* finish because they have no draw()
-
-_ selectInput() and selectOutput() freezes
-_   http://code.google.com/p/processing/issues/detail?id=173
-_     -> now includes a patch that addresses one specific problem
-_   just nix the function and go with a callback setup
-o   http://code.google.com/p/processing/issues/detail?id=445
-_   decision: named callback functions
-_   if can't find the function, tell people to put it in the main tab
-_   inputFile() and outputFile() need a fix
-_     remove them from the code, write examples for these
-_     use callbacks instead
-_     need to decide if you specify the function name, or if it's specific
-_ Linux file chooser is gross (presumably Windows too)
-_   http://code.google.com/p/processing/issues/detail?id=1014
-_ Linux sketchbook selector wasn't working properly at all
 
 _ fix edge + 1 issue on stroke/fill for rectangles
 _   http://code.google.com/p/processing/issues/detail?id=509
@@ -296,8 +297,6 @@ _   http://code.google.com/p/processing/issues/detail?id=135
 _ make determination on shape(x,y,z,w,h,d) or no
 _ new PGraphics(... OutputStream) 
 _   http://code.google.com/p/processing/issues/detail?id=246
-_ path for selectXxxxx() functions
-_   http://code.google.com/p/processing/issues/detail?id=233
 _ add breakShape to the public API 
 _   or handle differently in general.. nested beginPath() calls?
 
@@ -485,7 +484,6 @@ _   could optimize by keeping a java image around, but table for later
 _     it's too significant a change, and not enough time to test
 _ callback for requestImage()
 _   http://code.google.com/p/processing/issues/detail?id=641
-_   might work with the selectXxxx() functions as well
 _ img.get() quirks
 _   http://code.google.com/p/processing/issues/detail?id=167
 _ image resizing is ugly (just use java2d?)
