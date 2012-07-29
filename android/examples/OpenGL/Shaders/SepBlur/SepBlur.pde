@@ -1,6 +1,3 @@
-// Issues: shader cannot be compiled:
-// (48) : error C5013: profile does not support "for" statements and "for" could not be unrolled.
-
 // Separable-blur shader (works by applying two successive passes
 // in each direction of the image)
 
@@ -12,7 +9,6 @@ void setup() {
   size(200, 200, P2D);
   
   blur = loadShader(PShader.TEXTURED, "blur.glsl");
-  blur.set("blurSize", 9);
   blur.set("sigma", 5.0f);  
   
   src = createGraphics(width, height, P2D); 
@@ -48,18 +44,3 @@ void draw() {
   image(pass2, 0, 0);   
 }
 
-void keyPressed() {
-  if (key == '9') {
-    blur.set("blurSize", 9);
-    blur.set("sigma", 5.0);
-  } else if (key == '7') {
-    blur.set("blurSize", 7);
-    blur.set("sigma", 3.0);
-  } else if (key == '5') {
-    blur.set("blurSize", 5);
-    blur.set("sigma", 2.0);  
-  } else if (key == '3') {
-    blur.set("blurSize", 5);
-    blur.set("sigma", 1.0);  
-  }  
-} 
