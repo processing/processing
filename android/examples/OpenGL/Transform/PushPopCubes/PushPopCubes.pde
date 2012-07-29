@@ -28,7 +28,7 @@ void setup(){
 
   // instantiate cubes
   for (int i = 0; i < cubeCount; i++){
-    cubes[i] = new Cube(12, 12, 6, 0, 0, 0);
+    cubes[i] = new Cube(24, 20, 10, 0, 0, 0);
     /* 3 different rotation options
        - 1st option: cubes each rotate uniformly
        - 2nd option: cubes each rotate randomly

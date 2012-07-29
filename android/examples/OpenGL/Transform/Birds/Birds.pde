@@ -1,3 +1,6 @@
+// Issues: the entire screen is white for a second at the beginning, then 
+// the wings of the birds are black
+
 /**
  * Crazy Flocking 3D Birds 
  * by Ira Greenberg. 

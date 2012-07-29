@@ -69,8 +69,6 @@ class pelo
     float x = radio * cos(theta) * cos(phi);
     float y = radio * cos(theta) * sin(phi);
     float z = radio * sin(theta);
-    float msx= screenX(x,y,z);
-    float msy= screenY(x,y,z);
 
     float xo = radio * cos(thetaff) * cos(phff);
     float yo = radio * cos(thetaff) * sin(phff);
