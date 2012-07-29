@@ -1,3 +1,75 @@
+0206 core (2.0a7)
+X change appletViewer back to 'online'
+X begin/endGL added to PGraphics/PApplet
+X add hasChildren() to XML library
+X   http://code.google.com/p/processing/issues/detail?id=1045
+X displayWidth/Height not being set properly before setup()
+X   http://code.google.com/p/processing/issues/detail?id=1120
+X   can't reproduce.. might be Java update, or multi-display issue?
+X selectInput() and selectOutput() freezes
+X   http://code.google.com/p/processing/issues/detail?id=173
+o   http://code.google.com/p/processing/issues/detail?id=445
+X     -> now includes a patch that addresses one specific problem
+X   just nix the function and go with a callback setup
+X   decision: named callback functions
+X   if can't find the function, tell people to put it in the main tab
+X   inputFile() and outputFile() need a fix
+X     remove them from the code, write examples for these
+X     use callbacks instead
+X     need to decide if you specify the function name, or if it's specific
+X Set default path for selectXxxxx() functions
+X   http://code.google.com/p/processing/issues/detail?id=233
+X XML now throws exceptions in its constructor, use loadXML() instead
+X   http://code.google.com/p/processing/issues/detail?id=1138
+X loadXML() should return null, new XML() should throw exceptions
+X   http://code.google.com/p/processing/issues/detail?id=1138
+A ortho() causing line and fill to be misaligned
+A  http://code.google.com/p/processing/issues/detail?id=1143
+o smooth() not working with applets an createGraphics(JAVA2D)
+o   but works fine with applications
+o   need an example of this
+o   this might be a problem of the offscreen surface as RGB not RGBA
+o     but that's been changed in more recent releases
+o size() inside draw is missing a new call to cameraMode, etc
+o fix param() to use a sketch.properties file when run as an app
+o   make this also be used in generating the html file
+o test winding polygons in different directions
+X PApplet.main(new String[] { "classname" }) won't pass in args
+X   this means that no args are after passed to the class
+X   the fix would be to use the following as the call to main()
+X   PApplet.main(append(new String[] { "classname }, args));
+X   added PApplet.main(String name, String[] args)
+
+earlier/cleaning/nixed
+o opengl needs to shut itself down properly when closing applet
+o   otherwise can crash the whole browser
+o z value hack for lines is causing trouble for 2D
+o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1089737928;start=0
+o rewrite line and stroke code, it's a buggy mess
+o   lines become 2 pixels thick after a 3D transform 
+o   better handling of single-pixel special case
+o     flat_line_retribution is a hack, can go away
+o some optimizations from zach
+o   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=os_core_pde;action=display;num=1121670787
+o box is not opaque
+o   problem is that lines are drawn second
+o   one pixel lines have no z value.. argh
+o   bug re: 3d depth sorting on lines
+o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1043894019;start=0
+o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042004618
+o   translate(58, 48, 0); 
+o   rotateY(0.5);
+o   box(40);
+o cursor() broken in applets on macosx?
+o   or is it a java 1.4 versus java 1.3 problem?
+o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081645955
+A optimize: sending buffers of vertices
+A optimize: ellipse and sphere implementations
+A OpenGL tessellator implementation (for complex shapes)
+o making jogl behave better in the browser - or remove it/add warning
+o Update JOGL when RC6 arrive: forum.jogamp.org/Road-to-RC6-td3866404.html
+
+
 0205 core (2.0a6)
 X add support for println(long) because it was converting the type to float
 X   http://code.google.com/p/processing/issues/detail?id=969
