@@ -49,6 +49,9 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=1424
 X add general outline of 1.5 and 2.0 releases to the faq
 X   video is on its way out, no good/simple solution for fixing now
 X   andreas' library will do good things eventually
+o "create font" is slow, implement a progress indicator
+X   http://code.google.com/p/processing/issues/detail?id=230
+X   wontfix.. moving away from bitmap fonts
 
 cleaning/earlier
 o PApplet.this doesn't work
@@ -142,6 +145,73 @@ o   probaby related to the other load/save sync errors
 X   need something more specific than this
 X can't run opengl in 64-bit
 X   http://code.google.com/p/processing/issues/detail?id=255
+o PDE locks up during setup() (since no window shown)
+o   http://dev.processing.org/bugs/show_bug.cgi?id=687
+o   maybe better to do an example of running code on another thread
+o   when it's done as a script
+X   http://code.google.com/p/processing/issues/detail?id=86
+X   fixed as good as possible
+X remove jvm from cvs
+X   use wget to grab it if it doesn't exist
+o   and include an md5hash to see if the file is correct
+X     not necessary -- ant takes care of it
+o notes about getting best results from text in each renderer
+o   http://dev.processing.org/bugs/show_bug.cgi?id=466
+X   http://code.google.com/p/processing/issues/detail?id=64
+X   marked wontfix
+o Debugger highlights wrong line, and sometimes the wrong file
+o   http://code.google.com/p/processing/issues/detail?id=412
+X   no test case, closed
+o add support for multiple errors from the compiler
+o   actual error may be 4th of 5
+o   maybe a dropdown list thing, with the first just shown?
+X   http://code.google.com/p/processing/issues/detail?id=19
+X   marked cantfix
+o using a processing keyword as a variable name gives unhelpful error message
+X   http://dev.processing.org/bugs/show_bug.cgi?id=213
+X   fixed issue specific to handleDisplay
+o not enough args for triangle (or args in general) 
+o   throws out bizarre message 
+o   http://dev.processing.org/bugs/show_bug.cgi?id=17
+X   fixed up later
+X expecting RPAREN messages are ugly
+X   http://dev.processing.org/bugs/show_bug.cgi?id=15
+o unchecking 'use external editor' sketch should not set modified
+o   dangerous if a version that hasn't been re-loaded has possibility
+o   to overwrite. i.e. make a change and save in external editor,
+o   don't actually 
+o comments shown as code / code shown as comments
+o   http://code.google.com/p/processing/issues/detail?id=164
+X   merged into new editor issue
+o program sometimes goes gray because it thinks everything is in a comment
+o   http://code.google.com/p/processing/issues/detail?id=564
+X   merged into new editor issue
+o failed export still copies random files
+o   Failed compile on Export or Export to Application 
+o   still creates folder and leaves mess behind
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1050
+X   opted not to fix (rationale in the report)
+o javadoc comment in a static mode app doesn't get moved to the top
+o   http://dev.processing.org/bugs/show_bug.cgi?id=924
+X  http://code.google.com/p/processing/issues/detail?id=115
+o make export put a timestamp in the html code (hidden or visible)
+o   http://dev.processing.org/bugs/show_bug.cgi?id=66
+X   http://code.google.com/p/processing/issues/detail?id=22
+X when holding down shift, show the alternate behavior for EditorHeader
+X   http://dev.processing.org/bugs/show_bug.cgi?id=37
+o implement new version of history
+o   make history folder, and a zip (not gz) file for each entry
+o   history causing trouble - super slow with a huge sketch
+o     could instead be gzipped and appended to history.dat
+o     along with another file that is actually a table of offsets
+o     no need to make the thing a gzip stream
+o     checkbox on menu for 'record history' ?
+o     history converter option?
+o   only first 20 entries visible?
+o   shortcut to walk through history, ala photoshop (ctrl-alt-z)
+o   zlib file becoming corrupt (not flushed after close?)
+o   make hooks to history api so others can write tools around it
+X   http://code.google.com/p/processing/issues/detail?id=26
 
 applets
 o tool to run in appletviewer? sun.applet.Main is appletviewer
@@ -210,12 +280,6 @@ o   because otherwise it's impossible to debug this stuff
 o video library not working on export to web
 o   http://dev.processing.org/bugs/show_bug.cgi?id=1421
 o Movie needs the crop() functions ala Capture
-
-earlier
-X remove jvm from cvs
-X   use wget to grab it if it doesn't exist
-o   and include an md5hash to see if the file is correct
-X     not necessary -- ant takes care of it
 
 open/base/recent
 X recent sketches
@@ -740,10 +804,6 @@ X   nice idea but too error-prone
 
 DOC / Write Me
 
-_ PDE locks up during setup() (since no window shown)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=687
-_   maybe better to do an example of running code on another thread
-_   when it's done as a script
 _ stop() to shut down a sketch (but not quit/close window)
 _ MIN_FLOAT, MAX_FLOAT, also the difference from the Java functions
 _   also MIN_INT and MAX_INT, even though those are more similar
@@ -775,8 +835,6 @@ An unexpected error has been detected by HotSpot Virtual Machine:
 # EXCEPTION_ACCESS_VIOLATION
 all i can do is find things that might trigger them, but it's more likely
 than not to be a java problem, and not something that can be fixed
-_ notes about getting best results from text in each renderer
-_   http://dev.processing.org/bugs/show_bug.cgi?id=466
 _ explanation of we see libraries on desktop
 _   We're making an assumption that the idea of a "library" refers to a block of Java-based code. The reasoning is that from within the PDE, we anticipate that it will be Java-compatible versions of other languages (such as Jython, JRuby, or Scala) as opposed to more generic languages. In the future we could open this up, but we'd rather not complicate things for the moment.
 
@@ -994,9 +1052,7 @@ PDE / Compiler & Preprocessor
 
 need examples
 _ Improve detection and handling of missing semicolons
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1036
-_ Debugger highlights wrong line, and sometimes the wrong file
-_   http://code.google.com/p/processing/issues/detail?id=412
+_   http://code.google.com/p/processing/issues/detail?id=136
 
 medium (bugs/features)
 _ mismatched square brackets generate bizarre and/or misleading error messages
@@ -1008,13 +1064,9 @@ _   or if (blah blah blah) ;
 _   it's never useful. students can use { } if they want an empty block
 _ missing brackets, unmatched brackets
 _   examples added to the bug report
-_   http://dev.processing.org/bugs/show_bug.cgi?id=13
+_   http://code.google.com/p/processing/issues/detail?id=6
 
 low (features)
-_ add support for multiple errors from the compiler
-_   actual error may be 4th of 5
-_   maybe a dropdown list thing, with the first just shown?
-_   http://dev.processing.org/bugs/show_bug.cgi?id=58
 _ copy running code from /tmp/buildXXxxx on crash of p5
 _   should probably make a way to save/recover code
 _   make the buildXxxx folders relate to time/date?
@@ -1024,31 +1076,23 @@ _ Saving sketch with the same name as a class or primitive breaks sketch
 _   http://code.google.com/p/processing/issues/detail?id=157
 _ don't allow people to override methods like paint() 
 _   make them final? just improve the error messages?
-_   http://processing.org/bugs/bugzilla/1219.html
 _   http://code.google.com/p/processing/issues/detail?id=1020
 _ Processing chokes if a sketch defines a class with same name as the sketch
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1199
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1294
-_ using a processing keyword as a variable name gives unhelpful error message
-_   http://dev.processing.org/bugs/show_bug.cgi?id=213
+_   http://code.google.com/p/processing/issues/detail?id=157
+_   http://code.google.com/p/processing/issues/detail?id=168
 _ don't allow goofy case versions of reserved words
 _   keypressed should maybe throw an error
-_   http://dev.processing.org/bugs/show_bug.cgi?id=9
+_   http://code.google.com/p/processing/issues/detail?id=5
 _ using a keyword as a variable name gives unhelpful error message
-_   http://dev.processing.org/bugs/show_bug.cgi?id=212
+_   http://code.google.com/p/processing/issues/detail?id=54
 
 low (better error messages)
-_ not enough args for triangle (or args in general) 
-_   throws out bizarre message 
-_   http://dev.processing.org/bugs/show_bug.cgi?id=17
 _ need better error messages in general
 _   some means to link out to further documentation (e.g. AIOOBE, NPE)
-_ expecting RPAREN messages are ugly
-_   http://dev.processing.org/bugs/show_bug.cgi?id=15
 _ if 'void' left out before loop or setup, cryptic message about
 _   'constructor loop must be named Temporary_23498_2343'
 _   add a better handler for this specific thing?
-_   http://dev.processing.org/bugs/show_bug.cgi?id=18
+_   http://code.google.com/p/processing/issues/detail?id=8
 
 
 PDE / Editor
@@ -1078,10 +1122,6 @@ _ add auto-save to the editor
 _   http://dev.processing.org/bugs/show_bug.cgi?id=739
 _ dragging title bar while sketch running causes strange selection behavior
 _   http://dev.processing.org/bugs/show_bug.cgi?id=504
-_ unchecking 'use external editor' sketch should not set modified
-_   dangerous if a version that hasn't been re-loaded has possibility
-_   to overwrite. i.e. make a change and save in external editor,
-_   don't actually 
 _ add mnemonics for menus (alt-f to open 'file')
 _   http://code.google.com/p/processing/issues/detail?id=12
 _ option to just print all code in project
@@ -1106,10 +1146,6 @@ _ sketches should only write to the console of their editor window
 _   http://dev.processing.org/bugs/show_bug.cgi?id=921
 _ problems with file/print
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1230
-_ comments shown as code / code shown as comments
-_   http://code.google.com/p/processing/issues/detail?id=164
-_ program sometimes goes gray because it thinks everything is in a comment
-_   http://code.google.com/p/processing/issues/detail?id=564
 
 
 PDE / Editor Buttons
@@ -1126,8 +1162,6 @@ _   rather than post-compile
 _   http://dev.processing.org/bugs/show_bug.cgi?id=776
 _ if export fails (compile error) need to un-highlight the export button
 _   http://dev.processing.org/bugs/show_bug.cgi?id=39
-_ when holding down shift, show the alternate behavior for EditorHeader
-_   http://dev.processing.org/bugs/show_bug.cgi?id=37
 
 
 PDE / Editor Header
@@ -1154,10 +1188,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=59
 
 PDE / Export
 
-4 _ failed export still copies random files
-4 _   Failed compile on Export or Export to Application 
-4 _   still creates folder and leaves mess behind
-4 _   http://dev.processing.org/bugs/show_bug.cgi?id=1050
 _ when exporting to application (or applet) don't copy .java files from folder
 _   (they'll be copied as source files later)
 _   make .java files and friends go to correct locations on export (app)
@@ -1170,36 +1200,14 @@ _ show error when no main() is included but class extends PApplet
 _   error can happen or be checked 
 _ errors during export don't show up properly (no red status bar)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=194
-_ make export put a timestamp in the html code (hidden or visible)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=66
 _ exporting application copies .java files 
 _   .java files are copied to the root folder as well as the source folder
-_ javadoc comment in a static mode app doesn't get moved to the top
-_   http://dev.processing.org/bugs/show_bug.cgi?id=924
-
 
 
 PDE / Find & Replace
 
 _ allowing to find & replace over multiple tabs 
-_   http://dev.processing.org/bugs/show_bug.cgi?id=69
-
-
-PDE / History
-
-_ implement new version of history
-_   http://dev.processing.org/bugs/show_bug.cgi?id=71
-_   make history folder, and a zip (not gz) file for each entry
-_   history causing trouble - super slow with a huge sketch
-_     could instead be gzipped and appended to history.dat
-_     along with another file that is actually a table of offsets
-_     no need to make the thing a gzip stream
-_     checkbox on menu for 'record history' ?
-_     history converter option?
-_   only first 20 entries visible?
-_   shortcut to walk through history, ala photoshop (ctrl-alt-z)
-_   zlib file becoming corrupt (not flushed after close?)
-_   make hooks to history api so others can write tools around it
+_   http://code.google.com/p/processing/issues/detail?id=25
 
 
 PDE / Preferences
@@ -1350,11 +1358,6 @@ _   to pull code from a local folder
 _   update will update classes from shared in the current folder
 
 
-TOOLS / Create Font
-
-_ "create font" is slow, implement a progress indicator
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1464
-
 
 TOOLS / Color Selector
 
@@ -1408,8 +1411,8 @@ _   bufferUntil() fires an event but continues to fill up the buffer
 _   bug report includes patch from mellis
 _   http://dev.processing.org/bugs/show_bug.cgi?id=96
 _ add prompt() method to Serial (simple dialog box that pops up)
-E4 _ Add Mark and Space parity to the Serial library
-E4 _   http://dev.processing.org/bugs/show_bug.cgi?id=1087
+_ Add Mark and Space parity to the Serial library
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1087
 
 
 ////////////////////////////////////////////////////////////////////
@@ -1425,7 +1428,7 @@ How the environment gets packed up, downloaded, and installed.
 DIST / General 
 
 _ drag and drop
-_   including the number of items would be especially nice
+_   including the number of items added to sketch would be especially nice
 _ implement automatic update
 _   http://dev.processing.org/bugs/show_bug.cgi?id=374
 _ need .pde document icons
@@ -1497,11 +1500,11 @@ _   can comment out /System/Library/ as a test
 _ put stdout/stderr into ~/Library/Logs
 _   and have a .log extension so it can be browsed properly
 _ try LSMinimumSystemVersion in Info.plist
-5 _ Horizontal two finger scroll doesn't work in OS X
-5 _   also applies to horizontal scrolling on the mouse
-5 _   http://dev.processing.org/bugs/show_bug.cgi?id=1046
-5 _ Exiting a sketch with Command-Q or File > Quit doesn't call stop() on OS X
-5 _   http://dev.processing.org/bugs/show_bug.cgi?id=1069
+_ Horizontal two finger scroll doesn't work in OS X
+_   also applies to horizontal scrolling on the mouse
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1046
+_ Exiting a sketch with Command-Q or File > Quit doesn't call stop() on OS X
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1069
 _ add a check to make sure that people aren't running from the dmg
 _   doesn't actually cause any problems, so don't bother?
 
@@ -1518,7 +1521,7 @@ _   argh.. more path and shell issues..
 _ splash screen
 
 
-NOT FOR 2.0
+3.0 and later
 
 _ Replace current editor with more advanced version
 _   http://code.google.com/p/processing/issues/detail?id=1032
