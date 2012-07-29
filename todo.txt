@@ -54,6 +54,41 @@ X   http://code.google.com/p/processing/issues/detail?id=230
 X   wontfix.. moving away from bitmap fonts
 X switch back to yymmdd naming for sketches as the default
 
+open/base/recent
+X recent sketches
+X   http://code.google.com/p/processing/issues/detail?id=188
+X add EditorState class, device-aware placement
+o not properly handling other odd cases
+X don't pollute the recent menu with un-saved sketches
+X toFront() not working from recent menu
+X get rid of restore sketch feature
+o   remove pref for restoring sketches
+X implement recent sketches menu
+X add "recent files" list to open menu?
+o   http://dev.processing.org/bugs/show_bug.cgi?id=1335
+o don't re-open new window on top of another
+X   changing how this is handled
+X detect mode and library example folders for recent menu
+o with the same sketch open, a handleOpen() might open a second on top of it
+X   should be fixed up 
+
+applets
+o tool to run in appletviewer? sun.applet.Main is appletviewer
+X require Java 6 (and with that, OS X 10.5 plus Core 2 Intel Mac)?
+o   though we need a 64-bit browser before applets will run...
+o   http://www.ornl.gov/~t6p/Main/Utilities.html
+o courseware
+o   export sketch as applet when uploading
+o   save sketch zip files
+o   have a means to load them from "teacher" version of p5
+o   figure out how to use the 
+o items from the 'code' folder not included with applet export
+o add tool to "Add custom html to sketch"
+o   that copies applet.html, 
+o   opens sketch folder, 
+o   and gives info about what to do next (how to edit)
+o   http://dev.processing.org/bugs/show_bug.cgi?id=143
+
 cleaning/earlier
 o PApplet.this doesn't work
 o   doesn't work in javac either--needs to be ClassName.this
@@ -214,23 +249,6 @@ o   zlib file becoming corrupt (not flushed after close?)
 o   make hooks to history api so others can write tools around it
 X   http://code.google.com/p/processing/issues/detail?id=26
 
-applets
-o tool to run in appletviewer? sun.applet.Main is appletviewer
-X require Java 6 (and with that, OS X 10.5 plus Core 2 Intel Mac)?
-o   though we need a 64-bit browser before applets will run...
-o   http://www.ornl.gov/~t6p/Main/Utilities.html
-o courseware
-o   export sketch as applet when uploading
-o   save sketch zip files
-o   have a means to load them from "teacher" version of p5
-o   figure out how to use the 
-o items from the 'code' folder not included with applet export
-o add tool to "Add custom html to sketch"
-o   that copies applet.html, 
-o   opens sketch folder, 
-o   and gives info about what to do next (how to edit)
-o   http://dev.processing.org/bugs/show_bug.cgi?id=143
-
 video/nixed
 o if read() hasn't been called, can cause an error with java2d
 o   http://dev.processing.org/bugs/show_bug.cgi?id=1041
@@ -281,24 +299,6 @@ o   because otherwise it's impossible to debug this stuff
 o video library not working on export to web
 o   http://dev.processing.org/bugs/show_bug.cgi?id=1421
 o Movie needs the crop() functions ala Capture
-
-open/base/recent
-X recent sketches
-X   http://code.google.com/p/processing/issues/detail?id=188
-X add EditorState class, device-aware placement
-o not properly handling other odd cases
-X don't pollute the recent menu with un-saved sketches
-X toFront() not working from recent menu
-X get rid of restore sketch feature
-o   remove pref for restoring sketches
-X implement recent sketches menu
-X add "recent files" list to open menu?
-o   http://dev.processing.org/bugs/show_bug.cgi?id=1335
-o don't re-open new window on top of another
-X   changing how this is handled
-X detect mode and library example folders for recent menu
-o with the same sketch open, a handleOpen() might open a second on top of it
-X   should be fixed up 
 
 bugzilla (ouch)
 o add bug voting to the bugs db before 1.0 release?
