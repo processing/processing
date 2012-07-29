@@ -40,6 +40,30 @@ X   the fix would be to use the following as the call to main()
 X   PApplet.main(append(new String[] { "classname }, args));
 X   added PApplet.main(String name, String[] args)
 
+cleaning/nixed
+o opengl needs to shut itself down properly when closing applet
+o   otherwise can crash the whole browser
+o z value hack for lines is causing trouble for 2D
+o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1089737928;start=0
+o rewrite line and stroke code, it's a buggy mess
+o   lines become 2 pixels thick after a 3D transform 
+o   better handling of single-pixel special case
+o     flat_line_retribution is a hack, can go away
+o some optimizations from zach
+o   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=os_core_pde;action=display;num=1121670787
+o box is not opaque
+o   problem is that lines are drawn second
+o   one pixel lines have no z value.. argh
+o   bug re: 3d depth sorting on lines
+o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1043894019;start=0
+o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042004618
+o   translate(58, 48, 0); 
+o   rotateY(0.5);
+o   box(40);
+o cursor() broken in applets on macosx?
+o   or is it a java 1.4 versus java 1.3 problem?
+o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081645955
+
 before beta
 _ loadShape() mess
 _   get things out of PGraphics
@@ -113,6 +137,9 @@ _   provide a way to clear the PGraphics with plain alpha
 
 _ sort out edge + 1 issue on stroke/fill for rectangles
 _   http://code.google.com/p/processing/issues/detail?id=509
+_ y2 position of rectangles not same as y2 position of lines
+_   happens when the rectangle is flipped on the x or y axis
+_   probably a hack that draws the "last" point differently
 
 _ add() to add things to lists, sum() for the math (sum is used less after all)
 
@@ -134,83 +161,6 @@ _   also need to copy this over to android
 
 _ disable smoothing on noSmooth(), use hint to do 2x vs 4x smoothing
 
-andres 
-_ simple NPE in OpenGL causes really large, not useful, stack trace
-_ why is initPrimarySurface() public?
-_ why is setFramerate() public? (also should be setFrameRate or just frameRate)
-_ where did hintEnabled() come from?
-_ remove 'params' from createImage (is it on loadImage too?)
-_ OpenGL noSmooth() problems
-_   http://code.google.com/p/processing/issues/detail?id=328
-_ inconsistent anti-aliasing with OpenGL
-_   http://code.google.com/p/processing/issues/detail?id=217
-_ modelX/Y/Z broken when aiming a camera
-_   http://code.google.com/p/processing/issues/detail?id=148
-_ OS X slow with FSEM enabled
-_   http://code.google.com/p/processing/issues/detail?id=737
-_ chopping out triangles in OpenGL (though it's only 2D drawing)
-_   http://code.google.com/p/processing/issues/detail?id=193
-_ get() with OPENGL is grabbing the wrong coords
-_   http://code.google.com/p/processing/issues/detail?id=191
-_ deal with issue of single pixel seam at the edge of textures
-_   should vertexTexture() divide by width/height or width-1/height-1?
-_   http://code.google.com/p/processing/issues/detail?id=76
-_ lousy graphics cards cause background to flicker if background() not used
-_   http://code.google.com/p/processing/issues/detail?id=146
-_   OPENGL sketches flicker w/ Vista when background() not used inside draw()
-_   Disabling Aero scheme sometimes prevents the problem
-_   Updating graphics drivers may prevent the problem 
-_ text characters showing up as opaque rectangles in tga files
-o   solution is to implement alpha compositing across all of P3D 
-o   http://en.wikipedia.org/wiki/Alpha_compositing
-_   http://code.google.com/p/processing/issues/detail?id=80
-_ textAlign(CENTER) with P3D and OPENGL produces messy result
-_   probably rounding error with the images
-_   http://code.google.com/p/processing/issues/detail?id=65
-_ when turning smoothing on, internal lines of shapes are visible
-_   add an edge flag when tesselating 
-_   mind the opengl tesselation flags
-_   need to turn off smoothing for the interior of shapes
-_   http://code.google.com/p/processing/issues/detail?id=53
-_ Implement support for complex shapes when using the OpenGL renderer 
-_   in opengl mode, use its tesselator
-_   because the vertex calls can just come right back to regular vertex calls
-_   this way we can also implement breakShape() for opengl
-_   http://code.google.com/p/processing/issues/detail?id=122
-_ strokeCap() and strokeJoin() for use with OPENGL
-_   http://code.google.com/p/processing/issues/detail?id=123
-_ ellipse scaling method isn't great
-_   http://code.google.com/p/processing/issues/detail?id=87
-_ improve hint(ENABLE_DEPTH_SORT) to use proper painter's algo
-_   http://code.google.com/p/processing/issues/detail?id=51
-_   polygon z-order depth sorting with alpha in opengl
-_   complete the implementation of hint() with proper implementation
-_   gl alpha on images when flipped around backwards
-_     will sorting based on depth help this? also ask simon for ideas
-_   need to merge sorting/drawing of lines and triangles
-_     lines will occlude tris and vice versa
-_     will need to split each based on the other
-_     sort issues will affect both
-_ Stroking a rect() leaves off the upper right pixel
-_   http://code.google.com/p/processing/issues/detail?id=67
-_ implement a more efficient version of blend()
-_   http://code.google.com/p/processing/issues/detail?id=120
-_ Implement anisotropic filtering when using OPENGL
-_   http://code.google.com/p/processing/issues/detail?id=502
-_ Signature issue on contributed libraries affects unrelated opengl sketches
-_   http://code.google.com/p/processing/issues/detail?id=261
-_ remove matrixMode(), add a projection() method
-_ remove screenBlend(), textureBlend() from PGraphics et al
-_ have andres take over all current GL issues in the tracker
-_ opengl applet problems with tabs - needs to handle stop() and start() 
-_   http://code.google.com/p/processing/issues/detail?id=196
-_   stop() called between tabs/pages, start() may be called again
-_   http://java.sun.com/docs/books/tutorial/deployment/applet/lifeCycle.html
-_   really, stop() should just call noLoop() (and start re-enable if done)
-_     and on android, start/stop can be used to save state information
-_   need to fix opengl applets so that we can safely kill P3D
-_ shared intf for 3D view data across PGraphicsOpenGL and PGraphicsAndroid3D
-_   libraries have to do a lot of casting
 
 2.0 / methods
 _ decision on registered methods
@@ -274,18 +224,6 @@ _   10s should be fine--no need to keep spinning (bad for android too)
 _   just call interrupt() when it's time to get back to work
 _ add methods to PShape to apply all transformations in the tree
 _ need to clean up the hints in the reference/source
-
-gui priorities
-+ Label
-+ Button
-+ Scrollbar/Slider
-- Checkbox
-- Radio
-. List
-. Textblock
-\ Knob
-\ Progress bar
-\ Toggle
 
 vector
 _ PVector discussion with Dan
@@ -432,40 +370,10 @@ _ show an error when using a font character that isn't available
 _   maybe fall back on other characters instead?
 
 
-CORE / PGraphics
-
-_ y2 position of rectangles not same as y2 position of lines
-_   happens when the rectangle is flipped on the x or y axis
-_   probably a hack that draws the "last" point differently
-
-_ lines
-_   z value hack for lines is causing trouble for 2D
-_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1089737928;start=0
-_   rewrite line and stroke code, it's a buggy mess
-_     lines become 2 pixels thick after a 3D transform 
-_     better handling of single-pixel special case
-_       flat_line_retribution is a hack, can go away
-
-
 CORE / PGraphicsJava2D
 
-_ some optimizations from zach
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=os_core_pde;action=display;num=1121670787
 _ catch sun.dc.pr.PRException?
 _   http://code.google.com/p/processing/issues/detail?id=39
-
-
-CORE / PGraphics3D
-
-_ box is not opaque
-_   problem is that lines are drawn second
-_   one pixel lines have no z value.. argh
-_   bug re: 3d depth sorting on lines
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1043894019;start=0
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042004618
-_   translate(58, 48, 0); 
-_   rotateY(0.5);
-_   box(40);
 
 
 CORE / PImage
@@ -553,25 +461,8 @@ _ document somehow.. svg viewer will be discontinued
 _   http://www.adobe.com/svg/eol.html
 
 
-CORE / Mac OS X
+CORE / OpenGL (Andres)
 
-_ set the application name to sketch name (not processing.core.PApplet)
-_   System.setProperty("com.apple.mrj.application.apple.menu.about.name", ...)
-_   -Xdock:name=<application name>
-_   -Xdock:icon=<path to icon file>
-_ cursor() broken in applets on macosx?
-_   or is it a java 1.4 versus java 1.3 problem?
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081645955
-
-
-
-////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////
-
-
-
-more andres
 _ implement setImpl() instead of set() inside PGraphicsOpenGL
 _   http://code.google.com/p/processing/issues/detail?id=121
 _ use glCopyPixels() or glReadPixels() instead of copy() method
@@ -586,9 +477,92 @@ _ updatePixels wth OpenGL requires a lot of memory, need better texture update
 _   http://code.google.com/p/processing/issues/detail?id=77
 _ implement textMode(SHAPE) with OPENGL
 _   http://code.google.com/p/processing/issues/detail?id=738
+_ Signature issue on contributed libraries affects unrelated opengl sketches
+_   http://code.google.com/p/processing/issues/detail?id=261
+_ simple NPE in OpenGL causes really large, not useful, stack trace
+_ why is initPrimarySurface() public?
+_ why is setFramerate() public? (also should be setFrameRate or just frameRate)
+_ where did hintEnabled() come from?
+_ remove 'params' from createImage (is it on loadImage too?)
+_ OpenGL noSmooth() problems
+_   http://code.google.com/p/processing/issues/detail?id=328
+_ inconsistent anti-aliasing with OpenGL
+_   http://code.google.com/p/processing/issues/detail?id=217
+_ modelX/Y/Z broken when aiming a camera
+_   http://code.google.com/p/processing/issues/detail?id=148
+_ OS X slow with FSEM enabled
+_   http://code.google.com/p/processing/issues/detail?id=737
+_ chopping out triangles in OpenGL (though it's only 2D drawing)
+_   http://code.google.com/p/processing/issues/detail?id=193
+_ get() with OPENGL is grabbing the wrong coords
+_   http://code.google.com/p/processing/issues/detail?id=191
+_ deal with issue of single pixel seam at the edge of textures
+_   should vertexTexture() divide by width/height or width-1/height-1?
+_   http://code.google.com/p/processing/issues/detail?id=76
+_ lousy graphics cards cause background to flicker if background() not used
+_   http://code.google.com/p/processing/issues/detail?id=146
+_   OPENGL sketches flicker w/ Vista when background() not used inside draw()
+_   Disabling Aero scheme sometimes prevents the problem
+_   Updating graphics drivers may prevent the problem 
+_ text characters showing up as opaque rectangles in tga files
+o   solution is to implement alpha compositing across all of P3D 
+o   http://en.wikipedia.org/wiki/Alpha_compositing
+_   http://code.google.com/p/processing/issues/detail?id=80
+_ textAlign(CENTER) with P3D and OPENGL produces messy result
+_   probably rounding error with the images
+_   http://code.google.com/p/processing/issues/detail?id=65
+_ when turning smoothing on, internal lines of shapes are visible
+_   add an edge flag when tesselating 
+_   mind the opengl tesselation flags
+_   need to turn off smoothing for the interior of shapes
+_   http://code.google.com/p/processing/issues/detail?id=53
+_ Implement support for complex shapes when using the OpenGL renderer 
+_   in opengl mode, use its tesselator
+_   because the vertex calls can just come right back to regular vertex calls
+_   this way we can also implement breakShape() for opengl
+_   http://code.google.com/p/processing/issues/detail?id=122
+_ strokeCap() and strokeJoin() for use with OPENGL
+_   http://code.google.com/p/processing/issues/detail?id=123
+_ ellipse scaling method isn't great
+_   http://code.google.com/p/processing/issues/detail?id=87
+_ improve hint(ENABLE_DEPTH_SORT) to use proper painter's algo
+_   http://code.google.com/p/processing/issues/detail?id=51
+_   polygon z-order depth sorting with alpha in opengl
+_   complete the implementation of hint() with proper implementation
+_   gl alpha on images when flipped around backwards
+_     will sorting based on depth help this? also ask simon for ideas
+_   need to merge sorting/drawing of lines and triangles
+_     lines will occlude tris and vice versa
+_     will need to split each based on the other
+_     sort issues will affect both
+_ Stroking a rect() leaves off the upper right pixel
+_   http://code.google.com/p/processing/issues/detail?id=67
+_ implement a more efficient version of blend()
+_   http://code.google.com/p/processing/issues/detail?id=120
+_ Implement anisotropic filtering when using OPENGL
+_   http://code.google.com/p/processing/issues/detail?id=502
+_ Signature issue on contributed libraries affects unrelated opengl sketches
+_   http://code.google.com/p/processing/issues/detail?id=261
+_ remove matrixMode(), add a projection() method
+_ remove screenBlend(), textureBlend() from PGraphics et al
+_ have andres take over all current GL issues in the tracker
+_ opengl applet problems with tabs - needs to handle stop() and start() 
+_   http://code.google.com/p/processing/issues/detail?id=196
+_   stop() called between tabs/pages, start() may be called again
+_   http://java.sun.com/docs/books/tutorial/deployment/applet/lifeCycle.html
+_   really, stop() should just call noLoop() (and start re-enable if done)
+_     and on android, start/stop can be used to save state information
+_   need to fix opengl applets so that we can safely kill P3D
+_ shared intf for 3D view data across PGraphicsOpenGL and PGraphicsAndroid3D
+_   libraries have to do a lot of casting
 
-_ opengl needs to shut itself down properly when closing applet
-_   otherwise can crash the whole browser
+
+CORE / Mac OS X
+
+_ set the application name to sketch name (not processing.core.PApplet)
+_   System.setProperty("com.apple.mrj.application.apple.menu.about.name", ...)
+_   -Xdock:name=<application name>
+_   -Xdock:icon=<path to icon file>
 
 
 LIBRARIES / PGraphicsPDF
@@ -629,6 +603,17 @@ _     before rewriting all of createInput()
 
 LATER (post 2.0)
 
+_ gui priorities
+_   + Label
+_   + Button
+_   + Scrollbar/Slider
+_   - Checkbox
+_   - Radio
+_   . List
+_   . Textblock
+_   \ Knob
+_   \ Progress bar
+_   \ Toggle
 _ implement JSON class
 _   http://www.xml.com/lpt/a/1658
 _   http://www.json.org/java/
