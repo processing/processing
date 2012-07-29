@@ -1,5 +1,3 @@
-// Issues: same as FishEye
-
 // Fish-eye shader on the main surface, glossy specular reflection shader
 // on the offscreen canvas.
 

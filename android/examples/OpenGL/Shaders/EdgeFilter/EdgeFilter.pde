@@ -1,5 +1,3 @@
-// Issues: flickers and scene doesn't move
-
 PShader edges;
 boolean applyFilter = true;
 

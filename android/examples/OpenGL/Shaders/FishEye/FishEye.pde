@@ -1,6 +1,3 @@
-// Issues: crashes with 
-// java.lang.RuntimeException: can only create 8 lights
-
 // Fish-eye shader, useful for dome projection
 
 PGraphics canvas;
