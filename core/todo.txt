@@ -21,21 +21,43 @@ X Set default path for selectXxxxx() functions
 X   http://code.google.com/p/processing/issues/detail?id=233
 X XML now throws exceptions in its constructor, use loadXML() instead
 X   http://code.google.com/p/processing/issues/detail?id=1138
-
-3D and OpenGL
+X loadXML() should return null, new XML() should throw exceptions
+X   http://code.google.com/p/processing/issues/detail?id=1138
 A ortho() causing line and fill to be misaligned
 A  http://code.google.com/p/processing/issues/detail?id=1143
+o smooth() not working with applets an createGraphics(JAVA2D)
+o   but works fine with applications
+o   need an example of this
+o   this might be a problem of the offscreen surface as RGB not RGBA
+o     but that's been changed in more recent releases
+o size() inside draw is missing a new call to cameraMode, etc
+o fix param() to use a sketch.properties file when run as an app
+o   make this also be used in generating the html file
+o test winding polygons in different directions
+X PApplet.main(new String[] { "classname" }) won't pass in args
+X   this means that no args are after passed to the class
+X   the fix would be to use the following as the call to main()
+X   PApplet.main(append(new String[] { "classname }, args));
+X   added PApplet.main(String name, String[] args)
 
+before beta
+_ loadShape() mess
+_   get things out of PGraphics
+_   separate PShape2/3D from OpenGL
+_   incorporate SVG loader into the 2D class
+_ finish PGL/GL naming and cleanups to API
+_ loadPixels() implementation
+
+_ incorporate patch for SVG Gradients from Inkscape
+_   http://code.google.com/p/processing/issues/detail?id=1142
 
 constants/hints
 _ bring PConstants back in line w/ previous 1.5 (can't renumber)
 _ consider enable("mipmaps") instead of hint(ENABLE_MIPMAPS)
 _ hint(DISABLE_LOADPIXELS) -> faster rendering in Java2D
+_ clean up PConstants and move things into PGraphics that needn't be available
 
-_ loadXML() should return null, new XML() should throw exceptions
-_   http://code.google.com/p/processing/issues/detail?id=1138
-
-docs (2.0a6)
+docs (2.0)
 _ online is there but deprecated
 _   doesn't test net connection to see if 'online'
 _   only tests whether running inside an applet viewer
@@ -48,8 +70,13 @@ _ antialias -> smoothMode(), smoothQuality(), quality()
 _   NEAREST, BILINEAR, BICUBIC, or 0, 2, 4? (need 8x too, so maybe numbers)
 _ final decision on pg.setQuality(sketchQuality())
 _   should probably be setQuality(parent.sketchQuality())
-
-_ clean up PConstants and move things into PGraphics that needn't be available
+_ add reference/docs for urlEncode() and urlDecode()
+_ verify (and document) public access members of PApplet
+_   http://dev.processing.org/bugs/show_bug.cgi?id=660
+_ some docs missing (therefore not syntax highlighting)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=661
+_ constants that are not highlighting (WINDOWS the only one?)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=662
 
 _ move requestFocusInWindow() to safter EDT place
 _ look into using BufferStrategy again to improve performance
@@ -69,6 +96,10 @@ _ Update JOGL when RC6 arrive: forum.jogamp.org/Road-to-RC6-td3866404.html
 
 _ PUtil -> move match(), lots of other non-gui functions into own class
 _   and merge it in statically via the methods code
+_ check for what else inside PApplet should be static
+_   maybe catch RuntimeExceptions in the called sub-functions
+_   that way more stuff can be static w/o losing useful error handling
+_   (emitting errors when closest to source.. i.e. w/ the filename)
 
 _ memory leak when many createGraphics(..., JAVA2D) calls are used
 _   http://code.google.com/p/processing/issues/detail?id=507
@@ -80,29 +111,15 @@ o   or background(r, g, b, a) would be the thing
 _   clear() with a color doesn't make (verbal) sense
 _   provide a way to clear the PGraphics with plain alpha
 
-_ in PApplet.main(), windowClosing() should probably be calling 'exit()'
-_   or rather, we should never call System.exit(0), ja?
-_ dispose() method in PApplet should be empty so ppl can override
-_   move that stuff to destroy()
-_ pause()/resume() need to work on the desktop side as well
-_   notify ddf when pause/resume implemented
-_ stop() not called in 1.5
-_   http://code.google.com/p/processing/issues/detail?id=636
-_   In reply to c#1, I noticed that dispose() is getting called. stop() isn't.
-_ static mode sketches seem to break ESC... noLoop() problem?
-_   need to find another way to get ESC on static mode
-_   b/c static mode sketches *do* finish because they have no draw()
-
-_ fix edge + 1 issue on stroke/fill for rectangles
+_ sort out edge + 1 issue on stroke/fill for rectangles
 _   http://code.google.com/p/processing/issues/detail?id=509
-
-_ add reference/docs for urlEncode() and urlDecode()
 
 _ add() to add things to lists, sum() for the math (sum is used less after all)
 
 _ add inputPath() and outputPath() -> sketch folder or sd card
 _   or should this just be a change to sketchPath() on Android?
 _   also because input/output won't be different (since not data folder)
+_ or should this be storagePath() etc?
 
 _ finish adding loadStrings(BufferedReader)
 _   decide if we want to keep this (and/or others?)
@@ -230,13 +247,15 @@ X   decision: useExtension() or something like that
 _ how should stroke work w/ arcs?
 _   has an effect elliptical arc
 _   http://code.google.com/p/processing/issues/detail?id=130
-o   decision: we should do pie, you can make the other kind w/o it
+X   decision: we should do pie, you can make the other kind w/o it
 _   add an additional parameter for the others
 _   http://code.google.com/p/processing/issues/detail?id=711
 _ require people to put things in the data folder
 _ make sure that loadXxxx() methods are used after init()
 _   nasty errors when loadImage/Font/createFont/etc used outside
 _   decision: add error messages where possible
+_   idea: set frameCount to -1 when setup not run yet?
+_     then set frameCount to 0 when setup() starts?
 _ PShape API to handle internal vertex stuff
 _   add deconstruct() method for paths
 _   toArray() and toVector()
@@ -299,12 +318,6 @@ _   http://code.google.com/p/processing/issues/detail?id=246
 _ add breakShape to the public API 
 _   or handle differently in general.. nested beginPath() calls?
 
-_ smooth() not working with applets an createGraphics(JAVA2D)
-_   but works fine with applications
-_   need an example of this
-_   this might be a problem of the offscreen surface as RGB not RGBA
-_     but that's been changed in more recent releases
-
 looping/events
 _ key and mouse events delivered out of order
 _   http://code.google.com/p/processing/issues/detail?id=79
@@ -315,6 +328,18 @@ _ redraw() doesn't work from within draw()
 _   http://code.google.com/p/processing/issues/detail?id=195
 
 stop() mess
+_ in PApplet.main(), windowClosing() should probably be calling 'exit()'
+_   or rather, we should never call System.exit(0), ja?
+_ dispose() method in PApplet should be empty so ppl can override
+_   move that stuff to destroy()
+_ pause()/resume() need to work on the desktop side as well
+_   notify ddf when pause/resume implemented
+_ stop() not called in 1.5
+_   http://code.google.com/p/processing/issues/detail?id=636
+_   In reply to c#1, I noticed that dispose() is getting called. stop() isn't.
+_ static mode sketches seem to break ESC... noLoop() problem?
+_   need to find another way to get ESC on static mode
+_   b/c static mode sketches *do* finish because they have no draw()
 _ sort out destroy(), stop(), pause() et al
 _   ColorSelector should stop/pause when not visible
 _     right now it's doing a low-level looping
@@ -352,40 +377,18 @@ _ noloop ref even says that redraw will be called on resize, make sure it is
 _ focus not coming through, ESC no longer working(?)
 _ stop() not called in 1.5 when closing the sketch window
 _   http://code.google.com/p/processing/issues/detail?id=636
-
-
-
-////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////
-
-
-CORE / PApplet
-
-_ PApplet.main(new String[] { "classname" }) won't pass in args
-_   this means that no args are after passed to the class
-_   the fix would be to use the following as the call to main()
-_   PApplet.main(append(new String[] { "classname }, args));
-_ check for what else inside PApplet should be static
-_   maybe catch RuntimeExceptions in the called sub-functions
-_   that way more stuff can be static w/o losing useful error handling
-_   (emitting errors when closest to source.. i.e. w/ the filename)
-o size() inside draw is missing a new call to cameraMode, etc
-_ fix param() to use a sketch.properties file when run as an app
-_   make this also be used in generating the html file
-_ test winding polygons in different directions
-_ loadBytes() needs optimization
-_   don't bother using a buffering stream, just handle internally. gah!
-
-
-CORE / PApplet - main()
-
 _ hitting cmd-q when an applet is running quits p5 (on macosx)
 _   but cmd-q when running externally is ok because it just quits
 _   is there a way to catch cmd-q when running a sketch? 
 _     so that it could avoid quitting if the sketch hasn't been stopped
 _     or if the sketch window is foremost
 _     maybe a hack where a new menubar is added? 
+
+
+
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
 
 
 CORE / PFont and text()
@@ -612,6 +615,8 @@ LATER / Optimize
 _ put a wrapper around InputStream returned by createInput
 _   that actually has some notion of the length of its input
 _   that way, methods could use the information when reading
+_ loadBytes() needs optimization
+_   don't bother using a buffering stream, just handle internally. gah!
 _ can loadBytes() be improved by querying file size first?
 _   background 
 _     this would require a new version of createInput(), which would query

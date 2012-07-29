@@ -828,28 +828,29 @@ public class PdePreprocessor {
    */
   protected void writeFooter(PrintWriter out, String className) {
     if (mode == Mode.STATIC) {
-      // close off draw() definition
-      out.println(indent + "noLoop();");
-      out.println("} ");
+      // close off setup() definition
+      out.println(indent + indent + "noLoop();");
+      out.println(indent + "}");
+      out.println();
     }
 
     if ((mode == Mode.STATIC) || (mode == Mode.ACTIVE)) {
       if (sketchWidth != null && !hasMethod("sketchWidth")) {
         // Only include if it's a number (a variable will be a problem)
-        if (PApplet.parseInt(sketchWidth, -1) != -1 || sketchWidth.equals("displayWidth")) {  
+        if (PApplet.parseInt(sketchWidth, -1) != -1 || sketchWidth.equals("displayWidth")) {
           out.println(indent + "public int sketchWidth() { return " + sketchWidth + "; }");
         }
       }
       if (sketchHeight != null && !hasMethod("sketchHeight")) {
         // Only include if it's a number
-        if (PApplet.parseInt(sketchHeight, -1) != -1 || sketchHeight.equals("displayHeight")) {  
+        if (PApplet.parseInt(sketchHeight, -1) != -1 || sketchHeight.equals("displayHeight")) {
           out.println(indent + "public int sketchHeight() { return " + sketchHeight + "; }");
         }
       }
       if (sketchRenderer != null && !hasMethod("sketchRenderer")) {
         // Only include if it's a known renderer (otherwise it might be a variable)
-        if (sketchRenderer.equals("P2D") || 
-            sketchRenderer.equals("P3D") || 
+        if (sketchRenderer.equals("P2D") ||
+            sketchRenderer.equals("P3D") ||
             sketchRenderer.equals("OPENGL") ||
             sketchRenderer.equals("JAVA2D")) {
           out.println(indent + "public String sketchRenderer() { return " + sketchRenderer + "; }");
@@ -857,8 +858,9 @@ public class PdePreprocessor {
       }
 
       if (!hasMethod("main")) {
-        out.println(indent + "static public void main(String args[]) {");
-        out.print(indent + indent + "PApplet.main(new String[] { ");
+        out.println(indent + "static public void main(String[] passedArgs) {");
+        //out.print(indent + indent + "PApplet.main(new String[] { ");
+        out.print(indent + indent + "String[] appletArgs = new String[] { ");
 
         if (Preferences.getBoolean("export.application.fullscreen")) {
           out.print("\"" + PApplet.ARGS_FULL_SCREEN + "\", ");
@@ -878,7 +880,14 @@ public class PdePreprocessor {
 //          String farbe = Preferences.get("run.window.bgcolor");
 //          out.print("\"" + PApplet.ARGS_BGCOLOR + "=" + farbe + "\", ");
         }
-        out.println("\"" + className + "\" });");
+        out.println("\"" + className + "\" };");
+
+        out.println(indent + indent + "if (passedArgs != null) {");
+        out.println(indent + indent + "  PApplet.main(concat(appletArgs, passedArgs));");
+        out.println(indent + indent + "} else {");
+        out.println(indent + indent + "  PApplet.main(appletArgs);");
+        out.println(indent + indent + "}");
+
         out.println(indent + "}");
       }
 

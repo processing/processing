@@ -36,10 +36,10 @@ import processing.core.PApplet;
  * Contributed by Martin Gomez, additional bug fixes by Ben Fry.
  * Additional fixes by Jonathan Feinberg in March 2010.
  * <p/>
- * After some further digging, this code in fact appears to be a modified 
- * version of Jason Pell's GPLed "Java Beautifier" class found 
+ * After some further digging, this code in fact appears to be a modified
+ * version of Jason Pell's GPLed "Java Beautifier" class found
  * <a href="http://www.geocities.com/jasonpell/programs.html">here</a>.
- * Which is itself based on code from Van Di-Han Ho from 
+ * Which is itself based on code from Van Di-Han Ho from
  * <a href="http://www.geocities.com/~starkville/vancbj_idx.html">here</a>.
  * [Ben Fry, August 2009]
  */
@@ -73,8 +73,8 @@ public class AutoFormat implements Formatter {
   private char c;
 
   private final Stack<Boolean> castFlags = new Stack<Boolean>();
-  
-  
+
+
   private void comment() {
     final boolean save_s_flg = s_flag;
 
@@ -101,7 +101,7 @@ public class AutoFormat implements Formatter {
     return;
   }
 
-  
+
   private char get_string() {
     char ch;
     while (true) {
@@ -129,7 +129,7 @@ public class AutoFormat implements Formatter {
     }
   }
 
-  
+
   private void writeIndentedLine() {
     if (buf.length() == 0) {
       if (s_flag) {
@@ -154,7 +154,7 @@ public class AutoFormat implements Formatter {
     buf.setLength(0);
   }
 
-  
+
   private void writeIndentedComment() {
     final boolean saved_s_flag = s_flag;
     if (buf.length() > 0) {
@@ -186,7 +186,7 @@ public class AutoFormat implements Formatter {
     }
   }
 
-  
+
   private void handleSingleLineComment() {
     c = next();
     while (c != '\n') {
@@ -198,7 +198,7 @@ public class AutoFormat implements Formatter {
     s_flag = true;
   }
 
-  
+
   private void printIndentation() {
     if (tabs < 0) {
       tabs = 0;
@@ -212,7 +212,7 @@ public class AutoFormat implements Formatter {
     }
   }
 
-  
+
   private char peek() {
     if (pos + 1 >= chars.length) {
       return 0;
@@ -220,10 +220,10 @@ public class AutoFormat implements Formatter {
     return chars[pos + 1];
   }
 
-  
+
   private char lastNonWhitespace = 0;
 
-  
+
   private int prev() {
     return lastNonWhitespace;
   }
@@ -272,7 +272,7 @@ public class AutoFormat implements Formatter {
     if_flg = true;
   }
 
-  
+
   /* read to new_line */
   private boolean getnl() {
     final int savedTabs = tabs;
@@ -306,7 +306,7 @@ public class AutoFormat implements Formatter {
     return false;
   }
 
-  
+
   private boolean lookup(final String keyword) {
     return Pattern.matches("^\\s*" + keyword + "(?![a-zA-Z0-9_&]).*$", buf);
   }
@@ -316,8 +316,8 @@ public class AutoFormat implements Formatter {
     final String regex = "^\\s*" + keyword.replaceAll("\\*", "\\\\*") + ".*$";
     return Pattern.matches(regex, buf);
   }
-  
-  
+
+
   private void trimRight(final StringBuilder sb) {
     while (sb.length() >= 1
         && Character.isWhitespace(sb.charAt(sb.length() - 1)))
@@ -430,9 +430,8 @@ public class AutoFormat implements Formatter {
           tabs--;
         }
         trimRight(buf);
-        if (buf.length() > 0
-            || (result.length() > 0 && !Character.isWhitespace(result
-                .charAt(result.length() - 1))))
+        if (buf.length() > 0 ||
+          (result.length() > 0 && !Character.isWhitespace(result.charAt(result.length() - 1))))
           buf.append(" ");
         buf.append(c);
         writeIndentedLine();

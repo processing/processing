@@ -34,6 +34,34 @@ X   http://code.google.com/p/processing/issues/detail?id=884
 X suppress XInitThreads message on Linux with JOGL
 X Linux file chooser is gross (presumably Windows too)
 X   http://code.google.com/p/processing/issues/detail?id=1014
+X make note that Android tools do not run on 64-bit Linux
+X   causes "file not found" errors
+X switch to a non-modified version of launch4j
+X   figured out how to do Intel build for OS X
+
+cleaning/earlier
+o PApplet.this doesn't work
+o   doesn't work in javac either--needs to be ClassName.this
+o   sketchname.this also doesn't work, because Temporary_NNNN used for name
+o   but since it's another tab/class, will run externally
+o   so should make the external version use the actual sketch name not temp
+o   can't use PApplet.this, doesn't seem to like that
+o   instead, must pass variable to inner class
+X   should be working (for a while) now because no longer using a temp name
+
+applets
+o tool to run in appletviewer? sun.applet.Main is appletviewer
+X require Java 6 (and with that, OS X 10.5 plus Core 2 Intel Mac)?
+o   though we need a 64-bit browser before applets will run...
+o   http://www.ornl.gov/~t6p/Main/Utilities.html
+o courseware
+o   export sketch as applet when uploading
+o   save sketch zip files
+o   have a means to load them from "teacher" version of p5
+o   figure out how to use the 
+o items from the 'code' folder not included with applet export
+
+http://wiki.processing.org/w/Android
 
 _ Linux sketchbook selector wasn't working properly at all
 
@@ -95,6 +123,9 @@ _   http://code.google.com/p/processing/issues/detail?id=515
 C   Casey says yes kill ext editor and finish command line
 _ use as a way to remove the non-GUI-specifc code from PApplet
 _   so that the builds can run headless
+_ processing.app.Commander headless still requiring X11
+_   problem is static calls to PApplet
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1426
 X could move to java6 and better internal javac support (drop ecj)
 _   decided to use Java 6, so check on Javac usefulness
 _ change command line to just be part of regular (separate) distros
@@ -108,10 +139,6 @@ _   need to deal with setting path to sketchbook/examples
 _   also deal with the script not being in the right folder
 _   problems with imports and prefs file
 _     http://dev.processing.org/bugs/show_bug.cgi?id=1298
-_ processing.app.Commander headless still requiring X11
-_   problem is static calls to PApplet
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1426
-
 
 _ wordtreemap_sotu gives weird preproc error: wrong line, can't parse extends
 
@@ -152,9 +179,7 @@ _ problem with startup on vista 64
 _   try this with windows 7 64-bit (install on laptop?)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1246
 
-_ switch to a non-modified version of launch4j
 _ switch the exported launcher to use launch4j as well? 
-X   figured out how to do Intel build for OS X
 
 _ how to catch these?
 Exception in thread "Animation Thread" java.lang.NoClassDefFoundError: Could not initialize class javax.media.opengl.GLProfile
@@ -168,7 +193,6 @@ _ nurbs or other architecture stuff
 _ force indentation - implement an option for beginners especially
 _ indents and loops
 _   or make the area light up gray as it's being worked on
-_ fix autoformat to indent like the p5 book/examples
 _ common error messages
 _   with a proper list, we can add links when throwing an error in the PDE
 
@@ -482,11 +506,6 @@ _   along with php script to handle receive
 _   this is in hacks, but 
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=display;num=1117194066#7
 _ ftp upload sketch
-_ courseware
-_   export sketch as applet when uploading
-_   save sketch zip files
-_   have a means to load them from "teacher" version of p5
-_   figure out how to use the 
 
 version 2.0
 _ add proper copyright and license information for all included projects
@@ -500,7 +519,6 @@ _   check if libraries folder does not exist
 _   check to see if other libraries are installed
 _   warn user about moving libraries and restarting
 
-_ items from the 'code' folder not included with applet export
 _ deleting open sketch (with only one window) attempts to quit
 _   (and still deletes, but doesn't close, even if quitting is canceled)
 
@@ -740,25 +758,12 @@ _   problem with big floats:
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1061302380
 _   problem with small floats:
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Programs;action=display;num=1115500448
-_ verify (and document) public access members of PApplet
-_   http://dev.processing.org/bugs/show_bug.cgi?id=660
-_ some docs missing (therefore not syntax highlighting)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=661
-_ constants that are not highlighting (WINDOWS the only one?)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=662
 _ consoleXxxx and untitledXxxx folders in /tmp
 _   console may be useful for debugging
 _ untitled folders are stored in temp folder
 _ switching into present mode in info.plist
         <key>LSUIPresentationMode</key>
         <integer>4</integer> 
-_ PApplet.this doesn't work
-_   doesn't work in javac either--needs to be ClassName.this
-_   sketchname.this also doesn't work, because Temporary_NNNN used for name
-_   but since it's another tab/class, will run externally
-_   so should make the external version use the actual sketch name not temp
-_   can't use PApplet.this, doesn't seem to like that
-_   instead, must pass variable to inner class
 _ errors with serial and libraries
 Exception in thread "Thread-2" java.lang.NoClassDefFoundError:
 processing/core/PApplet
@@ -1305,7 +1310,6 @@ _   that copies applet.html,
 _   opens sketch folder, 
 _   and gives info about what to do next (how to edit)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=143
-_ tool to run in appletviewer? sun.applet.Main is appletviewer
 _ import sketch from url (takes a zip from archive sketch)
 _ archive sketch direct to bug report
 _ shared code
@@ -1316,11 +1320,11 @@ _   update will update classes from shared in the current folder
 
 TOOLS / Create Font
 
-E3 _ "create font" is slow, implement a progress indicator
-E3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1464
+_ "create font" is slow, implement a progress indicator
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1464
 
 
-TOOLS / Color Picker
+TOOLS / Color Selector
 
 _ pasting into color picker doesn't update the color values
 _   http://dev.processing.org/bugs/show_bug.cgi?id=503
@@ -1328,9 +1332,14 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=503
 
 TOOLS / Auto Format
 
-_ do a better job of maintaining cursor during beautify 
-_   jdf says: a specification would help here!
-_ only auto format a particular section of code
+_ fix autoformat to indent like the p5 book/examples
+_   http://code.google.com/p/processing/issues/detail?id=325
+_ extra indent found
+_   http://code.google.com/p/processing/issues/detail?id=1003
+_ Switch block cases not indented
+_   http://code.google.com/p/processing/issues/detail?id=1004
+_ do a better job of maintaining cursor 
+_ only auto-format a particular section of code
 _   set the 'tabs' var based on how many spaces on previous line
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1087227217
 
@@ -1548,9 +1557,6 @@ _ better text editor / live debugging (integrate Eclipse JDT)
 _   line numbers
 _ it's too difficult for students to debug their code
 _   can the jdt be hooked in somewhat easily?
-_ require Java 6 (and with that, OS X 10.5 plus Core 2 Intel Mac)?
-_   though we need a 64-bit browser before applets will run...
-_   http://www.ornl.gov/~t6p/Main/Utilities.html
 _ get rid of static mode? only setup/draw mode? or create project that way?
 _   pro: simplify internal code, fixes some of the worst errors
 _   con: people love it, most of the books use it heavily
