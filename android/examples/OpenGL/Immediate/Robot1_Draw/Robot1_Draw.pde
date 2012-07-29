@@ -1,5 +1,3 @@
-// Issues: some lines appear with wrong depth order
-
 // Robot 1: Draw from "Getting Started with Processing" 
 // by Reas & Fry. O'Reilly / Make 2010
 
