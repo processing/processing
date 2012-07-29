@@ -462,7 +462,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
     if (sketchRenderer().equals(JAVA2D)) {
       surfaceView = new SketchSurfaceView(this, sw, sh);
     } else if (sketchRenderer().equals(P2D) || sketchRenderer().equals(P3D)) {
-      surfaceView = new SketchSurfaceViewGL(this, sw, sh, true);
+      surfaceView = new SketchSurfaceViewGL(this, sw, sh, sketchRenderer().equals(P3D));
     }
 //    g = ((SketchSurfaceView) surfaceView).getGraphics();
 
@@ -1516,10 +1516,12 @@ public class PApplet extends Activity implements PConstants, Runnable {
    */
   public PGraphics createGraphics(int iwidth, int iheight, String irenderer) {
     PGraphics pg = null;
-    if (irenderer.equals(P2D)) {
+    if (irenderer.equals(JAVA2D)) {
       pg = new PGraphicsAndroid2D();
+    } else if (irenderer.equals(P2D)) {
+      pg = new PGraphics2D();
     } else if (irenderer.equals(P3D)) {
-      pg = new PGraphicsOpenGL();
+      pg = new PGraphics3D();
     } else {
       Class<?> rendererClass = null;
       Constructor<?> constructor = null;
