@@ -7,6 +7,8 @@ X   error: "http://apache.org/xml/features/nonvalidating/load-external-dtd"
 X   http://code.google.com/p/processing/issues/detail?id=1128
 X fix problems with XML loading so that PShape works again
 X   http://code.google.com/p/processing/issues/detail?id=1054
+X sketch names cannot start with underscore
+X   http://code.google.com/p/processing/issues/detail?id=1047
 
 _ no ES2 in the emulator, and no error reported in the PDE
 _   problem is probably that the error comes via E/AndroidRuntime
@@ -14,9 +16,6 @@ _   java.lang.RuntimeException: Unable to start activity ComponentInfo{processin
 
 _ Android OPENGL renderer + JAVA2D PGraphics results in PTexture exception
 _   http://code.google.com/p/processing/issues/detail?id=1019
-
-_ sketch names cannot start with underscore
-_   http://code.google.com/p/processing/issues/detail?id=1047
 
 _ lack of registerXxx() implementation is breaking pre() and post() in particles
 
