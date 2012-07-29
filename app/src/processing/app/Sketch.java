@@ -742,9 +742,18 @@ public class Sketch {
 
     // user canceled selection
     if (newName == null) return false;
-    newName = Sketch.checkName(newName);
 
-    File newFolder = new File(newParentDir, newName);
+    // check on the sanity of the name
+    String sanitaryName = Sketch.checkName(newName);
+    File newFolder = new File(newParentDir, sanitaryName);
+    if (!sanitaryName.equals(newName) && newFolder.exists()) {
+      Base.showMessage("Cannot Save",
+                       "A sketch with the cleaned name\n" +
+                       "“" + sanitaryName + "” already exists.");
+      return false;
+    }
+    newName = sanitaryName;
+
 //    String newPath = newFolder.getAbsolutePath();
 //    String oldPath = folder.getAbsolutePath();
 
@@ -1429,7 +1438,8 @@ public class Sketch {
    * or reading a FAT32 partition in OS X and using a thumb drive.
    * <p/>
    * This helper function replaces everything but A-Z, a-z, and 0-9 with
-   * underscores. Also disallows starting the sketch name with a digit.
+   * underscores. Also disallows starting the sketch name with a digit
+   * or underscore.
    */
   static public String sanitizeName(String origName) {
     char c[] = origName.toCharArray();
@@ -1457,6 +1467,18 @@ public class Sketch {
     // (to handle the base name + ".class")
     if (buffer.length() > 63) {
       buffer.setLength(63);
+    }
+    // Remove underscores from the beginning, these seem to be a reserved
+    // thing on Android, plus it sometimes causes trouble elsewhere.
+    int underscore = 0;
+    while (underscore < buffer.length() && buffer.charAt(underscore) == '_') {
+      underscore++;
+    }
+    if (underscore == buffer.length()) {
+      return "bad_sketch_name_please_fix";
+
+    } else if (underscore != 0) {
+      return buffer.substring(underscore);
     }
     return buffer.toString();
   }

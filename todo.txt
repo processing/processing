@@ -38,6 +38,12 @@ X make note that Android tools do not run on 64-bit Linux
 X   causes "file not found" errors
 X switch to a non-modified version of launch4j
 X   figured out how to do Intel build for OS X
+X Linux sketchbook selector wasn't working properly at all
+X   just default to a folder named 'sketchbook' in the home dir
+X   too confusing otherwise
+X disallow underscore at beginning of sketch name
+X   http://code.google.com/p/processing/issues/detail?id=1047
+X fix problem with sanitized names potentially overwriting existing sketches (!)
 
 cleaning/earlier
 o PApplet.this doesn't work
@@ -48,6 +54,15 @@ o   so should make the external version use the actual sketch name not temp
 o   can't use PApplet.this, doesn't seem to like that
 o   instead, must pass variable to inner class
 X   should be working (for a while) now because no longer using a temp name
+o quicktime likes to crash (not just on windows)
+o   http://dev.processing.org/bugs/show_bug.cgi?id=791
+o strange insets for PApplet on certain window managers
+o   http://dev.processing.org/bugs/show_bug.cgi?id=1187
+X   http://code.google.com/p/processing/issues/detail?id=161
+X   cannot fix
+o computationally intensive stuff runs really slow inside p5
+o   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1116872745
+o some reports of it not quitting properly, but not confirmed
 
 applets
 o tool to run in appletviewer? sun.applet.Main is appletviewer
@@ -61,13 +76,56 @@ o   have a means to load them from "teacher" version of p5
 o   figure out how to use the 
 o items from the 'code' folder not included with applet export
 
-http://wiki.processing.org/w/Android
-
-_ Linux sketchbook selector wasn't working properly at all
-
-o don't use tmp folder for sketches? 
-_   or restrict more things like "show sketch folder"
-_   don't allow adding files w/o saving
+video/nixed
+o if read() hasn't been called, can cause an error with java2d
+o   http://dev.processing.org/bugs/show_bug.cgi?id=1041
+o threading problems with video
+o   http://dev.processing.org/bugs/show_bug.cgi?id=868
+o audio stops working after two seconds
+o   http://dev.processing.org/bugs/show_bug.cgi?id=277
+o add more information about multiple camera inputs
+o add info about "access" errors being quicktime errors
+o documented in faq, add something to the lib "camera not installed"
+o   quicktime.std.stdQTException(QTjava:6.1.3gl),-9405=couldntgetrequiredcomponent,qtversion:7108000 at quicktime.std.stdQTExceptionchekcerror
+o need to add resize method to capture object
+o   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1150227643
+o figure out what's up with the qt error handler
+o   is this what's preventing the errors from being caught properly?
+o   shutting these off for 0116 so hopefully the messages improve
+o   (could this be a mac issue with errors not making it through?)
+o need to prevent multiple QTSession open or close
+o   static method shared across the lib, or some such
+o reading movie is really really slow (2-3 fps)
+o   possible improvement from qtjava list added
+X   http://dev.processing.org/bugs/show_bug.cgi?id=40
+o tearing and incomplete updates on capture?
+o   putting read() inside draw() seems to eliminate this?
+o   http://dev.processing.org/bugs/show_bug.cgi?id=114
+o   when drawing large video, the two triangles for the rect are out of sync
+o     only shows up in P3D
+o pause and frameRate aren't working
+o   framerate does set the frequency which movieEvent will be called, 
+o   but it is not setting the "available" field corrrectly. 
+o     in fact, speed() should be used to set the rate, not frameRate
+o   sketch .zip file in casey's email message
+X   http://dev.processing.org/bugs/show_bug.cgi?id=370
+o wrong device name for video capture will cause a crash
+o couldn't get req'd component also happens when the capture isn't ready
+o   may also mean that no camera is plugged in
+o   also, don't mention winvdig on the mac
+o include a separate video class to handle just playback
+o   video playback can be much faster if not messing with pixels
+o   could instead use texsubimage in opengl, etc
+o   only supports tint() (to set alpha or color) and drawing? just drawing?
+o stop button won't kill a video sketch (bug 150 example does this) 
+X   although ESC seems to work? (not sure, didn't test)
+o   or audio won't stop even after hitting stop
+o when an exception comes through during cameraEvent, not printed
+o   need to show an actual stack trace (InvocationTargetEx) 
+o   because otherwise it's impossible to debug this stuff
+o video library not working on export to web
+o   http://dev.processing.org/bugs/show_bug.cgi?id=1421
+o Movie needs the crop() functions ala Capture
 
 earlier
 X remove jvm from cvs
@@ -142,6 +200,12 @@ _     http://dev.processing.org/bugs/show_bug.cgi?id=1298
 
 _ wordtreemap_sotu gives weird preproc error: wrong line, can't parse extends
 
+_ don't let people into the /tmp folder for sketches
+o   don't use tmp folder for sketches? 
+_   restrict more things like "show sketch folder"
+_   don't allow adding files w/o saving
+_   others?
+
 _ change syntax highlighting so it differentiates keyPressed and keyPressed()
 _ syntax highlight with parens also helps "String line" vs "line()"
 
@@ -179,8 +243,6 @@ _ problem with startup on vista 64
 _   try this with windows 7 64-bit (install on laptop?)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1246
 
-_ switch the exported launcher to use launch4j as well? 
-
 _ how to catch these?
 Exception in thread "Animation Thread" java.lang.NoClassDefFoundError: Could not initialize class javax.media.opengl.GLProfile
 Exception in thread "Animation Thread" java.lang.UnsatisfiedLinkError: no gluegen-rt in java.library.path
@@ -200,12 +262,22 @@ _ write up code guidelines for project (in advance of GSoC)
 _ write up guidelines for modes
 _   i.e. don't mess with Sketch menu, put it in the mode menu
 
+export/launcher
+_ use launch4j for export and p5 app itself
+_   perhaps even calling it through an ant task
+_ switch the exported launcher to use launch4j as well? 
+_ better exe export.. maybe using jexegen or launch4j
+_ use launch4j when exporting applications for windows
+_ windows exported exe problems (pcho)
+_   unexplainable problems with apps not starting up
+_ lib folder goes missing from export, give an error
+_   also any .jar files that are missing, give an error
+_   showing more debug messages (command line?)
+
 ben
 _ build is currently broken for fresh checkout due to changes to file layout
 _   something that gets fixed by 'make clean'
 _   also test on windows and linux
-_ use launch4j for export and p5 app itself
-_   perhaps even calling it through an ant task
 _ l10n, i18n of environment/core - arduino pushing on this one
 _ eclipse import/export
 _   simple mechanism to export to eclipse
@@ -390,9 +462,6 @@ _ fix line endings in revisions.txt for windows
 
 closing this bug, because we'll be replacing the current video library with another sometime later this year. as such, i won't be doing any more bug fixes on the current video library. in the meantime, we recommend using gsvideo, opencv, or one of the other video libraries that are available.
 
-_ Signature issue on contributed libraries affects unrelated opengl sketches
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1570
-
 _ create default tools folder (just like libraries)
 
 _ add explanation to the reference about using beginRecord() with fonts
@@ -497,8 +566,6 @@ _   also need to look at the main to see what it's doing
 </dict>
 
 _ System.getProperty("sun.arch.data.model").equals("32").
-_ use launch4j when exporting applications for windows
-_   yes, for 1.5
 
 _ post to web example 
 _   particularly for uploading image data
@@ -533,8 +600,6 @@ _ add code for setting the l&f from the prefs file for linux
 _ problem with keyboard shortcuts when building from source
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1231
 
-_ better exe export.. maybe using jexegen or launch4j
-
 _ npe if library is removed before compile
 _   always check library folders to make sure they're still valid
 
@@ -557,12 +622,6 @@ _ make better version of the windows launcher for debugging
 
 _ after deleting a tab code still get's preprocessed, pde file is not forgotten
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1092
-
-_ windows exported exe problems (pcho)
-_   unexplainable problems with apps not starting up
-_ lib folder goes missing from export, give an error
-_   also any .jar files that are missing, give an error
-_   showing more debug messages (command line?)
 
 _ can't rename a .pde file as a .java file
 _ shift-tab with no selection should go back two spaces
@@ -737,8 +796,6 @@ _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Exhibition;action=d
 _ other projects on which p5 is built 
 _   no longer oro matcher and jikes
 _   add: quaqua, jna, registry stuff, .. ?
-_ quicktime likes to crash (not just on windows)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=791
 _ noLoop() isn't the same as "finished", though it's sometimes used that way
 _   to finish, use exit() (though that will make the window close)
 _   add this to ref once halt() is finished
@@ -1355,58 +1412,6 @@ _ need to unpack InvocationTargetException in xxxxxxEvent calls
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=display;num=1116850328#3
 
 
-LIBRARIES / Video
-
-_ if read() hasn't been called, can cause an error with java2d
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1041
-_ threading problems with video
-_   http://dev.processing.org/bugs/show_bug.cgi?id=868
-_ audio stops working after two seconds
-_   http://dev.processing.org/bugs/show_bug.cgi?id=277
-_ add more information about multiple camera inputs
-_ add info about "access" errors being quicktime errors
-_ documented in faq, add something to the lib "camera not installed"
-_   quicktime.std.stdQTException(QTjava:6.1.3gl),-9405=couldntgetrequiredcomponent,qtversion:7108000 at quicktime.std.stdQTExceptionchekcerror
-_ need to add resize method to capture object
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1150227643
-_ figure out what's up with the qt error handler
-_   is this what's preventing the errors from being caught properly?
-_   shutting these off for 0116 so hopefully the messages improve
-_   (could this be a mac issue with errors not making it through?)
-_ need to prevent multiple QTSession open or close
-_   static method shared across the lib, or some such
-_ reading movie is really really slow (2-3 fps)
-_   possible improvement from qtjava list added
-_   http://dev.processing.org/bugs/show_bug.cgi?id=40
-_ Movie needs the crop() functions ala Capture
-_ tearing and incomplete updates on capture?
-_   putting read() inside draw() seems to eliminate this?
-_   http://dev.processing.org/bugs/show_bug.cgi?id=114
-_   when drawing large video, the two triangles for the rect are out of sync
-_     only shows up in P3D
-_ pause and frameRate aren't working
-_   framerate does set the frequency which movieEvent will be called, 
-_   but it is not setting the "available" field corrrectly. 
-_     in fact, speed() should be used to set the rate, not frameRate
-_   sketch .zip file in casey's email message
-_   http://dev.processing.org/bugs/show_bug.cgi?id=370
-_ wrong device name for video capture will cause a crash
-_ couldn't get req'd component also happens when the capture isn't ready
-_   may also mean that no camera is plugged in
-_   also, don't mention winvdig on the mac
-_ include a separate video class to handle just playback
-_   video playback can be much faster if not messing with pixels
-_   could instead use texsubimage in opengl, etc
-_   only supports tint() (to set alpha or color) and drawing? just drawing?
-_ stop button won't kill a video sketch (bug 150 example does this) 
-X   although ESC seems to work? (not sure, didn't test)
-_   or audio won't stop even after hitting stop
-_ when an exception comes through during cameraEvent, not printed
-_   need to show an actual stack trace (InvocationTargetEx) 
-_   because otherwise it's impossible to debug this stuff
-_ video library not working on export to web
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1421
-
 
 LIBRARIES / Net
 
@@ -1536,27 +1541,24 @@ _   doesn't actually cause any problems, so don't bother?
 
 DIST / Linux
 
-5 _ strange insets for PApplet on certain window managers
-5 _   http://dev.processing.org/bugs/show_bug.cgi?id=1187
 _ finish up debian package support (see the processing.mess folder)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=596
+_   http://code.google.com/p/processing/issues/detail?id=75
 _   these bits need to be checked to ensure that they work on other distros
-5 _ Editor stops receiving keyboard input after running a program (8.10)
-5 _   http://dev.processing.org/bugs/show_bug.cgi?id=1161
+_ Editor stops receiving keyboard input after running a program (8.10)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1161
 _ not being able to make a link to the processing app
 _   argh.. more path and shell issues..
-_ computationally intensive stuff runs really slow inside p5
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1116872745
-_ some reports of it not quitting properly, but not confirmed
 _ splash screen
 
 
 NOT FOR 2.0
 
+_ Replace current editor with more advanced version
+_   http://code.google.com/p/processing/issues/detail?id=1032
 _ better text editor / live debugging (integrate Eclipse JDT)
 _   line numbers
-_ it's too difficult for students to debug their code
-_   can the jdt be hooked in somewhat easily?
+_   it's too difficult for students to debug their code
+_     can the jdt be hooked in somewhat easily?
 _ get rid of static mode? only setup/draw mode? or create project that way?
 _   pro: simplify internal code, fixes some of the worst errors
 _   con: people love it, most of the books use it heavily
@@ -1586,7 +1588,5 @@ _     (from 0, 0 to width, height)
 _     messy since some displays have negative coords
 _     http://code.google.com/p/processing/issues/detail?id=27
 _ rename location is awkward, do it on the tab?
-_ Replace current editor with more advanced version
-_   http://code.google.com/p/processing/issues/detail?id=1032
 _ Resurrect the Eclipse plug-in project
 _   http://code.google.com/p/processing/issues/detail?id=1031
