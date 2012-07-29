@@ -8,6 +8,10 @@ X   http://code.google.com/p/processing/issues/detail?id=1128
 X fix problems with XML loading so that PShape works again
 X   http://code.google.com/p/processing/issues/detail?id=1054
 
+_ no ES2 in the emulator, and no error reported in the PDE
+_   problem is probably that the error comes via E/AndroidRuntime
+_   java.lang.RuntimeException: Unable to start activity ComponentInfo{processing.test.fisheye/processing.test.fisheye.FishEye}: java.lang.RuntimeException: P3D: OpenGL ES 2.0 is not supported by this device.
+
 _ Android OPENGL renderer + JAVA2D PGraphics results in PTexture exception
 _   http://code.google.com/p/processing/issues/detail?id=1019
 
