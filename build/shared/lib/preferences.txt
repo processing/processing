@@ -196,8 +196,8 @@ run.display = 0
 #sketchbook.closing_last_window_quits.macosx = false
 
 editor.untitled.prefix=sketch_
-# old (pre-1.0) style for default sketch name
-#editor.untitled.suffix=yyMMdd
+# old (pre-1.0, back for 2.0) style for default sketch name
+editor.untitled.suffix=yyMMdd
 # new (1.0) style for sketch naming. if you change this, be sure that 
 # this will work with your language settings. for instance, MMMdd won't work
 # on Korean-language systems because it will insert non-ascii characters.
