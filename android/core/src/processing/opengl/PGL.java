@@ -324,6 +324,7 @@ public class PGL {
   
   // FBO for incremental drawing  
   
+  public static final boolean FORCE_SCREEN_FBO = false;
   protected boolean firstOnscreenFrame = true;
   protected int fboWidth, fboHeight;
   protected int backTex, frontTex;  
@@ -504,12 +505,6 @@ public class PGL {
       backTex = 1; 
       frontTex = 0;
       
-      // The screen framebuffer is the FBO just created. We need
-      // to update the screenFramebuffer object so when the
-      // framebuffer is popped back to the screen, the correct
-      // id is set.
-      PGraphicsOpenGL.screenFramebuffer.glFbo = glColorFbo[0];
-      
       initialized = true;
     }    
   }
@@ -521,12 +516,12 @@ public class PGL {
   
   
   public boolean primaryIsDoubleBuffered() {
-    return glColorFbo[0] == 0;
+    return PGraphicsOpenGL.screenFramebuffer.glFbo != 0;
   }
   
   
   public boolean primaryIsFboBacked() {
-    return glColorFbo[0] != 0;
+    return PGraphicsOpenGL.screenFramebuffer.glFbo != 0;
   }
   
   
@@ -575,13 +570,13 @@ public class PGL {
 
   
   public void beginOnscreenDraw(boolean clear) {
-    if (clear) {
+    if (clear && !FORCE_SCREEN_FBO) {
       // Simplest scenario: clear mode means we clear both the color and depth buffers.
       // No need for saving front color buffer, etc.
       GLES20.glClearColor(0, 0, 0, 0);
       GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
       PGraphicsOpenGL.screenFramebuffer.glFbo = 0;
-    } else {      
+    } else {    
       GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, glColorFbo[0]);      
       GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0, GLES20.GL_TEXTURE_2D, glColorTex[frontTex], 0);
       validateFramebuffer();      
@@ -597,7 +592,7 @@ public class PGL {
         // Render previous draw texture as background.      
         drawTexture(GLES20.GL_TEXTURE_2D, glColorTex[backTex], fboWidth, fboHeight, 0, 0, pg.width, pg.height, 0, 0, pg.width, pg.height);
       }
-      PGraphicsOpenGL.screenFramebuffer.glFbo  = glColorFbo[0];
+      PGraphicsOpenGL.screenFramebuffer.glFbo = glColorFbo[0];
     }
     
     if (firstOnscreenFrame) {
@@ -607,7 +602,7 @@ public class PGL {
   
   
   public void endOnscreenDraw(boolean clear0) {
-    if (!clear0) {
+    if (!clear0 || FORCE_SCREEN_FBO) {
       // We are in the primary surface, and no clear mode, this means that the current
       // contents of the front buffer needs to be used in the next frame as the background.
       GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0); 
