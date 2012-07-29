@@ -40,7 +40,7 @@ X   the fix would be to use the following as the call to main()
 X   PApplet.main(append(new String[] { "classname }, args));
 X   added PApplet.main(String name, String[] args)
 
-cleaning/nixed
+earlier/cleaning/nixed
 o opengl needs to shut itself down properly when closing applet
 o   otherwise can crash the whole browser
 o z value hack for lines is causing trouble for 2D
@@ -63,6 +63,11 @@ o   box(40);
 o cursor() broken in applets on macosx?
 o   or is it a java 1.4 versus java 1.3 problem?
 o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081645955
+A optimize: sending buffers of vertices
+A optimize: ellipse and sphere implementations
+A OpenGL tessellator implementation (for complex shapes)
+o making jogl behave better in the browser - or remove it/add warning
+o Update JOGL when RC6 arrive: forum.jogamp.org/Road-to-RC6-td3866404.html
 
 before beta
 _ loadShape() mess
@@ -101,6 +106,16 @@ _ some docs missing (therefore not syntax highlighting)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=661
 _ constants that are not highlighting (WINDOWS the only one?)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=662
+_ add explanation to the reference about using beginRecord() with fonts
+_   pdf.textMode(SHAPE)
+_   also set the font *after* the record has started
+_   maybe should instead make textMode(SHAPE) the norm? 
+_   and people can change it to textMode(MODEL) if they want?
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1535
+_ fix regex documentation (assigned to Shiffman)
+_   http://code.google.com/p/processing/issues/detail?id=169
+_ OpenGL offscreen requires primary surface to be OpenGL
+_ can't really change the smoothing/options on offscreen
 
 _ move requestFocusInWindow() to safter EDT place
 _ look into using BufferStrategy again to improve performance
@@ -114,9 +129,6 @@ _ thread() causes weird flickering
 _   http://code.google.com/p/processing/issues/detail?id=742
 _ Potential race condition when resizing sketches
 _   http://code.google.com/p/processing/issues/detail?id=697
-_ doc: OpenGL offscreen requires primary surface to be OpenGL
-_ doc: can't really change the smoothing/options on offscreen
-_ Update JOGL when RC6 arrive: forum.jogamp.org/Road-to-RC6-td3866404.html
 
 _ PUtil -> move match(), lots of other non-gui functions into own class
 _   and merge it in statically via the methods code
@@ -463,6 +475,8 @@ _   http://www.adobe.com/svg/eol.html
 
 CORE / OpenGL (Andres)
 
+_ first few frames of OpenGL sketches on Windows run slowly
+_   http://dev.processing.org/bugs/show_bug.cgi?id=874
 _ implement setImpl() instead of set() inside PGraphicsOpenGL
 _   http://code.google.com/p/processing/issues/detail?id=121
 _ use glCopyPixels() or glReadPixels() instead of copy() method
@@ -555,6 +569,8 @@ _     and on android, start/stop can be used to save state information
 _   need to fix opengl applets so that we can safely kill P3D
 _ shared intf for 3D view data across PGraphicsOpenGL and PGraphicsAndroid3D
 _   libraries have to do a lot of casting
+_ opengl isn't drawing rectangles out to raw properly with fonts
+_   when not in textMode(SHAPE) should have rects
 
 
 CORE / Mac OS X
