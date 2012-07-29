@@ -1,6 +1,11 @@
 // Adapted from:
 // http://callumhay.blogspot.com/2010/09/gaussian-blur-shader-glsl.html
 
+#ifdef GL_ES
+precision mediump float;
+precision mediump int;
+#endif
+
 uniform sampler2D textureSampler;
 
 // The inverse of the texture dimensions along X and Y
