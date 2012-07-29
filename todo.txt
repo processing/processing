@@ -53,6 +53,8 @@ o "create font" is slow, implement a progress indicator
 X   http://code.google.com/p/processing/issues/detail?id=230
 X   wontfix.. moving away from bitmap fonts
 X switch back to yymmdd naming for sketches as the default
+X add Mountain Lion support
+X   http://code.google.com/p/processing/issues/detail?id=1134
 
 open/base/recent
 X recent sketches
