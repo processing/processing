@@ -13,15 +13,13 @@
  * and maximum z values.
  */
 
-void setup() 
-{
+void setup() {
   size(640, 360, P3D);
   noStroke();
   fill(204);
 }
 
-void draw() 
-{
+void draw() {
   background(0);
   lights();
  

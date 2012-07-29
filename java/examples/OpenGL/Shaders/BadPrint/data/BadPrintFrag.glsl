@@ -7,6 +7,11 @@
 // of a bad printing process. Can be controlled
 // with different settings for RGB
 
+#ifdef GL_ES
+precision mediump float;
+precision mediump int;
+#endif
+
 uniform vec3 Scale;
 uniform vec3 Offset;
 uniform vec3 Register;
