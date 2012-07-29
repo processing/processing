@@ -1813,6 +1813,8 @@ public class PGraphicsOpenGL extends PGraphics {
           offscreenNotCurrent = false;
           pgl.glDrawBuffer(PGL.GL_COLOR_ATTACHMENT0);
         }
+      } else {
+        offscreenNotCurrent = false;
       }
     } else {
       // Making sure that the offscreen FBO is current. This allows to do calls
