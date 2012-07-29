@@ -183,7 +183,8 @@ public class AndroidPreprocessor extends PdePreprocessor {
   public String[] getCoreImports() {
     return new String[] {
       "processing.core.*",
-      "processing.data.*"
+      "processing.data.*",
+      "processing.opengl.*"
     };
   }
 
