@@ -1,6 +1,63 @@
-PROCESSING 2.0a7 (REV 0206) - 28 July 2012
+PROCESSING 2.0a7 (REV 0206) - 29 July 2012
 
-[ changes ] 
+Hopefully the last alpha before we hit 2.0 beta. 
+
+The big change is that we're dropping support for applets in 2.0, and in
+this release. See the Changes section of the Wiki for details. We've not
+updated all of the documentation to reflect this yet.
+
+[ editor ] 
+
++ Implemented a "Recent Sketches" menu. This replaces re-opening 
+  sketches on startup, which behaved inconsistently anyway. 
+  http://code.google.com/p/processing/issues/detail?id=188
+
++ Use Swing file choosers by default on Linux. The default open/save
+  dialogs provided by Java are pretty gruesome, so we're switching to 
+  the Swing JFileChooser instead. To swap the behavior, set 
+  'chooser.files.native' in your preferences.txt file.
+
++ Suppress "invalid context 0x0" and "invalid drawable" because they're
+  (unfixable) Apple Java bugs and being reported as Processing bugs.
+  Also suppress XInitThreads message on Linux with JOGL, which is a
+  JOGL bug that'll hopefully be fixed in their next release.
+
++ Fix Movie Maker tool on OS X.
+
++ Update to Java 6 update 33 on Windows and Linux.
+
++ Add separate 32- and 64-bit releases for Windows and Linux. Lots of other
+  updates for 32/64-bit support in general.
+  http://code.google.com/p/processing/issues/detail?id=955
+
++ Replace processing.exe with a more standard version from launch4j, 
+  which should hopefully clean up some launcher issues.
+  http://code.google.com/p/processing/issues/detail?id=943
+  http://code.google.com/p/processing/issues/detail?id=176
+
++ Change how sketches open so that there's no longer differences between
+  the File menu 'Open' and the way it worked from the toolbar. Simplifies 
+  additional code that was quirky.
+  http://code.google.com/p/processing/issues/detail?id=1034
+
++ Add a warning dialog for libraries that aren't compatible.
+  http://code.google.com/p/processing/issues/detail?id=884
+
++ Fix up the file choosers used on Linux.
+  http://code.google.com/p/processing/issues/detail?id=1014
+
++ Instead of prompting for sketchbook location on Linux, just default to
+  a folder named 'sketchbook' in the user's home directory. This can easily
+  be changed later but simplifies things internally a bit. 
+
++ No longer allow underscore at beginning of sketch name (causes problems 
+  with Android, and also with applets, though we care less about those...)
+  http://code.google.com/p/processing/issues/detail?id=1047
+
++ Fixed a problem where sanitized names (underscores replacing unusable 
+  characters) could potentially overwrite existing folders.
+
+[ core ] 
 
 + Major changes to selectInput(), selectOutput(), and selectFolder(). 
   See the Wiki: http://wiki.processing.org/w/Changes#Change_and_Removed
@@ -10,10 +67,43 @@ PROCESSING 2.0a7 (REV 0206) - 28 July 2012
   And also include an option to set the default file path:
   http://code.google.com/p/processing/issues/detail?id=233
 
-+ Use Swing file choosers by default on Linux. The default open/save
-  dialogs provided by Java are pretty gruesome, so we're switching to 
-  the Swing JFileChooser instead. To swap the behavior, set 
-  'chooser.files.native' in your preferences.txt file.
++ Change 'appletViewer' back to 'online'. Still deprecated, especially
+  because applets are going away. 
+
++ Add begin/endGL added to PGraphics/PApplet. 
+
++ Add hasChildren() to XML library.
+  http://code.google.com/p/processing/issues/detail?id=1045
+
++ Fix where displayWidth/Height not being set properly before setup()
+  http://code.google.com/p/processing/issues/detail?id=1120
+
++ XML now throws exceptions in its constructor (for advanced users). 
+  Use loadXML() instead of "new XML(this, ....)" 
+  http://code.google.com/p/processing/issues/detail?id=1138
+
++ loadXML() returns null when the file did not open properly
+  http://code.google.com/p/processing/issues/detail?id=1138
+
++ ortho() causing line and fill to be misaligned
+  http://code.google.com/p/processing/issues/detail?id=1143
+
++ Add some extra options for PApplet.main() for advanced users:
+  PApplet.main("SketchName") and PApplet.main("SketchName", args) 
+
+[ android ] 
+
++ Add full PAppletMethods implementation to Android, so that PGraphics  
+  and PImage methods are brought into PApplet.
+
++ Swap Run on Device and Run on Emulator
+  http://code.google.com/p/processing/issues/detail?id=1083
+
++ Fix XML crash on loading because of desktop-specific attribute
+  error: "http://apache.org/xml/features/nonvalidating/load-external-dtd"
+  http://code.google.com/p/processing/issues/detail?id=1128
+  This also fixes PShape on Android:
+  http://code.google.com/p/processing/issues/detail?id=1054
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
