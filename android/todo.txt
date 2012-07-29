@@ -1,4 +1,4 @@
-0206 android
+0206 android (2.0a7)
 X add full PAppletMethods implementation to Android
 X swap Run on Device and Run on Emulator
 X   http://code.google.com/p/processing/issues/detail?id=1083

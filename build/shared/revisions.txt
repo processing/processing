@@ -6,6 +6,11 @@ The big change is that we're dropping support for applets in 2.0, and in
 this release. See the Changes section of the Wiki for details. We've not
 updated all of the documentation to reflect this yet.
 
+OS X 10.8 Mountain Lion support has also been added, by virtue of our 
+paying $99/year for the privilege of releasing our free and open source
+application on OS X. When run on 10.8, versions prior to 2.0a7 would report
+that they were corrupt, invalid, or not trusted. Which is definitely us. 
+
 [ editor ] 
 
 + Implemented a "Recent Sketches" menu. This replaces re-opening 
