@@ -7454,6 +7454,11 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
+  public PShader loadShader(String fragFilename) {
+    return g.loadShader(fragFilename);
+  }
+
+
   public void shader(PShader shader) {
     g.shader(shader);
   }
