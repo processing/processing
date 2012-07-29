@@ -5,6 +5,11 @@
 // explained in Paul Bourke's website:
 // http://paulbourke.net/miscellaneous/domefisheye/fisheye/
 
+#ifdef GL_ES
+precision mediump float;
+precision mediump int;
+#endif
+
 uniform sampler2D textureSampler;
 varying vec4 vertColor;
 varying vec4 vertTexcoord;

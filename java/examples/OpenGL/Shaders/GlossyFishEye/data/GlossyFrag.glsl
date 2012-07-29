@@ -8,6 +8,11 @@
 // Useful for ceramic or fluids - from Advanced 
 // Renderman, thanks to Larry Gritz
 
+#ifdef GL_ES
+precision mediump float;
+precision mediump int;
+#endif
+
 uniform vec3 AmbientColour;
 uniform vec3 DiffuseColour;
 uniform vec3 SpecularColour;
