@@ -119,7 +119,7 @@ public class Recent {
           File examplesFolder = mode.getExamplesFolder();
           String examplesPath = examplesFolder.getAbsolutePath();
           if (purtyPath.startsWith(examplesPath)) {
-            String modePrefix = mode.getTitle();
+            String modePrefix = mode.getTitle() + " ";
             if (mode.getTitle().equals("Standard")) {
               modePrefix = "";  // "Standard examples" is dorky
             }
