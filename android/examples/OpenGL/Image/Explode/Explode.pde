@@ -1,3 +1,5 @@
+// Issues: the image appears corrupted...
+
 /**
  * Explode 
  * by Daniel Shiffman. 

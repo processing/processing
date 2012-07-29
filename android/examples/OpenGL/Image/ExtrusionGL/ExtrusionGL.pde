@@ -1,3 +1,5 @@
+// Lines appear repeated along horizontal strips (similar to Explode)
+
 /**
  * Extrusion. 
  * 

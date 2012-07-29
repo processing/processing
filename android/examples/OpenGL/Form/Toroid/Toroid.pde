@@ -1,3 +1,6 @@
+// Strange "lights flashing" effect, particularly noticeable at low res (pts=10, segments=20)
+// ...some problem with the automatic normal calculation maybe?
+
 /**
  * Interactive Toroid
  * by Ira Greenberg. 
