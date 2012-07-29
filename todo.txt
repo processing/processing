@@ -52,6 +52,7 @@ X   andreas' library will do good things eventually
 o "create font" is slow, implement a progress indicator
 X   http://code.google.com/p/processing/issues/detail?id=230
 X   wontfix.. moving away from bitmap fonts
+X switch back to yymmdd naming for sketches as the default
 
 cleaning/earlier
 o PApplet.this doesn't work
