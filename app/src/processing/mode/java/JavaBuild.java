@@ -263,6 +263,7 @@ public class JavaBuild {
       File outputFolder = (packageName == null) ?
         srcFolder : new File(srcFolder, packageName.replace('.', '/'));
       outputFolder.mkdirs();
+//      Base.openFolder(outputFolder);
       final File java = new File(outputFolder, sketch.getName() + ".java");
       final PrintWriter stream = new PrintWriter(new FileWriter(java));
       try {
@@ -276,7 +277,6 @@ public class JavaBuild {
       throw new SketchException(msg);
     } catch (antlr.RecognitionException re) {
       // re also returns a column that we're not bothering with for now
-
       // first assume that it's the main file
 //      int errorFile = 0;
       int errorLine = re.getLine() - 1;
