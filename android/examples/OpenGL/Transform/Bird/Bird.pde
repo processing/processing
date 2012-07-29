@@ -1,3 +1,6 @@
+// Issues: the entire screen is white for a second at the beginning, then 
+// the wings of the bird are black
+
 /**
  * Simple 3D Bird 
  * by Ira Greenberg.  

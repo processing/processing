@@ -5,17 +5,15 @@
 // Press any key to switch between the custom and the default shader.
 
 PImage img;
-PShader shader;
-PGraphicsOpenGL pg;  
+PShader edges;  
 boolean customShader;
   
 void setup() {
   size(400, 400, P2D);
   img = loadImage("berlin-1.jpg");
     
-  pg = (PGraphicsOpenGL)g;
-  shader = pg.loadShader("edges.glsl", PShader.TEXTURED);
-  pg.setShader(shader, PShader.TEXTURED);
+  edges = loadShader(PShader.TEXTURED, "edges.glsl");
+  shader(edges);
   customShader = true;
 }
 
@@ -25,10 +23,10 @@ public void draw() {
   
 public void mousePressed() {
   if (customShader) {
-    pg.defaultShader(PShader.TEXTURED);
+    resetShader(PShader.TEXTURED);
     customShader = false;
   } else {
-    pg.setShader(shader, PShader.TEXTURED);
+    shader(edges);
     customShader = true;
   }
 }

@@ -6,7 +6,7 @@ void setup() {
   size(displayWidth, displayWidth, P2D);
   orientation(LANDSCAPE);
   
-  world = loadShape("World_map_with_nations.svg");
+  world = loadShape("World_map-lowres.svg");
     
   PVector top = world.getTop();
   world.translate(-top.x, -top.y);

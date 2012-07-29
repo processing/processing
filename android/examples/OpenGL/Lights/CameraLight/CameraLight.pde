@@ -16,11 +16,8 @@ void draw() {
   lights();
   
   if (mousePressed) {
-    // The arguments of ortho are specified in screen coordinates, where (0,0)
-    // is the upper left corner of the screen
-    ortho(0, width, 0, height);     
+    ortho(-width/2, width/2, -height/2, height/2);     
   } else {
-
     float fov = PI/3.0; 
     float cameraZ = (height/2.0) / tan(fov/2.0); 
     perspective(fov, float(width)/float(height), 

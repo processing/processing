@@ -4,7 +4,6 @@ void setup() {
   size(400, 400, P3D);
 
   pg = createGraphics(400, 400, P3D);
-  pg.smooth(4);
 }
 
 void draw() {
@@ -16,17 +15,5 @@ void draw() {
   pg.endDraw();
 
   image(pg, 0, 0, 400, 400);
-}
-
-void keyPressed() {
-  if (key == '1') pg.smooth(1);
-  else if (key == '2') pg.smooth(2);
-  else if (key == '3') pg.smooth(4);
-  else if (key == '4') pg.smooth(8);
-  else if (key == '5') pg.smooth(16);
-  else if (key == '6') pg.smooth(32); 
-  else if (key == ' ') {
-    ((PGraphicsOpenGL)g).restartPGL();
-  }
 }
 

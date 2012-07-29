@@ -13,16 +13,14 @@
  * and maximum z values.
  */
 
-void setup() 
-{
+void setup()  {
   size(640, 360, P3D);
   orientation(LANDSCAPE);
   noStroke();
   fill(204);
 }
 
-void draw() 
-{
+void draw() {
   background(0);
   lights();
  
@@ -32,7 +30,7 @@ void draw()
     perspective(fov, float(width)/float(height), 
                 cameraZ/2.0, cameraZ*2.0); 
   } else {
-    ortho(0, width, 0, height, 50, 500);
+    ortho(-width/2, width/2, -height/2, height/2, 0, 400);
   }
   
   translate(width/2, height/2, 0);
