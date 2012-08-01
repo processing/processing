@@ -1,0 +1,41 @@
+import processing.core.*; 
+import processing.xml.*; 
+
+import java.util.ArrayList; 
+import java.util.List; 
+
+import java.applet.*; 
+import java.awt.Dimension; 
+import java.awt.Frame; 
+import java.awt.event.MouseEvent; 
+import java.awt.event.KeyEvent; 
+import java.awt.event.FocusEvent; 
+import java.awt.Image; 
+import java.io.*; 
+import java.net.*; 
+import java.text.*; 
+import java.util.*; 
+import java.util.zip.*; 
+import java.util.regex.*; 
+
+public class bug1518b extends PApplet {
+
+
+
+
+public void setup()
+{
+List<String> list = new ArrayList<String>();
+list.add("foo");
+list.add("bar");
+list.add("baz");
+}
+
+static <T> int binarySearch(List<? extends Comparable<? super T>> list, T
+key) {
+return 0;
+}
+    static public void main(String args[]) {
+        PApplet.main(new String[] { "--bgcolor=null", "bug1518b" });
+    }
+}

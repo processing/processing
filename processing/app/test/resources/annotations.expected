@@ -1,0 +1,47 @@
+import processing.core.*; 
+import processing.xml.*; 
+
+import java.applet.*; 
+import java.awt.Dimension; 
+import java.awt.Frame; 
+import java.awt.event.MouseEvent; 
+import java.awt.event.KeyEvent; 
+import java.awt.event.FocusEvent; 
+import java.awt.Image; 
+import java.io.*; 
+import java.net.*; 
+import java.text.*; 
+import java.util.*; 
+import java.util.zip.*; 
+import java.util.regex.*; 
+
+public class annotations extends PApplet {
+
+public void setup() {
+    size(200,200);
+}
+
+@Deprecated
+public void banana() {
+    println("hey");
+}
+
+@SuppressWarnings({"serial", "rawtypes"})
+class Banana implements Serializable {
+
+}
+
+@SuppressWarnings("serial")
+class Apple implements Serializable {
+
+}
+
+@javax.annotation.Generated(value = {"com.mrfeinberg.ImmortalAroma" 
+}, 
+    comments="Shazam!", 
+    date="2001-07-04T12:08:56.235-0700")
+class Pear {}
+    static public void main(String args[]) {
+        PApplet.main(new String[] { "--bgcolor=null", "annotations" });
+    }
+}

@@ -1,0 +1,36 @@
+import processing.core.*; 
+import processing.xml.*; 
+
+import java.applet.*; 
+import java.awt.Dimension; 
+import java.awt.Frame; 
+import java.awt.event.MouseEvent; 
+import java.awt.event.KeyEvent; 
+import java.awt.event.FocusEvent; 
+import java.awt.Image; 
+import java.io.*; 
+import java.net.*; 
+import java.text.*; 
+import java.util.*; 
+import java.util.zip.*; 
+import java.util.regex.*; 
+
+public class bug136 extends PApplet {
+
+java.util.List alist = Collections.synchronizedList(new ArrayList());
+
+public void setup() {
+size(400, 200);
+alist.add("hello");
+}
+
+public void draw() {
+rect(width/4, height/4, width/2, height/2);
+synchronized(alist) {
+alist.get(0);
+}
+}
+    static public void main(String args[]) {
+        PApplet.main(new String[] { "--bgcolor=null", "bug136" });
+    }
+}

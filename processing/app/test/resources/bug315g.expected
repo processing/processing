@@ -1,0 +1,32 @@
+import processing.core.*; 
+import processing.xml.*; 
+
+import java.applet.*; 
+import java.awt.Dimension; 
+import java.awt.Frame; 
+import java.awt.event.MouseEvent; 
+import java.awt.event.KeyEvent; 
+import java.awt.event.FocusEvent; 
+import java.awt.Image; 
+import java.io.*; 
+import java.net.*; 
+import java.text.*; 
+import java.util.*; 
+import java.util.zip.*; 
+import java.util.regex.*; 
+
+public class bug315g extends PApplet {
+    public void setup() {
+size(480, 120);
+smooth();
+int y;
+y = 60;
+int d;
+d = 80;
+ellipse(75, y, d, d);
+    noLoop();
+} 
+    static public void main(String args[]) {
+        PApplet.main(new String[] { "--bgcolor=null", "bug315g" });
+    }
+}

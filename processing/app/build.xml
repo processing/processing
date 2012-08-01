@@ -1,0 +1,136 @@
+<?xml version="1.0"?>
+<project name="Processing PDE" default="build">
+
+  <property name="generated" 
+	    value="${basedir}/generated/processing/mode/java/preproc" />
+  <mkdir dir="${generated}" />
+
+  <property name="grammars" 
+	    value="${basedir}/src/processing/mode/java/preproc" />
+
+  <property name="antlrjar" 
+	    value="${basedir}/lib/antlr.jar" />
+
+  <classloader taskname="antlr">
+    <classpath path="lib/antlr.jar" />
+  </classloader>
+
+  <target name="clean" description="Clean the build directories">
+    <!-- THIS SECTION SHOULD BE REMOVED AFTER A MONTH OR TWO -->
+    <!-- jdf sez: clean up after old layout of generated resources -->
+<!--
+    <delete failonerror="false">
+      <fileset dir="${basedir}/src/antlr">
+	<include name="*.java" />
+	<include name="*.tokens" />
+	<include name="*.txt" />
+	<include name="*.g" />
+	<include name="*.smap" />
+      </fileset>
+    </delete>
+    <delete failonerror="false">
+-->
+      <!-- jdf sez: don't name anything FooRecognizer or FooLexer in this package -->
+<!--
+      <fileset dir="${basedir}/src/processing/app/preproc">
+	<include name="*Recognizer.java" />
+	<include name="*Lexer.java" />
+	<include name="*.tokens" />
+	<include name="*.txt" />
+	<include name="*.g" />
+	<include name="*.smap" />
+      </fileset>
+    </delete>
+-->
+    <!-- END SECTION TO CLEAN UP AFTER OLD PROJECT LAYOUT -->
+
+    <delete dir="bin" />
+    <delete file="pde.jar" />
+    <delete>
+      <fileset dir="${generated}">
+	<include name="*.java" />
+	<include name="*.tokens" />
+	<include name="*.txt" />
+	<include name="*.g" />
+	<include name="*.smap" />
+      </fileset>
+    </delete>
+  </target>
+
+<!--<target name="preproc" depends="clean" description="Compile ANTLR grammar">-->
+  <target name="preproc" description="Compile ANTLR grammar">
+    <antlr target="${grammars}/java15.g" outputdirectory="${generated}">
+      <classpath path="${antlrjar}" />
+    </antlr>
+    <antlr target="${grammars}/pde.g" 
+	   outputdirectory="${generated}" 
+	   glib="${grammars}/java15.g">
+      <classpath path="${antlrjar}" />
+    </antlr>
+  </target>
+
+  <target name="compile" depends="preproc" description="Compile sources">
+    <condition property="core-built">
+      <available file="../core/core.jar" />
+    </condition>
+    <fail unless="core-built" 
+	  message="Please build the core library first and make sure it sits in ../core/core.jar" />
+
+    <mkdir dir="bin" />
+
+    <!-- ant seems to nuke ${java.home} for some reason, pointing at the JRE
+	 subfolder instead of the actual JDK found at JAVA_HOME. 
+	 To avoid this, we grab the actual JAVA_HOME environment variable 
+	 and use that to specify the location of tools.jar. -->
+    <!-- if someone is better with ant please help clean this up -->
+    <property environment="env" />
+    <property name="java_home" value="${env.JAVA_HOME}" />
+    <available file="${env.JAVA_HOME}/lib/tools.jar"
+	       property="java_tools_found" />
+
+    <condition property="linux">
+      <and>
+	<os family="unix" />
+	<not>
+	  <os family="mac" />
+	</not>
+      </and>
+    </condition>
+    <fail if="linux" unless="java_tools_found" 
+	  message="The JAVA_HOME variable must be set to the location of a full JDK. For instance, on Ubuntu Linux, this might be /usr/lib/jvm/java-6-sun." />
+
+    <condition property="windows">
+      <os family="windows" />
+    </condition>
+    <fail if="windows" unless="java_tools_found" 
+	  message="The JAVA_HOME variable must be set to the location of a full JDK. For instance, on Windows, this might be c:\jdk1.6.0_19." />
+
+    <javac target="1.5" 
+	   destdir="bin" 
+	   excludes="**/tools/format/**" 
+	   encoding="UTF-8" 
+	   includeAntRuntime="false" 
+	   classpath="../core/core.jar; ${env.JAVA_HOME}/lib/tools.jar; lib/ant.jar; lib/ant-launcher.jar; lib/antlr.jar; lib/apple.jar; lib/ecj.jar; lib/jna.jar"
+	   debug="on"
+	   >
+      <src path="src" />
+      <src path="generated" />
+    </javac>
+<!--
+    <javac target="1.5" 
+	   srcdir="../android/tool/src" 
+	   destdir="bin" 
+	   encoding="UTF-8" 
+	   includeAntRuntime="false" 
+	   classpath="../core/core.jar; ${env.JAVA_HOME}/lib/tools.jar; lib/ant.jar; lib/ant-launcher.jar; lib/antlr.jar; lib/apple.jar; lib/ecj.jar; lib/jna.jar" 
+	   />
+    <copy todir="bin/processing/app/tools/android/data">
+      <fileset dir="../android/tool/src/processing/app/tools/android/data/" />
+    </copy>
+-->
+  </target>
+
+  <target name="build" depends="compile" description="Build PDE">
+    <jar basedir="bin" destfile="pde.jar" />
+  </target>
+</project>

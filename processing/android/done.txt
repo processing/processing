@@ -1,0 +1,404 @@
+0196 android (1.5)
+X workaround for loadImage(url) bug in Google's Android source (via psoden)
+X   http://code.google.com/p/processing/issues/detail?id=629
+
+earlier
+X Build an interface for control of permissions on Android
+X   http://code.google.com/p/processing/issues/detail?id=275
+X Implement createGraphics() 
+X   http://code.google.com/p/processing/issues/detail?id=240
+X Android 0192 sketch in static mode crashes on exit
+X   http://code.google.com/p/processing/issues/detail?id=518
+
+
+0195 android (pre)
+X point() doesn't render in A3D
+X   http://code.google.com/p/processing/issues/detail?id=592
+X Processing 0194 + Android = "Starting Build"
+X   http://code.google.com/p/processing/issues/detail?id=590
+X   hanging at problem where it's prompting for info on the cmd line
+o renaming the old AVD is fixing a lot of issues with hanging at startup
+X modes/android/android-core.zip (No such file or directory)
+X   problem was that the build was ignoring no sdk silently
+X   need to require ANDROID_SDK set for build.xml dist
+X   http://code.google.com/p/processing/issues/detail?id=577
+X No library found for android.content (and all the others)
+X   need to suppress the messages ala java.*
+o ctrl-shift-r (run on device) is totally hosed
+X when returning to android application, sometimes screen stays black
+X   http://code.google.com/p/processing/issues/detail?id=237
+X Device Killed or Disconnected Error Message with Libraries
+X   http://code.google.com/p/processing/issues/detail?id=565
+X there's gotta be something we can do to get better ant build message
+X "Unable to resolve target 'Google...'" when APIs aren't installed
+X   add an error message that explains what to do
+X canceling an attempt to find the Android SDK leaves no window open
+X   (Linux and Windows)
+X crash when trying to change Android mode void sketch no Android SDK Installed
+X   http://code.google.com/p/processing/issues/detail?id=605
+
+earlier
+X Error 336  Can't run any sketch.
+X   javac.exe was not included with the download
+X   http://code.google.com/p/processing/issues/detail?id=393
+
+
+0194 android (pre)
+X Can't change Sketch Permissions
+X   http://code.google.com/p/processing/issues/detail?id=559
+
+
+0193 android (pre)
+o verify that processing-core.jar has downloaded properly
+o   http://code.google.com/p/processing/issues/detail?id=421
+o   this is the download page: 
+o     http://code.google.com/p/processing/downloads/detail?name=processing-android-core-0191.zip
+o   so look for "SHA1 Checksum: 1ed63f9316441fe46949ef5a92a28f58cc7ee226"
+X just use generic android apis as requirement, not the google apis
+X   though it does give us the emulator skin.. maybe another option
+X android debug certificate expired
+X   http://forum.processing.org/topic/ant-rules-r3-xml-209-395-error#25080000000262001
+X   just delete ~/.android/debug.keystore
+X .java files are reported with Syntax Error with the Android build 0191
+X   http://code.google.com/p/processing/issues/detail?id=404
+X implement mode switching for android/java/etc
+X save state re: whether sketches are android or java mode (or others?)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1380
+X   http://code.google.com/p/processing/issues/detail?id=202
+X android mode is currently per-editor (and clunky)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1379
+X   http://code.google.com/p/processing/issues/detail?id=201
+X remove use of clone() for images
+X   http://code.google.com/p/processing/issues/detail?id=42
+
+
+0192 android (pre)
+X compile android-core with java 5 as the target so that it works on OS X 10.5
+X A3D should use lower color depth on older devices
+X   http://code.google.com/p/processing/issues/detail?id=391
+X new api for begin/endRecord()
+A Finish opengl blending modes in A3D
+A   http://code.google.com/p/processing/issues/detail?id=290
+A Automatic normal calculation in A3D
+A   http://code.google.com/p/processing/issues/detail?id=345
+A Improve texture handling in A3D's PFont
+A   http://code.google.com/p/processing/issues/detail?id=394
+A OpenGL resource release mechanism in A3D is broken
+A   http://code.google.com/p/processing/issues/detail?id=456
+A Multitexturing in A3D
+A   http://code.google.com/p/processing/issues/detail?id=344
+A Problems when loading images asynchronously in A3D.
+A   http://code.google.com/p/processing/issues/detail?id=465
+X make several changes to get android running properly with sdk tools r8
+
+
+0191 android (pre)
+X won't interpret size() in Android Mode without spaces between arguments
+X   http://code.google.com/p/processing/issues/detail?id=390
+
+A Implement offscreen operations in A3D when FBO extension is not available
+A   http://code.google.com/p/processing/issues/detail?id=300
+A Get opengl matrices in A3D when GL_OES_matrix_get extension is not available
+A   http://code.google.com/p/processing/issues/detail?id=286
+A Implement calculateModelviewInverse() in A3D
+A   http://code.google.com/p/processing/issues/detail?id=287
+A Automatic clear/noClear() switch in A3D
+A   http://code.google.com/p/processing/issues/detail?id=289
+A Camera issues in A3D
+A   http://code.google.com/p/processing/issues/detail?id=367
+A major fixes for type to work properly in 3D (fixes KineticType)
+A   http://code.google.com/p/processing/issues/detail?id=358
+A Lighting and materials testing in A3D
+A   http://code.google.com/p/processing/issues/detail?id=294
+A Generate mipmaps when the GL_OES_generate_mipmaps extension is not available.
+A   http://code.google.com/p/processing/issues/detail?id=288
+A Finish screen pixels/texture operations in A3D
+A   http://code.google.com/p/processing/issues/detail?id=298
+
+1) I fixed a bug in the camera handling that a user pointed out recently (http://forum.processing.org/topic/possible-3d-bug). This was a quite urgent issue, since affected pretty much everything. It went unnoticed until now because the math error canceled out with the default camera settings.
+2) I also finished the implementation of the getImpl() method in PImage, so it initializes the texture of the new image in A3D mode. This makes the CubicVR example to work fine.
+
+
+0190 android (pre)
+X allow screenWidth/Height as parameters to size()
+X   right now would cause NumberFormatException
+X add notes to the wiki about the size() method
+X make sure sketchRenderer()/sketchWidth()/sketchHeight() are working on desktop
+o   see about getting them documented in the reference
+X   do a writeup of the size() method in the wiki
+X size() command is currently ignored in Android
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1397
+X   http://code.google.com/p/processing/issues/detail?id=211
+X Implement P3D, OpenGL, A3D for Android
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1396
+X fix mouseX/Y mapping when using smaller screen sizes
+o image() problems (includes sketch)
+o   http://dev.processing.org/bugs/show_bug.cgi?id=1565
+o next time the avd is updated
+o   remove old AVDs because their APIs might be out of date
+o   probably need to name AVDs based on their API spec
+o   http://dev.processing.org/bugs/show_bug.cgi?id=1526
+o   http://code.google.com/p/processing/issues/detail?id=249
+X text ascent/descent problem, text("blah\nblah") doesn't work properly
+X   reverting to using the PGraphics version rather than P2D
+X   because Paint.ascent() is returning negative values
+X properly handle setting whatever permissions are necessary
+X   added dialog box to set permissions 
+X re: rewriting manifest on each build
+o   http://dev.processing.org/bugs/show_bug.cgi?id=1429
+X   http://code.google.com/p/processing/issues/detail?id=221
+X change skewX/Y to shearX/Y
+X   make updated reference
+X copy the changes over from the xml library
+X remove 'import processing.opengl.*' in the preprocessor?
+X add to wiki - rename 'data' folder to 'assets' when inside eclipse
+X prevent rotation of applications? (or require a certain orientation)
+o   add to activity tag in the manifest:
+o     android:configChanges="keyboardHidden|orientation"
+o     android:screenOrientation="landscape"
+X   or programmatically specify:
+X     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+X     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+X get the dpi of the screen (added to wiki)
+X   http://developer.android.com/reference/android/util/DisplayMetrics.html
+X add hutch stuff to the wiki
+X   http://lukehutch.wordpress.com/2010/01/06/my-multi-touch-code-ported-to-eclair/
+X also for the wiki:
+X   add information about permissions, since loadStrings() will break
+X add information to wiki about preparing apps for release
+X   http://developer.android.com/guide/publishing/preparing.html
+X make size() work to place the component at the center of the screen
+X make size() work to change the renderer
+X how does size work? 
+X   if size() method is used, things are scaled based on that
+X   if no size() method, then the full screen/full resolution is used
+X   make apps properly handle screen resize
+o remove SurfaceView2D/SurfaceView3D separation, or clean up
+o test controlp5 with android
+X get core.zip out of svn (once tool is separate, modes stuff working etc)
+X fix the width of the build window
+X some sort of warning re: messing with AndroidManifest.xml
+X   added to the wiki
+X implement createGraphics() for A3D/P3D/OPENGL
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1488
+X   http://code.google.com/p/processing/issues/detail?id=240
+X   added a note to the wiki
+X make sure that AndroidManifest and other files are copied on Save As
+X   icons.. any others?
+X Errors show up that .java files are duplicates with the Android tools.
+X   problem is with the packages and where the preproc is putting the file
+X   example sketch added to bug report
+X   http://code.google.com/p/processing/issues/detail?id=232
+X prevent adding the opengl library when it's not needed
+X   preprocessor removes the code by before export
+X   added a note to the wiki
+X implement android menu
+X   reset option
+X   permissions
+X   run the 'android' application (since finding its location is painful)
+o remove the need for a "Reset Android" menu option
+o   might need to just put this in the menu for times when things go weird
+o   http://dev.processing.org/bugs/show_bug.cgi?id=1392
+o   http://code.google.com/p/processing/issues/detail?id=209
+X added orientation(PORTRAIT) and orientation(LANDSCAPE)
+
+earlier
+X if sketchRenderer() et al are used in android, need to add to desktop
+X remove processing.opengl.* classes and finish PGraphicsAndroid3D
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1401
+J need to prevent hitting 'run' twice (threaded, so would work)
+J   currently things just keep restarting the build, bad state
+J   http://dev.processing.org/bugs/show_bug.cgi?id=1387
+
+before 0190 release
+X post processing-android-core-0190.zip to the download page
+X   get some help w/ the dist script to make the right file
+X have casey do a reference build (skewX/Y to shearX/Y)
+X   also changes to the xml api naming
+
+
+0189 android (1.2.1)
+X no changes
+
+
+0188 android (1.2)
+X no changes (and android features hidden)
+
+
+0187 android (pre)
+X don't kill adb server each time that run is hit
+X move about.txt to the wiki
+
+done in 0186
+X move to Android 2.1 as the minimum requirement? 
+X   since 2.0.1 seems to be used on only a 0.46% of devices?
+X   http://developer.android.com/resources/dashboard/platform-versions.html
+X need to side-port changes from PShape/SVG over to Android
+
+
+0186 android (pre)
+X move to sdk 7 because 6 has been deprecated
+X merged svg changes with those in desktop core
+
+
+0185 android (pre)
+X fix two bugs with fonts created with specific charsets
+X fix for adobe illustrator-mangled svg id names with hex characters
+X add redirect and fix problem with core.zip location after server move
+X   http://code.google.com/p/processing/issues/detail?id=269
+X added android.permission.INTERNET 
+X   and android.permission.WRITE_EXTERNAL_STORAGE
+
+
+0184 android (pre)
+o when running a sketch, need to unlock the device
+o   http://dev.processing.org/bugs/show_bug.cgi?id=1500
+X add Pattern caching to match() to speed things up
+X make saveStream() return a boolean to indicate success
+X implement 'export' to create a local android folder
+X 'stop' is now a no-op for the android tools
+X   partially fixed but hangs after pressing stop
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1386
+X path problems finding javac.exe on vista
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1528
+
+earlier
+J figure out how to set ANDROID_SDK for the build scripts
+J   right now, just setting the env value is required 
+
+
+0183 android (pre-release)
+X mention in the notes
+o   emulator doesn't always start the sketch the first time
+X   emulator stays open because it's too slow to restart it
+X add notes to about.txt, and add link to it
+
+
+0182 android (pre-release)
+X added skewX/Y implementation
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1448
+
+
+0181 android (pre-release)
+X some changes to A3D
+
+
+0180 android (pre-release)
+X change sdk to use revision 6 (2.0.1) as the version
+X   change instructions on site 
+X add support for a default font
+
+
+0179 (1.1, but no android tools)
+X screenWidth/Height instead of screenW/H
+X errors that happen inside events (e.g. keys) not highlighting lines
+X   useful stack trace information not coming through.. why?
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1384
+
+previous
+X don't require JDK installation and PATH setting
+X   if using processing with java download, should be able to use its tools.jar
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1470
+
+
+0178 (private)
+X noLoop() is broken (draw is never called)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1467
+X fix the freakout that happens with onPause()
+o   solution is to call stop() to kill the thread, but that's not a pause
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1483
+X app not pausing or closing when switching to another activity
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1404
+o if !looping, is it necessary to call redraw() in onResume()?
+X   doesn't appear to be, since it gets completely rebuilt
+X bezier curves were broken in A2D
+X   extra point is drawn connecting the shape to the corner
+X fix other minor bugs in shape drawing
+X mask() now implemented in A2D
+X updatePixels() now work properly for A2D
+X set() should now be working
+X using set() on an image that doesn't have a bitmap, or has pixels loaded
+X requestImage() now working
+X drastically improve the performance of the time functions
+X point wasn't detecting different stroke weights
+X point wasn't working with strokeWeight > 1
+X fix rotate() bug (was using degrees instead of radians)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1497
+X arc() now working properly
+X createGraphics() works, at least with A2D (or aliases P2D and JAVA2D)
+X "The application ... has stopped unexpectedly." when quitting a slow app
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1485
+X Examples > Topics > Effects > Wormhole - needs work, something with resize()
+X test createFont()
+X createGraphics() broken
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1437
+X remove legacy PGraphics3D class from processing.core.android
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1402
+X is there a way to get a width/height default to use for surfaceChanged?
+
+cleaning
+X move to eclair (donut devices will have terrible performance anyway)
+X make change from src folder to assets folder for export
+X what to do with other classes that rely on PApplet? (e.g. vida)
+X remove drawCube() method from PApplet
+X add methods to request rendering
+o   need to deal with fps problems with this model
+o gz files not allowed, need to remove the code from createInput() et al
+X   or maybe not, since could still come from a site or a File?
+X   just can't come from the assets file..
+
+jdf
+X get stdout and stderr from the emulator/device
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1381
+X remove ANDROID_SDK env variable requirement
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1471
+X   ANDROID_SDK doesn't seem to be mentioned anywhere anymore
+X   this may mean that p5 might just need to get the location
+X ANDROID_SDK not getting set on OS X
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1469
+X   http://stackoverflow.com/questions/603785/environment-variables-in-mac-os-x
+X timeout isn't long enough for emulator to boot and startup
+X   always times out on a 3 GHz OS X machine
+
+
+0177 (private)
+X fix error with typo in the build file:
+X   Open quote is expected for attribute "{1}" associated with an
+X   element type "android:minSdkVersion".
+
+
+0176 (private)
+X begin the merge of the new A3D, remove old OpenGL code
+X escape slashes properly on windows (also place sdk in program files)
+X   writer.println("sdk.dir=" + Android.sdkPath);  // r4 of the sdk
+X   writer.println("sdk.dir=" + Android.sdkPath.replace("\\", "\\" +"\\")); 
+X move processing.android.core back to processing.core
+X   need to document the rationale
+X Android tools on Windows are broken due to naming changes in r4 SDK
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1432
+X images with tint() starting to work
+X   tint() causes crash
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1435
+X loadFont() now working, createFont() not tested yet
+X implement library support for android
+X   also code folder support
+
+
+0175 (private)
+X fix problem with windows claiming "does not appear to contain an Android SDK"
+X loadImage() and other loadXxxx() functions not yet working
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1414
+X   can the data folder have subfolders? - yes
+
+
+0174 (private)
+X not handling key characters correctly (space bar, tab, others)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1405
+X why aren't mouse drag events coming through?
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1382
+X "taskdef class com.android.ant.SetupTask cannot be found" on Linux
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1407
+X update to r4 of android sdk
+X   this release will not run on r3 or earlier
+X download core.zip from local files
+
