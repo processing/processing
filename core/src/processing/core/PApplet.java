@@ -3005,7 +3005,12 @@ public class PApplet extends Applet
   public void link(String url) {
 //    link(url, null);
     try {
-      Desktop.getDesktop().browse(new URI(url));
+      if (Desktop.isDesktopSupported()) {
+        Desktop.getDesktop().browse(new URI(url));
+      } else {
+        // Just pass it off to open() and hope for the best
+        open(url);
+      }
     } catch (IOException e) {
       e.printStackTrace();
     } catch (URISyntaxException e) {
