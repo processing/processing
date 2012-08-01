@@ -13990,7 +13990,7 @@ public class PApplet extends Applet
    * PGraphicsJava2D, or resized image data and OpenGL texture indices for
    * PGraphicsOpenGL.
    * @param renderer The PGraphics renderer associated to the image
-   * @param storage The metadata required by the renderer
+   * @param storage The metadata required by the renderer   
    */
   public void setCache(PGraphics renderer, Object storage) {
     if (recorder != null) recorder.setCache(renderer, storage);
@@ -14025,7 +14025,7 @@ public class PApplet extends Applet
    * Store parameters for a renderer that requires extra metadata of
    * some kind.
    * @param renderer The PGraphics renderer associated to the image
-   * @param storage The parameters required by the renderer
+   * @param storage The parameters required by the renderer  
    */
   public void setParams(PGraphics renderer, Object params) {
     if (recorder != null) recorder.setParams(renderer, params);
@@ -14055,26 +14055,26 @@ public class PApplet extends Applet
 
   /**
    * ( begin auto-generated from PImage_get.xml )
-   *
-   * Reads the color of any pixel or grabs a section of an image. If no
-   * parameters are specified, the entire image is returned. Use the <b>x</b>
-   * and <b>y</b> parameters to get the value of one pixel. Get a section of
-   * the display window by specifying an additional <b>width</b> and
-   * <b>height</b> parameter. When getting an image, the <b>x</b> and
-   * <b>y</b> parameters define the coordinates for the upper-left corner of
+   * 
+   * Reads the color of any pixel or grabs a section of an image. If no 
+   * parameters are specified, the entire image is returned. Use the <b>x</b> 
+   * and <b>y</b> parameters to get the value of one pixel. Get a section of 
+   * the display window by specifying an additional <b>width</b> and 
+   * <b>height</b> parameter. When getting an image, the <b>x</b> and 
+   * <b>y</b> parameters define the coordinates for the upper-left corner of 
    * the image, regardless of the current <b>imageMode()</b>.<br />
    * <br />
-   * If the pixel requested is outside of the image window, black is
-   * returned. The numbers returned are scaled according to the current color
-   * ranges, but only RGB values are returned by this function. For example,
-   * even though you may have drawn a shape with <b>colorMode(HSB)</b>, the
+   * If the pixel requested is outside of the image window, black is 
+   * returned. The numbers returned are scaled according to the current color 
+   * ranges, but only RGB values are returned by this function. For example, 
+   * even though you may have drawn a shape with <b>colorMode(HSB)</b>, the 
    * numbers returned will be in RGB format.<br />
    * <br />
-   * Getting the color of a single pixel with <b>get(x, y)</b> is easy, but
-   * not as fast as grabbing the data directly from <b>pixels[]</b>. The
-   * equivalent statement to <b>get(x, y)</b> using <b>pixels[]</b> is
+   * Getting the color of a single pixel with <b>get(x, y)</b> is easy, but 
+   * not as fast as grabbing the data directly from <b>pixels[]</b>. The 
+   * equivalent statement to <b>get(x, y)</b> using <b>pixels[]</b> is 
    * <b>pixels[y*width+x]</b>. See the reference for <b>pixels[]</b> for more information.
-   *
+   * 
    * ( end auto-generated )
    *
    * <h3>Advanced</h3>
@@ -14094,7 +14094,7 @@ public class PApplet extends Applet
    * is inside the bounds, and then has to check to see what image
    * type it is. If you want things to be more efficient, access the
    * pixels[] array directly.
-   *
+   * 
    * @webref image:pixels
    * @brief Reads the color of any pixel or grabs a rectangle of pixels
    * @usage web_application
@@ -14128,25 +14128,25 @@ public class PApplet extends Applet
 
   /**
    * ( begin auto-generated from PImage_set.xml )
-   *
-   * Changes the color of any pixel or writes an image directly into the
+   * 
+   * Changes the color of any pixel or writes an image directly into the 
    * display window.<br />
    * <br />
-   * The <b>x</b> and <b>y</b> parameters specify the pixel to change and the
-   * <b>color</b> parameter specifies the color value. The color parameter is
-   * affected by the current color mode (the default is RGB values from 0 to
-   * 255). When setting an image, the <b>x</b> and <b>y</b> parameters define
-   * the coordinates for the upper-left corner of the image, regardless of
+   * The <b>x</b> and <b>y</b> parameters specify the pixel to change and the 
+   * <b>color</b> parameter specifies the color value. The color parameter is 
+   * affected by the current color mode (the default is RGB values from 0 to 
+   * 255). When setting an image, the <b>x</b> and <b>y</b> parameters define 
+   * the coordinates for the upper-left corner of the image, regardless of 
    * the current <b>imageMode()</b>.
    * <br /><br />
-   * Setting the color of a single pixel with <b>set(x, y)</b> is easy, but
-   * not as fast as putting the data directly into <b>pixels[]</b>. The
-   * equivalent statement to <b>set(x, y, #000000)</b> using <b>pixels[]</b>
-   * is <b>pixels[y*width+x] = #000000</b>. See the reference for
+   * Setting the color of a single pixel with <b>set(x, y)</b> is easy, but 
+   * not as fast as putting the data directly into <b>pixels[]</b>. The 
+   * equivalent statement to <b>set(x, y, #000000)</b> using <b>pixels[]</b> 
+   * is <b>pixels[y*width+x] = #000000</b>. See the reference for 
    * <b>pixels[]</b> for more information.
-   *
+   * 
    * ( end auto-generated )
-   *
+   * 
    * @webref image:pixels
    * @brief writes a color to any pixel or writes an image into another
    * @usage web_application
@@ -14179,18 +14179,18 @@ public class PApplet extends Applet
 
   /**
    * ( begin auto-generated from PImage_mask.xml )
-   *
-   * Masks part of an image from displaying by loading another image and
-   * using it as an alpha channel. This mask image should only contain
-   * grayscale data, but only the blue color channel is used. The mask image
+   * 
+   * Masks part of an image from displaying by loading another image and 
+   * using it as an alpha channel. This mask image should only contain 
+   * grayscale data, but only the blue color channel is used. The mask image 
    * needs to be the same size as the image to which it is applied.<br />
    * <br />
-   * In addition to using a mask image, an integer array containing the alpha
-   * channel data can be specified directly. This method is useful for
-   * creating dynamically generated alpha masks. This array must be of the
-   * same length as the target image's pixels array and should contain only
+   * In addition to using a mask image, an integer array containing the alpha 
+   * channel data can be specified directly. This method is useful for 
+   * creating dynamically generated alpha masks. This array must be of the 
+   * same length as the target image's pixels array and should contain only 
    * grayscale data of values between 0-255.
-   *
+   * 
    * ( end auto-generated )
    *
    * <h3>Advanced</h3>
@@ -14235,31 +14235,31 @@ public class PApplet extends Applet
 
   /**
    * ( begin auto-generated from PImage_filter.xml )
-   *
-   * Filters an image as defined by one of the following modes:<br /><br
-   * />THRESHOLD - converts the image to black and white pixels depending if
-   * they are above or below the threshold defined by the level parameter.
-   * The level must be between 0.0 (black) and 1.0(white). If no level is
+   * 
+   * Filters an image as defined by one of the following modes:<br /><br 
+   * />THRESHOLD - converts the image to black and white pixels depending if 
+   * they are above or below the threshold defined by the level parameter. 
+   * The level must be between 0.0 (black) and 1.0(white). If no level is 
    * specified, 0.5 is used.<br />
    * <br />
    * GRAY - converts any colors in the image to grayscale equivalents<br />
    * <br />
    * INVERT - sets each pixel to its inverse value<br />
    * <br />
-   * POSTERIZE - limits each channel of the image to the number of colors
+   * POSTERIZE - limits each channel of the image to the number of colors 
    * specified as the level parameter<br />
    * <br />
-   * BLUR - executes a Guassian blur with the level parameter specifying the
-   * extent of the blurring. If no level parameter is used, the blur is
+   * BLUR - executes a Guassian blur with the level parameter specifying the 
+   * extent of the blurring. If no level parameter is used, the blur is 
    * equivalent to Guassian blur of radius 1<br />
    * <br />
    * OPAQUE - sets the alpha channel to entirely opaque<br />
    * <br />
-   * ERODE - reduces the light areas with the amount defined by the level
+   * ERODE - reduces the light areas with the amount defined by the level 
    * parameter<br />
    * <br />
    * DILATE - increases the light areas with the amount defined by the level parameter
-   *
+   * 
    * ( end auto-generated )
    *
    * <h3>Advanced</h3>
@@ -14294,17 +14294,17 @@ public class PApplet extends Applet
 
   /**
    * ( begin auto-generated from PImage_copy.xml )
-   *
-   * Copies a region of pixels from one image into another. If the source and
-   * destination regions aren't the same size, it will automatically resize
-   * source pixels to fit the specified target region. No alpha information
-   * is used in the process, however if the source image has an alpha channel
+   * 
+   * Copies a region of pixels from one image into another. If the source and 
+   * destination regions aren't the same size, it will automatically resize 
+   * source pixels to fit the specified target region. No alpha information 
+   * is used in the process, however if the source image has an alpha channel 
    * set, it will be copied as well.
    * <br /><br />
    * As of release 0149, this function ignores <b>imageMode()</b>.
-   *
+   * 
    * ( end auto-generated )
-   *
+   * 
    * @webref image:pixels
    * @brief Copies the entire image
    * @usage web_application
@@ -14339,11 +14339,11 @@ public class PApplet extends Applet
 
   /**
    * ( begin auto-generated from blendColor.xml )
-   *
-   * Blends two color values together based on the blending mode given as the
-   * <b>MODE</b> parameter. The possible modes are described in the reference
+   * 
+   * Blends two color values together based on the blending mode given as the 
+   * <b>MODE</b> parameter. The possible modes are described in the reference 
    * for the <b>blend()</b> function.
-   *
+   * 
    * ( end auto-generated )
    * <h3>Advanced</h3>
    * <UL>
@@ -14430,17 +14430,17 @@ public class PApplet extends Applet
 
   /**
    * ( begin auto-generated from PImage_blend.xml )
-   *
-   * Blends a region of pixels into the image specified by the <b>img</b>
-   * parameter. These copies utilize full alpha channel support and a choice
-   * of the following modes to blend the colors of source pixels (A) with the
+   * 
+   * Blends a region of pixels into the image specified by the <b>img</b> 
+   * parameter. These copies utilize full alpha channel support and a choice 
+   * of the following modes to blend the colors of source pixels (A) with the 
    * ones of pixels in the destination image (B):<br />
    * <br />
    * BLEND - linear interpolation of colours: C = A*factor + B<br />
    * <br />
    * ADD - additive blending with white clip: C = min(A*factor + B, 255)<br />
    * <br />
-   * SUBTRACT - subtractive blending with black clip: C = max(B - A*factor,
+   * SUBTRACT - subtractive blending with black clip: C = max(B - A*factor, 
    * 0)<br />
    * <br />
    * DARKEST - only the darkest colour succeeds: C = min(A*factor, B)<br />
@@ -14460,7 +14460,7 @@ public class PApplet extends Applet
    * <br />
    * HARD_LIGHT - SCREEN when greater than 50% gray, MULTIPLY when lower.<br />
    * <br />
-   * SOFT_LIGHT - Mix of DARKEST and LIGHTEST.
+   * SOFT_LIGHT - Mix of DARKEST and LIGHTEST. 
    * Works like OVERLAY, but not as harsh.<br />
    * <br />
    * DODGE - Lightens light tones and increases contrast, ignores darks.
@@ -14469,14 +14469,14 @@ public class PApplet extends Applet
    * BURN - Darker areas are applied, increasing contrast, ignores lights.
    * Called "Color Burn" in Illustrator and Photoshop.<br />
    * <br />
-   * All modes use the alpha information (highest byte) of source image
-   * pixels as the blending factor. If the source and destination regions are
-   * different sizes, the image will be automatically resized to match the
-   * destination size. If the <b>srcImg</b> parameter is not used, the
+   * All modes use the alpha information (highest byte) of source image 
+   * pixels as the blending factor. If the source and destination regions are 
+   * different sizes, the image will be automatically resized to match the 
+   * destination size. If the <b>srcImg</b> parameter is not used, the 
    * display window is used as the source image.<br />
    * <br />
    * As of release 0149, this function ignores <b>imageMode()</b>.
-   *
+   * 
    * ( end auto-generated )
    *
    * @webref image:pixels
