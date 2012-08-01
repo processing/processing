@@ -253,13 +253,13 @@ public class PGraphicsOpenGL extends PGraphics3D {
       // If OpenGL 2X or 4X smoothing is enabled, setup caps object for them
       GLCapabilities capabilities = new GLCapabilities();
       // Starting in release 0158, OpenGL smoothing is always enabled
-      if (!hints[DISABLE_OPENGL_2X_SMOOTH]) {
-        capabilities.setSampleBuffers(true);
-        capabilities.setNumSamples(2);
-      } else if (hints[ENABLE_OPENGL_4X_SMOOTH]) {
-        capabilities.setSampleBuffers(true);
-        capabilities.setNumSamples(4);
-      }
+//      if (!hints[DISABLE_OPENGL_2X_SMOOTH]) {
+      capabilities.setSampleBuffers(true);
+      capabilities.setNumSamples(2);
+//      } else if (hints[ENABLE_OPENGL_4X_SMOOTH]) {
+//        capabilities.setSampleBuffers(true);
+//        capabilities.setNumSamples(4);
+//      }
 
       // get a rendering surface and a context for this canvas
       GLDrawableFactory factory = GLDrawableFactory.getFactory();
@@ -506,8 +506,8 @@ public class PGraphicsOpenGL extends PGraphics3D {
   public void hint(int which) {
     // make note of whether these are set, if they are,
     // then will prevent the new renderer exception from being thrown.
-    boolean opengl2X = !hints[DISABLE_OPENGL_2X_SMOOTH];
-    boolean opengl4X = hints[ENABLE_OPENGL_4X_SMOOTH];
+//    boolean opengl2X = !hints[DISABLE_OPENGL_2X_SMOOTH];
+//    boolean opengl4X = hints[ENABLE_OPENGL_4X_SMOOTH];
     super.hint(which);
 
     if (which == DISABLE_DEPTH_TEST) {
@@ -517,26 +517,26 @@ public class PGraphicsOpenGL extends PGraphics3D {
     } else if (which == ENABLE_DEPTH_TEST) {
       gl.glEnable(GL.GL_DEPTH_TEST);
 
-    } else if (which == DISABLE_OPENGL_2X_SMOOTH) {
-      if (opengl2X) {
-        releaseContext();
-        context.destroy();
-        context = null;
-        allocate();
-        throw new PApplet.RendererChangeException();
-      }
-
-    } else if (which == ENABLE_OPENGL_2X_SMOOTH) {
-      // do nothing, this is the default in release 0158 and later
-
-    } else if (which == ENABLE_OPENGL_4X_SMOOTH) {
-      if (!opengl4X) {
-        releaseContext();
-        context.destroy();
-        context = null;
-        allocate();
-        throw new PApplet.RendererChangeException();
-      }
+//    } else if (which == DISABLE_OPENGL_2X_SMOOTH) {
+//      if (opengl2X) {
+//        releaseContext();
+//        context.destroy();
+//        context = null;
+//        allocate();
+//        throw new PApplet.RendererChangeException();
+//      }
+//
+//    } else if (which == ENABLE_OPENGL_2X_SMOOTH) {
+//      // do nothing, this is the default in release 0158 and later
+//
+//    } else if (which == ENABLE_OPENGL_4X_SMOOTH) {
+//      if (!opengl4X) {
+//        releaseContext();
+//        context.destroy();
+//        context = null;
+//        allocate();
+//        throw new PApplet.RendererChangeException();
+//      }
     }
   }
 
@@ -864,7 +864,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
      */
     protected void finalize() {
       if (textureDeleteQueue.length == textureDeleteQueueCount) {
-        textureDeleteQueue = (int[]) PApplet.expand(textureDeleteQueue);
+        textureDeleteQueue = PApplet.expand(textureDeleteQueue);
       }
       if (tindex != -1) {
         textureDeleteQueue[textureDeleteQueueCount++] = tindex;
@@ -1356,23 +1356,23 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
   public void smooth() {
     smooth = true;
-    if (hints[DISABLE_OPENGL_2X_SMOOTH]) {
-      //gl.glEnable(GL.GL_MULTISAMPLE);
-      gl.glEnable(GL.GL_POINT_SMOOTH);
-      gl.glEnable(GL.GL_LINE_SMOOTH);
-      gl.glEnable(GL.GL_POLYGON_SMOOTH);
-    }
+//    if (hints[DISABLE_OPENGL_2X_SMOOTH]) {
+//      //gl.glEnable(GL.GL_MULTISAMPLE);
+//      gl.glEnable(GL.GL_POINT_SMOOTH);
+//      gl.glEnable(GL.GL_LINE_SMOOTH);
+//      gl.glEnable(GL.GL_POLYGON_SMOOTH);
+//    }
   }
 
 
   public void noSmooth() {
     smooth = false;
-    if (hints[DISABLE_OPENGL_2X_SMOOTH]) {
-      //gl.glDisable(GL.GL_MULTISAMPLE);
-      gl.glDisable(GL.GL_POINT_SMOOTH);
-      gl.glDisable(GL.GL_LINE_SMOOTH);
-      gl.glDisable(GL.GL_POLYGON_SMOOTH);
-    }
+//    if (hints[DISABLE_OPENGL_2X_SMOOTH]) {
+//      //gl.glDisable(GL.GL_MULTISAMPLE);
+//      gl.glDisable(GL.GL_POINT_SMOOTH);
+//      gl.glDisable(GL.GL_LINE_SMOOTH);
+//      gl.glDisable(GL.GL_POLYGON_SMOOTH);
+//    }
   }
 
 
