@@ -940,6 +940,12 @@ public class Base {
 
       fc.setFileFilter(new javax.swing.filechooser.FileFilter() {
         public boolean accept(File file) {
+          // JFileChooser requires you to explicitly say yes to directories
+          // as well (unlike the AWT chooser). Useful, but... different.
+          // http://code.google.com/p/processing/issues/detail?id=1151
+          if (file.isDirectory()) {
+            return true;
+          }
           for (String ext : extensions) {
             if (file.getName().toLowerCase().endsWith("." + ext)) {
               return true;
@@ -1981,11 +1987,10 @@ public class Base {
 
 
   /**
-   * Implements the cross-platform headache of opening URLs
-   * TODO This code should be replaced by PApplet.link(),
-   * however that's not a static method (because it requires
-   * an AppletContext when used as an applet), so it's mildly
-   * trickier than just removing this method.
+   * Implements the cross-platform headache of opening URLs. For 2.0, this
+   * requires the parameter to be an actual URL, meaning that you can't send
+   * it a file:// path without a prefix. It also just calls into Platform,
+   * which now uses java.awt.Desktop because we're requiring Java 6.
    */
   static public void openURL(String url) {
     try {

@@ -178,7 +178,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     header = new EditorHeader(this);
     upper.add(header);
 
-    textarea = new JEditTextArea(new PdeTextAreaDefaults(mode));
+    textarea = createTextArea();
     textarea.setRightClickPopup(new TextAreaPopup());
     textarea.setHorizontalOffset(JEditTextArea.leftHandGutter);
 
@@ -277,6 +277,15 @@ public abstract class Editor extends JFrame implements RunnerListener {
     // Open the document that was passed in
     boolean loaded = handleOpenInternal(path);
     if (!loaded) sketch = null;
+  }
+
+
+  /**
+   * Broken out to get modes working for GSOC, but this needs a longer-term
+   * solution where the listeners are handled properly.
+   */
+  protected JEditTextArea createTextArea() {
+    return new JEditTextArea(new PdeTextAreaDefaults(mode));
   }
 
 
@@ -1072,7 +1081,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 //    File referenceFile = new File(referenceFolder, filename);
 //    Base.openURL(referenceFile.getAbsolutePath());
     File file = new File(mode.getReferenceFolder(), filename);
-    Base.openURL(file.getAbsolutePath());
+    Base.openURL("file://" + file.getAbsolutePath());
   }
 
 

@@ -1,4 +1,6 @@
 0207 android 
+_ Support Native Code in Libraries for Android (includes fix)
+_   http://code.google.com/p/processing/issues/detail?id=1117
 
 
 _ no ES2 in the emulator, and no error reported in the PDE

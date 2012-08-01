@@ -1,5 +1,21 @@
 0207 pde
+X wordtreemap_sotu gives weird preproc error: wrong line, can't parse extends
+X   problem was 'extends' after 'implements'
+X "Open" dialog on Linux wasn't showing directories
+X   http://code.google.com/p/processing/issues/detail?id=1151
+X switch Platform to just use java.awt.Desktop classes
+X for Java 1.6, replace com.apple.eio.FileManager.openURL(url); 
+X   with java.awt.Desktop.browse() and java.awt.Desktop.open()
+X   causes a deprecation warning whenever building on osx
+o   instead of "show sketch folder" method, use:
+The com.apple.eio.FileManager now has two new desktop interaction methods, revealInFinder(File) and moveToTrash(File). You can use revealInFinder() to open a Finder window in the parent directory of of a file and select it. You can use moveToTrash() to move a file to the most appropriate Trash directory for the volume that contains that file. 
 
+_ First doubleclick immediately closes example folder
+_   http://code.google.com/p/processing/issues/detail?id=1150
+
+earlier
+X the word from Apple on Info.plist setup
+X   DO NOT USE "JVMArchs". It is deprecated, and manually overrides the natural architecture launching and ordering that LaunchServices does, including accommodating the 32-bit checkbox in the Get Info window.
 
 http://code.google.com/p/processing/issues/list?can=2&q=owner%3Afry%40processing.org+Type%3ADefect&colspec=Stars+ID+Type+Status+Priority+Owner+Summary&cells=tiles
 
@@ -64,16 +80,14 @@ _   restrict more things like "show sketch folder"
 _   don't allow adding files w/o saving
 _   others?
 
-_ wordtreemap_sotu gives weird preproc error: wrong line, can't parse extends
+_ work on making GSOC stuff work better with unpatched editor
+_   currently using createTextArea() hack inside Editor
 
 _ change syntax highlighting so it differentiates keyPressed and keyPressed()
 _ syntax highlight with parens also helps "String line" vs "line()"
 
 _ excessive CPU usage of PDE after using library manager
 _   http://code.google.com/p/processing/issues/detail?id=1036
-
-_ check on new JDK and how it works on OS X
-_   http://jdk7.java.net/macportpreview/
 
 _ undo seems to not be going to the right location (now with example)
 _   http://code.google.com/p/processing/issues/detail?id=668
@@ -335,18 +349,6 @@ _   new libraries are not picked up
 
 _ the code[] array in Sketch is super hokey... switch to an arraylist
 _   and add compare method to SketchCode so that it can be sorted by name
-
-_ for Java 1.6 on osx, replace com.apple.eio.FileManager.openURL(url); 
-_   with java.awt.Desktop.browse() and java.awt.Desktop.open()
-_   causes a deprecation warning whenever building on osx
-
-NSMenu.setMenubarVisible(false);
-Then we used Cocoa via JNI:
-if([NSMenu menuBarVisible]){
-	[NSMenu setMenuBarVisible:NO];
-}
-You can't do that from the AWT event thread. You need to do a -performSelectorOnMainThread to do that on the AppKit event thread.
-Please see <http://developer.apple.com/mac/library/technotes/tn2005/tn2147.html> for more information, particularly the section about "Calling AppKit from AWT/Swing".
 
 _ check into apple.awt.graphics.UseQuartz again
 _   both for p5.app and for the exported app
@@ -1121,21 +1123,19 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=1567
 
 DIST / Mac OS X
 
+_ check on new JDK and how it works on OS X
+_   http://jdk7.java.net/macportpreview/
 _ very slow startup on OS X (library manager et al?)
 _ retina support
 Have you added an NSPrincipalClass to your Info.plist, and are using a JavaApplicationStub with 64-bit?
 <key>NSPrincipalClass</key>
 <string>NSApplication</string>
-_ Check out the desktop property. Unfortunately, it won't tell you *which* display is running in HiDPI, but it will stay up-to-date with live display changes (like a Retina-display being plugged and unplugged). If you query the property after each GraphicsEnvironment display change event, you should be able to live switch in and out of HiDPI.
+Check out the desktop property. Unfortunately, it won't tell you *which* display is running in HiDPI, but it will stay up-to-date with live display changes (like a Retina-display being plugged and unplugged). If you query the property after each GraphicsEnvironment display change event, you should be able to live switch in and out of HiDPI.
 java.awt.Toolkit.getDefaultToolkit().getDesktopProperty("apple.awt.contentScaleFactor");
 _ cut/copy/paste while saving a sketch on goes to the editor, not save dialog
 _   http://code.google.com/p/processing/issues/detail?id=997
 _   problem with focus traversal and native windows on OS X
 _   using JFileChooser fixes the problem (but is ugly)
-_ the word from apple on Info.plist setup
-DO NOT USE "JVMArchs". It is deprecated, and manually overrides the natural architecture launching and ordering that LaunchServices does, including accommodating the 32-bit checkbox in the Get Info window.
-_ instead of "show sketch folder" method, use:
-The com.apple.eio.FileManager now has two new desktop interaction methods, revealInFinder(File) and moveToTrash(File). You can use revealInFinder() to open a Finder window in the parent directory of of a file and select it. You can use moveToTrash() to move a file to the most appropriate Trash directory for the volume that contains that file. 
 _ setup() and draw() are not bold on osx (10.4)
 _   likely osx refuses to do monaco bold
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1047
@@ -1146,11 +1146,14 @@ _   should be using a menu factory to create menubar for all sub-windows
 _   http://developer.apple.com/technotes/tn/tn2042.html
 _   and the general warning dialogs are just ass ugly
 _   (i.e. we really need those replacements for JOptionPane)
-_ track down error in PdeCompiler for message parsing
-_   was missing the error about a package being gone
-_   can comment out /System/Library/ as a test
+o track down error in PdeCompiler for message parsing
+o   was missing the error about a package being gone
+o   can comment out /System/Library/ as a test
+X   way too old to know this one
 _ put stdout/stderr into ~/Library/Logs
 _   and have a .log extension so it can be browsed properly
+_   need to make sure that it's ok to write to logs dir..
+_      probably being removed from future OS X versions
 _ try LSMinimumSystemVersion in Info.plist
 _ Horizontal two finger scroll doesn't work in OS X
 _   also applies to horizontal scrolling on the mouse
@@ -1159,6 +1162,14 @@ _ Exiting a sketch with Command-Q or File > Quit doesn't call stop() on OS X
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1069
 _ add a check to make sure that people aren't running from the dmg
 _   doesn't actually cause any problems, so don't bother?
+_ code to hide menubar.. just include JNA and call from there?
+NSMenu.setMenubarVisible(false);
+Then we used Cocoa via JNI:
+if([NSMenu menuBarVisible]){
+	[NSMenu setMenuBarVisible:NO];
+}
+You can't do that from the AWT event thread. You need to do a -performSelectorOnMainThread to do that on the AppKit event thread.
+Please see <http://developer.apple.com/mac/library/technotes/tn2005/tn2147.html> for more information, particularly the section about "Calling AppKit from AWT/Swing".
 
 
 DIST / Linux

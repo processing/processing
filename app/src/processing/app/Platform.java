@@ -22,7 +22,9 @@
 
 package processing.app;
 
+import java.awt.Desktop;
 import java.io.File;
+import java.net.URI;
 
 import javax.swing.UIManager;
 
@@ -74,8 +76,7 @@ public class Platform {
   public File getSettingsFolder() throws Exception {
     // otherwise make a .processing directory int the user's home dir
     File home = new File(System.getProperty("user.home"));
-    File dataFolder = new File(home, ".processing");
-    return dataFolder;
+    return new File(home, ".processing");
 
     /*
     try {
@@ -95,8 +96,8 @@ public class Platform {
 
 
   /**
-   * @return null if not overridden, which will cause a prompt to show instead.
-   * @throws Exception
+   * @return if not overridden, a folder named "sketchbook" in user.dir.
+   * @throws Exception so that subclasses can throw a fit
    */
   public File getDefaultSketchbookFolder() throws Exception {
     return new File(System.getProperty("user.dir"), "sketchbook");
@@ -104,21 +105,29 @@ public class Platform {
 
 
   public void openURL(String url) throws Exception {
+    Desktop.getDesktop().browse(new URI(url));
+    /*
     String launcher = Preferences.get("launcher");
     if (launcher != null) {
       Runtime.getRuntime().exec(new String[] { launcher, url });
     } else {
       showLauncherWarning();
     }
+    */
   }
 
 
   public boolean openFolderAvailable() {
+    return Desktop.isDesktopSupported();
+    /*
     return Preferences.get("launcher") != null;
+    */
   }
 
 
   public void openFolder(File file) throws Exception {
+    Desktop.getDesktop().open(file);
+    /*
     String launcher = Preferences.get("launcher");
     if (launcher != null) {
       String folder = file.getAbsolutePath();
@@ -126,6 +135,7 @@ public class Platform {
     } else {
       showLauncherWarning();
     }
+    */
   }
 
 
@@ -162,6 +172,7 @@ public class Platform {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
+  /*
   protected void showLauncherWarning() {
     Base.showWarning("No launcher available",
                      "Unspecified platform, no launcher available.\n" +
@@ -169,4 +180,5 @@ public class Platform {
                      "\"launcher=/path/to/app\" line to preferences.txt",
                      null);
   }
+  */
 }

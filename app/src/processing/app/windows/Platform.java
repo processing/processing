@@ -314,6 +314,7 @@ public class Platform extends processing.app.Platform {
   }
 
 
+  /*
   public void openURL(String url) throws Exception {
     // this is not guaranteed to work, because who knows if the
     // path will always be c:\progra~1 et al. also if the user has
@@ -362,6 +363,7 @@ public class Platform extends processing.app.Platform {
     // not tested
     //Runtime.getRuntime().exec("start explorer \"" + folder + "\"");
   }
+  */
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
