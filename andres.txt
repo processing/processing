@@ -1,0 +1,20 @@
+processing-core todo (after beta):
+_ some glitches with SVG shapes in P2D 
+_   load world.svg and disable style)
+_ simple bevel algorithm for retained mode tessellation 
+_   if stroke weight is less than 1, the tessellator currently doesn't 
+_   apply the path stroking algorithm, but a retained shape can be zoomed 
+_   in to see the details of the strokes
+_ setting smooth(n) in a non-interactive sketch has no effect.
+_ Fix text rendering at non-integer coordinates. 
+_   This might be useful: http://www.valvesoftware.com/publications/2007/SIGGRAPH2007_AlphaTestedMagnification.pdf
+_ Implement manual mipmap generation to take care of missing extension
+_ Beveling algorithm needs to add last bevel triangle between last and first vertex in closed loops.
+_ Lines, points and fill geometry should be handled separately in raw ouput in P2D.
+_ Use GL_LINES and GL_POINTS when stroke weight is below the hardware limit and stroke cap/bevel is RECT.
+_ Properly handle very large stroke paths in P3D (create new index cache, etc).
+
+processing-android todo (after beta):
+_ noLoop/redraw not working
+_ Mipmaps are disabled, need manual generation
+_ Issues on low-end phones: http://code.google.com/p/processing/issues/detail?id=1145 
