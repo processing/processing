@@ -22,12 +22,9 @@
 
 package processing.app.linux;
 
-import java.io.File;
-
 import javax.swing.UIManager;
 
 import processing.app.Base;
-import processing.app.Preferences;
 
 
 public class Platform extends processing.app.Platform {
@@ -68,64 +65,64 @@ public class Platform extends processing.app.Platform {
   }
 
 
-  public void openURL(String url) throws Exception {
-    if (openFolderAvailable()) {
-      String launcher = Preferences.get("launcher");
-      if (launcher != null) {
-        Runtime.getRuntime().exec(new String[] { launcher, url });
-      }
-    }
-  }
-
-
-  public boolean openFolderAvailable() {
-    if (Preferences.get("launcher") != null) {
-      return true;
-    }
-
-    // Attempt to use xdg-open
-    try {
-      Process p = Runtime.getRuntime().exec(new String[] { "xdg-open" });
-      p.waitFor();
-      Preferences.set("launcher", "xdg-open");
-      return true;
-    } catch (Exception e) { }
-
-    // Attempt to use gnome-open
-    try {
-      Process p = Runtime.getRuntime().exec(new String[] { "gnome-open" });
-      p.waitFor();
-      // Not installed will throw an IOException (JDK 1.4.2, Ubuntu 7.04)
-      Preferences.set("launcher", "gnome-open");
-      return true;
-    } catch (Exception e) { }
-
-    // Attempt with kde-open
-    try {
-      Process p = Runtime.getRuntime().exec(new String[] { "kde-open" });
-      p.waitFor();
-      Preferences.set("launcher", "kde-open");
-      return true;
-    } catch (Exception e) { }
-
-    return false;
-  }
-
-
-  public void openFolder(File file) throws Exception {
-    if (openFolderAvailable()) {
-      String lunch = Preferences.get("launcher");
-      try {
-        String[] params = new String[] { lunch, file.getAbsolutePath() };
-        //processing.core.PApplet.println(params);
-        /*Process p =*/ Runtime.getRuntime().exec(params);
-        /*int result =*/ //p.waitFor();
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-    } else {
-      System.out.println("No launcher set, cannot open " +
-                         file.getAbsolutePath());
-    }
-  }
+//  public void openURL(String url) throws Exception {
+//    if (openFolderAvailable()) {
+//      String launcher = Preferences.get("launcher");
+//      if (launcher != null) {
+//        Runtime.getRuntime().exec(new String[] { launcher, url });
+//      }
+//    }
+//  }
+//
+//
+//  public boolean openFolderAvailable() {
+//    if (Preferences.get("launcher") != null) {
+//      return true;
+//    }
+//
+//    // Attempt to use xdg-open
+//    try {
+//      Process p = Runtime.getRuntime().exec(new String[] { "xdg-open" });
+//      p.waitFor();
+//      Preferences.set("launcher", "xdg-open");
+//      return true;
+//    } catch (Exception e) { }
+//
+//    // Attempt to use gnome-open
+//    try {
+//      Process p = Runtime.getRuntime().exec(new String[] { "gnome-open" });
+//      p.waitFor();
+//      // Not installed will throw an IOException (JDK 1.4.2, Ubuntu 7.04)
+//      Preferences.set("launcher", "gnome-open");
+//      return true;
+//    } catch (Exception e) { }
+//
+//    // Attempt with kde-open
+//    try {
+//      Process p = Runtime.getRuntime().exec(new String[] { "kde-open" });
+//      p.waitFor();
+//      Preferences.set("launcher", "kde-open");
+//      return true;
+//    } catch (Exception e) { }
+//
+//    return false;
+//  }
+//
+//
+//  public void openFolder(File file) throws Exception {
+//    if (openFolderAvailable()) {
+//      String lunch = Preferences.get("launcher");
+//      try {
+//        String[] params = new String[] { lunch, file.getAbsolutePath() };
+//        //processing.core.PApplet.println(params);
+//        /*Process p =*/ Runtime.getRuntime().exec(params);
+//        /*int result =*/ //p.waitFor();
+//      } catch (Exception e) {
+//        e.printStackTrace();
+//      }
+//    } else {
+//      System.out.println("No launcher set, cannot open " +
+//                         file.getAbsolutePath());
+//    }
+//  }
 }
