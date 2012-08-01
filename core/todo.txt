@@ -1,4 +1,14 @@
 0207 core
+X switch link() and others to just use java.awt.Desktop classes
+X   also deprecate param, link() with a target, and others
+
+_ add notes about the new shader setup
+
+fixed in 2.0a7 or earlier
+A ArrayIndexOutOfBoundsException inside PFontTexture.updateGlyphsTexCoords() 
+A   http://code.google.com/p/processing/issues/detail?id=1104
+A Camera function hot changing the upward axis
+A   http://code.google.com/p/processing/issues/detail?id=534
 
 
 before beta
@@ -17,6 +27,8 @@ _ bring PConstants back in line w/ previous 1.5 (can't renumber)
 _ consider enable("mipmaps") instead of hint(ENABLE_MIPMAPS)
 _ hint(DISABLE_LOADPIXELS) -> faster rendering in Java2D
 _ clean up PConstants and move things into PGraphics that needn't be available
+_ 2x and 4x smooth hints no longer needed/supported
+_   http://code.google.com/p/processing/issues/detail?id=1144
 
 docs (2.0)
 _ online is there but deprecated

@@ -246,7 +246,7 @@ public class AndroidEditor extends JavaEditor {
   public void showReference(String filename) {
     File javaReferenceFolder = Base.getContentFile("modes/java/reference");
     File file = new File(javaReferenceFolder, filename);
-    Base.openURL(file.getAbsolutePath());
+    Base.openURL("file://" + file.getAbsolutePath());
   }
 
 

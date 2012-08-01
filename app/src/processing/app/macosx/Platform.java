@@ -25,15 +25,12 @@ package processing.app.macosx;
 import java.awt.Insets;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.lang.reflect.Method;
-import java.net.URI;
 
 import javax.swing.UIManager;
 
 import com.apple.eio.FileManager;
 
 import processing.app.Base;
-import processing.core.PApplet;
 
 
 /**
@@ -106,6 +103,7 @@ public class Platform extends processing.app.Platform {
   }
 
 
+  /*
   public void openURL(String url) throws Exception {
     if (PApplet.javaVersion < 1.6f) {
       if (url.startsWith("http://")) {
@@ -130,7 +128,7 @@ public class Platform extends processing.app.Platform {
         Method getMethod = desktopClass.getMethod("getDesktop");
         Object desktop = getMethod.invoke(null, new Object[] { });
 
-        // for Java 1.6, replacing with java.awt.Desktop.browse() 
+        // for Java 1.6, replacing with java.awt.Desktop.browse()
         // and java.awt.Desktop.open()
         if (url.startsWith("http://")) {  // browse to a location
           Method browseMethod =
@@ -157,6 +155,7 @@ public class Platform extends processing.app.Platform {
     //openURL(file.getAbsolutePath());  // handles char replacement, etc
     processing.core.PApplet.open(file.getAbsolutePath());
   }
+  */
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
