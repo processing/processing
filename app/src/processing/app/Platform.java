@@ -64,7 +64,12 @@ public class Platform {
    * @throws Exception Just like I said.
    */
   public void setLookAndFeel() throws Exception {
-    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+    String laf = Preferences.get("editor.laf");
+    if (laf == null || laf.length() == 0) {  // normal situation
+      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+    } else {
+      UIManager.setLookAndFeel(laf);
+    }
   }
 
 

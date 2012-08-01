@@ -22,9 +22,10 @@
 
 package processing.app.linux;
 
-import javax.swing.UIManager;
+import java.io.File;
 
 import processing.app.Base;
+import processing.app.Preferences;
 
 
 public class Platform extends processing.app.Platform {
@@ -48,81 +49,64 @@ public class Platform extends processing.app.Platform {
   }
 
 
-  // TODO Need to be smarter here since KDE people ain't gonna like that GTK.
-  //      It may even throw a weird exception at 'em for their trouble.
-  public void setLookAndFeel() throws Exception {
-    // Linux is by default even uglier than metal (Motif?).
-    // Actually, i'm using native menus, so they're even uglier
-    // and Motif-looking (Lesstif?). Ick. Need to fix this.
-    //String lfname = UIManager.getCrossPlatformLookAndFeelClassName();
-    //UIManager.setLookAndFeel(lfname);
-
-    // For 0120, trying out the gtk+ look and feel as the default.
-    // This is available in Java 1.4.2 and later, and it can't possibly
-    // be any worse than Metal. (Ocean might also work, but that's for
-    // Java 1.5, and we aren't going there yet)
-    UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
+  public void openURL(String url) throws Exception {
+    if (openFolderAvailable()) {
+      String launcher = Preferences.get("launcher");
+      if (launcher != null) {
+        Runtime.getRuntime().exec(new String[] { launcher, url });
+      }
+    }
   }
 
 
-//  public void openURL(String url) throws Exception {
-//    if (openFolderAvailable()) {
-//      String launcher = Preferences.get("launcher");
-//      if (launcher != null) {
-//        Runtime.getRuntime().exec(new String[] { launcher, url });
-//      }
-//    }
-//  }
-//
-//
-//  public boolean openFolderAvailable() {
-//    if (Preferences.get("launcher") != null) {
-//      return true;
-//    }
-//
-//    // Attempt to use xdg-open
-//    try {
-//      Process p = Runtime.getRuntime().exec(new String[] { "xdg-open" });
-//      p.waitFor();
-//      Preferences.set("launcher", "xdg-open");
-//      return true;
-//    } catch (Exception e) { }
-//
-//    // Attempt to use gnome-open
-//    try {
-//      Process p = Runtime.getRuntime().exec(new String[] { "gnome-open" });
-//      p.waitFor();
-//      // Not installed will throw an IOException (JDK 1.4.2, Ubuntu 7.04)
-//      Preferences.set("launcher", "gnome-open");
-//      return true;
-//    } catch (Exception e) { }
-//
-//    // Attempt with kde-open
-//    try {
-//      Process p = Runtime.getRuntime().exec(new String[] { "kde-open" });
-//      p.waitFor();
-//      Preferences.set("launcher", "kde-open");
-//      return true;
-//    } catch (Exception e) { }
-//
-//    return false;
-//  }
-//
-//
-//  public void openFolder(File file) throws Exception {
-//    if (openFolderAvailable()) {
-//      String lunch = Preferences.get("launcher");
-//      try {
-//        String[] params = new String[] { lunch, file.getAbsolutePath() };
-//        //processing.core.PApplet.println(params);
-//        /*Process p =*/ Runtime.getRuntime().exec(params);
-//        /*int result =*/ //p.waitFor();
-//      } catch (Exception e) {
-//        e.printStackTrace();
-//      }
-//    } else {
-//      System.out.println("No launcher set, cannot open " +
-//                         file.getAbsolutePath());
-//    }
-//  }
+  public boolean openFolderAvailable() {
+    if (Preferences.get("launcher") != null) {
+      return true;
+    }
+
+    // Attempt to use xdg-open
+    try {
+      Process p = Runtime.getRuntime().exec(new String[] { "xdg-open" });
+      p.waitFor();
+      Preferences.set("launcher", "xdg-open");
+      return true;
+    } catch (Exception e) { }
+
+    // Attempt to use gnome-open
+    try {
+      Process p = Runtime.getRuntime().exec(new String[] { "gnome-open" });
+      p.waitFor();
+      // Not installed will throw an IOException (JDK 1.4.2, Ubuntu 7.04)
+      Preferences.set("launcher", "gnome-open");
+      return true;
+    } catch (Exception e) { }
+
+    // Attempt with kde-open
+    try {
+      Process p = Runtime.getRuntime().exec(new String[] { "kde-open" });
+      p.waitFor();
+      Preferences.set("launcher", "kde-open");
+      return true;
+    } catch (Exception e) { }
+
+    return false;
+  }
+
+
+  public void openFolder(File file) throws Exception {
+    if (openFolderAvailable()) {
+      String lunch = Preferences.get("launcher");
+      try {
+        String[] params = new String[] { lunch, file.getAbsolutePath() };
+        //processing.core.PApplet.println(params);
+        /*Process p =*/ Runtime.getRuntime().exec(params);
+        /*int result =*/ //p.waitFor();
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    } else {
+      System.out.println("No launcher set, cannot open " +
+                         file.getAbsolutePath());
+    }
+  }
 }
