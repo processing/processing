@@ -1,5 +1,3 @@
-/* @pjs transparent=true; */
-
 /**
  *    <p>This example shows you how to use video with a transparency
  *    which currently is not natively supported by web video formats (H264 / OGV).</p>
@@ -44,7 +42,13 @@
          PImage frame = video.getFrame();
          PImage rgbImage = frame.get(frame.width/2,0,frame.width/2,frame.height);
          PImage maskImage = frame.get(0,0,frame.width/2,frame.height);
-         rgbImage.mask(maskImage);
+         rgbImage.loadPixels();
+         maskImage.loadPixels();
+         for ( int i = 0; i < rgbImage.pixels.length; i++ )
+         {
+             rgbImage.pixels[i] = (rgbImage.pixels[i] & 0x00FFFFFF) + ((maskImage.pixels[i] & 0xFF) << 24);
+         }
+         rgbImage.updatePixels();
          image( rgbImage, width/2-rgbImage.width/2, 0 );
      }
  }

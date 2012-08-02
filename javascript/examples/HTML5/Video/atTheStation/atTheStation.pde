@@ -76,6 +76,7 @@
  void setVideo ( Video v )
  {
      video = v;
+     console.log( v );
  }
  
  /* make Processing understand the HTMLVideoElement */
