@@ -4,7 +4,7 @@ window.onload = function () {
     
     // try to find the Processing sketch instance, or retry
     function tryFindSketch () {
-        var sketch = Processing.instances[0];
+        var sketch = Processing.getInstanceById(getProcessingSketchID());
         if ( sketch == undefined )
             setTimeout(tryFindSketch, 200); // retry in 0.2 secs
         else
@@ -20,11 +20,20 @@ function initVideos ( sketch ) {
 
     video['loop'] = true; // as "loop" is not supported by many browsers
     
+    var lastTime = -1;
+    var lastFrame = null;
+    
     // extending our HTMLVideoElement object to return a PImage
     video['getFrame'] = function () {
-        var img = new sketch.PImage;
-        img.fromHTMLImageData(video);
-        return img;
+        if ( lastTime !== video.currentTime || !lastFrame )
+        {
+            lastFrame = new sketch.PImage;
+            lastFrame.fromHTMLImageData(video);
+            lastTime = video.currentTime;
+            return lastFrame;
+        } else {
+            return lastFrame;
+        }
     };
     
     // similar to tryFindSketch this creates a loop that
@@ -40,13 +49,17 @@ function initVideos ( sketch ) {
         tryAddVideo();
     })( sketch, video );
     
-    // force loop when set as this is currently not supported by most browsers
-    addEvent(video,'ended',function(){
-        if ( 'loop' in this && this.loop ) {
-            this.currentTime = 0;
-            this.play();
-        }
-    });
+    // this is a temporary fix for Chrome browsers sometimes not looping videos ...
+    if ( window.navigator.appVersion.toLowerCase().indexOf('chrome') >= 0 ) {
+        addEvent(video,'timeupdate',function(){
+            if ( video.currentTime == video.duration ) {
+                video.src = video.currentSrc;
+            }
+        });
+        addEvent(video,'canplay',function(){
+            video.play();
+        });
+    }
 }
 
 // http://html5demos.com/

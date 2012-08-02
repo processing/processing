@@ -3,9 +3,49 @@ http://code.google.com/p/processing/issues/detail?id=573
 
 ----------------------------------------------------------------------------
 
+Library system
+
+Rewrite library system to not be linked to java-libraries.
+<sketchbook>/libraries-js/..
+LibraryManager, updating, ..
+Update reference / wiki to mirror changes. 
+Make tutorial / template for Library authors.
+
+----------------------------------------------------------------------------
+
 Reference
 
 Make sure all reference links point to the same/new location
+
+----------------------------------------------------------------------------
+
+Examples
+
+Some of the standard examples should be included, but not library specific
+ones. Currently there is no way to "just pick some" one has to include whole
+branches.
+
+----------------------------------------------------------------------------
+
+UI
+
+As the server keeps running until being explicitly stopped we might think 
+about an animated icon. How does "Server running" look like?	
+
+----------------------------------------------------------------------------
+
+Convenience
+
+A way to open / run in other browsers?
+Find your own IP address so you can test the sketch from other clients 
+on the network.
+
+Watch source files for changes, rebuild & export upon change. 
+No saving needed.
+
+----------------------------------------------------------------------------
+
+Nice subpages for: 404, directory listing, ...
 
 ----------------------------------------------------------------------------
 
@@ -16,33 +56,5 @@ at the moment. Content scraping is possible but probably not
 submitting stuff ..
 Here's how to get latest of a sketch as plain text:
 http://studio.sketchpad.cc/sp/pad/export/ro.9civzkE0CyCy6/latest?format=txt
-
-
-----------------------------------------------------------------------------
-
-Examples.
-
-Some of the standard examples should be included, but not library specific
-ones. Currently there is no way to "just pick some" one has to include whole
-branches.
-
-----------------------------------------------------------------------------
-
-Interface.
-
-As the server keeps running until being explicitly stopped we might think 
-about an animated icon. How does "Server running" look like?	
-
-----------------------------------------------------------------------------
-
-Convenience.
-
-A way to reopen the browser window, maybe even other browsers?
-Find your own IP address so you can test the sketch from other clients 
-on the network.
-
-----------------------------------------------------------------------------
-
-Nice subpages for: 404, directory listing, ...
 
 ----------------------------------------------------------------------------
