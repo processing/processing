@@ -1,6 +1,6 @@
 /***
 
-    P R O C E S S I N G . J S - 1.3.6
+    P R O C E S S I N G . J S - 1.4.0
     a port of the Processing visualization language
 
     Processing.js is licensed under the MIT License, see LICENSE.
@@ -16,7 +16,7 @@
     if ("console" in window) return function(msg) {
       window.console.log("Processing.js: " + msg)
     };
-    return nop()
+    return nop
   }();
   var ajax = function(url) {
     var xhr = new XMLHttpRequest;
@@ -42,6 +42,7 @@
       }
     }
   }
+  if (document.documentMode >= 9 && !document.doctype) throw "The doctype directive is missing. The recommended doctype in Internet Explorer is the HTML5 doctype: <!DOCTYPE html>";
   var Float32Array = setupTypedArray("Float32Array", "WebGLFloatArray"),
     Int32Array = setupTypedArray("Int32Array", "WebGLIntArray"),
     Uint16Array = setupTypedArray("Uint16Array", "WebGLUnsignedShortArray"),
@@ -287,7 +288,8 @@
     return obj === other
   }
   var ObjectIterator = function(obj) {
-    if (obj.iterator instanceof Function) return obj.iterator();
+    if (obj.iterator instanceof
+    Function) return obj.iterator();
     if (obj instanceof Array) {
       var index = -1;
       this.hasNext = function() {
@@ -311,13 +313,12 @@
         array.splice(index, 1)
       }
     }
-    function ArrayList() {
+    function ArrayList(a) {
       var array;
-      if (arguments.length === 0) array = [];
-      else if (arguments.length > 0 && typeof arguments[0] !== "number") array = arguments[0].toArray();
+      if (a instanceof ArrayList) array = a.toArray();
       else {
         array = [];
-        array.length = 0 | arguments[0]
+        if (typeof a === "number") array.length = a > 0 ? a : 0
       }
       this.get = function(i) {
         return array[i]
@@ -327,6 +328,10 @@
       };
       this.indexOf = function(item) {
         for (var i = 0, len = array.length; i < len; ++i) if (virtEquals(item, array[i])) return i;
+        return -1
+      };
+      this.lastIndexOf = function(item) {
+        for (var i = array.length - 1; i >= 0; --i) if (virtEquals(item, array[i])) return i;
         return -1
       };
       this.add = function() {
@@ -370,6 +375,17 @@
           array.splice(item, 1);
           return true
         }
+        return false
+      };
+      this.removeAll = function(c) {
+        var i, x, item, newList = new ArrayList;
+        newList.addAll(this);
+        this.clear();
+        for (i = 0, x = 0; i < newList.size(); i++) {
+          item = newList.get(i);
+          if (!c.contains(item)) this.add(x++, item)
+        }
+        if (this.size() < newList.size()) return true;
         return false
       };
       this.isEmpty = function() {
@@ -419,6 +435,7 @@
         var bucketIndex = 0;
         var itemIndex = -1;
         var endOfBuckets = false;
+        var currentItem;
 
         function findNext() {
           while (!endOfBuckets) {
@@ -434,13 +451,16 @@
           return !endOfBuckets
         };
         this.next = function() {
-          var result = conversion(buckets[bucketIndex][itemIndex]);
+          currentItem = conversion(buckets[bucketIndex][itemIndex]);
           findNext();
-          return result
+          return currentItem
         };
         this.remove = function() {
-          removeItem(this.next());
-          --itemIndex
+          if (currentItem !== undef) {
+            removeItem(currentItem);
+            --itemIndex;
+            findNext()
+          }
         };
         findNext()
       }
@@ -808,6 +828,38 @@
     }
   };
 
+  function overloadBaseClassFunction(object, name, basefn) {
+    if (!object.hasOwnProperty(name) || typeof object[name] !== "function") {
+      object[name] = basefn;
+      return
+    }
+    var fn = object[name];
+    if ("$overloads" in fn) {
+      fn.$defaultOverload = basefn;
+      return
+    }
+    if (! ("$overloads" in basefn) && fn.length === basefn.length) return;
+    var overloads, defaultOverload;
+    if ("$overloads" in basefn) {
+      overloads = basefn.$overloads.slice(0);
+      overloads[fn.length] = fn;
+      defaultOverload = basefn.$defaultOverload
+    } else {
+      overloads = [];
+      overloads[basefn.length] = basefn;
+      overloads[fn.length] = fn;
+      defaultOverload = fn
+    }
+    var hubfn = function() {
+      var fn = hubfn.$overloads[arguments.length] || ("$methodArgsIndex" in hubfn && arguments.length > hubfn.$methodArgsIndex ? hubfn.$overloads[hubfn.$methodArgsIndex] : null) || hubfn.$defaultOverload;
+      return fn.apply(this, arguments)
+    };
+    hubfn.$overloads = overloads;
+    if ("$methodArgsIndex" in basefn) hubfn.$methodArgsIndex = basefn.$methodArgsIndex;
+    hubfn.$defaultOverload = defaultOverload;
+    hubfn.name = name;
+    object[name] = hubfn
+  }
   function extendClass(subClass, baseClass) {
     function extendGetterSetter(propertyName) {
       defaultScope.defineProperty(subClass, propertyName, {
@@ -821,10 +873,10 @@
       })
     }
     var properties = [];
-    for (var propertyName in baseClass) if (typeof baseClass[propertyName] === "function") {
-      if (!subClass.hasOwnProperty(propertyName)) subClass[propertyName] = baseClass[propertyName]
-    } else if (propertyName.charAt(0) !== "$" && !(propertyName in subClass)) properties.push(propertyName);
-    while (properties.length > 0) extendGetterSetter(properties.shift())
+    for (var propertyName in baseClass) if (typeof baseClass[propertyName] === "function") overloadBaseClassFunction(subClass, propertyName, baseClass[propertyName]);
+    else if (propertyName.charAt(0) !== "$" && !(propertyName in subClass)) properties.push(propertyName);
+    while (properties.length > 0) extendGetterSetter(properties.shift());
+    subClass.$super = baseClass
   }
   defaultScope.extendClassChain = function(base) {
     var path = [base];
@@ -841,24 +893,43 @@
   defaultScope.extendInterfaceMembers = function(derived, base) {
     extendClass(derived, base)
   };
-  defaultScope.addMethod = function(object, name, fn, superAccessor) {
-    if (object[name]) {
-      var args = fn.length,
-        oldfn = object[name];
-      object[name] = function() {
-        if (arguments.length === args) return fn.apply(this, arguments);
-        return oldfn.apply(this, arguments)
+  defaultScope.addMethod = function(object, name, fn, hasMethodArgs) {
+    var existingfn = object[name];
+    if (existingfn || hasMethodArgs) {
+      var args = fn.length;
+      if ("$overloads" in existingfn) existingfn.$overloads[args] = fn;
+      else {
+        var hubfn = function() {
+          var fn = hubfn.$overloads[arguments.length] || ("$methodArgsIndex" in hubfn && arguments.length > hubfn.$methodArgsIndex ? hubfn.$overloads[hubfn.$methodArgsIndex] : null) || hubfn.$defaultOverload;
+          return fn.apply(this, arguments)
+        };
+        var overloads = [];
+        if (existingfn) overloads[existingfn.length] = existingfn;
+        overloads[args] = fn;
+        hubfn.$overloads = overloads;
+        hubfn.$defaultOverload = existingfn || fn;
+        if (hasMethodArgs) hubfn.$methodArgsIndex = args;
+        hubfn.name = name;
+        object[name] = hubfn
       }
     } else object[name] = fn
   };
+
+  function isNumericalJavaType(type) {
+    if (typeof type !== "string") return false;
+    return ["byte", "int", "char", "color", "float", "long", "double"].indexOf(type) !== -1
+  }
   defaultScope.createJavaArray = function(type, bounds) {
-    var result = null;
+    var result = null,
+      defaultValue = null;
+    if (typeof type === "string") if (type === "boolean") defaultValue = false;
+    else if (isNumericalJavaType(type)) defaultValue = 0;
     if (typeof bounds[0] === "number") {
       var itemsCount = 0 | bounds[0];
       if (bounds.length <= 1) {
         result = [];
         result.length = itemsCount;
-        for (var i = 0; i < itemsCount; ++i) result[i] = 0
+        for (var i = 0; i < itemsCount; ++i) result[i] = defaultValue
       } else {
         result = [];
         var newBounds = bounds.slice(1);
@@ -1035,6 +1106,11 @@
       return window.innerHeight
     }
   });
+  defaultScope.defineProperty(defaultScope, "online", {
+    get: function() {
+      return true
+    }
+  });
   var processingInstances = [];
   var processingInstanceIds = {};
   var removeInstance = function(id) {
@@ -1057,7 +1133,6 @@
     var cfmFont = pfont.getCSSDefinition(emQuad + "px", "normal"),
       ctx = canvas.getContext("2d");
     ctx.font = cfmFont;
-    pfont.context2d = ctx;
     var protrusions = "dbflkhyjqpg";
     canvas.width = ctx.measureText(protrusions).width;
     ctx.font = cfmFont;
@@ -1091,7 +1166,8 @@
       leadDivHeight = correctionFactor * leadDivHeight.replace("px", "");
       if (leadDivHeight >= pfont.size * 2) pfont.leading = Math.round(leadDivHeight / 2)
     }
-    document.body.removeChild(leadDiv)
+    document.body.removeChild(leadDiv);
+    if (pfont.caching) return ctx
   }
   function PFont(name, size) {
     if (name === undef) name = "";
@@ -1129,11 +1205,11 @@
       this.family = '"' + name + '", sans-serif';
       break
     }
-    this.context2d = null;
-    computeFontMetrics(this);
+    this.context2d = computeFontMetrics(this);
     this.css = this.getCSSDefinition();
-    this.context2d.font = this.css
+    if (this.context2d) this.context2d.font = this.css
   }
+  PFont.prototype.caching = true;
   PFont.prototype.getCSSDefinition = function(fontSize, lineHeight) {
     if (fontSize === undef) fontSize = this.size + "px";
     if (lineHeight === undef) lineHeight = this.leading + "px";
@@ -1143,12 +1219,39 @@
   PFont.prototype.measureTextWidth = function(string) {
     return this.context2d.measureText(string).width
   };
-  PFont.PFontCache = {};
+  PFont.prototype.measureTextWidthFallback = function(string) {
+    var canvas = document.createElement("canvas"),
+      ctx = canvas.getContext("2d");
+    ctx.font = this.css;
+    return ctx.measureText(string).width
+  };
+  PFont.PFontCache = {
+    length: 0
+  };
   PFont.get = function(fontName, fontSize) {
-    var cache = PFont.PFontCache;
-    var idx = fontName + "/" + fontSize;
-    if (!cache[idx]) cache[idx] = new PFont(fontName, fontSize);
+    fontSize = (fontSize * 10 + 0.5 | 0) / 10;
+    var cache = PFont.PFontCache,
+      idx = fontName + "/" + fontSize;
+    if (!cache[idx]) {
+      cache[idx] = new PFont(fontName, fontSize);
+      cache.length++;
+      if (cache.length === 50) {
+        PFont.prototype.measureTextWidth = PFont.prototype.measureTextWidthFallback;
+        PFont.prototype.caching = false;
+        var entry;
+        for (entry in cache) if (entry !== "length") cache[entry].context2d = null;
+        return new PFont(fontName, fontSize)
+      }
+      if (cache.length === 400) {
+        PFont.PFontCache = {};
+        PFont.get = PFont.getFallback;
+        return new PFont(fontName, fontSize)
+      }
+    }
     return cache[idx]
+  };
+  PFont.getFallback = function(fontName, fontSize) {
+    return new PFont(fontName, fontSize)
   };
   PFont.list = function() {
     return ["sans-serif", "serif", "monospace", "fantasy", "cursive"]
@@ -1219,7 +1322,8 @@
   };
   defaultScope.PFont = PFont;
   var Processing = this.Processing = function(aCanvas, aCode) {
-    if (! (this instanceof Processing)) throw "called Processing constructor as if it were a function: missing 'new'.";
+    if (! (this instanceof
+    Processing)) throw "called Processing constructor as if it were a function: missing 'new'.";
     var curElement, pgraphicsMode = aCanvas === undef && aCode === undef;
     if (pgraphicsMode) curElement = document.createElement("canvas");
     else curElement = typeof aCanvas === "string" ? document.getElementById(aCanvas) : aCanvas;
@@ -1341,7 +1445,8 @@
       setPixelsCached, maxPixelsCached = 1E3,
       pressedKeysMap = [],
       lastPressedKeyCode = null,
-      codedKeys = [16, 17, 18, 20, 33, 34, 35, 36, 37, 38, 39, 40, 144, 155, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 157];
+      codedKeys = [16,
+      17, 18, 20, 33, 34, 35, 36, 37, 38, 39, 40, 144, 155, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 157];
     var stylePaddingLeft, stylePaddingTop, styleBorderLeft, styleBorderTop;
     if (document.defaultView && document.defaultView.getComputedStyle) {
       stylePaddingLeft = parseInt(document.defaultView.getComputedStyle(curElement, null)["paddingLeft"], 10) || 0;
@@ -1375,20 +1480,20 @@
       firstVert = true;
     var curShapeMode = 0;
     var styleArray = [];
-    var boxVerts = new Float32Array([0.5, 0.5, -0.5, 0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5, -0.5, -0.5, 0.5, -0.5, 0.5, -0.5, -0.5, 0.5, -0.5, -0.5, 0.5, -0.5, -0.5, -0.5, 0.5,
-      -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, 0.5, 0.5, -0.5, 0.5, -0.5, -0.5, -0.5, -0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, -0.5, 0.5, -0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, 0.5, 0.5]);
-    var boxOutlineVerts = new Float32Array([0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5, 0.5, -0.5, 0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, -0.5, -0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, -0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5,
-      0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5]);
-    var boxNorms = new Float32Array([0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0]);
+    var boxVerts = new Float32Array([0.5, 0.5, -0.5, 0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5, -0.5, -0.5, 0.5, -0.5, 0.5, -0.5, -0.5, 0.5, -0.5, -0.5, 0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, 0.5, 0.5, -0.5, 0.5, -0.5, -0.5, -0.5, -0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, -0.5,
+      0.5, -0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, 0.5, 0.5]);
+    var boxOutlineVerts = new Float32Array([0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5, 0.5, -0.5, 0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, -0.5, -0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, -0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5]);
+    var boxNorms = new Float32Array([0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, 1, 0, 0, 1, 0,
+      0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0]);
     var rectVerts = new Float32Array([0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0]);
     var rectNorms = new Float32Array([0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1]);
-    var vShaderSrcUnlitShape = "varying vec4 frontColor;" + "attribute vec3 aVertex;" + "attribute vec4 aColor;" + "uniform mat4 uView;" + "uniform mat4 uProjection;" + "uniform float pointSize;" + "void main(void) {" + "  frontColor = aColor;" + "  gl_PointSize = pointSize;" + "  gl_Position = uProjection * uView * vec4(aVertex, 1.0);" + "}";
-    var fShaderSrcUnlitShape = "#ifdef GL_ES\n" + "precision highp float;\n" + "#endif\n" + "varying vec4 frontColor;" + "void main(void){" + "  gl_FragColor = frontColor;" + "}";
-    var vertexShaderSource2D = "varying vec4 frontColor;" + "attribute vec3 Vertex;" + "attribute vec2 aTextureCoord;" + "uniform vec4 color;" + "uniform mat4 model;" + "uniform mat4 view;" + "uniform mat4 projection;" + "uniform float pointSize;" + "varying vec2 vTextureCoord;" + "void main(void) {" + "  gl_PointSize = pointSize;" + "  frontColor = color;" + "  gl_Position = projection * view * model * vec4(Vertex, 1.0);" + "  vTextureCoord = aTextureCoord;" + "}";
-    var fragmentShaderSource2D = "#ifdef GL_ES\n" + "precision highp float;\n" + "#endif\n" + "varying vec4 frontColor;" + "varying vec2 vTextureCoord;" + "uniform sampler2D uSampler;" + "uniform int picktype;" + "void main(void){" + "  if(picktype == 0){" + "    gl_FragColor = frontColor;" + "  }" + "  else if(picktype == 1){" + "    float alpha = texture2D(uSampler, vTextureCoord).a;" + "    gl_FragColor = vec4(frontColor.rgb*alpha, alpha);\n" + "  }" + "}";
+    var vertexShaderSrcUnlitShape = "varying vec4 vFrontColor;" + "attribute vec3 aVertex;" + "attribute vec4 aColor;" + "uniform mat4 uView;" + "uniform mat4 uProjection;" + "uniform float uPointSize;" + "void main(void) {" + "  vFrontColor = aColor;" + "  gl_PointSize = uPointSize;" + "  gl_Position = uProjection * uView * vec4(aVertex, 1.0);" + "}";
+    var fragmentShaderSrcUnlitShape = "#ifdef GL_ES\n" + "precision highp float;\n" + "#endif\n" + "varying vec4 vFrontColor;" + "uniform bool uSmooth;" + "void main(void){" + "  if(uSmooth == true){" + "    float dist = distance(gl_PointCoord, vec2(0.5));" + "    if(dist > 0.5){" + "      discard;" + "    }" + "  }" + "  gl_FragColor = vFrontColor;" + "}";
+    var vertexShaderSrc2D = "varying vec4 vFrontColor;" + "attribute vec3 aVertex;" + "attribute vec2 aTextureCoord;" + "uniform vec4 uColor;" + "uniform mat4 uModel;" + "uniform mat4 uView;" + "uniform mat4 uProjection;" + "uniform float uPointSize;" + "varying vec2 vTextureCoord;" + "void main(void) {" + "  gl_PointSize = uPointSize;" + "  vFrontColor = uColor;" + "  gl_Position = uProjection * uView * uModel * vec4(aVertex, 1.0);" + "  vTextureCoord = aTextureCoord;" + "}";
+    var fragmentShaderSrc2D = "#ifdef GL_ES\n" + "precision highp float;\n" + "#endif\n" + "varying vec4 vFrontColor;" + "varying vec2 vTextureCoord;" + "uniform sampler2D uSampler;" + "uniform int uIsDrawingText;" + "uniform bool uSmooth;" + "void main(void){" + "  if(uSmooth == true){" + "    float dist = distance(gl_PointCoord, vec2(0.5));" + "    if(dist > 0.5){" + "      discard;" + "    }" + "  }" + "  if(uIsDrawingText == 1){" + "    float alpha = texture2D(uSampler, vTextureCoord).a;" + "    gl_FragColor = vec4(vFrontColor.rgb * alpha, alpha);" + "  }" + "  else{" + "    gl_FragColor = vFrontColor;" + "  }" + "}";
     var webglMaxTempsWorkaround = /Windows/.test(navigator.userAgent);
-    var vertexShaderSource3D = "varying vec4 frontColor;" + "attribute vec3 Vertex;" + "attribute vec3 Normal;" + "attribute vec4 aColor;" + "attribute vec2 aTexture;" + "varying   vec2 vTexture;" + "uniform vec4 color;" + "uniform bool usingMat;" + "uniform vec3 specular;" + "uniform vec3 mat_emissive;" + "uniform vec3 mat_ambient;" + "uniform vec3 mat_specular;" + "uniform float shininess;" + "uniform mat4 model;" + "uniform mat4 view;" + "uniform mat4 projection;" + "uniform mat4 normalTransform;" + "uniform int lightCount;" + "uniform vec3 falloff;" + "struct Light {" + "  int type;" + "  vec3 color;" + "  vec3 position;" + "  vec3 direction;" + "  float angle;" + "  vec3 halfVector;" + "  float concentration;" + "};" + "uniform Light lights0;" + "uniform Light lights1;" + "uniform Light lights2;" + "uniform Light lights3;" + "uniform Light lights4;" + "uniform Light lights5;" + "uniform Light lights6;" + "uniform Light lights7;" + "Light getLight(int index){" + "  if(index == 0) return lights0;" + "  if(index == 1) return lights1;" + "  if(index == 2) return lights2;" + "  if(index == 3) return lights3;" + "  if(index == 4) return lights4;" + "  if(index == 5) return lights5;" + "  if(index == 6) return lights6;" + "  return lights7;" + "}" + "void AmbientLight( inout vec3 totalAmbient, in vec3 ecPos, in Light light ) {" + "  float d = length( light.position - ecPos );" + "  float attenuation = 1.0 / ( falloff[0] + ( falloff[1] * d ) + ( falloff[2] * d * d ));" + "  totalAmbient += light.color * attenuation;" + "}" + "void DirectionalLight( inout vec3 col, inout vec3 spec, in vec3 vertNormal, in vec3 ecPos, in Light light ) {" + "  float powerfactor = 0.0;" + "  float nDotVP = max(0.0, dot( vertNormal, normalize(-light.position) ));" + "  float nDotVH = max(0.0, dot( vertNormal, normalize(-light.position-normalize(ecPos) )));" + "  if( nDotVP != 0.0 ){" + "    powerfactor = pow( nDotVH, shininess );" + "  }" + "  col += light.color * nDotVP;" + "  spec += specular * powerfactor;" + "}" + "void PointLight( inout vec3 col, inout vec3 spec, in vec3 vertNormal, in vec3 ecPos, in Light light ) {" + "  float powerfactor;" + "   vec3 VP = light.position - ecPos;" + "  float d = length( VP ); " + "  VP = normalize( VP );" + "  float attenuation = 1.0 / ( falloff[0] + ( falloff[1] * d ) + ( falloff[2] * d * d ));" + "  float nDotVP = max( 0.0, dot( vertNormal, VP ));" + "  vec3 halfVector = normalize( VP - normalize(ecPos) );" + "  float nDotHV = max( 0.0, dot( vertNormal, halfVector ));" + "  if( nDotVP == 0.0) {" + "    powerfactor = 0.0;" + "  }" + "  else{" + "    powerfactor = pow( nDotHV, shininess );" + "  }" + "  spec += specular * powerfactor * attenuation;" + "  col += light.color * nDotVP * attenuation;" + "}" + "void SpotLight( inout vec3 col, inout vec3 spec, in vec3 vertNormal, in vec3 ecPos, in Light light ) {" + "  float spotAttenuation;" + "  float powerfactor;" + "  vec3 VP = light.position - ecPos; " + "  vec3 ldir = normalize( -light.direction );" + "  float d = length( VP );" + "  VP = normalize( VP );" + "  float attenuation = 1.0 / ( falloff[0] + ( falloff[1] * d ) + ( falloff[2] * d * d ) );" + "  float spotDot = dot( VP, ldir );" + (webglMaxTempsWorkaround ? "  spotAttenuation = 1.0; " : "  if( spotDot > cos( light.angle ) ) {" + "    spotAttenuation = pow( spotDot, light.concentration );" + "  }" + "  else{" + "    spotAttenuation = 0.0;" + "  }" + "  attenuation *= spotAttenuation;" + "") + "  float nDotVP = max( 0.0, dot( vertNormal, VP ));" + "  vec3 halfVector = normalize( VP - normalize(ecPos) );" + "  float nDotHV = max( 0.0, dot( vertNormal, halfVector ));" + "  if( nDotVP == 0.0 ) {" + "    powerfactor = 0.0;" + "  }" + "  else {" + "    powerfactor = pow( nDotHV, shininess );" + "  }" + "  spec += specular * powerfactor * attenuation;" + "  col += light.color * nDotVP * attenuation;" + "}" + "void main(void) {" + "  vec3 finalAmbient = vec3( 0.0, 0.0, 0.0 );" + "  vec3 finalDiffuse = vec3( 0.0, 0.0, 0.0 );" + "  vec3 finalSpecular = vec3( 0.0, 0.0, 0.0 );" + "  vec4 col = color;" + "  if(color[0] == -1.0){" + "    col = aColor;" + "  }" + "  vec3 norm = normalize(vec3( normalTransform * vec4( Normal, 0.0 ) ));" + "  vec4 ecPos4 = view * model * vec4(Vertex,1.0);" + "  vec3 ecPos = (vec3(ecPos4))/ecPos4.w;" + "  if( lightCount == 0 ) {" + "    frontColor = col + vec4(mat_specular,1.0);" + "  }" + "  else {" + "    for( int i = 0; i < 8; i++ ) {" + "      Light l = getLight(i);" + "      if( i >= lightCount ){" + "        break;" + "      }" + "      if( l.type == 0 ) {" + "        AmbientLight( finalAmbient, ecPos, l );" + "      }" + "      else if( l.type == 1 ) {" + "        DirectionalLight( finalDiffuse, finalSpecular, norm, ecPos, l );" + "      }" + "      else if( l.type == 2 ) {" + "        PointLight( finalDiffuse, finalSpecular, norm, ecPos, l );" + "      }" + "      else {" + "        SpotLight( finalDiffuse, finalSpecular, norm, ecPos, l );" + "      }" + "    }" + "   if( usingMat == false ) {" + "     frontColor = vec4(" + "       vec3(col) * finalAmbient +" + "       vec3(col) * finalDiffuse +" + "       vec3(col) * finalSpecular," + "       col[3] );" + "   }" + "   else{" + "     frontColor = vec4( " + "       mat_emissive + " + "       (vec3(col) * mat_ambient * finalAmbient) + " + "       (vec3(col) * finalDiffuse) + " + "       (mat_specular * finalSpecular), " + "       col[3] );" + "    }" + "  }" + "  vTexture.xy = aTexture.xy;" + "  gl_Position = projection * view * model * vec4( Vertex, 1.0 );" + "}";
-    var fragmentShaderSource3D = "#ifdef GL_ES\n" + "precision highp float;\n" + "#endif\n" + "varying vec4 frontColor;" + "uniform sampler2D sampler;" + "uniform bool usingTexture;" + "varying vec2 vTexture;" + "void main(void){" + "  if(usingTexture){" + "    gl_FragColor = vec4(texture2D(sampler, vTexture.xy)) * frontColor;" + "  }" + "  else{" + "    gl_FragColor = frontColor;" + "  }" + "}";
+    var vertexShaderSrc3D = "varying vec4 vFrontColor;" + "attribute vec3 aVertex;" + "attribute vec3 aNormal;" + "attribute vec4 aColor;" + "attribute vec2 aTexture;" + "varying   vec2 vTexture;" + "uniform vec4 uColor;" + "uniform bool uUsingMat;" + "uniform vec3 uSpecular;" + "uniform vec3 uMaterialEmissive;" + "uniform vec3 uMaterialAmbient;" + "uniform vec3 uMaterialSpecular;" + "uniform float uShininess;" + "uniform mat4 uModel;" + "uniform mat4 uView;" + "uniform mat4 uProjection;" + "uniform mat4 uNormalTransform;" + "uniform int uLightCount;" + "uniform vec3 uFalloff;" + "struct Light {" + "  int type;" + "  vec3 color;" + "  vec3 position;" + "  vec3 direction;" + "  float angle;" + "  vec3 halfVector;" + "  float concentration;" + "};" + "uniform Light uLights0;" + "uniform Light uLights1;" + "uniform Light uLights2;" + "uniform Light uLights3;" + "uniform Light uLights4;" + "uniform Light uLights5;" + "uniform Light uLights6;" + "uniform Light uLights7;" + "Light getLight(int index){" + "  if(index == 0) return uLights0;" + "  if(index == 1) return uLights1;" + "  if(index == 2) return uLights2;" + "  if(index == 3) return uLights3;" + "  if(index == 4) return uLights4;" + "  if(index == 5) return uLights5;" + "  if(index == 6) return uLights6;" + "  return uLights7;" + "}" + "void AmbientLight( inout vec3 totalAmbient, in vec3 ecPos, in Light light ) {" + "  float d = length( light.position - ecPos );" + "  float attenuation = 1.0 / ( uFalloff[0] + ( uFalloff[1] * d ) + ( uFalloff[2] * d * d ));" + "  totalAmbient += light.color * attenuation;" + "}" + "void DirectionalLight( inout vec3 col, inout vec3 spec, in vec3 vertNormal, in vec3 ecPos, in Light light ) {" + "  float powerFactor = 0.0;" + "  float nDotVP = max(0.0, dot( vertNormal, normalize(-light.position) ));" + "  float nDotVH = max(0.0, dot( vertNormal, normalize(-light.position-normalize(ecPos) )));" + "  if( nDotVP != 0.0 ){" + "    powerFactor = pow( nDotVH, uShininess );" + "  }" + "  col += light.color * nDotVP;" + "  spec += uSpecular * powerFactor;" + "}" + "void PointLight( inout vec3 col, inout vec3 spec, in vec3 vertNormal, in vec3 ecPos, in Light light ) {" + "  float powerFactor;" + "   vec3 VP = light.position - ecPos;" + "  float d = length( VP ); " + "  VP = normalize( VP );" + "  float attenuation = 1.0 / ( uFalloff[0] + ( uFalloff[1] * d ) + ( uFalloff[2] * d * d ));" + "  float nDotVP = max( 0.0, dot( vertNormal, VP ));" + "  vec3 halfVector = normalize( VP - normalize(ecPos) );" + "  float nDotHV = max( 0.0, dot( vertNormal, halfVector ));" + "  if( nDotVP == 0.0 ) {" + "    powerFactor = 0.0;" + "  }" + "  else {" + "    powerFactor = pow( nDotHV, uShininess );" + "  }" + "  spec += uSpecular * powerFactor * attenuation;" + "  col += light.color * nDotVP * attenuation;" + "}" + "void SpotLight( inout vec3 col, inout vec3 spec, in vec3 vertNormal, in vec3 ecPos, in Light light ) {" + "  float spotAttenuation;" + "  float powerFactor = 0.0;" + "  vec3 VP = light.position - ecPos;" + "  vec3 ldir = normalize( -light.direction );" + "  float d = length( VP );" + "  VP = normalize( VP );" + "  float attenuation = 1.0 / ( uFalloff[0] + ( uFalloff[1] * d ) + ( uFalloff[2] * d * d ) );" + "  float spotDot = dot( VP, ldir );" + (webglMaxTempsWorkaround ? "  spotAttenuation = 1.0; " : "  if( spotDot > cos( light.angle ) ) {" + "    spotAttenuation = pow( spotDot, light.concentration );" + "  }" + "  else{" + "    spotAttenuation = 0.0;" + "  }" + "  attenuation *= spotAttenuation;" + "") + "  float nDotVP = max( 0.0, dot( vertNormal, VP ) );" + "  vec3 halfVector = normalize( VP - normalize(ecPos) );" + "  float nDotHV = max( 0.0, dot( vertNormal, halfVector ) );" + "  if( nDotVP != 0.0 ) {" + "    powerFactor = pow( nDotHV, uShininess );" + "  }" + "  spec += uSpecular * powerFactor * attenuation;" + "  col += light.color * nDotVP * attenuation;" + "}" + "void main(void) {" + "  vec3 finalAmbient = vec3( 0.0 );" + "  vec3 finalDiffuse = vec3( 0.0 );" + "  vec3 finalSpecular = vec3( 0.0 );" + "  vec4 col = uColor;" + "  if ( uColor[0] == -1.0 ){" + "    col = aColor;" + "  }" + "  vec3 norm = normalize(vec3( uNormalTransform * vec4( aNormal, 0.0 ) ));" + "  vec4 ecPos4 = uView * uModel * vec4(aVertex, 1.0);" + "  vec3 ecPos = (vec3(ecPos4))/ecPos4.w;" + "  if( uLightCount == 0 ) {" + "    vFrontColor = col + vec4(uMaterialSpecular, 1.0);" + "  }" + "  else {" + "    for( int i = 0; i < 8; i++ ) {" + "      Light l = getLight(i);" + "      if( i >= uLightCount ){" + "        break;" + "      }" + "      if( l.type == 0 ) {" + "        AmbientLight( finalAmbient, ecPos, l );" + "      }" + "      else if( l.type == 1 ) {" + "        DirectionalLight( finalDiffuse, finalSpecular, norm, ecPos, l );" + "      }" + "      else if( l.type == 2 ) {" + "        PointLight( finalDiffuse, finalSpecular, norm, ecPos, l );" + "      }" + "      else {" + "        SpotLight( finalDiffuse, finalSpecular, norm, ecPos, l );" + "      }" + "    }" + "   if( uUsingMat == false ) {" + "     vFrontColor = vec4(" + "       vec3( col ) * finalAmbient +" + "       vec3( col ) * finalDiffuse +" + "       vec3( col ) * finalSpecular," + "       col[3] );" + "   }" + "   else{" + "     vFrontColor = vec4( " + "       uMaterialEmissive + " + "       (vec3(col) * uMaterialAmbient * finalAmbient ) + " + "       (vec3(col) * finalDiffuse) + " + "       (uMaterialSpecular * finalSpecular), " + "       col[3] );" + "    }" + "  }" + "  vTexture.xy = aTexture.xy;" + "  gl_Position = uProjection * uView * uModel * vec4( aVertex, 1.0 );" + "}";
+    var fragmentShaderSrc3D = "#ifdef GL_ES\n" + "precision highp float;\n" + "#endif\n" + "varying vec4 vFrontColor;" + "uniform sampler2D uSampler;" + "uniform bool uUsingTexture;" + "varying vec2 vTexture;" + "void main(void){" + "  if( uUsingTexture ){" + "    gl_FragColor = vec4(texture2D(uSampler, vTexture.xy)) * vFrontColor;" + "  }" + "  else{" + "    gl_FragColor = vFrontColor;" + "  }" + "}";
 
     function uniformf(cacheId, programObj, varName, varValue) {
       var varLocation = curContextCache.locations[cacheId];
@@ -1554,115 +1659,122 @@
       getName: function() {
         return this.name
       },
-      draw: function() {
+      draw: function(renderContext) {
+        renderContext = renderContext || p;
         if (this.visible) {
-          this.pre();
-          this.drawImpl();
-          this.post()
+          this.pre(renderContext);
+          this.drawImpl(renderContext);
+          this.post(renderContext)
         }
       },
-      drawImpl: function() {
-        if (this.family === 0) this.drawGroup();
-        else if (this.family === 1) this.drawPrimitive();
-        else if (this.family === 3) this.drawGeometry();
-        else if (this.family === 21) this.drawPath()
+      drawImpl: function(renderContext) {
+        if (this.family === 0) this.drawGroup(renderContext);
+        else if (this.family === 1) this.drawPrimitive(renderContext);
+        else if (this.family === 3) this.drawGeometry(renderContext);
+        else if (this.family === 21) this.drawPath(renderContext)
       },
-      drawPath: function() {
+      drawPath: function(renderContext) {
         var i, j;
         if (this.vertices.length === 0) return;
-        p.beginShape();
-        if (this.vertexCodes.length === 0) if (this.vertices[0].length === 2) for (i = 0, j = this.vertices.length; i < j; i++) p.vertex(this.vertices[i][0], this.vertices[i][1]);
-        else for (i = 0, j = this.vertices.length; i < j; i++) p.vertex(this.vertices[i][0], this.vertices[i][1], this.vertices[i][2]);
+        renderContext.beginShape();
+        if (this.vertexCodes.length === 0) if (this.vertices[0].length === 2) for (i = 0, j = this.vertices.length; i < j; i++) renderContext.vertex(this.vertices[i][0], this.vertices[i][1]);
+        else for (i = 0, j = this.vertices.length; i < j; i++) renderContext.vertex(this.vertices[i][0], this.vertices[i][1], this.vertices[i][2]);
         else {
           var index = 0;
           if (this.vertices[0].length === 2) for (i = 0, j = this.vertexCodes.length; i < j; i++) if (this.vertexCodes[i] === 0) {
-            p.vertex(this.vertices[index][0], this.vertices[index][1]);
-            if (this.vertices[index]["moveTo"] === true) vertArray[vertArray.length - 1]["moveTo"] = true;
-            else if (this.vertices[index]["moveTo"] === false) vertArray[vertArray.length - 1]["moveTo"] = false;
-            p.breakShape = false;
+            renderContext.vertex(this.vertices[index][0], this.vertices[index][1], this.vertices[index]["moveTo"]);
+            renderContext.breakShape = false;
             index++
           } else if (this.vertexCodes[i] === 1) {
-            p.bezierVertex(this.vertices[index + 0][0], this.vertices[index + 0][1], this.vertices[index + 1][0], this.vertices[index + 1][1], this.vertices[index + 2][0], this.vertices[index + 2][1]);
+            renderContext.bezierVertex(this.vertices[index + 0][0], this.vertices[index + 0][1], this.vertices[index + 1][0], this.vertices[index + 1][1], this.vertices[index + 2][0], this.vertices[index + 2][1]);
             index += 3
           } else if (this.vertexCodes[i] === 2) {
-            p.curveVertex(this.vertices[index][0], this.vertices[index][1]);
+            renderContext.curveVertex(this.vertices[index][0], this.vertices[index][1]);
             index++
           } else {
-            if (this.vertexCodes[i] === 3) p.breakShape = true
+            if (this.vertexCodes[i] === 3) renderContext.breakShape = true
           } else for (i = 0, j = this.vertexCodes.length; i < j; i++) if (this.vertexCodes[i] === 0) {
-            p.vertex(this.vertices[index][0], this.vertices[index][1], this.vertices[index][2]);
+            renderContext.vertex(this.vertices[index][0], this.vertices[index][1], this.vertices[index][2]);
             if (this.vertices[index]["moveTo"] === true) vertArray[vertArray.length - 1]["moveTo"] = true;
             else if (this.vertices[index]["moveTo"] === false) vertArray[vertArray.length - 1]["moveTo"] = false;
-            p.breakShape = false
+            renderContext.breakShape = false
           } else if (this.vertexCodes[i] === 1) {
-            p.bezierVertex(this.vertices[index + 0][0], this.vertices[index + 0][1], this.vertices[index + 0][2], this.vertices[index + 1][0], this.vertices[index + 1][1], this.vertices[index + 1][2], this.vertices[index + 2][0], this.vertices[index + 2][1], this.vertices[index + 2][2]);
+            renderContext.bezierVertex(this.vertices[index + 0][0], this.vertices[index + 0][1], this.vertices[index + 0][2], this.vertices[index + 1][0], this.vertices[index + 1][1], this.vertices[index + 1][2], this.vertices[index + 2][0], this.vertices[index + 2][1], this.vertices[index + 2][2]);
             index += 3
           } else if (this.vertexCodes[i] === 2) {
-            p.curveVertex(this.vertices[index][0], this.vertices[index][1], this.vertices[index][2]);
+            renderContext.curveVertex(this.vertices[index][0], this.vertices[index][1], this.vertices[index][2]);
             index++
-          } else if (this.vertexCodes[i] === 3) p.breakShape = true
+          } else if (this.vertexCodes[i] === 3) renderContext.breakShape = true
         }
-        p.endShape(this.close ? 2 : 1)
+        renderContext.endShape(this.close ? 2 : 1)
       },
-      drawGeometry: function() {
+      drawGeometry: function(renderContext) {
         var i, j;
-        p.beginShape(this.kind);
-        if (this.style) for (i = 0, j = this.vertices.length; i < j; i++) p.vertex(this.vertices[i]);
+        renderContext.beginShape(this.kind);
+        if (this.style) for (i = 0, j = this.vertices.length; i < j; i++) renderContext.vertex(this.vertices[i]);
         else for (i = 0, j = this.vertices.length; i < j; i++) {
           var vert = this.vertices[i];
-          if (vert[2] === 0) p.vertex(vert[0], vert[1]);
-          else p.vertex(vert[0], vert[1], vert[2])
+          if (vert[2] === 0) renderContext.vertex(vert[0], vert[1]);
+          else renderContext.vertex(vert[0], vert[1], vert[2])
         }
-        p.endShape()
+        renderContext.endShape()
       },
-      drawGroup: function() {
-        for (var i = 0, j = this.children.length; i < j; i++) this.children[i].draw()
+      drawGroup: function(renderContext) {
+        for (var i = 0, j = this.children.length; i < j; i++) this.children[i].draw(renderContext)
       },
-      drawPrimitive: function() {
-        if (this.kind === 2) p.point(this.params[0], this.params[1]);
-        else if (this.kind === 4) if (this.params.length === 4) p.line(this.params[0], this.params[1], this.params[2], this.params[3]);
-        else p.line(this.params[0], this.params[1], this.params[2], this.params[3], this.params[4], this.params[5]);
-        else if (this.kind === 8) p.triangle(this.params[0], this.params[1], this.params[2], this.params[3], this.params[4], this.params[5]);
-        else if (this.kind === 16) p.quad(this.params[0], this.params[1], this.params[2], this.params[3], this.params[4], this.params[5], this.params[6], this.params[7]);
+      drawPrimitive: function(renderContext) {
+        if (this.kind === 2) renderContext.point(this.params[0], this.params[1]);
+        else if (this.kind === 4) if (this.params.length === 4) renderContext.line(this.params[0], this.params[1], this.params[2], this.params[3]);
+        else renderContext.line(this.params[0], this.params[1], this.params[2], this.params[3], this.params[4], this.params[5]);
+        else if (this.kind === 8) renderContext.triangle(this.params[0], this.params[1], this.params[2], this.params[3], this.params[4], this.params[5]);
+        else if (this.kind === 16) renderContext.quad(this.params[0], this.params[1], this.params[2], this.params[3], this.params[4], this.params[5], this.params[6], this.params[7]);
         else if (this.kind === 30) if (this.image !== null) {
-          p.imageMode(0);
-          p.image(this.image, this.params[0], this.params[1], this.params[2], this.params[3])
+          var imMode = imageModeConvert;
+          renderContext.imageMode(0);
+          renderContext.image(this.image, this.params[0], this.params[1], this.params[2], this.params[3]);
+          imageModeConvert = imMode
         } else {
-          p.rectMode(0);
-          p.rect(this.params[0], this.params[1], this.params[2], this.params[3])
+          var rcMode = curRectMode;
+          renderContext.rectMode(0);
+          renderContext.rect(this.params[0], this.params[1], this.params[2], this.params[3]);
+          curRectMode = rcMode
         } else if (this.kind === 31) {
-          p.ellipseMode(0);
-          p.ellipse(this.params[0], this.params[1], this.params[2], this.params[3])
+          var elMode = curEllipseMode;
+          renderContext.ellipseMode(0);
+          renderContext.ellipse(this.params[0], this.params[1], this.params[2], this.params[3]);
+          curEllipseMode = elMode
         } else if (this.kind === 32) {
-          p.ellipseMode(0);
-          p.arc(this.params[0], this.params[1], this.params[2], this.params[3], this.params[4], this.params[5])
-        } else if (this.kind === 41) if (this.params.length === 1) p.box(this.params[0]);
-        else p.box(this.params[0], this.params[1], this.params[2]);
-        else if (this.kind === 40) p.sphere(this.params[0])
+          var eMode = curEllipseMode;
+          renderContext.ellipseMode(0);
+          renderContext.arc(this.params[0], this.params[1], this.params[2], this.params[3], this.params[4], this.params[5]);
+          curEllipseMode = eMode
+        } else if (this.kind === 41) if (this.params.length === 1) renderContext.box(this.params[0]);
+        else renderContext.box(this.params[0], this.params[1], this.params[2]);
+        else if (this.kind === 40) renderContext.sphere(this.params[0])
       },
-      pre: function() {
+      pre: function(renderContext) {
         if (this.matrix) {
-          p.pushMatrix();
-          curContext.transform(this.matrix.elements[0], this.matrix.elements[3], this.matrix.elements[1], this.matrix.elements[4], this.matrix.elements[2], this.matrix.elements[5])
+          renderContext.pushMatrix();
+          renderContext.transform(this.matrix)
         }
         if (this.style) {
-          p.pushStyle();
-          this.styles()
+          renderContext.pushStyle();
+          this.styles(renderContext)
         }
       },
-      post: function() {
-        if (this.matrix) p.popMatrix();
-        if (this.style) p.popStyle()
+      post: function(renderContext) {
+        if (this.matrix) renderContext.popMatrix();
+        if (this.style) renderContext.popStyle()
       },
-      styles: function() {
+      styles: function(renderContext) {
         if (this.stroke) {
-          p.stroke(this.strokeColor);
-          p.strokeWeight(this.strokeWeight);
-          p.strokeCap(this.strokeCap);
-          p.strokeJoin(this.strokeJoin)
-        } else p.noStroke();
-        if (this.fill) p.fill(this.fillColor);
-        else p.noFill()
+          renderContext.stroke(this.strokeColor);
+          renderContext.strokeWeight(this.strokeWeight);
+          renderContext.strokeCap(this.strokeCap);
+          renderContext.strokeJoin(this.strokeJoin)
+        } else renderContext.noStroke();
+        if (this.fill) renderContext.fill(this.fillColor);
+        else renderContext.noFill()
       },
       getChild: function(child) {
         var i, j;
@@ -1778,7 +1890,7 @@
         if (this.element.getName() !== "svg") throw "root is not <svg>, it's <" + this.element.getName() + ">";
       } else if (arguments.length === 2) if (typeof arguments[1] === "string") {
         if (arguments[1].indexOf(".svg") > -1) {
-          this.element = new p.XMLElement(null, arguments[1]);
+          this.element = new p.XMLElement(p, arguments[1]);
           this.vertexCodes = [];
           this.vertices = [];
           this.opacity = 1;
@@ -1880,7 +1992,9 @@
               this.matrix.translate(-m[1], -m[2])
             }
           } else if (pieces[i].indexOf("skewX") !== -1) this.matrix.skewX(parseFloat(m[0]));
-          else if (pieces[i].indexOf("skewY") !== -1) this.matrix.skewY(m[0])
+          else if (pieces[i].indexOf("skewY") !== -1) this.matrix.skewY(m[0]);
+          else if (pieces[i].indexOf("shearX") !== -1) this.matrix.shearX(m[0]);
+          else if (pieces[i].indexOf("shearY") !== -1) this.matrix.shearY(m[0])
         }
         return this.matrix
       }
@@ -2378,7 +2492,7 @@
           p.translate(x, y);
           p.scale(width / shape.getWidth(), height / shape.getHeight())
         } else if (arguments.length === 3) p.translate(x, y);
-        shape.draw();
+        shape.draw(p);
         if (arguments.length === 1 && curShapeMode === 3 || arguments.length > 1) p.popMatrix()
       }
     };
@@ -2416,7 +2530,7 @@
         this.value = newval
       }
     };
-    var XMLElement = p.XMLElement = function() {
+    var XMLElement = p.XMLElement = function(selector, uri, sysid, line) {
       this.attributes = [];
       this.children = [];
       this.fullName = null;
@@ -2427,19 +2541,13 @@
       this.lineNr = "";
       this.systemID = "";
       this.type = "ELEMENT";
-      if (arguments.length === 4) {
-        this.fullName = arguments[0] || "";
-        if (arguments[1]) this.name = arguments[1];
-        else {
-          var index = this.fullName.indexOf(":");
-          if (index >= 0) this.name = this.fullName.substring(index + 1);
-          else this.name = this.fullName
-        }
-        this.namespace = arguments[1];
-        this.lineNr = arguments[3];
-        this.systemID = arguments[2]
-      } else if (arguments.length === 2 && arguments[1].indexOf(".") > -1) this.parse(arguments[arguments.length - 1]);
-      else if (arguments.length === 1 && typeof arguments[0] === "string") this.parse(arguments[0])
+      if (selector) if (typeof selector === "string") if (uri === undef && selector.indexOf("<") > -1) this.parse(selector);
+      else {
+        this.fullName = selector;
+        this.namespace = uri;
+        this.systemId = sysid;
+        this.lineNr = line
+      } else this.parse(uri)
     };
     XMLElement.prototype = {
       parse: function(textstring) {
@@ -2463,34 +2571,48 @@
           this.name = elementpath.nodeName;
           xmlelement = this
         } else {
-          xmlelement = new XMLElement(elementpath.localName, elementpath.nodeName, "", "");
+          xmlelement = new XMLElement(elementpath.nodeName);
           xmlelement.parent = parent
         }
         if (elementpath.nodeType === 3 && elementpath.textContent !== "") return this.createPCDataElement(elementpath.textContent);
-        for (l = 0, m = elementpath.attributes.length; l < m; l++) {
+        if (elementpath.nodeType === 4) return this.createCDataElement(elementpath.textContent);
+        if (elementpath.attributes) for (l = 0, m = elementpath.attributes.length; l < m; l++) {
           tmpattrib = elementpath.attributes[l];
           xmlattribute = new XMLAttribute(tmpattrib.getname, tmpattrib.nodeName, tmpattrib.namespaceURI, tmpattrib.nodeValue, tmpattrib.nodeType);
           xmlelement.attributes.push(xmlattribute)
         }
-        for (l = 0, m = elementpath.childNodes.length; l < m; l++) {
+        if (elementpath.childNodes) for (l = 0, m = elementpath.childNodes.length; l < m; l++) {
           var node = elementpath.childNodes[l];
-          if (node.nodeType === 1 || node.nodeType === 3) {
-            child = xmlelement.parseChildrenRecursive(xmlelement, node);
-            if (child !== null) xmlelement.children.push(child)
-          }
+          child = xmlelement.parseChildrenRecursive(xmlelement, node);
+          if (child !== null) xmlelement.children.push(child)
         }
         return xmlelement
       },
-      createElement: function() {
-        if (arguments.length === 2) return new XMLElement(arguments[0], arguments[1], null, null);
-        return new XMLElement(arguments[0], arguments[1], arguments[2], arguments[3])
+      createElement: function(fullname, namespaceuri, sysid, line) {
+        if (sysid === undef) return new XMLElement(fullname, namespaceuri);
+        return new XMLElement(fullname, namespaceuri, sysid, line)
       },
-      createPCDataElement: function(content) {
+      createPCDataElement: function(content, isCDATA) {
         if (content.replace(/^\s+$/g, "") === "") return null;
         var pcdata = new XMLElement;
-        pcdata.content = content;
         pcdata.type = "TEXT";
+        pcdata.content = content;
         return pcdata
+      },
+      createCDataElement: function(content) {
+        var cdata = this.createPCDataElement(content);
+        if (cdata === null) return null;
+        cdata.type = "CDATA";
+        var htmlentities = {
+          "<": "&lt;",
+          ">": "&gt;",
+          "'": "&apos;",
+          '"': "&quot;"
+        },
+          entity;
+        for (entity in htmlentities) if (!Object.hasOwnProperty(htmlentities, entity)) content = content.replace(new RegExp(entity, "g"), htmlentities[entity]);
+        cdata.cdata = content;
+        return cdata
       },
       hasAttribute: function() {
         if (arguments.length === 1) return this.getAttribute(arguments[0]) !== null;
@@ -2499,7 +2621,7 @@
       equals: function(other) {
         if (! (other instanceof XMLElement)) return false;
         var i, j;
-        if (this.name !== other.getLocalName()) return false;
+        if (this.fullName !== other.fullName) return false;
         if (this.attributes.length !== other.getAttributeCount()) return false;
         if (this.attributes.length !== other.attributes.length) return false;
         var attr_name, attr_ns, attr_value, attr_type, attr_other;
@@ -2524,9 +2646,9 @@
         return this.content === other.content
       },
       getContent: function() {
-        if (this.type === "TEXT") return this.content;
+        if (this.type === "TEXT" || this.type === "CDATA") return this.content;
         var children = this.children;
-        if (children.length === 1 && children[0].type === "TEXT") return children[0].content;
+        if (children.length === 1 && (children[0].type === "TEXT" || children[0].type === "CDATA")) return children[0].content;
         return null
       },
       getAttribute: function() {
@@ -2591,17 +2713,14 @@
           this.children.splice(index, 0, child)
         }
       },
-      getChild: function() {
-        if (typeof arguments[0] === "number") return this.children[arguments[0]];
-        if (arguments[0].indexOf("/") !== -1) {
-          this.getChildRecursive(arguments[0].split("/"), 0);
-          return null
-        }
+      getChild: function(selector) {
+        if (typeof selector === "number") return this.children[selector];
+        if (selector.indexOf("/") !== -1) return this.getChildRecursive(selector.split("/"), 0);
         var kid, kidName;
         for (var i = 0, j = this.getChildCount(); i < j; i++) {
           kid = this.getChild(i);
           kidName = kid.getName();
-          if (kidName !== null && kidName === arguments[0]) return kid
+          if (kidName !== null && kidName === selector) return kid
         }
         return null
       },
@@ -2624,15 +2743,12 @@
         return this.children.length
       },
       getChildRecursive: function(items, offset) {
-        var kid, kidName;
+        if (offset === items.length) return this;
+        var kid, kidName, matchName = items[offset];
         for (var i = 0, j = this.getChildCount(); i < j; i++) {
           kid = this.getChild(i);
           kidName = kid.getName();
-          if (kidName !== null && kidName === items[offset]) {
-            if (offset === items.length - 1) return kid;
-            offset += 1;
-            return kid.getChildRecursive(items, offset)
-          }
+          if (kidName !== null && kidName === matchName) return kid.getChildRecursive(items, offset + 1)
         }
         return null
       },
@@ -2729,7 +2845,8 @@
       },
       toString: function() {
         if (this.type === "TEXT") return this.content;
-        var tagstring = (this.namespace !== "" && this.namespace !== this.name ? this.namespace + ":" : "") + this.name;
+        if (this.type === "CDATA") return this.cdata;
+        var tagstring = this.fullName;
         var xmlstring = "<" + tagstring;
         var a, c;
         for (a = 0; a < this.attributes.length; a++) {
@@ -2750,6 +2867,10 @@
       var element = new XMLElement;
       element.parse(xmlstring);
       return element
+    };
+    var XML = p.XML = p.XMLElement;
+    p.loadXML = function(uri) {
+      return new XML(p, uri)
     };
     var printMatrixHelper = function(elements) {
       var big = 0;
@@ -2825,6 +2946,12 @@
       },
       skewY: function(angle) {
         this.apply(1, 0, 1, 0, angle, 0)
+      },
+      shearX: function(angle) {
+        this.apply(1, 0, 1, Math.tan(angle), 0, 0)
+      },
+      shearY: function(angle) {
+        this.apply(1, 0, 1, 0, Math.tan(angle), 0)
       },
       determinant: function() {
         return this.elements[0] * this.elements[4] - this.elements[1] * this.elements[3]
@@ -2958,14 +3085,14 @@
       },
       mult: function(source, target) {
         var x, y, z, w;
-        if (source instanceof PVector) {
+        if (source instanceof
+        PVector) {
           x = source.x;
           y = source.y;
           z = source.z;
           w = 1;
           if (!target) target = new PVector
-        } else if (source instanceof
-        Array) {
+        } else if (source instanceof Array) {
           x = source[0];
           y = source[1];
           z = source[2];
@@ -3034,13 +3161,13 @@
       rotateY: function(angle) {
         var c = p.cos(angle);
         var s = p.sin(angle);
-        this.apply([c, 0, s, 0, 0, 1, 0, 0, -s, 0, c, 0, 0, 0, 0, 1])
+        this.apply([c,
+          0, s, 0, 0, 1, 0, 0, -s, 0, c, 0, 0, 0, 0, 1])
       },
       rotateZ: function(angle) {
         var c = Math.cos(angle);
         var s = Math.sin(angle);
-        this.apply([c,
-          -s, 0, 0, s, c, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1])
+        this.apply([c, -s, 0, 0, s, c, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1])
       },
       scale: function(sx, sy, sz) {
         if (sx && !sy && !sz) sy = sz = sx;
@@ -3065,6 +3192,14 @@
         this.apply(1, t, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
       },
       skewY: function(angle) {
+        var t = Math.tan(angle);
+        this.apply(1, 0, 0, 0, t, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
+      },
+      shearX: function(angle) {
+        var t = Math.tan(angle);
+        this.apply(1, t, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
+      },
+      shearY: function(angle) {
         var t = Math.tan(angle);
         this.apply(1, 0, 0, 0, t, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
       },
@@ -3155,8 +3290,7 @@
       invRotateX: function(angle) {
         var c = Math.cos(-angle);
         var s = Math.sin(-angle);
-        this.preApply([1, 0, 0, 0, 0, c, -s, 0, 0, s, c, 0,
-          0, 0, 0, 1])
+        this.preApply([1, 0, 0, 0, 0, c, -s, 0, 0, s, c, 0, 0, 0, 0, 1])
       },
       invRotateY: function(angle) {
         var c = Math.cos(-angle);
@@ -3205,23 +3339,20 @@
       return str.split(delim)
     };
     p.splitTokens = function(str, tokens) {
-      if (arguments.length === 1) tokens = "\n\t\r\u000c ";
-      tokens = "[" + tokens + "]";
-      var ary = [];
-      var index = 0;
-      var pos = str.search(tokens);
-      while (pos >= 0) {
-        if (pos === 0) str = str.substring(1);
-        else {
-          ary[index] = str.substring(0, pos);
-          index++;
-          str = str.substring(pos)
-        }
-        pos = str.search(tokens)
+      if (tokens === undef) return str.split(/\s+/g);
+      var chars = tokens.split(/()/g),
+        buffer = "",
+        len = str.length,
+        i, c, tokenized = [];
+      for (i = 0; i < len; i++) {
+        c = str[i];
+        if (chars.indexOf(c) > -1) {
+          if (buffer !== "") tokenized.push(buffer);
+          buffer = ""
+        } else buffer += c
       }
-      if (str.length > 0) ary[index] = str;
-      if (ary.length === 0) ary = undef;
-      return ary
+      if (buffer !== "") tokenized.push(buffer);
+      return tokenized
     };
     p.append = function(array, element) {
       array[array.length] = element;
@@ -3559,7 +3690,7 @@
       return [(colorInt >> 16) & 255, (colorInt >> 8) & 255, colorInt & 255, (colorInt >> 24) & 255]
     };
     p.color.toGLArray = function(colorInt) {
-      return [((colorInt >> 16) & 255) / 255, ((colorInt >> 8) & 255) / 255, (colorInt & 255) / 255, ((colorInt & 4278190080) >>> 24) / 255]
+      return [((colorInt & 16711680) >>> 16) / 255, ((colorInt >> 8) & 255) / 255, (colorInt & 255) / 255, ((colorInt >> 24) & 255) / 255]
     };
     p.color.toRGB = function(h, s, b) {
       h = h > colorModeX ? colorModeX : h;
@@ -3622,7 +3753,7 @@
       return ((aColor >> 16) & 255) / 255 * colorModeX
     };
     p.green = function(aColor) {
-      return ((aColor >> 8) & 255) / 255 * colorModeY
+      return ((aColor & 65280) >>> 8) / 255 * colorModeY
     };
     p.blue = function(aColor) {
       return (aColor & 255) / 255 * colorModeZ
@@ -3639,7 +3770,7 @@
         hsb1 = colorToHSB(colorBits1);
         a1 = ((colorBits1 >> 24) & 255) / colorModeA;
         hsb2 = colorToHSB(colorBits2);
-        a2 = ((colorBits2 >> 24) & 255) / colorModeA;
+        a2 = ((colorBits2 & 4278190080) >>> 24) / colorModeA;
         h = p.lerp(hsb1[0], hsb2[0], amt);
         s = p.lerp(hsb1[1], hsb2[1], amt);
         b = p.lerp(hsb1[2], hsb2[2], amt);
@@ -3651,10 +3782,10 @@
       g1 = (colorBits1 >> 8) & 255;
       b1 = colorBits1 & 255;
       a1 = ((colorBits1 >> 24) & 255) / colorModeA;
-      r2 = (colorBits2 >> 16) & 255;
+      r2 = (colorBits2 & 16711680) >>> 16;
       g2 = (colorBits2 >> 8) & 255;
       b2 = colorBits2 & 255;
-      a2 = ((colorBits2 & 4278190080) >>> 24) / colorModeA;
+      a2 = ((colorBits2 >> 24) & 255) / colorModeA;
       r = p.lerp(r1, r2, amt) | 0;
       g = p.lerp(g1, g2, amt) | 0;
       b = p.lerp(b1, b2, amt) | 0;
@@ -3717,6 +3848,13 @@
       modelView.scale(x, y, z);
       modelViewInv.invScale(x, y, z)
     };
+    Drawing2D.prototype.transform = function(pmatrix) {
+      var e = pmatrix.array();
+      curContext.transform(e[0], e[3], e[1], e[4], e[2], e[5])
+    };
+    Drawing3D.prototype.transformm = function(pmatrix3d) {
+      throw "p.transform is currently not supported in 3D mode";
+    };
     Drawing2D.prototype.pushMatrix = function() {
       userMatrixStack.load(modelView);
       userReverseMatrixStack.load(modelViewInv);
@@ -3778,6 +3916,20 @@
     Drawing3D.prototype.rotate = function(angleInRadians) {
       p.rotateZ(angleInRadians)
     };
+    Drawing2D.prototype.shearX = function(angleInRadians) {
+      modelView.shearX(angleInRadians);
+      curContext.transform(1, 0, angleInRadians, 1, 0, 0)
+    };
+    Drawing3D.prototype.shearX = function(angleInRadians) {
+      modelView.shearX(angleInRadians)
+    };
+    Drawing2D.prototype.shearY = function(angleInRadians) {
+      modelView.shearY(angleInRadians);
+      curContext.transform(1, angleInRadians, 0, 1, 0, 0)
+    };
+    Drawing3D.prototype.shearY = function(angleInRadians) {
+      modelView.shearY(angleInRadians)
+    };
     p.pushStyle = function() {
       saveContext();
       p.pushMatrix();
@@ -3815,7 +3967,7 @@
         doStroke = oldState.doStroke;
         currentStrokeColor = oldState.currentStrokeColor;
         curTint = oldState.curTint;
-        curRectMode = oldState.curRectmode;
+        curRectMode = oldState.curRectMode;
         curColorMode = oldState.curColorMode;
         colorModeX = oldState.colorModeX;
         colorModeZ = oldState.colorModeZ;
@@ -3958,6 +4110,7 @@
     p.exit = function() {
       window.clearInterval(looping);
       removeInstance(p.externals.canvas.id);
+      delete curElement.onmousedown;
       for (var lib in Processing.lib) if (Processing.lib.hasOwnProperty(lib)) if (Processing.lib[lib].hasOwnProperty("detach")) Processing.lib[lib].detach(p);
       var i = eventHandlers.length;
       while (i--) detachEventHandler(eventHandlers[i]);
@@ -4183,7 +4336,8 @@
       return result + subject.substring(j)
     };
     p.__equals = function(subject, other) {
-      if (subject.equals instanceof Function) return subject.equals.apply(subject, removeFirstArgument(arguments));
+      if (subject.equals instanceof
+      Function) return subject.equals.apply(subject, removeFirstArgument(arguments));
       return subject.valueOf() === other.valueOf()
     };
     p.__equalsIgnoreCase = function(subject, other) {
@@ -4256,7 +4410,8 @@
       logBuffer.push(message)
     };
     p.str = function(val) {
-      if (val instanceof Array) {
+      if (val instanceof
+      Array) {
         var arr = [];
         for (var i = 0; i < val.length; i++) arr.push(val[i].toString() + "");
         return arr
@@ -4287,8 +4442,7 @@
       return booleanScalar(val)
     };
     p.parseByte = function(what) {
-      if (what instanceof
-      Array) {
+      if (what instanceof Array) {
         var bytes = [];
         for (var i = 0; i < what.length; i++) bytes.push(0 - (what[i] & 128) | what[i] & 127);
         return bytes
@@ -4327,8 +4481,7 @@
         var number = parseInt(val, radix || 10);
         return number & 4294967295
       }
-      if (val instanceof
-      Char) return val.code
+      if (val instanceof Char) return val.code
     }
     p.parseInt = function(val, radix) {
       if (val instanceof Array) {
@@ -4638,7 +4791,8 @@
             gl;
           for (var i = 0, l = ctxNames.length; i < l; i++) {
             gl = canvas.getContext(ctxNames[i], {
-              antialias: false
+              antialias: false,
+              preserveDrawingBuffer: true
             });
             if (gl) break
           }
@@ -4658,10 +4812,10 @@
         curContext.enable(curContext.DEPTH_TEST);
         curContext.enable(curContext.BLEND);
         curContext.blendFunc(curContext.SRC_ALPHA, curContext.ONE_MINUS_SRC_ALPHA);
-        programObject2D = createProgramObject(curContext, vertexShaderSource2D, fragmentShaderSource2D);
-        programObjectUnlitShape = createProgramObject(curContext, vShaderSrcUnlitShape, fShaderSrcUnlitShape);
+        programObject2D = createProgramObject(curContext, vertexShaderSrc2D, fragmentShaderSrc2D);
+        programObjectUnlitShape = createProgramObject(curContext, vertexShaderSrcUnlitShape, fragmentShaderSrcUnlitShape);
         p.strokeWeight(1);
-        programObject3D = createProgramObject(curContext, vertexShaderSource3D, fragmentShaderSource3D);
+        programObject3D = createProgramObject(curContext, vertexShaderSrc3D, fragmentShaderSrc3D);
         curContext.useProgram(programObject3D);
         uniformi("usingTexture3d", programObject3D, "usingTexture", usingTexture);
         p.lightFalloff(1, 0, 0);
@@ -4698,11 +4852,11 @@
         curContext.bufferData(curContext.ARRAY_BUFFER, new Float32Array([1, 1, 0, -1, 1, 0, -1, -1, 0, 1, -1, 0]), curContext.STATIC_DRAW);
         textureBuffer = curContext.createBuffer();
         curContext.bindBuffer(curContext.ARRAY_BUFFER, textureBuffer);
-        curContext.bufferData(curContext.ARRAY_BUFFER, new Float32Array([0, 0, 1, 0, 1, 1, 0, 1]), curContext.STATIC_DRAW);
+        curContext.bufferData(curContext.ARRAY_BUFFER, new Float32Array([0, 0, 1, 0, 1, 1, 0,
+          1]), curContext.STATIC_DRAW);
         indexBuffer = curContext.createBuffer();
         curContext.bindBuffer(curContext.ELEMENT_ARRAY_BUFFER, indexBuffer);
-        curContext.bufferData(curContext.ELEMENT_ARRAY_BUFFER, new Uint16Array([0,
-          1, 2, 2, 3, 0]), curContext.STATIC_DRAW);
+        curContext.bufferData(curContext.ELEMENT_ARRAY_BUFFER, new Uint16Array([0, 1, 2, 2, 3, 0]), curContext.STATIC_DRAW);
         cam = new PMatrix3D;
         cameraInv = new PMatrix3D;
         modelView = new PMatrix3D;
@@ -4731,12 +4885,12 @@
       view.apply(modelView.array());
       view.mult(pos, pos);
       var col = color$4(r, g, b, 0);
-      var normalizedCol = [((col >> 16) & 255) / 255, ((col & 65280) >>> 8) / 255, (col & 255) / 255];
+      var normalizedCol = [((col >> 16) & 255) / 255, ((col >> 8) & 255) / 255, (col & 255) / 255];
       curContext.useProgram(programObject3D);
-      uniformf("lights.color.3d." + lightCount, programObject3D, "lights" + lightCount + ".color", normalizedCol);
-      uniformf("lights.position.3d." + lightCount, programObject3D, "lights" + lightCount + ".position", pos.array());
-      uniformi("lights.type.3d." + lightCount, programObject3D, "lights" + lightCount + ".type", 0);
-      uniformi("lightCount3d", programObject3D, "lightCount", ++lightCount)
+      uniformf("uLights.color.3d." + lightCount, programObject3D, "uLights" + lightCount + ".color", normalizedCol);
+      uniformf("uLights.position.3d." + lightCount, programObject3D, "uLights" + lightCount + ".position", pos.array());
+      uniformi("uLights.type.3d." + lightCount, programObject3D, "uLights" + lightCount + ".type", 0);
+      uniformi("uLightCount3d", programObject3D, "uLightCount", ++lightCount)
     };
     Drawing2D.prototype.directionalLight = DrawingShared.prototype.a3DOnlyFunction;
     Drawing3D.prototype.directionalLight = function(r, g, b, nx, ny, nz) {
@@ -4746,25 +4900,26 @@
       mvm.scale(1, -1, 1);
       mvm.apply(modelView.array());
       mvm = mvm.array();
-      var dir = [mvm[0] * nx + mvm[4] * ny + mvm[8] * nz, mvm[1] * nx + mvm[5] * ny + mvm[9] * nz, mvm[2] * nx + mvm[6] * ny + mvm[10] * nz];
+      var dir = [mvm[0] *
+        nx + mvm[4] * ny + mvm[8] * nz, mvm[1] * nx + mvm[5] * ny + mvm[9] * nz, mvm[2] * nx + mvm[6] * ny + mvm[10] * nz];
       var col = color$4(r, g, b, 0);
       var normalizedCol = [((col >> 16) & 255) / 255, ((col >> 8) & 255) / 255, (col & 255) / 255];
-      uniformf("lights.color.3d." + lightCount, programObject3D, "lights" + lightCount + ".color", normalizedCol);
-      uniformf("lights.position.3d." + lightCount, programObject3D, "lights" + lightCount + ".position", dir);
-      uniformi("lights.type.3d." + lightCount, programObject3D, "lights" + lightCount + ".type", 1);
-      uniformi("lightCount3d", programObject3D, "lightCount", ++lightCount)
+      uniformf("uLights.color.3d." + lightCount, programObject3D, "uLights" + lightCount + ".color", normalizedCol);
+      uniformf("uLights.position.3d." + lightCount, programObject3D, "uLights" + lightCount + ".position", dir);
+      uniformi("uLights.type.3d." + lightCount, programObject3D, "uLights" + lightCount + ".type", 1);
+      uniformi("uLightCount3d", programObject3D, "uLightCount", ++lightCount)
     };
     Drawing2D.prototype.lightFalloff = DrawingShared.prototype.a3DOnlyFunction;
     Drawing3D.prototype.lightFalloff = function(constant, linear, quadratic) {
       curContext.useProgram(programObject3D);
-      uniformf("falloff3d", programObject3D, "falloff", [constant, linear, quadratic])
+      uniformf("uFalloff3d", programObject3D, "uFalloff", [constant, linear, quadratic])
     };
     Drawing2D.prototype.lightSpecular = DrawingShared.prototype.a3DOnlyFunction;
     Drawing3D.prototype.lightSpecular = function(r, g, b) {
       var col = color$4(r, g, b, 0);
       var normalizedCol = [((col >> 16) & 255) / 255, ((col >> 8) & 255) / 255, (col & 255) / 255];
       curContext.useProgram(programObject3D);
-      uniformf("specular3d", programObject3D, "specular", normalizedCol)
+      uniformf("uSpecular3d", programObject3D, "uSpecular", normalizedCol)
     };
     p.lights = function() {
       p.ambientLight(128, 128, 128);
@@ -4783,16 +4938,16 @@
       var col = color$4(r, g, b, 0);
       var normalizedCol = [((col >> 16) & 255) / 255, ((col >> 8) & 255) / 255, (col & 255) / 255];
       curContext.useProgram(programObject3D);
-      uniformf("lights.color.3d." + lightCount, programObject3D, "lights" + lightCount + ".color", normalizedCol);
-      uniformf("lights.position.3d." + lightCount, programObject3D, "lights" + lightCount + ".position", pos.array());
-      uniformi("lights.type.3d." + lightCount, programObject3D, "lights" + lightCount + ".type", 2);
-      uniformi("lightCount3d", programObject3D, "lightCount", ++lightCount)
+      uniformf("uLights.color.3d." + lightCount, programObject3D, "uLights" + lightCount + ".color", normalizedCol);
+      uniformf("uLights.position.3d." + lightCount, programObject3D, "uLights" + lightCount + ".position", pos.array());
+      uniformi("uLights.type.3d." + lightCount, programObject3D, "uLights" + lightCount + ".type", 2);
+      uniformi("uLightCount3d", programObject3D, "uLightCount", ++lightCount)
     };
     Drawing2D.prototype.noLights = DrawingShared.prototype.a3DOnlyFunction;
     Drawing3D.prototype.noLights = function() {
       lightCount = 0;
       curContext.useProgram(programObject3D);
-      uniformi("lightCount3d", programObject3D, "lightCount", lightCount)
+      uniformi("uLightCount3d", programObject3D, "uLightCount", lightCount)
     };
     Drawing2D.prototype.spotLight = DrawingShared.prototype.a3DOnlyFunction;
     Drawing3D.prototype.spotLight = function(r, g, b, x, y, z, nx, ny, nz, angle, concentration) {
@@ -4806,14 +4961,14 @@
       mvm = mvm.array();
       var dir = [mvm[0] * nx + mvm[4] * ny + mvm[8] * nz, mvm[1] * nx + mvm[5] * ny + mvm[9] * nz, mvm[2] * nx + mvm[6] * ny + mvm[10] * nz];
       var col = color$4(r, g, b, 0);
-      var normalizedCol = [((col >> 16) & 255) / 255, ((col >> 8) & 255) / 255, (col & 255) / 255];
-      uniformf("lights.color.3d." + lightCount, programObject3D, "lights" + lightCount + ".color", normalizedCol);
-      uniformf("lights.position.3d." + lightCount, programObject3D, "lights" + lightCount + ".position", pos.array());
-      uniformf("lights.direction.3d." + lightCount, programObject3D, "lights" + lightCount + ".direction", dir);
-      uniformf("lights.concentration.3d." + lightCount, programObject3D, "lights" + lightCount + ".concentration", concentration);
-      uniformf("lights.angle.3d." + lightCount, programObject3D, "lights" + lightCount + ".angle", angle);
-      uniformi("lights.type.3d." + lightCount, programObject3D, "lights" + lightCount + ".type", 3);
-      uniformi("lightCount3d", programObject3D, "lightCount", ++lightCount)
+      var normalizedCol = [((col >> 16) & 255) / 255, ((col & 65280) >>> 8) / 255, (col & 255) / 255];
+      uniformf("uLights.color.3d." + lightCount, programObject3D, "uLights" + lightCount + ".color", normalizedCol);
+      uniformf("uLights.position.3d." + lightCount, programObject3D, "uLights" + lightCount + ".position", pos.array());
+      uniformf("uLights.direction.3d." + lightCount, programObject3D, "uLights" + lightCount + ".direction", dir);
+      uniformf("uLights.concentration.3d." + lightCount, programObject3D, "uLights" + lightCount + ".concentration", concentration);
+      uniformf("uLights.angle.3d." + lightCount, programObject3D, "uLights" + lightCount + ".angle", angle);
+      uniformi("uLights.type.3d." + lightCount, programObject3D, "uLights" + lightCount + ".type", 3);
+      uniformi("uLightCount3d", programObject3D, "uLightCount", ++lightCount)
     };
     Drawing2D.prototype.beginCamera = function() {
       throw "beginCamera() is not available in 2D mode";
@@ -4902,9 +5057,9 @@
       proj.set(projection);
       proj.transpose();
       curContext.useProgram(programObject2D);
-      uniformMatrix("projection2d", programObject2D, "projection", false, proj.array());
+      uniformMatrix("projection2d", programObject2D, "uProjection", false, proj.array());
       curContext.useProgram(programObject3D);
-      uniformMatrix("projection3d", programObject3D, "projection", false, proj.array());
+      uniformMatrix("projection3d", programObject3D, "uProjection", false, proj.array());
       curContext.useProgram(programObjectUnlitShape);
       uniformMatrix("uProjectionUS", programObjectUnlitShape, "uProjection", false, proj.array())
     };
@@ -4929,9 +5084,9 @@
       proj.set(projection);
       proj.transpose();
       curContext.useProgram(programObject2D);
-      uniformMatrix("projection2d", programObject2D, "projection", false, proj.array());
+      uniformMatrix("projection2d", programObject2D, "uProjection", false, proj.array());
       curContext.useProgram(programObject3D);
-      uniformMatrix("projection3d", programObject3D, "projection", false, proj.array());
+      uniformMatrix("projection3d", programObject3D, "uProjection", false, proj.array());
       curContext.useProgram(programObjectUnlitShape);
       uniformMatrix("uProjectionUS", programObjectUnlitShape, "uProjection", false, proj.array());
       frustumMode = false
@@ -4953,11 +5108,11 @@
       view.transpose();
       if (doFill) {
         curContext.useProgram(programObject3D);
-        uniformMatrix("model3d", programObject3D, "model", false, model.array());
-        uniformMatrix("view3d", programObject3D, "view", false, view.array());
+        uniformMatrix("model3d", programObject3D, "uModel", false, model.array());
+        uniformMatrix("view3d", programObject3D, "uView", false, view.array());
         curContext.enable(curContext.POLYGON_OFFSET_FILL);
         curContext.polygonOffset(1, 1);
-        uniformf("color3d", programObject3D, "color", fillStyle);
+        uniformf("color3d", programObject3D, "uColor", fillStyle);
         if (lightCount > 0) {
           var v = new PMatrix3D;
           v.set(view);
@@ -4968,10 +5123,10 @@
           normalMatrix.set(v);
           normalMatrix.invert();
           normalMatrix.transpose();
-          uniformMatrix("normalTransform3d", programObject3D, "normalTransform", false, normalMatrix.array());
-          vertexAttribPointer("normal3d", programObject3D, "Normal", 3, boxNormBuffer)
-        } else disableVertexAttribPointer("normal3d", programObject3D, "Normal");
-        vertexAttribPointer("vertex3d", programObject3D, "Vertex", 3, boxBuffer);
+          uniformMatrix("uNormalTransform3d", programObject3D, "uNormalTransform", false, normalMatrix.array());
+          vertexAttribPointer("aNormal3d", programObject3D, "aNormal", 3, boxNormBuffer)
+        } else disableVertexAttribPointer("aNormal3d", programObject3D, "aNormal");
+        vertexAttribPointer("aVertex3d", programObject3D, "aVertex", 3, boxBuffer);
         disableVertexAttribPointer("aColor3d", programObject3D, "aColor");
         disableVertexAttribPointer("aTexture3d", programObject3D, "aTexture");
         curContext.drawArrays(curContext.TRIANGLES, 0, boxVerts.length / 3);
@@ -4979,11 +5134,11 @@
       }
       if (lineWidth > 0 && doStroke) {
         curContext.useProgram(programObject2D);
-        uniformMatrix("model2d", programObject2D, "model", false, model.array());
-        uniformMatrix("view2d", programObject2D, "view", false, view.array());
-        uniformf("color2d", programObject2D, "color", strokeStyle);
-        uniformi("picktype2d", programObject2D, "picktype", 0);
-        vertexAttribPointer("vertex2d", programObject2D, "Vertex", 3, boxOutlineBuffer);
+        uniformMatrix("uModel2d", programObject2D, "uModel", false, model.array());
+        uniformMatrix("uView2d", programObject2D, "uView", false, view.array());
+        uniformf("uColor2d", programObject2D, "uColor", strokeStyle);
+        uniformi("uIsDrawingText2d", programObject2D, "uIsDrawingText", false);
+        vertexAttribPointer("vertex2d", programObject2D, "aVertex", 3, boxOutlineBuffer);
         disableVertexAttribPointer("aTextureCoord2d", programObject2D, "aTextureCoord");
         curContext.drawArrays(curContext.LINES, 0, boxOutlineVerts.length / 3)
       }
@@ -5101,29 +5256,29 @@
           normalMatrix.set(v);
           normalMatrix.invert();
           normalMatrix.transpose();
-          uniformMatrix("normalTransform3d", programObject3D, "normalTransform", false, normalMatrix.array());
-          vertexAttribPointer("normal3d", programObject3D, "Normal", 3, sphereBuffer)
-        } else disableVertexAttribPointer("normal3d", programObject3D, "Normal");
+          uniformMatrix("uNormalTransform3d", programObject3D, "uNormalTransform", false, normalMatrix.array());
+          vertexAttribPointer("aNormal3d", programObject3D, "aNormal", 3, sphereBuffer)
+        } else disableVertexAttribPointer("aNormal3d", programObject3D, "aNormal");
         curContext.useProgram(programObject3D);
         disableVertexAttribPointer("aTexture3d", programObject3D, "aTexture");
-        uniformMatrix("model3d", programObject3D, "model", false, model.array());
-        uniformMatrix("view3d", programObject3D, "view", false, view.array());
-        vertexAttribPointer("vertex3d", programObject3D, "Vertex", 3, sphereBuffer);
+        uniformMatrix("uModel3d", programObject3D, "uModel", false, model.array());
+        uniformMatrix("uView3d", programObject3D, "uView", false, view.array());
+        vertexAttribPointer("aVertex3d", programObject3D, "aVertex", 3, sphereBuffer);
         disableVertexAttribPointer("aColor3d", programObject3D, "aColor");
         curContext.enable(curContext.POLYGON_OFFSET_FILL);
         curContext.polygonOffset(1, 1);
-        uniformf("color3d", programObject3D, "color", fillStyle);
+        uniformf("uColor3d", programObject3D, "uColor", fillStyle);
         curContext.drawArrays(curContext.TRIANGLE_STRIP, 0, sphereVerts.length / 3);
         curContext.disable(curContext.POLYGON_OFFSET_FILL)
       }
       if (lineWidth > 0 && doStroke) {
         curContext.useProgram(programObject2D);
-        uniformMatrix("model2d", programObject2D, "model", false, model.array());
-        uniformMatrix("view2d", programObject2D, "view", false, view.array());
-        vertexAttribPointer("vertex2d", programObject2D, "Vertex", 3, sphereBuffer);
+        uniformMatrix("uModel2d", programObject2D, "uModel", false, model.array());
+        uniformMatrix("uView2d", programObject2D, "uView", false, view.array());
+        vertexAttribPointer("aVertex2d", programObject2D, "aVertex", 3, sphereBuffer);
         disableVertexAttribPointer("aTextureCoord2d", programObject2D, "aTextureCoord");
-        uniformf("color2d", programObject2D, "color", strokeStyle);
-        uniformi("picktype2d", programObject2D, "picktype", 0);
+        uniformf("uColor2d", programObject2D, "uColor", strokeStyle);
+        uniformi("uIsDrawingText", programObject2D, "uIsDrawingText", false);
         curContext.drawArrays(curContext.LINE_STRIP, 0, sphereVerts.length / 3)
       }
     };
@@ -5163,29 +5318,29 @@
     Drawing2D.prototype.ambient = DrawingShared.prototype.a3DOnlyFunction;
     Drawing3D.prototype.ambient = function(v1, v2, v3) {
       curContext.useProgram(programObject3D);
-      uniformi("usingMat3d", programObject3D, "usingMat", true);
+      uniformi("uUsingMat3d", programObject3D, "uUsingMat", true);
       var col = p.color(v1, v2, v3);
-      uniformf("mat_ambient3d", programObject3D, "mat_ambient", p.color.toGLArray(col).slice(0, 3))
+      uniformf("uMaterialAmbient3d", programObject3D, "uMaterialAmbient", p.color.toGLArray(col).slice(0, 3))
     };
     Drawing2D.prototype.emissive = DrawingShared.prototype.a3DOnlyFunction;
     Drawing3D.prototype.emissive = function(v1, v2, v3) {
       curContext.useProgram(programObject3D);
-      uniformi("usingMat3d", programObject3D, "usingMat", true);
+      uniformi("uUsingMat3d", programObject3D, "uUsingMat", true);
       var col = p.color(v1, v2, v3);
-      uniformf("mat_emissive3d", programObject3D, "mat_emissive", p.color.toGLArray(col).slice(0, 3))
+      uniformf("uMaterialEmissive3d", programObject3D, "uMaterialEmissive", p.color.toGLArray(col).slice(0, 3))
     };
     Drawing2D.prototype.shininess = DrawingShared.prototype.a3DOnlyFunction;
     Drawing3D.prototype.shininess = function(shine) {
       curContext.useProgram(programObject3D);
-      uniformi("usingMat3d", programObject3D, "usingMat", true);
-      uniformf("shininess3d", programObject3D, "shininess", shine)
+      uniformi("uUsingMat3d", programObject3D, "uUsingMat", true);
+      uniformf("uShininess3d", programObject3D, "uShininess", shine)
     };
     Drawing2D.prototype.specular = DrawingShared.prototype.a3DOnlyFunction;
     Drawing3D.prototype.specular = function(v1, v2, v3) {
       curContext.useProgram(programObject3D);
-      uniformi("usingMat3d", programObject3D, "usingMat", true);
+      uniformi("uUsingMat3d", programObject3D, "uUsingMat", true);
       var col = p.color(v1, v2, v3);
-      uniformf("mat_specular3d", programObject3D, "mat_specular", p.color.toGLArray(col).slice(0, 3))
+      uniformf("uMaterialSpecular3d", programObject3D, "uMaterialSpecular", p.color.toGLArray(col).slice(0, 3))
     };
     p.screenX = function(x, y, z) {
       var mv = modelView.array();
@@ -5294,9 +5449,9 @@
     Drawing3D.prototype.strokeWeight = function(w) {
       DrawingShared.prototype.strokeWeight.apply(this, arguments);
       curContext.useProgram(programObject2D);
-      uniformf("pointSize2d", programObject2D, "pointSize", w);
+      uniformf("pointSize2d", programObject2D, "uPointSize", w);
       curContext.useProgram(programObjectUnlitShape);
-      uniformf("pointSizeUnlitShape", programObjectUnlitShape, "pointSize", w);
+      uniformf("pointSizeUnlitShape", programObjectUnlitShape, "uPointSize", w);
       curContext.lineWidth(w)
     };
     p.strokeCap = function(value) {
@@ -5312,7 +5467,9 @@
       style.setProperty("-ms-interpolation-mode", "bicubic", "important");
       if (curContext.hasOwnProperty("mozImageSmoothingEnabled")) curContext.mozImageSmoothingEnabled = true
     };
-    Drawing3D.prototype.smooth = nop;
+    Drawing3D.prototype.smooth = function() {
+      renderSmooth = true
+    };
     Drawing2D.prototype.noSmooth = function() {
       renderSmooth = false;
       var style = curElement.style;
@@ -5323,7 +5480,9 @@
       style.setProperty("-ms-interpolation-mode", "nearest-neighbor", "important");
       if (curContext.hasOwnProperty("mozImageSmoothingEnabled")) curContext.mozImageSmoothingEnabled = false
     };
-    Drawing3D.prototype.noSmooth = nop;
+    Drawing3D.prototype.noSmooth = function() {
+      renderSmooth = false
+    };
     Drawing2D.prototype.point = function(x, y) {
       if (!doStroke) return;
       x = Math.round(x);
@@ -5345,12 +5504,13 @@
       view.apply(modelView.array());
       view.transpose();
       curContext.useProgram(programObject2D);
-      uniformMatrix("model2d", programObject2D, "model", false, model.array());
-      uniformMatrix("view2d", programObject2D, "view", false, view.array());
+      uniformMatrix("uModel2d", programObject2D, "uModel", false, model.array());
+      uniformMatrix("uView2d", programObject2D, "uView", false, view.array());
       if (lineWidth > 0 && doStroke) {
-        uniformf("color2d", programObject2D, "color", strokeStyle);
-        uniformi("picktype2d", programObject2D, "picktype", 0);
-        vertexAttribPointer("vertex2d", programObject2D, "Vertex", 3, pointBuffer);
+        uniformf("uColor2d", programObject2D, "uColor", strokeStyle);
+        uniformi("uIsDrawingText2d", programObject2D, "uIsDrawingText", false);
+        uniformi("uSmooth2d", programObject2D, "uSmooth", renderSmooth);
+        vertexAttribPointer("aVertex2d", programObject2D, "aVertex", 3, pointBuffer);
         disableVertexAttribPointer("aTextureCoord2d", programObject2D, "aTextureCoord");
         curContext.drawArrays(curContext.POINTS, 0, 1)
       }
@@ -5360,18 +5520,19 @@
       curvePoints = [];
       vertArray = []
     };
-    Drawing2D.prototype.vertex = function(x, y, u, v) {
+    Drawing2D.prototype.vertex = function(x, y, moveTo) {
       var vert = [];
       if (firstVert) firstVert = false;
       vert["isVert"] = true;
       vert[0] = x;
       vert[1] = y;
       vert[2] = 0;
-      vert[3] = u;
-      vert[4] = v;
+      vert[3] = 0;
+      vert[4] = 0;
       vert[5] = currentFillColor;
       vert[6] = currentStrokeColor;
-      vertArray.push(vert)
+      vertArray.push(vert);
+      if (moveTo) vertArray[vertArray.length - 1]["moveTo"] = moveTo
     };
     Drawing3D.prototype.vertex = function(x, y, z, u, v) {
       var vert = [];
@@ -5417,6 +5578,7 @@
       view.transpose();
       curContext.useProgram(programObjectUnlitShape);
       uniformMatrix("uViewUS", programObjectUnlitShape, "uView", false, view.array());
+      uniformi("uSmoothUS", programObjectUnlitShape, "uSmooth", renderSmooth);
       vertexAttribPointer("aVertexUS", programObjectUnlitShape, "aVertex", 3, pointBuffer);
       curContext.bufferData(curContext.ARRAY_BUFFER, new Float32Array(vArray), curContext.STREAM_DRAW);
       vertexAttribPointer("aColorUS", programObjectUnlitShape, "aColor", 4, fillColorBuffer);
@@ -5450,19 +5612,19 @@
       view.apply(modelView.array());
       view.transpose();
       curContext.useProgram(programObject3D);
-      uniformMatrix("model3d", programObject3D, "model", false, [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
-      uniformMatrix("view3d", programObject3D, "view", false, view.array());
+      uniformMatrix("model3d", programObject3D, "uModel", false, [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
+      uniformMatrix("view3d", programObject3D, "uView", false, view.array());
       curContext.enable(curContext.POLYGON_OFFSET_FILL);
       curContext.polygonOffset(1, 1);
-      uniformf("color3d", programObject3D, "color", [-1, 0, 0, 0]);
-      vertexAttribPointer("vertex3d", programObject3D, "Vertex", 3, fillBuffer);
+      uniformf("color3d", programObject3D, "uColor", [-1, 0, 0, 0]);
+      vertexAttribPointer("vertex3d", programObject3D, "aVertex", 3, fillBuffer);
       curContext.bufferData(curContext.ARRAY_BUFFER, new Float32Array(vArray), curContext.STREAM_DRAW);
       if (usingTexture && curTint !== null) curTint3d(cArray);
       vertexAttribPointer("aColor3d", programObject3D, "aColor", 4, fillColorBuffer);
       curContext.bufferData(curContext.ARRAY_BUFFER, new Float32Array(cArray), curContext.STREAM_DRAW);
-      disableVertexAttribPointer("normal3d", programObject3D, "Normal");
+      disableVertexAttribPointer("aNormal3d", programObject3D, "aNormal");
       if (usingTexture) {
-        uniformi("usingTexture3d", programObject3D, "usingTexture", usingTexture);
+        uniformi("uUsingTexture3d", programObject3D, "uUsingTexture", usingTexture);
         vertexAttribPointer("aTexture3d", programObject3D, "aTexture", 2, shapeTexVBO);
         curContext.bufferData(curContext.ARRAY_BUFFER, new Float32Array(tArray), curContext.STREAM_DRAW)
       }
@@ -5514,8 +5676,7 @@
           for (i = 1; i + 2 < vertArrayLength; i++) {
             cachedVertArray = vertArray[i];
             b[0] = [cachedVertArray[0], cachedVertArray[1]];
-            b[1] = [cachedVertArray[0] + (s * vertArray[i + 1][0] - s * vertArray[i - 1][0]) / 6, cachedVertArray[1] +
-              (s * vertArray[i + 1][1] - s * vertArray[i - 1][1]) / 6];
+            b[1] = [cachedVertArray[0] + (s * vertArray[i + 1][0] - s * vertArray[i - 1][0]) / 6, cachedVertArray[1] + (s * vertArray[i + 1][1] - s * vertArray[i - 1][1]) / 6];
             b[2] = [vertArray[i + 1][0] + (s * vertArray[i][0] - s * vertArray[i + 2][0]) / 6, vertArray[i + 1][1] + (s * vertArray[i][1] - s * vertArray[i + 2][1]) / 6];
             b[3] = [vertArray[i + 1][0], vertArray[i + 1][1]];
             curContext.bezierCurveTo(b[1][0], b[1][1], b[2][0], b[2][1], b[3][0], b[3][1])
@@ -5856,7 +6017,7 @@
         }
         usingTexture = false;
         curContext.useProgram(programObject3D);
-        uniformi("usingTexture3d", programObject3D, "usingTexture", usingTexture)
+        uniformi("usingTexture3d", programObject3D, "uUsingTexture", usingTexture)
       }
       isCurve = false;
       isBezier = false;
@@ -5970,7 +6131,7 @@
       }
       usingTexture = true;
       curContext.useProgram(programObject3D);
-      uniformi("usingTexture3d", programObject3D, "usingTexture", usingTexture)
+      uniformi("usingTexture3d", programObject3D, "uUsingTexture", usingTexture)
     };
     p.textureMode = function(mode) {
       curTextureMode = mode
@@ -6018,25 +6179,30 @@
       curveVertCount++;
       if (curveVertCount > 3) curveVertexSegment(curveVertArray[curveVertCount - 4][0], curveVertArray[curveVertCount - 4][1], curveVertArray[curveVertCount - 4][2], curveVertArray[curveVertCount - 3][0], curveVertArray[curveVertCount - 3][1], curveVertArray[curveVertCount - 3][2], curveVertArray[curveVertCount - 2][0], curveVertArray[curveVertCount - 2][1], curveVertArray[curveVertCount - 2][2], curveVertArray[curveVertCount - 1][0], curveVertArray[curveVertCount - 1][1], curveVertArray[curveVertCount - 1][2])
     };
-    Drawing2D.prototype.curve = function() {
-      if (arguments.length === 8) {
-        p.beginShape();
-        p.curveVertex(arguments[0], arguments[1]);
-        p.curveVertex(arguments[2], arguments[3]);
-        p.curveVertex(arguments[4], arguments[5]);
-        p.curveVertex(arguments[6], arguments[7]);
-        p.endShape()
-      }
+    Drawing2D.prototype.curve = function(x1, y1, x2, y2, x3, y3, x4, y4) {
+      p.beginShape();
+      p.curveVertex(x1, y1);
+      p.curveVertex(x2, y2);
+      p.curveVertex(x3, y3);
+      p.curveVertex(x4, y4);
+      p.endShape()
     };
-    Drawing3D.prototype.curve = function() {
-      if (arguments.length === 12) {
+    Drawing3D.prototype.curve = function(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4) {
+      if (z4 !== undef) {
         p.beginShape();
-        p.curveVertex(arguments[0], arguments[1], arguments[2]);
-        p.curveVertex(arguments[3], arguments[4], arguments[5]);
-        p.curveVertex(arguments[6], arguments[7], arguments[8]);
-        p.curveVertex(arguments[9], arguments[10], arguments[11]);
-        p.endShape()
+        p.curveVertex(x1, y1, z1);
+        p.curveVertex(x2, y2, z2);
+        p.curveVertex(x3, y3, z3);
+        p.curveVertex(x4, y4, z4);
+        p.endShape();
+        return
       }
+      p.beginShape();
+      p.curveVertex(x1, y1);
+      p.curveVertex(z1, x2);
+      p.curveVertex(y2, z2);
+      p.curveVertex(x3, y3);
+      p.endShape()
     };
     p.curveTightness = function(tightness) {
       curTightness = tightness
@@ -6088,13 +6254,13 @@
         start = 0;
         stop = 6.283185307179586
       }
-      var hr = width / 2;
-      var vr = height / 2;
-      var centerX = x + hr;
-      var centerY = y + vr;
-      var startLUT = 0 | -0.5 + start * p.RAD_TO_DEG * 2;
-      var stopLUT = 0 | 0.5 + stop * p.RAD_TO_DEG * 2;
-      var i, j;
+      var hr = width / 2,
+        vr = height / 2,
+        centerX = x + hr,
+        centerY = y + vr,
+        startLUT = 0 | 0.5 + start * p.RAD_TO_DEG * 2,
+        stopLUT = 0 | 0.5 + stop * p.RAD_TO_DEG * 2,
+        i, j;
       if (doFill) {
         var savedStroke = doStroke;
         doStroke = false;
@@ -6186,11 +6352,11 @@
       view.transpose();
       if (lineWidth > 0 && doStroke) {
         curContext.useProgram(programObject2D);
-        uniformMatrix("model2d", programObject2D, "model", false, [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
-        uniformMatrix("view2d", programObject2D, "view", false, view.array());
-        uniformf("color2d", programObject2D, "color", strokeStyle);
-        uniformi("picktype2d", programObject2D, "picktype", 0);
-        vertexAttribPointer("vertex2d", programObject2D, "Vertex", 3, lineBuffer);
+        uniformMatrix("uModel2d", programObject2D, "uModel", false, [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
+        uniformMatrix("uView2d", programObject2D, "uView", false, view.array());
+        uniformf("uColor2d", programObject2D, "uColor", strokeStyle);
+        uniformi("uIsDrawingText", programObject2D, "uIsDrawingText", false);
+        vertexAttribPointer("aVertex2d", programObject2D, "aVertex", 3, lineBuffer);
         disableVertexAttribPointer("aTextureCoord2d", programObject2D, "aTextureCoord");
         curContext.bufferData(curContext.ARRAY_BUFFER, new Float32Array(lineVerts), curContext.STREAM_DRAW);
         curContext.drawArrays(curContext.LINES, 0, 2)
@@ -6320,21 +6486,21 @@
       view.transpose();
       if (lineWidth > 0 && doStroke) {
         curContext.useProgram(programObject2D);
-        uniformMatrix("model2d", programObject2D, "model", false, model.array());
-        uniformMatrix("view2d", programObject2D, "view", false, view.array());
-        uniformf("color2d", programObject2D, "color", strokeStyle);
-        uniformi("picktype2d", programObject2D, "picktype", 0);
-        vertexAttribPointer("vertex2d", programObject2D, "Vertex", 3, rectBuffer);
+        uniformMatrix("uModel2d", programObject2D, "uModel", false, model.array());
+        uniformMatrix("uView2d", programObject2D, "uView", false, view.array());
+        uniformf("uColor2d", programObject2D, "uColor", strokeStyle);
+        uniformi("uIsDrawingText2d", programObject2D, "uIsDrawingText", false);
+        vertexAttribPointer("aVertex2d", programObject2D, "aVertex", 3, rectBuffer);
         disableVertexAttribPointer("aTextureCoord2d", programObject2D, "aTextureCoord");
         curContext.drawArrays(curContext.LINE_LOOP, 0, rectVerts.length / 3)
       }
       if (doFill) {
         curContext.useProgram(programObject3D);
-        uniformMatrix("model3d", programObject3D, "model", false, model.array());
-        uniformMatrix("view3d", programObject3D, "view", false, view.array());
+        uniformMatrix("uModel3d", programObject3D, "uModel", false, model.array());
+        uniformMatrix("uView3d", programObject3D, "uView", false, view.array());
         curContext.enable(curContext.POLYGON_OFFSET_FILL);
         curContext.polygonOffset(1, 1);
-        uniformf("color3d", programObject3D, "color", fillStyle);
+        uniformf("color3d", programObject3D, "uColor", fillStyle);
         if (lightCount > 0) {
           var v = new PMatrix3D;
           v.set(view);
@@ -6345,10 +6511,10 @@
           normalMatrix.set(v);
           normalMatrix.invert();
           normalMatrix.transpose();
-          uniformMatrix("normalTransform3d", programObject3D, "normalTransform", false, normalMatrix.array());
-          vertexAttribPointer("normal3d", programObject3D, "Normal", 3, rectNormBuffer)
-        } else disableVertexAttribPointer("normal3d", programObject3D, "Normal");
-        vertexAttribPointer("vertex3d", programObject3D, "Vertex", 3, rectBuffer);
+          uniformMatrix("uNormalTransform3d", programObject3D, "uNormalTransform", false, normalMatrix.array());
+          vertexAttribPointer("aNormal3d", programObject3D, "aNormal", 3, rectNormBuffer)
+        } else disableVertexAttribPointer("normal3d", programObject3D, "aNormal");
+        vertexAttribPointer("vertex3d", programObject3D, "aVertex", 3, rectBuffer);
         curContext.drawArrays(curContext.TRIANGLE_FAN, 0, rectVerts.length / 3);
         curContext.disable(curContext.POLYGON_OFFSET_FILL)
       }
@@ -6653,7 +6819,7 @@
       toImageData: function() {
         if (this.isRemote) return this.sourceImg;
         if (!this.__isDirty) return this.imageData;
-        var canvasData = getCanvasData(this.imageData);
+        var canvasData = getCanvasData(this.sourceImg);
         return canvasData.context.getImageData(0, 0, this.width, this.height)
       },
       toDataURL: function() {
@@ -6761,6 +6927,7 @@
     p.createGraphics = function(w, h, render) {
       var pg = new Processing;
       pg.size(w, h, render);
+      pg.background(0, 0);
       return pg
     };
 
@@ -6771,6 +6938,7 @@
         p.updatePixels()
       }
     }
+
     function SetPixelContextWrapper() {
       function wrapFunction(newContext, name) {
         function wrapper() {
@@ -6875,7 +7043,8 @@
       } else if (which === -4) {
         curContext.enable(curContext.DEPTH_TEST);
         curContext.depthMask(true)
-      }
+      } else if (which === -1 || which === 2) renderSmooth = true;
+      else if (which === 1) renderSmooth = false
     };
     var backgroundHelper = function(arg1, arg2, arg3, arg4) {
       var obj;
@@ -7473,15 +7642,13 @@
       curContext.font = curTextFont.css
     };
     p.textSize = function(size) {
-      if (size !== curTextSize) {
-        curTextFont = PFont.get(curFontName, size);
-        curTextSize = size;
-        curTextAscent = curTextFont.ascent;
-        curTextDescent = curTextFont.descent;
-        curTextLeading = curTextFont.leading;
-        var curContext = drawing.$ensureContext();
-        curContext.font = curTextFont.css
-      }
+      curTextFont = PFont.get(curFontName, size);
+      curTextSize = size;
+      curTextAscent = curTextFont.ascent;
+      curTextDescent = curTextFont.descent;
+      curTextLeading = curTextFont.leading;
+      var curContext = drawing.$ensureContext();
+      curContext.font = curTextFont.css
     };
     p.textAscent = function() {
       return curTextAscent
@@ -7690,13 +7857,13 @@
       view.apply(modelView.array());
       view.transpose();
       curContext.useProgram(programObject2D);
-      vertexAttribPointer("vertex2d", programObject2D, "Vertex", 3, textBuffer);
+      vertexAttribPointer("aVertex2d", programObject2D, "aVertex", 3, textBuffer);
       vertexAttribPointer("aTextureCoord2d", programObject2D, "aTextureCoord", 2, textureBuffer);
       uniformi("uSampler2d", programObject2D, "uSampler", [0]);
-      uniformi("picktype2d", programObject2D, "picktype", 1);
-      uniformMatrix("model2d", programObject2D, "model", false, model.array());
-      uniformMatrix("view2d", programObject2D, "view", false, view.array());
-      uniformf("color2d", programObject2D, "color", fillStyle);
+      uniformi("uIsDrawingText2d", programObject2D, "uIsDrawingText", true);
+      uniformMatrix("uModel2d", programObject2D, "uModel", false, model.array());
+      uniformMatrix("uView2d", programObject2D, "uView", false, view.array());
+      uniformf("uColor2d", programObject2D, "uColor", fillStyle);
       curContext.bindBuffer(curContext.ELEMENT_ARRAY_BUFFER, indexBuffer);
       curContext.drawElements(curContext.TRIANGLES, 6, curContext.UNSIGNED_SHORT, 0)
     };
@@ -7959,6 +8126,7 @@
       }
     }
     DrawingPre.prototype.translate = createDrawingPreFunction("translate");
+    DrawingPre.prototype.transform = createDrawingPreFunction("transform");
     DrawingPre.prototype.scale = createDrawingPreFunction("scale");
     DrawingPre.prototype.pushMatrix = createDrawingPreFunction("pushMatrix");
     DrawingPre.prototype.popMatrix = createDrawingPreFunction("popMatrix");
@@ -7966,6 +8134,8 @@
     DrawingPre.prototype.applyMatrix = createDrawingPreFunction("applyMatrix");
     DrawingPre.prototype.rotate = createDrawingPreFunction("rotate");
     DrawingPre.prototype.rotateZ = createDrawingPreFunction("rotateZ");
+    DrawingPre.prototype.shearX = createDrawingPreFunction("shearX");
+    DrawingPre.prototype.shearY = createDrawingPreFunction("shearY");
     DrawingPre.prototype.redraw = createDrawingPreFunction("redraw");
     DrawingPre.prototype.toImageData = createDrawingPreFunction("toImageData");
     DrawingPre.prototype.ambientLight = createDrawingPreFunction("ambientLight");
@@ -8017,7 +8187,8 @@
       p.disableContextMenu()
     };
     Drawing3D.prototype.$init = function() {
-      p.use3DContext = true
+      p.use3DContext = true;
+      p.disableContextMenu()
     };
     DrawingShared.prototype.$ensureContext = function() {
       return curContext
@@ -8171,6 +8342,9 @@
       updateMousePosition(curElement, e);
       if (typeof p.mouseOver === "function") p.mouseOver()
     });
+    curElement.onmousedown = function() {
+      return false
+    };
     attachEventHandler(curElement, "mousedown", function(e) {
       p.__mousePressed = true;
       p.mouseDragging = false;
@@ -8203,7 +8377,6 @@
     };
     attachEventHandler(document, "DOMMouseScroll", mouseWheelHandler);
     attachEventHandler(document, "mousewheel", mouseWheelHandler);
-    if (typeof curElement === "string") curElement = document.getElementById(curElement);
     if (!curElement.getAttribute("tabindex")) curElement.setAttribute("tabindex", 0);
 
     function getKeyCode(e) {
@@ -8284,6 +8457,7 @@
       updateKeyPressed();
       return suppressKeyEvent(e)
     }
+
     function handleKeypress(e) {
       if (lastPressedKeyCode === null) return;
       var code = lastPressedKeyCode,
@@ -8375,13 +8549,13 @@
   Processing.prototype = defaultScope;
 
   function getGlobalMembers() {
-    var names = ["abs", "acos", "alpha", "ambient", "ambientLight", "append", "applyMatrix", "arc", "arrayCopy", "asin", "atan", "atan2", "background", "beginCamera", "beginDraw", "beginShape", "bezier", "bezierDetail", "bezierPoint", "bezierTangent", "bezierVertex", "binary", "blend", "blendColor", "blit_resize", "blue", "box", "breakShape", "brightness", "camera", "ceil", "Character", "color", "colorMode", "concat", "constrain", "copy", "cos", "createFont",
-      "createGraphics", "createImage", "cursor", "curve", "curveDetail", "curvePoint", "curveTangent", "curveTightness", "curveVertex", "day", "degrees", "directionalLight", "disableContextMenu", "dist", "draw", "ellipse", "ellipseMode", "emissive", "enableContextMenu", "endCamera", "endDraw", "endShape", "exit", "exp", "expand", "externals", "fill", "filter", "floor", "focused", "frameCount", "frameRate", "frustum", "get", "glyphLook", "glyphTable", "green", "height", "hex", "hint", "hour", "hue", "image", "imageMode", "intersect", "join", "key",
-      "keyCode", "keyPressed", "keyReleased", "keyTyped", "lerp", "lerpColor", "lightFalloff", "lights", "lightSpecular", "line", "link", "loadBytes", "loadFont", "loadGlyphs", "loadImage", "loadPixels", "loadShape", "loadStrings", "log", "loop", "mag", "map", "match", "matchAll", "max", "millis", "min", "minute", "mix", "modelX", "modelY", "modelZ", "modes", "month", "mouseButton", "mouseClicked", "mouseDragged", "mouseMoved", "mouseOut", "mouseOver", "mousePressed", "mouseReleased", "mouseScroll", "mouseScrolled", "mouseX", "mouseY", "name", "nf",
-      "nfc", "nfp", "nfs", "noCursor", "noFill", "noise", "noiseDetail", "noiseSeed", "noLights", "noLoop", "norm", "normal", "noSmooth", "noStroke", "noTint", "ortho", "param", "parseBoolean", "parseByte", "parseChar", "parseFloat", "parseInt", "peg", "perspective", "PImage", "pixels", "PMatrix2D", "PMatrix3D", "PMatrixStack", "pmouseX", "pmouseY", "point", "pointLight", "popMatrix", "popStyle", "pow", "print", "printCamera", "println", "printMatrix", "printProjection", "PShape", "PShapeSVG", "pushMatrix", "pushStyle", "quad", "radians", "random",
-      "Random", "randomSeed", "rect", "rectMode", "red", "redraw", "requestImage", "resetMatrix", "reverse", "rotate", "rotateX", "rotateY", "rotateZ", "round", "saturation", "save", "saveFrame", "saveStrings", "scale", "screenX", "screenY", "screenZ", "second", "set", "setup", "shape", "shapeMode", "shared", "shininess", "shorten", "sin", "size", "smooth", "sort", "specular", "sphere", "sphereDetail", "splice", "split", "splitTokens", "spotLight", "sq", "sqrt", "status", "str", "stroke", "strokeCap", "strokeJoin", "strokeWeight", "subset", "tan", "text",
-      "textAlign", "textAscent", "textDescent", "textFont", "textLeading", "textMode", "textSize", "texture", "textureMode", "textWidth", "tint", "toImageData", "touchCancel", "touchEnd", "touchMove", "touchStart", "translate", "triangle", "trim", "unbinary", "unhex", "updatePixels", "use3DContext", "vertex", "width", "XMLElement", "year", "__contains", "__equals", "__equalsIgnoreCase", "__frameRate", "__hashCode", "__int_cast", "__instanceof", "__keyPressed", "__mousePressed", "__printStackTrace", "__replace", "__replaceAll", "__replaceFirst",
-      "__toCharArray", "__split", "__codePointAt", "__startsWith", "__endsWith"];
+    var names = ["abs", "acos", "alpha", "ambient", "ambientLight", "append",
+      "applyMatrix", "arc", "arrayCopy", "asin", "atan", "atan2", "background", "beginCamera", "beginDraw", "beginShape", "bezier", "bezierDetail", "bezierPoint", "bezierTangent", "bezierVertex", "binary", "blend", "blendColor", "blit_resize", "blue", "box", "breakShape", "brightness", "camera", "ceil", "Character", "color", "colorMode", "concat", "constrain", "copy", "cos", "createFont", "createGraphics", "createImage", "cursor", "curve", "curveDetail", "curvePoint", "curveTangent", "curveTightness", "curveVertex", "day", "degrees", "directionalLight",
+      "disableContextMenu", "dist", "draw", "ellipse", "ellipseMode", "emissive", "enableContextMenu", "endCamera", "endDraw", "endShape", "exit", "exp", "expand", "externals", "fill", "filter", "floor", "focused", "frameCount", "frameRate", "frustum", "get", "glyphLook", "glyphTable", "green", "height", "hex", "hint", "hour", "hue", "image", "imageMode", "intersect", "join", "key", "keyCode", "keyPressed", "keyReleased", "keyTyped", "lerp", "lerpColor", "lightFalloff", "lights", "lightSpecular", "line", "link", "loadBytes", "loadFont", "loadGlyphs",
+      "loadImage", "loadPixels", "loadShape", "loadXML", "loadStrings", "log", "loop", "mag", "map", "match", "matchAll", "max", "millis", "min", "minute", "mix", "modelX", "modelY", "modelZ", "modes", "month", "mouseButton", "mouseClicked", "mouseDragged", "mouseMoved", "mouseOut", "mouseOver", "mousePressed", "mouseReleased", "mouseScroll", "mouseScrolled", "mouseX", "mouseY", "name", "nf", "nfc", "nfp", "nfs", "noCursor", "noFill", "noise", "noiseDetail", "noiseSeed", "noLights", "noLoop", "norm", "normal", "noSmooth", "noStroke", "noTint", "ortho",
+      "param", "parseBoolean", "parseByte", "parseChar", "parseFloat", "parseInt", "peg", "perspective", "PImage", "pixels", "PMatrix2D", "PMatrix3D", "PMatrixStack", "pmouseX", "pmouseY", "point", "pointLight", "popMatrix", "popStyle", "pow", "print", "printCamera", "println", "printMatrix", "printProjection", "PShape", "PShapeSVG", "pushMatrix", "pushStyle", "quad", "radians", "random", "Random", "randomSeed", "rect", "rectMode", "red", "redraw", "requestImage", "resetMatrix", "reverse", "rotate", "rotateX", "rotateY", "rotateZ", "round", "saturation",
+      "save", "saveFrame", "saveStrings", "scale", "screenX", "screenY", "screenZ", "second", "set", "setup", "shape", "shapeMode", "shared", "shearX", "shearY", "shininess", "shorten", "sin", "size", "smooth", "sort", "specular", "sphere", "sphereDetail", "splice", "split", "splitTokens", "spotLight", "sq", "sqrt", "status", "str", "stroke", "strokeCap", "strokeJoin", "strokeWeight", "subset", "tan", "text", "textAlign", "textAscent", "textDescent", "textFont", "textLeading", "textMode", "textSize", "texture", "textureMode", "textWidth", "tint", "toImageData",
+      "touchCancel", "touchEnd", "touchMove", "touchStart", "translate", "transform", "triangle", "trim", "unbinary", "unhex", "updatePixels", "use3DContext", "vertex", "width", "XMLElement", "XML", "year", "__contains", "__equals", "__equalsIgnoreCase", "__frameRate", "__hashCode", "__int_cast", "__instanceof", "__keyPressed", "__mousePressed", "__printStackTrace", "__replace", "__replaceAll", "__replaceFirst", "__toCharArray", "__split", "__codePointAt", "__startsWith", "__endsWith"];
     var members = {};
     var i, l;
     for (i = 0, l = names.length; i < l; ++i) members[names[i]] = null;
@@ -8422,6 +8596,7 @@
         return /^'((?:[^'\\\n])|(?:\\.[0-9A-Fa-f]*))'$/.test(val) ? "(new $p.Character(" + val + "))" : val
       })
     }
+
     function trimSpaces(string) {
       var m1 = /^\s*/.exec(string),
         result;
@@ -8473,6 +8648,10 @@
       }
       return comment !== "" ? " " : "\n"
     });
+    codeWoStrings = codeWoStrings.replace(/__x([0-9A-F]{4})/g, function(all, hexCode) {
+      return "__x005F_x" + hexCode
+    });
+    codeWoStrings = codeWoStrings.replace(/\$/g, "__x0024");
     var genericsWereRemoved;
     var codeWoGenerics = codeWoStrings;
     var replaceFunc = function(all, before, types, after) {
@@ -8482,7 +8661,7 @@
     };
     do {
       genericsWereRemoved = false;
-      codeWoGenerics = codeWoGenerics.replace(/([<]?)<\s*((?:\?|[A-Za-z_$][\w$]*\b(?:\s*\.\s*[A-Za-z_$][\w$]*\b)*)(?:\s+(?:extends|super)\s+[A-Za-z_$][\w$]*\b(?:\s*\.\s*[A-Za-z_$][\w$]*\b)*)?(?:\s*,\s*(?:\?|[A-Za-z_$][\w$]*\b(?:\s*\.\s*[A-Za-z_$][\w$]*\b)*)(?:\s+(?:extends|super)\s+[A-Za-z_$][\w$]*\b(?:\s*\.\s*[A-Za-z_$][\w$]*\b)*)?)*)\s*>([=]?)/g, replaceFunc)
+      codeWoGenerics = codeWoGenerics.replace(/([<]?)<\s*((?:\?|[A-Za-z_$][\w$]*\b(?:\s*\.\s*[A-Za-z_$][\w$]*\b)*)(?:\[\])*(?:\s+(?:extends|super)\s+[A-Za-z_$][\w$]*\b(?:\s*\.\s*[A-Za-z_$][\w$]*\b)*)?(?:\s*,\s*(?:\?|[A-Za-z_$][\w$]*\b(?:\s*\.\s*[A-Za-z_$][\w$]*\b)*)(?:\[\])*(?:\s+(?:extends|super)\s+[A-Za-z_$][\w$]*\b(?:\s*\.\s*[A-Za-z_$][\w$]*\b)*)?)*)\s*>([=]?)/g, replaceFunc)
     } while (genericsWereRemoved);
     var atoms = splitToAtoms(codeWoGenerics);
     var replaceContext;
@@ -8537,13 +8716,18 @@
       return this.name
     };
 
-    function AstParams(params) {
-      this.params = params
+    function AstParams(params, methodArgsParam) {
+      this.params = params;
+      this.methodArgsParam = methodArgsParam
     }
     AstParams.prototype.getNames = function() {
       var names = [];
       for (var i = 0, l = this.params.length; i < l; ++i) names.push(this.params[i].name);
       return names
+    };
+    AstParams.prototype.prependMethodArgs = function(body) {
+      if (!this.methodArgsParam) return body;
+      return "{\nvar " + this.methodArgsParam.name + " = Array.prototype.slice.call(arguments, " + this.params.length + ");\n" + body.substring(1)
     };
     AstParams.prototype.toString = function() {
       if (this.params.length === 0) return "()";
@@ -8554,15 +8738,20 @@
 
     function transformParams(params) {
       var paramsWoPars = trim(params.substring(1, params.length - 1));
-      var result = [];
+      var result = [],
+        methodArgsParam = null;
       if (paramsWoPars !== "") {
         var paramList = paramsWoPars.split(",");
         for (var i = 0; i < paramList.length; ++i) {
           var param = /\b([A-Za-z_$][\w$]*\b)(\s*"[ABC][\d]*")*\s*$/.exec(paramList[i]);
+          if (i === paramList.length - 1 && paramList[i].indexOf("...") >= 0) {
+            methodArgsParam = new AstParam(param[1]);
+            break
+          }
           result.push(new AstParam(param[1]))
         }
       }
-      return new AstParams(result)
+      return new AstParams(result, methodArgsParam)
     }
     function preExpressionTransform(expr) {
       var s = expr;
@@ -8680,7 +8869,8 @@
       };
       var result = "function";
       if (this.name) result += " " + this.name;
-      result += this.params + " " + this.body;
+      var body = this.params.prependMethodArgs(this.body.toString());
+      result += this.params + " " + body;
       replaceContext = oldContext;
       return result
     };
@@ -8931,7 +9121,8 @@
       replaceContext = function(subject) {
         return paramNames.hasOwnProperty(subject.name) ? subject.name : oldContext(subject)
       };
-      var result = "function " + this.methodId + this.params + " " + this.body + "\n";
+      var body = this.params.prependMethodArgs(this.body.toString());
+      var result = "function " + this.methodId + this.params + " " + body + "\n";
       replaceContext = oldContext;
       return result
     };
@@ -8992,7 +9183,7 @@
         return paramNames.hasOwnProperty(subject.name) ? subject.name : oldContext(subject)
       };
       var prefix = "function $constr_" + this.params.params.length + this.params.toString();
-      var body = this.body.toString();
+      var body = this.params.prependMethodArgs(this.body.toString());
       if (!/\$(superCstr|constr)\b/.test(body)) body = "{\n$superCstr();\n" + body.substring(1);
       replaceContext = oldContext;
       return prefix + body + "\n"
@@ -9209,6 +9400,7 @@
         var method = this.methods[i];
         var overload = methodOverloads[method.name];
         var methodId = method.name + "$" + method.params.params.length;
+        var hasMethodArgs = !!method.params.methodArgsParam;
         if (overload) {
           ++overload;
           methodId += "_" + overload
@@ -9217,11 +9409,11 @@
         methodOverloads[method.name] = overload;
         if (method.isStatic) {
           staticDefinitions += method;
-          staticDefinitions += "$p.addMethod(" + className + ", '" + method.name + "', " + methodId + ");\n";
-          result += "$p.addMethod(" + selfId + ", '" + method.name + "', " + methodId + ");\n"
+          staticDefinitions += "$p.addMethod(" + className + ", '" + method.name + "', " + methodId + ", " + hasMethodArgs + ");\n";
+          result += "$p.addMethod(" + selfId + ", '" + method.name + "', " + methodId + ", " + hasMethodArgs + ");\n"
         } else {
           result += method;
-          result += "$p.addMethod(" + selfId + ", '" + method.name + "', " + methodId + ");\n"
+          result += "$p.addMethod(" + selfId + ", '" + method.name + "', " + methodId + ", " + hasMethodArgs + ");\n"
         }
       }
       result += trim(this.misc.tail);
@@ -9230,7 +9422,8 @@
       var cstrsIfs = [];
       for (i = 0, l = this.cstrs.length; i < l; ++i) {
         var paramsLength = this.cstrs[i].params.params.length;
-        cstrsIfs.push("if(arguments.length === " + paramsLength + ") { " + "$constr_" + paramsLength + ".apply(" + selfId + ", arguments); }")
+        var methodArgsPresent = !!this.cstrs[i].params.methodArgsParam;
+        cstrsIfs.push("if(arguments.length " + (methodArgsPresent ? ">=" : "===") + " " + paramsLength + ") { " + "$constr_" + paramsLength + ".apply(" + selfId + ", arguments); }")
       }
       if (cstrsIfs.length > 0) result += cstrsIfs.join(" else ") + " else ";
       result += "$superCstr();\n}\n";
@@ -9316,7 +9509,8 @@
       replaceContext = function(subject) {
         return paramNames.hasOwnProperty(subject.name) ? subject.name : oldContext(subject)
       };
-      var result = "function " + this.name + this.params + " " + this.body + "\n" + "$p." + this.name + " = " + this.name + ";";
+      var body = this.params.prependMethodArgs(this.body.toString());
+      var result = "function " + this.name + this.params + " " + body + "\n" + "$p." + this.name + " = " + this.name + ";";
       replaceContext = oldContext;
       return result
     };
@@ -9591,8 +9785,12 @@
     setWeight(transformed);
     var redendered = transformed.toString();
     redendered = redendered.replace(/\s*\n(?:[\t ]*\n)+/g, "\n\n");
+    redendered = redendered.replace(/__x([0-9A-F]{4})/g, function(all, hexCode) {
+      return String.fromCharCode(parseInt(hexCode, 16))
+    });
     return injectStrings(redendered, strings)
   }
+
   function preprocessCode(aCode, sketch) {
     var dm = (new RegExp(/\/\*\s*@pjs\s+((?:[^\*]|\*+[^\*\/])*)\*\//g)).exec(aCode);
     if (dm && dm.length === 2) {
@@ -9817,7 +10015,7 @@
     return tinylogLite
   }();
   Processing.logger = tinylogLite;
-  Processing.version = "1.3.6";
+  Processing.version = "1.4.0";
   Processing.lib = {};
   Processing.registerLibrary = function(name, desc) {
     Processing.lib[name] = desc;
@@ -9940,6 +10138,7 @@
   };
   var init = function() {
     document.removeEventListener("DOMContentLoaded", init, false);
+    processingInstances = [];
     var canvas = document.getElementsByTagName("canvas"),
       filenames;
     for (var i = 0, l = canvas.length; i < l; i++) {
@@ -9949,15 +10148,16 @@
         if (processingSources === null) processingSources = canvas[i].getAttribute("datasrc")
       }
       if (processingSources) {
-        filenames = processingSources.split(" ");
+        filenames = processingSources.split(/\s+/g);
         for (var j = 0; j < filenames.length;) if (filenames[j]) j++;
         else filenames.splice(j, 1);
         loadSketchFromSources(canvas[i], filenames)
       }
     }
-    var scripts = document.getElementsByTagName("script");
-    var s, source, instance;
-    for (s = 0; s < scripts.length; s++) {
+    var s, last, source, instance, nodelist = document.getElementsByTagName("script"),
+      scripts = [];
+    for (s = nodelist.length - 1; s >= 0; s--) scripts.push(nodelist[s]);
+    for (s = 0, last = scripts.length; s < last; s++) {
       var script = scripts[s];
       if (!script.getAttribute) continue;
       var type = script.getAttribute("type");
@@ -9968,7 +10168,7 @@
         else {
           var nextSibling = script.nextSibling;
           while (nextSibling && nextSibling.nodeType !== 1) nextSibling = nextSibling.nextSibling;
-          if (nextSibling.nodeName.toLowerCase() === "canvas") canvas = nextSibling
+          if (nextSibling && nextSibling.nodeName.toLowerCase() === "canvas") canvas = nextSibling
         }
         if (canvas) {
           if (script.getAttribute("src")) {
@@ -9981,6 +10181,10 @@
         }
       }
     }
+  };
+  Processing.reload = function() {
+    if (processingInstances.length > 0) for (var i = processingInstances.length - 1; i >= 0; i--) if (processingInstances[i]) processingInstances[i].exit();
+    init()
   };
   Processing.loadSketchFromSources = loadSketchFromSources;
   Processing.disableInit = function() {
