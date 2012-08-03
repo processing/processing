@@ -4,7 +4,7 @@ window.onload = function () {
     var audioNode = document.getElementsByTagName("audio")[0];
     
     function tryFindSketch () {
-        var sketch = Processing.instances[0];
+        var sketch = Processing.getInstanceById(getProcessingSketchID());
         if ( sketch == undefined )
             setTimeout(tryFindSketch,200); // retry
         else
