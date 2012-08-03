@@ -13,14 +13,12 @@
  *    <video width="480" height="360" style="display:none">
  *        <source src="charmy.mp4" />
  *        <source src="charmy.ogv" />
+ *        <source src="charmy.webm" />
  *    </video>
  */
  
  Video video;
  PImage frame;
- float fSec = 1/25.0;
- int fMillis = int(1000 * fSec);
- int ts = 0;
  
  void setup ()
  {
