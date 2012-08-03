@@ -3,7 +3,7 @@ window.onload = function () {
 }
 
 function tryFindSketch () {
-    var sketch = Processing.instances[0];
+    var sketch = Processing.getInstanceById(getProcessingSketchID());
     if ( sketch == undefined ) return setTimeout(tryFindSketch, 200);
     
     var controller = new Controller(sketch,"form-form");
