@@ -2,6 +2,10 @@
 X switch link() and others to just use java.awt.Desktop classes
 X   also deprecate param, link() with a target, and others
 
+_ smooth() should be the default in 2.0
+_   broken in the recent releases
+_   http://code.google.com/p/processing/issues/detail?id=1157
+
 _ add notes about the new shader setup
 
 fixed in 2.0a7 or earlier
@@ -419,6 +423,8 @@ _   http://www.adobe.com/svg/eol.html
 
 CORE / OpenGL (Andres)
 
+_ hint(DISABLE_PERSPECTIVE_CORRECTED_STROKE)
+_ textureWrap(CLAMP / REPEAT)
 _ first few frames of OpenGL sketches on Windows run slowly
 _   http://dev.processing.org/bugs/show_bug.cgi?id=874
 _ implement setImpl() instead of set() inside PGraphicsOpenGL
