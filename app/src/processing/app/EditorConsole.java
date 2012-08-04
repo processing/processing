@@ -318,14 +318,13 @@ public class EditorConsole extends JScrollPane {
         } catch (IOException e) { }  // just ignore, where would we write?
       }
 
-      OutputStream echo = err ? stderrFile : stdoutFile;
+      final OutputStream echo = err ? stderrFile : stdoutFile;
       if (echo != null) {
         try {
           echo.write(b, offset, length);
           echo.flush();
         } catch (IOException e) {
           e.printStackTrace();
-          echo = null;
         }
       }
     }

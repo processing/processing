@@ -17,6 +17,14 @@ X add warning message about using serial on OS X
 X   check on other serial issues, this may fix them
 X   http://code.google.com/p/processing/issues/detail?id=944
 X   http://code.google.com/p/processing/issues/detail?id=937
+X double-click immediately closes example folder (Windows? Linux)
+X   http://code.google.com/p/processing/issues/detail?id=1150
+X work on making GSOC stuff work better with unpatched editor
+X   currently using createTextArea() hack inside Editor
+o make better version of the windows launcher for debugging
+X add code for setting the L&F from the prefs file for linux
+o strange window flicker when first opened
+X   not seen since rolling back canvas changes
 
 cleaning
 o switching into present mode in info.plist
@@ -33,40 +41,29 @@ so perhaps conflicting versions of a library in the sketchbook (solve
 this by setting to an empty sketchbook temporarily) or files might be
 installed in the CLASSPATH variable or something conflicting in
 /System/Library/Extensions. 
-
-earlier
+F add processing.js export tool from florian
+F   http://github.com/fjenett/processingjstool/
+F   http://github.com/fjenett/processingjstool/zipball/v0.0.6
 X the word from Apple on Info.plist setup
 X   DO NOT USE "JVMArchs". It is deprecated, and manually overrides the natural architecture launching and ordering that LaunchServices does, including accommodating the 32-bit checkbox in the Get Info window.
-
-_ figure out why modes are not loading classes properly
-
-_ First doubleclick immediately closes example folder (Windows? Linux)
-_   http://code.google.com/p/processing/issues/detail?id=1150
-
-with casey
-_ does editor.bgcolor live in the theme.txt file for the mode? 
-_   or should it be a user preference thing
-_   for that matter, need to decide on how much modes can customize themselves
-_ find in reference for copy() (on image) tries to open PVector.copy()
-_   might need disambiguation pages?
-_   if a reference page is missing, throws a bunch of exceptions
-_   i.e. PVector.copy() not in the reference
-_ specifically add "eclipse" to integration description
-_ link books and sample chapters from the "getting started" portion of the faq
-_ keep examples.zip in a zip file? (5000 files @ 30 MB instead of 15 MB zip)
-_   mark examples as untitled (rather than read-only)
-_   maybe even pull these directly from the zip file?
-_ load examples from zip files
-_   http://code.google.com/p/processing/issues/detail?id=143
-_ disallow add file to sketch, export, export application
-_   pretty much anything inside the sketch?
-_   but don't do this with untitled, cuz it kinda stinks
-_   this is too weird--just put examples into individual zip files
-_   mark example files as untitled
-_   though will that require the sketch to be saved before export?
+o closing this bug, because we'll be replacing the current video library with another sometime later this year. as such, i won't be doing any more bug fixes on the current video library. in the meantime, we recommend using gsvideo, opencv, or one of the other video libraries that are available.
+o setting files executable on export:
+o   http://java.sun.com/javase/6/docs/api/java/io/File.html#setExecutable(boolean,%20boolean)
+o specifically add "eclipse" to integration description
+o link books and sample chapters from the "getting started" portion of the faq
+o if export fails (compile error) need to un-highlight the export button
+o   http://dev.processing.org/bugs/show_bug.cgi?id=39
 
 
-2.0 / command line
+PDE / Find & Replace
+
+_ implement find & replace over multiple tabs 
+_   http://code.google.com/p/processing/issues/detail?id=25
+_ find across all tabs (jer request)
+_   http://code.google.com/p/processing/issues/detail?id=25
+
+
+2.0 FINAL / command line
 _ kill external editor (for all its quirks) in favor of command line? 
 _   use external editor needs to enable/disable across all windows
 _   http://code.google.com/p/processing/issues/detail?id=515
@@ -88,6 +85,19 @@ _   need to deal with setting path to sketchbook/examples
 _   also deal with the script not being in the right folder
 
 
+2.0 FINAL / library/tool/mode manager cleanup
+_ excessive CPU usage of PDE after using library manager
+_   http://code.google.com/p/processing/issues/detail?id=1036
+_ very slow startup on OS X (library manager et al?)
+_   if not, move to OS X dist list
+
+
+2.0 FINAL / new interface
+_ editor.bgcolor probably moves out of the theme.txt file for the mode
+_   or should it be a user preference thing
+_   for that matter, need to decide on how much modes can customize themselves
+
+
 more open/save/etc
 _ blank sketch opened even if another opened by double-click
 _   http://code.google.com/p/processing/issues/detail?id=179
@@ -104,14 +114,10 @@ _   restrict more things like "show sketch folder"
 _   don't allow adding files w/o saving
 _   others?
 
-_ work on making GSOC stuff work better with unpatched editor
-_   currently using createTextArea() hack inside Editor
+_ figure out why modes are not loading classes properly
 
 _ change syntax highlighting so it differentiates keyPressed and keyPressed()
 _ syntax highlight with parens also helps "String line" vs "line()"
-
-_ excessive CPU usage of PDE after using library manager
-_   http://code.google.com/p/processing/issues/detail?id=1036
 
 _ undo seems to not be going to the right location (now with example)
 _   http://code.google.com/p/processing/issues/detail?id=668
@@ -119,85 +125,19 @@ _   http://code.google.com/p/processing/issues/detail?id=668
 _ bad tool brings down the environment
 _   http://code.google.com/p/processing/issues/detail?id=798
 
-_ update the build instructions page
-_   http://code.google.com/p/processing/wiki/BuildInstructions
-_ sketch.isReadOnly returns false for examples coming from multiple modes
-_   http://code.google.com/p/processing/issues/detail?id=734
-
-_ play button (and others) no longer highlighting
-_   http://code.google.com/p/processing/issues/detail?id=688
-
-frequent requests/projects
-_ nurbs or other architecture stuff
-_ force indentation - implement an option for beginners especially
-_ indents and loops
-_   or make the area light up gray as it's being worked on
-_ common error messages
-_   with a proper list, we can add links when throwing an error in the PDE
-
-_ write up code guidelines for project (in advance of GSoC)
-_ write up guidelines for modes
-_   i.e. don't mess with Sketch menu, put it in the mode menu
-
-export/launcher
-_ use launch4j for export and p5 app itself
-_   perhaps even calling it through an ant task
-_ switch the exported launcher to use launch4j as well? 
-_ better exe export.. maybe using jexegen or launch4j
-_ use launch4j when exporting applications for windows
-_ windows exported exe problems (pcho)
-_   unexplainable problems with apps not starting up
-_ lib folder goes missing from export, give an error
-_   also any .jar files that are missing, give an error
-_   showing more debug messages (command line?)
-
-_ build is currently broken for fresh checkout due to changes to file layout
-_   something that gets fixed by 'make clean'
-_   also test on windows and linux
-
 _ errors that cannot be placed (i.e. missing brace) 
 _   this makes things to jump to the last tab
 _   also happens with stray characters sometimes...
 _   casey: accidentally typing a letter at the top of the tab
 _     throws you onto the end of the last tab... exactly the worst location
-_ jer: omitting a semicolon shows the error on the line after it...
-_ find across all tabs (jer request)
-_   http://code.google.com/p/processing/issues/detail?id=25
 
-reference/examples
-_ import p5 reference into the javadoc
-_ local web server to run reference from .zip?
-_   no more gazillion file nastiness
-_ add notes to build instructions re: building core with eclipse
-_ yahoo search example is out of date (included in the examples? the book?)
-_ document the move of the auto format menu
-_   in the book(s)? in the reference?
-_ improve documentation of the pdf stuff
-_   be clearer about the font setup stuff
-_   fonts by default not working that well?
-_ jer: opengl2 tutorial
-_ jer: android tutorial
-_ probably later: examples into categories based on difficulty
-_   add ratings/difficult level to examples online and in the pde
-_ go through examples, figure out how to do many on the site w/ js instead
-_ colors/design for 2.0
-
-gsoc
-_ "install library" menu option
-_ see how library installation goes, then possibly do same w/ examples
-
-_ Internationalization
-_   http://code.google.com/p/processing/issues/detail?id=593
-_ l10n, i18n of environment/core - arduino pushing on this one
 
 regressions
-_ strange window flicker when first opened
 _ test libraries on android
 _ test .java files on desktop version
 
 _ when creating a sketch within non-java mode, should write the settings file
 _   so that it re-loads in the proper environment
-_ examples window sketches should load in proper environment
 
 ugliness
 _ inside AndroidPreprocessor
@@ -213,7 +153,6 @@ _   is editable in use?
 _   what's electricScroll?
 _   caretBlinks always true.. just remove the pref?
 _   blockCaret always false.. remove it?
-_ EditorToolbar, two TODO items for open menu handling
 
 blob of mess
 _ modes have their own methods for digging through sketch & libraries folders
@@ -227,12 +166,8 @@ _ idea of examples, libraries, reference built into the base system
 _ look through web/java_generate to see how the doc stuff works
 _ work through andres' pshape changes to smooth things out
 _ post videos online of the android work
-_ don't make examples read-only
-_   just do them from psk files
 
 http://stackoverflow.com/questions/1611357/how-to-make-a-jar-file-that-include-dll-files
-
-_ p5 assets need to be licensed differently from the source
 
 
 libraries
@@ -283,11 +218,7 @@ _ clear up prefs so that multiple editors don't trash each other's prefs
 _ make sure editor isn't trying to apply prefs when no editor is open
 _   (on mac os x, due to the change for no windows open)
 
-_ how to handle double-clicked files on windows?
-_   big deal for psk and others
 
-
-. . . . 
 
 protected void finalize() throws Throwable {
     try {
@@ -304,28 +235,15 @@ protected void finalize() throws Throwable {
 _ not properly revving the version numbers in releases in the .app file
 _   figure out a better way to do this automatically during build
 
-_ add processing.js export tool from florian
-_   http://github.com/fjenett/processingjstool/
-_   http://github.com/fjenett/processingjstool/zipball/v0.0.6
-
 _ Input Method support (for Japanese et al.) has been disabled
 _   http://code.google.com/p/processing/issues/detail?id=526
 
 _ fix line endings in revisions.txt for windows
 
-closing this bug, because we'll be replacing the current video library with another sometime later this year. as such, i won't be doing any more bug fixes on the current video library. in the meantime, we recommend using gsvideo, opencv, or one of the other video libraries that are available.
-
 _ create default tools folder (just like libraries)
 
-_ finish new build instructions
-_   update build/howto.txt (of course) because it says no ant
-_   this would also mean requiring a java installation for building
-
-_ simple prefs implementation to set key/value pairs using a JTable
 _ the .macosx, .linux, etc prefs should be stripped
 _   only use them on first load, and merge into preferences.txt
-
-_ write build.xml file to automatically update the examples
 
 _ error that sketch is read-only can't be canceled
 _   hitting cancel (or ESC?) still brings up the save dialog
@@ -387,11 +305,6 @@ _   http://code.google.com/p/processing/issues/detail?id=185
 _   list of license issues
 _   http://code.google.com/p/processing/issues/detail?id=575
 
-_ need an "install library" option to deal with urls.. oy
-_ proper libraries warning dialog
-_   check if libraries folder does not exist
-_   check to see if other libraries are installed
-_   warn user about moving libraries and restarting
 
 _ deleting open sketch (with only one window) attempts to quit
 _   (and still deletes, but doesn't close, even if quitting is canceled)
@@ -402,18 +315,8 @@ _   or shut them off if they don't want to
 _   also need to explain exception handling in general
 _   http://code.google.com/p/processing/issues/detail?id=183
 
-_ add code for setting the l&f from the prefs file for linux
-
-_ npe if library is removed before compile
-_   always check library folders to make sure they're still valid
-
-_ setting files executable on export:
-_   http://java.sun.com/javase/6/docs/api/java/io/File.html#setExecutable(boolean,%20boolean)
-
 _ update license info to state gplv2 not v3
 _   also need to add license info for all the projects in there
-
-_ make better version of the windows launcher for debugging
 
 _ can't rename a .pde file as a .java file
 _ shift-tab with no selection should go back two spaces
@@ -472,14 +375,43 @@ _ document how to add libraries: put in sketchbook (not libraries folder)
 _ library/download.url and library/home.url
 _ if there's a reference subfolder, add that to the help menu
 o   and enable it for "find in reference"
-X   nice idea but too error-prone
+X     nice idea but too error-prone
+_ need an "install library" option to deal with urls.. oy
+_ proper libraries warning dialog
+_   check if libraries folder does not exist
+_   check to see if other libraries are installed
+_   warn user about moving libraries and restarting
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+DOC / Mess
+
+_ find in reference for copy() (on image) tries to open PVector.copy()
+_   might need disambiguation pages?
+_   if a reference page is missing, throws a bunch of exceptions
+_   i.e. PVector.copy() not in the reference
+_ import p5 reference into the javadoc
+_ local web server to run reference from .zip?
+_   no more gazillion file nastiness
+_ yahoo search example is out of date (included in the examples? the book?)
+_ document the move of the auto format menu
+_   in the book(s)? in the reference?
+_ improve documentation of the pdf stuff
+_   be clearer about the font setup stuff
+_   fonts by default not working that well?
+_ jer: opengl2 tutorial
+_ jer: android tutorial
+_ probably later: examples into categories based on difficulty
+_   add ratings/difficult level to examples online and in the pde
+_ go through examples, figure out how to do many on the site w/ js instead
+
+
 DOC / Write Me
 
+_ common error messages
+_   with a proper list, we can add links when throwing an error in the PDE
 _ stop() to shut down a sketch (but not quit/close window)
 _   actually pause/resume
 _ MIN_FLOAT, MAX_FLOAT, also the difference from the Java functions
@@ -715,6 +647,9 @@ _ Improve detection and handling of missing semicolons
 _   http://code.google.com/p/processing/issues/detail?id=136
 
 medium (bugs/features)
+_ omitting a semicolon shows the error on the line after it
+_ npe if library is removed before compile
+_   always check library folders to make sure they're still valid
 _ mismatched square brackets generate bizarre and/or misleading error messages
 _   http://code.google.com/p/processing/issues/detail?id=355
 _ with additional .pde files, don't allow static mode in front tab
@@ -808,20 +743,20 @@ _ problems with file/print
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1230
 
 
-PDE / Editor Buttons
+PDE / Editor Toolbar (Buttons)
 
-_ run button not properly unhighlighting
+_ play button (and others) no longer highlighting
+_   http://code.google.com/p/processing/issues/detail?id=688
+_   run button not properly unhighlighting
 _   does it unhighlight after compile or runtime errors?
 _   also when using draw() instead of loop()
 _     applet needs to notify runner that it has terminated
-_   http://dev.processing.org/bugs/show_bug.cgi?id=38
 _   check 'finished' via objectreference?
-_ make the run button highlight immediately
+_ show compiling/startup animation after clicking run
 _   or maybe show an animation for starting up
 _   rather than post-compile
-_   http://dev.processing.org/bugs/show_bug.cgi?id=776
-_ if export fails (compile error) need to un-highlight the export button
-_   http://dev.processing.org/bugs/show_bug.cgi?id=39
+_   http://code.google.com/p/processing/issues/detail?id=97
+_ EditorToolbar has two TODO items for open menu handling
 
 
 PDE / Editor Header
@@ -829,6 +764,8 @@ PDE / Editor Header
 _ key command for prev/next tab works, but not menu
 _   menu options are actually disabled because of inconsistency
 _   http://code.google.com/p/processing/issues/detail?id=140
+_ ctrl/ctrl-shift-n sometimes stops working
+_   http://code.google.com/p/processing/issues/detail?id=149
 
 
 PDE / Editor Status
@@ -848,6 +785,12 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=59
 
 PDE / Export
 
+_ use launch4j for export and p5 app itself
+_   perhaps even calling it through an ant task
+_   windows exported exe problems (pcho)
+_ if the lib folder goes missing from export, give an error
+_   also any .jar files that are missing, give an error
+_   showing more debug messages (command line?)
 _ when exporting to application (or applet) don't copy .java files from folder
 _   (they'll be copied as source files later)
 _   make .java files and friends go to correct locations on export (app)
@@ -864,14 +807,31 @@ _ exporting application copies .java files
 _   .java files are copied to the root folder as well as the source folder
 
 
-PDE / Find & Replace
+PDE / Examples
 
-_ allowing to find & replace over multiple tabs 
-_   http://code.google.com/p/processing/issues/detail?id=25
+_ keep examples.zip in a zip file? (5000 files @ 30 MB instead of 15 MB zip)
+_   mark examples as untitled (rather than read-only)
+_   maybe even pull these directly from the zip file?
+_ load examples from zip files
+_   http://code.google.com/p/processing/issues/detail?id=143
+_ disallow add file to sketch, export, export application
+_   pretty much anything inside the sketch?
+_   but don't do this with untitled, cuz it kinda stinks
+_   this is too weird--just put examples into individual zip files
+_   mark example files as untitled
+_   though will that require the sketch to be saved before export?
+_ examples window sketches should load in proper environment
+_ write build.xml file to automatically update the examples
+_ don't make examples read-only
+_   just do them from psk files
+_ sketch.isReadOnly returns false for examples coming from multiple modes
+_   http://code.google.com/p/processing/issues/detail?id=734
+_ see how library installation goes, then possibly do same w/ examples
 
 
 PDE / Preferences
 
+_ simple prefs implementation to set key/value pairs using a JTable
 _ separate prefs and sketch state info?
 _   this would mean prefs being rewritten far less
 _ prefs window doesn't swap ok/cancel properly for mac vs. windows/linux
@@ -1039,6 +999,7 @@ _   set the 'tabs' var based on how many spaces on previous line
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1087227217
 
 
+
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
@@ -1117,6 +1078,8 @@ DIST / Windows
 _ exe instead of bat to make exported apps run in 64-bit
 _   http://code.google.com/p/processing/issues/detail?id=885
 _   might not be necessary with new launch4j!
+_ how to handle double-clicked files on windows?
+_   big deal for psk and others
 _ Update Windows icons for multiple sizes, implement them in the PDE
 _   http://code.google.com/p/processing/issues/detail?id=632
 _ problem with associating .pde files 
@@ -1136,7 +1099,6 @@ _ look into LCD rendering problems w/ Java (see if Lion still a problem)
 _   fonts were showing up with very different fatness
 _ check on new JDK and how it works on OS X
 _   http://jdk7.java.net/macportpreview/
-_ very slow startup on OS X (library manager et al?)
 _ retina support
 Have you added an NSPrincipalClass to your Info.plist, and are using a JavaApplicationStub with 64-bit?
 <key>NSPrincipalClass</key>
@@ -1195,8 +1157,48 @@ _   argh.. more path and shell issues..
 _ splash screen
 
 
-3.0 and later
 
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+
+
+DEVELOP
+
+Things to fix on the source code side of things.
+
+
+_ Internationalization
+_   http://code.google.com/p/processing/issues/detail?id=593
+_   l10n, i18n of environment/core - Arduino pushing on this one
+_ write up code guidelines for project
+_   make proper Eclipse style prefs to reinforce
+_ write up guidelines for modes
+_   i.e. don't mess with Sketch menu, put it in the mode menu
+_ add notes to build instructions re: building core with eclipse
+_ update the build instructions page
+_   http://code.google.com/p/processing/wiki/BuildInstructions
+_ build is currently broken for fresh checkout due to changes to file layout
+_   something that gets fixed by 'make clean'
+_   also test on windows and linux
+_ p5 assets need to be licensed differently from the source
+
+
+
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+
+
+FUTURE 
+
+Notes for 3.0 (and later).
+
+
+_ nurbs or other architecture stuff
+_ force indentation - implement an option for beginners especially
+_ indents and loops
+_   or make the area light up gray as it's being worked on
 _ Replace current editor with more advanced version
 _   http://code.google.com/p/processing/issues/detail?id=1032
 _ better text editor / live debugging (integrate Eclipse JDT)
