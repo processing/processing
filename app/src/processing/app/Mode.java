@@ -575,16 +575,6 @@ public abstract class Mode {
             if (node != null && node.isLeaf()) {
               SketchReference sketch = (SketchReference) node.getUserObject();
               base.handleOpen(sketch.getPath());
-            } else {
-              int selRow = tree.getRowForLocation(e.getX(), e.getY());
-              TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
-              if (selRow != -1) {
-                if (tree.isExpanded(selRow)) {
-                  tree.collapsePath(selPath);
-                } else {
-                  tree.expandPath(selPath);
-                }
-              }
             }
           }
         }
@@ -608,6 +598,7 @@ public abstract class Mode {
       });
 
       tree.setBorder(new EmptyBorder(5, 5, 5, 5));
+      tree.setToggleClickCount(1);
       JScrollPane treePane = new JScrollPane(tree);
       treePane.setPreferredSize(new Dimension(250, 450));
       treePane.setBorder(new EmptyBorder(0, 0, 0, 0));
