@@ -11,8 +11,12 @@ o   instead of "show sketch folder" method, use:
 The com.apple.eio.FileManager now has two new desktop interaction methods, revealInFinder(File) and moveToTrash(File). You can use revealInFinder() to open a Finder window in the parent directory of of a file and select it. You can use moveToTrash() to move a file to the most appropriate Trash directory for the volume that contains that file. 
 X added 64-bit RXTX for Mac OS X
 X   http://blog.iharder.net/2009/08/18/rxtx-java-6-and-librxtxserial-jnilib-on-intel-mac-os-x/
+X bufferUntil() with values above 127 do not work properly
+X   http://code.google.com/p/processing/issues/detail?id=1079
 X add warning message about using serial on OS X
-_   check on other serial issues, this may fix them
+X   check on other serial issues, this may fix them
+X   http://code.google.com/p/processing/issues/detail?id=944
+X   http://code.google.com/p/processing/issues/detail?id=937
 
 cleaning
 o switching into present mode in info.plist

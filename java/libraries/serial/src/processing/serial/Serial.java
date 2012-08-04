@@ -68,7 +68,7 @@ public class Serial implements SerialPortEventListener {
   //boolean bufferUntil = false;
   int bufferSize = 1;  // how big before reset or event firing
   boolean bufferUntil;
-  int bufferUntilByte;
+  byte bufferUntilByte;
 
 
   // defaults
@@ -306,7 +306,7 @@ public class Serial implements SerialPortEventListener {
    */
   public void bufferUntil(int what) {
     bufferUntil = true;
-    bufferUntilByte = what;
+    bufferUntilByte = (byte) what;
   }
 
 
