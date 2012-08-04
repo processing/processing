@@ -9,15 +9,35 @@ X   with java.awt.Desktop.browse() and java.awt.Desktop.open()
 X   causes a deprecation warning whenever building on osx
 o   instead of "show sketch folder" method, use:
 The com.apple.eio.FileManager now has two new desktop interaction methods, revealInFinder(File) and moveToTrash(File). You can use revealInFinder() to open a Finder window in the parent directory of of a file and select it. You can use moveToTrash() to move a file to the most appropriate Trash directory for the volume that contains that file. 
+X added 64-bit RXTX for Mac OS X
+X   http://blog.iharder.net/2009/08/18/rxtx-java-6-and-librxtxserial-jnilib-on-intel-mac-os-x/
+X add warning message about using serial on OS X
+_   check on other serial issues, this may fix them
 
-_ First doubleclick immediately closes example folder
-_   http://code.google.com/p/processing/issues/detail?id=1150
+cleaning
+o switching into present mode in info.plist
+o        <key>LSUIPresentationMode</key>
+o        <integer>4</integer> 
+o errors with serial and libraries
+Exception in thread "Thread-2" java.lang.NoClassDefFoundError:
+processing/core/PApplet
+    at processing.serial.Serial.<init>(Serial.java:156) 
+generally, that error means that something is missing from the
+CLASSPATH. the NoClassDefError gives erroneous feedback about *what*
+class is actually missing, as of java 1.3+ (yay!)
+so perhaps conflicting versions of a library in the sketchbook (solve
+this by setting to an empty sketchbook temporarily) or files might be
+installed in the CLASSPATH variable or something conflicting in
+/System/Library/Extensions. 
 
 earlier
 X the word from Apple on Info.plist setup
 X   DO NOT USE "JVMArchs". It is deprecated, and manually overrides the natural architecture launching and ordering that LaunchServices does, including accommodating the 32-bit checkbox in the Get Info window.
 
-http://code.google.com/p/processing/issues/list?can=2&q=owner%3Afry%40processing.org+Type%3ADefect&colspec=Stars+ID+Type+Status+Priority+Owner+Summary&cells=tiles
+_ figure out why modes are not loading classes properly
+
+_ First doubleclick immediately closes example folder
+_   http://code.google.com/p/processing/issues/detail?id=1150
 
 with casey
 _ does editor.bgcolor live in the theme.txt file for the mode? 
@@ -139,8 +159,6 @@ _     throws you onto the end of the last tab... exactly the worst location
 _ jer: omitting a semicolon shows the error on the line after it...
 _ find across all tabs (jer request)
 _   http://code.google.com/p/processing/issues/detail?id=25
-_ serial still causing problems on OS X
-_   http://code.google.com/p/processing/issues/detail?id=52
 
 reference/examples
 _ import p5 reference into the javadoc
@@ -459,6 +477,7 @@ X   nice idea but too error-prone
 DOC / Write Me
 
 _ stop() to shut down a sketch (but not quit/close window)
+_   actually pause/resume
 _ MIN_FLOAT, MAX_FLOAT, also the difference from the Java functions
 _   also MIN_INT and MAX_INT, even though those are more similar
 _ update the reference to cover parseXxxx() stuff
@@ -489,31 +508,14 @@ An unexpected error has been detected by HotSpot Virtual Machine:
 # EXCEPTION_ACCESS_VIOLATION
 all i can do is find things that might trigger them, but it's more likely
 than not to be a java problem, and not something that can be fixed
-_ explanation of we see libraries on desktop
+_ explanation of how we see libraries in the PDE
 _   We're making an assumption that the idea of a "library" refers to a block of Java-based code. The reasoning is that from within the PDE, we anticipate that it will be Java-compatible versions of other languages (such as Jython, JRuby, or Scala) as opposed to more generic languages. In the future we could open this up, but we'd rather not complicate things for the moment.
-
 _ add to troubleshooting
-_   problem with big floats:
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1061302380
-_   problem with small floats:
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Programs;action=display;num=1115500448
-_ consoleXxxx and untitledXxxx folders in /tmp
+_   problem with big floats: http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1061302380
+_   problem with small floats: http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Programs;action=display;num=1115500448
+_ console stored in prefs location
 _   console may be useful for debugging
 _ untitled folders are stored in temp folder
-_ switching into present mode in info.plist
-        <key>LSUIPresentationMode</key>
-        <integer>4</integer> 
-_ errors with serial and libraries
-Exception in thread "Thread-2" java.lang.NoClassDefFoundError:
-processing/core/PApplet
-    at processing.serial.Serial.<init>(Serial.java:156) 
-generally, that error means that something is missing from the
-CLASSPATH. the NoClassDefError gives erroneous feedback about *what*
-class is actually missing, as of java 1.3+ (yay!)
-so perhaps conflicting versions of a library in the sketchbook (solve
-this by setting to an empty sketchbook temporarily) or files might be
-installed in the CLASSPATH variable or something conflicting in
-/System/Library/Extensions. 
 
 
 DOC / Text
@@ -1053,6 +1055,9 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=1345
 
 LIBRARIES / Serial
 
+_ check on 64-bit RXTX libraries in the Arduino downloads
+_ serial still causing problems on OS X
+_   http://code.google.com/p/processing/issues/detail?id=52
 _ serial ports missing from list
 _   http://code.google.com/p/processing/issues/detail?id=52
 _ Serial.write problem with Bluetooth SPP virtual serial port 
@@ -1123,6 +1128,8 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=1567
 
 DIST / Mac OS X
 
+_ look into LCD rendering problems w/ Java (see if Lion still a problem)
+_   fonts were showing up with very different fatness
 _ check on new JDK and how it works on OS X
 _   http://jdk7.java.net/macportpreview/
 _ very slow startup on OS X (library manager et al?)
