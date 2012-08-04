@@ -40,7 +40,7 @@ X   DO NOT USE "JVMArchs". It is deprecated, and manually overrides the natural 
 
 _ figure out why modes are not loading classes properly
 
-_ First doubleclick immediately closes example folder
+_ First doubleclick immediately closes example folder (Windows? Linux)
 _   http://code.google.com/p/processing/issues/detail?id=1150
 
 with casey
