@@ -99,7 +99,7 @@ public class Serial implements SerialPortEventListener {
   public Serial(PApplet parent) {
     this(parent, dname, drate, dparity, ddatabits, dstopbits);
   }
-  
+
 /**
  * @param irate 9600 is the default
  */
@@ -128,6 +128,23 @@ public class Serial implements SerialPortEventListener {
     //if (port != null) port.close();
     this.parent = parent;
     //parent.attach(this);
+
+    // On OS X, make sure the lock folder needed by RXTX is present
+    if (PApplet.platform == PConstants.MACOSX) {
+      File lockFolder = new File("/var/lock");
+      if (!lockFolder.exists() ||
+          !lockFolder.canRead() ||
+          !lockFolder.canWrite() ||
+          !lockFolder.canExecute()) {
+        final String MESSAGE =
+          "To use the serial library, first open\n" +
+          "Applications -> Utilities -> Terminal.app\n" +
+          "and enter the following:\n" +
+          "sudo mkdir -p /var/lock\n" +
+          "sudo chmod 777 /var/lock";
+        System.err.println(MESSAGE);
+      }
+    }
 
     this.rate = irate;
 
@@ -376,7 +393,7 @@ public class Serial implements SerialPortEventListener {
 
 
   /**
-   * @generate Serial_readBytes.xml 
+   * @generate Serial_readBytes.xml
    * @webref serial:serial
    * @usage web_application
    */
@@ -587,7 +604,7 @@ public class Serial implements SerialPortEventListener {
    * If this just hangs and never completes on Windows,
    * it may be because the DLL doesn't have its exec bit set.
    * Why the hell that'd be the case, who knows.
-   * 
+   *
    * @webref serial
    * @usage web_application
    */
