@@ -1,11 +1,52 @@
 0207 android 
+X lots of cleanup on this todo list
+X Support Native Code in Libraries for Android (includes fix)
+X   http://code.google.com/p/processing/issues/detail?id=1117
+_   patch from m4rlonj
+
+
+cleaning/earlier
+X exceptions with StreamPump and adb devices on osx and linux
+X   http://code.google.com/p/processing/issues/detail?id=252
+o   when starting the emulator, the adb server gets reset
+o   then it causes this exception, which kills the thread waiting for input
+o   so another reset is necessary
+Exception in thread "StreamPump 49" java.lang.RuntimeException: Inside processing.app.exec.StreamPump@1ebe8ec for out: adb devices
+	at processing.app.exec.StreamPump.run(StreamPump.java:82)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:637)
+Caused by: java.io.IOException: Stream closed
+	at java.io.BufferedInputStream.getBufIfOpen(BufferedInputStream.java:145)
+	at java.io.BufferedInputStream.read1(BufferedInputStream.java:255)
+	at java.io.BufferedInputStream.read(BufferedInputStream.java:317)
+	at sun.nio.cs.StreamDecoder.readBytes(StreamDecoder.java:264)
+	at sun.nio.cs.StreamDecoder.implRead(StreamDecoder.java:306)
+	at sun.nio.cs.StreamDecoder.read(StreamDecoder.java:158)
+	at java.io.InputStreamReader.read(InputStreamReader.java:167)
+	at java.io.BufferedReader.fill(BufferedReader.java:136)
+	at java.io.BufferedReader.readLine(BufferedReader.java:299)
+	at java.io.BufferedReader.readLine(BufferedReader.java:362)
+	at processing.app.exec.StreamPump.run(StreamPump.java:71)
+	... 3 more
+X when returning to the application after link(), screen stays blank
+X   http://code.google.com/p/processing/issues/detail?id=237
+X   fixed in 0195
+X remove various debug messages on the console
+X   right now, there are too many places where errors occur
+X   http://code.google.com/p/processing/issues/detail?id=204
+J only send error text to System.err (i.e. "Launching emulator" is not an error)
+J   send these debug log messages to System.out
+o "Sketch started on emulator" in spite of the emulator only halfway booted
+o   sent email about this one
+o additional manifest gui necessary:
+X   icons are apparently important, android:icon
+X   http://developer.android.com/guide/practices/ui_guidelines/icon_design.html
+
 
 _ inside AndroidPreprocessor
 _   processing.mode.java.JavaBuild.scrubComments(sketch.getCode(0).getProgram())
 _   PApplet.match(scrubbed, processing.mode.java.JavaBuild.SIZE_REGEX);
-
-_ Support Native Code in Libraries for Android (includes fix)
-_   http://code.google.com/p/processing/issues/detail?id=1117
 
 _ test libraries on android
 
@@ -149,34 +190,6 @@ _ change run/present/export/export application names in the menus
 
 _ throw an error if a file in the 'data' dir ends with .gz
 
-P1 _ exceptions with StreamPump and adb devices on osx and linux
-P1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1545
-P1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1527
-P1 _   when starting the emulator, the adb server gets reset
-P1 _   then it causes this exception, which kills the thread waiting for input
-P1 _   so another reset is necessary
-Exception in thread "StreamPump 49" java.lang.RuntimeException: Inside processing.app.exec.StreamPump@1ebe8ec for out: adb devices
-	at processing.app.exec.StreamPump.run(StreamPump.java:82)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
-	at java.lang.Thread.run(Thread.java:637)
-Caused by: java.io.IOException: Stream closed
-	at java.io.BufferedInputStream.getBufIfOpen(BufferedInputStream.java:145)
-	at java.io.BufferedInputStream.read1(BufferedInputStream.java:255)
-	at java.io.BufferedInputStream.read(BufferedInputStream.java:317)
-	at sun.nio.cs.StreamDecoder.readBytes(StreamDecoder.java:264)
-	at sun.nio.cs.StreamDecoder.implRead(StreamDecoder.java:306)
-	at sun.nio.cs.StreamDecoder.read(StreamDecoder.java:158)
-	at java.io.InputStreamReader.read(InputStreamReader.java:167)
-	at java.io.BufferedReader.fill(BufferedReader.java:136)
-	at java.io.BufferedReader.readLine(BufferedReader.java:299)
-	at java.io.BufferedReader.readLine(BufferedReader.java:362)
-	at processing.app.exec.StreamPump.run(StreamPump.java:71)
-	... 3 more
-
-_ additional manifest gui necessary:
-X   icons are apparently important, android:icon
-X   http://developer.android.com/guide/practices/ui_guidelines/icon_design.html
 _ on export (application)
 _   increment manifest/android:versionCode each time 'export' is called
 _   Remove the android:debuggable="true" attribute from <application>
@@ -185,10 +198,9 @@ _ setting the default package: manifest/package
 _ application/android:label
 _   used on home screen, manage applications, my downloads, etc
 _ http://developer.android.com/guide/publishing/preparing.html
-P1 _ implement certificates (self-signed) for distribution
-P1 _   http://developer.android.com/guide/publishing/app-signing.html
-P1 _   http://dev.processing.org/bugs/show_bug.cgi?id=1430
-P1 _   http://code.google.com/p/processing/issues/detail?id=222
+_ implement certificates (self-signed) for distribution
+_   http://developer.android.com/guide/publishing/app-signing.html
+_   http://code.google.com/p/processing/issues/detail?id=222
 create new keystore
 location: [   ] (browse)
 password: [   ]
@@ -229,52 +241,42 @@ P3 would like to fix before final release
 P4 not an immediate need, but very nice to have
 P5 nice to have
 
-android bugs, sorted by priority
-http://dev.processing.org/bugs/buglist.cgi?bug_status=&field0-0-0=product&type0-0-0=substring&value0-0-0=android&field0-0-1=component&type0-0-1=substring&value0-0-1=android&field0-0-2=short_desc&type0-0-2=substring&value0-0-2=android&field0-0-3=status_whiteboard&type0-0-3=substring&value0-0-3=android&query_format=advanced&order=bugs.priority,bugs.bug_status%2Cbugs.bug_id&query_based_on=
-
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
 CORE (PApplet, P2D et al)
 
-P2 _ too many temporary objects (particularly w/ color) created with A2D
-P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1399
+_ too many temporary objects (particularly w/ color) created with A2D
+_ http://code.google.com/p/processing/issues/detail?id=213
 
-P3 _ mouseClicked() is currently missing
-P3 _   implement tap methods to handle mouseClicked() 
-P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1406
-P3 _ check on multiple pointers and multi-touch
-P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1491
+_ mouseClicked() is currently missing
+_   implement tap methods to handle mouseClicked() 
+_   http://code.google.com/p/processing/issues/detail?id=215
+_ check on multiple pointers and multi-touch
+_   http://code.google.com/p/processing/issues/detail?id=243
 
-P4 _ when returning to the application after link(), screen stays blank
-P4 _   http://dev.processing.org/bugs/show_bug.cgi?id=1484
 P4 _ excessive rotation of application causes memory to run out
 P4 _   this probably means that some memory isn't being freed that should be
 P4 _   new window and surfaceview objects are being created in onCreate
 P4 _     so they should probably be taken down in onDestroy.. but how?
-P4 _   http://dev.processing.org/bugs/show_bug.cgi?id=1480
+P4 _   http://code.google.com/p/processing/issues/detail?id=235
 P4 _ values for pmouseX/Y aren't great
 P4 _   Examples > Topics > Drawing > Continuous Lines shows gaps
-P4 _   http://dev.processing.org/bugs/show_bug.cgi?id=1486
+P4 _   http://code.google.com/p/processing/issues/detail?id=238
 
 P5 _ Examples > Topics > Effects > Lens uses a ton of memory
 P5 _ resize() needs to use the android resize stuff
 P5 _   right now using the rather than expensive copy()
 P5 _   instead, create a new resized bitmap, and get rid of pixels[]
-P5 _   http://dev.processing.org/bugs/show_bug.cgi?id=1487
+P5 _   http://code.google.com/p/processing/issues/detail?id=239
 P5 _ should alpha PImage stuff use a non-4byte config?
-P5 _   http://dev.processing.org/bugs/show_bug.cgi?id=1490
+P5 _   http://code.google.com/p/processing/issues/detail?id=242
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
 TOOLS 
-
-J only send error text to System.err (i.e. "Launching emulator" is not an error)
-J   send these debug log messages to System.out
-o "Sketch started on emulator" in spite of the emulator only halfway booted
-o   sent email about this one
 
 _ errors in ActivityManager aren't coming through
 _ if AVD is deleted while processing still running, things flake out
@@ -310,14 +312,10 @@ P2 _ move the android tools into its own source package in SVN
 P2 _   started, but needs proper Tool or Mode packaging
 P2 _   http://code.google.com/p/processing/issues/detail?id=206
 P2 _ implement method for selecting the AVD
-P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1390
-
-P3 _ remove various debug messages on the console
-P3 _   right now, there are too many places where errors occur
-P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1385
+P2 _   http://code.google.com/p/processing/issues/detail?id=208
 P3 _ for now, only runs on the first device (findDevice()) found
 P3 _   --> implement selector to choose the default device for debugging
-P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1389
+P3 _   http://code.google.com/p/processing/issues/detail?id=207
 P3 _ if different machines, debug.keystore changes, requiring manual removal
 P3 _   or find a way to do it automatically with processing
 P3 _   adb -s HT91MLC00031 install -r sketchbook/Hue/android/bin/Hue-debug.apk
@@ -328,13 +326,13 @@ P3 _   can't keep it with the sketch, don't want to give away private key
 P3 _   with different machines, users are required to remove signature
 P3 _   add a method to remove an application if the debug key is different
 P3 _     perhaps the first time an application is installed, remove it?
-P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1481
+P3 _   http://code.google.com/p/processing/issues/detail?id=236
 P3 _ library support also needs android manifest changes
-P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1439
+P3 _   http://code.google.com/p/processing/issues/detail?id=225
 
 P4 _ don't require android tools to be installed already
 P4 _   or implement automatic download/install of android tools
-P4 _   http://dev.processing.org/bugs/show_bug.cgi?id=1383
+P4 _   http://code.google.com/p/processing/issues/detail?id=203
 
 EH _ Remove requirement for Google APIs in Android mode
 EH _   http://code.google.com/p/processing/issues/detail?id=613
