@@ -23,6 +23,12 @@ _   incorporate SVG loader into the 2D class
 _ finish PGL/GL naming and cleanups to API
 _ loadPixels() implementation
 
+_ now that we can wrap exceptions, do die() and warn() methods
+_   this way, people can make use of exceptions if they would rather
+_   or shut them off if they don't want to 
+_   also need to explain exception handling in general
+_   http://code.google.com/p/processing/issues/detail?id=183
+
 _ incorporate patch for SVG Gradients from Inkscape
 _   http://code.google.com/p/processing/issues/detail?id=1142
 
