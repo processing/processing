@@ -25,6 +25,11 @@ o make better version of the windows launcher for debugging
 X add code for setting the L&F from the prefs file for linux
 o strange window flicker when first opened
 X   not seen since rolling back canvas changes
+X added 'all tabs' checkbox, but it's dimmed out
+X don't expand the folders in the examples window
+X cmd-shift-o for opening examples
+X add recent menu to the toolbar
+X add 'empty sketchbook' indicator when the sketchbook menus are empty
 
 cleaning
 o switching into present mode in info.plist
@@ -53,14 +58,13 @@ o specifically add "eclipse" to integration description
 o link books and sample chapters from the "getting started" portion of the faq
 o if export fails (compile error) need to un-highlight the export button
 o   http://dev.processing.org/bugs/show_bug.cgi?id=39
+o [LaunchRunner Error] processing.app.Base.main(String[]) threw an exception
+o   http://dev.processing.org/bugs/show_bug.cgi?id=821
+o   http://code.google.com/p/processing/issues/detail?id=102
+X   not seen for a long time, closed
 
-
-PDE / Find & Replace
-
-_ implement find & replace over multiple tabs 
-_   http://code.google.com/p/processing/issues/detail?id=25
-_ find across all tabs (jer request)
-_   http://code.google.com/p/processing/issues/detail?id=25
+_ figure out why modes are not loading classes properly
+_   first see if it's something quick
 
 
 2.0 FINAL / command line
@@ -103,7 +107,7 @@ _ blank sketch opened even if another opened by double-click
 _   http://code.google.com/p/processing/issues/detail?id=179
 _ also can have case of opening two of same sketch at once
 _   if sketch was open, then restart by dragging the .pde to p5.app
-_ osx not opening a sketch at all on double-click? (though opening the app)
+_ osx not opening a sketch at all on pde double-click? (though opening the app)
 _ active editor not being set null
 _   in Base.nextEditorLocation(), changed to "editors.size() == 0" 
 _   instead of (activeEditor == null), but that's papering over a problem
@@ -114,13 +118,8 @@ _   restrict more things like "show sketch folder"
 _   don't allow adding files w/o saving
 _   others?
 
-_ figure out why modes are not loading classes properly
-
 _ change syntax highlighting so it differentiates keyPressed and keyPressed()
 _ syntax highlight with parens also helps "String line" vs "line()"
-
-_ undo seems to not be going to the right location (now with example)
-_   http://code.google.com/p/processing/issues/detail?id=668
 
 _ bad tool brings down the environment
 _   http://code.google.com/p/processing/issues/detail?id=798
@@ -692,15 +691,13 @@ _   http://code.google.com/p/processing/issues/detail?id=8
 
 PDE / Editor
 
-_ cmd-shift-n not creating new tab
-_   http://code.google.com/p/processing/issues/detail?id=149
+_ undo seems to not be going to the right location (now with example)
+_   http://code.google.com/p/processing/issues/detail?id=668
 _ improve update check message "a new release (1.0.1) is available"
 _   be more descriptive, use a second line in latest.txt
 _   maybe just include the full text of the update message there?
 _ go through other sketch-opening menus to check for disappearing sketches
 _ deal with isManagingFocus() warning in the editor src
-_ [LaunchRunner Error] processing.app.Base.main(String[]) threw an exception
-_   http://dev.processing.org/bugs/show_bug.cgi?id=821
 _ strange NullPointerException problem prevents launch
 _   some kind of NPE in handleOpenInternal and friends
 _   appears to be a synchronization problem with the loading
@@ -805,6 +802,13 @@ _ errors during export don't show up properly (no red status bar)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=194
 _ exporting application copies .java files 
 _   .java files are copied to the root folder as well as the source folder
+
+
+PDE / Find & Replace
+
+_ implement find & replace over multiple tabs 
+_   http://code.google.com/p/processing/issues/detail?id=25
+_   added to the projects list
 
 
 PDE / Examples

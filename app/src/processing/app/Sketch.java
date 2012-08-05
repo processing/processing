@@ -1380,6 +1380,11 @@ public class Sketch {
   }
 
 
+  public int getCurrentCodeIndex() {
+    return currentIndex;
+  }
+
+
   public String getMainProgram() {
     return getCode(0).getProgram();
   }

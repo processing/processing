@@ -204,6 +204,20 @@ public abstract class Mode {
   }
 
 
+  public void insertToolbarRecentMenu() {
+    if (toolbarMenu == null) {
+      rebuildToolbarMenu();
+    } else {
+      toolbarMenu.insert(base.getToolbarRecentMenu(), 1);
+    }
+  }
+
+
+  public void removeToolbarRecentMenu() {
+    toolbarMenu.remove(base.getToolbarRecentMenu());
+  }
+
+
   protected void rebuildToolbarMenu() {  //JMenu menu) {
     JMenuItem item;
     if (toolbarMenu == null) {
@@ -222,36 +236,30 @@ public abstract class Mode {
       });
     toolbarMenu.add(item);
 
-//    JMenu examplesMenu = new JMenu("Examples");
-//    rebuildExamplesMenu(examplesMenu, true);
-    item = new JMenuItem("Examples...");
+    insertToolbarRecentMenu();
+
+    item = Base.newJMenuItemShift("Examples...", 'O');
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         showExamplesFrame();
       }
     });
     toolbarMenu.add(item);
-//    toolbarMenu.add(examplesMenu);
-
-    toolbarMenu.addSeparator();
 
     // Add a list of all sketches and subfolders
-    try {
-      base.addSketches(toolbarMenu, base.getSketchbookFolder(), true);
-//      boolean sketches = base.addSketches(toolbarMenu, base.getSketchbookFolder(), true);
-//      if (sketches) {
-//        toolbarMenu.addSeparator();
-//      }
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-
-    //System.out.println("rebuilding examples menu");
-    // Add each of the subfolders of examples directly to the menu
+    toolbarMenu.addSeparator();
+    base.populateSketchbookMenu(toolbarMenu);
+//    boolean found = false;
 //    try {
-//      base.addSketches(toolbarMenu, examplesFolder, true);
+//      found = base.addSketches(toolbarMenu, base.getSketchbookFolder(), true);
 //    } catch (IOException e) {
-//      e.printStackTrace();
+//      Base.showWarning("Sketchbook Toolbar Error",
+//                       "An error occurred while trying to list the sketchbook.", e);
+//    }
+//    if (!found) {
+//      JMenuItem empty = new JMenuItem("(empty)");
+//      empty.setEnabled(false);
+//      toolbarMenu.add(empty);
 //    }
   }
 
@@ -527,46 +535,13 @@ public abstract class Mode {
       tree.expandRow(0);
       // now hide the root
       tree.setRootVisible(false);
-      // now expand the other folks
-      for (int row = tree.getRowCount()-1; row >= 0; --row) {
-        tree.expandRow(row);
-      }
 
-      /*
-      tree.addTreeSelectionListener(new TreeSelectionListener() {
-        public void valueChanged(TreeSelectionEvent e) {
-          DefaultMutableTreeNode node = (DefaultMutableTreeNode)
-          tree.getLastSelectedPathComponent();
+      // After 2.0a7, no longer expanding each of the categories at Casey's
+      // request. He felt that the window was too complicated too quickly.
+//      for (int row = tree.getRowCount()-1; row >= 0; --row) {
+//        tree.expandRow(row);
+//      }
 
-          if (node != null) {
-            Object nodeInfo = node.getUserObject();
-            if (node.isLeaf()) {
-              System.out.println(node + " user obj: " + nodeInfo);
-              //            BookInfo book = (BookInfo)nodeInfo;
-              //            displayURL(book.bookURL);
-            }
-          }
-        }
-      });
-      */
-
-      /*
-       *  MouseListener ml = new MouseAdapter() {
-       *     public void <b>mousePressed</b>(MouseEvent e) {
-       *         int selRow = tree.getRowForLocation(e.getX(), e.getY());
-       *         TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
-       *         if(selRow != -1) {
-       *             if(e.getClickCount() == 1) {
-       *                 mySingleClick(selRow, selPath);
-       *             }
-       *             else if(e.getClickCount() == 2) {
-       *                 myDoubleClick(selRow, selPath);
-       *             }
-       *         }
-       *     }
-       * };
-       * tree.addMouseListener(ml);
-       */
       tree.addMouseListener(new MouseAdapter() {
         public void mouseClicked(MouseEvent e) {
           if (e.getClickCount() == 2) {
