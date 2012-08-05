@@ -43,14 +43,18 @@ public class Recent {
   /** How many recent sketches to remember. */
   int remember;
   ArrayList<Record> records;
-  JMenu menu;
+  /** actual menu used in the primary menu bar */
+  JMenu mainMenu;
+  /** copy of the menu to use in the toolbar */
+  JMenu toolbarMenu;
 
 
   public Recent(Base base) {
     this.base = base;
     remember = Preferences.getInteger("recent.count");
     file = Base.getSettingsFile(FILENAME);
-    menu = new JMenu("Recent Sketches");
+    mainMenu = new JMenu("Recent");
+    toolbarMenu = new JMenu("Recent");
 
     try {
       load();
@@ -80,7 +84,8 @@ public class Recent {
         }
       }
     }
-    updateMenu();
+    updateMenu(mainMenu);
+    updateMenu(toolbarMenu);
   }
 
 
@@ -94,17 +99,22 @@ public class Recent {
     }
     writer.flush();
     writer.close();
-//    System.out.println();
-    updateMenu();
+    updateMenu(mainMenu);
+    updateMenu(toolbarMenu);
   }
 
 
   public JMenu getMenu() {
-    return menu;
+    return mainMenu;
   }
 
 
-  private void updateMenu() {
+  public JMenu getToolbarMenu() {
+    return toolbarMenu;
+  }
+
+
+  private void updateMenu(JMenu menu) {
     menu.removeAll();
     for (final Record rec : records) {
       String purtyPath = new File(rec.getPath()).getParent();

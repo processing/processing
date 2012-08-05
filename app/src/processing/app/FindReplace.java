@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-11 Ben Fry and Casey Reas
+  Copyright (c) 2004-12 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -53,6 +53,9 @@ public class FindReplace extends JFrame implements ActionListener {
   JCheckBox ignoreCaseBox;
   static boolean ignoreCase = true;
 
+  JCheckBox allTabsBox;
+  static boolean allTabs = false;
+
   JCheckBox wrapAroundBox;
   static boolean wrapAround = true;
 
@@ -87,6 +90,16 @@ public class FindReplace extends JFrame implements ActionListener {
       });
     ignoreCaseBox.setSelected(ignoreCase);
     pain.add(ignoreCaseBox);
+
+    allTabsBox = new JCheckBox("All Tabs");
+    allTabsBox.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          allTabs = allTabsBox.isSelected();
+        }
+      });
+    allTabsBox.setSelected(allTabs);
+    allTabsBox.setEnabled(false);
+    pain.add(allTabsBox);
 
     wrapAroundBox = new JCheckBox("Wrap Around");
     wrapAroundBox.addActionListener(new ActionListener() {
@@ -163,13 +176,19 @@ public class FindReplace extends JFrame implements ActionListener {
 
     ypos += fieldHeight + SMALL;
 
+    final int third = (fieldWidth - SMALL*2) / 3;
     ignoreCaseBox.setBounds(EDGE + labelDimension.width + SMALL,
                             ypos,
-                            (fieldWidth-SMALL)/2, fieldHeight);
+                            third, fieldHeight);
 
-    wrapAroundBox.setBounds(EDGE + labelDimension.width + SMALL + (fieldWidth-SMALL)/2 + SMALL,
+    allTabsBox.setBounds(EDGE + labelDimension.width + SMALL + third + SMALL,
+                         ypos,
+                         third, fieldHeight);
+
+    //wrapAroundBox.setBounds(EDGE + labelDimension.width + SMALL + (fieldWidth-SMALL)/2 + SMALL,
+    wrapAroundBox.setBounds(EDGE + labelDimension.width + SMALL + third*2 + SMALL*2,
                             ypos,
-                            (fieldWidth-SMALL)/2, fieldHeight);
+                            third, fieldHeight);
 
     ypos += fieldHeight + SMALL;
 
@@ -272,15 +291,23 @@ public class FindReplace extends JFrame implements ActionListener {
   // look for the next instance of the find string to be found
   // once found, select it (and go to that line)
   private boolean find(boolean wrap, boolean backwards) {
-    String search = findField.getText();
+    String searchTerm = findField.getText();
     //System.out.println("finding for " + search + " " + findString);
     // this will catch "find next" being called when no search yet
-    if (search.length() == 0) return false;
+    if (searchTerm.length() == 0) return false;
 
     String text = editor.getText();
 
+    // Started work on find/replace across tabs. These two variables store
+    // the original tab and selection position so that it knew when to stop
+    // rotating through.
+//    Sketch sketch = editor.getSketch();
+//    int tabIndex = sketch.getCurrentCodeIndex();
+//    int selIndex = backwards ?
+//      editor.getSelectionStart() : editor.getSelectionStop();
+
     if (ignoreCase) {
-      search = search.toLowerCase();
+      searchTerm = searchTerm.toLowerCase();
       text = text.toLowerCase();
     }
 
@@ -289,28 +316,28 @@ public class FindReplace extends JFrame implements ActionListener {
       //int selectionStart = editor.textarea.getSelectionStart();
       int selectionEnd = editor.getSelectionStop();
 
-      nextIndex = text.indexOf(search, selectionEnd);
-      if (wrap && nextIndex == -1) {
+      nextIndex = text.indexOf(searchTerm, selectionEnd);
+      if (nextIndex == -1 && wrap) {
         // if wrapping, a second chance is ok, start from beginning
-        nextIndex = text.indexOf(search, 0);
+        nextIndex = text.indexOf(searchTerm, 0);
       }
     } else {
       //int selectionStart = editor.textarea.getSelectionStart();
       int selectionStart = editor.getSelectionStart()-1;
 
       if (selectionStart >= 0) {
-        nextIndex = text.lastIndexOf(search, selectionStart);
+        nextIndex = text.lastIndexOf(searchTerm, selectionStart);
       } else {
         nextIndex = -1;
       }
       if (wrap && nextIndex == -1) {
         // if wrapping, a second chance is ok, start from the end
-        nextIndex = text.lastIndexOf(search);
+        nextIndex = text.lastIndexOf(searchTerm);
       }
     }
 
     if (nextIndex != -1) {
-      editor.setSelection(nextIndex, nextIndex + search.length());
+      editor.setSelection(nextIndex, nextIndex + searchTerm.length());
     } else {
       //Toolkit.getDefaultToolkit().beep();
     }
