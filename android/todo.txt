@@ -1,46 +1,4 @@
-0207 android (2.0a8)
-X lots of cleanup on this todo list
-X Support Native Code in Libraries for Android (includes fix)
-X   http://code.google.com/p/processing/issues/detail?id=1117
-X   patch from m4rlonj
-
-cleaning/earlier
-X exceptions with StreamPump and adb devices on osx and linux
-X   http://code.google.com/p/processing/issues/detail?id=252
-o   when starting the emulator, the adb server gets reset
-o   then it causes this exception, which kills the thread waiting for input
-o   so another reset is necessary
-Exception in thread "StreamPump 49" java.lang.RuntimeException: Inside processing.app.exec.StreamPump@1ebe8ec for out: adb devices
-	at processing.app.exec.StreamPump.run(StreamPump.java:82)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
-	at java.lang.Thread.run(Thread.java:637)
-Caused by: java.io.IOException: Stream closed
-	at java.io.BufferedInputStream.getBufIfOpen(BufferedInputStream.java:145)
-	at java.io.BufferedInputStream.read1(BufferedInputStream.java:255)
-	at java.io.BufferedInputStream.read(BufferedInputStream.java:317)
-	at sun.nio.cs.StreamDecoder.readBytes(StreamDecoder.java:264)
-	at sun.nio.cs.StreamDecoder.implRead(StreamDecoder.java:306)
-	at sun.nio.cs.StreamDecoder.read(StreamDecoder.java:158)
-	at java.io.InputStreamReader.read(InputStreamReader.java:167)
-	at java.io.BufferedReader.fill(BufferedReader.java:136)
-	at java.io.BufferedReader.readLine(BufferedReader.java:299)
-	at java.io.BufferedReader.readLine(BufferedReader.java:362)
-	at processing.app.exec.StreamPump.run(StreamPump.java:71)
-	... 3 more
-X when returning to the application after link(), screen stays blank
-X   http://code.google.com/p/processing/issues/detail?id=237
-X   fixed in 0195
-X remove various debug messages on the console
-X   right now, there are too many places where errors occur
-X   http://code.google.com/p/processing/issues/detail?id=204
-J only send error text to System.err (i.e. "Launching emulator" is not an error)
-J   send these debug log messages to System.out
-o "Sketch started on emulator" in spite of the emulator only halfway booted
-o   sent email about this one
-o additional manifest gui necessary:
-X   icons are apparently important, android:icon
-X   http://developer.android.com/guide/practices/ui_guidelines/icon_design.html
+0208 android
 
 
 _ inside AndroidPreprocessor
