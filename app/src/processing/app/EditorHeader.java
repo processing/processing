@@ -75,7 +75,7 @@ public class EditorHeader extends JComponent {
   int imageW, imageH;
 
   String lastNoticeName;
-  
+
 
   public EditorHeader(Editor eddie) {
     this.editor = eddie;
@@ -106,7 +106,7 @@ public class EditorHeader extends JComponent {
             }
           }
         }
-        
+
         public void mouseExited(MouseEvent e) {
           // only clear if it's been set
           if (lastNoticeName != null) {
@@ -176,7 +176,7 @@ public class EditorHeader extends JComponent {
       imageH = sizeH;
       offscreen = createImage(imageW, imageH);
     }
-    
+
     Graphics g = offscreen.getGraphics();
     g.setFont(font);  // need to set this each time through
     metrics = g.getFontMetrics();
@@ -215,13 +215,13 @@ public class EditorHeader extends JComponent {
       SketchCode code = sketch.getCode(tab.index);
       tab.textVisible = true;
       tab.lastVisited = code.lastVisited();
-      
+
       // hide extensions for .pde files (or whatever else is the norm elsewhere
       boolean hide = editor.getMode().hideExtension(code.getExtension());
       String codeName = hide ? code.getPrettyName() : code.getFileName();
       // if modified, add the li'l glyph next to the name
       tab.text = "  " + codeName + (code.isModified() ? " \u00A7" : "  ");
-      
+
       tab.textWidth = (int)
         font.getStringBounds(tab.text, g2.getFontRenderContext()).getWidth();
     }
@@ -241,7 +241,7 @@ public class EditorHeader extends JComponent {
 //        System.out.println(visitOrder[i].index + " " + visitOrder[i].text);
 //      }
 //      System.out.println();
-      
+
       for (int i = 0; i < visitOrder.length; i++) {
         tabs[visitOrder[i].index].textVisible = false;
         if (placeTabs(tabLeft, tabMax, null)) {
@@ -249,7 +249,7 @@ public class EditorHeader extends JComponent {
         }
       }
     }
-    
+
     // now actually draw the tabs
     placeTabs(tabLeft, tabMax, g);
 
@@ -290,8 +290,8 @@ public class EditorHeader extends JComponent {
 
     screen.drawImage(offscreen, 0, 0, null);
   }
-  
-  
+
+
   private boolean placeTabs(int left, int right, Graphics g) {
     Sketch sketch = editor.getSketch();
     int x = left;
@@ -331,7 +331,7 @@ public class EditorHeader extends JComponent {
           g.drawString(tab.text, textLeft, baseline);
         }
       }
-      
+
       if (g != null) {
         g.drawImage(pieces[state][RIGHT], x, 0, null);
       }
@@ -435,7 +435,15 @@ public class EditorHeader extends JComponent {
     item = new JMenuItem("Delete");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          editor.getSketch().handleDeleteCode();
+          Sketch sketch = editor.getSketch();
+          if (editor.base.editors.size() != 1 &&  // mmm! accessor
+              sketch.getCodeCount() == 1) {
+            Base.showWarning("Yeah, no." ,
+                             "You can't delete the last tab " +
+                             "of the last open sketch.", null);
+          } else {
+            editor.getSketch().handleDeleteCode();
+          }
         }
       });
     menu.add(item);
@@ -526,11 +534,11 @@ public class EditorHeader extends JComponent {
     int textWidth;
     boolean textVisible;
     long lastVisited;
-    
+
     Tab(int index) {
       this.index = index;
     }
-    
+
     boolean contains(int x) {
       return x >= left && x <= right;
     }
