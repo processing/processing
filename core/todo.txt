@@ -1,18 +1,23 @@
 0207 core
 X switch link() and others to just use java.awt.Desktop classes
 X   also deprecate param, link() with a target, and others
+X added notes about "color(0, 0, 0, 0) produces black" to the Wiki
+
 
 _ smooth() should be the default in 2.0
 _   broken in the recent releases
 _   http://code.google.com/p/processing/issues/detail?id=1157
 
-_ add notes about the new shader setup
 
-fixed in 2.0a7 or earlier
+fixed earlier
 A ArrayIndexOutOfBoundsException inside PFontTexture.updateGlyphsTexCoords() 
 A   http://code.google.com/p/processing/issues/detail?id=1104
 A Camera function hot changing the upward axis
 A   http://code.google.com/p/processing/issues/detail?id=534
+C some docs missing (therefore not syntax highlighting)
+C   http://code.google.com/p/processing/issues/detail?id=84
+C constants that are not highlighting (WINDOWS the only one?)
+C   http://dev.processing.org/bugs/show_bug.cgi?id=662
 
 
 before beta
@@ -41,9 +46,10 @@ _ 2x and 4x smooth hints no longer needed/supported
 _   http://code.google.com/p/processing/issues/detail?id=1144
 
 docs (2.0)
+_ add notes about the new shader setup
 _ online is there but deprecated
 _   doesn't test net connection to see if 'online'
-_   only tests whether running inside an applet viewer
+_   only tests whether running inside an applet viewer (not relevant)
 _   remove 'online' from the docs
 _ createGraphics() with no renderer param to point to JAVA2D
 _ docs: P2D and P3D are now OpenGL variations
@@ -55,22 +61,18 @@ _ final decision on pg.setQuality(sketchQuality())
 _   should probably be setQuality(parent.sketchQuality())
 _ add reference/docs for urlEncode() and urlDecode()
 _ verify (and document) public access members of PApplet
-_   http://dev.processing.org/bugs/show_bug.cgi?id=660
-_ some docs missing (therefore not syntax highlighting)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=661
-_ constants that are not highlighting (WINDOWS the only one?)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=662
+_   http://code.google.com/p/processing/issues/detail?id=83
 _ add explanation to the reference about using beginRecord() with fonts
 _   pdf.textMode(SHAPE)
 _   also set the font *after* the record has started
 _   maybe should instead make textMode(SHAPE) the norm? 
 _   and people can change it to textMode(MODEL) if they want?
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1535
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1535 (no gcode)
 _ fix regex documentation (assigned to Shiffman)
 _   http://code.google.com/p/processing/issues/detail?id=169
 _ OpenGL offscreen requires primary surface to be OpenGL
-_ can't really change the smoothing/options on offscreen
 
+_ can't really change the smoothing/options on offscreen
 _ move requestFocusInWindow() to safter EDT place
 _ look into using BufferStrategy again to improve performance
 _   there are more improvements to be made ala issue #729
@@ -103,6 +105,8 @@ _   provide a way to clear the PGraphics with plain alpha
 
 _ sort out edge + 1 issue on stroke/fill for rectangles
 _   http://code.google.com/p/processing/issues/detail?id=509
+_ exactly how should pixel filling work with single pixel strokes?
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1025 (no gcode)
 _ y2 position of rectangles not same as y2 position of lines
 _   happens when the rectangle is flipped on the x or y axis
 _   probably a hack that draws the "last" point differently
@@ -431,8 +435,6 @@ CORE / OpenGL (Andres)
 
 _ hint(DISABLE_PERSPECTIVE_CORRECTED_STROKE)
 _ textureWrap(CLAMP / REPEAT)
-_ first few frames of OpenGL sketches on Windows run slowly
-_   http://dev.processing.org/bugs/show_bug.cgi?id=874
 _ implement setImpl() instead of set() inside PGraphicsOpenGL
 _   http://code.google.com/p/processing/issues/detail?id=121
 _ use glCopyPixels() or glReadPixels() instead of copy() method
@@ -622,18 +624,13 @@ _ add a timer(obj, "functionname", 45) method
 _   this can be used to schedule something to happen at a specific time
 _   or import the swing timer (for actionPerformed)
 _   also add interval("functionname", 40)
-_ color(0, 0, 0, 0) produces black
-_   because color(0, 0, 0, 0) creates an int that is simply '0'
-_   although fill(0, 0, 0, 0) does the right thing
-_   also, rgb255 not getting set
-_   http://dev.processing.org/bugs/show_bug.cgi?id=382
 _ should fill(c) instead be fillColor(c)?
 _ should color(123, 4, 99) instead be createColor()?
 _ rounding errors on color conversion
 _   colorMode(RGB, 1.0); colorMode(255); println(red(color(0.5,1,1)));
 _   will return 127, instead of 128.
 _ gray that's greater than the colorMode() can produce strange colors
-_   http://dev.processing.org/bugs/show_bug.cgi?id=432
+_   http://dev.processing.org/bugs/show_bug.cgi?id=432 (no gcode)
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1083650609
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1082481891
 _ add stroke() to type
@@ -644,11 +641,9 @@ _   don't add api to main p5 stuff (though maybe setPaint/noPaint api?)
 _   gradient-painted lines and fills
 _     java2d will do both line and fill, illusfarter only does fills
 _   gradients not supported in java2d
-_     http://dev.processing.org/bugs/show_bug.cgi?id=371
+_     http://dev.processing.org/bugs/show_bug.cgi?id=371 (no gcode)
 _ bspline or nurbs (later, want to do the 3D/arch stuff correctly)
 _ non-homogenous coloring for curve vertices
-_ exactly how should pixel filling work with single pixel strokes?
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1025
 _ consider bringing back text/image using cache/names
 _ exactly how pixel-filling works for strokes
 _   http://processing.org/bugs/bugzilla/1025.html
