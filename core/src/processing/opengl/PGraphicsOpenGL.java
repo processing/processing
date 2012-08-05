@@ -205,7 +205,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   /** Flag indicating the use of an orthographic projection matrix. */
   protected boolean usingOrthoProjection;
-  
+
   // ........................................................
 
   // All the matrices required for camera and geometry transformations.
@@ -477,10 +477,11 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  public void setParent(PApplet parent)  {
-    super.setParent(parent);
-    quality = parent.sketchQuality();
-  }
+  // now implemented in PGraphics
+//  public void setParent(PApplet parent)  {
+//    super.setParent(parent);
+//    quality = parent.sketchQuality();
+//  }
 
 
   public void setPrimary(boolean primary) {
@@ -495,8 +496,8 @@ public class PGraphicsOpenGL extends PGraphics {
   //public void setAntiAlias(int samples)  // PGraphics
 
 
-  public void setFrameRate(float framerate) {
-    pgl.setFramerate(framerate);
+  public void setFrameRate(float frameRate) {
+    pgl.setFrameRate(frameRate);
   }
 
 
@@ -1466,7 +1467,7 @@ public class PGraphicsOpenGL extends PGraphics {
       screenFramebuffer = new FrameBuffer(parent, width, height, true);
       setFramebuffer(screenFramebuffer);
     }
-    
+
     if (primarySurface) {
       pgl.updatePrimary();
       if (pgl.primaryIsDoubleBuffered()) {
@@ -1493,7 +1494,7 @@ public class PGraphicsOpenGL extends PGraphics {
       pgl.updateOffscreen(pgPrimary.pgl);
       pgl.glDrawBuffer(PGL.GL_COLOR_ATTACHMENT0);
     }
-    
+
     // We are ready to go!
     report("top beginDraw()");
 
@@ -1623,8 +1624,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
     if (!settingsInited) {
       defaultSettings();
-    } 
-    
+    }
+
     if (restoreSurface) {
       restoreSurfaceFromPixels();
       restoreSurface = false;
@@ -3365,7 +3366,7 @@ public class PGraphicsOpenGL extends PGraphics {
     // won't be optimal because at the end of each text() call the geometry
     // will be flushed when restoring the user's blend.
     blendMode(savedBlendMode);
-    
+
     textTex.end();
   }
 
@@ -3791,7 +3792,7 @@ public class PGraphicsOpenGL extends PGraphics {
     checkOrthoProjection();
   }
 
-  
+
   protected void checkOrthoProjection() {
     // If the matrix is of the form:
     // x, 0, 0, a,
@@ -3799,13 +3800,13 @@ public class PGraphicsOpenGL extends PGraphics {
     // 0, 0, z, c,
     // 0, 0, 0, 1
     // then the set usingOrthoProjection to true.
-    usingOrthoProjection = zero(projection.m01) && zero(projection.m02) && 
-                           zero(projection.m10) && zero(projection.m12) && 
+    usingOrthoProjection = zero(projection.m01) && zero(projection.m02) &&
+                           zero(projection.m10) && zero(projection.m12) &&
                            zero(projection.m20) && zero(projection.m21) &&
                            zero(projection.m30) && zero(projection.m31) &&
                            zero(projection.m32) && same(projection.m33, 1);
   }
-  
+
 
   //////////////////////////////////////////////////////////////
 
@@ -4165,7 +4166,7 @@ public class PGraphicsOpenGL extends PGraphics {
                    0,  0, 0,  1);
 
     calcProjmodelview();
-    
+
     usingOrthoProjection = true;
   }
 
@@ -4229,7 +4230,7 @@ public class PGraphicsOpenGL extends PGraphics {
                         0,       0,                  -1,                0);
 
     calcProjmodelview();
-    
+
     usingOrthoProjection = false;
   }
 
@@ -6494,7 +6495,7 @@ public class PGraphicsOpenGL extends PGraphics {
           setUniformValue(perspectiveLoc, 0);
         }
 
-        if (pgCurrent.hintEnabled(ENABLE_ACCURATE_2D)) {          
+        if (pgCurrent.hintEnabled(ENABLE_ACCURATE_2D)) {
           setUniformValue(scaleLoc, 1.0f, 1.0f, 1.0f);
         } else {
           if (usingOrthoProjection) {
@@ -6643,7 +6644,7 @@ public class PGraphicsOpenGL extends PGraphics {
     int[] lastCache;
     boolean hasTexture;
     Texture tex0;
-    
+
     TexCache() {
       allocate();
     }
@@ -9204,7 +9205,7 @@ public class PGraphicsOpenGL extends PGraphics {
       polySpecular[count] = sp;
       polyEmissive[count] = em;
       polyShininess[count] = shine;
-    }  
+    }
 
     void addPolyVertices(InGeometry in) {
       addPolyVertices(in, in.firstVertex, in.lastVertex);
@@ -9519,7 +9520,7 @@ public class PGraphicsOpenGL extends PGraphics {
     int[] rawIndices;
     int rawSize;
     int[] dupIndices;
-    int dupCount;    
+    int dupCount;
 
     int firstPolyIndexCache;
     int lastPolyIndexCache;
@@ -10129,7 +10130,7 @@ public class PGraphicsOpenGL extends PGraphics {
             path.lineTo(in.vertices[3 * i1 + 0], in.vertices[3 * i1 + 1]);
             break;
           case EDGE_STOP:
-            path.lineTo(in.vertices[3 * i1 + 0], in.vertices[3 * i1 + 1]);            
+            path.lineTo(in.vertices[3 * i1 + 0], in.vertices[3 * i1 + 1]);
             path.moveTo(in.vertices[3 * i1 + 0], in.vertices[3 * i1 + 1]);
             break;
           case EDGE_SINGLE:
@@ -10466,12 +10467,12 @@ public class PGraphicsOpenGL extends PGraphics {
       // Current index and vertex ranges
       int inInd0 = 0, inInd1 = 0;
       int inMaxVert0 = in.firstVertex, inMaxVert1 = in.firstVertex;
-      
+
       int inMaxVertRef = inMaxVert0; // Reference vertex where last break split occurred
       int inMaxVertRel = -1;         // Position of vertices from last range relative to
                                      // split position.
-      dupCount = 0;      
-      
+      dupCount = 0;
+
       IndexCache cache = tess.polyIndexCache;
       // In retained mode, each shape has with its own cache item, since
       // they should always be available to be rendererd individually, even
@@ -10540,7 +10541,7 @@ public class PGraphicsOpenGL extends PGraphics {
               tess.addPolyVertices(in, inMaxVertRef, inMaxVert1);
               nondupCount = inMaxVert1 - inMaxVertRef + 1;
             }
-            
+
             // Copy duplicated vertices from previous regions last
             for (int i = 0; i < dupCount; i++) {
               tess.addPolyVertex(in, dupIndices[i] + inMaxVertRef);
@@ -10554,7 +10555,7 @@ public class PGraphicsOpenGL extends PGraphics {
           // Increment counts:
           cache.incCounts(index, inInd1 - inInd0 + 1, nondupCount + dupCount);
           lastPolyIndexCache = index;
-                    
+
           // Prepare all variables to start next cache:
           index = -1;
           inMaxVertRel = -1;
@@ -10562,23 +10563,23 @@ public class PGraphicsOpenGL extends PGraphics {
           inMaxVert0 = inMaxVertRef;
           inInd0 = inInd1 + 1;
           if (dupIndices != null) Arrays.fill(dupIndices, 0, dupCount, 0);
-          dupCount = 0;          
+          dupCount = 0;
         }
       }
     }
-    
+
     void addDupIndex(int idx) {
       if (dupIndices == null) {
         dupIndices = new int[16];
       }
       if (dupIndices.length == dupCount) {
         int n = dupCount << 1;
-        
+
         int temp[] = new int[n];
         PApplet.arrayCopy(dupIndices, 0, temp, 0, dupCount);
-        dupIndices = temp;       
+        dupIndices = temp;
       }
-      
+
       if (idx < dupIndices[0]) {
         // Add at the beginning
         for (int i = dupCount; i > 0; i--) dupIndices[i] = dupIndices[i - 1];
@@ -10586,11 +10587,11 @@ public class PGraphicsOpenGL extends PGraphics {
         dupCount++;
       } else if (dupIndices[dupCount - 1] < idx) {
         // Add at the end
-        dupIndices[dupCount] = idx; 
+        dupIndices[dupCount] = idx;
         dupCount++;
-      } else {        
+      } else {
         for (int i = 0; i < dupCount - 1; i++) {
-          if (dupIndices[i] == idx) break;           
+          if (dupIndices[i] == idx) break;
           if (dupIndices[i] < idx && idx < dupIndices[i + 1]) {
             // Insert between i and i + 1:
             for (int j = dupCount; j > i + 1; j--) dupIndices[j] = dupIndices[j - 1];
@@ -10601,10 +10602,10 @@ public class PGraphicsOpenGL extends PGraphics {
         }
       }
     }
-    
+
     int dupIndexPos(int idx) {
       for (int i = 0; i < dupCount; i++) {
-        if (dupIndices[i] == idx) return i;        
+        if (dupIndices[i] == idx) return i;
       }
       return 0;
     }

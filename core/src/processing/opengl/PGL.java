@@ -491,7 +491,7 @@ public class PGL {
   }
 
 
-  public void setFramerate(float framerate) {
+  public void setFrameRate(float framerate) {
     if (targetFramerate != framerate) {
       if (60 < framerate) {
         // Disables v-sync
@@ -631,7 +631,7 @@ public class PGL {
 
   public void updatePrimary() {
     if (!setFramerate) {
-      setFramerate(targetFramerate);
+      setFrameRate(targetFramerate);
     }
 
     if (needScreenFBO && glColorFbo[0] == 0) {
