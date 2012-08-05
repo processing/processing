@@ -2,11 +2,9 @@
 X switch link() and others to just use java.awt.Desktop classes
 X   also deprecate param, link() with a target, and others
 X added notes about "color(0, 0, 0, 0) produces black" to the Wiki
-
-
-_ smooth() should be the default in 2.0
-_   broken in the recent releases
-_   http://code.google.com/p/processing/issues/detail?id=1157
+X smooth() should be the default in 2.0
+X   broken in the recent releases
+X   http://code.google.com/p/processing/issues/detail?id=1157
 
 
 fixed earlier

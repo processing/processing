@@ -590,6 +590,7 @@ public class PGraphics extends PImage implements PConstants {
 
   public void setParent(PApplet parent) {  // ignore
     this.parent = parent;
+    quality = parent.sketchQuality();
   }
 
 
@@ -1521,13 +1522,13 @@ public class PGraphics extends PImage implements PConstants {
     return null;
   }
 
-  
+
   public PShader loadShader(String fragFilename) {
     showMissingWarning("loadShader");
-    return null;    
+    return null;
   }
 
-  
+
   public void shader(PShader shader) {
     showMissingWarning("shader");
   }
