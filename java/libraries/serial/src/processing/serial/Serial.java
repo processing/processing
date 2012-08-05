@@ -143,6 +143,8 @@ public class Serial implements SerialPortEventListener {
           "sudo mkdir -p /var/lock\n" +
           "sudo chmod 777 /var/lock";
         System.err.println(MESSAGE);
+        throw new RuntimeException("Additional installation required to " +
+        		                       "use serial, read the console below.");
       }
     }
 
