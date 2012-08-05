@@ -33,6 +33,7 @@ X add 'empty sketchbook' indicator when the sketchbook menus are empty
 X deleting open sketch (with only one window) attempts to quit
 X   (and still deletes, but doesn't close, even if quitting is canceled)
 X   affects Windows and Linux
+o shift-tab with no selection should go back two spaces
 
 cleaning
 o switching into present mode in info.plist
@@ -217,7 +218,9 @@ o   or is that excessive, since Document is in there, etc
 o   Build does the heavy lifting anyway...
 o the code[] array in Sketch is super hokey... switch to an arraylist
 o   and add compare method to SketchCode so that it can be sorted by name
-
+o can't rename a .pde file as a .java file
+X   seems to have been fixed earlier? probably this one:
+o   http://code.google.com/p/processing/issues/detail?id=776
 
 2.0 FINAL / command line
 _ kill external editor (for all its quirks) in favor of command line? 
@@ -247,6 +250,8 @@ _   is editable in use?
 _   what's electricScroll?
 _   caretBlinks always true.. just remove the pref?
 _   blockCaret always false.. remove it?
+_   report from someone about blinking caret
+_     http://code.google.com/p/processing/issues/detail?id=1136
 _ figure out why modes are not loading classes properly
 _   first see if it's something quick
 _ excessive CPU usage of PDE after using library manager
@@ -296,7 +301,7 @@ _   casey: accidentally typing a letter at the top of the tab
 _     throws you onto the end of the last tab... exactly the worst location
 
 
-libraries
+2.0 FINAL / libraries & classpaths
 _ need to deal with classpath conflicts
 _   avoid garbage that people have installed on their machines
 _   antlr.jar in the classpath will cause trouble.. 
@@ -333,31 +338,6 @@ _   http://code.google.com/p/processing/issues/detail?id=1050
 _ how to catch these?
 Exception in thread "Animation Thread" java.lang.NoClassDefFoundError: Could not initialize class javax.media.opengl.GLProfile
 Exception in thread "Animation Thread" java.lang.UnsatisfiedLinkError: no gluegen-rt in java.library.path
-
-protected void finalize() throws Throwable {
-  try {
-    close();        
-  } catch (Exception e) {
-    // do something               
-  } finally {        
-    super.finalize();
-    // more code can be written here as per need of application        
-  }
-}
-
-_ fix line endings in revisions.txt for windows
-
-from user Batuff
-> sudo apt-get install xvfb
-> Xvfb :2 -screen 0 1024x768x24 &
-> export DISPLAY=localhost:2.0
-> ./<myExportedProcessingApplication>
-
-_ can't rename a .pde file as a .java file
-_ shift-tab with no selection should go back two spaces
-
-
-libraries and classpaths
 _ versioning info 
 _   http://java.sun.com/j2se/1.5.0/docs/guide/extensions/versioning.html
 _ java.ext.dirs for /System/Library/Java/Extensions
@@ -900,6 +880,9 @@ _ need to set dock icon title on osx
 
 PDE / Sketch & Sketchbook
 
+_ Large number of files in sketchbook folder can cause slow startup 
+_   and/or errors with launch4j
+_   http://code.google.com/p/processing/issues/detail?id=1152
 _ error that sketch is read-only can't be canceled
 _   hitting cancel (or ESC?) still brings up the save dialog
 _ ArticulatePrint-070103a.pde from ArticulatePrint-070103a loads ok
@@ -1045,6 +1028,7 @@ _   avoid some confusion for when describing the libraries folder to users
 
 DIST / Windows
 
+_ fix line endings in revisions.txt for windows
 _ exe instead of bat to make exported apps run in 64-bit
 _   http://code.google.com/p/processing/issues/detail?id=885
 _   might not be necessary with new launch4j!
@@ -1114,6 +1098,11 @@ Please see <http://developer.apple.com/mac/library/technotes/tn2005/tn2147.html>
 
 DIST / Linux
 
+_ how to run "headless" from user Batuff
+_   sudo apt-get install xvfb
+_   Xvfb :2 -screen 0 1024x768x24 &
+_   export DISPLAY=localhost:2.0
+_   ./<myExportedProcessingApplication>
 _ finish up debian package support (see the processing.mess folder)
 _   http://code.google.com/p/processing/issues/detail?id=75
 _   these bits need to be checked to ensure that they work on other distros
