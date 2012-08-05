@@ -708,59 +708,6 @@ public class Base {
   }
 
 
-//  protected int[] nextEditorLocation() {
-//    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-//    int defaultWidth = Preferences.getInteger("editor.window.width.default");
-//    int defaultHeight = Preferences.getInteger("editor.window.height.default");
-//
-////    if (activeEditor == null) {
-//    if (editors.size() == 0) {
-////      System.out.println("active editor is " + activeEditor);
-//      // If no current active editor, use default placement
-//      return new int[] {
-//          (screen.width - defaultWidth) / 2,
-//          (screen.height - defaultHeight) / 2,
-//          defaultWidth, defaultHeight, 0
-//      };
-//
-//    } else {
-//      // With a currently active editor, open the new window
-//      // using the same dimensions, but offset slightly.
-//      synchronized (editors) {
-//        final int OVER = 50;
-//        Editor lastOpened = editors.get(editors.size() - 1);
-//        int[] location = lastOpened.getPlacement();
-//        // Just in case the bounds for that window are bad
-//        location[0] += OVER;
-//        location[1] += OVER;
-//
-//        if (location[0] == OVER ||
-//            location[2] == OVER ||
-//            location[0] + location[2] > screen.width ||
-//            location[1] + location[3] > screen.height) {
-//          // Warp the next window to a randomish location on screen.
-//          return new int[] {
-//              (int) (Math.random() * (screen.width - defaultWidth)),
-//              (int) (Math.random() * (screen.height - defaultHeight)),
-//              defaultWidth, defaultHeight, 0
-//          };
-//        }
-//
-//        return location;
-//      }
-//    }
-//  }
-
-
-//  /**
-//   * Return the same mode as the active editor, or the default mode, which
-//   * begins as Java/Standard, but is updated with the last mode used.
-//   */
-//  public Mode nextEditorMode() {
-//    return (activeEditor == null) ? defaultMode : activeEditor.getMode();
-//  }
-
-
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
