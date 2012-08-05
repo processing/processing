@@ -252,12 +252,15 @@ _ very slow startup on OS X (library manager et al?)
 _   if not, move to OS X dist list
 _ remove PdeKeyListener, roll it into the Java InputHandler for JEditTextArea
 _   move Java-specific InputHandler to its own subclass
+_ problem changing sketchbook to new location (e.g. from ex to regular) 
+_   new libraries are not picked up
 
 
 2.0 FINAL / new interface
 _ editor.bgcolor probably moves out of the theme.txt file for the mode
 _   or should it be a user preference thing
 _   for that matter, need to decide on how much modes can customize themselves
+_ setModified() getting called on Windows (probably Linux) for key cmds
 
 
 2.0 FINAL / more open/save/etc
@@ -346,9 +349,6 @@ from user Batuff
 > Xvfb :2 -screen 0 1024x768x24 &
 > export DISPLAY=localhost:2.0
 > ./<myExportedProcessingApplication>
-
-_ problem changing sketchbook to new location (e.g. from ex to regular) 
-_   new libraries are not picked up
 
 _ deleting open sketch (with only one window) attempts to quit
 _   (and still deletes, but doesn't close, even if quitting is canceled)
