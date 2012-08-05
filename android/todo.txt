@@ -1,4 +1,4 @@
-0207 android 
+0207 android (2.0a8)
 X lots of cleanup on this todo list
 X Support Native Code in Libraries for Android (includes fix)
 X   http://code.google.com/p/processing/issues/detail?id=1117
