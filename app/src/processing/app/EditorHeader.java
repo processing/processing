@@ -436,13 +436,15 @@ public class EditorHeader extends JComponent {
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           Sketch sketch = editor.getSketch();
-          if (editor.base.editors.size() == 1 &&  // mmm! accessor
+          if (!sketch.isUntitled()) {  // don't bother if untitled
+            if (editor.base.editors.size() == 1 &&  // mmm! accessor
               sketch.getCurrentCodeIndex() == 0) {
-            Base.showWarning("Yeah, no." ,
-                             "You can't delete the last tab " +
-                             "of the last open sketch.", null);
-          } else {
-            editor.getSketch().handleDeleteCode();
+              Base.showWarning("Yeah, no." ,
+                               "You can't delete the last tab " +
+                               "of the last open sketch.", null);
+            } else {
+              editor.getSketch().handleDeleteCode();
+            }
           }
         }
       });
