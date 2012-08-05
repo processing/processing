@@ -1,3 +1,64 @@
+PROCESSING 2.0a8 (REV 0207) - 5 August 2012
+
+A handful of bug fixes. Not as large a release as 2.0a7, but I decided 
+it best to get the updates out there and in use rather than waiting for
+beta 1 since I'm not sure when we'll be able to get that out. 
+
+[ miscellaneous ] 
+
++ Make sure smooth() is the default with both renderers
+  http://code.google.com/p/processing/issues/detail?id=1157
+
++ "Open" dialog on Linux wasn't showing directories
+  http://code.google.com/p/processing/issues/detail?id=1151
+
++ Double-click was immediately closing example folder (Windows and Linux)
+  http://code.google.com/p/processing/issues/detail?id=1150
+
++ Support native code in Android libraries. Thanks to m4rlonj for the patch!
+  http://code.google.com/p/processing/issues/detail?id=1117
+
++ Don't expand the folders in the examples window (Casey request)
+
++ Added cmd-shift-O (ctrl-shift-O) for opening examples window
+
++ Added recent sketches menu to the toolbar
+
++ Added 'empty sketchbook' indicator when the sketchbook menus are empty
+
++ Prevent users from deleting the last tab on the only sketch that is 
+  currently open on Windows and Linux. 
+
+[ serial ] 
+
++ Added 64-bit RXTX for Mac OS X serial from this page:
+  http://blog.iharder.net/2009/08/18/rxtx-java-6-and-librxtxserial-jnilib-on-intel-mac-os-x/
+
++ Added warning message on Mac OS X when /var/lock folders aren't available
+  http://code.google.com/p/processing/issues/detail?id=944
+  http://code.google.com/p/processing/issues/detail?id=937
+
++ bufferUntil() with values above 127 do not work properly
+  http://code.google.com/p/processing/issues/detail?id=1079
+
+[ plumbing ] 
+
++ Switch to using java.awt.Desktop classes for opening folders, links, etc.
+
++ Include createTextArea() in Editor for the GSOC projects.
+
++ Add code for setting the L&F from the prefs file for Linux.
+
++ Added 'all tabs' checkbox to Find & Replace, but not implemented yet.
+  This would be a great project for someone to finish:
+  http://code.google.com/p/processing/issues/detail?id=25
+
++ Added notes about "color(0, 0, 0, 0) produces black" to the Wiki.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING 2.0a7 (REV 0206) - 29 July 2012
 
 Hopefully the last alpha before we hit 2.0 beta. 
