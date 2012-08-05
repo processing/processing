@@ -6,7 +6,6 @@ X smooth() should be the default in 2.0
 X   broken in the recent releases
 X   http://code.google.com/p/processing/issues/detail?id=1157
 
-
 fixed earlier
 A ArrayIndexOutOfBoundsException inside PFontTexture.updateGlyphsTexCoords() 
 A   http://code.google.com/p/processing/issues/detail?id=1104
@@ -17,14 +16,17 @@ C   http://code.google.com/p/processing/issues/detail?id=84
 C constants that are not highlighting (WINDOWS the only one?)
 C   http://dev.processing.org/bugs/show_bug.cgi?id=662
 
-
-before beta
 _ loadShape() mess
 _   get things out of PGraphics
 _   separate PShape2/3D from OpenGL
 _   incorporate SVG loader into the 2D class
-_ finish PGL/GL naming and cleanups to API
+
 _ loadPixels() implementation
+
+_ standardize PGL behavior
+PGL pgl = beginPGL();
+pgl.vertex3f(...)
+pgl.enable(PGL.SOMETHING_PARAM);
 
 _ now that we can wrap exceptions, do die() and warn() methods
 _   this way, people can make use of exceptions if they would rather
@@ -32,10 +34,7 @@ _   or shut them off if they don't want to
 _   also need to explain exception handling in general
 _   http://code.google.com/p/processing/issues/detail?id=183
 
-_ incorporate patch for SVG Gradients from Inkscape
-_   http://code.google.com/p/processing/issues/detail?id=1142
-
-constants/hints
+2.0 FINAL / constants/hints
 _ bring PConstants back in line w/ previous 1.5 (can't renumber)
 _ consider enable("mipmaps") instead of hint(ENABLE_MIPMAPS)
 _ hint(DISABLE_LOADPIXELS) -> faster rendering in Java2D
@@ -71,7 +70,13 @@ _   http://code.google.com/p/processing/issues/detail?id=169
 _ OpenGL offscreen requires primary surface to be OpenGL
 
 _ can't really change the smoothing/options on offscreen
-_ move requestFocusInWindow() to safter EDT place
+
+rendering/performance/threading
+_ problems with 2D rendering speed
+_   volatile images
+_   http://www.javalobby.org/forums/thread.jspa?threadID=16840&tstart=0
+_   http://www.javalobby.org/forums/thread.jspa?threadID=16867&tstart=0
+_   http://www.gamedev.net/page/resources/_/technical/general-programming/java-games-active-rendering-r2418
 _ look into using BufferStrategy again to improve performance
 _   there are more improvements to be made ala issue #729
 _ make sure rendering is happening on the EDT
@@ -83,6 +88,7 @@ _ thread() causes weird flickering
 _   http://code.google.com/p/processing/issues/detail?id=742
 _ Potential race condition when resizing sketches
 _   http://code.google.com/p/processing/issues/detail?id=697
+_ move requestFocusInWindow() to safter EDT place
 
 _ PUtil -> move match(), lots of other non-gui functions into own class
 _   and merge it in statically via the methods code
@@ -153,6 +159,8 @@ _   decision: go with what looks like javascript/ios
 _   touchEvent(), gestureEvent()?
 
 2.0
+_ get() or copy()? for vectors, image, etc.
+_ PVector chaining -> Dan looking into this
 _ PNode.getChildren() shouldn't make a new array.. toArray() can do that
 _ toArray(), toArray(float[]), toVectorArray(), toVectorArray(PVector[])
 _   toColorArray(), toColorArray(float[])...
@@ -204,7 +212,7 @@ decisions to make
 _ possible addition for 'implementation' variable
 _   http://code.google.com/p/processing/issues/detail?id=281
 _ should map() actually constrain to the low and high values?
-_   or have an alternate version that does that?
+_   or have an alternate version that does that? (boolean param at end?)
 _ decide whether to keep:
 _   public float textWidth(char[] chars, int start, int length)
 _ add version of math functions that use doubles?
@@ -404,6 +412,8 @@ _ for PShape, need to be able to set the origin (flash people)
 
 CORE / PShapeSVG
 
+_ implement support for SVG gradients from Inkscape
+_   http://code.google.com/p/processing/issues/detail?id=1142
 _ need to handle <!ENTITY tags in XML for SVG documents
 _   get entity tags working in xml library for SVG
 _ cover the svg changes in a future release
@@ -645,3 +655,8 @@ _ non-homogenous coloring for curve vertices
 _ consider bringing back text/image using cache/names
 _ exactly how pixel-filling works for strokes
 _   http://processing.org/bugs/bugzilla/1025.html
+_ deprecate loadPixels for 2.0? need to move away from it
+_   mostly just change the examples to not use loadPixels() anymore
+_ put a Hash<Something> class in there
+_   will this work to sort by the values?
+_   there was another concern as well..

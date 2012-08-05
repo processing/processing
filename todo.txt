@@ -222,6 +222,7 @@ o can't rename a .pde file as a .java file
 X   seems to have been fixed earlier? probably this one:
 o   http://code.google.com/p/processing/issues/detail?id=776
 
+
 2.0 FINAL / command line
 _ kill external editor (for all its quirks) in favor of command line? 
 _   use external editor needs to enable/disable across all windows
@@ -1201,3 +1202,14 @@ _   use FileChannels, see FileInputStream.getChannel(),
 _   and use transferFrom() or transferTo().)
 _   could also use FileUtils in Apache's common io
 _   http://commons.apache.org/io/api-release/index.html
+_ go through libraries and clean things up 
+protected void finalize() throws Throwable {
+  try {
+    close();        
+  } catch (Exception e) {
+    // do something               
+  } finally {        
+    super.finalize();
+    // more code can be written here as per need of application        
+  }
+}
