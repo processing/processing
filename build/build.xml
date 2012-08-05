@@ -386,6 +386,10 @@
   </target>
 
   <target name="macosx-dist-sign" if="codesign">
+    <echo>
+      It code signing fails, may need to use:
+      export CODESIGN_ALLOCATE="/Applications/Xcode.app/Contents/Developer/usr/bin/codesign_allocate"
+    </echo>
     <exec executable="codesign" dir="macosx/work">
       <arg value="--force" />
       <arg value="--sign" />
