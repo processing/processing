@@ -1,20 +1,5 @@
-0207 core (2.0a8)
-X switch link() and others to just use java.awt.Desktop classes
-X   also deprecate param, link() with a target, and others
-X added notes about "color(0, 0, 0, 0) produces black" to the Wiki
-X smooth() should be the default in 2.0
-X   broken in the recent releases
-X   http://code.google.com/p/processing/issues/detail?id=1157
+0208 core 
 
-fixed earlier
-A ArrayIndexOutOfBoundsException inside PFontTexture.updateGlyphsTexCoords() 
-A   http://code.google.com/p/processing/issues/detail?id=1104
-A Camera function hot changing the upward axis
-A   http://code.google.com/p/processing/issues/detail?id=534
-C some docs missing (therefore not syntax highlighting)
-C   http://code.google.com/p/processing/issues/detail?id=84
-C constants that are not highlighting (WINDOWS the only one?)
-C   http://dev.processing.org/bugs/show_bug.cgi?id=662
 
 _ loadShape() mess
 _   get things out of PGraphics

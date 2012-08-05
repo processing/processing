@@ -36,6 +36,7 @@ import javax.swing.tree.*;
 import processing.app.contrib.*;
 import processing.core.*;
 
+
 /**
  * The base class for the main processing application.
  * Primary role of this class is for platform identification and
@@ -43,9 +44,9 @@ import processing.core.*;
  * files and images, etc) that comes from that.
  */
 public class Base {
-  static public final int REVISION = 207;
+  static public final int REVISION = 208;
   /** This might be replaced by main() if there's a lib/version.txt file. */
-  static public String VERSION_NAME = "0207";
+  static public String VERSION_NAME = "0208";
   /** Set true if this a proper release rather than a numbered revision. */
   static public boolean RELEASE = false;
 
