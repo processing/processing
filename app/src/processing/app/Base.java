@@ -1298,12 +1298,36 @@ public class Base {
 
 
   protected void rebuildSketchbookMenu() {
-    try {
 //      System.err.println("sketchbook: " + sketchbookFolder);
-      sketchbookMenu.removeAll();
-      addSketches(sketchbookMenu, sketchbookFolder, false);
+    sketchbookMenu.removeAll();
+    populateSketchbookMenu(sketchbookMenu);
+//    boolean found = false;
+//    try {
+//      found = addSketches(sketchbookMenu, sketchbookFolder, false);
+//    } catch (IOException e) {
+//      Base.showWarning("Sketchbook Menu Error",
+//                       "An error occurred while trying to list the sketchbook.", e);
+//    }
+//    if (!found) {
+//      JMenuItem empty = new JMenuItem("(empty)");
+//      empty.setEnabled(false);
+//      sketchbookMenu.add(empty);
+//    }
+  }
+
+
+  public void populateSketchbookMenu(JMenu menu) {
+    boolean found = false;
+    try {
+      found = addSketches(menu, sketchbookFolder, false);
     } catch (IOException e) {
-      e.printStackTrace();
+      Base.showWarning("Sketchbook Menu Error",
+                       "An error occurred while trying to list the sketchbook.", e);
+    }
+    if (!found) {
+      JMenuItem empty = new JMenuItem("Empty Sketchbook");
+      empty.setEnabled(false);
+      menu.add(empty);
     }
   }
 
@@ -1329,6 +1353,11 @@ public class Base {
 
   public JMenu getRecentMenu() {
     return recent.getMenu();
+  }
+
+
+  public JMenu getToolbarRecentMenu() {
+    return recent.getToolbarMenu();
   }
 
 

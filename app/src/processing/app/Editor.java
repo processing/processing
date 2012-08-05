@@ -144,6 +144,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
           fileMenu.insert(base.getRecentMenu(), 3);
 //          fileMenu.insert(mode.getExamplesMenu(), 3);
           sketchMenu.insert(mode.getImportMenu(), 4);
+          mode.insertToolbarRecentMenu();
         }
 
         // added for 1.0.5
@@ -155,6 +156,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
           fileMenu.remove(base.getRecentMenu());
 //          fileMenu.remove(mode.getExamplesMenu());
           sketchMenu.remove(mode.getImportMenu());
+          mode.removeToolbarRecentMenu();
         }
       });
 
@@ -592,7 +594,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     fileMenu.add(base.getSketchbookMenu());
 
 //    fileMenu.add(mode.getExamplesMenu());
-    item = new JMenuItem("Examples...");
+    item = Base.newJMenuItemShift("Examples...", 'O');
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         mode.showExamplesFrame();
