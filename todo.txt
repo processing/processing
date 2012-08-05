@@ -30,6 +30,9 @@ X don't expand the folders in the examples window
 X cmd-shift-o for opening examples
 X add recent menu to the toolbar
 X add 'empty sketchbook' indicator when the sketchbook menus are empty
+X deleting open sketch (with only one window) attempts to quit
+X   (and still deletes, but doesn't close, even if quitting is canceled)
+X   affects Windows and Linux
 
 cleaning
 o switching into present mode in info.plist
@@ -349,9 +352,6 @@ from user Batuff
 > Xvfb :2 -screen 0 1024x768x24 &
 > export DISPLAY=localhost:2.0
 > ./<myExportedProcessingApplication>
-
-_ deleting open sketch (with only one window) attempts to quit
-_   (and still deletes, but doesn't close, even if quitting is canceled)
 
 _ can't rename a .pde file as a .java file
 _ shift-tab with no selection should go back two spaces
