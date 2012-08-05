@@ -690,8 +690,15 @@ class AndroidBuild extends JavaBuild {
                              " is mentioned in export.txt, but it's " +
                              "a big fat lie and does not exist.");
         } else if (exportFile.isDirectory()) {
-          Base.copyDir(exportFile, new File(assetsFolder, exportName));
-
+          // Copy native library folders to the correct location
+          if (exportName.equals("armeabi") ||
+              exportName.equals("armeabi-v7a") ||
+              exportName.equals("x86")) {
+            Base.copyDir(exportFile, new File(libsFolder, exportName));
+          } else {
+            // Copy any other directory to the assets folder
+            Base.copyDir(exportFile, new File(assetsFolder, exportName));
+          }
         } else if (exportName.toLowerCase().endsWith(".zip")) {
           // As of r4 of the Android SDK, it looks like .zip files
           // are ignored in the libs folder, so rename to .jar
