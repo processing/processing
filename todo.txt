@@ -1,8 +1,10 @@
 0208 pde
+X Help menu broken when Processing has spaces in its path name in 2.0a8
+X   http://code.google.com/p/processing/issues/detail?id=1164
 
 
 2.0 FINAL / command line
-_ kill external editor (for all its quirks) in favor of command line? 
+_ kill external editor (for all its quirks) in favor of command line
 _   use external editor needs to enable/disable across all windows
 _   http://code.google.com/p/processing/issues/detail?id=515
 C   Casey says yes kill ext editor and finish command line
@@ -612,6 +614,9 @@ _ see how library installation goes, then possibly do same w/ examples
 
 PDE / Preferences
 
+_ changing the default display does not reset editor location
+_   so the change appears to have no effect
+_   http://code.google.com/p/processing/issues/detail?id=1162
 _ the .macosx, .linux, etc prefs should be stripped
 _   only use them on first load, and merge into preferences.txt
 _ Editor.applyFrame() may not have a valid 'editor' object to work with
