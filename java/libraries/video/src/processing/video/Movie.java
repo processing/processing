@@ -136,12 +136,14 @@ public class Movie extends PImage implements PConstants {
     }
   }
   
+  
   /**
    * Same as delete.
    */  
   public void dispose() {
     delete();
   }
+  
   
   /**
    * Finalizer of the class.
@@ -154,13 +156,14 @@ public class Movie extends PImage implements PConstants {
     }
   }   
   
+  
   /**
    * Get the width of the source video. Note: calling this method repeatedly
    * can slow down playback performance.
    * 
    * @return int
    */  
-  public int getSourceWidth() {
+  protected int getSourceWidth() {
     Dimension dim = gplayer.getVideoSize();
     if (dim != null) {
       return dim.width;
@@ -169,13 +172,14 @@ public class Movie extends PImage implements PConstants {
     }
   }
   
+  
   /**
    * Get the height of the source video. Note: calling this method repeatedly
    * can slow down playback performance.
    * 
    * @return int
    */    
-  public int getSourceHeight() {
+  protected int getSourceHeight() {
     Dimension dim = gplayer.getVideoSize();
     if (dim != null) {
       return dim.height;
@@ -184,15 +188,17 @@ public class Movie extends PImage implements PConstants {
     }
   }
 
+  
   /**
    * Get the original framerate of the source video. Note: calling this method repeatedly
    * can slow down playback performance.
    * 
    * @return float
    */    
-  public float getSourceFrameRate() {
+  protected float getSourceFrameRate() {
     return (float)gplayer.getVideoSinkFrameRate();
   }  
+  
   
   /**
    * ( begin auto-generated from Movie_frameRate.xml )
@@ -242,6 +248,7 @@ public class Movie extends PImage implements PConstants {
     fps = ifps;
   }
 
+  
   /**
    * ( begin auto-generated from Movie_speed.xml )
    * 
@@ -268,6 +275,7 @@ public class Movie extends PImage implements PConstants {
     }
   }
   
+  
   /**
    * ( begin auto-generated from Movie_duration.xml )
    * 
@@ -284,6 +292,7 @@ public class Movie extends PImage implements PConstants {
     float nanosec = gplayer.queryDuration().getNanoSeconds();
     return sec + Video.nanoSecToSecFrac(nanosec);
   }  
+  
   
   /**
    * ( begin auto-generated from Movie_time.xml )
@@ -302,6 +311,7 @@ public class Movie extends PImage implements PConstants {
     return sec + Video.nanoSecToSecFrac(nanosec);
   }
 
+  
   /**
    * ( begin auto-generated from Movie_jump.xml )
    * 
@@ -339,12 +349,13 @@ public class Movie extends PImage implements PConstants {
     seeking = false;
   }
   
+  
   /**
    * Returns true if the stream is already producing frames.
    * 
    * @return boolean
    */  
-  public boolean ready() {
+  protected boolean ready() {
     return 0 < bufWidth && 0 < bufHeight && sinkReady && !seeking;
   }
   
@@ -355,7 +366,7 @@ public class Movie extends PImage implements PConstants {
    * 
    * @return boolean
    */   
-  public boolean newFrame() {
+  protected boolean newFrame() {
     boolean res = newFrame;
     newFrame = false;
     return res;
@@ -380,7 +391,7 @@ public class Movie extends PImage implements PConstants {
    * 
    * @return boolean
    */
-  public boolean isPlaying() {
+  protected boolean isPlaying() {
     return playing;  
   }
 
@@ -390,7 +401,7 @@ public class Movie extends PImage implements PConstants {
    * 
    * @return boolean
    */
-  public boolean isPaused() {
+  protected boolean isPaused() {
     return paused;  
   }  
   
@@ -399,7 +410,7 @@ public class Movie extends PImage implements PConstants {
    * 
    * @return boolean
    */
-  public boolean isLooping() {
+  protected boolean isLooping() {
     return repeat;
   }
   
@@ -505,7 +516,7 @@ public class Movie extends PImage implements PConstants {
     }
     
     if (playing) {      
-      goToBeginning();
+      jump(0);
       playing = false;
     }
     paused = false;    
@@ -577,20 +588,7 @@ public class Movie extends PImage implements PConstants {
     newFrame = true;
   }
 
-  /**
-   * Goes to the first frame of the movie.
-   */
-  public void goToBeginning() {
-    jump(0.0f);   
-  }
 
-  /**
-   * Goes to the last frame of the movie.
-   */
-  public void goToEnd() {
-    jump(duration());
-  }
-  
   /**
    * Change the volume. Values are from 0 to 1.
    * 
@@ -602,21 +600,13 @@ public class Movie extends PImage implements PConstants {
     }
   }
 
-  /**
-   * Returns the text string containing the filename of the video loaded.
-   * 
-   * @return String 
-   */  
-  public String getFilename() {
-    return filename;
-  }
   
   /**
    * Prints all the gstreamer elements currently used in the
    * current player instance.
    * 
    */    
-  public void printElements() {
+  protected void printElements() {
     List<Element> list = gplayer.getElementsRecursive();
     PApplet.println(list);
     for (Element element : list) {
@@ -630,7 +620,7 @@ public class Movie extends PImage implements PConstants {
    * be called upon a new frame read event. 
    * 
    */
-  public void setEventHandlerObject(Object obj) {
+  protected void setEventHandlerObject(Object obj) {
     eventHandler = obj;
 
     try {
@@ -829,10 +819,10 @@ public class Movie extends PImage implements PConstants {
     if (repeat) {
       if (0 < rate) {
         // Playing forward, so we return to the beginning
-        goToBeginning();
+        jump(0);
       } else {
         // Playing backwards, so we go to the end.
-        goToEnd();
+        jump(duration());
       }      
       
       // The rate is reset to 1 when restarting the stream, so

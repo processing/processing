@@ -242,7 +242,7 @@ public class Capture extends PImage implements PConstants {
    * 
    * @return boolean
    */  
-  public boolean ready() {
+  protected boolean ready() {
     return 0 < bufWidth && 0 < bufHeight && pipelineReady;
   }
   
@@ -253,7 +253,7 @@ public class Capture extends PImage implements PConstants {
    * 
    * @return boolean
    */   
-  public synchronized boolean newFrame() {
+  protected synchronized boolean newFrame() {
     boolean res = newFrame;
     newFrame = false;
     return res;
@@ -264,7 +264,7 @@ public class Capture extends PImage implements PConstants {
    * 
    * @return boolean
    */
-  public boolean isCapturing() {
+  protected boolean isCapturing() {
     return capturing;  
   }  
   
@@ -281,6 +281,7 @@ public class Capture extends PImage implements PConstants {
   public boolean available() {
     return available;
   }
+  
   
   /**
    * Starts capturing frames from the selected device.
@@ -303,6 +304,7 @@ public class Capture extends PImage implements PConstants {
     }
   }
 
+  
   /**
    * ( begin auto-generated from Capture_stop.xml )
    * 
@@ -321,6 +323,7 @@ public class Capture extends PImage implements PConstants {
     capturing = false;
     gpipeline.stop();
   }  
+  
   
   /** 
    * ( begin auto-generated from Capture_read.xml )
@@ -387,6 +390,7 @@ public class Capture extends PImage implements PConstants {
     newFrame = true;
   }
   
+  
   /**
    * <h3>Advanced</h3>
    * Returns the name of the source element used for capture.
@@ -396,6 +400,7 @@ public class Capture extends PImage implements PConstants {
   public String getSource() {
     return source;
   }   
+  
   
   /**
    * ( begin auto-generated from Capture_list.xml )
@@ -412,6 +417,7 @@ public class Capture extends PImage implements PConstants {
     return list(capturePlugin);
   }
 
+  
   /**
    * <h3>Advanced</h3>
    * Get a list of all available captures as a String array. i.e.
@@ -451,6 +457,7 @@ public class Capture extends PImage implements PConstants {
     return res;
   }
   
+  
   static protected String[] list(String sourceName, String propertyName) {
     Video.init();
     String[] valuesListing = new String[0];
@@ -471,6 +478,7 @@ public class Capture extends PImage implements PConstants {
     return valuesListing;
   }
 
+  
   /**
    * <h3>Advanced</h3>
    * Returns a list with the resolutions supported by the capture device,
@@ -478,7 +486,7 @@ public class Capture extends PImage implements PConstants {
    * 
    * @return Resolution[]
    */  
-  public Resolution[] resolutions() {
+  protected Resolution[] resolutions() {
     Resolution[] res;
     
     if (resolutions == null) {
@@ -494,13 +502,14 @@ public class Capture extends PImage implements PConstants {
     return res;        
   }  
   
+  
   /**
    * <h3>Advanced</h3>
    * Prints all the gstreamer elements currently used in the
    * current pipeline instance.
    * 
    */    
-  public void printElements() {
+  protected void printElements() {
     List<Element> list = gpipeline.getElementsRecursive();
     PApplet.println(list);
     for (Element element : list) {
@@ -515,7 +524,7 @@ public class Capture extends PImage implements PConstants {
    * be called upon a new frame read event. 
    * 
    */
-  public void setEventHandlerObject(Object obj) {
+  protected void setEventHandlerObject(Object obj) {
     eventHandler = obj;
 
     try {
