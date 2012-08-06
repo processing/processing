@@ -1,5 +1,12 @@
 0208 core 
+X remove/hide several video functions that weren't approved
 
+
+api to be fixed/removed
+_ remove PImage.delete() and friends from PImage, Movie, etc.
+_ delete()/dispose() being used in the movie
+_ buffer sink methods in movie
+_ 'newFrame' is 'available', and ready() is part of that
 
 _ loadShape() mess
 _   get things out of PGraphics
