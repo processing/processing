@@ -1964,10 +1964,13 @@ public class Base {
 
 
   /**
-   * Implements the cross-platform headache of opening URLs. For 2.0, this
-   * requires the parameter to be an actual URL, meaning that you can't send
-   * it a file:// path without a prefix. It also just calls into Platform,
-   * which now uses java.awt.Desktop because we're requiring Java 6.
+   * Implements the cross-platform headache of opening URLs.
+   *
+   * For 2.0a8 and later, this requires the parameter to be an actual URL,
+   * meaning that you can't send it a file:// path without a prefix. It also
+   * just calls into Platform, which now uses java.awt.Desktop (where
+   * possible, meaning not on Linux) now that we're requiring Java 6.
+   * As it happens the URL must also be properly URL-encoded.
    */
   static public void openURL(String url) {
     try {

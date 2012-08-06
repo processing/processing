@@ -1079,11 +1079,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
 
   public void showReference(String filename) {
-//    File referenceFolder = Base.getContentFile("reference");
-//    File referenceFile = new File(referenceFolder, filename);
-//    Base.openURL(referenceFile.getAbsolutePath());
     File file = new File(mode.getReferenceFolder(), filename);
-    Base.openURL("file://" + file.getAbsolutePath());
+    // Prepend with file:// and also encode spaces & other characters
+    Base.openURL(file.toURI().toString());
   }
 
 
