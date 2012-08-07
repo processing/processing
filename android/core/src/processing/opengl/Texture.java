@@ -287,6 +287,11 @@ public class Texture implements PConstants {
       return;
     }
     
+    if (pixels.length == 0) {
+      // Nothing to do (means that w == h == 0) but not an erroneous situation
+      return;
+    }
+    
     boolean enabledTex = false;
     if (!pgl.texturingIsEnabled(glTarget)) {
       pgl.enableTexturing(glTarget);
