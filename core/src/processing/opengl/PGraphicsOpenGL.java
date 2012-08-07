@@ -5169,15 +5169,17 @@ public class PGraphicsOpenGL extends PGraphics {
         }
         tex = addTexture(img, params);
       }
-      texture = tex;
-      texture.setFlippedY(true);
-      this.setCache(pgPrimary, texture);
-      this.setParams(pgPrimary, params);
+      if (tex != null) {
+        texture = tex;
+        texture.setFlippedY(true);
+        this.setCache(pgPrimary, texture);
+        this.setParams(pgPrimary, params);
 
-      if (!primarySurface && offscreenFramebuffer != null) {
-        // Attach as the color buffer for this offscreen surface
-        offscreenFramebuffer.setColorBuffer(texture);
-        offscreenFramebuffer.clear();
+        if (!primarySurface && offscreenFramebuffer != null) {
+          // Attach as the color buffer for this offscreen surface
+          offscreenFramebuffer.setColorBuffer(texture);
+          offscreenFramebuffer.clear();
+        }
       }
     }
   }
@@ -5529,7 +5531,8 @@ public class PGraphicsOpenGL extends PGraphics {
    */
   public Texture getTexture(PImage img) {
     Texture tex = (Texture)initCache(img);
-
+    if (tex == null) return null;
+      
     if (img.isModified()) {
       if (img.width != tex.width || img.height != tex.height) {
         tex.init(img.width, img.height);
@@ -5548,8 +5551,10 @@ public class PGraphicsOpenGL extends PGraphics {
     Texture tex = (Texture)img.getCache(pgPrimary);
     if (tex == null || tex.contextIsOutdated()) {
       tex = addTexture(img);
-      img.loadPixels();
-      tex.set(img.pixels);
+      if (tex != null) {
+        img.loadPixels();
+        tex.set(img.pixels);
+      }
     }
     return tex;
   }
@@ -5582,6 +5587,10 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected Texture addTexture(PImage img, Texture.Parameters params) {
+    if (img.width == 0 || img.height == 0) {
+      // Cannot add textures of size 0
+      return null;
+    } 
     if (img.parent == null) {
       img.parent = parent;
     }
@@ -6685,7 +6694,7 @@ public class PGraphicsOpenGL extends PGraphics {
       PImage img = textures[i];
       Texture tex = null;
 
-      if (img != null) {
+      if (img != null) {        
         tex = pgPrimary.getTexture(img);
         if (tex != null) {
           tex.bind();
