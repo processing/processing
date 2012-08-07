@@ -420,7 +420,7 @@ public class PGL {
   }
 
   
-  public void setFramerate(float framerate) {    
+  public void setFrameRate(float framerate) {    
   }
   
   
