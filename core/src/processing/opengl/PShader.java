@@ -580,10 +580,10 @@ public class PShader {
           PImage img = (PImage)val.value;
           Texture tex = pgMain.getTexture(img);     
           pgl.glUniform1i(loc, texUnit);
-          if (textures == null) {
+          if (textures == null) {            
             textures = new HashMap<Integer, Texture>();
-            textures.put(texUnit, tex);
-          }
+          }  
+          textures.put(texUnit, tex);
           texUnit++;
         }
       }
