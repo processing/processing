@@ -5818,6 +5818,11 @@ public class PGraphicsOpenGL extends PGraphics {
     }
   }
 
+  
+  public void resetShader() {
+    resetShader(PShader.TEXTURED);
+  }
+  
 
   public void resetShader(int kind) {
     flush(); // Flushing geometry drawn with a different shader.
@@ -6246,6 +6251,7 @@ public class PGraphicsOpenGL extends PGraphics {
   protected class PolyTexShader extends PolyFlatShader {
     protected int inTexcoordLoc;
 
+    protected int textureSamplerLoc;
     protected int texcoordMatrixLoc;
     protected int texcoordOffsetLoc;
 
@@ -6266,6 +6272,7 @@ public class PGraphicsOpenGL extends PGraphics {
     public void loadUniforms() {
       super.loadUniforms();
 
+      textureSamplerLoc = getUniformLoc("textureSampler");
       texcoordMatrixLoc = getUniformLoc("texcoordMatrix");
       texcoordOffsetLoc = getUniformLoc("texcoordOffset");
     }
@@ -6313,9 +6320,13 @@ public class PGraphicsOpenGL extends PGraphics {
       }
       
       setUniformValue(texcoordOffsetLoc, 1.0f / tex.width, 1.0f / tex.height);
+      
+      setUniformValue(textureSamplerLoc, 0);      
     }
 
     public void bind() {
+      firstTexUnit = 1; // 0 will be used by the textureSampler
+      
       super.bind();
 
       if (-1 < inTexcoordLoc) pgl.glEnableVertexAttribArray(inTexcoordLoc);
@@ -6332,6 +6343,7 @@ public class PGraphicsOpenGL extends PGraphics {
   protected class PolyFullShader extends PolyLightShader {
     protected int inTexcoordLoc;
 
+    protected int textureSamplerLoc;
     protected int texcoordMatrixLoc;
     protected int texcoordOffsetLoc;
 
@@ -6352,6 +6364,7 @@ public class PGraphicsOpenGL extends PGraphics {
     public void loadUniforms() {
       super.loadUniforms();
 
+      textureSamplerLoc = getUniformLoc("textureSampler");
       texcoordMatrixLoc = getUniformLoc("texcoordMatrix");
       texcoordOffsetLoc = getUniformLoc("texcoordOffset");
     }
@@ -6399,9 +6412,13 @@ public class PGraphicsOpenGL extends PGraphics {
       }
 
       setUniformValue(texcoordOffsetLoc, 1.0f / tex.width, 1.0f / tex.height);
+      
+      setUniformValue(textureSamplerLoc, 0);
     }
 
     public void bind() {
+      firstTexUnit = 1; // 0 will be used by the textureSampler
+      
       super.bind();
 
       if (-1 < inTexcoordLoc) pgl.glEnableVertexAttribArray(inTexcoordLoc);
