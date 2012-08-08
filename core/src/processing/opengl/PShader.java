@@ -205,6 +205,17 @@ public class PShader {
   }
   
   
+  public void set(String name, PImage tex) {
+    /*
+    texUnit = tu;
+    gl.glActiveTexture(GL.GL_TEXTURE0 + texUnit);
+    gl.glBindTexture(texTarget, tex);
+    if (-1 < texUniform) {
+      gl.glUniform1iARB(texUniform, texUnit);
+    */    
+  }
+  
+  
   public void set(String name, int x) {    
     setUniformImpl(name, UniformValue.INT1, new int[] { x });
   }

@@ -381,42 +381,64 @@ public class Texture implements PConstants {
     
     updateTexels(x, y, w, h);        
   }  
-  
+   
   
   ////////////////////////////////////////////////////////////
   
   // Native set methods
-  
-  
-  public void setNative(int[] pix, int x, int y, int w, int h) {
-    setNative(pix, 0, x, y, w, h);
-  }
-  
-  
-  public void setNative(int[] pix, int level, int x, int y, int w, int h) {
-    setNative(IntBuffer.wrap(pix), level, x, y, w, h);
-  }
 
   
-  public void setNative(IntBuffer buffer, int x, int y, int w, int h) {
-    setNative(buffer, 0, x, y, w, h);
-  }  
+  public void setNative(int[] pixels) {
+    setNative(pixels, 0, 0, width, height); 
+  }
   
   
-  public void setNative(IntBuffer buffer, int level, int x, int y, int w, int h) {
+  public void setNative(int[] pixels, int x, int y, int w, int h) {
+    setNative(IntBuffer.wrap(pixels), x, y, w, h);
+  }
+  
+  
+  public void setNative(IntBuffer pixels, int x, int y, int w, int h) {
+    if (pixels == null) {
+      pixels = null;
+      PGraphics.showWarning("The pixel buffer is null.");
+      return;
+    }    
+    if (pixels.capacity() != w * h) {
+      PGraphics.showWarning("The pixels array has a length of " + pixels.capacity()  + ", but it should be " + w * h);
+      return;
+    }
+    
+    if (pixels.capacity()  == 0) {
+      // Nothing to do (means that w == h == 0) but not an erroneous situation
+      return;
+    }
+    
     boolean enabledTex = false;
     if (!pgl.texturingIsEnabled(glTarget)) {
       pgl.enableTexturing(glTarget);
       enabledTex = true;
     }
     pgl.glBindTexture(glTarget, glName);
-    pgl.glTexSubImage2D(glTarget, level, x, y, w, h, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, buffer);
+    
+    if (usingMipmaps) {
+      if (PGraphicsOpenGL.autoMipmapGenSupported) {
+        pgl.glTexSubImage2D(glTarget, 0, x, y, w, h, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, pixels);
+        pgl.glGenerateMipmap(glTarget);
+      } else {       
+        pgl.glTexSubImage2D(glTarget, 0, x, y, w, h, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, pixels);  
+      }
+    } else {  
+      pgl.glTexSubImage2D(glTarget, 0, x, y, w, h, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, pixels);
+    }
+    
     pgl.glBindTexture(glTarget, 0);
     if (enabledTex) {
       pgl.disableTexturing(glTarget);
     }
+    
     updateTexels(x, y, w, h);
-  }  
+  } 
   
   
   ////////////////////////////////////////////////////////////
