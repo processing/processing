@@ -1,3 +1,10 @@
+API changes/additions (for beta release)
+_ Rename shader constants (FLAT, LIT, TEXTURED, etc)
+_ Back-buffer support in shaders: http://code.google.com/p/processing/issues/detail?id=1169
+_ Cleanup video API: http://code.google.com/p/processing/issues/detail?id=1170
+_ Texture wrapping option in PImage/Texture
+_ Add DISABLE_PERSPECTIVE_CORRECTED_STROKE hint, remove DISABLE_PERSPECTIVE_CORRECTED_LINES
+
 processing-core todo (after beta):
 _ some glitches with SVG shapes in P2D 
 _   load world.svg and disable style)

@@ -2468,6 +2468,12 @@ public class PGraphicsOpenGL extends PGraphics {
     for (int i = 0; i < texCache.size; i++) {
       Texture tex = texCache.getTexture(i);
 
+      PApplet.println(texCache.getTextureImage(i) + " " + tex);
+//      if (tex != null) {
+//        PApplet.println(tex.width + " " + tex.height);
+//      }
+      
+      
       // If the renderer is 2D, then lights should always be false,
       // so no need to worry about that.
       PolyShader shader = getPolyShader(lights, tex != null);
@@ -6312,6 +6318,8 @@ public class PGraphicsOpenGL extends PGraphics {
         tcmat[3] = 0;      tcmat[7] = 0;      tcmat[11] = 0; tcmat[15] = 0;
         setUniformMatrix(texcoordMatrixLoc, tcmat);
       }
+      
+      PApplet.println(tex.maxTexcoordU + " " + tex.maxTexcoordV);
 
       setUniformValue(texcoordOffsetLoc, 1.0f / tex.width, 1.0f / tex.height);
     }
