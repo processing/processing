@@ -72,6 +72,10 @@ public class PShader {
   
   protected HashMap<Integer, UniformValue> uniformValues = null;
   
+  protected HashMap<Integer, Texture> textures;
+  protected int firstTexUnit;
+
+  
   public PShader() {
     parent = null;
     pgMain = null;
@@ -87,8 +91,11 @@ public class PShader {
     glVertex = 0;
     glFragment = 0;
     
+    firstTexUnit = 0;
+    
     bound = false;
   }
+
     
   
   public PShader(PApplet parent) {
@@ -185,6 +192,7 @@ public class PShader {
     pgl.glUseProgram(glProgram);
     bound = true;
     consumeUniforms();
+    bindTextures();
   }
 
   
@@ -192,6 +200,7 @@ public class PShader {
    * Unbinds the shader program.
    */
   public void unbind() {
+    unbindTextures();
     pgl.glUseProgram(0);
     bound = false;
   }
@@ -203,18 +212,7 @@ public class PShader {
   public boolean bound() {
     return bound;
   }
-  
-  
-  public void set(String name, PImage tex) {
-    /*
-    texUnit = tu;
-    gl.glActiveTexture(GL.GL_TEXTURE0 + texUnit);
-    gl.glBindTexture(texTarget, tex);
-    if (-1 < texUniform) {
-      gl.glUniform1iARB(texUniform, texUnit);
-    */    
-  }
-  
+
   
   public void set(String name, int x) {    
     setUniformImpl(name, UniformValue.INT1, new int[] { x });
@@ -328,9 +326,15 @@ public class PShader {
                        mat.m10, mat.m11, mat.m12, mat.m13,
                        mat.m20, mat.m21, mat.m22, mat.m23, 
                        mat.m30, mat.m31, mat.m32, mat.m33 };
-      setUniformImpl(name, UniformValue.MAT4, matv);      
+      setUniformImpl(name, UniformValue.MAT4, matv);
     }
   }
+  
+  
+  public void set(String name, PImage tex) {
+    setUniformImpl(name, UniformValue.SAMPLER2D, tex);
+  }
+  
   
   
   /**
@@ -505,13 +509,14 @@ public class PShader {
       }
       uniformValues.put(loc, new UniformValue(type, value));      
     } else {
-      PGraphics.showWarning("The shader doesn't have the uniform " + name);
+      PGraphics.showWarning("The shader doesn't have a uniform called \"" + name + "\"");
     }    
   }  
   
   
   protected void consumeUniforms() {
     if (uniformValues != null && 0 < uniformValues.size()) {
+      int texUnit = firstTexUnit; 
       for (Integer loc: uniformValues.keySet()) {        
         UniformValue val = uniformValues.get(loc);        
         if (val.type == UniformValue.INT1) {
@@ -571,6 +576,15 @@ public class PShader {
         } else if (val.type == UniformValue.MAT4) {
           float[] v = ((float[])val.value);
           pgl.glUniformMatrix4fv(loc, 1, false, v, 0);          
+        } else if (val.type == UniformValue.SAMPLER2D) {
+          PImage img = (PImage)val.value;
+          Texture tex = pgMain.getTexture(img);     
+          pgl.glUniform1i(loc, texUnit);
+          if (textures == null) {
+            textures = new HashMap<Integer, Texture>();
+            textures.put(texUnit, tex);
+          }
+          texUnit++;
         }
       }
       uniformValues.clear();
@@ -578,6 +592,29 @@ public class PShader {
   }
   
     
+  protected void bindTextures() {
+    if (textures != null) {    
+      for (int unit: textures.keySet()) {
+        Texture tex = textures.get(unit);
+        pgl.glActiveTexture(PGL.GL_TEXTURE0 + unit);
+        tex.bind();
+      }          
+    }
+  }
+  
+  
+  protected void unbindTextures() {
+    if (textures != null) {
+      for (int unit: textures.keySet()) {
+        Texture tex = textures.get(unit);
+        pgl.glActiveTexture(PGL.GL_TEXTURE0 + unit);
+        tex.unbind();
+      } 
+      pgl.glActiveTexture(PGL.GL_TEXTURE0);
+    }    
+  }
+  
+  
   protected void init() {
     if (glProgram == 0 || contextIsOutdated()) {
       context = pgl.getCurrentContext();
@@ -794,6 +831,7 @@ public class PShader {
     static final int MAT2      = 16;
     static final int MAT3      = 17;
     static final int MAT4      = 18;
+    static final int SAMPLER2D = 19;
     
     int type;
     Object value;
