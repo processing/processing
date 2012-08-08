@@ -376,7 +376,7 @@ class PFontTexture implements PConstants {
 
 
     void updateTex() {
-      textures[texIndex].setNative(pixels, 0, crop[0] - 1, crop[1] + crop[3] - 1, crop[2] + 2, -crop[3] + 2);
+      textures[texIndex].setNative(pixels, crop[0] - 1, crop[1] + crop[3] - 1, crop[2] + 2, -crop[3] + 2);
     }
   }
 }
