@@ -5577,7 +5577,6 @@ public class PGraphicsOpenGL extends PGraphics {
       params.sampling = textureSampling;
       if (params.sampling == Texture.TRILINEAR && !params.mipmaps) {
         params.sampling = Texture.BILINEAR;
-        PGraphics.showWarning("TRILINEAR texture sampling requires mipmaps, which are disabled. I will use BILINEAR instead.");
       }
       params.wrapU = textureWrap;
       params.wrapV = textureWrap;
@@ -6312,7 +6311,7 @@ public class PGraphicsOpenGL extends PGraphics {
         tcmat[3] = 0;      tcmat[7] = 0;      tcmat[11] = 0; tcmat[15] = 0;
         setUniformMatrix(texcoordMatrixLoc, tcmat);
       }
-
+      
       setUniformValue(texcoordOffsetLoc, 1.0f / tex.width, 1.0f / tex.height);
     }
 
