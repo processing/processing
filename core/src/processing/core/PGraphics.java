@@ -721,13 +721,13 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  public PGL beginGL() {
+  public PGL beginPGL() {
     showMethodWarning("beginGL");
     return null;
   }
 
 
-  public void endGL() {
+  public void endPGL() {
     showMethodWarning("endGL");
   }
 
