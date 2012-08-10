@@ -297,15 +297,15 @@ public class Texture implements PConstants {
       pgl.enableTexturing(glTarget);
       enabledTex = true;
     }
-    pgl.glBindTexture(glTarget, glName);
+    pgl.bindTexture(glTarget, glName);
                 
     if (usingMipmaps) {
       if (PGraphicsOpenGL.autoMipmapGenSupported) {
         // Automatic mipmap generation.
         int[] rgbaPixels = new int[w * h];
         convertToRGBA(pixels, rgbaPixels, format, w, h);
-        pgl.glTexSubImage2D(glTarget, 0, x, y, w, h, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, IntBuffer.wrap(rgbaPixels));
-        pgl.glGenerateMipmap(glTarget);
+        pgl.texSubImage2D(glTarget, 0, x, y, w, h, PGL.RGBA, PGL.UNSIGNED_BYTE, IntBuffer.wrap(rgbaPixels));
+        pgl.generateMipmap(glTarget);
         rgbaPixels = null;
       } else {       
         // TODO: finish manual mipmap generation, replacing Bitmap with AWT's BufferedImage,
@@ -364,17 +364,17 @@ public class Texture implements PConstants {
         
         int[] rgbaPixels = new int[w * h];
         convertToRGBA(pixels, rgbaPixels, format, w, h);
-        pgl.glTexSubImage2D(glTarget, 0, x, y, w, h, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, IntBuffer.wrap(rgbaPixels));
+        pgl.texSubImage2D(glTarget, 0, x, y, w, h, PGL.RGBA, PGL.UNSIGNED_BYTE, IntBuffer.wrap(rgbaPixels));
         rgbaPixels = null;        
       }      
     } else {
       int[] rgbaPixels = new int[w * h];
       convertToRGBA(pixels, rgbaPixels, format, w, h);
-      pgl.glTexSubImage2D(glTarget, 0, x, y, w, h, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, IntBuffer.wrap(rgbaPixels));
+      pgl.texSubImage2D(glTarget, 0, x, y, w, h, PGL.RGBA, PGL.UNSIGNED_BYTE, IntBuffer.wrap(rgbaPixels));
       rgbaPixels = null;
     }
 
-    pgl.glBindTexture(glTarget, 0);
+    pgl.bindTexture(glTarget, 0);
     if (enabledTex) {
       pgl.disableTexturing(glTarget);
     }
@@ -419,20 +419,20 @@ public class Texture implements PConstants {
       pgl.enableTexturing(glTarget);
       enabledTex = true;
     }
-    pgl.glBindTexture(glTarget, glName);
+    pgl.bindTexture(glTarget, glName);
     
     if (usingMipmaps) {
       if (PGraphicsOpenGL.autoMipmapGenSupported) {
-        pgl.glTexSubImage2D(glTarget, 0, x, y, w, h, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, pixels);
-        pgl.glGenerateMipmap(glTarget);
+        pgl.texSubImage2D(glTarget, 0, x, y, w, h, PGL.RGBA, PGL.UNSIGNED_BYTE, pixels);
+        pgl.generateMipmap(glTarget);
       } else {       
-        pgl.glTexSubImage2D(glTarget, 0, x, y, w, h, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, pixels);  
+        pgl.texSubImage2D(glTarget, 0, x, y, w, h, PGL.RGBA, PGL.UNSIGNED_BYTE, pixels);  
       }
     } else {  
-      pgl.glTexSubImage2D(glTarget, 0, x, y, w, h, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, pixels);
+      pgl.texSubImage2D(glTarget, 0, x, y, w, h, PGL.RGBA, PGL.UNSIGNED_BYTE, pixels);
     }
     
-    pgl.glBindTexture(glTarget, 0);
+    pgl.bindTexture(glTarget, 0);
     if (enabledTex) {
       pgl.disableTexturing(glTarget);
     }
@@ -602,7 +602,7 @@ public class Texture implements PConstants {
     if (!pgl.texturingIsEnabled(glTarget)) {
       pgl.enableTexturing(glTarget);
     }
-    pgl.glBindTexture(glTarget, glName);
+    pgl.bindTexture(glTarget, glName);
     bound = true;
   }
   
@@ -613,10 +613,10 @@ public class Texture implements PConstants {
       // that might be bound instead of this one.
       if (!pgl.texturingIsEnabled(glTarget)) {
         pgl.enableTexturing(glTarget); 
-        pgl.glBindTexture(glTarget, 0);
+        pgl.bindTexture(glTarget, 0);
         pgl.disableTexturing(glTarget); 
       } else {
-        pgl.glBindTexture(glTarget, 0);
+        pgl.bindTexture(glTarget, 0);
       }
     }
     bound = false;
@@ -1086,20 +1086,20 @@ public class Texture implements PConstants {
     context = pgl.getCurrentContext();    
     glName = pg.createTextureObject(context.code());    
     
-    pgl.glBindTexture(glTarget, glName);    
-    pgl.glTexParameteri(glTarget, PGL.GL_TEXTURE_MIN_FILTER, glMinFilter);    
-    pgl.glTexParameteri(glTarget, PGL.GL_TEXTURE_MAG_FILTER, glMagFilter);
-    pgl.glTexParameteri(glTarget, PGL.GL_TEXTURE_WRAP_S, glWrapS);
-    pgl.glTexParameteri(glTarget, PGL.GL_TEXTURE_WRAP_T, glWrapT);
+    pgl.bindTexture(glTarget, glName);    
+    pgl.texParameteri(glTarget, PGL.TEXTURE_MIN_FILTER, glMinFilter);    
+    pgl.texParameteri(glTarget, PGL.TEXTURE_MAG_FILTER, glMagFilter);
+    pgl.texParameteri(glTarget, PGL.TEXTURE_WRAP_S, glWrapS);
+    pgl.texParameteri(glTarget, PGL.TEXTURE_WRAP_T, glWrapT);
     
     // First, we use glTexImage2D to set the full size of the texture (glW/glH might be diff
     // from w/h in the case that the GPU doesn't support NPOT textures)
-    pgl.glTexImage2D(glTarget, 0, glFormat, glWidth, glHeight, 0, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, null);
+    pgl.texImage2D(glTarget, 0, glFormat, glWidth, glHeight, 0, PGL.RGBA, PGL.UNSIGNED_BYTE, null);
     
     // Makes sure that the texture buffer in video memory doesn't contain any garbage.
-    pgl.initTexture(glTarget, PGL.GL_RGBA, width, height);
+    pgl.initTexture(glTarget, PGL.RGBA, width, height);
     
-    pgl.glBindTexture(glTarget, 0);
+    pgl.bindTexture(glTarget, 0);
     if (enabledTex) {
       pgl.disableTexturing(glTarget);
     }
@@ -1242,47 +1242,47 @@ public class Texture implements PConstants {
   public Parameters getParameters() {
     Parameters res = new Parameters();
     
-    if (glTarget == PGL.GL_TEXTURE_2D)  {
+    if (glTarget == PGL.TEXTURE_2D)  {
       res.target = TEX2D;
     }
     
-    if (glFormat == PGL.GL_RGB)  {
+    if (glFormat == PGL.RGB)  {
       res.format = RGB;
-    } else  if (glFormat == PGL.GL_RGBA) {
+    } else  if (glFormat == PGL.RGBA) {
       res.format = ARGB;
-    } else  if (glFormat == PGL.GL_ALPHA) {
+    } else  if (glFormat == PGL.ALPHA) {
       res.format = ALPHA;
     }
     
-    if (glMagFilter == PGL.GL_NEAREST && glMinFilter == PGL.GL_NEAREST) {
+    if (glMagFilter == PGL.NEAREST && glMinFilter == PGL.NEAREST) {
       res.sampling = POINT;
       res.mipmaps = false;
-    } else if (glMagFilter == PGL.GL_NEAREST && glMinFilter == PGL.GL_LINEAR)  {
+    } else if (glMagFilter == PGL.NEAREST && glMinFilter == PGL.LINEAR)  {
       res.sampling = LINEAR;
       res.mipmaps = false;
-    } else if (glMagFilter == PGL.GL_NEAREST && glMinFilter == PGL.GL_LINEAR_MIPMAP_NEAREST)  {
+    } else if (glMagFilter == PGL.NEAREST && glMinFilter == PGL.LINEAR_MIPMAP_NEAREST)  {
       res.sampling = LINEAR;
       res.mipmaps = true;       
-    } else if (glMagFilter == PGL.GL_LINEAR && glMinFilter == PGL.GL_LINEAR)  {
+    } else if (glMagFilter == PGL.LINEAR && glMinFilter == PGL.LINEAR)  {
       res.sampling = BILINEAR;
       res.mipmaps = false;
-    } else if (glMagFilter == PGL.GL_LINEAR && glMinFilter == PGL.GL_LINEAR_MIPMAP_NEAREST)  {
+    } else if (glMagFilter == PGL.LINEAR && glMinFilter == PGL.LINEAR_MIPMAP_NEAREST)  {
       res.sampling = BILINEAR;
       res.mipmaps = true;
-    } else if (glMagFilter == PGL.GL_LINEAR && glMinFilter == PGL.GL_LINEAR_MIPMAP_LINEAR) {
+    } else if (glMagFilter == PGL.LINEAR && glMinFilter == PGL.LINEAR_MIPMAP_LINEAR) {
       res.sampling = TRILINEAR;
       res.mipmaps = true;     
     }
     
-    if (glWrapS == PGL.GL_CLAMP_TO_EDGE) {
+    if (glWrapS == PGL.CLAMP_TO_EDGE) {
       res.wrapU = CLAMP;  
-    } else if (glWrapS == PGL.GL_REPEAT) {
+    } else if (glWrapS == PGL.REPEAT) {
       res.wrapU = REPEAT;
     }
 
-    if (glWrapT == PGL.GL_CLAMP_TO_EDGE) {
+    if (glWrapT == PGL.CLAMP_TO_EDGE) {
       res.wrapV = CLAMP;  
-    } else if (glWrapT == PGL.GL_REPEAT) {
+    } else if (glWrapT == PGL.REPEAT) {
       res.wrapV = REPEAT;
     }
     
@@ -1297,55 +1297,55 @@ public class Texture implements PConstants {
    */   
   protected void setParameters(Parameters params) {    
     if (params.target == TEX2D)  {
-        glTarget = PGL.GL_TEXTURE_2D;
+        glTarget = PGL.TEXTURE_2D;
     } else {
       throw new RuntimeException("Unknown texture target");     
     }
     
     if (params.format == RGB)  {
-      glFormat = PGL.GL_RGB;
+      glFormat = PGL.RGB;
     } else  if (params.format == ARGB) {
-      glFormat = PGL.GL_RGBA;
+      glFormat = PGL.RGBA;
     } else  if (params.format == ALPHA) {
-      glFormat = PGL.GL_ALPHA;
+      glFormat = PGL.ALPHA;
     } else {
       throw new RuntimeException("Unknown texture format");     
     }
 
     if (params.sampling == POINT) {
-      glMagFilter = PGL.GL_NEAREST;
-      glMinFilter = PGL.GL_NEAREST;
+      glMagFilter = PGL.NEAREST;
+      glMinFilter = PGL.NEAREST;
     } else if (params.sampling == LINEAR)  {
-      glMagFilter = PGL.GL_NEAREST;
-      glMinFilter = params.mipmaps && PGL.MIPMAPS_ENABLED ? PGL.GL_LINEAR_MIPMAP_NEAREST : PGL.GL_LINEAR;      
+      glMagFilter = PGL.NEAREST;
+      glMinFilter = params.mipmaps && PGL.MIPMAPS_ENABLED ? PGL.LINEAR_MIPMAP_NEAREST : PGL.LINEAR;      
     } else if (params.sampling == BILINEAR)  {
-      glMagFilter = PGL.GL_LINEAR;
-      glMinFilter = params.mipmaps && PGL.MIPMAPS_ENABLED ? PGL.GL_LINEAR_MIPMAP_NEAREST : PGL.GL_LINEAR;
+      glMagFilter = PGL.LINEAR;
+      glMinFilter = params.mipmaps && PGL.MIPMAPS_ENABLED ? PGL.LINEAR_MIPMAP_NEAREST : PGL.LINEAR;
     } else if (params.sampling == TRILINEAR)  {
-      glMagFilter = PGL.GL_LINEAR;
-      glMinFilter = params.mipmaps && PGL.MIPMAPS_ENABLED ? PGL.GL_LINEAR_MIPMAP_LINEAR : PGL.GL_LINEAR;
+      glMagFilter = PGL.LINEAR;
+      glMinFilter = params.mipmaps && PGL.MIPMAPS_ENABLED ? PGL.LINEAR_MIPMAP_LINEAR : PGL.LINEAR;
     } else {
       throw new RuntimeException("Unknown texture filtering mode");    
     }
     
     if (params.wrapU == CLAMP) {
-      glWrapS = PGL.GL_CLAMP_TO_EDGE;  
+      glWrapS = PGL.CLAMP_TO_EDGE;  
     } else if (params.wrapU == REPEAT)  {
-      glWrapS = PGL.GL_REPEAT;
+      glWrapS = PGL.REPEAT;
     } else {
       throw new RuntimeException("Unknown wrapping mode");     
     }
     
     if (params.wrapV == CLAMP) {
-      glWrapT = PGL.GL_CLAMP_TO_EDGE;  
+      glWrapT = PGL.CLAMP_TO_EDGE;  
     } else if (params.wrapV == REPEAT)  {
-      glWrapT = PGL.GL_REPEAT;
+      glWrapT = PGL.REPEAT;
     } else {
       throw new RuntimeException("Unknown wrapping mode");     
     }
     
-    usingMipmaps = glMinFilter == PGL.GL_LINEAR_MIPMAP_NEAREST || 
-                   glMinFilter == PGL.GL_LINEAR_MIPMAP_LINEAR;
+    usingMipmaps = glMinFilter == PGL.LINEAR_MIPMAP_NEAREST || 
+                   glMinFilter == PGL.LINEAR_MIPMAP_LINEAR;
     
     flippedX = false;
     flippedY = false;    

@@ -189,7 +189,7 @@ public class PShader {
    */
   public void bind() {
     init();
-    pgl.glUseProgram(glProgram);
+    pgl.useProgram(glProgram);
     bound = true;
     consumeUniforms();
     bindTextures();
@@ -201,7 +201,7 @@ public class PShader {
    */
   public void unbind() {
     unbindTextures();
-    pgl.glUseProgram(0);
+    pgl.useProgram(0);
     bound = false;
   }
   
@@ -345,7 +345,7 @@ public class PShader {
    */
   protected int getAttributeLoc(String name) {
     init();    
-    return pgl.glGetAttribLocation(glProgram, name);
+    return pgl.getAttribLocation(glProgram, name);
   }
 
   
@@ -357,69 +357,69 @@ public class PShader {
    */
   protected int getUniformLoc(String name) {
     init();
-    return pgl.glGetUniformLocation(glProgram, name);
+    return pgl.getUniformLocation(glProgram, name);
   }
 
   
   protected void setAttributeVBO(int loc, int vboId, int size, int type, boolean normalized, int stride, int offset) {
     if (-1 < loc) {
-      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, vboId);
-      pgl.glVertexAttribPointer(loc, size, type, normalized, stride, offset);
+      pgl.bindBuffer(PGL.ARRAY_BUFFER, vboId);
+      pgl.vertexAttribPointer(loc, size, type, normalized, stride, offset);
     }
   }  
   
   
   protected void setUniformValue(int loc, int x) {
     if (-1 < loc) {
-      pgl.glUniform1i(loc, x);
+      pgl.uniform1i(loc, x);
     }
   }  
 
   
   protected void setUniformValue(int loc, int x, int y) {
     if (-1 < loc) {
-      pgl.glUniform2i(loc, x, y);
+      pgl.uniform2i(loc, x, y);
     }
   }    
 
   
   protected void setUniformValue(int loc, int x, int y, int z) {
     if (-1 < loc) {
-      pgl.glUniform3i(loc, x, y, z);
+      pgl.uniform3i(loc, x, y, z);
     }
   }      
 
   
   protected void setUniformValue(int loc, int x, int y, int z, int w) {
     if (-1 < loc) {
-      pgl.glUniform4i(loc, x, y, z, w);
+      pgl.uniform4i(loc, x, y, z, w);
     }
   }      
   
   
   protected void setUniformValue(int loc, float x) {
     if (-1 < loc) {
-      pgl.glUniform1f(loc, x);
+      pgl.uniform1f(loc, x);
     }
   }  
   
   protected void setUniformValue(int loc, float x, float y) {
     if (-1 < loc) {
-      pgl.glUniform2f(loc, x, y);  
+      pgl.uniform2f(loc, x, y);  
     }
   }    
   
 
   protected void setUniformValue(int loc, float x, float y, float z) {
     if (-1 < loc) {
-      pgl.glUniform3f(loc, x, y, z);  
+      pgl.uniform3f(loc, x, y, z);  
     }    
   }  
 
   
   protected void setUniformValue(int loc, float x, float y, float z, float w) {
     if (-1 < loc) {
-      pgl.glUniform4f(loc, x, y, z, w);
+      pgl.uniform4f(loc, x, y, z, w);
     }
   }   
   
@@ -427,13 +427,13 @@ public class PShader {
   protected void setUniformVector(int loc, int[] vec, int ncoords) {
     if (-1 < loc) {
       if (ncoords == 1) {
-        pgl.glUniform1iv(loc, vec.length, vec, 0);  
+        pgl.uniform1iv(loc, vec.length, vec, 0);  
       } else if (ncoords == 2) {
-        pgl.glUniform2iv(loc, vec.length / 2, vec, 0);
+        pgl.uniform2iv(loc, vec.length / 2, vec, 0);
       } else if (ncoords == 3) {
-        pgl.glUniform3iv(loc, vec.length / 3, vec, 0);
+        pgl.uniform3iv(loc, vec.length / 3, vec, 0);
       } else if (ncoords == 4) {
-        pgl.glUniform3iv(loc, vec.length / 4, vec, 0);
+        pgl.uniform3iv(loc, vec.length / 4, vec, 0);
       }      
     }
   }  
@@ -442,13 +442,13 @@ public class PShader {
   protected void setUniformVector(int loc, float[] vec, int ncoords) {
     if (-1 < loc) {      
       if (ncoords == 1) {
-        pgl.glUniform1fv(loc, vec.length, vec, 0);  
+        pgl.uniform1fv(loc, vec.length, vec, 0);  
       } else if (ncoords == 2) {
-        pgl.glUniform2fv(loc, vec.length / 2, vec, 0);
+        pgl.uniform2fv(loc, vec.length / 2, vec, 0);
       } else if (ncoords == 3) {
-        pgl.glUniform3fv(loc, vec.length / 3, vec, 0);
+        pgl.uniform3fv(loc, vec.length / 3, vec, 0);
       } else if (ncoords == 4) {
-        pgl.glUniform4fv(loc, vec.length / 4, vec, 0);
+        pgl.uniform4fv(loc, vec.length / 4, vec, 0);
       }         
     }
   }
@@ -457,11 +457,11 @@ public class PShader {
   protected void setUniformMatrix(int loc, float[] mat) {
     if (-1 < loc) {
       if (mat.length == 4) {
-        pgl.glUniformMatrix2fv(loc, 1, false, mat, 0);
+        pgl.uniformMatrix2fv(loc, 1, false, mat, 0);
       } else if (mat.length == 9) {
-        pgl.glUniformMatrix3fv(loc, 1, false, mat, 0);
+        pgl.uniformMatrix3fv(loc, 1, false, mat, 0);
       } else if (mat.length == 16) {
-        pgl.glUniformMatrix4fv(loc, 1, false, mat, 0);
+        pgl.uniformMatrix4fv(loc, 1, false, mat, 0);
       }
     }
   }    
@@ -521,65 +521,65 @@ public class PShader {
         UniformValue val = uniformValues.get(loc);        
         if (val.type == UniformValue.INT1) {
           int[] v = ((int[])val.value);
-          pgl.glUniform1i(loc, v[0]); 
+          pgl.uniform1i(loc, v[0]); 
         } else if (val.type == UniformValue.INT2) {
           int[] v = ((int[])val.value);
-          pgl.glUniform2i(loc, v[0], v[1]); 
+          pgl.uniform2i(loc, v[0], v[1]); 
         } else if (val.type == UniformValue.INT3) {
           int[] v = ((int[])val.value);
-          pgl.glUniform3i(loc, v[0], v[1], v[2]); 
+          pgl.uniform3i(loc, v[0], v[1], v[2]); 
         } else if (val.type == UniformValue.INT4) {
           int[] v = ((int[])val.value);
-          pgl.glUniform4i(loc, v[0], v[1], v[2], v[4]); 
+          pgl.uniform4i(loc, v[0], v[1], v[2], v[4]); 
         } else if (val.type == UniformValue.FLOAT1) {
           float[] v = ((float[])val.value);
-          pgl.glUniform1f(loc, v[0]);          
+          pgl.uniform1f(loc, v[0]);          
         } else if (val.type == UniformValue.FLOAT2) {
           float[] v = ((float[])val.value);
-          pgl.glUniform2f(loc, v[0], v[1]);          
+          pgl.uniform2f(loc, v[0], v[1]);          
         } else if (val.type == UniformValue.FLOAT3) {
           float[] v = ((float[])val.value);
-          pgl.glUniform3f(loc, v[0], v[1], v[2]);           
+          pgl.uniform3f(loc, v[0], v[1], v[2]);           
         } else if (val.type == UniformValue.FLOAT4) {
           float[] v = ((float[])val.value);
-          pgl.glUniform4f(loc, v[0], v[1], v[2], v[3]);
+          pgl.uniform4f(loc, v[0], v[1], v[2], v[3]);
         } else if (val.type == UniformValue.INT1VEC) {
           int[] v = ((int[])val.value);
-          pgl.glUniform1iv(loc, v.length, v, 0);          
+          pgl.uniform1iv(loc, v.length, v, 0);          
         } else if (val.type == UniformValue.INT2VEC) {
           int[] v = ((int[])val.value);
-          pgl.glUniform2iv(loc, v.length / 2, v, 0);
+          pgl.uniform2iv(loc, v.length / 2, v, 0);
         } else if (val.type == UniformValue.INT3VEC) {
           int[] v = ((int[])val.value);
-          pgl.glUniform3iv(loc, v.length / 3, v, 0);          
+          pgl.uniform3iv(loc, v.length / 3, v, 0);          
         } else if (val.type == UniformValue.INT4VEC) {
           int[] v = ((int[])val.value);
-          pgl.glUniform4iv(loc, v.length / 4, v, 0);          
+          pgl.uniform4iv(loc, v.length / 4, v, 0);          
         } else if (val.type == UniformValue.FLOAT1VEC) {
           float[] v = ((float[])val.value);
-          pgl.glUniform1fv(loc, v.length, v, 0);  
+          pgl.uniform1fv(loc, v.length, v, 0);  
         } else if (val.type == UniformValue.FLOAT2VEC) {
           float[] v = ((float[])val.value);
-          pgl.glUniform2fv(loc, v.length / 2, v, 0);
+          pgl.uniform2fv(loc, v.length / 2, v, 0);
         } else if (val.type == UniformValue.FLOAT3VEC) {
           float[] v = ((float[])val.value);
-          pgl.glUniform3fv(loc, v.length / 3, v, 0);          
+          pgl.uniform3fv(loc, v.length / 3, v, 0);          
         } else if (val.type == UniformValue.FLOAT4VEC) {
           float[] v = ((float[])val.value);
-          pgl.glUniform4fv(loc, v.length / 4, v, 0);          
+          pgl.uniform4fv(loc, v.length / 4, v, 0);          
         } else if (val.type == UniformValue.MAT2) {
           float[] v = ((float[])val.value);
-          pgl.glUniformMatrix2fv(loc, 1, false, v, 0);          
+          pgl.uniformMatrix2fv(loc, 1, false, v, 0);          
         } else if (val.type == UniformValue.MAT3) {
           float[] v = ((float[])val.value);
-          pgl.glUniformMatrix3fv(loc, 1, false, v, 0);          
+          pgl.uniformMatrix3fv(loc, 1, false, v, 0);          
         } else if (val.type == UniformValue.MAT4) {
           float[] v = ((float[])val.value);
-          pgl.glUniformMatrix4fv(loc, 1, false, v, 0);          
+          pgl.uniformMatrix4fv(loc, 1, false, v, 0);          
         } else if (val.type == UniformValue.SAMPLER2D) {
           PImage img = (PImage)val.value;
           Texture tex = pgMain.getTexture(img);     
-          pgl.glUniform1i(loc, texUnit);
+          pgl.uniform1i(loc, texUnit);
           if (textures == null) {            
             textures = new HashMap<Integer, Texture>();
           }  
@@ -596,7 +596,7 @@ public class PShader {
     if (textures != null) {    
       for (int unit: textures.keySet()) {
         Texture tex = textures.get(unit);
-        pgl.glActiveTexture(PGL.GL_TEXTURE0 + unit);
+        pgl.activeTexture(PGL.TEXTURE0 + unit);
         tex.bind();
       }          
     }
@@ -607,10 +607,10 @@ public class PShader {
     if (textures != null) {
       for (int unit: textures.keySet()) {
         Texture tex = textures.get(unit);
-        pgl.glActiveTexture(PGL.GL_TEXTURE0 + unit);
+        pgl.activeTexture(PGL.TEXTURE0 + unit);
         tex.unbind();
       } 
-      pgl.glActiveTexture(PGL.GL_TEXTURE0);
+      pgl.activeTexture(PGL.TEXTURE0);
     }    
   }
   
@@ -650,25 +650,25 @@ public class PShader {
       
       if (vertRes && fragRes) {
         if (hasVert) {
-          pgl.glAttachShader(glProgram, glVertex);
+          pgl.attachShader(glProgram, glVertex);
         }
         if (hasFrag) {
-          pgl.glAttachShader(glProgram, glFragment);
+          pgl.attachShader(glProgram, glFragment);
         }
-        pgl.glLinkProgram(glProgram);
+        pgl.linkProgram(glProgram);
         
         int[] linked = new int[1];
-        pgl.glGetProgramiv(glProgram, PGL.GL_LINK_STATUS, linked, 0);        
-        if (linked[0] == PGL.GL_FALSE) {
-          PGraphics.showException("Cannot link shader program:\n" + pgl.glGetProgramInfoLog(glProgram));
+        pgl.getProgramiv(glProgram, PGL.LINK_STATUS, linked, 0);        
+        if (linked[0] == PGL.FALSE) {
+          PGraphics.showException("Cannot link shader program:\n" + pgl.getProgramInfoLog(glProgram));
         }
         
-        pgl.glValidateProgram(glProgram);
+        pgl.validateProgram(glProgram);
         
         int[] validated = new int[1];
-        pgl.glGetProgramiv(glProgram, PGL.GL_VALIDATE_STATUS, validated, 0);        
-        if (validated[0] == PGL.GL_FALSE) {
-          PGraphics.showException("Cannot validate shader program:\n" + pgl.glGetProgramInfoLog(glProgram));
+        pgl.getProgramiv(glProgram, PGL.VALIDATE_STATUS, validated, 0);        
+        if (validated[0] == PGL.FALSE) {
+          PGraphics.showException("Cannot validate shader program:\n" + pgl.getProgramInfoLog(glProgram));
         }        
       }
     }
@@ -750,13 +750,13 @@ public class PShader {
   protected boolean compileVertexShader() {
     glVertex = pgMain.createGLSLVertShaderObject(context.code());
     
-    pgl.glShaderSource(glVertex, vertexShaderSource);
-    pgl.glCompileShader(glVertex);
+    pgl.shaderSource(glVertex, vertexShaderSource);
+    pgl.compileShader(glVertex);
     
     int[] compiled = new int[1];
-    pgl.glGetShaderiv(glVertex, PGL.GL_COMPILE_STATUS, compiled, 0);        
-    if (compiled[0] == PGL.GL_FALSE) {
-      PGraphics.showException("Cannot compile vertex shader:\n" + pgl.glGetShaderInfoLog(glVertex));
+    pgl.getShaderiv(glVertex, PGL.COMPILE_STATUS, compiled, 0);        
+    if (compiled[0] == PGL.FALSE) {
+      PGraphics.showException("Cannot compile vertex shader:\n" + pgl.getShaderInfoLog(glVertex));
       return false;
     } else {
       return true;
@@ -770,13 +770,13 @@ public class PShader {
   protected boolean compileFragmentShader() {
     glFragment = pgMain.createGLSLFragShaderObject(context.code());
     
-    pgl.glShaderSource(glFragment, fragmentShaderSource);
-    pgl.glCompileShader(glFragment);
+    pgl.shaderSource(glFragment, fragmentShaderSource);
+    pgl.compileShader(glFragment);
     
     int[] compiled = new int[1];
-    pgl.glGetShaderiv(glFragment, PGL.GL_COMPILE_STATUS, compiled, 0);
-    if (compiled[0] == PGL.GL_FALSE) {
-      PGraphics.showException("Cannot compile fragment shader:\n" + pgl.glGetShaderInfoLog(glFragment));      
+    pgl.getShaderiv(glFragment, PGL.COMPILE_STATUS, compiled, 0);
+    if (compiled[0] == PGL.FALSE) {
+      PGraphics.showException("Cannot compile fragment shader:\n" + pgl.getShaderInfoLog(glFragment));      
       return false;
     } else {
       return true;

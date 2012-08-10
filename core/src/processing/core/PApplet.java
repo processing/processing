@@ -9864,14 +9864,14 @@ public class PApplet extends Applet
   // public functions for processing.core
 
 
-  public PGL beginGL() {
-    return g.beginGL();
+  public PGL beginPGL() {
+    return g.beginPGL();
   }
 
 
-  public void endGL() {
-    if (recorder != null) recorder.endGL();
-    g.endGL();
+  public void endPGL() {
+    if (recorder != null) recorder.endPGL();
+    g.endPGL();
   }
 
 
