@@ -1,6 +1,6 @@
 /***
 
-    P R O C E S S I N G . J S - 1.4.0
+    P R O C E S S I N G . J S - 1.4.1
     a port of the Processing visualization language
 
     Processing.js is licensed under the MIT License, see LICENSE.
@@ -4378,6 +4378,9 @@
     p.match = function(str, regexp) {
       return str.match(regexp)
     };
+    p.__matches = function(str, regexp) {
+      return (new RegExp(regexp)).test(str)
+    };
     p.__startsWith = function(subject, prefix, toffset) {
       if (typeof subject !== "string") return subject.startsWith.apply(subject, removeFirstArgument(arguments));
       toffset = toffset || 0;
@@ -4390,7 +4393,8 @@
       return suffix === "" || suffix === subject ? true : subject.indexOf(suffix) === subject.length - suffixLen
     };
     p.__hashCode = function(subject) {
-      if (subject.hashCode instanceof Function) return subject.hashCode.apply(subject, removeFirstArgument(arguments));
+      if (subject.hashCode instanceof
+      Function) return subject.hashCode.apply(subject, removeFirstArgument(arguments));
       return virtHashCode(subject)
     };
     p.__printStackTrace = function(subject) {
@@ -4410,8 +4414,7 @@
       logBuffer.push(message)
     };
     p.str = function(val) {
-      if (val instanceof
-      Array) {
+      if (val instanceof Array) {
         var arr = [];
         for (var i = 0; i < val.length; i++) arr.push(val[i].toString() + "");
         return arr
@@ -4466,7 +4469,8 @@
       if (val instanceof Char) return val.code
     }
     p.parseFloat = function(val) {
-      if (val instanceof Array) {
+      if (val instanceof
+      Array) {
         var ret = [];
         for (var i = 0; i < val.length; i++) ret.push(floatScalar(val[i]));
         return ret
@@ -4852,8 +4856,7 @@
         curContext.bufferData(curContext.ARRAY_BUFFER, new Float32Array([1, 1, 0, -1, 1, 0, -1, -1, 0, 1, -1, 0]), curContext.STATIC_DRAW);
         textureBuffer = curContext.createBuffer();
         curContext.bindBuffer(curContext.ARRAY_BUFFER, textureBuffer);
-        curContext.bufferData(curContext.ARRAY_BUFFER, new Float32Array([0, 0, 1, 0, 1, 1, 0,
-          1]), curContext.STATIC_DRAW);
+        curContext.bufferData(curContext.ARRAY_BUFFER, new Float32Array([0, 0, 1, 0, 1, 1, 0, 1]), curContext.STATIC_DRAW);
         indexBuffer = curContext.createBuffer();
         curContext.bindBuffer(curContext.ELEMENT_ARRAY_BUFFER, indexBuffer);
         curContext.bufferData(curContext.ELEMENT_ARRAY_BUFFER, new Uint16Array([0, 1, 2, 2, 3, 0]), curContext.STATIC_DRAW);
@@ -4900,8 +4903,7 @@
       mvm.scale(1, -1, 1);
       mvm.apply(modelView.array());
       mvm = mvm.array();
-      var dir = [mvm[0] *
-        nx + mvm[4] * ny + mvm[8] * nz, mvm[1] * nx + mvm[5] * ny + mvm[9] * nz, mvm[2] * nx + mvm[6] * ny + mvm[10] * nz];
+      var dir = [mvm[0] * nx + mvm[4] * ny + mvm[8] * nz, mvm[1] * nx + mvm[5] * ny + mvm[9] * nz, mvm[2] * nx + mvm[6] * ny + mvm[10] * nz];
       var col = color$4(r, g, b, 0);
       var normalizedCol = [((col >> 16) & 255) / 255, ((col >> 8) & 255) / 255, (col & 255) / 255];
       uniformf("uLights.color.3d." + lightCount, programObject3D, "uLights" + lightCount + ".color", normalizedCol);
@@ -4959,9 +4961,10 @@
       mvm.apply(modelView.array());
       mvm.mult(pos, pos);
       mvm = mvm.array();
-      var dir = [mvm[0] * nx + mvm[4] * ny + mvm[8] * nz, mvm[1] * nx + mvm[5] * ny + mvm[9] * nz, mvm[2] * nx + mvm[6] * ny + mvm[10] * nz];
+      var dir = [mvm[0] * nx + mvm[4] * ny + mvm[8] * nz, mvm[1] *
+        nx + mvm[5] * ny + mvm[9] * nz, mvm[2] * nx + mvm[6] * ny + mvm[10] * nz];
       var col = color$4(r, g, b, 0);
-      var normalizedCol = [((col >> 16) & 255) / 255, ((col & 65280) >>> 8) / 255, (col & 255) / 255];
+      var normalizedCol = [((col >> 16) & 255) / 255, ((col >> 8) & 255) / 255, (col & 255) / 255];
       uniformf("uLights.color.3d." + lightCount, programObject3D, "uLights" + lightCount + ".color", normalizedCol);
       uniformf("uLights.position.3d." + lightCount, programObject3D, "uLights" + lightCount + ".position", pos.array());
       uniformf("uLights.direction.3d." + lightCount, programObject3D, "uLights" + lightCount + ".direction", dir);
@@ -8343,6 +8346,7 @@
       if (typeof p.mouseOver === "function") p.mouseOver()
     });
     curElement.onmousedown = function() {
+      curElement.focus();
       return false
     };
     attachEventHandler(curElement, "mousedown", function(e) {
@@ -8457,7 +8461,6 @@
       updateKeyPressed();
       return suppressKeyEvent(e)
     }
-
     function handleKeypress(e) {
       if (lastPressedKeyCode === null) return;
       var code = lastPressedKeyCode,
@@ -8555,7 +8558,7 @@
       "loadImage", "loadPixels", "loadShape", "loadXML", "loadStrings", "log", "loop", "mag", "map", "match", "matchAll", "max", "millis", "min", "minute", "mix", "modelX", "modelY", "modelZ", "modes", "month", "mouseButton", "mouseClicked", "mouseDragged", "mouseMoved", "mouseOut", "mouseOver", "mousePressed", "mouseReleased", "mouseScroll", "mouseScrolled", "mouseX", "mouseY", "name", "nf", "nfc", "nfp", "nfs", "noCursor", "noFill", "noise", "noiseDetail", "noiseSeed", "noLights", "noLoop", "norm", "normal", "noSmooth", "noStroke", "noTint", "ortho",
       "param", "parseBoolean", "parseByte", "parseChar", "parseFloat", "parseInt", "peg", "perspective", "PImage", "pixels", "PMatrix2D", "PMatrix3D", "PMatrixStack", "pmouseX", "pmouseY", "point", "pointLight", "popMatrix", "popStyle", "pow", "print", "printCamera", "println", "printMatrix", "printProjection", "PShape", "PShapeSVG", "pushMatrix", "pushStyle", "quad", "radians", "random", "Random", "randomSeed", "rect", "rectMode", "red", "redraw", "requestImage", "resetMatrix", "reverse", "rotate", "rotateX", "rotateY", "rotateZ", "round", "saturation",
       "save", "saveFrame", "saveStrings", "scale", "screenX", "screenY", "screenZ", "second", "set", "setup", "shape", "shapeMode", "shared", "shearX", "shearY", "shininess", "shorten", "sin", "size", "smooth", "sort", "specular", "sphere", "sphereDetail", "splice", "split", "splitTokens", "spotLight", "sq", "sqrt", "status", "str", "stroke", "strokeCap", "strokeJoin", "strokeWeight", "subset", "tan", "text", "textAlign", "textAscent", "textDescent", "textFont", "textLeading", "textMode", "textSize", "texture", "textureMode", "textWidth", "tint", "toImageData",
-      "touchCancel", "touchEnd", "touchMove", "touchStart", "translate", "transform", "triangle", "trim", "unbinary", "unhex", "updatePixels", "use3DContext", "vertex", "width", "XMLElement", "XML", "year", "__contains", "__equals", "__equalsIgnoreCase", "__frameRate", "__hashCode", "__int_cast", "__instanceof", "__keyPressed", "__mousePressed", "__printStackTrace", "__replace", "__replaceAll", "__replaceFirst", "__toCharArray", "__split", "__codePointAt", "__startsWith", "__endsWith"];
+      "touchCancel", "touchEnd", "touchMove", "touchStart", "translate", "transform", "triangle", "trim", "unbinary", "unhex", "updatePixels", "use3DContext", "vertex", "width", "XMLElement", "XML", "year", "__contains", "__equals", "__equalsIgnoreCase", "__frameRate", "__hashCode", "__int_cast", "__instanceof", "__keyPressed", "__mousePressed", "__printStackTrace", "__replace", "__replaceAll", "__replaceFirst", "__toCharArray", "__split", "__codePointAt", "__startsWith", "__endsWith", "__matches"];
     var members = {};
     var i, l;
     for (i = 0, l = names.length; i < l; ++i) members[names[i]] = null;
@@ -8596,7 +8599,6 @@
         return /^'((?:[^'\\\n])|(?:\\.[0-9A-Fa-f]*))'$/.test(val) ? "(new $p.Character(" + val + "))" : val
       })
     }
-
     function trimSpaces(string) {
       var m1 = /^\s*/.exec(string),
         result;
@@ -8819,7 +8821,7 @@
       }
       do {
         repeatJavaReplacement = false;
-        s = s.replace(/((?:'\d+'|\b[A-Za-z_$][\w$]*\s*(?:"[BC]\d+")*)\s*\.\s*(?:[A-Za-z_$][\w$]*\s*(?:"[BC]\d+"\s*)*\.\s*)*)(replace|replaceAll|replaceFirst|contains|equals|equalsIgnoreCase|hashCode|toCharArray|printStackTrace|split|startsWith|endsWith|codePointAt)\s*"B(\d+)"/g, replacePrototypeMethods)
+        s = s.replace(/((?:'\d+'|\b[A-Za-z_$][\w$]*\s*(?:"[BC]\d+")*)\s*\.\s*(?:[A-Za-z_$][\w$]*\s*(?:"[BC]\d+"\s*)*\.\s*)*)(replace|replaceAll|replaceFirst|contains|equals|equalsIgnoreCase|hashCode|toCharArray|printStackTrace|split|startsWith|endsWith|codePointAt|matches)\s*"B(\d+)"/g, replacePrototypeMethods)
       } while (repeatJavaReplacement);
 
       function replaceInstanceof(all, subject, type) {
@@ -8853,6 +8855,7 @@
       currentClassId = oldClassId;
       return inlineClass
     }
+
     function AstFunction(name, params, body) {
       this.name = name;
       this.params = params;
@@ -8910,6 +8913,7 @@
       }
       return new AstInlineObject(members)
     }
+
     function expandExpression(expr) {
       if (expr.charAt(0) === "(" || expr.charAt(0) === "[") return expr.charAt(0) + expandExpression(expr.substring(1, expr.length - 1)) + expr.charAt(expr.length - 1);
       if (expr.charAt(0) === "{") {
@@ -9068,6 +9072,7 @@
       content = expr.substring(1, expr.length - 1).split(";");
       return new AstForExpression(transformStatement(trim(content[0])), transformExpression(content[1]), transformExpression(content[2]))
     }
+
     function sortByWeight(array) {
       array.sort(function(a, b) {
         return b.weight - a.weight
@@ -10015,7 +10020,7 @@
     return tinylogLite
   }();
   Processing.logger = tinylogLite;
-  Processing.version = "1.4.0";
+  Processing.version = "1.4.1";
   Processing.lib = {};
   Processing.registerLibrary = function(name, desc) {
     Processing.lib[name] = desc;
