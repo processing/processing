@@ -1078,6 +1078,11 @@ public class PGraphics extends PImage implements PConstants {
     this.textureMode = mode;
   }
 
+  
+  public void textureWrap(int wrap) {
+    showMissingWarning("textureWrap");
+  }  
+  
 
   /**
    * ( begin auto-generated from texture.xml )

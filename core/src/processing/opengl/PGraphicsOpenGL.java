@@ -306,8 +306,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // Texturing:
 
-  public int textureWrap     = Texture.CLAMP;
-  public int textureSampling = Texture.TRILINEAR;
+  protected int textureWrap     = CLAMP;
+  protected int textureSampling = Texture.TRILINEAR;
 
   // ........................................................
 
@@ -5538,6 +5538,9 @@ public class PGraphicsOpenGL extends PGraphics {
     if (tex.hasBuffers()) {
       tex.bufferUpdate();
     }
+    
+    checkTexture(tex);
+    
     return tex;
   }
 
@@ -5595,6 +5598,26 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
+  protected void checkTexture(Texture tex) {
+    if (tex.usingMipmaps == hints[DISABLE_TEXTURE_MIPMAPS]) {
+      if (hints[DISABLE_TEXTURE_MIPMAPS]) {
+        tex.usingMipmaps(false, textureSampling);
+      } else {
+        tex.usingMipmaps(true, textureSampling);
+      }        
+    }
+    
+    if ((tex.usingRepeat && textureWrap == CLAMP) ||
+        (!tex.usingRepeat && textureWrap == REPEAT)) {
+      if (textureWrap == CLAMP) {
+        tex.usingRepeat(false);
+      } else {
+        tex.usingRepeat(true);
+      }
+    }
+  }
+  
+  
   protected PImage wrapTexture(Texture tex) {
     // We don't use the PImage(int width, int height, int mode) constructor to
     // avoid initializing the pixels array.

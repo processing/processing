@@ -782,7 +782,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
       final boolean supportsGLES2 = configurationInfo.reqGlEsVersion >= 0x20000;
 
       if (!supportsGLES2) {
-        throw new RuntimeException("P3D: OpenGL ES 2.0 is not supported by this device.");
+        throw new RuntimeException("OpenGL ES 2.0 is not supported by this device.");
       }
 
       surfaceHolder = getHolder();
@@ -7326,6 +7326,11 @@ public class PApplet extends Activity implements PConstants, Runnable {
    */
   public void textureMode(int mode) {
     g.textureMode(mode);
+  }
+
+
+  public void textureWrap(int wrap) {
+    g.textureWrap(wrap);
   }
 
 
