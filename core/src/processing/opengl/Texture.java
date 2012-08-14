@@ -63,11 +63,6 @@ public class Texture implements PConstants {
    * interpolation to compute the value in each of two maps and then interpolates linearly 
    * between these two value. */
   public static final int TRILINEAR = 5;
-  
-  /** This constant identifies the clamp-to-edge wrapping mode */
-  public static final int CLAMP = 0;
-  /** This constant identifies the repeat wrapping mode */
-  public static final int REPEAT = 1;
 
   public int width, height;
 
@@ -86,7 +81,8 @@ public class Texture implements PConstants {
   protected PGL pgl;                  // The interface between Processing and OpenGL.
   protected PGL.Context context;      // The context that created this texture.
   
-  protected boolean usingMipmaps; 
+  protected boolean usingMipmaps;
+  protected boolean usingRepeat;
   protected float maxTexcoordU;
   protected float maxTexcoordV;
   protected boolean bound;
@@ -527,7 +523,8 @@ public class Texture implements PConstants {
   ////////////////////////////////////////////////////////////     
  
   // Get OpenGL parameters
-      
+     
+  
   /**
    * Returns true or false whether or not the texture is using mipmaps.
    * @return boolean
@@ -535,6 +532,76 @@ public class Texture implements PConstants {
   public boolean usingMipmaps()  {
     return usingMipmaps;
   }
+
+  
+  public void usingMipmaps(boolean mipmaps, int sampling)  {
+    if (mipmaps) {
+      if (glMinFilter != PGL.LINEAR_MIPMAP_NEAREST && glMinFilter != PGL.LINEAR_MIPMAP_LINEAR) {
+        if (sampling == POINT) {
+          glMagFilter = PGL.NEAREST;
+          glMinFilter = PGL.NEAREST;
+        } else if (sampling == LINEAR)  {
+          glMagFilter = PGL.NEAREST;
+          glMinFilter = PGL.MIPMAPS_ENABLED ? PGL.LINEAR_MIPMAP_NEAREST : PGL.LINEAR;      
+        } else if (sampling == BILINEAR)  {
+          glMagFilter = PGL.LINEAR;
+          glMinFilter = PGL.MIPMAPS_ENABLED ? PGL.LINEAR_MIPMAP_NEAREST : PGL.LINEAR;
+        } else if (sampling == TRILINEAR)  {
+          glMagFilter = PGL.LINEAR;
+          glMinFilter = PGL.MIPMAPS_ENABLED ? PGL.LINEAR_MIPMAP_LINEAR : PGL.LINEAR;
+        } else {
+          throw new RuntimeException("Unknown texture filtering mode");    
+        }        
+      }
+      
+      usingMipmaps = true;
+    } else {
+      if (glMinFilter == PGL.LINEAR_MIPMAP_NEAREST || glMinFilter == PGL.LINEAR_MIPMAP_LINEAR) {
+        glMinFilter = PGL.LINEAR;
+      }      
+      usingMipmaps = false;
+    }
+    
+    bind();
+    pgl.texParameteri(glTarget, PGL.TEXTURE_MIN_FILTER, glMinFilter);    
+    pgl.texParameteri(glTarget, PGL.TEXTURE_MAG_FILTER, glMagFilter);
+    if (usingMipmaps) {
+      if (PGraphicsOpenGL.autoMipmapGenSupported) {
+        pgl.generateMipmap(glTarget);
+      } else {
+        // TODO: need manual generation here..
+      }    
+    }
+    unbind();
+  }  
+  
+
+  /**
+   * Returns true or false whether or not the texture is using repeat wrap mode
+   * along either U or V directions.
+   * @return boolean
+   */ 
+  public boolean usingRepeat()  {
+    return usingRepeat;
+  }  
+  
+  
+  public void usingRepeat(boolean repeat)  {
+    if (repeat) {
+      glWrapS = PGL.REPEAT; 
+      glWrapT = PGL.REPEAT;
+      usingRepeat = true;
+    } else {
+      glWrapS = PGL.CLAMP_TO_EDGE; 
+      glWrapT = PGL.CLAMP_TO_EDGE;      
+      usingRepeat = false;
+    }
+    
+    bind();
+    pgl.texParameteri(glTarget, PGL.TEXTURE_WRAP_S, glWrapS);
+    pgl.texParameteri(glTarget, PGL.TEXTURE_WRAP_T, glWrapT);    
+    unbind();
+  } 
   
   
   /**
@@ -1225,7 +1292,8 @@ public class Texture implements PConstants {
     glWidth= src.glWidth;
     glHeight = src.glHeight;
   
-    usingMipmaps = src.usingMipmaps; 
+    usingMipmaps = src.usingMipmaps;
+    usingRepeat = src.usingRepeat;
     maxTexcoordU = src.maxTexcoordU;
     maxTexcoordV = src.maxTexcoordV;
   
@@ -1346,6 +1414,8 @@ public class Texture implements PConstants {
     
     usingMipmaps = glMinFilter == PGL.LINEAR_MIPMAP_NEAREST || 
                    glMinFilter == PGL.LINEAR_MIPMAP_LINEAR;
+    
+    usingRepeat = glWrapS == PGL.REPEAT || glWrapT == PGL.REPEAT;
     
     flippedX = false;
     flippedY = false;    
