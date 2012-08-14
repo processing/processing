@@ -501,11 +501,6 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  public void setToolkit(int toolkit) {
-    pgl.setToolkit(toolkit);
-  }
-
-
   public void setSize(int iwidth, int iheight) {
     resized = (0 < width && width != iwidth) || (0 < height && height != iwidth);
 
