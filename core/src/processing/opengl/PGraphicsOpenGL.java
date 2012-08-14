@@ -5696,10 +5696,23 @@ public class PGraphicsOpenGL extends PGraphics {
     OPENGL_EXTENSIONS = pgl.getString(PGL.EXTENSIONS);
     GLSL_VERSION      = pgl.getString(PGL.SHADING_LANGUAGE_VERSION);
 
-    npotTexSupported            = -1 < OPENGL_EXTENSIONS.indexOf("texture_non_power_of_two");
-    autoMipmapGenSupported      = -1 < OPENGL_EXTENSIONS.indexOf("generate_mipmap");
-    fboMultisampleSupported     = -1 < OPENGL_EXTENSIONS.indexOf("framebuffer_multisample");
-    packedDepthStencilSupported = -1 < OPENGL_EXTENSIONS.indexOf("packed_depth_stencil");
+    if (-1 == OPENGL_EXTENSIONS.indexOf("_framebuffer_object")) {
+      throw new RuntimeException("No framebuffer objects available");
+    }    
+    if (-1 == OPENGL_EXTENSIONS.indexOf("_vertex_buffer_object")) {
+      throw new RuntimeException("No vertex buffer objects available");
+    }    
+    if (-1 == OPENGL_EXTENSIONS.indexOf("_vertex_shader")) {
+      throw new RuntimeException("No vertex shaders available");
+    }    
+    if (-1 == OPENGL_EXTENSIONS.indexOf("_fragment_shader")) {
+      throw new RuntimeException("No fragment shaders available");
+    }
+    
+    npotTexSupported            = -1 < OPENGL_EXTENSIONS.indexOf("_texture_non_power_of_two");
+    autoMipmapGenSupported      = -1 < OPENGL_EXTENSIONS.indexOf("_generate_mipmap");
+    fboMultisampleSupported     = -1 < OPENGL_EXTENSIONS.indexOf("_framebuffer_multisample");
+    packedDepthStencilSupported = -1 < OPENGL_EXTENSIONS.indexOf("_packed_depth_stencil");
 
     try {
       pgl.blendEquation(PGL.FUNC_ADD);
