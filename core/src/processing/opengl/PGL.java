@@ -60,43 +60,43 @@ import com.jogamp.opengl.util.AnimatorBase;
  */
 public class PGL {
   // The two windowing toolkits available to use in JOGL:
-  public static final int AWT  = 0; // http://jogamp.org/wiki/index.php/Using_JOGL_in_AWT_SWT_and_Swing
-  public static final int NEWT = 1; // http://jogamp.org/jogl/doc/NEWT-Overview.html
+  protected static final int AWT  = 0; // http://jogamp.org/wiki/index.php/Using_JOGL_in_AWT_SWT_and_Swing
+  protected static final int NEWT = 1; // http://jogamp.org/jogl/doc/NEWT-Overview.html
 
   /** Size of a short (in bytes). */
-  public static final int SIZEOF_SHORT = Short.SIZE / 8;
+  protected static final int SIZEOF_SHORT = Short.SIZE / 8;
 
   /** Size of an int (in bytes). */
-  public static final int SIZEOF_INT = Integer.SIZE / 8;
+  protected static final int SIZEOF_INT = Integer.SIZE / 8;
 
   /** Size of a float (in bytes). */
-  public static final int SIZEOF_FLOAT = Float.SIZE / 8;
+  protected static final int SIZEOF_FLOAT = Float.SIZE / 8;
 
   /** Size of a byte (in bytes). */
-  public static final int SIZEOF_BYTE = Byte.SIZE / 8;
+  protected static final int SIZEOF_BYTE = Byte.SIZE / 8;
 
   /** Size of a vertex index. */
-  public static final int SIZEOF_INDEX = SIZEOF_SHORT;
+  protected static final int SIZEOF_INDEX = SIZEOF_SHORT;
 
   /** Type of a vertex index. */
-  public static final int INDEX_TYPE = GL.GL_UNSIGNED_SHORT;
+  protected static final int INDEX_TYPE = GL.GL_UNSIGNED_SHORT;
 
   /** Initial sizes for arrays of input and tessellated data. */
-  public static final int DEFAULT_IN_VERTICES   = 64;
-  public static final int DEFAULT_IN_EDGES      = 128;
-  public static final int DEFAULT_IN_TEXTURES   = 64;
-  public static final int DEFAULT_TESS_VERTICES = 64;
-  public static final int DEFAULT_TESS_INDICES  = 128;
+  protected static final int DEFAULT_IN_VERTICES   = 64;
+  protected static final int DEFAULT_IN_EDGES      = 128;
+  protected static final int DEFAULT_IN_TEXTURES   = 64;
+  protected static final int DEFAULT_TESS_VERTICES = 64;
+  protected static final int DEFAULT_TESS_INDICES  = 128;
 
   /** Maximum lights by default is 8, the minimum defined by OpenGL. */
-  public static final int MAX_LIGHTS = 8;
+  protected static final int MAX_LIGHTS = 8;
 
   /** Maximum index value of a tessellated vertex. GLES restricts the vertex
    * indices to be of type unsigned short. Since Java only supports signed
    * shorts as primitive type we have 2^15 = 32768 as the maximum number of
    * vertices that can be referred to within a single VBO. */
-  public static final int MAX_VERTEX_INDEX  = 32767;
-  public static final int MAX_VERTEX_INDEX1 = MAX_VERTEX_INDEX + 1;
+  protected static final int MAX_VERTEX_INDEX  = 32767;
+  protected static final int MAX_VERTEX_INDEX1 = MAX_VERTEX_INDEX + 1;
 
   /** Count of tessellated fill, line or point vertices that will
    * trigger a flush in the immediate mode. It doesn't necessarily
@@ -104,20 +104,20 @@ public class PGL {
    * be effectively much large since the renderer uses offsets to
    * refer to vertices beyond the MAX_VERTEX_INDEX limit.
    */
-  public static final int FLUSH_VERTEX_COUNT = MAX_VERTEX_INDEX1;
+  protected static final int FLUSH_VERTEX_COUNT = MAX_VERTEX_INDEX1;
 
   /** Maximum dimension of a texture used to hold font data. **/
-  public static final int MAX_FONT_TEX_SIZE = 1024;
+  protected static final int MAX_FONT_TEX_SIZE = 1024;
 
   /** Minimum stroke weight needed to apply the full path stroking
    * algorithm that properly generates caps and joins.
    */
-  public static final float MIN_CAPS_JOINS_WEIGHT = 1.5f;
+  protected static final float MIN_CAPS_JOINS_WEIGHT = 1.5f;
 
   /** Maximum length of linear paths to be stroked with the
    * full algorithm that generates accurate caps and joins.
    */
-  public static final int MAX_CAPS_JOINS_LENGTH = 5000;
+  protected static final int MAX_CAPS_JOINS_LENGTH = 5000;
 
   /** Minimum array size to use arrayCopy method(). **/
   protected static final int MIN_ARRAYCOPY_SIZE = 2;
@@ -126,7 +126,7 @@ public class PGL {
   protected static final boolean MIPMAPS_ENABLED = true;
 
   /** Machine Epsilon for float precision. **/
-  public static float FLOAT_EPS = Float.MIN_VALUE;
+  protected static float FLOAT_EPS = Float.MIN_VALUE;
   // Calculation of the Machine Epsilon for float precision. From:
   // http://en.wikipedia.org/wiki/Machine_epsilon#Approximation_using_Java
   static {
@@ -143,7 +143,7 @@ public class PGL {
    * Set to true if the host system is big endian (PowerPC, MIPS, SPARC), false
    * if little endian (x86 Intel for Mac or PC).
    */
-  public static boolean BIG_ENDIAN = ByteOrder.nativeOrder() == ByteOrder.BIG_ENDIAN;
+  protected static boolean BIG_ENDIAN = ByteOrder.nativeOrder() == ByteOrder.BIG_ENDIAN;
 
   protected static final String SHADER_PREPROCESSOR_DIRECTIVE = "#ifdef GL_ES\n" +
                                                                 "precision mediump float;\n" +
@@ -307,38 +307,38 @@ public class PGL {
   /** Basic GL functionality, common to all profiles */
   public GL gl;
 
-  /** GLES2 functionality (shaders, etc) */
-  public GL2ES2 gl2;
-
-  /** GL2 desktop functionality (blit framebuffer, map buffer range, multisampled renerbuffers) */
-  public GL2 gl2x;
-
   /** GLU interface **/
-  public GLU glu;
-
-  /** The PGraphics object using this interface */
-  public PGraphicsOpenGL pg;
-
-  /** Whether OpenGL has been initialized or not */
-  public boolean initialized;
-
-  /** Windowing toolkit */
-  public static int toolkit = AWT;
-
-  /** Selected GL profile */
-  public GLProfile profile;
-
-  /** The capabilities of the OpenGL rendering surface */
-  public GLCapabilitiesImmutable capabilities;
-
-  /** The rendering surface */
-  public GLDrawable drawable;
-
+  public GLU glu;  
+  
   /** The rendering context (holds rendering state info) */
   public GLContext context;
 
   /** The AWT canvas where OpenGL rendering takes place */
   public Canvas canvas;
+  
+  /** GLES2 functionality (shaders, etc) */
+  protected GL2ES2 gl2;
+
+  /** GL2 desktop functionality (blit framebuffer, map buffer range, multisampled renerbuffers) */
+  protected GL2 gl2x;
+
+  /** The PGraphics object using this interface */
+  protected PGraphicsOpenGL pg;
+
+  /** Whether OpenGL has been initialized or not */
+  protected boolean initialized;
+
+  /** Windowing toolkit */
+  protected static int toolkit = AWT;
+
+  /** Selected GL profile */
+  protected GLProfile profile;
+
+  /** The capabilities of the OpenGL rendering surface */
+  protected GLCapabilitiesImmutable capabilities;
+
+  /** The rendering surface */
+  protected GLDrawable drawable;
 
   /** The AWT-OpenGL canvas */
   protected GLCanvas canvasAWT;
@@ -491,7 +491,7 @@ public class PGL {
   }
 
 
-  public void setFrameRate(float framerate) {
+  protected void setFrameRate(float framerate) {
     if (targetFramerate != framerate) {
       if (60 < framerate) {
         // Disables v-sync
@@ -514,15 +514,7 @@ public class PGL {
   }
 
 
-  public void setToolkit(int toolkit) {
-    if (PGL.toolkit != toolkit) {
-      PGL.toolkit = toolkit;
-      this.initialized = false;
-    }
-  }
-
-
-  public void initPrimarySurface(int antialias) {
+  protected void initPrimarySurface(int antialias) {
     if (ENABLE_OSX_SCREEN_FBO) {
       needScreenFBO = false;
       glColorFbo[0] = 0;
@@ -621,7 +613,7 @@ public class PGL {
   }
 
 
-  public void initOffscreenSurface(PGL primary) {
+  protected void initOffscreenSurface(PGL primary) {
     context = primary.context;
     capabilities = primary.capabilities;
     drawable = null;
@@ -629,7 +621,7 @@ public class PGL {
   }
 
 
-  public void updatePrimary() {
+  protected void updatePrimary() {
     if (!setFramerate) {
       setFrameRate(targetFramerate);
     }
@@ -757,14 +749,14 @@ public class PGL {
   }
 
 
-  public void updateOffscreen(PGL primary) {
+  protected void updateOffscreen(PGL primary) {
     gl  = primary.gl;
     gl2 = primary.gl2;
     gl2x = primary.gl2x;
   }
 
 
-  public boolean primaryIsDoubleBuffered() {
+  protected boolean primaryIsDoubleBuffered() {
     // When using the multisampled FBO, the color
     // FBO is single buffered as it has only one
     // texture bound to it.
@@ -772,32 +764,32 @@ public class PGL {
   }
 
 
-  public boolean primaryIsFboBacked() {
+  protected boolean primaryIsFboBacked() {
     return glColorFbo[0] != 0;
   }
 
 
-  public int getFboTexTarget() {
+  protected int getFboTexTarget() {
     return GL.GL_TEXTURE_2D;
    }
 
 
-  public int getFboTexName() {
+  protected int getFboTexName() {
     return glColorTex[0];
    }
 
 
-  public int getFboWidth() {
+  protected int getFboWidth() {
    return fboWidth;
   }
 
 
-  public int getFboHeight() {
+  protected int getFboHeight() {
     return fboHeight;
    }
 
 
-  public void bindPrimaryColorFBO() {
+  protected void bindPrimaryColorFBO() {
     if (multisample) {
       // Blit the contents of the multisampled FBO into the color FBO,
       // so the later is up to date.
@@ -820,7 +812,7 @@ public class PGL {
   }
 
 
-  public void bindPrimaryMultiFBO() {
+  protected void bindPrimaryMultiFBO() {
     if (multisample) {
       gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, glMultiFbo[0]);
       PGraphicsOpenGL.screenFramebuffer.glFbo = glMultiFbo[0];
@@ -860,7 +852,7 @@ public class PGL {
   // Frame rendering
 
 
-  public void beginOnscreenDraw(boolean clear) {
+  protected void beginOnscreenDraw(boolean clear) {
     if (glColorFbo[0] != 0) {
       if (multisample) {
         // Render the scene to the mutisampled buffer...
@@ -879,7 +871,7 @@ public class PGL {
   }
 
 
-  public void endOnscreenDraw(boolean clear0) {
+  protected void endOnscreenDraw(boolean clear0) {
     if (glColorFbo[0] != 0) {
       if (multisample) {
         // Blit the contents of the multisampled FBO into the color FBO:
@@ -907,20 +899,20 @@ public class PGL {
   }
 
 
-  public void beginOffscreenDraw(boolean clear) {
+  protected void beginOffscreenDraw(boolean clear) {
   }
 
 
-  public void endOffscreenDraw(boolean clear0) {
+  protected void endOffscreenDraw(boolean clear0) {
   }
 
 
-  public boolean canDraw() {
+  protected boolean canDraw() {
     return initialized && pg.parent.isDisplayable();
   }
 
 
-  public void requestDraw() {
+  protected void requestDraw() {
     if (initialized) {
       //animator.requestDisplay();
 
@@ -1560,17 +1552,17 @@ public class PGL {
   // Context interface
 
 
-  public Context createEmptyContext() {
+  protected Context createEmptyContext() {
     return new Context();
   }
 
 
-  public Context getCurrentContext() {
+  protected Context getCurrentContext() {
     return new Context(context);
   }
 
 
-  public class Context {
+  protected class Context {
     protected GLContext glContext;
 
     Context() {
@@ -1610,12 +1602,12 @@ public class PGL {
   // Tessellator interface
 
 
-  public Tessellator createTessellator(TessellatorCallback callback) {
+  protected Tessellator createTessellator(TessellatorCallback callback) {
     return new Tessellator(callback);
   }
 
 
-  public class Tessellator {
+  protected class Tessellator {
     protected GLUtessellator tess;
     protected TessellatorCallback callback;
     protected GLUCallback gluCallback;
@@ -1684,7 +1676,7 @@ public class PGL {
     return glu.gluErrorString(err); 
   }  
 
-  public interface TessellatorCallback  {
+  protected interface TessellatorCallback  {
     public void begin(int type);
     public void end();
     public void vertex(Object data);
@@ -1699,12 +1691,12 @@ public class PGL {
   // Utility functions
 
 
-  public boolean contextIsCurrent(Context other) {
+  protected boolean contextIsCurrent(Context other) {
     return other == null || other.current();
   }
 
 
-  public void enableTexturing(int target) {
+  protected void enableTexturing(int target) {
     enable(target);
     if (target == TEXTURE_2D) {
       texturingTargets[0] = true;
@@ -1714,7 +1706,7 @@ public class PGL {
   }
 
 
-  public void disableTexturing(int target) {
+  protected void disableTexturing(int target) {
     disable(target);
     if (target == TEXTURE_2D) {
       texturingTargets[0] = false;
@@ -1724,7 +1716,7 @@ public class PGL {
   }
   
   
-  public boolean texturingIsEnabled(int target) {
+  protected boolean texturingIsEnabled(int target) {
     if (target == TEXTURE_2D) {
       return texturingTargets[0];
     } else if (target == TEXTURE_RECTANGLE) {
@@ -1735,7 +1727,7 @@ public class PGL {
   }
   
   
-  public boolean textureIsBound(int target, int id) {
+  protected boolean textureIsBound(int target, int id) {
     if (target == TEXTURE_2D) {
       return boundTextures[0] == id;
     } else if (target == TEXTURE_RECTANGLE) {
