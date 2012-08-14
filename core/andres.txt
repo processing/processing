@@ -1,12 +1,13 @@
+0208 opengl 
+X Make methods in PGL used by opengl protected, then remove gl from the public GL methods
+X Texture wrapping option in PGraphics: textureWrap(mode)
+
 API changes/additions (for beta release)
 _ Cleanup video API: http://code.google.com/p/processing/issues/detail?id=1170
 _ Have Capture.list() return all supported resolutions, and use the string as the argument 
 _   for the capture object
-_ Texture wrapping option in PGraphics: textureWrap(mode)
-_ Make methods in PGL used by opengl protected, then remove gl from the public GL methods
 _ Add DISABLE_PERSPECTIVE_CORRECTED_STROKE hint, remove DISABLE_PERSPECTIVE_CORRECTED_LINES  
 _ Rename shader constants (FLAT, LIT, TEXTURED, etc), resetShader() w/out args?
-_ Print warning message when GLES2 is not available.
 _ Cleaner Implementation of PImage.loadPixels()
 _ Back-buffer support in shaders: http://code.google.com/p/processing/issues/detail?id=1169
 

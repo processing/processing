@@ -405,7 +405,15 @@ public interface PConstants {
   /** texture coordinates based on image width/height */
   static final int IMAGE      = 2;
 
+  
+  // texture wrapping modes
+  
+  /** textures are clamped to their edges */
+  public static final int CLAMP = 0;
+  /** textures wrap around when uv values go outside 0..1 range */
+  public static final int REPEAT = 1;  
 
+  
   // text placement modes
 
   /**
