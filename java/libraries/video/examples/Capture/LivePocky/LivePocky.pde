@@ -19,7 +19,7 @@ void setup() {
   size(600, 400, P2D);
 
   // Uses the default video input, see the reference if this causes an error
-  video = new Capture(this, 160, 120);
+  video = new Capture(this, 320, 240);
   video.start();
 
   maxRows = height * 2;
@@ -34,6 +34,14 @@ void setup() {
 
 
 void draw() {
+  video.loadPixels();
+  arraycopy(video.pixels, 0, buffer, writeRow * width, width);
+  writeRow++;
+  if (writeRow == maxRows) {
+    writeRow = 0;
+  }
+  topRow++;
+  
   for (int y = 0; y < height; y++) {
     int row = (topRow + y) % maxRows;
     arraycopy(buffer, row * width, g.pixels, y*width, width);
@@ -44,11 +52,4 @@ void draw() {
 
 void captureEvent(Capture c) {
   c.read();
-  c.loadPixels();
-  arraycopy(c.pixels, 0, buffer, writeRow * width, width);
-  writeRow++;
-  if (writeRow == maxRows) {
-    writeRow = 0;
-  }
-  topRow++;
 }
