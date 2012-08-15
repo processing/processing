@@ -13983,12 +13983,6 @@ public class PApplet extends Applet
   }
 
 
-  public void delete() {
-    if (recorder != null) recorder.delete();
-    g.delete();
-  }
-
-
   /**
    * Store data of some kind for a renderer that requires extra metadata of
    * some kind. Usually this is a renderer-specific representation of the
