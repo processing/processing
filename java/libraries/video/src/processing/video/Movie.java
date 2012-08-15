@@ -292,6 +292,12 @@ public class Movie extends PImage implements PConstants {
       initSink();
     }    
     
+    // Round the time to a multiple of the source framerate, in
+    // order to eliminate stutter. Suggested by Daniel Shiffman
+    float fps = getSourceFrameRate();
+    int frame = (int)(where * fps);
+    where = frame / fps;    
+    
     boolean res;
     long pos = Video.secToNanoLong(where);
     
