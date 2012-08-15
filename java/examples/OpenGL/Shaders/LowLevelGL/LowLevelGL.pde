@@ -40,25 +40,25 @@ void draw() {
   
   updateGeometry();
   
-  pgl = pg.beginGL(); 
+  pgl = pg.beginPGL(); 
   flatShader.bind();
 
-  vertLoc = pgl.glGetAttribLocation(flatShader.glProgram, "inVertex");
-  colorLoc = pgl.glGetAttribLocation(flatShader.glProgram, "inColor");
+  vertLoc = pgl.getAttribLocation(flatShader.glProgram, "inVertex");
+  colorLoc = pgl.getAttribLocation(flatShader.glProgram, "inColor");
   
-  pgl.glEnableVertexAttribArray(vertLoc);
-  pgl.glEnableVertexAttribArray(colorLoc);
+  pgl.enableVertexAttribArray(vertLoc);
+  pgl.enableVertexAttribArray(colorLoc);
   
-  pgl.glVertexAttribPointer(vertLoc, 4, PGL.GL_FLOAT, false, 0, vertData);
-  pgl.glVertexAttribPointer(colorLoc, 4, PGL.GL_FLOAT, false, 0, colorData);
+  pgl.vertexAttribPointer(vertLoc, 4, PGL.FLOAT, false, 0, vertData);
+  pgl.vertexAttribPointer(colorLoc, 4, PGL.FLOAT, false, 0, colorData);
 
-  pgl.glDrawArrays(PGL.GL_TRIANGLES, 0, 3);
+  pgl.drawArrays(PGL.TRIANGLES, 0, 3);
 
-  pgl.glDisableVertexAttribArray(vertLoc);
-  pgl.glDisableVertexAttribArray(colorLoc);
+  pgl.disableVertexAttribArray(vertLoc);
+  pgl.disableVertexAttribArray(colorLoc);
   
   flatShader.unbind();  
-  pg.endGL();
+  pg.endPGL();
 }
 
 void updateGeometry() {
