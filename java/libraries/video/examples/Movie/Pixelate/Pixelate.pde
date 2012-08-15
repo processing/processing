@@ -15,7 +15,7 @@ Movie myMovie;
 color myMovieColors[];
 
 void setup() {
-  size(640, 480);
+  size(640, 480, P2D);
   noStroke();
   background(0);
   myMovie = new Movie(this, "station.mov");
@@ -28,18 +28,19 @@ void setup() {
 // Read new values from movie
 void movieEvent(Movie m) {
   m.read();
-  m.loadPixels();
-  
-  for (int j = 0; j < numPixels; j++) {
-    for (int i = 0; i < numPixels; i++) {
-      myMovieColors[j*numPixels + i] = m.get(i, j);
-    }
-  }
 }
 
 
 // Display values from movie
 void draw()  {
+  myMovie.loadPixels();
+  
+  for (int j = 0; j < numPixels; j++) {
+    for (int i = 0; i < numPixels; i++) {
+      myMovieColors[j*numPixels + i] = myMovie.get(i, j);
+    }
+  }
+  
   for (int j = 0; j < numPixels; j++) {
     for (int i = 0; i < numPixels; i++) {
       fill(myMovieColors[j*numPixels + i]);
