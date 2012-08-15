@@ -10,36 +10,38 @@
 import processing.video.*;
 
 Movie movie;
-int newFrame = 0;
+int newFrame;
 PFont font;
 
 void setup() {
-  size(320, 240);
+  size(320, 240, P2D);
   background(0);
   // Load and set the video to play. Setting the video 
   // in play mode is needed so at least one frame is read
   // and we can get duration, size and other information from
   // the video stream. 
   movie = new Movie(this, "station.mov");
-  
-  // Pausing the video at the first frame. 
   movie.play();
-  movie.goToBeginning();
-  movie.pause();
   
   font = loadFont("DejaVuSans-24.vlw");
   textFont(font, 24);
 }
 
 void movieEvent(Movie movie) {
-  movie.read();
+  movie.read();  
 }
 
 void draw() {
+  if (frameCount == 5) {
+    // Trick to force start at frame 0...
+    newFrame = 0;
+    setFrame(newFrame);
+  }
+  
   image(movie, 0, 0, width, height);
   fill(240, 20, 30);
 
-  text(getFrame() + " / " + (getLength() - 1), 10, 30);
+  text(getFrame() + " / " + (getLength() - 1), 10, 30);  
 }
 
 void keyPressed() {
@@ -51,18 +53,17 @@ void keyPressed() {
     }
   } 
   
-  
   setFrame(newFrame);  
 }
   
 int getFrame() {    
-  return ceil(movie.time() * movie.getSourceFrameRate()) - 1;
+  return ceil(movie.time() * movie.frameRate) - 1;
 }
 
 void setFrame(int n) {
   movie.play();
 
-  float srcFramerate = movie.getSourceFrameRate();
+  float srcFramerate = movie.frameRate;
     
   // The duration of a single frame:
   float frameDuration = 1.0 / srcFramerate;
@@ -82,6 +83,5 @@ void setFrame(int n) {
 }  
 
 int getLength() {
-  return int(movie.duration() * movie.getSourceFrameRate());
+  return int(movie.duration() * movie.frameRate);
 }  
-

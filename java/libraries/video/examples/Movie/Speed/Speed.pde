@@ -11,7 +11,7 @@ import processing.video.*;
 Movie movie;
 
 void setup() {
-  size(320, 240);
+  size(320, 240, P2D);
   background(0);
   movie = new Movie(this, "balloon.ogg");
   movie.loop();
@@ -32,4 +32,3 @@ void draw() {
   fill(240, 20, 30);
   text(nfc(newSpeed, 2) + "X", width - 80, 30); 
 }  
-

@@ -11,14 +11,14 @@ import processing.video.*;
 Movie movie;
 
 void setup() {
-  size(640, 480);
+  size(640, 480, P2D);
   background(0);
 
   movie = new Movie(this, "station.mov");
 
   // Pausing the video at the first frame. 
   movie.play();
-  movie.goToBeginning();
+  movie.jump(0);
   movie.pause();
 }
 
@@ -30,10 +30,8 @@ void draw() {
   // A new time position is calculated using the current mouse location:
   float f = constrain((float)mouseX / width, 0, 1);
   float t = movie.duration() * f;    
-  if (movie.ready()) {
-    movie.play();
-    movie.jump(t);
-    movie.pause();
-  }    
+  movie.play();
+  movie.jump(t);
+  movie.pause();   
   image(movie, 0, 0, width, height);
 }
