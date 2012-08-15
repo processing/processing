@@ -29,46 +29,27 @@ import processing.core.PConstants;
 import java.io.File;
 import java.util.List;
 
-// TODO:
-// http://forum.processing.org/topic/gsoc-2012-processing-video#25080000001473557
-
 /**
  * This class contains some basic functions used by the rest of the classes in
  * this library.
  */
 public class Video implements PConstants {
-  // Priority is given to the system install of GStreamer if this is set to true. 
-  public static boolean systemGStreamer = false;  
-  public static String systemGStreamerPath;
-  public static String systemPluginsFolder = "gstreamer-0.10";
-  // Default locations of the global install of gstreamer for each platform:
-  static {
-    if (PApplet.platform == MACOSX) {
-      systemGStreamerPath = "/System/Library/Frameworks/GStreamer.framework/Versions/Current/lib";
-    } else if (PApplet.platform == WINDOWS) {
-      systemGStreamerPath = "";
-    } else if (PApplet.platform == LINUX) {
-      systemGStreamerPath = "/usr/lib";
-    } else {}
-  }
-
   // Default location of the local install of gstreamer. Suggested by Charles Bourasseau. 
   // When it is left as empty string, GSVideo will attempt to use the path from GSLibraryPath.get(),
   // otherwise it will use it as the path to the folder where the libgstreamer.dylib and other 
   // files are located.  
-  public static String localGStreamerPath = "";
-  public static String localPluginsFolder = "plugins";
-      
+  protected static String gstreamerPath = "";
+  
   // Direct buffer pass enabled by default. With this mode enabled, no new buffers are created
   // and disposed by the GC in each frame (thanks to Octavi Estape for suggesting this improvement)
   // which should help performance in most situations.
-  public static boolean passDirectBuffer = true; 
+  protected static boolean passDirectBuffer = true; 
 
   // OpenGL texture used as buffer sink by default, when the renderer is GL-based. This 
   // can improve performance significantly, since the video frames are automatically
   // copied into the texture without passing through the pixels arrays, as well as 
   // having the color conversion into RGBA handled natively by gstreamer.
-  public static boolean useGLBufferSink = true;  
+  protected static boolean useGLBufferSink = true;  
   
   // Path that the video library will use to load the gstreamer native libs from.
   // It is buit either from the system or local paths.
@@ -83,6 +64,17 @@ public class Video implements PConstants {
   static {
     bitsJVM = PApplet.parseInt(System.getProperty("sun.arch.data.model"));
   }  
+    
+  
+  static public void setPath(String path) {
+    gstreamerPath = path;
+  }
+  
+  
+  static public void useOpenGL(boolean gl) {
+    useGLBufferSink = gl;
+  }
+  
   
   static public void init() {
     if (INSTANCES_COUNT == 0) {
@@ -98,9 +90,7 @@ public class Video implements PConstants {
   }
     
   static protected void initImpl() {
-    if (PApplet.platform == LINUX) {
-      // Linux only supports global gstreamer for now.
-      systemGStreamer = true;         
+    if (PApplet.platform == LINUX) {    
       setLinuxPath();
     } else if (PApplet.platform == WINDOWS) {
       setWindowsPath();
@@ -112,21 +102,12 @@ public class Video implements PConstants {
       System.setProperty("jna.library.path", gstreamerBinPath);
     }
 
-    if ((PApplet.platform == LINUX) && !systemGStreamer) {
-      System.err.println("Loading local version of GStreamer not supported in Linux at this time.");
-    }
-
-    if ((PApplet.platform == WINDOWS) && !systemGStreamer) {
+    if (PApplet.platform == WINDOWS) {
       LibraryLoader loader = LibraryLoader.getInstance();
       if (loader == null) {
         System.err.println("Cannot load local version of GStreamer libraries.");
       }
     }
-
-    if ((PApplet.platform == MACOSX) && !systemGStreamer) {
-      // Nothing to do here, since the dylib mechanism in OSX doesn't require the
-      // library loader.      
-    }    
     
     String[] args = { "" };
     Gst.setUseDefaultContext(defaultGLibContext);
@@ -135,6 +116,7 @@ public class Video implements PConstants {
     addPlugins();
   }
 
+  
   static protected void addPlugins() {
     if (!gstreamerPluginsPath.equals("")) {
       Registry reg = Registry.getDefault();
@@ -146,6 +128,7 @@ public class Video implements PConstants {
     }       
   }
   
+  
   static protected void removePlugins() {
     Registry reg = Registry.getDefault();
     List<Plugin> list = reg.getPluginList();
@@ -154,60 +137,62 @@ public class Video implements PConstants {
     }    
   }
   
+  
   static protected void setLinuxPath() {
-    if (systemGStreamer && lookForGlobalGStreamer()) {
-      gstreamerBinPath = "";
-      gstreamerPluginsPath = "";
-    } else {
-      systemGStreamer = false;
-      if (localGStreamerPath.equals("")) {
-        LibraryPath libPath = new LibraryPath();
-        String path = libPath.get();
-        gstreamerBinPath = buildGStreamerBinPath(path, "/linux" + bitsJVM);
-        gstreamerPluginsPath = gstreamerBinPath + "/" + localPluginsFolder;        
-      } else {
-        gstreamerBinPath = localGStreamerPath;
-        gstreamerPluginsPath = localGStreamerPath + "/" + localPluginsFolder;
-      }       
-    }
+    gstreamerBinPath = "";
+    gstreamerPluginsPath = "";
   }
 
+  
   static protected void setWindowsPath() {
-    if (systemGStreamer && lookForGlobalGStreamer()) {
-      gstreamerBinPath = "";
-      gstreamerPluginsPath = "";
+    if (gstreamerPath.equals("")) {
+      LibraryPath libPath = new LibraryPath();
+      String path = libPath.get();
+      gstreamerBinPath = buildGStreamerBinPath(path, "\\windows" + bitsJVM);
+      gstreamerPluginsPath = gstreamerBinPath + "\\plugins";
     } else {
-      systemGStreamer = false;
-      if (localGStreamerPath.equals("")) {
-        LibraryPath libPath = new LibraryPath();
-        String path = libPath.get();
-        gstreamerBinPath = buildGStreamerBinPath(path, "\\windows" + bitsJVM);
-        gstreamerPluginsPath = gstreamerBinPath + "\\" + localPluginsFolder;
-      } else {
-        gstreamerBinPath = localGStreamerPath;
-        gstreamerPluginsPath = localGStreamerPath + "\\" + localPluginsFolder;
-      }    
-    }
+      gstreamerBinPath = gstreamerPath;
+      gstreamerPluginsPath = gstreamerPath + "\\plugins";
+    }    
   }
 
+  
   static protected void setMacOSXPath() {
-    if (systemGStreamer && lookForGlobalGStreamer()) {
-      gstreamerBinPath = systemGStreamerPath;
-      gstreamerPluginsPath = systemGStreamerPath + "/" + systemPluginsFolder;
+    if (gstreamerPath.equals("")) {
+      LibraryPath libPath = new LibraryPath();
+      String path = libPath.get();        
+      gstreamerBinPath = buildGStreamerBinPath(path, "/macosx" + bitsJVM);
+      gstreamerPluginsPath = gstreamerBinPath + "/plugins";
     } else {
-      systemGStreamer = false;  
-      if (localGStreamerPath.equals("")) {
-        LibraryPath libPath = new LibraryPath();
-        String path = libPath.get();        
-        gstreamerBinPath = buildGStreamerBinPath(path, "/macosx" + bitsJVM);
-        gstreamerPluginsPath = gstreamerBinPath + "/" + localPluginsFolder;
-      } else {
-        gstreamerBinPath = localGStreamerPath;
-        gstreamerPluginsPath = localGStreamerPath + "/" + localPluginsFolder;
-      }
+      gstreamerBinPath = gstreamerPath;
+      gstreamerPluginsPath = gstreamerPath + "/plugins";
     }
   }
 
+  
+  static protected String buildGStreamerBinPath(String base, String os) {        
+    File path = new File(base + os);
+    if (path.exists()) {
+      return base + os; 
+    } else {      
+      return base;  
+    }
+  }
+
+  
+  static protected float nanoSecToSecFrac(float nanosec) {
+    for (int i = 0; i < 3; i++)
+      nanosec /= 1E3;
+    return nanosec;
+  }
+
+  
+  static protected long secToNanoLong(float sec) {
+    Float f = new Float(sec * 1E9);
+    return f.longValue();
+  }
+  
+  /*
   static protected boolean lookForGlobalGStreamer() {    
     LibraryPath libPath = new LibraryPath();
     String locPath = libPath.get();
@@ -234,6 +219,7 @@ public class Video implements PConstants {
     return false;
   }
   
+  
   static protected boolean libgstreamerPresent(String dir, String file) {
     File libPath = new File(dir);
     String[] files = libPath.list();
@@ -246,25 +232,5 @@ public class Video implements PConstants {
     }
     return false;
   }
-  
-  static protected String buildGStreamerBinPath(String base, String os) {        
-    File path = new File(base + os);
-    if (path.exists()) {
-      return base + os;	
-    } else {
-    	
-      return base;	
-    }
-  }
-  
-  static protected float nanoSecToSecFrac(float nanosec) {
-    for (int i = 0; i < 3; i++)
-      nanosec /= 1E3;
-    return nanosec;
-  }
-
-  static protected long secToNanoLong(float sec) {
-    Float f = new Float(sec * 1E9);
-    return f.longValue();
-  }
+  */  
 }
