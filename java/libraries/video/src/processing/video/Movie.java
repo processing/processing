@@ -110,8 +110,6 @@ public class Movie extends PImage implements PConstants {
           playBin.stop();
           playBin.getState();
         }
-      } catch (IllegalStateException e) {
-        PGraphics.showWarning("error when deleting player, maybe some native resource is already disposed"); 
       } catch (Exception e) {
         e.printStackTrace();
       }
