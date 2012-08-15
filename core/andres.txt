@@ -8,10 +8,10 @@ _ Have Capture.list() return all supported resolutions, and use the string as th
 _   for the capture object
 _ Add DISABLE_PERSPECTIVE_CORRECTED_STROKE hint, remove DISABLE_PERSPECTIVE_CORRECTED_LINES  
 _ Rename shader constants (FLAT, LIT, TEXTURED, etc), resetShader() w/out args?
-_ Cleaner Implementation of PImage.loadPixels()
 _ Back-buffer support in shaders: http://code.google.com/p/processing/issues/detail?id=1169
 
 processing-core todo (after beta):
+_ Cleaner Implementation of PImage.loadPixels()
 _ some glitches with SVG shapes in P2D 
 _   load world.svg and disable style)
 _ simple bevel algorithm for retained mode tessellation 
