@@ -37,11 +37,6 @@ import java.util.List;
  * this library.
  */
 public class Video implements PConstants {
-  // Streams type constants.
-  static public final int AUDIO = 0;
-  static public final int VIDEO = 1;
-  static public final int RAW   = 2;
-
   // Priority is given to the system install of GStreamer if this is set to true. 
   public static boolean systemGStreamer = false;  
   public static String systemGStreamerPath;
