@@ -264,7 +264,6 @@ public class Capture extends PImage implements PConstants {
     
     capturing = true;
     pipeline.play();
-    pipeline.getState();
     
     if (init) {
       checkResIsValid();
