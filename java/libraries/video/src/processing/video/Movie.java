@@ -54,6 +54,7 @@ public class Movie extends PImage implements PConstants {
   public static String[] supportedProtocols = { "http" }; 
   public float frameRate;  
   public String filename;
+  public PlayBin2 playBin;
   
   protected boolean playing = false;
   protected boolean paused = false;
@@ -63,8 +64,6 @@ public class Movie extends PImage implements PConstants {
   protected int bufWidth;
   protected int bufHeight;
   protected float volume;
-  
-  public PlayBin2 playBin;
   
   protected Method movieEventMethod;
   protected Object eventHandler;
