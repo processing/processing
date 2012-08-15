@@ -66,7 +66,7 @@ public class Video implements PConstants {
   }  
     
   
-  static public void setPath(String path) {
+  static public void setGStreamerPath(String path) {
     gstreamerPath = path;
   }
   
