@@ -561,7 +561,8 @@ public class Capture extends PImage implements PConstants {
     boolean singleFrac = false;
     try {
       Fraction fr = str.getFraction("framerate");
-      res.add(makeResolutionString(w, h, fr.numerator, fr.denominator));              
+      res.add(makeResolutionString(w, h, fr.numerator, fr.denominator));
+      singleFrac = true;
     } catch (Exception e) { 
     }
     
