@@ -479,7 +479,13 @@ public class Capture extends PImage implements PConstants {
     testPipeline.addMany(source, sink);
     Element.linkMany(source, sink);      
     
+    // Play/pause sequence (with getState() calls to to make sure
+    // all async operations are done) to trigger the capture momentarily
+    // for the device and obtain its supported resolutions.
     testPipeline.play();
+    testPipeline.getState();
+    testPipeline.pause();
+    testPipeline.getState();
         
     ArrayList<String> resolutions = new ArrayList<String>(); 
     addResFromSource(resolutions, source);
