@@ -30,7 +30,6 @@ import java.nio.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.io.File;
 import java.lang.reflect.*;
 
@@ -89,7 +88,7 @@ public class Capture extends PImage implements PConstants {
   protected int bufWidth;
   protected int bufHeight;
   
-  protected Pipeline gpipeline;
+  protected Pipeline pipeline;
   protected Element gsource;
   
   protected Method captureEventMethod;
@@ -104,18 +103,23 @@ public class Capture extends PImage implements PConstants {
   
   protected boolean firstFrame = true;
   
-  protected ArrayList<Resolution> resolutions;  
+  //protected ArrayList<Resolution> resolutions;  
   protected int reqWidth;
   protected int reqHeight;  
   
-  protected boolean useBufferSink = false;
-//  protected boolean useGLSink = true;  
+  protected boolean useBufferSink = false; 
   protected Object bufferSink;
   protected Method sinkCopyMethod;
   protected Method sinkSetMethod;
   protected String copyMask;    
   protected Buffer natBuffer = null;
   protected BufferDataAppSink natSink = null;  
+  
+  
+  public Capture(PApplet parent, String requestConfig) {
+    
+  }
+
   
   /**
    * @param parent typically use "this"
@@ -127,6 +131,7 @@ public class Capture extends PImage implements PConstants {
     initGStreamer(parent, requestWidth, requestHeight, capturePlugin, null, "");
   }
 
+  
   /**
    * <h3>Advanced</h3>
    * Constructor that takes resolution and framerate.
@@ -138,6 +143,7 @@ public class Capture extends PImage implements PConstants {
     initGStreamer(parent, requestWidth, requestHeight, capturePlugin, null, frameRate + "/1");
   }
 
+  
   /**
    * <h3>Advanced</h3>
    * This constructor allows to specify resolution and camera name.
@@ -156,6 +162,7 @@ public class Capture extends PImage implements PConstants {
     initGStreamer(parent, requestWidth, requestHeight, capturePlugin, properties, "");
   }
 
+  
   /**
    * <h3>Advanced</h3>
    * This constructor allows to specify the camera name and the desired framerate, in addition to the resolution.
@@ -172,28 +179,28 @@ public class Capture extends PImage implements PConstants {
     initGStreamer(parent, requestWidth, requestHeight, capturePlugin, properties, frameRate + "/1");
   }  
   
+  
   /**
    * <h3>Advanced</h3>
    * This constructor allows to specify the source element, properties and desired framerate (in fraction form).
    */       
-  public Capture(PApplet parent, int requestWidth, int requestHeight, String sourceName, 
-                 HashMap<String, Object> properties, String frameRate) {
-    super(requestWidth, requestHeight, RGB);
-    initGStreamer(parent, requestWidth, requestHeight, sourceName, properties, frameRate);    
-  }
+//  public Capture(PApplet parent, int requestWidth, int requestHeight, String sourceName, 
+//                 HashMap<String, Object> properties, String frameRate) {
+//    super(requestWidth, requestHeight, RGB);
+//    initGStreamer(parent, requestWidth, requestHeight, sourceName, properties, frameRate);    
+//  }
   
+
   /**
-   * Releases the gstreamer resources associated to this capture object.
-   * It shouldn't be used after this.
-   */
-  public void delete() {
-    if (gpipeline != null) {
+   * Disposes all the native resources associated to this capture device.
+   */    
+  public void dispose() {
+    if (pipeline != null) {
       try {
-        if (gpipeline.isPlaying()) {
-          gpipeline.stop();
+        if (pipeline.isPlaying()) {
+          pipeline.stop();
+          pipeline.getState();
         }
-      } catch (IllegalStateException e) {
-        PGraphics.showWarning("Error when deleting player, maybe some native resource is already disposed"); 
       } catch (Exception e) {
         e.printStackTrace();
       }
@@ -214,59 +221,23 @@ public class Capture extends PImage implements PConstants {
         natSink = null;
       }        
       
-      gpipeline.dispose();
-      gpipeline = null;
+      pipeline.dispose();
+      pipeline = null;
     }
-  }  
-
-  /**
-   * Same as delete.
-   */    
-  public void dispose() {
-    delete();
   }    
+  
   
   /**
    * Finalizer of the class.
    */  
   protected void finalize() throws Throwable {
     try {
-      delete();
+      dispose();
     } finally {
       super.finalize();
     }
-  }   
-    
-  /**
-   * Returns true if the capture device is already producing frames.
-   * 
-   * @return boolean
-   */  
-  protected boolean ready() {
-    return 0 < bufWidth && 0 < bufHeight && pipelineReady;
-  }
-  
-  /**
-   * Returns true if its called for the first time after a new
-   * frame has been read, and false afterwards until another frame
-   * is read.
-   * 
-   * @return boolean
-   */   
-  protected synchronized boolean newFrame() {
-    boolean res = newFrame;
-    newFrame = false;
-    return res;
-  }
-  
-  /**
-   * Returns whether the device is capturing frames or not.
-   * 
-   * @return boolean
-   */
-  protected boolean isCapturing() {
-    return capturing;  
-  }  
+  }       
+ 
   
   /**
    * ( begin auto-generated from Capture_available.xml )
@@ -287,21 +258,22 @@ public class Capture extends PImage implements PConstants {
    * Starts capturing frames from the selected device.
    */
   public void start() {
-    boolean init = false;
+    //boolean init = false;
     if (!pipelineReady) {
       initPipeline();
-      init = true;
+      //init = true;
     }
     
     capturing = true;
-    gpipeline.play();
+    pipeline.play();
+    pipeline.getState();
     
-    if (init) {
-      // Resolution and FPS initialization needs to be done after the
-      // pipeline is set to play.
-      getResolutions();
-      checkResolutions();
-    }
+//    if (init) {
+//      // Resolution and FPS initialization needs to be done after the
+//      // pipeline is set to play.
+//      getResolutions();
+//      checkResolutions();
+//    }
   }
 
   
@@ -321,7 +293,8 @@ public class Capture extends PImage implements PConstants {
     }
     
     capturing = false;
-    gpipeline.stop();
+    pipeline.stop();
+    pipeline.getState();
   }  
   
   
@@ -376,7 +349,6 @@ public class Capture extends PImage implements PConstants {
       
       if (firstFrame) {
         super.init(bufWidth, bufHeight, RGB);
-        //loadPixels();
         firstFrame = false;
       }
       
@@ -391,15 +363,10 @@ public class Capture extends PImage implements PConstants {
   }
   
   
-  /**
-   * <h3>Advanced</h3>
-   * Returns the name of the source element used for capture.
-   * 
-   * @return String 
-   */
-  public String getSource() {
-    return source;
-  }   
+   
+  ////////////////////////////////////////////////////////////
+  
+  // List methods.
   
   
   /**
@@ -426,15 +393,59 @@ public class Capture extends PImage implements PConstants {
    * @param sourceName String
    */
   static public String[] list(String sourceName) {
-    String[] res;
+    if (devicePropertyName.equals("")) {
+      return list(sourceName, indexPropertyName);  
+    } else {
+      return list(sourceName, devicePropertyName);
+    }
+  }
+  
+  
+  static protected String[] list(String sourceName, String propertyName) {
+    Video.init();
+    ArrayList<String> devices = listDevices(sourceName, propertyName);
+    
+    ArrayList<String> configList = new ArrayList<String>();
+    for (String device: devices) {
+      ArrayList<String> resolutions = listResolutions(sourceName, propertyName, device);      
+      for (String res: resolutions) {
+        configList.add("name=" + device + "," + res);
+      }
+    }
+    
+    String[] configs = new String[configList.size()];
+    for (int i = 0; i < configs.length; i++) {
+      configs[i] = configList.get(i);    
+    }
+    
+    return configs;
+  }
+
+  
+  static protected ArrayList<String> listDevices(String sourceName, String propertyName) {
+    ArrayList<String> devices = new ArrayList<String>();
     try {
-      res = list(sourceName, devicePropertyName);
-    } catch (IllegalArgumentException e) {      
+      // Using property-probe interface
+      Element videoSource = ElementFactory.make(sourceName, "Source");
+      PropertyProbe probe = PropertyProbe.wrap(videoSource);
+      if (probe != null) {
+        Property property = probe.getProperty(propertyName);
+        if (property != null) {
+          Object[] values = probe.getValues(property);
+          if (values != null) {
+            for (int i = 0; i < values.length; i++)
+              if (values[i] instanceof String) {
+                devices.add((String)values[i]);
+              }
+          }
+        }
+      }
+    } catch (IllegalArgumentException e) {
       if (PApplet.platform == LINUX) {
         // Linux hack to detect currently connected cameras
         // by looking for device files named /dev/video0, 
         // /dev/video1, etc.
-        ArrayList<String> devices = new ArrayList<String>();
+        devices = new ArrayList<String>();
         String dir = "/dev";
         File libPath = new File(dir);
         String[] files = libPath.list();
@@ -445,77 +456,270 @@ public class Capture extends PImage implements PConstants {
             }
           }
         }
-        res = new String[devices.size()];
-        for (int i = 0; i < res.length; i++) {
-          res[i] = devices.get(i);
-        }
       } else {      
         PGraphics.showWarning("The capture plugin doesn't support device query!");
-        res = new String[0];
-      }
+        devices = new ArrayList<String>();
+      }      
     }
-    return res;
+    return devices;
   }
   
   
-  static protected String[] list(String sourceName, String propertyName) {
-    Video.init();
-    String[] valuesListing = new String[0];
-    Element videoSource = ElementFactory.make(sourceName, "Source");
-    PropertyProbe probe = PropertyProbe.wrap(videoSource);
-    if (probe != null) {
-      Property property = probe.getProperty(propertyName);
-      if (property != null) {
-        Object[] values = probe.getValues(property);
-        if (values != null) {
-          valuesListing = new String[values.length];
-          for (int i = 0; i < values.length; i++)
-            if (values[i] instanceof String)
-              valuesListing[i] = (String) values[i];
-        }
+  static protected ArrayList<String> listResolutions(String sourceName, String propertyName, Object propertyValue) {
+    // Creating temporary pipeline so that we can query 
+    // the resolutions supported by the device.
+    Pipeline testPipeline = new Pipeline("test");    
+    Element source = ElementFactory.make(sourceName, "source");    
+    source.set(propertyName, propertyValue);
+        
+    BufferDataAppSink sink = new BufferDataAppSink("sink", "",
+        new BufferDataAppSink.Listener() {
+          public void bufferFrame(int w, int h, Buffer buffer) { }
+        });
+    testPipeline.addMany(source, sink);
+    Element.linkMany(source, sink);      
+    
+    testPipeline.play();
+    testPipeline.getState();    
+        
+    ArrayList<String> resolutions = new ArrayList<String>(); 
+    for (Pad pad : source.getPads()) {
+      
+      Caps caps = pad.getCaps();
+      int n = caps.size(); 
+      for (int i = 0; i < n; i++) {           
+        Structure str = caps.getStructure(i);
+        
+        if (!str.hasIntField("width") || !str.hasIntField("height")) continue;
+        
+        int w = ((Integer)str.getValue("width")).intValue();
+        int h = ((Integer)str.getValue("height")).intValue();          
+        
+        if (PApplet.platform == WINDOWS) {
+          // In Windows the getValueList() method doesn't seem to
+          // return a valid list of fraction values, so working on
+          // the string representation of the caps structure.            
+          addResFromString(resolutions, str.toString(), w, h);
+        } else {
+          addResFromStructure(resolutions, str, w, h);
+        }          
       }
     }
-    return valuesListing;
+    
+    testPipeline.stop();
+    testPipeline.getState();
+    
+    if (sink != null) {
+      sink.removeListener();
+      sink.dispose();
+    }        
+    
+    testPipeline.dispose();
+    
+    return resolutions;
+  }   
+  
+  
+  static protected void addResFromString(ArrayList<String> res, String str, int w, int h) {    
+    int n0 = str.indexOf("framerate=(fraction)");
+    if (-1 < n0) {
+      String temp = str.substring(n0 + 20, str.length());
+      int n1 = temp.indexOf("[");
+      int n2 = temp.indexOf("]");
+      if (-1 < n1 && -1 < n2) {
+        // A list of fractions enclosed between '[' and ']'
+        temp = temp.substring(n1 + 1, n2);  
+        String[] fractions = temp.split(",");
+        for (int k = 0; k < fractions.length; k++) {
+          String fpsStr = fractions[k].trim(); 
+          res.add(makeResolutionString(w, h, fpsStr));
+        }
+      } else {
+        // A single fraction
+        int n3 = temp.indexOf(",");
+        int n4 = temp.indexOf(";");
+        if (-1 < n3 || -1 < n4) {
+          int n5 = -1;
+          if (n3 == -1) {
+            n5 = n4;
+          } else if (n4 == -1) {
+            n5 = n3;
+          } else {
+            n5 = PApplet.min(n3, n4);
+          }
+          
+          temp = temp.substring(0, n5);
+          String fpsStr = temp.trim();                  
+          res.add(makeResolutionString(w, h, fpsStr));
+        }
+      }    
+    }
+  }
+  
+  
+  static protected void addResFromStructure(ArrayList<String> res, Structure str, int w, int h) {
+    boolean singleFrac = false;
+    try {
+      Fraction fr = str.getFraction("framerate");
+      res.add(makeResolutionString(w, h, fr.numerator, fr.denominator));              
+    } catch (Exception e) { 
+    }
+    
+    if (!singleFrac) {
+      ValueList flist = null;
+      
+      try {
+        flist = str.getValueList("framerate");
+      } catch (Exception e) { 
+      }
+      
+      if (flist != null) {
+        // All the framerates are put together, but this is not
+        // entirely accurate since there might be some of them'
+        // that work only for certain resolutions.
+        for (int k = 0; k < flist.getSize(); k++) {
+          Fraction fr = flist.getFraction(k);
+          res.add(makeResolutionString(w, h, fr.numerator, fr.denominator));
+        }              
+      }            
+    }    
   }
 
   
-  /**
-   * <h3>Advanced</h3>
-   * Returns a list with the resolutions supported by the capture device,
-   * including width, height and frame rate.
-   * 
-   * @return Resolution[]
-   */  
-  protected Resolution[] resolutions() {
-    Resolution[] res;
-    
-    if (resolutions == null) {
-      res = new Resolution[0];
-    } else {
-      int n = resolutions.size();
-      res = new Resolution[n];
-      for (int i = 0; i < n; i++) {
-        res[i] = new Resolution(resolutions.get(i));
+  static protected String makeResolutionString(int width, int height, int fpsDenominator, int fpsNumerator) {
+    String res = "size=" + width + "x" + height + ",fps=" + fpsDenominator;
+    if (fpsNumerator != 1) {
+      res += "/" + fpsNumerator;  
+    } 
+    return res;
+  }
+
+  
+  static protected String makeResolutionString(int width, int height, String fpsStr) {
+    String res = "size=" + width + "x" + height;    
+    String[] parts = fpsStr.split("/");
+    if (parts.length == 2) {      
+      int fpsDenominator = PApplet.parseInt(parts[0]);
+      int fpsNumerator = PApplet.parseInt(parts[1]);
+      res += ",fps=" + fpsDenominator;
+      if (fpsNumerator != 1) {
+        res += "/" + fpsNumerator;  
       }
+    }    
+    return res;
+  }
+
+  
+  ////////////////////////////////////////////////////////////
+  
+  // Initialization methods.
+  
+    
+  // The main initialization here.
+  protected void initGStreamer(PApplet parent, int requestWidth, int requestHeight, String sourceName,
+                               HashMap<String, Object> properties, String frameRate) {
+    this.parent = parent;
+
+//    String[] cameras = list(sourceName);
+//    if (cameras.length == 0) {
+//      throw new RuntimeException("There are no cameras available for capture.");
+//    } 
+    
+    Video.init();
+
+    // register methods
+    parent.registerDispose(this);
+
+    setEventHandlerObject(parent);
+
+    pipeline = new Pipeline("Video Capture");
+    
+    this.source = sourceName;
+    
+    fps = frameRate;
+    reqWidth = requestWidth;
+    reqHeight = requestHeight;    
+    
+    gsource = ElementFactory.make(sourceName, "Source");
+    
+    if (properties != null) {
+      Iterator<String> it = properties.keySet().iterator();    
+      while (it.hasNext()) {
+        String name = it.next();
+        Object value = properties.get(name);
+        gsource.set(name, value);
+      }    
     }
     
-    return res;        
-  }  
+    bufWidth = bufHeight = 0;
+    pipelineReady = false;    
+  }
+
   
-  
-  /**
-   * <h3>Advanced</h3>
-   * Prints all the gstreamer elements currently used in the
-   * current pipeline instance.
-   * 
-   */    
-  protected void printElements() {
-    List<Element> list = gpipeline.getElementsRecursive();
-    PApplet.println(list);
-    for (Element element : list) {
-      PApplet.println(element.toString());
-    }   
-  }  
+  protected void initPipeline() {
+    String fpsStr = "";
+    if (!fps.equals("")) {
+      // If the framerate string is empty we left the source element
+      // to use the default value.      
+      fpsStr = ", framerate=" + fps;
+    }    
+    
+    if (bufferSink != null || (Video.useGLBufferSink && parent.g.isGL())) {
+      useBufferSink = true;
+      
+      if (bufferSink != null) {
+        getSinkMethods();        
+      }  
+      
+      if (copyMask == null || copyMask.equals("")) { 
+        initCopyMask();
+      }
+      
+      //String caps = "width=" + reqWidth + ", height=" + reqHeight + fpsStr + ", " + copyMask;
+      String caps = copyMask; // default, use to query resolutions
+      
+      natSink = new BufferDataAppSink("nat", caps,
+          new BufferDataAppSink.Listener() {
+            public void bufferFrame(int w, int h, Buffer buffer) {
+              invokeEvent(w, h, buffer);
+            }
+          });
+    
+      natSink.setAutoDisposeBuffer(false);
+      
+      // No need for rgbSink.dispose(), because the addMany() doesn't increment the
+      // refcount of the videoSink object.      
+      
+      pipeline.addMany(gsource, natSink);
+      Element.linkMany(gsource, natSink);      
+      
+    } else {
+      Element conv = ElementFactory.make("ffmpegcolorspace", "ColorConverter");
+
+      Element videofilter = ElementFactory.make("capsfilter", "ColorFilter");
+      videofilter.setCaps(new Caps("video/x-raw-rgb, width=" + reqWidth + ", height=" + reqHeight + 
+                                   ", bpp=32, depth=24" + fpsStr));
+      
+      rgbSink = new RGBDataAppSink("rgb", 
+          new RGBDataAppSink.Listener() {
+            public void rgbFrame(int w, int h, IntBuffer buffer) {
+              invokeEvent(w, h, buffer);
+            }
+          });
+      
+      // Setting direct buffer passing in the video sink.
+      rgbSink.setPassDirectBuffer(Video.passDirectBuffer);      
+      
+      // No need for rgbSink.dispose(), because the addMany() doesn't increment the
+      // refcount of the videoSink object.      
+      
+      pipeline.addMany(gsource, conv, videofilter, rgbSink);
+      Element.linkMany(gsource, conv, videofilter, rgbSink);    
+    } 
+    
+    pipelineReady = true;
+    newFrame = false;
+  }
   
   
   /**
@@ -535,6 +739,12 @@ public class Capture extends PImage implements PConstants {
     }
   }
     
+  
+  ////////////////////////////////////////////////////////////
+  
+  // Stream event handling.   
+  
+  
   /**
    * invokeEvent() and read() are synchronized so that they can not be
    * called simultaneously. when they were not synchronized, this caused
@@ -586,140 +796,42 @@ public class Capture extends PImage implements PConstants {
       }
     }
   }  
-    
-  // The main initialization here.
-  protected void initGStreamer(PApplet parent, int requestWidth, int requestHeight, String sourceName,
-                               HashMap<String, Object> properties, String frameRate) {
-    this.parent = parent;
 
-    String[] cameras = list(sourceName);
-    if (cameras.length == 0) {
-      throw new RuntimeException("There are no cameras available for capture.");
-    } 
-    
-    Video.init();
-
-    // register methods
-    parent.registerDispose(this);
-
-    setEventHandlerObject(parent);
-
-    gpipeline = new Pipeline("GSCapture");
-    
-    this.source = sourceName;
-    
-    fps = frameRate;
-    reqWidth = requestWidth;
-    reqHeight = requestHeight;    
-    
-    gsource = ElementFactory.make(sourceName, "Source");
-    
-    if (properties != null) {
-      Iterator<String> it = properties.keySet().iterator();    
-      while (it.hasNext()) {
-        String name = it.next();
-        Object value = properties.get(name);
-        gsource.set(name, value);
-      }    
-    }
-    
-    bufWidth = bufHeight = 0;
-    pipelineReady = false;    
-  }
-
-  protected void initPipeline() {
-    String fpsStr = "";
-    if (!fps.equals("")) {
-      // If the framerate string is empty we left the source element
-      // to use the default value.      
-      fpsStr = ", framerate=" + fps;
-    }    
-    
-    if (bufferSink != null || (Video.useGLBufferSink && parent.g.isGL())) {
-      useBufferSink = true;
-      
-      if (bufferSink != null) {
-        getSinkMethods();        
-      }  
-      
-      if (copyMask == null || copyMask.equals("")) { 
-        initCopyMask();
-      }
-      
-      String caps = "width=" + reqWidth + ", height=" + reqHeight + fpsStr + ", " + copyMask;
-      
-      natSink = new BufferDataAppSink("nat", caps,
-          new BufferDataAppSink.Listener() {
-            public void bufferFrame(int w, int h, Buffer buffer) {
-              invokeEvent(w, h, buffer);
-            }
-          });
-    
-      natSink.setAutoDisposeBuffer(false);
-      
-      // No need for rgbSink.dispose(), because the addMany() doesn't increment the
-      // refcount of the videoSink object.      
-      
-      gpipeline.addMany(gsource, natSink);
-      Element.linkMany(gsource, natSink);      
-      
-    } else {
-      Element conv = ElementFactory.make("ffmpegcolorspace", "ColorConverter");
-
-      Element videofilter = ElementFactory.make("capsfilter", "ColorFilter");
-      videofilter.setCaps(new Caps("video/x-raw-rgb, width=" + reqWidth + ", height=" + reqHeight + 
-                                   ", bpp=32, depth=24" + fpsStr));
-      
-      rgbSink = new RGBDataAppSink("rgb", 
-          new RGBDataAppSink.Listener() {
-            public void rgbFrame(int w, int h, IntBuffer buffer) {
-              invokeEvent(w, h, buffer);
-            }
-          });
-      
-      // Setting direct buffer passing in the video sink.
-      rgbSink.setPassDirectBuffer(Video.passDirectBuffer);      
-      
-      // No need for rgbSink.dispose(), because the addMany() doesn't increment the
-      // refcount of the videoSink object.      
-      
-      gpipeline.addMany(gsource, conv, videofilter, rgbSink);
-      Element.linkMany(gsource, conv, videofilter, rgbSink);    
-    } 
-    
-    pipelineReady = true;
-    newFrame = false;
-  }
   
-  protected void checkResolutions() {
-    boolean suppRes = false;
-    for (int i = 0; i < resolutions.size(); i++) {
-      Resolution res = resolutions.get(i);
-      if (reqWidth == res.width && reqHeight == res.height && (fps.equals("") || fps.equals(res.fpsString))) {
-        suppRes = true;
-        break;
-      }
-    }
-    
-    if (!suppRes) {
-      String fpsStr = "";
-      if (!fps.equals("")) {
-        fpsStr = ", " + fps + "fps";
-      }      
-      String helpStr = "Use one of the following resolutions instead:\n";
-      for (int i = 0; i < resolutions.size(); i++) {
-        Resolution res = resolutions.get(i);
-        helpStr += res.toString() + '\n';
-      }      
-      throw new RuntimeException("The requested resolution of " + reqWidth + "x" + reqHeight + fpsStr + 
-                                 " is not supported by the selected capture device.\n" + helpStr);
-    }     
-  }
   
+  
+  
+//  protected void checkResolutions() {
+//    boolean suppRes = false;
+//    for (int i = 0; i < resolutions.size(); i++) {
+//      Resolution res = resolutions.get(i);
+//      if (reqWidth == res.width && reqHeight == res.height && (fps.equals("") || fps.equals(res.fpsString))) {
+//        suppRes = true;
+//        break;
+//      }
+//    }
+//    
+//    if (!suppRes) {
+//      String fpsStr = "";
+//      if (!fps.equals("")) {
+//        fpsStr = ", " + fps + "fps";
+//      }      
+//      String helpStr = "Use one of the following resolutions instead:\n";
+//      for (int i = 0; i < resolutions.size(); i++) {
+//        Resolution res = resolutions.get(i);
+//        helpStr += res.toString() + '\n';
+//      }      
+//      throw new RuntimeException("The requested resolution of " + reqWidth + "x" + reqHeight + fpsStr + 
+//                                 " is not supported by the selected capture device.\n" + helpStr);
+//    }     
+//  }
+  
+  
+  /*
   protected void getResolutions() {
     resolutions = new ArrayList<Resolution>(); 
    
-    for (Element src : gpipeline.getSources()) {
+    for (Element src : pipeline.getSources()) {
       for (Pad pad : src.getPads()) {
         
         Caps caps = pad.getCaps();
@@ -745,84 +857,13 @@ public class Capture extends PImage implements PConstants {
       }
     }
   }  
+  */
   
-  protected void getFpsFromString(String str, int w, int h) {    
-    int n0 = str.indexOf("framerate=(fraction)");
-    if (-1 < n0) {
-      String temp = str.substring(n0 + 20, str.length());
-      int n1 = temp.indexOf("[");
-      int n2 = temp.indexOf("]");
-      if (-1 < n1 && -1 < n2) {
-        // A list of fractions enclosed between '[' and ']'
-        temp = temp.substring(n1 + 1, n2);  
-        String[] fractions = temp.split(",");
-        for (int k = 0; k < fractions.length; k++) {
-          String fpsStr = fractions[k].trim(); 
-          resolutions.add(new Resolution(w, h, fpsStr));
-        }
-      } else {
-        // A single fraction
-        int n3 = temp.indexOf(",");
-        int n4 = temp.indexOf(";");
-        if (-1 < n3 || -1 < n4) {
-          int n5 = -1;
-          if (n3 == -1) {
-            n5 = n4;
-          } else if (n4 == -1) {
-            n5 = n3;
-          } else {
-            n5 = PApplet.min(n3, n4);
-          }
-          
-          temp = temp.substring(0, n5);
-          String fpsStr = temp.trim();                  
-          resolutions.add(new Resolution(w, h, fpsStr));
-        }
-      }    
-    }
-  }
-  
-  protected void getFpsFromStructure(Structure str, int w, int h) {
-    boolean singleFrac = false;
-    try {
-      Fraction fr = str.getFraction("framerate");
-      resolutions.add(new Resolution(w, h, fr.numerator, fr.denominator));              
-      singleFrac = true;
-    } catch (Exception e) { 
-    }
-    
-    if (!singleFrac) {
-      ValueList flist = null;
-      
-      try {
-        flist = str.getValueList("framerate");
-      } catch (Exception e) { 
-      }
-      
-      if (flist != null) {
-        // All the framerates are put together, but this is not
-        // entirely accurate since there might be some of them'
-        // that work only for certain resolutions.
-        for (int k = 0; k < flist.getSize(); k++) {
-          Fraction fr = flist.getFraction(k);
-          resolutions.add(new Resolution(w, h, fr.numerator, fr.denominator));
-        }              
-      }            
-    }    
-  }
   
   ////////////////////////////////////////////////////////////
   
   // Buffer source interface. 
 
-  /**
-   * Disables automatic use of hardware acceleration to play video with OpenGL-based 
-   * renderers.
-   * 
-   */   
-//  public void noGL() {
-//    useGLSink = false;
-//  }  
   
   /**
    * Sets the object to use as destination for the frames read from the stream.
@@ -836,6 +877,7 @@ public class Capture extends PImage implements PConstants {
     initCopyMask();
   }  
   
+  
   /**
    * Sets the object to use as destination for the frames read from the stream.
    * 
@@ -847,14 +889,17 @@ public class Capture extends PImage implements PConstants {
     copyMask = mask;
   }  
   
+  
   public boolean hasBufferSink() {
     return bufferSink != null;
   }
+  
   
   public synchronized void disposeBuffer(Object buf) {
     ((Buffer)buf).dispose();
   }
 
+  
   protected void getSinkMethods() {
     try {      
       sinkCopyMethod = bufferSink.getClass().getMethod("copyBufferFromSource",
@@ -870,6 +915,7 @@ public class Capture extends PImage implements PConstants {
       throw new RuntimeException("Movie: provided sink object doesn't have a setBufferSource method.");
     }    
   }
+  
   
   protected void initCopyMask() {
     if (ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN) {
