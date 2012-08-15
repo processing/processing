@@ -395,31 +395,6 @@ public class PFont implements PConstants {
     findFont();
   }
 
-  
-  void delete() {
-    if (cacheMap != null) {    
-      Set<PGraphics> keySet = cacheMap.keySet();
-      if (!keySet.isEmpty()) {
-        Object[] keys = keySet.toArray();
-        for (int i = 0; i < keys.length; i++) {
-          Object data = getCache((PGraphics)keys[i]);
-          Method del = null;
-          
-          try {
-            Class<?> c = data.getClass();
-            del = c.getMethod("delete", new Class[] {});
-          } catch (Exception e) {}
-          
-          if (del != null) {
-            // The metadata have a delete method. We try running it.
-            try {
-              del.invoke(data, new Object[] {});
-            } catch (Exception e) {}
-          }   
-        }
-      }    
-    }
-  }
 
   /**
    * Write this PFont to an OutputStream.

@@ -970,10 +970,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
       //System.out.println("making new buffered image");
 //      image = new BufferedImage(source.width, source.height, type);
     }
-
-    public void delete() {
-    }
-
+    
     /**
      * Update the pixels of the cache image. Already determined that the tint
      * has changed, or the pixels have changed, so should just go through

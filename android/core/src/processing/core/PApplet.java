@@ -8935,11 +8935,6 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
-  public void delete() {
-    g.delete();
-  }
-
-
   public Bitmap getBitmap() {
     return g.getBitmap();
   }
