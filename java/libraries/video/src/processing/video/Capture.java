@@ -78,18 +78,18 @@ public class Capture extends PImage implements PConstants {
       devicePropertyName = "device";
       indexPropertyName = "device-fd";
     } else {}
-  }  
-  
-  protected String source;
+  }
+  public float frameRate;
+  public Pipeline pipeline;  
   
   protected boolean capturing = false;
   
-  protected String fps;  
+  protected String frameRateString;  
   protected int bufWidth;
   protected int bufHeight;
   
-  protected Pipeline pipeline;
-  protected Element gsource;
+  protected String sourceName;
+  protected Element sourceElement;
   
   protected Method captureEventMethod;
   protected Object eventHandler;
@@ -102,8 +102,7 @@ public class Capture extends PImage implements PConstants {
   protected int[] copyPixels = null;
   
   protected boolean firstFrame = true;
-  
-  //protected ArrayList<Resolution> resolutions;  
+   
   protected int reqWidth;
   protected int reqHeight;  
   
@@ -117,7 +116,17 @@ public class Capture extends PImage implements PConstants {
   
   
   public Capture(PApplet parent, String requestConfig) {
-    
+    String name = getName(requestConfig);
+    int[] size = getSize(requestConfig);
+    String fps = getFrameRate(requestConfig);    
+    HashMap<String, Object> properties = new HashMap<String, Object>();
+    if (devicePropertyName.equals("")) {
+      // For plugins without device name property, the name is casted as an index
+      properties.put(indexPropertyName, PApplet.parseInt(name));
+    } else {
+      properties.put(devicePropertyName, name);
+    }
+    initGStreamer(parent, size[0], size[1], capturePlugin, properties, fps);
   }
 
   
@@ -180,17 +189,6 @@ public class Capture extends PImage implements PConstants {
   }  
   
   
-  /**
-   * <h3>Advanced</h3>
-   * This constructor allows to specify the source element, properties and desired framerate (in fraction form).
-   */       
-//  public Capture(PApplet parent, int requestWidth, int requestHeight, String sourceName, 
-//                 HashMap<String, Object> properties, String frameRate) {
-//    super(requestWidth, requestHeight, RGB);
-//    initGStreamer(parent, requestWidth, requestHeight, sourceName, properties, frameRate);    
-//  }
-  
-
   /**
    * Disposes all the native resources associated to this capture device.
    */    
@@ -258,24 +256,21 @@ public class Capture extends PImage implements PConstants {
    * Starts capturing frames from the selected device.
    */
   public void start() {
-    //boolean init = false;
+    boolean init = false;
     if (!pipelineReady) {
       initPipeline();
-      //init = true;
+      init = true;
     }
     
     capturing = true;
     pipeline.play();
     pipeline.getState();
     
-//    if (init) {
-//      // Resolution and FPS initialization needs to be done after the
-//      // pipeline is set to play.
-//      getResolutions();
-//      checkResolutions();
-//    }
+    if (init) {
+      checkResIsValid();
+    }
   }
-
+  
   
   /**
    * ( begin auto-generated from Capture_stop.xml )
@@ -314,6 +309,12 @@ public class Capture extends PImage implements PConstants {
    * @usage web_application
    */
   public synchronized void read() {
+    if (frameRate < 0) {
+      // Framerate not set yet, so we obtain from stream,
+      // which is already playing since we are in read().
+      frameRate = getSourceFrameRate();
+    }
+    
     if (useBufferSink) { // The native buffer from gstreamer is copied to the buffer sink.
       if (natBuffer == null) {         
         return;
@@ -361,9 +362,8 @@ public class Capture extends PImage implements PConstants {
     available = false;
     newFrame = true;
   }
+    
   
-  
-   
   ////////////////////////////////////////////////////////////
   
   // List methods.
@@ -480,31 +480,9 @@ public class Capture extends PImage implements PConstants {
     Element.linkMany(source, sink);      
     
     testPipeline.play();
-    testPipeline.getState();    
         
     ArrayList<String> resolutions = new ArrayList<String>(); 
-    for (Pad pad : source.getPads()) {
-      
-      Caps caps = pad.getCaps();
-      int n = caps.size(); 
-      for (int i = 0; i < n; i++) {           
-        Structure str = caps.getStructure(i);
-        
-        if (!str.hasIntField("width") || !str.hasIntField("height")) continue;
-        
-        int w = ((Integer)str.getValue("width")).intValue();
-        int h = ((Integer)str.getValue("height")).intValue();          
-        
-        if (PApplet.platform == WINDOWS) {
-          // In Windows the getValueList() method doesn't seem to
-          // return a valid list of fraction values, so working on
-          // the string representation of the caps structure.            
-          addResFromString(resolutions, str.toString(), w, h);
-        } else {
-          addResFromStructure(resolutions, str, w, h);
-        }          
-      }
-    }
+    addResFromSource(resolutions, source);
     
     testPipeline.stop();
     testPipeline.getState();
@@ -518,6 +496,31 @@ public class Capture extends PImage implements PConstants {
     
     return resolutions;
   }   
+  
+  
+  static protected void addResFromSource(ArrayList<String> res, Element src) {
+    for (Pad pad : src.getPads()) {
+      Caps caps = pad.getCaps();
+      int n = caps.size(); 
+      for (int i = 0; i < n; i++) {                   
+        Structure str = caps.getStructure(i);
+        
+        if (!str.hasIntField("width") || !str.hasIntField("height")) continue;
+        
+        int w = ((Integer)str.getValue("width")).intValue();
+        int h = ((Integer)str.getValue("height")).intValue();          
+        
+        if (PApplet.platform == WINDOWS) {
+          // In Windows the getValueList() method doesn't seem to
+          // return a valid list of fraction values, so working on
+          // the string representation of the caps structure.            
+          addResFromString(res, str.toString(), w, h);
+        } else {
+          addResFromStructure(res, str, w, h);
+        }          
+      }
+    }    
+  }
   
   
   static protected void addResFromString(ArrayList<String> res, String str, int w, int h) {    
@@ -611,23 +614,62 @@ public class Capture extends PImage implements PConstants {
   }
 
   
+  protected void checkResIsValid() {
+    ArrayList<String> resolutions = new ArrayList<String>();
+    addResFromSource(resolutions, sourceElement);
+    
+    boolean valid = false; 
+    for (String res: resolutions) {
+      if (validRes(res)) {
+        valid = true;
+        break;
+      }
+    }
+    
+    if (!valid) {
+      String fpsStr = "";
+      if (!frameRateString.equals("")) {
+        fpsStr = ", " + frameRateString + "fps";
+      }      
+      throw new RuntimeException("The requested resolution of " + reqWidth + "x" + reqHeight + fpsStr + 
+                                 " is not supported by the selected capture device.\n");
+    } 
+  }
+  
+  
+  protected void checkValidDevices(String src) {
+    ArrayList<String> devices;
+    if (devicePropertyName.equals("")) {
+      devices = listDevices(src, indexPropertyName);
+    } else {
+      devices = listDevices(src, devicePropertyName);
+    }
+    if (devices.size() == 0) {
+      throw new RuntimeException("There are no capture devices connected to this computer.\n");
+    }
+  }
+  
+  
+  protected boolean validRes(String res) {
+    int[] size = getSize(res);
+    String fps = getFrameRate(res);    
+    return (size[0] == reqWidth && size[1] == reqHeight) && (frameRateString.equals("") || frameRateString.equals(fps)); 
+  }
+
+  
   ////////////////////////////////////////////////////////////
   
   // Initialization methods.
   
     
   // The main initialization here.
-  protected void initGStreamer(PApplet parent, int requestWidth, int requestHeight, String sourceName,
-                               HashMap<String, Object> properties, String frameRate) {
+  protected void initGStreamer(PApplet parent, int rw, int rh, String src,
+                               HashMap<String, Object> props, String fps) {
     this.parent = parent;
 
-//    String[] cameras = list(sourceName);
-//    if (cameras.length == 0) {
-//      throw new RuntimeException("There are no cameras available for capture.");
-//    } 
-    
     Video.init();
-
+    checkValidDevices(src);
+    
     // register methods
     parent.registerDispose(this);
 
@@ -635,20 +677,36 @@ public class Capture extends PImage implements PConstants {
 
     pipeline = new Pipeline("Video Capture");
     
-    this.source = sourceName;
+    frameRateString = fps;
+    if (frameRateString.equals("")) {
+      frameRate = -1;
+    } else {
+      String[] parts = frameRateString.split("/");
+      if (parts.length == 2) {      
+        int fpsDenominator = PApplet.parseInt(parts[0]);
+        int fpsNumerator = PApplet.parseInt(parts[1]);
+        frameRate = (float)fpsDenominator / (float)fpsNumerator;  
+      } else if (parts.length == 1) {
+        frameRateString += "/1";
+        frameRate = PApplet.parseFloat(parts[0]);        
+      } else {
+        frameRateString = "";
+        frameRate = -1;
+      }
+    }
+        
+    reqWidth = rw;
+    reqHeight = rh;    
     
-    fps = frameRate;
-    reqWidth = requestWidth;
-    reqHeight = requestHeight;    
+    sourceName = src;
+    sourceElement = ElementFactory.make(src, "Source");
     
-    gsource = ElementFactory.make(sourceName, "Source");
-    
-    if (properties != null) {
-      Iterator<String> it = properties.keySet().iterator();    
+    if (props != null) {
+      Iterator<String> it = props.keySet().iterator();    
       while (it.hasNext()) {
         String name = it.next();
-        Object value = properties.get(name);
-        gsource.set(name, value);
+        Object value = props.get(name);
+        sourceElement.set(name, value);
       }    
     }
     
@@ -659,10 +717,10 @@ public class Capture extends PImage implements PConstants {
   
   protected void initPipeline() {
     String fpsStr = "";
-    if (!fps.equals("")) {
+    if (!frameRateString.equals("")) {
       // If the framerate string is empty we left the source element
       // to use the default value.      
-      fpsStr = ", framerate=" + fps;
+      fpsStr = ", framerate=" + frameRateString;
     }    
     
     if (bufferSink != null || (Video.useGLBufferSink && parent.g.isGL())) {
@@ -676,8 +734,7 @@ public class Capture extends PImage implements PConstants {
         initCopyMask();
       }
       
-      //String caps = "width=" + reqWidth + ", height=" + reqHeight + fpsStr + ", " + copyMask;
-      String caps = copyMask; // default, use to query resolutions
+      String caps = "width=" + reqWidth + ", height=" + reqHeight + fpsStr + ", " + copyMask;
       
       natSink = new BufferDataAppSink("nat", caps,
           new BufferDataAppSink.Listener() {
@@ -691,8 +748,8 @@ public class Capture extends PImage implements PConstants {
       // No need for rgbSink.dispose(), because the addMany() doesn't increment the
       // refcount of the videoSink object.      
       
-      pipeline.addMany(gsource, natSink);
-      Element.linkMany(gsource, natSink);      
+      pipeline.addMany(sourceElement, natSink);
+      Element.linkMany(sourceElement, natSink);      
       
     } else {
       Element conv = ElementFactory.make("ffmpegcolorspace", "ColorConverter");
@@ -714,8 +771,8 @@ public class Capture extends PImage implements PConstants {
       // No need for rgbSink.dispose(), because the addMany() doesn't increment the
       // refcount of the videoSink object.      
       
-      pipeline.addMany(gsource, conv, videofilter, rgbSink);
-      Element.linkMany(gsource, conv, videofilter, rgbSink);    
+      pipeline.addMany(sourceElement, conv, videofilter, rgbSink);
+      Element.linkMany(sourceElement, conv, videofilter, rgbSink);    
     } 
     
     pipelineReady = true;
@@ -779,6 +836,7 @@ public class Capture extends PImage implements PConstants {
       }
     }
   }
+  
 
   protected synchronized void invokeEvent(int w, int h, Buffer buffer) {
     available = true;
@@ -797,75 +855,83 @@ public class Capture extends PImage implements PConstants {
       }
     }
   }  
-
-  
-  
-  
-  
-//  protected void checkResolutions() {
-//    boolean suppRes = false;
-//    for (int i = 0; i < resolutions.size(); i++) {
-//      Resolution res = resolutions.get(i);
-//      if (reqWidth == res.width && reqHeight == res.height && (fps.equals("") || fps.equals(res.fpsString))) {
-//        suppRes = true;
-//        break;
-//      }
-//    }
-//    
-//    if (!suppRes) {
-//      String fpsStr = "";
-//      if (!fps.equals("")) {
-//        fpsStr = ", " + fps + "fps";
-//      }      
-//      String helpStr = "Use one of the following resolutions instead:\n";
-//      for (int i = 0; i < resolutions.size(); i++) {
-//        Resolution res = resolutions.get(i);
-//        helpStr += res.toString() + '\n';
-//      }      
-//      throw new RuntimeException("The requested resolution of " + reqWidth + "x" + reqHeight + fpsStr + 
-//                                 " is not supported by the selected capture device.\n" + helpStr);
-//    }     
-//  }
-  
-  
-  /*
-  protected void getResolutions() {
-    resolutions = new ArrayList<Resolution>(); 
-   
-    for (Element src : pipeline.getSources()) {
-      for (Pad pad : src.getPads()) {
-        
-        Caps caps = pad.getCaps();
-        int n = caps.size(); 
-        for (int i = 0; i < n; i++) {           
-          Structure str = caps.getStructure(i);
-          
-          if (!str.hasIntField("width") || !str.hasIntField("height")) continue;
-          
-          int w = ((Integer)str.getValue("width")).intValue();
-          int h = ((Integer)str.getValue("height")).intValue();          
-          
-          if (PApplet.platform == WINDOWS) {
-            // In Windows the getValueList() method doesn't seem to
-            // return a valid list of fraction values, so working on
-            // the string representation of the caps structure.            
-            getFpsFromString(str.toString(), w, h);
-
-          } else {
-            getFpsFromStructure(str, w, h);
-          }          
-        }
-      }
-    }
-  }  
-  */
   
   
   ////////////////////////////////////////////////////////////
   
+  // Stream query methods. 
+  
+
+  protected float getSourceFrameRate() {
+    for (Element sink : pipeline.getSinks()) {
+      for (Pad pad : sink.getPads()) {
+        Fraction frameRate = org.gstreamer.Video.getVideoFrameRate(pad);
+        if (frameRate != null) {
+          return (float)frameRate.toDouble();
+        }
+      }
+    }
+    return 0;
+  }  
+  
+  
+  protected String getName(String config) {
+    String name = "";
+    String[] parts = PApplet.split(config, ',');    
+    for (String part: parts) {
+      if (-1 < part.indexOf("name")) {        
+        String[] values = PApplet.split(part, '=');
+        if (0 < values.length) {
+          name = values[1];
+        }        
+      }
+    }
+    return name;
+  }
+  
+  
+  protected int[] getSize(String config) {
+    int[] wh = {0 , 0};  
+    String[] parts = PApplet.split(config, ',');    
+    for (String part: parts) {
+      if (-1 < part.indexOf("size")) {
+        String[] values = PApplet.split(part, '=');
+        if (0 < values.length) {
+          String[] whstr = PApplet.split(values[1], 'x');
+          if (whstr.length == 2) {
+            wh[0] = PApplet.parseInt(whstr[0]);
+            wh[1] = PApplet.parseInt(whstr[1]);
+          }
+        }
+      }      
+    }
+    return wh;
+  }
+  
+  
+  protected String getFrameRate(String config) {
+    String fps = "";
+    String[] parts = PApplet.split(config, ',');    
+    for (String part: parts) {
+      if (-1 < part.indexOf("fps")) {        
+        String[] values = PApplet.split(part, '=');
+        if (0 < values.length) {
+          fps = values[1];
+          if (fps.indexOf("/") == -1) {
+            fps += "/1";         
+          }  
+        }
+      }
+    }  
+    return fps;
+  }
+  
+    
+  ////////////////////////////////////////////////////////////
+  
   // Buffer source interface. 
 
-  
+
   /**
    * Sets the object to use as destination for the frames read from the stream.
    * The color conversion mask is automatically set to the one required to
