@@ -10282,6 +10282,12 @@ public class PApplet extends Applet
   }
 
 
+  public void resetShader() {
+    if (recorder != null) recorder.resetShader();
+    g.resetShader();
+  }
+
+
   public PShader getShader(int kind) {
     return g.getShader(kind);
   }

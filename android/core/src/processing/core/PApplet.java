@@ -7476,6 +7476,11 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
+  public void resetShader() {
+    g.resetShader();
+  }
+
+
   public PShader getShader(int kind) {
     return g.getShader(kind);
   }
