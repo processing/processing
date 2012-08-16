@@ -10,15 +10,16 @@ X Cleanup video API:
 X Have Capture.list() return all supported resolutions, and use the string as the argument 
     for the capture object
 
-API changes/additions (for beta release)
+0208 todo pre-beta:
 _ Add DISABLE_PERSPECTIVE_CORRECTED_STROKE hint, remove DISABLE_PERSPECTIVE_CORRECTED_LINES  
 _ Rename shader constants (FLAT, LIT, TEXTURED, etc), resetShader() w/out args?
 _ Back-buffer support in shaders: http://code.google.com/p/processing/issues/detail?id=1169
+_ Issues on low-end phones: http://code.google.com/p/processing/issues/detail?id=1145
+_ Rotation problem on Android: http://code.google.com/p/processing/issues/detail?id=1146
 
-processing-core todo (after beta):
+processing-core todo (post-beta):
 _ Cleaner Implementation of PImage.loadPixels()
-_ some glitches with SVG shapes in P2D 
-_   load world.svg and disable style)
+_ some glitches with SVG shapes in P2D (load world.svg and disable style to trigger)
 _ simple bevel algorithm for retained mode tessellation 
 _   if stroke weight is less than 1, the tessellator currently doesn't 
 _   apply the path stroking algorithm, but a retained shape can be zoomed 
@@ -32,7 +33,7 @@ _ Lines, points and fill geometry should be handled separately in raw output in 
 _ Use GL_LINES and GL_POINTS when stroke weight is below the hardware limit and stroke cap/bevel is RECT.
 _ Properly handle very large stroke paths in P3D (create new index cache, etc).
 
-processing-android todo (after beta):
+processing-android todo (post-beta):
 _ noLoop/redraw not working
 _ Mipmaps are disabled, need manual generation
-_ Issues on low-end phones: http://code.google.com/p/processing/issues/detail?id=1145 
+ 
