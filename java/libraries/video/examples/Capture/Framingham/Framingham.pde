@@ -1,5 +1,3 @@
-// Currently broken with the P2D renderer.
-
 /**
  * Framingham
  * by Ben Fry.
@@ -42,14 +40,14 @@ void draw() {
   if (video.available()) {
     video.read();
     video.loadPixels();
-    set(video.width*column, video.height*lastRow, video);
+    image(video, video.width*column, video.height*lastRow);
     column++;
     if (column == columnCount) {
       loadPixels();
         
       // Scoot everybody up one row
-      arraycopy(pixels, video.height*width, scoot, 0, scoot.length);
-      arraycopy(scoot, 0, pixels, 0, scoot.length);
+      arrayCopy(pixels, video.height*width, scoot, 0, scoot.length);
+      arrayCopy(scoot, 0, pixels, 0, scoot.length);
 
       // Set the moved row to black
       for (int i = scoot.length; i < width*height; i++) {
