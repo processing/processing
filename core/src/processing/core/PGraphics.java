@@ -1543,7 +1543,12 @@ public class PGraphics extends PImage implements PConstants {
     showMissingWarning("resetShader");
   }
 
+  
+  public void resetShader() {
+    showMissingWarning("resetShader");
+  }  
 
+  
   public PShader getShader(int kind) {
     showMissingWarning("getShader");
     return null;
