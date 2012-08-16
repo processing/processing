@@ -66,12 +66,12 @@ public class Video implements PConstants {
   }  
     
   
-  static public void setGStreamerPath(String path) {
+  static public void setPath(String path) {
     gstreamerPath = path;
   }
   
   
-  static public void useOpenGL(boolean gl) {
+  static public void useGL(boolean gl) {
     useGLBufferSink = gl;
   }
   

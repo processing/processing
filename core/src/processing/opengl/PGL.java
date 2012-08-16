@@ -923,8 +923,8 @@ public class PGL {
           animator.requestDisplay();
         }        
       } catch (GLException e) {
-        // Unwrap GLException  to only the causing exception and so
-        // avoid the additional jogl lines.
+        // Unwrap GLException so that only the causing exception  
+        // is shown.
         Throwable tr = e.getCause();        
         throw (RuntimeException)tr;
       }
