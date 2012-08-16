@@ -3,8 +3,11 @@
  * by Andres Colubri
  * 
  * Moves through the video one frame at the time by using the
- * arrow keys. It estimates the frame counts using the framerate
- * of the movie file, so it might not be exact in some cases.
+ * arrow keys. Because it estimates the frame counts using the 
+ * framerate of the movie file, and also, many movie codecs don't 
+ * actually support jumping to arbitrary frames, don't expect 
+ * accurate results in most cases.
+ * 
  */
  
 import processing.video.*;
@@ -16,28 +19,22 @@ PFont font;
 void setup() {
   size(320, 240, P2D);
   background(0);
-  // Load and set the video to play. Setting the video 
-  // in play mode is needed so at least one frame is read
-  // and we can get duration, size and other information from
-  // the video stream. 
+   
   movie = new Movie(this, "station.mov");
-  movie.play();
+  newFrame = 0;
+  setFrame(newFrame);
+  
+  noLoop();
   
   font = loadFont("DejaVuSans-24.vlw");
   textFont(font, 24);
 }
 
 void movieEvent(Movie movie) {
-  movie.read();  
+  movie.read();
 }
 
 void draw() {
-  if (frameCount == 5) {
-    // Trick to force start at frame 0...
-    newFrame = 0;
-    setFrame(newFrame);
-  }
-  
   image(movie, 0, 0, width, height);
   fill(240, 20, 30);
 
@@ -79,7 +76,9 @@ void setFrame(int n) {
     
   movie.jump(where);
   
-  movie.pause();  
+  movie.pause();
+
+  redraw();  
 }  
 
 int getLength() {
