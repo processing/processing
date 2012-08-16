@@ -44,6 +44,7 @@ import javax.media.opengl.GLCapabilitiesImmutable;
 import javax.media.opengl.GLContext;
 import javax.media.opengl.GLDrawable;
 import javax.media.opengl.GLEventListener;
+import javax.media.opengl.GLException;
 import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.glu.GLU;
@@ -914,14 +915,19 @@ public class PGL {
 
   protected void requestDraw() {
     if (initialized) {
-      //animator.requestDisplay();
-
-      if (toolkit == AWT) {
-        canvasAWT.display();
-      } else if (toolkit == NEWT) {
-        animator.requestDisplay();
+      try {
+        //animator.requestDisplay();
+        if (toolkit == AWT) {
+          canvasAWT.display();
+        } else if (toolkit == NEWT) {
+          animator.requestDisplay();
+        }        
+      } catch (GLException e) {
+        // Unwrap GLException  to only the causing exception and so
+        // avoid the additional jogl lines.
+        Throwable tr = e.getCause();        
+        throw (RuntimeException)tr;
       }
-
     }
   }
 

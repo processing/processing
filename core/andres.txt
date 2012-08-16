@@ -1,6 +1,7 @@
 0208 opengl 
 X Make methods in PGL used by opengl protected, then remove gl from the public GL methods
 X Texture wrapping option in PGraphics: textureWrap(mode)
+X Unwrap GLException to avoid confusion when common, non-GL errors occur.
 
 0208 video 
 X Cleanup video API: 
@@ -13,7 +14,6 @@ API changes/additions (for beta release)
 _ Add DISABLE_PERSPECTIVE_CORRECTED_STROKE hint, remove DISABLE_PERSPECTIVE_CORRECTED_LINES  
 _ Rename shader constants (FLAT, LIT, TEXTURED, etc), resetShader() w/out args?
 _ Back-buffer support in shaders: http://code.google.com/p/processing/issues/detail?id=1169
-_ Unwrap GLException to avoid confusion when common, non-GL errors occur.
 
 processing-core todo (after beta):
 _ Cleaner Implementation of PImage.loadPixels()
