@@ -2197,6 +2197,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
           mouseClicked();
           tapEvent(downX, downY);
         } else if (MIN_SWIPE_LENGTH <= gestureLength && gestureTime <= MAX_SWIPE_DURATION) {
+          mouseReleased();
           swipeEvent(downX, downY, upX, upY);
         } else {
           mouseReleased();
