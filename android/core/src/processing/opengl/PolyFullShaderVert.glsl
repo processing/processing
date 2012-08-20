@@ -59,8 +59,9 @@ float falloffFactor(vec3 lightPos, vec3 vertPos, vec3 coeff) {
 
 float spotFactor(vec3 lightPos, vec3 vertPos, vec3 lightNorm, float minCos, float spotExp) {
   vec3 lpv = normalize(lightPos - vertPos);
-  float spotCos = dot(-lightNorm, lpv);
-  return spotCos <= minCos ? zero_float : pow(spotCos, spotExp); 
+  vec3 nln = -one_float * lightNorm;
+  float spotCos = dot(nln, lpv);
+  return spotCos <= minCos ? zero_float : pow(spotCos, spotExp);
 }
 
 float lambertFactor(vec3 lightDir, vec3 vecNormal) {
@@ -83,7 +84,7 @@ void main() {
   // Normal vector in eye coordinates
   vec3 ecNormal = normalize(normalMatrix * inNormal);
   
-  if (dot(-ecVertex, ecNormal) < zero_float) {
+  if (dot(-one_float * ecVertex, ecNormal) < zero_float) {
     // If normal is away from camera, choose its opposite.
     // If we add backface culling, this will be backfacing  
     ecNormal *= -one_float;
@@ -93,7 +94,9 @@ void main() {
   vec3 totalAmbient = vec3(0, 0, 0);
   vec3 totalDiffuse = vec3(0, 0, 0);
   vec3 totalSpecular = vec3(0, 0, 0);
-  for (int i = 0; i < lightCount; i++) {
+  for (int i = 0; i < 8; i++) {
+    if (lightCount == i) break;
+    
     vec3 lightPos = lightPosition[i].xyz;
     bool isDir = zero_float < lightPosition[i].w;
     float spotCos = lightSpotParameters[i].x;
@@ -105,7 +108,7 @@ void main() {
       
     if (isDir) {
       falloff = one_float;
-      lightDir = -lightNormal[i];
+      lightDir = -one_float * lightNormal[i];
     } else {
       falloff = falloffFactor(lightPos, ecVertex, lightFalloffCoefficients[i]);  
       lightDir = normalize(lightPos - ecVertex);
