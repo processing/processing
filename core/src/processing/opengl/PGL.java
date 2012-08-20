@@ -2505,6 +2505,21 @@ public class PGL {
     public void init(GLAutoDrawable adrawable) {
       drawable = adrawable;
       context = adrawable.getContext();
+      
+      gl = context.getGL();
+      String extensions = gl.glGetString(GL.GL_EXTENSIONS);
+      if (-1 == extensions.indexOf("_framebuffer_object")) {
+        throw new RuntimeException("No framebuffer objects available");
+      }    
+      if (-1 == extensions.indexOf("_vertex_buffer_object")) {
+        throw new RuntimeException("No vertex buffer objects available");
+      }    
+      if (-1 == extensions.indexOf("_vertex_shader")) {
+        throw new RuntimeException("No vertex shaders available");
+      }    
+      if (-1 == extensions.indexOf("_fragment_shader")) {
+        throw new RuntimeException("No fragment shaders available");
+      }      
     }
 
     @Override
