@@ -5718,19 +5718,6 @@ public class PGraphicsOpenGL extends PGraphics {
     OPENGL_VERSION    = pgl.getString(PGL.VERSION);
     OPENGL_EXTENSIONS = pgl.getString(PGL.EXTENSIONS);
     GLSL_VERSION      = pgl.getString(PGL.SHADING_LANGUAGE_VERSION);
-
-    if (-1 == OPENGL_EXTENSIONS.indexOf("_framebuffer_object")) {
-      throw new RuntimeException("No framebuffer objects available");
-    }    
-    if (-1 == OPENGL_EXTENSIONS.indexOf("_vertex_buffer_object")) {
-      throw new RuntimeException("No vertex buffer objects available");
-    }    
-    if (-1 == OPENGL_EXTENSIONS.indexOf("_vertex_shader")) {
-      throw new RuntimeException("No vertex shaders available");
-    }    
-    if (-1 == OPENGL_EXTENSIONS.indexOf("_fragment_shader")) {
-      throw new RuntimeException("No fragment shaders available");
-    }
     
     npotTexSupported            = -1 < OPENGL_EXTENSIONS.indexOf("_texture_non_power_of_two");
     autoMipmapGenSupported      = -1 < OPENGL_EXTENSIONS.indexOf("_generate_mipmap");
