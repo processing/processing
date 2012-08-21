@@ -5180,6 +5180,25 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
+  public void drawTexture(int target, int id, int width, int height,
+                          int X0, int Y0, int X1, int Y1) {
+    beginPGL();
+    pgl.drawTexture(target, id, width, height, X0, Y0, X1, Y1);
+    endPGL();
+  }
+
+
+  public void drawTexture(int target, int id, int width, int height,
+                          int texX0, int texY0, int texX1, int texY1,
+                          int scrX0, int scrY0, int scrX1, int scrY1) {
+    beginPGL();
+    pgl.drawTexture(target, id, width, height, 
+                    texX0, texY0, texX1, texY1, 
+                    scrX0, scrY0, scrX1, scrY1);
+    endPGL();
+  }
+  
+  
   protected void loadTextureImpl(int sampling, boolean mipmap) {
     if (width == 0 || height == 0) return;
     if (texture == null || texture.contextIsOutdated()) {
@@ -5248,7 +5267,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
   }
 
-
+  
   //////////////////////////////////////////////////////////////
 
   // MASK
