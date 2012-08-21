@@ -366,39 +366,7 @@ public class PGL {
                                          "void main() {" +
                                          "  gl_FragColor = texture2D(textureSampler, vertTexcoord.st);" +                                   
                                          "}";  
-  
-  ///////////////////////////////////////////////////////////////////////////////////
-  
-  // Rectangle rendering
-  
-  protected boolean loadedRectShader = false;
-  protected int rectShaderProgram;
-  protected int rectVertShader;
-  protected int rectFragShader;
-  
-  protected int rectVertLoc;
-  protected int rectColorLoc;
-      
-  protected float[] rectCoords = {
-    //  X,     Y
-    -1.0f, -1.0f,
-    +1.0f, -1.0f,    
-    -1.0f, +1.0f,
-    +1.0f, +1.0f,
-  }; 
-  protected FloatBuffer rectData;  
-  
-  protected String rectVertShaderSource = "attribute vec2 inVertex;" +
-                                          "void main() {" +
-                                          "  gl_Position = vec4(inVertex, 0, 1);" +
-                                          "}";
 
-  protected String rectFragShaderSource = SHADER_PREPROCESSOR_DIRECTIVE +
-                                          "uniform vec4 rectColor;" +
-                                          "void main() {" +
-                                          "  gl_FragColor = rectColor;" +                                   
-                                          "}";
-  
   ///////////////////////////////////////////////////////////////////////////////////
   
   // 1-pixel color, depth, stencil buffers
@@ -1401,7 +1369,7 @@ public class PGL {
   }  
   
   
-  public void initTexture(int target, int format, int width, int height) {
+  protected void initTexture(int target, int format, int width, int height) {
     // Doing in patches of 16x16 pixels to avoid creating a (potentially)
     // very large transient array which in certain situations (memory-
     // constrained android devices) might lead to an out-of-memory error.
@@ -1416,7 +1384,7 @@ public class PGL {
   }  
 
   
-  public void copyToTexture(int target, int format, int id, int x, int y, int w, int h, IntBuffer buffer) {           
+  protected void copyToTexture(int target, int format, int id, int x, int y, int w, int h, IntBuffer buffer) {           
     activeTexture(TEXTURE0);
     boolean enabledTex = false;
     if (!texturingIsEnabled(target)) {
@@ -1432,13 +1400,13 @@ public class PGL {
   }   
    
   
-  public void drawTexture(int target, int id, int width, int height,
+  protected void drawTexture(int target, int id, int width, int height,
                           int X0, int Y0, int X1, int Y1) {
     drawTexture(target, id, width, height, X0, Y0, X1, Y1, X0, Y0, X1, Y1);
   }  
   
   
-  public void drawTexture(int target, int id, int width, int height,
+  protected void drawTexture(int target, int id, int width, int height,
                                               int texX0, int texY0, int texX1, int texY1, 
                                               int scrX0, int scrY0, int scrX1, int scrY1) {
     if (!loadedTexShader) {
@@ -1539,83 +1507,7 @@ public class PGL {
   }
 
   
-  public void drawRectangle(float r, float g, float b, float a, 
-                            int scrX0, int scrY0, int scrX1, int scrY1) {
-    if (!loadedRectShader) {
-      rectVertShader = createShader(VERTEX_SHADER, rectVertShaderSource);
-      rectFragShader = createShader(FRAGMENT_SHADER, rectFragShaderSource);
-      if (0 < rectVertShader && 0 < rectFragShader) {
-        rectShaderProgram = createProgram(rectVertShader, rectFragShader);
-      }
-      if (0 < rectShaderProgram) {
-        rectVertLoc = getAttribLocation(rectShaderProgram, "inVertex");
-        rectColorLoc = getUniformLocation(rectShaderProgram, "rectColor");
-      }
-      rectData = allocateDirectFloatBuffer(rectCoords.length);
-      loadedRectShader = true;
-    }
-
-    if (0 < rectShaderProgram) {
-      // The rectangle overwrites anything drawn earlier.
-      boolean[] depthTest = new boolean[1];
-      getBooleanv(DEPTH_TEST, depthTest, 0);
-      disable(DEPTH_TEST);       
-      
-      // When drawing the rectangle we don't write to the
-      // depth mask, so the rectangle remains in the background
-      // and can be occluded by anything drawn later, even if
-      // if it is behind it.
-      boolean[] depthMask = new boolean[1];
-      getBooleanv(DEPTH_WRITEMASK, depthMask, 0);
-      depthMask(false);
-
-      useProgram(rectShaderProgram);
-
-      enableVertexAttribArray(rectVertLoc);
-      uniform4f(rectColorLoc, r, g, b, a);
-
-      // Vertex coordinates of the rectangle are specified
-      // in normalized screen space (-1, 1):
-
-      // Corner 1
-      rectCoords[0] = 2 * (float)scrX0 / pg.width - 1;
-      rectCoords[1] = 2 * (float)scrY0 / pg.height - 1;
-
-      // Corner 2
-      rectCoords[2] = 2 * (float)scrX1 / pg.width - 1;
-      rectCoords[3] = 2 * (float)scrY0 / pg.height - 1;
-
-      // Corner 3
-      rectCoords[4] = 2 * (float)scrX0 / pg.width - 1;
-      rectCoords[5] = 2 * (float)scrY1 / pg.height - 1;
-
-      // Corner 4
-      rectCoords[6] = 2 * (float)scrX1 / pg.width - 1;
-      rectCoords[7] = 2 * (float)scrY1 / pg.height - 1;
-
-      rectData.rewind();
-      rectData.put(rectCoords);
-
-      rectData.position(0);
-      vertexAttribPointer(rectVertLoc, 2, FLOAT, false, 2 * SIZEOF_FLOAT, rectData);
-
-      drawArrays(TRIANGLE_STRIP, 0, 4);
-
-      disableVertexAttribArray(rectVertLoc);
-
-      useProgram(0);
-
-      if (depthTest[0]) {
-        enable(DEPTH_TEST);
-      } else {
-        disable(DEPTH_TEST);
-      }      
-      depthMask(depthMask[0]);
-    }
-  }
-  
-  
-  public int getColorValue(int scrX, int scrY) {
+  protected int getColorValue(int scrX, int scrY) {
     if (colorBuffer == null) {
       colorBuffer = IntBuffer.allocate(1);
     }
@@ -1625,19 +1517,19 @@ public class PGL {
   }
   
   
-  public float getDepthValue(int scrX, int scrY) {
+  protected float getDepthValue(int scrX, int scrY) {
     // http://stackoverflow.com/questions/2596682/opengl-es-2-0-read-depth-buffer
     return 0;
   }
   
   
-  public byte getStencilValue(int scrX, int scrY) {
+  protected byte getStencilValue(int scrX, int scrY) {
     return 0;
   }
   
   
   // bit shifting this might be more efficient
-  public static int nextPowerOfTwo(int val) {
+  protected static int nextPowerOfTwo(int val) {
     int ret = 1;
     while (ret < val) {
       ret <<= 1;
@@ -1650,7 +1542,7 @@ public class PGL {
    * Converts input native OpenGL value (RGBA on big endian, ABGR on little 
    * endian) to Java ARGB.
    */  
-  public static int nativeToJavaARGB(int color) {
+  protected static int nativeToJavaARGB(int color) {
     if (BIG_ENDIAN) { // RGBA to ARGB
       return (color & 0xff000000) |
              ((color >> 8) & 0x00ffffff);
@@ -1669,7 +1561,7 @@ public class PGL {
    * It also rearranges the elements in the array so that the image is flipped 
    * vertically.
    */ 
-  public static void nativeToJavaARGB(int[] pixels, int width, int height) {
+  protected static void nativeToJavaARGB(int[] pixels, int width, int height) {
     int index = 0;
     int yindex = (height - 1) * width;
     for (int y = 0; y < height / 2; y++) {
@@ -1728,7 +1620,7 @@ public class PGL {
    * endian) to Java RGB, so that the alpha component of the result is set
    * to opaque (255).
    */   
-  public static int nativeToJavaRGB(int color) {
+  protected static int nativeToJavaRGB(int color) {
     if (BIG_ENDIAN) { // RGBA to ARGB
       return ((color << 8) & 0xffffff00) | 0xff;
     } else { // ABGR to ARGB
@@ -1745,7 +1637,7 @@ public class PGL {
    * so that the alpha component of all pixels is set to opaque (255). It also 
    * rearranges the elements in the array so that the image is flipped vertically.
    */   
-  public static void nativeToJavaRGB(int[] pixels, int width, int height) {
+  protected static void nativeToJavaRGB(int[] pixels, int width, int height) {
     int index = 0;
     int yindex = (height - 1) * width;
     for (int y = 0; y < height / 2; y++) {
@@ -1797,7 +1689,7 @@ public class PGL {
    * Converts input Java ARGB value to native OpenGL format (RGBA on big endian,
    * BGRA on little endian).
    */
-  public static int javaToNativeARGB(int color) {
+  protected static int javaToNativeARGB(int color) {
     if (BIG_ENDIAN) { // ARGB to RGBA
       return ((color >> 24) & 0xff) | 
              ((color << 8) & 0xffffff00);
@@ -1816,7 +1708,7 @@ public class PGL {
    * It also rearranges the elements in the array so that the image is flipped 
    * vertically.
    */  
-  public static void javaToNativeARGB(int[] pixels, int width, int height) {
+  protected static void javaToNativeARGB(int[] pixels, int width, int height) {
     int index = 0;
     int yindex = (height - 1) * width;
     for (int y = 0; y < height / 2; y++) {
@@ -1875,7 +1767,7 @@ public class PGL {
    * Converts input Java ARGB value to native OpenGL format (RGBA on big endian,
    * BGRA on little endian), setting alpha component to opaque (255).
    */  
-  public static int javaToNativeRGB(int color) {
+  protected static int javaToNativeRGB(int color) {
     if (BIG_ENDIAN) { // ARGB to RGBA
         return ((color << 8) & 0xffffff00) | 0xff;
     } else { // ARGB to ABGR
@@ -1892,7 +1784,7 @@ public class PGL {
    * while setting alpha component of all pixels to opaque (255). It also rearranges 
    * the elements in the array so that the image is flipped vertically.
    */ 
-  public static void javaToNativeRGB(int[] pixels, int width, int height) {
+  protected static void javaToNativeRGB(int[] pixels, int width, int height) {
     int index = 0;
     int yindex = (height - 1) * width;
     for (int y = 0; y < height / 2; y++) {
@@ -1941,7 +1833,7 @@ public class PGL {
   } 
   
   
-  public int createShader(int shaderType, String source) {
+  protected int createShader(int shaderType, String source) {
     int shader = createShader(shaderType);
     if (shader != 0) {
       shaderSource(shader, source);
@@ -1959,7 +1851,7 @@ public class PGL {
   } 
   
   
-  public int createProgram(int vertexShader, int fragmentShader) {
+  protected int createProgram(int vertexShader, int fragmentShader) {
     int program = createProgram();
     if (program != 0) {
       attachShader(program, vertexShader);
@@ -1978,7 +1870,7 @@ public class PGL {
   }
   
   
-  public boolean validateFramebuffer() {
+  protected boolean validateFramebuffer() {
     int status = checkFramebufferStatus(FRAMEBUFFER);
     if (status == FRAMEBUFFER_COMPLETE) {
       return true;
@@ -1998,17 +1890,17 @@ public class PGL {
   }  
   
   
-  public static ByteBuffer allocateDirectByteBuffer(int size) {
+  protected static ByteBuffer allocateDirectByteBuffer(int size) {
     return ByteBuffer.allocateDirect(size * SIZEOF_BYTE).order(ByteOrder.nativeOrder());
   }  
   
   
-  public static IntBuffer allocateDirectIntBuffer(int size) {
+  protected static IntBuffer allocateDirectIntBuffer(int size) {
     return ByteBuffer.allocateDirect(size * SIZEOF_INT).order(ByteOrder.nativeOrder()).asIntBuffer();
   }  
   
   
-  public static FloatBuffer allocateDirectFloatBuffer(int size) {
+  protected static FloatBuffer allocateDirectFloatBuffer(int size) {
     return ByteBuffer.allocateDirect(size * SIZEOF_FLOAT).order(ByteOrder.nativeOrder()).asFloatBuffer();
   }
 
