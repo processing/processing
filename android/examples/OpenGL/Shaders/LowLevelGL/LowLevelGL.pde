@@ -25,10 +25,10 @@ void setup() {
   flatShader = getShader(PShader.FLAT);
 
   vertices = new float[12];
-  vertData = PGL.allocateDirectFloatBuffer(12);
+  vertData = allocateDirectFloatBuffer(12);
 
   colors = new float[12];
-  colorData = PGL.allocateDirectFloatBuffer(12);
+  colorData = allocateDirectFloatBuffer(12);
 }
 
 void draw() {
@@ -99,4 +99,8 @@ void updateGeometry() {
   colorData.rewind();
   colorData.put(colors);
   colorData.position(0);  
+}
+
+FloatBuffer allocateDirectFloatBuffer(int n) {
+  return ByteBuffer.allocateDirect(n * Float.SIZE/8).order(ByteOrder.nativeOrder()).asFloatBuffer();
 }
