@@ -37,7 +37,9 @@ _ Use GL_LINES and GL_POINTS when stroke weight is below the hardware limit and 
 _ Properly handle very large stroke paths in P3D (create new index cache, etc).
 
 processing-video todo (post-beta)
-_ New gstreamer binaries from GStreamer SDK
+_ New gstreamer binaries from GStreamer SDK:
+_   http://docs.gstreamer.com/display/GstSDK/Installing+the+SDK
+_   http://cgit.freedesktop.org/gstreamer-sdk/cerbero/tree/
 
 processing-android todo (post-beta):
 _ noLoop/redraw not working
