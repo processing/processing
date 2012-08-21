@@ -54,7 +54,7 @@ public class Movie extends PImage implements PConstants {
   public static String[] supportedProtocols = { "http" }; 
   public float frameRate;  
   public String filename;
-  public PlayBin2 playBin;
+  public PlayBin2 playbin;
   
   protected boolean playing = false;
   protected boolean paused = false;
@@ -103,11 +103,11 @@ public class Movie extends PImage implements PConstants {
    * Disposes all the native resources associated to this movie.
    */  
   public void dispose() {
-    if (playBin != null) {
+    if (playbin != null) {
       try {
-        if (playBin.isPlaying()) {
-          playBin.stop();
-          playBin.getState();
+        if (playbin.isPlaying()) {
+          playbin.stop();
+          playbin.getState();
         }
       } catch (Exception e) {
         e.printStackTrace();
@@ -129,8 +129,8 @@ public class Movie extends PImage implements PConstants {
         natSink = null;
       }   
 
-      playBin.dispose();
-      playBin = null;
+      playbin.dispose();
+      playbin = null;
     }
   }
   
@@ -168,11 +168,11 @@ public class Movie extends PImage implements PConstants {
     float f = (0 < ifps && 0 < frameRate) ? ifps / frameRate : 1;
     
     if (playing) {
-      playBin.pause();
-      playBin.getState();
+      playbin.pause();
+      playbin.getState();
     }
 
-    long t = playBin.queryPosition(TimeUnit.NANOSECONDS);
+    long t = playbin.queryPosition(TimeUnit.NANOSECONDS);
     
     boolean res;
     long start, stop;
@@ -184,16 +184,16 @@ public class Movie extends PImage implements PConstants {
       stop = t;
     }    
     
-    res = playBin.seek(rate * f, Format.TIME, SeekFlags.FLUSH,
+    res = playbin.seek(rate * f, Format.TIME, SeekFlags.FLUSH,
                        SeekType.SET, start, SeekType.SET, stop);
-    playBin.getState();
+    playbin.getState();
     
     if (!res) {
       PGraphics.showWarning("Seek operation failed.");
     }
     
     if (playing) {
-      playBin.play();
+      playbin.play();
     }
 
     frameRate = ifps;
@@ -201,7 +201,7 @@ public class Movie extends PImage implements PConstants {
     // getState() will wait until any async state change 
     // (like seek in this case) has completed    
     seeking = true;
-    playBin.getState();
+    playbin.getState();
     seeking = false;    
   }
   
@@ -245,8 +245,8 @@ public class Movie extends PImage implements PConstants {
    * @usage web_application
    */
   public float duration() {
-    float sec = playBin.queryDuration().toSeconds();
-    float nanosec = playBin.queryDuration().getNanoSeconds();
+    float sec = playbin.queryDuration().toSeconds();
+    float nanosec = playbin.queryDuration().getNanoSeconds();
     return sec + Video.nanoSecToSecFrac(nanosec);
   }  
   
@@ -263,8 +263,8 @@ public class Movie extends PImage implements PConstants {
    * @usage web_application 
    */
   public float time() {
-    float sec = playBin.queryPosition().toSeconds();
-    float nanosec = playBin.queryPosition().getNanoSeconds();
+    float sec = playbin.queryPosition().toSeconds();
+    float nanosec = playbin.queryPosition().getNanoSeconds();
     return sec + Video.nanoSecToSecFrac(nanosec);
   }
 
@@ -298,7 +298,7 @@ public class Movie extends PImage implements PConstants {
     boolean res;
     long pos = Video.secToNanoLong(where);
     
-    res = playBin.seek(1.0, Format.TIME, SeekFlags.FLUSH,
+    res = playbin.seek(1.0, Format.TIME, SeekFlags.FLUSH,
                        SeekType.SET, pos, SeekType.NONE, -1);
     
     if (!res) {
@@ -308,7 +308,7 @@ public class Movie extends PImage implements PConstants {
     // getState() will wait until any async state change 
     // (like seek in this case) has completed    
     seeking = true;
-    playBin.getState();
+    playbin.getState();
     seeking = false;
   }
   
@@ -347,8 +347,8 @@ public class Movie extends PImage implements PConstants {
     
     playing = true;
     paused = false;
-    playBin.play();
-    playBin.getState();
+    playbin.play();
+    playbin.getState();
   }
 
   
@@ -412,8 +412,8 @@ public class Movie extends PImage implements PConstants {
     
     playing = false;
     paused = true;
-    playBin.pause();    
-    playBin.getState();
+    playbin.pause();    
+    playbin.getState();
   }
 
   
@@ -440,8 +440,8 @@ public class Movie extends PImage implements PConstants {
       playing = false;
     }
     paused = false;    
-    playBin.stop();
-    playBin.getState();
+    playbin.stop();
+    playbin.getState();
   }
 
   
@@ -463,7 +463,7 @@ public class Movie extends PImage implements PConstants {
     }
     if (volume < 0) {
       // Idem for volume
-      volume = (float)playBin.getVolume();
+      volume = (float)playbin.getVolume();
     }
         
     if (useBufferSink) { // The native buffer from gstreamer is copied to the buffer sink.
@@ -522,7 +522,7 @@ public class Movie extends PImage implements PConstants {
    */
   public void volume(float v) {
     if (playing && PApplet.abs(volume - v) > 0.001f) {
-      playBin.setVolume(v);
+      playbin.setVolume(v);
       volume = v;
     }
   }
@@ -535,7 +535,7 @@ public class Movie extends PImage implements PConstants {
   
   protected void initGStreamer(PApplet parent, String filename) {
     this.parent = parent;
-    playBin = null;
+    playbin = null;
 
     File file;
 
@@ -549,8 +549,8 @@ public class Movie extends PImage implements PConstants {
         // which is less fun, so this will crap out.
         file = new File(parent.dataPath(filename));
         if (file.exists()) {
-          playBin = new PlayBin2("Movie Player");          
-          playBin.setInputFile(file);
+          playbin = new PlayBin2("Movie Player");          
+          playbin.setInputFile(file);
         }
       } catch (Exception e) {
       } // ignored
@@ -558,25 +558,25 @@ public class Movie extends PImage implements PConstants {
       // read from a file just hanging out in the local folder.
       // this might happen when the video library is used with some
       // other application, or the person enters a full path name
-      if (playBin == null) {
+      if (playbin == null) {
         try {
           file = new File(filename);
           if (file.exists()) {
-            playBin = new PlayBin2("Movie Player");            
-            playBin.setInputFile(file);
+            playbin = new PlayBin2("Movie Player");            
+            playbin.setInputFile(file);
           }
         } catch (Exception e) {
           e.printStackTrace();
         }
       }
             
-      if (playBin == null) { 
+      if (playbin == null) { 
         // Try network read...       
         for (int i = 0; i < supportedProtocols.length; i++) {
           if (filename.startsWith(supportedProtocols[i] + "://")) {                
             try {
-              playBin = new PlayBin2("Movie Player");            
-              playBin.setURI(URI.create(filename));
+              playbin = new PlayBin2("Movie Player");            
+              playbin.setURI(URI.create(filename));
               break;
             } catch (Exception e) {
               e.printStackTrace();
@@ -589,7 +589,7 @@ public class Movie extends PImage implements PConstants {
       // doing it three times (or whatever) for each of the cases above.
     }
 
-    if (playBin == null) {
+    if (playbin == null) {
       parent.die("Could not load movie file " + filename, null);
     }
 
@@ -652,7 +652,7 @@ public class Movie extends PImage implements PConstants {
           });
     
       natSink.setAutoDisposeBuffer(false);
-      playBin.setVideoSink(natSink);
+      playbin.setVideoSink(natSink);
       // The setVideoSink() method sets the videoSink as a property of the PlayBin,
       // which increments the refcount of the videoSink element. Disposing here once
       // to decrement the refcount.
@@ -667,7 +667,7 @@ public class Movie extends PImage implements PConstants {
       
       // Setting direct buffer passing in the video sink.
       rgbSink.setPassDirectBuffer(Video.passDirectBuffer);
-      playBin.setVideoSink(rgbSink);
+      playbin.setVideoSink(rgbSink);
       // The setVideoSink() method sets the videoSink as a property of the PlayBin,
       // which increments the refcount of the videoSink element. Disposing here once
       // to decrement the refcount.
@@ -675,7 +675,7 @@ public class Movie extends PImage implements PConstants {
     }
     
     // Creating bus to handle end-of-stream event.
-    Bus bus = playBin.getBus();
+    Bus bus = playbin.getBus();
     bus.connect(new Bus.EOS() {
       public void endOfStream(GstObject element) {
         eosEvent();
@@ -777,7 +777,7 @@ public class Movie extends PImage implements PConstants {
    * @return int
    */    
   protected int getSourceHeight() {
-    Dimension dim = playBin.getVideoSize();
+    Dimension dim = playbin.getVideoSize();
     if (dim != null) {
       return dim.height;
     } else {
@@ -793,7 +793,7 @@ public class Movie extends PImage implements PConstants {
    * @return float
    */    
   protected float getSourceFrameRate() {
-    return (float)playBin.getVideoSinkFrameRate();
+    return (float)playbin.getVideoSinkFrameRate();
   }  
   
   
@@ -804,7 +804,7 @@ public class Movie extends PImage implements PConstants {
    * @return int
    */  
   protected int getSourceWidth() {
-    Dimension dim = playBin.getVideoSize();
+    Dimension dim = playbin.getVideoSize();
     if (dim != null) {
       return dim.width;
     } else {
