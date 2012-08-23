@@ -1675,20 +1675,6 @@ public class PGraphicsOpenGL extends PGraphics {
         offscreenFramebufferMultisample.copy(offscreenFramebuffer);
       }
 
-      // Make the offscreen color buffer opaque so it doesn't show
-      // the background when drawn on the main surface.
-      if (offscreenMultisample) {
-        pushFramebuffer();
-        setFramebuffer(offscreenFramebuffer);
-      }
-      pgl.colorMask(false, false, false, true);
-      pgl.clearColor(0, 0, 0, 1);
-      pgl.clear(PGL.COLOR_BUFFER_BIT);
-      pgl.colorMask(true, true, true, true);
-      if (offscreenMultisample) {
-        popFramebuffer();
-      }
-
       if (!pgl.initialized || !pgPrimary.pgl.initialized || parent.frameCount == 0) {
         // If the primary surface is re-initialized, this offscreen
         // surface needs to save its contents into the pixels array
