@@ -3,6 +3,8 @@ X Make methods in PGL used by opengl protected, then remove gl from the public
 X   GL methods
 X Texture wrapping option in PGraphics: textureWrap(mode)
 X Unwrap GLException to avoid confusion when common, non-GL errors occur.
+X Fix alpha issue: 
+X   http://code.google.com/p/processing/issues/detail?id=1156
 
 0208 video 
 X Cleanup video API: 
@@ -17,14 +19,12 @@ X   http://code.google.com/p/processing/issues/detail?id=1145
     
 
 0208 todo pre-beta:
-_ Fix alpha issue: 
-_   http://code.google.com/p/processing/issues/detail?id=1156
 _ Capture launches X11 on ML: 
 _   http://code.google.com/p/processing/issues/detail?id=1191
 _ Wrong resolutions reported by list: 
 _   http://code.google.com/p/processing/issues/detail?id=1192
-_ Add DISABLE_PERSPECTIVE_CORRECTED_STROKE hint for bot points and lines, remove 
-_   DISABLE_PERSPECTIVE_CORRECTED_LINES  
+_ Add DISABLE_PERSPECTIVE_CORRECTED_STROKE hint for both points and lines,  
+_   remove DISABLE_PERSPECTIVE_CORRECTED_LINES  
 _ Rename shader constants (FLAT, LIT, TEXTURED, etc), resetShader() w/out args
 _ Back-buffer support in shaders: 
 _   http://code.google.com/p/processing/issues/detail?id=1169
