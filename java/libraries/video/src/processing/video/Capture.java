@@ -28,8 +28,6 @@ import processing.core.*;
 
 import java.nio.*;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.io.File;
 import java.lang.reflect.*;
 
@@ -57,21 +55,21 @@ import org.gstreamer.interfaces.Property;
  * @usage application
  */
 public class Capture extends PImage implements PConstants {
-  public static String capturePlugin;
+  public static String sourceElementName;
   public static String devicePropertyName;
   public static String indexPropertyName;
   // Default gstreamer capture plugin for each platform, and property names.
   static {
     if (PApplet.platform == MACOSX) {
-      capturePlugin = "qtkitvideosrc";
+      sourceElementName = "qtkitvideosrc";
       devicePropertyName = "device-name"; 
       indexPropertyName = "device-index";
     } else if (PApplet.platform == WINDOWS) {
-      capturePlugin = "ksvideosrc";
+      sourceElementName = "ksvideosrc";
       devicePropertyName = "device-name";
       indexPropertyName = "device-index";
     } else if (PApplet.platform == LINUX) {
-      capturePlugin = "v4l2src";
+      sourceElementName = "v4l2src";
       // The "device" property in v4l2src expects the device location (/dev/video0, etc). 
       // v4l2src has "device-name", which requires the human-readable name... but how 
       // to query in linux?.
@@ -87,6 +85,8 @@ public class Capture extends PImage implements PConstants {
   protected String frameRateString;  
   protected int bufWidth;
   protected int bufHeight;
+  protected String deviceIdName;
+  protected Object deviceIdValue;
   
   protected String sourceName;
   protected Element sourceElement;
@@ -115,18 +115,43 @@ public class Capture extends PImage implements PConstants {
   protected BufferDataAppSink natSink = null;  
   
   
+  public Capture(PApplet parent) {
+    String[] configs = Capture.list();
+    if (configs.length == 0) {
+      throw new RuntimeException("There are no cameras available for capture");      
+    }
+    String name = getName(configs[0]);
+    int[] size = getSize(configs[0]);
+    String fps = getFrameRate(configs[0]);
+    String idName;
+    Object idValue;
+    if (devicePropertyName.equals("")) {
+      // For plugins without device name property, the name is casted as an index
+      idName = indexPropertyName;
+      idValue = new Integer(PApplet.parseInt(name));
+    } else {
+      idName = devicePropertyName;
+      idValue = name;
+    }
+    initGStreamer(parent, size[0], size[1], sourceElementName, idName, idValue, fps);    
+  }
+  
+  
   public Capture(PApplet parent, String requestConfig) {
     String name = getName(requestConfig);
     int[] size = getSize(requestConfig);
-    String fps = getFrameRate(requestConfig);    
-    HashMap<String, Object> properties = new HashMap<String, Object>();
+    String fps = getFrameRate(requestConfig);
+    String idName;
+    Object idValue;
     if (devicePropertyName.equals("")) {
       // For plugins without device name property, the name is casted as an index
-      properties.put(indexPropertyName, PApplet.parseInt(name));
+      idName = indexPropertyName;
+      idValue = new Integer(PApplet.parseInt(name));
     } else {
-      properties.put(devicePropertyName, name);
+      idName = devicePropertyName;
+      idValue = name;
     }
-    initGStreamer(parent, size[0], size[1], capturePlugin, properties, fps);
+    initGStreamer(parent, size[0], size[1], sourceElementName, idName, idValue, fps);
   }
 
   
@@ -137,7 +162,7 @@ public class Capture extends PImage implements PConstants {
    */
   public Capture(PApplet parent, int requestWidth, int requestHeight) {
     super(requestWidth, requestHeight, RGB);
-    initGStreamer(parent, requestWidth, requestHeight, capturePlugin, null, "");
+    initGStreamer(parent, requestWidth, requestHeight, sourceElementName, null, null, "");
   }
 
   
@@ -149,7 +174,7 @@ public class Capture extends PImage implements PConstants {
    */  
   public Capture(PApplet parent, int requestWidth, int requestHeight, int frameRate) {
     super(requestWidth, requestHeight, RGB);
-    initGStreamer(parent, requestWidth, requestHeight, capturePlugin, null, frameRate + "/1");
+    initGStreamer(parent, requestWidth, requestHeight, sourceElementName, null, null, frameRate + "/1");
   }
 
   
@@ -161,14 +186,17 @@ public class Capture extends PImage implements PConstants {
    */   
   public Capture(PApplet parent, int requestWidth, int requestHeight, String cameraName) {
     super(requestWidth, requestHeight, RGB);
-    HashMap<String, Object> properties = new HashMap<String, Object>();
+    String idName;
+    Object idValue;
     if (devicePropertyName.equals("")) {
       // For plugins without device name property, the name is casted as an index
-      properties.put(indexPropertyName, PApplet.parseInt(cameraName));
+      idName = indexPropertyName;
+      idValue = new Integer(PApplet.parseInt(cameraName));
     } else {
-      properties.put(devicePropertyName, cameraName);
+      idName = devicePropertyName;
+      idValue = cameraName;
     }
-    initGStreamer(parent, requestWidth, requestHeight, capturePlugin, properties, "");
+    initGStreamer(parent, requestWidth, requestHeight, sourceElementName, idName, idValue, "");
   }
 
   
@@ -178,14 +206,17 @@ public class Capture extends PImage implements PConstants {
    */     
   public Capture(PApplet parent, int requestWidth, int requestHeight, String cameraName, int frameRate) {
     super(requestWidth, requestHeight, RGB);
-    HashMap<String, Object> properties = new HashMap<String, Object>();
+    String idName;
+    Object idValue;
     if (devicePropertyName.equals("")) {
       // For plugins without device name property, the name is casted as an index
-      properties.put(indexPropertyName, PApplet.parseInt(cameraName));
+      idName = indexPropertyName;
+      idValue = new Integer(PApplet.parseInt(cameraName));
     } else {
-      properties.put(devicePropertyName, cameraName);
+      idName = devicePropertyName;
+      idValue = cameraName;
     }
-    initGStreamer(parent, requestWidth, requestHeight, capturePlugin, properties, frameRate + "/1");
+    initGStreamer(parent, requestWidth, requestHeight, sourceElementName, idName, idValue, frameRate + "/1");
   }  
   
   
@@ -256,18 +287,18 @@ public class Capture extends PImage implements PConstants {
    * Starts capturing frames from the selected device.
    */
   public void start() {
-//    boolean init = false;
+    boolean init = false;
     if (!pipelineReady) {
       initPipeline();
-//      init = true;
+      init = true;
     }
     
     capturing = true;
     pipeline.play();
     
-//    if (init) {
-//      checkResIsValid();
-//    }
+    if (init) {
+      checkResIsValid();
+    }
   }
   
   
@@ -380,22 +411,10 @@ public class Capture extends PImage implements PConstants {
    * @usage web_application
    */  
   static public String[] list() {    
-    return list(capturePlugin);
-  }
-
-  
-  /**
-   * <h3>Advanced</h3>
-   * Get a list of all available captures as a String array. i.e.
-   * println(Capture.list()) will show you the goodies.
-   * 
-   * @param sourceName String
-   */
-  static public String[] list(String sourceName) {
     if (devicePropertyName.equals("")) {
-      return list(sourceName, indexPropertyName);  
+      return list(sourceElementName, indexPropertyName);  
     } else {
-      return list(sourceName, devicePropertyName);
+      return list(sourceElementName, devicePropertyName);
     }
   }
   
@@ -437,9 +456,10 @@ public class Capture extends PImage implements PConstants {
           Object[] values = probe.getValues(property);
           if (values != null) {
             for (int i = 0; i < values.length; i++) {
-              // TODO: needs to handle device-index with integer value.
               if (values[i] instanceof String) {
                 devices.add((String)values[i]);
+              } else if (values[i] instanceof Integer) {
+                devices.add(((Integer)values[i]).toString());
               }
             }
           }
@@ -448,8 +468,7 @@ public class Capture extends PImage implements PConstants {
     } catch (IllegalArgumentException e) {
       if (PApplet.platform == LINUX) {
         // Linux hack to detect currently connected cameras
-        // by looking for device files named /dev/video0, 
-        // /dev/video1, etc.
+        // by looking for device files named /dev/video0, /dev/video1, etc.
         devices = new ArrayList<String>();
         String dir = "/dev";
         File libPath = new File(dir);
@@ -515,16 +534,18 @@ public class Capture extends PImage implements PConstants {
       Caps caps = pad.getCaps();
       int n = caps.size(); 
       for (int i = 0; i < n; i++) {                   
-        Structure str = caps.getStructure(i);        
-        System.out.println(str);
+        Structure str = caps.getStructure(i);
         
-        if (str.hasField(propertyName)) {
+        if (propertyName != null && str.hasField(propertyName)) {
           Object value = str.getValue(propertyName);
-           // TODO: needs to handle device-index with integer value.
           if (value instanceof String) {
             String strValue = (String)value;
             String checkValue = (String)propertyValue;
             if (!strValue.equals(checkValue)) continue;
+          } else if (value instanceof Integer) {
+            Integer intValue = (Integer)value;
+            Integer checkValue = (Integer)propertyValue;
+            if (intValue != checkValue) continue;            
           }
         }
         
@@ -637,10 +658,9 @@ public class Capture extends PImage implements PConstants {
   }
 
 
-  /*
   protected void checkResIsValid() {
     ArrayList<String> resolutions = new ArrayList<String>();
-    addResFromSource(resolutions, sourceElement);
+    addResFromSource(resolutions, sourceElement, deviceIdName, deviceIdValue);
     
     boolean valid = resolutions.size() == 0; 
     for (String res: resolutions) {
@@ -659,7 +679,7 @@ public class Capture extends PImage implements PConstants {
                                  " is not supported by the selected capture device.\n");
     } 
   }
-  */
+
   
   protected void checkValidDevices(String src) {
     ArrayList<String> devices;
@@ -690,7 +710,8 @@ public class Capture extends PImage implements PConstants {
     
   // The main initialization here.
   protected void initGStreamer(PApplet parent, int rw, int rh, String src,
-                               HashMap<String, Object> props, String fps) {
+                               String idName, Object idValue, 
+                               String fps) {
     this.parent = parent;
 
     Video.init();
@@ -727,13 +748,10 @@ public class Capture extends PImage implements PConstants {
     sourceName = src;
     sourceElement = ElementFactory.make(src, "Source");
     
-    if (props != null) {
-      Iterator<String> it = props.keySet().iterator();    
-      while (it.hasNext()) {
-        String name = it.next();
-        Object value = props.get(name);
-        sourceElement.set(name, value);
-      }    
+    if (idName != null && !idName.equals("")) {
+      sourceElement.set(idName, idValue);
+      deviceIdName = idName;
+      deviceIdValue = idValue;
     }
     
     bufWidth = bufHeight = 0;
