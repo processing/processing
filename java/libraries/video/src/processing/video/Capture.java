@@ -256,18 +256,18 @@ public class Capture extends PImage implements PConstants {
    * Starts capturing frames from the selected device.
    */
   public void start() {
-    boolean init = false;
+//    boolean init = false;
     if (!pipelineReady) {
       initPipeline();
-      init = true;
+//      init = true;
     }
     
     capturing = true;
     pipeline.play();
     
-    if (init) {
-      checkResIsValid();
-    }
+//    if (init) {
+//      checkResIsValid();
+//    }
   }
   
   
@@ -406,9 +406,13 @@ public class Capture extends PImage implements PConstants {
     
     ArrayList<String> configList = new ArrayList<String>();
     for (String device: devices) {
-      ArrayList<String> resolutions = listResolutions(sourceName, propertyName, device);      
-      for (String res: resolutions) {
-        configList.add("name=" + device + "," + res);
+      ArrayList<String> resolutions = listResolutions(sourceName, propertyName, device);
+      if (0 < resolutions.size()) { 
+        for (String res: resolutions) {
+          configList.add("name=" + device + "," + res);
+        }
+      } else {
+        configList.add("name=" + device);
       }
     }
     
@@ -432,10 +436,12 @@ public class Capture extends PImage implements PConstants {
         if (property != null) {
           Object[] values = probe.getValues(property);
           if (values != null) {
-            for (int i = 0; i < values.length; i++)
+            for (int i = 0; i < values.length; i++) {
+              // TODO: needs to handle device-index with integer value.
               if (values[i] instanceof String) {
                 devices.add((String)values[i]);
               }
+            }
           }
         }
       }
@@ -487,7 +493,7 @@ public class Capture extends PImage implements PConstants {
     testPipeline.getState();
         
     ArrayList<String> resolutions = new ArrayList<String>(); 
-    addResFromSource(resolutions, source);
+    addResFromSource(resolutions, source, propertyName, propertyValue);
     
     testPipeline.stop();
     testPipeline.getState();
@@ -503,12 +509,24 @@ public class Capture extends PImage implements PConstants {
   }   
   
   
-  static protected void addResFromSource(ArrayList<String> res, Element src) {
+  static protected void addResFromSource(ArrayList<String> res, Element src, 
+      String propertyName, Object propertyValue) {
     for (Pad pad : src.getPads()) {
       Caps caps = pad.getCaps();
       int n = caps.size(); 
       for (int i = 0; i < n; i++) {                   
-        Structure str = caps.getStructure(i);
+        Structure str = caps.getStructure(i);        
+        System.out.println(str);
+        
+        if (str.hasField(propertyName)) {
+          Object value = str.getValue(propertyName);
+           // TODO: needs to handle device-index with integer value.
+          if (value instanceof String) {
+            String strValue = (String)value;
+            String checkValue = (String)propertyValue;
+            if (!strValue.equals(checkValue)) continue;
+          }
+        }
         
         if (!str.hasIntField("width") || !str.hasIntField("height")) continue;
         
@@ -522,7 +540,7 @@ public class Capture extends PImage implements PConstants {
           addResFromString(res, str.toString(), w, h);
         } else {
           addResFromStructure(res, str, w, h);
-        }          
+        }        
       }
     }    
   }
@@ -584,7 +602,7 @@ public class Capture extends PImage implements PConstants {
       
       if (flist != null) {
         // All the framerates are put together, but this is not
-        // entirely accurate since there might be some of them'
+        // entirely accurate since there might be some of them
         // that work only for certain resolutions.
         for (int k = 0; k < flist.getSize(); k++) {
           Fraction fr = flist.getFraction(k);
@@ -618,18 +636,19 @@ public class Capture extends PImage implements PConstants {
     return res;
   }
 
-  
+
+  /*
   protected void checkResIsValid() {
     ArrayList<String> resolutions = new ArrayList<String>();
     addResFromSource(resolutions, sourceElement);
     
-    boolean valid = false; 
+    boolean valid = resolutions.size() == 0; 
     for (String res: resolutions) {
       if (validRes(res)) {
         valid = true;
         break;
       }
-    }
+    }    
     
     if (!valid) {
       String fpsStr = "";
@@ -640,7 +659,7 @@ public class Capture extends PImage implements PConstants {
                                  " is not supported by the selected capture device.\n");
     } 
   }
-  
+  */
   
   protected void checkValidDevices(String src) {
     ArrayList<String> devices;
@@ -658,7 +677,9 @@ public class Capture extends PImage implements PConstants {
   protected boolean validRes(String res) {
     int[] size = getSize(res);
     String fps = getFrameRate(res);    
-    return (size[0] == reqWidth && size[1] == reqHeight) && (frameRateString.equals("") || frameRateString.equals(fps)); 
+    return (reqWidth == 0 || reqHeight == 0 || 
+            (size[0] == reqWidth && size[1] == reqHeight)) && 
+           (frameRateString.equals("") || frameRateString.equals(fps)); 
   }
 
   
@@ -721,6 +742,15 @@ public class Capture extends PImage implements PConstants {
 
   
   protected void initPipeline() {
+    String whStr = "";
+    if (0 < reqWidth && 0 < reqHeight) {
+      whStr = "width=" + reqWidth + ", height=" + reqHeight;
+    } else {
+      PGraphics.showWarning("Resolution information not available, attempting" +
+                            " to open the capture device at 320x240");
+      whStr = "width=320, height=240";
+    }
+    
     String fpsStr = "";
     if (!frameRateString.equals("")) {
       // If the framerate string is empty we left the source element
@@ -739,7 +769,7 @@ public class Capture extends PImage implements PConstants {
         initCopyMask();
       }
       
-      String caps = "width=" + reqWidth + ", height=" + reqHeight + fpsStr + ", " + copyMask;
+      String caps = whStr + fpsStr + ", " + copyMask;
       
       natSink = new BufferDataAppSink("nat", caps,
           new BufferDataAppSink.Listener() {
@@ -896,7 +926,7 @@ public class Capture extends PImage implements PConstants {
   
   
   protected int[] getSize(String config) {
-    int[] wh = {0 , 0};  
+    int[] wh = {0, 0};  
     String[] parts = PApplet.split(config, ',');    
     for (String part: parts) {
       if (-1 < part.indexOf("size")) {

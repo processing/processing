@@ -66,8 +66,13 @@ public class Video implements PConstants {
   }  
     
   
-  static public void setPath(String path) {
+  static public void setLibPath(String path) {
     gstreamerPath = path;
+  }
+  
+  static String pluginPath = "plugins";
+  static public void setPluginPath(String path) {
+    pluginPath = path;
   }
   
   
@@ -165,7 +170,7 @@ public class Video implements PConstants {
       gstreamerPluginsPath = gstreamerBinPath + "/plugins";
     } else {
       gstreamerBinPath = gstreamerPath;
-      gstreamerPluginsPath = gstreamerPath + "/plugins";
+      gstreamerPluginsPath = gstreamerPath + "/" + pluginPath;  //"/plugins";
     }
   }
 
