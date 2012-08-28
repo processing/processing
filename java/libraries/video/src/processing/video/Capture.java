@@ -54,10 +54,10 @@ import org.gstreamer.interfaces.Property;
  * @webref video
  * @usage application
  */
-public class Capture extends PImage implements PConstants {
-  public static String sourceElementName;
-  public static String devicePropertyName;
-  public static String indexPropertyName;
+public class Capture extends PImage implements PConstants {  
+  protected static String sourceElementName;
+  protected static String devicePropertyName;
+  protected static String indexPropertyName;
   // Default gstreamer capture plugin for each platform, and property names.
   static {
     if (PApplet.platform == MACOSX) {
@@ -77,6 +77,8 @@ public class Capture extends PImage implements PConstants {
       indexPropertyName = "device-fd";
     } else {}
   }
+  protected static boolean useResMacHack = true;
+  
   public float frameRate;
   public Pipeline pipeline;  
   
@@ -85,8 +87,6 @@ public class Capture extends PImage implements PConstants {
   protected String frameRateString;  
   protected int bufWidth;
   protected int bufHeight;
-  protected String deviceIdName;
-  protected Object deviceIdValue;
   
   protected String sourceName;
   protected Element sourceElement;
@@ -513,7 +513,7 @@ public class Capture extends PImage implements PConstants {
     testPipeline.getState();
         
     ArrayList<String> resolutions = new ArrayList<String>(); 
-    addResFromSource(resolutions, source, propertyName, propertyValue);
+    addResFromSource(resolutions, source);
     
     testPipeline.stop();
     testPipeline.getState();
@@ -529,32 +529,21 @@ public class Capture extends PImage implements PConstants {
   }   
   
   
-  static protected void addResFromSource(ArrayList<String> res, Element src, 
-      String propertyName, Object propertyValue) {
-    
+  static protected void addResFromSource(ArrayList<String> res, Element src) {
+    if (PApplet.platform == MACOSX && useResMacHack) {
+      addResFromSourceMacHack(res, src);
+    } else {
+      addResFromSourceImpl(res, src);
+    }
+  }
+  
+  
+  static protected void addResFromSourceImpl(ArrayList<String> res, Element src) {
     for (Pad pad : src.getPads()) {
-      //Caps caps = pad.getCaps();
-      //Caps caps = pad.getNegotiatedCaps();
-      Caps caps = pad.getNegotiatedCaps();
-      
+      Caps caps = pad.getCaps();
       int n = caps.size(); 
       for (int i = 0; i < n; i++) {                   
         Structure str = caps.getStructure(i);
-        PApplet.println(str);
-        
-        
-        if (propertyName != null && str.hasField(propertyName)) {
-          Object value = str.getValue(propertyName);
-          if (value instanceof String) {
-            String strValue = (String)value;
-            String checkValue = (String)propertyValue;
-            if (!strValue.equals(checkValue)) continue;
-          } else if (value instanceof Integer) {
-            Integer intValue = (Integer)value;
-            Integer checkValue = (Integer)propertyValue;
-            if (intValue != checkValue) continue;            
-          }
-        }
         
         if (!str.hasIntField("width") || !str.hasIntField("height")) continue;
         
@@ -568,10 +557,40 @@ public class Capture extends PImage implements PConstants {
           addResFromString(res, str.toString(), w, h);
         } else {
           addResFromStructure(res, str, w, h);
-        }
-                
+        }                
       }
     }    
+  }
+  
+
+  // The problem on OSX, at least when using qtkitvideosrc, is that it is only
+  // possible to obtain a single supported caps, the native maximum, using
+  // getNegotiatedCaps. getCaps() just gives the maximum possible ranges that
+  // are useless to build a list of supported resolutions. Using the fact that
+  // QTKit allows to capture streams at arbitrary resolutions, then the list is
+  // faked by repeatedly dividing the maximum by 2 until the width becomes too
+  // small (or not divisible by 2).
+  static protected void addResFromSourceMacHack(ArrayList<String> res, Element src) {
+    for (Pad pad : src.getPads()) {
+      Caps caps = pad.getNegotiatedCaps();
+      int n = caps.size();
+      if (0 < n) {
+        Structure str = caps.getStructure(0);
+        if (!str.hasIntField("width") || !str.hasIntField("height")) return;
+        
+        int w = ((Integer)str.getValue("width")).intValue();
+        int h = ((Integer)str.getValue("height")).intValue();        
+        while (80 <= w) {
+          addResFromStructure(res, str, w, h);
+          if (w % 2 == 0 && h % 2 == 0) {
+            w /= 2;
+            h /= 2;
+          } else {
+            break;
+          }
+        }
+      }
+    }
   }
   
   
@@ -668,7 +687,7 @@ public class Capture extends PImage implements PConstants {
 
   protected void checkResIsValid() {
     ArrayList<String> resolutions = new ArrayList<String>();
-    addResFromSource(resolutions, sourceElement, deviceIdName, deviceIdValue);
+    addResFromSource(resolutions, sourceElement);
     
     boolean valid = resolutions.size() == 0; 
     for (String res: resolutions) {
@@ -758,8 +777,6 @@ public class Capture extends PImage implements PConstants {
     
     if (idName != null && !idName.equals("")) {
       sourceElement.set(idName, idValue);
-      deviceIdName = idName;
-      deviceIdValue = idValue;
     }
     
     bufWidth = bufHeight = 0;
