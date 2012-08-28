@@ -490,7 +490,6 @@ public class Capture extends PImage implements PConstants {
   
   
   static protected ArrayList<String> listResolutions(String sourceName, String propertyName, Object propertyValue) {
-    PApplet.println("Getting resolutions for : " + propertyValue);
     // Creating temporary pipeline so that we can query 
     // the resolutions supported by the device.
     Pipeline testPipeline = new Pipeline("test");    
@@ -524,7 +523,6 @@ public class Capture extends PImage implements PConstants {
     }        
     
     testPipeline.dispose();
-    PApplet.println("Done");
     return resolutions;
   }   
   
@@ -576,8 +574,8 @@ public class Capture extends PImage implements PConstants {
       int n = caps.size();
       if (0 < n) {
         Structure str = caps.getStructure(0);
-        if (!str.hasIntField("width") || !str.hasIntField("height") ||
-            !str.hasIntField("framerate")) return;
+        
+        if (!str.hasIntField("width") || !str.hasIntField("height")) return;
         
         int w = ((Integer)str.getValue("width")).intValue();
         int h = ((Integer)str.getValue("height")).intValue();        
@@ -589,7 +587,6 @@ public class Capture extends PImage implements PConstants {
             num = fr.numerator; 
             den = fr.denominator;
           } catch (Exception e) {
-            return;
           }          
           
           res.add(makeResolutionString(w, h, num, den));
