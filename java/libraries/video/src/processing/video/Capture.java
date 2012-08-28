@@ -576,12 +576,30 @@ public class Capture extends PImage implements PConstants {
       int n = caps.size();
       if (0 < n) {
         Structure str = caps.getStructure(0);
-        if (!str.hasIntField("width") || !str.hasIntField("height")) return;
+        if (!str.hasIntField("width") || !str.hasIntField("height") ||
+            !str.hasIntField("framerate")) return;
         
         int w = ((Integer)str.getValue("width")).intValue();
         int h = ((Integer)str.getValue("height")).intValue();        
         while (80 <= w) {
-          addResFromStructure(res, str, w, h);
+          int num = 30;
+          int den = 1;
+          try {
+            Fraction fr = str.getFraction("framerate");
+            num = fr.numerator; 
+            den = fr.denominator;
+          } catch (Exception e) {
+            return;
+          }          
+          
+          res.add(makeResolutionString(w, h, num, den));
+          if (num == 30 && den == 1) {
+            // Adding additional framerates to allow for slower capture. Again,
+            // QTKit can output frames at arbitrary rates.            
+            res.add(makeResolutionString(w, h, 15, 1));
+            res.add(makeResolutionString(w, h, 1, 1));
+          }
+          
           if (w % 2 == 0 && h % 2 == 0) {
             w /= 2;
             h /= 2;
@@ -661,10 +679,10 @@ public class Capture extends PImage implements PConstants {
   }
 
   
-  static protected String makeResolutionString(int width, int height, int fpsDenominator, int fpsNumerator) {
-    String res = "size=" + width + "x" + height + ",fps=" + fpsDenominator;
-    if (fpsNumerator != 1) {
-      res += "/" + fpsNumerator;  
+  static protected String makeResolutionString(int width, int height, int fpsNumerator, int fpsDenominator) {
+    String res = "size=" + width + "x" + height + ",fps=" + fpsNumerator;
+    if (fpsDenominator != 1) {
+      res += "/" + fpsDenominator;  
     } 
     return res;
   }
@@ -674,11 +692,11 @@ public class Capture extends PImage implements PConstants {
     String res = "size=" + width + "x" + height;    
     String[] parts = fpsStr.split("/");
     if (parts.length == 2) {      
-      int fpsDenominator = PApplet.parseInt(parts[0]);
-      int fpsNumerator = PApplet.parseInt(parts[1]);
-      res += ",fps=" + fpsDenominator;
-      if (fpsNumerator != 1) {
-        res += "/" + fpsNumerator;  
+      int fpsNumerator = PApplet.parseInt(parts[0]);
+      int fpsDenominator = PApplet.parseInt(parts[1]);
+      res += ",fps=" + fpsNumerator;
+      if (fpsDenominator != 1) {
+        res += "/" + fpsDenominator;  
       }
     }    
     return res;
