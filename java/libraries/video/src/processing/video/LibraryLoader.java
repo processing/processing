@@ -106,23 +106,30 @@ public class LibraryLoader {
       { "gstaudio-0.10", new String[] { "gstbase-0.10" }, true },
       { "gstvideo-0.10", new String[] { "gstbase-0.10" }, true }, };
 
-  static final Object[][] dependencies = Platform.isWindows() ? WINDOWS_DEPENDENCIES
-                                                              : Platform.isMac() ? MACOSX_DEPENDENCIES 
-                                                                                 : DEFAULT_DEPENDENCIES;
+  
+  static final Object[][] dependencies = 
+    Platform.isWindows() ? WINDOWS_DEPENDENCIES : 
+      Platform.isMac() ? MACOSX_DEPENDENCIES : DEFAULT_DEPENDENCIES;
 
-  private static final Map<String, Object> loadedMap = new HashMap<String, Object>();
+  
+  private static final Map<String, Object> loadedMap = 
+    new HashMap<String, Object>();
 
+  
   private static final int RECURSIVE_LOAD_MAX_DEPTH = 5;
+  
   
   private LibraryLoader() {
   }
 
+  
   private void preLoadLibs() {
     for (Object[] a : dependencies) {
       load(a[0].toString(), DummyLibrary.class, true, 0, (Boolean) a[2]);
     }
   }
 
+  
   private String[] findDeps(String name) {
 
     for (Object[] a : dependencies) {
@@ -136,10 +143,12 @@ public class LibraryLoader {
                             // probably client call
   }
 
+  
   public Object load(String name, Class<?> clazz, boolean reqLib) {
     return load(name, clazz, true, 0, reqLib);
   }
 
+  
   private Object load(String name, Class<?> clazz, boolean forceReload,
       int depth, boolean reqLib) {
 
@@ -167,8 +176,8 @@ public class LibraryLoader {
         }
       } catch (Exception e) {
         if (reqLib)
-          throw new RuntimeException(String.format("can not load required library %s",
-              name, e));
+          throw new RuntimeException(String.format(
+            "can not load required library %s", name, e));
         else
           System.out.println(String.format("can not load library %s", name, e));
       }
@@ -177,7 +186,9 @@ public class LibraryLoader {
     return library;
   }
 
-  private static Object loadLibrary(String name, Class<?> clazz, boolean reqLib) {
+  
+  private static Object loadLibrary(String name, Class<?> clazz, 
+    boolean reqLib) {
 
     // Logger.getAnonymousLogger().info(String.format("loading %s", name));
 
@@ -201,28 +212,25 @@ public class LibraryLoader {
 
     if (reqLib)
       throw new UnsatisfiedLinkError(
-          String
-              .format(
-                  "can't load library %s (%1$s|lib%1$s|lib%1$s-0) with -Djna.library.path=%s. Last error:%s",
-                  name, System.getProperty("jna.library.path"), linkError));
+        String.format(
+          "can't load library %s (%1$s|lib%1$s|lib%1$s-0) with " + 
+          "-Djna.library.path=%s. Last error:%s",
+          name, System.getProperty("jna.library.path"), linkError));
     else {
-      System.out
-          .println(String
-              .format(
-                  "can't load library %s (%1$s|lib%1$s|lib%1$s-0) with -Djna.library.path=%s. Last error:%s",
-                  name, System.getProperty("jna.library.path"), linkError));
+      System.out.println(String.format(
+        "can't load library %s (%1$s|lib%1$s|lib%1$s-0) with " + 
+        "-Djna.library.path=%s. Last error:%s",
+        name, System.getProperty("jna.library.path"), linkError));
       return null;
     }
   }
 
+  
   public static synchronized LibraryLoader getInstance() {
-
     if (null == instance) {
       instance = new LibraryLoader();
       instance.preLoadLibs();
     }
-
     return instance;
   }
-
 }
