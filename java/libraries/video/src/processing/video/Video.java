@@ -134,7 +134,8 @@ public class Video implements PConstants {
       boolean res;
       res = reg.scanPath(gstreamerPluginPath);
       if (!res) {
-        System.err.println("Cannot load GStreamer plugins from " + gstreamerPluginPath);
+        System.err.println("Cannot load GStreamer plugins from " + 
+                           gstreamerPluginPath);
       }
     }       
   }

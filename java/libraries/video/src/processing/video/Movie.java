@@ -653,9 +653,9 @@ public class Movie extends PImage implements PConstants {
     
       natSink.setAutoDisposeBuffer(false);
       playbin.setVideoSink(natSink);
-      // The setVideoSink() method sets the videoSink as a property of the PlayBin,
-      // which increments the refcount of the videoSink element. Disposing here once
-      // to decrement the refcount.
+      // The setVideoSink() method sets the videoSink as a property of the 
+      // PlayBin, which increments the refcount of the videoSink element. 
+      // Disposing here once to decrement the refcount.
       natSink.dispose();        
     } else {
       rgbSink = new RGBDataAppSink("rgb", 
@@ -668,9 +668,9 @@ public class Movie extends PImage implements PConstants {
       // Setting direct buffer passing in the video sink.
       rgbSink.setPassDirectBuffer(Video.passDirectBuffer);
       playbin.setVideoSink(rgbSink);
-      // The setVideoSink() method sets the videoSink as a property of the PlayBin,
-      // which increments the refcount of the videoSink element. Disposing here once
-      // to decrement the refcount.
+      // The setVideoSink() method sets the videoSink as a property of the 
+      // PlayBin, which increments the refcount of the videoSink element. 
+      // Disposing here once to decrement the refcount.
       rgbSink.dispose();      
     }
     
@@ -787,8 +787,8 @@ public class Movie extends PImage implements PConstants {
 
   
   /**
-   * Get the original framerate of the source video. Note: calling this method repeatedly
-   * can slow down playback performance.
+   * Get the original framerate of the source video. Note: calling this method 
+   * repeatedly can slow down playback performance.
    * 
    * @return float
    */    
@@ -856,16 +856,19 @@ public class Movie extends PImage implements PConstants {
   protected void getSinkMethods() {
     try {      
       sinkCopyMethod = bufferSink.getClass().getMethod("copyBufferFromSource",
-          new Class[] { Object.class, ByteBuffer.class, int.class, int.class });         
+        new Class[] { Object.class, ByteBuffer.class, int.class, int.class });         
     } catch (Exception e) {
-      throw new RuntimeException("Movie: provided sink object doesn't have a copyBufferFromSource method.");
+      throw new RuntimeException("Movie: provided sink object doesn't have a " +
+                                 "copyBufferFromSource method.");
     }
     
     try {            
-      sinkSetMethod = bufferSink.getClass().getMethod("setBufferSource", new Class[] { Object.class });
+      sinkSetMethod = bufferSink.getClass().getMethod("setBufferSource", 
+        new Class[] { Object.class });
       sinkSetMethod.invoke(bufferSink, new Object[] { this });            
     } catch (Exception e) {
-      throw new RuntimeException("Movie: provided sink object doesn't have a setBufferSource method.");
+      throw new RuntimeException("Movie: provided sink object doesn't have a " + 
+                                 "setBufferSource method.");
     }    
   }
   
