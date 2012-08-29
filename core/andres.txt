@@ -12,6 +12,10 @@ X   http://forum.processing.org/topic/gsoc-2012-processing-video#250800000014735
 X   http://code.google.com/p/processing/issues/detail?id=1170
 X Have Capture.list() return all supported resolutions, and use the string 
 X   as the argument for the capture object
+X Capture launches X11 on ML: 
+X   http://code.google.com/p/processing/issues/detail?id=1191
+X Wrong resolutions reported by list: 
+X   http://code.google.com/p/processing/issues/detail?id=1192
     
 0208 android
 X Issues on low-end phones: 
@@ -19,13 +23,9 @@ X   http://code.google.com/p/processing/issues/detail?id=1145
     
 
 0208 todo pre-beta:
-_ Capture launches X11 on ML: 
-_   http://code.google.com/p/processing/issues/detail?id=1191
-_ Wrong resolutions reported by list: 
-_   http://code.google.com/p/processing/issues/detail?id=1192
 _ Add DISABLE_PERSPECTIVE_CORRECTED_STROKE hint for both points and lines,  
 _   remove DISABLE_PERSPECTIVE_CORRECTED_LINES  
-_ Rename shader constants (FLAT, LIT, TEXTURED, etc), resetShader() w/out args
+_ Rework shader API (shader(PShader, TRIANGLES/LINES/POINTS), etc.
 _ Back-buffer support in shaders: 
 _   http://code.google.com/p/processing/issues/detail?id=1169
 _ Rotation problem on Android: 
@@ -46,8 +46,9 @@ _ Beveling algorithm needs to add last bevel triangle between last and first
 _   vertex in closed loops.
 _ Lines, points and fill geometry should be handled separately in raw output in 
 _   P2D.
-_ Use GL_LINES and GL_POINTS when stroke weight is below the hardware limit and 
-_   stroke cap/bevel is RECT.
+_ Re-implement point rendering to use quads for round points: use fragment 
+_  shader to calculate pixels inside circle using the radius stored in point
+_  attributes.  
 _ Properly handle very large stroke paths in P3D (create new index cache, etc).
 
 processing-video todo (post-beta)
