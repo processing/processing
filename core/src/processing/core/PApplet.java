@@ -10255,18 +10255,13 @@ public class PApplet extends Applet
   }
 
 
-  public PShader loadShader(int kind, String fragFilename, String vertFilename) {
-    return g.loadShader(kind, fragFilename, vertFilename);
-  }
-
-
-  public PShader loadShader(int kind, String fragFilename) {
-    return g.loadShader(kind, fragFilename);
-  }
-
-
   public PShader loadShader(String fragFilename) {
     return g.loadShader(fragFilename);
+  }
+
+
+  public PShader loadShader(String fragFilename, String vertFilename) {
+    return g.loadShader(fragFilename, vertFilename);
   }
 
 
@@ -10276,9 +10271,9 @@ public class PApplet extends Applet
   }
 
 
-  public void resetShader(int kind) {
-    if (recorder != null) recorder.resetShader(kind);
-    g.resetShader(kind);
+  public void shader(PShader shader, int kind) {
+    if (recorder != null) recorder.shader(shader, kind);
+    g.shader(shader, kind);
   }
 
 
@@ -10288,8 +10283,9 @@ public class PApplet extends Applet
   }
 
 
-  public PShader getShader(int kind) {
-    return g.getShader(kind);
+  public void resetShader(int kind) {
+    if (recorder != null) recorder.resetShader(kind);
+    g.resetShader(kind);
   }
 
 
