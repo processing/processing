@@ -5,6 +5,7 @@ X Texture wrapping option in PGraphics: textureWrap(mode)
 X Unwrap GLException to avoid confusion when common, non-GL errors occur.
 X Fix alpha issue: 
 X   http://code.google.com/p/processing/issues/detail?id=1156
+X Rework shader API (shader(PShader, TRIANGLES/LINES/POINTS), etc.
 
 0208 video 
 X Cleanup video API: 
@@ -23,9 +24,10 @@ X   http://code.google.com/p/processing/issues/detail?id=1145
     
 
 0208 todo pre-beta:
+_ Fix issues with PShape.getTessellation() (wrong color and visible lines in 
+_   scanning piece) 
 _ Add DISABLE_PERSPECTIVE_CORRECTED_STROKE hint for both points and lines,  
 _   remove DISABLE_PERSPECTIVE_CORRECTED_LINES  
-_ Rework shader API (shader(PShader, TRIANGLES/LINES/POINTS), etc.
 _ Back-buffer support in shaders: 
 _   http://code.google.com/p/processing/issues/detail?id=1169
 _ Rotation problem on Android: 
