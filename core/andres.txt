@@ -30,6 +30,7 @@ _ Add DISABLE_PERSPECTIVE_CORRECTED_STROKE hint for both points and lines,
 _   remove DISABLE_PERSPECTIVE_CORRECTED_LINES  
 _ Back-buffer support in shaders: 
 _   http://code.google.com/p/processing/issues/detail?id=1169
+_ Decide on the names of the uniform and attribute variables in the shaders
 _ Rotation problem on Android: 
 _   http://code.google.com/p/processing/issues/detail?id=1146
 
