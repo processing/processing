@@ -510,40 +510,40 @@ public interface PConstants {
   // hints - hint values are positive for the alternate version,
   // negative of the same value returns to the normal/default state
 
-  static final int ENABLE_NATIVE_FONTS                 =  1;
-  static final int DISABLE_NATIVE_FONTS                = -1;
+  static final int ENABLE_NATIVE_FONTS                  =  1;
+  static final int DISABLE_NATIVE_FONTS                 = -1;
 
-  static final int DISABLE_DEPTH_TEST                  =  2;
-  static final int ENABLE_DEPTH_TEST                   = -2;
+  static final int DISABLE_DEPTH_TEST                   =  2;
+  static final int ENABLE_DEPTH_TEST                    = -2;
 
-  static final int ENABLE_DEPTH_SORT                   =  3;
-  static final int DISABLE_DEPTH_SORT                  = -3;
+  static final int ENABLE_DEPTH_SORT                    =  3;
+  static final int DISABLE_DEPTH_SORT                   = -3;
 
-  static final int DISABLE_OPENGL_ERROR_REPORT         =  4;
-  static final int ENABLE_OPENGL_ERROR_REPORT          = -4;
+  static final int DISABLE_OPENGL_ERROR_REPORT          =  4;
+  static final int ENABLE_OPENGL_ERROR_REPORT           = -4;
 
-  static final int ENABLE_ACCURATE_TEXTURES            =  5;
-  static final int DISABLE_ACCURATE_TEXTURES           = -5;
+  static final int ENABLE_ACCURATE_TEXTURES             =  5;
+  static final int DISABLE_ACCURATE_TEXTURES            = -5;
 
-  static final int DISABLE_DEPTH_MASK                  =  6;
-  static final int ENABLE_DEPTH_MASK                   = -6;
+  static final int DISABLE_DEPTH_MASK                   =  6;
+  static final int ENABLE_DEPTH_MASK                    = -6;
 
-  static final int ENABLE_ACCURATE_2D                  =  7;
-  static final int DISABLE_ACCURATE_2D                 = -7;
+  static final int ENABLE_ACCURATE_2D                   =  7;
+  static final int DISABLE_ACCURATE_2D                  = -7;
 
-  static final int DISABLE_TEXTURE_CACHE               =  8;
-  static final int ENABLE_TEXTURE_CACHE                = -8;
+  static final int DISABLE_TEXTURE_CACHE                =  8;
+  static final int ENABLE_TEXTURE_CACHE                 = -8;
 
-  static final int DISABLE_TRANSFORM_CACHE             =  9;
-  static final int ENABLE_TRANSFORM_CACHE              = -9;
+  static final int DISABLE_TRANSFORM_CACHE              =  9;
+  static final int ENABLE_TRANSFORM_CACHE               = -9;
 
-  static final int ENABLE_PERSPECTIVE_CORRECTED_LINES  =  10;
-  static final int DISABLE_PERSPECTIVE_CORRECTED_LINES = -10;
+  static final int ENABLE_PERSPECTIVE_CORRECTED_STROKE  =  10;
+  static final int DISABLE_PERSPECTIVE_CORRECTED_STROKE = -10;
 
-  static final int DISABLE_TEXTURE_MIPMAPS             =  11;
-  static final int ENABLE_TEXTURE_MIPMAPS              = -11;
+  static final int DISABLE_TEXTURE_MIPMAPS              =  11;
+  static final int ENABLE_TEXTURE_MIPMAPS               = -11;
   
-  static final int HINT_COUNT                          =  12;
+  static final int HINT_COUNT                           =  12;
 
   // error messages
 

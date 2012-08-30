@@ -2093,12 +2093,12 @@ public class PGraphicsOpenGL extends PGraphics {
       setFlushMode(FLUSH_CONTINUOUSLY);
     } else if (which == DISABLE_TEXTURE_CACHE) {
       flush();
-    } else if (which == DISABLE_PERSPECTIVE_CORRECTED_LINES) {
+    } else if (which == DISABLE_PERSPECTIVE_CORRECTED_STROKE) {
       if (0 < tessGeo.lineVertexCount && 0 < tessGeo.lineIndexCount) {
         // We flush the geometry using the previous line setting.
         flush();
       }
-    } else if (which == ENABLE_PERSPECTIVE_CORRECTED_LINES) {
+    } else if (which == ENABLE_PERSPECTIVE_CORRECTED_STROKE) {
       if (0 < tessGeo.lineVertexCount && 0 < tessGeo.lineIndexCount) {
         // We flush the geometry using the previous line setting.
         flush();
@@ -5447,9 +5447,8 @@ public class PGraphicsOpenGL extends PGraphics {
     }
       
     if (maskShader == null) {
-      maskShader = new PolyTexShader(parent, 
-                                           defPolyTexShaderVertURL, 
-                                           maskShaderFragURL);
+      maskShader = new PolyTexShader(parent, defPolyTexShaderVertURL, 
+                                             maskShaderFragURL);
     }
     maskShader.set("maskSampler", alpha);
     filter(maskShader);
@@ -6846,7 +6845,7 @@ public class PGraphicsOpenGL extends PGraphics {
       float h = pgCurrent.viewport[3];
       setUniformValue(viewportLoc, x, y, w, h);
 
-      if (pgCurrent.hintEnabled(ENABLE_PERSPECTIVE_CORRECTED_LINES)) {
+      if (pgCurrent.hintEnabled(ENABLE_PERSPECTIVE_CORRECTED_STROKE)) {
         setUniformValue(perspectiveLoc, 1);
       } else {
         setUniformValue(perspectiveLoc, 0);
@@ -6880,6 +6879,9 @@ public class PGraphicsOpenGL extends PGraphics {
     protected int modelviewMatrixLoc;
     protected int projectionMatrixLoc;
 
+    protected int viewportLoc;
+    protected int perspectiveLoc;
+        
     protected int inVertexLoc;
     protected int inColorLoc;
     protected int inPointLoc;
@@ -6907,6 +6909,9 @@ public class PGraphicsOpenGL extends PGraphics {
       projmodelviewMatrixLoc = getUniformLoc("projmodelviewMatrix");
       modelviewMatrixLoc = getUniformLoc("modelviewMatrix");
       projectionMatrixLoc = getUniformLoc("projectionMatrix");
+      
+      viewportLoc = getUniformLoc("viewport");
+      perspectiveLoc = getUniformLoc("perspective");      
     }
 
     public void setVertexAttribute(int vboId, int size, int type, 
@@ -6950,6 +6955,18 @@ public class PGraphicsOpenGL extends PGraphics {
         pgCurrent.updateGLProjection();
         setUniformMatrix(projectionMatrixLoc, pgCurrent.glProjection);
       }
+      
+      float x = pgCurrent.viewport[0];
+      float y = pgCurrent.viewport[1];
+      float w = pgCurrent.viewport[2];
+      float h = pgCurrent.viewport[3];
+      setUniformValue(viewportLoc, x, y, w, h);
+
+      if (pgCurrent.hintEnabled(ENABLE_PERSPECTIVE_CORRECTED_STROKE)) {
+        setUniformValue(perspectiveLoc, 1);
+      } else {
+        setUniformValue(perspectiveLoc, 0);
+      }      
     }
 
     public void unbind() {
