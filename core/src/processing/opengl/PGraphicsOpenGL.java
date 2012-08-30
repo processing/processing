@@ -178,7 +178,7 @@ public class PGraphicsOpenGL extends PGraphics {
     PGraphicsOpenGL.class.getResource("PointShaderVert.glsl");
   static protected URL defPointShaderFragURL = 
     PGraphicsOpenGL.class.getResource("PointShaderFrag.glsl");
-
+  
   static protected PolyColorShader defPolyColorShader;
   static protected PolyTexShader defPolyTexShader;
   static protected PolyLightShader defPolyLightShader;
@@ -186,6 +186,10 @@ public class PGraphicsOpenGL extends PGraphics {
   static protected LineShader defLineShader;
   static protected PointShader defPointShader;
 
+  static protected URL maskShaderFragURL = 
+    PGraphicsOpenGL.class.getResource("TexMaskShaderFrag.glsl");  
+  static protected PolyTexShader maskShader;  
+  
   protected PolyColorShader polyColorShader;
   protected PolyTexShader polyTexShader;
   protected PolyLightShader polyLightShader;
@@ -5430,14 +5434,27 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   public void mask(int alpha[]) {
-    PGraphics.showMethodWarning("mask");
+    PImage temp = get();
+    temp.mask(alpha);
+    set(0, 0, temp);
   }
 
 
   public void mask(PImage alpha) {
-    PGraphics.showMethodWarning("mask");
+    if (alpha.width != width || alpha.height != height) {
+      throw new RuntimeException("The PImage used with mask() must be " +
+      "the same size as the applet.");      
+    }
+      
+    if (maskShader == null) {
+      maskShader = new PolyTexShader(parent, 
+                                           defPolyTexShaderVertURL, 
+                                           maskShaderFragURL);
+    }
+    maskShader.set("maskSampler", alpha);
+    filter(maskShader);
   }
-
+  
 
   //////////////////////////////////////////////////////////////
 
