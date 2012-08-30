@@ -9,14 +9,12 @@ int scaleValue = 3;  // Multiplication factor
 int xoffset = 0;     // x-axis offset
 int yoffset = 0;     // y-axis offset
 
-void setup() 
-{
+void setup() {
   size(600, 600);
   stroke(0, 100);
 }
 
-void draw() 
-{
+void draw() {
   scale(scaleValue);
   translate(xoffset *(-width / scaleValue), yoffset *(-height / scaleValue));
   line(10, 150, 500, 50);
@@ -24,9 +22,8 @@ void draw()
   setOffset();
 }
 
-void setOffset() 
-{
-  save("lines-" + xoffset + "-" + yoffset + ".jpg");
+void setOffset() {
+  save("lines-" + xoffset + "-" + yoffset + ".png");
   xoffset++;
   if (xoffset == scaleValue) {
     xoffset = 0;

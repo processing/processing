@@ -25,19 +25,25 @@ void setup() {
 
 void draw() {
 
+  int y1 = 0;
+  int y2 = height/3;
   for (int i = 0; i < width; i++) {
     stroke(coswave[i]*255);
-    line(i, 0, i, height/3);
+    line(i, y1, i, y2);
   }
 
+  y1 = y2;
+  y2 = y1 + y1;
   for (int i = 0; i < width; i++) {
     stroke(coswave[i]*255 / 4);
-    line(i, height/3, i, height/3*2);
+    line(i, y1, i, y2);
   }
-
+  
+  y1 = y2;
+  y2 = height;
   for (int i = 0; i < width; i++) {
     stroke(255 - coswave[i]*255);
-    line(i, height/3*2, i, height);
+    line(i, y1, i, y2);
   }
   
 }
