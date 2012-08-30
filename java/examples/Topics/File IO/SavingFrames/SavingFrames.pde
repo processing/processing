@@ -3,7 +3,7 @@
  * by Daniel Shiffman.  
  * 
  * This example demonstrates how to use saveFrame() to render
- * our an image sequence that you can assemble into a movie
+ * out an image sequence that you can assemble into a movie
  * using the MovieMaker tool.
  */
 
@@ -50,8 +50,11 @@ void draw() {
   
   // A red dot for when we are recording
   stroke(255);
-  if (recording) fill(255, 0, 0);
-  else noFill();
+  if (recording) {
+    fill(255, 0, 0);
+  } else { 
+    noFill();
+  }
   ellipse(width/2, height-48, 16, 16);
 }
 

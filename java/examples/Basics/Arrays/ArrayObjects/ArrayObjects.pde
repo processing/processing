@@ -2,8 +2,6 @@
  * Array Objects. 
  * 
  * Demonstrates the syntax for creating an array of custom objects. 
- * 
- * Updated 26 February 2010.
  */
 
 int unit = 40;
@@ -12,7 +10,6 @@ Module[] mods;
 
 void setup() {
   size(640, 360);
-  background(176);
   noStroke();
   int wideCount = width / unit;
   int highCount = height / unit;
