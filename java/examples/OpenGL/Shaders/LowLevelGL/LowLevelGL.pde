@@ -20,9 +20,9 @@ void setup() {
   
   pg = (PGraphicsOpenGL)g;
   
-  // Get the default shader that Processing uses to
-  // render flat geometry (w/out textures and lights).
-  flatShader = getShader(PShader.FLAT);
+  // Loads a shader to render geometry w/out
+  // textures and lights.
+  flatShader = loadShader("frag.glsl", "vert.glsl");
 
   vertices = new float[12];
   vertData = allocateDirectFloatBuffer(12);
