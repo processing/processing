@@ -21,5 +21,4 @@ void draw() {
     
   shader(maskShader);    
   image(srcImage, 0, 0, width, height);
-  resetShader();
 }

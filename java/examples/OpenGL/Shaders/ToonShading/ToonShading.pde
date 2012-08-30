@@ -4,19 +4,19 @@
 // http://www.lighthouse3d.com/tutorials/glsl-tutorial/toon-shader-version-ii/
 
 PShader toon;
-boolean customShader;  
+boolean enabled = true;  
 
-public void setup() {
+void setup() {
   size(400, 400, P3D);
   noStroke();
   fill(204);
 
-  toon = loadShader(PShader.LIT, "ToonFrag.glsl", "ToonVert.glsl");
-  shader(toon);
-  customShader = true;
+  toon = loadShader("ToonFrag.glsl", "ToonVert.glsl");
 }
 
-public void draw() {
+void draw() {
+  if (enabled) shader(toon);
+  
   noStroke(); 
   background(0); 
   float dirY = (mouseY / float(height) - 0.5) * 2;
@@ -26,16 +26,13 @@ public void draw() {
   sphere(80);
 }  
 
-public void mousePressed() {
+void mousePressed() {
   if (dist(mouseX, mouseY, width/2, height/2) < 80) {
-    if (customShader) {
-      resetShader(PShader.LIT);
-      customShader = false;
-    } 
-    else {
-      shader(toon);
-      customShader = true;
+    if (enabled) {
+      enabled = false;
+      resetShader();      
+    } else {
+      enabled = true;
     }  
   }
 }
-

@@ -19,8 +19,7 @@ public void setup() {
   noStroke();
   fill(204);
 
-  badPrint = loadShader(PShader.LIT, "BadPrintFrag.glsl", "BadPrintVert.glsl");
-  shader(badPrint);
+  badPrint = loadShader("BadPrintFrag.glsl", "BadPrintVert.glsl");
   
   sphereDetail(60);
   
@@ -42,8 +41,8 @@ public void setup() {
 
 public void draw() {
   background(0);
-  
-  if (enabled) {
+
+  if (enabled) {  
     shader(badPrint);
    
     badPrint.set("Scale", scaleR, scaleG, scaleB);
@@ -51,7 +50,7 @@ public void draw() {
     badPrint.set("Register", registerR, registerG, registerB);
     badPrint.set("Size", sizeR, sizeG, sizeB);
   } else {
-    resetShader(PShader.LIT); 
+    resetShader(); 
   }
     
   noStroke(); 
@@ -66,6 +65,7 @@ public void draw() {
   
   hint(DISABLE_DEPTH_TEST);
   noLights();
+  resetShader();
   controlP5.draw();
   hint(ENABLE_DEPTH_TEST);
 }

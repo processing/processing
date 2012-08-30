@@ -6,27 +6,20 @@
 
 PImage img;
 PShader edges;  
-boolean customShader;
-  
+boolean enabled = true;
+    
 void setup() {
   size(400, 400, P2D);
-  img = loadImage("berlin-1.jpg");
-    
-  edges = loadShader(PShader.TEXTURED, "edges.glsl");
-  shader(edges);
-  customShader = true;
+  img = loadImage("berlin-1.jpg");      
+  edges = loadShader("edges.glsl");
 }
 
-public void draw() {
+void draw() {
+  if (enabled) shader(edges);
   image(img, 0, 0, width, height);
 }
-  
-public void mousePressed() {
-  if (customShader) {
-    resetShader(PShader.TEXTURED);
-    customShader = false;
-  } else {
-    shader(edges);
-    customShader = true;
-  }
+    
+void mousePressed() {
+  enabled = !enabled;
+  if (!enabled) resetShader();
 }

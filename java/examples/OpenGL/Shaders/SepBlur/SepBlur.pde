@@ -8,19 +8,17 @@ PGraphics pass1, pass2;
 void setup() {
   size(200, 200, P2D);
   
-  blur = loadShader(PShader.TEXTURED, "blur.glsl");
+  blur = loadShader("blur.glsl");
   blur.set("blurSize", 9);
   blur.set("sigma", 5.0f);  
   
   src = createGraphics(width, height, P2D); 
   
   pass1 = createGraphics(width, height, P2D);
-  pass1.noSmooth();
-  pass1.shader(blur);
+  pass1.noSmooth();  
   
   pass2 = createGraphics(width, height, P2D);
   pass2.noSmooth();
-  pass2.shader(blur);    
 }
 
 void draw() {
@@ -32,13 +30,15 @@ void draw() {
     
   // Applying the blur shader along the vertical direction   
   blur.set("horizontalPass", 0);
-  pass1.beginDraw();                
+  pass1.beginDraw();            
+  pass1.shader(blur);  
   pass1.image(src, 0, 0);
   pass1.endDraw();
   
   // Applying the blur shader along the horizontal direction      
   blur.set("horizontalPass", 1);
-  pass2.beginDraw();                
+  pass2.beginDraw();            
+  pass2.shader(blur);  
   pass2.image(pass1, 0, 0);
   pass2.endDraw();    
         
