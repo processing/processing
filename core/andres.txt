@@ -5,7 +5,7 @@ X Texture wrapping option in PGraphics: textureWrap(mode)
 X Unwrap GLException to avoid confusion when common, non-GL errors occur.
 X Fix alpha issue: 
 X   http://code.google.com/p/processing/issues/detail?id=1156
-X Rework shader API (shader(PShader, TRIANGLES/LINES/POINTS), etc.
+X Rework shader API: shader(PShader, TRIANGLES/LINES/POINTS), etc.
 
 0208 video 
 X Cleanup video API: 
@@ -35,6 +35,7 @@ _ Rotation problem on Android:
 _   http://code.google.com/p/processing/issues/detail?id=1146
 
 processing-core todo (post-beta):
+_ Revise/correct/update warning and error messages.
 _ Cleaner Implementation of PImage.loadPixels()
 _ some glitches with SVG shapes in P2D (load world.svg and disable style to see)
 _ simple bevel algorithm for retained mode tessellation 
