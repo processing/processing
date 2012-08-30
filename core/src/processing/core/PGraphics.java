@@ -1516,19 +1516,13 @@ public class PGraphics extends PImage implements PConstants {
   // SHADERS
 
 
-  public PShader loadShader(int kind, String fragFilename, String vertFilename) {
-    showMissingWarning("loadShader");
-    return null;
-  }
-
-
-  public PShader loadShader(int kind, String fragFilename) {
-    showMissingWarning("loadShader");
-    return null;
-  }
-
-
   public PShader loadShader(String fragFilename) {
+    showMissingWarning("loadShader");
+    return null;
+  }
+  
+  
+  public PShader loadShader(String fragFilename, String vertFilename) {
     showMissingWarning("loadShader");
     return null;
   }
@@ -1538,27 +1532,25 @@ public class PGraphics extends PImage implements PConstants {
     showMissingWarning("shader");
   }
 
-
-  public void resetShader(int kind) {
-    showMissingWarning("resetShader");
+  
+  public void shader(PShader shader, int kind) {
+    showMissingWarning("shader");
   }
 
-  
+
   public void resetShader() {
     showMissingWarning("resetShader");
   }  
-
   
-  public PShader getShader(int kind) {
-    showMissingWarning("getShader");
-    return null;
+  
+  public void resetShader(int kind) {
+    showMissingWarning("resetShader");
   }
 
 
   public void filter(PShader shader) {
     showMissingWarning("filter");
   }
-
 
 
   //////////////////////////////////////////////////////////////
