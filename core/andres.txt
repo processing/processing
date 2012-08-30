@@ -6,6 +6,10 @@ X Unwrap GLException to avoid confusion when common, non-GL errors occur.
 X Fix alpha issue: 
 X   http://code.google.com/p/processing/issues/detail?id=1156
 X Rework shader API: shader(PShader, TRIANGLES/LINES/POINTS), etc.
+X Fixed color update issues in PShapeOpenGL.
+X Implement mask(PImage) using a shader.  
+X Add DISABLE_PERSPECTIVE_CORRECTED_STROKE hint for both points and lines,  
+X   remove DISABLE_PERSPECTIVE_CORRECTED_LINES
 
 0208 video 
 X Cleanup video API: 
@@ -24,15 +28,15 @@ X   http://code.google.com/p/processing/issues/detail?id=1145
     
 
 0208 todo pre-beta:
-_ Fix issues with PShape.getTessellation() (wrong color and visible lines in 
-_   scanning piece) 
-_ Add DISABLE_PERSPECTIVE_CORRECTED_STROKE hint for both points and lines,  
-_   remove DISABLE_PERSPECTIVE_CORRECTED_LINES  
+_ Re-implement point rendering to use quads for round points: use fragment 
+_  shader to calculate pixels inside circle using the radius stored in point
+_  attributes.
 _ Back-buffer support in shaders: 
 _   http://code.google.com/p/processing/issues/detail?id=1169
-_ Decide on the names of the uniform and attribute variables in the shaders
 _ Rotation problem on Android: 
 _   http://code.google.com/p/processing/issues/detail?id=1146
+_ Decide on the names of the uniform and attribute variables in the shaders
+
 
 processing-core todo (post-beta):
 _ Revise/correct/update warning and error messages.
@@ -49,10 +53,7 @@ _ Implement manual mipmap generation to take care of missing extension
 _ Beveling algorithm needs to add last bevel triangle between last and first 
 _   vertex in closed loops.
 _ Lines, points and fill geometry should be handled separately in raw output in 
-_   P2D.
-_ Re-implement point rendering to use quads for round points: use fragment 
-_  shader to calculate pixels inside circle using the radius stored in point
-_  attributes.  
+_   P2D.  
 _ Properly handle very large stroke paths in P3D (create new index cache, etc).
 
 processing-video todo (post-beta)
