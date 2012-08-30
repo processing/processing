@@ -18,8 +18,7 @@ void setup() {
   canvas = createGraphics(width, height, P2D);
   canvas.noSmooth();
     
-  fxaa = loadShader(PShader.TEXTURED, "fxaa.glsl");
-  shader(fxaa);
+  fxaa = loadShader("fxaa.glsl");  
   usingShader = true;
   
   canvas.beginDraw();
@@ -45,6 +44,7 @@ public void draw() {
     canvas.endDraw();
   }
   
+  if (usingShader) shader(fxaa);
   image(canvas, 0, 0);
   
   drawMessage();
@@ -52,11 +52,10 @@ public void draw() {
   
 public void mousePressed() {
   if (!drawing && width - msgLen < mouseX && height - 23 < mouseY) {
-    if (usingShader) {
-      resetShader(PShader.TEXTURED);
+    if (usingShader) {      
       usingShader = false;
+      resetShader();
     } else {
-      shader(fxaa);
       usingShader = true;
     }
     updateMessage();    
@@ -79,14 +78,7 @@ void updateMessage() {
 }
 
 void drawMessage() {
-  if (usingShader) {
-    // We need the default texture shader to 
-    // render text.
-    resetShader(PShader.TEXTURED);
-  }
+  resetShader();
   fill(0);
   text(message, width - msgLen, height - 5);
-  if (usingShader) {
-    shader(fxaa);
-  }
 }
