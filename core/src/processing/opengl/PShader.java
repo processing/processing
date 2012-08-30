@@ -31,17 +31,18 @@ import java.util.HashMap;
 
 /**
  * This class encapsulates a GLSL shader program, including a vertex 
- * and a fragment shader. Originally based in the code by JohnG
- * (http://www.hardcorepawn.com/)
+ * and a fragment shader. Based on the GLSLShader class from GLGraphics, which
+ * in turn was originally based in the code by JohnG:
+ * http://processing.org/discourse/beta/num_1159494801.html 
  */
 public class PShader {
   // shaders constants
-  static public final int FLAT     = 0;
-  static public final int LIT      = 1;
-  static public final int TEXTURED = 2;
-  static public final int FULL     = 3;
-  static public final int LINE     = 4;
-  static public final int POINT    = 5;
+  static protected final int COLOR    = 0;
+  static protected final int LIGHT    = 1;
+  static protected final int TEXTURE  = 2;
+  static protected final int TEXLIGHT = 3;
+  static protected final int LINE     = 4;
+  static protected final int POINT    = 5;
   
   protected PApplet parent;
   // The main renderer associated to the parent PApplet.
@@ -255,7 +256,8 @@ public class PShader {
   
   
   public void set(String name, PVector vec) {
-    setUniformImpl(name, UniformValue.FLOAT3, new float[] { vec.x, vec.y, vec.z });
+    setUniformImpl(name, UniformValue.FLOAT3, 
+                   new float[] { vec.x, vec.y, vec.z });
   }
   
   
@@ -274,7 +276,8 @@ public class PShader {
     } else if (ncoords == 4) {
       setUniformImpl(name, UniformValue.INT4VEC, vec);
     } else if (4 < ncoords) {
-      PGraphics.showWarning("Only up to 4 coordinates per element are supported.");
+      PGraphics.showWarning("Only up to 4 coordinates per element are " + 
+                            "supported.");
     } else {
       PGraphics.showWarning("Wrong number of coordinates: it is negative!");
     }
@@ -296,7 +299,8 @@ public class PShader {
     } else if (ncoords == 4) {
       setUniformImpl(name, UniformValue.FLOAT4VEC, vec);
     } else if (4 < ncoords) {
-      PGraphics.showWarning("Only up to 4 coordinates per element are supported.");
+      PGraphics.showWarning("Only up to 4 coordinates per element are " + 
+                            "supported.");
     } else {
       PGraphics.showWarning("Wrong number of coordinates: it is negative!");
     }
@@ -361,7 +365,8 @@ public class PShader {
   }
 
   
-  protected void setAttributeVBO(int loc, int vboId, int size, int type, boolean normalized, int stride, int offset) {
+  protected void setAttributeVBO(int loc, int vboId, int size, int type, 
+                                 boolean normalized, int stride, int offset) {
     if (-1 < loc) {
       pgl.bindBuffer(PGL.ARRAY_BUFFER, vboId);
       pgl.vertexAttribPointer(loc, size, type, normalized, stride, offset);
@@ -509,7 +514,8 @@ public class PShader {
       }
       uniformValues.put(loc, new UniformValue(type, value));      
     } else {
-      PGraphics.showWarning("The shader doesn't have a uniform called \"" + name + "\"");
+      PGraphics.showWarning("The shader doesn't have a uniform called \"" + 
+                            name + "\"");
     }    
   }  
   
@@ -626,7 +632,8 @@ public class PShader {
       } else if (vertexURL != null) {
         hasVert = loadVertexShader(vertexURL);
       } else {
-        PGraphics.showException("Vertex shader filenames and URLs are both null!");
+        PGraphics.showException("Vertex shader filenames and URLs are " + 
+                                "both null!");
       }
       
       boolean hasFrag = false;      
@@ -635,7 +642,8 @@ public class PShader {
       } else if (fragmentURL != null) {      
         hasFrag = loadFragmentShader(fragmentURL);
       } else {
-        PGraphics.showException("Fragment shader filenames and URLs are both null!");
+        PGraphics.showException("Fragment shader filenames and URLs are " + 
+                                "both null!");
       }
       
       boolean vertRes = true; 
@@ -660,7 +668,8 @@ public class PShader {
         int[] linked = new int[1];
         pgl.getProgramiv(glProgram, PGL.LINK_STATUS, linked, 0);        
         if (linked[0] == PGL.FALSE) {
-          PGraphics.showException("Cannot link shader program:\n" + pgl.getProgramInfoLog(glProgram));
+          PGraphics.showException("Cannot link shader program:\n" + 
+                                  pgl.getProgramInfoLog(glProgram));
         }
         
         pgl.validateProgram(glProgram);
@@ -668,7 +677,8 @@ public class PShader {
         int[] validated = new int[1];
         pgl.getProgramiv(glProgram, PGL.VALIDATE_STATUS, validated, 0);        
         if (validated[0] == PGL.FALSE) {
-          PGraphics.showException("Cannot validate shader program:\n" + pgl.getProgramInfoLog(glProgram));
+          PGraphics.showException("Cannot validate shader program:\n" + 
+                                  pgl.getProgramInfoLog(glProgram));
         }        
       }
     }
@@ -708,7 +718,8 @@ public class PShader {
    */
   protected boolean loadVertexShader(URL url) {
     try {
-      vertexShaderSource = PApplet.join(PApplet.loadStrings(url.openStream()), "\n");
+      vertexShaderSource = PApplet.join(PApplet.loadStrings(url.openStream()), 
+                                        "\n");
       return vertexShaderSource != null;
     } catch (IOException e) {
       PGraphics.showException("Cannot load vertex shader " + url.getFile());
@@ -735,7 +746,8 @@ public class PShader {
    */
   protected boolean loadFragmentShader(URL url) {
     try {
-      fragmentShaderSource = PApplet.join(PApplet.loadStrings(url.openStream()), "\n");
+      fragmentShaderSource = PApplet.join(PApplet.loadStrings(url.openStream()), 
+                                          "\n");
       return fragmentShaderSource != null;
     } catch (IOException e) {
       PGraphics.showException("Cannot load fragment shader " + url.getFile());
@@ -756,7 +768,8 @@ public class PShader {
     int[] compiled = new int[1];
     pgl.getShaderiv(glVertex, PGL.COMPILE_STATUS, compiled, 0);        
     if (compiled[0] == PGL.FALSE) {
-      PGraphics.showException("Cannot compile vertex shader:\n" + pgl.getShaderInfoLog(glVertex));
+      PGraphics.showException("Cannot compile vertex shader:\n" + 
+                              pgl.getShaderInfoLog(glVertex));
       return false;
     } else {
       return true;
@@ -776,7 +789,8 @@ public class PShader {
     int[] compiled = new int[1];
     pgl.getShaderiv(glFragment, PGL.COMPILE_STATUS, compiled, 0);
     if (compiled[0] == PGL.FALSE) {
-      PGraphics.showException("Cannot compile fragment shader:\n" + pgl.getShaderInfoLog(glFragment));      
+      PGraphics.showException("Cannot compile fragment shader:\n" + 
+                              pgl.getShaderInfoLog(glFragment));      
       return false;
     } else {
       return true;
