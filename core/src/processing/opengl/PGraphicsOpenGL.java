@@ -187,7 +187,7 @@ public class PGraphicsOpenGL extends PGraphics {
   static protected PointShader defPointShader;
 
   static protected URL maskShaderFragURL = 
-    PGraphicsOpenGL.class.getResource("TexMaskShaderFrag.glsl");  
+    PGraphicsOpenGL.class.getResource("MaskShaderFrag.glsl");  
   static protected PolyTexShader maskShader;  
   
   protected PolyColorShader polyColorShader;
