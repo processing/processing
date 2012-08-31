@@ -75,6 +75,5 @@ public class PShape3D extends PShapeOpenGL {
       PShape c = PShape3D.createShape(parent, src.getChild(i));
       dest.addChild(c);
     }
-  } 
-  
+  }   
 }
