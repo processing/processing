@@ -36,7 +36,7 @@ public class PGraphics2D extends PGraphicsOpenGL {
 
   public PGraphics2D() {
     super();
-    hints[ENABLE_PERSPECTIVE_CORRECTED_STROKE] = false;
+    hints[ENABLE_STROKE_PERSPECTIVE] = false;
   }
 
 
@@ -61,7 +61,7 @@ public class PGraphics2D extends PGraphicsOpenGL {
 
 
   public void hint(int which) {
-    if (which == ENABLE_PERSPECTIVE_CORRECTED_STROKE) {
+    if (which == ENABLE_STROKE_PERSPECTIVE) {
       showWarning("2D lines cannot be perspective-corrected.");
       return;
     }
