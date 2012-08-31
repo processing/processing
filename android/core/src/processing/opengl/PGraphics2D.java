@@ -33,224 +33,230 @@ import processing.core.PShapeSVG;
 import processing.data.XML;
 
 public class PGraphics2D extends PGraphicsOpenGL {
-  
+
   public PGraphics2D() {
     super();
-    hints[ENABLE_PERSPECTIVE_CORRECTED_LINES] = false;
+    hints[ENABLE_STROKE_PERSPECTIVE] = false;
   }
-  
+
 
   //////////////////////////////////////////////////////////////
 
   // RENDERER SUPPORT QUERIES
-  
-  
+
+
   public boolean is2D() {
     return true;
   }
 
-  
+
   public boolean is3D() {
     return false;
-  }  
-  
-  
+  }
+
+
   //////////////////////////////////////////////////////////////
 
   // HINTS
 
-  
+
   public void hint(int which) {
-    if (which == ENABLE_PERSPECTIVE_CORRECTED_LINES) {
+    if (which == ENABLE_STROKE_PERSPECTIVE) {
       showWarning("2D lines cannot be perspective-corrected.");
       return;
     }
     super.hint(which);
   }
 
-  
+
   //////////////////////////////////////////////////////////////
 
   // PROJECTION
-  
-  
+
+
   public void ortho() {
     showMethodWarning("ortho");
   }
-  
-  
+
+
   public void ortho(float left, float right,
                     float bottom, float top) {
     showMethodWarning("ortho");
   }
-  
-  
+
+
   public void ortho(float left, float right,
                     float bottom, float top,
                     float near, float far) {
     showMethodWarning("ortho");
   }
-  
-  
+
+
   public void perspective() {
     showMethodWarning("perspective");
-  }  
-  
-  
+  }
+
+
   public void perspective(float fov, float aspect, float zNear, float zFar) {
     showMethodWarning("perspective");
   }
-  
-  
+
+
   public void frustum(float left, float right, float bottom, float top,
                       float znear, float zfar) {
     showMethodWarning("frustum");
   }
-  
-  
-  protected void defaultPerspective() {    
+
+
+  protected void defaultPerspective() {
     super.ortho(-width/2, +width/2, -height/2, +height/2, -1, +1);
   }
-  
-  
+
+
   //////////////////////////////////////////////////////////////
 
   // CAMERA
-  
-  
+
+
   public void beginCamera() {
     showMethodWarning("beginCamera");
   }
-  
-  
+
+
   public void endCamera() {
     showMethodWarning("endCamera");
   }
-  
-  
+
+
   public void camera() {
     showMethodWarning("camera");
   }
-  
-  
+
+
   public void camera(float eyeX, float eyeY, float eyeZ,
                      float centerX, float centerY, float centerZ,
                      float upX, float upY, float upZ) {
     showMethodWarning("camera");
   }
-  
 
-  protected void defaultCamera() {  
+
+  protected void defaultCamera() {
     super.camera(width/2, height/2);
   }
-  
-  
+
+
   //////////////////////////////////////////////////////////////
 
   // MATRIX MORE!
-  
-  
+
+
   protected void begin2D() {
     pushProjection();
     defaultPerspective();
     pushMatrix();
-    defaultCamera();    
+    defaultCamera();
   }
-  
+
 
   protected void end2D() {
     popMatrix();
-    popProjection();    
-  }  
+    popProjection();
+  }
 
-  
+
   //////////////////////////////////////////////////////////////
 
   // SHAPE
-  
-  
+
+
   public void shape(PShape shape) {
     if (shape.is2D()) {
       super.shape(shape);
     } else {
-      showWarning("The shape object is not 2D, cannot be displayed with this renderer"); 
+      showWarning("The shape object is not 2D, cannot be displayed with " + 
+                  "this renderer");
     }
   }
-  
-  
+
+
   public void shape(PShape shape, float x, float y) {
     if (shape.is2D()) {
       super.shape(shape, x, y);
     } else {
-      showWarning("The shape object is not 2D, cannot be displayed with this renderer"); 
-    }    
+      showWarning("The shape object is not 2D, cannot be displayed with " + 
+                  "this renderer");
+    }
   }
-  
-  
+
+
   public void shape(PShape shape, float a, float b, float c, float d) {
     if (shape.is2D()) {
       super.shape(shape, a, b, c, d);
     } else {
-      showWarning("The shape object is not 2D, cannot be displayed with this renderer"); 
-    }     
+      showWarning("The shape object is not 2D, cannot be displayed with " + 
+                  "this renderer");
+    }
   }
-  
-  
+
+
   public void shape(PShape shape, float x, float y, float z) {
-    showDepthWarningXYZ("shape");  
+    showDepthWarningXYZ("shape");
   }
-  
-  
-  public void shape(PShape shape, float x, float y, float z, float c, float d, float e) {
-    showDepthWarningXYZ("shape"); 
+
+
+  public void shape(PShape shape, float x, float y, float z, 
+                    float c, float d, float e) {
+    showDepthWarningXYZ("shape");
   }
-  
-  
+
+
   //////////////////////////////////////////////////////////////
 
   // SHAPE I/O
-  
-  
+
+
   static protected boolean isSupportedExtension(String extension) {
     return extension.equals("svg") || extension.equals("svgz");
   }
 
 
-  static protected PShape2D loadShapeImpl(PGraphics pg, String filename, String extension) {
+  static protected PShape2D loadShapeImpl(PGraphics pg, String filename, 
+                                          String extension) {
     PShapeSVG svg = null;
-    
-    try {
-      if (extension.equals("svg")) {
-        svg = new PShapeSVG(pg.parent, filename);
 
-      } else if (extension.equals("svgz")) {
-        InputStream input = new GZIPInputStream(pg.parent.createInput(filename));
+    if (extension.equals("svg")) {
+      svg = new PShapeSVG(pg.parent, filename);
+
+    } else if (extension.equals("svgz")) {
+      try {
+        InputStream input = 
+          new GZIPInputStream(pg.parent.createInput(filename));
         XML xml = new XML(PApplet.createReader(input));
         svg = new PShapeSVG(xml);
+      } catch (Exception e) {
+        e.printStackTrace();
       }
-    } catch (Exception e) {
-      e.printStackTrace();
     }
-      
+
     if (svg != null) {
-      PShape2D p2d = PShape2D.createShape(pg.parent, svg);  
+      PShape2D p2d = PShape2D.createShape(pg.parent, svg);
       return p2d;
     } else {
       return null;
     }
   }
-  
+
 
   //////////////////////////////////////////////////////////////
 
   // SHAPE CREATION
-  
-  
+
+
   public PShape createShape(PShape source) {
-    return PShape2D.createShape(parent, source);    
+    return PShape2D.createShape(parent, source);
   }
 
-  
+
   public PShape createShape() {
     return createShape(POLYGON);
   }
@@ -259,13 +265,13 @@ public class PGraphics2D extends PGraphicsOpenGL {
   public PShape createShape(int type) {
     return createShapeImpl(parent, type);
   }
-  
-  
+
+
   public PShape createShape(int kind, float... p) {
-    return createShapeImpl(parent, kind, p);  
+    return createShapeImpl(parent, kind, p);
   }
-  
-    
+
+
   static protected PShape2D createShapeImpl(PApplet parent, int type) {
     PShape2D shape = null;
     if (type == PShape.GROUP) {
@@ -301,7 +307,8 @@ public class PGraphics2D extends PGraphicsOpenGL {
   }
 
 
-  static protected PShape2D createShapeImpl(PApplet parent, int kind, float... p) {
+  static protected PShape2D createShapeImpl(PApplet parent, int kind, 
+                                            float... p) {
     PShape2D shape = null;
     int len = p.length;
 
@@ -367,21 +374,21 @@ public class PGraphics2D extends PGraphicsOpenGL {
     }
 
     return shape;
-  }  
-    
-  
+  }
+
+
   //////////////////////////////////////////////////////////////
 
   // BEZIER VERTICES
 
-  
+
   public void bezierVertex(float x2, float y2, float z2,
                            float x3, float y3, float z3,
                            float x4, float y4, float z4) {
     showDepthWarningXYZ("bezierVertex");
   }
-  
-  
+
+
   //////////////////////////////////////////////////////////////
 
   // QUADRATIC BEZIER VERTICES
@@ -390,19 +397,19 @@ public class PGraphics2D extends PGraphicsOpenGL {
   public void quadraticVertex(float x2, float y2, float z2,
                          float x4, float y4, float z4) {
     showDepthWarningXYZ("quadVertex");
-  }  
-  
-  
+  }
+
+
   //////////////////////////////////////////////////////////////
 
-  // CURVE VERTICES  
-  
-  
+  // CURVE VERTICES
+
+
   public void curveVertex(float x, float y, float z) {
     showDepthWarningXYZ("curveVertex");
-  }  
-  
-  
+  }
+
+
   //////////////////////////////////////////////////////////////
 
   // BOX
@@ -410,9 +417,9 @@ public class PGraphics2D extends PGraphicsOpenGL {
 
   public void box(float w, float h, float d) {
     showMethodWarning("box");
-  }  
+  }
 
-  
+
   //////////////////////////////////////////////////////////////
 
   // SPHERE
@@ -420,30 +427,30 @@ public class PGraphics2D extends PGraphicsOpenGL {
 
   public void sphere(float r) {
     showMethodWarning("sphere");
-  }  
-  
-  
+  }
+
+
   //////////////////////////////////////////////////////////////
 
   // VERTEX SHAPES
-  
-  
+
+
   public void vertex(float x, float y, float z) {
     showDepthWarningXYZ("vertex");
   }
-  
+
   public void vertex(float x, float y, float z, float u, float v) {
     showDepthWarningXYZ("vertex");
-  }  
-  
+  }
+
   //////////////////////////////////////////////////////////////
 
-  // MATRIX TRANSFORMATIONS  
-  
+  // MATRIX TRANSFORMATIONS
+
   public void translate(float tx, float ty, float tz) {
     showDepthWarningXYZ("translate");
   }
-  
+
   public void rotateX(float angle) {
     showDepthWarning("rotateX");
   }
@@ -458,27 +465,27 @@ public class PGraphics2D extends PGraphicsOpenGL {
 
   public void rotate(float angle, float vx, float vy, float vz) {
     showVariationWarning("rotate");
-  }  
-  
+  }
+
   public void applyMatrix(PMatrix3D source) {
     showVariationWarning("applyMatrix");
   }
-  
+
   public void applyMatrix(float n00, float n01, float n02, float n03,
                           float n10, float n11, float n12, float n13,
                           float n20, float n21, float n22, float n23,
                           float n30, float n31, float n32, float n33) {
     showVariationWarning("applyMatrix");
-  }  
-  
+  }
+
   public void scale(float sx, float sy, float sz) {
     showDepthWarningXYZ("scale");
   }
-  
+
   //////////////////////////////////////////////////////////////
 
-  // SCREEN AND MODEL COORDS  
-  
+  // SCREEN AND MODEL COORDS
+
   public float screenX(float x, float y, float z) {
     showDepthWarningXYZ("screenX");
     return 0;
@@ -492,18 +499,18 @@ public class PGraphics2D extends PGraphicsOpenGL {
   public float screenZ(float x, float y, float z) {
     showDepthWarningXYZ("screenZ");
     return 0;
-  }  
-  
+  }
+
   public PMatrix3D getMatrix(PMatrix3D target) {
     showVariationWarning("getMatrix");
     return target;
   }
-  
+
   public void setMatrix(PMatrix3D source) {
     showVariationWarning("setMatrix");
   }
-  
-  //////////////////////////////////////////////////////////////  
+
+  //////////////////////////////////////////////////////////////
 
   // LIGHTS
 

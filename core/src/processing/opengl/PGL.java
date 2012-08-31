@@ -186,11 +186,10 @@ public class PGL {
   public static final int FUNC_MAX              = GL2.GL_MAX;
   public static final int FUNC_REVERSE_SUBTRACT = GL.GL_FUNC_REVERSE_SUBTRACT;
 
-  public static final int TEXTURE_2D         = GL.GL_TEXTURE_2D;
-  public static final int TEXTURE_RECTANGLE  = GL2.GL_TEXTURE_RECTANGLE;
+  public static final int TEXTURE_2D        = GL.GL_TEXTURE_2D;
+  public static final int TEXTURE_RECTANGLE = GL2.GL_TEXTURE_RECTANGLE;
   
-  public static final int TEXTURE_BINDING_2D = 
-    GL.GL_TEXTURE_BINDING_2D;
+  public static final int TEXTURE_BINDING_2D        = GL.GL_TEXTURE_BINDING_2D;
   public static final int TEXTURE_BINDING_RECTANGLE = 
     GL2.GL_TEXTURE_BINDING_RECTANGLE;
 
@@ -228,21 +227,21 @@ public class PGL {
 
   public static final int SAMPLES = GL.GL_SAMPLES;
 
-  public static final int FRAMEBUFFER_COMPLETE = 
+  public static final int FRAMEBUFFER_COMPLETE                      = 
     GL.GL_FRAMEBUFFER_COMPLETE;
-  public static final int FRAMEBUFFER_INCOMPLETE_ATTACHMENT = 
+  public static final int FRAMEBUFFER_INCOMPLETE_ATTACHMENT         = 
     GL.GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT;
   public static final int FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT = 
     GL.GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT;
-  public static final int FRAMEBUFFER_INCOMPLETE_DIMENSIONS = 
+  public static final int FRAMEBUFFER_INCOMPLETE_DIMENSIONS         = 
     GL.GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS;
-  public static final int FRAMEBUFFER_INCOMPLETE_FORMATS = 
+  public static final int FRAMEBUFFER_INCOMPLETE_FORMATS            = 
     GL.GL_FRAMEBUFFER_INCOMPLETE_FORMATS;
-  public static final int FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER = 
+  public static final int FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER        = 
     GL2.GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER;
-  public static final int FRAMEBUFFER_INCOMPLETE_READ_BUFFER = 
+  public static final int FRAMEBUFFER_INCOMPLETE_READ_BUFFER        = 
     GL2.GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER;
-  public static final int FRAMEBUFFER_UNSUPPORTED = 
+  public static final int FRAMEBUFFER_UNSUPPORTED                   = 
     GL.GL_FRAMEBUFFER_UNSUPPORTED;
 
   public static final int STATIC_DRAW  = GL.GL_STATIC_DRAW;
@@ -257,29 +256,21 @@ public class PGL {
   public static final int TRIANGLE_STRIP = GL.GL_TRIANGLE_STRIP;
   public static final int TRIANGLES      = GL.GL_TRIANGLES;
 
-  public static final int VENDOR = 
-    GL.GL_VENDOR;
-  public static final int RENDERER = 
-    GL.GL_RENDERER;
-  public static final int VERSION = 
-    GL.GL_VERSION;
-  public static final int EXTENSIONS = 
-    GL.GL_EXTENSIONS;
+  public static final int VENDOR                   = GL.GL_VENDOR;
+  public static final int RENDERER                 = GL.GL_RENDERER;
+  public static final int VERSION                  = GL.GL_VERSION;
+  public static final int EXTENSIONS               = GL.GL_EXTENSIONS;
   public static final int SHADING_LANGUAGE_VERSION = 
     GL2ES2.GL_SHADING_LANGUAGE_VERSION;
 
-  public static final int MAX_TEXTURE_SIZE = 
-    GL.GL_MAX_TEXTURE_SIZE;
-  public static final int MAX_SAMPLES = 
-    GL2.GL_MAX_SAMPLES;
+  public static final int MAX_TEXTURE_SIZE         = GL.GL_MAX_TEXTURE_SIZE;
+  public static final int MAX_SAMPLES              = GL2.GL_MAX_SAMPLES;
   public static final int ALIASED_LINE_WIDTH_RANGE = 
     GL.GL_ALIASED_LINE_WIDTH_RANGE;
   public static final int ALIASED_POINT_SIZE_RANGE = 
     GL.GL_ALIASED_POINT_SIZE_RANGE;
-  public static final int DEPTH_BITS = 
-    GL.GL_DEPTH_BITS;
-  public static final int STENCIL_BITS = 
-    GL.GL_STENCIL_BITS;
+  public static final int DEPTH_BITS = GL.GL_DEPTH_BITS;
+  public static final int STENCIL_BITS = GL.GL_STENCIL_BITS;
 
   public static final int TESS_WINDING_NONZERO = GLU.GLU_TESS_WINDING_NONZERO;
   public static final int TESS_WINDING_ODD     = GLU.GLU_TESS_WINDING_ODD;
@@ -390,7 +381,7 @@ public class PGL {
   /** Which textures are bound to each target */
   protected static int[] boundTextures = { 0, 0 };
   
-  //////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////
 
   // FBO for anti-aliased rendering
 
@@ -411,7 +402,7 @@ public class PGL {
   protected int[] glStencilBuffer = { 0 };
   protected int contextHashCode;
 
-  //////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////
 
   // Texture rendering
 
@@ -465,7 +456,7 @@ public class PGL {
     "  gl_FragColor = texture2DRect(textureSampler, vertTexcoord.st);" +
     "}";
 
-  //////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////
 
   // 1-pixel color, depth, stencil buffers
 
@@ -474,9 +465,9 @@ public class PGL {
   protected ByteBuffer stencilBuffer;
 
   
-  //////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////
 
-  // Intialization, finalization
+  // Initialization, finalization
 
 
   public PGL(PGraphicsOpenGL pg) {
@@ -885,7 +876,7 @@ public class PGL {
   }
 
 
-  //////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////
 
   // Frame rendering
 
@@ -998,7 +989,7 @@ public class PGL {
   }
 
 
-  //////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////
 
   // Enable/disable caps
 
@@ -1017,7 +1008,7 @@ public class PGL {
   }
 
 
-  //////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////
 
   // Render control
 
@@ -1032,7 +1023,7 @@ public class PGL {
   }
 
 
-  //////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////
 
   // Error handling
 
@@ -1047,7 +1038,7 @@ public class PGL {
   }
 
   
-  //////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////
 
   // Rendering options
 
@@ -1072,7 +1063,7 @@ public class PGL {
   }
 
 
-  //////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////
 
   // Textures
 
@@ -1134,7 +1125,7 @@ public class PGL {
   }
 
 
-  //////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////
 
   // Vertex Buffers
 
@@ -1216,7 +1207,7 @@ public class PGL {
   }
 
 
-  //////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////
 
   // Framebuffers, renderbuffers
 
@@ -1293,7 +1284,7 @@ public class PGL {
   }
 
 
-  //////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////
 
   // Shaders
 
@@ -1531,7 +1522,7 @@ public class PGL {
   }
 
 
-  //////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////
 
   // Viewport
 
@@ -1541,7 +1532,7 @@ public class PGL {
   }
 
 
-  //////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////
 
   // Clipping (scissor test)
 
@@ -1551,7 +1542,7 @@ public class PGL {
   }
 
 
-  //////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////
 
   // Blending
 
@@ -1566,7 +1557,7 @@ public class PGL {
   }
 
 
-  //////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////
 
   // Pixels
 
@@ -1616,7 +1607,7 @@ public class PGL {
   }
 
 
-  //////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////
 
   // Context interface
 
@@ -1666,7 +1657,7 @@ public class PGL {
   }
 
 
-  //////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////
 
   // Tessellator interface
 
@@ -1755,7 +1746,7 @@ public class PGL {
   }
 
 
-  //////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////
 
   // Utility functions
 
@@ -2487,7 +2478,7 @@ public class PGL {
   }
 
 
-  //////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////
 
   // Java specific stuff
 
