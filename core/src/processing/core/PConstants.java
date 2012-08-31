@@ -510,8 +510,8 @@ public interface PConstants {
   // hints - hint values are positive for the alternate version,
   // negative of the same value returns to the normal/default state
 
-  static final int ENABLE_NATIVE_FONTS                  =  1;
-  static final int DISABLE_NATIVE_FONTS                 = -1;
+  static final int ENABLE_NATIVE_FONTS         =  1;
+  static final int DISABLE_NATIVE_FONTS        = -1;
 
   static final int DISABLE_DEPTH_TEST          =  2;
   static final int ENABLE_DEPTH_TEST           = -2;
@@ -543,7 +543,7 @@ public interface PConstants {
   static final int DISABLE_TEXTURE_MIPMAPS     =  11;
   static final int ENABLE_TEXTURE_MIPMAPS      = -11;
   
-  static final int HINT_COUNT                           =  12;
+  static final int HINT_COUNT                  =  12;
 
   // error messages
 

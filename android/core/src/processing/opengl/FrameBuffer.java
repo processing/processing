@@ -43,7 +43,7 @@ public class FrameBuffer implements PConstants {
   protected PApplet parent;
   protected PGraphicsOpenGL pg;
   protected PGL pgl;
-  protected PGL.Context context;      // The context that created this framebuffer.
+  protected PGL.Context context;   // The context that created this framebuffer.
   
   public int glFbo;
   public int glDepth;
@@ -120,8 +120,9 @@ public class FrameBuffer implements PConstants {
       this.packedDepthStencil = false;
     } else {
       if (packedDepthStencil) {
-        // When combined depth/stencil format is required, the depth and stencil bits
-        // are overriden and the 24/8 combination for a 32 bits surface is used. 
+        // When combined depth/stencil format is required, the depth and stencil 
+        // bits are overriden and the 24/8 combination for a 32 bits surface is 
+        // used.
         this.depthBits = 24;
         this.stencilBits = 8;
         this.packedDepthStencil = true;        
@@ -169,7 +170,9 @@ public class FrameBuffer implements PConstants {
     pgl.clearDepth(1);
     pgl.clearStencil(0);
     pgl.clearColor(0, 0, 0, 0);
-    pgl.clear(PGL.DEPTH_BUFFER_BIT | PGL.STENCIL_BUFFER_BIT | PGL.COLOR_BUFFER_BIT);
+    pgl.clear(PGL.DEPTH_BUFFER_BIT | 
+              PGL.STENCIL_BUFFER_BIT | 
+              PGL.COLOR_BUFFER_BIT);
     pg.popFramebuffer();    
   }
   
@@ -203,7 +206,8 @@ public class FrameBuffer implements PConstants {
   public void readPixels() {
     if (pixelBuffer == null) createPixelBuffer();
     pixelBuffer.rewind();
-    pgl.readPixels(0, 0, width, height, PGL.RGBA, PGL.UNSIGNED_BYTE, pixelBuffer);
+    pgl.readPixels(0, 0, width, height, PGL.RGBA, PGL.UNSIGNED_BYTE, 
+                   pixelBuffer);
   }
   
   public void getPixels(int[] pixels) {
@@ -244,7 +248,8 @@ public class FrameBuffer implements PConstants {
     if (screenFb) return;
 
     if (numColorBuffers != PApplet.min(n, textures.length)) {
-      throw new RuntimeException("Wrong number of textures to set the color buffers.");
+      throw new RuntimeException("Wrong number of textures to set the color " + 
+                                 "buffers.");
     }
         
     for (int i = 0; i < numColorBuffers; i++) {
@@ -256,11 +261,14 @@ public class FrameBuffer implements PConstants {
 
     // Making sure nothing is attached.
     for (int i = 0; i < numColorBuffers; i++) {
-      pgl.framebufferTexture2D(PGL.FRAMEBUFFER, PGL.COLOR_ATTACHMENT0 + i, PGL.TEXTURE_2D, 0, 0);
+      pgl.framebufferTexture2D(PGL.FRAMEBUFFER, PGL.COLOR_ATTACHMENT0 + i, 
+                               PGL.TEXTURE_2D, 0, 0);
     }
 
     for (int i = 0; i < numColorBuffers; i++) {
-      pgl.framebufferTexture2D(PGL.FRAMEBUFFER, PGL.COLOR_ATTACHMENT0 + i, colorBufferTex[i].glTarget, colorBufferTex[i].glName, 0);
+      pgl.framebufferTexture2D(PGL.FRAMEBUFFER, PGL.COLOR_ATTACHMENT0 + i, 
+                               colorBufferTex[i].glTarget, 
+                               colorBufferTex[i].glName, 0);
     }
 
     pgl.validateFramebuffer();
@@ -358,8 +366,10 @@ public class FrameBuffer implements PConstants {
 
     glMultisample = pg.createRenderBufferObject(context.code());
     pgl.bindRenderbuffer(PGL.RENDERBUFFER, glMultisample);      
-    pgl.renderbufferStorageMultisample(PGL.RENDERBUFFER, nsamples, PGL.RGBA8, width, height);
-    pgl.framebufferRenderbuffer(PGL.FRAMEBUFFER, PGL.COLOR_ATTACHMENT0, PGL.RENDERBUFFER, glMultisample);
+    pgl.renderbufferStorageMultisample(PGL.RENDERBUFFER, nsamples, 
+                                       PGL.RGBA8, width, height);
+    pgl.framebufferRenderbuffer(PGL.FRAMEBUFFER, PGL.COLOR_ATTACHMENT0, 
+                                PGL.RENDERBUFFER, glMultisample);
     
     pg.popFramebuffer();      
   }
@@ -379,13 +389,17 @@ public class FrameBuffer implements PConstants {
     pgl.bindRenderbuffer(PGL.RENDERBUFFER, glDepthStencil);      
     
     if (multisample) { 
-      pgl.renderbufferStorageMultisample(PGL.RENDERBUFFER, nsamples, PGL.DEPTH24_STENCIL8, width, height);
+      pgl.renderbufferStorageMultisample(PGL.RENDERBUFFER, nsamples, 
+                                         PGL.DEPTH24_STENCIL8, width, height);
     } else {
-      pgl.renderbufferStorage(PGL.RENDERBUFFER, PGL.DEPTH24_STENCIL8, width, height);
+      pgl.renderbufferStorage(PGL.RENDERBUFFER, PGL.DEPTH24_STENCIL8, 
+                              width, height);
     }
     
-    pgl.framebufferRenderbuffer(PGL.FRAMEBUFFER, PGL.DEPTH_ATTACHMENT, PGL.RENDERBUFFER, glDepthStencil);
-    pgl.framebufferRenderbuffer(PGL.FRAMEBUFFER, PGL.STENCIL_ATTACHMENT, PGL.RENDERBUFFER, glDepthStencil);
+    pgl.framebufferRenderbuffer(PGL.FRAMEBUFFER, PGL.DEPTH_ATTACHMENT, 
+                                PGL.RENDERBUFFER, glDepthStencil);
+    pgl.framebufferRenderbuffer(PGL.FRAMEBUFFER, PGL.STENCIL_ATTACHMENT, 
+                                PGL.RENDERBUFFER, glDepthStencil);
     
     pg.popFramebuffer();  
   }
@@ -414,12 +428,14 @@ public class FrameBuffer implements PConstants {
     }
     
     if (multisample) { 
-      pgl.renderbufferStorageMultisample(PGL.RENDERBUFFER, nsamples, glConst, width, height);
+      pgl.renderbufferStorageMultisample(PGL.RENDERBUFFER, nsamples, glConst, 
+                                         width, height);
     } else {
       pgl.renderbufferStorage(PGL.RENDERBUFFER, glConst, width, height);
     }                    
 
-    pgl.framebufferRenderbuffer(PGL.FRAMEBUFFER, PGL.DEPTH_ATTACHMENT, PGL.RENDERBUFFER, glDepth);
+    pgl.framebufferRenderbuffer(PGL.FRAMEBUFFER, PGL.DEPTH_ATTACHMENT, 
+                                PGL.RENDERBUFFER, glDepth);
 
     pg.popFramebuffer();
   }
@@ -447,12 +463,14 @@ public class FrameBuffer implements PConstants {
       glConst = PGL.STENCIL_INDEX8;              
     }
     if (multisample) { 
-      pgl.renderbufferStorageMultisample(PGL.RENDERBUFFER, nsamples, glConst, width, height);
+      pgl.renderbufferStorageMultisample(PGL.RENDERBUFFER, nsamples, glConst, 
+                                         width, height);
     } else {      
       pgl.renderbufferStorage(PGL.RENDERBUFFER, glConst, width, height);
     }
     
-    pgl.framebufferRenderbuffer(PGL.FRAMEBUFFER, PGL.STENCIL_ATTACHMENT, PGL.RENDERBUFFER, glStencil);
+    pgl.framebufferRenderbuffer(PGL.FRAMEBUFFER, PGL.STENCIL_ATTACHMENT, 
+                                PGL.RENDERBUFFER, glStencil);
 
     pg.popFramebuffer();
   }  
