@@ -1,5 +1,5 @@
 /**
- * GSVideo movie speed example.
+ * Speed. 
  *
  * Use the Movie.speed() method to change
  * the playback speed.
@@ -15,8 +15,6 @@ void setup() {
   background(0);
   mov = new Movie(this, "transit.mov");
   mov.loop();
-  
-  textSize(18);
 }
 
 void movieEvent(Movie movie) {

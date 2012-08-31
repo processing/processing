@@ -1,11 +1,11 @@
 /**
- * Scratch. 
- * by Andres Colubri
+ * Scratch 
+ * by Andres Colubri. 
  * 
  * Move the cursor horizontally across the screen to set  
  * the position in the movie file.
  */
- 
+
 import processing.video.*;
 
 Movie mov;
@@ -22,19 +22,18 @@ void setup() {
   mov.pause();
 }
 
-void movieEvent(Movie m) {
-  m.read();
-}
-
 void draw() {
-  // A new time position is calculated using the current mouse location:
-  float f = constrain((float)mouseX / width, 0, 1);
-  float t = mov.duration() * f;    
-  if (mov.ready()) {
+
+  if (mov.available()) {
+    mov.read();
+    // A new time position is calculated using the current mouse location:
+    float f = map(mouseX, 0, width, 0, 1);
+    float t = mov.duration() * f;
     mov.play();
     mov.jump(t);
     mov.pause();
-  }    
+  }  
+
   image(mov, 0, 0);
 }
 
