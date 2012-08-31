@@ -6,8 +6,6 @@
  * OBJ file of a rocket and displays it to the screen. 
  */
 
-// The next line is needed if running in JavaScript Mode with Processing.js
-/* @pjs preload="rocket.obj"; */ 
 
 PShape rocket;
 
