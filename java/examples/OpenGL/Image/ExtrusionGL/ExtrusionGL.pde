@@ -12,7 +12,7 @@ int[][] values;
 float angle;
 
 void setup() {
-  size(1024, 768, P3D);
+  size(640, 360, P3D);
   
   aPixels = new int[width][height];
   values = new int[width][height];
@@ -32,7 +32,7 @@ void setup() {
 
 void draw() {
   background(255);
-  translate(width/2, height/2, 0);
+  translate(width/2, height/2, -height/2);
   scale(2.0);
   
   // Update and constrain the angle

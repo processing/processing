@@ -1,4 +1,17 @@
+/**
+ * Load and Display an OBJ Shape. 
+ * 
+ * The loadShape() command is used to read simple SVG (Scalable Vector Graphics)
+ * files and OBJ (Object) files into a Processing sketch. This example loads an
+ * OBJ file of a rocket and displays it to the screen. 
+ */
+
+// The next line is needed if running in JavaScript Mode with Processing.js
+/* @pjs preload="rocket.obj"; */ 
+
 PShape rocket;
+
+float ry;
   
 public void setup() {
   size(640, 360, P3D);
@@ -8,11 +21,12 @@ public void setup() {
 
 public void draw() {
   background(0);
-    
   lights();
-    
+  
   translate(width/2, height/2 + 100, -200);
-  rotateX(PI);
-  rotateY(frameCount * 0.01f);
+  rotateZ(PI);
+  rotateY(ry);
   shape(rocket);
+  
+  ry += 0.02;
 }
