@@ -15,7 +15,7 @@ void setup() {
   maskImage.noSmooth();
   maskShader = loadShader("mask.glsl");
   maskShader.set("maskSampler", maskImage);
-  background(0);
+  background(255);
 }
 
 void draw() { 

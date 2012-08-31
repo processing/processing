@@ -12,12 +12,13 @@ void setup() {
   size(640, 360, P2D);
   blur = loadShader("blur.glsl"); 
   stroke(255, 0, 0);
+  rectMode(CENTER);
 }
 
 void draw() {
   filter(blur);  
   rect(mouseX, mouseY, 150, 150); 
-  line(mouseX, mouseY, mouseX+150, mouseY+150);  
+  ellipse(mouseX, mouseY, 100, 100);
 }
 
 

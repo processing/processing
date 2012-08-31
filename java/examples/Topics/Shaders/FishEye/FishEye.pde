@@ -1,7 +1,7 @@
 /**
  * Fish Eye
  * 
- * This fish-eye shader is useful for dome projection
+ * This fish-eye shader is useful for dome projection.
  */
 
 PShader fisheye;

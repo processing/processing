@@ -1,9 +1,7 @@
 // Draws a triangle using low-level OpenGL calls.
 import java.nio.*;
 
-PGraphicsOpenGL pg;
 PGL pgl;
-
 PShader flatShader;
 
 int vertLoc;
@@ -17,8 +15,6 @@ FloatBuffer colorData;
 
 void setup() {
   size(640, 360, P3D);
-  
-  pg = (PGraphicsOpenGL)g;
   
   // Loads a shader to render geometry w/out
   // textures and lights.
@@ -36,11 +32,11 @@ void draw() {
   
   // The geometric transformations will be automatically passed 
   // to the shader.
-  rotate(frameCount * 0.01f, width, height, 0);
+  rotate(frameCount * 0.01, width, height, 0);
   
   updateGeometry();
   
-  pgl = pg.beginPGL(); 
+  pgl = beginPGL();
   flatShader.bind();
 
   vertLoc = pgl.getAttribLocation(flatShader.glProgram, "inVertex");
@@ -58,7 +54,8 @@ void draw() {
   pgl.disableVertexAttribArray(colorLoc);
   
   flatShader.unbind();  
-  pg.endPGL();
+
+  endPGL();
 }
 
 void updateGeometry() {
