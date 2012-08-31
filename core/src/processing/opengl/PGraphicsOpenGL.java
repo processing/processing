@@ -10373,8 +10373,9 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     void tessellateLineStrip3D(int lineCount) {
-      int nvert = lineCount * 4 + (lineCount - 1); // (lineCount - 1) for the bevel triangles
-      int nind = lineCount * 2 * 3 + (lineCount - 1) * 2 * 3; // same thing
+      int nBevelTr = noCapsJoins() ? 0 : (lineCount - 1);      
+      int nvert = lineCount * 4 + nBevelTr;
+      int nind = lineCount * 2 * 3 + nBevelTr * 2 * 3;
 
       tess.lineVertexCheck(nvert);
       tess.lineIndexCheck(nind);
@@ -10385,7 +10386,11 @@ public class PGraphicsOpenGL extends PGraphics {
       short[] lastInd = {-1, -1};
       for (int ln = 0; ln < lineCount; ln++) {
         int i1 = in.firstVertex + ln + 1;
-        index = addLine3D(i0, i1, index, lastInd, false);
+        if (0 < nBevelTr) {
+          index = addLine3D(i0, i1, index, lastInd, false);
+        } else {
+          index = addLine3D(i0, i1, index, null, false);
+        }
         i0 = i1;
       }
       lastLineIndexCache = index;
@@ -10436,11 +10441,12 @@ public class PGraphicsOpenGL extends PGraphics {
       }
     }
 
-    void tessellateLineLoop3D(int lineCount) {
+    void tessellateLineLoop3D(int lineCount) {      
       // TODO: This calculation doesn't add the bevel join between
       // the first and last vertex, need to fix.
-      int nvert = lineCount * 4 + (lineCount - 1);
-      int nind = lineCount * 2 * 3 + (lineCount - 1) * 2 * 3;
+      int nBevelTr = noCapsJoins() ? 0 : (lineCount - 1); 
+      int nvert = lineCount * 4 + nBevelTr;
+      int nind = lineCount * 2 * 3 + nBevelTr * 2 * 3;
 
       tess.lineVertexCheck(nvert);
       tess.lineIndexCheck(nind);
@@ -10451,7 +10457,11 @@ public class PGraphicsOpenGL extends PGraphics {
       short[] lastInd = {-1, -1};
       for (int ln = 0; ln < lineCount - 1; ln++) {
         int i1 = in.firstVertex + ln + 1;
-        index = addLine3D(i0, i1, index, lastInd, false);
+        if (0 < nBevelTr) {
+          index = addLine3D(i0, i1, index, lastInd, false);
+        } else {
+          index = addLine3D(i0, i1, index, null, false);
+        }
         i0 = i1;
       }
       index = addLine3D(in.lastVertex, in.firstVertex, index, lastInd, false);
@@ -10505,8 +10515,9 @@ public class PGraphicsOpenGL extends PGraphics {
     void tessellateEdges3D() {
       // This calculation doesn't add the bevel join between
       // the first and last vertex, need to fix.
-      int nInVert = in.getNumEdgeVertices(true);
-      int nInInd = in.getNumEdgeIndices(true);
+      boolean bevel = !noCapsJoins();
+      int nInVert = in.getNumEdgeVertices(bevel);
+      int nInInd = in.getNumEdgeIndices(bevel);
 
       tess.lineVertexCheck(nInVert);
       tess.lineIndexCheck(nInInd);
@@ -10518,10 +10529,14 @@ public class PGraphicsOpenGL extends PGraphics {
         int[] edge = in.edges[i];
         int i0 = edge[0];
         int i1 = edge[1];
-        index = addLine3D(i0, i1, index, lastInd, true);
-        if (edge[2] == EDGE_STOP || edge[2] == EDGE_SINGLE) {
-          // No join with next line segment.
-          lastInd[0] = lastInd[1] = -1;
+        if (bevel) {
+          index = addLine3D(i0, i1, index, lastInd, true);
+          if (edge[2] == EDGE_STOP || edge[2] == EDGE_SINGLE) {
+            // No join with next line segment.
+            lastInd[0] = lastInd[1] = -1;
+          }
+        } else {
+          index = addLine3D(i0, i1, index, null, true);
         }
       }
       lastLineIndexCache = index;
@@ -10725,32 +10740,36 @@ public class PGraphicsOpenGL extends PGraphics {
         // to run out of memory, so full caps and joins are disabled.
         return true;
       } else {
-        // We first calculate the (volumetric) scaling factor that is associated
-        // to the current transformation matrix, which is given by the absolute
-        // value of its determinant:
-        float scaleFactor = 1;
-
-        if (transform != null) {
-          if (transform instanceof PMatrix2D) {
-            PMatrix2D tr = (PMatrix2D)transform;
-            float areaScaleFactor = Math.abs(tr.m00 * tr.m11 - tr.m01 * tr.m10);
-            scaleFactor = (float) Math.sqrt(areaScaleFactor);
-          } else if (transform instanceof PMatrix3D) {
-            PMatrix3D tr = (PMatrix3D)transform;
-            float volumeScaleFactor = 
-              Math.abs(tr.m00 * (tr.m11 * tr.m22 - tr.m12 * tr.m21) +
-                       tr.m01 * (tr.m12 * tr.m20 - tr.m10 * tr.m22) +
-                       tr.m02 * (tr.m10 * tr.m21 - tr.m11 * tr.m20));
-            scaleFactor = (float) Math.pow(volumeScaleFactor, 1.0f / 3.0f);
-          }
-        }
-
-        // The stroke weight is scaled so it correspons to the current
-        // "zoom level" being applied on the geometry due to scaling:
-        return scaleFactor * strokeWeight < PGL.MIN_CAPS_JOINS_WEIGHT;
+        return noCapsJoins();
       }
     }
+    
+    boolean noCapsJoins() {
+      // We first calculate the (volumetric) scaling factor that is associated
+      // to the current transformation matrix, which is given by the absolute
+      // value of its determinant:
+      float scaleFactor = 1;
 
+      if (transform != null) {
+        if (transform instanceof PMatrix2D) {
+          PMatrix2D tr = (PMatrix2D)transform;
+          float areaScaleFactor = Math.abs(tr.m00 * tr.m11 - tr.m01 * tr.m10);
+          scaleFactor = (float) Math.sqrt(areaScaleFactor);
+        } else if (transform instanceof PMatrix3D) {
+          PMatrix3D tr = (PMatrix3D)transform;
+          float volumeScaleFactor = 
+            Math.abs(tr.m00 * (tr.m11 * tr.m22 - tr.m12 * tr.m21) +
+                     tr.m01 * (tr.m12 * tr.m20 - tr.m10 * tr.m22) +
+                     tr.m02 * (tr.m10 * tr.m21 - tr.m11 * tr.m20));
+          scaleFactor = (float) Math.pow(volumeScaleFactor, 1.0f / 3.0f);
+        }
+      }
+
+      // The stroke weight is scaled so it correspons to the current
+      // "zoom level" being applied on the geometry due to scaling:
+      return scaleFactor * strokeWeight < PGL.MIN_CAPS_JOINS_WEIGHT;      
+    }
+    
     // -----------------------------------------------------------------
     //
     // Polygon primitives tessellation
