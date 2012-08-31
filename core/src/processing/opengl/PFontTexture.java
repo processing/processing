@@ -65,7 +65,8 @@ class PFontTexture implements PConstants {
   protected TextureInfo[] glyphTexinfos;
   protected HashMap<PFont.Glyph, TextureInfo> texinfoMap;
 
-  public PFontTexture(PApplet parent, PFont font, int maxw, int maxh, boolean is3D) {
+  public PFontTexture(PApplet parent, PFont font, int maxw, int maxh, 
+                      boolean is3D) {
     this.parent = parent;
     this.font = font;
     pg = (PGraphicsOpenGL)parent.g;
@@ -112,20 +113,24 @@ class PFontTexture implements PConstants {
       h = PApplet.min(2 * textures[currentTex].glHeight, maxTexHeight);
       resize = true;
     } else {
-      h = PApplet.min(PGraphicsOpenGL.maxTextureSize, PGL.MAX_FONT_TEX_SIZE / 2, maxTexHeight / 4);
+      h = PApplet.min(PGraphicsOpenGL.maxTextureSize, PGL.MAX_FONT_TEX_SIZE / 2, 
+                                                      maxTexHeight / 4);
       resize = false;
     }
 
     Texture tex;
     if (is3D) {
-      // Bilinear sampling ensures that the texture doesn't look pixelated either
-      // when it is magnified or minified...
-      tex = new Texture(parent, w, h, new Texture.Parameters(ARGB, Texture.BILINEAR, false));
+      // Bilinear sampling ensures that the texture doesn't look pixelated 
+      // either when it is magnified or minified...
+      tex = new Texture(parent, w, h, 
+                        new Texture.Parameters(ARGB, Texture.BILINEAR, false));
     } else {
-      // ...however, the effect of bilinear sampling is to add some blurriness to the text
-      // in its original size. In 2D, we assume that text will be shown at its original
-      // size, so linear sampling is chosen instead (which only affects minimized text).
-      tex = new Texture(parent, w, h, new Texture.Parameters(ARGB, Texture.LINEAR, false));
+      // ...however, the effect of bilinear sampling is to add some blurriness 
+      // to the text in its original size. In 2D, we assume that text will be 
+      // shown at its original size, so linear sampling is chosen instead (which 
+      // only affects minimized text).
+      tex = new Texture(parent, w, h, 
+                        new Texture.Parameters(ARGB, Texture.LINEAR, false));
     }
 
     if (textures == null) {
@@ -253,18 +258,19 @@ class PFontTexture implements PConstants {
 
   // Adds this glyph to the opengl texture in PFont.
   protected void addToTexture(int idx, PFont.Glyph glyph) {
-    // We add one pixel to avoid issues when sampling the font texture at fractional
-    // screen positions. I.e.: the pixel on the screen only contains half of the
-    // font rectangle, so it would sample half of the color from the glyph
-    // area in the texture, and the other half from the contiguous pixel. If the
-    // later contains a portion of the neighbor glyph and the former doesn't, this
-    // would result in a shaded pixel when the correct output is blank.
-    // This is a consequence of putting all the glyphs in a common texture with
-    // bilinear sampling.
+    // We add one pixel to avoid issues when sampling the font texture at 
+    // fractional screen positions. I.e.: the pixel on the screen only contains 
+    // half of the font rectangle, so it would sample half of the color from the 
+    // glyph area in the texture, and the other half from the contiguous pixel. 
+    // If the later contains a portion of the neighbor glyph and the former 
+    // doesn't, this would result in a shaded pixel when the correct output is 
+    // blank. This is a consequence of putting all the glyphs in a common 
+    // texture with bilinear sampling.
     int w = 1 + glyph.width + 1;
     int h = 1 + glyph.height + 1;
 
-    // Converting the pixels array from the PImage into a valid RGBA array for OpenGL.
+    // Converting the pixels array from the PImage into a valid RGBA array for 
+    // OpenGL.
     int[] rgba = new int[w * h];
     int t = 0;
     int p = 0;
@@ -326,7 +332,8 @@ class PFontTexture implements PConstants {
       currentTex = idx;
     }
 
-    TextureInfo tinfo = new TextureInfo(currentTex, offsetX, offsetY, w, h, rgba);
+    TextureInfo tinfo = new TextureInfo(currentTex, offsetX, offsetY, 
+                                        w, h, rgba);
     offsetX += w;
 
     if (idx == glyphTexinfos.length) {
@@ -349,12 +356,13 @@ class PFontTexture implements PConstants {
     public float v0, v1;
     public int[] pixels;
 
-    public TextureInfo(int tidx, int cropX, int cropY, int cropW, int cropH, int[] pix) {
+    public TextureInfo(int tidx, int cropX, int cropY, int cropW, int cropH, 
+                       int[] pix) {
       texIndex = tidx;
       crop = new int[4];
       // The region of the texture corresponding to the glyph is surrounded by a
-      // 1-pixel wide border to avoid artifacts due to bilinear sampling. This is
-      // why the additions and subtractions to the crop values.
+      // 1-pixel wide border to avoid artifacts due to bilinear sampling. This 
+      // is why the additions and subtractions to the crop values.
       crop[0] = cropX + 1;
       crop[1] = cropY + 1 + cropH - 2;
       crop[2] = cropW - 2;
@@ -376,7 +384,8 @@ class PFontTexture implements PConstants {
 
 
     void updateTex() {
-      textures[texIndex].setNative(pixels, crop[0] - 1, crop[1] + crop[3] - 1, crop[2] + 2, -crop[3] + 2);
+      textures[texIndex].setNative(pixels, crop[0] - 1, crop[1] + crop[3] - 1, 
+                                           crop[2] + 2, -crop[3] + 2);
     }
   }
 }
