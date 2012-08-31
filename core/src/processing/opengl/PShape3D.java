@@ -51,7 +51,8 @@ public class PShape3D extends PShapeOpenGL {
       dest = PGraphics3D.createShapeImpl(parent, GROUP);
       PShape3D.copyGroup(parent, src, dest);      
     } else if (src.getFamily() == PRIMITIVE) {
-      dest = PGraphics3D.createShapeImpl(parent, src.getKind(), src.getParams());
+      dest = PGraphics3D.createShapeImpl(parent, src.getKind(), 
+                                         src.getParams());
       PShape.copyPrimitive(src, dest);
     } else if (src.getFamily() == GEOMETRY) {
       dest = PGraphics3D.createShapeImpl(parent, src.getKind());

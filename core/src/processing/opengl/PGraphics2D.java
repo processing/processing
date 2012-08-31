@@ -173,7 +173,8 @@ public class PGraphics2D extends PGraphicsOpenGL {
     if (shape.is2D()) {
       super.shape(shape);
     } else {
-      showWarning("The shape object is not 2D, cannot be displayed with this renderer");
+      showWarning("The shape object is not 2D, cannot be displayed with " + 
+                  "this renderer");
     }
   }
 
@@ -182,7 +183,8 @@ public class PGraphics2D extends PGraphicsOpenGL {
     if (shape.is2D()) {
       super.shape(shape, x, y);
     } else {
-      showWarning("The shape object is not 2D, cannot be displayed with this renderer");
+      showWarning("The shape object is not 2D, cannot be displayed with " + 
+                  "this renderer");
     }
   }
 
@@ -191,7 +193,8 @@ public class PGraphics2D extends PGraphicsOpenGL {
     if (shape.is2D()) {
       super.shape(shape, a, b, c, d);
     } else {
-      showWarning("The shape object is not 2D, cannot be displayed with this renderer");
+      showWarning("The shape object is not 2D, cannot be displayed with " + 
+                  "this renderer");
     }
   }
 
@@ -201,7 +204,8 @@ public class PGraphics2D extends PGraphicsOpenGL {
   }
 
 
-  public void shape(PShape shape, float x, float y, float z, float c, float d, float e) {
+  public void shape(PShape shape, float x, float y, float z, 
+                    float c, float d, float e) {
     showDepthWarningXYZ("shape");
   }
 
@@ -216,7 +220,8 @@ public class PGraphics2D extends PGraphicsOpenGL {
   }
 
 
-  static protected PShape2D loadShapeImpl(PGraphics pg, String filename, String extension) {
+  static protected PShape2D loadShapeImpl(PGraphics pg, String filename, 
+                                          String extension) {
     PShapeSVG svg = null;
 
     if (extension.equals("svg")) {
@@ -224,7 +229,8 @@ public class PGraphics2D extends PGraphicsOpenGL {
 
     } else if (extension.equals("svgz")) {
       try {
-        InputStream input = new GZIPInputStream(pg.parent.createInput(filename));
+        InputStream input = 
+          new GZIPInputStream(pg.parent.createInput(filename));
         XML xml = new XML(PApplet.createReader(input));
         svg = new PShapeSVG(xml);
       } catch (Exception e) {
@@ -301,7 +307,8 @@ public class PGraphics2D extends PGraphicsOpenGL {
   }
 
 
-  static protected PShape2D createShapeImpl(PApplet parent, int kind, float... p) {
+  static protected PShape2D createShapeImpl(PApplet parent, int kind, 
+                                            float... p) {
     PShape2D shape = null;
     int len = p.length;
 

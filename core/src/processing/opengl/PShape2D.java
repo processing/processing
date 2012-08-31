@@ -52,7 +52,8 @@ public class PShape2D extends PShapeOpenGL {
       dest = PGraphics2D.createShapeImpl(parent, GROUP);
       PShape2D.copyGroup(parent, src, dest);      
     } else if (src.getFamily() == PRIMITIVE) {
-      dest = PGraphics2D.createShapeImpl(parent, src.getKind(), src.getParams());
+      dest = PGraphics2D.createShapeImpl(parent, src.getKind(), 
+                                         src.getParams());
       PShape.copyPrimitive(src, dest);
     } else if (src.getFamily() == GEOMETRY) {
       dest = PGraphics2D.createShapeImpl(parent, src.getKind());
