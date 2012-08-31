@@ -9,7 +9,7 @@ String name = "replace";
 int picAlpha = 255;
 
 void setup() {
-  size(800, 480, P3D);
+  size(640, 360, P3D);
   
   PFont font = createFont(PFont.list()[0], 20);
   textFont(font, 20);    
