@@ -113,7 +113,7 @@ public class PGL {
   /** Minimum stroke weight needed to apply the full path stroking
    * algorithm that properly generates caps and joins.
    */
-  protected static final float MIN_CAPS_JOINS_WEIGHT = 1.5f;
+  protected static final float MIN_CAPS_JOINS_WEIGHT = 2f;
 
   /** Maximum length of linear paths to be stroked with the
    * full algorithm that generates accurate caps and joins.
