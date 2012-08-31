@@ -1,6 +1,6 @@
 /**
- * Frames. 
- * by Andres Colubri
+ * Frames 
+ * by Andres Colubri. 
  * 
  * Moves through the video one frame at the time by using the
  * arrow keys. It estimates the frame counts using the framerate
