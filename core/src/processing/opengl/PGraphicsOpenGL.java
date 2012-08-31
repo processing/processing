@@ -2093,12 +2093,12 @@ public class PGraphicsOpenGL extends PGraphics {
       setFlushMode(FLUSH_CONTINUOUSLY);
     } else if (which == DISABLE_TEXTURE_CACHE) {
       flush();
-    } else if (which == DISABLE_PERSPECTIVE_CORRECTED_STROKE) {
+    } else if (which == DISABLE_STROKE_PERSPECTIVE) {
       if (0 < tessGeo.lineVertexCount && 0 < tessGeo.lineIndexCount) {
         // We flush the geometry using the previous line setting.
         flush();
       }
-    } else if (which == ENABLE_PERSPECTIVE_CORRECTED_STROKE) {
+    } else if (which == ENABLE_STROKE_PERSPECTIVE) {
       if (0 < tessGeo.lineVertexCount && 0 < tessGeo.lineIndexCount) {
         // We flush the geometry using the previous line setting.
         flush();
@@ -6845,7 +6845,7 @@ public class PGraphicsOpenGL extends PGraphics {
       float h = pgCurrent.viewport[3];
       setUniformValue(viewportLoc, x, y, w, h);
 
-      if (pgCurrent.hintEnabled(ENABLE_PERSPECTIVE_CORRECTED_STROKE)) {
+      if (pgCurrent.hintEnabled(ENABLE_STROKE_PERSPECTIVE)) {
         setUniformValue(perspectiveLoc, 1);
       } else {
         setUniformValue(perspectiveLoc, 0);
@@ -6962,7 +6962,7 @@ public class PGraphicsOpenGL extends PGraphics {
       float h = pgCurrent.viewport[3];
       setUniformValue(viewportLoc, x, y, w, h);
 
-      if (pgCurrent.hintEnabled(ENABLE_PERSPECTIVE_CORRECTED_STROKE)) {
+      if (pgCurrent.hintEnabled(ENABLE_STROKE_PERSPECTIVE)) {
         setUniformValue(perspectiveLoc, 1);
       } else {
         setUniformValue(perspectiveLoc, 0);

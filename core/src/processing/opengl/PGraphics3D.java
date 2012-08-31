@@ -36,7 +36,7 @@ public class PGraphics3D extends PGraphicsOpenGL {
 
   public PGraphics3D() {
     super();
-    hints[ENABLE_PERSPECTIVE_CORRECTED_STROKE] = true;
+    hints[ENABLE_STROKE_PERSPECTIVE] = true;
   }
   
   //////////////////////////////////////////////////////////////
