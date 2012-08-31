@@ -103,7 +103,8 @@ public class PGraphics3D extends PGraphicsOpenGL {
   }
 
 
-  static protected PShape loadShapeImpl(PGraphics pg, String filename, String ext) {
+  static protected PShape loadShapeImpl(PGraphics pg, String filename, 
+                                        String ext) {
     ArrayList<PVector> vertices = new ArrayList<PVector>(); 
     ArrayList<PVector> normals = new ArrayList<PVector>();
     ArrayList<PVector> textures = new ArrayList<PVector>();
@@ -210,7 +211,8 @@ public class PGraphics3D extends PGraphicsOpenGL {
       root.addChild(child);      
     }
     
-    pg.colorMode(prevColorMode, prevColorModeX, prevColorModeY, prevColorModeZ, prevColorModeA);    
+    pg.colorMode(prevColorMode, prevColorModeX, prevColorModeY, prevColorModeZ, 
+                 prevColorModeA);    
     pg.stroke = prevStroke;
     pg.textureMode = prevTextureMode; 
     
@@ -363,11 +365,12 @@ public class PGraphics3D extends PGraphicsOpenGL {
 
   
   static protected void parseOBJ(PApplet parent,
-                                 BufferedReader reader, ArrayList<PVector> vertices, 
-                                                        ArrayList<PVector> normals, 
-                                                        ArrayList<PVector> textures, 
-                                                        ArrayList<OBJFace> faces, 
-                                                        ArrayList<OBJMaterial> materials) {
+                                 BufferedReader reader, 
+                                 ArrayList<PVector> vertices, 
+                                 ArrayList<PVector> normals, 
+                                 ArrayList<PVector> textures, 
+                                 ArrayList<OBJFace> faces, 
+                                 ArrayList<OBJMaterial> materials) {
     Hashtable<String, Integer> mtlTable  = new Hashtable<String, Integer>();
     int mtlIdxCur = -1;
     boolean readv, readvn, readvt;
@@ -416,10 +419,11 @@ public class PGraphics3D extends PGraphicsOpenGL {
             normals.add(tempn);
             readvn = true;
           } else if (elements[0].equals("vt")) {
-            // uv, inverting v to take into account Processing's invertex Y axis with
-            // respect to OpenGL.
+            // uv, inverting v to take into account Processing's invertex Y axis 
+            // with respect to OpenGL.
             PVector tempv = new PVector(Float.valueOf(elements[1]).floatValue(), 
-                                        1 - Float.valueOf(elements[2]).floatValue());
+                                        1 - Float.valueOf(elements[2]).
+                                        floatValue());
             textures.add(tempv);
             readvt = true;
           } else if (elements[0].equals("o")) {
@@ -516,8 +520,9 @@ public class PGraphics3D extends PGraphicsOpenGL {
   
   
   static protected void parseMTL(PApplet parent,
-                                 BufferedReader reader, ArrayList<OBJMaterial> materials, 
-                                                        Hashtable<String, Integer> materialsHash) {
+                                 BufferedReader reader, 
+                                 ArrayList<OBJMaterial> materials, 
+                                 Hashtable<String, Integer> materialsHash) {
     try {
       String line;
       OBJMaterial currentMtl = null;
@@ -555,7 +560,8 @@ public class PGraphics3D extends PGraphicsOpenGL {
             currentMtl.ks.x = Float.valueOf(elements[1]).floatValue();
             currentMtl.ks.y = Float.valueOf(elements[2]).floatValue();
             currentMtl.ks.z = Float.valueOf(elements[3]).floatValue();
-          } else if ((elements[0].equals("d") || elements[0].equals("Tr")) && elements.length > 1) {
+          } else if ((elements[0].equals("d") || 
+                      elements[0].equals("Tr")) && elements.length > 1) {
             // Reading the alpha transparency.
             currentMtl.d = Float.valueOf(elements[1]).floatValue();
           } else if (elements[0].equals("Ns") && elements.length > 1) {
