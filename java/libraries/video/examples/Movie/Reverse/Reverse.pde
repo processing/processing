@@ -22,7 +22,7 @@ boolean once = true;
 void setup() {
   size(640, 360);
   background(0);
-  mov = new Movie(this, "transit.mov");
+  mov = new Movie(this, "transit.mkv");
   mov.play();
 }
 
