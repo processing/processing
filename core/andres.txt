@@ -28,9 +28,6 @@ X   http://code.google.com/p/processing/issues/detail?id=1145
     
 
 0208 todo pre-beta:
-_ Re-implement point rendering to use quads for round points: use fragment 
-_  shader to calculate pixels inside circle using the radius stored in point
-_  attributes.
 _ Back-buffer support in shaders: 
 _   http://code.google.com/p/processing/issues/detail?id=1169
 _ Rotation problem on Android: 
@@ -55,6 +52,10 @@ _   vertex in closed loops.
 _ Lines, points and fill geometry should be handled separately in raw output in 
 _   P2D.  
 _ Properly handle very large stroke paths in P3D (create new index cache, etc).
+_ Re-implement (maybe) point rendering to use quads for round points (3D): use  
+_  fragment shader to calculate pixels inside circle using the radius stored 
+_  in point attributes. Need to properly take care of aliasing at the border.
+
 
 processing-video todo (post-beta)
 _ New gstreamer binaries from GStreamer SDK:
