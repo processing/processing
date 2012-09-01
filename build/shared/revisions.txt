@@ -1,3 +1,65 @@
+PROCESSING 2.0a9 (REV 0208) - 1 September 2012
+
+As we inch closer to beta, a quick release for testing. 
+
+Plenty of video and OpenGL graphics fixes from Andres, and some functions
+disappearing due to cleanups by Ben. (Andres giveth, Ben taketh away). 
+
+Consider this one to be 'nightly build' quality. 
+
+[ general ] 
+
++ Help menu broken when Processing has spaces in its path name in 2.0a8
+  http://code.google.com/p/processing/issues/detail?id=1164
+
++ We now have repeating textures. Use textureWrap(CLAMP) (the usual
+  version) or textureWrap(REPEAT). If this feature is used for evil
+  and cheesiness, it will be removed in future releases. 
+  http://code.google.com/p/processing/issues/detail?id=94
+
++ Fix lights in GL renderers on low-end android devices.
+  http://code.google.com/p/processing/issues/detail?id=1145
+
++ Pixels for createGraphics() now transparent for P2D, P3D.
+  http://code.google.com/p/processing/issues/detail?id=1156
+
+[ video ] 
+
++ GettingStartedCapture in 2.0a8 launches X11 in Mountain Lion
+  http://code.google.com/p/processing/issues/detail?id=1191
+
++ Some videos were giving OpenGL error with P2D/P3D.
+  http://code.google.com/p/processing/issues/detail?id=1166
+
++ Jump movie to multiple of the framerate for better accuracy.
+  http://code.google.com/p/processing/issues/detail?id=1182
+
++ Movie functions not working correctly in setup().
+  http://code.google.com/p/processing/issues/detail?id=1181
+
++ Fix initialization API for Capture.
+  http://code.google.com/p/processing/issues/detail?id=1184
+
++ Some movie examples were not working in P2D, P3D in 2.0a8
+  http://code.google.com/p/processing/issues/detail?id=1178
+
++ Wrong resolutions reported by Capture.list()
+  http://code.google.com/p/processing/issues/detail?id=1192
+
+[ advanced ] 
+
++ Several constants moved out of PConstants and into PGraphics.
+
++ API cleanup to PShape and unapproved methods.
+
++ Synchronized Android sources a bit (PShape, PConstants, etc.)
+
++ Removed several video functions that weren't approved.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING 2.0a8 (REV 0207) - 5 August 2012
 
 A handful of bug fixes. Not as large a release as 2.0a7, but I decided 
