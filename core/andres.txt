@@ -25,13 +25,13 @@ X   http://code.google.com/p/processing/issues/detail?id=1192
 0208 android
 X Issues on low-end phones: 
 X   http://code.google.com/p/processing/issues/detail?id=1145    
+X Rotation problem on Android: 
+X   http://code.google.com/p/processing/issues/detail?id=1146
     
 
 0208 todo pre-beta:
 _ Back-buffer support in shaders: 
 _   http://code.google.com/p/processing/issues/detail?id=1169
-_ Rotation problem on Android: 
-_   http://code.google.com/p/processing/issues/detail?id=1146
 _ Decide on the names of the uniform and attribute variables in the shaders
 
 
