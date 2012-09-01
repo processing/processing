@@ -30,6 +30,7 @@
     <string>processing.icns</string>
     <key>CFBundleIdentifier</key> 
     <string>org.processing.app</string>
+
     <key>CFBundleDocumentTypes</key>
     <array>
       <dict>
@@ -54,6 +55,9 @@
         <string>Editor</string>
       </dict>
     </array>
+
+    <key>LSMinimumSystemVersion</key>
+    <string>10.6.8</string>
 
     <key>Java</key>
     <dict>
