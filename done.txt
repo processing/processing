@@ -1,3 +1,8 @@
+0208 pde (2.0a9)
+X Help menu broken when Processing has spaces in its path name in 2.0a8
+X   http://code.google.com/p/processing/issues/detail?id=1164
+
+
 0207 pde (2.0a8)
 X wordtreemap_sotu gives weird preproc error: wrong line, can't parse extends
 X   problem was 'extends' after 'implements'
