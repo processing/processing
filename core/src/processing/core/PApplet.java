@@ -5974,7 +5974,7 @@ public class PApplet extends Applet
 
     // safe to check for this as a url first. this will prevent online
     // access logs from being spammed with GET /sketchfolder/http://blahblah
-    if (filename.indexOf(":") != -1) {  // at least smells like URL
+    if (filename.contains(":")) {  // at least smells like URL
       try {
         URL url = new URL(filename);
         stream = url.openStream();
@@ -6708,9 +6708,12 @@ public class PApplet extends Applet
     File why = new File(where);
     if (why.isAbsolute()) return why;
 
-    String jarPath = getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+    String jarPath =
+      getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
     if (jarPath.contains("Contents/Resources/Java/")) {
-      File containingFolder = new File(jarPath).getParentFile();
+      // The path will be URL encoded (%20 for spaces) coming from above
+      // http://code.google.com/p/processing/issues/detail?id=1073
+      File containingFolder = new File(urlDecode(jarPath)).getParentFile();
       File dataFolder = new File(containingFolder, "data");
       return new File(dataFolder, where);
     }
@@ -14433,7 +14436,7 @@ public class PApplet extends Applet
    * @see PApplet#color(float, float, float, float)
    */
   static public int blendColor(int c1, int c2, int mode) {
-    return PGraphics.blendColor(c1, c2, mode);
+    return PImage.blendColor(c1, c2, mode);
   }
 
 
