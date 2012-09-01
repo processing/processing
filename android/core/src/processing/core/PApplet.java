@@ -9226,7 +9226,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
    * built with Processing.</P>
    */
   static public int blendColor(int c1, int c2, int mode) {
-    return PImage.blendColor(c1, c2, mode);
+    return PGraphics.blendColor(c1, c2, mode);
   }
 
 
