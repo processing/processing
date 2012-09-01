@@ -1,7 +1,8 @@
 0209 pde
-
+X require Mac OS X 10.6.8 as the minimum
 
 _ remove preferences that refer to applets
+_ remove applet folder from the Java stuff
 
 _ try to use appbundler to create a version that includes a JRE (JDK)
 _   http://java.net/downloads/appbundler/appbundler.html
@@ -914,7 +915,6 @@ _ put stdout/stderr into ~/Library/Logs
 _   and have a .log extension so it can be browsed properly
 _   need to make sure that it's ok to write to logs dir..
 _      probably being removed from future OS X versions
-_ try LSMinimumSystemVersion in Info.plist
 _ Horizontal two finger scroll doesn't work in OS X
 _   also applies to horizontal scrolling on the mouse
 _   http://code.google.com/p/processing/issues/detail?id=141
