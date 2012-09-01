@@ -835,7 +835,7 @@ public class PVector implements Serializable {
    * @brief Limit the magnitude of the vector
    */
   public void limit(float max) {
-    if (mag() > max) {
+    if (magSq() > max*max) {
       normalize();
       mult(max);
     }

@@ -1,6 +1,14 @@
 0209 pde
 X require Mac OS X 10.6.8 as the minimum
 
+_ example browser state (from Casey)
+_   http://code.google.com/p/processing/issues/detail?id=827
+
+_ replace/find need to dim out the buttons 
+_   i.e. hitting 'replace' multiple times causes weirdness
+_   and replace/replace+find buttons shouldn't be active until after a find
+_   http://code.google.com/p/processing/issues/detail?id=1056
+
 _ remove preferences that refer to applets
 _ remove applet folder from the Java stuff
 
