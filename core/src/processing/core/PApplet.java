@@ -11343,17 +11343,17 @@ public class PApplet extends Applet
    *
    * @webref shape:loading_displaying
    * @param shape the shape to display
-   * @param a x-coordinate of the shape
-   * @param b y-coordinate of the shape
+   * @param x x-coordinate of the shape
+   * @param y y-coordinate of the shape
    * @see PShape
    * @see PApplet#loadShape(String)
    * @see PGraphics#shapeMode(int)
    *
    * Convenience method to draw at a particular location.
    */
-  public void shape(PShape shape, float a, float b) {
-    if (recorder != null) recorder.shape(shape, a, b);
-    g.shape(shape, a, b);
+  public void shape(PShape shape, float x, float y) {
+    if (recorder != null) recorder.shape(shape, x, y);
+    g.shape(shape, x, y);
   }
 
 
@@ -14433,7 +14433,7 @@ public class PApplet extends Applet
    * @see PApplet#color(float, float, float, float)
    */
   static public int blendColor(int c1, int c2, int mode) {
-    return PImage.blendColor(c1, c2, mode);
+    return PGraphics.blendColor(c1, c2, mode);
   }
 
 
