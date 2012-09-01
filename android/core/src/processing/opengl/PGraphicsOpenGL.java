@@ -8412,7 +8412,7 @@ public class PGraphicsOpenGL extends PGraphics {
         PApplet.max(MIN_POINT_ACCURACY,
                     (int) (TWO_PI * PApplet.dist(sx1, sy1, sx2, sy2) / 
                     POINT_ACCURACY_FACTOR));
-      float inc = (float) PGraphicsOpenGL.SINCOS_LENGTH / accuracy;
+      float inc = (float) SINCOS_LENGTH / accuracy;
 
       if (fill) {
         addVertex(centerX, centerY, VERTEX);
@@ -8421,10 +8421,10 @@ public class PGraphicsOpenGL extends PGraphics {
       idx0 = pidx = idx = 0;
       float val = 0;
       for (int i = 0; i < accuracy; i++) {
-        idx = addVertex(centerX + PGraphicsOpenGL.cosLUT[(int) val] * radiusH,
-                        centerY + PGraphicsOpenGL.sinLUT[(int) val] * radiusV,
+        idx = addVertex(centerX + cosLUT[(int) val] * radiusH,
+                        centerY + sinLUT[(int) val] * radiusV,
                         VERTEX);
-        val = (val + inc) % PGraphicsOpenGL.SINCOS_LENGTH;
+        val = (val + inc) % SINCOS_LENGTH;
 
         if (0 < i) {
           if (stroke) addEdge(pidx, idx, i == 1, false);
@@ -8435,8 +8435,8 @@ public class PGraphicsOpenGL extends PGraphics {
         pidx = idx;
       }
       // Back to the beginning
-      addVertex(centerX + PGraphicsOpenGL.cosLUT[0] * radiusH,
-                centerY + PGraphicsOpenGL.sinLUT[0] * radiusV,
+      addVertex(centerX + cosLUT[0] * radiusH,
+                centerY + sinLUT[0] * radiusV,
                 VERTEX);
       if (stroke) addEdge(idx, idx0, false, true);
     }

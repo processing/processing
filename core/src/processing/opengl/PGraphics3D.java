@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 
 import processing.core.PApplet;
+import processing.core.PConstants;
 import processing.core.PGraphics;
 import processing.core.PImage;
 import processing.core.PShape;
@@ -257,8 +258,8 @@ public class PGraphics3D extends PGraphicsOpenGL {
 
   static protected PShape3D createShapeImpl(PApplet parent, int type) {
     PShape3D shape = null;
-    if (type == PShape.GROUP) {
-      shape = new PShape3D(parent, PShape.GROUP);
+    if (type == PConstants.GROUP) {
+      shape = new PShape3D(parent, PConstants.GROUP);
     } else if (type == PShape.PATH) {
       shape = new PShape3D(parent, PShape.PATH);
     } else if (type == POINTS) {

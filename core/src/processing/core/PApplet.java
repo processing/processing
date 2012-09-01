@@ -14433,7 +14433,7 @@ public class PApplet extends Applet
    * @see PApplet#color(float, float, float, float)
    */
   static public int blendColor(int c1, int c2, int mode) {
-    return PGraphics.blendColor(c1, c2, mode);
+    return PImage.blendColor(c1, c2, mode);
   }
 
 

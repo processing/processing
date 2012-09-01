@@ -26,6 +26,22 @@ import java.util.HashMap;
 
 
 /**
+   * ( begin auto-generated from PShape.xml )
+   *
+   * Datatype for storing shapes. Processing can currently load and display
+   * SVG (Scalable Vector Graphics) shapes. Before a shape is used, it must
+   * be loaded with the <b>loadShape()</b> function. The <b>shape()</b>
+   * function is used to draw the shape to the display window. The
+   * <b>PShape</b> object contain a group of methods, linked below, that can
+   * operate on the shape data.
+   * <br /><br />
+   * The <b>loadShape()</b> function supports SVG files created with Inkscape
+   * and Adobe Illustrator. It is not a full SVG implementation, but offers
+   * some straightforward support for handling vector data.
+   *
+   * ( end auto-generated )
+ * <h3>Advanced</h3>
+ *
  * In-progress class to handle shape data, currently to be considered of
  * alpha or beta quality. Major structural work may be performed on this class
  * after the release of Processing 1.0. Such changes may include:
@@ -50,14 +66,22 @@ import java.util.HashMap;
  * <p>Library developers are encouraged to create PShape objects when loading
  * shape data, so that they can eventually hook into the bounty that will be
  * the PShape interface, and the ease of loadShape() and shape().</p>
+ *
+ * @webref shape
+ * @usage Web &amp; Application
+ * @see PApplet#shape(PShape)
+ * @see PApplet#loadShape(String)
+ * @see PApplet#shapeMode(int)
+ * @instanceName sh any variable of type PShape
  */
 public class PShape implements PConstants {
 
   protected String name;
   protected HashMap<String,PShape> nameTable;
 
-  /** Generic, only draws its child objects. */
-  static public final int GROUP = 0;
+//  /** Generic, only draws its child objects. */
+//  static public final int GROUP = 0;
+  // GROUP now inherited from PConstants
   /** A line, ellipse, arc, image, etc. */
   static public final int PRIMITIVE = 1;
   /** A series of vertex, curveVertex, and bezierVertex calls. */
@@ -81,14 +105,24 @@ public class PShape implements PConstants {
   //protected float width;
   //protected float height;
   /**
+   * ( begin auto-generated from PShape_width.xml )
+   *
    * The width of the PShape document.
-   * @webref
+   *
+   * ( end auto-generated )
+   * @webref pshape:field
+   * @usage web_application
    * @brief     Shape document width
    */
   public float width;
   /**
-   * The width of the PShape document.
-   * @webref
+   * ( begin auto-generated from PShape_height.xml )
+   *
+   * The height of the PShape document.
+   *
+   * ( end auto-generated )
+   * @webref pshape:field
+   * @usage web_application
    * @brief     Shape document height
    */
   public float height;
@@ -117,7 +151,7 @@ public class PShape implements PConstants {
   /** Temporary toggle for whether styles should be honored. */
   protected boolean style = true;
 
-  /** For primitive shapes in particular, parms like x/y/w/h or x1/y1/x2/y2. */
+  /** For primitive shapes in particular, params like x/y/w/h or x1/y1/x2/y2. */
   protected float[] params;
 
   protected int vertexCount;
@@ -127,15 +161,6 @@ public class PShape implements PConstants {
    * two variables.
    */
   protected float[][] vertices;
-
-  static public final int VERTEX = 0;
-  static public final int BEZIER_VERTEX = 1;
-  static public final int QUAD_BEZIER_VERTEX = 2;
-  static public final int CURVE_VERTEX = 3;
-  static public final int BREAK = 4;
-
-  // should this be called vertices (consistent with PGraphics internals)
-  // or does that hurt flexibility?
 
   protected PShape parent;
   protected int childCount;
@@ -178,6 +203,11 @@ public class PShape implements PConstants {
   /** True if colorMode(RGB, 255) */
   boolean colorModeDefault; // = true;
   
+
+  // should this be called vertices (consistent with PGraphics internals)
+  // or does that hurt flexibility?
+
+
   // POINTS, LINES, xLINE_STRIP, xLINE_LOOP
   // TRIANGLES, TRIANGLE_STRIP, TRIANGLE_FAN
   // QUADS, QUAD_STRIP
@@ -215,6 +245,9 @@ public class PShape implements PConstants {
   }
 
 
+/**
+ * @nowebref
+ */
   public PShape(int family) {
     this.family = family;
   }
@@ -235,11 +268,18 @@ public class PShape implements PConstants {
   }
 
   /**
-   * Returns a boolean value "true" if the image is set to be visible, "false" if not. This is modified with the <b>setVisible()</b> parameter.
-   * <br><br>The visibility of a shape is usually controlled by whatever program created the SVG file.
-   * For instance, this parameter is controlled by showing or hiding the shape in the layers palette in Adobe Illustrator.
+   * ( begin auto-generated from PShape_isVisible.xml )
    *
-   * @webref
+   * Returns a boolean value "true" if the image is set to be visible,
+   * "false" if not. This is modified with the <b>setVisible()</b> parameter.
+   * <br/> <br/>
+   * The visibility of a shape is usually controlled by whatever program
+   * created the SVG file. For instance, this parameter is controlled by
+   * showing or hiding the shape in the layers palette in Adobe Illustrator.
+   *
+   * ( end auto-generated )
+   * @webref pshape:method
+   * @usage web_application
    * @brief Returns a boolean value "true" if the image is set to be visible, "false" if not
    */
   public boolean isVisible() {
@@ -247,12 +287,20 @@ public class PShape implements PConstants {
   }
 
   /**
-   * Sets the shape to be visible or invisible. This is determined by the value of the <b>visible</b> parameter.
-   * <br><br>The visibility of a shape is usually controlled by whatever program created the SVG file.
-   * For instance, this parameter is controlled by showing or hiding the shape in the layers palette in Adobe Illustrator.
-   * @param visible "false" makes the shape invisible and "true" makes it visible
-   * @webref
+   * ( begin auto-generated from PShape_setVisible.xml )
+   *
+   * Sets the shape to be visible or invisible. This is determined by the
+   * value of the <b>visible</b> parameter.
+   * <br/> <br/>
+   * The visibility of a shape is usually controlled by whatever program
+   * created the SVG file. For instance, this parameter is controlled by
+   * showing or hiding the shape in the layers palette in Adobe Illustrator.
+   *
+   * ( end auto-generated )
+   * @webref pshape:mathod
+   * @usage web_application
    * @brief Sets the shape to be visible or invisible
+   * @param visible "false" makes the shape invisible and "true" makes it visible
    */
   public void setVisible(boolean visible) {
     this.visible = visible;
@@ -260,12 +308,19 @@ public class PShape implements PConstants {
 
 
   /**
-   * Disables the shape's style data and uses Processing's current styles. Styles include attributes such as colors, stroke weight, and stroke joints.
-   *  =advanced
+   * ( begin auto-generated from PShape_disableStyle.xml )
+   *
+   * Disables the shape's style data and uses Processing's current styles.
+   * Styles include attributes such as colors, stroke weight, and stroke
+   * joints.
+   *
+   * ( end auto-generated )
+   *  <h3>Advanced</h3>
    * Overrides this shape's style information and uses PGraphics styles and
    * colors. Identical to ignoreStyles(true). Also disables styles for all
    * child shapes.
-   * @webref
+   * @webref pshape:method
+   * @usage web_application
    * @brief     Disables the shape's style data and uses Processing styles
    */
   public void disableStyle() {
@@ -278,8 +333,16 @@ public class PShape implements PConstants {
 
 
   /**
-   * Enables the shape's style data and ignores Processing's current styles. Styles include attributes such as colors, stroke weight, and stroke joints.
-   * @webref
+   * ( begin auto-generated from PShape_enableStyle.xml )
+   *
+   * Enables the shape's style data and ignores Processing's current styles.
+   * Styles include attributes such as colors, stroke weight, and stroke
+   * joints.
+   *
+   * ( end auto-generated )
+   *
+   * @webref pshape:method
+   * @usage web_application
    * @brief Enables the shape's style data and ignores the Processing styles
    */
   public void enableStyle() {
@@ -331,13 +394,14 @@ public class PShape implements PConstants {
   }
 
   
-  // TODO: need to discuss about these two (four).
-  public PVector getTop() {
+
+  // TODO unapproved
+  protected PVector getTop() {
     return getTop(null);
   }  
   
   
-  public PVector getTop(PVector top) {
+  protected PVector getTop(PVector top) {
     if (top == null) {
       top = new PVector();
     }
@@ -345,12 +409,12 @@ public class PShape implements PConstants {
   }
 
   
-  public PVector getBottom() {
+  protected PVector getBottom() {
     return getBottom(null);
   }  
   
   
-  public PVector getBottom(PVector bottom) {
+  protected PVector getBottom(PVector bottom) {
     if (bottom == null) {
       bottom = new PVector();
     }    
@@ -374,6 +438,15 @@ public class PShape implements PConstants {
   }
 
   
+  /**
+   * Return true if this shape requires rendering through OpenGL. Defaults to false.
+   */
+  // TODO unapproved
+  public boolean isGL() {
+    return false;
+  }
+
+
   ///////////////////////////////////////////////////////////  
   
   //
@@ -386,7 +459,8 @@ public class PShape implements PConstants {
   public void noTexture() {
   }  
     
-  public void solid(boolean solid) {
+  // TODO unapproved
+  protected void solid(boolean solid) {
   }
   
   public void beginContour() {
@@ -418,7 +492,8 @@ public class PShape implements PConstants {
   
   //////////////////////////////////////////////////////////////
 
-  // Stroke cap/join/weight set/update
+  // STROKE CAP/JOIN/WEIGHT
+
 
   public void strokeWeight(float weight) {
   }
@@ -431,7 +506,7 @@ public class PShape implements PConstants {
 
   //////////////////////////////////////////////////////////////
 
-  // Fill set/update
+  // FILL COLOR
 
   public void noFill() {
   }
@@ -456,7 +531,7 @@ public class PShape implements PConstants {
 
   //////////////////////////////////////////////////////////////
 
-  // Stroke (color) set/update 
+  // STROKE COLOR
 
   public void noStroke() {
   }
@@ -481,7 +556,7 @@ public class PShape implements PConstants {
 
   //////////////////////////////////////////////////////////////
 
-  // Tint set/update 
+  // TINT COLOR
 
 
   public void noTint() {
@@ -667,7 +742,7 @@ public class PShape implements PConstants {
   }
 
 
-  public void post(PGraphics g) {
+  protected void post(PGraphics g) {
 //    for (int i = 0; i < childCount; i++) {
 //      children[i].draw(g);
 //    }
@@ -701,7 +776,8 @@ public class PShape implements PConstants {
   // Shape copy
   
   
-  static public PShape createShape(PApplet parent, PShape src) {
+  // TODO unapproved
+  static protected PShape createShape(PApplet parent, PShape src) {
     PShape dest = null;
     if (src.family == GROUP) {
       dest = parent.createShape(GROUP);
@@ -721,7 +797,8 @@ public class PShape implements PConstants {
   }
 
   
-  static public void copyGroup(PApplet parent, PShape src, PShape dest) {
+  // TODO unapproved
+  static protected void copyGroup(PApplet parent, PShape src, PShape dest) {
     copyMatrix(src, dest);
     copyStyles(src, dest);
     copyImage(src, dest);
@@ -732,14 +809,16 @@ public class PShape implements PConstants {
   }
   
   
-  static public void copyPrimitive(PShape src, PShape dest) {
+  // TODO unapproved
+  static protected void copyPrimitive(PShape src, PShape dest) {
     copyMatrix(src, dest);    
     copyStyles(src, dest);
     copyImage(src, dest);
   }
   
   
-  static public void copyGeometry(PShape src, PShape dest) {
+  // TODO unapproved
+  static protected void copyGeometry(PShape src, PShape dest) {
     copyMatrix(src, dest);    
     copyStyles(src, dest);
     copyImage(src, dest);
@@ -754,13 +833,17 @@ public class PShape implements PConstants {
 //        s.emissive(vert[ER] * 255, vert[EG] * 255, vert[EB] * 255);
 //        s.shininess(vert[SHINE]);
         
-        dest.normal(vert[NX], vert[NY], vert[NZ]);
-        dest.vertex(vert[X], vert[Y], vert[Z], vert[U], vert[V]);        
+        dest.normal(vert[PGraphics.NX],
+                    vert[PGraphics.NY],
+                    vert[PGraphics.NZ]);
+        dest.vertex(vert[X], vert[Y], vert[Z],
+                    vert[PGraphics.U],
+                    vert[PGraphics.V]);
       }
     } else {
       for (int i = 0; i < src.vertexCount; i++) {
         float[] vert = src.vertices[i];
-        if (vert[PGraphics.Z] == 0) {
+        if (vert[Z] == 0) {
           dest.vertex(vert[X], vert[Y]);
         } else {
           dest.vertex(vert[X], vert[Y], vert[Z]);
@@ -772,7 +855,8 @@ public class PShape implements PConstants {
   }
   
   
-  static public void copyPath(PShape src, PShape dest) {
+  // TODO unapproved
+  static protected void copyPath(PShape src, PShape dest) {
     copyMatrix(src, dest);    
     copyStyles(src, dest);
     copyImage(src, dest);
@@ -781,13 +865,16 @@ public class PShape implements PConstants {
   }
   
   
-  static public void copyMatrix(PShape src, PShape dest) {
+  // TODO unapproved
+  static protected void copyMatrix(PShape src, PShape dest) {
     if (src.matrix != null) {
       dest.applyMatrix(src.matrix);  
     }    
   }
   
-  static public void copyStyles(PShape src, PShape dest) {
+
+  // TODO unapproved
+  static protected void copyStyles(PShape src, PShape dest) {
     if (src.stroke) {
       dest.stroke = true;
       dest.strokeColor = src.strokeColor;
@@ -807,7 +894,8 @@ public class PShape implements PConstants {
   } 
   
   
-  static public void copyImage(PShape src, PShape dest) {
+  // TODO unapproved
+  static protected void copyImage(PShape src, PShape dest) {
     if (src.image != null) {
       dest.texture(src.image);
     }    
@@ -819,7 +907,7 @@ public class PShape implements PConstants {
 
   /**
    * Called by the following (the shape() command adds the g)
-   * PShape s = loadShapes("blah.svg");
+   * PShape s = loadShape("blah.svg");
    * shape(s);
    */
   public void draw(PGraphics g) {
@@ -910,6 +998,7 @@ public class PShape implements PConstants {
 
 
   protected void drawGeometry(PGraphics g) {
+    // get cache object using g.
     g.beginShape(kind);
     if (style) {
       for (int i = 0; i < vertexCount; i++) {
@@ -918,7 +1007,7 @@ public class PShape implements PConstants {
     } else {
       for (int i = 0; i < vertexCount; i++) {
         float[] vert = vertices[i];
-        if (vert[PGraphics.Z] == 0) {
+        if (vert[Z] == 0) {
           g.vertex(vert[X], vert[Y]);
         } else {
           g.vertex(vert[X], vert[Y], vert[Z]);
@@ -989,6 +1078,7 @@ public class PShape implements PConstants {
     // http://dev.processing.org/bugs/show_bug.cgi?id=982
     if (vertices == null) return;
 
+    boolean insideContour = false;
     g.beginShape();
 
     if (vertexCodeCount == 0) {  // each point is a simple vertex
@@ -1043,9 +1133,14 @@ public class PShape implements PConstants {
           case CURVE_VERTEX:
             g.curveVertex(vertices[index][X], vertices[index][Y]);
             index++;
+            break;
 
           case BREAK:
-            g.breakShape();
+            if (insideContour) {
+              g.endContour();
+            }
+            g.beginContour();
+            insideContour = true;
           }
         }
       } else {  // drawing a 3D path
@@ -1077,12 +1172,20 @@ public class PShape implements PConstants {
           case CURVE_VERTEX:
             g.curveVertex(vertices[index][X], vertices[index][Y], vertices[index][Z]);
             index++;
+            break;
 
           case BREAK:
-            g.breakShape();
+            if (insideContour) {
+              g.endContour();
+            }
+            g.beginContour();
+            insideContour = true;
+          }
           }
         }
       }
+    if (insideContour) {
+      g.endContour();
     }
     g.endShape(close ? CLOSE : OPEN);
   }
@@ -1107,7 +1210,16 @@ public class PShape implements PConstants {
 
 
   /**
+   * ( begin auto-generated from PShape_getChild.xml )
    *
+   * Extracts a child shape from a parent shape. Specify the name of the
+   * shape with the <b>target</b> parameter. The shape is returned as a
+   * <b>PShape</b> object, or <b>null</b> is returned if there is an error.
+   *
+   * ( end auto-generated )
+   * @webref pshape:method
+   * @usage web_application
+   * @brief Returns a child element of a shape as a PShape object
    * @param index the layer position of the shape to get
    */
   public PShape getChild(int index) {
@@ -1116,11 +1228,7 @@ public class PShape implements PConstants {
 
 
   /**
-   * Extracts a child shape from a parent shape. Specify the name of the shape with the <b>target</b> parameter.
-   * The shape is returned as a <b>PShape</b> object, or <b>null</b> is returned if there is an error.
    * @param target the name of the shape to get
-   * @webref
-   * @brief Returns a child element of a shape as a PShape object
    */
   public PShape getChild(String target) {
     if (name != null && name.equals(target)) {
@@ -1241,10 +1349,6 @@ public class PShape implements PConstants {
   }
 
 
-  public void updateRoot(PShape root) {    
-  }
-
-  
   public PShape getTessellation() {
     return null;
   }
@@ -1283,7 +1387,7 @@ public class PShape implements PConstants {
   }
 
   
-  public void setParams(float[] source) {
+  protected void setParams(float[] source) {
     if (params == null) {
       params = new float[source.length];  
     }    
@@ -1300,7 +1404,7 @@ public class PShape implements PConstants {
   }
   
   
-  public void setPath(int vcount, float[][] verts, int ccount, int[] codes) {
+  protected void setPath(int vcount, float[][] verts, int ccount, int[] codes) {
     if (verts == null || verts.length < vcount) return;
     if (0 < ccount && (codes == null || codes.length < ccount)) return;
       
@@ -1357,7 +1461,8 @@ public class PShape implements PConstants {
 
   
   public void setVertex(int index, float x, float y) {
-    setVertex(index, x, y, 0);
+    vertices[index][X] = x;
+    vertices[index][Y] = y;
   }
   
   
@@ -1368,6 +1473,13 @@ public class PShape implements PConstants {
   }
   
   
+  public void setVertex(int index, PVector vec) {
+    vertices[index][X] = vec.x;
+    vertices[index][Y] = vec.y;
+    vertices[index][Z] = vec.z;
+  }
+
+
   public PVector getNormal(int index) {
     return getNormal(index, null);
   }
@@ -1377,127 +1489,146 @@ public class PShape implements PConstants {
     if (vec == null) {
       vec = new PVector();
     }
-    vec.x = vertices[index][NX];
-    vec.y = vertices[index][NY];
-    vec.z = vertices[index][NZ];
+    vec.x = vertices[index][PGraphics.NX];
+    vec.y = vertices[index][PGraphics.NY];
+    vec.z = vertices[index][PGraphics.NZ];
     return vec;    
   }
   
   
   public float getNormalX(int index) {
-    return vertices[index][NX];
+    return vertices[index][PGraphics.NX];
   }
   
 
   public float getNormalY(int index) {
-    return vertices[index][NY];
+    return vertices[index][PGraphics.NY];
   }
   
   
   public float getNormalZ(int index) {
-    return vertices[index][NZ];  
+    return vertices[index][PGraphics.NZ];
   }    
   
 
   public void setNormal(int index, float nx, float ny, float nz) {
-    vertices[index][NX] = nx;
-    vertices[index][NY] = ny;
-    vertices[index][NZ] = nz;    
+    vertices[index][PGraphics.NX] = nx;
+    vertices[index][PGraphics.NY] = ny;
+    vertices[index][PGraphics.NZ] = nz;
   }
   
   
   public float getTextureU(int index) {
-    return vertices[index][U];
+    return vertices[index][PGraphics.U];
   }
   
   
   public float getTextureV(int index) {
-    return vertices[index][V];
+    return vertices[index][PGraphics.V];
   }  
   
   
   public void setTextureUV(int index, float u, float v) {
-    vertices[index][U] = u;
-    vertices[index][V] = v;
+    vertices[index][PGraphics.U] = u;
+    vertices[index][PGraphics.V] = v;
   }
   
   
   public int getFill(int index) {
-    int a = (int) (vertices[index][A] * 255);
-    int r = (int) (vertices[index][R] * 255);
-    int g = (int) (vertices[index][G] * 255);
-    int b = (int) (vertices[index][B] * 255);                                        
+    int a = (int) (vertices[index][PGraphics.A] * 255);
+    int r = (int) (vertices[index][PGraphics.R] * 255);
+    int g = (int) (vertices[index][PGraphics.G] * 255);
+    int b = (int) (vertices[index][PGraphics.B] * 255);
     return (a << 24) | (r << 16) | (g << 8) | b;
   }
 
   
   public void setFill(int index, int fill) {
-    vertices[index][A] = ((fill >> 24) & 0xFF) / 255.0f; 
-    vertices[index][R] = ((fill >> 16) & 0xFF) / 255.0f;
-    vertices[index][G] = ((fill >>  8) & 0xFF) / 255.0f;
-    vertices[index][B] = ((fill >>  0) & 0xFF) / 255.0f;  
+    vertices[index][PGraphics.A] = ((fill >> 24) & 0xFF) / 255.0f;
+    vertices[index][PGraphics.R] = ((fill >> 16) & 0xFF) / 255.0f;
+    vertices[index][PGraphics.G] = ((fill >>  8) & 0xFF) / 255.0f;
+    vertices[index][PGraphics.B] = ((fill >>  0) & 0xFF) / 255.0f;
   }  
 
   
   public int getStroke(int index) {
-    int a = (int) (vertices[index][SA] * 255);
-    int r = (int) (vertices[index][SR] * 255);
-    int g = (int) (vertices[index][SG] * 255);
-    int b = (int) (vertices[index][SB] * 255);                                        
+    int a = (int) (vertices[index][PGraphics.SA] * 255);
+    int r = (int) (vertices[index][PGraphics.SR] * 255);
+    int g = (int) (vertices[index][PGraphics.SG] * 255);
+    int b = (int) (vertices[index][PGraphics.SB] * 255);
     return (a << 24) | (r << 16) | (g << 8) | b;
   }
 
   
   public void setStroke(int index, int stroke) {
-    vertices[index][SA] = ((stroke >> 24) & 0xFF) / 255.0f; 
-    vertices[index][SR] = ((stroke >> 16) & 0xFF) / 255.0f;
-    vertices[index][SG] = ((stroke >>  8) & 0xFF) / 255.0f;
-    vertices[index][SB] = ((stroke >>  0) & 0xFF) / 255.0f;   
+    vertices[index][PGraphics.SA] = ((stroke >> 24) & 0xFF) / 255.0f;
+    vertices[index][PGraphics.SR] = ((stroke >> 16) & 0xFF) / 255.0f;
+    vertices[index][PGraphics.SG] = ((stroke >>  8) & 0xFF) / 255.0f;
+    vertices[index][PGraphics.SB] = ((stroke >>  0) & 0xFF) / 255.0f;
   }  
   
   
-  public float getStrokeWeight(int index) {
-    return vertices[index][SW];
+  protected float getStrokeWeight(int index) {
+    return vertices[index][PGraphics.SW];
   }
   
 
-  public void setStrokeWeight(int index, float weight) {
-    vertices[index][SW] = weight;
+  protected void setStrokeWeight(int index, float weight) {
+    vertices[index][PGraphics.SW] = weight;
   }  
   
   
-  public int getAmbient(int index) {
-    return 0;
+  protected int getAmbient(int index) {
+    int r = (int) (vertices[index][PGraphics.AR] * 255);
+    int g = (int) (vertices[index][PGraphics.AG] * 255);
+    int b = (int) (vertices[index][PGraphics.AB] * 255);
+    return 0xff000000 | (r << 16) | (g << 8) | b;
   }
 
   
-  public void setAmbient(int index, int ambient) {
+  protected void setAmbient(int index, int ambient) {
+    vertices[index][PGraphics.AR] = ((ambient >> 16) & 0xFF) / 255.0f;
+    vertices[index][PGraphics.AG] = ((ambient >>  8) & 0xFF) / 255.0f;
+    vertices[index][PGraphics.AB] = ((ambient >>  0) & 0xFF) / 255.0f;
   }    
   
-  public int getSpecular(int index) {
-    return 0;
+  protected int getSpecular(int index) {
+    int r = (int) (vertices[index][PGraphics.SPR] * 255);
+    int g = (int) (vertices[index][PGraphics.SPG] * 255);
+    int b = (int) (vertices[index][PGraphics.SPB] * 255);
+    return 0xff000000 | (r << 16) | (g << 8) | b;
   }
 
   
-  public void setSpecular(int index, int specular) {
+  protected void setSpecular(int index, int specular) {
+    vertices[index][PGraphics.SPR] = ((specular >> 16) & 0xFF) / 255.0f;
+    vertices[index][PGraphics.SPG] = ((specular >>  8) & 0xFF) / 255.0f;
+    vertices[index][PGraphics.SPB] = ((specular >>  0) & 0xFF) / 255.0f;
   }    
     
   
-  public int getEmissive(int index) {
-    return 0;
+  protected int getEmissive(int index) {
+    int r = (int) (vertices[index][PGraphics.ER] * 255);
+    int g = (int) (vertices[index][PGraphics.EG] * 255);
+    int b = (int) (vertices[index][PGraphics.EB] * 255);
+    return 0xff000000 | (r << 16) | (g << 8) | b;
   }
 
   
-  public void setEmissive(int index, int emissive) {
+  protected void setEmissive(int index, int emissive) {
+    vertices[index][PGraphics.ER] = ((emissive >> 16) & 0xFF) / 255.0f;
+    vertices[index][PGraphics.EG] = ((emissive >>  8) & 0xFF) / 255.0f;
+    vertices[index][PGraphics.EB] = ((emissive >>  0) & 0xFF) / 255.0f;
   }     
   
   
-  public float getShininess(int index) {
-    return 0;
+  protected float getShininess(int index) {
+    return vertices[index][PGraphics.SHINE];
   }
 
   
-  public void setShininess(int index, float shine) {
+  protected void setShininess(int index, float shine) {
+    vertices[index][PGraphics.SHINE] = shine;
   }
   
   
@@ -1557,32 +1688,41 @@ public class PShape implements PConstants {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  public void center(float cx, float cy) {
-    
-  }
-  
-  public void center(float cx, float cy, float cz) {
-    
-  }  
-  
   // translate, rotate, scale, apply (no push/pop)
   //   these each call matrix.translate, etc
   // if matrix is null when one is called,
   //   it is created and set to identity
 
+
+/**
+   * ( begin auto-generated from PShape_translate.xml )
+   *
+   * Specifies an amount to displace the shape. The <b>x</b> parameter
+   * specifies left/right translation, the <b>y</b> parameter specifies
+   * up/down translation, and the <b>z</b> parameter specifies translations
+   * toward/away from the screen. Subsequent calls to the method accumulates
+   * the effect. For example, calling <b>translate(50, 0)</b> and then
+   * <b>translate(20, 0)</b> is the same as <b>translate(70, 0)</b>. This
+   * transformation is applied directly to the shape, it's not refreshed each
+   * time <b>draw()</b> is run.
+   * <br /><br />
+   * Using this method with the <b>z</b> parameter requires using the P3D
+   * parameter in combination with size.
+   *
+   * ( end auto-generated )
+   * @webref pshape:method
+   * @usage web_application
+   * @brief Displaces the shape
+   * @param tx left/right translation
+   * @param ty up/down translation
+   */
   public void translate(float tx, float ty) {
     checkMatrix(2);
     matrix.translate(tx, ty);
   }
 
   /**
-   * Specifies an amount to displace the shape. The <b>x</b> parameter specifies left/right translation, the <b>y</b> parameter specifies up/down translation, and the <b>z</b> parameter specifies translations toward/away from the screen. Subsequent calls to the method accumulates the effect. For example, calling <b>translate(50, 0)</b> and then <b>translate(20, 0)</b> is the same as <b>translate(70, 0)</b>. This transformation is applied directly to the shape, it's not refreshed each time <b>draw()</b> is run.
-   * <br><br>Using this method with the <b>z</b> parameter requires using the P3D or OPENGL parameter in combination with size.
-   * @webref
-   * @param tx left/right translation
-   * @param ty up/down translation
    * @param tz forward/back translation
-   * @brief Displaces the shape
    */
   public void translate(float tx, float ty, float tz) {
     checkMatrix(3);
@@ -1590,28 +1730,58 @@ public class PShape implements PConstants {
   }
 
   /**
-   * Rotates a shape around the x-axis the amount specified by the <b>angle</b> parameter. Angles should be specified in radians (values from 0 to TWO_PI) or converted to radians with the <b>radians()</b> method.
-   * <br><br>Shapes are always rotated around the upper-left corner of their bounding box. Positive numbers rotate objects in a clockwise direction.
-   * Subsequent calls to the method accumulates the effect. For example, calling <b>rotateX(HALF_PI)</b> and then <b>rotateX(HALF_PI)</b> is the same as <b>rotateX(PI)</b>.
-   * This transformation is applied directly to the shape, it's not refreshed each time <b>draw()</b> is run.
-   * <br><br>This method requires a 3D renderer. You need to pass P3D or OPENGL as a third parameter into the <b>size()</b> method as shown in the example above.
-   * @param angle angle of rotation specified in radians
-   * @webref
+   * ( begin auto-generated from PShape_rotateX.xml )
+   *
+   * Rotates a shape around the x-axis the amount specified by the
+   * <b>angle</b> parameter. Angles should be specified in radians (values
+   * from 0 to TWO_PI) or converted to radians with the <b>radians()</b> method.
+   * <br /><br />
+   * Shapes are always rotated around the upper-left corner of their bounding
+   * box. Positive numbers rotate objects in a clockwise direction.
+   * Subsequent calls to the method accumulates the effect. For example,
+   * calling <b>rotateX(HALF_PI)</b> and then <b>rotateX(HALF_PI)</b> is the
+   * same as <b>rotateX(PI)</b>. This transformation is applied directly to
+   * the shape, it's not refreshed each time <b>draw()</b> is run.
+   * <br /><br />
+   * This method requires a 3D renderer. You need to use P3D as a third
+   * parameter for the <b>size()</b> function as shown in the example above.
+   *
+   * ( end auto-generated )
+   * @webref pshape:method
+   * @usage web_application
    * @brief Rotates the shape around the x-axis
+   * @param angle angle of rotation specified in radians
    */
   public void rotateX(float angle) {
     rotate(angle, 1, 0, 0);
   }
 
   /**
-   * Rotates a shape around the y-axis the amount specified by the <b>angle</b> parameter. Angles should be specified in radians (values from 0 to TWO_PI) or converted to radians with the <b>radians()</b> method.
-   * <br><br>Shapes are always rotated around the upper-left corner of their bounding box. Positive numbers rotate objects in a clockwise direction.
-   * Subsequent calls to the method accumulates the effect. For example, calling <b>rotateY(HALF_PI)</b> and then <b>rotateY(HALF_PI)</b> is the same as <b>rotateY(PI)</b>.
-   * This transformation is applied directly to the shape, it's not refreshed each time <b>draw()</b> is run.
-   * <br><br>This method requires a 3D renderer. You need to pass P3D or OPENGL as a third parameter into the <b>size()</b> method as shown in the example above.
-   * @param angle angle of rotation specified in radians
-   * @webref
+   * ( begin auto-generated from PShape_rotateY.xml )
+   *
+   * Rotates a shape around the y-axis the amount specified by the
+   * <b>angle</b> parameter. Angles should be specified in radians (values
+   * from 0 to TWO_PI) or converted to radians with the <b>radians()</b> method.
+   * <br /><br />
+   * Shapes are always rotated around the upper-left corner of their bounding
+   * box. Positive numbers rotate objects in a clockwise direction.
+   * Subsequent calls to the method accumulates the effect. For example,
+   * calling <b>rotateY(HALF_PI)</b> and then <b>rotateY(HALF_PI)</b> is the
+   * same as <b>rotateY(PI)</b>. This transformation is applied directly to
+   * the shape, it's not refreshed each time <b>draw()</b> is run.
+   * <br /><br />
+   * This method requires a 3D renderer. You need to use P3D as a third
+   * parameter for the <b>size()</b> function as shown in the example above.
+   *
+   * ( end auto-generated )
+   *
+   * @webref pshape:method
+   * @usage web_application
    * @brief Rotates the shape around the y-axis
+   * @param angle angle of rotation specified in radians
+   * @see PShape#rotate(float)
+   * @see PShape#rotateX(float)
+   * @see PShape#rotateZ(float)
    */
   public void rotateY(float angle) {
     rotate(angle, 0, 1, 0);
@@ -1619,37 +1789,71 @@ public class PShape implements PConstants {
 
 
   /**
-   * Rotates a shape around the z-axis the amount specified by the <b>angle</b> parameter. Angles should be specified in radians (values from 0 to TWO_PI) or converted to radians with the <b>radians()</b> method.
-   * <br><br>Shapes are always rotated around the upper-left corner of their bounding box. Positive numbers rotate objects in a clockwise direction.
-   * Subsequent calls to the method accumulates the effect. For example, calling <b>rotateZ(HALF_PI)</b> and then <b>rotateZ(HALF_PI)</b> is the same as <b>rotateZ(PI)</b>.
-   * This transformation is applied directly to the shape, it's not refreshed each time <b>draw()</b> is run.
-   * <br><br>This method requires a 3D renderer. You need to pass P3D or OPENGL as a third parameter into the <b>size()</b> method as shown in the example above.
-   * @param angle angle of rotation specified in radians
-   * @webref
+   * ( begin auto-generated from PShape_rotateZ.xml )
+   *
+   * Rotates a shape around the z-axis the amount specified by the
+   * <b>angle</b> parameter. Angles should be specified in radians (values
+   * from 0 to TWO_PI) or converted to radians with the <b>radians()</b> method.
+   * <br /><br />
+   * Shapes are always rotated around the upper-left corner of their bounding
+   * box. Positive numbers rotate objects in a clockwise direction.
+   * Subsequent calls to the method accumulates the effect. For example,
+   * calling <b>rotateZ(HALF_PI)</b> and then <b>rotateZ(HALF_PI)</b> is the
+   * same as <b>rotateZ(PI)</b>. This transformation is applied directly to
+   * the shape, it's not refreshed each time <b>draw()</b> is run.
+   * <br /><br />
+   * This method requires a 3D renderer. You need to use P3D as a third
+   * parameter for the <b>size()</b> function as shown in the example above.
+   *
+   * ( end auto-generated )
+   * @webref pshape:method
+   * @usage web_application
    * @brief Rotates the shape around the z-axis
+   * @param angle angle of rotation specified in radians
    */
   public void rotateZ(float angle) {
     rotate(angle, 0, 0, 1);
   }
 
   /**
-   * Rotates a shape the amount specified by the <b>angle</b> parameter. Angles should be specified in radians (values from 0 to TWO_PI) or converted to radians with the <b>radians()</b> method.
-   * <br><br>Shapes are always rotated around the upper-left corner of their bounding box. Positive numbers rotate objects in a clockwise direction.
-   * Transformations apply to everything that happens after and subsequent calls to the method accumulates the effect.
-   * For example, calling <b>rotate(HALF_PI)</b> and then <b>rotate(HALF_PI)</b> is the same as <b>rotate(PI)</b>.
-   * This transformation is applied directly to the shape, it's not refreshed each time <b>draw()</b> is run.
-   * @param angle angle of rotation specified in radians
-   * @webref
+   * ( begin auto-generated from PShape_rotate.xml )
+   *
+   * Rotates a shape the amount specified by the <b>angle</b> parameter.
+   * Angles should be specified in radians (values from 0 to TWO_PI) or
+   * converted to radians with the <b>radians()</b> method.
+   * <br /><br />
+   * Shapes are always rotated around the upper-left corner of their bounding
+   * box. Positive numbers rotate objects in a clockwise direction.
+   * Transformations apply to everything that happens after and subsequent
+   * calls to the method accumulates the effect. For example, calling
+   * <b>rotate(HALF_PI)</b> and then <b>rotate(HALF_PI)</b> is the same as
+   * <b>rotate(PI)</b>. This transformation is applied directly to the shape,
+   * it's not refreshed each time <b>draw()</b> is run.
+   *
+   * ( end auto-generated )
+   * @webref pshape:method
+   * @usage web_application
    * @brief Rotates the shape
+   * @param angle angle of rotation specified in radians
    */
   public void rotate(float angle) {
     checkMatrix(2);  // at least 2...
     matrix.rotate(angle);
   }
 
-
+/**
+ * @nowebref
+ */
   public void rotate(float angle, float v0, float v1, float v2) {
     checkMatrix(3);
+    float norm2 = v0 * v0 + v1 * v1 + v2 * v2;
+    if (Math.abs(norm2 - 1) > EPSILON) {
+      // The rotation vector is not normalized.
+      float norm = PApplet.sqrt(norm2);
+      v0 /= norm;
+      v1 /= norm;
+      v2 /= norm;
+    }
     matrix.rotate(angle, v0, v1, v2);
   }
 
@@ -1657,7 +1861,25 @@ public class PShape implements PConstants {
   //
 
   /**
-   * @param s percentage to scale the object
+   * ( begin auto-generated from PShape_scale.xml )
+   *
+   * Increases or decreases the size of a shape by expanding and contracting
+   * vertices. Shapes always scale from the relative origin of their bounding
+   * box. Scale values are specified as decimal percentages. For example, the
+   * method call <b>scale(2.0)</b> increases the dimension of a shape by
+   * 200%. Subsequent calls to the method multiply the effect. For example,
+   * calling <b>scale(2.0)</b> and then <b>scale(1.5)</b> is the same as
+   * <b>scale(3.0)</b>. This transformation is applied directly to the shape,
+   * it's not refreshed each time <b>draw()</b> is run.
+   * <br /><br />
+   * Using this method with the <b>z</b> parameter requires using the P3D
+   * parameter in combination with size.
+   *
+   * ( end auto-generated )
+   * @webref pshape:method
+   * @usage web_application
+   * @brief Increases and decreases the size of a shape
+   * @param s percentate to scale the object
    */
   public void scale(float s) {
     checkMatrix(2);  // at least 2...
@@ -1672,16 +1894,9 @@ public class PShape implements PConstants {
 
 
   /**
-   * Increases or decreases the size of a shape by expanding and contracting vertices. Shapes always scale from the relative origin of their bounding box.
-   * Scale values are specified as decimal percentages. For example, the method call <b>scale(2.0)</b> increases the dimension of a shape by 200%.
-   * Subsequent calls to the method multiply the effect. For example, calling <b>scale(2.0)</b> and then <b>scale(1.5)</b> is the same as <b>scale(3.0)</b>.
-   * This transformation is applied directly to the shape, it's not refreshed each time <b>draw()</b> is run.
-   * <br><br>Using this fuction with the <b>z</b> parameter requires passing P3D or OPENGL into the size() parameter.
    * @param x percentage to scale the object in the x-axis
    * @param y percentage to scale the object in the y-axis
    * @param z percentage to scale the object in the z-axis
-   * @webref
-   * @brief Increases and decreases the size of a shape
    */
   public void scale(float x, float y, float z) {
     checkMatrix(3);
@@ -1689,14 +1904,19 @@ public class PShape implements PConstants {
   }
 
 
-  public void centerAt(float cx, float cy, float cz) {
-
-  }
-
-
   //
 
-
+/**
+   * ( begin auto-generated from PShape_resetMatrix.xml )
+   *
+   * Replaces the current matrix of a shape with the identity matrix. The
+   * equivalent function in OpenGL is glLoadIdentity().
+   *
+   * ( end auto-generated )
+ * @webref pshape:method
+ * @brief Replaces the current matrix of a shape with the identity matrix
+ * @usage web_application
+ */
   public void resetMatrix() {
     checkMatrix(2);
     matrix.reset();
@@ -1723,14 +1943,12 @@ public class PShape implements PConstants {
   public void applyMatrix(float n00, float n01, float n02,
                           float n10, float n11, float n12) {
     checkMatrix(2);
-    matrix.apply(n00, n01, n02, 0,
-                 n10, n11, n12, 0,
-                 0,   0,   1,   0,
-                 0,   0,   0,   1);
+    matrix.apply(n00, n01, n02,
+                 n10, n11, n12);
   }
 
 
-  public void apply(PMatrix3D source) {
+  public void applyMatrix(PMatrix3D source) {
     applyMatrix(source.m00, source.m01, source.m02, source.m03,
                 source.m10, source.m11, source.m12, source.m13,
                 source.m20, source.m21, source.m22, source.m23,
@@ -1794,8 +2012,6 @@ public class PShape implements PConstants {
 //    py = y;
 //  }
 
-
-  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 

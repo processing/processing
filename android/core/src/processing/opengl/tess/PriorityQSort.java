@@ -81,11 +81,11 @@ class PriorityQSort extends PriorityQ {
     }
 
     private static boolean LT(PriorityQ.Leq leq, Object x, Object y) {
-        return (!PriorityQHeap.LEQ(leq, y, x));
+        return (!PriorityQ.LEQ(leq, y, x));
     }
 
     private static boolean GT(PriorityQ.Leq leq, Object x, Object y) {
-        return (!PriorityQHeap.LEQ(leq, x, y));
+        return (!PriorityQ.LEQ(leq, x, y));
     }
 
     private static void Swap(int[] array, int a, int b) {
@@ -252,7 +252,7 @@ class PriorityQSort extends PriorityQ {
         sortMin = keys[order[size - 1]];
         if (!heap.pqIsEmpty()) {
             heapMin = heap.pqMinimum();
-            if (PriorityQHeap.LEQ(leq, heapMin, sortMin)) {
+            if (PriorityQ.LEQ(leq, heapMin, sortMin)) {
                 return heapMin;
             }
         }
