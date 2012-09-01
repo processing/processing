@@ -1,3 +1,7 @@
+0208 android (2.0a9)
+X inherited PShape API changes from the desktop version
+
+
 0207 android (2.0a8)
 X lots of cleanup on this todo list
 X Support Native Code in Libraries for Android (includes fix)

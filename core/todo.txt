@@ -1,31 +1,5 @@
-0208 core (2.0a9)
-X several constants moved out of PConstants and into PGraphics
-X API cleanup to PShape and unapproved methods
+0209 core
 
-andres
-A implement repeating textures
-A   http://code.google.com/p/processing/issues/detail?id=94
-X lights don't work in GL renderers on low-end android devices
-X   http://code.google.com/p/processing/issues/detail?id=1145
-X Pixels for createGraphics() should be transparent (P2D, P3D) in P2a7
-X   http://code.google.com/p/processing/issues/detail?id=1156
-
-video
-X remove/hide several video functions that weren't approved
-A Some videos give OpenGL error with P2D/P3D
-A   http://code.google.com/p/processing/issues/detail?id=1166
-A Jump movie to multiple of the framerate
-A   http://code.google.com/p/processing/issues/detail?id=1182
-A Movie functions not working in setup()
-A   http://code.google.com/p/processing/issues/detail?id=1181
-A Capture needs better initialization API
-A   http://code.google.com/p/processing/issues/detail?id=1184
-A Movie examples not working in P2D, P3D in 2.0a8
-A   http://code.google.com/p/processing/issues/detail?id=1178
-A GettingStartedCapture in 2.0a8 launches X11 in Mountain Lion
-A   http://code.google.com/p/processing/issues/detail?id=1191
-A Wrong resolutions reported by Capture.list()
-A   http://code.google.com/p/processing/issues/detail?id=1192
 
 docs
 _ textureWrap() CLAMP and REPEAT now added
