@@ -1336,7 +1336,7 @@ public class PApplet extends Applet
  * @see PApplet#loop()
  * @see PApplet#noLoop()
  * @see PApplet#redraw()
- * @see PApplet#frameRate()
+ * @see PApplet#frameRate(float)
  */
   public void draw() {
     // if no draw method, then shut things down
@@ -2060,7 +2060,7 @@ public class PApplet extends Applet
  * @see PApplet#draw()
  * @see PApplet#loop()
  * @see PApplet#noLoop()
- * @see PApplet#frameRate()
+ * @see PApplet#frameRate(float)
  */
   synchronized public void redraw() {
     if (!looping) {
@@ -11343,17 +11343,17 @@ public class PApplet extends Applet
    *
    * @webref shape:loading_displaying
    * @param shape the shape to display
-   * @param x x-coordinate of the shape
-   * @param y y-coordinate of the shape
+   * @param a x-coordinate of the shape
+   * @param b y-coordinate of the shape
    * @see PShape
    * @see PApplet#loadShape(String)
    * @see PGraphics#shapeMode(int)
    *
    * Convenience method to draw at a particular location.
    */
-  public void shape(PShape shape, float x, float y) {
-    if (recorder != null) recorder.shape(shape, x, y);
-    g.shape(shape, x, y);
+  public void shape(PShape shape, float a, float b) {
+    if (recorder != null) recorder.shape(shape, a, b);
+    g.shape(shape, a, b);
   }
 
 
