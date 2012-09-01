@@ -26,7 +26,6 @@ package processing.core;
 import java.io.*;
 import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.Set;
 
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;

@@ -26,10 +26,8 @@ package processing.core;
 import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
-import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Set;
 
 
 /**
@@ -59,9 +57,9 @@ public class PFont implements PConstants {
 
   /** Number of character glyphs in this font. */
   protected int glyphCount;
-  
-  /** 
-   * Actual glyph data. The length of this array won't necessarily be the 
+
+  /**
+   * Actual glyph data. The length of this array won't necessarily be the
    * same size as glyphCount, in cases where lazy font loading is in use.
    */
   protected Glyph[] glyphs;
@@ -72,42 +70,42 @@ public class PFont implements PConstants {
    */
   protected String name;
 
-  /** 
+  /**
    * Postscript name of the font that this bitmap was created from.
    */
   protected String psname;
 
-  /** 
-   * The original size of the font when it was first created 
+  /**
+   * The original size of the font when it was first created
    */
   protected int size;
 
   /** true if smoothing was enabled for this font, used for native impl */
   protected boolean smooth;
 
-  /** 
-   * The ascent of the font. If the 'd' character is present in this PFont, 
+  /**
+   * The ascent of the font. If the 'd' character is present in this PFont,
    * this value is replaced with its pixel height, because the values returned
-   * by FontMetrics.getAscent() seem to be terrible. 
+   * by FontMetrics.getAscent() seem to be terrible.
    */
   protected int ascent;
-  
-  /** 
-   * The descent of the font. If the 'p' character is present in this PFont, 
-   * this value is replaced with its lowest pixel height, because the values 
-   * returned by FontMetrics.getDescent() are gross. 
+
+  /**
+   * The descent of the font. If the 'p' character is present in this PFont,
+   * this value is replaced with its lowest pixel height, because the values
+   * returned by FontMetrics.getDescent() are gross.
    */
   protected int descent;
 
   /**
    * A more efficient array lookup for straight ASCII characters. For Unicode
-   * characters, a QuickSort-style search is used. 
+   * characters, a QuickSort-style search is used.
    */
   protected int[] ascii;
 
   /**
-   * True if this font is set to load dynamically. This is the default when 
-   * createFont() method is called without a character set. Bitmap versions of 
+   * True if this font is set to load dynamically. This is the default when
+   * createFont() method is called without a character set. Bitmap versions of
    * characters are only created when prompted by an index() call.
    */
   protected boolean lazy;
@@ -119,7 +117,7 @@ public class PFont implements PConstants {
    */
   protected Font font;
 
-  /** 
+  /**
    * True if this font was loaded from a stream, rather than from the OS.
    * It's always safe to use the native version of a font loaded from a TTF
    * file, since that's how it'll look when exported. Otherwise, you'll have
@@ -127,59 +125,59 @@ public class PFont implements PConstants {
    * renderers that support it.
    */
   protected boolean stream;
-  
+
   /**
    * True if this font should return 'null' for getFont(), so that the native
    * font will be used to create a subset, but the native version of the font
-   * will not be used. 
+   * will not be used.
    */
-  protected boolean subsetting; 
+  protected boolean subsetting;
 
   /** True if already tried to find the native AWT version of this font. */
   protected boolean fontSearched;
 
   /**
-   * Array of the native system fonts. Used to lookup native fonts by their 
+   * Array of the native system fonts. Used to lookup native fonts by their
    * PostScript name. This is a workaround for a several year old Apple Java
-   * bug that they can't be bothered to fix. 
+   * bug that they can't be bothered to fix.
    */
   static protected Font[] fonts;
   static protected HashMap<String,Font> fontDifferent;
 
 //  /**
-//   * If not null, this font is set to load dynamically. This is the default  
-//   * when createFont() method is called without a character set. Bitmap 
+//   * If not null, this font is set to load dynamically. This is the default
+//   * when createFont() method is called without a character set. Bitmap
 //   * versions of characters are only created when prompted by an index() call.
 //   */
-//  protected Font lazyFont;  
+//  protected Font lazyFont;
   protected BufferedImage lazyImage;
   protected Graphics2D lazyGraphics;
   protected FontMetrics lazyMetrics;
-  protected int[] lazySamples;  
+  protected int[] lazySamples;
 
-  
+
   /** for subclasses that need to store metadata about the font */
-  protected HashMap<PGraphics, Object> cacheMap;  
+  protected HashMap<PGraphics, Object> cacheMap;
 
-  
+
   public PFont() { }  // for subclasses
 
 
   /**
    * ( begin auto-generated from PFont.xml )
-   * 
-   * PFont is the font class for Processing. To create a font to use with 
-   * Processing, select "Create Font..." from the Tools menu. This will 
-   * create a font in the format Processing requires and also adds it to the 
-   * current sketch's data directory. Processing displays fonts using the 
-   * .vlw font format, which uses images for each letter, rather than 
-   * defining them through vector data. The <b>loadFont()</b> function 
-   * constructs a new font and <b>textFont()</b> makes a font active. The 
-   * <b>list()</b> method creates a list of the fonts installed on the 
-   * computer, which is useful information to use with the 
-   * <b>createFont()</b> function for dynamically converting fonts into a 
-   * format to use with Processing. 
-   * 
+   *
+   * PFont is the font class for Processing. To create a font to use with
+   * Processing, select "Create Font..." from the Tools menu. This will
+   * create a font in the format Processing requires and also adds it to the
+   * current sketch's data directory. Processing displays fonts using the
+   * .vlw font format, which uses images for each letter, rather than
+   * defining them through vector data. The <b>loadFont()</b> function
+   * constructs a new font and <b>textFont()</b> makes a font active. The
+   * <b>list()</b> method creates a list of the fonts installed on the
+   * computer, which is useful information to use with the
+   * <b>createFont()</b> function for dynamically converting fonts into a
+   * format to use with Processing.
+   *
    * ( end auto-generated )
    *
    * @webref typography:pfont
@@ -192,10 +190,10 @@ public class PFont implements PConstants {
   public PFont(Font font, boolean smooth) {
     this(font, smooth, null);
   }
-  
-  
+
+
   /**
-   * Create a new image-based font on the fly. If charset is set to null, 
+   * Create a new image-based font on the fly. If charset is set to null,
    * the characters will only be created as bitmaps when they're drawn.
    *
    * @param font the font object to create from
@@ -214,7 +212,7 @@ public class PFont implements PConstants {
     // no, i'm not interested in getting off the couch
     //lazy = true;
     // not sure what else to do here
-    //mbox2 = 0; 
+    //mbox2 = 0;
 
     int initialCount = 10;
     glyphs = new Glyph[initialCount];
@@ -241,7 +239,7 @@ public class PFont implements PConstants {
     lazySamples = new int[mbox3 * mbox3];
 
     // These values are terrible/unusable. Verified again for Processing 1.1.
-    // They vary widely per-platform and per-font, so instead we'll use the 
+    // They vary widely per-platform and per-font, so instead we'll use the
     // calculate-by-hand method of measuring pixels in characters.
     //ascent = lazyMetrics.getAscent();
     //descent = lazyMetrics.getDescent();
@@ -265,7 +263,7 @@ public class PFont implements PConstants {
             ascii[glyf.value] = glyphCount;
           }
           glyf.index = glyphCount;
-          glyphs[glyphCount++] = glyf;           
+          glyphs[glyphCount++] = glyf;
         }
       }
 
@@ -275,7 +273,7 @@ public class PFont implements PConstants {
       }
 
       // foreign font, so just make ascent the max topExtent
-      // for > 1.0.9, not doing this anymore. 
+      // for > 1.0.9, not doing this anymore.
       // instead using getAscent() and getDescent() values for these cases.
 //      if ((ascent == 0) && (descent == 0)) {
 //        //for (int i = 0; i < charCount; i++) {
@@ -297,8 +295,8 @@ public class PFont implements PConstants {
 //      }
     }
 
-    // If not already created, just create these two characters to calculate 
-    // the ascent and descent values for the font. This was tested to only 
+    // If not already created, just create these two characters to calculate
+    // the ascent and descent values for the font. This was tested to only
     // require 5-10 ms on a 2.4 GHz MacBook Pro.
     // In versions 1.0.9 and earlier, fonts that could not display d or p
     // used the max up/down values as calculated by looking through the font.
@@ -319,17 +317,17 @@ public class PFont implements PConstants {
       }
     }
   }
-  
+
 
   /**
-   * Adds an additional parameter that indicates the font came from a file, 
-   * not a built-in OS font. 
+   * Adds an additional parameter that indicates the font came from a file,
+   * not a built-in OS font.
    */
   public PFont(Font font, boolean smooth, char charset[], boolean stream) {
     this(font, smooth, charset);
     this.stream = stream;
   }
-  
+
 /**
  * @param input InputStream
  */
@@ -390,7 +388,7 @@ public class PFont implements PConstants {
     if (version == 11) {
       smooth = is.readBoolean();
     }
-    // See if there's a native version of this font that can be used, 
+    // See if there's a native version of this font that can be used,
     // in case that's of interest later.
     findFont();
   }
@@ -414,7 +412,7 @@ public class PFont implements PConstants {
       name = "";
       psname = "";
     }
-    
+
     os.writeInt(11);      // formerly numBits, now used for version number
     os.writeInt(size);    // formerly mboxX (was 64, now 48)
     os.writeInt(0);       // formerly mboxY, now ignored
@@ -454,13 +452,13 @@ public class PFont implements PConstants {
       if (glyph.value < 128) {
         ascii[glyph.value] = 0;
       }
-      
+
     } else if (glyphs[glyphCount-1].value < glyph.value) {
       glyphs[glyphCount] = glyph;
       if (glyph.value < 128) {
         ascii[glyph.value] = glyphCount;
       }
-      
+
     } else {
       for (int i = 0; i < glyphCount; i++) {
         if (glyphs[i].value > c) {
@@ -491,7 +489,7 @@ public class PFont implements PConstants {
     return psname;
   }
 
-  
+
   /**
    * Set the native complement of this font. Might be set internally via the
    * findFont() function, or externally by a deriveFont() call if the font
@@ -500,8 +498,8 @@ public class PFont implements PConstants {
   public void setFont(Font font) {
     this.font = font;
   }
-  
-  
+
+
   /**
    * Return the native java.awt.Font associated with this PFont (if any).
    */
@@ -512,20 +510,20 @@ public class PFont implements PConstants {
     return font;
   }
 
-  
+
   /**
    * Return size of this font.
    */
   public int getSize() {
     return size;
   }
-   
+
 
   public boolean isStream() {
     return stream;
   }
-  
-  
+
+
   public void setSubsetting() {
     subsetting = true;
   }
@@ -580,7 +578,7 @@ public class PFont implements PConstants {
         addGlyph(c);
         // now where did i put that?
         return indexActual(c);
-        
+
       } else {
         return -1;
       }
@@ -667,14 +665,14 @@ public class PFont implements PConstants {
   //////////////////////////////////////////////////////////////
 
   // METADATA REQUIRED BY THE RENDERERS
-  
+
 
   /**
    * Store data of some kind for a renderer that requires extra metadata of
    * some kind. Usually this is a renderer-specific representation of the
    * font data, for instance a custom OpenGL texture for PGraphicsOpenGL2.
    * @param renderer The PGraphics renderer associated to the font
-   * @param storage The metadata required by the renderer    
+   * @param storage The metadata required by the renderer
    */
   public void setCache(PGraphics renderer, Object storage) {
     if (cacheMap == null) cacheMap = new HashMap<PGraphics, Object>();
@@ -705,18 +703,18 @@ public class PFont implements PConstants {
       cacheMap.remove(renderer);
     }
   }
-  
-  
-  //////////////////////////////////////////////////////////////  
-  
+
+
+  //////////////////////////////////////////////////////////////
+
   public int getGlyphCount()  {
     return glyphCount;
   }
-  
+
   public Glyph getGlyph(int i)  {
-    return glyphs[i];  
+    return glyphs[i];
   }
-  
+
   //////////////////////////////////////////////////////////////
 
 
@@ -781,15 +779,15 @@ public class PFont implements PConstants {
 
   /**
    * ( begin auto-generated from PFont_list.xml )
-   * 
-   * Gets a list of the fonts installed on the system. The data is returned 
-   * as a String array. This list provides the names of each font for input 
-   * into <b>createFont()</b>, which allows Processing to dynamically format 
-   * fonts. This function is meant as a tool for programming local 
+   *
+   * Gets a list of the fonts installed on the system. The data is returned
+   * as a String array. This list provides the names of each font for input
+   * into <b>createFont()</b>, which allows Processing to dynamically format
+   * fonts. This function is meant as a tool for programming local
    * applications and is not recommended for use in applets.
-   * 
+   *
    * ( end auto-generated )
-   * 
+   *
    * @webref pfont
    * @usage application
    * @brief     Gets a list of the fonts installed on the system
@@ -802,7 +800,7 @@ public class PFont implements PConstants {
     }
     return list;
   }
-  
+
 
   static public void loadFonts() {
     if (fonts == null) {
@@ -841,11 +839,11 @@ public class PFont implements PConstants {
     }
     return new Font(name, Font.PLAIN, 1);
   }
-  
-  
+
+
   //////////////////////////////////////////////////////////////
 
-  
+
   /**
    * A single character, and its visage.
    */
@@ -859,19 +857,19 @@ public class PFont implements PConstants {
     public int topExtent;
     public int leftExtent;
 
-    
+
     public Glyph() {
       index = -1;
       // used when reading from a stream or for subclasses
     }
-    
-    
+
+
     public Glyph(DataInputStream is) throws IOException {
       index = -1;
       readHeader(is);
     }
-    
-    
+
+
     protected void readHeader(DataInputStream is) throws IOException {
       value = is.readInt();
       height = is.readInt();
@@ -882,7 +880,7 @@ public class PFont implements PConstants {
 
       // pointer from a struct in the c version, ignored
       is.readInt();
-      
+
       // the values for getAscent() and getDescent() from FontMetrics
       // seem to be way too large.. perhaps they're the max?
       // as such, use a more traditional marker for ascent/descent
@@ -894,7 +892,7 @@ public class PFont implements PConstants {
       }
     }
 
-    
+
     protected void writeHeader(DataOutputStream os) throws IOException {
       os.writeInt(value);
       os.writeInt(height);
@@ -904,8 +902,8 @@ public class PFont implements PConstants {
       os.writeInt(leftExtent);
       os.writeInt(0); // padding
     }
-    
-    
+
+
     protected void readBitmap(DataInputStream is) throws IOException {
       image = new PImage(width, height, ALPHA);
       int bitmapSize = width * height;
@@ -926,8 +924,8 @@ public class PFont implements PConstants {
       }
 //      System.out.println();
     }
-    
-    
+
+
     protected void writeBitmap(DataOutputStream os) throws IOException {
       int[] pixels  = image.pixels;
       for (int y = 0; y < height; y++) {

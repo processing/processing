@@ -589,6 +589,7 @@ public class XML implements Serializable {
   }
 
 
+  @Override
   public String toString() {
     return toString(2);
   }
