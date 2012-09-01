@@ -1599,6 +1599,7 @@ public class PShapeSVG extends PShape {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
+  @Override
   protected void styles(PGraphics g) {
     super.styles(g);
 
@@ -1834,6 +1835,7 @@ public class PShapeSVG extends PShape {
    * PShape layer3 = svg.getChild("Layer 3");
    * </PRE>
    */
+  @Override
   public PShape getChild(String name) {
     PShape found = super.getChild(name);
     if (found == null) {
