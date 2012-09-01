@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.util.zip.GZIPInputStream;
 
 import processing.core.PApplet;
+import processing.core.PConstants;
 import processing.core.PGraphics;
 import processing.core.PMatrix3D;
 import processing.core.PShape;
@@ -300,8 +301,8 @@ public class PGraphics2D extends PGraphicsOpenGL {
 
   static protected PShape2D createShapeImpl(PApplet parent, int type) {
     PShape2D shape = null;
-    if (type == PShape.GROUP) {
-      shape = new PShape2D(parent, PShape.GROUP);
+    if (type == PConstants.GROUP) {
+      shape = new PShape2D(parent, PConstants.GROUP);
     } else if (type == PShape.PATH) {
       shape = new PShape2D(parent, PShape.PATH);
     } else if (type == POINTS) {

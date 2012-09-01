@@ -233,15 +233,15 @@ public final class PMatrix3D implements PMatrix /*, PConstants*/ {
     if (norm2 < PConstants.EPSILON) {
       // The vector is zero, cannot apply rotation.
       return;
-    }    
-    
+    }
+
     if (Math.abs(norm2 - 1) > PConstants.EPSILON) {
       // The rotation vector is not normalized.
       float norm = PApplet.sqrt(norm2);
       v0 /= norm;
       v1 /= norm;
       v2 /= norm;
-    } 
+    }
 
     float c = cos(angle);
     float s = sin(angle);
@@ -776,19 +776,19 @@ public final class PMatrix3D implements PMatrix /*, PConstants*/ {
   //////////////////////////////////////////////////////////////
 
 
-  private final float max(float a, float b) {
+  static private final float max(float a, float b) {
     return (a > b) ? a : b;
   }
 
-  private final float abs(float a) {
+  static private final float abs(float a) {
     return (a < 0) ? -a : a;
   }
 
-  private final float sin(float angle) {
+  static private final float sin(float angle) {
     return (float) Math.sin(angle);
   }
 
-  private final float cos(float angle) {
+  static private final float cos(float angle) {
     return (float) Math.cos(angle);
   }
 }

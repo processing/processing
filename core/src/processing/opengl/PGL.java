@@ -58,7 +58,10 @@ import com.jogamp.opengl.util.AnimatorBase;
 /**
  * Processing-OpenGL abstraction layer.
  *
+ * Warnings are suppressed for static access because presumably on Android,
+ * the GL2 vs GL distinctions are necessary, whereas on desktop they are not.
  */
+@SuppressWarnings("static-access")
 public class PGL {
   // The two windowing toolkits available to use in JOGL:
   protected static final int AWT  = 0; // http://jogamp.org/wiki/index.php/Using_JOGL_in_AWT_SWT_and_Swing

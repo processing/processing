@@ -411,11 +411,11 @@ public class PMatrix2D implements PMatrix {
 
   //////////////////////////////////////////////////////////////
 
-  // TODO these need to be added as regular API, but the naming and 
+  // TODO these need to be added as regular API, but the naming and
   // implementation needs to be improved first. (e.g. actually keeping track
   // of whether the matrix is in fact identity internally.)
 
-  
+
   protected boolean isIdentity() {
     return ((m00 == 1) && (m01 == 0) && (m02 == 0) &&
             (m10 == 0) && (m11 == 1) && (m12 == 0));
@@ -424,31 +424,31 @@ public class PMatrix2D implements PMatrix {
 
   // TODO make this more efficient, or move into PMatrix2D
   protected boolean isWarped() {
-    return ((m00 != 1) || (m01 != 0) && 
+    return ((m00 != 1) || (m01 != 0) &&
             (m10 != 0) || (m11 != 1));
   }
 
 
   //////////////////////////////////////////////////////////////
 
-  
-  private final float max(float a, float b) {
+
+  static private final float max(float a, float b) {
     return (a > b) ? a : b;
   }
 
-  private final float abs(float a) {
+  static private final float abs(float a) {
     return (a < 0) ? -a : a;
   }
 
-  private final float sin(float angle) {
+  static private final float sin(float angle) {
     return (float)Math.sin(angle);
   }
 
-  private final float cos(float angle) {
+  static private final float cos(float angle) {
     return (float)Math.cos(angle);
   }
 
-  private final float tan(float angle) {
+  static private final float tan(float angle) {
     return (float)Math.tan(angle);
   }
 }
