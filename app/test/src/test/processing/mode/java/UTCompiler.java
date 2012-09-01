@@ -10,7 +10,7 @@ import processing.app.exec.ProcessResult;
 
 /**
  * Utility class for compiling single compilationUnits.
- * 
+ *
  * @author Jonathan Feinberg &lt;jdf@pobox.com&gt;
  *
  */
@@ -56,8 +56,12 @@ class UTCompiler {
       java.close();
     }
     try {
-      return new ProcessHelper("javac", "-sourcepath", tmpdir.getAbsolutePath(), "-cp",
-                        classpath, "-nowarn", "-d", tmpdir.getAbsolutePath(), javaFile.getAbsolutePath()).execute();
+      return new ProcessHelper("javac",
+                               "-sourcepath", tmpdir.getAbsolutePath(),
+                               "-cp", classpath,
+                               "-nowarn",
+                               "-d", tmpdir.getAbsolutePath(),
+                               javaFile.getAbsolutePath()).execute();
     } catch (InterruptedException e) {
       throw new RuntimeException(e);
     } finally {

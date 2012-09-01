@@ -30,28 +30,30 @@ public class PShape3D extends PShapeOpenGL {
   public PShape3D(PApplet parent, int family) {
     super(parent, family);
   }
-  
+
+  @Override
   public boolean is2D() {
     return false;
   }
 
+  @Override
   public boolean is3D() {
     return true;
   }
- 
-  
+
+
   ////////////////////////////////////////////////////////////////////////
   //
-  // Shape copy  
-  
-  
+  // Shape copy
+
+
   static public PShape3D createShape(PApplet parent, PShape src) {
     PShape3D dest = null;
     if (src.getFamily() == GROUP) {
       dest = PGraphics3D.createShapeImpl(parent, GROUP);
-      PShape3D.copyGroup(parent, src, dest);      
+      PShape3D.copyGroup(parent, src, dest);
     } else if (src.getFamily() == PRIMITIVE) {
-      dest = PGraphics3D.createShapeImpl(parent, src.getKind(), 
+      dest = PGraphics3D.createShapeImpl(parent, src.getKind(),
                                          src.getParams());
       PShape.copyPrimitive(src, dest);
     } else if (src.getFamily() == GEOMETRY) {
@@ -63,17 +65,17 @@ public class PShape3D extends PShapeOpenGL {
     }
     dest.setName(src.getName());
     return dest;
-  }  
-  
-  
+  }
+
+
   static public void copyGroup(PApplet parent, PShape src, PShape dest) {
     copyMatrix(src, dest);
     copyStyles(src, dest);
     copyImage(src, dest);
-        
+
     for (int i = 0; i < src.getChildCount(); i++) {
       PShape c = PShape3D.createShape(parent, src.getChild(i));
       dest.addChild(c);
     }
-  }   
+  }
 }

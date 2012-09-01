@@ -2,6 +2,58 @@
 X Help menu broken when Processing has spaces in its path name in 2.0a8
 X   http://code.google.com/p/processing/issues/detail?id=1164
 
+_ remove preferences that refer to applets
+
+_ try to use appbundler to create a version that includes a JRE (JDK)
+_   http://java.net/downloads/appbundler/appbundler.html
+_   http://docs.oracle.com/javase/7/docs/technotes/guides/jweb/packagingAppsForMac.html
+_   http://www.intransitione.com/blog/take-java-to-app-store/
+_ investigate the sandboxing situation on OS X
+_   http://developer.apple.com/library/mac/#documentation/Miscellaneous/Reference/EntitlementKeyReference/Chapters/EnablingAppSandbox.html#//apple_ref/doc/uid/TP40011195-CH4-SW1
+most sandbox violations are triggered by attempts to read/write to the
+filesystem without user intervention (eg. without using an open/save
+dialog)  and/or from places outside the container (eg.
+~/Library/Containers/yourapp/...).
+A violation is also triggered by trying to execute an external process
+from Java (ex. using Runtime.exec()).
+If you look at the list of entitlements your application can have on
+the Apple site(*) you can think whether your application is performing
+an operation that would require enabling a specific entitlement, like
+connecting to a network, printing, interacting with a usb or bluetooth
+device, etc..
+
+. . .
+
+I encountered this problem too, I forgot to add it to my guide....
+If you sign all the files in the bundle it won't work as codesign
+doesn't follow the symlinks.
+
+First sign your bundle:
+codesign --verbose -f -s "$SIGNATURE_APP" --entitlements $ENTITLEMENTS
+$YOUR_APP.app
+
+Then sign all the libraries:
+find $YOUR_APP/Contents/ -type f \( -name "*.jar" -or -name "*.dylib"
+\) -exec codesign --verbose -f -s "$SIGNATURE_APP" --entitlements
+$ENTITLEMENTS {} \;
+
+Finally you can create the package:
+productbuild --component YOUR_APP.app /Applications --sign
+"$SIGNATURE_INST" YOUR_APP.pkg
+
+You can test if the package work with this command:
+
+sudo installer -store -pkg $YOUR_APP.pkg -target /
+
+You can also verify all libraries have been signed
+find YOUR_APP/Contents/ -type f \( -name "*.jar" -or -name "*.dylib"
+\) -exec codesign --verbose --verify {} \;
+
+. . . 
+
+_ 'recent' menu doesn't respect examples folder of other p5 versions
+_ 'recent' menu paths can get enormous
+
 
 2.0 FINAL / command line
 _ kill external editor (for all its quirks) in favor of command line

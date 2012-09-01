@@ -114,6 +114,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
    *
    * Note that this will nuke any cameraMode() settings.
    */
+  @Override
   public void setSize(int iwidth, int iheight) {  // ignore
     width = iwidth;
     height = iheight;
@@ -126,6 +127,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 
 
   // broken out because of subclassing for opengl
+  @Override
   protected void allocate() {
     // Tried this with RGB instead of ARGB for the primarySurface version,
     // but didn't see any performance difference (OS X 10.6, Java 6u24).
@@ -175,11 +177,13 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   // FRAME
 
 
+  @Override
   public boolean canDraw() {
     return true;
   }
 
 
+  @Override
   public void requestDraw() {
 //    EventQueue.invokeLater(new Runnable() {
 //      public void run() {
@@ -189,6 +193,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   }
 
 
+  @Override
   public void beginDraw() {
     checkSettings();
 
@@ -199,6 +204,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   }
 
 
+  @Override
   public void endDraw() {
     // hm, mark pixels as changed, because this will instantly do a full
     // copy of all the pixels to the surface.. so that's kind of a mess.
@@ -266,6 +272,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   //public void beginShape(int kind)
 
 
+  @Override
   public void beginShape(int kind) {
     //super.beginShape(kind);
     shape = kind;
@@ -290,11 +297,13 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   //public void textureMode(int mode)
 
 
+  @Override
   public void texture(PImage image) {
     showMethodWarning("texture");
   }
 
 
+  @Override
   public void vertex(float x, float y) {
     curveVertexCount = 0;
     //float vertex[];
@@ -405,35 +414,42 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   }
 
 
+  @Override
   public void vertex(float x, float y, float z) {
     showDepthWarningXYZ("vertex");
   }
 
+  @Override
   public void vertex(float[] v) {
     vertex(v[X], v[Y]);
   }
 
 
+  @Override
   public void vertex(float x, float y, float u, float v) {
     showVariationWarning("vertex(x, y, u, v)");
   }
 
 
+  @Override
   public void vertex(float x, float y, float z, float u, float v) {
     showDepthWarningXYZ("vertex");
   }
 
 
+  @Override
   public void beginContour() {
     breakShape = true;
   }
 
 
+  @Override
   public void endContour() {
     // does nothing, just need the break in beginContour()
   }
 
 
+  @Override
   public void endShape(int mode) {
     if (gpath != null) {  // make sure something has been drawn
       if (shape == POLYGON) {
@@ -453,6 +469,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   // BEZIER VERTICES
 
 
+  @Override
   public void bezierVertex(float x1, float y1,
                            float x2, float y2,
                            float x3, float y3) {
@@ -461,6 +478,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   }
 
 
+  @Override
   public void bezierVertex(float x2, float y2, float z2,
                            float x3, float y3, float z3,
                            float x4, float y4, float z4) {
@@ -474,6 +492,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   // QUADRATIC BEZIER VERTICES
 
 
+  @Override
   public void quadraticVertex(float ctrlX, float ctrlY,
                          float endX, float endY) {
     bezierVertexCheck();
@@ -488,6 +507,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   }
 
 
+  @Override
   public void quadraticVertex(float x2, float y2, float z2,
                          float x4, float y4, float z4) {
     showDepthWarningXYZ("quadVertex");
@@ -500,6 +520,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   // CURVE VERTICES
 
 
+  @Override
   protected void curveVertexCheck() {
     super.curveVertexCheck();
 
@@ -512,6 +533,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   }
 
 
+  @Override
   protected void curveVertexSegment(float x1, float y1,
                                     float x2, float y2,
                                     float x3, float y3,
@@ -544,6 +566,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   }
 
 
+  @Override
   public void curveVertex(float x, float y, float z) {
     showDepthWarningXYZ("curveVertex");
   }
@@ -564,6 +587,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   // POINT, LINE, TRIANGLE, QUAD
 
 
+  @Override
   public void point(float x, float y) {
     if (stroke) {
 //      if (strokeWeight > 1) {
@@ -575,12 +599,14 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   }
 
 
+  @Override
   public void line(float x1, float y1, float x2, float y2) {
     line.setLine(x1, y1, x2, y2);
     strokeShape(line);
   }
 
 
+  @Override
   public void triangle(float x1, float y1, float x2, float y2,
                        float x3, float y3) {
     gpath = new GeneralPath();
@@ -592,6 +618,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   }
 
 
+  @Override
   public void quad(float x1, float y1, float x2, float y2,
                    float x3, float y3, float x4, float y4) {
     GeneralPath gp = new GeneralPath();
@@ -616,6 +643,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   //public void rect(float a, float b, float c, float d)
 
 
+  @Override
   protected void rectImpl(float x1, float y1, float x2, float y2) {
     rect.setFrame(x1, y1, x2-x1, y2-y1);
     drawShape(rect);
@@ -634,6 +662,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   //public void ellipse(float a, float b, float c, float d)
 
 
+  @Override
   protected void ellipseImpl(float x, float y, float w, float h) {
     ellipse.setFrame(x, y, w, h);
     drawShape(ellipse);
@@ -650,6 +679,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   //                float start, float stop)
 
 
+  @Override
   protected void arcImpl(float x, float y, float w, float h,
                          float start, float stop) {
     // 0 to 90 in java would be 0 to -90 for p5 renderer
@@ -739,6 +769,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   //public void box(float size)
 
 
+  @Override
   public void box(float w, float h, float d) {
     showMethodWarning("box");
   }
@@ -756,6 +787,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   //public void sphereDetail(int ures, int vres)
 
 
+  @Override
   public void sphere(float r) {
     showMethodWarning("sphere");
   }
@@ -780,6 +812,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 
 
   /** Ignored (not needed) in Java 2D. */
+  @Override
   public void bezierDetail(int detail) {
   }
 
@@ -809,6 +842,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 
 
   /** Ignored (not needed) in Java 2D. */
+  @Override
   public void curveDetail(int detail) {
   }
 
@@ -839,6 +873,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   // SMOOTH
 
 
+  @Override
   public void smooth() {
     smooth = true;
 
@@ -857,6 +892,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   }
 
 
+  @Override
   public void smooth(int antialias) {
     this.quality = antialias;
     if (antialias == 0) {
@@ -867,6 +903,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   }
 
 
+  @Override
   public void noSmooth() {
     smooth = false;
     g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
@@ -899,6 +936,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   /**
    * Handle renderer-specific image drawing.
    */
+  @Override
   protected void imageImpl(PImage who,
                            float x1, float y1, float x2, float y2,
                            int u1, int v1, int u2, int v2) {
@@ -970,7 +1008,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
       //System.out.println("making new buffered image");
 //      image = new BufferedImage(source.width, source.height, type);
     }
-    
+
     /**
      * Update the pixels of the cache image. Already determined that the tint
      * has changed, or the pixels have changed, so should just go through
@@ -1111,6 +1149,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   // SHAPE I/O
 
 
+  @Override
   public PShape loadShape(String filename) {
     String extension = PApplet.getExtension(filename);
 
@@ -1146,6 +1185,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   //public void textAlign(int alignX, int alignY)
 
 
+  @Override
   public float textAscent() {
     if (textFont == null) {
       defaultFontOrDeath("textAscent");
@@ -1161,6 +1201,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   }
 
 
+  @Override
   public float textDescent() {
     if (textFont == null) {
       defaultFontOrDeath("textAscent");
@@ -1187,6 +1228,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   //public void textMode(int mode)
 
 
+  @Override
   protected boolean textModeCheck(int mode) {
     return mode == MODEL;
   }
@@ -1198,6 +1240,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
    * Also gets called by textFont, so the metrics
    * will get recorded properly.
    */
+  @Override
   public void textSize(float size) {
     if (textFont == null) {
       defaultFontOrDeath("textAscent", size);
@@ -1230,6 +1273,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   //public float textWidth(String str)
 
 
+  @Override
   protected float textWidthImpl(char buffer[], int start, int stop) {
     Font font = textFont.getFont();
     //if (font != null && (textFont.isStream() || hints[ENABLE_NATIVE_FONTS])) {
@@ -1281,6 +1325,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   //                                 float x, float y)
 
 
+  @Override
   protected void textLineImpl(char buffer[], int start, int stop,
                               float x, float y) {
     Font font = textFont.getFont();
@@ -1353,6 +1398,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   // MATRIX STACK
 
 
+  @Override
   public void pushMatrix() {
     if (transformCount == transformStack.length) {
       throw new RuntimeException("pushMatrix() cannot use push more than " +
@@ -1363,6 +1409,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   }
 
 
+  @Override
   public void popMatrix() {
     if (transformCount == 0) {
       throw new RuntimeException("missing a pushMatrix() " +
@@ -1379,6 +1426,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   // MATRIX TRANSFORMS
 
 
+  @Override
   public void translate(float tx, float ty) {
     g2.translate(tx, ty);
   }
@@ -1387,51 +1435,61 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   //public void translate(float tx, float ty, float tz)
 
 
+  @Override
   public void rotate(float angle) {
     g2.rotate(angle);
   }
 
 
+  @Override
   public void rotateX(float angle) {
     showDepthWarning("rotateX");
   }
 
 
+  @Override
   public void rotateY(float angle) {
     showDepthWarning("rotateY");
   }
 
 
+  @Override
   public void rotateZ(float angle) {
     showDepthWarning("rotateZ");
   }
 
 
+  @Override
   public void rotate(float angle, float vx, float vy, float vz) {
     showVariationWarning("rotate");
   }
 
 
+  @Override
   public void scale(float s) {
     g2.scale(s, s);
   }
 
 
+  @Override
   public void scale(float sx, float sy) {
     g2.scale(sx, sy);
   }
 
 
+  @Override
   public void scale(float sx, float sy, float sz) {
     showDepthWarningXYZ("scale");
   }
 
 
+  @Override
   public void shearX(float angle) {
     g2.shear(Math.tan(angle), 0);
   }
 
 
+  @Override
   public void shearY(float angle) {
     g2.shear(0, Math.tan(angle));
   }
@@ -1443,6 +1501,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   // MATRIX MORE
 
 
+  @Override
   public void resetMatrix() {
     g2.setTransform(new AffineTransform());
   }
@@ -1451,6 +1510,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   //public void applyMatrix(PMatrix2D source)
 
 
+  @Override
   public void applyMatrix(float n00, float n01, float n02,
                           float n10, float n11, float n12) {
     //System.out.println("PGraphicsJava2D.applyMatrix()");
@@ -1463,6 +1523,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   //public void applyMatrix(PMatrix3D source)
 
 
+  @Override
   public void applyMatrix(float n00, float n01, float n02, float n03,
                           float n10, float n11, float n12, float n13,
                           float n20, float n21, float n22, float n23,
@@ -1477,11 +1538,13 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   // MATRIX GET/SET
 
 
+  @Override
   public PMatrix getMatrix() {
     return getMatrix((PMatrix2D) null);
   }
 
 
+  @Override
   public PMatrix2D getMatrix(PMatrix2D target) {
     if (target == null) {
       target = new PMatrix2D();
@@ -1493,6 +1556,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   }
 
 
+  @Override
   public PMatrix3D getMatrix(PMatrix3D target) {
     showVariationWarning("getMatrix");
     return target;
@@ -1502,6 +1566,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   //public void setMatrix(PMatrix source)
 
 
+  @Override
   public void setMatrix(PMatrix2D source) {
     g2.setTransform(new AffineTransform(source.m00, source.m10,
                                         source.m01, source.m11,
@@ -1509,11 +1574,13 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   }
 
 
+  @Override
   public void setMatrix(PMatrix3D source) {
     showVariationWarning("setMatrix");
   }
 
 
+  @Override
   public void printMatrix() {
     getMatrix((PMatrix2D) null).print();
   }
@@ -1553,30 +1620,35 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   // SCREEN and MODEL transforms
 
 
+  @Override
   public float screenX(float x, float y) {
     g2.getTransform().getMatrix(transform);
     return (float)transform[0]*x + (float)transform[2]*y + (float)transform[4];
   }
 
 
+  @Override
   public float screenY(float x, float y) {
     g2.getTransform().getMatrix(transform);
     return (float)transform[1]*x + (float)transform[3]*y + (float)transform[5];
   }
 
 
+  @Override
   public float screenX(float x, float y, float z) {
     showDepthWarningXYZ("screenX");
     return 0;
   }
 
 
+  @Override
   public float screenY(float x, float y, float z) {
     showDepthWarningXYZ("screenY");
     return 0;
   }
 
 
+  @Override
   public float screenZ(float x, float y, float z) {
     showDepthWarningXYZ("screenZ");
     return 0;
@@ -1606,18 +1678,21 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   // STROKE CAP/JOIN/WEIGHT
 
 
+  @Override
   public void strokeCap(int cap) {
     super.strokeCap(cap);
     strokeImpl();
   }
 
 
+  @Override
   public void strokeJoin(int join) {
     super.strokeJoin(join);
     strokeImpl();
   }
 
 
+  @Override
   public void strokeWeight(float weight) {
     super.strokeWeight(weight);
     strokeImpl();
@@ -1651,6 +1726,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   // noStroke() and stroke() inherited from PGraphics.
 
 
+  @Override
   protected void strokeFromCalc() {
     super.strokeFromCalc();
     strokeColorObject = new Color(strokeColor, true);
@@ -1666,6 +1742,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   // noTint() and tint() inherited from PGraphics.
 
 
+  @Override
   protected void tintFromCalc() {
     super.tintFromCalc();
     // TODO actually implement tinted images
@@ -1681,6 +1758,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   // noFill() and fill() inherited from PGraphics.
 
 
+  @Override
   protected void fillFromCalc() {
     super.fillFromCalc();
     fillColorObject = new Color(fillColor, true);
@@ -1748,6 +1826,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 
   int[] clearPixels;
 
+  @Override
   public void backgroundImpl() {
     if (backgroundAlpha) {
       // Create a small array that can be used to set the pixels several times.
@@ -1831,11 +1910,13 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   // BEGIN/END RAW
 
 
+  @Override
   public void beginRaw(PGraphics recorderRaw) {
     showMethodWarning("beginRaw");
   }
 
 
+  @Override
   public void endRaw() {
     showMethodWarning("endRaw");
   }
@@ -1873,6 +1954,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   // getImage, setCache, getCache, removeCache, isModified, setModified
 
 
+  @Override
   public void loadPixels() {
     if ((pixels == null) || (pixels.length != width * height)) {
       pixels = new int[width * height];
@@ -1890,6 +1972,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
    * Unlike in PImage, where updatePixels() only requests that the
    * update happens, in PGraphicsJava2D, this will happen immediately.
    */
+  @Override
   public void updatePixels() {
     //updatePixels(0, 0, width, height);
     WritableRaster raster = ((BufferedImage) (primarySurface ? offscreen : image)).getRaster();
@@ -1904,6 +1987,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
    * Unlike in PImage, where updatePixels() only requests that the
    * update happens, in PGraphicsJava2D, this will happen immediately.
    */
+  @Override
   public void updatePixels(int x, int y, int c, int d) {
     //if ((x == 0) && (y == 0) && (c == width) && (d == height)) {
     if ((x != 0) || (y != 0) || (c != width) || (d != height)) {
@@ -1921,6 +2005,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   static int getset[] = new int[1];
 
 
+  @Override
   public int get(int x, int y) {
     if ((x < 0) || (y < 0) || (x >= width) || (y >= height)) return 0;
     //return ((BufferedImage) image).getRGB(x, y);
@@ -1934,6 +2019,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   //public PImage get(int x, int y, int w, int h)
 
 
+  @Override
   public PImage getImpl(int x, int y, int w, int h) {
     PImage output = new PImage(w, h);
     output.parent = parent;
@@ -1948,11 +2034,13 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   }
 
 
+  @Override
   public PImage get() {
     return get(0, 0, width, height);
   }
 
 
+  @Override
   public void set(int x, int y, int argb) {
     if ((x < 0) || (y < 0) || (x >= width) || (y >= height)) return;
 //    ((BufferedImage) image).setRGB(x, y, argb);
@@ -1963,6 +2051,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   }
 
 
+  @Override
   protected void setImpl(int dx, int dy, int sx, int sy, int sw, int sh,
                          PImage src) {
     WritableRaster raster = ((BufferedImage) (primarySurface ? offscreen : image)).getRaster();
@@ -1983,11 +2072,13 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   // MASK
 
 
+  @Override
   public void mask(int alpha[]) {
     showMethodWarning("mask");
   }
 
 
+  @Override
   public void mask(PImage alpha) {
     showMethodWarning("mask");
   }
@@ -2014,6 +2105,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   // COPY
 
 
+  @Override
   public void copy(int sx, int sy, int sw, int sh,
                    int dx, int dy, int dw, int dh) {
     if ((sw != dw) || (sh != dh)) {
@@ -2029,6 +2121,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   }
 
 
+  @Override
   public void copy(PImage src,
                    int sx, int sy, int sw, int sh,
                    int dx, int dy, int dw, int dh) {
