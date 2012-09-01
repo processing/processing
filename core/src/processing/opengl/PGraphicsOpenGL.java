@@ -22,24 +22,12 @@
 
 package processing.opengl;
 
-import processing.core.PApplet;
-import processing.core.PFont;
-import processing.core.PGraphics;
-import processing.core.PImage;
-import processing.core.PMatrix;
-import processing.core.PMatrix2D;
-import processing.core.PMatrix3D;
-import processing.core.PShape;
-import processing.core.PVector;
+import processing.core.*;
 
 import java.net.URL;
 import java.nio.*;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.*;
+import java.util.regex.*;
 
 /**
  * OpenGL renderer.
@@ -54,6 +42,10 @@ public class PGraphicsOpenGL extends PGraphics {
 
   /** The renderer currently in use. */
   protected static PGraphicsOpenGL pgCurrent = null;
+
+  /** Additional image parameters not covered by the cache. */
+  protected WeakHashMap<PImage, Object> paramMap =
+    new WeakHashMap<PImage, Object>();
 
   // ........................................................
 
@@ -615,6 +607,38 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void setFlushMode(int mode) {
     flushMode = mode;
+  }
+
+
+  //////////////////////////////////////////////////////////////
+
+  /**
+   * Store parameters for a renderer that requires extra metadata of
+   * some kind.
+   * @param renderer The PGraphics renderer associated to the image
+   * @param storage The parameters required by the renderer
+   */
+  public void setParams(PImage image, Object params) {
+    paramMap.put(image, params);
+  }
+
+
+  /**
+   * Get the parameters for the specified renderer.
+   * @param renderer The PGraphics renderer associated to the image
+   * @return parameters stored for the specified renderer
+   */
+  public Object getParams(PImage image) {
+    return paramMap.get(image);
+  }
+
+
+  /**
+   * Remove information associated with this renderer from the cache, if any.
+   * @param renderer The PGraphics renderer whose parameters should be removed
+   */
+  public void removeParams(PImage image) {
+    paramMap.remove(image);
   }
 
 
@@ -1631,7 +1655,7 @@ public class PGraphicsOpenGL extends PGraphics {
       if (texture != null) {
         // The screen texture should be deleted because it
         // corresponds to the old window size.
-        this.removeCache(pgPrimary);
+        pgPrimary.removeCache(this);
         this.removeParams(pgPrimary);
         texture = null;
         loadTexture();
@@ -5443,8 +5467,8 @@ public class PGraphicsOpenGL extends PGraphics {
       return;
     }
 
-    if (texture == null || texture != img.getCache(pgPrimary)) {
-      Texture tex = (Texture)img.getCache(pgPrimary);
+    if (texture == null || texture != pgPrimary.getCache(img)) {
+      Texture tex = (Texture)pgPrimary.getCache(img);
       Texture.Parameters params = tex != null ? tex.getParameters() : null;
       if (tex == null || tex.contextIsOutdated() || !validSurfaceTex(tex)) {
         if (primarySurface) {
@@ -5457,8 +5481,8 @@ public class PGraphicsOpenGL extends PGraphics {
       if (tex != null) {
         texture = tex;
         texture.setFlippedY(true);
-        this.setCache(pgPrimary, texture);
-        this.setParams(pgPrimary, params);
+        pgPrimary.setCache(this, texture);
+        pgPrimary.setParams(this, params);
 
         if (!primarySurface && offscreenFramebuffer != null) {
           // Attach as the color buffer for this offscreen surface
@@ -5883,7 +5907,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   @Override
   public Object initCache(PImage img) {
-    Texture tex = (Texture)img.getCache(pgPrimary);
+    Texture tex = (Texture)pgPrimary.getCache(img);
     if (tex == null || tex.contextIsOutdated()) {
       tex = addTexture(img);
       if (tex != null) {
@@ -5901,7 +5925,7 @@ public class PGraphicsOpenGL extends PGraphics {
    * @param img the image to have a texture metadata associated to it
    */
   protected Texture addTexture(PImage img) {
-    Texture.Parameters params = (Texture.Parameters)img.getParams(pgPrimary);
+    Texture.Parameters params = (Texture.Parameters)pgPrimary.getParams(img);
     if (params == null) {
       params = new Texture.Parameters();
       if (hints[DISABLE_TEXTURE_MIPMAPS]) {
@@ -5929,8 +5953,8 @@ public class PGraphicsOpenGL extends PGraphics {
       img.parent = parent;
     }
     Texture tex = new Texture(img.parent, img.width, img.height, params);
-    img.setCache(pgPrimary, tex);
-    img.setParams(pgPrimary, params);
+    pgPrimary.setCache(img, tex);
+    pgPrimary.setParams(img, params);
     return tex;
   }
 
@@ -5963,8 +5987,8 @@ public class PGraphicsOpenGL extends PGraphics {
     img.width = tex.width;
     img.height = tex.height;
     img.format = ARGB;
-    img.setCache(pgPrimary, tex);
-    img.setParams(pgPrimary, tex.getParameters());
+    pgPrimary.setCache(img, tex);
+    pgPrimary.setParams(img, tex.getParameters());
     return img;
   }
 

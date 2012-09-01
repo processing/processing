@@ -26,6 +26,7 @@ package processing.core;
 
 import java.awt.*;
 import java.util.HashMap;
+import java.util.WeakHashMap;
 
 import processing.opengl.PGL;
 import processing.opengl.PShader;
@@ -195,6 +196,17 @@ public class PGraphics extends PImage implements PConstants {
    * be used inside beginDraw(), allocate(), etc.
    */
   protected boolean[] hints = new boolean[HINT_COUNT];
+
+  // ........................................................
+
+  /**
+   * Storage for renderer-specific image data. In 1.x, renderers wrote cache
+   * data into the image object. In 2.x, the renderer has a weak-referenced
+   * map that points at any of the images it has worked on already. When the
+   * images go out of scope, they will be properly garbage collected.
+   */
+  protected WeakHashMap<PImage, Object> cacheMap =
+    new WeakHashMap<PImage, Object>();
 
 
   ////////////////////////////////////////////////////////////
@@ -742,6 +754,47 @@ public class PGraphics extends PImage implements PConstants {
    * endRaw(), in order to shut things off.
    */
   public void dispose() {  // ignore
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // IMAGE METADATA FOR THIS RENDERER
+
+  /**
+   * Store data of some kind for the renderer that requires extra metadata of
+   * some kind. Usually this is a renderer-specific representation of the
+   * image data, for instance a BufferedImage with tint() settings applied for
+   * PGraphicsJava2D, or resized image data and OpenGL texture indices for
+   * PGraphicsOpenGL.
+   * @param renderer The PGraphics renderer associated to the image
+   * @param storage The metadata required by the renderer
+   */
+  public void setCache(PImage image, Object storage) {
+    cacheMap.put(image, storage);
+  }
+
+
+  /**
+   * Get cache storage data for the specified renderer. Because each renderer
+   * will cache data in different formats, it's necessary to store cache data
+   * keyed by the renderer object. Otherwise, attempting to draw the same
+   * image to both a PGraphicsJava2D and a PGraphicsOpenGL will cause errors.
+   * @param renderer The PGraphics renderer associated to the image
+   * @return metadata stored for the specified renderer
+   */
+  public Object getCache(PImage image) {
+    return cacheMap.get(image);
+  }
+
+
+  /**
+   * Remove information associated with this renderer from the cache, if any.
+   * @param renderer The PGraphics renderer whose cache data should be removed
+   */
+  public void removeCache(PImage image) {
+    cacheMap.remove(image);
   }
 
 
