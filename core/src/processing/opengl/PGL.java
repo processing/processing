@@ -156,7 +156,7 @@ public class PGL {
     "precision mediump int;\n" +
     "#endif\n";
 
-  //////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////
 
   // OpenGL constants
 
@@ -1626,14 +1626,18 @@ public class PGL {
 
 
   protected class Context {
-    protected GLContext glContext;
+    protected int id;
 
     Context() {
-      glContext = null;
+      id = -1;
     }
 
     Context(GLContext context) {
-      glContext = context;
+      if (context != null) {
+        id = context.hashCode();
+      } else {
+        id = -1;
+      }
     }
 
     boolean current() {
@@ -1641,21 +1645,17 @@ public class PGL {
     }
 
     boolean equal(GLContext context) {
-      if (glContext == null || context == null) {
+      if (id == -1 || context == null) {
         // A null context means a still non-created resource,
         // so it is considered equal to the argument.
         return true;
       } else {
-        return glContext.hashCode() == context.hashCode();
+        return id == context.hashCode();
       }
     }
 
-    int code() {
-      if (glContext == null) {
-        return -1;
-      } else {
-        return glContext.hashCode();
-      }
+    int id() {
+      return id;
     }
   }
 
