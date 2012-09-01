@@ -1,4 +1,14 @@
 0209 core
+X loadImage() with spaces in path broken with exported applications on OS X
+X   http://code.google.com/p/processing/issues/detail?id=1073
+X   maybe getResource() fails because spaces are not encoded?
+X PVector limit() is inefficient
+X   http://code.google.com/p/processing/issues/detail?id=1122
+
+_ Jagged / Glitchy JAVA2D shape strokes in Java 1.6
+_   g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, 
+_                       RenderingHints.VALUE_STROKE_PURE); 
+_   http://code.google.com/p/processing/issues/detail?id=1068
 
 
 docs
@@ -6,6 +16,9 @@ _ textureWrap() CLAMP and REPEAT now added
 
 _ implement callbacks for images and other loadXxxx() functions
 _   remove requestImage() and friends
+_ callback for requestImage()
+_   http://code.google.com/p/processing/issues/detail?id=641
+_ remove/update requestImage example
 
 _ do we need a trim() method for XML? or enableWhiteSpace()? or?
 
@@ -392,8 +405,6 @@ _ work through loadPixels in PImage, how consistent do we need to be?
 _   with get() and set() methods, this gets really tricky (too slow)
 _   could optimize by keeping a java image around, but table for later
 _     it's too significant a change, and not enough time to test
-_ callback for requestImage()
-_   http://code.google.com/p/processing/issues/detail?id=641
 _ img.get() quirks
 _   http://code.google.com/p/processing/issues/detail?id=167
 _ image resizing is ugly (just use java2d?)
