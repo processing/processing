@@ -77,7 +77,6 @@ import processing.core.PApplet;
  * @instanceName sh any variable of type PShape
  */
 public class PShape implements PConstants {
-
   protected String name;
   protected HashMap<String,PShape> nameTable;
 
@@ -398,13 +397,13 @@ public class PShape implements PConstants {
 
 
 
-  // TODO: need to discuss about these two (four).
-  public PVector getTop() {
+  // TODO unapproved
+  protected PVector getTop() {
     return getTop(null);
   }
 
 
-  public PVector getTop(PVector top) {
+  protected PVector getTop(PVector top) {
     if (top == null) {
       top = new PVector();
     }
@@ -412,12 +411,12 @@ public class PShape implements PConstants {
   }
 
 
-  public PVector getBottom() {
+  protected PVector getBottom() {
     return getBottom(null);
   }
 
 
-  public PVector getBottom(PVector bottom) {
+  protected PVector getBottom(PVector bottom) {
     if (bottom == null) {
       bottom = new PVector();
     }
@@ -444,6 +443,7 @@ public class PShape implements PConstants {
   /**
    * Return true if this shape requires rendering through OpenGL. Defaults to false.
    */
+  // TODO unapproved
   public boolean isGL() {
     return false;
   }
@@ -461,7 +461,8 @@ public class PShape implements PConstants {
   public void noTexture() {
   }
 
-  public void solid(boolean solid) {
+  // TODO unapproved
+  protected void solid(boolean solid) {
   }
 
   public void beginContour() {
@@ -491,6 +492,7 @@ public class PShape implements PConstants {
   public void end(int mode) {
   }
 
+
   //////////////////////////////////////////////////////////////
 
   // STROKE CAP/JOIN/WEIGHT
@@ -504,6 +506,7 @@ public class PShape implements PConstants {
 
   public void strokeCap(int cap) {
   }
+
 
   //////////////////////////////////////////////////////////////
 
@@ -778,7 +781,8 @@ public class PShape implements PConstants {
   // Shape copy
 
 
-  static public PShape createShape(PApplet parent, PShape src) {
+  // TODO unapproved
+  static protected PShape createShape(PApplet parent, PShape src) {
     PShape dest = null;
     if (src.family == GROUP) {
       dest = parent.createShape(GROUP);
@@ -798,7 +802,8 @@ public class PShape implements PConstants {
   }
 
 
-  static public void copyGroup(PApplet parent, PShape src, PShape dest) {
+  // TODO unapproved
+  static protected void copyGroup(PApplet parent, PShape src, PShape dest) {
     copyMatrix(src, dest);
     copyStyles(src, dest);
     copyImage(src, dest);
@@ -809,14 +814,16 @@ public class PShape implements PConstants {
   }
 
 
-  static public void copyPrimitive(PShape src, PShape dest) {
+  // TODO unapproved
+  static protected void copyPrimitive(PShape src, PShape dest) {
     copyMatrix(src, dest);
     copyStyles(src, dest);
     copyImage(src, dest);
   }
 
 
-  static public void copyGeometry(PShape src, PShape dest) {
+  // TODO unapproved
+  static protected void copyGeometry(PShape src, PShape dest) {
     copyMatrix(src, dest);
     copyStyles(src, dest);
     copyImage(src, dest);
@@ -831,13 +838,17 @@ public class PShape implements PConstants {
 //        s.emissive(vert[ER] * 255, vert[EG] * 255, vert[EB] * 255);
 //        s.shininess(vert[SHINE]);
 
-        dest.normal(vert[NX], vert[NY], vert[NZ]);
-        dest.vertex(vert[X], vert[Y], vert[Z], vert[U], vert[V]);
+        dest.normal(vert[PGraphics.NX],
+                    vert[PGraphics.NY],
+                    vert[PGraphics.NZ]);
+        dest.vertex(vert[X], vert[Y], vert[Z],
+                    vert[PGraphics.U],
+                    vert[PGraphics.V]);
       }
     } else {
       for (int i = 0; i < src.vertexCount; i++) {
         float[] vert = src.vertices[i];
-        if (vert[PGraphics.Z] == 0) {
+        if (vert[Z] == 0) {
           dest.vertex(vert[X], vert[Y]);
         } else {
           dest.vertex(vert[X], vert[Y], vert[Z]);
@@ -849,7 +860,8 @@ public class PShape implements PConstants {
   }
 
 
-  static public void copyPath(PShape src, PShape dest) {
+  // TODO unapproved
+  static protected void copyPath(PShape src, PShape dest) {
     copyMatrix(src, dest);
     copyStyles(src, dest);
     copyImage(src, dest);
@@ -858,13 +870,16 @@ public class PShape implements PConstants {
   }
 
 
-  static public void copyMatrix(PShape src, PShape dest) {
+  // TODO unapproved
+  static protected void copyMatrix(PShape src, PShape dest) {
     if (src.matrix != null) {
       dest.applyMatrix(src.matrix);
     }
   }
 
-  static public void copyStyles(PShape src, PShape dest) {
+
+  // TODO unapproved
+  static protected void copyStyles(PShape src, PShape dest) {
     if (src.stroke) {
       dest.stroke = true;
       dest.strokeColor = src.strokeColor;
@@ -884,11 +899,13 @@ public class PShape implements PConstants {
   }
 
 
-  static public void copyImage(PShape src, PShape dest) {
+  // TODO unapproved
+  static protected void copyImage(PShape src, PShape dest) {
     if (src.image != null) {
       dest.texture(src.image);
     }
   }
+
 
 
   ////////////////////////////////////////////////////////////////////////
@@ -896,7 +913,7 @@ public class PShape implements PConstants {
 
   /**
    * Called by the following (the shape() command adds the g)
-   * PShape s = loadShapes("blah.svg");
+   * PShape s = loadShape("blah.svg");
    * shape(s);
    */
   public void draw(PGraphics g) {
@@ -988,8 +1005,6 @@ public class PShape implements PConstants {
 
   protected void drawGeometry(PGraphics g) {
     // get cache object using g.
-
-
     g.beginShape(kind);
     if (style) {
       for (int i = 0; i < vertexCount; i++) {
@@ -998,7 +1013,7 @@ public class PShape implements PConstants {
     } else {
       for (int i = 0; i < vertexCount; i++) {
         float[] vert = vertices[i];
-        if (vert[PGraphics.Z] == 0) {
+        if (vert[Z] == 0) {
           g.vertex(vert[X], vert[Y]);
         } else {
           g.vertex(vert[X], vert[Y], vert[Z]);
@@ -1124,6 +1139,7 @@ public class PShape implements PConstants {
           case CURVE_VERTEX:
             g.curveVertex(vertices[index][X], vertices[index][Y]);
             index++;
+            break;
 
           case BREAK:
             if (insideContour) {
@@ -1162,6 +1178,7 @@ public class PShape implements PConstants {
           case CURVE_VERTEX:
             g.curveVertex(vertices[index][X], vertices[index][Y], vertices[index][Z]);
             index++;
+            break;
 
           case BREAK:
             if (insideContour) {
@@ -1373,7 +1390,7 @@ public class PShape implements PConstants {
   }
 
 
-  public void setParams(float[] source) {
+  protected void setParams(float[] source) {
     if (params == null) {
       params = new float[source.length];
     }
@@ -1390,7 +1407,7 @@ public class PShape implements PConstants {
   }
 
 
-  public void setPath(int vcount, float[][] verts, int ccount, int[] codes) {
+  protected void setPath(int vcount, float[][] verts, int ccount, int[] codes) {
     if (verts == null || verts.length < vcount) return;
     if (0 < ccount && (codes == null || codes.length < ccount)) return;
 
@@ -1447,7 +1464,8 @@ public class PShape implements PConstants {
 
 
   public void setVertex(int index, float x, float y) {
-    setVertex(index, x, y, 0);
+    vertices[index][X] = x;
+    vertices[index][Y] = y;
   }
 
 
@@ -1474,146 +1492,146 @@ public class PShape implements PConstants {
     if (vec == null) {
       vec = new PVector();
     }
-    vec.x = vertices[index][NX];
-    vec.y = vertices[index][NY];
-    vec.z = vertices[index][NZ];
+    vec.x = vertices[index][PGraphics.NX];
+    vec.y = vertices[index][PGraphics.NY];
+    vec.z = vertices[index][PGraphics.NZ];
     return vec;
   }
 
 
   public float getNormalX(int index) {
-    return vertices[index][NX];
+    return vertices[index][PGraphics.NX];
   }
 
 
   public float getNormalY(int index) {
-    return vertices[index][NY];
+    return vertices[index][PGraphics.NY];
   }
 
 
   public float getNormalZ(int index) {
-    return vertices[index][NZ];
+    return vertices[index][PGraphics.NZ];
   }
 
 
   public void setNormal(int index, float nx, float ny, float nz) {
-    vertices[index][NX] = nx;
-    vertices[index][NY] = ny;
-    vertices[index][NZ] = nz;
+    vertices[index][PGraphics.NX] = nx;
+    vertices[index][PGraphics.NY] = ny;
+    vertices[index][PGraphics.NZ] = nz;
   }
 
 
   public float getTextureU(int index) {
-    return vertices[index][U];
+    return vertices[index][PGraphics.U];
   }
 
 
   public float getTextureV(int index) {
-    return vertices[index][V];
+    return vertices[index][PGraphics.V];
   }
 
 
   public void setTextureUV(int index, float u, float v) {
-    vertices[index][U] = u;
-    vertices[index][V] = v;
+    vertices[index][PGraphics.U] = u;
+    vertices[index][PGraphics.V] = v;
   }
 
 
   public int getFill(int index) {
-    int a = (int) (vertices[index][A] * 255);
-    int r = (int) (vertices[index][R] * 255);
-    int g = (int) (vertices[index][G] * 255);
-    int b = (int) (vertices[index][B] * 255);
+    int a = (int) (vertices[index][PGraphics.A] * 255);
+    int r = (int) (vertices[index][PGraphics.R] * 255);
+    int g = (int) (vertices[index][PGraphics.G] * 255);
+    int b = (int) (vertices[index][PGraphics.B] * 255);
     return (a << 24) | (r << 16) | (g << 8) | b;
   }
 
 
   public void setFill(int index, int fill) {
-    vertices[index][A] = ((fill >> 24) & 0xFF) / 255.0f;
-    vertices[index][R] = ((fill >> 16) & 0xFF) / 255.0f;
-    vertices[index][G] = ((fill >>  8) & 0xFF) / 255.0f;
-    vertices[index][B] = ((fill >>  0) & 0xFF) / 255.0f;
+    vertices[index][PGraphics.A] = ((fill >> 24) & 0xFF) / 255.0f;
+    vertices[index][PGraphics.R] = ((fill >> 16) & 0xFF) / 255.0f;
+    vertices[index][PGraphics.G] = ((fill >>  8) & 0xFF) / 255.0f;
+    vertices[index][PGraphics.B] = ((fill >>  0) & 0xFF) / 255.0f;
   }
 
 
   public int getStroke(int index) {
-    int a = (int) (vertices[index][SA] * 255);
-    int r = (int) (vertices[index][SR] * 255);
-    int g = (int) (vertices[index][SG] * 255);
-    int b = (int) (vertices[index][SB] * 255);
+    int a = (int) (vertices[index][PGraphics.SA] * 255);
+    int r = (int) (vertices[index][PGraphics.SR] * 255);
+    int g = (int) (vertices[index][PGraphics.SG] * 255);
+    int b = (int) (vertices[index][PGraphics.SB] * 255);
     return (a << 24) | (r << 16) | (g << 8) | b;
   }
 
 
   public void setStroke(int index, int stroke) {
-    vertices[index][SA] = ((stroke >> 24) & 0xFF) / 255.0f;
-    vertices[index][SR] = ((stroke >> 16) & 0xFF) / 255.0f;
-    vertices[index][SG] = ((stroke >>  8) & 0xFF) / 255.0f;
-    vertices[index][SB] = ((stroke >>  0) & 0xFF) / 255.0f;
+    vertices[index][PGraphics.SA] = ((stroke >> 24) & 0xFF) / 255.0f;
+    vertices[index][PGraphics.SR] = ((stroke >> 16) & 0xFF) / 255.0f;
+    vertices[index][PGraphics.SG] = ((stroke >>  8) & 0xFF) / 255.0f;
+    vertices[index][PGraphics.SB] = ((stroke >>  0) & 0xFF) / 255.0f;
   }
 
 
-  public float getStrokeWeight(int index) {
-    return vertices[index][SW];
+  protected float getStrokeWeight(int index) {
+    return vertices[index][PGraphics.SW];
   }
 
 
-  public void setStrokeWeight(int index, float weight) {
-    vertices[index][SW] = weight;
+  protected void setStrokeWeight(int index, float weight) {
+    vertices[index][PGraphics.SW] = weight;
   }
 
 
-  public int getAmbient(int index) {
-    int r = (int) (vertices[index][AR] * 255);
-    int g = (int) (vertices[index][AG] * 255);
-    int b = (int) (vertices[index][AB] * 255);
+  protected int getAmbient(int index) {
+    int r = (int) (vertices[index][PGraphics.AR] * 255);
+    int g = (int) (vertices[index][PGraphics.AG] * 255);
+    int b = (int) (vertices[index][PGraphics.AB] * 255);
     return 0xff000000 | (r << 16) | (g << 8) | b;
   }
 
 
-  public void setAmbient(int index, int ambient) {
-    vertices[index][AR] = ((ambient >> 16) & 0xFF) / 255.0f;
-    vertices[index][AG] = ((ambient >>  8) & 0xFF) / 255.0f;
-    vertices[index][AB] = ((ambient >>  0) & 0xFF) / 255.0f;
+  protected void setAmbient(int index, int ambient) {
+    vertices[index][PGraphics.AR] = ((ambient >> 16) & 0xFF) / 255.0f;
+    vertices[index][PGraphics.AG] = ((ambient >>  8) & 0xFF) / 255.0f;
+    vertices[index][PGraphics.AB] = ((ambient >>  0) & 0xFF) / 255.0f;
   }
 
-  public int getSpecular(int index) {
-    int r = (int) (vertices[index][SPR] * 255);
-    int g = (int) (vertices[index][SPG] * 255);
-    int b = (int) (vertices[index][SPB] * 255);
+  protected int getSpecular(int index) {
+    int r = (int) (vertices[index][PGraphics.SPR] * 255);
+    int g = (int) (vertices[index][PGraphics.SPG] * 255);
+    int b = (int) (vertices[index][PGraphics.SPB] * 255);
     return 0xff000000 | (r << 16) | (g << 8) | b;
   }
 
 
-  public void setSpecular(int index, int specular) {
-    vertices[index][SPR] = ((specular >> 16) & 0xFF) / 255.0f;
-    vertices[index][SPG] = ((specular >>  8) & 0xFF) / 255.0f;
-    vertices[index][SPB] = ((specular >>  0) & 0xFF) / 255.0f;
+  protected void setSpecular(int index, int specular) {
+    vertices[index][PGraphics.SPR] = ((specular >> 16) & 0xFF) / 255.0f;
+    vertices[index][PGraphics.SPG] = ((specular >>  8) & 0xFF) / 255.0f;
+    vertices[index][PGraphics.SPB] = ((specular >>  0) & 0xFF) / 255.0f;
   }
 
 
-  public int getEmissive(int index) {
-    int r = (int) (vertices[index][ER] * 255);
-    int g = (int) (vertices[index][EG] * 255);
-    int b = (int) (vertices[index][EB] * 255);
+  protected int getEmissive(int index) {
+    int r = (int) (vertices[index][PGraphics.ER] * 255);
+    int g = (int) (vertices[index][PGraphics.EG] * 255);
+    int b = (int) (vertices[index][PGraphics.EB] * 255);
     return 0xff000000 | (r << 16) | (g << 8) | b;
   }
 
 
-  public void setEmissive(int index, int emissive) {
-    vertices[index][ER] = ((emissive >> 16) & 0xFF) / 255.0f;
-    vertices[index][EG] = ((emissive >>  8) & 0xFF) / 255.0f;
-    vertices[index][EB] = ((emissive >>  0) & 0xFF) / 255.0f;
+  protected void setEmissive(int index, int emissive) {
+    vertices[index][PGraphics.ER] = ((emissive >> 16) & 0xFF) / 255.0f;
+    vertices[index][PGraphics.EG] = ((emissive >>  8) & 0xFF) / 255.0f;
+    vertices[index][PGraphics.EB] = ((emissive >>  0) & 0xFF) / 255.0f;
   }
 
 
-  public float getShininess(int index) {
-    return vertices[index][SHINE];
+  protected float getShininess(int index) {
+    return vertices[index][PGraphics.SHINE];
   }
 
 
-  public void setShininess(int index, float shine) {
-    vertices[index][SHINE] = shine;
+  protected void setShininess(int index, float shine) {
+    vertices[index][PGraphics.SHINE] = shine;
   }
 
 

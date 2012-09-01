@@ -45,6 +45,7 @@ import android.os.Handler;
 import android.text.format.Time;
 import android.util.*;
 import android.view.*;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.*;
 
 import org.apache.http.client.HttpClient;
@@ -493,8 +494,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
       // can keep your "talentless hack" comments to yourself. Ahem.)
       RelativeLayout overallLayout = new RelativeLayout(this);
       RelativeLayout.LayoutParams lp =
-        new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
-          RelativeLayout.LayoutParams.WRAP_CONTENT);
+        new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
+                                        LayoutParams.WRAP_CONTENT);
       lp.addRule(RelativeLayout.CENTER_IN_PARENT);
 
       LinearLayout layout = new LinearLayout(this);
@@ -9225,7 +9226,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
    * built with Processing.</P>
    */
   static public int blendColor(int c1, int c2, int mode) {
-    return PGraphics.blendColor(c1, c2, mode);
+    return PImage.blendColor(c1, c2, mode);
   }
 
 

@@ -2880,6 +2880,7 @@ public class PShapeOpenGL extends PShape {
                                  fill, stroke, curveDetail, code);
             code = VERTEX;
             idx++;
+            break;
 
           case BREAK:
             code = BREAK;
@@ -2931,6 +2932,7 @@ public class PShapeOpenGL extends PShape {
                                  fill, stroke, curveDetail, code);
             code = VERTEX;
             idx++;
+            break;
 
           case BREAK:
             code = BREAK;
