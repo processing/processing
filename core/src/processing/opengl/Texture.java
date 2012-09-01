@@ -145,7 +145,7 @@ public class Texture implements PConstants {
   protected void finalize() throws Throwable {
     try {
       if (glName != 0) {
-        pg.finalizeTextureObject(glName, context.code());
+        pg.finalizeTextureObject(glName, context.id());
       }
     } finally {
       super.finalize();
@@ -1130,7 +1130,7 @@ public class Texture implements PConstants {
     }
 
     context = pgl.getCurrentContext();
-    glName = pg.createTextureObject(context.code());
+    glName = pg.createTextureObject(context.id());
 
     pgl.bindTexture(glTarget, glName);
     pgl.texParameteri(glTarget, PGL.TEXTURE_MIN_FILTER, glMinFilter);
@@ -1161,7 +1161,7 @@ public class Texture implements PConstants {
    */
   protected void release() {
     if (glName != 0) {
-      pg.finalizeTextureObject(glName, context.code());
+      pg.finalizeTextureObject(glName, context.id());
       glName = 0;
     }
   }
@@ -1173,7 +1173,7 @@ public class Texture implements PConstants {
       // Removing the texture object from the renderer's list so it
       // doesn't get deleted by OpenGL. The texture object was
       // automatically disposed when the old context was destroyed.
-      pg.removeTextureObject(glName, context.code());
+      pg.removeTextureObject(glName, context.id());
 
       // And then set the id to zero, so it doesn't try to be
       // deleted when the object's finalizer is invoked by the GC.

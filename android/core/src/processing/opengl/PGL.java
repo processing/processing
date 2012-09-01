@@ -318,6 +318,9 @@ public class PGL {
   
   /** GLU interface **/
   public PGLU glu; 
+
+  /** The current opengl context */
+  static public EGLContext context;
   
   /** The PGraphics object using this interface */
   protected PGraphicsOpenGL pg;
@@ -328,7 +331,7 @@ public class PGL {
   /** The renderer object driving the rendering loop,
    * analogous to the GLEventListener in JOGL */
   protected AndroidRenderer renderer;
-
+  
   /** Which texturing targets are enabled */
   protected static boolean[] texturingTargets = { false }; 
   
@@ -1284,25 +1287,41 @@ public class PGL {
     
   
   protected Context getCurrentContext() {
-    return new Context();
+    return new Context(context);
   }
   
   
   protected class Context {
+    protected int id;
 
-    Context() {    
+    Context() {
+      id = -1;
     }
-    
+
+    Context(EGLContext context) {
+      if (context != null) {
+        id = context.hashCode();
+      } else {
+        id = -1;
+      }
+    }
+
     boolean current() {
-      return true;
-    }    
-    
-    boolean equal() {
-      return true;
+      return equal(context);
     }
-    
-    int code() {
-      return 0;
+
+    boolean equal(EGLContext context) {
+      if (id == -1 || context == null) {
+        // A null context means a still non-created resource,
+        // so it is considered equal to the argument.        
+        return true;
+      } else {
+        return id == context.hashCode();
+      }
+    }
+
+    int id() {
+      return id;
     }
   }  
   
@@ -2035,6 +2054,7 @@ public class PGL {
 
     public void onSurfaceCreated(GL10 igl, EGLConfig config) {      
       gl = igl;
+      context = ((EGL10)EGLContext.getEGL()).eglGetCurrentContext();
     }    
   }
   
