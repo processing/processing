@@ -27,7 +27,6 @@ package processing.core;
 import java.awt.image.*;
 import java.io.*;
 import java.lang.reflect.Method;
-import java.util.HashMap;
 
 import javax.imageio.ImageIO;
 
@@ -126,10 +125,11 @@ public class PImage implements PConstants, Cloneable {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
   /** for renderers that need to store info about the image */
-  protected HashMap<PGraphics, Object> cacheMap;
+  //protected HashMap<PGraphics, Object> cacheMap;
+//  protected WeakHashMap<PGraphics, Object> cacheMap;
 
   /** for renderers that need to store parameters about the image */
-  protected HashMap<PGraphics, Object> paramMap;
+//  protected HashMap<PGraphics, Object> paramMap;
 
   /** modified portion of the image */
   protected boolean modified;
@@ -305,82 +305,82 @@ public class PImage implements PConstants, Cloneable {
   }
 
 
-  //////////////////////////////////////////////////////////////
-
-  // METADATA/PARAMETERS REQUIRED BY RENDERERS
-
-  /**
-   * Store data of some kind for a renderer that requires extra metadata of
-   * some kind. Usually this is a renderer-specific representation of the
-   * image data, for instance a BufferedImage with tint() settings applied for
-   * PGraphicsJava2D, or resized image data and OpenGL texture indices for
-   * PGraphicsOpenGL.
-   * @param renderer The PGraphics renderer associated to the image
-   * @param storage The metadata required by the renderer
-   */
-  public void setCache(PGraphics renderer, Object storage) {
-    if (cacheMap == null) cacheMap = new HashMap<PGraphics, Object>();
-    cacheMap.put(renderer, storage);
-  }
-
-
-  /**
-   * Get cache storage data for the specified renderer. Because each renderer
-   * will cache data in different formats, it's necessary to store cache data
-   * keyed by the renderer object. Otherwise, attempting to draw the same
-   * image to both a PGraphicsJava2D and a PGraphicsOpenGL will cause errors.
-   * @param renderer The PGraphics renderer associated to the image
-   * @return metadata stored for the specified renderer
-   */
-  public Object getCache(PGraphics renderer) {
-    if (cacheMap == null) return null;
-    return cacheMap.get(renderer);
-  }
-
-
-  /**
-   * Remove information associated with this renderer from the cache, if any.
-   * @param renderer The PGraphics renderer whose cache data should be removed
-   */
-  public void removeCache(PGraphics renderer) {
-    if (cacheMap != null) {
-      cacheMap.remove(renderer);
-    }
-  }
-
-
-  /**
-   * Store parameters for a renderer that requires extra metadata of
-   * some kind.
-   * @param renderer The PGraphics renderer associated to the image
-   * @param storage The parameters required by the renderer
-   */
-  public void setParams(PGraphics renderer, Object params) {
-    if (paramMap == null) paramMap = new HashMap<PGraphics, Object>();
-    paramMap.put(renderer, params);
-  }
+//  //////////////////////////////////////////////////////////////
+//
+//  // METADATA/PARAMETERS REQUIRED BY RENDERERS
+//
+//  /**
+//   * Store data of some kind for a renderer that requires extra metadata of
+//   * some kind. Usually this is a renderer-specific representation of the
+//   * image data, for instance a BufferedImage with tint() settings applied for
+//   * PGraphicsJava2D, or resized image data and OpenGL texture indices for
+//   * PGraphicsOpenGL.
+//   * @param renderer The PGraphics renderer associated to the image
+//   * @param storage The metadata required by the renderer
+//   */
+//  public void setCache(PGraphics renderer, Object storage) {
+//    if (cacheMap == null) cacheMap = new WeakHashMap<PGraphics, Object>();
+//    cacheMap.put(renderer, storage);
+//  }
+//
+//
+//  /**
+//   * Get cache storage data for the specified renderer. Because each renderer
+//   * will cache data in different formats, it's necessary to store cache data
+//   * keyed by the renderer object. Otherwise, attempting to draw the same
+//   * image to both a PGraphicsJava2D and a PGraphicsOpenGL will cause errors.
+//   * @param renderer The PGraphics renderer associated to the image
+//   * @return metadata stored for the specified renderer
+//   */
+//  public Object getCache(PGraphics renderer) {
+//    if (cacheMap == null) return null;
+//    return cacheMap.get(renderer);
+//  }
+//
+//
+//  /**
+//   * Remove information associated with this renderer from the cache, if any.
+//   * @param renderer The PGraphics renderer whose cache data should be removed
+//   */
+//  public void removeCache(PGraphics renderer) {
+//    if (cacheMap != null) {
+//      cacheMap.remove(renderer);
+//    }
+//  }
 
 
-  /**
-   * Get the parameters for the specified renderer.
-   * @param renderer The PGraphics renderer associated to the image
-   * @return parameters stored for the specified renderer
-   */
-  public Object getParams(PGraphics renderer) {
-    if (paramMap == null) return null;
-    return paramMap.get(renderer);
-  }
-
-
-  /**
-   * Remove information associated with this renderer from the cache, if any.
-   * @param renderer The PGraphics renderer whose parameters should be removed
-   */
-  public void removeParams(PGraphics renderer) {
-    if (paramMap != null) {
-      paramMap.remove(renderer);
-    }
-  }
+//  /**
+//   * Store parameters for a renderer that requires extra metadata of
+//   * some kind.
+//   * @param renderer The PGraphics renderer associated to the image
+//   * @param storage The parameters required by the renderer
+//   */
+//  public void setParams(PGraphics renderer, Object params) {
+//    if (paramMap == null) paramMap = new HashMap<PGraphics, Object>();
+//    paramMap.put(renderer, params);
+//  }
+//
+//
+//  /**
+//   * Get the parameters for the specified renderer.
+//   * @param renderer The PGraphics renderer associated to the image
+//   * @return parameters stored for the specified renderer
+//   */
+//  public Object getParams(PGraphics renderer) {
+//    if (paramMap == null) return null;
+//    return paramMap.get(renderer);
+//  }
+//
+//
+//  /**
+//   * Remove information associated with this renderer from the cache, if any.
+//   * @param renderer The PGraphics renderer whose parameters should be removed
+//   */
+//  public void removeParams(PGraphics renderer) {
+//    if (paramMap != null) {
+//      paramMap.remove(renderer);
+//    }
+//  }
 
 
   //////////////////////////////////////////////////////////////

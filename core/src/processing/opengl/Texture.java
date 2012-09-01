@@ -230,13 +230,13 @@ public class Texture implements PConstants {
 
 
   public void set(PImage img) {
-    Texture tex = (Texture)img.getCache(pg);
+    Texture tex = (Texture)pg.getCache(img);
     set(tex);
   }
 
 
   public void set(PImage img, int x, int y, int w, int h) {
-    Texture tex = (Texture)img.getCache(pg);
+    Texture tex = (Texture)pg.getCache(img);
     set(tex, x, y, w, h);
   }
 

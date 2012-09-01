@@ -1695,13 +1695,18 @@ public class PApplet extends Applet
    * @see PGraphics#PGraphics
    */
   public PImage createImage(int w, int h, int format) {
-    return createImage(w, h, format, null);
+    PImage image = new PImage(w, h, format);
+    image.parent = this;  // make save() work
+    return image;
   }
 
 
-  /**
-   * @nowebref
-   */
+  /*
+  public PImage createImage(int w, int h, int format) {
+    return createImage(w, h, format, null);
+  }
+
+  // unapproved
   public PImage createImage(int w, int h, int format, Object params) {
     PImage image = new PImage(w, h, format);
     if (params != null) {
@@ -1710,6 +1715,7 @@ public class PApplet extends Applet
     image.parent = this;  // make save() work
     return image;
   }
+  */
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -4841,27 +4847,28 @@ public class PApplet extends Applet
    * @see PGraphics#background(float, float, float, float)
    */
   public PImage loadImage(String filename) {
-    return loadImage(filename, null, null);
+//    return loadImage(filename, null, null);
+    return loadImage(filename, null);
   }
 
-  /**
-   * @param extension the type of image to load, for example "png", "gif", "jpg"
-   */
-  public PImage loadImage(String filename, String extension) {
-    return loadImage(filename, extension, null);
-  }
+//  /**
+//   * @param extension the type of image to load, for example "png", "gif", "jpg"
+//   */
+//  public PImage loadImage(String filename, String extension) {
+//    return loadImage(filename, extension, null);
+//  }
+
+//  /**
+//   * @nowebref
+//   */
+//  public PImage loadImage(String filename, Object params) {
+//    return loadImage(filename, null, params);
+//  }
 
   /**
    * @nowebref
    */
-  public PImage loadImage(String filename, Object params) {
-    return loadImage(filename, null, params);
-  }
-
-  /**
-   * @nowebref
-   */
-  public PImage loadImage(String filename, String extension, Object params) {
+  public PImage loadImage(String filename, String extension) { //, Object params) {
     if (extension == null) {
       String lower = filename.toLowerCase();
       int dot = filename.lastIndexOf('.');
@@ -4884,9 +4891,9 @@ public class PApplet extends Applet
     if (extension.equals("tga")) {
       try {
         PImage image = loadImageTGA(filename);
-        if (params != null) {
-          image.setParams(g, params);
-        }
+//        if (params != null) {
+//          image.setParams(g, params);
+//        }
         return image;
       } catch (IOException e) {
         e.printStackTrace();
@@ -4897,9 +4904,9 @@ public class PApplet extends Applet
     if (extension.equals("tif") || extension.equals("tiff")) {
       byte bytes[] = loadBytes(filename);
       PImage image =  (bytes == null) ? null : PImage.loadTIFF(bytes);
-      if (params != null) {
-        image.setParams(g, params);
-      }
+//      if (params != null) {
+//        image.setParams(g, params);
+//      }
       return image;
     }
 
@@ -4925,9 +4932,9 @@ public class PApplet extends Applet
             image.checkAlpha();
           }
 
-          if (params != null) {
-            image.setParams(g, params);
-          }
+//          if (params != null) {
+//            image.setParams(g, params);
+//          }
           return image;
         }
       }
@@ -4944,9 +4951,9 @@ public class PApplet extends Applet
         if (extension.equals(loadImageFormats[i])) {
           PImage image;
           image = loadImageIO(filename);
-          if (params != null) {
-            image.setParams(g, params);
-          }
+//          if (params != null) {
+//            image.setParams(g, params);
+//          }
           return image;
         }
       }
@@ -4957,9 +4964,12 @@ public class PApplet extends Applet
     return null;
   }
 
+
   public PImage requestImage(String filename) {
-    return requestImage(filename, null, null);
+//    return requestImage(filename, null, null);
+    return requestImage(filename, null);
   }
+
 
   /**
    * ( begin auto-generated from requestImage.xml )
@@ -4984,20 +4994,24 @@ public class PApplet extends Applet
    * @see PImage#PImage
    */
   public PImage requestImage(String filename, String extension) {
-    return requestImage(filename, extension, null);
-  }
-
-
-  /**
-   * @nowebref
-   */
-  public PImage requestImage(String filename, String extension, Object params) {
-    PImage vessel = createImage(0, 0, ARGB, params);
+    PImage vessel = createImage(0, 0, ARGB);
     AsyncImageLoader ail =
       new AsyncImageLoader(filename, extension, vessel);
     ail.start();
     return vessel;
   }
+
+
+//  /**
+//   * @nowebref
+//   */
+//  public PImage requestImage(String filename, String extension, Object params) {
+//    PImage vessel = createImage(0, 0, ARGB, params);
+//    AsyncImageLoader ail =
+//      new AsyncImageLoader(filename, extension, vessel);
+//    ail.start();
+//    return vessel;
+//  }
 
 
   /**
@@ -14040,36 +14054,36 @@ public class PApplet extends Applet
   }
 
 
-  /**
-   * Store parameters for a renderer that requires extra metadata of
-   * some kind.
-   * @param renderer The PGraphics renderer associated to the image
-   * @param storage The parameters required by the renderer
-   */
-  public void setParams(PGraphics renderer, Object params) {
-    if (recorder != null) recorder.setParams(renderer, params);
-    g.setParams(renderer, params);
-  }
-
-
-  /**
-   * Get the parameters for the specified renderer.
-   * @param renderer The PGraphics renderer associated to the image
-   * @return parameters stored for the specified renderer
-   */
-  public Object getParams(PGraphics renderer) {
-    return g.getParams(renderer);
-  }
-
-
-  /**
-   * Remove information associated with this renderer from the cache, if any.
-   * @param renderer The PGraphics renderer whose parameters should be removed
-   */
-  public void removeParams(PGraphics renderer) {
-    if (recorder != null) recorder.removeParams(renderer);
-    g.removeParams(renderer);
-  }
+//  /**
+//   * Store parameters for a renderer that requires extra metadata of
+//   * some kind.
+//   * @param renderer The PGraphics renderer associated to the image
+//   * @param storage The parameters required by the renderer
+//   */
+//  public void setParams(PGraphics renderer, Object params) {
+//    if (recorder != null) recorder.setParams(renderer, params);
+//    g.setParams(renderer, params);
+//  }
+//
+//
+//  /**
+//   * Get the parameters for the specified renderer.
+//   * @param renderer The PGraphics renderer associated to the image
+//   * @return parameters stored for the specified renderer
+//   */
+//  public Object getParams(PGraphics renderer) {
+//    return g.getParams(renderer);
+//  }
+//
+//
+//  /**
+//   * Remove information associated with this renderer from the cache, if any.
+//   * @param renderer The PGraphics renderer whose parameters should be removed
+//   */
+//  public void removeParams(PGraphics renderer) {
+//    if (recorder != null) recorder.removeParams(renderer);
+//    g.removeParams(renderer);
+//  }
 
 
   /**
