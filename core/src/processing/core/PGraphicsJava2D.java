@@ -943,14 +943,14 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
     // Image not ready yet, or an error
     if (who.width <= 0 || who.height <= 0) return;
 
-    if (who.getCache(this) == null) {
+    if (getCache(who) == null) {
       //System.out.println("making new image cache");
-      who.setCache(this, new ImageCache(who));
+      this.setCache(who, new ImageCache(who));
       who.updatePixels();  // mark the whole thing for update
       who.modified = true;
     }
 
-    ImageCache cash = (ImageCache) who.getCache(this);
+    ImageCache cash = (ImageCache) getCache(who);
     // if image previously was tinted, or the color changed
     // or the image was tinted, and tint is now disabled
     if ((tint && !cash.tinted) ||
@@ -965,7 +965,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
       who.modified = false;
     }
 
-    g2.drawImage(((ImageCache) who.getCache(this)).image,
+    g2.drawImage(((ImageCache) getCache(who)).image,
                  (int) x1, (int) y1, (int) x2, (int) y2,
                  u1, v1, u2, v2, null);
 

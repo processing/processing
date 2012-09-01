@@ -5,6 +5,29 @@ X   maybe getResource() fails because spaces are not encoded?
 X PVector limit() is inefficient
 X   http://code.google.com/p/processing/issues/detail?id=1122
 
+_ memory leak when many createGraphics(..., JAVA2D) calls are used
+_   http://code.google.com/p/processing/issues/detail?id=507
+_   need to add clear() method so clear out ARGB surfaces
+C clear() ok to add
+X   decided clear(r, g, b, a) problematic since it's an exception to color model
+X   and that people should use background() anyway
+o   or background(r, g, b, a) would be the thing
+_   clear() with a color doesn't make (verbal) sense
+_   provide a way to clear the PGraphics with plain alpha
+
+api to be fixed/removed
+_ remove PImage.delete() and friends from PImage, Movie, etc.
+_ delete()/dispose() being used in the movie
+_ buffer sink methods in movie
+_ 'newFrame' is 'available', and ready() is part of that
+
+_ loadShape() mess
+_   get things out of PGraphics
+_   separate PShape2/3D from OpenGL
+_   incorporate SVG loader into the 2D class
+
+_ loadPixels() implementation
+
 _ Jagged / Glitchy JAVA2D shape strokes in Java 1.6
 _   g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, 
 _                       RenderingHints.VALUE_STROKE_PURE); 
@@ -46,19 +69,6 @@ void iconLoaded(PImage image, String filename) {
  // filename can be ignored
 }
 
-
-api to be fixed/removed
-_ remove PImage.delete() and friends from PImage, Movie, etc.
-_ delete()/dispose() being used in the movie
-_ buffer sink methods in movie
-_ 'newFrame' is 'available', and ready() is part of that
-
-_ loadShape() mess
-_   get things out of PGraphics
-_   separate PShape2/3D from OpenGL
-_   incorporate SVG loader into the 2D class
-
-_ loadPixels() implementation
 
 _ standardize PGL behavior
 PGL pgl = beginPGL();
@@ -133,16 +143,6 @@ _ check for what else inside PApplet should be static
 _   maybe catch RuntimeExceptions in the called sub-functions
 _   that way more stuff can be static w/o losing useful error handling
 _   (emitting errors when closest to source.. i.e. w/ the filename)
-
-_ memory leak when many createGraphics(..., JAVA2D) calls are used
-_   http://code.google.com/p/processing/issues/detail?id=507
-_   need to add clear() method so clear out ARGB surfaces
-C clear() ok to add
-X   decided clear(r, g, b, a) problematic since it's an exception to color model
-X   and that people should use background() anyway
-o   or background(r, g, b, a) would be the thing
-_   clear() with a color doesn't make (verbal) sense
-_   provide a way to clear the PGraphics with plain alpha
 
 _ sort out edge + 1 issue on stroke/fill for rectangles
 _   http://code.google.com/p/processing/issues/detail?id=509
