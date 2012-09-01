@@ -1,9 +1,10 @@
 0208 core 
+X several constants moved out of PConstants and into PGraphics
+X API cleanup to PShape and unapproved methods
 
 andres
 A implement repeating textures
 A   http://code.google.com/p/processing/issues/detail?id=94
-_   CLAMP and REPEAT have now been added
 X lights don't work in GL renderers on low-end android devices
 X   http://code.google.com/p/processing/issues/detail?id=1145
 X Pixels for createGraphics() should be transparent (P2D, P3D) in P2a7
@@ -26,8 +27,13 @@ A   http://code.google.com/p/processing/issues/detail?id=1191
 A Wrong resolutions reported by Capture.list()
 A   http://code.google.com/p/processing/issues/detail?id=1192
 
+docs
+_ textureWrap() CLAMP and REPEAT now added
+
 _ implement callbacks for images and other loadXxxx() functions
 _   remove requestImage() and friends
+
+_ do we need a trim() method for XML? or enableWhiteSpace()? or?
 
 PImage icon;
 
