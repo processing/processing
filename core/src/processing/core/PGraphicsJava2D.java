@@ -1167,7 +1167,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
         e.printStackTrace();
       }
     } else {
-      PGraphics.showWarning("Unsupported format");
+      PGraphics.showWarning("Unsupported format: " + filename);
     }
 
     return svg;

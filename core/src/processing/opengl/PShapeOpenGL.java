@@ -546,6 +546,7 @@ public class PShapeOpenGL extends PShape {
   }
 
 
+  /*
   @Override
   public PVector getTop(PVector top) {
     if (top == null) {
@@ -568,6 +569,7 @@ public class PShapeOpenGL extends PShape {
     getVertexMax(bottom);
     return bottom;
   }
+  */
 
 
   protected void getVertexMin(PVector min) {
