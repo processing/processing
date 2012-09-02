@@ -1191,7 +1191,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
       defaultFontOrDeath("textAscent");
     }
 
-    Font font = textFont.getFont();
+    Font font = (Font) textFont.getNative();
     //if (font != null && (textFont.isStream() || hints[ENABLE_NATIVE_FONTS])) {
     if (font != null) {
       FontMetrics metrics = parent.getFontMetrics(font);
@@ -1206,7 +1206,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
     if (textFont == null) {
       defaultFontOrDeath("textAscent");
     }
-    Font font = textFont.getFont();
+    Font font = (Font) textFont.getNative();
     //if (font != null && (textFont.isStream() || hints[ENABLE_NATIVE_FONTS])) {
     if (font != null) {
       FontMetrics metrics = parent.getFontMetrics(font);
@@ -1252,12 +1252,12 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 //      g2.setFont(textFontNative);
 //      textFontNativeMetrics = g2.getFontMetrics(textFontNative);
 //    }
-    Font font = textFont.getFont();
+    Font font = (Font) textFont.getNative();
     //if (font != null && (textFont.isStream() || hints[ENABLE_NATIVE_FONTS])) {
     if (font != null) {
       Font dfont = font.deriveFont(size);
       g2.setFont(dfont);
-      textFont.setFont(dfont);
+      textFont.setNative(dfont);
     }
 
     // take care of setting the textSize and textLeading vars
@@ -1275,7 +1275,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 
   @Override
   protected float textWidthImpl(char buffer[], int start, int stop) {
-    Font font = textFont.getFont();
+    Font font = (Font) textFont.getNative();
     //if (font != null && (textFont.isStream() || hints[ENABLE_NATIVE_FONTS])) {
     if (font != null) {
       // maybe should use one of the newer/fancier functions for this?
@@ -1328,7 +1328,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   @Override
   protected void textLineImpl(char buffer[], int start, int stop,
                               float x, float y) {
-    Font font = textFont.getFont();
+    Font font = (Font) textFont.getNative();
 //    if (font != null && (textFont.isStream() || hints[ENABLE_NATIVE_FONTS])) {
     if (font != null) {
       /*
@@ -2125,7 +2125,9 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   public void copy(PImage src,
                    int sx, int sy, int sw, int sh,
                    int dx, int dy, int dw, int dh) {
-    g2.drawImage(src.getImage(), dx, dy, dx + dw, dy + dh, sx, sy, sx + sw, sy + sh, null);
+    g2.drawImage((Image) src.getNative(),
+                 dx, dy, dx + dw, dy + dh,
+                 sx, sy, sx + sw, sy + sh, null);
   }
 
 

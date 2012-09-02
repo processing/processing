@@ -390,7 +390,7 @@ public class PFont implements PConstants {
     }
     // See if there's a native version of this font that can be used,
     // in case that's of interest later.
-    findFont();
+    findNative();
   }
 
 
@@ -495,15 +495,15 @@ public class PFont implements PConstants {
    * findFont() function, or externally by a deriveFont() call if the font
    * is resized by PGraphicsJava2D.
    */
-  public void setFont(Font font) {
-    this.font = font;
+  public void setNative(Object font) {
+    this.font = (Font) font;
   }
 
 
   /**
    * Return the native java.awt.Font associated with this PFont (if any).
    */
-  public Font getFont() {
+  public Object getNative() {
     if (subsetting) {
       return null;  // don't return the font for use
     }
@@ -533,7 +533,7 @@ public class PFont implements PConstants {
    * Attempt to find the native version of this font.
    * (Public so that it can be used by OpenGL or other renderers.)
    */
-  public Font findFont() {
+  public Object findNative() {
     if (font == null) {
       if (!fontSearched) {
         // this font may or may not be installed
@@ -664,56 +664,16 @@ public class PFont implements PConstants {
 
   //////////////////////////////////////////////////////////////
 
-  // METADATA REQUIRED BY THE RENDERERS
-
-
-  /**
-   * Store data of some kind for a renderer that requires extra metadata of
-   * some kind. Usually this is a renderer-specific representation of the
-   * font data, for instance a custom OpenGL texture for PGraphicsOpenGL2.
-   * @param renderer The PGraphics renderer associated to the font
-   * @param storage The metadata required by the renderer
-   */
-  public void setCache(PGraphics renderer, Object storage) {
-    if (cacheMap == null) cacheMap = new HashMap<PGraphics, Object>();
-    cacheMap.put(renderer, storage);
-  }
-
-
-  /**
-   * Get cache storage data for the specified renderer. Because each renderer
-   * will cache data in different formats, it's necessary to store cache data
-   * keyed by the renderer object. Otherwise, attempting to draw the same
-   * image to both a PGraphicsJava2D and a PGraphicsOpenGL2 will cause errors.
-   * @param renderer The PGraphics renderer associated to the font
-   * @return metadata stored for the specified renderer
-   */
-  public Object getCache(PGraphics renderer) {
-    if (cacheMap == null) return null;
-    return cacheMap.get(renderer);
-  }
-
-
-  /**
-   * Remove information associated with this renderer from the cache, if any.
-   * @param parent The PGraphics renderer whose cache data should be removed
-   */
-  public void removeCache(PGraphics renderer) {
-    if (cacheMap != null) {
-      cacheMap.remove(renderer);
-    }
-  }
-
-
-  //////////////////////////////////////////////////////////////
 
   public int getGlyphCount()  {
     return glyphCount;
   }
 
+
   public Glyph getGlyph(int i)  {
     return glyphs[i];
   }
+
 
   //////////////////////////////////////////////////////////////
 

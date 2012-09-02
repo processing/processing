@@ -168,28 +168,20 @@ public class PImage implements PConstants, Cloneable {
    * Construct a new PImage from an Android bitmap. The pixels[] array is not
    * initialized, nor is data copied to it, until loadPixels() is called.
    */
-  public PImage(Bitmap image) {
-    this.bitmap = image;
-    this.width = image.getWidth();
-    this.height = image.getHeight();
+  public PImage(Object nativeObject) {
+    Bitmap bitmap = (Bitmap) nativeObject;
+    this.bitmap = bitmap;
+    this.width = bitmap.getWidth();
+    this.height = bitmap.getHeight();
     this.pixels = null;
-    this.format = image.hasAlpha() ? ARGB : RGB;
+    this.format = bitmap.hasAlpha() ? ARGB : RGB;
   }
 
 
   /**
-   * Returns a BufferedImage from this PImage.
+   * Returns the native Bitmap object for this PImage.
    */
-//  public java.awt.Image getImage() {
-//    loadPixels();
-//    int type = (format == RGB) ?
-//      BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB;
-//    BufferedImage image = new BufferedImage(width, height, type);
-//    WritableRaster wr = image.getRaster();
-//    wr.setDataElements(0, 0, width, height, pixels);
-//    return image;
-//  }
-  public Bitmap getBitmap() {
+  public Object getNative() {
     return bitmap;
   }
 

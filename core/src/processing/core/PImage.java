@@ -292,9 +292,10 @@ public class PImage implements PConstants, Cloneable {
 
 
   /**
-   * Returns a BufferedImage from this PImage.
+   * Returns a native BufferedImage from this PImage.
    */
-  public java.awt.Image getImage() {
+//  public java.awt.Image getImage() {
+  public Object getNative() {
     loadPixels();
     int type = (format == RGB) ?
       BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
