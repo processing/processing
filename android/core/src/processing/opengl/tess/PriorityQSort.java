@@ -74,6 +74,7 @@ class PriorityQSort extends PriorityQ {
     }
 
 /* really __gl_pqSortDeletePriorityQ */
+    @Override
     void pqDeletePriorityQ() {
         if (heap != null) heap.pqDeletePriorityQ();
         order = null;
@@ -103,6 +104,7 @@ class PriorityQSort extends PriorityQ {
     }
 
 /* really __gl_pqSortInit */
+    @Override
     boolean pqInit() {
         int p, r, i, j;
         int piv;
@@ -194,6 +196,7 @@ class PriorityQSort extends PriorityQ {
 
 /* really __gl_pqSortInsert */
 /* returns LONG_MAX iff out of memory */
+    @Override
     int pqInsert(Object keyNew) {
         int curr;
 
@@ -223,6 +226,7 @@ class PriorityQSort extends PriorityQ {
     }
 
 /* really __gl_pqSortExtractMin */
+    @Override
     Object pqExtractMin() {
         Object sortMin, heapMin;
 
@@ -243,6 +247,7 @@ class PriorityQSort extends PriorityQ {
     }
 
 /* really __gl_pqSortMinimum */
+    @Override
     Object pqMinimum() {
         Object sortMin, heapMin;
 
@@ -260,11 +265,13 @@ class PriorityQSort extends PriorityQ {
     }
 
 /* really __gl_pqSortIsEmpty */
+    @Override
     boolean pqIsEmpty() {
         return (size == 0) && heap.pqIsEmpty();
     }
 
 /* really __gl_pqSortDelete */
+    @Override
     void pqDelete(int curr) {
         if (curr >= 0) {
             heap.pqDelete(curr);

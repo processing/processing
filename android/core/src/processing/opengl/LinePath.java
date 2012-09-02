@@ -31,9 +31,9 @@ import processing.core.PMatrix2D;
 
 /**
  * The {@code LinePath} class allows to represent polygonal paths,
- * potentially composed by several disjoint polygonal segments. 
- * It can be iterated by the {@link PathIterator} class including all 
- * of its segment types and winding rules 
+ * potentially composed by several disjoint polygonal segments.
+ * It can be iterated by the {@link PathIterator} class including all
+ * of its segment types and winding rules
  *
  */
 public class LinePath {
@@ -56,12 +56,12 @@ public class LinePath {
    * clockwise direction.
    */
   public static final int WIND_NON_ZERO       = 1;
-    
+
   /**
    * Starts segment at a given position.
-   */    
+   */
   public static final byte SEG_MOVETO  = 0;
-    
+
   /**
    * Extends segment by adding a line to a given position.
    */
@@ -110,7 +110,7 @@ public class LinePath {
   private static PMatrix2D identity = new PMatrix2D();
 
   private static float defaultMiterlimit = 10.0f;
-    
+
   static final int INIT_SIZE = 20;
 
   static final int EXPAND_MAX = 500;
@@ -124,8 +124,8 @@ public class LinePath {
   protected int numCoords;
 
   protected int windingRule;
-    
-  
+
+
   /**
    * Constructs a new empty single precision {@code LinePath} object with a
    * default winding rule of {@link #WIND_NON_ZERO}.
@@ -134,12 +134,12 @@ public class LinePath {
     this(WIND_NON_ZERO, INIT_SIZE);
   }
 
-  
+
   /**
    * Constructs a new empty single precision {@code LinePath} object with the
    * specified winding rule to control operations that require the interior of
    * the path to be defined.
-   * 
+   *
    * @param rule
    *          the winding rule
    * @see #WIND_EVEN_ODD
@@ -147,14 +147,14 @@ public class LinePath {
    */
   public LinePath(int rule) {
     this(rule, INIT_SIZE);
-  }   
+  }
 
-  
+
   /**
    * Constructs a new {@code LinePath} object from the given specified initial
    * values. This method is only intended for internal use and should not be
    * made public if the other constructors for this class are ever exposed.
-   * 
+   *
    * @param rule
    *          the winding rule
    * @param initialTypes
@@ -165,7 +165,7 @@ public class LinePath {
     this.pointTypes = new byte[initialCapacity];
     floatCoords = new float[initialCapacity * 2];
   }
-  
+
 
   void needRoom(boolean needMove, int newCoords) {
     if (needMove && numTypes == 0) {
@@ -200,7 +200,7 @@ public class LinePath {
    * <p>
    * This method provides a single precision variant of the double precision
    * {@code moveTo()} method on the base {@code LinePath} class.
-   * 
+   *
    * @param x
    *          the specified X coordinate
    * @param y
@@ -226,7 +226,7 @@ public class LinePath {
    * <p>
    * This method provides a single precision variant of the double precision
    * {@code lineTo()} method on the base {@code LinePath} class.
-   * 
+   *
    * @param x
    *          the specified X coordinate
    * @param y
@@ -240,7 +240,7 @@ public class LinePath {
     floatCoords[numCoords++] = y;
   }
 
-    
+
   /**
    * The iterator for this class is not multi-threaded safe, which means that
    * the {@code LinePath} class does not guarantee that modifications to the
@@ -251,7 +251,7 @@ public class LinePath {
     return new PathIterator(this);
   }
 
-    
+
   /**
    * Closes the current subpath by drawing a straight line back to the
    * coordinates of the last {@code moveTo}. If the path is already closed then
@@ -264,10 +264,10 @@ public class LinePath {
     }
   }
 
-    
+
   /**
    * Returns the fill style winding rule.
-   * 
+   *
    * @return an integer representing the current winding rule.
    * @see #WIND_EVEN_ODD
    * @see #WIND_NON_ZERO
@@ -277,10 +277,10 @@ public class LinePath {
     return windingRule;
   }
 
-    
+
   /**
    * Sets the winding rule for this path to the specified value.
-   * 
+   *
    * @param rule
    *          an integer representing the specified winding rule
    * @exception IllegalArgumentException
@@ -295,7 +295,7 @@ public class LinePath {
     }
     windingRule = rule;
   }
-    
+
 
   /**
    * Resets the path to empty. The append position is set back to the beginning
@@ -305,7 +305,7 @@ public class LinePath {
     numTypes = numCoords = 0;
   }
 
-    
+
   static public class PathIterator {
     float floatCoords[];
 
@@ -356,27 +356,27 @@ public class LinePath {
     }
   }
 
-    
+
   /////////////////////////////////////////////////////////////////////////////
   //
   // Stroked path methods
-    
+
 
   static public LinePath createStrokedPath(LinePath src, float weight,
                                            int caps, int join) {
     return createStrokedPath(src, weight, caps, join, defaultMiterlimit, null);
   }
-    
+
 
   static public LinePath createStrokedPath(LinePath src, float weight,
                                            int caps, int join, float miterlimit) {
     return createStrokedPath(src, weight, caps, join, miterlimit, null);
   }
-    
-    
+
+
   /**
    * Constructs a solid <code>LinePath</code> with the specified attributes.
-   * 
+   *
    * @param src
    *          the original path to be stroked
    * @param weight
@@ -387,7 +387,7 @@ public class LinePath {
    *          the decoration applied where path segments meet
    * @param miterlimit
    * @param transform
-   * 
+   *
    */
   static public LinePath createStrokedPath(LinePath src, float weight,
                                            int caps, int join,
@@ -395,29 +395,34 @@ public class LinePath {
     final LinePath dest = new LinePath();
 
     strokeTo(src, weight, caps, join, miterlimit, transform, new LineStroker() {
+      @Override
       public void moveTo(int x0, int y0) {
         dest.moveTo(S15_16ToFloat(x0), S15_16ToFloat(y0));
       }
 
+      @Override
       public void lineJoin() {
       }
 
+      @Override
       public void lineTo(int x1, int y1) {
         dest.lineTo(S15_16ToFloat(x1), S15_16ToFloat(y1));
       }
 
+      @Override
       public void close() {
         dest.closePath();
       }
 
+      @Override
       public void end() {
       }
     });
 
     return dest;
   }
-    
-  
+
+
   private static void strokeTo(LinePath src, float width, int caps, int join,
                                float miterlimit, PMatrix2D transform,
                                LineStroker lsink) {
@@ -428,8 +433,8 @@ public class LinePath {
     PathIterator pi = src.getPathIterator();
     pathTo(pi, lsink);
   }
-  
-    
+
+
   private static void pathTo(PathIterator pi, LineStroker lsink) {
     float coords[] = new float[2];
     while (!pi.isDone()) {
@@ -451,14 +456,14 @@ public class LinePath {
       pi.next();
     }
     lsink.end();
-  }    
-    
-    
+  }
+
+
   /////////////////////////////////////////////////////////////////////////////
-  //    
+  //
   // Utility methods
 
-    
+
   public static float[] copyOf(float[] source, int length) {
     float[] target = new float[length];
     for (int i = 0; i < target.length; i++) {
@@ -470,7 +475,7 @@ public class LinePath {
     return target;
   }
 
-  
+
   public static byte[] copyOf(byte[] source, int length) {
     byte[] target = new byte[length];
     for (int i = 0; i < target.length; i++) {
@@ -481,7 +486,7 @@ public class LinePath {
     }
     return target;
   }
-  
+
 
   // From Ken Turkowski, _Fixed-Point Square Root_, In Graphics Gems V
   public static int isqrt(int x) {
@@ -506,7 +511,7 @@ public class LinePath {
     return root;
   }
 
-  
+
   public static long lsqrt(long x) {
     int fracbits = 16;
 
@@ -529,22 +534,22 @@ public class LinePath {
     return root;
   }
 
-  
+
   public static double hypot(double x, double y) {
     return Math.sqrt(x * x + y * y);
   }
 
-  
+
   public static int hypot(int x, int y) {
     return (int) ((lsqrt((long) x * x + (long) y * y) + 128) >> 8);
   }
 
-  
+
   public static long hypot(long x, long y) {
     return (lsqrt(x * x + y * y) + 128) >> 8;
   }
 
-  
+
   static int FloatToS15_16(float flt) {
     flt = flt * 65536f + 0.5f;
     if (flt <= -(65536f * 65536f)) {
@@ -556,8 +561,8 @@ public class LinePath {
     }
   }
 
-  
+
   static float S15_16ToFloat(int fix) {
     return (fix / 65536f);
-  } 
+  }
 }
