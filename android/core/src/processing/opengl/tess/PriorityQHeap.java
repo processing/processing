@@ -83,6 +83,7 @@ class PriorityQHeap extends PriorityQ {
     }
 
 /* really __gl_pqHeapDeletePriorityQ */
+    @Override
     void pqDeletePriorityQ() {
         handles = null;
         nodes = null;
@@ -139,6 +140,7 @@ class PriorityQHeap extends PriorityQ {
     }
 
 /* really __gl_pqHeapInit */
+    @Override
     boolean pqInit() {
         int i;
 
@@ -154,6 +156,7 @@ class PriorityQHeap extends PriorityQ {
 
 /* really __gl_pqHeapInsert */
 /* returns LONG_MAX iff out of memory */
+    @Override
     int pqInsert(Object keyNew) {
         int curr;
         int free;
@@ -209,6 +212,7 @@ class PriorityQHeap extends PriorityQ {
     }
 
 /* really __gl_pqHeapExtractMin */
+    @Override
     Object pqExtractMin() {
         PriorityQ.PQnode[] n = nodes;
         PriorityQ.PQhandleElem[] h = handles;
@@ -231,6 +235,7 @@ class PriorityQHeap extends PriorityQ {
     }
 
 /* really __gl_pqHeapDelete */
+    @Override
     void pqDelete(int hCurr) {
         PriorityQ.PQnode[] n = nodes;
         PriorityQ.PQhandleElem[] h = handles;
@@ -254,10 +259,12 @@ class PriorityQHeap extends PriorityQ {
         freeList = hCurr;
     }
 
+    @Override
     Object pqMinimum() {
         return handles[nodes[1].handle].key;
     }
 
+    @Override
     boolean pqIsEmpty() {
         return size == 0;
     }

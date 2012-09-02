@@ -46,11 +46,13 @@ public class PGraphics2D extends PGraphicsOpenGL {
   // RENDERER SUPPORT QUERIES
 
 
+  @Override
   public boolean is2D() {
     return true;
   }
 
 
+  @Override
   public boolean is3D() {
     return false;
   }
@@ -61,6 +63,7 @@ public class PGraphics2D extends PGraphicsOpenGL {
   // HINTS
 
 
+  @Override
   public void hint(int which) {
     if (which == ENABLE_STROKE_PERSPECTIVE) {
       showWarning("2D lines cannot be perspective-corrected.");
@@ -75,17 +78,20 @@ public class PGraphics2D extends PGraphicsOpenGL {
   // PROJECTION
 
 
+  @Override
   public void ortho() {
     showMethodWarning("ortho");
   }
 
 
+  @Override
   public void ortho(float left, float right,
                     float bottom, float top) {
     showMethodWarning("ortho");
   }
 
 
+  @Override
   public void ortho(float left, float right,
                     float bottom, float top,
                     float near, float far) {
@@ -93,22 +99,26 @@ public class PGraphics2D extends PGraphicsOpenGL {
   }
 
 
+  @Override
   public void perspective() {
     showMethodWarning("perspective");
   }
 
 
+  @Override
   public void perspective(float fov, float aspect, float zNear, float zFar) {
     showMethodWarning("perspective");
   }
 
 
+  @Override
   public void frustum(float left, float right, float bottom, float top,
                       float znear, float zfar) {
     showMethodWarning("frustum");
   }
 
 
+  @Override
   protected void defaultPerspective() {
     super.ortho(-width/2, +width/2, -height/2, +height/2, -1, +1);
   }
@@ -119,21 +129,25 @@ public class PGraphics2D extends PGraphicsOpenGL {
   // CAMERA
 
 
+  @Override
   public void beginCamera() {
     showMethodWarning("beginCamera");
   }
 
 
+  @Override
   public void endCamera() {
     showMethodWarning("endCamera");
   }
 
 
+  @Override
   public void camera() {
     showMethodWarning("camera");
   }
 
 
+  @Override
   public void camera(float eyeX, float eyeY, float eyeZ,
                      float centerX, float centerY, float centerZ,
                      float upX, float upY, float upZ) {
@@ -141,6 +155,7 @@ public class PGraphics2D extends PGraphicsOpenGL {
   }
 
 
+  @Override
   protected void defaultCamera() {
     super.camera(width/2, height/2);
   }
@@ -151,6 +166,7 @@ public class PGraphics2D extends PGraphicsOpenGL {
   // MATRIX MORE!
 
 
+  @Override
   protected void begin2D() {
     pushProjection();
     defaultPerspective();
@@ -159,6 +175,7 @@ public class PGraphics2D extends PGraphicsOpenGL {
   }
 
 
+  @Override
   protected void end2D() {
     popMatrix();
     popProjection();
@@ -170,42 +187,47 @@ public class PGraphics2D extends PGraphicsOpenGL {
   // SHAPE
 
 
+  @Override
   public void shape(PShape shape) {
     if (shape.is2D()) {
       super.shape(shape);
     } else {
-      showWarning("The shape object is not 2D, cannot be displayed with " + 
+      showWarning("The shape object is not 2D, cannot be displayed with " +
                   "this renderer");
     }
   }
 
 
+  @Override
   public void shape(PShape shape, float x, float y) {
     if (shape.is2D()) {
       super.shape(shape, x, y);
     } else {
-      showWarning("The shape object is not 2D, cannot be displayed with " + 
+      showWarning("The shape object is not 2D, cannot be displayed with " +
                   "this renderer");
     }
   }
 
 
+  @Override
   public void shape(PShape shape, float a, float b, float c, float d) {
     if (shape.is2D()) {
       super.shape(shape, a, b, c, d);
     } else {
-      showWarning("The shape object is not 2D, cannot be displayed with " + 
+      showWarning("The shape object is not 2D, cannot be displayed with " +
                   "this renderer");
     }
   }
 
 
+  @Override
   public void shape(PShape shape, float x, float y, float z) {
     showDepthWarningXYZ("shape");
   }
 
 
-  public void shape(PShape shape, float x, float y, float z, 
+  @Override
+  public void shape(PShape shape, float x, float y, float z,
                     float c, float d, float e) {
     showDepthWarningXYZ("shape");
   }
@@ -221,7 +243,7 @@ public class PGraphics2D extends PGraphicsOpenGL {
   }
 
 
-  static protected PShape2D loadShapeImpl(PGraphics pg, String filename, 
+  static protected PShape2D loadShapeImpl(PGraphics pg, String filename,
                                           String extension) {
     PShapeSVG svg = null;
 
@@ -230,7 +252,7 @@ public class PGraphics2D extends PGraphicsOpenGL {
 
     } else if (extension.equals("svgz")) {
       try {
-        InputStream input = 
+        InputStream input =
           new GZIPInputStream(pg.parent.createInput(filename));
         XML xml = new XML(PApplet.createReader(input));
         svg = new PShapeSVG(xml);
@@ -253,21 +275,25 @@ public class PGraphics2D extends PGraphicsOpenGL {
   // SHAPE CREATION
 
 
+  @Override
   public PShape createShape(PShape source) {
     return PShape2D.createShape(parent, source);
   }
 
 
+  @Override
   public PShape createShape() {
     return createShape(POLYGON);
   }
 
 
+  @Override
   public PShape createShape(int type) {
     return createShapeImpl(parent, type);
   }
 
 
+  @Override
   public PShape createShape(int kind, float... p) {
     return createShapeImpl(parent, kind, p);
   }
@@ -308,7 +334,7 @@ public class PGraphics2D extends PGraphicsOpenGL {
   }
 
 
-  static protected PShape2D createShapeImpl(PApplet parent, int kind, 
+  static protected PShape2D createShapeImpl(PApplet parent, int kind,
                                             float... p) {
     PShape2D shape = null;
     int len = p.length;
@@ -383,6 +409,7 @@ public class PGraphics2D extends PGraphicsOpenGL {
   // BEZIER VERTICES
 
 
+  @Override
   public void bezierVertex(float x2, float y2, float z2,
                            float x3, float y3, float z3,
                            float x4, float y4, float z4) {
@@ -395,6 +422,7 @@ public class PGraphics2D extends PGraphicsOpenGL {
   // QUADRATIC BEZIER VERTICES
 
 
+  @Override
   public void quadraticVertex(float x2, float y2, float z2,
                          float x4, float y4, float z4) {
     showDepthWarningXYZ("quadVertex");
@@ -406,6 +434,7 @@ public class PGraphics2D extends PGraphicsOpenGL {
   // CURVE VERTICES
 
 
+  @Override
   public void curveVertex(float x, float y, float z) {
     showDepthWarningXYZ("curveVertex");
   }
@@ -416,6 +445,7 @@ public class PGraphics2D extends PGraphicsOpenGL {
   // BOX
 
 
+  @Override
   public void box(float w, float h, float d) {
     showMethodWarning("box");
   }
@@ -426,6 +456,7 @@ public class PGraphics2D extends PGraphicsOpenGL {
   // SPHERE
 
 
+  @Override
   public void sphere(float r) {
     showMethodWarning("sphere");
   }
@@ -436,10 +467,12 @@ public class PGraphics2D extends PGraphicsOpenGL {
   // VERTEX SHAPES
 
 
+  @Override
   public void vertex(float x, float y, float z) {
     showDepthWarningXYZ("vertex");
   }
 
+  @Override
   public void vertex(float x, float y, float z, float u, float v) {
     showDepthWarningXYZ("vertex");
   }
@@ -448,30 +481,37 @@ public class PGraphics2D extends PGraphicsOpenGL {
 
   // MATRIX TRANSFORMATIONS
 
+  @Override
   public void translate(float tx, float ty, float tz) {
     showDepthWarningXYZ("translate");
   }
 
+  @Override
   public void rotateX(float angle) {
     showDepthWarning("rotateX");
   }
 
+  @Override
   public void rotateY(float angle) {
     showDepthWarning("rotateY");
   }
 
+  @Override
   public void rotateZ(float angle) {
     showDepthWarning("rotateZ");
   }
 
+  @Override
   public void rotate(float angle, float vx, float vy, float vz) {
     showVariationWarning("rotate");
   }
 
+  @Override
   public void applyMatrix(PMatrix3D source) {
     showVariationWarning("applyMatrix");
   }
 
+  @Override
   public void applyMatrix(float n00, float n01, float n02, float n03,
                           float n10, float n11, float n12, float n13,
                           float n20, float n21, float n22, float n23,
@@ -479,6 +519,7 @@ public class PGraphics2D extends PGraphicsOpenGL {
     showVariationWarning("applyMatrix");
   }
 
+  @Override
   public void scale(float sx, float sy, float sz) {
     showDepthWarningXYZ("scale");
   }
@@ -487,26 +528,31 @@ public class PGraphics2D extends PGraphicsOpenGL {
 
   // SCREEN AND MODEL COORDS
 
+  @Override
   public float screenX(float x, float y, float z) {
     showDepthWarningXYZ("screenX");
     return 0;
   }
 
+  @Override
   public float screenY(float x, float y, float z) {
     showDepthWarningXYZ("screenY");
     return 0;
   }
 
+  @Override
   public float screenZ(float x, float y, float z) {
     showDepthWarningXYZ("screenZ");
     return 0;
   }
 
+  @Override
   public PMatrix3D getMatrix(PMatrix3D target) {
     showVariationWarning("getMatrix");
     return target;
   }
 
+  @Override
   public void setMatrix(PMatrix3D source) {
     showVariationWarning("setMatrix");
   }
@@ -515,33 +561,40 @@ public class PGraphics2D extends PGraphicsOpenGL {
 
   // LIGHTS
 
+  @Override
   public void lights() {
     showMethodWarning("lights");
   }
 
+  @Override
   public void noLights() {
     showMethodWarning("noLights");
   }
 
+  @Override
   public void ambientLight(float red, float green, float blue) {
     showMethodWarning("ambientLight");
   }
 
+  @Override
   public void ambientLight(float red, float green, float blue,
                            float x, float y, float z) {
     showMethodWarning("ambientLight");
   }
 
+  @Override
   public void directionalLight(float red, float green, float blue,
                                float nx, float ny, float nz) {
     showMethodWarning("directionalLight");
   }
 
+  @Override
   public void pointLight(float red, float green, float blue,
                          float x, float y, float z) {
     showMethodWarning("pointLight");
   }
 
+  @Override
   public void spotLight(float red, float green, float blue,
                         float x, float y, float z,
                         float nx, float ny, float nz,
@@ -549,10 +602,12 @@ public class PGraphics2D extends PGraphicsOpenGL {
     showMethodWarning("spotLight");
   }
 
+  @Override
   public void lightFalloff(float constant, float linear, float quadratic) {
     showMethodWarning("lightFalloff");
   }
 
+  @Override
   public void lightSpecular(float v1, float v2, float v3) {
     showMethodWarning("lightSpecular");
   }

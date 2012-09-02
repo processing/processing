@@ -66,7 +66,7 @@ public class PImage implements PConstants, Cloneable {
 
   /** for renderers that need to store info about the image */
   protected HashMap<PGraphics, Object> cacheMap;
-  
+
   /** for renderers that need to store parameters about the image */
   protected HashMap<PGraphics, Object> paramMap;
 
@@ -139,11 +139,11 @@ public class PImage implements PConstants, Cloneable {
     this.width = width;
     this.height = height;
     this.pixels = new int[width*height];
-    this.format = format;    
+    this.format = format;
 //    this.cache = null;
   }
 
-  
+
   /**
    * Check the alpha on an image, using a really primitive loop.
    */
@@ -192,83 +192,6 @@ public class PImage implements PConstants, Cloneable {
   public Bitmap getBitmap() {
     return bitmap;
   }
-    
-  //////////////////////////////////////////////////////////////
-
-  // METADATA/PARAMETERS REQUIRED BY RENDERERS
-  
-  /**
-   * Store data of some kind for a renderer that requires extra metadata of
-   * some kind. Usually this is a renderer-specific representation of the
-   * image data, for instance a BufferedImage with tint() settings applied for
-   * PGraphicsJava2D, or resized image data and OpenGL texture indices for
-   * PGraphicsOpenGL.
-   * @param renderer The PGraphics renderer associated to the image
-   * @param storage The metadata required by the renderer   
-   */
-  public void setCache(PGraphics renderer, Object storage) {
-    if (cacheMap == null) cacheMap = new HashMap<PGraphics, Object>();
-    cacheMap.put(renderer, storage);
-  }
-
-
-  /**
-   * Get cache storage data for the specified renderer. Because each renderer
-   * will cache data in different formats, it's necessary to store cache data
-   * keyed by the renderer object. Otherwise, attempting to draw the same
-   * image to both a PGraphicsJava2D and a PGraphicsOpenGL will cause errors.
-   * @param renderer The PGraphics renderer associated to the image
-   * @return metadata stored for the specified renderer
-   */
-  public Object getCache(PGraphics renderer) {
-    if (cacheMap == null) return null;
-    return cacheMap.get(renderer);
-  }
-
-
-  /**
-   * Remove information associated with this renderer from the cache, if any.
-   * @param renderer The PGraphics renderer whose cache data should be removed
-   */
-  public void removeCache(PGraphics renderer) {
-    if (cacheMap != null) {
-      cacheMap.remove(renderer);
-    }
-  }
-
-
-  /**
-   * Store parameters for a renderer that requires extra metadata of
-   * some kind.
-   * @param renderer The PGraphics renderer associated to the image
-   * @param storage The parameters required by the renderer  
-   */
-  public void setParams(PGraphics renderer, Object params) {
-    if (paramMap == null) paramMap = new HashMap<PGraphics, Object>();
-    paramMap.put(renderer, params);
-  }
-
-
-  /**
-   * Get the parameters for the specified renderer.
-   * @param renderer The PGraphics renderer associated to the image
-   * @return parameters stored for the specified renderer
-   */
-  public Object getParams(PGraphics renderer) {
-    if (paramMap == null) return null;
-    return paramMap.get(renderer);
-  }
-
-
-  /**
-   * Remove information associated with this renderer from the cache, if any.
-   * @param renderer The PGraphics renderer whose parameters should be removed
-   */
-  public void removeParams(PGraphics renderer) {
-    if (paramMap != null) {
-      paramMap.remove(renderer);
-    }
-  }
 
 
   //////////////////////////////////////////////////////////////
@@ -294,21 +217,21 @@ public class PImage implements PConstants, Cloneable {
     return mx1;
   }
 
-  
+
   public int getModifiedX2() {  // ignore
     return mx2;
   }
 
-  
+
   public int getModifiedY1() {  // ignore
     return my1;
   }
 
-  
+
   public int getModifiedY2() {  // ignore
     return my2;
-  }  
-    
+  }
+
 
   /**
    * Call this when you want to mess with the pixels[] array.
@@ -321,18 +244,18 @@ public class PImage implements PConstants, Cloneable {
       pixels = new int[width*height];
     }
     if (bitmap != null) {
-      bitmap.getPixels(pixels, 0, width, 0, 0, width, height); 
+      bitmap.getPixels(pixels, 0, width, 0, 0, width, height);
     }
-    
+
     if (parent == null) return;
     Object cache = parent.g.initCache(this);
     if (cache != null) {
       Method loadPixelsMethod = null;
-      try {      
-        loadPixelsMethod = cache.getClass().getMethod("loadPixels", new Class[] { int[].class });         
-      } catch (Exception e) {          
+      try {
+        loadPixelsMethod = cache.getClass().getMethod("loadPixels", new Class[] { int[].class });
+      } catch (Exception e) {
       }
-      
+
       if (loadPixelsMethod != null) {
         try {
           loadPixelsMethod.invoke(cache, new Object[] { pixels });
@@ -340,7 +263,7 @@ public class PImage implements PConstants, Cloneable {
           e.printStackTrace();
         }
       }
-    } 
+    }
   }
 
 
@@ -414,6 +337,7 @@ public class PImage implements PConstants, Cloneable {
    * because it prevents you from needing to catch the
    * CloneNotSupportedException, and from doing a cast from the result.
    */
+  @Override
   public Object clone() throws CloneNotSupportedException {  // ignore
     return get();
   }
@@ -448,7 +372,7 @@ public class PImage implements PConstants, Cloneable {
       this.height = high;
       this.pixels = temp.pixels;
       this.bitmap = null;
-    }    
+    }
     // Mark the pixels array as altered
     updatePixels();
   }
@@ -485,7 +409,7 @@ public class PImage implements PConstants, Cloneable {
       return bitmap.getPixel(x, y);
 
     } else {
-      // If the pixels array exists, it's fairly safe to assume that it's 
+      // If the pixels array exists, it's fairly safe to assume that it's
       // the most up to date, and that it's faster for access.
       switch (format) {
       case RGB:
@@ -515,7 +439,7 @@ public class PImage implements PConstants, Cloneable {
       h += y; // clip off some of the height
       y = 0;
     }
-    
+
     if (x + w > width) w = width - x;
     if (y + h > height) h = height - y;
 
@@ -542,7 +466,7 @@ public class PImage implements PConstants, Cloneable {
 
     if (pixels == null) {
       bitmap.getPixels(newbie.pixels, 0, w, x, y, w, h);
-      
+
     } else {
       int index = y*width + x;
       int index2 = 0;
@@ -551,7 +475,7 @@ public class PImage implements PConstants, Cloneable {
         index += width;
         index2 += w;
       }
-    }      
+    }
     return newbie;
   }
 
@@ -588,7 +512,7 @@ public class PImage implements PConstants, Cloneable {
    */
   public void set(int x, int y, PImage src) {
     if (src.format == ALPHA) {
-      // set() doesn't really make sense for an ALPHA image, since it 
+      // set() doesn't really make sense for an ALPHA image, since it
       // directly replaces pixels and does no blending.
       throw new RuntimeException("set() not available for ALPHA images");
     }
@@ -638,7 +562,7 @@ public class PImage implements PConstants, Cloneable {
 
     // if this.pixels[] is null, copying directly into this.bitmap
     if (pixels == null) {
-      // if this.pixels[] is null, this.bitmap cannot be null 
+      // if this.pixels[] is null, this.bitmap cannot be null
       // make sure the bitmap is writable
       if (!bitmap.isMutable()) {
         // create a mutable version of this bitmap
@@ -648,7 +572,7 @@ public class PImage implements PConstants, Cloneable {
       // copy from src.pixels to this.bitmap
       int offset = sy * src.width + sx;
       bitmap.setPixels(src.pixels, offset, src.width, dx, dy, sw, sh);
-      
+
     } else {  // pixels != null
       // copy into this.pixels[] and mark as modified
       int srcOffset = sy * src.width + sx;
@@ -702,8 +626,8 @@ public class PImage implements PConstants, Cloneable {
    */
   public void mask(PImage alpha) {
     if (alpha.pixels == null) {
-      // if pixels haven't been loaded by the user, then only load them 
-      // temporarily to save memory when finished. 
+      // if pixels haven't been loaded by the user, then only load them
+      // temporarily to save memory when finished.
       alpha.loadPixels();
       mask(alpha.pixels);
       alpha.pixels = null;
@@ -1384,7 +1308,7 @@ public class PImage implements PConstants, Cloneable {
    * are preferrable, and the difference is insignificant for applications
    * built with Processing.</P>
    */
-  static public int blendColor(int c1, int c2, int mode) {
+  static public int blendColor(int c1, int c2, int mode) {  // ignore
     switch (mode) {
     case REPLACE:    return c2;
     case BLEND:      return blend_blend(c1, c2);
@@ -2440,10 +2364,10 @@ public class PImage implements PConstants, Cloneable {
     }
 
     PImage outgoing = new PImage(width, height, RGB);
-    
-    // Not possible because this method is static, so careful when using it. 
-    // outgoing.parent = parent;  
-    
+
+    // Not possible because this method is static, so careful when using it.
+    // outgoing.parent = parent;
+
     int index = 768;
     count /= 3;
     for (int i = 0; i < count; i++) {
@@ -2713,7 +2637,7 @@ public class PImage implements PConstants, Cloneable {
     loadPixels();
 
     try {
-      OutputStream output = 
+      OutputStream output =
         new BufferedOutputStream(parent.createOutput(path), 16 * 1024);
 
       String lower = path.toLowerCase();
@@ -2721,7 +2645,7 @@ public class PImage implements PConstants, Cloneable {
       if (extension.equals("jpg") || extension.equals("jpeg")) {
         // TODO probably not necessary to create another bitmap
         Bitmap outgoing = Bitmap.createBitmap(pixels, width, height, Config.ARGB_8888);
-        success = outgoing.compress(CompressFormat.JPEG, 100, output); 
+        success = outgoing.compress(CompressFormat.JPEG, 100, output);
 
       } else if (extension.equals("png")) {
         Bitmap outgoing = Bitmap.createBitmap(pixels, width, height, Config.ARGB_8888);

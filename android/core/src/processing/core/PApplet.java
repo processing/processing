@@ -582,12 +582,14 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
+  @Override
   public void onConfigurationChanged(Configuration newConfig) {
     System.out.println("configuration changed: " + newConfig);
     super.onConfigurationChanged(newConfig);
   }
 
 
+  @Override
   protected void onResume() {
     super.onResume();
 
@@ -601,6 +603,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
+  @Override
   protected void onPause() {
     super.onPause();
 
@@ -632,6 +635,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
+  @Override
   public void onDestroy() {
 //    stop();
     dispose();
@@ -807,7 +811,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
       // Tells the default EGLContextFactory and EGLConfigChooser to create an GLES2 context.
       setEGLContextClientVersion(2);
- 
+
       // The renderer can be set only once.
       setRenderer(g3.pgl.getRenderer());
       setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
@@ -827,6 +831,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
 
     // part of SurfaceHolder.Callback
+    @Override
     public void surfaceCreated(SurfaceHolder holder) {
       super.surfaceCreated(holder);
       if (DEBUG) {
@@ -836,6 +841,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
 
     // part of SurfaceHolder.Callback
+    @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
       super.surfaceDestroyed(holder);
       if (DEBUG) {
@@ -980,8 +986,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
   public int sketchQuality() {
     return 1;
   }
-  
-  
+
+
   public int sketchWidth() {
     return displayWidth;
   }
@@ -996,7 +1002,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
     return JAVA2D;
   }
 
-  
+
   public void orientation(int which) {
     if (which == PORTRAIT) {
       setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -1630,20 +1636,20 @@ public class PApplet extends Activity implements PConstants, Runnable {
    * Creates a new PImage (the datatype for storing images). This provides a fresh buffer of pixels to play with. Set the size of the buffer with the <b>width</b> and <b>height</b> parameters. The <b>format</b> parameter defines how the pixels are stored. See the PImage reference for more information.
    */
   public PImage createImage(int wide, int high, int format) {
-    return createImage(wide, high, format, null);
-  }
-
-
-  /**
-   * Preferred method of creating new PImage objects, ensures that a
-   * reference to the parent PApplet is included, which makes save() work
-   * without needing an absolute path.
-   */
-  public PImage createImage(int wide, int high, int format, Object params) {
+//    return createImage(wide, high, format, null);
+//  }
+//
+//
+//  /**
+//   * Preferred method of creating new PImage objects, ensures that a
+//   * reference to the parent PApplet is included, which makes save() work
+//   * without needing an absolute path.
+//   */
+//  public PImage createImage(int wide, int high, int format, Object params) {
     PImage image = new PImage(wide, high, format);
-    if (params != null) {
-      image.setParams(g, params);
-    }
+//    if (params != null) {
+//      image.setParams(g, params);
+//    }
     image.parent = this;  // make save() work
     return image;
   }
@@ -2774,6 +2780,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
    */
   public void thread(final String name) {
     Thread later = new Thread() {
+      @Override
       public void run() {
         method(name);
       }
@@ -3576,12 +3583,12 @@ public class PApplet extends Activity implements PConstants, Runnable {
 //  protected String[] loadImageFormats;
 
 
-  public PImage loadImage(String filename) {
-    return loadImage(filename, null);
-  }
+//  public PImage loadImage(String filename) {
+//    return loadImage(filename, null);
+//  }
 
 
-  public PImage loadImage(String filename, Object params) {
+  public PImage loadImage(String filename) { //, Object params) {
 //    return loadImage(filename, null);
     InputStream stream = createInput(filename);
     if (stream == null) {
@@ -3602,9 +3609,9 @@ public class PApplet extends Activity implements PConstants, Runnable {
 //    println("loadImage(" + filename + ") was " + nfc(much));
     PImage image = new PImage(bitmap);
     image.parent = this;
-    if (params != null) {
-      image.setParams(g, params);
-    }
+//    if (params != null) {
+//      image.setParams(g, params);
+//    }
     return image;
   }
 
@@ -3722,6 +3729,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
       this.vessel = vessel;
     }
 
+    @Override
     public void run() {
       while (requestImageCount == requestImageMax) {
         try {
@@ -3774,7 +3782,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
       return null;
     }
   }
-  
+
 
   public Table loadTable(String filename) {
     return new Table(this, filename);
@@ -6638,6 +6646,11 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
+  static public int blendColor(int c1, int c2, int mode) {
+    return PImage.blendColor(c1, c2, mode);
+  }
+
+
 
   //////////////////////////////////////////////////////////////
 
@@ -7219,18 +7232,54 @@ public class PApplet extends Activity implements PConstants, Runnable {
   // public functions for processing.core
 
 
+  /**
+   * Store data of some kind for the renderer that requires extra metadata of
+   * some kind. Usually this is a renderer-specific representation of the
+   * image data, for instance a BufferedImage with tint() settings applied for
+   * PGraphicsJava2D, or resized image data and OpenGL texture indices for
+   * PGraphicsOpenGL.
+   * @param renderer The PGraphics renderer associated to the image
+   * @param storage The metadata required by the renderer
+   */
+  public void setCache(PImage image, Object storage) {
+    g.setCache(image, storage);
+  }
+
+
+  /**
+   * Get cache storage data for the specified renderer. Because each renderer
+   * will cache data in different formats, it's necessary to store cache data
+   * keyed by the renderer object. Otherwise, attempting to draw the same
+   * image to both a PGraphicsJava2D and a PGraphicsOpenGL will cause errors.
+   * @param renderer The PGraphics renderer associated to the image
+   * @return metadata stored for the specified renderer
+   */
+  public Object getCache(PImage image) {
+    return g.getCache(image);
+  }
+
+
+  /**
+   * Remove information associated with this renderer from the cache, if any.
+   * @param renderer The PGraphics renderer whose cache data should be removed
+   */
+  public void removeCache(PImage image) {
+    g.removeCache(image);
+  }
+
+
   public void flush() {
     g.flush();
   }
 
 
-  public PGL beginGL() {
-    return g.beginGL();
+  public PGL beginPGL() {
+    return g.beginPGL();
   }
 
 
-  public void endGL() {
-    g.endGL();
+  public void endPGL() {
+    g.endPGL();
   }
 
 
@@ -7453,18 +7502,13 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
-  public PShader loadShader(int kind, String fragFilename, String vertFilename) {
-    return g.loadShader(kind, fragFilename, vertFilename);
-  }
-
-
-  public PShader loadShader(int kind, String fragFilename) {
-    return g.loadShader(kind, fragFilename);
-  }
-
-
   public PShader loadShader(String fragFilename) {
     return g.loadShader(fragFilename);
+  }
+
+
+  public PShader loadShader(String fragFilename, String vertFilename) {
+    return g.loadShader(fragFilename, vertFilename);
   }
 
 
@@ -7473,13 +7517,18 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
-  public void resetShader(int kind) {
-    g.resetShader(kind);
+  public void shader(PShader shader, int kind) {
+    g.shader(shader, kind);
   }
 
 
   public void resetShader() {
     g.resetShader();
+  }
+
+
+  public void resetShader(int kind) {
+    g.resetShader(kind);
   }
 
 
@@ -7884,18 +7933,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
-  public void shape(PShape shape, float x, float y, float z) {
-    g.shape(shape, x, y, z);
-  }
-
-
   public void shape(PShape shape, float x, float y, float c, float d) {
     g.shape(shape, x, y, c, d);
-  }
-
-
-  public void shape(PShape shape, float x, float y, float z, float c, float d, float e) {
-    g.shape(shape, x, y, z, c, d, e);
   }
 
 
@@ -8936,7 +8975,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
   /**
    * Return true if this renderer does rendering through OpenGL. Defaults to false.
-   */  
+   */
   public boolean isGL() {
     return g.isGL();
   }
@@ -8944,72 +8983,6 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
   public Bitmap getBitmap() {
     return g.getBitmap();
-  }
-
-
-  /**
-   * Store data of some kind for a renderer that requires extra metadata of
-   * some kind. Usually this is a renderer-specific representation of the
-   * image data, for instance a BufferedImage with tint() settings applied for
-   * PGraphicsJava2D, or resized image data and OpenGL texture indices for
-   * PGraphicsOpenGL.
-   * @param renderer The PGraphics renderer associated to the image
-   * @param storage The metadata required by the renderer   
-   */
-  public void setCache(PGraphics renderer, Object storage) {
-    g.setCache(renderer, storage);
-  }
-
-
-  /**
-   * Get cache storage data for the specified renderer. Because each renderer
-   * will cache data in different formats, it's necessary to store cache data
-   * keyed by the renderer object. Otherwise, attempting to draw the same
-   * image to both a PGraphicsJava2D and a PGraphicsOpenGL will cause errors.
-   * @param renderer The PGraphics renderer associated to the image
-   * @return metadata stored for the specified renderer
-   */
-  public Object getCache(PGraphics renderer) {
-    return g.getCache(renderer);
-  }
-
-
-  /**
-   * Remove information associated with this renderer from the cache, if any.
-   * @param renderer The PGraphics renderer whose cache data should be removed
-   */
-  public void removeCache(PGraphics renderer) {
-    g.removeCache(renderer);
-  }
-
-
-  /**
-   * Store parameters for a renderer that requires extra metadata of
-   * some kind.
-   * @param renderer The PGraphics renderer associated to the image
-   * @param storage The parameters required by the renderer  
-   */
-  public void setParams(PGraphics renderer, Object params) {
-    g.setParams(renderer, params);
-  }
-
-
-  /**
-   * Get the parameters for the specified renderer.
-   * @param renderer The PGraphics renderer associated to the image
-   * @return parameters stored for the specified renderer
-   */
-  public Object getParams(PGraphics renderer) {
-    return g.getParams(renderer);
-  }
-
-
-  /**
-   * Remove information associated with this renderer from the cache, if any.
-   * @param renderer The PGraphics renderer whose parameters should be removed
-   */
-  public void removeParams(PGraphics renderer) {
-    g.removeParams(renderer);
   }
 
 
@@ -9158,75 +9131,6 @@ public class PApplet extends Activity implements PConstants, Runnable {
                    int sx, int sy, int sw, int sh,
                    int dx, int dy, int dw, int dh) {
     g.copy(src, sx, sy, sw, sh, dx, dy, dw, dh);
-  }
-
-
-  /**
-   * Blend two colors based on a particular mode.
-   * <UL>
-   * <LI>REPLACE - destination colour equals colour of source pixel: C = A.
-   *     Sometimes called "Normal" or "Copy" in other software.
-   *
-   * <LI>BLEND - linear interpolation of colours:
-   *     <TT>C = A*factor + B</TT>
-   *
-   * <LI>ADD - additive blending with white clip:
-   *     <TT>C = min(A*factor + B, 255)</TT>.
-   *     Clipped to 0..255, Photoshop calls this "Linear Burn",
-   *     and Director calls it "Add Pin".
-   *
-   * <LI>SUBTRACT - substractive blend with black clip:
-   *     <TT>C = max(B - A*factor, 0)</TT>.
-   *     Clipped to 0..255, Photoshop calls this "Linear Dodge",
-   *     and Director calls it "Subtract Pin".
-   *
-   * <LI>DARKEST - only the darkest colour succeeds:
-   *     <TT>C = min(A*factor, B)</TT>.
-   *     Illustrator calls this "Darken".
-   *
-   * <LI>LIGHTEST - only the lightest colour succeeds:
-   *     <TT>C = max(A*factor, B)</TT>.
-   *     Illustrator calls this "Lighten".
-   *
-   * <LI>DIFFERENCE - subtract colors from underlying image.
-   *
-   * <LI>EXCLUSION - similar to DIFFERENCE, but less extreme.
-   *
-   * <LI>MULTIPLY - Multiply the colors, result will always be darker.
-   *
-   * <LI>SCREEN - Opposite multiply, uses inverse values of the colors.
-   *
-   * <LI>OVERLAY - A mix of MULTIPLY and SCREEN. Multiplies dark values,
-   *     and screens light values.
-   *
-   * <LI>HARD_LIGHT - SCREEN when greater than 50% gray, MULTIPLY when lower.
-   *
-   * <LI>SOFT_LIGHT - Mix of DARKEST and LIGHTEST.
-   *     Works like OVERLAY, but not as harsh.
-   *
-   * <LI>DODGE - Lightens light tones and increases contrast, ignores darks.
-   *     Called "Color Dodge" in Illustrator and Photoshop.
-   *
-   * <LI>BURN - Darker areas are applied, increasing contrast, ignores lights.
-   *     Called "Color Burn" in Illustrator and Photoshop.
-   * </UL>
-   * <P>A useful reference for blending modes and their algorithms can be
-   * found in the <A HREF="http://www.w3.org/TR/SVG12/rendering.html">SVG</A>
-   * specification.</P>
-   * <P>It is important to note that Processing uses "fast" code, not
-   * necessarily "correct" code. No biggie, most software does. A nitpicker
-   * can find numerous "off by 1 division" problems in the blend code where
-   * <TT>&gt;&gt;8</TT> or <TT>&gt;&gt;7</TT> is used when strictly speaking
-   * <TT>/255.0</T> or <TT>/127.0</TT> should have been used.</P>
-   * <P>For instance, exclusion (not intended for real-time use) reads
-   * <TT>r1 + r2 - ((2 * r1 * r2) / 255)</TT> because <TT>255 == 1.0</TT>
-   * not <TT>256 == 1.0</TT>. In other words, <TT>(255*255)>>8</TT> is not
-   * the same as <TT>(255*255)/255</TT>. But for real-time use the shifts
-   * are preferrable, and the difference is insignificant for applications
-   * built with Processing.</P>
-   */
-  static public int blendColor(int c1, int c2, int mode) {
-    return PGraphics.blendColor(c1, c2, mode);
   }
 
 

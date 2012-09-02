@@ -24,6 +24,7 @@
 package processing.core;
 
 import java.util.HashMap;
+import java.util.WeakHashMap;
 
 import processing.opengl.PGL;
 import processing.opengl.PShader;
@@ -130,8 +131,8 @@ public class PGraphics extends PImage implements PConstants {
   public boolean smooth = false;
 
   /// the anti-aliasing level for renderers that support it
-  protected int quality;  
-  
+  protected int quality;
+
   // ........................................................
 
   /// true if defaults() has been called a first time
@@ -168,6 +169,17 @@ public class PGraphics extends PImage implements PConstants {
    * be used inside beginDraw(), allocate(), etc.
    */
   protected boolean[] hints = new boolean[HINT_COUNT];
+
+  // ........................................................
+
+  /**
+   * Storage for renderer-specific image data. In 1.x, renderers wrote cache
+   * data into the image object. In 2.x, the renderer has a weak-referenced
+   * map that points at any of the images it has worked on already. When the
+   * images go out of scope, they will be properly garbage collected.
+   */
+  protected WeakHashMap<PImage, Object> cacheMap =
+    new WeakHashMap<PImage, Object>();
 
 
   ////////////////////////////////////////////////////////////
@@ -249,7 +261,7 @@ public class PGraphics extends PImage implements PConstants {
 
   static public final int VERTEX_FIELD_COUNT = 37;
 
-  
+
 
   ////////////////////////////////////////////////////////////
 
@@ -408,13 +420,13 @@ public class PGraphics extends PImage implements PConstants {
   public int ambientColor;
   public float ambientR, ambientG, ambientB;
   protected boolean setAmbient;
-  
+
   public int specularColor;
   public float specularR, specularG, specularB;
-  
+
   public int emissiveColor;
   public float emissiveR, emissiveG, emissiveB;
-  
+
   public float shininess;
 
 
@@ -601,8 +613,8 @@ public class PGraphics extends PImage implements PConstants {
    * vertex() calls will be based on coordinates that are
    * based on the IMAGE or NORMALIZED.
    */
-  public int textureMode = IMAGE;  
-  
+  public int textureMode = IMAGE;
+
   /**
    * Current horizontal coordinate for texture, will always
    * be between 0 and 1, even if using textureMode(IMAGE).
@@ -668,10 +680,10 @@ public class PGraphics extends PImage implements PConstants {
     this.path = path;
   }
 
-  
+
   public void setFrameRate(float framerate) {  // ignore
   }
-  
+
 
   /**
    * The final step in setting up a renderer, set its size of this renderer.
@@ -716,15 +728,56 @@ public class PGraphics extends PImage implements PConstants {
 
   //////////////////////////////////////////////////////////////
 
+  // IMAGE METADATA FOR THIS RENDERER
+
+  /**
+   * Store data of some kind for the renderer that requires extra metadata of
+   * some kind. Usually this is a renderer-specific representation of the
+   * image data, for instance a BufferedImage with tint() settings applied for
+   * PGraphicsJava2D, or resized image data and OpenGL texture indices for
+   * PGraphicsOpenGL.
+   * @param renderer The PGraphics renderer associated to the image
+   * @param storage The metadata required by the renderer
+   */
+  public void setCache(PImage image, Object storage) {
+    cacheMap.put(image, storage);
+  }
+
+
+  /**
+   * Get cache storage data for the specified renderer. Because each renderer
+   * will cache data in different formats, it's necessary to store cache data
+   * keyed by the renderer object. Otherwise, attempting to draw the same
+   * image to both a PGraphicsJava2D and a PGraphicsOpenGL will cause errors.
+   * @param renderer The PGraphics renderer associated to the image
+   * @return metadata stored for the specified renderer
+   */
+  public Object getCache(PImage image) {
+    return cacheMap.get(image);
+  }
+
+
+  /**
+   * Remove information associated with this renderer from the cache, if any.
+   * @param renderer The PGraphics renderer whose cache data should be removed
+   */
+  public void removeCache(PImage image) {
+    cacheMap.remove(image);
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
   // FRAME
 
 
   /**
    * Some renderers have requirements re: when they are ready to draw.
    */
-//  public boolean canDraw() {  // ignore
-//    return true;
-//  }
+  public boolean canDraw() {  // ignore
+    return true;
+  }
 
 
   /**
@@ -757,16 +810,16 @@ public class PGraphics extends PImage implements PConstants {
   public void flush() {
     // no-op, mostly for P3D to write sorted stuff
   }
-  
-  
-  public PGL beginGL() {
-    showMethodWarning("beginGL");
+
+
+  public PGL beginPGL() {
+    showMethodWarning("beginPGL");
     return null;
   }
 
 
-  public void endGL() {
-    showMethodWarning("endGL");
+  public void endPGL() {
+    showMethodWarning("endPGL");
   }
 
 
@@ -790,7 +843,7 @@ public class PGraphics extends PImage implements PConstants {
     colorMode(RGB, 255);
     fill(255);
     stroke(0);
-    
+
     // added for 0178 for subclasses that need them
     strokeWeight(DEFAULT_STROKE_WEIGHT);
     strokeJoin(DEFAULT_STROKE_JOIN);
@@ -928,7 +981,7 @@ public class PGraphics extends PImage implements PConstants {
     }
   }
 
-  
+
   public boolean hintEnabled(int which) {
     if (which > 0) {
       return hints[which];
@@ -936,7 +989,7 @@ public class PGraphics extends PImage implements PConstants {
       return !hints[-which];
     }
   }
-  
+
 
   //////////////////////////////////////////////////////////////
 
@@ -1001,7 +1054,7 @@ public class PGraphics extends PImage implements PConstants {
     normalX = nx;
     normalY = ny;
     normalZ = nz;
-    
+
     // if drawing a shape and the normal hasn't been set yet,
     // then we need to set the normals for each vertex so far
     if (shape != 0) {
@@ -1012,7 +1065,7 @@ public class PGraphics extends PImage implements PConstants {
         // a separate normal for each vertex
         normalMode = NORMAL_MODE_VERTEX;
       }
-    }        
+    }
   }
 
   /**
@@ -1023,11 +1076,11 @@ public class PGraphics extends PImage implements PConstants {
     this.textureMode = mode;
   }
 
-  
+
   public void textureWrap(int wrap) {
     showMissingWarning("textureWrap");
   }
-  
+
 
   /**
    * Set texture image for current shape.
@@ -1308,17 +1361,17 @@ public class PGraphics extends PImage implements PConstants {
                 "or shapes with holes.");
   }
 
-  
+
   public void beginContour() {
     showMissingWarning("beginContour");
   }
-  
-  
+
+
   public void endContour() {
     showMissingWarning("endContour");
-  }  
-  
-  
+  }
+
+
   public void endShape() {
     endShape(OPEN);
   }
@@ -1327,93 +1380,97 @@ public class PGraphics extends PImage implements PConstants {
   public void endShape(int mode) {
   }
 
-  
+
   public void clip(float a, float b, float c, float d) {
     showMissingWarning("clip");
   }
 
-  
+
   public void noClip() {
     showMissingWarning("noClip");
   }
 
-  
+
   //////////////////////////////////////////////////////////////
 
   // BLEND
-  
-  
+
+
   public void blendMode(int mode) {
     showMissingWarning("blendMode");
   }
-  
+
 
   //////////////////////////////////////////////////////////////
 
   // SHAPE I/O
-  
+
 
   public PShape loadShape(String filename) {
     showMissingWarning("loadShape");
-    return null;    
+    return null;
   }
-  
+
 
   //////////////////////////////////////////////////////////////
 
   // SHAPE CREATION
-  
-  
+
+
   public PShape createShape(PShape source) {
     showMissingWarning("createShape");
-    return null;    
+    return null;
   }
-  
-  
+
+
   public PShape createShape() {
     showMissingWarning("createShape");
     return null;
   }
 
-  
+
   public PShape createShape(int type) {
     showMissingWarning("createShape");
     return null;
   }
 
-  
+
   public PShape createShape(int kind, float... p) {
     showMissingWarning("createShape");
     return null;
-  }  
-  
+  }
 
-  
+
+
   //////////////////////////////////////////////////////////////
 
   // SHADERS
 
-  
-  public PShader loadShader(int kind, String fragFilename, String vertFilename) {
-    showMissingWarning("loadShader");
-    return null;
-  }
 
-
-  public PShader loadShader(int kind, String fragFilename) {
-    showMissingWarning("loadShader");
-    return null;
-  }
-
-  
   public PShader loadShader(String fragFilename) {
     showMissingWarning("loadShader");
-    return null;    
+    return null;
   }
-  
+
+
+  public PShader loadShader(String fragFilename, String vertFilename) {
+    showMissingWarning("loadShader");
+    return null;
+  }
+
 
   public void shader(PShader shader) {
     showMissingWarning("shader");
+  }
+
+
+  public void shader(PShader shader, int kind) {
+    showMissingWarning("shader");
+  }
+
+
+  public void resetShader() {
+    showMissingWarning("resetShader");
   }
 
 
@@ -1421,12 +1478,7 @@ public class PGraphics extends PImage implements PConstants {
     showMissingWarning("resetShader");
   }
 
-  
-  public void resetShader() {
-    showMissingWarning("resetShader");
-  }  
 
-  
   public PShader getShader(int kind) {
     showMissingWarning("getShader");
     return null;
@@ -1435,10 +1487,10 @@ public class PGraphics extends PImage implements PConstants {
 
   public void filter(PShader shader) {
     showMissingWarning("filter");
-  }  
-  
-   
-  
+  }
+
+
+
   //////////////////////////////////////////////////////////////
 
   // CURVE/BEZIER VERTEX HANDLING
@@ -1447,7 +1499,7 @@ public class PGraphics extends PImage implements PConstants {
   protected void bezierVertexCheck() {
     bezierVertexCheck(shape, vertexCount);
   }
-  
+
 
   protected void bezierVertexCheck(int shape, int vertexCount) {
     if (shape == 0 || shape != POLYGON) {
@@ -1527,7 +1579,7 @@ public class PGraphics extends PImage implements PConstants {
     float[] prev = vertices[vertexCount-1];
     float x1 = prev[X];
     float y1 = prev[Y];
-    
+
     bezierVertex(x1 + ((cx-x1)*2/3.0f), y1 + ((cy-y1)*2/3.0f),
                  x3 + ((cx-x3)*2/3.0f), y3 + ((cy-y3)*2/3.0f),
                  x3, y3);
@@ -1541,18 +1593,18 @@ public class PGraphics extends PImage implements PConstants {
     float x1 = prev[X];
     float y1 = prev[Y];
     float z1 = prev[Z];
-    
+
     bezierVertex(x1 + ((cx-x1)*2/3.0f), y1 + ((cy-y1)*2/3.0f), z1 + ((cz-z1)*2/3.0f),
                  x3 + ((cx-x3)*2/3.0f), y3 + ((cy-y3)*2/3.0f), z3 + ((cz-z3)*2/3.0f),
                  x3, y3, z3);
   }
-  
-  
+
+
   protected void curveVertexCheck() {
     curveVertexCheck(shape);
   }
-  
-  
+
+
   /**
    * Perform initialization specific to curveVertex(), and handle standard
    * error modes. Can be overridden by subclasses that need the flexibility.
@@ -1807,8 +1859,8 @@ public class PGraphics extends PImage implements PConstants {
   protected void rectImpl(float x1, float y1, float x2, float y2) {
     quad(x1, y1,  x2, y1,  x2, y2,  x1, y2);
   }
-  
-  
+
+
   public void rect(float a, float b, float c, float d, float r) {
     rect(a, b, c, d, r, r, r, r);
   }
@@ -1853,7 +1905,7 @@ public class PGraphics extends PImage implements PConstants {
     if (tr > maxRounding) tr = maxRounding;
     if (br > maxRounding) br = maxRounding;
     if (bl > maxRounding) bl = maxRounding;
-    
+
     rectImpl(a, b, c, d, tl, tr, br, bl);
   }
 
@@ -1889,7 +1941,7 @@ public class PGraphics extends PImage implements PConstants {
 //    endShape();
     endShape(CLOSE);
   }
-  
+
 
 
   //////////////////////////////////////////////////////////////
@@ -2143,8 +2195,8 @@ public class PGraphics extends PImage implements PConstants {
     if ((sphereDetailU < 3) || (sphereDetailV < 2)) {
       sphereDetail(30);
     }
-    
-    edge(false);    
+
+    edge(false);
 
     // 1st ring from south pole
     beginShape(TRIANGLE_STRIP);
@@ -2199,7 +2251,7 @@ public class PGraphics extends PImage implements PConstants {
     normal(0, 1, 0);
     vertex(0, r, 0);
     endShape();
-    
+
     edge(true);
   }
 
@@ -2525,11 +2577,11 @@ public class PGraphics extends PImage implements PConstants {
   public void smooth() {
     smooth = true;
   }
-  
+
   public void smooth(int level) {
     smooth = true;
-  }  
-  
+  }
+
   /**
    * Disable smoothing. See smooth().
    */
@@ -2696,7 +2748,7 @@ public class PGraphics extends PImage implements PConstants {
   public Object initCache(PImage img) { // ignore
     return null;
   }
-  
+
 
   //////////////////////////////////////////////////////////////
 
@@ -2748,7 +2800,8 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  public void shape(PShape shape, float x, float y, float z) {
+  // TODO unapproved
+  protected void shape(PShape shape, float x, float y, float z) {
     showMissingWarning("shape");
   }
 
@@ -2781,7 +2834,8 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  public void shape(PShape shape, float x, float y, float z, float c, float d, float e) {
+  // TODO unapproved
+  protected void shape(PShape shape, float x, float y, float z, float c, float d, float e) {
     showMissingWarning("shape");
   }
 
@@ -2948,7 +3002,7 @@ public class PGraphics extends PImage implements PConstants {
 //    PApplet.println("textSize textLeading = " + textLeading);
   }
 
-  
+
   // ........................................................
 
 
@@ -4390,7 +4444,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
   protected void specularFromCalc() {
-    specularColor = calcColor; 
+    specularColor = calcColor;
     specularR = calcR;
     specularG = calcG;
     specularB = calcB;
@@ -5224,15 +5278,15 @@ public class PGraphics extends PImage implements PConstants {
     }
   }
 
-  
+
   public boolean haveRaw() { // ignore
-    return raw != null; 
+    return raw != null;
   }
-  
-  
+
+
   public PGraphics getRaw() { // ignore
     return raw;
-  }  
+  }
 
 
   //////////////////////////////////////////////////////////////
@@ -5375,12 +5429,12 @@ public class PGraphics extends PImage implements PConstants {
   public boolean is3D() {
     return false;
   }
-  
-  
+
+
   /**
    * Return true if this renderer does rendering through OpenGL. Defaults to false.
-   */  
+   */
   public boolean isGL() {
     return false;
-  }   
+  }
 }
