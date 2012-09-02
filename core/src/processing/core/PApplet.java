@@ -5709,7 +5709,7 @@ public class PApplet extends Applet
                                      String callbackMethod,
                                      Object callbackObject) {
     try {
-      Class callbackClass = callbackObject.getClass();
+      Class<?> callbackClass = callbackObject.getClass();
       Method selectMethod =
         callbackClass.getMethod(callbackMethod, new Class[] { File.class });
       selectMethod.invoke(callbackObject, new Object[] { selectedFile });
@@ -8924,6 +8924,7 @@ public class PApplet extends Applet
     return g.color(gray);
   }
 
+
   /**
    * @nowebref
    * @param fgray number specifying value between white and black
@@ -8940,7 +8941,6 @@ public class PApplet extends Applet
 
   /**
    * As of 0116 this also takes color(#FF8800, alpha)
-   *
    * @param alpha relative to current color range
    */
   public final int color(int gray, int alpha) {
@@ -8957,6 +8957,7 @@ public class PApplet extends Applet
     return g.color(gray, alpha);
   }
 
+
   /**
    * @nowebref
    */
@@ -8970,6 +8971,7 @@ public class PApplet extends Applet
     }
     return g.color(fgray, falpha);
   }
+
 
   /**
    * @param v1 red or hue values relative to the current color range
@@ -8987,6 +8989,7 @@ public class PApplet extends Applet
     return g.color(v1, v2, v3);
   }
 
+
   public final int color(int v1, int v2, int v3, int alpha) {
     if (g == null) {
       if (alpha > 255) alpha = 255; else if (alpha < 0) alpha = 0;
@@ -8999,6 +9002,7 @@ public class PApplet extends Applet
     return g.color(v1, v2, v3, alpha);
   }
 
+
   public final int color(float v1, float v2, float v3) {
     if (g == null) {
       if (v1 > 255) v1 = 255; else if (v1 < 0) v1 = 0;
@@ -9010,6 +9014,7 @@ public class PApplet extends Applet
     return g.color(v1, v2, v3);
   }
 
+
   public final int color(float v1, float v2, float v3, float alpha) {
     if (g == null) {
       if (alpha > 255) alpha = 255; else if (alpha < 0) alpha = 0;
@@ -9020,6 +9025,11 @@ public class PApplet extends Applet
       return ((int)alpha << 24) | ((int)v1 << 16) | ((int)v2 << 8) | (int)v3;
     }
     return g.color(v1, v2, v3, alpha);
+  }
+
+
+  static public int blendColor(int c1, int c2, int mode) {
+    return PImage.blendColor(c1, c2, mode);
   }
 
 
@@ -9893,6 +9903,44 @@ public class PApplet extends Applet
   // the PImage and PGraphics source code files.
 
   // public functions for processing.core
+
+
+  /**
+   * Store data of some kind for the renderer that requires extra metadata of
+   * some kind. Usually this is a renderer-specific representation of the
+   * image data, for instance a BufferedImage with tint() settings applied for
+   * PGraphicsJava2D, or resized image data and OpenGL texture indices for
+   * PGraphicsOpenGL.
+   * @param renderer The PGraphics renderer associated to the image
+   * @param storage The metadata required by the renderer
+   */
+  public void setCache(PImage image, Object storage) {
+    if (recorder != null) recorder.setCache(image, storage);
+    g.setCache(image, storage);
+  }
+
+
+  /**
+   * Get cache storage data for the specified renderer. Because each renderer
+   * will cache data in different formats, it's necessary to store cache data
+   * keyed by the renderer object. Otherwise, attempting to draw the same
+   * image to both a PGraphicsJava2D and a PGraphicsOpenGL will cause errors.
+   * @param renderer The PGraphics renderer associated to the image
+   * @return metadata stored for the specified renderer
+   */
+  public Object getCache(PImage image) {
+    return g.getCache(image);
+  }
+
+
+  /**
+   * Remove information associated with this renderer from the cache, if any.
+   * @param renderer The PGraphics renderer whose cache data should be removed
+   */
+  public void removeCache(PImage image) {
+    if (recorder != null) recorder.removeCache(image);
+    g.removeCache(image);
+  }
 
 
   public PGL beginPGL() {
@@ -14017,76 +14065,6 @@ public class PApplet extends Applet
 
 
   /**
-   * Store data of some kind for a renderer that requires extra metadata of
-   * some kind. Usually this is a renderer-specific representation of the
-   * image data, for instance a BufferedImage with tint() settings applied for
-   * PGraphicsJava2D, or resized image data and OpenGL texture indices for
-   * PGraphicsOpenGL.
-   * @param renderer The PGraphics renderer associated to the image
-   * @param storage The metadata required by the renderer
-   */
-  public void setCache(PGraphics renderer, Object storage) {
-    if (recorder != null) recorder.setCache(renderer, storage);
-    g.setCache(renderer, storage);
-  }
-
-
-  /**
-   * Get cache storage data for the specified renderer. Because each renderer
-   * will cache data in different formats, it's necessary to store cache data
-   * keyed by the renderer object. Otherwise, attempting to draw the same
-   * image to both a PGraphicsJava2D and a PGraphicsOpenGL will cause errors.
-   * @param renderer The PGraphics renderer associated to the image
-   * @return metadata stored for the specified renderer
-   */
-  public Object getCache(PGraphics renderer) {
-    return g.getCache(renderer);
-  }
-
-
-  /**
-   * Remove information associated with this renderer from the cache, if any.
-   * @param renderer The PGraphics renderer whose cache data should be removed
-   */
-  public void removeCache(PGraphics renderer) {
-    if (recorder != null) recorder.removeCache(renderer);
-    g.removeCache(renderer);
-  }
-
-
-//  /**
-//   * Store parameters for a renderer that requires extra metadata of
-//   * some kind.
-//   * @param renderer The PGraphics renderer associated to the image
-//   * @param storage The parameters required by the renderer
-//   */
-//  public void setParams(PGraphics renderer, Object params) {
-//    if (recorder != null) recorder.setParams(renderer, params);
-//    g.setParams(renderer, params);
-//  }
-//
-//
-//  /**
-//   * Get the parameters for the specified renderer.
-//   * @param renderer The PGraphics renderer associated to the image
-//   * @return parameters stored for the specified renderer
-//   */
-//  public Object getParams(PGraphics renderer) {
-//    return g.getParams(renderer);
-//  }
-//
-//
-//  /**
-//   * Remove information associated with this renderer from the cache, if any.
-//   * @param renderer The PGraphics renderer whose parameters should be removed
-//   */
-//  public void removeParams(PGraphics renderer) {
-//    if (recorder != null) recorder.removeParams(renderer);
-//    g.removeParams(renderer);
-//  }
-
-
-  /**
    * ( begin auto-generated from PImage_get.xml )
    *
    * Reads the color of any pixel or grabs a section of an image. If no
@@ -14367,90 +14345,6 @@ public class PApplet extends Applet
                    int dx, int dy, int dw, int dh) {
     if (recorder != null) recorder.copy(src, sx, sy, sw, sh, dx, dy, dw, dh);
     g.copy(src, sx, sy, sw, sh, dx, dy, dw, dh);
-  }
-
-
-  /**
-   * ( begin auto-generated from blendColor.xml )
-   *
-   * Blends two color values together based on the blending mode given as the
-   * <b>MODE</b> parameter. The possible modes are described in the reference
-   * for the <b>blend()</b> function.
-   *
-   * ( end auto-generated )
-   * <h3>Advanced</h3>
-   * <UL>
-   * <LI>REPLACE - destination colour equals colour of source pixel: C = A.
-   *     Sometimes called "Normal" or "Copy" in other software.
-   *
-   * <LI>BLEND - linear interpolation of colours:
-   *     <TT>C = A*factor + B</TT>
-   *
-   * <LI>ADD - additive blending with white clip:
-   *     <TT>C = min(A*factor + B, 255)</TT>.
-   *     Clipped to 0..255, Photoshop calls this "Linear Burn",
-   *     and Director calls it "Add Pin".
-   *
-   * <LI>SUBTRACT - substractive blend with black clip:
-   *     <TT>C = max(B - A*factor, 0)</TT>.
-   *     Clipped to 0..255, Photoshop calls this "Linear Dodge",
-   *     and Director calls it "Subtract Pin".
-   *
-   * <LI>DARKEST - only the darkest colour succeeds:
-   *     <TT>C = min(A*factor, B)</TT>.
-   *     Illustrator calls this "Darken".
-   *
-   * <LI>LIGHTEST - only the lightest colour succeeds:
-   *     <TT>C = max(A*factor, B)</TT>.
-   *     Illustrator calls this "Lighten".
-   *
-   * <LI>DIFFERENCE - subtract colors from underlying image.
-   *
-   * <LI>EXCLUSION - similar to DIFFERENCE, but less extreme.
-   *
-   * <LI>MULTIPLY - Multiply the colors, result will always be darker.
-   *
-   * <LI>SCREEN - Opposite multiply, uses inverse values of the colors.
-   *
-   * <LI>OVERLAY - A mix of MULTIPLY and SCREEN. Multiplies dark values,
-   *     and screens light values.
-   *
-   * <LI>HARD_LIGHT - SCREEN when greater than 50% gray, MULTIPLY when lower.
-   *
-   * <LI>SOFT_LIGHT - Mix of DARKEST and LIGHTEST.
-   *     Works like OVERLAY, but not as harsh.
-   *
-   * <LI>DODGE - Lightens light tones and increases contrast, ignores darks.
-   *     Called "Color Dodge" in Illustrator and Photoshop.
-   *
-   * <LI>BURN - Darker areas are applied, increasing contrast, ignores lights.
-   *     Called "Color Burn" in Illustrator and Photoshop.
-   * </UL>
-   * <P>A useful reference for blending modes and their algorithms can be
-   * found in the <A HREF="http://www.w3.org/TR/SVG12/rendering.html">SVG</A>
-   * specification.</P>
-   * <P>It is important to note that Processing uses "fast" code, not
-   * necessarily "correct" code. No biggie, most software does. A nitpicker
-   * can find numerous "off by 1 division" problems in the blend code where
-   * <TT>&gt;&gt;8</TT> or <TT>&gt;&gt;7</TT> is used when strictly speaking
-   * <TT>/255.0</T> or <TT>/127.0</TT> should have been used.</P>
-   * <P>For instance, exclusion (not intended for real-time use) reads
-   * <TT>r1 + r2 - ((2 * r1 * r2) / 255)</TT> because <TT>255 == 1.0</TT>
-   * not <TT>256 == 1.0</TT>. In other words, <TT>(255*255)>>8</TT> is not
-   * the same as <TT>(255*255)/255</TT>. But for real-time use the shifts
-   * are preferrable, and the difference is insignificant for applications
-   * built with Processing.</P>
-   *
-   * @webref color:creating_reading
-   * @usage web_application
-   * @param c1 the first color to blend
-   * @param c2 the second color to blend
-   * @param mode either BLEND, ADD, SUBTRACT, DARKEST, LIGHTEST, DIFFERENCE, EXCLUSION, MULTIPLY, SCREEN, OVERLAY, HARD_LIGHT, SOFT_LIGHT, DODGE, or BURN
-   * @see PImage#blend(PImage, int, int, int, int, int, int, int, int, int)
-   * @see PApplet#color(float, float, float, float)
-   */
-  static public int blendColor(int c1, int c2, int mode) {
-    return PImage.blendColor(c1, c2, mode);
   }
 
 

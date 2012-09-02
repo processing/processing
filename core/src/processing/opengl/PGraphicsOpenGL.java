@@ -1656,7 +1656,7 @@ public class PGraphicsOpenGL extends PGraphics {
         // The screen texture should be deleted because it
         // corresponds to the old window size.
         pgPrimary.removeCache(this);
-        this.removeParams(pgPrimary);
+        pgPrimary.removeParams(this);
         texture = null;
         loadTexture();
       }
@@ -3372,7 +3372,8 @@ public class PGraphicsOpenGL extends PGraphics {
   // public void shapeMode(int mode)
 
 
-  public void shape(PShape shape, float x, float y, float z) {
+  // TODO unapproved
+  protected void shape(PShape shape, float x, float y, float z) {
     if (shape.isVisible()) { // don't do expensive matrix ops if invisible
       flush();
 
@@ -3392,8 +3393,9 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  public void shape(PShape shape, float x, float y, float z, float c, float d,
-                    float e) {
+  // TODO unapproved
+  protected void shape(PShape shape, float x, float y, float z,
+                       float c, float d, float e) {
     if (shape.isVisible()) { // don't do expensive matrix ops if invisible
       flush();
 
