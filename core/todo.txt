@@ -5,6 +5,18 @@ X   maybe getResource() fails because spaces are not encoded?
 X PVector limit() is inefficient
 X   http://code.google.com/p/processing/issues/detail?id=1122
 
+X work on making API more generic and consistent
+X   PFont.getFont() changed to PFont.getNative() (returns an Object)
+X   PFont.getTypeface() changed to PFont.getNative() 
+
+earlier
+X add breakShape to the public API -> begin/endContour
+x   or handle differently in general.. nested beginPath() calls?
+
+
+_ beginning slash in getChild() threw an NPE
+_ do we need a trim() method for XML? or enableWhiteSpace()? or?
+
 _ memory leak when many createGraphics(..., JAVA2D) calls are used
 _   http://code.google.com/p/processing/issues/detail?id=507
 _   need to add clear() method so clear out ARGB surfaces
@@ -14,6 +26,9 @@ X   and that people should use background() anyway
 o   or background(r, g, b, a) would be the thing
 _   clear() with a color doesn't make (verbal) sense
 _   provide a way to clear the PGraphics with plain alpha
+
+_ use getNative() to return the native object for
+_   PImage (BufferedImage and Bitmap), PFont (Typeface or awt.Font)
 
 api to be fixed/removed
 _ remove PImage.delete() and friends from PImage, Movie, etc.
@@ -36,14 +51,13 @@ _   http://code.google.com/p/processing/issues/detail?id=1068
 
 docs
 _ textureWrap() CLAMP and REPEAT now added
+_ begin/endContour()
 
 _ implement callbacks for images and other loadXxxx() functions
 _   remove requestImage() and friends
 _ callback for requestImage()
 _   http://code.google.com/p/processing/issues/detail?id=641
 _ remove/update requestImage example
-
-_ do we need a trim() method for XML? or enableWhiteSpace()? or?
 
 PImage icon;
 
@@ -266,8 +280,7 @@ _   http://code.google.com/p/processing/issues/detail?id=135
 _ make determination on shape(x,y,z,w,h,d) or no
 _ new PGraphics(... OutputStream) 
 _   http://code.google.com/p/processing/issues/detail?id=246
-_ add breakShape to the public API 
-_   or handle differently in general.. nested beginPath() calls?
+_   already added for PDF, just need to work out the API
 
 looping/events
 _ key and mouse events delivered out of order

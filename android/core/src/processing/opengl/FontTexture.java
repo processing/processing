@@ -46,7 +46,7 @@ import java.util.HashMap;
  * over several textures.
  * @author Andres Colubri
  */
-class PFontTexture implements PConstants {
+class FontTexture implements PConstants {
   protected PApplet parent;
   protected PGraphicsOpenGL pg;
   protected PGL pgl;
@@ -65,7 +65,7 @@ class PFontTexture implements PConstants {
   protected TextureInfo[] glyphTexinfos;
   protected HashMap<PFont.Glyph, TextureInfo> texinfoMap;
 
-  public PFontTexture(PApplet parent, PFont font, int maxw, int maxh,
+  public FontTexture(PApplet parent, PFont font, int maxw, int maxh,
                       boolean is3D) {
     this.parent = parent;
     this.font = font;

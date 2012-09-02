@@ -118,10 +118,10 @@ public class PFont implements PConstants {
   /**
    * True if this font should return 'null' for getFont(), so that the native
    * font will be used to create a subset, but the native version of the font
-   * will not be used. 
+   * will not be used.
    */
-  protected boolean subsetting; 
-  
+  protected boolean subsetting;
+
   /**
    * True if we've already tried to find the native version of this font.
    */
@@ -133,18 +133,18 @@ public class PFont implements PConstants {
    * bug that they can't be bothered to fix.
    */
   static protected Typeface[] typefaces;
-  
+
   // objects to handle creation of font characters only as they're needed
   Bitmap lazyBitmap;
   Canvas lazyCanvas;
   Paint lazyPaint;
 //  FontMetrics lazyMetrics;
   int[] lazySamples;
-  
+
   /** for subclasses that need to store metadata about the font */
-  protected HashMap<PGraphics, Object> cacheMap;    
-  
-  
+  protected HashMap<PGraphics, Object> cacheMap;
+
+
   public PFont() { }  // for subclasses
 
 
@@ -212,7 +212,7 @@ public class PFont implements PConstants {
 
     if (charset == null) {
       lazy = true;
-      
+
     } else {
       // charset needs to be sorted to make index lookup run more quickly
       // http://dev.processing.org/bugs/show_bug.cgi?id=494
@@ -317,7 +317,7 @@ public class PFont implements PConstants {
     }
   }
 
-    
+
   /**
    * Write this PFont to an OutputStream.
    * <p>
@@ -408,20 +408,20 @@ public class PFont implements PConstants {
     return name;
   }
 
-  
+
   /**
    * Return size of this font.
    */
   public int getSize() {
     return size;
   }
-  
+
 
   public void setSubsetting() {
     subsetting = true;
   }
 
-  
+
   public String getPostScriptName() {
     return psname;
   }
@@ -430,15 +430,15 @@ public class PFont implements PConstants {
   /**
    * Set the native complement of this font.
    */
-  public void setTypeface(Typeface typeface) {
-    this.typeface = typeface;
+  public void setNative(Object typeface) {
+    this.typeface = (Typeface) typeface;
   }
 
 
   /**
    * Return the native Typeface object associated with this PFont (if any).
    */
-  public Typeface getTypeface() {
+  public Typeface getNative() {
     if (subsetting) {
       return null;
     }
@@ -450,7 +450,7 @@ public class PFont implements PConstants {
    * Attempt to find the native version of this font.
    * (Public so that it can be used by OpenGL or other renderers.)
    */
-  static public Typeface findTypeface(String name) {
+  static public Object findNative(String name) {
     loadTypefaces();
     return typefaceMap.get(name);
   }
@@ -564,14 +564,14 @@ public class PFont implements PConstants {
   //////////////////////////////////////////////////////////////
 
   // METADATA REQUIRED BY THE RENDERERS
-  
+
 
   /**
    * Store data of some kind for a renderer that requires extra metadata of
    * some kind. Usually this is a renderer-specific representation of the
    * font data, for instance a custom OpenGL texture for PGraphicsOpenGL2.
    * @param renderer The PGraphics renderer associated to the font
-   * @param storage The metadata required by the renderer    
+   * @param storage The metadata required by the renderer
    */
   public void setCache(PGraphics renderer, Object storage) {
     if (cacheMap == null) cacheMap = new HashMap<PGraphics, Object>();
@@ -601,22 +601,22 @@ public class PFont implements PConstants {
     if (cacheMap != null) {
       cacheMap.remove(renderer);
     }
-  }  
-  
-  
-  //////////////////////////////////////////////////////////////  
-  
+  }
+
+
+  //////////////////////////////////////////////////////////////
+
   public int getGlyphCount()  {
     return glyphCount;
   }
-  
+
   public Glyph getGlyph(int i)  {
-    return glyphs[i];  
-  }  
-  
+    return glyphs[i];
+  }
+
   //////////////////////////////////////////////////////////////
 
-  
+
   static final char[] EXTRA_CHARS = {
     0x0080, 0x0081, 0x0082, 0x0083, 0x0084, 0x0085, 0x0086, 0x0087,
     0x0088, 0x0089, 0x008A, 0x008B, 0x008C, 0x008D, 0x008E, 0x008F,
@@ -725,7 +725,7 @@ public class PFont implements PConstants {
     }
   }
 
-  
+
   /////////////////////////////////////////////////////////////
 
   /**
@@ -736,7 +736,7 @@ public class PFont implements PConstants {
     public int value;
     public int height;
     public int width;
-    public int index;    
+    public int index;
     public int setWidth;
     public int topExtent;
     public int leftExtent;

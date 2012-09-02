@@ -3848,7 +3848,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
       AssetManager assets = getBaseContext().getAssets();
       baseFont = Typeface.createFromAsset(assets, name);
     } else {
-      baseFont = PFont.findTypeface(name);
+      baseFont = (Typeface) PFont.findNative(name);
     }
     return new PFont(baseFont, round(size), smooth, charset);
   }
@@ -8976,8 +8976,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
-  public Bitmap getBitmap() {
-    return g.getBitmap();
+  public Object getNative() {
+    return g.getNative();
   }
 
 

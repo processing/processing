@@ -1,4 +1,6 @@
 0209 android
+A GL android sketch stops running after rotation
+A   http://code.google.com/p/processing/issues/detail?id=1146
 
 
 _ inside AndroidPreprocessor

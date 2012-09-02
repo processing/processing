@@ -43,6 +43,10 @@ public class PGraphicsOpenGL extends PGraphics {
   /** The renderer currently in use. */
   protected static PGraphicsOpenGL pgCurrent = null;
 
+  /** Font cache for texture objects. */
+  protected WeakHashMap<PFont, FontTexture> fontMap =
+    new WeakHashMap<PFont, FontTexture>();
+
   /** Additional image parameters not covered by the cache. */
   protected WeakHashMap<PImage, Object> paramMap =
     new WeakHashMap<PImage, Object>();
@@ -353,7 +357,7 @@ public class PGraphicsOpenGL extends PGraphics {
   // Text:
 
   /** Font texture of currently selected font. */
-  PFontTexture textTex;
+  FontTexture textTex;
 
   // .......................................................
 
@@ -607,6 +611,24 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void setFlushMode(int mode) {
     flushMode = mode;
+  }
+
+
+  //////////////////////////////////////////////////////////////
+
+
+  protected void setFontTexture(PFont font, FontTexture fontTexture) {
+    fontMap.put(font, fontTexture);
+  }
+
+
+  protected FontTexture getFontTexture(PFont font) {
+    return fontMap.get(font);
+  }
+
+
+  protected void removeFontTexture(PFont font) {
+    fontMap.remove(font);
   }
 
 
@@ -3508,17 +3530,17 @@ public class PGraphicsOpenGL extends PGraphics {
   @Override
   protected void textLineImpl(char buffer[], int start, int stop,
                               float x, float y) {
-    textTex = (PFontTexture)textFont.getCache(pgPrimary);
+    textTex = pgPrimary.getFontTexture(textFont);
     if (textTex == null) {
-      textTex = new PFontTexture(parent, textFont, maxTextureSize,
+      textTex = new FontTexture(parent, textFont, maxTextureSize,
                                  maxTextureSize, is3D());
-      textFont.setCache(pgPrimary, textTex);
+      pgPrimary.setFontTexture(textFont, textTex);
     } else {
       if (textTex.contextIsOutdated()) {
-        textTex = new PFontTexture(parent, textFont,
+        textTex = new FontTexture(parent, textFont,
           PApplet.min(PGL.MAX_FONT_TEX_SIZE, maxTextureSize),
           PApplet.min(PGL.MAX_FONT_TEX_SIZE, maxTextureSize), is3D());
-        textFont.setCache(pgPrimary, textTex);
+        pgPrimary.setFontTexture(textFont, textTex);
       }
     }
     textTex.begin();
@@ -3570,7 +3592,7 @@ public class PGraphicsOpenGL extends PGraphics {
     PFont.Glyph glyph = textFont.getGlyph(ch);
 
     if (glyph != null) {
-      PFontTexture.TextureInfo tinfo = textTex.getTexInfo(glyph);
+      FontTexture.TextureInfo tinfo = textTex.getTexInfo(glyph);
 
       if (tinfo == null) {
         // Adding new glyph to the font texture.
@@ -3594,7 +3616,7 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  protected void textCharModelImpl(PFontTexture.TextureInfo info,
+  protected void textCharModelImpl(FontTexture.TextureInfo info,
                                    float x0, float y0,
                                    float x1, float y1) {
     if (textTex.currentTex != info.texIndex) {
