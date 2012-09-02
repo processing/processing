@@ -4078,30 +4078,31 @@ public class PShapeOpenGL extends PShape {
   @Override
   public void draw(PGraphics g) {
     if (g instanceof PGraphicsOpenGL) {
+      PGraphicsOpenGL gl = (PGraphicsOpenGL)g;
       if (visible) {
-        pre(g);
+        pre(gl);
 
         updateTessellation();
         updateGeometry();
 
         if (family == GROUP) {
-          if (fragmentedGroup(g)) {
+          if (fragmentedGroup(gl)) {
             for (int i = 0; i < childCount; i++) {
-              ((PShapeOpenGL) children[i]).draw(g);
+              ((PShapeOpenGL) children[i]).draw(gl);
             }
           } else {
             PImage tex = null;
             if (textures != null && textures.size() == 1) {
               tex = (PImage)textures.toArray()[0];
             }
-            render((PGraphicsOpenGL)g, tex);
+            render(gl, tex);
           }
 
         } else {
-          render((PGraphicsOpenGL)g, texture);
+          render(gl, texture);
         }
 
-        post(g);
+        post(gl);
       }
     } else {
       // The renderer is not PGraphicsOpenGL, which probably
@@ -4118,7 +4119,7 @@ public class PShapeOpenGL extends PShape {
   // so they cannot rendered in a single call.
   // Or accurate 2D mode is enabled, which forces each
   // shape to be rendered separately.
-  protected boolean fragmentedGroup(PGraphics g) {
+  protected boolean fragmentedGroup(PGraphicsOpenGL g) {
     return g.hintEnabled(ENABLE_ACCURATE_2D) ||
            (textures != null && 1 < textures.size()) ||
            strokedTexture;
