@@ -36,10 +36,12 @@ _ delete()/dispose() being used in the movie
 _ buffer sink methods in movie
 _ 'newFrame' is 'available', and ready() is part of that
 
-_ loadShape() mess
-_   get things out of PGraphics
-_   separate PShape2/3D from OpenGL
-_   incorporate SVG loader into the 2D class
+_ loadShape() cleanup
+_   remove PShape2D/3D
+_   make PShapeOpenGL a cache object
+_   make PShapeOBJ the 3D loader
+o   separate PShape2/3D from OpenGL
+o   incorporate SVG loader into the 2D class
 
 _ loadPixels() implementation
 

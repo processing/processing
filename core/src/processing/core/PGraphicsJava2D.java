@@ -1817,6 +1817,33 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 
   // BACKGROUND
 
+
+  @Override
+  public void clear() {
+    clearPixels(0);
+  }
+
+
+  int[] clearPixels;
+
+  protected void clearPixels(int color) {
+    // Create a small array that can be used to set the pixels several times.
+    // Using a single-pixel line of length 'width' is a tradeoff between
+    // speed (setting each pixel individually is too slow) and memory
+    // (an array for width*height would waste lots of memory if it stayed
+    // resident, and would terrify the gc if it were re-created on each trip
+    // to background().
+    WritableRaster raster = ((BufferedImage) image).getRaster();
+//    WritableRaster raster = image.getRaster();
+    if ((clearPixels == null) || (clearPixels.length < width)) {
+      clearPixels = new int[width];
+    }
+    Arrays.fill(clearPixels, backgroundColor);
+    for (int i = 0; i < height; i++) {
+      raster.setDataElements(0, i, width, 1, clearPixels);
+    }
+  }
+
   // background() methods inherited from PGraphics, along with the
   // PImage version of backgroundImpl(), since it just calls set().
 
@@ -1824,26 +1851,11 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   //public void backgroundImpl(PImage image)
 
 
-  int[] clearPixels;
-
   @Override
   public void backgroundImpl() {
     if (backgroundAlpha) {
-      // Create a small array that can be used to set the pixels several times.
-      // Using a single-pixel line of length 'width' is a tradeoff between
-      // speed (setting each pixel individually is too slow) and memory
-      // (an array for width*height would waste lots of memory if it stayed
-      // resident, and would terrify the gc if it were re-created on each trip
-      // to background().
-      WritableRaster raster = ((BufferedImage) image).getRaster();
-//      WritableRaster raster = image.getRaster();
-      if ((clearPixels == null) || (clearPixels.length < width)) {
-        clearPixels = new int[width];
-      }
-      Arrays.fill(clearPixels, backgroundColor);
-      for (int i = 0; i < height; i++) {
-        raster.setDataElements(0, i, width, 1, clearPixels);
-      }
+      clearPixels(backgroundColor);
+
     } else {
       Color bgColor = new Color(backgroundColor);
       // seems to fire an additional event that causes flickering,
