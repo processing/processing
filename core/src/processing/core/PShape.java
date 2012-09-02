@@ -397,6 +397,7 @@ public class PShape implements PConstants {
 
 
 
+  /*
   // TODO unapproved
   protected PVector getTop() {
     return getTop(null);
@@ -422,6 +423,7 @@ public class PShape implements PConstants {
     }
     return bottom;
   }
+  */
 
 
   /**
@@ -440,13 +442,13 @@ public class PShape implements PConstants {
   }
 
 
-  /**
-   * Return true if this shape requires rendering through OpenGL. Defaults to false.
-   */
-  // TODO unapproved
-  public boolean isGL() {
-    return false;
-  }
+//  /**
+//   * Return true if this shape requires rendering through OpenGL. Defaults to false.
+//   */
+//  // TODO unapproved
+//  public boolean isGL() {
+//    return false;
+//  }
 
 
   ///////////////////////////////////////////////////////////
