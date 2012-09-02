@@ -160,6 +160,13 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
       g2 = (Graphics2D) image.getGraphics();
     }
 
+    // Avoid badness when drawing shorter strokes.
+    // http://code.google.com/p/processing/issues/detail?id=1068
+    // With very small stroke increments, this was actually faster by 2x,
+    // and for larger increments it was only 3% slower.
+    g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL,
+                        RenderingHints.VALUE_STROKE_PURE);
+
     // can't un-set this because this may be only a resize
     // http://dev.processing.org/bugs/show_bug.cgi?id=463
     //defaultsInited = false;
@@ -1816,12 +1823,6 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   //////////////////////////////////////////////////////////////
 
   // BACKGROUND
-
-
-  @Override
-  public void clear() {
-    clearPixels(0);
-  }
 
 
   int[] clearPixels;
