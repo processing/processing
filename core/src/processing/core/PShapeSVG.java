@@ -214,7 +214,7 @@ public class PShapeSVG extends PShape {
   }
 
 
-  public PShapeSVG(PShapeSVG parent, XML properties, boolean parseKids) {
+  protected PShapeSVG(PShapeSVG parent, XML properties, boolean parseKids) {
     // Need to set this so that findChild() works.
     // Otherwise 'parent' is null until addChild() is called later.
     this.parent = parent;
