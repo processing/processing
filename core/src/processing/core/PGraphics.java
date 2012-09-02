@@ -6637,6 +6637,11 @@ public class PGraphics extends PImage implements PConstants {
   // BACKGROUND
 
 
+  public void clear() {
+    showMethodWarning("clear");
+  }
+
+
   /**
    * ( begin auto-generated from background.xml )
    *
