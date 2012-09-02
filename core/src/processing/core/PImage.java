@@ -1629,7 +1629,7 @@ public class PImage implements PConstants, Cloneable {
    * @see PImage#blend(PImage, int, int, int, int, int, int, int, int, int)
    * @see PApplet#color(float, float, float, float)
    */
-  static public int blendColor(int c1, int c2, int mode) {
+  static public int blendColor(int c1, int c2, int mode) {  // ignore
     switch (mode) {
     case REPLACE:    return c2;
     case BLEND:      return blend_blend(c1, c2);
@@ -1655,6 +1655,7 @@ public class PImage implements PConstants, Cloneable {
     }
     return 0;
   }
+
 
   public void blend(int sx, int sy, int sw, int sh,
                     int dx, int dy, int dw, int dh, int mode) {
