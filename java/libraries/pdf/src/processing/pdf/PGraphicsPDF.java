@@ -63,7 +63,7 @@ public class PGraphicsPDF extends PGraphicsJava2D {
   static protected String fontList[];
 
 
-  public PGraphicsPDF() { 
+  public PGraphicsPDF() {
     // PDF always likes native fonts. Always.
     hint(ENABLE_NATIVE_FONTS);
   }
@@ -105,8 +105,8 @@ public class PGraphicsPDF extends PGraphicsJava2D {
     super.defaultSettings();
     textMode = SHAPE;
   }
-  
-  
+
+
   public void beginDraw() {
 //    long t0 = System.currentTimeMillis();
 
@@ -210,8 +210,8 @@ public class PGraphicsPDF extends PGraphicsJava2D {
     }
     return mapper;
   }
-  
-  
+
+
   static protected void checkDir(String path, DefaultFontMapper mapper) {
     File folder = new File(path);
     if (folder.exists()) {
@@ -316,8 +316,8 @@ public class PGraphicsPDF extends PGraphicsJava2D {
     beginDraw();
     style(savedStyle);
   }
-  
-  
+
+
   protected Graphics2D createGraphics() {
     if (textMode == SHAPE) {
       return content.createGraphicsShapes(width, height);
@@ -604,7 +604,7 @@ public class PGraphicsPDF extends PGraphicsJava2D {
    * @return true if it's ok
    */
   protected void checkFont() {
-    Font awtFont = textFont.getNative();
+    Font awtFont = (Font) textFont.getNative();
     if (awtFont == null) {  // always need a native font or reference to it
       throw new RuntimeException("Use createFont() instead of loadFont() " +
                                  "when drawing text using the PDF library.");
