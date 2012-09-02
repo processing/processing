@@ -604,7 +604,7 @@ public class PGraphicsPDF extends PGraphicsJava2D {
    * @return true if it's ok
    */
   protected void checkFont() {
-    Font awtFont = textFont.getFont();
+    Font awtFont = textFont.getNative();
     if (awtFont == null) {  // always need a native font or reference to it
       throw new RuntimeException("Use createFont() instead of loadFont() " +
                                  "when drawing text using the PDF library.");

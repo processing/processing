@@ -4911,8 +4911,8 @@ public class PApplet extends Applet
     }
 
     // For jpeg, gif, and png, load them using createImage(),
-    // because the javax.imageio code was found to be much slower, see
-    // <A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=392">Bug 392</A>.
+    // because the javax.imageio code was found to be much slower.
+    // http://dev.processing.org/bugs/show_bug.cgi?id=392
     try {
       if (extension.equals("jpg") || extension.equals("jpeg") ||
           extension.equals("gif") || extension.equals("png") ||
@@ -4949,12 +4949,12 @@ public class PApplet extends Applet
     if (loadImageFormats != null) {
       for (int i = 0; i < loadImageFormats.length; i++) {
         if (extension.equals(loadImageFormats[i])) {
-          PImage image;
-          image = loadImageIO(filename);
+          return loadImageIO(filename);
+//          PImage image = loadImageIO(filename);
 //          if (params != null) {
 //            image.setParams(g, params);
 //          }
-          return image;
+//          return image;
         }
       }
     }
