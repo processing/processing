@@ -2154,6 +2154,15 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
+  protected boolean hintEnabled(int which) {
+    if (which > 0) {
+      return hints[which];
+    } else {
+      return !hints[-which];
+    }
+  }
+
+
   //////////////////////////////////////////////////////////////
 
   // VERTEX SHAPES
@@ -6766,6 +6775,8 @@ public class PGraphicsOpenGL extends PGraphics {
     protected int textureSamplerLoc;
     protected int texcoordMatrixLoc;
     protected int texcoordOffsetLoc;
+    protected int backbufferSamplerLoc;
+    protected int resolutionLoc;
 
     protected float[] tcmat;
 
@@ -6789,6 +6800,9 @@ public class PGraphicsOpenGL extends PGraphics {
       textureSamplerLoc = getUniformLoc("textureSampler");
       texcoordMatrixLoc = getUniformLoc("texcoordMatrix");
       texcoordOffsetLoc = getUniformLoc("texcoordOffset");
+
+      backbufferSamplerLoc = getUniformLoc("backbufferSampler");
+      resolutionLoc = getUniformLoc("resolution");
     }
 
     @Override
@@ -6849,6 +6863,10 @@ public class PGraphicsOpenGL extends PGraphics {
       super.bind();
 
       if (-1 < inTexcoordLoc) pgl.enableVertexAttribArray(inTexcoordLoc);
+
+      if (-1 < backbufferSamplerLoc) {
+     //   ...
+      }
     }
 
     @Override
