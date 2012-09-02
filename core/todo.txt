@@ -20,6 +20,10 @@ X   PFont.getTypeface() changed to PFont.getNative()
 X   PImage.getBitmap() and getImage() changed to PImage.getNative()
 X   use getNative() to return the native object for
 X     PImage (BufferedImage and Bitmap), PFont (Typeface or awt.Font)
+X Jagged / Glitchy JAVA2D shape strokes in Java 1.6
+X   g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, 
+X                       RenderingHints.VALUE_STROKE_PURE); 
+X   http://code.google.com/p/processing/issues/detail?id=1068
 
 earlier
 X add breakShape to the public API -> begin/endContour
@@ -44,11 +48,6 @@ o   incorporate SVG loader into the 2D class
 _ loadShape() needs to live in PApplet
 
 _ loadPixels() implementation needs to be in PApplet, not PGraphics
-
-_ Jagged / Glitchy JAVA2D shape strokes in Java 1.6
-_   g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, 
-_                       RenderingHints.VALUE_STROKE_PURE); 
-_   http://code.google.com/p/processing/issues/detail?id=1068
 
 
 docs
