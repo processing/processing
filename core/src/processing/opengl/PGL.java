@@ -635,7 +635,7 @@ public class PGL {
       // Create the color texture...
       gl.glGenTextures(2, glColorTex, 0);
       for (int i = 0; i < 2; i++) {
-        gl.glBindTexture(GL.GL_TEXTURE_2D, glColorTex[0]);
+        gl.glBindTexture(GL.GL_TEXTURE_2D, glColorTex[i]);
         gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER,
                            GL.GL_NEAREST);
         gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER,
@@ -653,18 +653,10 @@ public class PGL {
       // ...and attach to the color framebuffer.
       gl.glGenFramebuffers(1, glColorFbo, 0);
       gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, glColorFbo[0]);
-      //gl.glFramebufferTexture2D(GL.GL_FRAMEBUFFER, GL.GL_COLOR_ATTACHMENT0,
-      //                          GL.GL_TEXTURE_2D, glColorTex[0], 0);
-
-      // Clear the color buffer in the color FBO
-      //gl.glClearColor(0, 0, 0, 0);
-      //gl.glClear(GL.GL_COLOR_BUFFER_BIT);
+      gl.glFramebufferTexture2D(GL.GL_FRAMEBUFFER, GL.GL_COLOR_ATTACHMENT0,
+                                GL.GL_TEXTURE_2D, glColorTex[0], 0);
 
       if (multisample) {
-        // We need multisampled FBO:
-
-        gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, 0);
-
         // Now, creating mutisampled FBO with packed depth and stencil buffers.
         gl.glGenFramebuffers(1, glMultiFbo, 0);
         gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, glMultiFbo[0]);
@@ -717,6 +709,7 @@ public class PGL {
                                        GL.GL_RENDERBUFFER,
                                        glStencilBuffer[0]);
         }
+        validateFramebuffer();
 
         // Clear all the buffers in the multisample FBO
         gl.glClearDepth(1);
@@ -762,8 +755,11 @@ public class PGL {
                                        GL.GL_STENCIL_ATTACHMENT,
                                        GL.GL_RENDERBUFFER, glStencilBuffer[0]);
         }
+        validateFramebuffer();
 
-        // Clear all the buffers in the color FBO
+        // Clear the depth and stencil buffers in the color FBO. There is no
+        // need to clear the color buffers because the textures attached were
+        // properly initialized blank.
         gl.glClearDepth(1);
         gl.glClearStencil(0);
         gl.glClear(GL.GL_DEPTH_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT);
@@ -778,7 +774,7 @@ public class PGL {
       frontTex = 0;
     } else {
       // To make sure that the default screen buffer is used, specially after
-      // doing screen rendering on an FBO (the OSX 10.7+ above).
+      // doing screen rendering on an FBO.
       PGraphicsOpenGL.screenFramebuffer.glFbo = 0;
     }
   }
@@ -791,11 +787,21 @@ public class PGL {
   }
 
 
+  protected int primaryDrawBuffer() {
+    if (glColorFbo[0] == 0) {
+      return GL.GL_BACK;
+    } else {
+      return GL.GL_COLOR_ATTACHMENT0;
+    }
+  }
+
+
   protected boolean primaryIsDoubleBuffered() {
     // When using the multisampled FBO, the color
     // FBO is single buffered as it has only one
     // texture bound to it.
-    return glColorFbo[0] == 0;
+    //return glColorFbo[0] == 0;
+    return true;
   }
 
 
@@ -890,12 +896,10 @@ public class PGL {
   protected void beginOnscreenDraw(boolean clear) {
     if (glColorFbo[0] != 0) {
       gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, glColorFbo[0]);
-      pg.report("HERE");
       gl.glFramebufferTexture2D(GL.GL_FRAMEBUFFER,
                                 GL.GL_COLOR_ATTACHMENT0,
                                 GL.GL_TEXTURE_2D,
                                 glColorTex[frontTex], 0);
-      validateFramebuffer();
 
       if (multisample) {
         // Render the scene to the mutisampled buffer...
@@ -910,7 +914,6 @@ public class PGL {
         PGraphicsOpenGL.screenFramebuffer.glFbo = glColorFbo[0];
       }
     }
-
   }
 
 
@@ -933,7 +936,7 @@ public class PGL {
       gl.glClear(GL.GL_DEPTH_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT);
 
       gl.glDisable(GL.GL_BLEND);
-      drawTexture(GL.GL_TEXTURE_2D, glColorTex[0], fboWidth, fboHeight,
+      drawTexture(GL.GL_TEXTURE_2D, glColorTex[frontTex], fboWidth, fboHeight,
                   0, 0, pg.width, pg.height, 0, 0, pg.width, pg.height);
 
       // Leaving the color FBO currently bound as the screen FB.
