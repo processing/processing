@@ -75,7 +75,7 @@ public class XML implements Serializable {
     this(PApplet.createReader(file));
   }
 
-  
+
   public XML(Reader reader) throws IOException, ParserConfigurationException, SAXException {
       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 
@@ -240,8 +240,8 @@ public class XML implements Serializable {
     checkChildren();
     return children.length;
   }
-  
-  
+
+
   public boolean hasChildren() {
     checkChildren();
     return children.length > 0;
@@ -588,6 +588,7 @@ public class XML implements Serializable {
   }
 
 
+  @Override
   public String toString() {
     return toString(2);
   }

@@ -32,9 +32,9 @@ import android.graphics.Paint.Style;
 
 
 /**
- * Subclass for PGraphics that implements the graphics API using 
- * the Android 2D graphics model. Similar tradeoffs to JAVA2D mode  
- * with the original (desktop) version of Processing. 
+ * Subclass for PGraphics that implements the graphics API using
+ * the Android 2D graphics model. Similar tradeoffs to JAVA2D mode
+ * with the original (desktop) version of Processing.
  */
 public class PGraphicsAndroid2D extends PGraphics {
 
@@ -57,9 +57,9 @@ public class PGraphicsAndroid2D extends PGraphics {
 //  Ellipse2D.Float ellipse = new Ellipse2D.Float();
 //  Rectangle2D.Float rect = new Rectangle2D.Float();
 //  Arc2D.Float arc = new Arc2D.Float();
-  /** 
+  /**
    * The temporary path object that does most of the drawing work. If there are
-   * any points in the path (meaning that moveto has been called), then 
+   * any points in the path (meaning that moveto has been called), then
    * vertexCount will be 1 (or more). In the POLYGON case, vertexCount is only
    * set to 1 after the first point is drawn (to indicate a moveto) and not
    * incremented after, since the variable isn't used for POLYGON paths.
@@ -121,6 +121,7 @@ public class PGraphicsAndroid2D extends PGraphics {
    *
    * Note that this will nuke any cameraMode() settings.
    */
+  @Override
   public void setSize(int iwidth, int iheight) {  // ignore
     width = iwidth;
     height = iheight;
@@ -132,6 +133,7 @@ public class PGraphicsAndroid2D extends PGraphics {
   }
 
 
+  @Override
   protected void allocate() {
     bitmap = Bitmap.createBitmap(width, height, Config.ARGB_8888);
     canvas = new Canvas(bitmap);
@@ -140,6 +142,7 @@ public class PGraphicsAndroid2D extends PGraphics {
   }
 
 
+  @Override
   public void dispose() {
     bitmap.recycle();
   }
@@ -155,17 +158,19 @@ public class PGraphicsAndroid2D extends PGraphics {
 	  parent.surfaceView.requestRender();
   }
   */
-    
+
 //  public boolean canDraw() {
 //    return true;
 //  }
 
 
+  @Override
   public void requestDraw() {
     parent.handleDraw();
   }
 
 
+  @Override
   public void beginDraw() {
 //    if (primarySurface) {
 //      canvas = parent.getSurfaceHolder().lockCanvas(null);
@@ -185,11 +190,12 @@ public class PGraphicsAndroid2D extends PGraphics {
   }
 
 
+  @Override
   public void endDraw() {
     // hm, mark pixels as changed, because this will instantly do a full
     // copy of all the pixels to the surface.. so that's kind of a mess.
     //updatePixels();
-    
+
 //    if (primarySurface) {
 //      if (canvas != null) {
 //        parent.getSurfaceHolder().unlockCanvasAndPost(canvas);
@@ -255,6 +261,7 @@ public class PGraphicsAndroid2D extends PGraphics {
   //public void beginShape(int kind)
 
 
+  @Override
   public void beginShape(int kind) {
     //super.beginShape(kind);
     shape = kind;
@@ -281,11 +288,13 @@ public class PGraphicsAndroid2D extends PGraphics {
   //public void textureMode(int mode)
 
 
+  @Override
   public void texture(PImage image) {
     showMethodWarning("texture");
   }
 
 
+  @Override
   public void vertex(float x, float y) {
     // POLYGON and POINTS are broken out for efficiency
     if (shape == POLYGON) {
@@ -308,7 +317,7 @@ public class PGraphicsAndroid2D extends PGraphics {
     // this is way too slow, otherwise what's the point of using beginShape()
 //    } else if (shape == POINTS) {
 //      point(x, y);
-      
+
     } else {
       curveVertexCount = 0;
 
@@ -368,7 +377,7 @@ public class PGraphicsAndroid2D extends PGraphics {
           path.reset();
           // when vertexCount > 3, draw an un-closed triangle
           // for indices 0 (center), previous, current
-          path.moveTo(vertices[0][X], 
+          path.moveTo(vertices[0][X],
                       vertices[0][Y]);
           path.lineTo(vertices[vertexCount - 2][X],
                       vertices[vertexCount - 2][Y]);
@@ -409,26 +418,31 @@ public class PGraphicsAndroid2D extends PGraphics {
   }
 
 
+  @Override
   public void vertex(float x, float y, float z) {
     showDepthWarningXYZ("vertex");
   }
 
 
+  @Override
   public void vertex(float x, float y, float u, float v) {
     showVariationWarning("vertex(x, y, u, v)");
   }
 
 
+  @Override
   public void vertex(float x, float y, float z, float u, float v) {
     showDepthWarningXYZ("vertex");
   }
 
 
+  @Override
   public void breakShape() {
     breakShape = true;
   }
 
 
+  @Override
   public void endShape(int mode) {
     if (shape == POINTS && stroke && vertexCount > 0) {
       Matrix m = canvas.getMatrix();
@@ -441,7 +455,7 @@ public class PGraphicsAndroid2D extends PGraphics {
           screenPoint[1] = vertices[i][Y];
           m.mapPoints(screenPoint);
           set(PApplet.round(screenPoint[0]), PApplet.round(screenPoint[1]), strokeColor);
-          float x = vertices[i][X]; 
+          float x = vertices[i][X];
           float y = vertices[i][Y];
           set(PApplet.round(screenX(x, y)), PApplet.round(screenY(x, y)), strokeColor);
         }
@@ -450,14 +464,14 @@ public class PGraphicsAndroid2D extends PGraphics {
         // temporarily use the stroke Paint as a fill
         strokePaint.setStyle(Style.FILL);
         for (int i = 0; i < vertexCount; i++) {
-          float x = vertices[i][X]; 
+          float x = vertices[i][X];
           float y = vertices[i][Y];
           rect.set(x - sw, y - sw, x + sw, y + sw);
           canvas.drawOval(rect, strokePaint);
         }
         strokePaint.setStyle(Style.STROKE);
       }
-    } else if (shape == POLYGON) {    
+    } else if (shape == POLYGON) {
       if (!path.isEmpty()) {
         if (mode == CLOSE) {
           path.close();
@@ -475,6 +489,7 @@ public class PGraphicsAndroid2D extends PGraphics {
   // BEZIER VERTICES
 
 
+  @Override
   public void bezierVertex(float x1, float y1,
                            float x2, float y2,
                            float x3, float y3) {
@@ -484,6 +499,7 @@ public class PGraphicsAndroid2D extends PGraphics {
   }
 
 
+  @Override
   public void bezierVertex(float x2, float y2, float z2,
                            float x3, float y3, float z3,
                            float x4, float y4, float z4) {
@@ -497,6 +513,7 @@ public class PGraphicsAndroid2D extends PGraphics {
   // QUADRATIC BEZIER VERTICES
 
 
+  @Override
   public void quadraticVertex(float ctrlX, float ctrlY,
                          float endX, float endY) {
     bezierVertexCheck();
@@ -504,6 +521,7 @@ public class PGraphicsAndroid2D extends PGraphics {
   }
 
 
+  @Override
   public void quadraticVertex(float x2, float y2, float z2,
                          float x4, float y4, float z4) {
     showDepthWarningXYZ("quadVertex");
@@ -516,6 +534,7 @@ public class PGraphicsAndroid2D extends PGraphics {
   // CURVE VERTICES
 
 
+  @Override
   protected void curveVertexCheck() {
     super.curveVertexCheck();
 
@@ -528,6 +547,7 @@ public class PGraphicsAndroid2D extends PGraphics {
   }
 
 
+  @Override
   protected void curveVertexSegment(float x1, float y1,
                                     float x2, float y2,
                                     float x3, float y3,
@@ -562,6 +582,7 @@ public class PGraphicsAndroid2D extends PGraphics {
   }
 
 
+  @Override
   public void curveVertex(float x, float y, float z) {
     showDepthWarningXYZ("curveVertex");
   }
@@ -582,9 +603,10 @@ public class PGraphicsAndroid2D extends PGraphics {
   // POINT, LINE, TRIANGLE, QUAD
 
 
+  @Override
   public void point(float x, float y) {
-    // this is a slow function to call on its own anyway. 
-    // most people will use set(). 
+    // this is a slow function to call on its own anyway.
+    // most people will use set().
     beginShape(POINTS);
     vertex(x, y);
     endShape();
@@ -596,12 +618,13 @@ public class PGraphicsAndroid2D extends PGraphics {
 //      canvas.drawOval(rect, strokePaint);
 //      strokePaint.setStyle(Style.STROKE);
 //    } else {
-//      // TODO this isn't accurate, really we need to 
+//      // TODO this isn't accurate, really we need to
 //      set(PApplet.round(screenX(x, y)), PApplet.round(screenY(x, y)), strokeColor);
 //    }
   }
 
 
+  @Override
   public void line(float x1, float y1, float x2, float y2) {
 //    line.setLine(x1, y1, x2, y2);
 //    strokeShape(line);
@@ -611,6 +634,7 @@ public class PGraphicsAndroid2D extends PGraphics {
   }
 
 
+  @Override
   public void triangle(float x1, float y1, float x2, float y2,
                        float x3, float y3) {
     path.reset();
@@ -622,6 +646,7 @@ public class PGraphicsAndroid2D extends PGraphics {
   }
 
 
+  @Override
   public void quad(float x1, float y1, float x2, float y2,
                    float x3, float y3, float x4, float y4) {
     path.reset();
@@ -646,6 +671,7 @@ public class PGraphicsAndroid2D extends PGraphics {
   //public void rect(float a, float b, float c, float d)
 
 
+  @Override
   protected void rectImpl(float x1, float y1, float x2, float y2) {
 //    rect.setFrame(x1, y1, x2-x1, y2-y1);
 //    drawShape(rect);
@@ -671,6 +697,7 @@ public class PGraphicsAndroid2D extends PGraphics {
   //public void ellipse(float a, float b, float c, float d)
 
 
+  @Override
   protected void ellipseImpl(float x, float y, float w, float h) {
 //    ellipse.setFrame(x, y, w, h);
 //    drawShape(ellipse);
@@ -694,6 +721,7 @@ public class PGraphicsAndroid2D extends PGraphics {
   //                float start, float stop)
 
 
+  @Override
   protected void arcImpl(float x, float y, float w, float h,
                          float start, float stop) {
     // 0 to 90 in java would be 0 to -90 for p5 renderer
@@ -795,6 +823,7 @@ public class PGraphicsAndroid2D extends PGraphics {
   //public void box(float size)
 
 
+  @Override
   public void box(float w, float h, float d) {
     showMethodWarning("box");
   }
@@ -812,6 +841,7 @@ public class PGraphicsAndroid2D extends PGraphics {
   //public void sphereDetail(int ures, int vres)
 
 
+  @Override
   public void sphere(float r) {
     showMethodWarning("sphere");
   }
@@ -836,6 +866,7 @@ public class PGraphicsAndroid2D extends PGraphics {
 
 
   /** Ignored (not needed) in Java 2D. */
+  @Override
   public void bezierDetail(int detail) {
   }
 
@@ -865,6 +896,7 @@ public class PGraphicsAndroid2D extends PGraphics {
 
 
   /** Ignored (not needed) in Java 2D. */
+  @Override
   public void curveDetail(int detail) {
   }
 
@@ -895,6 +927,7 @@ public class PGraphicsAndroid2D extends PGraphics {
   // SMOOTH
 
 
+  @Override
   public void smooth() {
     smooth = true;
 //    canvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
@@ -906,6 +939,7 @@ public class PGraphicsAndroid2D extends PGraphics {
   }
 
 
+  @Override
   public void noSmooth() {
     smooth = false;
 //    canvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
@@ -940,10 +974,11 @@ public class PGraphicsAndroid2D extends PGraphics {
   Rect imageImplSrcRect;
   RectF imageImplDstRect;
   //android.widget.ImageView imv;
-  
+
   /**
    * Handle renderer-specific image drawing.
    */
+  @Override
   protected void imageImpl(PImage src,
                            float x1, float y1, float x2, float y2,
                            int u1, int v1, int u2, int v2) {
@@ -966,9 +1001,9 @@ public class PGraphicsAndroid2D extends PGraphics {
 //                        x1, y1, u2-u1, v2-v1,
 //                        src.format == ARGB, tint ? tintPaint : null);
 //    } else {
-    
+
     if (src.bitmap == null ||
-        src.width != src.bitmap.getWidth() || 
+        src.width != src.bitmap.getWidth() ||
         src.height != src.bitmap.getHeight()) {
       src.bitmap = Bitmap.createBitmap(src.width, src.height, Config.ARGB_8888);
       src.modified = true;
@@ -980,7 +1015,7 @@ public class PGraphicsAndroid2D extends PGraphics {
       }
       src.bitmap.setPixels(src.pixels, 0, src.width, 0, 0, src.width, src.height);
       src.modified = false;
-    } 
+    }
 
     if (imageImplSrcRect == null) {
       imageImplSrcRect = new Rect(u1, v1, u2, v2);
@@ -997,7 +1032,7 @@ public class PGraphicsAndroid2D extends PGraphics {
   }
 
 
-  
+
   //////////////////////////////////////////////////////////////
 
   // SHAPE
@@ -1020,6 +1055,7 @@ public class PGraphicsAndroid2D extends PGraphics {
   // SHAPE I/O
 
 
+  @Override
   public PShape loadShape(String filename) {
     String extension = PApplet.getExtension(filename);
 
@@ -1042,7 +1078,7 @@ public class PGraphicsAndroid2D extends PGraphics {
 
     return svg;
   }
-  
+
 
   //////////////////////////////////////////////////////////////
 
@@ -1081,6 +1117,7 @@ public class PGraphicsAndroid2D extends PGraphics {
 //  }
 
 
+  @Override
   public void textFont(PFont which) {
     super.textFont(which);
     fillPaint.setTypeface(which.getTypeface());
@@ -1096,6 +1133,7 @@ public class PGraphicsAndroid2D extends PGraphics {
   //public void textMode(int mode)
 
 
+  @Override
   protected boolean textModeCheck(int mode) {
     return mode == MODEL;
   }
@@ -1107,6 +1145,7 @@ public class PGraphicsAndroid2D extends PGraphics {
    * Also gets called by textFont, so the metrics
    * will get recorded properly.
    */
+  @Override
   public void textSize(float size) {
     if (textFont == null) {
       defaultFontOrDeath("textSize", size);
@@ -1127,14 +1166,14 @@ public class PGraphicsAndroid2D extends PGraphics {
 //    PApplet.println("P2D textSize textLeading = " + textLeading);
   }
 
-  
+
   protected void beginTextScreenMode() {
     loadPixels();
   }
-  
+
   protected void endTextScreenMode() {
     updatePixels();
-  }   
+  }
 
   //public float textWidth(char c)
 
@@ -1142,6 +1181,7 @@ public class PGraphicsAndroid2D extends PGraphics {
   //public float textWidth(String str)
 
 
+  @Override
   protected float textWidthImpl(char buffer[], int start, int stop) {
 //    Font font = textFont.getFont();
     Typeface font = textFont.getTypeface();
@@ -1174,6 +1214,7 @@ public class PGraphicsAndroid2D extends PGraphics {
   //                                 float x, float y)
 
 
+  @Override
   protected void textLineImpl(char buffer[], int start, int stop,
                               float x, float y) {
     Typeface font = textFont.getTypeface();
@@ -1241,6 +1282,7 @@ public class PGraphicsAndroid2D extends PGraphics {
   // MATRIX STACK
 
 
+  @Override
   public void pushMatrix() {
 //    if (transformCount == transformStack.length) {
 //      throw new RuntimeException("pushMatrix() cannot use push more than " +
@@ -1252,6 +1294,7 @@ public class PGraphicsAndroid2D extends PGraphics {
   }
 
 
+  @Override
   public void popMatrix() {
 //    if (transformCount == 0) {
 //      throw new RuntimeException("missing a popMatrix() " +
@@ -1269,6 +1312,7 @@ public class PGraphicsAndroid2D extends PGraphics {
   // MATRIX TRANSFORMS
 
 
+  @Override
   public void translate(float tx, float ty) {
     canvas.translate(tx, ty);
   }
@@ -1277,51 +1321,61 @@ public class PGraphicsAndroid2D extends PGraphics {
   //public void translate(float tx, float ty, float tz)
 
 
+  @Override
   public void rotate(float angle) {
     canvas.rotate(angle * RAD_TO_DEG);
   }
 
 
+  @Override
   public void rotateX(float angle) {
     showDepthWarning("rotateX");
   }
 
 
+  @Override
   public void rotateY(float angle) {
     showDepthWarning("rotateY");
   }
 
 
+  @Override
   public void rotateZ(float angle) {
     showDepthWarning("rotateZ");
   }
 
 
+  @Override
   public void rotate(float angle, float vx, float vy, float vz) {
     showVariationWarning("rotate");
   }
 
 
+  @Override
   public void scale(float s) {
     canvas.scale(s, s);
   }
 
 
+  @Override
   public void scale(float sx, float sy) {
     canvas.scale(sx, sy);
   }
 
 
+  @Override
   public void scale(float sx, float sy, float sz) {
     showDepthWarningXYZ("scale");
   }
-  
-  
+
+
+  @Override
   public void shearX(float angle) {
     canvas.skew((float) Math.tan(angle), 0);
   }
 
 
+  @Override
   public void shearY(float angle) {
     canvas.skew(0, (float) Math.tan(angle));
   }
@@ -1333,6 +1387,7 @@ public class PGraphicsAndroid2D extends PGraphics {
   // MATRIX MORE
 
 
+  @Override
   public void resetMatrix() {
 //    canvas.setTransform(new AffineTransform());
     canvas.setMatrix(new Matrix());
@@ -1342,6 +1397,7 @@ public class PGraphicsAndroid2D extends PGraphics {
   //public void applyMatrix(PMatrix2D source)
 
 
+  @Override
   public void applyMatrix(float n00, float n01, float n02,
                           float n10, float n11, float n12) {
 //    canvas.transform(new AffineTransform(n00, n10, n01, n11, n02, n12));
@@ -1359,6 +1415,7 @@ public class PGraphicsAndroid2D extends PGraphics {
   //public void applyMatrix(PMatrix3D source)
 
 
+  @Override
   public void applyMatrix(float n00, float n01, float n02, float n03,
                           float n10, float n11, float n12, float n13,
                           float n20, float n21, float n22, float n23,
@@ -1373,11 +1430,13 @@ public class PGraphicsAndroid2D extends PGraphics {
   // MATRIX GET/SET
 
 
+  @Override
   public PMatrix getMatrix() {
     return getMatrix((PMatrix2D) null);
   }
 
 
+  @Override
   public PMatrix2D getMatrix(PMatrix2D target) {
     if (target == null) {
       target = new PMatrix2D();
@@ -1394,6 +1453,7 @@ public class PGraphicsAndroid2D extends PGraphics {
   }
 
 
+  @Override
   public PMatrix3D getMatrix(PMatrix3D target) {
     showVariationWarning("getMatrix");
     return target;
@@ -1403,6 +1463,7 @@ public class PGraphicsAndroid2D extends PGraphics {
   //public void setMatrix(PMatrix source)
 
 
+  @Override
   public void setMatrix(PMatrix2D source) {
 //    canvas.setTransform(new AffineTransform(source.m00, source.m10,
 //                                            source.m01, source.m11,
@@ -1417,11 +1478,13 @@ public class PGraphicsAndroid2D extends PGraphics {
   }
 
 
+  @Override
   public void setMatrix(PMatrix3D source) {
     showVariationWarning("setMatrix");
   }
 
 
+  @Override
   public void printMatrix() {
     getMatrix((PMatrix2D) null).print();
   }
@@ -1462,6 +1525,7 @@ public class PGraphicsAndroid2D extends PGraphics {
 
   float[] screenPoint;
 
+  @Override
   public float screenX(float x, float y) {
 //    canvas.getTransform().getMatrix(transform);
 //    return (float)transform[0]*x + (float)transform[2]*y + (float)transform[4];
@@ -1475,6 +1539,7 @@ public class PGraphicsAndroid2D extends PGraphics {
   }
 
 
+  @Override
   public float screenY(float x, float y) {
 //    canvas.getTransform().getMatrix(transform);
 //    return (float)transform[1]*x + (float)transform[3]*y + (float)transform[5];
@@ -1488,18 +1553,21 @@ public class PGraphicsAndroid2D extends PGraphics {
   }
 
 
+  @Override
   public float screenX(float x, float y, float z) {
     showDepthWarningXYZ("screenX");
     return 0;
   }
 
 
+  @Override
   public float screenY(float x, float y, float z) {
     showDepthWarningXYZ("screenY");
     return 0;
   }
 
 
+  @Override
   public float screenZ(float x, float y, float z) {
     showDepthWarningXYZ("screenZ");
     return 0;
@@ -1529,6 +1597,7 @@ public class PGraphicsAndroid2D extends PGraphics {
   // STROKE CAP/JOIN/WEIGHT
 
 
+  @Override
   public void strokeCap(int cap) {
     super.strokeCap(cap);
 
@@ -1542,6 +1611,7 @@ public class PGraphicsAndroid2D extends PGraphics {
   }
 
 
+  @Override
   public void strokeJoin(int join) {
     super.strokeJoin(join);
 
@@ -1555,6 +1625,7 @@ public class PGraphicsAndroid2D extends PGraphics {
   }
 
 
+  @Override
   public void strokeWeight(float weight) {
     super.strokeWeight(weight);
     strokePaint.setStrokeWidth(weight);
@@ -1569,6 +1640,7 @@ public class PGraphicsAndroid2D extends PGraphics {
   // noStroke() and stroke() inherited from PGraphics.
 
 
+  @Override
   protected void strokeFromCalc() {
     super.strokeFromCalc();
 //    strokeColorObject = new Color(strokeColor, true);
@@ -1586,6 +1658,7 @@ public class PGraphicsAndroid2D extends PGraphics {
   // noTint() and tint() inherited from PGraphics.
 
 
+  @Override
   protected void tintFromCalc() {
     super.tintFromCalc();
     tintPaint.setColorFilter(new PorterDuffColorFilter(tintColor, PorterDuff.Mode.MULTIPLY));
@@ -1600,6 +1673,7 @@ public class PGraphicsAndroid2D extends PGraphics {
   // noFill() and fill() inherited from PGraphics.
 
 
+  @Override
   protected void fillFromCalc() {
     super.fillFromCalc();
 //    fillColorObject = new Color(fillColor, true);
@@ -1669,6 +1743,7 @@ public class PGraphicsAndroid2D extends PGraphics {
 
 //  int[] clearPixels;
 
+  @Override
   public void backgroundImpl() {
     canvas.drawColor(backgroundColor);
 
@@ -1741,11 +1816,13 @@ public class PGraphicsAndroid2D extends PGraphics {
   // BEGIN/END RAW
 
 
+  @Override
   public void beginRaw(PGraphics recorderRaw) {
     showMethodWarning("beginRaw");
   }
 
 
+  @Override
   public void endRaw() {
     showMethodWarning("endRaw");
   }
@@ -1783,6 +1860,7 @@ public class PGraphicsAndroid2D extends PGraphics {
   // getImage, setCache, getCache, removeCache, isModified, setModified
 
 
+  @Override
   public void loadPixels() {
     if ((pixels == null) || (pixels.length != width * height)) {
       pixels = new int[width * height];
@@ -1799,6 +1877,7 @@ public class PGraphicsAndroid2D extends PGraphics {
    * Unlike in PImage, where updatePixels() only requests that the
    * update happens, in PGraphicsJava2D, this will happen immediately.
    */
+  @Override
   public void updatePixels() {
 //    WritableRaster raster = ((BufferedImage) image).getRaster();
 //    raster.setDataElements(0, 0, width, height, pixels);
@@ -1812,6 +1891,7 @@ public class PGraphicsAndroid2D extends PGraphics {
    * Unlike in PImage, where updatePixels() only requests that the
    * update happens, in PGraphicsJava2D, this will happen immediately.
    */
+  @Override
   public void updatePixels(int x, int y, int c, int d) {
     //if ((x == 0) && (y == 0) && (c == width) && (d == height)) {
     if ((x != 0) || (y != 0) || (c != width) || (d != height)) {
@@ -1822,6 +1902,7 @@ public class PGraphicsAndroid2D extends PGraphics {
   }
 
 
+  @Override
   public void resize(int wide, int high) {
     showMethodWarning("resize");
   }
@@ -1836,6 +1917,7 @@ public class PGraphicsAndroid2D extends PGraphics {
   static int getset[] = new int[1];
 
 
+  @Override
   public int get(int x, int y) {
     if ((x < 0) || (y < 0) || (x >= width) || (y >= height)) return 0;
 //    WritableRaster raster = ((BufferedImage) image).getRaster();
@@ -1848,6 +1930,7 @@ public class PGraphicsAndroid2D extends PGraphics {
   //public PImage get(int x, int y, int w, int h)
 
 
+  @Override
   public PImage getImpl(int x, int y, int w, int h) {
     PImage output = new PImage();
     output.width = w;
@@ -1865,11 +1948,13 @@ public class PGraphicsAndroid2D extends PGraphics {
   }
 
 
+  @Override
   public PImage get() {
     return get(0, 0, width, height);
   }
 
 
+  @Override
   public void set(int x, int y, int argb) {
     if ((x < 0) || (y < 0) || (x >= width) || (y >= height)) return;
 //    getset[0] = argb;
@@ -1879,9 +1964,10 @@ public class PGraphicsAndroid2D extends PGraphics {
   }
 
 
+  @Override
   public void set(int x, int y, PImage src) {
     if (src.format == ALPHA) {
-      // set() doesn't really make sense for an ALPHA image, since it 
+      // set() doesn't really make sense for an ALPHA image, since it
       // directly replaces pixels and does no blending.
       throw new RuntimeException("set() not available for ALPHA images");
     }
@@ -1891,12 +1977,12 @@ public class PGraphicsAndroid2D extends PGraphics {
       // in spite of the offset and stride that's been provided
       canvas.drawBitmap(src.pixels, 0, src.width,
                         x, y, src.width, src.height, false, null);
-      // hasAlpha is set to false since we don't want blending. 
+      // hasAlpha is set to false since we don't want blending.
       // however that may be incorrect if it winds up copying only the RGB
       // (without the A) portion of the pixels.
 
     } else {  // src.bitmap != null
-      if (src.width != src.bitmap.getWidth() || 
+      if (src.width != src.bitmap.getWidth() ||
           src.height != src.bitmap.getHeight()) {
         src.bitmap = Bitmap.createBitmap(src.width, src.height, Config.ARGB_8888);
         src.modified = true;
@@ -1908,7 +1994,7 @@ public class PGraphicsAndroid2D extends PGraphics {
         src.bitmap.setPixels(src.pixels, 0, src.width, 0, 0, src.width, src.height);
         src.modified = false;
       }
-      // set() happens in screen coordinates, so need to clear the ctm 
+      // set() happens in screen coordinates, so need to clear the ctm
       canvas.save(Canvas.MATRIX_SAVE_FLAG);
       canvas.setMatrix(null);  // set to identity
       canvas.drawBitmap(src.bitmap, x, y, null);
@@ -1916,11 +2002,11 @@ public class PGraphicsAndroid2D extends PGraphics {
     }
   }
 
-  
+
   // elaborate but silly version, since android will happily do this work
 //  private Rect setImplSrcRect;
 //  private Rect setImplDstRect;
-//  
+//
 //  protected void setImpl(int dx, int dy, int sx, int sy, int sw, int sh,
 //                         PImage src) {
 //    if (setImplSrcRect == null) {
@@ -1930,7 +2016,7 @@ public class PGraphicsAndroid2D extends PGraphics {
 //      setImplSrcRect.set(sx, sy, sx+sw, sy+sh);
 //      setImplDstRect.set(dx, dy, dx+sw, dy+sh);
 //    }
-//    // set() happens in screen coordinates, so need to nuke the ctm 
+//    // set() happens in screen coordinates, so need to nuke the ctm
 //    canvas.save(Canvas.MATRIX_SAVE_FLAG);
 //    canvas.setMatrix(null);  // set to identity
 //    canvas.drawBitmap(src.image, setImplSrcRect, setImplDstRect, null);
@@ -1965,11 +2051,13 @@ public class PGraphicsAndroid2D extends PGraphics {
   // MASK
 
 
+  @Override
   public void mask(int alpha[]) {
     showMethodWarning("mask");
   }
 
 
+  @Override
   public void mask(PImage alpha) {
     showMethodWarning("mask");
   }
@@ -1996,6 +2084,7 @@ public class PGraphicsAndroid2D extends PGraphics {
   // COPY
 
 
+  @Override
   public void copy(int sx, int sy, int sw, int sh,
                    int dx, int dy, int dw, int dh) {
 //    Bitmap bitsy = Bitmap.createBitmap(image, sx, sy, sw, sh);
