@@ -4122,7 +4122,7 @@ public class PShapeOpenGL extends PShape {
   // Or accurate 2D mode is enabled, which forces each
   // shape to be rendered separately.
   protected boolean fragmentedGroup(PGraphicsOpenGL g) {
-    return g.hintEnabled(ENABLE_ACCURATE_2D) ||
+    return g.getHint(ENABLE_ACCURATE_2D) ||
            (textures != null && 1 < textures.size()) ||
            strokedTexture;
   }

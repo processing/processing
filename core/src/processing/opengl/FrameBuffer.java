@@ -196,7 +196,7 @@ public class FrameBuffer implements PConstants {
   public void finish() {
     if (noDepth) {
       // No need to clear depth buffer because depth testing was disabled.
-      if (pg.hintEnabled(ENABLE_DEPTH_TEST)) {
+      if (pg.getHint(ENABLE_DEPTH_TEST)) {
         pgl.enable(PGL.DEPTH_TEST);
       } else {
         pgl.disable(PGL.DEPTH_TEST);
