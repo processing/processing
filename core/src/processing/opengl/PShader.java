@@ -473,6 +473,12 @@ public class PShader {
   }
 
 
+  protected void setUniformTex(int loc, Texture tex) {
+    // get unit from last value in bindTextures ...
+  //  pgl.activeTexture(PGL.TEXTURE0 + unit);
+    tex.bind();
+  }
+
 
   /*
   // The individual attribute setters are not really needed, read this:

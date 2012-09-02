@@ -10031,11 +10031,6 @@ public class PApplet extends Applet
   }
 
 
-  public boolean hintEnabled(int which) {
-    return g.hintEnabled(which);
-  }
-
-
   /**
    * Start a new shape of type POLYGON
    */

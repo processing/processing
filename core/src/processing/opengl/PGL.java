@@ -396,7 +396,8 @@ public class PGL {
   protected int numSamples;
   protected boolean multisample;
   protected boolean packedDepthStencil;
-  protected int[] glColorTex = { 0 };
+  protected int backTex, frontTex;
+  protected int[] glColorTex = { 0, 0 };
   protected int[] glColorFbo = { 0 };
   protected int[] glMultiFbo = { 0 };
   protected int[] glColorRenderBuffer = { 0 };
@@ -504,6 +505,7 @@ public class PGL {
 
 
   protected void initPrimarySurface(int antialias) {
+/*
     if (ENABLE_OSX_SCREEN_FBO) {
       needScreenFBO = false;
       glColorFbo[0] = 0;
@@ -525,16 +527,14 @@ public class PGL {
         }
       }
     }
+*/
+    needScreenFBO = true;
 
     if (profile == null) {
       profile = GLProfile.getDefault();
     } else {
       // Restarting...
       if (canvasAWT != null) {
-        // TODO: Even if the GLCanvas is put inside an animator, the rendering
-        // runs inside the EDT, ask the JOGL guys about this.
-//        animator.stop();
-//        animator.remove(canvasAWT);
         canvasAWT.removeGLEventListener(listener);
         pg.parent.removeListeners(canvasAWT);
         pg.parent.remove(canvasAWT);
@@ -573,9 +573,6 @@ public class PGL {
 
       listener = new PGLListener();
       canvasAWT.addGLEventListener(listener);
-//      animator = new PGLAnimator(canvasAWT);
-//      animator.start();
-
       capabilities = canvasAWT.getChosenGLCapabilities();
       canvas = canvasAWT;
       canvasNEWT = null;
@@ -636,29 +633,32 @@ public class PGL {
       contextHashCode = context.hashCode();
 
       // Create the color texture...
-      gl.glGenTextures(1, glColorTex, 0);
-      gl.glBindTexture(GL.GL_TEXTURE_2D, glColorTex[0]);
-      gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER,
-                         GL.GL_NEAREST);
-      gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER,
-                         GL.GL_NEAREST);
-      gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S,
-                         GL.GL_CLAMP_TO_EDGE);
-      gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T,
-                         GL.GL_CLAMP_TO_EDGE);
-      gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, fboWidth, fboHeight,
-                      0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, null);
+      gl.glGenTextures(2, glColorTex, 0);
+      for (int i = 0; i < 2; i++) {
+        gl.glBindTexture(GL.GL_TEXTURE_2D, glColorTex[0]);
+        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER,
+                           GL.GL_NEAREST);
+        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER,
+                           GL.GL_NEAREST);
+        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S,
+                           GL.GL_CLAMP_TO_EDGE);
+        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T,
+                           GL.GL_CLAMP_TO_EDGE);
+        gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, fboWidth, fboHeight,
+                        0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, null);
+        initTexture(GL.GL_TEXTURE_2D, PGL.RGBA, fboWidth, fboHeight);
+      }
       gl.glBindTexture(GL.GL_TEXTURE_2D, 0);
 
       // ...and attach to the color framebuffer.
       gl.glGenFramebuffers(1, glColorFbo, 0);
       gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, glColorFbo[0]);
-      gl.glFramebufferTexture2D(GL.GL_FRAMEBUFFER, GL.GL_COLOR_ATTACHMENT0,
-                                GL.GL_TEXTURE_2D, glColorTex[0], 0);
+      //gl.glFramebufferTexture2D(GL.GL_FRAMEBUFFER, GL.GL_COLOR_ATTACHMENT0,
+      //                          GL.GL_TEXTURE_2D, glColorTex[0], 0);
 
       // Clear the color buffer in the color FBO
-      gl.glClearColor(0, 0, 0, 0);
-      gl.glClear(GL.GL_COLOR_BUFFER_BIT);
+      //gl.glClearColor(0, 0, 0, 0);
+      //gl.glClear(GL.GL_COLOR_BUFFER_BIT);
 
       if (multisample) {
         // We need multisampled FBO:
@@ -773,6 +773,9 @@ public class PGL {
       // to update the screenFramebuffer object so when the framebuffer
       // is popped back to the screen, the correct id is set.
       PGraphicsOpenGL.screenFramebuffer.glFbo = glColorFbo[0];
+
+      backTex = 1;
+      frontTex = 0;
     } else {
       // To make sure that the default screen buffer is used, specially after
       // doing screen rendering on an FBO (the OSX 10.7+ above).
@@ -886,6 +889,14 @@ public class PGL {
 
   protected void beginOnscreenDraw(boolean clear) {
     if (glColorFbo[0] != 0) {
+      gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, glColorFbo[0]);
+      pg.report("HERE");
+      gl.glFramebufferTexture2D(GL.GL_FRAMEBUFFER,
+                                GL.GL_COLOR_ATTACHMENT0,
+                                GL.GL_TEXTURE_2D,
+                                glColorTex[frontTex], 0);
+      validateFramebuffer();
+
       if (multisample) {
         // Render the scene to the mutisampled buffer...
         gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, glMultiFbo[0]);
@@ -894,12 +905,12 @@ public class PGL {
         // Now the screen buffer is the multisample FBO.
         PGraphicsOpenGL.screenFramebuffer.glFbo = glMultiFbo[0];
       } else {
-        gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, glColorFbo[0]);
         if (gl2x != null) gl2x.glDrawBuffer(GL.GL_COLOR_ATTACHMENT0);
 
         PGraphicsOpenGL.screenFramebuffer.glFbo = glColorFbo[0];
       }
     }
+
   }
 
 
@@ -928,6 +939,11 @@ public class PGL {
       // Leaving the color FBO currently bound as the screen FB.
       gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, glColorFbo[0]);
       PGraphicsOpenGL.screenFramebuffer.glFbo = glColorFbo[0];
+
+      // Swapping front and back textures.
+      int temp = frontTex;
+      frontTex = backTex;
+      backTex = temp;
     }
   }
 
@@ -948,7 +964,6 @@ public class PGL {
   protected void requestDraw() {
     if (initialized) {
       try {
-        //animator.requestDisplay();
         if (toolkit == AWT) {
           canvasAWT.display();
         } else if (toolkit == NEWT) {

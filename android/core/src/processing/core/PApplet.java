@@ -7306,11 +7306,6 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
-  public boolean hintEnabled(int which) {
-    return g.hintEnabled(which);
-  }
-
-
   /**
    * Start a new shape of type POLYGON
    */

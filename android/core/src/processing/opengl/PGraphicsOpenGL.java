@@ -2153,6 +2153,15 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
+  protected boolean hintEnabled(int which) {
+    if (which > 0) {
+      return hints[which];
+    } else {
+      return !hints[-which];
+    }
+  }
+
+
   //////////////////////////////////////////////////////////////
 
   // VERTEX SHAPES
