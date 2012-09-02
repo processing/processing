@@ -1591,7 +1591,7 @@ public class PGraphicsOpenGL extends PGraphics {
     if (primarySurface) {
       pgl.updatePrimary();
       if (pgl.primaryIsDoubleBuffered()) {
-        pgl.drawBuffer(PGL.BACK);
+        pgl.drawBuffer(pgl.primaryDrawBuffer());
       }
     } else {
       if (!pgl.initialized) {
@@ -1710,8 +1710,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     // Because y is flipped, the vertices that should be specified by
-    // the user in CCW order to define a front-facing facet, end up being
-    // CW.
+    // the user in CCW order to define a front-facing facet, end up being CW.
     pgl.frontFace(PGL.CW);
     pgl.disable(PGL.CULL_FACE);
 
@@ -1899,7 +1898,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     if (pgl.primaryIsDoubleBuffered()) {
-      pgl.drawBuffer(PGL.BACK);
+      pgl.drawBuffer(pgl.primaryDrawBuffer());
     }
   }
 
@@ -1910,14 +1909,15 @@ public class PGraphicsOpenGL extends PGraphics {
         // We read or write from the back buffer, where all the
         // drawing in the current frame is taking place.
         if (op == OP_READ) {
-          pgl.readBuffer(PGL.BACK);
+          pgl.readBuffer(pgl.primaryDrawBuffer());
         } else {
-          pgl.drawBuffer(PGL.BACK);
+          pgl.drawBuffer(pgl.primaryDrawBuffer());
         }
         offscreenNotCurrent = false;
       } else if (pgl.primaryIsFboBacked()) {
         if (op == OP_READ) {
-          // We read from the color FBO, but the multisample FBO is currently bound, so:
+          // We read from the color FBO, but the multisample FBO is currently
+          // bound, so:
           offscreenNotCurrent = true;
           pgl.bindPrimaryColorFBO();
           pgl.readBuffer(PGL.COLOR_ATTACHMENT0);
@@ -5553,8 +5553,8 @@ public class PGraphicsOpenGL extends PGraphics {
                                                          sampling, mipmap);
       texture = new Texture(parent, width, height, params);
       texture.setFlippedY(true);
-      this.setCache(pgPrimary, texture);
-      this.setParams(pgPrimary, params);
+      pgPrimary.setCache(this, texture);
+      pgPrimary.setParams(this, params);
     }
   }
 
