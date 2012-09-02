@@ -30,28 +30,28 @@ import processing.core.PConstants;
 
 /**
  * ( begin auto-generated from PVector.xml )
- * 
- * A class to describe a two or three dimensional vector. This datatype 
- * stores two or three variables that are commonly used as a position, 
- * velocity, and/or acceleration. Technically, <em>position</em> is a point 
- * and <em>velocity</em> and <em>acceleration</em> are vectors, but this is 
- * often simplified to consider all three as vectors. For example, if you 
- * consider a rectangle moving across the screen, at any given instant it 
- * has a position (the object's location, expressed as a point.), a 
- * velocity (the rate at which the object's position changes per time unit, 
- * expressed as a vector), and acceleration (the rate at which the object's 
- * velocity changes per time unit, expressed as a vector). Since vectors 
- * represent groupings of values, we cannot simply use traditional 
- * addition/multiplication/etc. Instead, we'll need to do some "vector" 
- * math, which is made easy by the methods inside the <b>PVector</b> 
+ *
+ * A class to describe a two or three dimensional vector. This datatype
+ * stores two or three variables that are commonly used as a position,
+ * velocity, and/or acceleration. Technically, <em>position</em> is a point
+ * and <em>velocity</em> and <em>acceleration</em> are vectors, but this is
+ * often simplified to consider all three as vectors. For example, if you
+ * consider a rectangle moving across the screen, at any given instant it
+ * has a position (the object's location, expressed as a point.), a
+ * velocity (the rate at which the object's position changes per time unit,
+ * expressed as a vector), and acceleration (the rate at which the object's
+ * velocity changes per time unit, expressed as a vector). Since vectors
+ * represent groupings of values, we cannot simply use traditional
+ * addition/multiplication/etc. Instead, we'll need to do some "vector"
+ * math, which is made easy by the methods inside the <b>PVector</b>
  * class.<br />
  * <br />
- * The methods for this class are extensive. For a complete list, visit the 
- * <a 
+ * The methods for this class are extensive. For a complete list, visit the
+ * <a
  * href="http://processing.googlecode.com/svn/trunk/processing/build/javadoc/core/">developer's reference.</a>
- * 
+ *
  * ( end auto-generated )
- * 
+ *
  * A class to describe a two or three dimensional vector.
  * <p>
  * The result of all functions are applied to the vector itself, with the
@@ -64,7 +64,7 @@ import processing.core.PConstants;
  * new PVector object is not created with each operation.
  * <p>
  * Initially based on the Vector3D class by <a href="http://www.shiffman.net">Dan Shiffman</a>.
- * 
+ *
  * @webref math
  */
 public class PVector implements Serializable {
@@ -74,42 +74,42 @@ public class PVector implements Serializable {
    */
   private static final long serialVersionUID = -6717872085945400694L;
 
-  /** 
+  /**
    * ( begin auto-generated from PVector_x.xml )
-   * 
-   * The x component of the vector. This field (variable) can be used to both 
+   *
+   * The x component of the vector. This field (variable) can be used to both
    * get and set the value (see above example.)
-   * 
+   *
    * ( end auto-generated )
-   * 
+   *
    * @webref pvector:field
    * @usage web_application
    * @brief The x component of the vector
    */
   public float x;
 
-  /** 
+  /**
    * ( begin auto-generated from PVector_y.xml )
-   * 
-   * The y component of the vector. This field (variable) can be used to both 
+   *
+   * The y component of the vector. This field (variable) can be used to both
    * get and set the value (see above example.)
-   * 
+   *
    * ( end auto-generated )
-   * 
+   *
    * @webref pvector:field
    * @usage web_application
    * @brief The y component of the vector
    */
   public float y;
 
-  /** 
+  /**
    * ( begin auto-generated from PVector_z.xml )
-   * 
-   * The z component of the vector. This field (variable) can be used to both 
+   *
+   * The z component of the vector. This field (variable) can be used to both
    * get and set the value (see above example.)
-   * 
+   *
    * ( end auto-generated )
-   * 
+   *
    * @webref pvector:field
    * @usage web_application
    * @brief The z component of the vector
@@ -152,12 +152,12 @@ public class PVector implements Serializable {
 
   /**
    * ( begin auto-generated from PVector_set.xml )
-   * 
-   * Sets the x, y, and z component of the vector using three separate 
+   *
+   * Sets the x, y, and z component of the vector using three separate
    * variables, the data from a PVector, or the values from a float array.
-   * 
+   *
    * ( end auto-generated )
-   * 
+   *
    * @webref pvector:method
    * @param x the x component of the vector
    * @param y the y component of the vector
@@ -198,11 +198,11 @@ public class PVector implements Serializable {
 
   /**
    * ( begin auto-generated from PVector_random2D.xml )
-   * 
+   *
    * Make a new 2D unit vector with a random direction.  If you pass in "this"
    * as an argument, it will use the PApplet's random number generator.  You can
    * also pass in a target PVector to fill.
-   * 
+   *
    * @webref pvector:method
    * @usage web_application
    * @return the random PVector
@@ -238,17 +238,17 @@ public class PVector implements Serializable {
    * @return the random PVector
    */
   static public PVector random2D(PVector target, PApplet parent) {
-    if (parent == null) return fromAngle((float)(Math.random()*Math.PI*2),target); 
+    if (parent == null) return fromAngle((float)(Math.random()*Math.PI*2),target);
     else                return fromAngle(parent.random(PConstants.TWO_PI),target);
   }
 
   /**
    * ( begin auto-generated from PVector_random3D.xml )
-   * 
+   *
    * Make a new 3D unit vector with a random direction.  If you pass in "this"
    * as an argument, it will use the PApplet's random number generator.  You can
    * also pass in a target PVector to fill.
-   * 
+   *
    * @webref pvector:method
    * @usage web_application
    * @return the random PVector
@@ -306,11 +306,11 @@ public class PVector implements Serializable {
 
   /**
    * ( begin auto-generated from PVector_sub.xml )
-   * 
+   *
    * Make a new 2D unit vector from an angle.
-   * 
+   *
    * ( end auto-generated )
-   * 
+   *
    * @webref pvector:method
    * @usage web_application
    * @brief Make a new 2D unit vector from an angle
@@ -339,11 +339,11 @@ public class PVector implements Serializable {
 
   /**
    * ( begin auto-generated from PVector_get.xml )
-   * 
+   *
    * Gets a copy of the vector, returns a PVector object.
-   * 
+   *
    * ( end auto-generated )
-   * 
+   *
    * @webref pvector:method
    * @usage web_application
    * @brief Get a copy of the vector
@@ -372,12 +372,12 @@ public class PVector implements Serializable {
 
   /**
    * ( begin auto-generated from PVector_mag.xml )
-   * 
-   * Calculates the magnitude (length) of the vector and returns the result 
+   *
+   * Calculates the magnitude (length) of the vector and returns the result
    * as a float (this is simply the equation <em>sqrt(x*x + y*y + z*z)</em>.)
-   * 
+   *
    * ( end auto-generated )
-   * 
+   *
    * @webref pvector:method
    * @usage web_application
    * @brief Calculate the magnitude of the vector
@@ -389,14 +389,14 @@ public class PVector implements Serializable {
 
   /**
    * ( begin auto-generated from PVector_mag.xml )
-   * 
-   * Calculates the squared magnitude of the vector and returns the result 
+   *
+   * Calculates the squared magnitude of the vector and returns the result
    * as a float (this is simply the equation <em>(x*x + y*y + z*z)</em>.)
-   * Faster if the real length is not required in the 
+   * Faster if the real length is not required in the
    * case of comparing vectors, etc.
-   * 
+   *
    * ( end auto-generated )
-   * 
+   *
    * @webref pvector:method
    * @usage web_application
    * @brief Calculate the magnitude of the vector
@@ -409,15 +409,15 @@ public class PVector implements Serializable {
 
   /**
    * ( begin auto-generated from PVector_add.xml )
-   * 
-   * Adds x, y, and z components to a vector, adds one vector to another, or 
-   * adds two independent vectors together. The version of the method that 
-   * adds two vectors together is a static method and returns a PVector, the 
-   * others have no return value -- they act directly on the vector. See the 
+   *
+   * Adds x, y, and z components to a vector, adds one vector to another, or
+   * adds two independent vectors together. The version of the method that
+   * adds two vectors together is a static method and returns a PVector, the
+   * others have no return value -- they act directly on the vector. See the
    * examples for more context.
-   * 
+   *
    * ( end auto-generated )
-   * 
+   *
    * @webref pvector:method
    * @usage web_application
    * @param v the vector to be added
@@ -467,15 +467,15 @@ public class PVector implements Serializable {
 
   /**
    * ( begin auto-generated from PVector_sub.xml )
-   * 
-   * Subtracts x, y, and z components from a vector, subtracts one vector 
-   * from another, or subtracts two independent vectors. The version of the 
-   * method that subtracts two vectors is a static method and returns a 
-   * PVector, the others have no return value -- they act directly on the 
+   *
+   * Subtracts x, y, and z components from a vector, subtracts one vector
+   * from another, or subtracts two independent vectors. The version of the
+   * method that subtracts two vectors is a static method and returns a
+   * PVector, the others have no return value -- they act directly on the
    * vector. See the examples for more context.
-   * 
+   *
    * ( end auto-generated )
-   * 
+   *
    * @webref pvector:method
    * @usage web_application
    * @param v any variable of type PVector
@@ -526,11 +526,11 @@ public class PVector implements Serializable {
 
   /**
    * ( begin auto-generated from PVector_mult.xml )
-   * 
+   *
    * Multiplies a vector by a scalar or multiplies one vector by another.
-   * 
+   *
    * ( end auto-generated )
-   * 
+   *
    * @webref pvector:method
    * @usage web_application
    * @param n the number to multiply with the vector
@@ -572,8 +572,8 @@ public class PVector implements Serializable {
 
 
   /**
-   * @param v1 the x, y, and z components of a PVector 
-   * @param v2 the x, y, and z components of a PVector 
+   * @param v1 the x, y, and z components of a PVector
+   * @param v2 the x, y, and z components of a PVector
    */
   static public PVector mult(PVector v1, PVector v2) {
     return mult(v1, v2, null);
@@ -592,11 +592,11 @@ public class PVector implements Serializable {
 
   /**
    * ( begin auto-generated from PVector_div.xml )
-   * 
+   *
    * Divides a vector by a scalar or divides one vector by another.
-   * 
+   *
    * ( end auto-generated )
-   * 
+   *
    * @webref pvector:method
    * @usage web_application
    * @param n the value to divide by
@@ -665,12 +665,12 @@ public class PVector implements Serializable {
 
   /**
    * ( begin auto-generated from PVector_dist.xml )
-   * 
-   * Calculates the Euclidean distance between two points (considering a 
+   *
+   * Calculates the Euclidean distance between two points (considering a
    * point as a vector object).
-   * 
+   *
    * ( end auto-generated )
-   * 
+   *
    * @webref pvector:method
    * @usage web_application
    * @param v the x, y, and z coordinates of a PVector
@@ -699,11 +699,11 @@ public class PVector implements Serializable {
 
   /**
    * ( begin auto-generated from PVector_dot.xml )
-   * 
+   *
    * Calculates the dot product of two vectors.
-   * 
+   *
    * ( end auto-generated )
-   * 
+   *
    * @webref pvector:method
    * @usage web_application
    * @param v any variable of type PVector
@@ -734,12 +734,12 @@ public class PVector implements Serializable {
 
   /**
    * ( begin auto-generated from PVector_cross.xml )
-   * 
-   * Calculates and returns a vector composed of the cross product between 
+   *
+   * Calculates and returns a vector composed of the cross product between
    * two vectors.
-   * 
+   *
    * ( end auto-generated )
-   * 
+   *
    * @webref pvector:method
    * @param v the vector to calculate the cross product
    * @brief Calculate and return the cross product
@@ -787,11 +787,11 @@ public class PVector implements Serializable {
 
   /**
    * ( begin auto-generated from PVector_normalize.xml )
-   * 
+   *
    * Normalize the vector to length 1 (make it a unit vector).
-   * 
+   *
    * ( end auto-generated )
-   * 
+   *
    * @webref pvector:method
    * @usage web_application
    * @brief Normalize the vector to a length of 1
@@ -824,18 +824,18 @@ public class PVector implements Serializable {
 
   /**
    * ( begin auto-generated from PVector_limit.xml )
-   * 
+   *
    * Limit the magnitude of this vector to the value used for the <b>max</b> parameter.
-   * 
+   *
    * ( end auto-generated )
-   * 
+   *
    * @webref pvector:method
    * @usage web_application
    * @param max the maximum magnitude for the vector
    * @brief Limit the magnitude of the vector
    */
   public void limit(float max) {
-    if (mag() > max) {
+    if (magSq() > max*max) {
       normalize();
       mult(max);
     }
@@ -843,11 +843,11 @@ public class PVector implements Serializable {
 
   /**
    * ( begin auto-generated from PVector_setMag.xml )
-   * 
+   *
    * Set the magnitude of this vector to the value used for the <b>len</b> parameter.
-   * 
+   *
    * ( end auto-generated )
-   * 
+   *
    * @webref pvector:method
    * @usage web_application
    * @param len the new length for this vector
@@ -855,7 +855,7 @@ public class PVector implements Serializable {
    */
   public void setMag(float len) {
     normalize();
-    mult(len);	
+    mult(len);
   }
 
   /**
@@ -872,11 +872,11 @@ public class PVector implements Serializable {
 
   /**
    * ( begin auto-generated from PVector_setMag.xml )
-   * 
+   *
    * Calculate the angle of rotation for this vector (only 2D vectors)
-   * 
+   *
    * ( end auto-generated )
-   * 
+   *
    * @webref pvector:method
    * @usage web_application
    * @return the angle of rotation
@@ -889,11 +889,11 @@ public class PVector implements Serializable {
 
   /**
    * ( begin auto-generated from PVector_rotate.xml )
-   * 
+   *
    * Rotate the vector by an angle (only 2D vectors), magnitude remains the same
-   * 
+   *
    * ( end auto-generated )
-   * 
+   *
    * @webref pvector:method
    * @usage web_application
    * @brief Rotate the vector by an angle (2D only)
@@ -906,14 +906,14 @@ public class PVector implements Serializable {
     y = xTemp*PApplet.sin(theta) + y*PApplet.cos(theta);
   }
 
- 
+
   /**
    * ( begin auto-generated from PVector_rotate.xml )
-   * 
+   *
    * Linear interpolate the vector to another vector
-   * 
+   *
    * ( end auto-generated )
-   * 
+   *
    * @webref pvector:method
    * @usage web_application
    * @brief Linear interpolate the vector to another vector
@@ -957,11 +957,11 @@ public class PVector implements Serializable {
 
   /**
    * ( begin auto-generated from PVector_angleBetween.xml )
-   * 
+   *
    * Calculates and returns the angle (in radians) between two vectors.
-   * 
+   *
    * ( end auto-generated )
-   * 
+   *
    * @webref pvector:method
    * @usage web_application
    * @param v1 the x, y, and z components of a PVector
@@ -988,6 +988,7 @@ public class PVector implements Serializable {
   }
 
 
+  @Override
   public String toString() {
     return "[ " + x + ", " + y + ", " + z + " ]";
   }
@@ -995,13 +996,13 @@ public class PVector implements Serializable {
 
   /**
    * ( begin auto-generated from PVector_array.xml )
-   * 
-   * Return a representation of this vector as a float array. This is only 
-   * for temporary use. If used in any other fashion, the contents should be 
+   *
+   * Return a representation of this vector as a float array. This is only
+   * for temporary use. If used in any other fashion, the contents should be
    * copied by using the <b>PVector.get()</b> method to copy into your own array.
-   * 
+   *
    * ( end auto-generated )
-   * 
+   *
    * @webref pvector:method
    * @usage: web_application
    * @brief Return a representation of the vector as a float array
