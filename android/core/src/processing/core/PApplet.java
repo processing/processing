@@ -2169,7 +2169,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
         if (mousePressed) {
           mouseDragged();
           dragEvent();
-        } else {
+        } else {  // TODO is this physically possible? (perhaps with alt input devices...)
           mouseMoved();
           moveEvent();
         }
@@ -2197,7 +2197,6 @@ public class PApplet extends Activity implements PConstants, Runnable {
       int gestureTime = upMillis - downMillis;
 
       if (onePointerGesture) {
-
         // First, lets determine if this 1-pointer event is a tap
         boolean tap = gestureLength <= MAX_TAP_DISP && gestureTime <= MAX_TAP_DURATION;
         if (tap) {
@@ -2266,13 +2265,26 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
   public void mouseMoved() { }
 
-  public void pressEvent() { }
-  public void dragEvent() { }
-  public void moveEvent() { }
-  public void releaseEvent() { }
-  public void zoomEvent(float x, float y, float d0, float d1) { }
-  public void tapEvent(float x, float y) { }
-  public void swipeEvent(float x0, float y0, float x1, float y1) { }
+
+  //////////////////////////////////////////////////////////////
+
+  // unfinished API, do not use
+
+
+  protected void pressEvent() { }
+
+  protected void dragEvent() { }
+
+  protected void moveEvent() { }
+
+  protected void releaseEvent() { }
+
+  protected void zoomEvent(float x, float y, float d0, float d1) { }
+
+  protected void tapEvent(float x, float y) { }
+
+  protected void swipeEvent(float x0, float y0, float x1, float y1) { }
+
 
   //////////////////////////////////////////////////////////////
 
