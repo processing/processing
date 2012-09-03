@@ -12,6 +12,7 @@ X Add DISABLE_PERSPECTIVE_CORRECTED_STROKE hint for both points and lines,
 X   remove DISABLE_PERSPECTIVE_CORRECTED_LINES
 X Back-buffer support in shaders: 
 X   http://code.google.com/p/processing/issues/detail?id=1169
+X Add some more shader examples (monjori, game of life, etc)
 
 0208 video 
 X Cleanup video API: 
@@ -32,7 +33,8 @@ X   http://code.google.com/p/processing/issues/detail?id=1146
     
 
 0208 todo pre-beta:
-_ Add some shader examples (monjori, etc)
+_ Refactor PShapeOpenGL as cache object
+_ Add general interface for file loading 
 _ Decide on the names of the uniform and attribute variables in the shaders
 
 
