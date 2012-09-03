@@ -75,6 +75,7 @@ public class PShader {
 
   protected HashMap<Integer, Texture> textures;
   protected int firstTexUnit;
+  protected int lastTexUnit;
 
 
   public PShader() {
@@ -529,7 +530,7 @@ public class PShader {
 
   protected void consumeUniforms() {
     if (uniformValues != null && 0 < uniformValues.size()) {
-      int texUnit = firstTexUnit;
+      lastTexUnit = firstTexUnit;
       for (Integer loc: uniformValues.keySet()) {
         UniformValue val = uniformValues.get(loc);
         if (val.type == UniformValue.INT1) {
@@ -592,12 +593,12 @@ public class PShader {
         } else if (val.type == UniformValue.SAMPLER2D) {
           PImage img = (PImage)val.value;
           Texture tex = pgMain.getTexture(img);
-          pgl.uniform1i(loc, texUnit);
+          pgl.uniform1i(loc, lastTexUnit);
           if (textures == null) {
             textures = new HashMap<Integer, Texture>();
           }
-          textures.put(texUnit, tex);
-          texUnit++;
+          textures.put(lastTexUnit, tex);
+          lastTexUnit++;
         }
       }
       uniformValues.clear();
