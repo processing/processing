@@ -394,7 +394,7 @@ public class PShapeOpenGL extends PShape {
   }
 
 
-  public void updateRoot(PShape root) {
+  protected void updateRoot(PShape root) {
     this.root = (PShapeOpenGL) root;
     if (family == GROUP) {
       for (int i = 0; i < childCount; i++) {
@@ -546,6 +546,7 @@ public class PShapeOpenGL extends PShape {
   }
 
 
+  /*
   @Override
   public PVector getTop(PVector top) {
     if (top == null) {
@@ -568,6 +569,7 @@ public class PShapeOpenGL extends PShape {
     getVertexMax(bottom);
     return bottom;
   }
+  */
 
 
   protected void getVertexMin(PVector min) {
@@ -2880,6 +2882,7 @@ public class PShapeOpenGL extends PShape {
                                  fill, stroke, curveDetail, code);
             code = VERTEX;
             idx++;
+            break;
 
           case BREAK:
             code = BREAK;
@@ -2931,6 +2934,7 @@ public class PShapeOpenGL extends PShape {
                                  fill, stroke, curveDetail, code);
             code = VERTEX;
             idx++;
+            break;
 
           case BREAK:
             code = BREAK;
@@ -4118,7 +4122,7 @@ public class PShapeOpenGL extends PShape {
   // Or accurate 2D mode is enabled, which forces each
   // shape to be rendered separately.
   protected boolean fragmentedGroup(PGraphicsOpenGL g) {
-    return g.hintEnabled(ENABLE_ACCURATE_2D) ||
+    return g.getHint(ENABLE_ACCURATE_2D) ||
            (textures != null && 1 < textures.size()) ||
            strokedTexture;
   }
@@ -4137,7 +4141,7 @@ public class PShapeOpenGL extends PShape {
 
 
   @Override
-  public void post(PGraphics g) {
+  protected void post(PGraphics g) {
     if (g instanceof PGraphicsOpenGL) {
     } else {
       super.post(g);
