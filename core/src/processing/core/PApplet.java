@@ -13416,17 +13416,17 @@ public class PApplet extends Applet
    *
    * @webref lights_camera:lights
    * @usage web_application
-   * @param red red or hue value (depending on current color mode)
-   * @param green green or saturation value (depending on current color mode)
-   * @param blue blue or brightness value (depending on current color mode)
+   * @param v1 red or hue value (depending on current color mode)
+   * @param v2 green or saturation value (depending on current color mode)
+   * @param v3 blue or brightness value (depending on current color mode)
    * @see PGraphics#lights()
    * @see PGraphics#directionalLight(float, float, float, float, float, float)
    * @see PGraphics#pointLight(float, float, float, float, float, float)
    * @see PGraphics#spotLight(float, float, float, float, float, float, float, float, float, float, float)
    */
-  public void ambientLight(float red, float green, float blue) {
-    if (recorder != null) recorder.ambientLight(red, green, blue);
-    g.ambientLight(red, green, blue);
+  public void ambientLight(float v1, float v2, float v3) {
+    if (recorder != null) recorder.ambientLight(v1, v2, v3);
+    g.ambientLight(v1, v2, v3);
   }
 
 
@@ -13435,10 +13435,10 @@ public class PApplet extends Applet
    * @param y y-coordinate of the light
    * @param z z-coordinate of the light
    */
-  public void ambientLight(float red, float green, float blue,
+  public void ambientLight(float v1, float v2, float v3,
                            float x, float y, float z) {
-    if (recorder != null) recorder.ambientLight(red, green, blue, x, y, z);
-    g.ambientLight(red, green, blue, x, y, z);
+    if (recorder != null) recorder.ambientLight(v1, v2, v3, x, y, z);
+    g.ambientLight(v1, v2, v3, x, y, z);
   }
 
 
@@ -13461,9 +13461,9 @@ public class PApplet extends Applet
    *
    * @webref lights_camera:lights
    * @usage web_application
-   * @param red red value
-   * @param green green value
-   * @param blue blue value
+   * @param v1 red or hue value (depending on current color mode)
+   * @param v2 green or saturation value (depending on current color mode)
+   * @param v3 blue or brightness value (depending on current color mode)
    * @param nx direction along the x-axis
    * @param ny direction along the y-axis
    * @param nz direction along the z-axis
@@ -13472,10 +13472,10 @@ public class PApplet extends Applet
    * @see PGraphics#pointLight(float, float, float, float, float, float)
    * @see PGraphics#spotLight(float, float, float, float, float, float, float, float, float, float, float)
    */
-  public void directionalLight(float red, float green, float blue,
+  public void directionalLight(float v1, float v2, float v3,
                                float nx, float ny, float nz) {
-    if (recorder != null) recorder.directionalLight(red, green, blue, nx, ny, nz);
-    g.directionalLight(red, green, blue, nx, ny, nz);
+    if (recorder != null) recorder.directionalLight(v1, v2, v3, nx, ny, nz);
+    g.directionalLight(v1, v2, v3, nx, ny, nz);
   }
 
 
@@ -13494,9 +13494,9 @@ public class PApplet extends Applet
    *
    * @webref lights_camera:lights
    * @usage web_application
-   * @param red red value
-   * @param green green value
-   * @param blue blue value
+   * @param v1 red or hue value (depending on current color mode)
+   * @param v2 green or saturation value (depending on current color mode)
+   * @param v3 blue or brightness value (depending on current color mode)
    * @param x x-coordinate of the light
    * @param y y-coordinate of the light
    * @param z z-coordinate of the light
@@ -13505,10 +13505,10 @@ public class PApplet extends Applet
    * @see PGraphics#ambientLight(float, float, float, float, float, float)
    * @see PGraphics#spotLight(float, float, float, float, float, float, float, float, float, float, float)
    */
-  public void pointLight(float red, float green, float blue,
+  public void pointLight(float v1, float v2, float v3,
                          float x, float y, float z) {
-    if (recorder != null) recorder.pointLight(red, green, blue, x, y, z);
-    g.pointLight(red, green, blue, x, y, z);
+    if (recorder != null) recorder.pointLight(v1, v2, v3, x, y, z);
+    g.pointLight(v1, v2, v3, x, y, z);
   }
 
 
@@ -13529,9 +13529,9 @@ public class PApplet extends Applet
    *
    * @webref lights_camera:lights
    * @usage web_application
-   * @param red red value
-   * @param green green value
-   * @param blue blue value
+   * @param v1 red or hue value (depending on current color mode)
+   * @param v2 green or saturation value (depending on current color mode)
+   * @param v3 blue or brightness value (depending on current color mode)
    * @param x x-coordinate of the light
    * @param y y-coordinate of the light
    * @param z z-coordinate of the light
@@ -13545,12 +13545,12 @@ public class PApplet extends Applet
    * @see PGraphics#pointLight(float, float, float, float, float, float)
    * @see PGraphics#ambientLight(float, float, float, float, float, float)
    */
-  public void spotLight(float red, float green, float blue,
+  public void spotLight(float v1, float v2, float v3,
                         float x, float y, float z,
                         float nx, float ny, float nz,
                         float angle, float concentration) {
-    if (recorder != null) recorder.spotLight(red, green, blue, x, y, z, nx, ny, nz, angle, concentration);
-    g.spotLight(red, green, blue, x, y, z, nx, ny, nz, angle, concentration);
+    if (recorder != null) recorder.spotLight(v1, v2, v3, x, y, z, nx, ny, nz, angle, concentration);
+    g.spotLight(v1, v2, v3, x, y, z, nx, ny, nz, angle, concentration);
   }
 
 
