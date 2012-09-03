@@ -66,7 +66,7 @@ public class PGraphics2D extends PGraphicsOpenGL {
   @Override
   public void hint(int which) {
     if (which == ENABLE_STROKE_PERSPECTIVE) {
-      showWarning("2D lines cannot be perspective-corrected.");
+      showWarning("Strokes cannot be perspective-corrected in 2D.");
       return;
     }
     super.hint(which);

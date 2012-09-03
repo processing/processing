@@ -47,10 +47,6 @@ public class PGraphicsOpenGL extends PGraphics {
   protected WeakHashMap<PFont, FontTexture> fontMap =
     new WeakHashMap<PFont, FontTexture>();
 
-  /** Additional image parameters not covered by the cache. */
-  protected WeakHashMap<PImage, Object> paramMap =
-    new WeakHashMap<PImage, Object>();
-
   // ........................................................
 
   // Basic rendering parameters:
@@ -634,44 +630,13 @@ public class PGraphicsOpenGL extends PGraphics {
 
   //////////////////////////////////////////////////////////////
 
-  /**
-   * Store parameters for a renderer that requires extra metadata of
-   * some kind.
-   * @param renderer The PGraphics renderer associated to the image
-   * @param storage The parameters required by the renderer
-   */
-  public void setParams(PImage image, Object params) {
-    paramMap.put(image, params);
-  }
-
-
-  /**
-   * Get the parameters for the specified renderer.
-   * @param renderer The PGraphics renderer associated to the image
-   * @return parameters stored for the specified renderer
-   */
-  public Object getParams(PImage image) {
-    return paramMap.get(image);
-  }
-
-
-  /**
-   * Remove information associated with this renderer from the cache, if any.
-   * @param renderer The PGraphics renderer whose parameters should be removed
-   */
-  public void removeParams(PImage image) {
-    paramMap.remove(image);
-  }
-
-
-  //////////////////////////////////////////////////////////////
-
   // RESOURCE HANDLING
 
 
   protected class GLResource {
     int id;
     int context;
+
     GLResource(int id, int context) {
       this.id = id;
       this.context = context;
@@ -1589,9 +1554,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
     if (primarySurface) {
       pgl.updatePrimary();
-      if (pgl.primaryIsDoubleBuffered()) {
-        pgl.drawBuffer(PGL.BACK);
-      }
+      pgl.drawBuffer(pgl.primaryDrawBuffer());
     } else {
       if (!pgl.initialized) {
         initOffscreen();
@@ -1677,7 +1640,6 @@ public class PGraphicsOpenGL extends PGraphics {
         // The screen texture should be deleted because it
         // corresponds to the old window size.
         pgPrimary.removeCache(this);
-        pgPrimary.removeParams(this);
         texture = null;
         loadTexture();
       }
@@ -1709,8 +1671,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     // Because y is flipped, the vertices that should be specified by
-    // the user in CCW order to define a front-facing facet, end up being
-    // CW.
+    // the user in CCW order to define a front-facing facet, end up being CW.
     pgl.frontFace(PGL.CW);
     pgl.disable(PGL.CULL_FACE);
 
@@ -1897,35 +1858,32 @@ public class PGraphicsOpenGL extends PGraphics {
       pgl.depthMask(true);
     }
 
-    if (pgl.primaryIsDoubleBuffered()) {
-      pgl.drawBuffer(PGL.BACK);
-    }
+    pgl.drawBuffer(pgl.primaryDrawBuffer());
   }
 
 
   protected void beginPixelsOp(int op) {
     if (primarySurface) {
-      if (pgl.primaryIsDoubleBuffered()) {
-        // We read or write from the back buffer, where all the
-        // drawing in the current frame is taking place.
+      if (pgl.primaryIsFboBacked()) {
         if (op == OP_READ) {
-          pgl.readBuffer(PGL.BACK);
-        } else {
-          pgl.drawBuffer(PGL.BACK);
-        }
-        offscreenNotCurrent = false;
-      } else if (pgl.primaryIsFboBacked()) {
-        if (op == OP_READ) {
-          // We read from the color FBO, but the multisample FBO is currently bound, so:
+          // We read from the color FBO, but the multisample FBO is currently
+          // bound, so:
           offscreenNotCurrent = true;
           pgl.bindPrimaryColorFBO();
-          pgl.readBuffer(PGL.COLOR_ATTACHMENT0);
+          pgl.readBuffer(pgl.primaryDrawBuffer());
         } else {
           // We write directly to the multisample FBO.
           offscreenNotCurrent = false;
-          pgl.drawBuffer(PGL.COLOR_ATTACHMENT0);
+          pgl.drawBuffer(pgl.primaryDrawBuffer());
         }
       } else {
+        // We read or write from the back buffer, where all the
+        // drawing in the current frame is taking place.
+        if (op == OP_READ) {
+          pgl.readBuffer(pgl.primaryDrawBuffer());
+        } else {
+          pgl.drawBuffer(pgl.primaryDrawBuffer());
+        }
         offscreenNotCurrent = false;
       }
     } else {
@@ -2175,7 +2133,7 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  protected boolean hintEnabled(int which) {
+  protected boolean getHint(int which) {
     if (which > 0) {
       return hints[which];
     } else {
@@ -2225,9 +2183,11 @@ public class PGraphicsOpenGL extends PGraphics {
     }
   }
 
+
   protected void endShape(int[] indices) {
     endShape(indices, null);
   }
+
 
   protected void endShape(int[] indices, int[] edges) {
     if (shape != TRIANGLE && shape != TRIANGLES) {
@@ -5240,6 +5200,7 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
+
   //////////////////////////////////////////////////////////////
 
   // RENDERER SUPPORT QUERIES
@@ -5251,6 +5212,7 @@ public class PGraphicsOpenGL extends PGraphics {
   public boolean isGL() {
     return true;
   }
+
 
 
   //////////////////////////////////////////////////////////////
@@ -5510,9 +5472,8 @@ public class PGraphicsOpenGL extends PGraphics {
       }
       if (tex != null) {
         texture = tex;
-        texture.setFlippedY(true);
+        texture.invertedY(true);
         pgPrimary.setCache(this, texture);
-        pgPrimary.setParams(this, params);
 
         if (!primarySurface && offscreenFramebuffer != null) {
           // Attach as the color buffer for this offscreen surface
@@ -5549,9 +5510,8 @@ public class PGraphicsOpenGL extends PGraphics {
       Texture.Parameters params = new Texture.Parameters(ARGB,
                                                          sampling, mipmap);
       texture = new Texture(parent, width, height, params);
-      texture.setFlippedY(true);
-      this.setCache(pgPrimary, texture);
-      this.setParams(pgPrimary, params);
+      texture.invertedY(true);
+      pgPrimary.setCache(this, texture);
     }
   }
 
@@ -5578,6 +5538,7 @@ public class PGraphicsOpenGL extends PGraphics {
       return params.sampling == Texture.BILINEAR && !params.mipmaps;
     }
   }
+
 
 
   //////////////////////////////////////////////////////////////
@@ -5615,6 +5576,7 @@ public class PGraphicsOpenGL extends PGraphics {
   */
 
 
+
   //////////////////////////////////////////////////////////////
 
   // MASK
@@ -5642,6 +5604,7 @@ public class PGraphicsOpenGL extends PGraphics {
     maskShader.set("maskSampler", alpha);
     filter(maskShader);
   }
+
 
 
   //////////////////////////////////////////////////////////////
@@ -5689,7 +5652,7 @@ public class PGraphicsOpenGL extends PGraphics {
       Texture.Parameters params = new Texture.Parameters(ARGB, Texture.POINT,
                                                          false);
       textureCopy = new Texture(parent, width, height, params);
-      textureCopy.setFlippedY(true);
+      textureCopy.invertedY(true);
       imageCopy = wrapTexture(textureCopy);
     }
     textureCopy.set(texture.glTarget, texture.glName,
@@ -5946,27 +5909,33 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
+  protected void bindBackTexture() {
+    if (primarySurface) {
+      pgl.bindBackBufferTex();
+    } else {
+
+    }
+  }
+
+
+  protected void unbindBackTexture() {
+    if (primarySurface) {
+      pgl.unbindBackBufferTex();
+    } else {
+
+    }
+  }
+
+
   /**
    * This utility method creates a texture for the provided image, and adds it
    * to the metadata cache of the image.
    * @param img the image to have a texture metadata associated to it
    */
   protected Texture addTexture(PImage img) {
-    Texture.Parameters params = (Texture.Parameters)pgPrimary.getParams(img);
-    if (params == null) {
-      params = new Texture.Parameters();
-      if (hints[DISABLE_TEXTURE_MIPMAPS]) {
-        params.mipmaps = false;
-      } else {
-        params.mipmaps = true;
-      }
-      params.sampling = textureSampling;
-      if (params.sampling == Texture.TRILINEAR && !params.mipmaps) {
-        params.sampling = Texture.BILINEAR;
-      }
-      params.wrapU = textureWrap;
-      params.wrapV = textureWrap;
-    }
+    Texture.Parameters params =
+      new Texture.Parameters(ARGB, textureSampling,
+                             getHint(ENABLE_TEXTURE_MIPMAPS),textureWrap);
     return addTexture(img, params);
   }
 
@@ -5981,7 +5950,6 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     Texture tex = new Texture(img.parent, img.width, img.height, params);
     pgPrimary.setCache(img, tex);
-    pgPrimary.setParams(img, params);
     return tex;
   }
 
@@ -6015,7 +5983,6 @@ public class PGraphicsOpenGL extends PGraphics {
     img.height = tex.height;
     img.format = ARGB;
     pgPrimary.setCache(img, tex);
-    pgPrimary.setParams(img, tex.getParameters());
     return img;
   }
 
@@ -6527,6 +6494,8 @@ public class PGraphicsOpenGL extends PGraphics {
     protected int projmodelviewMatrixLoc;
     protected int modelviewMatrixLoc;
     protected int projectionMatrixLoc;
+    protected int backbufferSamplerLoc;
+    protected int resolutionLoc;
 
     protected int inVertexLoc;
     protected int inColorLoc;
@@ -6555,6 +6524,9 @@ public class PGraphicsOpenGL extends PGraphics {
       projmodelviewMatrixLoc = getUniformLoc("projmodelviewMatrix");
       modelviewMatrixLoc = getUniformLoc("modelviewMatrix");
       projectionMatrixLoc = getUniformLoc("projectionMatrix");
+
+      backbufferSamplerLoc = getUniformLoc("backbufferSampler");
+      resolutionLoc = getUniformLoc("resolution");
     }
 
     @Override
@@ -6595,12 +6567,28 @@ public class PGraphicsOpenGL extends PGraphics {
         pgCurrent.updateGLProjection();
         setUniformMatrix(projectionMatrixLoc, pgCurrent.glProjection);
       }
+
+      float w = pgCurrent.width;
+      float h = pgCurrent.height;
+      setUniformValue(resolutionLoc, w, h);
+
+      if (-1 < backbufferSamplerLoc) {
+        setUniformValue(backbufferSamplerLoc, lastTexUnit);
+        pgl.activeTexture(PGL.TEXTURE0 + lastTexUnit);
+        pgCurrent.bindBackTexture();
+      }
     }
 
     @Override
     public void unbind() {
       if (-1 < inVertexLoc) pgl.disableVertexAttribArray(inVertexLoc);
       if (-1 < inColorLoc)  pgl.disableVertexAttribArray(inColorLoc);
+
+      if (-1 < backbufferSamplerLoc) {
+        pgl.activeTexture(PGL.TEXTURE0 + lastTexUnit);
+        pgCurrent.unbindBackTexture();
+        pgl.activeTexture(PGL.TEXTURE0);
+      }
 
       pgl.bindBuffer(PGL.ARRAY_BUFFER, 0);
 
@@ -6836,20 +6824,20 @@ public class PGraphicsOpenGL extends PGraphics {
       float dispu  = 0;
       float dispv  = 0;
 
-      if (tex.isFlippedX()) {
+      if (tex.invertedX()) {
         scaleu = -1;
         dispu  = 1;
       }
 
-      if (tex.isFlippedY()) {
+      if (tex.invertedY()) {
         scalev = -1;
         dispv  = 1;
       }
 
-      scaleu *= tex.maxTexcoordU;
-      dispu  *= tex.maxTexcoordU;
-      scalev *= tex.maxTexcoordV;
-      dispv  *= tex.maxTexcoordV;
+      scaleu *= tex.maxTexcoordU();
+      dispu  *= tex.maxTexcoordU();
+      scalev *= tex.maxTexcoordV();
+      dispv  *= tex.maxTexcoordV();
 
       if (-1 < texcoordMatrixLoc) {
         if (tcmat == null) {
@@ -6936,12 +6924,12 @@ public class PGraphicsOpenGL extends PGraphics {
       float dispu  = 0;
       float dispv  = 0;
 
-      if (tex.isFlippedX()) {
+      if (tex.invertedX()) {
         scaleu = -1;
         dispu  = 1;
       }
 
-      if (tex.isFlippedY()) {
+      if (tex.invertedY()) {
         scalev = -1;
         dispv  = 1;
       }
@@ -7078,13 +7066,13 @@ public class PGraphicsOpenGL extends PGraphics {
       float h = pgCurrent.viewport[3];
       setUniformValue(viewportLoc, x, y, w, h);
 
-      if (pgCurrent.hintEnabled(ENABLE_STROKE_PERSPECTIVE)) {
+      if (pgCurrent.getHint(ENABLE_STROKE_PERSPECTIVE)) {
         setUniformValue(perspectiveLoc, 1);
       } else {
         setUniformValue(perspectiveLoc, 0);
       }
 
-      if (pgCurrent.hintEnabled(ENABLE_ACCURATE_2D)) {
+      if (pgCurrent.getHint(ENABLE_ACCURATE_2D)) {
         setUniformValue(scaleLoc, 1.0f, 1.0f, 1.0f);
       } else {
         if (usingOrthoProjection) {
@@ -7199,7 +7187,7 @@ public class PGraphicsOpenGL extends PGraphics {
       float h = pgCurrent.viewport[3];
       setUniformValue(viewportLoc, x, y, w, h);
 
-      if (pgCurrent.hintEnabled(ENABLE_STROKE_PERSPECTIVE)) {
+      if (pgCurrent.getHint(ENABLE_STROKE_PERSPECTIVE)) {
         setUniformValue(perspectiveLoc, 1);
       } else {
         setUniformValue(perspectiveLoc, 0);

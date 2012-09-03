@@ -3,8 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2011 Andres Colubri
-  Copyright (c) 2010 Ben Fry and Casey Reas
+  Copyright (c) 2011-12 Ben Fry and Casey Reas
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -520,10 +519,19 @@ public class PGL {
   }
 
 
+  protected int primaryDrawBuffer() {
+    if (PGraphicsOpenGL.screenFramebuffer.glFbo != 0) {
+      return GLES20.GL_BACK;
+    } else {
+      return GLES20.GL_COLOR_ATTACHMENT0;
+    }
+  }
+
+/*
   protected boolean primaryIsDoubleBuffered() {
     return PGraphicsOpenGL.screenFramebuffer.glFbo != 0;
   }
-
+*/
 
   protected boolean primaryIsFboBacked() {
     return PGraphicsOpenGL.screenFramebuffer.glFbo != 0;
@@ -569,6 +577,14 @@ public class PGL {
   }
 
 
+  protected void bindBackBufferTex() {
+  }
+
+
+  protected void unbindBackBufferTex() {
+  }
+
+
   ///////////////////////////////////////////////////////////
 
   // Frame rendering
@@ -576,8 +592,8 @@ public class PGL {
 
   protected void beginOnscreenDraw(boolean clear) {
     if (clear && !FORCE_SCREEN_FBO) {
-      // Simplest scenario: clear mode means we clear both the color and depth buffers.
-      // No need for saving front color buffer, etc.
+      // Simplest scenario: clear mode means we clear both the color and depth
+      // buffers. No need for saving front color buffer, etc.
       GLES20.glClearColor(0, 0, 0, 0);
       GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
       PGraphicsOpenGL.screenFramebuffer.glFbo = 0;
