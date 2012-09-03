@@ -243,8 +243,8 @@ public class PGraphics2D extends PGraphicsOpenGL {
   }
 
 
-  static protected PShape2D loadShapeImpl(PGraphics pg, String filename,
-                                          String extension) {
+  static protected PShape loadShapeImpl(PGraphics pg, String filename,
+                                                      String extension) {
     PShapeSVG svg = null;
 
     if (extension.equals("svg")) {
@@ -262,7 +262,7 @@ public class PGraphics2D extends PGraphicsOpenGL {
     }
 
     if (svg != null) {
-      PShape2D p2d = PShape2D.createShape(pg.parent, svg);
+      PShapeOpenGL p2d = PShapeOpenGL.createShape2D(pg.parent, svg);
       return p2d;
     } else {
       return null;
@@ -277,7 +277,7 @@ public class PGraphics2D extends PGraphicsOpenGL {
 
   @Override
   public PShape createShape(PShape source) {
-    return PShape2D.createShape(parent, source);
+    return PShapeOpenGL.createShape2D(parent, source);
   }
 
 
@@ -299,44 +299,45 @@ public class PGraphics2D extends PGraphicsOpenGL {
   }
 
 
-  static protected PShape2D createShapeImpl(PApplet parent, int type) {
-    PShape2D shape = null;
+  static protected PShapeOpenGL createShapeImpl(PApplet parent, int type) {
+    PShapeOpenGL shape = null;
     if (type == PConstants.GROUP) {
-      shape = new PShape2D(parent, PConstants.GROUP);
+      shape = new PShapeOpenGL(parent, PConstants.GROUP);
     } else if (type == PShape.PATH) {
-      shape = new PShape2D(parent, PShape.PATH);
+      shape = new PShapeOpenGL(parent, PShape.PATH);
     } else if (type == POINTS) {
-      shape = new PShape2D(parent, PShape.GEOMETRY);
+      shape = new PShapeOpenGL(parent, PShape.GEOMETRY);
       shape.setKind(POINTS);
     } else if (type == LINES) {
-      shape = new PShape2D(parent, PShape.GEOMETRY);
+      shape = new PShapeOpenGL(parent, PShape.GEOMETRY);
       shape.setKind(LINES);
     } else if (type == TRIANGLE || type == TRIANGLES) {
-      shape = new PShape2D(parent, PShape.GEOMETRY);
+      shape = new PShapeOpenGL(parent, PShape.GEOMETRY);
       shape.setKind(TRIANGLES);
     } else if (type == TRIANGLE_FAN) {
-      shape = new PShape2D(parent, PShape.GEOMETRY);
+      shape = new PShapeOpenGL(parent, PShape.GEOMETRY);
       shape.setKind(TRIANGLE_FAN);
     } else if (type == TRIANGLE_STRIP) {
-      shape = new PShape2D(parent, PShape.GEOMETRY);
+      shape = new PShapeOpenGL(parent, PShape.GEOMETRY);
       shape.setKind(TRIANGLE_STRIP);
     } else if (type == QUAD || type == QUADS) {
-      shape = new PShape2D(parent, PShape.GEOMETRY);
+      shape = new PShapeOpenGL(parent, PShape.GEOMETRY);
       shape.setKind(QUADS);
     } else if (type == QUAD_STRIP) {
-      shape = new PShape2D(parent, PShape.GEOMETRY);
+      shape = new PShapeOpenGL(parent, PShape.GEOMETRY);
       shape.setKind(QUAD_STRIP);
     } else if (type == POLYGON) {
-      shape = new PShape2D(parent, PShape.GEOMETRY);
+      shape = new PShapeOpenGL(parent, PShape.GEOMETRY);
       shape.setKind(POLYGON);
     }
+    shape.is3D(false);
     return shape;
   }
 
 
-  static protected PShape2D createShapeImpl(PApplet parent, int kind,
-                                            float... p) {
-    PShape2D shape = null;
+  static protected PShapeOpenGL createShapeImpl(PApplet parent,
+                                                int kind, float... p) {
+    PShapeOpenGL shape = null;
     int len = p.length;
 
     if (kind == POINT) {
@@ -344,49 +345,49 @@ public class PGraphics2D extends PGraphicsOpenGL {
         showWarning("Wrong number of parameters");
         return null;
       }
-      shape = new PShape2D(parent, PShape.PRIMITIVE);
+      shape = new PShapeOpenGL(parent, PShape.PRIMITIVE);
       shape.setKind(POINT);
     } else if (kind == LINE) {
       if (len != 4) {
         showWarning("Wrong number of parameters");
         return null;
       }
-      shape = new PShape2D(parent, PShape.PRIMITIVE);
+      shape = new PShapeOpenGL(parent, PShape.PRIMITIVE);
       shape.setKind(LINE);
     } else if (kind == TRIANGLE) {
       if (len != 6) {
         showWarning("Wrong number of parameters");
         return null;
       }
-      shape = new PShape2D(parent, PShape.PRIMITIVE);
+      shape = new PShapeOpenGL(parent, PShape.PRIMITIVE);
       shape.setKind(TRIANGLE);
     } else if (kind == QUAD) {
       if (len != 8) {
         showWarning("Wrong number of parameters");
         return null;
       }
-      shape = new PShape2D(parent, PShape.PRIMITIVE);
+      shape = new PShapeOpenGL(parent, PShape.PRIMITIVE);
       shape.setKind(QUAD);
     } else if (kind == RECT) {
       if (len != 4 && len != 5 && len != 8) {
         showWarning("Wrong number of parameters");
         return null;
       }
-      shape = new PShape2D(parent, PShape.PRIMITIVE);
+      shape = new PShapeOpenGL(parent, PShape.PRIMITIVE);
       shape.setKind(RECT);
     } else if (kind == ELLIPSE) {
       if (len != 4) {
         showWarning("Wrong number of parameters");
         return null;
       }
-      shape = new PShape2D(parent, PShape.PRIMITIVE);
+      shape = new PShapeOpenGL(parent, PShape.PRIMITIVE);
       shape.setKind(ELLIPSE);
     } else if (kind == ARC) {
       if (len != 6) {
         showWarning("Wrong number of parameters");
         return null;
       }
-      shape = new PShape2D(parent, PShape.PRIMITIVE);
+      shape = new PShapeOpenGL(parent, PShape.PRIMITIVE);
       shape.setKind(ARC);
     } else if (kind == BOX) {
       showWarning("Primitive not supported in 2D");
@@ -400,6 +401,7 @@ public class PGraphics2D extends PGraphicsOpenGL {
       shape.setParams(p);
     }
 
+    shape.is3D(false);
     return shape;
   }
 

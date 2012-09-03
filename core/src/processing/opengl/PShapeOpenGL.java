@@ -927,10 +927,6 @@ public class PShapeOpenGL extends PShape {
 
   @Override
   public void vertex(float x, float y, float z) {
-//    if (!is3D) {
-//      PGraphics.showDepthWarningXYZ("vertex");
-//      return;
-//    }
     vertexImpl(x, y, z, 0, 0);
   }
 
@@ -946,10 +942,6 @@ public class PShapeOpenGL extends PShape {
       PGraphics.showWarning("Cannot add vertices to GROUP shape");
       return;
     }
-//    if (!is3D) {
-//      PGraphics.showDepthWarningXYZ("vertex");
-//      return;
-//    }
 
     boolean textured = image != null;
     int fcolor = 0x00;
@@ -1874,10 +1866,6 @@ public class PShapeOpenGL extends PShape {
 
   @Override
   public void translate(float tx, float ty, float tz) {
-//    if (!is3D) {
-//      PGraphics.showVariationWarning("translate");
-//      return;
-//    }
     transform(TRANSLATE, tx, ty, tz);
   }
 
@@ -1890,20 +1878,12 @@ public class PShapeOpenGL extends PShape {
 
   @Override
   public void rotateX(float angle) {
-//    if (!is3D) {
-//      PGraphics.showDepthWarning("rotateX");
-//      return;
-//    }
     rotate(angle, 1, 0, 0);
   }
 
 
   @Override
   public void rotateY(float angle) {
-//    if (!is3D) {
-//      PGraphics.showDepthWarning("rotateY");
-//      return;
-//    }
     rotate(angle, 0, 1, 0);
   }
 
@@ -1916,10 +1896,6 @@ public class PShapeOpenGL extends PShape {
 
   @Override
   public void rotate(float angle, float v0, float v1, float v2) {
-//    if (!is3D) {
-//      PGraphics.showVariationWarning("rotate");
-//      return;
-//    }
     transform(ROTATE, angle, v0, v1, v2);
   }
 
@@ -1938,10 +1914,6 @@ public class PShapeOpenGL extends PShape {
 
   @Override
   public void scale(float x, float y, float z) {
-//    if (!is3D) {
-//      PGraphics.showDepthWarningXYZ("scale");
-//      return;
-//    }
     transform(SCALE, x, y, z);
   }
 
@@ -1966,10 +1938,6 @@ public class PShapeOpenGL extends PShape {
                           float n10, float n11, float n12, float n13,
                           float n20, float n21, float n22, float n23,
                           float n30, float n31, float n32, float n33) {
-//    if (!is3D) {
-//      PGraphics.showVariationWarning("applyMatrix");
-//      return;
-//    }
     transform(MATRIX, n00, n01, n02, n03,
                       n10, n11, n12, n13,
                       n20, n21, n22, n23,
@@ -2120,10 +2088,6 @@ public class PShapeOpenGL extends PShape {
   public void bezierVertex(float x2, float y2, float z2,
                            float x3, float y3, float z3,
                            float x4, float y4, float z4) {
-//    if (!is3D) {
-//      PGraphics.showDepthWarningXYZ("bezierVertex");
-//      return;
-//    }
     bezierVertexImpl(x2, y2, z2,
                      x3, y3, z3,
                      x4, y4, z4);
@@ -2154,10 +2118,6 @@ public class PShapeOpenGL extends PShape {
   @Override
   public void quadraticVertex(float cx, float cy, float cz,
                               float x3, float y3, float z3) {
-//    if (!is3D) {
-//      PGraphics.showDepthWarningXYZ("quadraticVertex");
-//      return;
-//    }
     quadraticVertexImpl(cx, cy, cz,
                         x3, y3, z3);
   }
@@ -2203,10 +2163,6 @@ public class PShapeOpenGL extends PShape {
 
   @Override
   public void curveVertex(float x, float y, float z) {
-//    if (!is3D) {
-//      PGraphics.showDepthWarningXYZ("curveVertex");
-//      return;
-//    }
     curveVertexImpl(x, y, z);
   }
 
