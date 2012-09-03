@@ -980,8 +980,7 @@ public class PGL {
                                 GL.GL_TEXTURE_2D,
                                 glColorTex[frontTex], 0);
 
-
-
+      // TODO: check if the screen FBO should be left bound instead
       PGraphicsOpenGL.screenFramebuffer.glFbo = glColorFbo[0];
 
       // Swapping front and back textures.
