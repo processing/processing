@@ -414,7 +414,7 @@ public class PGL {
   protected void initPrimarySurface(int antialias) {
     // We do the initialization in updatePrimary() because
     // at the moment initPrimarySurface() gets called we
-    // cannot rely on the GL surface actually being
+    // cannot rely on the GL surface being actually
     // available.
   }
 
@@ -448,9 +448,11 @@ public class PGL {
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D,
                                GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_NEAREST);
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D,
-                               GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
+                               GLES20.GL_TEXTURE_WRAP_S,
+                               GLES20.GL_CLAMP_TO_EDGE);
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D,
-                               GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
+                               GLES20.GL_TEXTURE_WRAP_T,
+                               GLES20.GL_CLAMP_TO_EDGE);
         GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA,
                             fboWidth, fboHeight, 0, PGL.RGBA, PGL.UNSIGNED_BYTE,
                             null);
@@ -459,8 +461,10 @@ public class PGL {
       GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
 
       GLES20.glGenFramebuffers(1, glColorFbo, 0);
-
       GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, glColorFbo[0]);
+      GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER,
+                                    GLES20.GL_COLOR_ATTACHMENT0,
+                                    GLES20.GL_TEXTURE_2D, glColorTex[0], 0);
 
       if (packed) { // packed depth+stencil buffer
         int[] depthStencil = { 0 };
@@ -503,8 +507,20 @@ public class PGL {
                                            GLES20.GL_RENDERBUFFER, stencil[0]);
         }
       }
+      validateFramebuffer();
+
+      // Clear the depth and stencil buffers in the color FBO. There is no
+      // need to clear the color buffers because the textures attached were
+      // properly initialized blank.
+      GLES20.glClearDepthf(1);
+      GLES20.glClearStencil(0);
+      GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_STENCIL_BUFFER_BIT);
 
       GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
+      PGraphicsOpenGL.screenFramebuffer.glFbo = 0;
+
+      // Use this instead for the new code to be implemented later...
+//      PGraphicsOpenGL.screenFramebuffer.glFbo = glColorFbo[0];
 
       backTex = 1;
       frontTex = 0;
@@ -591,6 +607,20 @@ public class PGL {
 
 
   protected void beginOnscreenDraw(boolean clear) {
+
+    // TODO: enable this implementation later (solves the flickering problem):
+    /*
+    if (glColorFbo[0] != 0) {
+      GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, glColorFbo[0]);
+      GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER,
+                                    GLES20.GL_COLOR_ATTACHMENT0,
+                                    GLES20.GL_TEXTURE_2D,
+                                    glColorTex[frontTex], 0);
+
+      PGraphicsOpenGL.screenFramebuffer.glFbo = glColorFbo[0];
+    }
+*/
+
     if (clear && !FORCE_SCREEN_FBO) {
       // Simplest scenario: clear mode means we clear both the color and depth
       // buffers. No need for saving front color buffer, etc.
@@ -603,7 +633,6 @@ public class PGL {
                                     GLES20.GL_COLOR_ATTACHMENT0,
                                     GLES20.GL_TEXTURE_2D,
                                     glColorTex[frontTex], 0);
-      validateFramebuffer();
 
       // We need to save the color buffer after finishing with the rendering of
       // this frame, to use is as the background for the next frame
@@ -625,15 +654,63 @@ public class PGL {
     if (firstOnscreenFrame) {
       firstOnscreenFrame = false;
     }
+
   }
 
 
   protected void endOnscreenDraw(boolean clear0) {
+/*
+    // TODO: enable this implementation later (solves the flickering problem):
+    if (glColorFbo[0] != 0) {
+      // We are in the primary surface, and no clear mode, this means that the
+      // current contents of the front buffer needs to be used in the next frame
+      // as the background.
+      GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
+
+      GLES20.glClearDepthf(1);
+      GLES20.glClearColor(0, 0, 0, 0);
+      GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
+
+      // Render current front texture to screen, without blending.
+      GLES20.glDisable(GLES20.GL_BLEND);
+      drawTexture(GLES20.GL_TEXTURE_2D, glColorTex[frontTex],
+                  fboWidth, fboHeight,
+                  0, 0, pg.width, pg.height, 0, 0, pg.width, pg.height);
+
+      GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, glColorFbo[0]);
+
+      // Blitting the front texture into the back texture.
+      GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER,
+                                    GLES20.GL_COLOR_ATTACHMENT0,
+                                    GLES20.GL_TEXTURE_2D,
+                                    glColorTex[backTex], 0);
+      drawTexture(GLES20.GL_TEXTURE_2D, glColorTex[frontTex],
+                  fboWidth, fboHeight,
+                  0, 0, pg.width, pg.height, 0, 0, pg.width, pg.height);
+
+      // Leave the front texture as current
+      GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER,
+                                    GLES20.GL_COLOR_ATTACHMENT0,
+                                    GLES20.GL_TEXTURE_2D,
+                                    glColorTex[frontTex], 0);
+
+//      int temp = frontTex;
+//      frontTex = backTex;
+//      backTex = temp;
+
+
+      // This is the trick to avoid tre flickering: don't leave the FBO bound!
+      GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
+      PGraphicsOpenGL.screenFramebuffer.glFbo = 0;
+    }
+*/
+
     if (!clear0 || FORCE_SCREEN_FBO) {
       // We are in the primary surface, and no clear mode, this means that the
       // current contents of the front buffer needs to be used in the next frame
       // as the background.
       GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
+      PGraphicsOpenGL.screenFramebuffer.glFbo = 0;
 
       GLES20.glClearDepthf(1);
       GLES20.glClearColor(0, 0, 0, 0);
