@@ -547,7 +547,11 @@ public abstract class Mode {
           if (e.getClickCount() == 2) {
             DefaultMutableTreeNode node =
               (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
-            if (node != null && node.isLeaf()) {
+
+            int selRow = tree.getRowForLocation(e.getX(), e.getY());
+            //TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
+            //if (node != null && node.isLeaf() && node.getPath().equals(selPath)) {
+            if (node != null && node.isLeaf() && selRow != -1) {
               SketchReference sketch = (SketchReference) node.getUserObject();
               base.handleOpen(sketch.getPath());
             }
