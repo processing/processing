@@ -3362,6 +3362,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   // TODO unapproved
+  @Override
   protected void shape(PShape shape, float x, float y, float z) {
     if (shape.isVisible()) { // don't do expensive matrix ops if invisible
       flush();
@@ -3383,6 +3384,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   // TODO unapproved
+  @Override
   protected void shape(PShape shape, float x, float y, float z,
                        float c, float d, float e) {
     if (shape.isVisible()) { // don't do expensive matrix ops if invisible
