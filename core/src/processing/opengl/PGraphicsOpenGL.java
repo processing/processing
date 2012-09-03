@@ -1747,6 +1747,7 @@ public class PGraphicsOpenGL extends PGraphics {
       pgl.endOnscreenDraw(clearColorBuffer0);
 
       if (!pgl.initialized || parent.frameCount == 0) {
+        // TODO: check this code and see if should go before endOnscreenDraw
         // Smooth was called at some point during drawing. We save
         // the current contents of the back buffer (because the
         // buffers haven't been swapped yet) to the pixels array.
