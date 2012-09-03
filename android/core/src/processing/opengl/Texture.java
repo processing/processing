@@ -89,8 +89,8 @@ public class Texture implements PConstants {
   protected float maxTexcoordV;
   protected boolean bound;
 
-  protected boolean flippedX;
-  protected boolean flippedY;
+  protected boolean invertedX;
+  protected boolean invertedY;
 
   protected FrameBuffer tempFbo = null;
 
@@ -484,8 +484,8 @@ public class Texture implements PConstants {
     tempFbo.getPixels(pixels);
     convertToARGB(pixels);
 
-    if (flippedX) flipArrayOnX(pixels, 1);
-    if (flippedY) flipArrayOnY(pixels, 1);
+    if (invertedX) flipArrayOnX(pixels, 1);
+    if (invertedY) flipArrayOnY(pixels, 1);
   }
 
 
@@ -632,7 +632,7 @@ public class Texture implements PConstants {
    * (horizontal).
    * @return float
    */
-  public float getMaxU() {
+  public float maxTexcoordU() {
     return maxTexcoordU;
   }
 
@@ -641,45 +641,46 @@ public class Texture implements PConstants {
    * Returns the maximum possible value for the texture coordinate V (vertical).
    * @return float
    */
-  public float getMaxV() {
+  public float maxTexcoordV() {
     return maxTexcoordV;
   }
 
 
   /**
-   * Returns true if the texture is flipped along the horizontal direction.
+   * Returns true if the texture is inverted along the horizontal direction.
    * @return boolean;
    */
-  public boolean isFlippedX() {
-    return flippedX;
+  public boolean invertedX() {
+    return invertedX;
   }
 
 
   /**
-   * Sets the texture as flipped or not flipped on the horizontal direction.
+   * Sets the texture as inverted or not along the horizontal direction.
    * @param v boolean;
    */
-  public void setFlippedX(boolean v) {
-    flippedX = v;
+  public void invertedX(boolean v) {
+    invertedX = v;
   }
 
 
   /**
-   * Returns true if the texture is flipped along the vertical direction.
+   * Returns true if the texture is inverted along the vertical direction.
    * @return boolean;
    */
-  public boolean isFlippedY() {
-    return flippedY;
+  public boolean invertedY() {
+    return invertedY;
   }
 
 
   /**
-   * Sets the texture as flipped or not flipped on the vertical direction.
+   * Sets the texture as inverted or not along the vertical direction.
    * @param v boolean;
    */
-  public void setFlippedY(boolean v) {
-    flippedY = v;
+  public void invertedY(boolean v) {
+    invertedY = v;
   }
+
 
   ////////////////////////////////////////////////////////////
 
@@ -1282,8 +1283,8 @@ public class Texture implements PConstants {
     maxTexcoordU = src.maxTexcoordU;
     maxTexcoordV = src.maxTexcoordV;
 
-    flippedX = src.flippedX;
-    flippedY = src.flippedY;
+    invertedX = src.invertedX;
+    invertedY = src.invertedY;
   }
 
 
@@ -1409,8 +1410,8 @@ public class Texture implements PConstants {
 
     usingRepeat = glWrapS == PGL.REPEAT || glWrapT == PGL.REPEAT;
 
-    flippedX = false;
-    flippedY = false;
+    invertedX = false;
+    invertedY = false;
   }
 
 
@@ -1487,10 +1488,27 @@ public class Texture implements PConstants {
     public Parameters(int format, int sampling, boolean mipmaps) {
       this.target = TEX2D;
       this.format = format;
-      this.sampling = sampling;
       this.mipmaps = mipmaps;
+      if (sampling == TRILINEAR && !mipmaps) {
+        this.sampling = BILINEAR;
+      } else {
+        this.sampling = sampling;
+      }
       this.wrapU = CLAMP;
       this.wrapV = CLAMP;
+    }
+
+    public Parameters(int format, int sampling, boolean mipmaps, int wrap) {
+      this.target = TEX2D;
+      this.format = format;
+      this.mipmaps = mipmaps;
+      if (sampling == TRILINEAR && !mipmaps) {
+        this.sampling = BILINEAR;
+      } else {
+        this.sampling = sampling;
+      }
+      this.wrapU = wrap;
+      this.wrapV = wrap;
     }
 
     public Parameters(Parameters src) {
