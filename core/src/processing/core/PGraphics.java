@@ -3620,6 +3620,12 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  // TODO unapproved
+  protected void shape(PShape shape, float x, float y, float z) {
+    showMissingWarning("shape");
+  }
+
+
   /**
    * @param a x-coordinate of the shape
    * @param b y-coordinate of the shape
@@ -3655,6 +3661,11 @@ public class PGraphics extends PImage implements PConstants {
     }
   }
 
+
+  // TODO unapproved
+  protected void shape(PShape shape, float x, float y, float z, float c, float d, float e) {
+    showMissingWarning("shape");
+  }
 
 
   //////////////////////////////////////////////////////////////
