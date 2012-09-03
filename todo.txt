@@ -7,15 +7,8 @@ X   http://code.google.com/p/processing/issues/detail?id=1056
 X change "Standard" to "Java" mode
 X Any double-click inside Examples window opening the last selection on Windows
 X   http://code.google.com/p/processing/issues/detail?id=1201
-
-_ example browser state (from Casey)
-_   http://code.google.com/p/processing/issues/detail?id=827
-
-_ remove preferences that refer to applets
-_ remove applet folder from the Java stuff
-
-_ 'recent' menu doesn't respect examples folder of other p5 versions
-_ 'recent' menu paths can get enormous
+X example browser state (from Casey)
+X   http://code.google.com/p/processing/issues/detail?id=827
 
 . . .
 
@@ -237,6 +230,13 @@ _ proper libraries warning dialog
 _   check if libraries folder does not exist
 _   check to see if other libraries are installed
 _   warn user about moving libraries and restarting
+
+
+2.0 FINAL / misc pde cleanups
+_ remove preferences that refer to applets
+_ remove applet folder from the Java stuff
+_ 'recent' menu doesn't respect examples folder of other p5 versions
+_ 'recent' menu paths can get enormous
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
