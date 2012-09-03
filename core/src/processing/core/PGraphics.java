@@ -6441,15 +6441,15 @@ public class PGraphics extends PImage implements PConstants {
    *
    * @webref lights_camera:lights
    * @usage web_application
-   * @param red red or hue value (depending on current color mode)
-   * @param green green or saturation value (depending on current color mode)
-   * @param blue blue or brightness value (depending on current color mode)
+   * @param v1 red or hue value (depending on current color mode)
+   * @param v2 green or saturation value (depending on current color mode)
+   * @param v3 blue or brightness value (depending on current color mode)
    * @see PGraphics#lights()
    * @see PGraphics#directionalLight(float, float, float, float, float, float)
    * @see PGraphics#pointLight(float, float, float, float, float, float)
    * @see PGraphics#spotLight(float, float, float, float, float, float, float, float, float, float, float)
    */
-  public void ambientLight(float red, float green, float blue) {
+  public void ambientLight(float v1, float v2, float v3) {
     showMethodWarning("ambientLight");
   }
 
@@ -6458,7 +6458,7 @@ public class PGraphics extends PImage implements PConstants {
    * @param y y-coordinate of the light
    * @param z z-coordinate of the light
    */
-  public void ambientLight(float red, float green, float blue,
+  public void ambientLight(float v1, float v2, float v3,
                            float x, float y, float z) {
     showMethodWarning("ambientLight");
   }
@@ -6482,9 +6482,9 @@ public class PGraphics extends PImage implements PConstants {
    *
    * @webref lights_camera:lights
    * @usage web_application
-   * @param red red value
-   * @param green green value
-   * @param blue blue value
+   * @param v1 red or hue value (depending on current color mode)
+   * @param v2 green or saturation value (depending on current color mode)
+   * @param v3 blue or brightness value (depending on current color mode)
    * @param nx direction along the x-axis
    * @param ny direction along the y-axis
    * @param nz direction along the z-axis
@@ -6493,7 +6493,7 @@ public class PGraphics extends PImage implements PConstants {
    * @see PGraphics#pointLight(float, float, float, float, float, float)
    * @see PGraphics#spotLight(float, float, float, float, float, float, float, float, float, float, float)
    */
-  public void directionalLight(float red, float green, float blue,
+  public void directionalLight(float v1, float v2, float v3,
                                float nx, float ny, float nz) {
     showMethodWarning("directionalLight");
   }
@@ -6513,9 +6513,9 @@ public class PGraphics extends PImage implements PConstants {
    *
    * @webref lights_camera:lights
    * @usage web_application
-   * @param red red value
-   * @param green green value
-   * @param blue blue value
+   * @param v1 red or hue value (depending on current color mode)
+   * @param v2 green or saturation value (depending on current color mode)
+   * @param v3 blue or brightness value (depending on current color mode)
    * @param x x-coordinate of the light
    * @param y y-coordinate of the light
    * @param z z-coordinate of the light
@@ -6524,7 +6524,7 @@ public class PGraphics extends PImage implements PConstants {
    * @see PGraphics#ambientLight(float, float, float, float, float, float)
    * @see PGraphics#spotLight(float, float, float, float, float, float, float, float, float, float, float)
    */
-  public void pointLight(float red, float green, float blue,
+  public void pointLight(float v1, float v2, float v3,
                          float x, float y, float z) {
     showMethodWarning("pointLight");
   }
@@ -6546,9 +6546,9 @@ public class PGraphics extends PImage implements PConstants {
    *
    * @webref lights_camera:lights
    * @usage web_application
-   * @param red red value
-   * @param green green value
-   * @param blue blue value
+   * @param v1 red or hue value (depending on current color mode)
+   * @param v2 green or saturation value (depending on current color mode)
+   * @param v3 blue or brightness value (depending on current color mode)
    * @param x x-coordinate of the light
    * @param y y-coordinate of the light
    * @param z z-coordinate of the light
@@ -6562,7 +6562,7 @@ public class PGraphics extends PImage implements PConstants {
    * @see PGraphics#pointLight(float, float, float, float, float, float)
    * @see PGraphics#ambientLight(float, float, float, float, float, float)
    */
-  public void spotLight(float red, float green, float blue,
+  public void spotLight(float v1, float v2, float v3,
                         float x, float y, float z,
                         float nx, float ny, float nz,
                         float angle, float concentration) {
