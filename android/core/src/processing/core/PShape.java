@@ -143,11 +143,11 @@ public class PShape implements PConstants {
   protected boolean tint;
   protected int tintColor;
 
-  protected int ambientColor;  
-  protected int specularColor;  
+  protected int ambientColor;
+  protected int specularColor;
   protected int emissiveColor;
-  protected float shininess;  
-  
+  protected float shininess;
+
   /** Temporary toggle for whether styles should be honored. */
   protected boolean style = true;
 
@@ -165,7 +165,7 @@ public class PShape implements PConstants {
   protected PShape parent;
   protected int childCount;
   protected PShape[] children;
-  
+
 
   /** Array of VERTEX, BEZIER_VERTEX, and CURVE_VERTEX calls. */
   protected int vertexCodeCount;
@@ -173,14 +173,14 @@ public class PShape implements PConstants {
   /** True if this is a closed path. */
   protected boolean close;
 
-  
+
   // ........................................................
 
   // internal color for setting/calculating
   protected float calcR, calcG, calcB, calcA;
   protected int calcRi, calcGi, calcBi, calcAi;
   protected int calcColor;
-  protected boolean calcAlpha;  
+  protected boolean calcAlpha;
 
   /** The current colorMode */
   public int colorMode; // = RGB;
@@ -202,7 +202,10 @@ public class PShape implements PConstants {
 
   /** True if colorMode(RGB, 255) */
   boolean colorModeDefault; // = true;
-  
+
+  /** True if contains 3D data */
+  protected boolean is3D = false;
+
 
   // should this be called vertices (consistent with PGraphics internals)
   // or does that hurt flexibility?
@@ -252,12 +255,12 @@ public class PShape implements PConstants {
     this.family = family;
   }
 
-  
+
   public void setKind(int kind) {
     this.kind = kind;
   }
-  
-  
+
+
   public void setName(String name) {
     this.name = name;
   }
@@ -393,14 +396,14 @@ public class PShape implements PConstants {
     return depth;
   }
 
-  
+
 
   // TODO unapproved
   protected PVector getTop() {
     return getTop(null);
-  }  
-  
-  
+  }
+
+
   protected PVector getTop(PVector top) {
     if (top == null) {
       top = new PVector();
@@ -408,88 +411,83 @@ public class PShape implements PConstants {
     return top;
   }
 
-  
+
   protected PVector getBottom() {
     return getBottom(null);
-  }  
-  
-  
+  }
+
+
   protected PVector getBottom(PVector bottom) {
     if (bottom == null) {
       bottom = new PVector();
-    }    
+    }
     return bottom;
-  } 
-  
+  }
+
 
   /**
    * Return true if this shape is 2D. Defaults to true.
-   */  
+   */
   public boolean is2D() {
-    return true;
+    return !is3D;
   }
-  
-  
+
+
   /**
    * Return true if this shape is 3D. Defaults to false.
    */
   public boolean is3D() {
-    return false;
-  }
-
-  
-  /**
-   * Return true if this shape requires rendering through OpenGL. Defaults to false.
-   */
-  // TODO unapproved
-  public boolean isGL() {
-    return false;
+    return is3D;
   }
 
 
-  ///////////////////////////////////////////////////////////  
-  
+  public void is3D(boolean val) {
+    is3D = val;
+  }
+
+  ///////////////////////////////////////////////////////////
+
   //
-  
-  // Drawing methods  
-  
+
+  // Drawing methods
+
   public void texture(PImage tex) {
   }
-  
+
   public void noTexture() {
-  }  
-    
+  }
+
   // TODO unapproved
   protected void solid(boolean solid) {
   }
-  
+
   public void beginContour() {
   }
-    
+
   public void endContour() {
   }
-  
-  public void vertex(float x, float y) { 
+
+  public void vertex(float x, float y) {
   }
 
-  public void vertex(float x, float y, float u, float v) { 
+  public void vertex(float x, float y, float u, float v) {
   }
-  
+
   public void vertex(float x, float y, float z) {
   }
 
   public void vertex(float x, float y, float z, float u, float v) {
-  }  
-  
+  }
+
   public void normal(float nx, float ny, float nz) {
   }
 
   public void end() {
-  }  
+  }
 
-  public void end(int mode) {    
-  }    
-  
+  public void end(int mode) {
+  }
+
   //////////////////////////////////////////////////////////////
 
   // STROKE CAP/JOIN/WEIGHT
@@ -583,97 +581,97 @@ public class PShape implements PConstants {
   //////////////////////////////////////////////////////////////
 
   // Ambient set/update
-  
-  public void ambient(int rgb) {    
+
+  public void ambient(int rgb) {
   }
-  
-  public void ambient(float gray) {    
+
+  public void ambient(float gray) {
   }
-  
+
   public void ambient(float x, float y, float z) {
   }
-  
+
   //////////////////////////////////////////////////////////////
 
   // Specular set/update
-  
-  public void specular(int rgb) {    
+
+  public void specular(int rgb) {
   }
-  
-  public void specular(float gray) {    
+
+  public void specular(float gray) {
   }
-  
+
   public void specular(float x, float y, float z) {
-  }  
-  
-  
+  }
+
+
   //////////////////////////////////////////////////////////////
 
-  // Emissive set/update  
+  // Emissive set/update
 
-  public void emissive(int rgb) {    
+  public void emissive(int rgb) {
   }
-  
-  public void emissive(float gray) {    
+
+  public void emissive(float gray) {
   }
-  
+
   public void emissive(float x, float y, float z) {
-  }    
-  
+  }
+
   //////////////////////////////////////////////////////////////
 
-  // Shininess set/update  
-  
-  public void shininess(float shine) {    
-  }  
-  
-  ///////////////////////////////////////////////////////////  
-  
+  // Shininess set/update
+
+  public void shininess(float shine) {
+  }
+
+  ///////////////////////////////////////////////////////////
+
   //
-  
-  // Bezier curves   
-  
-  
+
+  // Bezier curves
+
+
   public void bezierDetail(int detail) {
-  }  
-  
+  }
+
   public void bezierVertex(float x2, float y2,
                            float x3, float y3,
                            float x4, float y4) {
   }
-  
+
   public void bezierVertex(float x2, float y2, float z2,
                            float x3, float y3, float z3,
                            float x4, float y4, float z4) {
   }
-  
+
   public void quadraticVertex(float cx, float cy,
                               float x3, float y3) {
-  }  
-  
+  }
+
   public void quadraticVertex(float cx, float cy, float cz,
                               float x3, float y3, float z3) {
   }
-  
-  ///////////////////////////////////////////////////////////  
-  
+
+  ///////////////////////////////////////////////////////////
+
   //
-  
+
   // Catmull-Rom curves
 
   public void curveDetail(int detail) {
   }
-  
+
   public void curveTightness(float tightness) {
-  }  
-  
+  }
+
   public void curveVertex(float x, float y) {
-  }  
+  }
 
   public void curveVertex(float x, float y, float z) {
   }
-  
-  
+
+
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
@@ -769,19 +767,19 @@ public class PShape implements PConstants {
       g.popStyle();
     }
   }
-  
-  
+
+
   ////////////////////////////////////////////////////////////////////////
   //
   // Shape copy
-  
-  
+
+
   // TODO unapproved
   static protected PShape createShape(PApplet parent, PShape src) {
     PShape dest = null;
     if (src.family == GROUP) {
       dest = parent.createShape(GROUP);
-      PShape.copyGroup(parent, src, dest);      
+      PShape.copyGroup(parent, src, dest);
     } else if (src.family == PRIMITIVE) {
       dest = parent.createShape(src.kind, src.params);
       PShape.copyPrimitive(src, dest);
@@ -796,7 +794,7 @@ public class PShape implements PConstants {
     return dest;
   }
 
-  
+
   // TODO unapproved
   static protected void copyGroup(PApplet parent, PShape src, PShape dest) {
     copyMatrix(src, dest);
@@ -807,32 +805,32 @@ public class PShape implements PConstants {
       dest.addChild(c);
     }
   }
-  
-  
+
+
   // TODO unapproved
   static protected void copyPrimitive(PShape src, PShape dest) {
-    copyMatrix(src, dest);    
+    copyMatrix(src, dest);
     copyStyles(src, dest);
     copyImage(src, dest);
   }
-  
-  
+
+
   // TODO unapproved
   static protected void copyGeometry(PShape src, PShape dest) {
-    copyMatrix(src, dest);    
+    copyMatrix(src, dest);
     copyStyles(src, dest);
     copyImage(src, dest);
-    
+
     if (src.style) {
       for (int i = 0; i < src.vertexCount; i++) {
         float[] vert = src.vertices[i];
-        
+
         // Do we need to copy these as well?
 //        s.ambient(vert[AR] * 255, vert[AG] * 255, vert[AB] * 255);
 //        s.specular(vert[SPR] * 255, vert[SPG] * 255, vert[SPB] * 255);
 //        s.emissive(vert[ER] * 255, vert[EG] * 255, vert[EB] * 255);
 //        s.shininess(vert[SHINE]);
-        
+
         dest.normal(vert[PGraphics.NX],
                     vert[PGraphics.NY],
                     vert[PGraphics.NZ]);
@@ -850,28 +848,28 @@ public class PShape implements PConstants {
         }
       }
     }
-    
-    dest.end();  
+
+    dest.end();
   }
-  
-  
+
+
   // TODO unapproved
   static protected void copyPath(PShape src, PShape dest) {
-    copyMatrix(src, dest);    
+    copyMatrix(src, dest);
     copyStyles(src, dest);
     copyImage(src, dest);
     dest.close = src.close;
-    dest.setPath(src.vertexCount, src.vertices, src.vertexCodeCount, src.vertexCodes);    
+    dest.setPath(src.vertexCount, src.vertices, src.vertexCodeCount, src.vertexCodes);
   }
-  
-  
+
+
   // TODO unapproved
   static protected void copyMatrix(PShape src, PShape dest) {
     if (src.matrix != null) {
-      dest.applyMatrix(src.matrix);  
-    }    
+      dest.applyMatrix(src.matrix);
+    }
   }
-  
+
 
   // TODO unapproved
   static protected void copyStyles(PShape src, PShape dest) {
@@ -891,19 +889,19 @@ public class PShape implements PConstants {
     } else {
       dest.fill = false;
     }
-  } 
-  
-  
+  }
+
+
   // TODO unapproved
   static protected void copyImage(PShape src, PShape dest) {
     if (src.image != null) {
       dest.texture(src.image);
-    }    
+    }
   }
 
-  
+
   ////////////////////////////////////////////////////////////////////////
-  
+
 
   /**
    * Called by the following (the shape() command adds the g)
@@ -1352,8 +1350,8 @@ public class PShape implements PConstants {
   public PShape getTessellation() {
     return null;
   }
-  
-  
+
+
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
@@ -1386,54 +1384,54 @@ public class PShape implements PConstants {
     return params[index];
   }
 
-  
+
   protected void setParams(float[] source) {
     if (params == null) {
-      params = new float[source.length];  
-    }    
+      params = new float[source.length];
+    }
     if (source.length != params.length) {
       PGraphics.showWarning("Wrong number of parameters");
       return;
     }
     PApplet.arrayCopy(source, params);
-  }    
-  
+  }
+
 
   public void setPath(int vcount, float[][] verts) {
     setPath(vcount, verts, 0, null);
   }
-  
-  
+
+
   protected void setPath(int vcount, float[][] verts, int ccount, int[] codes) {
     if (verts == null || verts.length < vcount) return;
     if (0 < ccount && (codes == null || codes.length < ccount)) return;
-      
+
     int ndim = verts[0].length;
     vertexCount = vcount;
     vertices = new float[vertexCount][ndim];
     for (int i = 0; i < vertexCount; i++) {
       PApplet.arrayCopy(verts[i], vertices[i]);
-    }    
-     
+    }
+
     vertexCodeCount = ccount;
     if (0 < vertexCodeCount) {
       vertexCodes = new int[vertexCodeCount];
       PApplet.arrayCopy(codes, vertexCodes, vertexCodeCount);
-    }    
+    }
   }
-  
-  
+
+
   public int getVertexCount() {
     return vertexCount;
   }
 
 
-  
+
   public PVector getVertex(int index) {
     return getVertex(index, null);
-  }  
-  
-  
+  }
+
+
   public PVector getVertex(int index, PVector vec) {
     if (vec == null) {
       vec = new PVector();
@@ -1444,7 +1442,7 @@ public class PShape implements PConstants {
     return vec;
   }
 
-  
+
   public float getVertexX(int index) {
     return vertices[index][X];
   }
@@ -1459,20 +1457,20 @@ public class PShape implements PConstants {
     return vertices[index][Z];
   }
 
-  
+
   public void setVertex(int index, float x, float y) {
     vertices[index][X] = x;
     vertices[index][Y] = y;
   }
-  
-  
+
+
   public void setVertex(int index, float x, float y, float z) {
     vertices[index][X] = x;
     vertices[index][Y] = y;
     vertices[index][Z] = z;
   }
-  
-  
+
+
   public void setVertex(int index, PVector vec) {
     vertices[index][X] = vec.x;
     vertices[index][Y] = vec.y;
@@ -1483,8 +1481,8 @@ public class PShape implements PConstants {
   public PVector getNormal(int index) {
     return getNormal(index, null);
   }
-  
-  
+
+
   public PVector getNormal(int index, PVector vec) {
     if (vec == null) {
       vec = new PVector();
@@ -1492,48 +1490,48 @@ public class PShape implements PConstants {
     vec.x = vertices[index][PGraphics.NX];
     vec.y = vertices[index][PGraphics.NY];
     vec.z = vertices[index][PGraphics.NZ];
-    return vec;    
+    return vec;
   }
-  
-  
+
+
   public float getNormalX(int index) {
     return vertices[index][PGraphics.NX];
   }
-  
+
 
   public float getNormalY(int index) {
     return vertices[index][PGraphics.NY];
   }
-  
-  
+
+
   public float getNormalZ(int index) {
     return vertices[index][PGraphics.NZ];
-  }    
-  
+  }
+
 
   public void setNormal(int index, float nx, float ny, float nz) {
     vertices[index][PGraphics.NX] = nx;
     vertices[index][PGraphics.NY] = ny;
     vertices[index][PGraphics.NZ] = nz;
   }
-  
-  
+
+
   public float getTextureU(int index) {
     return vertices[index][PGraphics.U];
   }
-  
-  
+
+
   public float getTextureV(int index) {
     return vertices[index][PGraphics.V];
-  }  
-  
-  
+  }
+
+
   public void setTextureUV(int index, float u, float v) {
     vertices[index][PGraphics.U] = u;
     vertices[index][PGraphics.V] = v;
   }
-  
-  
+
+
   public int getFill(int index) {
     int a = (int) (vertices[index][PGraphics.A] * 255);
     int r = (int) (vertices[index][PGraphics.R] * 255);
@@ -1542,15 +1540,15 @@ public class PShape implements PConstants {
     return (a << 24) | (r << 16) | (g << 8) | b;
   }
 
-  
+
   public void setFill(int index, int fill) {
     vertices[index][PGraphics.A] = ((fill >> 24) & 0xFF) / 255.0f;
     vertices[index][PGraphics.R] = ((fill >> 16) & 0xFF) / 255.0f;
     vertices[index][PGraphics.G] = ((fill >>  8) & 0xFF) / 255.0f;
     vertices[index][PGraphics.B] = ((fill >>  0) & 0xFF) / 255.0f;
-  }  
+  }
 
-  
+
   public int getStroke(int index) {
     int a = (int) (vertices[index][PGraphics.SA] * 255);
     int r = (int) (vertices[index][PGraphics.SR] * 255);
@@ -1559,25 +1557,25 @@ public class PShape implements PConstants {
     return (a << 24) | (r << 16) | (g << 8) | b;
   }
 
-  
+
   public void setStroke(int index, int stroke) {
     vertices[index][PGraphics.SA] = ((stroke >> 24) & 0xFF) / 255.0f;
     vertices[index][PGraphics.SR] = ((stroke >> 16) & 0xFF) / 255.0f;
     vertices[index][PGraphics.SG] = ((stroke >>  8) & 0xFF) / 255.0f;
     vertices[index][PGraphics.SB] = ((stroke >>  0) & 0xFF) / 255.0f;
-  }  
-  
-  
+  }
+
+
   protected float getStrokeWeight(int index) {
     return vertices[index][PGraphics.SW];
   }
-  
+
 
   protected void setStrokeWeight(int index, float weight) {
     vertices[index][PGraphics.SW] = weight;
-  }  
-  
-  
+  }
+
+
   protected int getAmbient(int index) {
     int r = (int) (vertices[index][PGraphics.AR] * 255);
     int g = (int) (vertices[index][PGraphics.AG] * 255);
@@ -1585,13 +1583,13 @@ public class PShape implements PConstants {
     return 0xff000000 | (r << 16) | (g << 8) | b;
   }
 
-  
+
   protected void setAmbient(int index, int ambient) {
     vertices[index][PGraphics.AR] = ((ambient >> 16) & 0xFF) / 255.0f;
     vertices[index][PGraphics.AG] = ((ambient >>  8) & 0xFF) / 255.0f;
     vertices[index][PGraphics.AB] = ((ambient >>  0) & 0xFF) / 255.0f;
-  }    
-  
+  }
+
   protected int getSpecular(int index) {
     int r = (int) (vertices[index][PGraphics.SPR] * 255);
     int g = (int) (vertices[index][PGraphics.SPG] * 255);
@@ -1599,14 +1597,14 @@ public class PShape implements PConstants {
     return 0xff000000 | (r << 16) | (g << 8) | b;
   }
 
-  
+
   protected void setSpecular(int index, int specular) {
     vertices[index][PGraphics.SPR] = ((specular >> 16) & 0xFF) / 255.0f;
     vertices[index][PGraphics.SPG] = ((specular >>  8) & 0xFF) / 255.0f;
     vertices[index][PGraphics.SPB] = ((specular >>  0) & 0xFF) / 255.0f;
-  }    
-    
-  
+  }
+
+
   protected int getEmissive(int index) {
     int r = (int) (vertices[index][PGraphics.ER] * 255);
     int g = (int) (vertices[index][PGraphics.EG] * 255);
@@ -1614,24 +1612,24 @@ public class PShape implements PConstants {
     return 0xff000000 | (r << 16) | (g << 8) | b;
   }
 
-  
+
   protected void setEmissive(int index, int emissive) {
     vertices[index][PGraphics.ER] = ((emissive >> 16) & 0xFF) / 255.0f;
     vertices[index][PGraphics.EG] = ((emissive >>  8) & 0xFF) / 255.0f;
     vertices[index][PGraphics.EB] = ((emissive >>  0) & 0xFF) / 255.0f;
-  }     
-  
-  
+  }
+
+
   protected float getShininess(int index) {
     return vertices[index][PGraphics.SHINE];
   }
 
-  
+
   protected void setShininess(int index, float shine) {
     vertices[index][PGraphics.SHINE] = shine;
   }
-  
-  
+
+
   public int[] getVertexCodes() {
     if (vertexCodes == null) {
       return null;
@@ -1641,8 +1639,8 @@ public class PShape implements PConstants {
     }
     return vertexCodes;
   }
-  
-  
+
+
   public int getVertexCodeCount() {
     return vertexCodeCount;
   }
@@ -2015,7 +2013,7 @@ public class PShape implements PConstants {
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
-  
+
   public void colorMode(int mode) {
     colorMode(mode, colorModeX, colorModeY, colorModeZ, colorModeA);
   }
@@ -2059,8 +2057,8 @@ public class PShape implements PConstants {
       (colorModeA == 255) && (colorModeX == 255) &&
       (colorModeY == 255) && (colorModeZ == 255);
   }
-  
-  
+
+
   protected void colorCalc(int rgb) {
     if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {
       colorCalc((float) rgb);
@@ -2185,6 +2183,6 @@ public class PShape implements PConstants {
     calcB = calcBi / 255.0f;
     calcAlpha = (calcAi != 255);
   }
-   
-  
+
+
 }
