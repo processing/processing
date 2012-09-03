@@ -205,6 +205,8 @@ public class PShape implements PConstants {
   /** True if colorMode(RGB, 255) */
   boolean colorModeDefault; // = true;
 
+  /** True if contains 3D data */
+  protected boolean is3D = false;
 
   // should this be called vertices (consistent with PGraphics internals)
   // or does that hurt flexibility?
@@ -430,7 +432,7 @@ public class PShape implements PConstants {
    * Return true if this shape is 2D. Defaults to true.
    */
   public boolean is2D() {
-    return true;
+    return !is3D;
   }
 
 
@@ -438,7 +440,12 @@ public class PShape implements PConstants {
    * Return true if this shape is 3D. Defaults to false.
    */
   public boolean is3D() {
-    return false;
+    return is3D;
+  }
+
+
+  public void is3D(boolean val) {
+    is3D = val;
   }
 
 
@@ -840,9 +847,13 @@ public class PShape implements PConstants {
 //        s.emissive(vert[ER] * 255, vert[EG] * 255, vert[EB] * 255);
 //        s.shininess(vert[SHINE]);
 
-        dest.normal(vert[PGraphics.NX],
-                    vert[PGraphics.NY],
-                    vert[PGraphics.NZ]);
+        if (0 < PApplet.dist(vert[PGraphics.NX],
+                             vert[PGraphics.NY],
+                             vert[PGraphics.NZ], 0, 0, 0)) {
+          dest.normal(vert[PGraphics.NX],
+                      vert[PGraphics.NY],
+                      vert[PGraphics.NZ]);
+        }
         dest.vertex(vert[X], vert[Y], vert[Z],
                     vert[PGraphics.U],
                     vert[PGraphics.V]);

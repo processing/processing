@@ -87,7 +87,6 @@ public class PShapeOpenGL extends PShape {
   // Texturing
 
   protected HashSet<PImage> textures;
-  protected PImage texture;
   protected boolean strokedTexture;
 
   // ........................................................
@@ -377,8 +376,8 @@ public class PShapeOpenGL extends PShape {
             strokedTexture(true);
           }
         } else {
-          if (c3d.texture != null) {
-            addTexture(c3d.texture);
+          if (c3d.image != null) {
+            addTexture(c3d.image);
             if (c3d.stroke) {
               strokedTexture(true);
             }
@@ -490,6 +489,77 @@ public class PShapeOpenGL extends PShape {
 
     if (glPointIndex != 0) {
       pg.finalizeVertexBufferObject(glPointIndex, context.id());
+    }
+  }
+
+  ///////////////////////////////////////////////////////////
+
+  //
+  // Shape creation (temporary hack)
+
+
+  static protected PShapeOpenGL createShape3D(PApplet parent, PShape src) {
+    PShapeOpenGL dest = null;
+    if (src.getFamily() == GROUP) {
+      dest = PGraphics3D.createShapeImpl(parent, GROUP);
+      copyGroup3D(parent, src, dest);
+    } else if (src.getFamily() == PRIMITIVE) {
+      dest = PGraphics3D.createShapeImpl(parent, src.getKind(),
+                                         src.getParams());
+      PShape.copyPrimitive(src, dest);
+    } else if (src.getFamily() == GEOMETRY) {
+      dest = PGraphics3D.createShapeImpl(parent, src.getKind());
+      PShape.copyGeometry(src, dest);
+    } else if (src.getFamily() == PATH) {
+      dest = PGraphics3D.createShapeImpl(parent, PATH);
+      PShape.copyPath(src, dest);
+    }
+    dest.setName(src.getName());
+    return dest;
+  }
+
+
+  static public PShapeOpenGL createShape2D(PApplet parent, PShape src) {
+    PShapeOpenGL dest = null;
+    if (src.getFamily() == GROUP) {
+      dest = PGraphics2D.createShapeImpl(parent, GROUP);
+      copyGroup2D(parent, src, dest);
+    } else if (src.getFamily() == PRIMITIVE) {
+      dest = PGraphics2D.createShapeImpl(parent, src.getKind(),
+                                         src.getParams());
+      PShape.copyPrimitive(src, dest);
+    } else if (src.getFamily() == GEOMETRY) {
+      dest = PGraphics2D.createShapeImpl(parent, src.getKind());
+      PShape.copyGeometry(src, dest);
+    } else if (src.getFamily() == PATH) {
+      dest = PGraphics2D.createShapeImpl(parent, PATH);
+      PShape.copyPath(src, dest);
+    }
+    dest.setName(src.getName());
+    return dest;
+  }
+
+
+  static public void copyGroup3D(PApplet parent, PShape src, PShape dest) {
+    copyMatrix(src, dest);
+    copyStyles(src, dest);
+    copyImage(src, dest);
+
+    for (int i = 0; i < src.getChildCount(); i++) {
+      PShape c = createShape3D(parent, src.getChild(i));
+      dest.addChild(c);
+    }
+  }
+
+
+  static public void copyGroup2D(PApplet parent, PShape src, PShape dest) {
+    copyMatrix(src, dest);
+    copyStyles(src, dest);
+    copyImage(src, dest);
+
+    for (int i = 0; i < src.getChildCount(); i++) {
+      PShape c = createShape2D(parent, src.getChild(i));
+      dest.addChild(c);
     }
   }
 
@@ -674,13 +744,13 @@ public class PShapeOpenGL extends PShape {
         child.texture(tex);
       }
     } else {
-      PImage tex0 = texture;
-      texture = tex;
+      PImage tex0 = image;
+      image = tex;
       if (tex0 != tex && parent != null) {
         ((PShapeOpenGL)parent).removeTexture(tex);
       }
       if (parent != null) {
-        ((PShapeOpenGL)parent).addTexture(texture);
+        ((PShapeOpenGL)parent).addTexture(image);
         if (is2D() && stroke) {
           ((PShapeOpenGL)parent).strokedTexture(true);
         }
@@ -697,8 +767,8 @@ public class PShapeOpenGL extends PShape {
         child.noTexture();
       }
     } else {
-      PImage tex0 = texture;
-      texture = null;
+      PImage tex0 = image;
+      image = null;
       if (tex0 != null && parent != null) {
         ((PShapeOpenGL)parent).removeTexture(tex0);
         if (is2D()) {
@@ -785,7 +855,7 @@ public class PShapeOpenGL extends PShape {
     if (family == GROUP) {
       return textures != null && textures.contains(tex);
     } else {
-      return texture == tex;
+      return image == tex;
     }
   }
 
@@ -794,7 +864,7 @@ public class PShapeOpenGL extends PShape {
     if (family == GROUP) {
       return strokedTexture;
     } else {
-      return texture != null && stroke;
+      return image != null && stroke;
     }
   }
 
@@ -857,6 +927,10 @@ public class PShapeOpenGL extends PShape {
 
   @Override
   public void vertex(float x, float y, float z) {
+//    if (!is3D) {
+//      PGraphics.showDepthWarningXYZ("vertex");
+//      return;
+//    }
     vertexImpl(x, y, z, 0, 0);
   }
 
@@ -872,8 +946,12 @@ public class PShapeOpenGL extends PShape {
       PGraphics.showWarning("Cannot add vertices to GROUP shape");
       return;
     }
+//    if (!is3D) {
+//      PGraphics.showDepthWarningXYZ("vertex");
+//      return;
+//    }
 
-    boolean textured = texture != null;
+    boolean textured = image != null;
     int fcolor = 0x00;
     if (fill || textured) {
       if (!textured) {
@@ -887,9 +965,9 @@ public class PShapeOpenGL extends PShape {
       }
     }
 
-    if (texture != null && textureMode == IMAGE) {
-      u = PApplet.min(1, u / texture.width);
-      v = PApplet.min(1, v / texture.height);
+    if (image != null && textureMode == IMAGE) {
+      u = PApplet.min(1, u / image.width);
+      v = PApplet.min(1, v / image.height);
     }
 
     int scolor = 0x00;
@@ -1202,7 +1280,7 @@ public class PShapeOpenGL extends PShape {
     if (fillColor == newFillColor) return;
     fillColor = newFillColor;
 
-    if (texture == null) {
+    if (image == null) {
       Arrays.fill(inGeo.colors, 0, inGeo.vertexCount,
                   PGL.javaToNativeARGB(fillColor));
       if (shapeEnded && tessellated && hasPolys) {
@@ -1344,7 +1422,7 @@ public class PShapeOpenGL extends PShape {
       stroke = true;
     }
     updateStrokeColor(calcColor);
-    if (is2D() && texture != null && parent != null) {
+    if (is2D() && image != null && parent != null) {
       ((PShapeOpenGL)parent).strokedTexture(true);
     }
   }
@@ -1496,7 +1574,7 @@ public class PShapeOpenGL extends PShape {
     if (tintColor == newTintColor) return;
     tintColor = newTintColor;
 
-    if (texture != null) {
+    if (image != null) {
       Arrays.fill(inGeo.colors, 0, inGeo.vertexCount,
                   PGL.javaToNativeARGB(tintColor));
       if (shapeEnded && tessellated && hasPolys) {
@@ -1796,6 +1874,10 @@ public class PShapeOpenGL extends PShape {
 
   @Override
   public void translate(float tx, float ty, float tz) {
+//    if (!is3D) {
+//      PGraphics.showVariationWarning("translate");
+//      return;
+//    }
     transform(TRANSLATE, tx, ty, tz);
   }
 
@@ -1807,7 +1889,37 @@ public class PShapeOpenGL extends PShape {
 
 
   @Override
+  public void rotateX(float angle) {
+//    if (!is3D) {
+//      PGraphics.showDepthWarning("rotateX");
+//      return;
+//    }
+    rotate(angle, 1, 0, 0);
+  }
+
+
+  @Override
+  public void rotateY(float angle) {
+//    if (!is3D) {
+//      PGraphics.showDepthWarning("rotateY");
+//      return;
+//    }
+    rotate(angle, 0, 1, 0);
+  }
+
+
+  @Override
+  public void rotateZ(float angle) {
+    transform(ROTATE, angle);
+  }
+
+
+  @Override
   public void rotate(float angle, float v0, float v1, float v2) {
+//    if (!is3D) {
+//      PGraphics.showVariationWarning("rotate");
+//      return;
+//    }
     transform(ROTATE, angle, v0, v1, v2);
   }
 
@@ -1826,6 +1938,10 @@ public class PShapeOpenGL extends PShape {
 
   @Override
   public void scale(float x, float y, float z) {
+//    if (!is3D) {
+//      PGraphics.showDepthWarningXYZ("scale");
+//      return;
+//    }
     transform(SCALE, x, y, z);
   }
 
@@ -1850,6 +1966,10 @@ public class PShapeOpenGL extends PShape {
                           float n10, float n11, float n12, float n13,
                           float n20, float n21, float n22, float n23,
                           float n30, float n31, float n32, float n33) {
+//    if (!is3D) {
+//      PGraphics.showVariationWarning("applyMatrix");
+//      return;
+//    }
     transform(MATRIX, n00, n01, n02, n03,
                       n10, n11, n12, n13,
                       n20, n21, n22, n23,
@@ -2000,6 +2120,10 @@ public class PShapeOpenGL extends PShape {
   public void bezierVertex(float x2, float y2, float z2,
                            float x3, float y3, float z3,
                            float x4, float y4, float z4) {
+//    if (!is3D) {
+//      PGraphics.showDepthWarningXYZ("bezierVertex");
+//      return;
+//    }
     bezierVertexImpl(x2, y2, z2,
                      x3, y3, z3,
                      x4, y4, z4);
@@ -2030,6 +2154,10 @@ public class PShapeOpenGL extends PShape {
   @Override
   public void quadraticVertex(float cx, float cy, float cz,
                               float x3, float y3, float z3) {
+//    if (!is3D) {
+//      PGraphics.showDepthWarningXYZ("quadraticVertex");
+//      return;
+//    }
     quadraticVertexImpl(cx, cy, cz,
                         x3, y3, z3);
   }
@@ -2075,6 +2203,10 @@ public class PShapeOpenGL extends PShape {
 
   @Override
   public void curveVertex(float x, float y, float z) {
+//    if (!is3D) {
+//      PGraphics.showDepthWarningXYZ("curveVertex");
+//      return;
+//    }
     curveVertexImpl(x, y, z);
   }
 
@@ -2517,7 +2649,7 @@ public class PShapeOpenGL extends PShape {
 
         tessellator.setInGeometry(inGeo);
         tessellator.setTessGeometry(tessGeo);
-        tessellator.setFill(fill || texture != null);
+        tessellator.setFill(fill || image != null);
         tessellator.setStroke(stroke);
         tessellator.setStrokeColor(strokeColor);
         tessellator.setStrokeWeight(strokeWeight);
@@ -2591,8 +2723,8 @@ public class PShapeOpenGL extends PShape {
           tessellatePath();
         }
 
-        if (texture != null && parent != null) {
-          ((PShapeOpenGL)parent).addTexture(texture);
+        if (image != null && parent != null) {
+          ((PShapeOpenGL)parent).addTexture(image);
         }
 
         firstPolyIndexCache = tessellator.firstPolyIndexCache;
@@ -3159,7 +3291,7 @@ public class PShapeOpenGL extends PShape {
 
 
   protected boolean startStrokedTex(int n) {
-    return texture != null && (n == firstLineIndexCache ||
+    return image != null && (n == firstLineIndexCache ||
                                n == firstPointIndexCache);
   }
 
@@ -4101,7 +4233,7 @@ public class PShapeOpenGL extends PShape {
           }
 
         } else {
-          render(gl, texture);
+          render(gl, image);
         }
 
         post(gl);
