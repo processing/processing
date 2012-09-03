@@ -8976,6 +8976,9 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
+  /**
+   * Returns the native Bitmap object for this PImage.
+   */
   public Object getNative() {
     return g.getNative();
   }
