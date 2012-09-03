@@ -7,10 +7,12 @@ import java.util.*;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.TreeExpansionEvent;
+import javax.swing.event.TreeExpansionListener;
 import javax.swing.tree.*;
 
 import processing.app.syntax.*;
-//import processing.app.tools.Tool;
+
 
 public abstract class Mode {
   protected Base base;
@@ -576,6 +578,18 @@ public abstract class Mode {
         }
       });
 
+      tree.addTreeExpansionListener(new TreeExpansionListener() {
+        @Override
+        public void treeExpanded(TreeExpansionEvent event) {
+          updateExpanded(tree);
+        }
+
+        @Override
+        public void treeCollapsed(TreeExpansionEvent event) {
+          updateExpanded(tree);
+        }
+      });
+
       tree.setBorder(new EmptyBorder(5, 5, 5, 5));
       tree.setToggleClickCount(1);
       JScrollPane treePane = new JScrollPane(tree);
@@ -583,7 +597,10 @@ public abstract class Mode {
       treePane.setBorder(new EmptyBorder(0, 0, 0, 0));
       examplesFrame.getContentPane().add(treePane);
       examplesFrame.pack();
+
+      restoreExpanded(tree);
     }
+
     // Space for the editor plus a li'l gap
     int roughWidth = examplesFrame.getWidth() + 20;
     Point p = null;
@@ -600,22 +617,106 @@ public abstract class Mode {
   }
 
 
-//  public void handleActivated(Editor editor) {
-//    //// re-add the sub-menus that are shared by all windows
-//    fileMenu.insert(Base.sketchbookMenu, 2);
-//    fileMenu.insert(mode.examplesMenu, 3);
-//    sketchMenu.insert(mode.importMenu, 4);
+  protected void updateExpanded(JTree tree) {
+    Enumeration en = tree.getExpandedDescendants(new TreePath(tree.getModel().getRoot()));
+    //en.nextElement();  // skip the root "Examples" node
+
+    StringBuilder s = new StringBuilder();
+    while (en.hasMoreElements()) {
+      //System.out.println(en.nextElement());
+      TreePath tp = (TreePath) en.nextElement();
+      Object[] path = tp.getPath();
+      for (Object o : path) {
+        DefaultMutableTreeNode p = (DefaultMutableTreeNode) o;
+        String name = (String) p.getUserObject();
+        //System.out.print(p.getUserObject().getClass().getName() + ":" + p.getUserObject() + " -> ");
+        //System.out.print(name + " -> ");
+        s.append(name);
+        s.append(File.separatorChar);
+      }
+      //System.out.println();
+      s.setCharAt(s.length() - 1, File.pathSeparatorChar);
+    }
+    s.setLength(s.length() - 1);  // nix that last separator
+    String pref = "examples." + getClass().getName() + ".visible";
+    Preferences.set(pref, s.toString());
+    Preferences.save();
+//    System.out.println(s);
+//    System.out.println();
+  }
+
+
+  protected void restoreExpanded(JTree tree) {
+    String pref = "examples." + getClass().getName() + ".visible";
+    String value = Preferences.get(pref);
+    if (value != null) {
+      String[] paths = value.split(File.pathSeparator);
+      for (String path : paths) {
+//        System.out.println("trying to expand " + path);
+        String[] items = path.split(File.separator);
+        DefaultMutableTreeNode[] nodes = new DefaultMutableTreeNode[items.length];
+        expandTree(tree, null, items, nodes, 0);
+      }
+    }
+  }
+
+
+  void expandTree(JTree tree, Object object, String[] items, DefaultMutableTreeNode[] nodes, int index) {
+//    if (object == null) {
+//      object = model.getRoot();
+//    }
+    TreeModel model = tree.getModel();
+
+    if (index == 0) {
+      nodes[0] = (DefaultMutableTreeNode) model.getRoot();
+      expandTree(tree, nodes[0], items, nodes, 1);
+
+    } else if (index < items.length) {
+//    String item = items[0];
+//    TreeModel model = object.getModel();
+//    System.out.println(object.getClass().getName());
+      DefaultMutableTreeNode node = (DefaultMutableTreeNode) object;
+      int count = model.getChildCount(node);
+//    System.out.println("child count is " + count);
+      for (int i = 0; i < count; i++) {
+        DefaultMutableTreeNode child = (DefaultMutableTreeNode) model.getChild(node, i);
+        if (items[index].equals(child.getUserObject())) {
+          nodes[index] = child;
+          expandTree(tree, child, items, nodes, index+1);
+        }
+      }
+    } else {  // last one
+//      PApplet.println(nodes);
+      tree.expandPath(new TreePath(nodes));
+    }
+  }
+
+
+//  void
+
+//  protected TreePath findPath(FileItem item) {
+//    ArrayList<FileItem> items = new ArrayList<FileItem>();
+////    FileItem which = item.isDirectory() ? item : (FileItem) item.getParent();
+////    FileItem which = item;
+//    FileItem which = (FileItem) item.getParent();
+//    while (which != null) {
+//      items.add(0, which);
+//      which = (FileItem) which.getParent();
+//    }
+//    return new TreePath(items.toArray());
+////    FileItem[] array = items.toArray();
+////    return new TreePath(array);
 //  }
 
 
-//  public void handleDeactivated(Editor editor) {
-//    fileMenu.remove(Base.sketchbookMenu);
-//    fileMenu.remove(examplesMenu);
-//    sketchMenu.remove(importMenu);
+//  public static void loadExpansionState(JTree tree, Enumeration enumeration) {
+//    if (enumeration != null) {
+//      while (enumeration.hasMoreElements()) {
+//        TreePath treePath = (TreePath) enumeration.nextElement();
+//        tree.expandPath(treePath);
+//      }
+//    }
 //  }
-
-
-//  abstract public void internalCloseRunner(Editor editor);
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
