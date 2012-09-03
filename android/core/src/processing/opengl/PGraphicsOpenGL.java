@@ -2073,7 +2073,7 @@ public class PGraphicsOpenGL extends PGraphics {
     textureMode(IMAGE);
 
     // Default material properties
-    ambient(80);
+    ambient(255);
     specular(125);
     emissive(0);
     shininess(1);
