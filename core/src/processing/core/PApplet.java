@@ -731,11 +731,22 @@ public class PApplet extends Applet
   Object pauseObject = new Object();
   Thread thread;
 
+//  static final String[] registerNames = {
+//    "size",
+//    "pause", "resume",
+//    "pre", "draw", "post",
+//    "mouseEvent", "keyEvent", "touchEvent",
+//    "dispose"
+//  };
+  HashMap<String, RegisteredMethods> registerMap =
+    new HashMap<String, PApplet.RegisteredMethods>();
 //  protected RegisteredMethods sizeMethods;
-  protected RegisteredMethods pauseMethods, resumeMethods;
-  protected RegisteredMethods preMethods, drawMethods, postMethods;
+//  protected RegisteredMethods pauseMethods, resumeMethods;
+//  protected RegisteredMethods preMethods, drawMethods, postMethods;
+  /** Old methods with AWT API that should not be used. */
   protected RegisteredMethods mouseEventMethods, keyEventMethods;
-  protected RegisteredMethods disposeMethods;
+//  protected RegisteredMethods disposeMethods;
+
 
   // messages to send if attached as an external vm
 
@@ -835,14 +846,14 @@ public class PApplet extends Applet
 
     // these need to be inited before setup
 //    sizeMethods = new RegisteredMethods();
-    pauseMethods = new RegisteredMethods();
-    resumeMethods = new RegisteredMethods();
-    preMethods = new RegisteredMethods();
-    drawMethods = new RegisteredMethods();
-    postMethods = new RegisteredMethods();
-    mouseEventMethods = new RegisteredMethods();
-    keyEventMethods = new RegisteredMethods();
-    disposeMethods = new RegisteredMethods();
+//    pauseMethods = new RegisteredMethods();
+//    resumeMethods = new RegisteredMethods();
+//    preMethods = new RegisteredMethods();
+//    drawMethods = new RegisteredMethods();
+//    postMethods = new RegisteredMethods();
+//    mouseEventMethods = new RegisteredMethods();
+//    keyEventMethods = new RegisteredMethods();
+//    disposeMethods = new RegisteredMethods();
 
     try {
       getAppletContext();
@@ -957,7 +968,8 @@ public class PApplet extends Applet
     paused = false; // unpause the thread
 
     resume();
-    resumeMethods.handle();
+//    resumeMethods.handle();
+    handleMethods("resume");
 
     debug("un-pausing thread");
     synchronized (pauseObject) {
@@ -998,7 +1010,8 @@ public class PApplet extends Applet
     paused = true; // causes animation thread to sleep
 
     pause();
-    pauseMethods.handle();
+//    pauseMethods.handle();
+    handleMethods("pause");
 
     // actual pause will happen in the run() method
 
@@ -1046,82 +1059,67 @@ public class PApplet extends Applet
   }
 
 
-  /**
-   * This returns the last width and height specified by the user
-   * via the size() command.
-   */
-//  public Dimension getPreferredSize() {
-//    return new Dimension(width, height);
-//  }
-
-
-//  public void addNotify() {
-//    super.addNotify();
-//    println("addNotify()");
-//  }
-
-
 
   //////////////////////////////////////////////////////////////
 
 
-  public class RegisteredMethods {
+  class RegisteredMethods {
     int count;
-    Object objects[];
-    Method methods[];
-    Object[] convArgs = new Object[] { };
+    Object[] objects;
+    // Because the Method comes from the class being called,
+    // it will be unique for most, if not all, objects.
+    Method[] methods;
+    Object[] emptyArgs = new Object[] { };
 
-    // convenience version for no args
-    public void handle() {
-      handle(convArgs);
+
+    void handle() {
+      handle(emptyArgs);
     }
 
-    public void handle(Object oargs[]) {
+
+    void handle(Object[] args) {
       for (int i = 0; i < count; i++) {
         try {
-          //System.out.println(objects[i] + " " + args);
-          methods[i].invoke(objects[i], oargs);
+          methods[i].invoke(objects[i], args);
         } catch (Exception e) {
-          //// check for wrapped exception, get root exception
+          // check for wrapped exception, get root exception
           Throwable t;
           if (e instanceof InvocationTargetException) {
             InvocationTargetException ite = (InvocationTargetException) e;
-            //ite.getTargetException().printStackTrace();
             t = ite.getCause();
           } else {
-            //e.printStackTrace();
             t = e;
           }
-          //// check for RuntimeException, and allow to bubble up
+          // check for RuntimeException, and allow to bubble up
           if (t instanceof RuntimeException) {
-            //// re-throw exception
+            // re-throw exception
             throw (RuntimeException) t;
           } else {
-            //// trap and print as usual
+            // trap and print as usual
             t.printStackTrace();
           }
         }
       }
     }
 
-    public void add(Object object, Method method) {
-      if (objects == null) {
-        objects = new Object[5];
-        methods = new Method[5];
+
+    void add(Object object, Method method) {
+      if (findIndex(object) == -1) {
+        if (objects == null) {
+          objects = new Object[5];
+          methods = new Method[5];
+
+        } else if (count == objects.length) {
+          objects = (Object[]) PApplet.expand(objects);
+          methods = (Method[]) PApplet.expand(methods);
+        }
+        objects[count] = object;
+        methods[count] = method;
+        count++;
+      } else {
+        die(method.getName() + "() already added for this instance of " +
+            object.getClass().getName());
       }
-      if (count == objects.length) {
-        objects = (Object[]) PApplet.expand(objects);
-        methods = (Method[]) PApplet.expand(methods);
-//        Object otemp[] = new Object[count << 1];
-//        System.arraycopy(objects, 0, otemp, 0, count);
-//        objects = otemp;
-//        Method mtemp[] = new Method[count << 1];
-//        System.arraycopy(methods, 0, mtemp, 0, count);
-//        methods = mtemp;
-      }
-      objects[count] = object;
-      methods[count] = method;
-      count++;
     }
 
 
@@ -1130,8 +1128,10 @@ public class PApplet extends Applet
      * must be called multiple times if object is registered multiple times).
      * Does not shrink array afterwards, silently returns if method not found.
      */
-    public void remove(Object object, Method method) {
-      int index = findIndex(object, method);
+//    public void remove(Object object, Method method) {
+//      int index = findIndex(object, method);
+    public void remove(Object object) {
+      int index = findIndex(object);
       if (index != -1) {
         // shift remaining methods by one to preserve ordering
         count--;
@@ -1145,9 +1145,12 @@ public class PApplet extends Applet
       }
     }
 
-    protected int findIndex(Object object, Method method) {
+
+//    protected int findIndex(Object object, Method method) {
+    protected int findIndex(Object object) {
       for (int i = 0; i < count; i++) {
-        if (objects[i] == object && methods[i].equals(method)) {
+        if (objects[i] == object) {
+//        if (objects[i] == object && methods[i].equals(method)) {
           //objects[i].equals() might be overridden, so use == for safety
           // since here we do care about actual object identity
           //methods[i]==method is never true even for same method, so must use
@@ -1160,127 +1163,260 @@ public class PApplet extends Applet
   }
 
 
-//  public void registerSize(Object o) {
+  /**
+   * Register a built-in event so that it can be fired for libraries, etc.
+   * Supported events include:
+   * <ul>
+   * <li>pre – at the very top of the draw() method (safe to draw)
+   * <li>draw – at the end of the draw() method (safe to draw)
+   * <li>post – after draw() has exited (not safe to draw)
+   * <li>dispose – when the sketch is shutting down (definitely not safe to draw)
+   * <ul>
+   * In addition, the new (for 2.0) processing.event classes are passed to
+   * the following event types:
+   * <ul>
+   * <li>mouseEvent
+   * <li>keyEvent
+   * <li>touchEvent
+   * </ul>
+   * The older java.awt events are no longer supported.
+   * See the Library Wiki page for more details.
+   * @param methodName name of the method to be called
+   * @param target the target object that should receive the event
+   */
+  public void registerMethod(String methodName, Object target) {
+    if (methodName.equals("mouseEvent")) {
+      registerWithArgs("mouseEvent", target, new Class[] { processing.event.MouseEvent.class });
+
+    } else if (methodName.equals("keyEvent")) {
+      registerWithArgs("keyEvent", target, new Class[] { processing.event.KeyEvent.class });
+
+    } else if (methodName.equals("touchEvent")) {
+      registerWithArgs("touchEvent", target, new Class[] { processing.event.TouchEvent.class });
+
+    } else {
+      registerNoArgs(methodName, target);
+    }
+  }
+
+
+  private void registerNoArgs(String name, Object o) {
+    RegisteredMethods meth = registerMap.get(name);
+    if (meth == null) {
+      meth = new RegisteredMethods();
+      registerMap.put(name, meth);
+    }
+    Class<?> c = o.getClass();
+    try {
+      Method method = c.getMethod(name, new Class[] {});
+      meth.add(o, method);
+
+    } catch (NoSuchMethodException nsme) {
+      die("There is no public " + name + "() method in the class " +
+          o.getClass().getName());
+
+    } catch (Exception e) {
+      die("Could not register " + name + " + () for " + o, e);
+    }
+  }
+
+
+  private void registerWithArgs(String name, Object o, Class<?> cargs[]) {
+    RegisteredMethods meth = registerMap.get(name);
+    if (meth == null) {
+      meth = new RegisteredMethods();
+      registerMap.put(name, meth);
+    }
+    Class<?> c = o.getClass();
+    try {
+      Method method = c.getMethod(name, cargs);
+      meth.add(o, method);
+
+    } catch (NoSuchMethodException nsme) {
+      die("There is no public " + name + "() method in the class " +
+          o.getClass().getName());
+
+    } catch (Exception e) {
+      die("Could not register " + name + " + () for " + o, e);
+    }
+  }
+
+
+//  public void registerMethod(String methodName, Object target, Object... args) {
+//    registerWithArgs(methodName, target, args);
+//  }
+
+
+  public void unregisterMethod(String name, Object target) {
+    RegisteredMethods meth = registerMap.get(name);
+    if (meth == null) {
+      die("No registered methods with the name " + name + "() were found.");
+    }
+    try {
+//      Method method = o.getClass().getMethod(name, new Class[] {});
+//      meth.remove(o, method);
+      meth.remove(target);
+    } catch (Exception e) {
+      die("Could not unregister " + name + "() for " + target, e);
+    }
+
+  }
+
+
+  protected void handleMethods(String methodName) {
+    RegisteredMethods meth = registerMap.get(methodName);
+    if (meth != null) {
+      meth.handle();
+    }
+  }
+
+
+  @Deprecated
+  public void registerSize(Object o) {
+    System.err.println("The registerSize() command is no longer supported.");
 //    Class<?> methodArgs[] = new Class[] { Integer.TYPE, Integer.TYPE };
 //    registerWithArgs(sizeMethods, "size", o, methodArgs);
-//  }
+  }
 
+
+  @Deprecated
   public void registerPre(Object o) {
-    registerNoArgs(preMethods, "pre", o);
+    registerNoArgs("pre", o);
   }
 
+
+  @Deprecated
   public void registerDraw(Object o) {
-    registerNoArgs(drawMethods, "draw", o);
+    registerNoArgs("draw", o);
   }
 
+
+  @Deprecated
   public void registerPost(Object o) {
-    registerNoArgs(postMethods, "post", o);
-  }
-
-  public void registerMouseEvent(Object o) {
-    Class<?> methodArgs[] = new Class[] { MouseEvent.class };
-    registerWithArgs(mouseEventMethods, "mouseEvent", o, methodArgs);
+    registerNoArgs("post", o);
   }
 
 
-  public void registerKeyEvent(Object o) {
-    Class<?> methodArgs[] = new Class[] { KeyEvent.class };
-    registerWithArgs(keyEventMethods, "keyEvent", o, methodArgs);
-  }
-
+  @Deprecated
   public void registerDispose(Object o) {
-    registerNoArgs(disposeMethods, "dispose", o);
+    registerNoArgs("dispose", o);
   }
 
 
-  protected void registerNoArgs(RegisteredMethods meth,
-                                String name, Object o) {
+  @Deprecated
+  public void registerMouseEvent(Object o) {
     Class<?> c = o.getClass();
     try {
-      Method method = c.getMethod(name, new Class[] {});
-      meth.add(o, method);
-
-    } catch (NoSuchMethodException nsme) {
-      die("There is no public " + name + "() method in the class " +
-          o.getClass().getName());
-
+      Method method = c.getMethod("mouseEvent", new Class[] { java.awt.event.MouseEvent.class });
+      if (mouseEventMethods == null) {
+        mouseEventMethods = new RegisteredMethods();
+      }
+      mouseEventMethods.add(o, method);
     } catch (Exception e) {
-      die("Could not register " + name + " + () for " + o, e);
+      die("Could not register mouseEvent() for " + o, e);
     }
   }
 
 
-  protected void registerWithArgs(RegisteredMethods meth,
-                                  String name, Object o, Class<?> cargs[]) {
+  @Deprecated
+  public void registerKeyEvent(Object o) {
     Class<?> c = o.getClass();
     try {
-      Method method = c.getMethod(name, cargs);
-      meth.add(o, method);
-
-    } catch (NoSuchMethodException nsme) {
-      die("There is no public " + name + "() method in the class " +
-          o.getClass().getName());
-
+      Method method = c.getMethod("keyEvent", new Class[] { java.awt.event.KeyEvent.class });
+      if (keyEventMethods == null) {
+        keyEventMethods = new RegisteredMethods();
+      }
+      keyEventMethods.add(o, method);
     } catch (Exception e) {
-      die("Could not register " + name + " + () for " + o, e);
+      die("Could not register keyEvent() for " + o, e);
     }
   }
 
 
-//  public void unregisterSize(Object o) {
+  @Deprecated
+  public void unregisterSize(Object o) {
+    System.err.println("The unregisterSize() command is no longer supported.");
 //    Class<?> methodArgs[] = new Class[] { Integer.TYPE, Integer.TYPE };
 //    unregisterWithArgs(sizeMethods, "size", o, methodArgs);
+  }
+
+
+  @Deprecated
+  public void unregisterPre(Object o) {
+    unregisterMethod("pre", o);
+  }
+
+
+  @Deprecated
+  public void unregisterDraw(Object o) {
+    unregisterMethod("draw", o);
+  }
+
+
+  @Deprecated
+  public void unregisterPost(Object o) {
+    unregisterMethod("post", o);
+  }
+
+
+  @Deprecated
+  public void unregisterDispose(Object o) {
+    unregisterMethod("dispose", o);
+  }
+
+
+  @Deprecated
+  public void unregisterMouseEvent(Object o) {
+    try {
+//      Method method = o.getClass().getMethod("mouseEvent", new Class[] { MouseEvent.class });
+//      mouseEventMethods.remove(o, method);
+      mouseEventMethods.remove(o);
+    } catch (Exception e) {
+      die("Could not unregister mouseEvent() for " + o, e);
+    }
+  }
+
+
+  @Deprecated
+  public void unregisterKeyEvent(Object o) {
+    try {
+//      Method method = o.getClass().getMethod("keyEvent", new Class[] { KeyEvent.class });
+//      keyEventMethods.remove(o, method);
+      keyEventMethods.remove(o);
+    } catch (Exception e) {
+      die("Could not unregister keyEvent() for " + o, e);
+    }
+  }
+
+
+//  private void unregisterNoArgs(String name, Object o) {
+//    RegisteredMethods meth = registerMap.get(name);
+//    if (meth == null) {
+//      die("No registered methods with the name " + name + "() were found.");
+//    }
+//    try {
+////      Method method = o.getClass().getMethod(name, new Class[] {});
+////      meth.remove(o, method);
+//      meth.remove(o);
+//    } catch (Exception e) {
+//      die("Could not unregister " + name + "() for " + o, e);
+//    }
 //  }
 
-  public void unregisterPre(Object o) {
-    unregisterNoArgs(preMethods, "pre", o);
-  }
 
-  public void unregisterDraw(Object o) {
-    unregisterNoArgs(drawMethods, "draw", o);
-  }
-
-  public void unregisterPost(Object o) {
-    unregisterNoArgs(postMethods, "post", o);
-  }
-
-  public void unregisterMouseEvent(Object o) {
-    Class<?> methodArgs[] = new Class[] { MouseEvent.class };
-    unregisterWithArgs(mouseEventMethods, "mouseEvent", o, methodArgs);
-  }
-
-  public void unregisterKeyEvent(Object o) {
-    Class<?> methodArgs[] = new Class[] { KeyEvent.class };
-    unregisterWithArgs(keyEventMethods, "keyEvent", o, methodArgs);
-  }
-
-  public void unregisterDispose(Object o) {
-    unregisterNoArgs(disposeMethods, "dispose", o);
-  }
-
-
-  protected void unregisterNoArgs(RegisteredMethods meth,
-                                  String name, Object o) {
-    Class<?> c = o.getClass();
-    try {
-      Method method = c.getMethod(name, new Class[] {});
-      meth.remove(o, method);
-    } catch (Exception e) {
-      die("Could not unregister " + name + "() for " + o, e);
-    }
-  }
-
-
-  protected void unregisterWithArgs(RegisteredMethods meth,
-                                    String name, Object o, Class<?> cargs[]) {
-    Class<?> c = o.getClass();
-    try {
-      Method method = c.getMethod(name, cargs);
-      meth.remove(o, method);
-    } catch (Exception e) {
-      die("Could not unregister " + name + "() for " + o, e);
-    }
-  }
+//  private void unregisterWithArgs(String name, Object o, Class<?> cargs[]) {
+//    RegisteredMethods meth = registerMap.get(name);
+//    if (meth == null) {
+//      die("No registered methods with the name " + name + "() were found.");
+//    }
+//    try {
+////      Method method = o.getClass().getMethod(name, cargs);
+////      meth.remove(o, method);
+//      meth.remove(o);
+//    } catch (Exception e) {
+//      die("Could not unregister " + name + "() for " + o, e);
+//    }
+//  }
 
 
   //////////////////////////////////////////////////////////////
@@ -1990,7 +2126,7 @@ public class PApplet extends Applet
         frameRate = (frameRate * 0.9f) + (instantaneousRate * 0.1f);
 
         if (frameCount != 0) {
-          preMethods.handle();
+          handleMethods("pre");
         }
 
         // use dmouseX/Y as previous mouse pos, since this is the
@@ -2013,7 +2149,7 @@ public class PApplet extends Applet
         dequeueMouseEvents();
         dequeueKeyEvents();
 
-        drawMethods.handle();
+        handleMethods("draw");
 
         redraw = false;  // unset 'redraw' flag in case it was set
         // (only do this once draw() has run, not just setup())
@@ -2037,7 +2173,7 @@ public class PApplet extends Applet
       getToolkit().sync();  // force repaint now (proper method)
 
       if (frameCount != 0) {
-        postMethods.handle();
+        handleMethods("post");
       }
     }
   }
@@ -3311,12 +3447,12 @@ public class PApplet extends Applet
 
     // don't run the disposers twice
     if (thread != null) {
-    thread = null;
+      thread = null;
 
-    // shut down renderer
-    if (g != null) g.dispose();
-    disposeMethods.handle();
-  }
+      // shut down renderer
+      if (g != null) g.dispose();
+      handleMethods("dispose");
+    }
   }
 
 

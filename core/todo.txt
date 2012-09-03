@@ -39,6 +39,9 @@ _ do we need a trim() method for XML? or enableWhiteSpace()? or?
 _ XML toString(0) means no indents or newlines
 _   but no way to remove indents and still have newlines... 
 _   toString(-1)? a new method?
+_ format(2), format(4)... format() -> default to 2 params
+
+_ add loadType() and saveType()... get working with shapes, etc
 
 api to be fixed/removed
 _ remove PImage.delete() and friends from PImage, Movie, etc.
@@ -52,6 +55,8 @@ _   make PShapeOpenGL a cache object
 _   make PShapeOBJ the 3D loader
 o   separate PShape2/3D from OpenGL
 o   incorporate SVG loader into the 2D class
+
+_ createShape() with Java2D not ready to go
 
 _ loadShape() needs to live in PApplet
 
