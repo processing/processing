@@ -24,13 +24,14 @@ package processing.app;
 
 import java.awt.*;
 import java.awt.event.*;
+
 import javax.swing.*;
 
 
 /**
  * Find & Replace window for the Processing editor.
  */
-public class FindReplace extends JFrame implements ActionListener {
+public class FindReplace extends JFrame {
 
   static final int EDGE = Base.isMacOS() ? 20 : 13;
   static final int SMALL = 6;
@@ -46,7 +47,7 @@ public class FindReplace extends JFrame implements ActionListener {
 
   JButton replaceButton;
   JButton replaceAllButton;
-  JButton replaceFindButton;
+  JButton replaceAndFindButton;
   JButton previousButton;
   JButton findButton;
 
@@ -113,43 +114,33 @@ public class FindReplace extends JFrame implements ActionListener {
     JPanel buttons = new JPanel();
     buttons.setLayout(new FlowLayout(FlowLayout.CENTER,BUTTON_GAP, 0));
 
+    replaceAllButton = new JButton("Replace All");
+    replaceButton = new JButton("Replace");
+    replaceAndFindButton = new JButton("Replace & Find");
+    previousButton = new JButton("Previous");
+    findButton = new JButton("Find");
+
     // ordering is different on mac versus pc
     if (Base.isMacOS()) {
-      buttons.add(replaceAllButton = new JButton("Replace All"));
-      buttons.add(replaceButton = new JButton("Replace"));
-      buttons.add(replaceFindButton = new JButton("Replace & Find"));
-      buttons.add(previousButton = new JButton("Previous"));
-      buttons.add(findButton = new JButton("Find"));
+      buttons.add(replaceAllButton);
+      buttons.add(replaceButton);
+      buttons.add(replaceAndFindButton);
+      buttons.add(previousButton);
+      buttons.add(findButton);
+
+      // to fix ugliness.. normally macosx java 1.3 puts an
+      // ugly white border around this object, so turn it off.
+      buttons.setBorder(null);
 
     } else {
-      buttons.add(findButton = new JButton("Find"));
-      buttons.add(previousButton = new JButton("Previous")); // is this the right position for non-Mac?
-      buttons.add(replaceFindButton = new JButton("Replace & Find"));
-      buttons.add(replaceButton = new JButton("Replace"));
-      buttons.add(replaceAllButton = new JButton("Replace All"));
+      buttons.add(findButton);
+      buttons.add(previousButton);
+      buttons.add(replaceAndFindButton);
+      buttons.add(replaceButton);
+      buttons.add(replaceAllButton);
     }
     pain.add(buttons);
-
-    // to fix ugliness.. normally macosx java 1.3 puts an
-    // ugly white border around this object, so turn it off.
-    if (Base.isMacOS()) {
-      buttons.setBorder(null);
-    }
-
-    /*
-    findField.addFocusListener(new FocusListener() {
-        public void focusGained(FocusEvent e) {
-          System.out.println("Focus gained " + e.getOppositeComponent());
-        }
-
-        public void focusLost(FocusEvent e) {
-          System.out.println("Focus lost "); // + e.getOppositeComponent());
-          if (e.getOppositeComponent() == null) {
-            requestFocusInWindow();
-          }
-        }
-      });
-    */
+    setFound(false);
 
     Dimension buttonsDimension = buttons.getPreferredSize();
     int visibleButtonWidth = buttonsDimension.width - 2 * BUTTON_GAP;
@@ -206,11 +197,35 @@ public class FindReplace extends JFrame implements ActionListener {
 
     setLocationRelativeTo(null); // center
 
-    replaceButton.addActionListener(this);
-    replaceAllButton.addActionListener(this);
-    replaceFindButton.addActionListener(this);
-    findButton.addActionListener(this);
-    previousButton.addActionListener(this);
+    replaceButton.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        replace();
+      }
+    });
+
+    replaceAllButton.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        replaceAll();
+      }
+    });
+
+    replaceAndFindButton.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        replaceAndFindNext();
+      }
+    });
+
+    findButton.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        findNext();
+      }
+    });
+
+    previousButton.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        findPrevious();
+      }
+    });
 
     // you mustn't replace what you haven't found, my son
     // semantics of replace are "replace the current selection with the replace field"
@@ -257,91 +272,71 @@ public class FindReplace extends JFrame implements ActionListener {
   }
 
 
-  /*
-  public void show() {
-    findField.requestFocusInWindow();
-    super.show();
-    //findField.selectAll();
-    //findField.requestFocus();
-  }
-  */
-
-
-  public void actionPerformed(ActionEvent e) {
-    Object source = e.getSource();
-
-    if (source == findButton) {
-      findNext();
-
-    } else if (source == previousButton) {
-      findPrevious();
-
-    } else if (source == replaceFindButton) {
-      replaceAndFindNext();
-
-    } else if (source == replaceButton) {
-      replace();
-
-    } else if (source == replaceAllButton) {
-      replaceAll();
-    }
-  }
-
-
   // look for the next instance of the find string to be found
   // once found, select it (and go to that line)
   private boolean find(boolean wrap, boolean backwards) {
     String searchTerm = findField.getText();
-    //System.out.println("finding for " + search + " " + findString);
+
     // this will catch "find next" being called when no search yet
-    if (searchTerm.length() == 0) return false;
+    if (searchTerm.length() != 0) {
+      String text = editor.getText();
 
-    String text = editor.getText();
-
-    // Started work on find/replace across tabs. These two variables store
-    // the original tab and selection position so that it knew when to stop
-    // rotating through.
+      // Started work on find/replace across tabs. These two variables store
+      // the original tab and selection position so that it knew when to stop
+      // rotating through.
 //    Sketch sketch = editor.getSketch();
 //    int tabIndex = sketch.getCurrentCodeIndex();
 //    int selIndex = backwards ?
 //      editor.getSelectionStart() : editor.getSelectionStop();
 
-    if (ignoreCase) {
-      searchTerm = searchTerm.toLowerCase();
-      text = text.toLowerCase();
-    }
-
-    int nextIndex;
-    if (!backwards) {
-      //int selectionStart = editor.textarea.getSelectionStart();
-      int selectionEnd = editor.getSelectionStop();
-
-      nextIndex = text.indexOf(searchTerm, selectionEnd);
-      if (nextIndex == -1 && wrap) {
-        // if wrapping, a second chance is ok, start from beginning
-        nextIndex = text.indexOf(searchTerm, 0);
+      if (ignoreCase) {
+        searchTerm = searchTerm.toLowerCase();
+        text = text.toLowerCase();
       }
-    } else {
-      //int selectionStart = editor.textarea.getSelectionStart();
-      int selectionStart = editor.getSelectionStart()-1;
 
-      if (selectionStart >= 0) {
-        nextIndex = text.lastIndexOf(searchTerm, selectionStart);
+      int nextIndex;
+      if (!backwards) {
+        //int selectionStart = editor.textarea.getSelectionStart();
+        int selectionEnd = editor.getSelectionStop();
+
+        nextIndex = text.indexOf(searchTerm, selectionEnd);
+        if (nextIndex == -1 && wrap) {
+          // if wrapping, a second chance is ok, start from beginning
+          nextIndex = text.indexOf(searchTerm, 0);
+        }
       } else {
-        nextIndex = -1;
-      }
-      if (wrap && nextIndex == -1) {
-        // if wrapping, a second chance is ok, start from the end
-        nextIndex = text.lastIndexOf(searchTerm);
-      }
-    }
+        //int selectionStart = editor.textarea.getSelectionStart();
+        int selectionStart = editor.getSelectionStart()-1;
 
-    if (nextIndex != -1) {
-      editor.setSelection(nextIndex, nextIndex + searchTerm.length());
-    } else {
-      //Toolkit.getDefaultToolkit().beep();
+        if (selectionStart >= 0) {
+          nextIndex = text.lastIndexOf(searchTerm, selectionStart);
+        } else {
+          nextIndex = -1;
+        }
+        if (wrap && nextIndex == -1) {
+          // if wrapping, a second chance is ok, start from the end
+          nextIndex = text.lastIndexOf(searchTerm);
+        }
+      }
+
+      if (nextIndex != -1) {
+        editor.setSelection(nextIndex, nextIndex + searchTerm.length());
+      } else {
+        //Toolkit.getDefaultToolkit().beep();
+      }
+      if (nextIndex != -1) {
+        setFound(true);
+        return true;
+      }
     }
-    return nextIndex != -1;
+    setFound(false);
+    return false;
+  }
+
+
+  protected void setFound(boolean found) {
+    replaceButton.setEnabled(found);
+    replaceAndFindButton.setEnabled(found);
   }
 
 
@@ -352,6 +347,7 @@ public class FindReplace extends JFrame implements ActionListener {
   public void replace() {
     editor.setSelectedText(replaceField.getText());
     editor.getSketch().setModified(true);  // TODO is this necessary?
+    setFound(false);
   }
 
 
@@ -385,6 +381,7 @@ public class FindReplace extends JFrame implements ActionListener {
     if (!foundAtLeastOne) {
       Toolkit.getDefaultToolkit().beep();
     }
+    setFound(false);
   }
 
 

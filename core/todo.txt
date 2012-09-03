@@ -28,9 +28,17 @@ X   http://code.google.com/p/processing/issues/detail?id=1068
 earlier
 X add breakShape to the public API -> begin/endContour
 x   or handle differently in general.. nested beginPath() calls?
+A standardize PGL behavior
+A   PGL pgl = beginPGL();
+A   pgl.vertex3f(...)
+A   pgl.enable(PGL.SOMETHING_PARAM);
 
+xml tweaks
 _ beginning slash in getChild() threw an NPE
 _ do we need a trim() method for XML? or enableWhiteSpace()? or?
+_ XML toString(0) means no indents or newlines
+_   but no way to remove indents and still have newlines... 
+_   toString(-1)? a new method?
 
 api to be fixed/removed
 _ remove PImage.delete() and friends from PImage, Movie, etc.
@@ -53,6 +61,8 @@ _ loadPixels() implementation needs to be in PApplet, not PGraphics
 docs
 _ textureWrap() CLAMP and REPEAT now added
 _ begin/endContour()
+_ explain the new PGL interface
+
 
 _ implement callbacks for images and other loadXxxx() functions
 _   remove requestImage() and friends
@@ -85,22 +95,17 @@ void iconLoaded(PImage image, String filename) {
 }
 
 
-_ standardize PGL behavior
-PGL pgl = beginPGL();
-pgl.vertex3f(...)
-pgl.enable(PGL.SOMETHING_PARAM);
-
-_ now that we can wrap exceptions, do die() and warn() methods
+_ wrap exceptions with die() and warn() methods
 _   this way, people can make use of exceptions if they would rather
 _   or shut them off if they don't want to 
 _   also need to explain exception handling in general
 _   http://code.google.com/p/processing/issues/detail?id=183
 
 2.0 FINAL / constants/hints
-_ bring PConstants back in line w/ previous 1.5 (can't renumber)
-_ consider enable("mipmaps") instead of hint(ENABLE_MIPMAPS)
+o bring PConstants back in line w/ previous 1.5 (can't renumber)
+o consider enable("mipmaps") instead of hint(ENABLE_MIPMAPS)
+X clean up PConstants and move things into PGraphics that needn't be available
 _ hint(DISABLE_LOADPIXELS) -> faster rendering in Java2D
-_ clean up PConstants and move things into PGraphics that needn't be available
 _ 2x and 4x smooth hints no longer needed/supported
 _   http://code.google.com/p/processing/issues/detail?id=1144
 
