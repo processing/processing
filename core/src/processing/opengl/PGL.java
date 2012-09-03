@@ -795,7 +795,7 @@ public class PGL {
     }
   }
 
-
+/*
   protected boolean primaryIsDoubleBuffered() {
     // When using the multisampled FBO, the color
     // FBO is single buffered as it has only one
@@ -803,7 +803,7 @@ public class PGL {
     //return glColorFbo[0] == 0;
     return true;
   }
-
+*/
 
   protected boolean primaryIsFboBacked() {
     return glColorFbo[0] != 0;
@@ -887,6 +887,28 @@ public class PGL {
     }
   }
 
+  protected void bindBackBufferTex() {
+    if (!texturingIsEnabled(GL.GL_TEXTURE_2D)) {
+      enableTexturing(GL.GL_TEXTURE_2D);
+    }
+    gl.glBindTexture(GL.GL_TEXTURE_2D, glColorTex[backTex]);
+  }
+
+
+  protected void unbindBackBufferTex() {
+    if (textureIsBound(GL.GL_TEXTURE_2D, glColorTex[backTex])) {
+      // We don't want to unbind another texture
+      // that might be bound instead of this one.
+      if (!texturingIsEnabled(GL.GL_TEXTURE_2D)) {
+        enableTexturing(GL.GL_TEXTURE_2D);
+        gl.glBindTexture(GL.GL_TEXTURE_2D, 0);
+        disableTexturing(GL.GL_TEXTURE_2D);
+      } else {
+        gl.glBindTexture(GL.GL_TEXTURE_2D, 0);
+      }
+    }
+  }
+
 
   ///////////////////////////////////////////////////////////
 
@@ -941,12 +963,31 @@ public class PGL {
 
       // Leaving the color FBO currently bound as the screen FB.
       gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, glColorFbo[0]);
+
+
+
+      // Blitting the front texture into the back texture.
+      gl.glFramebufferTexture2D(GL.GL_FRAMEBUFFER,
+                                GL.GL_COLOR_ATTACHMENT0,
+                                GL.GL_TEXTURE_2D,
+                                glColorTex[backTex], 0);
+      drawTexture(GL.GL_TEXTURE_2D, glColorTex[frontTex], fboWidth, fboHeight,
+                  0, 0, pg.width, pg.height, 0, 0, pg.width, pg.height);
+
+      // Leave the front texture as current
+      gl.glFramebufferTexture2D(GL.GL_FRAMEBUFFER,
+                                GL.GL_COLOR_ATTACHMENT0,
+                                GL.GL_TEXTURE_2D,
+                                glColorTex[frontTex], 0);
+
+
+
       PGraphicsOpenGL.screenFramebuffer.glFbo = glColorFbo[0];
 
       // Swapping front and back textures.
-      int temp = frontTex;
-      frontTex = backTex;
-      backTex = temp;
+//      int temp = frontTex;
+//      frontTex = backTex;
+//      backTex = temp;
     }
   }
 

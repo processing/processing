@@ -1554,9 +1554,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
     if (primarySurface) {
       pgl.updatePrimary();
-      if (pgl.primaryIsDoubleBuffered()) {
-        pgl.drawBuffer(pgl.primaryDrawBuffer());
-      }
+      pgl.drawBuffer(pgl.primaryDrawBuffer());
     } else {
       if (!pgl.initialized) {
         initOffscreen();
@@ -1860,15 +1858,25 @@ public class PGraphicsOpenGL extends PGraphics {
       pgl.depthMask(true);
     }
 
-    if (pgl.primaryIsDoubleBuffered()) {
-      pgl.drawBuffer(pgl.primaryDrawBuffer());
-    }
+    pgl.drawBuffer(pgl.primaryDrawBuffer());
   }
 
 
   protected void beginPixelsOp(int op) {
     if (primarySurface) {
-      if (pgl.primaryIsDoubleBuffered()) {
+      if (pgl.primaryIsFboBacked()) {
+        if (op == OP_READ) {
+          // We read from the color FBO, but the multisample FBO is currently
+          // bound, so:
+          offscreenNotCurrent = true;
+          pgl.bindPrimaryColorFBO();
+          pgl.readBuffer(pgl.primaryDrawBuffer());
+        } else {
+          // We write directly to the multisample FBO.
+          offscreenNotCurrent = false;
+          pgl.drawBuffer(pgl.primaryDrawBuffer());
+        }
+      } else {
         // We read or write from the back buffer, where all the
         // drawing in the current frame is taking place.
         if (op == OP_READ) {
@@ -1876,20 +1884,6 @@ public class PGraphicsOpenGL extends PGraphics {
         } else {
           pgl.drawBuffer(pgl.primaryDrawBuffer());
         }
-        offscreenNotCurrent = false;
-      } else if (pgl.primaryIsFboBacked()) {
-        if (op == OP_READ) {
-          // We read from the color FBO, but the multisample FBO is currently
-          // bound, so:
-          offscreenNotCurrent = true;
-          pgl.bindPrimaryColorFBO();
-          pgl.readBuffer(PGL.COLOR_ATTACHMENT0);
-        } else {
-          // We write directly to the multisample FBO.
-          offscreenNotCurrent = false;
-          pgl.drawBuffer(PGL.COLOR_ATTACHMENT0);
-        }
-      } else {
         offscreenNotCurrent = false;
       }
     } else {
@@ -5913,6 +5907,24 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
+  protected void bindBackTexture() {
+    if (primarySurface) {
+      pgl.bindBackBufferTex();
+    } else {
+
+    }
+  }
+
+
+  protected void unbindBackTexture() {
+    if (primarySurface) {
+      pgl.unbindBackBufferTex();
+    } else {
+
+    }
+  }
+
+
   /**
    * This utility method creates a texture for the provided image, and adds it
    * to the metadata cache of the image.
@@ -6480,6 +6492,8 @@ public class PGraphicsOpenGL extends PGraphics {
     protected int projmodelviewMatrixLoc;
     protected int modelviewMatrixLoc;
     protected int projectionMatrixLoc;
+    protected int backbufferSamplerLoc;
+    protected int resolutionLoc;
 
     protected int inVertexLoc;
     protected int inColorLoc;
@@ -6508,6 +6522,9 @@ public class PGraphicsOpenGL extends PGraphics {
       projmodelviewMatrixLoc = getUniformLoc("projmodelviewMatrix");
       modelviewMatrixLoc = getUniformLoc("modelviewMatrix");
       projectionMatrixLoc = getUniformLoc("projectionMatrix");
+
+      backbufferSamplerLoc = getUniformLoc("backbufferSampler");
+      resolutionLoc = getUniformLoc("resolution");
     }
 
     @Override
@@ -6548,12 +6565,28 @@ public class PGraphicsOpenGL extends PGraphics {
         pgCurrent.updateGLProjection();
         setUniformMatrix(projectionMatrixLoc, pgCurrent.glProjection);
       }
+
+      float w = pgCurrent.width;
+      float h = pgCurrent.height;
+      setUniformValue(resolutionLoc, w, h);
+
+      if (-1 < backbufferSamplerLoc) {
+        setUniformValue(backbufferSamplerLoc, lastTexUnit);
+        pgl.activeTexture(PGL.TEXTURE0 + lastTexUnit);
+        pgCurrent.bindBackTexture();
+      }
     }
 
     @Override
     public void unbind() {
       if (-1 < inVertexLoc) pgl.disableVertexAttribArray(inVertexLoc);
       if (-1 < inColorLoc)  pgl.disableVertexAttribArray(inColorLoc);
+
+      if (-1 < backbufferSamplerLoc) {
+        pgl.activeTexture(PGL.TEXTURE0 + lastTexUnit);
+        pgCurrent.unbindBackTexture();
+        pgl.activeTexture(PGL.TEXTURE0);
+      }
 
       pgl.bindBuffer(PGL.ARRAY_BUFFER, 0);
 
@@ -6744,8 +6777,6 @@ public class PGraphicsOpenGL extends PGraphics {
     protected int textureSamplerLoc;
     protected int texcoordMatrixLoc;
     protected int texcoordOffsetLoc;
-    protected int backbufferSamplerLoc;
-    protected int resolutionLoc;
 
     protected float[] tcmat;
 
@@ -6769,9 +6800,6 @@ public class PGraphicsOpenGL extends PGraphics {
       textureSamplerLoc = getUniformLoc("textureSampler");
       texcoordMatrixLoc = getUniformLoc("texcoordMatrix");
       texcoordOffsetLoc = getUniformLoc("texcoordOffset");
-
-      backbufferSamplerLoc = getUniformLoc("backbufferSampler");
-      resolutionLoc = getUniformLoc("resolution");
     }
 
     @Override
@@ -6832,10 +6860,6 @@ public class PGraphicsOpenGL extends PGraphics {
       super.bind();
 
       if (-1 < inTexcoordLoc) pgl.enableVertexAttribArray(inTexcoordLoc);
-
-      if (-1 < backbufferSamplerLoc) {
-     //   ...
-      }
     }
 
     @Override

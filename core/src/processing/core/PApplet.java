@@ -13619,6 +13619,12 @@ public class PApplet extends Applet
   }
 
 
+  public void clear() {
+    if (recorder != null) recorder.clear();
+    g.clear();
+  }
+
+
   /**
    * ( begin auto-generated from background.xml )
    *
@@ -14056,6 +14062,11 @@ public class PApplet extends Applet
    */
   public boolean isGL() {
     return g.isGL();
+  }
+
+
+  public Object getNative() {
+    return g.getNative();
   }
 
 
