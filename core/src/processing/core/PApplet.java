@@ -13619,12 +13619,6 @@ public class PApplet extends Applet
   }
 
 
-  public void clear() {
-    if (recorder != null) recorder.clear();
-    g.clear();
-  }
-
-
   /**
    * ( begin auto-generated from background.xml )
    *
