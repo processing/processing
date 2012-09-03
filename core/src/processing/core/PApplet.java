@@ -731,23 +731,6 @@ public class PApplet extends Applet
   Object pauseObject = new Object();
   Thread thread;
 
-//  static final String[] registerNames = {
-//    "size",
-//    "pause", "resume",
-//    "pre", "draw", "post",
-//    "mouseEvent", "keyEvent", "touchEvent",
-//    "dispose"
-//  };
-  HashMap<String, RegisteredMethods> registerMap =
-    new HashMap<String, PApplet.RegisteredMethods>();
-//  protected RegisteredMethods sizeMethods;
-//  protected RegisteredMethods pauseMethods, resumeMethods;
-//  protected RegisteredMethods preMethods, drawMethods, postMethods;
-  /** Old methods with AWT API that should not be used. */
-  protected RegisteredMethods mouseEventMethods, keyEventMethods;
-//  protected RegisteredMethods disposeMethods;
-
-
   // messages to send if attached as an external vm
 
   /**
@@ -1010,7 +993,6 @@ public class PApplet extends Applet
     paused = true; // causes animation thread to sleep
 
     pause();
-//    pauseMethods.handle();
     handleMethods("pause");
 
     // actual pause will happen in the run() method
@@ -1059,8 +1041,14 @@ public class PApplet extends Applet
   }
 
 
-
   //////////////////////////////////////////////////////////////
+
+
+  /** Map of registered methods, stored by name. */
+  HashMap<String, RegisteredMethods> registerMap =
+    new HashMap<String, PApplet.RegisteredMethods>();
+  /** Old methods with AWT API that should not be used. */
+  RegisteredMethods mouseEventMethods, keyEventMethods;
 
 
   class RegisteredMethods {
@@ -1170,6 +1158,8 @@ public class PApplet extends Applet
    * <li>pre – at the very top of the draw() method (safe to draw)
    * <li>draw – at the end of the draw() method (safe to draw)
    * <li>post – after draw() has exited (not safe to draw)
+   * <li>pause() – called when the sketch is paused
+   * <li>resume() – called when the sketch is resumed
    * <li>dispose – when the sketch is shutting down (definitely not safe to draw)
    * <ul>
    * In addition, the new (for 2.0) processing.event classes are passed to
@@ -2153,20 +2143,12 @@ public class PApplet extends Applet
 
         redraw = false;  // unset 'redraw' flag in case it was set
         // (only do this once draw() has run, not just setup())
-
       }
-
       g.endDraw();
 
       if (recorder != null) {
         recorder.endDraw();
       }
-
-      frameRateLastNanos = now;
-      frameCount++;
-
-      // 1.2.1 version
-//      paint();
 
       // 1.5.1 version
       repaint();
@@ -2175,6 +2157,9 @@ public class PApplet extends Applet
       if (frameCount != 0) {
         handleMethods("post");
       }
+
+      frameRateLastNanos = now;
+      frameCount++;
     }
   }
 
@@ -2432,7 +2417,9 @@ public class PApplet extends Applet
       }
     }
 
-    mouseEventMethods.handle(new Object[] { event });
+    if (mouseEventMethods != null) {
+      mouseEventMethods.handle(new Object[] { event });
+    }
 
     // this used to only be called on mouseMoved and mouseDragged
     // change it back if people run into trouble
@@ -2671,7 +2658,9 @@ public class PApplet extends Applet
     key = event.getKeyChar();
     keyCode = event.getKeyCode();
 
-    keyEventMethods.handle(new Object[] { event });
+    if (keyEventMethods != null) {
+      keyEventMethods.handle(new Object[] { event });
+    }
 
     switch (event.getID()) {
     case KeyEvent.KEY_PRESSED:
