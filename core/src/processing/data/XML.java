@@ -39,6 +39,8 @@ import processing.core.PApplet;
 /**
  * This is the base class used for the Processing XML library,
  * representing a single node of an XML tree.
+ *
+ * @webref data:composite
  */
 public class XML implements Serializable {
 
