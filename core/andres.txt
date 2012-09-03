@@ -10,9 +10,7 @@ X Fixed color update issues in PShapeOpenGL.
 X Implement mask(PImage) using a shader.  
 X Add DISABLE_PERSPECTIVE_CORRECTED_STROKE hint for both points and lines,  
 X   remove DISABLE_PERSPECTIVE_CORRECTED_LINES
-X Back-buffer support in shaders: 
-X   http://code.google.com/p/processing/issues/detail?id=1169
-X Add some more shader examples (monjori, game of life, etc)
+X Add some more shader examples (monjori, etc)
 
 0208 video 
 X Cleanup video API: 
@@ -31,14 +29,10 @@ X   http://code.google.com/p/processing/issues/detail?id=1145
 X Rotation problem on Android: 
 X   http://code.google.com/p/processing/issues/detail?id=1146
     
-
-0208 todo pre-beta:
-_ Refactor PShapeOpenGL as cache object
-_ Add general interface for file loading 
+processing-core
+_ Back-buffer support in shaders: 
+_   http://code.google.com/p/processing/issues/detail?id=1169
 _ Decide on the names of the uniform and attribute variables in the shaders
-
-
-processing-core todo (post-beta):
 _ Revise/correct/update warning and error messages.
 _ Cleaner Implementation of PImage.loadPixels()
 _ some glitches with SVG shapes in P2D (load world.svg and disable style to see)
@@ -59,13 +53,12 @@ _ Re-implement (maybe) point rendering to use quads for round points (3D): use
 _  fragment shader to calculate pixels inside circle using the radius stored 
 _  in point attributes. Need to properly take care of aliasing at the border.
 
-
-processing-video todo (post-beta)
+processing-video
 _ New gstreamer binaries from GStreamer SDK:
 _   http://docs.gstreamer.com/display/GstSDK/Installing+the+SDK
 _   http://cgit.freedesktop.org/gstreamer-sdk/cerbero/tree/
 
-processing-android todo (post-beta):
+processing-android
 _ noLoop/redraw not working
 _ Mipmaps are disabled, need manual generation
 _ make OpenGL examples work on emulator
