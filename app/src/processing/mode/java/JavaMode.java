@@ -92,7 +92,7 @@ public class JavaMode extends Mode {
 
 
   public String getTitle() {
-    return "Standard";
+    return "Java";
   }
 
 
