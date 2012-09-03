@@ -505,7 +505,6 @@ public class PGL {
 
 
   protected void initPrimarySurface(int antialias) {
-/*
     if (ENABLE_OSX_SCREEN_FBO) {
       needScreenFBO = false;
       glColorFbo[0] = 0;
@@ -527,8 +526,6 @@ public class PGL {
         }
       }
     }
-*/
-    needScreenFBO = true;
 
     if (profile == null) {
       profile = GLProfile.getDefault();
@@ -634,7 +631,8 @@ public class PGL {
 
       // Create the color texture...
       gl.glGenTextures(2, glColorTex, 0);
-      for (int i = 0; i < 2; i++) {
+//      for (int i = 0; i < 2; i++) { // Don't create back-buffer for now.
+      for (int i = 0; i < 1; i++) {
         gl.glBindTexture(GL.GL_TEXTURE_2D, glColorTex[i]);
         gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER,
                            GL.GL_NEAREST);
@@ -965,20 +963,20 @@ public class PGL {
       gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, glColorFbo[0]);
 
 
-
-      // Blitting the front texture into the back texture.
-      gl.glFramebufferTexture2D(GL.GL_FRAMEBUFFER,
-                                GL.GL_COLOR_ATTACHMENT0,
-                                GL.GL_TEXTURE_2D,
-                                glColorTex[backTex], 0);
-      drawTexture(GL.GL_TEXTURE_2D, glColorTex[frontTex], fboWidth, fboHeight,
-                  0, 0, pg.width, pg.height, 0, 0, pg.width, pg.height);
-
-      // Leave the front texture as current
-      gl.glFramebufferTexture2D(GL.GL_FRAMEBUFFER,
-                                GL.GL_COLOR_ATTACHMENT0,
-                                GL.GL_TEXTURE_2D,
-                                glColorTex[frontTex], 0);
+      // Disabling back-buffer for the time being.
+//      // Blitting the front texture into the back texture.
+//      gl.glFramebufferTexture2D(GL.GL_FRAMEBUFFER,
+//                                GL.GL_COLOR_ATTACHMENT0,
+//                                GL.GL_TEXTURE_2D,
+//                                glColorTex[backTex], 0);
+//      drawTexture(GL.GL_TEXTURE_2D, glColorTex[frontTex], fboWidth, fboHeight,
+//                  0, 0, pg.width, pg.height, 0, 0, pg.width, pg.height);
+//
+//      // Leave the front texture as current
+//      gl.glFramebufferTexture2D(GL.GL_FRAMEBUFFER,
+//                                GL.GL_COLOR_ATTACHMENT0,
+//                                GL.GL_TEXTURE_2D,
+//                                glColorTex[frontTex], 0);
 
       // TODO: check if the screen FBO should be left bound instead
       PGraphicsOpenGL.screenFramebuffer.glFbo = glColorFbo[0];
