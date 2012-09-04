@@ -1,7 +1,15 @@
 0209 android
 A GL android sketch stops running after rotation
 A   http://code.google.com/p/processing/issues/detail?id=1146
+X lack of registerXxx() implementation is breaking pre() and post() in particles
+X pause/resume trickiness with interactive apps
+X   can we serialize objects (even if slow?)
+X   add pause() and resume() methods to PApplet -> this is start/stop
+X register(this, "pause") -> libs will need pause events on android
 
+_ modify MotionEvent code to use TouchEvent class, even if basic version
+_   internally, PApplet might subclass it for the pointers
+_   but queueing needs to work
 
 _ inside AndroidPreprocessor
 _   processing.mode.java.JavaBuild.scrubComments(sketch.getCode(0).getProgram())
@@ -15,8 +23,6 @@ _   java.lang.RuntimeException: Unable to start activity ComponentInfo{processin
 
 _ Android OPENGL renderer + JAVA2D PGraphics results in PTexture exception
 _   http://code.google.com/p/processing/issues/detail?id=1019
-
-_ lack of registerXxx() implementation is breaking pre() and post() in particles
 
 _ focus handling note:
 _   http://android-developers.blogspot.com/2011/11/making-android-games-that-play-nice.html
@@ -42,13 +48,9 @@ _   optimize for android use
 _   need to set permissions as necessary (therefore add manifest files)
 
 lifecycle/size changes/etc
-_ pause/resume trickiness with interactive apps
-_   can we serialize objects (even if slow?)
-_   add pause() and resume() methods to PApplet -> this is start/stop
 _ need to smooth out screen orientation changes
 _ g2 and g3 are no longer disposed on pause (0195), but probably should be
 _   they're deleted when dispose() is called (on exit()) 
-_ register(this, "pause") -> libs will need pause events on android
 _ add registered methods again
 _   need to figure out generic event queueing first
 _   may need a different subset of methods, and introduce new ones

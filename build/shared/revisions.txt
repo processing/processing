@@ -1,3 +1,62 @@
+PROCESSING 2.0a10 (REV 0209) - 3 September 2012
+
+Bug fixes, new registered methods for libraries, and hopefully a beta 
+coming shortly...
+
+[ changes ] 
+
++ Require 10.6.8 as minimum Mac OS X system version. 
+
++ Change name from "Standard" to "Java" mode.
+
++ Save opened/closed state of entries in the examples browser
+  http://code.google.com/p/processing/issues/detail?id=827
+
++ Lots of internal changes to loadShape() and PShape. 
+
++ Work on making API more generic and consistent for cross-platform use.
+  Font PFont.getFont() -> Object PFont.getNative()
+  Typeface PFont.getTypeface() -> Object PFont.getNative()
+  Image PImage.getImage() -> Object PImage.getNative()
+  Bitmap PImage.getBitmap() -> Object PImage.getNative()
+
++ beginGL() and endGL() are gone, and beginPGL() and endPGL() exist 
+  in their place. The PGL class is a layer that lets us talk to 
+  OpenGL in a way that's cross-platform and consistent. It also has
+  many GL calls for people who want to access GL directly.
+
++ New syntax introduced for libraries and registered methods. 
+  Documentation coming soon.
+
+[ bug fixes ] 
+
++ Handle dimming the Find/Replace buttons.
+  http://code.google.com/p/processing/issues/detail?id=1056
+
++ Any double-click inside Examples window opened the last selection on Windows
+  http://code.google.com/p/processing/issues/detail?id=1201
+
++ loadImage() with spaces in path broken with exported applications on OS X
+  http://code.google.com/p/processing/issues/detail?id=1073
+
++ Minor speed fix for PVector.limit()
+  http://code.google.com/p/processing/issues/detail?id=1122
+
++ Jagged / Glitchy JAVA2D shape strokes in Java 1.6 due to recent
+  change introduced in Java update from Oracle.
+  http://code.google.com/p/processing/issues/detail?id=1068
+
++ GL Android sketches halting after rotation.
+  http://code.google.com/p/processing/issues/detail?id=1146
+
+[ known issues ] 
+
++ createShape() is not implemented with the default 2D renderer.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING 2.0a9 (REV 0208) - 1 September 2012
 
 As we inch closer to beta, a quick release for testing. 
