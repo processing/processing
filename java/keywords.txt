@@ -286,6 +286,31 @@ substring	KEYWORD3	String_substring_
 toLowerCase	KEYWORD3	String_toLowerCase_
 toUpperCase	KEYWORD3	String_toUpperCase_
 
+# Temporary additions 3 September 2012 as the reference is getting updated
+PShape	KEYWORD1
+createShape	KEYWORD2
+beginContour	KEYWORD2
+endContour	KEYWORD2
+end	KEYWORD2
+addChild	KEYWORD2
+
+PShader	KEYWORD1
+loadShader	KEYWORD2
+resetShader	KEYWORD2
+bind	KEYWORD2
+shader	KEYWORD2
+  
+blendMode	KEYWORD2
+  
+selectInput	KEYWORD2
+selectOutput	KEYWORD2
+selectFolder	KEYWORD2
+  
+saveType	KEYWORD2
+loadType	KEYWORD2
+clip	KEYWORD2
+noClip	KEYWORD2
+
 
 # Operators are without KEYWORDS
 
@@ -384,7 +409,7 @@ day	KEYWORD2	day_
 degrees	KEYWORD2	degrees_
 directionalLight	KEYWORD2	directionalLight_
 displayHeight	KEYWORD5	displayHeight
-width	KEYWORD5	displayWidth
+displayWidth	KEYWORD5	displayWidth
 dist	KEYWORD2	dist_
 draw	KEYWORD2	draw_
 ellipse	KEYWORD2	ellipse_
@@ -488,7 +513,6 @@ blend	KEYWORD3	PImage_blend_
 copy	KEYWORD3	PImage_copy_
 filter	KEYWORD3	PImage_filter_
 get	KEYWORD3	PImage_get_
-height	KEYWORD4	PImage_height
 loadPixels	KEYWORD3	PImage_loadPixels_
 mask	KEYWORD3	PImage_mask_
 pixels	KEYWORD4	PImage_pixels
@@ -496,7 +520,6 @@ resize	KEYWORD3	PImage_resize_
 save	KEYWORD3	PImage_save_
 set	KEYWORD3	PImage_set_
 updatePixels	KEYWORD3	PImage_updatePixels_
-width	KEYWORD4	PImage_width
 pixels	KEYWORD5	pixels
 pmouseX	KEYWORD5	pmouseX
 pmouseY	KEYWORD5	pmouseY
@@ -514,7 +537,6 @@ PShape	KEYWORD1	PShape
 disableStyle	KEYWORD3	PShape_disableStyle_
 enableStyle	KEYWORD3	PShape_enableStyle_
 getChild	KEYWORD3	PShape_getChild_
-height	KEYWORD4	PShape_height
 isVisible	KEYWORD3	PShape_isVisible_
 resetMatrix	KEYWORD3	PShape_resetMatrix_
 rotate	KEYWORD3	PShape_rotate_
@@ -524,7 +546,6 @@ rotateZ	KEYWORD3	PShape_rotateZ_
 scale	KEYWORD3	PShape_scale_
 setVisible	KEYWORD3	PShape_setVisible_
 translate	KEYWORD3	PShape_translate_
-width	KEYWORD4	PShape_width
 pushMatrix	KEYWORD2	pushMatrix_
 pushStyle	KEYWORD2	pushStyle_
 PVector	KEYWORD1	PVector

@@ -1,7 +1,11 @@
-PShader monjori;
+/**
+ * Monjori
+ */
+ 
+ PShader monjori;
 
 void setup() {
-  size(512, 384, P2D);
+  size(640, 360, P2D);
   noStroke();
  
   monjori = loadShader("monjori.glsl");

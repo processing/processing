@@ -11,26 +11,23 @@
  
 float x;
 float y;
-float targetX, targetY;
 float easing = 0.05;
 
-void setup() 
-{
+void setup() {
   size(640, 360); 
   noStroke();  
 }
 
-void draw() 
-{ 
+void draw() { 
   background(51);
   
-  targetX = mouseX;
+  float targetX = mouseX;
   float dx = targetX - x;
   if(abs(dx) > 1) {
     x += dx * easing;
   }
   
-  targetY = mouseY;
+  float targetY = mouseY;
   float dy = targetY - y;
   if(abs(dy) > 1) {
     y += dy * easing;
