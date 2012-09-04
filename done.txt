@@ -1,3 +1,16 @@
+0209 pde (2.0b1)
+X require Mac OS X 10.6.8 as the minimum
+X replace/find need to dim out the buttons 
+X   i.e. hitting 'replace' multiple times causes weirdness
+X   and replace/replace+find buttons shouldn't be active until after a find
+X   http://code.google.com/p/processing/issues/detail?id=1056
+X change "Standard" to "Java" mode
+X Any double-click inside Examples window opening the last selection on Windows
+X   http://code.google.com/p/processing/issues/detail?id=1201
+X example browser state
+X   http://code.google.com/p/processing/issues/detail?id=827
+
+
 0208 pde (2.0a9)
 X Help menu broken when Processing has spaces in its path name in 2.0a8
 X   http://code.google.com/p/processing/issues/detail?id=1164
