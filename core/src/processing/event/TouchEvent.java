@@ -23,18 +23,9 @@
 package processing.event;
 
 
-public class TouchEvent {
-  Object nativeObject;
+public class TouchEvent extends Event {
 
-  float x, y;
-
-
-  public TouchEvent(Object nativeObject) {
-    this.nativeObject = nativeObject;
-  }
-
-
-  public Object getNative() {
-    return nativeObject;
+  public TouchEvent(Object nativeObject, long millis, int action, int modifiers) {
+    super(nativeObject, millis, action, modifiers);
   }
 }
