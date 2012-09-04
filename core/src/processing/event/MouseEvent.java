@@ -22,19 +22,68 @@
 
 package processing.event;
 
-
-public class MouseEvent {
-  Object nativeObject;
-
-  int x, y;
+//import processing.core.PConstants;
 
 
-  public MouseEvent(Object nativeObject) {
-    this.nativeObject = nativeObject;
+public class MouseEvent extends Event {
+  static public final int PRESSED = 1;
+  static public final int RELEASED = 2;
+  static public final int CLICKED = 3;
+  static public final int DRAGGED = 4;
+  static public final int MOVED = 5;
+  static public final int ENTERED = 6;
+  static public final int EXITED = 7;
+
+  protected int x, y;
+  protected int button;
+  protected int clickCount;
+
+
+//  public MouseEvent(int x, int y) {
+//    this(null,
+//         System.currentTimeMillis(), PRESSED, 0,
+//         x, y, PConstants.LEFT, 1);
+//  }
+
+
+  public MouseEvent(Object nativeObject,
+                    long millis, int action, int modifiers,
+                    int x, int y, int button, int clickCount) {
+    super(nativeObject, millis, action, modifiers);
+    this.x = x;
+    this.y = y;
+    this.button = button;
+    this.clickCount = clickCount;
   }
 
 
-  public Object getNative() {
-    return nativeObject;
+  public int getX() {
+    return x;
   }
+
+
+  public int getY() {
+    return y;
+  }
+
+
+  /** Which button was pressed, either LEFT, CENTER, or RIGHT. */
+  public int getButton() {
+    return button;
+  }
+
+
+//  public void setButton(int button) {
+//    this.button = button;
+//  }
+
+
+  public int getClickCount() {
+    return clickCount;
+  }
+
+
+//  public void setClickCount(int clickCount) {
+//    this.clickCount = clickCount;
+//  }
 }
