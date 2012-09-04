@@ -44,8 +44,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.format.Time;
 import android.util.*;
-import android.view.*;
+import android.view.MotionEvent;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.ViewGroup.LayoutParams;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.*;
 
 import org.apache.http.client.HttpClient;
@@ -55,6 +59,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpEntity;
 
 import processing.data.*;
+import processing.event.*;
 import processing.opengl.*;
 
 
@@ -267,7 +272,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
   /**
    * the last KeyEvent object passed into a mouse function.
    */
-//  public KeyEvent keyEvent;
+  public KeyEvent keyEvent;
 
   /**
    * Gets set to true/false as the applet gains/loses focus.
@@ -742,13 +747,13 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
 
     @Override
-    public boolean onKeyDown(int code, KeyEvent event) {
+    public boolean onKeyDown(int code, android.view.KeyEvent event) {
       return surfaceKeyDown(code, event);
     }
 
 
     @Override
-    public boolean onKeyUp(int code, KeyEvent event) {
+    public boolean onKeyUp(int code, android.view.KeyEvent event) {
       return surfaceKeyUp(code, event);
     }
 
@@ -897,13 +902,13 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
 
     @Override
-    public boolean onKeyDown(int code, KeyEvent event) {
+    public boolean onKeyDown(int code, android.view.KeyEvent event) {
       return surfaceKeyDown(code, event);
     }
 
 
     @Override
-    public boolean onKeyUp(int code, KeyEvent event) {
+    public boolean onKeyUp(int code, android.view.KeyEvent event) {
       return surfaceKeyUp(code, event);
     }
 
@@ -952,22 +957,22 @@ public class PApplet extends Activity implements PConstants, Runnable {
    */
   public boolean surfaceTouchEvent(MotionEvent event) {
 //    println(event);
-    checkMotionEvent(event);
+    nativeMotionEvent(event);
 //    return super.onTouchEvent(event);
     return true;
   }
 
 
-  public boolean surfaceKeyDown(int code, KeyEvent event) {
+  public boolean surfaceKeyDown(int code, android.view.KeyEvent event) {
     //  System.out.println("got onKeyDown for " + code + " " + event);
-    checkKeyEvent(event);
+    nativeKeyEvent(event);
     return super.onKeyDown(code, event);
   }
 
 
-  public boolean surfaceKeyUp(int code, KeyEvent event) {
+  public boolean surfaceKeyUp(int code, android.view.KeyEvent event) {
     //  System.out.println("got onKeyUp for " + code + " " + event);
-    checkKeyEvent(event);
+    nativeKeyEvent(event);
     return super.onKeyUp(code, event);
   }
 
@@ -1199,8 +1204,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
    * <li>pre – at the very top of the draw() method (safe to draw)
    * <li>draw – at the end of the draw() method (safe to draw)
    * <li>post – after draw() has exited (not safe to draw)
-   * <li>pause() – called when the sketch is paused
-   * <li>resume() – called when the sketch is resumed
+   * <li>pause – called when the sketch is paused
+   * <li>resume – called when the sketch is resumed
    * <li>dispose – when the sketch is shutting down (definitely not safe to draw)
    * <ul>
    * In addition, the new (for 2.0) processing.event classes are passed to
@@ -1290,7 +1295,6 @@ public class PApplet extends Activity implements PConstants, Runnable {
     } catch (Exception e) {
       die("Could not unregister " + name + "() for " + target, e);
     }
-
   }
 
 
@@ -1298,6 +1302,14 @@ public class PApplet extends Activity implements PConstants, Runnable {
     RegisteredMethods meth = registerMap.get(methodName);
     if (meth != null) {
       meth.handle();
+    }
+  }
+
+
+  protected void handleMethods(String methodName, Object[] args) {
+    RegisteredMethods meth = registerMap.get(methodName);
+    if (meth != null) {
+      meth.handle(args);
     }
   }
 
@@ -2056,7 +2068,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
     float[] motionPressure;
     int[] mouseX, mouseY;
 
-    void setAction (int action) {
+    void setAction(int action) {
       this.action = action;
     }
 
@@ -2288,15 +2300,15 @@ public class PApplet extends Activity implements PConstants, Runnable {
         mouseReleased();
         releaseEvent();
       }
-
       onePointerGesture = twoPointerGesture = false;
+
     } else if (pme.action == MotionEvent.ACTION_CANCEL) {
       // Current gesture is canceled.
       onePointerGesture = twoPointerGesture = false;
       mousePressed = false;
-
       mouseReleased();
       releaseEvent();
+
     } else {
       //System.out.println("Unknown MotionEvent action: " + action);
     }
@@ -2317,7 +2329,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
    * called, the events will be queued up until drawing is complete.
    * If noLoop() has been called, then events will happen immediately.
    */
-  protected void checkMotionEvent(MotionEvent event) {
+  protected void nativeMotionEvent(MotionEvent event) {
     enqueueMotionEvent(event);
 
     // if not looping, then remove from the queue immediately
@@ -2386,56 +2398,63 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
 
   protected void handleKeyEvent(KeyEvent event) {
-    // event.isPrintingKey() returns false for whitespace and others,
-    // which is a problem if the space bar or tab key are used.
-    key = (char) event.getUnicodeChar();
-    // if not mappable to a unicode character, instead mark as coded key
-    if (key == 0 || key == 0xFFFF) {
-//      System.out.println("  key is coded");
-      key = CODED;
-//    } else {
-//      System.out.println("  key is unicode");
-    }
-
-    keyCode = event.getKeyCode();
-//    println(key + " " + keyCode);
-
-    int action = event.getAction();
-    if (action == KeyEvent.ACTION_DOWN) {
+    switch (event.getAction()) {
+    case KeyEvent.PRESSED:
       keyPressed = true;
       keyPressed();
-    } else if (action == KeyEvent.ACTION_UP) {
+      break;
+    case KeyEvent.RELEASED:
       keyPressed = false;
       keyReleased();
+      break;
     }
 
     // if someone else wants to intercept the key, they should
     // set key to zero (or something besides the "ESC").
-//    println(event);
-    if (action == KeyEvent.ACTION_DOWN) {
-      if (keyCode == KeyEvent.KEYCODE_BACK) {
-//        println("KEYCODE_BACK, calling exit()");
-        exit();
-      }
+    if (event.getAction() == KeyEvent.PRESSED &&
+        event.getKeyCode() == android.view.KeyEvent.KEYCODE_BACK) {
+      exit();
     }
-      // When running tethered to the Processing application, respond to
-      // Ctrl-W (or Cmd-W) events by closing the sketch. Disable this behavior
-      // when running independently, because this sketch may be one component
-      // embedded inside an application that has its own close behavior.
-//      if (external &&
-//          event.getModifiers() == MENU_SHORTCUT &&
-//          event.getKeyCode() == 'W') {
-//        exit();
-//      }
-//    }
   }
 
 
-  protected void checkKeyEvent(KeyEvent event) {
+  protected void nativeKeyEvent(android.view.KeyEvent event) {
+    // event.isPrintingKey() returns false for whitespace and others,
+    // which is a problem if the space bar or tab key are used.
+    char key = (char) event.getUnicodeChar();
+    // if not mappable to a unicode character, instead mark as coded key
+    if (key == 0 || key == 0xFFFF) {
+      key = CODED;
+    }
+
+    int keyCode = event.getKeyCode();
+
+    int keAction = 0;
+    int action = event.getAction();
+    if (action == android.view.KeyEvent.ACTION_DOWN) {
+      keAction = KeyEvent.PRESSED;
+    } else if (action == android.view.KeyEvent.ACTION_UP) {
+      keAction = KeyEvent.RELEASED;
+    }
+
+    // TODO set up proper key modifier handling
+    int keModifiers = 0;
+
+    KeyEvent ke = new KeyEvent(event, event.getEventTime(),
+                               keAction, keModifiers, key, keyCode);
+
+    // if someone else wants to intercept the key, they should
+    // set key to zero (or something besides the "ESC").
+    if (action == android.view.KeyEvent.ACTION_DOWN) {
+      if (keyCode == android.view.KeyEvent.KEYCODE_BACK) {
+        exit();
+      }
+    }
+
     if (looping) {
-      enqueueKeyEvent(event);
+      enqueueKeyEvent(ke);
     } else {
-      handleKeyEvent(event);
+      handleKeyEvent(ke);
     }
   }
 
