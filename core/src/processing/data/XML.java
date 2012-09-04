@@ -3,6 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
+  Copyright (c) 2012 The Processing Foundation
   Copyright (c) 2009-12 Ben Fry and Casey Reas
 
   This library is free software; you can redistribute it and/or
@@ -138,14 +139,6 @@ public class XML implements Serializable {
   }
 
 
-//  public PNodeXML(String name, PNode parent) {
-//    PNodeXML pxml = PNodeXML.parse("<" + name + ">");
-//    this.node = pxml.node;
-//    this.name = name;
-//    this.parent = parent;
-//  }
-
-
   protected XML(XML parent, Node node) {
     this.node = node;
     this.parent = parent;
@@ -174,7 +167,7 @@ public class XML implements Serializable {
 
 
   public boolean save(PrintWriter output) {
-    output.print(toString(2));
+    output.print(format(2));
     output.flush();
     return true;
   }
@@ -430,6 +423,38 @@ public class XML implements Serializable {
   }
 
 
+  /** Remove whitespace nodes. */
+  public void trim() {
+////    public static boolean isWhitespace(XML xml) {
+////      if (xml.node.getNodeType() != Node.TEXT_NODE)
+////        return false;
+////      Matcher m = whitespace.matcher(xml.node.getNodeValue());
+////      return m.matches();
+////    }
+//    trim(this);
+//  }
+//
+//
+//  protected void trim() {
+    checkChildren();
+    int index = 0;
+    for (int i = 0; i < children.length; i++) {
+      if (i != index) {
+        children[index] = children[i];
+      }
+      Node childNode = children[i].getNode();
+      if (childNode.getNodeType() != Node.TEXT_NODE ||
+          children[i].getContent().trim().length() > 0) {
+        children[i].trim();
+        index++;
+      }
+    }
+    if (index != children.length) {
+      children = (XML[]) PApplet.subset(children, 0, index);
+    }
+  }
+
+
   /**
    * Returns the number of attributes.
    */
@@ -591,24 +616,17 @@ public class XML implements Serializable {
   }
 
 
-  @Override
-  public String toString() {
-    return toString(2);
-  }
-
-
-  public String toString(int indent) {
+  public String format(int indent) {
     try {
-//      node.normalize();  // does nothing useful
       DOMSource dumSource = new DOMSource(node);
       // entities = doctype.getEntities()
       TransformerFactory tf = TransformerFactory.newInstance();
       Transformer transformer = tf.newTransformer();
       // if this is the root, output the decl, if not, hide it
-      if (parent != null) {
+      if (indent == -1 || parent != null) {
         transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-//      } else {
-//        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+      } else {
+        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
       }
 //      transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, "sample.dtd");
       transformer.setOutputProperty(OutputKeys.METHOD, "xml");
@@ -638,56 +656,16 @@ public class XML implements Serializable {
       transformer.transform(dumSource, sr);
       return sw.toString();
 
-//      Document document = node.getOwnerDocument();
-//      OutputFormat format = new OutputFormat(document);
-//      format.setLineWidth(65);
-//      format.setIndenting(true);
-//      format.setIndent(2);
-//      StringWriter sw = new StringWriter();
-//      XMLSerializer serializer = new XMLSerializer(sw, format);
-//      serializer.serialize(document);
-//      return sw.toString();
-
     } catch (Exception e) {
       e.printStackTrace();
     }
     return null;
-
-//    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-//    try {
-//      DocumentBuilder builder = factory.newDocumentBuilder();
-//      //builder.get
-////      Document document = builder.
-//
-//    } catch (ParserConfigurationException e) {
-//      e.printStackTrace();
-//    }
-
-
-
-    //    Document doc = new DocumentImpl();
-//    return node.toString();
-
-//    TransformerFactory transfac = TransformerFactory.newInstance();
-//    Transformer trans = transfac.newTransformer();
-//    trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-//    trans.setOutputProperty(OutputKeys.INDENT, "yes");
-//
-//    //create string from xml tree
-//    StringWriter sw = new StringWriter();
-//    StreamResult result = new StreamResult(sw);
-////    Document doc =
-//    DOMSource source = new DOMSource(doc);
-//    trans.transform(source, result);
-//    String xmlString = sw.toString();
-
   }
 
 
-//  static final String HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
-//
-//  public void write(PrintWriter writer) {
-//    writer.println(HEADER);
-//    writer.print(toString(2));
-//  }
+  @Override
+  /** Return the XML data as a single line, with no DOCTYPE declaration. */
+  public String toString() {
+    return format(-1);
+  }
 }
