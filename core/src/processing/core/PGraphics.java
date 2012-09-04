@@ -3278,7 +3278,11 @@ public class PGraphics extends PImage implements PConstants {
   public void smooth() {
     smooth = true;
   }
-
+  
+  /**
+   * 
+   * @param level either 2, 4, or 8
+   */ 
   public void smooth(int level) {
     smooth = true;
   }

@@ -230,8 +230,7 @@ void	KEYWORD1	void
 volatile	KEYWORD1
 while	KEYWORD1	while
 
-
-# Depricated API
+# Deprecated API
 
 arraycopy	KEYWORD2	arrayCopy_
 openStream	KEYWORD2	openStream_
@@ -246,7 +245,7 @@ boolean	KEYWORD2	booleanconvert_
 byte	KEYWORD2	byteconvert_
 cache	KEYWORD2
 char	KEYWORD2	charconvert_
-color	KEYWORD1	color_datatype
+color KEYWORD1	color_datatype
 start	KEYWORD2
 stop	KEYWORD2
 breakShape	KEYWORD2
@@ -625,13 +624,13 @@ unhex	KEYWORD2	unhex_
 updatePixels	KEYWORD2	updatePixels_
 vertex	KEYWORD2	vertex_
 width	KEYWORD5	width
-XMLElement	KEYWORD2	XMLElement_
-getChild	KEYWORD3	XMLElement_getChild_
-getChildCount	KEYWORD3	XMLElement_getChildCount_
-getChildren	KEYWORD3	XMLElement_getChildren_
-getContent	KEYWORD3	XMLElement_getContent_
-getFloat	KEYWORD3	XMLElement_getFloat_
-getInt	KEYWORD3	XMLElement_getInt_
-getName	KEYWORD3	XMLElement_getName_
-getString	KEYWORD3	XMLElement_getString_
+XMLElement	KEYWORD2	XML_
+getChild	KEYWORD3	XML_getChild_
+getChildCount	KEYWORD3	XML_getChildCount_
+getChildren	KEYWORD3	XML_getChildren_
+getContent	KEYWORD3	XML_getContent_
+getFloat	KEYWORD3	XML_getFloat_
+getInt	KEYWORD3	XML_getInt_
+getName	KEYWORD3	XML_getName_
+getString	KEYWORD3	XML_getString_
 year	KEYWORD2	year_
