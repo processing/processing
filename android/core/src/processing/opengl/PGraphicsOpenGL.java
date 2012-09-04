@@ -5190,7 +5190,7 @@ public class PGraphicsOpenGL extends PGraphics {
    * throw an GL_INVALID_OPERATION error.
    */
   public void report(String where) {
-    if (!hints[DISABLE_OPENGL_ERROR_REPORT]) {
+    if (!hints[DISABLE_OPENGL_ERRORS]) {
       int err = pgl.getError();
       if (err != 0) {
         String errString = pgl.errorString(err);
