@@ -7,8 +7,9 @@ X   http://code.google.com/p/processing/issues/detail?id=1056
 X change "Standard" to "Java" mode
 X Any double-click inside Examples window opening the last selection on Windows
 X   http://code.google.com/p/processing/issues/detail?id=1201
-X example browser state (from Casey)
+X example browser state
 X   http://code.google.com/p/processing/issues/detail?id=827
+
 
 . . .
 
