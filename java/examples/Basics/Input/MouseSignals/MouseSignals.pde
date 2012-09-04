@@ -14,6 +14,7 @@ int[] bvals;
 void setup() 
 {
   size(640, 360);
+  noSmooth();
   xvals = new int[width];
   yvals = new int[width];
   bvals = new int[width];

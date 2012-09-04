@@ -26,11 +26,11 @@ void setup()
 {
   size(640, 360);
   noStroke();
-  colorMode(RGB, numChars);
+  colorMode(HSB, numChars);
   background(numChars/2);
   // Set a gray value for each key
-  for(int i=0; i<numChars; i++) {
-    colors[i] = color(i);    
+  for(int i = 0; i < numChars; i++) {
+    colors[i] = color(i, numChars, numChars);    
   }
 }
 

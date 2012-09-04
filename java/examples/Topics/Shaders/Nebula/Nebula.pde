@@ -1,7 +1,11 @@
+/**
+ * Nebula
+ */
+ 
 PShader nebula;
 
 void setup() {
-  size(320, 240, P3D);
+  size(640, 360, P2D);
   noStroke();
 
   nebula = loadShader("nebula.glsl");
