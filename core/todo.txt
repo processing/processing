@@ -1,6 +1,9 @@
 0210 core
 
 
+hint(OPENGL_ERRORS) should be the opposite to enable the reporting, no?
+
+
 xml tweaks
 _ beginning slash in getChild() threw an NPE
 _ do we need a trim() method for XML? or enableWhiteSpace()? or?
