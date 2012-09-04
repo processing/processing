@@ -36,7 +36,7 @@ import android.view.KeyEvent;
  * FILE_TYPE_TIFF. We'll do this as long as we can get away with it.
  */
 public interface PConstants {
-  
+
   // vertex fields
   static public final int X = 0;  // model coords xyz (formerly MX/MY/MZ)
   static public final int Y = 1;
@@ -48,8 +48,8 @@ public interface PConstants {
   static final String P3D = "processing.opengl.PGraphics3D";
   static final String OPENGL = P3D;
 
-  // The PDF and DXF renderers are not available for Android. 
-  
+  // The PDF and DXF renderers are not available for Android.
+
 
   // platform IDs for PApplet.platform
 
@@ -85,14 +85,14 @@ public interface PConstants {
   /** Smallest possible (negative) integer value */
   static final int MIN_INT = Integer.MIN_VALUE;
 
-  
+
   // shapes
-  
-  static public final int VERTEX = 0;  
-  static public final int BEZIER_VERTEX = 1;  
-  static public final int QUAD_BEZIER_VERTEX = 2;  
+
+  static public final int VERTEX = 0;
+  static public final int BEZIER_VERTEX = 1;
+  static public final int QUAD_BEZIER_VERTEX = 2;
   static public final int CURVE_VERTEX = 3;
-  static public final int BREAK = 4;    
+  static public final int BREAK = 4;
 
   // useful goodness
 
@@ -182,9 +182,9 @@ public interface PConstants {
   static final int PROBLEM   = 2;
 
   // types of transformation matrices
-  
+
   static final int PROJECTION = 0;
-  static final int MODELVIEW  = 1;  
+  static final int MODELVIEW  = 1;
 
   // types of projection matrices
 
@@ -226,10 +226,10 @@ public interface PConstants {
 
   static final int SPHERE          = 40;  // primitive
   static final int BOX             = 41;  // primitive
-  
-//  static public final int LINE_STRIP    = 50;   
-//  static public final int LINE_LOOP     = 51;   
-//  static public final int POINT_SPRITES = 52;  
+
+//  static public final int LINE_STRIP    = 50;
+//  static public final int LINE_LOOP     = 51;
+//  static public final int POINT_SPRITES = 52;
 
 
   // shape closing modes
@@ -278,16 +278,16 @@ public interface PConstants {
   static final int NORMAL = 1;
   /** texture coordinates based on image width/height */
   static final int IMAGE  = 2;
-  
+
 
   // texture wrapping modes
-  
+
   /** textures are clamped to their edges */
   public static final int CLAMP = 0;
   /** textures wrap around when uv values go outside 0..1 range */
-  public static final int REPEAT = 1;  
-  
-  
+  public static final int REPEAT = 1;
+
+
   // text placement modes
 
   /**
@@ -310,11 +310,11 @@ public interface PConstants {
    */
   static final int SHAPE = 5;
 
-  
+
   // text alignment modes
-  // are inherited from LEFT, CENTER, RIGHT  
-  
-  
+  // are inherited from LEFT, CENTER, RIGHT
+
+
   // stroke modes
 
   static final int SQUARE   = 1 << 0;  // called 'butt' in the svg spec
@@ -358,7 +358,7 @@ public interface PConstants {
   static final int LEFT      = KeyEvent.KEYCODE_DPAD_LEFT;
   static final int RIGHT     = KeyEvent.KEYCODE_DPAD_RIGHT;
 
-  // These seem essential for most sketches, so they're included. 
+  // These seem essential for most sketches, so they're included.
   // Others can be found in the KeyEvent reference:
   // http://developer.android.com/reference/android/view/KeyEvent.html
   static final int BACK = KeyEvent.KEYCODE_BACK;
@@ -380,8 +380,8 @@ public interface PConstants {
 //  static final int MOVE  = Cursor.MOVE_CURSOR;
 //  static final int TEXT  = Cursor.TEXT_CURSOR;
 //  static final int WAIT  = Cursor.WAIT_CURSOR;
-  
-  
+
+
   /** Screen orientation constant for portrait (the hamburger way). */
   static final int PORTRAIT = 1;
   /** Screen orientation constant for landscape (the hot dog way). */
@@ -391,41 +391,40 @@ public interface PConstants {
   // hints - hint values are positive for the alternate version,
   // negative of the same value returns to the normal/default state
 
-  static final int ENABLE_NATIVE_FONTS         =  1;
-  static final int DISABLE_NATIVE_FONTS        = -1;
+  static final int ENABLE_NATIVE_FONTS        =  1;
+  static final int DISABLE_NATIVE_FONTS       = -1;
 
-  static final int DISABLE_DEPTH_TEST          =  2;
-  static final int ENABLE_DEPTH_TEST           = -2;
+  static final int DISABLE_DEPTH_TEST         =  2;
+  static final int ENABLE_DEPTH_TEST          = -2;
 
-  static final int ENABLE_DEPTH_SORT           =  3;
-  static final int DISABLE_DEPTH_SORT          = -3;
+  static final int ENABLE_DEPTH_SORT          =  3;
+  static final int DISABLE_DEPTH_SORT         = -3;
 
-  static final int DISABLE_OPENGL_ERROR_REPORT =  4;
-  static final int ENABLE_OPENGL_ERROR_REPORT  = -4;
+  static final int DISABLE_OPENGL_ERRORS      =  4;
+  static final int ENABLE_OPENGL_ERRORS       = -4;
 
-  static final int ENABLE_ACCURATE_TEXTURES    =  5;
-  static final int DISABLE_ACCURATE_TEXTURES   = -5;
+  static final int ENABLE_ACCURATE_TEXTURES   =  5;
+  static final int DISABLE_ACCURATE_TEXTURES  = -5;
 
-  static final int DISABLE_DEPTH_MASK          =  6;
-  static final int ENABLE_DEPTH_MASK           = -6;
+  static final int DISABLE_DEPTH_MASK         =  6;
+  static final int ENABLE_DEPTH_MASK          = -6;
 
-  static final int ENABLE_ACCURATE_2D          =  7;
-  static final int DISABLE_ACCURATE_2D         = -7;
+  static final int ENABLE_ACCURATE_2D         =  7;
+  static final int DISABLE_ACCURATE_2D        = -7;
 
-  static final int DISABLE_TEXTURE_CACHE       =  8;
-  static final int ENABLE_TEXTURE_CACHE        = -8;
+  static final int DISABLE_TEXTURE_CACHE      =  8;
+  static final int ENABLE_TEXTURE_CACHE       = -8;
 
-  static final int DISABLE_TRANSFORM_CACHE     =  9;
-  static final int ENABLE_TRANSFORM_CACHE      = -9;
+  static final int DISABLE_TRANSFORM_CACHE    =  9;
+  static final int ENABLE_TRANSFORM_CACHE     = -9;
 
-  static final int ENABLE_STROKE_PERSPECTIVE   =  10;
-  static final int DISABLE_STROKE_PERSPECTIVE  = -10;
+  static final int ENABLE_STROKE_PERSPECTIVE  =  10;
+  static final int DISABLE_STROKE_PERSPECTIVE = -10;
 
-  static final int DISABLE_TEXTURE_MIPMAPS     =  11;
-  static final int ENABLE_TEXTURE_MIPMAPS      = -11;
-  
-  static final int HINT_COUNT                  =  12;
+  static final int DISABLE_TEXTURE_MIPMAPS    =  11;
+  static final int ENABLE_TEXTURE_MIPMAPS     = -11;
 
+  static final int HINT_COUNT                 =  12;
   // error messages
 
   static final String ERROR_BACKGROUND_IMAGE_SIZE =
@@ -440,10 +439,10 @@ public interface PConstants {
     "Too many calls to pushMatrix().";
   static final String ERROR_PUSHMATRIX_UNDERFLOW =
     "Too many calls to popMatrix(), and not enough to pushMatrix().";
-  
-  
+
+
   // Some currently missing GLES constants.
-  
+
 //  static final int GL_MIN_EXT = 0x8007;
 //  static final int GL_MAX_EXT = 0x8008;
 }
