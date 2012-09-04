@@ -1054,8 +1054,6 @@ public class PApplet extends Applet
   /** Map of registered methods, stored by name. */
   HashMap<String, RegisteredMethods> registerMap =
     new HashMap<String, PApplet.RegisteredMethods>();
-  /** Old methods with AWT API that should not be used. */
-  RegisteredMethods mouseEventMethods, keyEventMethods;
 
 
   class RegisteredMethods {
@@ -1165,8 +1163,8 @@ public class PApplet extends Applet
    * <li>pre – at the very top of the draw() method (safe to draw)
    * <li>draw – at the end of the draw() method (safe to draw)
    * <li>post – after draw() has exited (not safe to draw)
-   * <li>pause() – called when the sketch is paused
-   * <li>resume() – called when the sketch is resumed
+   * <li>pause – called when the sketch is paused
+   * <li>resume – called when the sketch is resumed
    * <li>dispose – when the sketch is shutting down (definitely not safe to draw)
    * <ul>
    * In addition, the new (for 2.0) processing.event classes are passed to
@@ -1256,7 +1254,6 @@ public class PApplet extends Applet
     } catch (Exception e) {
       die("Could not unregister " + name + "() for " + target, e);
     }
-
   }
 
 
@@ -1309,36 +1306,6 @@ public class PApplet extends Applet
 
 
   @Deprecated
-  public void registerMouseEvent(Object o) {
-    Class<?> c = o.getClass();
-    try {
-      Method method = c.getMethod("mouseEvent", new Class[] { java.awt.event.MouseEvent.class });
-      if (mouseEventMethods == null) {
-        mouseEventMethods = new RegisteredMethods();
-      }
-      mouseEventMethods.add(o, method);
-    } catch (Exception e) {
-      die("Could not register mouseEvent() for " + o, e);
-    }
-  }
-
-
-  @Deprecated
-  public void registerKeyEvent(Object o) {
-    Class<?> c = o.getClass();
-    try {
-      Method method = c.getMethod("keyEvent", new Class[] { java.awt.event.KeyEvent.class });
-      if (keyEventMethods == null) {
-        keyEventMethods = new RegisteredMethods();
-      }
-      keyEventMethods.add(o, method);
-    } catch (Exception e) {
-      die("Could not register keyEvent() for " + o, e);
-    }
-  }
-
-
-  @Deprecated
   public void unregisterSize(Object o) {
     System.err.println("The unregisterSize() command is no longer supported.");
 //    Class<?> methodArgs[] = new Class[] { Integer.TYPE, Integer.TYPE };
@@ -1370,6 +1337,44 @@ public class PApplet extends Applet
   }
 
 
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+  // Old methods with AWT API that should not be used.
+  // These were never implemented on Android so they're stored separately.
+
+  RegisteredMethods mouseEventMethods, keyEventMethods;
+
+
+  @Deprecated
+  public void registerMouseEvent(Object o) {
+    Class<?> c = o.getClass();
+    try {
+      Method method = c.getMethod("mouseEvent", new Class[] { java.awt.event.MouseEvent.class });
+      if (mouseEventMethods == null) {
+        mouseEventMethods = new RegisteredMethods();
+      }
+      mouseEventMethods.add(o, method);
+    } catch (Exception e) {
+      die("Could not register mouseEvent() for " + o, e);
+    }
+  }
+
+
+  @Deprecated
+  public void registerKeyEvent(Object o) {
+    Class<?> c = o.getClass();
+    try {
+      Method method = c.getMethod("keyEvent", new Class[] { java.awt.event.KeyEvent.class });
+      if (keyEventMethods == null) {
+        keyEventMethods = new RegisteredMethods();
+      }
+      keyEventMethods.add(o, method);
+    } catch (Exception e) {
+      die("Could not register keyEvent() for " + o, e);
+    }
+  }
+
+
   @Deprecated
   public void unregisterMouseEvent(Object o) {
     try {
@@ -1394,34 +1399,6 @@ public class PApplet extends Applet
   }
 
 
-//  private void unregisterNoArgs(String name, Object o) {
-//    RegisteredMethods meth = registerMap.get(name);
-//    if (meth == null) {
-//      die("No registered methods with the name " + name + "() were found.");
-//    }
-//    try {
-////      Method method = o.getClass().getMethod(name, new Class[] {});
-////      meth.remove(o, method);
-//      meth.remove(o);
-//    } catch (Exception e) {
-//      die("Could not unregister " + name + "() for " + o, e);
-//    }
-//  }
-
-
-//  private void unregisterWithArgs(String name, Object o, Class<?> cargs[]) {
-//    RegisteredMethods meth = registerMap.get(name);
-//    if (meth == null) {
-//      die("No registered methods with the name " + name + "() were found.");
-//    }
-//    try {
-////      Method method = o.getClass().getMethod(name, cargs);
-////      meth.remove(o, method);
-//      meth.remove(o);
-//    } catch (Exception e) {
-//      die("Could not unregister " + name + "() for " + o, e);
-//    }
-//  }
 
 
   //////////////////////////////////////////////////////////////
@@ -11564,9 +11541,9 @@ public class PApplet extends Applet
 
 
   /**
-   * 
+   *
    * @param level either 2, 4, or 8
-   */ 
+   */
   public void smooth(int level) {
     if (recorder != null) recorder.smooth(level);
     g.smooth(level);
