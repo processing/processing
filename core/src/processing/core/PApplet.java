@@ -654,13 +654,8 @@ public class PApplet extends Applet
   public boolean focused = false;
 
   /**
-   * ( begin auto-generated from online.xml )
-   *
    * Confirms if a Processing program is running inside a web browser. This
    * variable is "true" if the program is online and "false" if not.
-   *
-   * ( end auto-generated )
-   * @webref environment
    */
   @Deprecated
   public boolean online = false;
@@ -3085,18 +3080,11 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from param.xml )
-   *
    * Reads the value of a param. Values are always read as a String so if you
    * want them to be an integer or other datatype they must be converted. The
    * <b>param()</b> function will only work in a web browser. The function
    * should be called inside <b>setup()</b>, otherwise the applet may not yet
    * be initialized and connected to its parent web browser.
-   *
-   * ( end auto-generated )
-   *
-   * @webref input:web
-   * @usage Web
    *
    * @param name name of the param to read
    * @deprecated no more applet support
@@ -3113,21 +3101,11 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from status.xml )
-   *
-   * Displays message in the browser's status area. This is the text area in
-   * the lower left corner of the browser. The <b>status()</b> function will
-   * only work when the Processing program is running in a web browser.
-   *
-   * ( end auto-generated )
    * <h3>Advanced</h3>
    * Show status in the status bar of a web browser, or in the
    * System.out console. Eventually this might show status in the
    * p5 environment itself, rather than relying on the console.
    *
-   * @webref input:web
-   * @usage Web
-   * @param value any valid String
    * @deprecated no more applet support
    */
   public void status(String value) {
