@@ -1,7 +1,7 @@
-PROCESSING 2.0a10 (REV 0209) - 3 September 2012
+PROCESSING 2.0b1 (REV 0209) - 3 September 2012
 
-Bug fixes, new registered methods for libraries, and hopefully a beta 
-coming shortly...
+Bug fixes, new registered methods for libraries, updated keywords,
+and we're beta!
 
 [ changes ] 
 
@@ -52,6 +52,8 @@ coming shortly...
 [ known issues ] 
 
 + createShape() is not implemented with the default 2D renderer.
+
++ See the Changes page on the Wiki for more. 
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
