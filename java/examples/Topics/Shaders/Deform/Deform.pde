@@ -1,10 +1,13 @@
+/**
+ * Deform
+ */
+ 
 PImage tex;
 PShader deform;
 
 void setup() {
-  size(512, 384, P2D);
+  size(640, 360, P2D);
   
-  textureWrap(REPEAT);   
   tex = loadImage("tex1.jpg");
  
   deform = loadShader("deform.glsl");

@@ -55,8 +55,9 @@ void draw() {
   strokeWeight(2);
   beginShape(POINTS);
   for (int a = 0; a < 360; a+=6) {
-    float x = cx + cos(radians(a)) * secondsRadius;
-    float y = cy + sin(radians(a)) * secondsRadius;
+    float angle = radians(a);
+    float x = cx + cos(angle) * secondsRadius;
+    float y = cy + sin(angle) * secondsRadius;
     vertex(x, y);
   }
   endShape();

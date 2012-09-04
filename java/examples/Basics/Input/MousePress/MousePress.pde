@@ -8,6 +8,7 @@
 
 void setup() {
   size(640, 360);
+  noSmooth();
   fill(126);
   background(102);
 }
