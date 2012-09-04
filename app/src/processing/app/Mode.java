@@ -12,6 +12,7 @@ import javax.swing.event.TreeExpansionListener;
 import javax.swing.tree.*;
 
 import processing.app.syntax.*;
+import processing.core.PApplet;
 
 
 public abstract class Mode {
@@ -650,10 +651,10 @@ public abstract class Mode {
     String pref = "examples." + getClass().getName() + ".visible";
     String value = Preferences.get(pref);
     if (value != null) {
-      String[] paths = value.split(File.pathSeparator);
+      String[] paths = PApplet.split(value, File.pathSeparator);
       for (String path : paths) {
 //        System.out.println("trying to expand " + path);
-        String[] items = path.split(File.separator);
+        String[] items = PApplet.split(path, File.separator);
         DefaultMutableTreeNode[] nodes = new DefaultMutableTreeNode[items.length];
         expandTree(tree, null, items, nodes, 0);
       }
