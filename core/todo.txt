@@ -24,6 +24,11 @@ X Jagged / Glitchy JAVA2D shape strokes in Java 1.6
 X   g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, 
 X                       RenderingHints.VALUE_STROKE_PURE); 
 X   http://code.google.com/p/processing/issues/detail?id=1068
+X loadShape() cleanup
+A   remove PShape2D/3D
+A   make PShapeOBJ the 3D loader
+o   separate PShape2/3D from OpenGL
+o   incorporate SVG loader into the 2D class
 
 earlier
 X add breakShape to the public API -> begin/endContour
@@ -49,13 +54,7 @@ _ delete()/dispose() being used in the movie
 _ buffer sink methods in movie
 _ 'newFrame' is 'available', and ready() is part of that
 
-_ loadShape() cleanup
-_   remove PShape2D/3D
-_   make PShapeOpenGL a cache object
-_   make PShapeOBJ the 3D loader
-o   separate PShape2/3D from OpenGL
-o   incorporate SVG loader into the 2D class
-
+_ make PShapeOpenGL a cache object
 _ createShape() with Java2D not ready to go
 
 _ loadShape() needs to live in PApplet
