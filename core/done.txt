@@ -1,3 +1,44 @@
+0209 core (2.0b1)
+X loadImage() with spaces in path broken with exported applications on OS X
+X   http://code.google.com/p/processing/issues/detail?id=1073
+X   maybe getResource() fails because spaces are not encoded?
+X PVector limit() is inefficient
+X   http://code.google.com/p/processing/issues/detail?id=1122
+X memory leak when many createGraphics(..., JAVA2D) calls are used
+X   http://code.google.com/p/processing/issues/detail?id=507
+X   need to add clear() method so clear out ARGB surfaces
+C clear() ok to add
+X   decided clear(r, g, b, a) problematic since it's an exception to color model
+X   and that people should use background() anyway
+o   or background(r, g, b, a) would be the thing
+X   clear() with a color doesn't make (verbal) sense
+X   provide a way to clear the PGraphics with plain alpha
+X   removed in the end... background() can already do it
+X work on making API more generic and consistent
+X   PFont.getFont() changed to PFont.getNative() (returns an Object)
+X   PFont.getTypeface() changed to PFont.getNative() 
+X   PImage.getBitmap() and getImage() changed to PImage.getNative()
+X   use getNative() to return the native object for
+X     PImage (BufferedImage and Bitmap), PFont (Typeface or awt.Font)
+X Jagged / Glitchy JAVA2D shape strokes in Java 1.6
+X   g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, 
+X                       RenderingHints.VALUE_STROKE_PURE); 
+X   http://code.google.com/p/processing/issues/detail?id=1068
+X loadShape() cleanup
+A   remove PShape2D/3D
+A   make PShapeOBJ the 3D loader
+o   separate PShape2/3D from OpenGL
+o   incorporate SVG loader into the 2D class
+
+earlier
+X add breakShape to the public API -> begin/endContour
+x   or handle differently in general.. nested beginPath() calls?
+A standardize PGL behavior
+A   PGL pgl = beginPGL();
+A   pgl.vertex3f(...)
+A   pgl.enable(PGL.SOMETHING_PARAM);
+
+
 0208 core (2.0a9)
 X several constants moved out of PConstants and into PGraphics
 X API cleanup to PShape and unapproved methods

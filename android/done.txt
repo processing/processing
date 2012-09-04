@@ -1,3 +1,13 @@
+0209 android (2.0b1)
+A GL android sketch stops running after rotation
+A   http://code.google.com/p/processing/issues/detail?id=1146
+X lack of registerXxx() implementation is breaking pre() and post() in particles
+X pause/resume trickiness with interactive apps
+X   can we serialize objects (even if slow?)
+X   add pause() and resume() methods to PApplet -> this is start/stop
+X register(this, "pause") -> libs will need pause events on android
+
+
 0208 android (2.0a9)
 X inherited PShape API changes from the desktop version
 
