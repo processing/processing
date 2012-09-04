@@ -4,8 +4,8 @@
 # KEYWORD1 - Java datatypes and keywords
 # KEYWORD2 - functions
 # KEYWORD3 - methods (functions inside a class)
-# KEYWORD4 - fields (variables inside a class)
-# KEYWORD5 - Processing variables (width, height, focused, etc.)
+# XXX KEYWORD2 - fields (variables inside a class)
+# XXX LITERAL2 - Processing variables (width, height, focused, etc.)
 
 #
 
@@ -408,8 +408,8 @@ curveVertex	KEYWORD2	curveVertex_
 day	KEYWORD2	day_
 degrees	KEYWORD2	degrees_
 directionalLight	KEYWORD2	directionalLight_
-displayHeight	KEYWORD5	displayHeight
-displayWidth	KEYWORD5	displayWidth
+displayHeight	LITERAL2	displayHeight
+displayWidth	LITERAL2	displayWidth
 dist	KEYWORD2	dist_
 draw	KEYWORD2	draw_
 ellipse	KEYWORD2	ellipse_
@@ -425,15 +425,15 @@ expand	KEYWORD2	expand_
 fill	KEYWORD2	fill_
 filter	KEYWORD2	filter_
 floor	KEYWORD2	floor_
-focused	KEYWORD5	focused
-frameCount	KEYWORD5	frameCount
-frameRate	KEYWORD5	frameRate
+focused	LITERAL2	focused
+frameCount	LITERAL2	frameCount
+frameRate	LITERAL2	frameRate
 frameRate	KEYWORD2	frameRate_
 frustum	KEYWORD2	frustum_
 get	KEYWORD2	get_
 green	KEYWORD2	green_
 HALF_PI	LITERAL2	HALF_PI
-height	KEYWORD5	height
+height	LITERAL2	height
 hex	KEYWORD2	hex_
 hint	KEYWORD2	hint_
 hour	KEYWORD2	hour_
@@ -441,10 +441,10 @@ hue	KEYWORD2	hue_
 image	KEYWORD2	image_
 imageMode	KEYWORD2	imageMode_
 join	KEYWORD2	join_
-key	KEYWORD5	key
-keyCode	KEYWORD5	keyCode
+key	LITERAL2	key
+keyCode	LITERAL2	keyCode
 keyPressed	KEYWORD2	keyPressed_
-keyPressed	KEYWORD5	keyPressed
+keyPressed	LITERAL2	keyPressed
 keyReleased	KEYWORD2	keyReleased_
 keyTyped	KEYWORD2	keyTyped_
 lerp	KEYWORD2	lerp_
@@ -473,15 +473,15 @@ modelX	KEYWORD2	modelX_
 modelY	KEYWORD2	modelY_
 modelZ	KEYWORD2	modelZ_
 month	KEYWORD2	month_
-mouseButton	KEYWORD5	mouseButton
+mouseButton	LITERAL2	mouseButton
 mouseClicked	KEYWORD2	mouseClicked_
 mouseDragged	KEYWORD2	mouseDragged_
 mouseMoved	KEYWORD2	mouseMoved_
 mousePressed	KEYWORD2	mousePressed_
-mousePressed	KEYWORD5	mousePressed
+mousePressed	LITERAL2	mousePressed
 mouseReleased	KEYWORD2	mouseReleased_
-mouseX	KEYWORD5	mouseX
-mouseY	KEYWORD5	mouseY
+mouseX	LITERAL2	mouseX
+mouseY	LITERAL2	mouseY
 nf	KEYWORD2	nf_
 nfc	KEYWORD2	nfc_
 nfp	KEYWORD2	nfp_
@@ -515,14 +515,14 @@ filter	KEYWORD3	PImage_filter_
 get	KEYWORD3	PImage_get_
 loadPixels	KEYWORD3	PImage_loadPixels_
 mask	KEYWORD3	PImage_mask_
-pixels	KEYWORD4	PImage_pixels
+pixels	KEYWORD2	PImage_pixels
 resize	KEYWORD3	PImage_resize_
 save	KEYWORD3	PImage_save_
 set	KEYWORD3	PImage_set_
 updatePixels	KEYWORD3	PImage_updatePixels_
-pixels	KEYWORD5	pixels
-pmouseX	KEYWORD5	pmouseX
-pmouseY	KEYWORD5	pmouseY
+pixels	LITERAL2	pixels
+pmouseX	LITERAL2	pmouseX
+pmouseY	LITERAL2	pmouseY
 point	KEYWORD2	point_
 pointLight	KEYWORD2	pointLight_
 popMatrix	KEYWORD2	popMatrix_
@@ -565,9 +565,9 @@ normalize	KEYWORD3	PVector_normalize_
 set	KEYWORD3	PVector_set_
 setMag	KEYWORD3	PVector_setMag_
 sub	KEYWORD3	PVector_sub_
-x	KEYWORD4	PVector_x
-y	KEYWORD4	PVector_y
-z	KEYWORD4	PVector_z
+x	KEYWORD2	PVector_x
+y	KEYWORD2	PVector_y
+z	KEYWORD2	PVector_z
 quad	KEYWORD2	quad_
 quadraticVertex	KEYWORD2	quadraticVertex_
 QUARTER_PI	LITERAL2	QUARTER_PI
@@ -593,8 +593,8 @@ saveFrame	KEYWORD2	saveFrame_
 saveStream	KEYWORD2	saveStream_
 saveStrings	KEYWORD2	saveStrings_
 scale	KEYWORD2	scale_
-screenHeight	KEYWORD5	screenHeight
-screenWidth	KEYWORD5	screenWidth
+screenHeight	LITERAL2	screenHeight
+screenWidth	LITERAL2	screenWidth
 screenX	KEYWORD2	screenX_
 screenY	KEYWORD2	screenY_
 screenZ	KEYWORD2	screenZ_
@@ -649,7 +649,7 @@ unbinary	KEYWORD2	unbinary_
 unhex	KEYWORD2	unhex_
 updatePixels	KEYWORD2	updatePixels_
 vertex	KEYWORD2	vertex_
-width	KEYWORD5	width
+width	LITERAL2	width
 XML	KEYWORD2	XML_
 getChild	KEYWORD3	XML_getChild_
 getChildCount	KEYWORD3	XML_getChildCount_
