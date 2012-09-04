@@ -24,11 +24,22 @@
 package processing.core;
 
 import processing.data.*;
+import processing.event.*;
 import processing.opengl.*;
 
 import java.applet.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.*;
 import java.io.*;
 import java.lang.reflect.*;
@@ -546,6 +557,7 @@ public class PApplet extends Applet
    * @see PApplet#mouseDragged()
    */
   public boolean mousePressed;
+
   public MouseEvent mouseEvent;
 
   /**
@@ -635,7 +647,7 @@ public class PApplet extends Applet
   public boolean keyPressed;
 
   /**
-   * the last KeyEvent object passed into a mouse function.
+   * The last KeyEvent object passed into a mouse function.
    */
   public KeyEvent keyEvent;
 
@@ -1252,6 +1264,14 @@ public class PApplet extends Applet
     RegisteredMethods meth = registerMap.get(methodName);
     if (meth != null) {
       meth.handle();
+    }
+  }
+
+
+  protected void handleMethods(String methodName, Object[] args) {
+    RegisteredMethods meth = registerMap.get(methodName);
+    if (meth != null) {
+      meth.handle(args);
     }
   }
 
@@ -2365,8 +2385,7 @@ public class PApplet extends Applet
   protected void dequeueMouseEvents() {
     synchronized (mouseEventQueue) {
       for (int i = 0; i < mouseEventCount; i++) {
-        mouseEvent = mouseEventQueue[i];
-        handleMouseEvent(mouseEvent);
+        handleMouseEvent(mouseEventQueue[i]);
       }
       mouseEventCount = 0;
     }
@@ -2381,39 +2400,33 @@ public class PApplet extends Applet
    * overloaded to do something more useful.
    */
   protected void handleMouseEvent(MouseEvent event) {
-    int id = event.getID();
-
     // http://dev.processing.org/bugs/show_bug.cgi?id=170
     // also prevents mouseExited() on the mac from hosing the mouse
     // position, because x/y are bizarre values on the exit event.
     // see also the id check below.. both of these go together
-    if ((id == MouseEvent.MOUSE_DRAGGED) ||
-        (id == MouseEvent.MOUSE_MOVED)) {
+//  if ((id == java.awt.event.MouseEvent.MOUSE_DRAGGED) ||
+//      (id == java.awt.event.MouseEvent.MOUSE_MOVED)) {
+    if (event.getAction() == MouseEvent.DRAGGED ||
+        event.getAction() == MouseEvent.MOVED) {
       pmouseX = emouseX;
       pmouseY = emouseY;
       mouseX = event.getX();
       mouseY = event.getY();
     }
 
-    mouseEvent = event;
+    mouseButton = event.getButton();
+//    int modifiers = event.getModifiersEx();
+//    if ((modifiers & InputEvent.BUTTON1_DOWN_MASK) != 0) {
+//      mouseButton = LEFT;
+//    } else if ((modifiers & InputEvent.BUTTON2_DOWN_MASK) != 0) {
+//      mouseButton = CENTER;
+//    } else if ((modifiers & InputEvent.BUTTON3_DOWN_MASK) != 0) {
+//      mouseButton = RIGHT;
+//    }
 
-    int modifiers = event.getModifiers();
-    if ((modifiers & InputEvent.BUTTON1_MASK) != 0) {
-      mouseButton = LEFT;
-    } else if ((modifiers & InputEvent.BUTTON2_MASK) != 0) {
-      mouseButton = CENTER;
-    } else if ((modifiers & InputEvent.BUTTON3_MASK) != 0) {
-      mouseButton = RIGHT;
-    }
-    // if running on macos, allow ctrl-click as right mouse
-    if (platform == MACOSX) {
-      if (mouseEvent.isPopupTrigger()) {
-        mouseButton = RIGHT;
-      }
-    }
-
+  // Compatibility for older code
     if (mouseEventMethods != null) {
-      mouseEventMethods.handle(new Object[] { event });
+      mouseEventMethods.handle(new Object[] { event.getNative() });
     }
 
     // this used to only be called on mouseMoved and mouseDragged
@@ -2426,34 +2439,139 @@ public class PApplet extends Applet
       firstMouse = false;
     }
 
-    //println(event);
+    mouseEvent = event;
+    handleMethods("mouseEvent", new Object[] { event });
 
-    switch (id) {
-    case MouseEvent.MOUSE_PRESSED:
+    switch (event.getAction()) {
+    case MouseEvent.PRESSED:
       mousePressed = true;
       mousePressed();
       break;
-    case MouseEvent.MOUSE_RELEASED:
+    case MouseEvent.RELEASED:
       mousePressed = false;
       mouseReleased();
       break;
-    case MouseEvent.MOUSE_CLICKED:
+    case MouseEvent.CLICKED:
       mouseClicked();
       break;
-    case MouseEvent.MOUSE_DRAGGED:
+    case MouseEvent.DRAGGED:
       mouseDragged();
       break;
-    case MouseEvent.MOUSE_MOVED:
+    case MouseEvent.MOVED:
       mouseMoved();
       break;
     }
 
-    if ((id == MouseEvent.MOUSE_DRAGGED) ||
-        (id == MouseEvent.MOUSE_MOVED)) {
+    if ((event.getAction() == MouseEvent.DRAGGED) ||
+      (event.getAction() == MouseEvent.MOVED)) {
       emouseX = mouseX;
       emouseY = mouseY;
     }
   }
+
+//  protected void handleMouseEvent(java.awt.event.MouseEvent event) {
+////    int id = event.getID();
+//    int peAction = 0;
+//    switch (event.getID()) {
+//    case java.awt.event.MouseEvent.MOUSE_PRESSED:
+//      peAction = MouseEvent.PRESSED;
+//      break;
+//    case java.awt.event.MouseEvent.MOUSE_RELEASED:
+//      peAction = MouseEvent.RELEASED;
+//      break;
+//    case java.awt.event.MouseEvent.MOUSE_CLICKED:
+//      peAction = MouseEvent.CLICKED;
+//      break;
+//    case java.awt.event.MouseEvent.MOUSE_DRAGGED:
+//      peAction = MouseEvent.DRAGGED;
+//      break;
+//    case java.awt.event.MouseEvent.MOUSE_MOVED:
+//      peAction = MouseEvent.MOVED;
+//      break;
+//    }
+//
+//    // http://dev.processing.org/bugs/show_bug.cgi?id=170
+//    // also prevents mouseExited() on the mac from hosing the mouse
+//    // position, because x/y are bizarre values on the exit event.
+//    // see also the id check below.. both of these go together
+////    if ((id == java.awt.event.MouseEvent.MOUSE_DRAGGED) ||
+////        (id == java.awt.event.MouseEvent.MOUSE_MOVED)) {
+//    if (peAction == MouseEvent.DRAGGED || peAction == MouseEvent.MOVED) {
+//      pmouseX = emouseX;
+//      pmouseY = emouseY;
+//      mouseX = event.getX();
+//      mouseY = event.getY();
+//    }
+//
+//    int modifiers = event.getModifiersEx();
+//    if ((modifiers & InputEvent.BUTTON1_DOWN_MASK) != 0) {
+//      mouseButton = LEFT;
+//    } else if ((modifiers & InputEvent.BUTTON2_DOWN_MASK) != 0) {
+//      mouseButton = CENTER;
+//    } else if ((modifiers & InputEvent.BUTTON3_DOWN_MASK) != 0) {
+//      mouseButton = RIGHT;
+//    }
+//    // if running on macos, allow ctrl-click as right mouse
+//    if (platform == MACOSX) {
+//      if (event.isPopupTrigger()) {
+//        mouseButton = RIGHT;
+//      }
+//    }
+//
+//    if (mouseEventMethods != null) {
+//      mouseEventMethods.handle(new Object[] { event });
+//    }
+//
+//    // this used to only be called on mouseMoved and mouseDragged
+//    // change it back if people run into trouble
+//    if (firstMouse) {
+//      pmouseX = mouseX;
+//      pmouseY = mouseY;
+//      dmouseX = mouseX;
+//      dmouseY = mouseY;
+//      firstMouse = false;
+//    }
+//
+//    int peModifiers = modifiers &
+//      (InputEvent.SHIFT_DOWN_MASK |
+//       InputEvent.CTRL_DOWN_MASK |
+//       InputEvent.META_DOWN_MASK |
+//       InputEvent.ALT_DOWN_MASK);
+//
+//    MouseEvent pe = new MouseEvent(event, event.getWhen(),
+//                                   peAction, peModifiers,
+//                                   mouseX, mouseY,
+//                                   event.getButton(),
+//                                   event.getClickCount());
+//    mouseEvent = pe;
+//    handleMethods("mouseEvent", new Object[] { pe });
+//
+//    switch (peAction) {
+//    case MouseEvent.PRESSED:
+//      mousePressed = true;
+//      mousePressed();
+//      break;
+//    case MouseEvent.RELEASED:
+//      mousePressed = false;
+//      mouseReleased();
+//      break;
+//    case MouseEvent.CLICKED:
+//      mouseClicked();
+//      break;
+//    case MouseEvent.DRAGGED:
+//      mouseDragged();
+//      break;
+//    case MouseEvent.MOVED:
+//      mouseMoved();
+//      break;
+//    }
+//
+//    if ((peAction == MouseEvent.DRAGGED) ||
+//        (peAction == MouseEvent.MOVED)) {
+//      emouseX = mouseX;
+//      emouseY = mouseY;
+//    }
+//  }
 
 
   /**
@@ -2461,11 +2579,65 @@ public class PApplet extends Applet
    * called, the events will be queued up until drawing is complete.
    * If noLoop() has been called, then events will happen immediately.
    */
-  protected void checkMouseEvent(MouseEvent event) {
+  protected void nativeMouseEvent(java.awt.event.MouseEvent nativeEvent) {
+    int peAction = 0;
+    switch (nativeEvent.getID()) {
+    case java.awt.event.MouseEvent.MOUSE_PRESSED:
+      peAction = MouseEvent.PRESSED;
+      break;
+    case java.awt.event.MouseEvent.MOUSE_RELEASED:
+      peAction = MouseEvent.RELEASED;
+      break;
+    case java.awt.event.MouseEvent.MOUSE_CLICKED:
+      peAction = MouseEvent.CLICKED;
+      break;
+    case java.awt.event.MouseEvent.MOUSE_DRAGGED:
+      peAction = MouseEvent.DRAGGED;
+      break;
+    case java.awt.event.MouseEvent.MOUSE_MOVED:
+      peAction = MouseEvent.MOVED;
+      break;
+    case java.awt.event.MouseEvent.MOUSE_ENTERED:
+      peAction = MouseEvent.ENTERED;
+      break;
+    case java.awt.event.MouseEvent.MOUSE_EXITED:
+      peAction = MouseEvent.EXITED;
+      break;
+    }
+
+    int modifiers = nativeEvent.getModifiersEx();
+
+    int peModifiers = modifiers &
+      (InputEvent.SHIFT_DOWN_MASK |
+       InputEvent.CTRL_DOWN_MASK |
+       InputEvent.META_DOWN_MASK |
+       InputEvent.ALT_DOWN_MASK);
+
+    int peButton = 0;
+    if ((modifiers & InputEvent.BUTTON1_DOWN_MASK) != 0) {
+      peButton = LEFT;
+    } else if ((modifiers & InputEvent.BUTTON2_DOWN_MASK) != 0) {
+      peButton = CENTER;
+    } else if ((modifiers & InputEvent.BUTTON3_DOWN_MASK) != 0) {
+      peButton = RIGHT;
+    }
+    // if running on macos, allow ctrl-click as right mouse
+    if (platform == MACOSX) {
+      if (nativeEvent.isPopupTrigger()) {
+        peButton = RIGHT;
+      }
+    }
+
+    MouseEvent pe = new MouseEvent(nativeEvent, nativeEvent.getWhen(),
+                                   peAction, peModifiers,
+                                   nativeEvent.getX(), nativeEvent.getY(),
+                                   peButton,
+                                   nativeEvent.getClickCount());
+
     if (looping) {
-      enqueueMouseEvent(event);
+      enqueueMouseEvent(pe);
     } else {
-      handleMouseEvent(event);
+      handleMouseEvent(pe);
     }
   }
 
@@ -2477,44 +2649,44 @@ public class PApplet extends Applet
    *
    * @nowebref
    */
-  public void mousePressed(MouseEvent e) {
-    checkMouseEvent(e);
+  public void mousePressed(java.awt.event.MouseEvent e) {
+    nativeMouseEvent(e);
   }
 
   /**
    * @nowebref
    */
-  public void mouseReleased(MouseEvent e) {
-    checkMouseEvent(e);
+  public void mouseReleased(java.awt.event.MouseEvent e) {
+    nativeMouseEvent(e);
   }
 
   /**
    * @nowebref
    */
-  public void mouseClicked(MouseEvent e) {
-    checkMouseEvent(e);
+  public void mouseClicked(java.awt.event.MouseEvent e) {
+    nativeMouseEvent(e);
   }
 
-  public void mouseEntered(MouseEvent e) {
-    checkMouseEvent(e);
+  public void mouseEntered(java.awt.event.MouseEvent e) {
+    nativeMouseEvent(e);
   }
 
-  public void mouseExited(MouseEvent e) {
-    checkMouseEvent(e);
-  }
-
-  /**
-   * @nowebref
-   */
-  public void mouseDragged(MouseEvent e) {
-    checkMouseEvent(e);
+  public void mouseExited(java.awt.event.MouseEvent e) {
+    nativeMouseEvent(e);
   }
 
   /**
    * @nowebref
    */
-  public void mouseMoved(MouseEvent e) {
-    checkMouseEvent(e);
+  public void mouseDragged(java.awt.event.MouseEvent e) {
+    nativeMouseEvent(e);
+  }
+
+  /**
+   * @nowebref
+   */
+  public void mouseMoved(java.awt.event.MouseEvent e) {
+    nativeMouseEvent(e);
   }
 
 
@@ -2648,33 +2820,76 @@ public class PApplet extends Applet
   }
 
 
+//  protected void handleKeyEvent(java.awt.event.KeyEvent event) {
+//    keyEvent = event;
+//    key = event.getKeyChar();
+//    keyCode = event.getKeyCode();
+//
+//    if (keyEventMethods != null) {
+//      keyEventMethods.handle(new Object[] { event });
+//    }
+//
+//    switch (event.getID()) {
+//    case KeyEvent.KEY_PRESSED:
+//      keyPressed = true;
+//      keyPressed();
+//      break;
+//    case KeyEvent.KEY_RELEASED:
+//      keyPressed = false;
+//      keyReleased();
+//      break;
+//    case KeyEvent.KEY_TYPED:
+//      keyTyped();
+//      break;
+//    }
+//
+//    // if someone else wants to intercept the key, they should
+//    // set key to zero (or something besides the ESC).
+//    if (event.getID() == java.awt.event.KeyEvent.KEY_PRESSED) {
+//      if (key == java.awt.event.KeyEvent.VK_ESCAPE) {
+//        exit();
+//      }
+//      // When running tethered to the Processing application, respond to
+//      // Ctrl-W (or Cmd-W) events by closing the sketch. Disable this behavior
+//      // when running independently, because this sketch may be one component
+//      // embedded inside an application that has its own close behavior.
+//      if (external &&
+//          event.getModifiers() == MENU_SHORTCUT &&
+//          event.getKeyCode() == 'W') {
+//        exit();
+//      }
+//    }
+//  }
+
+
   protected void handleKeyEvent(KeyEvent event) {
     keyEvent = event;
-    key = event.getKeyChar();
+    key = event.getKey();
     keyCode = event.getKeyCode();
 
     if (keyEventMethods != null) {
       keyEventMethods.handle(new Object[] { event });
     }
 
-    switch (event.getID()) {
-    case KeyEvent.KEY_PRESSED:
+    switch (event.getAction()) {
+    case KeyEvent.PRESSED:
       keyPressed = true;
       keyPressed();
       break;
-    case KeyEvent.KEY_RELEASED:
+    case KeyEvent.RELEASED:
       keyPressed = false;
       keyReleased();
       break;
-    case KeyEvent.KEY_TYPED:
+    case KeyEvent.TYPED:
       keyTyped();
       break;
     }
 
     // if someone else wants to intercept the key, they should
     // set key to zero (or something besides the ESC).
-    if (event.getID() == KeyEvent.KEY_PRESSED) {
-      if (key == KeyEvent.VK_ESCAPE) {
+    if (event.getAction() == KeyEvent.PRESSED) {
+      //if (key == java.awt.event.KeyEvent.VK_ESCAPE) {
+      if (key == ESC) {
         exit();
       }
       // When running tethered to the Processing application, respond to
@@ -2682,7 +2897,7 @@ public class PApplet extends Applet
       // when running independently, because this sketch may be one component
       // embedded inside an application that has its own close behavior.
       if (external &&
-          event.getModifiers() == MENU_SHORTCUT &&
+          ((java.awt.event.KeyEvent) event.getNative()).getModifiers() == MENU_SHORTCUT &&
           event.getKeyCode() == 'W') {
         exit();
       }
@@ -2690,12 +2905,32 @@ public class PApplet extends Applet
   }
 
 
-  protected void checkKeyEvent(KeyEvent event) {
+  protected void nativeKeyEvent(java.awt.event.KeyEvent event) {
+    int peAction = 0;
+    switch (event.getID()) {
+    case java.awt.event.KeyEvent.KEY_PRESSED:
+      peAction = KeyEvent.PRESSED;
+      break;
+    case java.awt.event.KeyEvent.KEY_RELEASED:
+      peAction = KeyEvent.RELEASED;
+      break;
+    case java.awt.event.KeyEvent.KEY_TYPED:
+      peAction = KeyEvent.TYPED;
+      break;
+    }
+
+    int peModifiers = event.getModifiersEx() &
+      (InputEvent.SHIFT_DOWN_MASK |
+       InputEvent.CTRL_DOWN_MASK |
+       InputEvent.META_DOWN_MASK |
+       InputEvent.ALT_DOWN_MASK);
+
+    KeyEvent ke = new KeyEvent(event, event.getWhen(), peAction, peModifiers,
+                               event.getKeyChar(), event.getKeyCode());
     if (looping) {
-      enqueueKeyEvent(event);
+      enqueueKeyEvent(ke);
     } else {
-//      thread.notify();  // wake 'im up
-      handleKeyEvent(event);
+      handleKeyEvent(ke);
     }
   }
 
@@ -2709,17 +2944,17 @@ public class PApplet extends Applet
    *
    * @nowebref
    */
-  public void keyPressed(KeyEvent e) { checkKeyEvent(e); }
+  public void keyPressed(java.awt.event.KeyEvent e) { nativeKeyEvent(e); }
 
   /**
    * @nowebref
    */
-  public void keyReleased(KeyEvent e) { checkKeyEvent(e); }
+  public void keyReleased(java.awt.event.KeyEvent e) { nativeKeyEvent(e); }
 
   /**
    * @nowebref
    */
-  public void keyTyped(KeyEvent e) { checkKeyEvent(e); }
+  public void keyTyped(java.awt.event.KeyEvent e) { nativeKeyEvent(e); }
 
 
   /**
@@ -9640,7 +9875,7 @@ public class PApplet extends Applet
         label.setForeground(stopColor);
         label.addMouseListener(new MouseAdapter() {
             @Override
-            public void mousePressed(MouseEvent e) {
+            public void mousePressed(java.awt.event.MouseEvent e) {
               System.exit(0);
             }
           });
@@ -9732,7 +9967,7 @@ public class PApplet extends Applet
       } else {  // !external
         frame.addWindowListener(new WindowAdapter() {
             @Override
-            public void windowClosing(WindowEvent e) {
+            public void windowClosing(java.awt.event.WindowEvent e) {
               System.exit(0);
             }
           });
@@ -11328,6 +11563,10 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * 
+   * @param level either 2, 4, or 8
+   */ 
   public void smooth(int level) {
     if (recorder != null) recorder.smooth(level);
     g.smooth(level);
