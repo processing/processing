@@ -31,6 +31,7 @@ void setup() {
 void draw() {
   background(0);
    
+  ambient(80);   
   lights();
    
   translate(width/2, height/2, 200);
