@@ -1,3 +1,8 @@
+#ifdef GL_ES
+precision mediump float;
+precision mediump int;
+#endif
+
 varying vec3 vertNormal;
 varying vec3 vertLightDir;
 
