@@ -2845,7 +2845,7 @@ public class PApplet extends Applet
     keyCode = event.getKeyCode();
 
     if (keyEventMethods != null) {
-      keyEventMethods.handle(new Object[] { event });
+      keyEventMethods.handle(new Object[] { event.getNative() });
     }
 
     switch (event.getAction()) {
@@ -11541,9 +11541,9 @@ public class PApplet extends Applet
 
 
   /**
-   * 
+   *
    * @param level either 2, 4, or 8
-   */ 
+   */
   public void smooth(int level) {
     if (recorder != null) recorder.smooth(level);
     g.smooth(level);
