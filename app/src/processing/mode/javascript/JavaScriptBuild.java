@@ -324,8 +324,8 @@ public class JavaScriptBuild
 	// add a handy method to read the generated sketchID
 	String scriptFiles = "<script type=\"text/javascript\">\n";
 
-	scriptFiles += "// convenience function to fetch ID of sketch html element\n" +
-				   "function getProcessingSketchID () { return '"+sketchID+"'; }\n";
+	scriptFiles += "// convenience function to get the id attribute of generated sketch html element\n" +
+				   "function getProcessingSketchId () { return '"+sketchID+"'; }\n";
 
 //	ArrayList<String> addresses = jsServer.getInetAddresses();
 //	int port = jsServer.getPort();
