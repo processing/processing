@@ -7067,7 +7067,8 @@ public class PGraphicsOpenGL extends PGraphics {
       float h = pgCurrent.viewport[3];
       setUniformValue(viewportLoc, x, y, w, h);
 
-      if (pgCurrent.getHint(ENABLE_STROKE_PERSPECTIVE)) {
+      if (pgCurrent.getHint(ENABLE_STROKE_PERSPECTIVE) &&
+          !pgCurrent.usingOrthoProjection) {
         setUniformValue(perspectiveLoc, 1);
       } else {
         setUniformValue(perspectiveLoc, 0);
@@ -7188,7 +7189,8 @@ public class PGraphicsOpenGL extends PGraphics {
       float h = pgCurrent.viewport[3];
       setUniformValue(viewportLoc, x, y, w, h);
 
-      if (pgCurrent.getHint(ENABLE_STROKE_PERSPECTIVE)) {
+      if (pgCurrent.getHint(ENABLE_STROKE_PERSPECTIVE) &&
+          !pgCurrent.usingOrthoProjection) {
         setUniformValue(perspectiveLoc, 1);
       } else {
         setUniformValue(perspectiveLoc, 0);
