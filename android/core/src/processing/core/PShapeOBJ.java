@@ -49,6 +49,9 @@ public class PShapeOBJ extends PShape {
       kind = POLYGON;
     }
 
+    stroke = false;
+    fill = true;
+
     // Setting material properties for the new face
     fillColor = rgbaValue(mtl.kd);
     ambientColor = rgbaValue(mtl.ka);
@@ -83,8 +86,8 @@ public class PShapeOBJ extends PShape {
       vertices[j][Z] = vert.z;
 
       vertices[j][PGraphics.R] = mtl.kd.x;
-      vertices[j][PGraphics.B] = mtl.kd.y;
-      vertices[j][PGraphics.G] = mtl.kd.z;
+      vertices[j][PGraphics.G] = mtl.kd.y;
+      vertices[j][PGraphics.B] = mtl.kd.z;
       vertices[j][PGraphics.A] = 1;
 
       if (norms != null) {
@@ -126,7 +129,7 @@ public class PShapeOBJ extends PShape {
       OBJFace face = faces.get(i);
 
       // Getting current material.
-      if (mtlIdxCur != face.matIdx) {
+      if (mtlIdxCur != face.matIdx || face.matIdx == -1) {
         // To make sure that at least we get the default material
         mtlIdxCur = PApplet.max(0, face.matIdx);
         mtl = materials.get(mtlIdxCur);
@@ -156,6 +159,11 @@ public class PShapeOBJ extends PShape {
       String gname = "object";
       while ((line = reader.readLine()) != null) {
        // Parse the line.
+        line = line.trim();
+        if (line.equals("") || line.indexOf('#') == 0) {
+          // Empty line of comment, ignore line
+          continue;
+        }
 
         // The below patch/hack comes from Carlos Tomas Marti and is a
         // fix for single backslashes in Rhino obj files

@@ -126,12 +126,9 @@ public class PGraphics3D extends PGraphicsOpenGL {
     }
 
     if (obj != null) {
-      boolean prevStroke = pg.stroke;
       int prevTextureMode = pg.textureMode;
-      pg.stroke = false;
       pg.textureMode = NORMAL;
       PShapeOpenGL p3d = PShapeOpenGL.createShape3D(pg.parent, obj);
-      pg.stroke = prevStroke;
       pg.textureMode = prevTextureMode;
       return p3d;
     } else {
