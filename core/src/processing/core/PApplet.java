@@ -3348,12 +3348,9 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from link.xml )
-   *
    * Links to a webpage either in the same window or in a new window. The
    * complete URL must be specified.
-   *
-   * ( end auto-generated )
+   * 
    * <h3>Advanced</h3>
    * Link to an external page without all the muss.
    * <p>
@@ -3365,7 +3362,6 @@ public class PApplet extends Applet
    * or whatever you want as your browser, since Linux doesn't
    * yet have a standard method for launching URLs.
    *
-   * @webref input:web
    * @param url the complete URL, as a String in quotes
    * @param target the name of the window in which to load the URL, as a String in quotes
    * @deprecated the 'target' parameter is no longer relevant with the removal of applets
@@ -5871,6 +5867,8 @@ public class PApplet extends Applet
    * For advanced users, the method must be 'public', which is true for all
    * methods inside a sketch when run from the PDE, but must explicitly be
    * set when using Eclipse or other development environments.
+   * 
+   * @webref input:files
    * @param prompt message to the user
    * @param callback name of the method to be called when the selection is made
    */
@@ -5896,12 +5894,17 @@ public class PApplet extends Applet
   }
 
 
-  /** See selectInput() for details. */
+  /** 
+   * See selectInput() for details.
+   * 
+   * @webref output:files
+   * @param prompt message to the user
+   * @param callback name of the method to be called when the selection is made
+   */
   public void selectOutput(String prompt, String callback) {
     selectOutput(prompt, callback, null);
   }
-
-
+  
   public void selectOutput(String prompt, String callback, File file) {
     selectOutput(prompt, callback, file, this);
   }
@@ -5965,7 +5968,13 @@ public class PApplet extends Applet
   }
 
 
-  /** See selectInput() for details. */
+  /** 
+   * See selectInput() for details.
+   * 
+   * @webref input:files
+   * @param prompt message to the user
+   * @param callback name of the method to be called when the selection is made
+   */
   public void selectFolder(String prompt, String callback) {
     selectFolder(prompt, callback, null);
   }
@@ -10613,6 +10622,16 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * ( begin auto-generated from blendMode.xml )
+   *
+   * This is a new reference entry for Processing 2.0. It will be updated shortly.
+   *
+   * ( end auto-generated )
+   * 
+   * @webref Rendering
+   * @param mode the blending mode to use
+   */
   public void blendMode(int mode) {
     if (recorder != null) recorder.blendMode(mode);
     g.blendMode(mode);
@@ -10644,34 +10663,72 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * ( begin auto-generated from loadShader.xml )
+   *
+   * This is a new reference entry for Processing 2.0. It will be updated shortly.
+   *
+   * ( end auto-generated )
+   * 
+   * @webref rendering:shaders
+   * @param fragFilename name of fragment shader file
+   */
   public PShader loadShader(String fragFilename) {
     return g.loadShader(fragFilename);
   }
 
 
+  /**
+   * @param vertFilename name of vertex shader file
+   */
   public PShader loadShader(String fragFilename, String vertFilename) {
     return g.loadShader(fragFilename, vertFilename);
   }
 
 
+  /**
+   * ( begin auto-generated from shader.xml )
+   *
+   * This is a new reference entry for Processing 2.0. It will be updated shortly.
+   *
+   * ( end auto-generated )
+   * 
+   * @webref rendering:shaders
+   * @param shader name of shader file
+   */
   public void shader(PShader shader) {
     if (recorder != null) recorder.shader(shader);
     g.shader(shader);
   }
 
 
+  /**
+   * @param kind type of shader, either POINTS, LINES, or TRIANGLES
+   */
   public void shader(PShader shader, int kind) {
     if (recorder != null) recorder.shader(shader, kind);
     g.shader(shader, kind);
   }
 
 
+  /**
+   * ( begin auto-generated from resetShader.xml )
+   *
+   * This is a new reference entry for Processing 2.0. It will be updated shortly.
+   *
+   * ( end auto-generated )
+   * 
+   * @webref rendering:shaders
+   */
   public void resetShader() {
     if (recorder != null) recorder.resetShader();
     g.resetShader();
   }
 
 
+  /**
+   * @param kind type of shader, either POINTS, LINES, or TRIANGLES
+   */
   public void resetShader(int kind) {
     if (recorder != null) recorder.resetShader(kind);
     g.resetShader(kind);
@@ -11541,9 +11598,9 @@ public class PApplet extends Applet
 
 
   /**
-   *
+   * 
    * @param level either 2, 4, or 8
-   */
+   */ 
   public void smooth(int level) {
     if (recorder != null) recorder.smooth(level);
     g.smooth(level);
