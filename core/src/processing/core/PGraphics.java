@@ -1590,7 +1590,16 @@ public class PGraphics extends PImage implements PConstants {
 
   // BLEND
 
-
+  /**
+   * ( begin auto-generated from blendMode.xml )
+   *
+   * This is a new reference entry for Processing 2.0. It will be updated shortly.
+   *
+   * ( end auto-generated )
+   * 
+   * @webref Rendering
+   * @param mode the blending mode to use
+   */
   public void blendMode(int mode) {
     showMissingWarning("blendMode");
   }
@@ -1640,34 +1649,66 @@ public class PGraphics extends PImage implements PConstants {
 
   // SHADERS
 
-
+  /**
+   * ( begin auto-generated from loadShader.xml )
+   *
+   * This is a new reference entry for Processing 2.0. It will be updated shortly.
+   *
+   * ( end auto-generated )
+   * 
+   * @webref rendering:shaders
+   * @param fragFilename name of fragment shader file
+   */
   public PShader loadShader(String fragFilename) {
     showMissingWarning("loadShader");
     return null;
   }
 
-
+  /**
+   * @param vertFilename name of vertex shader file
+   */
   public PShader loadShader(String fragFilename, String vertFilename) {
     showMissingWarning("loadShader");
     return null;
   }
 
-
+  /**
+   * ( begin auto-generated from shader.xml )
+   *
+   * This is a new reference entry for Processing 2.0. It will be updated shortly.
+   *
+   * ( end auto-generated )
+   * 
+   * @webref rendering:shaders
+   * @param shader name of shader file
+   */
   public void shader(PShader shader) {
     showMissingWarning("shader");
   }
 
-
+  /**
+   * @param kind type of shader, either POINTS, LINES, or TRIANGLES
+   */
   public void shader(PShader shader, int kind) {
     showMissingWarning("shader");
   }
 
-
+  /**
+   * ( begin auto-generated from resetShader.xml )
+   *
+   * This is a new reference entry for Processing 2.0. It will be updated shortly.
+   *
+   * ( end auto-generated )
+   * 
+   * @webref rendering:shaders
+   */
   public void resetShader() {
     showMissingWarning("resetShader");
   }
 
-
+  /**
+   * @param kind type of shader, either POINTS, LINES, or TRIANGLES
+   */
   public void resetShader(int kind) {
     showMissingWarning("resetShader");
   }
