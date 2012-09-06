@@ -825,15 +825,24 @@ public class PShape implements PConstants {
       for (int i = 0; i < src.vertexCount; i++) {
         float[] vert = src.vertices[i];
 
-        // Do we need to copy these as well?
-//        s.ambient(vert[AR] * 255, vert[AG] * 255, vert[AB] * 255);
-//        s.specular(vert[SPR] * 255, vert[SPG] * 255, vert[SPB] * 255);
-//        s.emissive(vert[ER] * 255, vert[EG] * 255, vert[EB] * 255);
-//        s.shininess(vert[SHINE]);
+        dest.fill(vert[PGraphics.R] * 255,
+                  vert[PGraphics.G] * 255,
+                  vert[PGraphics.B] * 255,
+                  vert[PGraphics.A] * 255);
 
-        dest.normal(vert[PGraphics.NX],
-                    vert[PGraphics.NY],
-                    vert[PGraphics.NZ]);
+     // Do we need to copy these as well?
+//        dest.ambient(vert[PGraphics.AR] * 255, vert[PGraphics.AG] * 255, vert[PGraphics.AB] * 255);
+//        dest.specular(vert[PGraphics.SPR] * 255, vert[PGraphics.SPG] * 255, vert[PGraphics.SPB] * 255);
+//        dest.emissive(vert[PGraphics.ER] * 255, vert[PGraphics.EG] * 255, vert[PGraphics.EB] * 255);
+//        dest.shininess(vert[PGraphics.SHINE]);
+
+        if (0 < PApplet.dist(vert[PGraphics.NX],
+                             vert[PGraphics.NY],
+                             vert[PGraphics.NZ], 0, 0, 0)) {
+          dest.normal(vert[PGraphics.NX],
+                      vert[PGraphics.NY],
+                      vert[PGraphics.NZ]);
+        }
         dest.vertex(vert[X], vert[Y], vert[Z],
                     vert[PGraphics.U],
                     vert[PGraphics.V]);
