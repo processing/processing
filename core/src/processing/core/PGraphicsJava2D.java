@@ -160,13 +160,6 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
       g2 = (Graphics2D) image.getGraphics();
     }
 
-    // Avoid badness when drawing shorter strokes.
-    // http://code.google.com/p/processing/issues/detail?id=1068
-    // With very small stroke increments, this was actually faster by 2x,
-    // and for larger increments it was only 3% slower.
-    g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL,
-                        RenderingHints.VALUE_STROKE_PURE);
-
     // can't un-set this because this may be only a resize
     // http://dev.processing.org/bugs/show_bug.cgi?id=463
     //defaultsInited = false;
@@ -267,7 +260,23 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   // HINT
 
 
-  //public void hint(int which)
+  @Override
+  public void hint(int which) {
+    // take care of setting the hint
+    super.hint(which);
+
+    // Avoid badness when drawing shorter strokes.
+    // http://code.google.com/p/processing/issues/detail?id=1068
+    // Unfortunately cannot always be enabled, because it makes the
+    // stroke in many standard Processing examples really gross.
+    if (which == ENABLE_STROKE_PURE) {
+      g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL,
+                          RenderingHints.VALUE_STROKE_PURE);
+    } else if (which == DISABLE_STROKE_PURE) {
+      g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL,
+                          RenderingHints.VALUE_STROKE_DEFAULT);
+    }
+  }
 
 
 
@@ -373,8 +382,14 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
         gpath.moveTo(vertices[0][X],
                      vertices[0][Y]);
         gpath.lineTo(vertices[vertexCount - 2][X],
-                    vertices[vertexCount - 2][Y]);
+                     vertices[vertexCount - 2][Y]);
         gpath.lineTo(x, y);
+//        gpath.moveTo(vertices[vertexCount - 2][X],
+//                     vertices[vertexCount - 2][Y]);
+//        gpath.lineTo(x, y);
+//        gpath.lineTo(vertices[0][X],
+//                     vertices[0][Y]);
+        gpath.closePath();
         drawShape(gpath);
       }
       break;

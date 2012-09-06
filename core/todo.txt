@@ -1,4 +1,22 @@
 0210 core
+X fix problem with key events breaking with libraries
+X added hint(ENABLE_STROKE_PURE) to deal with Java 2D grossness
+
+_ double check that new key and mouse events are being addressed correctly
+
+andres
+A POINTS mode vertices are huge
+A   http://code.google.com/p/processing/issues/detail?id=1037
+A potentially insufficient ellipse detail with P3D/OPENGL when scale()'d
+A   http://code.google.com/p/processing/issues/detail?id=87
+
+earlier
+A Implement support for complex shapes when using the OpenGL renderer 
+A   in opengl mode, use its tesselator
+A   because the vertex calls can just come right back to regular vertex calls
+A   this way we can also implement breakShape() for opengl
+A   http://code.google.com/p/processing/issues/detail?id=122
+
 
 
 hint(OPENGL_ERRORS) should be the opposite to enable the reporting, no?
@@ -520,11 +538,6 @@ _   add an edge flag when tesselating
 _   mind the opengl tesselation flags
 _   need to turn off smoothing for the interior of shapes
 _   http://code.google.com/p/processing/issues/detail?id=53
-_ Implement support for complex shapes when using the OpenGL renderer 
-_   in opengl mode, use its tesselator
-_   because the vertex calls can just come right back to regular vertex calls
-_   this way we can also implement breakShape() for opengl
-_   http://code.google.com/p/processing/issues/detail?id=122
 _ strokeCap() and strokeJoin() for use with OPENGL
 _   http://code.google.com/p/processing/issues/detail?id=123
 _ ellipse scaling method isn't great
