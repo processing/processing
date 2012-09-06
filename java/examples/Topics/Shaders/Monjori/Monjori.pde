@@ -1,13 +1,14 @@
 /**
- * Monjori
+ * Monjori. 
+ * 
  * GLSL version of the 1k intro Monjori from the demoscene 
  * (http://www.pouet.net/prod.php?which=52761)
  * Ported from the webGL version available in ShaderToy:
  * http://www.iquilezles.org/apps/shadertoy/
- * (look for Monjori under the Plane Deformations Presets) 
+ * (Look for Monjori under the Plane Deformations Presets) 
  */
  
- PShader monjori;
+PShader monjori;
 
 void setup() {
   size(640, 360, P2D);

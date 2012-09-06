@@ -1,9 +1,10 @@
 /**
- * Deform
+ * Deform. 
+ * 
  * A GLSL version of the oldschool 2D deformation effect, by Inigo Quilez.
  * Ported from the webGL version available in ShaderToy:
  * http://www.iquilezles.org/apps/shadertoy/
- * (look for Deform under the Plane Deformations Presets)
+ * (Look for Deform under the Plane Deformations Presets)
  * 
  */
  

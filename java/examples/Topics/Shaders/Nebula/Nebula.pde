@@ -1,5 +1,6 @@
 /**
- * Nebula
+ * Nebula. 
+ * 
  * From CoffeeBreakStudios.com (CBS)
  * Ported from the webGL version in GLSL Sandbox:
  * http://glsl.heroku.com/e#3265.2
