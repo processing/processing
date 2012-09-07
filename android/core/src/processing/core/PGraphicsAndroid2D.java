@@ -369,20 +369,12 @@ public class PGraphicsAndroid2D extends PGraphics {
         break;
 
       case TRIANGLE_FAN:
-        if (vertexCount == 3) {
-          triangle(vertices[0][X], vertices[0][Y],
-                   vertices[1][X], vertices[1][Y],
+        if (vertexCount >= 3) {
+          triangle(vertices[0][X],
+                   vertices[0][Y],
+                   vertices[vertexCount - 2][X],
+                   vertices[vertexCount - 2][Y],
                    x, y);
-        } else if (vertexCount > 3) {
-          path.reset();
-          // when vertexCount > 3, draw an un-closed triangle
-          // for indices 0 (center), previous, current
-          path.moveTo(vertices[0][X],
-                      vertices[0][Y]);
-          path.lineTo(vertices[vertexCount - 2][X],
-                      vertices[vertexCount - 2][Y]);
-          path.lineTo(x, y);
-          drawPath();
         }
         break;
 

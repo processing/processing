@@ -1,14 +1,16 @@
 0210 core
 X fix problem with key events breaking with libraries
 X added hint(ENABLE_STROKE_PURE) to deal with Java 2D grossness
-
-_ double check that new key and mouse events are being addressed correctly
+X fix stroke on TRIANGLE_FAN
+X   http://code.google.com/p/processing/issues/detail?id=1137
 
 andres
 A POINTS mode vertices are huge
 A   http://code.google.com/p/processing/issues/detail?id=1037
 A potentially insufficient ellipse detail with P3D/OPENGL when scale()'d
 A   http://code.google.com/p/processing/issues/detail?id=87
+A Using ortho() breaks stroke rendering
+A   http://code.google.com/p/processing/issues/detail?id=1207
 
 earlier
 A Implement support for complex shapes when using the OpenGL renderer 
@@ -18,6 +20,7 @@ A   this way we can also implement breakShape() for opengl
 A   http://code.google.com/p/processing/issues/detail?id=122
 
 
+_ double check that new key and mouse events are being addressed correctly
 
 hint(OPENGL_ERRORS) should be the opposite to enable the reporting, no?
 
