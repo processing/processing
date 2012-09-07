@@ -12,6 +12,9 @@ fixes that we've found along the way.
 + Added hint(ENABLE_STROKE_PURE) to deal with Java 2D regression.
   http://code.google.com/p/processing/issues/detail?id=1137
 
++ Fix for stroke with beginShape(TRIANGLE_FAN)
+  http://code.google.com/p/processing/issues/detail?id=1137
+
 + hint() documentation now updated (except for the hint above). 
   http://code.google.com/p/processing/issues/detail?id=1144
 
