@@ -18,7 +18,15 @@ A   in opengl mode, use its tesselator
 A   because the vertex calls can just come right back to regular vertex calls
 A   this way we can also implement breakShape() for opengl
 A   http://code.google.com/p/processing/issues/detail?id=122
-
+A modelX/Y/Z broken when aiming a camera
+A   http://code.google.com/p/processing/issues/detail?id=148
+A OpenGL renderer does not work on Mac OS X + JDK 7
+A   upstream fix in JOGL bindings
+A   http://code.google.com/p/processing/issues/detail?id=1070
+A Problems w/ opengl example sketches
+A   http://code.google.com/p/processing/issues/detail?id=902
+A updatePixels wth OpenGL requires a lot of memory, need better texture update
+A   http://code.google.com/p/processing/issues/detail?id=77
 
 _ double check that new key and mouse events are being addressed correctly
 
@@ -498,8 +506,6 @@ _ set() requires updatePixels() with OpenGL
 _   http://code.google.com/p/processing/issues/detail?id=89
 _ first few frames of OpenGL sketches on Windows run slowly
 _   http://code.google.com/p/processing/issues/detail?id=107
-_ updatePixels wth OpenGL requires a lot of memory, need better texture update
-_   http://code.google.com/p/processing/issues/detail?id=77
 _ implement textMode(SHAPE) with OPENGL
 _   http://code.google.com/p/processing/issues/detail?id=738
 _ Signature issue on contributed libraries affects unrelated opengl sketches
@@ -513,8 +519,6 @@ _ OpenGL noSmooth() problems
 _   http://code.google.com/p/processing/issues/detail?id=328
 _ inconsistent anti-aliasing with OpenGL
 _   http://code.google.com/p/processing/issues/detail?id=217
-_ modelX/Y/Z broken when aiming a camera
-_   http://code.google.com/p/processing/issues/detail?id=148
 _ OS X slow with FSEM enabled
 _   http://code.google.com/p/processing/issues/detail?id=737
 _ chopping out triangles in OpenGL (though it's only 2D drawing)
