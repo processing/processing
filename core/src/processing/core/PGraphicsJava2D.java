@@ -371,26 +371,20 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
       break;
 
     case TRIANGLE_FAN:
-      if (vertexCount == 3) {
-        triangle(vertices[0][X], vertices[0][Y],
-                 vertices[1][X], vertices[1][Y],
+      if (vertexCount >= 3) {
+        // This is an unfortunate implementation because the stroke for an
+        // adjacent triangle will be repeated. However, if the stroke is not
+        // redrawn, it will replace the adjacent line (when it lines up
+        // perfectly) or show a faint line (when off by a small amount).
+        // The alternative would be to wait, then draw the shape as a
+        // polygon fill, followed by a series of vertices. But that's a
+        // poor method when used with PDF, DXF, or other recording objects,
+        // since discrete triangles would likely be preferred.
+        triangle(vertices[0][X],
+                 vertices[0][Y],
+                 vertices[vertexCount - 2][X],
+                 vertices[vertexCount - 2][Y],
                  x, y);
-      } else if (vertexCount > 3) {
-        gpath = new GeneralPath();
-        // when vertexCount > 3, draw an un-closed triangle
-        // for indices 0 (center), previous, current
-        gpath.moveTo(vertices[0][X],
-                     vertices[0][Y]);
-        gpath.lineTo(vertices[vertexCount - 2][X],
-                     vertices[vertexCount - 2][Y]);
-        gpath.lineTo(x, y);
-//        gpath.moveTo(vertices[vertexCount - 2][X],
-//                     vertices[vertexCount - 2][Y]);
-//        gpath.lineTo(x, y);
-//        gpath.lineTo(vertices[0][X],
-//                     vertices[0][Y]);
-        gpath.closePath();
-        drawShape(gpath);
       }
       break;
 
