@@ -68,8 +68,8 @@ public class AndroidMode extends JavaMode {
     return new File[] {
       new File(examplesFolder, "Basics"),
       new File(examplesFolder, "Topics"),
-      new File(examplesFolder, "Sensors"),
-      new File(examplesFolder, "OpenGL")
+      new File(examplesFolder, "Demos"),
+      new File(examplesFolder, "Sensors")
     };
   }
 
