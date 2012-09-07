@@ -424,7 +424,12 @@ public interface PConstants {
   static final int DISABLE_TEXTURE_MIPMAPS    =  11;
   static final int ENABLE_TEXTURE_MIPMAPS     = -11;
 
-  static final int HINT_COUNT                 =  12;
+  static final int ENABLE_STROKE_PURE         =  12;
+  static final int DISABLE_STROKE_PURE        = -12;
+
+  static final int HINT_COUNT                 =  13;
+
+
   // error messages
 
   static final String ERROR_BACKGROUND_IMAGE_SIZE =
