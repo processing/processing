@@ -1,3 +1,60 @@
+PROCESSING 2.0b2 (REV 0210) - 7 September 2012
+
+One major fix for libraries that use key events, and a number of minor 
+fixes that we've found along the way. 
+
+[ fixes and updates ] 
+
++ Libraries with using key events were reporting:
+  "java.lang.IllegalArgumentException: argument type mismatch"
+  in beta 1, this is now fixed. 
+
++ Added hint(ENABLE_STROKE_PURE) to deal with Java 2D regression.
+  http://code.google.com/p/processing/issues/detail?id=1137
+
++ hint() documentation now updated (except for the hint above). 
+  http://code.google.com/p/processing/issues/detail?id=1144
+
++ Using ortho() breaks stroke rendering
+  http://code.google.com/p/processing/issues/detail?id=1207
+
+[ fixed earlier ] 
+
++ POINTS mode vertices are huge
+  http://code.google.com/p/processing/issues/detail?id=1037
+
++ Potentially insufficient ellipse detail with P3D/OPENGL when scaled
+  http://code.google.com/p/processing/issues/detail?id=87
+
++ Implement support for complex shapes when using the OpenGL renderer 
+  http://code.google.com/p/processing/issues/detail?id=122
+
++ modelX/Y/Z broken when aiming a camera
+  http://code.google.com/p/processing/issues/detail?id=148
+
++ OpenGL broken with JDK 7 on OS X, fixed with new JOGL updates
+  http://code.google.com/p/processing/issues/detail?id=1070
+
++ Problems with OpenGL example sketches
+  http://code.google.com/p/processing/issues/detail?id=902
+
++ Memory improvements for updatePixels() with OpenGL (P2D and P3D)
+  http://code.google.com/p/processing/issues/detail?id=77
+
++ Text characters showing up as opaque rectangles 
+  http://code.google.com/p/processing/issues/detail?id=80
+
++ Changing framerate causes program to crash with P2D in 2.0a6
+  http://code.google.com/p/processing/issues/detail?id=1116
+
+[ android ] 
+
++ Updated examples from Andres and categories in the examples browser.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING 2.0b1 (REV 0209) - 3 September 2012
 
 Bug fixes, new registered methods for libraries, updated keywords,
