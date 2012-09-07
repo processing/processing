@@ -474,9 +474,15 @@ public class PShape implements PConstants {
   protected void solid(boolean solid) {
   }
 
+  /**
+   * @webref pshape:method 
+   */
   public void beginContour() {
   }
-
+  
+  /**
+   * @webref pshape:method 
+   */
   public void endContour() {
   }
 
@@ -495,6 +501,9 @@ public class PShape implements PConstants {
   public void normal(float nx, float ny, float nz) {
   }
 
+  /**
+   * @webref pshape:method 
+   */
   public void end() {
   }
 
@@ -1282,6 +1291,9 @@ public class PShape implements PConstants {
 
 
   // can't be just 'add' because that suggests additive geometry
+  /**
+   * @webref pshape:method 
+   */
   public void addChild(PShape who) {
     if (children == null) {
       children = new PShape[1];
