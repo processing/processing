@@ -4,6 +4,10 @@ X added hint(ENABLE_STROKE_PURE) to deal with Java 2D grossness
 X fix stroke on TRIANGLE_FAN
 X   http://code.google.com/p/processing/issues/detail?id=1137
 
+docs
+C 2x and 4x smooth hints no longer needed/supported
+C   http://code.google.com/p/processing/issues/detail?id=1144
+
 andres
 A POINTS mode vertices are huge
 A   http://code.google.com/p/processing/issues/detail?id=1037
@@ -27,6 +31,13 @@ A Problems w/ opengl example sketches
 A   http://code.google.com/p/processing/issues/detail?id=902
 A updatePixels wth OpenGL requires a lot of memory, need better texture update
 A   http://code.google.com/p/processing/issues/detail?id=77
+A text characters showing up as opaque rectangles in tga files
+o   solution is to implement alpha compositing across all of P3D 
+o   http://en.wikipedia.org/wiki/Alpha_compositing
+A   http://code.google.com/p/processing/issues/detail?id=80
+A changing framerate causes program to crash with P2D in 2.0a6
+A   http://code.google.com/p/processing/issues/detail?id=1116
+
 
 _ double check that new key and mouse events are being addressed correctly
 
@@ -105,8 +116,7 @@ o bring PConstants back in line w/ previous 1.5 (can't renumber)
 o consider enable("mipmaps") instead of hint(ENABLE_MIPMAPS)
 X clean up PConstants and move things into PGraphics that needn't be available
 _ hint(DISABLE_LOADPIXELS) -> faster rendering in Java2D
-_ 2x and 4x smooth hints no longer needed/supported
-_   http://code.google.com/p/processing/issues/detail?id=1144
+_ getGLProfiles stuff.. can't do getGL2(), not good x-platform
 
 docs (2.0)
 _ add notes about the new shader setup
@@ -533,10 +543,6 @@ _   http://code.google.com/p/processing/issues/detail?id=146
 _   OPENGL sketches flicker w/ Vista when background() not used inside draw()
 _   Disabling Aero scheme sometimes prevents the problem
 _   Updating graphics drivers may prevent the problem 
-_ text characters showing up as opaque rectangles in tga files
-o   solution is to implement alpha compositing across all of P3D 
-o   http://en.wikipedia.org/wiki/Alpha_compositing
-_   http://code.google.com/p/processing/issues/detail?id=80
 _ textAlign(CENTER) with P3D and OPENGL produces messy result
 _   probably rounding error with the images
 _   http://code.google.com/p/processing/issues/detail?id=65
