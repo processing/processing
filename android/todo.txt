@@ -1,5 +1,6 @@
 0210 android
 X lots of example updates from Andres
+X update example categories in the browser
 
 _ PMotionEvent is being used internal to PApplet, need to re-wrap
 _   should be able to fire MotionEvents
