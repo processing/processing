@@ -1,3 +1,44 @@
+0210 core (2.0b2)
+X fix problem with key events breaking with libraries
+X added hint(ENABLE_STROKE_PURE) to deal with Java 2D grossness
+X fix stroke on TRIANGLE_FAN
+X   http://code.google.com/p/processing/issues/detail?id=1137
+
+docs
+C 2x and 4x smooth hints no longer needed/supported
+C   http://code.google.com/p/processing/issues/detail?id=1144
+
+andres
+A POINTS mode vertices are huge
+A   http://code.google.com/p/processing/issues/detail?id=1037
+A potentially insufficient ellipse detail with P3D/OPENGL when scale()'d
+A   http://code.google.com/p/processing/issues/detail?id=87
+A Using ortho() breaks stroke rendering
+A   http://code.google.com/p/processing/issues/detail?id=1207
+
+earlier
+A Implement support for complex shapes when using the OpenGL renderer 
+A   in opengl mode, use its tesselator
+A   because the vertex calls can just come right back to regular vertex calls
+A   this way we can also implement breakShape() for opengl
+A   http://code.google.com/p/processing/issues/detail?id=122
+A modelX/Y/Z broken when aiming a camera
+A   http://code.google.com/p/processing/issues/detail?id=148
+A OpenGL renderer does not work on Mac OS X + JDK 7
+A   upstream fix in JOGL bindings
+A   http://code.google.com/p/processing/issues/detail?id=1070
+A Problems w/ opengl example sketches
+A   http://code.google.com/p/processing/issues/detail?id=902
+A updatePixels wth OpenGL requires a lot of memory, need better texture update
+A   http://code.google.com/p/processing/issues/detail?id=77
+A text characters showing up as opaque rectangles in tga files
+o   solution is to implement alpha compositing across all of P3D 
+o   http://en.wikipedia.org/wiki/Alpha_compositing
+A   http://code.google.com/p/processing/issues/detail?id=80
+A changing framerate causes program to crash with P2D in 2.0a6
+A   http://code.google.com/p/processing/issues/detail?id=1116
+
+
 0209 core (2.0b1)
 X loadImage() with spaces in path broken with exported applications on OS X
 X   http://code.google.com/p/processing/issues/detail?id=1073
