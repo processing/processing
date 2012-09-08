@@ -6,6 +6,37 @@ _ double check that new key and mouse events are being addressed correctly
 hint(OPENGL_ERRORS) should be the opposite to enable the reporting, no?
 
 
+_ fillMode(NONZERO) and fillMode(ODD) to replace sold(boolean)?
+
+keeping these public for now
+get/setNormal
+get/setTextureUV
+get/setFill
+get/setStroke
+-> perhaps these go into their own section?
+-> or have their own accessor that returns all params?
+
+trying to remember why primitive was changed to kind? (better name?)
+
+these aren't per-vertex:
+get/setStrokeWeight
+get/setAmbient
+get/setEmissive 
+get/setShininess
+
+boolean isGL() -> now removed
+
+unapproved (made protected)
+static shape copying methods
+getTop, getBottom, etc
+void solid(boolean)
+void setParams()
+void setPath()
+
+clenaup
+colorCalc() methods added to PShape.. should just be used from PGraphics
+
+
 xml tweaks
 _ beginning slash in getChild() threw an NPE
 _ do we need a trim() method for XML? or enableWhiteSpace()? or?
