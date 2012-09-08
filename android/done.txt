@@ -1,3 +1,8 @@
+0210 android (2.0b2)
+X lots of example updates from Andres
+X update example categories in the browser
+
+
 0209 android (2.0b1)
 A GL android sketch stops running after rotation
 A   http://code.google.com/p/processing/issues/detail?id=1146
