@@ -1,3 +1,7 @@
+0210 pde (2.0b2)
+X no changes
+
+
 0209 pde (2.0b1)
 X require Mac OS X 10.6.8 as the minimum
 X replace/find need to dim out the buttons 
