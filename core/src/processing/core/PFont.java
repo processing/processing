@@ -157,7 +157,7 @@ public class PFont implements PConstants {
 
 
   /** for subclasses that need to store metadata about the font */
-  protected HashMap<PGraphics, Object> cacheMap;
+//  protected HashMap<PGraphics, Object> cacheMap;
 
 
   public PFont() { }  // for subclasses

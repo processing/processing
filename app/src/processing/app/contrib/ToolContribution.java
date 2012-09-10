@@ -25,7 +25,6 @@ package processing.app.contrib;
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import java.util.zip.*;
 
 import processing.app.Editor;
 import processing.app.tools.Tool;
@@ -38,7 +37,7 @@ public class ToolContribution extends InstalledContribution implements Tool {
   URLClassLoader loader;
 
   Tool tool;
-  
+
   static String propertiesFileName = "tool.properties";
 
   static public ToolContribution getTool(File folder) {
@@ -104,6 +103,7 @@ public class ToolContribution extends InstalledContribution implements Tool {
      */
   }
 
+
   /**
    * @return true if a Tool class of the expected name was found in this tool's
    *         classpath
@@ -111,6 +111,7 @@ public class ToolContribution extends InstalledContribution implements Tool {
   private boolean isValid() {
     return className != null;
   }
+
 
   /**
    * Loads the tool, making it impossible (on Windows) to move the files in the
@@ -121,36 +122,6 @@ public class ToolContribution extends InstalledContribution implements Tool {
     tool = (Tool) toolClass.newInstance();
   }
 
-  static protected String findClassInZipFile(String base, File file) {
-    // Class file to search for
-    String classFileName = "/" + base + ".class";
-
-    try {
-      ZipFile zipFile = new ZipFile(file);
-      Enumeration<?> entries = zipFile.entries();
-      while (entries.hasMoreElements()) {
-        ZipEntry entry = (ZipEntry) entries.nextElement();
-
-        if (!entry.isDirectory()) {
-          String name = entry.getName();
-          //System.out.println("entry: " + name);
-
-          if (name.endsWith(classFileName)) {
-            //int slash = name.lastIndexOf('/');
-            //String packageName = (slash == -1) ? "" : name.substring(0, slash);
-            // Remove .class and convert slashes to periods.
-            zipFile.close();
-            return name.substring(0, name.length() - 6).replace('/', '.');
-          }
-        }
-      }
-      zipFile.close();
-    } catch (IOException e) {
-      //System.err.println("Ignoring " + filename + " (" + e.getMessage() + ")");
-      e.printStackTrace();
-    }
-    return null;
-  }
 
   /**
    * Searches and returns a list of tools found in the immediate children of the
@@ -180,14 +151,15 @@ public class ToolContribution extends InstalledContribution implements Tool {
     return tools;
   }
 
+
   static protected ArrayList<File> discover(File folder) {
     ArrayList<File> tools = new ArrayList<File>();
     discover(folder, tools);
     return tools;
   }
-  
-  static protected void discover(File folder, ArrayList<File> toolFolders) {
 
+
+  static protected void discover(File folder, ArrayList<File> toolFolders) {
     File[] folders = folder.listFiles(new FileFilter() {
       public boolean accept(File folder) {
         if (folder.isDirectory()) {
@@ -212,7 +184,7 @@ public class ToolContribution extends InstalledContribution implements Tool {
     if (folders != null) {
       for (int i = 0; i < folders.length; i++) {
         Tool tool = ToolContribution.getTool(folders[i]);
-        
+
         if (tool != null)
           toolFolders.add(folders[i]);
       }

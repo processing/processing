@@ -37,13 +37,13 @@ public class Library extends InstalledContribution {
    * this might be the windows64 subfolder with the library.
    */
   String nativeLibraryPath;
-  
+
   static public final String propertiesFileName = "library.properties";
 
-  /** 
-   * Filter to pull out just files and none of the platform-specific 
+  /**
+   * Filter to pull out just files and none of the platform-specific
    * directories, and to skip export.txt. As of 2.0a2, other directories are
-   * included, because we need things like the 'plugins' subfolder w/ video. 
+   * included, because we need things like the 'plugins' subfolder w/ video.
    */
   static FilenameFilter standardFilter = new FilenameFilter() {
     public boolean accept(File dir, String name) {
@@ -82,8 +82,8 @@ public class Library extends InstalledContribution {
   public Library(File folder) {
     this(folder, null);
   }
-  
-  
+
+
   public Library(File folder, String groupName) {
     super(folder, Library.propertiesFileName);
     this.group = groupName;
@@ -91,10 +91,10 @@ public class Library extends InstalledContribution {
     libraryFolder = new File(folder, "library");
     examplesFolder = new File(folder, "examples");
     referenceFile = new File(folder, "reference/index.html");
-   
+
     File exportSettings = new File(libraryFolder, "export.txt");
     HashMap<String,String> exportTable = Base.readSettings(exportSettings);
-    
+
     exportList = new HashMap<String, String[]>();
 
     // get the list of files just in the library root
@@ -192,7 +192,7 @@ public class Library extends InstalledContribution {
 
     // get the path for all .jar files in this code folder
     packageList = Base.packageListFromClassPath(getClassPath());
-    
+
   }
 
 
@@ -268,8 +268,8 @@ public class Library extends InstalledContribution {
   public String getGroup() {
     return group;
   }
-  
-  
+
+
   public String getPath() {
     return folder.getAbsolutePath();
   }
@@ -350,7 +350,7 @@ public class Library extends InstalledContribution {
    * that doesn't specify bit depth.
    */
   public String[] getApplicationExportList(int platform, int bits) {
-    String platformName = PApplet.platformNames[platform];
+    String platformName = PConstants.platformNames[platform];
     if (bits == 32) {
       String[] pieces = exportList.get(platformName + "32");
       if (pieces != null) return pieces;
@@ -360,8 +360,8 @@ public class Library extends InstalledContribution {
     }
     return exportList.get(platformName);
   }
-  
-  
+
+
   public File[] getAndroidExports() {
     return wrapFiles(androidExportList);
   }
@@ -375,14 +375,14 @@ public class Library extends InstalledContribution {
   public boolean hasMultipleArch(int platform) {
     return multipleArch[platform];
   }
-  
-  
+
+
   public boolean supportsArch(int platform, int bits) {
     // If this is a universal library, or has no natives, then we're good.
     if (multipleArch[platform] == false) {
       return true;
     }
-    return getApplicationExportList(platform, bits) != null; 
+    return getApplicationExportList(platform, bits) != null;
   }
 
 
@@ -415,13 +415,13 @@ public class Library extends InstalledContribution {
       return (new File(dir, name).isDirectory());
     }
   };
-  
+
   public static ArrayList<File> discover(File folder) {
     ArrayList<File> libraries = new ArrayList<File>();
     discover(folder, libraries);
     return libraries;
   }
-  
+
   static public void discover(File folder, ArrayList<File> libraries) {
     String[] list = folder.list(junkFolderFilter);
 
@@ -465,20 +465,20 @@ public class Library extends InstalledContribution {
   static protected void list(File folder, ArrayList<Library> libraries) {
     ArrayList<File> librariesFolders = new ArrayList<File>();
     discover(folder, librariesFolders);
-    
+
     for (File baseFolder : librariesFolders) {
       libraries.add(new Library(baseFolder));
     }
-    
+
     String[] list = folder.list(junkFolderFilter);
     if (list != null) {
       for (String subfolderName : list) {
         File subfolder = new File(folder, subfolderName);
-        
+
         if (!libraries.contains(subfolder)) {
           ArrayList<File> discoveredLibFolders = new ArrayList<File>();
           discover(subfolder, discoveredLibFolders);
-          
+
           for (File discoveredFolder : discoveredLibFolders) {
             libraries.add(new Library(discoveredFolder, subfolderName));
           }
@@ -486,7 +486,7 @@ public class Library extends InstalledContribution {
       }
     }
   }
-  
+
   public Type getType() {
     return Type.LIBRARY;
   }

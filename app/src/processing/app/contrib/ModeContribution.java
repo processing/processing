@@ -35,22 +35,19 @@ import processing.app.Base;
 import processing.app.Mode;
 
 public class ModeContribution extends InstalledContribution {
+  static final String propertiesFileName = "mode.properties";
 
   private URLClassLoader loader;
-
   private String className;
-
   Base base;
-
   Mode mode;
 
-  static String propertiesFileName = "mode.properties";
 
-  static public Mode getCoreMode(Base base, String classname, File folder) {
+  static public Mode getCoreMode(Base base, String className, File folder) {
     try {
-      Class c = Class.forName(classname);
-      Constructor cc;
-      cc = c.getConstructor(Base.class, File.class);
+      Class<?> c = Thread.currentThread().getContextClassLoader().loadClass(className);
+//      Class c = Class.forName(classname);
+      Constructor cc = c.getConstructor(Base.class, File.class);
       return (Mode) cc.newInstance(base, folder);
     } catch (Exception e) {
       e.printStackTrace();
@@ -58,17 +55,15 @@ public class ModeContribution extends InstalledContribution {
     return null;
   }
 
+
   static public ModeContribution getContributedMode(Base base, File folder) {
     ModeContribution mode = new ModeContribution(base, folder);
-    if (mode.isValid())
-      return mode;
-
-    return null;
+    return mode.isValid() ? mode : null;
   }
+
 
   private ModeContribution(Base base, File folder) {
     super(folder, ModeContribution.propertiesFileName);
-
     this.base = base;
 
     File modeDirectory = new File(folder, "mode");
@@ -81,29 +76,29 @@ public class ModeContribution extends InstalledContribution {
       }
     });
 
-    if (archives == null || archives.length == 0)
-      return;
-
-    try {
-      URL[] urlList = new URL[archives.length];
-      for (int j = 0; j < urlList.length; j++) {
+    if (archives != null && archives.length > 0) {
+      try {
+        URL[] urlList = new URL[archives.length];
+        for (int j = 0; j < urlList.length; j++) {
           urlList[j] = archives[j].toURI().toURL();
-      }
-      loader = new URLClassLoader(urlList);
+        }
+        loader = new URLClassLoader(urlList);
 
-      for (int j = 0; j < archives.length; j++) {
-        className = ToolContribution.findClassInZipFile( folder.getName(),
-                                                         archives[j] );
-		if (className != null) break;
+        for (int j = 0; j < archives.length; j++) {
+          className = findClassInZipFile(folder.getName(), archives[j]);
+          if (className != null) break;
+        }
+      } catch (MalformedURLException e) {
+        // Maybe log this
       }
-    } catch (MalformedURLException e) {
-      // Maybe log this
     }
   }
+
 
   private boolean isValid() {
     return className != null;
   }
+
 
   /**
    * Creates an instance of the Mode object. Warning: this makes it impossible
@@ -124,34 +119,41 @@ public class ModeContribution extends InstalledContribution {
     return false;
   }
 
+
   public Mode getMode() {
     return mode;
   }
+
 
   public Type getType() {
     return Type.MODE;
   }
 
-  public boolean equals(Object o) {
-    if (o == null || o instanceof ModeContribution)
-      return false;
 
+  public boolean equals(Object o) {
+    if (o == null || o instanceof ModeContribution) {
+      return false;
+    }
     ModeContribution other = (ModeContribution) o;
     return loader.equals(other.loader) && className.equals(other.className);
   }
+
 
   static public ArrayList<ModeContribution> list(Base base, File folder) {
     ArrayList<ModeContribution> modes = new ArrayList<ModeContribution>();
     ArrayList<File> modeFolders = discover(folder);
 
     for (File potentialModeFolder : modeFolders) {
+      System.out.println("getting mode from " + potentialModeFolder);
       ModeContribution contrib = getContributedMode(base, potentialModeFolder);
       if (contrib != null) {
+        System.out.println("adding mode " + contrib);
         modes.add(contrib);
       }
     }
     return modes;
   }
+
 
   static protected ArrayList<File> discover(File folder) {
     ArrayList<File> modeFolders = new ArrayList<File>();
@@ -159,8 +161,8 @@ public class ModeContribution extends InstalledContribution {
     return modeFolders;
   }
 
-  static protected void discover(File folder, ArrayList<File> modeFolders) {
 
+  static protected void discover(File folder, ArrayList<File> modeFolders) {
     File[] folders = folder.listFiles(new FileFilter() {
       public boolean accept(File potentialModeFolder) {
         if (!potentialModeFolder.isDirectory()) return false;
@@ -168,13 +170,10 @@ public class ModeContribution extends InstalledContribution {
       }
     });
 
-    if (folders == null || folders.length == 0) {
-      return;
-    }
-
-    for (File potentialModeFolder : folders) {
-      modeFolders.add(potentialModeFolder);
+    if (folders != null && folders.length > 0) {
+      for (File potentialModeFolder : folders) {
+        modeFolders.add(potentialModeFolder);
+      }
     }
   }
-
 }

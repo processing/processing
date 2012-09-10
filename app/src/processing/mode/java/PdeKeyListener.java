@@ -122,7 +122,7 @@ public class PdeKeyListener {
       }
     }
 
-    if ((event.getModifiers() & KeyEvent.META_MASK) != 0) {
+    if ((event.getModifiers() & InputEvent.META_MASK) != 0) {
       //event.consume();  // does nothing
       return false;
     }
@@ -136,7 +136,7 @@ public class PdeKeyListener {
 //    }
 
     if ((code == KeyEvent.VK_UP) &&
-        ((event.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+        ((event.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
       // back up to the last empty line
       char contents[] = textarea.getText().toCharArray();
       //int origIndex = textarea.getCaretPosition() - 1;
@@ -163,7 +163,7 @@ public class PdeKeyListener {
       // if the first char, index will be -2
       if (index < 0) index = 0;
 
-      if ((event.getModifiers() & KeyEvent.SHIFT_MASK) != 0) {
+      if ((event.getModifiers() & InputEvent.SHIFT_MASK) != 0) {
         textarea.setSelectionStart(caretIndex);
         textarea.setSelectionEnd(index);
       } else {
@@ -173,7 +173,7 @@ public class PdeKeyListener {
       return true;
 
     } else if ((code == KeyEvent.VK_DOWN) &&
-               ((event.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+               ((event.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
       char contents[] = textarea.getText().toCharArray();
       int caretIndex = textarea.getCaretPosition();
 
@@ -199,7 +199,7 @@ public class PdeKeyListener {
 
       //textarea.setSelectionStart(index);
       //textarea.setSelectionEnd(index);
-      if ((event.getModifiers() & KeyEvent.SHIFT_MASK) != 0) {
+      if ((event.getModifiers() & InputEvent.SHIFT_MASK) != 0) {
         textarea.setSelectionStart(caretIndex);
         textarea.setSelectionEnd(index);
       } else {
@@ -213,7 +213,7 @@ public class PdeKeyListener {
     switch (c) {
 
     case 9:  // TAB
-      if ((event.getModifiers() & KeyEvent.SHIFT_MASK) != 0) {
+      if ((event.getModifiers() & InputEvent.SHIFT_MASK) != 0) {
         // if shift is down, the user always expects an outdent
         // http://code.google.com/p/processing/issues/detail?id=458
         editor.handleOutdent();
@@ -417,7 +417,7 @@ public class PdeKeyListener {
   public boolean keyTyped(KeyEvent event) {
     char c = event.getKeyChar();
 
-    if ((event.getModifiers() & KeyEvent.CTRL_MASK) != 0) {
+    if ((event.getModifiers() & InputEvent.CTRL_MASK) != 0) {
       // on linux, ctrl-comma (prefs) being passed through to the editor
       if (c == KeyEvent.VK_COMMA) {
         event.consume();
