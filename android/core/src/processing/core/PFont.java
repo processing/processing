@@ -438,7 +438,7 @@ public class PFont implements PConstants {
   /**
    * Return the native Typeface object associated with this PFont (if any).
    */
-  public Typeface getNative() {
+  public Object getNative() {
     if (subsetting) {
       return null;
     }
