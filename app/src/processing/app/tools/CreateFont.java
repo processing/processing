@@ -60,23 +60,23 @@ public class CreateFont extends JFrame implements Tool {
 
   String[] list;
   int selection = -1;
-  
+
   CharacterSelector charSelector;
 
 
   public CreateFont() {
     super("Create Font");
   }
-  
-  
+
+
   public String getMenuTitle() {
     return "Create Font...";
   }
-  
-  
+
+
   public void init(Editor editor) {
     this.editor = editor;
-    
+
     Container paine = getContentPane();
     paine.setLayout(new BorderLayout()); //10, 10));
 
@@ -107,7 +107,7 @@ public class CreateFont extends JFrame implements Tool {
       GraphicsEnvironment.getLocalGraphicsEnvironment();
 
     Font fonts[] = ge.getAllFonts();
-    
+
     String flist[] = new String[fonts.length];
     table = new HashMap<String,Font>();
 
@@ -149,7 +149,7 @@ public class CreateFont extends JFrame implements Tool {
     pain.add(new Box.Filler(d1, d1, d1));
 
     sample = new SampleComponent(this);
-    
+
     // Seems that in some instances, no default font is set
     // http://dev.processing.org/bugs/show_bug.cgi?id=777
     sample.setFont(new Font("Dialog", Font.PLAIN, 12));
@@ -246,9 +246,9 @@ public class CreateFont extends JFrame implements Tool {
 
     setLocation((screen.width - windowSize.width) / 2,
                 (screen.height - windowSize.height) / 2);
-    
+
     // create this behind the scenes
-    charSelector = new CharacterSelector(); 
+    charSelector = new CharacterSelector();
   }
 
 
@@ -267,7 +267,7 @@ public class CreateFont extends JFrame implements Tool {
     // if a deselect occurred, selection will be -1
     if ((fontsize > 0) && (fontsize < 256) && (selection != -1)) {
       //font = new Font(list[selection], Font.PLAIN, fontsize);
-      Font instance = (Font) table.get(list[selection]);
+      Font instance = table.get(list[selection]);
       font = instance.deriveFont(Font.PLAIN, fontsize);
       //System.out.println("setting font to " + font);
       sample.setFont(font);
@@ -303,13 +303,13 @@ public class CreateFont extends JFrame implements Tool {
 
     // Please implement me properly. The schematic is below, but not debugged.
     // http://dev.processing.org/bugs/show_bug.cgi?id=1464
-    
+
 //    final String filename2 = filename;
 //    final int fontsize2 = fontsize;
 //    SwingUtilities.invokeLater(new Runnable() {
 //      public void run() {
     try {
-      Font instance = (Font) table.get(list[selection]);
+      Font instance = table.get(list[selection]);
       font = instance.deriveFont(Font.PLAIN, fontsize);
       //PFont f = new PFont(font, smooth, all ? null : PFont.CHARSET);
       PFont f = new PFont(font, smooth, charSelector.getCharacters());
@@ -368,27 +368,27 @@ public class CreateFont extends JFrame implements Tool {
 /**
  * Component that draws the sample text. This is its own subclassed component
  * because Mac OS X controls seem to reset the RenderingHints for smoothing
- * so that they cannot be overridden properly for JLabel or JTextArea. 
+ * so that they cannot be overridden properly for JLabel or JTextArea.
  * @author fry
  */
 class SampleComponent extends JComponent {
   // see http://rinkworks.com/words/pangrams.shtml
-  String text = 
+  String text =
     "Forsaking monastic tradition, twelve jovial friars gave up their " +
     "vocation for a questionable existence on the flying trapeze.";
   int high = 80;
-  
+
   CreateFont parent;
-  
+
   public SampleComponent(CreateFont p) {
     this.parent = p;
-    
-    // and yet, we still need an inner class to handle the basics. 
+
+    // and yet, we still need an inner class to handle the basics.
     // or no, maybe i'll refactor this as a separate class!
     // maybe a few getters and setters? mmm?
     addMouseListener(new MouseAdapter() {
       public void mousePressed(MouseEvent e) {
-        String input = 
+        String input =
           (String) JOptionPane.showInputDialog(parent,
                                                "Enter new sample text:",
                                                "Sample Text",
@@ -403,7 +403,7 @@ class SampleComponent extends JComponent {
       }
     });
   }
-  
+
   public void paintComponent(Graphics g) {
 //    System.out.println("smoothing set to " + smooth);
     Graphics2D g2 = (Graphics2D) g;
@@ -411,7 +411,7 @@ class SampleComponent extends JComponent {
     Dimension dim = getSize();
     g2.fillRect(0, 0, dim.width, dim.height);
     g2.setColor(Color.BLACK);
-    
+
     g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
                         parent.smooth ?
                         RenderingHints.VALUE_TEXT_ANTIALIAS_ON :
@@ -428,15 +428,15 @@ class SampleComponent extends JComponent {
     g2.setFont(font);
     g2.drawString(text, 5, dim.height - (dim.height - ascent) / 2);
   }
-  
+
   public Dimension getPreferredSize() {
     return new Dimension(400, high);
   }
-  
+
   public Dimension getMaximumSize() {
     return new Dimension(10000, high);
   }
-  
+
   public Dimension getMinimumSize() {
     return new Dimension(100, high);
   }
@@ -464,11 +464,11 @@ class CharacterSelector extends JFrame {
       model.addElement(new JCheckBox(item));
     }
 
-    unicodeBlockScroller = 
-      new JScrollPane(charsetList, 
+    unicodeBlockScroller =
+      new JScrollPane(charsetList,
                       ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
                       ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-    
+
     Container outer = getContentPane();
     outer.setLayout(new BorderLayout());
 
@@ -517,7 +517,7 @@ class CharacterSelector extends JFrame {
     radioPanel.add(defaultCharsButton);
     radioPanel.add(allCharsButton);
     radioPanel.add(unicodeCharsButton);
-    
+
     JPanel rightStuff = new JPanel();
     rightStuff.setLayout(new BoxLayout(rightStuff, BoxLayout.X_AXIS));
     rightStuff.add(radioPanel);
@@ -526,7 +526,7 @@ class CharacterSelector extends JFrame {
     pain.add(Box.createVerticalStrut(13));
 
 //    pain.add(radioPanel);
-    
+
 //    pain.add(defaultCharsButton);
 //    pain.add(allCharsButton);
 //    pain.add(unicodeCharsButton);
@@ -558,7 +558,7 @@ class CharacterSelector extends JFrame {
       };
     Base.registerWindowCloseKeys(root, disposer);
     Base.setIcon(this);
-    
+
     pack();
 
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
@@ -567,13 +567,13 @@ class CharacterSelector extends JFrame {
     setLocation((screen.width - windowSize.width) / 2,
                 (screen.height - windowSize.height) / 2);
   }
-  
-  
+
+
   protected char[] getCharacters() {
     if (defaultCharsButton.isSelected()) {
       return PFont.CHARSET;
     }
-    
+
     char[] charset = new char[65536];
     if (allCharsButton.isSelected()) {
       for (int i = 0; i < 0xFFFF; i++) {
@@ -596,7 +596,7 @@ class CharacterSelector extends JFrame {
   }
 
 
-  // http://www.unicode.org/Public/UNIDATA/Blocks.txt  
+  // http://www.unicode.org/Public/UNIDATA/Blocks.txt
   static final String[] BLOCKS = {
     "0000..007F; Basic Latin",
     "0080..00FF; Latin-1 Supplement",
@@ -770,9 +770,9 @@ class CharacterSelector extends JFrame {
 }
 
 
-// Code for this CheckBoxList class found on the net, though I've lost the 
-// link. If you run across the original version, please let me know so that 
-// the original author can be credited properly. It was from a snippet 
+// Code for this CheckBoxList class found on the net, though I've lost the
+// link. If you run across the original version, please let me know so that
+// the original author can be credited properly. It was from a snippet
 // collection, but it seems to have been picked up so many places with others
 // placing their copyright on it, that I haven't been able to determine the
 // original author. [fry 20100216]
@@ -801,8 +801,8 @@ class CheckBoxList extends JList {
 
 
   protected class CellRenderer implements ListCellRenderer {
-    public Component getListCellRendererComponent(JList list, Object value, 
-                                                  int index, boolean isSelected, 
+    public Component getListCellRendererComponent(JList list, Object value,
+                                                  int index, boolean isSelected,
                                                   boolean cellHasFocus) {
       JCheckBox checkbox = (JCheckBox) value;
       checkbox.setBackground(isSelected ? getSelectionBackground() : getBackground());

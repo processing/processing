@@ -1,11 +1,17 @@
 0211 android
 
 
+motion/touch events
 _ PMotionEvent is being used internal to PApplet, need to re-wrap
 _   should be able to fire MotionEvents
 _ modify MotionEvent code to use TouchEvent class, even if basic version
 _   internally, PApplet might subclass it for the pointers
 _   but queueing needs to work
+_ coordinates from motionX/Y reportedly inconsistent
+_   http://code.google.com/p/processing/issues/detail?id=1018
+
+_ Android emulator doesn't always start on the first attempt
+_   http://code.google.com/p/processing/issues/detail?id=1210
 
 _ inside AndroidPreprocessor
 _   processing.mode.java.JavaBuild.scrubComments(sketch.getCode(0).getProgram())
@@ -87,11 +93,6 @@ _ when there's a 'create avd' error, things still keep running. yay!
 
 _ need to do this for utf8: "overridable Ant javac properties: java.encoding"
 _   new for sdk tools r8, it's using ascii as the default, we're utf-8
-
-_ error in 'create avd' with "Emulator already exists" when it needs an upgrade
-_   or cannot be used with the current setup
-_   use 'android list avds' on the command line to see the problem in this case
-_ when there's a 'create avd' error, things still keep running. yay!
 
 _ don't give user a "User cancelled attempt to find SDK" error message
 _   it's annoying.. they f*king know they just did that

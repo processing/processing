@@ -1,5 +1,10 @@
 0211 pde
+X make file selectable from the OS X menubar
+X   http://code.google.com/p/processing/issues/detail?id=1215
 
+
+_ running at size(7000, 4000) followed by size(100, 100) 
+_ http://code.google.com/p/processing/issues/detail?id=1213
 
 . . .
 
@@ -69,6 +74,10 @@ _   also deal with the script not being in the right folder
 
 
 2.0 FINAL / library/tool/mode manager cleanup
+_ a couple notes
+_   http://code.google.com/p/processing/issues/detail?id=1212
+_ complaint that dropdown list is too small
+_   http://code.google.com/p/processing/issues/detail?id=1093
 _ TextAreaDefaults
 _   is editable in use?
 _   what's electricScroll?
