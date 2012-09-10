@@ -622,7 +622,7 @@ public class PdePreprocessor {
     //((CommonAST)parserAST).setVerboseStringConversion(
     //  true, parser.getTokenNames());
     // (made to use the static version because of jikes 1.22 warning)
-    CommonAST.setVerboseStringConversion(true, parser.getTokenNames());
+    BaseAST.setVerboseStringConversion(true, parser.getTokenNames());
 
     final String className;
     if (mode == Mode.JAVA) {
@@ -675,29 +675,29 @@ public class PdePreprocessor {
     // hide and which to copy to the hidden text
     //
     filter = new TokenStreamCopyingHiddenTokenFilter(lexer);
-    filter.hide(PdeRecognizer.SL_COMMENT);
-    filter.hide(PdeRecognizer.ML_COMMENT);
-    filter.hide(PdeRecognizer.WS);
-    filter.copy(PdeRecognizer.SEMI);
-    filter.copy(PdeRecognizer.LPAREN);
-    filter.copy(PdeRecognizer.RPAREN);
-    filter.copy(PdeRecognizer.LCURLY);
-    filter.copy(PdeRecognizer.RCURLY);
-    filter.copy(PdeRecognizer.COMMA);
-    filter.copy(PdeRecognizer.RBRACK);
-    filter.copy(PdeRecognizer.LBRACK);
-    filter.copy(PdeRecognizer.COLON);
-    filter.copy(PdeRecognizer.TRIPLE_DOT);
+    filter.hide(PdePartialTokenTypes.SL_COMMENT);
+    filter.hide(PdePartialTokenTypes.ML_COMMENT);
+    filter.hide(PdePartialTokenTypes.WS);
+    filter.copy(PdePartialTokenTypes.SEMI);
+    filter.copy(PdePartialTokenTypes.LPAREN);
+    filter.copy(PdePartialTokenTypes.RPAREN);
+    filter.copy(PdePartialTokenTypes.LCURLY);
+    filter.copy(PdePartialTokenTypes.RCURLY);
+    filter.copy(PdePartialTokenTypes.COMMA);
+    filter.copy(PdePartialTokenTypes.RBRACK);
+    filter.copy(PdePartialTokenTypes.LBRACK);
+    filter.copy(PdePartialTokenTypes.COLON);
+    filter.copy(PdePartialTokenTypes.TRIPLE_DOT);
 
     // Because the meanings of < and > are overloaded to support
     // type arguments and type parameters, we have to treat them
     // as copyable to hidden text (or else the following syntax,
     // such as (); and what not gets lost under certain circumstances)
     // -- jdf
-    filter.copy(PdeRecognizer.LT);
-    filter.copy(PdeRecognizer.GT);
-    filter.copy(PdeRecognizer.SR);
-    filter.copy(PdeRecognizer.BSR);
+    filter.copy(PdePartialTokenTypes.LT);
+    filter.copy(PdePartialTokenTypes.GT);
+    filter.copy(PdePartialTokenTypes.SR);
+    filter.copy(PdePartialTokenTypes.BSR);
 
     // create a parser and set what sort of AST should be generated
     //

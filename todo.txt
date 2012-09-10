@@ -2,6 +2,8 @@
 X make file selectable from the OS X menubar
 X   http://code.google.com/p/processing/issues/detail?id=1215
 
+_ "Processing is damaged and should be put in the trash" for 2.0b2
+_   http://code.google.com/p/processing/issues/detail?id=1226
 
 _ running at size(7000, 4000) followed by size(100, 100) 
 _ http://code.google.com/p/processing/issues/detail?id=1213

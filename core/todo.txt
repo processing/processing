@@ -1,5 +1,12 @@
 0211 core
 
+_ new keyEvent methods not firing
+_   http://code.google.com/p/processing/issues/detail?id=1225
+
+_ remove subsetting stuff from PFont
+
+_ add deprecated versions of getFont, getImage, etc.
+
 
 _ double check that new key and mouse events are being addressed correctly
 

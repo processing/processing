@@ -23,7 +23,10 @@
 package processing.app.contrib;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import processing.app.*;
 
@@ -39,15 +42,15 @@ public abstract class InstalledContribution implements Contribution {
   protected int version;              // 102
   protected int latestVersion;        // 103
   protected String prettyVersion;     // "1.0.2"
-  
+
   protected File folder;
 
   protected HashMap<String, String> properties;
-  
+
   public InstalledContribution(File folder, String propertiesFileName) {
-    
+
     this.folder = folder;
-    
+
     File propertiesFile = new File(folder, propertiesFileName);
 
     properties = Base.readSettings(propertiesFile);
@@ -71,53 +74,83 @@ public abstract class InstalledContribution implements Contribution {
     }
     prettyVersion = properties.get("prettyVersion");
   }
-  
+
   public File getFolder() {
     return folder;
   }
-  
+
   public boolean isInstalled() {
     return folder != null;
   }
-  
+
   public String getCategory() {
     return category;
   }
-  
+
   public String getName() {
     return name;
   }
-  
+
   public String getId() {
     return id;
   }
-  
+
   public String getAuthorList() {
     return authorList;
   }
-  
+
   public String getUrl() {
     return url;
   }
-  
+
   public String getSentence() {
     return sentence;
   }
-  
+
   public String getParagraph() {
     return paragraph;
   }
-  
+
   public int getVersion() {
     return version;
   }
-  
+
   public int getLatestVersion() {
     return latestVersion;
   }
-  
+
   public String getPrettyVersion() {
     return prettyVersion;
   }
-  
+
+  static protected String findClassInZipFile(String base, File file) {
+    // Class file to search for
+    String classFileName = "/" + base + ".class";
+
+    try {
+      ZipFile zipFile = new ZipFile(file);
+      Enumeration<?> entries = zipFile.entries();
+      while (entries.hasMoreElements()) {
+        ZipEntry entry = (ZipEntry) entries.nextElement();
+
+        if (!entry.isDirectory()) {
+          String name = entry.getName();
+          //System.out.println("entry: " + name);
+
+          if (name.endsWith(classFileName)) {
+            //int slash = name.lastIndexOf('/');
+            //String packageName = (slash == -1) ? "" : name.substring(0, slash);
+            // Remove .class and convert slashes to periods.
+            zipFile.close();
+            return name.substring(0, name.length() - 6).replace('/', '.');
+          }
+        }
+      }
+      zipFile.close();
+    } catch (IOException e) {
+      //System.err.println("Ignoring " + filename + " (" + e.getMessage() + ")");
+      e.printStackTrace();
+    }
+    return null;
+  }
 }
