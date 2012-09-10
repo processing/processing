@@ -297,7 +297,7 @@ public class PImage implements PConstants, Cloneable {
    * written in a cross-platform fashion for desktop, Android, and others.
    */
   @Deprecated
-  public Image getImage() {
+  public Image getImage() {  // ignore
     return (Image) getNative();
   }
 
@@ -305,7 +305,7 @@ public class PImage implements PConstants, Cloneable {
   /**
    * Returns a native BufferedImage from this PImage.
    */
-  public Object getNative() {
+  public Object getNative() {  // ignore
     loadPixels();
     int type = (format == RGB) ?
       BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
