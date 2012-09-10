@@ -1,6 +1,9 @@
 0211 pde
 X make file selectable from the OS X menubar
 X   http://code.google.com/p/processing/issues/detail?id=1215
+X make Mode menu into a radio button, so it cannot be de-selected
+X   http://code.google.com/p/processing/issues/detail?id=1227
+
 
 _ "Processing is damaged and should be put in the trash" for 2.0b2
 _   http://code.google.com/p/processing/issues/detail?id=1226
