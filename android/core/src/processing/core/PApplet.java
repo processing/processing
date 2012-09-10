@@ -2201,6 +2201,11 @@ public class PApplet extends Activity implements PConstants, Runnable {
       firstMotion = false;
     }
 
+    // TODO implement method handling for registry of motion/mouse events
+//    MouseEvent me = new MouseEvent(nativeObject, millis, action, modifiers, x, y, button, clickCount);
+//    handleMethods("mouseEvent", new Object[] { mouseEvent });
+//    handleMethods("motionEvent", new Object[] { motionEvent });
+
     if (ppointersX.length < numPointers) {
       ppointersX = new float[numPointers];
       ppointersY = new float[numPointers];
@@ -2408,6 +2413,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
       keyReleased();
       break;
     }
+
+    handleMethods("keyEvent", new Object[] { event });
 
     // if someone else wants to intercept the key, they should
     // set key to zero (or something besides the "ESC").
