@@ -275,7 +275,7 @@ public class PImage implements PConstants, Cloneable {
       pixels = new int[width * height];
       WritableRaster raster = bi.getRaster();
       raster.getDataElements(0, 0, width, height, pixels);
-      if  (bi.getType() == BufferedImage.TYPE_INT_ARGB) {
+      if (bi.getType() == BufferedImage.TYPE_INT_ARGB) {
         format = ARGB;
       }
 
