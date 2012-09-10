@@ -126,7 +126,8 @@ public class Preferences {
 
   // the calling editor, so updates can be applied
 
-  Editor editor;
+//  Editor editor;
+  Base base;
 
 
   // data model
@@ -206,7 +207,8 @@ public class Preferences {
 
 
   // setup dialog for the prefs
-  public Preferences() {
+  public Preferences(Base base) {
+    this.base = base;
     //dialog = new JDialog(editor, "Preferences", true);
     dialog = new JFrame("Preferences");
     dialog.setResizable(false);
@@ -571,19 +573,25 @@ public class Preferences {
     String oldPath = get("sketchbook.path");
     String newPath = sketchbookLocationField.getText();
     if (!newPath.equals(oldPath)) {
-      editor.base.setSketchbookFolder(new File(newPath));
+      base.setSketchbookFolder(new File(newPath));
     }
 
     setBoolean("editor.external", externalEditorBox.isSelected());
     setBoolean("update.check", checkUpdatesBox.isSelected());
 
+    int oldDisplayIndex = getInteger("run.display");
     int displayIndex = 0;
     for (int d = 0; d < displaySelectionBox.getItemCount(); d++) {
       if (displaySelectionBox.getSelectedIndex() == d) {
         displayIndex = d;
       }
     }
-    setInteger("run.display", displayIndex);
+    if (oldDisplayIndex != displayIndex) {
+      setInteger("run.display", displayIndex);
+      for (Editor editor : base.getEditors()) {
+        editor.setSketchLocation(null);
+      }
+    }
 
     setBoolean("run.options.memory", memoryOverrideBox.isSelected());
     int memoryMin = Preferences.getInteger("run.options.memory.initial");
@@ -616,7 +624,7 @@ public class Preferences {
       String newBits = bitsThirtyTwoButton.isSelected() ? "32" : "64";
       if (!oldBits.equals(newBits)) {
         set("run.options.bits", newBits);
-        for (Mode m : editor.base.getModeList()) {
+        for (Mode m : base.getModeList()) {
           m.rebuildLibraryList();
         }
       }
@@ -638,13 +646,13 @@ public class Preferences {
                  autoAssociateBox.isSelected());
     }
 
-    editor.applyPreferences();
+    for (Editor editor : base.getEditors()) {
+      editor.applyPreferences();
+    }
   }
 
 
-  protected void showFrame(Editor editor) {
-    this.editor = editor;
-
+  protected void showFrame() {
     editorAntialiasBox.setSelected(getBoolean("editor.antialias"));
 
     // set all settings entry boxes to their actual status

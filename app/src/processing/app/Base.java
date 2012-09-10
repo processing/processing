@@ -105,17 +105,16 @@ public class Base {
   // Location for untitled items
   static File untitledFolder;
 
-  List<Editor> editors =
+  /** List of currently active editors. */
+  protected List<Editor> editors =
     Collections.synchronizedList(new ArrayList<Editor>());
   protected Editor activeEditor;
-  // a lone file menu to be used when all sketch windows are closed
+  /** A lone file menu to be used when all sketch windows are closed. */
   static public JMenu defaultFileMenu;
 
-//  private Mode defaultMode;
-
   /**
-   * Starts with the last mode used with the environment, or the default mode
-   * if not used.
+   * Starts with the last mode used with the environment, 
+   * or the default mode if not used.
    */
   private Mode nextMode;
 
@@ -637,12 +636,18 @@ public class Base {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  /** Returns the frontmost, active editor window. */
+  /** Returns the front most, active editor window. */
   public Editor getActiveEditor() {
     return activeEditor;
   }
 
 
+  /** Get the list of currently active editor windows. */
+  public List<Editor> getEditors() {
+    return editors;
+  }
+  
+  
   protected void changeMode(Mode mode) {
     if (activeEditor.getMode() != mode) {
       Sketch sketch = activeEditor.getSketch();
@@ -1580,18 +1585,21 @@ public class Base {
    * Show the Preferences window.
    */
   public void handlePrefs() {
-    if (preferencesFrame == null) preferencesFrame = new Preferences();
-    preferencesFrame.showFrame(activeEditor);
+    if (preferencesFrame == null) {
+      preferencesFrame = new Preferences(this);
+    }
+    preferencesFrame.showFrame();
   }
 
+  
   /**
    * Show the library installer window.
    */
   public void handleOpenLibraryManager() {
     libraryManagerFrame.showFrame(activeEditor);
-    // Contribution.Type.LIBRARY
   }
 
+  
   /**
    * Show the tool installer window.
    */
@@ -1599,6 +1607,7 @@ public class Base {
     toolManagerFrame.showFrame(activeEditor);
   }
 
+  
   /**
    * Show the mode installer window.
    */
@@ -1606,6 +1615,7 @@ public class Base {
     modeManagerFrame.showFrame(activeEditor);
   }
 
+  
   public void handleShowUpdates() {
     updateManagerFrame.showFrame(activeEditor);
   }
