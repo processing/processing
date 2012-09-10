@@ -656,8 +656,9 @@ public class Base {
                          "Please save the sketch before changing the mode.",
                          null);
       } else {
-        boolean untitled = activeEditor.untitled;
+//        boolean untitled = activeEditor.untitled;
         String mainPath = sketch.getMainFilePath();
+        boolean wasUntitled = sketch.isUntitled();
 
         // save a mode file into this sketch folder
         File sketchProps = new File(sketch.getFolder(), "sketch.properties");
@@ -684,7 +685,8 @@ public class Base {
         handleClose(activeEditor, true);
 
         // re-open the sketch
-        /*Editor editor =*/ handleOpen(mainPath, untitled, state);
+//        /*Editor editor =*/ handleOpen(mainPath, untitled, state);
+        /*Editor editor =*/ handleOpen(mainPath, wasUntitled, state);
       }
     }
   }
@@ -1030,7 +1032,8 @@ public class Base {
       return null;  // Just walk away quietly
     }
 
-    editor.untitled = untitled;
+//    editor.untitled = untitled;
+    editor.getSketch().setUntitled(untitled);
     editors.add(editor);
     handleRecent(editor);
 
