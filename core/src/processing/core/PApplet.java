@@ -14437,6 +14437,14 @@ public class PApplet extends Applet
   }
 
 
+  public Image getImage() {
+    return g.getImage();
+  }
+
+
+  /**
+   * Returns a native BufferedImage from this PImage.
+   */
   public Object getNative() {
     return g.getNative();
   }
