@@ -2844,12 +2844,6 @@ public class PApplet extends Applet
     key = event.getKey();
     keyCode = event.getKeyCode();
 
-    if (keyEventMethods != null) {
-      keyEventMethods.handle(new Object[] { event.getNative() });
-    }
-
-    handleMethods("keyEvent", new Object[] { event });
-
     switch (event.getAction()) {
     case KeyEvent.PRESSED:
       keyPressed = true;
@@ -2863,6 +2857,12 @@ public class PApplet extends Applet
       keyTyped();
       break;
     }
+
+    if (keyEventMethods != null) {
+      keyEventMethods.handle(new Object[] { event.getNative() });
+    }
+
+    handleMethods("keyEvent", new Object[] { event });
 
     // if someone else wants to intercept the key, they should
     // set key to zero (or something besides the ESC).
@@ -10630,7 +10630,7 @@ public class PApplet extends Applet
    * This is a new reference entry for Processing 2.0. It will be updated shortly.
    *
    * ( end auto-generated )
-   *
+   * 
    * @webref Rendering
    * @param mode the blending mode to use
    */
@@ -10671,7 +10671,7 @@ public class PApplet extends Applet
    * This is a new reference entry for Processing 2.0. It will be updated shortly.
    *
    * ( end auto-generated )
-   *
+   * 
    * @webref rendering:shaders
    * @param fragFilename name of fragment shader file
    */
@@ -10694,7 +10694,7 @@ public class PApplet extends Applet
    * This is a new reference entry for Processing 2.0. It will be updated shortly.
    *
    * ( end auto-generated )
-   *
+   * 
    * @webref rendering:shaders
    * @param shader name of shader file
    */
@@ -10719,7 +10719,7 @@ public class PApplet extends Applet
    * This is a new reference entry for Processing 2.0. It will be updated shortly.
    *
    * ( end auto-generated )
-   *
+   * 
    * @webref rendering:shaders
    */
   public void resetShader() {
@@ -11600,9 +11600,9 @@ public class PApplet extends Applet
 
 
   /**
-   *
+   * 
    * @param level either 2, 4, or 8
-   */
+   */ 
   public void smooth(int level) {
     if (recorder != null) recorder.smooth(level);
     g.smooth(level);
