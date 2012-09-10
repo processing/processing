@@ -24,6 +24,7 @@
 
 package processing.core;
 
+import java.awt.Image;
 import java.awt.image.*;
 import java.io.*;
 import java.lang.reflect.Method;
@@ -265,7 +266,7 @@ public class PImage implements PConstants, Cloneable {
    * @param img assumes a MediaTracker has been used to fully download
    * the data and the img is valid
    */
-  public PImage(java.awt.Image img) {
+  public PImage(Image img) {
     format = RGB;
     if (img instanceof BufferedImage) {
       BufferedImage bi = (BufferedImage) img;
@@ -292,9 +293,18 @@ public class PImage implements PConstants, Cloneable {
 
 
   /**
+   * Use the getNative() method instead, which allows library interfaces to be
+   * written in a cross-platform fashion for desktop, Android, and others.
+   */
+  @Deprecated
+  public Image getImage() {
+    return (Image) getNative();
+  }
+
+
+  /**
    * Returns a native BufferedImage from this PImage.
    */
-//  public java.awt.Image getImage() {
   public Object getNative() {
     loadPixels();
     int type = (format == RGB) ?
