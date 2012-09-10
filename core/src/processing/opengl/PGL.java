@@ -1011,10 +1011,9 @@ public class PGL {
           animator.requestDisplay();
         }
       } catch (GLException e) {
-        // Unwrap GLException so that only the causing exception
-        // is shown.
+        // Unwrap GLException so that only the causing exception is shown.
         Throwable tr = e.getCause();
-        throw (RuntimeException)tr;
+        throw new RuntimeException(tr);
       }
     }
   }
