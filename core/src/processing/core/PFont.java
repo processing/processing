@@ -501,6 +501,16 @@ public class PFont implements PConstants {
 
 
   /**
+   * Use the getNative() method instead, which allows library interfaces to be
+   * written in a cross-platform fashion for desktop, Android, and others.
+   */
+  @Deprecated
+  public Font getFont() {
+    return font;
+  }
+
+
+  /**
    * Return the native java.awt.Font associated with this PFont (if any).
    */
   public Object getNative() {

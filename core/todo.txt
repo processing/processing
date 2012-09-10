@@ -1,14 +1,14 @@
 0211 core
+X remove bad cast in PGL
+X new keyEvent methods not firing
+X   http://code.google.com/p/processing/issues/detail?id=1225
+X double check that new key and mouse events are being addressed correctly
+X restore deprecated versions of getFont() and getImage()
+X   Android getBitmap() and getTypeface() will not be restored
 
-_ new keyEvent methods not firing
-_   http://code.google.com/p/processing/issues/detail?id=1225
 
-_ remove subsetting stuff from PFont
-
-_ add deprecated versions of getFont, getImage, etc.
-
-
-_ double check that new key and mouse events are being addressed correctly
+_ remove subsetting stuff from PFont?
+_   or use hint(ENABLE_FONT_SUBSETTING)? 
 
 hint(OPENGL_ERRORS) should be the opposite to enable the reporting, no?
 
