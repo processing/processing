@@ -2848,6 +2848,8 @@ public class PApplet extends Applet
       keyEventMethods.handle(new Object[] { event.getNative() });
     }
 
+    handleMethods("keyEvent", new Object[] { event });
+
     switch (event.getAction()) {
     case KeyEvent.PRESSED:
       keyPressed = true;
@@ -3350,7 +3352,7 @@ public class PApplet extends Applet
   /**
    * Links to a webpage either in the same window or in a new window. The
    * complete URL must be specified.
-   * 
+   *
    * <h3>Advanced</h3>
    * Link to an external page without all the muss.
    * <p>
@@ -5867,7 +5869,7 @@ public class PApplet extends Applet
    * For advanced users, the method must be 'public', which is true for all
    * methods inside a sketch when run from the PDE, but must explicitly be
    * set when using Eclipse or other development environments.
-   * 
+   *
    * @webref input:files
    * @param prompt message to the user
    * @param callback name of the method to be called when the selection is made
@@ -5894,9 +5896,9 @@ public class PApplet extends Applet
   }
 
 
-  /** 
+  /**
    * See selectInput() for details.
-   * 
+   *
    * @webref output:files
    * @param prompt message to the user
    * @param callback name of the method to be called when the selection is made
@@ -5904,7 +5906,7 @@ public class PApplet extends Applet
   public void selectOutput(String prompt, String callback) {
     selectOutput(prompt, callback, null);
   }
-  
+
   public void selectOutput(String prompt, String callback, File file) {
     selectOutput(prompt, callback, file, this);
   }
@@ -5968,9 +5970,9 @@ public class PApplet extends Applet
   }
 
 
-  /** 
+  /**
    * See selectInput() for details.
-   * 
+   *
    * @webref input:files
    * @param prompt message to the user
    * @param callback name of the method to be called when the selection is made
@@ -10628,7 +10630,7 @@ public class PApplet extends Applet
    * This is a new reference entry for Processing 2.0. It will be updated shortly.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref Rendering
    * @param mode the blending mode to use
    */
@@ -10669,7 +10671,7 @@ public class PApplet extends Applet
    * This is a new reference entry for Processing 2.0. It will be updated shortly.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref rendering:shaders
    * @param fragFilename name of fragment shader file
    */
@@ -10692,7 +10694,7 @@ public class PApplet extends Applet
    * This is a new reference entry for Processing 2.0. It will be updated shortly.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref rendering:shaders
    * @param shader name of shader file
    */
@@ -10717,7 +10719,7 @@ public class PApplet extends Applet
    * This is a new reference entry for Processing 2.0. It will be updated shortly.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref rendering:shaders
    */
   public void resetShader() {
@@ -11598,9 +11600,9 @@ public class PApplet extends Applet
 
 
   /**
-   * 
+   *
    * @param level either 2, 4, or 8
-   */ 
+   */
   public void smooth(int level) {
     if (recorder != null) recorder.smooth(level);
     g.smooth(level);
