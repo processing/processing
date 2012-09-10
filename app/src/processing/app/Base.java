@@ -275,9 +275,11 @@ public class Base {
   }
 
 
-  /** Instantiates and adds new contributed modes to the contribModes list.
+  /**
+   * Instantiates and adds new contributed modes to the contribModes list.
    * Checks for duplicates so the same mode isn't instantiates twice. Does not
-   * remove modes because modes can't be removed once they are instantiated */
+   * remove modes because modes can't be removed once they are instantiated.
+   */
   void rebuildContribModes() {
     if (contribModes == null)
       contribModes = new ArrayList<ModeContribution>();

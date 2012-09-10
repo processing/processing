@@ -10,6 +10,7 @@ import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
 import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
+import java.text.CharacterIterator;
 
 import javax.swing.text.BadLocationException;
 
@@ -17,15 +18,15 @@ import processing.app.syntax.JEditTextArea;
 import processing.app.syntax.TextAreaPainter;
 
 /**
- * This class Manage texts from input method 
+ * This class Manage texts from input method
  * by begin-process-end steps.
- * 
- * First, if a user start inputing via input method, 
+ *
+ * First, if a user start inputing via input method,
  * beginCompositionText is called from InputMethodSupport.
  * Second, the user continues from input method, processCompositionText is called
  * and reflect user inputs to text area.
  * Finally the user try to commit text, endCompositionText is called.
- *  
+ *
  * @author Takashi Maekawa (takachin@generative.info)
  */
 
@@ -36,7 +37,7 @@ public class CompositionTextManager {
   private boolean isInputProcess;
   private int initialCaretPosition;
   public static final int COMPOSING_UNDERBAR_HEIGHT = 5;
-  
+
   /**
    * Create text manager class with a textarea.
    * @param textArea texarea component for PDE.
@@ -70,9 +71,9 @@ public class CompositionTextManager {
   /**
    * Called when a user begins input from input method.
    * This method initializes text manager.
-   * 
+   *
    * @param text Text from InputMethodEvent.
-   * @param commited_count Numbers of committed characters in text. 
+   * @param commited_count Numbers of committed characters in text.
    */
   public void beginCompositionText(AttributedCharacterIterator text, int committed_count) {
     isInputProcess = true;
@@ -84,9 +85,9 @@ public class CompositionTextManager {
   /**
    * Called when a user processing input characters and
    * select candidates from input method.
-   * 
+   *
    * @param text Text from InputMethodEvent.
-   * @param commited_count Numbers of committed characters in text. 
+   * @param commited_count Numbers of committed characters in text.
    */
   public void processCompositionText(AttributedCharacterIterator text, int committed_count) {
     int layoutCaretPosition = initialCaretPosition + committed_count;
@@ -95,7 +96,7 @@ public class CompositionTextManager {
     int textLength = text.getEndIndex() - text.getBeginIndex() - committed_count;
     StringBuffer unCommitedStringBuf = new StringBuffer(textLength);
     char c;
-    for (c = text.setIndex(committed_count); c != AttributedCharacterIterator.DONE
+    for (c = text.setIndex(committed_count); c != CharacterIterator.DONE
         && textLength > 0; c = text.next(), --textLength) {
       unCommitedStringBuf.append(c);
     }
@@ -120,16 +121,16 @@ public class CompositionTextManager {
   }
 
   /**
-   * Called when a user fixed text from input method or delete all 
+   * Called when a user fixed text from input method or delete all
    * composition text. This method resets CompositionTextPainter.
-   * 
+   *
    * @param text Text from InputMethodEvent.
-   * @param commited_count Numbers of committed characters in text. 
+   * @param commited_count Numbers of committed characters in text.
    */
   public void endCompositionText(AttributedCharacterIterator text, int committed_count) {
     /*
      * If there are no committed characters, remove it all from textarea.
-     * This case will happen if a user delete all composing characters by backspace or delete key. 
+     * This case will happen if a user delete all composing characters by backspace or delete key.
      * If it does, these previous characters are needed to be deleted.
      */
     if(committed_count == 0){

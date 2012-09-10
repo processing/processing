@@ -36,7 +36,7 @@ import processing.app.Sketch;
 
 
 public class Permissions extends JFrame {
-  static final String GUIDE_URL = 
+  static final String GUIDE_URL =
     "http://developer.android.com/guide/topics/security/security.html#permissions";
 
   static final int BORDER_HORIZ = 5;
@@ -50,14 +50,14 @@ public class Permissions extends JFrame {
 //  Editor editor;
   Sketch sketch;
 
-  
+
   public Permissions(Sketch sketch) {
   //public Permissions(Editor editor) {
     super("Android Permissions Selector");
     this.sketch = sketch;
 //    this.editor = editor;
 
-//    XMLElement xml = 
+//    XMLElement xml =
 
     permissionList = new CheckBoxList();
 //    permissionList.addMouseListener(new MouseAdapter() {
@@ -74,7 +74,7 @@ public class Permissions extends JFrame {
 //      }
 //    });
 
-//    ListSelectionModel lsm = permissionList.getSelectionModel(); 
+//    ListSelectionModel lsm = permissionList.getSelectionModel();
 //    lsm.addListSelectionListener(new ListSelectionListener() {
 //      public void valueChanged(ListSelectionEvent e) {
 ////        ListSelectionModel lsm = (ListSelectionModel) e.getSource();
@@ -105,7 +105,7 @@ public class Permissions extends JFrame {
 //    int h = permissionList.getFixedCellHeight();
 //    permissionList.setFixedCellHeight(h + 8);
     permissionList.setFixedCellHeight(20);
-    permissionList.setBorder(new EmptyBorder(BORDER_VERT, BORDER_HORIZ, 
+    permissionList.setBorder(new EmptyBorder(BORDER_VERT, BORDER_HORIZ,
                                              BORDER_VERT, BORDER_HORIZ));
 
     DefaultListModel model = new DefaultListModel();
@@ -114,8 +114,8 @@ public class Permissions extends JFrame {
       model.addElement(new JCheckBox(item));
     }
 
-    permissionScroller = 
-      new JScrollPane(permissionList, 
+    permissionScroller =
+      new JScrollPane(permissionList,
                       ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
                       ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 //    permissionList.setVisibleRowCount(20);
@@ -126,7 +126,7 @@ public class Permissions extends JFrame {
       public void keyTyped(KeyEvent e) {
         if (e.getKeyChar() == ' ') {
           int index = permissionList.getSelectedIndex();
-          JCheckBox checkbox = 
+          JCheckBox checkbox =
             (JCheckBox) permissionList.getModel().getElementAt(index);
           checkbox.setSelected(!checkbox.isSelected());
           permissionList.repaint();
@@ -148,14 +148,14 @@ public class Permissions extends JFrame {
       "<html>" +
       "Android applications must specifically ask for permission\n" +
       "to do things like connect to the internet, write a file,\n" +
-      "or make phone calls. When installing your application,\n" + 
+      "or make phone calls. When installing your application,\n" +
       "users will be asked whether they want to allow such access.\n" +
       "More about permissions can be found " +
       "<a href=\"" + GUIDE_URL + "\">here</a>.</body></html>";
 //      "<html>" +
 //      "Android applications must specifically ask for permission\n" +
 //      "to do things like connect to the internet, write a file,\n" +
-//      "or make phone calls. When installing your application,\n" + 
+//      "or make phone calls. When installing your application,\n" +
 //      "users will be asked whether they want to allow such access.\n" +
 //      "More about permissions can be found " +
 //      "<a href=\"" + GUIDE_URL + "\">here</a>.</body></html>";
@@ -184,7 +184,7 @@ public class Permissions extends JFrame {
     textarea.setAlignmentX(LEFT_ALIGNMENT);
 
 //    textarea.setBorder(new EmptyBorder(13, 8, 13, 8));
-    
+
 //    textarea.setBackground(null);
 //    textarea.setBackground(Color.RED);
 //    textarea.setEditable(false);
@@ -200,7 +200,7 @@ public class Permissions extends JFrame {
     pain.add(permissionScroller);
 //    pain.add(permissionList);
     pain.add(Box.createVerticalStrut(8));
-    
+
 //    descriptionLabel = new JTextArea(4, 10);
     descriptionLabel = new JLabel();
 //    descriptionLabel = new JLabel() {
@@ -215,7 +215,7 @@ public class Permissions extends JFrame {
 //      }
 //    };
     descriptionLabel.setPreferredSize(new Dimension(400, 50));
-    descriptionLabel.setVerticalAlignment(JLabel.TOP);
+    descriptionLabel.setVerticalAlignment(SwingConstants.TOP);
     descriptionLabel.setAlignmentX(LEFT_ALIGNMENT);
     pain.add(descriptionLabel);
     pain.add(Box.createVerticalStrut(8));
@@ -237,7 +237,7 @@ public class Permissions extends JFrame {
 //    Box buttons = Box.createHorizontalBox();
     buttons.setAlignmentX(LEFT_ALIGNMENT);
     JButton okButton = new JButton("OK");
-    Dimension dim = new Dimension(Preferences.BUTTON_WIDTH, 
+    Dimension dim = new Dimension(Preferences.BUTTON_WIDTH,
                                   okButton.getPreferredSize().height);
     okButton.setPreferredSize(dim);
     okButton.addActionListener(new ActionListener() {
@@ -248,7 +248,7 @@ public class Permissions extends JFrame {
       }
     });
     okButton.setEnabled(true);
-    
+
     JButton cancelButton = new JButton("Cancel");
     cancelButton.setPreferredSize(dim);
     cancelButton.addActionListener(new ActionListener() {
@@ -323,8 +323,8 @@ public class Permissions extends JFrame {
     }
     return sel.toArray(new String[0]);
   }
-  
-  
+
+
   protected void saveSelections() {
     String[] sel = getSelections();
     Manifest mf = new Manifest(sketch);
@@ -338,7 +338,7 @@ public class Permissions extends JFrame {
 
 
 //  public void init(Editor editor) {
-//    this.editor = editor;    
+//    this.editor = editor;
 //  }
 
 
@@ -346,17 +346,17 @@ public class Permissions extends JFrame {
 //    // parse the manifest file here and figure out what permissions are set
 //    Manifest mf = new Manifest(editor);
 //    setSelections(mf.getPermissions());
-//    
+//
 //    // show the window and get to work
 //    setVisible(true);
 //  }
-  
-  
+
+
   /**
    * Created by inserting the HTML doc into OpenOffice, then copy and pasting
-   * the table into a plain text document, then adding the quotes via search 
+   * the table into a plain text document, then adding the quotes via search
    * and replace. If there's a way to auto-create from aapt, that'd be better,
-   * but I haven't found anything yet. 
+   * but I haven't found anything yet.
    */
   static final String[] listing = {
     "ACCESS_CHECKIN_PROPERTIES", "Allows read/write access to the \"properties\" table in the checkin database, to change values that get uploaded.",
@@ -474,8 +474,8 @@ public class Permissions extends JFrame {
     "WRITE_SMS", "Allows an application to write SMS messages.",
     "WRITE_SYNC_SETTINGS", "Allows applications to write the sync settings"
   };
-  
-  static String[] title; 
+
+  static String[] title;
   static String[] description;
   static int count;
   static {
@@ -490,9 +490,9 @@ public class Permissions extends JFrame {
 }
 
 
-// Code for this CheckBoxList class found on the net, though I've lost the 
-// link. If you run across the original version, please let me know so that 
-// the original author can be credited properly. It was from a snippet 
+// Code for this CheckBoxList class found on the net, though I've lost the
+// link. If you run across the original version, please let me know so that
+// the original author can be credited properly. It was from a snippet
 // collection, but it seems to have been picked up so many places with others
 // placing their copyright on it, that I haven't been able to determine the
 // original author. [fry 20100216]
@@ -507,7 +507,7 @@ class CheckBoxList extends JList {
     checkboxWidth = new JCheckBox().getPreferredSize().width;
     // add the amount for the inset
     checkboxWidth += Permissions.BORDER_HORIZ;
-    
+
     addMouseListener(new MouseAdapter() {
       public void mousePressed(MouseEvent e) {
         if (isEnabled()) {
@@ -529,11 +529,11 @@ class CheckBoxList extends JList {
     });
     setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
   }
-  
-  
+
+
   protected class CellRenderer implements ListCellRenderer {
-    public Component getListCellRendererComponent(JList list, Object value, 
-                                                  int index, boolean isSelected, 
+    public Component getListCellRendererComponent(JList list, Object value,
+                                                  int index, boolean isSelected,
                                                   boolean cellHasFocus) {
       JCheckBox checkbox = (JCheckBox) value;
 //      checkbox.setBorder(new EmptyBorder(13, 5, 3, 5));  // trying again
