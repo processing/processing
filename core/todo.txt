@@ -6,6 +6,7 @@ X double check that new key and mouse events are being addressed correctly
 X restore deprecated versions of getFont() and getImage()
 X   Android getBitmap() and getTypeface() will not be restored
 X   http://code.google.com/p/processing/issues/detail?id=1223
+X hide getImage() from PApplet (unintentionally hidden before)
 
 
 _ remove subsetting stuff from PFont?

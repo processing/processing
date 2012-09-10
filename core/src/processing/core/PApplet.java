@@ -1720,6 +1720,14 @@ public class PApplet extends Applet
       "The Java classpath and native library path is not " +  // welcome to Java programming!
       "properly set for using the OpenGL library.";
 
+    if (!primary && !g.isGL()) {
+      if (renderer.equals(P2D)) {
+        throw new RuntimeException("createGraphics() with P2D requires size() to use P2D or P3D");
+      } else if (renderer.equals(P3D)) {
+        throw new RuntimeException("createGraphics() with P3D or OPENGL requires size() to use P2D or P3D");
+      }
+    }
+
     try {
       Class<?> rendererClass =
         Thread.currentThread().getContextClassLoader().loadClass(renderer);
@@ -14434,19 +14442,6 @@ public class PApplet extends Applet
    */
   public boolean isGL() {
     return g.isGL();
-  }
-
-
-  public Image getImage() {
-    return g.getImage();
-  }
-
-
-  /**
-   * Returns a native BufferedImage from this PImage.
-   */
-  public Object getNative() {
-    return g.getNative();
   }
 
 
