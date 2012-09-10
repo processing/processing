@@ -6,6 +6,13 @@ X   http://code.google.com/p/processing/issues/detail?id=1227
 X no response with registerMethod keyEvent when key pressed or released
 X   http://code.google.com/p/processing/issues/detail?id=1225
 
+_ changing the default display does not reset editor location
+_   so the change appears to have no effect
+_   http://code.google.com/p/processing/issues/detail?id=1162
+X cleaning up preferences a bit
+X   to use Base, not Editor
+X   to apply to all open editors, not just the first
+
 _ "Processing is damaged and should be put in the trash" for 2.0b2
 _   http://code.google.com/p/processing/issues/detail?id=1226
 
@@ -680,9 +687,6 @@ _ see how library installation goes, then possibly do same w/ examples
 
 PDE / Preferences
 
-_ changing the default display does not reset editor location
-_   so the change appears to have no effect
-_   http://code.google.com/p/processing/issues/detail?id=1162
 _ the .macosx, .linux, etc prefs should be stripped
 _   only use them on first load, and merge into preferences.txt
 _ Editor.applyFrame() may not have a valid 'editor' object to work with
