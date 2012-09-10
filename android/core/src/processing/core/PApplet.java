@@ -1604,8 +1604,14 @@ public class PApplet extends Activity implements PConstants, Runnable {
     if (irenderer.equals(JAVA2D)) {
       pg = new PGraphicsAndroid2D();
     } else if (irenderer.equals(P2D)) {
+      if (!g.isGL()) {
+        throw new RuntimeException("createGraphics() with P2D requires size() to use P2D or P3D");
+      }
       pg = new PGraphics2D();
     } else if (irenderer.equals(P3D)) {
+      if (!g.isGL()) {
+        throw new RuntimeException("createGraphics() with P3D or OPENGL requires size() to use P2D or P3D");
+      }
       pg = new PGraphics3D();
     } else {
       Class<?> rendererClass = null;
