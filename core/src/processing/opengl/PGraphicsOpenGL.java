@@ -511,6 +511,11 @@ public class PGraphicsOpenGL extends PGraphics {
   @Override
   public void setPrimary(boolean primary) {
     super.setPrimary(primary);
+    if (!primary && !(parent.g instanceof PGraphicsOpenGL)) {
+      throw new RuntimeException("An OpenGL renderer (either P2D or P3D) " +
+                                 "cannot be created with a non-OpenGL main " +
+                                 "renderer (such as JAVA2D)");
+    }
     format = ARGB;
   }
 
