@@ -2111,6 +2111,33 @@ public class PGL {
   }
 
 
+  protected int[] getGLVersion() {
+    String version = GLES20.glGetString(GLES20.GL_VERSION).trim();
+    int[] res = {0, 0, 0};
+    String[] parts = version.split(" ");
+    for (int i = 0; i < parts.length; i++) {
+      if (0 < parts[i].indexOf(".")) {
+        String nums[] = parts[i].split("\\.");
+        try {
+          res[0] = Integer.parseInt(nums[0]);
+        } catch (NumberFormatException e) { }
+        if (1 < nums.length) {
+          try {
+            res[1] = Integer.parseInt(nums[1]);
+          } catch (NumberFormatException e) { }
+        }
+        if (2 < nums.length) {
+          try {
+            res[2] = Integer.parseInt(nums[2]);
+          } catch (NumberFormatException e) { }
+        }
+        break;
+      }
+    }
+    return res;
+  }
+
+
   ///////////////////////////////////////////////////////////
 
   // Android specific stuff
