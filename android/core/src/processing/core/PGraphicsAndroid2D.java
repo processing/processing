@@ -1112,7 +1112,7 @@ public class PGraphicsAndroid2D extends PGraphics {
   @Override
   public void textFont(PFont which) {
     super.textFont(which);
-    fillPaint.setTypeface(which.getNative());
+    fillPaint.setTypeface((Typeface) which.getNative());
   }
 
 
@@ -1143,7 +1143,7 @@ public class PGraphicsAndroid2D extends PGraphics {
       defaultFontOrDeath("textSize", size);
     }
 
-    Typeface font = textFont.getNative();
+    Typeface font = (Typeface) textFont.getNative();
     if (font != null) {
       fillPaint.setTextSize(size);
     }
@@ -1176,7 +1176,7 @@ public class PGraphicsAndroid2D extends PGraphics {
   @Override
   protected float textWidthImpl(char buffer[], int start, int stop) {
 //    Font font = textFont.getFont();
-    Typeface font = textFont.getNative();
+    Typeface font = (Typeface) textFont.getNative();
     if (font == null) {
       return super.textWidthImpl(buffer, start, stop);
     }
@@ -1209,7 +1209,7 @@ public class PGraphicsAndroid2D extends PGraphics {
   @Override
   protected void textLineImpl(char buffer[], int start, int stop,
                               float x, float y) {
-    Typeface font = textFont.getNative();
+    Typeface font = (Typeface) textFont.getNative();
     if (font == null) {
       showWarning("Inefficient font rendering: use createFont() with a TTF/OTF instead of loadFont().");
       //new Exception().printStackTrace(System.out);
