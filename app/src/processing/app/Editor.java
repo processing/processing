@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-11 Ben Fry and Casey Reas
+  Copyright (c) 2004-12 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -58,7 +58,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
   /**
    * true if this file has not yet been given a name by the user
    */
-  protected boolean untitled;
+//  private boolean untitled;
 
   private PageFormat pageFormat;
   private PrinterJob printerJob;
@@ -2043,9 +2043,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
       return false;
     }
     header.rebuild();
-    setTitle();
+    updateTitle();
     // Disable untitled setting from previous document, if any
-    untitled = false;
+//    untitled = false;
 
     // Store information on who's open and running
     // (in case there's a crash or something that can't be recovered)
@@ -2067,12 +2067,17 @@ public abstract class Editor extends JFrame implements RunnerListener {
    * Set the title of the PDE window based on the current sketch, i.e.
    * something like "sketch_070752a - Processing 0126"
    */
-  public void setTitle() {
+  public void updateTitle() {
     setTitle(sketch.getName() + " | Processing " + Base.VERSION_NAME);
 
-    // set current file for OS X
-    File sketchFile = sketch.getMainFile();
-    getRootPane().putClientProperty("Window.documentFile", sketchFile);
+    if (!sketch.isUntitled()) {
+      // set current file for OS X so that cmd-click in title bar works
+      File sketchFile = sketch.getMainFile();
+      getRootPane().putClientProperty("Window.documentFile", sketchFile);
+    } else {
+      // per other applications, don't set this until the file has been saved
+      getRootPane().putClientProperty("Window.documentFile", null);
+    }
   }
 
 
@@ -2088,7 +2093,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
   public boolean handleSave(boolean immediately) {
 //    handleStop();  // 0136
 
-    if (untitled) {
+    if (sketch.isUntitled()) {
       return handleSaveAs();
       // need to get the name, user might also cancel here
 

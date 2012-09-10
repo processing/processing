@@ -384,7 +384,7 @@
   <target name="macosx-run" depends="macosx-build" 
 	  description="Run Mac OS X version">
     <exec executable="Processing.app/Contents/MacOS/JavaApplicationStub"
-	  dir="macosx/work" spawn="true"/>
+	  dir="macosx/work" spawn="false"/>
   </target>
 
   <target name="macosx-dist-sign" if="codesign">

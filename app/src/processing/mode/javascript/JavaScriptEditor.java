@@ -530,7 +530,7 @@ public class JavaScriptEditor extends ServingEditor
 	 */
   public boolean handleSave ( boolean immediately )
   {
-    if (untitled) 
+    if (sketch.isUntitled()) 
 	{
       return handleSaveAs();
     } 

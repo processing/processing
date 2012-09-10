@@ -70,6 +70,9 @@ public class Sketch {
    */
   private int codeCount;
   private SketchCode[] code;
+  
+  /** Moved out of Editor and into here for cleaner access. */
+  private boolean untitled;
 
 //  /** Class path determined during build. */
 //  private String classPath;
@@ -294,7 +297,7 @@ public class Sketch {
     // make sure the user didn't hide the sketch folder
     ensureExistence();
 
-    if (currentIndex == 0 && editor.untitled) {
+    if (currentIndex == 0 && isUntitled()) {
       Base.showMessage("Sketch is Untitled",
                        "How about saving the sketch first \n" +
                        "before trying to rename it?");
@@ -899,7 +902,7 @@ public class Sketch {
     // Name changed, rebuild the sketch menus
     calcModified();
 //    System.out.println("modified is now " + modified);
-    editor.setTitle();
+    editor.updateTitle();
     editor.base.rebuildSketchbookMenus();
 //    editor.header.rebuild();
   }
@@ -1058,13 +1061,13 @@ public class Sketch {
       }
       setCurrentCode(filename);
       editor.header.repaint();
-      if (editor.untitled) {  // TODO probably not necessary? problematic?
+      if (isUntitled()) {  // TODO probably not necessary? problematic?
         // Mark the new code as modified so that the sketch is saved
         current.setModified(true);
       }
 
     } else {
-      if (editor.untitled) {  // TODO probably not necessary? problematic?
+      if (isUntitled()) {  // TODO probably not necessary? problematic?
         // If a file has been added, mark the main code as modified so
         // that the sketch is properly saved.
         code[0].setModified(true);
@@ -1390,13 +1393,16 @@ public class Sketch {
   }
 
 
-  public void setUntitled(boolean u) {
-    editor.untitled = u;
+  public void setUntitled(boolean untitled) {
+//    editor.untitled = u;
+    this.untitled = untitled;
+    editor.updateTitle();
   }
 
 
   public boolean isUntitled() {
-    return editor.untitled;
+//    return editor.untitled;
+    return untitled;
   }
 
 
