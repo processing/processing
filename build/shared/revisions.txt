@@ -1,3 +1,52 @@
+PROCESSING 2.0b3 (REV 0211) - 10 September 2012
+
+Shaking out the beta bugs.
+
+[ major fixes ] 
+
++ registerMethod("keyEvent", ...) not calling key event methods.
+  http://code.google.com/p/processing/issues/detail?id=1225
+
++ "Processing is damaged and should be put in the trash" with 2.0b2.
+  Apple's asinine code signing strikes back!
+  http://code.google.com/p/processing/issues/detail?id=1226
+
++ Restore deprecated versions of getFont() and getImage() to address
+  library compatibility issues. The similar getBitmap() and getTypeface() 
+  methods on Android will not be restored.
+  http://code.google.com/p/processing/issues/detail?id=1223
+
+[ minor fixes ] 
+
++ Changing the default display in Preferences does not reset editor 
+  location, so it appears to have no effect.
+  http://code.google.com/p/processing/issues/detail?id=1162
+
++ Remove bad cast in PGL during error reporting.
+
++ Make Mode menu into a radio button, so it cannot be de-selected
+  http://code.google.com/p/processing/issues/detail?id=1227
+
+[ changes and additions ] 
+
++ Show error message when using createGraphics() with P2D, P3D, or OPENGL
+  and the main drawing surface is not an OpenGL renderer.
+  http://code.google.com/p/processing/issues/detail?id=1217
+
++ Make file selectable from the OS X menu bar. Thanks to Hansi for the
+  patch. Note that this only works for sketches that have been saved.
+  http://code.google.com/p/processing/issues/detail?id=1215
+
++ Added registerMethod(keyEvent) to Android, though motion and mouse
+  events are still unavailable.
+
++ Cleaning up the internals of Preferences and untitled sketches.
+  Fingers crossed that these don't give us last-minute regressions.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING 2.0b2 (REV 0210) - 7 September 2012
 
 One major fix for libraries that use key events, and a number of minor 

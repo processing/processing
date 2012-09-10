@@ -7,13 +7,14 @@ X restore deprecated versions of getFont() and getImage()
 X   Android getBitmap() and getTypeface() will not be restored
 X   http://code.google.com/p/processing/issues/detail?id=1223
 X hide getImage() from PApplet (unintentionally hidden before)
+A beginDraw on an OpenGL PGraphics is throwing an exception
+A   http://code.google.com/p/processing/issues/detail?id=1217
 
 
 _ remove subsetting stuff from PFont?
 _   or use hint(ENABLE_FONT_SUBSETTING)? 
 
 hint(OPENGL_ERRORS) should be the opposite to enable the reporting, no?
-
 
 _ fillMode(NONZERO) and fillMode(ODD) to replace sold(boolean)?
 
