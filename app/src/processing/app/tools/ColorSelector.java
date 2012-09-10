@@ -225,9 +225,9 @@ public class ColorSelector implements Tool, DocumentListener {
    * Set the RGB values based on the current HSB values.
    */
   protected void updateRGB() {
-    int rgb = Color.HSBtoRGB((float)hue / 359f,
-                             (float)saturation / 99f,
-                             (float)brightness / 99f);
+    int rgb = Color.HSBtoRGB(hue / 359f,
+                             saturation / 99f,
+                             brightness / 99f);
     updateRGB2(rgb);
   }
 

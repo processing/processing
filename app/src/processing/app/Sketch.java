@@ -1266,9 +1266,9 @@ public class Sketch {
 
 
   /**
-   * Returns a file object for the primary .pde of this sketch.
+   * Returns a File object for the main .pde file for this sketch.
    */
-  public File getPrimaryFile() {
+  public File getMainFile() {
     return primaryFile;
   }
 

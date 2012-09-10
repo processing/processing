@@ -966,12 +966,12 @@ public abstract class Editor extends JFrame implements RunnerListener {
     }
 
     ArrayList<String> toolList = new ArrayList<String>(toolItems.keySet());
-    if (toolList.size() == 0) return;
-
-    menu.addSeparator();
-    Collections.sort(toolList);
-    for (String title : toolList) {
-      menu.add((JMenuItem) toolItems.get(title));
+    if (toolList.size() > 0) {
+      menu.addSeparator();
+      Collections.sort(toolList);
+      for (String title : toolList) {
+        menu.add(toolItems.get(title));
+      }
     }
   }
 
@@ -2070,6 +2070,10 @@ public abstract class Editor extends JFrame implements RunnerListener {
    */
   public void setTitle() {
     setTitle(sketch.getName() + " | Processing " + Base.VERSION_NAME);
+
+    // set current file for OS X
+    File sketchFile = sketch.getMainFile();
+    getRootPane().putClientProperty("Window.documentFile", sketchFile);
   }
 
 

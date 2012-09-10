@@ -308,7 +308,7 @@ public class Runner implements MessageConsumer {
 //    String outgoing[] = new String[params.size()];
 //    params.toArray(outgoing);
 //    return outgoing;
-    return (String[]) params.toArray(new String[0]);
+    return params.toArray(new String[0]);
   }
 
 

@@ -781,7 +781,7 @@ public class PdePreprocessor {
   }
 
   protected int writeImportList(PrintWriter out, List<String> imports) {
-    return writeImportList(out, (String[]) imports.toArray(new String[0]));
+    return writeImportList(out, imports.toArray(new String[0]));
   }
 
   protected int writeImportList(PrintWriter out, String[] imports) {

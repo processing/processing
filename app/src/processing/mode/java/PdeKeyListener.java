@@ -210,7 +210,7 @@ public class PdeKeyListener {
     }
 
 
-    switch ((int) c) {
+    switch (c) {
 
     case 9:  // TAB
       if ((event.getModifiers() & KeyEvent.SHIFT_MASK) != 0) {
@@ -220,7 +220,7 @@ public class PdeKeyListener {
 
       } else if (textarea.isSelectionActive()) {
         editor.handleIndent();
-        
+
       } else if (Preferences.getBoolean("editor.tabs.expand")) {
         int tabSize = Preferences.getInteger("editor.tabs.size");
         textarea.setSelectedText(spaces(tabSize));
@@ -412,8 +412,8 @@ public class PdeKeyListener {
     }
     return false;
   }
-  
-  
+
+
   public boolean keyTyped(KeyEvent event) {
     char c = event.getKeyChar();
 
