@@ -6082,8 +6082,8 @@ public class PGraphicsOpenGL extends PGraphics {
     int major = pgl.getGLVersion()[0];
     if (major < 2) {
       // There might be problems...
-      PGraphics.showWarning("The OpenGL version in this is less than 2.0 so " +
-                            "Processing might not draw things properly");
+      PGraphics.showWarning("The OpenGL version is less than 2.0 so " +
+                            "Processing might not draw properly");
       // ... but GLSL might still be available through extensions.
       if (OPENGL_EXTENSIONS.indexOf("_fragment_shader")  == -1 ||
           OPENGL_EXTENSIONS.indexOf("_vertex_shader")    == -1 ||
