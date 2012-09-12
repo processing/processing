@@ -290,7 +290,7 @@ public class Capture extends PImage implements PConstants {
    * ( end auto-generated )
    *
    * @webref capture
-   * @usage web_application
+   * @brief Returns "true" when a new video frame is available to read
    */
   public boolean available() {
     return available;
@@ -298,7 +298,14 @@ public class Capture extends PImage implements PConstants {
 
 
   /**
+   * ( begin auto-generated from Capture_start.xml )
+   * 
    * Starts capturing frames from the selected device.
+   * 
+   * ( end auto-generated )
+   * 
+   * @webref capture
+   * @brief Starts capturing frames from the selected device
    */
   public void start() {
     boolean init = false;
@@ -324,7 +331,7 @@ public class Capture extends PImage implements PConstants {
    * ( end auto-generated )
    *
    * @webref capture
-   * @usage web_application
+   * @brief Stops capturing frames from an attached device
    */
   public void stop() {
     if (!pipelineReady) {
@@ -350,7 +357,7 @@ public class Capture extends PImage implements PConstants {
    * fixed by Charl P. Botha <charlbotha.com>
    *
    * @webref capture
-   * @usage web_application
+   * @brief Reads the current video frame
    */
   public synchronized void read() {
     if (frameRate < 0) {
@@ -423,7 +430,7 @@ public class Capture extends PImage implements PConstants {
    * ( end auto-generated )
    *
    * @webref capture
-   * @usage web_application
+   * @brief Gets a list of all available capture devices such as a camera
    */
   static public String[] list() {
     if (devicePropertyName.equals("")) {
