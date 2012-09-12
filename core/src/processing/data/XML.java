@@ -65,6 +65,7 @@ public class XML implements Serializable {
    * Begin parsing XML data passed in from a PApplet. This code
    * wraps exception handling, for more advanced exception handling,
    * use the constructor that takes a Reader or InputStream.
+   *
    * @throws SAXException
    * @throws ParserConfigurationException
    * @throws IOException
@@ -176,12 +177,17 @@ public class XML implements Serializable {
   /**
    * Returns the parent element. This method returns null for the root
    * element.
+   *
+   * @webref xml:method
+   * @brief Gets a copy of the element's parent
    */
   public XML getParent() {
     return this.parent;
   }
 
-
+  /**
+   * Internal function; not included in reference.
+   */
   protected Node getNode() {
     return node;
   }
@@ -190,13 +196,19 @@ public class XML implements Serializable {
   /**
    * Returns the full name (i.e. the name including an eventual namespace
    * prefix) of the element.
+   *
+   * @webref xml:method
+   * @brief Gets the element's full name
    * @return the name, or null if the element only contains #PCDATA.
    */
   public String getName() {
     return name;
   }
 
-
+  /**
+   * @webref xml:method
+   * @brief Sets the element's name
+   */
   public void setName(String newName) {
     Document document = node.getOwnerDocument();
     node = document.renameNode(node, null, newName);
@@ -206,6 +218,9 @@ public class XML implements Serializable {
 
   /**
    * Returns the name of the element (without namespace prefix).
+   *
+   * @webref xml:method
+   * @brief Gets the element's name
    * @return the name, or null if the element only contains #PCDATA.
    */
   public String getLocalName() {
@@ -215,6 +230,8 @@ public class XML implements Serializable {
 
   /**
    * Honey, can you just check on the kids? Thanks.
+   *
+   * Internal function; not included in reference.
    */
   protected void checkChildren() {
     if (children == null) {
@@ -230,6 +247,9 @@ public class XML implements Serializable {
 
   /**
    * Returns the number of children.
+   *
+   * @webref xml:method
+   * @brief Returns the element's number of children
    * @return the count.
    */
   public int getChildCount() {
@@ -238,6 +258,12 @@ public class XML implements Serializable {
   }
 
 
+  /**
+   * Returns a boolean of whether or not there are children.
+   *
+   * @webref xml:method
+   * @brief Checks whether or not an element has any children
+   */
   public boolean hasChildren() {
     checkChildren();
     return children.length > 0;
@@ -247,6 +273,9 @@ public class XML implements Serializable {
   /**
    * Put the names of all children into an array. Same as looping through
    * each child and calling getName() on each XMLElement.
+   *
+   * @webref xml:method
+   * @brief Returns the names of all children as an array
    */
   public String[] listChildren() {
 //    NodeList children = node.getChildNodes();
@@ -269,6 +298,9 @@ public class XML implements Serializable {
 
   /**
    * Returns an array containing all the child elements.
+   *
+   * @webref xml:method
+   * @brief Returns an array containing all child elements
    */
   public XML[] getChildren() {
 //    NodeList children = node.getChildNodes();
@@ -286,7 +318,9 @@ public class XML implements Serializable {
 
   /**
    * Quick accessor for an element at a particular index.
-   * @author processing.org
+   *
+   * @webref xml:method
+   * @brief Returns the child element with the specified index value or path
    */
   public XML getChild(int index) {
     checkChildren();
@@ -296,6 +330,7 @@ public class XML implements Serializable {
 
   /**
    * Get a child by its name or path.
+   *
    * @param name element name or path/to/element
    * @return the first matching element
    */
@@ -317,6 +352,7 @@ public class XML implements Serializable {
 
   /**
    * Internal helper function for getChild(String).
+   *
    * @param items result of splitting the query on slashes
    * @param offset where in the items[] array we're currently looking
    * @return matching element or null if no match
@@ -351,6 +387,7 @@ public class XML implements Serializable {
   /**
    * Get any children that match this name or path. Similar to getChild(),
    * but will grab multiple matches rather than only the first.
+   *
    * @param name element name or path/to/element
    * @return array of child elements that match
    * @author processing.org
@@ -392,6 +429,10 @@ public class XML implements Serializable {
   }
 
 
+  /**
+   * @webref xml:method
+   * @brief Appends a new child to the element
+   */
   public XML addChild(String tag) {
     Document document = node.getOwnerDocument();
     Node newChild = document.createElement(tag);
@@ -417,6 +458,10 @@ public class XML implements Serializable {
   }
 
 
+  /**
+   * @webref xml:method
+   * @brief Removes the specified child
+   */
   public void removeChild(XML kid) {
     node.removeChild(kid.node);
     children = null;  // TODO not efficient
@@ -457,6 +502,9 @@ public class XML implements Serializable {
 
   /**
    * Returns the number of attributes.
+   *
+   * @webref xml:method
+   * @brief Counts the specified element's number of attributes
    */
   public int getAttributeCount() {
     return node.getAttributes().getLength();
@@ -465,6 +513,9 @@ public class XML implements Serializable {
 
   /**
    * Get a list of the names for all of the attributes for this node.
+   *
+   * @webref xml:method
+   * @brief Returns a list of names of all attributes as an array
    */
   public String[] listAttributes() {
     NamedNodeMap nnm = node.getAttributes();
@@ -477,6 +528,9 @@ public class XML implements Serializable {
 
   /**
    * Returns whether an attribute exists.
+   *
+   * @webref xml:method
+   * @brief Checks whether or not an element has the specified attribute
    */
   public boolean hasAttribute(String name) {
     return (node.getAttributes().getNamedItem(name) != null);
@@ -485,6 +539,7 @@ public class XML implements Serializable {
 
   /**
    * Returns the value of an attribute.
+   *
    * @param name the non-null name of the attribute.
    * @return the value, or null if the attribute does not exist.
    */
@@ -498,7 +553,6 @@ public class XML implements Serializable {
    *
    * @param name the non-null full name of the attribute.
    * @param defaultValue the default value of the attribute.
-   *
    * @return the value, or defaultValue if the attribute does not exist.
    */
 //  public String getAttribute(String name, String defaultValue) {
@@ -507,6 +561,10 @@ public class XML implements Serializable {
 //  }
 
 
+  /**
+   * @webref xml:method
+   * @brief Gets the content of an element as a String
+   */
   public String getString(String name) {
     return getString(name, null);
   }
@@ -518,16 +576,28 @@ public class XML implements Serializable {
   }
 
 
+  /**
+   * @webref xml:method
+   * @brief Sets the content of an element as a String
+   */
   public void setString(String name, String value) {
     ((Element) node).setAttribute(name, value);
   }
 
 
+  /**
+   * @webref xml:method
+   * @brief Gets the content of an element as an int
+   */
   public int getInt(String name) {
     return getInt(name, 0);
   }
 
 
+  /**
+   * @webref xml:method
+   * @brief Sets the content of an element as an int
+   */
   public void setInt(String name, int value) {
     setString(name, String.valueOf(value));
   }
@@ -538,7 +608,6 @@ public class XML implements Serializable {
    *
    * @param name the non-null full name of the attribute.
    * @param defaultValue the default value of the attribute.
-   *
    * @return the value, or defaultValue if the attribute does not exist.
    */
   public int getInt(String name, int defaultValue) {
@@ -549,6 +618,9 @@ public class XML implements Serializable {
 
   /**
    * Returns the value of an attribute, or zero if not present.
+   *
+   * @webref xml:method
+   * @brief Gets the content of an element as a float
    */
   public float getFloat(String name) {
     return getFloat(name, 0);
@@ -560,7 +632,6 @@ public class XML implements Serializable {
    *
    * @param name the non-null full name of the attribute.
    * @param defaultValue the default value of the attribute.
-   *
    * @return the value, or defaultValue if the attribute does not exist.
    */
   public float getFloat(String name, float defaultValue) {
@@ -569,6 +640,10 @@ public class XML implements Serializable {
   }
 
 
+  /**
+   * @webref xml:method
+   * @brief Sets the content of an element as a float
+   */
   public void setFloat(String name, float value) {
     setString(name, String.valueOf(value));
   }
@@ -604,6 +679,8 @@ public class XML implements Serializable {
    * sections can be retrieved as unnamed child objects. In this case,
    * this method returns null.
    *
+   * @webref xml:method
+   * @brief Gets the content of an element
    * @return the content.
    */
   public String getContent() {
@@ -611,6 +688,10 @@ public class XML implements Serializable {
   }
 
 
+  /**
+   * @webref xml:method
+   * @brief Sets the content of an element
+   */
   public void setContent(String text) {
     node.setTextContent(text);
   }
