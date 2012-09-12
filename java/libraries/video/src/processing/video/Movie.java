@@ -158,6 +158,7 @@ public class Movie extends PImage implements PConstants {
    * @webref movie
    * @usage web_application
    * @param ifps speed of the movie in frames per second
+   * @brief Sets the target frame rate
    */
   public void frameRate(float ifps) {
     if (seeking) return;
@@ -221,6 +222,7 @@ public class Movie extends PImage implements PConstants {
 
    * @usage web_application
    * @param irate speed multiplier for movie playback
+   * @brief Sets the relative playback speed
    */
   public void speed(float irate) {
     // If the frameRate() method is called continuously with very similar
@@ -243,6 +245,7 @@ public class Movie extends PImage implements PConstants {
    *
    * @webref movie
    * @usage web_application
+   * @brief Returns length of movie in seconds
    */
   public float duration() {
     float sec = playbin.queryDuration().toSeconds();
@@ -261,6 +264,7 @@ public class Movie extends PImage implements PConstants {
    *
    * @webref movie
    * @usage web_application
+   * @brief Returns location of playback head in units of seconds
    */
   public float time() {
     float sec = playbin.queryPosition().toSeconds();
@@ -281,6 +285,7 @@ public class Movie extends PImage implements PConstants {
    * @webref movie
    * @usage web_application
    * @param where position to jump to specified in seconds
+   * @brief Jumps to a specific location
    */
   public void jump(float where) {
     if (seeking) return;
@@ -322,6 +327,7 @@ public class Movie extends PImage implements PConstants {
    *
    * @webref movie
    * @usage web_application
+   * @brief Returns "true" when a new movie frame is available to read.
    */
   public boolean available() {
     return available;
@@ -337,6 +343,7 @@ public class Movie extends PImage implements PConstants {
    *
    * @webref movie
    * @usage web_application
+   * @brief Plays movie one time and stops at the last frame
    */
   public void play() {
     if (seeking) return;
@@ -355,12 +362,13 @@ public class Movie extends PImage implements PConstants {
   /**
    * ( begin auto-generated from Movie_loop.xml )
    *
-   * Plays a movie continuously, restarting it when it is over.
+   * Plays a movie continuously, restarting it when it's over.
    *
    * ( end auto-generated )
    *
    * @webref movie
    * @usage web_application
+   * @brief Plays a movie continuously, restarting it when it's over.
    */
   public void loop() {
     if (seeking) return;
@@ -380,6 +388,7 @@ public class Movie extends PImage implements PConstants {
    *
    * @webref movie
    * @usage web_application
+   * @brief Stops the movie from looping
    */
   public void noLoop() {
     if (seeking) return;
@@ -402,6 +411,7 @@ public class Movie extends PImage implements PConstants {
    *
    * @webref movie
    * @usage web_application
+   * @brief Pauses the movie
    */
   public void pause() {
     if (seeking) return;
@@ -427,6 +437,7 @@ public class Movie extends PImage implements PConstants {
    *
    * @webref movie
    * @usage web_application
+   * @brief Stops the movie
    */
   public void stop() {
     if (seeking) return;
@@ -454,6 +465,7 @@ public class Movie extends PImage implements PConstants {
    *
    * @webref movie
    * @usage web_application
+   * @brief Reads the current frame
    */
   public synchronized void read() {
     if (frameRate < 0) {
