@@ -832,6 +832,7 @@ public class PGraphics extends PImage implements PConstants {
    * drawing anything.
    *
    * @webref pgraphics:method
+   * @brief Sets the default properties for a PGraphics object
    */
   public void beginDraw() {  // ignore
   }
@@ -849,6 +850,7 @@ public class PGraphics extends PImage implements PConstants {
    * you're finished drawing.
    *
    * @webref pgraphics:method
+   * @brief Finalizes the rendering of a PGraphics object
    */
   public void endDraw() {  // ignore
   }
@@ -1195,7 +1197,7 @@ public class PGraphics extends PImage implements PConstants {
    * NORMAL_SPACE is (0,0) (0,1) (1,1) (0,1).
    *
    * ( end auto-generated )
-   * @webref shape:vertex
+   * @webref image:textures
    * @param mode either IMAGE or NORMALIZED
    * @see PGraphics#texture(PImage)
    */
@@ -1203,7 +1205,16 @@ public class PGraphics extends PImage implements PConstants {
     this.textureMode = mode;
   }
 
-
+  /**
+   * ( begin auto-generated from textureWrap.xml )
+   *
+   * Description to come...
+   *
+   * ( end auto-generated from textureWrap.xml )
+   * 
+   * @webref image:textures
+   * @param wrap Either CLAMP (default) or REPEAT
+   */
   public void textureWrap(int wrap) {
     showMissingWarning("textureWrap");
   }
@@ -1220,7 +1231,7 @@ public class PGraphics extends PImage implements PConstants {
    * to specify the color of the texture as it is applied to the shape.
    *
    * ( end auto-generated )
-   * @webref shape:vertex
+   * @webref image:textures
    * @param image reference to a PImage object
    * @see PGraphics#textureMode(int)
    * @see PGraphics#beginShape(int)
@@ -6834,8 +6845,6 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * @param image PImage to set as background (must be same size as the sketch window).<br/>
-   * <br/>
    * Takes an RGB or ARGB image and sets it as the background.
    * The width and height of the image must be the same size as the sketch.
    * Use image.resize(width, height) to make short work of such a task.<br/>
@@ -6846,6 +6855,8 @@ public class PGraphics extends PImage implements PConstants {
    * behavior. Use image.filter(OPAQUE) to handle this easily.<br/>
    * <br/>
    * When using 3D, this will also clear the zbuffer (if it exists).
+   *
+   * @param image PImage to set as background (must be same size as the sketch window)
    */
   public void background(PImage image) {
     if ((image.width != width) || (image.height != height)) {
