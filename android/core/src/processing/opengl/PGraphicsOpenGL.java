@@ -6760,16 +6760,17 @@ public class PGraphicsOpenGL extends PGraphics {
         setUniformMatrix(normalMatrixLoc, pgCurrent.glNormal);
       }
 
-      setUniformValue(lightCountLoc, pgCurrent.lightCount);
-      setUniformVector(lightPositionLoc, pgCurrent.lightPosition, 4);
-      setUniformVector(lightNormalLoc, pgCurrent.lightNormal, 3);
-      setUniformVector(lightAmbientLoc, pgCurrent.lightAmbient, 3);
-      setUniformVector(lightDiffuseLoc, pgCurrent.lightDiffuse, 3);
-      setUniformVector(lightSpecularLoc, pgCurrent.lightSpecular, 3);
+      int count = pgCurrent.lightCount;
+      setUniformValue(lightCountLoc, count);
+      setUniformVector(lightPositionLoc, pgCurrent.lightPosition, 4, count);
+      setUniformVector(lightNormalLoc, pgCurrent.lightNormal, 3, count);
+      setUniformVector(lightAmbientLoc, pgCurrent.lightAmbient, 3, count);
+      setUniformVector(lightDiffuseLoc, pgCurrent.lightDiffuse, 3, count);
+      setUniformVector(lightSpecularLoc, pgCurrent.lightSpecular, 3, count);
       setUniformVector(lightFalloffCoefficientsLoc,
-                       pgCurrent.lightFalloffCoefficients, 3);
+                       pgCurrent.lightFalloffCoefficients, 3, count);
       setUniformVector(lightSpotParametersLoc,
-                       pgCurrent.lightSpotParameters, 2);
+                       pgCurrent.lightSpotParameters, 2, count);
     }
 
     @Override
