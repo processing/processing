@@ -431,31 +431,33 @@ public class PShader {
   }
 
 
-  protected void setUniformVector(int loc, int[] vec, int ncoords) {
+  protected void setUniformVector(int loc, int[] vec, int ncoords,
+                                  int length) {
     if (-1 < loc) {
       if (ncoords == 1) {
-        pgl.uniform1iv(loc, vec.length, vec, 0);
+        pgl.uniform1iv(loc, length, vec, 0);
       } else if (ncoords == 2) {
-        pgl.uniform2iv(loc, vec.length / 2, vec, 0);
+        pgl.uniform2iv(loc, length, vec, 0);
       } else if (ncoords == 3) {
-        pgl.uniform3iv(loc, vec.length / 3, vec, 0);
+        pgl.uniform3iv(loc, length, vec, 0);
       } else if (ncoords == 4) {
-        pgl.uniform3iv(loc, vec.length / 4, vec, 0);
+        pgl.uniform3iv(loc, length, vec, 0);
       }
     }
   }
 
 
-  protected void setUniformVector(int loc, float[] vec, int ncoords) {
+  protected void setUniformVector(int loc, float[] vec, int ncoords,
+                                  int length) {
     if (-1 < loc) {
       if (ncoords == 1) {
-        pgl.uniform1fv(loc, vec.length, vec, 0);
+        pgl.uniform1fv(loc, length, vec, 0);
       } else if (ncoords == 2) {
-        pgl.uniform2fv(loc, vec.length / 2, vec, 0);
+        pgl.uniform2fv(loc, length, vec, 0);
       } else if (ncoords == 3) {
-        pgl.uniform3fv(loc, vec.length / 3, vec, 0);
+        pgl.uniform3fv(loc, length, vec, 0);
       } else if (ncoords == 4) {
-        pgl.uniform4fv(loc, vec.length / 4, vec, 0);
+        pgl.uniform4fv(loc, length, vec, 0);
       }
     }
   }
