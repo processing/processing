@@ -610,7 +610,7 @@ public class PGL {
     }
 
     if (needScreenFBO && glColorFbo[0] == 0) {
-      numSamples = qualityToSamples(pg.quality);
+
 
       String ext = gl.glGetString(GL.GL_EXTENSIONS);
       if (-1 < ext.indexOf("texture_non_power_of_two")) {
@@ -620,7 +620,14 @@ public class PGL {
         fboWidth = PGL.nextPowerOfTwo(pg.width);
         fboHeight = PGL.nextPowerOfTwo(pg.height);
       }
+
+      if (-1 < ext.indexOf("_framebuffer_multisample")) {
+        numSamples = qualityToSamples(pg.quality);
+      } else {
+        numSamples = 1;
+      }
       multisample = 1 < numSamples;
+
       if (multisample && gl2x == null) {
         throw new RuntimeException("Doesn't have the OpenGL extensions " +
                                    "necessary for multisampling.");
