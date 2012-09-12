@@ -5642,6 +5642,13 @@ public class PApplet extends Applet
   // DATA I/O
 
 
+  /**
+   * @webref input:files
+   * @param filename name of a file in the data folder or a URL.
+   * @see PApplet#loadBytes(String)
+   * @see PApplet#loadStrings(String)
+   * @see PApplet#loadTable(String)
+   */
   public XML loadXML(String filename) {
     try {
       return new XML(this, filename);
@@ -5662,6 +5669,13 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * @webref input:files
+   * @param filename name of a file in the data folder or a URL.
+   * @see PApplet#loadBytes(String)
+   * @see PApplet#loadStrings(String)
+   * @see PApplet#loadXML(String)
+   */
   public Table loadTable(String filename) {
     return new Table(this, filename);
   }
