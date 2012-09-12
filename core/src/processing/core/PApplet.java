@@ -10663,6 +10663,9 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * @webref shape
+   */
   public PShape createShape(PShape source) {
     return g.createShape(source);
   }

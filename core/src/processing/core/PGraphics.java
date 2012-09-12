@@ -1631,7 +1631,9 @@ public class PGraphics extends PImage implements PConstants {
 
   // SHAPE CREATION
 
-
+  /**
+   * @webref shape
+   */
   public PShape createShape(PShape source) {
     showMissingWarning("createShape");
     return null;
