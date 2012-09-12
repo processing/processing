@@ -59,6 +59,8 @@ import processing.core.PConstants;
  * often with the data in quotes. TSV files use tabs as separators, and usually
  * don't bother with the quotes.</p>
  * <p>File names should end with .csv if they're comma separated.</p>
+ *
+ * @webref data:composite
  */
 public class Table implements Iterable<TableRow> {
   protected int rowCount;
