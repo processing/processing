@@ -4348,12 +4348,27 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   /**
-   * Sets orthographic projection. The left, right, bottom and top
-   * values refer to the top left corner of the screen, not to the
-   * center or eye of the camera. This is like this because making
-   * it relative to the camera is not very intuitive if we think
-   * of the perspective function, which is also independent of the
-   * camera position.
+   * Sets an orthographic projection. The left, right, bottom and top
+   * values refer to the center of the screen, with the y-axis inverted
+   * with respect to the default orientation in Processing, e.g: botton-to-top
+   * instead of top-to-bottom.
+   * In particular, if we need to set the the orthographic projection exactly
+   * covering the rectangle starting at the origin and having the same
+   * dimensions as the screen size, then we would pass:
+   * left   = -width/2
+   * right  = +width/2
+   * bottom = -height/2
+   * top    = +height/2
+   * In general, if we want to set an ortographic projection covering the
+   * rectangle determined by the top-left corner (x0, y0) and bottom-right
+   * corner (x1, y1), we would need to pass the following parameters:
+   * left   = x0 - width/2
+   * right  = x1 - width/2
+   * bottom = height/2 - y1
+   * top    = height/2 - y0
+   * that just correspond to the change of coordinates between the
+   * coordinate system located at the screen center with the Y-axis
+   * bottom-to-top, and Processing's system.
    *
    */
   @Override
