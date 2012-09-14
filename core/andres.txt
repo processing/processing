@@ -32,6 +32,8 @@ X   http://code.google.com/p/processing/issues/detail?id=1146
 processing-core
 _ Back-buffer support in shaders: 
 _   http://code.google.com/p/processing/issues/detail?id=1169
+_ Allow for nested drawing of PGraphic objects:
+_   https://forum.processing.org/topic/already-called-begindraw-for-another-pgraphicsopengl-object-14-9-2012
 _ Decide on the names of the uniform and attribute variables in the shaders
 _ Revise/correct/update warning and error messages.
 _ Cleaner Implementation of PImage.loadPixels()
