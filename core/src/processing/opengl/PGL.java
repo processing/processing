@@ -25,6 +25,7 @@ package processing.opengl;
 
 import java.awt.BorderLayout;
 import java.awt.Canvas;
+import java.awt.Dimension;
 import java.nio.Buffer;
 
 import java.nio.ByteBuffer;
@@ -43,13 +44,19 @@ import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLCapabilitiesImmutable;
 import javax.media.opengl.GLContext;
 import javax.media.opengl.GLDrawable;
+import javax.media.opengl.GLDrawableFactory;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.GLException;
+import javax.media.opengl.GLFBODrawable;
+import javax.media.opengl.GLOffscreenAutoDrawable;
 import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUtessellator;
 import javax.media.opengl.glu.GLUtessellatorCallbackAdapter;
+
+import processing.core.PApplet;
+import processing.core.PConstants;
 
 import com.jogamp.newt.awt.NewtCanvasAWT;
 import com.jogamp.newt.opengl.GLWindow;
@@ -350,6 +357,11 @@ public class PGL {
   /** Windowing toolkit */
   protected static int toolkit = AWT;
 
+  protected static boolean enable_screen_FBO_macosx  = true;
+  protected static boolean enable_screen_FBO_windows = false;
+  protected static boolean enable_screen_FBO_linux   = false;
+  protected static boolean enable_screen_FBO_other   = false;
+
   /** Selected GL profile */
   protected GLProfile profile;
 
@@ -388,7 +400,7 @@ public class PGL {
 
   // FBO for anti-aliased rendering
 
-  protected static final boolean ENABLE_OSX_SCREEN_FBO  = true;
+  protected static final boolean ENABLE_OSX_SCREEN_FBO  = false;
   protected static final int MIN_OSX_VER_FOR_SCREEN_FBO = 6;
   protected static final int MIN_SAMPLES_FOR_SCREEN_FBO = 1;
   protected boolean needScreenFBO = false;
@@ -505,6 +517,7 @@ public class PGL {
 
 
   protected void initPrimarySurface(int antialias) {
+    /*
     if (ENABLE_OSX_SCREEN_FBO) {
       needScreenFBO = false;
       glColorFbo[0] = 0;
@@ -526,6 +539,7 @@ public class PGL {
         }
       }
     }
+    */
 
     if (profile == null) {
       profile = GLProfile.getDefault();
@@ -553,11 +567,22 @@ public class PGL {
     } else {
       caps.setSampleBuffers(false);
     }
+
+    if (PApplet.platform == PConstants.MACOSX) {
+      caps.setFBO(enable_screen_FBO_macosx);
+    } else if (PApplet.platform == PConstants.WINDOWS) {
+      caps.setFBO(enable_screen_FBO_windows);
+    } else if (PApplet.platform == PConstants.LINUX) {
+      caps.setFBO(enable_screen_FBO_linux);
+    } else {
+      caps.setFBO(enable_screen_FBO_other);
+    }
+
     caps.setDepthBits(24);
     caps.setStencilBits(8);
     caps.setAlphaBits(8);
-    //caps.setFBO(false);
     caps.setBackgroundOpaque(true);
+    caps.setOnscreen(true);
 
     if (toolkit == AWT) {
       canvasAWT = new GLCanvas(caps);
@@ -568,6 +593,8 @@ public class PGL {
       pg.parent.removeListeners(pg.parent);
       pg.parent.addListeners(canvasAWT);
 
+
+
       listener = new PGLListener();
       canvasAWT.addGLEventListener(listener);
       capabilities = canvasAWT.getChosenGLCapabilities();
@@ -576,6 +603,11 @@ public class PGL {
     } else if (toolkit == NEWT) {
       window = GLWindow.create(caps);
       canvasNEWT = new NewtCanvasAWT(window);
+      Dimension size0 = new Dimension(pg.width, pg.height);
+      canvasNEWT.setShallUseOffscreenLayer(true); // trigger offscreen layer - if supported
+      canvasNEWT.setPreferredSize(size0);
+      canvasNEWT.setMinimumSize(size0);
+      canvasNEWT.setSize(size0);
 
       pg.parent.setLayout(new BorderLayout());
       pg.parent.add(canvasNEWT, BorderLayout.CENTER);
@@ -792,11 +824,42 @@ public class PGL {
   }
 
 
-  protected int primaryDrawBuffer() {
-    if (glColorFbo[0] == 0) {
-      return GL.GL_BACK;
+  protected int primaryReadFramebuffer() {
+    if (capabilities.isFBO()) {
+      return context.getDefaultReadFramebuffer();
     } else {
+      return 0;
+    }
+  }
+
+  protected int primaryDrawFramebuffer() {
+
+
+    if (capabilities.isFBO()) {
+      return context.getDefaultDrawFramebuffer();
+    } else {
+      return 0;
+    }
+  }
+
+  protected int primaryDrawBuffer() {
+//    if (glColorFbo[0] == 0) {
+//      return GL.GL_BACK;
+//    } else {
+//      return GL.GL_COLOR_ATTACHMENT0;
+//    }
+    //int draw = context.getDefaultDrawFramebuffer();
+    //int read = context.getDefaultReadFramebuffer();
+    //System.out.println(draw + " " + read);
+
+    //System.out.println((GLFBODrawable)drawable);
+
+
+
+    if (capabilities.isFBO()) {
       return GL.GL_COLOR_ATTACHMENT0;
+    } else {
+      return GL.GL_BACK;
     }
   }
 
@@ -811,7 +874,7 @@ public class PGL {
 */
 
   protected boolean primaryIsFboBacked() {
-    return glColorFbo[0] != 0;
+    return capabilities.isFBO();
   }
 
 
