@@ -99,7 +99,7 @@ public class FindReplace extends JFrame {
         }
       });
     allTabsBox.setSelected(allTabs);
-    allTabsBox.setEnabled(false);
+    allTabsBox.setEnabled(true);
     pain.add(allTabsBox);
 
     wrapAroundBox = new JCheckBox("Wrap Around");
@@ -284,8 +284,8 @@ public class FindReplace extends JFrame {
       // Started work on find/replace across tabs. These two variables store
       // the original tab and selection position so that it knew when to stop
       // rotating through.
-//    Sketch sketch = editor.getSketch();
-//    int tabIndex = sketch.getCurrentCodeIndex();
+      Sketch sketch = editor.getSketch();
+      int tabIndex = sketch.getCurrentCodeIndex();
 //    int selIndex = backwards ?
 //      editor.getSelectionStart() : editor.getSelectionStop();
 
@@ -300,9 +300,40 @@ public class FindReplace extends JFrame {
         int selectionEnd = editor.getSelectionStop();
 
         nextIndex = text.indexOf(searchTerm, selectionEnd);
-        if (nextIndex == -1 && wrap) {
+        if (nextIndex == -1 && wrap && !allTabs) {
           // if wrapping, a second chance is ok, start from beginning
           nextIndex = text.indexOf(searchTerm, 0);
+
+        } else if (nextIndex == -1 && allTabs) {
+          // For searching in all tabs, wrapping always happens.
+
+          int tempIndex = tabIndex;
+          // Look for searchterm in all tabs.
+          while (tabIndex <= sketch.getCodeCount() - 1) {
+            if (tabIndex == sketch.getCodeCount() - 1) {
+              // System.out.println("wrapping.");
+              tabIndex = -1;
+            } else if (tabIndex == sketch.getCodeCount() - 1) {
+              break;
+            }
+
+            text = sketch.getCode(tabIndex + 1).getProgram();
+            tabIndex++;
+            if (ignoreCase) {
+              text = text.toLowerCase();
+            }
+            nextIndex = text.indexOf(searchTerm, 0);
+
+            if (nextIndex != -1  || tabIndex == tempIndex) {
+              break;
+            }
+          }
+
+          // searchterm wasn't found in any of the tabs.
+          // No tab switching should happen, restore tabIndex
+          if (nextIndex == -1) {
+            tabIndex = tempIndex;
+          }
         }
       } else {
         //int selectionStart = editor.textarea.getSelectionStart();
@@ -313,13 +344,44 @@ public class FindReplace extends JFrame {
         } else {
           nextIndex = -1;
         }
-        if (wrap && nextIndex == -1) {
+        if (wrap &&  !allTabs && nextIndex == -1) {
           // if wrapping, a second chance is ok, start from the end
           nextIndex = text.lastIndexOf(searchTerm);
+
+        } else if (nextIndex == -1 && allTabs) {
+          int tempIndex = tabIndex;
+          // Look for search term in previous tabs.
+          while (tabIndex >= 0) {
+            if (tabIndex == 0) {
+              //System.out.println("wrapping.");
+              tabIndex = sketch.getCodeCount();
+            } else if (tabIndex == 0) {
+              break;
+            }
+            text = sketch.getCode(tabIndex - 1).getProgram();
+            tabIndex--;
+            if (ignoreCase) {
+              text = text.toLowerCase();
+            }
+            nextIndex = text.lastIndexOf(searchTerm);
+
+            if (nextIndex != -1  || tabIndex == tempIndex) {
+              break;
+            }
+          }
+
+          // search term wasn't found in any of the tabs.
+          // No tab switching should happen, restore tabIndex
+          if (nextIndex == -1) {
+            tabIndex = tempIndex;
+          }
         }
       }
 
       if (nextIndex != -1) {
+        if (allTabs) {
+          sketch.setCurrentCode(tabIndex);
+        }
         editor.setSelection(nextIndex, nextIndex + searchTerm.length());
       } else {
         //Toolkit.getDefaultToolkit().beep();

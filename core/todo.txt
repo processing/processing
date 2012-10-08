@@ -1,4 +1,6 @@
 0212 core
+_ appears that JOGL has been updated?
+
 
 _ Default Renderer slow on retina displays
 _   http://code.google.com/p/processing/issues/detail?id=1262
