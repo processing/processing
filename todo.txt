@@ -1,4 +1,7 @@
 0212 pde
+M implement find & replace over multiple tabs 
+M   http://code.google.com/p/processing/issues/detail?id=25
+M   added to the projects list
 
 
 . . .
@@ -639,10 +642,6 @@ _   .java files are copied to the root folder as well as the source folder
 
 
 PDE / Find & Replace
-
-_ implement find & replace over multiple tabs 
-_   http://code.google.com/p/processing/issues/detail?id=25
-_   added to the projects list
 
 
 PDE / Examples
