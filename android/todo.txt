@@ -1,6 +1,9 @@
-0211 android
-X implement registerMethod(keyEvent) (motion and mouse still unavailable)
+0212 android
 
+_ key value is not set in android mode
+_   http://code.google.com/p/processing/issues/detail?id=1254
+_ hue() in HSB mode returns out of range values
+_   http://code.google.com/p/processing/issues/detail?id=1257
 
 motion/touch events
 _ registerMethod("motionEvent") and "mouseEvent" not implemented

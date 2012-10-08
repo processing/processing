@@ -44,9 +44,9 @@ import processing.core.*;
  * files and images, etc) that comes from that.
  */
 public class Base {
-  static public final int REVISION = 211;
+  static public final int REVISION = 212;
   /** This might be replaced by main() if there's a lib/version.txt file. */
-  static public String VERSION_NAME = "0211";
+  static public String VERSION_NAME = "0212";
   /** Set true if this a proper release rather than a numbered revision. */
   static public boolean RELEASE = false;
 
@@ -113,7 +113,7 @@ public class Base {
   static public JMenu defaultFileMenu;
 
   /**
-   * Starts with the last mode used with the environment, 
+   * Starts with the last mode used with the environment,
    * or the default mode if not used.
    */
   private Mode nextMode;
@@ -646,8 +646,8 @@ public class Base {
   public List<Editor> getEditors() {
     return editors;
   }
-  
-  
+
+
   protected void changeMode(Mode mode) {
     if (activeEditor.getMode() != mode) {
       Sketch sketch = activeEditor.getSketch();
@@ -1594,7 +1594,7 @@ public class Base {
     preferencesFrame.showFrame();
   }
 
-  
+
   /**
    * Show the library installer window.
    */
@@ -1602,7 +1602,7 @@ public class Base {
     libraryManagerFrame.showFrame(activeEditor);
   }
 
-  
+
   /**
    * Show the tool installer window.
    */
@@ -1610,7 +1610,7 @@ public class Base {
     toolManagerFrame.showFrame(activeEditor);
   }
 
-  
+
   /**
    * Show the mode installer window.
    */
@@ -1618,7 +1618,7 @@ public class Base {
     modeManagerFrame.showFrame(activeEditor);
   }
 
-  
+
   public void handleShowUpdates() {
     updateManagerFrame.showFrame(activeEditor);
   }
