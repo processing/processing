@@ -1,23 +1,5 @@
-0211 pde
-X make file selectable from the OS X menubar
-X   http://code.google.com/p/processing/issues/detail?id=1215
-X make Mode menu into a radio button, so it cannot be de-selected
-X   http://code.google.com/p/processing/issues/detail?id=1227
-X no response with registerMethod keyEvent when key pressed or released
-X   http://code.google.com/p/processing/issues/detail?id=1225
-o running at size(7000, 4000) followed by size(100, 100) 
-X   http://code.google.com/p/processing/issues/detail?id=1213
-X   won't fix, too hairy and messy
-X clean up handling of untitled sketches
-X   was formerly a bare variable in Editor, but affected Sketch
-X changing the default display does not reset editor location
-X   so the change appears to have no effect
-X   http://code.google.com/p/processing/issues/detail?id=1162
-X cleaning up preferences a bit
-X   to use Base, not Editor
-X   to apply to all open editors, not just the first
-_ "Processing is damaged and should be put in the trash" for 2.0b2
-_   http://code.google.com/p/processing/issues/detail?id=1226
+0212 pde
+
 
 . . .
 

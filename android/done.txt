@@ -1,3 +1,7 @@
+0211 android (2.0b3)
+X implement registerMethod(keyEvent) (motion and mouse still unavailable)
+
+
 0210 android (2.0b2)
 X lots of example updates from Andres
 X update example categories in the browser
