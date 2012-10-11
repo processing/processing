@@ -303,7 +303,7 @@ public class Movie extends PImage implements PConstants {
     boolean res;
     long pos = Video.secToNanoLong(where);
 
-    res = playbin.seek(1.0, Format.TIME, SeekFlags.FLUSH,
+    res = playbin.seek(rate, Format.TIME, SeekFlags.FLUSH,
                        SeekType.SET, pos, SeekType.NONE, -1);
 
     if (!res) {
