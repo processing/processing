@@ -2399,17 +2399,10 @@ public class PApplet extends Applet
       mouseY = event.getY();
     }
 
+    // Get the (already processed) button code
     mouseButton = event.getButton();
-//    int modifiers = event.getModifiersEx();
-//    if ((modifiers & InputEvent.BUTTON1_DOWN_MASK) != 0) {
-//      mouseButton = LEFT;
-//    } else if ((modifiers & InputEvent.BUTTON2_DOWN_MASK) != 0) {
-//      mouseButton = CENTER;
-//    } else if ((modifiers & InputEvent.BUTTON3_DOWN_MASK) != 0) {
-//      mouseButton = RIGHT;
-//    }
 
-  // Compatibility for older code
+    // Compatibility for older code
     if (mouseEventMethods != null) {
       mouseEventMethods.handle(new Object[] { event.getNative() });
     }
@@ -2448,115 +2441,11 @@ public class PApplet extends Applet
     }
 
     if ((event.getAction() == MouseEvent.DRAGGED) ||
-      (event.getAction() == MouseEvent.MOVED)) {
+        (event.getAction() == MouseEvent.MOVED)) {
       emouseX = mouseX;
       emouseY = mouseY;
     }
   }
-
-//  protected void handleMouseEvent(java.awt.event.MouseEvent event) {
-////    int id = event.getID();
-//    int peAction = 0;
-//    switch (event.getID()) {
-//    case java.awt.event.MouseEvent.MOUSE_PRESSED:
-//      peAction = MouseEvent.PRESSED;
-//      break;
-//    case java.awt.event.MouseEvent.MOUSE_RELEASED:
-//      peAction = MouseEvent.RELEASED;
-//      break;
-//    case java.awt.event.MouseEvent.MOUSE_CLICKED:
-//      peAction = MouseEvent.CLICKED;
-//      break;
-//    case java.awt.event.MouseEvent.MOUSE_DRAGGED:
-//      peAction = MouseEvent.DRAGGED;
-//      break;
-//    case java.awt.event.MouseEvent.MOUSE_MOVED:
-//      peAction = MouseEvent.MOVED;
-//      break;
-//    }
-//
-//    // http://dev.processing.org/bugs/show_bug.cgi?id=170
-//    // also prevents mouseExited() on the mac from hosing the mouse
-//    // position, because x/y are bizarre values on the exit event.
-//    // see also the id check below.. both of these go together
-////    if ((id == java.awt.event.MouseEvent.MOUSE_DRAGGED) ||
-////        (id == java.awt.event.MouseEvent.MOUSE_MOVED)) {
-//    if (peAction == MouseEvent.DRAGGED || peAction == MouseEvent.MOVED) {
-//      pmouseX = emouseX;
-//      pmouseY = emouseY;
-//      mouseX = event.getX();
-//      mouseY = event.getY();
-//    }
-//
-//    int modifiers = event.getModifiersEx();
-//    if ((modifiers & InputEvent.BUTTON1_DOWN_MASK) != 0) {
-//      mouseButton = LEFT;
-//    } else if ((modifiers & InputEvent.BUTTON2_DOWN_MASK) != 0) {
-//      mouseButton = CENTER;
-//    } else if ((modifiers & InputEvent.BUTTON3_DOWN_MASK) != 0) {
-//      mouseButton = RIGHT;
-//    }
-//    // if running on macos, allow ctrl-click as right mouse
-//    if (platform == MACOSX) {
-//      if (event.isPopupTrigger()) {
-//        mouseButton = RIGHT;
-//      }
-//    }
-//
-//    if (mouseEventMethods != null) {
-//      mouseEventMethods.handle(new Object[] { event });
-//    }
-//
-//    // this used to only be called on mouseMoved and mouseDragged
-//    // change it back if people run into trouble
-//    if (firstMouse) {
-//      pmouseX = mouseX;
-//      pmouseY = mouseY;
-//      dmouseX = mouseX;
-//      dmouseY = mouseY;
-//      firstMouse = false;
-//    }
-//
-//    int peModifiers = modifiers &
-//      (InputEvent.SHIFT_DOWN_MASK |
-//       InputEvent.CTRL_DOWN_MASK |
-//       InputEvent.META_DOWN_MASK |
-//       InputEvent.ALT_DOWN_MASK);
-//
-//    MouseEvent pe = new MouseEvent(event, event.getWhen(),
-//                                   peAction, peModifiers,
-//                                   mouseX, mouseY,
-//                                   event.getButton(),
-//                                   event.getClickCount());
-//    mouseEvent = pe;
-//    handleMethods("mouseEvent", new Object[] { pe });
-//
-//    switch (peAction) {
-//    case MouseEvent.PRESSED:
-//      mousePressed = true;
-//      mousePressed();
-//      break;
-//    case MouseEvent.RELEASED:
-//      mousePressed = false;
-//      mouseReleased();
-//      break;
-//    case MouseEvent.CLICKED:
-//      mouseClicked();
-//      break;
-//    case MouseEvent.DRAGGED:
-//      mouseDragged();
-//      break;
-//    case MouseEvent.MOVED:
-//      mouseMoved();
-//      break;
-//    }
-//
-//    if ((peAction == MouseEvent.DRAGGED) ||
-//        (peAction == MouseEvent.MOVED)) {
-//      emouseX = mouseX;
-//      emouseY = mouseY;
-//    }
-//  }
 
 
   /**
@@ -2599,11 +2488,11 @@ public class PApplet extends Applet
        InputEvent.ALT_DOWN_MASK);
 
     int peButton = 0;
-    if ((modifiers & InputEvent.BUTTON1_DOWN_MASK) != 0) {
+    if ((modifiers & InputEvent.BUTTON1_MASK) != 0) {
       peButton = LEFT;
-    } else if ((modifiers & InputEvent.BUTTON2_DOWN_MASK) != 0) {
+    } else if ((modifiers & InputEvent.BUTTON2_MASK) != 0) {
       peButton = CENTER;
-    } else if ((modifiers & InputEvent.BUTTON3_DOWN_MASK) != 0) {
+    } else if ((modifiers & InputEvent.BUTTON3_MASK) != 0) {
       peButton = RIGHT;
     }
     // if running on macos, allow ctrl-click as right mouse
@@ -10493,7 +10382,7 @@ public class PApplet extends Applet
    * Description to come...
    *
    * ( end auto-generated from textureWrap.xml )
-   * 
+   *
    * @webref image:textures
    * @param wrap Either CLAMP (default) or REPEAT
    */
@@ -10662,7 +10551,7 @@ public class PApplet extends Applet
    * This is a new reference entry for Processing 2.0. It will be updated shortly.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref Rendering
    * @param mode the blending mode to use
    */
@@ -10706,7 +10595,7 @@ public class PApplet extends Applet
    * This is a new reference entry for Processing 2.0. It will be updated shortly.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref rendering:shaders
    * @param fragFilename name of fragment shader file
    */
@@ -10729,7 +10618,7 @@ public class PApplet extends Applet
    * This is a new reference entry for Processing 2.0. It will be updated shortly.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref rendering:shaders
    * @param shader name of shader file
    */
@@ -10754,7 +10643,7 @@ public class PApplet extends Applet
    * This is a new reference entry for Processing 2.0. It will be updated shortly.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref rendering:shaders
    */
   public void resetShader() {
@@ -11635,9 +11524,9 @@ public class PApplet extends Applet
 
 
   /**
-   * 
+   *
    * @param level either 2, 4, or 8
-   */ 
+   */
   public void smooth(int level) {
     if (recorder != null) recorder.smooth(level);
     g.smooth(level);
