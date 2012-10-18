@@ -1,7 +1,8 @@
 0212 android
+X key value is not set in android mode
+X   http://code.google.com/p/processing/issues/detail?id=1254
 
-_ key value is not set in android mode
-_   http://code.google.com/p/processing/issues/detail?id=1254
+
 _ hue() in HSB mode returns out of range values
 _   http://code.google.com/p/processing/issues/detail?id=1257
 
