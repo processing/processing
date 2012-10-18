@@ -1,15 +1,34 @@
 0212 core
+X mouseButton not getting set on release event
+X   http://code.google.com/p/processing/issues/detail?id=1294
+
+
 _ appears that JOGL has been updated?
 
+_ remove java.awt.* imports from sketches
+
+_ lots of improvements to Table class?
+_ findRows() is broken
+_   should it return an iterator instead?
+//println(dict.getRowCount());
+ languages = new Language[langTotal];
+ for (int h = 0; h < langTotal; h++) {
+   String num = str(h + 1);
+   //int[] rows = dict.findRows(num, "#LNUM");
+   int[] rows = findRowsReally(dict, num, "#LNUM");
+   println(rows);
+ }
 
 _ Default Renderer slow on retina displays
 _   http://code.google.com/p/processing/issues/detail?id=1262
 
-
 _ remove subsetting stuff from PFont?
 _   or use hint(ENABLE_FONT_SUBSETTING)? 
 
-hint(OPENGL_ERRORS) should be the opposite to enable the reporting, no?
+_ change name for hint() that controls stroke/fill combo
+_   hint(DISABLE_OPTIMIZED_STROKE)
+
+_ hint(OPENGL_ERRORS) should be the opposite to enable the reporting, no?
 
 _ fillMode(NONZERO) and fillMode(ODD) to replace sold(boolean)?
 
@@ -44,11 +63,13 @@ colorCalc() methods added to PShape.. should just be used from PGraphics
 
 xml tweaks
 _ beginning slash in getChild() threw an NPE
-_ do we need a trim() method for XML? or enableWhiteSpace()? or?
+_ do we need a trim() method for XML?
+_ isWhitespace() method for nodes?
 _ XML toString(0) means no indents or newlines
 _   but no way to remove indents and still have newlines... 
 _   toString(-1)? a new method?
 _ format(2), format(4)... format() -> default to 2 params
+_ get back to PhiLho once finished
 
 _ add loadType() and saveType()... get working with shapes, etc
 

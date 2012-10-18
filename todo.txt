@@ -3,6 +3,12 @@ M implement find & replace over multiple tabs
 M   http://code.google.com/p/processing/issues/detail?id=25
 M   added to the projects list
 
+A calling jump() resets movie speed
+A   http://code.google.com/p/processing/issues/detail?id=1303
+
+_ problems running on OS X with recent updates
+_   also that missing semicolon on first line just produces "null" as the error
+_   http://code.google.com/p/processing/issues/detail?id=1312
 
 . . .
 
@@ -93,6 +99,11 @@ _ remove PdeKeyListener, roll it into the Java InputHandler for JEditTextArea
 _   move Java-specific InputHandler to its own subclass
 _ problem changing sketchbook to new location (e.g. from ex to regular) 
 _   new libraries are not picked up
+_ from Casey
+_   list in the PDE would be updated automatically by querying a web service
+_   list on the website would be generated using the same web service
+_   All I would need to do is update web/contrib_generate/sources.conf 
+_     and the rest would happen automatically.
 
 
 2.0 FINAL / new interface
