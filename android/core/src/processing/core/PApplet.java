@@ -2409,6 +2409,10 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
 
   protected void handleKeyEvent(KeyEvent event) {
+    keyEvent = event;
+    key = event.getKey();
+    keyCode = event.getKeyCode();
+
     switch (event.getAction()) {
     case KeyEvent.PRESSED:
       keyPressed = true;
