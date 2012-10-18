@@ -9,6 +9,8 @@ A   http://code.google.com/p/processing/issues/detail?id=1303
 _ problems running on OS X with recent updates
 _   also that missing semicolon on first line just produces "null" as the error
 _   http://code.google.com/p/processing/issues/detail?id=1312
+_   seems that 1.7 is now the default, and no 32-bit option is available (!@#$)
+_   but the 32-bit JVM for 1.6 seems to still be installed
 
 . . .
 
