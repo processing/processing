@@ -1438,6 +1438,11 @@ public class Sketch {
   }
 
 
+  static final boolean asciiLetter(char c) {
+    return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+  }
+  
+  
   /**
    * Produce a sanitized name that fits our standards for likely to work.
    * <p/>
@@ -1451,29 +1456,36 @@ public class Sketch {
    * This helper function replaces everything but A-Z, a-z, and 0-9 with
    * underscores. Also disallows starting the sketch name with a digit
    * or underscore.
+   * <p/>
+   * In Processing 2.0, sketches can no longer begin with an underscore, 
+   * because these aren't valid class names on Android.
    */
   static public String sanitizeName(String origName) {
-    char c[] = origName.toCharArray();
+    char orig[] = origName.toCharArray();
     StringBuffer buffer = new StringBuffer();
 
-    // can't lead with a digit, so start with an underscore
-    if ((c[0] >= '0') && (c[0] <= '9')) {
-      buffer.append('_');
+    // Can't lead with a digit (or anything besides a letter), so prefix with 
+    // "sketch_". In 1.x this prefixed with an underscore, but those get shaved
+    // off later, since you can't start a sketch name with underscore anymore.
+    if (!asciiLetter(orig[0])) {
+      buffer.append("sketch_");
     }
-    for (int i = 0; i < c.length; i++) {
-      if (((c[i] >= '0') && (c[i] <= '9')) ||
-          ((c[i] >= 'a') && (c[i] <= 'z')) ||
-          ((c[i] >= 'A') && (c[i] <= 'Z'))) {
-        buffer.append(c[i]);
+//    for (int i = 0; i < orig.length; i++) {
+    for (char c : orig) {
+      if (asciiLetter(c) || (c >= '0' && c <= '9')) {
+        buffer.append(c);
 
       } else {
+        // Tempting to only add if prev char is not underscore, but that 
+        // might be more confusing if lots of chars are converted and the 
+        // result is a very short string thats nothing like the original.
         buffer.append('_');
       }
     }
-    // let's not be ridiculous about the length of filenames.
+    // Let's not be ridiculous about the length of filenames.
     // in fact, Mac OS 9 can handle 255 chars, though it can't really
     // deal with filenames longer than 31 chars in the Finder.
-    // but limiting to that for sketches would mean setting the
+    // Limiting to that for sketches would mean setting the
     // upper-bound on the character limit here to 25 characters
     // (to handle the base name + ".class")
     if (buffer.length() > 63) {
