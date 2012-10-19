@@ -1,10 +1,11 @@
 0212 android
 X key value is not set in android mode
 X   http://code.google.com/p/processing/issues/detail?id=1254
+X hue() in HSB mode returns out of range values
+X   hue method on Android may just be different
+X   http://code.google.com/p/processing/issues/detail?id=1257
 
-
-_ hue() in HSB mode returns out of range values
-_   http://code.google.com/p/processing/issues/detail?id=1257
+_ emulator not starting up on OS X?
 
 motion/touch events
 _ registerMethod("motionEvent") and "mouseEvent" not implemented
