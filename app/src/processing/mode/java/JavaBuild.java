@@ -275,6 +275,7 @@ public class JavaBuild {
       fnfe.printStackTrace();
       String msg = "Build folder disappeared or could not be written";
       throw new SketchException(msg);
+
     } catch (antlr.RecognitionException re) {
       // re also returns a column that we're not bothering with for now
       // first assume that it's the main file
@@ -293,7 +294,7 @@ public class JavaBuild {
       String msg = re.getMessage();
 
       //System.out.println(java.getAbsolutePath());
-      System.out.println(bigCode);
+//      System.out.println(bigCode);
 
       if (msg.contains("expecting RCURLY")) {
       //if (msg.equals("expecting RCURLY, found 'null'")) {
