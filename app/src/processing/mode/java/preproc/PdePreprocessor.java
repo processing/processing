@@ -169,6 +169,20 @@ public class PdePreprocessor {
     "(?:^|\\s|;)size\\s*\\(\\s*([^\\s,]+)\\s*,\\s*([^\\s,\\)]+),?\\s*([^\\)]*)\\s*\\)\\s*\\;";
     //"(?:^|\\s|;)size\\s*\\(\\s*(\\S+)\\s*,\\s*([^\\s,\\)]+),?\\s*([^\\)]*)\\s*\\)\\s*\\;";
 
+  
+  private static final Pattern PUBLIC_CLASS =
+    Pattern.compile("(^|;)\\s*public\\s+class\\s+\\S+\\s+extends\\s+PApplet", Pattern.MULTILINE);
+    // Can't only match any 'public class', needs to be a PApplet
+    // http://code.google.com/p/processing/issues/detail?id=551
+    //Pattern.compile("(^|;)\\s*public\\s+class", Pattern.MULTILINE);
+
+  
+  private static final Pattern FUNCTION_DECL =
+    Pattern.compile("(^|;)\\s*((public|private|protected|final|static)\\s+)*" +
+        "(void|int|float|double|String|char|byte)" +
+        "(\\s*\\[\\s*\\])?\\s+[a-zA-Z0-9]+\\s*\\(",
+        Pattern.MULTILINE);
+
 
   public PdePreprocessor(final String sketchName) {
     this(sketchName, Preferences.getInteger("editor.tabs.size"));
@@ -340,7 +354,7 @@ public class PdePreprocessor {
 
 
   public void setMode(final Mode mode) {
-    // System.err.println("Setting mode to " + mode);
+    //System.err.println("Setting mode to " + mode);
     this.mode = mode;
   }
 
@@ -565,17 +579,6 @@ public class PdePreprocessor {
     return new String(p2, 0, index);
   }
 
-  private static final Pattern PUBLIC_CLASS =
-    Pattern.compile("(^|;)\\s*public\\s+class\\s+\\S+\\s+extends\\s+PApplet", Pattern.MULTILINE);
-    // Can't only match any 'public class', needs to be a PApplet
-    // http://code.google.com/p/processing/issues/detail?id=551
-    //Pattern.compile("(^|;)\\s*public\\s+class", Pattern.MULTILINE);
-
-  private static final Pattern FUNCTION_DECL =
-    Pattern.compile("(^|;)\\s*((public|private|protected|final|static)\\s+)*" +
-    		"(void|int|float|double|String|char|byte)" +
-    		"(\\s*\\[\\s*\\])?\\s+[a-zA-Z0-9]+\\s*\\(",
-        Pattern.MULTILINE);
 
   /**
    * preprocesses a pde file and writes out a java file
