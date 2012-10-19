@@ -13,7 +13,8 @@
     <methods dir="${basedir}/src/processing/core" recorder="true" />
 
     <mkdir dir="bin" />
-    <javac target="1.6" 
+    <javac source="1.6"
+	   target="1.6" 
 	   encoding="UTF-8"
 	   includeAntRuntime="false"
 	   debug="true"
