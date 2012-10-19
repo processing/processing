@@ -5120,7 +5120,7 @@ public class PGraphics extends PImage implements PConstants {
                      what & 0xff, cacheHsbValue);
       cacheHsbKey = what;
     }
-    return cacheHsbValue[0] * colorModeX;
+    return (cacheHsbValue[0] / 360f) * colorModeX;
   }
 
 
