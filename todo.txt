@@ -9,6 +9,17 @@ A   http://code.google.com/p/processing/issues/detail?id=1303
 X problems running on OS X with recent updates
 X   seems that 1.7 is now the default, and no 32-bit option is available (!@#$)
 X   but the 32-bit JVM for 1.6 seems to still be installed
+X sketch renaming regeression due to underscore handling
+X   http://code.google.com/p/processing/issues/detail?id=1310
+
+_ figure out why modes are not loading classes properly
+_   first see if it's something quick
+
+_ 2.0b3 needs existing sketchbook folder on Linux
+_   http://code.google.com/p/processing/issues/detail?id=1286
+
+_ library manager using renameTo() (can't cross FS)
+_   http://code.google.com/p/processing/issues/detail?id=1295
 
 . . .
 
@@ -89,8 +100,6 @@ _   caretBlinks always true.. just remove the pref?
 _   blockCaret always false.. remove it?
 _   report from someone about blinking caret
 _     http://code.google.com/p/processing/issues/detail?id=1136
-_ figure out why modes are not loading classes properly
-_   first see if it's something quick
 _ excessive CPU usage of PDE after using library manager
 _   http://code.google.com/p/processing/issues/detail?id=1036
 _ very slow startup on OS X (library manager et al?)
