@@ -1134,7 +1134,7 @@ public class Sketch {
    */
   public File makeTempFolder() {
     try {
-      File buildFolder = Base.createTempFolder(name, "temp");
+      File buildFolder = Base.createTempFolder(name, "temp", null);
 //      if (buildFolder.mkdirs()) {
       return buildFolder;
 
