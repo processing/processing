@@ -186,7 +186,7 @@ public class Base {
 
       // Create a location for untitled sketches
       try {
-        untitledFolder = Base.createTempFolder("untitled", "sketches");
+        untitledFolder = Base.createTempFolder("untitled", "sketches", null);
         untitledFolder.deleteOnExit();
       } catch (IOException e) {
         Base.showError("Trouble without a name",
@@ -1812,12 +1812,12 @@ public class Base {
    * prefix is less than 3 characters, the remaining characters will be
    * filled with underscores
    */
-  static public File createTempFolder(String prefix, String suffix) throws IOException {
+  static public File createTempFolder(String prefix, String suffix, File directory) throws IOException {
     int fillChars = 3 - prefix.length();
     for (int i = 0; i < fillChars; i++) {
       prefix += '_';
     }
-    File folder = File.createTempFile(prefix, suffix);
+    File folder = File.createTempFile(prefix, suffix, directory);
     // Now delete that file and create a folder in its place
     folder.delete();
     folder.mkdirs();
@@ -1897,7 +1897,7 @@ public class Base {
   }
 
 
-  public File getSketchbookFolder() {
+  static public File getSketchbookFolder() {
 //    return new File(Preferences.get("sketchbook.path"));
     return sketchbookFolder;
   }
