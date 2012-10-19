@@ -2,15 +2,13 @@
 M implement find & replace over multiple tabs 
 M   http://code.google.com/p/processing/issues/detail?id=25
 M   added to the projects list
-
+X change all build.xml files to use Java 6 as both source and target
+X   (avoids Java 7 warnings during build)
 A calling jump() resets movie speed
 A   http://code.google.com/p/processing/issues/detail?id=1303
-
-_ problems running on OS X with recent updates
-_   also that missing semicolon on first line just produces "null" as the error
-_   http://code.google.com/p/processing/issues/detail?id=1312
-_   seems that 1.7 is now the default, and no 32-bit option is available (!@#$)
-_   but the 32-bit JVM for 1.6 seems to still be installed
+X problems running on OS X with recent updates
+X   seems that 1.7 is now the default, and no 32-bit option is available (!@#$)
+X   but the 32-bit JVM for 1.6 seems to still be installed
 
 . . .
 
@@ -533,6 +531,7 @@ low (features)
 _ copy running code from /tmp/buildXXxxx on crash of p5
 _   should probably make a way to save/recover code
 _   make the buildXxxx folders relate to time/date?
+_ link out to further documentation (e.g. AIOOBE, NPE)
 
 low (common errors around reserved names/class naming)
 _ Saving sketch with the same name as a class or primitive breaks sketch
@@ -550,8 +549,8 @@ _ using a keyword as a variable name gives unhelpful error message
 _   http://code.google.com/p/processing/issues/detail?id=54
 
 low (better error messages)
-_ need better error messages in general
-_   some means to link out to further documentation (e.g. AIOOBE, NPE)
+_ single line of code with no semicolon dies with "unexpected token: null"
+_   http://code.google.com/p/processing/issues/detail?id=1312
 _ if 'void' left out before loop or setup, cryptic message about
 _   'constructor loop must be named Temporary_23498_2343'
 _   add a better handler for this specific thing?
