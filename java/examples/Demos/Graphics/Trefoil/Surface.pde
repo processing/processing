@@ -1,4 +1,4 @@
-d// Code to draw a trefoil knot surface, with normals and texture 
+// Code to draw a trefoil knot surface, with normals and texture 
 // coordinates.
 // Adapted from the parametric equations example by Philip Rideout:
 // http://iphone-3d-programming.labs.oreilly.com/ch03.html
