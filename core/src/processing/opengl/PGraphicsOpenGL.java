@@ -1882,45 +1882,7 @@ public class PGraphicsOpenGL extends PGraphics {
         setFramebuffer(drawFramebuffer);
         pgl.drawBuffer(pgl.primaryDrawBuffer());
       }
-      offscreenNotCurrent = false;
-
-      /*
-      if (pgl.primaryIsFboBacked()) {
-        if (op == OP_READ) {
-
-        } else {
-
-        }
-      }
-      */
-        /*
-        if (op == OP_READ) {
-          // We read from the color FBO, but the multisample FBO is currently
-          // bound, so:
-          offscreenNotCurrent = true;
-          pgl.bindPrimaryColorFBO();
-          pgl.readBuffer(pgl.primaryDrawBuffer());
-        } else {
-          // We write directly to the multisample FBO.
-          offscreenNotCurrent = false;
-          pgl.drawBuffer(pgl.primaryDrawBuffer());
-        }
-
-        pgl.drawBuffer(pgl.primaryDrawBuffer());
-
-      } else {
-        // We read or write from the back buffer, where all the
-        // drawing in the current frame is taking place.
-        if (op == OP_READ) {
-          pgl.readBuffer(pgl.primaryDrawBuffer());
-        } else {
-          pgl.drawBuffer(pgl.primaryDrawBuffer());
-        }
-        offscreenNotCurrent = false;
-      }
-      */
-
-
+      offscreenNotCurrent = true;
     } else {
       // Making sure that the offscreen FBO is current. This allows to do calls
       // like loadPixels(), set() or get() without enclosing them between
@@ -1963,13 +1925,14 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void endPixelsOp() {
     if (offscreenNotCurrent) {
-      if (pixelsOp == OP_WRITE && offscreenMultisample) {
+      if (!primarySurface && pixelsOp == OP_WRITE && offscreenMultisample) {
         // We were writing to the multisample FBO, so we need
         // to blit its contents to the color FBO.
         offscreenFramebufferMultisample.copy(offscreenFramebuffer);
       }
+      popFramebuffer();
     }
-    popFramebuffer();
+
     pixelsOp = OP_NONE;
 
     /*
