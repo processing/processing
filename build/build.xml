@@ -35,7 +35,6 @@
 
   <!-- Libraries required for running processing -->
   <fileset dir=".." id="runtime.jars">
-    <!--<include name="core/library/core.jar" />-->
     <include name="app/pde.jar" />
     <include name="app/lib/antlr.jar" />
     <include name="app/lib/jdt-core.jar" />
