@@ -80,6 +80,7 @@ public class ModeContribution extends InstalledContribution {
       try {
         URL[] urlList = new URL[archives.length];
         for (int j = 0; j < urlList.length; j++) {
+//          System.out.println("found lib: " + archives[j] + " for " + getName());
           urlList[j] = archives[j].toURI().toURL();
         }
         loader = new URLClassLoader(urlList);
@@ -144,10 +145,8 @@ public class ModeContribution extends InstalledContribution {
     ArrayList<File> modeFolders = discover(folder);
 
     for (File potentialModeFolder : modeFolders) {
-      System.out.println("getting mode from " + potentialModeFolder);
       ModeContribution contrib = getContributedMode(base, potentialModeFolder);
       if (contrib != null) {
-        System.out.println("adding mode " + contrib);
         modes.add(contrib);
       }
     }

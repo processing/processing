@@ -118,7 +118,7 @@ public class Recent {
     menu.removeAll();
     for (final Record rec : records) {
       String purtyPath = new File(rec.getPath()).getParent();
-      String sketchbookPath = base.getSketchbookFolder().getAbsolutePath();
+      String sketchbookPath = Base.getSketchbookFolder().getAbsolutePath();
       if (purtyPath.startsWith(sketchbookPath)) {
         purtyPath = "sketchbook \u2192 " +
           purtyPath.substring(sketchbookPath.length() + 1);
