@@ -2444,30 +2444,33 @@ public class PGL {
   protected class PGLListener implements GLEventListener {
     @Override
     public void display(GLAutoDrawable adrawable) {
-      GLFBODrawable fboDrawable = null;
-      if (toolkit == AWT) {
-        GLCanvas drCanvas = (GLCanvas)adrawable;
-        fboDrawable = (GLFBODrawable)drCanvas.getDelegatedDrawable();
-//        FBObject fboFront = dr.getFBObject(GL.GL_FRONT);
-//        FBObject.Colorbuffer colorBuf = fboFront.getColorbuffer(0);
-//        FBObject.TextureAttachment texFront = (FBObject.TextureAttachment) colorBuf;
-//        System.out.println("front texture: " + texFront.getName());
-      } else {
-        GLWindow drWindow = (GLWindow)adrawable;
-        fboDrawable = (GLFBODrawable)drWindow.getDelegatedDrawable();
-      }
-      FBObject.TextureAttachment texAttach = null;
-      if (fboDrawable != null) {
-        texAttach = fboDrawable.getTextureBuffer(GL.GL_FRONT);
-      }
-      if (texAttach != null) {
-        fboFrontTex = texAttach.getName();
-        fboFrontTexWidth = texAttach.getWidth();
-        fboFrontTexHeight = texAttach.getHeight();
-      }
-
       drawable = adrawable;
       context = adrawable.getContext();
+
+      if (capabilities.isFBO()) {
+        GLFBODrawable fboDrawable = null;
+        if (toolkit == AWT) {
+          GLCanvas drCanvas = (GLCanvas)adrawable;
+          fboDrawable = (GLFBODrawable)drCanvas.getDelegatedDrawable();
+//          FBObject fboFront = dr.getFBObject(GL.GL_FRONT);
+//          FBObject.Colorbuffer colorBuf = fboFront.getColorbuffer(0);
+//          FBObject.TextureAttachment texFront = (FBObject.TextureAttachment) colorBuf;
+//          System.out.println("front texture: " + texFront.getName());
+        } else {
+          GLWindow drWindow = (GLWindow)adrawable;
+          fboDrawable = (GLFBODrawable)drWindow.getDelegatedDrawable();
+        }
+        FBObject.TextureAttachment texAttach = null;
+        if (fboDrawable != null) {
+          texAttach = fboDrawable.getTextureBuffer(GL.GL_FRONT);
+        }
+        if (texAttach != null) {
+          fboFrontTex = texAttach.getName();
+          fboFrontTexWidth = texAttach.getWidth();
+          fboFrontTexHeight = texAttach.getHeight();
+        }
+      }
+
       gl = context.getGL();
       gl2 = gl.getGL2ES2();
       try {
