@@ -111,7 +111,7 @@
 	   excludes="**/tools/format/**" 
 	   encoding="UTF-8" 
 	   includeAntRuntime="false" 
-	   classpath="../core/library/core.jar; ${env.JAVA_HOME}/lib/tools.jar; lib/ant.jar; lib/ant-launcher.jar; lib/antlr.jar; lib/apple.jar; lib/ecj.jar; lib/jna.jar"
+	   classpath="../core/library/core.jar; ${env.JAVA_HOME}/lib/tools.jar; lib/ant.jar; lib/ant-launcher.jar; lib/antlr.jar; lib/apple.jar; lib/jdt-core.jar; lib/jna.jar"
 	   debug="on"
 	   >
       <src path="src" />
