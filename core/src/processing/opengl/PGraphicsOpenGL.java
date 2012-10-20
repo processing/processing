@@ -363,7 +363,9 @@ public class PGraphicsOpenGL extends PGraphics {
 
   static protected int fbStackDepth;
   static protected FrameBuffer[] fbStack = new FrameBuffer[FB_STACK_DEPTH];
-  static protected FrameBuffer screenFramebuffer;
+  //static protected FrameBuffer screenFramebuffer;
+  static protected FrameBuffer drawFramebuffer;
+  static protected FrameBuffer readFramebuffer;
   static protected FrameBuffer currentFramebuffer;
 
   // .......................................................
@@ -1547,9 +1549,12 @@ public class PGraphicsOpenGL extends PGraphics {
       getGLParameters();
     }
 
-    if (screenFramebuffer == null) {
-      screenFramebuffer = new FrameBuffer(parent, width, height, true);
-      setFramebuffer(screenFramebuffer);
+    if (drawFramebuffer == null || readFramebuffer == null) {
+      //screenFramebuffer = new FrameBuffer(parent, width, height, true);
+      //setFramebuffer(screenFramebuffer);
+      drawFramebuffer = FrameBuffer.wrap(parent, pgl.primaryDrawFramebuffer(), width, height);
+      readFramebuffer = FrameBuffer.wrap(parent, pgl.primaryReadFramebuffer(), width, height);
+      setFramebuffer(drawFramebuffer);
     }
 
     if (primarySurface) {
@@ -1863,9 +1868,32 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
+
+
   protected void beginPixelsOp(int op) {
     if (primarySurface) {
+      // We read or write from the back buffer, where all the
+      // drawing in the current frame is taking place.
+      pushFramebuffer();
+      if (op == OP_READ) {
+        setFramebuffer(readFramebuffer);
+        pgl.readBuffer(pgl.primaryDrawBuffer());
+      } else {
+        setFramebuffer(drawFramebuffer);
+        pgl.drawBuffer(pgl.primaryDrawBuffer());
+      }
+      offscreenNotCurrent = false;
+
+      /*
       if (pgl.primaryIsFboBacked()) {
+        if (op == OP_READ) {
+
+        } else {
+
+        }
+      }
+      */
+        /*
         if (op == OP_READ) {
           // We read from the color FBO, but the multisample FBO is currently
           // bound, so:
@@ -1877,6 +1905,9 @@ public class PGraphicsOpenGL extends PGraphics {
           offscreenNotCurrent = false;
           pgl.drawBuffer(pgl.primaryDrawBuffer());
         }
+
+        pgl.drawBuffer(pgl.primaryDrawBuffer());
+
       } else {
         // We read or write from the back buffer, where all the
         // drawing in the current frame is taking place.
@@ -1887,6 +1918,9 @@ public class PGraphicsOpenGL extends PGraphics {
         }
         offscreenNotCurrent = false;
       }
+      */
+
+
     } else {
       // Making sure that the offscreen FBO is current. This allows to do calls
       // like loadPixels(), set() or get() without enclosing them between
@@ -1929,6 +1963,17 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void endPixelsOp() {
     if (offscreenNotCurrent) {
+      if (pixelsOp == OP_WRITE && offscreenMultisample) {
+        // We were writing to the multisample FBO, so we need
+        // to blit its contents to the color FBO.
+        offscreenFramebufferMultisample.copy(offscreenFramebuffer);
+      }
+    }
+    popFramebuffer();
+    pixelsOp = OP_NONE;
+
+    /*
+    if (offscreenNotCurrent) {
       if (primarySurface) {
         pgl.bindPrimaryMultiFBO();
       } else {
@@ -1941,6 +1986,7 @@ public class PGraphicsOpenGL extends PGraphics {
       }
     }
     pixelsOp = OP_NONE;
+    */
   }
 
 
@@ -5298,7 +5344,6 @@ public class PGraphicsOpenGL extends PGraphics {
     pgl.readPixels(0, 0, width, height, PGL.RGBA, PGL.UNSIGNED_BYTE,
                    pixelBuffer);
     endPixelsOp();
-
     PGL.nativeToJavaARGB(pixels, width, height);
   }
 
@@ -5394,6 +5439,9 @@ public class PGraphicsOpenGL extends PGraphics {
       loadTextureImpl(Texture.POINT, false);
 
       if (pgl.primaryIsFboBacked()) {
+        // TODO: need to find how to blit the multisampled back-buffer into the
+        // front buffer in JOGL:
+        /*
         pgl.bindPrimaryColorFBO();
         // Copy the contents of the FBO used by the primary surface into
         // texture, this copy operation is very fast because it is resolved
@@ -5401,6 +5449,8 @@ public class PGraphicsOpenGL extends PGraphics {
         texture.set(pgl.getFboTexTarget(), pgl.getFboTexName(),
                     pgl.getFboWidth(), pgl.getFboHeight(), width, height);
         pgl.bindPrimaryMultiFBO();
+        */
+        PGraphics.showWarning("Cannot load contents of screen into texture");
       } else {
         // Here we go the slow route: we first copy the contents of the color
         // buffer into a pixels array (but we keep it in native format) and
@@ -5927,7 +5977,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void bindBackTexture() {
     if (primarySurface) {
-      pgl.bindBackBufferTex();
+      //pgl.bindBackBufferTex();
     } else {
 
     }
@@ -5936,7 +5986,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void unbindBackTexture() {
     if (primarySurface) {
-      pgl.unbindBackBufferTex();
+      //pgl.unbindBackBufferTex();
     } else {
 
     }
