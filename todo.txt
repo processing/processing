@@ -31,18 +31,23 @@ X     with this specific (more esoteric) low-level case w/ a workaround
 
 
 2.0 FINAL / command line
+_ implement command line installer for Mac OS X
+_ add processing-java.bat (or exe?) for Windows
+_ add processing-java script for Linux
+_ 
 _ kill external editor (for all its quirks) in favor of command line
 _   use external editor needs to enable/disable across all windows
 _   http://code.google.com/p/processing/issues/detail?id=515
 C   Casey says yes kill ext editor and finish command line
-_ processing.app.Commander headless still requiring X11
-_   problem is static calls to PApplet
-_   http://code.google.com/p/processing/issues/detail?id=220
-_   set java.awt.headless=true
-_   use as a way to remove the non-GUI-specifc code from PApplet
-_   so that the builds can run headless
+_   make note for docs to remove mentions of external editor
+X processing.app.Commander headless still requiring X11
+X   problem is static calls to PApplet
+X   http://code.google.com/p/processing/issues/detail?id=220
+X   set -Djava.awt.headless=true
+X   use as a way to remove the non-GUI-specifc code from PApplet
+X   so that the builds can run headless
 X could move to java6 and better internal javac support (drop ecj)
-_   decided to use Java 6, so check on Javac usefulness
+o   decided to use Java 6, so check on Javac usefulness
 _ change command line to just be part of regular (separate) distros
 _   there's so much platform code in there, it's not worth the extra work
 _   also include update check for logging
