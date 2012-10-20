@@ -76,13 +76,17 @@ public class FrameBuffer implements PConstants {
     this(parent, w, h, 1, 1, 0, 0, false, screen);
   }
 
-  FrameBuffer(PApplet parent, int w, int h, int samples, int colorBuffers,
-               int depthBits, int stencilBits, boolean packedDepthStencil,
-               boolean screen) {
+  FrameBuffer(PApplet parent) {
     this.parent = parent;
     pg = (PGraphicsOpenGL)parent.g;
     pgl = pg.pgl;
     context = pgl.createEmptyContext();
+  }
+
+  FrameBuffer(PApplet parent, int w, int h, int samples, int colorBuffers,
+               int depthBits, int stencilBits, boolean packedDepthStencil,
+               boolean screen) {
+    this(parent);
 
     glFbo = 0;
     glDepth = 0;
@@ -228,6 +232,15 @@ public class FrameBuffer implements PConstants {
 
   public boolean hasStencilBuffer() {
     return 0 < stencilBits;
+  }
+
+  public static FrameBuffer wrap(PApplet parent, int id, int w, int h) {
+    FrameBuffer res = new FrameBuffer(parent);
+    res.glFbo = id;
+    res.width = w;
+    res.height = h;
+    res.screenFb = true;
+    return res;
   }
 
   ///////////////////////////////////////////////////////////
