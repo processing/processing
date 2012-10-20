@@ -280,8 +280,9 @@ public class Base {
    * remove modes because modes can't be removed once they are instantiated.
    */
   void rebuildContribModes() {
-    if (contribModes == null)
+    if (contribModes == null) {
       contribModes = new ArrayList<ModeContribution>();
+    }
 
     ArrayList<ModeContribution> newContribs =
       ModeContribution.list(this, getSketchbookModesFolder());
