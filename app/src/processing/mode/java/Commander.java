@@ -67,6 +67,7 @@ public class Commander implements RunnerListener {
 
 
   static public void main(String[] args) {
+    /*
     if (args == null || args.length == 0) {
 //      System.out.println(System.getProperty("user.dir"));
       args = new String[] {
@@ -82,6 +83,7 @@ public class Commander implements RunnerListener {
         "--output=/Users/fry/Desktop/test-build"
       };
     }
+    */
 
     // Do this early so that error messages go to the console
     Base.setCommandLine();
