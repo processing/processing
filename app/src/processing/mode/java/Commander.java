@@ -71,6 +71,10 @@ public class Commander implements RunnerListener {
 //      System.out.println(System.getProperty("user.dir"));
       args = new String[] {
         "--export",
+//        "--build",
+//        "--run",
+//        "--present",
+//        "--force",
 //        "--platform=windows",
         "--platform=macosx",
         "--bits=64",
@@ -188,8 +192,13 @@ public class Commander implements RunnerListener {
     }
 
     outputFolder = new File(outputPath);
-    if (outputFolder.exists() && !force) {
-      complainAndQuit("The output folder already exists. Use --force to overwrite it.", false);
+    if (outputFolder.exists()) {
+      if (force) {
+        Base.removeDir(outputFolder);
+      } else {
+        complainAndQuit("The output folder already exists. " +
+        		            "Use --force to remove it.", false);
+      }
     }
 
     if (!outputFolder.mkdirs()) {
@@ -215,44 +224,27 @@ public class Commander implements RunnerListener {
 //      complainAndQuit("Sketch path must point to the main .pde file.", false);
 
     } else {
-      //Sketch sketch = null;
       boolean success = false;
 
       JavaMode javaMode =
         new JavaMode(null, Base.getContentFile("modes/java"));
       try {
         sketch = new Sketch(pdePath, javaMode);
-        /*
-        if (task == PREPROCESS) {
+        if (task == BUILD || task == RUN || task == PRESENT) {
           JavaBuild build = new JavaBuild(sketch);
-          build.preprocess(new File(sketchFolder), true);
-          success = sketch.preprocess(new File(outputPath)) != null;
-
-        } else*/ if (task == BUILD) {
-          JavaBuild build = new JavaBuild(sketch);
-          String mainClassName =
-            build.build(new File(sketchPath), outputFolder, true);
-          success = mainClassName != null;
-
-        } else if (task == RUN || task == PRESENT) {
-          JavaBuild build = new JavaBuild(sketch);
-          String className = build.build(sketchFolder, outputFolder, true);
+          File srcFolder = new File(outputFolder, "source");
+          String className = build.build(srcFolder, outputFolder, true);
+//          String className = build.build(sketchFolder, outputFolder, true);
           if (className != null) {
             success = true;
-            Runner runner = new Runner(build, this);
-            runner.launch(task == PRESENT);
-
+            if (task == RUN || task == PRESENT) {
+              Runner runner = new Runner(build, this);
+              runner.launch(task == PRESENT);
+            }
           } else {
             success = false;
           }
 
-//        } else if (task == EXPORT_APPLET) {
-//          if (outputPath != null) {
-//            success = sketch.exportApplet(outputPath);
-//          } else {
-//            String target = sketchFolder + File.separatorChar + "applet";
-//            success = sketch.exportApplet(target);
-//          }
         } else if (task == EXPORT) {
           if (outputPath == null) {
             javaMode.handleExportApplication(sketch);
@@ -271,7 +263,11 @@ public class Commander implements RunnerListener {
             }
           }
         }
-        System.exit(success ? 0 : 1);
+        if (!success) {  // error already printed
+          System.exit(1);
+        }
+        System.out.println("Finished.");
+        System.exit(0);
 
       } catch (SketchException re) {
         statusError(re);
@@ -334,7 +330,8 @@ public class Commander implements RunnerListener {
     out.println();
     out.println("--force              The sketch will not build if the output");
     out.println("                     folder already exists, because the contents");
-    out.println("                     will be replaced. This option overrides.");
+    out.println("                     will be replaced. This option erases the");
+    out.println("                     folder first. Use with extreme caution!");
     out.println();
     out.println("--build              Preprocess and compile a sketch into .class files.");
     out.println("--run                Preprocess, compile, and run a sketch.");
