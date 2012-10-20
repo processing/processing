@@ -24,7 +24,12 @@ package processing.app.tools;
 import processing.app.*;
 import processing.core.*;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.*;
@@ -115,7 +120,7 @@ public class ColorSelector implements Tool, DocumentListener {
     //slider.setSize(256, 20);
 
     Dimension size = frame.getSize();
-    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+    Dimension screen = Toolkit.getScreenSize();
     frame.setLocation((screen.width - size.width) / 2,
                       (screen.height - size.height) / 2);
 
@@ -125,13 +130,13 @@ public class ColorSelector implements Tool, DocumentListener {
           frame.setVisible(false);
         }
       });
-    Base.registerWindowCloseKeys(frame.getRootPane(), new ActionListener() {
+    Toolkit.registerWindowCloseKeys(frame.getRootPane(), new ActionListener() {
         public void actionPerformed(ActionEvent actionEvent) {
           frame.setVisible(false);
         }
       });
 
-    Base.setIcon(frame);
+    Toolkit.setIcon(frame);
 
     hueField.getDocument().addDocumentListener(this);
     saturationField.getDocument().addDocumentListener(this);

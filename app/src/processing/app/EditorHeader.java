@@ -348,7 +348,6 @@ public class EditorHeader extends JComponent {
     //System.out.println("rebuilding editor header");
     rebuildMenu();
     repaint();
-    Toolkit.getDefaultToolkit().sync();
   }
 
 
@@ -410,7 +409,7 @@ public class EditorHeader extends JComponent {
     */
 
     //item = new JMenuItem("New Tab");
-    item = Base.newJMenuItemShift("New Tab", 'N');
+    item = Toolkit.newJMenuItemShift("New Tab", 'N');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           editor.getSketch().handleNewCode();
@@ -457,7 +456,7 @@ public class EditorHeader extends JComponent {
 
     item = new JMenuItem("Previous Tab");
     KeyStroke ctrlAltLeft =
-      KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, Base.SHORTCUT_ALT_KEY_MASK);
+      KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, Toolkit.SHORTCUT_ALT_KEY_MASK);
     item.setAccelerator(ctrlAltLeft);
     // this didn't want to work consistently
     /*
@@ -471,7 +470,7 @@ public class EditorHeader extends JComponent {
 
     item = new JMenuItem("Next Tab");
     KeyStroke ctrlAltRight =
-      KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, Base.SHORTCUT_ALT_KEY_MASK);
+      KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, Toolkit.SHORTCUT_ALT_KEY_MASK);
     item.setAccelerator(ctrlAltRight);
     /*
     item.addActionListener(new ActionListener() {

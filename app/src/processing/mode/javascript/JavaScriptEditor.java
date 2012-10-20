@@ -26,7 +26,7 @@ public class JavaScriptEditor extends ServingEditor
 
   // tapping into Java mode might not be wanted?
   processing.mode.java.PdeKeyListener listener;
-	
+
 	/**
 	 *	Constructor, overrides ServingEditor( .. )
 	 *
@@ -45,9 +45,9 @@ public class JavaScriptEditor extends ServingEditor
 	//  abstract Editor implementations
 	//  and standard overrides
 	// ----------------------------------------
-	
+
 	/**
-	 *	Create and return the toolbar (tools above text area), 
+	 *	Create and return the toolbar (tools above text area),
 	 *	implements abstract Editor.createToolbar(),
 	 *	called in Editor constructor to add the toolbar to the window.
 	 *
@@ -60,7 +60,7 @@ public class JavaScriptEditor extends ServingEditor
   }
 
 	/**
-	 *	Create a formatter to prettify code, 
+	 *	Create a formatter to prettify code,
 	 *	implements abstract Editor.createFormatter(),
 	 *	called by Editor.handleAutoFormat() to handle menu item or shortcut
 	 *
@@ -80,7 +80,7 @@ public class JavaScriptEditor extends ServingEditor
 	 */
   public JMenu buildFileMenu ()
   {
-    JMenuItem exportItem = Base.newJMenuItem("Export", 'E');
+    JMenuItem exportItem = Toolkit.newJMenuItem("Export", 'E');
     exportItem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         handleExport( true );
@@ -98,14 +98,14 @@ public class JavaScriptEditor extends ServingEditor
 	 */
   public JMenu buildSketchMenu ()
   {
-	JMenuItem startServerItem = Base.newJMenuItem("Run in Browser", 'R');
+	JMenuItem startServerItem = Toolkit.newJMenuItem("Run in Browser", 'R');
     startServerItem.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           handleStartServer();
         }
       });
 
-	JMenuItem openInBrowserItem = Base.newJMenuItem("Reopen in Browser", 'B');
+	JMenuItem openInBrowserItem = Toolkit.newJMenuItem("Reopen in Browser", 'B');
     openInBrowserItem.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           handleOpenInBrowser();
@@ -120,8 +120,8 @@ public class JavaScriptEditor extends ServingEditor
       });
 
     return buildSketchMenu(new JMenuItem[] {
-		startServerItem, 
-		openInBrowserItem, 
+		startServerItem,
+		openInBrowserItem,
 		stopServerItem
 	});
   }
@@ -133,11 +133,11 @@ public class JavaScriptEditor extends ServingEditor
 	 *
 	 *	@return JMenu containing the menu items for "JavaScript" menu
 	 */
-  public JMenu buildModeMenu() 
+  public JMenu buildModeMenu()
   {
     JMenu menu = new JMenu("JavaScript");
     JMenuItem item;
-	
+
 	item = new JMenuItem("Playback Settings (Directives)");
 	item.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
@@ -145,7 +145,7 @@ public class JavaScriptEditor extends ServingEditor
 		}
 	});
 	menu.add(item);
-	
+
 	JMenuItem copyServerAddressItem = new JMenuItem("Copy Server Address");
 	copyServerAddressItem.addActionListener(new ActionListener(){
 		public void actionPerformed(ActionEvent e) {
@@ -182,7 +182,7 @@ public class JavaScriptEditor extends ServingEditor
 
     return menu;
   }
-	
+
 	/**
 	 *	Build the "Help" menu,
 	 *	implements abstract Editor.buildHelpMenu(),
@@ -243,7 +243,7 @@ public class JavaScriptEditor extends ServingEditor
     });
     menu.add(item);
 
-    item = Base.newJMenuItemShift("Find in Reference", 'F');
+    item = Toolkit.newJMenuItemShift("Find in Reference", 'F');
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         handleFindReferenceImpl();
@@ -288,7 +288,7 @@ public class JavaScriptEditor extends ServingEditor
 	 *	Returns the default commenting prefix for comment/uncomment command,
 	 *	implements abstract Editor.getCommentPrefix(),
 	 *	called from Editor.handleCommentUncomment()
-	 *  
+	 *
 	 *	@return the comment prefix as String
 	 */
   public String getCommentPrefix ()
@@ -312,7 +312,7 @@ public class JavaScriptEditor extends ServingEditor
 		directivesEditor = null;
 	  }
   }
-	
+
 	/**
 	 *	Implements abstract Editor.deactivateRun()
 	 */
@@ -333,7 +333,7 @@ public class JavaScriptEditor extends ServingEditor
 	statusEmpty();
 
 	boolean wasRunning = serverRunning();
-	if ( wasRunning ) 
+	if ( wasRunning )
 	{
 		statusNotice("Server was running, changing the port requires a restart.");
 		stopServer();
@@ -434,7 +434,7 @@ public class JavaScriptEditor extends ServingEditor
 	// TODO: catch handleFindReference directly
 	handleFindReferenceImpl();
   }
-	
+
 	/**
 	 *	Menu item callback, handles showing a reference page.
 	 */
@@ -465,7 +465,7 @@ public class JavaScriptEditor extends ServingEditor
 
 		// waiting for server to call "serverStarted() below ..."
 	}
-	
+
 	/**
 	 *	Menu item callback, open running server address in a browser
 	 */
@@ -485,7 +485,7 @@ public class JavaScriptEditor extends ServingEditor
   }
 
 	/**
-	 *	Menu item callback, call the export method of the sketch 
+	 *	Menu item callback, call the export method of the sketch
 	 *	and handle the gui stuff
 	 */
   public boolean handleExport ( boolean openFolder )
@@ -522,29 +522,29 @@ public class JavaScriptEditor extends ServingEditor
   }
 
 	/**
-	 *  Menu item callback, changed from Editor.java to automaticaly 
-	 *	export and handle the server when it's running. 
+	 *  Menu item callback, changed from Editor.java to automaticaly
+	 *	export and handle the server when it's running.
 	 *	Normal save ops otherwise.
 	 *
-	 *	@param immediately set to false to allow it to be run in a Swing optimized manner 
+	 *	@param immediately set to false to allow it to be run in a Swing optimized manner
 	 */
   public boolean handleSave ( boolean immediately )
   {
-    if (sketch.isUntitled()) 
+    if (sketch.isUntitled())
 	{
       return handleSaveAs();
-    } 
-	else if (immediately) 
+    }
+	else if (immediately)
 	{
       handleSave();
 	  statusEmpty();
 		if ( serverRunning() ) handleStartServer();
-    } 
-	else 
+    }
+	else
 	{
-      	SwingUtilities.invokeLater(new Runnable() 
+      	SwingUtilities.invokeLater(new Runnable()
 		{
-          	public void run() 
+          	public void run()
 			{
             	handleSave();
 				statusEmpty();
@@ -564,7 +564,7 @@ public class JavaScriptEditor extends ServingEditor
     handleSaveImpl();
     toolbar.deactivate(JavaScriptToolbar.SAVE);
   }
-	
+
 	/**
 	 *	Called from handleExport()
 	 */
@@ -619,7 +619,7 @@ public class JavaScriptEditor extends ServingEditor
 	// ----------------------------------------
 
 	/**
-	 *	BasicServerListener implementation, 
+	 *	BasicServerListener implementation,
 	 *	called by server once it starts serving
 	 */
   public void serverStarted ()
@@ -647,7 +647,7 @@ public class JavaScriptEditor extends ServingEditor
 
 	/**
 	 *	Return the custom template folder
-	 * 
+	 *
 	 *	@return the custom template folder as File
 	 */
   private File getCustomTemplateFolder ()

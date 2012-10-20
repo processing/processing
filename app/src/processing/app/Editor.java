@@ -118,7 +118,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     this.state = state;
     this.mode = mode;
 
-    Base.setIcon(this);  // TODO should this be per-mode?
+    Toolkit.setIcon(this);  // TODO should this be per-mode?
 
     // Install default actions for Run, Present, etc.
 //    resetHandlers();
@@ -574,7 +574,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     JMenuItem item;
     JMenu fileMenu = new JMenu("File");
 
-    item = Base.newJMenuItem("New", 'N');
+    item = Toolkit.newJMenuItem("New", 'N');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           base.handleNew();
@@ -582,7 +582,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
       });
     fileMenu.add(item);
 
-    item = Base.newJMenuItem("Open...", 'O');
+    item = Toolkit.newJMenuItem("Open...", 'O');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           base.handleOpenPrompt();
@@ -593,7 +593,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     fileMenu.add(base.getSketchbookMenu());
 
 //    fileMenu.add(mode.getExamplesMenu());
-    item = Base.newJMenuItemShift("Examples...", 'O');
+    item = Toolkit.newJMenuItemShift("Examples...", 'O');
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         mode.showExamplesFrame();
@@ -601,7 +601,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     });
     fileMenu.add(item);
 
-    item = Base.newJMenuItem("Close", 'W');
+    item = Toolkit.newJMenuItem("Close", 'W');
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         base.handleClose(Editor.this, false);
@@ -609,7 +609,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     });
     fileMenu.add(item);
 
-    item = Base.newJMenuItem("Save", 'S');
+    item = Toolkit.newJMenuItem("Save", 'S');
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         handleSave(false);
@@ -618,7 +618,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     saveMenuItem = item;
     fileMenu.add(item);
 
-    item = Base.newJMenuItemShift("Save As...", 'S');
+    item = Toolkit.newJMenuItemShift("Save As...", 'S');
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         handleSaveAs();
@@ -634,7 +634,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     }
     fileMenu.addSeparator();
 
-    item = Base.newJMenuItemShift("Page Setup", 'P');
+    item = Toolkit.newJMenuItemShift("Page Setup", 'P');
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         handlePageSetup();
@@ -642,7 +642,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     });
     fileMenu.add(item);
 
-    item = Base.newJMenuItem("Print", 'P');
+    item = Toolkit.newJMenuItem("Print", 'P');
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         handlePrint();
@@ -655,7 +655,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     if (!Base.isMacOS()) {
       fileMenu.addSeparator();
 
-      item = Base.newJMenuItem("Preferences", ',');
+      item = Toolkit.newJMenuItem("Preferences", ',');
       item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           base.handlePrefs();
@@ -665,7 +665,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
       fileMenu.addSeparator();
 
-      item = Base.newJMenuItem("Quit", 'Q');
+      item = Toolkit.newJMenuItem("Quit", 'Q');
       item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           base.handleQuit();
@@ -691,16 +691,16 @@ public abstract class Editor extends JFrame implements RunnerListener {
     JMenu menu = new JMenu("Edit");
     JMenuItem item;
 
-    undoItem = Base.newJMenuItem("Undo", 'Z');
+    undoItem = Toolkit.newJMenuItem("Undo", 'Z');
     undoItem.addActionListener(undoAction = new UndoAction());
     menu.add(undoItem);
 
     // Gotta follow them interface guidelines
     // http://code.google.com/p/processing/issues/detail?id=363
     if (Base.isWindows()) {
-      redoItem = Base.newJMenuItem("Redo", 'Y');
+      redoItem = Toolkit.newJMenuItem("Redo", 'Y');
     } else {  // Linux and OS X
-      redoItem = Base.newJMenuItemShift("Redo", 'Z');
+      redoItem = Toolkit.newJMenuItemShift("Redo", 'Z');
     }
     redoItem.addActionListener(redoAction = new RedoAction());
     menu.add(redoItem);
@@ -709,7 +709,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
     // TODO "cut" and "copy" should really only be enabled
     // if some text is currently selected
-    item = Base.newJMenuItem("Cut", 'X');
+    item = Toolkit.newJMenuItem("Cut", 'X');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           handleCut();
@@ -717,7 +717,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
       });
     menu.add(item);
 
-    item = Base.newJMenuItem("Copy", 'C');
+    item = Toolkit.newJMenuItem("Copy", 'C');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           textarea.copy();
@@ -725,7 +725,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
       });
     menu.add(item);
 
-    item = Base.newJMenuItemShift("Copy as HTML", 'C');
+    item = Toolkit.newJMenuItemShift("Copy as HTML", 'C');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           handleCopyAsHTML();
@@ -733,7 +733,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
       });
     menu.add(item);
 
-    item = Base.newJMenuItem("Paste", 'V');
+    item = Toolkit.newJMenuItem("Paste", 'V');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           textarea.paste();
@@ -742,7 +742,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
       });
     menu.add(item);
 
-    item = Base.newJMenuItem("Select All", 'A');
+    item = Toolkit.newJMenuItem("Select All", 'A');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           textarea.selectAll();
@@ -753,7 +753,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     /*
     menu.addSeparator();
 
-    item = Base.newJMenuItem("Delete Selected Lines", 'D');
+    item = Toolkit.newJMenuItem("Delete Selected Lines", 'D');
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         handleDeleteLines();
@@ -782,7 +782,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
     menu.addSeparator();
 
-    item = Base.newJMenuItem("Auto Format", 'T');
+    item = Toolkit.newJMenuItem("Auto Format", 'T');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           handleAutoFormat();
@@ -790,7 +790,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     });
     menu.add(item);
 
-    item = Base.newJMenuItem("Comment/Uncomment", '/');
+    item = Toolkit.newJMenuItem("Comment/Uncomment", '/');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           handleCommentUncomment();
@@ -798,7 +798,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     });
     menu.add(item);
 
-    item = Base.newJMenuItem("Increase Indent", ']');
+    item = Toolkit.newJMenuItem("Increase Indent", ']');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           handleIndentOutdent(true);
@@ -806,7 +806,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     });
     menu.add(item);
 
-    item = Base.newJMenuItem("Decrease Indent", '[');
+    item = Toolkit.newJMenuItem("Decrease Indent", '[');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           handleIndentOutdent(false);
@@ -816,7 +816,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
     menu.addSeparator();
 
-    item = Base.newJMenuItem("Find...", 'F');
+    item = Toolkit.newJMenuItem("Find...", 'F');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           if (find == null) {
@@ -830,7 +830,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
     // TODO find next should only be enabled after a
     // search has actually taken place
-    item = Base.newJMenuItem("Find Next", 'G');
+    item = Toolkit.newJMenuItem("Find Next", 'G');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           if (find != null) {
@@ -840,7 +840,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
       });
     menu.add(item);
 
-    item = Base.newJMenuItemShift("Find Previous", 'G');
+    item = Toolkit.newJMenuItemShift("Find Previous", 'G');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           if (find != null) {
@@ -851,7 +851,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     menu.add(item);
 
     // For Arduino and Mac, this should be command-E, but that currently conflicts with Export Applet
-    item = Base.newJMenuItemAlt("Use Selection for Find", 'F');
+    item = Toolkit.newJMenuItemAlt("Use Selection for Find", 'F');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           if (find == null) {
@@ -881,7 +881,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
     sketchMenu.add(mode.getImportMenu());
 
-    item = Base.newJMenuItem("Show Sketch Folder", 'K');
+    item = Toolkit.newJMenuItem("Show Sketch Folder", 'K');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           Base.openFolder(sketch.getFolder());

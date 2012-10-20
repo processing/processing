@@ -21,7 +21,9 @@
 
 package processing.mode.android;
 
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,6 +35,7 @@ import javax.swing.event.*;
 import processing.app.Base;
 import processing.app.Preferences;
 import processing.app.Sketch;
+import processing.app.Toolkit;
 
 
 public class Permissions extends JFrame {
@@ -278,12 +281,12 @@ public class Permissions extends JFrame {
         setVisible(false);
       }
     };
-    Base.registerWindowCloseKeys(root, disposer);
-    Base.setIcon(this);
+    Toolkit.registerWindowCloseKeys(root, disposer);
+    Toolkit.setIcon(this);
 
     pack();
 
-    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+    Dimension screen = Toolkit.getScreenSize();
     Dimension windowSize = getSize();
 
     setLocation((screen.width - windowSize.width) / 2,

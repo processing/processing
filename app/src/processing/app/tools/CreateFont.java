@@ -26,7 +26,16 @@ package processing.app.tools;
 import processing.app.*;
 import processing.core.*;
 
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GraphicsEnvironment;
+import java.awt.RenderingHints;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
@@ -230,8 +239,8 @@ public class CreateFont extends JFrame implements Tool {
           setVisible(false);
         }
       };
-    Base.registerWindowCloseKeys(root, disposer);
-    Base.setIcon(this);
+    Toolkit.registerWindowCloseKeys(root, disposer);
+    Toolkit.setIcon(this);
 
     setResizable(false);
     pack();
@@ -241,7 +250,7 @@ public class CreateFont extends JFrame implements Tool {
 
     fontSelector.setSelectedIndex(0);
 
-    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+    Dimension screen = Toolkit.getScreenSize();
     windowSize = getSize();
 
     setLocation((screen.width - windowSize.width) / 2,
@@ -556,12 +565,12 @@ class CharacterSelector extends JFrame {
           setVisible(false);
         }
       };
-    Base.registerWindowCloseKeys(root, disposer);
-    Base.setIcon(this);
+    Toolkit.registerWindowCloseKeys(root, disposer);
+    Toolkit.setIcon(this);
 
     pack();
 
-    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+    Dimension screen = Toolkit.getScreenSize();
     Dimension windowSize = getSize();
 
     setLocation((screen.width - windowSize.width) / 2,

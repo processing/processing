@@ -13,16 +13,17 @@ package processing.app.syntax;
 
 import processing.app.*;
 
+import java.awt.*;
+import java.awt.datatransfer.*;
+import java.awt.event.*;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.Vector;
+
 import javax.swing.event.*;
 import javax.swing.text.*;
 import javax.swing.undo.*;
 import javax.swing.*;
-import java.awt.datatransfer.*;
-import java.awt.event.*;
-import java.awt.*;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.Vector;
 import java.awt.im.InputMethodRequests;
 
 import processing.app.syntax.im.InputMethodSupport;
@@ -1715,7 +1716,7 @@ public class JEditTextArea extends JComponent
     cf.append("\n</pre>");
 
     StringSelection formatted = new StringSelection(cf.toString());
-    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+    Clipboard clipboard = processing.app.Toolkit.getSystemClipboard();
     clipboard.setContents(formatted, new ClipboardOwner() {
       public void lostOwnership(Clipboard clipboard, Transferable contents) {
         // i don't care about ownership

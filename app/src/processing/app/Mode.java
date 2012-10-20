@@ -231,7 +231,7 @@ public abstract class Mode {
 
     //System.out.println("rebuilding toolbar menu");
     // Add the single "Open" item
-    item = Base.newJMenuItem("Open...", 'O');
+    item = Toolkit.newJMenuItem("Open...", 'O');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           base.handleOpenPrompt();
@@ -241,7 +241,7 @@ public abstract class Mode {
 
     insertToolbarRecentMenu();
 
-    item = Base.newJMenuItemShift("Examples...", 'O');
+    item = Toolkit.newJMenuItemShift("Examples...", 'O');
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         showExamplesFrame();
