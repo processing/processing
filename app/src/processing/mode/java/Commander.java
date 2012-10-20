@@ -38,49 +38,22 @@ import processing.mode.java.runner.*;
 
 /**
  * Class to handle running Processing from the command line.
- * <PRE>
- * --help               Show the help text.
- *
- * --sketch=&lt;name&gt;      Specify the sketch folder (required)
- * --output=&lt;name&gt;      Specify the output folder (required and
- *                      cannot be the same as the sketch folder.)
- *
- * --preprocess         Preprocess a sketch into .java files.
- * --build              Preprocess and compile a sketch into .class files.
- * --run                Preprocess, compile, and run a sketch.
- * --present            Preprocess, compile, and run a sketch full screen.
- *
- * --export             Export an application.
- * --platform           Specify the platform (export to application only).
- *                      Should be one of 'windows', 'macosx', or 'linux'.
- * --bits               Must be specified if libraries are used that are
- *                      32- or 64-bit specific such as the OpenGL library.
- *                      Otherwise specify 0 or leave it out.
-// *
-// * --preferences=&lt;file&gt; Specify a preferences file to use. Required if the
-// *                      sketch uses libraries found in your sketchbook folder.
- * </PRE>
- *
- * To build the command line version, first build for your platform,
- * then cd to processing/build/cmd and type 'dist.sh'. This will create a
- * usable installation plus a zip file of the same.
  *
  * @author fry
  */
 public class Commander implements RunnerListener {
   static final String helpArg = "--help";
-  static final String preprocArg = "--preprocess";
+//  static final String preprocArg = "--preprocess";
   static final String buildArg = "--build";
   static final String runArg = "--run";
   static final String presentArg = "--present";
   static final String sketchArg = "--sketch=";
   static final String forceArg = "--force";
   static final String outputArg = "--output=";
-//  static final String exportAppletArg = "--export-applet";
-  static final String exportApplicationArg = "--export-application";
+  static final String exportApplicationArg = "--export";
   static final String platformArg = "--platform=";
   static final String bitsArg = "--bits=";
-  static final String preferencesArg = "--preferences=";
+//  static final String preferencesArg = "--preferences=";
 
   static final int HELP = -1;
   static final int PREPROCESS = 0;
@@ -88,7 +61,7 @@ public class Commander implements RunnerListener {
   static final int RUN = 2;
   static final int PRESENT = 3;
 //  static final int EXPORT_APPLET = 4;
-  static final int EXPORT_APPLICATION = 5;
+  static final int EXPORT = 4;
 
   Sketch sketch;
 
@@ -97,8 +70,9 @@ public class Commander implements RunnerListener {
     if (args == null || args.length == 0) {
 //      System.out.println(System.getProperty("user.dir"));
       args = new String[] {
-        "--export-application",
-        "--platform=windows",
+        "--export",
+//        "--platform=windows",
+        "--platform=macosx",
         "--bits=64",
         "--sketch=/Users/fry/coconut/processing/java/examples/Basics/Lights/Directional",
         "--output=/Users/fry/Desktop/test-build"
@@ -135,8 +109,8 @@ public class Commander implements RunnerListener {
       } else if (arg.equals(helpArg)) {
         // mode already set to HELP
 
-      } else if (arg.equals(preprocArg)) {
-        task = PREPROCESS;
+//      } else if (arg.equals(preprocArg)) {
+//        task = PREPROCESS;
 
       } else if (arg.equals(buildArg)) {
         task = BUILD;
@@ -151,14 +125,14 @@ public class Commander implements RunnerListener {
 //        task = EXPORT_APPLET;
 
       } else if (arg.equals(exportApplicationArg)) {
-        task = EXPORT_APPLICATION;
+        task = EXPORT;
 
       } else if (arg.startsWith(platformArg)) {
         String platformStr = arg.substring(platformArg.length());
         platform = Base.getPlatformIndex(platformStr);
         if (platform == -1) {
           complainAndQuit(platformStr + " should instead be " +
-                          "'windows', 'macosx', or 'linux'.");
+                          "'windows', 'macosx', or 'linux'.", true);
         }
 
       } else if (arg.startsWith(bitsArg)) {
@@ -168,18 +142,18 @@ public class Commander implements RunnerListener {
         } else if (bitsStr.equals("64")) {
           platformBits = 64;
         } else {
-          complainAndQuit("Bits should be either 32 or 64, not " + bitsStr);
+          complainAndQuit("Bits should be either 32 or 64, not " + bitsStr, true);
         }
 
       } else if (arg.startsWith(sketchArg)) {
         sketchPath = arg.substring(sketchArg.length());
         sketchFolder = new File(sketchPath);
         if (!sketchFolder.exists()) {
-          complainAndQuit(sketchFolder + " does not exist.");
+          complainAndQuit(sketchFolder + " does not exist.", false);
         }
         File pdeFile = new File(sketchFolder, sketchFolder.getName() + ".pde");
         if (!pdeFile.exists()) {
-          complainAndQuit("Not a valid sketch folder. " + pdeFile + " does not exist.");
+          complainAndQuit("Not a valid sketch folder. " + pdeFile + " does not exist.", true);
         }
         pdePath = pdeFile.getAbsolutePath();
 
@@ -193,7 +167,7 @@ public class Commander implements RunnerListener {
         force = true;
 
       } else {
-        complainAndQuit("I don't know anything about " + arg + ".");
+        complainAndQuit("I don't know anything about " + arg + ".", true);
       }
     }
 
@@ -210,16 +184,16 @@ public class Commander implements RunnerListener {
     }
 
     if (outputPath == null) {
-      complainAndQuit("An output path must be specified.");
+      complainAndQuit("An output path must be specified.", true);
     }
 
     outputFolder = new File(outputPath);
     if (outputFolder.exists() && !force) {
-      complainAndQuit("The output folder already exists. Use --force to overwrite it.");
+      complainAndQuit("The output folder already exists. Use --force to overwrite it.", false);
     }
 
     if (!outputFolder.mkdirs()) {
-      complainAndQuit("Could not create the output folder.");
+      complainAndQuit("Could not create the output folder.", false);
     }
 
 //    // run static initialization that grabs all the prefs
@@ -232,13 +206,13 @@ public class Commander implements RunnerListener {
     Base.locateSketchbookFolder();
 
     if (sketchPath == null) {
-      complainAndQuit("No sketch path specified.");
+      complainAndQuit("No sketch path specified.", true);
 
-    } else if (outputPath.equals(pdePath)) {
-      complainAndQuit("The sketch path and output path cannot be identical.");
+    } else if (outputPath.equals(sketchPath)) {
+      complainAndQuit("The sketch path and output path cannot be identical.", false);
 
-    } else if (!pdePath.toLowerCase().endsWith(".pde")) {
-      complainAndQuit("Sketch path must point to the main .pde file.");
+//    } else if (!pdePath.toLowerCase().endsWith(".pde")) {
+//      complainAndQuit("Sketch path must point to the main .pde file.", false);
 
     } else {
       //Sketch sketch = null;
@@ -279,7 +253,7 @@ public class Commander implements RunnerListener {
 //            String target = sketchFolder + File.separatorChar + "applet";
 //            success = sketch.exportApplet(target);
 //          }
-        } else if (task == EXPORT_APPLICATION) {
+        } else if (task == EXPORT) {
           if (outputPath == null) {
             javaMode.handleExportApplication(sketch);
           } else {
@@ -291,7 +265,7 @@ public class Commander implements RunnerListener {
 //              }
               if (platformBits == 0 &&
                 Library.hasMultipleArch(platform, build.getImportedLibraries())) {
-                complainAndQuit("This sketch can be exported for 32- or 64-bit, please specify one.");
+                complainAndQuit("This sketch can be exported for 32- or 64-bit, please specify one.", true);
               }
               success = build.exportApplication(outputFolder, platform, platformBits);
             }
@@ -340,26 +314,28 @@ public class Commander implements RunnerListener {
   }
 
 
-  static void complainAndQuit(String lastWords) {
-    printCommandLine(System.err);
+  static void complainAndQuit(String lastWords, boolean schoolEmFirst) {
+    if (schoolEmFirst) {
+      printCommandLine(System.err);
+    }
     System.err.println(lastWords);
     System.exit(1);
   }
 
 
   static void printCommandLine(PrintStream out) {
-    out.println("Standard (Java) mode command line edition for Processing " + Base.VERSION_NAME);
+    out.println("Command line edition for Processing " + Base.VERSION_NAME + " (Java Mode");
     out.println();
     out.println("--help               Show this help text. Congratulations.");
     out.println();
     out.println("--sketch=<name>      Specify the sketch folder (required)");
     out.println("--output=<name>      Specify the output folder (required and");
     out.println("                     cannot be the same as the sketch folder.)");
+    out.println();
     out.println("--force              The sketch will not build if the output");
     out.println("                     folder already exists, because the contents");
     out.println("                     will be replaced. This option overrides.");
     out.println();
-    out.println("--preprocess         Preprocess a sketch into .java files.");
     out.println("--build              Preprocess and compile a sketch into .class files.");
     out.println("--run                Preprocess, compile, and run a sketch.");
     out.println("--present            Preprocess, compile, and run a sketch full screen.");
@@ -370,9 +346,7 @@ public class Commander implements RunnerListener {
     out.println("--bits               Must be specified if libraries are used that are");
     out.println("                     32- or 64-bit specific such as the OpenGL library.");
     out.println("                     Otherwise specify 0 or leave it out.");
-//    out.println();
-//    out.println("--preferences=<file> Specify a preferences file to use. Required if the");
-//    out.println("                     sketch uses libraries found in your sketchbook folder.");
+    out.println();
   }
 
 
