@@ -1017,7 +1017,14 @@ public abstract class Editor extends JFrame implements RunnerListener {
     addToolMenuItem(menu, "processing.app.tools.CreateFont");
     addToolMenuItem(menu, "processing.app.tools.ColorSelector");
     addToolMenuItem(menu, "processing.app.tools.Archiver");
-    addToolMenuItem(menu, "processing.app.tools.FixEncoding");
+
+    if (Base.isMacOS()) {
+      addToolMenuItem(menu, "processing.app.tools.InstallCommander");
+    }
+
+    // I think this is no longer needed... It was Mac OS X specific,
+    // and they gave up on MacRoman a long time ago.
+//    addToolMenuItem(menu, "processing.app.tools.FixEncoding");
 
     if (Base.DEBUG) {
       addToolMenuItem(menu, "processing.app.tools.ExportExamples");
