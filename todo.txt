@@ -15,11 +15,19 @@ X library manager using renameTo() (can't cross FS)
 X   http://code.google.com/p/processing/issues/detail?id=1295
 X 2.0b3 needs existing sketchbook folder on Linux
 X   http://code.google.com/p/processing/issues/detail?id=1286
-
-_ change mode handling so that XQMode works properly
-_   move ecj.jar into the java mode folders
-_   remove ecj.jar from the .exe, plist, sh, and the rest
-_   replaced ecj.jar with org.eclipse.jdt.core_3.7.1.v_B76_R37x.jar
+o change mode handling so that XQMode works properly
+X   decided to just replace ecj with jdt-core
+o   move ecj.jar into the java mode folders
+X   replace ecj.jar in the .exe, plist, sh, and the rest
+X   replaced ecj.jar with org.eclipse.jdt.core_3.7.1.v_B76_R37x.jar
+X   rationale
+X     built-in modes don't bother with their own 'mode' folder and don't
+X     currently use their own classloader. this could be changed, but as
+X     it turns out, things like XQMode already *depend* on JavaMode, so
+X     that would mean putting the .jar file for ecj into each of the modes
+X     that subclass it. not a good solution, but no good solution for
+X     library deps either. punting on that for now, and instead just deal
+X     with this specific (more esoteric) low-level case w/ a workaround
 
 
 2.0 FINAL / command line

@@ -23,10 +23,15 @@
 
 package processing.app.contrib;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.*;
 import java.util.*;
-import java.util.List;
 
 import javax.swing.*;
 import javax.swing.event.*;
@@ -34,6 +39,7 @@ import javax.swing.event.*;
 import processing.app.Base;
 import processing.app.Editor;
 import processing.app.Library;
+import processing.app.Toolkit;
 import processing.app.contrib.ContributionListing.Filter;
 
 public class ContributionManagerDialog {
@@ -79,14 +85,14 @@ public class ContributionManagerDialog {
     if (dialog == null) {
       dialog = new JFrame(title);
 
-      Base.setIcon(dialog);
+      Toolkit.setIcon(dialog);
 
       createComponents();
 
       registerDisposeListeners();
 
       dialog.pack();
-      Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+      Dimension screen = Toolkit.getScreenSize();
       dialog.setLocation((screen.width - dialog.getWidth()) / 2,
                          (screen.height - dialog.getHeight()) / 2);
 
@@ -267,14 +273,14 @@ public class ContributionManagerDialog {
         disposeFrame();
       }
     };
-    Base.registerWindowCloseKeys(dialog.getRootPane(), disposer);
+    Toolkit.registerWindowCloseKeys(dialog.getRootPane(), disposer);
 
     // handle window closing commands for ctrl/cmd-W or hitting ESC.
 
     dialog.getContentPane().addKeyListener(new KeyAdapter() {
       public void keyPressed(KeyEvent e) {
         //System.out.println(e);
-        KeyStroke wc = Base.WINDOW_CLOSE_KEYSTROKE;
+        KeyStroke wc = Toolkit.WINDOW_CLOSE_KEYSTROKE;
         if ((e.getKeyCode() == KeyEvent.VK_ESCAPE) ||
             (KeyStroke.getKeyStrokeForEvent(e).equals(wc))) {
           disposeFrame();
@@ -472,8 +478,8 @@ public class ContributionManagerDialog {
           .setVisible(false);
     }
   }
-
 }
+
 
 abstract class JProgressMonitor extends AbstractProgressMonitor {
   JProgressBar progressBar;

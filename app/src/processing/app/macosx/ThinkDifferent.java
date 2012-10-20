@@ -29,6 +29,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
 import processing.app.Base;
+import processing.app.Toolkit;
 
 import com.apple.eawt.*;
 
@@ -107,7 +108,7 @@ public class ThinkDifferent implements ApplicationListener {
     JMenuItem item;
     JMenu fileMenu = new JMenu("File");
 
-    item = Base.newJMenuItem("New", 'N');
+    item = Toolkit.newJMenuItem("New", 'N');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           base.handleNew();
@@ -115,7 +116,7 @@ public class ThinkDifferent implements ApplicationListener {
       });
     fileMenu.add(item);
 
-    item = Base.newJMenuItem("Open...", 'O');
+    item = Toolkit.newJMenuItem("Open...", 'O');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           base.handleOpenPrompt();
