@@ -10383,7 +10383,7 @@ public class PApplet extends Applet
    * Description to come...
    *
    * ( end auto-generated from textureWrap.xml )
-   *
+   * 
    * @webref image:textures
    * @param wrap Either CLAMP (default) or REPEAT
    */
@@ -10552,7 +10552,7 @@ public class PApplet extends Applet
    * This is a new reference entry for Processing 2.0. It will be updated shortly.
    *
    * ( end auto-generated )
-   *
+   * 
    * @webref Rendering
    * @param mode the blending mode to use
    */
@@ -10596,7 +10596,7 @@ public class PApplet extends Applet
    * This is a new reference entry for Processing 2.0. It will be updated shortly.
    *
    * ( end auto-generated )
-   *
+   * 
    * @webref rendering:shaders
    * @param fragFilename name of fragment shader file
    */
@@ -10619,7 +10619,7 @@ public class PApplet extends Applet
    * This is a new reference entry for Processing 2.0. It will be updated shortly.
    *
    * ( end auto-generated )
-   *
+   * 
    * @webref rendering:shaders
    * @param shader name of shader file
    */
@@ -10644,7 +10644,7 @@ public class PApplet extends Applet
    * This is a new reference entry for Processing 2.0. It will be updated shortly.
    *
    * ( end auto-generated )
-   *
+   * 
    * @webref rendering:shaders
    */
   public void resetShader() {
@@ -11525,9 +11525,9 @@ public class PApplet extends Applet
 
 
   /**
-   *
+   * 
    * @param level either 2, 4, or 8
-   */
+   */ 
   public void smooth(int level) {
     if (recorder != null) recorder.smooth(level);
     g.smooth(level);

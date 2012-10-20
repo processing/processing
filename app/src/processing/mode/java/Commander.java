@@ -70,9 +70,9 @@ public class Commander implements RunnerListener {
     if (args == null || args.length == 0) {
 //      System.out.println(System.getProperty("user.dir"));
       args = new String[] {
-        "--export",
+//        "--export",
 //        "--build",
-//        "--run",
+        "--run",
 //        "--present",
 //        "--force",
 //        "--platform=windows",
