@@ -242,13 +242,13 @@ public class FindReplace extends JFrame {
           handleClose();
         }
       });
-    Base.registerWindowCloseKeys(getRootPane(), new ActionListener() {
+    Toolkit.registerWindowCloseKeys(getRootPane(), new ActionListener() {
         public void actionPerformed(ActionEvent actionEvent) {
           //hide();
           handleClose();
         }
       });
-    Base.setIcon(this);
+    Toolkit.setIcon(this);
 
     // hack to to get first field to focus properly on osx
     addWindowListener(new WindowAdapter() {
@@ -441,7 +441,7 @@ public class FindReplace extends JFrame {
       }
     }
     if (!foundAtLeastOne) {
-      Toolkit.getDefaultToolkit().beep();
+      Toolkit.beep();
     }
     setFound(false);
   }
@@ -455,14 +455,14 @@ public class FindReplace extends JFrame {
 
   public void findNext() {
     if (!find(wrapAround, false)) {
-      Toolkit.getDefaultToolkit().beep();
+      Toolkit.beep();
     }
   }
 
 
   public void findPrevious() {
     if (!find(wrapAround, true)) {
-      Toolkit.getDefaultToolkit().beep();
+      Toolkit.beep();
     }
   }
 }

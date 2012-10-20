@@ -500,10 +500,10 @@ public class Preferences {
           disposeFrame();
         }
       };
-    Base.registerWindowCloseKeys(dialog.getRootPane(), disposer);
-    Base.setIcon(dialog);
+    Toolkit.registerWindowCloseKeys(dialog.getRootPane(), disposer);
+    Toolkit.setIcon(dialog);
 
-    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+    Dimension screen = Toolkit.getScreenSize();
     dialog.setLocation((screen.width - wide) / 2,
                       (screen.height - high) / 2);
 
@@ -518,7 +518,7 @@ public class Preferences {
     pain.addKeyListener(new KeyAdapter() {
         public void keyPressed(KeyEvent e) {
           //System.out.println(e);
-          KeyStroke wc = Base.WINDOW_CLOSE_KEYSTROKE;
+          KeyStroke wc = Toolkit.WINDOW_CLOSE_KEYSTROKE;
           if ((e.getKeyCode() == KeyEvent.VK_ESCAPE) ||
               (KeyStroke.getKeyStrokeForEvent(e).equals(wc))) {
             disposeFrame();

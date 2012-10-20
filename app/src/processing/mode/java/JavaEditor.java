@@ -9,6 +9,7 @@ import javax.swing.*;
 import javax.swing.border.*;
 
 import processing.app.*;
+import processing.app.Toolkit;
 import processing.mode.java.runner.Runner;
 
 
@@ -48,7 +49,7 @@ public class JavaEditor extends Editor {
 
   public JMenu buildFileMenu() {
     String appTitle = JavaToolbar.getTitle(JavaToolbar.EXPORT, false);
-    JMenuItem exportApplication = Base.newJMenuItem(appTitle, 'E');
+    JMenuItem exportApplication = Toolkit.newJMenuItem(appTitle, 'E');
     exportApplication.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         handleExportApplication();
@@ -68,14 +69,14 @@ public class JavaEditor extends Editor {
 
 
   public JMenu buildSketchMenu() {
-    JMenuItem runItem = Base.newJMenuItem(JavaToolbar.getTitle(JavaToolbar.RUN, false), 'R');
+    JMenuItem runItem = Toolkit.newJMenuItem(JavaToolbar.getTitle(JavaToolbar.RUN, false), 'R');
     runItem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         handleRun();
       }
     });
 
-    JMenuItem presentItem = Base.newJMenuItemShift(JavaToolbar.getTitle(JavaToolbar.RUN, true), 'R');
+    JMenuItem presentItem = Toolkit.newJMenuItemShift(JavaToolbar.getTitle(JavaToolbar.RUN, true), 'R');
     presentItem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         handlePresent();
@@ -126,7 +127,7 @@ public class JavaEditor extends Editor {
     });
     menu.add(item);
 
-    item = Base.newJMenuItemShift("Find in Reference", 'F');
+    item = Toolkit.newJMenuItemShift("Find in Reference", 'F');
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         if (textarea.isSelectionActive()) {
