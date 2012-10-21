@@ -106,8 +106,8 @@ else
 fi
 cd "$APPDIR"
 
-current_name = `basename $0`
-cmd_name = 'processing-java'
+current_name=`basename $0`
+cmd_name='processing-java'
 
 if [ $current_name = $cmd_name ]
 then
