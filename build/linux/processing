@@ -111,7 +111,7 @@ cmd_name='processing-java'
 
 if [ $current_name = $cmd_name ]
 then
-    java processing.mode.java.Commander "$@" &
+    java processing.mode.java.Commander "$@"
 else
-    java processing.app.Base "$SKETCH"
+    java processing.app.Base "$SKETCH" &
 fi
