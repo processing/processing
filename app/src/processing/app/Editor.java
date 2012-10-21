@@ -1020,9 +1020,10 @@ public abstract class Editor extends JFrame implements RunnerListener {
     // and they gave up on MacRoman a long time ago.
 //    addToolMenuItem(menu, "processing.app.tools.FixEncoding");
 
-    if (Base.DEBUG) {
-      addToolMenuItem(menu, "processing.app.tools.ExportExamples");
-    }
+    // currently commented out
+//    if (Base.DEBUG) {
+//      addToolMenuItem(menu, "processing.app.tools.ExportExamples");
+//    }
 
 //    // These are temporary entries while Android mode is being worked out.
 //    // The mode will not be in the tools menu, and won't involve a cmd-key
