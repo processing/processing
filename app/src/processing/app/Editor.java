@@ -1019,6 +1019,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
     addToolMenuItem(menu, "processing.app.tools.Archiver");
 
     if (Base.isMacOS()) {
+      if (SerialFixer.isNeeded()) {
+        addToolMenuItem(menu, "processing.app.tools.SerialFixer");
+      }
       addToolMenuItem(menu, "processing.app.tools.InstallCommander");
     }
 
