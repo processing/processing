@@ -119,7 +119,8 @@ public class Base {
   private Mode nextMode;
 
   private Mode[] coreModes;
-  public List<ModeContribution> contribModes;
+  //public List<ModeContribution> contribModes;
+  protected ArrayList<ModeContribution> modeContribs;
 
   private JMenu sketchbookMenu;
 
@@ -257,15 +258,24 @@ public class Base {
 
 
   private void buildCoreModes() {
+//    Mode javaMode =
+//      ModeContribution.getCoreMode(this, "processing.mode.java.JavaMode",
+//                                   getContentFile("modes/java"));
+//    Mode androidMode =
+//      ModeContribution.getCoreMode(this, "processing.mode.android.AndroidMode",
+//                                   getContentFile("modes/android"));
+//    Mode javaScriptMode =
+//      ModeContribution.getCoreMode(this, "processing.mode.javascript.JavaScriptMode",
+//                                   getContentFile("modes/javascript"));
     Mode javaMode =
-      ModeContribution.getCoreMode(this, "processing.mode.java.JavaMode",
-                                   getContentFile("modes/java"));
+      ModeContribution.load(this, getContentFile("modes/java"),
+                            "processing.mode.java.JavaMode").getMode();
     Mode androidMode =
-      ModeContribution.getCoreMode(this, "processing.mode.android.AndroidMode",
-                                   getContentFile("modes/android"));
+      ModeContribution.load(this, getContentFile("modes/android"),
+                            "processing.mode.android.AndroidMode").getMode();
     Mode javaScriptMode =
-      ModeContribution.getCoreMode(this, "processing.mode.javascript.JavaScriptMode",
-                                   getContentFile("modes/javascript"));
+      ModeContribution.load(this, getContentFile("modes/javascript"),
+                            "processing.mode.javascript.JavaScriptMode").getMode();
 
     coreModes = new Mode[] { javaMode, androidMode, javaScriptMode };
     for (Mode mode : coreModes) {
@@ -280,20 +290,22 @@ public class Base {
    * remove modes because modes can't be removed once they are instantiated.
    */
   void rebuildContribModes() {
-    if (contribModes == null) {
-      contribModes = new ArrayList<ModeContribution>();
+    if (modeContribs == null) {
+      modeContribs = new ArrayList<ModeContribution>();
     }
+    ModeContribution.loadMissing(this);
 
-    ArrayList<ModeContribution> newContribs =
-      ModeContribution.list(this, getSketchbookModesFolder());
-    for (ModeContribution contrib : newContribs) {
-      if (!contribModes.contains(contrib)) {
-        if (contrib.instantiateModeClass()) {
-          contribModes.add(contrib);
-        }
-      }
-    }
+//    ArrayList<ModeContribution> newContribs =
+//      ModeContribution.loadAll(getSketchbookModesFolder());
+//    for (ModeContribution contrib : newContribs) {
+//      if (!contribModes.contains(contrib)) {
+//        if (contrib.instantiateModeClass(this)) {
+//          contribModes.add(contrib);
+//        }
+//      }
+//    }
   }
+
 
   public Base(String[] args) {
 //    // Get the sketchbook path, and make sure it's set properly
@@ -301,14 +313,16 @@ public class Base {
 
     // Delete all modes and tools that have been flagged for deletion before
     // they are initialized by an editor.
-    ArrayList<InstalledContribution> contribs = new ArrayList<InstalledContribution>();
-    contribs.addAll(ModeContribution.list(this, getSketchbookModesFolder()));
-    contribs.addAll(ToolContribution.list(getSketchbookToolsFolder(), false));
-    for (InstalledContribution contrib : contribs) {
-      if (ContributionManager.isFlaggedForDeletion(contrib)) {
-        removeDir(contrib.getFolder());
-      }
-    }
+//    ArrayList<InstalledContribution> contribs = new ArrayList<InstalledContribution>();
+//    contribs.addAll(ModeContribution.list(getSketchbookModesFolder()));
+//    contribs.addAll(ToolContribution.list(getSketchbookToolsFolder(), false));
+//    for (InstalledContribution contrib : contribs) {
+//      if (ContributionManager.isDeletionFlagSet(contrib)) {
+//        removeDir(contrib.getFolder());
+//      }
+//    }
+    ContributionManager.checkDeletions(getSketchbookModesFolder());
+    ContributionManager.checkDeletions(getSketchbookToolsFolder());
 
     buildCoreModes();
     rebuildContribModes();
@@ -626,10 +640,15 @@ public class Base {
   }
 
 
+  public ArrayList<ModeContribution> getModeContribs() {
+    return modeContribs;
+  }
+
+
   public ArrayList<Mode> getModeList() {
     ArrayList<Mode> allModes = new ArrayList<Mode>();
     allModes.addAll(Arrays.asList(coreModes));
-    for (ModeContribution contrib : contribModes) {
+    for (ModeContribution contrib : modeContribs) {
       allModes.add(contrib.getMode());
     }
     return allModes;
@@ -2535,6 +2554,8 @@ public class Base {
 
   /**
    * Remove all files in a directory and the directory itself.
+   * TODO implement cross-platform "move to trash" instead of deleting,
+   *      since this is potentially scary if there's a bug.
    */
   static public void removeDir(File dir) {
     if (dir.exists()) {
@@ -2659,6 +2680,21 @@ public class Base {
         }
       }
     }
+  }
+
+
+  /**
+   * @param folder source folder to search
+   * @return a list of .jar and .zip files in that folder
+   */
+  static public File[] listJarFiles(File folder) {
+    return folder.listFiles(new FilenameFilter() {
+      public boolean accept(File dir, String name) {
+        return (!name.startsWith(".") &&
+                (name.toLowerCase().endsWith(".jar") ||
+                 name.toLowerCase().endsWith(".zip")));
+      }
+    });
   }
 
 

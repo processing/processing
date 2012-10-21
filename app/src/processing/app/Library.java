@@ -85,7 +85,7 @@ public class Library extends InstalledContribution {
 
 
   public Library(File folder, String groupName) {
-    super(folder, Library.propertiesFileName);
+    super(folder);
     this.group = groupName;
 
     libraryFolder = new File(folder, "library");

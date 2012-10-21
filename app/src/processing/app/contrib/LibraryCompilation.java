@@ -9,24 +9,24 @@ import processing.app.Library;
 public class LibraryCompilation extends InstalledContribution {
   ArrayList<Library> libraries;
   static String propertiesFileName = "compilation.properties";
-  
-  
-  private LibraryCompilation(File folder) throws IOException {  
-    super(folder, LibraryCompilation.propertiesFileName);
-    
+
+
+  private LibraryCompilation(File folder) throws IOException {
+    super(folder);
+
     libraries = new ArrayList<Library>();
     ArrayList<File> librariesFolders = new ArrayList<File>();
     Library.discover(folder, librariesFolders);
-    
+
     for (File baseFolder : librariesFolders) {
       libraries.add(new Library(baseFolder, name));
     }
   }
-  
-  
+
+
   public static ArrayList<LibraryCompilation> list(ArrayList<Library> libraries) {
     HashMap<String, File> folderByGroup = new HashMap<String, File>();
-    
+
     // Find each file that is in a group, and record what directory it is in.
     // This makes the assumption that all libraries that are grouped are
     // contained in the same folder.
@@ -36,7 +36,7 @@ public class LibraryCompilation extends InstalledContribution {
         folderByGroup.put(group, lib.getFolder().getParentFile());
       }
     }
-    
+
     ArrayList<LibraryCompilation> compilations = new ArrayList<LibraryCompilation>();
     for (File folder : folderByGroup.values()) {
       try {
@@ -45,10 +45,10 @@ public class LibraryCompilation extends InstalledContribution {
         e.printStackTrace();
       }
     }
-    
+
     return compilations;
   }
-  
+
   public static LibraryCompilation create(File folder) {
     try {
       LibraryCompilation compilation = new LibraryCompilation(folder);
@@ -60,9 +60,9 @@ public class LibraryCompilation extends InstalledContribution {
     }
     return null;
   }
-  
+
   public Type getType() {
     return Type.LIBRARY_COMPILATION;
   }
-  
+
 }
