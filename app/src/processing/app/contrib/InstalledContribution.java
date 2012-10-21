@@ -23,6 +23,7 @@
 package processing.app.contrib;
 
 import java.io.*;
+import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
@@ -108,8 +109,11 @@ public abstract class InstalledContribution implements Contribution {
           Base.log("found lib: " + archives[j] + " for " + getName());
           urlList[j] = archives[j].toURI().toURL();
         }
+//        loader = new URLClassLoader(urlList, Thread.currentThread().getContextClassLoader());
         loader = new URLClassLoader(urlList);
         Base.log("loading above JARs with loader " + loader);
+//        System.out.println("listing classes for loader " + loader);
+//        listClasses(loader);
       }
     }
 
@@ -118,6 +122,22 @@ public abstract class InstalledContribution implements Contribution {
       loader = Thread.currentThread().getContextClassLoader();
     }
     return className;
+  }
+
+
+  // doesn't work with URLClassLoader, but works with the system CL
+  static void listClasses(ClassLoader loader) {
+//    loader = Thread.currentThread().getContextClassLoader();
+    try {
+      Field f = ClassLoader.class.getDeclaredField("classes");
+      f.setAccessible(true);
+      Vector<Class> classes =  (Vector<Class>) f.get(loader);
+      for (Class c : classes) {
+        System.out.println(c.getName());
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
 
