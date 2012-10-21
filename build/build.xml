@@ -681,6 +681,33 @@
     <delete dir="windows/work" 
 	    includes="about.bmp, application.ico, config.xml" />
 
+    <launch4j>
+      <config headerType="console"
+	      outfile="processing-java.exe"
+	      dontWrapJar="false">
+<!--
+	      jarPath="lib/pde.jar">
+-->
+	<!-- because of a launch4j bug, seems to need a 
+	     non-empty cp tag in there -->
+	<classPath mainClass="processing.mode.java.Commander">
+	  <cp>lib/pde.jar</cp>
+	  <cp>lib/antlr.jar</cp>
+	  <cp>lib/jdt-core.jar</cp>
+	  <cp>lib/jna.jar</cp>
+	  <cp>lib/ant.jar</cp>
+	  <cp>lib/ant-launcher.jar</cp>
+	  <cp>modes/java/libraries/core/core.jar</cp>
+	</classPath>
+	<jre minVersion="1.6.0" />
+<!--
+      <jre minVersion="1.6.0">
+	<opt>-Xmx2g</opt>
+      </jre>
+-->
+      </config>
+    </launch4j>
+
     <!-- cygwin requires html, dll, and exe to have the +x flag -->
     <chmod perm="ugo+x">
       <fileset dir="windows/work" includes="**/*.html, **/*.dll, **/*.exe" />
