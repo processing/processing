@@ -32,19 +32,19 @@ import processing.app.Base;
 import processing.core.PApplet;
 
 public class ContributionListing {
-  
+
   ArrayList<ContributionChangeListener> listeners;
-  
+
   ArrayList<AdvertisedContribution> advertisedContributions;
-  
+
   Map<String, List<Contribution>> librariesByCategory;
-  
+
   ArrayList<Contribution> allContributions;
 
   boolean hasDownloadedLatestList;
-  
+
   ReentrantLock downloadingListingLock;
-  
+
   static protected final String validCategories[] = {
     "3D", "Animation", "Compilations", "Data", "Geometry", "GUI", "Hardware",
     "I/O", "Math", "Simulation", "Sound", "Utilities", "Typography",
@@ -55,25 +55,27 @@ public class ContributionListing {
       return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
     }
   };
-  
+
   File listingFile;
-  
+
   static ContributionListing singleInstance;
-  
+
+
   private ContributionListing() {
     listeners = new ArrayList<ContributionChangeListener>();
     advertisedContributions = new ArrayList<AdvertisedContribution>();
     librariesByCategory = new HashMap<String, List<Contribution>>();
     allContributions = new ArrayList<Contribution>();
     downloadingListingLock = new ReentrantLock();
-    
+
     listingFile = Base.getSettingsFile("contributions.txt");
     listingFile.setWritable(true);
     if (listingFile.exists()) {
       setAdvertisedList(listingFile);
     }
   }
-  
+
+
   static public ContributionListing getInstance() {
     if (singleInstance == null)
       singleInstance = new ContributionListing();
@@ -81,32 +83,33 @@ public class ContributionListing {
     return singleInstance;
   }
 
+
   void setAdvertisedList(File file) {
-    
+
     listingFile = file;
-    
+
     advertisedContributions.clear();
     advertisedContributions.addAll(getLibraries(listingFile));
     for (Contribution contribution : advertisedContributions) {
       addContribution(contribution);
     }
-    
+
     Collections.sort(allContributions, contribComparator);
 
   }
-  
+
   public Comparator<? super Contribution> getComparator() {
     return contribComparator;
   }
-  
+
   /**
    * Adds the installed libraries to the listing of libraries, replacing any
    * pre-existing libraries by the same name as one in the list.
    */
   public void updateInstalledList(List<Contribution> installedContributions) {
-    
+
     for (Contribution contribution : installedContributions) {
-      
+
       Contribution preexistingContribution = getContribution(contribution);
 
       if (preexistingContribution != null) {
@@ -115,41 +118,42 @@ public class ContributionListing {
         addContribution(contribution);
       }
     }
-    
+
   }
-  
-  
+
+
   public void replaceContribution(Contribution oldLib, Contribution newLib) {
-    
+
     if (oldLib == null || newLib == null) {
       return;
     }
-    
+
     if (librariesByCategory.containsKey(oldLib.getCategory())) {
       List<Contribution> list = librariesByCategory.get(oldLib.getCategory());
-      
+
       for (int i = 0; i < list.size(); i++) {
         if (list.get(i) == oldLib) {
           list.set(i, newLib);
         }
       }
     }
-    
+
     for (int i = 0; i < allContributions.size(); i++) {
       if (allContributions.get(i) == oldLib) {
         allContributions.set(i, newLib);
       }
     }
-    
+
     notifyChange(oldLib, newLib);
   }
-  
+
+
   public void addContribution(Contribution contribution) {
-    
+
     if (librariesByCategory.containsKey(contribution.getCategory())) {
       List<Contribution> list = librariesByCategory.get(contribution.getCategory());
       list.add(contribution);
-      
+
       Collections.sort(list, contribComparator);
     } else {
       ArrayList<Contribution> list = new ArrayList<Contribution>();
@@ -157,21 +161,23 @@ public class ContributionListing {
       librariesByCategory.put(contribution.getCategory(), list);
     }
     allContributions.add(contribution);
-    
+
     notifyAdd(contribution);
-    
+
     Collections.sort(allContributions, contribComparator);
   }
-  
+
+
   public void removeContribution(Contribution info) {
     if (librariesByCategory.containsKey(info.getCategory())) {
       librariesByCategory.get(info.getCategory()).remove(info);
     }
     allContributions.remove(info);
-    
+
     notifyRemove(info);
   }
-  
+
+
   public Contribution getContribution(Contribution contribution) {
     for (Contribution preexistingContribution : allContributions) {
       if (preexistingContribution.getName().equals(contribution.getName())
@@ -181,24 +187,25 @@ public class ContributionListing {
     }
     return null;
   }
-  
+
+
   public AdvertisedContribution getAdvertisedContribution(Contribution info) {
     for (AdvertisedContribution advertised : advertisedContributions) {
-      
+
       if (advertised.getType() == info.getType()
           && advertised.getName().equals(info.getName())) {
-        
+
         return advertised;
       }
-      
+
     }
-    
+
     return null;
   }
-  
+
   public Set<String> getCategories(Filter filter) {
     Set<String> ret = new HashSet<String>();
-    
+
     Set<String> cats = librariesByCategory.keySet();
     for (String cat : cats) {
       for (Contribution contrib : librariesByCategory.get(cat)) {
@@ -208,10 +215,10 @@ public class ContributionListing {
         }
       }
     }
-    
+
     return ret;
   }
-  
+
   public List<Contribution> getAllContributions() {
     return new ArrayList<Contribution>(allContributions);
   }
@@ -222,14 +229,14 @@ public class ContributionListing {
     Collections.sort(libinfos, contribComparator);
     return libinfos;
   }
-  
+
   public List<Contribution> getFilteredLibraryList(String category, List<String> filters) {
     ArrayList<Contribution> filteredList = new ArrayList<Contribution>(allContributions);
-    
+
     Iterator<Contribution> it = filteredList.iterator();
     while (it.hasNext()) {
       Contribution libInfo = it.next();
-      
+
       if (category != null && !category.equals(libInfo.getCategory())) {
         it.remove();
       } else {
@@ -240,48 +247,50 @@ public class ContributionListing {
           }
         }
       }
-      
+
     }
-    
+
     return filteredList;
   }
 
+
   public boolean matches(Contribution contrib, String filter) {
-    
     int colon = filter.indexOf(":");
     if (colon != -1) {
       String isText = filter.substring(0, colon);
       String property = filter.substring(colon + 1);
-      
+
       // Chances are the person is still typing the property, so rather than
       // make the list flash empty (because nothing contains "is:" or "has:",
       // just return true.
       if (!isProperty(property))
         return true;
-      
+
       if ("is".equals(isText) || "has".equals(isText)) {
         return hasProperty(contrib, filter.substring(colon + 1));
       } else  if ("not".equals(isText)) {
         return !hasProperty(contrib, filter.substring(colon + 1));
       }
     }
-    
+
     filter = ".*" + filter.toLowerCase() + ".*";
-    
+
     return contrib.getAuthorList() != null && contrib.getAuthorList().toLowerCase().matches(filter)
         || contrib.getSentence() != null && contrib.getSentence().toLowerCase().matches(filter)
         || contrib.getParagraph() != null && contrib.getParagraph().toLowerCase().matches(filter)
         || contrib.getCategory() != null && contrib.getCategory().toLowerCase().matches(filter)
         || contrib.getName() != null && contrib.getName().toLowerCase().matches(filter);
- 
+
   }
-  
+
+
   public boolean isProperty(String property) {
     return property.startsWith("updat") || property.startsWith("upgrad")
         || property.startsWith("instal") && !property.startsWith("installabl")
         || property.equals("tool") || property.startsWith("lib")
         || property.equals("mode") || property.equals("compilation");
   }
+
 
   /** Returns true if the contribution fits the given property, false otherwise.
    *  If the property is invalid, returns false. */
@@ -310,35 +319,38 @@ public class ContributionListing {
     return false;
   }
 
+
   private void notifyRemove(Contribution contribution) {
     for (ContributionChangeListener listener : listeners) {
       listener.contributionRemoved(contribution);
     }
   }
-  
+
+
   private void notifyAdd(Contribution contribution) {
     for (ContributionChangeListener listener : listeners) {
       listener.contributionAdded(contribution);
     }
   }
-  
+
+
   private void notifyChange(Contribution oldLib, Contribution newLib) {
     for (ContributionChangeListener listener : listeners) {
       listener.contributionChanged(oldLib, newLib);
     }
   }
-  
+
   public void addContributionListener(ContributionChangeListener listener) {
     for (Contribution contrib : allContributions) {
       listener.contributionAdded(contrib);
     }
     listeners.add(listener);
   }
-  
+
   public void removeContributionListener(ContributionChangeListener listener) {
     listeners.remove(listener);
   }
-  
+
   public ArrayList<ContributionChangeListener> getContributionListeners() {
     return new ArrayList<ContributionChangeListener>(listeners);
   }
@@ -348,14 +360,14 @@ public class ContributionListing {
    * one instance will run at a time.
    */
   public void getAdvertisedContributions(ProgressMonitor pm) {
-    
+
     final ProgressMonitor progressMonitor = (pm != null) ? pm : new NullProgressMonitor();
-    
+
     new Thread(new Runnable() {
-      
+
       public void run() {
         downloadingListingLock.lock();
-        
+
         URL url = null;
         try {
           url = new URL("http://processing.googlecode.com/svn/trunk/web/contrib_generate/contributions.txt");
@@ -363,7 +375,7 @@ public class ContributionListing {
           progressMonitor.error(e);
           progressMonitor.finished();
         }
-        
+
         if (!progressMonitor.isFinished()) {
           FileDownloader.downloadFile(url, listingFile, progressMonitor);
           if (!progressMonitor.isCanceled() && !progressMonitor.isError()) {
@@ -371,12 +383,12 @@ public class ContributionListing {
             setAdvertisedList(listingFile);
           }
         }
-        
+
         downloadingListingLock.unlock();
       }
     }).start();
   }
-  
+
   public boolean hasUpdates() {
     for (Contribution info : allContributions) {
       if (hasUpdates(info)) {
@@ -392,34 +404,34 @@ public class ContributionListing {
       Contribution advertised = getAdvertisedContribution(contribution);
       if (advertised == null)
         return false;
-      
+
       return advertised.getVersion() > contribution.getVersion();
     }
-    
+
     return false;
   }
-  
+
   public boolean hasDownloadedLatestList() {
     return hasDownloadedLatestList;
   }
 
   public static interface ContributionChangeListener {
-    
+
     public void contributionAdded(Contribution Contribution);
-    
+
     public void contributionRemoved(Contribution Contribution);
-    
+
     public void contributionChanged(Contribution oldLib, Contribution newLib);
-    
+
   }
-  
+
   /**
    * @return a lowercase string with all non-alphabetic characters removed
    */
   static protected String normalize(String s) {
     return s.toLowerCase().replaceAll("^\\p{Lower}", "");
   }
-  
+
   /**
    * @return the proper, valid name of this category to be displayed in the UI
    *         (e.g. "Typography / Geometry"). "Unknown" if the category null.
@@ -428,25 +440,25 @@ public class ContributionListing {
     if (category == null) {
       return "Unknown";
     }
-    
+
     String normCatName = normalize(category);
-    
+
     for (String validCatName : validCategories) {
       String normValidCatName = normalize(validCatName);
       if (normValidCatName.equals(normCatName)) {
         return validCatName;
       }
     }
-    
+
     return category;
   }
-  
+
   public ArrayList<AdvertisedContribution> getLibraries(File f) {
     ArrayList<AdvertisedContribution> outgoing = new ArrayList<AdvertisedContribution>();
-    
+
     if (f != null && f.exists()) {
       String lines[] = PApplet.loadStrings(f);
-      
+
       int start = 0;
       while (start < lines.length) {
         // Only consider 'invalid' lines. These lines contain the type of
@@ -459,29 +471,29 @@ public class ContributionListing {
           while (end < lines.length && !lines[end].equals("")) {
             end++;
           }
-          
+
           int length = end - start;
           String strings[] = new String[length];
           System.arraycopy(lines, start, strings, 0, length);
-          
+
           HashMap<String,String> exports = new HashMap<String,String>();
           Base.readSettings(null, strings, exports);
-          
+
           Contribution.Type kind = Contribution.Type.toType(type);
           outgoing.add(new AdvertisedContribution(kind, exports));
-          
+
           start = end + 1;
         } else {
           start++;
         }
       }
     }
-    
+
     return outgoing;
   }
-  
+
   static class AdvertisedContribution implements Contribution {
-    
+
     protected final String name;             // "pdf" or "PDF Export"
     protected final Type type;               // Library, tool, etc.
     protected final String category;         // "Sound"
@@ -492,9 +504,9 @@ public class ContributionListing {
     protected final int version;             // 102
     protected final String prettyVersion;    // "1.0.2"
     protected final String link;             // Direct link to download the file
-    
+
     public AdvertisedContribution(Type type, HashMap<String, String> exports) {
-      
+
       this.type = type;
       name = exports.get("name");
       category = ContributionListing.getCategory(exports.get("category"));
@@ -510,61 +522,93 @@ public class ContributionListing {
       } catch (NumberFormatException e) {
       }
       version = v;
-      
+
       prettyVersion = exports.get("prettyVersion");
-      
+
       this.link = exports.get("download");
     }
-    
+
     public boolean isInstalled() {
       return false;
     }
-    
+
     public Type getType() {
       return type;
     }
-    
+
+    public String getTypeName() {
+      return type.toString();
+    }
+
     public String getCategory() {
       return category;
     }
-    
+
     public String getName() {
       return name;
     }
-    
+
     public String getAuthorList() {
       return authorList;
     }
-    
+
     public String getUrl() {
       return url;
     }
-    
+
     public String getSentence() {
       return sentence;
     }
-    
+
     public String getParagraph() {
       return paragraph;
     }
-    
+
     public int getVersion() {
       return version;
     }
-    
+
     public String getPrettyVersion() {
       return prettyVersion;
     }
-    
+
+    public boolean writePropertiesFile(File propFile) {
+      try {
+        if (propFile.delete() && propFile.createNewFile() && propFile.setWritable(true)) {
+          //BufferedWriter bw = new BufferedWriter(new FileWriter(propFile));
+          PrintWriter writer = PApplet.createWriter(propFile);
+
+          writer.println("name=" + getName());
+          writer.println("category=" + getCategory());
+          writer.println("authorList=" + getAuthorList());
+          writer.println("url=" + getUrl());
+          writer.println("sentence=" + getSentence());
+          writer.println("paragraph=" + getParagraph());
+          writer.println("version=" + getVersion());
+          writer.println("prettyVersion=" + getPrettyVersion());
+
+          writer.flush();
+          writer.close();
+        }
+        return true;
+
+      } catch (FileNotFoundException e) {
+        e.printStackTrace();
+
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+      return false;
+    }
   }
 
   public boolean isDownloadingListing() {
     return downloadingListingLock.isLocked();
   }
-  
+
   public static interface Filter {
-    
+
     boolean matches(Contribution contrib);
   }
-  
+
 }

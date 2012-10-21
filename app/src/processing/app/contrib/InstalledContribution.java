@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-11 Ben Fry and Casey Reas
+  Copyright (c) 2004-12 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -22,13 +22,14 @@
 
 package processing.app.contrib;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.*;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
+import java.util.zip.*;
 
 import processing.app.*;
+
 
 public abstract class InstalledContribution implements Contribution {
 
@@ -47,82 +48,178 @@ public abstract class InstalledContribution implements Contribution {
 
   protected HashMap<String, String> properties;
 
-  public InstalledContribution(File folder, String propertiesFileName) {
+  protected ClassLoader loader;
 
+
+  public InstalledContribution(File folder) {
     this.folder = folder;
 
-    File propertiesFile = new File(folder, propertiesFileName);
+    // required for contributed modes, but not for built-in core modes
+    File propertiesFile = new File(folder, getTypeName() + ".properties");
+    if (propertiesFile.exists()) {
+      properties = Base.readSettings(propertiesFile);
 
-    properties = Base.readSettings(propertiesFile);
+      name = properties.get("name");
+      id = properties.get("id");
+      category = ContributionListing.getCategory(properties.get("category"));
+      if (name == null) {
+        name = folder.getName();
+      }
+      authorList = properties.get("authorList");
+      url = properties.get("url");
+      sentence = properties.get("sentence");
+      paragraph = properties.get("paragraph");
 
-    name = properties.get("name");
-    id = properties.get("id");
-    category = ContributionListing.getCategory(properties.get("category"));
-    if (name == null) {
-      name = folder.getName();
+      try {
+        version = Integer.parseInt(properties.get("version"));
+      } catch (NumberFormatException e) {
+        e.printStackTrace();
+      }
+      prettyVersion = properties.get("prettyVersion");
     }
-
-    authorList = properties.get("authorList");
-
-    url = properties.get("url");
-    sentence = properties.get("sentence");
-    paragraph = properties.get("paragraph");
-
-    try {
-      version = Integer.parseInt(properties.get("version"));
-    } catch (NumberFormatException e) {
-    }
-    prettyVersion = properties.get("prettyVersion");
   }
+
+
+  public String initLoader(String className) throws Exception {
+    File modeDirectory = new File(folder, getTypeName());
+    if (modeDirectory.exists()) {
+      // If no class name specified, search the main <modename>.jar for the
+      // full name package and mode name.
+      if (className == null) {
+        String shortName = folder.getName();
+        File mainJar = new File(modeDirectory, shortName + ".jar");
+        if (mainJar.exists()) {
+          className = findClassInZipFile(shortName, mainJar);
+        } else {
+          throw new IgnorableException(mainJar.getAbsolutePath() + " does not exist.");
+        }
+
+        if (className == null) {
+          throw new IgnorableException("Could not find " + shortName +
+                                       " class inside " + mainJar.getAbsolutePath());
+        }
+      }
+
+      // Add .jar and .zip files from the "mode" folder into the classpath
+      File[] archives = Base.listJarFiles(modeDirectory);
+      if (archives != null && archives.length > 0) {
+        URL[] urlList = new URL[archives.length];
+        for (int j = 0; j < urlList.length; j++) {
+          Base.log("found lib: " + archives[j] + " for " + getName());
+          urlList[j] = archives[j].toURI().toURL();
+        }
+        loader = new URLClassLoader(urlList);
+        Base.log("loading above JARs with loader " + loader);
+      }
+    }
+
+    // If no archives were found, just use the regular ClassLoader
+    if (loader == null) {
+      loader = Thread.currentThread().getContextClassLoader();
+    }
+    return className;
+  }
+
+
+  /**
+   * Return a list of directories that have the necessary subfolder for this
+   * contribution type. For instance, a list of folders that have a 'mode'
+   * subfolder if this is a ModeContribution.
+   */
+  static protected File[] listCandidates(File folder, final String typeName) {
+    return folder.listFiles(new FileFilter() {
+      public boolean accept(File potential) {
+        return (potential.isDirectory() &&
+                new File(potential, typeName).exists());
+      }
+    });
+  }
+
 
   public File getFolder() {
     return folder;
   }
 
+
   public boolean isInstalled() {
     return folder != null;
   }
+
 
   public String getCategory() {
     return category;
   }
 
+
   public String getName() {
     return name;
   }
+
 
   public String getId() {
     return id;
   }
 
+
   public String getAuthorList() {
     return authorList;
   }
+
 
   public String getUrl() {
     return url;
   }
 
+
   public String getSentence() {
     return sentence;
   }
+
 
   public String getParagraph() {
     return paragraph;
   }
 
+
   public int getVersion() {
     return version;
   }
+
 
   public int getLatestVersion() {
     return latestVersion;
   }
 
+
   public String getPrettyVersion() {
     return prettyVersion;
   }
 
+
+  public String getTypeName() {
+    return getType().toString();
+  }
+
+
+  /*
+  static protected String findClassInZipFileList(String base, File[] fileList) {
+    for (File file : fileList) {
+      String found = findClassInZipFile(base, file);
+      if (found != null) {
+        return found;
+      }
+    }
+    return null;
+  }
+  */
+
+
+  /**
+   *
+   * @param base name of the class, with or without the package
+   * @param file
+   * @return name of class (with full package name) or null if not found
+   */
   static protected String findClassInZipFile(String base, File file) {
     // Class file to search for
     String classFileName = "/" + base + ".class";
@@ -135,7 +232,7 @@ public abstract class InstalledContribution implements Contribution {
 
         if (!entry.isDirectory()) {
           String name = entry.getName();
-          //System.out.println("entry: " + name);
+//          System.out.println("entry: " + name);
 
           if (name.endsWith(classFileName)) {
             //int slash = name.lastIndexOf('/');
@@ -152,5 +249,12 @@ public abstract class InstalledContribution implements Contribution {
       e.printStackTrace();
     }
     return null;
+  }
+
+
+  class IgnorableException extends Exception {
+    public IgnorableException(String msg) {
+      super(msg);
+    }
   }
 }

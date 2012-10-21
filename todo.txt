@@ -28,6 +28,8 @@ X     that would mean putting the .jar file for ecj into each of the modes
 X     that subclass it. not a good solution, but no good solution for
 X     library deps either. punting on that for now, and instead just deal
 X     with this specific (more esoteric) low-level case w/ a workaround
+X very slow startup on OS X (library manager et al?)
+X   if not, move to OS X dist list
 
 command line
 X implement command line installer for Mac OS X
@@ -73,8 +75,6 @@ _   report from someone about blinking caret
 _     http://code.google.com/p/processing/issues/detail?id=1136
 _ excessive CPU usage of PDE after using library manager
 _   http://code.google.com/p/processing/issues/detail?id=1036
-_ very slow startup on OS X (library manager et al?)
-_   if not, move to OS X dist list
 _ remove PdeKeyListener, roll it into the Java InputHandler for JEditTextArea
 _   move Java-specific InputHandler to its own subclass
 _ problem changing sketchbook to new location (e.g. from ex to regular) 
@@ -84,6 +84,10 @@ _   list in the PDE would be updated automatically by querying a web service
 _   list on the website would be generated using the same web service
 _   All I would need to do is update web/contrib_generate/sources.conf 
 _     and the rest would happen automatically.
+
+_ better implementation of jar handling using OSGi
+_   http://eclipse.org/equinox/
+_   http://eclipse.org/equinox/documents/quickstart-framework.php
 
 
 2.0 FINAL / new interface
