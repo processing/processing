@@ -100,12 +100,14 @@ public class Serial implements SerialPortEventListener {
     this(parent, dname, drate, dparity, ddatabits, dstopbits);
   }
 
+
 /**
  * @param irate 9600 is the default
  */
   public Serial(PApplet parent, int irate) {
     this(parent, dname, irate, dparity, ddatabits, dstopbits);
   }
+
 
 /**
  * @param iname name of the port (COM1 is the default)
@@ -117,6 +119,7 @@ public class Serial implements SerialPortEventListener {
   public Serial(PApplet parent, String iname) {
     this(parent, iname, drate, dparity, ddatabits, dstopbits);
   }
+
 
 /**
  * @param iparity 'N' for none, 'E' for even, 'O' for odd ('N' is the default)
@@ -143,8 +146,11 @@ public class Serial implements SerialPortEventListener {
           "sudo mkdir -p /var/lock\n" +
           "sudo chmod 777 /var/lock";
         System.err.println(MESSAGE);
-        throw new RuntimeException("Additional installation required to " +
-        		                       "use serial, read the console below.");
+        //throw new RuntimeException("Additional installation required to " +
+        //                           "use serial, read the console below.");
+        final String msg =
+          "Please use Tools \u2192 Fix the Serial Library.";
+        throw new RuntimeException(msg);
       }
     }
 
@@ -189,7 +195,7 @@ public class Serial implements SerialPortEventListener {
       output = null;
     }
 
-    parent.registerDispose(this);
+    parent.registerMethod("dispose", this);
 
     // reflection to check whether host applet has a call for
     // public void serialEvent(processing.serial.Serial)
@@ -240,18 +246,19 @@ public class Serial implements SerialPortEventListener {
 
 
   /**
-  * Set the DTR line. Addition from Tom Hulbert.
-  */
+   * Set the DTR line. Addition from Tom Hulbert.
+   */
   public void setDTR(boolean state) {
-        port.setDTR(state);
+    port.setDTR(state);
   }
 
-/**
- * @generate serialEvent.xml
- * @webref serial:events
- * @usage web_application
- * @param serialEvent the port where new data is available
- */
+
+  /**
+   * @generate serialEvent.xml
+   * @webref serial:events
+   * @usage web_application
+   * @param serialEvent the port where new data is available
+   */
   synchronized public void serialEvent(SerialPortEvent serialEvent) {
     if (serialEvent.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
       try {
