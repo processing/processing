@@ -683,9 +683,9 @@
 
     <launch4j>
       <config headerType="console"
-	      outfile="processing-java.exe"
+	      outfile="windows/work/processing-java.exe"
 	      dontWrapJar="false"
-	      jarPath="lib/pde.jar">
+	      jarPath="../app/pde.jar">
 	<!-- because of a launch4j bug, seems to need a 
 	     non-empty cp tag in there -->
 	<classPath mainClass="processing.mode.java.Commander">
@@ -696,13 +696,9 @@
 	  <cp>lib/ant.jar</cp>
 	  <cp>lib/ant-launcher.jar</cp>
 	  <cp>modes/java/libraries/core/core.jar</cp>
+	  <cp>%JAVA_HOME%/lib/tools.jar</cp>
 	</classPath>
-	<jre minVersion="1.6.0" />
-<!--
-      <jre minVersion="1.6.0">
-	<opt>-Xmx2g</opt>
-      </jre>
--->
+	<jre minVersion="1.6.0" jdkPreference="jdkOnly" />
       </config>
     </launch4j>
 
