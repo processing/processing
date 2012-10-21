@@ -105,4 +105,13 @@ else
   SKETCH=
 fi
 cd "$APPDIR"
-java processing.app.Base "$SKETCH" &
+
+current_name = `basename $0`
+cmd_name = 'processing-java'
+
+if [ $current_name = $cmd_name ]
+then
+    java processing.mode.java.Commander "$@" &
+else
+    java processing.app.Base "$SKETCH" &
+fi

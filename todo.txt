@@ -31,11 +31,11 @@ X     with this specific (more esoteric) low-level case w/ a workaround
 
 
 2.0 FINAL / command line
-_ implement command line installer for Mac OS X
+X implement command line installer for Mac OS X
 _ add processing-java.bat (or exe?) for Windows
 _ add processing-java script for Linux
-_ file bug for android implementation
-_   modify comments on project site to say android, js, etc
+X file bug for android implementation
+X   modify comments on project site to say android, js, etc
 _ kill external editor (for all its quirks) in favor of command line
 _   use external editor needs to enable/disable across all windows
 _   http://code.google.com/p/processing/issues/detail?id=515
