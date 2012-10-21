@@ -535,8 +535,12 @@
       <param name="target.path" value="linux/work" />
     </antcall>
 
-    <copy todir="linux/work" file="linux/processing" />
+    <copy file="linux/processing" todir="linux/work" />
     <chmod perm="ugo+x" file="linux/work/processing" />
+
+    <!-- copy command line tool -->
+    <copy file="linux/processing" tofile="linux/work/processing-java" />
+    <chmod perm="ugo+x" file="linux/work/processing-java" />
 
     <property name="jre.file" 
 	      value="jre-tools-6u33-linux${sun.arch.data.model}.tgz" />
