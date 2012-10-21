@@ -1,8 +1,8 @@
 <launch4jConfig>
   <dontWrapJar>true</dontWrapJar>
-  <headerType>gui</headerType>
+  <headerType>console</headerType>
   <jar>lib</jar>
-  <outfile>processing.exe</outfile>
+  <outfile>processing-java.exe</outfile>
   <errTitle></errTitle>
   <cmdLine></cmdLine>
   <chdir>.</chdir>
@@ -12,9 +12,9 @@
   <customProcName>false</customProcName>
   <stayAlive>false</stayAlive>
   <manifest></manifest>
-  <icon>application.ico</icon>
+<!--  <icon>application.ico</icon>-->
   <classPath>
-    <mainClass>processing.app.Base</mainClass>
+    <mainClass>processing.mode.java.Commander</mainClass>
     <cp>lib/pde.jar</cp>
     <cp>core/library/core.jar</cp>
     <cp>lib/jna.jar</cp>
@@ -33,12 +33,6 @@
     <opt>-Xms128m -Xmx128m</opt>
 -->
   </jre>
-  <splash>
-    <file>about.bmp</file>
-    <waitForWindow>true</waitForWindow>
-    <timeout>60</timeout>
-    <timeoutErr>false</timeoutErr>
-  </splash>
   <messages>
     <startupErr>An error occurred while starting the application.</startupErr>
     <bundledJreErr>This application was configured to use a bundled Java Runtime Environment but the runtime is missing or corrupted.</bundledJreErr>
