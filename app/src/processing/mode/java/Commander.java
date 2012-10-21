@@ -322,6 +322,7 @@ public class Commander implements RunnerListener {
 
 
   static void printCommandLine(PrintStream out) {
+    out.println();
     out.println("Command line edition for Processing " + Base.VERSION_NAME + " (Java Mode)");
     out.println();
     out.println("--help               Show this help text. Congratulations.");
