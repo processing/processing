@@ -675,19 +675,21 @@
 
     <copy todir="windows/work">
       <fileset dir="windows/launcher" 
-	       includes="about.bmp, application.ico, config.xml"/>
+	       includes="about.bmp, application.ico, config.xml, config-cmd.xml"/>
     </copy>
-    <launch4j configFile="windows/work/config.xml" />
-    <delete dir="windows/work" 
-	    includes="about.bmp, application.ico, config.xml" />
 
+    <launch4j configFile="windows/work/config.xml" />
+    <launch4j configFile="windows/work/config-cmd.xml" />
+
+    <delete dir="windows/work" 
+	    includes="about.bmp, application.ico, config.xml, config-cmd.xml" />
+
+<!--
     <launch4j>
-      <config headerType="console"
+      <config headerType="gui"
 	      outfile="windows/work/processing-java.exe"
 	      dontWrapJar="false"
 	      jarPath="../app/pde.jar">
-	<!-- because of a launch4j bug, seems to need a 
-	     non-empty cp tag in there -->
 	<classPath mainClass="processing.mode.java.Commander">
 	  <cp>lib/pde.jar</cp>
 	  <cp>lib/antlr.jar</cp>
@@ -695,12 +697,14 @@
 	  <cp>lib/jna.jar</cp>
 	  <cp>lib/ant.jar</cp>
 	  <cp>lib/ant-launcher.jar</cp>
-	  <cp>modes/java/libraries/core/core.jar</cp>
+	  <cp>core/library/core.jar</cp>
 	  <cp>%JAVA_HOME%/lib/tools.jar</cp>
 	</classPath>
-	<jre minVersion="1.6.0" jdkPreference="jdkOnly" />
+	<jre minVersion="1.6.0" jdkPreference="jdkOnly">
+	</jre>
       </config>
     </launch4j>
+-->
 
     <!-- cygwin requires html, dll, and exe to have the +x flag -->
     <chmod perm="ugo+x">
