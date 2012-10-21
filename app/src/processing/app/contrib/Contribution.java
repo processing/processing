@@ -46,35 +46,37 @@ public interface Contribution {
 
   // "1.0.2"
   String getPrettyVersion();
-  
+
   boolean isInstalled();
-  
+
   Type getType();
+
+  String getTypeName();
+
 
   public static enum Type {
     LIBRARY, LIBRARY_COMPILATION, TOOL, MODE;
-    
+
     public String toString() {
       switch (this) {
       case LIBRARY:
         return "library";
       case LIBRARY_COMPILATION:
-        return "library compilation";
+        return "compilation";
       case TOOL:
         return "tool";
       case MODE:
         return "mode";
       }
-      
       return "contribution";
     };
-    
+
     static public Type toType(String s) {
       if (s != null) {
         if ("library".equals(s.toLowerCase())) {
           return LIBRARY;
         }
-        if ("librarycompilation".equals(s.toLowerCase())) {
+        if ("compilation".equals(s.toLowerCase())) {
           return LIBRARY_COMPILATION;
         }
         if ("tool".equals(s.toLowerCase())) {
@@ -87,5 +89,4 @@ public interface Contribution {
       return null;
     }
   }
-
 }

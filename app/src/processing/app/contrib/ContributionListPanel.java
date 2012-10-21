@@ -478,7 +478,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         public void actionPerformed(ActionEvent e) {
           if (contrib instanceof InstalledContribution) {
             InstalledContribution installed = (InstalledContribution) contrib;
-            ContributionManager.removeFlagForDeletion(installed);
+            ContributionManager.unsetDeletionFlag(installed);
             contribListing.replaceContribution(contrib, contrib);
           }
         }
@@ -733,7 +733,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       StringBuilder description = new StringBuilder();
       description.append("<html><body>");
 
-      boolean isFlagged = ContributionManager.isFlaggedForDeletion(contrib);
+      boolean isFlagged = ContributionManager.isDeletionFlagSet(contrib);
       if (isFlagged) {
         description.append(ContributionListPanel.DELETION_MESSAGE);
       } else {

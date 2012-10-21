@@ -519,7 +519,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     menubar.add(fileMenu);
     menubar.add(buildEditMenu());
     menubar.add(buildSketchMenu());
-    rebuildToolList();
+//    rebuildToolList();
     rebuildToolMenu();
     menubar.add(getToolMenu());
 
@@ -902,10 +902,10 @@ public abstract class Editor extends JFrame implements RunnerListener {
   }
 
 
-  protected void rebuildToolList() {
-    coreTools = ToolContribution.list(Base.getToolsFolder(), true);
-    contribTools = ToolContribution.list(Base.getSketchbookToolsFolder(), true);
-  }
+//  protected void rebuildToolList() {
+//    coreTools = ToolContribution.list(Base.getToolsFolder(), true);
+//    contribTools = ToolContribution.list(Base.getSketchbookToolsFolder(), true);
+//  }
 
 
   public void rebuildToolMenu() {
@@ -915,7 +915,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
       toolsMenu.removeAll();
     }
 
-    rebuildToolList();
+//    rebuildToolList();
+    coreTools = ToolContribution.loadAll(Base.getToolsFolder());
+    contribTools = ToolContribution.loadAll(Base.getSketchbookToolsFolder());
 
     addInternalTools(toolsMenu);
     addTools(toolsMenu, coreTools);
