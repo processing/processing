@@ -53,8 +53,8 @@ public class SingleInstance {
    * @return true if successfully launched on the other instance
    */
   static boolean alreadyRunning(String[] args) {
-    return (Preferences.get(SERVER_PORT) != null &&
-            sendArguments(args, 5000));
+    return Preferences.get(SERVER_PORT) != null && sendArguments(args);
+//            sendArguments(args, 5000));
   }
 
 
@@ -123,27 +123,31 @@ public class SingleInstance {
   }
 
 
-  static boolean sendArguments(String[] args, long timeout) {
+  static boolean sendArguments(String[] args) {  //, long timeout) {
     try {
       //int port = Integer.parseInt(Preferences.get("server.port"));
       //String key = Preferences.get("server.key");
       int port = Preferences.getInteger(SERVER_PORT);
       String key = Preferences.get(SERVER_KEY);
 
-      long endTime = System.currentTimeMillis() + timeout;
-
+//      long endTime = System.currentTimeMillis() + timeout;
+//
+//      Socket socket = null;
+//      while (socket == null && System.currentTimeMillis() < endTime) {
+//        try {
+//          socket = new Socket(InetAddress.getByName(null), port);
+//        } catch (Exception ioe) {
+//          try {
+//            Thread.sleep(50);
+//          } catch (InterruptedException ie) {
+//            Thread.yield();
+//          }
+//        }
+//      }
       Socket socket = null;
-      while (socket == null && System.currentTimeMillis() < endTime) {
-        try {
-          socket = new Socket(InetAddress.getByName(null), port);
-        } catch (Exception ioe) {
-          try {
-            Thread.sleep(50);
-          } catch (InterruptedException ie) {
-            Thread.yield();
-          }
-        }
-      }
+      try {
+        socket = new Socket(InetAddress.getByName(null), port);
+      } catch (Exception ignored) { }
 
       if (socket != null) {
         PrintWriter writer = PApplet.createWriter(socket.getOutputStream());
