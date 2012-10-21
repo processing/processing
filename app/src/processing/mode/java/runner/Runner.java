@@ -338,12 +338,15 @@ public class Runner implements MessageConsumer {
         "java -Xrunjdwp:transport=dt_shmem,address=" + addr + ",suspend=y ";
     } else if (Base.isMacOS()) {
       // This will run a 32-bit VM (likely 1.6) or a 64-bit VM (probably 1.7)
-      // based on Apple's recent changes. The --request flag will prompt to 
+      // based on Apple's recent changes. The --request flag will prompt to
       // install a JVM if none is available. Or if only Java 7 is installed,
       // and 32-bit is requested, this will download Apple's 32-bit Java 6.
+      // ...decided to just set this to 1.6 only, it's gonna be a shitshow
+      // if folks are getting Apple's 1.6 with 32-bit and Oracle's 1.7 when
+      // run in 64-bit mode.
       commandArgs =
-        "/usr/libexec/java_home --request " +
-        "-d" + Base.getNativeBits() + " -exec java " + 
+        "/usr/libexec/java_home --request --version 1.6 " +
+        "-d" + Base.getNativeBits() + " -exec java " +
         "-Xrunjdwp:transport=dt_socket,address=" + addr + ",suspend=y ";
     }
 
