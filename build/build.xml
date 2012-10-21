@@ -684,10 +684,8 @@
     <launch4j>
       <config headerType="console"
 	      outfile="processing-java.exe"
-	      dontWrapJar="false">
-<!--
+	      dontWrapJar="false"
 	      jarPath="lib/pde.jar">
--->
 	<!-- because of a launch4j bug, seems to need a 
 	     non-empty cp tag in there -->
 	<classPath mainClass="processing.mode.java.Commander">
