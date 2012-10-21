@@ -112,7 +112,7 @@ public class Preferences {
   JCheckBox editorAntialiasBox;
   JCheckBox exportSeparateBox;
   JCheckBox deletePreviousBox;
-  JCheckBox externalEditorBox;
+//  JCheckBox externalEditorBox;
   JCheckBox memoryOverrideBox;
   JTextField memoryField;
   JCheckBox checkUpdatesBox;
@@ -337,14 +337,14 @@ public class Preferences {
     top += d.height + GUI_BETWEEN;
 
 
-    // [ ] Use external editor
-
-    externalEditorBox = new JCheckBox("Use external editor");
-    pain.add(externalEditorBox);
-    d = externalEditorBox.getPreferredSize();
-    externalEditorBox.setBounds(left, top, d.width + 10, d.height);
-    right = Math.max(right, left + d.width);
-    top += d.height + GUI_BETWEEN;
+//    // [ ] Use external editor
+//
+//    externalEditorBox = new JCheckBox("Use external editor");
+//    pain.add(externalEditorBox);
+//    d = externalEditorBox.getPreferredSize();
+//    externalEditorBox.setBounds(left, top, d.width + 10, d.height);
+//    right = Math.max(right, left + d.width);
+//    top += d.height + GUI_BETWEEN;
 
 
     // [ ] Check for updates on startup
@@ -576,7 +576,7 @@ public class Preferences {
       base.setSketchbookFolder(new File(newPath));
     }
 
-    setBoolean("editor.external", externalEditorBox.isSelected());
+//    setBoolean("editor.external", externalEditorBox.isSelected());
     setBoolean("update.check", checkUpdatesBox.isSelected());
 
     int oldDisplayIndex = getInteger("run.display");
@@ -670,8 +670,8 @@ public class Preferences {
 
     sketchbookLocationField.
       setText(get("sketchbook.path"));
-    externalEditorBox.
-      setSelected(getBoolean("editor.external"));
+//    externalEditorBox.
+//      setSelected(getBoolean("editor.external"));
     checkUpdatesBox.
       setSelected(getBoolean("update.check"));
 

@@ -65,8 +65,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
   // file and sketch menus for re-inserting items
   private JMenu fileMenu;
-  private JMenuItem saveMenuItem;
-  private JMenuItem saveAsMenuItem;
+//  private JMenuItem saveMenuItem;
+//  private JMenuItem saveAsMenuItem;
 
   private JMenu sketchMenu;
 
@@ -473,37 +473,26 @@ public abstract class Editor extends JFrame implements RunnerListener {
    * with things in the Preferences window.
    */
   protected void applyPreferences() {
-    // apply the setting for 'use external editor'
-    boolean external = Preferences.getBoolean("editor.external");
-
-    textarea.setEditable(!external);
-    saveMenuItem.setEnabled(!external);
-    saveAsMenuItem.setEnabled(!external);
+//    // apply the setting for 'use external editor'
+//    boolean external = Preferences.getBoolean("editor.external");
+//    textarea.setEditable(!external);
+//    saveMenuItem.setEnabled(!external);
+//    saveAsMenuItem.setEnabled(!external);
 
     TextAreaPainter painter = textarea.getPainter();
-    if (external) {
-      // disable line highlight and turn off the caret when disabling
-      Color color = mode.getColor("editor.external.bgcolor");
-      painter.setBackground(color);
-      painter.setLineHighlightEnabled(false);
-      textarea.setCaretVisible(false);
-
-      // new stuff
-//      splitPane.setDividerLocation(toolbar.getHeight() + header.getHeight());
-//      splitPane.setResizeWeight(0D);
-//      textarea.setMinimumSize(new Dimension(textarea.getWidth(), 0));
-    } else {
-      Color color = mode.getColor("editor.bgcolor");
-      painter.setBackground(color);
-      boolean highlight = Preferences.getBoolean("editor.linehighlight");
-      painter.setLineHighlightEnabled(highlight);
-      textarea.setCaretVisible(true);
-
-      // new stuff
-//      splitPane.setDividerLocation(-1); // any negative value resets to preferred size
-//      splitPane.setResizeWeight(1D);
-//      textarea.setMinimumSize(null);
-    }
+//    if (external) {
+//      // disable line highlight and turn off the caret when disabling
+//      Color color = mode.getColor("editor.external.bgcolor");
+//      painter.setBackground(color);
+//      painter.setLineHighlightEnabled(false);
+//      textarea.setCaretVisible(false);
+//    } else {
+    Color color = mode.getColor("editor.bgcolor");
+    painter.setBackground(color);
+    boolean highlight = Preferences.getBoolean("editor.linehighlight");
+    painter.setLineHighlightEnabled(highlight);
+    textarea.setCaretVisible(true);
+//    }
 
     // apply changes to the font size for the editor
     painter.setFont(Preferences.getFont("editor.font"));
@@ -615,7 +604,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
         handleSave(false);
       }
     });
-    saveMenuItem = item;
+//    saveMenuItem = item;
     fileMenu.add(item);
 
     item = Toolkit.newJMenuItemShift("Save As...", 'S');
@@ -624,7 +613,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
         handleSaveAs();
       }
     });
-    saveAsMenuItem = item;
+//    saveAsMenuItem = item;
     fileMenu.add(item);
 
     if (exportItems != null) {
@@ -2236,11 +2225,11 @@ public abstract class Editor extends JFrame implements RunnerListener {
     //current.setProgram(editor.getText());
     sketch.getCurrentCode().setProgram(getText());
 
-    // if an external editor is being used, need to grab the
-    // latest version of the code from the file.
-    if (Preferences.getBoolean("editor.external")) {
-      sketch.reload();
-    }
+//    // if an external editor is being used, need to grab the
+//    // latest version of the code from the file.
+//    if (Preferences.getBoolean("editor.external")) {
+//      sketch.reload();
+//    }
   }
 
 
