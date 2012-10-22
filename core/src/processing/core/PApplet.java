@@ -2487,12 +2487,21 @@ public class PApplet extends Applet
        InputEvent.META_DOWN_MASK |
        InputEvent.ALT_DOWN_MASK);
 
+    // Windows and OS X seem to disagree on how to handle this. Windows only
+    // sets BUTTON1_DOWN_MASK, while OS X seems to set BUTTON1_MASK.
+    // This is an issue in particular with mouse release events:
+    // http://code.google.com/p/processing/issues/detail?id=1294
+    // The fix for which led to a regression (fixed here by checking both):
+    // http://code.google.com/p/processing/issues/detail?id=1332
     int peButton = 0;
-    if ((modifiers & InputEvent.BUTTON1_MASK) != 0) {
+    if ((modifiers & InputEvent.BUTTON1_MASK) != 0 ||
+        (modifiers & InputEvent.BUTTON1_DOWN_MASK) != 0) {
       peButton = LEFT;
-    } else if ((modifiers & InputEvent.BUTTON2_MASK) != 0) {
+    } else if ((modifiers & InputEvent.BUTTON2_MASK) != 0 ||
+               (modifiers & InputEvent.BUTTON2_DOWN_MASK) != 0) {
       peButton = CENTER;
-    } else if ((modifiers & InputEvent.BUTTON3_MASK) != 0) {
+    } else if ((modifiers & InputEvent.BUTTON3_MASK) != 0 ||
+               (modifiers & InputEvent.BUTTON3_DOWN_MASK) != 0) {
       peButton = RIGHT;
     }
     // if running on macos, allow ctrl-click as right mouse
@@ -10383,7 +10392,7 @@ public class PApplet extends Applet
    * Description to come...
    *
    * ( end auto-generated from textureWrap.xml )
-   * 
+   *
    * @webref image:textures
    * @param wrap Either CLAMP (default) or REPEAT
    */
@@ -10552,7 +10561,7 @@ public class PApplet extends Applet
    * This is a new reference entry for Processing 2.0. It will be updated shortly.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref Rendering
    * @param mode the blending mode to use
    */
@@ -10596,7 +10605,7 @@ public class PApplet extends Applet
    * This is a new reference entry for Processing 2.0. It will be updated shortly.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref rendering:shaders
    * @param fragFilename name of fragment shader file
    */
@@ -10619,7 +10628,7 @@ public class PApplet extends Applet
    * This is a new reference entry for Processing 2.0. It will be updated shortly.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref rendering:shaders
    * @param shader name of shader file
    */
@@ -10644,7 +10653,7 @@ public class PApplet extends Applet
    * This is a new reference entry for Processing 2.0. It will be updated shortly.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref rendering:shaders
    */
   public void resetShader() {
@@ -11525,9 +11534,9 @@ public class PApplet extends Applet
 
 
   /**
-   * 
+   *
    * @param level either 2, 4, or 8
-   */ 
+   */
   public void smooth(int level) {
     if (recorder != null) recorder.smooth(level);
     g.smooth(level);
