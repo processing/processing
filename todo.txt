@@ -1,6 +1,13 @@
 0213 pde
 X Console disappears with increased editor font size
 X   http://code.google.com/p/processing/issues/detail?id=1275
+X Change how modes are set up so that XQMode can work properly
+X   Change back to ecj.jar, and remove jdt-core.jar references
+X   Put ecj.jar in the 'mode' folder for Java so that it's isolated
+X   (Kinda gross having it in 'lib' before)
+o better implementation of jar handling using OSGi?
+o   http://eclipse.org/equinox/
+o   http://eclipse.org/equinox/documents/quickstart-framework.php
 
 
 2.0 FINAL / library/tool/mode manager cleanup
@@ -26,9 +33,6 @@ _   list in the PDE would be updated automatically by querying a web service
 _   list on the website would be generated using the same web service
 _   All I would need to do is update web/contrib_generate/sources.conf 
 _     and the rest would happen automatically.
-_ better implementation of jar handling using OSGi
-_   http://eclipse.org/equinox/
-_   http://eclipse.org/equinox/documents/quickstart-framework.php
 
 
 2.0 FINAL / new interface
@@ -58,7 +62,7 @@ _ when creating a sketch within non-java mode, should write the settings file
 _   so that it re-loads in the proper environment
 
 
-2.0 FINAL / casey stuff
+2.0 FINAL / casey requests
 _ try to make KEYWORD4 and KEYWORD5 work
 _ change syntax highlighting so it differentiates keyPressed and keyPressed()
 _ syntax highlight with parens also helps "String line" vs "line()"

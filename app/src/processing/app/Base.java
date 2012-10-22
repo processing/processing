@@ -1821,8 +1821,8 @@ public class Base {
                          "The sketchbook folder no longer exists.\n" +
                          "Processing will switch to the default sketchbook\n" +
                          "location, and create a new sketchbook folder if\n" +
-                         "necessary. Procesing will then stop talking about\n" +
-                         "himself in the third person.", null);
+                         "necessary. Processing will then stop talking\n" +
+                         "about himself in the third person.", null);
         sketchbookFolder = null;
       }
     }
