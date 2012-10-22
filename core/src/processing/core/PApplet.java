@@ -9385,7 +9385,8 @@ public class PApplet extends Applet
 
         for (int sz : sizes) {
           URL url = getClass().getResource("icon/icon-" + sz + ".png");
-          Toolkit.getDefaultToolkit().getImage(url);
+          Image image = Toolkit.getDefaultToolkit().getImage(url);
+          iconImages.add(image);
           //iconImages.add(Toolkit.getLibImage("icons/pde-" + sz + ".png", frame));
         }
       }
