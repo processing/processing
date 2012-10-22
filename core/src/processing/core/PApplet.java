@@ -9375,24 +9375,28 @@ public class PApplet extends Applet
 
   static ArrayList<Image> iconImages;
 
-  public void setIconImage(Frame frame) {
-    //Image image = Toolkit.getDefaultToolkit().createImage(ICON_IMAGE);
-    //frame.setIconImage(image);
-    try {
-      if (iconImages == null) {
-        iconImages = new ArrayList<Image>();
-        final int[] sizes = { 16, 24, 32, 48, 64 };
+  protected void setIconImage(Frame frame) {
+    // On OS X, this only affects what shows up in the dock when minimized.
+    // So this is actually a step backwards. Brilliant.
+    if (platform != MACOSX) {
+      //Image image = Toolkit.getDefaultToolkit().createImage(ICON_IMAGE);
+      //frame.setIconImage(image);
+      try {
+        if (iconImages == null) {
+          iconImages = new ArrayList<Image>();
+          final int[] sizes = { 16, 24, 32, 48, 64 };
 
-        for (int sz : sizes) {
-          URL url = getClass().getResource("icon/icon-" + sz + ".png");
-          Image image = Toolkit.getDefaultToolkit().getImage(url);
-          iconImages.add(image);
-          //iconImages.add(Toolkit.getLibImage("icons/pde-" + sz + ".png", frame));
+          for (int sz : sizes) {
+            URL url = getClass().getResource("icon/icon-" + sz + ".png");
+            Image image = Toolkit.getDefaultToolkit().getImage(url);
+            iconImages.add(image);
+            //iconImages.add(Toolkit.getLibImage("icons/pde-" + sz + ".png", frame));
+          }
         }
+        frame.setIconImages(iconImages);
+      } catch (Exception e) {
+        e.printStackTrace();
       }
-      frame.setIconImages(iconImages);
-    } catch (Exception e) {
-      e.printStackTrace();
     }
   }
 
