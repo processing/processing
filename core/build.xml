@@ -29,6 +29,7 @@
     <copy todir="bin">
       <fileset dir="src">
 	<include name="processing/opengl/*.glsl" />
+	<include name="icon/*.png" />
       </fileset>
     </copy>
   </target>		
