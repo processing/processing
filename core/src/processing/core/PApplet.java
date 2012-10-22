@@ -9354,23 +9354,46 @@ public class PApplet extends Applet
   }
 
 
-  /**
-   * GIF image of the Processing logo.
-   */
-  static public final byte[] ICON_IMAGE = {
-    71, 73, 70, 56, 57, 97, 16, 0, 16, 0, -77, 0, 0, 0, 0, 0, -1, -1, -1, 12,
-    12, 13, -15, -15, -14, 45, 57, 74, 54, 80, 111, 47, 71, 97, 62, 88, 117,
-    1, 14, 27, 7, 41, 73, 15, 52, 85, 2, 31, 55, 4, 54, 94, 18, 69, 109, 37,
-    87, 126, -1, -1, -1, 33, -7, 4, 1, 0, 0, 15, 0, 44, 0, 0, 0, 0, 16, 0, 16,
-    0, 0, 4, 122, -16, -107, 114, -86, -67, 83, 30, -42, 26, -17, -100, -45,
-    56, -57, -108, 48, 40, 122, -90, 104, 67, -91, -51, 32, -53, 77, -78, -100,
-    47, -86, 12, 76, -110, -20, -74, -101, 97, -93, 27, 40, 20, -65, 65, 48,
-    -111, 99, -20, -112, -117, -123, -47, -105, 24, 114, -112, 74, 69, 84, 25,
-    93, 88, -75, 9, 46, 2, 49, 88, -116, -67, 7, -19, -83, 60, 38, 3, -34, 2,
-    66, -95, 27, -98, 13, 4, -17, 55, 33, 109, 11, 11, -2, -128, 121, 123, 62,
-    91, 120, -128, 127, 122, 115, 102, 2, 119, 0, -116, -113, -119, 6, 102,
-    121, -108, -126, 5, 18, 6, 4, -102, -101, -100, 114, 15, 17, 0, 59
-  };
+//  /**
+//   * GIF image of the Processing logo.
+//   */
+//  static public final byte[] ICON_IMAGE = {
+//    71, 73, 70, 56, 57, 97, 16, 0, 16, 0, -77, 0, 0, 0, 0, 0, -1, -1, -1, 12,
+//    12, 13, -15, -15, -14, 45, 57, 74, 54, 80, 111, 47, 71, 97, 62, 88, 117,
+//    1, 14, 27, 7, 41, 73, 15, 52, 85, 2, 31, 55, 4, 54, 94, 18, 69, 109, 37,
+//    87, 126, -1, -1, -1, 33, -7, 4, 1, 0, 0, 15, 0, 44, 0, 0, 0, 0, 16, 0, 16,
+//    0, 0, 4, 122, -16, -107, 114, -86, -67, 83, 30, -42, 26, -17, -100, -45,
+//    56, -57, -108, 48, 40, 122, -90, 104, 67, -91, -51, 32, -53, 77, -78, -100,
+//    47, -86, 12, 76, -110, -20, -74, -101, 97, -93, 27, 40, 20, -65, 65, 48,
+//    -111, 99, -20, -112, -117, -123, -47, -105, 24, 114, -112, 74, 69, 84, 25,
+//    93, 88, -75, 9, 46, 2, 49, 88, -116, -67, 7, -19, -83, 60, 38, 3, -34, 2,
+//    66, -95, 27, -98, 13, 4, -17, 55, 33, 109, 11, 11, -2, -128, 121, 123, 62,
+//    91, 120, -128, 127, 122, 115, 102, 2, 119, 0, -116, -113, -119, 6, 102,
+//    121, -108, -126, 5, 18, 6, 4, -102, -101, -100, 114, 15, 17, 0, 59
+//  };
+
+
+  static ArrayList<Image> iconImages;
+
+  public void setIconImage(Frame frame) {
+    //Image image = Toolkit.getDefaultToolkit().createImage(ICON_IMAGE);
+    //frame.setIconImage(image);
+    try {
+      if (iconImages == null) {
+        iconImages = new ArrayList<Image>();
+        final int[] sizes = { 16, 24, 32, 48, 64 };
+
+        for (int sz : sizes) {
+          URL url = getClass().getResource("icon/icon-" + sz + ".png");
+          Toolkit.getDefaultToolkit().getImage(url);
+          //iconImages.add(Toolkit.getLibImage("icons/pde-" + sz + ".png", frame));
+        }
+      }
+      frame.setIconImages(iconImages);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
 
 
   // Not gonna do this dynamically, only on startup. Too much headache.
@@ -9621,11 +9644,6 @@ public class PApplet extends Applet
 //    frame.setResizable(false);
     // moved later (issue #467)
 
-    // Set the trimmings around the image
-    Image image = Toolkit.getDefaultToolkit().createImage(ICON_IMAGE);
-    frame.setIconImage(image);
-    frame.setTitle(name);
-
     final PApplet applet;
     if (constructedApplet != null) {
       applet = constructedApplet;
@@ -9637,6 +9655,10 @@ public class PApplet extends Applet
         throw new RuntimeException(e);
       }
     }
+
+    // Set the trimmings around the image
+    applet.setIconImage(frame);
+    frame.setTitle(name);
 
 //    frame.setIgnoreRepaint(true);  // does nothing
 //    frame.addComponentListener(new ComponentAdapter() {
