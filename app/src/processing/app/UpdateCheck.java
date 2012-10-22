@@ -96,6 +96,7 @@ public class UpdateCheck {
                                     System.getProperty("os.arch"));
 
     int latest = readInt(downloadURL + "?" + info);
+    System.out.println("latest is " + latest);
 
     String lastString = Preferences.get("update.last");
     long now = System.currentTimeMillis();
