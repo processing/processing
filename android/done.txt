@@ -1,3 +1,11 @@
+0212 android (2.0b4)
+X key value is not set in android mode
+X   http://code.google.com/p/processing/issues/detail?id=1254
+X hue() in HSB mode returns out of range values
+X   hue method on Android may just be different
+X   http://code.google.com/p/processing/issues/detail?id=1257
+
+
 0211 android (2.0b3)
 X implement registerMethod(keyEvent) (motion and mouse still unavailable)
 
