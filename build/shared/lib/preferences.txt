@@ -30,7 +30,7 @@
 
 # DEFAULT PATHS FOR SKETCHBOOK AND SETTINGS
 
-# relative paths will be relative to processing.exe or procesing.app.
+# relative paths will be relative to processing.exe or processing.app.
 # absolute paths may also be used.
 
 # note that this path should use forward slashes (like unix)
@@ -108,9 +108,6 @@ editor.font.macosx = Monaco,plain,10
 editor.antialias=false
 # linux fonts are hideous without anti-aliasing [0191]
 editor.antialias.linux=true
-
-# currently using an external editor
-editor.external=false
 
 # enable ctrl-ins, shift-ins, shift-delete for cut/copy/paste
 # on windows and linux, but disable on the mac
