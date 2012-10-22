@@ -21,13 +21,17 @@
 
 package processing.app;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Image;
+import java.awt.MediaTracker;
 import java.awt.datatransfer.Clipboard;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.util.ArrayList;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
@@ -36,7 +40,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
 
-import processing.core.PApplet;
 
 /**
  * Utility functions for base that require a java.awt.Toolkit object. These
@@ -120,11 +123,41 @@ public class Toolkit {
 
 
   /**
+   * Return an Image object from inside the Processing lib folder.
+   */
+  static public Image getLibImage(String name, Component who) {
+    Image image = null;
+//    Toolkit tk = Toolkit.getDefaultToolkit();
+
+    File imageLocation = new File(Base.getContentFile("lib"), name);
+    image = java.awt.Toolkit.getDefaultToolkit().getImage(imageLocation.getAbsolutePath());
+    MediaTracker tracker = new MediaTracker(who);
+    tracker.addImage(image, 0);
+    try {
+      tracker.waitForAll();
+    } catch (InterruptedException e) { }
+    return image;
+  }
+  
+  
+  static ArrayList<Image> iconImages;
+  
+  /**
    * Give this Frame a Processing icon.
    */
   static public void setIcon(Frame frame) {
-    Image image = awtToolkit.createImage(PApplet.ICON_IMAGE);
-    frame.setIconImage(image);
+//    // too low-res, prepping for nicer icons in 2.0 timeframe
+//    Image image = awtToolkit.createImage(PApplet.ICON_IMAGE);
+//    frame.setIconImage(image);
+    
+    if (iconImages == null) {
+      iconImages = new ArrayList<Image>();
+      final int[] sizes = { 16, 24, 32, 48, 64, 128, 256 };
+      for (int sz : sizes) {
+        iconImages.add(Toolkit.getLibImage("icons/pde-" + sz + ".png", frame));
+      }
+    }
+    frame.setIconImages(iconImages);
   }
 
 
