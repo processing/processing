@@ -143,21 +143,25 @@ public class Toolkit {
   static ArrayList<Image> iconImages;
   
   /**
-   * Give this Frame a Processing icon.
+   * Give this Frame the Processing icon set. Ignored on OS X, because they
+   * thought different and made this function set the minified image of the
+   * window, not the window icon for the dock or cmd-tab.
    */
   static public void setIcon(Frame frame) {
+    if (!Base.isMacOS()) {
 //    // too low-res, prepping for nicer icons in 2.0 timeframe
 //    Image image = awtToolkit.createImage(PApplet.ICON_IMAGE);
 //    frame.setIconImage(image);
-    
-    if (iconImages == null) {
-      iconImages = new ArrayList<Image>();
-      final int[] sizes = { 16, 24, 32, 48, 64, 128, 256 };
-      for (int sz : sizes) {
-        iconImages.add(Toolkit.getLibImage("icons/pde-" + sz + ".png", frame));
+
+      if (iconImages == null) {
+        iconImages = new ArrayList<Image>();
+        final int[] sizes = { 16, 24, 32, 48, 64, 128, 256 };
+        for (int sz : sizes) {
+          iconImages.add(Toolkit.getLibImage("icons/pde-" + sz + ".png", frame));
+        }
       }
+      frame.setIconImages(iconImages);
     }
-    frame.setIconImages(iconImages);
   }
 
 
