@@ -1,3 +1,9 @@
+0212 core (2.0b4)
+X mouseButton not getting set on release event
+X   http://code.google.com/p/processing/issues/detail?id=1294
+X appears that JOGL has been updated?
+
+
 0211 core (2.0b3)
 X remove bad cast in PGL
 X new keyEvent methods not firing
