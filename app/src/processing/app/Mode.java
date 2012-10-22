@@ -51,6 +51,12 @@ public abstract class Mode {
 
   /** Library folder for core. (Used for OpenGL in particular.) */
   protected Library coreLibrary;
+  
+  /** 
+   * ClassLoader used to retrieve classes for this mode. Useful if you want
+   * to grab any additional classes that subclass what's in the mode folder. 
+   */
+  protected ClassLoader classLoader;
 
 
 //  public Mode(Base base, File folder) {
@@ -70,6 +76,16 @@ public abstract class Mode {
 //    rebuildToolbarMenu();
     rebuildLibraryList();
 //    rebuildExamplesMenu();
+  }
+  
+  
+  public void setClassLoader(ClassLoader loader) {
+    this.classLoader = loader;
+  }
+  
+  
+  public ClassLoader getClassLoader() {
+    return classLoader;
   }
 
 
