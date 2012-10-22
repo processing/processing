@@ -196,6 +196,8 @@ public class ModeContribution extends InstalledContribution {
       if (!existing.containsKey(folder)) {
           try {
             contribModes.add(new ModeContribution(base, folder, null));
+          } catch (IgnorableException ig) {
+            Base.log(ig.getMessage());
           } catch (Exception e) {
             e.printStackTrace();
           }
