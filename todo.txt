@@ -1,4 +1,6 @@
 0213 pde
+X Console disappears with increased editor font size
+X   http://code.google.com/p/processing/issues/detail?id=1275
 
 
 2.0 FINAL / library/tool/mode manager cleanup
