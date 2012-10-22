@@ -1,4 +1,6 @@
 0213 core
+X mouseButton not being set properly on Windows (and probably Linux) in 2.0b4
+X   http://code.google.com/p/processing/issues/detail?id=1332
 
 
 _ remove java.awt.* imports from sketches
