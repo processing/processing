@@ -84,7 +84,6 @@ _   list in the PDE would be updated automatically by querying a web service
 _   list on the website would be generated using the same web service
 _   All I would need to do is update web/contrib_generate/sources.conf 
 _     and the rest would happen automatically.
-
 _ better implementation of jar handling using OSGi
 _   http://eclipse.org/equinox/
 _   http://eclipse.org/equinox/documents/quickstart-framework.php
