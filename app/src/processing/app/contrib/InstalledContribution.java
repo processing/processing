@@ -34,16 +34,16 @@ import processing.app.*;
 
 public abstract class InstalledContribution implements Contribution {
 
-  protected String name;              // "pdf" or "PDF Export"
-  protected String id;              // 1
-  protected String category;          // "Sound"
-  protected String authorList;  // Ben Fry
-  protected String url;               // http://processing.org
-  protected String sentence;          // Write graphics to PDF files.
-  protected String paragraph;         // <paragraph length description for site>
-  protected int version;              // 102
-  protected int latestVersion;        // 103
-  protected String prettyVersion;     // "1.0.2"
+  protected String name;          // "pdf" or "PDF Export"
+  protected String id;            // 1
+  protected String category;      // "Sound"
+  protected String authorList;    // Ben Fry
+  protected String url;           // http://processing.org
+  protected String sentence;      // Write graphics to PDF files.
+  protected String paragraph;     // <paragraph length description for site>
+  protected int version;          // 102
+  protected int latestVersion;    // 103
+  protected String prettyVersion; // "1.0.2"
 
   protected File folder;
 
