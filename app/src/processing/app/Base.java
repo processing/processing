@@ -1510,7 +1510,7 @@ public class Base {
    * Show the About box.
    */
   public void handleAbout() {
-    final Image image = Base.getLibImage("about.jpg", activeEditor);
+    final Image image = Toolkit.getLibImage("about.jpg", activeEditor);
     final Window window = new Window(activeEditor) {
         public void paint(Graphics g) {
           g.drawImage(image, 0, 0, null);
@@ -2355,32 +2355,32 @@ public class Base {
   }
 
 
-  /**
-   * Get an image associated with the current color theme.
-   * @deprecated
-   */
-  static public Image getThemeImage(String name, Component who) {
-    return getLibImage("theme/" + name, who);
-  }
-
-
-  /**
-   * Return an Image object from inside the Processing lib folder.
-   * @deprecated
-   */
-  static public Image getLibImage(String name, Component who) {
-    Image image = null;
-//    Toolkit tk = Toolkit.getDefaultToolkit();
-
-    File imageLocation = new File(getContentFile("lib"), name);
-    image = java.awt.Toolkit.getDefaultToolkit().getImage(imageLocation.getAbsolutePath());
-    MediaTracker tracker = new MediaTracker(who);
-    tracker.addImage(image, 0);
-    try {
-      tracker.waitForAll();
-    } catch (InterruptedException e) { }
-    return image;
-  }
+//  /**
+//   * Get an image associated with the current color theme.
+//   * @deprecated
+//   */
+//  static public Image getThemeImage(String name, Component who) {
+//    return getLibImage("theme/" + name, who);
+//  }
+//
+//
+//  /**
+//   * Return an Image object from inside the Processing lib folder.
+//   * @deprecated
+//   */
+//  static public Image getLibImage(String name, Component who) {
+//    Image image = null;
+////    Toolkit tk = Toolkit.getDefaultToolkit();
+//
+//    File imageLocation = new File(getContentFile("lib"), name);
+//    image = java.awt.Toolkit.getDefaultToolkit().getImage(imageLocation.getAbsolutePath());
+//    MediaTracker tracker = new MediaTracker(who);
+//    tracker.addImage(image, 0);
+//    try {
+//      tracker.waitForAll();
+//    } catch (InterruptedException e) { }
+//    return image;
+//  }
 
 
   /**
