@@ -27,9 +27,10 @@ import processing.app.*;
 import processing.core.*;
 
 import java.io.*;
+import java.lang.reflect.Method;
 
-import org.eclipse.jdt.core.compiler.batch.BatchCompiler;
-import org.eclipse.jdt.core.compiler.CompilationProgress;
+//import org.eclipse.jdt.core.compiler.batch.BatchCompiler;
+//import org.eclipse.jdt.core.compiler.CompilationProgress;
 
 
 public class Compiler {
@@ -107,10 +108,31 @@ public class Compiler {
       PrintWriter writer = new PrintWriter(internalWriter);
 
       //result = com.sun.tools.javac.Main.compile(command, writer);
-
-      CompilationProgress progress = null;
+      
       PrintWriter outWriter = new PrintWriter(System.out);
-      success = BatchCompiler.compile(command, outWriter, writer, progress);
+      
+      // Version that's not dynamically loaded
+      //CompilationProgress progress = null;
+      //success = BatchCompiler.compile(command, outWriter, writer, progress);
+      
+      // Version that *is* dynamically loaded. First gets the mode class loader
+      // so that it can grab the compiler JAR files from it.
+      ClassLoader loader = build.mode.getClassLoader();
+      try {
+        Class batchClass = 
+          Class.forName("org.eclipse.jdt.core.compiler.batch.BatchCompiler", false, loader);
+        Class progressClass = 
+          Class.forName("org.eclipse.jdt.core.compiler.CompilationProgress", false, loader);
+        Class[] compileArgs = 
+          new Class[] { String[].class, PrintWriter.class, PrintWriter.class, progressClass };
+        Method compileMethod = batchClass.getMethod("compile", compileArgs);
+        success = (Boolean) 
+          compileMethod.invoke(null, new Object[] { command, outWriter, writer, null });
+      } catch (Exception e) {
+        e.printStackTrace();
+        throw new SketchException("Unknown error inside the compiler.");
+      }
+      
       // Close out the stream for good measure
       writer.flush();
       writer.close();
