@@ -1,3 +1,77 @@
+PROCESSING 2.0b4 (REV 0212) - 21 October 2012
+
+Command line support is back! Find and Replace works over multiple tabs!
+The Mac OS X version should work again in spite of Apple's best efforts!
+
+[ additions & removals ] 
+
++ Command line support is now available for Java mode. On Windows and Linux, 
+  use the processing-java program. On Mac OS X, there's an option in the 
+  Tools menu to install the command line tool. 
+  http://code.google.com/p/processing/issues/detail?id=142
+
+  Build and export options should even work in headless mode when enabled
+  (no guarantees, but simple test results were promising).
+  http://code.google.com/p/processing/issues/detail?id=220
+
+  Android and JavaScript mode are not supported, contributions are welcome:
+  http://code.google.com/p/processing/issues/detail?id=1323
+
++ Added a Tool for Mac OS X to help set up serial port. Using serial on 
+  OS X requires some incantations on the command line, and this prompts for
+  an administrator password and takes care of them for you. The commands
+  involve creating a folder and setting a few permissions. If everything 
+  is already set properly, the Tool will not be present in the Tools menu.
+
++ With the arrival of command line support, the misunderstood and sometimes
+  maligned "Use External Editor" option has been removed. 
+  http://code.google.com/p/processing/issues/detail?id=515
+
++ Fix several problems introduced by Apple's recent Java "update".
+  Apple's most recent Java update may render older versions of Processing
+  completely unusable, it's not quite clear yet. 
+
+[ bug fixes ] 
+
++ Fix the exceptionally slow startup (a 5 second delay) in recent releases.
+
++ Find & Replace over multiple tabs (thanks to Manindra Moharana for the patch!)
+  http://code.google.com/p/processing/issues/detail?id=25
+
++ calling jump() resets movie speed
+  http://code.google.com/p/processing/issues/detail?id=1303
+
++ Fixed sketch renaming regression in underscore handling
+  http://code.google.com/p/processing/issues/detail?id=1310
+
++ Fix library manager temporary folder problem on Linux)
+  http://code.google.com/p/processing/issues/detail?id=1295
+
++ Default sketchbook folder was going to wrong location on Linux
+  http://code.google.com/p/processing/issues/detail?id=1286
+
++ mouseButton wasn't getting set on mouseReleased()
+  http://code.google.com/p/processing/issues/detail?id=1294
+
+[ technical updates ] 
+
++ JOGL has been updated, which may help iron out some GL quirks.
+
++ Change all build.xml files to use Java 6 as both source and target
+  (avoids Java 7 warnings during build).
+
++ Updated ecj.jar to use jdt-core.jar... This is a larger file but were 
+  hoping that this would get our GSoC project "XQMode" working without
+  the need for patches. Sadly that's not the case, but stay tuned.
+
+[ known issues ] 
+
++ Fewer exclamation points will be used to introduce future releases.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING 2.0b3 (REV 0211) - 10 September 2012
 
 Shaking out the beta bugs.

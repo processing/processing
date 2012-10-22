@@ -1,9 +1,8 @@
 0212 core
 X mouseButton not getting set on release event
 X   http://code.google.com/p/processing/issues/detail?id=1294
+X appears that JOGL has been updated?
 
-
-_ appears that JOGL has been updated?
 
 _ remove java.awt.* imports from sketches
 
