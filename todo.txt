@@ -8,6 +8,8 @@ X   (Kinda gross having it in 'lib' before)
 o better implementation of jar handling using OSGi?
 o   http://eclipse.org/equinox/
 o   http://eclipse.org/equinox/documents/quickstart-framework.php
+X Libraries not installed through IDE don't appear correctly
+X   http://code.google.com/p/processing/issues/detail?id=1331
 
 
 2.0 FINAL / library/tool/mode manager cleanup
