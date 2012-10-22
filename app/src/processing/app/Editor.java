@@ -234,9 +234,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
     // end an undo-chunk any time the caret moves unless it's when text is edited
     textarea.addCaretListener(new CaretListener() {
-
       String lastText = textarea.getText();
-
       public void caretUpdate(CaretEvent e) {
         String newText = textarea.getText();
         if (lastText.equals(newText) && isDirectEdit()) {
@@ -252,7 +250,6 @@ public abstract class Editor extends JFrame implements RunnerListener {
     pack();
 
     // Set the window bounds and the divider location before setting it visible
-//    setPlacement(location);
     state.apply(this);
 
     // Set the minimum size for the editor window

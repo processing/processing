@@ -309,7 +309,7 @@ public class JEditTextArea extends JComponent
       // http://code.google.com/p/processing/issues/detail?id=280
       // http://code.google.com/p/processing/issues/detail?id=316
       //setValues(int newValue, int newExtent, int newMin, int newMax)
-      if ( (-horizontalOffset) > 0 ){
+      if (horizontalOffset < 0) {
         horizontal.setValues(-horizontalOffset, painterWidth, -leftHandGutter, width);
       } else {
         horizontal.setValues(-leftHandGutter, painterWidth, -leftHandGutter, width);

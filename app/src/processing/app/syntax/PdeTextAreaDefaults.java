@@ -139,7 +139,9 @@ public class PdeTextAreaDefaults extends TextAreaDefaults {
     caretVisible = true;
     caretBlinks = true;
     cols = 80;
-    rows = 15;
+    // Set the number of rows lower to avoid layout badness with large fonts
+    // http://code.google.com/p/processing/issues/detail?id=1275
+    rows = 5;
 
     font = Preferences.getFont("editor.font");
     antialias = Preferences.getBoolean("editor.antialias");
