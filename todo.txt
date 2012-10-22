@@ -10,6 +10,9 @@ o   http://eclipse.org/equinox/
 o   http://eclipse.org/equinox/documents/quickstart-framework.php
 X Libraries not installed through IDE don't appear correctly
 X   http://code.google.com/p/processing/issues/detail?id=1331
+X implement multiple sizes of icons for PDE and core
+X   http://code.google.com/p/processing/issues/detail?id=632
+X   (stubbing things in for artwork update later)
 
 
 2.0 FINAL / library/tool/mode manager cleanup
