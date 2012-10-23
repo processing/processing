@@ -13,14 +13,13 @@ o caretBlinks always true.. just remove the pref?
 o blockCaret always false.. remove it?
 X report from someone about blinking caret
 X   http://code.google.com/p/processing/issues/detail?id=1136
+X added caret options
+X   editor.caret.blink = true
+X   editor.caret.block = false
 X see if commander is still headless
+X check to see if sketchbook is getting picked up for cmd line
+X don't use --request on OS X 10.6, it's not available
 
-_ don't use --request on OS X, not available
-
-_ check to see if sketchbook is getting picked up for cmd line
-
-editor.caret.blink = true
-editor.caret.block = false
 
 _ processing-java ClassNotFoundException: BatchCompiler (Linux)
 _   http://code.google.com/p/processing/issues/detail?id=1334

@@ -337,16 +337,26 @@ public class Runner implements MessageConsumer {
       commandArgs =
         "java -Xrunjdwp:transport=dt_shmem,address=" + addr + ",suspend=y ";
     } else if (Base.isMacOS()) {
-      // This will run a 32-bit VM (likely 1.6) or a 64-bit VM (probably 1.7)
-      // based on Apple's recent changes. The --request flag will prompt to
-      // install a JVM if none is available. Or if only Java 7 is installed,
-      // and 32-bit is requested, this will download Apple's 32-bit Java 6.
-      // ...decided to just set this to 1.6 only, it's gonna be a shitshow
-      // if folks are getting Apple's 1.6 with 32-bit and Oracle's 1.7 when
-      // run in 64-bit mode.
+      // Decided to just set this to 1.6 only, because otherwise it's gonna  
+      // be a shitshow if folks are getting Apple's 1.6 with 32-bit and 
+      // Oracle's 1.7 when run in 64-bit mode. ("Why does my sketch suck in
+      // 64-bit? Why is retina broken?)
+      // The --request flag will prompt to install Apple's 1.6 JVM if none is
+      // available. We're specifying 1.6 so that we can get support for both 
+      // 32- and 64-bit, because Oracle won't be releasing Java 1.7 in 32-bit.
+      // Helpfully, the --request flag is not present on Mac OS X 10.6 
+      // (luckily it is also not needed, because 1.6 is installed by default)
+      // but it requires an additional workaround to not use that flag, 
+      // otherwise will see an error about an unsupported option. The flag is
+      // available with 10.7 and 10.8, the only other supported versions of 
+      // OS X at this point, because we require 10.6.8 and higher. That also
+      // means we don't need to check for any other OS versions, unless 
+      // is a douchebag and modifies Info.plist to get around the restriction.    
       commandArgs =
-        "/usr/libexec/java_home --request --version 1.6 " +
-        "-d" + Base.getNativeBits() + " -exec java " +
+        "/usr/libexec/java_home " +
+        (System.getProperty("os.version").startsWith("10.6") ? "" : "--request ") +
+        "--version 1.6 " +
+        "-d" + Base.getNativeBits() + " --exec java " +
         "-Xrunjdwp:transport=dt_socket,address=" + addr + ",suspend=y ";
     }
 
