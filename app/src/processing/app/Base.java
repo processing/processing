@@ -166,7 +166,7 @@ public class Base {
     initRequirements();
 
     // run static initialization that grabs all the prefs
-    Preferences.init(null);
+    Preferences.init();
 
     // Get the sketchbook path, and make sure it's set properly
     locateSketchbookFolder();
@@ -2339,6 +2339,22 @@ public class Base {
   */
 
   static public File getContentFile(String name) {
+    // Get the path to the .jar file that contains Base.class
+    String path = Base.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+    // Path may have URL encoding, so remove it
+    String decodedPath = PApplet.urlDecode(path);
+    // The .jar file will be in the lib folder
+    File libFolder = new File(decodedPath).getParentFile();
+    File processingRoot = null;
+    if (libFolder.getName().equals("lib")) {
+      // The main Processing installation directory
+      processingRoot = libFolder.getParentFile();
+    } else {
+      Base.log("Could not find lib in " + 
+               libFolder.getAbsolutePath() + ", switching to user.dir");
+      processingRoot = new File(System.getProperty("user.dir"));
+    }
+/*
     String path = System.getProperty("user.dir");
 
     // Get a path to somewhere inside the .app folder
@@ -2351,7 +2367,8 @@ public class Base {
       }
     }
     File working = new File(path);
-    return new File(working, name);
+    */
+    return new File(processingRoot, name);
   }
 
 
