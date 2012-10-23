@@ -5,6 +5,8 @@ X   http://code.google.com/p/processing/issues/detail?id=526
 X remove preferences that refer to applets
 X remove applet folder from the Java stuff
 X remove old 'cmd' folder from the Java build directory
+X Import statements are executed within multiline comments
+_   http://code.google.com/p/processing/issues/detail?id=911
 
 _ check to see if sketchbook is getting picked up for cmd line
 
@@ -35,7 +37,8 @@ _     and the rest would happen automatically.
 
 
 2.0 FINAL / new interface
-_ editor.bgcolor probably moves out of the theme.txt file for the mode
+_ most of theme probably moves back into lib
+_   editor.bgcolor probably moves out of the theme.txt file for the mode
 _   or should it be a user preference thing
 _   for that matter, need to decide on how much modes can customize themselves
 _ setModified() getting called on Windows (probably Linux) for key cmds
