@@ -213,7 +213,7 @@ public class Commander implements RunnerListener {
 //      Preferences.init(preferencesPath);
 //    }
 
-    Preferences.init(null);
+    Preferences.init();
     Base.locateSketchbookFolder();
 
     if (sketchPath == null) {
