@@ -278,9 +278,9 @@ public class Base {
                             "processing.mode.javascript.JavaScriptMode").getMode();
 
     coreModes = new Mode[] { javaMode, androidMode, javaScriptMode };
-    for (Mode mode : coreModes) {
-      mode.setupGUI();
-    }
+//    for (Mode mode : coreModes) {  // already called by load() above
+//      mode.setupGUI();
+//    }
   }
 
 
@@ -2338,21 +2338,28 @@ public class Base {
   }
   */
 
+  /** 
+   * Adjacent the executable on Windows and Linux, 
+   * or inside Contents/Resources/Java on Mac OS X.
+   */
+  static protected File processingRoot; 
+  
   static public File getContentFile(String name) {
-    // Get the path to the .jar file that contains Base.class
-    String path = Base.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-    // Path may have URL encoding, so remove it
-    String decodedPath = PApplet.urlDecode(path);
-    // The .jar file will be in the lib folder
-    File libFolder = new File(decodedPath).getParentFile();
-    File processingRoot = null;
-    if (libFolder.getName().equals("lib")) {
-      // The main Processing installation directory
-      processingRoot = libFolder.getParentFile();
-    } else {
-      Base.log("Could not find lib in " + 
-               libFolder.getAbsolutePath() + ", switching to user.dir");
-      processingRoot = new File(System.getProperty("user.dir"));
+    if (processingRoot == null) {
+      // Get the path to the .jar file that contains Base.class
+      String path = Base.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+      // Path may have URL encoding, so remove it
+      String decodedPath = PApplet.urlDecode(path);
+      // The .jar file will be in the lib folder
+      File libFolder = new File(decodedPath).getParentFile();
+      if (libFolder.getName().equals("lib")) {
+        // The main Processing installation directory
+        processingRoot = libFolder.getParentFile();
+      } else {
+        Base.log("Could not find lib in " + 
+          libFolder.getAbsolutePath() + ", switching to user.dir");
+        processingRoot = new File(System.getProperty("user.dir"));
+      }
     }
 /*
     String path = System.getProperty("user.dir");

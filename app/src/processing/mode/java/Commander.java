@@ -26,12 +26,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 
-import processing.app.Base;
-import processing.app.Library;
-import processing.app.Preferences;
-import processing.app.SketchException;
-import processing.app.RunnerListener;
-import processing.app.Sketch;
+import processing.app.*;
+import processing.app.contrib.ModeContribution;
 import processing.core.PApplet;
 import processing.mode.java.runner.*;
 
@@ -71,26 +67,28 @@ public class Commander implements RunnerListener {
     if (args == null || args.length == 0) {
 //      System.out.println(System.getProperty("user.dir"));
       args = new String[] {
-//        "--export",
+        "--export",
 //        "--build",
-        "--run",
+//        "--run",
 //        "--present",
-//        "--force",
+        "--force",
 //        "--platform=windows",
         "--platform=macosx",
         "--bits=64",
         "--sketch=/Users/fry/coconut/processing/java/examples/Basics/Lights/Directional",
+//        "--sketch=/Users/fry/coconut/sketchbook/sketchbook_libraries_test",
         "--output=/Users/fry/Desktop/test-build"
       };
     }
     */
-
+    
     // Do this early so that error messages go to the console
     Base.setCommandLine();
     // init the platform so that prefs and other native code is ready to go
     Base.initPlatform();
     // make sure a full JDK is installed
     Base.initRequirements();
+    
     // launch command line handler
     new Commander(args);
   }
@@ -228,8 +226,11 @@ public class Commander implements RunnerListener {
     } else {
       boolean success = false;
 
-      JavaMode javaMode =
-        new JavaMode(null, Base.getContentFile("modes/java"));
+//      JavaMode javaMode =
+//        new JavaMode(null, Base.getContentFile("modes/java"));
+      JavaMode javaMode = (JavaMode)
+        ModeContribution.load(null, Base.getContentFile("modes/java"),
+                              "processing.mode.java.JavaMode").getMode();
       try {
         sketch = new Sketch(pdePath, javaMode);
         if (task == BUILD || task == RUN || task == PRESENT) {
