@@ -90,8 +90,9 @@ public abstract class Mode {
 
 
   /**
-   * Setup additional elements that are only required when running
-   * with a GUI, rather than from the command-line.
+   * Setup additional elements that are only required when running with a GUI,
+   * rather than from the command-line. Note that this will not be called when
+   * the Mode is used from the command line (because Base will be null).  
    */
   public void setupGUI() {
     try {
