@@ -9,13 +9,11 @@ X Import statements are executed within multiline comments
 X   http://code.google.com/p/processing/issues/detail?id=911
 X write preferences file sorted
 X Major change to how lib folder is found, hopefully handles cmd line better
-
 o caretBlinks always true.. just remove the pref?
 o blockCaret always false.. remove it?
 X report from someone about blinking caret
 X   http://code.google.com/p/processing/issues/detail?id=1136
-
-_ see if commander is still headless
+X see if commander is still headless
 
 _ don't use --request on OS X, not available
 

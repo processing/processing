@@ -89,6 +89,7 @@ public abstract class InstalledContribution implements Contribution {
   public String initLoader(String className) throws Exception {
     File modeDirectory = new File(folder, getTypeName());
     if (modeDirectory.exists()) {
+      Base.log("checking mode folder regarding " + className);
       // If no class name specified, search the main <modename>.jar for the
       // full name package and mode name.
       if (className == null) {

@@ -97,7 +97,9 @@ public class ModeContribution extends InstalledContribution {
       Constructor con = modeClass.getConstructor(Base.class, File.class);
       mode = (Mode) con.newInstance(base, folder);
       mode.setClassLoader(loader);
-      mode.setupGUI();
+      if (base != null) {
+        mode.setupGUI();
+      }
     }
 
 //    // Class name already found above, go ahead and instantiate
