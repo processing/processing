@@ -363,7 +363,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
   static protected int fbStackDepth;
   static protected FrameBuffer[] fbStack = new FrameBuffer[FB_STACK_DEPTH];
-  //static protected FrameBuffer screenFramebuffer;
   static protected FrameBuffer drawFramebuffer;
   static protected FrameBuffer readFramebuffer;
   static protected FrameBuffer currentFramebuffer;
@@ -1549,15 +1548,17 @@ public class PGraphicsOpenGL extends PGraphics {
       getGLParameters();
     }
 
-    if (drawFramebuffer == null || readFramebuffer == null) {
-      //screenFramebuffer = new FrameBuffer(parent, width, height, true);
-      //setFramebuffer(screenFramebuffer);
-      drawFramebuffer = FrameBuffer.wrap(parent, pgl.primaryDrawFramebuffer(), width, height);
-      readFramebuffer = FrameBuffer.wrap(parent, pgl.primaryReadFramebuffer(), width, height);
-      setFramebuffer(drawFramebuffer);
-    }
-
     if (primarySurface) {
+      if (drawFramebuffer == null) {
+        drawFramebuffer = new FrameBuffer(parent, width, height, true);
+        setFramebuffer(drawFramebuffer);
+      }
+      drawFramebuffer.setFBO(pgl.primaryDrawFramebuffer());
+      if (readFramebuffer == null) {
+        readFramebuffer = new FrameBuffer(parent, width, height, true);
+      }
+      readFramebuffer.setFBO(pgl.primaryReadFramebuffer());
+
       pgl.updatePrimary();
       pgl.drawBuffer(pgl.primaryDrawBuffer());
     } else {
