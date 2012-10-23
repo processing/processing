@@ -6,9 +6,26 @@ X remove preferences that refer to applets
 X remove applet folder from the Java stuff
 X remove old 'cmd' folder from the Java build directory
 X Import statements are executed within multiline comments
-_   http://code.google.com/p/processing/issues/detail?id=911
+X   http://code.google.com/p/processing/issues/detail?id=911
+X write preferences file sorted
+X Major change to how lib folder is found, hopefully handles cmd line better
+
+o caretBlinks always true.. just remove the pref?
+o blockCaret always false.. remove it?
+X report from someone about blinking caret
+X   http://code.google.com/p/processing/issues/detail?id=1136
+
+_ see if commander is still headless
+
+_ don't use --request on OS X, not available
 
 _ check to see if sketchbook is getting picked up for cmd line
+
+editor.caret.blink = true
+editor.caret.block = false
+
+_ processing-java ClassNotFoundException: BatchCompiler (Linux)
+_   http://code.google.com/p/processing/issues/detail?id=1334
 
 
 2.0 FINAL / library/tool/mode manager cleanup
@@ -19,10 +36,6 @@ _   http://code.google.com/p/processing/issues/detail?id=1093
 _ TextAreaDefaults
 _   is editable in use?
 _   what's electricScroll?
-_   caretBlinks always true.. just remove the pref?
-_   blockCaret always false.. remove it?
-_   report from someone about blinking caret
-_     http://code.google.com/p/processing/issues/detail?id=1136
 _ excessive CPU usage of PDE after using library manager
 _   http://code.google.com/p/processing/issues/detail?id=1036
 _ remove PdeKeyListener, roll it into the Java InputHandler for JEditTextArea
