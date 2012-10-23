@@ -109,6 +109,11 @@ editor.antialias=false
 # linux fonts are hideous without anti-aliasing [0191]
 editor.antialias.linux=true
 
+# blink the caret by default
+editor.caret.blink = true
+# change to true to use a block (instead of a bar)
+editor.caret.block = false
+
 # enable ctrl-ins, shift-ins, shift-delete for cut/copy/paste
 # on windows and linux, but disable on the mac
 editor.keys.alternative_cut_copy_paste = true
@@ -132,6 +137,20 @@ editor.keys.home_and_end_travel_far.macosx = true
 # but disable when not needed, otherwise basic Western European chars break.
 editor.input_method_support = false
 
+# convert tabs to spaces? how many spaces?
+editor.tabs.expand = true
+editor.tabs.size   = 2
+
+# automatically indent each line
+editor.indent = true
+
+# size of divider between editing area and the console
+editor.divider.size = 0
+# the larger divider on windows is ugly with the little arrows
+# this makes it large enough to see (mouse changes) and use, 
+# but keeps it from being annoyingly obtrusive
+editor.divider.size.windows = 2
+
 # font choice and size for the console
 console.font = Monospaced,plain,11
 console.font.macosx = Monaco,plain,10
@@ -146,20 +165,6 @@ console.auto_clear = true
 # set the maximum number of lines remembered by the console
 # the default is 500, lengthen at your own peril
 console.length = 500
-
-# convert tabs to spaces? how many spaces?
-editor.tabs.expand = true
-editor.tabs.size   = 2
-
-# automatically indent each line
-editor.indent = true
-
-# size of divider between editing area and the console
-editor.divider.size = 0
-# the larger divider on windows is ugly with the little arrows
-# this makes it large enough to see (mouse changes) and use, 
-# but keeps it from being annoyingly obtrusive
-editor.divider.size.windows = 2
 
 # any additional java options when running externally
 # (for applets that are run external to the environment...
