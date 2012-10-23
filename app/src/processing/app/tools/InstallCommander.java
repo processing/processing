@@ -80,11 +80,11 @@ public class InstallCommander implements Tool {
       writer.println("#!/bin/sh");
 
       String[] jarList = new String[] {
-        "pde.jar",
-        "antlr.jar",
-        "jna.jar",
-        "ant.jar",
-        "ant-launcher.jar",
+        "lib/pde.jar",
+        "lib/antlr.jar",
+        "lib/jna.jar",
+        "lib/ant.jar",
+        "lib/ant-launcher.jar",
         "core/library/core.jar"
       };
       String classPath = PApplet.join(jarList, ":");
