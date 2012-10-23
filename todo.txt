@@ -3,8 +3,10 @@ X Input Method support (for Japanese et al.) has been disabled
 X   implement as an option inside Preferences
 X   http://code.google.com/p/processing/issues/detail?id=526
 X remove preferences that refer to applets
+X remove applet folder from the Java stuff
+X remove old 'cmd' folder from the Java build directory
 
-_ remove applet folder from the Java stuff
+_ check to see if sketchbook is getting picked up for cmd line
 
 
 2.0 FINAL / library/tool/mode manager cleanup
