@@ -77,6 +77,8 @@ public class JEditTextArea extends JComponent
 
   private InputMethodSupport inputMethodSupport = null;
 
+  private Brackets bracketHelper = new Brackets();
+
   /**
    * Creates a new JEditTextArea with the specified settings.
    * @param defaults The default settings
@@ -144,15 +146,12 @@ public class JEditTextArea extends JComponent
     });
   }
 
-  private Brackets bracketHelper = new Brackets();
 
   /**
    * Inline Input Method Support for Japanese.
    */
   public InputMethodRequests getInputMethodRequests() {
-    // Temporarily disabling for now.
-    // http://code.google.com/p/processing/issues/detail?id=335
-    if (false) {
+    if (Preferences.getBoolean("editor.input_method_support")) {
       if (inputMethodSupport == null) {
         inputMethodSupport = new InputMethodSupport(this);
       }
@@ -161,6 +160,7 @@ public class JEditTextArea extends JComponent
     return null;
   }
 
+  
   /**
    * Get current position of the vertical scroll bar. [fry]
    */
@@ -177,14 +177,6 @@ public class JEditTextArea extends JComponent
   }
 
 
-//  /**
-//   * Returns if this component can be traversed by pressing
-//   * the Tab key. This returns false. (removing b/c superclass returns false)
-//   */
-//    public final boolean isManagingFocus() {
-//      return false;
-//    }
-
   /**
    * Returns the object responsible for painting this text area.
    */
@@ -192,6 +184,7 @@ public class JEditTextArea extends JComponent
     return painter;
   }
 
+  
   /**
    * Returns the input handler.
    */
@@ -199,6 +192,7 @@ public class JEditTextArea extends JComponent
     return inputHandler;
   }
 
+  
   /**
    * Sets the input handler.
    * @param inputHandler The new input handler
@@ -207,6 +201,7 @@ public class JEditTextArea extends JComponent
     this.inputHandler = inputHandler;
   }
 
+  
   /**
    * Returns true if the caret is blinking, false otherwise.
    */
@@ -214,18 +209,20 @@ public class JEditTextArea extends JComponent
     return caretBlinks;
   }
 
+  
   /**
    * Toggles caret blinking.
    * @param caretBlinks True if the caret should blink, false otherwise
    */
   public void setCaretBlinkEnabled(boolean caretBlinks) {
     this.caretBlinks = caretBlinks;
-    if(!caretBlinks)
+    if (!caretBlinks) {
       blink = false;
-
+    }
     painter.invalidateSelectedLines();
   }
 
+  
   /**
    * Returns true if the caret is visible, false otherwise.
    */
@@ -233,6 +230,7 @@ public class JEditTextArea extends JComponent
     return (!caretBlinks || blink) && caretVisible;
   }
 
+  
   /**
    * Sets if the caret should be visible.
    * @param caretVisible True if the caret should be visible, false
@@ -245,6 +243,7 @@ public class JEditTextArea extends JComponent
     painter.invalidateSelectedLines();
   }
 
+  
   /**
    * Blinks the caret.
    */
@@ -257,6 +256,7 @@ public class JEditTextArea extends JComponent
     }
   }
 
+  
   /**
    * Returns the number of lines from the top and button of the
    * text area that are always visible.
@@ -265,6 +265,7 @@ public class JEditTextArea extends JComponent
     return electricScroll;
   }
 
+  
   /**
    * Sets the number of lines from the top and bottom of the text
    * area that are always visible
@@ -321,6 +322,7 @@ public class JEditTextArea extends JComponent
     }
   }
 
+  
   /**
    * Returns the line displayed at the text area's origin.
    */
@@ -328,6 +330,7 @@ public class JEditTextArea extends JComponent
     return firstLine;
   }
 
+  
   /**
    * Sets the line displayed at the text area's origin without
    * updating the scroll bars.
@@ -341,6 +344,7 @@ public class JEditTextArea extends JComponent
     }
     painter.repaint();
   }
+  
 
   /**
    * Returns the number of lines visible in this text area.
@@ -349,6 +353,7 @@ public class JEditTextArea extends JComponent
     return visibleLines;
   }
 
+  
   /**
    * Recalculates the number of visible lines. This should not
    * be called directly.
@@ -362,6 +367,7 @@ public class JEditTextArea extends JComponent
     updateScrollBars();
   }
 
+  
   /**
    * Returns the horizontal offset of drawn lines.
    */
@@ -369,6 +375,7 @@ public class JEditTextArea extends JComponent
     return horizontalOffset;
   }
 
+  
   /**
    * Sets the horizontal offset of drawn lines. This can be used to
    * implement horizontal scrolling.
@@ -385,6 +392,7 @@ public class JEditTextArea extends JComponent
     painter.repaint();
   }
 
+  
   /**
    * A fast way of changing both the first line and horizontal
    * offset.
@@ -392,40 +400,34 @@ public class JEditTextArea extends JComponent
    * @param horizontalOffset The new horizontal offset
    * @return True if any of the values were changed, false otherwise
    */
-  public boolean setOrigin(int firstLine, int horizontalOffset)
-  {
+  public boolean setOrigin(int firstLine, int horizontalOffset) {
     boolean changed = false;
-    //int oldFirstLine = this.firstLine;
 
-    if(horizontalOffset != this.horizontalOffset)
-    {
+    if (horizontalOffset != this.horizontalOffset) {
       this.horizontalOffset = horizontalOffset;
       changed = true;
     }
-
-    if(firstLine != this.firstLine)
-    {
+    
+    if (firstLine != this.firstLine) {
       this.firstLine = firstLine;
       changed = true;
     }
-
-    if(changed)
-    {
+    
+    if (changed) {
       updateScrollBars();
       painter.repaint();
     }
-
     return changed;
   }
 
+  
   /**
    * Ensures that the caret is visible by scrolling the text area if
    * necessary.
    * @return True if scrolling was actually performed, false if the
    * caret was already visible
    */
-  public boolean scrollToCaret()
-  {
+  public boolean scrollToCaret() {
     int line = getCaretLine();
     int lineStart = getLineStartOffset(line);
     int offset = Math.max(0,Math.min(getLineLength(line) - 1,
@@ -434,6 +436,7 @@ public class JEditTextArea extends JComponent
     return scrollTo(line,offset);
   }
 
+  
   /**
    * Ensures that the specified line and offset is visible by scrolling
    * the text area if necessary.
@@ -442,8 +445,7 @@ public class JEditTextArea extends JComponent
    * @return True if scrolling was actually performed, false if the
    * line and offset was already visible
    */
-  public boolean scrollTo(int line, int offset)
-  {
+  public boolean scrollTo(int line, int offset) {
     // visibleLines == 0 before the component is realized
     // we can't do any proper scrolling then, so we have
     // this hack...
@@ -479,51 +481,51 @@ public class JEditTextArea extends JComponent
     return setOrigin(newFirstLine,newHorizontalOffset);
   }
 
+  
   /**
    * Converts a line index to a y co-ordinate.
    * @param line The line
    */
-  public int lineToY(int line)
-  {
+  public int lineToY(int line) {
     FontMetrics fm = painter.getFontMetrics();
     return (line - firstLine) * fm.getHeight()
     - (fm.getLeading() + fm.getMaxDescent());
   }
 
+  
   /**
    * Converts a y co-ordinate to a line index.
    * @param y The y co-ordinate
    */
-  public int yToLine(int y)
-  {
+  public int yToLine(int y) {
     FontMetrics fm = painter.getFontMetrics();
     int height = fm.getHeight();
     return Math.max(0,Math.min(getLineCount() - 1,
         y / height + firstLine));
   }
 
+  
   /**
    * Converts an offset in a line into an x co-ordinate. This is a
    * slow version that can be used any time.
    * @param line The line
    * @param offset The offset, from the start of the line
    */
-  public final int offsetToX(int line, int offset)
-  {
+  public final int offsetToX(int line, int offset) {
     // don't use cached tokens
     painter.currentLineTokens = null;
     return _offsetToX(line,offset);
   }
 
+  
   /**
-   * Converts an offset in a line into an x co-ordinate. This is a
+   * Converts an offset in a line into an x coordinate. This is a
    * fast version that should only be used if no changes were made
    * to the text since the last repaint.
    * @param line The line
    * @param offset The offset, from the start of the line
    */
-  public int _offsetToX(int line, int offset)
-  {
+  public int _offsetToX(int line, int offset) {
     TokenMarker tokenMarker = getTokenMarker();
 
     /* Use painter's cached info for speed */

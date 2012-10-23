@@ -110,13 +110,14 @@ public class Preferences {
 
   JTextField sketchbookLocationField;
   JCheckBox editorAntialiasBox;
-  JCheckBox exportSeparateBox;
+//  JCheckBox exportSeparateBox;
   JCheckBox deletePreviousBox;
 //  JCheckBox externalEditorBox;
   JCheckBox memoryOverrideBox;
   JTextField memoryField;
   JCheckBox checkUpdatesBox;
   JTextField fontSizeField;
+  JCheckBox inputMethodBox;
   JCheckBox autoAssociateBox;
   JRadioButton bitsThirtyTwoButton;
   JRadioButton bitsSixtyFourButton;
@@ -299,6 +300,18 @@ public class Preferences {
     top += d.height + GUI_BETWEEN;
 
 
+    // [ ] Enable complex text input (for Japanese et al, requires restart)
+
+    inputMethodBox =
+      new JCheckBox("Enable complex text input " +
+                    "(i.e. Japanese, requires restart of Processing)");
+    pain.add(inputMethodBox);
+    d = inputMethodBox.getPreferredSize();
+    inputMethodBox.setBounds(left, top, d.width + 10, d.height);
+    right = Math.max(right, left + d.width);
+    top += d.height + GUI_BETWEEN;
+
+
     // [ ] Increase maximum available memory to [______] MB
 
     Container memoryBox = Box.createHorizontalBox();
@@ -313,23 +326,23 @@ public class Preferences {
     top += d.height + GUI_BETWEEN;
 
 
-    // [ ] Use multiple .jar files when exporting applets
+//    // [ ] Use multiple .jar files when exporting applets
+//
+//    exportSeparateBox =
+//      new JCheckBox("Use multiple .jar files when exporting applets " +
+//                    "(ignored when using libraries)");
+//    pain.add(exportSeparateBox);
+//    d = exportSeparateBox.getPreferredSize();
+//    // adding +10 because ubuntu + jre 1.5 truncating items
+//    exportSeparateBox.setBounds(left, top, d.width + 10, d.height);
+//    right = Math.max(right, left + d.width);
+//    top += d.height + GUI_BETWEEN;
 
-    exportSeparateBox =
-      new JCheckBox("Use multiple .jar files when exporting applets " +
-                    "(ignored when using libraries)");
-    pain.add(exportSeparateBox);
-    d = exportSeparateBox.getPreferredSize();
-    // adding +10 because ubuntu + jre 1.5 truncating items
-    exportSeparateBox.setBounds(left, top, d.width + 10, d.height);
-    right = Math.max(right, left + d.width);
-    top += d.height + GUI_BETWEEN;
 
-
-    // [ ] Delete previous application folder on export
+    // [ ] Delete previous folder on export
 
     deletePreviousBox =
-      new JCheckBox("Delete previous application folder on export");
+      new JCheckBox("Delete previous folder on export");
     pain.add(deletePreviousBox);
     d = deletePreviousBox.getPreferredSize();
     deletePreviousBox.setBounds(left, top, d.width + 10, d.height);
@@ -558,9 +571,8 @@ public class Preferences {
   protected void applyFrame() {
     setBoolean("editor.antialias", editorAntialiasBox.isSelected());
 
-    // put each of the settings into the table
-    setBoolean("export.applet.separate_jar_files",
-               exportSeparateBox.isSelected());
+//    setBoolean("export.applet.separate_jar_files",
+//               exportSeparateBox.isSelected());
     setBoolean("export.delete_target_folder",
                deletePreviousBox.isSelected());
 
@@ -640,6 +652,8 @@ public class Preferences {
     } catch (Exception e) {
       System.err.println("ignoring invalid font size " + newSizeText);
     }
+    
+    setBoolean("editor.input_method_support", inputMethodBox.isSelected());
 
     if (autoAssociateBox != null) {
       setBoolean("platform.auto_file_type_associations",
@@ -654,10 +668,11 @@ public class Preferences {
 
   protected void showFrame() {
     editorAntialiasBox.setSelected(getBoolean("editor.antialias"));
+    inputMethodBox.setSelected(getBoolean("editor.input_method_support"));
 
     // set all settings entry boxes to their actual status
-    exportSeparateBox.
-      setSelected(getBoolean("export.applet.separate_jar_files"));
+//    exportSeparateBox.
+//      setSelected(getBoolean("export.applet.separate_jar_files"));
     deletePreviousBox.
       setSelected(getBoolean("export.delete_target_folder"));
 
