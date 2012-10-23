@@ -510,30 +510,40 @@ public class PdePreprocessor {
     }
 
     final String importRegexp = 
-      "(?:^|;)\\s*(import\\s+)((?:static\\s+)?\\S+)(\\s*;)";
+      "((?:^|;)\\s*)(import\\s+)((?:static\\s+)?\\S+)(\\s*;)";
+      //"(?:^|;)\\s*(import\\s+)((?:static\\s+)?\\S+)(\\s*;)";
     final Pattern importPattern = Pattern.compile(importRegexp);
     String scrubbed = scrubComments(program);
-    Matcher m = importPattern.matcher(scrubbed);
+    Matcher m = null;
     int offset = 0;
     boolean found = false;
     do {
+      m = importPattern.matcher(scrubbed);
       found = m.find(offset);
       if (found) {
-        String piece = m.group(1) + m.group(2) + m.group(3);
-        int len = piece.length(); // how much to trim out
+//        System.out.println("found " + m.groupCount() + " groups");
+        String before = m.group(1);
+        String piece = m.group(2) + m.group(3) + m.group(4);
+//        int len = piece.length(); // how much to trim out
 
-        if (!ignoreImport(m.group(2))) {
-          programImports.add(m.group(2)); // the package name
+        if (!ignoreImport(m.group(3))) {
+          programImports.add(m.group(3)); // the package name
         }
 
         // find index of this import in the program
-        int start = m.start();
-        int stop = start + len;
+        int start = m.start() + before.length();
+        int stop = start + piece.length();
+//        System.out.println(start + " " + stop + " " + piece);
 
         // Remove the import from the main program
         program = program.substring(0, start) + program.substring(stop);
         scrubbed = scrubbed.substring(0, start) + scrubbed.substring(stop);
-        offset = stop;
+        // Set the offset to start, because everything between 
+        // start and stop has been deleted.
+        offset = m.start();
+        
+//        System.out.println("program now:");
+//        System.out.println(program);
       }
     } while (found);
 
