@@ -1,4 +1,10 @@
 0214 pde
+X Input Method support (for Japanese et al.) has been disabled
+X   implement as an option inside Preferences
+X   http://code.google.com/p/processing/issues/detail?id=526
+X remove preferences that refer to applets
+
+_ remove applet folder from the Java stuff
 
 
 2.0 FINAL / library/tool/mode manager cleanup
@@ -163,8 +169,6 @@ _   warn user about moving libraries and restarting
 
 
 2.0 FINAL / misc pde cleanups
-_ remove preferences that refer to applets
-_ remove applet folder from the Java stuff
 _ 'recent' menu doesn't respect examples folder of other p5 versions
 _ 'recent' menu paths can get enormous
 
@@ -518,8 +522,6 @@ _ sketches should only write to the console of their editor window
 _   http://code.google.com/p/processing/issues/detail?id=114
 _ problems with file/print
 _   http://code.google.com/p/processing/issues/detail?id=174
-_ Input Method support (for Japanese et al.) has been disabled
-_   http://code.google.com/p/processing/issues/detail?id=526
 
 
 PDE / Editor Toolbar (Buttons)
