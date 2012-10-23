@@ -344,17 +344,18 @@
 	  tofile="macosx/work/Processing.app" />
 
     <chmod file="macosx/work/Processing.app/Contents/MacOS/JavaApplicationStub" perm="ugo+x" />
-    
-    <copy todir="macosx/work/Processing.app/Contents/Resources/Java" flatten="true">
-      <fileset refid="runtime.jars"/>
-    </copy>
-    
+      
     <copy todir="macosx/work/Processing.app/Contents/Resources/Java">
       <fileset dir=".." includes="core/library/**" />
       <fileset dir="shared" includes="launch4j/**" />
       <fileset dir="shared" includes="lib/**" />
       <fileset dir="shared" includes="modes/**" />
       <fileset file="shared/revisions.txt" />
+    </copy>
+
+    <copy todir="macosx/work/Processing.app/Contents/Resources/Java/lib" 
+	  flatten="true">
+      <fileset refid="runtime.jars"/>
     </copy>
 
     <property name="launch4j.dir" value="macosx/work/Processing.app/Contents/Resources/Java/launch4j" />
