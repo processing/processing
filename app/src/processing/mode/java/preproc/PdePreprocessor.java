@@ -29,6 +29,7 @@ package processing.mode.java.preproc;
 
 import java.io.*;
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import processing.app.Base;
@@ -498,8 +499,9 @@ public class PdePreprocessor {
     foundMethods = new HashMap<String, Object>();
 
     // http://processing.org/bugs/bugzilla/5.html
-    if (!program.endsWith("\n"))
+    if (!program.endsWith("\n")) {
       program += "\n";
+    }
 
     checkForUnterminatedMultilineComment(program);
 
@@ -507,27 +509,33 @@ public class PdePreprocessor {
       program = substituteUnicode(program);
     }
 
-    final String importRegexp = "(?:^|;)\\s*(import\\s+)((?:static\\s+)?\\S+)(\\s*;)";
-
+    final String importRegexp = 
+      "(?:^|;)\\s*(import\\s+)((?:static\\s+)?\\S+)(\\s*;)";
+    final Pattern importPattern = Pattern.compile(importRegexp);
+    String scrubbed = scrubComments(program);
+    Matcher m = importPattern.matcher(scrubbed);
+    int offset = 0;
+    boolean found = false;
     do {
-      String[] pieces = PApplet.match(program, importRegexp);
-      // Stop the loop if we've removed all the importy lines
-      if (pieces == null)
-        break;
+      found = m.find(offset);
+      if (found) {
+        String piece = m.group(1) + m.group(2) + m.group(3);
+        int len = piece.length(); // how much to trim out
 
-      String piece = pieces[1] + pieces[2] + pieces[3];
-      int len = piece.length(); // how much to trim out
+        if (!ignoreImport(m.group(2))) {
+          programImports.add(m.group(2)); // the package name
+        }
 
-      if (!ignoreImport(pieces[2])) {
-        programImports.add(pieces[2]); // the package name
+        // find index of this import in the program
+        int start = m.start();
+        int stop = start + len;
+
+        // Remove the import from the main program
+        program = program.substring(0, start) + program.substring(stop);
+        scrubbed = scrubbed.substring(0, start) + scrubbed.substring(stop);
+        offset = stop;
       }
-
-      // find index of this import in the program
-      int idx = program.indexOf(piece);
-
-      // Remove the import from the main program
-      program = program.substring(0, idx) + program.substring(idx + len);
-    } while (true);
+    } while (found);
 
     if (codeFolderPackages != null) {
       for (String item : codeFolderPackages) {
@@ -536,10 +544,10 @@ public class PdePreprocessor {
     }
 
     final PrintWriter stream = new PrintWriter(out);
-    final int headerOffset = writeImports(stream, programImports,
-      codeFolderImports);
-    return new PreprocessorResult(mode, headerOffset + 2, write(program, stream),
-                                programImports);
+    final int headerOffset = 
+      writeImports(stream, programImports, codeFolderImports);
+    return new PreprocessorResult(mode, headerOffset + 2, 
+                                  write(program, stream), programImports);
   }
 
   static String substituteUnicode(String program) {
