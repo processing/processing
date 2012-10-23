@@ -1,3 +1,32 @@
+PROCESSING 2.0b5 (REV 0213) - 22 October 2012
+
+Fixes for a few regressions that showed up in 2.0b4, plus some internal
+changes to simplify how modes are handled.
+
+[ bug fixes ] 
+
++ Libraries not installed through IDE had blank names.
+  http://code.google.com/p/processing/issues/detail?id=1331
+
++ mouseButton not being set properly on Windows (and probably Linux).
+  http://code.google.com/p/processing/issues/detail?id=1332
+
++ Console disappearing with increased editor font size.
+  http://code.google.com/p/processing/issues/detail?id=1275
+
+[ changes/internal ] 
+
++ Change how modes are set up so that XQMode, our Google Summer of Code
+  project can work properly.
+
++ Implement multiple sizes of icons for PDE and core. This improves 
+  the quality of the icon seen on Windows and Linux attached to frames.
+  http://code.google.com/p/processing/issues/detail?id=632
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING 2.0b4 (REV 0212) - 21 October 2012
 
 Command line support is back! Find and Replace works over multiple tabs!
