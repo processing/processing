@@ -1,3 +1,8 @@
+0213 core (2.0b5)
+X mouseButton not being set properly on Windows (and probably Linux) in 2.0b4
+X   http://code.google.com/p/processing/issues/detail?id=1332
+
+
 0212 core (2.0b4)
 X mouseButton not getting set on release event
 X   http://code.google.com/p/processing/issues/detail?id=1294

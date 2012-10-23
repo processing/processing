@@ -1,3 +1,20 @@
+0213 pde (2.0b5)
+X Console disappears with increased editor font size
+X   http://code.google.com/p/processing/issues/detail?id=1275
+X Change how modes are set up so that XQMode can work properly
+X   Change back to ecj.jar, and remove jdt-core.jar references
+X   Put ecj.jar in the 'mode' folder for Java so that it's isolated
+X   (Kinda gross having it in 'lib' before)
+o better implementation of jar handling using OSGi?
+o   http://eclipse.org/equinox/
+o   http://eclipse.org/equinox/documents/quickstart-framework.php
+X Libraries not installed through IDE don't appear correctly
+X   http://code.google.com/p/processing/issues/detail?id=1331
+X implement multiple sizes of icons for PDE and core
+X   http://code.google.com/p/processing/issues/detail?id=632
+X   (stubbing things in for artwork update later)
+
+
 0212 pde (2.0b4)
 M implement find & replace over multiple tabs 
 M   http://code.google.com/p/processing/issues/detail?id=25
