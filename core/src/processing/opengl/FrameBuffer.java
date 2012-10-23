@@ -149,20 +149,22 @@ public class FrameBuffer implements PConstants {
   @Override
   protected void finalize() throws Throwable {
     try {
-      if (glFbo != 0) {
-        pg.finalizeFrameBufferObject(glFbo, context.id());
-      }
-      if (glDepth != 0) {
-        pg.finalizeRenderBufferObject(glDepth, context.id());
-      }
-      if (glStencil != 0) {
-        pg.finalizeRenderBufferObject(glStencil, context.id());
-      }
-      if (glMultisample != 0) {
-        pg.finalizeRenderBufferObject(glMultisample, context.id());
-      }
-      if (glDepthStencil != 0) {
-        pg.finalizeRenderBufferObject(glDepthStencil, context.id());
+      if (!screenFb) {
+        if (glFbo != 0) {
+          pg.finalizeFrameBufferObject(glFbo, context.id());
+        }
+        if (glDepth != 0) {
+          pg.finalizeRenderBufferObject(glDepth, context.id());
+        }
+        if (glStencil != 0) {
+          pg.finalizeRenderBufferObject(glStencil, context.id());
+        }
+        if (glMultisample != 0) {
+          pg.finalizeRenderBufferObject(glMultisample, context.id());
+        }
+        if (glDepthStencil != 0) {
+          pg.finalizeRenderBufferObject(glDepthStencil, context.id());
+        }
       }
     } finally {
       super.finalize();
@@ -234,13 +236,10 @@ public class FrameBuffer implements PConstants {
     return 0 < stencilBits;
   }
 
-  public static FrameBuffer wrap(PApplet parent, int id, int w, int h) {
-    FrameBuffer res = new FrameBuffer(parent);
-    res.glFbo = id;
-    res.width = w;
-    res.height = h;
-    res.screenFb = true;
-    return res;
+  public void setFBO(int id) {
+    if (screenFb) {
+      glFbo = id;
+    }
   }
 
   ///////////////////////////////////////////////////////////
@@ -304,28 +303,31 @@ public class FrameBuffer implements PConstants {
     if (screenFb) {
       glFbo = 0;
     } else {
+      //create the FBO object...
       glFbo = pg.createFrameBufferObject(context.id());
-    }
 
-    // create the rest of the stuff...
-    if (multisample) {
-      createColorBufferMultisample();
-    }
-
-    if (packedDepthStencil) {
-      createPackedDepthStencilBuffer();
-    } else {
-      if (0 < depthBits) {
-        createDepthBuffer();
+      // ... and then create the rest of the stuff.
+      if (multisample) {
+        createColorBufferMultisample();
       }
-      if (0 < stencilBits) {
-        createStencilBuffer();
+
+      if (packedDepthStencil) {
+        createPackedDepthStencilBuffer();
+      } else {
+        if (0 < depthBits) {
+          createDepthBuffer();
+        }
+        if (0 < stencilBits) {
+          createStencilBuffer();
+        }
       }
     }
   }
 
 
   protected void release() {
+    if (screenFb) return;
+
     if (glFbo != 0) {
       pg.finalizeFrameBufferObject(glFbo, context.id());
       glFbo = 0;
@@ -350,6 +352,8 @@ public class FrameBuffer implements PConstants {
 
 
   protected boolean contextIsOutdated() {
+    if (screenFb) return false;
+
     boolean outdated = !pgl.contextIsCurrent(context);
     if (outdated) {
       pg.removeFrameBufferObject(glFbo, context.id());
