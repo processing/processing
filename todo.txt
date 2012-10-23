@@ -763,7 +763,8 @@ _   http://code.google.com/p/processing/issues/detail?id=189
 
 LIBRARIES / Serial
 
-_ need 64-bit Windows version of RXTX library
+_ need 64-bit version of RXTX library
+_   http://code.google.com/p/processing/issues/detail?id=1237
 _ serial still causing problems on OS X
 _   http://code.google.com/p/processing/issues/detail?id=52
 _ serial ports missing from list (OS X)
