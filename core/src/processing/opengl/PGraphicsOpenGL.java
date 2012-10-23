@@ -3308,9 +3308,13 @@ public class PGraphicsOpenGL extends PGraphics {
     smooth = true;
 
     if (maxSamples < level) {
-      PGraphics.showWarning("Smooth level " + level +
-                            " is not supported by the hardware. Using " +
-                            maxSamples + " instead.");
+      if (0 < maxSamples) {
+        PGraphics.showWarning("Smooth level " + level +
+                              " is not available. Using " +
+                              maxSamples + " instead.");
+      } else{
+        PGraphics.showWarning("Smooth is not available.");
+      }
       level = maxSamples;
     }
 
@@ -6109,17 +6113,14 @@ public class PGraphicsOpenGL extends PGraphics {
 
     int major = pgl.getGLVersion()[0];
     if (major < 2) {
-      // There might be problems...
-      PGraphics.showWarning("The OpenGL version is less than 2.0 so " +
-                            "Processing might not draw properly");
-      // ... but GLSL might still be available through extensions.
+      // GLSL might still be available through extensions.
       if (OPENGL_EXTENSIONS.indexOf("_fragment_shader")  == -1 ||
           OPENGL_EXTENSIONS.indexOf("_vertex_shader")    == -1 ||
           OPENGL_EXTENSIONS.indexOf("_shader_objects")   == -1 ||
           OPENGL_EXTENSIONS.indexOf("_shading_language") == -1) {
         // GLSL extensions are not present, we cannot do anything else here.
-        throw new RuntimeException("GLSL shaders are not supported by this " +
-                                   "video card");
+        throw new RuntimeException("Processing cannot run because GLSL shaders" +
+                                   " are not available.");
       }
     }
 
