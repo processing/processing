@@ -133,13 +133,13 @@ public class Preferences {
 
   // data model
 
-  static Hashtable defaults;
-  static Hashtable table = new Hashtable();;
+  static HashMap<String,String> defaults;
+  static HashMap<String,String> table = new HashMap<String,String>();
   static File preferencesFile;
 
 
-  static public void init(String commandLinePrefs) {
-
+//  static public void init(String commandLinePrefs) {
+  static public void init() {
     // start by loading the defaults, in case something
     // important was deleted from the user prefs
     try {
@@ -152,55 +152,71 @@ public class Preferences {
     // check for platform-specific properties in the defaults
     String platformExt = "." + PConstants.platformNames[PApplet.platform];
     int platformExtLength = platformExt.length();
-    Enumeration e = table.keys();
-    while (e.hasMoreElements()) {
-      String key = (String) e.nextElement();
+//    Enumeration e = table.keys();
+//    while (e.hasMoreElements()) {
+//      String key = (String) e.nextElement();
+//      if (key.endsWith(platformExt)) {
+//        // this is a key specific to a particular platform
+//        String actualKey = key.substring(0, key.length() - platformExtLength);
+//        String value = get(key);
+//        table.put(actualKey, value);
+//      }
+//    }
+
+    // Get a list of keys that are specific to this platform
+    ArrayList<String> platformKeys = new ArrayList<String>();
+    for (String key : table.keySet()) {
       if (key.endsWith(platformExt)) {
-        // this is a key specific to a particular platform
-        String actualKey = key.substring(0, key.length() - platformExtLength);
-        String value = get(key);
-        table.put(actualKey, value);
+        platformKeys.add(key);
       }
+    }
+    
+    // Use those platform-specific keys to override
+    for (String key : platformKeys) {
+      // this is a key specific to a particular platform
+      String actualKey = key.substring(0, key.length() - platformExtLength);
+      String value = get(key);
+      set(actualKey, value);
     }
 
     // clone the hash table
-    defaults = (Hashtable) table.clone();
+    defaults = (HashMap<String, String>) table.clone();
 
     // other things that have to be set explicitly for the defaults
     setColor("run.window.bgcolor", SystemColor.control);
 
     // Load a prefs file if specified on the command line
-    if (commandLinePrefs != null) {
+//    if (commandLinePrefs != null) {
+//      try {
+//        load(new FileInputStream(commandLinePrefs));
+//
+//      } catch (Exception poe) {
+//        Base.showError("Error",
+//                       "Could not read preferences from " +
+//                       commandLinePrefs, poe);
+//      }
+//    } else if (!Base.isCommandLine()) {
+    // next load user preferences file
+    preferencesFile = Base.getSettingsFile(PREFS_FILE);
+    if (!preferencesFile.exists()) {
+      // create a new preferences file if none exists
+      // saves the defaults out to the file
+      save();
+
+    } else {
+      // load the previous preferences file
+
       try {
-        load(new FileInputStream(commandLinePrefs));
+        load(new FileInputStream(preferencesFile));
 
-      } catch (Exception poe) {
-        Base.showError("Error",
-                       "Could not read preferences from " +
-                       commandLinePrefs, poe);
+      } catch (Exception ex) {
+        Base.showError("Error reading preferences",
+                       "Error reading the preferences file. " +
+                       "Please delete (or move)\n" +
+                       preferencesFile.getAbsolutePath() +
+                       " and restart Processing.", ex);
       }
-    } else if (!Base.isCommandLine()) {
-      // next load user preferences file
-      preferencesFile = Base.getSettingsFile(PREFS_FILE);
-      if (!preferencesFile.exists()) {
-        // create a new preferences file if none exists
-        // saves the defaults out to the file
-        save();
-
-      } else {
-        // load the previous preferences file
-
-        try {
-          load(new FileInputStream(preferencesFile));
-
-        } catch (Exception ex) {
-          Base.showError("Error reading preferences",
-                         "Error reading the preferences file. " +
-                         "Please delete (or move)\n" +
-                         preferencesFile.getAbsolutePath() +
-                         " and restart Processing.", ex);
-        }
-      }
+//      }
     }
 
     PApplet.useNativeSelect = Preferences.getBoolean("chooser.files.native");
@@ -790,10 +806,15 @@ public class Preferences {
     // Fix for 0163 to properly use Unicode when writing preferences.txt
     PrintWriter writer = PApplet.createWriter(preferencesFile);
 
-    Enumeration e = table.keys(); //properties.propertyNames();
-    while (e.hasMoreElements()) {
-      String key = (String) e.nextElement();
-      writer.println(key + "=" + ((String) table.get(key)));
+//    Enumeration e = table.keys(); //properties.propertyNames();
+//    while (e.hasMoreElements()) {
+//      String key = (String) e.nextElement();
+//      writer.println(key + "=" + ((String) table.get(key)));
+//    }
+    String[] keyList = table.keySet().toArray(new String[table.size()]);
+    keyList = PApplet.sort(keyList);
+    for (String key : keyList) {
+      writer.println(key + "=" + table.get(key));
     }
 
     writer.flush();
@@ -815,7 +836,7 @@ public class Preferences {
   //}
 
   static public String get(String attribute /*, String defaultValue */) {
-    return (String) table.get(attribute);
+    return table.get(attribute);
     /*
     //String value = (properties != null) ?
     //properties.getProperty(attribute) : applet.getParameter(attribute);
@@ -828,7 +849,7 @@ public class Preferences {
 
 
   static public String getDefault(String attribute) {
-    return (String) defaults.get(attribute);
+    return defaults.get(attribute);
   }
 
 
