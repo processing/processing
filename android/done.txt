@@ -1,3 +1,7 @@
+0213 android (2.0b5)
+no changes
+
+
 0212 android (2.0b4)
 X key value is not set in android mode
 X   http://code.google.com/p/processing/issues/detail?id=1254
