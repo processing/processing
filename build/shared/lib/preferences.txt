@@ -239,7 +239,7 @@ export.application.fullscreen = false
 export.application.stop = true
 
 # false will place all exported files into a single .jar
-export.applet.separate_jar_files = false
+#export.applet.separate_jar_files = false
 
 # set to false to no longer delete applet or application folders before export
 export.delete_target_folder = true
