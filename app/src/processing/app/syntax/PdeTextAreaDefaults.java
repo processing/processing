@@ -137,7 +137,8 @@ public class PdeTextAreaDefaults extends TextAreaDefaults {
     editable = true;
     electricScroll = 3;
     caretVisible = true;
-    caretBlinks = true;
+    caretBlinks = Preferences.getBoolean("editor.caret.blink");
+    blockCaret = Preferences.getBoolean("editor.caret.block");
     cols = 80;
     // Set the number of rows lower to avoid layout badness with large fonts
     // http://code.google.com/p/processing/issues/detail?id=1275
