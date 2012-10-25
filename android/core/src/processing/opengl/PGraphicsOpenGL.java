@@ -6316,32 +6316,35 @@ public class PGraphicsOpenGL extends PGraphics {
   protected int getTypeFromVertexShader(String filename) {
     String[] source = parent.loadStrings(filename);
 
-    Pattern pointPattern = Pattern.compile("attribute *vec2 *inPoint");
-    Pattern linePattern = Pattern.compile("attribute *vec4 *inLine");
+    Pattern pointPattern  = Pattern.compile("attribute *vec2 *inPoint");
+    Pattern linePattern   = Pattern.compile("attribute *vec4 *inLine");
     Pattern lightPattern1 = Pattern.compile("uniform *vec4 *lightPosition");
     Pattern lightPattern2 = Pattern.compile("uniform *vec3 *lightNormal");
-    Pattern texPattern = Pattern.compile("attribute vec2 inTexcoord");
+    Pattern texPattern    = Pattern.compile("attribute vec2 inTexcoord");
+
+    boolean foundPoint = false;
+    boolean foundLine  = false;
+    boolean foundLight = false;
+    boolean foundTex   = false;
+    for (int i = 0; i < source.length; i++) {
+      foundPoint |= pointPattern.matcher(source[i]).find();
+      foundLine  |= linePattern.matcher(source[i]).find();
+      foundLight |= lightPattern1.matcher(source[i]).find();
+      foundLight |= lightPattern2.matcher(source[i]).find();
+      foundTex   |= texPattern.matcher(source[i]).find();
+    }
 
     int type = PShader.COLOR;
-    for (int i = 0; i < source.length; i++) {
-      boolean foundPoint = pointPattern.matcher(source[i]).find();
-      boolean foundLine = linePattern.matcher(source[i]).find();
-      boolean foundLight = lightPattern1.matcher(source[i]).find() ||
-                           lightPattern2.matcher(source[i]).find();
-      boolean foundTex = texPattern.matcher(source[i]).find();
-
-      if (foundPoint) {
-        type = PShader.POINT;
-      } else if (foundLine) {
-        type = PShader.LINE;
-      } else if (foundLight && foundTex) {
-        type = PShader.TEXLIGHT;
-      } else if (foundLight) {
-        type = PShader.LIGHT;
-      } else if (foundTex) {
-        type = PShader.TEXTURE;
-      }
-      if (type != PShader.COLOR) break;
+    if (foundPoint) {
+      type = PShader.POINT;
+     } else if (foundLine) {
+       type = PShader.LINE;
+     } else if (foundLight && foundTex) {
+       type = PShader.TEXLIGHT;
+     } else if (foundLight) {
+       type = PShader.LIGHT;
+     } else if (foundTex) {
+     type = PShader.TEXTURE;
     }
     return type;
   }

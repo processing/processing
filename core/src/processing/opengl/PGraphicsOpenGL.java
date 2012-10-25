@@ -1878,7 +1878,7 @@ public class PGraphicsOpenGL extends PGraphics {
       pushFramebuffer();
       if (op == OP_READ) {
         setFramebuffer(readFramebuffer);
-        pgl.readBuffer(pgl.primaryDrawBuffer());
+        pgl.readBuffer(pgl.primaryReadBuffer());
       } else {
         setFramebuffer(drawFramebuffer);
         pgl.drawBuffer(pgl.primaryDrawBuffer());
@@ -5406,18 +5406,19 @@ public class PGraphicsOpenGL extends PGraphics {
     if (primarySurface) {
       loadTextureImpl(Texture.POINT, false);
 
+
       if (pgl.primaryIsFboBacked()) {
-        // TODO: need to find how to blit the multisampled back-buffer into the
-        // front buffer in JOGL:
-        /*
-        pgl.bindPrimaryColorFBO();
+      /*
+        pgl.updateFront();
+        pgl.done();
+        //pgl.bindPrimaryColorFBO();
         // Copy the contents of the FBO used by the primary surface into
         // texture, this copy operation is very fast because it is resolved
         // in the GPU.
         texture.set(pgl.getFboTexTarget(), pgl.getFboTexName(),
                     pgl.getFboWidth(), pgl.getFboHeight(), width, height);
-        pgl.bindPrimaryMultiFBO();
-        */
+        //pgl.bindPrimaryMultiFBO();
+      */
         PGraphics.showWarning("Cannot load contents of screen into texture");
       } else {
         // Here we go the slow route: we first copy the contents of the color
@@ -5435,6 +5436,9 @@ public class PGraphicsOpenGL extends PGraphics {
 
         texture.setNative(nativePixels, 0, 0, width, height);
       }
+
+
+      texture.setNative(nativePixels, 0, 0, width, height);
     } else {
       // We need to copy the contents of the multisampled buffer to the
       // color buffer, so the later is up-to-date with the last drawing.
@@ -6331,32 +6335,35 @@ public class PGraphicsOpenGL extends PGraphics {
   protected int getTypeFromVertexShader(String filename) {
     String[] source = parent.loadStrings(filename);
 
-    Pattern pointPattern = Pattern.compile("attribute *vec2 *inPoint");
-    Pattern linePattern = Pattern.compile("attribute *vec4 *inLine");
+    Pattern pointPattern  = Pattern.compile("attribute *vec2 *inPoint");
+    Pattern linePattern   = Pattern.compile("attribute *vec4 *inLine");
     Pattern lightPattern1 = Pattern.compile("uniform *vec4 *lightPosition");
     Pattern lightPattern2 = Pattern.compile("uniform *vec3 *lightNormal");
-    Pattern texPattern = Pattern.compile("attribute vec2 inTexcoord");
+    Pattern texPattern    = Pattern.compile("attribute vec2 inTexcoord");
+
+    boolean foundPoint = false;
+    boolean foundLine  = false;
+    boolean foundLight = false;
+    boolean foundTex   = false;
+    for (int i = 0; i < source.length; i++) {
+      foundPoint |= pointPattern.matcher(source[i]).find();
+      foundLine  |= linePattern.matcher(source[i]).find();
+      foundLight |= lightPattern1.matcher(source[i]).find();
+      foundLight |= lightPattern2.matcher(source[i]).find();
+      foundTex   |= texPattern.matcher(source[i]).find();
+    }
 
     int type = PShader.COLOR;
-    for (int i = 0; i < source.length; i++) {
-      boolean foundPoint = pointPattern.matcher(source[i]).find();
-      boolean foundLine = linePattern.matcher(source[i]).find();
-      boolean foundLight = lightPattern1.matcher(source[i]).find() ||
-                           lightPattern2.matcher(source[i]).find();
-      boolean foundTex = texPattern.matcher(source[i]).find();
-
-      if (foundPoint) {
-        type = PShader.POINT;
-      } else if (foundLine) {
-        type = PShader.LINE;
-      } else if (foundLight && foundTex) {
-        type = PShader.TEXLIGHT;
-      } else if (foundLight) {
-        type = PShader.LIGHT;
-      } else if (foundTex) {
-        type = PShader.TEXTURE;
-      }
-      if (type != PShader.COLOR) break;
+    if (foundPoint) {
+      type = PShader.POINT;
+     } else if (foundLine) {
+       type = PShader.LINE;
+     } else if (foundLight && foundTex) {
+       type = PShader.TEXLIGHT;
+     } else if (foundLight) {
+       type = PShader.LIGHT;
+     } else if (foundTex) {
+     type = PShader.TEXTURE;
     }
     return type;
   }
