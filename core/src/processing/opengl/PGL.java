@@ -2462,6 +2462,11 @@ public class PGL {
         }
         FBObject.TextureAttachment texAttach = null;
         if (fboDrawable != null) {
+          //fboBack = fboDrawable.getFBObject(GL.GL_BACK);
+          //fboFront = fboDrawable.getFBObject(GL.GL_FRONT);
+          //FBObject.Colorbuffer colorBuf = fboFront.getSamplingSinkFBO().getColorbuffer(0);
+          //texAttach = (FBObject.TextureAttachment) colorBuf;
+          //texAttach = fboBack.getSamplingSink();
           texAttach = fboDrawable.getTextureBuffer(GL.GL_FRONT);
         }
         if (texAttach != null) {
