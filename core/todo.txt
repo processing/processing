@@ -1,19 +1,14 @@
 0214 core
-
+X Patch for /trunk/processing/core/src/processing/opengl/PGraphicsOpenGL.java
+X   http://code.google.com/p/processing/issues/detail?id=1306
 
 _ remove java.awt.* imports from sketches
+_   go through examples to make sure they're not being used
 
 _ lots of improvements to Table class?
-_ findRows() is broken
-_   should it return an iterator instead?
-//println(dict.getRowCount());
- languages = new Language[langTotal];
- for (int h = 0; h < langTotal; h++) {
-   String num = str(h + 1);
-   //int[] rows = dict.findRows(num, "#LNUM");
-   int[] rows = findRowsReally(dict, num, "#LNUM");
-   println(rows);
- }
+need option to save table
+join tables together (static is kinda gross)
+lastRowIndex() (to avoid getRowCount() - 1)
 
 _ Default Renderer slow on retina displays
 _   http://code.google.com/p/processing/issues/detail?id=1262

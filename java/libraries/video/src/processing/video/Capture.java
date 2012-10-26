@@ -797,7 +797,7 @@ public class Capture extends PImage implements PConstants {
     checkValidDevices(src);
 
     // register methods
-    parent.registerDispose(this);
+    parent.registerMethod("dispose", this);
 
     setEventHandlerObject(parent);
 
