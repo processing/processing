@@ -611,7 +611,7 @@ public class Movie extends PImage implements PConstants {
       this.filename = filename; // for error messages
 
       // register methods
-      parent.registerDispose(this);
+      parent.registerMethod("dispose", this);
 
       setEventHandlerObject(parent);
 

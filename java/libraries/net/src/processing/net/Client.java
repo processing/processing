@@ -81,7 +81,7 @@ public class Client implements Runnable {
       thread = new Thread(this);
       thread.start();
 
-      parent.registerDispose(this);
+      parent.registerMethod("dispose", this);
 
       // reflection to check whether host applet has a call for
       // public void clientEvent(processing.net.Client)
