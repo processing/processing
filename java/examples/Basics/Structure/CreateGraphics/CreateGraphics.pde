@@ -2,7 +2,7 @@
  * Create Graphics. 
  * 
  * The createGraphics() function creates an object from the PGraphics class 
- * (PGraphics is the main graphics and rendering context for Processing). 
+ * PGraphics is the main graphics and rendering context for Processing. 
  * The beginDraw() method is necessary to prepare for drawing and endDraw() is
  * necessary to finish. Use this class if you need to draw into an off-screen 
  * graphics buffer or to maintain two contexts with different properties.
@@ -29,5 +29,6 @@ void draw() {
   pg.ellipse(mouseX-120, mouseY-60, 60, 60);
   pg.endDraw();
   
+  // Draw the offscreen buffer to the screen with image() 
   image(pg, 120, 60); 
 }
