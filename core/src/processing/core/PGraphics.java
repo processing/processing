@@ -3454,8 +3454,6 @@ public class PGraphics extends PImage implements PConstants {
   }
 
   /**
-   * @param a x-coordinate of the image
-   * @param b y-coordinate of the image
    * @param c width to display the image
    * @param d height to display the image
    */
