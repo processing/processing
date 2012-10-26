@@ -19,10 +19,14 @@ X   editor.caret.block = false
 X see if commander is still headless
 X check to see if sketchbook is getting picked up for cmd line
 X don't use --request on OS X 10.6, it's not available
+X processing-java ClassNotFoundException: BatchCompiler (Linux)
+X   http://code.google.com/p/processing/issues/detail?id=1334
 
+_ renaming RGB (.pde) to Rgb.java says "a file named RGB.pde already exists"
 
-_ processing-java ClassNotFoundException: BatchCompiler (Linux)
-_   http://code.google.com/p/processing/issues/detail?id=1334
+_ change cmd line for OS X to use symlink? 
+_   otherwise updates are going to require reinstall..
+_   or that it's gonna need to parse and say "update command line?" 
 
 
 2.0 FINAL / library/tool/mode manager cleanup
