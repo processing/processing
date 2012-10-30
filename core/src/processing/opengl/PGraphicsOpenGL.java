@@ -387,8 +387,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
   /** Used to create a temporary copy of the color buffer of this
    * rendering surface when applying a filter */
-  protected Texture textureCopy;
-  protected PImage imageCopy;
+//  protected Texture textureCopy;
+//  protected PImage imageCopy;
 
   /** IntBuffer wrapping the pixels array. */
   protected IntBuffer pixelBuffer;
@@ -1879,6 +1879,9 @@ public class PGraphicsOpenGL extends PGraphics {
       if (op == OP_READ) {
         setFramebuffer(readFramebuffer);
         pgl.readBuffer(pgl.primaryReadBuffer());
+        if (pgl.primaryIsFboBacked()) {
+          pgl.forceUpdate();
+        }
       } else {
         setFramebuffer(drawFramebuffer);
         pgl.drawBuffer(pgl.primaryDrawBuffer());
@@ -5406,20 +5409,10 @@ public class PGraphicsOpenGL extends PGraphics {
     if (primarySurface) {
       loadTextureImpl(Texture.POINT, false);
 
-
       if (pgl.primaryIsFboBacked()) {
-      /*
-        pgl.updateFront();
-        pgl.done();
-        //pgl.bindPrimaryColorFBO();
-        // Copy the contents of the FBO used by the primary surface into
-        // texture, this copy operation is very fast because it is resolved
-        // in the GPU.
+        pgl.forceUpdate();
         texture.set(pgl.getFboTexTarget(), pgl.getFboTexName(),
                     pgl.getFboWidth(), pgl.getFboHeight(), width, height);
-        //pgl.bindPrimaryMultiFBO();
-      */
-        PGraphics.showWarning("Cannot load contents of screen into texture");
       } else {
         // Here we go the slow route: we first copy the contents of the color
         // buffer into a pixels array (but we keep it in native format) and
@@ -5436,9 +5429,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
         texture.setNative(nativePixels, 0, 0, width, height);
       }
-
-
-      texture.setNative(nativePixels, 0, 0, width, height);
     } else {
       // We need to copy the contents of the multisampled buffer to the
       // color buffer, so the later is up-to-date with the last drawing.
@@ -5685,6 +5675,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
     loadTexture();
 
+/*
     if (textureCopy == null || textureCopy.width != width ||
                                textureCopy.height != height) {
       Texture.Parameters params = new Texture.Parameters(ARGB, Texture.POINT,
@@ -5695,6 +5686,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     textureCopy.set(texture.glTarget, texture.glName,
                     texture.glWidth, texture.glHeight, width, height);
+*/
 
     // Disable writing to the depth buffer, so that after applying the filter we
     // can still use the depth information to keep adding geometry to the scene.
@@ -5703,21 +5695,23 @@ public class PGraphicsOpenGL extends PGraphics {
     // that has been drawn before.
     pgl.disable(PGL.DEPTH_TEST);
 
-    PolyTexShader prevTexShader = polyTexShader;
-    polyTexShader = (PolyTexShader) shader;
+    // Drawing a textured quad in 2D, covering the entire screen,
+    // with the filter shader applied to it:
+    begin2D();
 
+    // Changing light configuration and shader after begin2D()
+    // because it calls flush().
     boolean prevLights = lights;
     lights = false;
     int prevTextureMode = textureMode;
     textureMode = NORMAL;
     boolean prevStroke = stroke;
     stroke = false;
-
-    // Drawing a textured quad in 2D, covering the entire screen,
-    // with the filter shader applied to it:
-    begin2D();
+    PolyTexShader prevTexShader = polyTexShader;
+    polyTexShader = (PolyTexShader) shader;
     beginShape(QUADS);
-    texture(imageCopy);
+    //texture(imageCopy);
+    texture(this);
     vertex(0, 0, 0, 0);
     vertex(width, 0, 1, 0);
     vertex(width, height, 1, 1);
@@ -5725,12 +5719,12 @@ public class PGraphicsOpenGL extends PGraphics {
     endShape();
     end2D();
 
+    polyTexShader = prevTexShader;
+
     // Restoring previous configuration.
     stroke = prevStroke;
     lights = prevLights;
     textureMode = prevTextureMode;
-
-    polyTexShader = prevTexShader;
 
     if (!hints[DISABLE_DEPTH_TEST]) {
       pgl.enable(PGL.DEPTH_TEST);
