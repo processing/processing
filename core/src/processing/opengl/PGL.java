@@ -737,6 +737,11 @@ public class PGL {
     }
   }
 
+  protected void forceUpdate() {
+    fboBack.syncSamplingSink(gl);
+    fboBack.bind(gl);
+  }
+
 
   protected void bindBackBufferTex() {
     /*
@@ -2440,7 +2445,7 @@ public class PGL {
   ///////////////////////////////////////////////////////////
 
   // Java specific stuff
-
+  FBObject fboBack;
   protected class PGLListener implements GLEventListener {
     @Override
     public void display(GLAutoDrawable adrawable) {
@@ -2467,6 +2472,9 @@ public class PGL {
           //FBObject.Colorbuffer colorBuf = fboFront.getSamplingSinkFBO().getColorbuffer(0);
           //texAttach = (FBObject.TextureAttachment) colorBuf;
           //texAttach = fboBack.getSamplingSink();
+
+          fboBack = fboDrawable.getFBObject(GL.GL_BACK);
+
           texAttach = fboDrawable.getTextureBuffer(GL.GL_FRONT);
         }
         if (texAttach != null) {
