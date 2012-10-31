@@ -1150,8 +1150,10 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void setFramebuffer(FrameBuffer fbo) {
-    currentFramebuffer = fbo;
-    currentFramebuffer.bind();
+    if (currentFramebuffer != fbo) {
+      currentFramebuffer = fbo;
+      currentFramebuffer.bind();
+    }
   }
 
 
@@ -1160,9 +1162,12 @@ public class PGraphicsOpenGL extends PGraphics {
       throw new RuntimeException("popFramebuffer call is unbalanced.");
     }
     fbStackDepth--;
-    currentFramebuffer.finish();
-    currentFramebuffer = fbStack[fbStackDepth];
-    currentFramebuffer.bind();
+    FrameBuffer fbo = fbStack[fbStackDepth];
+    if (currentFramebuffer != fbo) {
+      currentFramebuffer.finish();
+      currentFramebuffer = fbo;
+      currentFramebuffer.bind();
+    }
   }
 
 
@@ -5434,20 +5439,6 @@ public class PGraphicsOpenGL extends PGraphics {
       // color buffer, so the later is up-to-date with the last drawing.
       if (offscreenMultisample) {
         offscreenFramebufferMultisample.copy(offscreenFramebuffer);
-      }
-
-      // Make the offscreen color buffer opaque so it doesn't show
-      // the background when drawn on the main surface.
-      if (offscreenMultisample) {
-        pushFramebuffer();
-        setFramebuffer(offscreenFramebuffer);
-      }
-      pgl.colorMask(false, false, false, true);
-      pgl.clearColor(0, 0, 0, 1);
-      pgl.clear(PGL.COLOR_BUFFER_BIT);
-      pgl.colorMask(true, true, true, true);
-      if (offscreenMultisample) {
-        popFramebuffer();
       }
     }
 
