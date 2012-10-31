@@ -399,8 +399,9 @@ public class PGL {
 
   // FBO for anti-aliased rendering
 
-  protected int fboFrontTex;
-  protected int fboFrontTexWidth, fboFrontTexHeight;
+  protected int drawTexName;
+  protected int drawTexWidth, drawTexHeight;
+  protected FBObject drawFBO;
 
   /*
   protected static final boolean ENABLE_OSX_SCREEN_FBO  = false;
@@ -668,15 +669,15 @@ public class PGL {
   }
 
   protected int getFboTexName() {
-    return fboFrontTex;
+    return drawTexName;
   }
 
   protected int getFboWidth() {
-    return fboFrontTexWidth;
+    return drawTexWidth;
   }
 
   protected int getFboHeight() {
-    return fboFrontTexHeight;
+    return drawTexHeight;
   }
 
   /*
@@ -738,8 +739,10 @@ public class PGL {
   }
 
   protected void forceUpdate() {
-    fboBack.syncSamplingSink(gl);
-    fboBack.bind(gl);
+    if (0 < capabilities.getNumSamples()) {
+      drawFBO.syncSamplingSink(gl);
+      drawFBO.bind(gl);
+    }
   }
 
 
@@ -2445,7 +2448,7 @@ public class PGL {
   ///////////////////////////////////////////////////////////
 
   // Java specific stuff
-  FBObject fboBack;
+
   protected class PGLListener implements GLEventListener {
     @Override
     public void display(GLAutoDrawable adrawable) {
@@ -2473,14 +2476,20 @@ public class PGL {
           //texAttach = (FBObject.TextureAttachment) colorBuf;
           //texAttach = fboBack.getSamplingSink();
 
-          fboBack = fboDrawable.getFBObject(GL.GL_BACK);
-
-          texAttach = fboDrawable.getTextureBuffer(GL.GL_FRONT);
+          drawFBO = fboDrawable.getFBObject(GL.GL_BACK);
+          if (0 < capabilities.getNumSamples()) {
+            // When using multisampled FBO,the back buffer is the MSAA
+            // surface so it cannot read from, the one to use is the front.
+            texAttach = fboDrawable.getTextureBuffer(GL.GL_FRONT);
+          } else {
+            // W/out multisampling, rendering is done on the back buffer.
+            texAttach = fboDrawable.getTextureBuffer(GL.GL_BACK);
+          }
         }
         if (texAttach != null) {
-          fboFrontTex = texAttach.getName();
-          fboFrontTexWidth = texAttach.getWidth();
-          fboFrontTexHeight = texAttach.getHeight();
+          drawTexName = texAttach.getName();
+          drawTexWidth = texAttach.getWidth();
+          drawTexHeight = texAttach.getHeight();
         }
       }
 
