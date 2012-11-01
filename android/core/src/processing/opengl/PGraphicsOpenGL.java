@@ -386,8 +386,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
   /** Used to create a temporary copy of the color buffer of this
    * rendering surface when applying a filter */
-  protected Texture textureCopy;
-  protected PImage imageCopy;
+//  protected Texture textureCopy;
+//  protected PImage imageCopy;
 
   /** IntBuffer wrapping the pixels array. */
   protected IntBuffer pixelBuffer;
@@ -1149,8 +1149,10 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void setFramebuffer(FrameBuffer fbo) {
-    currentFramebuffer = fbo;
-    currentFramebuffer.bind();
+    if (currentFramebuffer != fbo) {
+      currentFramebuffer = fbo;
+      currentFramebuffer.bind();
+    }
   }
 
 
@@ -1159,9 +1161,12 @@ public class PGraphicsOpenGL extends PGraphics {
       throw new RuntimeException("popFramebuffer call is unbalanced.");
     }
     fbStackDepth--;
-    currentFramebuffer.finish();
-    currentFramebuffer = fbStack[fbStackDepth];
-    currentFramebuffer.bind();
+    FrameBuffer fbo = fbStack[fbStackDepth];
+    if (currentFramebuffer != fbo) {
+      currentFramebuffer.finish();
+      currentFramebuffer = fbo;
+      currentFramebuffer.bind();
+    }
   }
 
 
@@ -3299,9 +3304,13 @@ public class PGraphicsOpenGL extends PGraphics {
     smooth = true;
 
     if (maxSamples < level) {
-      PGraphics.showWarning("Smooth level " + level +
-                            " is not supported by the hardware. Using " +
-                            maxSamples + " instead.");
+      if (0 < maxSamples) {
+        PGraphics.showWarning("Smooth level " + level +
+                              " is not available. Using " +
+                              maxSamples + " instead.");
+      } else{
+        PGraphics.showWarning("Smooth is not available.");
+      }
       level = maxSamples;
     }
 
@@ -5423,20 +5432,6 @@ public class PGraphicsOpenGL extends PGraphics {
       if (offscreenMultisample) {
         offscreenFramebufferMultisample.copy(offscreenFramebuffer);
       }
-
-      // Make the offscreen color buffer opaque so it doesn't show
-      // the background when drawn on the main surface.
-      if (offscreenMultisample) {
-        pushFramebuffer();
-        setFramebuffer(offscreenFramebuffer);
-      }
-      pgl.colorMask(false, false, false, true);
-      pgl.clearColor(0, 0, 0, 1);
-      pgl.clear(PGL.COLOR_BUFFER_BIT);
-      pgl.colorMask(true, true, true, true);
-      if (offscreenMultisample) {
-        popFramebuffer();
-      }
     }
 
     if (needEndDraw) {
@@ -5663,6 +5658,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
     loadTexture();
 
+/*
     if (textureCopy == null || textureCopy.width != width ||
                                textureCopy.height != height) {
       Texture.Parameters params = new Texture.Parameters(ARGB, Texture.POINT,
@@ -5673,6 +5669,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     textureCopy.set(texture.glTarget, texture.glName,
                     texture.glWidth, texture.glHeight, width, height);
+*/
 
     // Disable writing to the depth buffer, so that after applying the filter we
     // can still use the depth information to keep adding geometry to the scene.
@@ -5681,21 +5678,23 @@ public class PGraphicsOpenGL extends PGraphics {
     // that has been drawn before.
     pgl.disable(PGL.DEPTH_TEST);
 
-    PolyTexShader prevTexShader = polyTexShader;
-    polyTexShader = (PolyTexShader) shader;
+    // Drawing a textured quad in 2D, covering the entire screen,
+    // with the filter shader applied to it:
+    begin2D();
 
+    // Changing light configuration and shader after begin2D()
+    // because it calls flush().
     boolean prevLights = lights;
     lights = false;
     int prevTextureMode = textureMode;
     textureMode = NORMAL;
     boolean prevStroke = stroke;
     stroke = false;
-
-    // Drawing a textured quad in 2D, covering the entire screen,
-    // with the filter shader applied to it:
-    begin2D();
+    PolyTexShader prevTexShader = polyTexShader;
+    polyTexShader = (PolyTexShader) shader;
     beginShape(QUADS);
-    texture(imageCopy);
+    //texture(imageCopy);
+    texture(this);
     vertex(0, 0, 0, 0);
     vertex(width, 0, 1, 0);
     vertex(width, height, 1, 1);
@@ -5703,12 +5702,12 @@ public class PGraphicsOpenGL extends PGraphics {
     endShape();
     end2D();
 
+    polyTexShader = prevTexShader;
+
     // Restoring previous configuration.
     stroke = prevStroke;
     lights = prevLights;
     textureMode = prevTextureMode;
-
-    polyTexShader = prevTexShader;
 
     if (!hints[DISABLE_DEPTH_TEST]) {
       pgl.enable(PGL.DEPTH_TEST);
@@ -6096,10 +6095,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
     int major = pgl.getGLVersion()[0];
     if (major < 2) {
-      // There might be problems...
-      PGraphics.showWarning("The OpenGL version is less than 2.0 so " +
-                            "Processing might not draw properly");
-      // ... but GLSL might still be available through extensions.
+      // GLSL might still be available through extensions.
       if (OPENGL_EXTENSIONS.indexOf("_fragment_shader")  == -1 ||
           OPENGL_EXTENSIONS.indexOf("_vertex_shader")    == -1 ||
           OPENGL_EXTENSIONS.indexOf("_shader_objects")   == -1 ||
