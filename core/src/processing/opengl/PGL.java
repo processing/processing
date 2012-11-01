@@ -45,7 +45,6 @@ import javax.media.opengl.GLContext;
 import javax.media.opengl.GLDrawable;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.GLException;
-import javax.media.opengl.GLFBODrawable;
 import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.glu.GLU;
@@ -57,7 +56,6 @@ import processing.core.PConstants;
 
 import com.jogamp.newt.awt.NewtCanvasAWT;
 import com.jogamp.newt.opengl.GLWindow;
-import com.jogamp.opengl.FBObject;
 import com.jogamp.opengl.util.AnimatorBase;
 
 /**
@@ -398,14 +396,6 @@ public class PGL {
 
   // FBO for anti-aliased rendering
 
-  protected int drawTexName;
-  protected int drawTexWidth, drawTexHeight;
-  protected FBObject drawFBO;
-
-  /*
-  protected static final boolean ENABLE_OSX_SCREEN_FBO  = false;
-  protected static final int MIN_OSX_VER_FOR_SCREEN_FBO = 6;
-  protected static final int MIN_SAMPLES_FOR_SCREEN_FBO = 1;
   protected boolean needScreenFBO = false;
   protected int fboWidth, fboHeight;
   protected int numSamples;
@@ -420,7 +410,6 @@ public class PGL {
   protected int[] glDepthBuffer = { 0 };
   protected int[] glStencilBuffer = { 0 };
   protected int contextHashCode;
-*/
 
   ///////////////////////////////////////////////////////////
 
@@ -521,6 +510,16 @@ public class PGL {
 
 
   protected void initPrimarySurface(int antialias) {
+    if (PApplet.platform == PConstants.MACOSX) {
+      needScreenFBO = enable_screen_FBO_macosx;
+    } else if (PApplet.platform == PConstants.WINDOWS) {
+      needScreenFBO = enable_screen_FBO_windows;
+    } else if (PApplet.platform == PConstants.LINUX) {
+      needScreenFBO = enable_screen_FBO_linux;
+    } else {
+      needScreenFBO = enable_screen_FBO_other;
+    }
+
     if (profile == null) {
       profile = GLProfile.getDefault();
     } else {
@@ -541,21 +540,11 @@ public class PGL {
 
     // Setting up the desired GL capabilities;
     GLCapabilities caps = new GLCapabilities(profile);
-    if (1 < antialias) {
+    if (1 < antialias && !needScreenFBO) {
       caps.setSampleBuffers(true);
       caps.setNumSamples(antialias);
     } else {
       caps.setSampleBuffers(false);
-    }
-
-    if (PApplet.platform == PConstants.MACOSX) {
-      caps.setFBO(enable_screen_FBO_macosx);
-    } else if (PApplet.platform == PConstants.WINDOWS) {
-      caps.setFBO(enable_screen_FBO_windows);
-    } else if (PApplet.platform == PConstants.LINUX) {
-      caps.setFBO(enable_screen_FBO_linux);
-    } else {
-      caps.setFBO(enable_screen_FBO_other);
     }
 
     caps.setDepthBits(24);
@@ -614,7 +603,182 @@ public class PGL {
     if (!setFramerate) {
       setFrameRate(targetFramerate);
     }
+
+    if (needScreenFBO && glColorFbo[0] == 0) {
+
+
+      String ext = gl.glGetString(GL.GL_EXTENSIONS);
+      if (-1 < ext.indexOf("texture_non_power_of_two")) {
+        fboWidth = pg.width;
+        fboHeight = pg.height;
+      } else {
+        fboWidth = PGL.nextPowerOfTwo(pg.width);
+        fboHeight = PGL.nextPowerOfTwo(pg.height);
+      }
+
+      if (-1 < ext.indexOf("_framebuffer_multisample")) {
+        numSamples = qualityToSamples(pg.quality);
+      } else {
+        numSamples = 1;
+      }
+      multisample = 1 < numSamples;
+
+      if (multisample && gl2x == null) {
+        throw new RuntimeException("Doesn't have the OpenGL extensions " +
+                                   "necessary for multisampling.");
+      }
+      packedDepthStencil = ext.indexOf("packed_depth_stencil") != -1;
+
+      contextHashCode = context.hashCode();
+
+      // Create the color texture...
+      gl.glGenTextures(2, glColorTex, 0);
+//      for (int i = 0; i < 2; i++) { // Don't create back-buffer for now.
+      for (int i = 0; i < 1; i++) {
+        gl.glBindTexture(GL.GL_TEXTURE_2D, glColorTex[i]);
+        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER,
+                           GL.GL_NEAREST);
+        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER,
+                           GL.GL_NEAREST);
+        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S,
+                           GL.GL_CLAMP_TO_EDGE);
+        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T,
+                           GL.GL_CLAMP_TO_EDGE);
+        gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, fboWidth, fboHeight,
+                        0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, null);
+        initTexture(GL.GL_TEXTURE_2D, PGL.RGBA, fboWidth, fboHeight);
+      }
+      gl.glBindTexture(GL.GL_TEXTURE_2D, 0);
+
+      // ...and attach to the color framebuffer.
+      gl.glGenFramebuffers(1, glColorFbo, 0);
+      gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, glColorFbo[0]);
+      gl.glFramebufferTexture2D(GL.GL_FRAMEBUFFER, GL.GL_COLOR_ATTACHMENT0,
+                                GL.GL_TEXTURE_2D, glColorTex[0], 0);
+
+      if (multisample) {
+        // Now, creating mutisampled FBO with packed depth and stencil buffers.
+        gl.glGenFramebuffers(1, glMultiFbo, 0);
+        gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, glMultiFbo[0]);
+
+        // color render buffer...
+        gl.glGenRenderbuffers(1, glColorRenderBuffer, 0);
+        gl.glBindRenderbuffer(GL.GL_RENDERBUFFER, glColorRenderBuffer[0]);
+        gl2x.glRenderbufferStorageMultisample(GL.GL_RENDERBUFFER, numSamples,
+                                              GL.GL_RGBA8, fboWidth, fboHeight);
+        gl.glFramebufferRenderbuffer(GL.GL_FRAMEBUFFER, GL.GL_COLOR_ATTACHMENT0,
+                                     GL.GL_RENDERBUFFER, glColorRenderBuffer[0]);
+
+        if (packedDepthStencil) {
+          // packed depth+stencil buffer...
+          gl.glGenRenderbuffers(1, glPackedDepthStencil, 0);
+          gl.glBindRenderbuffer(GL.GL_RENDERBUFFER, glPackedDepthStencil[0]);
+          gl2x.glRenderbufferStorageMultisample(GL.GL_RENDERBUFFER, numSamples,
+                                                GL.GL_DEPTH24_STENCIL8,
+                                                fboWidth, fboHeight);
+          gl.glFramebufferRenderbuffer(GL.GL_FRAMEBUFFER,
+                                       GL.GL_DEPTH_ATTACHMENT,
+                                       GL.GL_RENDERBUFFER,
+                                       glPackedDepthStencil[0]);
+          gl.glFramebufferRenderbuffer(GL.GL_FRAMEBUFFER,
+                                       GL.GL_STENCIL_ATTACHMENT,
+                                       GL.GL_RENDERBUFFER,
+                                       glPackedDepthStencil[0]);
+        } else {
+          // Separate depth and stencil buffers...
+          gl.glGenRenderbuffers(1, glDepthBuffer, 0);
+          gl.glBindRenderbuffer(GL.GL_RENDERBUFFER, glDepthBuffer[0]);
+          gl2x.glRenderbufferStorageMultisample(GL.GL_RENDERBUFFER, numSamples,
+                                                GL.GL_DEPTH_COMPONENT24,
+                                                fboWidth, fboHeight);
+          gl.glFramebufferRenderbuffer(GL.GL_FRAMEBUFFER,
+                                       GL.GL_DEPTH_ATTACHMENT,
+                                       GL.GL_RENDERBUFFER,
+                                       glDepthBuffer[0]);
+
+          // Some hardware doesn't support distinct depth and stencil buffers:
+          // http://lists.apple.com/archives/mac-opengl/2008/Aug/msg00089.html
+          // which just results in an unsupported framebuffer error.
+          gl.glGenRenderbuffers(1, glStencilBuffer, 0);
+          gl.glBindRenderbuffer(GL.GL_RENDERBUFFER, glStencilBuffer[0]);
+          gl2x.glRenderbufferStorageMultisample(GL.GL_RENDERBUFFER, numSamples,
+                                                GL.GL_STENCIL_INDEX8,
+                                                fboWidth, fboHeight);
+          gl.glFramebufferRenderbuffer(GL.GL_FRAMEBUFFER,
+                                       GL.GL_STENCIL_ATTACHMENT,
+                                       GL.GL_RENDERBUFFER,
+                                       glStencilBuffer[0]);
+        }
+        validateFramebuffer();
+
+        // Clear all the buffers in the multisample FBO
+        gl.glClearDepth(1);
+        gl.glClearStencil(0);
+        gl.glClearColor(0, 0, 0, 0);
+        gl.glClear(GL.GL_DEPTH_BUFFER_BIT |
+                   GL.GL_STENCIL_BUFFER_BIT |
+                   GL.GL_COLOR_BUFFER_BIT);
+
+        // All set with multisampled FBO!
+        gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, glColorFbo[0]);
+      } else {
+        if (packedDepthStencil) {
+          // packed depth+stencil buffer...
+          gl.glGenRenderbuffers(1, glPackedDepthStencil, 0);
+          gl.glBindRenderbuffer(GL.GL_RENDERBUFFER, glPackedDepthStencil[0]);
+          gl.glRenderbufferStorage(GL.GL_RENDERBUFFER, GL.GL_DEPTH24_STENCIL8,
+                                   fboWidth, fboHeight);
+          gl.glFramebufferRenderbuffer(GL.GL_FRAMEBUFFER,
+                                       GL.GL_DEPTH_ATTACHMENT,
+                                       GL.GL_RENDERBUFFER,
+                                       glPackedDepthStencil[0]);
+          gl.glFramebufferRenderbuffer(GL.GL_FRAMEBUFFER,
+                                       GL.GL_STENCIL_ATTACHMENT,
+                                       GL.GL_RENDERBUFFER,
+                                       glPackedDepthStencil[0]);
+        } else {
+          // Separate depth and stencil buffers...
+          gl.glGenRenderbuffers(1, glDepthBuffer, 0);
+          gl.glBindRenderbuffer(GL.GL_RENDERBUFFER, glDepthBuffer[0]);
+          gl.glRenderbufferStorage(GL.GL_RENDERBUFFER, GL.GL_DEPTH_COMPONENT24,
+                                   fboWidth, fboHeight);
+          gl.glFramebufferRenderbuffer(GL.GL_FRAMEBUFFER,
+                                       GL.GL_DEPTH_ATTACHMENT,
+                                       GL.GL_RENDERBUFFER,
+                                       glDepthBuffer[0]);
+
+          gl.glGenRenderbuffers(1, glStencilBuffer, 0);
+          gl.glBindRenderbuffer(GL.GL_RENDERBUFFER, glStencilBuffer[0]);
+          gl.glRenderbufferStorage(GL.GL_RENDERBUFFER, GL.GL_STENCIL_INDEX8,
+                                   fboWidth, fboHeight);
+          gl.glFramebufferRenderbuffer(GL.GL_FRAMEBUFFER,
+                                       GL.GL_STENCIL_ATTACHMENT,
+                                       GL.GL_RENDERBUFFER, glStencilBuffer[0]);
+        }
+        validateFramebuffer();
+
+        // Clear the depth and stencil buffers in the color FBO. There is no
+        // need to clear the color buffers because the textures attached were
+        // properly initialized blank.
+        gl.glClearDepth(1);
+        gl.glClearStencil(0);
+        gl.glClear(GL.GL_DEPTH_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT);
+      }
+
+      // The screen framebuffer is the color FBO just created. We need
+      // to update the screenFramebuffer object so when the framebuffer
+      // is popped back to the screen, the correct id is set.
+      PGraphicsOpenGL.screenFramebuffer.glFbo = glColorFbo[0];
+
+      backTex = 1;
+      frontTex = 0;
+    } else {
+      // To make sure that the default screen buffer is used, specially after
+      // doing screen rendering on an FBO.
+      PGraphicsOpenGL.screenFramebuffer.glFbo = 0;
+    }
   }
+
 
   protected void updateOffscreen(PGL primary) {
     gl  = primary.gl;
@@ -623,59 +787,49 @@ public class PGL {
   }
 
 
-  protected int primaryReadFramebuffer() {
-    if (capabilities.isFBO()) {
-      return context.getDefaultReadFramebuffer();
-    } else {
-      return 0;
-    }
-  }
-
-  protected int primaryDrawFramebuffer() {
-    if (capabilities.isFBO()) {
-      return context.getDefaultDrawFramebuffer();
-    } else {
-      return 0;
-    }
-  }
-
   protected int primaryDrawBuffer() {
-    if (capabilities.isFBO()) {
-      return GL.GL_COLOR_ATTACHMENT0;
-    } else {
+    if (glColorFbo[0] == 0) {
       return GL.GL_BACK;
+    } else {
+      return GL.GL_COLOR_ATTACHMENT0;
     }
   }
 
-  protected int primaryReadBuffer() {
-    if (capabilities.isFBO()) {
-      return GL.GL_COLOR_ATTACHMENT0;
-    } else {
-      return GL.GL_BACK;
-    }
+/*
+  protected boolean primaryIsDoubleBuffered() {
+    // When using the multisampled FBO, the color
+    // FBO is single buffered as it has only one
+    // texture bound to it.
+    //return glColorFbo[0] == 0;
+    return true;
   }
+*/
 
   protected boolean primaryIsFboBacked() {
-    return capabilities.isFBO();
+    return glColorFbo[0] != 0;
   }
+
 
   protected int getFboTexTarget() {
     return GL.GL_TEXTURE_2D;
   }
 
+
   protected int getFboTexName() {
-    return drawTexName;
+    return glColorTex[0];
   }
+
 
   protected int getFboWidth() {
-    return drawTexWidth;
+    return fboWidth;
   }
+
 
   protected int getFboHeight() {
-    return drawTexHeight;
+    return fboHeight;
   }
 
-  /*
+
   protected void bindPrimaryColorFBO() {
     if (multisample) {
       // Blit the contents of the multisampled FBO into the color FBO,
@@ -721,7 +875,7 @@ public class PGL {
       gl.glDeleteRenderbuffers(1, glColorRenderBuffer, 0);
     }
   }
-*/
+
 
   protected int qualityToSamples(int quality) {
     if (quality <= 1) {
@@ -733,26 +887,15 @@ public class PGL {
     }
   }
 
-  protected void forceUpdate() {
-    if (0 < capabilities.getNumSamples()) {
-      drawFBO.syncSamplingSink(gl);
-      drawFBO.bind(gl);
-    }
-  }
-
-
   protected void bindBackBufferTex() {
-    /*
     if (!texturingIsEnabled(GL.GL_TEXTURE_2D)) {
       enableTexturing(GL.GL_TEXTURE_2D);
     }
     gl.glBindTexture(GL.GL_TEXTURE_2D, glColorTex[backTex]);
-    */
   }
 
 
   protected void unbindBackBufferTex() {
-    /*
     if (textureIsBound(GL.GL_TEXTURE_2D, glColorTex[backTex])) {
       // We don't want to unbind another texture
       // that might be bound instead of this one.
@@ -764,7 +907,6 @@ public class PGL {
         gl.glBindTexture(GL.GL_TEXTURE_2D, 0);
       }
     }
-    */
   }
 
 
@@ -774,7 +916,6 @@ public class PGL {
 
 
   protected void beginOnscreenDraw(boolean clear) {
-    /*
     if (glColorFbo[0] != 0) {
       gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, glColorFbo[0]);
       gl.glFramebufferTexture2D(GL.GL_FRAMEBUFFER,
@@ -795,12 +936,10 @@ public class PGL {
         PGraphicsOpenGL.screenFramebuffer.glFbo = glColorFbo[0];
       }
     }
-    */
   }
 
 
   protected void endOnscreenDraw(boolean clear0) {
-    /*
     if (glColorFbo[0] != 0) {
       if (multisample) {
         // Blit the contents of the multisampled FBO into the color FBO:
@@ -849,7 +988,6 @@ public class PGL {
 //      frontTex = backTex;
 //      backTex = temp;
     }
-    */
   }
 
 
@@ -1497,11 +1635,7 @@ public class PGL {
 
   public void readPixels(int x, int y, int width, int height, int format,
                          int type, Buffer buffer) {
-
-
     gl.glReadPixels(x, y, width, height, format, type, buffer);
-
-
   }
 
 
@@ -2444,50 +2578,12 @@ public class PGL {
 
   // Java specific stuff
 
+
   protected class PGLListener implements GLEventListener {
     @Override
     public void display(GLAutoDrawable adrawable) {
       drawable = adrawable;
       context = adrawable.getContext();
-
-      if (capabilities.isFBO()) {
-        GLFBODrawable fboDrawable = null;
-        if (toolkit == AWT) {
-          GLCanvas drCanvas = (GLCanvas)adrawable;
-          fboDrawable = (GLFBODrawable)drCanvas.getDelegatedDrawable();
-//          FBObject fboFront = dr.getFBObject(GL.GL_FRONT);
-//          FBObject.Colorbuffer colorBuf = fboFront.getColorbuffer(0);
-//          FBObject.TextureAttachment texFront = (FBObject.TextureAttachment) colorBuf;
-//          System.out.println("front texture: " + texFront.getName());
-        } else {
-          GLWindow drWindow = (GLWindow)adrawable;
-          fboDrawable = (GLFBODrawable)drWindow.getDelegatedDrawable();
-        }
-        FBObject.TextureAttachment texAttach = null;
-        if (fboDrawable != null) {
-          //fboBack = fboDrawable.getFBObject(GL.GL_BACK);
-          //fboFront = fboDrawable.getFBObject(GL.GL_FRONT);
-          //FBObject.Colorbuffer colorBuf = fboFront.getSamplingSinkFBO().getColorbuffer(0);
-          //texAttach = (FBObject.TextureAttachment) colorBuf;
-          //texAttach = fboBack.getSamplingSink();
-
-          drawFBO = fboDrawable.getFBObject(GL.GL_BACK);
-          if (0 < capabilities.getNumSamples()) {
-            // When using multisampled FBO,the back buffer is the MSAA
-            // surface so it cannot read from, the one to use is the front.
-            texAttach = fboDrawable.getTextureBuffer(GL.GL_FRONT);
-          } else {
-            // W/out multisampling, rendering is done on the back buffer.
-            texAttach = fboDrawable.getTextureBuffer(GL.GL_BACK);
-          }
-        }
-        if (texAttach != null) {
-          drawTexName = texAttach.getName();
-          drawTexWidth = texAttach.getWidth();
-          drawTexHeight = texAttach.getHeight();
-        }
-      }
-
       gl = context.getGL();
       gl2 = gl.getGL2ES2();
       try {
@@ -2529,13 +2625,11 @@ public class PGL {
       drawable = adrawable;
       context = adrawable.getContext();
 
-      /*
       if (glColorFbo[0] != 0) {
         // The screen FBO hack needs the FBO to be recreated when starting
         // and after resizing.
         glColorFbo[0] = 0;
       }
-      */
     }
   }
 
