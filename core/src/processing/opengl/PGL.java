@@ -25,7 +25,6 @@ package processing.opengl;
 
 import java.awt.BorderLayout;
 import java.awt.Canvas;
-import java.awt.Dimension;
 import java.nio.Buffer;
 
 import java.nio.ByteBuffer;
@@ -582,11 +581,7 @@ public class PGL {
     } else if (toolkit == NEWT) {
       window = GLWindow.create(caps);
       canvasNEWT = new NewtCanvasAWT(window);
-      Dimension size0 = new Dimension(pg.width, pg.height);
-      canvasNEWT.setShallUseOffscreenLayer(true); // trigger offscreen layer - if supported
-      canvasNEWT.setPreferredSize(size0);
-      canvasNEWT.setMinimumSize(size0);
-      canvasNEWT.setSize(size0);
+      canvasNEWT.setBounds(0, 0, pg.width, pg.height);
 
       pg.parent.setLayout(new BorderLayout());
       pg.parent.add(canvasNEWT, BorderLayout.CENTER);
