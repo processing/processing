@@ -10396,7 +10396,7 @@ public class PApplet extends Applet
    *
    * Sets the coordinate space for texture mapping. There are two options,
    * IMAGE, which refers to the actual coordinates of the image, and
-   * NORMALIZED, which refers to a normalized space of values ranging from 0
+   * NORMAL, which refers to a normalized space of values ranging from 0
    * to 1. The default mode is IMAGE. In IMAGE, if an image is 100 x 200
    * pixels, mapping the image onto the entire size of a quad would require
    * the points (0,0) (0,100) (100,200) (0,200). The same mapping in
@@ -10404,7 +10404,7 @@ public class PApplet extends Applet
    *
    * ( end auto-generated )
    * @webref image:textures
-   * @param mode either IMAGE or NORMALIZED
+   * @param mode either IMAGE or NORMAL
    * @see PGraphics#texture(PImage)
    */
   public void textureMode(int mode) {
@@ -11660,8 +11660,6 @@ public class PApplet extends Applet
 
 
   /**
-   * @param a x-coordinate of the image
-   * @param b y-coordinate of the image
    * @param c width to display the image
    * @param d height to display the image
    */
