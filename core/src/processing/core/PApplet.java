@@ -9387,7 +9387,7 @@ public class PApplet extends Applet
           final int[] sizes = { 16, 24, 32, 48, 64 };
 
           for (int sz : sizes) {
-            URL url = getClass().getResource("icon/icon-" + sz + ".png");
+            URL url = getClass().getResource("/icon/icon-" + sz + ".png");
             Image image = Toolkit.getDefaultToolkit().getImage(url);
             iconImages.add(image);
             //iconImages.add(Toolkit.getLibImage("icons/pde-" + sz + ".png", frame));
@@ -9395,7 +9395,7 @@ public class PApplet extends Applet
         }
         frame.setIconImages(iconImages);
       } catch (Exception e) {
-        e.printStackTrace();
+        //e.printStackTrace();  // more or less harmless; don't spew errors
       }
     }
   }
@@ -10419,7 +10419,7 @@ public class PApplet extends Applet
    * Description to come...
    *
    * ( end auto-generated from textureWrap.xml )
-   * 
+   *
    * @webref image:textures
    * @param wrap Either CLAMP (default) or REPEAT
    */
@@ -10588,7 +10588,7 @@ public class PApplet extends Applet
    * This is a new reference entry for Processing 2.0. It will be updated shortly.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref Rendering
    * @param mode the blending mode to use
    */
@@ -10632,7 +10632,7 @@ public class PApplet extends Applet
    * This is a new reference entry for Processing 2.0. It will be updated shortly.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref rendering:shaders
    * @param fragFilename name of fragment shader file
    */
@@ -10655,7 +10655,7 @@ public class PApplet extends Applet
    * This is a new reference entry for Processing 2.0. It will be updated shortly.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref rendering:shaders
    * @param shader name of shader file
    */
@@ -10680,7 +10680,7 @@ public class PApplet extends Applet
    * This is a new reference entry for Processing 2.0. It will be updated shortly.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref rendering:shaders
    */
   public void resetShader() {
@@ -11561,9 +11561,9 @@ public class PApplet extends Applet
 
 
   /**
-   * 
+   *
    * @param level either 2, 4, or 8
-   */ 
+   */
   public void smooth(int level) {
     if (recorder != null) recorder.smooth(level);
     g.smooth(level);
