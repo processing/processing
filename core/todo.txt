@@ -1,12 +1,4 @@
-0214 core (2.0b6)
-A Patch for /trunk/processing/core/src/processing/opengl/PGraphicsOpenGL.java
-A   http://code.google.com/p/processing/issues/detail?id=1306
-A reverted back to earlier version of JOGL
-A several fixes for GMA 950
-A video was broken due to JOGL issues
-A   http://code.google.com/p/processing/issues/detail?id=1364
-X icon loading causes an error if you use a package
-X   http://code.google.com/p/processing/issues/detail?id=1346
+0215 core
 
 
 _ mouseButton not being set properly in mouseClicked

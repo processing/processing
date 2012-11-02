@@ -44,9 +44,9 @@ import processing.core.*;
  * files and images, etc) that comes from that.
  */
 public class Base {
-  static public final int REVISION = 214;
+  static public final int REVISION = 215;
   /** This might be replaced by main() if there's a lib/version.txt file. */
-  static public String VERSION_NAME = "0214";
+  static public String VERSION_NAME = "0215";
   /** Set true if this a proper release rather than a numbered revision. */
   static public boolean RELEASE = false;
 
@@ -2338,12 +2338,12 @@ public class Base {
   }
   */
 
-  /** 
-   * Adjacent the executable on Windows and Linux, 
+  /**
+   * Adjacent the executable on Windows and Linux,
    * or inside Contents/Resources/Java on Mac OS X.
    */
-  static protected File processingRoot; 
-  
+  static protected File processingRoot;
+
   static public File getContentFile(String name) {
     if (processingRoot == null) {
       // Get the path to the .jar file that contains Base.class
@@ -2356,7 +2356,7 @@ public class Base {
         // The main Processing installation directory
         processingRoot = libFolder.getParentFile();
       } else {
-        Base.log("Could not find lib in " + 
+        Base.log("Could not find lib in " +
           libFolder.getAbsolutePath() + ", switching to user.dir");
         processingRoot = new File(System.getProperty("user.dir"));
       }
