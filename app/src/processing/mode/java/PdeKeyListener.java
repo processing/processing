@@ -52,16 +52,6 @@ public class PdeKeyListener {
   private Editor editor;
   private JEditTextArea textarea;
 
-//  private boolean externalEditor;
-//  private boolean tabsExpand;
-////  private boolean tabsIndent;
-//  private int tabSize;
-//  private String tabString;
-//  private boolean autoIndent;
-
-//  private int selectionStart, selectionEnd;
-//  private int position;
-
   /** ctrl-alt on windows and linux, cmd-alt on mac os x */
   static final int CTRL_ALT = ActionEvent.ALT_MASK |
     Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
@@ -73,18 +63,7 @@ public class PdeKeyListener {
 
     // let him know that i'm leechin'
     textarea.editorListener = this;
-
-//    applyPreferences();
   }
-
-
-//  public void applyPreferences() {
-//    tabsExpand = Preferences.getBoolean("editor.tabs.expand");
-//    tabSize = Preferences.getInteger("editor.tabs.size");
-//    tabString = spaces(tabSize);
-//    autoIndent = Preferences.getBoolean("editor.indent");
-//    externalEditor = Preferences.getBoolean("editor.external");
-//  }
 
 
   /**
@@ -96,19 +75,8 @@ public class PdeKeyListener {
    * @return true if the event has been handled (to remove it from the queue)
    */
   public boolean keyPressed(KeyEvent event) {
-    // don't do things if the textarea isn't editable
-    if (Preferences.getBoolean("editor.external")) return false;
-
-    //deselect();  // this is for paren balancing
     char c = event.getKeyChar();
     int code = event.getKeyCode();
-
-//    if (code == KeyEvent.VK_SHIFT) {
-//      editor.toolbar.setShiftPressed(true);
-//    }
-
-    //System.out.println((int)c + " " + code + " " + event);
-    //System.out.println();
 
     Sketch sketch = editor.getSketch();
 
