@@ -1,3 +1,70 @@
+PROCESSING 2.0b6 (REV 0214) - 2 November 2012
+
+Patching up command line issues that went backwards in the last release, 
+a number of OpenGL fixes, and more internal changes and updates. 
+
+[ bug fixes ] 
+
++ Command line support was broken in 2.0b5, with an error about
+  processing-java ClassNotFoundException: BatchCompiler
+  http://code.google.com/p/processing/issues/detail?id=1334
+  On Mac OS X, you may need to re-run the "Install Command Line" tool.
+
++ Make sure the sketchbook is being picked up on the command line,
+  so that imported libraries are handled correctly.
+
++ Import statements were executed within multiline comments.
+  http://code.google.com/p/processing/issues/detail?id=911
+
++ Editor not responding properly if the "External Editor" preference
+  had been enabled with a previous release. 
+  http://code.google.com/p/processing/issues/detail?id=1355
+
++ A number of OpenGL fixes to better handle older chipsets, like the
+  GMA 950 (found on lots of older Mac Minis and similar hardware). 
+
++ Reverted back to an older version of the JOGL library to prevent
+  issues with sketches locking up. In particular, this should fix 
+  sketches that use the video library: 
+  http://code.google.com/p/processing/issues/detail?id=1338
+  http://code.google.com/p/processing/issues/detail?id=1364
+
++ Icon loading was causing an error if you used a package for your code.
+  http://code.google.com/p/processing/issues/detail?id=1346
+
++ No longer using --request on OS X 10.6, since it's not available. 
+  Avoids a harmless warning message on the console when running a sketch.
+
+[ changes/additions ] 
+
++ Added an option to Preferences to enable/disable advanced input method
+  support to handle complex scripts like Japanese, Korean, or Chinese.
+  http://code.google.com/p/processing/issues/detail?id=526
+
++ Add option for blinking and/or block caret in the editor. To disable 
+  caret blinking in the text editor, add this line to preferences.txt:
+  editor.caret.blink = true
+  Or to just a block caret, use this:
+  editor.caret.block = false
+  http://code.google.com/p/processing/issues/detail?id=1136
+
+[ internal ]
+
++ Removed applet-related preferences, and the 'applet' subfolder in the 
+  source/distribution.
+
++ Removed the old 'cmd' folder from the source/distribution
+
++ Preferences are now written in sorted order to make it easier to handle
+  comparisons or other debugging.
+
++ Major change to handle how the 'lib' folder is found, hopefully does a 
+  better job with command line support.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING 2.0b5 (REV 0213) - 22 October 2012
 
 Fixes for a few regressions that showed up in 2.0b4, plus some internal

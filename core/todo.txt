@@ -1,6 +1,22 @@
-0214 core
-X Patch for /trunk/processing/core/src/processing/opengl/PGraphicsOpenGL.java
-X   http://code.google.com/p/processing/issues/detail?id=1306
+0214 core (2.0b6)
+A Patch for /trunk/processing/core/src/processing/opengl/PGraphicsOpenGL.java
+A   http://code.google.com/p/processing/issues/detail?id=1306
+A reverted back to earlier version of JOGL
+A several fixes for GMA 950
+A video was broken due to JOGL issues
+A   http://code.google.com/p/processing/issues/detail?id=1364
+X icon loading causes an error if you use a package
+X   http://code.google.com/p/processing/issues/detail?id=1346
+
+
+_ mouseButton not being set properly in mouseClicked
+_   http://code.google.com/p/processing/issues/detail?id=1350
+
+_ "translate, or this variation of it" when using text(s, x, y, z) accidentally
+_   change to be th text command
+
+_ OutOfMemory in image()
+_   http://code.google.com/p/processing/issues/detail?id=1353
 
 _ remove java.awt.* imports from sketches
 _   go through examples to make sure they're not being used
