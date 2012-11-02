@@ -1,4 +1,4 @@
-0214 pde
+0214 pde (2.0b6)
 X Input Method support (for Japanese et al.) has been disabled
 X   implement as an option inside Preferences
 X   http://code.google.com/p/processing/issues/detail?id=526
@@ -21,6 +21,12 @@ X check to see if sketchbook is getting picked up for cmd line
 X don't use --request on OS X 10.6, it's not available
 X processing-java ClassNotFoundException: BatchCompiler (Linux)
 X   http://code.google.com/p/processing/issues/detail?id=1334
+X 2.0 beta editor does not respond properly if External Editor was enabled
+X   http://code.google.com/p/processing/issues/detail?id=1355
+
+
+_ Sketch that exported to Linux doesn't get the command line arguments
+_   http://code.google.com/p/processing/issues/detail?id=1359
 
 _ renaming RGB (.pde) to Rgb.java says "a file named RGB.pde already exists"
 
