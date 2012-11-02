@@ -1,3 +1,30 @@
+0214 pde (2.0b6)
+X Input Method support (for Japanese et al.) has been disabled
+X   implement as an option inside Preferences
+X   http://code.google.com/p/processing/issues/detail?id=526
+X remove preferences that refer to applets
+X remove applet folder from the Java stuff
+X remove old 'cmd' folder from the Java build directory
+X Import statements are executed within multiline comments
+X   http://code.google.com/p/processing/issues/detail?id=911
+X write preferences file sorted
+X Major change to how lib folder is found, hopefully handles cmd line better
+o caretBlinks always true.. just remove the pref?
+o blockCaret always false.. remove it?
+X report from someone about blinking caret
+X   http://code.google.com/p/processing/issues/detail?id=1136
+X added caret options
+X   editor.caret.blink = true
+X   editor.caret.block = false
+X see if commander is still headless
+X check to see if sketchbook is getting picked up for cmd line
+X don't use --request on OS X 10.6, it's not available
+X processing-java ClassNotFoundException: BatchCompiler (Linux)
+X   http://code.google.com/p/processing/issues/detail?id=1334
+X 2.0 beta editor does not respond properly if External Editor was enabled
+X   http://code.google.com/p/processing/issues/detail?id=1355
+
+
 0213 pde (2.0b5)
 X Console disappears with increased editor font size
 X   http://code.google.com/p/processing/issues/detail?id=1275
