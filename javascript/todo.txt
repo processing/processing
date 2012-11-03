@@ -11,6 +11,11 @@ LibraryManager, updating, ..
 Update reference / wiki to mirror changes. 
 Make tutorial / template for Library authors.
 
+Check "Duplicate import!" message
+
+Sketch > Import Library > ...
+Does not work, complains about libs not supported
+
 ----------------------------------------------------------------------------
 
 Reference
