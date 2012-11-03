@@ -14,7 +14,7 @@
      
      // Get the instance. We just use the first one. Another way would be to use
      // the automaticaly generated ID "colorFinder", see <canvas> in index.html
-     var mySketchInstance = Processing.getInstanceById( getProcessingSketchID() );
+     var mySketchInstance = Processing.getInstanceById( getProcessingSketchId() );
      
      if ( mySketchInstance == undefined ) { // means it has not started
          setTimeout( makeTheLink, 200 );    // try again later

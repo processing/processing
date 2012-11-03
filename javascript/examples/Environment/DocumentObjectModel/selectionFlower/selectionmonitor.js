@@ -12,7 +12,7 @@ window.onload = function () {
 
 // this is called (repeatedly) to find the sketch
 function getSketchInstance() {
-    var s = Processing.getInstanceById(getProcessingSketchID());
+    var s = Processing.getInstanceById(getProcessingSketchId());
     if ( s == undefined ) {
         setTimeout(getSketchInstance, 200); // try again a bit later
         

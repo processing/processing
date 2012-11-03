@@ -5,7 +5,7 @@ window.onload = function () {
 }
 
 function tryFindSketch () {
-    var sketch = Processing.getInstanceById( getProcessingSketchID() );
+    var sketch = Processing.getInstanceById( getProcessingSketchId() );
     if ( sketch == undefined )
         setTimeout(tryFindSketch, 200);  // retry after 0.2 secs
     else
