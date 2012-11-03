@@ -6,7 +6,7 @@ window.onload = function () {
 
 // try and find the sketch
 function tryLinkSketch() {
-    var sketch = Processing.getInstanceById( getProcessingSketchID() );
+    var sketch = Processing.getInstanceById( getProcessingSketchId() );
     if ( sketch == undefined )
         setTimeout(tryLinkSketch, 200); /*try again later*/
     else {

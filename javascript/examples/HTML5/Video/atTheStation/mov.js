@@ -3,7 +3,7 @@ window.onload = function () {
     video['loop'] = true;
     
     function tryFindSketch () {
-        var sketch = Processing.getInstanceById(getProcessingSketchID());
+        var sketch = Processing.getInstanceById(getProcessingSketchId());
         if ( sketch == undefined )
             return setTimeout(tryFindSketch, 200); // retry in 0.2 secs
         
