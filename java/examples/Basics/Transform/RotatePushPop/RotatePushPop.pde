@@ -6,37 +6,32 @@
  * and pop() restores the prior coordinate system. 
  */
  
-float a;                          // Angle of rotation
-float offset = PI/24.0;             // Angle offset between boxes
-int num = 12;                     // Number of boxes
-color[] colors = new color[num];  // Colors of each box
-color safecolor;
+float a;                 // Angle of rotation
+float offset = PI/24.0;  // Angle offset between boxes
+int num = 12;            // Number of boxes
 
-boolean pink = true;
-
-void setup() 
-{ 
+void setup() { 
   size(640, 360, P3D);
   noStroke();  
-  for(int i=0; i<num; i++) {
-    colors[i] = color(255 * (i+1)/num);
-  }
-  lights();
 } 
  
 
-void draw() 
-{     
+void draw() {
+  
+  lights();
+  
   background(0, 0, 26);
-  translate(width/2, height/2);
-  a += 0.01;   
+  translate(width/2, height/2); 
   
   for(int i = 0; i < num; i++) {
+    float gray = map(i, 0, num-1, 0, 255);
     pushMatrix();
-    fill(colors[i]);
+    fill(gray);
     rotateY(a + offset*i);
     rotateX(a/2 + offset*i);
     box(200);
     popMatrix();
   }
+  
+  a += 0.01;    
 } 
