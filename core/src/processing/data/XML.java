@@ -220,9 +220,7 @@ public class XML implements Serializable {
   /**
    * Returns the name of the element (without namespace prefix).
    *
-   * @webref xml:method
-   * @brief Gets the element's name
-   * @return the name, or null if the element only contains #PCDATA.
+   * Internal function; not included in reference.
    */
   public String getLocalName() {
     return node.getLocalName();
