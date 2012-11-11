@@ -1,8 +1,16 @@
 0215 core
+X change to getRows() method for iterating through the Table object
+X add parseInto() method (provisional)
 
+_ change translate() and rotate() to use x, y, z as param names
+
+_ add "CGAffineTransformInvert: singular matrix" problem to the Wiki
+_   http://code.google.com/p/processing/issues/detail?id=1363
 
 _ mouseButton not being set properly in mouseClicked
 _   http://code.google.com/p/processing/issues/detail?id=1350
+_ mouseButton is 0 in mouseReleased() on OS X
+_   http://code.google.com/p/processing/issues/detail?id=1373
 
 _ "translate, or this variation of it" when using text(s, x, y, z) accidentally
 _   change to be th text command
@@ -14,6 +22,7 @@ _ remove java.awt.* imports from sketches
 _   go through examples to make sure they're not being used
 
 _ lots of improvements to Table class?
+createTable()
 need option to save table
 join tables together (static is kinda gross)
 lastRowIndex() (to avoid getRowCount() - 1)

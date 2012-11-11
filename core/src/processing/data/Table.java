@@ -24,8 +24,11 @@
 package processing.data;
 
 import java.io.*;
-import java.lang.reflect.Array;
-import java.sql.*;
+import java.lang.reflect.*;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Types;
 import java.util.*;
 
 import processing.core.PApplet;
@@ -50,6 +53,7 @@ import processing.core.PConstants;
 // <p>By default, empty rows are skipped and so are lines that start with the
 // # character. Using # at the beginning of a line indicates a comment.</p>
 
+// attempt at a CSV spec: http://tools.ietf.org/html/rfc4180
 
 /**
  * <p>Generic class for handling tabular data, typically from a CSV, TSV, or
@@ -62,7 +66,7 @@ import processing.core.PConstants;
  *
  * @webref data:composite
  */
-public class Table implements Iterable<TableRow> {
+public class Table {
   protected int rowCount;
 
 //  protected boolean skipEmptyRows = true;
@@ -108,6 +112,8 @@ public class Table implements Iterable<TableRow> {
 //  double[][] doubleData;
 //  Object[][] objectData;
 
+  PApplet sketch;
+
 
   /**
    * Creates a new, empty table. Use addRow() to add additional rows.
@@ -116,6 +122,12 @@ public class Table implements Iterable<TableRow> {
     columns = new Object[0];
     columnTypes = new int[0];
     columnCategories = new HashMapBlows[0];
+  }
+
+
+  public Table(PApplet parent) {
+    this();
+    this.sketch = parent;
   }
 
 
@@ -130,11 +142,17 @@ public class Table implements Iterable<TableRow> {
    * @param filename
    */
   public Table(PApplet parent, String filename) {
-    this(parent.createReader(filename));
+    this.sketch = parent;
+    read(parent.createReader(filename));
   }
 
 
   public Table(BufferedReader reader) {
+    read(reader);
+  }
+
+
+  protected void read(BufferedReader reader) {
     columns = new Object[0];
     columnTypes = new int[0];
     columnCategories = new HashMapBlows[0];
@@ -548,6 +566,272 @@ public class Table implements Iterable<TableRow> {
     }
     return c.length;
   }
+
+
+  // A 'Class' object is used here, so the syntax for this function is:
+  // Table t = loadTable("cars3.tsv", "header");
+  // Record[] records = (Record[]) t.parse(Record.class);
+  // While t.parse("Record") might be nicer, the class is likely to be an
+  // inner class (another tab in a PDE sketch) or even inside a package,
+  // so additional information would be needed to locate it. The name of the
+  // inner class would be "SketchName$Record" which isn't acceptable syntax
+  // to make people use. Better to just introduce the '.class' syntax.
+
+  // Unlike the Table class itself, this accepts char and boolean fields in
+  // the target class, since they're much more prevalent, and don't require
+  // a zillion extra methods and special cases in the rest of the class here.
+
+  // since this is likely an inner class, needs a reference to its parent,
+  // because that's passed to the constructor parameter (inserted by the
+  // compiler) of an inner class by the runtime.
+
+  /** incomplete, do not use */
+  public void parseInto(String fieldName) {
+    Class<?> target = null;
+    Object outgoing = null;
+    Field targetField = null;
+    try {
+      // Object targetObject,
+      // Class target -> get this from the type of fieldName
+      Class sketchClass = sketch.getClass();
+      targetField = sketchClass.getDeclaredField(fieldName);
+      PApplet.println("found " + targetField);
+      Class targetArray = targetField.getType();
+      if (!targetArray.isArray()) {
+        // fieldName is not an array
+      } else {
+        target = targetArray.getComponentType();
+        outgoing = Array.newInstance(target, getRowCount());
+      }
+    } catch (NoSuchFieldException e) {
+      e.printStackTrace();
+    } catch (SecurityException e) {
+      e.printStackTrace();
+    }
+
+    Object enclosingObject = sketch;
+    PApplet.println("enclosing obj is " + enclosingObject);
+    Class enclosingClass = target.getEnclosingClass();
+    Constructor con = null;
+
+    try {
+      if (enclosingClass == null) {
+        con = target.getDeclaredConstructor();  //new Class[] { });
+        PApplet.println("no enclosing class");
+      } else {
+        con = target.getDeclaredConstructor(new Class[] { enclosingClass });
+//      con = target.getConstructor(enclosingClass);
+        PApplet.println("enclosed by " + enclosingClass.getName());
+      }
+      if (!con.isAccessible()) {
+        System.out.println("setting constructor to public");
+        con.setAccessible(true);
+      }
+    } catch (SecurityException e) {
+      e.printStackTrace();
+    } catch (NoSuchMethodException e) {
+      e.printStackTrace();
+    }
+
+    Field[] fields = target.getDeclaredFields();
+    ArrayList<Field> inuse = new ArrayList<Field>();
+    for (Field field : fields) {
+      String name = field.getName();
+      if (getColumnIndex(name, false) != -1) {
+        System.out.println("found field " + name);
+        if (!field.isAccessible()) {
+          PApplet.println("  changing field access");
+          field.setAccessible(true);
+        }
+        inuse.add(field);
+      } else {
+        System.out.println("skipping field " + name);
+      }
+    }
+//    Constructor[] cons = target.getDeclaredConstructors();
+//    //for (Method m : methods) {
+//    Constructor defaultCons = null;
+//    for (Constructor c : cons) {
+//      //System.out.println("found " + c.getParameterTypes());
+//      if (c.getParameterTypes().length == 0) {
+//        System.out.println("found default");
+//        defaultCons = c;
+//        c.setAccessible(true);
+//      } else {
+//        PApplet.println(c.getParameterTypes());
+//      }
+//    }
+
+    int index = 0;
+//    ArrayList<Object> list = new ArrayList<Object>();
+    try {
+      for (TableRow row : getRows()) {
+        Object item = null;
+        if (enclosingClass == null) {
+          //item = target.newInstance();
+          item = con.newInstance();
+        } else {
+          item = con.newInstance(new Object[] { enclosingObject });
+        }
+        //Object item = defaultCons.newInstance(new Object[] { });
+        for (Field field : inuse) {
+          String name = field.getName();
+          //PApplet.println("gonna set field " + name);
+
+          if (field.getType() == String.class) {
+            field.set(item, row.getString(name));
+
+          } else if (field.getType() == Integer.TYPE) {
+            field.setInt(item, row.getInt(name));
+
+          } else if (field.getType() == Long.TYPE) {
+            field.setLong(item, row.getLong(name));
+
+          } else if (field.getType() == Float.TYPE) {
+            field.setFloat(item, row.getFloat(name));
+
+          } else if (field.getType() == Double.TYPE) {
+            field.setDouble(item, row.getDouble(name));
+
+          } else if (field.getType() == Boolean.TYPE) {
+            String content = row.getString(name);
+            if (content != null) {
+              // Only bother setting if it's true,
+              // otherwise false by default anyway.
+              if (content.toLowerCase().equals("true") ||
+                  content.equals("1")) {
+                field.setBoolean(item, true);
+              }
+            }
+//            if (content == null) {
+//              field.setBoolean(item, false);  // necessary?
+//            } else if (content.toLowerCase().equals("true")) {
+//              field.setBoolean(item, true);
+//            } else if (content.equals("1")) {
+//              field.setBoolean(item, true);
+//            } else {
+//              field.setBoolean(item, false);  // necessary?
+//            }
+          } else if (field.getType() == Character.TYPE) {
+            String content = row.getString(name);
+            if (content != null && content.length() > 0) {
+              // Otherwise set to \0 anyway
+              field.setChar(item, content.charAt(0));
+            }
+          }
+        }
+//        list.add(item);
+        Array.set(outgoing, index++, item);
+      }
+      if (!targetField.isAccessible()) {
+        PApplet.println("setting target field to public");
+        targetField.setAccessible(true);
+      }
+      // Set the array in the sketch
+      targetField.set(sketch, outgoing);
+
+    } catch (InstantiationException e) {
+      e.printStackTrace();
+    } catch (IllegalAccessException e) {
+      e.printStackTrace();
+    } catch (IllegalArgumentException e) {
+      e.printStackTrace();
+    } catch (InvocationTargetException e) {
+      e.printStackTrace();
+    }
+  }
+
+  /*
+  public Object[] parse(Class target) {
+    Field[] fields = target.getDeclaredFields();
+    ArrayList<Field> inuse = new ArrayList<Field>();
+    for (Field field : fields) {
+      String name = field.getName();
+      if (getColumnIndex(name, false) != -1) {
+        System.out.println("found field " + name);
+        inuse.add(field);
+      } else {
+        System.out.println("skipping field " + name);
+      }
+    }
+    Constructor[] cons = target.getDeclaredConstructors();
+    //for (Method m : methods) {
+    Constructor defaultCons = null;
+    for (Constructor c : cons) {
+      //System.out.println("found " + c.getParameterTypes());
+      if (c.getParameterTypes().length == 0) {
+        System.out.println("found default");
+        defaultCons = c;
+        c.setAccessible(true);
+      } else {
+        PApplet.println(c.getParameterTypes());
+      }
+    }
+    ArrayList<Object> list = new ArrayList<Object>();
+    try {
+      for (TableRow row : getRows()) {
+        Object item = target.newInstance();
+        //Object item = defaultCons.newInstance(new Object[] { });
+        for (Field field : inuse) {
+          String name = field.getName();
+
+          if (field.getType() == String.class) {
+            field.set(item, row.getString(name));
+
+          } else if (field.getType() == Integer.TYPE) {
+            field.setInt(item, row.getInt(name));
+
+          } else if (field.getType() == Long.TYPE) {
+            field.setLong(item, row.getLong(name));
+
+          } else if (field.getType() == Float.TYPE) {
+            field.setFloat(item, row.getFloat(name));
+
+          } else if (field.getType() == Double.TYPE) {
+            field.setDouble(item, row.getDouble(name));
+
+          } else if (field.getType() == Boolean.TYPE) {
+            String content = row.getString(name);
+            if (content != null) {
+              // Only bother setting if it's true,
+              // otherwise false by default anyway.
+              if (content.toLowerCase().equals("true") ||
+                  content.equals("1")) {
+                field.setBoolean(item, true);
+              }
+            }
+//            if (content == null) {
+//              field.setBoolean(item, false);  // necessary?
+//            } else if (content.toLowerCase().equals("true")) {
+//              field.setBoolean(item, true);
+//            } else if (content.equals("1")) {
+//              field.setBoolean(item, true);
+//            } else {
+//              field.setBoolean(item, false);  // necessary?
+//            }
+          } else if (field.getType() == Character.TYPE) {
+            String content = row.getString(name);
+            if (content != null && content.length() > 0) {
+              // Otherwise set to \0 anyway
+              field.setChar(item, content.charAt(0));
+            }
+          }
+        }
+        list.add(item);
+      }
+    } catch (InstantiationException e) {
+      e.printStackTrace();
+    } catch (IllegalAccessException e) {
+      e.printStackTrace();
+    } catch (IllegalArgumentException e) {
+      e.printStackTrace();
+//    } catch (InvocationTargetException e) {
+//      e.printStackTrace();
+    }
+    Object[] outgoing = new Object[list.size()];
+    return list.toArray(outgoing);
+  }
+  */
 
 
   public void writeTSV(PrintWriter writer) {
@@ -1365,18 +1649,31 @@ public class Table implements Iterable<TableRow> {
 
   protected RowIterator rowIterator;
 
+  public Iterable<TableRow> getRows() {
+    return new Iterable<TableRow>() {
+      public Iterator<TableRow> iterator() {
+      if (rowIterator == null) {
+        rowIterator = new RowIterator();
+      }
+      rowIterator.reset();
+      return rowIterator;
+      }
+    };
+  }
+
+
   /**
    * Note that this one iterator instance is shared by any calls to iterate the
    * rows of this table. This is very efficient, but not very thread-safe. If
    * you want to iterate in a multi-threaded manner, use createIterator().
    */
-  public Iterator<TableRow> iterator() {
-    if (rowIterator == null) {
-      rowIterator = new RowIterator();
-    }
-    rowIterator.reset();
-    return rowIterator;
-  }
+//  public Iterator<TableRow> iterator() {
+//    if (rowIterator == null) {
+//      rowIterator = new RowIterator();
+//    }
+//    rowIterator.reset();
+//    return rowIterator;
+//  }
 
 
   public Iterator<TableRow> createIterator() {
