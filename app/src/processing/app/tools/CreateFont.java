@@ -52,7 +52,7 @@ public class CreateFont extends JFrame implements Tool {
   Editor editor;
   //Sketch sketch;
 
-  Dimension windowSize;
+//  Dimension windowSize;
 
   JList fontSelector;
   JTextField sizeSelector;
@@ -242,19 +242,20 @@ public class CreateFont extends JFrame implements Tool {
     Toolkit.registerWindowCloseKeys(root, disposer);
     Toolkit.setIcon(this);
 
-    setResizable(false);
     pack();
+    setResizable(false);
+    //System.out.println(getPreferredSize());
 
     // do this after pack so it doesn't affect layout
     sample.setFont(new Font(list[0], Font.PLAIN, 48));
 
     fontSelector.setSelectedIndex(0);
 
-    Dimension screen = Toolkit.getScreenSize();
-    windowSize = getSize();
-
-    setLocation((screen.width - windowSize.width) / 2,
-                (screen.height - windowSize.height) / 2);
+//    Dimension screen = Toolkit.getScreenSize();
+//    windowSize = getSize();
+//    setLocation((screen.width - windowSize.width) / 2,
+//                (screen.height - windowSize.height) / 2);
+    setLocationRelativeTo(null);
 
     // create this behind the scenes
     charSelector = new CharacterSelector();
@@ -352,17 +353,17 @@ public class CreateFont extends JFrame implements Tool {
   }
 
 
-  /**
-   * make the window vertically resizable
-   */
-  public Dimension getMaximumSize() {
-    return new Dimension(windowSize.width, 2000);
-  }
-
-
-  public Dimension getMinimumSize() {
-    return windowSize;
-  }
+//  /**
+//   * make the window vertically resizable
+//   */
+//  public Dimension getMaximumSize() {
+//    return new Dimension(windowSize.width, 2000);
+//  }
+//
+//
+//  public Dimension getMinimumSize() {
+//    return windowSize;
+//  }
 
 
   /*

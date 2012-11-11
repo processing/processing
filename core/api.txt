@@ -1,3 +1,4 @@
+This document was last updated for Processing 1.0.
   
   public void setParent(PApplet parent)
   public void setPrimary(boolean primary)

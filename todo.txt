@@ -1,4 +1,27 @@
 0215 pde
+_ standard "Emacs" keybindings not implemented on OS X
+_   http://code.google.com/p/processing/issues/detail?id=1354
+_   http://guides.macrumors.com/Keyboard_shortcuts&section=10#Text_Shortcuts
+
+control-A	 move to start of current paragraph
+control-B	 move left one character
+control-D	 forwards delete
+control-E	 move to end of current paragraph
+control-F	 move right one character
+control-H	 delete
+control-K	 delete remainder of current paragraph
+control-N	 move down one line
+control-O	 insert new line after cursor
+control-P	 move up one line
+control-T	 transpose (swap) two surrounding character
+control-V	 move to end, then left one character
+control-Y	 paste text previously deleted with control-K
+
+http://download.eclipse.org/eclipse/downloads/
+
+_ clientEvent() called even w/o data from server
+_   http://code.google.com/p/processing/issues/detail?id=189
+_ check on adding ip() method
 
 
 _ Sketch that exported to Linux doesn't get the command line arguments
@@ -21,6 +44,7 @@ _   is editable in use?
 _   what's electricScroll?
 _ excessive CPU usage of PDE after using library manager
 _   http://code.google.com/p/processing/issues/detail?id=1036
+_   confirmed to still be a problem with b5/6
 _ remove PdeKeyListener, roll it into the Java InputHandler for JEditTextArea
 _   move Java-specific InputHandler to its own subclass
 _ problem changing sketchbook to new location (e.g. from ex to regular) 
@@ -741,13 +765,6 @@ LIBRARIES / General
 
 _ need to unpack InvocationTargetException in xxxxxxEvent calls
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=display;num=1116850328#3
-
-
-
-LIBRARIES / Net
-
-_ clientEvent() called even w/o data from server
-_   http://code.google.com/p/processing/issues/detail?id=189
 
 
 LIBRARIES / Serial
