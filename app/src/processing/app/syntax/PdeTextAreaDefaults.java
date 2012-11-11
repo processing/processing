@@ -33,21 +33,22 @@ public class PdeTextAreaDefaults extends TextAreaDefaults {
     inputHandler = new DefaultInputHandler();
     //inputHandler.addDefaultKeyBindings();  // 0122
 
-    // use option on mac for text edit controls that are ctrl on windows/linux
+    // Use option on mac for text edit controls that are ctrl on Windows/Linux.
+    // (i.e. ctrl-left/right is option-left/right on OS X)
     String mod = Base.isMacOS() ? "A" : "C";
 
     // right now, ctrl-up/down is select up/down, but mod should be
     // used instead, because the mac expects it to be option(alt)
 
     inputHandler.addKeyBinding("BACK_SPACE", InputHandler.BACKSPACE);
-    // for 0122, shift-backspace is delete, for 0176, it's now a preference, 
+    // for 0122, shift-backspace is delete, for 0176, it's now a preference,
     // to prevent holy warriors from attacking me for it.
     if (Preferences.getBoolean("editor.keys.shift_backspace_is_delete")) {
       inputHandler.addKeyBinding("S+BACK_SPACE", InputHandler.DELETE);
     } else {
       inputHandler.addKeyBinding("S+BACK_SPACE", InputHandler.BACKSPACE);
     }
-    
+
     inputHandler.addKeyBinding("DELETE", InputHandler.DELETE);
     inputHandler.addKeyBinding("S+DELETE", InputHandler.DELETE);
 
@@ -60,9 +61,9 @@ public class PdeTextAreaDefaults extends TextAreaDefaults {
     //inputHandler.addKeyBinding("TAB", InputHandler.INSERT_TAB);
 
     inputHandler.addKeyBinding("INSERT", InputHandler.OVERWRITE);
-    
+
     // http://dev.processing.org/bugs/show_bug.cgi?id=162
-    // added for 0176, though the bindings do not appear relevant for osx 
+    // added for 0176, though the bindings do not appear relevant for osx
     if (Preferences.getBoolean("editor.keys.alternative_cut_copy_paste")) {
       inputHandler.addKeyBinding("C+INSERT", InputHandler.CLIPBOARD_COPY);
       inputHandler.addKeyBinding("S+INSERT", InputHandler.CLIPBOARD_PASTE);
@@ -91,6 +92,12 @@ public class PdeTextAreaDefaults extends TextAreaDefaults {
       inputHandler.addKeyBinding("C+END", InputHandler.DOCUMENT_END);
       inputHandler.addKeyBinding("CS+HOME", InputHandler.SELECT_DOC_HOME);
       inputHandler.addKeyBinding("CS+END", InputHandler.SELECT_DOC_END);
+    }
+
+    if (Base.isMacOS()) {
+      //inputHandler.addKeyBinding("C+A", InputHandler.HOME);
+      //inputHandler.addKeyBinding("C+E", InputHandler.END);
+      //inputHandler.addKeyBinding("C+D", InputHandler.DELETE);  // option-delete (fwd)
     }
 
     if (Base.isMacOS()) {
