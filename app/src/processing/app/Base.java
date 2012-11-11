@@ -276,11 +276,17 @@ public class Base {
     Mode javaScriptMode =
       ModeContribution.load(this, getContentFile("modes/javascript"),
                             "processing.mode.javascript.JavaScriptMode").getMode();
-
-    coreModes = new Mode[] { javaMode, androidMode, javaScriptMode };
+    
+//    coreModes = new Mode[] { javaMode, androidMode, javaScriptMode };
+    
+    Mode debugMode = 
+      ModeContribution.load(this, getContentFile("modes/java2"),
+                            "processing.mode.java2.DebugMode").getMode();
+    coreModes = new Mode[] { javaMode, androidMode, javaScriptMode, debugMode };
+    
 //    for (Mode mode : coreModes) {  // already called by load() above
 //      mode.setupGUI();
-//    }
+//    }    
   }
 
 
@@ -648,8 +654,10 @@ public class Base {
   public ArrayList<Mode> getModeList() {
     ArrayList<Mode> allModes = new ArrayList<Mode>();
     allModes.addAll(Arrays.asList(coreModes));
-    for (ModeContribution contrib : modeContribs) {
-      allModes.add(contrib.getMode());
+    if (modeContribs != null) {
+      for (ModeContribution contrib : modeContribs) {
+        allModes.add(contrib.getMode());
+      }
     }
     return allModes;
   }

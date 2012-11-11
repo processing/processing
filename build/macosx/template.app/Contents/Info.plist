@@ -81,7 +81,7 @@
       <!-- In 0149, removed /System/Library/Java from the CLASSPATH because
            it can cause problems if users have installed weird files there.
            http://dev.processing.org/bugs/show_bug.cgi?id=1045 -->
-      <string>$JAVAROOT/lib/pde.jar:$JAVAROOT/core/library/core.jar:$JAVAROOT/lib/ant.jar:$JAVAROOT/lib/ant-launcher.jar:$JAVAROOT/lib/antlr.jar:$JAVAROOT/lib/jna.jar:$JAVAROOT/quaqua.jar</string>
+      <string>$JAVAROOT/lib/pde.jar:$JAVAROOT/core/library/core.jar:$JAVAROOT/lib/ant.jar:$JAVAROOT/lib/ant-launcher.jar:$JAVAROOT/lib/antlr.jar:$JAVAROOT/lib/jna.jar:$JAVAROOT/quaqua.jar:$JAVAROOT/lib/org-netbeans-swing-outline.jar</string>
 
       <!-- More properties can be found in http://developer.apple.com/releasenotes/Java/java141/system_properties/chapter_4_section_1.html#//apple_ref/doc/uid/TP30000285 -->
       <key>Properties</key>

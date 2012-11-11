@@ -1,0 +1,637 @@
+# KEY
+
+# LITERAL2 - constants
+# KEYWORD1 - Java datatypes and keywords
+# KEYWORD2 - functions
+# KEYWORD3 - methods (functions inside a class)
+# KEYWORD4 - fields (variables inside a class)
+# KEYWORD5 - Processing variables (width, height, focused, etc.)
+
+#
+
+# LITERAL2 specifies constants
+
+ADD	LITERAL2	blend_
+ALIGN_CENTER	LITERAL2	
+ALIGN_LEFT	LITERAL2	
+ALIGN_RIGHT	LITERAL2	
+ALPHA	LITERAL2
+ALPHA_MASK	LITERAL2
+ALT	LITERAL2
+AMBIENT	LITERAL2	
+ARROW	LITERAL2	cursor_
+ARGB	LITERAL2
+BACKSPACE	LITERAL2	keyCode
+BASELINE	LITERAL2	textAlign_
+BEVEL	LITERAL2	strokeJoin_
+BLEND	LITERAL2	blend_
+BLUE_MASK	LITERAL2
+BLUR	LITERAL2	filter_
+BOTTOM	LITERAL2	textAlign_
+BURN	LITERAL2	blend_
+CENTER	LITERAL2	
+CHATTER	LITERAL2
+CLOSE	LITERAL2
+CMYK	LITERAL2
+CODED	LITERAL2	key
+COMPLAINT	LITERAL2
+COMPOSITE	LITERAL2
+COMPONENT	LITERAL2
+CONCAVE_POLYGON	LITERAL2
+CONTROL	LITERAL2
+CONVEX_POLYGON	LITERAL2
+CORNER	LITERAL2	textAlign_
+CORNERS	LITERAL2
+CROSS	LITERAL2	cursor_
+CUSTOM	LITERAL2
+DARKEST	LITERAL2	blend_
+DEGREES	LITERAL2
+DEG_TO_RAD	LITERAL2
+DELETE	LITERAL2
+DIAMETER	LITERAL2
+DIFFERENCE	LITERAL2	blend_
+DIFFUSE	LITERAL2
+DILATE	LITERAL2	filter_
+DIRECTIONAL	LITERAL2
+DISABLE_ACCURATE_TEXTURES	LITERAL2
+DISABLE_DEPTH_SORT	LITERAL2
+DISABLE_DEPTH_TEST	LITERAL2
+DISABLE_NATIVE_FONTS	LITERAL2
+DISABLE_OPENGL_ERROR_REPORT	LITERAL2
+DISABLE_OPENGL_2X_SMOOTH	LITERAL2
+DISABLE_OPENGL_4X_SMOOTH	LITERAL2
+DISABLE_TEXT_SMOOTH	LITERAL2	
+DISABLED	LITERAL2
+DODGE	LITERAL2	blend_
+DOWN	LITERAL2	keyCode
+DXF	LITERAL2	size_
+ENABLE_ACCURATE_TEXTURES	LITERAL2
+ENABLE_DEPTH_SORT	LITERAL2
+ENABLE_DEPTH_TEST	LITERAL2
+ENABLE_NATIVE_FONTS	LITERAL2
+ENABLE_OPENGL_2X_SMOOTH	LITERAL2
+ENABLE_OPENGL_4X_SMOOTH	LITERAL2
+ENABLE_OPENGL_ERROR_REPORT	LITERAL2
+ENTER	LITERAL2	keyCode
+EPSILON	LITERAL2
+ERODE	LITERAL2	filter_
+ESC	LITERAL2	keyCode
+EXCLUSION	LITERAL2	blend_
+GIF	LITERAL2
+GRAY	LITERAL2	filter_
+GREEN_MASK	LITERAL2
+GROUP	LITERAL2
+HALF	LITERAL2	
+HALF_PI	LITERAL2	HALF_PI
+HAND	LITERAL2	cursor_
+HARD_LIGHT	LITERAL2	blend_
+HINT_COUNT	LITERAL2
+HSB	LITERAL2	colorMode_
+IMAGE	LITERAL2	textureMode_
+INVERT	LITERAL2	filter_
+JPEG	LITERAL2	
+LEFT	LITERAL2	keyCode
+LIGHTEST	LITERAL2	blend_
+LINES	LITERAL2	beginShape_
+LINUX	LITERAL2
+MACOSX	LITERAL2
+MAX_FLOAT	LITERAL2
+MAX_INT	LITERAL2	
+MITER	LITERAL2	stokeJoin_
+MODEL	LITERAL2
+MOVE	LITERAL2	cursor_
+MULTIPLY	LITERAL2	blend_
+NORMAL	LITERAL2	
+NORMALIZED	LITERAL2	textureMode_
+NO_DEPTH_TEST	LITERAL2
+NTSC	LITERAL2
+ONE	LITERAL2	
+OPAQUE	LITERAL2	filter_
+OPEN	LITERAL2
+ORTHOGRAPHIC	LITERAL2
+OVERLAY	LITERAL2	blend_
+PAL	LITERAL2
+PDF	LITERAL2	size_
+P2D	LITERAL2	size_
+P3D	LITERAL2	size_
+PERSPECTIVE	LITERAL2
+PI	LITERAL2	PI
+PIXEL_CENTER	LITERAL2
+POINT	LITERAL2
+POINTS	LITERAL2	
+POSTERIZE	LITERAL2	filter_
+PROBLEM	LITERAL2	
+PROJECT	LITERAL2	strokeCap_
+QUAD_STRIP	LITERAL2	beginShape_
+QUADS	LITERAL2	beginShape_
+QUARTER_PI	LITERAL2	QUARTER_PI
+RAD_TO_DEG	LITERAL2
+RADIUS	LITERAL2
+RADIANS	LITERAL2
+RED_MASK	LITERAL2
+REPLACE	LITERAL2	
+RETURN	LITERAL2
+RGB	LITERAL2	colorMode_
+RIGHT	LITERAL2	keyCode
+ROUND	LITERAL2	strokeCap_
+SCREEN	LITERAL2	blend_
+SECAM	LITERAL2	
+SHIFT	LITERAL2	
+SPECULAR	LITERAL2
+SOFT_LIGHT	LITERAL2	blend_
+SQUARE	LITERAL2	strokeCap_
+SUBTRACT	LITERAL2	blend_
+SVIDEO	LITERAL2	
+TAB	LITERAL2	keyCode
+TARGA	LITERAL2
+TEXT	LITERAL2	cursor_
+TFF	LITERAL2
+THIRD_PI	LITERAL2
+THRESHOLD	LITERAL2	filter_
+TIFF	LITERAL2
+TOP	LITERAL2	textAlign_
+TRIANGLE_FAN	LITERAL2	beginShape_
+TRIANGLES	LITERAL2	beginShape_
+TRIANGLE_STRIP	LITERAL2	beginShape_
+TUNER	LITERAL2
+TWO	LITERAL2
+TWO_PI	LITERAL2	TWO_PI
+UP	LITERAL2	keyCode
+WAIT	LITERAL2	cursor_
+WHITESPACE	LITERAL2		
+
+
+# KEYWORD1 specifies datatypes and keywords
+
+Array	KEYWORD1	Array
+ArrayList	KEYWORD1	ArrayList
+Boolean	KEYWORD1	
+Byte	KEYWORD1	
+BufferedReader	KEYWORD1	BufferedReader
+Character	KEYWORD1	
+Class	KEYWORD1	class
+Double	KEYWORD1	
+Float	KEYWORD1	
+Integer	KEYWORD1	
+HashMap	KEYWORD1	HashMap
+PrintWriter	KEYWORD1	PrintWriter
+String	KEYWORD1	String
+StringBuffer	KEYWORD1	
+Thread	KEYWORD1		
+abstract	KEYWORD1
+assert	KEYWORD1
+boolean	KEYWORD1	boolean
+break	KEYWORD1	break
+byte	KEYWORD1	byte
+case	KEYWORD1	case
+catch	KEYWORD1	catch
+char	KEYWORD1	char
+class	KEYWORD1	class
+continue	KEYWORD1	continue
+default	KEYWORD1	default
+do	KEYWORD1	
+double	KEYWORD1	double
+else	KEYWORD1	else
+enum	KEYWORD1	
+extends	KEYWORD1	extends
+false	KEYWORD1	false
+final	KEYWORD1	final
+finally	KEYWORD1
+for	KEYWORD1	for
+float 	KEYWORD1	float
+if	KEYWORD1	if
+implements	KEYWORD1	implements
+import	KEYWORD1	import
+instanceof	KEYWORD1
+int	KEYWORD1	int
+interface	KEYWORD1	
+long	KEYWORD1	long
+native	KEYWORD1
+new	KEYWORD1	new
+null	KEYWORD1	null
+package	KEYWORD1	
+private	KEYWORD1	private
+protected	KEYWORD1	
+public	KEYWORD1	public
+return	KEYWORD1	return
+short	KEYWORD1	
+static	KEYWORD1	static
+strictfp	KEYWORD1
+super	KEYWORD1	super
+switch	KEYWORD1	switch
+synchronized	KEYWORD1
+this	KEYWORD1	this
+throw	KEYWORD1	
+throws	KEYWORD1	
+transient	KEYWORD1
+true	KEYWORD1	true
+try	KEYWORD1	try
+void	KEYWORD1	void
+volatile	KEYWORD1
+while	KEYWORD1	while
+
+
+# Depricated API
+
+arraycopy	KEYWORD2	arrayCopy_
+openStream	KEYWORD2	openStream_
+OPENGL	LITERAL2	size_
+JAVA2D	LITERAL2	size_
+
+
+# KEYWORD2 specifies functions and KEYWORD3 specifies methods
+# These items are a part of Processing but are not included in the reference
+
+boolean	KEYWORD2	booleanconvert_
+byte	KEYWORD2	byteconvert_
+cache	KEYWORD2
+char	KEYWORD2	charconvert_
+color	KEYWORD1	color_datatype
+start	KEYWORD2
+stop	KEYWORD2
+breakShape	KEYWORD2
+createPath	KEYWORD2
+float	KEYWORD2	floatconvert_
+int	KEYWORD2	intconvert_
+loadMatrix	KEYWORD2
+noHint	KEYWORD2
+parseBoolean	KEYWORD2
+parseByte	KEYWORD2
+parseChar	KEYWORD2
+parseFloat	KEYWORD2
+parseInt	KEYWORD2
+saveFile	KEYWORD2
+savePath	KEYWORD2
+sketchFile	KEYWORD2
+sketchPath	KEYWORD2
+string	KEYWORD2	strconvert_
+
+#KEYWORD3 is an experimental designation for methods
+readLine	KEYWORD3	BufferedReader_readLine_
+close	KEYWORD3	PrintWriter_close_
+flush	KEYWORD3	PrintWriter_flush_
+print	KEYWORD3	PrintWriter_print_
+println	KEYWORD3	PrintWriter_println_
+charAt	KEYWORD3	String_charAt_
+equals	KEYWORD3	String_equals_
+indexOf	KEYWORD3	String_indexOf_
+length	KEYWORD3	String_length_
+substring	KEYWORD3	String_substring_
+toLowerCase	KEYWORD3	String_toLowerCase_
+toUpperCase	KEYWORD3	String_toUpperCase_
+
+
+# Operators are without KEYWORDS
+
++=		addassign
++		addition
+[]		arrayaccess
+=		assign
+&		bitwiseAND
+|		bitwiseOR
+,		comma
+//		comment
+?		conditional
+{}		curlybraces
+--		decrement
+/		divide
+/=		divideassign
+/**		doccomment
+.		dot
+==		equality
+>		greaterthan
+>=		greaterthanorequalto
+++		increment
+!=		inequality
+<<		leftshift
+<		lessthan
+<=		lessthanorequalto
+&&		logicalAND
+!		logicalNOT
+||		logicalOR
+-		minus
+%		modulo
+/*		multilinecomment
+*		multiply
+*=		multiplyassign
+()		parentheses
+<<		rightshift
+;		semicolon
+-=		subtractassign
+
+
+# THE TEXT ABOVE IS HAND-WRITTEN AND FOUND IN THE FILE "keywords_base.txt"
+# THE TEXT BELOW IS AUTO-GENERATED
+
+
+abs	KEYWORD2	abs_
+acos	KEYWORD2	acos_
+alpha	KEYWORD2	alpha_
+ambient	KEYWORD2	ambient_
+ambientLight	KEYWORD2	ambientLight_
+append	KEYWORD2	append_
+applyMatrix	KEYWORD2	applyMatrix_
+arc	KEYWORD2	arc_
+arrayCopy	KEYWORD2	arrayCopy_
+asin	KEYWORD2	asin_
+atan	KEYWORD2	atan_
+atan2	KEYWORD2	atan2_
+background	KEYWORD2	background_
+beginCamera	KEYWORD2	beginCamera_
+beginRaw	KEYWORD2	beginRaw_
+beginRecord	KEYWORD2	beginRecord_
+beginShape	KEYWORD2	beginShape_
+bezier	KEYWORD2	bezier_
+bezierDetail	KEYWORD2	bezierDetail_
+bezierPoint	KEYWORD2	bezierPoint_
+bezierTangent	KEYWORD2	bezierTangent_
+bezierVertex	KEYWORD2	bezierVertex_
+binary	KEYWORD2	binary_
+blend	KEYWORD2	blend_
+blendColor	KEYWORD2	blendColor_
+blue	KEYWORD2	blue_
+box	KEYWORD2	box_
+brightness	KEYWORD2	brightness_
+camera	KEYWORD2	camera_
+ceil	KEYWORD2	ceil_
+color	KEYWORD2	color_
+colorMode	KEYWORD2	colorMode_
+concat	KEYWORD2	concat_
+constrain	KEYWORD2	constrain_
+copy	KEYWORD2	copy_
+cos	KEYWORD2	cos_
+createFont	KEYWORD2	createFont_
+createGraphics	KEYWORD2	createGraphics_
+createImage	KEYWORD2	createImage_
+createInput	KEYWORD2	createInput_
+createOutput	KEYWORD2	createOutput_
+createReader	KEYWORD2	createReader_
+createWriter	KEYWORD2	createWriter_
+cursor	KEYWORD2	cursor_
+curve	KEYWORD2	curve_
+curveDetail	KEYWORD2	curveDetail_
+curvePoint	KEYWORD2	curvePoint_
+curveTangent	KEYWORD2	curveTangent_
+curveTightness	KEYWORD2	curveTightness_
+curveVertex	KEYWORD2	curveVertex_
+day	KEYWORD2	day_
+degrees	KEYWORD2	degrees_
+directionalLight	KEYWORD2	directionalLight_
+dist	KEYWORD2	dist_
+draw	KEYWORD2	draw_
+ellipse	KEYWORD2	ellipse_
+ellipseMode	KEYWORD2	ellipseMode_
+emissive	KEYWORD2	emissive_
+endCamera	KEYWORD2	endCamera_
+endRaw	KEYWORD2	endRaw_
+endRecord	KEYWORD2	endRecord_
+endShape	KEYWORD2	endShape_
+exit	KEYWORD2	exit_
+exp	KEYWORD2	exp_
+expand	KEYWORD2	expand_
+fill	KEYWORD2	fill_
+filter	KEYWORD2	filter_
+floor	KEYWORD2	floor_
+focused	KEYWORD5	focused
+frameCount	KEYWORD5	frameCount
+frameRate	KEYWORD5	frameRate
+frameRate	KEYWORD2	frameRate_
+frustum	KEYWORD2	frustum_
+get	KEYWORD2	get_
+green	KEYWORD2	green_
+HALF_PI	LITERAL2	HALF_PI
+height	KEYWORD5	height
+hex	KEYWORD2	hex_
+hint	KEYWORD2	hint_
+hour	KEYWORD2	hour_
+hue	KEYWORD2	hue_
+image	KEYWORD2	image_
+imageMode	KEYWORD2	imageMode_
+join	KEYWORD2	join_
+key	KEYWORD5	key
+keyCode	KEYWORD5	keyCode
+keyPressed	KEYWORD2	keyPressed_
+keyPressed	KEYWORD5	keyPressed
+keyReleased	KEYWORD2	keyReleased_
+keyTyped	KEYWORD2	keyTyped_
+lerp	KEYWORD2	lerp_
+lerpColor	KEYWORD2	lerpColor_
+lightFalloff	KEYWORD2	lightFalloff_
+lights	KEYWORD2	lights_
+lightSpecular	KEYWORD2	lightSpecular_
+line	KEYWORD2	line_
+link	KEYWORD2	link_
+loadBytes	KEYWORD2	loadBytes_
+loadFont	KEYWORD2	loadFont_
+loadImage	KEYWORD2	loadImage_
+loadPixels	KEYWORD2	loadPixels_
+loadShape	KEYWORD2	loadShape_
+loadStrings	KEYWORD2	loadStrings_
+log	KEYWORD2	log_
+loop	KEYWORD2	loop_
+mag	KEYWORD2	mag_
+map	KEYWORD2	map_
+match	KEYWORD2	match_
+matchAll	KEYWORD2	matchAll_
+max	KEYWORD2	max_
+millis	KEYWORD2	millis_
+min	KEYWORD2	min_
+minute	KEYWORD2	minute_
+modelX	KEYWORD2	modelX_
+modelY	KEYWORD2	modelY_
+modelZ	KEYWORD2	modelZ_
+month	KEYWORD2	month_
+mouseButton	KEYWORD5	mouseButton
+mouseClicked	KEYWORD2	mouseClicked_
+mouseDragged	KEYWORD2	mouseDragged_
+mouseMoved	KEYWORD2	mouseMoved_
+mousePressed	KEYWORD2	mousePressed_
+mousePressed	KEYWORD5	mousePressed
+mouseReleased	KEYWORD2	mouseReleased_
+mouseX	KEYWORD5	mouseX
+mouseY	KEYWORD5	mouseY
+nf	KEYWORD2	nf_
+nfc	KEYWORD2	nfc_
+nfp	KEYWORD2	nfp_
+nfs	KEYWORD2	nfs_
+noCursor	KEYWORD2	noCursor_
+noFill	KEYWORD2	noFill_
+noise	KEYWORD2	noise_
+noiseDetail	KEYWORD2	noiseDetail_
+noiseSeed	KEYWORD2	noiseSeed_
+noLights	KEYWORD2	noLights_
+noLoop	KEYWORD2	noLoop_
+norm	KEYWORD2	norm_
+normal	KEYWORD2	normal_
+noSmooth	KEYWORD2	noSmooth_
+noStroke	KEYWORD2	noStroke_
+noTint	KEYWORD2	noTint_
+online	KEYWORD5	online
+open	KEYWORD2	open_
+ortho	KEYWORD2	ortho_
+param	KEYWORD2	param_
+perspective	KEYWORD2	perspective_
+PFont	KEYWORD1	PFont
+list	KEYWORD2	PFont_list_
+PGraphics	KEYWORD2	PGraphics_
+beginDraw	KEYWORD3	PGraphics_beginDraw_
+endDraw	KEYWORD3	PGraphics_endDraw_
+PI	LITERAL2	PI
+PImage	KEYWORD1	PImage
+alpha	KEYWORD3	PImage_alpha_
+blend	KEYWORD3	PImage_blend_
+copy	KEYWORD3	PImage_copy_
+filter	KEYWORD3	PImage_filter_
+get	KEYWORD3	PImage_get_
+height	KEYWORD4	PImage_height
+loadPixels	KEYWORD3	PImage_loadPixels_
+mask	KEYWORD3	PImage_mask_
+pixels	KEYWORD4	PImage_pixels
+resize	KEYWORD3	PImage_resize_
+save	KEYWORD3	PImage_save_
+set	KEYWORD3	PImage_set_
+updatePixels	KEYWORD3	PImage_updatePixels_
+width	KEYWORD4	PImage_width
+pixels	KEYWORD5	pixels
+pmouseX	KEYWORD5	pmouseX
+pmouseY	KEYWORD5	pmouseY
+point	KEYWORD2	point_
+pointLight	KEYWORD2	pointLight_
+popMatrix	KEYWORD2	popMatrix_
+popStyle	KEYWORD2	popStyle_
+pow	KEYWORD2	pow_
+print	KEYWORD2	print_
+printCamera	KEYWORD2	printCamera_
+println	KEYWORD2	println_
+printMatrix	KEYWORD2	printMatrix_
+printProjection	KEYWORD2	printProjection_
+PShape	KEYWORD1	PShape
+disableStyle	KEYWORD3	PShape_disableStyle_
+enableStyle	KEYWORD3	PShape_enableStyle_
+getChild	KEYWORD3	PShape_getChild_
+height	KEYWORD4	PShape_height
+isVisible	KEYWORD3	PShape_isVisible_
+resetMatrix	KEYWORD3	PShape_resetMatrix_
+rotate	KEYWORD3	PShape_rotate_
+rotateX	KEYWORD3	PShape_rotateX_
+rotateY	KEYWORD3	PShape_rotateY_
+rotateZ	KEYWORD3	PShape_rotateZ_
+scale	KEYWORD3	PShape_scale_
+setVisible	KEYWORD3	PShape_setVisible_
+translate	KEYWORD3	PShape_translate_
+width	KEYWORD4	PShape_width
+pushMatrix	KEYWORD2	pushMatrix_
+pushStyle	KEYWORD2	pushStyle_
+PVector	KEYWORD1	PVector
+add	KEYWORD3	PVector_add_
+angleBetween	KEYWORD3	PVector_angleBetween_
+array	KEYWORD3	PVector_array_
+copy	KEYWORD3	PVector_copy_
+cross	KEYWORD3	PVector_cross_
+dist	KEYWORD3	PVector_dist_
+div	KEYWORD3	PVector_div_
+dot	KEYWORD3	PVector_dot_
+get	KEYWORD3	PVector_get_
+limit	KEYWORD3	PVector_limit_
+mag	KEYWORD3	PVector_mag_
+mult	KEYWORD3	PVector_mult_
+normalize	KEYWORD3	PVector_normalize_
+set	KEYWORD3	PVector_set_
+setMag	KEYWORD3	PVector_setMag_
+sub	KEYWORD3	PVector_sub_
+x	KEYWORD4	PVector_x
+y	KEYWORD4	PVector_y
+z	KEYWORD4	PVector_z
+quad	KEYWORD2	quad_
+quadraticVertex	KEYWORD2	quadraticVertex_
+QUARTER_PI	LITERAL2	QUARTER_PI
+radians	KEYWORD2	radians_
+random	KEYWORD2	random_
+randomSeed	KEYWORD2	randomSeed_
+rect	KEYWORD2	rect_
+rectMode	KEYWORD2	rectMode_
+red	KEYWORD2	red_
+redraw	KEYWORD2	redraw_
+requestImage	KEYWORD2	requestImage_
+resetMatrix	KEYWORD2	resetMatrix_
+reverse	KEYWORD2	reverse_
+rotate	KEYWORD2	rotate_
+rotateX	KEYWORD2	rotateX_
+rotateY	KEYWORD2	rotateY_
+rotateZ	KEYWORD2	rotateZ_
+round	KEYWORD2	round_
+saturation	KEYWORD2	saturation_
+save	KEYWORD2	save_
+saveBytes	KEYWORD2	saveBytes_
+saveFrame	KEYWORD2	saveFrame_
+saveStream	KEYWORD2	saveStream_
+saveStrings	KEYWORD2	saveStrings_
+scale	KEYWORD2	scale_
+screenHeight	KEYWORD5	screenHeight
+screenWidth	KEYWORD5	screenWidth
+screenX	KEYWORD2	screenX_
+screenY	KEYWORD2	screenY_
+screenZ	KEYWORD2	screenZ_
+second	KEYWORD2	second_
+selectFolder	KEYWORD2	selectFolder_
+selectInput	KEYWORD2	selectInput_
+selectOutput	KEYWORD2	selectOutput_
+set	KEYWORD2	set_
+setup	KEYWORD2	setup_
+shape	KEYWORD2	shape_
+shapeMode	KEYWORD2	shapeMode_
+shearX	KEYWORD2	shearX_
+shearY	KEYWORD2	shearY_
+shininess	KEYWORD2	shininess_
+shorten	KEYWORD2	shorten_
+sin	KEYWORD2	sin_
+size	KEYWORD2	size_
+smooth	KEYWORD2	smooth_
+sort	KEYWORD2	sort_
+specular	KEYWORD2	specular_
+sphere	KEYWORD2	sphere_
+sphereDetail	KEYWORD2	sphereDetail_
+splice	KEYWORD2	splice_
+split	KEYWORD2	split_
+splitTokens	KEYWORD2	splitTokens_
+spotLight	KEYWORD2	spotLight_
+sq	KEYWORD2	sq_
+sqrt	KEYWORD2	sqrt_
+status	KEYWORD2	status_
+stroke	KEYWORD2	stroke_
+strokeCap	KEYWORD2	strokeCap_
+strokeJoin	KEYWORD2	strokeJoin_
+strokeWeight	KEYWORD2	strokeWeight_
+subset	KEYWORD2	subset_
+tan	KEYWORD2	tan_
+text	KEYWORD2	text_
+textAlign	KEYWORD2	textAlign_
+textAscent	KEYWORD2	textAscent_
+textDescent	KEYWORD2	textDescent_
+textFont	KEYWORD2	textFont_
+textLeading	KEYWORD2	textLeading_
+textMode	KEYWORD2	textMode_
+textSize	KEYWORD2	textSize_
+texture	KEYWORD2	texture_
+textureMode	KEYWORD2	textureMode_
+textWidth	KEYWORD2	textWidth_
+tint	KEYWORD2	tint_
+translate	KEYWORD2	translate_
+triangle	KEYWORD2	triangle_
+trim	KEYWORD2	trim_
+TWO_PI	LITERAL2	TWO_PI
+unbinary	KEYWORD2	unbinary_
+unhex	KEYWORD2	unhex_
+updatePixels	KEYWORD2	updatePixels_
+vertex	KEYWORD2	vertex_
+width	KEYWORD5	width
+XMLElement	KEYWORD2	XMLElement_
+getChild	KEYWORD3	XMLElement_getChild_
+getChildCount	KEYWORD3	XMLElement_getChildCount_
+getChildren	KEYWORD3	XMLElement_getChildren_
+getContent	KEYWORD3	XMLElement_getContent_
+getFloat	KEYWORD3	XMLElement_getFloat_
+getInt	KEYWORD3	XMLElement_getInt_
+getName	KEYWORD3	XMLElement_getName_
+getString	KEYWORD3	XMLElement_getString_
+year	KEYWORD2	year_

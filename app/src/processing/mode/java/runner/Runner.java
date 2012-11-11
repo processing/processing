@@ -128,6 +128,8 @@ public class Runner implements MessageConsumer {
     vm = launchVirtualMachine(machineParamList, sketchParamList);
     if (vm != null) {
       generateTrace(null);
+      //redirectStreams(vm);
+      
 //      try {
 //        generateTrace(new PrintWriter("/Users/fry/Desktop/output.txt"));
 //      } catch (Exception e) {
@@ -352,6 +354,7 @@ public class Runner implements MessageConsumer {
       // OS X at this point, because we require 10.6.8 and higher. That also
       // means we don't need to check for any other OS versions, unless 
       // is a douchebag and modifies Info.plist to get around the restriction.    
+      addr = "" + (8000 + (int) (Math.random() * 1000));
       commandArgs =
         "/usr/libexec/java_home " +
         (System.getProperty("os.version").startsWith("10.6") ? "" : "--request ") +
@@ -453,6 +456,20 @@ public class Runner implements MessageConsumer {
   }
 
 
+//  /**
+//   * Redirect a VMs output and error streams to System.out and System.err
+//   *
+//   * @param vm the VM
+//   */
+//  protected void redirectStreams(VirtualMachine vm) {
+//    MessageSiphon ms = new MessageSiphon(vm.process().getErrorStream(), this);
+//    errThread = ms.getThread();
+//    outThread = new StreamRedirectThread("VM output reader", vm.process().getInputStream(), System.out);
+//    errThread.start();
+//    outThread.start();
+//  }
+  
+  
   /**
    * Generate the trace.
    * Enable events, start thread to display events,
@@ -465,8 +482,8 @@ public class Runner implements MessageConsumer {
     EventThread eventThread = null;
     //if (writer != null) {
     eventThread = new EventThread(this, vm, excludes, writer);
-    eventThread.setEventRequests(watchFields);
     eventThread.start();
+    eventThread.setEventRequests(watchFields);
     //}
 
     //redirectOutput();
@@ -521,6 +538,8 @@ public class Runner implements MessageConsumer {
 
   protected Connector findConnector(String connectorName) {
     List connectors = Bootstrap.virtualMachineManager().allConnectors();
+//    List connectors = 
+//      org.eclipse.jdi.Bootstrap.virtualMachineManager().allConnectors();
 
     // debug: code to list available connectors
 //    Iterator iter2 = connectors.iterator();
@@ -529,9 +548,13 @@ public class Runner implements MessageConsumer {
 //      System.out.println("connector name is " + connector.name());
 //    }
 
-    Iterator iter = connectors.iterator();
-    while (iter.hasNext()) {
-      Connector connector = (Connector)iter.next();
+    for (Object c : connectors) {
+      Connector connector = (Connector) c;
+//      System.out.println(connector.name());
+//    }
+//    Iterator iter = connectors.iterator();
+//    while (iter.hasNext()) {
+//      Connector connector = (Connector)iter.next();
       if (connector.name().equals(connectorName)) {
         return connector;
       }

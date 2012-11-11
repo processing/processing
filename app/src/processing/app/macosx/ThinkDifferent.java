@@ -23,6 +23,7 @@ package processing.app.macosx;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -30,6 +31,7 @@ import javax.swing.JMenuItem;
 
 import processing.app.Base;
 import processing.app.Toolkit;
+import processing.core.PApplet;
 
 import com.apple.eawt.*;
 
@@ -77,21 +79,28 @@ public class ThinkDifferent implements ApplicationListener {
     //   JavaSE6_AppleExtensionsRef/api/com/apple/eawt/Application.html
     // Only available since Java for Mac OS X 10.6 Update 1, and
     // Java for Mac OS X 10.5 Update 6, so need to load this dynamically
-    try {
-      // com.apple.eawt.Application.setDefaultMenuBar(JMenuBar)
-      Class<?> appClass = Application.class;
-      Method method =
-        appClass.getMethod("setDefaultMenuBar", new Class[] { JMenuBar.class });
-      if (method != null) {
-        JMenuBar defaultMenuBar = new JMenuBar();
-        JMenu fileMenu = buildFileMenu(base);
-        defaultMenuBar.add(fileMenu);
-        method.invoke(application, new Object[] { defaultMenuBar });
-        // This is kind of a gross way to do this, but the alternatives? Hrm.
-        Base.defaultFileMenu = fileMenu;
+    if (PApplet.javaVersion <= 1.6f) {  // doesn't work on Oracle's Java
+      try {
+        // com.apple.eawt.Application.setDefaultMenuBar(JMenuBar)
+        Class<?> appClass = Application.class;
+        Method method =
+          appClass.getMethod("setDefaultMenuBar", new Class[] { JMenuBar.class });
+        if (method != null) {
+          JMenuBar defaultMenuBar = new JMenuBar();
+          JMenu fileMenu = buildFileMenu(base);
+          defaultMenuBar.add(fileMenu);
+          method.invoke(application, new Object[] { defaultMenuBar });
+          // This is kind of a gross way to do this, but the alternatives? Hrm.
+          Base.defaultFileMenu = fileMenu;
+        }
+      } catch (InvocationTargetException ite) {
+        ite.getTargetException().printStackTrace();
+      } catch (Exception e) {
+        e.printStackTrace();  // oh well nevermind
       }
-    } catch (Exception e) {
-      e.printStackTrace();  // oh well nevermind
+    } else {
+      // http://java.net/jira/browse/MACOSX_PORT-775?page=com.atlassian.jira.plugin.system.issuetabpanels%3Aall-tabpanel
+      System.out.println("Skipping default menu bar due to apparent Oracle Java bug.");
     }
   }
 
