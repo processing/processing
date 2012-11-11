@@ -41,7 +41,6 @@ import javax.swing.UIManager;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
 import javax.swing.table.TableColumn;
-import javax.swing.tree.AbstractLayoutCache;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.ExpandVetoException;
@@ -359,8 +358,8 @@ public class VariableInspector extends javax.swing.JFrame {
                 }
             } else {
                 if (o instanceof TreeNode) {
-                    TreeNode node = (TreeNode) o;
-                    AbstractLayoutCache layout = tree.getLayoutCache();
+//                    TreeNode node = (TreeNode) o;
+//                    AbstractLayoutCache layout = tree.getLayoutCache();
                     UIDefaults defaults = UIManager.getDefaults();
 
                     boolean isLeaf = model.isLeaf(o);
@@ -896,6 +895,7 @@ public class VariableInspector extends javax.swing.JFrame {
          * Prefix a this-fields name with "this." if hidden by a local.
          */
         public static final int MODE_PREFIX = 1; // prefix hidden this fields with "this."
+        @SuppressWarnings("hiding")
         protected List<VariableNode> locals;
         protected int mode;
 
