@@ -454,10 +454,13 @@ public class JavaScriptBuild
     // essentially... cat sketchFolder/*.pde > bin/sketchname.pde
 
     StringBuffer bigCode = new StringBuffer();
-    for (SketchCode sc : sketch.getCode()){
+    int bigCount = 0;
+    for (SketchCode sc : sketch.getCode()) {
       if (sc.isExtension("pde")) {
+        sc.setPreprocOffset(bigCount);
         bigCode.append(sc.getProgram());
-        bigCode.append("\n");
+        bigCode.append('\n');
+        bigCount += sc.getLineCount();
       }
     }
 
@@ -502,6 +505,11 @@ public class JavaScriptBuild
       // since they've also been combined into the main pde.
       int errorFile = findErrorFile(errorLine);
       errorLine -= sketch.getCode(errorFile).getPreprocOffset();
+
+      System.out.println(String.format(
+      	"(1) %d, %d",
+      	errorFile, errorLine
+      ));
 
       String msg = re.getMessage();
 
@@ -570,6 +578,11 @@ public class JavaScriptBuild
         }
         errorLine -= sketch.getCode(errorFile).getPreprocOffset();
 
+        System.out.println(String.format(
+      		"(2) %d, %d",
+      		errorFile, errorLine
+      	));
+
         throw new SketchException(tsre.getMessage(),
                                   errorFile, errorLine, errorColumn);
 
@@ -596,13 +609,10 @@ public class JavaScriptBuild
    * Copied from JavaBuild as it is protected there.
    * @see processing.mode.java.JavaBuild#findErrorFile(int)
    */
-  protected int findErrorFile ( int errorLine )
-  {
-    for (int i = 1; i < sketch.getCodeCount(); i++)
-    {
+  protected int findErrorFile(int errorLine) {
+    for (int i = sketch.getCodeCount() - 1; i > 0; i--) {
       SketchCode sc = sketch.getCode(i);
-      if (sc.isExtension("pde") && (sc.getPreprocOffset() < errorLine))
-      {
+      if (sc.isExtension("pde") && (sc.getPreprocOffset() < errorLine)) {
         // keep looping until the errorLine is past the offset
         return i;
       }
