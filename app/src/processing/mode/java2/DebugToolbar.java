@@ -34,16 +34,18 @@ import processing.mode.java.JavaToolbar;
  *
  * @author Martin Leopold <m@martinleopold.com>
  */
+@SuppressWarnings("hiding")
 public class DebugToolbar extends JavaToolbar {
-    // preserve original button id's, but re-define so they are accessible (they are protected)
+  // preserve original button id's, but re-define so they are accessible 
+  // (they are used by DebugEditor, so they want to be public)
 
-     static protected final int RUN    = 100; // change this, to be able to get it's name via getTitle()
-     static protected final int STOP   = JavaToolbar.STOP;
+    static protected final int RUN    = 100; // change this, to be able to get it's name via getTitle()
+    static protected final int STOP   = JavaToolbar.STOP;
 
-     static protected final int NEW    = JavaToolbar.NEW;
-     static protected final int OPEN   = JavaToolbar.OPEN;
-     static protected final int SAVE   = JavaToolbar.SAVE;
-     static protected final int EXPORT = JavaToolbar.EXPORT;
+    static protected final int NEW    = JavaToolbar.NEW;
+    static protected final int OPEN   = JavaToolbar.OPEN;
+    static protected final int SAVE   = JavaToolbar.SAVE;
+    static protected final int EXPORT = JavaToolbar.EXPORT;
 
     static protected final int DEBUG = JavaToolbar.RUN;
     static protected final int CONTINUE = 101;

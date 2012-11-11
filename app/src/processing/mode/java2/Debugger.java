@@ -19,10 +19,7 @@ package processing.mode.java2;
 
 import com.sun.jdi.*;
 import com.sun.jdi.event.*;
-import com.sun.jdi.request.BreakpointRequest;
-import com.sun.jdi.request.ClassPrepareRequest;
-import com.sun.jdi.request.EventRequestManager;
-import com.sun.jdi.request.StepRequest;
+import com.sun.jdi.request.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -534,7 +531,7 @@ public class Debugger implements VMEventListener {
             Logger.getLogger(Debugger.class.getName()).log(Level.INFO, "*** VM Event: {0}", e.toString());
             if (e instanceof VMStartEvent) {
                 //initialThread = ((VMStartEvent) e).thread();
-                ThreadReference t = ((VMStartEvent) e).thread();
+//                ThreadReference t = ((VMStartEvent) e).thread();
                 //printStackTrace(t);
 
                 // break on main class load
@@ -582,7 +579,7 @@ public class Debugger implements VMEventListener {
             } else if (e instanceof BreakpointEvent) {
                 BreakpointEvent be = (BreakpointEvent) e;
                 currentThread = be.thread(); // save this thread
-                BreakpointRequest br = (BreakpointRequest) be.request();
+//                BreakpointRequest br = (BreakpointRequest) be.request();
 
                 //printSourceLocation(currentThread);
                 updateVariableInspector(currentThread); // this is already on the EDT
@@ -730,7 +727,7 @@ public class Debugger implements VMEventListener {
             System.out.println("stack trace for thread " + t.name() + ":");
             int i = 0;
             for (StackFrame f : t.frames()) {
-                Location l = f.location();
+//                Location l = f.location();
                 System.out.println(i++ + ": " + f.toString());
             }
         } catch (IncompatibleThreadStateException ex) {
@@ -1078,7 +1075,7 @@ public class Debugger implements VMEventListener {
     protected List<DefaultMutableTreeNode> getStackTrace(ThreadReference t) {
         List<DefaultMutableTreeNode> stack = new ArrayList();
         try {
-            int i = 0;
+//            int i = 0;
             for (StackFrame f : t.frames()) {
                 stack.add(new DefaultMutableTreeNode(locationToString(f.location())));
             }
