@@ -506,11 +506,6 @@ public class JavaScriptBuild
       int errorFile = findErrorFile(errorLine);
       errorLine -= sketch.getCode(errorFile).getPreprocOffset();
 
-      System.out.println(String.format(
-      	"(1) %d, %d",
-      	errorFile, errorLine
-      ));
-
       String msg = re.getMessage();
 
       if (msg.equals("expecting RCURLY, found 'null'")) {
@@ -577,11 +572,6 @@ public class JavaScriptBuild
           }
         }
         errorLine -= sketch.getCode(errorFile).getPreprocOffset();
-
-        System.out.println(String.format(
-      		"(2) %d, %d",
-      		errorFile, errorLine
-      	));
 
         throw new SketchException(tsre.getMessage(),
                                   errorFile, errorLine, errorColumn);
