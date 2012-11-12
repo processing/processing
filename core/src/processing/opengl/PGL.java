@@ -55,8 +55,11 @@ import javax.media.opengl.glu.GLUtessellatorCallbackAdapter;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
+import processing.event.KeyEvent;
+import processing.event.MouseEvent;
 
 import com.jogamp.newt.awt.NewtCanvasAWT;
+import com.jogamp.newt.event.InputEvent;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.FBObject;
 import com.jogamp.opengl.util.AnimatorBase;
@@ -356,7 +359,7 @@ public class PGL {
   /** Windowing toolkit */
   protected static int toolkit = NEWT;
 
-  protected static boolean enable_screen_FBO_macosx  = false;
+  protected static boolean enable_screen_FBO_macosx  = true;
   protected static boolean enable_screen_FBO_windows = false;
   protected static boolean enable_screen_FBO_linux   = false;
   protected static boolean enable_screen_FBO_other   = false;
@@ -383,7 +386,7 @@ public class PGL {
   protected PGLListener listener;
 
   /** Animator to drive the rendering thread in NEWT */
-  protected PGLAnimator animator;
+  protected NEWTAnimator animator;
 
   /** Desired target framerate */
   protected float targetFramerate = 60;
@@ -560,6 +563,8 @@ public class PGL {
     }
 
     caps.setDepthBits(24);
+    // Stencil buffer dissabled for now:
+    // http://forum.jogamp.org/Enabling-Stencil-buffer-breaks-rendering-OSX-R11-td4026857.html
     //caps.setStencilBits(8);
     caps.setAlphaBits(8);
     caps.setBackgroundOpaque(true);
@@ -587,19 +592,26 @@ public class PGL {
 
       pg.parent.setLayout(new BorderLayout());
       pg.parent.add(canvasNEWT, BorderLayout.CENTER);
-      pg.parent.removeListeners(pg.parent);
-      pg.parent.addListeners(canvasNEWT);
+      //pg.parent.removeListeners(pg.parent);
+      //pg.parent.addListeners(canvasNEWT);
+
+      com.jogamp.newt.event.MouseListener mouseListener = new NEWTMouseAdapter();
+      window.addMouseListener(mouseListener);
+      com.jogamp.newt.event.KeyListener keyListener = new NEWTKeyAdapter();
+      window.addKeyListener(keyListener);
+
+
 
       listener = new PGLListener();
       window.addGLEventListener(listener);
-      animator = new PGLAnimator(window);
+      animator = new NEWTAnimator(window);
       animator.start();
 
       capabilities = window.getChosenGLCapabilities();
       canvas = canvasNEWT;
       canvasAWT = null;
 
-      System.out.println(capabilities);
+//      System.out.println(capabilities);
     }
 
     initialized = true;
@@ -2544,10 +2556,103 @@ public class PGL {
     }
   }
 
+  protected void nativeMouseEvent(com.jogamp.newt.event.MouseEvent nativeEvent,
+                                  int peAction) {
+    int modifiers = nativeEvent.getModifiers();
+    int peModifiers = modifiers &
+                      (InputEvent.SHIFT_MASK |
+                       InputEvent.CTRL_MASK |
+                       InputEvent.META_MASK |
+                       InputEvent.ALT_MASK);
 
-  /** Animator subclass to drive render loop when using NEWT.
-   **/
-  protected static class PGLAnimator extends AnimatorBase {
+    int peButton = 0;
+    if ((modifiers & InputEvent.BUTTON1_MASK) != 0) {
+      peButton = PConstants.LEFT;
+    } else if ((modifiers & InputEvent.BUTTON2_MASK) != 0) {
+      peButton = PConstants.CENTER;
+    } else if ((modifiers & InputEvent.BUTTON3_MASK) != 0) {
+      peButton = PConstants.RIGHT;
+    }
+
+    MouseEvent me = new MouseEvent(nativeEvent, nativeEvent.getWhen(),
+                                   peAction, peModifiers,
+                                   nativeEvent.getX(), nativeEvent.getY(),
+                                   peButton,
+                                   nativeEvent.getClickCount());
+
+    pg.parent.postEvent(me);
+  }
+
+  protected void nativeKeyEvent(com.jogamp.newt.event.KeyEvent nativeEvent,
+                                int peAction) {
+    int peModifiers = nativeEvent.getModifiers() &
+                      (InputEvent.SHIFT_MASK |
+                       InputEvent.CTRL_MASK |
+                       InputEvent.META_MASK |
+                       InputEvent.ALT_MASK);
+
+    KeyEvent ke = new KeyEvent(nativeEvent, nativeEvent.getWhen(),
+                               peAction, peModifiers,
+                               nativeEvent.getKeyChar(),
+                               nativeEvent.getKeyCode());
+
+    pg.parent.postEvent(ke);
+  }
+
+  // NEWT mouse listener
+  class NEWTMouseAdapter extends com.jogamp.newt.event.MouseAdapter {
+    @Override
+    public void mousePressed(com.jogamp.newt.event.MouseEvent e) {
+      nativeMouseEvent(e, MouseEvent.PRESSED);
+    }
+    @Override
+    public void mouseReleased(com.jogamp.newt.event.MouseEvent e) {
+      nativeMouseEvent(e, MouseEvent.RELEASED);
+    }
+    @Override
+    public void mouseClicked(com.jogamp.newt.event.MouseEvent e) {
+      nativeMouseEvent(e, MouseEvent.CLICKED);
+    }
+    @Override
+    public void mouseDragged(com.jogamp.newt.event.MouseEvent e) {
+      nativeMouseEvent(e, MouseEvent.DRAGGED);
+    }
+    @Override
+    public void mouseMoved(com.jogamp.newt.event.MouseEvent e) {
+      nativeMouseEvent(e, MouseEvent.MOVED);
+    }
+    @Override
+    public void mouseEntered(com.jogamp.newt.event.MouseEvent e) {
+      nativeMouseEvent(e, MouseEvent.ENTERED);
+    }
+    @Override
+    public void mouseExited(com.jogamp.newt.event.MouseEvent e) {
+      nativeMouseEvent(e, MouseEvent.EXITED);
+    }
+    @Override
+    public void mouseWheelMoved(com.jogamp.newt.event.MouseEvent e) {
+      // Not supported in Processing.
+    }
+  }
+
+  // NEWT key listener
+  class NEWTKeyAdapter extends com.jogamp.newt.event.KeyAdapter {
+    @Override
+    public void keyPressed(com.jogamp.newt.event.KeyEvent e) {
+      nativeKeyEvent(e, KeyEvent.PRESSED);
+    }
+    @Override
+    public void keyReleased(com.jogamp.newt.event.KeyEvent e) {
+      nativeKeyEvent(e, KeyEvent.RELEASED);
+    }
+    @Override
+    public void keyTyped(com.jogamp.newt.event.KeyEvent e)  {
+      nativeKeyEvent(e, KeyEvent.TYPED);
+    }
+  }
+
+  // Animator to drive render loop when using NEWT.
+  protected static class NEWTAnimator extends AnimatorBase {
     private static int count = 0;
     private Timer timer = null;
     private TimerTask task = null;
@@ -2555,13 +2660,13 @@ public class PGL {
 
     @Override
     protected String getBaseName(String prefix) {
-      return prefix + "PGLAnimator";
+      return prefix + "NEWTAnimator";
     }
 
     /** Creates an CustomAnimator with an initial drawable to
      * animate.
      */
-    public PGLAnimator(GLAutoDrawable drawable) {
+    public NEWTAnimator(GLAutoDrawable drawable) {
       if (drawable != null) {
         add(drawable);
       }
@@ -2603,8 +2708,8 @@ public class PGL {
             firstRun = false;
             count++;
           }
-          if (PGLAnimator.this.shouldRun) {
-            PGLAnimator.this.animThread = Thread.currentThread();
+          if (NEWTAnimator.this.shouldRun) {
+            NEWTAnimator.this.animThread = Thread.currentThread();
             // display impl. uses synchronized block on the animator instance
             display();
             synchronized (this) {
