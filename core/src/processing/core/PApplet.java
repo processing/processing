@@ -2353,6 +2353,26 @@ public class PApplet extends Applet
   //////////////////////////////////////////////////////////////
 
 
+  public void postEvent(processing.event.Event pe) {
+    if (pe instanceof MouseEvent) {
+      if (looping) {
+        enqueueMouseEvent((MouseEvent) pe);
+      } else {
+        handleMouseEvent((MouseEvent) pe);
+      }
+    } else if (pe instanceof KeyEvent) {
+      if (looping) {
+        enqueueKeyEvent((KeyEvent) pe);
+      } else {
+        handleKeyEvent((KeyEvent) pe);
+      }
+    }
+  }
+
+
+  //////////////////////////////////////////////////////////////
+
+
   MouseEvent mouseEventQueue[] = new MouseEvent[10];
   int mouseEventCount;
 
@@ -2516,12 +2536,7 @@ public class PApplet extends Applet
                                    nativeEvent.getX(), nativeEvent.getY(),
                                    peButton,
                                    nativeEvent.getClickCount());
-
-    if (looping) {
-      enqueueMouseEvent(pe);
-    } else {
-      handleMouseEvent(pe);
-    }
+    postEvent(pe);
   }
 
 
@@ -2813,11 +2828,7 @@ public class PApplet extends Applet
 
     KeyEvent ke = new KeyEvent(event, event.getWhen(), peAction, peModifiers,
                                event.getKeyChar(), event.getKeyCode());
-    if (looping) {
-      enqueueKeyEvent(ke);
-    } else {
-      handleKeyEvent(ke);
-    }
+    postEvent(ke);
   }
 
 
