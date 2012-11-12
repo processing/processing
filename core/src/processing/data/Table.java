@@ -71,7 +71,8 @@ public class Table {
 
 //  protected boolean skipEmptyRows = true;
 //  protected boolean skipCommentLines = true;
-  protected boolean commaSeparatedValues = false;
+  protected String extension = null;
+//  protected boolean commaSeparatedValues = false;
   protected boolean awfulCSV = false;
 
   protected String missingString = null;
@@ -119,20 +120,22 @@ public class Table {
    * Creates a new, empty table. Use addRow() to add additional rows.
    */
   public Table() {
-    columns = new Object[0];
-    columnTypes = new int[0];
-    columnCategories = new HashMapBlows[0];
+    init(null);
   }
 
 
-  public Table(PApplet parent) {
-    this();
-    this.sketch = parent;
+  public Table(PApplet sketch) {
+    init(sketch);
   }
 
 
-  public Table(File file) {
-    this(PApplet.createReader(file));
+//  public Table(File file) {
+//    this(PApplet.createReader(file));
+//  }
+
+
+  public Table(PApplet parent, String filename) throws IOException {
+    this(parent, filename, null);
   }
 
 
@@ -140,37 +143,86 @@ public class Table {
    * Can handle TSV or CSV files.
    * @param parent
    * @param filename
+   * @throws IOException
    */
-  public Table(PApplet parent, String filename) {
-    this.sketch = parent;
-    read(parent.createReader(filename));
+  public Table(PApplet parent, String filename, String options) throws IOException {
+    init(parent);
+    //String[] opts = PApplet.split(options, ',');
+    //PApplet.trim(opts);
+
+    // try to determine file type from extension
+    String extension = null;
+    int dotIndex = filename.lastIndexOf('.');
+    if (dotIndex != -1) {
+      extension = filename.substring(dotIndex + 1).toLowerCase();
+      if (!extension.equals("csv") &&
+          !extension.equals("tsv")) {
+        // ignore extension
+        extension = null;
+      }
+    }
+
+    String[] opts = null;
+    if (options != null) {
+      opts = options.split("\\s*,\\s*");
+//      PApplet.println("options:");
+//      PApplet.println(opts);
+
+      for (String opt : opts) {
+        if (opt.equals("tsv")) {
+          extension = "tsv";
+        } else if (opt.equals("csv")) {
+          extension = "csv";
+        } else if (opt.equals("newlines")) {
+          awfulCSV = true;
+        } else {
+          System.err.println(opt + " is not a valid option for loading a Table");
+        }
+      }
+    }
+
+    BufferedReader reader = parent.createReader(filename);
+    if (awfulCSV) {
+      parseAwfulCSV(reader);
+    } else if ("tsv".equals(extension)) {
+      parseBasic(reader, true);
+    } else if ("csv".equals(extension)) {
+      parseBasic(reader, false);
+    }
+    //read();
   }
 
 
-  public Table(BufferedReader reader) {
-    read(reader);
-  }
+//  public Table(BufferedReader reader) {
+//    read(reader);
+//  }
 
 
-  protected void read(BufferedReader reader) {
+  protected void init(PApplet sketch) {
+    this.sketch = sketch;
     columns = new Object[0];
     columnTypes = new int[0];
     columnCategories = new HashMapBlows[0];
-    try {
-      boolean csv = peekCSV(reader);
-      if (csv) {
-        parseCSV(reader);
-      } else {
-        parseTSV(reader);
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
   }
 
 
+//  protected void read(BufferedReader reader) {
+//    init();
+//    try {
+//      boolean csv = peekCSV(reader);
+//      if (csv) {
+//        parseCSV(reader);
+//      } else {
+//        parseTSV(reader);
+//      }
+//    } catch (IOException e) {
+//      e.printStackTrace();
+//    }
+//  }
+
+
   public Table(ResultSet rs) {
-    this();
+    init(null);
     try {
       ResultSetMetaData rsmd = rs.getMetaData();
 
@@ -231,6 +283,7 @@ public class Table {
    * Guess whether this file is tab separated or comma separated by checking
    * whether there are more tabs or commas in the first 100 characters.
    */
+  /*
   protected boolean peekCSV(BufferedReader reader) throws IOException {
     char[] buffer = new char[100];
     int remaining = buffer.length;
@@ -260,6 +313,7 @@ public class Table {
       parseTSV(reader);
     }
   }
+  */
 
 
   public void parseTSV(BufferedReader reader) throws IOException {
@@ -419,7 +473,7 @@ public class Table {
   }
 
 
-  public void parseAwfulCSV(BufferedReader reader) throws IOException {
+  protected void parseAwfulCSV(BufferedReader reader) throws IOException {
     char[] c = new char[100];
     int count = 0;
     boolean insideQuote = false;
@@ -497,9 +551,9 @@ public class Table {
   }
 
 
-  protected String[] splitLine(String line) {
-    return commaSeparatedValues ? splitLineCSV(line) : PApplet.split(line, '\t');
-  }
+//  protected String[] splitLine(String line) {
+//    return commaSeparatedValues ? splitLineCSV(line) : PApplet.split(line, '\t');
+//  }
 
 
   /**
