@@ -25,6 +25,7 @@ package processing.core;
 
 import processing.data.*;
 import processing.event.*;
+import processing.event.Event;
 import processing.opengl.*;
 
 import java.applet.*;
@@ -2136,8 +2137,9 @@ public class PApplet extends Applet
         // drawing commands can be run inside them. it can't
         // be before, since a call to background() would wipe
         // out anything that had been drawn so far.
-        dequeueMouseEvents();
-        dequeueKeyEvents();
+        dequeueEvents();
+//        dequeueMouseEvents();
+//        dequeueKeyEvents();
 
         handleMethods("draw");
 
@@ -2353,20 +2355,106 @@ public class PApplet extends Applet
   //////////////////////////////////////////////////////////////
 
 
-  // TODO this needs lots of cleaning
+//  protected Event eventQueue[] = new Event[10];
+//  protected int eventCount;
+
+
+  class InternalEventQueue {
+    protected Event queue[] = new Event[10];
+    protected int offset;
+    protected int count;
+
+    synchronized void add(Event e) {
+      if (count == queue.length) {
+        queue = (Event[]) expand(queue);
+      }
+      queue[count++] = e;
+    }
+
+    synchronized Event remove() {
+      if (offset == count) {
+        throw new RuntimeException("Nothing left on the event queue.");
+      }
+      Event outgoing = queue[offset++];
+      if (offset == count) {
+        // All done, time to reset
+        offset = 0;
+        count = 0;
+      }
+      return outgoing;
+    }
+
+    synchronized boolean available() {
+      return count != 0;
+    }
+  }
+
+  InternalEventQueue eventQueue = new InternalEventQueue();
+
+
+  /**
+   * Add an event to the internal event queue, or process it immediately if
+   * the sketch is not currently looping.
+   */
   public void postEvent(processing.event.Event pe) {
-    if (pe instanceof MouseEvent) {
-      if (looping) {
-        enqueueMouseEvent((MouseEvent) pe);
-      } else {
-        handleMouseEvent((MouseEvent) pe);
+//    if (pe instanceof MouseEvent) {
+////    switch (pe.getFlavor()) {
+////    case Event.MOUSE:
+//      if (looping) {
+//        enqueueMouseEvent((MouseEvent) pe);
+//      } else {
+//        handleMouseEvent((MouseEvent) pe);
+//        enqueueEvent(pe);
+//      }
+//    } else if (pe instanceof KeyEvent) {
+//      if (looping) {
+//        enqueueKeyEvent((KeyEvent) pe);
+//      } else {
+//        handleKeyEvent((KeyEvent) pe);
+//      }
+//    }
+
+//    synchronized (eventQueue) {
+//      if (eventCount == eventQueue.length) {
+//        eventQueue = (Event[]) expand(eventQueue);
+//      }
+//      eventQueue[eventCount++] = pe;
+//    }
+    eventQueue.add(pe);
+
+    if (!looping) {
+      dequeueEvents();
+    }
+  }
+
+
+//  protected void enqueueEvent(Event e) {
+//    synchronized (eventQueue) {
+//      if (eventCount == eventQueue.length) {
+//        eventQueue = (Event[]) expand(eventQueue);
+//      }
+//      eventQueue[eventCount++] = e;
+//    }
+//  }
+
+  protected void dequeueEvents() {
+    // can't do this.. thread lock
+//    synchronized (eventQueue) {
+//      for (int i = 0; i < eventCount; i++) {
+//        Event e = eventQueue[i];
+    while (eventQueue.available()) {
+      Event e = eventQueue.remove();
+
+      switch (e.getFlavor()) {
+      case Event.MOUSE:
+        handleMouseEvent((MouseEvent) e);
+        break;
+      case Event.KEY:
+        handleKeyEvent((KeyEvent) e);
+        break;
       }
-    } else if (pe instanceof KeyEvent) {
-      if (looping) {
-        enqueueKeyEvent((KeyEvent) pe);
-      } else {
-        handleKeyEvent((KeyEvent) pe);
-      }
+//      }
+//      eventCount = 0;
     }
   }
 
@@ -2374,28 +2462,28 @@ public class PApplet extends Applet
   //////////////////////////////////////////////////////////////
 
 
-  MouseEvent mouseEventQueue[] = new MouseEvent[10];
-  int mouseEventCount;
-
-  protected void enqueueMouseEvent(MouseEvent e) {
-    synchronized (mouseEventQueue) {
-      if (mouseEventCount == mouseEventQueue.length) {
-        MouseEvent temp[] = new MouseEvent[mouseEventCount << 1];
-        System.arraycopy(mouseEventQueue, 0, temp, 0, mouseEventCount);
-        mouseEventQueue = temp;
-      }
-      mouseEventQueue[mouseEventCount++] = e;
-    }
-  }
-
-  protected void dequeueMouseEvents() {
-    synchronized (mouseEventQueue) {
-      for (int i = 0; i < mouseEventCount; i++) {
-        handleMouseEvent(mouseEventQueue[i]);
-      }
-      mouseEventCount = 0;
-    }
-  }
+//  MouseEvent mouseEventQueue[] = new MouseEvent[10];
+//  int mouseEventCount;
+//
+//  protected void enqueueMouseEvent(MouseEvent e) {
+//    synchronized (mouseEventQueue) {
+//      if (mouseEventCount == mouseEventQueue.length) {
+//        MouseEvent temp[] = new MouseEvent[mouseEventCount << 1];
+//        System.arraycopy(mouseEventQueue, 0, temp, 0, mouseEventCount);
+//        mouseEventQueue = temp;
+//      }
+//      mouseEventQueue[mouseEventCount++] = e;
+//    }
+//  }
+//
+//  protected void dequeueMouseEvents() {
+//    synchronized (mouseEventQueue) {
+//      for (int i = 0; i < mouseEventCount; i++) {
+//        handleMouseEvent(mouseEventQueue[i]);
+//      }
+//      mouseEventCount = 0;
+//    }
+//  }
 
 
   /**
@@ -2529,10 +2617,10 @@ public class PApplet extends Applet
     int modifiers = nativeEvent.getModifiers();
 
     int peModifiers = modifiers &
-      (InputEvent.SHIFT_DOWN_MASK |
-       InputEvent.CTRL_DOWN_MASK |
-       InputEvent.META_DOWN_MASK |
-       InputEvent.ALT_DOWN_MASK);
+      (InputEvent.SHIFT_MASK |
+       InputEvent.CTRL_MASK |
+       InputEvent.META_MASK |
+       InputEvent.ALT_MASK);
 
     // Windows and OS X seem to disagree on how to handle this. Windows only
     // sets BUTTON1_DOWN_MASK, while OS X seems to set BUTTON1_MASK.
@@ -2569,12 +2657,11 @@ public class PApplet extends Applet
       }
     }
 
-    MouseEvent pe = new MouseEvent(nativeEvent, nativeEvent.getWhen(),
-                                   peAction, peModifiers,
-                                   nativeEvent.getX(), nativeEvent.getY(),
-                                   peButton,
-                                   nativeEvent.getClickCount());
-    postEvent(pe);
+    postEvent(new MouseEvent(nativeEvent, nativeEvent.getWhen(),
+                             peAction, peModifiers,
+                             nativeEvent.getX(), nativeEvent.getY(),
+                             peButton,
+                             nativeEvent.getClickCount()));
   }
 
 
@@ -2589,12 +2676,14 @@ public class PApplet extends Applet
     nativeMouseEvent(e);
   }
 
+
   /**
    * @nowebref
    */
   public void mouseReleased(java.awt.event.MouseEvent e) {
     nativeMouseEvent(e);
   }
+
 
   /**
    * @nowebref
@@ -2603,13 +2692,22 @@ public class PApplet extends Applet
     nativeMouseEvent(e);
   }
 
+
+  /**
+   * @nowebref
+   */
   public void mouseEntered(java.awt.event.MouseEvent e) {
     nativeMouseEvent(e);
   }
 
+
+  /**
+   * @nowebref
+   */
   public void mouseExited(java.awt.event.MouseEvent e) {
     nativeMouseEvent(e);
   }
+
 
   /**
    * @nowebref
@@ -2617,6 +2715,7 @@ public class PApplet extends Applet
   public void mouseDragged(java.awt.event.MouseEvent e) {
     nativeMouseEvent(e);
   }
+
 
   /**
    * @nowebref
@@ -2652,6 +2751,7 @@ public class PApplet extends Applet
    * @see PApplet#mouseDragged()
    */
   public void mousePressed() { }
+
 
   /**
    * ( begin auto-generated from mouseReleased.xml )
@@ -2693,6 +2793,7 @@ public class PApplet extends Applet
    */
   public void mouseClicked() { }
 
+
   /**
    * ( begin auto-generated from mouseDragged.xml )
    *
@@ -2709,6 +2810,7 @@ public class PApplet extends Applet
    * @see PApplet#mouseMoved()
    */
   public void mouseDragged() { }
+
 
   /**
    * ( begin auto-generated from mouseMoved.xml )
@@ -2727,7 +2829,9 @@ public class PApplet extends Applet
    */
   public void mouseMoved() { }
 
+
   public void mouseEntered() { }
+
 
   public void mouseExited() { }
 
@@ -2736,29 +2840,29 @@ public class PApplet extends Applet
   //////////////////////////////////////////////////////////////
 
 
-  KeyEvent keyEventQueue[] = new KeyEvent[10];
-  int keyEventCount;
-
-  protected void enqueueKeyEvent(KeyEvent e) {
-    synchronized (keyEventQueue) {
-      if (keyEventCount == keyEventQueue.length) {
-        KeyEvent temp[] = new KeyEvent[keyEventCount << 1];
-        System.arraycopy(keyEventQueue, 0, temp, 0, keyEventCount);
-        keyEventQueue = temp;
-      }
-      keyEventQueue[keyEventCount++] = e;
-    }
-  }
-
-  protected void dequeueKeyEvents() {
-    synchronized (keyEventQueue) {
-      for (int i = 0; i < keyEventCount; i++) {
-        keyEvent = keyEventQueue[i];
-        handleKeyEvent(keyEvent);
-      }
-      keyEventCount = 0;
-    }
-  }
+//  KeyEvent keyEventQueue[] = new KeyEvent[10];
+//  int keyEventCount;
+//
+//  protected void enqueueKeyEvent(KeyEvent e) {
+//    synchronized (keyEventQueue) {
+//      if (keyEventCount == keyEventQueue.length) {
+//        KeyEvent temp[] = new KeyEvent[keyEventCount << 1];
+//        System.arraycopy(keyEventQueue, 0, temp, 0, keyEventCount);
+//        keyEventQueue = temp;
+//      }
+//      keyEventQueue[keyEventCount++] = e;
+//    }
+//  }
+//
+//  protected void dequeueKeyEvents() {
+//    synchronized (keyEventQueue) {
+//      for (int i = 0; i < keyEventCount; i++) {
+//        keyEvent = keyEventQueue[i];
+//        handleKeyEvent(keyEvent);
+//      }
+//      keyEventCount = 0;
+//    }
+//  }
 
 
 //  protected void handleKeyEvent(java.awt.event.KeyEvent event) {
@@ -2836,13 +2940,18 @@ public class PApplet extends Applet
         exit();
       }
       // When running tethered to the Processing application, respond to
-      // Ctrl-W (or Cmd-W) events by closing the sketch. Disable this behavior
-      // when running independently, because this sketch may be one component
+      // Ctrl-W (or Cmd-W) events by closing the sketch. Not enabled when
+      // running independently, because this sketch may be one component
       // embedded inside an application that has its own close behavior.
-      if (external && event.getNative() instanceof java.awt.event.KeyEvent &&
-          ((java.awt.event.KeyEvent) event.getNative()).getModifiers() ==
-            Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() &&
-          event.getKeyCode() == 'W') {
+      if (external &&
+          event.getKeyCode() == 'W' &&
+          ((event.isMetaDown() && platform == MACOSX) ||
+           (event.isControlDown() && platform != MACOSX))) {
+        // Can't use this native stuff b/c the native event might be NEWT
+//      if (external && event.getNative() instanceof java.awt.event.KeyEvent &&
+//          ((java.awt.event.KeyEvent) event.getNative()).getModifiers() ==
+//            Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() &&
+//          event.getKeyCode() == 'W') {
         exit();
       }
     }
@@ -2863,15 +2972,19 @@ public class PApplet extends Applet
       break;
     }
 
-    int peModifiers = event.getModifiersEx() &
-      (InputEvent.SHIFT_DOWN_MASK |
-       InputEvent.CTRL_DOWN_MASK |
-       InputEvent.META_DOWN_MASK |
-       InputEvent.ALT_DOWN_MASK);
+//    int peModifiers = event.getModifiersEx() &
+//      (InputEvent.SHIFT_DOWN_MASK |
+//       InputEvent.CTRL_DOWN_MASK |
+//       InputEvent.META_DOWN_MASK |
+//       InputEvent.ALT_DOWN_MASK);
+    int peModifiers = event.getModifiers() &
+      (InputEvent.SHIFT_MASK |
+       InputEvent.CTRL_MASK |
+       InputEvent.META_MASK |
+       InputEvent.ALT_MASK);
 
-    KeyEvent ke = new KeyEvent(event, event.getWhen(), peAction, peModifiers,
-                               event.getKeyChar(), event.getKeyCode());
-    postEvent(ke);
+    postEvent(new KeyEvent(event, event.getWhen(), peAction, peModifiers,
+                           event.getKeyChar(), event.getKeyCode()));
   }
 
 
@@ -2884,17 +2997,25 @@ public class PApplet extends Applet
    *
    * @nowebref
    */
-  public void keyPressed(java.awt.event.KeyEvent e) { nativeKeyEvent(e); }
+  public void keyPressed(java.awt.event.KeyEvent e) {
+    nativeKeyEvent(e);
+  }
+
 
   /**
    * @nowebref
    */
-  public void keyReleased(java.awt.event.KeyEvent e) { nativeKeyEvent(e); }
+  public void keyReleased(java.awt.event.KeyEvent e) {
+    nativeKeyEvent(e);
+  }
+
 
   /**
    * @nowebref
    */
-  public void keyTyped(java.awt.event.KeyEvent e) { nativeKeyEvent(e); }
+  public void keyTyped(java.awt.event.KeyEvent e) {
+    nativeKeyEvent(e);
+  }
 
 
   /**

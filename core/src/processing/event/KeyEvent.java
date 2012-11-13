@@ -36,6 +36,7 @@ public class KeyEvent extends Event {
                   long millis, int action, int modifiers,
                   char key, int keyCode) {
     super(nativeObject, millis, action, modifiers);
+    this.flavor = KEY;
     this.key = key;
     this.keyCode = keyCode;
   }

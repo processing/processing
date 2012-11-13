@@ -2,6 +2,9 @@
 X change to getRows() method for iterating through the Table object
 X add parseInto() method (provisional)
 X change translate() and rotate() to use x, y, z as param names
+X changing default imports
+X   new set: java.io.*,java.net.*,java.text.*,java.util.*,java.util.zip.*,java.util.regex.*
+X   removed: java.applet.*,java.awt.Dimension,java.awt.Frame,java.awt.event.MouseEvent,java.awt.event.KeyEvent,java.awt.event.FocusEvent,java.awt.Image,
 
 cleaning
 o remove screenBlend(), textureBlend() from PGraphics et al
@@ -10,7 +13,8 @@ X Support 'black' as color for SVG files (PhiLho fix)
 X   http://code.google.com/p/processing/issues/detail?id=1010
 
 events
-_ make sure alt/ctl/meta/etc all work
+_ make sure alt/ctl/meta/etc all work (for both mouse and key) 
+_ remove thread blocking when dequeueing events
 _ finish postEvent()
 _ need to make events interleave
 _   http://code.google.com/p/processing/issues/detail?id=79

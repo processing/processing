@@ -184,6 +184,7 @@ public class AndroidPreprocessor extends PdePreprocessor {
     return new String[] {
       "processing.core.*",
       "processing.data.*",
+      "processing.event.*",
       "processing.opengl.*"
     };
   }
@@ -191,25 +192,28 @@ public class AndroidPreprocessor extends PdePreprocessor {
 
   @Override
   public String[] getDefaultImports() {
-    final String prefsLine = Preferences.get("android.preproc.imports.list");
+    final String prefsLine = Preferences.get("android.preproc.imports");
     if (prefsLine != null) {
       return PApplet.splitTokens(prefsLine, ", ");
     }
 
+    // The initial values are stored in here for the day when Android
+    // is broken out as a separate mode.
+    
     // In the future, this may include standard classes for phone or
     // accelerometer access within the Android APIs. This is currently living
     // in code rather than preferences.txt because Android mode needs to
     // maintain its independence from the rest of processing.app.
     final String[] androidImports = new String[] {
-      "android.view.MotionEvent", "android.view.KeyEvent",
-      "android.graphics.Bitmap", //"java.awt.Image",
+//      "android.view.MotionEvent", "android.view.KeyEvent",
+//      "android.graphics.Bitmap", //"java.awt.Image",
       "java.io.*", // for BufferedReader, InputStream, etc
       //"java.net.*", "java.text.*", // leaving otu for now
       "java.util.*" // for ArrayList and friends
       //"java.util.zip.*", "java.util.regex.*" // not necessary w/ newer i/o
     };
 
-    Preferences.set("android.preproc.imports.list",
+    Preferences.set("android.preproc.imports",
                     PApplet.join(androidImports, ","));
 
     return androidImports;
