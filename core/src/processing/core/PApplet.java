@@ -2425,7 +2425,11 @@ public class PApplet extends Applet
 
     // Compatibility for older code
     if (mouseEventMethods != null) {
-      mouseEventMethods.handle(new Object[] { event.getNative() });
+      // Probably also good to check this, in case anyone tries to call
+      // postEvent() with an artificial event they've created.
+      if (event.getNative() != null) {
+        mouseEventMethods.handle(new Object[] { event.getNative() });
+      }
     }
 
     // this used to only be called on mouseMoved and mouseDragged
@@ -2439,15 +2443,28 @@ public class PApplet extends Applet
     }
 
     mouseEvent = event;
-    handleMethods("mouseEvent", new Object[] { event });
+
+    // Do this up here in case a registered method relies on the
+    // boolean for mousePressed.
 
     switch (event.getAction()) {
     case MouseEvent.PRESSED:
       mousePressed = true;
-      mousePressed();
       break;
     case MouseEvent.RELEASED:
       mousePressed = false;
+      break;
+    }
+
+    handleMethods("mouseEvent", new Object[] { event });
+
+    switch (event.getAction()) {
+    case MouseEvent.PRESSED:
+//      mousePressed = true;
+      mousePressed();
+      break;
+    case MouseEvent.RELEASED:
+//      mousePressed = false;
       mouseReleased();
       break;
     case MouseEvent.CLICKED:
@@ -2458,6 +2475,12 @@ public class PApplet extends Applet
       break;
     case MouseEvent.MOVED:
       mouseMoved();
+      break;
+    case MouseEvent.ENTERED:
+      mouseEntered();
+      break;
+    case MouseEvent.EXITED:
+      mouseExited();
       break;
     }
 
@@ -2500,7 +2523,10 @@ public class PApplet extends Applet
       break;
     }
 
-    int modifiers = nativeEvent.getModifiersEx();
+    System.out.println(nativeEvent);
+
+    //int modifiers = nativeEvent.getModifiersEx();
+    int modifiers = nativeEvent.getModifiers();
 
     int peModifiers = modifiers &
       (InputEvent.SHIFT_DOWN_MASK |
@@ -2515,19 +2541,30 @@ public class PApplet extends Applet
     // The fix for which led to a regression (fixed here by checking both):
     // http://code.google.com/p/processing/issues/detail?id=1332
     int peButton = 0;
-    if ((modifiers & InputEvent.BUTTON1_MASK) != 0 ||
-        (modifiers & InputEvent.BUTTON1_DOWN_MASK) != 0) {
+//    if ((modifiers & InputEvent.BUTTON1_MASK) != 0 ||
+//        (modifiers & InputEvent.BUTTON1_DOWN_MASK) != 0) {
+//      peButton = LEFT;
+//    } else if ((modifiers & InputEvent.BUTTON2_MASK) != 0 ||
+//               (modifiers & InputEvent.BUTTON2_DOWN_MASK) != 0) {
+//      peButton = CENTER;
+//    } else if ((modifiers & InputEvent.BUTTON3_MASK) != 0 ||
+//               (modifiers & InputEvent.BUTTON3_DOWN_MASK) != 0) {
+//      peButton = RIGHT;
+//    }
+    if ((modifiers & InputEvent.BUTTON1_MASK) != 0) {
       peButton = LEFT;
-    } else if ((modifiers & InputEvent.BUTTON2_MASK) != 0 ||
-               (modifiers & InputEvent.BUTTON2_DOWN_MASK) != 0) {
+    } else if ((modifiers & InputEvent.BUTTON2_MASK) != 0) {
       peButton = CENTER;
-    } else if ((modifiers & InputEvent.BUTTON3_MASK) != 0 ||
-               (modifiers & InputEvent.BUTTON3_DOWN_MASK) != 0) {
+    } else if ((modifiers & InputEvent.BUTTON3_MASK) != 0) {
       peButton = RIGHT;
     }
-    // if running on macos, allow ctrl-click as right mouse
+
+    // If running on macos, allow ctrl-click as right mouse. Prior to 0215,
+    // this used isPopupTrigger() on the native event, but that doesn't work
+    // for mouseClicked and mouseReleased (or others).
     if (platform == MACOSX) {
-      if (nativeEvent.isPopupTrigger()) {
+      //if (nativeEvent.isPopupTrigger()) {
+      if ((modifiers & InputEvent.CTRL_DOWN_MASK) != 0) {
         peButton = RIGHT;
       }
     }
@@ -2689,6 +2726,11 @@ public class PApplet extends Applet
    * @see PApplet#mouseDragged()
    */
   public void mouseMoved() { }
+
+  public void mouseEntered() { }
+
+  public void mouseExited() { }
+
 
 
   //////////////////////////////////////////////////////////////
