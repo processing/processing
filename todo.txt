@@ -1,4 +1,7 @@
 0215 pde
+X "expecting EOF, found 'import'" on previously working sketch 
+X   http://code.google.com/p/processing/issues/detail?id=1376
+
 _ standard "Emacs" keybindings not implemented on OS X
 _   http://code.google.com/p/processing/issues/detail?id=1354
 _   http://guides.macrumors.com/Keyboard_shortcuts&section=10#Text_Shortcuts
@@ -19,10 +22,9 @@ control-Y	 paste text previously deleted with control-K
 
 http://download.eclipse.org/eclipse/downloads/
 
-_ clientEvent() called even w/o data from server
+_ clientEvent() called even w/o data from server (with fix)
 _   http://code.google.com/p/processing/issues/detail?id=189
 _ check on adding ip() method
-
 
 _ Sketch that exported to Linux doesn't get the command line arguments
 _   http://code.google.com/p/processing/issues/detail?id=1359
@@ -477,6 +479,8 @@ _   it's never useful. students can use { } if they want an empty block
 _ missing brackets, unmatched brackets
 _   examples added to the bug report
 _   http://code.google.com/p/processing/issues/detail?id=6
+_ enums not supported properly
+_   http://code.google.com/p/processing/issues/detail?id=1352
 
 low (features)
 _ copy running code from /tmp/buildXXxxx on crash of p5

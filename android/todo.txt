@@ -15,6 +15,8 @@ _   internally, PApplet might subclass it for the pointers
 _   but queueing needs to work
 _ coordinates from motionX/Y reportedly inconsistent
 _   http://code.google.com/p/processing/issues/detail?id=1018
+_ pmouseX/Y not being set properly?
+_   http://code.google.com/p/processing/issues/detail?id=238
 
 _ Android emulator doesn't always start on the first attempt
 _   http://code.google.com/p/processing/issues/detail?id=1210
