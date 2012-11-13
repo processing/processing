@@ -924,13 +924,14 @@ public class PdePreprocessor {
     return new String[] {
       "processing.core.*",
       "processing.data.*",
+      "processing.event.*",
       "processing.opengl.*"
     };
   }
 
   public String[] getDefaultImports() {
     // These may change in-between (if the prefs panel adds this option)
-    String prefsLine = Preferences.get("preproc.imports.list");
+    String prefsLine = Preferences.get("preproc.imports");
     return PApplet.splitTokens(prefsLine, ", ");
   }
 

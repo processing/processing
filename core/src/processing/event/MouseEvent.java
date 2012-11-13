@@ -50,6 +50,7 @@ public class MouseEvent extends Event {
                     long millis, int action, int modifiers,
                     int x, int y, int button, int clickCount) {
     super(nativeObject, millis, action, modifiers);
+    this.flavor = MOUSE;
     this.x = x;
     this.y = y;
     this.button = button;

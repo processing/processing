@@ -273,8 +273,13 @@ preproc.substitute_unicode = true
 # viewed in (at least) Mozilla or IE.  useful when debugging the preprocessor.
 preproc.output_parse_tree = false
 
-# Changed after 1.0.9 to a new name, and also includes the specific entries
-preproc.imports.list = java.applet.*,java.awt.Dimension,java.awt.Frame,java.awt.event.MouseEvent,java.awt.event.KeyEvent,java.awt.event.FocusEvent,java.awt.Image,java.io.*,java.net.*,java.text.*,java.util.*,java.util.zip.*,java.util.regex.*
+# Changed after 2.0b6 to remove those that aren't compatible with Android, 
+# as we move to the new built-in event types. Also remove .list from the end
+# of the name, so that the pref will reset. These are now the same imports
+# as are used over on the Android side.
+#preproc.imports.list = java.applet.*,java.awt.Dimension,java.awt.Frame,java.awt.event.MouseEvent,java.awt.event.KeyEvent,java.awt.event.FocusEvent,java.awt.Image,java.io.*,java.net.*,java.text.*,java.util.*,java.util.zip.*,java.util.regex.*
+#preproc.imports = java.io.*,java.net.*,java.text.*,java.util.*,java.util.zip.*,java.util.regex.*
+preproc.imports = java.io.*,java.util.*
 
 # set to the program to be used for opening HTML files, folders, etc.
 #launcher.linux = xdg-open
