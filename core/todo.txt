@@ -6,8 +6,11 @@ X change translate() and rotate() to use x, y, z as param names
 cleaning
 o remove screenBlend(), textureBlend() from PGraphics et al
 o have andres take over all current GL issues in the tracker
+X Support 'black' as color for SVG files (PhiLho fix)
+X   http://code.google.com/p/processing/issues/detail?id=1010
 
 events
+_ make sure alt/ctl/meta/etc all work
 _ finish postEvent()
 _ need to make events interleave
 _   http://code.google.com/p/processing/issues/detail?id=79
@@ -17,7 +20,7 @@ _ mouseButton is 0 in mouseReleased() on OS X
 _   http://code.google.com/p/processing/issues/detail?id=1373
 _ unconfirmed: keyEvent works only using JAVA2D
 _   http://code.google.com/p/processing/issues/detail?id=1279
-_ mouseEntered/Exited?
+_ mouseEntered/Exited? (they're caught but not handled)
 _   http://code.google.com/p/processing/issues/detail?id=500
 _ also look into Android issues with this stuff
 _ this only works for awt events... switch to using internal event code
