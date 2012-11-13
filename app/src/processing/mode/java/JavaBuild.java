@@ -521,6 +521,7 @@ public class JavaBuild {
 
     if (pkg.startsWith("processing.core.")) return true;
     if (pkg.startsWith("processing.data.")) return true;
+    if (pkg.startsWith("processing.event.")) return true;
     if (pkg.startsWith("processing.opengl.")) return true;
 
 //    // ignore core, data, and opengl packages

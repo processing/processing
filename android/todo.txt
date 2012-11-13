@@ -1,5 +1,7 @@
 0215 android
-
+X removing default imports for 
+X   android.view.MotionEvent, android.view.KeyEvent,android.graphics.Bitmap
+X   due to conflicts w/ the new p5 event system
 
 _ implement Android version of command line tools
 _   http://code.google.com/p/processing/issues/detail?id=1323
