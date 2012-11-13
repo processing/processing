@@ -1,22 +1,38 @@
 0215 core
 X change to getRows() method for iterating through the Table object
 X add parseInto() method (provisional)
+X change translate() and rotate() to use x, y, z as param names
 
 cleaning
 o remove screenBlend(), textureBlend() from PGraphics et al
 o have andres take over all current GL issues in the tracker
 
+events
+_ finish postEvent()
 _ need to make events interleave
-
-_ change translate() and rotate() to use x, y, z as param names
-
-_ add "CGAffineTransformInvert: singular matrix" problem to the Wiki
-_   http://code.google.com/p/processing/issues/detail?id=1363
-
+_   http://code.google.com/p/processing/issues/detail?id=79
 _ mouseButton not being set properly in mouseClicked
 _   http://code.google.com/p/processing/issues/detail?id=1350
 _ mouseButton is 0 in mouseReleased() on OS X
 _   http://code.google.com/p/processing/issues/detail?id=1373
+_ unconfirmed: keyEvent works only using JAVA2D
+_   http://code.google.com/p/processing/issues/detail?id=1279
+_ mouseEntered/Exited?
+_   http://code.google.com/p/processing/issues/detail?id=500
+_ also look into Android issues with this stuff
+_ this only works for awt events... switch to using internal event code
+if (external && event.getNative() instanceof java.awt.event.KeyEvent &&
+         ((java.awt.event.KeyEvent) event.getNative()).getModifiers() ==
+           Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() &&
+         event.getKeyCode() == 'W') {
+       exit();
+     }
+
+_ add "CGAffineTransformInvert: singular matrix" problem to the Wiki
+_   http://code.google.com/p/processing/issues/detail?id=1363
+
+_ heading2D()? weird.. angle?
+_   http://code.google.com/p/processing/issues/detail?id=987
 
 _ "translate, or this variation of it" when using text(s, x, y, z) accidentally
 _   change to be th text command
