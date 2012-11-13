@@ -509,9 +509,11 @@ public class PdePreprocessor {
       program = substituteUnicode(program);
     }
 
+    // For 0215, adding } as a legitimate prefix to the import (along with 
+    // newline and semicolon) for cases where a tab ends with } and an import
+    // statement starts the next tab.
     final String importRegexp = 
-      "((?:^|;)\\s*)(import\\s+)((?:static\\s+)?\\S+)(\\s*;)";
-      //"(?:^|;)\\s*(import\\s+)((?:static\\s+)?\\S+)(\\s*;)";
+      "((?:^|;|\\})\\s*)(import\\s+)((?:static\\s+)?\\S+)(\\s*;)";
     final Pattern importPattern = Pattern.compile(importRegexp);
     String scrubbed = scrubComments(program);
     Matcher m = null;
@@ -534,18 +536,19 @@ public class PdePreprocessor {
         int start = m.start() + before.length();
         int stop = start + piece.length();
 //        System.out.println(start + " " + stop + " " + piece);
+        //System.out.println("found " + m.group(3));
+//        System.out.println("removing '" + program.substring(start, stop) + "'");
 
         // Remove the import from the main program
         program = program.substring(0, start) + program.substring(stop);
         scrubbed = scrubbed.substring(0, start) + scrubbed.substring(stop);
         // Set the offset to start, because everything between 
         // start and stop has been deleted.
-        offset = m.start();
-        
-//        System.out.println("program now:");
-//        System.out.println(program);
+        offset = m.start();        
       }
     } while (found);
+//    System.out.println("program now:");
+//    System.out.println(program);
 
     if (codeFolderPackages != null) {
       for (String item : codeFolderPackages) {
