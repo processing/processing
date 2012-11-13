@@ -2,6 +2,12 @@
 X change to getRows() method for iterating through the Table object
 X add parseInto() method (provisional)
 
+cleaning
+o remove screenBlend(), textureBlend() from PGraphics et al
+o have andres take over all current GL issues in the tracker
+
+_ need to make events interleave
+
 _ change translate() and rotate() to use x, y, z as param names
 
 _ add "CGAffineTransformInvert: singular matrix" problem to the Wiki
@@ -251,15 +257,26 @@ _   http://www.html5rocks.com/en/mobile/touch.html
 _   decision: go with what looks like javascript/ios
 _   touchEvent(), gestureEvent()?
 
+2.0 / blending
+_ remove blend(), add blendMode()
+_   for Java2D: http://code.google.com/p/processing/issues/detail?id=1385
+_   for Android: http://code.google.com/p/processing/issues/detail?id=1386
+_ fix blue-channel bias on blend() so that blendMode() will work in 2.0
+_   http://code.google.com/p/processing/issues/detail?id=475
+_ blend() bugs with identically-sized images
+_   http://code.google.com/p/processing/issues/detail?id=285
+_ improve blend() accuracy when using ADD
+_   http://code.google.com/p/processing/issues/detail?id=133
+_   includes code for a slow but more accurate mode
+_ implement a more efficient version of blend()
+_   http://code.google.com/p/processing/issues/detail?id=120
+
 2.0
 _ get() or copy()? for vectors, image, etc.
 _ PVector chaining -> Dan looking into this
 _ PNode.getChildren() shouldn't make a new array.. toArray() can do that
 _ toArray(), toArray(float[]), toVectorArray(), toVectorArray(PVector[])
 _   toColorArray(), toColorArray(float[])...
-_ remove blend(), add blendMode()
-_ fix blue-channel bias on blend() so that blendMode() will work in 2.0
-_   http://code.google.com/p/processing/issues/detail?id=475
 _ load/save methods.. is it save("blah.svg") or saveSVG("blah.svg")
 X   also works that way with tables
 X   decision: useExtension() or something like that
@@ -465,17 +482,12 @@ _   http://code.google.com/p/processing/issues/detail?id=167
 _ image resizing is ugly (just use java2d?)
 _   also deal with copy()/blend() inaccuracies
 _   http://code.google.com/p/processing/issues/detail?id=332
-_ blend() bugs with identically-sized images
-_   http://code.google.com/p/processing/issues/detail?id=285
 _ transparency issue with JAVA2D
 _   http://code.google.com/p/processing/issues/detail?id=182
 _ copy(image with transparency) doesn't keep the transparency at start up
 _   http://code.google.com/p/processing/issues/detail?id=601
 _ accuracy problems make alpha channel go to FE with image.copy()
 _   http://code.google.com/p/processing/issues/detail?id=219
-_ improve blend() accuracy when using ADD
-_   http://code.google.com/p/processing/issues/detail?id=133
-_   includes code for a slow but more accurate mode
 _ for a PGraphics2D, should its image cache object be the memoryimagesource?
 _ loading lots of images is a problem, describe how to unload
 _   is it possible? necessary to call delay(5) or something?
@@ -514,7 +526,6 @@ _ when using get(), reset the bounds for the objects
 _   otherwise it's always relative to the original document
 _ support for text (shouldn't be too bad, use createFont)
 _   implement text spans for svg output
-_ try enabling blending modes
 _ add better support for attributes buried in styles (support ai9/10/11)
 _ test what happens when transparency is used with gradient fill
 _ look into transformation issues... guessing this is probably wrong
@@ -594,15 +605,11 @@ _     will need to split each based on the other
 _     sort issues will affect both
 _ Stroking a rect() leaves off the upper right pixel
 _   http://code.google.com/p/processing/issues/detail?id=67
-_ implement a more efficient version of blend()
-_   http://code.google.com/p/processing/issues/detail?id=120
 _ Implement anisotropic filtering when using OPENGL
 _   http://code.google.com/p/processing/issues/detail?id=502
 _ Signature issue on contributed libraries affects unrelated opengl sketches
 _   http://code.google.com/p/processing/issues/detail?id=261
 _ remove matrixMode(), add a projection() method
-_ remove screenBlend(), textureBlend() from PGraphics et al
-_ have andres take over all current GL issues in the tracker
 _ opengl applet problems with tabs - needs to handle stop() and start() 
 _   http://code.google.com/p/processing/issues/detail?id=196
 _   stop() called between tabs/pages, start() may be called again
@@ -614,6 +621,7 @@ _ shared intf for 3D view data across PGraphicsOpenGL and PGraphicsAndroid3D
 _   libraries have to do a lot of casting
 _ opengl isn't drawing rectangles out to raw properly with fonts
 _   when not in textMode(SHAPE) should have rects
+
 
 
 CORE / Mac OS X

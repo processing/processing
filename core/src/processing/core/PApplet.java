@@ -2353,6 +2353,7 @@ public class PApplet extends Applet
   //////////////////////////////////////////////////////////////
 
 
+  // TODO this needs lots of cleaning
   public void postEvent(processing.event.Event pe) {
     if (pe instanceof MouseEvent) {
       if (looping) {
@@ -4703,17 +4704,17 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref math:calculation
    * @param value the incoming value to be converted
-   * @param istart lower bound of the value's current range
-   * @param istop upper bound of the value's current range
-   * @param ostart lower bound of the value's target range
-   * @param ostop upper bound of the value's target range
+   * @param start1 lower bound of the value's current range
+   * @param stop1 upper bound of the value's current range
+   * @param start2 lower bound of the value's target range
+   * @param stop2 upper bound of the value's target range
    * @see PApplet#norm(float, float, float)
    * @see PApplet#lerp(float, float, float)
    */
   static public final float map(float value,
-                                float istart, float istop,
-                                float ostart, float ostop) {
-    return ostart + (ostop - ostart) * ((value - istart) / (istop - istart));
+                                float start1, float stop1,
+                                float start2, float stop2) {
+    return start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
   }
 
 
@@ -10448,7 +10449,7 @@ public class PApplet extends Applet
    * Description to come...
    *
    * ( end auto-generated from textureWrap.xml )
-   * 
+   *
    * @webref image:textures
    * @param wrap Either CLAMP (default) or REPEAT
    */
@@ -10617,7 +10618,7 @@ public class PApplet extends Applet
    * This is a new reference entry for Processing 2.0. It will be updated shortly.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref Rendering
    * @param mode the blending mode to use
    */
@@ -10661,7 +10662,7 @@ public class PApplet extends Applet
    * This is a new reference entry for Processing 2.0. It will be updated shortly.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref rendering:shaders
    * @param fragFilename name of fragment shader file
    */
@@ -10684,7 +10685,7 @@ public class PApplet extends Applet
    * This is a new reference entry for Processing 2.0. It will be updated shortly.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref rendering:shaders
    * @param shader name of shader file
    */
@@ -10709,7 +10710,7 @@ public class PApplet extends Applet
    * This is a new reference entry for Processing 2.0. It will be updated shortly.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref rendering:shaders
    */
   public void resetShader() {
@@ -11590,9 +11591,9 @@ public class PApplet extends Applet
 
 
   /**
-   * 
+   *
    * @param level either 2, 4, or 8
-   */ 
+   */
   public void smooth(int level) {
     if (recorder != null) recorder.smooth(level);
     g.smooth(level);
@@ -12256,8 +12257,8 @@ public class PApplet extends Applet
    * ( end auto-generated )
    *
    * @webref transform
-   * @param tx left/right translation
-   * @param ty up/down translation
+   * @param x left/right translation
+   * @param y up/down translation
    * @see PGraphics#popMatrix()
    * @see PGraphics#pushMatrix()
    * @see PGraphics#rotate(float)
@@ -12266,18 +12267,18 @@ public class PApplet extends Applet
    * @see PGraphics#rotateZ(float)
    * @see PGraphics#scale(float, float, float)
    */
-  public void translate(float tx, float ty) {
-    if (recorder != null) recorder.translate(tx, ty);
-    g.translate(tx, ty);
+  public void translate(float x, float y) {
+    if (recorder != null) recorder.translate(x, y);
+    g.translate(x, y);
   }
 
 
   /**
-   * @param tz forward/backward translation
+   * @param z forward/backward translation
    */
-  public void translate(float tx, float ty, float tz) {
-    if (recorder != null) recorder.translate(tx, ty, tz);
-    g.translate(tx, ty, tz);
+  public void translate(float x, float y, float z) {
+    if (recorder != null) recorder.translate(x, y, z);
+    g.translate(x, y, z);
   }
 
 
@@ -12423,13 +12424,13 @@ public class PApplet extends Applet
   /**
    * <h3>Advanced</h3>
    * Rotate about a vector in space. Same as the glRotatef() function.
-   * @param vx
-   * @param vy
-   * @param vz
+   * @param x
+   * @param y
+   * @param z
    */
-  public void rotate(float angle, float vx, float vy, float vz) {
-    if (recorder != null) recorder.rotate(angle, vx, vy, vz);
-    g.rotate(angle, vx, vy, vz);
+  public void rotate(float angle, float x, float y, float z) {
+    if (recorder != null) recorder.rotate(angle, x, y, z);
+    g.rotate(angle, x, y, z);
   }
 
 
