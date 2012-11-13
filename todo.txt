@@ -2,6 +2,8 @@
 X "expecting EOF, found 'import'" on previously working sketch 
 X   http://code.google.com/p/processing/issues/detail?id=1376
 
+_ DebugMode throwing exception about breakpoints when trying to save
+
 _ standard "Emacs" keybindings not implemented on OS X
 _   http://code.google.com/p/processing/issues/detail?id=1354
 _   http://guides.macrumors.com/Keyboard_shortcuts&section=10#Text_Shortcuts
@@ -502,6 +504,8 @@ _   keypressed should maybe throw an error
 _   http://code.google.com/p/processing/issues/detail?id=5
 _ using a keyword as a variable name gives unhelpful error message
 _   http://code.google.com/p/processing/issues/detail?id=54
+_ "unexpected token" on anonymous instance of parameterized Comparator
+_   http://code.google.com/p/processing/issues/detail?id=494
 
 low (better error messages)
 _ single line of code with no semicolon dies with "unexpected token: null"

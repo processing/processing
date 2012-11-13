@@ -2523,9 +2523,9 @@ public class PApplet extends Applet
       break;
     }
 
-    System.out.println(nativeEvent);
-
+    //System.out.println(nativeEvent);
     //int modifiers = nativeEvent.getModifiersEx();
+    // If using getModifiersEx(), the regular modifiers don't set properly.
     int modifiers = nativeEvent.getModifiers();
 
     int peModifiers = modifiers &
