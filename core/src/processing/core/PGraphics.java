@@ -1211,7 +1211,7 @@ public class PGraphics extends PImage implements PConstants {
    * Description to come...
    *
    * ( end auto-generated from textureWrap.xml )
-   * 
+   *
    * @webref image:textures
    * @param wrap Either CLAMP (default) or REPEAT
    */
@@ -1607,7 +1607,7 @@ public class PGraphics extends PImage implements PConstants {
    * This is a new reference entry for Processing 2.0. It will be updated shortly.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref Rendering
    * @param mode the blending mode to use
    */
@@ -1668,7 +1668,7 @@ public class PGraphics extends PImage implements PConstants {
    * This is a new reference entry for Processing 2.0. It will be updated shortly.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref rendering:shaders
    * @param fragFilename name of fragment shader file
    */
@@ -1691,7 +1691,7 @@ public class PGraphics extends PImage implements PConstants {
    * This is a new reference entry for Processing 2.0. It will be updated shortly.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref rendering:shaders
    * @param shader name of shader file
    */
@@ -1712,7 +1712,7 @@ public class PGraphics extends PImage implements PConstants {
    * This is a new reference entry for Processing 2.0. It will be updated shortly.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref rendering:shaders
    */
   public void resetShader() {
@@ -3332,11 +3332,11 @@ public class PGraphics extends PImage implements PConstants {
   public void smooth() {
     smooth = true;
   }
-  
+
   /**
-   * 
+   *
    * @param level either 2, 4, or 8
-   */ 
+   */
   public void smooth(int level) {
     smooth = true;
   }
@@ -4736,8 +4736,8 @@ public class PGraphics extends PImage implements PConstants {
    * ( end auto-generated )
    *
    * @webref transform
-   * @param tx left/right translation
-   * @param ty up/down translation
+   * @param x left/right translation
+   * @param y up/down translation
    * @see PGraphics#popMatrix()
    * @see PGraphics#pushMatrix()
    * @see PGraphics#rotate(float)
@@ -4746,15 +4746,15 @@ public class PGraphics extends PImage implements PConstants {
    * @see PGraphics#rotateZ(float)
    * @see PGraphics#scale(float, float, float)
    */
-  public void translate(float tx, float ty) {
+  public void translate(float x, float y) {
     showMissingWarning("translate");
   }
 
 
   /**
-   * @param tz forward/backward translation
+   * @param z forward/backward translation
    */
-  public void translate(float tx, float ty, float tz) {
+  public void translate(float x, float y, float z) {
     showMissingWarning("translate");
   }
 
@@ -4897,11 +4897,11 @@ public class PGraphics extends PImage implements PConstants {
   /**
    * <h3>Advanced</h3>
    * Rotate about a vector in space. Same as the glRotatef() function.
-   * @param vx
-   * @param vy
-   * @param vz
+   * @param x
+   * @param y
+   * @param z
    */
-  public void rotate(float angle, float vx, float vy, float vz) {
+  public void rotate(float angle, float x, float y, float z) {
     showMissingWarning("rotate");
   }
 
