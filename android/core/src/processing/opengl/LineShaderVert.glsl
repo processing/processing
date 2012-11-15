@@ -62,8 +62,7 @@ void main() {
     vec3 window_p = clipToWindow(clip_p, viewport); 
     vec3 window_q = clipToWindow(clip_q, viewport); 
     vec3 tangent = window_q - window_p;
-  
-    float segment_length = length(tangent.xy);  
+    
     vec2 perp = normalize(vec2(-tangent.y, tangent.x));
     vec2 window_offset = perp * thickness;
 
