@@ -10799,21 +10799,31 @@ public class PApplet extends Applet
   /**
    * @webref shape
    */
-  public PShape createShape(PShape source) {
-    return g.createShape(source);
-  }
-
-
   public PShape createShape() {
     return g.createShape();
   }
 
 
+  /**
+   * @param source
+   */
+  public PShape createShape(PShape source) {
+    return g.createShape(source);
+  }
+
+
+  /**
+   * @param type either POINTS, LINES, TRIANGLES, TRIANGLE_FAN, TRIANGLE_STRIP, QUADS, QUAD_STRIP
+   */
   public PShape createShape(int type) {
     return g.createShape(type);
   }
 
 
+  /**
+   * @param kind either LINE, TRIANGLE, RECT, ELLIPSE, ARC, SPHERE, BOX
+   * @param p parameters that match the kind of shape 
+   */
   public PShape createShape(int kind, float... p) {
     return g.createShape(kind, p);
   }
@@ -12000,7 +12010,7 @@ public class PApplet extends Applet
    * @param alignY vertical alignment, either TOP, BOTTOM, CENTER, or BASELINE
    * @see PApplet#loadFont(String)
    * @see PFont
-   * @see PGraphics#text(String, float, float, float, float, float)
+   * @see PGraphics#text(String, float, float)
    */
   public void textAlign(int alignX, int alignY) {
     if (recorder != null) recorder.textAlign(alignX, alignY);
@@ -12070,7 +12080,7 @@ public class PApplet extends Applet
    * @see PApplet#createFont(String, float, boolean)
    * @see PApplet#loadFont(String)
    * @see PFont#PFont
-   * @see PGraphics#text(String, float, float, float, float, float)
+   * @see PGraphics#text(String, float, float)
    */
   public void textFont(PFont which) {
     if (recorder != null) recorder.textFont(which);
@@ -12099,7 +12109,7 @@ public class PApplet extends Applet
    * @param leading the size in pixels for spacing between lines
    * @see PApplet#loadFont(String)
    * @see PFont#PFont
-   * @see PGraphics#text(String, float, float, float, float, float)
+   * @see PGraphics#text(String, float, float)
    * @see PGraphics#textFont(PFont)
    */
   public void textLeading(float leading) {
@@ -12135,7 +12145,7 @@ public class PApplet extends Applet
    * @param mode either MODEL or SHAPE
    * @see PApplet#loadFont(String)
    * @see PFont#PFont
-   * @see PGraphics#text(String, float, float, float, float, float)
+   * @see PGraphics#text(String, float, float)
    * @see PGraphics#textFont(PFont)
    * @see PGraphics#beginRaw(PGraphics)
    * @see PApplet#createFont(String, float, boolean)
@@ -12158,7 +12168,7 @@ public class PApplet extends Applet
    * @param size the size of the letters in units of pixels
    * @see PApplet#loadFont(String)
    * @see PFont#PFont
-   * @see PGraphics#text(String, float, float, float, float, float)
+   * @see PGraphics#text(String, float, float)
    * @see PGraphics#textFont(PFont)
    */
   public void textSize(float size) {
@@ -12186,7 +12196,7 @@ public class PApplet extends Applet
    * @param str the String of characters to measure
    * @see PApplet#loadFont(String)
    * @see PFont#PFont
-   * @see PGraphics#text(String, float, float, float, float, float)
+   * @see PGraphics#text(String, float, float)
    * @see PGraphics#textFont(PFont)
    */
   public float textWidth(String str) {
