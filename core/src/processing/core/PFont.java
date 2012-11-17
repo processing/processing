@@ -185,7 +185,7 @@ public class PFont implements PConstants {
    * @param smooth
    * @see PApplet#loadFont(String)
    * @see PGraphics#textFont(PFont, float)
-   * @see PGraphics#text(String, float, float, float, float, float)
+   * @see PGraphics#text(String, float, float)
    */
   public PFont(Font font, boolean smooth) {
     this(font, smooth, null);

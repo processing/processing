@@ -2259,7 +2259,7 @@ public class Table {
    * Get a String value from the table. If the row is longer than the table
    * @param row
    * @param col
-   * @return
+   * @return the String defined by the row and col variables
    */
   public String getString(int row, int col) {
     checkBounds(row, col);
