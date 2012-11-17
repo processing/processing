@@ -476,12 +476,14 @@ public class PShape implements PConstants {
 
   /**
    * @webref pshape:method 
+   * @brief Starts a new contour
    */
   public void beginContour() {
   }
   
   /**
    * @webref pshape:method 
+   * @brief Ends a contour
    */
   public void endContour() {
   }
@@ -502,7 +504,8 @@ public class PShape implements PConstants {
   }
 
   /**
-   * @webref pshape:method 
+   * @webref pshape:method
+   * @brief Finishes the creation of a new PShape 
    */
   public void end() {
   }
@@ -1292,7 +1295,8 @@ public class PShape implements PConstants {
 
   // can't be just 'add' because that suggests additive geometry
   /**
-   * @webref pshape:method 
+   * @webref pshape:method
+   * @brief Adds a new child  
    */
   public void addChild(PShape who) {
     if (children == null) {
@@ -1473,7 +1477,9 @@ public class PShape implements PConstants {
     return getVertex(index, null);
   }
 
-
+  /**
+   * @param vec PVector to assign the data to
+   */
   public PVector getVertex(int index, PVector vec) {
     if (vec == null) {
       vec = new PVector();
@@ -1501,8 +1507,10 @@ public class PShape implements PConstants {
 
   /**
    * @webref pshape:method 
-   * @brief sets the vertex at the index position
+   * @brief Sets the vertex at the index position
    * @param index the location of the vertex
+   * @param x the x value for the vertex
+   * @param y the y value for the vertex
    */
   public void setVertex(int index, float x, float y) {
     vertices[index][X] = x;
