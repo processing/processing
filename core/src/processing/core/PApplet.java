@@ -10791,6 +10791,10 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * @webref shape
+   * @param filename name of file to load, can be .svg or .obj
+   */
   public PShape loadShape(String filename) {
     return g.loadShape(filename);
   }

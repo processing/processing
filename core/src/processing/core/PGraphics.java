@@ -1620,7 +1620,10 @@ public class PGraphics extends PImage implements PConstants {
 
   // SHAPE I/O
 
-
+  /**
+   * @webref shape
+   * @param filename name of file to load, can be .svg or .obj
+   */
   public PShape loadShape(String filename) {
     showMissingWarning("loadShape");
     return null;
