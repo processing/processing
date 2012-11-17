@@ -1455,13 +1455,20 @@ public class PShape implements PConstants {
     }
   }
 
-
+  /**
+   * @webref pshape:method 
+   * @brief Returns the total number of vertices as an int
+   */
   public int getVertexCount() {
     return vertexCount;
   }
 
 
-
+  /**
+   * @webref pshape:method 
+   * @brief Returns the vertex at the index position
+   * @param index the location of the vertex
+   */
   public PVector getVertex(int index) {
     return getVertex(index, null);
   }
@@ -1492,20 +1499,28 @@ public class PShape implements PConstants {
     return vertices[index][Z];
   }
 
-
+  /**
+   * @webref pshape:method 
+   * @brief sets the vertex at the index position
+   * @param index the location of the vertex
+   */
   public void setVertex(int index, float x, float y) {
     vertices[index][X] = x;
     vertices[index][Y] = y;
   }
 
-
+  /**
+   * @param z the z value for the vertex
+   */ 
   public void setVertex(int index, float x, float y, float z) {
     vertices[index][X] = x;
     vertices[index][Y] = y;
     vertices[index][Z] = z;
   }
 
-
+  /**
+   * @param vec the PVector to define the x, y, z coordinates
+   */ 
   public void setVertex(int index, PVector vec) {
     vertices[index][X] = vec.x;
     vertices[index][Y] = vec.y;
@@ -1749,17 +1764,17 @@ public class PShape implements PConstants {
    * @param tx left/right translation
    * @param ty up/down translation
    */
-  public void translate(float tx, float ty) {
+  public void translate(float x, float y) {
     checkMatrix(2);
-    matrix.translate(tx, ty);
+    matrix.translate(x, y);
   }
 
   /**
    * @param tz forward/back translation
    */
-  public void translate(float tx, float ty, float tz) {
+  public void translate(float x, float y, float z) {
     checkMatrix(3);
-    matrix.translate(tx, ty, tz);
+    matrix.translate(x, y, z);
   }
 
   /**
