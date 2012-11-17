@@ -13,7 +13,7 @@ void setup() {
   smooth();
   // Creating the PShape as an ellipse
   // The corner is -50,-50 so that the center is at 0,0 
-  circle = createShape(RECT, -50, -25, 100, 50);
+  circle = createShape(ELLIPSE, -50, -25, 100, 50);
 }
 
 void draw() {
