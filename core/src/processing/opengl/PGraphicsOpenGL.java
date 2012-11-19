@@ -5935,7 +5935,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void bindBackTexture() {
     if (primarySurface) {
-      //pgl.bindBackBufferTex();
+      pgl.bindBackBufferTex();
     } else {
 
     }
@@ -5944,7 +5944,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void unbindBackTexture() {
     if (primarySurface) {
-      //pgl.unbindBackBufferTex();
+      pgl.unbindBackBufferTex();
     } else {
 
     }
