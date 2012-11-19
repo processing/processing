@@ -406,31 +406,19 @@ public class PGL {
 
   ///////////////////////////////////////////////////////////
 
-  // FBO for anti-aliased rendering
+  // Objects for onscreen FBO-based rendering
 
-  protected int drawTexName;
-  protected int drawTexWidth, drawTexHeight;
-  protected FBObject drawFBO;
+  /** Back (== draw, current frame) buffer */
+  protected FBObject backFBO;
 
-  /*
-  protected static final boolean ENABLE_OSX_SCREEN_FBO  = false;
-  protected static final int MIN_OSX_VER_FOR_SCREEN_FBO = 6;
-  protected static final int MIN_SAMPLES_FOR_SCREEN_FBO = 1;
-  protected boolean needScreenFBO = false;
-  protected int fboWidth, fboHeight;
-  protected int numSamples;
-  protected boolean multisample;
-  protected boolean packedDepthStencil;
-  protected int backTex, frontTex;
-  protected int[] glColorTex = { 0, 0 };
-  protected int[] glColorFbo = { 0 };
-  protected int[] glMultiFbo = { 0 };
-  protected int[] glColorRenderBuffer = { 0 };
-  protected int[] glPackedDepthStencil = { 0 };
-  protected int[] glDepthBuffer = { 0 };
-  protected int[] glStencilBuffer = { 0 };
-  protected int contextHashCode;
-*/
+  /** Sink buffer, used in the multisampled case */
+  protected FBObject sinkFBO;
+
+  /** Front (== read, previous frame) buffer */
+  protected FBObject frontFBO;
+
+  protected FBObject.TextureAttachment backTex;
+  protected FBObject.TextureAttachment frontTex;
 
   ///////////////////////////////////////////////////////////
 
@@ -684,15 +672,15 @@ public class PGL {
   }
 
   protected int getFboTexName() {
-    return drawTexName;
+    return backTex.getName();
   }
 
   protected int getFboWidth() {
-    return drawTexWidth;
+    return backTex.getWidth();
   }
 
   protected int getFboHeight() {
-    return drawTexHeight;
+    return backTex.getHeight();
   }
 
   /*
@@ -755,25 +743,25 @@ public class PGL {
 
   protected void forceUpdate() {
     if (0 < capabilities.getNumSamples()) {
-      drawFBO.syncSamplingSink(gl);
-      drawFBO.bind(gl);
+      backFBO.syncSamplingSink(gl);
+      backFBO.bind(gl);
     }
   }
 
 
   protected void bindBackBufferTex() {
-    /*
+
     if (!texturingIsEnabled(GL.GL_TEXTURE_2D)) {
       enableTexturing(GL.GL_TEXTURE_2D);
     }
-    gl.glBindTexture(GL.GL_TEXTURE_2D, glColorTex[backTex]);
-    */
+    gl.glBindTexture(GL.GL_TEXTURE_2D, frontTex.getName());
+
   }
 
 
   protected void unbindBackBufferTex() {
-    /*
-    if (textureIsBound(GL.GL_TEXTURE_2D, glColorTex[backTex])) {
+
+    if (textureIsBound(GL.GL_TEXTURE_2D, frontTex.getName())) {
       // We don't want to unbind another texture
       // that might be bound instead of this one.
       if (!texturingIsEnabled(GL.GL_TEXTURE_2D)) {
@@ -784,7 +772,7 @@ public class PGL {
         gl.glBindTexture(GL.GL_TEXTURE_2D, 0);
       }
     }
-    */
+
   }
 
 
@@ -2467,45 +2455,56 @@ public class PGL {
   protected class PGLListener implements GLEventListener {
     @Override
     // http://www.opengl.org/wiki/Default_Framebuffer
-    public void display(GLAutoDrawable adrawable) {
-      drawable = adrawable;
-      context = adrawable.getContext();
+    public void display(GLAutoDrawable glDrawable) {
+      drawable = glDrawable;
+      context = glDrawable.getContext();
 
       if (capabilities.isFBO()) {
+        // The onscreen drawing surface is backed by an FBO layer.
         GLFBODrawable fboDrawable = null;
-        if (toolkit == AWT) {
-          GLCanvas drCanvas = (GLCanvas)adrawable;
-          fboDrawable = (GLFBODrawable)drCanvas.getDelegatedDrawable();
-//          FBObject fboFront = dr.getFBObject(GL.GL_FRONT);
-//          FBObject.Colorbuffer colorBuf = fboFront.getColorbuffer(0);
-//          FBObject.TextureAttachment texFront = (FBObject.TextureAttachment) colorBuf;
-//          System.out.println("front texture: " + texFront.getName());
-        } else {
-          GLWindow drWindow = (GLWindow)adrawable;
-          fboDrawable = (GLFBODrawable)drWindow.getDelegatedDrawable();
-        }
-        FBObject.TextureAttachment texAttach = null;
-        if (fboDrawable != null) {
-          //fboBack = fboDrawable.getFBObject(GL.GL_BACK);
-          //fboFront = fboDrawable.getFBObject(GL.GL_FRONT);
-          //FBObject.Colorbuffer colorBuf = fboFront.getSamplingSinkFBO().getColorbuffer(0);
-          //texAttach = (FBObject.TextureAttachment) colorBuf;
-          //texAttach = fboBack.getSamplingSink();
 
-          drawFBO = fboDrawable.getFBObject(GL.GL_BACK);
+        if (toolkit == AWT) {
+          GLCanvas glCanvas = (GLCanvas)glDrawable;
+          fboDrawable = (GLFBODrawable)glCanvas.getDelegatedDrawable();
+        } else {
+          GLWindow glWindow = (GLWindow)glDrawable;
+          fboDrawable = (GLFBODrawable)glWindow.getDelegatedDrawable();
+        }
+        if (fboDrawable != null) {
+          backFBO = fboDrawable.getFBObject(GL.GL_BACK);
           if (0 < capabilities.getNumSamples()) {
-            // When using multisampled FBO,the back buffer is the MSAA
-            // surface so it cannot read from, the one to use is the front.
-            texAttach = fboDrawable.getTextureBuffer(GL.GL_FRONT);
+            // When using multisampled FBO, the back buffer is the MSAA
+            // surface so it cannot be read from. The sink buffer contains
+            // the readable 2D texture.
+            // In this case, we create an auxiliar "front" buffer that it is
+            // swapped with the sink buffer at the beginning of each frame.
+            // In this way, we always have a readable copy of the previous
+            // frame in the front texture, while the back is synchronized
+            // with the contents of the MSAA back buffer when requested.
+
+            if (frontFBO == null) {
+              // init
+              frontFBO = new FBObject();
+              frontFBO.reset(gl, pg.width, pg.height);
+              frontFBO.attachTexture2D(gl, 0, true);
+              sinkFBO = backFBO.getSamplingSinkFBO();
+            } else {
+              // swap
+              FBObject temp = sinkFBO;
+              sinkFBO = frontFBO;
+              frontFBO = temp;
+              backFBO.setSamplingSink(sinkFBO);
+            }
+
+            backTex  = (FBObject.TextureAttachment) sinkFBO.getColorbuffer(0);
+            frontTex = (FBObject.TextureAttachment)frontFBO.getColorbuffer(0);
           } else {
             // W/out multisampling, rendering is done on the back buffer.
-            texAttach = fboDrawable.getTextureBuffer(GL.GL_BACK);
+            frontFBO = fboDrawable.getFBObject(GL.GL_FRONT);
+
+            backTex  = fboDrawable.getTextureBuffer(GL.GL_BACK);
+            frontTex = fboDrawable.getTextureBuffer(GL.GL_FRONT);
           }
-        }
-        if (texAttach != null) {
-          drawTexName = texAttach.getName();
-          drawTexWidth = texAttach.getWidth();
-          drawTexHeight = texAttach.getHeight();
         }
       }
 
