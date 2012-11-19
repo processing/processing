@@ -360,9 +360,9 @@ public class PGL {
   protected static int toolkit = NEWT;
 
   protected static boolean enable_screen_FBO_macosx  = true;
-  protected static boolean enable_screen_FBO_windows = false;
-  protected static boolean enable_screen_FBO_linux   = false;
-  protected static boolean enable_screen_FBO_other   = false;
+  protected static boolean enable_screen_FBO_windows = true;
+  protected static boolean enable_screen_FBO_linux   = true;
+  protected static boolean enable_screen_FBO_other   = true;
 
   protected static int request_depth_bits = 24;
   // Stencil buffer disabled for now:
