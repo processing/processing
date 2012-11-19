@@ -2592,7 +2592,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
       // If the renderer is 2D, then lights should always be false,
       // so no need to worry about that.
-      PolyShader shader = getPolyShader(lights, tex != null);
+      BaseShader shader = getPolyShader(lights, tex != null);
       shader.bind();
 
       int first = texCache.firstCache[i];
@@ -6356,8 +6356,8 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  protected PolyShader getPolyShader(boolean lit, boolean tex) {
-    PolyShader shader;
+  protected BaseShader getPolyShader(boolean lit, boolean tex) {
+    BaseShader shader;
     if (lit) {
       if (tex) {
         if (polyTexlightShader == null) {
@@ -6498,17 +6498,109 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  protected class PolyShader extends PShader {
-    public PolyShader(PApplet parent) {
+  protected class BaseShader extends PShader {
+    protected int projmodelviewMatrixLoc;
+    protected int modelviewMatrixLoc;
+    protected int projectionMatrixLoc;
+    protected int pframeSamplerLoc;
+    protected int resolutionLoc;
+    protected int viewportLoc;
+    protected int mouseLoc;
+    protected int pmouseLoc;
+    protected int timeLoc;
+
+    public BaseShader(PApplet parent) {
       super(parent);
     }
 
-    public PolyShader(PApplet parent, String vertFilename, String fragFilename) {
+    public BaseShader(PApplet parent, String vertFilename, String fragFilename) {
       super(parent, vertFilename, fragFilename);
     }
 
-    public PolyShader(PApplet parent, URL vertURL, URL fragURL) {
+    public BaseShader(PApplet parent, URL vertURL, URL fragURL) {
       super(parent, vertURL, fragURL);
+    }
+
+    @Override
+    public void loadUniforms() {
+      projmodelviewMatrixLoc = getUniformLoc("projmodelviewMatrix");
+      modelviewMatrixLoc = getUniformLoc("modelviewMatrix");
+      projectionMatrixLoc = getUniformLoc("projectionMatrix");
+
+      resolutionLoc = getUniformLoc("resolution");
+      viewportLoc = getUniformLoc("viewport");
+      mouseLoc = getUniformLoc("mouse");
+      pmouseLoc = getUniformLoc("pmouse");
+      timeLoc = getUniformLoc("time");
+
+      pframeSamplerLoc = getUniformLoc("prevframeSampler");
+    }
+
+    @Override
+    public void unbind() {
+      if (-1 < pframeSamplerLoc) {
+        pgl.activeTexture(PGL.TEXTURE0 + lastTexUnit);
+        pgCurrent.unbindBackTexture();
+        pgl.activeTexture(PGL.TEXTURE0);
+      }
+
+      pgl.bindBuffer(PGL.ARRAY_BUFFER, 0);
+
+      super.unbind();
+    }
+
+    protected void setCommonUniforms() {
+      if (-1 < projmodelviewMatrixLoc) {
+        pgCurrent.updateGLProjmodelview();
+        setUniformMatrix(projmodelviewMatrixLoc, pgCurrent.glProjmodelview);
+      }
+
+      if (-1 < modelviewMatrixLoc) {
+        pgCurrent.updateGLModelview();
+        setUniformMatrix(modelviewMatrixLoc, pgCurrent.glModelview);
+      }
+
+      if (-1 < projectionMatrixLoc) {
+        pgCurrent.updateGLProjection();
+        setUniformMatrix(projectionMatrixLoc, pgCurrent.glProjection);
+      }
+
+      if (1 < resolutionLoc) {
+        float w = pgCurrent.width;
+        float h = pgCurrent.height;
+        setUniformValue(resolutionLoc, w, h);
+      }
+
+      if (-1 < viewportLoc) {
+        float x = pgCurrent.viewport[0];
+        float y = pgCurrent.viewport[1];
+        float w = pgCurrent.viewport[2];
+        float h = pgCurrent.viewport[3];
+        setUniformValue(viewportLoc, x, y, w, h);
+      }
+
+      if (-1 < mouseLoc) {
+        float mx = pgCurrent.parent.mouseX;
+        float my = pgCurrent.parent.mouseY;
+        setUniformValue(mouseLoc, mx, my);
+      }
+
+      if (-1 < pmouseLoc) {
+        float pmx = pgCurrent.parent.pmouseX;
+        float pmy = pgCurrent.parent.pmouseY;
+        setUniformValue(pmouseLoc, pmx, pmy);
+      }
+
+      if (-1 < timeLoc) {
+        float sec = pgCurrent.parent.millis() / 1000.0f;
+        setUniformValue(timeLoc, sec);
+      }
+
+      if (-1 < pframeSamplerLoc) {
+        setUniformValue(pframeSamplerLoc, lastTexUnit);
+        pgl.activeTexture(PGL.TEXTURE0 + lastTexUnit);
+        pgCurrent.bindBackTexture();
+      }
     }
 
     public void setVertexAttribute(int vboId, int size, int type,
@@ -6531,13 +6623,7 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  protected class PolyColorShader extends PolyShader {
-    protected int projmodelviewMatrixLoc;
-    protected int modelviewMatrixLoc;
-    protected int projectionMatrixLoc;
-    protected int backbufferSamplerLoc;
-    protected int resolutionLoc;
-
+  protected class PolyColorShader extends BaseShader {
     protected int inVertexLoc;
     protected int inColorLoc;
 
@@ -6562,12 +6648,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
     @Override
     public void loadUniforms() {
-      projmodelviewMatrixLoc = getUniformLoc("projmodelviewMatrix");
-      modelviewMatrixLoc = getUniformLoc("modelviewMatrix");
-      projectionMatrixLoc = getUniformLoc("projectionMatrix");
-
-      backbufferSamplerLoc = getUniformLoc("backbufferSampler");
-      resolutionLoc = getUniformLoc("resolution");
+      super.loadUniforms();
     }
 
     @Override
@@ -6594,30 +6675,7 @@ public class PGraphicsOpenGL extends PGraphics {
       if (-1 < inVertexLoc) pgl.enableVertexAttribArray(inVertexLoc);
       if (-1 < inColorLoc)  pgl.enableVertexAttribArray(inColorLoc);
 
-      if (-1 < projmodelviewMatrixLoc) {
-        pgCurrent.updateGLProjmodelview();
-        setUniformMatrix(projmodelviewMatrixLoc, pgCurrent.glProjmodelview);
-      }
-
-      if (-1 < modelviewMatrixLoc) {
-        pgCurrent.updateGLModelview();
-        setUniformMatrix(modelviewMatrixLoc, pgCurrent.glModelview);
-      }
-
-      if (-1 < projectionMatrixLoc) {
-        pgCurrent.updateGLProjection();
-        setUniformMatrix(projectionMatrixLoc, pgCurrent.glProjection);
-      }
-
-      float w = pgCurrent.width;
-      float h = pgCurrent.height;
-      setUniformValue(resolutionLoc, w, h);
-
-      if (-1 < backbufferSamplerLoc) {
-        setUniformValue(backbufferSamplerLoc, lastTexUnit);
-        pgl.activeTexture(PGL.TEXTURE0 + lastTexUnit);
-        pgCurrent.bindBackTexture();
-      }
+      setCommonUniforms();
     }
 
     @Override
@@ -6625,23 +6683,12 @@ public class PGraphicsOpenGL extends PGraphics {
       if (-1 < inVertexLoc) pgl.disableVertexAttribArray(inVertexLoc);
       if (-1 < inColorLoc)  pgl.disableVertexAttribArray(inColorLoc);
 
-      if (-1 < backbufferSamplerLoc) {
-        pgl.activeTexture(PGL.TEXTURE0 + lastTexUnit);
-        pgCurrent.unbindBackTexture();
-        pgl.activeTexture(PGL.TEXTURE0);
-      }
-
-      pgl.bindBuffer(PGL.ARRAY_BUFFER, 0);
-
       super.unbind();
     }
   }
 
 
-  protected class PolyLightShader extends PolyShader {
-    protected int projmodelviewMatrixLoc;
-    protected int modelviewMatrixLoc;
-    protected int projectionMatrixLoc;
+  protected class PolyLightShader extends BaseShader {
     protected int normalMatrixLoc;
 
     protected int lightCountLoc;
@@ -6689,9 +6736,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
     @Override
     public void loadUniforms() {
-      projmodelviewMatrixLoc = getUniformLoc("projmodelviewMatrix");
-      modelviewMatrixLoc = getUniformLoc("modelviewMatrix");
-      projectionMatrixLoc = getUniformLoc("projectionMatrix");
+      super.loadUniforms();
+
       normalMatrixLoc = getUniformLoc("normalMatrix");
 
       lightCountLoc = getUniformLoc("lightCount");
@@ -6764,21 +6810,6 @@ public class PGraphicsOpenGL extends PGraphics {
       if (-1 < inEmissiveLoc) pgl.enableVertexAttribArray(inEmissiveLoc);
       if (-1 < inShineLoc)    pgl.enableVertexAttribArray(inShineLoc);
 
-      if (-1 < projmodelviewMatrixLoc) {
-        pgCurrent.updateGLProjmodelview();
-        setUniformMatrix(projmodelviewMatrixLoc, pgCurrent.glProjmodelview);
-      }
-
-      if (-1 < modelviewMatrixLoc) {
-        pgCurrent.updateGLModelview();
-        setUniformMatrix(modelviewMatrixLoc, pgCurrent.glModelview);
-      }
-
-      if (-1 < projectionMatrixLoc) {
-        pgCurrent.updateGLProjection();
-        setUniformMatrix(projectionMatrixLoc, pgCurrent.glProjection);
-      }
-
       if (-1 < normalMatrixLoc) {
         pgCurrent.updateGLNormal();
         setUniformMatrix(normalMatrixLoc, pgCurrent.glNormal);
@@ -6795,6 +6826,8 @@ public class PGraphicsOpenGL extends PGraphics {
                        pgCurrent.lightFalloffCoefficients, 3, count);
       setUniformVector(lightSpotParametersLoc,
                        pgCurrent.lightSpotParameters, 2, count);
+
+      setCommonUniforms();
     }
 
     @Override
@@ -6807,8 +6840,6 @@ public class PGraphicsOpenGL extends PGraphics {
       if (-1 < inSpecularLoc) pgl.disableVertexAttribArray(inSpecularLoc);
       if (-1 < inEmissiveLoc) pgl.disableVertexAttribArray(inEmissiveLoc);
       if (-1 < inShineLoc)    pgl.disableVertexAttribArray(inShineLoc);
-
-      pgl.bindBuffer(PGL.ARRAY_BUFFER, 0);
 
       super.unbind();
     }
@@ -7015,12 +7046,7 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  protected class LineShader extends PShader {
-    protected int projmodelviewMatrixLoc;
-    protected int modelviewMatrixLoc;
-    protected int projectionMatrixLoc;
-
-    protected int viewportLoc;
+  protected class LineShader extends BaseShader {
     protected int perspectiveLoc;
     protected int scaleLoc;
 
@@ -7050,20 +7076,20 @@ public class PGraphicsOpenGL extends PGraphics {
 
     @Override
     public void loadUniforms() {
-      projmodelviewMatrixLoc = getUniformLoc("projmodelviewMatrix");
-      modelviewMatrixLoc = getUniformLoc("modelviewMatrix");
-      projectionMatrixLoc = getUniformLoc("projectionMatrix");
+      super.loadUniforms();
 
       viewportLoc = getUniformLoc("viewport");
       perspectiveLoc = getUniformLoc("perspective");
       scaleLoc = getUniformLoc("scale");
     }
 
+    @Override
     public void setVertexAttribute(int vboId, int size, int type,
                                    int stride, int offset) {
       setAttributeVBO(inVertexLoc, vboId, size, type, false, stride, offset);
     }
 
+    @Override
     public void setColorAttribute(int vboId, int size, int type,
                                   int stride, int offset) {
       setAttributeVBO(inColorLoc, vboId, size, type, true, stride, offset);
@@ -7087,27 +7113,6 @@ public class PGraphicsOpenGL extends PGraphics {
       if (-1 < inColorLoc)  pgl.enableVertexAttribArray(inColorLoc);
       if (-1 < inAttribLoc) pgl.enableVertexAttribArray(inAttribLoc);
 
-      if (-1 < projmodelviewMatrixLoc) {
-        pgCurrent.updateGLProjmodelview();
-        setUniformMatrix(projmodelviewMatrixLoc, pgCurrent.glProjmodelview);
-      }
-
-      if (-1 < modelviewMatrixLoc) {
-        pgCurrent.updateGLModelview();
-        setUniformMatrix(modelviewMatrixLoc, pgCurrent.glModelview);
-      }
-
-      if (-1 < projectionMatrixLoc) {
-        pgCurrent.updateGLProjection();
-        setUniformMatrix(projectionMatrixLoc, pgCurrent.glProjection);
-      }
-
-      float x = pgCurrent.viewport[0];
-      float y = pgCurrent.viewport[1];
-      float w = pgCurrent.viewport[2];
-      float h = pgCurrent.viewport[3];
-      setUniformValue(viewportLoc, x, y, w, h);
-
       if (pgCurrent.getHint(ENABLE_STROKE_PERSPECTIVE) &&
           !pgCurrent.usingOrthoProjection) {
         setUniformValue(perspectiveLoc, 1);
@@ -7124,6 +7129,8 @@ public class PGraphicsOpenGL extends PGraphics {
           setUniformValue(scaleLoc, 0.99f, 0.99f, 0.99f);
         }
       }
+
+      setCommonUniforms();
     }
 
     @Override
@@ -7132,19 +7139,12 @@ public class PGraphicsOpenGL extends PGraphics {
       if (-1 < inColorLoc)  pgl.disableVertexAttribArray(inColorLoc);
       if (-1 < inAttribLoc) pgl.disableVertexAttribArray(inAttribLoc);
 
-      pgl.bindBuffer(PGL.ARRAY_BUFFER, 0);
-
       super.unbind();
     }
   }
 
 
-  protected class PointShader extends PShader {
-    protected int projmodelviewMatrixLoc;
-    protected int modelviewMatrixLoc;
-    protected int projectionMatrixLoc;
-
-    protected int viewportLoc;
+  protected class PointShader extends BaseShader {
     protected int perspectiveLoc;
 
     protected int inVertexLoc;
@@ -7173,19 +7173,18 @@ public class PGraphicsOpenGL extends PGraphics {
 
     @Override
     public void loadUniforms() {
-      projmodelviewMatrixLoc = getUniformLoc("projmodelviewMatrix");
-      modelviewMatrixLoc = getUniformLoc("modelviewMatrix");
-      projectionMatrixLoc = getUniformLoc("projectionMatrix");
+      super.loadUniforms();
 
-      viewportLoc = getUniformLoc("viewport");
       perspectiveLoc = getUniformLoc("perspective");
     }
 
+    @Override
     public void setVertexAttribute(int vboId, int size, int type,
                                    int stride, int offset) {
       setAttributeVBO(inVertexLoc, vboId, size, type, false, stride, offset);
     }
 
+    @Override
     public void setColorAttribute(int vboId, int size, int type,
                                   int stride, int offset) {
       setAttributeVBO(inColorLoc, vboId, size, type, true, stride, offset);
@@ -7209,33 +7208,14 @@ public class PGraphicsOpenGL extends PGraphics {
       if (-1 < inColorLoc)  pgl.enableVertexAttribArray(inColorLoc);
       if (-1 < inPointLoc)  pgl.enableVertexAttribArray(inPointLoc);
 
-      if (-1 < projmodelviewMatrixLoc) {
-        pgCurrent.updateGLProjmodelview();
-        setUniformMatrix(projmodelviewMatrixLoc, pgCurrent.glProjmodelview);
-      }
-
-      if (-1 < modelviewMatrixLoc) {
-        pgCurrent.updateGLModelview();
-        setUniformMatrix(modelviewMatrixLoc, pgCurrent.glModelview);
-      }
-
-      if (-1 < projectionMatrixLoc) {
-        pgCurrent.updateGLProjection();
-        setUniformMatrix(projectionMatrixLoc, pgCurrent.glProjection);
-      }
-
-      float x = pgCurrent.viewport[0];
-      float y = pgCurrent.viewport[1];
-      float w = pgCurrent.viewport[2];
-      float h = pgCurrent.viewport[3];
-      setUniformValue(viewportLoc, x, y, w, h);
-
       if (pgCurrent.getHint(ENABLE_STROKE_PERSPECTIVE) &&
           !pgCurrent.usingOrthoProjection) {
         setUniformValue(perspectiveLoc, 1);
       } else {
         setUniformValue(perspectiveLoc, 0);
       }
+
+      super.setCommonUniforms();
     }
 
     @Override
@@ -7243,8 +7223,6 @@ public class PGraphicsOpenGL extends PGraphics {
       if (-1 < inVertexLoc) pgl.disableVertexAttribArray(inVertexLoc);
       if (-1 < inColorLoc)  pgl.disableVertexAttribArray(inColorLoc);
       if (-1 < inPointLoc)  pgl.disableVertexAttribArray(inPointLoc);
-
-      pgl.bindBuffer(PGL.ARRAY_BUFFER, 0);
 
       super.unbind();
     }
