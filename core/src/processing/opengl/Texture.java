@@ -82,6 +82,7 @@ public class Texture implements PConstants {
   protected PGraphicsOpenGL pg;       // The main renderer
   protected PGL pgl;                  // The interface between Processing and OpenGL.
   protected PGL.Context context;      // The context that created this texture.
+  protected PGraphicsOpenGL pgDraw; // The main renderer is the color buffer of.
 
   protected boolean usingMipmaps;
   protected boolean usingRepeat;
@@ -134,6 +135,8 @@ public class Texture implements PConstants {
     pg = (PGraphicsOpenGL)parent.g;
     pgl = pg.pgl;
     context = pgl.createEmptyContext();
+
+    pgDraw = null;
 
     glName = 0;
 
@@ -1181,6 +1184,16 @@ public class Texture implements PConstants {
       glName = 0;
     }
     return outdated;
+  }
+
+
+  protected void colorBufferOf(PGraphicsOpenGL pgDraw) {
+    this.pgDraw = pgDraw;
+  }
+
+
+  protected boolean isColorBuffer() {
+    return pgDraw != null;
   }
 
 
