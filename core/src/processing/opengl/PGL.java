@@ -364,6 +364,12 @@ public class PGL {
   protected static boolean enable_screen_FBO_linux   = false;
   protected static boolean enable_screen_FBO_other   = false;
 
+  protected static int request_depth_bits = 24;
+  // Stencil buffer disabled for now:
+  // http://forum.jogamp.org/Enabling-Stencil-buffer-breaks-rendering-OSX-R11-td4026857.html
+  protected static int request_stencil_bits = 0;
+  protected static int request_alpha_bits = 8;
+
   /** Selected GL profile */
   protected GLProfile profile;
 
@@ -562,11 +568,9 @@ public class PGL {
       caps.setFBO(enable_screen_FBO_other);
     }
 
-    caps.setDepthBits(24);
-    // Stencil buffer dissabled for now:
-    // http://forum.jogamp.org/Enabling-Stencil-buffer-breaks-rendering-OSX-R11-td4026857.html
-    //caps.setStencilBits(8);
-    caps.setAlphaBits(8);
+    caps.setDepthBits(request_depth_bits);
+    caps.setStencilBits(request_stencil_bits);
+    caps.setAlphaBits(request_alpha_bits);
     caps.setBackgroundOpaque(true);
     caps.setOnscreen(true);
 
