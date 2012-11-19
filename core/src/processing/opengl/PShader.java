@@ -34,6 +34,8 @@ import java.util.HashMap;
  * and a fragment shader. Based on the GLSLShader class from GLGraphics, which
  * in turn was originally based in the code by JohnG:
  * http://processing.org/discourse/beta/num_1159494801.html
+ *
+ * @webref rendering:shaders
  */
 public class PShader {
   // shaders constants
@@ -113,9 +115,9 @@ public class PShader {
    * Creates a shader program using the specified vertex and fragment
    * shaders.
    *
-   * @param parent PApplet
-   * @param vertexFN String
-   * @param fragmentFN String
+   * @param parent the parent program
+   * @param vertFilename name of the vertex shader
+   * @param fragFilename name of the fragment shader
    */
   public PShader(PApplet parent, String vertFilename, String fragFilename) {
     this.parent = parent;
@@ -132,7 +134,10 @@ public class PShader {
     glFragment = 0;
   }
 
-
+  /**
+   * @param vertURL network location of the vertex shader
+   * @param fragURL network location of the fragment shader
+   */
   public PShader(PApplet parent, URL vertURL, URL fragURL) {
     this.parent = parent;
     pgMain = (PGraphicsOpenGL) parent.g;
@@ -216,7 +221,9 @@ public class PShader {
     return bound;
   }
 
-
+  /**
+   * @webref rendering:shaders
+   */
   public void set(String name, int x) {
     setUniformImpl(name, UniformValue.INT1, new int[] { x });
   }
