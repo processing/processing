@@ -1641,7 +1641,7 @@ public class PGraphics extends PImage implements PConstants {
     showMissingWarning("createShape");
     return null;
   }
-  
+
   /**
    * @param source
    */
@@ -1660,7 +1660,7 @@ public class PGraphics extends PImage implements PConstants {
 
   /**
    * @param kind either LINE, TRIANGLE, RECT, ELLIPSE, ARC, SPHERE, BOX
-   * @param p parameters that match the kind of shape 
+   * @param p parameters that match the kind of shape
    */
   public PShape createShape(int kind, float... p) {
     showMissingWarning("createShape");
@@ -7647,6 +7647,14 @@ public class PGraphics extends PImage implements PConstants {
       System.err.println(msg);
       warnings.put(msg, new Object());
     }
+  }
+
+
+  /**
+   * Version of showWarning() that takes a parsed String.
+   */
+  static public void showWarning(String msg, String... args) {  // ignore
+    showWarning(String.format(msg, args));
   }
 
 

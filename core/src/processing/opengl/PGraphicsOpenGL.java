@@ -49,6 +49,13 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // ........................................................
 
+  static final String BLEND_DRIVER_ERROR =
+    "blendMode(%1$s) is not supported by this hardware (or driver)";
+  static final String BLEND_RENDERER_ERROR =
+    "blendMode(%1$s) is not supported by this renderer";
+
+  // ........................................................
+
   // Basic rendering parameters:
 
   /** Flush modes: continuously (geometry is flushed after each call to
@@ -5781,12 +5788,14 @@ public class PGraphicsOpenGL extends PGraphics {
    * Allows to set custom blend modes for the entire scene, using openGL.
    * Reference article about blending modes:
    * http://www.pegtop.net/delphi/articles/blendmodes/
+   * HARD_LIGHT, SOFT_LIGHT, OVERLAY, DODGE, BURN modes cannot be
+   * implemented in fixed-function pipeline because they require
+   * conditional blending and non-linear blending equations.
    */
   @Override
   public void blendMode(int mode) {
     if (blendMode != mode) {
-      // Flushing any remaining geometry that uses a different blending
-      // mode.
+      // Flush any geometry that uses a different blending mode.
       flush();
 
       blendMode = mode;
@@ -5797,64 +5806,82 @@ public class PGraphicsOpenGL extends PGraphics {
           pgl.blendEquation(PGL.FUNC_ADD);
         }
         pgl.blendFunc(PGL.ONE, PGL.ZERO);
+
       } else if (mode == BLEND) {
         if (blendEqSupported) {
           pgl.blendEquation(PGL.FUNC_ADD);
         }
         pgl.blendFunc(PGL.SRC_ALPHA, PGL.ONE_MINUS_SRC_ALPHA);
+
       } else if (mode == ADD) {
         if (blendEqSupported) {
           pgl.blendEquation(PGL.FUNC_ADD);
         }
         pgl.blendFunc(PGL.SRC_ALPHA, PGL.ONE);
+
       } else if (mode == SUBTRACT) {
         if (blendEqSupported) {
           pgl.blendEquation(PGL.FUNC_ADD);
         }
         pgl.blendFunc(PGL.ONE_MINUS_DST_COLOR, PGL.ZERO);
+
       } else if (mode == LIGHTEST) {
         if (blendEqSupported) {
           pgl.blendEquation(PGL.FUNC_MAX);
+          pgl.blendFunc(PGL.SRC_ALPHA, PGL.DST_ALPHA);
         } else {
-          PGraphics.showWarning("This blend mode is not supported");
-          return;
+          PGraphics.showWarning(BLEND_DRIVER_ERROR, "LIGHTEST");
         }
-        pgl.blendFunc(PGL.SRC_ALPHA, PGL.DST_ALPHA);
+
       } else if (mode == DARKEST) {
         if (blendEqSupported) {
           pgl.blendEquation(PGL.FUNC_MIN);
+          pgl.blendFunc(PGL.SRC_ALPHA, PGL.DST_ALPHA);
         } else {
-          PGraphics.showWarning("This blend mode is not supported");
-          return;
+          PGraphics.showWarning(BLEND_DRIVER_ERROR, "DARKEST");
         }
-        pgl.blendFunc(PGL.SRC_ALPHA, PGL.DST_ALPHA);
+
       } else if (mode == DIFFERENCE) {
         if (blendEqSupported) {
           pgl.blendEquation(PGL.FUNC_REVERSE_SUBTRACT);
+          pgl.blendFunc(PGL.ONE, PGL.ONE);
         } else {
-          PGraphics.showWarning("This blend mode is not supported");
-          return;
+          PGraphics.showWarning(BLEND_DRIVER_ERROR, "DIFFERENCE");
         }
-        pgl.blendFunc(PGL.ONE, PGL.ONE);
+
       } else if (mode == EXCLUSION) {
         if (blendEqSupported) {
           pgl.blendEquation(PGL.FUNC_ADD);
         }
         pgl.blendFunc(PGL.ONE_MINUS_DST_COLOR, PGL.ONE_MINUS_SRC_COLOR);
+
       } else if (mode == MULTIPLY) {
         if (blendEqSupported) {
           pgl.blendEquation(PGL.FUNC_ADD);
         }
         pgl.blendFunc(PGL.DST_COLOR, PGL.SRC_COLOR);
+
       } else if (mode == SCREEN) {
         if (blendEqSupported) {
           pgl.blendEquation(PGL.FUNC_ADD);
         }
         pgl.blendFunc(PGL.ONE_MINUS_DST_COLOR, PGL.ONE);
+
+      } else if (mode == OVERLAY) {
+        PGraphics.showWarning(BLEND_RENDERER_ERROR, "OVERLAY");
+
+      } else if (mode == HARD_LIGHT) {
+        PGraphics.showWarning(BLEND_RENDERER_ERROR, "HARD_LIGHT");
+
+      } else if (mode == SOFT_LIGHT) {
+        PGraphics.showWarning(BLEND_RENDERER_ERROR, "SOFT_LIGHT");
+
+      } else if (mode == DODGE) {
+        PGraphics.showWarning(BLEND_RENDERER_ERROR, "DODGE");
+
+      } else if (mode == BURN) {
+        PGraphics.showWarning(BLEND_RENDERER_ERROR, "BURN");
       }
-      // HARD_LIGHT, SOFT_LIGHT, OVERLAY, DODGE, BURN modes cannot be
-      // implemented in fixed-function pipeline because they require conditional
-      // blending and non-linear blending equations.
     }
   }
 
