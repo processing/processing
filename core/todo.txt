@@ -3,7 +3,7 @@ X change to getRows() method for iterating through the Table object
 X add parseInto() method (provisional)
 X change translate() and rotate() to use x, y, z as param names
 
-cleanup with Andres
+cleanup/earlier by Andres
 A when turning smoothing on, internal lines of shapes are visible
 o   add an edge flag when tesselating 
 o   mind the opengl tesselation flags
@@ -17,6 +17,18 @@ X   http://code.google.com/p/processing/issues/detail?id=261
 A Implement efficient version of copy() in PGraphicsOpenGL
 A   use glCopyPixels() or glReadPixels() instead of copy() method
 A   http://code.google.com/p/processing/issues/detail?id=119
+A copy() does not update the screen with OpenGL
+A   http://code.google.com/p/processing/issues/detail?id=118
+A strokeCap() and strokeJoin() for use with OPENGL
+A   http://code.google.com/p/processing/issues/detail?id=123
+A inconsistent anti-aliasing with OpenGL
+A   http://code.google.com/p/processing/issues/detail?id=217
+A noCursor() + OPENGL = won't get past setup()
+A   http://code.google.com/p/processing/issues/detail?id=1345
+A set() requires updatePixels() with OpenGL
+A   http://code.google.com/p/processing/issues/detail?id=89
+A chopping out triangles in OpenGL (though it's only 2D drawing)
+A   http://code.google.com/p/processing/issues/detail?id=193
 
 _ Problem with beginShape()/endShape() when using multiple contours
 _   http://code.google.com/p/processing/issues/detail?id=1396
@@ -597,10 +609,6 @@ _ hint(DISABLE_PERSPECTIVE_CORRECTED_STROKE)
 _ textureWrap(CLAMP / REPEAT)
 _ implement setImpl() instead of set() inside PGraphicsOpenGL
 _   http://code.google.com/p/processing/issues/detail?id=121
-_ copy() does not update the screen with OpenGL
-_   http://code.google.com/p/processing/issues/detail?id=118
-_ set() requires updatePixels() with OpenGL
-_   http://code.google.com/p/processing/issues/detail?id=89
 _ first few frames of OpenGL sketches on Windows run slowly
 _   http://code.google.com/p/processing/issues/detail?id=107
 _ implement textMode(SHAPE) with OPENGL
@@ -614,12 +622,8 @@ _ where did hintEnabled() come from?
 _ remove 'params' from createImage (is it on loadImage too?)
 _ OpenGL noSmooth() problems
 _   http://code.google.com/p/processing/issues/detail?id=328
-_ inconsistent anti-aliasing with OpenGL
-_   http://code.google.com/p/processing/issues/detail?id=217
 _ OS X slow with FSEM enabled
 _   http://code.google.com/p/processing/issues/detail?id=737
-_ chopping out triangles in OpenGL (though it's only 2D drawing)
-_   http://code.google.com/p/processing/issues/detail?id=193
 _ get() with OPENGL is grabbing the wrong coords
 _   http://code.google.com/p/processing/issues/detail?id=191
 _ deal with issue of single pixel seam at the edge of textures
@@ -630,8 +634,6 @@ _   http://code.google.com/p/processing/issues/detail?id=146
 _   OPENGL sketches flicker w/ Vista when background() not used inside draw()
 _   Disabling Aero scheme sometimes prevents the problem
 _   Updating graphics drivers may prevent the problem 
-_ strokeCap() and strokeJoin() for use with OPENGL
-_   http://code.google.com/p/processing/issues/detail?id=123
 _ ellipse scaling method isn't great
 _   http://code.google.com/p/processing/issues/detail?id=87
 _ improve hint(ENABLE_DEPTH_SORT) to use proper painter's algo
