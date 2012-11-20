@@ -2,6 +2,16 @@
 X change to getRows() method for iterating through the Table object
 X add parseInto() method (provisional)
 X change translate() and rotate() to use x, y, z as param names
+o opengl.jar with eclipse
+o   auto-extract native libs from opengl.jar 
+o   to remove java.library.path problems (!)
+X   no longer necessary, JOGL does this by default
+X implement clip()/noClip()
+X remove blend(), add blendMode()
+X   http://code.google.com/p/processing/issues/detail?id=1385
+o implement a more efficient version of blend()
+o   http://code.google.com/p/processing/issues/detail?id=120
+
 
 cleanup/earlier by Andres
 A when turning smoothing on, internal lines of shapes are visible
@@ -29,6 +39,7 @@ A set() requires updatePixels() with OpenGL
 A   http://code.google.com/p/processing/issues/detail?id=89
 A chopping out triangles in OpenGL (though it's only 2D drawing)
 A   http://code.google.com/p/processing/issues/detail?id=193
+
 
 _ Problem with beginShape()/endShape() when using multiple contours
 _   http://code.google.com/p/processing/issues/detail?id=1396
@@ -321,9 +332,6 @@ _   decision: go with what looks like javascript/ios
 _   touchEvent(), gestureEvent()?
 
 2.0 / blending
-_ remove blend(), add blendMode()
-_   for Java2D: http://code.google.com/p/processing/issues/detail?id=1385
-_   for Android: http://code.google.com/p/processing/issues/detail?id=1386
 _ fix blue-channel bias on blend() so that blendMode() will work in 2.0
 _   http://code.google.com/p/processing/issues/detail?id=475
 _ blend() bugs with identically-sized images
@@ -331,8 +339,7 @@ _   http://code.google.com/p/processing/issues/detail?id=285
 _ improve blend() accuracy when using ADD
 _   http://code.google.com/p/processing/issues/detail?id=133
 _   includes code for a slow but more accurate mode
-_ implement a more efficient version of blend()
-_   http://code.google.com/p/processing/issues/detail?id=120
+_ deprecate the blend() function
 
 2.0
 _ get() or copy()? for vectors, image, etc.
@@ -747,9 +754,6 @@ _   this has a big impact on the SVG library
 _   in fact, this maybe should be a library that does it
 _     so that the file size can be much smaller
 _ add setOutput() method across other renderers?
-_ opengl.jar with eclipse
-_   auto-extract native libs from opengl.jar 
-_   to remove java.library.path problems (!)
 _ introduce calc()
 _   semantics of this are just too tricky, especially when it's not clear
 _   what's actually gained by the split--would have to do weird hacks

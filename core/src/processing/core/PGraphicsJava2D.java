@@ -513,8 +513,54 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
    * @param mode the blending mode to use
    */
   @Override
-  public void blendMode(int mode) {
-    showMissingWarning("blendMode");
+  public void blendMode(final int mode) {
+    g2.setComposite(new Composite() {
+
+      @Override
+      public CompositeContext createContext(ColorModel srcColorModel,
+                                            ColorModel dstColorModel,
+                                            RenderingHints hints) {
+        return new BlendingContext(mode);
+      }
+    });
+  }
+
+
+  // Blending implementation cribbed from portions of Romain Guy's
+  // demo and terrific writeup on blending modes in Java 2D.
+  // http://www.curious-creature.org/2006/09/20/new-blendings-modes-for-java2d/
+  private static final class BlendingContext implements CompositeContext {
+    private int mode;
+
+    private BlendingContext(int mode) {
+      this.mode = mode;
+    }
+
+    public void dispose() { }
+
+    public void compose(Raster src, Raster dstIn, WritableRaster dstOut) {
+      // not sure if this is really necessary, since we control our buffers
+      if (src.getSampleModel().getDataType() != DataBuffer.TYPE_INT ||
+          dstIn.getSampleModel().getDataType() != DataBuffer.TYPE_INT ||
+          dstOut.getSampleModel().getDataType() != DataBuffer.TYPE_INT) {
+        throw new IllegalStateException("Source and destination must store pixels as INT.");
+      }
+
+      int width = Math.min(src.getWidth(), dstIn.getWidth());
+      int height = Math.min(src.getHeight(), dstIn.getHeight());
+
+      int[] srcPixels = new int[width];
+      int[] dstPixels = new int[width];
+
+      for (int y = 0; y < height; y++) {
+        src.getDataElements(0, y, width, 1, srcPixels);
+        dstIn.getDataElements(0, y, width, 1, dstPixels);
+        for (int x = 0; x < width; x++) {
+          dstPixels[x] = blendColor(srcPixels[x], dstPixels[x], mode);
+        }
+        dstOut.setDataElements(0, y, width, 1, dstPixels);
+      }
+    }
   }
 
 
