@@ -6533,7 +6533,7 @@ public class PGraphicsOpenGL extends PGraphics {
       pmouseLoc = getUniformLoc("pmouse");
       timeLoc = getUniformLoc("time");
 
-      pframeSamplerLoc = getUniformLoc("prevframeSampler");
+      pframeSamplerLoc = getUniformLoc("pframeSampler");
     }
 
     @Override
@@ -6581,13 +6581,13 @@ public class PGraphicsOpenGL extends PGraphics {
 
       if (-1 < mouseLoc) {
         float mx = pgCurrent.parent.mouseX;
-        float my = pgCurrent.parent.mouseY;
+        float my = pgCurrent.parent.height - pgCurrent.parent.mouseY;
         setUniformValue(mouseLoc, mx, my);
       }
 
       if (-1 < pmouseLoc) {
         float pmx = pgCurrent.parent.pmouseX;
-        float pmy = pgCurrent.parent.pmouseY;
+        float pmy = pgCurrent.parent.height - pgCurrent.parent.pmouseY;
         setUniformValue(pmouseLoc, pmx, pmy);
       }
 
