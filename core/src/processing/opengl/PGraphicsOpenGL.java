@@ -2176,7 +2176,7 @@ public class PGraphicsOpenGL extends PGraphics {
   @Override
   public void beginShape(int kind) {
     shape = kind;
-
+    curveVertexCount = 0;
     inGeo.clear();
 
     breakShape = true;
@@ -8097,6 +8097,7 @@ public class PGraphicsOpenGL extends PGraphics {
                         boolean fill, boolean stroke, int detail, int code,
                         int shape) {
       curveVertexCheck(shape);
+
       float[] vertex = curveVertices[curveVertexCount];
       vertex[X] = x;
       vertex[Y] = y;
