@@ -223,22 +223,31 @@ public class PShader {
 
   /**
    * @webref rendering:shaders
+   * @brief Sets a variable within the shader
+   * @param name the name of the uniform variable to modify
+   * @param x first component of the variable to modify
    */
   public void set(String name, int x) {
     setUniformImpl(name, UniformValue.INT1, new int[] { x });
   }
 
-
+  /**
+   * @param y second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+   */
   public void set(String name, int x, int y) {
     setUniformImpl(name, UniformValue.INT2, new int[] { x, y });
   }
 
-
+  /**
+   * @param z third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+   */
   public void set(String name, int x, int y, int z) {
     setUniformImpl(name, UniformValue.INT3, new int[] { x, y, z });
   }
 
-
+  /**
+   * @param w fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+   */
   public void set(String name, int x, int y, int z, int w) {
     setUniformImpl(name, UniformValue.INT4, new int[] { x, y, z });
   }
@@ -263,7 +272,9 @@ public class PShader {
     setUniformImpl(name, UniformValue.FLOAT4, new float[] { x, y, z, w });
   }
 
-
+  /**
+   * @param vec modifies all the components of an array/vector uniform variable. PVector can be only be used if the type of the variable is vec3.
+   */
   public void set(String name, PVector vec) {
     setUniformImpl(name, UniformValue.FLOAT3,
                    new float[] { vec.x, vec.y, vec.z });
@@ -274,7 +285,9 @@ public class PShader {
     set(name, vec, 1);
   }
 
-
+  /**
+   * @param ncoords number of coordinates per element, max 4
+   */
   public void set(String name, int[] vec, int ncoords) {
     if (ncoords == 1) {
       setUniformImpl(name, UniformValue.INT1VEC, vec);
@@ -315,7 +328,9 @@ public class PShader {
     }
   }
 
-
+  /**
+   * @param mat matrix of values
+   */
   public void set(String name, PMatrix2D mat) {
     float[] matv = { mat.m00, mat.m01,
                      mat.m10, mat.m11 };
@@ -327,7 +342,9 @@ public class PShader {
     set(name, mat, false);
   }
 
-
+  /**
+   * @param use3x3 enforces the matrix is 3 x 3
+   */
   public void set(String name, PMatrix3D mat, boolean use3x3) {
     if (use3x3) {
       float[] matv = { mat.m00, mat.m01, mat.m02,
@@ -343,7 +360,9 @@ public class PShader {
     }
   }
 
-
+  /**
+   * @param tex sets the sampler uniform variable to read from this image texture
+   */
   public void set(String name, PImage tex) {
     setUniformImpl(name, UniformValue.SAMPLER2D, tex);
   }

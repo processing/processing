@@ -10905,6 +10905,9 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * @param shader the fragment shader to apply
+   */
   public void filter(PShader shader) {
     if (recorder != null) recorder.filter(shader);
     g.filter(shader);
