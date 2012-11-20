@@ -273,7 +273,7 @@ public class PShader {
   }
 
   /**
-   * @param vec modifies all the components of an array/vector uniform variable. PVector can be only be used if the type of the variable is vec3.
+   * @param vec modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
    */
   public void set(String name, PVector vec) {
     setUniformImpl(name, UniformValue.FLOAT3,
