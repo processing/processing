@@ -146,7 +146,7 @@ public class PGL {
 
   // The values for constants not defined in the GLES20 interface can be found
   // in this file:
-  // http://androidxref.com/source/raw/development/tools/glesv2debugger/src/com/android/glesv2debugger/GLEnum.java
+  // http://code.metager.de/source/xref/android/4.0.3/development/tools/glesv2debugger/src/com/android/glesv2debugger/GLEnum.java
 
   public static final int FALSE = GLES20.GL_FALSE;
   public static final int TRUE  = GLES20.GL_TRUE;
@@ -196,6 +196,9 @@ public class PGL {
     GLES20.GL_LINEAR_MIPMAP_NEAREST;
   public static final int LINEAR_MIPMAP_LINEAR  =
     GLES20.GL_LINEAR_MIPMAP_LINEAR;
+
+  public static final int TEXTURE_MAX_ANISOTROPY     = 0x84FE;
+  public static final int MAX_TEXTURE_MAX_ANISOTROPY = 0x84FF;
 
   public static final int CLAMP_TO_EDGE = GLES20.GL_CLAMP_TO_EDGE;
   public static final int REPEAT        = GLES20.GL_REPEAT;
@@ -767,6 +770,15 @@ public class PGL {
   }
 
 
+  public void getFloatv(int name, float[] values, int offset) {
+    if (-1 < name) {
+      GLES20.glGetFloatv(name, values, offset);
+    } else {
+      Arrays.fill(values, 0);
+    }
+  }
+
+
   public void getBooleanv(int name, boolean[] values, int offset) {
     if (-1 < name) {
       GLES20.glGetBooleanv(name, values, offset);
@@ -896,6 +908,11 @@ public class PGL {
 
   public void texParameteri(int target, int param, int value) {
     GLES20.glTexParameteri(target, param, value);
+  }
+
+
+  public void texParameterf(int target, int param, float value) {
+    GLES20.glTexParameterf(target, param, value);
   }
 
 
