@@ -218,6 +218,11 @@ public class PGL {
   public static final int LINEAR_MIPMAP_NEAREST = GL.GL_LINEAR_MIPMAP_NEAREST;
   public static final int LINEAR_MIPMAP_LINEAR  = GL.GL_LINEAR_MIPMAP_LINEAR;
 
+  public static final int TEXTURE_MAX_ANISOTROPY =
+    GL.GL_TEXTURE_MAX_ANISOTROPY_EXT;
+  public static final int MAX_TEXTURE_MAX_ANISOTROPY =
+    GL.GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT;
+
   public static final int CLAMP_TO_EDGE = GL.GL_CLAMP_TO_EDGE;
   public static final int REPEAT        = GL.GL_REPEAT;
 
@@ -905,6 +910,11 @@ public class PGL {
   }
 
 
+  public void getFloatv(int name, float[] values, int offset) {
+    gl.glGetFloatv(name, values, offset);
+  }
+
+
   public void getBooleanv(int name, boolean[] values, int offset) {
     if (-1 < name) {
       byte[] bvalues = new byte[values.length];
@@ -1040,6 +1050,11 @@ public class PGL {
 
   public void texParameteri(int target, int param, int value) {
     gl.glTexParameteri(target, param, value);
+  }
+
+
+  public void texParameterf(int target, int param, float value) {
+    gl.glTexParameterf(target, param, value);
   }
 
 

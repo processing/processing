@@ -1141,6 +1141,10 @@ public class Texture implements PConstants {
     pgl.texParameteri(glTarget, PGL.TEXTURE_MAG_FILTER, glMagFilter);
     pgl.texParameteri(glTarget, PGL.TEXTURE_WRAP_S, glWrapS);
     pgl.texParameteri(glTarget, PGL.TEXTURE_WRAP_T, glWrapT);
+    if (PGraphicsOpenGL.anisoSamplingSupported) {
+      pgl.texParameterf(glTarget, PGL.TEXTURE_MAX_ANISOTROPY,
+                        PGraphicsOpenGL.maxAnisoAmount);
+    }
 
     // First, we use glTexImage2D to set the full size of the texture (glW/glH
     // might be diff from w/h in the case that the GPU doesn't support NPOT

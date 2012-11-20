@@ -117,6 +117,7 @@ public class PGraphicsOpenGL extends PGraphics {
   static public boolean autoMipmapGenSupported;
   static public boolean fboMultisampleSupported;
   static public boolean packedDepthStencilSupported;
+  static public boolean anisoSamplingSupported;
   static public boolean blendEqSupported;
 
   /** Some hardware limits */
@@ -124,6 +125,7 @@ public class PGraphicsOpenGL extends PGraphics {
   static public int maxSamples;
   static public float maxPointSize;
   static public float maxLineWidth;
+  static public float maxAnisoAmount;
   static public int depthBits;
   static public int stencilBits;
 
@@ -6151,6 +6153,8 @@ public class PGraphicsOpenGL extends PGraphics {
       -1 < OPENGL_EXTENSIONS.indexOf("_framebuffer_multisample");
     packedDepthStencilSupported =
       -1 < OPENGL_EXTENSIONS.indexOf("_packed_depth_stencil");
+    anisoSamplingSupported =
+      -1 < OPENGL_EXTENSIONS.indexOf("_texture_filter_anisotropic");
 
     try {
       pgl.blendEquation(PGL.FUNC_ADD);
@@ -6178,6 +6182,12 @@ public class PGraphicsOpenGL extends PGraphics {
 
     pgl.getIntegerv(PGL.STENCIL_BITS, temp, 0);
     stencilBits = temp[0];
+
+    if (anisoSamplingSupported) {
+      float ftemp[] = new float[1];
+      pgl.getFloatv(PGL.MAX_TEXTURE_MAX_ANISOTROPY, ftemp, 0);
+      maxAnisoAmount = ftemp[0];
+    }
 
     glParamsRead = true;
   }
