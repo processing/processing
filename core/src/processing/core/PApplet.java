@@ -10826,7 +10826,7 @@ public class PApplet extends Applet
 
   /**
    * @param kind either LINE, TRIANGLE, RECT, ELLIPSE, ARC, SPHERE, BOX
-   * @param p parameters that match the kind of shape 
+   * @param p parameters that match the kind of shape
    */
   public PShape createShape(int kind, float... p) {
     return g.createShape(kind, p);
