@@ -482,6 +482,45 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 
   //////////////////////////////////////////////////////////////
 
+  // CLIPPING
+
+
+  @Override
+  protected void clipImpl(float x1, float y1, float x2, float y2) {
+    g2.setClip(new Rectangle2D.Float(x1, y1, x2 - x1, y2 - y1));
+  }
+
+
+  @Override
+  public void noClip() {
+    g2.setClip(null);
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // BLEND
+
+  /**
+   * ( begin auto-generated from blendMode.xml )
+   *
+   * This is a new reference entry for Processing 2.0. It will be updated shortly.
+   *
+   * ( end auto-generated )
+   *
+   * @webref Rendering
+   * @param mode the blending mode to use
+   */
+  @Override
+  public void blendMode(int mode) {
+    showMissingWarning("blendMode");
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
   // BEZIER VERTICES
 
 
