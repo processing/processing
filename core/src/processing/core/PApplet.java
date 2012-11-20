@@ -10763,34 +10763,6 @@ public class PApplet extends Applet
   }
 
 
-  public void clip(float a, float b, float c, float d) {
-    if (recorder != null) recorder.clip(a, b, c, d);
-    g.clip(a, b, c, d);
-  }
-
-
-  public void noClip() {
-    if (recorder != null) recorder.noClip();
-    g.noClip();
-  }
-
-
-  /**
-   * ( begin auto-generated from blendMode.xml )
-   *
-   * This is a new reference entry for Processing 2.0. It will be updated shortly.
-   *
-   * ( end auto-generated )
-   *
-   * @webref Rendering
-   * @param mode the blending mode to use
-   */
-  public void blendMode(int mode) {
-    if (recorder != null) recorder.blendMode(mode);
-    g.blendMode(mode);
-  }
-
-
   /**
    * @webref shape
    * @param filename name of file to load, can be .svg or .obj
@@ -10911,6 +10883,34 @@ public class PApplet extends Applet
   public void filter(PShader shader) {
     if (recorder != null) recorder.filter(shader);
     g.filter(shader);
+  }
+
+
+  public void clip(float a, float b, float c, float d) {
+    if (recorder != null) recorder.clip(a, b, c, d);
+    g.clip(a, b, c, d);
+  }
+
+
+  public void noClip() {
+    if (recorder != null) recorder.noClip();
+    g.noClip();
+  }
+
+
+  /**
+   * ( begin auto-generated from blendMode.xml )
+   *
+   * This is a new reference entry for Processing 2.0. It will be updated shortly.
+   *
+   * ( end auto-generated )
+   *
+   * @webref Rendering
+   * @param mode the blending mode to use
+   */
+  public void blendMode(int mode) {
+    if (recorder != null) recorder.blendMode(mode);
+    g.blendMode(mode);
   }
 
 
