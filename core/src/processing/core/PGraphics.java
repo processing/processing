@@ -1736,7 +1736,9 @@ public class PGraphics extends PImage implements PConstants {
     showMissingWarning("resetShader");
   }
 
-
+  /**
+   * @param shader the fragment shader to apply
+   */
   public void filter(PShader shader) {
     showMissingWarning("filter");
   }
