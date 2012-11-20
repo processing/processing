@@ -571,11 +571,12 @@ public class PGL {
       pg.parent.removeListeners(pg.parent);
       pg.parent.addListeners(canvasAWT);
 
-      listener = new PGLListener();
-      canvasAWT.addGLEventListener(listener);
       capabilities = canvasAWT.getChosenGLCapabilities();
       canvas = canvasAWT;
       canvasNEWT = null;
+
+      listener = new PGLListener();
+      canvasAWT.addGLEventListener(listener);
     } else if (toolkit == NEWT) {
       window = GLWindow.create(caps);
       canvasNEWT = new NewtCanvasAWT(window);
@@ -584,26 +585,20 @@ public class PGL {
 
       pg.parent.setLayout(new BorderLayout());
       pg.parent.add(canvasNEWT, BorderLayout.CENTER);
-      //pg.parent.removeListeners(pg.parent);
-      //pg.parent.addListeners(canvasNEWT);
 
       com.jogamp.newt.event.MouseListener mouseListener = new NEWTMouseAdapter();
       window.addMouseListener(mouseListener);
       com.jogamp.newt.event.KeyListener keyListener = new NEWTKeyAdapter();
       window.addKeyListener(keyListener);
 
-
+      capabilities = window.getChosenGLCapabilities();
+      canvas = canvasNEWT;
+      canvasAWT = null;
 
       listener = new PGLListener();
       window.addGLEventListener(listener);
       animator = new NEWTAnimator(window);
       animator.start();
-
-      capabilities = window.getChosenGLCapabilities();
-      canvas = canvasNEWT;
-      canvasAWT = null;
-
-//      System.out.println(capabilities);
     }
 
     initialized = true;
