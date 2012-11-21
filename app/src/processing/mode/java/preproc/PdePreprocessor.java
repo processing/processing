@@ -608,8 +608,11 @@ public class PdePreprocessor {
   private String write(final String program, final PrintWriter stream)
       throws SketchException, RecognitionException, TokenStreamException {
 
+    // Match on the uncommented version, otherwise code inside comments used
+    // http://code.google.com/p/processing/issues/detail?id=1404
+    String uncomment = scrubComments(program);
     PdeRecognizer parser = createParser(program);
-    if (PUBLIC_CLASS.matcher(program).find()) {
+    if (PUBLIC_CLASS.matcher(uncomment).find()) {
       try {
         final PrintStream saved = System.err;
         try {
@@ -625,7 +628,7 @@ public class PdePreprocessor {
         parser = createParser(program);
         parser.pdeProgram();
       }
-    } else if (FUNCTION_DECL.matcher(program).find()) {
+    } else if (FUNCTION_DECL.matcher(uncomment).find()) {
       setMode(Mode.ACTIVE);
       parser.activeProgram();
     } else {
