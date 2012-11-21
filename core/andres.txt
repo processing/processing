@@ -37,6 +37,8 @@ _   https://forum.processing.org/topic/already-called-begindraw-for-another-pgra
 _ Decide on the names of the uniform and attribute variables in the shaders
 _ Revise/correct/update warning and error messages.
 _ Cleaner Implementation of PImage.loadPixels()
+- Rewrite PShapeOpenGL as a cache object of PShape.
+- Implement textMode(SHAPE) for 3D: http://code.google.com/p/processing/issues/detail?id=738 
 _ some glitches with SVG shapes in P2D (load world.svg and disable style to see)
 _ simple bevel algorithm for retained mode tessellation 
 _   if stroke weight is less than 1, the tessellator currently doesn't 
