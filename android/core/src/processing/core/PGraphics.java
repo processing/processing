@@ -419,7 +419,7 @@ public class PGraphics extends PImage implements PConstants {
 
   public int ambientColor;
   public float ambientR, ambientG, ambientB;
-  protected boolean setAmbient;
+  public boolean setAmbient;
 
   public int specularColor;
   public float specularR, specularG, specularB;

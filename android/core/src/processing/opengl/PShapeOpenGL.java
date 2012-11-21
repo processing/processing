@@ -339,6 +339,7 @@ public class PShapeOpenGL extends PShape {
     tint = pg.tint;
     tintColor = pg.tintColor;
 
+    setAmbient = pg.setAmbient;
     ambientColor = pg.ambientColor;
     specularColor = pg.specularColor;
     emissiveColor = pg.emissiveColor;
@@ -1265,6 +1266,15 @@ public class PShapeOpenGL extends PShape {
   protected void fillFromCalc() {
     fill = true;
     updateFillColor(calcColor);
+
+    if (!setAmbient) {
+      // Setting the ambient color from the current fill
+      // is what the old P3D did and allows to have an
+      // default ambient color when the user doesn't specify
+      // it explicitly.
+      ambientFromCalc();
+      setAmbient = false;
+    }
   }
 
 
@@ -1636,6 +1646,7 @@ public class PShapeOpenGL extends PShape {
 
   protected void ambientFromCalc() {
     updateAmbientColor(calcColor);
+    setAmbient = true;
   }
 
 

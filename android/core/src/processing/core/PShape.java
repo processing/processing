@@ -144,6 +144,7 @@ public class PShape implements PConstants {
   protected int tintColor;
 
   protected int ambientColor;
+  protected boolean setAmbient;
   protected int specularColor;
   protected int emissiveColor;
   protected float shininess;
