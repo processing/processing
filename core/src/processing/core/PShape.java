@@ -146,6 +146,7 @@ public class PShape implements PConstants {
   protected int tintColor;
 
   protected int ambientColor;
+  protected boolean setAmbient;
   protected int specularColor;
   protected int emissiveColor;
   protected float shininess;
@@ -475,14 +476,14 @@ public class PShape implements PConstants {
   }
 
   /**
-   * @webref pshape:method 
+   * @webref pshape:method
    * @brief Starts a new contour
    */
   public void beginContour() {
   }
-  
+
   /**
-   * @webref pshape:method 
+   * @webref pshape:method
    * @brief Ends a contour
    */
   public void endContour() {
@@ -505,7 +506,7 @@ public class PShape implements PConstants {
 
   /**
    * @webref pshape:method
-   * @brief Finishes the creation of a new PShape 
+   * @brief Finishes the creation of a new PShape
    */
   public void end() {
   }
@@ -1296,7 +1297,7 @@ public class PShape implements PConstants {
   // can't be just 'add' because that suggests additive geometry
   /**
    * @webref pshape:method
-   * @brief Adds a new child  
+   * @brief Adds a new child
    */
   public void addChild(PShape who) {
     if (children == null) {
@@ -1460,7 +1461,7 @@ public class PShape implements PConstants {
   }
 
   /**
-   * @webref pshape:method 
+   * @webref pshape:method
    * @brief Returns the total number of vertices as an int
    */
   public int getVertexCount() {
@@ -1469,7 +1470,7 @@ public class PShape implements PConstants {
 
 
   /**
-   * @webref pshape:method 
+   * @webref pshape:method
    * @brief Returns the vertex at the index position
    * @param index the location of the vertex
    */
@@ -1506,7 +1507,7 @@ public class PShape implements PConstants {
   }
 
   /**
-   * @webref pshape:method 
+   * @webref pshape:method
    * @brief Sets the vertex at the index position
    * @param index the location of the vertex
    * @param x the x value for the vertex
@@ -1519,7 +1520,7 @@ public class PShape implements PConstants {
 
   /**
    * @param z the z value for the vertex
-   */ 
+   */
   public void setVertex(int index, float x, float y, float z) {
     vertices[index][X] = x;
     vertices[index][Y] = y;
@@ -1528,7 +1529,7 @@ public class PShape implements PConstants {
 
   /**
    * @param vec the PVector to define the x, y, z coordinates
-   */ 
+   */
   public void setVertex(int index, PVector vec) {
     vertices[index][X] = vec.x;
     vertices[index][Y] = vec.y;

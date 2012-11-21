@@ -4721,6 +4721,8 @@ public class PGraphicsOpenGL extends PGraphics {
       // default ambient color when the user doesn't specify
       // it explicitly.
       ambientFromCalc();
+      // ambientFromCalc sets setAmbient to true, but it hasn't been
+      // set by the user so put back to false.
       setAmbient = false;
     }
   }
