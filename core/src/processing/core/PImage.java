@@ -160,6 +160,12 @@ public class PImage implements PConstants, Cloneable {
   private int[] blurKernel;
   private int[][] blurMult;
 
+  // colour component bitmasks (moved from PConstants in 2.0b7)
+  public static final int ALPHA_MASK = 0xff000000;
+  public static final int RED_MASK   = 0x00ff0000;
+  public static final int GREEN_MASK = 0x0000ff00;
+  public static final int BLUE_MASK  = 0x000000ff;
+
 
   //////////////////////////////////////////////////////////////
 
