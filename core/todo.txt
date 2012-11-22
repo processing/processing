@@ -11,6 +11,19 @@ X remove blend(), add blendMode()
 X   http://code.google.com/p/processing/issues/detail?id=1385
 o implement a more efficient version of blend()
 o   http://code.google.com/p/processing/issues/detail?id=120
+o Problem with beginShape()/endShape() when using multiple contours
+X   http://code.google.com/p/processing/issues/detail?id=1396
+X   just a documentation issue
+A PShape and lights results in more lit vertices
+A   http://code.google.com/p/processing/issues/detail?id=1342
+A Implement anisotropic filtering when using OPENGL
+A   http://code.google.com/p/processing/issues/detail?id=502
+X move _MASK constants out of PConstants and into PImage
+
+_ how should stroke work w/ arcs?
+X   decision: we should do pie, you can make the other kind w/o it
+_   add an additional parameter for the others
+_   http://code.google.com/p/processing/issues/detail?id=711
 
 
 cleanup/earlier by Andres
@@ -39,10 +52,13 @@ A set() requires updatePixels() with OpenGL
 A   http://code.google.com/p/processing/issues/detail?id=89
 A chopping out triangles in OpenGL (though it's only 2D drawing)
 A   http://code.google.com/p/processing/issues/detail?id=193
+A shared interface for 3D view data across desktop/Android
+A   http://code.google.com/p/processing/issues/detail?id=970
+A Distortion of 2D shapes when sphereDetail() is used
+A   http://code.google.com/p/processing/issues/detail?id=762
+A OPENGL renderer stops rendering after text is written using textMode(SCREEN)
+A   http://code.google.com/p/processing/issues/detail?id=710
 
-
-_ Problem with beginShape()/endShape() when using multiple contours
-_   http://code.google.com/p/processing/issues/detail?id=1396
 
 _ createShape() not yet implemented for 2.0
 _   http://code.google.com/p/processing/issues/detail?id=1400
@@ -350,12 +366,6 @@ _   toColorArray(), toColorArray(float[])...
 _ load/save methods.. is it save("blah.svg") or saveSVG("blah.svg")
 X   also works that way with tables
 X   decision: useExtension() or something like that
-_ how should stroke work w/ arcs?
-_   has an effect elliptical arc
-_   http://code.google.com/p/processing/issues/detail?id=130
-X   decision: we should do pie, you can make the other kind w/o it
-_   add an additional parameter for the others
-_   http://code.google.com/p/processing/issues/detail?id=711
 _ require people to put things in the data folder
 _ make sure that loadXxxx() methods are used after init()
 _   nasty errors when loadImage/Font/createFont/etc used outside
@@ -584,6 +594,8 @@ _ for PShape, need to be able to set the origin (flash people)
 
 CORE / PShapeSVG
 
+_ implement A and a (elliptical arcs)
+_   http://code.google.com/p/processing/issues/detail?id=130
 _ implement support for SVG gradients from Inkscape
 _   http://code.google.com/p/processing/issues/detail?id=1142
 _ need to handle <!ENTITY tags in XML for SVG documents
@@ -600,8 +612,6 @@ _ add better support for attributes buried in styles (support ai9/10/11)
 _ test what happens when transparency is used with gradient fill
 _ look into transformation issues... guessing this is probably wrong
 _   this may be what's throwing off the radial radius transform
-_ implement A and a (elliptical arcs)
-_   http://code.google.com/p/processing/issues/detail?id=130
 _ check for any other pieces of missing path api
 _   multiple sets of coordinates after a command not supported
 _   i.e. M with several coords means moveto followed by many linetos
@@ -655,8 +665,6 @@ _     will need to split each based on the other
 _     sort issues will affect both
 _ Stroking a rect() leaves off the upper right pixel
 _   http://code.google.com/p/processing/issues/detail?id=67
-_ Implement anisotropic filtering when using OPENGL
-_   http://code.google.com/p/processing/issues/detail?id=502
 _ Signature issue on contributed libraries affects unrelated opengl sketches
 _   http://code.google.com/p/processing/issues/detail?id=261
 _ remove matrixMode(), add a projection() method
