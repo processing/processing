@@ -2569,6 +2569,12 @@ public class PGraphics extends PImage implements PConstants {
    */
   public void arc(float a, float b, float c, float d,
                   float start, float stop) {
+    arc(a, b, c, d, start, stop, 0);
+  }
+
+
+  public void arc(float a, float b, float c, float d,
+                  float start, float stop, int mode) {
     float x = a;
     float y = b;
     float w = c;
@@ -2589,24 +2595,29 @@ public class PGraphics extends PImage implements PConstants {
       y = b - d/2f;
     }
 
-    // make sure this loop will exit before starting while
-    if (Float.isInfinite(start) || Float.isInfinite(stop)) return;
-//    while (stop < start) stop += TWO_PI;
-    if (stop < start) return;  // why bother
+    // make sure the loop will exit before starting while
+    if (!Float.isInfinite(start) && !Float.isInfinite(stop)) {
+      // ignore equal and degenerate cases
+      if (stop > start) {
+        // make sure that we're starting at a useful point
+        while (start < 0) {
+          start += TWO_PI;
+          stop += TWO_PI;
+        }
 
-    // make sure that we're starting at a useful point
-    while (start < 0) {
-      start += TWO_PI;
-      stop += TWO_PI;
+        if (stop - start > TWO_PI) {
+          start = 0;
+          stop = TWO_PI;
+        }
+        arcImpl(x, y, w, h, start, stop, mode);
+      }
     }
-
-    if (stop - start > TWO_PI) {
-      start = 0;
-      stop = TWO_PI;
-    }
-
-    arcImpl(x, y, w, h, start, stop);
   }
+
+
+//  protected void arcImpl(float x, float y, float w, float h,
+//                         float start, float stop) {
+//  }
 
 
   /**
@@ -2616,9 +2627,9 @@ public class PGraphics extends PImage implements PConstants {
    * and the user will still collect $200.
    */
   protected void arcImpl(float x, float y, float w, float h,
-                         float start, float stop) {
+                         float start, float stop, int mode) {
+    showMissingWarning("arc");
   }
-
 
 
   //////////////////////////////////////////////////////////////

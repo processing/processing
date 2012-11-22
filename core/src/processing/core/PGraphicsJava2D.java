@@ -782,7 +782,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 
   @Override
   protected void arcImpl(float x, float y, float w, float h,
-                         float start, float stop) {
+                         float start, float stop, int mode) {
     // 0 to 90 in java would be 0 to -90 for p5 renderer
     // but that won't work, so -90 to 0?
 
@@ -801,15 +801,32 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 //    }
     float sweep = stop - start;
 
-    // stroke as Arc2D.OPEN, fill as Arc2D.PIE
+    // The defaults, before 2.0b7, were to stroke as Arc2D.OPEN, and then fill
+    // using Arc2D.PIE. That's a little wonky, but it's here for compatability.
+    int fillMode = Arc2D.PIE;
+    int strokeMode = Arc2D.OPEN;
+
+    if (mode == OPEN) {
+      fillMode = Arc2D.OPEN;
+      //strokeMode = Arc2D.OPEN;
+
+    } else if (mode == PIE) {
+      //fillMode = Arc2D.PIE;
+      strokeMode = Arc2D.PIE;
+
+    } else if (mode == CHORD) {
+      fillMode = Arc2D.CHORD;
+      strokeMode = Arc2D.CHORD;
+    }
+
     if (fill) {
       //System.out.println("filla");
-      arc.setArc(x, y, w, h, start, sweep, Arc2D.PIE);
+      arc.setArc(x, y, w, h, start, sweep, fillMode);
       fillShape(arc);
     }
     if (stroke) {
       //System.out.println("strokey");
-      arc.setArc(x, y, w, h, start, sweep, Arc2D.OPEN);
+      arc.setArc(x, y, w, h, start, sweep, strokeMode);
       strokeShape(arc);
     }
   }
