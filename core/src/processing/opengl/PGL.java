@@ -536,7 +536,6 @@ public class PGL {
         animator.stop();
         animator.remove(window);
         window.removeGLEventListener(listener);
-        pg.parent.removeListeners(canvasNEWT);
         pg.parent.remove(canvasNEWT);
       }
       setFramerate = false;
