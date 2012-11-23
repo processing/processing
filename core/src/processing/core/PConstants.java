@@ -450,31 +450,22 @@ public interface PConstants {
   static final int DISABLE_OPENGL_ERRORS      =  4;
   static final int ENABLE_OPENGL_ERRORS       = -4;
 
-  static final int ENABLE_ACCURATE_TEXTURES   =  5;
-  static final int DISABLE_ACCURATE_TEXTURES  = -5;
+  static final int DISABLE_DEPTH_MASK         =  5;
+  static final int ENABLE_DEPTH_MASK          = -5;
 
-  static final int DISABLE_DEPTH_MASK         =  6;
-  static final int ENABLE_DEPTH_MASK          = -6;
+  static final int ENABLE_ACCURATE_2D         =  6;
+  static final int DISABLE_ACCURATE_2D        = -6;
 
-  static final int ENABLE_ACCURATE_2D         =  7;
-  static final int DISABLE_ACCURATE_2D        = -7;
+  static final int ENABLE_STROKE_PERSPECTIVE  =  7;
+  static final int DISABLE_STROKE_PERSPECTIVE = -7;
 
-  static final int DISABLE_TEXTURE_CACHE      =  8;
-  static final int ENABLE_TEXTURE_CACHE       = -8;
+  static final int DISABLE_TEXTURE_MIPMAPS    =  8;
+  static final int ENABLE_TEXTURE_MIPMAPS     = -8;
 
-  static final int DISABLE_TRANSFORM_CACHE    =  9;
-  static final int ENABLE_TRANSFORM_CACHE     = -9;
+  static final int ENABLE_STROKE_PURE         =  9;
+  static final int DISABLE_STROKE_PURE        = -9;
 
-  static final int ENABLE_STROKE_PERSPECTIVE  =  10;
-  static final int DISABLE_STROKE_PERSPECTIVE = -10;
-
-  static final int DISABLE_TEXTURE_MIPMAPS    =  11;
-  static final int ENABLE_TEXTURE_MIPMAPS     = -11;
-
-  static final int ENABLE_STROKE_PURE         =  12;
-  static final int DISABLE_STROKE_PURE        = -12;
-
-  static final int HINT_COUNT                 =  13;
+  static final int HINT_COUNT                 = 10;
 
   // error messages
 
