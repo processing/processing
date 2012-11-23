@@ -2,10 +2,23 @@
 X removing default imports for 
 X   android.view.MotionEvent, android.view.KeyEvent,android.graphics.Bitmap
 X   due to conflicts w/ the new p5 event system
+X change event handling to hopefully clean up some inconsistencies
+X remove motionX/Y/Pressure... these need to be handled separately
+X mouseX/Y no longer include history with moves
+X   better to use motion object when that's done
+o coordinates from motionX/Y reportedly inconsistent
+X   http://code.google.com/p/processing/issues/detail?id=1018
+X   moving away from this anyway
+X pmouseX/Y not being set properly?
+X   http://code.google.com/p/processing/issues/detail?id=238
 
 cleaning/earlier
 A Defects in the tessellation of SVG shapes in A3D
 A   http://code.google.com/p/processing/issues/detail?id=291
+X change run/present/export/export application names in the menus
+A Blacked-out screen when restoring Android app from background.
+A   http://code.google.com/p/processing/issues/detail?id=381
+X android sdk/build location has changed (android-7 not 2.1) fix build.xml
 
 
 _ Finish implementation of OPEN and CHORD drawing modes for arc()
@@ -26,21 +39,18 @@ _ implement Android version of command line tools
 _   http://code.google.com/p/processing/issues/detail?id=1323
 
 _ emulator not starting up on OS X?
+_ Android emulator doesn't always start on the first attempt
+_   http://code.google.com/p/processing/issues/detail?id=1210
 
-motion/touch events
+
+implement motion/touch events
 _ registerMethod("motionEvent") and "mouseEvent" not implemented
 _ PMotionEvent is being used internal to PApplet, need to re-wrap
 _   should be able to fire MotionEvents
 _ modify MotionEvent code to use TouchEvent class, even if basic version
 _   internally, PApplet might subclass it for the pointers
 _   but queueing needs to work
-_ coordinates from motionX/Y reportedly inconsistent
-_   http://code.google.com/p/processing/issues/detail?id=1018
-_ pmouseX/Y not being set properly?
-_   http://code.google.com/p/processing/issues/detail?id=238
 
-_ Android emulator doesn't always start on the first attempt
-_   http://code.google.com/p/processing/issues/detail?id=1210
 
 _ inside AndroidPreprocessor
 _   processing.mode.java.JavaBuild.scrubComments(sketch.getCode(0).getProgram())
@@ -146,12 +156,6 @@ _ gui stuff: http://hg.postspectacular.com/cp5magic/wiki/Home
 _ "failed to get signature key" problem
 _   Caused by: /Users/aandnota/Documents/android-sdk-mac_x86/tools/ant/ant_rules_r3.xml:209: com.android.sdklib.build.ApkCreationException: Unable to get debug signature key
 
-_ android sdk/build location has changed (android-7 not 2.1) fix build.xml
-
-_ Blacked-out screen when restoring Android app from background.
-_   http://code.google.com/p/processing/issues/detail?id=381
-_   probably related to the other thread hooey
-
 _ saveStream() on processing-android-core.zip breaks behind firewall
 _   downloads a 5kb html login page rather than the correct file
 
@@ -173,8 +177,6 @@ android menu
 _ something to bring up the full console window
 _ signing tool
 _ selection of which avd (emulator), or plugged-in devices (if multiple)
-
-_ change run/present/export/export application names in the menus
 
 _ throw an error if a file in the 'data' dir ends with .gz
 

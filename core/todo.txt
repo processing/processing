@@ -59,8 +59,38 @@ A   http://code.google.com/p/processing/issues/detail?id=762
 A OPENGL renderer stops rendering after text is written using textMode(SCREEN)
 A   http://code.google.com/p/processing/issues/detail?id=710
 
+cleaning
+o remove screenBlend(), textureBlend() from PGraphics et al
+o have andres take over all current GL issues in the tracker
+X Support 'black' as color for SVG files (PhiLho fix)
+X   http://code.google.com/p/processing/issues/detail?id=1010
 
-_ createShape() not yet implemented for 2.0
+events
+X make sure alt/ctl/meta/etc all work (for both mouse and key) 
+X remove thread blocking when dequeueing events
+X finish postEvent()
+X need to make events interleave
+X   http://code.google.com/p/processing/issues/detail?id=79
+X mouseButton not being set properly in mouseClicked
+X   http://code.google.com/p/processing/issues/detail?id=1350
+X mouseButton is 0 in mouseReleased() on OS X
+X   http://code.google.com/p/processing/issues/detail?id=1373
+o unconfirmed: keyEvent works only using JAVA2D
+X   http://code.google.com/p/processing/issues/detail?id=1279
+X   can't find anything on this, closed
+X mouseEntered/Exited? (they're caught but not handled)
+X   http://code.google.com/p/processing/issues/detail?id=500
+X also look into Android issues with this stuff
+X this only works for awt events... switch to using internal event code
+if (external && event.getNative() instanceof java.awt.event.KeyEvent &&
+         ((java.awt.event.KeyEvent) event.getNative()).getModifiers() ==
+           Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() &&
+         event.getKeyCode() == 'W') {
+       exit();
+     }
+
+
+_ createShape() not yet implemented for Java2D
 _   http://code.google.com/p/processing/issues/detail?id=1400
 
 _ look into json and how it would work
@@ -75,38 +105,12 @@ join tables together (static is kinda gross)
 lastRowIndex() (to avoid getRowCount() - 1)
 addRow() 
 
-cleaning
-o remove screenBlend(), textureBlend() from PGraphics et al
-o have andres take over all current GL issues in the tracker
-X Support 'black' as color for SVG files (PhiLho fix)
-X   http://code.google.com/p/processing/issues/detail?id=1010
-
-events
-_ make sure alt/ctl/meta/etc all work (for both mouse and key) 
-_ remove thread blocking when dequeueing events
-_ finish postEvent()
-_ need to make events interleave
-_   http://code.google.com/p/processing/issues/detail?id=79
-_ mouseButton not being set properly in mouseClicked
-_   http://code.google.com/p/processing/issues/detail?id=1350
-_ mouseButton is 0 in mouseReleased() on OS X
-_   http://code.google.com/p/processing/issues/detail?id=1373
-_ unconfirmed: keyEvent works only using JAVA2D
-_   http://code.google.com/p/processing/issues/detail?id=1279
-_ mouseEntered/Exited? (they're caught but not handled)
-_   http://code.google.com/p/processing/issues/detail?id=500
-_ also look into Android issues with this stuff
-_ this only works for awt events... switch to using internal event code
-if (external && event.getNative() instanceof java.awt.event.KeyEvent &&
-         ((java.awt.event.KeyEvent) event.getNative()).getModifiers() ==
-           Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() &&
-         event.getKeyCode() == 'W') {
-       exit();
-     }
-
 Request r = createRequest("http://p5.org/feed/13134.jpg");
 Request r = createRequest("http://p5.org/feed/13134.jpg", "callbackName");
 Request r = createRequest("http://p5.org/feed/13134, "callbackName", "jpg");
+
+_ splice() throws ClassCastException when used with objects like PVector 
+_   http://code.google.com/p/processing/issues/detail?id=1407
 
 _ add "CGAffineTransformInvert: singular matrix" problem to the Wiki
 _   http://code.google.com/p/processing/issues/detail?id=1363
