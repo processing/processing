@@ -390,9 +390,11 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // Screen surface:
 
-  /** A handy reference to the PTexture bound to the drawing surface
-   * (off or on-screen) */
+  /** Texture containing the current frame */
   protected Texture texture;
+
+  /** Texture containing the previous frame */
+  protected Texture ptexture;
 
   /** Used to create a temporary copy of the color buffer of this
    * rendering surface when applying a filter */
@@ -1893,7 +1895,7 @@ public class PGraphicsOpenGL extends PGraphics {
       if (op == OP_READ) {
         setFramebuffer(readFramebuffer);
         pgl.readBuffer(pgl.primaryReadBuffer());
-        if (pgl.primaryIsFboBacked()) {
+        if (pgl.isFBOBacked()) {
           pgl.forceUpdate();
         }
       } else {
@@ -5392,10 +5394,10 @@ public class PGraphicsOpenGL extends PGraphics {
     if (primarySurface) {
       loadTextureImpl(Texture.POINT, false);
 
-      if (pgl.primaryIsFboBacked()) {
+      if (pgl.isFBOBacked()) {
         pgl.forceUpdate();
-        texture.set(pgl.getFboTexTarget(), pgl.getFboTexName(),
-                    pgl.getFboWidth(), pgl.getFboHeight(), width, height);
+        texture.set(pgl.getBackTexTarget(), pgl.getBackTexName(),
+                    pgl.getBackTexWidth(), pgl.getBackTexHeight(), width, height);
       } else {
         // Here we go the slow route: we first copy the contents of the color
         // buffer into a pixels array (but we keep it in native format) and
@@ -5511,6 +5513,57 @@ public class PGraphicsOpenGL extends PGraphics {
       texture.colorBufferOf(this);
       pgPrimary.setCache(this, texture);
     }
+
+
+
+/*
+    texture.glName = pgl.getBackTexName();
+    ptexture.glName = pgl.getFrontTexName();
+
+    if (width == 0 || height == 0) return;
+    if (texture == null || texture.contextIsOutdated()) {
+      if (primarySurface) {
+        if (pgl.isFBOBacked()) {
+          texture = new Texture(parent);
+          texture.init(pgl.getBackTexName(),
+                       pgl.getBackTexTarget(), pgl.getBackTexFormat(),
+                       pgl.getBackTexWidth(), pgl.getBackTexHeight(),
+                       pgl.getBackTexMinFilter(), pgl.getBackTexMagFilter(),
+                       pgl.getBackTexWrapS(), pgl.getBackTexWrapT());
+          texture.invertedY(true);
+          texture.colorBufferOf(this);
+          pgPrimary.setCache(this, texture);
+
+          ptexture = new Texture(parent);
+          ptexture.init(pgl.getFrontTexName(),
+                        pgl.getFrontTexTarget(), pgl.getFrontTexFormat(),
+                        pgl.getFrontTexWidth(), pgl.getFrontTexHeight(),
+                        pgl.getFrontTexMinFilter(), pgl.getFrontTexMagFilter(),
+                        pgl.getFrontTexWrapS(), pgl.getFrontTexWrapT());
+          ptexture.invertedY(true);
+          ptexture.colorBufferOf(this);
+        } else {
+          Texture.Parameters params = new Texture.Parameters(ARGB, Texture.POINT, false);
+          texture = new Texture(parent, width, height, params);
+          texture.invertedY(true);
+          texture.colorBufferOf(this);
+          pgPrimary.setCache(this, texture);
+
+          ptexture = null;
+        }
+      } else {
+        Texture.Parameters params = new Texture.Parameters(ARGB, Texture.BILINEAR, false);
+        texture = new Texture(parent, width, height, params);
+        texture.invertedY(true);
+        texture.colorBufferOf(this);
+        pgPrimary.setCache(this, texture);
+
+        ptexture = new Texture(parent, width, height, params);
+        ptexture.invertedY(true);
+        ptexture.colorBufferOf(this);
+      }
+    }
+*/
   }
 
 

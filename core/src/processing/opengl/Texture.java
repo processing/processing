@@ -108,6 +108,18 @@ public class Texture implements PConstants {
 
   // Constructors.
 
+  public Texture(PApplet parent) {
+    this.parent = parent;
+
+    pg = (PGraphicsOpenGL)parent.g;
+    pgl = pg.pgl;
+    context = pgl.createEmptyContext();
+
+    pgDraw = null;
+
+    glName = 0;
+  }
+
 
   /**
    * Creates an instance of PTexture with size width x height. The texture is
@@ -226,6 +238,31 @@ public class Texture implements PConstants {
     return 0 < glName;
   }
 
+  /**
+   * Initializes the texture using GL parameters
+   */
+  public void init(int glName, int glTarget, int glFormat, int glWidth, int glHeight,
+                   int glMinFilter, int glMagFilter, int glWrapS, int glWrapT) {
+    this.glName = glName;
+    this.glTarget = glTarget;
+    this.glFormat = glFormat;
+    this.glWidth = glWidth;
+    this.glHeight = glHeight;
+    this.glMinFilter = glMinFilter;
+    this.glMagFilter = glMagFilter;
+    this.glWrapS = glWrapS;
+    this.glWrapT = glWrapT;
+
+    width = glWidth;
+    height = glHeight;
+    maxTexcoordU = 1;
+    maxTexcoordV = 1;
+
+    usingMipmaps = glMinFilter == PGL.LINEAR_MIPMAP_NEAREST ||
+                   glMinFilter == PGL.LINEAR_MIPMAP_LINEAR;
+
+    usingRepeat = glWrapS == PGL.REPEAT || glWrapT == PGL.REPEAT;
+  }
 
   ////////////////////////////////////////////////////////////
 
