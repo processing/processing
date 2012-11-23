@@ -630,6 +630,12 @@ public class PGL {
   }
 
 
+
+
+
+
+  // CLEANUP!
+
   protected int primaryReadFramebuffer() {
     if (capabilities.isFBO()) {
       return context.getDefaultReadFramebuffer();
@@ -637,6 +643,7 @@ public class PGL {
       return 0;
     }
   }
+
 
   protected int primaryDrawFramebuffer() {
     if (capabilities.isFBO()) {
@@ -662,25 +669,87 @@ public class PGL {
     }
   }
 
-  protected boolean primaryIsFboBacked() {
+
+
+
+  protected boolean isFBOBacked() {
     return capabilities.isFBO();
   }
 
-  protected int getFboTexTarget() {
-    return GL.GL_TEXTURE_2D;
-  }
-
-  protected int getFboTexName() {
+  protected int getBackTexName() {
     return backTex.getName();
   }
 
-  protected int getFboWidth() {
+  protected int getBackTexTarget() {
+    return GL.GL_TEXTURE_2D;
+  }
+
+  protected int getBackTexFormat() {
+    return backTex.format;
+  }
+
+  protected int getBackTexWidth() {
     return backTex.getWidth();
   }
 
-  protected int getFboHeight() {
+  protected int getBackTexHeight() {
     return backTex.getHeight();
   }
+
+  protected int getBackTexMinFilter() {
+    return backTex.minFilter;
+  }
+
+  protected int getBackTexMagFilter() {
+    return backTex.magFilter;
+  }
+
+  protected int getBackTexWrapS() {
+    return backTex.wrapS;
+  }
+
+  protected int getBackTexWrapT() {
+    return backTex.wrapT;
+  }
+
+  protected int getFrontTexName() {
+    return frontTex.getName();
+  }
+
+  protected int getFrontTexTarget() {
+    return GL.GL_TEXTURE_2D;
+  }
+
+  protected int getFrontTexFormat() {
+    return frontTex.format;
+  }
+
+  protected int getFrontTexWidth() {
+    return frontTex.getWidth();
+  }
+
+  protected int getFrontTexHeight() {
+    return frontTex.getHeight();
+  }
+
+  protected int getFrontTexMinFilter() {
+    return frontTex.minFilter;
+  }
+
+  protected int getFrontTexMagFilter() {
+    return frontTex.magFilter;
+  }
+
+  protected int getFrontTexWrapS() {
+    return frontTex.wrapS;
+  }
+
+  protected int getFrontTexWrapT() {
+    return frontTex.wrapT;
+  }
+
+
+
 
   /*
   protected void bindPrimaryColorFBO() {
@@ -773,6 +842,11 @@ public class PGL {
     }
 
   }
+
+
+
+
+
 
 
   ///////////////////////////////////////////////////////////
