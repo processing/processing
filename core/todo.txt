@@ -19,12 +19,12 @@ A   http://code.google.com/p/processing/issues/detail?id=1342
 A Implement anisotropic filtering when using OPENGL
 A   http://code.google.com/p/processing/issues/detail?id=502
 X move _MASK constants out of PConstants and into PImage
-
-_ how should stroke work w/ arcs?
+X how should stroke work w/ arcs?
 X   decision: we should do pie, you can make the other kind w/o it
-_   add an additional parameter for the others
+X   add an additional parameter for the others
 _   http://code.google.com/p/processing/issues/detail?id=711
-
+X changed events to PRESS, RELEASE, CLICK, DRAG, MOVE, ENTER, EXIT
+X   instead of past-tense versions of the same
 
 cleanup/earlier by Andres
 A when turning smoothing on, internal lines of shapes are visible
@@ -119,9 +119,6 @@ _   change to be th text command
 
 _ OutOfMemory in image()
 _   http://code.google.com/p/processing/issues/detail?id=1353
-
-_ remove java.awt.* imports from sketches
-_   go through examples to make sure they're not being used
 
 _ Default Renderer slow on retina displays
 _   http://code.google.com/p/processing/issues/detail?id=1262

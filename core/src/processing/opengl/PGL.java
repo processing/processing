@@ -2615,31 +2615,31 @@ public class PGL {
   class NEWTMouseAdapter extends com.jogamp.newt.event.MouseAdapter {
     @Override
     public void mousePressed(com.jogamp.newt.event.MouseEvent e) {
-      nativeMouseEvent(e, MouseEvent.PRESSED);
+      nativeMouseEvent(e, MouseEvent.PRESS);
     }
     @Override
     public void mouseReleased(com.jogamp.newt.event.MouseEvent e) {
-      nativeMouseEvent(e, MouseEvent.RELEASED);
+      nativeMouseEvent(e, MouseEvent.RELEASE);
     }
     @Override
     public void mouseClicked(com.jogamp.newt.event.MouseEvent e) {
-      nativeMouseEvent(e, MouseEvent.CLICKED);
+      nativeMouseEvent(e, MouseEvent.CLICK);
     }
     @Override
     public void mouseDragged(com.jogamp.newt.event.MouseEvent e) {
-      nativeMouseEvent(e, MouseEvent.DRAGGED);
+      nativeMouseEvent(e, MouseEvent.DRAG);
     }
     @Override
     public void mouseMoved(com.jogamp.newt.event.MouseEvent e) {
-      nativeMouseEvent(e, MouseEvent.MOVED);
+      nativeMouseEvent(e, MouseEvent.MOVE);
     }
     @Override
     public void mouseEntered(com.jogamp.newt.event.MouseEvent e) {
-      nativeMouseEvent(e, MouseEvent.ENTERED);
+      nativeMouseEvent(e, MouseEvent.ENTER);
     }
     @Override
     public void mouseExited(com.jogamp.newt.event.MouseEvent e) {
-      nativeMouseEvent(e, MouseEvent.EXITED);
+      nativeMouseEvent(e, MouseEvent.EXIT);
     }
     @Override
     public void mouseWheelMoved(com.jogamp.newt.event.MouseEvent e) {
@@ -2651,15 +2651,15 @@ public class PGL {
   class NEWTKeyAdapter extends com.jogamp.newt.event.KeyAdapter {
     @Override
     public void keyPressed(com.jogamp.newt.event.KeyEvent e) {
-      nativeKeyEvent(e, KeyEvent.PRESSED);
+      nativeKeyEvent(e, KeyEvent.PRESS);
     }
     @Override
     public void keyReleased(com.jogamp.newt.event.KeyEvent e) {
-      nativeKeyEvent(e, KeyEvent.RELEASED);
+      nativeKeyEvent(e, KeyEvent.RELEASE);
     }
     @Override
     public void keyTyped(com.jogamp.newt.event.KeyEvent e)  {
-      nativeKeyEvent(e, KeyEvent.TYPED);
+      nativeKeyEvent(e, KeyEvent.TYPE);
     }
   }
 

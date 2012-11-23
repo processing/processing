@@ -23,9 +23,24 @@
 package processing.event;
 
 
+/*
+http://developer.android.com/guide/topics/ui/ui-events.html
+http://developer.android.com/reference/android/view/MotionEvent.html
+http://developer.apple.com/library/safari/#documentation/UserExperience/Reference/TouchEventClassReference/TouchEvent/TouchEvent.html
+http://developer.apple.com/library/ios/#documentation/UIKit/Reference/UIGestureRecognizer_Class/Reference/Reference.html#//apple_ref/occ/cl/UIGestureRecognizer
+
+Apple's high-level gesture names:
+tap
+pinch
+rotate
+swipe
+pan
+longpress
+*/
 public class TouchEvent extends Event {
 
   public TouchEvent(Object nativeObject, long millis, int action, int modifiers) {
     super(nativeObject, millis, action, modifiers);
+    this.flavor = TOUCH;
   }
 }

@@ -29,11 +29,19 @@ public class Event {
   protected long millis;
   protected int action;
 
-  static public final int SHIFT_MASK = 1 << 6;
-  static public final int CTRL_MASK  = 1 << 7;
-  static public final int META_MASK  = 1 << 8;
-  static public final int ALT_MASK   = 1 << 9;
+  // These correspond to the java.awt.Event modifiers (not to be confused with
+  // the newer getModifiersEx), though they're not guaranteed to in the future.
+  static public final int SHIFT = 1 << 0;
+  static public final int CTRL  = 1 << 1;
+  static public final int META  = 1 << 2;
+  static public final int ALT   = 1 << 3;
   protected int modifiers;
+
+  // Types of events. As with all constants in Processing, brevity's preferred.
+  static public final int KEY = 1;
+  static public final int MOUSE = 2;
+  static public final int TOUCH = 3;
+  protected int flavor;
 
 
   public Event(Object nativeObject, long millis, int action, int modifiers) {
@@ -44,6 +52,18 @@ public class Event {
   }
 
 
+  public int getFlavor() {
+    return flavor;
+  }
+
+
+  /**
+   * Get the platform-native event object. This might be the java.awt event
+   * on the desktop, though if you're using OpenGL on the desktop it'll be a
+   * NEWT event that JOGL uses. Android events are something else altogether.
+   * Bottom line, use this only if you know what you're doing, and don't make
+   * assumptions about the class type.
+   */
   public Object getNative() {
     return nativeObject;
   }
@@ -85,21 +105,21 @@ public class Event {
 
 
   public boolean isShiftDown() {
-    return (modifiers & SHIFT_MASK) != 0;
+    return (modifiers & SHIFT) != 0;
   }
 
 
   public boolean isControlDown() {
-    return (modifiers & CTRL_MASK) != 0;
+    return (modifiers & CTRL) != 0;
   }
 
 
   public boolean isMetaDown() {
-    return (modifiers & META_MASK) != 0;
+    return (modifiers & META) != 0;
   }
 
 
   public boolean isAltDown() {
-    return (modifiers & ALT_MASK) != 0;
+    return (modifiers & ALT) != 0;
   }
 }
