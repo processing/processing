@@ -2147,8 +2147,6 @@ public class PGraphicsOpenGL extends PGraphics {
     } else if (which == ENABLE_ACCURATE_2D) {
       flush();
       setFlushMode(FLUSH_CONTINUOUSLY);
-    } else if (which == DISABLE_TEXTURE_CACHE) {
-      flush();
     } else if (which == DISABLE_STROKE_PERSPECTIVE) {
       if (0 < tessGeo.lineVertexCount && 0 < tessGeo.lineIndexCount) {
         // We flush the geometry using the previous line setting.
@@ -2196,15 +2194,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
   @Override
   public void endShape(int mode) {
-    if (flushMode == FLUSH_WHEN_FULL && hints[DISABLE_TEXTURE_CACHE] &&
-        textureImage0 != null && textureImage == null) {
-      // The previous shape had a texture and this one doesn't. So we need to
-      // flush the textured geometry.
-      textureImage = textureImage0;
-      flush();
-      textureImage = null;
-    }
-
     tessellate(mode);
 
     if ((flushMode == FLUSH_CONTINUOUSLY) ||
@@ -2225,15 +2214,6 @@ public class PGraphicsOpenGL extends PGraphics {
                                  "TRIANGLE shapes");
     }
 
-    if (flushMode == FLUSH_WHEN_FULL && hints[DISABLE_TEXTURE_CACHE] &&
-        textureImage0 != null && textureImage == null) {
-      // The previous shape had a texture and this one doesn't. So we need to
-      // flush the textured geometry.
-      textureImage = textureImage0;
-      flush();
-      textureImage = null;
-    }
-
     tessellate(indices, edges);
 
     if (flushMode == FLUSH_CONTINUOUSLY ||
@@ -2251,34 +2231,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
   public void textureSampling(int sampling) {
     this.textureSampling = sampling;
-  }
-
-
-  @Override
-  public void texture(PImage image) {
-    if (flushMode == FLUSH_WHEN_FULL && hints[DISABLE_TEXTURE_CACHE] &&
-        image != textureImage0) {
-      // Changing the texture image, so we need to flush the
-      // tessellated geometry accumulated until now, so that
-      // textures are not mixed.
-      textureImage = textureImage0;
-      flush();
-    }
-    super.texture(image);
-  }
-
-
-  @Override
-  public void noTexture() {
-    if (flushMode == FLUSH_WHEN_FULL && hints[DISABLE_TEXTURE_CACHE] &&
-        null != textureImage0) {
-      // Changing the texture image, so we need to flush the
-      // tessellated geometry accumulated until now, so that
-      // textures are not mixed.
-      textureImage = textureImage0;
-      flush();
-    }
-    super.noTexture();
   }
 
 
@@ -2507,7 +2459,7 @@ public class PGraphicsOpenGL extends PGraphics {
     if (hasPoints || hasLines || hasPolys) {
       PMatrix3D modelview0 = null;
       PMatrix3D modelviewInv0 = null;
-      if (flushMode == FLUSH_WHEN_FULL && !hints[DISABLE_TRANSFORM_CACHE]) {
+      if (flushMode == FLUSH_WHEN_FULL) {
         // The modelview transformation has been applied already to the
         // tessellated vertices, so we set the OpenGL modelview matrix as
         // the identity to avoid applying the model transformations twice.
@@ -2543,7 +2495,7 @@ public class PGraphicsOpenGL extends PGraphics {
         }
       }
 
-      if (flushMode == FLUSH_WHEN_FULL && !hints[DISABLE_TRANSFORM_CACHE]) {
+      if (flushMode == FLUSH_WHEN_FULL) {
         modelview = modelview0;
         modelviewInv = modelviewInv0;
         calcProjmodelview();
@@ -2656,8 +2608,7 @@ public class PGraphicsOpenGL extends PGraphics {
           int argb1 = PGL.nativeToJavaARGB(color[i1]);
           int argb2 = PGL.nativeToJavaARGB(color[i2]);
 
-          if (flushMode == FLUSH_CONTINUOUSLY ||
-              hints[DISABLE_TRANSFORM_CACHE]) {
+          if (flushMode == FLUSH_CONTINUOUSLY) {
             float[] src0 = {0, 0, 0, 0};
             float[] src1 = {0, 0, 0, 0};
             float[] src2 = {0, 0, 0, 0};
@@ -2793,7 +2744,7 @@ public class PGraphicsOpenGL extends PGraphics {
         int argb0 = PGL.nativeToJavaARGB(color[i0]);
         int argb1 = PGL.nativeToJavaARGB(color[i1]);
 
-        if (flushMode == FLUSH_CONTINUOUSLY || hints[DISABLE_TRANSFORM_CACHE]) {
+        if (flushMode == FLUSH_CONTINUOUSLY) {
           float[] src0 = {0, 0, 0, 0};
           float[] src1 = {0, 0, 0, 0};
           PApplet.arrayCopy(vertices, 4 * i0, src0, 0, 4);
@@ -2896,7 +2847,7 @@ public class PGraphicsOpenGL extends PGraphics {
         int argb0 = PGL.nativeToJavaARGB(color[i0]);
         float[] pt0 = {0, 0, 0, 0};
 
-        if (flushMode == FLUSH_CONTINUOUSLY || hints[DISABLE_TRANSFORM_CACHE]) {
+        if (flushMode == FLUSH_CONTINUOUSLY) {
           float[] src0 = {0, 0, 0, 0};
           PApplet.arrayCopy(vertices, 4 * i0, src0, 0, 4);
           modelview.mult(src0, pt0);
@@ -3614,10 +3565,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
   @Override
   public void popMatrix() {
-    if (hints[DISABLE_TRANSFORM_CACHE]) {
-      flush();
-    }
-
     if (modelviewStackDepth == 0) {
       throw new RuntimeException(ERROR_PUSHMATRIX_UNDERFLOW);
     }
@@ -3648,10 +3595,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void translateImpl(float tx, float ty, float tz) {
-    if (hints[DISABLE_TRANSFORM_CACHE]) {
-      flush();
-    }
-
     modelview.translate(tx, ty, tz);
     invTranslate(modelviewInv, tx, ty, tz);
     projmodelview.translate(tx, ty, tz);
@@ -3708,10 +3651,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void rotateImpl(float angle, float v0, float v1, float v2) {
-    if (hints[DISABLE_TRANSFORM_CACHE]) {
-      flush();
-    }
-
     float norm2 = v0 * v0 + v1 * v1 + v2 * v2;
     if (zero(norm2)) {
       // The vector is zero, cannot apply rotation.
@@ -3775,10 +3714,6 @@ public class PGraphicsOpenGL extends PGraphics {
    * Scale in three dimensions.
    */
   protected void scaleImpl(float sx, float sy, float sz) {
-    if (hints[DISABLE_TRANSFORM_CACHE]) {
-      flush();
-    }
-
     modelview.scale(sx, sy, sz);
     invScale(modelviewInv, sx, sy, sz);
     projmodelview.scale(sx, sy, sz);
@@ -3817,10 +3752,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
   @Override
   public void resetMatrix() {
-    if (hints[DISABLE_TRANSFORM_CACHE]) {
-      flush();
-    }
-
     modelview.reset();
     modelviewInv.reset();
     projmodelview.set(projection);
@@ -3879,9 +3810,6 @@ public class PGraphicsOpenGL extends PGraphics {
                                  float n10, float n11, float n12, float n13,
                                  float n20, float n21, float n22, float n23,
                                  float n30, float n31, float n32, float n33) {
-    if (hints[DISABLE_TRANSFORM_CACHE]) {
-      flush();
-    }
     modelview.apply(n00, n01, n02, n03,
                     n10, n11, n12, n13,
                     n20, n21, n22, n23,
@@ -4223,10 +4151,6 @@ public class PGraphicsOpenGL extends PGraphics {
   public void camera(float eyeX, float eyeY, float eyeZ,
                      float centerX, float centerY, float centerZ,
                      float upX, float upY, float upZ) {
-    if (hints[DISABLE_TRANSFORM_CACHE]) {
-      flush();
-    }
-
     // Calculating Z vector
     float z0 = eyeX - centerX;
     float z1 = eyeY - centerY;
@@ -9705,8 +9629,7 @@ public class PGraphicsOpenGL extends PGraphics {
       float y = in.vertices[index++];
       float z = in.vertices[index  ];
 
-      if (renderMode == IMMEDIATE && flushMode == FLUSH_WHEN_FULL &&
-          !hints[DISABLE_TRANSFORM_CACHE]) {
+      if (renderMode == IMMEDIATE && flushMode == FLUSH_WHEN_FULL) {
         PMatrix3D mm = modelview;
 
         index = 4 * tessIdx;
@@ -9737,8 +9660,7 @@ public class PGraphicsOpenGL extends PGraphics {
       float y0 = in.vertices[index++];
       float z0 = in.vertices[index  ];
 
-      if (renderMode == IMMEDIATE && flushMode == FLUSH_WHEN_FULL &&
-          !hints[DISABLE_TRANSFORM_CACHE]) {
+      if (renderMode == IMMEDIATE && flushMode == FLUSH_WHEN_FULL) {
         PMatrix3D mm = modelview;
 
         index = 4 * tessIdx;
@@ -9778,8 +9700,7 @@ public class PGraphicsOpenGL extends PGraphics {
       float y1 = in.vertices[index++];
       float z1 = in.vertices[index  ];
 
-      if (renderMode == IMMEDIATE && flushMode == FLUSH_WHEN_FULL &&
-          !hints[DISABLE_TRANSFORM_CACHE]) {
+      if (renderMode == IMMEDIATE && flushMode == FLUSH_WHEN_FULL) {
         PMatrix3D mm = modelview;
 
         index = 4 * tessIdx;
@@ -9828,8 +9749,7 @@ public class PGraphicsOpenGL extends PGraphics {
                        int am, int sp, int em, float shine) {
       int index;
 
-      if (renderMode == IMMEDIATE && flushMode == FLUSH_WHEN_FULL &&
-          !hints[DISABLE_TRANSFORM_CACHE]) {
+      if (renderMode == IMMEDIATE && flushMode == FLUSH_WHEN_FULL) {
         PMatrix3D mm = modelview;
         PMatrix3D nm = modelviewInv;
 
@@ -9877,8 +9797,7 @@ public class PGraphicsOpenGL extends PGraphics {
       int index;
       int count = polyVertexCount - 1;
 
-      if (renderMode == IMMEDIATE && flushMode == FLUSH_WHEN_FULL &&
-          !hints[DISABLE_TRANSFORM_CACHE]) {
+      if (renderMode == IMMEDIATE && flushMode == FLUSH_WHEN_FULL) {
         PMatrix3D mm = modelview;
         PMatrix3D nm = modelviewInv;
 
@@ -9931,8 +9850,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
       polyVertexCheck(nvert);
 
-      if (renderMode == IMMEDIATE && flushMode == FLUSH_WHEN_FULL &&
-          !hints[DISABLE_TRANSFORM_CACHE]) {
+      if (renderMode == IMMEDIATE && flushMode == FLUSH_WHEN_FULL) {
         PMatrix3D mm = modelview;
         PMatrix3D nm = modelviewInv;
 
