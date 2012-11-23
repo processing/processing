@@ -112,17 +112,22 @@ public class UpdateCheck {
       boolean offerToUpdateContributions = true;
 
       if (latest > Base.REVISION) {
+        System.out.println("You are running Processing revision " +
+                           Base.REVISION + ", the latest is " + latest + ".");
         // Assume the person is busy downloading the latest version
         offerToUpdateContributions = !promptToVisitDownloadPage();
       }
 
       if (offerToUpdateContributions) {
-        // Wait for xml file to be downloaded and updates to come in. (this
-        // should really be handled better).
+        // Wait for xml file to be downloaded and updates to come in.
+        // (this should really be handled better).
         Thread.sleep(5 * 1000);
-        if (!base.libraryManagerFrame.hasAlreadyBeenOpened() && base.libraryManagerFrame.hasUpdates() ||
-            !base.toolManagerFrame.hasAlreadyBeenOpened() && base.toolManagerFrame.hasUpdates() ||
-            !base.modeManagerFrame.hasAlreadyBeenOpened() && base.modeManagerFrame.hasUpdates()) {
+        if ((!base.libraryManagerFrame.hasAlreadyBeenOpened() &&
+             base.libraryManagerFrame.hasUpdates()) ||
+            (!base.toolManagerFrame.hasAlreadyBeenOpened() &&
+             base.toolManagerFrame.hasUpdates()) ||
+            (!base.modeManagerFrame.hasAlreadyBeenOpened() &&
+             base.modeManagerFrame.hasUpdates())) {
           promptToOpenContributionManager();
         }
       }
