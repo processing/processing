@@ -2656,7 +2656,7 @@ public class PApplet extends Applet
     // for mouseClicked and mouseReleased (or others).
     if (platform == MACOSX) {
       //if (nativeEvent.isPopupTrigger()) {
-      if ((modifiers & InputEvent.CTRL_DOWN_MASK) != 0) {
+      if ((modifiers & InputEvent.CTRL_MASK) != 0) {
         peButton = RIGHT;
       }
     }
