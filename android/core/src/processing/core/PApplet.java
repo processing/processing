@@ -168,36 +168,36 @@ public class PApplet extends Activity implements PConstants, Runnable {
   /** absolute x position of input on screen */
   public int mouseY;
 
-  /** current x position of motion (relative to start of motion) */
-  public float motionX;
-
-  /** current y position of the mouse (relative to start of motion) */
-  public float motionY;
-
-  /** Last reported pressure of the current motion event */
-  public float motionPressure;
-
-  /** Last reported positions and pressures for all pointers */
-  protected int numPointers;
-  protected int pnumPointers;
-
-  protected float[] ppointersX = {0};
-  protected float[] ppointersY = {0};
-  protected float[] ppointersPressure = {0};
-
-  protected float[] pointersX = {0};
-  protected float[] pointersY = {0};
-  protected float[] pointersPressure = {0};
-
-  protected int downMillis;
-  protected float downX, downY;
-  protected boolean onePointerGesture = false;
-  protected boolean twoPointerGesture = true;
-
-  protected final int MIN_SWIPE_LENGTH = 150;       // Minimum length (in pixels) of a swipe event
-  protected final int MAX_SWIPE_DURATION = 2000;    // Maximum duration (in millis) of a swipe event
-  protected final int MAX_TAP_DISP = 20;            // Maximum displacement (in pixels) during a tap event
-  protected final int MAX_TAP_DURATION = 1000;      // Maximum duration (in millis) of a tap event
+//  /** current x position of motion (relative to start of motion) */
+//  public float motionX;
+//
+//  /** current y position of the mouse (relative to start of motion) */
+//  public float motionY;
+//
+//  /** Last reported pressure of the current motion event */
+//  public float motionPressure;
+//
+//  /** Last reported positions and pressures for all pointers */
+//  protected int numPointers;
+//  protected int pnumPointers;
+//
+//  protected float[] ppointersX = {0};
+//  protected float[] ppointersY = {0};
+//  protected float[] ppointersPressure = {0};
+//
+//  protected float[] pointersX = {0};
+//  protected float[] pointersY = {0};
+//  protected float[] pointersPressure = {0};
+//
+//  protected int downMillis;
+//  protected float downX, downY;
+//  protected boolean onePointerGesture = false;
+//  protected boolean twoPointerGesture = true;
+//
+//  protected final int MIN_SWIPE_LENGTH = 150;       // Minimum length (in pixels) of a swipe event
+//  protected final int MAX_SWIPE_DURATION = 2000;    // Maximum duration (in millis) of a swipe event
+//  protected final int MAX_TAP_DISP = 20;            // Maximum displacement (in pixels) during a tap event
+//  protected final int MAX_TAP_DURATION = 1000;      // Maximum duration (in millis) of a tap event
 
 
   /**
@@ -210,14 +210,14 @@ public class PApplet extends Activity implements PConstants, Runnable {
    * you're gonna run into trouble.
    */
   public int pmouseX, pmouseY;
-  public float pmotionX, pmotionY;
+//  public float pmotionX, pmotionY;
 
   /**
    * previous mouseX/Y for the draw loop, separated out because this is
    * separate from the pmouseX/Y when inside the mouse event handlers.
    */
   protected int dmouseX, dmouseY;
-  protected float dmotionX, dmotionY;
+//  protected float dmotionX, dmotionY;
 
   /**
    * pmotionX/Y for the event handlers (motionPressed(), motionDragged() etc)
@@ -227,7 +227,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
    * to be updated once per trip through draw().
    */
   protected int emouseX, emouseY;
-  protected float emotionX, emotionY;
+//  protected float emotionX, emotionY;
 
 //  /**
 //   * Used to set pmotionX/Y to motionX/Y the first time motionX/Y are used,
@@ -1968,8 +1968,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
         // last position the mouse was in during the previous draw.
         pmouseX = dmouseX;
         pmouseY = dmouseY;
-        pmotionX = dmotionX;
-        pmotionY = dmotionY;
+//        pmotionX = dmotionX;
+//        pmotionY = dmotionY;
 
         //println("Calling draw()");
         draw();
@@ -1978,8 +1978,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
         // dmouseX/Y is updated only once per frame (unlike emouseX/Y)
         dmouseX = mouseX;
         dmouseY = mouseY;
-        dmotionX = motionX;
-        dmotionY = motionY;
+//        dmotionX = motionX;
+//        dmotionY = motionY;
 
         // these are called *after* loop so that valid
         // drawing commands can be run inside them. it can't

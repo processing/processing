@@ -8,6 +8,12 @@ X   removed: java.applet.*,java.awt.Dimension,java.awt.Frame,java.awt.event.Mous
 X mode detection isn't properly ignoring code inside comments
 X   http://code.google.com/p/processing/issues/detail?id=1404
 
+earlier
+X The sketch name can't begin with '_' (underscore)
+X   http://code.google.com/p/processing/issues/detail?id=859
+
+_ fix the debug stuff before shipping this out
+
 _ remove java.awt.* imports from sketches
 _   go through examples to make sure they're not being used
 _   do command line to run through all examples? 
