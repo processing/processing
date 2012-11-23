@@ -715,7 +715,7 @@ public class PGraphicsAndroid2D extends PGraphics {
 
   @Override
   protected void arcImpl(float x, float y, float w, float h,
-                         float start, float stop) {
+                         float start, float stop, int mode) {
     // 0 to 90 in java would be 0 to -90 for p5 renderer
     // but that won't work, so -90 to 0?
 
@@ -740,11 +740,32 @@ public class PGraphicsAndroid2D extends PGraphics {
 
       float sweep = stop - start;
       rect.set(x, y, x+w, y+h);
-      if (fill) {
-        canvas.drawArc(rect, start, sweep, true, fillPaint);
-      }
-      if (stroke) {
-        canvas.drawArc(rect, start, sweep, false, strokePaint);
+
+      if (mode == 0) {
+        if (fill) {
+          canvas.drawArc(rect, start, sweep, true, fillPaint);
+        }
+        if (stroke) {
+          canvas.drawArc(rect, start, sweep, false, strokePaint);
+        }
+      } else if (mode == OPEN) {
+        if (fill) {
+          showMissingWarning("arc");
+        }
+        if (stroke) {
+          canvas.drawArc(rect, start, sweep, false, strokePaint);
+        }
+      } else if (mode == CHORD) {
+        showMissingWarning("arc");
+
+      } else if (mode == PIE) {
+        if (fill) {
+          canvas.drawArc(rect, start, sweep, true, fillPaint);
+        }
+        if (stroke) {
+          canvas.drawArc(rect, start, sweep, true, strokePaint);
+        }
+
       }
     }
   }
