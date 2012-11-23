@@ -514,7 +514,12 @@ public class PApplet extends Applet
    * <p>
    * Just using (frameCount == 0) won't work since mouseXxxxx()
    * may not be called until a couple frames into things.
+   * <p>
+   * @deprecated Please refrain from using this variable, it will be removed
+   * from future releases of Processing because it cannot be used consistently
+   * across platforms and input methods.
    */
+  @Deprecated
   public boolean firstMouse;
 
   /**
@@ -529,9 +534,8 @@ public class PApplet extends Applet
    *
    * <h3>Advanced:</h3>
    *
-   * If running on Mac OS, a ctrl-click will be interpreted as
-   * the righthand mouse button (unlike Java, which reports it as
-   * the left mouse).
+   * If running on Mac OS, a ctrl-click will be interpreted as the right-hand
+   * mouse button (unlike Java, which reports it as the left mouse).
    * @webref input:mouse
    * @see PApplet#mouseX
    * @see PApplet#mouseY
@@ -2497,11 +2501,11 @@ public class PApplet extends Applet
     // http://dev.processing.org/bugs/show_bug.cgi?id=170
     // also prevents mouseExited() on the mac from hosing the mouse
     // position, because x/y are bizarre values on the exit event.
-    // see also the id check below.. both of these go together
-//  if ((id == java.awt.event.MouseEvent.MOUSE_DRAGGED) ||
-//      (id == java.awt.event.MouseEvent.MOUSE_MOVED)) {
-    if (event.getAction() == MouseEvent.DRAGGED ||
-        event.getAction() == MouseEvent.MOVED) {
+    // see also the id check below.. both of these go together.
+    // Not necessary to set mouseX/Y on PRESS or RELEASE events because the
+    // actual position will have been set by a MOVE or DRAG event.
+    if (event.getAction() == MouseEvent.DRAG ||
+        event.getAction() == MouseEvent.MOVE) {
       pmouseX = emouseX;
       pmouseY = emouseY;
       mouseX = event.getX();
@@ -2511,7 +2515,7 @@ public class PApplet extends Applet
     // Get the (already processed) button code
     mouseButton = event.getButton();
 
-    // Compatibility for older code
+    // Compatibility for older code (these have AWT object params, not P5)
     if (mouseEventMethods != null) {
       // Probably also good to check this, in case anyone tries to call
       // postEvent() with an artificial event they've created.
@@ -2536,10 +2540,10 @@ public class PApplet extends Applet
     // boolean for mousePressed.
 
     switch (event.getAction()) {
-    case MouseEvent.PRESSED:
+    case MouseEvent.PRESS:
       mousePressed = true;
       break;
-    case MouseEvent.RELEASED:
+    case MouseEvent.RELEASE:
       mousePressed = false;
       break;
     }
@@ -2547,33 +2551,33 @@ public class PApplet extends Applet
     handleMethods("mouseEvent", new Object[] { event });
 
     switch (event.getAction()) {
-    case MouseEvent.PRESSED:
+    case MouseEvent.PRESS:
 //      mousePressed = true;
       mousePressed();
       break;
-    case MouseEvent.RELEASED:
+    case MouseEvent.RELEASE:
 //      mousePressed = false;
       mouseReleased();
       break;
-    case MouseEvent.CLICKED:
+    case MouseEvent.CLICK:
       mouseClicked();
       break;
-    case MouseEvent.DRAGGED:
+    case MouseEvent.DRAG:
       mouseDragged();
       break;
-    case MouseEvent.MOVED:
+    case MouseEvent.MOVE:
       mouseMoved();
       break;
-    case MouseEvent.ENTERED:
+    case MouseEvent.ENTER:
       mouseEntered();
       break;
-    case MouseEvent.EXITED:
+    case MouseEvent.EXIT:
       mouseExited();
       break;
     }
 
-    if ((event.getAction() == MouseEvent.DRAGGED) ||
-        (event.getAction() == MouseEvent.MOVED)) {
+    if ((event.getAction() == MouseEvent.DRAG) ||
+        (event.getAction() == MouseEvent.MOVE)) {
       emouseX = mouseX;
       emouseY = mouseY;
     }
@@ -2589,25 +2593,25 @@ public class PApplet extends Applet
     int peAction = 0;
     switch (nativeEvent.getID()) {
     case java.awt.event.MouseEvent.MOUSE_PRESSED:
-      peAction = MouseEvent.PRESSED;
+      peAction = MouseEvent.PRESS;
       break;
     case java.awt.event.MouseEvent.MOUSE_RELEASED:
-      peAction = MouseEvent.RELEASED;
+      peAction = MouseEvent.RELEASE;
       break;
     case java.awt.event.MouseEvent.MOUSE_CLICKED:
-      peAction = MouseEvent.CLICKED;
+      peAction = MouseEvent.CLICK;
       break;
     case java.awt.event.MouseEvent.MOUSE_DRAGGED:
-      peAction = MouseEvent.DRAGGED;
+      peAction = MouseEvent.DRAG;
       break;
     case java.awt.event.MouseEvent.MOUSE_MOVED:
-      peAction = MouseEvent.MOVED;
+      peAction = MouseEvent.MOVE;
       break;
     case java.awt.event.MouseEvent.MOUSE_ENTERED:
-      peAction = MouseEvent.ENTERED;
+      peAction = MouseEvent.ENTER;
       break;
     case java.awt.event.MouseEvent.MOUSE_EXITED:
-      peAction = MouseEvent.EXITED;
+      peAction = MouseEvent.EXIT;
       break;
     }
 
@@ -2913,15 +2917,15 @@ public class PApplet extends Applet
     keyCode = event.getKeyCode();
 
     switch (event.getAction()) {
-    case KeyEvent.PRESSED:
+    case KeyEvent.PRESS:
       keyPressed = true;
       keyPressed();
       break;
-    case KeyEvent.RELEASED:
+    case KeyEvent.RELEASE:
       keyPressed = false;
       keyReleased();
       break;
-    case KeyEvent.TYPED:
+    case KeyEvent.TYPE:
       keyTyped();
       break;
     }
@@ -2934,7 +2938,7 @@ public class PApplet extends Applet
 
     // if someone else wants to intercept the key, they should
     // set key to zero (or something besides the ESC).
-    if (event.getAction() == KeyEvent.PRESSED) {
+    if (event.getAction() == KeyEvent.PRESS) {
       //if (key == java.awt.event.KeyEvent.VK_ESCAPE) {
       if (key == ESC) {
         exit();
@@ -2962,13 +2966,13 @@ public class PApplet extends Applet
     int peAction = 0;
     switch (event.getID()) {
     case java.awt.event.KeyEvent.KEY_PRESSED:
-      peAction = KeyEvent.PRESSED;
+      peAction = KeyEvent.PRESS;
       break;
     case java.awt.event.KeyEvent.KEY_RELEASED:
-      peAction = KeyEvent.RELEASED;
+      peAction = KeyEvent.RELEASE;
       break;
     case java.awt.event.KeyEvent.KEY_TYPED:
-      peAction = KeyEvent.TYPED;
+      peAction = KeyEvent.TYPE;
       break;
     }
 
@@ -11306,6 +11310,13 @@ public class PApplet extends Applet
                   float start, float stop) {
     if (recorder != null) recorder.arc(a, b, c, d, start, stop);
     g.arc(a, b, c, d, start, stop);
+  }
+
+
+  public void arc(float a, float b, float c, float d,
+                  float start, float stop, int mode) {
+    if (recorder != null) recorder.arc(a, b, c, d, start, stop, mode);
+    g.arc(a, b, c, d, start, stop, mode);
   }
 
 

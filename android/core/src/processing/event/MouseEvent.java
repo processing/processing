@@ -26,13 +26,13 @@ package processing.event;
 
 
 public class MouseEvent extends Event {
-  static public final int PRESSED = 1;
-  static public final int RELEASED = 2;
-  static public final int CLICKED = 3;
-  static public final int DRAGGED = 4;
-  static public final int MOVED = 5;
-  static public final int ENTERED = 6;
-  static public final int EXITED = 7;
+  static public final int PRESS = 1;
+  static public final int RELEASE = 2;
+  static public final int CLICK = 3;
+  static public final int DRAG = 4;
+  static public final int MOVE = 5;
+  static public final int ENTER = 6;
+  static public final int EXIT = 7;
 
   protected int x, y;
   protected int button;
@@ -50,6 +50,7 @@ public class MouseEvent extends Event {
                     long millis, int action, int modifiers,
                     int x, int y, int button, int clickCount) {
     super(nativeObject, millis, action, modifiers);
+    this.flavor = MOUSE;
     this.x = x;
     this.y = y;
     this.button = button;

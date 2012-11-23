@@ -24,9 +24,9 @@ package processing.event;
 
 
 public class KeyEvent extends Event {
-  static public final int PRESSED = 1;
-  static public final int RELEASED = 2;
-  static public final int TYPED = 3;
+  static public final int PRESS = 1;
+  static public final int RELEASE = 2;
+  static public final int TYPE = 3;
 
   char key;
   int keyCode;
