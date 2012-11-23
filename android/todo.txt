@@ -3,6 +3,25 @@ X removing default imports for
 X   android.view.MotionEvent, android.view.KeyEvent,android.graphics.Bitmap
 X   due to conflicts w/ the new p5 event system
 
+cleaning/earlier
+A Defects in the tessellation of SVG shapes in A3D
+A   http://code.google.com/p/processing/issues/detail?id=291
+
+
+_ Finish implementation of OPEN and CHORD drawing modes for arc()
+_   http://code.google.com/p/processing/issues/detail?id=1405
+
+_ implement blendMode() for Android
+_   should be fairly straightforward given Java2D implementation
+_   http://code.google.com/p/processing/issues/detail?id=1386
+
+_ Update documentation and tools for Android SDK Tools revision 21
+_   http://code.google.com/p/processing/issues/detail?id=1398
+
+_ re-implement to use Fragment API
+_   and what about daydream or widgets or whatever?
+_   http://code.google.com/p/processing/issues/detail?id=1335
+
 _ implement Android version of command line tools
 _   http://code.google.com/p/processing/issues/detail?id=1323
 
@@ -30,6 +49,7 @@ _   PApplet.match(scrubbed, processing.mode.java.JavaBuild.SIZE_REGEX);
 _ test libraries on android
 
 _ no ES2 in the emulator, and no error reported in the PDE
+_   http://code.google.com/p/processing/issues/detail?id=1059
 _   problem is probably that the error comes via E/AndroidRuntime
 _   java.lang.RuntimeException: Unable to start activity ComponentInfo{processing.test.fisheye/processing.test.fisheye.FishEye}: java.lang.RuntimeException: P3D: OpenGL ES 2.0 is not supported by this device.
 

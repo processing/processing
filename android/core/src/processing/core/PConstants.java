@@ -167,13 +167,6 @@ public interface PConstants {
   public final static int DODGE      = 1 << 12;
   public final static int BURN       = 1 << 13;
 
-  // colour component bitmasks
-
-  public static final int ALPHA_MASK = 0xff000000;
-  public static final int RED_MASK   = 0x00ff0000;
-  public static final int GREEN_MASK = 0x0000ff00;
-  public static final int BLUE_MASK  = 0x000000ff;
-
 
   // for messages
 
@@ -260,6 +253,13 @@ public interface PConstants {
   static final int DIAMETER = 3;
   /** @deprecated Use DIAMETER instead. */
   static final int CENTER_DIAMETER = 3;
+
+
+  // arc drawing modes
+
+  //static final int OPEN = 1;  // shared
+  static final int CHORD  = 2;
+  static final int PIE    = 3;
 
 
   // vertically alignment modes for text

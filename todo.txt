@@ -1,6 +1,28 @@
 0215 pde
 X "expecting EOF, found 'import'" on previously working sketch 
 X   http://code.google.com/p/processing/issues/detail?id=1376
+X changing default imports to only cover those we have in the reference
+X   also on the Android side as well
+X   new set: java.io.*,java.util.*
+X   removed: java.applet.*,java.awt.Dimension,java.awt.Frame,java.awt.event.MouseEvent,java.awt.event.KeyEvent,java.awt.event.FocusEvent,java.awt.Image,
+X mode detection isn't properly ignoring code inside comments
+X   http://code.google.com/p/processing/issues/detail?id=1404
+
+_ remove java.awt.* imports from sketches
+_   go through examples to make sure they're not being used
+_   do command line to run through all examples? 
+_ consider hard-coding these, the pref can be for additions?
+import java.util.HashMap;
+import java.util.ArrayList;
+import java.io.BufferedReader;
+import java.io.PrintWriter;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.IOException;
+
+_ change error message for serial re: 64-bit
+_   "To use this library, switch to 32-bit mode in Preferences." (OS X)
+_   "To use this library, you must use the 32-bit version of Processing."
 
 _ DebugMode throwing exception about breakpoints when trying to save
 
