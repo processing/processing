@@ -10479,11 +10479,6 @@ public class PApplet extends Applet
    * hint(DISABLE_OPENGL_ERROR_REPORT) - Speeds up the P3D renderer setting
    * by not checking for errors while running. Undo with hint(ENABLE_OPENGL_ERROR_REPORT).
    * <br/> <br/>
-   * <!--hint(ENABLE_ACCURATE_TEXTURES) - Enables better texture accuracy for
-   * the P3D renderer. This option will do a better job of dealing with
-   * textures in perspective. hint(DISABLE_ACCURATE_TEXTURES) returns to the
-   * default. This hint is not likely to last long.
-   * <br/> <br/>-->
    * As of release 0149, unhint() has been removed in favor of adding
    * additional ENABLE/DISABLE constants to reset the default behavior. This
    * prevents the double negatives, and also reinforces which hints can be
