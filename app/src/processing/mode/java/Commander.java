@@ -300,9 +300,9 @@ public class Commander implements RunnerListener {
       // format the runner exception like emacs
       //blah.java:2:10:2:13: Syntax Error: This is a big error message
       String filename = sketch.getCode(re.getCodeIndex()).getFileName();
-      int line = re.getCodeLine();
-      int column = re.getCodeColumn();
-      if (column == -1) column = 0;
+      int line = re.getCodeLine() + 1;
+      int column = re.getCodeColumn() + 1;
+      //if (column == -1) column = 0;
       // TODO if column not specified, should just select the whole line.
       System.err.println(filename + ":" +
                          line + ":" + column + ":" +
