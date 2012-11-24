@@ -934,8 +934,17 @@ public class PdePreprocessor {
 
   public String[] getDefaultImports() {
     // These may change in-between (if the prefs panel adds this option)
-    String prefsLine = Preferences.get("preproc.imports");
-    return PApplet.splitTokens(prefsLine, ", ");
+    //String prefsLine = Preferences.get("preproc.imports");
+    //return PApplet.splitTokens(prefsLine, ", ");
+    return new String[] { 
+      "java.util.HashMap",
+      "java.util.ArrayList",
+      "java.io.BufferedReader",
+      "java.io.PrintWriter",
+      "java.io.InputStream",
+      "java.io.OutputStream",
+      "java.io.IOException"
+    };
   }
 
   /**
@@ -957,10 +966,8 @@ public class PdePreprocessor {
    * this info.  In fact, we should be descending the AST passed in.
    */
   String getFirstClassName(AST ast) {
-
     String t = advClassName;
     advClassName = "";
-
     return t;
   }
 
