@@ -873,14 +873,6 @@ public class PGL {
   }
 
 
-  protected void beginOffscreenDraw(boolean clear) {
-  }
-
-
-  protected void endOffscreenDraw(boolean clear0) {
-  }
-
-
   protected boolean canDraw() {
     return initialized && pg.parent.isDisplayable();
   }

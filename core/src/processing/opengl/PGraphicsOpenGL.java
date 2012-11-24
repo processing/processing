@@ -1727,18 +1727,7 @@ public class PGraphicsOpenGL extends PGraphics {
     if (primarySurface) {
       pgl.beginOnscreenDraw(clearColorBuffer);
     } else {
-      pgl.beginOffscreenDraw(clearColorBuffer);
-
-      // Just in case the texture was recreated (in a resize event for example)
-      offscreenFramebuffer.setColorBuffer(texture);
-
-      // Restoring the clipping configuration of the offscreen surface.
-      if (clip) {
-        pgl.enable(PGL.SCISSOR_TEST);
-        pgl.scissor(clipRect[0], clipRect[1], clipRect[2], clipRect[3]);
-      } else {
-        pgl.disable(PGL.SCISSOR_TEST);
-      }
+      beginOffscreenDraw();
     }
     // -------------------------------------------------------------------------
 
@@ -1803,52 +1792,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
       pgl.flush();
     } else {
-      if (offscreenMultisample) {
-        offscreenFramebufferMultisample.copy(offscreenFramebuffer);
-      }
-
-      if (!pgl.initialized || !pgPrimary.pgl.initialized ||
-          parent.frameCount == 0) {
-        // If the primary surface is re-initialized, this offscreen
-        // surface needs to save its contents into the pixels array
-        // so they can be restored after the FBOs are recreated.
-        // Note that a consequence of how this is code works, is that
-        // if the user changes the smooth level of the primary surface
-        // in the middle of draw, but after drawing the offscreen surfaces
-        // then these won't be restored in the next frame since their
-        // endDraw() calls didn't pick up any change in the initialization
-        // state of the primary surface.
-        saveSurfaceToPixels();
-        restoreSurface = true;
-      }
-
-      if (!clearColorBuffer0) {
-        // Draw the back texture into the front texture, which will be used as
-        // front texture in the next frame. Otherwise flickering will occur if
-        // the sketch uses "incremental drawing" (background() not called).
-        if (offscreenMultisample) {
-          pushFramebuffer();
-          setFramebuffer(offscreenFramebuffer);
-        }
-        offscreenFramebuffer.setColorBuffer(ptexture);
-        drawTexture();
-        offscreenFramebuffer.setColorBuffer(texture);
-        if (offscreenMultisample) {
-          popFramebuffer();
-        }
-      }
-
-      popFramebuffer();
-
-      texture.updateTexels(); // Mark all texels in screen texture as modified.
-
-      pgl.endOffscreenDraw(clearColorBuffer0);
-
-      int temp = texture.glName;
-      texture.glName = ptexture.glName;
-      ptexture.glName = temp;
-
-      pgPrimary.restoreGL();
+      endOffscreenDraw();
     }
 
     // Done!
@@ -1857,8 +1801,7 @@ public class PGraphicsOpenGL extends PGraphics {
       // Done with the main surface
       pgCurrent = null;
     } else {
-      // Done with an offscreen surface,
-      // going back to onscreen drawing.
+      // Done with an offscreen surface, going back to onscreen drawing.
       pgCurrent = pgPrimary;
     }
 
@@ -6127,6 +6070,67 @@ public class PGraphicsOpenGL extends PGraphics {
 
     offscreenFramebuffer.setColorBuffer(texture);
     offscreenFramebuffer.clear();
+  }
+
+
+  protected void beginOffscreenDraw() {
+    // Just in case the texture was recreated (in a resize event for example)
+    offscreenFramebuffer.setColorBuffer(texture);
+
+    // Restoring the clipping configuration of the offscreen surface.
+    if (clip) {
+      pgl.enable(PGL.SCISSOR_TEST);
+      pgl.scissor(clipRect[0], clipRect[1], clipRect[2], clipRect[3]);
+    } else {
+      pgl.disable(PGL.SCISSOR_TEST);
+    }
+  }
+
+
+  protected void endOffscreenDraw() {
+    if (offscreenMultisample) {
+      offscreenFramebufferMultisample.copy(offscreenFramebuffer);
+    }
+
+    if (!pgl.initialized || !pgPrimary.pgl.initialized ||
+        parent.frameCount == 0) {
+      // If the primary surface is re-initialized, this offscreen
+      // surface needs to save its contents into the pixels array
+      // so they can be restored after the FBOs are recreated.
+      // Note that a consequence of how this is code works, is that
+      // if the user changes the smooth level of the primary surface
+      // in the middle of draw, but after drawing the offscreen surfaces
+      // then these won't be restored in the next frame since their
+      // endDraw() calls didn't pick up any change in the initialization
+      // state of the primary surface.
+      saveSurfaceToPixels();
+      restoreSurface = true;
+    }
+
+    if (!clearColorBuffer0) {
+      // Draw the back texture into the front texture, which will be used as
+      // front texture in the next frame. Otherwise flickering will occur if
+      // the sketch uses "incremental drawing" (background() not called).
+      if (offscreenMultisample) {
+        pushFramebuffer();
+        setFramebuffer(offscreenFramebuffer);
+      }
+      offscreenFramebuffer.setColorBuffer(ptexture);
+      drawTexture();
+      offscreenFramebuffer.setColorBuffer(texture);
+      if (offscreenMultisample) {
+        popFramebuffer();
+      }
+    }
+
+    popFramebuffer();
+    texture.updateTexels(); // Mark all texels in screen texture as modified.
+
+    int temp = texture.glName;
+    texture.glName = ptexture.glName;
+    ptexture.glName = temp;
+
+    pgPrimary.restoreGL();
   }
 
 
