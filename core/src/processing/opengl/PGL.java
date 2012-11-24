@@ -337,23 +337,32 @@ public class PGL {
   public static final int POLYGON_SMOOTH = GL2.GL_POLYGON_SMOOTH;
 
   /** Basic GL functionality, common to all profiles */
-  public GL gl;
+  public static GL gl;
 
   /** GLU interface **/
-  public GLU glu;
+  public static GLU glu;
 
   /** The rendering context (holds rendering state info) */
-  public GLContext context;
+  public static GLContext context;
 
-  /** The AWT canvas where OpenGL rendering takes place */
-  public Canvas canvas;
+  /** The canvas where OpenGL rendering takes place */
+  public static Canvas canvas;
+
+  /** Selected GL profile */
+  public static GLProfile profile;
+
+  /** The capabilities of the OpenGL rendering surface */
+  protected static GLCapabilitiesImmutable capabilities;
+
+  /** The rendering surface */
+  protected static GLDrawable drawable;
 
   /** GLES2 functionality (shaders, etc) */
-  protected GL2ES2 gl2;
+  protected static GL2ES2 gl2;
 
   /** GL2 desktop functionality (blit framebuffer, map buffer range,
    * multisampled renerbuffers) */
-  protected GL2 gl2x;
+  protected static GL2 gl2x;
 
   /** The PGraphics object using this interface */
   protected PGraphicsOpenGL pg;
@@ -375,29 +384,20 @@ public class PGL {
   protected static int request_stencil_bits = 0;
   protected static int request_alpha_bits = 8;
 
-  /** Selected GL profile */
-  protected GLProfile profile;
-
-  /** The capabilities of the OpenGL rendering surface */
-  protected GLCapabilitiesImmutable capabilities;
-
-  /** The rendering surface */
-  protected GLDrawable drawable;
-
   /** The AWT-OpenGL canvas */
-  protected GLCanvas canvasAWT;
+  protected static GLCanvas canvasAWT;
 
   /** The NEWT-OpenGL canvas */
-  protected NewtCanvasAWT canvasNEWT;
+  protected static NewtCanvasAWT canvasNEWT;
 
   /** The NEWT window */
-  protected GLWindow window;
+  protected static GLWindow window;
 
   /** The listener that fires the frame rendering in Processing */
-  protected PGLListener listener;
+  protected static PGLListener listener;
 
   /** Animator to drive the rendering thread in NEWT */
-  protected NEWTAnimator animator;
+  protected static NEWTAnimator animator;
 
   /** Desired target framerate */
   protected float targetFramerate = 60;
@@ -429,32 +429,32 @@ public class PGL {
 
   // Texture rendering
 
-  protected boolean loadedTex2DShader = false;
-  protected int tex2DShaderProgram;
-  protected int tex2DVertShader;
-  protected int tex2DFragShader;
-  protected GLContext tex2DShaderContext;
-  protected int tex2DVertLoc;
-  protected int tex2DTCoordLoc;
+  protected static boolean loadedTex2DShader = false;
+  protected static int tex2DShaderProgram;
+  protected static int tex2DVertShader;
+  protected static int tex2DFragShader;
+  protected static GLContext tex2DShaderContext;
+  protected static int tex2DVertLoc;
+  protected static int tex2DTCoordLoc;
 
-  protected boolean loadedTexRectShader = false;
-  protected int texRectShaderProgram;
-  protected int texRectVertShader;
-  protected int texRectFragShader;
-  protected GLContext texRectShaderContext;
-  protected int texRectVertLoc;
-  protected int texRectTCoordLoc;
+  protected static boolean loadedTexRectShader = false;
+  protected static int texRectShaderProgram;
+  protected static int texRectVertShader;
+  protected static int texRectFragShader;
+  protected static GLContext texRectShaderContext;
+  protected static int texRectVertLoc;
+  protected static int texRectTCoordLoc;
 
-  protected float[] texCoords = {
+  protected static float[] texCoords = {
     //  X,     Y,    U,    V
     -1.0f, -1.0f, 0.0f, 0.0f,
     +1.0f, -1.0f, 1.0f, 0.0f,
     -1.0f, +1.0f, 0.0f, 1.0f,
     +1.0f, +1.0f, 1.0f, 1.0f
   };
-  protected FloatBuffer texData;
+  protected static FloatBuffer texData;
 
-  protected String texVertShaderSource =
+  protected static String texVertShaderSource =
     "attribute vec2 inVertex;" +
     "attribute vec2 inTexcoord;" +
     "varying vec2 vertTexcoord;" +
@@ -463,7 +463,7 @@ public class PGL {
     "  vertTexcoord = inTexcoord;" +
     "}";
 
-  protected String tex2DFragShaderSource =
+  protected static String tex2DFragShaderSource =
     SHADER_PREPROCESSOR_DIRECTIVE +
     "uniform sampler2D textureSampler;" +
     "varying vec2 vertTexcoord;" +
@@ -471,7 +471,7 @@ public class PGL {
     "  gl_FragColor = texture2D(textureSampler, vertTexcoord.st);" +
     "}";
 
-  protected String texRectFragShaderSource =
+  protected static String texRectFragShaderSource =
     SHADER_PREPROCESSOR_DIRECTIVE +
     "uniform sampler2DRect textureSampler;" +
     "varying vec2 vertTexcoord;" +
@@ -495,7 +495,9 @@ public class PGL {
 
   public PGL(PGraphicsOpenGL pg) {
     this.pg = pg;
-    glu = new GLU();
+    if (glu == null) {
+      glu = new GLU();
+    }
     initialized = false;
   }
 
@@ -523,7 +525,7 @@ public class PGL {
   }
 
 
-  protected void initPrimarySurface(int antialias) {
+  protected void initSurface(int antialias) {
     if (profile == null) {
       profile = GLProfile.getDefault();
     } else {
@@ -609,34 +611,14 @@ public class PGL {
   }
 
 
-  protected void initOffscreenSurface(PGL primary) {
-    context = primary.context;
-    capabilities = primary.capabilities;
-    drawable = null;
-    initialized = true;
-  }
-
-
-  protected void updatePrimary() {
+  protected void update() {
     if (!setFramerate) {
       setFrameRate(targetFramerate);
     }
   }
 
-  protected void updateOffscreen(PGL primary) {
-    gl  = primary.gl;
-    gl2 = primary.gl2;
-    gl2x = primary.gl2x;
-  }
 
-
-
-
-
-
-  // CLEANUP!
-
-  protected int primaryReadFramebuffer() {
+  protected int getReadFramebuffer() {
     if (capabilities.isFBO()) {
       return context.getDefaultReadFramebuffer();
     } else {
@@ -645,7 +627,7 @@ public class PGL {
   }
 
 
-  protected int primaryDrawFramebuffer() {
+  protected int getDrawFramebuffer() {
     if (capabilities.isFBO()) {
       return context.getDefaultDrawFramebuffer();
     } else {
@@ -653,7 +635,8 @@ public class PGL {
     }
   }
 
-  protected int primaryDrawBuffer() {
+
+  protected int getBackBuffer() {
     if (capabilities.isFBO()) {
       return GL.GL_COLOR_ATTACHMENT0;
     } else {
@@ -661,174 +644,67 @@ public class PGL {
     }
   }
 
-  protected int primaryReadBuffer() {
+
+  protected int getFrontBuffer() {
     if (capabilities.isFBO()) {
       return GL.GL_COLOR_ATTACHMENT0;
     } else {
       return GL.GL_BACK;
     }
   }
-
-
 
 
   protected boolean isFBOBacked() {
     return capabilities.isFBO();
   }
 
-  protected int getBackTexName() {
+
+  protected Texture wrapBackTexture() {
+    Texture tex = new Texture(pg.parent);
+    tex.init(backTex.getName(),
+             GL.GL_TEXTURE_2D, backTex.format,
+             backTex.getWidth(), backTex.getHeight(),
+             backTex.minFilter, backTex.magFilter,
+             backTex.wrapS, backTex.wrapT);
+    tex.invertedY(true);
+    tex.colorBufferOf(pg);
+    pg.setCache(pg, tex);
+    return tex;
+  }
+
+
+  protected Texture wrapFrontTexture() {
+    Texture tex = new Texture(pg.parent);
+    tex.init(backTex.getName(),
+             GL.GL_TEXTURE_2D, frontTex.format,
+             frontTex.getWidth(), frontTex.getHeight(),
+             frontTex.minFilter, frontTex.magFilter,
+             frontTex.wrapS, frontTex.wrapT);
+    tex.invertedY(true);
+    tex.colorBufferOf(pg);
+    return tex;
+  }
+
+
+  int getBackTextureName() {
     return backTex.getName();
   }
 
-  protected int getBackTexTarget() {
-    return GL.GL_TEXTURE_2D;
-  }
 
-  protected int getBackTexFormat() {
-    return backTex.format;
-  }
-
-  protected int getBackTexWidth() {
-    return backTex.getWidth();
-  }
-
-  protected int getBackTexHeight() {
-    return backTex.getHeight();
-  }
-
-  protected int getBackTexMinFilter() {
-    return backTex.minFilter;
-  }
-
-  protected int getBackTexMagFilter() {
-    return backTex.magFilter;
-  }
-
-  protected int getBackTexWrapS() {
-    return backTex.wrapS;
-  }
-
-  protected int getBackTexWrapT() {
-    return backTex.wrapT;
-  }
-
-  protected int getFrontTexName() {
+  int getFrontTextureName() {
     return frontTex.getName();
   }
 
-  protected int getFrontTexTarget() {
-    return GL.GL_TEXTURE_2D;
-  }
 
-  protected int getFrontTexFormat() {
-    return frontTex.format;
-  }
-
-  protected int getFrontTexWidth() {
-    return frontTex.getWidth();
-  }
-
-  protected int getFrontTexHeight() {
-    return frontTex.getHeight();
-  }
-
-  protected int getFrontTexMinFilter() {
-    return frontTex.minFilter;
-  }
-
-  protected int getFrontTexMagFilter() {
-    return frontTex.magFilter;
-  }
-
-  protected int getFrontTexWrapS() {
-    return frontTex.wrapS;
-  }
-
-  protected int getFrontTexWrapT() {
-    return frontTex.wrapT;
-  }
-
-
-
-
-  /*
-  protected void bindPrimaryColorFBO() {
-    if (multisample) {
-      // Blit the contents of the multisampled FBO into the color FBO,
-      // so the later is up to date.
-      gl.glBindFramebuffer(GL2.GL_READ_FRAMEBUFFER, glMultiFbo[0]);
-      gl.glBindFramebuffer(GL2.GL_DRAW_FRAMEBUFFER, glColorFbo[0]);
-      gl2x.glBlitFramebuffer(0, 0, fboWidth, fboHeight,
-                             0, 0, fboWidth, fboHeight,
-                             GL.GL_COLOR_BUFFER_BIT, GL.GL_NEAREST);
-    }
-
-    gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, glColorFbo[0]);
-    PGraphicsOpenGL.screenFramebuffer.glFbo = glColorFbo[0];
-
-    // Make the color buffer opaque so it doesn't show
-    // the background when drawn on top of another surface.
-    gl.glColorMask(false, false, false, true);
-    gl.glClearColor(0, 0, 0, 1);
-    gl.glClear(GL.GL_COLOR_BUFFER_BIT);
-    gl.glColorMask(true, true, true, true);
-  }
-
-
-  protected void bindPrimaryMultiFBO() {
-    if (multisample) {
-      gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, glMultiFbo[0]);
-      PGraphicsOpenGL.screenFramebuffer.glFbo = glMultiFbo[0];
-    }
-  }
-
-
-  protected void releaseScreenFBO() {
-    gl.glDeleteTextures(1, glColorTex, 0);
-    gl.glDeleteFramebuffers(1, glColorFbo, 0);
-    if (packedDepthStencil) {
-      gl.glDeleteRenderbuffers(1, glPackedDepthStencil, 0);
-    } else {
-      gl.glDeleteRenderbuffers(1, glDepthBuffer, 0);
-      gl.glDeleteRenderbuffers(1, glStencilBuffer, 0);
-    }
-    if (multisample) {
-      gl.glDeleteFramebuffers(1, glMultiFbo, 0);
-      gl.glDeleteRenderbuffers(1, glColorRenderBuffer, 0);
-    }
-  }
-*/
-
-  protected int qualityToSamples(int quality) {
-    if (quality <= 1) {
-      return 1;
-    } else {
-      // Number of samples is always an even number:
-      int n = 2 * (quality / 2);
-      return n;
-    }
-  }
-
-  protected void forceUpdate() {
-    if (0 < capabilities.getNumSamples()) {
-      backFBO.syncSamplingSink(gl);
-      backFBO.bind(gl);
-    }
-  }
-
-
-  protected void bindBackBufferTex() {
-
+  protected void bindFrontTexture() {
     if (!texturingIsEnabled(GL.GL_TEXTURE_2D)) {
       enableTexturing(GL.GL_TEXTURE_2D);
     }
     gl.glBindTexture(GL.GL_TEXTURE_2D, frontTex.getName());
-
   }
 
 
-  protected void unbindBackBufferTex() {
-
+  protected void unbindFrontTexture() {
     if (textureIsBound(GL.GL_TEXTURE_2D, frontTex.getName())) {
       // We don't want to unbind another texture
       // that might be bound instead of this one.
@@ -840,13 +716,26 @@ public class PGL {
         gl.glBindTexture(GL.GL_TEXTURE_2D, 0);
       }
     }
-
   }
 
 
+  protected void syncBackTexture() {
+    if (0 < capabilities.getNumSamples()) {
+      backFBO.syncSamplingSink(gl);
+      backFBO.bind(gl);
+    }
+  }
 
 
-
+  protected int qualityToSamples(int quality) {
+    if (quality <= 1) {
+      return 1;
+    } else {
+      // Number of samples is always an even number:
+      int n = 2 * (quality / 2);
+      return n;
+    }
+  }
 
 
   ///////////////////////////////////////////////////////////
@@ -854,11 +743,11 @@ public class PGL {
   // Frame rendering
 
 
-  protected void beginOnscreenDraw(boolean clear) {
+  protected void beginDraw(boolean clear) {
   }
 
 
-  protected void endOnscreenDraw(boolean clear0) {
+  protected void endDraw(boolean clear0) {
     if (!clear0 && isFBOBacked() && capabilities.getNumSamples() == 0) {
       // Draw the back texture into the front texture, which will be used as
       // front texture in the next frame. Otherwise flickering will occur if
@@ -2513,7 +2402,7 @@ public class PGL {
             backTex  = (FBObject.TextureAttachment) sinkFBO.getColorbuffer(0);
             frontTex = (FBObject.TextureAttachment)frontFBO.getColorbuffer(0);
           } else {
-            // W/out multisampling, rendering is done on the back buffer.
+            // w/out multisampling, rendering is done on the back buffer.
             frontFBO = fboDrawable.getFBObject(GL.GL_FRONT);
 
             backTex  = fboDrawable.getTextureBuffer(GL.GL_BACK);
