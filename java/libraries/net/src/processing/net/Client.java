@@ -112,6 +112,7 @@ public class Client implements Runnable {
     }
   }
 
+  
   /**
    * @param socket any object of type Socket
    * @throws IOException
@@ -183,35 +184,49 @@ public class Client implements Runnable {
   public void run() {
     while (Thread.currentThread() == thread) {
       try {
-        while ((input != null) &&
-               (input.available() > 0)) {  // this will block
+        while (input != null) {
+          int value;
+
+          // try to read a byte using a blocking read. 
+          // An exception will occur when the sketch is exits.
+          try {
+            value = input.read();
+          } catch (SocketException e) {
+             System.err.println("Client SocketException: " + e.getMessage());
+             // the socket had a problem reading so don't try to read from it again.
+             stop();
+             return;
+          }
+        
+          // read returns -1 if end-of-stream occurs (for example if the host disappears)
+          if (value == -1) {
+            System.err.println("Client got end-of-stream.");
+            stop();
+            return;
+          }
+
           synchronized (buffer) {
+            // todo: at some point buffer should stop increasing in size, 
+            // otherwise it could use up all the memory.
             if (bufferLast == buffer.length) {
               byte temp[] = new byte[bufferLast << 1];
               System.arraycopy(buffer, 0, temp, 0, bufferLast);
               buffer = temp;
             }
-            buffer[bufferLast++] = (byte) input.read();
+            buffer[bufferLast++] = (byte)value;
+          }
+
+          // now post an event
+          if (clientEventMethod != null) {
+            try {
+              clientEventMethod.invoke(parent, new Object[] { this });
+             } catch (Exception e) {
+               System.err.println("error, disabling clientEvent() for " + host);
+               e.printStackTrace();
+               clientEventMethod = null;
+            }
           }
         }
-        // now post an event
-        if (clientEventMethod != null) {
-          try {
-            clientEventMethod.invoke(parent, new Object[] { this });
-          } catch (Exception e) {
-            System.err.println("error, disabling clientEvent() for " + host);
-            e.printStackTrace();
-            clientEventMethod = null;
-          }
-        }
-
-        try {
-          // uhh.. not sure what's best here.. since blocking,
-          // do we need to worry about sleeping much? or is this
-          // gonna try to slurp cpu away from the main applet?
-          Thread.sleep(10);
-        } catch (InterruptedException ex) { }
-
       } catch (IOException e) {
         //errorMessage("run", e);
         e.printStackTrace();
