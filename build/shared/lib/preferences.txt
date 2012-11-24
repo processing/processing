@@ -277,9 +277,14 @@ preproc.output_parse_tree = false
 # as we move to the new built-in event types. Also remove .list from the end
 # of the name, so that the pref will reset. These are now the same imports
 # as are used over on the Android side.
+# Changed again for revision 0215 (around 2.0b7) to remove all default 
+# imports that aren't covered by the reference. This has been done to improve
+# overall cross-platform parity and to avoid users unknowingly adding 
+# Java classes, and then the sadness that comes when switching to Android
+# or JavaScript modes
 #preproc.imports.list = java.applet.*,java.awt.Dimension,java.awt.Frame,java.awt.event.MouseEvent,java.awt.event.KeyEvent,java.awt.event.FocusEvent,java.awt.Image,java.io.*,java.net.*,java.text.*,java.util.*,java.util.zip.*,java.util.regex.*
 #preproc.imports = java.io.*,java.net.*,java.text.*,java.util.*,java.util.zip.*,java.util.regex.*
-preproc.imports = java.io.*,java.util.*
+#preproc.imports = java.io.*,java.util.*
 
 # set to the program to be used for opening HTML files, folders, etc.
 #launcher.linux = xdg-open
