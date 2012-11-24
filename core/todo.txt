@@ -25,6 +25,8 @@ X   add an additional parameter for the others
 _   http://code.google.com/p/processing/issues/detail?id=711
 X changed events to PRESS, RELEASE, CLICK, DRAG, MOVE, ENTER, EXIT
 X   instead of past-tense versions of the same
+A Implement arc() with modes on OpenGL
+A   http://code.google.com/p/processing/issues/detail?id=1406
 
 cleanup/earlier by Andres
 A when turning smoothing on, internal lines of shapes are visible

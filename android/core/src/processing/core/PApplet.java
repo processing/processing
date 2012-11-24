@@ -242,6 +242,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
   public boolean mousePressed;
 
+  public MouseEvent mouseEvent;
+
 //  public MotionEvent motionEvent;
 
   /** Post events to the main thread that created the Activity */
@@ -2137,6 +2139,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
 
   protected void handleMouseEvent(MouseEvent event) {
+    mouseEvent = event;
+
     // http://dev.processing.org/bugs/show_bug.cgi?id=170
     // also prevents mouseExited() on the mac from hosing the mouse
     // position, because x/y are bizarre values on the exit event.

@@ -12,6 +12,8 @@ earlier
 X The sketch name can't begin with '_' (underscore)
 X   http://code.google.com/p/processing/issues/detail?id=859
 
+_ does launching p5 from inside the .zip folder cause it to quit immediately?
+
 _ fix the debug stuff before shipping this out
 
 _ remove java.awt.* imports from sketches
