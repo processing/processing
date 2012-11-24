@@ -859,10 +859,10 @@ public class PGL {
 
 
   protected void endOnscreenDraw(boolean clear0) {
-    if (isFBOBacked() && capabilities.getNumSamples() == 0) {
+    if (!clear0 && isFBOBacked() && capabilities.getNumSamples() == 0) {
       // Draw the back texture into the front texture, which will be used as
       // front texture in the next frame. Otherwise flickering will occur if
-      // the sketch uses "incremental drawing" (no background()).
+      // the sketch uses "incremental drawing" (background() not called).
       frontFBO.bind(gl);
       gl.glDisable(GL.GL_BLEND);
       drawTexture(GL.GL_TEXTURE_2D, backTex.getName(),

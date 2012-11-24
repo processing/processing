@@ -1727,7 +1727,7 @@ public class PGraphicsOpenGL extends PGraphics {
     if (primarySurface) {
       pgl.beginOnscreenDraw(clearColorBuffer);
     } else {
-      pgl.beginOffscreenDraw(pgPrimary.clearColorBuffer);
+      pgl.beginOffscreenDraw(clearColorBuffer);
 
       // Just in case the texture was recreated (in a resize event for example)
       offscreenFramebuffer.setColorBuffer(texture);
@@ -1822,28 +1822,27 @@ public class PGraphicsOpenGL extends PGraphics {
         restoreSurface = true;
       }
 
-
-      // Draw the back texture into the front texture, which will be used as
-      // front texture in the next frame. Otherwise flickering will occur if
-      // the sketch uses "incremental drawing" (no background()).
-      if (offscreenMultisample) {
-        pushFramebuffer();
-        setFramebuffer(offscreenFramebuffer);
+      if (!clearColorBuffer0) {
+        // Draw the back texture into the front texture, which will be used as
+        // front texture in the next frame. Otherwise flickering will occur if
+        // the sketch uses "incremental drawing" (background() not called).
+        if (offscreenMultisample) {
+          pushFramebuffer();
+          setFramebuffer(offscreenFramebuffer);
+        }
+        offscreenFramebuffer.setColorBuffer(ptexture);
+        drawTexture();
+        offscreenFramebuffer.setColorBuffer(texture);
+        if (offscreenMultisample) {
+          popFramebuffer();
+        }
       }
-      offscreenFramebuffer.setColorBuffer(ptexture);
-      drawTexture();
-      offscreenFramebuffer.setColorBuffer(texture);
-      if (offscreenMultisample) {
-        popFramebuffer();
-      }
-
-
 
       popFramebuffer();
 
       texture.updateTexels(); // Mark all texels in screen texture as modified.
 
-      pgl.endOffscreenDraw(pgPrimary.clearColorBuffer0);
+      pgl.endOffscreenDraw(clearColorBuffer0);
 
       int temp = texture.glName;
       texture.glName = ptexture.glName;
