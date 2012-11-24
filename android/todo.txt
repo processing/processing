@@ -36,6 +36,8 @@ X   http://code.google.com/p/processing/issues/detail?id=242
 X   hasn't emerged as a real issue
 o try using the internal javac on windows and see if exceptions come through..
 o   actually i think that might have been worse...
+X rounded rect support
+X   http://code.google.com/p/processing/issues/detail?id=929
 
 motion events
 o registerMethod("motionEvent") and "mouseEvent" not implemented
@@ -124,9 +126,6 @@ _ thread is continually running - 'inside handleDraw()' running continually
 _   inside run() it shouldn't still be going
 _ need sizeChanged() method... 
 _   also add the param to the xml file saying that it can deal w/ rotation
-
-_ temp files are not deleted
-_   http://code.google.com/p/processing/issues/detail?id=562
 
 _ check out andres' changes for PShape
 
