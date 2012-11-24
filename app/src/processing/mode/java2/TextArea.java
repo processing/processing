@@ -82,11 +82,11 @@ public class TextArea extends JEditTextArea {
 
         // load settings from theme.txt
         DebugMode theme = (DebugMode) editor.getMode();
-        gutterBgColor = theme.loadColorFromTheme("gutter.bgcolor", gutterBgColor);
-        gutterLineColor = theme.loadColorFromTheme("gutter.linecolor", gutterLineColor);
+        gutterBgColor = theme.getThemeColor("gutter.bgcolor", gutterBgColor);
+        gutterLineColor = theme.getThemeColor("gutter.linecolor", gutterLineColor);
         gutterPadding = theme.getInteger("gutter.padding");
-        breakpointMarker = theme.loadStringFromTheme("breakpoint.marker", breakpointMarker);
-        currentLineMarker = theme.loadStringFromTheme("currentline.marker", currentLineMarker);
+        breakpointMarker = theme.loadThemeString("breakpoint.marker", breakpointMarker);
+        currentLineMarker = theme.loadThemeString("currentline.marker", currentLineMarker);
     }
 
     /**
