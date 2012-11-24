@@ -53,6 +53,8 @@ public class PGraphicsOpenGL extends PGraphics {
     "blendMode(%1$s) is not supported by this hardware (or driver)";
   static final String BLEND_RENDERER_ERROR =
     "blendMode(%1$s) is not supported by this renderer";
+  static final String NESTED_DRAW_ERROR =
+    "Already called drawing on another PGraphicsOpenGL object";
 
   // ........................................................
 
@@ -1553,10 +1555,8 @@ public class PGraphicsOpenGL extends PGraphics {
     if (pgCurrent != null && !pgCurrent.primarySurface &&
                              !this.primarySurface) {
       // It seems that the user is trying to start another beginDraw()/endDraw()
-      // block for an offscreen surface, still drawing on another offscreen
-      // surface.
-      showWarning("Already called beginDraw() for another " +
-                  "PGraphicsOpenGL object.");
+      // block for an offscreen surface, still drawing on another one.
+      showWarning(NESTED_DRAW_ERROR);
       return;
     }
 
@@ -1564,15 +1564,22 @@ public class PGraphicsOpenGL extends PGraphics {
       getGLParameters();
     }
 
+
+
+    // surface initialization/update -------------------------------------------
     if (primarySurface) {
       if (drawFramebuffer == null) {
         drawFramebuffer = new FrameBuffer(parent, width, height, true);
         setFramebuffer(drawFramebuffer);
       }
-      drawFramebuffer.setFBO(pgl.primaryDrawFramebuffer());
       if (readFramebuffer == null) {
         readFramebuffer = new FrameBuffer(parent, width, height, true);
       }
+//      if (pgl.isFBOBacked()) {
+//        loadTextureImpl();
+//      }
+
+      drawFramebuffer.setFBO(pgl.primaryDrawFramebuffer());
       readFramebuffer.setFBO(pgl.primaryReadFramebuffer());
 
       pgl.updatePrimary();
@@ -1601,11 +1608,15 @@ public class PGraphicsOpenGL extends PGraphics {
       pgl.drawBuffer(PGL.COLOR_ATTACHMENT0);
     }
 
+
+
     // We are ready to go!
     report("top beginDraw()");
-
     drawing = true;
     pgCurrent = this;
+
+
+    // Setting up variables ----------------------------------------------------
 
     inGeo.clear();
     tessGeo.clear();
@@ -1709,6 +1720,10 @@ public class PGraphicsOpenGL extends PGraphics {
     pgl.clearStencil(0);
     pgl.clear(PGL.DEPTH_BUFFER_BIT | PGL.STENCIL_BUFFER_BIT);
 
+
+
+
+    // Should go right after report("top beginDraw()") -------------------------
     if (primarySurface) {
       pgl.beginOnscreenDraw(clearColorBuffer);
     } else {
@@ -1725,6 +1740,7 @@ public class PGraphicsOpenGL extends PGraphics {
         pgl.disable(PGL.SCISSOR_TEST);
       }
     }
+    // -------------------------------------------------------------------------
 
     if (!settingsInited) {
       defaultSettings();
@@ -1748,6 +1764,11 @@ public class PGraphicsOpenGL extends PGraphics {
 
     clearColorBuffer0 = clearColorBuffer;
     clearColorBuffer = false;
+
+
+
+
+
 
     report("bot beginDraw()");
   }
@@ -1801,11 +1822,32 @@ public class PGraphicsOpenGL extends PGraphics {
         restoreSurface = true;
       }
 
+
+      // Draw the back texture into the front texture, which will be used as
+      // front texture in the next frame. Otherwise flickering will occur if
+      // the sketch uses "incremental drawing" (no background()).
+      if (offscreenMultisample) {
+        pushFramebuffer();
+        setFramebuffer(offscreenFramebuffer);
+      }
+      offscreenFramebuffer.setColorBuffer(ptexture);
+      drawTexture();
+      offscreenFramebuffer.setColorBuffer(texture);
+      if (offscreenMultisample) {
+        popFramebuffer();
+      }
+
+
+
       popFramebuffer();
 
       texture.updateTexels(); // Mark all texels in screen texture as modified.
 
       pgl.endOffscreenDraw(pgPrimary.clearColorBuffer0);
+
+      int temp = texture.glName;
+      texture.glName = ptexture.glName;
+      ptexture.glName = temp;
 
       pgPrimary.restoreGL();
     }
@@ -5374,7 +5416,7 @@ public class PGraphicsOpenGL extends PGraphics {
     endPixelsOp();
   }
 
-
+/*
   // Uses the texture in img as the color buffer for this surface.
   public void setTexture(PImage img) {
     if (width != img.width || height != img.height) {
@@ -5407,7 +5449,7 @@ public class PGraphicsOpenGL extends PGraphics {
       }
     }
   }
-
+*/
 
   public void drawTexture(int target, int id, int width, int height,
                           int X0, int Y0, int X1, int Y1) {
@@ -5429,6 +5471,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void loadTextureImpl(int sampling, boolean mipmap) {
+
     if (width == 0 || height == 0) return;
     if (texture == null || texture.contextIsOutdated()) {
       Texture.Parameters params = new Texture.Parameters(ARGB,
@@ -5440,11 +5483,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
 
-
 /*
-    texture.glName = pgl.getBackTexName();
-    ptexture.glName = pgl.getFrontTexName();
-
     if (width == 0 || height == 0) return;
     if (texture == null || texture.contextIsOutdated()) {
       if (primarySurface) {
@@ -5488,7 +5527,22 @@ public class PGraphicsOpenGL extends PGraphics {
         ptexture.colorBufferOf(this);
       }
     }
-*/
+    */
+  }
+
+
+  protected void swapTexture() {
+    if (primarySurface) {
+      if (pgl.isFBOBacked()) {
+        texture.glName = pgl.getBackTexName();
+        ptexture.glName = pgl.getFrontTexName();
+      }
+    } else {
+      // Swap texture id's
+      int temp = texture.glName;
+      texture.glName = ptexture.glName;
+      ptexture.glName = temp;
+    }
   }
 
 
@@ -5506,6 +5560,7 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
+/*
   protected boolean validSurfaceTex(Texture tex) {
     Texture.Parameters params = tex.getParameters();
     if (primarySurface) {
@@ -5514,7 +5569,7 @@ public class PGraphicsOpenGL extends PGraphics {
       return params.sampling == Texture.BILINEAR && !params.mipmaps;
     }
   }
-
+*/
 
 
   //////////////////////////////////////////////////////////////
@@ -5913,7 +5968,7 @@ public class PGraphicsOpenGL extends PGraphics {
     if (primarySurface) {
       pgl.bindBackBufferTex();
     } else {
-
+      ptexture.bind();
     }
   }
 
@@ -5922,7 +5977,7 @@ public class PGraphicsOpenGL extends PGraphics {
     if (primarySurface) {
       pgl.unbindBackBufferTex();
     } else {
-
+      ptexture.unbind();
     }
   }
 
@@ -6031,6 +6086,10 @@ public class PGraphicsOpenGL extends PGraphics {
     pgl.updateOffscreen(pgPrimary.pgl);
 
     loadTextureImpl(Texture.BILINEAR, false);
+    Texture.Parameters params = new Texture.Parameters(ARGB, Texture.BILINEAR, false);
+    ptexture = new Texture(parent, width, height, params);
+    ptexture.invertedY(true);
+    ptexture.colorBufferOf(this);
 
     // In case of reinitialization (for example, when the smooth level
     // is changed), we make sure that all the OpenGL resources associated
