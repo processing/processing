@@ -636,20 +636,24 @@ public class PGL {
   }
 
 
-  protected int getBackBuffer() {
+  protected int getDefautDrawBuffer() {
     if (capabilities.isFBO()) {
       return GL.GL_COLOR_ATTACHMENT0;
-    } else {
+    } else if (capabilities.getDoubleBuffered()) {
       return GL.GL_BACK;
+    } else {
+      return GL.GL_FRONT;
     }
   }
 
 
-  protected int getFrontBuffer() {
+  protected int getDefaultReadBuffer() {
     if (capabilities.isFBO()) {
       return GL.GL_COLOR_ATTACHMENT0;
-    } else {
+    } else if (capabilities.getDoubleBuffered()) {
       return GL.GL_BACK;
+    } else {
+      return GL.GL_FRONT;
     }
   }
 
@@ -659,10 +663,15 @@ public class PGL {
   }
 
 
+  protected boolean isMultisampled() {
+    return 0 < capabilities.getNumSamples();
+  }
+
+
   protected Texture wrapBackTexture() {
     Texture tex = new Texture(pg.parent);
     tex.init(backTex.getName(),
-             GL.GL_TEXTURE_2D, backTex.format,
+             GL.GL_TEXTURE_2D, GL.GL_RGBA,
              backTex.getWidth(), backTex.getHeight(),
              backTex.minFilter, backTex.magFilter,
              backTex.wrapS, backTex.wrapT);
@@ -676,7 +685,7 @@ public class PGL {
   protected Texture wrapFrontTexture() {
     Texture tex = new Texture(pg.parent);
     tex.init(backTex.getName(),
-             GL.GL_TEXTURE_2D, frontTex.format,
+             GL.GL_TEXTURE_2D, GL.GL_RGBA,
              frontTex.getWidth(), frontTex.getHeight(),
              frontTex.minFilter, frontTex.magFilter,
              frontTex.wrapS, frontTex.wrapT);

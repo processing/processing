@@ -383,10 +383,10 @@ public class PGraphicsOpenGL extends PGraphics {
   // Offscreen rendering:
 
   protected FrameBuffer offscreenFramebuffer;
-  protected FrameBuffer offscreenFramebufferMultisample;
+  protected FrameBuffer multisampleFramebuffer;
   protected boolean offscreenMultisample;
 
-  protected boolean offscreenNotCurrent;
+  protected boolean pixOpChangedFB;
 
   // ........................................................
 
@@ -417,9 +417,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
   /** True if we are inside a beginDraw()/endDraw() block. */
   protected boolean drawing = false;
-
-  /** Used to indicate an OpenGL surface recreation */
-  protected boolean restoreSurface = false;
 
   /** Used to detect continuous use of the smooth/noSmooth functions */
   protected boolean smoothDisabled = false;
@@ -1580,15 +1577,14 @@ public class PGraphicsOpenGL extends PGraphics {
       ptexture.glName = pgl.getFrontTextureName();
 
       pgl.update();
-      pgl.drawBuffer(pgl.getBackBuffer());
     } else {
       if (!pgl.initialized) {
         initOffscreen();
       } else {
         boolean outdated = offscreenFramebuffer != null &&
                            offscreenFramebuffer.contextIsOutdated();
-        boolean outdatedMulti = offscreenFramebufferMultisample != null &&
-          offscreenFramebufferMultisample.contextIsOutdated();
+        boolean outdatedMulti = multisampleFramebuffer != null &&
+          multisampleFramebuffer.contextIsOutdated();
         if (outdated || outdatedMulti) {
           pgl.initialized = false;
           initOffscreen();
@@ -1597,12 +1593,10 @@ public class PGraphicsOpenGL extends PGraphics {
 
       pushFramebuffer();
       if (offscreenMultisample) {
-        setFramebuffer(offscreenFramebufferMultisample);
+        setFramebuffer(multisampleFramebuffer);
       } else {
         setFramebuffer(offscreenFramebuffer);
       }
-//      pgl.updateOffscreen(pgPrimary.pgl);
-      pgl.drawBuffer(PGL.COLOR_ATTACHMENT0);
     }
 
 
@@ -1732,12 +1726,7 @@ public class PGraphicsOpenGL extends PGraphics {
       defaultSettings();
     }
 
-    /*
-    if (restoreSurface) {
-      restoreSurfaceFromPixels();
-      restoreSurface = false;
-    }
-    */
+
 
     if (hints[DISABLE_DEPTH_MASK]) {
       pgl.depthMask(false);
@@ -1752,11 +1741,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
     clearColorBuffer0 = clearColorBuffer;
     clearColorBuffer = false;
-
-
-
-
-
 
     report("bot beginDraw()");
   }
@@ -1776,21 +1760,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
     if (primarySurface) {
       pgl.endDraw(clearColorBuffer0);
-
-      /*
-      if (!pgl.initialized || parent.frameCount == 0) {
-        // TODO: check this code and see if should go before endOnscreenDraw
-        // Smooth was called at some point during drawing. We save
-        // the current contents of the back buffer (because the
-        // buffers haven't been swapped yet) to the pixels array.
-        // The frameCount == 0 condition is to handle the situation when
-        // no smooth is called in setup in the PDE, but the OpenGL appears to
-        // be recreated due to the size() nastiness.
-        saveSurfaceToPixels();
-        restoreSurface = true;
-      }
-      */
-
       pgl.flush();
     } else {
       endOffscreenDraw();
@@ -1866,98 +1835,75 @@ public class PGraphicsOpenGL extends PGraphics {
       pgl.depthMask(true);
     }
 
-    pgl.drawBuffer(pgl.getBackBuffer());
+    currentFramebuffer.bind();
+    pgl.drawBuffer(pgl.getDefautDrawBuffer());
   }
 
 
-
-
   protected void beginPixelsOp(int op) {
-     // TODO: need to revise...
+    FrameBuffer pixfb = null;
     if (primarySurface) {
-      // We read or write from the back buffer, where all the
-      // drawing in the current frame is taking place.
-      pushFramebuffer();
       if (op == OP_READ) {
-        setFramebuffer(readFramebuffer);
-        pgl.readBuffer(pgl.getFrontBuffer());
-        if (pgl.isFBOBacked()) {
+        if (pgl.isFBOBacked() && pgl.isMultisampled()) {
+          // Making sure the back texture is up-to-date...
           pgl.syncBackTexture();
+          // ...because the read framebuffer uses it as the color buffer (the
+          // draw framebuffer is MSAA so it cannot be read from it).
+          pixfb = readFramebuffer;
+        } else {
+          pixfb = drawFramebuffer;
         }
-      } else {
-        setFramebuffer(drawFramebuffer);
-        pgl.drawBuffer(pgl.getBackBuffer());
+      } else if (op == OP_WRITE) {
+        // We can write to the draw framebuffer irrespective of whether is
+        // FBO-baked or multisampled.
+        pixfb = drawFramebuffer;
       }
-      offscreenNotCurrent = true;
     } else {
-      // Making sure that the offscreen FBO is current. This allows to do calls
-      // like loadPixels(), set() or get() without enclosing them between
-      // beginDraw()/endDraw() when working with a PGraphics object. We don't
-      // need the rest of the surface initialization/finalization, since only
-      // the pixels are affected.
       if (op == OP_READ) {
-        // We always read the screen pixels from the color FBO.
-        offscreenNotCurrent = offscreenFramebuffer != currentFramebuffer;
-        if (offscreenNotCurrent) {
-          pushFramebuffer();
-          setFramebuffer(offscreenFramebuffer);
-          //pgl.updateOffscreen(pgPrimary.pgl);
+        if (offscreenMultisample) {
+          // Making sure the offscreen FBO is up-to-date
+          multisampleFramebuffer.copy(offscreenFramebuffer, currentFramebuffer);
         }
-        pgl.readBuffer(PGL.COLOR_ATTACHMENT0);
-      } else {
+        // We always read the screen pixels from the color FBO.
+        pixfb = offscreenFramebuffer;
+      } else if (op == OP_WRITE) {
         // We can write directly to the color FBO, or to the multisample FBO
         // if multisampling is enabled.
-        if (offscreenMultisample) {
-          offscreenNotCurrent = offscreenFramebufferMultisample !=
-                                currentFramebuffer;
-        } else {
-          offscreenNotCurrent = offscreenFramebuffer != currentFramebuffer;
-        }
-        if (offscreenNotCurrent) {
-          pushFramebuffer();
-          if (offscreenMultisample) {
-            setFramebuffer(offscreenFramebufferMultisample);
-          } else {
-            setFramebuffer(offscreenFramebuffer);
-          }
-          //pgl.updateOffscreen(pgPrimary.pgl);
-        }
-        pgl.drawBuffer(PGL.COLOR_ATTACHMENT0);
+        pixfb = offscreenMultisample ? multisampleFramebuffer :
+                                       offscreenFramebuffer;
       }
     }
+
+    // Set the framebuffer where the pixel operation shall be carried out.
+    if (pixfb != currentFramebuffer) {
+      pushFramebuffer();
+      setFramebuffer(pixfb);
+      pixOpChangedFB = true;
+    }
+
+    // We read from/write to the draw buffer.
+    if (op == OP_READ) {
+      pgl.readBuffer(pgl.getDefautDrawBuffer());
+    } else if (op == OP_WRITE) {
+      pgl.drawBuffer(pgl.getDefautDrawBuffer());
+    }
+
     pixelsOp = op;
   }
 
 
   protected void endPixelsOp() {
-    // TODO: need to revise...
-
-    if (offscreenNotCurrent) {
-      if (!primarySurface && pixelsOp == OP_WRITE && offscreenMultisample) {
-        // We were writing to the multisample FBO, so we need
-        // to blit its contents to the color FBO.
-        offscreenFramebufferMultisample.copy(offscreenFramebuffer);
-      }
+    // Restoring current framebuffer prior to the pixel operation
+    if (pixOpChangedFB) {
       popFramebuffer();
+      pixOpChangedFB = false;
     }
 
-    pixelsOp = OP_NONE;
+    // Restoring default read/draw buffer configuration.
+    pgl.readBuffer(pgl.getDefaultReadBuffer());
+    pgl.drawBuffer(pgl.getDefautDrawBuffer());
 
-    /*
-    if (offscreenNotCurrent) {
-      if (primarySurface) {
-        pgl.bindPrimaryMultiFBO();
-      } else {
-        if (pixelsOp == OP_WRITE && offscreenMultisample) {
-          // We were writing to the multisample FBO, so we need
-          // to blit its contents to the color FBO.
-          offscreenFramebufferMultisample.copy(offscreenFramebuffer);
-        }
-        popFramebuffer();
-      }
-    }
     pixelsOp = OP_NONE;
-    */
   }
 
 
@@ -5188,17 +5134,6 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  protected void saveSurfaceToPixels() {
-    allocatePixels();
-    readPixels();
-  }
-
-
-  protected void restoreSurfaceFromPixels() {
-    drawPixels(0, 0, width, height);
-  }
-
-
   protected void allocatePixels() {
     if ((pixels == null) || (pixels.length != width * height)) {
       pixels = new int[width * height];
@@ -5333,7 +5268,7 @@ public class PGraphicsOpenGL extends PGraphics {
       // We need to copy the contents of the multisampled buffer to the
       // color buffer, so the later is up-to-date with the last drawing.
       if (offscreenMultisample) {
-        offscreenFramebufferMultisample.copy(offscreenFramebuffer);
+        multisampleFramebuffer.copy(offscreenFramebuffer, currentFramebuffer);
       }
     }
 
@@ -5887,10 +5822,6 @@ public class PGraphicsOpenGL extends PGraphics {
     // Getting the context and capabilities from the main renderer.
     pgPrimary = (PGraphicsOpenGL)parent.g;
     pgl.initialized = true;
-//    pgl.initOffscreenSurface(pgPrimary.pgl);
-//    pgl.updateOffscreen(pgPrimary.pgl);
-
-
     loadTextureImpl(Texture.BILINEAR, false);
 
     // In case of reinitialization (for example, when the smooth level
@@ -5899,18 +5830,18 @@ public class PGraphicsOpenGL extends PGraphics {
     if (offscreenFramebuffer != null) {
       offscreenFramebuffer.release();
     }
-    if (offscreenFramebufferMultisample != null) {
-      offscreenFramebufferMultisample.release();
+    if (multisampleFramebuffer != null) {
+      multisampleFramebuffer.release();
     }
 
     boolean packed = depthBits == 24 && stencilBits == 8 &&
                      packedDepthStencilSupported;
     if (PGraphicsOpenGL.fboMultisampleSupported && 1 < quality) {
-      offscreenFramebufferMultisample =
+      multisampleFramebuffer =
         new FrameBuffer(parent, texture.glWidth, texture.glHeight, quality, 0,
                         depthBits, stencilBits, packed, false);
 
-      offscreenFramebufferMultisample.clear();
+      multisampleFramebuffer.clear();
       offscreenMultisample = true;
 
       // The offscreen framebuffer where the multisampled image is finally drawn
@@ -5949,25 +5880,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void endOffscreenDraw() {
     if (offscreenMultisample) {
-      offscreenFramebufferMultisample.copy(offscreenFramebuffer);
+      multisampleFramebuffer.copy(offscreenFramebuffer, currentFramebuffer);
     }
-
-    /*
-    if (!pgl.initialized || !pgPrimary.pgl.initialized ||
-        parent.frameCount == 0) {
-      // If the primary surface is re-initialized, this offscreen
-      // surface needs to save its contents into the pixels array
-      // so they can be restored after the FBOs are recreated.
-      // Note that a consequence of how this is code works, is that
-      // if the user changes the smooth level of the primary surface
-      // in the middle of draw, but after drawing the offscreen surfaces
-      // then these won't be restored in the next frame since their
-      // endDraw() calls didn't pick up any change in the initialization
-      // state of the primary surface.
-      saveSurfaceToPixels();
-      restoreSurface = true;
-    }
-*/
 
     if (!clearColorBuffer0) {
       // Draw the back texture into the front texture, which will be used as
