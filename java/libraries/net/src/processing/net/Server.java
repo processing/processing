@@ -147,6 +147,19 @@ public class Server implements Runnable {
     return -1;
   }
 
+  
+  static public String ip() {
+    try {
+      return InetAddress.getLocalHost().getHostAddress();
+    } catch (UnknownHostException e) {
+      e.printStackTrace();
+    }
+    return null;
+//    InetAddress thisIp = InetAddress.getLocalHost();
+//    thisIpAddress = thisIp.getHostAddress()
+//    return server.getInetAddress().getHostAddress();
+  }
+
 
   // the last index used for available. can't just cycle through
   // the clients in order from 0 each time, because if client 0 won't
