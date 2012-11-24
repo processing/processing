@@ -1,3 +1,34 @@
+PROCESSING ??? 
+
+[ changes ] 
+
++ Removed all imports that aren't covered in the Processing reference. 
+  If you use java.awt, java.util, or other classes in your sketch, you
+  will need to add an import line to the beginning of your sketch.
+
+  Only the classes that are covered in the reference (HashMap, ArrayList, 
+  and some others) are now imported by default. This has been done to improve
+  overall cross-platform parity and to avoid users unknowingly adding 
+  Java classes, and then the sadness that comes when switching to Android
+  or JavaScript modes. 
+
+  The list of imports is now hard-coded (no longer read from preferences.txt)
+  and includes the following:
+  import java.util.HashMap;
+  import java.util.ArrayList;
+  import java.io.BufferedReader;
+  import java.io.PrintWriter;
+  import java.io.InputStream;
+  import java.io.OutputStream;
+  import java.io.IOException;
+
+  If we're missing anything that's not covered in the reference, please
+  let us know via the bugs database.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING 2.0b6 (REV 0214) - 2 November 2012
 
 Patching up command line issues that went backwards in the last release, 

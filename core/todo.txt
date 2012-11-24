@@ -106,6 +106,7 @@ if (external && event.getNative() instanceof java.awt.event.KeyEvent &&
        exit();
      }
 
+_ send note about begin/endShape and vertex() calls
 
 _ createShape() not yet implemented for Java2D
 _   http://code.google.com/p/processing/issues/detail?id=1400
