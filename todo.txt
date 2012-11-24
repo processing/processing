@@ -32,6 +32,9 @@ _ change error message for serial re: 64-bit
 _   "To use this library, switch to 32-bit mode in Preferences." (OS X)
 _   "To use this library, you must use the 32-bit version of Processing."
 
+_ temp files are not deleted
+_   http://code.google.com/p/processing/issues/detail?id=562
+
 _ DebugMode throwing exception about breakpoints when trying to save
 
 _ standard "Emacs" keybindings not implemented on OS X

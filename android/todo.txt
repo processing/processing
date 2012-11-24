@@ -12,6 +12,12 @@ X   moving away from this anyway
 X pmouseX/Y not being set properly?
 X   http://code.google.com/p/processing/issues/detail?id=238
 X mouseEvent is back (see the Wiki)
+o add method to bring up the keyboard in sketches
+o   actually, just write an example of how to do it, since holding menu works
+o   http://code.google.com/p/processing/issues/detail?id=234
+X values for pmouseX/Y aren't great
+X   Examples > Topics > Drawing > Continuous Lines shows gaps
+X   http://code.google.com/p/processing/issues/detail?id=238
 
 cleaning/earlier
 A Defects in the tessellation of SVG shapes in A3D
@@ -20,6 +26,16 @@ X change run/present/export/export application names in the menus
 A Blacked-out screen when restoring Android app from background.
 A   http://code.google.com/p/processing/issues/detail?id=381
 X android sdk/build location has changed (android-7 not 2.1) fix build.xml
+A excessive rotation of application causes memory to run out
+A   this probably means that some memory isn't being freed that should be
+A   new window and surfaceview objects are being created in onCreate
+A     so they should probably be taken down in onDestroy.. but how?
+A   http://code.google.com/p/processing/issues/detail?id=235
+o should alpha PImage stuff use a non-4byte config?
+X   http://code.google.com/p/processing/issues/detail?id=242
+X   hasn't emerged as a real issue
+o try using the internal javac on windows and see if exceptions come through..
+o   actually i think that might have been worse...
 
 motion events
 o registerMethod("motionEvent") and "mouseEvent" not implemented
@@ -53,8 +69,6 @@ _ emulator not starting up on OS X?
 _ Android emulator doesn't always start on the first attempt
 _   http://code.google.com/p/processing/issues/detail?id=1210
 
-
-
 _ inside AndroidPreprocessor
 _   processing.mode.java.JavaBuild.scrubComments(sketch.getCode(0).getProgram())
 _   PApplet.match(scrubbed, processing.mode.java.JavaBuild.SIZE_REGEX);
@@ -84,6 +98,7 @@ _ don't let the examples get overwritten with other mode stuff
 _   the whole sketch.properties thing is yech
 
 _ add INTERNET permissions to the android net examples
+_   or other necessary permissions for other examples
 
 _ go through all basics/topics examples
 _   remove those that don't make sense with android
@@ -117,14 +132,12 @@ _ check out andres' changes for PShape
 
 _ re: android libraries, from shawn van every
 The most powerful part were the libraries (and the ease with which they could be developed).  Location, SMS, Camera/Video, Bluetooth (for Arduino integration) and PClient/PRequest were by far the most used.  The ones that came with it, plus the ones from MJSoft were good though I ended up making a couple of very specific ones for my students: http://www.mobvcasting.com/wp/?cat=4
+
 _ separate activity and view
 _ process trackball events (they're only deltas)
 _ handle repeat key events 
 _ implement link()
 _ need to post android examples
-
-_ try using the internal javac on windows and see if exceptions come through..
-_   actually i think that might have been worse...
 
 _ instructions on installing the usb driver for windows
 _   http://developer.android.com/sdk/win-usb.html
@@ -146,10 +159,6 @@ _   ...because it's ignoring the exception messages that come in from trying
 _   to create the new sdk object
 
 _ need to do something to make it easier to do new screen sizes.
-
-_ add method to bring up the keyboard in sketches
-_   actually, just write an example of how to do it, since holding menu works
-_   http://code.google.com/p/processing/issues/detail?id=234
 
 _ sketches must be removed manually if the debug keystore changes
 _   http://code.google.com/p/processing/issues/detail?id=236
@@ -242,28 +251,16 @@ CORE (PApplet, P2D et al)
 _ too many temporary objects (particularly w/ color) created with A2D
 _ http://code.google.com/p/processing/issues/detail?id=213
 
-_ mouseClicked() is currently missing
-_   implement tap methods to handle mouseClicked() 
+_ implement tap detection and set correct click count for mouseClicked()
 _   http://code.google.com/p/processing/issues/detail?id=215
-_ check on multiple pointers and multi-touch
+_ implement multiple pointers and multi-touch
 _   http://code.google.com/p/processing/issues/detail?id=243
 
-P4 _ excessive rotation of application causes memory to run out
-P4 _   this probably means that some memory isn't being freed that should be
-P4 _   new window and surfaceview objects are being created in onCreate
-P4 _     so they should probably be taken down in onDestroy.. but how?
-P4 _   http://code.google.com/p/processing/issues/detail?id=235
-P4 _ values for pmouseX/Y aren't great
-P4 _   Examples > Topics > Drawing > Continuous Lines shows gaps
-P4 _   http://code.google.com/p/processing/issues/detail?id=238
-
-P5 _ Examples > Topics > Effects > Lens uses a ton of memory
-P5 _ resize() needs to use the android resize stuff
-P5 _   right now using the rather than expensive copy()
-P5 _   instead, create a new resized bitmap, and get rid of pixels[]
-P5 _   http://code.google.com/p/processing/issues/detail?id=239
-P5 _ should alpha PImage stuff use a non-4byte config?
-P5 _   http://code.google.com/p/processing/issues/detail?id=242
+_ Examples > Topics > Effects > Lens uses a ton of memory
+_ resize() needs to use the android resize stuff
+_   right now using the rather than expensive copy()
+_   instead, create a new resized bitmap, and get rid of pixels[]
+_   http://code.google.com/p/processing/issues/detail?id=239
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 

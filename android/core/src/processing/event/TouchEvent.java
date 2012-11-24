@@ -23,6 +23,9 @@
 package processing.event;
 
 
+// PLACEHOLDER CLASS: DO NOT USE. IT HAS NOT EVEN DECIDED WHETHER
+// THIS WILL BE CALLED TOUCHEVENT ONCE IT'S FINISHED.
+
 /*
 http://developer.android.com/guide/topics/ui/ui-events.html
 http://developer.android.com/reference/android/view/MotionEvent.html
