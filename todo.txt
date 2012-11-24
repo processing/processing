@@ -7,24 +7,11 @@ X   new set: java.io.*,java.util.*
 X   removed: java.applet.*,java.awt.Dimension,java.awt.Frame,java.awt.event.MouseEvent,java.awt.event.KeyEvent,java.awt.event.FocusEvent,java.awt.Image,
 X mode detection isn't properly ignoring code inside comments
 X   http://code.google.com/p/processing/issues/detail?id=1404
-
-earlier
-X The sketch name can't begin with '_' (underscore)
-X   http://code.google.com/p/processing/issues/detail?id=859
-
-_ "java.lang.ArrayIndexOutOfBoundsException: 10" shows "10" as error message
-
-_ remove sketch.properties when moving back to the default?
-_   or can we not do this, because the next mode needs this?
-
-_ does launching p5 from inside the .zip folder cause it to quit immediately?
-
-_ fix the debug stuff before shipping this out
-
-_ remove java.awt.* imports from sketches
-_   go through examples to make sure they're not being used
-_   do command line to run through all examples? 
-_ consider hard-coding these, the pref can be for additions?
+X added debug mode as 'experimental' heading into 2.0
+o "java.lang.ArrayIndexOutOfBoundsException: 10" shows "10" as error message
+X remove java.awt.* imports from sketches
+X   consider hard-coding these
+o   the pref can be for additions?
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.io.BufferedReader;
@@ -32,6 +19,29 @@ import java.io.PrintWriter;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.IOException;
+_ fix the debug stuff before shipping this out
+_   DebugMode throwing exception about breakpoints when trying to save
+
+earlier
+X The sketch name can't begin with '_' (underscore)
+X   http://code.google.com/p/processing/issues/detail?id=859
+
+_ clientEvent() called even w/o data from server (with fix)
+_   http://code.google.com/p/processing/issues/detail?id=189
+_ check on adding ip() method
+
+_ Sketch that exported to Linux doesn't get the command line arguments
+_   http://code.google.com/p/processing/issues/detail?id=1359
+
+
+_ if RuntimeException thrown, needs to check if it's a wrapped exception
+_   for instance, if there's a crash inside makeGraphics()
+
+_ remove sketch.properties when moving back to the default?
+_   or can we not do this, because the next mode needs this?
+
+_ go through examples to make sure extra imports are not being used
+_   do command line to run through all examples? 
 
 _ change error message for serial re: 64-bit
 _   "To use this library, switch to 32-bit mode in Preferences." (OS X)
@@ -40,12 +50,9 @@ _   "To use this library, you must use the 32-bit version of Processing."
 _ temp files are not deleted
 _   http://code.google.com/p/processing/issues/detail?id=562
 
-_ DebugMode throwing exception about breakpoints when trying to save
-
 _ standard "Emacs" keybindings not implemented on OS X
 _   http://code.google.com/p/processing/issues/detail?id=1354
 _   http://guides.macrumors.com/Keyboard_shortcuts&section=10#Text_Shortcuts
-
 control-A	 move to start of current paragraph
 control-B	 move left one character
 control-D	 forwards delete
@@ -61,13 +68,6 @@ control-V	 move to end, then left one character
 control-Y	 paste text previously deleted with control-K
 
 http://download.eclipse.org/eclipse/downloads/
-
-_ clientEvent() called even w/o data from server (with fix)
-_   http://code.google.com/p/processing/issues/detail?id=189
-_ check on adding ip() method
-
-_ Sketch that exported to Linux doesn't get the command line arguments
-_   http://code.google.com/p/processing/issues/detail?id=1359
 
 _ renaming RGB (.pde) to Rgb.java says "a file named RGB.pde already exists"
 
@@ -866,6 +866,7 @@ _   avoid some confusion for when describing the libraries folder to users
 
 DIST / Windows
 
+_ does launching p5 from inside the .zip folder cause it to quit immediately?
 _ fix line endings in revisions.txt for windows
 _ exe instead of bat to make exported apps run in 64-bit
 _   http://code.google.com/p/processing/issues/detail?id=885
