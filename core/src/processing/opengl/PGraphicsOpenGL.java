@@ -3117,16 +3117,17 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // public void ellipse(float a, float b, float c, float d)
 
+
   @Override
-  public void arc(float a, float b, float c, float d,
-                  float start, float stop) {
+  protected void arcImpl(float x, float y, float w, float h,
+                         float start, float stop, int mode) {
     beginShape(TRIANGLE_FAN);
     defaultEdges = false;
     normalMode = NORMAL_MODE_SHAPE;
     inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
                       ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);
-    inGeo.addArc(a, b, c, d, start, stop, fill, stroke, ellipseMode);
+    inGeo.addArc(x, y, w, h, start, stop, fill, stroke, mode);
     endShape();
   }
 
@@ -8673,44 +8674,10 @@ public class PGraphicsOpenGL extends PGraphics {
       if (stroke) addEdge(idx, idx0, false, true);
     }
 
-    void addArc(float a, float b, float c, float d,
+    // arcMode can be 0, OPEN, CHORD, or PIE
+    void addArc(float x, float y, float w, float h,
                 float start, float stop,
-                boolean fill, boolean stroke, int ellipseMode) {
-      float x = a;
-      float y = b;
-      float w = c;
-      float h = d;
-
-      if (ellipseMode == CORNERS) {
-        w = c - a;
-        h = d - b;
-
-      } else if (ellipseMode == RADIUS) {
-        x = a - c;
-        y = b - d;
-        w = c * 2;
-        h = d * 2;
-
-      } else if (ellipseMode == CENTER) {
-        x = a - c/2f;
-        y = b - d/2f;
-      }
-
-      // make sure this loop will exit before starting while
-      if (Float.isInfinite(start) || Float.isInfinite(stop)) return;
-      if (stop < start) return;  // why bother
-
-      // make sure that we're starting at a useful point
-      while (start < 0) {
-        start += TWO_PI;
-        stop += TWO_PI;
-      }
-
-      if (stop - start > TWO_PI) {
-        start = 0;
-        stop = TWO_PI;
-      }
-
+                boolean fill, boolean stroke, int arcMode) {
       float hr = w / 2f;
       float vr = h / 2f;
 
@@ -8721,7 +8688,7 @@ public class PGraphicsOpenGL extends PGraphics {
       int stopLUT = (int) (0.5f + (stop / TWO_PI) * SINCOS_LENGTH);
 
       if (fill) {
-        vertex(centerX, centerY, VERTEX);
+        addVertex(centerX, centerY, VERTEX);
       }
 
       int increment = 1; // what's a good algorithm? stopLUT - startLUT;
@@ -8735,8 +8702,13 @@ public class PGraphicsOpenGL extends PGraphics {
                         centerY + sinLUT[ii] * vr,
                         VERTEX);
 
-        if (startLUT < i) {
-          if (stroke) addEdge(pidx, idx, i == startLUT + 1, false);
+        if (stroke) {
+          if (arcMode == PIE) {
+            addEdge(pidx, idx, i == startLUT, false);
+          } else if (startLUT < i) {
+            addEdge(pidx, idx, i == startLUT + 1, arcMode == 0 &&
+                                                  i == stopLUT - 1);
+          }
         }
 
         pidx = idx;
@@ -8745,6 +8717,24 @@ public class PGraphicsOpenGL extends PGraphics {
       idx = addVertex(centerX + cosLUT[stopLUT % SINCOS_LENGTH] * hr,
                       centerY + sinLUT[stopLUT % SINCOS_LENGTH] * vr,
                       VERTEX);
+      if (stroke) {
+        if (arcMode == PIE) {
+          addEdge(idx, 0, false, true);
+        }
+      }
+      if (arcMode == CHORD || arcMode == OPEN) {
+        // Add a last vertex coincident with the first along the perimeter
+        pidx = idx;
+        int i = startLUT;
+        int ii = i % SINCOS_LENGTH;
+        if (ii < 0) ii += SINCOS_LENGTH;
+        idx = addVertex(centerX + cosLUT[ii] * hr,
+                        centerY + sinLUT[ii] * vr,
+                        VERTEX);
+        if (stroke && arcMode == CHORD) {
+          addEdge(pidx, idx, false, true);
+        }
+      }
     }
 
     void addBox(float w, float h, float d,
