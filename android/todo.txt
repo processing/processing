@@ -11,6 +11,7 @@ X   http://code.google.com/p/processing/issues/detail?id=1018
 X   moving away from this anyway
 X pmouseX/Y not being set properly?
 X   http://code.google.com/p/processing/issues/detail?id=238
+X mouseEvent is back (see the Wiki)
 
 cleaning/earlier
 A Defects in the tessellation of SVG shapes in A3D
@@ -19,6 +20,16 @@ X change run/present/export/export application names in the menus
 A Blacked-out screen when restoring Android app from background.
 A   http://code.google.com/p/processing/issues/detail?id=381
 X android sdk/build location has changed (android-7 not 2.1) fix build.xml
+
+motion events
+o registerMethod("motionEvent") and "mouseEvent" not implemented
+o PMotionEvent is being used internal to PApplet, need to re-wrap
+o   should be able to fire MotionEvents
+o modify MotionEvent code to use TouchEvent class, even if basic version
+o   internally, PApplet might subclass it for the pointers
+o   but queueing needs to work
+X opting to take a step backwards on the motion event handling
+_ write a little stub code for people who want to use motionX/Y/etc
 
 
 _ Finish implementation of OPEN and CHORD drawing modes for arc()
@@ -42,14 +53,6 @@ _ emulator not starting up on OS X?
 _ Android emulator doesn't always start on the first attempt
 _   http://code.google.com/p/processing/issues/detail?id=1210
 
-
-implement motion/touch events
-_ registerMethod("motionEvent") and "mouseEvent" not implemented
-_ PMotionEvent is being used internal to PApplet, need to re-wrap
-_   should be able to fire MotionEvents
-_ modify MotionEvent code to use TouchEvent class, even if basic version
-_   internally, PApplet might subclass it for the pointers
-_   but queueing needs to work
 
 
 _ inside AndroidPreprocessor
