@@ -1458,8 +1458,8 @@ public class JavaBuild {
       File shellScript = new File(destFolder, sketch.getName());
       PrintWriter pw = PApplet.createWriter(shellScript);
 
-      // do the newlines explicitly so that windows CRLF
-      // isn't used when exporting for unix
+      // Do the newlines explicitly so that Windows CRLF
+      // isn't used when exporting for Unix.
       pw.print("#!/bin/sh\n\n");
       //ps.print("APPDIR=`dirname $0`\n");
       pw.print("APPDIR=$(dirname \"$0\")\n");  // more posix compliant
@@ -1468,7 +1468,7 @@ public class JavaBuild {
       pw.print("java " + Preferences.get("run.options") +
                " -Djava.library.path=\"$APPDIR:$APPDIR/lib\"" +
                " -cp \"" + exportClassPath + "\"" +
-               " " + sketch.getName() + "\n");
+               " " + sketch.getName() + " \"$@\"\n");
 
       pw.flush();
       pw.close();

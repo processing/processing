@@ -19,8 +19,12 @@ import java.io.PrintWriter;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.IOException;
+X error lines from Commander should be 1-indexed not 0-indexed
+X   http://code.google.com/p/processing/issues/detail?id=1392
 _ fix the debug stuff before shipping this out
 _   DebugMode throwing exception about breakpoints when trying to save
+X Sketch that exported to Linux doesn't get the command line arguments
+X   http://code.google.com/p/processing/issues/detail?id=1359
 
 earlier
 X The sketch name can't begin with '_' (underscore)
@@ -29,10 +33,6 @@ X   http://code.google.com/p/processing/issues/detail?id=859
 _ clientEvent() called even w/o data from server (with fix)
 _   http://code.google.com/p/processing/issues/detail?id=189
 _ check on adding ip() method
-
-_ Sketch that exported to Linux doesn't get the command line arguments
-_   http://code.google.com/p/processing/issues/detail?id=1359
-
 
 _ if RuntimeException thrown, needs to check if it's a wrapped exception
 _   for instance, if there's a crash inside makeGraphics()
