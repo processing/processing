@@ -855,82 +855,21 @@ public class PGL {
 
 
   protected void beginOnscreenDraw(boolean clear) {
-    /*
-    if (glColorFbo[0] != 0) {
-      gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, glColorFbo[0]);
-      gl.glFramebufferTexture2D(GL.GL_FRAMEBUFFER,
-                                GL.GL_COLOR_ATTACHMENT0,
-                                GL.GL_TEXTURE_2D,
-                                glColorTex[frontTex], 0);
-
-      if (multisample) {
-        // Render the scene to the mutisampled buffer...
-        gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, glMultiFbo[0]);
-        gl2x.glDrawBuffer(GL.GL_COLOR_ATTACHMENT0);
-
-        // Now the screen buffer is the multisample FBO.
-        PGraphicsOpenGL.screenFramebuffer.glFbo = glMultiFbo[0];
-      } else {
-        if (gl2x != null) gl2x.glDrawBuffer(GL.GL_COLOR_ATTACHMENT0);
-
-        PGraphicsOpenGL.screenFramebuffer.glFbo = glColorFbo[0];
-      }
-    }
-    */
   }
 
 
   protected void endOnscreenDraw(boolean clear0) {
-    /*
-    if (glColorFbo[0] != 0) {
-      if (multisample) {
-        // Blit the contents of the multisampled FBO into the color FBO:
-        gl.glBindFramebuffer(GL2.GL_READ_FRAMEBUFFER, glMultiFbo[0]);
-        gl.glBindFramebuffer(GL2.GL_DRAW_FRAMEBUFFER, glColorFbo[0]);
-        gl2x.glBlitFramebuffer(0, 0, fboWidth, fboHeight,
-                               0, 0, fboWidth, fboHeight,
-                               GL.GL_COLOR_BUFFER_BIT, GL.GL_NEAREST);
-      }
-
-      // And finally write the color texture to the screen, without blending.
-      gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, 0);
-
-      gl.glClearDepth(1);
-      gl.glClearColor(0, 0, 0, 0);
-      gl.glClear(GL.GL_DEPTH_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT);
-
+    if (isFBOBacked() && capabilities.getNumSamples() == 0) {
+      // Draw the back texture into the front texture, which will be used as
+      // front texture in the next frame. Otherwise flickering will occur if
+      // the sketch uses "incremental drawing" (no background()).
+      frontFBO.bind(gl);
       gl.glDisable(GL.GL_BLEND);
-      drawTexture(GL.GL_TEXTURE_2D, glColorTex[frontTex], fboWidth, fboHeight,
+      drawTexture(GL.GL_TEXTURE_2D, backTex.getName(),
+                  backTex.getWidth(), backTex.getHeight(),
                   0, 0, pg.width, pg.height, 0, 0, pg.width, pg.height);
-
-      // Leaving the color FBO currently bound as the screen FB.
-      gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, glColorFbo[0]);
-
-
-      // Disabling back-buffer for the time being.
-//      // Blitting the front texture into the back texture.
-//      gl.glFramebufferTexture2D(GL.GL_FRAMEBUFFER,
-//                                GL.GL_COLOR_ATTACHMENT0,
-//                                GL.GL_TEXTURE_2D,
-//                                glColorTex[backTex], 0);
-//      drawTexture(GL.GL_TEXTURE_2D, glColorTex[frontTex], fboWidth, fboHeight,
-//                  0, 0, pg.width, pg.height, 0, 0, pg.width, pg.height);
-//
-//      // Leave the front texture as current
-//      gl.glFramebufferTexture2D(GL.GL_FRAMEBUFFER,
-//                                GL.GL_COLOR_ATTACHMENT0,
-//                                GL.GL_TEXTURE_2D,
-//                                glColorTex[frontTex], 0);
-
-      // TODO: check if the screen FBO should be left bound instead
-      PGraphicsOpenGL.screenFramebuffer.glFbo = glColorFbo[0];
-
-      // Swapping front and back textures.
-//      int temp = frontTex;
-//      frontTex = backTex;
-//      backTex = temp;
+      backFBO.bind(gl);
     }
-    */
   }
 
 
