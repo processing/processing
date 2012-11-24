@@ -142,7 +142,11 @@ public class PdeTextAreaDefaults extends TextAreaDefaults {
 
     document = new SyntaxDocument();
     editable = true;
-    electricScroll = 3;
+    
+    // Set to 0 for revision 0215 because it causes strange jumps
+    // http://code.google.com/p/processing/issues/detail?id=1055
+    electricScroll = 0;
+    
     caretVisible = true;
     caretBlinks = Preferences.getBoolean("editor.caret.blink");
     blockCaret = Preferences.getBoolean("editor.caret.block");
