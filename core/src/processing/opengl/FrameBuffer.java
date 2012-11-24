@@ -183,12 +183,16 @@ public class FrameBuffer implements PConstants {
     pg.popFramebuffer();
   }
 
-  public void copy(FrameBuffer dest) {
+  public void copy(FrameBuffer dest, FrameBuffer current) {
     pgl.bindFramebuffer(PGL.READ_FRAMEBUFFER, this.glFbo);
     pgl.bindFramebuffer(PGL.DRAW_FRAMEBUFFER, dest.glFbo);
     pgl.blitFramebuffer(0, 0, this.width, this.height,
                           0, 0, dest.width, dest.height,
                           PGL.COLOR_BUFFER_BIT, PGL.NEAREST);
+
+    if (current != this) {
+      pgl.bindFramebuffer(PGL.FRAMEBUFFER, current.glFbo);
+    }
   }
 
   public void bind() {
