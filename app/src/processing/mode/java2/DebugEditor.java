@@ -110,10 +110,10 @@ public class DebugEditor extends JavaEditor implements ActionListener {
 
         // load settings from theme.txt
         DebugMode theme = dmode;
-        breakpointColor = theme.loadColorFromTheme("breakpoint.bgcolor", breakpointColor);
-        breakpointMarkerColor = theme.loadColorFromTheme("breakpoint.marker.color", breakpointMarkerColor);
-        currentLineColor = theme.loadColorFromTheme("currentline.bgcolor", currentLineColor);
-        currentLineMarkerColor = theme.loadColorFromTheme("currentline.marker.color", currentLineMarkerColor);
+        breakpointColor = theme.getThemeColor("breakpoint.bgcolor", breakpointColor);
+        breakpointMarkerColor = theme.getThemeColor("breakpoint.marker.color", breakpointMarkerColor);
+        currentLineColor = theme.getThemeColor("currentline.bgcolor", currentLineColor);
+        currentLineMarkerColor = theme.getThemeColor("currentline.marker.color", currentLineMarkerColor);
 
         // set breakpoints from marker comments
         for (LineID lineID : stripBreakpointComments()) {
