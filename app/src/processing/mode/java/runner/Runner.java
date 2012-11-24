@@ -574,6 +574,7 @@ public class Runner implements MessageConsumer {
     Value messageValue = or.getValue(messageField);
 //    System.out.println("mess val " + messageValue);
 
+    //"java.lang.ArrayIndexOutOfBoundsException"
     int last = exceptionName.lastIndexOf('.');
     String message = exceptionName.substring(last + 1);
     if (messageValue != null) {
@@ -630,7 +631,7 @@ public class Runner implements MessageConsumer {
       System.err.println("This version of Processing only supports libraries and JAR files compiled for Java 1.6 or earlier.");
       System.err.println("A library used by this sketch was compiled for Java 1.7 or later, ");
       System.err.println("and needs to be recompiled to be compatible with Java 1.6.");
-
+      
     } else if (exceptionClass.equals("java.lang.NoSuchMethodError") ||
                exceptionClass.equals("java.lang.NoSuchFieldError")) {
       listener.statusError(exceptionClass.substring(10) + ": " +

@@ -27,7 +27,6 @@ import java.io.Writer;
 import java.util.List;
 
 import processing.app.*;
-import processing.core.PApplet;
 import processing.mode.java.preproc.PdePreprocessor;
 import processing.mode.java.preproc.PreprocessorResult;
 import antlr.RecognitionException;
@@ -179,6 +178,9 @@ public class AndroidPreprocessor extends PdePreprocessor {
   }
 
 
+  // As of revision 0215 (2.0b7-ish), the default imports are now identical
+  // between desktop and Android (to avoid unintended incompatibilities).
+  /*
   @Override
   public String[] getCoreImports() {
     return new String[] {
@@ -218,4 +220,5 @@ public class AndroidPreprocessor extends PdePreprocessor {
 
     return androidImports;
   }
+  */
 }
