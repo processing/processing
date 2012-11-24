@@ -22,13 +22,13 @@ X move _MASK constants out of PConstants and into PImage
 X how should stroke work w/ arcs?
 X   decision: we should do pie, you can make the other kind w/o it
 X   add an additional parameter for the others
-_   http://code.google.com/p/processing/issues/detail?id=711
+X   http://code.google.com/p/processing/issues/detail?id=711
 X changed events to PRESS, RELEASE, CLICK, DRAG, MOVE, ENTER, EXIT
 X   instead of past-tense versions of the same
 A Implement arc() with modes on OpenGL
 A   http://code.google.com/p/processing/issues/detail?id=1406
 
-cleanup/earlier by Andres
+andres (cleanup)
 A when turning smoothing on, internal lines of shapes are visible
 o   add an edge flag when tesselating 
 o   mind the opengl tesselation flags
@@ -66,6 +66,21 @@ o remove screenBlend(), textureBlend() from PGraphics et al
 o have andres take over all current GL issues in the tracker
 X Support 'black' as color for SVG files (PhiLho fix)
 X   http://code.google.com/p/processing/issues/detail?id=1010
+o catch sun.dc.pr.PRException?
+X   http://code.google.com/p/processing/issues/detail?id=39
+X   no longer valid
+X work through loadPixels in PImage, how consistent do we need to be?
+X   with get() and set() methods, this gets really tricky (too slow)
+X   could optimize by keeping a java image around, but table for later
+X     it's too significant a change, and not enough time to test
+o image created with img.get() works incorrectly when using filter()
+X   http://code.google.com/p/processing/issues/detail?id=167
+X copy(image with transparency) doesn't keep the transparency at start up
+X   http://code.google.com/p/processing/issues/detail?id=601
+X   tested and working
+o for a PGraphics2D, should its image cache object be the memoryimagesource?
+o loading lots of images is a problem, describe how to unload
+o   is it possible? necessary to call delay(5) or something?
 
 events
 X make sure alt/ctl/meta/etc all work (for both mouse and key) 
@@ -350,15 +365,6 @@ _   http://www.html5rocks.com/en/mobile/touch.html
 _   decision: go with what looks like javascript/ios
 _   touchEvent(), gestureEvent()?
 
-2.0 / blending
-_ fix blue-channel bias on blend() so that blendMode() will work in 2.0
-_   http://code.google.com/p/processing/issues/detail?id=475
-_ blend() bugs with identically-sized images
-_   http://code.google.com/p/processing/issues/detail?id=285
-_ improve blend() accuracy when using ADD
-_   http://code.google.com/p/processing/issues/detail?id=133
-_   includes code for a slow but more accurate mode
-_ deprecate the blend() function
 
 2.0
 _ get() or copy()? for vectors, image, etc.
@@ -538,17 +544,11 @@ _ show an error when using a font character that isn't available
 _   maybe fall back on other characters instead?
 
 
-CORE / PGraphicsJava2D
-
-_ catch sun.dc.pr.PRException?
-_   http://code.google.com/p/processing/issues/detail?id=39
-
-
 CORE / PImage
 
-_ make loading images lighter, ala android 
-_   require loadPixels to get 2D image data from images
-_   only load PImage pixels when necessary (faster for java2d)
+_ don't grab pixels of java2d images unless asked
+_   this is the difference between a lot of loadPixels() and not
+_   so important to have it in before beta if that's the change
 _   http://code.google.com/p/processing/issues/detail?id=60
 _ loadImage() should use the faster loading methods
 _   hint(DISABLE_IMAGE_CACHING)
@@ -556,35 +556,30 @@ _   add a note to the loadImage() reference page
 _ figure out why 1024x768 image takes 3.5 seconds to load
 _   would using a BufferedImage work better?
 _   is the image actually a BufferedImage so PixelGrabber is a waste?
-_ work through loadPixels in PImage, how consistent do we need to be?
-_   with get() and set() methods, this gets really tricky (too slow)
-_   could optimize by keeping a java image around, but table for later
-_     it's too significant a change, and not enough time to test
-_ img.get() quirks
-_   http://code.google.com/p/processing/issues/detail?id=167
+
+_ fix blue-channel bias on blend()
+_   http://code.google.com/p/processing/issues/detail?id=475
+_ improve blend() accuracy when using ADD
+_   http://code.google.com/p/processing/issues/detail?id=133
+_   includes code for a slow but more accurate mode
+_ deprecate the blend() function
+
 _ image resizing is ugly (just use java2d?)
 _   also deal with copy()/blend() inaccuracies
 _   http://code.google.com/p/processing/issues/detail?id=332
-_ transparency issue with JAVA2D
-_   http://code.google.com/p/processing/issues/detail?id=182
-_ copy(image with transparency) doesn't keep the transparency at start up
-_   http://code.google.com/p/processing/issues/detail?id=601
+_ when resizing, do we add a way to keep it pixelated?
+_   http://code.google.com/p/processing/issues/detail?id=165
+_ blend() and copy() are not pixel accurate for copy/scale
+_   http://code.google.com/p/processing/issues/detail?id=285
 _ accuracy problems make alpha channel go to FE with image.copy()
 _   http://code.google.com/p/processing/issues/detail?id=219
-_ for a PGraphics2D, should its image cache object be the memoryimagesource?
-_ loading lots of images is a problem, describe how to unload
-_   is it possible? necessary to call delay(5) or something?
-_ don't grab pixels of java2d images unless asked
-_   this is the difference between a lot of loadPixels() and not
-_   so important to have it in before beta if that's the change
-_   http://code.google.com/p/processing/issues/detail?id=60
+
+_ Semitransparent rect drawn over image not rendered correctly
+_   http://code.google.com/p/processing/issues/detail?id=182
+
 _ add ability to control jpeg compression level with save() and saveFrame()
 _   or just write a better example for this one?
 _   http://code.google.com/p/processing/issues/detail?id=58
-_ should PImage smoothing not be turned on by default? handle this where?
-_   http://code.google.com/p/processing/issues/detail?id=165
-_ Semitransparent rect drawn over image not rendered correctly
-_   http://code.google.com/p/processing/issues/detail?id=182
 
 
 CORE / PShape
