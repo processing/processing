@@ -143,7 +143,9 @@ class AndroidBuild extends JavaBuild {
       writeBuildXML(buildFile, sketch.getName());
       writeProjectProps(new File(tmpFolder, "project.properties"));
       writeLocalProps(new File(tmpFolder, "local.properties"));
-      writeRes(new File(tmpFolder, "res"), sketchClassName);
+      
+      final File resFolder = new File(tmpFolder, "res"); 
+      writeRes(resFolder, sketchClassName);
 
       // new location for SDK Tools 17: /opt/android/tools/proguard/proguard-android.txt
 //      File proguardSrc = new File(sdk.getSdkFolder(), "tools/lib/proguard.cfg");
@@ -166,6 +168,13 @@ class AndroidBuild extends JavaBuild {
       final File sketchDataFolder = sketch.getDataFolder();
       if (sketchDataFolder.exists()) {
         Base.copyDir(sketchDataFolder, assetsFolder);
+      }
+      
+      // Do the same for the 'res' folder.
+      // http://code.google.com/p/processing/issues/detail?id=767
+      final File sketchResFolder = new File(sketch.getFolder(), "res");
+      if (sketchResFolder.exists()) {
+        Base.copyDir(sketchResFolder, resFolder);
       }
     }
     return tmpFolder;
