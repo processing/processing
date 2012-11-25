@@ -3,12 +3,11 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2005-08 Ben Fry and Casey Reas
+  Copyright (c) 2005-12 Ben Fry and Casey Reas
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
+  License version 2.1 as published by the Free Software Foundation.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -426,9 +425,9 @@ public final class PMatrix3D implements PMatrix /*, PConstants*/ {
     if (target == null) {
       target = new PVector();
     }
-    target.x = m00*source.x + m01*source.y + m02*source.z + m03;
-    target.y = m10*source.x + m11*source.y + m12*source.z + m13;
-    target.z = m20*source.x + m21*source.y + m22*source.z + m23;
+    target.set(m00*source.x + m01*source.y + m02*source.z + m03,
+               m10*source.x + m11*source.y + m12*source.z + m13,
+               m20*source.x + m21*source.y + m22*source.z + m23);
 //    float tw = m30*source.x + m31*source.y + m32*source.z + m33;
 //    if (tw != 0 && tw != 1) {
 //      target.div(tw);
@@ -656,7 +655,7 @@ public final class PMatrix3D implements PMatrix /*, PConstants*/ {
   // These functions should not be used, as they will be removed in the future.
 
 
-  public void invTranslate(float tx, float ty, float tz) {
+  protected void invTranslate(float tx, float ty, float tz) {
     preApply(1, 0, 0, -tx,
              0, 1, 0, -ty,
              0, 0, 1, -tz,
@@ -664,28 +663,28 @@ public final class PMatrix3D implements PMatrix /*, PConstants*/ {
   }
 
 
-  public void invRotateX(float angle) {
+  protected void invRotateX(float angle) {
     float c = cos(-angle);
     float s = sin(-angle);
     preApply(1, 0, 0, 0,  0, c, -s, 0,  0, s, c, 0,  0, 0, 0, 1);
   }
 
 
-  public void invRotateY(float angle) {
+  protected void invRotateY(float angle) {
     float c = cos(-angle);
     float s = sin(-angle);
     preApply(c, 0, s, 0,  0, 1, 0, 0,  -s, 0, c, 0,  0, 0, 0, 1);
   }
 
 
-  public void invRotateZ(float angle) {
+  protected void invRotateZ(float angle) {
     float c = cos(-angle);
     float s = sin(-angle);
     preApply(c, -s, 0, 0,  s, c, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1);
   }
 
 
-  public void invRotate(float angle, float v0, float v1, float v2) {
+  protected void invRotate(float angle, float v0, float v1, float v2) {
     //TODO should make sure this vector is normalized
 
     float c = cos(-angle);
@@ -699,15 +698,15 @@ public final class PMatrix3D implements PMatrix /*, PConstants*/ {
   }
 
 
-  public void invScale(float x, float y, float z) {
+  protected void invScale(float x, float y, float z) {
     preApply(1/x, 0, 0, 0,  0, 1/y, 0, 0,  0, 0, 1/z, 0,  0, 0, 0, 1);
   }
 
 
-  public boolean invApply(float n00, float n01, float n02, float n03,
-                          float n10, float n11, float n12, float n13,
-                          float n20, float n21, float n22, float n23,
-                          float n30, float n31, float n32, float n33) {
+  protected boolean invApply(float n00, float n01, float n02, float n03,
+                             float n10, float n11, float n12, float n13,
+                             float n20, float n21, float n22, float n23,
+                             float n30, float n31, float n32, float n33) {
     if (inverseCopy == null) {
       inverseCopy = new PMatrix3D();
     }
