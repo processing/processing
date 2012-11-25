@@ -249,16 +249,20 @@ public class ContributionManagerDialog {
   }
 
   private void updateCategoryChooser() {
-    if (categoryChooser == null)
-      return;
-
-    ArrayList<String> categories;
-    categoryChooser.removeAllItems();
-    categories = new ArrayList<String>(contribListing.getCategories(permaFilter));
-    Collections.sort(categories);
-    categories.add(0, ContributionManagerDialog.ANY_CATEGORY);
-    for (String s : categories) {
-      categoryChooser.addItem(s);
+    if (categoryChooser != null) {
+      ArrayList<String> categories;
+      categoryChooser.removeAllItems();
+      categories = new ArrayList<String>(contribListing.getCategories(permaFilter));
+//      for (int i = 0; i < categories.size(); i++) {
+//        System.out.println(i + " category: " + categories.get(i));
+//      }
+      Collections.sort(categories);
+//    categories.add(0, ContributionManagerDialog.ANY_CATEGORY);
+      categoryChooser.addItem(ContributionManagerDialog.ANY_CATEGORY);
+      for (String s : categories) {
+        categoryChooser.addItem(s);
+      }
+      categoryChooser.setEnabled(categories.size() != 0);
     }
   }
 

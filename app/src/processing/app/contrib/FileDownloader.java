@@ -34,52 +34,50 @@ import java.net.URLConnection;
 public class FileDownloader {
 
   /**
-   * Blocks until the file is downloaded or an error occurs. Returns true if the
-   * file was successfully downloaded, false otherwise
+   * Blocks until the file is downloaded or an error occurs. 
+   * Returns true if the file was successfully downloaded, false otherwise.
    * 
    * @param source
-   *          the URL of the file to donwload
+   *          the URL of the file to download
    * @param dest
    *          the file on the local system where the file will be written. This
    *          must be a file (not a directory), and must already exist.
-   * @param progressMonitor
+   * @param progress
    * @throws FileNotFoundException
    *           if an error occurred downloading the file
    */
   static public void downloadFile(URL source, File dest,
-                                     ProgressMonitor progressMonitor) {
-
+                                  ProgressMonitor progress) {
     try {
-      URLConnection urlConn = source.openConnection();
-      urlConn.setConnectTimeout(1000);
-      urlConn.setReadTimeout(5000);
+//      System.out.println("downloading file " + source);
+      URLConnection conn = source.openConnection();
+      conn.setConnectTimeout(1000);
+      conn.setReadTimeout(5000);
   
-      // String expectedType1 = "application/x-zip-compressed";
-      // String expectedType2 = "application/zip";
-      // String type = urlConn.getContentType();
-      // if (expectedType1.equals(type) || expectedType2.equals(type)) {
-      // }
+      // TODO this is often -1, may need to set progress to indeterminate
+      int fileSize = conn.getContentLength();
+//      System.out.println("file size is " + fileSize);
+      progress.startTask("Downloading", fileSize);
   
-      int fileSize = urlConn.getContentLength();
-      progressMonitor.startTask("Downloading", fileSize);
-  
-      InputStream in = urlConn.getInputStream();
+      InputStream in = conn.getInputStream();
       FileOutputStream out = new FileOutputStream(dest);
   
-      byte[] b = new byte[256];
-      int bytesDownloaded = 0, len;
-      while (!progressMonitor.isCanceled() && (len = in.read(b)) != -1) {
-        out.write(b, 0, len);
-        bytesDownloaded += len;
-  
-        progressMonitor.setProgress(bytesDownloaded);
+      byte[] b = new byte[8192];
+      int amount;
+      int total = 0;
+      while (!progress.isCanceled() && (amount = in.read(b)) != -1) {
+        out.write(b, 0, amount);
+        total += amount;  
+        progress.setProgress(total);
       }
+      out.flush();
       out.close();
+      
     } catch (IOException ioe) {
-      progressMonitor.error(ioe);
+      progress.error(ioe);
+      ioe.printStackTrace();
     }
-    
-    progressMonitor.finished();
+    progress.finished();
+//    System.out.println("done downloading");
   }
-  
 }
