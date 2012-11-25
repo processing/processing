@@ -115,6 +115,9 @@ if (external && event.getNative() instanceof java.awt.event.KeyEvent &&
        exit();
      }
 
+_ how to handle stroke/fill separation in OpenGL
+_   http://code.google.com/p/processing/issues/detail?id=1302
+
 _ createShape() not yet implemented for Java2D
 _   http://code.google.com/p/processing/issues/detail?id=1400
 
