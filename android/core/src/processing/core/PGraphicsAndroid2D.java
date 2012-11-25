@@ -378,6 +378,7 @@ public class PGraphicsAndroid2D extends PGraphics {
         }
         break;
 
+      case QUAD:
       case QUADS:
         if ((vertexCount % 4) == 0) {
           quad(vertices[vertexCount - 4][X],
