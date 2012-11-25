@@ -767,12 +767,17 @@ public class PImage implements PConstants, Cloneable {
    * @param h height of pixel rectangle to get
    */
   public PImage get(int x, int y, int w, int h) {
+    int targetX = 0;
+    int targetY = 0;
+
     if (x < 0) {
       w += x; // clip off the left edge
+      targetX = -x;
       x = 0;
     }
     if (y < 0) {
       h += y; // clip off some of the height
+      targetY = -y;
       y = 0;
     }
 
@@ -786,7 +791,10 @@ public class PImage implements PConstants, Cloneable {
       h = 0;
     }
 
-    return getImpl(x, y, w, h);
+    PImage target = new PImage(w, h, format);
+    target.parent = parent;
+    getImpl(x, y, w, h, target, targetX, targetY);
+    return target;
   }
 
 
@@ -796,18 +804,16 @@ public class PImage implements PConstants, Cloneable {
    * are guaranteed to be inside the image space, so the implementation can
    * use the fastest possible pixel copying method.
    */
-  protected PImage getImpl(int x, int y, int w, int h) {
-    PImage newbie = new PImage(w, h, format);
-    newbie.parent = parent;
-
-    int index = y*width + x;
-    int index2 = 0;
-    for (int row = y; row < y+h; row++) {
-      System.arraycopy(pixels, index, newbie.pixels, index2, w);
-      index += width;
-      index2 += w;
+  protected void getImpl(int sourceX, int sourceY,
+                         int sourceWidth, int sourceHeight,
+                         PImage target, int targetX, int targetY) {
+    int sourceIndex = sourceY*width + sourceX;
+    int targetIndex = targetY*target.width + targetX;
+    for (int row = sourceY; row < sourceY+sourceHeight; row++) {
+      System.arraycopy(pixels, sourceIndex, target.pixels, targetIndex, sourceWidth);
+      sourceIndex += width;
+      targetIndex += target.width;
     }
-    return newbie;
   }
 
 
@@ -897,7 +903,7 @@ public class PImage implements PConstants, Cloneable {
     // this could be nonexistant
     if ((sw <= 0) || (sh <= 0)) return;
 
-    setImpl(x, y, sx, sy, sw, sh, img);
+    setImpl(img, sx, sy, sw, sh, x, y);
   }
 
 
@@ -905,17 +911,19 @@ public class PImage implements PConstants, Cloneable {
    * Internal function to actually handle setting a block of pixels that
    * has already been properly cropped from the image to a valid region.
    */
-  protected void setImpl(int dx, int dy, int sx, int sy, int sw, int sh,
-                         PImage img) {
-    int srcOffset = sy * img.width + sx;
-    int dstOffset = dy * width + dx;
+  protected void setImpl(PImage sourceImage,
+                         int sourceX, int sourceY,
+                         int sourceWidth, int sourceHeight,
+                         int targetX, int targetY) {
+    int sourceOffset = sourceY * sourceImage.width + sourceX;
+    int targetOffset = targetY * width + targetX;
 
-    for (int y = sy; y < sy + sh; y++) {
-      System.arraycopy(img.pixels, srcOffset, pixels, dstOffset, sw);
-      srcOffset += img.width;
-      dstOffset += width;
+    for (int y = sourceY; y < sourceY + sourceHeight; y++) {
+      System.arraycopy(sourceImage.pixels, sourceOffset, pixels, targetOffset, sourceWidth);
+      sourceOffset += sourceImage.width;
+      targetOffset += width;
     }
-    updatePixelsImpl(sx, sy, sw, sh);
+    updatePixelsImpl(sourceX, sourceY, sourceWidth, sourceHeight);
   }
 
 
