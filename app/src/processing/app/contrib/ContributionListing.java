@@ -34,15 +34,10 @@ import processing.core.PApplet;
 public class ContributionListing {
 
   ArrayList<ContributionChangeListener> listeners;
-
   ArrayList<AdvertisedContribution> advertisedContributions;
-
   Map<String, List<Contribution>> librariesByCategory;
-
   ArrayList<Contribution> allContributions;
-
   boolean hasDownloadedLatestList;
-
   ReentrantLock downloadingListingLock;
 
   static protected final String validCategories[] = {
@@ -204,19 +199,22 @@ public class ContributionListing {
   }
 
   public Set<String> getCategories(Filter filter) {
-    Set<String> ret = new HashSet<String>();
+    Set<String> outgoing = new HashSet<String>();
 
-    Set<String> cats = librariesByCategory.keySet();
-    for (String cat : cats) {
-      for (Contribution contrib : librariesByCategory.get(cat)) {
+    Set<String> categorySet = librariesByCategory.keySet();
+    for (String categoryName : categorySet) {
+      for (Contribution contrib : librariesByCategory.get(categoryName)) {
         if (filter.matches(contrib)) {
-          ret.add(cat);
+          // TODO still not sure why category would be coming back null [fry]
+          // http://code.google.com/p/processing/issues/detail?id=1387
+          if (categoryName != null && categoryName.trim().length() != 0) {
+            outgoing.add(categoryName);
+          }
           break;
         }
       }
     }
-
-    return ret;
+    return outgoing;
   }
 
   public List<Contribution> getAllContributions() {
