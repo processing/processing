@@ -37,6 +37,9 @@ X fix for PMatrix3D.mult() when vectors are identical
 X   http://code.google.com/p/processing/issues/detail?id=921
 A back-buffer sampler in OpenGL renderers
 A   http://code.google.com/p/processing/issues/detail?id=1169
+X image resizing is ugly (just use java2d?)
+o   also deal with copy()/blend() inaccuracies
+X   http://code.google.com/p/processing/issues/detail?id=332
 
 andres (cleanup)
 A when turning smoothing on, internal lines of shapes are visible
@@ -248,8 +251,6 @@ _ createShape() with Java2D not ready to go
 
 _ loadShape() needs to live in PApplet
 
-_ loadPixels() implementation needs to be in PApplet, not PGraphics
-
 
 docs
 _ textureWrap() CLAMP and REPEAT now added
@@ -263,10 +264,10 @@ _   also need to explain exception handling in general
 _   http://code.google.com/p/processing/issues/detail?id=183
 
 2.0 FINAL / constants/hints
-o bring PConstants back in line w/ previous 1.5 (can't renumber)
+_ bring PConstants back in line w/ previous 1.5 (can't renumber)
 o consider enable("mipmaps") instead of hint(ENABLE_MIPMAPS)
 X clean up PConstants and move things into PGraphics that needn't be available
-_ hint(DISABLE_LOADPIXELS) -> faster rendering in Java2D
+_ hint(DISABLE_LOAD_PIXELS) -> faster rendering in Java2D
 _ getGLProfiles stuff.. can't do getGL2(), not good x-platform
 
 docs (2.0)
@@ -564,6 +565,9 @@ _ don't grab pixels of java2d images unless asked
 _   this is the difference between a lot of loadPixels() and not
 _   so important to have it in before beta if that's the change
 _   http://code.google.com/p/processing/issues/detail?id=60
+_ loadPixels() implementation needs to be in PApplet, not PGraphics
+_ this is a tricky thing to implement because of how OpenGL is handled
+
 _ loadImage() should use the faster loading methods
 _   hint(DISABLE_IMAGE_CACHING)
 _   add a note to the loadImage() reference page
@@ -578,9 +582,6 @@ _   http://code.google.com/p/processing/issues/detail?id=133
 _   includes code for a slow but more accurate mode
 _ deprecate the blend() function
 
-_ image resizing is ugly (just use java2d?)
-_   also deal with copy()/blend() inaccuracies
-_   http://code.google.com/p/processing/issues/detail?id=332
 _ include option for nearest neighbor on resize
 _   http://code.google.com/p/processing/issues/detail?id=165
 _ blend() and copy() are not pixel accurate for copy/scale
