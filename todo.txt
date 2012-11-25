@@ -31,6 +31,9 @@ X clientEvent() called even w/o data from server (with fix)
 X   http://code.google.com/p/processing/issues/detail?id=189
 X check on adding ip() method
 X   http://code.google.com/p/processing/issues/detail?id=1228
+X Modify “Copy as HTML” to add second HTML data type when writing the clipboard
+X   http://code.google.com/p/processing/issues/detail?id=1065
+X 
 
 
 _ fix the debug stuff before shipping this out
