@@ -369,6 +369,7 @@ public class PGL {
 
   /** Whether OpenGL has been initialized or not */
   protected boolean initialized;
+  protected boolean firstFrame;
 
   /** Windowing toolkit */
   protected static int toolkit = NEWT;
@@ -414,16 +415,16 @@ public class PGL {
   // Objects for onscreen FBO-based rendering
 
   /** Back (== draw, current frame) buffer */
-  protected FBObject backFBO;
+  protected static FBObject backFBO;
 
   /** Sink buffer, used in the multisampled case */
-  protected FBObject sinkFBO;
+  protected static FBObject sinkFBO;
 
   /** Front (== read, previous frame) buffer */
-  protected FBObject frontFBO;
+  protected static FBObject frontFBO;
 
-  protected FBObject.TextureAttachment backTex;
-  protected FBObject.TextureAttachment frontTex;
+  protected static FBObject.TextureAttachment backTex;
+  protected static FBObject.TextureAttachment frontTex;
 
   ///////////////////////////////////////////////////////////
 
@@ -540,6 +541,7 @@ public class PGL {
         window.removeGLEventListener(listener);
         pg.parent.remove(canvasNEWT);
       }
+      sinkFBO = backFBO = frontFBO = null;
       setFramerate = false;
     }
 
@@ -607,6 +609,7 @@ public class PGL {
       animator.start();
     }
 
+    firstFrame = true;
     initialized = true;
   }
 
@@ -757,7 +760,7 @@ public class PGL {
 
 
   protected void endDraw(boolean clear0) {
-    if (!clear0 && isFBOBacked() && capabilities.getNumSamples() == 0) {
+    if (!clear0 && isFBOBacked() && !isMultisampled()) {
       // Draw the back texture into the front texture, which will be used as
       // front texture in the next frame. Otherwise flickering will occur if
       // the sketch uses "incremental drawing" (background() not called).
@@ -2366,10 +2369,27 @@ public class PGL {
 
   protected class PGLListener implements GLEventListener {
     @Override
-    // http://www.opengl.org/wiki/Default_Framebuffer
     public void display(GLAutoDrawable glDrawable) {
       drawable = glDrawable;
       context = glDrawable.getContext();
+
+      gl = context.getGL();
+      gl2 = gl.getGL2ES2();
+      try {
+        gl2x = gl.getGL2();
+      } catch (javax.media.opengl.GLException e) {
+        gl2x = null;
+      }
+
+      if (firstFrame) {
+        // Cleaning all buffers for the first time.
+        gl.glClearDepthf(1);
+        gl.glClearStencil(0);
+        gl.glClearColor(0, 0, 0, 0);
+        gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT |
+                   GL.GL_STENCIL_BUFFER_BIT);
+        firstFrame = false;
+      }
 
       if (capabilities.isFBO()) {
         // The onscreen drawing surface is backed by an FBO layer.
@@ -2420,13 +2440,7 @@ public class PGL {
         }
       }
 
-      gl = context.getGL();
-      gl2 = gl.getGL2ES2();
-      try {
-        gl2x = gl.getGL2();
-      } catch (javax.media.opengl.GLException e) {
-        gl2x = null;
-      }
+
 
       pg.parent.handleDraw();
     }
