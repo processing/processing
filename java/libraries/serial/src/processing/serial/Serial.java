@@ -225,23 +225,31 @@ public class Serial implements SerialPortEventListener {
    */
   public void dispose() {
     try {
-      // do io streams need to be closed first?
-      if (input != null) input.close();
-      if (output != null) output.close();
-
+      if (input != null) {
+        input.close();
+        input = null;
+      }
     } catch (Exception e) {
       e.printStackTrace();
     }
-    input = null;
-    output = null;
 
     try {
-      if (port != null) port.close();  // close the port
-
+      if (output != null) {
+        output.close();
+        output = null;
+      }
     } catch (Exception e) {
       e.printStackTrace();
     }
-    port = null;
+
+    try {
+      if (port != null) {
+        port.close();
+        port = null;
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
 
