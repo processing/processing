@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2005-10 Ben Fry and Casey Reas
+  Copyright (c) 2005-12 Ben Fry and Casey Reas
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -26,7 +26,7 @@ package processing.core;
 /**
  * 4x4 matrix implementation.
  */
-public class PMatrix3D implements PMatrix /*, PConstants*/ {
+public final class PMatrix3D implements PMatrix /*, PConstants*/ {
 
   public float m00, m01, m02, m03;
   public float m10, m11, m12, m13;
@@ -232,16 +232,16 @@ public class PMatrix3D implements PMatrix /*, PConstants*/ {
     if (norm2 < PConstants.EPSILON) {
       // The vector is zero, cannot apply rotation.
       return;
-    }    
-    
+    }
+
     if (Math.abs(norm2 - 1) > PConstants.EPSILON) {
       // The rotation vector is not normalized.
       float norm = PApplet.sqrt(norm2);
       v0 /= norm;
       v1 /= norm;
       v2 /= norm;
-    } 
-    
+    }
+
     float c = cos(angle);
     float s = sin(angle);
     float t = 1.0f - c;
@@ -425,9 +425,9 @@ public class PMatrix3D implements PMatrix /*, PConstants*/ {
     if (target == null) {
       target = new PVector();
     }
-    target.x = m00*source.x + m01*source.y + m02*source.z + m03;
-    target.y = m10*source.x + m11*source.y + m12*source.z + m13;
-    target.z = m20*source.x + m21*source.y + m22*source.z + m23;
+    target.set(m00*source.x + m01*source.y + m02*source.z + m03,
+               m10*source.x + m11*source.y + m12*source.z + m13,
+               m20*source.x + m21*source.y + m22*source.z + m23);
 //    float tw = m30*source.x + m31*source.y + m32*source.z + m33;
 //    if (tw != 0 && tw != 1) {
 //      target.div(tw);
@@ -775,19 +775,19 @@ public class PMatrix3D implements PMatrix /*, PConstants*/ {
   //////////////////////////////////////////////////////////////
 
 
-  private final float max(float a, float b) {
+  static private final float max(float a, float b) {
     return (a > b) ? a : b;
   }
 
-  private final float abs(float a) {
+  static private final float abs(float a) {
     return (a < 0) ? -a : a;
   }
 
-  private final float sin(float angle) {
+  static private final float sin(float angle) {
     return (float) Math.sin(angle);
   }
 
-  private final float cos(float angle) {
+  static private final float cos(float angle) {
     return (float) Math.cos(angle);
   }
 }
