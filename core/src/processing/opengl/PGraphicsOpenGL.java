@@ -418,6 +418,9 @@ public class PGraphicsOpenGL extends PGraphics {
   /** True if we are inside a beginDraw()/endDraw() block. */
   protected boolean drawing = false;
 
+  /** Used to indicate an OpenGL surface recreation */
+  protected boolean restoreSurface = false;
+
   /** Used to detect continuous use of the smooth/noSmooth functions */
   protected boolean smoothDisabled = false;
   protected int smoothCallCount = 0;
@@ -1566,15 +1569,21 @@ public class PGraphicsOpenGL extends PGraphics {
       if (readFramebuffer == null) {
         readFramebuffer = new FrameBuffer(parent, width, height, true);
       }
-      if (pgl.isFBOBacked() && texture == null) {
-        texture = pgl.wrapBackTexture();
-        ptexture = pgl.wrapFrontTexture();
-      }
 
       drawFramebuffer.setFBO(pgl.getDrawFramebuffer());
       readFramebuffer.setFBO(pgl.getReadFramebuffer());
-      texture.glName = pgl.getBackTextureName();
-      ptexture.glName = pgl.getFrontTextureName();
+      if (pgl.isFBOBacked()) {
+        if (texture == null) {
+          texture = pgl.wrapBackTexture();
+        } else {
+          texture.glName = pgl.getBackTextureName();
+        }
+        if (ptexture == null) {
+          ptexture = pgl.wrapFrontTexture();
+        } else {
+          ptexture.glName = pgl.getFrontTextureName();
+        }
+      }
 
       pgl.update();
     } else {
@@ -1726,7 +1735,10 @@ public class PGraphicsOpenGL extends PGraphics {
       defaultSettings();
     }
 
-
+    if (restoreSurface) {
+      restoreSurfaceFromPixels();
+      restoreSurface = false;
+    }
 
     if (hints[DISABLE_DEPTH_MASK]) {
       pgl.depthMask(false);
@@ -1741,6 +1753,9 @@ public class PGraphicsOpenGL extends PGraphics {
 
     clearColorBuffer0 = clearColorBuffer;
     clearColorBuffer = false;
+
+
+
 
     report("bot beginDraw()");
   }
@@ -1757,6 +1772,18 @@ public class PGraphicsOpenGL extends PGraphics {
       showWarning("Cannot call endDraw() before beginDraw().");
       return;
     }
+
+
+    if (!pgPrimary.pgl.initialized || parent.frameCount == 0) {
+      // Smooth was disabled/enabled at some point during drawing. We save
+      // the current contents of the back buffer (because the  buffers haven't
+      // been swapped yet) to the pixels array. The frameCount == 0 condition
+      // is to handle the situation when no smooth is called in setup in the
+      // PDE, but the OpenGL appears to be recreated due to the size() nastiness.
+      saveSurfaceToPixels();
+      restoreSurface = true;
+    }
+
 
     if (primarySurface) {
       pgl.endDraw(clearColorBuffer0);
@@ -5139,6 +5166,17 @@ public class PGraphicsOpenGL extends PGraphics {
       pixels = new int[width * height];
       pixelBuffer = IntBuffer.wrap(pixels);
     }
+  }
+
+
+  protected void saveSurfaceToPixels() {
+    allocatePixels();
+    readPixels();
+  }
+
+
+  protected void restoreSurfaceFromPixels() {
+    drawPixels(0, 0, width, height);
   }
 
 
