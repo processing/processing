@@ -1691,7 +1691,7 @@ public class JEditTextArea extends JComponent
    * specific to any language or version of the PDE.
    */
   public void copyAsHTML() {
-    StringBuffer cf = new StringBuffer("<pre>\n");
+    StringBuffer cf = new StringBuffer("<html><body><pre>\n");
 
     int selStart = getSelectionStart();
     int selStop = getSelectionStop();
@@ -1715,9 +1715,10 @@ public class JEditTextArea extends JComponent
       emitAsHTML(cf, i);
     }
 
-    cf.append("\n</pre>");
+    cf.append("\n</pre></body></html>");
 
-    StringSelection formatted = new StringSelection(cf.toString());
+    HtmlSelection formatted = new HtmlSelection(cf.toString());
+
     Clipboard clipboard = processing.app.Toolkit.getSystemClipboard();
     clipboard.setContents(formatted, new ClipboardOwner() {
       public void lostOwnership(Clipboard clipboard, Transferable contents) {
@@ -1812,7 +1813,13 @@ public class JEditTextArea extends JComponent
     if (c == '<') {
       buffer.append("&lt;");
     } else if (c == '>') {
-      buffer.append("&rt;");
+      buffer.append("&gt;");
+    } else if (c == '&') {
+      buffer.append("&amp;");
+    } else if (c == '\'') {
+      buffer.append("&apos;");
+    } else if (c == '"') {
+      buffer.append("&quot;");
     } else if (c > 127) {
       buffer.append("&#" + ((int) c) + ";");  // use unicode entity
     } else {
