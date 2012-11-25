@@ -5288,10 +5288,13 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   @Override
-  protected PImage getImpl(int x, int y, int w, int h) {
+  protected void getImpl(int sourceX, int sourceY,
+                         int sourceWidth, int sourceHeight,
+                         PImage target, int targetX, int targetY) {
     loadPixels();
     setgetPixels = true;
-    return super.getImpl(x, y, w, h);
+    super.getImpl(sourceX, sourceY, sourceWidth, sourceHeight,
+                  target, targetX, targetY);
   }
 
 
@@ -5304,11 +5307,11 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   @Override
-  protected void setImpl(int dx, int dy, int sx, int sy, int sw, int sh,
-                         PImage src) {
+  protected void setImpl(PImage src,
+                         int sx, int sy, int sw, int sh, int dx, int dy) {
     loadPixels();
     setgetPixels = true;
-    super.setImpl(dx, dy, sx, sy, sw, sh, src);
+    super.setImpl(src, sx, sy, sw, sh, dx, dy);
   }
 
 

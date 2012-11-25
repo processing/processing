@@ -1944,22 +1944,20 @@ public class PGraphicsAndroid2D extends PGraphics {
   //public PImage get(int x, int y, int w, int h)
 
 
-  @Override
-  public PImage getImpl(int x, int y, int w, int h) {
-    PImage output = new PImage();
-    output.width = w;
-    output.height = h;
-    output.parent = parent;
-
-//    WritableRaster raster = ((BufferedImage) image).getRaster();
-//    raster.getDataElements(x, y, w, h, output.pixels);
-    Bitmap bitsy = Bitmap.createBitmap(bitmap, x, y, w, h);
-    // guessing it's more efficient to use Bitmap instead of pixels[]
-    //bitsy.getPixels(output.pixels, 0, w, 0, 0, w, h);
-    output.bitmap = bitsy;
-
-    return output;
-  }
+//  @Override
+//  public PImage getImpl(int x, int y, int w, int h) {
+//    PImage output = new PImage();
+//    output.width = w;
+//    output.height = h;
+//    output.parent = parent;
+//
+//    Bitmap bitsy = Bitmap.createBitmap(bitmap, x, y, w, h);
+//    // guessing it's more efficient to use Bitmap instead of pixels[]
+//    //bitsy.getPixels(output.pixels, 0, w, 0, 0, w, h);
+//    output.bitmap = bitsy;
+//
+//    return output;
+//  }
 
 
   @Override
