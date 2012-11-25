@@ -33,6 +33,8 @@ X add XML.getLong() (also update Android)
 X   http://code.google.com/p/processing/issues/detail?id=1378
 X beginShape(QUAD) not working with Java2D
 X   http://code.google.com/p/processing/issues/detail?id=1365
+X fix for PMatrix3D.mult() when vectors are identical
+X   http://code.google.com/p/processing/issues/detail?id=921
 
 
 andres (cleanup)
