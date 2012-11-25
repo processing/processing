@@ -33,7 +33,7 @@ X check on adding ip() method
 X   http://code.google.com/p/processing/issues/detail?id=1228
 X Modify “Copy as HTML” to add second HTML data type when writing the clipboard
 X   http://code.google.com/p/processing/issues/detail?id=1065
-X 
+X   fix contributed by Ostap Andrusiv
 
 
 _ fix the debug stuff before shipping this out
@@ -251,6 +251,8 @@ _   http://code.google.com/p/processing/issues/detail?id=905
 _ 'recent' menu doesn't respect examples folder of other p5 versions
 _ 'recent' menu paths can get enormous
 _ what order should 'recent' menu use?
+_ add reference for contributed libraries to the Help menu
+_   http://code.google.com/p/processing/issues/detail?id=905
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -666,6 +668,8 @@ PDE / Find & Replace
 
 PDE / Examples
 
+_ "Standard Examples" dialog box off screen if Processing IDE maximised
+_   http://code.google.com/p/processing/issues/detail?id=928
 _ keep examples.zip in a zip file? (5000 files @ 30 MB instead of 15 MB zip)
 _   mark examples as untitled (rather than read-only)
 _   maybe even pull these directly from the zip file?
