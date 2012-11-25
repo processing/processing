@@ -3,6 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
+  Copyright (c) 2012 The Processing Foundation
   Copyright (c) 2009-12 Ben Fry and Casey Reas
 
   This library is free software; you can redistribute it and/or
@@ -39,6 +40,9 @@ import processing.core.PApplet;
 /**
  * This is the base class used for the Processing XML library,
  * representing a single node of an XML tree.
+ *
+ * @webref data:composite
+ * @see PApplet#loadXML(String)
  */
 public class XML implements Serializable {
 
@@ -62,6 +66,7 @@ public class XML implements Serializable {
    * Begin parsing XML data passed in from a PApplet. This code
    * wraps exception handling, for more advanced exception handling,
    * use the constructor that takes a Reader or InputStream.
+   *
    * @throws SAXException
    * @throws ParserConfigurationException
    * @throws IOException
@@ -77,44 +82,45 @@ public class XML implements Serializable {
 
 
   public XML(Reader reader) throws IOException, ParserConfigurationException, SAXException {
-      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 
-      try {
-        factory.setAttribute("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-      } catch (IllegalArgumentException e) {
-        // ignore this; Android doesn't like it
-      }
+    // Prevent 503 errors from www.w3.org
+    try {
+      factory.setAttribute("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+    } catch (IllegalArgumentException e) {
+      // ignore this; Android doesn't like it
+    }
 
-      // without a validating DTD, this doesn't do anything since it doesn't know what is ignorable
+    // without a validating DTD, this doesn't do anything since it doesn't know what is ignorable
 //      factory.setIgnoringElementContentWhitespace(true);
 
-      factory.setExpandEntityReferences(false);
+    factory.setExpandEntityReferences(false);
 //      factory.setExpandEntityReferences(true);
 
 //      factory.setCoalescing(true);
 //      builderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-      DocumentBuilder builder = factory.newDocumentBuilder();
+    DocumentBuilder builder = factory.newDocumentBuilder();
 //      builder.setEntityResolver()
 
 //      SAXParserFactory spf = SAXParserFactory.newInstance();
 //      spf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
 //      SAXParser p = spf.newSAXParser();
 
-      //    builder = DocumentBuilderFactory.newDocumentBuilder();
-      //    builder = new SAXBuilder();
-      //    builder.setValidation(validating);
+    //    builder = DocumentBuilderFactory.newDocumentBuilder();
+    //    builder = new SAXBuilder();
+    //    builder.setValidation(validating);
 
 //      print(dataPath("1broke.html"), System.out);
 
 //      Document document = builder.parse(dataPath("1_alt.html"));
-      Document document = builder.parse(new InputSource(reader));
-      node = document.getDocumentElement();
-      name = node.getNodeName();
+    Document document = builder.parse(new InputSource(reader));
+    node = document.getDocumentElement();
+    name = node.getNodeName();
 //      NodeList nodeList = document.getDocumentElement().getChildNodes();
 //      for (int i = 0; i < nodeList.getLength(); i++) {
 //      }
 //      print(createWriter("data/1_alt_reparse.html"), document.getDocumentElement(), 0);
-    }
+  }
 
 
   // TODO is there a more efficient way of doing this? wow.
@@ -135,14 +141,6 @@ public class XML implements Serializable {
   }
 
 
-//  public PNodeXML(String name, PNode parent) {
-//    PNodeXML pxml = PNodeXML.parse("<" + name + ">");
-//    this.node = pxml.node;
-//    this.name = name;
-//    this.parent = parent;
-//  }
-
-
   protected XML(XML parent, Node node) {
     this.node = node;
     this.parent = parent;
@@ -152,7 +150,7 @@ public class XML implements Serializable {
 
   static public XML parse(String xml) {
     try {
-    return new XML(new StringReader(xml));
+      return new XML(new StringReader(xml));
     } catch (Exception e) {
       e.printStackTrace();
       return null;
@@ -171,7 +169,7 @@ public class XML implements Serializable {
 
 
   public boolean save(PrintWriter output) {
-    output.print(toString(2));
+    output.print(format(2));
     output.flush();
     return true;
   }
@@ -180,12 +178,17 @@ public class XML implements Serializable {
   /**
    * Returns the parent element. This method returns null for the root
    * element.
+   *
+   * @webref xml:method
+   * @brief Gets a copy of the element's parent
    */
   public XML getParent() {
     return this.parent;
   }
 
-
+  /**
+   * Internal function; not included in reference.
+   */
   protected Node getNode() {
     return node;
   }
@@ -194,13 +197,19 @@ public class XML implements Serializable {
   /**
    * Returns the full name (i.e. the name including an eventual namespace
    * prefix) of the element.
+   *
+   * @webref xml:method
+   * @brief Gets the element's full name
    * @return the name, or null if the element only contains #PCDATA.
    */
   public String getName() {
     return name;
   }
 
-
+  /**
+   * @webref xml:method
+   * @brief Sets the element's name
+   */
   public void setName(String newName) {
     Document document = node.getOwnerDocument();
     node = document.renameNode(node, null, newName);
@@ -210,7 +219,8 @@ public class XML implements Serializable {
 
   /**
    * Returns the name of the element (without namespace prefix).
-   * @return the name, or null if the element only contains #PCDATA.
+   *
+   * Internal function; not included in reference.
    */
   public String getLocalName() {
     return node.getLocalName();
@@ -219,6 +229,8 @@ public class XML implements Serializable {
 
   /**
    * Honey, can you just check on the kids? Thanks.
+   *
+   * Internal function; not included in reference.
    */
   protected void checkChildren() {
     if (children == null) {
@@ -234,6 +246,9 @@ public class XML implements Serializable {
 
   /**
    * Returns the number of children.
+   *
+   * @webref xml:method
+   * @brief Returns the element's number of children
    * @return the count.
    */
   public int getChildCount() {
@@ -242,6 +257,12 @@ public class XML implements Serializable {
   }
 
 
+  /**
+   * Returns a boolean of whether or not there are children.
+   *
+   * @webref xml:method
+   * @brief Checks whether or not an element has any children
+   */
   public boolean hasChildren() {
     checkChildren();
     return children.length > 0;
@@ -251,6 +272,9 @@ public class XML implements Serializable {
   /**
    * Put the names of all children into an array. Same as looping through
    * each child and calling getName() on each XMLElement.
+   *
+   * @webref xml:method
+   * @brief Returns the names of all children as an array
    */
   public String[] listChildren() {
 //    NodeList children = node.getChildNodes();
@@ -273,6 +297,9 @@ public class XML implements Serializable {
 
   /**
    * Returns an array containing all the child elements.
+   *
+   * @webref xml:method
+   * @brief Returns an array containing all child elements
    */
   public XML[] getChildren() {
 //    NodeList children = node.getChildNodes();
@@ -290,7 +317,9 @@ public class XML implements Serializable {
 
   /**
    * Quick accessor for an element at a particular index.
-   * @author processing.org
+   *
+   * @webref xml:method
+   * @brief Returns the child element with the specified index value or path
    */
   public XML getChild(int index) {
     checkChildren();
@@ -300,6 +329,7 @@ public class XML implements Serializable {
 
   /**
    * Get a child by its name or path.
+   *
    * @param name element name or path/to/element
    * @return the first matching element
    */
@@ -321,6 +351,7 @@ public class XML implements Serializable {
 
   /**
    * Internal helper function for getChild(String).
+   *
    * @param items result of splitting the query on slashes
    * @param offset where in the items[] array we're currently looking
    * @return matching element or null if no match
@@ -355,6 +386,7 @@ public class XML implements Serializable {
   /**
    * Get any children that match this name or path. Similar to getChild(),
    * but will grab multiple matches rather than only the first.
+   *
    * @param name element name or path/to/element
    * @return array of child elements that match
    * @author processing.org
@@ -396,6 +428,10 @@ public class XML implements Serializable {
   }
 
 
+  /**
+   * @webref xml:method
+   * @brief Appends a new child to the element
+   */
   public XML addChild(String tag) {
     Document document = node.getOwnerDocument();
     Node newChild = document.createElement(tag);
@@ -421,14 +457,53 @@ public class XML implements Serializable {
   }
 
 
+  /**
+   * @webref xml:method
+   * @brief Removes the specified child
+   */
   public void removeChild(XML kid) {
     node.removeChild(kid.node);
     children = null;  // TODO not efficient
   }
 
 
+  /** Remove whitespace nodes. */
+  public void trim() {
+////    public static boolean isWhitespace(XML xml) {
+////      if (xml.node.getNodeType() != Node.TEXT_NODE)
+////        return false;
+////      Matcher m = whitespace.matcher(xml.node.getNodeValue());
+////      return m.matches();
+////    }
+//    trim(this);
+//  }
+//
+//
+//  protected void trim() {
+    checkChildren();
+    int index = 0;
+    for (int i = 0; i < children.length; i++) {
+      if (i != index) {
+        children[index] = children[i];
+      }
+      Node childNode = children[i].getNode();
+      if (childNode.getNodeType() != Node.TEXT_NODE ||
+          children[i].getContent().trim().length() > 0) {
+        children[i].trim();
+        index++;
+      }
+    }
+    if (index != children.length) {
+      children = (XML[]) PApplet.subset(children, 0, index);
+    }
+  }
+
+
   /**
    * Returns the number of attributes.
+   *
+   * @webref xml:method
+   * @brief Counts the specified element's number of attributes
    */
   public int getAttributeCount() {
     return node.getAttributes().getLength();
@@ -437,6 +512,9 @@ public class XML implements Serializable {
 
   /**
    * Get a list of the names for all of the attributes for this node.
+   *
+   * @webref xml:method
+   * @brief Returns a list of names of all attributes as an array
    */
   public String[] listAttributes() {
     NamedNodeMap nnm = node.getAttributes();
@@ -449,6 +527,9 @@ public class XML implements Serializable {
 
   /**
    * Returns whether an attribute exists.
+   *
+   * @webref xml:method
+   * @brief Checks whether or not an element has the specified attribute
    */
   public boolean hasAttribute(String name) {
     return (node.getAttributes().getNamedItem(name) != null);
@@ -457,6 +538,7 @@ public class XML implements Serializable {
 
   /**
    * Returns the value of an attribute.
+   *
    * @param name the non-null name of the attribute.
    * @return the value, or null if the attribute does not exist.
    */
@@ -470,7 +552,6 @@ public class XML implements Serializable {
    *
    * @param name the non-null full name of the attribute.
    * @param defaultValue the default value of the attribute.
-   *
    * @return the value, or defaultValue if the attribute does not exist.
    */
 //  public String getAttribute(String name, String defaultValue) {
@@ -479,6 +560,10 @@ public class XML implements Serializable {
 //  }
 
 
+  /**
+   * @webref xml:method
+   * @brief Gets the content of an element as a String
+   */
   public String getString(String name) {
     return getString(name, null);
   }
@@ -490,16 +575,28 @@ public class XML implements Serializable {
   }
 
 
+  /**
+   * @webref xml:method
+   * @brief Sets the content of an element as a String
+   */
   public void setString(String name, String value) {
     ((Element) node).setAttribute(name, value);
   }
 
 
+  /**
+   * @webref xml:method
+   * @brief Gets the content of an element as an int
+   */
   public int getInt(String name) {
     return getInt(name, 0);
   }
 
 
+  /**
+   * @webref xml:method
+   * @brief Sets the content of an element as an int
+   */
   public void setInt(String name, int value) {
     setString(name, String.valueOf(value));
   }
@@ -510,7 +607,6 @@ public class XML implements Serializable {
    *
    * @param name the non-null full name of the attribute.
    * @param defaultValue the default value of the attribute.
-   *
    * @return the value, or defaultValue if the attribute does not exist.
    */
   public int getInt(String name, int defaultValue) {
@@ -520,7 +616,32 @@ public class XML implements Serializable {
 
 
   /**
+   * @webref xml:method
+   * @brief Sets the content of an element as an int
+   */
+  public void setLong(String name, long value) {
+    setString(name, String.valueOf(value));
+  }
+
+
+  /**
+   * Returns the value of an attribute.
+   *
+   * @param name the non-null full name of the attribute.
+   * @param defaultValue the default value of the attribute.
+   * @return the value, or defaultValue if the attribute does not exist.
+   */
+  public long getLong(String name, long defaultValue) {
+    String value = getString(name);
+    return (value == null) ? defaultValue : Long.parseLong(value);
+  }
+
+
+  /**
    * Returns the value of an attribute, or zero if not present.
+   *
+   * @webref xml:method
+   * @brief Gets the content of an element as a float
    */
   public float getFloat(String name) {
     return getFloat(name, 0);
@@ -532,7 +653,6 @@ public class XML implements Serializable {
    *
    * @param name the non-null full name of the attribute.
    * @param defaultValue the default value of the attribute.
-   *
    * @return the value, or defaultValue if the attribute does not exist.
    */
   public float getFloat(String name, float defaultValue) {
@@ -541,6 +661,10 @@ public class XML implements Serializable {
   }
 
 
+  /**
+   * @webref xml:method
+   * @brief Sets the content of an element as a float
+   */
   public void setFloat(String name, float value) {
     setString(name, String.valueOf(value));
   }
@@ -576,6 +700,8 @@ public class XML implements Serializable {
    * sections can be retrieved as unnamed child objects. In this case,
    * this method returns null.
    *
+   * @webref xml:method
+   * @brief Gets the content of an element
    * @return the content.
    */
   public String getContent() {
@@ -583,29 +709,26 @@ public class XML implements Serializable {
   }
 
 
+  /**
+   * @webref xml:method
+   * @brief Sets the content of an element
+   */
   public void setContent(String text) {
     node.setTextContent(text);
   }
 
 
-  @Override
-  public String toString() {
-    return toString(2);
-  }
-
-
-  public String toString(int indent) {
+  public String format(int indent) {
     try {
-//      node.normalize();  // does nothing useful
       DOMSource dumSource = new DOMSource(node);
       // entities = doctype.getEntities()
       TransformerFactory tf = TransformerFactory.newInstance();
       Transformer transformer = tf.newTransformer();
       // if this is the root, output the decl, if not, hide it
-      if (parent != null) {
+      if (indent == -1 || parent != null) {
         transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-//      } else {
-//        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+      } else {
+        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
       }
 //      transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, "sample.dtd");
       transformer.setOutputProperty(OutputKeys.METHOD, "xml");
@@ -635,56 +758,16 @@ public class XML implements Serializable {
       transformer.transform(dumSource, sr);
       return sw.toString();
 
-//      Document document = node.getOwnerDocument();
-//      OutputFormat format = new OutputFormat(document);
-//      format.setLineWidth(65);
-//      format.setIndenting(true);
-//      format.setIndent(2);
-//      StringWriter sw = new StringWriter();
-//      XMLSerializer serializer = new XMLSerializer(sw, format);
-//      serializer.serialize(document);
-//      return sw.toString();
-
     } catch (Exception e) {
       e.printStackTrace();
     }
     return null;
-
-//    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-//    try {
-//      DocumentBuilder builder = factory.newDocumentBuilder();
-//      //builder.get
-////      Document document = builder.
-//
-//    } catch (ParserConfigurationException e) {
-//      e.printStackTrace();
-//    }
-
-
-
-    //    Document doc = new DocumentImpl();
-//    return node.toString();
-
-//    TransformerFactory transfac = TransformerFactory.newInstance();
-//    Transformer trans = transfac.newTransformer();
-//    trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-//    trans.setOutputProperty(OutputKeys.INDENT, "yes");
-//
-//    //create string from xml tree
-//    StringWriter sw = new StringWriter();
-//    StreamResult result = new StreamResult(sw);
-////    Document doc =
-//    DOMSource source = new DOMSource(doc);
-//    trans.transform(source, result);
-//    String xmlString = sw.toString();
-
   }
 
 
-//  static final String HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
-//
-//  public void write(PrintWriter writer) {
-//    writer.println(HEADER);
-//    writer.print(toString(2));
-//  }
+  @Override
+  /** Return the XML data as a single line, with no DOCTYPE declaration. */
+  public String toString() {
+    return format(-1);
+  }
 }

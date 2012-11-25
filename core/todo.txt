@@ -27,6 +27,10 @@ X changed events to PRESS, RELEASE, CLICK, DRAG, MOVE, ENTER, EXIT
 X   instead of past-tense versions of the same
 A Implement arc() with modes on OpenGL
 A   http://code.google.com/p/processing/issues/detail?id=1406
+X relative coordinates not updated properly on closepath with SVG files
+X   http://code.google.com/p/processing/issues/detail?id=1058
+X add XML.getLong() (also update Android)
+X   http://code.google.com/p/processing/issues/detail?id=1378
 
 andres (cleanup)
 A when turning smoothing on, internal lines of shapes are visible

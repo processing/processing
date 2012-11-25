@@ -616,6 +616,28 @@ public class XML implements Serializable {
 
 
   /**
+   * @webref xml:method
+   * @brief Sets the content of an element as an int
+   */
+  public void setLong(String name, long value) {
+    setString(name, String.valueOf(value));
+  }
+
+
+  /**
+   * Returns the value of an attribute.
+   *
+   * @param name the non-null full name of the attribute.
+   * @param defaultValue the default value of the attribute.
+   * @return the value, or defaultValue if the attribute does not exist.
+   */
+  public long getLong(String name, long defaultValue) {
+    String value = getString(name);
+    return (value == null) ? defaultValue : Long.parseLong(value);
+  }
+
+
+  /**
    * Returns the value of an attribute, or zero if not present.
    *
    * @webref xml:method
