@@ -46,15 +46,18 @@ public class PdeTextAreaDefaults extends TextAreaDefaults {
     if (Preferences.getBoolean("editor.keys.shift_backspace_is_delete")) {
       inputHandler.addKeyBinding("S+BACK_SPACE", InputHandler.DELETE);
     } else {
+      // Made the default for 0215, deemed better for our audience.
       inputHandler.addKeyBinding("S+BACK_SPACE", InputHandler.BACKSPACE);
     }
 
     inputHandler.addKeyBinding("DELETE", InputHandler.DELETE);
     inputHandler.addKeyBinding("S+DELETE", InputHandler.DELETE);
 
-    // the following two were changing for 0122 for better mac/pc compatability
-    inputHandler.addKeyBinding(mod + "+BACK_SPACE", InputHandler.BACKSPACE_WORD);
-    inputHandler.addKeyBinding(mod + "+DELETE", InputHandler.DELETE_WORD);
+    // the following two were changed for 0122 for better mac/pc compatability
+    inputHandler.addKeyBinding(mod + "+BACK_SPACE", InputHandler.BACKSPACE_WORD);  // 0122
+    inputHandler.addKeyBinding(mod + "S+BACK_SPACE", InputHandler.BACKSPACE_WORD);  // 0215
+    inputHandler.addKeyBinding(mod + "+DELETE", InputHandler.DELETE_WORD);  // 0122
+    inputHandler.addKeyBinding(mod + "S+DELETE", InputHandler.DELETE_WORD);  // 0215
 
     // handled by listener, don't bother here
     //inputHandler.addKeyBinding("ENTER", InputHandler.INSERT_BREAK);
@@ -95,9 +98,45 @@ public class PdeTextAreaDefaults extends TextAreaDefaults {
     }
 
     if (Base.isMacOS()) {
-      //inputHandler.addKeyBinding("C+A", InputHandler.HOME);
-      //inputHandler.addKeyBinding("C+E", InputHandler.END);
-      //inputHandler.addKeyBinding("C+D", InputHandler.DELETE);  // option-delete (fwd)
+      // Additional OS X key bindings added for 0215.  
+      // Also note that two more are added above and marked 0215.
+      // http://code.google.com/p/processing/issues/detail?id=1354
+      // Could not find a proper Apple guide, but a partial reference is here:
+      // http://guides.macrumors.com/Keyboard_shortcuts&section=10#Text_Shortcuts
+      
+      // control-A  move to start of current paragraph
+      inputHandler.addKeyBinding("C+A", InputHandler.HOME);
+      inputHandler.addKeyBinding("CS+A", InputHandler.SELECT_HOME);
+      // control-E  move to end of current paragraph
+      inputHandler.addKeyBinding("C+E", InputHandler.END);
+      inputHandler.addKeyBinding("CS+E", InputHandler.SELECT_END);
+      
+      // control-D  forward delete
+      inputHandler.addKeyBinding("C+D", InputHandler.DELETE);
+      
+      // control-B  move left one character
+      inputHandler.addKeyBinding("C+B", InputHandler.PREV_CHAR);
+      inputHandler.addKeyBinding("CS+B", InputHandler.SELECT_PREV_CHAR);
+      // control-F  move right one character
+      inputHandler.addKeyBinding("C+F", InputHandler.NEXT_CHAR);
+      inputHandler.addKeyBinding("CS+F", InputHandler.SELECT_NEXT_CHAR);
+      
+      // control-H  delete (just ASCII for backspace)
+      inputHandler.addKeyBinding("C+H", InputHandler.BACKSPACE);
+      
+      // control-N  move down one line
+      inputHandler.addKeyBinding("C+N", InputHandler.NEXT_LINE);
+      inputHandler.addKeyBinding("CS+N", InputHandler.SELECT_NEXT_LINE);
+      // control-P  move up one line
+      inputHandler.addKeyBinding("C+P", InputHandler.PREV_LINE);
+      inputHandler.addKeyBinding("CS+P", InputHandler.SELECT_PREV_LINE);
+
+      // might be nice, but no handlers currently available
+      // control-O  insert new line after cursor
+      // control-T  transpose (swap) two surrounding character
+      // control-V  move to end, then left one character
+      // control-K  delete remainder of current paragraph
+      // control-Y  paste text previously deleted with control-K
     }
 
     if (Base.isMacOS()) {

@@ -121,7 +121,7 @@ editor.keys.alternative_cut_copy_paste.macosx = false
 
 # true if shift-backspace sends the delete character, 
 # false if shift-backspace just means backspace
-editor.keys.shift_backspace_is_delete = true
+editor.keys.shift_backspace_is_delete = false
 
 # home and end keys should only travel to the start/end of the current line
 editor.keys.home_and_end_travel_far = false

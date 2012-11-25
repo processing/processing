@@ -34,18 +34,23 @@ X   http://code.google.com/p/processing/issues/detail?id=1228
 X Modify “Copy as HTML” to add second HTML data type when writing the clipboard
 X   http://code.google.com/p/processing/issues/detail?id=1065
 X   fix contributed by Ostap Andrusiv
-
-
+X change default for shift-backspace to just be backspace
+X   use editor.keys.shift_backspace_is_delete=true to bring it back
+X standard "Emacs" keybindings not implemented on OS X
+X   http://code.google.com/p/processing/issues/detail?id=1354
+X   http://guides.macrumors.com/Keyboard_shortcuts&section=10#Text_Shortcuts
 _ fix the debug stuff before shipping this out
 _   DebugMode throwing exception about breakpoints when trying to save
-
+_   what to call it?
 
 earlier
 X The sketch name can't begin with '_' (underscore)
 X   http://code.google.com/p/processing/issues/detail?id=859
 
+
 _ if RuntimeException thrown, needs to check if it's a wrapped exception
 _   for instance, if there's a crash inside makeGraphics()
+_   this inside the handling that comes from the JVM, which makes it tricky
 
 _ remove sketch.properties when moving back to the default?
 _   or can we not do this, because the next mode needs this?
@@ -59,23 +64,6 @@ _   "To use this library, you must use the 32-bit version of Processing."
 
 _ temporary files (for sketches and logs) are not deleted
 _   http://code.google.com/p/processing/issues/detail?id=562
-
-_ standard "Emacs" keybindings not implemented on OS X
-_   http://code.google.com/p/processing/issues/detail?id=1354
-_   http://guides.macrumors.com/Keyboard_shortcuts&section=10#Text_Shortcuts
-control-A	 move to start of current paragraph
-control-B	 move left one character
-control-D	 forwards delete
-control-E	 move to end of current paragraph
-control-F	 move right one character
-control-H	 delete
-control-K	 delete remainder of current paragraph
-control-N	 move down one line
-control-O	 insert new line after cursor
-control-P	 move up one line
-control-T	 transpose (swap) two surrounding character
-control-V	 move to end, then left one character
-control-Y	 paste text previously deleted with control-K
 
 http://download.eclipse.org/eclipse/downloads/
 
