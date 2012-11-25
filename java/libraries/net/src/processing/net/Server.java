@@ -47,7 +47,6 @@ import java.net.*;
  * @instanceName server  	any variable of type Server
  */
 public class Server implements Runnable {
-
   PApplet parent;
   Method serverEventMethod;
 
@@ -60,6 +59,7 @@ public class Server implements Runnable {
   /** Array of client objects, useful length is determined by clientCount. */
   public Client[] clients;
 
+  
   /**
    * @param parent typically use "this"
    * @param port port used to transfer data
@@ -155,9 +155,6 @@ public class Server implements Runnable {
       e.printStackTrace();
     }
     return null;
-//    InetAddress thisIp = InetAddress.getLocalHost();
-//    thisIpAddress = thisIp.getHostAddress()
-//    return server.getInetAddress().getHostAddress();
   }
 
 
@@ -219,25 +216,23 @@ public class Server implements Runnable {
    * Disconnect all clients and stop the server: internal use only.
    */
   public void dispose() {
-    try {
-      thread = null;
+    thread = null;
 
-      if (clients != null) {
-        for (int i = 0; i < clientCount; i++) {
-          disconnect(clients[i]);
-        }
-        clientCount = 0;
-        clients = null;
+    if (clients != null) {
+      for (int i = 0; i < clientCount; i++) {
+        disconnect(clients[i]);
       }
+      clientCount = 0;
+      clients = null;
+    }
 
+    try {
       if (server != null) {
         server.close();
         server = null;
       }
-
     } catch (IOException e) {
       e.printStackTrace();
-      //errorMessage("stop", e);
     }
   }
 
@@ -294,6 +289,7 @@ public class Server implements Runnable {
       }
     }
   }
+  
 
   public void write(byte data[]) {
     int index = 0;
@@ -306,6 +302,7 @@ public class Server implements Runnable {
       }
     }
   }
+  
 
   public void write(String data) {
     int index = 0;
@@ -321,7 +318,7 @@ public class Server implements Runnable {
 
 
   /**
-   * General error reporting, all corraled here just in case
+   * General error reporting, all corralled here just in case
    * I think of something slightly more intelligent to do.
    */
 //  public void errorMessage(String where, Exception e) {

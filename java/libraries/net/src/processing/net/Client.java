@@ -45,7 +45,6 @@ import java.net.*;
  * @see_external LIB_net/clientEvent
  */
 public class Client implements Runnable {
-
   PApplet parent;
   Method clientEventMethod;
   Method disconnectEventMethod;
@@ -63,6 +62,7 @@ public class Client implements Runnable {
   int bufferIndex;
   int bufferLast;
 
+  
   /**
    * @param parent typically use "this"
    * @param host address of the server
@@ -83,7 +83,7 @@ public class Client implements Runnable {
 
       parent.registerMethod("dispose", this);
 
-      // reflection to check whether host applet has a call for
+      // reflection to check whether host sketch has a call for
       // public void clientEvent(processing.net.Client)
       // which would be called each time an event comes in
       try {
@@ -139,8 +139,7 @@ public class Client implements Runnable {
    * @brief Disconnects from the server
    * @usage application
    */
-  public void stop() {
-    dispose();
+  public void stop() {    
     if (disconnectEventMethod != null) {
       try {
         disconnectEventMethod.invoke(parent, new Object[] { this });
@@ -149,6 +148,7 @@ public class Client implements Runnable {
         disconnectEventMethod = null;
       }
     }
+    dispose();
   }
 
 
@@ -161,23 +161,31 @@ public class Client implements Runnable {
   public void dispose() {
     thread = null;
     try {
-      // do io streams need to be closed first?
-      if (input != null) input.close();
-      if (output != null) output.close();
-
+      if (input != null) {
+        input.close();
+        input = null;
+      }
     } catch (Exception e) {
       e.printStackTrace();
     }
-    input = null;
-    output = null;
 
     try {
-      if (socket != null) socket.close();
-
+      if (output != null) {
+        output.close();
+        output = null;
+      }
     } catch (Exception e) {
       e.printStackTrace();
     }
-    socket = null;
+    
+    try {
+      if (socket != null) {
+        socket.close();
+        socket = null;
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
 
@@ -615,7 +623,7 @@ public class Client implements Runnable {
 
 
   /**
-   * General error reporting, all corraled here just in case
+   * General error reporting, all corralled here just in case
    * I think of something slightly more intelligent to do.
    */
   //public void errorMessage(String where, Exception e) {
