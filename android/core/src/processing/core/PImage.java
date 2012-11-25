@@ -345,32 +345,22 @@ public class PImage implements PConstants, Cloneable {
    * Resize this image to a new width and height.
    * Use 0 for wide or high to make that dimension scale proportionally.
    */
-  public void resize(int wide, int high) {  // ignore
-    // Make sure that the pixels[] array is valid
-    loadPixels();
-
-    if (wide <= 0 && high <= 0) {
-      width = 0;  // Gimme a break, don't waste my time
-      height = 0;
-      pixels = new int[0];
-      bitmap = null;
-
-    } else {
-      if (wide == 0) {  // Use height to determine relative size
-        float diff = (float) high / (float) height;
-        wide = (int) (width * diff);
-      } else if (high == 0) {  // Use the width to determine relative size
-        float diff = (float) wide / (float) width;
-        high = (int) (height * diff);
-      }
-      PImage temp = new PImage(wide, high, this.format);
-      temp.parent = parent;
-      temp.copy(this, 0, 0, width, height, 0, 0, wide, high);
-      this.width = wide;
-      this.height = high;
-      this.pixels = temp.pixels;
-      this.bitmap = null;
+  public void resize(int w, int h) {  // ignore
+    if (w <= 0 && h <= 0) {
+      throw new IllegalArgumentException("width or height must be > 0 for resize");
     }
+
+    if (w == 0) {  // Use height to determine relative size
+      float diff = (float) h / (float) height;
+      w = (int) (width * diff);
+    } else if (h == 0) {  // Use the width to determine relative size
+      float diff = (float) w / (float) width;
+      h = (int) (height * diff);
+    }
+    bitmap = Bitmap.createScaledBitmap(bitmap, w, h, true);
+    this.width = w;
+    this.height = h;
+
     // Mark the pixels array as altered
     updatePixels();
   }
