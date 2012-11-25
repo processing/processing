@@ -5415,12 +5415,12 @@ public class PGraphicsOpenGL extends PGraphics {
   // MASK
 
 
-  @Override
-  public void mask(int alpha[]) {
-    PImage temp = get();
-    temp.mask(alpha);
-    set(0, 0, temp);
-  }
+//  @Override
+//  public void mask(int alpha[]) {
+//    PImage temp = get();
+//    temp.mask(alpha);
+//    set(0, 0, temp);
+//  }
 
 
   @Override

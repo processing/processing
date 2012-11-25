@@ -49,6 +49,7 @@ X   http://code.google.com/p/processing/issues/detail?id=195
 X   make note for Casey to include this in the reference
 X Potential race condition when resizing sketches
 X   http://code.google.com/p/processing/issues/detail?id=697
+X removed mask(int[]).. check reference to make sure it's not in use
 
 andres (cleanup)
 A when turning smoothing on, internal lines of shapes are visible
