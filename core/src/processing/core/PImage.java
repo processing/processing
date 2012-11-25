@@ -24,12 +24,10 @@
 
 package processing.core;
 
-import java.awt.Image;
+import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
 import java.lang.reflect.Method;
-
-import javax.imageio.ImageIO;
 
 
 /**
@@ -124,6 +122,7 @@ public class PImage implements PConstants, Cloneable {
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
 
   /** for renderers that need to store info about the image */
   //protected HashMap<PGraphics, Object> cacheMap;
@@ -470,20 +469,20 @@ public class PImage implements PConstants, Cloneable {
       pixels = new int[width*height];
     }
 
-    if (parent == null) return;
-    Object cache = parent.g.initCache(this);
-    if (cache != null) {
-      Method loadPixelsMethod = null;
-      try {
-        loadPixelsMethod = cache.getClass().getMethod("loadPixels", new Class[] { int[].class });
-      } catch (Exception e) {
-      }
-
-      if (loadPixelsMethod != null) {
+    if (parent != null) {
+      Object cache = parent.g.initCache(this);
+      if (cache != null) {
+        Method loadPixelsMethod = null;
         try {
-          loadPixelsMethod.invoke(cache, new Object[] { pixels });
-        } catch (Exception e) {
-          e.printStackTrace();
+          loadPixelsMethod = cache.getClass().getMethod("loadPixels", new Class[] { int[].class });
+        } catch (Exception e) { }
+
+        if (loadPixelsMethod != null) {
+          try {
+            loadPixelsMethod.invoke(cache, new Object[] { pixels });
+          } catch (Exception e) {
+            e.printStackTrace();
+          }
         }
       }
     }
@@ -599,30 +598,93 @@ public class PImage implements PConstants, Cloneable {
    * @see PImage#get(int, int, int, int)
    */
   public void resize(int w, int h) {  // ignore
-    // Make sure that the pixels[] array is valid
-    loadPixels();
-
     if (w <= 0 && h <= 0) {
-      width = 0;  // Gimme a break, don't waste my time
-      height = 0;
-      pixels = new int[0];
-
-    } else {
-      if (w == 0) {  // Use height to determine relative size
-        float diff = (float) h / (float) height;
-        w = (int) (width * diff);
-      } else if (h == 0) {  // Use the width to determine relative size
-        float diff = (float) w / (float) width;
-        h = (int) (height * diff);
-      }
-      PImage temp = new PImage(w, h, this.format);
-      temp.copy(this, 0, 0, width, height, 0, 0, w, h);
-      this.width = w;
-      this.height = h;
-      this.pixels = temp.pixels;
+      throw new IllegalArgumentException("width or height must be > 0 for resize");
     }
+
+    if (w == 0) {  // Use height to determine relative size
+      float diff = (float) h / (float) height;
+      w = (int) (width * diff);
+    } else if (h == 0) {  // Use the width to determine relative size
+      float diff = (float) w / (float) width;
+      h = (int) (height * diff);
+    }
+
+    BufferedImage img = resizeImage((BufferedImage) getNative(), w, h);
+    PImage temp = new PImage(img);
+
+    // Assume that w/h is the same as passed in
+    this.width = w;
+    this.height = h;
+
+    // Get the resized pixel array
+    this.pixels = temp.pixels;
+
     // Mark the pixels array as altered
     updatePixels();
+  }
+
+
+  // Adapted from getFasterScaledInstance() method from page 111 of
+  // "Filthy Rich Clients" by Chet Haase and Romain Guy
+  static private BufferedImage resizeImage(BufferedImage img,
+                                           int wide, int high) {
+    int type = (img.getTransparency() == Transparency.OPAQUE) ?
+      BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
+    BufferedImage outgoing = img;
+    BufferedImage scratchImage = null;
+    Graphics2D g2 = null;
+    int prevW = outgoing.getWidth();
+    int prevH = outgoing.getHeight();
+    boolean isTranslucent = img.getTransparency() != Transparency.OPAQUE;
+
+    // Use multi-step technique: start with original size, then scale down in
+    // multiple passes with drawImage() until the target size is reached
+    int w = img.getWidth();
+    int h = img.getHeight();
+
+    do {
+      if (w > wide) {
+        w /= 2;
+        if (w < wide) {
+          w = wide;
+        }
+      }
+      if (h > high) {
+        h /= 2;
+        if (h < high) {
+          h = high;
+        }
+      }
+      if (scratchImage == null || isTranslucent) {
+        // Use a single scratch buffer for all iterations and then copy
+        // to the final, correctly-sized image before returning
+        scratchImage = new BufferedImage(w, h, type);
+        g2 = scratchImage.createGraphics();
+      }
+      g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                          RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+      g2.drawImage(outgoing, 0, 0, w, h, 0, 0, prevW, prevH, null);
+      prevW = w;
+      prevH = h;
+      outgoing = scratchImage;
+    } while (w != wide || h != high);
+
+    if (g2 != null) {
+      g2.dispose();
+    }
+
+    // If we used a scratch buffer that is larger than our target size,
+    // create an image of the right size and copy the results into it
+    if (wide != outgoing.getWidth() ||
+        high != outgoing.getHeight()) {
+      scratchImage = new BufferedImage(wide, high, type);
+      g2 = scratchImage.createGraphics();
+      g2.drawImage(outgoing, 0, 0, null);
+      g2.dispose();
+      outgoing = scratchImage;
+    }
+    return outgoing;
   }
 
 
@@ -2999,7 +3061,7 @@ public class PImage implements PConstants, Cloneable {
       File file = new File(path);
       String extension = path.substring(path.lastIndexOf('.') + 1);
 
-      return ImageIO.write(bimage, extension, file);
+      return javax.imageio.ImageIO.write(bimage, extension, file);
 
     } catch (Exception e) {
       e.printStackTrace();
