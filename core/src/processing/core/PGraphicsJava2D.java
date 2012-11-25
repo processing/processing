@@ -2145,17 +2145,32 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 
 
   @Override
-  public PImage getImpl(int x, int y, int w, int h) {
-    PImage output = new PImage(w, h);
-    output.parent = parent;
-
-    // oops, the last parameter is the scan size of the *target* buffer
+//  public PImage getImpl(int x, int y, int w, int h) {
+  protected void getImpl(int sourceX, int sourceY,
+                         int sourceWidth, int sourceHeight,
+                         PImage target, int targetX, int targetY) {
+    // last parameter to getRGB() is the scan size of the *target* buffer
     //((BufferedImage) image).getRGB(x, y, w, h, output.pixels, 0, w);
-    WritableRaster raster = ((BufferedImage) (primarySurface ? offscreen : image)).getRaster();
-//    WritableRaster raster = image.getRaster();
-    raster.getDataElements(x, y, w, h, output.pixels);
+    WritableRaster raster =
+      ((BufferedImage) (primarySurface ? offscreen : image)).getRaster();
 
-    return output;
+    if (sourceWidth == target.width && sourceHeight == target.height) {
+      raster.getDataElements(sourceX, sourceY, sourceWidth, sourceHeight, target.pixels);
+
+    } else {
+      // TODO optimize, incredibly inefficient to reallocate this much memory
+      int[] temp = new int[sourceWidth * sourceHeight];
+      raster.getDataElements(sourceX, sourceY, sourceWidth, sourceHeight, temp);
+
+      // Copy the temporary output pixels over to the outgoing image
+      int sourceOffset = 0;
+      int targetOffset = targetY*target.width + targetX;
+      for (int y = 0; y < sourceHeight; y++) {
+        System.arraycopy(temp, sourceOffset, target.pixels, targetOffset, sourceWidth);
+        sourceOffset += sourceWidth;
+        targetOffset += target.width;
+      }
+    }
   }
 
 
@@ -2176,17 +2191,27 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   }
 
 
+
+//  protected void setImpl(int dx, int dy, int sx, int sy, int sw, int sh,
+//                         PImage src) {
   @Override
-  protected void setImpl(int dx, int dy, int sx, int sy, int sw, int sh,
-                         PImage src) {
-    WritableRaster raster = ((BufferedImage) (primarySurface ? offscreen : image)).getRaster();
-//    WritableRaster raster = image.getRaster();
-    if ((sx == 0) && (sy == 0) && (sw == src.width) && (sh == src.height)) {
-      raster.setDataElements(dx, dy, src.width, src.height, src.pixels);
+  protected void setImpl(PImage sourceImage,
+                         int sourceX, int sourceY,
+                         int sourceWidth, int sourceHeight,
+                         int targetX, int targetY) {
+    WritableRaster raster =
+      ((BufferedImage) (primarySurface ? offscreen : image)).getRaster();
+
+    if ((sourceX == 0) && (sourceY == 0) &&
+        (sourceWidth == sourceImage.width) &&
+        (sourceHeight == sourceImage.height)) {
+      raster.setDataElements(targetX, targetY,
+                             sourceImage.width, sourceImage.height,
+                             sourceImage.pixels);
     } else {
-      // TODO Optimize, incredibly inefficient to reallocate this much memory
-      PImage temp = src.get(sx, sy, sw, sh);
-      raster.setDataElements(dx, dy, temp.width, temp.height, temp.pixels);
+      // TODO optimize, incredibly inefficient to reallocate this much memory
+      PImage temp = sourceImage.get(sourceX, sourceY, sourceWidth, sourceHeight);
+      raster.setDataElements(targetX, targetY, temp.width, temp.height, temp.pixels);
     }
   }
 
