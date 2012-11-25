@@ -38,6 +38,9 @@ o try using the internal javac on windows and see if exceptions come through..
 o   actually i think that might have been worse...
 X rounded rect support
 X   http://code.google.com/p/processing/issues/detail?id=929
+o too many temporary objects (particularly w/ color) created with A2D
+X   http://code.google.com/p/processing/issues/detail?id=213
+X   no votes after a couple years
 
 motion events
 o registerMethod("motionEvent") and "mouseEvent" not implemented
@@ -255,9 +258,6 @@ CORE (PApplet, P2D et al)
 
 _ images resized with default renderer on Android are pixelated
 _   http://code.google.com/p/processing/issues/detail?id=552
-
-_ too many temporary objects (particularly w/ color) created with A2D
-_   http://code.google.com/p/processing/issues/detail?id=213
 
 _ implement tap detection and set correct click count for mouseClicked()
 _   http://code.google.com/p/processing/issues/detail?id=215

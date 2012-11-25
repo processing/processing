@@ -35,7 +35,8 @@ X beginShape(QUAD) not working with Java2D
 X   http://code.google.com/p/processing/issues/detail?id=1365
 X fix for PMatrix3D.mult() when vectors are identical
 X   http://code.google.com/p/processing/issues/detail?id=921
-
+A back-buffer sampler in OpenGL renderers
+A   http://code.google.com/p/processing/issues/detail?id=1169
 
 andres (cleanup)
 A when turning smoothing on, internal lines of shapes are visible
@@ -580,7 +581,7 @@ _ deprecate the blend() function
 _ image resizing is ugly (just use java2d?)
 _   also deal with copy()/blend() inaccuracies
 _   http://code.google.com/p/processing/issues/detail?id=332
-_ when resizing, do we add a way to keep it pixelated?
+_ include option for nearest neighbor on resize
 _   http://code.google.com/p/processing/issues/detail?id=165
 _ blend() and copy() are not pixel accurate for copy/scale
 _   http://code.google.com/p/processing/issues/detail?id=285
