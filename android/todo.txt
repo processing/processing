@@ -50,6 +50,12 @@ X opting to take a step backwards on the motion event handling
 _ write a little stub code for people who want to use motionX/Y/etc
 
 
+_ NullPointerException in AndroidBuild.writeLocalProps(AndroidBuild.java:458)
+_   prompts for SDK, works; then after restart breaks again
+_   also refers to ANDROID_HOME and not ANDROID_SDK.. 
+_     are we using the right one these days?
+_   http://code.google.com/p/processing/issues/detail?id=979
+
 _ Finish implementation of OPEN and CHORD drawing modes for arc()
 _   http://code.google.com/p/processing/issues/detail?id=1405
 
@@ -247,8 +253,11 @@ P5 nice to have
 
 CORE (PApplet, P2D et al)
 
+_ images resized with default renderer on Android are pixelated
+_   http://code.google.com/p/processing/issues/detail?id=552
+
 _ too many temporary objects (particularly w/ color) created with A2D
-_ http://code.google.com/p/processing/issues/detail?id=213
+_   http://code.google.com/p/processing/issues/detail?id=213
 
 _ implement tap detection and set correct click count for mouseClicked()
 _   http://code.google.com/p/processing/issues/detail?id=215

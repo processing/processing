@@ -631,6 +631,7 @@ public class PImage implements PConstants, Cloneable {
 
   // GET/SET PIXELS
 
+
   /**
    * ( begin auto-generated from PImage_get.xml )
    *
@@ -697,6 +698,7 @@ public class PImage implements PConstants, Cloneable {
     }
     return 0;
   }
+
 
   /**
    * @param w width of pixel rectangle to get
@@ -924,6 +926,8 @@ public class PImage implements PConstants, Cloneable {
   //////////////////////////////////////////////////////////////
 
   // IMAGE FILTERS
+
+
   public void filter(int kind) {
     loadPixels();
 

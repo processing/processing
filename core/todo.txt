@@ -115,6 +115,9 @@ if (external && event.getNative() instanceof java.awt.event.KeyEvent &&
        exit();
      }
 
+_ how to handle get(x, y, w, h) when off screen? 
+_   http://code.google.com/p/processing/issues/detail?id=925
+
 _ how to handle stroke/fill separation in OpenGL
 _   http://code.google.com/p/processing/issues/detail?id=1302
 
@@ -137,6 +140,36 @@ Request r = createRequest("http://p5.org/feed/13134.jpg");
 Request r = createRequest("http://p5.org/feed/13134.jpg", "callbackName");
 Request r = createRequest("http://p5.org/feed/13134, "callbackName", "jpg");
 
+_ implement callbacks for images and other loadXxxx() functions
+_   remove requestImage() and friends
+_ callback for requestImage()
+_   http://code.google.com/p/processing/issues/detail?id=641
+_ remove/update requestImage example
+
+PImage icon;
+
+void setup() {
+ loadImage("icon.jpg", "iconLoaded");
+}
+
+void draw() {
+ if (icon != null) {
+   // do something
+ }
+}
+
+// if this version is present, it'll be called
+void iconLoaded(PImage image) {
+ icon = image;
+ // filename can be ignored
+}
+
+// alternate version that can be used, and will be called if present
+void iconLoaded(PImage image, String filename) {
+ icon = image;
+ // filename can be ignored
+}
+
 _ splice() throws ClassCastException when used with objects like PVector 
 _   http://code.google.com/p/processing/issues/detail?id=1407
 
@@ -154,9 +187,6 @@ _   http://code.google.com/p/processing/issues/detail?id=1353
 
 _ Default Renderer slow on retina displays
 _   http://code.google.com/p/processing/issues/detail?id=1262
-
-_ remove subsetting stuff from PFont?
-_   or use hint(ENABLE_FONT_SUBSETTING)? 
 
 _ change name for hint() that controls stroke/fill combo
 _   hint(DISABLE_OPTIMIZED_STROKE)
@@ -224,38 +254,6 @@ docs
 _ textureWrap() CLAMP and REPEAT now added
 _ begin/endContour()
 _ explain the new PGL interface
-
-
-_ implement callbacks for images and other loadXxxx() functions
-_   remove requestImage() and friends
-_ callback for requestImage()
-_   http://code.google.com/p/processing/issues/detail?id=641
-_ remove/update requestImage example
-
-PImage icon;
-
-void setup() {
- loadImage("icon.jpg", "iconLoaded");
-}
-
-void draw() {
- if (icon != null) {
-   // do something
- }
-}
-
-// if this version is present, it'll be called
-void iconLoaded(PImage image) {
- icon = image;
- // filename can be ignored
-}
-
-// alternate version that can be used, and will be called if present
-void iconLoaded(PImage image, String filename) {
- icon = image;
- // filename can be ignored
-}
-
 
 _ wrap exceptions with die() and warn() methods
 _   this way, people can make use of exceptions if they would rather
@@ -516,6 +514,10 @@ _     maybe a hack where a new menubar is added?
 
 CORE / PFont and text()
 
+_ text() wraps words differently depending on whether space seen or not
+_   http://code.google.com/p/processing/issues/detail?id=439
+_ remove subsetting stuff from PFont?
+_   or use hint(ENABLE_FONT_SUBSETTING)? 
 _ what's the difference with ascent on loadFont vs. createFont?
 _ svg font support seems nice.. add PFontSVG
 _ font rotation (native font problem?) with natives?
