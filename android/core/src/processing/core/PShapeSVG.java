@@ -546,6 +546,9 @@ public class PShapeSVG extends PShape {
 //    char prevCommand = '\0';
     boolean prevCurve = false;
     float ctrlX, ctrlY;
+    // store values for closepath so that relative coords work properly
+    float movetoX = 0;
+    float movetoY = 0;
 
     while (i < pathTokens.length) {
       char c = pathTokens[i].charAt(0);
@@ -560,6 +563,8 @@ public class PShapeSVG extends PShape {
       case 'M':  // M - move to (absolute)
         cx = PApplet.parseFloat(pathTokens[i + 1]);
         cy = PApplet.parseFloat(pathTokens[i + 2]);
+        movetoX = cx;
+        movetoY = cy;
         parsePathMoveto(cx, cy);
         implicitCommand = 'L';
         i += 3;
@@ -798,6 +803,11 @@ public class PShapeSVG extends PShape {
 
       case 'Z':
       case 'z':
+        // since closing the path, the 'current' point needs
+        // to return back to the last moveto location.
+        // http://code.google.com/p/processing/issues/detail?id=1058
+        cx = movetoX;
+        cy = movetoY;
         close = true;
         i++;
         break;
@@ -811,7 +821,7 @@ public class PShapeSVG extends PShape {
         System.err.println("unparsed: " + unparsed);
         if (pathTokens[i].equals("a") || pathTokens[i].equals("A")) {
           String msg = "Sorry, elliptical arc support for SVG files " +
-            "is not yet implemented (See issue #130 for updates)";
+            "is not yet implemented (See issue 130 for updates)";
           throw new RuntimeException(msg);
         }
         throw new RuntimeException("shape command not handled: " + pathTokens[i]);
