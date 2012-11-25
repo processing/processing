@@ -418,18 +418,38 @@ public class PImage implements PConstants, Cloneable {
    * Grab a subsection of a PImage, and copy it into a fresh PImage.
    * As of release 0149, no longer honors imageMode() for the coordinates.
    */
+  /**
+   * @param w width of pixel rectangle to get
+   * @param h height of pixel rectangle to get
+   */
   public PImage get(int x, int y, int w, int h) {
+    int targetX = 0;
+    int targetY = 0;
+    int targetWidth = w;
+    int targetHeight = h;
+    boolean cropped = false;
+
     if (x < 0) {
-      w += x; // clip off the left edge
+      w += x; // x is negative, removes the left edge from the width
+      targetX = -x;
+      cropped = true;
       x = 0;
     }
     if (y < 0) {
-      h += y; // clip off some of the height
+      h += y; // y is negative, clip the number of rows
+      targetY = -y;
+      cropped = true;
       y = 0;
     }
 
-    if (x + w > width) w = width - x;
-    if (y + h > height) h = height - y;
+    if (x + w > width) {
+      w = width - x;
+      cropped = true;
+    }
+    if (y + h > height) {
+      h = height - y;
+      cropped = true;
+    }
 
     if (w < 0) {
       w = 0;
@@ -438,7 +458,17 @@ public class PImage implements PConstants, Cloneable {
       h = 0;
     }
 
-    return getImpl(x, y, w, h);
+    int targetFormat = format;
+    if (cropped && format == RGB) {
+      targetFormat = ARGB;
+    }
+
+    PImage target = new PImage(targetWidth, targetHeight, targetFormat);
+    target.parent = parent;  // parent may be null so can't use createImage()
+    if (w > 0 && h > 0) {
+      getImpl(x, y, w, h, target, targetX, targetY);
+    }
+    return target;
   }
 
 
@@ -448,23 +478,22 @@ public class PImage implements PConstants, Cloneable {
    * are guaranteed to be inside the image space, so the implementation can
    * use the fastest possible pixel copying method.
    */
-  protected PImage getImpl(int x, int y, int w, int h) {
-    PImage newbie = new PImage(w, h, format);
-    newbie.parent = parent;
-
+  protected void getImpl(int sourceX, int sourceY,
+                         int sourceWidth, int sourceHeight,
+                         PImage target, int targetX, int targetY) {
     if (pixels == null) {
-      bitmap.getPixels(newbie.pixels, 0, w, x, y, w, h);
-
+      bitmap.getPixels(target.pixels,
+                       targetY*target.width + targetX, target.width,
+                       sourceX, sourceY, sourceWidth, sourceHeight);
     } else {
-      int index = y*width + x;
-      int index2 = 0;
-      for (int row = y; row < y+h; row++) {
-        System.arraycopy(pixels, index, newbie.pixels, index2, w);
-        index += width;
-        index2 += w;
+      int sourceIndex = sourceY*width + sourceX;
+      int targetIndex = targetY*target.width + targetX;
+      for (int row = 0; row < sourceHeight; row++) {
+        System.arraycopy(pixels, sourceIndex, target.pixels, targetIndex, sourceWidth);
+        sourceIndex += width;
+        targetIndex += target.width;
       }
     }
-    return newbie;
   }
 
 
@@ -498,22 +527,18 @@ public class PImage implements PConstants, Cloneable {
    * No variations are employed, meaning that any scale, tint, or imageMode
    * settings will be ignored.
    */
-  public void set(int x, int y, PImage src) {
-    if (src.format == ALPHA) {
+  public void set(int x, int y, PImage img) {
+    if (img.format == ALPHA) {
       // set() doesn't really make sense for an ALPHA image, since it
       // directly replaces pixels and does no blending.
-      throw new RuntimeException("set() not available for ALPHA images");
+      throw new IllegalArgumentException("set() not available for ALPHA images");
     }
 
     int sx = 0;
     int sy = 0;
-    int sw = src.width;
-    int sh = src.height;
+    int sw = img.width;
+    int sh = img.height;
 
-//    if (imageMode == CENTER) {
-//      x -= src.width/2;
-//      y -= src.height/2;
-//    }
     if (x < 0) {  // off left edge
       sx -= x;
       sw += x;
@@ -534,7 +559,7 @@ public class PImage implements PConstants, Cloneable {
     // this could be nonexistent
     if ((sw <= 0) || (sh <= 0)) return;
 
-    setImpl(x, y, sx, sy, sw, sh, src);
+    setImpl(img, sx, sy, sw, sh, x, y);
   }
 
 
@@ -542,10 +567,12 @@ public class PImage implements PConstants, Cloneable {
    * Internal function to actually handle setting a block of pixels that
    * has already been properly cropped from the image to a valid region.
    */
-  protected void setImpl(int dx, int dy, int sx, int sy, int sw, int sh,
-                         PImage src) {
-    if (src.pixels == null) {
-      src.loadPixels();
+  protected void setImpl(PImage sourceImage,
+                         int sourceX, int sourceY,
+                         int sourceWidth, int sourceHeight,
+                         int targetX, int targetY) {
+    if (sourceImage.pixels == null) {
+      sourceImage.loadPixels();
     }
 
     // if this.pixels[] is null, copying directly into this.bitmap
@@ -558,19 +585,21 @@ public class PImage implements PConstants, Cloneable {
       }
 
       // copy from src.pixels to this.bitmap
-      int offset = sy * src.width + sx;
-      bitmap.setPixels(src.pixels, offset, src.width, dx, dy, sw, sh);
+      int offset = sourceY * sourceImage.width + sourceX;
+      bitmap.setPixels(sourceImage.pixels,
+                       offset, sourceImage.width,
+                       targetX, targetY, sourceWidth, sourceHeight);
 
     } else {  // pixels != null
       // copy into this.pixels[] and mark as modified
-      int srcOffset = sy * src.width + sx;
-      int dstOffset = dy * width + dx;
-      for (int y = sy; y < sy + sh; y++) {
-        System.arraycopy(src.pixels, srcOffset, pixels, dstOffset, sw);
-        srcOffset += src.width;
+      int srcOffset = sourceY * sourceImage.width + sourceX;
+      int dstOffset = targetY * width + targetX;
+      for (int y = sourceY; y < sourceY + sourceHeight; y++) {
+        System.arraycopy(sourceImage.pixels, srcOffset, pixels, dstOffset, sourceWidth);
+        srcOffset += sourceImage.width;
         dstOffset += width;
       }
-      updatePixelsImpl(dx, dy, sw, sh);
+      updatePixelsImpl(targetX, targetY, sourceWidth, sourceHeight);
     }
   }
 

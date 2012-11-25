@@ -825,13 +825,9 @@ public class PImage implements PConstants, Cloneable {
   protected void getImpl(int sourceX, int sourceY,
                          int sourceWidth, int sourceHeight,
                          PImage target, int targetX, int targetY) {
-//    System.err.println(sourceWidth + "x" + sourceHeight + " at " + sourceX + "," + sourceY + " " + " out of " + width + "x" + height);
-//    System.err.println("  target is " + targetX + "," + targetY + " img size is " + target.width + "x" + target.height);
     int sourceIndex = sourceY*width + sourceX;
     int targetIndex = targetY*target.width + targetX;
-    //for (int row = sourceY; row < sourceY+sourceHeight; row++) {
     for (int row = 0; row < sourceHeight; row++) {
-//      System.err.println("  row " + row + " " + pixels.length + " " + sourceIndex + " " + target.pixels.length + " " + targetIndex);
       System.arraycopy(pixels, sourceIndex, target.pixels, targetIndex, sourceWidth);
       sourceIndex += width;
       targetIndex += target.width;
