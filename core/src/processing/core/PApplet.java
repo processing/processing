@@ -14782,15 +14782,6 @@ public class PApplet extends Applet
    * @brief Masks part of an image with another image as an alpha channel
    * @param maskArray array of integers used as the alpha channel, needs to be the same length as the image's pixel array
    */
-  public void mask(int maskArray[]) {
-    if (recorder != null) recorder.mask(maskArray);
-    g.mask(maskArray);
-  }
-
-
-  /**
-   * @param img a PImage object used as the alpha channel for "img", must be same dimensions as "img"
-   */
   public void mask(PImage img) {
     if (recorder != null) recorder.mask(img);
     g.mask(img);

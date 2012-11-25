@@ -769,20 +769,31 @@ public class PImage implements PConstants, Cloneable {
   public PImage get(int x, int y, int w, int h) {
     int targetX = 0;
     int targetY = 0;
+    int targetWidth = w;
+    int targetHeight = h;
+    boolean cropped = false;
 
     if (x < 0) {
-      w += x; // clip off the left edge
+      w += x; // x is negative, removes the left edge from the width
       targetX = -x;
+      cropped = true;
       x = 0;
     }
     if (y < 0) {
-      h += y; // clip off some of the height
+      h += y; // y is negative, clip the number of rows
       targetY = -y;
+      cropped = true;
       y = 0;
     }
 
-    if (x + w > width) w = width - x;
-    if (y + h > height) h = height - y;
+    if (x + w > width) {
+      w = width - x;
+      cropped = true;
+    }
+    if (y + h > height) {
+      h = height - y;
+      cropped = true;
+    }
 
     if (w < 0) {
       w = 0;
@@ -791,9 +802,16 @@ public class PImage implements PConstants, Cloneable {
       h = 0;
     }
 
-    PImage target = new PImage(w, h, format);
-    target.parent = parent;
-    getImpl(x, y, w, h, target, targetX, targetY);
+    int targetFormat = format;
+    if (cropped && format == RGB) {
+      targetFormat = ARGB;
+    }
+
+    PImage target = new PImage(targetWidth, targetHeight, targetFormat);
+    target.parent = parent;  // parent may be null so can't use createImage()
+    if (w > 0 && h > 0) {
+      getImpl(x, y, w, h, target, targetX, targetY);
+    }
     return target;
   }
 
@@ -807,9 +825,13 @@ public class PImage implements PConstants, Cloneable {
   protected void getImpl(int sourceX, int sourceY,
                          int sourceWidth, int sourceHeight,
                          PImage target, int targetX, int targetY) {
+//    System.err.println(sourceWidth + "x" + sourceHeight + " at " + sourceX + "," + sourceY + " " + " out of " + width + "x" + height);
+//    System.err.println("  target is " + targetX + "," + targetY + " img size is " + target.width + "x" + target.height);
     int sourceIndex = sourceY*width + sourceX;
     int targetIndex = targetY*target.width + targetX;
-    for (int row = sourceY; row < sourceY+sourceHeight; row++) {
+    //for (int row = sourceY; row < sourceY+sourceHeight; row++) {
+    for (int row = 0; row < sourceHeight; row++) {
+//      System.err.println("  row " + row + " " + pixels.length + " " + sourceIndex + " " + target.pixels.length + " " + targetIndex);
       System.arraycopy(pixels, sourceIndex, target.pixels, targetIndex, sourceWidth);
       sourceIndex += width;
       targetIndex += target.width;
@@ -879,10 +901,6 @@ public class PImage implements PConstants, Cloneable {
     int sw = img.width;
     int sh = img.height;
 
-//    if (imageMode == CENTER) {
-//      x -= src.width/2;
-//      y -= src.height/2;
-//    }
     if (x < 0) {  // off left edge
       sx -= x;
       sw += x;
@@ -900,7 +918,7 @@ public class PImage implements PConstants, Cloneable {
       sh = height - y;
     }
 
-    // this could be nonexistant
+    // this could be nonexistent
     if ((sw <= 0) || (sh <= 0)) return;
 
     setImpl(img, sx, sy, sw, sh, x, y);
@@ -931,6 +949,21 @@ public class PImage implements PConstants, Cloneable {
   //////////////////////////////////////////////////////////////
 
   // ALPHA CHANNEL
+
+
+  @Deprecated
+  public void mask(int maskArray[]) {  // ignore
+    loadPixels();
+    // don't execute if mask image is different size
+    if (maskArray.length != pixels.length) {
+      throw new RuntimeException("mask() can only be used with an image that's the same size.");
+    }
+    for (int i = 0; i < pixels.length; i++) {
+      pixels[i] = ((maskArray[i] & 0xff) << 24) | (pixels[i] & 0xffffff);
+    }
+    format = ARGB;
+    updatePixels();
+  }
 
 
   /**
@@ -967,24 +1000,6 @@ public class PImage implements PConstants, Cloneable {
    * @usage web_application
    * @brief Masks part of an image with another image as an alpha channel
    * @param maskArray array of integers used as the alpha channel, needs to be the same length as the image's pixel array
-   */
-  public void mask(int maskArray[]) {
-    loadPixels();
-    // don't execute if mask image is different size
-    if (maskArray.length != pixels.length) {
-      throw new RuntimeException("The PImage used with mask() must be " +
-                                 "the same size as the applet.");
-    }
-    for (int i = 0; i < pixels.length; i++) {
-      pixels[i] = ((maskArray[i] & 0xff) << 24) | (pixels[i] & 0xffffff);
-    }
-    format = ARGB;
-    updatePixels();
-  }
-
-
-  /**
-   * @param img a PImage object used as the alpha channel for "img", must be same dimensions as "img"
    */
   public void mask(PImage img) {
     img.loadPixels();
