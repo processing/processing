@@ -348,9 +348,12 @@ public class PApplet extends Applet
    */
   public boolean defaultSize;
 
-  volatile boolean resizeRequest;
-  volatile int resizeWidth;
-  volatile int resizeHeight;
+  /** Storage for the current renderer size to avoid re-allocation. */
+  Dimension currentSize = new Dimension();
+
+//  volatile boolean resizeRequest;
+//  volatile int resizeWidth;
+//  volatile int resizeHeight;
 
   /**
    * ( begin auto-generated from pixels.xml )
@@ -891,12 +894,12 @@ public class PApplet extends Applet
     addComponentListener(new ComponentAdapter() {
       @Override
       public void componentResized(ComponentEvent e) {
-        Component c = e.getComponent();
-        //System.out.println("componentResized() " + c);
-        Rectangle bounds = c.getBounds();
-        resizeRequest = true;
-        resizeWidth = bounds.width;
-        resizeHeight = bounds.height;
+//        Component c = e.getComponent();
+//        //System.out.println("componentResized() " + c);
+//        Rectangle bounds = c.getBounds();
+//        resizeRequest = true;
+//        resizeWidth = bounds.width;
+//        resizeHeight = bounds.height;
 
         if (!looping) {
           redraw();
@@ -968,8 +971,7 @@ public class PApplet extends Applet
 
     debug("un-pausing thread");
     synchronized (pauseObject) {
-      debug("un-pausing thread 2");
-      debug("start() calling pauseObject.notify()");
+      debug("start() calling pauseObject.notifyAll()");
 //      try {
       pauseObject.notifyAll();  // wake up the animation thread
       debug("un-pausing thread 3");
@@ -1471,13 +1473,13 @@ public class PApplet extends Applet
   //////////////////////////////////////////////////////////////
 
 
-  protected void resizeRenderer(int iwidth, int iheight) {
-//    println("resizeRenderer request for " + iwidth + " " + iheight);
-    if (width != iwidth || height != iheight) {
-//      println("  former size was " + width + " " + height);
-      g.setSize(iwidth, iheight);
-      width = iwidth;
-      height = iheight;
+  protected void resizeRenderer(int newWidth, int newHeight) {
+    debug("resizeRenderer request for " + newWidth + " " + newHeight);
+    if (width != newWidth || height != newHeight) {
+      debug("  former size was " + width + " " + height);
+      g.setSize(newWidth, newHeight);
+      width = newWidth;
+      height = newHeight;
     }
   }
 
@@ -2001,9 +2003,15 @@ public class PApplet extends Applet
 
       // Don't resize the renderer from the EDT (i.e. from a ComponentEvent),
       // otherwise it may attempt a resize mid-render.
-      if (resizeRequest) {
-        resizeRenderer(resizeWidth, resizeHeight);
-        resizeRequest = false;
+//      if (resizeRequest) {
+//        resizeRenderer(resizeWidth, resizeHeight);
+//        resizeRequest = false;
+//      }
+      if (g != null) {
+        getSize(currentSize);
+        if (currentSize.width != g.width || currentSize.height != g.height) {
+          resizeRenderer(currentSize.width, currentSize.height);
+        }
       }
 
       // render a single frame
@@ -2074,7 +2082,7 @@ public class PApplet extends Applet
 
   //synchronized public void handleDisplay() {
   public void handleDraw() {
-    debug("handleDraw() " + g + " " + looping + " " + redraw);
+    debug("handleDraw() " + g + " " + looping + " " + redraw + " valid:" + this.isValid() + " visible:" + this.isVisible());
     if (g != null && (looping || redraw)) {
       if (!g.canDraw()) {
         debug("g.canDraw() is false");
@@ -3713,7 +3721,10 @@ public class PApplet extends Applet
       thread = null;
 
       // shut down renderer
-      if (g != null) g.dispose();
+      if (g != null) {
+        g.dispose();
+      }
+      // run dispose() methods registered by libraries
       handleMethods("dispose");
     }
   }
