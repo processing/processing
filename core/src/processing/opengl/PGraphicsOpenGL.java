@@ -432,9 +432,6 @@ public class PGraphicsOpenGL extends PGraphics {
   static protected final int OP_WRITE = 2;
   protected int pixelsOp = OP_NONE;
 
-  /** Used to detect the occurrence of a frame resize event. */
-  protected boolean resized = false;
-
   /** Viewport dimensions. */
   protected int[] viewport = {0, 0, 0, 0};
 
@@ -537,16 +534,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
   @Override
   public void setSize(int iwidth, int iheight) {
-    resized = (0 < width && width != iwidth) ||
-              (0 < height && height != iwidth);
-
     width = iwidth;
     height = iheight;
-
-    if (pixels != null) {
-      // The user is using the pixels array, so we need to resize accordingly
-      allocatePixels();
-    }
 
     allocate();
     reapplySettings();
@@ -560,11 +549,12 @@ public class PGraphicsOpenGL extends PGraphics {
     cameraFar = cameraZ * 10.0f;
     cameraAspect = (float) width / (float) height;
 
+    // Forces a restart of OpenGL so the canvas has the right size.
+    //pgl.initialized = false;
+    restartPGL();
+
     // set this flag so that beginDraw() will do an update to the camera.
     sized = true;
-
-    // Forces a restart of OpenGL so the canvas has the right size.
-    pgl.initialized = false;
   }
 
 
@@ -1595,7 +1585,8 @@ public class PGraphicsOpenGL extends PGraphics {
         boolean outdatedMulti = multisampleFramebuffer != null &&
           multisampleFramebuffer.contextIsOutdated();
         if (outdated || outdatedMulti) {
-          pgl.initialized = false;
+//          pgl.initialized = false;
+          restartPGL();
           initOffscreen();
         }
       }
@@ -1665,27 +1656,23 @@ public class PGraphicsOpenGL extends PGraphics {
     // setup opengl viewport.
     viewport[0] = 0; viewport[1] = 0; viewport[2] = width; viewport[3] = height;
     pgl.viewport(viewport[0], viewport[1], viewport[2], viewport[3]);
-    if (resized) {
+
+    if (sized) {
       // To avoid having garbage in the screen after a resize,
       // in the case background is not called in draw().
       background(backgroundColor);
-      if (texture != null) {
-        // The screen texture should be deleted because it
-        // corresponds to the old window size.
-        pgPrimary.removeCache(this);
-        texture = null;
-        loadTexture();
-      }
-      resized = false;
-    }
 
-    if (sized) {
       // Sets the default projection and camera (initializes modelview).
       // If the user has setup up their own projection, they'll need
       // to fix it after resize anyway. This helps the people who haven't
       // set up their own projection.
       defaultPerspective();
       defaultCamera();
+
+      if (pixels != null) {
+        // The pixels array is being used, so we need to resize accordingly
+        loadPixels();
+      }
 
       // clear the flag
       sized = false;
@@ -1821,6 +1808,14 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void restartPGL() {
     pgl.initialized = false;
+    /*
+    if (texture != null) {
+      PApplet.println("restart: " + Thread.currentThread());
+      // The screen texture should be deleted because it
+      // corresponds to the old window size.
+      removeCache(this);
+      texture = ptexture = null;
+    }*/
   }
 
 
@@ -3234,9 +3229,11 @@ public class PGraphicsOpenGL extends PGraphics {
       if (quality == 1) {
         quality = 0;
       }
+
       // This will trigger a surface restart next time
       // requestDraw() is called.
-      pgl.initialized = false;
+//      pgl.initialized = false;
+      restartPGL();
     }
   }
 
@@ -3262,7 +3259,8 @@ public class PGraphicsOpenGL extends PGraphics {
       quality = 0;
       // This will trigger a surface restart next time
       // requestDraw() is called.
-      pgl.initialized = false;
+//      pgl.initialized = false;
+      restartPGL();
     }
   }
 
@@ -5191,10 +5189,17 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void drawPixels(int x, int y, int w, int h) {
+    if (sized || texture == null) {
+      // This shouldn't happen... some threading problem because sized is turned
+      // to false in beginDraw()
+      // http://code.google.com/p/processing/issues/detail?id=1119
+      return;
+    }
+
     int i0 = y * width + x;
     int len = w * h;
 
-    if (nativePixels == null || nativePixels.length < len) {
+    if (nativePixels == null || nativePixels.length != len) {
       nativePixels = new int[len];
       nativePixelBuffer = IntBuffer.wrap(nativePixels);
     }
@@ -5208,6 +5213,7 @@ public class PGraphicsOpenGL extends PGraphics {
       // of non-FBO-backed primary surface we might need to create the texture.
       loadTextureImpl(POINT, false);
     }
+
     pgl.copyToTexture(texture.glTarget, texture.glFormat, texture.glName,
                       x, y, w, h, IntBuffer.wrap(nativePixels));
 
@@ -5858,6 +5864,10 @@ public class PGraphicsOpenGL extends PGraphics {
     pgl.initSurface(quality);
     if (pgPrimary == null) {
       pgPrimary = this;
+    }
+    if (texture != null) {
+      pgPrimary.removeCache(this);
+      texture = ptexture = null;
     }
   }
 
