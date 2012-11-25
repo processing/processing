@@ -554,6 +554,9 @@ public class PShapeSVG extends PShape {
 //    char prevCommand = '\0';
     boolean prevCurve = false;
     float ctrlX, ctrlY;
+    // store values for closepath so that relative coords work properly
+    float movetoX = 0;
+    float movetoY = 0;
 
     while (i < pathTokens.length) {
       char c = pathTokens[i].charAt(0);
@@ -568,6 +571,8 @@ public class PShapeSVG extends PShape {
       case 'M':  // M - move to (absolute)
         cx = PApplet.parseFloat(pathTokens[i + 1]);
         cy = PApplet.parseFloat(pathTokens[i + 2]);
+        movetoX = cx;
+        movetoY = cy;
         parsePathMoveto(cx, cy);
         implicitCommand = 'L';
         i += 3;
@@ -654,15 +659,15 @@ public class PShapeSVG extends PShape {
       break;
 
       // S - curve to shorthand (absolute)
-      // Draws a cubic Bezier curve from the current point to (x,y). The first
+      // Draws a cubic Bézier curve from the current point to (x,y). The first
       // control point is assumed to be the reflection of the second control
       // point on the previous command relative to the current point.
       // (x2,y2) is the second control point (i.e., the control point
       // at the end of the curve). S (uppercase) indicates that absolute
       // coordinates will follow; s (lowercase) indicates that relative
       // coordinates will follow. Multiple sets of coordinates may be specified
-      // to draw a polybezier. At the end of the command, the new current point
-      // becomes the final (x,y) coordinate pair used in the polybezier.
+      // to draw a polybézier. At the end of the command, the new current point
+      // becomes the final (x,y) coordinate pair used in the polybézier.
       case 'S': {
         // (If there is no previous command or if the previous command was not
         // an C, c, S or s, assume the first control point is coincident with
@@ -716,12 +721,12 @@ public class PShapeSVG extends PShape {
       break;
 
       // Q - quadratic curve to (absolute)
-      // Draws a quadratic Bezier curve from the current point to (x,y) using
+      // Draws a quadratic Bézier curve from the current point to (x,y) using
       // (x1,y1) as the control point. Q (uppercase) indicates that absolute
       // coordinates will follow; q (lowercase) indicates that relative
       // coordinates will follow. Multiple sets of coordinates may be specified
-      // to draw a polybezier. At the end of the command, the new current point
-      // becomes the final (x,y) coordinate pair used in the polybezier.
+      // to draw a polybézier. At the end of the command, the new current point
+      // becomes the final (x,y) coordinate pair used in the polybézier.
       case 'Q': {
         ctrlX = PApplet.parseFloat(pathTokens[i + 1]);
         ctrlY = PApplet.parseFloat(pathTokens[i + 2]);
@@ -806,6 +811,11 @@ public class PShapeSVG extends PShape {
 
       case 'Z':
       case 'z':
+        // since closing the path, the 'current' point needs
+        // to return back to the last moveto location.
+        // http://code.google.com/p/processing/issues/detail?id=1058
+        cx = movetoX;
+        cy = movetoY;
         close = true;
         i++;
         break;
@@ -819,7 +829,7 @@ public class PShapeSVG extends PShape {
         System.err.println("unparsed: " + unparsed);
         if (pathTokens[i].equals("a") || pathTokens[i].equals("A")) {
           String msg = "Sorry, elliptical arc support for SVG files " +
-            "is not yet implemented (See issue #130 for updates)";
+            "is not yet implemented (See issue 130 for updates)";
           throw new RuntimeException(msg);
         }
         throw new RuntimeException("shape command not handled: " + pathTokens[i]);
