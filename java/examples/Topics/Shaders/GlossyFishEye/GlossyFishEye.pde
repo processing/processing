@@ -22,7 +22,7 @@ void setup() {
   fisheye.set("aperture", 180.0);
   
   glossy = loadShader("GlossyFrag.glsl", "GlossyVert.glsl");  
-  glossy.set("AmbientColour", 0, 0, 0);
+  glossy.set("AmbientColour", 0.0, 0.0, 0.0);
   glossy.set("DiffuseColour", 0.9, 0.2, 0.2);
   glossy.set("SpecularColour", 1.0, 1.0, 1.0);
   glossy.set("AmbientIntensity", 1.0);
