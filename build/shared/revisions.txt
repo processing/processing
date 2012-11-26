@@ -1,4 +1,6 @@
-PROCESSING ??? 
+PROCESSING 2.0b7 (REV 0215) - 25 November 2012
+
+475,382 bug fixes in this release as we work on finalizing 2.0. 
 
 [ changes ] 
 
@@ -24,6 +26,211 @@ PROCESSING ???
 
   If we're missing anything that's not covered in the reference, please
   let us know via the bugs database.
+
++ Sketch names can no longer begin with underscores (fixes an Android
+  compatibility issue). This was changed in recent releases, but missing here.
+  http://code.google.com/p/processing/issues/detail?id=859
+
++ Implement more Mac OS X key bindings
+  http://code.google.com/p/processing/issues/detail?id=1354
+  http://guides.macrumors.com/Keyboard_shortcuts&section=10#Text_Shortcuts
+
++ Table row iterating syntax has changed. This code:
+  for (TableRow row : table) { ... }
+  has now changed to 
+  for (TableRow row : table.getRows()) { ... }
+
++ Change default for shift-backspace to just be backspace. To change it back,
+  set editor.keys.shift_backspace_is_delete=true in preferences.txt.
+
++ Implement clip() and noClip() to set the clipping region.
+
++ Added blendMode() feature.
+  http://code.google.com/p/processing/issues/detail?id=1385
+
++ Add different styles of arc drawing.
+  http://code.google.com/p/processing/issues/detail?id=711
+  http://code.google.com/p/processing/issues/detail?id=1406
+
++ Added XML.getLong() (also updated Android)
+  http://code.google.com/p/processing/issues/detail?id=1378
+
++ Implement back-buffer sampler in OpenGL renderers.
+  http://code.google.com/p/processing/issues/detail?id=1169
+
++ Change how get(x, y, w, h) was handled with offscreen areas.
+  http://code.google.com/p/processing/issues/detail?id=925
+
++ Make key and mouse events interleave, also improve threading.
+  http://code.google.com/p/processing/issues/detail?id=79
+
++ Changed event constants to PRESS, RELEASE, CLICK, DRAG, MOVE, ENTER, EXIT
+  instead of past-tense versions of the same.
+
++ Removed mask(int[]) from PImage.
+
++ Implement postEvent() to put new events on the queue.
+
++ Add mouseEntered/Exited on the desktop.
+  http://code.google.com/p/processing/issues/detail?id=500
+
+[ bug fixes ] 
+
++ mouseButton not being set properly in mouseClicked.
+  http://code.google.com/p/processing/issues/detail?id=1350
+
++ mouseButton is 0 in mouseReleased() on OS X
+  http://code.google.com/p/processing/issues/detail?id=1373
+
++ Fix ugly results from resize() command on PImage:
+  http://code.google.com/p/processing/issues/detail?id=332
+  and similar on Android:
+  http://code.google.com/p/processing/issues/detail?id=239
+
++ beginShape(QUAD) not working with Java2D
+  http://code.google.com/p/processing/issues/detail?id=1365
+
++ Relative coordinates not updated properly on closepath with SVG files.
+  http://code.google.com/p/processing/issues/detail?id=1058
+
++ PShape and lights results in more lit vertices.
+  http://code.google.com/p/processing/issues/detail?id=1342
+
++ Implement anisotropic filtering when using OPENGL.
+  http://code.google.com/p/processing/issues/detail?id=502
+
++ Update reference for begin/endContour
+  http://code.google.com/p/processing/issues/detail?id=1396
+
++ "expecting EOF, found 'import'" error on previously working sketch 
+  http://code.google.com/p/processing/issues/detail?id=1376
+
++ Prevent potential race condition when resizing sketches.
+  http://code.google.com/p/processing/issues/detail?id=697
+
++ Mode detection wasn't properly ignoring code inside comments.
+  http://code.google.com/p/processing/issues/detail?id=1404
+
++ Fix error line numbers from command line version to count from one
+  instead of zero, so that they're compatible with other systems.
+  http://code.google.com/p/processing/issues/detail?id=1392
+
++ Sketches exported to Linux weren't passed the command line arguments
+  http://code.google.com/p/processing/issues/detail?id=1359
+
++ "electricScroll" feature was causing weird jumps when double-clicking
+  http://code.google.com/p/processing/issues/detail?id=1055
+
++ Crash during library download was causing empty library list
+  http://code.google.com/p/processing/issues/detail?id=1093
+
++ In the net library, clientEvent() called even w/o data from server
+  http://code.google.com/p/processing/issues/detail?id=189
+
++ Add Server.ip() method to get the IP address of the host machine.
+  http://code.google.com/p/processing/issues/detail?id=1228
+
++ Modify “Copy as HTML” to add second HTML data type when writing the clipboard
+  http://code.google.com/p/processing/issues/detail?id=1065
+  Fix contributed by Ostap Andrusiv--thanks!
+
++ Shaders are passed wrong defaults when calling "filter" on a PGraphics object
+  http://code.google.com/p/processing/issues/detail?id=1301
+
++ Fix for PMatrix3D.mult() when vectors are identical
+  http://code.google.com/p/processing/issues/detail?id=921
+
++ Curves weren't rendered seperately when P3D or P2D specified.
+  http://code.google.com/p/processing/issues/detail?id=1317
+
++ FBO handling in PGL is not transparent.
+  http://code.google.com/p/processing/issues/detail?id=1282
+
+[ android ] 
+
++ Like the desktop release, removed default imports. This includes:
+  android.view.MotionEvent, android.view.KeyEvent,android.graphics.Bitmap
+  due to conflicts w/ the new event system, and hoping to enforce better
+  cross-platform compatibility between Java, JavaScript, and Android modes.
+
++ Changed event handling to hopefully clean up some inconsistencies.
+  Removed motionX/Y/Pressure... these need to be handled separately. 
+  More here: http://wiki.processing.org/w/Android
+
++ mouseX/Y no longer include history with moves, which reduces fidelity 
+  a bit, but will hopefully prevent us overdoing it for future releases.
+
++ Fix how pmouseX/Y are set.
+  http://code.google.com/p/processing/issues/detail?id=238
+  http://code.google.com/p/processing/issues/detail?id=1018
+
+[ fixed earlier / cleaning ] 
+
++ When turning smoothing on, internal lines of shapes are visible.
+  http://code.google.com/p/processing/issues/detail?id=53
+
++ textAlign(CENTER) with P3D and OPENGL produces messy result
+  http://code.google.com/p/processing/issues/detail?id=65
+
++ Signature issue on contributed libraries affects unrelated OpenGL sketches
+  http://code.google.com/p/processing/issues/detail?id=261
+
++ Implement efficient version of copy() in PGraphicsOpenGL.
+  http://code.google.com/p/processing/issues/detail?id=119
+
++ copy() does not update the screen with OpenGL.
+  http://code.google.com/p/processing/issues/detail?id=118
+
++ strokeCap() and strokeJoin() for use with OPENGL.
+  http://code.google.com/p/processing/issues/detail?id=123
+
++ Fix inconsistent anti-aliasing with OpenGL.
+  http://code.google.com/p/processing/issues/detail?id=217
+
++ noCursor() + OPENGL = won't get past setup()
+  http://code.google.com/p/processing/issues/detail?id=1345
+
++ set() requires updatePixels() with OpenGL.
+  http://code.google.com/p/processing/issues/detail?id=89
+
++ Chopping out triangles in OpenGL (though it's only 2D drawing).
+  http://code.google.com/p/processing/issues/detail?id=193
+
++ Share interface for 3D across desktop and Android.
+  http://code.google.com/p/processing/issues/detail?id=970
+
++ Distortion of 2D shapes when sphereDetail() is used.
+  http://code.google.com/p/processing/issues/detail?id=762
+
++ OPENGL renderer stops rendering after text is written using textMode(SCREEN)
+  http://code.google.com/p/processing/issues/detail?id=710
+
++ Support 'black' as color for SVG files (fix from PhiLho)
+  http://code.google.com/p/processing/issues/detail?id=1010
+
++ Catch sun.dc.pr.PRException?
+  http://code.google.com/p/processing/issues/detail?id=39
+
++ Image created with img.get() works incorrectly when using filter()
+  http://code.google.com/p/processing/issues/detail?id=167
+
++ copy(image with transparency) doesn't keep the transparency at start up.
+  http://code.google.com/p/processing/issues/detail?id=601
+
++ Defects in the tessellation of SVG shapes in A3D
+  http://code.google.com/p/processing/issues/detail?id=291
+
++ Blacked-out screen when restoring Android app from background.
+  http://code.google.com/p/processing/issues/detail?id=381
+
++ Excessive rotation of application causes memory to run out
+  http://code.google.com/p/processing/issues/detail?id=235
+
++ Should alpha PImage stuff use a non-4byte config?
+  http://code.google.com/p/processing/issues/detail?id=242
+
++ Rounded rect support on Android
+  http://code.google.com/p/processing/issues/detail?id=929
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
