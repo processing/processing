@@ -87,7 +87,13 @@ PROCESSING 2.0b7 (REV 0215) - 25 November 2012
   and similar on Android:
   http://code.google.com/p/processing/issues/detail?id=239
 
-+ beginShape(QUAD) not working with Java2D
++ P2D/P3D PGraphics buffer failing to draw if larger than main surface.
+  http://code.google.com/p/processing/issues/detail?id=1255
+
++ image(pgraphics, x, y, w, h) was only drawing once when shrinking.
+  http://code.google.com/p/processing/issues/detail?id=1382
+
++ beginShape(QUAD) was not working with Java2D
   http://code.google.com/p/processing/issues/detail?id=1365
 
 + Relative coordinates not updated properly on closepath with SVG files.

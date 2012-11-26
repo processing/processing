@@ -57,6 +57,17 @@ X opting to take a step backwards on the motion event handling
 o write a little stub code for people who want to use motionX/Y/etc
 
 
+emulator
+_ check into better emulator/updates necessary
+_   also options for enabling the GPU
+_   http://developer.android.com/tools/devices/emulator.html
+_   http://android-developers.blogspot.com/2012/04/faster-emulator-with-better-hardware.html
+_ no ES2 in the emulator, and no error reported in the PDE
+_   http://code.google.com/p/processing/issues/detail?id=1059
+_   problem is probably that the error comes via E/AndroidRuntime
+_   java.lang.RuntimeException: Unable to start activity ComponentInfo{processing.test.fisheye/processing.test.fisheye.FishEye}: java.lang.RuntimeException: P3D: OpenGL ES 2.0 is not supported by this device.
+
+
 _ NullPointerException in AndroidBuild.writeLocalProps(AndroidBuild.java:458)
 _   prompts for SDK, works; then after restart breaks again
 _   also refers to ANDROID_HOME and not ANDROID_SDK.. 
@@ -89,11 +100,6 @@ _   processing.mode.java.JavaBuild.scrubComments(sketch.getCode(0).getProgram())
 _   PApplet.match(scrubbed, processing.mode.java.JavaBuild.SIZE_REGEX);
 
 _ test libraries on android
-
-_ no ES2 in the emulator, and no error reported in the PDE
-_   http://code.google.com/p/processing/issues/detail?id=1059
-_   problem is probably that the error comes via E/AndroidRuntime
-_   java.lang.RuntimeException: Unable to start activity ComponentInfo{processing.test.fisheye/processing.test.fisheye.FishEye}: java.lang.RuntimeException: P3D: OpenGL ES 2.0 is not supported by this device.
 
 _ Android OPENGL renderer + JAVA2D PGraphics results in PTexture exception
 _   http://code.google.com/p/processing/issues/detail?id=1019
