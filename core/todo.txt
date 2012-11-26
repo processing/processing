@@ -50,6 +50,12 @@ X   make note for Casey to include this in the reference
 X Potential race condition when resizing sketches
 X   http://code.google.com/p/processing/issues/detail?id=697
 X removed mask(int[]).. check reference to make sure it's not in use
+X how to handle get(x, y, w, h) when off screen? 
+X   http://code.google.com/p/processing/issues/detail?id=925
+A curves aren't rendered seperately when P3D or P2D is specified
+A   http://code.google.com/p/processing/issues/detail?id=1317
+A FBO handling in PGL is not transparent
+A   http://code.google.com/p/processing/issues/detail?id=1282
 
 andres (cleanup)
 A when turning smoothing on, internal lines of shapes are visible
@@ -185,9 +191,6 @@ _   is there a way to catch cmd-q when running a sketch?
 _     so that it could avoid quitting if the sketch hasn't been stopped
 _     or if the sketch window is foremost
 _     maybe a hack where a new menubar is added? 
-
-_ how to handle get(x, y, w, h) when off screen? 
-_   http://code.google.com/p/processing/issues/detail?id=925
 
 _ how to handle stroke/fill separation in OpenGL
 _   http://code.google.com/p/processing/issues/detail?id=1302
@@ -581,7 +584,7 @@ _   http://code.google.com/p/processing/issues/detail?id=133
 _   includes code for a slow but more accurate mode
 _ deprecate the blend() function
 
-_ include option for nearest neighbor on resize
+_ implement unified means to specify smoothing level for image scaling
 _   http://code.google.com/p/processing/issues/detail?id=165
 _ blend() and copy() are not pixel accurate for copy/scale
 _   http://code.google.com/p/processing/issues/detail?id=285

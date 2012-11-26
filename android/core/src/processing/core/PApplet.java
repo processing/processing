@@ -9403,6 +9403,10 @@ public class PApplet extends Activity implements PConstants, Runnable {
    * Grab a subsection of a PImage, and copy it into a fresh PImage.
    * As of release 0149, no longer honors imageMode() for the coordinates.
    */
+  /**
+   * @param w width of pixel rectangle to get
+   * @param h height of pixel rectangle to get
+   */
   public PImage get(int x, int y, int w, int h) {
     return g.get(x, y, w, h);
   }
@@ -9429,8 +9433,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
    * No variations are employed, meaning that any scale, tint, or imageMode
    * settings will be ignored.
    */
-  public void set(int x, int y, PImage src) {
-    g.set(x, y, src);
+  public void set(int x, int y, PImage img) {
+    g.set(x, y, img);
   }
 
 
