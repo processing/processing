@@ -56,6 +56,8 @@ A curves aren't rendered seperately when P3D or P2D is specified
 A   http://code.google.com/p/processing/issues/detail?id=1317
 A FBO handling in PGL is not transparent
 A   http://code.google.com/p/processing/issues/detail?id=1282
+A Shaders are passed wrong defaults when calling "filter" on a PGraphics object
+A   http://code.google.com/p/processing/issues/detail?id=1301
 
 andres (cleanup)
 A when turning smoothing on, internal lines of shapes are visible
