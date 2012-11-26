@@ -58,6 +58,12 @@ A FBO handling in PGL is not transparent
 A   http://code.google.com/p/processing/issues/detail?id=1282
 A Shaders are passed wrong defaults when calling "filter" on a PGraphics object
 A   http://code.google.com/p/processing/issues/detail?id=1301
+A P2D/P3D PGraphics buffer fails to draw if larger than main surface
+A   http://code.google.com/p/processing/issues/detail?id=1255
+A image(pgraphics, x,y, w, h) only draw once when shrinking
+A   http://code.google.com/p/processing/issues/detail?id=1382
+_ implement mousePressed(Event) etc
+_   better to do this instead of bringing back the magic event
 
 andres (cleanup)
 A when turning smoothing on, internal lines of shapes are visible
@@ -91,6 +97,9 @@ A Distortion of 2D shapes when sphereDetail() is used
 A   http://code.google.com/p/processing/issues/detail?id=762
 A OPENGL renderer stops rendering after text is written using textMode(SCREEN)
 A   http://code.google.com/p/processing/issues/detail?id=710
+A OpenGL renderer cannot draw down-right diagonal lines (OS X)
+A   http://code.google.com/p/processing/issues/detail?id=1290
+o   marked invalid, can disable stroke perspective, etc
 
 cleaning
 o remove screenBlend(), textureBlend() from PGraphics et al
@@ -200,6 +209,9 @@ _   http://code.google.com/p/processing/issues/detail?id=1302
 _ createShape() not yet implemented for Java2D
 _   http://code.google.com/p/processing/issues/detail?id=1400
 
+_ shader syntax (Andres request)
+_   might also need a define inside the shader to control what type it is
+
 _ look into json and how it would work
 1) we bring back getFloatAttribute() et al., and make getFloat() be equivalent to parseFloat(xml.getContent())
 2) we keep getFloat() like it is, and add getFloatContent(), getIntContent() etc.
@@ -215,7 +227,6 @@ addRow()
 Request r = createRequest("http://p5.org/feed/13134.jpg");
 Request r = createRequest("http://p5.org/feed/13134.jpg", "callbackName");
 Request r = createRequest("http://p5.org/feed/13134, "callbackName", "jpg");
-
 _ implement callbacks for images and other loadXxxx() functions
 _   remove requestImage() and friends
 _ callback for requestImage()
