@@ -10790,9 +10790,6 @@ public class PApplet extends Applet
   }
 
 
-  /**
-   * @param source
-   */
   public PShape createShape(PShape source) {
     return g.createShape(source);
   }
@@ -10896,12 +10893,22 @@ public class PApplet extends Applet
   }
 
 
+  /*
+   * @webref rendering:shaders
+   * @param a x-coordinate of the rectangle by default
+   * @param b y-coordinate of the rectangle by default
+   * @param c width of the rectangle by default
+   * @param d height of the rectangle by default
+   */
   public void clip(float a, float b, float c, float d) {
     if (recorder != null) recorder.clip(a, b, c, d);
     g.clip(a, b, c, d);
   }
 
 
+  /*
+   * @webref rendering:shaders
+   */
   public void noClip() {
     if (recorder != null) recorder.noClip();
     g.noClip();

@@ -1611,9 +1611,6 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  /**
-   * @param source
-   */
   public PShape createShape(PShape source) {
     showMissingWarning("createShape");
     return null;
@@ -1725,7 +1722,13 @@ public class PGraphics extends PImage implements PConstants {
 
   // CLIPPING
 
-
+  /*
+   * @webref rendering:shaders
+   * @param a x-coordinate of the rectangle by default
+   * @param b y-coordinate of the rectangle by default
+   * @param c width of the rectangle by default
+   * @param d height of the rectangle by default
+   */
   public void clip(float a, float b, float c, float d) {
     if (imageMode == CORNER) {
       if (c < 0) {  // reset a negative width
@@ -1763,7 +1766,9 @@ public class PGraphics extends PImage implements PConstants {
     showMissingWarning("clip");
   }
 
-
+  /*
+   * @webref rendering:shaders
+   */
   public void noClip() {
     showMissingWarning("noClip");
   }
