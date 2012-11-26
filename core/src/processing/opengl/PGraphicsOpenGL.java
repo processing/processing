@@ -53,8 +53,50 @@ public class PGraphicsOpenGL extends PGraphics {
     "blendMode(%1$s) is not supported by this hardware (or driver)";
   static final String BLEND_RENDERER_ERROR =
     "blendMode(%1$s) is not supported by this renderer";
+  static final String ALREADY_DRAWING_ERROR =
+    "Already called beginDraw()";
+  static final String NO_BEGIN_DRAW_ERROR =
+  "Cannot call endDraw() before beginDraw()";
   static final String NESTED_DRAW_ERROR =
     "Already called drawing on another PGraphicsOpenGL object";
+  static final String ALREADY_BEGAN_CONTOUR_ERROR =
+    "Already called beginContour()";
+  static final String NO_BEGIN_CONTOUR_ERROR =
+    "Need to call beginContour() first";
+  static final String UNSUPPORTED_SMOOTH_LEVEL_ERROR =
+    "Smooth level %1$s is not available. Using %2$s instead";
+  static final String UNSUPPORTED_SMOOTH_ERROR =
+    "Smooth is not supported by this hardware (or driver)";
+  static final String TOO_MANY_SMOOTH_CALLS_ERROR =
+    "The smooth/noSmooth functions are being called too often.\n" +
+    "This results in screen flickering, so they will be disabled\n" +
+    "for the rest of the sketch's execution";
+  static final String UNSUPPORTED_SHAPE_FORMAT_ERROR =
+    "Unsupported shape format";
+  static final String INVALID_FILTER_SHADER_ERROR =
+    "Object is not a valid shader to use as filter";
+  static final String INVALID_PROCESSING_SHADER_ERROR =
+    "The GLSL code doesn't seem to contain a valid shader to use in Processing";
+  static final String WRONG_SHADER_TYPE_ERROR =
+    "shader() called with a wrong shader";
+  static final String UNKNOWN_SHADER_KIND_ERROR =
+    "Unknown shader kind";
+  static final String NO_TEXLIGHT_SHADER_ERROR =
+    "Your shader cannot be used to render textured " +
+    "and lit geometry, using default shader instead.";
+  static final String NO_LIGHT_SHADER_ERROR =
+    "Your shader cannot be used to render lit " +
+    "geometry, using default shader instead.";
+  static final String NO_TEXTURE_SHADER_ERROR =
+    "Your shader cannot be used to render textured " +
+    "geometry, using default shader instead.";
+  static final String NO_COLOR_SHADER_ERROR =
+    "Your shader cannot be used to render colored " +
+    "geometry, using default shader instead.";
+  static final String TOO_LONG_STROKE_PATH_ERROR =
+    "Stroke path is too long, some bevel triangles won't be added";
+  static final String TESSELLATION_ERROR =
+    "Tessellation Error: %1$s";
 
   // ........................................................
 
@@ -668,7 +710,7 @@ public class PGraphicsOpenGL extends PGraphics {
     GLResource res = new GLResource(id, context);
 
     if (glTextureObjects.containsKey(res)) {
-      showWarning("Adding same texture twice");
+      throw new RuntimeException("Adding same texture twice");
     } else {
       glTextureObjects.put(res, false);
     }
@@ -736,7 +778,7 @@ public class PGraphicsOpenGL extends PGraphics {
     GLResource res = new GLResource(id, context);
 
     if (glVertexBuffers.containsKey(res)) {
-      showWarning("Adding same VBO twice");
+      throw new RuntimeException("Adding same VBO twice");
     } else {
       glVertexBuffers.put(res, false);
     }
@@ -804,7 +846,7 @@ public class PGraphicsOpenGL extends PGraphics {
     GLResource res = new GLResource(id, context);
 
     if (glFrameBuffers.containsKey(res)) {
-      showWarning("Adding same FBO twice");
+      throw new RuntimeException("Adding same FBO twice");
     } else {
       glFrameBuffers.put(res, false);
     }
@@ -872,7 +914,7 @@ public class PGraphicsOpenGL extends PGraphics {
     GLResource res = new GLResource(id, context);
 
     if (glRenderBuffers.containsKey(res)) {
-      showWarning("Adding same renderbuffer twice");
+      throw new RuntimeException("Adding same renderbuffer twice");
     } else {
       glRenderBuffers.put(res, false);
     }
@@ -938,7 +980,7 @@ public class PGraphicsOpenGL extends PGraphics {
     GLResource res = new GLResource(id, context);
 
     if (glslPrograms.containsKey(res)) {
-      showWarning("Adding same glsl program twice");
+      throw new RuntimeException("Adding same glsl program twice");
     } else {
       glslPrograms.put(res, false);
     }
@@ -1001,7 +1043,7 @@ public class PGraphicsOpenGL extends PGraphics {
     GLResource res = new GLResource(id, context);
 
     if (glslVertexShaders.containsKey(res)) {
-      showWarning("Adding same glsl vertex shader twice");
+      throw new RuntimeException("Adding same glsl vertex shader twice");
     } else {
       glslVertexShaders.put(res, false);
     }
@@ -1065,7 +1107,7 @@ public class PGraphicsOpenGL extends PGraphics {
     GLResource res = new GLResource(id, context);
 
     if (glslFragmentShaders.containsKey(res)) {
-      showWarning("Adding same glsl fragment shader twice");
+      throw new RuntimeException("Adding same glsl fragment shader twice");
     } else {
       glslFragmentShaders.put(res, false);
     }
@@ -1534,7 +1576,7 @@ public class PGraphicsOpenGL extends PGraphics {
     report("top beginDraw()");
 
     if (drawing) {
-      showWarning("Already called beginDraw().");
+      PGraphics.showWarning(ALREADY_DRAWING_ERROR);
       return;
     }
 
@@ -1542,7 +1584,7 @@ public class PGraphicsOpenGL extends PGraphics {
                              !this.primarySurface) {
       // It seems that the user is trying to start another beginDraw()/endDraw()
       // block for an offscreen surface, still drawing on another one.
-      showWarning(NESTED_DRAW_ERROR);
+      PGraphics.showWarning(NESTED_DRAW_ERROR);
       return;
     }
 
@@ -1570,13 +1612,13 @@ public class PGraphicsOpenGL extends PGraphics {
   public void endDraw() {
     report("top endDraw()");
 
-    // Flushing any remaining geometry.
-    flush();
-
     if (!drawing) {
-      showWarning("Cannot call endDraw() before beginDraw().");
+      PGraphics.showWarning(NO_BEGIN_DRAW_ERROR);
       return;
     }
+
+    // Flushing any remaining geometry.
+    flush();
 
     if (!pgPrimary.pgl.initialized || parent.frameCount == 0) {
       // Smooth was disabled/enabled at some point during drawing. We save
@@ -2000,7 +2042,7 @@ public class PGraphicsOpenGL extends PGraphics {
   @Override
   public void beginContour() {
     if (openContour) {
-      showWarning("Already called beginContour().");
+      PGraphics.showWarning(ALREADY_BEGAN_CONTOUR_ERROR);
       return;
     }
     openContour = true;
@@ -2011,7 +2053,7 @@ public class PGraphicsOpenGL extends PGraphics {
   @Override
   public void endContour() {
     if (!openContour) {
-      showWarning("Need to call beginContour() first.");
+      PGraphics.showWarning(NO_BEGIN_CONTOUR_ERROR);
       return;
     }
     openContour = false;
@@ -3011,11 +3053,9 @@ public class PGraphicsOpenGL extends PGraphics {
 
     if (maxSamples < level) {
       if (0 < maxSamples) {
-        PGraphics.showWarning("Smooth level " + level +
-                              " is not available. Using " +
-                              maxSamples + " instead.");
+        PGraphics.showWarning(UNSUPPORTED_SMOOTH_LEVEL_ERROR, level, maxSamples);
       } else{
-        PGraphics.showWarning("Smooth is not available.");
+        PGraphics.showWarning(UNSUPPORTED_SMOOTH_ERROR);
       }
       level = maxSamples;
     }
@@ -3024,11 +3064,7 @@ public class PGraphicsOpenGL extends PGraphics {
       smoothCallCount++;
       if (parent.frameCount - lastSmoothCall < 30 && 5 < smoothCallCount) {
         smoothDisabled = true;
-        PGraphics.showWarning("The smooth/noSmooth functions are being " +
-                              "called too often.\n" +
-                              "This results in screen flickering, so they " +
-                              "will be disabled\n" +
-                              "for the rest of the sketch's execution.");
+        PGraphics.showWarning(TOO_MANY_SMOOTH_CALLS_ERROR);
       }
       lastSmoothCall = parent.frameCount;
 
@@ -3054,11 +3090,7 @@ public class PGraphicsOpenGL extends PGraphics {
       smoothCallCount++;
       if (parent.frameCount - lastSmoothCall < 30 && 5 < smoothCallCount) {
         smoothDisabled = true;
-        PGraphics.showWarning("The smooth/noSmooth functions are being " +
-                              "called too often.\n" +
-                              "This results in screen flickering, so they " +
-                              "will be disabled\n" +
-                              "for the rest of the sketch's execution.");
+        PGraphics.showWarning(TOO_MANY_SMOOTH_CALLS_ERROR);
       }
       lastSmoothCall = parent.frameCount;
 
@@ -3153,7 +3185,7 @@ public class PGraphicsOpenGL extends PGraphics {
     } if (PGraphics3D.isSupportedExtension(ext)) {
       return PGraphics3D.loadShapeImpl(this, filename, ext);
     } else {
-      PGraphics.showWarning("Unsupported format");
+      PGraphics.showWarning(UNSUPPORTED_SHAPE_FORMAT_ERROR);
       return null;
     }
   }
@@ -5283,7 +5315,7 @@ public class PGraphicsOpenGL extends PGraphics {
   @Override
   public void filter(PShader shader) {
     if (!(shader instanceof PolyTexShader)) {
-      PGraphics.showWarning("Object is not a valid shader");
+      PGraphics.showWarning(INVALID_FILTER_SHADER_ERROR);
       return;
     }
 
@@ -6034,8 +6066,7 @@ public class PGraphicsOpenGL extends PGraphics {
       shader.setVertexShader(defPolyColorShaderVertURL);
     }
     if (shader == null){
-      PGraphics.showWarning("The GLSL code doesn't seem to contain a valid " +
-                            "shader to use in Processing.");
+      PGraphics.showWarning(INVALID_PROCESSING_SHADER_ERROR);
     } else {
       shader.setFragmentShader(fragFilename);
     }
@@ -6086,8 +6117,7 @@ public class PGraphicsOpenGL extends PGraphics {
       }
     }
     if (shader == null) {
-      PGraphics.showWarning("The GLSL code doesn't seem to contain a valid " +
-                            "shader to use in Processing.");
+      PGraphics.showWarning(INVALID_PROCESSING_SHADER_ERROR);
     }
     return shader;
   }
@@ -6113,22 +6143,22 @@ public class PGraphicsOpenGL extends PGraphics {
       } else if (shader instanceof PolyLightShader) {
         polyLightShader = (PolyLightShader) shader;
       } else {
-        showWarning("shader() called with a wrong shader object");
+        PGraphics.showWarning(WRONG_SHADER_TYPE_ERROR);
       }
     } else if (kind == LINES) {
       if (shader instanceof LineShader) {
         lineShader = (LineShader)shader;
       } else {
-        showWarning("shader() called with a wrong shader object");
+        PGraphics.showWarning(WRONG_SHADER_TYPE_ERROR);
       }
     } else if (kind == POINTS) {
       if (shader instanceof PointShader) {
         pointShader = (PointShader)shader;
       } else {
-        showWarning("shader() called with a wrong shader object");
+        PGraphics.showWarning(WRONG_SHADER_TYPE_ERROR);
       }
     } else {
-      showWarning("shader() called with an unknown shader type");
+      PGraphics.showWarning(UNKNOWN_SHADER_KIND_ERROR);
     }
   }
 
@@ -6153,7 +6183,7 @@ public class PGraphicsOpenGL extends PGraphics {
     } else if (kind == POINTS) {
       pointShader = null;
     } else {
-      PGraphics.showWarning("Wrong shader type");
+      PGraphics.showWarning(UNKNOWN_SHADER_KIND_ERROR);
     }
   }
 
@@ -6284,8 +6314,7 @@ public class PGraphicsOpenGL extends PGraphics {
         (polyLightShader != null ||
          polyTexShader != null ||
          polyColorShader != null)) {
-      PGraphics.showWarning("Your shader cannot be used to render textured " +
-                            "and lit geometry, using default shader instead.");
+      PGraphics.showWarning(NO_TEXLIGHT_SHADER_ERROR);
     }
   }
 
@@ -6295,8 +6324,7 @@ public class PGraphicsOpenGL extends PGraphics {
         (polyTexlightShader != null ||
          polyTexShader != null ||
          polyColorShader != null)) {
-      PGraphics.showWarning("Your shader cannot be used to render lit " +
-                            "geometry, using default shader instead.");
+      PGraphics.showWarning(NO_LIGHT_SHADER_ERROR);
     }
   }
 
@@ -6306,8 +6334,7 @@ public class PGraphicsOpenGL extends PGraphics {
         (polyTexlightShader != null ||
          polyLightShader != null ||
          polyColorShader != null)) {
-      PGraphics.showWarning("Your shader cannot be used to render textured " +
-                            "geometry, using default shader instead.");
+      PGraphics.showWarning(NO_TEXTURE_SHADER_ERROR);
     }
   }
 
@@ -6317,8 +6344,7 @@ public class PGraphicsOpenGL extends PGraphics {
         (polyTexlightShader != null ||
          polyLightShader != null ||
          polyTexShader != null)) {
-      PGraphics.showWarning("Your shader cannot be used to render colored " +
-                            "geometry, using default shader instead.");
+      PGraphics.showWarning(NO_COLOR_SHADER_ERROR);
     }
   }
 
@@ -10731,8 +10757,7 @@ public class PGraphicsOpenGL extends PGraphics {
           tess.setLineVertex(vidx, in, i0, color0);
 
           if (newCache) {
-            PGraphics.showWarning("Stroke path is too long, some bevel " +
-                                  "triangles won't be added.");
+            PGraphics.showWarning(TOO_LONG_STROKE_PATH_ERROR);
 
             // TODO: Fix this situation, the vertices from the previous cache
             // block should be copied in the newly created one.
@@ -11539,7 +11564,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
       public void error(int errnum) {
         String estring = pgl.tessError(errnum);
-        PGraphics.showWarning("Tessellation Error: " + estring);
+        PGraphics.showWarning(TESSELLATION_ERROR, estring);
       }
 
       /**
