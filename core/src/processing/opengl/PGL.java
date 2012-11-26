@@ -383,8 +383,6 @@ public class PGL {
   protected static boolean enable_screen_FBO_other   = true;
 
   protected static int request_depth_bits = 24;
-  // Stencil buffer disabled for now:
-  // http://forum.jogamp.org/Enabling-Stencil-buffer-breaks-rendering-OSX-R11-td4026857.html
   protected static int request_stencil_bits = 8;
   protected static int request_alpha_bits = 8;
 
