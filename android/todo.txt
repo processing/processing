@@ -41,6 +41,10 @@ X   http://code.google.com/p/processing/issues/detail?id=929
 o too many temporary objects (particularly w/ color) created with A2D
 X   http://code.google.com/p/processing/issues/detail?id=213
 X   no votes after a couple years
+X resize() needs to use the android resize stuff
+o   right now using the rather than expensive copy()
+X   instead, create a new resized bitmap, and get rid of pixels[]
+X   http://code.google.com/p/processing/issues/detail?id=239
 
 motion events
 o registerMethod("motionEvent") and "mouseEvent" not implemented
@@ -265,10 +269,6 @@ _ implement multiple pointers and multi-touch
 _   http://code.google.com/p/processing/issues/detail?id=243
 
 _ Examples > Topics > Effects > Lens uses a ton of memory
-_ resize() needs to use the android resize stuff
-_   right now using the rather than expensive copy()
-_   instead, create a new resized bitmap, and get rid of pixels[]
-_   http://code.google.com/p/processing/issues/detail?id=239
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
