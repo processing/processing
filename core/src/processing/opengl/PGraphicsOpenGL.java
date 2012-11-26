@@ -1585,9 +1585,13 @@ public class PGraphicsOpenGL extends PGraphics {
         boolean outdatedMulti = multisampleFramebuffer != null &&
           multisampleFramebuffer.contextIsOutdated();
         if (outdated || outdatedMulti) {
-//          pgl.initialized = false;
           restartPGL();
           initOffscreen();
+        } else {
+          // The back texture of the past frame becomes the front,
+          // and the front texture becomes the new back texture where the
+          // new frame is drawn to.
+          swapTextures();
         }
       }
 
@@ -1741,9 +1745,6 @@ public class PGraphicsOpenGL extends PGraphics {
     clearColorBuffer0 = clearColorBuffer;
     clearColorBuffer = false;
 
-
-
-
     report("bot beginDraw()");
   }
 
@@ -1760,7 +1761,6 @@ public class PGraphicsOpenGL extends PGraphics {
       return;
     }
 
-
     if (!pgPrimary.pgl.initialized || parent.frameCount == 0) {
       // Smooth was disabled/enabled at some point during drawing. We save
       // the current contents of the back buffer (because the  buffers haven't
@@ -1770,7 +1770,6 @@ public class PGraphicsOpenGL extends PGraphics {
       saveSurfaceToPixels();
       restoreSurface = true;
     }
-
 
     if (primarySurface) {
       pgl.endDraw(clearColorBuffer0);
@@ -1808,14 +1807,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void restartPGL() {
     pgl.initialized = false;
-    /*
-    if (texture != null) {
-      PApplet.println("restart: " + Thread.currentThread());
-      // The screen texture should be deleted because it
-      // corresponds to the old window size.
-      removeCache(this);
-      texture = ptexture = null;
-    }*/
   }
 
 
@@ -3232,7 +3223,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
       // This will trigger a surface restart next time
       // requestDraw() is called.
-//      pgl.initialized = false;
       restartPGL();
     }
   }
@@ -3257,9 +3247,9 @@ public class PGraphicsOpenGL extends PGraphics {
       lastSmoothCall = parent.frameCount;
 
       quality = 0;
+
       // This will trigger a surface restart next time
       // requestDraw() is called.
-//      pgl.initialized = false;
       restartPGL();
     }
   }
@@ -5393,6 +5383,9 @@ public class PGraphicsOpenGL extends PGraphics {
     int temp = texture.glName;
     texture.glName = ptexture.glName;
     ptexture.glName = temp;
+    if (!primarySurface) {
+      offscreenFramebuffer.setColorBuffer(texture);
+    }
   }
 
 
@@ -5406,6 +5399,20 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void drawTexture(int x, int y, int w, int h) {
     pgl.drawTexture(texture.glTarget, texture.glName,
                     texture.glWidth, texture.glHeight,
+                    x, y, x + w, y + h);
+  }
+
+
+  protected void drawPTexture() {
+    pgl.drawTexture(ptexture.glTarget, ptexture.glName,
+                    ptexture.glWidth, ptexture.glHeight,
+                    0, 0, width, height);
+  }
+
+
+  protected void drawPTexture(int x, int y, int w, int h) {
+    pgl.drawTexture(ptexture.glTarget, ptexture.glName,
+                    ptexture.glWidth, ptexture.glHeight,
                     x, y, x + w, y + h);
   }
 
@@ -5502,7 +5509,6 @@ public class PGraphicsOpenGL extends PGraphics {
     PolyTexShader prevTexShader = polyTexShader;
     polyTexShader = (PolyTexShader) shader;
     beginShape(QUADS);
-    //texture(imageCopy);
     texture(this);
     vertex(0, 0, 0, 0);
     vertex(width, 0, 1, 0);
@@ -5955,8 +5961,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
     popFramebuffer();
     texture.updateTexels(); // Mark all texels in screen texture as modified.
-
-    swapTextures();
 
     pgPrimary.restoreGL();
   }

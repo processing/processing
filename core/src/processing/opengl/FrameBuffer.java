@@ -189,10 +189,8 @@ public class FrameBuffer implements PConstants {
     pgl.blitFramebuffer(0, 0, this.width, this.height,
                           0, 0, dest.width, dest.height,
                           PGL.COLOR_BUFFER_BIT, PGL.NEAREST);
-
-    if (current != this) {
-      pgl.bindFramebuffer(PGL.FRAMEBUFFER, current.glFbo);
-    }
+    pgl.bindFramebuffer(PGL.READ_FRAMEBUFFER, current.glFbo);
+    pgl.bindFramebuffer(PGL.DRAW_FRAMEBUFFER, current.glFbo);
   }
 
   public void bind() {
