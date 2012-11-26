@@ -39,14 +39,74 @@ X   use editor.keys.shift_backspace_is_delete=true to bring it back
 X standard "Emacs" keybindings not implemented on OS X
 X   http://code.google.com/p/processing/issues/detail?id=1354
 X   http://guides.macrumors.com/Keyboard_shortcuts&section=10#Text_Shortcuts
-_ fix the debug stuff before shipping this out
-_   DebugMode throwing exception about breakpoints when trying to save
-_   what to call it?
+X fix the debug stuff before shipping this out
+X   just remove for the release
 
 earlier
 X The sketch name can't begin with '_' (underscore)
 X   http://code.google.com/p/processing/issues/detail?id=859
+X change to getRows() method for iterating through the Table object
+X add parseInto() method (provisional)
+X change translate() and rotate() to use x, y, z as param names
+o opengl.jar with eclipse
+o   auto-extract native libs from opengl.jar 
+o   to remove java.library.path problems (!)
+X   no longer necessary, JOGL does this by default
+X implement clip()/noClip()
+X remove blend(), add blendMode()
+X   http://code.google.com/p/processing/issues/detail?id=1385
+o implement a more efficient version of blend()
+o   http://code.google.com/p/processing/issues/detail?id=120
+o Problem with beginShape()/endShape() when using multiple contours
+X   http://code.google.com/p/processing/issues/detail?id=1396
+X   just a documentation issue
+A PShape and lights results in more lit vertices
+A   http://code.google.com/p/processing/issues/detail?id=1342
+A Implement anisotropic filtering when using OPENGL
+A   http://code.google.com/p/processing/issues/detail?id=502
+X move _MASK constants out of PConstants and into PImage
+X how should stroke work w/ arcs?
+X   decision: we should do pie, you can make the other kind w/o it
+X   add an additional parameter for the others
+X   http://code.google.com/p/processing/issues/detail?id=711
+X changed events to PRESS, RELEASE, CLICK, DRAG, MOVE, ENTER, EXIT
+X   instead of past-tense versions of the same
+A Implement arc() with modes on OpenGL
+A   http://code.google.com/p/processing/issues/detail?id=1406
+X relative coordinates not updated properly on closepath with SVG files
+X   http://code.google.com/p/processing/issues/detail?id=1058
+X add XML.getLong() (also updated Android)
+X   http://code.google.com/p/processing/issues/detail?id=1378
+X beginShape(QUAD) not working with Java2D
+X   http://code.google.com/p/processing/issues/detail?id=1365
+X fix for PMatrix3D.mult() when vectors are identical
+X   http://code.google.com/p/processing/issues/detail?id=921
+A back-buffer sampler in OpenGL renderers
+A   http://code.google.com/p/processing/issues/detail?id=1169
+X image resizing is ugly (just use java2d?)
+o   also deal with copy()/blend() inaccuracies
+X   http://code.google.com/p/processing/issues/detail?id=332
+o key/mouse events have concurrency problems with noLoop()
+X   http://code.google.com/p/processing/issues/detail?id=187
+o   need to say "no drawing inside mouse/key events w/ noLoop"
+X   changed to reference issue
+X redraw() doesn't work from within draw()
+X   http://code.google.com/p/processing/issues/detail?id=195
+X   make note for Casey to include this in the reference
+X Potential race condition when resizing sketches
+X   http://code.google.com/p/processing/issues/detail?id=697
+X removed mask(int[]).. check reference to make sure it's not in use
+X how to handle get(x, y, w, h) when off screen? 
+X   http://code.google.com/p/processing/issues/detail?id=925
+A curves aren't rendered seperately when P3D or P2D is specified
+A   http://code.google.com/p/processing/issues/detail?id=1317
+A FBO handling in PGL is not transparent
+A   http://code.google.com/p/processing/issues/detail?id=1282
 
+
+_ include debug mode as 'experimental'?
+_   DebugMode throwing exception about breakpoints when trying to save
+_   what to call it?
 
 _ if RuntimeException thrown, needs to check if it's a wrapped exception
 _   for instance, if there's a crash inside makeGraphics()

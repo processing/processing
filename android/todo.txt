@@ -54,7 +54,7 @@ o modify MotionEvent code to use TouchEvent class, even if basic version
 o   internally, PApplet might subclass it for the pointers
 o   but queueing needs to work
 X opting to take a step backwards on the motion event handling
-_ write a little stub code for people who want to use motionX/Y/etc
+o write a little stub code for people who want to use motionX/Y/etc
 
 
 _ NullPointerException in AndroidBuild.writeLocalProps(AndroidBuild.java:458)
