@@ -4,8 +4,8 @@
 # KEYWORD1 - Java datatypes and keywords
 # KEYWORD2 - functions
 # KEYWORD3 - methods (functions inside a class)
-# XXX KEYWORD2 - fields (variables inside a class)
-# XXX LITERAL2 - Processing variables (width, height, focused, etc.)
+# KEYWORD4 - fields (variables inside a class)
+# KEYWORD5 - Processing variables (width, height, focused, etc.)
 
 #
 
@@ -31,6 +31,8 @@ BOTTOM	LITERAL2	textAlign_
 BURN	LITERAL2	blend_
 CENTER	LITERAL2	
 CHATTER	LITERAL2
+CLAMP LITERAL2
+CLICK	LITERAL2
 CLOSE	LITERAL2
 CMYK	LITERAL2
 CODED	LITERAL2	key
@@ -54,28 +56,27 @@ DIFFUSE	LITERAL2
 DILATE	LITERAL2	filter_
 DIRECTIONAL	LITERAL2
 DISABLE_ACCURATE_2D	LITERAL2
-DISABLE_ACCURATE_TEXTURES	LITERAL2
-DISABLE_DEPTH_MASKS	LITERAL2
+DISABLE_DEPTH_MASK	LITERAL2
 DISABLE_DEPTH_SORT	LITERAL2
 DISABLE_DEPTH_TEST	LITERAL2
 DISABLE_NATIVE_FONTS	LITERAL2
 DISABLE_OPENGL_ERRORS	LITERAL2
-DISABLE_TEXTURE_CACHE LITERAL2
+DISABLE_PURE_STROKE	LITERAL2
 DISABLE_TEXTURE_MIPMAPS	LITERAL2
 DISABLE_TRANSFORM_CACHE	LITERAL2
 DISABLE_STROKE_PERSPECTIVE	LITERAL2
 DISABLED	LITERAL2
 DODGE	LITERAL2	blend_
 DOWN	LITERAL2	keyCode
+DRAG	LITERAL2
 DXF	LITERAL2	size_
 ENABLE_ACCURATE_2D	LITERAL2
-ENABLE_ACCURATE_TEXTURES	LITERAL2
-ENABLE_DEPTH_MASKS	LITERAL2
+ENABLE_DEPTH_MASK	LITERAL2
 ENABLE_DEPTH_SORT	LITERAL2
 ENABLE_DEPTH_TEST	LITERAL2
 ENABLE_NATIVE_FONTS	LITERAL2
 ENABLE_OPENGL_ERRORS	LITERAL2
-ENABLE_TEXTURE_CACHE LITERAL2
+ENABLE_PURE_STROKE LITERAL2
 ENABLE_TEXTURE_MIPMAPS	LITERAL2
 ENABLE_TRANSFORM_CACHE	LITERAL2
 ENABLE_STROKE_PERSPECTIVE	LITERAL2
@@ -84,6 +85,7 @@ EPSILON	LITERAL2
 ERODE	LITERAL2	filter_
 ESC	LITERAL2	keyCode
 EXCLUSION	LITERAL2	blend_
+EXIT LITERAL2
 GIF	LITERAL2
 GRAY	LITERAL2	filter_
 GREEN_MASK	LITERAL2
@@ -127,6 +129,7 @@ PIXEL_CENTER	LITERAL2
 POINT	LITERAL2
 POINTS	LITERAL2	
 POSTERIZE	LITERAL2	filter_
+PRESS	LITERAL2
 PROBLEM	LITERAL2	
 PROJECT	LITERAL2	strokeCap_
 QUAD_STRIP	LITERAL2	beginShape_
@@ -136,6 +139,8 @@ RAD_TO_DEG	LITERAL2
 RADIUS	LITERAL2
 RADIANS	LITERAL2
 RED_MASK	LITERAL2
+RELEASE LITERAL2
+REPEAT	LITERAL2
 REPLACE	LITERAL2	
 RETURN	LITERAL2
 RGB	LITERAL2	colorMode_
@@ -259,6 +264,7 @@ breakShape	KEYWORD2
 createPath	KEYWORD2
 float	KEYWORD2	floatconvert_
 int	KEYWORD2	intconvert_
+str	KEYWORD2	strconvert_
 loadMatrix	KEYWORD2
 noHint	KEYWORD2
 parseBoolean	KEYWORD2
@@ -287,27 +293,12 @@ toLowerCase	KEYWORD3	String_toLowerCase_
 toUpperCase	KEYWORD3	String_toUpperCase_
 
 # Temporary additions 3 September 2012 as the reference is getting updated
-PShape	KEYWORD1
-createShape	KEYWORD2
+
 beginContour	KEYWORD2
 endContour	KEYWORD2
 end	KEYWORD2
 addChild	KEYWORD2
 
-PShader	KEYWORD1
-loadShader	KEYWORD2
-resetShader	KEYWORD2
-bind	KEYWORD2
-shader	KEYWORD2
-  
-blendMode	KEYWORD2
-  
-selectInput	KEYWORD2
-selectOutput	KEYWORD2
-selectFolder	KEYWORD2
-  
-saveType	KEYWORD2
-loadType	KEYWORD2
 clip	KEYWORD2
 noClip	KEYWORD2
 
@@ -380,6 +371,7 @@ bezierVertex	KEYWORD2	bezierVertex_
 binary	KEYWORD2	binary_
 blend	KEYWORD2	blend_
 blendColor	KEYWORD2	blendColor_
+blendMode	KEYWORD2	blendMode_
 blue	KEYWORD2	blue_
 box	KEYWORD2	box_
 brightness	KEYWORD2	brightness_
@@ -397,6 +389,7 @@ createImage	KEYWORD2	createImage_
 createInput	KEYWORD2	createInput_
 createOutput	KEYWORD2	createOutput_
 createReader	KEYWORD2	createReader_
+createShape	KEYWORD2	createShape_
 createWriter	KEYWORD2	createWriter_
 cursor	KEYWORD2	cursor_
 curve	KEYWORD2	curve_
@@ -408,8 +401,8 @@ curveVertex	KEYWORD2	curveVertex_
 day	KEYWORD2	day_
 degrees	KEYWORD2	degrees_
 directionalLight	KEYWORD2	directionalLight_
-displayHeight	LITERAL2	displayHeight
-displayWidth	LITERAL2	displayWidth
+displayHeight	KEYWORD5	displayHeight
+displayWidth	KEYWORD5	displayWidth
 dist	KEYWORD2	dist_
 draw	KEYWORD2	draw_
 ellipse	KEYWORD2	ellipse_
@@ -425,15 +418,15 @@ expand	KEYWORD2	expand_
 fill	KEYWORD2	fill_
 filter	KEYWORD2	filter_
 floor	KEYWORD2	floor_
-focused	LITERAL2	focused
-frameCount	LITERAL2	frameCount
-frameRate	LITERAL2	frameRate
+focused	KEYWORD5	focused
+frameCount	KEYWORD5	frameCount
+frameRate	KEYWORD5	frameRate
 frameRate	KEYWORD2	frameRate_
 frustum	KEYWORD2	frustum_
 get	KEYWORD2	get_
 green	KEYWORD2	green_
 HALF_PI	LITERAL2	HALF_PI
-height	LITERAL2	height
+height	KEYWORD5	height
 hex	KEYWORD2	hex_
 hint	KEYWORD2	hint_
 hour	KEYWORD2	hour_
@@ -441,10 +434,10 @@ hue	KEYWORD2	hue_
 image	KEYWORD2	image_
 imageMode	KEYWORD2	imageMode_
 join	KEYWORD2	join_
-key	LITERAL2	key
-keyCode	LITERAL2	keyCode
+key	KEYWORD5	key
+keyCode	KEYWORD5	keyCode
 keyPressed	KEYWORD2	keyPressed_
-keyPressed	LITERAL2	keyPressed
+keyPressed	KEYWORD5	keyPressed
 keyReleased	KEYWORD2	keyReleased_
 keyTyped	KEYWORD2	keyTyped_
 lerp	KEYWORD2	lerp_
@@ -457,8 +450,11 @@ loadBytes	KEYWORD2	loadBytes_
 loadFont	KEYWORD2	loadFont_
 loadImage	KEYWORD2	loadImage_
 loadPixels	KEYWORD2	loadPixels_
+loadShader	KEYWORD2	loadShader_
 loadShape	KEYWORD2	loadShape_
 loadStrings	KEYWORD2	loadStrings_
+loadTable	KEYWORD2	loadTable_
+loadXML	KEYWORD2	loadXML_
 log	KEYWORD2	log_
 loop	KEYWORD2	loop_
 mag	KEYWORD2	mag_
@@ -473,15 +469,15 @@ modelX	KEYWORD2	modelX_
 modelY	KEYWORD2	modelY_
 modelZ	KEYWORD2	modelZ_
 month	KEYWORD2	month_
-mouseButton	LITERAL2	mouseButton
+mouseButton	KEYWORD5	mouseButton
 mouseClicked	KEYWORD2	mouseClicked_
 mouseDragged	KEYWORD2	mouseDragged_
 mouseMoved	KEYWORD2	mouseMoved_
 mousePressed	KEYWORD2	mousePressed_
-mousePressed	LITERAL2	mousePressed
+mousePressed	KEYWORD5	mousePressed
 mouseReleased	KEYWORD2	mouseReleased_
-mouseX	LITERAL2	mouseX
-mouseY	LITERAL2	mouseY
+mouseX	KEYWORD5	mouseX
+mouseY	KEYWORD5	mouseY
 nf	KEYWORD2	nf_
 nfc	KEYWORD2	nfc_
 nfp	KEYWORD2	nfp_
@@ -513,16 +509,18 @@ blend	KEYWORD3	PImage_blend_
 copy	KEYWORD3	PImage_copy_
 filter	KEYWORD3	PImage_filter_
 get	KEYWORD3	PImage_get_
+height	KEYWORD4	PImage_height
 loadPixels	KEYWORD3	PImage_loadPixels_
 mask	KEYWORD3	PImage_mask_
-pixels	KEYWORD2	PImage_pixels
+pixels	KEYWORD4	PImage_pixels
 resize	KEYWORD3	PImage_resize_
 save	KEYWORD3	PImage_save_
 set	KEYWORD3	PImage_set_
 updatePixels	KEYWORD3	PImage_updatePixels_
-pixels	LITERAL2	pixels
-pmouseX	LITERAL2	pmouseX
-pmouseY	LITERAL2	pmouseY
+width	KEYWORD4	PImage_width
+pixels	KEYWORD5	pixels
+pmouseX	KEYWORD5	pmouseX
+pmouseY	KEYWORD5	pmouseY
 point	KEYWORD2	point_
 pointLight	KEYWORD2	pointLight_
 popMatrix	KEYWORD2	popMatrix_
@@ -533,10 +531,19 @@ printCamera	KEYWORD2	printCamera_
 println	KEYWORD2	println_
 printMatrix	KEYWORD2	printMatrix_
 printProjection	KEYWORD2	printProjection_
+PShader	KEYWORD2	PShader_
+PShader	KEYWORD3	PShader_set_
 PShape	KEYWORD1	PShape
+addChild	KEYWORD3	PShape_addChild_
+beginContour	KEYWORD3	PShape_beginContour_
 disableStyle	KEYWORD3	PShape_disableStyle_
 enableStyle	KEYWORD3	PShape_enableStyle_
+end	KEYWORD3	PShape_end_
+endContour	KEYWORD3	PShape_endContour_
 getChild	KEYWORD3	PShape_getChild_
+getVertex	KEYWORD3	PShape_getVertex_
+getVertexCount	KEYWORD3	PShape_getVertexCount_
+height	KEYWORD4	PShape_height
 isVisible	KEYWORD3	PShape_isVisible_
 resetMatrix	KEYWORD3	PShape_resetMatrix_
 rotate	KEYWORD3	PShape_rotate_
@@ -544,8 +551,10 @@ rotateX	KEYWORD3	PShape_rotateX_
 rotateY	KEYWORD3	PShape_rotateY_
 rotateZ	KEYWORD3	PShape_rotateZ_
 scale	KEYWORD3	PShape_scale_
+setVertex	KEYWORD3	PShape_setVertex_
 setVisible	KEYWORD3	PShape_setVisible_
 translate	KEYWORD3	PShape_translate_
+width	KEYWORD4	PShape_width
 pushMatrix	KEYWORD2	pushMatrix_
 pushStyle	KEYWORD2	pushStyle_
 PVector	KEYWORD1	PVector
@@ -565,9 +574,6 @@ normalize	KEYWORD3	PVector_normalize_
 set	KEYWORD3	PVector_set_
 setMag	KEYWORD3	PVector_setMag_
 sub	KEYWORD3	PVector_sub_
-x	KEYWORD2	PVector_x
-y	KEYWORD2	PVector_y
-z	KEYWORD2	PVector_z
 quad	KEYWORD2	quad_
 quadraticVertex	KEYWORD2	quadraticVertex_
 QUARTER_PI	LITERAL2	QUARTER_PI
@@ -580,6 +586,7 @@ red	KEYWORD2	red_
 redraw	KEYWORD2	redraw_
 requestImage	KEYWORD2	requestImage_
 resetMatrix	KEYWORD2	resetMatrix_
+resetShader	KEYWORD2	resetShader_
 reverse	KEYWORD2	reverse_
 rotate	KEYWORD2	rotate_
 rotateX	KEYWORD2	rotateX_
@@ -593,8 +600,8 @@ saveFrame	KEYWORD2	saveFrame_
 saveStream	KEYWORD2	saveStream_
 saveStrings	KEYWORD2	saveStrings_
 scale	KEYWORD2	scale_
-screenHeight	LITERAL2	screenHeight
-screenWidth	LITERAL2	screenWidth
+screenHeight	KEYWORD5	screenHeight
+screenWidth	KEYWORD5	screenWidth
 screenX	KEYWORD2	screenX_
 screenY	KEYWORD2	screenY_
 screenZ	KEYWORD2	screenZ_
@@ -604,6 +611,7 @@ selectInput	KEYWORD2	selectInput_
 selectOutput	KEYWORD2	selectOutput_
 set	KEYWORD2	set_
 setup	KEYWORD2	setup_
+shader	KEYWORD2	shader_
 shape	KEYWORD2	shape_
 shapeMode	KEYWORD2	shapeMode_
 shearX	KEYWORD2	shearX_
@@ -628,6 +636,7 @@ strokeCap	KEYWORD2	strokeCap_
 strokeJoin	KEYWORD2	strokeJoin_
 strokeWeight	KEYWORD2	strokeWeight_
 subset	KEYWORD2	subset_
+Table	KEYWORD2	Table_
 tan	KEYWORD2	tan_
 text	KEYWORD2	text_
 textAlign	KEYWORD2	textAlign_
@@ -639,6 +648,7 @@ textMode	KEYWORD2	textMode_
 textSize	KEYWORD2	textSize_
 texture	KEYWORD2	texture_
 textureMode	KEYWORD2	textureMode_
+textureWrap	KEYWORD2	textureWrap_
 textWidth	KEYWORD2	textWidth_
 tint	KEYWORD2	tint_
 translate	KEYWORD2	translate_
@@ -649,8 +659,10 @@ unbinary	KEYWORD2	unbinary_
 unhex	KEYWORD2	unhex_
 updatePixels	KEYWORD2	updatePixels_
 vertex	KEYWORD2	vertex_
-width	LITERAL2	width
+width	KEYWORD5	width
 XML	KEYWORD2	XML_
+addChild	KEYWORD3	XML_addChild_
+getAttributeCount	KEYWORD3	XML_getAttributeCount_
 getChild	KEYWORD3	XML_getChild_
 getChildCount	KEYWORD3	XML_getChildCount_
 getChildren	KEYWORD3	XML_getChildren_
@@ -658,5 +670,16 @@ getContent	KEYWORD3	XML_getContent_
 getFloat	KEYWORD3	XML_getFloat_
 getInt	KEYWORD3	XML_getInt_
 getName	KEYWORD3	XML_getName_
+getParent	KEYWORD3	XML_getParent_
 getString	KEYWORD3	XML_getString_
+hasAttribute	KEYWORD3	XML_hasAttribute_
+hasChildren	KEYWORD3	XML_hasChildren_
+listAttributes	KEYWORD3	XML_listAttributes_
+listChildren	KEYWORD3	XML_listChildren_
+removeChild	KEYWORD3	XML_removeChild_
+setContent	KEYWORD3	XML_setContent_
+setFloat	KEYWORD3	XML_setFloat_
+setInt	KEYWORD3	XML_setInt_
+setName	KEYWORD3	XML_setName_
+setString	KEYWORD3	XML_setString_
 year	KEYWORD2	year_
