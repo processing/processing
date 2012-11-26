@@ -1531,6 +1531,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
   @Override
   public void beginDraw() {
+    report("top beginDraw()");
+
     if (drawing) {
       showWarning("Already called beginDraw().");
       return;
@@ -1548,202 +1550,17 @@ public class PGraphicsOpenGL extends PGraphics {
       getGLParameters();
     }
 
-
-
-    // surface initialization/update -------------------------------------------
     if (primarySurface) {
-      if (drawFramebuffer == null) {
-        drawFramebuffer = new FrameBuffer(parent, width, height, true);
-        setFramebuffer(drawFramebuffer);
-      }
-      if (readFramebuffer == null) {
-        readFramebuffer = new FrameBuffer(parent, width, height, true);
-      }
-
-      drawFramebuffer.setFBO(pgl.getDrawFramebuffer());
-      readFramebuffer.setFBO(pgl.getReadFramebuffer());
-      if (pgl.isFBOBacked()) {
-        if (texture == null) {
-          texture = pgl.wrapBackTexture();
-        } else {
-          texture.glName = pgl.getBackTextureName();
-        }
-        if (ptexture == null) {
-          ptexture = pgl.wrapFrontTexture();
-        } else {
-          ptexture.glName = pgl.getFrontTextureName();
-        }
-      }
-
-      pgl.update();
-    } else {
-      if (!pgl.initialized) {
-        initOffscreen();
-      } else {
-        boolean outdated = offscreenFramebuffer != null &&
-                           offscreenFramebuffer.contextIsOutdated();
-        boolean outdatedMulti = multisampleFramebuffer != null &&
-          multisampleFramebuffer.contextIsOutdated();
-        if (outdated || outdatedMulti) {
-          restartPGL();
-          initOffscreen();
-        } else {
-          // The back texture of the past frame becomes the front,
-          // and the front texture becomes the new back texture where the
-          // new frame is drawn to.
-          swapTextures();
-        }
-      }
-
-      pushFramebuffer();
-      if (offscreenMultisample) {
-        setFramebuffer(multisampleFramebuffer);
-      } else {
-        setFramebuffer(offscreenFramebuffer);
-      }
-    }
-
-
-
-    // We are ready to go!
-    report("top beginDraw()");
-    drawing = true;
-    pgCurrent = this;
-
-
-    // Setting up variables ----------------------------------------------------
-
-    inGeo.clear();
-    tessGeo.clear();
-    texCache.clear();
-
-    // Each frame starts with textures disabled.
-    super.noTexture();
-
-    // Screen blend is needed for alpha (i.e. fonts) to work.
-    // Using setDefaultBlend() instead of blendMode() because
-    // the latter will set the blend mode only if it is different
-    // from current.
-    setDefaultBlend();
-
-    // this is necessary for 3D drawing
-    if (hints[DISABLE_DEPTH_TEST]) {
-      pgl.disable(PGL.DEPTH_TEST);
-    } else {
-      pgl.enable(PGL.DEPTH_TEST);
-    }
-    // use <= since that's what processing.core does
-    pgl.depthFunc(PGL.LEQUAL);
-
-    if (hints[ENABLE_ACCURATE_2D]) {
-      flushMode = FLUSH_CONTINUOUSLY;
-    } else {
-      flushMode = FLUSH_WHEN_FULL;
-    }
-
-    if (primarySurface) {
-      int[] temp = new int[1];
-      pgl.getIntegerv(PGL.SAMPLES, temp, 0);
-      if (quality != temp[0] && 1 < temp[0] && 1 < quality) {
-        quality = temp[0];
-      }
-    }
-    if (quality < 2) {
-      pgl.disable(PGL.MULTISAMPLE);
-    } else {
-      pgl.enable(PGL.MULTISAMPLE);
-    }
-    pgl.disable(PGL.POINT_SMOOTH);
-    pgl.disable(PGL.LINE_SMOOTH);
-    pgl.disable(PGL.POLYGON_SMOOTH);
-
-    // setup opengl viewport.
-    viewport[0] = 0; viewport[1] = 0; viewport[2] = width; viewport[3] = height;
-    pgl.viewport(viewport[0], viewport[1], viewport[2], viewport[3]);
-
-    if (sized) {
-      // To avoid having garbage in the screen after a resize,
-      // in the case background is not called in draw().
-      background(backgroundColor);
-
-      // Sets the default projection and camera (initializes modelview).
-      // If the user has setup up their own projection, they'll need
-      // to fix it after resize anyway. This helps the people who haven't
-      // set up their own projection.
-      defaultPerspective();
-      defaultCamera();
-
-      if (pixels != null) {
-        // The pixels array is being used, so we need to resize accordingly
-        loadPixels();
-      }
-
-      // clear the flag
-      sized = false;
-    } else {
-      // Eliminating any user's transformations by going back to the
-      // original camera setup.
-      modelview.set(camera);
-      modelviewInv.set(cameraInv);
-      calcProjmodelview();
-    }
-
-    if (is3D()) {
-      noLights();
-      lightFalloff(1, 0, 0);
-      lightSpecular(0, 0, 0);
-    }
-
-    // Because y is flipped, the vertices that should be specified by
-    // the user in CCW order to define a front-facing facet, end up being CW.
-    pgl.frontFace(PGL.CW);
-    pgl.disable(PGL.CULL_FACE);
-
-    // Processing uses only one texture unit.
-    pgl.activeTexture(PGL.TEXTURE0);
-
-    // The current normal vector is set to be parallel to the Z axis.
-    normalX = normalY = normalZ = 0;
-
-    // Clear depth and stencil buffers.
-    pgl.depthMask(true);
-    pgl.clearDepth(1);
-    pgl.clearStencil(0);
-    pgl.clear(PGL.DEPTH_BUFFER_BIT | PGL.STENCIL_BUFFER_BIT);
-
-
-
-
-    // Should go right after report("top beginDraw()") -------------------------
-    if (primarySurface) {
+      updatePrimary();
       pgl.beginDraw(clearColorBuffer);
     } else {
+      updateOffscreen();
       beginOffscreenDraw();
     }
-    // -------------------------------------------------------------------------
 
-    if (!settingsInited) {
-      defaultSettings();
-    }
-
-    if (restoreSurface) {
-      restoreSurfaceFromPixels();
-      restoreSurface = false;
-    }
-
-    if (hints[DISABLE_DEPTH_MASK]) {
-      pgl.depthMask(false);
-    } else {
-      pgl.depthMask(true);
-    }
-
-    pixelsOp = OP_NONE;
-
-    modified = false;
-    setgetPixels = false;
-
-    clearColorBuffer0 = clearColorBuffer;
-    clearColorBuffer = false;
+    setDefaults();
+    pgCurrent = this;
+    drawing = true;
 
     report("bot beginDraw()");
   }
@@ -1778,8 +1595,6 @@ public class PGraphicsOpenGL extends PGraphics {
       endOffscreenDraw();
     }
 
-    // Done!
-    drawing = false;
     if (pgCurrent == pgPrimary) {
       // Done with the main surface
       pgCurrent = null;
@@ -1787,6 +1602,7 @@ public class PGraphicsOpenGL extends PGraphics {
       // Done with an offscreen surface, going back to onscreen drawing.
       pgCurrent = pgPrimary;
     }
+    drawing = false;
 
     report("bot endDraw()");
   }
@@ -5403,20 +5219,6 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  protected void drawPTexture() {
-    pgl.drawTexture(ptexture.glTarget, ptexture.glName,
-                    ptexture.glWidth, ptexture.glHeight,
-                    0, 0, width, height);
-  }
-
-
-  protected void drawPTexture(int x, int y, int w, int h) {
-    pgl.drawTexture(ptexture.glTarget, ptexture.glName,
-                    ptexture.glWidth, ptexture.glHeight,
-                    x, y, x + w, y + h);
-  }
-
-
   //////////////////////////////////////////////////////////////
 
   // MASK
@@ -5878,6 +5680,34 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
+  protected void updatePrimary() {
+    if (drawFramebuffer == null) {
+      drawFramebuffer = new FrameBuffer(parent, width, height, true);
+      setFramebuffer(drawFramebuffer);
+    }
+    if (readFramebuffer == null) {
+      readFramebuffer = new FrameBuffer(parent, width, height, true);
+    }
+
+    drawFramebuffer.setFBO(pgl.getDrawFramebuffer());
+    readFramebuffer.setFBO(pgl.getReadFramebuffer());
+    if (pgl.isFBOBacked()) {
+      if (texture == null) {
+        texture = pgl.wrapBackTexture();
+      } else {
+        texture.glName = pgl.getBackTextureName();
+      }
+      if (ptexture == null) {
+        ptexture = pgl.wrapFrontTexture();
+      } else {
+        ptexture.glName = pgl.getFrontTextureName();
+      }
+    }
+
+    pgl.update();
+  }
+
+
   protected void initOffscreen() {
     // Getting the context and capabilities from the main renderer.
     pgPrimary = (PGraphicsOpenGL)parent.g;
@@ -5924,6 +5754,34 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
+  protected void updateOffscreen() {
+    if (!pgl.initialized) {
+      initOffscreen();
+    } else {
+      boolean outdated = offscreenFramebuffer != null &&
+                         offscreenFramebuffer.contextIsOutdated();
+      boolean outdatedMulti = multisampleFramebuffer != null &&
+        multisampleFramebuffer.contextIsOutdated();
+      if (outdated || outdatedMulti) {
+        restartPGL();
+        initOffscreen();
+      } else {
+        // The back texture of the past frame becomes the front,
+        // and the front texture becomes the new back texture where the
+        // new frame is drawn to.
+        swapTextures();
+      }
+    }
+
+    pushFramebuffer();
+    if (offscreenMultisample) {
+      setFramebuffer(multisampleFramebuffer);
+    } else {
+      setFramebuffer(offscreenFramebuffer);
+    }
+  }
+
+
   protected void beginOffscreenDraw() {
     // Just in case the texture was recreated (in a resize event for example)
     offscreenFramebuffer.setColorBuffer(texture);
@@ -5963,6 +5821,131 @@ public class PGraphicsOpenGL extends PGraphics {
     texture.updateTexels(); // Mark all texels in screen texture as modified.
 
     pgPrimary.restoreGL();
+  }
+
+
+  protected void setDefaults() {
+    inGeo.clear();
+    tessGeo.clear();
+    texCache.clear();
+
+    // Each frame starts with textures disabled.
+    super.noTexture();
+
+    // Screen blend is needed for alpha (i.e. fonts) to work.
+    // Using setDefaultBlend() instead of blendMode() because
+    // the latter will set the blend mode only if it is different
+    // from current.
+    setDefaultBlend();
+
+    // this is necessary for 3D drawing
+    if (hints[DISABLE_DEPTH_TEST]) {
+      pgl.disable(PGL.DEPTH_TEST);
+    } else {
+      pgl.enable(PGL.DEPTH_TEST);
+    }
+    // use <= since that's what processing.core does
+    pgl.depthFunc(PGL.LEQUAL);
+
+    if (hints[ENABLE_ACCURATE_2D]) {
+      flushMode = FLUSH_CONTINUOUSLY;
+    } else {
+      flushMode = FLUSH_WHEN_FULL;
+    }
+
+    if (primarySurface) {
+      int[] temp = new int[1];
+      pgl.getIntegerv(PGL.SAMPLES, temp, 0);
+      if (quality != temp[0] && 1 < temp[0] && 1 < quality) {
+        quality = temp[0];
+      }
+    }
+    if (quality < 2) {
+      pgl.disable(PGL.MULTISAMPLE);
+    } else {
+      pgl.enable(PGL.MULTISAMPLE);
+    }
+    pgl.disable(PGL.POINT_SMOOTH);
+    pgl.disable(PGL.LINE_SMOOTH);
+    pgl.disable(PGL.POLYGON_SMOOTH);
+
+    // setup opengl viewport.
+    viewport[0] = 0; viewport[1] = 0; viewport[2] = width; viewport[3] = height;
+    pgl.viewport(viewport[0], viewport[1], viewport[2], viewport[3]);
+
+    if (sized) {
+      // To avoid having garbage in the screen after a resize,
+      // in the case background is not called in draw().
+      background(backgroundColor);
+
+      // Sets the default projection and camera (initializes modelview).
+      // If the user has setup up their own projection, they'll need
+      // to fix it after resize anyway. This helps the people who haven't
+      // set up their own projection.
+      defaultPerspective();
+      defaultCamera();
+
+      if (pixels != null) {
+        // The pixels array is being used, so we need to resize accordingly
+        allocatePixels();
+        readPixels();
+      }
+
+      // clear the flag
+      sized = false;
+    } else {
+      // Eliminating any user's transformations by going back to the
+      // original camera setup.
+      modelview.set(camera);
+      modelviewInv.set(cameraInv);
+      calcProjmodelview();
+    }
+
+    if (is3D()) {
+      noLights();
+      lightFalloff(1, 0, 0);
+      lightSpecular(0, 0, 0);
+    }
+
+    // Because y is flipped, the vertices that should be specified by
+    // the user in CCW order to define a front-facing facet, end up being CW.
+    pgl.frontFace(PGL.CW);
+    pgl.disable(PGL.CULL_FACE);
+
+    // Processing uses only one texture unit.
+    pgl.activeTexture(PGL.TEXTURE0);
+
+    // The current normal vector is set to be parallel to the Z axis.
+    normalX = normalY = normalZ = 0;
+
+    // Clear depth and stencil buffers.
+    pgl.depthMask(true);
+    pgl.clearDepth(1);
+    pgl.clearStencil(0);
+    pgl.clear(PGL.DEPTH_BUFFER_BIT | PGL.STENCIL_BUFFER_BIT);
+
+    if (!settingsInited) {
+      defaultSettings();
+    }
+
+    if (restoreSurface) {
+      restoreSurfaceFromPixels();
+      restoreSurface = false;
+    }
+
+    if (hints[DISABLE_DEPTH_MASK]) {
+      pgl.depthMask(false);
+    } else {
+      pgl.depthMask(true);
+    }
+
+    pixelsOp = OP_NONE;
+
+    modified = false;
+    setgetPixels = false;
+
+    clearColorBuffer0 = clearColorBuffer;
+    clearColorBuffer = false;
   }
 
 
