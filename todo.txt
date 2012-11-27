@@ -54,6 +54,10 @@ X   syntax highlight with parens also helps "String line" vs "line()"
 X     although nothing in here to prevent "String line" from coloring
 X   try to make KEYWORD4 and KEYWORD5 work
 
+earlier
+X The sketch name can't begin with '_' (underscore)
+X   http://code.google.com/p/processing/issues/detail?id=859
+
 
 2.0 FINAL / casey requests
 _ errors that cannot be placed (i.e. missing brace) 
@@ -61,10 +65,7 @@ _   this makes things to jump to the last tab
 _   also happens with stray characters sometimes...
 _   casey: accidentally typing a letter at the top of the tab
 _     throws you onto the end of the last tab... exactly the worst location
-
-earlier
-X The sketch name can't begin with '_' (underscore)
-X   http://code.google.com/p/processing/issues/detail?id=859
+_   if the error cannot be placed, just don't change tabs/placement at all
 
 _ include debug mode as 'experimental'?
 _   DebugMode throwing exception about breakpoints when trying to save
