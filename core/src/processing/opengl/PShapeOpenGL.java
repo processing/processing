@@ -350,6 +350,10 @@ public class PShapeOpenGL extends PShape {
 
     normalMode = NORMAL_MODE_AUTO;
 
+    // To make sure that the first vertex is marked as a break.
+    // Same behavior as in the immediate mode.
+    breakShape = true;
+
     if (family == GROUP) {
       // GROUP shapes are always marked as ended.
       shapeEnded = true;
@@ -895,6 +899,7 @@ public class PShapeOpenGL extends PShape {
       return;
     }
     openContour = true;
+    breakShape = true;
   }
 
 
@@ -910,7 +915,6 @@ public class PShapeOpenGL extends PShape {
       return;
     }
     openContour = false;
-    breakShape = true;
   }
 
 
