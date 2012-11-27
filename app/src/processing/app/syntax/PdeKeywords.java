@@ -34,70 +34,14 @@ import javax.swing.text.Segment;
 public class PdeKeywords extends TokenMarker {
   private KeywordMap keywordColoring;
 
-  // lookup table for the TokenMarker subclass, handles coloring
-//  private static final KeywordMap keywordColoring;
-  // lookup table that maps keywords to their html reference pages
-//  private static final Hashtable keywordToReference;
-//  private HashMap<String,String> keywordToReference;
-
-  // used internally
   private int lastOffset;
   private int lastKeyword;
   
 
-  /*
-  public PdeKeywords(File file) throws IOException {
-    //super(false, getKeywords());
-//    this.cpp = cpp;
-//    this.keywordColoring = keywordColoring;
-//    try {
-    BufferedReader reader = PApplet.createReader(file);
-
-    keywordColoring = new KeywordMap(false);
-    keywordToReference = new HashMap<String, String>();
-
-    //      InputStream input = Base.getLibStream("keywords.txt");
-    //      InputStreamReader isr = new InputStreamReader(input);
-    //      BufferedReader reader = new BufferedReader(isr);
-
-    String line = null;
-    while ((line = reader.readLine()) != null) {
-      String pieces[] = processing.core.PApplet.split(line, '\t');
-      if (pieces.length >= 2) {
-        String keyword = pieces[0].trim();
-        String coloring = pieces[1].trim();
-
-        if (coloring.length() > 0) {
-          // text will be KEYWORD or LITERAL
-          boolean isKey = (coloring.charAt(0) == 'K');
-          // KEYWORD1 -> 0, KEYWORD2 -> 1, etc
-          int num = coloring.charAt(coloring.length() - 1) - '1';
-          byte id = (byte) ((isKey ? Token.KEYWORD1 : Token.LITERAL1) + num);
-          //System.out.println("got " + (isKey ? "keyword" : "literal") +
-          //                 (num+1) + " for " + keyword);
-          keywordColoring.add(keyword, id);
-        }
-        if (pieces.length >= 3) {
-          String htmlFilename = pieces[2].trim();
-          if (htmlFilename.length() > 0) {
-            keywordToReference.put(keyword, htmlFilename);
-          }
-        }
-      }
-    }
-    reader.close();
-
-//    } catch (Exception e) {
-//      Base.showError("Problem loading keywords",
-//                     "Could not load keywords.txt,\n" + 
-//                     "please re-install Processing.", e);
-//    }
-  }
-  */
-  
-
   /**
-   * Add a keyword, and the associated coloring.
+   * Add a keyword, and the associated coloring. KEYWORD2 and KEYWORD3 
+   * should only be used with functions (where parens are present). 
+   * This is done for the extra paren handling.
    * @param coloring one of KEYWORD1, KEYWORD2, LITERAL1, etc.
    */
   public void addColoring(String keyword, String coloring) {
@@ -109,7 +53,9 @@ public class PdeKeywords extends TokenMarker {
     // KEYWORD1 -> 0, KEYWORD2 -> 1, etc
     int num = coloring.charAt(coloring.length() - 1) - '1';
     byte id = (byte) ((isKey ? Token.KEYWORD1 : Token.LITERAL1) + num);
-    keywordColoring.add(keyword, id);
+    // Making an assumption (..., you, me) that KEYWORD2 and KEYWORD3 
+    // are the functions (at least that's what we're doing in P5 right now)
+    keywordColoring.add(keyword, id, id == Token.KEYWORD2 || id == Token.KEYWORD3);
   }
 
 
@@ -324,7 +270,7 @@ public class PdeKeywords extends TokenMarker {
 ////        new String(line.array, i, line.array.length - i));
 //    }
 
-    byte id = keywordColoring.lookup(line, lastKeyword, len);
+    byte id = keywordColoring.lookup(line, lastKeyword, len, paren);
     if (id != Token.NULL) {
       if (lastKeyword != lastOffset) {
         addToken(lastKeyword - lastOffset, Token.NULL);

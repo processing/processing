@@ -147,6 +147,12 @@ PROCESSING 2.0b7 (REV 0215) - 25 November 2012
 + Shaders are passed wrong defaults when calling "filter" on a PGraphics object
   http://code.google.com/p/processing/issues/detail?id=1301
 
++ beginContour() behaves differently in immediate and retained modes
+  http://code.google.com/p/processing/issues/detail?id=1417
+
++ P2D/P3D crashes when trying to display unicode text
+  http://code.google.com/p/processing/issues/detail?id=1308
+
 + Fix for PMatrix3D.mult() when vectors are identical
   http://code.google.com/p/processing/issues/detail?id=921
 

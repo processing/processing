@@ -62,6 +62,10 @@ A P2D/P3D PGraphics buffer fails to draw if larger than main surface
 A   http://code.google.com/p/processing/issues/detail?id=1255
 A image(pgraphics, x,y, w, h) only draw once when shrinking
 A   http://code.google.com/p/processing/issues/detail?id=1382
+A P2D/P3D crashes when trying to display unicode text
+A   http://code.google.com/p/processing/issues/detail?id=1308
+A beginContour() behaves differently in immediate and retained modes
+A   http://code.google.com/p/processing/issues/detail?id=1417
 _ implement mousePressed(Event) etc
 _   better to do this instead of bringing back the magic event
 

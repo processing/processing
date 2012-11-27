@@ -47,6 +47,20 @@ X mousePressed() coloring now different from mousePressed
 X   i.e. mousePressed() is red but mouseMoved() is brown
 X   http://code.google.com/p/processing/issues/detail?id=41
 X   Token.KEYWORD / KEYWORD1/2 / LITERAL1/2/3
+X casey requests
+X   change keyword coloring so that KEYWORD2 and KEYWORD3 are for functions
+X   change syntax highlighting so it differentiates keyPressed and keyPressed()
+X   syntax highlight with parens also helps "String line" vs "line()"
+X     although nothing in here to prevent "String line" from coloring
+X   try to make KEYWORD4 and KEYWORD5 work
+
+
+2.0 FINAL / casey requests
+_ errors that cannot be placed (i.e. missing brace) 
+_   this makes things to jump to the last tab
+_   also happens with stray characters sometimes...
+_   casey: accidentally typing a letter at the top of the tab
+_     throws you onto the end of the last tab... exactly the worst location
 
 earlier
 X The sketch name can't begin with '_' (underscore)
@@ -130,17 +144,6 @@ _   don't allow adding files w/o saving
 _   others?
 _ when creating a sketch within non-java mode, should write the settings file
 _   so that it re-loads in the proper environment
-
-
-2.0 FINAL / casey requests
-_ try to make KEYWORD4 and KEYWORD5 work
-_ change syntax highlighting so it differentiates keyPressed and keyPressed()
-_ syntax highlight with parens also helps "String line" vs "line()"
-_ errors that cannot be placed (i.e. missing brace) 
-_   this makes things to jump to the last tab
-_   also happens with stray characters sometimes...
-_   casey: accidentally typing a letter at the top of the tab
-_     throws you onto the end of the last tab... exactly the worst location
 
 
 2.0 FINAL / libraries & classpaths

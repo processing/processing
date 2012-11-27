@@ -76,24 +76,28 @@ public class Token
          */
         public static final byte KEYWORD3 = 8;
 
+        public static final byte KEYWORD4 = 9;
+
+        public static final byte KEYWORD5 = 10;
+
         /**
          * Operator token id. This can be used to mark an
          * operator. (eg, SQL mode marks +, -, etc with this
          * token type)
          */
-        public static final byte OPERATOR = 9;
+        public static final byte OPERATOR = 11;
 
         /**
          * Invalid token id. This can be used to mark invalid
          * or incomplete tokens, so the user can easily spot
          * syntax errors.
          */
-        public static final byte INVALID = 10;
+        public static final byte INVALID = 12;
 
         /**
          * The total number of defined token ids.
          */
-        public static final byte ID_COUNT = 11;
+        public static final byte ID_COUNT = 13;
 
         /**
          * The first id that can be used for internal state
