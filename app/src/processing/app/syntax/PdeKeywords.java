@@ -4,7 +4,7 @@
   PdeKeywords - handles text coloring and links to html reference
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-10 Ben Fry and Casey Reas
+  Copyright (c) 2004-12 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -118,7 +118,7 @@ public class PdeKeywords extends TokenMarker {
     int offset = line.offset;
     lastOffset = offset;
     lastKeyword = offset;
-    int mlength = line.count + offset;
+    int mlength = offset + line.count;
     boolean backslash = false;
 
     loop: for (int i = offset; i < mlength; i++) {
@@ -186,13 +186,25 @@ public class PdeKeywords extends TokenMarker {
               lastOffset = lastKeyword = mlength;
               break loop;
             }
-            i++; // jdf- fix http://dev.processing.org/bugs/show_bug.cgi?id=609
+            i++;  // http://processing.org/bugs/bugzilla/609.html [jdf] 
           }
           break;
         default:
           backslash = false;
-          if (!Character.isLetterOrDigit(c) && c != '_')
+          if (!Character.isLetterOrDigit(c) && c != '_') {
+            // if (i1 < mlength && array[i1]
+//            boolean paren = false;
+//            int stepper = i + 1;
+//            while (stepper < mlength) {
+//              if (array[stepper] == '(') {
+//                paren = true;
+//                break;
+//              }
+//              stepper++;
+//            }
             doKeyword(line, i, c);
+//            doKeyword(line, i, checkParen(array, i1, mlength));
+          }
           break;
         }
         break;
@@ -231,8 +243,9 @@ public class PdeKeywords extends TokenMarker {
       }
     }
 
-    if (token == Token.NULL)
+    if (token == Token.NULL) {
       doKeyword(line, mlength, '\0');
+    }
 
     switch (token) {
     case Token.LITERAL1:
@@ -252,16 +265,75 @@ public class PdeKeywords extends TokenMarker {
     }
     return token;
   }
+  
+  
+  private boolean checkParen(char[] array, int index, int stop) {
+//    boolean paren = false;
+//    int stepper = i + 1;
+//    while (stepper < mlength) {
+//      if (array[stepper] == '(') {
+//        paren = true;
+//        break;
+//      }
+//      stepper++;
+//    }
+    while (index < stop) {
+//      if (array[index] == '(') {
+//        return true;
+//      } else if (!Character.isWhitespace(array[index])) {
+//        return false;
+//      }
+      switch (array[index]) {
+      case '(':
+        return true;
+        
+      case ' ':
+      case '\t':
+      case '\n':
+      case '\r':
+        index++;
+        break;
+        
+      default:
+//        System.out.println("defaulting because " + array[index] + " " + PApplet.hex(array[index]));
+        return false;
+      }
+    }
+//    System.out.println("exiting " + new String(array, index, stop - index));
+    return false;
+  }
 
 
   private boolean doKeyword(Segment line, int i, char c) {
+//    return doKeyword(line, i, false);
+//  }
+//  
+//  
+//  //private boolean doKeyword(Segment line, int i, char c) {
+//  private boolean doKeyword(Segment line, int i, boolean paren) {
     int i1 = i + 1;
-
     int len = i - lastKeyword;
+    
+    boolean paren = checkParen(line.array, i, line.array.length);
+//    String s = new String(line.array, lastKeyword, len);
+//    if (s.equals("mousePressed")) {
+//      System.out.println("found mousePressed" + (paren ? "()" : ""));
+//      //new Exception().printStackTrace(System.out);
+////      System.out.println("  " + i + " " + line.count + " " + 
+////        //new String(line.array, line.offset + i, line.offset + line.count - i));
+////        new String(line.array, i, line.array.length - i));
+//    }
+
     byte id = keywordColoring.lookup(line, lastKeyword, len);
     if (id != Token.NULL) {
-      if (lastKeyword != lastOffset)
+      if (lastKeyword != lastOffset) {
         addToken(lastKeyword - lastOffset, Token.NULL);
+      }
+      if (paren && id == Token.LITERAL2) {
+        id = Token.KEYWORD2;
+      } else if (!paren && id == Token.KEYWORD2) {
+        id = Token.LITERAL2;
+      }
       addToken(len, id);
       lastOffset = i;
     }

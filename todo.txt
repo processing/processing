@@ -43,11 +43,14 @@ X fix the debug stuff before shipping this out
 X   just remove for the release
 X Reas added notes about command line support to the Wiki
 X   http://wiki.processing.org/w/Command_Line
+X mousePressed() coloring now different from mousePressed
+X   i.e. mousePressed() is red but mouseMoved() is brown
+X   http://code.google.com/p/processing/issues/detail?id=41
+X   Token.KEYWORD / KEYWORD1/2 / LITERAL1/2/3
 
 earlier
 X The sketch name can't begin with '_' (underscore)
 X   http://code.google.com/p/processing/issues/detail?id=859
-
 
 _ include debug mode as 'experimental'?
 _   DebugMode throwing exception about breakpoints when trying to save
@@ -592,9 +595,6 @@ _   http://code.google.com/p/processing/issues/detail?id=11
 _   or option to export all the code as colored html?
 _ dim edit menus as appropriate during selection/no selection/etc
 _   http://code.google.com/p/processing/issues/detail?id=14
-_ code coloring is imperfect because it's not based on a parser
-_   i.e. mousePressed() is red but mouseMoved() is brown
-_   http://code.google.com/p/processing/issues/detail?id=41
 _ implement better method of showing curly brace closure
 _   http://code.google.com/p/processing/issues/detail?id=55
 _ sketches should only write to the console of their editor window
@@ -1047,6 +1047,7 @@ _ indents and loops
 _   or make the area light up gray as it's being worked on
 _ Replace current editor with more advanced version
 _   http://code.google.com/p/processing/issues/detail?id=1032
+_   code coloring is imperfect because it's not based on a parser
 _ better text editor / live debugging (integrate Eclipse JDT)
 _   line numbers
 _   it's too difficult for students to debug their code
