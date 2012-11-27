@@ -684,6 +684,16 @@ public class PGL {
   }
 
 
+  protected int getDepthBits() {
+    return capabilities.getDepthBits();
+  }
+
+
+  protected int getStencilBits() {
+    return capabilities.getStencilBits();
+  }
+
+
   protected Texture wrapBackTexture() {
     Texture tex = new Texture(pg.parent);
     tex.init(backTex.getName(),
