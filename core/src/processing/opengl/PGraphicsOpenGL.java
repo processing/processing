@@ -4973,6 +4973,12 @@ public class PGraphicsOpenGL extends PGraphics {
   // color buffer into it.
   @Override
   public void loadPixels() {
+    if (sized) {
+      // Something wrong going on with threading, sized can never be true if the
+      // all the steps in a resize happen inside the Animation thread.
+      return;
+    }
+
     boolean needEndDraw = false;
     if (!drawing) {
       beginDraw();
@@ -5019,10 +5025,23 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void readPixels() {
     beginPixelsOp(OP_READ);
     pixelBuffer.rewind();
-    pgl.readPixels(0, 0, width, height, PGL.RGBA, PGL.UNSIGNED_BYTE,
-                   pixelBuffer);
+    try {
+      // The readPixels() call in inside a try/catch block because it appears
+      // that (only sometimes) JOGL will run beginDraw/endDraw on the EDT
+      // thread instead of the Animation thread right after a resize. Because
+      // of this the width and height might have a different size than the
+      // one of the pixels arrays.
+      pgl.readPixels(0, 0, width, height, PGL.RGBA, PGL.UNSIGNED_BYTE,
+                     pixelBuffer);
+    } catch (IndexOutOfBoundsException e) {
+      // Silently catch the exception.
+    }
     endPixelsOp();
-    PGL.nativeToJavaARGB(pixels, width, height);
+    try {
+      // Idem...
+      PGL.nativeToJavaARGB(pixels, width, height);
+    } catch (ArrayIndexOutOfBoundsException e) {
+    }
   }
 
 
@@ -5035,8 +5054,11 @@ public class PGraphicsOpenGL extends PGraphics {
       nativePixelBuffer = IntBuffer.wrap(nativePixels);
     }
 
-    PApplet.arrayCopy(pixels, i0, nativePixels, 0, len);
-    PGL.javaToNativeARGB(nativePixels, w, h);
+    try {
+      PApplet.arrayCopy(pixels, i0, nativePixels, 0, len);
+      PGL.javaToNativeARGB(nativePixels, w, h);
+    } catch (ArrayIndexOutOfBoundsException e) {
+    }
 
     // Copying pixel buffer to screen texture...
     if (primarySurface && !pgl.isFBOBacked()) {
@@ -5142,8 +5164,12 @@ public class PGraphicsOpenGL extends PGraphics {
         }
 
         beginPixelsOp(OP_READ);
-        pgl.readPixels(0, 0, width, height, PGL.RGBA, PGL.UNSIGNED_BYTE,
-                       nativePixelBuffer);
+        try {
+          // Se comments in readPixels() for the reason for this try/catch.
+          pgl.readPixels(0, 0, width, height, PGL.RGBA, PGL.UNSIGNED_BYTE,
+                         nativePixelBuffer);
+        } catch (IndexOutOfBoundsException e) {
+        }
         endPixelsOp();
 
         texture.setNative(nativePixels, 0, 0, width, height);
@@ -5912,12 +5938,6 @@ public class PGraphicsOpenGL extends PGraphics {
       // set up their own projection.
       defaultPerspective();
       defaultCamera();
-
-      if (pixels != null) {
-        // The pixels array is being used, so we need to resize accordingly
-        allocatePixels();
-        readPixels();
-      }
 
       // clear the flag
       sized = false;
