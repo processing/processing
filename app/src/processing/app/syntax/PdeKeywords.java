@@ -275,11 +275,11 @@ public class PdeKeywords extends TokenMarker {
       if (lastKeyword != lastOffset) {
         addToken(lastKeyword - lastOffset, Token.NULL);
       }
-      if (paren && id == Token.LITERAL2) {
-        id = Token.KEYWORD2;
-      } else if (!paren && id == Token.KEYWORD2) {
-        id = Token.LITERAL2;
-      }
+//      if (paren && id == Token.LITERAL2) {
+//        id = Token.KEYWORD2;
+//      } else if (!paren && id == Token.KEYWORD2) {
+//        id = Token.LITERAL2;
+//      }
       addToken(len, id);
       lastOffset = i;
     }
