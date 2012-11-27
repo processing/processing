@@ -209,9 +209,7 @@ extends	KEYWORD1	extends
 false	KEYWORD1	false
 final	KEYWORD1	final
 finally	KEYWORD1
-for	KEYWORD1	for
 float 	KEYWORD1	float
-if	KEYWORD1	if
 implements	KEYWORD1	implements
 import	KEYWORD1	import
 instanceof	KEYWORD1
@@ -230,8 +228,6 @@ short	KEYWORD1
 static	KEYWORD1	static
 strictfp	KEYWORD1
 super	KEYWORD1	super
-switch	KEYWORD1	switch
-synchronized	KEYWORD1
 this	KEYWORD1	this
 throw	KEYWORD1	
 throws	KEYWORD1	
@@ -240,14 +236,23 @@ true	KEYWORD1	true
 try	KEYWORD1	try
 void	KEYWORD1	void
 volatile	KEYWORD1
-while	KEYWORD1	while
 
-# Deprecated API
 
-arraycopy	KEYWORD2	arrayCopy_
-openStream	KEYWORD2	openStream_
-OPENGL	LITERAL2	size_
-JAVA2D	LITERAL2	size_
+# Formerly KEYWORD1, but changed to paren handling (2.0b7)
+
+for	KEYWORD2	for
+if	KEYWORD2	if
+switch	KEYWORD2	switch
+synchronized	KEYWORD2
+while	KEYWORD2	while
+
+
+# Deprecated API (commented these out for 2.0b7)
+
+#arraycopy	KEYWORD2	arrayCopy_
+#openStream	KEYWORD2	openStream_
+#OPENGL	LITERAL2	size_
+#JAVA2D	LITERAL2	size_
 
 
 # KEYWORD2 specifies functions and KEYWORD3 specifies methods
