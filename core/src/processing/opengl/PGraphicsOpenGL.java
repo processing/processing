@@ -6037,6 +6037,9 @@ public class PGraphicsOpenGL extends PGraphics {
 
     int temp[] = new int[2];
 
+    depthBits = pgl.getDepthBits();
+    stencilBits = pgl.getStencilBits();
+
     pgl.getIntegerv(PGL.MAX_TEXTURE_SIZE, temp, 0);
     maxTextureSize = temp[0];
 
@@ -6048,22 +6051,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
     pgl.getIntegerv(PGL.ALIASED_POINT_SIZE_RANGE, temp, 0);
     maxPointSize = temp[1];
-
-    pgl.getIntegerv(PGL.DEPTH_BITS, temp, 0);
-    depthBits = temp[0];
-
-    pgl.getIntegerv(PGL.STENCIL_BITS, temp, 0);
-    stencilBits = temp[0];
-
-    // Temporary fix to what seems to be a regression introduced by a recent
-    // fix in JOGL. See the discussion here:
-    // http://forum.jogamp.org/Enabling-Stencil-buffer-breaks-rendering-OSX-R11-td4026857.html
-    if (depthBits == 0) {
-      depthBits = 24;
-    }
-    if (stencilBits == 0) {
-      stencilBits = 8;
-    }
 
     if (anisoSamplingSupported) {
       float ftemp[] = new float[1];
