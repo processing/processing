@@ -23,31 +23,39 @@ import javax.swing.text.Segment;
  * @version $Id$
  */
 public class KeywordMap {
-  private Keyword[] map;
-  private boolean ignoreCase;
+//  private Keyword[] map;
+//  protected int mapLength;
 
+  private boolean ignoreCase;
+  private Keyword[] literalMap;
+  private Keyword[] parenMap;
+
+  // A value of 52 will give good performance for most maps.
+  static private int MAP_LENGTH = 52;
   
   /**
    * Creates a new <code>KeywordMap</code>.
    * @param ignoreCase True if keys are case insensitive
    */
   public KeywordMap(boolean ignoreCase) {
-    this(ignoreCase, 52);
+//    this(ignoreCase, 52);
     this.ignoreCase = ignoreCase;
+    literalMap = new Keyword[MAP_LENGTH];
+    parenMap = new Keyword[MAP_LENGTH];
   }
 
 
-  /**
-   * Creates a new <code>KeywordMap</code>.
-   * @param ignoreCase True if the keys are case insensitive
-   * @param mapLength The number of `buckets' to create.
-   * A value of 52 will give good performance for most maps.
-   */
-  public KeywordMap(boolean ignoreCase, int mapLength) {
-    this.mapLength = mapLength;
-    this.ignoreCase = ignoreCase;
-    map = new Keyword[mapLength];
-  }
+//  /**
+//   * Creates a new <code>KeywordMap</code>.
+//   * @param ignoreCase True if the keys are case insensitive
+//   * @param mapLength The number of `buckets' to create.
+//   * A value of 52 will give good performance for most maps.
+//   */
+//  public KeywordMap(boolean ignoreCase, int mapLength) {
+//    this.mapLength = mapLength;
+//    this.ignoreCase = ignoreCase;
+//    map = new Keyword[mapLength];
+//  }
 
 
   /**
@@ -56,18 +64,21 @@ public class KeywordMap {
    * @param offset The offset of the substring within the text segment
    * @param length The length of the substring
    */
-  public byte lookup(Segment text, int offset, int length) {
+  public byte lookup(Segment text, int offset, int length, boolean paren) {
     if (length == 0) {
       return Token.NULL;
     }
-    Keyword k = map[getSegmentMapKey(text, offset, length)];
-    while(k != null) {
-      if (length != k.keyword.length) {
-        k = k.next;
-        continue;
-      }
-      if (SyntaxUtilities.regionMatches(ignoreCase,text,offset, k.keyword)) {
-        return k.id;
+    int key = getSegmentMapKey(text, offset, length);
+    Keyword k = paren ? parenMap[key] : literalMap[key];
+    while (k != null) {
+//      if (length != k.keyword.length) {
+//        k = k.next;
+//        continue;
+//      }
+      if (length == k.keyword.length) {
+        if (SyntaxUtilities.regionMatches(ignoreCase,text,offset, k.keyword)) {
+          return k.id;
+        }
       }
       k = k.next;
     }
@@ -80,9 +91,10 @@ public class KeywordMap {
    * @param keyword The key
    * @param id The value
    */
-  public void add(String keyword, byte id) {
+  public void add(String keyword, byte id, boolean paren) {
     int key = getStringMapKey(keyword);
-    map[key] = new Keyword(keyword.toCharArray(),id,map[key]);
+    Keyword[] map = paren ? parenMap : literalMap;
+    map[key] = new Keyword(keyword.toCharArray(), id, map[key]);
   }
 
   
@@ -105,20 +117,17 @@ public class KeywordMap {
   }
 
   
-  // protected members
-  protected int mapLength;
-
   protected int getStringMapKey(String s) {
     return (Character.toUpperCase(s.charAt(0)) +
       Character.toUpperCase(s.charAt(s.length()-1)))
-      % mapLength;
+      % MAP_LENGTH;
   }
 
   
   protected int getSegmentMapKey(Segment s, int off, int len) {
     return (Character.toUpperCase(s.array[off]) +
       Character.toUpperCase(s.array[off + len - 1]))
-      % mapLength;
+      % MAP_LENGTH;
   }
 
   
