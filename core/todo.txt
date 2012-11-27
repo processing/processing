@@ -66,6 +66,8 @@ A P2D/P3D crashes when trying to display unicode text
 A   http://code.google.com/p/processing/issues/detail?id=1308
 A beginContour() behaves differently in immediate and retained modes
 A   http://code.google.com/p/processing/issues/detail?id=1417
+A use to pixels array breaks after resize
+A   http://code.google.com/p/processing/issues/detail?id=1119
 _ implement mousePressed(Event) etc
 _   better to do this instead of bringing back the magic event
 
