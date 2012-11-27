@@ -5027,13 +5027,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void drawPixels(int x, int y, int w, int h) {
-    if (sized || texture == null) {
-      // This shouldn't happen... some threading problem because sized is turned
-      // to false in beginDraw()
-      // http://code.google.com/p/processing/issues/detail?id=1119
-      return;
-    }
-
     int i0 = y * width + x;
     int len = w * h;
 
@@ -5055,13 +5048,16 @@ public class PGraphicsOpenGL extends PGraphics {
     pgl.copyToTexture(texture.glTarget, texture.glFormat, texture.glName,
                       x, y, w, h, IntBuffer.wrap(nativePixels));
 
-    if (primarySurface || offscreenMultisample) {
-      // ...and drawing the texture to screen... but only
-      // if we are on the primary surface or we have
-      // multisampled FBO. Why? Because in the case of non-
-      // multisampled FBO, texture is actually the color buffer
-      // used by the color FBO, so with the copy operation we
-      // should be done updating the (off)screen buffer.
+    boolean needToDrawTex = primarySurface && (!pgl.isFBOBacked() ||
+                            (pgl.isFBOBacked() && pgl.isMultisampled())) ||
+                            offscreenMultisample;
+    if (needToDrawTex) {
+      // The texture to screen needs to be drawn only if we are on the primary
+      // surface w/out FBO-layer, or with FBO-layer and mutlisampling. Or, we
+      // are doing multisampled offscreen. Why? Because in the case of
+      // non-multisampled FBO, texture is actually the color buffer used by the
+      // color FBO, so with the copy operation we should be done updating the
+      // (off)screen buffer.
       beginPixelsOp(OP_WRITE);
       drawTexture(x, y, w, h);
       endPixelsOp();
