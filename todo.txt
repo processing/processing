@@ -53,6 +53,8 @@ X   change syntax highlighting so it differentiates keyPressed and keyPressed()
 X   syntax highlight with parens also helps "String line" vs "line()"
 X     although nothing in here to prevent "String line" from coloring
 X   try to make KEYWORD4 and KEYWORD5 work
+X change output from processing-java to be UTF-8 encoded
+X   http://code.google.com/p/processing/issues/detail?id=1418
 
 earlier
 X The sketch name can't begin with '_' (underscore)
