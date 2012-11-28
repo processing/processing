@@ -2572,7 +2572,9 @@ public class PGraphics extends PImage implements PConstants {
     arc(a, b, c, d, start, stop, 0);
   }
 
-
+  /*
+   * @param mode either OPEN, CHORD, or PIE
+   */
   public void arc(float a, float b, float c, float d,
                   float start, float stop, int mode) {
     float x = a;
