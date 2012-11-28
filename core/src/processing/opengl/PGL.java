@@ -652,7 +652,7 @@ public class PGL {
   }
 
 
-  protected int getDefautDrawBuffer() {
+  protected int getDefaultDrawBuffer() {
     if (capabilities.isFBO()) {
       return GL.GL_COLOR_ATTACHMENT0;
     } else if (capabilities.getDoubleBuffered()) {
