@@ -937,7 +937,8 @@ public class PImage implements PConstants, Cloneable {
       sourceOffset += sourceImage.width;
       targetOffset += width;
     }
-    updatePixelsImpl(sourceX, sourceY, sourceWidth, sourceHeight);
+
+    updatePixelsImpl(targetX, targetY, sourceWidth, sourceHeight);
   }
 
 
