@@ -5046,17 +5046,35 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void drawPixels(int x, int y, int w, int h) {
-    int i0 = y * width + x;
     int len = w * h;
 
-    if (nativePixels == null || nativePixels.length != len) {
+    if (nativePixels == null || nativePixels.length < len) {
       nativePixels = new int[len];
       nativePixelBuffer = IntBuffer.wrap(nativePixels);
     }
 
+
     try {
-      PApplet.arrayCopy(pixels, i0, nativePixels, 0, len);
+      //
+
+
+      //if (0 < x || 0 < y || w < width || h < height) {
+        // The pixels to copy to the texture need to be consecutive, and they
+        // are not in the pixels array, so putting each row one after another
+        // in nativePixels.
+        int offset0 = y * width + x;
+        int offset1 = 0;
+
+        for (int yc = y; yc < y + h; yc++) {
+          System.arraycopy(pixels, offset0, nativePixels, offset1, w);
+          offset0 += width;
+          offset1 += w;
+        }
+      //} else {
+      //  PApplet.arrayCopy(pixels, 0, nativePixels, 0, len);
+      //}
       PGL.javaToNativeARGB(nativePixels, w, h);
+
     } catch (ArrayIndexOutOfBoundsException e) {
     }
 
@@ -5067,22 +5085,31 @@ public class PGraphicsOpenGL extends PGraphics {
       loadTextureImpl(POINT, false);
     }
 
-    pgl.copyToTexture(texture.glTarget, texture.glFormat, texture.glName,
-                      x, y, w, h, IntBuffer.wrap(nativePixels));
-
     boolean needToDrawTex = primarySurface && (!pgl.isFBOBacked() ||
                             (pgl.isFBOBacked() && pgl.isMultisampled())) ||
                             offscreenMultisample;
     if (needToDrawTex) {
       // The texture to screen needs to be drawn only if we are on the primary
-      // surface w/out FBO-layer, or with FBO-layer and mutlisampling. Or, we
+      // surface w/out FBO-layer, or with FBO-layer and multisampling. Or, we
       // are doing multisampled offscreen. Why? Because in the case of
       // non-multisampled FBO, texture is actually the color buffer used by the
       // color FBO, so with the copy operation we should be done updating the
       // (off)screen buffer.
+
+      // First, copy the pixels to the texture. We don't need to invert the
+      // pixel copy because the texture will be drawn inverted.
+      pgl.copyToTexture(texture.glTarget, texture.glFormat, texture.glName,
+                        x, y, w, h, IntBuffer.wrap(nativePixels));
+
       beginPixelsOp(OP_WRITE);
       drawTexture(x, y, w, h);
       endPixelsOp();
+    } else {
+      // We only need to copy the pixels to the back texture where we are
+      // currently drawing to. Because the texture is invertex along Y, we
+      // need to reflect that in the vertical arguments.
+      pgl.copyToTexture(texture.glTarget, texture.glFormat, texture.glName,
+                        x, height - (y + h), w, h, IntBuffer.wrap(nativePixels));
     }
   }
 
@@ -5126,8 +5153,19 @@ public class PGraphicsOpenGL extends PGraphics {
                          int targetX, int targetY) {
     loadPixels();
     setgetPixels = true;
+
     super.setImpl(sourceImage, sourceX, sourceY, sourceWidth, sourceHeight,
                   targetX, targetY);
+
+//    int sourceOffset = sourceY * sourceImage.width + sourceX;
+//    int targetOffset = targetY * width + targetX;
+//
+//    for (int y = sourceY; y < sourceY + sourceHeight; y++) {
+//      System.arraycopy(sourceImage.pixels, sourceOffset, pixels, targetOffset, sourceWidth);
+//      sourceOffset += sourceImage.width;
+//      targetOffset += width;
+//    }
+//    updatePixelsImpl(targetX, targetY, sourceWidth, sourceHeight);
   }
 
 
@@ -5267,9 +5305,12 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void drawTexture(int x, int y, int w, int h) {
+    // Processing Y axis is inverted with respect to OpenGL, so we need to
+    // invert the y coordinates of the screen rectangle.
     pgl.drawTexture(texture.glTarget, texture.glName,
                     texture.glWidth, texture.glHeight,
-                    x, y, x + w, y + h);
+                    x, y, x + w, y + h,
+                    x, height - (y + h), x + w, height - y);
   }
 
 
