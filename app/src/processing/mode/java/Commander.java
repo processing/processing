@@ -25,6 +25,7 @@ package processing.mode.java;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
 
 import processing.app.*;
 import processing.app.contrib.ModeContribution;
@@ -60,6 +61,9 @@ public class Commander implements RunnerListener {
   static final int EXPORT = 4;
 
   Sketch sketch;
+  
+  PrintStream systemOut;
+  PrintStream systemErr;
 
 
   static public void main(String[] args) {
@@ -106,6 +110,17 @@ public class Commander implements RunnerListener {
     int platformBits = 0;
     int task = HELP;
 
+    // Turns out the output goes as MacRoman or something else useless.
+    // http://code.google.com/p/processing/issues/detail?id=1418
+    try {
+      systemOut = new PrintStream(System.out, true, "UTF-8");
+      systemErr = new PrintStream(System.err, true, "UTF-8");
+      
+    } catch (UnsupportedEncodingException e) {
+      e.printStackTrace();
+      System.exit(1);
+    }
+    
     for (String arg : args) {
       if (arg.length() == 0) {
         // ignore it, just the crappy shell script
@@ -183,7 +198,7 @@ public class Commander implements RunnerListener {
 //                      runArg + ", or " + presentArg + ".");
 //    }
     if (task == HELP) {
-      printCommandLine(System.out);
+      printCommandLine(systemOut);
       System.exit(0);
     }
 
@@ -269,7 +284,7 @@ public class Commander implements RunnerListener {
         if (!success) {  // error already printed
           System.exit(1);
         }
-        System.out.println("Finished.");
+        systemOut.println("Finished.");
         System.exit(0);
 
       } catch (SketchException re) {
@@ -284,12 +299,12 @@ public class Commander implements RunnerListener {
 
 
   public void statusNotice(String message) {
-    System.err.println(message);
+    systemErr.println(message);
   }
 
 
   public void statusError(String message) {
-    System.err.println(message);
+    systemErr.println(message);
   }
 
 
@@ -304,7 +319,7 @@ public class Commander implements RunnerListener {
       int column = re.getCodeColumn() + 1;
       //if (column == -1) column = 0;
       // TODO if column not specified, should just select the whole line.
-      System.err.println(filename + ":" +
+      systemErr.println(filename + ":" +
                          line + ":" + column + ":" +
                          line + ":" + column + ":" + " " + re.getMessage());
     } else {
@@ -313,11 +328,11 @@ public class Commander implements RunnerListener {
   }
 
 
-  static void complainAndQuit(String lastWords, boolean schoolEmFirst) {
+  void complainAndQuit(String lastWords, boolean schoolEmFirst) {
     if (schoolEmFirst) {
-      printCommandLine(System.err);
+      printCommandLine(systemErr);
     }
-    System.err.println(lastWords);
+    systemErr.println(lastWords);
     System.exit(1);
   }
 

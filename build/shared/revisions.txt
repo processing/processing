@@ -74,6 +74,9 @@ PROCESSING 2.0b7 (REV 0215) - 25 November 2012
 + Add mouseEntered/Exited on the desktop.
   http://code.google.com/p/processing/issues/detail?id=500
 
++ Change output from processing-java to be UTF-8 encoded.
+  http://code.google.com/p/processing/issues/detail?id=1418
+
 [ bug fixes ] 
 
 + mouseButton not being set properly in mouseClicked.
@@ -111,10 +114,10 @@ PROCESSING 2.0b7 (REV 0215) - 25 November 2012
 + Implement anisotropic filtering when using OPENGL.
   http://code.google.com/p/processing/issues/detail?id=502
 
-+ Update reference for begin/endContour
++ Update reference for begin/endContour.
   http://code.google.com/p/processing/issues/detail?id=1396
 
-+ "expecting EOF, found 'import'" error on previously working sketch 
++ Fix "expecting EOF, found 'import'" error on previously working sketch.
   http://code.google.com/p/processing/issues/detail?id=1376
 
 + Prevent potential race condition when resizing sketches.
@@ -166,6 +169,15 @@ PROCESSING 2.0b7 (REV 0215) - 25 November 2012
 
 + Use of pixels[] array breaks after resize in OpenGL.
   http://code.google.com/p/processing/issues/detail?id=1119
+
++ No stroke with OpenGL sketches on a 2007 Mac Mini (GMA 950)
+  http://code.google.com/p/processing/issues/detail?id=1222
+
++ ortho() displays strange line widths.
+  http://code.google.com/p/processing/issues/detail?id=1285
+
++ Resizeable frame crashes sketch with AMD video card.
+  http://code.google.com/p/processing/issues/detail?id=1175
 
 [ android ] 
 
