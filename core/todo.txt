@@ -68,6 +68,13 @@ A beginContour() behaves differently in immediate and retained modes
 A   http://code.google.com/p/processing/issues/detail?id=1417
 A use to pixels array breaks after resize
 A   http://code.google.com/p/processing/issues/detail?id=1119
+A no stroke with OpenGL sketches on a 2007 Mac Mini (GMA 950)
+A   http://code.google.com/p/processing/issues/detail?id=1222
+A ortho() displays strange line widths
+A   http://code.google.com/p/processing/issues/detail?id=1285
+A resizeable frame crashes sketch with AMD video card
+A   http://code.google.com/p/processing/issues/detail?id=1175
+
 _ implement mousePressed(Event) etc
 _   better to do this instead of bringing back the magic event
 
