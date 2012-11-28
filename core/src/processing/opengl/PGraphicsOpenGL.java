@@ -1707,7 +1707,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     currentFramebuffer.bind();
-    pgl.drawBuffer(pgl.getDefautDrawBuffer());
+    pgl.drawBuffer(currentFramebuffer.getDefaultDrawBuffer());
   }
 
 
@@ -1754,9 +1754,9 @@ public class PGraphicsOpenGL extends PGraphics {
 
     // We read from/write to the draw buffer.
     if (op == OP_READ) {
-      pgl.readBuffer(pgl.getDefautDrawBuffer());
+      pgl.readBuffer(currentFramebuffer.getDefaultDrawBuffer());
     } else if (op == OP_WRITE) {
-      pgl.drawBuffer(pgl.getDefautDrawBuffer());
+      pgl.drawBuffer(currentFramebuffer.getDefaultDrawBuffer());
     }
 
     pixelsOp = op;
@@ -1771,8 +1771,8 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     // Restoring default read/draw buffer configuration.
-    pgl.readBuffer(pgl.getDefaultReadBuffer());
-    pgl.drawBuffer(pgl.getDefautDrawBuffer());
+    pgl.readBuffer(currentFramebuffer.getDefaultReadBuffer());
+    pgl.drawBuffer(currentFramebuffer.getDefaultDrawBuffer());
 
     pixelsOp = OP_NONE;
   }
@@ -5047,18 +5047,13 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void drawPixels(int x, int y, int w, int h) {
     int len = w * h;
-
     if (nativePixels == null || nativePixels.length < len) {
       nativePixels = new int[len];
       nativePixelBuffer = IntBuffer.wrap(nativePixels);
     }
 
-
     try {
-      //
-
-
-      //if (0 < x || 0 < y || w < width || h < height) {
+      if (0 < x || 0 < y || w < width || h < height) {
         // The pixels to copy to the texture need to be consecutive, and they
         // are not in the pixels array, so putting each row one after another
         // in nativePixels.
@@ -5070,11 +5065,10 @@ public class PGraphicsOpenGL extends PGraphics {
           offset0 += width;
           offset1 += w;
         }
-      //} else {
-      //  PApplet.arrayCopy(pixels, 0, nativePixels, 0, len);
-      //}
+      } else {
+        PApplet.arrayCopy(pixels, 0, nativePixels, 0, len);
+      }
       PGL.javaToNativeARGB(nativePixels, w, h);
-
     } catch (ArrayIndexOutOfBoundsException e) {
     }
 
@@ -5153,19 +5147,8 @@ public class PGraphicsOpenGL extends PGraphics {
                          int targetX, int targetY) {
     loadPixels();
     setgetPixels = true;
-
     super.setImpl(sourceImage, sourceX, sourceY, sourceWidth, sourceHeight,
                   targetX, targetY);
-
-//    int sourceOffset = sourceY * sourceImage.width + sourceX;
-//    int targetOffset = targetY * width + targetX;
-//
-//    for (int y = sourceY; y < sourceY + sourceHeight; y++) {
-//      System.arraycopy(sourceImage.pixels, sourceOffset, pixels, targetOffset, sourceWidth);
-//      sourceOffset += sourceImage.width;
-//      targetOffset += width;
-//    }
-//    updatePixelsImpl(targetX, targetY, sourceWidth, sourceHeight);
   }
 
 
