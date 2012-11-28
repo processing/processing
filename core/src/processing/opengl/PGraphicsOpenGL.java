@@ -11015,11 +11015,11 @@ public class PGraphicsOpenGL extends PGraphics {
 
           rawIndices[idx++] = i0;
           rawIndices[idx++] = i1;
-          rawIndices[idx++] = i3;
+          rawIndices[idx++] = i2;
 
-          rawIndices[idx++] = i1;
           rawIndices[idx++] = i2;
           rawIndices[idx++] = i3;
+          rawIndices[idx++] = i0;
         }
         splitRawIndices();
       }
