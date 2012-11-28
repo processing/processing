@@ -313,6 +313,24 @@ public class FrameBuffer implements PConstants {
   }
 
 
+  public int getDefaultReadBuffer() {
+    if (screenFb) {
+      return pgl.getDefaultReadBuffer();
+    } else {
+      return PGL.COLOR_ATTACHMENT0;
+    }
+  }
+
+
+  public int getDefaultDrawBuffer() {
+    if (screenFb) {
+      return pgl.getDefaultDrawBuffer();
+    } else {
+      return PGL.COLOR_ATTACHMENT0;
+    }
+  }
+
+
   ///////////////////////////////////////////////////////////
 
   // Allocate/release framebuffer.
