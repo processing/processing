@@ -10658,6 +10658,9 @@ public class PGraphicsOpenGL extends PGraphics {
 
     void tessellateEdges() {
       if (stroke) {
+        if (in.edgeCount == 0) {
+          return;
+        }
         if (is3D) {
           tessellateEdges3D();
         } else if (is2D) {
