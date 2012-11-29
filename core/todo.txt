@@ -74,6 +74,10 @@ A ortho() displays strange line widths
 A   http://code.google.com/p/processing/issues/detail?id=1285
 A resizeable frame crashes sketch with AMD video card
 A   http://code.google.com/p/processing/issues/detail?id=1175
+A set(x, y, PImage) doesn't work with P2D/P3D
+A   http://code.google.com/p/processing/issues/detail?id=1185
+A Processing 2.0b6 p2d / p3d arraylist pvector display issues
+A   http://code.google.com/p/processing/issues/detail?id=1421
 
 _ implement mousePressed(Event) etc
 _   better to do this instead of bringing back the magic event

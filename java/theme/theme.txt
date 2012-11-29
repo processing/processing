@@ -74,6 +74,10 @@ editor.brackethighlight.color = #006699
 
 # TEXT - KEYWORDS
 
+editor.function1.style = #cc6600,plain
+
+editor.function2.style = #cc6600,bold
+
 # e.g abstract, final, private
 editor.keyword1.style = #cc6600,plain
 
@@ -82,10 +86,6 @@ editor.keyword2.style = #cc6600,plain
 
 # e.g. byte, char, short, color
 editor.keyword3.style = #cc6600,bold
-
-editor.keyword4.style = #006699,plain
-
-editor.keyword5.style = #006699,plain
 
 
 # TEXT - LITERALS

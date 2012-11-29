@@ -212,6 +212,12 @@ public class PdeTextAreaDefaults extends TextAreaDefaults {
     // byte, char, short, color
     styles[Token.KEYWORD3] = theme.getStyle("keyword3");
 
+    // beginShape, point, line
+    styles[Token.FUNCTION1] = theme.getStyle("function1");
+
+    // byte, char, short, color
+    styles[Token.FUNCTION2] = theme.getStyle("function2");
+
     // constants: null, true, this, RGB, TWO_PI
     styles[Token.LITERAL1] = theme.getStyle("literal1");
 
