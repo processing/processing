@@ -88,8 +88,8 @@ PROCESSING 2.0b7 (REV 0215) - 25 November 2012
 + mousePressed() coloring now different from mousePressed
   http://code.google.com/p/processing/issues/detail?id=41
   Still not necessarily perfect, but it's a big improvement.
-  Note for people implementing their own Modes: KEYWORD2 and 
-  KEYWORD3 are now reserved for functions with parens.
+  Note for people implementing their own Modes: FUNCTION1 and 
+  FUNCTION2 have now been added for functions with parens.
 
 + Fix ugly results from resize() command on PImage:
   http://code.google.com/p/processing/issues/detail?id=332
@@ -102,7 +102,7 @@ PROCESSING 2.0b7 (REV 0215) - 25 November 2012
 + image(pgraphics, x, y, w, h) was only drawing once when shrinking.
   http://code.google.com/p/processing/issues/detail?id=1382
 
-+ beginShape(QUAD) was not working with Java2D
++ beginShape(QUAD) was not working with Java2D.
   http://code.google.com/p/processing/issues/detail?id=1365
 
 + Relative coordinates not updated properly on closepath with SVG files.
@@ -178,6 +178,12 @@ PROCESSING 2.0b7 (REV 0215) - 25 November 2012
 
 + Resizeable frame crashes sketch with AMD video card.
   http://code.google.com/p/processing/issues/detail?id=1175
+
++ set(x, y, PImage) doesn't work with P2D/P3D.
+  http://code.google.com/p/processing/issues/detail?id=1185
+
++ begin/endShape with a single vertex causing crash on P2D/P3D.
+  http://code.google.com/p/processing/issues/detail?id=1421
 
 [ android ] 
 

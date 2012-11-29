@@ -76,7 +76,7 @@ public class KeywordMap {
 //        continue;
 //      }
       if (length == k.keyword.length) {
-        if (SyntaxUtilities.regionMatches(ignoreCase,text,offset, k.keyword)) {
+        if (SyntaxUtilities.regionMatches(ignoreCase, text, offset, k.keyword)) {
           return k.id;
         }
       }
