@@ -78,6 +78,12 @@ A set(x, y, PImage) doesn't work with P2D/P3D
 A   http://code.google.com/p/processing/issues/detail?id=1185
 A Processing 2.0b6 p2d / p3d arraylist pvector display issues
 A   http://code.google.com/p/processing/issues/detail?id=1421
+A Using a PGraphics as a texture produces visual artifacts in P2D/P3D.
+A   http://code.google.com/p/processing/issues/detail?id=1420
+X set quality level higher when exporting JPEG images
+o   add ability to control jpeg compression level with save() and saveFrame()
+o   or just write a better example for this one?
+X   http://code.google.com/p/processing/issues/detail?id=58
 
 _ implement mousePressed(Event) etc
 _   better to do this instead of bringing back the magic event
@@ -623,10 +629,6 @@ _   http://code.google.com/p/processing/issues/detail?id=219
 
 _ Semitransparent rect drawn over image not rendered correctly
 _   http://code.google.com/p/processing/issues/detail?id=182
-
-_ add ability to control jpeg compression level with save() and saveFrame()
-_   or just write a better example for this one?
-_   http://code.google.com/p/processing/issues/detail?id=58
 
 
 CORE / PShape

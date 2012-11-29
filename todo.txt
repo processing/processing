@@ -60,6 +60,12 @@ earlier
 X The sketch name can't begin with '_' (underscore)
 X   http://code.google.com/p/processing/issues/detail?id=859
 
+_ add to build.xml
+_   insert "@SuppressWarnings({"unused", "cast"})" into
+_   JavaLexer, JavaRecognizer, PdeLexer, PdeRecognizer
+_   from processing/mode/java/preproc/
+
+
 
 2.0 FINAL / casey requests
 _ errors that cannot be placed (i.e. missing brace) 
