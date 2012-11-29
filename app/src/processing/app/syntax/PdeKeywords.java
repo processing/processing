@@ -48,14 +48,17 @@ public class PdeKeywords extends TokenMarker {
     if (keywordColoring == null) {
       keywordColoring = new KeywordMap(false);
     }
-    // text will be KEYWORD or LITERAL
-    boolean isKey = (coloring.charAt(0) == 'K');
     // KEYWORD1 -> 0, KEYWORD2 -> 1, etc
     int num = coloring.charAt(coloring.length() - 1) - '1';
-    byte id = (byte) ((isKey ? Token.KEYWORD1 : Token.LITERAL1) + num);
-    // Making an assumption (..., you, me) that KEYWORD2 and KEYWORD3 
-    // are the functions (at least that's what we're doing in P5 right now)
-    keywordColoring.add(keyword, id, id == Token.KEYWORD2 || id == Token.KEYWORD3);
+//    byte id = (byte) ((isKey ? Token.KEYWORD1 : Token.LITERAL1) + num);
+    int id = 0;
+    boolean paren = false;
+    switch (coloring.charAt(0)) {
+      case 'K': id = Token.KEYWORD1 + num; break;
+      case 'L': id = Token.LITERAL1 + num; break; 
+      case 'F': id = Token.FUNCTION1 + num; paren = true; break;
+    }
+    keywordColoring.add(keyword, (byte) id, paren);
   }
 
 

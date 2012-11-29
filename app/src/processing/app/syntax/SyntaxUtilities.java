@@ -20,8 +20,8 @@ import java.awt.*;
  * @author Slava Pestov
  * @version $Id$
  */
-public class SyntaxUtilities
-{
+public class SyntaxUtilities {
+  
   /**
    * Checks if a subregion of a <code>Segment</code> is equal to a
    * string.
@@ -31,8 +31,7 @@ public class SyntaxUtilities
    * @param match The string to match
    */
   public static boolean regionMatches(boolean ignoreCase, Segment text,
-                                      int offset, String match)
-  {
+                                      int offset, String match) {
     int length = offset + match.length();
     char[] textArray = text.array;
     if(length > text.offset + text.count)
@@ -62,8 +61,7 @@ public class SyntaxUtilities
    * @param match The character array to match
    */
   public static boolean regionMatches(boolean ignoreCase, Segment text,
-                                      int offset, char[] match)
-  {
+                                      int offset, char[] match) {
     int length = offset + match.length;
     char[] textArray = text.array;
     if(length > text.offset + text.count)
@@ -84,28 +82,29 @@ public class SyntaxUtilities
   }
 
 
-  /**
-   * Returns the default style table. This can be passed to the
-   * <code>setStyles()</code> method of <code>SyntaxDocument</code>
-   * to use the default syntax styles.
-   */
-  public static SyntaxStyle[] getDefaultSyntaxStyles()
-  {
-    SyntaxStyle[] styles = new SyntaxStyle[Token.ID_COUNT];
-
-    styles[Token.COMMENT1] = new SyntaxStyle(Color.black,true,false);
-    styles[Token.COMMENT2] = new SyntaxStyle(new Color(0x990033),true,false);
-    styles[Token.KEYWORD1] = new SyntaxStyle(Color.black,false,true);
-    styles[Token.KEYWORD2] = new SyntaxStyle(Color.magenta,false,false);
-    styles[Token.KEYWORD3] = new SyntaxStyle(new Color(0x009600),false,false);
-    styles[Token.LITERAL1] = new SyntaxStyle(new Color(0x650099),false,false);
-    styles[Token.LITERAL2] = new SyntaxStyle(new Color(0x650099),false,true);
-    styles[Token.LABEL] = new SyntaxStyle(new Color(0x990033),false,true);
-    styles[Token.OPERATOR] = new SyntaxStyle(Color.black,false,true);
-    styles[Token.INVALID] = new SyntaxStyle(Color.red,false,true);
-
-    return styles;
-  }
+//  /**
+//   * Returns the default style table. This can be passed to the
+//   * <code>setStyles()</code> method of <code>SyntaxDocument</code>
+//   * to use the default syntax styles.
+//   */
+//  public static SyntaxStyle[] getDefaultSyntaxStyles() {
+//    SyntaxStyle[] styles = new SyntaxStyle[Token.ID_COUNT];
+//
+//    styles[Token.COMMENT1] = new SyntaxStyle(Color.black,true,false);
+//    styles[Token.COMMENT2] = new SyntaxStyle(new Color(0x990033),true,false);
+//    styles[Token.KEYWORD1] = new SyntaxStyle(Color.black,false,true);
+//    styles[Token.KEYWORD2] = new SyntaxStyle(Color.magenta,false,false);
+//    styles[Token.KEYWORD3] = new SyntaxStyle(new Color(0x009600),false,false);
+//    styles[Token.FUNCTION1] = new SyntaxStyle(Color.magenta,false,false);
+//    styles[Token.FUNCTION2] = new SyntaxStyle(new Color(0x009600),false,false);
+//    styles[Token.LITERAL1] = new SyntaxStyle(new Color(0x650099),false,false);
+//    styles[Token.LITERAL2] = new SyntaxStyle(new Color(0x650099),false,true);
+//    styles[Token.LABEL] = new SyntaxStyle(new Color(0x990033),false,true);
+//    styles[Token.OPERATOR] = new SyntaxStyle(Color.black,false,true);
+//    styles[Token.INVALID] = new SyntaxStyle(Color.red,false,true);
+//
+//    return styles;
+//  }
 
 
   /**

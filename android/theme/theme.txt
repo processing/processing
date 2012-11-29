@@ -82,6 +82,9 @@ editor.brackethighlight.color = #006699
 
 # TEXT - syntax highlighting
 
+editor.function1.style = #627516,plain
+editor.function2.style = #627516,bold
+
 # e.g abstract, final, private
 editor.keyword1.style = #627516,plain
 # e.g. beginShape, point, line

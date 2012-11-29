@@ -76,9 +76,9 @@ public class Token
          */
         public static final byte KEYWORD3 = 8;
 
-        public static final byte KEYWORD4 = 9;
+        public static final byte FUNCTION1 = 9;
 
-        public static final byte KEYWORD5 = 10;
+        public static final byte FUNCTION2 = 10;
 
         /**
          * Operator token id. This can be used to mark an
