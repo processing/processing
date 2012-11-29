@@ -35,6 +35,13 @@ PROCESSING 2.0b7 (REV 0215) - 25 November 2012
   http://code.google.com/p/processing/issues/detail?id=1354
   http://guides.macrumors.com/Keyboard_shortcuts&section=10#Text_Shortcuts
 
++ Set quality level higher when exporting JPEG images. This will result 
+  in larger JPEG files with save() and saveFrame(), but the default quality 
+  setting in the past was unacceptable for many/most projects. 
+  http://code.google.com/p/processing/issues/detail?id=58
+  See the bug report link for how to implement in case you want to set 
+  the quality lower (or even higher) than the new default.
+
 + Table row iterating syntax has changed. This code:
   for (TableRow row : table) { ... }
   has now changed to 
@@ -184,6 +191,9 @@ PROCESSING 2.0b7 (REV 0215) - 25 November 2012
 
 + begin/endShape with a single vertex causing crash on P2D/P3D.
   http://code.google.com/p/processing/issues/detail?id=1421
+
++ Using a PGraphics as a texture produces visual artifacts.
+  http://code.google.com/p/processing/issues/detail?id=1420
 
 [ android ] 
 
