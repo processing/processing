@@ -4054,7 +4054,7 @@ public class PGraphicsOpenGL extends PGraphics {
    */
   @Override
   public void ortho() {
-    ortho(-width/2, +width/2, +height/2, -height/2, cameraNear, cameraFar);
+    ortho(0, width, height, 0, cameraNear, cameraFar);
   }
 
 
@@ -4070,33 +4070,18 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   /**
-   * Sets an orthographic projection. The left, right, bottom and top
-   * values refer to the center of the screen, with the y-axis inverted
-   * with respect to the default orientation in Processing, e.g: botton-to-top
-   * instead of top-to-bottom.
-   * In particular, if we need to set the the orthographic projection exactly
-   * covering the rectangle starting at the origin and having the same
-   * dimensions as the screen size, then we would pass:
-   * left   = -width/2
-   * right  = +width/2
-   * bottom = +height/2
-   * top    = -height/2
-   * In general, if we want to set an ortographic projection covering the
-   * rectangle determined by the top-left corner (x0, y0) and bottom-right
-   * corner (x1, y1), we would need to pass the following parameters:
-   * left   = x0 - width/2
-   * right  = x1 - width/2
-   * bottom = height/2 - y0
-   * top    = height/2 - y1
-   * that just correspond to the change of coordinates between the
-   * coordinate system located at the screen center with the Y-axis
-   * bottom-to-top, and Processing's system.
+   * Sets an orthographic projection.
    *
    */
   @Override
   public void ortho(float left, float right,
                     float bottom, float top,
                     float near, float far) {
+    left   -= width/2;
+    right  -= width/2;
+    bottom -= height/2;
+    top    -= height/2;
+
     // Flushing geometry with a different perspective configuration.
     flush();
 
