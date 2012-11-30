@@ -85,7 +85,7 @@ public class PGraphics3D extends PGraphicsOpenGL {
   @Override
   protected void begin2D() {
     pushProjection();
-    ortho(0, width, height, 0, -1, +1);
+    ortho(0, width, 0, height, -1, +1);
     pushMatrix();
     camera(width/2, height/2);
   }
