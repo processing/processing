@@ -28,8 +28,9 @@ import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
 import java.lang.reflect.Method;
+import java.util.Iterator;
 
-import com.sun.image.codec.jpeg.*;
+import javax.imageio.*;
 
 
 /**
@@ -3087,29 +3088,32 @@ public class PImage implements PConstants, Cloneable {
       File file = new File(path);
 
       if (extension.equals("jpg") || extension.equals("jpeg")) {
-//        ByteArrayOutputStream out = new ByteArrayOutputStream();
-//        JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(out);
-        BufferedOutputStream output =
-          new BufferedOutputStream(new FileOutputStream(file));
-        JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(output);
-        JPEGEncodeParam param = encoder.getDefaultJPEGEncodeParam(bimage);
-        // Set JPEG quality to 90% with baseline optimization. Setting this
-        // to 1 was a huge jump (about triple the size), so this seems good.
-        // Oddly, a smaller file size than Photoshop at 90%, but it's a
-        // completely different algorithm, I suppose.
-        param.setQuality(0.9f, true);
-//        p.setQuality(1, true);
-        encoder.setJPEGEncodeParam(param);
-        encoder.encode(bimage);
-        output.flush();
-        output.close();
-//        FileOutputStream fo = new FileOutputStream(new File(path));
-//        out.writeTo(fo);
-        return true;
+        ImageWriter writer = null;
+        Iterator<ImageWriter> iter = ImageIO.getImageWritersByFormatName("jpeg");
+        if (iter.hasNext()) {
+          writer = iter.next();
 
-      } else {
-        return javax.imageio.ImageIO.write(bimage, extension, file);
+          // Set JPEG quality to 90% with baseline optimization. Setting this
+          // to 1 was a huge jump (about triple the size), so this seems good.
+          // Oddly, a smaller file size than Photoshop at 90%, but it's a
+          // completely different algorithm, I suppose.
+          ImageWriteParam param = writer.getDefaultWriteParam();
+          param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+          param.setCompressionQuality(0.9f);
+
+          BufferedOutputStream output =
+            new BufferedOutputStream(new FileOutputStream(file));
+          writer.setOutput(ImageIO.createImageOutputStream(output));
+          writer.write(null, new IIOImage(bimage, null, null), param);
+          writer.dispose();
+
+          output.flush();
+          output.close();
+          return true;
+        }
       }
+      // If iter.hasNext() somehow fails up top, it falls through to here
+      return javax.imageio.ImageIO.write(bimage, extension, file);
 
     } catch (Exception e) {
       e.printStackTrace();
