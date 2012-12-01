@@ -55,10 +55,14 @@ X     although nothing in here to prevent "String line" from coloring
 X   try to make KEYWORD4 and KEYWORD5 work
 X change output from processing-java to be UTF-8 encoded
 X   http://code.google.com/p/processing/issues/detail?id=1418
+X Lauch programs in 32-bit mode / 64-bit mode ignored
+X   http://code.google.com/p/processing/issues/detail?id=1426
 
 earlier
 X The sketch name can't begin with '_' (underscore)
 X   http://code.google.com/p/processing/issues/detail?id=859
+
+https://processing-js.lighthouseapp.com/
 
 _ add to build.xml
 _   insert "@SuppressWarnings({"unused", "cast"})" into

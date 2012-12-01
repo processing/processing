@@ -98,6 +98,9 @@ PROCESSING 2.0b7 (REV 0215) - 25 November 2012
   Note for people implementing their own Modes: FUNCTION1 and 
   FUNCTION2 have now been added for functions with parens.
 
++ 32-bit mode / 64-bit mode preference was ignored on OS X.
+  http://code.google.com/p/processing/issues/detail?id=1426
+
 + Fix ugly results from resize() command on PImage:
   http://code.google.com/p/processing/issues/detail?id=332
   and similar on Android:
