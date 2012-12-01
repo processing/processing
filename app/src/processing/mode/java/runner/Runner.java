@@ -129,7 +129,7 @@ public class Runner implements MessageConsumer {
     if (vm != null) {
       generateTrace(null);
       //redirectStreams(vm);
-      
+
 //      try {
 //        generateTrace(new PrintWriter("/Users/fry/Desktop/output.txt"));
 //      } catch (Exception e) {
@@ -339,27 +339,28 @@ public class Runner implements MessageConsumer {
       commandArgs =
         "java -Xrunjdwp:transport=dt_shmem,address=" + addr + ",suspend=y ";
     } else if (Base.isMacOS()) {
-      // Decided to just set this to 1.6 only, because otherwise it's gonna  
-      // be a shitshow if folks are getting Apple's 1.6 with 32-bit and 
+      // Decided to just set this to 1.6 only, because otherwise it's gonna
+      // be a shitshow if folks are getting Apple's 1.6 with 32-bit and
       // Oracle's 1.7 when run in 64-bit mode. ("Why does my sketch suck in
       // 64-bit? Why is retina broken?)
       // The --request flag will prompt to install Apple's 1.6 JVM if none is
-      // available. We're specifying 1.6 so that we can get support for both 
+      // available. We're specifying 1.6 so that we can get support for both
       // 32- and 64-bit, because Oracle won't be releasing Java 1.7 in 32-bit.
-      // Helpfully, the --request flag is not present on Mac OS X 10.6 
+      // Helpfully, the --request flag is not present on Mac OS X 10.6
       // (luckily it is also not needed, because 1.6 is installed by default)
-      // but it requires an additional workaround to not use that flag, 
+      // but it requires an additional workaround to not use that flag,
       // otherwise will see an error about an unsupported option. The flag is
-      // available with 10.7 and 10.8, the only other supported versions of 
+      // available with 10.7 and 10.8, the only other supported versions of
       // OS X at this point, because we require 10.6.8 and higher. That also
-      // means we don't need to check for any other OS versions, unless 
-      // is a douchebag and modifies Info.plist to get around the restriction.    
+      // means we don't need to check for any other OS versions, unless
+      // is a douchebag and modifies Info.plist to get around the restriction.
       addr = "" + (8000 + (int) (Math.random() * 1000));
       commandArgs =
         "/usr/libexec/java_home " +
         (System.getProperty("os.version").startsWith("10.6") ? "" : "--request ") +
         "--version 1.6 " +
-        "-d" + Base.getNativeBits() + " --exec java " +
+        "--exec java " +
+        "-d" + Base.getNativeBits() + " " +
         "-Xrunjdwp:transport=dt_socket,address=" + addr + ",suspend=y ";
     }
 
@@ -468,8 +469,8 @@ public class Runner implements MessageConsumer {
 //    errThread.start();
 //    outThread.start();
 //  }
-  
-  
+
+
   /**
    * Generate the trace.
    * Enable events, start thread to display events,
@@ -538,7 +539,7 @@ public class Runner implements MessageConsumer {
 
   protected Connector findConnector(String connectorName) {
     List connectors = Bootstrap.virtualMachineManager().allConnectors();
-//    List connectors = 
+//    List connectors =
 //      org.eclipse.jdi.Bootstrap.virtualMachineManager().allConnectors();
 
     // debug: code to list available connectors
@@ -631,7 +632,7 @@ public class Runner implements MessageConsumer {
       System.err.println("This version of Processing only supports libraries and JAR files compiled for Java 1.6 or earlier.");
       System.err.println("A library used by this sketch was compiled for Java 1.7 or later, ");
       System.err.println("and needs to be recompiled to be compatible with Java 1.6.");
-      
+
     } else if (exceptionClass.equals("java.lang.NoSuchMethodError") ||
                exceptionClass.equals("java.lang.NoSuchFieldError")) {
       listener.statusError(exceptionClass.substring(10) + ": " +
