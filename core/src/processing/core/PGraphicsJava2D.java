@@ -57,6 +57,8 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   public Graphics2D g2;
   protected BufferedImage offscreen;
 
+  Composite defaultComposite;
+
   GeneralPath gpath;
 
   /// break the shape at the next vertex (next vertex() call is a moveto())
@@ -159,6 +161,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
       image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
       g2 = (Graphics2D) image.getGraphics();
     }
+    defaultComposite = g2.getComposite();
 
     // can't un-set this because this may be only a resize
     // http://dev.processing.org/bugs/show_bug.cgi?id=463
@@ -515,15 +518,20 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
    */
   @Override
   public void blendMode(final int mode) {
-    g2.setComposite(new Composite() {
+    if (mode == BLEND) {
+      g2.setComposite(defaultComposite);
 
-      @Override
-      public CompositeContext createContext(ColorModel srcColorModel,
-                                            ColorModel dstColorModel,
-                                            RenderingHints hints) {
-        return new BlendingContext(mode);
-      }
-    });
+    } else {
+      g2.setComposite(new Composite() {
+
+        @Override
+        public CompositeContext createContext(ColorModel srcColorModel,
+                                              ColorModel dstColorModel,
+                                              RenderingHints hints) {
+          return new BlendingContext(mode);
+        }
+      });
+    }
   }
 
 
@@ -1979,11 +1987,16 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
       //new Exception().printStackTrace(System.out);
       // in case people do transformations before background(),
       // need to handle this with a push/reset/pop
+      Composite oldComposite = g2.getComposite();
+      g2.setComposite(defaultComposite);
+
       pushMatrix();
       resetMatrix();
       g2.setColor(bgColor); //, backgroundAlpha));
       g2.fillRect(0, 0, width, height);
       popMatrix();
+
+      g2.setComposite(oldComposite);
     }
   }
 
