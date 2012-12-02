@@ -88,6 +88,8 @@ X using com.sun.image.codec.jpeg.* in PImage causes problems with OpenJDK
 X   http://code.google.com/p/processing/issues/detail?id=1424
 X fix problem with background() and the default composite (for Casey)
 X   also store the default composite instance and use that on blendMode(BLEND)
+X disable Quartz renderer to fix line blending problem from Casey
+X   might make sketches run more slowly
 
 _ implement mousePressed(Event) etc
 _   better to do this instead of bringing back the magic event

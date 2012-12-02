@@ -84,6 +84,13 @@ PROCESSING 2.0b7 (REV 0215) - 25 November 2012
 + Change output from processing-java to be UTF-8 encoded.
   http://code.google.com/p/processing/issues/detail?id=1418
 
++ Disable Quartz renderer to fix line blending problem on OS X. 
+  This older renderer was faster but had some bugs, like one that
+  caused lines to composite incorrectly when alpha was used. 
+  Add "PApplet.useQuartz = true;" into your PApplet.main() 
+  function to switch back to the old method:
+  http://processing.googlecode.com/svn/trunk/processing/build/javadoc/core/processing/core/PApplet.html#useQuartz
+
 [ bug fixes ] 
 
 + mouseButton not being set properly in mouseClicked.
