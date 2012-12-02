@@ -11,6 +11,7 @@ import processing.app.EditorState;
 import processing.app.Mode;
 import processing.app.Sketch;
 import processing.app.SketchException;
+import processing.app.Library;
 import processing.core.PApplet;
 
 import processing.app.syntax.PdeKeywords;
@@ -19,7 +20,7 @@ import processing.app.syntax.TokenMarker;
 import processing.mode.java.JavaMode;
 
 /**
- * JS Mode for Processing based on Processing.js. Comes with a server as
+ *	JS Mode for Processing based on Processing.js. Comes with a server as
  *	replacement for the normal runner.
  */
 public class JavaScriptMode extends Mode
@@ -29,6 +30,7 @@ public class JavaScriptMode extends Mode
 	public boolean showSizeWarning = true;
 	
 	private JavaScriptEditor jsEditor;
+	private JavaMode defaultJavaMode;
 	
 	/**
 	 *	Constructor
@@ -72,6 +74,21 @@ public class JavaScriptMode extends Mode
 		return jsEditor;
 	}
 
+	public JavaMode getDefaultMode ()
+	{
+		if ( defaultJavaMode == null ) {
+			for ( Mode m : base.getModeList() )
+			{
+				if ( m.getClass() == JavaMode.class )
+				{
+					defaultJavaMode = (JavaMode)m;
+					break;
+				}
+			}
+		}
+		return defaultJavaMode;
+	}
+
 	/**
 	 *	Loads default Java keywords, JS keywords 
 	 *	were already loaded in constructor.
@@ -104,7 +121,7 @@ public class JavaScriptMode extends Mode
 	}
 	
 	/**
-	 * Copied from JavaMode
+	 * load the keywords from file, copied from JavaMode.java
 	 */
 	protected void loadKeywords() throws IOException 
 	{
@@ -144,11 +161,13 @@ public class JavaScriptMode extends Mode
 		return tokenMarker;
 	}
 
-  // pretty printable name of the mode
-  public String getTitle()
-  {
-    return "JavaScript";
-  }
+	/**
+	 *	Return pretty title of this mode for menu listing and such
+	 */
+	public String getTitle()
+	{
+		return "JavaScript";
+	}
 
   // public EditorToolbar createToolbar(Editor editor) { }
 
@@ -159,7 +178,7 @@ public class JavaScriptMode extends Mode
   // ------------------------------------------------
 
   /**
-   * For now just add JavaMode examples.
+   *	Fetch and return examples from JS and Java mode
    */
   public File[] getExampleCategoryFolders()
   {
@@ -173,15 +192,7 @@ public class JavaScriptMode extends Mode
 	java.util.Arrays.sort(inclExamples);
 	
 	// add JavaMode examples as these are supposed to run in JSMode
-	JavaMode jMode = null;
-	for ( Mode m : base.getModeList() )
-	{
-		if ( m.getClass() == JavaMode.class )
-		{
-			jMode = (JavaMode)m;
-			break;
-		}
-	}
+	JavaMode jMode = getDefaultMode();
 	if ( jMode == null )
 		return inclExamples; // js examples only
 	
@@ -203,37 +214,58 @@ public class JavaScriptMode extends Mode
     return finalExamples;
   }
   
-  
-  public String getDefaultExtension() 
-  {
-    return "pde";
-  }
+    /**
+	 *	Return the default extension for this mode, same as Java
+	 */
+	public String getDefaultExtension() 
+	{
+		return "pde";
+	}
 
-  // all file extensions it supports
-  public String[] getExtensions () 
-  {
-    return new String[] {"pde", "js"};
-  }
+	/**
+	 *	Return allowed extensions
+	 */
+	public String[] getExtensions () 
+	{
+		return new String[] { "pde", "js" };
+	}
 
-  public String[] getIgnorable () 
-  {
-    return new String[] {
-	  "applet",
-      "applet_js",
-	  JavaScriptBuild.EXPORTED_FOLDER_NAME
-    };
-  }
+	/**
+	 *	Return list of file- / folder-names that should be ignored when 
+	 *	sketch is being copied or saved as 
+	 */
+	public String[] getIgnorable () 
+	{
+		return new String[] {
+			"applet",
+			"applet_js",
+			JavaScriptBuild.EXPORTED_FOLDER_NAME
+		};
+	}
+
+  	/**
+  	 *	Override Mode.getLibrary to add our own discovery of JS-only libraries.
+  	 *
+  	 *	fjenett 20121202
+  	 */
+	public Library getLibrary ( String pkgName ) throws SketchException 
+	{
+		return super.getLibrary( pkgName );
+	}
   
   
   // ------------------------------------------------
   
-  public boolean handleExport(Sketch sketch) throws IOException, SketchException
-  {
-    JavaScriptBuild build = new JavaScriptBuild(sketch);
-    return build.export();
-  }
-  
-  //public boolean handleExportApplet(Sketch sketch) throws SketchException, IOException { }
-  
-  //public boolean handleExportApplication(Sketch sketch) throws SketchException, IOException { }
+  	/**
+  	 *	Build and export a sketch
+  	 */
+	public boolean handleExport(Sketch sketch) throws IOException, SketchException
+	{
+		JavaScriptBuild build = new JavaScriptBuild(sketch);
+		return build.export();
+	}
+
+	//public boolean handleExportApplet(Sketch sketch) throws SketchException, IOException { }
+
+	//public boolean handleExportApplication(Sketch sketch) throws SketchException, IOException { }
 }
