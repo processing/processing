@@ -4026,11 +4026,12 @@ public class PGraphics extends PImage implements PConstants {
   public void textMode(int mode) {
     // CENTER and MODEL overlap (they're both 3)
     if ((mode == LEFT) || (mode == RIGHT)) {
-      showWarning("Since Processing beta, textMode() is now textAlign().");
+      showWarning("Since Processing 1.0 beta, textMode() is now textAlign().");
       return;
     }
     if (mode == SCREEN) {
       showWarning("textMode(SCREEN) has been removed from Processing 2.0.");
+      return;
     }
 
     if (textModeCheck(mode)) {
