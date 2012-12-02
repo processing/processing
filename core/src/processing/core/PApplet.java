@@ -219,7 +219,7 @@ public class PApplet extends Applet
    * change this setting before you call PApplet.main().
    * <pre>
    * static public void main(String[] args) {
-   *   PApplet.useQuartz = "false";
+   *   PApplet.useQuartz = false;
    *   PApplet.main(new String[] { "YourSketch" });
    * }
    * </pre>
@@ -227,7 +227,8 @@ public class PApplet extends Applet
    * it's such a terrible hack in how it's employed here. Calling setProperty()
    * inside setup() is a joke, since it's long since the AWT has been invoked.
    */
-  static public boolean useQuartz = true;
+//  static public boolean useQuartz = true;
+  static public boolean useQuartz = false;
 
   /**
    * Whether to use native (AWT) dialogs for selectInput and selectOutput.
