@@ -3,18 +3,13 @@ http://code.google.com/p/processing/issues/detail?id=573
 
 ----------------------------------------------------------------------------
 
-Library system
+Library system changes, as discussed at EyeO 2012
 
 Rewrite library system to not be linked to java-libraries.
 <sketchbook>/libraries-js/..
 LibraryManager, updating, ..
 Update reference / wiki to mirror changes. 
 Make tutorial / template for Library authors.
-
-Check "Duplicate import!" message
-
-Sketch > Import Library > ...
-Does not work, complains about libs not supported
 
 ----------------------------------------------------------------------------
 
