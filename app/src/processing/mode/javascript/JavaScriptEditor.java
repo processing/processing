@@ -197,18 +197,18 @@ public class JavaScriptEditor extends ServingEditor
 
 	// TODO switch to "http://js.processing.org/"?
 
-    item = new JMenuItem("QuickStart for JS Devs");
-    item.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        Base.openURL("http://processingjs.org/reference/articles/jsQuickStart");
-      }
-    });
-    menu.add(item);
-
     item = new JMenuItem("QuickStart for Processing Devs");
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         Base.openURL("http://processingjs.org/reference/articles/p5QuickStart");
+      }
+    });
+    menu.add(item);
+
+    item = new JMenuItem("QuickStart for JavaScript Devs");
+    item.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        Base.openURL("http://processingjs.org/reference/articles/jsQuickStart");
       }
     });
     menu.add(item);
@@ -246,7 +246,8 @@ public class JavaScriptEditor extends ServingEditor
     item = Toolkit.newJMenuItemShift("Find in Reference", 'F');
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        handleFindReferenceImpl();
+        //handleFindReferenceImpl();
+        handleFindReference();
       }
     });
     menu.add(item);
@@ -432,22 +433,26 @@ public class JavaScriptEditor extends ServingEditor
   public void showReference ( String filename )
   {
 	// TODO: catch handleFindReference directly
-	handleFindReferenceImpl();
+	//handleFindReferenceImpl();
+
+    File file = new File( jsMode.getDefaultMode().getReferenceFolder(), filename );
+    // Prepend with file:// and also encode spaces & other characters
+    Base.openURL( file.toURI().toString() );
   }
 
 	/**
 	 *	Menu item callback, handles showing a reference page.
 	 */
-  private void handleFindReferenceImpl ()
+  /*private void handleFindReferenceImpl ()
   {
-	if (textarea.isSelectionActive()) {
+	if ( textarea.isSelectionActive() ) {
         Base.openURL(
           "http://www.google.com/search?q=" +
           textarea.getSelectedText().trim() +
           "+site%3Ahttp%3A%2F%2Fprocessingjs.org%2Freference"
         );
      }
-  }
+  }*/
 
 	/**
 	 *	Menu item callback, replacement for RUN:
@@ -604,15 +609,44 @@ public class JavaScriptEditor extends ServingEditor
   }
 
 	/**
-	 *	Menu item callback
+	 *	Menu item callback for Sketch -> Import Library -> XXX
+	 *
+	 *	Copied from JavaEditor.java
 	 */
-  public void handleImportLibrary (String item)
-  {
-    Base.showWarning("Processing.js doesn't support libraries",
-                     "Libraries are not supported. Import statements are " +
-                     "ignored, and code relying on them will break.",
-                     null);
-  }
+	public void handleImportLibrary ( String jarPath )
+	{
+		// Base.showWarning("Processing.js doesn't support libraries",
+		//                  "Libraries are not supported. Import statements are " +
+		//                  "ignored, and code relying on them will break.",
+		//                  null);
+
+		// make sure the user didn't hide the sketch folder
+		sketch.ensureExistence();
+
+		// import statements into the main sketch file (code[0])
+		// if the current code is a .java file, insert into current
+		if (mode.isDefaultExtension(sketch.getCurrentCode())) 
+		{
+			sketch.setCurrentCode(0);
+		}
+
+		// could also scan the text in the file to see if each import
+		// statement is already in there, but if the user has the import
+		// commented out, then this will be a problem.
+		String[] list = Base.packageListFromClassPath(jarPath);
+		StringBuffer buffer = new StringBuffer();
+		for ( int i = 0; i < list.length; i++ ) 
+		{
+			buffer.append("import ");
+			buffer.append(list[i]);
+			buffer.append(".*;\n");
+		}
+		buffer.append('\n');
+		buffer.append(getText());
+		setText(buffer.toString());
+		setSelection(0, 0);  // scroll to start
+		sketch.setModified(true);
+	}
 
 	// ----------------------------------------
 	//  implementation BasicServerListener
