@@ -69,7 +69,9 @@ _   insert "@SuppressWarnings({"unused", "cast"})" into
 _   JavaLexer, JavaRecognizer, PdeLexer, PdeRecognizer
 _   from processing/mode/java/preproc/
 
-
+_ double textMode() error message with P3D:
+textMode(SCREEN) has been removed from Processing 2.0.
+textMode(256) is not supported by this renderer.
 
 2.0 FINAL / casey requests
 _ errors that cannot be placed (i.e. missing brace) 
