@@ -90,6 +90,7 @@ X fix problem with background() and the default composite (for Casey)
 X   also store the default composite instance and use that on blendMode(BLEND)
 X disable Quartz renderer to fix line blending problem from Casey
 X   might make sketches run more slowly
+X fix double error report about textMode(SCREEN)
 
 _ implement mousePressed(Event) etc
 _   better to do this instead of bringing back the magic event

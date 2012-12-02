@@ -116,6 +116,8 @@ PROCESSING 2.0b7 (REV 0215) - 25 November 2012
 + P2D/P3D PGraphics buffer failing to draw if larger than main surface.
   http://code.google.com/p/processing/issues/detail?id=1255
 
++ Fix double error report when textMode(SCREEN) was used.
+
 + image(pgraphics, x, y, w, h) was only drawing once when shrinking.
   http://code.google.com/p/processing/issues/detail?id=1382
 
