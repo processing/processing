@@ -260,7 +260,7 @@ public class PdePreprocessor {
           "values (not variables) for the size() command.\n" +
           "See the size() reference for an explanation.";
         Base.showWarning("Could not find sketch size", message, null);
-        new Exception().printStackTrace(System.out);
+//        new Exception().printStackTrace(System.out);
         return null;
       }
 
@@ -563,6 +563,7 @@ public class PdePreprocessor {
                                   write(program, stream), programImports);
   }
 
+  
   static String substituteUnicode(String program) {
     // check for non-ascii chars (these will be/must be in unicode format)
     char p[] = program.toCharArray();
@@ -688,6 +689,7 @@ public class PdePreprocessor {
 
     return className;
   }
+  
 
   private PdeRecognizer createParser(final String program) {
     // create a lexer with the stream reader, and tell it to handle

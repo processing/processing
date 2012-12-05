@@ -93,11 +93,6 @@ PROCESSING 2.0b7 (REV 0215) - 25 November 2012
 
 [ bug fixes ] 
 
-+ Debug information wasn't being passed through to the console. 
-  In addition, on Windows, error reporting wasn't working properly
-  (couldn't find the right line or report the error correctly).
-  http://code.google.com/p/processing/issues/detail?id=1440
-
 + mouseButton not being set properly in mouseClicked.
   http://code.google.com/p/processing/issues/detail?id=1350
 
@@ -113,6 +108,15 @@ PROCESSING 2.0b7 (REV 0215) - 25 November 2012
 + 32-bit mode / 64-bit mode preference was ignored on OS X.
   http://code.google.com/p/processing/issues/detail?id=1426
 
++ Prevent errors on first line of a new tab from highlighting the last 
+  line of the previous tab. In particular, a single letter on a new tab 
+  was highlighting the last line of the tab to its left.
+
++ Android debug information wasn't being passed through to the console. 
+  In addition, on Windows, error reporting wasn't working properly
+  (couldn't find the right line or report the error correctly).
+  http://code.google.com/p/processing/issues/detail?id=1440
+
 + Fix ugly results from resize() command on PImage:
   http://code.google.com/p/processing/issues/detail?id=332
   and similar on Android:
@@ -121,7 +125,9 @@ PROCESSING 2.0b7 (REV 0215) - 25 November 2012
 + P2D/P3D PGraphics buffer failing to draw if larger than main surface.
   http://code.google.com/p/processing/issues/detail?id=1255
 
-+ Fix double error report when textMode(SCREEN) was used.
++ Fix double error report when textMode(SCREEN) was used: 
+  textMode(SCREEN) has been removed from Processing 2.0.
+  textMode(256) is not supported by this renderer.
 
 + image(pgraphics, x, y, w, h) was only drawing once when shrinking.
   http://code.google.com/p/processing/issues/detail?id=1382
