@@ -19,85 +19,65 @@ package processing.app.syntax;
  * @author Slava Pestov
  * @version $Id$
  */
-public class Token
-{
-        /**
-         * Normal text token id. This should be used to mark
-         * normal text.
-         */
+public class Token {
+
+        /** Normal text token id. This should be used to mark normal text. */
         public static final byte NULL = 0;
 
-        /**
-         * Comment 1 token id. This can be used to mark a comment.
-         */
+        /** This can be used to mark a comment. */
         public static final byte COMMENT1 = 1;
 
-        /**
-         * Comment 2 token id. This can be used to mark a comment.
-         */
+        /** This can be used to mark a comment. */
         public static final byte COMMENT2 = 2;
 
-
-        /**
-         * Literal 1 token id. This can be used to mark a string
-         * literal (eg, C mode uses this to mark "..." literals)
-         */
+        /** Strings in quotes */
         public static final byte LITERAL1 = 3;
-
-        /**
-         * Literal 2 token id. This can be used to mark an object
-         * literal (eg, Java mode uses this to mark true, false, etc)
-         */
+        
+        /** Constants (QUARTER_PI, CORNERS, etc.) */
         public static final byte LITERAL2 = 4;
-
+        
         /**
          * Label token id. This can be used to mark labels
          * (eg, C mode uses this to mark ...: sequences)
          */
         public static final byte LABEL = 5;
 
-        /**
-         * Keyword 1 token id. This can be used to mark a
-         * keyword. This should be used for general language
-         * constructs.
-         */
+        /** Datatypes and keywords (void, int, boolean, etc.) */
         public static final byte KEYWORD1 = 6;
 
-        /**
-         * Keyword 2 token id. This can be used to mark a
-         * keyword. This should be used for preprocessor
-         * commands, or variables.
-         */
+        /** Fields [variables within a class] */
         public static final byte KEYWORD2 = 7;
 
-        /**
-         * Keyword 3 token id. This can be used to mark a
-         * keyword. This should be used for data types.
-         */
+        /** Processing variables (width, height, focused, etc.) */
         public static final byte KEYWORD3 = 8;
 
+        /** Functions */
         public static final byte FUNCTION1 = 9;
 
+        /** Methods (functions inside a class) */
         public static final byte FUNCTION2 = 10;
+
+        /** Loop/function-like blocks (for, while, etc.) */
+        public static final byte FUNCTION3 = 12;
 
         /**
          * Operator token id. This can be used to mark an
          * operator. (eg, SQL mode marks +, -, etc with this
          * token type)
          */
-        public static final byte OPERATOR = 11;
+        public static final byte OPERATOR = 13;
 
         /**
          * Invalid token id. This can be used to mark invalid
          * or incomplete tokens, so the user can easily spot
          * syntax errors.
          */
-        public static final byte INVALID = 12;
+        public static final byte INVALID = 14;
 
         /**
          * The total number of defined token ids.
          */
-        public static final byte ID_COUNT = 13;
+        public static final byte ID_COUNT = 15;
 
         /**
          * The first id that can be used for internal state
