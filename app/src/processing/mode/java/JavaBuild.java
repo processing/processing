@@ -285,7 +285,9 @@ public class JavaBuild {
       // then search through for anyone else whose preprocName is null,
       // since they've also been combined into the main pde.
       int errorFile = findErrorFile(errorLine);
+//      System.out.println("error line is " + errorLine + ", file is " + errorFile);
       errorLine -= sketch.getCode(errorFile).getPreprocOffset();
+//      System.out.println("  preproc offset for that file: " + sketch.getCode(errorFile).getPreprocOffset());
 
 //      System.out.println("i found this guy snooping around..");
 //      System.out.println("whatcha want me to do with 'im boss?");
@@ -543,7 +545,7 @@ public class JavaBuild {
   protected int findErrorFile(int errorLine) {
     for (int i = sketch.getCodeCount() - 1; i > 0; i--) {
       SketchCode sc = sketch.getCode(i);
-      if (sc.isExtension("pde") && (sc.getPreprocOffset() < errorLine)) {
+      if (sc.isExtension("pde") && (sc.getPreprocOffset() <= errorLine)) {
         // keep looping until the errorLine is past the offset
         return i;
       }

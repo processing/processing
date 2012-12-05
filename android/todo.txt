@@ -154,7 +154,6 @@ _ check out andres' changes for PShape
 _ re: android libraries, from shawn van every
 The most powerful part were the libraries (and the ease with which they could be developed).  Location, SMS, Camera/Video, Bluetooth (for Arduino integration) and PClient/PRequest were by far the most used.  The ones that came with it, plus the ones from MJSoft were good though I ended up making a couple of very specific ones for my students: http://www.mobvcasting.com/wp/?cat=4
 
-_ separate activity and view
 _ process trackball events (they're only deltas)
 _ handle repeat key events 
 _ implement link()
