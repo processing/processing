@@ -316,13 +316,13 @@ public class PGL {
   protected static final int EGL_OPENGL_ES2_BIT         = 0x0004;
 
   /** Basic GLES 1.0 interface */
-  public GL10 gl;
+  public static GL10 gl;
 
   /** GLU interface **/
-  public PGLU glu;
+  public static PGLU glu;
 
   /** The current opengl context */
-  static public EGLContext context;
+  public static EGLContext context;
 
   /** The PGraphics object using this interface */
   protected PGraphicsOpenGL pg;
@@ -342,14 +342,13 @@ public class PGL {
 
   ///////////////////////////////////////////////////////////
 
-  // FBO for incremental drawing
+  // FBO layer
 
-  protected static final boolean FORCE_SCREEN_FBO = false;
-  protected boolean firstOnscreenFrame = true;
+  protected boolean usingFBOlayer = false;
+  protected int[] glColorFbo = { 0 };
+  protected int[] glColorTex = { 0, 0 };
   protected int fboWidth, fboHeight;
   protected int backTex, frontTex;
-  protected int[] glColorTex = { 0, 0 };
-  protected int[] glColorFbo = { 0 };
 
   ///////////////////////////////////////////////////////////
 
@@ -405,7 +404,9 @@ public class PGL {
   public PGL(PGraphicsOpenGL pg) {
     this.pg = pg;
     renderer = new AndroidRenderer();
-    glu = new PGLU();
+    if (glu == null) {
+      glu = new PGLU();
+    }
     initialized = false;
   }
 
@@ -414,7 +415,7 @@ public class PGL {
   }
 
 
-  protected void initPrimarySurface(int antialias) {
+  protected void initSurface(int antialias) {
     // We do the initialization in updatePrimary() because
     // at the moment initPrimarySurface() gets called we
     // cannot rely on the GL surface being actually
@@ -422,12 +423,7 @@ public class PGL {
   }
 
 
-  protected void initOffscreenSurface(PGL primary) {
-    initialized = true;
-  }
-
-
-  protected void updatePrimary() {
+  protected void update() {
     if (!initialized) {
       String ext = GLES20.glGetString(GLES20.GL_EXTENSIONS);
       if (-1 < ext.indexOf("texture_non_power_of_two")) {
@@ -520,87 +516,139 @@ public class PGL {
       GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_STENCIL_BUFFER_BIT);
 
       GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
-      PGraphicsOpenGL.screenFramebuffer.glFbo = 0;
+      PGraphicsOpenGL.drawFramebuffer.glFbo = 0;
 
-      // Use this instead for the new code to be implemented later...
-//      PGraphicsOpenGL.screenFramebuffer.glFbo = glColorFbo[0];
-
-      backTex = 1;
-      frontTex = 0;
+      backTex = 0;
+      frontTex = 1;
 
       initialized = true;
     }
   }
 
 
-  protected void updateOffscreen(PGL primary) {
-    gl = primary.gl;
-  }
-
-
-  protected int primaryDrawBuffer() {
-    if (PGraphicsOpenGL.screenFramebuffer.glFbo != 0) {
-      return GLES20.GL_BACK;
+  protected int getReadFramebuffer() {
+    if (usingFBOlayer) {
+      return glColorFbo[0];
     } else {
-      return GLES20.GL_COLOR_ATTACHMENT0;
+      return 0;
     }
   }
 
-/*
-  protected boolean primaryIsDoubleBuffered() {
-    return PGraphicsOpenGL.screenFramebuffer.glFbo != 0;
-  }
-*/
 
-  protected boolean primaryIsFboBacked() {
-    return PGraphicsOpenGL.screenFramebuffer.glFbo != 0;
-  }
-
-
-  protected int getFboTexTarget() {
-    return GLES20.GL_TEXTURE_2D;
-   }
-
-
-  protected int getFboTexName() {
-    return glColorTex[0];
-   }
-
-
-  protected int getFboWidth() {
-   return fboWidth;
+  protected int getDrawFramebuffer() {
+    if (usingFBOlayer) {
+      return glColorFbo[0];
+    } else {
+      return 0;
+    }
   }
 
 
-  protected int getFboHeight() {
-    return fboHeight;
-   }
-
-
-  protected void bindPrimaryColorFBO() {
-    GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, glColorFbo[0]);
-    PGraphicsOpenGL.screenFramebuffer.glFbo = glColorFbo[0];
-
-    // Make the color buffer opaque so it doesn't show
-    // the background when drawn on top of another surface.
-    GLES20.glColorMask(false, false, false, true);
-    GLES20.glClearColor(0, 0, 0, 1);
-    GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
-    GLES20.glColorMask(true, true, true, true);
+  protected int getDefaultDrawBuffer() {
+    if (usingFBOlayer) {
+      return GLES20.GL_COLOR_ATTACHMENT0;
+    } else {
+      return GLES20.GL_BACK;
+    }
   }
 
 
-  protected void bindPrimaryMultiFBO() {
-    GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, glColorFbo[0]);
-    PGraphicsOpenGL.screenFramebuffer.glFbo = glColorFbo[0];
+  protected int getDefaultReadBuffer() {
+    if (usingFBOlayer) {
+      return GLES20.GL_COLOR_ATTACHMENT0;
+    } else {
+      return GLES20.GL_FRONT;
+    }
   }
 
 
-  protected void bindBackBufferTex() {
+  protected boolean isFBOBacked() {
+    return usingFBOlayer;
   }
 
 
-  protected void unbindBackBufferTex() {
+  protected boolean isMultisampled() {
+    return false;
+  }
+
+
+  protected int getDepthBits() {
+    int[] temp = {0};
+    GLES20.glGetIntegerv(GLES20.GL_DEPTH_BITS, temp, 0);
+    return temp[0];
+  }
+
+
+  protected int getStencilBits() {
+    int[] temp = {0};
+    GLES20.glGetIntegerv(GLES20.GL_STENCIL_BITS, temp, 0);
+    return temp[0];
+  }
+
+
+  protected Texture wrapBackTexture() {
+    Texture tex = new Texture(pg.parent);
+    tex.init(glColorTex[backTex],
+             GLES20.GL_TEXTURE_2D, GLES20.GL_RGBA,
+             fboWidth, fboHeight,
+             GLES20.GL_NEAREST, GLES20.GL_NEAREST,
+             GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
+    tex.invertedY(true);
+    tex.colorBufferOf(pg);
+    pg.setCache(pg, tex);
+    return tex;
+  }
+
+
+  protected Texture wrapFrontTexture() {
+    Texture tex = new Texture(pg.parent);
+    tex.init(glColorTex[frontTex],
+             GLES20.GL_TEXTURE_2D, GLES20.GL_RGBA,
+             fboWidth, fboHeight,
+             GLES20.GL_NEAREST, GLES20.GL_NEAREST,
+             GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
+    tex.invertedY(true);
+    tex.colorBufferOf(pg);
+    return tex;
+  }
+
+
+  int getBackTextureName() {
+    return glColorTex[backTex];
+
+  }
+
+
+  int getFrontTextureName() {
+    return glColorTex[frontTex];
+  }
+
+
+  protected void bindFrontTexture() {
+    if (!texturingIsEnabled(GLES20.GL_TEXTURE_2D)) {
+      enableTexturing(GLES20.GL_TEXTURE_2D);
+    }
+    gl.glBindTexture(GLES20.GL_TEXTURE_2D, glColorTex[frontTex]);
+  }
+
+
+  protected void unbindFrontTexture() {
+    if (textureIsBound(GLES20.GL_TEXTURE_2D, glColorTex[frontTex])) {
+      // We don't want to unbind another texture
+      // that might be bound instead of this one.
+      if (!texturingIsEnabled(GLES20.GL_TEXTURE_2D)) {
+        enableTexturing(GLES20.GL_TEXTURE_2D);
+        gl.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
+        disableTexturing(GLES20.GL_TEXTURE_2D);
+      } else {
+        gl.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
+      }
+    }
+  }
+
+
+  protected void syncBackTexture() {
+    // Nothing to do because there is no MSAA in GLES20
   }
 
 
@@ -609,27 +657,29 @@ public class PGL {
   // Frame rendering
 
 
-  protected void beginOnscreenDraw(boolean clear) {
-
-    // TODO: enable this implementation later (solves the flickering problem):
-    /*
-    if (glColorFbo[0] != 0) {
+  protected void beginDraw(boolean clear0) {
+    if (!clear0 && glColorFbo[0] != 0) {
+      // Bind the FBO and use the back texture to draw to.
       GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, glColorFbo[0]);
       GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER,
                                     GLES20.GL_COLOR_ATTACHMENT0,
                                     GLES20.GL_TEXTURE_2D,
-                                    glColorTex[frontTex], 0);
-
-      PGraphicsOpenGL.screenFramebuffer.glFbo = glColorFbo[0];
+                                    glColorTex[backTex], 0);
+      usingFBOlayer = true;
+    } else {
+      usingFBOlayer = false;
     }
-*/
 
+
+
+
+    /*
     if (clear && !FORCE_SCREEN_FBO) {
       // Simplest scenario: clear mode means we clear both the color and depth
       // buffers. No need for saving front color buffer, etc.
       GLES20.glClearColor(0, 0, 0, 0);
       GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
-      PGraphicsOpenGL.screenFramebuffer.glFbo = 0;
+      PGraphicsOpenGL.drawFramebuffer.glFbo = 0;
     } else {
       GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, glColorFbo[0]);
       GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER,
@@ -651,69 +701,69 @@ public class PGL {
                     fboWidth, fboHeight, 0, 0, pg.width, pg.height,
                     0, 0, pg.width, pg.height);
       }
-      PGraphicsOpenGL.screenFramebuffer.glFbo = glColorFbo[0];
+      PGraphicsOpenGL.drawFramebuffer.glFbo = glColorFbo[0];
     }
 
     if (firstOnscreenFrame) {
       firstOnscreenFrame = false;
     }
-
+*/
   }
 
 
-  protected void endOnscreenDraw(boolean clear0) {
-/*
-    // TODO: enable this implementation later (solves the flickering problem):
-    if (glColorFbo[0] != 0) {
-      // We are in the primary surface, and no clear mode, this means that the
-      // current contents of the front buffer needs to be used in the next frame
-      // as the background.
+  protected void endDraw(boolean clear) {
+    if (usingFBOlayer) {
+      // Draw the contents of the back texture to the main framebuffer.
       GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
 
       GLES20.glClearDepthf(1);
       GLES20.glClearColor(0, 0, 0, 0);
       GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
 
-      // Render current front texture to screen, without blending.
+      // Render current back texture to screen, without blending.
       GLES20.glDisable(GLES20.GL_BLEND);
-      drawTexture(GLES20.GL_TEXTURE_2D, glColorTex[frontTex],
+      drawTexture(GLES20.GL_TEXTURE_2D, glColorTex[backTex],
                   fboWidth, fboHeight,
                   0, 0, pg.width, pg.height, 0, 0, pg.width, pg.height);
 
       GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, glColorFbo[0]);
 
-      // Blitting the front texture into the back texture.
-      GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER,
-                                    GLES20.GL_COLOR_ATTACHMENT0,
-                                    GLES20.GL_TEXTURE_2D,
-                                    glColorTex[backTex], 0);
-      drawTexture(GLES20.GL_TEXTURE_2D, glColorTex[frontTex],
-                  fboWidth, fboHeight,
-                  0, 0, pg.width, pg.height, 0, 0, pg.width, pg.height);
+      if (!clear) {
+        // Draw the back texture into the front texture, which will be used as
+        // back texture in the next frame. Otherwise flickering will occur if
+        // the sketch uses "incremental drawing" (background() not called).
+        GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER,
+                                      GLES20.GL_COLOR_ATTACHMENT0,
+                                      GLES20.GL_TEXTURE_2D,
+                                      glColorTex[frontTex], 0);
+        drawTexture(GLES20.GL_TEXTURE_2D, glColorTex[backTex],
+                    fboWidth, fboHeight,
+                    0, 0, pg.width, pg.height, 0, 0, pg.width, pg.height);
 
-      // Leave the front texture as current
-      GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER,
-                                    GLES20.GL_COLOR_ATTACHMENT0,
-                                    GLES20.GL_TEXTURE_2D,
-                                    glColorTex[frontTex], 0);
+        // Leave the back texture as current
+        GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER,
+                                      GLES20.GL_COLOR_ATTACHMENT0,
+                                      GLES20.GL_TEXTURE_2D,
+                                      glColorTex[backTex], 0);
+      }
 
-//      int temp = frontTex;
-//      frontTex = backTex;
-//      backTex = temp;
+      // Swap textures.
+      int temp = frontTex;
+      frontTex = backTex;
+      backTex = temp;
 
-
-      // This is the trick to avoid tre flickering: don't leave the FBO bound!
+      // This is the trick to avoid the flickering: don't leave the FBO bound!
       GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
-      PGraphicsOpenGL.screenFramebuffer.glFbo = 0;
     }
-*/
 
+
+    /*
     if (!clear0 || FORCE_SCREEN_FBO) {
       // We are in the primary surface, and no clear mode, this means that the
       // current contents of the front buffer needs to be used in the next frame
       // as the background.
       GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
-      PGraphicsOpenGL.screenFramebuffer.glFbo = 0;
+      PGraphicsOpenGL.drawFramebuffer.glFbo = 0;
 
       GLES20.glClearDepthf(1);
       GLES20.glClearColor(0, 0, 0, 0);
@@ -730,14 +780,7 @@ public class PGL {
       frontTex = backTex;
       backTex = temp;
     }
-  }
-
-
-  protected void beginOffscreenDraw(boolean clear) {
-  }
-
-
-  protected void endOffscreenDraw(boolean clear0) {
+    */
   }
 
 

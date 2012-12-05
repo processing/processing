@@ -159,14 +159,14 @@ class FontTexture implements PConstants {
       currentTex = textures.length - 1;
 
       PImage[] tempImg = images;
-      images = new PImage[textures.length + 1];
+      images = new PImage[textures.length];
       PApplet.arrayCopy(tempImg, images, tempImg.length);
       images[tempImg.length] = pg.wrapTexture(tex);
     }
     lastTex = currentTex;
 
     // Make sure that the current texture is bound.
-    //tex.bind();
+    tex.bind();
 
     return resize;
   }
@@ -322,14 +322,6 @@ class FontTexture implements PConstants {
         offsetY = 0;
         lineHeight = 0;
       }
-    }
-
-    if (lastTex == -1) {
-      lastTex = 0;
-    }
-
-    if (currentTex != lastTex || resized) {
-      currentTex = idx;
     }
 
     TextureInfo tinfo = new TextureInfo(currentTex, offsetX, offsetY,
