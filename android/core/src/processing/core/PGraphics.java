@@ -1372,7 +1372,45 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  //////////////////////////////////////////////////////////////
+
+  // CLIPPING
+
+
   public void clip(float a, float b, float c, float d) {
+    if (imageMode == CORNER) {
+      if (c < 0) {  // reset a negative width
+        a += c; c = -c;
+      }
+      if (d < 0) {  // reset a negative height
+        b += d; d = -d;
+      }
+
+      clipImpl(a, b, a + c, b + d);
+
+    } else if (imageMode == CORNERS) {
+      if (c < a) {  // reverse because x2 < x1
+        float temp = a; a = c; c = temp;
+      }
+      if (d < b) {  // reverse because y2 < y1
+        float temp = b; b = d; d = temp;
+      }
+
+      clipImpl(a, b, c, d);
+
+    } else if (imageMode == CENTER) {
+      // c and d are width/height
+      if (c < 0) c = -c;
+      if (d < 0) d = -d;
+      float x1 = a - c/2;
+      float y1 = b - d/2;
+
+      clipImpl(x1, y1, x1 + c, y1 + d);
+    }
+  }
+
+
+  protected void clipImpl(float x1, float y1, float x2, float y2) {
     showMissingWarning("clip");
   }
 
@@ -5319,6 +5357,14 @@ public class PGraphics extends PImage implements PConstants {
       System.err.println(msg);
       warnings.put(msg, new Object());
     }
+  }
+
+
+  /**
+   * Version of showWarning() that takes a parsed String.
+   */
+  static public void showWarning(String msg, Object... args) {  // ignore
+    showWarning(String.format(msg, args));
   }
 
 
