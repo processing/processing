@@ -433,7 +433,7 @@ public class JavaBuild {
             }
           }
         }
-        if (ignorableImport(item, preprocessor)) {
+        if (ignorableImport(item)) {
           found = true;
         }
         if (!found) {
@@ -515,7 +515,7 @@ public class JavaBuild {
    * for libraries that begin with a prefix like javax, since that includes
    * the OpenGL library, even though we're just returning true here, hrm...
    */
-  protected boolean ignorableImport(String pkg, PdePreprocessor preprocessor) {
+  protected boolean ignorableImport(String pkg) {
     if (pkg.startsWith("java.")) return true;
     if (pkg.startsWith("javax.")) return true;
 
