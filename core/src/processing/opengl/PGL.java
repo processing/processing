@@ -778,14 +778,14 @@ public class PGL {
   // Frame rendering
 
 
-  protected void beginDraw(boolean clear) {
+  protected void beginDraw(boolean clear0) {
   }
 
 
-  protected void endDraw(boolean clear0) {
-    if (!clear0 && isFBOBacked() && !isMultisampled()) {
+  protected void endDraw(boolean clear) {
+    if (!clear && isFBOBacked() && !isMultisampled()) {
       // Draw the back texture into the front texture, which will be used as
-      // front texture in the next frame. Otherwise flickering will occur if
+      // back texture in the next frame. Otherwise flickering will occur if
       // the sketch uses "incremental drawing" (background() not called).
       frontFBO.bind(gl);
       gl.glDisable(GL.GL_BLEND);
