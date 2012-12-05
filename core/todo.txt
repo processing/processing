@@ -346,7 +346,7 @@ colorCalc() methods added to PShape.. should just be used from PGraphics
 xml tweaks
 _ beginning slash in getChild() threw an NPE
 _ do we need a trim() method for XML?
-_ isWhitespace() method for nodes?
+_ isWhitespace() method for nodes? (that's the capitalization used in Character)
 _ XML toString(0) means no indents or newlines
 _   but no way to remove indents and still have newlines... 
 _   toString(-1)? a new method?
