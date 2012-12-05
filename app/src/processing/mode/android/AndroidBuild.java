@@ -90,7 +90,7 @@ class AndroidBuild extends JavaBuild {
     if (pkg.startsWith("org.json.")) return true;
     if (pkg.startsWith("org.w3c.dom.")) return true;
     if (pkg.startsWith("org.xml.sax.")) return true;
-    
+
     if (pkg.startsWith("processing.core.")) return true;
     if (pkg.startsWith("processing.data.")) return true;
     if (pkg.startsWith("processing.event.")) return true;
@@ -143,8 +143,8 @@ class AndroidBuild extends JavaBuild {
       writeBuildXML(buildFile, sketch.getName());
       writeProjectProps(new File(tmpFolder, "project.properties"));
       writeLocalProps(new File(tmpFolder, "local.properties"));
-      
-      final File resFolder = new File(tmpFolder, "res"); 
+
+      final File resFolder = new File(tmpFolder, "res");
       writeRes(resFolder, sketchClassName);
 
       // new location for SDK Tools 17: /opt/android/tools/proguard/proguard-android.txt
@@ -169,7 +169,7 @@ class AndroidBuild extends JavaBuild {
       if (sketchDataFolder.exists()) {
         Base.copyDir(sketchDataFolder, assetsFolder);
       }
-      
+
       // Do the same for the 'res' folder.
       // http://code.google.com/p/processing/issues/detail?id=767
       final File sketchResFolder = new File(sketch.getFolder(), "res");
@@ -385,8 +385,8 @@ class AndroidBuild extends JavaBuild {
     consoleLogger.setErrorPrintStream(System.err);
     consoleLogger.setOutputPrintStream(System.out);  // ? uncommented before
     // WARN, INFO, VERBOSE, DEBUG
-    consoleLogger.setMessageOutputLevel(Project.MSG_ERR);
-//    consoleLogger.setMessageOutputLevel(Project.MSG_INFO);
+    //    consoleLogger.setMessageOutputLevel(Project.MSG_ERR);
+    consoleLogger.setMessageOutputLevel(Project.MSG_INFO);
 //    consoleLogger.setMessageOutputLevel(Project.MSG_DEBUG);
     p.addBuildListener(consoleLogger);
 
@@ -400,8 +400,8 @@ class AndroidBuild extends JavaBuild {
     final ByteArrayOutputStream outb = new ByteArrayOutputStream();
     final PrintStream outp = new PrintStream(outb);
     errorLogger.setOutputPrintStream(outp);
-//    errorLogger.setMessageOutputLevel(Project.MSG_INFO);
-    errorLogger.setMessageOutputLevel(Project.MSG_DEBUG);
+    errorLogger.setMessageOutputLevel(Project.MSG_INFO);
+    //    errorLogger.setMessageOutputLevel(Project.MSG_DEBUG);
     p.addBuildListener(errorLogger);
 
     try {
@@ -442,8 +442,6 @@ class AndroidBuild extends JavaBuild {
       outPile.split(System.getProperty("line.separator"));
     final String[] errLines =
       errPile.split(System.getProperty("line.separator"));
-//    System.err.println("lines are:");
-//    PApplet.println(outLines);
 
     for (final String line : outLines) {
       final String javacPrefix = "[javac]";
@@ -459,7 +457,8 @@ class AndroidBuild extends JavaBuild {
 //          PApplet.println(pieces);
           String fileName = pieces[1];
           // remove the path from the front of the filename
-          fileName = fileName.substring(fileName.lastIndexOf('/') + 1);
+          //fileName = fileName.substring(fileName.lastIndexOf('/') + 1);
+          fileName = fileName.substring(fileName.lastIndexOf(File.separatorChar) + 1);
           final int lineNumber = PApplet.parseInt(pieces[2]) - 1;
 //          PApplet.println("looking for " + fileName + " line " + lineNumber);
           SketchException rex = placeException(pieces[3], fileName, lineNumber);
