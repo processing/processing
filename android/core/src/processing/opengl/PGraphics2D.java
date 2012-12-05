@@ -120,7 +120,7 @@ public class PGraphics2D extends PGraphicsOpenGL {
 
   @Override
   protected void defaultPerspective() {
-    super.ortho(-width/2, +width/2, -height/2, +height/2, -1, +1);
+    super.ortho(0, width, 0, height, -1, +1);
   }
 
 

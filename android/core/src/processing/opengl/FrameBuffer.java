@@ -183,12 +183,14 @@ public class FrameBuffer implements PConstants {
     pg.popFramebuffer();
   }
 
-  public void copy(FrameBuffer dest) {
+  public void copy(FrameBuffer dest, FrameBuffer current) {
     pgl.bindFramebuffer(PGL.READ_FRAMEBUFFER, this.glFbo);
     pgl.bindFramebuffer(PGL.DRAW_FRAMEBUFFER, dest.glFbo);
     pgl.blitFramebuffer(0, 0, this.width, this.height,
                           0, 0, dest.width, dest.height,
                           PGL.COLOR_BUFFER_BIT, PGL.NEAREST);
+    pgl.bindFramebuffer(PGL.READ_FRAMEBUFFER, current.glFbo);
+    pgl.bindFramebuffer(PGL.DRAW_FRAMEBUFFER, current.glFbo);
   }
 
   public void bind() {
@@ -308,6 +310,24 @@ public class FrameBuffer implements PConstants {
     pgl.validateFramebuffer();
 
     pg.popFramebuffer();
+  }
+
+
+  public int getDefaultReadBuffer() {
+    if (screenFb) {
+      return pgl.getDefaultReadBuffer();
+    } else {
+      return PGL.COLOR_ATTACHMENT0;
+    }
+  }
+
+
+  public int getDefaultDrawBuffer() {
+    if (screenFb) {
+      return pgl.getDefaultDrawBuffer();
+    } else {
+      return PGL.COLOR_ATTACHMENT0;
+    }
   }
 
 

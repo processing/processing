@@ -34,6 +34,8 @@ import java.util.HashMap;
  * and a fragment shader. Based on the GLSLShader class from GLGraphics, which
  * in turn was originally based in the code by JohnG:
  * http://processing.org/discourse/beta/num_1159494801.html
+ *
+ * @webref rendering:shaders
  */
 public class PShader {
   // shaders constants
@@ -113,9 +115,9 @@ public class PShader {
    * Creates a shader program using the specified vertex and fragment
    * shaders.
    *
-   * @param parent PApplet
-   * @param vertexFN String
-   * @param fragmentFN String
+   * @param parent the parent program
+   * @param vertFilename name of the vertex shader
+   * @param fragFilename name of the fragment shader
    */
   public PShader(PApplet parent, String vertFilename, String fragFilename) {
     this.parent = parent;
@@ -132,7 +134,10 @@ public class PShader {
     glFragment = 0;
   }
 
-
+  /**
+   * @param vertURL network location of the vertex shader
+   * @param fragURL network location of the fragment shader
+   */
   public PShader(PApplet parent, URL vertURL, URL fragURL) {
     this.parent = parent;
     pgMain = (PGraphicsOpenGL) parent.g;
@@ -216,22 +221,33 @@ public class PShader {
     return bound;
   }
 
-
+  /**
+   * @webref rendering:shaders
+   * @brief Sets a variable within the shader
+   * @param name the name of the uniform variable to modify
+   * @param x first component of the variable to modify
+   */
   public void set(String name, int x) {
     setUniformImpl(name, UniformValue.INT1, new int[] { x });
   }
 
-
+  /**
+   * @param y second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)
+   */
   public void set(String name, int x, int y) {
     setUniformImpl(name, UniformValue.INT2, new int[] { x, y });
   }
 
-
+  /**
+   * @param z third component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[3], vec3)
+   */
   public void set(String name, int x, int y, int z) {
     setUniformImpl(name, UniformValue.INT3, new int[] { x, y, z });
   }
 
-
+  /**
+   * @param w fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
+   */
   public void set(String name, int x, int y, int z, int w) {
     setUniformImpl(name, UniformValue.INT4, new int[] { x, y, z });
   }
@@ -256,7 +272,9 @@ public class PShader {
     setUniformImpl(name, UniformValue.FLOAT4, new float[] { x, y, z, w });
   }
 
-
+  /**
+   * @param vec modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.
+   */
   public void set(String name, PVector vec) {
     setUniformImpl(name, UniformValue.FLOAT3,
                    new float[] { vec.x, vec.y, vec.z });
@@ -267,7 +285,9 @@ public class PShader {
     set(name, vec, 1);
   }
 
-
+  /**
+   * @param ncoords number of coordinates per element, max 4
+   */
   public void set(String name, int[] vec, int ncoords) {
     if (ncoords == 1) {
       setUniformImpl(name, UniformValue.INT1VEC, vec);
@@ -308,7 +328,9 @@ public class PShader {
     }
   }
 
-
+  /**
+   * @param mat matrix of values
+   */
   public void set(String name, PMatrix2D mat) {
     float[] matv = { mat.m00, mat.m01,
                      mat.m10, mat.m11 };
@@ -320,7 +342,9 @@ public class PShader {
     set(name, mat, false);
   }
 
-
+  /**
+   * @param use3x3 enforces the matrix is 3 x 3
+   */
   public void set(String name, PMatrix3D mat, boolean use3x3) {
     if (use3x3) {
       float[] matv = { mat.m00, mat.m01, mat.m02,
@@ -336,7 +360,9 @@ public class PShader {
     }
   }
 
-
+  /**
+   * @param tex sets the sampler uniform variable to read from this image texture
+   */
   public void set(String name, PImage tex) {
     setUniformImpl(name, UniformValue.SAMPLER2D, tex);
   }

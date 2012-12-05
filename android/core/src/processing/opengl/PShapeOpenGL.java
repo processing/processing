@@ -33,7 +33,7 @@ import processing.core.PShape;
 import processing.core.PVector;
 import processing.opengl.PGraphicsOpenGL.LineShader;
 import processing.opengl.PGraphicsOpenGL.PointShader;
-import processing.opengl.PGraphicsOpenGL.PolyShader;
+import processing.opengl.PGraphicsOpenGL.BaseShader;
 import processing.opengl.PGraphicsOpenGL.IndexCache;
 import processing.opengl.PGraphicsOpenGL.InGeometry;
 import processing.opengl.PGraphicsOpenGL.TessGeometry;
@@ -349,6 +349,10 @@ public class PShapeOpenGL extends PShape {
     normalZ = 1;
 
     normalMode = NORMAL_MODE_AUTO;
+
+    // To make sure that the first vertex is marked as a break.
+    // Same behavior as in the immediate mode.
+    breakShape = true;
 
     if (family == GROUP) {
       // GROUP shapes are always marked as ended.
@@ -895,6 +899,7 @@ public class PShapeOpenGL extends PShape {
       return;
     }
     openContour = true;
+    breakShape = true;
   }
 
 
@@ -910,7 +915,6 @@ public class PShapeOpenGL extends PShape {
       return;
     }
     openContour = false;
-    breakShape = true;
   }
 
 
@@ -4306,7 +4310,7 @@ public class PShapeOpenGL extends PShape {
     }
 
     boolean renderingFill = false, renderingStroke = false;
-    PolyShader shader = null;
+    BaseShader shader = null;
     IndexCache cache = tessGeo.polyIndexCache;
     for (int n = firstPolyIndexCache; n <= lastPolyIndexCache; n++) {
       if (is3D() || (tex != null && (firstLineIndexCache == -1 ||
