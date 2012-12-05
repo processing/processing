@@ -57,6 +57,10 @@ X change output from processing-java to be UTF-8 encoded
 X   http://code.google.com/p/processing/issues/detail?id=1418
 X Lauch programs in 32-bit mode / 64-bit mode ignored
 X   http://code.google.com/p/processing/issues/detail?id=1426
+X double textMode() error message with P3D:
+X   textMode(SCREEN) has been removed from Processing 2.0.
+X   textMode(256) is not supported by this renderer.
+X prevent errors on first line of a new tab from highlighting on previous tab
 
 earlier
 X The sketch name can't begin with '_' (underscore)
@@ -72,10 +76,6 @@ _ add to build.xml
 _   insert "@SuppressWarnings({"unused", "cast"})" into
 _   JavaLexer, JavaRecognizer, PdeLexer, PdeRecognizer
 _   from processing/mode/java/preproc/
-
-_ double textMode() error message with P3D:
-textMode(SCREEN) has been removed from Processing 2.0.
-textMode(256) is not supported by this renderer.
 
 2.0 FINAL / casey requests
 _ errors that cannot be placed (i.e. missing brace) 
