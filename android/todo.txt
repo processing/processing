@@ -18,6 +18,9 @@ o   http://code.google.com/p/processing/issues/detail?id=234
 X values for pmouseX/Y aren't great
 X   Examples > Topics > Drawing > Continuous Lines shows gaps
 X   http://code.google.com/p/processing/issues/detail?id=238
+X debug information not coming through (Windows only?)
+X   http://code.google.com/p/processing/issues/detail?id=1440
+X "no library found" with android.text.format (so android.* is a problem)
 
 cleaning/earlier
 A Defects in the tessellation of SVG shapes in A3D
@@ -270,6 +273,7 @@ _ images resized with default renderer on Android are pixelated
 _   http://code.google.com/p/processing/issues/detail?id=552
 
 _ implement tap detection and set correct click count for mouseClicked()
+_   mouseClicked is currently not fired at all (no direct match on Android)
 _   http://code.google.com/p/processing/issues/detail?id=215
 _ implement multiple pointers and multi-touch
 _   http://code.google.com/p/processing/issues/detail?id=243

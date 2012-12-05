@@ -62,6 +62,10 @@ earlier
 X The sketch name can't begin with '_' (underscore)
 X   http://code.google.com/p/processing/issues/detail?id=859
 
+_ crashes in PdePreprocessor.scrubComments(PdePreprocessor.java:321)
+_   String t = "*/*";
+_   http://code.google.com/p/processing/issues/detail?id=1435
+
 https://processing-js.lighthouseapp.com/
 
 _ add to build.xml
@@ -925,6 +929,10 @@ _   fonts were showing up with very different fatness
 _ check on new JDK and how it works on OS X
 _   http://jdk7.java.net/macportpreview/
 _ retina support
+_   also this? 
+<key>NSHighResolutionCapable</key>
+<string>true</string>
+_   someone else:
 Have you added an NSPrincipalClass to your Info.plist, and are using a JavaApplicationStub with 64-bit?
 <key>NSPrincipalClass</key>
 <string>NSApplication</string>
