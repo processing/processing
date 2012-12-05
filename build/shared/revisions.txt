@@ -93,6 +93,11 @@ PROCESSING 2.0b7 (REV 0215) - 25 November 2012
 
 [ bug fixes ] 
 
++ Debug information wasn't being passed through to the console. 
+  In addition, on Windows, error reporting wasn't working properly
+  (couldn't find the right line or report the error correctly).
+  http://code.google.com/p/processing/issues/detail?id=1440
+
 + mouseButton not being set properly in mouseClicked.
   http://code.google.com/p/processing/issues/detail?id=1350
 
