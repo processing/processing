@@ -38,7 +38,6 @@ public class DebugToolbar extends JavaToolbar {
   // preserve original button id's, but re-define so they are accessible 
   // (they are used by DebugEditor, so they want to be public)
 
-  @SuppressWarnings("hiding")
   static protected final int RUN    = 100; // change this, to be able to get it's name via getTitle()
   static protected final int DEBUG = JavaToolbar.RUN;
 
@@ -47,16 +46,11 @@ public class DebugToolbar extends JavaToolbar {
   static protected final int TOGGLE_BREAKPOINT = 103;
   static protected final int TOGGLE_VAR_INSPECTOR = 104;
 
-  @SuppressWarnings("hiding")
   static protected final int STOP   = JavaToolbar.STOP;
 
-  @SuppressWarnings("hiding")
   static protected final int NEW    = JavaToolbar.NEW;
-  @SuppressWarnings("hiding")
   static protected final int OPEN   = JavaToolbar.OPEN;
-  @SuppressWarnings("hiding")
   static protected final int SAVE   = JavaToolbar.SAVE;
-  @SuppressWarnings("hiding")
   static protected final int EXPORT = JavaToolbar.EXPORT;
 
 
