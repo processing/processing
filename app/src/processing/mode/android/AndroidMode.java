@@ -62,6 +62,13 @@ public class AndroidMode extends JavaMode {
   public String getTitle() {
     return "Android";
   }
+  
+  
+  public File[] getKeywordFiles() {
+    return new File[] { 
+      Base.getContentFile("modes/java/keywords.txt") 
+    };
+  }
 
 
   public File[] getExampleCategoryFolders() {
