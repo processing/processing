@@ -68,13 +68,21 @@ public class ModeContribution extends InstalledContribution {
 
 
 //  static public ModeContribution load(Base base, File folder, String searchName) {
-  static public ModeContribution load(Base base, File folder, String searchName) {
+  static public ModeContribution load(Base base, File folder, 
+                                      String searchName) {
     try {
       return new ModeContribution(base, folder, searchName);
     } catch (IgnorableException ig) {
       Base.log(ig.getMessage());
     } catch (Exception e) {
-      e.printStackTrace();
+      if (searchName == null) {
+        e.printStackTrace();
+      } else {
+        // For the built-in modes, don't print the exception, just log it 
+        // for debugging. This should be impossible for most users to reach, 
+        // but it helps us load experimental mode when it's available.
+        Base.log("ModeContribution.load() failed for " + searchName, e);
+      }
     }
     return null;
   }
