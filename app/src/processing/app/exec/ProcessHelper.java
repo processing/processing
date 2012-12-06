@@ -72,6 +72,17 @@ public class ProcessHelper {
    * @throws IOException
    */
   public ProcessResult execute() throws InterruptedException, IOException {
+    return execute(null);
+  }
+  
+  
+  /**
+   * Blocks execution, also passes a single line to the command's input stream.
+   * @return exit value of process
+   * @throws InterruptedException
+   * @throws IOException
+   */
+  public ProcessResult execute(String outgoing) throws InterruptedException, IOException {
     final StringWriter outWriter = new StringWriter();
     final StringWriter errWriter = new StringWriter();
     final long startTime = System.currentTimeMillis();
@@ -84,6 +95,16 @@ public class ProcessHelper {
       Runtime.getRuntime().exec(cmd) :
       Runtime.getRuntime().exec(cmd, new String[] { }, dir);
     ProcessRegistry.watch(process);
+    
+    // Write a single line of output to the app... used to write 'no' to 'create avd'
+    if (outgoing != null) {
+      OutputStream os = process.getOutputStream();
+      PrintWriter pw = new PrintWriter(new OutputStreamWriter(os));
+      pw.println(outgoing);
+      pw.flush();
+      pw.close();
+    }
+
     try {
       String title = prettyCommand;
       new StreamPump(process.getInputStream(), "out: " + title).addTarget(outWriter).start();
