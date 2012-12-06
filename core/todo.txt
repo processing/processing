@@ -91,10 +91,18 @@ X   also store the default composite instance and use that on blendMode(BLEND)
 X disable Quartz renderer to fix line blending problem from Casey
 X   might make sketches run more slowly
 X fix double error report about textMode(SCREEN)
+X how to handle stroke/fill separation in OpenGL
+X   hint(DISABLE_OPTIMIZED_STROKE)
+X   http://code.google.com/p/processing/issues/detail?id=1302
+X   change name for hint() that controls stroke/fill combo:
 
 _ implement mousePressed(Event) etc
 _   better to do this instead of bringing back the magic event
+_   or implementing the magic event on Android
 _ add mouse wheel support to 2.0 event system
+_   this is fairly messy since desktop and JS behave a little differently
+_   wheel event should subclass mouse (since position still relevant)
+_   might be more effort than it's worth?
 _   http://code.google.com/p/processing/issues/detail?id=1423
 
 andres (cleanup)
@@ -235,14 +243,11 @@ _     so that it could avoid quitting if the sketch hasn't been stopped
 _     or if the sketch window is foremost
 _     maybe a hack where a new menubar is added? 
 
-_ how to handle stroke/fill separation in OpenGL
-_   http://code.google.com/p/processing/issues/detail?id=1302
+_ shader syntax (Andres request)
+_   might also need a define inside the shader to control what type it is
 
 _ createShape() not yet implemented for Java2D
 _   http://code.google.com/p/processing/issues/detail?id=1400
-
-_ shader syntax (Andres request)
-_   might also need a define inside the shader to control what type it is
 
 _ look into json and how it would work
 1) we bring back getFloatAttribute() et al., and make getFloat() be equivalent to parseFloat(xml.getContent())
@@ -296,6 +301,7 @@ _ add "CGAffineTransformInvert: singular matrix" problem to the Wiki
 _   http://code.google.com/p/processing/issues/detail?id=1363
 
 _ heading2D()? weird.. angle?
+_   http://toxiclibs.org/docs/core/toxi/geom/Vec3D.html
 _   http://code.google.com/p/processing/issues/detail?id=987
 
 _ "translate, or this variation of it" when using text(s, x, y, z) accidentally
@@ -306,9 +312,6 @@ _   http://code.google.com/p/processing/issues/detail?id=1353
 
 _ Default Renderer slow on retina displays
 _   http://code.google.com/p/processing/issues/detail?id=1262
-
-_ change name for hint() that controls stroke/fill combo
-_   hint(DISABLE_OPTIMIZED_STROKE)
 
 _ hint(OPENGL_ERRORS) should be the opposite to enable the reporting, no?
 
