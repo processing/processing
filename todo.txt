@@ -60,7 +60,13 @@ X   http://code.google.com/p/processing/issues/detail?id=1426
 X double textMode() error message with P3D:
 X   textMode(SCREEN) has been removed from Processing 2.0.
 X   textMode(256) is not supported by this renderer.
-X prevent errors on first line of a new tab from highlighting on previous tab
+X errors that cannot be placed (i.e. missing brace) 
+X   this makes things to jump to the last tab
+X   also happens with stray characters sometimes...
+X   casey: accidentally typing a letter at the top of the tab
+X     throws you onto the end of the last tab... exactly the worst location
+o   if the error cannot be placed, just don't change tabs/placement at all
+X   prevent errors on first line of a new tab from highlighting on previous tab
 
 earlier
 X The sketch name can't begin with '_' (underscore)
@@ -76,18 +82,11 @@ _ add to build.xml
 _   insert "@SuppressWarnings({"unused", "cast"})" into
 _   JavaLexer, JavaRecognizer, PdeLexer, PdeRecognizer
 _   from processing/mode/java/preproc/
-
-2.0 FINAL / casey requests
-_ errors that cannot be placed (i.e. missing brace) 
-_   this makes things to jump to the last tab
-_   also happens with stray characters sometimes...
-_   casey: accidentally typing a letter at the top of the tab
-_     throws you onto the end of the last tab... exactly the worst location
-_   if the error cannot be placed, just don't change tabs/placement at all
+_ also add means to move changes from desktop to Android (and vice-versa)
 
 _ include debug mode as 'experimental'?
 _   DebugMode throwing exception about breakpoints when trying to save
-_   what to call it?
+_   what to call it? change java2 folder name?
 
 _ if RuntimeException thrown, needs to check if it's a wrapped exception
 _   for instance, if there's a crash inside makeGraphics()

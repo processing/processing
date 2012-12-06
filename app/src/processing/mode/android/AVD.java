@@ -36,6 +36,7 @@ public class AVD {
     "found at http://android.processing.org and try again.";
 
   static final String DEFAULT_SKIN = "WVGA800";
+  static final String DEFAULT_SDCARD_SIZE = "64M";
 
   /** Name of this avd. */
   protected String name;
@@ -45,10 +46,9 @@ public class AVD {
 
   /** Default virtual device used by Processing. */
   static public final AVD defaultAVD =
-    new AVD(//"Processing-Android-" + AndroidBuild.sdkVersion,
-            "Processing-0" + Base.REVISION,
-            "Google Inc.:Google APIs:" + AndroidBuild.sdkVersion);
-            //AndroidBuild.sdkTarget);
+    new AVD("Processing-0" + Base.REVISION,
+            "android-" + AndroidBuild.sdkVersion);
+//            "Google Inc.:Google APIs:" + AndroidBuild.sdkVersion);
 
   static ArrayList<String> avdList;
   static ArrayList<String> badList;
@@ -134,8 +134,9 @@ public class AVD {
     final String[] params = {
       sdk.getAndroidToolPath(),
       "create", "avd",
-      "-n", name, "-t", target,
-      "-c", "64M",
+      "-n", name, 
+      "-t", target,
+      "-c", DEFAULT_SDCARD_SIZE,
       "-s", DEFAULT_SKIN
     };
 
@@ -144,7 +145,10 @@ public class AVD {
 
     final ProcessHelper p = new ProcessHelper(params);
     try {
-      final ProcessResult createAvdResult = p.execute();
+      // Passes 'no' to "Do you wish to create a custom hardware profile [no]"
+//      System.out.println("CREATE AVD STARTING");
+      final ProcessResult createAvdResult = p.execute("no");
+//      System.out.println("CREATE AVD HAS COMPLETED");
       if (createAvdResult.succeeded()) {
         return true;
       }
