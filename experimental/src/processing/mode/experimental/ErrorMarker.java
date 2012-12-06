@@ -1,4 +1,4 @@
-package processing.mode.java2;
+package processing.mode.experimental;
 /**
 	 * Error markers displayed on the Error Bar.
 	 * 

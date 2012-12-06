@@ -1,4 +1,4 @@
-package processing.mode.java2;
+package processing.mode.experimental;
 
 /*
  Part of the XQMode project - https://github.com/Manindra29/XQMode
