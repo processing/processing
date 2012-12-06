@@ -91,6 +91,10 @@ PROCESSING 2.0b7 (REV 0215) - 25 November 2012
   function to switch back to the old method:
   http://processing.googlecode.com/svn/trunk/processing/build/javadoc/core/processing/core/PApplet.html#useQuartz
 
++ Remove requirement for Google APIs in Android mode.
+  http://code.google.com/p/processing/issues/detail?id=613
+
+
 [ bug fixes ] 
 
 + mouseButton not being set properly in mouseClicked.

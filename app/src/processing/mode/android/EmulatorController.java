@@ -53,7 +53,9 @@ class EmulatorController {
       "emulator",
       "-avd", AVD.defaultAVD.name,
       "-port", portString,
-      "-no-boot-anim"
+//      "-no-boot-anim",  // does this do anything?
+      // http://code.google.com/p/processing/issues/detail?id=1059
+//      "-gpu", "on"  // enable OpenGL
     };
     //System.err.println("EmulatorController: Launching emulator");
     if (Base.DEBUG) {

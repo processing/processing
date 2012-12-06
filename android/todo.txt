@@ -21,6 +21,9 @@ X   http://code.google.com/p/processing/issues/detail?id=238
 X debug information not coming through (Windows only?)
 X   http://code.google.com/p/processing/issues/detail?id=1440
 X "no library found" with android.text.format (so android.* is a problem)
+X Remove requirement for Google APIs in Android mode
+X   http://code.google.com/p/processing/issues/detail?id=613
+_   update Wiki to reflect the change
 
 cleaning/earlier
 A Defects in the tessellation of SVG shapes in A3D
@@ -58,18 +61,6 @@ o   internally, PApplet might subclass it for the pointers
 o   but queueing needs to work
 X opting to take a step backwards on the motion event handling
 o write a little stub code for people who want to use motionX/Y/etc
-
-
-emulator
-_ check into better emulator/updates necessary
-_   also options for enabling the GPU
-_   http://developer.android.com/tools/devices/emulator.html
-_   http://android-developers.blogspot.com/2012/04/faster-emulator-with-better-hardware.html
-_ no ES2 in the emulator, and no error reported in the PDE
-_   http://code.google.com/p/processing/issues/detail?id=1059
-_   problem is probably that the error comes via E/AndroidRuntime
-_   java.lang.RuntimeException: Unable to start activity ComponentInfo{processing.test.fisheye/processing.test.fisheye.FishEye}: java.lang.RuntimeException: P3D: OpenGL ES 2.0 is not supported by this device.
-
 
 _ NullPointerException in AndroidBuild.writeLocalProps(AndroidBuild.java:458)
 _   prompts for SDK, works; then after restart breaks again
@@ -315,11 +306,24 @@ W/System.err(  242): 	at android.app.ApplicationContext.openFileOutput(Applicati
 W/System.err(  242): 	at android.content.ContextWrapper.openFileOutput(ContextWrapper.java:158)
 W/System.err(  242): 	at processing.core.PApplet.createOutput(PApplet.java:3677)
 
-P2 _ move the android tools into its own source package in SVN
-P2 _   started, but needs proper Tool or Mode packaging
-P2 _   http://code.google.com/p/processing/issues/detail?id=206
-P2 _ implement method for selecting the AVD
-P2 _   http://code.google.com/p/processing/issues/detail?id=208
+P1
+_ no ES2 in the emulator, and no error reported in the PDE
+_   problem is probably that the error comes via E/AndroidRuntime
+_   java.lang.RuntimeException: Unable to start activity ComponentInfo{processing.test.fisheye/processing.test.fisheye.FishEye}: java.lang.RuntimeException: P3D: OpenGL ES 2.0 is not supported by this device.
+_   http://developer.android.com/tools/devices/emulator.html
+_   http://code.google.com/p/processing/issues/detail?id=1059
+
+P2
+_ move the Android tools into its own source package in SVN
+_   started, but needs proper Tool or Mode packaging
+_   http://code.google.com/p/processing/issues/detail?id=206
+_ implement method for selecting the AVD
+_   http://code.google.com/p/processing/issues/detail?id=208
+_ implement means to use Intel version of the emulator
+_   need to verify if this is much faster or not
+_   http://developer.android.com/tools/devices/emulator.html
+_   http://android-developers.blogspot.com/2012/04/faster-emulator-with-better-hardware.html
+
 P3 _ for now, only runs on the first device (findDevice()) found
 P3 _   --> implement selector to choose the default device for debugging
 P3 _   http://code.google.com/p/processing/issues/detail?id=207
@@ -341,8 +345,6 @@ P4 _ don't require android tools to be installed already
 P4 _   or implement automatic download/install of android tools
 P4 _   http://code.google.com/p/processing/issues/detail?id=203
 
-EH _ Remove requirement for Google APIs in Android mode
-EH _   http://code.google.com/p/processing/issues/detail?id=613
 PM _ Error for "android create avd" when the AVD is already installed
 PM -   http://code.google.com/p/processing/issues/detail?id=614
 
