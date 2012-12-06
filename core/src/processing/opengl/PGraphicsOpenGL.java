@@ -1946,10 +1946,10 @@ public class PGraphicsOpenGL extends PGraphics {
     } else if (which == ENABLE_DEPTH_MASK) {
       flush();
       pgl.depthMask(true);
-    } else if (which == DISABLE_ACCURATE_2D) {
+    } else if (which == ENABLE_OPTIMIZED_STROKE) {
       flush();
       setFlushMode(FLUSH_WHEN_FULL);
-    } else if (which == ENABLE_ACCURATE_2D) {
+    } else if (which == DISABLE_OPTIMIZED_STROKE) {
       flush();
       setFlushMode(FLUSH_CONTINUOUSLY);
     } else if (which == DISABLE_STROKE_PERSPECTIVE) {
@@ -5910,7 +5910,7 @@ public class PGraphicsOpenGL extends PGraphics {
     // use <= since that's what processing.core does
     pgl.depthFunc(PGL.LEQUAL);
 
-    if (hints[ENABLE_ACCURATE_2D]) {
+    if (hints[DISABLE_OPTIMIZED_STROKE]) {
       flushMode = FLUSH_CONTINUOUSLY;
     } else {
       flushMode = FLUSH_WHEN_FULL;
@@ -7029,7 +7029,7 @@ public class PGraphicsOpenGL extends PGraphics {
         setUniformValue(perspectiveLoc, 0);
       }
 
-      if (pgCurrent.getHint(ENABLE_ACCURATE_2D)) {
+      if (pgCurrent.getHint(DISABLE_OPTIMIZED_STROKE)) {
         setUniformValue(scaleLoc, 1.0f, 1.0f, 1.0f);
       } else {
         if (usingOrthoProjection) {

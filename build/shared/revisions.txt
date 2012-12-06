@@ -27,6 +27,14 @@ PROCESSING 2.0b7 (REV 0215) - 25 November 2012
   If we're missing anything that's not covered in the reference, please
   let us know via the bugs database.
 
++ hint(ENABLE_ACCURATE_2D) has been renamed to hint(DISABLE_OPTIMIZED_STROKE)
+  to better reflect what it actually does. Reference has been added.
+  OpenGL drawing is significantly faster when the fill and stroke of a shape
+  is drawn separately. This leads to visual artifacts on shapes where both
+  fill and stroke is enabled (not a great idea in 3D anyway), so this option
+  fixes the visual artifacts at the expense of speed.
+  http://code.google.com/p/processing/issues/detail?id=1302
+
 + Sketch names can no longer begin with underscores (fixes an Android
   compatibility issue). This was changed in recent releases, but missing here.
   http://code.google.com/p/processing/issues/detail?id=859
