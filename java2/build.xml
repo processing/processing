@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<project name="Processing PDE" default="build">
+
+  <target name="clean" description="Clean the build directories">
+    <delete dir="bin" />
+    <delete file="mode/experimental.jar" />
+  </target>
+
+  <target name="compile" description="Compile sources">
+    <condition property="core-built">
+      <available file="../core/library/core.jar" />
+    </condition>
+    <fail unless="core-built" 
+	  message="Please build the core library first and make sure it sits in ../core/library/core.jar" />
+
+    <mkdir dir="bin" />
+
+    <!-- ant seems to nuke ${java.home} for some reason, pointing at the JRE
+	 subfolder instead of the actual JDK found at JAVA_HOME. 
+	 To avoid this, we grab the actual JAVA_HOME environment variable 
+	 and use that to specify the location of tools.jar. -->
+    <!-- if someone is better with ant please help clean this up -->
+    <property environment="env" />
+    <property name="java_home" value="${env.JAVA_HOME}" />
+    <available file="${env.JAVA_HOME}/lib/tools.jar"
+	       property="java_tools_found" />
+
+    <condition property="linux">
+      <and>
+	<os family="unix" />
+	<not>
+	  <os family="mac" />
+	</not>
+      </and>
+    </condition>
+    <fail if="linux" unless="java_tools_found" 
+	  message="The JAVA_HOME variable must be set to the location of a full JDK. For instance, on Ubuntu Linux, this might be /usr/lib/jvm/java-6-sun." />
+
+    <condition property="windows">
+      <os family="windows" />
+    </condition>
+    <fail if="windows" unless="java_tools_found" 
+	  message="The JAVA_HOME variable must be set to the location of a full JDK. For instance, on Windows, this might be c:\jdk1.6.0_19." />
+
+    <javac source="1.6" 
+	   target="1.6" 
+	   destdir="bin" 
+	   encoding="UTF-8" 
+	   includeAntRuntime="false" 
+	   classpath="../core/library/core.jar; ${env.JAVA_HOME}/lib/tools.jar; ../app/lib/ant.jar; ../app/lib/ant-launcher.jar; ../app/lib/antlr.jar; ../app/lib/apple.jar; ../app/lib/jdt-core.jar; ../app/lib/jna.jar; ../app/lib/org-netbeans-swing-outline.jar; ../app/pde.jar; mode/CompilationChecker.jar; mode/com.ibm.icu_4.4.2.v20110823.jar; mode/jdi.jar; mode/jdimodel.jar; mode/org.eclipse.core.contenttype_3.4.200.v20120523-2004.jar; mode/org.eclipse.core.jobs_3.5.300.v20120622-204750.jar; mode/org.eclipse.core.resources_3.8.1.v20120802-154922.jar; mode/org.eclipse.core.runtime_3.8.0.v20120521-2346.jar; mode/org.eclipse.equinox.common_3.6.100.v20120522-1841.jar; mode/org.eclipse.equinox.preferences_3.5.0.v20120522-1841.jar; mode/org.eclipse.jdt.core_3.8.2.v20120814-155456.jar; mode/org.eclipse.jdt.debug_3.7.101.v20120725-115645.jar; mode/org.eclipse.osgi_3.8.1.v20120830-144521.jar; mode/org.eclipse.text_3.5.200.v20120523-1310.jar"
+	   debug="on">
+      <src path="src" />
+    </javac>
+  </target>
+
+  <target name="build" depends="compile" description="Build Experimental mode">
+    <jar basedir="bin" destfile="mode/experimental.jar" />
+  </target>
+</project>
