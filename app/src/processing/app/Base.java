@@ -277,15 +277,19 @@ public class Base {
       ModeContribution.load(this, getContentFile("modes/javascript"),
                             "processing.mode.javascript.JavaScriptMode").getMode();
     
-    if (true) {
-      coreModes = new Mode[] { javaMode, androidMode, javaScriptMode };
+    coreModes = new Mode[] { javaMode, androidMode, javaScriptMode };
     
-    } else {
-      Mode debugMode = 
-        ModeContribution.load(this, getContentFile("modes/java2"),
-          "processing.mode.java2.DebugMode").getMode();
-      coreModes = new Mode[] { javaMode, androidMode, javaScriptMode, debugMode };
+    // check for the new mode in case it's available
+//    try {
+//      Class.forName("processing.mode.java2.DebugMode");
+    ModeContribution experimentalContrib =  
+      ModeContribution.load(this, getContentFile("modes/java2"), 
+        "processing.mode.java2.DebugMode");
+    if (experimentalContrib != null) {
+      Mode experimentalMode = experimentalContrib.getMode();
+      coreModes = new Mode[] { javaMode, androidMode, javaScriptMode, experimentalMode };
     }
+//    } catch (ClassNotFoundException e) { }
 
 //    for (Mode mode : coreModes) {  // already called by load() above
 //      mode.setupGUI();
