@@ -17,8 +17,11 @@
  */
 package processing.mode.java2;
 
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.EventQueue;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -28,8 +31,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.swing.Box;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.border.EtchedBorder;
+import javax.swing.table.TableModel;
 import javax.swing.text.Document;
 import processing.app.*;
 import processing.app.syntax.JEditTextArea;
@@ -43,6 +54,9 @@ import processing.mode.java.JavaEditor;
  * debuggers current line).
  *
  * @author Martin Leopold <m@martinleopold.com>
+ * @author Manindra Moharana &lt;me@mkmoharana.com&gt;
+ * 
+ * 
  */
 public class DebugEditor extends JavaEditor implements ActionListener {
     // important fields from superclass
@@ -85,6 +99,36 @@ public class DebugEditor extends JavaEditor implements ActionListener {
     protected VariableInspector vi; // the variable inspector frame
     protected TextArea ta; // the text area
 
+    
+    protected ErrorBar errorBar;
+    /**
+     * Show Console button
+     */
+    protected XQConsoleToggle btnShowConsole;
+
+    /**
+     * Show Problems button
+     */
+    protected XQConsoleToggle btnShowErrors;
+
+    /**
+     * Scroll pane for Error Table
+     */
+    protected JScrollPane errorTableScrollPane;
+
+    /**
+     * Panel with card layout which contains the p5 console and Error Table
+     * panes
+     */
+    protected JPanel consoleProblemsPane;
+    
+    protected XQErrorTable errorTable;
+    
+    /**
+     * Enable/Disable compilation checking
+     */
+    protected boolean compilationCheckEnabled = true;
+    
     public DebugEditor(Base base, String path, EditorState state, Mode mode) {
         super(base, path, state, mode);
 
@@ -121,6 +165,63 @@ public class DebugEditor extends JavaEditor implements ActionListener {
             dbg.setBreakpoint(lineID);
         }
         getSketch().setModified(false); // setting breakpoints will flag sketch as modified, so override this here
+        
+        checkForJavaTabs();
+        initializeErrorChecker();
+        ta.setECSandThemeforTextArea(errorCheckerService, dmode);
+        addXQModeUI();        
+    }
+    
+    private void addXQModeUI(){
+      
+      // Adding ErrorBar
+      JPanel textAndError = new JPanel();
+      Box box = (Box) textarea.getParent();
+      box.remove(2); // Remove textArea from it's container, i.e Box
+      textAndError.setLayout(new BorderLayout());
+      errorBar =  new ErrorBar(this, textarea.getMinimumSize().height, dmode);
+      textAndError.add(errorBar, BorderLayout.EAST);
+      textarea.setBounds(0, 0, errorBar.getX() - 1, textarea.getHeight());
+      textAndError.add(textarea);
+      box.add(textAndError);
+      
+      // Adding Error Table in a scroll pane
+      errorTableScrollPane = new JScrollPane();
+      errorTable = new XQErrorTable(errorCheckerService);
+      // errorTableScrollPane.setBorder(new EmptyBorder(2, 2, 2, 2));
+      errorTableScrollPane.setBorder(new EtchedBorder());
+      errorTableScrollPane.setViewportView(errorTable);
+
+      // Adding toggle console button
+      consolePanel.remove(2);
+      JPanel lineStatusPanel = new JPanel();
+      lineStatusPanel.setLayout(new BorderLayout());
+      btnShowConsole = new XQConsoleToggle(this,
+          XQConsoleToggle.text[0], lineStatus.getHeight());
+      btnShowErrors = new XQConsoleToggle(this,
+          XQConsoleToggle.text[1], lineStatus.getHeight());
+      btnShowConsole.addMouseListener(btnShowConsole);
+
+      // lineStatusPanel.add(btnShowConsole, BorderLayout.EAST);
+      // lineStatusPanel.add(btnShowErrors);
+      btnShowErrors.addMouseListener(btnShowErrors);
+
+      JPanel toggleButtonPanel = new JPanel(new BorderLayout());
+      toggleButtonPanel.add(btnShowConsole, BorderLayout.EAST);
+      toggleButtonPanel.add(btnShowErrors, BorderLayout.WEST);
+      lineStatusPanel.add(toggleButtonPanel, BorderLayout.EAST);
+      lineStatus.setBounds(0, 0, toggleButtonPanel.getX() - 1,
+          toggleButtonPanel.getHeight());
+      lineStatusPanel.add(lineStatus);
+      consolePanel.add(lineStatusPanel, BorderLayout.SOUTH);
+      lineStatusPanel.repaint();
+
+      // Adding JPanel with CardLayout for Console/Problems Toggle
+      consolePanel.remove(1);
+      consoleProblemsPane = new JPanel(new CardLayout());
+      consoleProblemsPane.add(errorTableScrollPane, XQConsoleToggle.text[1]);
+      consoleProblemsPane.add(console, XQConsoleToggle.text[0]);
+      consolePanel.add(consoleProblemsPane, BorderLayout.CENTER);
     }
 
 //    /**
@@ -244,7 +345,165 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         debugMenu.add(printThreads);
         debugMenu.addSeparator();
         debugMenu.add(toggleVariableInspectorMenuItem);
+        debugMenu.addSeparator();
+        
+        // XQMode menu items
+                
+        JCheckBoxMenuItem item;
+        final DebugEditor thisEditor = this;
+        item = new JCheckBoxMenuItem("Error Checker Enabled");
+        item.setSelected(true);
+        item.addActionListener(new ActionListener() {
+
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            
+            if (!((JCheckBoxMenuItem) e.getSource()).isSelected()) {
+              // unticked Menu Item
+              errorCheckerService.pauseThread();
+              System.out.println(thisEditor.getSketch().getName()
+                  + " - Error Checker paused.");
+              errorBar.errorPoints.clear();
+              errorCheckerService.problemsList.clear();
+              errorCheckerService.updateErrorTable();
+              errorCheckerService.updateEditorStatus();
+              getTextArea().repaint();
+            } else {
+              errorCheckerService.resumeThread();
+              System.out.println(thisEditor.getSketch().getName()
+                  + " - Error Checker resumed.");
+            }
+          }
+        });
+        debugMenu.add(item);
+
+        problemWindowMenuCB = new JCheckBoxMenuItem("Show Problem Window");
+        // problemWindowMenuCB.setSelected(true);
+        problemWindowMenuCB.addActionListener(new ActionListener() {
+
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            if (errorCheckerService.errorWindow == null)
+              return;
+            errorCheckerService.errorWindow
+                .setVisible(((JCheckBoxMenuItem) e.getSource())
+                    .isSelected());
+            // switch to console, now that Error Window is open
+            toggleView(XQConsoleToggle.text[0]);
+          }
+        });
+        debugMenu.add(problemWindowMenuCB);
+
+        showWarnings = new JCheckBoxMenuItem("Warnings Enabled");
+        showWarnings.setSelected(true);
+        showWarnings.addActionListener(new ActionListener() {
+
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            errorCheckerService.warningsEnabled = ((JCheckBoxMenuItem) e
+                .getSource()).isSelected();
+          }
+        });
+        debugMenu.add(showWarnings);
+        
+        
         return debugMenu;
+    }
+    
+    /**
+     * Show warnings menu item
+     */
+    protected JCheckBoxMenuItem showWarnings;
+    
+    /**
+     * Check box menu item for show/hide Problem Window
+     */
+    public JCheckBoxMenuItem problemWindowMenuCB;
+
+    
+    public JMenu buildXQModeMenu() {
+
+      // Enable Error Checker - CB
+      // Show/Hide Problem Window - CB
+      // Show Warnings - CB
+      JMenu menu = new JMenu("XQMode");
+      JCheckBoxMenuItem item;
+      final DebugEditor thisEditor = this;
+      item = new JCheckBoxMenuItem("Error Checker Enabled");
+      item.setSelected(true);
+      item.addActionListener(new ActionListener() {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          
+          if (!((JCheckBoxMenuItem) e.getSource()).isSelected()) {
+            // unticked Menu Item
+            errorCheckerService.pauseThread();
+            System.out.println(thisEditor.getSketch().getName()
+                + " - Error Checker paused.");
+            errorBar.errorPoints.clear();
+            errorCheckerService.problemsList.clear();
+            errorCheckerService.updateErrorTable();
+            errorCheckerService.updateEditorStatus();
+            getTextArea().repaint();
+          } else {
+            errorCheckerService.resumeThread();
+            System.out.println(thisEditor.getSketch().getName()
+                + " - Error Checker resumed.");
+          }
+        }
+      });
+      menu.add(item);
+
+      problemWindowMenuCB = new JCheckBoxMenuItem("Show Problem Window");
+      // problemWindowMenuCB.setSelected(true);
+      problemWindowMenuCB.addActionListener(new ActionListener() {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          if (errorCheckerService.errorWindow == null)
+            return;
+          errorCheckerService.errorWindow
+              .setVisible(((JCheckBoxMenuItem) e.getSource())
+                  .isSelected());
+          // switch to console, now that Error Window is open
+          toggleView(XQConsoleToggle.text[0]);
+        }
+      });
+      menu.add(problemWindowMenuCB);
+
+      showWarnings = new JCheckBoxMenuItem("Warnings Enabled");
+      showWarnings.setSelected(true);
+      showWarnings.addActionListener(new ActionListener() {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          errorCheckerService.warningsEnabled = ((JCheckBoxMenuItem) e
+              .getSource()).isSelected();
+        }
+      });
+      menu.add(showWarnings);
+      
+      menu.addSeparator();
+      
+      JMenuItem item2 = new JMenuItem("XQMode Wiki");
+      item2.addActionListener(new ActionListener() {      
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          Base.openURL("https://github.com/Manindra29/XQMode/wiki");
+        }
+      });
+      menu.add(item2);
+      
+      item2 = new JMenuItem("XQMode on Github");
+      item2.addActionListener(new ActionListener() {      
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          Base.openURL("https://github.com/Manindra29/XQMode");
+        }
+      });
+      menu.add(item2);
+      return menu;
     }
 
     @Override
@@ -891,5 +1150,67 @@ public class DebugEditor extends JavaEditor implements ActionListener {
 
     public void statusHalted() {
         statusNotice("Debugger halted.");
+    }
+    
+    ErrorCheckerService errorCheckerService;
+    
+    /**
+     * Initializes and starts Error Checker Service
+     */
+    private void initializeErrorChecker() {
+      Thread errorCheckerThread = null;
+
+      if (errorCheckerThread == null) {
+        errorCheckerService = new ErrorCheckerService(this);
+        errorCheckerThread = new Thread(errorCheckerService);
+        try {
+          errorCheckerThread.start();
+        } catch (Exception e) {
+          System.err
+          .println("Error Checker Service not initialized [XQEditor]: "
+            + e);
+          // e.printStackTrace();
+        }
+        // System.out.println("Error Checker Service initialized.");
+      }
+
+    }
+    
+    public void updateErrorBar(ArrayList<Problem> problems) {
+          errorBar.updateErrorPoints(problems);
+    }
+
+    /**
+     * Toggle between Console and Errors List
+     * 
+     * @param buttonName
+     *            - Button Label
+     */
+    public void toggleView(String buttonName) {
+      CardLayout cl = (CardLayout) consoleProblemsPane.getLayout();
+      cl.show(consoleProblemsPane, buttonName);
+    }
+    
+    synchronized public boolean updateTable(final TableModel tableModel) {
+      return errorTable.updateTable(tableModel);
+    }
+    
+    /**
+     * Checks if the sketch contains java tabs. If it does, XQMode ain't built
+     * for it, yet. Also, user should really start looking at Eclipse. Disable
+     * compilation check.
+     */
+    private void checkForJavaTabs() {
+      for (int i = 0; i < this.getSketch().getCodeCount(); i++) {
+        if (this.getSketch().getCode(i).getExtension().equals("java")) {
+          compilationCheckEnabled = false;
+          JOptionPane.showMessageDialog(new Frame(), this
+              .getSketch().getName()
+              + " contains .java tabs. Live compilation error checking isn't "
+              + "supported for java tabs. Only "
+              + "syntax errors will be reported for .pde tabs.");
+          break;
+        }
+      }
     }
 }

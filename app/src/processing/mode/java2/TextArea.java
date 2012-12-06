@@ -26,6 +26,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.HashMap;
 import java.util.Map;
+
 import processing.app.syntax.JEditTextArea;
 import processing.app.syntax.TextAreaDefaults;
 
@@ -48,7 +49,8 @@ public class TextArea extends JEditTextArea {
     protected String currentLineMarker = "->"; // the text marker for highlighting the current line in the gutter
     protected Map<Integer, String> gutterText = new HashMap(); // maps line index to gutter text
     protected Map<Integer, Color> gutterTextColors = new HashMap(); // maps line index to gutter text color
-
+    protected TextAreaPainter customPainter;
+    
     public TextArea(TextAreaDefaults defaults, DebugEditor editor) {
         super(defaults);
         this.editor = editor;
@@ -62,8 +64,9 @@ public class TextArea extends JEditTextArea {
         remove(painter);
 
         // set new painter
-        painter = new TextAreaPainter(this, defaults);
-
+        customPainter = new TextAreaPainter(this, defaults);        
+        painter = customPainter;
+        
         // set listeners
         for (ComponentListener cl : componentListeners) {
             painter.addComponentListener(cl);
@@ -87,6 +90,11 @@ public class TextArea extends JEditTextArea {
         gutterPadding = theme.getInteger("gutter.padding");
         breakpointMarker = theme.loadThemeString("breakpoint.marker", breakpointMarker);
         currentLineMarker = theme.loadThemeString("currentline.marker", currentLineMarker);
+    }
+    
+    public void setECSandThemeforTextArea(ErrorCheckerService ecs, DebugMode mode)
+    {
+      customPainter.setECSandTheme(ecs, mode);
     }
 
     /**
@@ -130,7 +138,7 @@ public class TextArea extends JEditTextArea {
      *
      * @param lineIdx the line index (0-based)
      * @param text the text
-     * @param textColor the text colorÏ
+     * @param textColor the text color
      */
     public void setGutterText(int lineIdx, String text, Color textColor) {
         gutterTextColors.put(lineIdx, textColor);
