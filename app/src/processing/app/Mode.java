@@ -20,9 +20,10 @@ public abstract class Mode {
 
   protected File folder;
 
-  protected HashMap<String, String> keywordToReference;
-
-  protected PdeKeywords tokenMarker;
+  protected PdeKeywords tokenMarker = new PdeKeywords();
+  protected HashMap<String, String> keywordToReference = 
+    new HashMap<String, String>();
+  
   protected Settings theme;
 //  protected Formatter formatter;
 //  protected Tool formatter;
@@ -76,6 +77,47 @@ public abstract class Mode {
 //    rebuildToolbarMenu();
     rebuildLibraryList();
 //    rebuildExamplesMenu();
+    
+    try {
+      for (File file : getKeywordFiles()) {
+        loadKeywords(file);
+      }
+    } catch (IOException e) {
+      Base.showWarning("Problem loading keywords",
+                       "Could not load keywords file for " + getTitle() + " mode.", e);
+    }
+  }
+  
+  
+  /**
+   * To add additional keywords, or to grab them from another mode, override
+   * this function. If your mode has no keywords, return a zero length array.
+   */
+  public File[] getKeywordFiles() {
+    return new File[] { new File(folder, "keywords.txt") };
+  }
+
+  
+  protected void loadKeywords(File keywordFile) throws IOException {
+    BufferedReader reader = PApplet.createReader(keywordFile);
+    String line = null;
+    while ((line = reader.readLine()) != null) {
+      String[] pieces = PApplet.trim(PApplet.split(line, '\t'));
+      if (pieces.length >= 2) {
+        String keyword = pieces[0];
+        String coloring = pieces[1];
+
+        if (coloring.length() > 0) {
+          tokenMarker.addColoring(keyword, coloring);
+        }
+        if (pieces.length == 3) {
+          String htmlFilename = pieces[2];
+          if (htmlFilename.length() > 0) {
+            keywordToReference.put(keyword, htmlFilename);
+          }
+        }
+      }
+    }
   }
   
   

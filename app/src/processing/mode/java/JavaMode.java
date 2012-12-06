@@ -21,21 +21,10 @@
 
 package processing.mode.java;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 
-import processing.app.Base;
-import processing.app.Editor;
-import processing.app.EditorState;
-import processing.app.Library;
-import processing.app.Mode;
-import processing.app.RunnerListener;
-import processing.app.Sketch;
-import processing.app.SketchException;
-import processing.app.syntax.PdeKeywords;
-import processing.core.PApplet;
+import processing.app.*;
 import processing.mode.java.runner.Runner;
 
 
@@ -53,41 +42,6 @@ public class JavaMode extends Mode {
 
   public JavaMode(Base base, File folder) {
     super(base, folder);
-
-    try {
-      loadKeywords();
-    } catch (IOException e) {
-      Base.showError("Problem loading keywords",
-                     "Could not load keywords.txt, please re-install Processing.", e);
-    }
-  }
-
-
-  protected void loadKeywords() throws IOException {
-    File file = new File(folder, "keywords.txt");
-    BufferedReader reader = PApplet.createReader(file);
-
-    tokenMarker = new PdeKeywords();
-    keywordToReference = new HashMap<String, String>();
-
-    String line = null;
-    while ((line = reader.readLine()) != null) {
-      String[] pieces = PApplet.trim(PApplet.split(line, '\t'));
-      if (pieces.length >= 2) {
-        String keyword = pieces[0];
-        String coloring = pieces[1];
-
-        if (coloring.length() > 0) {
-          tokenMarker.addColoring(keyword, coloring);
-        }
-        if (pieces.length == 3) {
-          String htmlFilename = pieces[2];
-          if (htmlFilename.length() > 0) {
-            keywordToReference.put(keyword, htmlFilename);
-          }
-        }
-      }
-    }
   }
 
 
