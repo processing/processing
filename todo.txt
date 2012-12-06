@@ -67,14 +67,13 @@ X   casey: accidentally typing a letter at the top of the tab
 X     throws you onto the end of the last tab... exactly the worst location
 o   if the error cannot be placed, just don't change tabs/placement at all
 X   prevent errors on first line of a new tab from highlighting on previous tab
+X crashes in PdePreprocessor.scrubComments(PdePreprocessor.java:321)
+X   String t = "*/*";
+X   http://code.google.com/p/processing/issues/detail?id=1435
 
 earlier
 X The sketch name can't begin with '_' (underscore)
 X   http://code.google.com/p/processing/issues/detail?id=859
-
-_ crashes in PdePreprocessor.scrubComments(PdePreprocessor.java:321)
-_   String t = "*/*";
-_   http://code.google.com/p/processing/issues/detail?id=1435
 
 https://processing-js.lighthouseapp.com/
 

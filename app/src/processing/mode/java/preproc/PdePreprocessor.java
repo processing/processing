@@ -283,11 +283,15 @@ public class PdePreprocessor {
    */
   static public String scrubComments(String what) {
     char p[] = what.toCharArray();
+    // Track quotes to avoid problems with code like: String t = "*/*";
+    // http://code.google.com/p/processing/issues/detail?id=1435
+    boolean insideQuote = false;
 
     int index = 0;
     while (index < p.length) {
       // for any double slash comments, ignore until the end of the line
-      if ((p[index] == '/') &&
+      if (!insideQuote && 
+          (p[index] == '/') &&
           (index < p.length - 1) &&
           (p[index+1] == '/')) {
         p[index++] = ' ';
@@ -299,7 +303,8 @@ public class PdePreprocessor {
 
         // check to see if this is the start of a new multiline comment.
         // if it is, then make sure it's actually terminated somewhere.
-      } else if ((p[index] == '/') &&
+      } else if (!insideQuote &&
+                 (p[index] == '/') &&
                  (index < p.length - 1) &&
                  (p[index+1] == '*')) {
         p[index++] = ' ';
@@ -321,6 +326,10 @@ public class PdePreprocessor {
           throw new RuntimeException("Missing the */ from the end of a " +
                                      "/* comment */");
         }
+      } else if (p[index] == '"' && index > 0 && p[index-1] != '\\') {
+        insideQuote = !insideQuote;
+        index++;
+        
       } else {  // any old character, move along
         index++;
       }
