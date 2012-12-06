@@ -1,5 +1,6 @@
 # KEY 2.0b7+
 
+# LITERAL1 - Strings in quotes
 # LITERAL2 - Constants (QUARTER_PI, CORNERS, etc.)
 # KEYWORD1 - Datatypes and keywords (void, int, boolean, etc.)
 # KEYWORD2 - Fields [variables within a class]
@@ -31,7 +32,7 @@ BOTTOM	LITERAL2	textAlign_
 BURN	LITERAL2	blend_
 CENTER	LITERAL2	
 CHATTER	LITERAL2
-CHORD	LITERAL2
+CHORD	LITERAL2	arc_
 CLAMP LITERAL2
 CLICK	LITERAL2
 CLOSE	LITERAL2
@@ -108,7 +109,7 @@ MACOSX	LITERAL2
 MAX_FLOAT	LITERAL2
 MAX_INT	LITERAL2	
 MITER	LITERAL2	stokeJoin_
-MODEL	LITERAL2
+MODEL	LITERAL2	textMode_
 MOVE	LITERAL2	cursor_
 MULTIPLY	LITERAL2	blend_
 NORMAL	LITERAL2	
@@ -150,6 +151,7 @@ RIGHT	LITERAL2	keyCode
 ROUND	LITERAL2	strokeCap_
 SCREEN	LITERAL2	blend_
 SECAM	LITERAL2	
+SHAPE	LITERAL2	textMode_
 SHIFT	LITERAL2	
 SPECULAR	LITERAL2
 SOFT_LIGHT	LITERAL2	blend_
@@ -211,9 +213,7 @@ extends	KEYWORD1	extends
 false	KEYWORD1	false
 final	KEYWORD1	final
 finally	KEYWORD1
-for	KEYWORD1	for
 float 	KEYWORD1	float
-if	KEYWORD1	if
 implements	KEYWORD1	implements
 import	KEYWORD1	import
 instanceof	KEYWORD1
@@ -232,7 +232,6 @@ short	KEYWORD1
 static	KEYWORD1	static
 strictfp	KEYWORD1
 super	KEYWORD1	super
-switch	KEYWORD1	switch
 this	KEYWORD1	this
 throw	KEYWORD1	
 throws	KEYWORD1	
@@ -253,7 +252,7 @@ while	FUNCTION1	while
 
 # These items are a part of Processing but are not included in the reference
 
-color KEYWORD1	color_datatype
+color	KEYWORD1	color_datatype
 
 boolean	FUNCTION1	booleanconvert_
 byte	FUNCTION1	byteconvert_
@@ -343,6 +342,10 @@ addChild	FUNCTION1
 
 width	KEYWORD3	width_
 height	KEYWORD3	height_
+
+PVector	FUNCTION1	PVector
+ArrayList	FUNCTION1	ArrayList
+HashMap	FUNCTION1	HashMap
 
 
 # THE TEXT ABOVE IS HAND-WRITTEN AND FOUND IN THE FILE "keywords_base.txt"

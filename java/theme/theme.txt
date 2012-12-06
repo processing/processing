@@ -99,7 +99,7 @@ editor.literal1.style = #7D4793,plain
 editor.literal2.style = #669933,plain
 
 # e.g. + - = /
-editor.operator.style = #000000,plain
+editor.operator.style = #006699,plain
 
 # ?? maybe this is for words followed by a colon
 # like in case statements or goto
