@@ -882,10 +882,17 @@ public class PVector implements Serializable {
    * @return the angle of rotation
    * @brief SCalculate the angle of rotation for this vector
    */
-  public float heading2D() {
+  public float heading() {
     float angle = (float) Math.atan2(-y, x);
     return -1*angle;
   }
+
+
+  @Deprecated
+  public float heading2D() {
+    return heading();
+  }
+
 
   /**
    * ( begin auto-generated from PVector_rotate.xml )
