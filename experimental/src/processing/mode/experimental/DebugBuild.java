@@ -67,7 +67,7 @@ public class DebugBuild extends JavaBuild {
         return null;
     }
 
-    public DebugMode getMode() {
-        return (DebugMode)mode;
+    public ExperimentalMode getMode() {
+        return (ExperimentalMode)mode;
     }
 }

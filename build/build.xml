@@ -87,7 +87,7 @@
     <subant buildpath="../java/libraries/pdf" target="clean"/>
     <subant buildpath="../java/libraries/serial" target="clean"/>
     <subant buildpath="../java/libraries/video" target="clean"/>
-    <subant buildpath="../java2" target="clean"/>
+    <subant buildpath="../experimental" target="clean"/>
     <subant buildpath="../android/core" target="clean"/>
     <subant buildpath="shared/tools/MovieMaker" target="clean"/>
   </target>
@@ -100,7 +100,7 @@
     <subant buildpath="../java/libraries/pdf" target="build"/>
     <subant buildpath="../java/libraries/serial" target="build"/>
     <subant buildpath="../java/libraries/video" target="build"/>
-    <subant buildpath="../java2" target="build"/>
+    <subant buildpath="../experimental" target="build"/>
     <subant buildpath="../android/core" target="build"/>
     <subant buildpath="shared/tools/MovieMaker" target="build"/>
   </target>
@@ -134,8 +134,8 @@
       </fileset>
     </copy>
 
-    <copy todir="${target.path}/modes/java2">
-      <fileset dir="../java2">
+    <copy todir="${target.path}/modes/experimental">
+      <fileset dir="../experimental">
 	<include name="**/mode/*" />
 	<include name="**/theme/*" />
       </fileset>
