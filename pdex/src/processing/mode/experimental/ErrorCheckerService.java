@@ -1,4 +1,4 @@
-package processing.mode.java2;
+package processing.mode.experimental;
 
 import java.awt.EventQueue;
 import java.io.File;
