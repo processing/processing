@@ -106,8 +106,6 @@ _   "To use this library, you must use the 32-bit version of Processing."
 _ temporary files (for sketches and logs) are not deleted
 _   http://code.google.com/p/processing/issues/detail?id=562
 
-http://download.eclipse.org/eclipse/downloads/
-
 _ renaming RGB (.pde) to Rgb.java says "a file named RGB.pde already exists"
 
 _ change cmd line for OS X to use symlink? 
