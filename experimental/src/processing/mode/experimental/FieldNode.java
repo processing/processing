@@ -15,51 +15,50 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package processing.mode.java2;
+package processing.mode.experimental;
 
 import com.sun.jdi.ClassNotLoadedException;
+import com.sun.jdi.Field;
 import com.sun.jdi.InvalidTypeException;
-import com.sun.jdi.LocalVariable;
-import com.sun.jdi.StackFrame;
+import com.sun.jdi.ObjectReference;
 import com.sun.jdi.Value;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Specialized {@link VariableNode} for representing local variables. Overrides
- * {@link #setValue} to properly change the value of the encapsulated local
- * variable.
+ * Specialized {@link VariableNode} for representing fields. Overrides
+ * {@link #setValue} to properly change the value of the encapsulated field.
  *
  * @author Martin Leopold <m@martinleopold.com>
  */
-public class LocalVariableNode extends VariableNode {
+public class FieldNode extends VariableNode {
 
-    protected LocalVariable var;
-    protected StackFrame frame;
+    protected Field field;
+    protected ObjectReference obj;
 
     /**
-     * Construct a {@link LocalVariableNode}.
+     * Construct a {@link FieldNode}.
      *
      * @param name the name
      * @param type the type
      * @param value the value
-     * @param var the local variable
-     * @param frame the stack frame containing the local variable
+     * @param field the field
+     * @param obj a reference to the object containing the field
      */
-    public LocalVariableNode(String name, String type, Value value, LocalVariable var, StackFrame frame) {
+    public FieldNode(String name, String type, Value value, Field field, ObjectReference obj) {
         super(name, type, value);
-        this.var = var;
-        this.frame = frame;
+        this.field = field;
+        this.obj = obj;
     }
 
     @Override
     public void setValue(Value value) {
         try {
-            frame.setValue(var, value);
+            obj.setValue(field, value);
         } catch (InvalidTypeException ex) {
-            Logger.getLogger(LocalVariableNode.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(FieldNode.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotLoadedException ex) {
-            Logger.getLogger(LocalVariableNode.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(FieldNode.class.getName()).log(Level.SEVERE, null, ex);
         }
         this.value = value;
     }
