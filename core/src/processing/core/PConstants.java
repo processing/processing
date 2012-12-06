@@ -453,8 +453,8 @@ public interface PConstants {
   static final int DISABLE_DEPTH_MASK         =  5;
   static final int ENABLE_DEPTH_MASK          = -5;
 
-  static final int ENABLE_ACCURATE_2D         =  6;
-  static final int DISABLE_ACCURATE_2D        = -6;
+  static final int DISABLE_OPTIMIZED_STROKE   =  6;
+  static final int ENABLE_OPTIMIZED_STROKE    = -6;
 
   static final int ENABLE_STROKE_PERSPECTIVE  =  7;
   static final int DISABLE_STROKE_PERSPECTIVE = -7;
