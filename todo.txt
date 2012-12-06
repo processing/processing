@@ -70,6 +70,11 @@ X   prevent errors on first line of a new tab from highlighting on previous tab
 X crashes in PdePreprocessor.scrubComments(PdePreprocessor.java:321)
 X   String t = "*/*";
 X   http://code.google.com/p/processing/issues/detail?id=1435
+o add to build.xml
+o   insert "@SuppressWarnings({"unused", "cast"})" into
+o   JavaLexer, JavaRecognizer, PdeLexer, PdeRecognizer
+o   from processing/mode/java/preproc/
+X   add Eclipse setting to ignore warnings
 
 earlier
 X The sketch name can't begin with '_' (underscore)
@@ -77,10 +82,6 @@ X   http://code.google.com/p/processing/issues/detail?id=859
 
 https://processing-js.lighthouseapp.com/
 
-_ add to build.xml
-_   insert "@SuppressWarnings({"unused", "cast"})" into
-_   JavaLexer, JavaRecognizer, PdeLexer, PdeRecognizer
-_   from processing/mode/java/preproc/
 _ also add means to move changes from desktop to Android (and vice-versa)
 
 _ include debug mode as 'experimental'?
@@ -95,6 +96,7 @@ _ remove sketch.properties when moving back to the default?
 _   or can we not do this, because the next mode needs this?
 
 _ go through examples to make sure extra imports are not being used
+_   vida examples use them sometimes
 _   do command line to run through all examples? 
 
 _ change error message for serial re: 64-bit
