@@ -118,7 +118,7 @@ public class ErrorBar extends JPanel {
 		return getPreferredSize();
 	}
 
-	public ErrorBar(DebugEditor editor, int height, DebugMode mode) {
+	public ErrorBar(DebugEditor editor, int height, ExperimentalMode mode) {
 		this.editor = editor;
 		this.preferredHeight = height;
 		this.errorCheckerService = editor.errorCheckerService;

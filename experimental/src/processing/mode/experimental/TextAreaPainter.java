@@ -64,7 +64,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter {
         ta = textArea;
     }
     
-    private void loadTheme(DebugMode mode){
+    private void loadTheme(ExperimentalMode mode){
       errorColor = mode.getThemeColor("editor.errorcolor", errorColor);
       warningColor = mode.getThemeColor("editor.warningcolor",
           warningColor);
@@ -306,7 +306,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter {
       return newString;
     }
     
-    public void setECSandTheme(ErrorCheckerService ecs, DebugMode mode){
+    public void setECSandTheme(ErrorCheckerService ecs, ExperimentalMode mode){
       this.errorCheckerService = ecs;
       loadTheme(mode);
     }

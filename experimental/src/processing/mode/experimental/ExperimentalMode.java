@@ -1,20 +1,24 @@
+/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+
 /*
- * Copyright (C) 2012 Martin Leopold <m@martinleopold.com>
- *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place - Suite 330, Boston, MA 02111-1307, USA.
- */
+  Part of the Processing project - http://processing.org
+
+  Copyright (c) 2012 The Processing Foundation
+
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License version 2
+  as published by the Free Software Foundation.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software Foundation,
+  Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
 package processing.mode.experimental;
 
 import java.awt.Color;
@@ -29,18 +33,18 @@ import processing.app.EditorState;
 import processing.app.Mode;
 import processing.mode.java.JavaMode;
 
+
 /**
- * Debug Mode for Processing. Built on top of JavaMode.
- *
- * @author Martin Leopold <m@martinleopold.com>
+ * Experimental Mode for Processing, combines Debug Mode and XQMode and 
+ * starts us working toward our next generation editor/debugger setup.
  */
-public class DebugMode extends JavaMode {
+public class ExperimentalMode extends JavaMode {
   public static final boolean VERBOSE_LOGGING = true;
   //public static final boolean VERBOSE_LOGGING = false;  
   public static final int LOG_SIZE = 512 * 1024; // max log file size (in bytes)
 
   
-  public DebugMode(Base base, File folder) {
+  public ExperimentalMode(Base base, File folder) {
     super(base, folder);
 
         // use libraries folder from javamode. will make sketches using core libraries work, as well as import libraries and examples menus
@@ -80,16 +84,16 @@ public class DebugMode extends JavaMode {
       globalLogger.addHandler(handler);
 
     } catch (IOException ex) {
-      Logger.getLogger(DebugMode.class.getName()).log(Level.SEVERE, null, ex);
+      Logger.getLogger(ExperimentalMode.class.getName()).log(Level.SEVERE, null, ex);
     } catch (SecurityException ex) {
-      Logger.getLogger(DebugMode.class.getName()).log(Level.SEVERE, null, ex);
+      Logger.getLogger(ExperimentalMode.class.getName()).log(Level.SEVERE, null, ex);
     }
 
     // output version from manifest file
-    Package p = DebugMode.class.getPackage();
+    Package p = ExperimentalMode.class.getPackage();
     String titleAndVersion = p.getImplementationTitle() + " (v" + p.getImplementationVersion() + ")";
     //System.out.println(titleAndVersion);
-    Logger.getLogger(DebugMode.class.getName()).log(Level.INFO, titleAndVersion);
+    Logger.getLogger(ExperimentalMode.class.getName()).log(Level.INFO, titleAndVersion);
   }
 
 
@@ -128,7 +132,7 @@ public class DebugMode extends JavaMode {
     if (newString != null) {
       return newString;
     }
-    Logger.getLogger(DebugMode.class.getName()).log(Level.WARNING, "Error loading String: {0}", attribute);
+    Logger.getLogger(ExperimentalMode.class.getName()).log(Level.WARNING, "Error loading String: {0}", attribute);
     return defaultValue;
   }
     
@@ -147,7 +151,7 @@ public class DebugMode extends JavaMode {
       return newColor;
     }
     System.out.println("error loading color: " + attribute);
-    Logger.getLogger(DebugMode.class.getName()).log(Level.WARNING, "Error loading Color: {0}", attribute);
+    Logger.getLogger(ExperimentalMode.class.getName()).log(Level.WARNING, "Error loading Color: {0}", attribute);
     return defaultValue;
   }
 

@@ -74,26 +74,32 @@ editor.brackethighlight.color = #006699
 
 # TEXT - KEYWORDS
 
-# e.g abstract, final, private
-editor.keyword1.style = #cc6600,plain
+# e.g. Functions 
+editor.function1.style = #006699,plain
 
-# e.g. beginShape, point, line
-editor.keyword2.style = #cc6600,plain
+# e.g. Methods (functions inside a class)
+editor.function2.style = #006699,plain
 
-# e.g. byte, char, short, color
-editor.keyword3.style = #cc6600,bold
+# e.g. Datatypes and keywords (void, int, boolean, etc.)
+editor.keyword1.style = #D86736,plain
+
+# e.g. Processing fields [variables within a class]
+editor.keyword2.style = #EE3C96,plain
+
+# e.g. Processing variables (width, height, focused, etc.)
+editor.keyword3.style = #EE3C96,plain
 
 
 # TEXT - LITERALS
 
-# constants: e.g. null, true, this, RGB, TWO_PI
-editor.literal1.style = #006699,plain
+# e.g. Strings (text in quotes)
+editor.literal1.style = #7D4793,plain
 
-# p5 built in variables: e.g. mouseX, width, pixels
-editor.literal2.style = #006699,plain
+# e.g. Constants (QUARTER_PI, CORNERS, etc.)
+editor.literal2.style = #669933,plain
 
 # e.g. + - = /
-editor.operator.style = #000000,plain
+editor.operator.style = #006699,plain
 
 # ?? maybe this is for words followed by a colon
 # like in case statements or goto
