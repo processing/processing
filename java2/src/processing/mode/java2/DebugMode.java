@@ -97,6 +97,13 @@ public class DebugMode extends JavaMode {
   public String getTitle() {
     return "Experimental";
   }
+  
+  
+  public File[] getKeywordFiles() {
+    return new File[] { 
+      Base.getContentFile("modes/java/keywords.txt") 
+    };
+  }
 
 
   /**

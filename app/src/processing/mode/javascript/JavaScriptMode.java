@@ -1,23 +1,11 @@
 package processing.mode.javascript;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 
-import processing.app.Base;
-import processing.app.Editor;
-import processing.app.EditorState;
-import processing.app.Mode;
-import processing.app.Sketch;
-import processing.app.SketchException;
-import processing.app.Library;
-import processing.core.PApplet;
-
-import processing.app.syntax.PdeKeywords;
-import processing.app.syntax.TokenMarker;
-
+import processing.app.*;
 import processing.mode.java.JavaMode;
+
 
 /**
  *	JS Mode for Processing based on Processing.js. Comes with a server as
@@ -42,18 +30,18 @@ public class JavaScriptMode extends Mode
 	{
 		super(base, folder);
 		
-		try {
-			loadKeywords(); // in JavaMode, sets tokenMarker
-			loadAdditionalKeywords( 
-				new File(Base.getContentFile("modes/java"), "keywords.txt" ),
-				tokenMarker
-			);
-		} 
-		catch ( IOException e ) 
-		{
-			Base.showError( "Problem loading keywords",
-			                "Could not load keywords.txt, please re-install Processing.", e);
-		}
+//		try {
+//			loadKeywords(); // in JavaMode, sets tokenMarker
+//			loadAdditionalKeywords( 
+//				new File(Base.getContentFile("modes/java"), "keywords.txt" ),
+//				tokenMarker
+//			);
+//		} 
+//		catch ( IOException e ) 
+//		{
+//			Base.showError( "Problem loading keywords",
+//			                "Could not load keywords.txt, please re-install Processing.", e);
+//		}
 	}
 
 	/**
@@ -89,78 +77,87 @@ public class JavaScriptMode extends Mode
 		return defaultJavaMode;
 	}
 
-	/**
-	 *	Loads default Java keywords, JS keywords 
-	 *	were already loaded in constructor.
-	 */
-	protected void loadAdditionalKeywords ( File keywords, PdeKeywords tokenMarker ) throws IOException
-	{
-		if ( keywordToReference == null )
-			keywordToReference = new HashMap<String, String>();
-		
-		BufferedReader reader = PApplet.createReader( keywords );
-		String line = null;
-		while ((line = reader.readLine()) != null) 
-		{
-			String[] pieces = PApplet.trim(PApplet.split(line, '\t'));
-		    if (pieces.length >= 2) 
-			{
-		    	String keyword = pieces[0];
-				String coloring = pieces[1];
-				if (coloring.length() > 0) {
-		        	tokenMarker.addColoring(keyword, coloring);
-		      	}
-		      	if (pieces.length == 3) {
-		        	String htmlFilename = pieces[2];
-		        	if (htmlFilename.length() > 0) {
-		          		keywordToReference.put(keyword, htmlFilename);
-		        	}
-		      	}
-			}
-		}
-	}
+//	/**
+//	 *	Loads default Java keywords, JS keywords 
+//	 *	were already loaded in constructor.
+//	 */
+//	protected void loadAdditionalKeywords ( File keywords, PdeKeywords tokenMarker ) throws IOException
+//	{
+//		if ( keywordToReference == null )
+//			keywordToReference = new HashMap<String, String>();
+//		
+//		BufferedReader reader = PApplet.createReader( keywords );
+//		String line = null;
+//		while ((line = reader.readLine()) != null) 
+//		{
+//			String[] pieces = PApplet.trim(PApplet.split(line, '\t'));
+//		    if (pieces.length >= 2) 
+//			{
+//		    	String keyword = pieces[0];
+//				String coloring = pieces[1];
+//				if (coloring.length() > 0) {
+//		        	tokenMarker.addColoring(keyword, coloring);
+//		      	}
+//		      	if (pieces.length == 3) {
+//		        	String htmlFilename = pieces[2];
+//		        	if (htmlFilename.length() > 0) {
+//		          		keywordToReference.put(keyword, htmlFilename);
+//		        	}
+//		      	}
+//			}
+//		}
+//	}
+//	
+//	/**
+//	 * load the keywords from file, copied from JavaMode.java
+//	 */
+//	protected void loadKeywords() throws IOException 
+//	{
+//	    File file = new File(folder, "keywords.txt");
+//	    BufferedReader reader = PApplet.createReader(file);
+//
+//	    tokenMarker = new PdeKeywords();
+//	    keywordToReference = new HashMap<String, String>();
+//
+//	    String line = null;
+//    	while ((line = reader.readLine()) != null) {
+//      		String[] pieces = PApplet.trim(PApplet.split(line, '\t'));
+//      		if (pieces.length >= 2) {
+//        		String keyword = pieces[0];
+//        		String coloring = pieces[1];
+//
+//        		if (coloring.length() > 0) {
+//          			tokenMarker.addColoring(keyword, coloring);
+//        		}
+//        		if (pieces.length == 3) {
+//          			String htmlFilename = pieces[2];
+//          			if (htmlFilename.length() > 0) {
+//            			keywordToReference.put(keyword, htmlFilename);
+//          			}
+//        		}
+//      		}
+//    	}
+//  	}
 	
-	/**
-	 * load the keywords from file, copied from JavaMode.java
-	 */
-	protected void loadKeywords() throws IOException 
-	{
-	    File file = new File(folder, "keywords.txt");
-	    BufferedReader reader = PApplet.createReader(file);
+  public File[] getKeywordFiles() {
+    return new File[] { 
+      Base.getContentFile("modes/java/keywords.txt"),
+      new File(folder, "keywords.txt")
+    };
+  }
 
-	    tokenMarker = new PdeKeywords();
-	    keywordToReference = new HashMap<String, String>();
+  
+//	/**
+//	 *	Override getTokenMarker in Mode
+//	 */
+//	public TokenMarker getTokenMarker () 
+//	{
+//		if ( tokenMarker == null )
+//			tokenMarker = new PdeKeywords();
+//		return tokenMarker;
+//	}
 
-	    String line = null;
-    	while ((line = reader.readLine()) != null) {
-      		String[] pieces = PApplet.trim(PApplet.split(line, '\t'));
-      		if (pieces.length >= 2) {
-        		String keyword = pieces[0];
-        		String coloring = pieces[1];
-
-        		if (coloring.length() > 0) {
-          			tokenMarker.addColoring(keyword, coloring);
-        		}
-        		if (pieces.length == 3) {
-          			String htmlFilename = pieces[2];
-          			if (htmlFilename.length() > 0) {
-            			keywordToReference.put(keyword, htmlFilename);
-          			}
-        		}
-      		}
-    	}
-  	}
-	
-	/**
-	 *	Override getTokenMarker in Mode
-	 */
-	public TokenMarker getTokenMarker () 
-	{
-		if ( tokenMarker == null )
-			tokenMarker = new PdeKeywords();
-		return tokenMarker;
-	}
-
+  
 	/**
 	 *	Return pretty title of this mode for menu listing and such
 	 */
