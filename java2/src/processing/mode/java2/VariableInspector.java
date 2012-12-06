@@ -895,7 +895,6 @@ public class VariableInspector extends javax.swing.JFrame {
          * Prefix a this-fields name with "this." if hidden by a local.
          */
         public static final int MODE_PREFIX = 1; // prefix hidden this fields with "this."
-        @SuppressWarnings("hiding")
         protected List<VariableNode> locals;
         protected int mode;
 
