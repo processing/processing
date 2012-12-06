@@ -260,7 +260,7 @@ public class VariableInspector extends javax.swing.JFrame {
          * null if the file wasn't found.
          */
         protected ImageIcon[][] loadIcons(String fileName) {
-            DebugMode mode = editor.mode();
+            ExperimentalMode mode = editor.mode();
             File file = mode.getContentFile(fileName);
             if (!file.exists()) {
                 Logger.getLogger(OutlineRenderer.class.getName()).log(Level.SEVERE, "icon file not found: {0}", file.getAbsolutePath());

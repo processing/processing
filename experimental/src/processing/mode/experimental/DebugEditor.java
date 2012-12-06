@@ -94,7 +94,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
     // variable inspector
     protected JMenuItem toggleVariableInspectorMenuItem;
     // references
-    protected DebugMode dmode; // the mode
+    protected ExperimentalMode dmode; // the mode
     protected Debugger dbg; // the debugger
     protected VariableInspector vi; // the variable inspector frame
     protected TextArea ta; // the text area
@@ -133,7 +133,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         super(base, path, state, mode);
 
         // get mode
-        dmode = (DebugMode) mode;
+        dmode = (ExperimentalMode) mode;
 
         // init controller class
         dbg = new Debugger(this);
@@ -153,7 +153,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
 //        });
 
         // load settings from theme.txt
-        DebugMode theme = dmode;
+        ExperimentalMode theme = dmode;
         breakpointColor = theme.getThemeColor("breakpoint.bgcolor", breakpointColor);
         breakpointMarkerColor = theme.getThemeColor("breakpoint.marker.color", breakpointMarkerColor);
         currentLineColor = theme.getThemeColor("currentline.bgcolor", currentLineColor);
@@ -835,7 +835,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
      *
      * @return the mode object
      */
-    public DebugMode mode() {
+    public ExperimentalMode mode() {
         return dmode;
     }
 

@@ -283,8 +283,8 @@ public class Base {
 //    try {
 //      Class.forName("processing.mode.java2.DebugMode");
     ModeContribution experimentalContrib =  
-      ModeContribution.load(this, getContentFile("modes/java2"), 
-        "processing.mode.java2.DebugMode");
+      ModeContribution.load(this, getContentFile("modes/experimental"), 
+        "processing.mode.experimental.ExperimentalMode");
     if (experimentalContrib != null) {
       Mode experimentalMode = experimentalContrib.getMode();
       coreModes = new Mode[] { javaMode, androidMode, javaScriptMode, experimentalMode };

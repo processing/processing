@@ -84,7 +84,7 @@ public class TextArea extends JEditTextArea {
         add(CENTER, painter);
 
         // load settings from theme.txt
-        DebugMode theme = (DebugMode) editor.getMode();
+        ExperimentalMode theme = (ExperimentalMode) editor.getMode();
         gutterBgColor = theme.getThemeColor("gutter.bgcolor", gutterBgColor);
         gutterLineColor = theme.getThemeColor("gutter.linecolor", gutterLineColor);
         gutterPadding = theme.getInteger("gutter.padding");
@@ -92,7 +92,7 @@ public class TextArea extends JEditTextArea {
         currentLineMarker = theme.loadThemeString("currentline.marker", currentLineMarker);
     }
     
-    public void setECSandThemeforTextArea(ErrorCheckerService ecs, DebugMode mode)
+    public void setECSandThemeforTextArea(ErrorCheckerService ecs, ExperimentalMode mode)
     {
       customPainter.setECSandTheme(ecs, mode);
     }
