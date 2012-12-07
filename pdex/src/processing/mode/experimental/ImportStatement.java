@@ -29,23 +29,29 @@ package processing.mode.experimental;
  *
  */
 public class ImportStatement {
-		/**
-		 * Ex: processing.opengl.*, java.util.* 
-		 */
-		String importName;
-		/**
-		 * Which tab does it belong to?
-		 */
-		int tab;
-		
-		/**
-		 * Line number(pde code) of the import
-		 */
-		int lineNumber;
+	/**
+	 * Ex: processing.opengl.*, java.util.* 
+	 */
+	String importName;
+	/**
+	 * Which tab does it belong to?
+	 */
+	int tab;
 
-		public ImportStatement(String importName, int tab, int lineNumber) {
-			this.importName = importName;
-			this.tab = tab;
-			this.lineNumber = lineNumber;
-		}
+	/**
+	 * Line number(pde code) of the import
+	 */
+	int lineNumber;
+
+	/**
+	 * 
+	 * @param importName - Ex: processing.opengl.*, java.util.* 
+	 * @param tab - Which tab does it belong to?
+	 * @param lineNumber - Line number(pde code) of the import
+	 */
+	public ImportStatement(String importName, int tab, int lineNumber) {
+		this.importName = importName;
+		this.tab = tab;
+		this.lineNumber = lineNumber;
 	}
+}

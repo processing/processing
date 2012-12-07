@@ -129,6 +129,16 @@ public class DebugEditor extends JavaEditor implements ActionListener {
      */
     protected boolean compilationCheckEnabled = true;
     
+    /**
+     * Show warnings menu item
+     */
+    protected JCheckBoxMenuItem showWarnings;
+    
+    /**
+     * Check box menu item for show/hide Problem Window
+     */
+    public JCheckBoxMenuItem problemWindowMenuCB;
+    
     public DebugEditor(Base base, String path, EditorState state, Mode mode) {
         super(base, path, state, mode);
 
@@ -383,8 +393,9 @@ public class DebugEditor extends JavaEditor implements ActionListener {
 
           @Override
           public void actionPerformed(ActionEvent e) {
-            if (errorCheckerService.errorWindow == null)
+            if (errorCheckerService.errorWindow == null) {
               return;
+            }
             errorCheckerService.errorWindow
                 .setVisible(((JCheckBoxMenuItem) e.getSource())
                     .isSelected());
@@ -410,102 +421,6 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         return debugMenu;
     }
     
-    /**
-     * Show warnings menu item
-     */
-    protected JCheckBoxMenuItem showWarnings;
-    
-    /**
-     * Check box menu item for show/hide Problem Window
-     */
-    public JCheckBoxMenuItem problemWindowMenuCB;
-
-    
-    public JMenu buildXQModeMenu() {
-
-      // Enable Error Checker - CB
-      // Show/Hide Problem Window - CB
-      // Show Warnings - CB
-      JMenu menu = new JMenu("XQMode");
-      JCheckBoxMenuItem item;
-      final DebugEditor thisEditor = this;
-      item = new JCheckBoxMenuItem("Error Checker Enabled");
-      item.setSelected(true);
-      item.addActionListener(new ActionListener() {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          
-          if (!((JCheckBoxMenuItem) e.getSource()).isSelected()) {
-            // unticked Menu Item
-            errorCheckerService.pauseThread();
-            System.out.println(thisEditor.getSketch().getName()
-                + " - Error Checker paused.");
-            errorBar.errorPoints.clear();
-            errorCheckerService.problemsList.clear();
-            errorCheckerService.updateErrorTable();
-            errorCheckerService.updateEditorStatus();
-            getTextArea().repaint();
-          } else {
-            errorCheckerService.resumeThread();
-            System.out.println(thisEditor.getSketch().getName()
-                + " - Error Checker resumed.");
-          }
-        }
-      });
-      menu.add(item);
-
-      problemWindowMenuCB = new JCheckBoxMenuItem("Show Problem Window");
-      // problemWindowMenuCB.setSelected(true);
-      problemWindowMenuCB.addActionListener(new ActionListener() {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          if (errorCheckerService.errorWindow == null)
-            return;
-          errorCheckerService.errorWindow
-              .setVisible(((JCheckBoxMenuItem) e.getSource())
-                  .isSelected());
-          // switch to console, now that Error Window is open
-          toggleView(XQConsoleToggle.text[0]);
-        }
-      });
-      menu.add(problemWindowMenuCB);
-
-      showWarnings = new JCheckBoxMenuItem("Warnings Enabled");
-      showWarnings.setSelected(true);
-      showWarnings.addActionListener(new ActionListener() {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          errorCheckerService.warningsEnabled = ((JCheckBoxMenuItem) e
-              .getSource()).isSelected();
-        }
-      });
-      menu.add(showWarnings);
-      
-      menu.addSeparator();
-      
-      JMenuItem item2 = new JMenuItem("XQMode Wiki");
-      item2.addActionListener(new ActionListener() {      
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          Base.openURL("https://github.com/Manindra29/XQMode/wiki");
-        }
-      });
-      menu.add(item2);
-      
-      item2 = new JMenuItem("XQMode on Github");
-      item2.addActionListener(new ActionListener() {      
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          Base.openURL("https://github.com/Manindra29/XQMode");
-        }
-      });
-      menu.add(item2);
-      return menu;
-    }
-
     @Override
     public JMenu buildModeMenu() {
         return buildDebugMenu();
@@ -1176,6 +1091,10 @@ public class DebugEditor extends JavaEditor implements ActionListener {
 
     }
     
+    /**
+     * Updates the error bar
+     * @param problems
+     */
     public void updateErrorBar(ArrayList<Problem> problems) {
           errorBar.updateErrorPoints(problems);
     }
@@ -1191,6 +1110,11 @@ public class DebugEditor extends JavaEditor implements ActionListener {
       cl.show(consoleProblemsPane, buttonName);
     }
     
+    /**
+     * Updates the error table
+     * @param tableModel
+     * @return
+     */
     synchronized public boolean updateTable(final TableModel tableModel) {
       return errorTable.updateTable(tableModel);
     }

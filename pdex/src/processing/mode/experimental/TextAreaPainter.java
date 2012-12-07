@@ -193,7 +193,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter {
      *            0-based line number: NOTE
      * @param x
      */
-    private void paintErrorLine(Graphics gfx, int line, int x) {
+    protected void paintErrorLine(Graphics gfx, int line, int x) {
       
       if (errorCheckerService == null) {
         return;
@@ -306,6 +306,11 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter {
       return newString;
     }
     
+    /**
+     * Sets ErrorCheckerService and loads theme for TextAreaPainter(XQMode)
+     * @param ecs 
+     * @param mode
+     */
     public void setECSandTheme(ErrorCheckerService ecs, ExperimentalMode mode){
       this.errorCheckerService = ecs;
       loadTheme(mode);
