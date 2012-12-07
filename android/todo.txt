@@ -1,66 +1,7 @@
-0215 android
-X removing default imports for 
-X   android.view.MotionEvent, android.view.KeyEvent,android.graphics.Bitmap
-X   due to conflicts w/ the new p5 event system
-X change event handling to hopefully clean up some inconsistencies
-X remove motionX/Y/Pressure... these need to be handled separately
-X mouseX/Y no longer include history with moves
-X   better to use motion object when that's done
-o coordinates from motionX/Y reportedly inconsistent
-X   http://code.google.com/p/processing/issues/detail?id=1018
-X   moving away from this anyway
-X pmouseX/Y not being set properly?
-X   http://code.google.com/p/processing/issues/detail?id=238
-X mouseEvent is back (see the Wiki)
-o add method to bring up the keyboard in sketches
-o   actually, just write an example of how to do it, since holding menu works
-o   http://code.google.com/p/processing/issues/detail?id=234
-X values for pmouseX/Y aren't great
-X   Examples > Topics > Drawing > Continuous Lines shows gaps
-X   http://code.google.com/p/processing/issues/detail?id=238
-X debug information not coming through (Windows only?)
-X   http://code.google.com/p/processing/issues/detail?id=1440
-X "no library found" with android.text.format (so android.* is a problem)
-X Remove requirement for Google APIs in Android mode
-X   http://code.google.com/p/processing/issues/detail?id=613
-_   update Wiki to reflect the change
+0216 android
 
-cleaning/earlier
-A Defects in the tessellation of SVG shapes in A3D
-A   http://code.google.com/p/processing/issues/detail?id=291
-X change run/present/export/export application names in the menus
-A Blacked-out screen when restoring Android app from background.
-A   http://code.google.com/p/processing/issues/detail?id=381
-X android sdk/build location has changed (android-7 not 2.1) fix build.xml
-A excessive rotation of application causes memory to run out
-A   this probably means that some memory isn't being freed that should be
-A   new window and surfaceview objects are being created in onCreate
-A     so they should probably be taken down in onDestroy.. but how?
-A   http://code.google.com/p/processing/issues/detail?id=235
-o should alpha PImage stuff use a non-4byte config?
-X   http://code.google.com/p/processing/issues/detail?id=242
-X   hasn't emerged as a real issue
-o try using the internal javac on windows and see if exceptions come through..
-o   actually i think that might have been worse...
-X rounded rect support
-X   http://code.google.com/p/processing/issues/detail?id=929
-o too many temporary objects (particularly w/ color) created with A2D
-X   http://code.google.com/p/processing/issues/detail?id=213
-X   no votes after a couple years
-X resize() needs to use the android resize stuff
-o   right now using the rather than expensive copy()
-X   instead, create a new resized bitmap, and get rid of pixels[]
-X   http://code.google.com/p/processing/issues/detail?id=239
 
-motion events
-o registerMethod("motionEvent") and "mouseEvent" not implemented
-o PMotionEvent is being used internal to PApplet, need to re-wrap
-o   should be able to fire MotionEvents
-o modify MotionEvent code to use TouchEvent class, even if basic version
-o   internally, PApplet might subclass it for the pointers
-o   but queueing needs to work
-X opting to take a step backwards on the motion event handling
-o write a little stub code for people who want to use motionX/Y/etc
+_ update Wiki to reflect no need for Google APIs
 
 _ NullPointerException in AndroidBuild.writeLocalProps(AndroidBuild.java:458)
 _   prompts for SDK, works; then after restart breaks again

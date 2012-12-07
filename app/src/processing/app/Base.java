@@ -44,9 +44,9 @@ import processing.core.*;
  * files and images, etc) that comes from that.
  */
 public class Base {
-  static public final int REVISION = 215;
+  static public final int REVISION = 216;
   /** This might be replaced by main() if there's a lib/version.txt file. */
-  static public String VERSION_NAME = "0215";
+  static public String VERSION_NAME = "0216";
   /** Set true if this a proper release rather than a numbered revision. */
   static public boolean RELEASE = false;
 
@@ -276,14 +276,14 @@ public class Base {
     Mode javaScriptMode =
       ModeContribution.load(this, getContentFile("modes/javascript"),
                             "processing.mode.javascript.JavaScriptMode").getMode();
-    
+
     coreModes = new Mode[] { javaMode, androidMode, javaScriptMode };
-    
+
     // check for the new mode in case it's available
 //    try {
 //      Class.forName("processing.mode.java2.DebugMode");
-    ModeContribution experimentalContrib =  
-      ModeContribution.load(this, getContentFile("modes/experimental"), 
+    ModeContribution experimentalContrib =
+      ModeContribution.load(this, getContentFile("modes/experimental"),
         "processing.mode.experimental.ExperimentalMode");
     if (experimentalContrib != null) {
       Mode experimentalMode = experimentalContrib.getMode();
@@ -293,7 +293,7 @@ public class Base {
 
 //    for (Mode mode : coreModes) {  // already called by load() above
 //      mode.setupGUI();
-//    }    
+//    }
   }
 
 
