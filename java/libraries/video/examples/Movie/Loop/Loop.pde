@@ -1,7 +1,6 @@
 /**
  * Loop. 
  * 
- * Move the cursor across the screen to draw. 
  * Shows how to load and play a QuickTime movie file.  
  *
  */

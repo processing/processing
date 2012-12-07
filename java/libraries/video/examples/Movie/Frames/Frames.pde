@@ -14,7 +14,7 @@ int newFrame = 0;
 int movFrameRate = 30;
 
 void setup() {
-  size(640, 360, P2D);
+  size(640, 360);
   background(0);
   // Load and set the video to play. Setting the video 
   // in play mode is needed so at least one frame is read
