@@ -27,7 +27,6 @@ void setup() {
   writeRow = height - 1;
   topRow = 0;
   
-  //frameRate(10);
   background(0);
   loadPixels();
 }
