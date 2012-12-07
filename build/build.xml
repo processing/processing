@@ -109,8 +109,19 @@
   <!-- - - - - - - - - -->
   <!-- Basic Assembly  -->
   <!-- - - - - - - - - -->
+
+
+<!--  <target name="experimental" unless="version">-->
+  <target name="experimental">
+    <copy todir="${target.path}/modes/experimental">
+      <fileset dir="../experimental">
+	<include name="**/mode/*" />
+	<include name="**/theme/*" />
+      </fileset>
+    </copy>
+  </target>
   
-  <target name="assemble" depends="version-clear, version-write">
+  <target name="assemble" depends="version-clear, version-write, experimental">
     <fail unless="target.path" 
 	  message="Do not call assemble from the command line." />
     
@@ -131,13 +142,6 @@
 	<exclude name="**/._*" />
 
 	<exclude name="examples/**/applet/**" />
-      </fileset>
-    </copy>
-
-    <copy todir="${target.path}/modes/experimental">
-      <fileset dir="../experimental">
-	<include name="**/mode/*" />
-	<include name="**/theme/*" />
       </fileset>
     </copy>
 
@@ -347,8 +351,6 @@
       <fileset dir="macosx/" includes="template.app/**"/>
     </copy>
     
-<!--    <rename src="macosx/work/template.app" 
-	    dest="macosx/work/Processing.app" />-->
     <move file="macosx/work/template.app" 
 	  tofile="macosx/work/Processing.app" />
 
