@@ -476,14 +476,14 @@ public class PShape implements PConstants {
   }
 
   /**
-   * @webref pshape:method
+   * @webref shape:vertex
    * @brief Starts a new contour
    */
   public void beginContour() {
   }
 
   /**
-   * @webref pshape:method
+   * @webref shape:vertex
    * @brief Ends a contour
    */
   public void endContour() {

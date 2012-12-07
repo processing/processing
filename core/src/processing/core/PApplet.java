@@ -10735,12 +10735,18 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * @webref shape:vertex
+   */
   public void beginContour() {
     if (recorder != null) recorder.beginContour();
     g.beginContour();
   }
 
 
+  /**
+   * @webref shape:vertex
+   */
   public void endContour() {
     if (recorder != null) recorder.endContour();
     g.endContour();
@@ -10753,7 +10759,7 @@ public class PApplet extends Applet
   }
 
 
-/**
+  /**
    * ( begin auto-generated from endShape.xml )
    *
    * The <b>endShape()</b> function is the companion to <b>beginShape()</b>
@@ -10764,10 +10770,10 @@ public class PApplet extends Applet
    * beginning and the end).
    *
    * ( end auto-generated )
- * @webref shape:vertex
- * @param mode use CLOSE to close the shape
- * @see PGraphics#beginShape(int)
- */
+   * @webref shape:vertex
+   * @param mode use CLOSE to close the shape
+   * @see PGraphics#beginShape(int)
+   */
   public void endShape(int mode) {
     if (recorder != null) recorder.endShape(mode);
     g.endShape(mode);
