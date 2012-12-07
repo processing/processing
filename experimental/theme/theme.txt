@@ -137,3 +137,17 @@ gutter.bgcolor = #fcfcfc
 gutter.linecolor = #e9e9e9
 # space (in px) added to left and right of gutter markers
 gutter.padding = 3
+
+
+# XQMODE
+
+# underline colors
+editor.errorcolor = #ed2630
+editor.warningcolor = #ffc30e
+editor.errormarkercolor = #ed2630
+editor.warningmarkercolor = #ffc30e
+
+# ERROR BAR - error bar on the right that shows the markers
+errorbar.errorcolor = #ed2630
+errorbar.warningcolor = #ffc30e
+errorbar.backgroundcolor = #2c343d
