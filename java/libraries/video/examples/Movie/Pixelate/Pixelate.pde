@@ -46,6 +46,6 @@ void draw() {
       rect(i*blockSize, j*blockSize, blockSize, blockSize);
     }
   }
-  //image(mov, 0, 0);
+
 }
 
