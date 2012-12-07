@@ -260,6 +260,7 @@ need option to save table
 join tables together (static is kinda gross)
 lastRowIndex() (to avoid getRowCount() - 1)
 addRow() 
+rows() instead of getRows() (doesn't perform like our other get() functions)
 
 Request r = createRequest("http://p5.org/feed/13134.jpg");
 Request r = createRequest("http://p5.org/feed/13134.jpg", "callbackName");
