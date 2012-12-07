@@ -55,10 +55,19 @@ public class Problem {
    */
   public String message;
 
+  /**
+   * The type of error - WARNING or ERROR.
+   */
   public int type;
 
   public static final int ERROR = 1, WARNING = 2;
 
+  /**
+   * 
+   * @param iProblem - The IProblem which is being wrapped
+   * @param tabIndex - The tab number to which the error belongs to
+   * @param lineNumber - Line number(pde code) of the error
+   */
   public Problem(IProblem iProblem, int tabIndex, int lineNumber) {
     this.iProblem = iProblem;
     if(iProblem.isError()) {
@@ -101,10 +110,10 @@ public class Problem {
     else throw new IllegalArgumentException("Illegal Problem type passed to Problem.setType(int)");
   }
 
-  static Pattern pattern;
-  static Matcher matcher;
+  private static Pattern pattern;
+  private static Matcher matcher;
 
-  static final String tokenRegExp = "\\b token\\b";
+  private static final String tokenRegExp = "\\b token\\b";
 
   public static String process(IProblem problem) {
     return process(problem.getMessage());
@@ -126,21 +135,12 @@ public class Problem {
     matcher = pattern.matcher(message);
     message = matcher.replaceAll("");
 
-    // Split camel case words into separate words. 
-    // "VaraibleDeclaration" becomes "Variable Declaration"
-    // But sadly "PApplet" become "P Applet" and so on.
-
-    // StringTokenizer st = new StringTokenizer(message);
-    // String newMessage = "";
-    // while (st.hasMoreTokens()) {
-    // String word = st.nextToken();
-    // newMessage += splitCamelCaseWord(word) + " ";
-    // }
-    // message = new String(newMessage);
-
     return message;
   }
 
+  // Split camel case words into separate words. 
+  // "VaraibleDeclaration" becomes "Variable Declaration"
+  // But sadly "PApplet" become "P Applet" and so on.
   public static String splitCamelCaseWord(String word) {
     String newWord = "";
     for (int i = 1; i < word.length(); i++) {

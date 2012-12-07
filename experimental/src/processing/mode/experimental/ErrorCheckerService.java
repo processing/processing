@@ -52,7 +52,7 @@ public class ErrorCheckerService implements Runnable{
   private boolean pauseThread = false;
 
   protected ErrorWindow errorWindow;
-//  protected ErrorBar errorBar;
+
   /**
    * IProblem[] returned by parser stored in here
    */
@@ -256,15 +256,16 @@ public class ErrorCheckerService implements Runnable{
       syntaxCheck();
       
       // No syntax errors, proceed for compilation check, Stage 2.
-      if (problems.length == 0 && editor.compilationCheckEnabled) { //TODO: && editor.compilationCheckEnabled condition
+      if (problems.length == 0 && editor.compilationCheckEnabled) {
         sourceCode = xqpreproc.doYourThing(sourceCode, programImports);
         prepareCompilerClasspath();
         mainClassOffset = xqpreproc.mainClassOffset; // tiny, but
                                 // significant
-        if (staticMode)
-          mainClassOffset++; // Extra line for setup() decl.
-//         System.out.println(sourceCode);
-//         System.out.println("--------------------------");
+        if (staticMode) {
+        	mainClassOffset++; // Extra line for setup() decl.
+        }
+        //         System.out.println(sourceCode);
+        //         System.out.println("--------------------------");
         compileCheck();
       }
       
@@ -303,7 +304,7 @@ public class ErrorCheckerService implements Runnable{
       int a[] = calculateTabIndexAndLineNumber(problems[i]);
       Problem p = new Problem(problems[i], a[0], a[1]);
       problemsList.add(p);
-//      System.out.println(p.toString());
+      // System.out.println(p.toString());
     }
   }
   
@@ -329,17 +330,18 @@ public class ErrorCheckerService implements Runnable{
         
         File f = new File("modes"
             + File.separator
-            + "java2"
+            + "experimental"
             + File.separator + "mode");
         
         FileFilter fileFilter = new FileFilter() {
           public boolean accept(File file) {
             return (file.getName().endsWith(".jar") && !file
-                .getName().startsWith("XQMode"));
+                .getName().startsWith("experimental"));
           }
         };
 
         File[] jarFiles = f.listFiles(fileFilter);
+        // System.out.println( "Jar files found? " + (jarFiles != null));
         for (File jarFile : jarFiles) {
           classpathJars.add(jarFile.toURI().toURL());
         }
@@ -444,8 +446,10 @@ public class ErrorCheckerService implements Runnable{
    * 
    */
   private void prepareCompilerClasspath() {
-    if (!loadCompClass)
+    if (!loadCompClass) {
       return;
+    }
+    
     // System.out.println("1..");
     classpathJars = new ArrayList<URL>();
     String entry = "";
@@ -648,6 +652,7 @@ public class ErrorCheckerService implements Runnable{
    * Repaints the textarea if required
    */
   public void updateTextAreaPainter() {
+	// TODO: Make this fucntion of some use
     editor.getTextArea().repaint();
     currentTab = editor.getSketch().getCodeIndex(
         editor.getSketch().getCurrentCode());
@@ -657,9 +662,6 @@ public class ErrorCheckerService implements Runnable{
       // System.out.println("1 Repaint " + System.currentTimeMillis());
       return;
     }
-
-//    TODO: if (errorBar.errorPointsChanged())
-//      editor.getTextArea().repaint();
 
   }
   
@@ -920,8 +922,10 @@ public class ErrorCheckerService implements Runnable{
    *            - index of error
    */
   public void scrollToErrorLine(int errorIndex) {
-    if (editor == null)
+    if (editor == null) {
       return;
+    }
+    
     if (errorIndex < problemsList.size() && errorIndex >= 0) {
       Problem p = problemsList.get(errorIndex);
       try {
@@ -1073,8 +1077,6 @@ public class ErrorCheckerService implements Runnable{
    */
   public void stopThread() {
     stopThread = true;
-//    System.out.println(editor.getSketch().getName()
-//        + " - Error Checker stopped.");
   }
 
   /**
