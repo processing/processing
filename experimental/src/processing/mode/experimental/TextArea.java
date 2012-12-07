@@ -92,6 +92,11 @@ public class TextArea extends JEditTextArea {
         currentLineMarker = theme.loadThemeString("currentline.marker", currentLineMarker);
     }
     
+    /**
+     * Sets ErrorCheckerService and loads theme for TextArea(XQMode)
+     * @param ecs
+     * @param mode
+     */
     public void setECSandThemeforTextArea(ErrorCheckerService ecs, ExperimentalMode mode)
     {
       customPainter.setECSandTheme(ecs, mode);

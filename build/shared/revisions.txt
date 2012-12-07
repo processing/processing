@@ -1,4 +1,4 @@
-PROCESSING 2.0b7 (REV 0215) - 25 November 2012
+PROCESSING 2.0b7 (REV 0215) - 7 December 2012
 
 475,382 bug fixes in this release as we work on finalizing 2.0. 
 
@@ -26,6 +26,13 @@ PROCESSING 2.0b7 (REV 0215) - 25 November 2012
 
   If we're missing anything that's not covered in the reference, please
   let us know via the bugs database.
+
++ A new "experimental" mode has been added. It's the start of combining two
+  of our Google Summer of Code projects (DebugMode and XQMode) to enable 
+  a debugger and on-the-fly error checking. We're including it in the release
+  so that folks can test it out and let us know how it's doing. The interface
+  still needs work and its innards may be a bit buggy, but it represents
+  some exciting upcoming improvements for the PDE.
 
 + hint(ENABLE_ACCURATE_2D) has been renamed to hint(DISABLE_OPTIMIZED_STROKE)
   to better reflect what it actually does. Reference has been added.
