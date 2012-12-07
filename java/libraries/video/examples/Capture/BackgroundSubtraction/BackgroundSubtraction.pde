@@ -14,9 +14,8 @@ int[] backgroundPixels;
 Capture video;
 
 void setup() {
-  // Change size to 320 x 240 if too slow at 640 x 480
   size(640, 480, P2D); 
-  
+  // Uses the default video input, see the reference if this causes an error
   video = new Capture(this, width, height);
   video.start();  
   numPixels = video.width * video.height;
