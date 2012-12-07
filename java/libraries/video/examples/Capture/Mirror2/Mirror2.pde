@@ -17,7 +17,7 @@ Capture video;
 
 void setup() {
   size(640, 480, P2D);
-  //set up columns and rows
+  // Set up columns and rows
   cols = width / cellSize;
   rows = height / cellSize;
   colorMode(RGB, 255, 255, 255, 100);

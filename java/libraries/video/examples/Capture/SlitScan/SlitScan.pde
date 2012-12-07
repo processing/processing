@@ -6,9 +6,6 @@
  * to the video capture height. If you would prefer otherwise, 
  * consider using the image copy() function rather than the 
  * direct pixel-accessing approach I have used here. 
- * 
- * Created December 2006. 
- * Updated June 2007 by fry.
  */
 import processing.video.*;
 
