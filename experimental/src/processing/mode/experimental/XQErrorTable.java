@@ -53,6 +53,9 @@ public class XQErrorTable extends JTable {
 	 */
 	private boolean columnResizing = false;
 
+	/**
+	 * ErrorCheckerService instance
+	 */
 	protected ErrorCheckerService errorCheckerService;
 
 	@Override
@@ -118,8 +121,9 @@ public class XQErrorTable extends JTable {
 	synchronized public boolean updateTable(final TableModel tableModel) {
 
 		// If problems list is not visible, no need to update
-		if (!this.isVisible())
+		if (!this.isVisible()) {
 			return false;
+		}
 
 		SwingWorker worker = new SwingWorker() {
 
@@ -148,8 +152,9 @@ public class XQErrorTable extends JTable {
 		};
 
 		try {
-			if (!columnResizing)
+			if (!columnResizing) {
 				worker.execute();
+			}
 		} catch (Exception e) {
 			System.out.println("ErrorTable updateTable Worker's slacking."
 					+ e.getMessage());

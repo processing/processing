@@ -1,11 +1,11 @@
 /*
   Part of the XQMode project - https://github.com/Manindra29/XQMode
-  
+
   Under Google Summer of Code 2012 - 
   http://www.google-melange.com/gsoc/homepage/google/gsoc2012
-  
+
   Copyright (C) 2012 Manindra Moharana
-	
+
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License version 2
   as published by the Free Software Foundation.
@@ -81,8 +81,14 @@ public class ErrorBar extends JPanel {
 	 */
 	public Color backgroundColor = new Color(0x2C343D);
 
+	/**
+	 * DebugEditor instance
+	 */
 	protected DebugEditor editor;
 
+	/**
+	 * ErrorCheckerService instance
+	 */
 	protected ErrorCheckerService errorCheckerService;
 
 	/**
@@ -90,6 +96,9 @@ public class ErrorBar extends JPanel {
 	 */
 	protected ArrayList<ErrorMarker> errorPoints = new ArrayList<ErrorMarker>();
 
+	/**
+	 * Stores previous list of error markers.
+	 */
 	protected ArrayList<ErrorMarker> errorPointsOld = new ArrayList<ErrorMarker>();
 
 	public void paintComponent(Graphics g) {
@@ -102,8 +111,7 @@ public class ErrorBar extends JPanel {
 		for (ErrorMarker emarker : errorPoints) {
 			if (emarker.type == ErrorMarker.Error) {
 				g.setColor(errorColor);
-			}
-			else {
+			} else {
 				g.setColor(warningColor);
 			}
 			g.fillRect(2, emarker.y, (getWidth() - 3), errorMarkerHeight);
@@ -123,8 +131,8 @@ public class ErrorBar extends JPanel {
 		this.preferredHeight = height;
 		this.errorCheckerService = editor.errorCheckerService;
 		errorColor = mode.getThemeColor("errorbar.errorcolor", errorColor);
-		warningColor = mode.getThemeColor("errorbar.warningcolor",
-				warningColor);
+		warningColor = mode
+				.getThemeColor("errorbar.warningcolor", warningColor);
 		backgroundColor = mode.getThemeColor("errorbar.backgroundcolor",
 				backgroundColor);
 		addListeners();
@@ -140,69 +148,73 @@ public class ErrorBar extends JPanel {
 
 		// NOTE TO SELF: ErrorMarkers are calculated for the present tab only
 		// Error Marker index in the arraylist is LOCALIZED for current tab.
-	  
-	  final int fheight = this.getHeight();
-	  SwingWorker worker = new SwingWorker() {
-	    
-      protected Object doInBackground() throws Exception {
-        return null;
-      }
+		// Also, need to do the update in the UI thread to prevent concurrency issues. 
+		final int fheight = this.getHeight();
+		SwingWorker worker = new SwingWorker() {
 
-      protected void done() {
-        int bigCount = 0;
-        int totalLines = 0;
-        int currentTab = 0;
-        for (SketchCode sc : editor.getSketch().getCode()) {
-          if (sc.isExtension("pde")) {
-            sc.setPreprocOffset(bigCount);
+			protected Object doInBackground() throws Exception {
+				return null;
+			}
 
-            try {
-              if (editor.getSketch().getCurrentCode().equals(sc)) {
-                // Adding + 1 to len because \n gets appended for each
-                // sketchcode extracted during processPDECode()
-                totalLines = Base.countLines(sc.getDocument().getText(
-                    0, sc.getDocument().getLength())) + 1;
-                break;
-              }
-            } catch (Exception e) {
-              e.printStackTrace();
-            }
-          }
-          currentTab++;
-        }
-        // System.out.println("Total lines: " + totalLines);
+			protected void done() {
+				int bigCount = 0;
+				int totalLines = 0;
+				int currentTab = 0;
+				for (SketchCode sc : editor.getSketch().getCode()) {
+					if (sc.isExtension("pde")) {
+						sc.setPreprocOffset(bigCount);
 
-        errorPointsOld.clear();
-        for (ErrorMarker marker : errorPoints) {
-          errorPointsOld.add(marker);
-        }
-        errorPoints.clear();
+						try {
+							if (editor.getSketch().getCurrentCode().equals(sc)) {
+								// Adding + 1 to len because \n gets appended
+								// for each
+								// sketchcode extracted during processPDECode()
+								totalLines = Base.countLines(sc.getDocument()
+										.getText(0,
+												sc.getDocument().getLength())) + 1;
+								break;
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+					currentTab++;
+				}
+				// System.out.println("Total lines: " + totalLines);
 
-        // Each problem.getSourceLine() will have an extra line added because of
-        // class declaration in the beginning
-        for (Problem problem : problems) {
-          if (problem.tabIndex == currentTab) {
-            // Ratio of error line to total lines
-            float y = problem.lineNumber / ((float) totalLines);
-            // Ratio multiplied by height of the error bar
-            y *= fheight - 15; // -15 is just a vertical offset
-            errorPoints.add(new ErrorMarker(problem, (int) y, problem
-                .isError() ? ErrorMarker.Error : ErrorMarker.Warning));
-            // System.out.println("Y: " + y);
-          }
-        }
+				errorPointsOld.clear();
+				for (ErrorMarker marker : errorPoints) {
+					errorPointsOld.add(marker);
+				}
+				errorPoints.clear();
 
-        repaint();
-      }
-    };
+				// Each problem.getSourceLine() will have an extra line added
+				// because of
+				// class declaration in the beginning
+				for (Problem problem : problems) {
+					if (problem.tabIndex == currentTab) {
+						// Ratio of error line to total lines
+						float y = problem.lineNumber / ((float) totalLines);
+						// Ratio multiplied by height of the error bar
+						y *= fheight - 15; // -15 is just a vertical offset
+						errorPoints.add(new ErrorMarker(problem, (int) y,
+								problem.isError() ? ErrorMarker.Error
+										: ErrorMarker.Warning));
+						// System.out.println("Y: " + y);
+					}
+				}
 
-    try {
-      worker.execute(); // I eat concurrency bugs for breakfast.
-    } catch (Exception exp) {
-      System.out.println("Errorbar update markers is slacking."
-          + exp.getMessage());
-      // e.printStackTrace();
-    }
+				repaint();
+			}
+		};
+
+		try {
+			worker.execute(); // I eat concurrency bugs for breakfast.
+		} catch (Exception exp) {
+			System.out.println("Errorbar update markers is slacking."
+					+ exp.getMessage());
+			// e.printStackTrace();
+		}
 	}
 
 	/**
@@ -270,10 +282,12 @@ public class ErrorBar extends JPanel {
 										.size(); i++) {
 									Problem p = errorCheckerService.problemsList
 											.get(i);
-									if (p.tabIndex < currentTab)
+									if (p.tabIndex < currentTab) {
 										totalErrorIndex++;
-									if (p.tabIndex == currentTab)
+									}
+									if (p.tabIndex == currentTab) {
 										break;
+									}
 								}
 								errorCheckerService
 										.scrollToErrorLine(totalErrorIndex);
@@ -364,7 +378,7 @@ public class ErrorBar extends JPanel {
 
 			@Override
 			public void mouseDragged(MouseEvent arg0) {
-			  
+
 			}
 		});
 

@@ -43,6 +43,7 @@ import org.eclipse.text.edits.TextEdit;
 
 import processing.app.Preferences;
 import processing.core.PApplet;
+import processing.mode.java.preproc.PdePreprocessor;
 
 /**
  * My implementation of P5 preprocessor. Uses Eclipse JDT features instead of
@@ -57,8 +58,16 @@ public class XQPreprocessor {
 
 	private ASTRewrite rewrite = null;
 	public int mainClassOffset = 0;
-	ArrayList<String> imports;
-	ArrayList<ImportStatement> extraImports;
+	private ArrayList<String> imports;
+	private ArrayList<ImportStatement> extraImports;
+	
+	private String[] coreImports, defaultImports;
+	
+	public XQPreprocessor() {
+		PdePreprocessor p = new PdePreprocessor(null);
+		defaultImports = p.getDefaultImports();		
+		coreImports = p.getCoreImports();
+	}
 
 	/**
 	 * The main method that performs preprocessing. Converts code into compilable java.
@@ -104,8 +113,9 @@ public class XQPreprocessor {
 		int position = doc.get().indexOf("{") + 1;
 		int lines = 0;
 		for (int i = 0; i < position; i++) {
-			if (doc.get().charAt(i) == '\n')
+			if (doc.get().charAt(i) == '\n') {
 				lines++;
+			}
 		}
 		lines += 2;
 		// System.out.println("Lines: " + lines);
@@ -117,7 +127,7 @@ public class XQPreprocessor {
 	/**
 	 * Returns all import statements as lines of code
 	 * 
-	 * @return String - All import statements combined
+	 * @return String - All import statements combined. Each import in a separate line.
 	 */
 	public String prepareImports() {
 		imports = new ArrayList<String>();
@@ -125,11 +135,11 @@ public class XQPreprocessor {
 			imports.add(new String(extraImports.get(i).importName));
 		}
 		imports.add(new String("// Default Imports"));
-		for (int i = 0; i < getCoreImports().length; i++) {
-			imports.add(new String("import " + getCoreImports()[i] + ";"));
+		for (int i = 0; i < coreImports.length; i++) {
+			imports.add(new String("import " + coreImports[i] + ";"));
 		}
-		for (int i = 0; i < getDefaultImports().length; i++) {
-			imports.add(new String("import " + getDefaultImports()[i] + ";"));
+		for (int i = 0; i < defaultImports.length; i++) {
+			imports.add(new String("import " + defaultImports[i] + ";"));
 		}
 		String totalImports = "";
 		for (int i = 0; i < imports.size(); i++) {
@@ -137,17 +147,6 @@ public class XQPreprocessor {
 		}
 		totalImports += "\n";
 		return totalImports;
-	}
-
-	public String[] getCoreImports() {
-		return new String[] { "processing.core.*", "processing.data.*",
-				"processing.opengl.*" };
-	}
-
-	public String[] getDefaultImports() {
-		// These may change in-between (if the prefs panel adds this option)
-		String prefsLine = Preferences.get("preproc.imports.list");
-		return PApplet.splitTokens(prefsLine, ", ");
 	}
 
 	/**
