@@ -39,7 +39,7 @@ PROCESSING 2.0b7 (REV 0215) - 25 November 2012
   compatibility issue). This was changed in recent releases, but missing here.
   http://code.google.com/p/processing/issues/detail?id=859
 
-+ Implement more Mac OS X key bindings
++ More Mac OS X key bindings have been implemented in the editor:
   http://code.google.com/p/processing/issues/detail?id=1354
   http://guides.macrumors.com/Keyboard_shortcuts&section=10#Text_Shortcuts
 
@@ -54,6 +54,7 @@ PROCESSING 2.0b7 (REV 0215) - 25 November 2012
   for (TableRow row : table) { ... }
   has now changed to 
   for (TableRow row : table.getRows()) { ... }
+  (This may change to rows() on the next round, pending other API tweaks)
 
 + Change default for shift-backspace to just be backspace. To change it back,
   set editor.keys.shift_backspace_is_delete=true in preferences.txt.
