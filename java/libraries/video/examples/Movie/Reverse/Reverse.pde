@@ -1,14 +1,11 @@
 /**
  * Reverse playback example.
  *
- * The Movie.speed() method allows to 
- * change the playback speed. Use negative
- * values for backwards playback. Note that
- * not all video formats support backwards
- * playback. This depends on the underlying
- * gstreamer plugins used by gsvideo. For
- * example, the theora codec does support 
- * backward playback, but not so the H264 
+ * The Movie.speed() method allows to change the playback speed. 
+ * Use negative values for backwards playback. Note that not all 
+ * video formats support backwards playback. This depends on the 
+ * underlying gstreamer plugins used by gsvideo. For example, the 
+ * theora codec does support backward playback, but not so the H264 
  * codec, at least in its current version.
  * 
  */
