@@ -1548,12 +1548,16 @@ public class PGraphics extends PImage implements PConstants {
 //                "or shapes with holes.");
 //  }
 
-
+  /**
+   * @webref shape:vertex
+   */
   public void beginContour() {
     showMissingWarning("beginContour");
   }
 
-
+  /**
+   * @webref shape:vertex
+   */
   public void endContour() {
     showMissingWarning("endContour");
   }
@@ -1563,7 +1567,7 @@ public class PGraphics extends PImage implements PConstants {
     endShape(OPEN);
   }
 
-/**
+  /**
    * ( begin auto-generated from endShape.xml )
    *
    * The <b>endShape()</b> function is the companion to <b>beginShape()</b>
@@ -1574,10 +1578,10 @@ public class PGraphics extends PImage implements PConstants {
    * beginning and the end).
    *
    * ( end auto-generated )
- * @webref shape:vertex
- * @param mode use CLOSE to close the shape
- * @see PGraphics#beginShape(int)
- */
+   * @webref shape:vertex
+   * @param mode use CLOSE to close the shape
+   * @see PGraphics#beginShape(int)
+   */
   public void endShape(int mode) {
   }
 
