@@ -4694,16 +4694,13 @@ public class PGraphics extends PImage implements PConstants {
    * and draw a rectangle.
    */
   public void background(float x, float y, float z, float a) {
-//    if (format == RGB) {
-//      background(x, y, z);  // don't allow people to set alpha
-//
-//    } else {
-//      colorCalc(x, y, z, a);
-//      backgroundFromCalc();
-//      backgroundImpl();
-//    }
     colorCalc(x, y, z, a);
     backgroundFromCalc();
+  }
+
+
+  public void clear() {
+    background(0, 0, 0, 0);
   }
 
 

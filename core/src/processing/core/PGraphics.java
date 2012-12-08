@@ -6896,16 +6896,13 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public void background(float v1, float v2, float v3, float alpha) {
-//    if (format == RGB) {
-//      background(x, y, z);  // don't allow people to set alpha
-//
-//    } else {
-//      colorCalc(x, y, z, a);
-//      backgroundFromCalc();
-//      backgroundImpl();
-//    }
     colorCalc(v1, v2, v3, alpha);
     backgroundFromCalc();
+  }
+
+
+  public void clear() {
+    background(0, 0, 0, 0);
   }
 
 
