@@ -2007,6 +2007,8 @@ public class QuickTimeWriter {
                 }
                 seekRelative(pointer);
                 finished = true;
+                headerData.flush();
+                headerData.close();
             }
         }
 
@@ -2075,6 +2077,8 @@ public class QuickTimeWriter {
                 if (sizeBefore != sizeAfter) {
                     System.err.println("size mismatch " + sizeBefore + ".." + sizeAfter);
                 }
+                headerData.flush();
+                headerData.close();
             }
         }
 
@@ -2146,6 +2150,8 @@ public class QuickTimeWriter {
 
                 seekRelative(pointer);
                 finished = true;
+                headerData.flush();
+                headerData.close();
             }
         }
 
@@ -3330,6 +3336,8 @@ public class QuickTimeWriter {
                     for (int i = 0; i < freeSize; i++) {
                         daos.write(0);
                     }
+                    daos.flush();
+                    daos.close();
                 }
 
             }
