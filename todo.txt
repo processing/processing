@@ -1,5 +1,7 @@
 0216 pde
 
+_ on Windows, the Help menu seems to start with a separator
+
 
 https://processing-js.lighthouseapp.com/
 
