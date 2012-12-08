@@ -1,40 +1,45 @@
 0216 android
+X Update documentation and tools for Android SDK Tools revision 21
+X   http://code.google.com/p/processing/issues/detail?id=1398
+X update Wiki to reflect no need for Google APIs
+o instructions on installing the usb driver for windows
+o   http://developer.android.com/sdk/win-usb.html
+o need to post android examples
+o check out andres' changes for PShape
+X look into touch event code, see if there's a good way to integrate
+o   make a decision on how to integrate touch event code
+X   punting until later
+X add clear and close to all stream methods?
+X   http://code.google.com/p/processing/issues/detail?id=244
+X   check on this, fixed one, all set
+o gui stuff: http://hg.postspectacular.com/cp5magic/wiki/Home
 
+earlier
+X inside AndroidPreprocessor
+X   processing.mode.java.JavaBuild.scrubComments(sketch.getCode(0).getProgram())
+X   PApplet.match(scrubbed, processing.mode.java.JavaBuild.SIZE_REGEX);
+X   clean up earlier when size() stuff was moved up
+o test libraries on android
+X Implement a way to include the resources directory of an Android app
+X   USB host and NFC reader need other changes to the app hierarchy to work
+X   http://code.google.com/p/processing/issues/detail?id=767
+X Error for "android create avd" when the AVD is already installed
+X   http://code.google.com/p/processing/issues/detail?id=614
 
-_ update Wiki to reflect no need for Google APIs
 
 _ NullPointerException in AndroidBuild.writeLocalProps(AndroidBuild.java:458)
 _   prompts for SDK, works; then after restart breaks again
 _   also refers to ANDROID_HOME and not ANDROID_SDK.. 
 _     are we using the right one these days?
 _   http://code.google.com/p/processing/issues/detail?id=979
-
-_ Finish implementation of OPEN and CHORD drawing modes for arc()
-_   http://code.google.com/p/processing/issues/detail?id=1405
-
-_ implement blendMode() for Android
-_   should be fairly straightforward given Java2D implementation
-_   http://code.google.com/p/processing/issues/detail?id=1386
-
-_ Update documentation and tools for Android SDK Tools revision 21
-_   http://code.google.com/p/processing/issues/detail?id=1398
-
-_ re-implement to use Fragment API
-_   and what about daydream or widgets or whatever?
-_   http://code.google.com/p/processing/issues/detail?id=1335
+_   this one is difficult to reproduce
 
 _ implement Android version of command line tools
 _   http://code.google.com/p/processing/issues/detail?id=1323
 
-_ emulator not starting up on OS X?
 _ Android emulator doesn't always start on the first attempt
+_   emulator not starting up on OS X?
 _   http://code.google.com/p/processing/issues/detail?id=1210
-
-_ inside AndroidPreprocessor
-_   processing.mode.java.JavaBuild.scrubComments(sketch.getCode(0).getProgram())
-_   PApplet.match(scrubbed, processing.mode.java.JavaBuild.SIZE_REGEX);
-
-_ test libraries on android
 
 _ Android OPENGL renderer + JAVA2D PGraphics results in PTexture exception
 _   http://code.google.com/p/processing/issues/detail?id=1019
@@ -42,15 +47,12 @@ _   http://code.google.com/p/processing/issues/detail?id=1019
 _ focus handling note:
 _   http://android-developers.blogspot.com/2011/11/making-android-games-that-play-nice.html
 
-_ if a sketch asks for android mode but it's not available
+_ if a sketch asks for Android mode but it's not available
 _   (after a double-click)
 _   you get the "is android installed"? dialog, then it re-opens again
 _   without closing the other
 
-_ usb host and nfc reader need other changes to the app hierarchy to work
-_   http://code.google.com/p/processing/issues/detail?id=767
-
-_ don't let the examples get overwritten with other mode stuff
+_ don't let the examples get overwritten with mode settings, manifest, etc
 _   the whole sketch.properties thing is yech
 
 _ add INTERNET permissions to the android net examples
@@ -81,18 +83,12 @@ _   inside run() it shouldn't still be going
 _ need sizeChanged() method... 
 _   also add the param to the xml file saying that it can deal w/ rotation
 
-_ check out andres' changes for PShape
-
 _ re: android libraries, from shawn van every
 The most powerful part were the libraries (and the ease with which they could be developed).  Location, SMS, Camera/Video, Bluetooth (for Arduino integration) and PClient/PRequest were by far the most used.  The ones that came with it, plus the ones from MJSoft were good though I ended up making a couple of very specific ones for my students: http://www.mobvcasting.com/wp/?cat=4
 
 _ process trackball events (they're only deltas)
 _ handle repeat key events 
 _ implement link()
-_ need to post android examples
-
-_ instructions on installing the usb driver for windows
-_   http://developer.android.com/sdk/win-usb.html
 
 _ error in 'create avd' with "Emulator already exists" when it needs an upgrade
 _   or cannot be used with the current setup
@@ -114,8 +110,6 @@ _ need to do something to make it easier to do new screen sizes.
 
 _ sketches must be removed manually if the debug keystore changes
 _   http://code.google.com/p/processing/issues/detail?id=236
-
-_ gui stuff: http://hg.postspectacular.com/cp5magic/wiki/Home
 
 _ "failed to get signature key" problem
 _   Caused by: /Users/aandnota/Documents/android-sdk-mac_x86/tools/ant/ant_rules_r3.xml:209: com.android.sdklib.build.ApkCreationException: Unable to get debug signature key
@@ -171,9 +165,6 @@ _   removing local version of java helped someone fix it
 _ don't let the keystore message show up in red
 _   Using keystore: /Users/fry/.android/debug.keystore
 
-X look into touch event code, see if there's a good way to integrate
-_   make a decision on how to integrate touch event code
-
 _ for libraries that don't work with android, don't let them export
 _   http://code.google.com/p/processing/issues/detail?id=248
 _   add line for export in libraries to say whether they're compatible
@@ -183,11 +174,10 @@ _     or 'mode=java,android,python'
 _ error messages in runner that are handled special (OOME) need different
 _   handling for android vs others.. argh
 
-_ PShape examples are totally broken
-
 _ clean up changes from andres
 _   what is resetLights() in PGraphics?
 _   remove model() method from end of PApplet (make it shape(PShape))
+_   PShape examples are totally broken
 
 P1 this is embarrassing, need to fix ASAP
 P2 need to fix before beta release
@@ -199,6 +189,12 @@ P5 nice to have
 
 
 CORE (PApplet, P2D et al)
+
+_ implement blendMode() for Android
+_   should be fairly straightforward given Java2D implementation
+_   http://code.google.com/p/processing/issues/detail?id=1386
+_ Finish implementation of OPEN and CHORD drawing modes for arc()
+_   http://code.google.com/p/processing/issues/detail?id=1405
 
 _ images resized with default renderer on Android are pixelated
 _   http://code.google.com/p/processing/issues/detail?id=552
@@ -282,12 +278,9 @@ P3 _   http://code.google.com/p/processing/issues/detail?id=236
 P3 _ library support also needs android manifest changes
 P3 _   http://code.google.com/p/processing/issues/detail?id=225
 
-P4 _ don't require android tools to be installed already
-P4 _   or implement automatic download/install of android tools
-P4 _   http://code.google.com/p/processing/issues/detail?id=203
-
-PM _ Error for "android create avd" when the AVD is already installed
-PM -   http://code.google.com/p/processing/issues/detail?id=614
+_ implement automatic download/install of android tools
+_   also need to install USB Driver on Windows, and set device rules on Linux
+_   http://code.google.com/p/processing/issues/detail?id=203
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
@@ -313,13 +306,13 @@ _   w/o needing to use the incredibly slow android tools
 _ maybe the back button shouldn't quit apps, the home button should?
 _   back button use in apps is so infuriating...
 
-DL _ add clear and close to all stream methods?
-DL _   http://code.google.com/p/processing/issues/detail?id=244
-
-EH _ separate "PApplet" into separate View and Activity classes
-EH _   http://code.google.com/p/processing/issues/detail?id=212
-EM _ implement size() and createGraphics() for arbitrary renderers
-EM _   http://code.google.com/p/processing/issues/detail?id=241
+_ separate "PApplet" into separate View and Activity classes
+_   http://code.google.com/p/processing/issues/detail?id=212
+_ re-implement to use Fragment API
+_   and what about daydream or widgets or whatever?
+_   http://code.google.com/p/processing/issues/detail?id=1335
+_ implement size() and createGraphics() for arbitrary renderers
+_   http://code.google.com/p/processing/issues/detail?id=241
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
