@@ -217,6 +217,7 @@ public class PShapeOBJ extends PShape {
               if (mreader != null) {
                 parseMTL(parent, mreader, materials, mtlTable);
               }
+              mreader.close();
             }
           } else if (parts[0].equals("g")) {
             gname = 1 < parts.length ? parts[1] : "";
