@@ -16,7 +16,9 @@
     
     <mkdir dir="bin" />
     <javac target="1.5" 
-	   srcdir="src" destdir="bin" 
+	   source="1.5"
+	   srcdir="src" 
+	   destdir="bin" 
 	   encoding="UTF-8"
 	   includeAntRuntime="false"
 	   classpath="../../../../app/bin" />
