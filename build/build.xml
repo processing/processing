@@ -841,6 +841,10 @@
 	  tofile="javadoc/everything/index.html" />
 -->
 
+    <exec executable="find" dir=".">
+      <arg line="javadoc -name '*.html' -exec svn propset svn:mime-type text/html {} ';'" />
+    </exec>
+
   </target>
 
 <!-- no longer necessary because it comes straight from Google Code -->
