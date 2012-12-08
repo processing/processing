@@ -378,6 +378,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
               errorCheckerService.updateErrorTable();
               errorCheckerService.updateEditorStatus();
               getTextArea().repaint();
+              errorBar.repaint();
             } else {
               errorCheckerService.resumeThread();
               System.out.println(thisEditor.getSketch().getName()
