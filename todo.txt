@@ -1,4 +1,5 @@
 0216 pde
+X remove extra separator at the top of the Help menu on Windows and Linux
 
 _ on Windows, the Help menu seems to start with a separator
 
