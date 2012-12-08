@@ -2,6 +2,7 @@ package processing.app.tools;
 
 import java.io.IOException;
 
+import processing.app.Base;
 import processing.app.Editor;
 
 
@@ -20,15 +21,21 @@ public class MovieMaker implements Tool {
 
 
   public void run() {
-    String classPath =
-      getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
-    System.out.println("cp is " + classPath);
-    try {
-      Runtime.getRuntime().exec(new String[] {
-        "java", "-cp", classPath, "processing.app.tools.MovieMakerFrame"
-      });
-    } catch (IOException e) {
-      e.printStackTrace();
+    if (Base.isMacOS()) {
+      // For OS X, run out of process, so that Quaqua doesn't hose the layout.
+      // http://code.google.com/p/processing/issues/detail?id=836
+      String classPath =
+          getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+      try {
+        Runtime.getRuntime().exec(new String[] {
+          "java", "-cp", classPath, "processing.app.tools.MovieMakerFrame"
+        });
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    } else {
+      System.out.println("null frame, yeah baby");
+      MovieMakerFrame.main(null);
     }
   }
 

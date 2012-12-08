@@ -1,5 +1,7 @@
 0216 core
 
+_ Add clear() to replace background(0, 0, 0, 0)
+_   http://code.google.com/p/processing/issues/detail?id=1446
 
 _ implement mousePressed(Event) etc
 _   better to do this instead of bringing back the magic event
