@@ -14284,6 +14284,12 @@ public class PApplet extends Applet
   }
 
 
+  public void clear() {
+    if (recorder != null) recorder.clear();
+    g.clear();
+  }
+
+
   /**
    * Takes an RGB or ARGB image and sets it as the background.
    * The width and height of the image must be the same size as the sketch.
