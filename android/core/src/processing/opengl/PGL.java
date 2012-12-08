@@ -344,7 +344,9 @@ public class PGL {
 
   // FBO layer
 
+  public static boolean FORCE_SCREEN_FBO = false;
   protected boolean usingFBOlayer = false;
+  protected boolean firstFrame = true;
   protected int[] glColorFbo = { 0 };
   protected int[] glColorTex = { 0, 0 };
   protected int fboWidth, fboHeight;
@@ -435,10 +437,9 @@ public class PGL {
       }
 
       boolean packed = ext.indexOf("packed_depth_stencil") != -1;
+      int depthBits = getDepthBits();
+      int stencilBits = getStencilBits();
 
-      // We create the GL resources we need to draw incrementally, ie: not
-      // clearing the screen in each frame. Because the way Android handles
-      // double buffering we need to handle our own custom buffering using FBOs.
       GLES20.glGenTextures(2, glColorTex, 0);
       for (int i = 0; i < 2; i++) {
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, glColorTex[i]);
@@ -459,13 +460,17 @@ public class PGL {
       }
       GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
 
+      backTex = 0;
+      frontTex = 1;
+
       GLES20.glGenFramebuffers(1, glColorFbo, 0);
       GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, glColorFbo[0]);
       GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER,
                                     GLES20.GL_COLOR_ATTACHMENT0,
-                                    GLES20.GL_TEXTURE_2D, glColorTex[0], 0);
+                                    GLES20.GL_TEXTURE_2D, glColorTex[backTex], 0);
 
-      if (packed) { // packed depth+stencil buffer
+      if (packed && depthBits == 24 && stencilBits == 8) {
+        // packed depth+stencil buffer
         int[] depthStencil = { 0 };
         GLES20.glGenRenderbuffers(1, depthStencil, 0);
         GLES20.glBindRenderbuffer(GLES20.GL_RENDERBUFFER, depthStencil[0]);
@@ -492,10 +497,8 @@ public class PGL {
                                          GLES20.GL_DEPTH_ATTACHMENT,
                                          GLES20.GL_RENDERBUFFER, depth[0]);
 
-        int[] temp = new int[1];
-        GLES20.glGetIntegerv(GLES20.GL_STENCIL_BITS, temp, 0);
-        int stencilBits = temp[0];
         if (stencilBits == 8) {
+          // We have stencil buffer.
           GLES20.glGenRenderbuffers(1, stencil, 0);
           GLES20.glBindRenderbuffer(GLES20.GL_RENDERBUFFER, stencil[0]);
           GLES20.glRenderbufferStorage(GLES20.GL_RENDERBUFFER,
@@ -516,10 +519,6 @@ public class PGL {
       GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_STENCIL_BUFFER_BIT);
 
       GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
-      PGraphicsOpenGL.drawFramebuffer.glFbo = 0;
-
-      backTex = 0;
-      frontTex = 1;
 
       initialized = true;
     }
@@ -658,62 +657,37 @@ public class PGL {
 
 
   protected void beginDraw(boolean clear0) {
-    if (!clear0 && glColorFbo[0] != 0) {
-      // Bind the FBO and use the back texture to draw to.
+    if ((!clear0 || FORCE_SCREEN_FBO) && glColorFbo[0] != 0) {
       GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, glColorFbo[0]);
       GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER,
                                     GLES20.GL_COLOR_ATTACHMENT0,
                                     GLES20.GL_TEXTURE_2D,
                                     glColorTex[backTex], 0);
+      if (firstFrame) {
+        // No need to draw back color buffer because we are in the first frame.
+        GLES20.glClearColor(0, 0, 0, 0);
+        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
+      } else if (!clear0) {
+        // Render previous back texture (now is the front) as background,
+        // because no background() is being used ("incremental drawing")
+        drawTexture(GLES20.GL_TEXTURE_2D, glColorTex[frontTex],
+                    fboWidth, fboHeight, 0, 0, pg.width, pg.height,
+                                         0, 0, pg.width, pg.height);
+      }
       usingFBOlayer = true;
     } else {
       usingFBOlayer = false;
     }
 
-
-
-
-    /*
-    if (clear && !FORCE_SCREEN_FBO) {
-      // Simplest scenario: clear mode means we clear both the color and depth
-      // buffers. No need for saving front color buffer, etc.
-      GLES20.glClearColor(0, 0, 0, 0);
-      GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
-      PGraphicsOpenGL.drawFramebuffer.glFbo = 0;
-    } else {
-      GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, glColorFbo[0]);
-      GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER,
-                                    GLES20.GL_COLOR_ATTACHMENT0,
-                                    GLES20.GL_TEXTURE_2D,
-                                    glColorTex[frontTex], 0);
-
-      // We need to save the color buffer after finishing with the rendering of
-      // this frame, to use is as the background for the next frame
-      // ("incremental drawing").
-      GLES20.glClearColor(0, 0, 0, 0);
-      GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_STENCIL_BUFFER_BIT);
-      if (firstOnscreenFrame) {
-        // No need to draw back color buffer because we are in the first frame.
-        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
-      } else {
-        // Render previous draw texture as background.
-        drawTexture(GLES20.GL_TEXTURE_2D, glColorTex[backTex],
-                    fboWidth, fboHeight, 0, 0, pg.width, pg.height,
-                    0, 0, pg.width, pg.height);
-      }
-      PGraphicsOpenGL.drawFramebuffer.glFbo = glColorFbo[0];
+    if (firstFrame) {
+      firstFrame = false;
     }
-
-    if (firstOnscreenFrame) {
-      firstOnscreenFrame = false;
-    }
-*/
   }
 
 
   protected void endDraw(boolean clear) {
     if (usingFBOlayer) {
-      // Draw the contents of the back texture to the main framebuffer.
+      // Draw the contents of the back texture to the screen framebuffer.
       GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
 
       GLES20.glClearDepthf(1);
@@ -723,64 +697,14 @@ public class PGL {
       // Render current back texture to screen, without blending.
       GLES20.glDisable(GLES20.GL_BLEND);
       drawTexture(GLES20.GL_TEXTURE_2D, glColorTex[backTex],
-                  fboWidth, fboHeight,
-                  0, 0, pg.width, pg.height, 0, 0, pg.width, pg.height);
-
-      GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, glColorFbo[0]);
-
-      if (!clear) {
-        // Draw the back texture into the front texture, which will be used as
-        // back texture in the next frame. Otherwise flickering will occur if
-        // the sketch uses "incremental drawing" (background() not called).
-        GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER,
-                                      GLES20.GL_COLOR_ATTACHMENT0,
-                                      GLES20.GL_TEXTURE_2D,
-                                      glColorTex[frontTex], 0);
-        drawTexture(GLES20.GL_TEXTURE_2D, glColorTex[backTex],
-                    fboWidth, fboHeight,
-                    0, 0, pg.width, pg.height, 0, 0, pg.width, pg.height);
-
-        // Leave the back texture as current
-        GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER,
-                                      GLES20.GL_COLOR_ATTACHMENT0,
-                                      GLES20.GL_TEXTURE_2D,
-                                      glColorTex[backTex], 0);
-      }
-
-      // Swap textures.
-      int temp = frontTex;
-      frontTex = backTex;
-      backTex = temp;
-
-      // This is the trick to avoid the flickering: don't leave the FBO bound!
-      GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
-    }
-
-
-    /*
-    if (!clear0 || FORCE_SCREEN_FBO) {
-      // We are in the primary surface, and no clear mode, this means that the
-      // current contents of the front buffer needs to be used in the next frame
-      // as the background.
-      GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
-      PGraphicsOpenGL.drawFramebuffer.glFbo = 0;
-
-      GLES20.glClearDepthf(1);
-      GLES20.glClearColor(0, 0, 0, 0);
-      GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
-
-      // Render current front texture to screen, without blending.
-      GLES20.glDisable(GLES20.GL_BLEND);
-      drawTexture(GLES20.GL_TEXTURE_2D, glColorTex[frontTex],
                   fboWidth, fboHeight, 0, 0, pg.width, pg.height,
-                  0, 0, pg.width, pg.height);
+                                       0, 0, pg.width, pg.height);
 
       // Swapping front and back textures.
       int temp = frontTex;
       frontTex = backTex;
       backTex = temp;
     }
-    */
   }
 
 
