@@ -13,6 +13,8 @@ X add clear and close to all stream methods?
 X   http://code.google.com/p/processing/issues/detail?id=244
 X   check on this, fixed one, all set
 o gui stuff: http://hg.postspectacular.com/cp5magic/wiki/Home
+X OpenGL sketches crashes on older Android devices
+X   http://code.google.com/p/processing/issues/detail?id=1455
 
 earlier
 X inside AndroidPreprocessor

@@ -3,9 +3,13 @@ X Add clear() to replace background(0, 0, 0, 0)
 X   http://code.google.com/p/processing/issues/detail?id=1446
 
 
+PShape s = createShape();
+s.beginShape(QUADS);
+
 _ implement mousePressed(Event) etc
 _   better to do this instead of bringing back the magic event
 _   or implementing the magic event on Android
+_   also problematic with it not being called now
 _ add mouse wheel support to 2.0 event system
 _   this is fairly messy since desktop and JS behave a little differently
 _   wheel event should subclass mouse (since position still relevant)
