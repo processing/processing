@@ -781,6 +781,72 @@
     </echo>
   </target>
   
+
+  <!-- - - - - - - - - -->
+  <!-- Developer Docs -->
+  <!-- - - - - - - - - -->
+
+  <target name="doc">
+
+    <javadoc access="public" author="false" classpath="../core/library/jogl-all.jar:../core/bin:../core/library/gluegen-rt.jar" destdir="javadoc/core" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" source="1.6" splitindex="true" use="true" version="false">
+
+      <packageset dir="../core/src">
+	<include name="processing/**" />
+      </packageset>
+
+    </javadoc>
+
+    <javadoc access="public" author="false" classpath="../java/libraries/video/library/jna.jar:../java/libraries/serial/bin:lib/antlr.jar:../core/library/jogl-all.jar:../java/libraries/video/bin:lib/apple.jar:lib/jna.jar:lib/ant-launcher.jar:../java/libraries/pdf/bin:lib/ant.jar:../core/bin:../java/libraries/pdf/library/itext.jar:../java/libraries/video/library/gstreamer-java.jar:lib/org-netbeans-swing-outline.jar:../java/libraries/dxf/bin:bin:../java/libraries/net/bin:../java/libraries/serial/library/RXTXcomm.jar:../core/library/gluegen-rt.jar:${java.home}/lib/tools.jar" destdir="javadoc/everything" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" source="1.6" splitindex="true" use="true" version="false">
+      
+      <packageset dir="../app/src">
+	<include name="antlr/**" />
+	<include name="processing/**" />
+      </packageset>
+
+      <packageset dir="../app/generated">
+	<include name="processing/**" />
+      </packageset>
+
+      <packageset dir="../core/src">
+	<include name="processing/**" />
+	<include name="japplemenubar/**" />
+      </packageset>
+    </javadoc>
+
+    <copy file="javadoc/stylesheet.css" 
+	  tofile="javadoc/core/stylesheet.css" />
+    <copy file="javadoc/stylesheet.css" 
+	  tofile="javadoc/everything/stylesheet.css" />
+
+    <copy file="javadoc/index.html" 
+	  tofile="javadoc/core/index.html" />
+    <copy file="javadoc/index.html" 
+	  tofile="javadoc/everything/index.html" />
+
+  </target>
+
+<!-- no longer necessary because it comes straight from Google Code -->
+<!--
+  <target name="doc-upload">
+    <exec executable="rsync" dir="javadoc" spawn="true">
+      <arg value="-avz" />
+      <arg value="- -delete" />
+      <arg value="core/" />
+      <arg value="fry@processing.org:dev/reference/core/javadoc/" />
+    </exec>
+
+    <exec executable="rsync" dir="javadoc" spawn="true">
+      <arg value="-avz" />
+      <arg value="- -delete" />
+      <arg value="everything/" />
+      <arg value="fry@processing.org:dev/reference/core/everything/" />
+    </exec>
+
+    rsync -avz - -delete core/ fry@processing.org:dev/reference/core/javadoc/
+    rsync -avz - -delete everything/ fry@processing.org:dev/reference/everything/javadoc/
+  </target>
+-->
+
   
   <!-- - - - - - - - -->
   <!-- Run It!       -->
