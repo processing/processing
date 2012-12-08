@@ -186,11 +186,11 @@ public class ErrorCheckerService implements Runnable{
     try {
       parser = ASTParser.newParser(AST.JLS4);
     } catch (Exception e) {
-      System.err.println("XQMode initialization failed. "
+      System.err.println("Experimental Mode initialization failed. "
           + "Are you running the right version of Processing? ");
       pauseThread();
     } catch (Error e) {
-      System.err.println("XQMode initialization failed. ");
+      System.err.println("Experimental Mode initialization failed. ");
       e.printStackTrace();
       pauseThread();
     }
@@ -228,7 +228,8 @@ public class ErrorCheckerService implements Runnable{
 
   public void run() {
     stopThread = false;
-
+    
+    checkCode();
     while (!stopThread) {
       try {
         // Take a nap.
@@ -326,12 +327,15 @@ public class ErrorCheckerService implements Runnable{
 
         // if (classpathJars.size() > 0)
         // System.out
-        // .println("XQMode: Loading contributed libraries referenced by import statements.");
+        // .println("Experimental Mode: Loading contributed libraries referenced by import statements.");
         
-        File f = new File("modes"
-            + File.separator
-            + "experimental"
+        File f = Base.getContentFile("modes" + File.separator + "experimental"
             + File.separator + "mode");
+        
+        if(!f.exists()) {
+        	System.err.println("Could not locate the files required for on-the-fly error checking. Bummer.");
+        	return;
+        }
         
         FileFilter fileFilter = new FileFilter() {
           public boolean accept(File file) {
@@ -432,7 +436,7 @@ public class ErrorCheckerService implements Runnable{
     } catch (NoClassDefFoundError e) {
       System.err
           .println(e
-              + " compileCheck() problem. Somebody tried to mess with XQMode files.");
+              + " compileCheck() problem. Somebody tried to mess with Experimental Mode files.");
       stopThread();
     }
     // System.out.println("Compilecheck, Done.");
@@ -496,7 +500,7 @@ public class ErrorCheckerService implements Runnable{
                 .contentsToClassPath(codeFolder);
             codeFolderChecked = true;
             if (codeFolderClassPath.equalsIgnoreCase("")) {
-              System.err.println("XQMODE: Yikes! Can't find \""
+              System.err.println("Experimental Mode: Yikes! Can't find \""
                   + entry
                   + "\" library! Line: "
                   + impstat.lineNumber
@@ -523,7 +527,7 @@ public class ErrorCheckerService implements Runnable{
                       + e2);
             }
           } else {
-            System.err.println("XQMODE: Yikes! Can't find \""
+            System.err.println("Experimental Mode: Yikes! Can't find \""
                 + entry
                 + "\" library! Line: "
                 + impstat.lineNumber

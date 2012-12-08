@@ -47,15 +47,15 @@ public class ExperimentalMode extends JavaMode {
   public ExperimentalMode(Base base, File folder) {
     super(base, folder);
 
-        // use libraries folder from javamode. will make sketches using core libraries work, as well as import libraries and examples menus
-//        for (Mode m : base.getModeList()) {
-//            if (m.getClass() == JavaMode.class) {
-//                JavaMode jMode = (JavaMode) m;
-//                librariesFolder = jMode.getLibrariesFolder();
-//                rebuildLibraryList();
-//                break;
-//            }
-//        }
+    // use libraries folder from javamode. will make sketches using core libraries work, as well as import libraries and examples menus
+    for (Mode m : base.getModeList()) {
+    	if (m.getClass() == JavaMode.class) {
+    		JavaMode jMode = (JavaMode) m;
+    		librariesFolder = jMode.getLibrariesFolder();
+    		rebuildLibraryList();
+    		break;
+    	}
+    }
 
     // Fetch examples and reference from java mode
     // thx to Manindra (https://github.com/martinleopold/DebugMode/issues/4)

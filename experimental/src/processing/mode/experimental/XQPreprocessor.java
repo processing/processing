@@ -233,7 +233,7 @@ public class XQPreprocessor {
 		public boolean visit(SimpleType node) {
 			if (node.toString().equals("color")) {
 				System.err
-						.println("color type detected! \nThis shouldn't be happening! Please report this as an issue on www.github.com/Manindra29/XQMode");
+						.println("color type detected! \nThis shouldn't be happening! Please report this as an issue.");
 			}
 			return true;
 
