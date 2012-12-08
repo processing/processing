@@ -101,7 +101,6 @@ public class JavaEditor extends Editor {
 
     // macosx already has its own about menu
     if (!Base.isMacOS()) {
-      menu.addSeparator();
       item = new JMenuItem("About Processing");
       item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
