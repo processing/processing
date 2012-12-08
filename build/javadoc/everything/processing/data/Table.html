@@ -1,0 +1,1875 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!-- NewPage -->
+<html lang="en">
+<head>
+<title>Table</title>
+<link rel="stylesheet" type="text/css" href="../../stylesheet.css" title="Style">
+</head>
+<body>
+<script type="text/javascript"><!--
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="Table";
+    }
+//-->
+</script>
+<noscript>
+<div>JavaScript is disabled on your browser.</div>
+</noscript>
+<!-- ========= START OF TOP NAVBAR ======= -->
+<div class="topNav"><a name="navbar_top">
+<!--   -->
+</a><a href="#skip-navbar_top" title="Skip navigation links"></a><a name="navbar_top_firstrow">
+<!--   -->
+</a>
+<ul class="navList" title="Navigation">
+<li><a href="../../overview-summary.html">Overview</a></li>
+<li><a href="package-summary.html">Package</a></li>
+<li class="navBarCell1Rev">Class</li>
+<li><a href="package-tree.html">Tree</a></li>
+<li><a href="../../deprecated-list.html">Deprecated</a></li>
+<li><a href="../../index-all.html">Index</a></li>
+<li><a href="../../help-doc.html">Help</a></li>
+</ul>
+</div>
+<div class="subNav">
+<ul class="navList">
+<li>Prev Class</li>
+<li><a href="../../processing/data/TableRow.html" title="interface in processing.data"><span class="strong">Next Class</span></a></li>
+</ul>
+<ul class="navList">
+<li><a href="../../index.html?processing/data/Table.html" target="_top">Frames</a></li>
+<li><a href="Table.html" target="_top">No Frames</a></li>
+</ul>
+<ul class="navList" id="allclasses_navbar_top">
+<li><a href="../../allclasses-noframe.html">All Classes</a></li>
+</ul>
+<div>
+<script type="text/javascript"><!--
+  allClassesLink = document.getElementById("allclasses_navbar_top");
+  if(window==top) {
+    allClassesLink.style.display = "block";
+  }
+  else {
+    allClassesLink.style.display = "none";
+  }
+  //-->
+</script>
+</div>
+<div>
+<ul class="subNavList">
+<li>Summary:&nbsp;</li>
+<li>Nested&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method_summary">Method</a></li>
+</ul>
+<ul class="subNavList">
+<li>Detail:&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#constructor_detail">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method_detail">Method</a></li>
+</ul>
+</div>
+<a name="skip-navbar_top">
+<!--   -->
+</a></div>
+<!-- ========= END OF TOP NAVBAR ========= -->
+<!-- ======== START OF CLASS DATA ======== -->
+<div class="header">
+<div class="subTitle">processing.data</div>
+<h2 title="Class Table" class="title">Class Table</h2>
+</div>
+<div class="contentContainer">
+<ul class="inheritance">
+<li>java.lang.Object</li>
+<li>
+<ul class="inheritance">
+<li>processing.data.Table</li>
+</ul>
+</li>
+</ul>
+<div class="description">
+<ul class="blockList">
+<li class="blockList">
+<hr>
+<br>
+<pre>public class <span class="strong">Table</span>
+extends java.lang.Object</pre>
+<div class="block"><p>Generic class for handling tabular data, typically from a CSV, TSV, or
+ other sort of spreadsheet file.</p>
+ <p>CSV files are
+ <a href="http://en.wikipedia.org/wiki/Comma-separated_values">comma separated values</a>,
+ often with the data in quotes. TSV files use tabs as separators, and usually
+ don't bother with the quotes.</p>
+ <p>File names should end with .csv if they're comma separated.</p></div>
+</li>
+</ul>
+</div>
+<div class="summary">
+<ul class="blockList">
+<li class="blockList">
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="constructor_summary">
+<!--   -->
+</a>
+<h3>Constructor Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Constructor Summary table, listing constructors, and an explanation">
+<caption><span>Constructors</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colOne" scope="col">Constructor and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../processing/data/Table.html#Table()">Table</a></strong>()</code>
+<div class="block">Creates a new, empty table.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../processing/data/Table.html#Table(processing.core.PApplet)">Table</a></strong>(<a href="../../processing/core/PApplet.html" title="class in processing.core">PApplet</a>&nbsp;sketch)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../processing/data/Table.html#Table(processing.core.PApplet, java.lang.String)">Table</a></strong>(<a href="../../processing/core/PApplet.html" title="class in processing.core">PApplet</a>&nbsp;parent,
+     java.lang.String&nbsp;filename)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../processing/data/Table.html#Table(processing.core.PApplet, java.lang.String, java.lang.String)">Table</a></strong>(<a href="../../processing/core/PApplet.html" title="class in processing.core">PApplet</a>&nbsp;parent,
+     java.lang.String&nbsp;filename,
+     java.lang.String&nbsp;options)</code>
+<div class="block">Can handle TSV or CSV files.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../processing/data/Table.html#Table(java.sql.ResultSet)">Table</a></strong>(java.sql.ResultSet&nbsp;rs)</code>&nbsp;</td>
+</tr>
+</table>
+</li>
+</ul>
+<!-- ========== METHOD SUMMARY =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="method_summary">
+<!--   -->
+</a>
+<h3>Method Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
+<caption><span>Methods</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Method and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#addColumn()">addColumn</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#addColumn(java.lang.String)">addColumn</a></strong>(java.lang.String&nbsp;title)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#addColumn(java.lang.String, int)">addColumn</a></strong>(java.lang.String&nbsp;title,
+         int&nbsp;type)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#addRow()">addRow</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#addRow(java.lang.String[])">addRow</a></strong>(java.lang.String[]&nbsp;columns)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#checkColumnIndex(java.lang.String)">checkColumnIndex</a></strong>(java.lang.String&nbsp;title)</code>
+<div class="block">Same as getColumnIndex(), but creates the column if it doesn't exist.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#convertRow(java.io.DataOutputStream, java.lang.String[])">convertRow</a></strong>(java.io.DataOutputStream&nbsp;output,
+          java.lang.String[]&nbsp;pieces)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#convertTSV(java.io.BufferedReader, java.io.File)">convertTSV</a></strong>(java.io.BufferedReader&nbsp;reader,
+          java.io.File&nbsp;outputFile)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>java.util.Iterator&lt;<a href="../../processing/data/TableRow.html" title="interface in processing.data">TableRow</a>&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#createIterator()">createIterator</a></strong>()</code>
+<div class="block">Note that this one iterator instance is shared by any calls to iterate the
+ rows of this table.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.util.Iterator&lt;<a href="../../processing/data/TableRow.html" title="interface in processing.data">TableRow</a>&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#createIterator(java.sql.ResultSet)">createIterator</a></strong>(java.sql.ResultSet&nbsp;rs)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../processing/data/Table.html" title="class in processing.data">Table</a></code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#createSubset(int[])">createSubset</a></strong>(int[]&nbsp;rowSubset)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#findRow(java.lang.String, int)">findRow</a></strong>(java.lang.String&nbsp;what,
+       int&nbsp;column)</code>
+<div class="block">Return the row that contains the first String that matches.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#findRow(java.lang.String, java.lang.String)">findRow</a></strong>(java.lang.String&nbsp;what,
+       java.lang.String&nbsp;columnName)</code>
+<div class="block">Return the row that contains the first String that matches.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>int[]</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#findRows(java.lang.String, int)">findRows</a></strong>(java.lang.String&nbsp;what,
+        int&nbsp;column)</code>
+<div class="block">Return a list of rows that contain the String passed in.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>int[]</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#findRows(java.lang.String, java.lang.String)">findRows</a></strong>(java.lang.String&nbsp;what,
+        java.lang.String&nbsp;columnName)</code>
+<div class="block">Return a list of rows that contain the String passed in.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#getColumnCount()">getColumnCount</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#getColumnIndex(java.lang.String)">getColumnIndex</a></strong>(java.lang.String&nbsp;name)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#getColumnTitle(int)">getColumnTitle</a></strong>(int&nbsp;col)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>java.lang.String[]</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#getColumnTitles()">getColumnTitles</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>double</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#getDouble(int, int)">getDouble</a></strong>(int&nbsp;row,
+         int&nbsp;column)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>double</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#getDouble(int, java.lang.String)">getDouble</a></strong>(int&nbsp;row,
+         java.lang.String&nbsp;columnName)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>double[]</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#getDoubleColumn(int)">getDoubleColumn</a></strong>(int&nbsp;col)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>double[]</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#getDoubleColumn(java.lang.String)">getDoubleColumn</a></strong>(java.lang.String&nbsp;name)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>double[]</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#getDoubleRow(int)">getDoubleRow</a></strong>(int&nbsp;row)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>float</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#getFloat(int, int)">getFloat</a></strong>(int&nbsp;row,
+        int&nbsp;column)</code>
+<div class="block">Get a float value from the specified row and column.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>float</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#getFloat(int, java.lang.String)">getFloat</a></strong>(int&nbsp;row,
+        java.lang.String&nbsp;columnName)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>float[]</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#getFloatColumn(int)">getFloatColumn</a></strong>(int&nbsp;col)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>float[]</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#getFloatColumn(java.lang.String)">getFloatColumn</a></strong>(java.lang.String&nbsp;name)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>float[]</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#getFloatRow(int)">getFloatRow</a></strong>(int&nbsp;row)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#getInt(int, int)">getInt</a></strong>(int&nbsp;row,
+      int&nbsp;column)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#getInt(int, java.lang.String)">getInt</a></strong>(int&nbsp;row,
+      java.lang.String&nbsp;columnName)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>int[]</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#getIntColumn(int)">getIntColumn</a></strong>(int&nbsp;col)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>int[]</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#getIntColumn(java.lang.String)">getIntColumn</a></strong>(java.lang.String&nbsp;name)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>int[]</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#getIntRow(int)">getIntRow</a></strong>(int&nbsp;row)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>long</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#getLong(int, int)">getLong</a></strong>(int&nbsp;row,
+       int&nbsp;column)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>long</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#getLong(int, java.lang.String)">getLong</a></strong>(int&nbsp;row,
+       java.lang.String&nbsp;columnName)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>long[]</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#getLongColumn(int)">getLongColumn</a></strong>(int&nbsp;col)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>long[]</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#getLongColumn(java.lang.String)">getLongColumn</a></strong>(java.lang.String&nbsp;name)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>long[]</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#getLongRow(int)">getLongRow</a></strong>(int&nbsp;row)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>float</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#getMaxFloat()">getMaxFloat</a></strong>()</code>
+<div class="block">Searches the entire table for float values.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#getRowCount()">getRowCount</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>java.util.HashMap&lt;java.lang.String,java.lang.Integer&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#getRowLookup(int)">getRowLookup</a></strong>(int&nbsp;col)</code>
+<div class="block">Return an object that maps the String values in one column back to the
+ row from which they came.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>java.lang.Iterable&lt;<a href="../../processing/data/TableRow.html" title="interface in processing.data">TableRow</a>&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#getRows()">getRows</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#getString(int, int)">getString</a></strong>(int&nbsp;row,
+         int&nbsp;col)</code>
+<div class="block">Get a String value from the table.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#getString(int, java.lang.String)">getString</a></strong>(int&nbsp;row,
+         java.lang.String&nbsp;columnName)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>java.lang.String[]</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#getStringColumn(int)">getStringColumn</a></strong>(int&nbsp;col)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>java.lang.String[]</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#getStringColumn(java.lang.String)">getStringColumn</a></strong>(java.lang.String&nbsp;name)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>java.lang.String[]</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#getStringRow(int)">getStringRow</a></strong>(int&nbsp;row)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>java.lang.String[]</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#getUnique(int)">getUnique</a></strong>(int&nbsp;column)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>java.lang.String[]</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#getUnique(java.lang.String)">getUnique</a></strong>(java.lang.String&nbsp;column)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>java.util.HashMap&lt;java.lang.String,java.lang.Integer&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#getUniqueCount(int)">getUniqueCount</a></strong>(int&nbsp;column)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>java.util.HashMap&lt;java.lang.String,java.lang.Integer&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#getUniqueCount(java.lang.String)">getUniqueCount</a></strong>(java.lang.String&nbsp;columnName)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#insertColumn(int)">insertColumn</a></strong>(int&nbsp;index)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#insertColumn(int, java.lang.String)">insertColumn</a></strong>(int&nbsp;index,
+            java.lang.String&nbsp;title)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#insertColumn(int, java.lang.String, int)">insertColumn</a></strong>(int&nbsp;index,
+            java.lang.String&nbsp;title,
+            int&nbsp;type)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#insertRow(int, java.lang.String[])">insertRow</a></strong>(int&nbsp;insert,
+         java.lang.String[]&nbsp;data)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#makeEmptyNull()">makeEmptyNull</a></strong>()</code>
+<div class="block">Set all "" entries (zero length String objects) to null values.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#makeNullEmpty()">makeNullEmpty</a></strong>()</code>
+<div class="block">Set all 'null' entries to "" (zero length String objects).</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#matchRow(java.lang.String, int)">matchRow</a></strong>(java.lang.String&nbsp;regexp,
+        int&nbsp;column)</code>
+<div class="block">Return the row that contains the first String that matches.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#matchRow(java.lang.String, java.lang.String)">matchRow</a></strong>(java.lang.String&nbsp;what,
+        java.lang.String&nbsp;columnName)</code>
+<div class="block">Return the row that contains the first String that matches.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>int[]</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#matchRows(java.lang.String, int)">matchRows</a></strong>(java.lang.String&nbsp;regexp,
+         int&nbsp;column)</code>
+<div class="block">Return a list of rows that contain the String passed in.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>int[]</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#matchRows(java.lang.String, java.lang.String)">matchRows</a></strong>(java.lang.String&nbsp;what,
+         java.lang.String&nbsp;columnName)</code>
+<div class="block">Return a list of rows that match the regex passed in.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#parseCSV(java.io.BufferedReader)">parseCSV</a></strong>(java.io.BufferedReader&nbsp;reader)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#parseInto(java.lang.String)">parseInto</a></strong>(java.lang.String&nbsp;fieldName)</code>
+<div class="block">incomplete, do not use</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#parseTSV(java.io.BufferedReader)">parseTSV</a></strong>(java.io.BufferedReader&nbsp;reader)</code>
+<div class="block">Guess whether this file is tab separated or comma separated by checking
+ whether there are more tabs or commas in the first 100 characters.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#removeColumn(int)">removeColumn</a></strong>(int&nbsp;index)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#removeColumn(java.lang.String)">removeColumn</a></strong>(java.lang.String&nbsp;dead)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#removeRow(int)">removeRow</a></strong>(int&nbsp;dead)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>java.lang.String[]</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#removeTitleRow()">removeTitleRow</a></strong>()</code>
+<div class="block">Remove the first row from the data set, and use it as the column titles.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#removeTokens(java.lang.String)">removeTokens</a></strong>(java.lang.String&nbsp;tokens)</code>
+<div class="block">Remove any of the specified characters from the entire table.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#removeTokens(java.lang.String, int)">removeTokens</a></strong>(java.lang.String&nbsp;tokens,
+            int&nbsp;column)</code>
+<div class="block">Removed any of the specified characters from a column.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#removeTokens(java.lang.String, java.lang.String)">removeTokens</a></strong>(java.lang.String&nbsp;tokens,
+            java.lang.String&nbsp;column)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#replaceAll(java.lang.String, java.lang.String, int)">replaceAll</a></strong>(java.lang.String&nbsp;regex,
+          java.lang.String&nbsp;replacement,
+          int&nbsp;column)</code>
+<div class="block">Return a list of rows that contain the String passed in.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#replaceAll(java.lang.String, java.lang.String, java.lang.String)">replaceAll</a></strong>(java.lang.String&nbsp;regex,
+          java.lang.String&nbsp;replacement,
+          java.lang.String&nbsp;columnName)</code>
+<div class="block">Run String.replaceAll() on all entries in a column.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#setColumnCount(int)">setColumnCount</a></strong>(int&nbsp;newCount)</code>
+<div class="block">Change the number of columns in this table.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#setColumnTitle(int, java.lang.String)">setColumnTitle</a></strong>(int&nbsp;column,
+              java.lang.String&nbsp;title)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#setColumnTitles(java.lang.String[])">setColumnTitles</a></strong>(java.lang.String[]&nbsp;titles)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#setColumnType(int, java.lang.String)">setColumnType</a></strong>(int&nbsp;column,
+             java.lang.String&nbsp;columnType)</code>
+<div class="block">Set the data type for a column so that using it is more efficient.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#setColumnType(java.lang.String, java.lang.String)">setColumnType</a></strong>(java.lang.String&nbsp;columnName,
+             java.lang.String&nbsp;columnType)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#setColumnTypes(processing.data.Table)">setColumnTypes</a></strong>(<a href="../../processing/data/Table.html" title="class in processing.data">Table</a>&nbsp;dictionary)</code>
+<div class="block">Set the titles (and if a second column is present) the data types for
+ this table based on a file loaded separately.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#setDouble(int, int, double)">setDouble</a></strong>(int&nbsp;row,
+         int&nbsp;column,
+         double&nbsp;what)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#setFloat(int, int, float)">setFloat</a></strong>(int&nbsp;row,
+        int&nbsp;column,
+        float&nbsp;what)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#setInt(int, int, int)">setInt</a></strong>(int&nbsp;row,
+      int&nbsp;column,
+      int&nbsp;what)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#setLong(int, int, long)">setLong</a></strong>(int&nbsp;row,
+       int&nbsp;column,
+       long&nbsp;what)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#setMissingDouble(double)">setMissingDouble</a></strong>(double&nbsp;value)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#setMissingFloat(float)">setMissingFloat</a></strong>(float&nbsp;value)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#setMissingInt(int)">setMissingInt</a></strong>(int&nbsp;value)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#setMissingLong(long)">setMissingLong</a></strong>(long&nbsp;value)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#setMissingString(java.lang.String)">setMissingString</a></strong>(java.lang.String&nbsp;value)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#setRow(int, java.lang.String[])">setRow</a></strong>(int&nbsp;row,
+      java.lang.String[]&nbsp;pieces)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#setRowCount(int)">setRowCount</a></strong>(int&nbsp;newCount)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#setString(int, int, java.lang.String)">setString</a></strong>(int&nbsp;row,
+         int&nbsp;column,
+         java.lang.String&nbsp;what)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#setString(int, java.lang.String, java.lang.String)">setString</a></strong>(int&nbsp;row,
+         java.lang.String&nbsp;columnName,
+         java.lang.String&nbsp;what)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#setTableType(java.lang.String)">setTableType</a></strong>(java.lang.String&nbsp;type)</code>
+<div class="block">Set the entire table to a specific data type.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String[]</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#splitLineCSV(java.lang.String)">splitLineCSV</a></strong>(java.lang.String&nbsp;line)</code>
+<div class="block">Parse a line of text as comma-separated values, returning each value as
+ one entry in an array of String objects.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#trim()">trim</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#writeCSV(java.io.File)">writeCSV</a></strong>(java.io.File&nbsp;file)</code>
+<div class="block">Write this table as a TSV file.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#writeCSV(java.io.PrintWriter)">writeCSV</a></strong>(java.io.PrintWriter&nbsp;writer)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#writeHTML(java.io.PrintWriter)">writeHTML</a></strong>(java.io.PrintWriter&nbsp;writer)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#writeTSV(java.io.File)">writeTSV</a></strong>(java.io.File&nbsp;file)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/Table.html#writeTSV(java.io.PrintWriter)">writeTSV</a></strong>(java.io.PrintWriter&nbsp;writer)</code>&nbsp;</td>
+</tr>
+</table>
+<ul class="blockList">
+<li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
+<!--   -->
+</a>
+<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
+<code>equals, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="details">
+<ul class="blockList">
+<li class="blockList">
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="constructor_detail">
+<!--   -->
+</a>
+<h3>Constructor Detail</h3>
+<a name="Table()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>Table</h4>
+<pre>public&nbsp;Table()</pre>
+<div class="block">Creates a new, empty table. Use addRow() to add additional rows.</div>
+</li>
+</ul>
+<a name="Table(processing.core.PApplet)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>Table</h4>
+<pre>public&nbsp;Table(<a href="../../processing/core/PApplet.html" title="class in processing.core">PApplet</a>&nbsp;sketch)</pre>
+</li>
+</ul>
+<a name="Table(processing.core.PApplet, java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>Table</h4>
+<pre>public&nbsp;Table(<a href="../../processing/core/PApplet.html" title="class in processing.core">PApplet</a>&nbsp;parent,
+     java.lang.String&nbsp;filename)
+      throws java.io.IOException</pre>
+<dl><dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd></dl>
+</li>
+</ul>
+<a name="Table(processing.core.PApplet, java.lang.String, java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>Table</h4>
+<pre>public&nbsp;Table(<a href="../../processing/core/PApplet.html" title="class in processing.core">PApplet</a>&nbsp;parent,
+     java.lang.String&nbsp;filename,
+     java.lang.String&nbsp;options)
+      throws java.io.IOException</pre>
+<div class="block">Can handle TSV or CSV files.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>parent</code> - </dd><dd><code>filename</code> - </dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd></dl>
+</li>
+</ul>
+<a name="Table(java.sql.ResultSet)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>Table</h4>
+<pre>public&nbsp;Table(java.sql.ResultSet&nbsp;rs)</pre>
+</li>
+</ul>
+</li>
+</ul>
+<!-- ============ METHOD DETAIL ========== -->
+<ul class="blockList">
+<li class="blockList"><a name="method_detail">
+<!--   -->
+</a>
+<h3>Method Detail</h3>
+<a name="parseTSV(java.io.BufferedReader)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>parseTSV</h4>
+<pre>public&nbsp;void&nbsp;parseTSV(java.io.BufferedReader&nbsp;reader)
+              throws java.io.IOException</pre>
+<div class="block">Guess whether this file is tab separated or comma separated by checking
+ whether there are more tabs or commas in the first 100 characters.</div>
+<dl><dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd></dl>
+</li>
+</ul>
+<a name="parseCSV(java.io.BufferedReader)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>parseCSV</h4>
+<pre>public&nbsp;void&nbsp;parseCSV(java.io.BufferedReader&nbsp;reader)
+              throws java.io.IOException</pre>
+<dl><dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd></dl>
+</li>
+</ul>
+<a name="convertTSV(java.io.BufferedReader, java.io.File)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>convertTSV</h4>
+<pre>public&nbsp;void&nbsp;convertTSV(java.io.BufferedReader&nbsp;reader,
+              java.io.File&nbsp;outputFile)
+                throws java.io.IOException</pre>
+<dl><dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd></dl>
+</li>
+</ul>
+<a name="splitLineCSV(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>splitLineCSV</h4>
+<pre>public static&nbsp;java.lang.String[]&nbsp;splitLineCSV(java.lang.String&nbsp;line)</pre>
+<div class="block">Parse a line of text as comma-separated values, returning each value as
+ one entry in an array of String objects. Remove quotes from entries that
+ begin and end with them, and convert 'escaped' quotes to actual quotes.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>line</code> - line of text to be parsed</dd>
+<dt><span class="strong">Returns:</span></dt><dd>an array of the individual values formerly separated by commas</dd></dl>
+</li>
+</ul>
+<a name="parseInto(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>parseInto</h4>
+<pre>public&nbsp;void&nbsp;parseInto(java.lang.String&nbsp;fieldName)</pre>
+<div class="block">incomplete, do not use</div>
+</li>
+</ul>
+<a name="writeTSV(java.io.PrintWriter)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>writeTSV</h4>
+<pre>public&nbsp;void&nbsp;writeTSV(java.io.PrintWriter&nbsp;writer)</pre>
+</li>
+</ul>
+<a name="writeCSV(java.io.PrintWriter)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>writeCSV</h4>
+<pre>public&nbsp;void&nbsp;writeCSV(java.io.PrintWriter&nbsp;writer)</pre>
+</li>
+</ul>
+<a name="writeHTML(java.io.PrintWriter)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>writeHTML</h4>
+<pre>public&nbsp;void&nbsp;writeHTML(java.io.PrintWriter&nbsp;writer)</pre>
+</li>
+</ul>
+<a name="writeCSV(java.io.File)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>writeCSV</h4>
+<pre>public&nbsp;boolean&nbsp;writeCSV(java.io.File&nbsp;file)</pre>
+<div class="block">Write this table as a TSV file.
+ Exceptions will be printed, but not thrown.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - the location to write to.</dd>
+<dt><span class="strong">Returns:</span></dt><dd>true if written successfully</dd></dl>
+</li>
+</ul>
+<a name="writeTSV(java.io.File)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>writeTSV</h4>
+<pre>public&nbsp;boolean&nbsp;writeTSV(java.io.File&nbsp;file)</pre>
+</li>
+</ul>
+<a name="addColumn()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>addColumn</h4>
+<pre>public&nbsp;void&nbsp;addColumn()</pre>
+</li>
+</ul>
+<a name="addColumn(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>addColumn</h4>
+<pre>public&nbsp;void&nbsp;addColumn(java.lang.String&nbsp;title)</pre>
+</li>
+</ul>
+<a name="addColumn(java.lang.String, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>addColumn</h4>
+<pre>public&nbsp;void&nbsp;addColumn(java.lang.String&nbsp;title,
+             int&nbsp;type)</pre>
+</li>
+</ul>
+<a name="insertColumn(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>insertColumn</h4>
+<pre>public&nbsp;void&nbsp;insertColumn(int&nbsp;index)</pre>
+</li>
+</ul>
+<a name="insertColumn(int, java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>insertColumn</h4>
+<pre>public&nbsp;void&nbsp;insertColumn(int&nbsp;index,
+                java.lang.String&nbsp;title)</pre>
+</li>
+</ul>
+<a name="insertColumn(int, java.lang.String, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>insertColumn</h4>
+<pre>public&nbsp;void&nbsp;insertColumn(int&nbsp;index,
+                java.lang.String&nbsp;title,
+                int&nbsp;type)</pre>
+</li>
+</ul>
+<a name="removeColumn(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>removeColumn</h4>
+<pre>public&nbsp;void&nbsp;removeColumn(java.lang.String&nbsp;dead)</pre>
+</li>
+</ul>
+<a name="removeColumn(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>removeColumn</h4>
+<pre>public&nbsp;void&nbsp;removeColumn(int&nbsp;index)</pre>
+</li>
+</ul>
+<a name="getColumnCount()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getColumnCount</h4>
+<pre>public&nbsp;int&nbsp;getColumnCount()</pre>
+</li>
+</ul>
+<a name="setColumnCount(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setColumnCount</h4>
+<pre>public&nbsp;void&nbsp;setColumnCount(int&nbsp;newCount)</pre>
+<div class="block">Change the number of columns in this table. Resizes all rows to ensure
+ the same number of columns in each row. Entries in the additional (empty)
+ columns will be set to null.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>newCount</code> - </dd></dl>
+</li>
+</ul>
+<a name="setColumnType(java.lang.String, java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setColumnType</h4>
+<pre>public&nbsp;void&nbsp;setColumnType(java.lang.String&nbsp;columnName,
+                 java.lang.String&nbsp;columnType)</pre>
+</li>
+</ul>
+<a name="setColumnType(int, java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setColumnType</h4>
+<pre>public&nbsp;void&nbsp;setColumnType(int&nbsp;column,
+                 java.lang.String&nbsp;columnType)</pre>
+<div class="block">Set the data type for a column so that using it is more efficient.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>column</code> - the column to change</dd><dd><code>columnType</code> - One of int, long, float, double, or String.</dd></dl>
+</li>
+</ul>
+<a name="setTableType(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setTableType</h4>
+<pre>public&nbsp;void&nbsp;setTableType(java.lang.String&nbsp;type)</pre>
+<div class="block">Set the entire table to a specific data type.</div>
+</li>
+</ul>
+<a name="setColumnTypes(processing.data.Table)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setColumnTypes</h4>
+<pre>public&nbsp;void&nbsp;setColumnTypes(<a href="../../processing/data/Table.html" title="class in processing.data">Table</a>&nbsp;dictionary)</pre>
+<div class="block">Set the titles (and if a second column is present) the data types for
+ this table based on a file loaded separately.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>dictionary</code> - </dd></dl>
+</li>
+</ul>
+<a name="removeTitleRow()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>removeTitleRow</h4>
+<pre>public&nbsp;java.lang.String[]&nbsp;removeTitleRow()</pre>
+<div class="block">Remove the first row from the data set, and use it as the column titles.</div>
+</li>
+</ul>
+<a name="setColumnTitles(java.lang.String[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setColumnTitles</h4>
+<pre>public&nbsp;void&nbsp;setColumnTitles(java.lang.String[]&nbsp;titles)</pre>
+</li>
+</ul>
+<a name="setColumnTitle(int, java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setColumnTitle</h4>
+<pre>public&nbsp;void&nbsp;setColumnTitle(int&nbsp;column,
+                  java.lang.String&nbsp;title)</pre>
+</li>
+</ul>
+<a name="getColumnTitles()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getColumnTitles</h4>
+<pre>public&nbsp;java.lang.String[]&nbsp;getColumnTitles()</pre>
+</li>
+</ul>
+<a name="getColumnTitle(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getColumnTitle</h4>
+<pre>public&nbsp;java.lang.String&nbsp;getColumnTitle(int&nbsp;col)</pre>
+</li>
+</ul>
+<a name="getColumnIndex(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getColumnIndex</h4>
+<pre>public&nbsp;int&nbsp;getColumnIndex(java.lang.String&nbsp;name)</pre>
+</li>
+</ul>
+<a name="checkColumnIndex(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>checkColumnIndex</h4>
+<pre>public&nbsp;int&nbsp;checkColumnIndex(java.lang.String&nbsp;title)</pre>
+<div class="block">Same as getColumnIndex(), but creates the column if it doesn't exist.
+ Named this way to not conflict with checkColumn(), an internal function
+ used to ensure that a columns exists, and also to denote that it returns
+ an int for the column index.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>title</code> - column title</dd>
+<dt><span class="strong">Returns:</span></dt><dd>index of a new or previously existing column</dd></dl>
+</li>
+</ul>
+<a name="getRowCount()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getRowCount</h4>
+<pre>public&nbsp;int&nbsp;getRowCount()</pre>
+</li>
+</ul>
+<a name="setRowCount(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setRowCount</h4>
+<pre>public&nbsp;void&nbsp;setRowCount(int&nbsp;newCount)</pre>
+</li>
+</ul>
+<a name="addRow()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>addRow</h4>
+<pre>public&nbsp;void&nbsp;addRow()</pre>
+</li>
+</ul>
+<a name="addRow(java.lang.String[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>addRow</h4>
+<pre>public&nbsp;void&nbsp;addRow(java.lang.String[]&nbsp;columns)</pre>
+</li>
+</ul>
+<a name="insertRow(int, java.lang.String[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>insertRow</h4>
+<pre>public&nbsp;void&nbsp;insertRow(int&nbsp;insert,
+             java.lang.String[]&nbsp;data)</pre>
+</li>
+</ul>
+<a name="removeRow(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>removeRow</h4>
+<pre>public&nbsp;void&nbsp;removeRow(int&nbsp;dead)</pre>
+</li>
+</ul>
+<a name="setRow(int, java.lang.String[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setRow</h4>
+<pre>public&nbsp;void&nbsp;setRow(int&nbsp;row,
+          java.lang.String[]&nbsp;pieces)</pre>
+</li>
+</ul>
+<a name="convertRow(java.io.DataOutputStream, java.lang.String[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>convertRow</h4>
+<pre>public&nbsp;void&nbsp;convertRow(java.io.DataOutputStream&nbsp;output,
+              java.lang.String[]&nbsp;pieces)
+                throws java.io.IOException</pre>
+<dl><dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd></dl>
+</li>
+</ul>
+<a name="getRows()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getRows</h4>
+<pre>public&nbsp;java.lang.Iterable&lt;<a href="../../processing/data/TableRow.html" title="interface in processing.data">TableRow</a>&gt;&nbsp;getRows()</pre>
+</li>
+</ul>
+<a name="createIterator()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createIterator</h4>
+<pre>public&nbsp;java.util.Iterator&lt;<a href="../../processing/data/TableRow.html" title="interface in processing.data">TableRow</a>&gt;&nbsp;createIterator()</pre>
+<div class="block">Note that this one iterator instance is shared by any calls to iterate the
+ rows of this table. This is very efficient, but not very thread-safe. If
+ you want to iterate in a multi-threaded manner, use createIterator().</div>
+</li>
+</ul>
+<a name="createIterator(java.sql.ResultSet)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createIterator</h4>
+<pre>public static&nbsp;java.util.Iterator&lt;<a href="../../processing/data/TableRow.html" title="interface in processing.data">TableRow</a>&gt;&nbsp;createIterator(java.sql.ResultSet&nbsp;rs)</pre>
+</li>
+</ul>
+<a name="getInt(int, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getInt</h4>
+<pre>public&nbsp;int&nbsp;getInt(int&nbsp;row,
+         int&nbsp;column)</pre>
+</li>
+</ul>
+<a name="getInt(int, java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getInt</h4>
+<pre>public&nbsp;int&nbsp;getInt(int&nbsp;row,
+         java.lang.String&nbsp;columnName)</pre>
+</li>
+</ul>
+<a name="setMissingInt(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setMissingInt</h4>
+<pre>public&nbsp;void&nbsp;setMissingInt(int&nbsp;value)</pre>
+</li>
+</ul>
+<a name="setInt(int, int, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setInt</h4>
+<pre>public&nbsp;void&nbsp;setInt(int&nbsp;row,
+          int&nbsp;column,
+          int&nbsp;what)</pre>
+</li>
+</ul>
+<a name="getIntColumn(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getIntColumn</h4>
+<pre>public&nbsp;int[]&nbsp;getIntColumn(java.lang.String&nbsp;name)</pre>
+</li>
+</ul>
+<a name="getIntColumn(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getIntColumn</h4>
+<pre>public&nbsp;int[]&nbsp;getIntColumn(int&nbsp;col)</pre>
+</li>
+</ul>
+<a name="getIntRow(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getIntRow</h4>
+<pre>public&nbsp;int[]&nbsp;getIntRow(int&nbsp;row)</pre>
+</li>
+</ul>
+<a name="getLong(int, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getLong</h4>
+<pre>public&nbsp;long&nbsp;getLong(int&nbsp;row,
+           int&nbsp;column)</pre>
+</li>
+</ul>
+<a name="getLong(int, java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getLong</h4>
+<pre>public&nbsp;long&nbsp;getLong(int&nbsp;row,
+           java.lang.String&nbsp;columnName)</pre>
+</li>
+</ul>
+<a name="setMissingLong(long)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setMissingLong</h4>
+<pre>public&nbsp;void&nbsp;setMissingLong(long&nbsp;value)</pre>
+</li>
+</ul>
+<a name="setLong(int, int, long)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setLong</h4>
+<pre>public&nbsp;void&nbsp;setLong(int&nbsp;row,
+           int&nbsp;column,
+           long&nbsp;what)</pre>
+</li>
+</ul>
+<a name="getLongColumn(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getLongColumn</h4>
+<pre>public&nbsp;long[]&nbsp;getLongColumn(java.lang.String&nbsp;name)</pre>
+</li>
+</ul>
+<a name="getLongColumn(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getLongColumn</h4>
+<pre>public&nbsp;long[]&nbsp;getLongColumn(int&nbsp;col)</pre>
+</li>
+</ul>
+<a name="getLongRow(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getLongRow</h4>
+<pre>public&nbsp;long[]&nbsp;getLongRow(int&nbsp;row)</pre>
+</li>
+</ul>
+<a name="getFloat(int, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getFloat</h4>
+<pre>public&nbsp;float&nbsp;getFloat(int&nbsp;row,
+             int&nbsp;column)</pre>
+<div class="block">Get a float value from the specified row and column. If the value is null
+ or not parseable as a float, the "missing" value is returned. By default,
+ this is Float.NaN, but can be controlled with setMissingFloat().</div>
+</li>
+</ul>
+<a name="getFloat(int, java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getFloat</h4>
+<pre>public&nbsp;float&nbsp;getFloat(int&nbsp;row,
+             java.lang.String&nbsp;columnName)</pre>
+</li>
+</ul>
+<a name="setMissingFloat(float)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setMissingFloat</h4>
+<pre>public&nbsp;void&nbsp;setMissingFloat(float&nbsp;value)</pre>
+</li>
+</ul>
+<a name="setFloat(int, int, float)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setFloat</h4>
+<pre>public&nbsp;void&nbsp;setFloat(int&nbsp;row,
+            int&nbsp;column,
+            float&nbsp;what)</pre>
+</li>
+</ul>
+<a name="getFloatColumn(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getFloatColumn</h4>
+<pre>public&nbsp;float[]&nbsp;getFloatColumn(java.lang.String&nbsp;name)</pre>
+</li>
+</ul>
+<a name="getFloatColumn(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getFloatColumn</h4>
+<pre>public&nbsp;float[]&nbsp;getFloatColumn(int&nbsp;col)</pre>
+</li>
+</ul>
+<a name="getFloatRow(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getFloatRow</h4>
+<pre>public&nbsp;float[]&nbsp;getFloatRow(int&nbsp;row)</pre>
+</li>
+</ul>
+<a name="getDouble(int, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getDouble</h4>
+<pre>public&nbsp;double&nbsp;getDouble(int&nbsp;row,
+               int&nbsp;column)</pre>
+</li>
+</ul>
+<a name="getDouble(int, java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getDouble</h4>
+<pre>public&nbsp;double&nbsp;getDouble(int&nbsp;row,
+               java.lang.String&nbsp;columnName)</pre>
+</li>
+</ul>
+<a name="setMissingDouble(double)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setMissingDouble</h4>
+<pre>public&nbsp;void&nbsp;setMissingDouble(double&nbsp;value)</pre>
+</li>
+</ul>
+<a name="setDouble(int, int, double)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setDouble</h4>
+<pre>public&nbsp;void&nbsp;setDouble(int&nbsp;row,
+             int&nbsp;column,
+             double&nbsp;what)</pre>
+</li>
+</ul>
+<a name="getDoubleColumn(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getDoubleColumn</h4>
+<pre>public&nbsp;double[]&nbsp;getDoubleColumn(java.lang.String&nbsp;name)</pre>
+</li>
+</ul>
+<a name="getDoubleColumn(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getDoubleColumn</h4>
+<pre>public&nbsp;double[]&nbsp;getDoubleColumn(int&nbsp;col)</pre>
+</li>
+</ul>
+<a name="getDoubleRow(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getDoubleRow</h4>
+<pre>public&nbsp;double[]&nbsp;getDoubleRow(int&nbsp;row)</pre>
+</li>
+</ul>
+<a name="getString(int, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getString</h4>
+<pre>public&nbsp;java.lang.String&nbsp;getString(int&nbsp;row,
+                         int&nbsp;col)</pre>
+<div class="block">Get a String value from the table. If the row is longer than the table</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>row</code> - </dd><dd><code>col</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd>the String defined by the row and col variables</dd></dl>
+</li>
+</ul>
+<a name="getString(int, java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getString</h4>
+<pre>public&nbsp;java.lang.String&nbsp;getString(int&nbsp;row,
+                         java.lang.String&nbsp;columnName)</pre>
+</li>
+</ul>
+<a name="setMissingString(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setMissingString</h4>
+<pre>public&nbsp;void&nbsp;setMissingString(java.lang.String&nbsp;value)</pre>
+</li>
+</ul>
+<a name="setString(int, int, java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setString</h4>
+<pre>public&nbsp;void&nbsp;setString(int&nbsp;row,
+             int&nbsp;column,
+             java.lang.String&nbsp;what)</pre>
+</li>
+</ul>
+<a name="setString(int, java.lang.String, java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setString</h4>
+<pre>public&nbsp;void&nbsp;setString(int&nbsp;row,
+             java.lang.String&nbsp;columnName,
+             java.lang.String&nbsp;what)</pre>
+</li>
+</ul>
+<a name="getStringColumn(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getStringColumn</h4>
+<pre>public&nbsp;java.lang.String[]&nbsp;getStringColumn(java.lang.String&nbsp;name)</pre>
+</li>
+</ul>
+<a name="getStringColumn(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getStringColumn</h4>
+<pre>public&nbsp;java.lang.String[]&nbsp;getStringColumn(int&nbsp;col)</pre>
+</li>
+</ul>
+<a name="getStringRow(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getStringRow</h4>
+<pre>public&nbsp;java.lang.String[]&nbsp;getStringRow(int&nbsp;row)</pre>
+</li>
+</ul>
+<a name="makeNullEmpty()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>makeNullEmpty</h4>
+<pre>public&nbsp;void&nbsp;makeNullEmpty()</pre>
+<div class="block">Set all 'null' entries to "" (zero length String objects).
+ If columns are typed, then this will only apply to String columns.</div>
+</li>
+</ul>
+<a name="makeEmptyNull()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>makeEmptyNull</h4>
+<pre>public&nbsp;void&nbsp;makeEmptyNull()</pre>
+<div class="block">Set all "" entries (zero length String objects) to null values.
+ If columns are typed, then this will only apply to String columns.</div>
+</li>
+</ul>
+<a name="getMaxFloat()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getMaxFloat</h4>
+<pre>public&nbsp;float&nbsp;getMaxFloat()</pre>
+<div class="block">Searches the entire table for float values.
+ Returns missing float (Float.NaN by default) if no valid numbers found.</div>
+</li>
+</ul>
+<a name="removeTokens(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>removeTokens</h4>
+<pre>public&nbsp;void&nbsp;removeTokens(java.lang.String&nbsp;tokens)</pre>
+<div class="block">Remove any of the specified characters from the entire table.</div>
+</li>
+</ul>
+<a name="removeTokens(java.lang.String, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>removeTokens</h4>
+<pre>public&nbsp;void&nbsp;removeTokens(java.lang.String&nbsp;tokens,
+                int&nbsp;column)</pre>
+<div class="block">Removed any of the specified characters from a column. For instance,
+ the following code removes dollar signs and commas from column 2:
+ <pre>
+ table.removeTokens(",$", 2);
+ </pre></div>
+</li>
+</ul>
+<a name="removeTokens(java.lang.String, java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>removeTokens</h4>
+<pre>public&nbsp;void&nbsp;removeTokens(java.lang.String&nbsp;tokens,
+                java.lang.String&nbsp;column)</pre>
+</li>
+</ul>
+<a name="findRow(java.lang.String, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>findRow</h4>
+<pre>public&nbsp;int&nbsp;findRow(java.lang.String&nbsp;what,
+          int&nbsp;column)</pre>
+<div class="block">Return the row that contains the first String that matches.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>what</code> - the String to match</dd><dd><code>column</code> - the column to search</dd></dl>
+</li>
+</ul>
+<a name="findRow(java.lang.String, java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>findRow</h4>
+<pre>public&nbsp;int&nbsp;findRow(java.lang.String&nbsp;what,
+          java.lang.String&nbsp;columnName)</pre>
+<div class="block">Return the row that contains the first String that matches.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>what</code> - the String to match</dd><dd><code>columnName</code> - the column to search</dd></dl>
+</li>
+</ul>
+<a name="findRows(java.lang.String, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>findRows</h4>
+<pre>public&nbsp;int[]&nbsp;findRows(java.lang.String&nbsp;what,
+             int&nbsp;column)</pre>
+<div class="block">Return a list of rows that contain the String passed in. If there are no
+ matches, a zero length array will be returned (not a null array).</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>what</code> - the String to match</dd><dd><code>column</code> - the column to search</dd></dl>
+</li>
+</ul>
+<a name="findRows(java.lang.String, java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>findRows</h4>
+<pre>public&nbsp;int[]&nbsp;findRows(java.lang.String&nbsp;what,
+             java.lang.String&nbsp;columnName)</pre>
+<div class="block">Return a list of rows that contain the String passed in. If there are no
+ matches, a zero length array will be returned (not a null array).</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>what</code> - the String to match</dd><dd><code>columnName</code> - the column to search</dd></dl>
+</li>
+</ul>
+<a name="matchRow(java.lang.String, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>matchRow</h4>
+<pre>public&nbsp;int&nbsp;matchRow(java.lang.String&nbsp;regexp,
+           int&nbsp;column)</pre>
+<div class="block">Return the row that contains the first String that matches.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>what</code> - the String to match</dd><dd><code>column</code> - the column to search</dd></dl>
+</li>
+</ul>
+<a name="matchRow(java.lang.String, java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>matchRow</h4>
+<pre>public&nbsp;int&nbsp;matchRow(java.lang.String&nbsp;what,
+           java.lang.String&nbsp;columnName)</pre>
+<div class="block">Return the row that contains the first String that matches.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>what</code> - the String to match</dd><dd><code>columnName</code> - the column to search</dd></dl>
+</li>
+</ul>
+<a name="matchRows(java.lang.String, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>matchRows</h4>
+<pre>public&nbsp;int[]&nbsp;matchRows(java.lang.String&nbsp;regexp,
+              int&nbsp;column)</pre>
+<div class="block">Return a list of rows that contain the String passed in. If there are no
+ matches, a zero length array will be returned (not a null array).</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>what</code> - the String to match</dd><dd><code>column</code> - the column to search</dd></dl>
+</li>
+</ul>
+<a name="matchRows(java.lang.String, java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>matchRows</h4>
+<pre>public&nbsp;int[]&nbsp;matchRows(java.lang.String&nbsp;what,
+              java.lang.String&nbsp;columnName)</pre>
+<div class="block">Return a list of rows that match the regex passed in. If there are no
+ matches, a zero length array will be returned (not a null array).</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>what</code> - the String to match</dd><dd><code>columnName</code> - the column to search</dd></dl>
+</li>
+</ul>
+<a name="replaceAll(java.lang.String, java.lang.String, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>replaceAll</h4>
+<pre>public&nbsp;void&nbsp;replaceAll(java.lang.String&nbsp;regex,
+              java.lang.String&nbsp;replacement,
+              int&nbsp;column)</pre>
+<div class="block">Return a list of rows that contain the String passed in. If there are no
+ matches, a zero length array will be returned (not a null array).</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>what</code> - the String to match</dd><dd><code>column</code> - the column to search</dd></dl>
+</li>
+</ul>
+<a name="replaceAll(java.lang.String, java.lang.String, java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>replaceAll</h4>
+<pre>public&nbsp;void&nbsp;replaceAll(java.lang.String&nbsp;regex,
+              java.lang.String&nbsp;replacement,
+              java.lang.String&nbsp;columnName)</pre>
+<div class="block">Run String.replaceAll() on all entries in a column.
+ Only works with columns that are already String values.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>what</code> - the String to match</dd><dd><code>columnName</code> - the column to search</dd></dl>
+</li>
+</ul>
+<a name="createSubset(int[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createSubset</h4>
+<pre>public&nbsp;<a href="../../processing/data/Table.html" title="class in processing.data">Table</a>&nbsp;createSubset(int[]&nbsp;rowSubset)</pre>
+</li>
+</ul>
+<a name="getUnique(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getUnique</h4>
+<pre>public&nbsp;java.lang.String[]&nbsp;getUnique(java.lang.String&nbsp;column)</pre>
+</li>
+</ul>
+<a name="getUnique(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getUnique</h4>
+<pre>public&nbsp;java.lang.String[]&nbsp;getUnique(int&nbsp;column)</pre>
+</li>
+</ul>
+<a name="getUniqueCount(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getUniqueCount</h4>
+<pre>public&nbsp;java.util.HashMap&lt;java.lang.String,java.lang.Integer&gt;&nbsp;getUniqueCount(java.lang.String&nbsp;columnName)</pre>
+</li>
+</ul>
+<a name="getUniqueCount(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getUniqueCount</h4>
+<pre>public&nbsp;java.util.HashMap&lt;java.lang.String,java.lang.Integer&gt;&nbsp;getUniqueCount(int&nbsp;column)</pre>
+</li>
+</ul>
+<a name="getRowLookup(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getRowLookup</h4>
+<pre>public&nbsp;java.util.HashMap&lt;java.lang.String,java.lang.Integer&gt;&nbsp;getRowLookup(int&nbsp;col)</pre>
+<div class="block">Return an object that maps the String values in one column back to the
+ row from which they came. For instance, if the "name" of each row is
+ found in the first column, getColumnRowLookup(0) would return an object
+ that would map each name back to its row.</div>
+</li>
+</ul>
+<a name="trim()">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>trim</h4>
+<pre>public&nbsp;void&nbsp;trim()</pre>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<!-- ========= END OF CLASS DATA ========= -->
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<div class="bottomNav"><a name="navbar_bottom">
+<!--   -->
+</a><a href="#skip-navbar_bottom" title="Skip navigation links"></a><a name="navbar_bottom_firstrow">
+<!--   -->
+</a>
+<ul class="navList" title="Navigation">
+<li><a href="../../overview-summary.html">Overview</a></li>
+<li><a href="package-summary.html">Package</a></li>
+<li class="navBarCell1Rev">Class</li>
+<li><a href="package-tree.html">Tree</a></li>
+<li><a href="../../deprecated-list.html">Deprecated</a></li>
+<li><a href="../../index-all.html">Index</a></li>
+<li><a href="../../help-doc.html">Help</a></li>
+</ul>
+</div>
+<div class="subNav">
+<ul class="navList">
+<li>Prev Class</li>
+<li><a href="../../processing/data/TableRow.html" title="interface in processing.data"><span class="strong">Next Class</span></a></li>
+</ul>
+<ul class="navList">
+<li><a href="../../index.html?processing/data/Table.html" target="_top">Frames</a></li>
+<li><a href="Table.html" target="_top">No Frames</a></li>
+</ul>
+<ul class="navList" id="allclasses_navbar_bottom">
+<li><a href="../../allclasses-noframe.html">All Classes</a></li>
+</ul>
+<div>
+<script type="text/javascript"><!--
+  allClassesLink = document.getElementById("allclasses_navbar_bottom");
+  if(window==top) {
+    allClassesLink.style.display = "block";
+  }
+  else {
+    allClassesLink.style.display = "none";
+  }
+  //-->
+</script>
+</div>
+<div>
+<ul class="subNavList">
+<li>Summary:&nbsp;</li>
+<li>Nested&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method_summary">Method</a></li>
+</ul>
+<ul class="subNavList">
+<li>Detail:&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#constructor_detail">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method_detail">Method</a></li>
+</ul>
+</div>
+<a name="skip-navbar_bottom">
+<!--   -->
+</a></div>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+</body>
+</html>
