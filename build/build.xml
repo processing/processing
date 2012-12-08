@@ -788,6 +788,11 @@
 
   <target name="doc">
 
+    <!-- build doc for core -->
+    <exec executable="find" dir="javadoc" errorproperty="ignored">
+      <arg line="core -type f -exec rm -rf {} ';'" />
+    </exec>
+
     <javadoc access="public" author="false" classpath="../core/library/jogl-all.jar:../core/bin:../core/library/gluegen-rt.jar" destdir="javadoc/core" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" source="1.6" splitindex="false" use="false" version="false">
 
       <arg value="-notimestamp" />
@@ -798,8 +803,15 @@
 
     </javadoc>
 
-    <exec executable="find" dir="javadoc"
-	  errorproperty="ignored">
+<!--
+    <copy file="javadoc/stylesheet.css" 
+	  tofile="javadoc/core/stylesheet.css" />
+    <copy file="javadoc/index.html" 
+	  tofile="javadoc/core/index.html" />
+-->
+
+    <!-- build everything else -->
+    <exec executable="find" dir="javadoc" errorproperty="ignored">
       <arg line="everything -type f -exec rm -rf {} ';'" />
     </exec>
 
@@ -822,15 +834,12 @@
       </packageset>
     </javadoc>
 
-    <copy file="javadoc/stylesheet.css" 
-	  tofile="javadoc/core/stylesheet.css" />
+<!--
     <copy file="javadoc/stylesheet.css" 
 	  tofile="javadoc/everything/stylesheet.css" />
-
-    <copy file="javadoc/index.html" 
-	  tofile="javadoc/core/index.html" />
     <copy file="javadoc/index.html" 
 	  tofile="javadoc/everything/index.html" />
+-->
 
   </target>
 
