@@ -8,7 +8,7 @@
 #    Processing -> preferences.txt (on Windows XP)
 
 # Users -> [username] -> AppData -> Roaming -> 
-#    Processing -> preferences.txt (on Windows Vista)
+#    Processing -> preferences.txt (on Windows Vista and 7)
 
 # ~/Library -> Processing -> preferences.txt (on Mac OS X)
 
