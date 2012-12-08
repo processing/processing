@@ -9201,6 +9201,11 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
+  public void clear() {
+    g.clear();
+  }
+
+
   /**
    * Takes an RGB or ARGB image and sets it as the background.
    * The width and height of the image must be the same size as the sketch.

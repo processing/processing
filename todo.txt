@@ -3,9 +3,12 @@ X remove extra separator at the top of the Help menu on Windows and Linux
 X MovieMaker tool will not start on Windows 8
 X   make a little less fragile by not launching as separate process
 X   http://code.google.com/p/processing/issues/detail?id=1447
+X clean up the code and interface for the Movie Maker tool
+X   http://code.google.com/p/processing/issues/detail?id=836 
+X on Windows, the Help menu seems to start with a separator
 
-_ on Windows, the Help menu seems to start with a separator
-
+_ add 6u37 as the Java runtime
+_ add bootclasspath for 1.6
 
 https://processing-js.lighthouseapp.com/
 
