@@ -558,7 +558,7 @@
     <chmod perm="ugo+x" file="linux/work/processing-java" />
 
     <property name="jre.file" 
-	      value="jre-tools-6u33-linux${sun.arch.data.model}.tgz" />
+	      value="jre-tools-6u37-linux${sun.arch.data.model}.tgz" />
 
     <get src="http://processing.googlecode.com/files/${jre.file}" 
 	 dest="linux/jre.tgz" 
@@ -729,7 +729,7 @@
 
     <!-- starting with 2.0a7, require the local JRE + tools.jar -->
     <property name="jre.file" 
-	      value="jre-tools-6u33-windows${sun.arch.data.model}.zip" />
+	      value="jre-tools-6u37-windows${sun.arch.data.model}.zip" />
 
     <get src="http://processing.googlecode.com/files/${jre.file}" 
 	 dest="windows/jre.zip" 
