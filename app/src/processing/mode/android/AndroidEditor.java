@@ -34,78 +34,21 @@ import processing.mode.java.JavaEditor;
 
 import processing.core.PApplet;
 
-// http://dl.google.com/android/repository/repository.xml
-// http://dl.google.com/android/android-sdk_r3-mac.zip
-// http://dl.google.com/android/repository/tools_r03-macosx.zip
-
-// contains the android guts, the google specifics, and the usb driver for windows
-// https://dl-ssl.google.com/android/repository/addon.xml
-
-// need to lock to a specific sdk version and tools version anyway
-// may as well do the auto-download thing.
-
 
 public class AndroidEditor extends JavaEditor {
-//  private AndroidBuild build;
   private AndroidMode androidMode;
-
-//  private static final String ANDROID_CORE_FILENAME =
-//    "processing-android-core-" + Base.VERSION_NAME + ".zip";
-
-//  private static final String ANDROID_CORE_URL =
-//    "http://processing.googlecode.com/files/" + ANDROID_CORE_FILENAME;
-
 
 
   protected AndroidEditor(Base base, String path, EditorState state, Mode mode) throws Exception {
     super(base, path, state, mode);
     androidMode = (AndroidMode) mode;
     androidMode.checkSDK(this);
-
-////    try {
-//    AndroidSDK sdk = amode.loadSDK();
-//    if (sdk == null) {
-//      sdk = AndroidSDK.locate(this);
-//    }
-////    } catch (BadSDKException bse) {
-////      statusError(bse);
-////
-////    } catch (IOException e) {
-////      statusError(e);
-////    }
-
-    /*
-    if (sdk == null) {
-      statusNotice("Loading Android tools.");
-      try {
-        sdk = AndroidSDK.load();
-        statusNotice("Done loading Android tools.");
-
-      } catch (Exception e) {
-        Base.showWarning("Android Tools Error", e.getMessage(), null);
-        statusError("Android Mode is disabled.");
-      }
-    }
-    */
-
-    // Make sure that the processing.android.core.* classes are available
-    //  if (!checkCore()) {
-    //    statusNotice("Android mode canceled.");
-    //    return false;
-    //  }
-
   }
 
 
   public EditorToolbar createToolbar() {
     return new AndroidToolbar(this, base);
   }
-
-
-  // inherit from the parent
-//  public Formatter createFormatter() {
-//    return new AutoFormat();
-//  }
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
