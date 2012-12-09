@@ -170,7 +170,6 @@ WHITESPACE	LITERAL2
 		
 abstract	KEYWORD1
 assert	KEYWORD1
-boolean	KEYWORD1	boolean
 break	KEYWORD1	break
 case	KEYWORD1	case
 class	KEYWORD1	class
@@ -222,6 +221,7 @@ PrintWriter	KEYWORD5	PrintWriter
 String	KEYWORD5	String
 StringBuffer	KEYWORD5	
 Thread	KEYWORD5
+boolean	KEYWORD5	boolean
 byte	KEYWORD5	byte
 char	KEYWORD5	char
 double	KEYWORD5	double
@@ -500,13 +500,13 @@ noTint	FUNCTION1	noTint_
 open	FUNCTION1	open_
 ortho	FUNCTION1	ortho_
 perspective	FUNCTION1	perspective_
-PFont	KEYWORD1	PFont
+PFont	KEYWORD5	PFont
 list	FUNCTION1	PFont_list_
 PGraphics	FUNCTION1	PGraphics_
 beginDraw	FUNCTION2	PGraphics_beginDraw_
 endDraw	FUNCTION2	PGraphics_endDraw_
 PI	LITERAL2	PI
-PImage	KEYWORD1	PImage
+PImage	KEYWORD5	PImage
 alpha	FUNCTION2	PImage_alpha_
 blend	FUNCTION2	PImage_blend_
 copy	FUNCTION2	PImage_copy_
@@ -532,9 +532,9 @@ printCamera	FUNCTION1	printCamera_
 println	FUNCTION1	println_
 printMatrix	FUNCTION1	printMatrix_
 printProjection	FUNCTION1	printProjection_
-PShader	FUNCTION1	PShader_
+PShader	KEYWORD5	PShader
 PShader	FUNCTION2	PShader_set_
-PShape	KEYWORD1	PShape
+PShape	KEYWORD5	PShape
 addChild	FUNCTION2	PShape_addChild_
 beginContour	FUNCTION2	PShape_beginContour_
 disableStyle	FUNCTION2	PShape_disableStyle_
@@ -556,7 +556,7 @@ setVisible	FUNCTION2	PShape_setVisible_
 translate	FUNCTION2	PShape_translate_
 pushMatrix	FUNCTION1	pushMatrix_
 pushStyle	FUNCTION1	pushStyle_
-PVector	KEYWORD1	PVector
+PVector	KEYWORD5	PVector
 add	FUNCTION2	PVector_add_
 angleBetween	FUNCTION2	PVector_angleBetween_
 array	FUNCTION2	PVector_array_

@@ -80,8 +80,8 @@ editor.function2.style = #006699,plain
 editor.keyword1.style = #D86736,plain
 editor.keyword2.style = #EE3C96,plain
 editor.keyword3.style = #EE3C96,plain
-editor.keyword4.style = #FF0000,plain
-editor.keyword5.style = #00FF00,plain
+editor.keyword4.style = #669933,plain
+editor.keyword5.style = #D86736,plain
 editor.literal1.style = #7D4793,plain
 editor.literal2.style = #669933,plain
 
