@@ -6,6 +6,8 @@ import java.io.IOException;
 import processing.app.*;
 import processing.mode.java.JavaMode;
 
+import javax.swing.*;
+import javax.swing.tree.*;
 
 /**
  *	JS Mode for Processing based on Processing.js. Comes with a server as
@@ -196,9 +198,9 @@ public class JavaScriptMode extends Mode
 	File jExamples = jMode.getContentFile("examples");
 	File[] jModeExamples = new File[] {
       new File(jExamples, "Basics"),
-      new File(jExamples, "Topics"),
-      new File(jExamples, "3D") /*,
-      new File(jExamples, "Books")*/
+      //new File(jExamples, "Topics"),
+      //new File(jExamples, "3D") ,
+      //new File(jExamples, "Books")
     };
 	
 	// merge them all
@@ -208,8 +210,30 @@ public class JavaScriptMode extends Mode
 	for ( int i = 0; i < jModeExamples.length; i++ )
 		finalExamples[inclExamples.length+i] = jModeExamples[i];
 	
+	java.util.Arrays.sort(finalExamples);
+
     return finalExamples;
   }
+
+	/**
+	 *	Overriding this from Mode.java to remove "Contributed Libraries"
+	 */
+
+	public JTree buildExamplesTree()
+	{
+		JTree superTree = super.buildExamplesTree();
+
+		DefaultTreeModel model = (DefaultTreeModel) superTree.getModel();
+		DefaultMutableTreeNode root = (DefaultMutableTreeNode) model.getRoot();
+		DefaultMutableTreeNode contribExamples = (DefaultMutableTreeNode) root.getLastChild();
+		Object title = contribExamples.getUserObject();
+		if ( title != null && title.getClass() == String.class && ((String)title).equals("Contributed Libraries") )
+		{
+			root.remove( contribExamples );
+		}
+
+		return superTree;
+	}
   
     /**
 	 *	Return the default extension for this mode, same as Java
