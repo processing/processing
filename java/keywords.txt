@@ -233,15 +233,15 @@ short	KEYWORD5
 
 # Flow structures
 
-catch	KEYWORD4	catch
-do	KEYWORD4
-for	KEYWORD4	for
-if	KEYWORD4	if
-else	KEYWORD4	else
-switch	KEYWORD4	switch
-synchronized	KEYWORD4
-while	KEYWORD4	while
-try	KEYWORD4	try
+catch	KEYWORD3	catch
+do	KEYWORD3
+for	KEYWORD3	for
+if	KEYWORD3	if
+else	KEYWORD3	else
+switch	KEYWORD3	switch
+synchronized	KEYWORD3
+while	KEYWORD3	while
+try	KEYWORD3	try
 
 catch	FUNCTION3	catch
 do	FUNCTION3
