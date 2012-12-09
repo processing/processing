@@ -2224,53 +2224,6 @@ public class Table {
 
 
   /**
-   * Remove any of the specified characters from the entire table.
-   */
-  public void removeTokens(String tokens) {
-    for (int col = 0; col < getColumnCount(); col++) {
-      removeTokens(tokens, col);
-    }
-  }
-
-
-  /**
-   * Removed any of the specified characters from a column. For instance,
-   * the following code removes dollar signs and commas from column 2:
-   * <pre>
-   * table.removeTokens(",$", 2);
-   * </pre>
-   */
-  public void removeTokens(String tokens, int column) {
-    for (int row = 0; row < rowCount; row++) {
-      String s = getString(row, column);
-      if (s != null) {
-        char[] c = s.toCharArray();
-        int index = 0;
-        for (int j = 0; j < c.length; j++) {
-          if (tokens.indexOf(c[j]) == -1) {
-            if (index != j) {
-              c[index] = c[j];
-            }
-            index++;
-          }
-        }
-        if (index != c.length) {
-          setString(row, column, new String(c, 0, index));
-        }
-      }
-    }
-  }
-
-
-  public void removeTokens(String tokens, String columnName) {
-    removeTokens(tokens, getColumnIndex(columnName));
-  }
-
-
-  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-
-
-  /**
    * Return the row that contains the first String that matches.
    * @param value the String to match
    * @param column the column to search
@@ -2568,6 +2521,53 @@ public class Table {
    */
   public void replaceAll(String regex, String replacement, String columnName) {
     replaceAll(regex, replacement, getColumnIndex(columnName));
+  }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  /**
+   * Remove any of the specified characters from the entire table.
+   */
+  public void removeTokens(String tokens) {
+    for (int col = 0; col < getColumnCount(); col++) {
+      removeTokens(tokens, col);
+    }
+  }
+
+
+  /**
+   * Removed any of the specified characters from a column. For instance,
+   * the following code removes dollar signs and commas from column 2:
+   * <pre>
+   * table.removeTokens(",$", 2);
+   * </pre>
+   */
+  public void removeTokens(String tokens, int column) {
+    for (int row = 0; row < rowCount; row++) {
+      String s = getString(row, column);
+      if (s != null) {
+        char[] c = s.toCharArray();
+        int index = 0;
+        for (int j = 0; j < c.length; j++) {
+          if (tokens.indexOf(c[j]) == -1) {
+            if (index != j) {
+              c[index] = c[j];
+            }
+            index++;
+          }
+        }
+        if (index != c.length) {
+          setString(row, column, new String(c, 0, index));
+        }
+      }
+    }
+  }
+
+
+  public void removeTokens(String tokens, String columnName) {
+    removeTokens(tokens, getColumnIndex(columnName));
   }
 
 

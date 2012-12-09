@@ -6,33 +6,37 @@ X heading2D()? weird.. changed to heading()
 X   http://toxiclibs.org/docs/core/toxi/geom/Vec3D.html
 X   http://code.google.com/p/processing/issues/detail?id=987
 
-X lots of improvements/cleanups to Table class
-X   added lastRowIndex()
-X   rows() instead of getRows() (doesn't perform like our other get() functions)
-X     it's more like keys() and values() in HashMap
-X   addRow() returns TableRow object to be modified
-X   lastRowIndex() (to avoid getRowCount() - 1)
-X     not lastRow() because Row functions return TableRow object/intf
+table
+X added lastRowIndex()
+X rows() instead of getRows() (doesn't perform like our other get() functions)
+X   it's more like keys() and values() in HashMap
+X addRow() returns TableRow object to be modified
+X lastRowIndex() (to avoid getRowCount() - 1)
+X   not lastRow() because Row functions return TableRow object/intf
+X makeNullEmpty() -> replace(null, "");
+X makeEmptyNull() -> replace("", null);
+X saveTable("filename.tsv") or saveTable("filename.txt", "tsv")
+X createTable() method in PApplet
+X removed getUniqueXxxx() and some others, pending names
 
-X   makeNullEmpty() -> replace(null, "");
-X   makeEmptyNull() -> replace("", null);
+more table
+_ naming for these (or whether to include hash)
+_   Table createSubset() -> leave out?
+_   String[] getUnique(col)
+_   HashMap<String,Integer> getUniqueCount(col)
+_ possible features
+_   create table from TableRow iterator...allows for subset and find
+_     downside is types are not included
+_   getMaxFloat() (whole table) or getMaxFloat(col) 
+_     that's max(getFloatColumn(n))
+_   also important b/c can leave out missing values
+_ include SQL, HTML, ODS, binary?
+_   naming HTMLTable, TableHTML (ala PShapeSVG)
+_   or should it be HTMLTable / HtmlTable... then SVGShape / SvgShape
+_ dictionary support
+_ join tables together (static is kinda gross)
 
-createTable()
-need option to save table
-
-_ create table from TableRow iterator...allows for subset and find
-
-naming for these (or whether to include hash)
-Table createSubset() -> leave out?
-String[] getUnique(col)
-HashMap<String,Integer> getUniqueCount(col)
-
-features?
-getMaxFloat() (whole table) or getMaxFloat(col) (that's max(getFloatColumn(n))
-  also important b/c can leave out missing values
-include SQL, HTML, ODS, binary?
-
-join tables together (static is kinda gross)
+. . . 
 
 PShape s = createShape();
 s.beginShape(QUADS);
