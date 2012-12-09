@@ -3,19 +3,11 @@ http://code.google.com/p/processing/issues/detail?id=573
 
 ----------------------------------------------------------------------------
 
-Library system changes, as discussed at EyeO 2012
-
-Rewrite library system to not be linked to java-libraries.
-<sketchbook>/libraries-js/..
-LibraryManager, updating, ..
-Update reference / wiki to mirror changes. 
-Make tutorial / template for Library authors.
+X Library system changes, as discussed at EyeO 2012
 
 ----------------------------------------------------------------------------
 
-Reference
-
-Make sure all reference links point to the same/new location
+X Make sure all reference links point to the same/new location
 
 ----------------------------------------------------------------------------
 
@@ -37,11 +29,16 @@ about an animated icon. How does "Server running" look like?
 Convenience
 
 A way to open / run in other browsers?
+
 Find your own IP address so you can test the sketch from other clients 
 on the network.
+QRCode for mobile devices? http://code.google.com/p/zxing/
 
-Watch source files for changes, rebuild & export upon change. 
+Watch source files for changes, rebuild & export upon change.
 No saving needed.
+
+Add a callback that will fire once your sketch has loaded to get away from
+continously testing Processing.instances.
 
 ----------------------------------------------------------------------------
 
