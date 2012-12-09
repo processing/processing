@@ -857,7 +857,13 @@ public abstract class Mode {
 
 
   public SyntaxStyle getStyle(String attribute) {
-    return theme.getStyle(attribute);
+    SyntaxStyle style = theme.getStyle(attribute);
+    if (style == null) {
+//      System.err.println("No style coloring found for " + attribute);
+//      style = new SyntaxStyle(Color.BLACK, false, false);
+      throw new IllegalArgumentException("No style found for " + attribute);
+    }
+    return style;
   }
 
 
