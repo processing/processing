@@ -84,6 +84,7 @@ editor.brackethighlight.color = #006699
 
 editor.function1.style = #627516,plain
 editor.function2.style = #627516,bold
+editor.function3.style = #627516,plain
 
 # e.g abstract, final, private
 editor.keyword1.style = #627516,plain
@@ -91,6 +92,8 @@ editor.keyword1.style = #627516,plain
 editor.keyword2.style = #627516,plain
 # e.g. byte, char, short, color
 editor.keyword3.style = #627516,bold
+editor.keyword4.style = #627516,plain
+editor.keyword5.style = #627516,plain
 
 # constants: e.g. null, true, this, RGB, TWO_PI
 #editor.literal1.style = #627f26,plain

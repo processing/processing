@@ -6,6 +6,17 @@ X heading2D()? weird.. changed to heading()
 X   http://toxiclibs.org/docs/core/toxi/geom/Vec3D.html
 X   http://code.google.com/p/processing/issues/detail?id=987
 
+_ hint(OPENGL_ERRORS) should be the opposite to enable the reporting, no?
+_   hint(ENABLE_OPENGL_ERRORS) should be the hint.. disabled by default
+
+cleaning/earlier
+C textureWrap() CLAMP and REPEAT now added
+C begin/endContour()
+o consider enable("mipmaps") instead of hint(ENABLE_MIPMAPS)
+X clean up PConstants and move things into PGraphics that needn't be available
+o getGLProfiles stuff.. can't do getGL2(), not good x-platform
+o disable smoothing on noSmooth(), use hint to do 2x vs 4x smoothing
+
 table
 X added lastRowIndex()
 X rows() instead of getRows() (doesn't perform like our other get() functions)
@@ -19,37 +30,84 @@ X saveTable("filename.tsv") or saveTable("filename.txt", "tsv")
 X createTable() method in PApplet
 X removed getUniqueXxxx() and some others, pending names
 
+_ shader syntax (Andres request)
+_   might also need a define inside the shader to control what type it is
+
 more table
 _ naming for these (or whether to include hash)
 _   Table createSubset() -> leave out?
-_   String[] getUnique(col)
+_   String[] getUnique(col) (SQL DISTINCT, sort --unique)
 _   HashMap<String,Integer> getUniqueCount(col)
 _ possible features
 _   create table from TableRow iterator...allows for subset and find
 _     downside is types are not included
 _   getMaxFloat() (whole table) or getMaxFloat(col) 
 _     that's max(getFloatColumn(n))
-_   also important b/c can leave out missing values
-_ include SQL, HTML, ODS, binary?
-_   naming HTMLTable, TableHTML (ala PShapeSVG)
-_   or should it be HTMLTable / HtmlTable... then SVGShape / SvgShape
-_ dictionary support
-_ join tables together (static is kinda gross)
+_     also important b/c can leave out missing values
+_   include SQL, HTML, ODS, binary?
+_     naming HTMLTable, TableHTML (ala PShapeSVG)
+_     or should it be HTMLTable / HtmlTable... then SVGShape / SvgShape
+_   dictionary support
+_   join tables together (static is kinda gross)
 
-. . . 
+shape
+_ PShape s = createShape(); / s.beginShape(QUADS);
+_ createShape() not yet implemented for Java2D
+_   http://code.google.com/p/processing/issues/detail?id=1400
+_ keeping these public for now
+_   get/setNormal
+_   get/setTextureUV
+_   get/setFill
+_   get/setStroke
+_   -> perhaps these go into their own section?
+_   -> or have their own accessor that returns all params?
+_ trying to remember why primitive was changed to kind? (better name?)
+_ these aren't per-vertex:
+_   get/setStrokeWeight
+_   get/setAmbient
+_   get/setEmissive 
+_   get/setShininess
+_ boolean isGL() -> now removed
+_ unapproved (made protected)
+_   static shape copying methods
+_   getTop, getBottom, etc
+_   void solid(boolean)
+_   void setParams()
+_   void setPath()
+_ colorCalc() methods added to PShape.. should just be used from PGraphics
+_ loadShape() needs to live in PApplet
+_ make PShapeOpenGL a cache object
 
-PShape s = createShape();
-s.beginShape(QUADS);
+xml library
+_ beginning slash in getChild() threw an NPE
+_ do we need a trim() method for XML?
+_ isWhitespace() method for nodes? (that's the capitalization used in Character)
+_ XML toString(0) means no indents or newlines
+_   but no way to remove indents and still have newlines... 
+_   toString(-1)? a new method?
+_ format(2), format(4)... format() -> default to 2 params
+_ get back to PhiLho once finished
+_ look into json and how it would work wrt XML
+_   1) we bring back getFloatAttribute() et al., 
+_      and make getFloat() be equivalent to parseFloat(xml.getContent())
+_   2) we keep getFloat() like it is, and add getFloatContent(), etc.
+_   3) we deprecate our nice short getFloat/getInt/etc and go with 
+_      getXxxxAttribute() and getXxxxContent() methods.
+
+async requests
+Request r = createRequest("http://p5.org/feed/13134.jpg");
+Request r = createRequest("http://p5.org/feed/13134.jpg", "callbackName");
+Request r = createRequest("http://p5.org/feed/13134, "callbackName", "jpg");
+_ implement callbacks for images and other loadXxxx() functions
+_   remove requestImage() and friends
+_ callback for requestImage()
+_   http://code.google.com/p/processing/issues/detail?id=641
+_ remove/update requestImage example
 
 _ implement mousePressed(Event) etc
 _   better to do this instead of bringing back the magic event
 _   or implementing the magic event on Android
 _   also problematic with it not being called now
-_ add mouse wheel support to 2.0 event system
-_   this is fairly messy since desktop and JS behave a little differently
-_   wheel event should subclass mouse (since position still relevant)
-_   might be more effort than it's worth?
-_   http://code.google.com/p/processing/issues/detail?id=1423
 
 stop() mess
 _ in PApplet.main(), windowClosing() should probably be calling 'exit()'
@@ -108,50 +166,6 @@ _     so that it could avoid quitting if the sketch hasn't been stopped
 _     or if the sketch window is foremost
 _     maybe a hack where a new menubar is added? 
 
-_ shader syntax (Andres request)
-_   might also need a define inside the shader to control what type it is
-
-_ createShape() not yet implemented for Java2D
-_   http://code.google.com/p/processing/issues/detail?id=1400
-
-_ look into json and how it would work
-1) we bring back getFloatAttribute() et al., and make getFloat() be equivalent to parseFloat(xml.getContent())
-2) we keep getFloat() like it is, and add getFloatContent(), getIntContent() etc.
-3) we deprecate our nice short getFloat/getInt/etc and go with getXxxxAttribute() and getXxxxContent() methods.
-
-Request r = createRequest("http://p5.org/feed/13134.jpg");
-Request r = createRequest("http://p5.org/feed/13134.jpg", "callbackName");
-Request r = createRequest("http://p5.org/feed/13134, "callbackName", "jpg");
-_ implement callbacks for images and other loadXxxx() functions
-_   remove requestImage() and friends
-_ callback for requestImage()
-_   http://code.google.com/p/processing/issues/detail?id=641
-_ remove/update requestImage example
-
-PImage icon;
-
-void setup() {
- loadImage("icon.jpg", "iconLoaded");
-}
-
-void draw() {
- if (icon != null) {
-   // do something
- }
-}
-
-// if this version is present, it'll be called
-void iconLoaded(PImage image) {
- icon = image;
- // filename can be ignored
-}
-
-// alternate version that can be used, and will be called if present
-void iconLoaded(PImage image, String filename) {
- icon = image;
- // filename can be ignored
-}
-
 _ splice() throws ClassCastException when used with objects like PVector 
 _   http://code.google.com/p/processing/issues/detail?id=1407
 
@@ -164,68 +178,11 @@ _   change to be the text command
 _ OutOfMemory in image()
 _   http://code.google.com/p/processing/issues/detail?id=1353
 
-_ Default Renderer slow on retina displays
-_   http://code.google.com/p/processing/issues/detail?id=1262
-
-_ hint(OPENGL_ERRORS) should be the opposite to enable the reporting, no?
-
-_ fillMode(NONZERO) and fillMode(ODD) to replace solid(boolean)?
-
-keeping these public for now
-get/setNormal
-get/setTextureUV
-get/setFill
-get/setStroke
--> perhaps these go into their own section?
--> or have their own accessor that returns all params?
-
-trying to remember why primitive was changed to kind? (better name?)
-
-these aren't per-vertex:
-get/setStrokeWeight
-get/setAmbient
-get/setEmissive 
-get/setShininess
-
-boolean isGL() -> now removed
-
-unapproved (made protected)
-static shape copying methods
-getTop, getBottom, etc
-void solid(boolean)
-void setParams()
-void setPath()
-
-clenaup
-colorCalc() methods added to PShape.. should just be used from PGraphics
-
-
-xml tweaks
-_ beginning slash in getChild() threw an NPE
-_ do we need a trim() method for XML?
-_ isWhitespace() method for nodes? (that's the capitalization used in Character)
-_ XML toString(0) means no indents or newlines
-_   but no way to remove indents and still have newlines... 
-_   toString(-1)? a new method?
-_ format(2), format(4)... format() -> default to 2 params
-_ get back to PhiLho once finished
-
 api to be fixed/removed
 _ remove PImage.delete() and friends from PImage, Movie, etc.
 _ delete()/dispose() being used in the movie
 _ buffer sink methods in movie
 _ 'newFrame' is 'available', and ready() is part of that
-
-_ make PShapeOpenGL a cache object
-_ createShape() with Java2D not ready to go
-
-_ loadShape() needs to live in PApplet
-
-
-docs
-_ textureWrap() CLAMP and REPEAT now added
-_ begin/endContour()
-_ explain the new PGL interface
 
 _ wrap exceptions with die() and warn() methods
 _   this way, people can make use of exceptions if they would rather
@@ -233,12 +190,7 @@ _   or shut them off if they don't want to
 _   also need to explain exception handling in general
 _   http://code.google.com/p/processing/issues/detail?id=183
 
-2.0 FINAL / constants/hints
 _ bring PConstants back in line w/ previous 1.5 (can't renumber)
-o consider enable("mipmaps") instead of hint(ENABLE_MIPMAPS)
-X clean up PConstants and move things into PGraphics that needn't be available
-_ hint(DISABLE_LOAD_PIXELS) -> faster rendering in Java2D
-_ getGLProfiles stuff.. can't do getGL2(), not good x-platform
 
 docs (2.0)
 _ add notes about the new shader setup
@@ -266,10 +218,14 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=1535 (no gcode)
 _ fix regex documentation (assigned to Shiffman)
 _   http://code.google.com/p/processing/issues/detail?id=169
 _ OpenGL offscreen requires primary surface to be OpenGL
-
+_ explain the new PGL interface
 _ can't really change the smoothing/options on offscreen
+_   is this still true?
 
 rendering/performance/threading
+_ Default Renderer slow on retina displays
+_   http://code.google.com/p/processing/issues/detail?id=1262
+_ hint(DISABLE_LOAD_PIXELS) -> faster rendering in Java2D
 _ problems with 2D rendering speed
 _   volatile images
 _   http://www.javalobby.org/forums/thread.jspa?threadID=16840&tstart=0
@@ -319,8 +275,6 @@ _   should instead be a renderer that splits things out
 _ if save() returns boolean, does saveFrame()?
 _   also need to copy this over to android
 
-_ disable smoothing on noSmooth(), use hint to do 2x vs 4x smoothing
-
 
 2.0 / methods
 _ decision on registered methods
@@ -338,11 +292,6 @@ _   the registered method for size() also needs to be called
 _ need to wrap mouse/key events for p5
 _   need a version that works with both android and desktop
 _   also need to interleave events properly (as per report)
-_ touch events.. can't do MouseEvent et al with Android
-_   http://dvcs.w3.org/hg/webevents/raw-file/tip/touchevents.html
-_   http://www.html5rocks.com/en/mobile/touch.html
-_   decision: go with what looks like javascript/ios
-_   touchEvent(), gestureEvent()?
 
 
 2.0
@@ -594,13 +543,26 @@ _ opengl isn't drawing rectangles out to raw properly with fonts
 _   when not in textMode(SHAPE) should have rects
 
 
-
 CORE / Mac OS X
 
 _ set the application name to sketch name (not processing.core.PApplet)
 _   System.setProperty("com.apple.mrj.application.apple.menu.about.name", ...)
 _   -Xdock:name=<application name>
 _   -Xdock:icon=<path to icon file>
+
+
+CORE / Events
+
+_ touch events.. can't do MouseEvent et al with Android
+_   http://dvcs.w3.org/hg/webevents/raw-file/tip/touchevents.html
+_   http://www.html5rocks.com/en/mobile/touch.html
+_   decision: go with what looks like javascript/ios
+_   touchEvent(), gestureEvent()?
+_ add mouse wheel support to 2.0 event system
+_   this is fairly messy since desktop and JS behave a little differently
+_   wheel event should subclass mouse (since position still relevant)
+_   might be more effort than it's worth?
+_   http://code.google.com/p/processing/issues/detail?id=1423
 
 
 LIBRARIES / PGraphicsPDF
@@ -641,6 +603,7 @@ _     before rewriting all of createInput()
 
 LATER (post 2.0)
 
+_ fillMode(NONZERO) and fillMode(ODD) to replace solid(boolean)?
 _ create PVec2D and PVec3D as separate classes
 _ gui priorities
 _   + Label
