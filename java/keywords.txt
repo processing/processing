@@ -645,7 +645,7 @@ strokeCap	FUNCTION1	strokeCap_
 strokeJoin	FUNCTION1	strokeJoin_
 strokeWeight	FUNCTION1	strokeWeight_
 subset	FUNCTION1	subset_
-Table	FUNCTION1	Table_
+Table	KEYWORD5	Table
 tan	FUNCTION1	tan_
 text	FUNCTION1	text_
 textAlign	FUNCTION1	textAlign_
@@ -668,7 +668,7 @@ unbinary	FUNCTION1	unbinary_
 unhex	FUNCTION1	unhex_
 updatePixels	FUNCTION1	updatePixels_
 vertex	FUNCTION1	vertex_
-XML	FUNCTION1	XML_
+XML	KEYWORD5	XML
 addChild	FUNCTION2	XML_addChild_
 getAttributeCount	FUNCTION2	XML_getAttributeCount_
 getChild	FUNCTION2	XML_getChild_
