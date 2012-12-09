@@ -588,6 +588,12 @@ public abstract class Mode {
   public void showExamplesFrame() {
     if (examplesFrame == null) {
       examplesFrame = new JFrame(getTitle() + " Examples");
+      Toolkit.registerWindowCloseKeys(examplesFrame.getRootPane(), new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          examplesFrame.setVisible(false);
+        }
+      });
+      
       final JTree tree = buildExamplesTree();
 
       tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
