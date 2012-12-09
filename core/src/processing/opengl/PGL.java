@@ -32,7 +32,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.Arrays;
+import java.nio.ShortBuffer;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -455,6 +455,8 @@ public class PGL {
     +1.0f, +1.0f, 1.0f, 1.0f
   };
   protected static FloatBuffer texData;
+  protected static ByteBuffer byteBuffer;
+  protected static IntBuffer intBuffer;
 
   protected static String texVertShaderSource =
     "attribute vec2 inVertex;" +
@@ -837,27 +839,43 @@ public class PGL {
   }
 
 
-  public void getIntegerv(int name, int[] values, int offset) {
-    gl.glGetIntegerv(name, values, offset);
+//  public void getIntegerv(int name, int[] values, int offset) {
+//    gl.glGetIntegerv(name, values, offset);
+//  }
+
+
+  public void getIntegerv(int name, IntBuffer values) {
+    gl.glGetIntegerv(name, values);
   }
 
 
-  public void getFloatv(int name, float[] values, int offset) {
-    gl.glGetFloatv(name, values, offset);
+//  public void getFloatv(int name, float[] values, int offset) {
+//    gl.glGetFloatv(name, values, offset);
+//  }
+
+
+  public void getFloatv(int name, FloatBuffer values) {
+    gl.glGetFloatv(name, values);
   }
 
 
-  public void getBooleanv(int name, boolean[] values, int offset) {
-    if (-1 < name) {
-      byte[] bvalues = new byte[values.length];
-      gl.glGetBooleanv(name, bvalues, offset);
-      for (int i = 0; i < values.length; i++) {
-        values[i] = bvalues[i] != 0;
-      }
-    } else {
-      Arrays.fill(values, false);
-    }
+//  public void getBooleanv(int name, boolean[] values, int offset) {
+//    if (-1 < name) {
+//      byte[] bvalues = new byte[values.length];
+//      gl.glGetBooleanv(name, bvalues, offset);
+//      for (int i = 0; i < values.length; i++) {
+//        values[i] = bvalues[i] != 0;
+//      }
+//    } else {
+//      Arrays.fill(values, false);
+//    }
+//  }
+
+
+  public void getBooleanv(int name, ByteBuffer values) {
+     gl.glGetBooleanv(name, values);
   }
+
 
 
   ///////////////////////////////////////////////////////////
@@ -939,13 +957,23 @@ public class PGL {
   // Textures
 
 
-  public void genTextures(int n, int[] ids, int offset) {
-    gl.glGenTextures(n, ids, offset);
+//  public void genTextures(int n, int[] ids, int offset) {
+//    gl.glGenTextures(n, ids, offset);
+//  }
+
+
+  public void genTextures(int n, IntBuffer ids) {
+    gl.glGenTextures(n, ids);
   }
 
 
-  public void deleteTextures(int n, int[] ids, int offset) {
-    gl.glDeleteTextures(n, ids, offset);
+//  public void deleteTextures(int n, int[] ids, int offset) {
+//    gl.glDeleteTextures(n, ids, offset);
+//  }
+
+
+  public void deleteTextures(int n, IntBuffer ids) {
+    gl.glDeleteTextures(n, ids);
   }
 
 
@@ -990,9 +1018,14 @@ public class PGL {
   }
 
 
-  public void getTexParameteriv(int target, int param, int[] values,
-                                int offset) {
-    gl.glGetTexParameteriv(target, param, values, offset);
+//  public void getTexParameteriv(int target, int param, int[] values,
+//                                int offset) {
+//    gl.glGetTexParameteriv(target, param, values, offset);
+//  }
+
+
+  public void getTexParameteriv(int target, int param, IntBuffer values) {
+    gl.glGetTexParameteriv(target, param, values);
   }
 
 
@@ -1006,13 +1039,23 @@ public class PGL {
   // Vertex Buffers
 
 
-  public void genBuffers(int n, int[] ids, int offset) {
-    gl.glGenBuffers(n, ids, offset);
+//  public void genBuffers(int n, int[] ids, int offset) {
+//    gl.glGenBuffers(n, ids, offset);
+//  }
+
+
+  public void genBuffers(int n, IntBuffer ids) {
+    gl.glGenBuffers(n, ids);
   }
 
 
-  public void deleteBuffers(int n, int[] ids, int offset) {
-    gl.glDeleteBuffers(n, ids, offset);
+//  public void deleteBuffers(int n, int[] ids, int offset) {
+//    gl.glDeleteBuffers(n, ids, offset);
+//  }
+
+
+  public void deleteBuffers(int n, IntBuffer ids) {
+    gl.glDeleteBuffers(n, ids);
   }
 
 
@@ -1088,23 +1131,43 @@ public class PGL {
   // Framebuffers, renderbuffers
 
 
-  public void genFramebuffers(int n, int[] ids, int offset) {
-    gl.glGenFramebuffers(n, ids, offset);
+//  public void genFramebuffers(int n, int[] ids, int offset) {
+//    gl.glGenFramebuffers(n, ids, offset);
+//  }
+
+
+  public void genFramebuffers(int n, IntBuffer ids) {
+    gl.glGenFramebuffers(n, ids);
   }
 
 
-  public void deleteFramebuffers(int n, int[] ids, int offset) {
-    gl.glDeleteFramebuffers(n, ids, offset);
+//  public void deleteFramebuffers(int n, int[] ids, int offset) {
+//    gl.glDeleteFramebuffers(n, ids, offset);
+//  }
+
+
+  public void deleteFramebuffers(int n, IntBuffer ids) {
+    gl.glDeleteFramebuffers(n, ids);
   }
 
 
-  public void genRenderbuffers(int n, int[] ids, int offset) {
-    gl.glGenRenderbuffers(n, ids, offset);
+//  public void genRenderbuffers(int n, int[] ids, int offset) {
+//    gl.glGenRenderbuffers(n, ids, offset);
+//  }
+
+
+  public void genRenderbuffers(int n, IntBuffer ids) {
+    gl.glGenRenderbuffers(n, ids);
   }
 
 
-  public void deleteRenderbuffers(int n, int[] ids, int offset) {
-    gl.glDeleteRenderbuffers(n, ids, offset);
+//  public void deleteRenderbuffers(int n, int[] ids, int offset) {
+//    gl.glDeleteRenderbuffers(n, ids, offset);
+//  }
+
+
+  public void deleteRenderbuffers(int n, IntBuffer ids) {
+    gl.glDeleteRenderbuffers(n, ids);
   }
 
 
@@ -1252,61 +1315,119 @@ public class PGL {
   }
 
 
-  public void uniform1iv(int loc, int count, int[] v, int offset) {
-    gl2.glUniform1iv(loc, count, v, offset);
+//  public void uniform1iv(int loc, int count, int[] v, int offset) {
+//    gl2.glUniform1iv(loc, count, v, offset);
+//  }
+
+
+  public void uniform1iv(int loc, int count, IntBuffer v) {
+    gl2.glUniform1iv(loc, count, v);
   }
 
 
-  public void uniform2iv(int loc, int count, int[] v, int offset) {
-    gl2.glUniform2iv(loc, count, v, offset);
+//  public void uniform2iv(int loc, int count, int[] v, int offset) {
+//    gl2.glUniform2iv(loc, count, v, offset);
+//  }
+
+
+  public void uniform2iv(int loc, int count, IntBuffer v) {
+    gl2.glUniform2iv(loc, count, v);
   }
 
 
-  public void uniform3iv(int loc, int count, int[] v, int offset) {
-    gl2.glUniform3iv(loc, count, v, offset);
+//  public void uniform3iv(int loc, int count, int[] v, int offset) {
+//    gl2.glUniform3iv(loc, count, v, offset);
+//  }
+
+
+  public void uniform3iv(int loc, int count, IntBuffer v) {
+    gl2.glUniform3iv(loc, count, v);
   }
 
 
-  public void uniform4iv(int loc, int count, int[] v, int offset) {
-    gl2.glUniform4iv(loc, count, v, offset);
+//  public void uniform4iv(int loc, int count, int[] v, int offset) {
+//    gl2.glUniform4iv(loc, count, v, offset);
+//  }
+
+
+  public void uniform4iv(int loc, int count, IntBuffer v) {
+    gl2.glUniform4iv(loc, count, v);
   }
 
 
-  public void uniform1fv(int loc, int count, float[] v, int offset) {
-    gl2.glUniform1fv(loc, count, v, offset);
+//  public void uniform1fv(int loc, int count, float[] v, int offset) {
+//    gl2.glUniform1fv(loc, count, v, offset);
+//  }
+
+
+  public void uniform1fv(int loc, int count, FloatBuffer v) {
+    gl2.glUniform1fv(loc, count, v);
   }
 
 
-  public void uniform2fv(int loc, int count, float[] v, int offset) {
-    gl2.glUniform2fv(loc, count, v, offset);
+//  public void uniform2fv(int loc, int count, float[] v, int offset) {
+//    gl2.glUniform2fv(loc, count, v, offset);
+//  }
+
+
+  public void uniform2fv(int loc, int count, FloatBuffer v) {
+    gl2.glUniform2fv(loc, count, v);
   }
 
 
-  public void uniform3fv(int loc, int count, float[] v, int offset) {
-    gl2.glUniform3fv(loc, count, v, offset);
+//  public void uniform3fv(int loc, int count, float[] v, int offset) {
+//    gl2.glUniform3fv(loc, count, v, offset);
+//  }
+
+
+  public void uniform3fv(int loc, int count, FloatBuffer v) {
+    gl2.glUniform3fv(loc, count, v);
   }
 
 
-  public void uniform4fv(int loc, int count, float[] v, int offset) {
-    gl2.glUniform4fv(loc, count, v, offset);
+//  public void uniform4fv(int loc, int count, float[] v, int offset) {
+//    gl2.glUniform4fv(loc, count, v, offset);
+//  }
+
+
+  public void uniform4fv(int loc, int count, FloatBuffer v) {
+    gl2.glUniform4fv(loc, count, v);
   }
+
+
+//  public void uniformMatrix2fv(int loc, int count, boolean transpose,
+//                               float[] mat, int offset) {
+//    gl2.glUniformMatrix2fv(loc, count, transpose, mat, offset);
+//  }
 
 
   public void uniformMatrix2fv(int loc, int count, boolean transpose,
-                               float[] mat, int offset) {
-    gl2.glUniformMatrix2fv(loc, count, transpose, mat, offset);
+                               FloatBuffer mat) {
+    gl2.glUniformMatrix2fv(loc, count, transpose, mat);
   }
+
+
+//  public void uniformMatrix3fv(int loc, int count, boolean transpose,
+//                               float[] mat, int offset) {
+//    gl2.glUniformMatrix3fv(loc, count, transpose, mat, offset);
+//  }
 
 
   public void uniformMatrix3fv(int loc, int count, boolean transpose,
-                               float[] mat, int offset) {
-    gl2.glUniformMatrix3fv(loc, count, transpose, mat, offset);
+                               FloatBuffer mat) {
+    gl2.glUniformMatrix3fv(loc, count, transpose, mat);
   }
 
 
+//  public void uniformMatrix4fv(int loc, int count, boolean transpose,
+//                               float[] mat, int offset) {
+//    gl2.glUniformMatrix4fv(loc, count, transpose, mat, offset);
+//  }
+
+
   public void uniformMatrix4fv(int loc, int count, boolean transpose,
-                               float[] mat, int offset) {
-    gl2.glUniformMatrix4fv(loc, count, transpose, mat, offset);
+                               FloatBuffer mat) {
+    gl2.glUniformMatrix4fv(loc, count, transpose, mat);
   }
 
 
@@ -1331,23 +1452,43 @@ public class PGL {
   }
 
 
-  public void vertexAttrib1fv(int loc, float[] v, int offset) {
-    gl2.glVertexAttrib1fv(loc, v, offset);
+//  public void vertexAttrib1fv(int loc, float[] v, int offset) {
+//    gl2.glVertexAttrib1fv(loc, v, offset);
+//  }
+
+
+  public void vertexAttrib1fv(int loc, FloatBuffer v) {
+    gl2.glVertexAttrib1fv(loc, v);
   }
 
 
-  public void vertexAttrib2fv(int loc, float[] v, int offset) {
-    gl2.glVertexAttrib2fv(loc, v, offset);
+//  public void vertexAttrib2fv(int loc, float[] v, int offset) {
+//    gl2.glVertexAttrib2fv(loc, v, offset);
+//  }
+
+
+  public void vertexAttrib2fv(int loc, FloatBuffer v) {
+    gl2.glVertexAttrib2fv(loc, v);
   }
 
 
-  public void vertexAttrib3fv(int loc, float[] v, int offset) {
-    gl2.glVertexAttrib3fv(loc, v, offset);
+//  public void vertexAttrib3fv(int loc, float[] v, int offset) {
+//    gl2.glVertexAttrib3fv(loc, v, offset);
+//  }
+
+
+  public void vertexAttrib3fv(int loc, FloatBuffer v) {
+    gl2.glVertexAttrib3fv(loc, v);
   }
 
 
-  public void vertexAttrib4fv(int loc, float[] v, int offset) {
-    gl2.glVertexAttrib4fv(loc, v, offset);
+//  public void vertexAttrib4fv(int loc, float[] v, int offset) {
+//    gl2.glVertexAttrib4fv(loc, v, offset);
+//  }
+
+
+  public void vertexAttri4fv(int loc, FloatBuffer v) {
+    gl2.glVertexAttrib4fv(loc, v);
   }
 
 
@@ -1366,8 +1507,13 @@ public class PGL {
   }
 
 
-  public void getShaderiv(int shader, int pname, int[] params, int offset) {
-    gl2.glGetShaderiv(shader, pname, params, offset);
+//  public void getShaderiv(int shader, int pname, int[] params, int offset) {
+//    gl2.glGetShaderiv(shader, pname, params, offset);
+//  }
+
+
+  public void getShaderiv(int shader, int pname, IntBuffer params) {
+    gl2.glGetShaderiv(shader, pname, params);
   }
 
 
@@ -1382,8 +1528,13 @@ public class PGL {
   }
 
 
-  public void getProgramiv(int prog, int pname, int[] params, int offset) {
-    gl2.glGetProgramiv(prog, pname, params, offset);
+//  public void getProgramiv(int prog, int pname, int[] params, int offset) {
+//    gl2.glGetProgramiv(prog, pname, params, offset);
+//  }
+
+
+  public void getProgramiv(int prog, int pname, IntBuffer params) {
+    gl2.glGetProgramiv(prog, pname, params);
   }
 
 
@@ -1750,18 +1901,22 @@ public class PGL {
       texData = allocateDirectFloatBuffer(texCoords.length);
     }
 
+    if (byteBuffer == null) {
+      byteBuffer = allocateDirectByteBuffer(1);
+    }
+
     if (0 < tex2DShaderProgram) {
       // The texture overwrites anything drawn earlier.
-      boolean[] depthTest = new boolean[1];
-      getBooleanv(DEPTH_TEST, depthTest, 0);
+      getBooleanv(DEPTH_TEST, byteBuffer);
+      boolean depthTest = byteBuffer.get(0) == 0 ? false : true;
       disable(DEPTH_TEST);
 
       // When drawing the texture we don't write to the
       // depth mask, so the texture remains in the background
       // and can be occluded by anything drawn later, even if
       // if it is behind it.
-      boolean[] depthMask = new boolean[1];
-      getBooleanv(DEPTH_WRITEMASK, depthMask, 0);
+      getBooleanv(DEPTH_WRITEMASK, byteBuffer);
+      boolean depthMask = byteBuffer.get(0) == 0 ? false : true;
       depthMask(false);
 
       useProgram(tex2DShaderProgram);
@@ -1824,12 +1979,12 @@ public class PGL {
 
       useProgram(0);
 
-      if (depthTest[0]) {
+      if (depthTest) {
         enable(DEPTH_TEST);
       } else {
         disable(DEPTH_TEST);
       }
-      depthMask(depthMask[0]);
+      depthMask(depthMask);
     }
   }
 
@@ -1857,18 +2012,22 @@ public class PGL {
       texData = allocateDirectFloatBuffer(texCoords.length);
     }
 
+    if (byteBuffer == null) {
+      byteBuffer = allocateDirectByteBuffer(1);
+    }
+
     if (0 < texRectShaderProgram) {
       // The texture overwrites anything drawn earlier.
-      boolean[] depthTest = new boolean[1];
-      getBooleanv(DEPTH_TEST, depthTest, 0);
+      getBooleanv(DEPTH_TEST, byteBuffer);
+      boolean depthTest = byteBuffer.get(0) == 0 ? false : true;
       disable(DEPTH_TEST);
 
       // When drawing the texture we don't write to the
       // depth mask, so the texture remains in the background
       // and can be occluded by anything drawn later, even if
       // if it is behind it.
-      boolean[] depthMask = new boolean[1];
-      getBooleanv(DEPTH_WRITEMASK, depthMask, 0);
+      getBooleanv(DEPTH_WRITEMASK, byteBuffer);
+      boolean depthMask = byteBuffer.get(0) == 0 ? false : true;
       depthMask(false);
 
       useProgram(texRectShaderProgram);
@@ -1931,12 +2090,12 @@ public class PGL {
 
       useProgram(0);
 
-      if (depthTest[0]) {
+      if (depthTest) {
         enable(DEPTH_TEST);
       } else {
         disable(DEPTH_TEST);
       }
-      depthMask(depthMask[0]);
+      depthMask(depthMask);
     }
   }
 
@@ -2283,11 +2442,14 @@ public class PGL {
   protected int createShader(int shaderType, String source) {
     int shader = createShader(shaderType);
     if (shader != 0) {
+      if (intBuffer == null) {
+        intBuffer = allocateDirectIntBuffer(1);
+      }
       shaderSource(shader, source);
       compileShader(shader);
-      int[] compiled = new int[1];
-      getShaderiv(shader, COMPILE_STATUS, compiled, 0);
-      if (compiled[0] == FALSE) {
+      getShaderiv(shader, COMPILE_STATUS, intBuffer);
+      boolean compiled = intBuffer.get(0) == 0 ? false : true;
+      if (!compiled) {
         System.err.println("Could not compile shader " + shaderType + ":");
         System.err.println(getShaderInfoLog(shader));
         deleteShader(shader);
@@ -2301,12 +2463,15 @@ public class PGL {
   protected int createProgram(int vertexShader, int fragmentShader) {
     int program = createProgram();
     if (program != 0) {
+      if (intBuffer == null) {
+        intBuffer = allocateDirectIntBuffer(1);
+      }
       attachShader(program, vertexShader);
       attachShader(program, fragmentShader);
       linkProgram(program);
-      int[] linked = new int[1];
-      getProgramiv(program, LINK_STATUS, linked, 0);
-      if (linked[0] == FALSE) {
+      getProgramiv(program, LINK_STATUS, intBuffer);
+      boolean linked = intBuffer.get(0) == 0 ? false : true;
+      if (!linked) {
         System.err.println("Could not link program: ");
         System.err.println(getProgramInfoLog(program));
         deleteProgram(program);
@@ -2345,24 +2510,6 @@ public class PGL {
   }
 
 
-  protected static ByteBuffer allocateDirectByteBuffer(int size) {
-    return ByteBuffer.allocateDirect(size * SIZEOF_BYTE).
-           order(ByteOrder.nativeOrder());
-  }
-
-
-  protected static IntBuffer allocateDirectIntBuffer(int size) {
-    return ByteBuffer.allocateDirect(size * SIZEOF_INT).
-           order(ByteOrder.nativeOrder()).asIntBuffer();
-  }
-
-
-  protected static FloatBuffer allocateDirectFloatBuffer(int size) {
-    return ByteBuffer.allocateDirect(size * SIZEOF_FLOAT).
-           order(ByteOrder.nativeOrder()).asFloatBuffer();
-  }
-
-
   protected int[] getGLVersion() {
     String version = gl.glGetString(GL.GL_VERSION).trim();
     int[] res = {0, 0, 0};
@@ -2387,6 +2534,30 @@ public class PGL {
       }
     }
     return res;
+  }
+
+
+  protected static ByteBuffer allocateDirectByteBuffer(int size) {
+    return ByteBuffer.allocateDirect(size * SIZEOF_BYTE).
+           order(ByteOrder.nativeOrder());
+  }
+
+
+  protected static ShortBuffer allocateDirectShortBuffer(int size) {
+    return ByteBuffer.allocateDirect(size * SIZEOF_SHORT).
+           order(ByteOrder.nativeOrder()).asShortBuffer();
+  }
+
+
+  protected static IntBuffer allocateDirectIntBuffer(int size) {
+    return ByteBuffer.allocateDirect(size * SIZEOF_INT).
+           order(ByteOrder.nativeOrder()).asIntBuffer();
+  }
+
+
+  protected static FloatBuffer allocateDirectFloatBuffer(int size) {
+    return ByteBuffer.allocateDirect(size * SIZEOF_FLOAT).
+           order(ByteOrder.nativeOrder()).asFloatBuffer();
   }
 
 
