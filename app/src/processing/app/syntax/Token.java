@@ -48,10 +48,10 @@ public class Token {
         /** Fields [variables within a class] */
         public static final byte KEYWORD2 = 7;
 
-        /** Processing variables (width, height, focused, etc.) */
+         /** Loop/function-like blocks (for, while, etc.) */
         public static final byte KEYWORD3 = 8;
 
-        /** Flow structures (if, else, while, for, etc.) */
+        /** Processing variables (width, height, focused, etc.) */
         public static final byte KEYWORD4 = 9;
         
         /** Datatypes (int, boolean, etc.) */
