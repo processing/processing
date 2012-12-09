@@ -243,6 +243,16 @@ synchronized	KEYWORD4
 while	KEYWORD4	while
 try	KEYWORD4	try
 
+catch	FUNCTION3	catch
+do	FUNCTION3
+for	FUNCTION3	for
+if	FUNCTION3	if
+#else	FUNCTION3	else
+switch	FUNCTION3	switch
+synchronized	FUNCTION3
+while	FUNCTION3	while
+try	FUNCTION3	try
+
 
 # These items are a part of Processing but, but pages don't generate
 
@@ -403,8 +413,8 @@ curveVertex	FUNCTION1	curveVertex_
 day	FUNCTION1	day_
 degrees	FUNCTION1	degrees_
 directionalLight	FUNCTION1	directionalLight_
-displayHeight	KEYWORD3	displayHeight
-displayWidth	KEYWORD3	displayWidth
+displayHeight	KEYWORD4	displayHeight
+displayWidth	KEYWORD4	displayWidth
 dist	FUNCTION1	dist_
 draw	FUNCTION1	draw_
 ellipse	FUNCTION1	ellipse_
@@ -421,9 +431,9 @@ expand	FUNCTION1	expand_
 fill	FUNCTION1	fill_
 filter	FUNCTION1	filter_
 floor	FUNCTION1	floor_
-focused	KEYWORD3	focused
-frameCount	KEYWORD3	frameCount
-frameRate	KEYWORD3	frameRate
+focused	KEYWORD4	focused
+frameCount	KEYWORD4	frameCount
+frameRate	KEYWORD4	frameRate
 frameRate	FUNCTION1	frameRate_
 frustum	FUNCTION1	frustum_
 get	FUNCTION1	get_
@@ -436,10 +446,10 @@ hue	FUNCTION1	hue_
 image	FUNCTION1	image_
 imageMode	FUNCTION1	imageMode_
 join	FUNCTION1	join_
-key	KEYWORD3	key
-keyCode	KEYWORD3	keyCode
+key	KEYWORD4	key
+keyCode	KEYWORD4	keyCode
 keyPressed	FUNCTION1	keyPressed_
-keyPressed	KEYWORD3	keyPressed
+keyPressed	KEYWORD4	keyPressed
 keyReleased	FUNCTION1	keyReleased_
 keyTyped	FUNCTION1	keyTyped_
 lerp	FUNCTION1	lerp_
@@ -471,15 +481,15 @@ modelX	FUNCTION1	modelX_
 modelY	FUNCTION1	modelY_
 modelZ	FUNCTION1	modelZ_
 month	FUNCTION1	month_
-mouseButton	KEYWORD3	mouseButton
+mouseButton	KEYWORD4	mouseButton
 mouseClicked	FUNCTION1	mouseClicked_
 mouseDragged	FUNCTION1	mouseDragged_
 mouseMoved	FUNCTION1	mouseMoved_
 mousePressed	FUNCTION1	mousePressed_
-mousePressed	KEYWORD3	mousePressed
+mousePressed	KEYWORD4	mousePressed
 mouseReleased	FUNCTION1	mouseReleased_
-mouseX	KEYWORD3	mouseX
-mouseY	KEYWORD3	mouseY
+mouseX	KEYWORD4	mouseX
+mouseY	KEYWORD4	mouseY
 nf	FUNCTION1	nf_
 nfc	FUNCTION1	nfc_
 nfp	FUNCTION1	nfp_
@@ -519,9 +529,9 @@ resize	FUNCTION2	PImage_resize_
 save	FUNCTION2	PImage_save_
 set	FUNCTION2	PImage_set_
 updatePixels	FUNCTION2	PImage_updatePixels_
-pixels	KEYWORD3	pixels
-pmouseX	KEYWORD3	pmouseX
-pmouseY	KEYWORD3	pmouseY
+pixels	KEYWORD4	pixels
+pmouseX	KEYWORD4	pmouseX
+pmouseY	KEYWORD4	pmouseY
 point	FUNCTION1	point_
 pointLight	FUNCTION1	pointLight_
 popMatrix	FUNCTION1	popMatrix_
@@ -599,8 +609,8 @@ saveFrame	FUNCTION1	saveFrame_
 saveStream	FUNCTION1	saveStream_
 saveStrings	FUNCTION1	saveStrings_
 scale	FUNCTION1	scale_
-screenHeight	KEYWORD3	screenHeight
-screenWidth	KEYWORD3	screenWidth
+screenHeight	KEYWORD4	screenHeight
+screenWidth	KEYWORD4	screenWidth
 screenX	FUNCTION1	screenX_
 screenY	FUNCTION1	screenY_
 screenZ	FUNCTION1	screenZ_
