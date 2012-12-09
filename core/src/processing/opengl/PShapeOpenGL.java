@@ -2417,11 +2417,11 @@ public class PShapeOpenGL extends PShape {
   public PShape getTessellation() {
     updateTessellation();
 
-    float[] vertices = tessGeo.polyVertices;
+    FloatBuffer vertices = tessGeo.polyVertices;
     float[] normals = tessGeo.polyNormals;
     int[] color = tessGeo.polyColors;
     float[] uv = tessGeo.polyTexcoords;
-    short[] indices = tessGeo.polyIndices;
+    ShortBuffer indices = tessGeo.polyIndices;
 
     PShape tess;
     if (is3D()) {
@@ -2441,20 +2441,20 @@ public class PShapeOpenGL extends PShape {
       int voffset = cache.vertexOffset[n];
 
       for (int tr = ioffset / 3; tr < (ioffset + icount) / 3; tr++) {
-        int i0 = voffset + indices[3 * tr + 0];
-        int i1 = voffset + indices[3 * tr + 1];
-        int i2 = voffset + indices[3 * tr + 2];
+        int i0 = voffset + indices.get(3 * tr + 0);
+        int i1 = voffset + indices.get(3 * tr + 1);
+        int i2 = voffset + indices.get(3 * tr + 2);
 
         if (is3D()) {
-          float x0 = vertices[4 * i0 + 0];
-          float y0 = vertices[4 * i0 + 1];
-          float z0 = vertices[4 * i0 + 2];
-          float x1 = vertices[4 * i1 + 0];
-          float y1 = vertices[4 * i1 + 1];
-          float z1 = vertices[4 * i1 + 2];
-          float x2 = vertices[4 * i2 + 0];
-          float y2 = vertices[4 * i2 + 1];
-          float z2 = vertices[4 * i2 + 2];
+          float x0 = vertices.get(4 * i0 + 0);
+          float y0 = vertices.get(4 * i0 + 1);
+          float z0 = vertices.get(4 * i0 + 2);
+          float x1 = vertices.get(4 * i1 + 0);
+          float y1 = vertices.get(4 * i1 + 1);
+          float z1 = vertices.get(4 * i1 + 2);
+          float x2 = vertices.get(4 * i2 + 0);
+          float y2 = vertices.get(4 * i2 + 1);
+          float z2 = vertices.get(4 * i2 + 2);
 
           float nx0 = normals[3 * i0 + 0];
           float ny0 = normals[3 * i0 + 1];
@@ -2482,9 +2482,9 @@ public class PShapeOpenGL extends PShape {
           tess.normal(nx2, ny2, nz2);
           tess.vertex(x2, y2, z2, uv[2 * i2 + 0], uv[2 * i2 + 1]);
         } else if (is2D()) {
-          float x0 = vertices[4 * i0 + 0], y0 = vertices[4 * i0 + 1];
-          float x1 = vertices[4 * i1 + 0], y1 = vertices[4 * i1 + 1];
-          float x2 = vertices[4 * i2 + 0], y2 = vertices[4 * i2 + 1];
+          float x0 = vertices.get(4 * i0 + 0), y0 = vertices.get(4 * i0 + 1);
+          float x1 = vertices.get(4 * i1 + 0), y1 = vertices.get(4 * i1 + 1);
+          float x2 = vertices.get(4 * i2 + 0), y2 = vertices.get(4 * i2 + 1);
 
           int argb0 = PGL.nativeToJavaARGB(color[i0]);
           int argb1 = PGL.nativeToJavaARGB(color[i1]);
@@ -3450,10 +3450,11 @@ public class PShapeOpenGL extends PShape {
     int sizef = size * PGL.SIZEOF_FLOAT;
     int sizei = size * PGL.SIZEOF_INT;
 
+    tessGeo.readyPolyVertices();
     glPolyVertex = pg.createVertexBufferObject(context.id());
     pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolyVertex);
     pgl.bufferData(PGL.ARRAY_BUFFER, 4 * sizef,
-                   FloatBuffer.wrap(tessGeo.polyVertices, 0, 4 * size),
+                   tessGeo.polyVertices,
                    PGL.STATIC_DRAW);
 
     glPolyColor = pg.createVertexBufferObject(context.id());
@@ -3500,12 +3501,12 @@ public class PShapeOpenGL extends PShape {
 
     pgl.bindBuffer(PGL.ARRAY_BUFFER, 0);
 
+    tessGeo.readyPolyIndices();
     glPolyIndex = pg.createVertexBufferObject(context.id());
     pgl.bindBuffer(PGL.ELEMENT_ARRAY_BUFFER, glPolyIndex);
     pgl.bufferData(PGL.ELEMENT_ARRAY_BUFFER,
                    tessGeo.polyIndexCount * PGL.SIZEOF_INDEX,
-                   ShortBuffer.wrap(tessGeo.polyIndices, 0,
-                                    tessGeo.polyIndexCount), PGL.STATIC_DRAW);
+                   tessGeo.polyIndices, PGL.STATIC_DRAW);
 
     pgl.bindBuffer(PGL.ELEMENT_ARRAY_BUFFER, 0);
   }
@@ -3882,11 +3883,10 @@ public class PShapeOpenGL extends PShape {
 
 
   protected void copyPolyVertices(int offset, int size) {
+    tessGeo.readyPolyVertices();
     pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolyVertex);
     pgl.bufferSubData(PGL.ARRAY_BUFFER, 4 * offset * PGL.SIZEOF_FLOAT,
-                      4 * size * PGL.SIZEOF_FLOAT,
-                      FloatBuffer.wrap(tessGeo.polyVertices,
-                                       4 * offset, 4 * size));
+                      4 * size * PGL.SIZEOF_FLOAT, tessGeo.polyVertices);
     pgl.bindBuffer(PGL.ARRAY_BUFFER, 0);
   }
 
@@ -4396,10 +4396,10 @@ public class PShapeOpenGL extends PShape {
     raw.noStroke();
     raw.beginShape(TRIANGLES);
 
-    float[] vertices = tessGeo.polyVertices;
+    FloatBuffer vertices = tessGeo.polyVertices;
     int[] color = tessGeo.polyColors;
     float[] uv = tessGeo.polyTexcoords;
-    short[] indices = tessGeo.polyIndices;
+    ShortBuffer indices = tessGeo.polyIndices;
 
     IndexCache cache = tessGeo.polyIndexCache;
     for (int n = firstPolyIndexCache; n <= lastPolyIndexCache; n++) {
@@ -4408,9 +4408,9 @@ public class PShapeOpenGL extends PShape {
       int voffset = cache.vertexOffset[n];
 
       for (int tr = ioffset / 3; tr < (ioffset + icount) / 3; tr++) {
-        int i0 = voffset + indices[3 * tr + 0];
-        int i1 = voffset + indices[3 * tr + 1];
-        int i2 = voffset + indices[3 * tr + 2];
+        int i0 = voffset + indices.get(3 * tr + 0);
+        int i1 = voffset + indices.get(3 * tr + 1);
+        int i2 = voffset + indices.get(3 * tr + 2);
 
         float[] src0 = {0, 0, 0, 0};
         float[] src1 = {0, 0, 0, 0};
@@ -4422,9 +4422,9 @@ public class PShapeOpenGL extends PShape {
         int argb1 = PGL.nativeToJavaARGB(color[i1]);
         int argb2 = PGL.nativeToJavaARGB(color[i2]);
 
-        PApplet.arrayCopy(vertices, 4 * i0, src0, 0, 4);
-        PApplet.arrayCopy(vertices, 4 * i1, src1, 0, 4);
-        PApplet.arrayCopy(vertices, 4 * i2, src2, 0, 4);
+        vertices.position(4 * i0); vertices.get(src0, 0, 4);
+        vertices.position(4 * i1); vertices.get(src1, 0, 4);
+        vertices.position(4 * i2); vertices.get(src2, 0, 4);
         // Applying any transformation is currently stored in the
         // modelview matrix of the renderer.
         g.modelview.mult(src0, pt0);
