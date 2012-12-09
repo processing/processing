@@ -17,7 +17,7 @@ class Polygon {
   
   // Simple motion
   void move() {
-    y+=speed;
+    y += speed;
     if (y > height+100) {
       y = -100;
     }

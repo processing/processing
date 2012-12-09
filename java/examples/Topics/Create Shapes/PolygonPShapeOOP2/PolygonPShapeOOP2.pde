@@ -15,8 +15,8 @@ void setup() {
   smooth();
   // Make a PShape
   PShape star = createShape();
+  star.noStroke();
   star.fill(0,127);
-  star.stroke(0);
   star.vertex(0, -50);
   star.vertex(14, -20);
   star.vertex(47, -15);

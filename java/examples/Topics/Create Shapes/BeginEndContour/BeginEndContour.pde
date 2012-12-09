@@ -15,13 +15,10 @@ void setup() {
   s.stroke(255);
   s.strokeWeight(2);
   // Exterior part of shape
-  s.beginContour();
   s.vertex(-100,-100);
   s.vertex(100,-100);
   s.vertex(100,100);
   s.vertex(-100,100);
-  s.vertex(-100,-100);
-  s.endContour();
   
   // Interior part of shape
   s.beginContour();
@@ -29,11 +26,10 @@ void setup() {
   s.vertex(10,-10);
   s.vertex(10,10);
   s.vertex(-10,10);
-  s.vertex(-10,-10);
   s.endContour();
   
   // Finishing off shape
-  s.end();
+  s.end(CLOSE);
 }
 
 void draw() {

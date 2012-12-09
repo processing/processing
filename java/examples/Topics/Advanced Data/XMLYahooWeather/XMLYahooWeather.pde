@@ -14,8 +14,13 @@ String weather = "";
 // The zip code we'll check for
 String zip = "10003";
 
+PFont font;
+
 void setup() {
-  size(200, 200);
+  size(600, 360);
+  
+  font = createFont("Merriweather-Light.ttf", 28);
+  textFont(font);
 
   // The URL for the XML document
   String url = "http://xml.weather.yahoo.com/forecastrss?p=" + zip;
@@ -36,12 +41,8 @@ void draw() {
   fill(0);
 
   // Display all the stuff we want to display
-  text("Zip code: " + zip, 10, 160);
-  text("Today's high: " + temperature, 10, 40);
-  text("Forecast: " + weather, 10, 90);
+  text("Zip code: " + zip, width*0.15, height*0.33);
+  text("Today’s high: " + temperature, width*0.15, height*0.5);
+  text("Forecast: " + weather, width*0.15, height*0.66);
 
-  // Draw a little thermometer based on the temperature
-  stroke(0);
-  fill(175);
-  rect(10, 50, temperature*2, 20);
 }
