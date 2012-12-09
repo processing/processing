@@ -9,10 +9,15 @@
 // The next line is needed if running in JavaScript Mode with Processing.js
 /* @pjs font="Georgia.ttf"; */
   
+PFont f;
+  
 void setup() {
   size(640, 360);
+  
   // Create the font
-  textFont(createFont("Georgia", 24));
+  println(PFont.list());
+  f = createFont("Serif", 24);
+  textFont(f);
 }
 
 void draw() {
