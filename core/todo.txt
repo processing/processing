@@ -1,6 +1,10 @@
 0216 core
 X Add clear() to replace background(0, 0, 0, 0)
 X   http://code.google.com/p/processing/issues/detail?id=1446
+o add loadType() and saveType()... get working with shapes, etc
+X heading2D()? weird.. changed to heading()
+X   http://toxiclibs.org/docs/core/toxi/geom/Vec3D.html
+X   http://code.google.com/p/processing/issues/detail?id=987
 
 
 PShape s = createShape();
@@ -131,12 +135,8 @@ _   http://code.google.com/p/processing/issues/detail?id=1407
 _ add "CGAffineTransformInvert: singular matrix" problem to the Wiki
 _   http://code.google.com/p/processing/issues/detail?id=1363
 
-_ heading2D()? weird.. angle?
-_   http://toxiclibs.org/docs/core/toxi/geom/Vec3D.html
-_   http://code.google.com/p/processing/issues/detail?id=987
-
 _ "translate, or this variation of it" when using text(s, x, y, z) accidentally
-_   change to be th text command
+_   change to be the text command
 
 _ OutOfMemory in image()
 _   http://code.google.com/p/processing/issues/detail?id=1353
@@ -146,7 +146,7 @@ _   http://code.google.com/p/processing/issues/detail?id=1262
 
 _ hint(OPENGL_ERRORS) should be the opposite to enable the reporting, no?
 
-_ fillMode(NONZERO) and fillMode(ODD) to replace sold(boolean)?
+_ fillMode(NONZERO) and fillMode(ODD) to replace solid(boolean)?
 
 keeping these public for now
 get/setNormal
@@ -186,8 +186,6 @@ _   but no way to remove indents and still have newlines...
 _   toString(-1)? a new method?
 _ format(2), format(4)... format() -> default to 2 params
 _ get back to PhiLho once finished
-
-_ add loadType() and saveType()... get working with shapes, etc
 
 api to be fixed/removed
 _ remove PImage.delete() and friends from PImage, Movie, etc.
@@ -620,6 +618,7 @@ _     before rewriting all of createInput()
 
 LATER (post 2.0)
 
+_ create PVec2D and PVec3D as separate classes
 _ gui priorities
 _   + Label
 _   + Button
