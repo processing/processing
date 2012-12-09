@@ -33,6 +33,7 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
+import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -2558,6 +2559,42 @@ public class PGL {
   protected static FloatBuffer allocateDirectFloatBuffer(int size) {
     return ByteBuffer.allocateDirect(size * SIZEOF_FLOAT).
            order(ByteOrder.nativeOrder()).asFloatBuffer();
+  }
+
+
+  protected static void fillBuffer(ByteBuffer buf, int i0, int i1, byte val) {
+    int n = i1 - i0 + 1;
+    byte[] temp = new byte[n];
+    Arrays.fill(temp, 0, n, val);
+    buf.position(i0);
+    buf.put(temp, 0, n);
+  }
+
+
+  protected static void fillBuffer(ShortBuffer buf, int i0, int i1, short val) {
+    int n = i1 - i0 + 1;
+    short[] temp = new short[n];
+    Arrays.fill(temp, 0, n, val);
+    buf.position(i0);
+    buf.put(temp, 0, n);
+  }
+
+
+  protected static void fillBuffer(IntBuffer buf, int i0, int i1, int val) {
+    int n = i1 - i0 + 1;
+    int[] temp = new int[n];
+    Arrays.fill(temp, 0, n, val);
+    buf.position(i0);
+    buf.put(temp, 0, n);
+  }
+
+
+  protected static void fillBuffer(FloatBuffer buf, int i0, int i1, float val) {
+    int n = i1 - i0 + 1;
+    float[] temp = new float[n];
+    Arrays.fill(temp, 0, n, val);
+    buf.position(i0);
+    buf.put(temp, 0, n);
   }
 
 
