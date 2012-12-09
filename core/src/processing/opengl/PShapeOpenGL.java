@@ -3553,11 +3553,11 @@ public class PShapeOpenGL extends PShape {
     int sizef = size * PGL.SIZEOF_FLOAT;
     int sizei = size * PGL.SIZEOF_INT;
 
+    tessGeo.readyPointVertices();
     glPointVertex = pg.createVertexBufferObject(context.id());
     pgl.bindBuffer(PGL.ARRAY_BUFFER, glPointVertex);
     pgl.bufferData(PGL.ARRAY_BUFFER, 4 * sizef,
-                   FloatBuffer.wrap(tessGeo.pointVertices, 0, 4 * size),
-                   PGL.STATIC_DRAW);
+                   tessGeo.pointVertices, PGL.STATIC_DRAW);
 
     glPointColor = pg.createVertexBufferObject(context.id());
     pgl.bindBuffer(PGL.ARRAY_BUFFER, glPointColor);
@@ -3573,12 +3573,12 @@ public class PShapeOpenGL extends PShape {
 
     pgl.bindBuffer(PGL.ARRAY_BUFFER, 0);
 
+    tessGeo.readyPointIndices();
     glPointIndex = pg.createVertexBufferObject(context.id());
     pgl.bindBuffer(PGL.ELEMENT_ARRAY_BUFFER, glPointIndex);
     pgl.bufferData(PGL.ELEMENT_ARRAY_BUFFER,
                    tessGeo.pointIndexCount * PGL.SIZEOF_INDEX,
-                   ShortBuffer.wrap(tessGeo.pointIndices, 0,
-                                    tessGeo.pointIndexCount), PGL.STATIC_DRAW);
+                   tessGeo.pointIndices, PGL.STATIC_DRAW);
 
     pgl.bindBuffer(PGL.ELEMENT_ARRAY_BUFFER, 0);
   }
@@ -3985,11 +3985,10 @@ public class PShapeOpenGL extends PShape {
 
 
   protected void copyPointVertices(int offset, int size) {
+    tessGeo.readyPointVertices();
     pgl.bindBuffer(PGL.ARRAY_BUFFER, glPointVertex);
     pgl.bufferSubData(PGL.ARRAY_BUFFER, 4 * offset * PGL.SIZEOF_FLOAT,
-                      4 * size * PGL.SIZEOF_FLOAT,
-                      FloatBuffer.wrap(tessGeo.pointVertices,
-                                       4 * offset, 4 * size));
+                      4 * size * PGL.SIZEOF_FLOAT, tessGeo.pointVertices);
     pgl.bindBuffer(PGL.ARRAY_BUFFER, 0);
   }
 
@@ -4618,10 +4617,10 @@ public class PShapeOpenGL extends PShape {
     raw.strokeCap(strokeCap);
     raw.beginShape(POINTS);
 
-    float[] vertices = tessGeo.pointVertices;
+    FloatBuffer vertices = tessGeo.pointVertices;
     int[] color = tessGeo.pointColors;
     float[] attribs = tessGeo.pointAttribs;
-    short[] indices = tessGeo.pointIndices;
+    ShortBuffer indices = tessGeo.pointIndices;
 
     IndexCache cache = tessGeo.pointIndexCache;
     for (int n = 0; n < cache.size; n++) {
@@ -4644,12 +4643,12 @@ public class PShapeOpenGL extends PShape {
           perim = 5;
         }
 
-        int i0 = voffset + indices[3 * pt];
+        int i0 = voffset + indices.get(3 * pt);
         int argb0 = PGL.nativeToJavaARGB(color[i0]);
         float[] pt0 = {0, 0, 0, 0};
 
         float[] src0 = {0, 0, 0, 0};
-        PApplet.arrayCopy(vertices, 4 * i0, src0, 0, 4);
+        vertices.position(4 * i0); vertices.get(src0, 0, 4);
         g.modelview.mult(src0, pt0);
 
         if (raw.is3D()) {
