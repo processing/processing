@@ -199,35 +199,22 @@ public class PdeTextAreaDefaults extends TextAreaDefaults {
 
     styles = new SyntaxStyle[Token.ID_COUNT];
 
-    // comments
     styles[Token.COMMENT1] = theme.getStyle("comment1");
     styles[Token.COMMENT2] = theme.getStyle("comment2");
 
-    // abstract, final, private
     styles[Token.KEYWORD1] = theme.getStyle("keyword1");
-
-    // beginShape, point, line
     styles[Token.KEYWORD2] = theme.getStyle("keyword2");
-
-    // byte, char, short, color
     styles[Token.KEYWORD3] = theme.getStyle("keyword3");
+    styles[Token.KEYWORD4] = theme.getStyle("keyword4");
+    styles[Token.KEYWORD5] = theme.getStyle("keyword5");
 
-    // beginShape, point, line
     styles[Token.FUNCTION1] = theme.getStyle("function1");
-
-    // byte, char, short, color
     styles[Token.FUNCTION2] = theme.getStyle("function2");
 
-    // constants: null, true, this, RGB, TWO_PI
     styles[Token.LITERAL1] = theme.getStyle("literal1");
-
-    // p5 built in variables: mouseX, width, pixels
     styles[Token.LITERAL2] = theme.getStyle("literal2");
 
-    // ??
     styles[Token.LABEL] = theme.getStyle("label");
-
-    // + - = /
     styles[Token.OPERATOR] = theme.getStyle("operator");
 
     // area that's not in use by the text (replaced with tildes)
