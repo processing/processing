@@ -5846,9 +5846,8 @@ public class PApplet extends Applet
    * ( end auto-generated )
   * @webref typography:loading_displaying
   * @param filename name of the font to load
-  * @see PFont#PFont
+  * @see PFont#PFont(Font, boolean)
   * @see PGraphics#textFont(PFont, float)
-  * @see PGraphics#text(String, float, float, float, float, float)
   * @see PApplet#createFont(String, float, boolean, char[])
   */
   public PFont loadFont(String filename) {
@@ -12300,7 +12299,6 @@ public class PApplet extends Applet
    * @see PGraphics#textAlign(int, int)
    * @see PGraphics#textMode(int)
    * @see PApplet#loadFont(String)
-   * @see PFont#PFont
    * @see PGraphics#textFont(PFont)
    * @see PGraphics#rectMode(int)
    * @see PGraphics#fill(int, float)

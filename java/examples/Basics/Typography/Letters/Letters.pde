@@ -6,14 +6,18 @@
  */
 
 // The next line is needed if running in JavaScript Mode with Processing.js
-/* @pjs font="Georgia.ttf"; */
+/* @pjs font="Courier.ttf"; */
+
+PFont f;
 
 void setup() {
   size(640, 360);
   background(0);
 
   // Create the font
-  textFont(createFont("Georgia",24));
+  println(PFont.list());
+  f = createFont("Monospaced", 24);
+  textFont(f);
   textAlign(CENTER, CENTER);
 } 
 
@@ -33,10 +37,10 @@ void draw() {
       char letter = char(counter);
       
       if (letter == 'A' || letter == 'E' || letter == 'I' || letter == 'O' || letter == 'U') {
-        fill(255);
+        fill(255, 204, 0);
       } 
       else {
-        fill(102);
+        fill(255);
       }
 
       // Draw the letter to the screen

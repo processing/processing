@@ -247,7 +247,7 @@ catch	FUNCTION3	catch
 do	FUNCTION3
 for	FUNCTION3	for
 if	FUNCTION3	if
-#else	FUNCTION3	else
+else	FUNCTION3	else
 switch	FUNCTION3	switch
 synchronized	FUNCTION3
 while	FUNCTION3	while
@@ -279,7 +279,6 @@ saveFile	FUNCTION1
 savePath	FUNCTION1
 sketchFile	FUNCTION1
 sketchPath	FUNCTION1
-string	KEYWORD2	strconvert_
 
 readLine	FUNCTION2	BufferedReader_readLine_
 close	FUNCTION2	PrintWriter_close_
@@ -293,6 +292,8 @@ length	FUNCTION2	String_length_
 substring	FUNCTION2	String_substring_
 toLowerCase	FUNCTION2	String_toLowerCase_
 toUpperCase	FUNCTION2	String_toUpperCase_
+
+length	KEYWORD2	String
 
 
 # Temporary additions 3 September 2012 as the reference is getting updated
@@ -340,8 +341,8 @@ addChild	FUNCTION1
 
 # Suppressed from Generate to avoid conflicts with variables inside methods
 
-width	KEYWORD3	width_
-height	KEYWORD3	height_
+width	KEYWORD4	width_
+height	KEYWORD4	height_
 
 PVector	FUNCTION1	PVector
 ArrayList	FUNCTION1	ArrayList

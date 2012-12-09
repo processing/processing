@@ -52,6 +52,9 @@ import java.util.HashMap;
  *   ^^^^^^^^^^^^^^ setWidth (width displaced by char)
  * </PRE>
  * @webref typography
+ * @see PApplet#loadFont(String)
+ * @see PGraphics#textFont(PFont)
+ * @see PGraphics#text(char, float, float)
  */
 public class PFont implements PConstants {
 
@@ -181,11 +184,8 @@ public class PFont implements PConstants {
    * ( end auto-generated )
    *
    * @webref typography:pfont
-   * @param font
-   * @param smooth
-   * @see PApplet#loadFont(String)
-   * @see PGraphics#textFont(PFont, float)
-   * @see PGraphics#text(String, float, float)
+   * @param font font the font object to create from
+   * @param smooth smooth true to enable smoothing/anti-aliasing
    */
   public PFont(Font font, boolean smooth) {
     this(font, smooth, null);
@@ -196,9 +196,7 @@ public class PFont implements PConstants {
    * Create a new image-based font on the fly. If charset is set to null,
    * the characters will only be created as bitmaps when they're drawn.
    *
-   * @param font the font object to create from
    * @param charset array of all unicode chars that should be included
-   * @param smooth true to enable smoothing/anti-aliasing
    */
   public PFont(Font font, boolean smooth, char charset[]) {
     // save this so that we can use the native version
