@@ -10803,6 +10803,8 @@ public class PApplet extends Applet
   /**
    * @webref shape
    * @param filename name of file to load, can be .svg or .obj
+   * @see PShape
+   * @see PApplet#createShape()
    */
   public PShape loadShape(String filename) {
     return g.loadShape(filename);
@@ -10811,6 +10813,9 @@ public class PApplet extends Applet
 
   /**
    * @webref shape
+   * @see PShape
+   * @see PShape#end()
+   * @see PApplet#loadShape(String)
    */
   public PShape createShape() {
     return g.createShape();

@@ -1594,6 +1594,8 @@ public class PGraphics extends PImage implements PConstants {
   /**
    * @webref shape
    * @param filename name of file to load, can be .svg or .obj
+   * @see PShape
+   * @see PApplet#createShape()
    */
   public PShape loadShape(String filename) {
     showMissingWarning("loadShape");
@@ -1608,6 +1610,9 @@ public class PGraphics extends PImage implements PConstants {
 
   /**
    * @webref shape
+   * @see PShape
+   * @see PShape#end()
+   * @see PApplet#loadShape(String)
    */
   public PShape createShape() {
     showMissingWarning("createShape");

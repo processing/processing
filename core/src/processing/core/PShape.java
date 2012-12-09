@@ -71,8 +71,8 @@ import processing.core.PApplet;
  *
  * @webref shape
  * @usage Web &amp; Application
- * @see PApplet#shape(PShape)
  * @see PApplet#loadShape(String)
+ * @see PApplet#createShape()
  * @see PApplet#shapeMode(int)
  * @instanceName sh any variable of type PShape
  */
@@ -114,6 +114,7 @@ public class PShape implements PConstants {
    * @webref pshape:field
    * @usage web_application
    * @brief     Shape document width
+   * @see PShape#height
    */
   public float width;
   /**
@@ -125,6 +126,7 @@ public class PShape implements PConstants {
    * @webref pshape:field
    * @usage web_application
    * @brief     Shape document height
+   * @see PShape#width
    */
   public float height;
 
@@ -285,6 +287,7 @@ public class PShape implements PConstants {
    * @webref pshape:method
    * @usage web_application
    * @brief Returns a boolean value "true" if the image is set to be visible, "false" if not
+   * @see PShape#setVisible(boolean)
    */
   public boolean isVisible() {
     return visible;
@@ -306,6 +309,7 @@ public class PShape implements PConstants {
    * @usage web_application
    * @brief Sets the shape to be visible or invisible
    * @param visible "false" makes the shape invisible and "true" makes it visible
+   * @see PShape#isVisible()
    */
   public void setVisible(boolean visible) {
     this.visible = visible;
@@ -327,6 +331,7 @@ public class PShape implements PConstants {
    * @webref pshape:method
    * @usage web_application
    * @brief     Disables the shape's style data and uses Processing styles
+   * @see PShape#enableStyle()
    */
   public void disableStyle() {
     style = false;
@@ -349,6 +354,7 @@ public class PShape implements PConstants {
    * @webref pshape:method
    * @usage web_application
    * @brief Enables the shape's style data and ignores the Processing styles
+   * @see PShape#disableStyle()
    */
   public void enableStyle() {
     style = true;
@@ -478,6 +484,7 @@ public class PShape implements PConstants {
   /**
    * @webref shape:vertex
    * @brief Starts a new contour
+   * @see PShape#endContour()
    */
   public void beginContour() {
   }
@@ -485,6 +492,7 @@ public class PShape implements PConstants {
   /**
    * @webref shape:vertex
    * @brief Ends a contour
+   * @see PShape#beginContour()
    */
   public void endContour() {
   }
@@ -507,6 +515,7 @@ public class PShape implements PConstants {
   /**
    * @webref pshape:method
    * @brief Finishes the creation of a new PShape
+   * @see PApplet#createShape()
    */
   public void end() {
   }
@@ -1256,6 +1265,7 @@ public class PShape implements PConstants {
    * @usage web_application
    * @brief Returns a child element of a shape as a PShape object
    * @param index the layer position of the shape to get
+   * @see PShape#addChild(PShape)
    */
   public PShape getChild(int index) {
     return children[index];
@@ -1298,6 +1308,8 @@ public class PShape implements PConstants {
   /**
    * @webref pshape:method
    * @brief Adds a new child
+   * @param who any variable of type PShape
+   * @see PShape#getChild(int)
    */
   public void addChild(PShape who) {
     if (children == null) {
@@ -1316,6 +1328,9 @@ public class PShape implements PConstants {
 
 
   // adds child who exactly at position idx in the array of children.
+  /**
+   * @param idx the layer position in which to insert the new child
+   */
   public void addChild(PShape who, int idx) {
     if (idx < childCount) {
       if (childCount == children.length) {
@@ -1463,6 +1478,8 @@ public class PShape implements PConstants {
   /**
    * @webref pshape:method
    * @brief Returns the total number of vertices as an int
+   * @see PShape#getVertex(int)
+   * @see PShape#setVertex(int, float, float)
    */
   public int getVertexCount() {
     return vertexCount;
@@ -1473,6 +1490,8 @@ public class PShape implements PConstants {
    * @webref pshape:method
    * @brief Returns the vertex at the index position
    * @param index the location of the vertex
+   * @see PShape#setVertex(int, float, float)
+   * @see PShape#getVertexCount()
    */
   public PVector getVertex(int index) {
     return getVertex(index, null);
@@ -1512,6 +1531,8 @@ public class PShape implements PConstants {
    * @param index the location of the vertex
    * @param x the x value for the vertex
    * @param y the y value for the vertex
+   * @see PShape#getVertex(int)
+   * @see PShape#getVertexCount()
    */
   public void setVertex(int index, float x, float y) {
     vertices[index][X] = x;
@@ -1772,6 +1793,9 @@ public class PShape implements PConstants {
    * @brief Displaces the shape
    * @param tx left/right translation
    * @param ty up/down translation
+   * @see PShape#rotate(float)
+   * @see PShape#scale(float)
+   * @see PShape#resetMatrix()
    */
   public void translate(float x, float y) {
     checkMatrix(2);
@@ -1808,6 +1832,12 @@ public class PShape implements PConstants {
    * @usage web_application
    * @brief Rotates the shape around the x-axis
    * @param angle angle of rotation specified in radians
+   * @see PShape#rotate(float)
+   * @see PShape#rotateY(float)
+   * @see PShape#rotateZ(float)
+   * @see PShape#scale(float)
+   * @see PShape#translate(float, float)
+   * @see PShape#resetMatrix()
    */
   public void rotateX(float angle) {
     rotate(angle, 1, 0, 0);
@@ -1839,6 +1869,9 @@ public class PShape implements PConstants {
    * @see PShape#rotate(float)
    * @see PShape#rotateX(float)
    * @see PShape#rotateZ(float)
+   * @see PShape#scale(float)
+   * @see PShape#translate(float, float)
+   * @see PShape#resetMatrix()
    */
   public void rotateY(float angle) {
     rotate(angle, 0, 1, 0);
@@ -1867,6 +1900,12 @@ public class PShape implements PConstants {
    * @usage web_application
    * @brief Rotates the shape around the z-axis
    * @param angle angle of rotation specified in radians
+   * @see PShape#rotate(float)
+   * @see PShape#rotateX(float)
+   * @see PShape#rotateY(float)
+   * @see PShape#scale(float)
+   * @see PShape#translate(float, float)
+   * @see PShape#resetMatrix()
    */
   public void rotateZ(float angle) {
     rotate(angle, 0, 0, 1);
@@ -1892,6 +1931,12 @@ public class PShape implements PConstants {
    * @usage web_application
    * @brief Rotates the shape
    * @param angle angle of rotation specified in radians
+   * @see PShape#rotateX(float)
+   * @see PShape#rotateY(float)
+   * @see PShape#rotateZ(float)
+   * @see PShape#scale(float)
+   * @see PShape#translate(float, float)
+   * @see PShape#resetMatrix()
    */
   public void rotate(float angle) {
     checkMatrix(2);  // at least 2...
@@ -1937,6 +1982,9 @@ public class PShape implements PConstants {
    * @usage web_application
    * @brief Increases and decreases the size of a shape
    * @param s percentate to scale the object
+   * @see PShape#rotate(float)
+   * @see PShape#translate(float, float)
+   * @see PShape#resetMatrix()
    */
   public void scale(float s) {
     checkMatrix(2);  // at least 2...
@@ -1969,9 +2017,12 @@ public class PShape implements PConstants {
    * equivalent function in OpenGL is glLoadIdentity().
    *
    * ( end auto-generated )
- * @webref pshape:method
- * @brief Replaces the current matrix of a shape with the identity matrix
- * @usage web_application
+   * @webref pshape:method
+   * @brief Replaces the current matrix of a shape with the identity matrix
+   * @usage web_application
+   * @see PShape#rotate(float)
+   * @see PShape#scale(float)
+   * @see PShape#translate(float, float)
  */
   public void resetMatrix() {
     checkMatrix(2);
