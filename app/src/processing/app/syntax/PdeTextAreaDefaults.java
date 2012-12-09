@@ -98,32 +98,32 @@ public class PdeTextAreaDefaults extends TextAreaDefaults {
     }
 
     if (Base.isMacOS()) {
-      // Additional OS X key bindings added for 0215.  
+      // Additional OS X key bindings added for 0215.
       // Also note that two more are added above and marked 0215.
       // http://code.google.com/p/processing/issues/detail?id=1354
       // Could not find a proper Apple guide, but a partial reference is here:
       // http://guides.macrumors.com/Keyboard_shortcuts&section=10#Text_Shortcuts
-      
+
       // control-A  move to start of current paragraph
       inputHandler.addKeyBinding("C+A", InputHandler.HOME);
       inputHandler.addKeyBinding("CS+A", InputHandler.SELECT_HOME);
       // control-E  move to end of current paragraph
       inputHandler.addKeyBinding("C+E", InputHandler.END);
       inputHandler.addKeyBinding("CS+E", InputHandler.SELECT_END);
-      
+
       // control-D  forward delete
       inputHandler.addKeyBinding("C+D", InputHandler.DELETE);
-      
+
       // control-B  move left one character
       inputHandler.addKeyBinding("C+B", InputHandler.PREV_CHAR);
       inputHandler.addKeyBinding("CS+B", InputHandler.SELECT_PREV_CHAR);
       // control-F  move right one character
       inputHandler.addKeyBinding("C+F", InputHandler.NEXT_CHAR);
       inputHandler.addKeyBinding("CS+F", InputHandler.SELECT_NEXT_CHAR);
-      
+
       // control-H  delete (just ASCII for backspace)
       inputHandler.addKeyBinding("C+H", InputHandler.BACKSPACE);
-      
+
       // control-N  move down one line
       inputHandler.addKeyBinding("C+N", InputHandler.NEXT_LINE);
       inputHandler.addKeyBinding("CS+N", InputHandler.SELECT_NEXT_LINE);
@@ -181,11 +181,11 @@ public class PdeTextAreaDefaults extends TextAreaDefaults {
 
     document = new SyntaxDocument();
     editable = true;
-    
+
     // Set to 0 for revision 0215 because it causes strange jumps
     // http://code.google.com/p/processing/issues/detail?id=1055
     electricScroll = 0;
-    
+
     caretVisible = true;
     caretBlinks = Preferences.getBoolean("editor.caret.blink");
     blockCaret = Preferences.getBoolean("editor.caret.block");
@@ -210,6 +210,7 @@ public class PdeTextAreaDefaults extends TextAreaDefaults {
 
     styles[Token.FUNCTION1] = theme.getStyle("function1");
     styles[Token.FUNCTION2] = theme.getStyle("function2");
+    styles[Token.FUNCTION3] = theme.getStyle("function3");
 
     styles[Token.LITERAL1] = theme.getStyle("literal1");
     styles[Token.LITERAL2] = theme.getStyle("literal2");
