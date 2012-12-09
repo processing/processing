@@ -16,6 +16,9 @@ X make sure javadoc builds and uploads properly
 X error checker broken in experimental mode (fix from Manindra)
 X   http://code.google.com/p/processing/issues/detail?id=1449
 
+_ Color coding for if/else in Processing IDE doesn't match
+_   http://code.google.com/p/processing/issues/detail?id=1457
+
 earlier
 X include debug mode as 'experimental'?
 X   DebugMode throwing exception about breakpoints when trying to save

@@ -5761,7 +5761,8 @@ public class PApplet extends Applet
 
 
   public Table createTable() {
-    return new Table(this);
+//    return new Table(this);
+    return new Table();
   }
 
 
@@ -5779,7 +5780,8 @@ public class PApplet extends Applet
 
   public Table loadTable(String filename, String options) {
     try {
-      return new Table(this, filename, options);
+//      return new Table(this, filename, options);
+      return new Table(createInput(filename), options);
     } catch (IOException e) {
       e.printStackTrace();
       return null;
@@ -5787,9 +5789,28 @@ public class PApplet extends Applet
   }
 
 
+  public void saveTable(Table table, String filename) {
+    saveTable(table, filename, null);
+  }
+
+
+  public void saveTable(Table table, String filename, String options) {
+    try {
+      table.save(saveFile(filename), options);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+
 //  static public Table loadTable(File file) {
 //    return new Table(this, file);
 //  }
+
+
+  static public String[] fixOptions(String options) {
+    return options == null ? new String[0] : options.split("\\s*,\\s*");
+  }
 
 
 
