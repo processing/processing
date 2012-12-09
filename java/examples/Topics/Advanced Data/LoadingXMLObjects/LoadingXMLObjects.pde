@@ -21,7 +21,7 @@ Bubble[] bubbles;
 
 void setup() {
   size(640, 360);
-  smooth();
+  
   // Load an XML document
   XML xml = loadXML("bubbles.xml");
 
@@ -31,7 +31,7 @@ void setup() {
   // Make an array of objects the same size
   bubbles = new Bubble[children.length];
 
-  for (int i = 0; i < children.length; i ++ ) {
+  for (int i = 0; i < children.length; i++ ) {
     
     // The diameter is the content of the child named "Diamater"
     XML diameterElement = children[i].getChild("diameter");

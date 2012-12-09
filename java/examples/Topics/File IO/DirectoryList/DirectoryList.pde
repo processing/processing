@@ -55,7 +55,6 @@ void draw() {
 
 }
 
-
 // This function returns all the files in a directory as an array of Strings  
 String[] listFileNames(String dir) {
   File file = new File(dir);
@@ -81,7 +80,7 @@ File[] listFiles(String dir) {
   }
 }
 
-// Function to get a list ofall files in a directory and all subdirectories
+// Function to get a list of all files in a directory and all subdirectories
 ArrayList listFilesRecursive(String dir) {
    ArrayList fileList = new ArrayList(); 
    recurseDir(fileList,dir);

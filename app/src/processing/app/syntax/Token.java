@@ -42,7 +42,7 @@ public class Token {
          */
         public static final byte LABEL = 5;
 
-        /** Datatypes and keywords (void, int, boolean, etc.) */
+        /** Keywords (void, int, boolean, etc.) */
         public static final byte KEYWORD1 = 6;
 
         /** Fields [variables within a class] */
@@ -51,8 +51,10 @@ public class Token {
         /** Processing variables (width, height, focused, etc.) */
         public static final byte KEYWORD3 = 8;
 
+        /** Flow structures (if, else, while, for, etc.) */
         public static final byte KEYWORD4 = 9;
         
+        /** Datatypes (int, boolean, etc.) */
         public static final byte KEYWORD5 = 10;
 
         /** Functions */

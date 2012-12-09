@@ -6,16 +6,17 @@ class Star {
   PShape s;
   // The location where we will draw the shape
   float x, y;
+  float speed;
 
   Star() {
-    x = 0;
-    y = height/2; 
+    x = random(100, width-100);
+    y = random(100, height-100); 
+    speed = random(0.5, 3);
     // First create the shape
     s = createShape();
     // You can set fill and stroke
-    s.fill(102);
-    s.stroke(255);
-    s.strokeWeight(2);
+    s.fill(255, 204);
+    s.noStroke();
     // Here, we are hardcoding a series of vertices
     s.vertex(0, -50);
     s.vertex(14, -20);
@@ -33,7 +34,7 @@ class Star {
 
   void move() {
     // Demonstrating some simple motion
-    x++;
+    x += speed;
     if (x > width+100) {
       x = -100;
     }

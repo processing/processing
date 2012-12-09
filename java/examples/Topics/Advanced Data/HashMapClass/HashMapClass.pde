@@ -16,7 +16,7 @@
 // The next line is needed if running in JavaScript Mode with Processing.js
 /* @pjs font="Georgia.ttf"; */
 
-HashMap words;  // HashMap object
+HashMap<String, Word> words;  // HashMap object
 
 String[] tokens;  // Array of all words from input file
 int counter;
@@ -46,7 +46,7 @@ void draw() {
   if (words.containsKey(s)) {
     // Get the word object and increase the count
     // We access objects from a HashMap via its key, the String
-    Word w = (Word) words.get(s);
+    Word w = words.get(s);
     w.count(); 
   } else {
     // Otherwise make a new word
@@ -57,16 +57,12 @@ void draw() {
     words.put(s, w);    
   }
 
-  // Make an iterator to look at all the things in the HashMap
-  Iterator i = words.values().iterator();
-
   // x and y will be used to locate each word
   float x = 0;
   float y = height-10;
 
-  while (i.hasNext()) {
-    // Look at each word
-    Word w = (Word) i.next();
+  // Look at each word
+  for (Word w : words.values()) {
     
     // Only display words that appear 3 times
     if (w.count > 3) {
@@ -89,3 +85,4 @@ void draw() {
     }
   } 
 }
+

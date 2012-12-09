@@ -8,13 +8,13 @@
  */
 
 // Used for oveall rotation
-float ang;
+float angle;
 
 // Cube count-lower/raise to test performance
 int limit = 500;
 
 // Array for all cubes
-Cube[]cubes = new Cube[limit];
+Cube[] cubes = new Cube[limit];
 
 void setup() {
   size(640, 360, P3D); 
@@ -22,7 +22,7 @@ void setup() {
   noStroke();
 
   // Instantiate cubes, passing in random vals for size and postion
-  for (int i = 0; i< cubes.length; i++){
+  for (int i = 0; i < cubes.length; i++){
     cubes[i] = new Cube(int(random(-10, 10)), int(random(-10, 10)), 
                         int(random(-10, 10)), int(random(-140, 140)), 
                         int(random(-140, 140)), int(random(-140, 140)));
@@ -41,13 +41,13 @@ void draw(){
   ambientLight(70, 70, 10); 
 
   // Center geometry in display windwow.
-  // you can change 3rd argument ('0')
-  // to move block group closer(+)/further(-)
+  // you can changlee 3rd argument ('0')
+  // to move block group closer(+) / further(-)
   translate(width/2, height/2, -200 + mouseX * 0.65);
 
   // Rotate around y and x axes
-  rotateY(radians(ang));
-  rotateX(radians(ang));
+  rotateY(radians(angle));
+  rotateX(radians(angle));
 
   // Draw cubes
   for (int i = 0; i < cubes.length; i++){
@@ -55,7 +55,7 @@ void draw(){
   }
   
   // Used in rotate function calls above
-  ang += 0.2;
+  angle += 0.2;
 }
 
 
