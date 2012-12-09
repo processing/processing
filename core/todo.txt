@@ -6,6 +6,33 @@ X heading2D()? weird.. changed to heading()
 X   http://toxiclibs.org/docs/core/toxi/geom/Vec3D.html
 X   http://code.google.com/p/processing/issues/detail?id=987
 
+X lots of improvements/cleanups to Table class
+X   added lastRowIndex()
+X   rows() instead of getRows() (doesn't perform like our other get() functions)
+X     it's more like keys() and values() in HashMap
+X   addRow() returns TableRow object to be modified
+X   lastRowIndex() (to avoid getRowCount() - 1)
+X     not lastRow() because Row functions return TableRow object/intf
+
+X   makeNullEmpty() -> replace(null, "");
+X   makeEmptyNull() -> replace("", null);
+
+createTable()
+need option to save table
+
+_ create table from TableRow iterator...allows for subset and find
+
+naming for these (or whether to include hash)
+Table createSubset() -> leave out?
+String[] getUnique(col)
+HashMap<String,Integer> getUniqueCount(col)
+
+features?
+getMaxFloat() (whole table) or getMaxFloat(col) (that's max(getFloatColumn(n))
+  also important b/c can leave out missing values
+include SQL, HTML, ODS, binary?
+
+join tables together (static is kinda gross)
 
 PShape s = createShape();
 s.beginShape(QUADS);
@@ -87,14 +114,6 @@ _ look into json and how it would work
 1) we bring back getFloatAttribute() et al., and make getFloat() be equivalent to parseFloat(xml.getContent())
 2) we keep getFloat() like it is, and add getFloatContent(), getIntContent() etc.
 3) we deprecate our nice short getFloat/getInt/etc and go with getXxxxAttribute() and getXxxxContent() methods.
-
-_ lots of improvements to Table class?
-createTable()
-need option to save table
-join tables together (static is kinda gross)
-lastRowIndex() (to avoid getRowCount() - 1)
-addRow() 
-rows() instead of getRows() (doesn't perform like our other get() functions)
 
 Request r = createRequest("http://p5.org/feed/13134.jpg");
 Request r = createRequest("http://p5.org/feed/13134.jpg", "callbackName");
