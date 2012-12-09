@@ -1415,9 +1415,10 @@ public class PGraphicsOpenGL extends PGraphics {
     int sizef = size * PGL.SIZEOF_FLOAT;
     int sizei = size * PGL.SIZEOF_INT;
 
+    tessGeo.readyLineVertices();
     pgl.bindBuffer(PGL.ARRAY_BUFFER, glLineVertex);
-    pgl.bufferData(PGL.ARRAY_BUFFER, 4 * sizef,
-      FloatBuffer.wrap(tessGeo.lineVertices, 0, 4 * size), PGL.STATIC_DRAW);
+    pgl.bufferData(PGL.ARRAY_BUFFER, 4 * sizef, tessGeo.lineVertices,
+                   PGL.STATIC_DRAW);
 
     pgl.bindBuffer(PGL.ARRAY_BUFFER, glLineColor);
     pgl.bufferData(PGL.ARRAY_BUFFER, sizei,
@@ -1427,11 +1428,11 @@ public class PGraphicsOpenGL extends PGraphics {
     pgl.bufferData(PGL.ARRAY_BUFFER, 4 * sizef,
       FloatBuffer.wrap(tessGeo.lineAttribs, 0, 4 * size), PGL.STATIC_DRAW);
 
+    tessGeo.readyLineIndices();
     pgl.bindBuffer(PGL.ELEMENT_ARRAY_BUFFER, glLineIndex);
     pgl.bufferData(PGL.ELEMENT_ARRAY_BUFFER,
-      tessGeo.lineIndexCount * PGL.SIZEOF_INDEX,
-      ShortBuffer.wrap(tessGeo.lineIndices, 0, tessGeo.lineIndexCount),
-      PGL.STATIC_DRAW);
+                   tessGeo.lineIndexCount * PGL.SIZEOF_INDEX,
+                   tessGeo.lineIndices, PGL.STATIC_DRAW);
   }
 
 
@@ -2527,10 +2528,10 @@ public class PGraphicsOpenGL extends PGraphics {
     raw.strokeJoin(strokeJoin);
     raw.beginShape(LINES);
 
-    float[] vertices = tessGeo.lineVertices;
+    FloatBuffer vertices = tessGeo.lineVertices;
     int[] color = tessGeo.lineColors;
     float[] attribs = tessGeo.lineAttribs;
-    short[] indices = tessGeo.lineIndices;
+    ShortBuffer indices = tessGeo.lineIndices;
 
     IndexCache cache = tessGeo.lineIndexCache;
     for (int n = 0; n < cache.size; n++) {
@@ -2544,8 +2545,8 @@ public class PGraphicsOpenGL extends PGraphics {
         // vertices.
         // This bunch of vertices could also be the bevel triangles,
         // with we detect this situation by looking at the line weight.
-        int i0 = voffset + indices[6 * ln + 0];
-        int i1 = voffset + indices[6 * ln + 5];
+        int i0 = voffset + indices.get(6 * ln + 0);
+        int i1 = voffset + indices.get(6 * ln + 5);
         float sw0 = 2 * attribs[4 * i0 + 3];
         float sw1 = 2 * attribs[4 * i1 + 3];
 
@@ -2559,13 +2560,13 @@ public class PGraphicsOpenGL extends PGraphics {
         if (flushMode == FLUSH_CONTINUOUSLY) {
           float[] src0 = {0, 0, 0, 0};
           float[] src1 = {0, 0, 0, 0};
-          PApplet.arrayCopy(vertices, 4 * i0, src0, 0, 4);
-          PApplet.arrayCopy(vertices, 4 * i1, src1, 0, 4);
+          vertices.position(4 * i0); vertices.get(src0, 0, 4);
+          vertices.position(4 * i1); vertices.get(src1, 0, 4);
           modelview.mult(src0, pt0);
           modelview.mult(src1, pt1);
         } else {
-          PApplet.arrayCopy(vertices, 4 * i0, pt0, 0, 4);
-          PApplet.arrayCopy(vertices, 4 * i1, pt1, 0, 4);
+          vertices.position(4 * i0); vertices.get(pt0, 0, 4);
+          vertices.position(4 * i1); vertices.get(pt1, 0, 4);
         }
 
         if (raw.is3D()) {
@@ -8904,14 +8905,14 @@ public class PGraphicsOpenGL extends PGraphics {
     int lineVertexCount;
     int firstLineVertex;
     int lastLineVertex;
-    float[] lineVertices;
+    FloatBuffer lineVertices;
     int[] lineColors;
     float[] lineAttribs;
 
     int lineIndexCount;
     int firstLineIndex;
     int lastLineIndex;
-    short[] lineIndices;
+    ShortBuffer lineIndices;
     IndexCache lineIndexCache = new IndexCache();
 
     // Tessellated point data
@@ -8948,10 +8949,10 @@ public class PGraphicsOpenGL extends PGraphics {
       polyShininess = new float[PGL.DEFAULT_TESS_VERTICES];
       polyIndices = PGL.allocateDirectShortBuffer(PGL.DEFAULT_TESS_VERTICES);
 
-      lineVertices = new float[4 * PGL.DEFAULT_TESS_VERTICES];
+      lineVertices = PGL.allocateDirectFloatBuffer(4 * PGL.DEFAULT_TESS_VERTICES);
       lineColors = new int[PGL.DEFAULT_TESS_VERTICES];
       lineAttribs = new float[4 * PGL.DEFAULT_TESS_VERTICES];
-      lineIndices = new short[PGL.DEFAULT_TESS_VERTICES];
+      lineIndices = PGL.allocateDirectShortBuffer(PGL.DEFAULT_TESS_VERTICES);
 
       pointVertices = new float[4 * PGL.DEFAULT_TESS_VERTICES];
       pointColors = new int[PGL.DEFAULT_TESS_VERTICES];
@@ -9001,6 +9002,7 @@ public class PGraphicsOpenGL extends PGraphics {
     void polyVertexCheck() {
       if (polyVertexCount == polyVertices.capacity() / 4) {
         int newSize = polyVertexCount << 1;
+
         expandPolyVertices(newSize);
         expandPolyColors(newSize);
         expandPolyNormals(newSize);
@@ -9020,6 +9022,7 @@ public class PGraphicsOpenGL extends PGraphics {
       int oldSize = polyVertices.capacity() / 4;
       if (polyVertexCount + count > oldSize) {
         int newSize = expandArraySize(oldSize, polyVertexCount + count);
+
         expandPolyVertices(newSize);
         expandPolyColors(newSize);
         expandPolyNormals(newSize);
@@ -9039,6 +9042,7 @@ public class PGraphicsOpenGL extends PGraphics {
       int oldSize = polyIndices.capacity();
       if (polyIndexCount + count > oldSize) {
         int newSize = expandArraySize(oldSize, polyIndexCount + count);
+
         expandPolyIndices(newSize);
       }
 
@@ -9050,6 +9054,7 @@ public class PGraphicsOpenGL extends PGraphics {
     void polyIndexCheck() {
       if (polyIndexCount == polyIndices.capacity()) {
         int newSize = polyIndexCount << 1;
+
         expandPolyIndices(newSize);
       }
 
@@ -9059,7 +9064,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     void lineVertexCheck(int count) {
-      int oldSize = lineVertices.length / 4;
+      int oldSize = lineVertices.capacity() / 4;
       if (lineVertexCount + count > oldSize) {
         int newSize = expandArraySize(oldSize, lineVertexCount + count);
 
@@ -9074,7 +9079,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     void lineIndexCheck(int count) {
-      int oldSize = lineIndices.length;
+      int oldSize = lineIndices.capacity();
       if (lineIndexCount + count > oldSize) {
         int newSize = expandArraySize(oldSize, lineIndexCount + count);
 
@@ -9136,9 +9141,9 @@ public class PGraphicsOpenGL extends PGraphics {
     void getLineVertexMin(PVector v, int first, int last) {
       for (int i = first; i <= last; i++) {
         int index = 4 * i;
-        v.x = PApplet.min(v.x, lineVertices[index++]);
-        v.y = PApplet.min(v.y, lineVertices[index++]);
-        v.z = PApplet.min(v.z, lineVertices[index  ]);
+        v.x = PApplet.min(v.x, lineVertices.get(index++));
+        v.y = PApplet.min(v.y, lineVertices.get(index++));
+        v.z = PApplet.min(v.z, lineVertices.get(index  ));
       }
     }
 
@@ -9163,9 +9168,9 @@ public class PGraphicsOpenGL extends PGraphics {
     void getLineVertexMax(PVector v, int first, int last) {
       for (int i = first; i <= last; i++) {
         int index = 4 * i;
-        v.x = PApplet.max(v.x, lineVertices[index++]);
-        v.y = PApplet.max(v.y, lineVertices[index++]);
-        v.z = PApplet.max(v.z, lineVertices[index  ]);
+        v.x = PApplet.max(v.x, lineVertices.get(index++));
+        v.y = PApplet.max(v.y, lineVertices.get(index++));
+        v.z = PApplet.max(v.z, lineVertices.get(index  ));
       }
     }
 
@@ -9191,9 +9196,9 @@ public class PGraphicsOpenGL extends PGraphics {
     int getLineVertexSum(PVector v, int first, int last) {
       for (int i = first; i <= last; i++) {
         int index = 4 * i;
-        v.x += lineVertices[index++];
-        v.y += lineVertices[index++];
-        v.z += lineVertices[index  ];
+        v.x += lineVertices.get(index++);
+        v.y += lineVertices.get(index++);
+        v.z += lineVertices.get(index  );
       }
       return last - first + 1;
     }
@@ -9269,8 +9274,9 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     void expandLineVertices(int n) {
-      float temp[] = new float[4 * n];
-      PApplet.arrayCopy(lineVertices, 0, temp, 0, 4 * lineVertexCount);
+      readyLineVertices();
+      FloatBuffer temp = PGL.allocateDirectFloatBuffer(4 * n);
+      temp.put(lineVertices);
       lineVertices = temp;
     }
 
@@ -9287,8 +9293,9 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     void expandLineIndices(int n) {
-      short temp[] = new short[n];
-      PApplet.arrayCopy(lineIndices, 0, temp, 0, lineIndexCount);
+      readyLineIndices();
+      ShortBuffer temp = PGL.allocateDirectShortBuffer(n);
+      temp.put(lineIndices);
       lineIndices = temp;
     }
 
@@ -9344,6 +9351,30 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
 
+    protected void readyLineVertices() {
+      lineVertices.position(0);
+      lineVertices.limit(lineVertices.capacity());
+    }
+
+
+    protected void readyLineVertices(int count) {
+      lineVertices.position(0);
+      lineVertices.limit(count);
+    }
+
+
+    protected void readyLineIndices() {
+      lineIndices.position(0);
+      lineIndices.limit(lineIndices.capacity());
+    }
+
+
+    protected void readyLineIndices(int count) {
+      lineIndices.position(0);
+      lineIndices.limit(count);
+    }
+
+
     // -----------------------------------------------------------------
     //
     // Trim arrays
@@ -9364,13 +9395,13 @@ public class PGraphicsOpenGL extends PGraphics {
         trimPolyIndices();
       }
 
-      if (0 < lineVertexCount && lineVertexCount < lineVertices.length / 4) {
+      if (0 < lineVertexCount && lineVertexCount < lineVertices.capacity() / 4) {
         trimLineVertices();
         trimLineColors();
         trimLineAttribs();
       }
 
-      if (0 < lineIndexCount && lineIndexCount < lineIndices.length) {
+      if (0 < lineIndexCount && lineIndexCount < lineIndices.capacity()) {
         trimLineIndices();
       }
 
@@ -9442,8 +9473,9 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     void trimLineVertices() {
-      float temp[] = new float[4 * lineVertexCount];
-      PApplet.arrayCopy(lineVertices, 0, temp, 0, 4 * lineVertexCount);
+      readyLineVertices(4 * lineVertexCount);
+      FloatBuffer temp = PGL.allocateDirectFloatBuffer(4 * lineVertexCount);
+      temp.put(lineVertices);
       lineVertices = temp;
     }
 
@@ -9460,8 +9492,9 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     void trimLineIndices() {
-      short temp[] = new short[lineIndexCount];
-      PApplet.arrayCopy(lineIndices, 0, temp, 0, lineIndexCount);
+      readyLineIndices(lineIndexCount);
+      ShortBuffer temp = PGL.allocateDirectShortBuffer(lineIndexCount);
+      temp.put(lineIndices);
       lineIndices = temp;
     }
 
@@ -9501,7 +9534,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
     void incLineIndices(int first, int last, int inc) {
       for (int i = first; i <= last; i++) {
-        lineIndices[i] += inc;
+        lineIndices.put(i, (short)(lineIndices.get(i) + inc));
       }
     }
 
@@ -9614,16 +9647,16 @@ public class PGraphicsOpenGL extends PGraphics {
         PMatrix3D mm = modelview;
 
         index = 4 * tessIdx;
-        lineVertices[index++] = x0*mm.m00 + y0*mm.m01 + z0*mm.m02 + mm.m03;
-        lineVertices[index++] = x0*mm.m10 + y0*mm.m11 + z0*mm.m12 + mm.m13;
-        lineVertices[index++] = x0*mm.m20 + y0*mm.m21 + z0*mm.m22 + mm.m23;
-        lineVertices[index  ] = x0*mm.m30 + y0*mm.m31 + z0*mm.m32 + mm.m33;
+        lineVertices.put(index++, x0*mm.m00 + y0*mm.m01 + z0*mm.m02 + mm.m03);
+        lineVertices.put(index++, x0*mm.m10 + y0*mm.m11 + z0*mm.m12 + mm.m13);
+        lineVertices.put(index++, x0*mm.m20 + y0*mm.m21 + z0*mm.m22 + mm.m23);
+        lineVertices.put(index  , x0*mm.m30 + y0*mm.m31 + z0*mm.m32 + mm.m33);
       } else {
         index = 4 * tessIdx;
-        lineVertices[index++] = x0;
-        lineVertices[index++] = y0;
-        lineVertices[index++] = z0;
-        lineVertices[index  ] = 1;
+        lineVertices.put(index++, x0);
+        lineVertices.put(index++, y0);
+        lineVertices.put(index++, z0);
+        lineVertices.put(index  , 1);
       }
 
       lineColors[tessIdx] = rgba;
@@ -9654,10 +9687,10 @@ public class PGraphicsOpenGL extends PGraphics {
         PMatrix3D mm = modelview;
 
         index = 4 * tessIdx;
-        lineVertices[index++] = x0*mm.m00 + y0*mm.m01 + z0*mm.m02 + mm.m03;
-        lineVertices[index++] = x0*mm.m10 + y0*mm.m11 + z0*mm.m12 + mm.m13;
-        lineVertices[index++] = x0*mm.m20 + y0*mm.m21 + z0*mm.m22 + mm.m23;
-        lineVertices[index  ] = x0*mm.m30 + y0*mm.m31 + z0*mm.m32 + mm.m33;
+        lineVertices.put(index++, x0*mm.m00 + y0*mm.m01 + z0*mm.m02 + mm.m03);
+        lineVertices.put(index++, x0*mm.m10 + y0*mm.m11 + z0*mm.m12 + mm.m13);
+        lineVertices.put(index++, x0*mm.m20 + y0*mm.m21 + z0*mm.m22 + mm.m23);
+        lineVertices.put(index  , x0*mm.m30 + y0*mm.m31 + z0*mm.m32 + mm.m33);
 
         index = 4 * tessIdx;
         lineAttribs[index++] = x1*mm.m00 + y1*mm.m01 + z1*mm.m02 + mm.m03;
@@ -9665,10 +9698,10 @@ public class PGraphicsOpenGL extends PGraphics {
         lineAttribs[index  ] = x1*mm.m20 + y1*mm.m21 + z1*mm.m22 + mm.m23;
       } else {
         index = 4 * tessIdx;
-        lineVertices[index++] = x0;
-        lineVertices[index++] = y0;
-        lineVertices[index++] = z0;
-        lineVertices[index  ] = 1;
+        lineVertices.put(index++, x0);
+        lineVertices.put(index++, y0);
+        lineVertices.put(index++, z0);
+        lineVertices.put(index  , 1);
 
         index = 4 * tessIdx;
         lineAttribs[index++] = x1;
@@ -9965,16 +9998,16 @@ public class PGraphicsOpenGL extends PGraphics {
 
         for (int i = first; i <= last; i++) {
           index = 4 * i;
-          float x = lineVertices[index++];
-          float y = lineVertices[index  ];
+          float x = lineVertices.get(index++);
+          float y = lineVertices.get(index  );
 
           index = 4 * i;
           float xa = lineAttribs[index++];
           float ya = lineAttribs[index  ];
 
           index = 4 * i;
-          lineVertices[index++] = x*tr.m00 + y*tr.m01 + tr.m02;
-          lineVertices[index  ] = x*tr.m10 + y*tr.m11 + tr.m12;
+          lineVertices.put(index++, x*tr.m00 + y*tr.m01 + tr.m02);
+          lineVertices.put(index  , x*tr.m10 + y*tr.m11 + tr.m12);
 
           index = 4 * i;
           lineAttribs[index++] = xa*tr.m00 + ya*tr.m01 + tr.m02;
@@ -10035,10 +10068,10 @@ public class PGraphicsOpenGL extends PGraphics {
 
         for (int i = first; i <= last; i++) {
           index = 4 * i;
-          float x = lineVertices[index++];
-          float y = lineVertices[index++];
-          float z = lineVertices[index++];
-          float w = lineVertices[index  ];
+          float x = lineVertices.get(index++);
+          float y = lineVertices.get(index++);
+          float z = lineVertices.get(index++);
+          float w = lineVertices.get(index  );
 
           index = 4 * i;
           float xa = lineAttribs[index++];
@@ -10046,10 +10079,10 @@ public class PGraphicsOpenGL extends PGraphics {
           float za = lineAttribs[index  ];
 
           index = 4 * i;
-          lineVertices[index++] = x*tr.m00 + y*tr.m01 + z*tr.m02 + w*tr.m03;
-          lineVertices[index++] = x*tr.m10 + y*tr.m11 + z*tr.m12 + w*tr.m13;
-          lineVertices[index++] = x*tr.m20 + y*tr.m21 + z*tr.m22 + w*tr.m23;
-          lineVertices[index  ] = x*tr.m30 + y*tr.m31 + z*tr.m32 + w*tr.m33;
+          lineVertices.put(index++, x*tr.m00 + y*tr.m01 + z*tr.m02 + w*tr.m03);
+          lineVertices.put(index++, x*tr.m10 + y*tr.m11 + z*tr.m12 + w*tr.m13);
+          lineVertices.put(index++, x*tr.m20 + y*tr.m21 + z*tr.m22 + w*tr.m23);
+          lineVertices.put(index  , x*tr.m30 + y*tr.m31 + z*tr.m32 + w*tr.m33);
 
           index = 4 * i;
           lineAttribs[index++] = xa*tr.m00 + ya*tr.m01 + za*tr.m02 + tr.m03;
@@ -10791,23 +10824,23 @@ public class PGraphicsOpenGL extends PGraphics {
       weight = constStroke ? strokeWeight : in.strokeWeights[i0];
 
       tess.setLineVertex(vidx++, in, i0, i1, color, +weight/2);
-      tess.lineIndices[iidx++] = (short) (count + 0);
+      tess.lineIndices.put(iidx++, (short) (count + 0));
 
       tess.setLineVertex(vidx++, in, i0, i1, color, -weight/2);
-      tess.lineIndices[iidx++] = (short) (count + 1);
+      tess.lineIndices.put(iidx++, (short) (count + 1));
 
       color = constStroke ? strokeColor : in.strokeColors[i1];
       weight = constStroke ? strokeWeight : in.strokeWeights[i1];
 
       tess.setLineVertex(vidx++, in, i1, i0, color, -weight/2);
-      tess.lineIndices[iidx++] = (short) (count + 2);
+      tess.lineIndices.put(iidx++, (short) (count + 2));
 
       // Starting a new triangle re-using prev vertices.
-      tess.lineIndices[iidx++] = (short) (count + 2);
-      tess.lineIndices[iidx++] = (short) (count + 1);
+      tess.lineIndices.put(iidx++, (short) (count + 2));
+      tess.lineIndices.put(iidx++, (short) (count + 1));
 
       tess.setLineVertex(vidx++, in, i1, i0, color, +weight/2);
-      tess.lineIndices[iidx++] = (short) (count + 3);
+      tess.lineIndices.put(iidx++, (short) (count + 3));
 
       cache.incCounts(index, 6, 4);
 
@@ -10821,21 +10854,21 @@ public class PGraphicsOpenGL extends PGraphics {
 
             // TODO: Fix this situation, the vertices from the previous cache
             // block should be copied in the newly created one.
-            tess.lineIndices[iidx++] = (short) (count + 4);
-            tess.lineIndices[iidx++] = (short) (count + 0);
-            tess.lineIndices[iidx++] = (short) (count + 0);
+            tess.lineIndices.put(iidx++, (short) (count + 4));
+            tess.lineIndices.put(iidx++, (short) (count + 0));
+            tess.lineIndices.put(iidx++, (short) (count + 0));
 
-            tess.lineIndices[iidx++] = (short) (count + 4);
-            tess.lineIndices[iidx++] = (short) (count + 1);
-            tess.lineIndices[iidx  ] = (short) (count + 1);
+            tess.lineIndices.put(iidx++, (short) (count + 4));
+            tess.lineIndices.put(iidx++, (short) (count + 1));
+            tess.lineIndices.put(iidx  , (short) (count + 1));
           } else {
-            tess.lineIndices[iidx++] = (short) (count + 4);
-            tess.lineIndices[iidx++] = lastInd[0];
-            tess.lineIndices[iidx++] = (short) (count + 0);
+            tess.lineIndices.put(iidx++, (short) (count + 4));
+            tess.lineIndices.put(iidx++, lastInd[0]);
+            tess.lineIndices.put(iidx++, (short) (count + 0));
 
-            tess.lineIndices[iidx++] = (short) (count + 4);
-            tess.lineIndices[iidx++] = lastInd[1];
-            tess.lineIndices[iidx  ] = (short) (count + 1);
+            tess.lineIndices.put(iidx++, (short) (count + 4));
+            tess.lineIndices.put(iidx++, lastInd[1]);
+            tess.lineIndices.put(iidx  , (short) (count + 1));
           }
 
           cache.incCounts(index, 6, 1);

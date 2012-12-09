@@ -3517,11 +3517,11 @@ public class PShapeOpenGL extends PShape {
     int sizef = size * PGL.SIZEOF_FLOAT;
     int sizei = size * PGL.SIZEOF_INT;
 
+    tessGeo.readyLineVertices();
     glLineVertex = pg.createVertexBufferObject(context.id());
     pgl.bindBuffer(PGL.ARRAY_BUFFER, glLineVertex);
     pgl.bufferData(PGL.ARRAY_BUFFER, 4 * sizef,
-                   FloatBuffer.wrap(tessGeo.lineVertices, 0, 4 * size),
-                   PGL.STATIC_DRAW);
+                   tessGeo.lineVertices, PGL.STATIC_DRAW);
 
     glLineColor = pg.createVertexBufferObject(context.id());
     pgl.bindBuffer(PGL.ARRAY_BUFFER, glLineColor);
@@ -3537,12 +3537,12 @@ public class PShapeOpenGL extends PShape {
 
     pgl.bindBuffer(PGL.ARRAY_BUFFER, 0);
 
+    tessGeo.readyLineIndices();
     glLineIndex = pg.createVertexBufferObject(context.id());
     pgl.bindBuffer(PGL.ELEMENT_ARRAY_BUFFER, glLineIndex);
     pgl.bufferData(PGL.ELEMENT_ARRAY_BUFFER,
                    tessGeo.lineIndexCount * PGL.SIZEOF_INDEX,
-                   ShortBuffer.wrap(tessGeo.lineIndices, 0,
-                                    tessGeo.lineIndexCount), PGL.STATIC_DRAW);
+                   tessGeo.lineIndices, PGL.STATIC_DRAW);
 
     pgl.bindBuffer(PGL.ELEMENT_ARRAY_BUFFER, 0);
   }
@@ -3957,11 +3957,10 @@ public class PShapeOpenGL extends PShape {
 
 
   protected void copyLineVertices(int offset, int size) {
+    tessGeo.readyLineVertices();
     pgl.bindBuffer(PGL.ARRAY_BUFFER, glLineVertex);
     pgl.bufferSubData(PGL.ARRAY_BUFFER, 4 * offset * PGL.SIZEOF_FLOAT,
-                      4 * size * PGL.SIZEOF_FLOAT,
-                      FloatBuffer.wrap(tessGeo.lineVertices,
-                                       4 * offset, 4 * size));
+                      4 * size * PGL.SIZEOF_FLOAT, tessGeo.lineVertices);
     pgl.bindBuffer(PGL.ARRAY_BUFFER, 0);
   }
 
@@ -4520,10 +4519,10 @@ public class PShapeOpenGL extends PShape {
     raw.strokeJoin(strokeJoin);
     raw.beginShape(LINES);
 
-    float[] vertices = tessGeo.lineVertices;
+    FloatBuffer vertices = tessGeo.lineVertices;
     int[] color = tessGeo.lineColors;
     float[] attribs = tessGeo.lineAttribs;
-    short[] indices = tessGeo.lineIndices;
+    ShortBuffer indices = tessGeo.lineIndices;
 
     IndexCache cache = tessGeo.lineIndexCache;
     for (int n = firstLineIndexCache; n <= lastLineIndexCache; n++) {
@@ -4537,8 +4536,8 @@ public class PShapeOpenGL extends PShape {
         // vertices.
         // This bunch of vertices could also be the bevel triangles,
         // with we detect this situation by looking at the line weight.
-        int i0 = voffset + indices[6 * ln + 0];
-        int i1 = voffset + indices[6 * ln + 5];
+        int i0 = voffset + indices.get(6 * ln + 0);
+        int i1 = voffset + indices.get(6 * ln + 5);
         float sw0 = 2 * attribs[4 * i0 + 3];
         float sw1 = 2 * attribs[4 * i1 + 3];
 
@@ -4551,8 +4550,8 @@ public class PShapeOpenGL extends PShape {
         int argb0 = PGL.nativeToJavaARGB(color[i0]);
         int argb1 = PGL.nativeToJavaARGB(color[i1]);
 
-        PApplet.arrayCopy(vertices, 4 * i0, src0, 0, 4);
-        PApplet.arrayCopy(vertices, 4 * i1, src1, 0, 4);
+        vertices.position(4 * i0); vertices.get(src0, 0, 4);
+        vertices.position(4 * i1); vertices.get(src1, 0, 4);
         // Applying any transformation is currently stored in the
         // modelview matrix of the renderer.
         g.modelview.mult(src0, pt0);
