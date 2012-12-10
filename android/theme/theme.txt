@@ -80,27 +80,25 @@ editor.brackethighlight = true
 editor.brackethighlight.color = #006699
 
 
-# TEXT - syntax highlighting
+# TEXT - KEYWORDS, LITERALS
+# For an explanation of these tags, see Token.java 
+# trunk/processing/app/src/processing/app/syntax/Token.java
 
-editor.function1.style = #627516,plain
-editor.function2.style = #627516,bold
+editor.function1.style = #006699,plain
+editor.function2.style = #006699,plain
+editor.function3.style = #669933,plain
+editor.keyword1.style = #996633,plain
+editor.keyword2.style = #996633,plain
+editor.keyword3.style = #669933,plain
+editor.keyword4.style = #ff6699,plain
+editor.keyword5.style = #cc6633,plain
+editor.literal1.style = #7D4793,plain
+editor.literal2.style = #666666,plain
 editor.function3.style = #627516,plain
 
-# e.g abstract, final, private
-editor.keyword1.style = #627516,plain
-# e.g. beginShape, point, line
-editor.keyword2.style = #627516,plain
-# e.g. byte, char, short, color
-editor.keyword3.style = #627516,bold
 editor.keyword4.style = #627516,plain
 editor.keyword5.style = #627516,plain
 
-# constants: e.g. null, true, this, RGB, TWO_PI
-#editor.literal1.style = #627f26,plain
-editor.literal1.style = #336598,plain
-# p5 built in variables: e.g. mouseX, width, pixels
-#editor.literal2.style = #627f26,plain
-editor.literal2.style = #336598,plain
 # e.g. + - = /
 editor.operator.style = #000000,plain
 
