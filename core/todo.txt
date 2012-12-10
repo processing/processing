@@ -166,6 +166,10 @@ _     so that it could avoid quitting if the sketch hasn't been stopped
 _     or if the sketch window is foremost
 _     maybe a hack where a new menubar is added? 
 
+_ when using loadFont(), don't enable native fonts unless hint() in use
+_   but on createFont(), we're probably OK
+_   might need to make reference notes about the two behaviors
+
 _ splice() throws ClassCastException when used with objects like PVector 
 _   http://code.google.com/p/processing/issues/detail?id=1407
 

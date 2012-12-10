@@ -27,7 +27,6 @@ import java.awt.*;
 import java.io.*;
 import java.util.*;
 
-import processing.app.syntax.*;
 import processing.core.*;
 
 
@@ -209,22 +208,5 @@ public class Settings {
     }
 
     return font;
-  }
-
-
-  public SyntaxStyle getStyle(String what) {
-    String str = get("editor." + what + ".style");
-
-    StringTokenizer st = new StringTokenizer(str, ",");
-
-    String s = st.nextToken();
-    if (s.indexOf("#") == 0) s = s.substring(1);
-    Color color = new Color(Integer.parseInt(s, 16));
-
-    s = st.nextToken();
-    boolean bold = (s.indexOf("bold") != -1);
-    boolean italic = (s.indexOf("italic") != -1);
-
-    return new SyntaxStyle(color, italic, bold);
   }
 }

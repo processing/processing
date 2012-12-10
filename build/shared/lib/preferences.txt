@@ -227,6 +227,37 @@ editor.laf.linux = com.sun.java.swing.plaf.gtk.GTKLookAndFeel
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
+# TEXT - KEYWORDS, LITERALS
+# For an explanation of these tags, see Token.java:
+# processing/app/src/processing/app/syntax/Token.java
+
+editor.token.function1.style = #006699,plain
+editor.token.function2.style = #006699,plain
+editor.token.function3.style = #669933,plain
+editor.token.function4.style = #669933,plain
+
+editor.token.keyword1.style = #996633,plain
+editor.token.keyword2.style = #996633,plain
+editor.token.keyword3.style = #669933,plain
+editor.token.keyword4.style = #ff6699,plain
+editor.token.keyword5.style = #cc6633,plain
+
+editor.token.literal1.style = #7D4793,plain
+editor.token.literal2.style = #666666,plain
+
+editor.token.operator.style = #006699,plain
+
+editor.token.label.style = #7e7e7e,bold
+
+editor.token.comment1.style = #7e7e7e,plain
+editor.token.comment2.style = #7e7e7e,plain
+
+editor.token.invalid.style = #7e7e7e,bold
+
+
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
 #history.recording = true
 
 # for advanced users, enable option to export a library
