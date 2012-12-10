@@ -346,12 +346,15 @@ public class PGL {
   // FBO layer
 
   public static boolean FORCE_SCREEN_FBO = false;
-  protected boolean usingFBOlayer = false;
-  protected boolean firstFrame = true;
-  protected int[] glColorFbo = { 0 };
-  protected int[] glColorTex = { 0, 0 };
-  protected int fboWidth, fboHeight;
-  protected int backTex, frontTex;
+  protected static boolean usingFBOlayer = false;
+  protected static boolean firstFrame = true;
+  protected static IntBuffer glColorFbo;
+  protected static IntBuffer glColorTex;
+  protected static IntBuffer glDepthStencil;
+  protected static IntBuffer glDepth;
+  protected static IntBuffer glStencil;
+  protected static int fboWidth, fboHeight;
+  protected static int backTex, frontTex;
 
   ///////////////////////////////////////////////////////////
 
@@ -409,9 +412,7 @@ public class PGL {
 
   public PGL(PGraphicsOpenGL pg) {
     this.pg = pg;
-    if (renderer == null) {
-      renderer = new AndroidRenderer();
-    }
+    renderer = new AndroidRenderer();
     if (glu == null) {
       glu = new PGLU();
     }
@@ -435,86 +436,90 @@ public class PGL {
 
   protected void update() {
     if (!initialized) {
-      String ext = GLES20.glGetString(GLES20.GL_EXTENSIONS);
+      String ext = getString(EXTENSIONS);
       if (-1 < ext.indexOf("texture_non_power_of_two")) {
         fboWidth = pg.width;
         fboHeight = pg.height;
       } else {
-        fboWidth = PGL.nextPowerOfTwo(pg.width);
-        fboHeight = PGL.nextPowerOfTwo(pg.height);
+        fboWidth = nextPowerOfTwo(pg.width);
+        fboHeight = nextPowerOfTwo(pg.height);
       }
 
       boolean packed = ext.indexOf("packed_depth_stencil") != -1;
       int depthBits = getDepthBits();
       int stencilBits = getStencilBits();
 
-      GLES20.glGenTextures(2, glColorTex, 0);
+      glColorTex = allocateDirectIntBuffer(2);
+      glColorFbo = allocateDirectIntBuffer(1);
+      glDepthStencil = allocateDirectIntBuffer(1);
+      glDepth = allocateDirectIntBuffer(1);
+      glStencil = allocateDirectIntBuffer(1);
+
+      genTextures(2, glColorTex);
       for (int i = 0; i < 2; i++) {
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, glColorTex[i]);
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D,
-                               GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D,
-                               GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_NEAREST);
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D,
-                               GLES20.GL_TEXTURE_WRAP_S,
-                               GLES20.GL_CLAMP_TO_EDGE);
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D,
-                               GLES20.GL_TEXTURE_WRAP_T,
-                               GLES20.GL_CLAMP_TO_EDGE);
-        GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA,
-                            fboWidth, fboHeight, 0, PGL.RGBA, PGL.UNSIGNED_BYTE,
-                            null);
-        initTexture(GLES20.GL_TEXTURE_2D, PGL.RGBA, fboWidth, fboHeight);
+        bindTexture(TEXTURE_2D, glColorTex.get(i));
+        texParameteri(TEXTURE_2D, TEXTURE_MIN_FILTER, NEAREST);
+        texParameteri(TEXTURE_2D, TEXTURE_MAG_FILTER, NEAREST);
+        texParameteri(TEXTURE_2D, TEXTURE_WRAP_S, CLAMP_TO_EDGE);
+        texParameteri(TEXTURE_2D, TEXTURE_WRAP_T, CLAMP_TO_EDGE);
+        texImage2D(TEXTURE_2D, 0, RGBA, fboWidth, fboHeight, 0,
+                   RGBA, UNSIGNED_BYTE, null);
+        initTexture(TEXTURE_2D, RGBA, fboWidth, fboHeight);
       }
-      GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
+      bindTexture(TEXTURE_2D, 0);
 
       backTex = 0;
       frontTex = 1;
 
-      GLES20.glGenFramebuffers(1, glColorFbo, 0);
-      GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, glColorFbo[0]);
-      GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER,
-                                    GLES20.GL_COLOR_ATTACHMENT0,
-                                    GLES20.GL_TEXTURE_2D, glColorTex[backTex], 0);
+      genFramebuffers(1, glColorFbo);
+      bindFramebuffer(FRAMEBUFFER, glColorFbo.get(0));
+      framebufferTexture2D(FRAMEBUFFER, COLOR_ATTACHMENT0, TEXTURE_2D,
+                           glColorTex.get(backTex), 0);
 
       if (packed && depthBits == 24 && stencilBits == 8) {
         // packed depth+stencil buffer
-        int[] depthStencil = { 0 };
-        GLES20.glGenRenderbuffers(1, depthStencil, 0);
-        GLES20.glBindRenderbuffer(GLES20.GL_RENDERBUFFER, depthStencil[0]);
-        GLES20.glRenderbufferStorage(GLES20.GL_RENDERBUFFER, DEPTH24_STENCIL8,
-                                     fboWidth, fboHeight);
-        GLES20.glFramebufferRenderbuffer(GLES20.GL_FRAMEBUFFER,
-                                         GLES20.GL_DEPTH_ATTACHMENT,
-                                         GLES20.GL_RENDERBUFFER,
-                                         depthStencil[0]);
-        GLES20.glFramebufferRenderbuffer(GLES20.GL_FRAMEBUFFER,
-                                         GLES20.GL_STENCIL_ATTACHMENT,
-                                         GLES20.GL_RENDERBUFFER,
-                                         depthStencil[0]);
+
+        genRenderbuffers(1, glDepthStencil);
+        bindRenderbuffer(RENDERBUFFER, glDepthStencil.get(0));
+        renderbufferStorage(RENDERBUFFER, DEPTH24_STENCIL8,
+                            fboWidth, fboHeight);
+        framebufferRenderbuffer(FRAMEBUFFER, DEPTH_ATTACHMENT, RENDERBUFFER,
+                                glDepthStencil.get(0));
+        framebufferRenderbuffer(FRAMEBUFFER, STENCIL_ATTACHMENT, RENDERBUFFER,
+                                glDepthStencil.get(0));
       } else { // separate depth and stencil buffers
-        int[] depth = { 0 };
-        int[] stencil = { 0 };
+        if (0 < depthBits) {
+          int depthComponent = DEPTH_COMPONENT16;
+          if (depthBits == 32) {
+            depthComponent = DEPTH_COMPONENT32;
+          } else if (depthBits == 24) {
+            depthComponent = DEPTH_COMPONENT24;
+          } else if (depthBits == 16) {
+            depthComponent = DEPTH_COMPONENT16;
+          }
 
-        GLES20.glGenRenderbuffers(1, depth, 0);
-        GLES20.glBindRenderbuffer(GLES20.GL_RENDERBUFFER, depth[0]);
-        GLES20.glRenderbufferStorage(GLES20.GL_RENDERBUFFER,
-                                     GLES20.GL_DEPTH_COMPONENT16,
-                                     fboWidth, fboHeight);
-        GLES20.glFramebufferRenderbuffer(GLES20.GL_FRAMEBUFFER,
-                                         GLES20.GL_DEPTH_ATTACHMENT,
-                                         GLES20.GL_RENDERBUFFER, depth[0]);
+          genRenderbuffers(1, glDepth);
+          bindRenderbuffer(RENDERBUFFER, glDepth.get(0));
+          renderbufferStorage(RENDERBUFFER, depthComponent, fboWidth, fboHeight);
+          framebufferRenderbuffer(FRAMEBUFFER, DEPTH_ATTACHMENT,
+                                  RENDERBUFFER, glDepth.get(0));
+        }
 
-        if (stencilBits == 8) {
-          // We have stencil buffer.
-          GLES20.glGenRenderbuffers(1, stencil, 0);
-          GLES20.glBindRenderbuffer(GLES20.GL_RENDERBUFFER, stencil[0]);
-          GLES20.glRenderbufferStorage(GLES20.GL_RENDERBUFFER,
-                                       GLES20.GL_STENCIL_INDEX8,
-                                       fboWidth, fboHeight);
-          GLES20.glFramebufferRenderbuffer(GLES20.GL_FRAMEBUFFER,
-                                           GLES20.GL_STENCIL_ATTACHMENT,
-                                           GLES20.GL_RENDERBUFFER, stencil[0]);
+        if (0 < stencilBits) {
+          int stencilIndex = STENCIL_INDEX1;
+          if (stencilBits == 8) {
+            stencilIndex = STENCIL_INDEX8;
+          } else if (stencilBits == 4) {
+            stencilIndex = STENCIL_INDEX4;
+          } else if (stencilBits == 1) {
+            stencilIndex = STENCIL_INDEX1;
+          }
+
+          genRenderbuffers(1, glStencil);
+          bindRenderbuffer(RENDERBUFFER, glStencil.get(0));
+          renderbufferStorage(RENDERBUFFER, stencilIndex, fboWidth, fboHeight);
+          framebufferRenderbuffer(FRAMEBUFFER, STENCIL_ATTACHMENT,
+                                  RENDERBUFFER, glStencil.get(0));
         }
       }
       validateFramebuffer();
@@ -522,11 +527,11 @@ public class PGL {
       // Clear the depth and stencil buffers in the color FBO. There is no
       // need to clear the color buffers because the textures attached were
       // properly initialized blank.
-      GLES20.glClearDepthf(1);
-      GLES20.glClearStencil(0);
-      GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_STENCIL_BUFFER_BIT);
+      clearDepth(1);
+      clearStencil(0);
+      clear(DEPTH_BUFFER_BIT | STENCIL_BUFFER_BIT);
 
-      GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
+      bindFramebuffer(FRAMEBUFFER, 0);
 
       initialized = true;
     }
@@ -535,7 +540,7 @@ public class PGL {
 
   protected int getReadFramebuffer() {
     if (usingFBOlayer) {
-      return glColorFbo[0];
+      return glColorFbo.get(0);
     } else {
       return 0;
     }
@@ -544,7 +549,7 @@ public class PGL {
 
   protected int getDrawFramebuffer() {
     if (usingFBOlayer) {
-      return glColorFbo[0];
+      return glColorFbo.get(0);
     } else {
       return 0;
     }
@@ -553,18 +558,18 @@ public class PGL {
 
   protected int getDefaultDrawBuffer() {
     if (usingFBOlayer) {
-      return GLES20.GL_COLOR_ATTACHMENT0;
+      return COLOR_ATTACHMENT0;
     } else {
-      return GLES20.GL_BACK;
+      return BACK;
     }
   }
 
 
   protected int getDefaultReadBuffer() {
     if (usingFBOlayer) {
-      return GLES20.GL_COLOR_ATTACHMENT0;
+      return COLOR_ATTACHMENT0;
     } else {
-      return GLES20.GL_FRONT;
+      return FRONT;
     }
   }
 
@@ -580,26 +585,38 @@ public class PGL {
 
 
   protected int getDepthBits() {
-    int[] temp = {0};
-    GLES20.glGetIntegerv(GLES20.GL_DEPTH_BITS, temp, 0);
-    return temp[0];
+    intBuffer.rewind();
+    getIntegerv(DEPTH_BITS, intBuffer);
+    return intBuffer.get(0);
   }
 
 
   protected int getStencilBits() {
-    int[] temp = {0};
-    GLES20.glGetIntegerv(GLES20.GL_STENCIL_BITS, temp, 0);
-    return temp[0];
+    intBuffer.rewind();
+    getIntegerv(STENCIL_BITS, intBuffer);
+    return intBuffer.get(0);
+  }
+
+
+  protected boolean getDepthTest() {
+    intBuffer.rewind();
+    getBooleanv(DEPTH_TEST, intBuffer);
+    return intBuffer.get(0) == 0 ? false : true;
+  }
+
+
+  protected boolean getDepthWriteMask() {
+    intBuffer.rewind();
+    getBooleanv(DEPTH_WRITEMASK, intBuffer);
+    return intBuffer.get(0) == 0 ? false : true;
   }
 
 
   protected Texture wrapBackTexture() {
     Texture tex = new Texture(pg.parent);
-    tex.init(glColorTex[backTex],
-             GLES20.GL_TEXTURE_2D, GLES20.GL_RGBA,
-             fboWidth, fboHeight,
-             GLES20.GL_NEAREST, GLES20.GL_NEAREST,
-             GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
+    tex.init(glColorTex.get(backTex), TEXTURE_2D, RGBA,
+             fboWidth, fboHeight, NEAREST, NEAREST,
+             CLAMP_TO_EDGE, CLAMP_TO_EDGE);
     tex.invertedY(true);
     tex.colorBufferOf(pg);
     pg.setCache(pg, tex);
@@ -609,11 +626,9 @@ public class PGL {
 
   protected Texture wrapFrontTexture() {
     Texture tex = new Texture(pg.parent);
-    tex.init(glColorTex[frontTex],
-             GLES20.GL_TEXTURE_2D, GLES20.GL_RGBA,
-             fboWidth, fboHeight,
-             GLES20.GL_NEAREST, GLES20.GL_NEAREST,
-             GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
+    tex.init(glColorTex.get(frontTex), TEXTURE_2D, RGBA,
+             fboWidth, fboHeight, NEAREST, NEAREST,
+             CLAMP_TO_EDGE, CLAMP_TO_EDGE);
     tex.invertedY(true);
     tex.colorBufferOf(pg);
     return tex;
@@ -621,34 +636,34 @@ public class PGL {
 
 
   int getBackTextureName() {
-    return glColorTex[backTex];
+    return glColorTex.get(backTex);
 
   }
 
 
   int getFrontTextureName() {
-    return glColorTex[frontTex];
+    return glColorTex.get(frontTex);
   }
 
 
   protected void bindFrontTexture() {
-    if (!texturingIsEnabled(GLES20.GL_TEXTURE_2D)) {
-      enableTexturing(GLES20.GL_TEXTURE_2D);
+    if (!texturingIsEnabled(TEXTURE_2D)) {
+      enableTexturing(TEXTURE_2D);
     }
-    gl.glBindTexture(GLES20.GL_TEXTURE_2D, glColorTex[frontTex]);
+    bindTexture(TEXTURE_2D, glColorTex.get(frontTex));
   }
 
 
   protected void unbindFrontTexture() {
-    if (textureIsBound(GLES20.GL_TEXTURE_2D, glColorTex[frontTex])) {
+    if (textureIsBound(TEXTURE_2D, glColorTex.get(frontTex))) {
       // We don't want to unbind another texture
       // that might be bound instead of this one.
-      if (!texturingIsEnabled(GLES20.GL_TEXTURE_2D)) {
-        enableTexturing(GLES20.GL_TEXTURE_2D);
-        gl.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
-        disableTexturing(GLES20.GL_TEXTURE_2D);
+      if (!texturingIsEnabled(TEXTURE_2D)) {
+        enableTexturing(TEXTURE_2D);
+        bindTexture(TEXTURE_2D, 0);
+        disableTexturing(TEXTURE_2D);
       } else {
-        gl.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
+        bindTexture(TEXTURE_2D, 0);
       }
     }
   }
@@ -665,20 +680,18 @@ public class PGL {
 
 
   protected void beginDraw(boolean clear0) {
-    if ((!clear0 || FORCE_SCREEN_FBO) && glColorFbo[0] != 0) {
-      GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, glColorFbo[0]);
-      GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER,
-                                    GLES20.GL_COLOR_ATTACHMENT0,
-                                    GLES20.GL_TEXTURE_2D,
-                                    glColorTex[backTex], 0);
+    if ((!clear0 || FORCE_SCREEN_FBO) && glColorFbo.get(0) != 0) {
+      bindFramebuffer(FRAMEBUFFER, glColorFbo.get(0));
+      framebufferTexture2D(FRAMEBUFFER, COLOR_ATTACHMENT0,
+                           TEXTURE_2D, glColorTex.get(backTex), 0);
       if (firstFrame) {
         // No need to draw back color buffer because we are in the first frame.
-        GLES20.glClearColor(0, 0, 0, 0);
-        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
+        clearColor(0, 0, 0, 0);
+        clear(COLOR_BUFFER_BIT);
       } else if (!clear0) {
         // Render previous back texture (now is the front) as background,
         // because no background() is being used ("incremental drawing")
-        drawTexture(GLES20.GL_TEXTURE_2D, glColorTex[frontTex],
+        drawTexture(TEXTURE_2D, glColorTex.get(frontTex),
                     fboWidth, fboHeight, 0, 0, pg.width, pg.height,
                                          0, 0, pg.width, pg.height);
       }
@@ -696,15 +709,15 @@ public class PGL {
   protected void endDraw(boolean clear) {
     if (usingFBOlayer) {
       // Draw the contents of the back texture to the screen framebuffer.
-      GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
+      bindFramebuffer(FRAMEBUFFER, 0);
 
-      GLES20.glClearDepthf(1);
-      GLES20.glClearColor(0, 0, 0, 0);
-      GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
+      clearDepth(1);
+      clearColor(0, 0, 0, 0);
+      clear(COLOR_BUFFER_BIT | DEPTH_BUFFER_BIT);
 
       // Render current back texture to screen, without blending.
-      GLES20.glDisable(GLES20.GL_BLEND);
-      drawTexture(GLES20.GL_TEXTURE_2D, glColorTex[backTex],
+      disable(BLEND);
+      drawTexture(TEXTURE_2D, glColorTex.get(backTex),
                   fboWidth, fboHeight, 0, 0, pg.width, pg.height,
                                        0, 0, pg.width, pg.height);
 
@@ -740,7 +753,7 @@ public class PGL {
     if (-1 < name) {
       GLES20.glGetIntegerv(name, values);
     } else {
-      fillBuffer(values, 0, values.capacity() - 1, 0);
+      fillBuffer(values, 0, values.capacity(), 0);
     }
   }
 
@@ -749,7 +762,7 @@ public class PGL {
     if (-1 < name) {
       GLES20.glGetFloatv(name, values);
     } else {
-      fillBuffer(values, 0, values.capacity() - 1, 0);
+      fillBuffer(values, 0, values.capacity(), 0);
     }
   }
 
@@ -758,7 +771,7 @@ public class PGL {
     if (-1 < name) {
       GLES20.glGetBooleanv(name, values);
     } else {
-      fillBuffer(values, 0, values.capacity() - 1, 0);
+      fillBuffer(values, 0, values.capacity(), 0);
     }
   }
 
@@ -1607,22 +1620,16 @@ public class PGL {
       texData = allocateDirectFloatBuffer(texCoords.length);
     }
 
-    if (intBuffer == null) {
-      intBuffer = allocateDirectIntBuffer(1);
-    }
-
     if (0 < texShaderProgram) {
       // The texture overwrites anything drawn earlier.
-      getBooleanv(DEPTH_TEST, intBuffer);
-      boolean depthTest = intBuffer.get(0) == 0 ? false : true;
+      boolean depthTest = getDepthTest();
       disable(DEPTH_TEST);
 
       // When drawing the texture we don't write to the
       // depth mask, so the texture remains in the background
       // and can be occluded by anything drawn later, even if
       // if it is behind it.
-      getBooleanv(DEPTH_WRITEMASK, intBuffer);
-      boolean depthMask = intBuffer.get(0) == 0 ? false : true;
+      boolean depthMask = getDepthWriteMask();
       depthMask(false);
 
       useProgram(texShaderProgram);
@@ -2031,9 +2038,7 @@ public class PGL {
     if (shader != 0) {
       shaderSource(shader, source);
       compileShader(shader);
-      getShaderiv(shader, COMPILE_STATUS, intBuffer);
-      boolean compiled = intBuffer.get(0) == 0 ? false : true;
-      if (!compiled) {
+      if (!compiled(shader)) {
         System.err.println("Could not compile shader " + shaderType + ":");
         System.err.println(getShaderInfoLog(shader));
         deleteShader(shader);
@@ -2050,9 +2055,7 @@ public class PGL {
       attachShader(program, vertexShader);
       attachShader(program, fragmentShader);
       linkProgram(program);
-      getProgramiv(program, LINK_STATUS, intBuffer);
-      boolean linked = intBuffer.get(0) == 0 ? false : true;
-      if (!linked) {
+      if (!linked(program)) {
         System.err.println("Could not link program: ");
         System.err.println(getProgramInfoLog(program));
         deleteProgram(program);
@@ -2060,6 +2063,20 @@ public class PGL {
       }
     }
     return program;
+  }
+
+
+  protected boolean compiled(int shader) {
+    intBuffer.rewind();
+    getShaderiv(shader, COMPILE_STATUS, intBuffer);
+    return intBuffer.get(0) == 0 ? false : true;
+  }
+
+
+  protected boolean linked(int program) {
+    intBuffer.rewind();
+    getProgramiv(program, LINK_STATUS, intBuffer);
+    return intBuffer.get(0) == 0 ? false : true;
   }
 
 
@@ -2092,7 +2109,7 @@ public class PGL {
 
 
   protected int[] getGLVersion() {
-    String version = GLES20.glGetString(GLES20.GL_VERSION).trim();
+    String version = getString(VERSION).trim();
     int[] res = {0, 0, 0};
     String[] parts = version.split(" ");
     for (int i = 0; i < parts.length; i++) {
@@ -2143,50 +2160,42 @@ public class PGL {
 
 
   protected static void fillBuffer(ByteBuffer buf, int i0, int i1, byte val) {
-    int n = i1 - i0 + 1;
+    int n = i1 - i0;
     byte[] temp = new byte[n];
     Arrays.fill(temp, 0, n, val);
     buf.position(i0);
-    buf.limit(i1 + 1);
     buf.put(temp, 0, n);
-    buf.position(0);
-    buf.limit(buf.capacity());
+    buf.rewind();
   }
 
 
   protected static void fillBuffer(ShortBuffer buf, int i0, int i1, short val) {
-    int n = i1 - i0 + 1;
+    int n = i1 - i0;
     short[] temp = new short[n];
     Arrays.fill(temp, 0, n, val);
     buf.position(i0);
-    buf.limit(i1 + 1);
     buf.put(temp, 0, n);
-    buf.position(0);
-    buf.limit(buf.capacity());
+    buf.rewind();
   }
 
 
   protected static void fillBuffer(IntBuffer buf, int i0, int i1, int val) {
-    int n = i1 - i0 + 1;
+    int n = i1 - i0;
     int[] temp = new int[n];
     Arrays.fill(temp, 0, n, val);
     buf.position(i0);
-    buf.limit(i1 + 1);
     buf.put(temp, 0, n);
-    buf.position(0);
-    buf.limit(buf.capacity());
+    buf.rewind();
   }
 
 
   protected static void fillBuffer(FloatBuffer buf, int i0, int i1, float val) {
-    int n = i1 - i0 + 1;
+    int n = i1 - i0;
     float[] temp = new float[n];
     Arrays.fill(temp, 0, n, val);
     buf.position(i0);
-    buf.limit(i1 + 1);
     buf.put(temp, 0, n);
-    buf.position(0);
-    buf.limit(buf.capacity());
+    buf.rewind();
   }
 
 
