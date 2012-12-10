@@ -352,6 +352,15 @@ public class PGL {
   /** Selected GL profile */
   public static GLProfile profile;
 
+  /** The PGraphics object using this interface */
+  protected PGraphicsOpenGL pg;
+
+  /** Whether OpenGL has been initialized or not */
+  protected boolean initialized;
+
+  /** Flag to signal rendering of first frame */
+  protected boolean firstFrame;
+
   /** The capabilities of the OpenGL rendering surface */
   protected static GLCapabilitiesImmutable capabilities;
 
@@ -364,13 +373,6 @@ public class PGL {
   /** GL2 desktop functionality (blit framebuffer, map buffer range,
    * multisampled renerbuffers) */
   protected static GL2 gl2x;
-
-  /** The PGraphics object using this interface */
-  protected PGraphicsOpenGL pg;
-
-  /** Whether OpenGL has been initialized or not */
-  protected boolean initialized;
-  protected boolean firstFrame;
 
   /** Windowing toolkit */
   protected static int toolkit = NEWT;
@@ -456,8 +458,6 @@ public class PGL {
     +1.0f, +1.0f, 1.0f, 1.0f
   };
   protected static FloatBuffer texData;
-  protected static ByteBuffer byteBuffer;
-  protected static IntBuffer intBuffer;
 
   protected static String texVertShaderSource =
     "attribute vec2 inVertex;" +
@@ -486,7 +486,10 @@ public class PGL {
 
   ///////////////////////////////////////////////////////////
 
-  // 1-pixel color, depth, stencil buffers
+  // Utilities
+
+  protected ByteBuffer byteBuffer;
+  protected IntBuffer intBuffer;
 
   protected IntBuffer colorBuffer;
   protected FloatBuffer depthBuffer;
@@ -502,6 +505,12 @@ public class PGL {
     this.pg = pg;
     if (glu == null) {
       glu = new GLU();
+    }
+    if (byteBuffer == null) {
+      byteBuffer = allocateDirectByteBuffer(1);
+    }
+    if (intBuffer == null) {
+      intBuffer = allocateDirectIntBuffer(1);
     }
     initialized = false;
   }
@@ -846,7 +855,11 @@ public class PGL {
 
 
   public void getIntegerv(int name, IntBuffer values) {
-    gl.glGetIntegerv(name, values);
+    if (-1 < name) {
+      gl.glGetIntegerv(name, values);
+    } else {
+      fillBuffer(values, 0, values.capacity() - 1, 0);
+    }
   }
 
 
@@ -856,7 +869,11 @@ public class PGL {
 
 
   public void getFloatv(int name, FloatBuffer values) {
-    gl.glGetFloatv(name, values);
+    if (-1 < name) {
+      gl.glGetFloatv(name, values);
+    } else {
+      fillBuffer(values, 0, values.capacity() - 1, 0);
+    }
   }
 
 
@@ -873,10 +890,19 @@ public class PGL {
 //  }
 
 
-  public void getBooleanv(int name, ByteBuffer values) {
-     gl.glGetBooleanv(name, values);
+  public void getBooleanv(int name, IntBuffer values) {
+    if (-1 < name) {
+      if (byteBuffer.capacity() < values.capacity()) {
+        byteBuffer = allocateDirectByteBuffer(values.capacity());
+      }
+      gl.glGetBooleanv(name, byteBuffer);
+      for (int i = 0; i < values.capacity(); i++) {
+        values.put(i, byteBuffer.get(i));
+      }
+    } else {
+      fillBuffer(values, 0, values.capacity() - 1, 0);
+    }
   }
-
 
 
   ///////////////////////////////////////////////////////////
@@ -1902,22 +1928,18 @@ public class PGL {
       texData = allocateDirectFloatBuffer(texCoords.length);
     }
 
-    if (byteBuffer == null) {
-      byteBuffer = allocateDirectByteBuffer(1);
-    }
-
     if (0 < tex2DShaderProgram) {
       // The texture overwrites anything drawn earlier.
-      getBooleanv(DEPTH_TEST, byteBuffer);
-      boolean depthTest = byteBuffer.get(0) == 0 ? false : true;
+      getBooleanv(DEPTH_TEST, intBuffer);
+      boolean depthTest = intBuffer.get(0) == 0 ? false : true;
       disable(DEPTH_TEST);
 
       // When drawing the texture we don't write to the
       // depth mask, so the texture remains in the background
       // and can be occluded by anything drawn later, even if
       // if it is behind it.
-      getBooleanv(DEPTH_WRITEMASK, byteBuffer);
-      boolean depthMask = byteBuffer.get(0) == 0 ? false : true;
+      getBooleanv(DEPTH_WRITEMASK, intBuffer);
+      boolean depthMask = intBuffer.get(0) == 0 ? false : true;
       depthMask(false);
 
       useProgram(tex2DShaderProgram);
@@ -2013,22 +2035,18 @@ public class PGL {
       texData = allocateDirectFloatBuffer(texCoords.length);
     }
 
-    if (byteBuffer == null) {
-      byteBuffer = allocateDirectByteBuffer(1);
-    }
-
     if (0 < texRectShaderProgram) {
       // The texture overwrites anything drawn earlier.
-      getBooleanv(DEPTH_TEST, byteBuffer);
-      boolean depthTest = byteBuffer.get(0) == 0 ? false : true;
+      getBooleanv(DEPTH_TEST, intBuffer);
+      boolean depthTest = intBuffer.get(0) == 0 ? false : true;
       disable(DEPTH_TEST);
 
       // When drawing the texture we don't write to the
       // depth mask, so the texture remains in the background
       // and can be occluded by anything drawn later, even if
       // if it is behind it.
-      getBooleanv(DEPTH_WRITEMASK, byteBuffer);
-      boolean depthMask = byteBuffer.get(0) == 0 ? false : true;
+      getBooleanv(DEPTH_WRITEMASK, intBuffer);
+      boolean depthMask = intBuffer.get(0) == 0 ? false : true;
       depthMask(false);
 
       useProgram(texRectShaderProgram);
@@ -2443,9 +2461,6 @@ public class PGL {
   protected int createShader(int shaderType, String source) {
     int shader = createShader(shaderType);
     if (shader != 0) {
-      if (intBuffer == null) {
-        intBuffer = allocateDirectIntBuffer(1);
-      }
       shaderSource(shader, source);
       compileShader(shader);
       getShaderiv(shader, COMPILE_STATUS, intBuffer);
@@ -2464,9 +2479,6 @@ public class PGL {
   protected int createProgram(int vertexShader, int fragmentShader) {
     int program = createProgram();
     if (program != 0) {
-      if (intBuffer == null) {
-        intBuffer = allocateDirectIntBuffer(1);
-      }
       attachShader(program, vertexShader);
       attachShader(program, fragmentShader);
       linkProgram(program);
@@ -2563,38 +2575,42 @@ public class PGL {
 
 
   protected static void fillBuffer(ByteBuffer buf, int i0, int i1, byte val) {
-    int n = i1 - i0 + 1;
+    int n = i1 - i0;
     byte[] temp = new byte[n];
     Arrays.fill(temp, 0, n, val);
     buf.position(i0);
     buf.put(temp, 0, n);
+    buf.rewind();
   }
 
 
   protected static void fillBuffer(ShortBuffer buf, int i0, int i1, short val) {
-    int n = i1 - i0 + 1;
+    int n = i1 - i0;
     short[] temp = new short[n];
     Arrays.fill(temp, 0, n, val);
     buf.position(i0);
     buf.put(temp, 0, n);
+    buf.rewind();
   }
 
 
   protected static void fillBuffer(IntBuffer buf, int i0, int i1, int val) {
-    int n = i1 - i0 + 1;
+    int n = i1 - i0;
     int[] temp = new int[n];
     Arrays.fill(temp, 0, n, val);
     buf.position(i0);
     buf.put(temp, 0, n);
+    buf.rewind();
   }
 
 
   protected static void fillBuffer(FloatBuffer buf, int i0, int i1, float val) {
-    int n = i1 - i0 + 1;
+    int n = i1 - i0;
     float[] temp = new float[n];
     Arrays.fill(temp, 0, n, val);
     buf.position(i0);
     buf.put(temp, 0, n);
+    buf.rewind();
   }
 
 
