@@ -5,9 +5,9 @@ o add loadType() and saveType()... get working with shapes, etc
 X heading2D()? weird.. changed to heading()
 X   http://toxiclibs.org/docs/core/toxi/geom/Vec3D.html
 X   http://code.google.com/p/processing/issues/detail?id=987
-
-_ hint(OPENGL_ERRORS) should be the opposite to enable the reporting, no?
-_   hint(ENABLE_OPENGL_ERRORS) should be the hint.. disabled by default
+o hint(OPENGL_ERRORS) should be the opposite to enable the reporting, no?
+o   hint(ENABLE_OPENGL_ERRORS) should be the hint.. disabled by default
+X   nah, just leave these turned on since (potentially) important
 
 cleaning/earlier
 C textureWrap() CLAMP and REPEAT now added
@@ -29,6 +29,16 @@ X makeEmptyNull() -> replace("", null);
 X saveTable("filename.tsv") or saveTable("filename.txt", "tsv")
 X createTable() method in PApplet
 X removed getUniqueXxxx() and some others, pending names
+
+_ when using loadFont(), don't enable native fonts unless hint() in use
+_   but on createFont(), we're probably OK
+_   might need to make reference notes about the two behaviors
+_   remove hint(ENABLE_NATIVE_FONTS)
+
+_ implement mousePressed(Event) etc
+_   better to do this instead of bringing back the magic event
+_   or implementing the magic event on Android
+_   also problematic with it not being called now
 
 _ shader syntax (Andres request)
 _   might also need a define inside the shader to control what type it is
@@ -104,11 +114,6 @@ _ callback for requestImage()
 _   http://code.google.com/p/processing/issues/detail?id=641
 _ remove/update requestImage example
 
-_ implement mousePressed(Event) etc
-_   better to do this instead of bringing back the magic event
-_   or implementing the magic event on Android
-_   also problematic with it not being called now
-
 stop() mess
 _ in PApplet.main(), windowClosing() should probably be calling 'exit()'
 _   or rather, we should never call System.exit(0), ja?
@@ -166,18 +171,11 @@ _     so that it could avoid quitting if the sketch hasn't been stopped
 _     or if the sketch window is foremost
 _     maybe a hack where a new menubar is added? 
 
-_ when using loadFont(), don't enable native fonts unless hint() in use
-_   but on createFont(), we're probably OK
-_   might need to make reference notes about the two behaviors
-
 _ splice() throws ClassCastException when used with objects like PVector 
 _   http://code.google.com/p/processing/issues/detail?id=1407
 
 _ add "CGAffineTransformInvert: singular matrix" problem to the Wiki
 _   http://code.google.com/p/processing/issues/detail?id=1363
-
-_ "translate, or this variation of it" when using text(s, x, y, z) accidentally
-_   change to be the text command
 
 _ OutOfMemory in image()
 _   http://code.google.com/p/processing/issues/detail?id=1353
@@ -276,9 +274,6 @@ _ change how beginRecord() works.. passing around PApplet vs PGraphics is gross
 _   have to pass PApplet just to make the rendering work to both renderers
 _   should instead be a renderer that splits things out
 
-_ if save() returns boolean, does saveFrame()?
-_   also need to copy this over to android
-
 
 2.0 / methods
 _ decision on registered methods
@@ -361,6 +356,10 @@ _ make determination on shape(x,y,z,w,h,d) or no
 _ new PGraphics(... OutputStream) 
 _   http://code.google.com/p/processing/issues/detail?id=246
 _   already added for PDF, just need to work out the API
+_ if save() returns boolean, does saveFrame()?
+_   also need to copy this over to android
+_ "translate, or this variation of it" when using text(s, x, y, z) accidentally
+_   change to be the text command
 
 
 
