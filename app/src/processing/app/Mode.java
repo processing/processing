@@ -863,13 +863,22 @@ public abstract class Mode {
 
 
   public SyntaxStyle getStyle(String attribute) {
-    SyntaxStyle style = theme.getStyle(attribute);
-    if (style == null) {
-//      System.err.println("No style coloring found for " + attribute);
-//      style = new SyntaxStyle(Color.BLACK, false, false);
+    String str = Preferences.get("editor.token." + attribute + ".style");
+    if (str == null) {
       throw new IllegalArgumentException("No style found for " + attribute);
     }
-    return style;
+
+    StringTokenizer st = new StringTokenizer(str, ",");
+
+    String s = st.nextToken();
+    if (s.indexOf("#") == 0) s = s.substring(1);
+    Color color = new Color(Integer.parseInt(s, 16));
+
+    s = st.nextToken();
+    boolean bold = (s.indexOf("bold") != -1);
+    boolean italic = (s.indexOf("italic") != -1);
+
+    return new SyntaxStyle(color, italic, bold);
   }
 
 

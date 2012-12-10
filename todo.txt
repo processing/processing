@@ -17,6 +17,8 @@ X error checker broken in experimental mode (fix from Manindra)
 X   http://code.google.com/p/processing/issues/detail?id=1449
 X Color coding for if/else in Processing IDE doesn't match
 X   http://code.google.com/p/processing/issues/detail?id=1457
+X add ESC and cmd/ctrl-W to the Examples window
+X move token/syntax coloring out of theme.txt and back into preferences
 
 earlier
 X include debug mode as 'experimental'?

@@ -275,7 +275,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
     // Open the document that was passed in
     boolean loaded = handleOpenInternal(path);
-    if (!loaded) sketch = null;
+    if (!loaded) {
+      sketch = null;
+    }
   }
 
 
