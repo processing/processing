@@ -9071,7 +9071,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     void polyVertexCheck() {
-      if (polyVertexCount == polyVerticesBuffer.capacity() / 4) {
+      if (polyVertexCount == polyVertices.length / 4) {
         int newSize = polyVertexCount << 1;
 
         expandPolyVertices(newSize);
@@ -9090,7 +9090,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     void polyVertexCheck(int count) {
-      int oldSize = polyVerticesBuffer.capacity() / 4;
+      int oldSize = polyVertices.length / 4;
       if (polyVertexCount + count > oldSize) {
         int newSize = expandArraySize(oldSize, polyVertexCount + count);
 
@@ -9110,7 +9110,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     void polyIndexCheck(int count) {
-      int oldSize = polyIndicesBuffer.capacity();
+      int oldSize = polyIndices.length;
       if (polyIndexCount + count > oldSize) {
         int newSize = expandArraySize(oldSize, polyIndexCount + count);
 
@@ -9123,7 +9123,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     void polyIndexCheck() {
-      if (polyIndexCount == polyIndicesBuffer.capacity()) {
+      if (polyIndexCount == polyIndices.length) {
         int newSize = polyIndexCount << 1;
 
         expandPolyIndices(newSize);
@@ -9135,7 +9135,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     void lineVertexCheck(int count) {
-      int oldSize = lineVerticesBuffer.capacity() / 4;
+      int oldSize = lineVertices.length / 4;
       if (lineVertexCount + count > oldSize) {
         int newSize = expandArraySize(oldSize, lineVertexCount + count);
 
@@ -9150,7 +9150,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     void lineIndexCheck(int count) {
-      int oldSize = lineIndicesBuffer.capacity();
+      int oldSize = lineIndices.length;
       if (lineIndexCount + count > oldSize) {
         int newSize = expandArraySize(oldSize, lineIndexCount + count);
 
@@ -9163,7 +9163,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     void pointVertexCheck(int count) {
-      int oldSize = pointVerticesBuffer.capacity() / 4;
+      int oldSize = pointVertices.length / 4;
       if (pointVertexCount + count > oldSize) {
         int newSize = expandArraySize(oldSize, pointVertexCount + count);
 
@@ -9178,7 +9178,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     void pointIndexCheck(int count) {
-      int oldSize = pointIndicesBuffer.capacity();
+      int oldSize = pointIndices.length;
       if (pointIndexCount + count > oldSize) {
         int newSize = expandArraySize(oldSize, pointIndexCount + count);
 
@@ -9603,7 +9603,7 @@ public class PGraphicsOpenGL extends PGraphics {
     // Trim arrays
 
     void trim() {
-      if (0 < polyVertexCount && polyVertexCount < polyVerticesBuffer.capacity() / 4) {
+      if (0 < polyVertexCount && polyVertexCount < polyVertices.length / 4) {
         trimPolyVertices();
         trimPolyColors();
         trimPolyNormals();
@@ -9614,27 +9614,27 @@ public class PGraphicsOpenGL extends PGraphics {
         trimPolyShininess();
       }
 
-      if (0 < polyIndexCount && polyIndexCount < polyIndicesBuffer.capacity()) {
+      if (0 < polyIndexCount && polyIndexCount < polyIndices.length) {
         trimPolyIndices();
       }
 
-      if (0 < lineVertexCount && lineVertexCount < lineVerticesBuffer.capacity() / 4) {
+      if (0 < lineVertexCount && lineVertexCount < lineVertices.length / 4) {
         trimLineVertices();
         trimLineColors();
         trimLineAttribs();
       }
 
-      if (0 < lineIndexCount && lineIndexCount < lineIndicesBuffer.capacity()) {
+      if (0 < lineIndexCount && lineIndexCount < lineIndices.length) {
         trimLineIndices();
       }
 
-      if (0 < pointVertexCount && pointVertexCount < pointVerticesBuffer.capacity() / 4) {
+      if (0 < pointVertexCount && pointVertexCount < pointVertices.length / 4) {
         trimPointVertices();
         trimPointColors();
         trimPointAttribs();
       }
 
-      if (0 < pointIndexCount && pointIndexCount < pointIndicesBuffer.capacity()) {
+      if (0 < pointIndexCount && pointIndexCount < pointIndices.length) {
         trimPointIndices();
       }
     }

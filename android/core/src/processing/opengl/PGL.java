@@ -333,7 +333,7 @@ public class PGL {
 
   /** The renderer object driving the rendering loop,
    * analogous to the GLEventListener in JOGL */
-  protected AndroidRenderer renderer;
+  protected static AndroidRenderer renderer;
 
   /** Which texturing targets are enabled */
   protected static boolean[] texturingTargets = { false };
@@ -409,16 +409,14 @@ public class PGL {
 
   public PGL(PGraphicsOpenGL pg) {
     this.pg = pg;
-    renderer = new AndroidRenderer();
+    if (renderer == null) {
+      renderer = new AndroidRenderer();
+    }
     if (glu == null) {
       glu = new PGLU();
     }
-    if (byteBuffer == null) {
-      byteBuffer = allocateDirectByteBuffer(1);
-    }
-    if (intBuffer == null) {
-      intBuffer = allocateDirectIntBuffer(1);
-    }
+    byteBuffer = allocateDirectByteBuffer(1);
+    intBuffer = allocateDirectIntBuffer(1);
     initialized = false;
   }
 
@@ -738,15 +736,6 @@ public class PGL {
   }
 
 
-//  public void getIntegerv(int name, int[] values, int offset) {
-//    if (-1 < name) {
-//      GLES20.glGetIntegerv(name, values, offset);
-//    } else {
-//      Arrays.fill(values, 0);
-//    }
-//  }
-
-
   public void getIntegerv(int name, IntBuffer values) {
     if (-1 < name) {
       GLES20.glGetIntegerv(name, values);
@@ -754,15 +743,6 @@ public class PGL {
       fillBuffer(values, 0, values.capacity() - 1, 0);
     }
   }
-
-
-//  public void getFloatv(int name, float[] values, int offset) {
-//    if (-1 < name) {
-//      GLES20.glGetFloatv(name, values, offset);
-//    } else {
-//      Arrays.fill(values, 0);
-//    }
-//  }
 
 
   public void getFloatv(int name, FloatBuffer values) {
@@ -774,21 +754,13 @@ public class PGL {
   }
 
 
-//  public void getBooleanv(int name, boolean[] values, int offset) {
-//    if (-1 < name) {
-//      GLES20.glGetBooleanv(name, values, offset);
-//    } else {
-//      Arrays.fill(values, false);
-//    }
-//  }
-
   public void getBooleanv(int name, IntBuffer values) {
     if (-1 < name) {
       GLES20.glGetBooleanv(name, values);
     } else {
       fillBuffer(values, 0, values.capacity() - 1, 0);
     }
- }
+  }
 
 
   ///////////////////////////////////////////////////////////
@@ -870,17 +842,10 @@ public class PGL {
   // Textures
 
 
-//  public void genTextures(int n, int[] ids, int offset) {
-//    GLES20.glGenTextures(n, ids, offset);
-//  }
-
   public void genTextures(int n, IntBuffer ids) {
     GLES20.glGenTextures(n, ids);
   }
 
-//  public void deleteTextures(int n, int[] ids, int offset) {
-//    GLES20.glDeleteTextures(n, ids, offset);
-//  }
 
   public void deleteTextures(int n, IntBuffer ids) {
     GLES20.glDeleteTextures(n, ids);
@@ -926,12 +891,6 @@ public class PGL {
   }
 
 
-//  public void getTexParameteriv(int target, int param, int[] values,
-//                                int offset) {
-//    GLES20.glGetTexParameteriv(target, param, values, offset);
-//  }
-
-
   public void getTexParameteriv(int target, int param, IntBuffer values) {
     GLES20.glGetTexParameteriv(target, param, values);
   }
@@ -947,19 +906,9 @@ public class PGL {
   // Vertex Buffers
 
 
-//  public void genBuffers(int n, int[] ids, int offset) {
-//    GLES20.glGenBuffers(n, ids, offset);
-//  }
-
-
   public void genBuffers(int n, IntBuffer ids) {
     GLES20.glGenBuffers(n, ids);
   }
-
-
-//  public void deleteBuffers(int n, int[] ids, int offset) {
-//    GLES20.glDeleteBuffers(n, ids, offset);
-//  }
 
 
   public void deleteBuffers(int n, IntBuffer ids) {
@@ -1036,25 +985,6 @@ public class PGL {
 
   // Framebuffers, renderbuffers
 
-
-//  public void genFramebuffers(int n, int[] ids, int offset) {
-//    GLES20.glGenFramebuffers(n, ids, offset);
-//  }
-//
-//
-//  public void deleteFramebuffers(int n, int[] ids, int offset) {
-//    GLES20.glDeleteFramebuffers(n, ids, offset);
-//  }
-//
-//
-//  public void genRenderbuffers(int n, int[] ids, int offset) {
-//    GLES20.glGenRenderbuffers(n, ids, offset);
-//  }
-//
-//
-//  public void deleteRenderbuffers(int n, int[] ids, int offset) {
-//    GLES20.glDeleteRenderbuffers(n, ids, offset);
-//  }
 
   public void genFramebuffers(int n, IntBuffer ids) {
     GLES20.glGenFramebuffers(n, ids);
@@ -1215,65 +1145,6 @@ public class PGL {
   }
 
 
-//  public void uniform1iv(int loc, int count, int[] v, int offset) {
-//    GLES20.glUniform1iv(loc, count, v, offset);
-//  }
-//
-//
-//  public void uniform2iv(int loc, int count, int[] v, int offset) {
-//    GLES20.glUniform2iv(loc, count, v, offset);
-//  }
-//
-//
-//  public void uniform3iv(int loc, int count, int[] v, int offset) {
-//    GLES20.glUniform3iv(loc, count, v, offset);
-//  }
-//
-//
-//  public void uniform4iv(int loc, int count, int[] v, int offset) {
-//    GLES20.glUniform4iv(loc, count, v, offset);
-//  }
-//
-//
-//  public void uniform1fv(int loc, int count, float[] v, int offset) {
-//    GLES20.glUniform1fv(loc, count, v, offset);
-//  }
-//
-//
-//  public void uniform2fv(int loc, int count, float[] v, int offset) {
-//    GLES20.glUniform2fv(loc, count, v, offset);
-//  }
-//
-//
-//  public void uniform3fv(int loc, int count, float[] v, int offset) {
-//    GLES20.glUniform3fv(loc, count, v, offset);
-//  }
-//
-//
-//  public void uniform4fv(int loc, int count, float[] v, int offset) {
-//    GLES20.glUniform4fv(loc, count, v, offset);
-//  }
-//
-//
-//  public void uniformMatrix2fv(int loc, int count, boolean transpose,
-//                               float[] mat, int offset) {
-//    GLES20.glUniformMatrix2fv(loc, count, transpose, mat, offset);
-//  }
-//
-//
-//  public void uniformMatrix3fv(int loc, int count, boolean transpose,
-//                               float[] mat, int offset) {
-//    GLES20.glUniformMatrix3fv(loc, count, transpose, mat, offset);
-//  }
-//
-//
-//  public void uniformMatrix4fv(int loc, int count, boolean transpose,
-//                               float[] mat, int offset) {
-//    GLES20.glUniformMatrix4fv(loc, count, transpose, mat, offset);
-//  }
-
-
-
   public void uniform1iv(int loc, int count, IntBuffer v) {
     GLES20.glUniform1iv(loc, count, v);
   }
@@ -1353,25 +1224,6 @@ public class PGL {
   }
 
 
-//  public void vertexAttrib1fv(int loc, float[] v, int offset) {
-//    GLES20.glVertexAttrib1fv(loc, v, offset);
-//  }
-//
-//
-//  public void vertexAttrib2fv(int loc, float[] v, int offset) {
-//    GLES20.glVertexAttrib2fv(loc, v, offset);
-//  }
-//
-//
-//  public void vertexAttrib3fv(int loc, float[] v, int offset) {
-//    GLES20.glVertexAttrib3fv(loc, v, offset);
-//  }
-//
-//
-//  public void vertexAttrib4fv(int loc, float[] v, int offset) {
-//    GLES20.glVertexAttrib4fv(loc, v, offset);
-//  }
-
   public void vertexAttrib1fv(int loc, FloatBuffer v) {
     GLES20.glVertexAttrib1fv(loc, v);
   }
@@ -1407,11 +1259,6 @@ public class PGL {
   }
 
 
-//  public void getShaderiv(int shader, int pname, int[] params, int offset) {
-//    GLES20.glGetShaderiv(shader, pname, params, offset);
-//  }
-
-
   public void getShaderiv(int shader, int pname, IntBuffer params) {
     GLES20.glGetShaderiv(shader, pname, params);
   }
@@ -1420,11 +1267,6 @@ public class PGL {
   public String getShaderInfoLog(int shader) {
     return GLES20.glGetShaderInfoLog(shader);
   }
-
-
-//  public void getProgramiv(int prog, int pname, int[] params, int offset) {
-//    GLES20.glGetProgramiv(prog, pname, params, offset);
-//  }
 
 
   public void getProgramiv(int prog, int pname, IntBuffer params) {
