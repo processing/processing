@@ -91,7 +91,7 @@ public class IntHash {
   }
 
 
-  public int getCount() {
+  public int size() {
     return count;
   }
 
