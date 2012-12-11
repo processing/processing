@@ -1444,18 +1444,18 @@ public class JSONObject {
     if (value == null || value.equals(null)) {
       return "null";
     }
-    if (value instanceof JSONString) {
-      Object object;
-      try {
-        object = ((JSONString)value).toJSONString();
-      } catch (Exception e) {
-        throw new RuntimeException(e);
-      }
-      if (object instanceof String) {
-        return (String)object;
-      }
-      throw new RuntimeException("Bad value from toJSONString: " + object);
-    }
+//    if (value instanceof JSONString) {
+//      Object object;
+//      try {
+//        object = ((JSONString)value).toJSONString();
+//      } catch (Exception e) {
+//        throw new RuntimeException(e);
+//      }
+//      if (object instanceof String) {
+//        return (String)object;
+//      }
+//      throw new RuntimeException("Bad value from toJSONString: " + object);
+//    }
     if (value instanceof Number) {
       return numberToString((Number) value);
     }
@@ -1493,7 +1493,7 @@ public class JSONObject {
         return NULL;
       }
       if (object instanceof JSONObject || object instanceof JSONArray  ||
-        NULL.equals(object)      || object instanceof JSONString ||
+        NULL.equals(object)      || /*object instanceof JSONString ||*/
         object instanceof Byte   || object instanceof Character  ||
         object instanceof Short  || object instanceof Integer    ||
         object instanceof Long   || object instanceof Boolean    ||
@@ -1562,6 +1562,7 @@ public class JSONObject {
       writer.write(numberToString((Number) value));
     } else if (value instanceof Boolean) {
       writer.write(value.toString());
+      /*
     } else if (value instanceof JSONString) {
       Object o;
       try {
@@ -1570,6 +1571,7 @@ public class JSONObject {
         throw new RuntimeException(e);
       }
       writer.write(o != null ? o.toString() : quote(value.toString()));
+      */
     } else {
       quote(value.toString(), writer);
     }
