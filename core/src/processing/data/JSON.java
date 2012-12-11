@@ -25,20 +25,21 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Locale;
 import java.util.Map;
-import java.util.ResourceBundle;
-import java.util.Set;
 
 /**
  * A JSONObject is an unordered collection of name/value pairs. Its external
@@ -108,6 +109,10 @@ public class JSON {
    */
   private static HashMap keyPool = new HashMap(keyPoolSize);
 
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
   /**
    * JSONObject.NULL is equivalent to the value that JavaScript calls null,
    * whilst Java's null is equivalent to the value that JavaScript calls
@@ -151,6 +156,9 @@ public class JSON {
       return super.hashCode();
     }
   }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
   /**
@@ -202,19 +210,19 @@ public class JSON {
    * @throws JSONException If there is a syntax error in the source string
    *  or a duplicated key.
    */
-  public JSON(JSONTokener x) throws JSONException {
+  public JSON(JSONTokener x) {
     this();
     char c;
     String key;
 
     if (x.nextClean() != '{') {
-      throw x.syntaxError("A JSONObject text must begin with '{'");
+      throw new RuntimeException("A JSONObject text must begin with '{'");
     }
     for (;;) {
       c = x.nextClean();
       switch (c) {
       case 0:
-        throw x.syntaxError("A JSONObject text must end with '}'");
+        throw new RuntimeException("A JSONObject text must end with '}'");
       case '}':
         return;
       default:
@@ -230,7 +238,7 @@ public class JSON {
           x.back();
         }
       } else if (c != ':') {
-        throw x.syntaxError("Expected a ':' after a key");
+        throw new RuntimeException("Expected a ':' after a key");
       }
       this.putOnce(key, x.nextValue());
 
@@ -247,7 +255,7 @@ public class JSON {
       case '}':
         return;
       default:
-        throw x.syntaxError("Expected a ',' or '}'");
+        throw new RuntimeException("Expected a ',' or '}'");
       }
     }
   }
@@ -333,49 +341,49 @@ public class JSON {
    * @exception JSONException If there is a syntax error in the source
    *  string or a duplicated key.
    */
-  public JSON(String source) throws JSONException {
+  public JSON(String source) {
     this(new JSONTokener(source));
   }
 
 
-  /**
-   * Construct a JSONObject from a ResourceBundle.
-   * @param baseName The ResourceBundle base name.
-   * @param locale The Locale to load the ResourceBundle for.
-   * @throws JSONException If any JSONExceptions are detected.
-   */
-  public JSON(String baseName, Locale locale) throws JSONException {
-    this();
-    ResourceBundle bundle = ResourceBundle.getBundle(baseName, locale,
-                                                     Thread.currentThread().getContextClassLoader());
-
-    // Iterate through the keys in the bundle.
-
-    Enumeration keys = bundle.getKeys();
-    while (keys.hasMoreElements()) {
-      Object key = keys.nextElement();
-      if (key instanceof String) {
-
-        // Go through the path, ensuring that there is a nested JSONObject for each
-        // segment except the last. Add the value using the last segment's name into
-        // the deepest nested JSONObject.
-
-        String[] path = ((String)key).split("\\.");
-        int last = path.length - 1;
-        JSON target = this;
-        for (int i = 0; i < last; i += 1) {
-          String segment = path[i];
-          JSON nextTarget = target.optJSONObject(segment);
-          if (nextTarget == null) {
-            nextTarget = new JSON();
-            target.put(segment, nextTarget);
-          }
-          target = nextTarget;
-        }
-        target.put(path[last], bundle.getString((String)key));
-      }
-    }
-  }
+//  /**
+//   * Construct a JSONObject from a ResourceBundle.
+//   * @param baseName The ResourceBundle base name.
+//   * @param locale The Locale to load the ResourceBundle for.
+//   * @throws JSONException If any JSONExceptions are detected.
+//   */
+//  public JSON(String baseName, Locale locale) {
+//    this();
+//    ResourceBundle bundle = ResourceBundle.getBundle(baseName, locale,
+//                                                     Thread.currentThread().getContextClassLoader());
+//
+//    // Iterate through the keys in the bundle.
+//
+//    Enumeration keys = bundle.getKeys();
+//    while (keys.hasMoreElements()) {
+//      Object key = keys.nextElement();
+//      if (key instanceof String) {
+//
+//        // Go through the path, ensuring that there is a nested JSONObject for each
+//        // segment except the last. Add the value using the last segment's name into
+//        // the deepest nested JSONObject.
+//
+//        String[] path = ((String)key).split("\\.");
+//        int last = path.length - 1;
+//        JSON target = this;
+//        for (int i = 0; i < last; i += 1) {
+//          String segment = path[i];
+//          JSON nextTarget = target.optJSONObject(segment);
+//          if (nextTarget == null) {
+//            nextTarget = new JSON();
+//            target.put(segment, nextTarget);
+//          }
+//          target = nextTarget;
+//        }
+//        target.put(path[last], bundle.getString((String)key));
+//      }
+//    }
+//  }
 
 
 //  /**
@@ -473,14 +481,13 @@ public class JSON {
    * @return      The object associated with the key.
    * @throws      JSONException if the key is not found.
    */
-  public Object get(String key) throws JSONException {
+  public Object get(String key) {
     if (key == null) {
-      throw new JSONException("Null key.");
+      throw new RuntimeException("Null key.");
     }
     Object object = this.opt(key);
     if (object == null) {
-      throw new JSONException("JSONObject[" + quote(key) +
-        "] not found.");
+      throw new RuntimeException("JSONObject[" + quote(key) + "] not found.");
     }
     return object;
   }
@@ -494,7 +501,7 @@ public class JSON {
    * @throws      JSONException
    *  if the value is not a Boolean or the String "true" or "false".
    */
-  public boolean getBoolean(String key) throws JSONException {
+  public boolean getBoolean(String key) {
     Object object = this.get(key);
     if (object.equals(Boolean.FALSE) ||
       (object instanceof String &&
@@ -505,8 +512,7 @@ public class JSON {
         ((String)object).equalsIgnoreCase("true"))) {
       return true;
     }
-    throw new JSONException("JSONObject[" + quote(key) +
-      "] is not a Boolean.");
+    throw new RuntimeException("JSONObject[" + quote(key) + "] is not a Boolean.");
   }
 
 
@@ -517,15 +523,14 @@ public class JSON {
    * @throws JSONException if the key is not found or
    *  if the value is not a Number object and cannot be converted to a number.
    */
-  public double getDouble(String key) throws JSONException {
+  public double getDouble(String key) {
     Object object = this.get(key);
     try {
       return object instanceof Number
         ? ((Number)object).doubleValue()
           : Double.parseDouble((String)object);
     } catch (Exception e) {
-      throw new JSONException("JSONObject[" + quote(key) +
-        "] is not a number.");
+      throw new RuntimeException("JSONObject[" + quote(key) + "] is not a number.");
     }
   }
 
@@ -538,15 +543,14 @@ public class JSON {
    * @throws   JSONException if the key is not found or if the value cannot
    *  be converted to an integer.
    */
-  public int getInt(String key) throws JSONException {
+  public int getInt(String key) {
     Object object = this.get(key);
     try {
       return object instanceof Number
         ? ((Number)object).intValue()
           : Integer.parseInt((String)object);
     } catch (Exception e) {
-      throw new JSONException("JSONObject[" + quote(key) +
-        "] is not an int.");
+      throw new RuntimeException("JSONObject[" + quote(key) + "] is not an int.");
     }
   }
 
@@ -559,13 +563,12 @@ public class JSON {
    * @throws      JSONException if the key is not found or
    *  if the value is not a JSONArray.
    */
-  public JSONArray getJSONArray(String key) throws JSONException {
+  public JSONArray getJSONArray(String key) {
     Object object = this.get(key);
     if (object instanceof JSONArray) {
       return (JSONArray)object;
     }
-    throw new JSONException("JSONObject[" + quote(key) +
-      "] is not a JSONArray.");
+    throw new RuntimeException("JSONObject[" + quote(key) + "] is not a JSONArray.");
   }
 
 
@@ -577,13 +580,12 @@ public class JSON {
    * @throws      JSONException if the key is not found or
    *  if the value is not a JSONObject.
    */
-  public JSON getJSONObject(String key) throws JSONException {
+  public JSON getJSONObject(String key) {
     Object object = this.get(key);
     if (object instanceof JSON) {
       return (JSON)object;
     }
-    throw new JSONException("JSONObject[" + quote(key) +
-      "] is not a JSONObject.");
+    throw new RuntimeException("JSONObject[" + quote(key) + "] is not a JSONObject.");
   }
 
 
@@ -595,15 +597,14 @@ public class JSON {
    * @throws   JSONException if the key is not found or if the value cannot
    *  be converted to a long.
    */
-  public long getLong(String key) throws JSONException {
+  public long getLong(String key) {
     Object object = this.get(key);
     try {
       return object instanceof Number
         ? ((Number)object).longValue()
           : Long.parseLong((String)object);
     } catch (Exception e) {
-      throw new JSONException("JSONObject[" + quote(key) +
-        "] is not a long.");
+      throw new RuntimeException("JSONObject[" + quote(key) + "] is not a long.", e);
     }
   }
 
@@ -659,13 +660,12 @@ public class JSON {
    * @return      A string which is the value.
    * @throws   JSONException if there is no string value for the key.
    */
-  public String getString(String key) throws JSONException {
+  public String getString(String key) {
     Object object = this.get(key);
     if (object instanceof String) {
       return (String)object;
     }
-    throw new JSONException("JSONObject[" + quote(key) +
-      "] not a string.");
+    throw new RuntimeException("JSONObject[" + quote(key) + "] not a string.");
   }
 
 
@@ -679,32 +679,32 @@ public class JSON {
   }
 
 
-  /**
-   * Increment a property of a JSONObject. If there is no such property,
-   * create one with a value of 1. If there is such a property, and if
-   * it is an Integer, Long, Double, or Float, then add one to it.
-   * @param key  A key string.
-   * @return this.
-   * @throws JSONException If there is already a property with this name
-   * that is not an Integer, Long, Double, or Float.
-   */
-  public JSON increment(String key) throws JSONException {
-    Object value = this.opt(key);
-    if (value == null) {
-      this.put(key, 1);
-    } else if (value instanceof Integer) {
-      this.put(key, ((Integer)value).intValue() + 1);
-    } else if (value instanceof Long) {
-      this.put(key, ((Long)value).longValue() + 1);
-    } else if (value instanceof Double) {
-      this.put(key, ((Double)value).doubleValue() + 1);
-    } else if (value instanceof Float) {
-      this.put(key, ((Float)value).floatValue() + 1);
-    } else {
-      throw new JSONException("Unable to increment [" + quote(key) + "].");
-    }
-    return this;
-  }
+//  /**
+//   * Increment a property of a JSONObject. If there is no such property,
+//   * create one with a value of 1. If there is such a property, and if
+//   * it is an Integer, Long, Double, or Float, then add one to it.
+//   * @param key  A key string.
+//   * @return this.
+//   * @throws JSONException If there is already a property with this name
+//   * that is not an Integer, Long, Double, or Float.
+//   */
+//  public JSON increment(String key) {
+//    Object value = this.opt(key);
+//    if (value == null) {
+//      this.put(key, 1);
+//    } else if (value instanceof Integer) {
+//      this.put(key, ((Integer)value).intValue() + 1);
+//    } else if (value instanceof Long) {
+//      this.put(key, ((Long)value).longValue() + 1);
+//    } else if (value instanceof Double) {
+//      this.put(key, ((Double)value).doubleValue() + 1);
+//    } else if (value instanceof Float) {
+//      this.put(key, ((Float)value).floatValue() + 1);
+//    } else {
+//      throw new RuntimeException("Unable to increment [" + quote(key) + "].");
+//    }
+//    return this;
+//  }
 
 
   /**
@@ -771,10 +771,9 @@ public class JSON {
    * @return A String.
    * @throws JSONException If n is a non-finite number.
    */
-  public static String numberToString(Number number)
-    throws JSONException {
+  public static String numberToString(Number number) {
     if (number == null) {
-      throw new JSONException("Null pointer");
+      throw new RuntimeException("Null pointer");
     }
     testValidity(number);
 
@@ -1045,7 +1044,7 @@ public class JSON {
    * @return this.
    * @throws JSONException If the key is null.
    */
-  public JSON put(String key, boolean value) throws JSONException {
+  public JSON put(String key, boolean value) {
     this.put(key, value ? Boolean.TRUE : Boolean.FALSE);
     return this;
   }
@@ -1059,7 +1058,7 @@ public class JSON {
    * @return      this.
    * @throws JSONException
    */
-  public JSON put(String key, Collection value) throws JSONException {
+  public JSON put(String key, Collection value) {
     this.put(key, new JSONArray(value));
     return this;
   }
@@ -1073,7 +1072,7 @@ public class JSON {
    * @return this.
    * @throws JSONException If the key is null or if the number is invalid.
    */
-  public JSON put(String key, double value) throws JSONException {
+  public JSON put(String key, double value) {
     this.put(key, new Double(value));
     return this;
   }
@@ -1087,7 +1086,7 @@ public class JSON {
    * @return this.
    * @throws JSONException If the key is null.
    */
-  public JSON put(String key, int value) throws JSONException {
+  public JSON put(String key, int value) {
     this.put(key, new Integer(value));
     return this;
   }
@@ -1101,7 +1100,7 @@ public class JSON {
    * @return this.
    * @throws JSONException If the key is null.
    */
-  public JSON put(String key, long value) throws JSONException {
+  public JSON put(String key, long value) {
     this.put(key, new Long(value));
     return this;
   }
@@ -1115,7 +1114,7 @@ public class JSON {
    * @return      this.
    * @throws JSONException
    */
-  public JSON put(String key, Map value) throws JSONException {
+  public JSON put(String key, Map value) {
     this.put(key, new JSON(value));
     return this;
   }
@@ -1132,10 +1131,10 @@ public class JSON {
    * @throws JSONException If the value is non-finite number
    *  or if the key is null.
    */
-  public JSON put(String key, Object value) throws JSONException {
+  public JSON put(String key, Object value) {
     String pooled;
     if (key == null) {
-      throw new JSONException("Null key.");
+      throw new RuntimeException("Null key.");
     }
     if (value != null) {
       testValidity(value);
@@ -1165,10 +1164,10 @@ public class JSON {
    * @return his.
    * @throws JSONException if the key is a duplicate
    */
-  public JSON putOnce(String key, Object value) throws JSONException {
+  public JSON putOnce(String key, Object value) {
     if (key != null && value != null) {
       if (this.opt(key) != null) {
-        throw new JSONException("Duplicate key \"" + key + "\"");
+        throw new RuntimeException("Duplicate key \"" + key + "\"");
       }
       this.put(key, value);
     }
@@ -1186,7 +1185,7 @@ public class JSON {
    * @return this.
    * @throws JSONException If the value is a non-finite number.
    */
-  public JSON putOpt(String key, Object value) throws JSONException {
+  public JSON putOpt(String key, Object value) {
     if (key != null && value != null) {
       this.put(key, value);
     }
@@ -1341,16 +1340,16 @@ public class JSON {
    * @param o The object to test.
    * @throws JSONException If o is a non-finite number.
    */
-  public static void testValidity(Object o) throws JSONException {
+  public static void testValidity(Object o) {
     if (o != null) {
       if (o instanceof Double) {
         if (((Double)o).isInfinite() || ((Double)o).isNaN()) {
-          throw new JSONException(
+          throw new RuntimeException(
             "JSON does not allow non-finite numbers.");
         }
       } else if (o instanceof Float) {
         if (((Float)o).isInfinite() || ((Float)o).isNaN()) {
-          throw new JSONException(
+          throw new RuntimeException(
             "JSON does not allow non-finite numbers.");
         }
       }
@@ -1366,7 +1365,7 @@ public class JSON {
    * @return A JSONArray of values.
    * @throws JSONException If any of the values are non-finite numbers.
    */
-  public JSONArray toJSONArray(JSONArray names) throws JSONException {
+  public JSONArray toJSONArray(JSONArray names) {
     if (names == null || names.length() == 0) {
       return null;
     }
@@ -1411,7 +1410,7 @@ public class JSON {
    *  with <code>}</code>&nbsp;<small>(right brace)</small>.
    * @throws JSONException If the object contains an invalid number.
    */
-  public String toString(int indentFactor) throws JSONException {
+  public String toString(int indentFactor) {
     StringWriter w = new StringWriter();
     synchronized (w.getBuffer()) {
       return this.write(w, indentFactor, 0).toString();
@@ -1439,7 +1438,7 @@ public class JSON {
    *  with <code>}</code>&nbsp;<small>(right brace)</small>.
    * @throws JSONException If the value is or contains an invalid number.
    */
-  public static String valueToString(Object value) throws JSONException {
+  public static String valueToString(Object value) {
     if (value == null || value.equals(null)) {
       return "null";
     }
@@ -1448,12 +1447,12 @@ public class JSON {
       try {
         object = ((JSONString)value).toJSONString();
       } catch (Exception e) {
-        throw new JSONException(e);
+        throw new RuntimeException(e);
       }
       if (object instanceof String) {
         return (String)object;
       }
-      throw new JSONException("Bad value from toJSONString: " + object);
+      throw new RuntimeException("Bad value from toJSONString: " + object);
     }
     if (value instanceof Number) {
       return numberToString((Number) value);
@@ -1537,13 +1536,13 @@ public class JSON {
    * @return The writer.
    * @throws JSONException
    */
-  public Writer write(Writer writer) throws JSONException {
+  public Writer write(Writer writer) {
     return this.write(writer, 0, 0);
   }
 
 
   static final Writer writeValue(Writer writer, Object value,
-                                 int indentFactor, int indent) throws JSONException, IOException {
+                                 int indentFactor, int indent) throws IOException {
     if (value == null || value.equals(null)) {
       writer.write("null");
     } else if (value instanceof JSON) {
@@ -1566,7 +1565,7 @@ public class JSON {
       try {
         o = ((JSONString) value).toJSONString();
       } catch (Exception e) {
-        throw new JSONException(e);
+        throw new RuntimeException(e);
       }
       writer.write(o != null ? o.toString() : quote(value.toString()));
     } else {
@@ -1590,8 +1589,7 @@ public class JSON {
    * @return The writer.
    * @throws JSONException
    */
-  Writer write(Writer writer, int indentFactor, int indent)
-    throws JSONException {
+  Writer write(Writer writer, int indentFactor, int indent) {
     try {
       boolean commanate = false;
       final int length = this.length();
@@ -1634,7 +1632,423 @@ public class JSON {
       writer.write('}');
       return writer;
     } catch (IOException exception) {
-      throw new JSONException(exception);
+      throw new RuntimeException(exception);
+    }
+  }
+
+
+//  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+//
+//
+//  class JSONException extends RuntimeException {
+//
+//    public JSONException(String message) {
+//      super(message);
+//    }
+//
+//    public JSONException(Throwable throwable) {
+//      super(throwable);
+//    }
+//  }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  /**
+   * Get the hex value of a character (base16).
+   * @param c A character between '0' and '9' or between 'A' and 'F' or
+   * between 'a' and 'f'.
+   * @return  An int between 0 and 15, or -1 if c was not a hex digit.
+   */
+  public static int dehexchar(char c) {
+    if (c >= '0' && c <= '9') {
+      return c - '0';
+    }
+    if (c >= 'A' && c <= 'F') {
+      return c - ('A' - 10);
+    }
+    if (c >= 'a' && c <= 'f') {
+      return c - ('a' - 10);
+    }
+    return -1;
+  }
+
+
+  static class JSONTokener {
+
+    private long    character;
+    private boolean eof;
+    private long    index;
+    private long    line;
+    private char    previous;
+    private Reader  reader;
+    private boolean usePrevious;
+
+
+    /**
+     * Construct a JSONTokener from a Reader.
+     *
+     * @param reader     A reader.
+     */
+    public JSONTokener(Reader reader) {
+      this.reader = reader.markSupported()
+        ? reader
+          : new BufferedReader(reader);
+      this.eof = false;
+      this.usePrevious = false;
+      this.previous = 0;
+      this.index = 0;
+      this.character = 1;
+      this.line = 1;
+    }
+
+
+    /**
+     * Construct a JSONTokener from an InputStream.
+     */
+    public JSONTokener(InputStream inputStream) {
+      this(new InputStreamReader(inputStream));
+    }
+
+
+    /**
+     * Construct a JSONTokener from a string.
+     *
+     * @param s     A source string.
+     */
+    public JSONTokener(String s) {
+      this(new StringReader(s));
+    }
+
+
+    /**
+     * Back up one character. This provides a sort of lookahead capability,
+     * so that you can test for a digit or letter before attempting to parse
+     * the next number or identifier.
+     */
+    public void back() {
+      if (this.usePrevious || this.index <= 0) {
+        throw new RuntimeException("Stepping back two steps is not supported");
+      }
+      this.index -= 1;
+      this.character -= 1;
+      this.usePrevious = true;
+      this.eof = false;
+    }
+
+
+    public boolean end() {
+      return this.eof && !this.usePrevious;
+    }
+
+
+    /**
+     * Determine if the source string still contains characters that next()
+     * can consume.
+     * @return true if not yet at the end of the source.
+     */
+    public boolean more() {
+      this.next();
+      if (this.end()) {
+        return false;
+      }
+      this.back();
+      return true;
+    }
+
+
+    /**
+     * Get the next character in the source string.
+     *
+     * @return The next character, or 0 if past the end of the source string.
+     */
+    public char next() {
+      int c;
+      if (this.usePrevious) {
+        this.usePrevious = false;
+        c = this.previous;
+      } else {
+        try {
+          c = this.reader.read();
+        } catch (IOException exception) {
+          throw new RuntimeException(exception);
+        }
+
+        if (c <= 0) { // End of stream
+          this.eof = true;
+        c = 0;
+        }
+      }
+      this.index += 1;
+      if (this.previous == '\r') {
+        this.line += 1;
+        this.character = c == '\n' ? 0 : 1;
+      } else if (c == '\n') {
+        this.line += 1;
+        this.character = 0;
+      } else {
+        this.character += 1;
+      }
+      this.previous = (char) c;
+      return this.previous;
+    }
+
+
+    /**
+     * Consume the next character, and check that it matches a specified
+     * character.
+     * @param c The character to match.
+     * @return The character.
+     * @throws JSONException if the character does not match.
+     */
+    public char next(char c) {
+      char n = this.next();
+      if (n != c) {
+        throw new RuntimeException("Expected '" + c + "' and instead saw '" + n + "'");
+      }
+      return n;
+    }
+
+
+    /**
+     * Get the next n characters.
+     *
+     * @param n     The number of characters to take.
+     * @return      A string of n characters.
+     * @throws JSONException
+     *   Substring bounds error if there are not
+     *   n characters remaining in the source string.
+     */
+    public String next(int n) {
+      if (n == 0) {
+        return "";
+      }
+
+      char[] chars = new char[n];
+      int pos = 0;
+
+      while (pos < n) {
+        chars[pos] = this.next();
+        if (this.end()) {
+          throw new RuntimeException("Substring bounds error");
+        }
+        pos += 1;
+      }
+      return new String(chars);
+    }
+
+
+    /**
+     * Get the next char in the string, skipping whitespace.
+     * @throws JSONException
+     * @return  A character, or 0 if there are no more characters.
+     */
+    public char nextClean() {
+      for (;;) {
+        char c = this.next();
+        if (c == 0 || c > ' ') {
+          return c;
+        }
+      }
+    }
+
+
+    /**
+     * Return the characters up to the next close quote character.
+     * Backslash processing is done. The formal JSON format does not
+     * allow strings in single quotes, but an implementation is allowed to
+     * accept them.
+     * @param quote The quoting character, either
+     *      <code>"</code>&nbsp;<small>(double quote)</small> or
+     *      <code>'</code>&nbsp;<small>(single quote)</small>.
+     * @return      A String.
+     * @throws JSONException Unterminated string.
+     */
+    public String nextString(char quote) {
+      char c;
+      StringBuffer sb = new StringBuffer();
+      for (;;) {
+        c = this.next();
+        switch (c) {
+        case 0:
+        case '\n':
+        case '\r':
+          throw new RuntimeException("Unterminated string");
+        case '\\':
+          c = this.next();
+          switch (c) {
+          case 'b':
+            sb.append('\b');
+            break;
+          case 't':
+            sb.append('\t');
+            break;
+          case 'n':
+            sb.append('\n');
+            break;
+          case 'f':
+            sb.append('\f');
+            break;
+          case 'r':
+            sb.append('\r');
+            break;
+          case 'u':
+            sb.append((char)Integer.parseInt(this.next(4), 16));
+            break;
+          case '"':
+          case '\'':
+          case '\\':
+          case '/':
+            sb.append(c);
+            break;
+          default:
+            throw new RuntimeException("Illegal escape.");
+          }
+          break;
+        default:
+          if (c == quote) {
+            return sb.toString();
+          }
+          sb.append(c);
+        }
+      }
+    }
+
+
+    /**
+     * Get the text up but not including the specified character or the
+     * end of line, whichever comes first.
+     * @param  delimiter A delimiter character.
+     * @return   A string.
+     */
+    public String nextTo(char delimiter) {
+      StringBuffer sb = new StringBuffer();
+      for (;;) {
+        char c = this.next();
+        if (c == delimiter || c == 0 || c == '\n' || c == '\r') {
+          if (c != 0) {
+            this.back();
+          }
+          return sb.toString().trim();
+        }
+        sb.append(c);
+      }
+    }
+
+
+    /**
+     * Get the text up but not including one of the specified delimiter
+     * characters or the end of line, whichever comes first.
+     * @param delimiters A set of delimiter characters.
+     * @return A string, trimmed.
+     */
+    public String nextTo(String delimiters) {
+      char c;
+      StringBuffer sb = new StringBuffer();
+      for (;;) {
+        c = this.next();
+        if (delimiters.indexOf(c) >= 0 || c == 0 ||
+          c == '\n' || c == '\r') {
+          if (c != 0) {
+            this.back();
+          }
+          return sb.toString().trim();
+        }
+        sb.append(c);
+      }
+    }
+
+
+    /**
+     * Get the next value. The value can be a Boolean, Double, Integer,
+     * JSONArray, JSONObject, Long, or String, or the JSONObject.NULL object.
+     * @throws JSONException If syntax error.
+     *
+     * @return An object.
+     */
+    public Object nextValue() {
+      char c = this.nextClean();
+      String string;
+
+      switch (c) {
+      case '"':
+      case '\'':
+        return this.nextString(c);
+      case '{':
+        this.back();
+        return new JSON(this);
+      case '[':
+        this.back();
+        return new JSONArray(this);
+      }
+
+      /*
+       * Handle unquoted text. This could be the values true, false, or
+       * null, or it can be a number. An implementation (such as this one)
+       * is allowed to also accept non-standard forms.
+       *
+       * Accumulate characters until we reach the end of the text or a
+       * formatting character.
+       */
+
+      StringBuffer sb = new StringBuffer();
+      while (c >= ' ' && ",:]}/\\\"[{;=#".indexOf(c) < 0) {
+        sb.append(c);
+        c = this.next();
+      }
+      this.back();
+
+      string = sb.toString().trim();
+      if ("".equals(string)) {
+        throw new RuntimeException("Missing value");
+      }
+      return JSON.stringToValue(string);
+    }
+
+
+    /**
+     * Skip characters until the next character is the requested character.
+     * If the requested character is not found, no characters are skipped.
+     * @param to A character to skip to.
+     * @return The requested character, or zero if the requested character
+     * is not found.
+     */
+    public char skipTo(char to) {
+      char c;
+      try {
+        long startIndex = this.index;
+        long startCharacter = this.character;
+        long startLine = this.line;
+        this.reader.mark(1000000);
+        do {
+          c = this.next();
+          if (c == 0) {
+            this.reader.reset();
+            this.index = startIndex;
+            this.character = startCharacter;
+            this.line = startLine;
+            return c;
+          }
+        } while (c != to);
+      } catch (IOException exc) {
+        throw new RuntimeException(exc);
+      }
+
+      this.back();
+      return c;
+    }
+
+
+    /**
+     * Make a printable string of this JSONTokener.
+     *
+     * @return " at {index} [character {character} line {line}]"
+     */
+    @Override
+    public String toString() {
+      return " at " + this.index + " [character " + this.character + " line " +
+        this.line + "]";
     }
   }
 }
