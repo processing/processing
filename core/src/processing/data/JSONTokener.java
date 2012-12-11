@@ -359,7 +359,7 @@ public class JSONTokener {
       return this.nextString(c);
     case '{':
       this.back();
-      return new JSON(this);
+      return new JSONObject(this);
     case '[':
       this.back();
       return new JSONArray(this);
@@ -385,7 +385,7 @@ public class JSONTokener {
     if ("".equals(string)) {
       throw new RuntimeException("Missing value");
     }
-    return JSON.stringToValue(string);
+    return JSONObject.stringToValue(string);
   }
 
 
