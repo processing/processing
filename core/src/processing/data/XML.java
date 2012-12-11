@@ -148,9 +148,18 @@ public class XML implements Serializable {
   }
 
 
-  static public XML parse(String xml) {
+  /**
+   * xxxxxxx
+   *
+   * @webref xml:method
+   * @brief Converts String content to an XML object
+   * @param data the content to be parsed as XML
+   * @return an XML object, or null
+   * @see PApplet#loadXML(String)
+   */
+  static public XML parse(String data) {
     try {
-      return new XML(new StringReader(xml));
+      return new XML(new StringReader(data));
     } catch (Exception e) {
       e.printStackTrace();
       return null;
