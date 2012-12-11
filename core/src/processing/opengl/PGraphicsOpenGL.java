@@ -1731,7 +1731,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
     currentFramebuffer.bind();
     pgl.drawBuffer(currentFramebuffer.getDefaultDrawBuffer());
-    report("HERE");
   }
 
 
