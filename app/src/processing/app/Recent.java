@@ -116,25 +116,27 @@ public class Recent {
 
   private void updateMenu(JMenu menu) {
     menu.removeAll();
+    String sketchbookPath = Base.getSketchbookFolder().getAbsolutePath();
+//    String homePath = System.getProperty("user.home");
     for (final Record rec : records) {
-      String purtyPath = new File(rec.getPath()).getParent();
-      String sketchbookPath = Base.getSketchbookFolder().getAbsolutePath();
-      if (purtyPath.startsWith(sketchbookPath)) {
+      String recPath = new File(rec.getPath()).getParent();
+      String purtyPath = null;
+      
+      if (recPath.startsWith(sketchbookPath)) {
         purtyPath = "sketchbook \u2192 " +
-          purtyPath.substring(sketchbookPath.length() + 1);
-
+          recPath.substring(sketchbookPath.length() + 1);
       } else {
         ArrayList<Mode> modes = base.getModeList();
         for (Mode mode : modes) {
           File examplesFolder = mode.getExamplesFolder();
           String examplesPath = examplesFolder.getAbsolutePath();
-          if (purtyPath.startsWith(examplesPath)) {
+          if (recPath.startsWith(examplesPath)) {
             String modePrefix = mode.getTitle() + " ";
             if (mode.getTitle().equals("Standard")) {
               modePrefix = "";  // "Standard examples" is dorky
             }
             purtyPath = modePrefix + "examples \u2192 " +
-              purtyPath.substring(examplesPath.length() + 1);
+              recPath.substring(examplesPath.length() + 1);
             break;
           }
 
@@ -142,9 +144,9 @@ public class Recent {
             for (Library lib : mode.coreLibraries) {
               examplesFolder = lib.getExamplesFolder();
               examplesPath = examplesFolder.getAbsolutePath();
-              if (purtyPath.startsWith(examplesPath)) {
+              if (recPath.startsWith(examplesPath)) {
                 purtyPath = lib.getName() + " examples \u2192 " +
-                  purtyPath.substring(examplesPath.length() + 1);
+                  recPath.substring(examplesPath.length() + 1);
                 break;
               }
             }
@@ -154,14 +156,21 @@ public class Recent {
             for (Library lib : mode.contribLibraries) {
               examplesFolder = lib.getExamplesFolder();
               examplesPath = examplesFolder.getAbsolutePath();
-              if (purtyPath.startsWith(examplesPath)) {
+              if (recPath.startsWith(examplesPath)) {
                 purtyPath = lib.getName() + " examples \u2192 " +
-                  purtyPath.substring(examplesPath.length() + 1);
+                  recPath.substring(examplesPath.length() + 1);
                 break;
               }
             }
           }
         }
+      }
+      if (purtyPath == null) {
+//        if (recPath.startsWith(homePath)) {
+//          purtyPath = "\u2302 \u2192 " + recPath.substring(homePath.length() + 1);
+//        } else {
+        purtyPath = recPath;
+//        }
       }
 
 //      JMenuItem item = new JMenuItem(rec.getName() + " | " + purtyPath);
@@ -186,7 +195,8 @@ public class Recent {
 //          }
         }
       });
-      menu.add(item);
+      //menu.add(item);
+      menu.insert(item, 0);
     }
   }
 
