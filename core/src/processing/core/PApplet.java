@@ -5735,6 +5735,7 @@ public class PApplet extends Applet
   /**
    * @webref input:files
    * @param filename name of a file in the data folder or a URL.
+   * @see XML#parse(String)
    * @see PApplet#loadBytes(String)
    * @see PApplet#loadStrings(String)
    * @see PApplet#loadTable(String)
