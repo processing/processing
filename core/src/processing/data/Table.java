@@ -88,14 +88,12 @@ public class Table {
 
   protected Object[] columns;  // [column]
 
-  // typed data
   static final int STRING = 0;
   static final int INT = 1;
   static final int LONG = 2;
   static final int FLOAT = 3;
   static final int DOUBLE = 4;
   static final int CATEGORICAL = 5;
-//  static final int TIME = 5;
   int[] columnTypes;
 
   protected RowIterator rowIterator;
@@ -105,24 +103,8 @@ public class Table {
    * Creates a new, empty table. Use addRow() to add additional rows.
    */
   public Table() {
-//    init(null);
     init();
   }
-
-
-//  public Table(PApplet sketch) {
-//    init(sketch);
-//  }
-
-
-//  public Table(File file) {
-//    this(PApplet.createReader(file));
-//  }
-
-
-//  public Table(PApplet parent, String filename) throws IOException {
-//    this(parent, filename, null);
-//  }
 
 
   public Table(File file) throws IOException {
@@ -155,7 +137,6 @@ public class Table {
 
 
   public Table(ResultSet rs) {
-//    init(null);
     init();
     try {
       ResultSetMetaData rsmd = rs.getMetaData();
@@ -251,29 +232,25 @@ public class Table {
   protected void parse(InputStream input, String options) throws IOException {
     init();
 
-    String[] opts = PApplet.fixOptions(options);
-//    if (options != null) {
-//      opts = options.split("\\s*,\\s*");
-////    PApplet.println("options:");
-////    PApplet.println(opts);
-
     boolean awfulCSV = false;
     boolean header = false;
     String extension = null;
-    for (String opt : opts) {
-      if (opt.equals("tsv")) {
-        extension = "tsv";
-      } else if (opt.equals("csv")) {
-        extension = "csv";
-      } else if (opt.equals("newlines")) {
-        awfulCSV = true;
-      } else if (opt.equals("header")) {
-        header = true;
-      } else {
-        throw new IllegalArgumentException("'" + opt + "' is not a valid option for loading a Table");
+    if (options != null) {
+      String[] opts = PApplet.splitTokens(options, " ,");
+      for (String opt : opts) {
+        if (opt.equals("tsv")) {
+          extension = "tsv";
+        } else if (opt.equals("csv")) {
+          extension = "csv";
+        } else if (opt.equals("newlines")) {
+          awfulCSV = true;
+        } else if (opt.equals("header")) {
+          header = true;
+        } else {
+          throw new IllegalArgumentException("'" + opt + "' is not a valid option for loading a Table");
+        }
       }
     }
-//    }
 
     BufferedReader reader = PApplet.createReader(input);
     if (awfulCSV) {
@@ -408,11 +385,6 @@ public class Table {
       setString(row, col, new String(c, 0, count));
     }
   }
-
-
-//  protected String[] splitLine(String line) {
-//    return commaSeparatedValues ? splitLineCSV(line) : PApplet.split(line, '\t');
-//  }
 
 
   /**
@@ -650,18 +622,20 @@ public class Table {
 
   public void save(OutputStream output, String options) {
     PrintWriter writer = PApplet.createWriter(output);
-    String[] opts = PApplet.fixOptions(options);
-    for (String opt : opts) {
-      if (opt.equals("csv")) {
-        writeCSV(writer);
-      } else if (opt.equals("tsv")) {
-        writeTSV(writer);
-      } else if (opt.equals("html")) {
-        writeHTML(writer);
-      } else {
-        throw new IllegalArgumentException("'" + opt + "' not understood. " +
-                                           "Only csv, tsv, and html are " +
-                                           "accepted as save parameters");
+    if (options != null) {
+      String[] opts = PApplet.splitTokens(options, ", ");
+      for (String opt : opts) {
+        if (opt.equals("csv")) {
+          writeCSV(writer);
+        } else if (opt.equals("tsv")) {
+          writeTSV(writer);
+        } else if (opt.equals("html")) {
+          writeHTML(writer);
+        } else {
+          throw new IllegalArgumentException("'" + opt + "' not understood. " +
+                                             "Only csv, tsv, and html are " +
+                                             "accepted as save parameters");
+        }
       }
     }
     writer.close();
