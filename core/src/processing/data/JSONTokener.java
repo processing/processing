@@ -187,7 +187,7 @@ public class JSONTokener {
   public char next(char c) {
     char n = this.next();
     if (n != c) {
-      syntaxError("Expected '" + c + "' and instead saw '" + n + "'");
+      throw new RuntimeException("Expected '" + c + "' and instead saw '" + n + "'");
     }
     return n;
   }
@@ -213,7 +213,7 @@ public class JSONTokener {
     while (pos < n) {
       chars[pos] = this.next();
       if (this.end()) {
-        syntaxError("Substring bounds error");
+        throw new RuntimeException("Substring bounds error");
       }
       pos += 1;
     }
@@ -256,8 +256,7 @@ public class JSONTokener {
       case 0:
       case '\n':
       case '\r':
-        syntaxError("Unterminated string");
-        break;
+        throw new RuntimeException("Unterminated string");
       case '\\':
         c = this.next();
         switch (c) {
@@ -286,7 +285,7 @@ public class JSONTokener {
           sb.append(c);
           break;
         default:
-          syntaxError("Illegal escape.");
+          throw new RuntimeException("Illegal escape.");
         }
         break;
       default:
@@ -384,7 +383,7 @@ public class JSONTokener {
 
     string = sb.toString().trim();
     if ("".equals(string)) {
-      syntaxError("Missing value");
+      throw new RuntimeException("Missing value");
     }
     return JSON.stringToValue(string);
   }
@@ -420,17 +419,6 @@ public class JSONTokener {
 
     this.back();
     return c;
-  }
-
-
-  /**
-   * Make a JSONException to signal a syntax error.
-   *
-   * @param message The error message.
-   * @return  A JSONException object, suitable for throwing
-   */
-  private void syntaxError(String message) {
-    throw new RuntimeException(message + this.toString());
   }
 
 
