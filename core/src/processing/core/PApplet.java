@@ -5727,6 +5727,7 @@ public class PApplet extends Applet
   }
 
 
+
   //////////////////////////////////////////////////////////////
 
   // DATA I/O
@@ -5750,19 +5751,7 @@ public class PApplet extends Applet
   }
 
 
-  // do we want this? for advanced users won't they just use 'new XML'?
-//  static public XML loadXML(File file) {
-//    try {
-//      return new XML(file);
-//    } catch (Exception e) {
-//      e.printStackTrace();
-//      return null;
-//    }
-//  }
-
-
   public Table createTable() {
-//    return new Table(this);
     return new Table();
   }
 
@@ -5781,8 +5770,14 @@ public class PApplet extends Applet
 
   public Table loadTable(String filename, String options) {
     try {
-//      return new Table(this, filename, options);
+      String ext = checkExtension(filename);
+      if (ext != null) {
+        if (ext.equals("csv") || ext.equals("tsv")) {
+          options = ext + ",";
+        }
+      }
       return new Table(createInput(filename), options);
+
     } catch (IOException e) {
       e.printStackTrace();
       return null;
@@ -5804,13 +5799,12 @@ public class PApplet extends Applet
   }
 
 
-//  static public Table loadTable(File file) {
-//    return new Table(this, file);
-//  }
-
-
-  static public String[] fixOptions(String options) {
-    return options == null ? new String[0] : options.split("\\s*,\\s*");
+  protected String checkExtension(String filename) {
+    int index = filename.lastIndexOf('.');
+    if (index == -1) {
+      return null;
+    }
+    return filename.substring(index + 1).toLowerCase();
   }
 
 

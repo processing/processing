@@ -8,6 +8,7 @@ X   http://code.google.com/p/processing/issues/detail?id=987
 o hint(OPENGL_ERRORS) should be the opposite to enable the reporting, no?
 o   hint(ENABLE_OPENGL_ERRORS) should be the hint.. disabled by default
 X   nah, just leave these turned on since (potentially) important
+X fix table loading quirk with extensions
 
 cleaning/earlier
 C textureWrap() CLAMP and REPEAT now added
