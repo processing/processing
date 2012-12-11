@@ -279,9 +279,6 @@ public class PGraphicsOpenGL extends PGraphics {
   /** Flag to indicate that we are inside beginCamera/endCamera block. */
   protected boolean manipulatingCamera;
 
-  /** Flag indicating the use of an orthographic projection matrix. */
-  protected boolean usingOrthoProjection;
-
   // ........................................................
 
   // All the matrices required for camera and geometry transformations.
@@ -1645,8 +1642,8 @@ public class PGraphicsOpenGL extends PGraphics {
       // been swapped yet) to the pixels array. The frameCount == 0 condition
       // is to handle the situation when no smooth is called in setup in the
       // PDE, but the OpenGL appears to be recreated due to the size() nastiness.
-      saveSurfaceToPixels();
-      restoreSurface = true;
+//      saveSurfaceToPixels();
+//      restoreSurface = true;
     }
 
     if (primarySurface) {
@@ -1679,6 +1676,12 @@ public class PGraphicsOpenGL extends PGraphics {
   @Override
   public void endPGL() {
     restoreGL();
+  }
+
+
+  public void updateProjmodelview() {
+    projmodelview.set(projection);
+    projmodelview.apply(modelview);
   }
 
 
@@ -1849,12 +1852,6 @@ public class PGraphicsOpenGL extends PGraphics {
     glModelview[13] = modelview.m13;
     glModelview[14] = modelview.m23;
     glModelview[15] = modelview.m33;
-  }
-
-
-  protected void calcProjmodelview() {
-    projmodelview.set(projection);
-    projmodelview.apply(modelview);
   }
 
 
@@ -2323,7 +2320,7 @@ public class PGraphicsOpenGL extends PGraphics {
       if (flushMode == FLUSH_WHEN_FULL) {
         modelview = modelview0;
         modelviewInv = modelviewInv0;
-        calcProjmodelview();
+        updateProjmodelview();
       }
     }
 
@@ -3391,7 +3388,7 @@ public class PGraphicsOpenGL extends PGraphics {
     modelviewInv.set(modelviewInvStack[modelviewStackDepth]);
     camera.set(cameraStack[modelviewStackDepth]);
     cameraInv.set(cameraInvStack[modelviewStackDepth]);
-    calcProjmodelview();
+    updateProjmodelview();
   }
 
 
@@ -3485,7 +3482,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
     modelview.rotate(angle, v0, v1, v2);
     invRotate(modelviewInv, angle, v0, v1, v2);
-    calcProjmodelview(); // Possibly cheaper than doing projmodelview.rotate()
+    updateProjmodelview(); // Possibly cheaper than doing projmodelview.rotate()
   }
 
 
@@ -3725,36 +3722,64 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     projectionStackDepth--;
     projection.set(projectionStack[projectionStackDepth]);
-    checkOrthoProjection();
+    updateProjmodelview();
+  }
+
+
+  public void resetProjection() {
+    flush();
+    projection.reset();
+    updateProjmodelview();
   }
 
 
   public void applyProjection(PMatrix3D mat) {
     flush();
     projection.apply(mat);
-    checkOrthoProjection();
+    updateProjmodelview();
+  }
+
+
+  public void applyProjection(float n00, float n01, float n02, float n03,
+                              float n10, float n11, float n12, float n13,
+                              float n20, float n21, float n22, float n23,
+                              float n30, float n31, float n32, float n33) {
+    flush();
+    projection.apply(n00, n01, n02, n03,
+                     n10, n11, n12, n13,
+                     n20, n21, n22, n23,
+                     n30, n31, n32, n33);
+    updateProjmodelview();
   }
 
 
   public void setProjection(PMatrix3D mat) {
     flush();
     projection.set(mat);
-    checkOrthoProjection();
+    updateProjmodelview();
   }
 
 
-  protected void checkOrthoProjection() {
-    // If the matrix is of the form:
-    // x, 0, 0, a,
-    // 0, y, 0, b,
-    // 0, 0, z, c,
-    // 0, 0, 0, 1
-    // then the set usingOrthoProjection to true.
-    usingOrthoProjection = zero(projection.m01) && zero(projection.m02) &&
-                           zero(projection.m10) && zero(projection.m12) &&
-                           zero(projection.m20) && zero(projection.m21) &&
-                           zero(projection.m30) && zero(projection.m31) &&
-                           zero(projection.m32) && same(projection.m33, 1);
+  // Returns true if the matrix is of the form:
+  // x, 0, 0, a,
+  // 0, y, 0, b,
+  // 0, 0, z, c,
+  // 0, 0, 0, 1
+  protected boolean orthoProjection() {
+    return zero(projection.m01) && zero(projection.m02) &&
+           zero(projection.m10) && zero(projection.m12) &&
+           zero(projection.m20) && zero(projection.m21) &&
+           zero(projection.m30) && zero(projection.m31) &&
+           zero(projection.m32) && same(projection.m33, 1);
+  }
+
+
+  protected boolean nonOrthoProjection() {
+    return nonZero(projection.m01) || nonZero(projection.m02) ||
+           nonZero(projection.m10) || nonZero(projection.m12) ||
+           nonZero(projection.m20) || nonZero(projection.m21) ||
+           nonZero(projection.m30) || nonZero(projection.m31) ||
+           nonZero(projection.m32) || diff(projection.m33, 1);
   }
 
 
@@ -4030,7 +4055,7 @@ public class PGraphicsOpenGL extends PGraphics {
     camera.set(modelview);
     cameraInv.set(modelviewInv);
 
-    calcProjmodelview();
+    updateProjmodelview();
   }
 
 
@@ -4045,7 +4070,7 @@ public class PGraphicsOpenGL extends PGraphics {
     camera.set(modelview);
     cameraInv.set(modelviewInv);
 
-    calcProjmodelview();
+    updateProjmodelview();
   }
 
 
@@ -4119,9 +4144,7 @@ public class PGraphicsOpenGL extends PGraphics {
                    0,  0, z, tz,
                    0,  0, 0,  1);
 
-    calcProjmodelview();
-
-    usingOrthoProjection = true;
+    updateProjmodelview();
   }
 
 
@@ -4186,9 +4209,7 @@ public class PGraphicsOpenGL extends PGraphics {
                         0,       0, -(zfar + znear) / d, -(n2 * zfar) / d,
                         0,       0,                  -1,                0);
 
-    calcProjmodelview();
-
-    usingOrthoProjection = false;
+    updateProjmodelview();
   }
 
 
@@ -5977,7 +5998,7 @@ public class PGraphicsOpenGL extends PGraphics {
       // original camera setup.
       modelview.set(camera);
       modelviewInv.set(cameraInv);
-      calcProjmodelview();
+      updateProjmodelview();
     }
 
     if (is3D()) {
@@ -7042,7 +7063,7 @@ public class PGraphicsOpenGL extends PGraphics {
       if (-1 < inAttribLoc) pgl.enableVertexAttribArray(inAttribLoc);
 
       if (pgCurrent.getHint(ENABLE_STROKE_PERSPECTIVE) &&
-          !pgCurrent.usingOrthoProjection) {
+          pgCurrent.nonOrthoProjection()) {
         setUniformValue(perspectiveLoc, 1);
       } else {
         setUniformValue(perspectiveLoc, 0);
@@ -7051,7 +7072,7 @@ public class PGraphicsOpenGL extends PGraphics {
       if (pgCurrent.getHint(DISABLE_OPTIMIZED_STROKE)) {
         setUniformValue(scaleLoc, 1.0f, 1.0f, 1.0f);
       } else {
-        if (usingOrthoProjection) {
+        if (orthoProjection()) {
           setUniformValue(scaleLoc, 1.0f, 1.0f, 0.99f);
         } else {
           setUniformValue(scaleLoc, 0.99f, 0.99f, 0.99f);
@@ -7137,7 +7158,7 @@ public class PGraphicsOpenGL extends PGraphics {
       if (-1 < inPointLoc)  pgl.enableVertexAttribArray(inPointLoc);
 
       if (pgCurrent.getHint(ENABLE_STROKE_PERSPECTIVE) &&
-          !pgCurrent.usingOrthoProjection) {
+          pgCurrent.nonOrthoProjection()) {
         setUniformValue(perspectiveLoc, 1);
       } else {
         setUniformValue(perspectiveLoc, 0);
