@@ -107,7 +107,8 @@ public class JSON {
    * JSONObjects will be avoided by using a key pool to manage unique key
    * string objects. This is used by JSONObject.put(string, object).
    */
-  private static HashMap keyPool = new HashMap(keyPoolSize);
+  private static HashMap<String, Object> keyPool =
+    new HashMap<String, Object>(keyPoolSize);
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -164,7 +165,8 @@ public class JSON {
   /**
    * The map where the JSONObject's properties are kept.
    */
-  private final Map map;
+//  private final Map map;
+  private final HashMap<String, Object> map;
 
 
   /**
@@ -180,7 +182,7 @@ public class JSON {
    * Construct an empty JSONObject.
    */
   public JSON() {
-    this.map = new HashMap();
+    this.map = new HashMap<String, Object>();
   }
 
 
@@ -268,15 +270,15 @@ public class JSON {
    *  the JSONObject.
    * @throws JSONException
    */
-  public JSON(Map map) {
-    this.map = new HashMap();
+  public JSON(Map<String, Object> map) {
+    this.map = new HashMap<String, Object>();
     if (map != null) {
       Iterator i = map.entrySet().iterator();
       while (i.hasNext()) {
-        Map.Entry e = (Map.Entry)i.next();
+        Map.Entry e = (Map.Entry) i.next();
         Object value = e.getValue();
         if (value != null) {
-          this.map.put(e.getKey(), wrap(value));
+          map.put((String) e.getKey(), wrap(value));
         }
       }
     }
@@ -760,7 +762,7 @@ public class JSON {
     JSONArray ja = new JSONArray();
     Iterator  keys = this.keys();
     while (keys.hasNext()) {
-      ja.put(keys.next());
+      ja.append(keys.next());
     }
     return ja.length() == 0 ? null : ja;
   }
@@ -1114,7 +1116,7 @@ public class JSON {
    * @return      this.
    * @throws JSONException
    */
-  public JSON put(String key, Map value) {
+  public JSON put(String key, HashMap<String, Object> value) {
     this.put(key, new JSON(value));
     return this;
   }
@@ -1141,7 +1143,7 @@ public class JSON {
       pooled = (String)keyPool.get(key);
       if (pooled == null) {
         if (keyPool.size() >= keyPoolSize) {
-          keyPool = new HashMap(keyPoolSize);
+          keyPool = new HashMap<String, Object>(keyPoolSize);
         }
         keyPool.put(key, key);
       } else {
@@ -1371,7 +1373,7 @@ public class JSON {
     }
     JSONArray ja = new JSONArray();
     for (int i = 0; i < names.length(); i += 1) {
-      ja.put(this.opt(names.getString(i)));
+      ja.append(this.opt(names.getString(i)));
     }
     return ja;
   }
