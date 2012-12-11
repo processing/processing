@@ -207,6 +207,7 @@ public class PVector implements Serializable {
    * @usage web_application
    * @return the random PVector
    * @brief Make a new 2D unit vector with a random direction.
+   * @see PVector#random3D()
    */
   static public PVector random2D() {
     return random2D(null,null);
@@ -233,8 +234,6 @@ public class PVector implements Serializable {
 
   /**
    * Make a new 2D unit vector with a random direction
-   * @param parent current PApplet instance
-   * @param target the target vector (if null, a new vector will be created)
    * @return the random PVector
    */
   static public PVector random2D(PVector target, PApplet parent) {
@@ -253,6 +252,7 @@ public class PVector implements Serializable {
    * @usage web_application
    * @return the random PVector
    * @brief Make a new 3D unit vector with a random direction.
+   * @see PVector#random2D()
    */
   static public PVector random3D() {
     return random3D(null,null);
@@ -279,8 +279,6 @@ public class PVector implements Serializable {
 
   /**
    * Make a new 3D unit vector with a random direction
-   * @param target the target vector (if null, a new vector will be created)
-   * @param parent current PApplet instance
    * @return the random PVector
    */
   static public PVector random3D(PVector target, PApplet parent) {
@@ -324,7 +322,7 @@ public class PVector implements Serializable {
 
   /**
    * Make a new 2D unit vector from an angle
-   * @param angle the angle
+   *
    * @param target the target vector (if null, a new vector will be created)
    * @return the PVector
    */
@@ -382,6 +380,7 @@ public class PVector implements Serializable {
    * @usage web_application
    * @brief Calculate the magnitude of the vector
    * @return magnitude (length) of the vector
+   * @see PVector#magSq()
    */
   public float mag() {
     return (float) Math.sqrt(x*x + y*y + z*z);
@@ -399,9 +398,9 @@ public class PVector implements Serializable {
    *
    * @webref pvector:method
    * @usage web_application
-   * @brief Calculate the magnitude of the vector
+   * @brief Calculate the magnitude of the vector, squared
    * @return squared magnitude of the vector
-   *
+   * @see PVector#mag()
    */
   public float magSq() {
     return (x*x + y*y + z*z);
@@ -880,7 +879,7 @@ public class PVector implements Serializable {
    * @webref pvector:method
    * @usage web_application
    * @return the angle of rotation
-   * @brief SCalculate the angle of rotation for this vector
+   * @brief Calculate the angle of rotation for this vector
    */
   public float heading() {
     float angle = (float) Math.atan2(-y, x);
@@ -925,8 +924,8 @@ public class PVector implements Serializable {
    * @usage web_application
    * @brief Linear interpolate the vector to another vector
    * @param v the vector to lerp to
-   * @param amt  The amt parameter is the amount to interpolate between the two vectors where 1.0 equal to the new vector
-   * 0.1 is very near the new vector, 0.5 is half-way in between.
+   * @param amt  The amount of interpolation; some value between 0.0 (old vector) and 1.0 (new vector). 0.1 is very near the new vector. 0.5 is halfway in between.
+   * @see PApplet#lerp(float, float, float)
    */
   public void lerp(PVector v, float amt) {
     x = PApplet.lerp(x,v.x,amt);
@@ -938,9 +937,6 @@ public class PVector implements Serializable {
    * Linear interpolate between two vectors (returns a new PVector object)
    * @param v1 the vector
    * @param v2 the vector to lerp to
-   * @param amt  The amt parameter is the amount to interpolate between the two vectors where 1.0 equal to the new vector
-   * 0.1 is very near the new vector, 0.5 is half-way in between.
-   * @return the resulting lerped PVector
    */
   public static PVector lerp(PVector v1, PVector v2, float amt) {
     PVector v = v1.get();
@@ -953,8 +949,6 @@ public class PVector implements Serializable {
    * @param x the x component to lerp to
    * @param y the y component to lerp to
    * @param z the z component to lerp to
-   * @param amt  The amt parameter is the amount to interpolate between the two vectors where 1.0 equal to the new vector
-   * 0.1 is very near the new vector, 0.5 is half-way in between.
    */
   public void lerp(float x, float y, float z, float amt) {
     this.x = PApplet.lerp(this.x,x,amt);
