@@ -13,9 +13,8 @@ X Make sure all reference links point to the same/new location
 
 Examples
 
-Some of the standard examples should be included, but not library specific
-ones. Currently there is no way to "just pick some" one has to include whole
-branches.
+X Standard examples should be included, but not library specific ones. 
+There is no way to "just pick some" one has to include whole branches.
 
 ----------------------------------------------------------------------------
 
@@ -39,6 +38,13 @@ No saving needed.
 
 Add a callback that will fire once your sketch has loaded to get away from
 continously testing Processing.instances.
+
+----------------------------------------------------------------------------
+
+Automation
+
+Commandline compilation of sketches to make writing plugins for other 
+editors simpler?
 
 ----------------------------------------------------------------------------
 
