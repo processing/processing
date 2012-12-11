@@ -19,6 +19,8 @@ X Color coding for if/else in Processing IDE doesn't match
 X   http://code.google.com/p/processing/issues/detail?id=1457
 X add ESC and cmd/ctrl-W to the Examples window
 X move token/syntax coloring out of theme.txt and back into preferences
+X what order should 'recent' menu use?
+X   most recent is at the top
 
 earlier
 X include debug mode as 'experimental'?
@@ -64,6 +66,8 @@ _ remove PdeKeyListener, roll it into the Java InputHandler for JEditTextArea
 _   move Java-specific InputHandler to its own subclass
 _ problem changing sketchbook to new location (e.g. from ex to regular) 
 _   new libraries are not picked up
+_ Contributed modes should show up in mode menu after installation
+_   http://code.google.com/p/processing/issues/detail?id=1466
 _ from Casey
 _   list in the PDE would be updated automatically by querying a web service
 _   list on the website would be generated using the same web service
@@ -205,7 +209,6 @@ _   http://code.google.com/p/processing/issues/detail?id=905
 2.0 FINAL / misc pde cleanups
 _ 'recent' menu doesn't respect examples folder of other p5 versions
 _ 'recent' menu paths can get enormous
-_ what order should 'recent' menu use?
 _ add reference for contributed libraries to the Help menu
 _   http://code.google.com/p/processing/issues/detail?id=905
 
