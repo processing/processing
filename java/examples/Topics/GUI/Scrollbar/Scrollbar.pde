@@ -10,7 +10,7 @@
 
 
 HScrollbar hs1, hs2;  // Two scrollbars
-PImage img1, img2;  // Two image to load
+PImage img1, img2;  // Two images to load
 
 void setup() {
   size(640, 360);
@@ -74,21 +74,21 @@ class HScrollbar {
   }
 
   void update() {
-    if(overEvent()) {
+    if (overEvent()) {
       over = true;
     } else {
       over = false;
     }
-    if(mousePressed && over) {
+    if (mousePressed && over) {
       locked = true;
     }
-    if(!mousePressed) {
+    if (!mousePressed) {
       locked = false;
     }
-    if(locked) {
+    if (locked) {
       newspos = constrain(mouseX-sheight/2, sposMin, sposMax);
     }
-    if(abs(newspos - spos) > 1) {
+    if (abs(newspos - spos) > 1) {
       spos = spos + (newspos-spos)/loose;
     }
   }
@@ -98,7 +98,7 @@ class HScrollbar {
   }
 
   boolean overEvent() {
-    if(mouseX > xpos && mouseX < xpos+swidth &&
+    if (mouseX > xpos && mouseX < xpos+swidth &&
        mouseY > ypos && mouseY < ypos+sheight) {
       return true;
     } else {
@@ -110,7 +110,7 @@ class HScrollbar {
     noStroke();
     fill(204);
     rect(xpos, ypos, swidth, sheight);
-    if(over || locked) {
+    if (over || locked) {
       fill(0, 0, 0);
     } else {
       fill(102, 102, 102);

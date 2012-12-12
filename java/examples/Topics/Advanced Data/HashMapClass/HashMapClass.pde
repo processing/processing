@@ -3,9 +3,8 @@
  * by Daniel Shiffman.  
  * 
  * This example demonstrates how to use a HashMap to store 
- * a collection of objects referenced by a key.
- * This is much like an array, only instead of accessing elements
- * with a numeric index, we use a String.
+ * a collection of objects referenced by a key. This is much like an array, 
+ * only instead of accessing elements with a numeric index, we use a String.
  * If you are familiar with associative arrays from other languages,
  * this is the same idea.
  *
@@ -23,6 +22,7 @@ int counter;
 
 void setup() {
   size(640, 360);
+  
   words = new HashMap();
 
   // Load file and chop it up
@@ -51,8 +51,7 @@ void draw() {
   } else {
     // Otherwise make a new word
     Word w = new Word(s);
-    // And add to the HashMap
-    // put() takes two arguments, "key" and "value"
+    // And add to the HashMap put() takes two arguments, "key" and "value"
     // The key for us is the String and the value is the Word object
     words.put(s, w);    
   }
@@ -74,7 +73,7 @@ void draw() {
       x += textWidth(w.word + " ");
     }
     
-    // If x gets to the end, move Y
+    // If x gets to the end, move y
     if (x > width) {
       x = 0;
       y -= 100;

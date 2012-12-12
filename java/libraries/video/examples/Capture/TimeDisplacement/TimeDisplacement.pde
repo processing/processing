@@ -31,7 +31,7 @@ void captureEvent(Capture camera) {
   frames.add(img);
   
   //once there are enough frames, remove the oldest one when adding a new one
-  if(frames.size() > height/4) {
+  if (frames.size() > height/4) {
     frames.remove(0);
   }
 }
@@ -43,16 +43,16 @@ void draw() {
  loadPixels();
   
   //begin a loop for displaying pixel rows of 4 pixels height
-  for(int y = 0; y < video.height; y+=4) {
+  for (int y = 0; y < video.height; y+=4) {
     //go through the frame buffer and pick an image, starting with the oldest one
-    if(currentImage < frames.size()) {
+    if (currentImage < frames.size()) {
       PImage img = (PImage)frames.get(currentImage);
       
-      if(img != null) {
+      if (img != null) {
         img.loadPixels();
         
         //put 4 rows of pixels on the screen
-        for(int x = 0; x < video.width; x++) {
+        for (int x = 0; x < video.width; x++) {
           pixels[x + y * width] = img.pixels[x + y * video.width];
           pixels[x + (y + 1) * width] = img.pixels[x + (y + 1) * video.width];
           pixels[x + (y + 2) * width] = img.pixels[x + (y + 2) * video.width];

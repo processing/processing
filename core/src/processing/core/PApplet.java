@@ -5277,7 +5277,7 @@ public class PApplet extends Applet
 //  }
 
   /**
-   * @nowebref
+   * @param extension type of image to load, for example "png", "gif", "jpg"
    */
   public PImage loadImage(String filename, String extension) { //, Object params) {
     if (extension == null) {
@@ -14303,6 +14303,9 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * @webref color:setting
+   */
   public void clear() {
     if (recorder != null) recorder.clear();
     g.clear();

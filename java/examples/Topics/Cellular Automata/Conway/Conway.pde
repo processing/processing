@@ -25,7 +25,9 @@ void setup()
    
   // Set random cells to 'on' 
   for (int i = 0; i < sx * sy * density; i++) { 
-    world[(int)random(sx)][(int)random(sy)][1] = 1; 
+    int x = int(random(sx));
+    int y = int(random(sy));
+    world[x][y][1] = 1; 
   } 
 } 
  

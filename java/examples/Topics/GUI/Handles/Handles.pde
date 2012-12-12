@@ -5,14 +5,13 @@
  */
  
 Handle[] handles;
-int num;
 
 void setup() {
   size(640, 360);
-  num = height/15;
+  int num = height/15;
   handles = new Handle[num];
   int hsize = 10;
-  for(int i=0; i<num; i++) {
+  for (int i = 0; i < handles.length; i++) {
     handles[i] = new Handle(width/2, 10+i*15, 50-hsize/2, 10, handles);
   }
 }
@@ -20,7 +19,7 @@ void setup() {
 void draw() {
   background(153);
   
-  for(int i=0; i<num; i++) {
+  for (int i = 0; i < handles.length; i++) {
     handles[i].update();
     handles[i].display();
   }
@@ -30,7 +29,7 @@ void draw() {
 }
 
 void mouseReleased()  {
-  for(int i=0; i<num; i++) {
+  for (int i = 0; i < handles.length; i++) {
     handles[i].releaseEvent();
   }
 }
@@ -39,7 +38,7 @@ class Handle {
   
   int x, y;
   int boxx, boxy;
-  int length;
+  int stretch;
   int size;
   boolean over;
   boolean press;
@@ -50,19 +49,19 @@ class Handle {
   Handle(int ix, int iy, int il, int is, Handle[] o) {
     x = ix;
     y = iy;
-    length = il;
+    stretch = il;
     size = is;
-    boxx = x+length - size/2;
+    boxx = x+stretch - size/2;
     boxy = y - size/2;
     others = o;
   }
   
   void update() {
-    boxx = x+length;
+    boxx = x+stretch;
     boxy = y - size/2;
     
-    for(int i=0; i<others.length; i++) {
-      if(others[i].locked == true) {
+    for (int i=0; i<others.length; i++) {
+      if (others[i].locked == true) {
         otherslocked = true;
         break;
       } else {
@@ -70,18 +69,18 @@ class Handle {
       }  
     }
     
-    if(otherslocked == false) {
+    if (otherslocked == false) {
       overEvent();
       pressEvent();
     }
     
-    if(press) {
-      length = lock(mouseX-width/2-size/2, 0, width/2-size-1);
+    if (press) {
+      stretch = lock(mouseX-width/2-size/2, 0, width/2-size-1);
     }
   }
   
   void overEvent() {
-    if(overRect(boxx, boxy, size, size)) {
+    if (overRect(boxx, boxy, size, size)) {
       over = true;
     } else {
       over = false;
@@ -89,7 +88,7 @@ class Handle {
   }
   
   void pressEvent() {
-    if(over && mousePressed || locked) {
+    if (over && mousePressed || locked) {
       press = true;
       locked = true;
     } else {
@@ -102,11 +101,11 @@ class Handle {
   }
   
   void display() {
-    line(x, y, x+length, y);
+    line(x, y, x+stretch, y);
     fill(255);
     stroke(0);
     rect(boxx, boxy, size, size);
-    if(over || press) {
+    if (over || press) {
       line(boxx, boxy, boxx+size, boxy+size);
       line(boxx, boxy+size, boxx+size, boxy);
     }

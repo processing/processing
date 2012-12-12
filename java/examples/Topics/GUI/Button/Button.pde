@@ -35,7 +35,7 @@ void draw() {
   update(mouseX, mouseY);
   background(currentColor);
   
-  if(rectOver) {
+  if (rectOver) {
     fill(rectHighlight);
   } else {
     fill(rectColor);
@@ -43,7 +43,7 @@ void draw() {
   stroke(255);
   rect(rectX, rectY, rectSize, rectSize);
   
-  if(circleOver) {
+  if (circleOver) {
     fill(circleHighlight);
   } else {
     fill(circleColor);
@@ -53,7 +53,7 @@ void draw() {
 }
 
 void update(int x, int y) {
-  if( overCircle(circleX, circleY, circleSize) ) {
+  if ( overCircle(circleX, circleY, circleSize) ) {
     circleOver = true;
     rectOver = false;
   } else if ( overRect(rectX, rectY, rectSize, rectSize) ) {
@@ -65,10 +65,10 @@ void update(int x, int y) {
 }
 
 void mousePressed() {
-  if(circleOver) {
+  if (circleOver) {
     currentColor = circleColor;
   }
-  if(rectOver) {
+  if (rectOver) {
     currentColor = rectColor;
   }
 }
@@ -85,7 +85,7 @@ boolean overRect(int x, int y, int width, int height)  {
 boolean overCircle(int x, int y, int diameter) {
   float disX = x - mouseX;
   float disY = y - mouseY;
-  if(sqrt(sq(disX) + sq(disY)) < diameter/2 ) {
+  if (sqrt(sq(disX) + sq(disY)) < diameter/2 ) {
     return true;
   } else {
     return false;
