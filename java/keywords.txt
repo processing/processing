@@ -224,6 +224,7 @@ Thread	KEYWORD5
 boolean	KEYWORD5	boolean
 byte	KEYWORD5	byte
 char	KEYWORD5	char
+color	KEYWORD5	color_datatype
 double	KEYWORD5	double
 float 	KEYWORD5	float
 int	KEYWORD5	int
@@ -255,8 +256,6 @@ try	FUNCTION3	try
 
 
 # These items are a part of Processing but, but pages don't generate
-
-color	KEYWORD1	color_datatype
 
 boolean	FUNCTION1	booleanconvert_
 byte	FUNCTION1	byteconvert_

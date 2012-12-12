@@ -234,7 +234,7 @@ editor.laf.linux = com.sun.java.swing.plaf.gtk.GTKLookAndFeel
 editor.token.function1.style = #006699,plain
 editor.token.function2.style = #006699,plain
 editor.token.function3.style = #669933,plain
-editor.token.function4.style = #669933,plain
+editor.token.function4.style = #006699,bold
 
 editor.token.keyword1.style = #996633,plain
 editor.token.keyword2.style = #996633,plain
@@ -249,8 +249,8 @@ editor.token.operator.style = #006699,plain
 
 editor.token.label.style = #7e7e7e,bold
 
-editor.token.comment1.style = #7e7e7e,plain
-editor.token.comment2.style = #7e7e7e,plain
+editor.token.comment1.style = #7e7e7e,italic
+editor.token.comment2.style = #7e7e7e,italic
 
 editor.token.invalid.style = #7e7e7e,bold
 

@@ -6904,7 +6904,9 @@ public class PGraphics extends PImage implements PConstants {
     backgroundFromCalc();
   }
 
-
+  /**
+   * @webref color:setting
+   */
   public void clear() {
     background(0, 0, 0, 0);
   }
