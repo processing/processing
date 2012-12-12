@@ -352,6 +352,9 @@ public class PGL {
   /** Selected GL profile */
   public static GLProfile profile;
 
+  /** OpenGL thread */
+  protected static Thread glThread;
+
   /** The PGraphics object using this interface */
   protected PGraphicsOpenGL pg;
 
@@ -1862,9 +1865,14 @@ public class PGL {
 
 
   protected void initTexture(int target, int format, int width, int height) {
-    int[] texels = new int[width * height];
-    texSubImage2D(target, 0, 0, 0, width, height, format, UNSIGNED_BYTE,
-                  IntBuffer.wrap(texels));
+    IntBuffer texels = PGL.allocateDirectIntBuffer(16 * 16);
+    for (int y = 0; y < height; y += 16) {
+      int h = PApplet.min(16, height - y);
+      for (int x = 0; x < width; x += 16) {
+        int w = PApplet.min(16, width - x);
+        texSubImage2D(target, 0, x, y, w, h, format, UNSIGNED_BYTE, texels);
+      }
+    }
   }
 
 
@@ -2146,7 +2154,7 @@ public class PGL {
       stencilBuffer = ByteBuffer.allocate(1);
     }
     readPixels(scrX, pg.height - scrY - 1, 1, 1, STENCIL_INDEX,
-               GL.GL_UNSIGNED_BYTE, stencilBuffer);
+               UNSIGNED_BYTE, stencilBuffer);
     return stencilBuffer.get(0);
   }
 
@@ -2524,7 +2532,7 @@ public class PGL {
 
 
   protected int[] getGLVersion() {
-    String version = gl.glGetString(GL.GL_VERSION).trim();
+    String version = getString(VERSION).trim();
     int[] res = {0, 0, 0};
     String[] parts = version.split(" ");
     for (int i = 0; i < parts.length; i++) {
@@ -2614,6 +2622,11 @@ public class PGL {
   }
 
 
+  protected static boolean glThreadIsCurrent() {
+    return Thread.currentThread() == glThread;
+  }
+
+
   ///////////////////////////////////////////////////////////
 
   // Java specific stuff
@@ -2623,6 +2636,8 @@ public class PGL {
     public void display(GLAutoDrawable glDrawable) {
       drawable = glDrawable;
       context = glDrawable.getContext();
+
+      glThread = Thread.currentThread();
 
       gl = context.getGL();
       gl2 = gl.getGL2ES2();

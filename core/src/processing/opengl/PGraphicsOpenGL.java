@@ -49,6 +49,10 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // ........................................................
 
+  static final String OPENGL_THREAD_ERROR =
+    "Cannot run the OpenGL renderer outside the main thread, change your code" +
+    "\nso the drawing calls are all inside the main thread, " +
+    "\nor use the default renderer instead.";
   static final String BLEND_DRIVER_ERROR =
     "blendMode(%1$s) is not supported by this hardware (or driver)";
   static final String BLEND_RENDERER_ERROR =
@@ -421,6 +425,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // Offscreen rendering:
 
+  protected boolean initializedOffscreen;
   protected FrameBuffer offscreenFramebuffer;
   protected FrameBuffer multisampleFramebuffer;
   protected boolean offscreenMultisample;
@@ -1590,6 +1595,10 @@ public class PGraphicsOpenGL extends PGraphics {
   @Override
   public void beginDraw() {
     report("top beginDraw()");
+
+    if (!checkGLThread()) {
+      return;
+    }
 
     if (drawing) {
       PGraphics.showWarning(ALREADY_DRAWING_ERROR);
@@ -5032,7 +5041,7 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void allocatePixels() {
     if ((pixels == null) || (pixels.length != width * height)) {
       pixels = new int[width * height];
-      pixelBuffer = IntBuffer.wrap(pixels);
+      pixelBuffer = PGL.allocateDirectIntBuffer(width * height);
     }
   }
 
@@ -5065,6 +5074,9 @@ public class PGraphicsOpenGL extends PGraphics {
     endPixelsOp();
     try {
       // Idem...
+      pixelBuffer.position(0);
+      pixelBuffer.get(pixels);
+      pixelBuffer.rewind();
       PGL.nativeToJavaARGB(pixels, width, height);
     } catch (ArrayIndexOutOfBoundsException e) {
     }
@@ -5075,7 +5087,7 @@ public class PGraphicsOpenGL extends PGraphics {
     int len = w * h;
     if (nativePixels == null || nativePixels.length < len) {
       nativePixels = new int[len];
-      nativePixelBuffer = IntBuffer.wrap(nativePixels);
+      nativePixelBuffer = PGL.allocateDirectIntBuffer(len);
     }
 
     try {
@@ -5105,6 +5117,11 @@ public class PGraphicsOpenGL extends PGraphics {
       loadTextureImpl(POINT, false);
     }
 
+    // Put native pixels in direct buffer for copy.
+    nativePixelBuffer.position(0);
+    nativePixelBuffer.put(nativePixels);
+    nativePixelBuffer.rewind();
+
     boolean needToDrawTex = primarySurface && (!pgl.isFBOBacked() ||
                             (pgl.isFBOBacked() && pgl.isMultisampled())) ||
                             offscreenMultisample;
@@ -5118,9 +5135,9 @@ public class PGraphicsOpenGL extends PGraphics {
 
       // First, copy the pixels to the texture. We don't need to invert the
       // pixel copy because the texture will be drawn inverted.
-      pgl.copyToTexture(texture.glTarget, texture.glFormat, texture.glName,
-                        x, y, w, h, IntBuffer.wrap(nativePixels));
 
+      pgl.copyToTexture(texture.glTarget, texture.glFormat, texture.glName,
+                        x, y, w, h, nativePixelBuffer);
       beginPixelsOp(OP_WRITE);
       drawTexture(x, y, w, h);
       endPixelsOp();
@@ -5129,7 +5146,7 @@ public class PGraphicsOpenGL extends PGraphics {
       // currently drawing to. Because the texture is invertex along Y, we
       // need to reflect that in the vertical arguments.
       pgl.copyToTexture(texture.glTarget, texture.glFormat, texture.glName,
-                        x, height - (y + h), w, h, IntBuffer.wrap(nativePixels));
+                        x, height - (y + h), w, h, nativePixelBuffer);
     }
   }
 
@@ -5207,19 +5224,20 @@ public class PGraphicsOpenGL extends PGraphics {
         // then copy this array into the texture.
         if (nativePixels == null || nativePixels.length < width * height) {
           nativePixels = new int[width * height];
-          nativePixelBuffer = IntBuffer.wrap(nativePixels);
+          nativePixelBuffer = PGL.allocateDirectIntBuffer(width * height);
         }
 
         beginPixelsOp(OP_READ);
         try {
           // Se comments in readPixels() for the reason for this try/catch.
+          nativePixelBuffer.rewind();
           pgl.readPixels(0, 0, width, height, PGL.RGBA, PGL.UNSIGNED_BYTE,
                          nativePixelBuffer);
         } catch (IndexOutOfBoundsException e) {
         }
         endPixelsOp();
 
-        texture.setNative(nativePixels, 0, 0, width, height);
+        texture.setNative(nativePixelBuffer, 0, 0, width, height);
       }
     } else {
       // We need to copy the contents of the multisampled buffer to the
@@ -5653,6 +5671,10 @@ public class PGraphicsOpenGL extends PGraphics {
 
   @Override
   public Object initCache(PImage img) {
+    if (!checkGLThread()) {
+      return null;
+    }
+
     Texture tex = (Texture)pgPrimary.getCache(img);
     if (tex == null || tex.contextIsOutdated()) {
       tex = addTexture(img);
@@ -5756,6 +5778,16 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
+  protected boolean checkGLThread() {
+    if (PGL.glThreadIsCurrent()) {
+      return true;
+    } else {
+      PGraphics.showWarning(OPENGL_THREAD_ERROR);
+      return false;
+    }
+  }
+
+
   //////////////////////////////////////////////////////////////
 
   // RESIZE
@@ -5815,7 +5847,6 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void initOffscreen() {
     // Getting the context and capabilities from the main renderer.
     pgPrimary = (PGraphicsOpenGL)parent.g;
-    pgl.initialized = true;
     loadTextureImpl(Texture.BILINEAR, false);
 
     // In case of reinitialization (for example, when the smooth level
@@ -5855,11 +5886,13 @@ public class PGraphicsOpenGL extends PGraphics {
 
     offscreenFramebuffer.setColorBuffer(texture);
     offscreenFramebuffer.clear();
+
+    initializedOffscreen = true;
   }
 
 
   protected void updateOffscreen() {
-    if (!pgl.initialized) {
+    if (!initializedOffscreen) {
       initOffscreen();
     } else {
       boolean outdated = offscreenFramebuffer != null &&
