@@ -935,7 +935,7 @@ public class PVector implements Serializable {
 
   /**
    * Linear interpolate between two vectors (returns a new PVector object)
-   * @param v1 the vector
+   * @param v1 the vector to start from
    * @param v2 the vector to lerp to
    */
   public static PVector lerp(PVector v1, PVector v2, float amt) {
