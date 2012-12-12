@@ -93,6 +93,7 @@ public class Texture implements PConstants {
   protected boolean invertedX;
   protected boolean invertedY;
 
+  protected IntBuffer pixelBuffer = null;
   protected FrameBuffer tempFbo = null;
 
   /** Modified portion of the texture */
@@ -324,9 +325,10 @@ public class Texture implements PConstants {
       PGraphics.showWarning("The pixels array is null.");
       return;
     }
-    if (pixels.length != w * h) {
-      PGraphics.showWarning("The pixels array has a length of " +
-                            pixels.length + ", but it should be " + w * h);
+    if (pixels.length < w * h) {
+      PGraphics.showWarning("The pixel array has a length of " +
+                            pixels.length + ", but it should be at least " +
+                            w * h);
       return;
     }
 
@@ -347,8 +349,9 @@ public class Texture implements PConstants {
         // Automatic mipmap generation.
         int[] rgbaPixels = new int[w * h];
         convertToRGBA(pixels, rgbaPixels, format, w, h);
+        updatePixelBuffer(rgbaPixels);
         pgl.texSubImage2D(glTarget, 0, x, y, w, h, PGL.RGBA, PGL.UNSIGNED_BYTE,
-                          IntBuffer.wrap(rgbaPixels));
+                          pixelBuffer);
         pgl.generateMipmap(glTarget);
         rgbaPixels = null;
       } else {
@@ -408,15 +411,17 @@ public class Texture implements PConstants {
 
         int[] rgbaPixels = new int[w * h];
         convertToRGBA(pixels, rgbaPixels, format, w, h);
+        updatePixelBuffer(rgbaPixels);
         pgl.texSubImage2D(glTarget, 0, x, y, w, h, PGL.RGBA, PGL.UNSIGNED_BYTE,
-                          IntBuffer.wrap(rgbaPixels));
+                          pixelBuffer);
         rgbaPixels = null;
       }
     } else {
       int[] rgbaPixels = new int[w * h];
       convertToRGBA(pixels, rgbaPixels, format, w, h);
+      updatePixelBuffer(rgbaPixels);
       pgl.texSubImage2D(glTarget, 0, x, y, w, h, PGL.RGBA, PGL.UNSIGNED_BYTE,
-                        IntBuffer.wrap(rgbaPixels));
+                        pixelBuffer);
       rgbaPixels = null;
     }
 
@@ -440,23 +445,25 @@ public class Texture implements PConstants {
 
 
   public void setNative(int[] pixels, int x, int y, int w, int h) {
-    setNative(IntBuffer.wrap(pixels), x, y, w, h);
+    updatePixelBuffer(pixels);
+    setNative(pixelBuffer, x, y, w, h);
   }
 
 
-  public void setNative(IntBuffer pixels, int x, int y, int w, int h) {
-    if (pixels == null) {
-      pixels = null;
+  public void setNative(IntBuffer pixBuf, int x, int y, int w, int h) {
+    if (pixBuf == null) {
+      pixBuf = null;
       PGraphics.showWarning("The pixel buffer is null.");
       return;
     }
-    if (pixels.capacity() != w * h) {
-      PGraphics.showWarning("The pixels array has a length of " +
-                            pixels.capacity()  + ", but it should be " + w * h);
+    if (pixBuf.capacity() < w * h) {
+      PGraphics.showWarning("The pixel bufer has a length of " +
+                            pixBuf.capacity()  + ", but it should be at least " +
+                            w * h);
       return;
     }
 
-    if (pixels.capacity()  == 0) {
+    if (pixBuf.capacity()  == 0) {
       // Nothing to do (means that w == h == 0) but not an erroneous situation
       return;
     }
@@ -471,15 +478,15 @@ public class Texture implements PConstants {
     if (usingMipmaps) {
       if (PGraphicsOpenGL.autoMipmapGenSupported) {
         pgl.texSubImage2D(glTarget, 0, x, y, w, h, PGL.RGBA, PGL.UNSIGNED_BYTE,
-                          pixels);
+                          pixBuf);
         pgl.generateMipmap(glTarget);
       } else {
         pgl.texSubImage2D(glTarget, 0, x, y, w, h, PGL.RGBA, PGL.UNSIGNED_BYTE,
-                          pixels);
+                          pixBuf);
       }
     } else {
       pgl.texSubImage2D(glTarget, 0, x, y, w, h, PGL.RGBA, PGL.UNSIGNED_BYTE,
-                        pixels);
+                        pixBuf);
     }
 
     pgl.bindTexture(glTarget, 0);
@@ -836,6 +843,15 @@ public class Texture implements PConstants {
     }
   }
 
+
+  protected void updatePixelBuffer(int[] pixels) {
+    if (pixelBuffer == null || pixelBuffer.capacity() < pixels.length) {
+      pixelBuffer = PGL.allocateDirectIntBuffer(pixels.length);
+    }
+    pixelBuffer.position(0);
+    pixelBuffer.put(pixels);
+    pixelBuffer.rewind();
+  }
 
   ////////////////////////////////////////////////////////////
 

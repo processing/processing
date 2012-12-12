@@ -325,6 +325,9 @@ public class PGL {
   /** The current opengl context */
   public static EGLContext context;
 
+  /** OpenGL thread */
+  protected static Thread glThread;
+
   /** The PGraphics object using this interface */
   protected PGraphicsOpenGL pg;
 
@@ -736,6 +739,11 @@ public class PGL {
 
   protected void requestDraw() {
     pg.parent.andresNeedsBetterAPI();
+  }
+
+
+  protected static boolean glThreadIsCurrent() {
+    return Thread.currentThread() == glThread;
   }
 
 
@@ -1565,13 +1573,12 @@ public class PGL {
     // Doing in patches of 16x16 pixels to avoid creating a (potentially)
     // very large transient array which in certain situations (memory-
     // constrained android devices) might lead to an out-of-memory error.
-    int[] texels = new int[16 * 16];
+    IntBuffer texels = PGL.allocateDirectIntBuffer(16 * 16);
     for (int y = 0; y < height; y += 16) {
       int h = PApplet.min(16, height - y);
       for (int x = 0; x < width; x += 16) {
         int w = PApplet.min(16, width - x);
-        texSubImage2D(target, 0, x, y, w, h, format, UNSIGNED_BYTE,
-                      IntBuffer.wrap(texels));
+        texSubImage2D(target, 0, x, y, w, h, format, UNSIGNED_BYTE, texels);
       }
     }
   }
@@ -2226,6 +2233,7 @@ public class PGL {
 
     public void onDrawFrame(GL10 igl) {
       gl = igl;
+      glThread = Thread.currentThread();
       pg.parent.handleDraw();
     }
 
