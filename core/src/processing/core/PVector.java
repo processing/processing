@@ -925,7 +925,6 @@ public class PVector implements Serializable {
    * @brief Linear interpolate the vector to another vector
    * @param v the vector to lerp to
    * @param amt  The amount of interpolation; some value between 0.0 (old vector) and 1.0 (new vector). 0.1 is very near the new vector. 0.5 is halfway in between.
-   * @see PApplet#lerp(float, float, float)
    */
   public void lerp(PVector v, float amt) {
     x = PApplet.lerp(x,v.x,amt);
