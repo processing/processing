@@ -33,7 +33,6 @@ import java.util.*;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
-import quicktime.streaming.SettingsDialog;
 
 // function that will convert awful CSV to TSV.. or something else?
 //   maybe to write binary instead? then read the binary file once it's ok?

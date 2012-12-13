@@ -764,7 +764,7 @@ public class JSONObject {
     while (keys.hasNext()) {
       ja.append(keys.next());
     }
-    return ja.length() == 0 ? null : ja;
+    return ja.size() == 0 ? null : ja;
   }
 
   /**
@@ -1368,11 +1368,11 @@ public class JSONObject {
    * @throws JSONException If any of the values are non-finite numbers.
    */
   public JSONArray toJSONArray(JSONArray names) {
-    if (names == null || names.length() == 0) {
+    if (names == null || names.size() == 0) {
       return null;
     }
     JSONArray ja = new JSONArray();
-    for (int i = 0; i < names.length(); i += 1) {
+    for (int i = 0; i < names.size(); i += 1) {
       ja.append(this.opt(names.getString(i)));
     }
     return ja;

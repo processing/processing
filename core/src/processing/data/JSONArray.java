@@ -185,7 +185,7 @@ public class JSONArray {
    *              object at that index.
    */
   private Object opt(int index) {
-    if (index < 0 || index >= this.length()) {
+    if (index < 0 || index >= this.size()) {
       return null;
     }
     return myArrayList.get(index);
@@ -261,15 +261,12 @@ public class JSONArray {
   }
 
 
+  /**
+   * Get a value from an index as a float. JSON uses 'double' values
+   * internally, so this is simply getDouble() cast to a float.
+   */
   public float getFloat(int index) {
-    Object object = this.get(index);
-    try {
-      return object instanceof Number
-        ? ((Number)object).floatValue()
-          : Float.parseFloat((String)object);
-    } catch (Exception e) {
-      throw new RuntimeException("JSONArray[" + index + "] is not a number.");
-    }
+    return (float) getDouble(index);
   }
 
 
@@ -527,45 +524,6 @@ public class JSONArray {
 
 
   /**
-   * Append a boolean value. This increases the array's length by one.
-   *
-   * @param value A boolean value.
-   * @return this.
-   */
-  public JSONArray append(boolean value) {
-    this.append(value ? Boolean.TRUE : Boolean.FALSE);
-    return this;
-  }
-
-
-  /**
-   * Put a value in the JSONArray, where the value will be a
-   * JSONArray which is produced from a Collection.
-   * @param value A Collection value.
-   * @return      this.
-   */
-  public JSONArray append(Collection value) {
-    this.append(new JSONArray(value));
-    return this;
-  }
-
-
-  /**
-   * Append a double value. This increases the array's length by one.
-   *
-   * @param value A double value.
-   * @throws JSONException if the value is not finite.
-   * @return this.
-   */
-  public JSONArray append(double value) {
-    Double d = new Double(value);
-    JSONObject.testValidity(d);
-    this.append(d);
-    return this;
-  }
-
-
-  /**
    * Append an int value. This increases the array's length by one.
    *
    * @param value An int value.
@@ -590,15 +548,67 @@ public class JSONArray {
 
 
   /**
-   * Put a value in the JSONArray, where the value will be a
-   * JSONObject which is produced from a Map.
-   * @param value A Map value.
-   * @return      this.
+   * Append a float value. This increases the array's length by one.
+   * This will store the value as a double, since there are no floats in JSON.
+   *
+   * @param value A float value.
+   * @throws JSONException if the value is not finite.
+   * @return this.
    */
-  public JSONArray append(Map value) {
-    this.append(new JSONObject(value));
+  public JSONArray append(float value) {
+    return append((double) value);
+  }
+
+
+  /**
+   * Append a double value. This increases the array's length by one.
+   *
+   * @param value A double value.
+   * @throws JSONException if the value is not finite.
+   * @return this.
+   */
+  public JSONArray append(double value) {
+    Double d = new Double(value);
+    JSONObject.testValidity(d);
+    this.append(d);
     return this;
   }
+
+
+  /**
+   * Append a boolean value. This increases the array's length by one.
+   *
+   * @param value A boolean value.
+   * @return this.
+   */
+  public JSONArray append(boolean value) {
+    this.append(value ? Boolean.TRUE : Boolean.FALSE);
+    return this;
+  }
+
+
+//  /**
+//   * Put a value in the JSONArray, where the value will be a
+//   * JSONArray which is produced from a Collection.
+//   * @param value A Collection value.
+//   * @return      this.
+//   */
+//  public JSONArray append(Collection value) {
+//    this.append(new JSONArray(value));
+//    return this;
+//  }
+
+
+//  /**
+//   * Put a value in the JSONArray, where the value will be a
+//   * JSONObject which is produced from a Map.
+//   * @param value A Map value.
+//   * @return      this.
+//   */
+//  public JSONArray append(Map value) {
+//    this.append(new JSONObject(value));
+//    return this;
+//  }
 
 
   /**
@@ -614,50 +624,19 @@ public class JSONArray {
   }
 
 
-  /**
-   * Put or replace a boolean value in the JSONArray. If the index is greater
-   * than the length of the JSONArray, then null elements will be added as
-   * necessary to pad it out.
-   * @param index The subscript.
-   * @param value A boolean value.
-   * @return this.
-   * @throws JSONException If the index is negative.
-   */
-  public JSONArray set(int index, boolean value) {
-    this.set(index, value ? Boolean.TRUE : Boolean.FALSE);
-    return this;
-  }
-
-
-  /**
-   * Put a value in the JSONArray, where the value will be a
-   * JSONArray which is produced from a Collection.
-   * @param index The subscript.
-   * @param value A Collection value.
-   * @return      this.
-   * @throws JSONException If the index is negative or if the value is
-   * not finite.
-   */
-  public JSONArray set(int index, Collection value) {
-    this.set(index, new JSONArray(value));
-    return this;
-  }
-
-
-  /**
-   * Put or replace a double value. If the index is greater than the length of
-   *  the JSONArray, then null elements will be added as necessary to pad
-   *  it out.
-   * @param index The subscript.
-   * @param value A double value.
-   * @return this.
-   * @throws JSONException If the index is negative or if the value is
-   * not finite.
-   */
-  public JSONArray set(int index, double value) {
-    this.set(index, new Double(value));
-    return this;
-  }
+//  /**
+//   * Put a value in the JSONArray, where the value will be a
+//   * JSONArray which is produced from a Collection.
+//   * @param index The subscript.
+//   * @param value A Collection value.
+//   * @return      this.
+//   * @throws JSONException If the index is negative or if the value is
+//   * not finite.
+//   */
+//  public JSONArray set(int index, Collection value) {
+//    this.set(index, new JSONArray(value));
+//    return this;
+//  }
 
 
   /**
@@ -669,7 +648,7 @@ public class JSONArray {
    * @return this.
    * @throws JSONException If the index is negative.
    */
-  public JSONArray set(int index, int value) {
+  public JSONArray setInt(int index, int value) {
     this.set(index, new Integer(value));
     return this;
   }
@@ -684,25 +663,69 @@ public class JSONArray {
    * @return this.
    * @throws JSONException If the index is negative.
    */
-  public JSONArray set(int index, long value) {
-    this.set(index, new Long(value));
-    return this;
+  public JSONArray setLong(int index, long value) {
+    return set(index, new Long(value));
   }
 
 
   /**
-   * Put a value in the JSONArray, where the value will be a
-   * JSONObject that is produced from a Map.
+   * Put or replace a float value. If the index is greater than the length
+   * of the JSONArray, then null elements will be added as necessary to pad
+   * it out. There are no 'double' values in JSON, so this is passed to
+   * setDouble(value).
    * @param index The subscript.
-   * @param value The Map value.
-   * @return      this.
-   * @throws JSONException If the index is negative or if the the value is
-   *  an invalid number.
+   * @param value A float value.
+   * @return this.
+   * @throws RuntimeException If the index is negative or if the value is
+   * not finite.
    */
-  public JSONArray set(int index, Map value) {
-    this.set(index, new JSONObject(value));
-    return this;
+  public JSONArray setFloat(int index, float value) {
+    return setDouble(index, value);
   }
+
+
+  /**
+   * Put or replace a double value. If the index is greater than the length of
+   *  the JSONArray, then null elements will be added as necessary to pad
+   *  it out.
+   * @param index The subscript.
+   * @param value A double value.
+   * @return this.
+   * @throws JSONException If the index is negative or if the value is
+   * not finite.
+   */
+  public JSONArray setDouble(int index, double value) {
+    return set(index, new Double(value));
+  }
+
+
+  /**
+   * Put or replace a boolean value in the JSONArray. If the index is greater
+   * than the length of the JSONArray, then null elements will be added as
+   * necessary to pad it out.
+   * @param index The subscript.
+   * @param value A boolean value.
+   * @return this.
+   * @throws JSONException If the index is negative.
+   */
+  public JSONArray setBoolean(int index, boolean value) {
+    return set(index, value ? Boolean.TRUE : Boolean.FALSE);
+  }
+
+
+//  /**
+//   * Put a value in the JSONArray, where the value will be a
+//   * JSONObject that is produced from a Map.
+//   * @param index The subscript.
+//   * @param value The Map value.
+//   * @return      this.
+//   * @throws JSONException If the index is negative or if the the value is
+//   *  an invalid number.
+//   */
+//  public JSONArray set(int index, Map value) {
+//    this.set(index, new JSONObject(value));
+//    return this;
+//  }
 
 
   /**
@@ -717,15 +740,15 @@ public class JSONArray {
    * @throws JSONException If the index is negative or if the the value is
    *  an invalid number.
    */
-  public JSONArray set(int index, Object value) {
+  private JSONArray set(int index, Object value) {
     JSONObject.testValidity(value);
     if (index < 0) {
       throw new RuntimeException("JSONArray[" + index + "] not found.");
     }
-    if (index < this.length()) {
+    if (index < this.size()) {
       this.myArrayList.set(index, value);
     } else {
-      while (index != this.length()) {
+      while (index != this.size()) {
         this.append(JSONObject.NULL);
       }
       this.append(value);
@@ -739,7 +762,7 @@ public class JSONArray {
    *
    * @return The length (or size).
    */
-  public int length() {
+  public int size() {
     return myArrayList.size();
   }
 
@@ -856,7 +879,7 @@ public class JSONArray {
   Writer write(Writer writer, int indentFactor, int indent) {
     try {
       boolean commanate = false;
-      int length = this.length();
+      int length = this.size();
       writer.write('[');
 
       if (length == 1) {
@@ -899,7 +922,7 @@ public class JSONArray {
    * @throws JSONException If the array contains an invalid number.
    */
   public String join(String separator) {
-    int len = this.length();
+    int len = this.size();
     StringBuffer sb = new StringBuffer();
 
     for (int i = 0; i < len; i += 1) {

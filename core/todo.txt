@@ -11,6 +11,13 @@ X   nah, just leave these turned on since (potentially) important
 X fix table loading quirk with extensions
 _ PImage.resize() greater than loaded image size hangs Java App
 _   http://code.google.com/p/processing/issues/detail?id=1463
+_ add a warning message with registerMouseEvent()
+_   don't let OpenGL fire those mouse events at all
+_   phrase the warning differently when OpenGL is in use (or only show then?)
+_ api note: size() used in data classes
+_   length() too confusing w/ array.length being built-in (when to use ()?)
+_   size() a bit confusing with the p5 size command, but less problematic
+_   also shorter than getCount() or getLength()
 
 cleaning/earlier
 C textureWrap() CLAMP and REPEAT now added

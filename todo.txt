@@ -21,6 +21,8 @@ X add ESC and cmd/ctrl-W to the Examples window
 X move token/syntax coloring out of theme.txt and back into preferences
 X what order should 'recent' menu use?
 X   most recent is at the top
+_ unable to open the URL link to reference after updated to 2.0b7
+_   http://code.google.com/p/processing/issues/detail?id=1465
 
 earlier
 X include debug mode as 'experimental'?
@@ -36,6 +38,7 @@ X   removed in 2.0b7, because it has bugs and is no longer compatible
   <string>true</string>
 </dict>
 
+_ show warning when registering mouse/key events with OpenGL
 
 https://processing-js.lighthouseapp.com/
 
@@ -68,14 +71,14 @@ _ problem changing sketchbook to new location (e.g. from ex to regular)
 _   new libraries are not picked up
 _ Contributed modes should show up in mode menu after installation
 _   http://code.google.com/p/processing/issues/detail?id=1466
+_ using "Add Library" requires restart of Processing before lib recognized
+_   http://code.google.com/p/processing/issues/detail?id=1387
 _ from Casey
 _   list in the PDE would be updated automatically by querying a web service
 _   list on the website would be generated using the same web service
 _   All I would need to do is update web/contrib_generate/sources.conf 
 _     and the rest would happen automatically.
 _ alternating blue/white backgrounds aren't updated after changing filter
-_ using "Add Library" requires restart of Processing before lib recognized
-_   http://code.google.com/p/processing/issues/detail?id=1387
 
 
 2.0 FINAL / new interface
