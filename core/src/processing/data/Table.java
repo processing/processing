@@ -33,6 +33,7 @@ import java.util.*;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
+import quicktime.streaming.SettingsDialog;
 
 // function that will convert awful CSV to TSV.. or something else?
 //   maybe to write binary instead? then read the binary file once it's ok?
@@ -270,14 +271,21 @@ public class Table {
     if (rowCount == 0) {
       setRowCount(10);
     }
-    int prev = 0;  //-1;
+    //int prev = 0;  //-1;
     while ((line = reader.readLine()) != null) {
       if (row == getRowCount()) {
         setRowCount(row << 1);
       }
-      setRow(row, tsv ? PApplet.split(line, '\t') : splitLineCSV(line));
-      row++;
+      if (row == 0 && header) {
+        setColumnTitles(tsv ? PApplet.split(line, '\t') : splitLineCSV(line));
+        header = false;
+      } else {
+        setRow(row, tsv ? PApplet.split(line, '\t') : splitLineCSV(line));
+        row++;
+      }
 
+      /*
+      // this is problematic unless we're going to calculate rowCount first
       if (row % 10000 == 0) {
         if (row < rowCount) {
           int pct = (100 * row) / rowCount;
@@ -292,6 +300,7 @@ public class Table {
           e.printStackTrace();
         }
       }
+      */
     }
     // shorten or lengthen based on what's left
     if (row != getRowCount()) {
