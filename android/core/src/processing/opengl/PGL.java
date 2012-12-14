@@ -549,7 +549,6 @@ public class PGL {
 
       bindFramebuffer(FRAMEBUFFER, 0);
 
-      System.out.println("inited FBO layer");
       initialized = true;
     }
   }
@@ -1662,9 +1661,7 @@ public class PGL {
       boolean depthMask = getDepthWriteMask();
       depthMask(false);
 
-      pg.report("BEFORE USE PROGRAM");
       useProgram(texShaderProgram);
-      pg.report("USE SHADER PROGRAM " + texShaderProgram);
 
       enableVertexAttribArray(texVertLoc);
       enableVertexAttribArray(texTCoordLoc);

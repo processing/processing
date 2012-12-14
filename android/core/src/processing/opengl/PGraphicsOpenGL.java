@@ -527,8 +527,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   public PGraphicsOpenGL() {
-    System.err.println("Create PGL: " + pgPrimary + " " + pgCurrent);
-
     pgl = new PGL(this);
 
     if (tessellator == null) {
@@ -664,11 +662,7 @@ public class PGraphicsOpenGL extends PGraphics {
     deletePointBuffers();
 
     pgl.deleteSurface();
-
-    System.err.println("Disposed renderer");
   }
-
-
 
 
   protected void setFlushMode(int mode) {
@@ -5224,7 +5218,6 @@ public class PGraphicsOpenGL extends PGraphics {
         // In the case of MSAA, this is needed so the back buffer is in sync
         // with the rendering.
         pgl.syncBackTexture();
-        PApplet.println("FBO backed");
       } else {
         loadTextureImpl(Texture.POINT, false);
 
@@ -5250,8 +5243,6 @@ public class PGraphicsOpenGL extends PGraphics {
         endPixelsOp();
 
         texture.setNative(nativePixelBuffer, 0, 0, width, height);
-
-        PApplet.println("not FBO backed");
       }
     } else {
       // We need to copy the contents of the multisampled buffer to the
