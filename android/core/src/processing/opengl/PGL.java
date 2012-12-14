@@ -52,6 +52,11 @@ import android.opengl.GLU;
  *
  */
 public class PGL {
+  public static final boolean SAVE_SURFACE_TO_PIXELS    = false;
+  public static final boolean USE_DIRECT_PIXEL_BUFFERS  = false;
+  public static final boolean USE_DIRECT_VERTEX_BUFFERS = false;
+  public static final int MIN_DIRECT_BUFFER_SIZE        = 1;
+
   /** Size of a short (in bytes). */
   protected static final int SIZEOF_SHORT = Short.SIZE / 8;
 
@@ -349,8 +354,8 @@ public class PGL {
   // FBO layer
 
   public static boolean FORCE_SCREEN_FBO = false;
-  protected static boolean usingFBOlayer = false;
-  protected static boolean firstFrame = true;
+  protected boolean usingFBOlayer = false;
+  protected boolean firstFrame = true;
   protected static IntBuffer glColorFbo;
   protected static IntBuffer glColorTex;
   protected static IntBuffer glDepthStencil;
@@ -367,7 +372,7 @@ public class PGL {
   protected static int texShaderProgram;
   protected static int texVertShader;
   protected static int texFragShader;
-
+  protected static EGLContext texShaderContext;
   protected static int texVertLoc;
   protected static int texTCoordLoc;
 
@@ -415,7 +420,6 @@ public class PGL {
 
   public PGL(PGraphicsOpenGL pg) {
     this.pg = pg;
-    renderer = new AndroidRenderer();
     if (glu == null) {
       glu = new PGLU();
     }
@@ -434,6 +438,15 @@ public class PGL {
     // at the moment initPrimarySurface() gets called we
     // cannot rely on the GL surface being actually
     // available.
+  }
+
+
+  protected void deleteSurface() {
+    deleteTextures(2, glColorTex);
+    deleteFramebuffers(1, glColorFbo);
+    deleteRenderbuffers(1, glDepthStencil);
+    deleteRenderbuffers(1, glDepth);
+    deleteRenderbuffers(1, glStencil);
   }
 
 
@@ -536,6 +549,7 @@ public class PGL {
 
       bindFramebuffer(FRAMEBUFFER, 0);
 
+      System.out.println("inited FBO layer");
       initialized = true;
     }
   }
@@ -617,7 +631,8 @@ public class PGL {
 
   protected Texture wrapBackTexture() {
     Texture tex = new Texture(pg.parent);
-    tex.init(glColorTex.get(backTex), TEXTURE_2D, RGBA,
+    tex.init(pg.width, pg.height,
+             glColorTex.get(backTex), TEXTURE_2D, RGBA,
              fboWidth, fboHeight, NEAREST, NEAREST,
              CLAMP_TO_EDGE, CLAMP_TO_EDGE);
     tex.invertedY(true);
@@ -629,7 +644,8 @@ public class PGL {
 
   protected Texture wrapFrontTexture() {
     Texture tex = new Texture(pg.parent);
-    tex.init(glColorTex.get(frontTex), TEXTURE_2D, RGBA,
+    tex.init(pg.width, pg.height,
+             glColorTex.get(frontTex), TEXTURE_2D, RGBA,
              fboWidth, fboHeight, NEAREST, NEAREST,
              CLAMP_TO_EDGE, CLAMP_TO_EDGE);
     tex.invertedY(true);
@@ -1573,7 +1589,12 @@ public class PGL {
     // Doing in patches of 16x16 pixels to avoid creating a (potentially)
     // very large transient array which in certain situations (memory-
     // constrained android devices) might lead to an out-of-memory error.
-    IntBuffer texels = PGL.allocateDirectIntBuffer(16 * 16);
+    IntBuffer texels;
+    if (USE_DIRECT_PIXEL_BUFFERS) {
+      texels = PGL.allocateDirectIntBuffer(16 * 16);
+    } else {
+      texels = IntBuffer.allocate(16 * 16);
+    }
     for (int y = 0; y < height; y += 16) {
       int h = PApplet.min(16, height - y);
       for (int x = 0; x < width; x += 16) {
@@ -1610,7 +1631,8 @@ public class PGL {
   protected void drawTexture(int target, int id, int width, int height,
                              int texX0, int texY0, int texX1, int texY1,
                              int scrX0, int scrY0, int scrX1, int scrY1) {
-    if (!loadedTexShader) {
+    if (!loadedTexShader ||
+        texShaderContext.hashCode() != context.hashCode()) {
       texVertShader = createShader(VERTEX_SHADER, texVertShaderSource);
       texFragShader = createShader(FRAGMENT_SHADER, texFragShaderSource);
       if (0 < texVertShader && 0 < texFragShader) {
@@ -1621,6 +1643,7 @@ public class PGL {
         texTCoordLoc = getAttribLocation(texShaderProgram, "inTexcoord");
       }
       loadedTexShader = true;
+      texShaderContext = context;
     }
 
     if (texData == null) {
@@ -1639,7 +1662,9 @@ public class PGL {
       boolean depthMask = getDepthWriteMask();
       depthMask(false);
 
+      pg.report("BEFORE USE PROGRAM");
       useProgram(texShaderProgram);
+      pg.report("USE SHADER PROGRAM " + texShaderProgram);
 
       enableVertexAttribArray(texVertLoc);
       enableVertexAttribArray(texTCoordLoc);
@@ -2143,26 +2168,29 @@ public class PGL {
 
 
   protected static ByteBuffer allocateDirectByteBuffer(int size) {
-    return ByteBuffer.allocateDirect(size * SIZEOF_BYTE).
-           order(ByteOrder.nativeOrder());
+    int bytes = PApplet.max(MIN_DIRECT_BUFFER_SIZE, size) * SIZEOF_BYTE;
+    return ByteBuffer.allocateDirect(bytes).order(ByteOrder.nativeOrder());
   }
 
 
   protected static ShortBuffer allocateDirectShortBuffer(int size) {
-    return ByteBuffer.allocateDirect(size * SIZEOF_SHORT).
-           order(ByteOrder.nativeOrder()).asShortBuffer();
+    int bytes = PApplet.max(MIN_DIRECT_BUFFER_SIZE, size) * SIZEOF_SHORT;
+    return ByteBuffer.allocateDirect(bytes).order(ByteOrder.nativeOrder()).
+           asShortBuffer();
   }
 
 
   protected static IntBuffer allocateDirectIntBuffer(int size) {
-    return ByteBuffer.allocateDirect(size * SIZEOF_INT).
-           order(ByteOrder.nativeOrder()).asIntBuffer();
+    int bytes = PApplet.max(MIN_DIRECT_BUFFER_SIZE, size) * SIZEOF_INT;
+    return ByteBuffer.allocateDirect(bytes).order(ByteOrder.nativeOrder()).
+           asIntBuffer();
   }
 
 
   protected static FloatBuffer allocateDirectFloatBuffer(int size) {
-    return ByteBuffer.allocateDirect(size * SIZEOF_FLOAT).
-           order(ByteOrder.nativeOrder()).asFloatBuffer();
+    int bytes = PApplet.max(MIN_DIRECT_BUFFER_SIZE, size) * SIZEOF_FLOAT;
+    return ByteBuffer.allocateDirect(bytes).order(ByteOrder.nativeOrder()).
+           asFloatBuffer();
   }
 
 
@@ -2212,6 +2240,7 @@ public class PGL {
 
 
   public AndroidRenderer getRenderer() {
+    renderer = new AndroidRenderer();
     return renderer;
   }
 
@@ -2235,6 +2264,8 @@ public class PGL {
       gl = igl;
       glThread = Thread.currentThread();
       pg.parent.handleDraw();
+//      clearColor(1, 0, 0, 1);
+//      clear(COLOR_BUFFER_BIT);
     }
 
     public void onSurfaceChanged(GL10 igl, int iwidth, int iheight) {
