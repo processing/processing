@@ -93,6 +93,7 @@ public class Texture implements PConstants {
   protected boolean invertedX;
   protected boolean invertedY;
 
+  protected int[] rgbaPixels = null;
   protected IntBuffer pixelBuffer = null;
   protected FrameBuffer tempFbo = null;
 
@@ -353,13 +354,12 @@ public class Texture implements PConstants {
     if (usingMipmaps) {
       if (PGraphicsOpenGL.autoMipmapGenSupported) {
         // Automatic mipmap generation.
-        int[] rgbaPixels = new int[w * h];
+        loadPixels(w * h);
         convertToRGBA(pixels, rgbaPixels, format, w, h);
         updatePixelBuffer(rgbaPixels);
         pgl.texSubImage2D(glTarget, 0, x, y, w, h, PGL.RGBA, PGL.UNSIGNED_BYTE,
                           pixelBuffer);
         pgl.generateMipmap(glTarget);
-        rgbaPixels = null;
       } else {
         // TODO: finish manual mipmap generation, replacing Bitmap with AWT's BufferedImage,
         // making it work in npot textures (embed npot tex into larger pot tex?), subregions,
@@ -415,20 +415,18 @@ public class Texture implements PConstants {
         }
       */
 
-        int[] rgbaPixels = new int[w * h];
+        loadPixels(w * h);
         convertToRGBA(pixels, rgbaPixels, format, w, h);
         updatePixelBuffer(rgbaPixels);
         pgl.texSubImage2D(glTarget, 0, x, y, w, h, PGL.RGBA, PGL.UNSIGNED_BYTE,
                           pixelBuffer);
-        rgbaPixels = null;
       }
     } else {
-      int[] rgbaPixels = new int[w * h];
+      loadPixels(w * h);
       convertToRGBA(pixels, rgbaPixels, format, w, h);
       updatePixelBuffer(rgbaPixels);
       pgl.texSubImage2D(glTarget, 0, x, y, w, h, PGL.RGBA, PGL.UNSIGNED_BYTE,
                         pixelBuffer);
-      rgbaPixels = null;
     }
 
     pgl.bindTexture(glTarget, 0);
@@ -850,13 +848,24 @@ public class Texture implements PConstants {
   }
 
 
-  protected void updatePixelBuffer(int[] pixels) {
-    if (pixelBuffer == null || pixelBuffer.capacity() < pixels.length) {
-      pixelBuffer = PGL.allocateDirectIntBuffer(pixels.length);
+  protected void loadPixels(int len) {
+    if (rgbaPixels == null || rgbaPixels.length < len) {
+      rgbaPixels = new int[len];
     }
-    pixelBuffer.position(0);
-    pixelBuffer.put(pixels);
-    pixelBuffer.rewind();
+  }
+
+
+  protected void updatePixelBuffer(int[] pixels) {
+    if (PGL.USE_DIRECT_VERTEX_BUFFERS) {
+      if (pixelBuffer == null || pixelBuffer.capacity() < pixels.length) {
+        pixelBuffer = PGL.allocateDirectIntBuffer(pixels.length);
+      }
+      pixelBuffer.position(0);
+      pixelBuffer.put(pixels);
+      pixelBuffer.rewind();
+    } else {
+      pixelBuffer = IntBuffer.wrap(pixels);
+    }
   }
 
   ////////////////////////////////////////////////////////////
