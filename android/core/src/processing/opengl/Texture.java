@@ -207,7 +207,7 @@ public class Texture implements PConstants {
   public void init(int width, int height, Parameters params)  {
     setParameters(params);
     setSize(width, height);
-    //allocate();
+    allocate();
   }
 
 
