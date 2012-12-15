@@ -856,16 +856,7 @@ public class Texture implements PConstants {
 
 
   protected void updatePixelBuffer(int[] pixels) {
-    if (PGL.USE_DIRECT_VERTEX_BUFFERS) {
-      if (pixelBuffer == null || pixelBuffer.capacity() < pixels.length) {
-        pixelBuffer = PGL.allocateDirectIntBuffer(pixels.length);
-      }
-      pixelBuffer.position(0);
-      pixelBuffer.put(pixels);
-      pixelBuffer.rewind();
-    } else {
-      pixelBuffer = IntBuffer.wrap(pixels);
-    }
+    pixelBuffer = PGL.updateIntBuffer(pixelBuffer, pixels, true);
   }
 
   ////////////////////////////////////////////////////////////

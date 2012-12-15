@@ -52,10 +52,9 @@ import android.opengl.GLU;
  *
  */
 public class PGL {
-  public static final boolean SAVE_SURFACE_TO_PIXELS    = false;
-  public static final boolean USE_DIRECT_PIXEL_BUFFERS  = false;
-  public static final boolean USE_DIRECT_VERTEX_BUFFERS = false;
-  public static final int MIN_DIRECT_BUFFER_SIZE        = 1;
+  public static final boolean USE_DIRECT_BUFFERS = false;
+  public static final int MIN_DIRECT_BUFFER_SIZE = 1;
+  public static final boolean SAVE_SURFACE_TO_PIXELS = false;
 
   /** Size of a short (in bytes). */
   protected static final int SIZEOF_SHORT = Short.SIZE / 8;
@@ -330,18 +329,18 @@ public class PGL {
   /** The current opengl context */
   public static EGLContext context;
 
-  /** OpenGL thread */
-  protected static Thread glThread;
-
   /** The PGraphics object using this interface */
   protected PGraphicsOpenGL pg;
-
-  /** Whether OpenGL has been initialized or not */
-  protected boolean initialized;
 
   /** The renderer object driving the rendering loop,
    * analogous to the GLEventListener in JOGL */
   protected static AndroidRenderer renderer;
+
+  /** OpenGL thread */
+  protected static Thread glThread;
+
+  /** Whether OpenGL has been initialized or not */
+  protected static boolean glInitialized = false;
 
   /** Which texturing targets are enabled */
   protected static boolean[] texturingTargets = { false };
@@ -354,8 +353,9 @@ public class PGL {
   // FBO layer
 
   public static boolean FORCE_SCREEN_FBO = false;
-  protected boolean usingFBOlayer = false;
-  protected boolean firstFrame = true;
+  protected static boolean fboLayerCreated = false;
+  protected static boolean fboLayerInUse = false;
+  protected static boolean firstFrame = true;
   protected static IntBuffer glColorFbo;
   protected static IntBuffer glColorTex;
   protected static IntBuffer glDepthStencil;
@@ -423,9 +423,16 @@ public class PGL {
     if (glu == null) {
       glu = new PGLU();
     }
-    byteBuffer = allocateDirectByteBuffer(1);
-    intBuffer = allocateDirectIntBuffer(1);
-    initialized = false;
+    if (glColorTex == null) {
+      glColorTex = allocateIntBuffer(2);
+      glColorFbo = allocateIntBuffer(1);
+      glDepthStencil = allocateIntBuffer(1);
+      glDepth = allocateIntBuffer(1);
+      glStencil = allocateIntBuffer(1);
+    }
+
+    byteBuffer = allocateByteBuffer(1);
+    intBuffer = allocateIntBuffer(1);
   }
 
 
@@ -442,16 +449,20 @@ public class PGL {
 
 
   protected void deleteSurface() {
-    deleteTextures(2, glColorTex);
-    deleteFramebuffers(1, glColorFbo);
-    deleteRenderbuffers(1, glDepthStencil);
-    deleteRenderbuffers(1, glDepth);
-    deleteRenderbuffers(1, glStencil);
+    if (glColorTex != null) {
+      deleteTextures(2, glColorTex);
+      deleteFramebuffers(1, glColorFbo);
+      deleteRenderbuffers(1, glDepthStencil);
+      deleteRenderbuffers(1, glDepth);
+      deleteRenderbuffers(1, glStencil);
+    }
+    fboLayerCreated = false;
+    glInitialized = false;
   }
 
 
   protected void update() {
-    if (!initialized) {
+    if (!fboLayerCreated) {
       String ext = getString(EXTENSIONS);
       if (-1 < ext.indexOf("texture_non_power_of_two")) {
         fboWidth = pg.width;
@@ -464,12 +475,6 @@ public class PGL {
       boolean packed = ext.indexOf("packed_depth_stencil") != -1;
       int depthBits = getDepthBits();
       int stencilBits = getStencilBits();
-
-      glColorTex = allocateDirectIntBuffer(2);
-      glColorFbo = allocateDirectIntBuffer(1);
-      glDepthStencil = allocateDirectIntBuffer(1);
-      glDepth = allocateDirectIntBuffer(1);
-      glStencil = allocateDirectIntBuffer(1);
 
       genTextures(2, glColorTex);
       for (int i = 0; i < 2; i++) {
@@ -549,13 +554,13 @@ public class PGL {
 
       bindFramebuffer(FRAMEBUFFER, 0);
 
-      initialized = true;
+      fboLayerCreated = true;
     }
   }
 
 
   protected int getReadFramebuffer() {
-    if (usingFBOlayer) {
+    if (fboLayerInUse) {
       return glColorFbo.get(0);
     } else {
       return 0;
@@ -564,7 +569,7 @@ public class PGL {
 
 
   protected int getDrawFramebuffer() {
-    if (usingFBOlayer) {
+    if (fboLayerInUse) {
       return glColorFbo.get(0);
     } else {
       return 0;
@@ -573,7 +578,7 @@ public class PGL {
 
 
   protected int getDefaultDrawBuffer() {
-    if (usingFBOlayer) {
+    if (fboLayerInUse) {
       return COLOR_ATTACHMENT0;
     } else {
       return BACK;
@@ -582,7 +587,7 @@ public class PGL {
 
 
   protected int getDefaultReadBuffer() {
-    if (usingFBOlayer) {
+    if (fboLayerInUse) {
       return COLOR_ATTACHMENT0;
     } else {
       return FRONT;
@@ -591,7 +596,7 @@ public class PGL {
 
 
   protected boolean isFBOBacked() {
-    return usingFBOlayer;
+    return fboLayerInUse;
   }
 
 
@@ -713,9 +718,9 @@ public class PGL {
                     fboWidth, fboHeight, 0, 0, pg.width, pg.height,
                                          0, 0, pg.width, pg.height);
       }
-      usingFBOlayer = true;
+      fboLayerInUse = true;
     } else {
-      usingFBOlayer = false;
+      fboLayerInUse = false;
     }
 
     if (firstFrame) {
@@ -725,7 +730,7 @@ public class PGL {
 
 
   protected void endDraw(boolean clear) {
-    if (usingFBOlayer) {
+    if (fboLayerInUse) {
       // Draw the contents of the back texture to the screen framebuffer.
       bindFramebuffer(FRAMEBUFFER, 0);
 
@@ -776,7 +781,7 @@ public class PGL {
     if (-1 < name) {
       GLES20.glGetIntegerv(name, values);
     } else {
-      fillBuffer(values, 0, values.capacity(), 0);
+      fillIntBuffer(values, 0, values.capacity(), 0);
     }
   }
 
@@ -785,7 +790,7 @@ public class PGL {
     if (-1 < name) {
       GLES20.glGetFloatv(name, values);
     } else {
-      fillBuffer(values, 0, values.capacity(), 0);
+      fillFloatBuffer(values, 0, values.capacity(), 0);
     }
   }
 
@@ -794,7 +799,7 @@ public class PGL {
     if (-1 < name) {
       GLES20.glGetBooleanv(name, values);
     } else {
-      fillBuffer(values, 0, values.capacity(), 0);
+      fillIntBuffer(values, 0, values.capacity(), 0);
     }
   }
 
@@ -1588,12 +1593,7 @@ public class PGL {
     // Doing in patches of 16x16 pixels to avoid creating a (potentially)
     // very large transient array which in certain situations (memory-
     // constrained android devices) might lead to an out-of-memory error.
-    IntBuffer texels;
-    if (USE_DIRECT_PIXEL_BUFFERS) {
-      texels = PGL.allocateDirectIntBuffer(16 * 16);
-    } else {
-      texels = IntBuffer.allocate(16 * 16);
-    }
+    IntBuffer texels = PGL.allocateIntBuffer(16 * 16);
     for (int y = 0; y < height; y += 16) {
       int h = PApplet.min(16, height - y);
       for (int x = 0; x < width; x += 16) {
@@ -1646,6 +1646,8 @@ public class PGL {
     }
 
     if (texData == null) {
+      // This buffer has to be direct because vertexAttribPointer only accepts
+      // direct buffers.
       texData = allocateDirectFloatBuffer(texCoords.length);
     }
 
@@ -2170,10 +2172,118 @@ public class PGL {
   }
 
 
+  protected static ByteBuffer allocateByteBuffer(int size) {
+    if (USE_DIRECT_BUFFERS) {
+      return allocateDirectByteBuffer(size);
+    } else {
+      return ByteBuffer.allocate(size);
+    }
+  }
+
+
+  protected static ByteBuffer allocateByteBuffer(byte[] arr) {
+    if (USE_DIRECT_BUFFERS) {
+      return PGL.allocateDirectByteBuffer(arr.length);
+    } else {
+      return ByteBuffer.wrap(arr);
+    }
+  }
+
+
+  protected static ByteBuffer updateByteBuffer(ByteBuffer buf, byte[] arr,
+                                               boolean wrap) {
+    if (USE_DIRECT_BUFFERS) {
+      if (buf == null || buf.capacity() < arr.length) {
+        buf = PGL.allocateDirectByteBuffer(arr.length);
+      }
+      buf.position(0);
+      buf.put(arr);
+      buf.rewind();
+    } else {
+      if (wrap) {
+        buf = ByteBuffer.wrap(arr);
+      } else {
+        if (buf == null || buf.capacity() < arr.length) {
+          buf = ByteBuffer.allocate(arr.length);
+        }
+        buf.position(0);
+        buf.put(arr);
+        buf.rewind();
+      }
+    }
+    return buf;
+  }
+
+
+  protected static void fillByteBuffer(ByteBuffer buf, int i0, int i1,
+                                       byte val) {
+    int n = i1 - i0;
+    byte[] temp = new byte[n];
+    Arrays.fill(temp, 0, n, val);
+    buf.position(i0);
+    buf.put(temp, 0, n);
+    buf.rewind();
+  }
+
+
   protected static ShortBuffer allocateDirectShortBuffer(int size) {
     int bytes = PApplet.max(MIN_DIRECT_BUFFER_SIZE, size) * SIZEOF_SHORT;
     return ByteBuffer.allocateDirect(bytes).order(ByteOrder.nativeOrder()).
            asShortBuffer();
+  }
+
+
+  protected static ShortBuffer allocateShortBuffer(int size) {
+    if (USE_DIRECT_BUFFERS) {
+      return allocateDirectShortBuffer(size);
+    } else {
+      return ShortBuffer.allocate(size);
+    }
+  }
+
+
+  protected static ShortBuffer allocateShortBuffer(short[] arr) {
+    if (USE_DIRECT_BUFFERS) {
+      return PGL.allocateDirectShortBuffer(arr.length);
+    } else {
+      return ShortBuffer.wrap(arr);
+    }
+  }
+
+
+  protected static ShortBuffer updateShortBuffer(ShortBuffer buf, short[] arr,
+                                                 boolean wrap) {
+    if (USE_DIRECT_BUFFERS) {
+      if (buf == null || buf.capacity() < arr.length) {
+        buf = PGL.allocateDirectShortBuffer(arr.length);
+      }
+      buf.position(0);
+      buf.put(arr);
+      buf.rewind();
+    } else {
+      if (wrap) {
+        buf = ShortBuffer.wrap(arr);
+      } else {
+        if (buf == null || buf.capacity() < arr.length) {
+          buf = ShortBuffer.allocate(arr.length);
+        }
+        buf.position(0);
+        buf.put(arr);
+        buf.rewind();
+      }
+    }
+    return buf;
+  }
+
+
+  protected static void fillShortBuffer(ShortBuffer buf, int i0, int i1,
+                                        short val) {
+    int n = i1 - i0;
+    short[] temp = new short[n];
+    Arrays.fill(temp, 0, n, val);
+    buf.position(i0);
+    buf.put(temp, 0, n);
+    buf.rewind();
   }
 
 
@@ -2184,34 +2294,50 @@ public class PGL {
   }
 
 
-  protected static FloatBuffer allocateDirectFloatBuffer(int size) {
-    int bytes = PApplet.max(MIN_DIRECT_BUFFER_SIZE, size) * SIZEOF_FLOAT;
-    return ByteBuffer.allocateDirect(bytes).order(ByteOrder.nativeOrder()).
-           asFloatBuffer();
+  protected static IntBuffer allocateIntBuffer(int size) {
+    if (USE_DIRECT_BUFFERS) {
+      return allocateDirectIntBuffer(size);
+    } else {
+      return IntBuffer.allocate(size);
+    }
   }
 
 
-  protected static void fillBuffer(ByteBuffer buf, int i0, int i1, byte val) {
-    int n = i1 - i0;
-    byte[] temp = new byte[n];
-    Arrays.fill(temp, 0, n, val);
-    buf.position(i0);
-    buf.put(temp, 0, n);
-    buf.rewind();
+  protected static IntBuffer allocateIntBuffer(int[] arr) {
+    if (USE_DIRECT_BUFFERS) {
+      return PGL.allocateDirectIntBuffer(arr.length);
+    } else {
+      return IntBuffer.wrap(arr);
+    }
   }
 
 
-  protected static void fillBuffer(ShortBuffer buf, int i0, int i1, short val) {
-    int n = i1 - i0;
-    short[] temp = new short[n];
-    Arrays.fill(temp, 0, n, val);
-    buf.position(i0);
-    buf.put(temp, 0, n);
-    buf.rewind();
+  protected static IntBuffer updateIntBuffer(IntBuffer buf, int[] arr,
+                                             boolean wrap) {
+    if (USE_DIRECT_BUFFERS) {
+      if (buf == null || buf.capacity() < arr.length) {
+        buf = PGL.allocateDirectIntBuffer(arr.length);
+      }
+      buf.position(0);
+      buf.put(arr);
+      buf.rewind();
+    } else {
+      if (wrap) {
+        buf = IntBuffer.wrap(arr);
+      } else {
+        if (buf == null || buf.capacity() < arr.length) {
+          buf = IntBuffer.allocate(arr.length);
+        }
+        buf.position(0);
+        buf.put(arr);
+        buf.rewind();
+      }
+    }
+    return buf;
   }
 
 
-  protected static void fillBuffer(IntBuffer buf, int i0, int i1, int val) {
+  protected static void fillIntBuffer(IntBuffer buf, int i0, int i1, int val) {
     int n = i1 - i0;
     int[] temp = new int[n];
     Arrays.fill(temp, 0, n, val);
@@ -2221,13 +2347,82 @@ public class PGL {
   }
 
 
-  protected static void fillBuffer(FloatBuffer buf, int i0, int i1, float val) {
+  protected static FloatBuffer allocateDirectFloatBuffer(int size) {
+    int bytes = PApplet.max(MIN_DIRECT_BUFFER_SIZE, size) * SIZEOF_FLOAT;
+    return ByteBuffer.allocateDirect(bytes).order(ByteOrder.nativeOrder()).
+           asFloatBuffer();
+  }
+
+
+  protected static FloatBuffer allocateFloatBuffer(int size) {
+    if (USE_DIRECT_BUFFERS) {
+      return allocateDirectFloatBuffer(size);
+    } else {
+      return FloatBuffer.allocate(size);
+    }
+  }
+
+
+  protected static FloatBuffer allocateFloatBuffer(float[] arr) {
+    if (USE_DIRECT_BUFFERS) {
+      return PGL.allocateDirectFloatBuffer(arr.length);
+    } else {
+      return FloatBuffer.wrap(arr);
+    }
+  }
+
+
+  protected static FloatBuffer updateFloatBuffer(FloatBuffer buf, float[] arr,
+                                                 boolean wrap) {
+    if (USE_DIRECT_BUFFERS) {
+      if (buf == null || buf.capacity() < arr.length) {
+        buf = PGL.allocateDirectFloatBuffer(arr.length);
+      }
+      buf.position(0);
+      buf.put(arr);
+      buf.rewind();
+    } else {
+      if (wrap) {
+        buf = FloatBuffer.wrap(arr);
+      } else {
+        if (buf == null || buf.capacity() < arr.length) {
+          buf = FloatBuffer.allocate(arr.length);
+        }
+        buf.position(0);
+        buf.put(arr);
+        buf.rewind();
+      }
+    }
+    return buf;
+  }
+
+
+  protected static void fillFloatBuffer(FloatBuffer buf, int i0, int i1,
+                                        float val) {
     int n = i1 - i0;
     float[] temp = new float[n];
     Arrays.fill(temp, 0, n, val);
     buf.position(i0);
     buf.put(temp, 0, n);
     buf.rewind();
+  }
+
+
+  protected static void getPixels(IntBuffer buf, int[] arr) {
+    if (USE_DIRECT_BUFFERS) {
+      buf.position(0);
+      buf.get(arr);
+      buf.rewind();
+    }
+  }
+
+
+  protected static void putPixels(IntBuffer buf, int[] arr) {
+    if (USE_DIRECT_BUFFERS) {
+      buf.position(0);
+      buf.put(arr);
+      buf.rewind();
+    }
   }
 
 
@@ -2277,6 +2472,7 @@ public class PGL {
     public void onSurfaceCreated(GL10 igl, EGLConfig config) {
       gl = igl;
       context = ((EGL10)EGLContext.getEGL()).eglGetCurrentContext();
+      glInitialized = true;
     }
   }
 

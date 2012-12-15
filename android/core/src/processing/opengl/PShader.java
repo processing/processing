@@ -102,7 +102,7 @@ public class PShader {
 
     firstTexUnit = 0;
 
-    intBuffer = PGL.allocateDirectIntBuffer(1);
+    intBuffer = PGL.allocateIntBuffer(1);
     floatBuffer = PGL.allocateDirectFloatBuffer(1);
 
     bound = false;
@@ -141,8 +141,8 @@ public class PShader {
     glVertex = 0;
     glFragment = 0;
 
-    intBuffer = PGL.allocateDirectIntBuffer(1);
-    floatBuffer = PGL.allocateDirectFloatBuffer(1);
+    intBuffer = PGL.allocateIntBuffer(1);
+    floatBuffer = PGL.allocateFloatBuffer(1);
   }
 
   /**
@@ -163,8 +163,8 @@ public class PShader {
     glVertex = 0;
     glFragment = 0;
 
-    intBuffer = PGL.allocateDirectIntBuffer(1);
-    floatBuffer = PGL.allocateDirectFloatBuffer(1);
+    intBuffer = PGL.allocateIntBuffer(1);
+    floatBuffer = PGL.allocateFloatBuffer(1);
   }
 
 
@@ -474,7 +474,7 @@ public class PShader {
   protected void setUniformVector(int loc, int[] vec, int ncoords,
                                   int length) {
     if (-1 < loc) {
-      copyToIntBuffer(vec);
+      updateIntBuffer(vec);
       if (ncoords == 1) {
         pgl.uniform1iv(loc, length, intBuffer);
       } else if (ncoords == 2) {
@@ -491,7 +491,7 @@ public class PShader {
   protected void setUniformVector(int loc, float[] vec, int ncoords,
                                   int length) {
     if (-1 < loc) {
-      copyToFloatBuffer(vec);
+      updateFloatBuffer(vec);
       if (ncoords == 1) {
         pgl.uniform1fv(loc, length, floatBuffer);
       } else if (ncoords == 2) {
@@ -507,7 +507,7 @@ public class PShader {
 
   protected void setUniformMatrix(int loc, float[] mat) {
     if (-1 < loc) {
-      copyToFloatBuffer(mat);
+      updateFloatBuffer(mat);
       if (mat.length == 4) {
         pgl.uniformMatrix2fv(loc, 1, false, floatBuffer);
       } else if (mat.length == 9) {
@@ -604,47 +604,47 @@ public class PShader {
           pgl.uniform4f(loc, v[0], v[1], v[2], v[3]);
         } else if (val.type == UniformValue.INT1VEC) {
           int[] v = ((int[])val.value);
-          copyToIntBuffer(v);
+          updateIntBuffer(v);
           pgl.uniform1iv(loc, v.length, intBuffer);
         } else if (val.type == UniformValue.INT2VEC) {
           int[] v = ((int[])val.value);
-          copyToIntBuffer(v);
+          updateIntBuffer(v);
           pgl.uniform2iv(loc, v.length / 2, intBuffer);
         } else if (val.type == UniformValue.INT3VEC) {
           int[] v = ((int[])val.value);
-          copyToIntBuffer(v);
+          updateIntBuffer(v);
           pgl.uniform3iv(loc, v.length / 3, intBuffer);
         } else if (val.type == UniformValue.INT4VEC) {
           int[] v = ((int[])val.value);
-          copyToIntBuffer(v);
+          updateIntBuffer(v);
           pgl.uniform4iv(loc, v.length / 4, intBuffer);
         } else if (val.type == UniformValue.FLOAT1VEC) {
           float[] v = ((float[])val.value);
-          copyToFloatBuffer(v);
+          updateFloatBuffer(v);
           pgl.uniform1fv(loc, v.length, floatBuffer);
         } else if (val.type == UniformValue.FLOAT2VEC) {
           float[] v = ((float[])val.value);
-          copyToFloatBuffer(v);
+          updateFloatBuffer(v);
           pgl.uniform2fv(loc, v.length / 2, floatBuffer);
         } else if (val.type == UniformValue.FLOAT3VEC) {
           float[] v = ((float[])val.value);
-          copyToFloatBuffer(v);
+          updateFloatBuffer(v);
           pgl.uniform3fv(loc, v.length / 3, floatBuffer);
         } else if (val.type == UniformValue.FLOAT4VEC) {
           float[] v = ((float[])val.value);
-          copyToFloatBuffer(v);
+          updateFloatBuffer(v);
           pgl.uniform4fv(loc, v.length / 4, floatBuffer);
         } else if (val.type == UniformValue.MAT2) {
           float[] v = ((float[])val.value);
-          copyToFloatBuffer(v);
+          updateFloatBuffer(v);
           pgl.uniformMatrix2fv(loc, 1, false, floatBuffer);
         } else if (val.type == UniformValue.MAT3) {
           float[] v = ((float[])val.value);
-          copyToFloatBuffer(v);
+          updateFloatBuffer(v);
           pgl.uniformMatrix3fv(loc, 1, false, floatBuffer);
         } else if (val.type == UniformValue.MAT4) {
           float[] v = ((float[])val.value);
-          copyToFloatBuffer(v);
+          updateFloatBuffer(v);
           pgl.uniformMatrix4fv(loc, 1, false, floatBuffer);
         } else if (val.type == UniformValue.SAMPLER2D) {
           PImage img = (PImage)val.value;
@@ -662,23 +662,13 @@ public class PShader {
   }
 
 
-  protected void copyToIntBuffer(int[] vec) {
-    if (intBuffer.capacity() < vec.length) {
-      intBuffer = PGL.allocateDirectIntBuffer(vec.length);
-    }
-    intBuffer.rewind();
-    intBuffer.put(vec, 0, vec.length);
-    intBuffer.rewind();
+  protected void updateIntBuffer(int[] vec) {
+    intBuffer = PGL.updateIntBuffer(intBuffer, vec, false);
   }
 
 
-  protected void copyToFloatBuffer(float[] vec) {
-    if (floatBuffer.capacity() < vec.length) {
-      floatBuffer = PGL.allocateDirectFloatBuffer(vec.length);
-    }
-    floatBuffer.rewind();
-    floatBuffer.put(vec, 0, vec.length);
-    floatBuffer.rewind();
+  protected void updateFloatBuffer(float[] vec) {
+    floatBuffer = PGL.updateFloatBuffer(floatBuffer, vec, false);
   }
 
 
