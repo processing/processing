@@ -9,6 +9,13 @@ o hint(OPENGL_ERRORS) should be the opposite to enable the reporting, no?
 o   hint(ENABLE_OPENGL_ERRORS) should be the hint.. disabled by default
 X   nah, just leave these turned on since (potentially) important
 X fix table loading quirk with extensions
+o full screen not auto-enabling with displayWidth/Height
+X   Opting not to do this, because we can't remove the decorations on the
+X   window at this point. And re-opening a new winodw is a lot of mess.
+X   Better all around to just encourage the use of sketchFullScreen()
+X   or cmd/ctrl-shift-R in the PDE.
+
+
 _ PImage.resize() greater than loaded image size hangs Java App
 _   http://code.google.com/p/processing/issues/detail?id=1463
 _ add a warning message with registerMouseEvent()
@@ -18,6 +25,18 @@ _ api note: size() used in data classes
 _   length() too confusing w/ array.length being built-in (when to use ()?)
 _   size() a bit confusing with the p5 size command, but less problematic
 _   also shorter than getCount() or getLength()
+
+
+decisions on data
+X are we comfortable with setInt/Float/etc instead of just set(int, blah)
+X   yes, better to have parity
+X   too weird to have to explain why getXxx() needs types and set() doesn't
+_ get/set with Java's 'Map' class?
+_   really useful, but leaning toward not including it
+_   or leave it in as an advanced feature?
+X createXxx() methods less important
+X   XML.parse() - or new XML("<tag>") or new XML("tag")
+_   add parseXML() and parseJSONObject(x)
 
 cleaning/earlier
 C textureWrap() CLAMP and REPEAT now added
@@ -40,10 +59,10 @@ X saveTable("filename.tsv") or saveTable("filename.txt", "tsv")
 X createTable() method in PApplet
 X removed getUniqueXxxx() and some others, pending names
 
-_ when using loadFont(), don't enable native fonts unless hint() in use
-_   but on createFont(), we're probably OK
-_   might need to make reference notes about the two behaviors
-_   remove hint(ENABLE_NATIVE_FONTS)
+o when using loadFont(), don't enable native fonts unless hint() in use
+o   but on createFont(), we're probably OK
+o   might need to make reference notes about the two behaviors
+_   decision: remove hint(ENABLE_NATIVE_FONTS)
 
 _ implement mousePressed(Event) etc
 _   better to do this instead of bringing back the magic event
