@@ -21,6 +21,17 @@ X add ESC and cmd/ctrl-W to the Examples window
 X move token/syntax coloring out of theme.txt and back into preferences
 X what order should 'recent' menu use?
 X   most recent is at the top
+X check on new JDK and how it works on OS X
+X   http://jdk7.java.net/macportpreview/
+X add retina support to Info.plist
+X   <key>NSHighResolutionCapable</key>
+X   <string>true</string>
+X add basics of retina support to the toolbar and header
+X   getDefaultToolkit().getDesktopProperty("apple.awt.contentScaleFactor");
+
+_ deal with underscores and "Find in Reference"
+_   http://code.google.com/p/processing/issues/detail?id=1474
+
 _ unable to open the URL link to reference after updated to 2.0b7
 _   http://code.google.com/p/processing/issues/detail?id=1465
 
@@ -870,18 +881,6 @@ _   otherwise updates are going to require reinstall..
 _   or that it's gonna need to parse and say "update command line?" 
 _ look into LCD rendering problems w/ Java (see if Lion still a problem)
 _   fonts were showing up with very different fatness
-_ check on new JDK and how it works on OS X
-_   http://jdk7.java.net/macportpreview/
-_ retina support
-_   also this? 
-<key>NSHighResolutionCapable</key>
-<string>true</string>
-_   someone else:
-Have you added an NSPrincipalClass to your Info.plist, and are using a JavaApplicationStub with 64-bit?
-<key>NSPrincipalClass</key>
-<string>NSApplication</string>
-Check out the desktop property. Unfortunately, it won't tell you *which* display is running in HiDPI, but it will stay up-to-date with live display changes (like a Retina-display being plugged and unplugged). If you query the property after each GraphicsEnvironment display change event, you should be able to live switch in and out of HiDPI.
-java.awt.Toolkit.getDefaultToolkit().getDesktopProperty("apple.awt.contentScaleFactor");
 _ cut/copy/paste while saving a sketch on goes to the editor, not save dialog
 _   http://code.google.com/p/processing/issues/detail?id=997
 _   problem with focus traversal and native windows on OS X
