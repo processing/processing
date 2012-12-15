@@ -388,7 +388,7 @@ public class PFont implements PConstants {
     }
     // See if there's a native version of this font that can be used,
     // in case that's of interest later.
-    findNative();
+//    findNative();
   }
 
 
