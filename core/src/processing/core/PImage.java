@@ -613,12 +613,17 @@ public class PImage implements PConstants, Cloneable {
       h = (int) (height * diff);
     }
 
-    BufferedImage img = resizeImage((BufferedImage) getNative(), w, h);
-    PImage temp = new PImage(img);
+    BufferedImage img = shrinkImage((BufferedImage) getNative(), w, h);
+//    BufferedImage img = null;
+//    if (w < width && h < height) {
+//      img = shrinkImage((BufferedImage) getNative(), w, h);
+//    } else {
+//      img = resampleImage((BufferedImage) getNative(), w, h);
+//    }
 
-    // Assume that w/h is the same as passed in
-    this.width = w;
-    this.height = h;
+    PImage temp = new PImage(img);
+    this.width = temp.width;
+    this.height = temp.height;
 
     // Get the resized pixel array
     this.pixels = temp.pixels;
@@ -630,8 +635,11 @@ public class PImage implements PConstants, Cloneable {
 
   // Adapted from getFasterScaledInstance() method from page 111 of
   // "Filthy Rich Clients" by Chet Haase and Romain Guy
-  static private BufferedImage resizeImage(BufferedImage img,
-                                           int wide, int high) {
+  // Additional modifications and simplifications have been added,
+  // plus a fix to deal with an infinite loop if images are expanded.
+  // http://code.google.com/p/processing/issues/detail?id=1463
+  static private BufferedImage shrinkImage(BufferedImage img,
+                                           int targetWidth, int targetHeight) {
     int type = (img.getTransparency() == Transparency.OPAQUE) ?
       BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
     BufferedImage outgoing = img;
@@ -647,17 +655,22 @@ public class PImage implements PConstants, Cloneable {
     int h = img.getHeight();
 
     do {
-      if (w > wide) {
+      if (w > targetWidth) {
         w /= 2;
-        if (w < wide) {
-          w = wide;
+        // if this is the last step, do the exact size
+        if (w < targetWidth) {
+          w = targetWidth;
         }
+      } else if (targetWidth >= w) {
+        w = targetWidth;
       }
-      if (h > high) {
+      if (h > targetHeight) {
         h /= 2;
-        if (h < high) {
-          h = high;
+        if (h < targetHeight) {
+          h = targetHeight;
         }
+      } else if (targetHeight >= h) {
+        h = targetHeight;
       }
       if (scratchImage == null || isTranslucent) {
         // Use a single scratch buffer for all iterations and then copy
@@ -671,7 +684,7 @@ public class PImage implements PConstants, Cloneable {
       prevW = w;
       prevH = h;
       outgoing = scratchImage;
-    } while (w != wide || h != high);
+    } while (w != targetWidth || h != targetHeight);
 
     if (g2 != null) {
       g2.dispose();
@@ -679,9 +692,9 @@ public class PImage implements PConstants, Cloneable {
 
     // If we used a scratch buffer that is larger than our target size,
     // create an image of the right size and copy the results into it
-    if (wide != outgoing.getWidth() ||
-        high != outgoing.getHeight()) {
-      scratchImage = new BufferedImage(wide, high, type);
+    if (targetWidth != outgoing.getWidth() ||
+        targetHeight != outgoing.getHeight()) {
+      scratchImage = new BufferedImage(targetWidth, targetHeight, type);
       g2 = scratchImage.createGraphics();
       g2.drawImage(outgoing, 0, 0, null);
       g2.dispose();
