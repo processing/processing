@@ -41,8 +41,6 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.TextEdit;
 
-import processing.app.Preferences;
-import processing.core.PApplet;
 import processing.mode.java.preproc.PdePreprocessor;
 
 /**

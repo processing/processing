@@ -89,11 +89,12 @@ public class ExperimentalMode extends JavaMode {
       Logger.getLogger(ExperimentalMode.class.getName()).log(Level.SEVERE, null, ex);
     }
 
-    // output version from manifest file
-    Package p = ExperimentalMode.class.getPackage();
-    String titleAndVersion = p.getImplementationTitle() + " (v" + p.getImplementationVersion() + ")";
-    //System.out.println(titleAndVersion);
-    Logger.getLogger(ExperimentalMode.class.getName()).log(Level.INFO, titleAndVersion);
+    // disable initial chattiness for now
+//    // output version from manifest file
+//    Package p = ExperimentalMode.class.getPackage();
+//    String titleAndVersion = p.getImplementationTitle() + " (v" + p.getImplementationVersion() + ")";
+//    //System.out.println(titleAndVersion);
+//    Logger.getLogger(ExperimentalMode.class.getName()).log(Level.INFO, titleAndVersion);
   }
 
 
