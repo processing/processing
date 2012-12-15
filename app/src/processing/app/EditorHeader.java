@@ -163,7 +163,7 @@ public class EditorHeader extends JComponent {
         offscreen = null;
 
       } else {
-        // who cares, just resize
+        // if the image is larger than necessary, no need to change
         sizeW = size.width;
         sizeH = size.height;
       }
@@ -174,7 +174,11 @@ public class EditorHeader extends JComponent {
       sizeH = size.height;
       imageW = sizeW;
       imageH = sizeH;
-      offscreen = createImage(imageW, imageH);
+      if (Toolkit.isRetina()) {
+        offscreen = createImage(imageW*2, imageH*2);
+      } else {
+        offscreen = createImage(imageW, imageH);
+      }
     }
 
     Graphics g = offscreen.getGraphics();
@@ -183,8 +187,15 @@ public class EditorHeader extends JComponent {
     fontAscent = metrics.getAscent();
 
     Graphics2D g2 = (Graphics2D) g;
-    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-                        RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+    
+    if (Toolkit.isRetina()) {
+      // scale everything 2x, will be scaled down when drawn to the screen
+      g2.scale(2, 2);
+    } else {
+      // don't anti-alias text in retina mode
+      g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                          RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+    }
 
     // set the background for the offscreen
     g.setColor(backgroundColor);
@@ -288,7 +299,7 @@ public class EditorHeader extends JComponent {
     g.drawImage(pieces[popup.isVisible() ? SELECTED : UNSELECTED][MENU],
                 menuLeft, 0, null);
 
-    screen.drawImage(offscreen, 0, 0, null);
+    screen.drawImage(offscreen, 0, 0, imageW, imageH, null);
   }
 
 

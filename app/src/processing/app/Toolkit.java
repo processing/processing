@@ -212,4 +212,22 @@ public class Toolkit {
   static public Clipboard getSystemClipboard() {
     return awtToolkit.getSystemClipboard();
   }
+  
+  
+  static Boolean retinaProp; 
+  
+  static public boolean isRetina() {
+    if (Base.isMacOS()) {
+      // This should probably be reset each time there's a display change.
+      // A 5-minute search didn't turn up any such event in the Java API.
+      // Also, should we use the Toolkit associated with the editor window?
+      if (retinaProp == null) {
+        Float prop = (Float)
+          awtToolkit.getDesktopProperty("apple.awt.contentScaleFactor");
+        retinaProp = prop == 2;
+      }
+      return retinaProp;
+    }
+    return false;
+  }
 }

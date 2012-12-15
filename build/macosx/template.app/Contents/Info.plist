@@ -59,6 +59,9 @@
     <key>LSMinimumSystemVersion</key>
     <string>10.6.8</string>
 
+    <key>NSHighResolutionCapable</key>
+    <true/>
+
     <key>Java</key>
     <dict>
       <key>SplashFile</key>
