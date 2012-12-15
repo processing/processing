@@ -59,7 +59,6 @@ public class EditorStatus extends JPanel {
 
   Image offscreen;
   int sizeW, sizeH;
-  int imageW, imageH;
 
   JButton cancelButton;
   JButton okButton;
@@ -178,33 +177,29 @@ public class EditorStatus extends JPanel {
     Dimension size = getSize();
     if ((size.width != sizeW) || (size.height != sizeH)) {
       // component has been resized
-
-      if ((size.width > imageW) || (size.height > imageH)) {
-        // nix the image and recreate, it's too small
-        offscreen = null;
-
-      } else {
-        // who cares, just resize
-        sizeW = size.width;
-        sizeH = size.height;
-        setButtonBounds();
-      }
+      offscreen = null;
     }
 
     if (offscreen == null) {
       sizeW = size.width;
       sizeH = size.height;
       setButtonBounds();
-      imageW = sizeW;
-      imageH = sizeH;
-      offscreen = createImage(imageW, imageH);
+      if (Toolkit.isRetina()) {
+        offscreen = createImage(sizeW*2, sizeH*2);
+      } else {
+        offscreen = createImage(sizeW, sizeH);
+      }
     }
 
     Graphics g = offscreen.getGraphics();
 
     Graphics2D g2 = (Graphics2D) g;
-    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-                        RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+    if (Toolkit.isRetina()) {
+      g2.scale(2, 2);
+    } else {
+      g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                          RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+    }
 
     g.setFont(font);
     if (metrics == null) {
@@ -215,7 +210,7 @@ public class EditorStatus extends JPanel {
     //setBackground(bgcolor[mode]);  // does nothing
 
     g.setColor(bgcolor[mode]);
-    g.fillRect(0, 0, imageW, imageH);
+    g.fillRect(0, 0, sizeW, sizeH);
 
     g.setColor(fgcolor[mode]);
     g.setFont(font); // needs to be set each time on osx
@@ -238,7 +233,7 @@ public class EditorStatus extends JPanel {
       }
     }
 
-    screen.drawImage(offscreen, 0, 0, null);
+    screen.drawImage(offscreen, 0, 0, sizeW, sizeH, null);
   }
 
 
