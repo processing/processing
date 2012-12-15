@@ -9970,11 +9970,11 @@ public class PApplet extends Applet
     // http://dev.processing.org/bugs/show_bug.cgi?id=891
     // http://dev.processing.org/bugs/show_bug.cgi?id=908
     if (present) {
-      if (platform == MACOSX) {
-        // Call some native code to remove the menu bar on OS X. Not necessary
-        // on Linux and Windows, who are happy to make full screen windows.
-        japplemenubar.JAppleMenuBar.hide();
-      }
+//      if (platform == MACOSX) {
+//        // Call some native code to remove the menu bar on OS X. Not necessary
+//        // on Linux and Windows, who are happy to make full screen windows.
+//        japplemenubar.JAppleMenuBar.hide();
+//      }
 
       frame.setUndecorated(true);
       if (backgroundColor != null) {
@@ -10020,10 +10020,27 @@ public class PApplet extends Applet
         //System.out.println("interrupt");
       }
     }
-    //println("not default size " + applet.width + " " + applet.height);
-    //println("  (g width/height is " + applet.g.width + "x" + applet.g.height + ")");
+
+//    // If 'present' wasn't already set, but the applet initializes
+//    // to full screen, attempt to make things full screen anyway.
+//    if (!present &&
+//        applet.width == screenRect.width &&
+//        applet.height == screenRect.height) {
+//      // bounds will be set below, but can't change to setUndecorated() now
+//      present = true;
+//    }
+//    // Opting not to do this, because we can't remove the decorations on the
+//    // window at this point. And re-opening a new winodw is a lot of mess.
+//    // Better all around to just encourage the use of sketchFullScreen()
+//    // or cmd/ctrl-shift-R in the PDE.
 
     if (present) {
+      if (platform == MACOSX) {
+        // Call some native code to remove the menu bar on OS X. Not necessary
+        // on Linux and Windows, who are happy to make full screen windows.
+        japplemenubar.JAppleMenuBar.hide();
+      }
+
       // After the pack(), the screen bounds are gonna be 0s
       frame.setBounds(screenRect);
       applet.setBounds((screenRect.width - applet.width) / 2,
