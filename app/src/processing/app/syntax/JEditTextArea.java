@@ -2297,16 +2297,20 @@ public class JEditTextArea extends JComponent
     }
   }
 
-  class DragHandler implements MouseMotionListener
+  
+  class DragHandler implements MouseMotionListener 
   {
-    public void mouseDragged(MouseEvent evt)
-    {
+    public void mouseDragged(MouseEvent evt) {
       if (popup != null && popup.isVisible()) return;
 
-      if ( !selectWord && !selectLine ) {
-      setSelectionRectangular((evt.getModifiers()
-          & InputEvent.CTRL_MASK) != 0);
-      select(getMarkPosition(),xyToOffset(evt.getX(),evt.getY()));
+      if (!selectWord && !selectLine) {
+        //setSelectionRectangular((evt.getModifiers() & InputEvent.CTRL_MASK) != 0);
+        setSelectionRectangular(evt.isControlDown());
+        try {
+          select(getMarkPosition(), xyToOffset(evt.getX(), evt.getY()));
+        } catch (ArrayIndexOutOfBoundsException e) {
+          Base.log("xToOffset problem", e);
+        }
       } else {
         int line = yToLine(evt.getY());
         if ( selectWord ) {

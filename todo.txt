@@ -28,6 +28,7 @@ X   <key>NSHighResolutionCapable</key>
 X   <string>true</string>
 X add basics of retina support to the toolbar and header
 X   getDefaultToolkit().getDesktopProperty("apple.awt.contentScaleFactor");
+X paper over ArrayIndexOutOfBoundsException in JEditTextArea.xToOffset() 
 
 _ deal with underscores and "Find in Reference"
 _   http://code.google.com/p/processing/issues/detail?id=1474
