@@ -1,5 +1,16 @@
-/*
+package processing.data;
 
+// This code has been modified heavily to more closely match the rest of the
+// Processing API. In the spirit of the rest of the project, where we try to
+// keep the API as simple as possible, we have erred on the side of being
+// conservative in choosing which functions to include, since we haven't yet
+// decided what's truly necessary. Power users looking for a full-featured
+// version can use the original version from json.org, or one of the many
+// other APIs that are available. As with all Processing API, if there's a
+// function that should be added, please let use know, and have others vote:
+// http://code.google.com/p/processing/issues/list
+
+/*
 Copyright (c) 2002 JSON.org
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,8 +33,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
-
-package processing.data;
 
 import java.io.IOException;
 import java.io.StringWriter;

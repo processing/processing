@@ -14,6 +14,7 @@ X   Opting not to do this, because we can't remove the decorations on the
 X   window at this point. And re-opening a new winodw is a lot of mess.
 X   Better all around to just encourage the use of sketchFullScreen()
 X   or cmd/ctrl-shift-R in the PDE.
+X make notes about methods removed from JSON to be conservative
 
 
 _ PImage.resize() greater than loaded image size hangs Java App
@@ -31,12 +32,17 @@ decisions on data
 X are we comfortable with setInt/Float/etc instead of just set(int, blah)
 X   yes, better to have parity
 X   too weird to have to explain why getXxx() needs types and set() doesn't
-_ get/set with Java's 'Map' class?
-_   really useful, but leaning toward not including it
-_   or leave it in as an advanced feature?
+X get/set with Java's 'Map' class?
+X   really useful, but leaning toward not including it
+X   or leave it in as an advanced feature?
 X createXxx() methods less important
 X   XML.parse() - or new XML("<tag>") or new XML("tag")
 _   add parseXML() and parseJSONObject(x)
+
+_ why not HashMap and ArrayList for JSON? 
+_ JSONObject.has(key) vs XML.hasAttribute(attr) vs HashMap.containsKey()
+_   and how it should be handled with hash/dict
+
 
 cleaning/earlier
 C textureWrap() CLAMP and REPEAT now added
