@@ -185,7 +185,12 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
     Dimension size = getSize();
     if ((offscreen == null) ||
         (size.width != width) || (size.height != height)) {
-      offscreen = createImage(size.width, size.height);
+      if (Toolkit.isRetina()) {
+        offscreen = createImage(size.width*2, size.height*2);
+      } else {
+        offscreen = createImage(size.width, size.height);
+      }
+
       width = size.width;
       height = size.height;
 
@@ -205,19 +210,26 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
 //        offsetX = x2[i];
 //      }
     }
-    Graphics g = offscreen.getGraphics();
+    Graphics g = offscreen.getGraphics();    
+    Graphics2D g2 = (Graphics2D) g;
+    
+    if (Toolkit.isRetina()) {
+      // scale everything 2x, will be scaled down when drawn to the screen
+      g2.scale(2, 2);
+    } else {
+      // don't anti-alias text in retina mode
+      g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                          RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+    }
+
     g.setColor(bgcolor); //getBackground());
     g.fillRect(0, 0, width, height);
-
-    Graphics2D g2 = (Graphics2D) g;
-    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-                        RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
 //    for (int i = 0; i < buttonCount; i++) {
 //      g.drawImage(stateImage[i], x1[i], y1, null);
 //    }
     for (Button b : buttons) {
-      g.drawImage(b.stateImage, b.left, TOP, null);
+      g.drawImage(b.stateImage, b.left, TOP, BUTTON_WIDTH, BUTTON_HEIGHT, null);
     }
 
     g.setColor(statusColor);
@@ -259,10 +271,11 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
     g.drawRect(modeX1, modeY1, modeX2 - modeX1, modeY2 - modeY1);
     g.drawString(modeTitle, modeX1 + modeGapH, modeY2 - modeGapV);
 
-    screen.drawImage(offscreen, 0, 0, null);
-    
+    screen.drawImage(offscreen, 0, 0, size.width, size.height, null);
+
+    // dim things out when not enabled (not currently in use) 
     if (!isEnabled()) {
-      screen.setColor(new Color(0,0,0,100));
+      screen.setColor(new Color(0, 0, 0, 100));
       screen.fillRect(0, 0, getWidth(), getHeight());
     }
   }
