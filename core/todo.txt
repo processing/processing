@@ -20,16 +20,13 @@ o when using loadFont(), don't enable native fonts unless hint() in use
 o   but on createFont(), we're probably OK
 o   might need to make reference notes about the two behaviors
 X   decision: remove hint(ENABLE_NATIVE_FONTS)
-
-_ PImage.resize() greater than loaded image size hangs Java App
-_   http://code.google.com/p/processing/issues/detail?id=1463
-_ add a warning message with registerMouseEvent()
-_   don't let OpenGL fire those mouse events at all
-_   phrase the warning differently when OpenGL is in use (or only show then?)
-_ api note: size() used in data classes
-_   length() too confusing w/ array.length being built-in (when to use ()?)
-_   size() a bit confusing with the p5 size command, but less problematic
-_   also shorter than getCount() or getLength()
+X PImage.resize() greater than image size hangs 
+X   http://code.google.com/p/processing/issues/detail?id=1463
+X   turns out to be errata from the book
+X add warning message when registering AWT mouse/key events
+X   don't let OpenGL fire those mouse events at all
+X   phrase the warning differently when OpenGL is in use (or only show then?)
+X   halt with OpenGL, otherwise will be ignored
 
 
 decisions on data
@@ -42,8 +39,13 @@ X   or leave it in as an advanced feature?
 X createXxx() methods less important
 X   XML.parse() - or new XML("<tag>") or new XML("tag")
 _   add parseXML() and parseJSONObject(x)
-
+X api note: size() used in data classes
+X   length() too confusing w/ array.length being built-in (when to use ()?)
+X   size() a bit confusing with the p5 size command, but less problematic
+X   also shorter than getCount() or getLength()
 _ why not HashMap and ArrayList for JSON? 
+_   could enable loadHash() and loadArray() functions
+_   or loadDict() and loadList() as the case might be
 _ JSONObject.has(key) vs XML.hasAttribute(attr) vs HashMap.containsKey()
 _   and how it should be handled with hash/dict
 

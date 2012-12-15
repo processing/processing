@@ -1353,9 +1353,28 @@ public class PApplet extends Applet
   RegisteredMethods mouseEventMethods, keyEventMethods;
 
 
+  protected void reportDeprecation(Class<?> c, boolean mouse) {
+    if (g != null) {
+      PGraphics.showWarning("The class " + c.getName() +
+                            " is incompatible with Processing 2.0.");
+      PGraphics.showWarning("A library (or other code) is using register" +
+                            (mouse ? "Mouse" : "Key") + "Event()" +
+                            "which is no longer available.");
+      // This will crash with OpenGL, so quit anyway
+      if (g instanceof PGraphicsOpenGL) {
+        PGraphics.showWarning("Stopping the sketch because this code will " +
+        		                  "not work correctly with OpenGL.");
+        throw new RuntimeException("This sketch uses a library that " +
+        		                       "needs to be updated for Processing 2.0.");
+      }
+    }
+  }
+
+
   @Deprecated
   public void registerMouseEvent(Object o) {
     Class<?> c = o.getClass();
+    reportDeprecation(c, true);
     try {
       Method method = c.getMethod("mouseEvent", new Class[] { java.awt.event.MouseEvent.class });
       if (mouseEventMethods == null) {
@@ -1369,8 +1388,21 @@ public class PApplet extends Applet
 
 
   @Deprecated
+  public void unregisterMouseEvent(Object o) {
+    try {
+//      Method method = o.getClass().getMethod("mouseEvent", new Class[] { MouseEvent.class });
+//      mouseEventMethods.remove(o, method);
+      mouseEventMethods.remove(o);
+    } catch (Exception e) {
+      die("Could not unregister mouseEvent() for " + o, e);
+    }
+  }
+
+
+  @Deprecated
   public void registerKeyEvent(Object o) {
     Class<?> c = o.getClass();
+    reportDeprecation(c, false);
     try {
       Method method = c.getMethod("keyEvent", new Class[] { java.awt.event.KeyEvent.class });
       if (keyEventMethods == null) {
@@ -1379,18 +1411,6 @@ public class PApplet extends Applet
       keyEventMethods.add(o, method);
     } catch (Exception e) {
       die("Could not register keyEvent() for " + o, e);
-    }
-  }
-
-
-  @Deprecated
-  public void unregisterMouseEvent(Object o) {
-    try {
-//      Method method = o.getClass().getMethod("mouseEvent", new Class[] { MouseEvent.class });
-//      mouseEventMethods.remove(o, method);
-      mouseEventMethods.remove(o);
-    } catch (Exception e) {
-      die("Could not unregister mouseEvent() for " + o, e);
     }
   }
 
@@ -10475,66 +10495,6 @@ public class PApplet extends Applet
   }
 
 
-  /**
-   * ( begin auto-generated from hint.xml )
-   *
-   * Set various hints and hacks for the renderer. This is used to handle
-   * obscure rendering features that cannot be implemented in a consistent
-   * manner across renderers. Many options will often graduate to standard
-   * features instead of hints over time.
-   * <br/> <br/>
-   * hint(ENABLE_OPENGL_4X_SMOOTH) - Enable 4x anti-aliasing for P3D. This
-   * can help force anti-aliasing if it has not been enabled by the user. On
-   * some graphics cards, this can also be set by the graphics driver's
-   * control panel, however not all cards make this available. This hint must
-   * be called immediately after the size() command because it resets the
-   * renderer, obliterating any settings and anything drawn (and like size(),
-   * re-running the code that came before it again).
-   * <br/> <br/>
-   * hint(DISABLE_OPENGL_2X_SMOOTH) - In Processing 1.0, Processing always
-   * enables 2x smoothing when the P3D renderer is used. This hint disables
-   * the default 2x smoothing and returns the smoothing behavior found in
-   * earlier releases, where smooth() and noSmooth() could be used to enable
-   * and disable smoothing, though the quality was inferior.
-   * <br/> <br/>
-   * hint(ENABLE_NATIVE_FONTS) - Use the native version fonts when they are
-   * installed, rather than the bitmapped version from a .vlw file. This is
-   * useful with the default (or JAVA2D) renderer setting, as it will improve
-   * font rendering speed. This is not enabled by default, because it can be
-   * misleading while testing because the type will look great on your
-   * machine (because you have the font installed) but lousy on others'
-   * machines if the identical font is unavailable. This option can only be
-   * set per-sketch, and must be called before any use of textFont().
-   * <br/> <br/>
-   * hint(DISABLE_DEPTH_TEST) - Disable the zbuffer, allowing you to draw on
-   * top of everything at will. When depth testing is disabled, items will be
-   * drawn to the screen sequentially, like a painting. This hint is most
-   * often used to draw in 3D, then draw in 2D on top of it (for instance, to
-   * draw GUI controls in 2D on top of a 3D interface). Starting in release
-   * 0149, this will also clear the depth buffer. Restore the default with
-   * hint(ENABLE_DEPTH_TEST), but note that with the depth buffer cleared,
-   * any 3D drawing that happens later in draw() will ignore existing shapes
-   * on the screen.
-   * <br/> <br/>
-   * hint(ENABLE_DEPTH_SORT) - Enable primitive z-sorting of triangles and
-   * lines in P3D and OPENGL. This can slow performance considerably, and the
-   * algorithm is not yet perfect. Restore the default with hint(DISABLE_DEPTH_SORT).
-   * <br/> <br/>
-   * hint(DISABLE_OPENGL_ERROR_REPORT) - Speeds up the P3D renderer setting
-   * by not checking for errors while running. Undo with hint(ENABLE_OPENGL_ERROR_REPORT).
-   * <br/> <br/>
-   * As of release 0149, unhint() has been removed in favor of adding
-   * additional ENABLE/DISABLE constants to reset the default behavior. This
-   * prevents the double negatives, and also reinforces which hints can be
-   * enabled or disabled.
-   *
-   * ( end auto-generated )
-   * @webref rendering
-   * @param which name of the hint to be enabled or disabled
-   * @see PGraphics
-   * @see PApplet#createGraphics(int, int, String, String)
-   * @see PApplet#size(int, int)
-   */
   public void hint(int which) {
     if (recorder != null) recorder.hint(which);
     g.hint(which);
