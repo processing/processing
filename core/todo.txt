@@ -15,7 +15,11 @@ X   window at this point. And re-opening a new winodw is a lot of mess.
 X   Better all around to just encourage the use of sketchFullScreen()
 X   or cmd/ctrl-shift-R in the PDE.
 X make notes about methods removed from JSON to be conservative
-
+X remove default findNative() that was enabling native fonts w/ p5
+o when using loadFont(), don't enable native fonts unless hint() in use
+o   but on createFont(), we're probably OK
+o   might need to make reference notes about the two behaviors
+X   decision: remove hint(ENABLE_NATIVE_FONTS)
 
 _ PImage.resize() greater than loaded image size hangs Java App
 _   http://code.google.com/p/processing/issues/detail?id=1463
@@ -64,11 +68,6 @@ X makeEmptyNull() -> replace("", null);
 X saveTable("filename.tsv") or saveTable("filename.txt", "tsv")
 X createTable() method in PApplet
 X removed getUniqueXxxx() and some others, pending names
-
-o when using loadFont(), don't enable native fonts unless hint() in use
-o   but on createFont(), we're probably OK
-o   might need to make reference notes about the two behaviors
-_   decision: remove hint(ENABLE_NATIVE_FONTS)
 
 _ implement mousePressed(Event) etc
 _   better to do this instead of bringing back the magic event

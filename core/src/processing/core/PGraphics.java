@@ -1072,7 +1072,13 @@ public class PGraphics extends PImage implements PConstants {
    * @see PApplet#createGraphics(int, int, String, String)
    * @see PApplet#size(int, int)
    */
+  @SuppressWarnings("deprecation")
   public void hint(int which) {
+    if (which == ENABLE_NATIVE_FONTS ||
+        which == DISABLE_NATIVE_FONTS) {
+      showWarning("hint(ENABLE_NATIVE_FONTS) no longer supported. " +
+      		        "Use createFont() instead.");
+    }
     if (which > 0) {
       hints[which] = true;
     } else {
@@ -3935,11 +3941,11 @@ public class PGraphics extends PImage implements PConstants {
   public void textFont(PFont which) {
     if (which != null) {
       textFont = which;
-      if (hints[ENABLE_NATIVE_FONTS]) {
-        //if (which.font == null) {
-        which.findNative();
-        //}
-      }
+//      if (hints[ENABLE_NATIVE_FONTS]) {
+//        //if (which.font == null) {
+//        which.findNative();
+//        //}
+//      }
       /*
       textFontNative = which.font;
 

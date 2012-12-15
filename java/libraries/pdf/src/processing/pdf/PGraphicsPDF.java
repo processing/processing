@@ -60,13 +60,15 @@ public class PGraphicsPDF extends PGraphicsJava2D {
 
   /** Shared across instances because it's incredibly time-consuming to create. */
   static protected DefaultFontMapper mapper;
-  static protected String fontList[];
+  static protected String[] fontList;
 
 
+  /*
   public PGraphicsPDF() {
     // PDF always likes native fonts. Always.
     hint(ENABLE_NATIVE_FONTS);
   }
+  */
 
 
   public void setPath(String path) {
