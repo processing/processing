@@ -4151,9 +4151,23 @@ public class PApplet extends Activity implements PConstants, Runnable {
   // DATA I/O
 
 
+  /**
+   * @webref input:files
+   * @param filename name of a file in the data folder or a URL.
+   * @see XML#parse(String)
+   * @see PApplet#loadBytes(String)
+   * @see PApplet#loadStrings(String)
+   * @see PApplet#loadTable(String)
+   */
   public XML loadXML(String filename) {
+    return loadXML(filename, null);
+  }
+
+
+  // version that uses 'options' though there are currently no supported options
+  public XML loadXML(String filename, String options) {
     try {
-      return new XML(this, filename);
+      return new XML(createInput(filename), options);
     } catch (Exception e) {
       e.printStackTrace();
       return null;
@@ -4161,9 +4175,14 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
-  static public XML loadXML(File file) {
+  public XML parseXML(String xmlString) {
+    return parseXML(xmlString, null);
+  }
+
+
+  public XML parseXML(String xmlString, String options) {
     try {
-      return new XML(file);
+      return XML.parse(xmlString, options);
     } catch (Exception e) {
       e.printStackTrace();
       return null;
@@ -4171,17 +4190,80 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
+  public boolean saveXML(XML xml, String filename) {
+    return saveXML(xml, filename, null);
+  }
+
+
+  public boolean saveXML(XML xml, String filename, String options) {
+    return xml.save(saveFile(filename), options);
+  }
+
+
+  public Table createTable() {
+    return new Table();
+  }
+
+
+  /**
+   * @webref input:files
+   * @param filename name of a file in the data folder or a URL.
+   * @see PApplet#loadBytes(String)
+   * @see PApplet#loadStrings(String)
+   * @see PApplet#loadXML(String)
+   */
   public Table loadTable(String filename) {
-    return new Table(this, filename);
+    return loadTable(filename, null);
   }
 
 
-  static public Table loadTable(File file) {
-    return new Table(file);
+  public Table loadTable(String filename, String options) {
+    try {
+      String ext = checkExtension(filename);
+      if (ext != null) {
+        if (ext.equals("csv") || ext.equals("tsv")) {
+          if (options == null) {
+            options = ext;
+          } else {
+            options = ext + "," + options;
+          }
+        }
+      }
+      return new Table(createInput(filename), options);
+
+    } catch (IOException e) {
+      e.printStackTrace();
+      return null;
+    }
   }
 
 
-  //////////////////////////////////////////////////////////////
+  public boolean saveTable(Table table, String filename) {
+    return saveTable(table, filename, null);
+  }
+
+
+  public boolean saveTable(Table table, String filename, String options) {
+    try {
+      table.save(saveFile(filename), options);
+      return true;
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return false;
+  }
+
+
+  protected String checkExtension(String filename) {
+    int index = filename.lastIndexOf('.');
+    if (index == -1) {
+      return null;
+    }
+    return filename.substring(index + 1).toLowerCase();
+  }
+
+
+
 
   // FONT I/O
 

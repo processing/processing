@@ -492,10 +492,10 @@ public class Table {
       // Object targetObject,
       // Class target -> get this from the type of fieldName
 //      Class sketchClass = sketch.getClass();
-      Class sketchClass = enclosingObject.getClass();
+      Class<?> sketchClass = enclosingObject.getClass();
       targetField = sketchClass.getDeclaredField(fieldName);
 //      PApplet.println("found " + targetField);
-      Class targetArray = targetField.getType();
+      Class<?> targetArray = targetField.getType();
       if (!targetArray.isArray()) {
         // fieldName is not an array
       } else {
@@ -510,8 +510,8 @@ public class Table {
 
 //    Object enclosingObject = sketch;
 //    PApplet.println("enclosing obj is " + enclosingObject);
-    Class enclosingClass = target.getEnclosingClass();
-    Constructor con = null;
+    Class<?> enclosingClass = target.getEnclosingClass();
+    Constructor<?> con = null;
 
     try {
       if (enclosingClass == null) {
@@ -1595,7 +1595,6 @@ public class Table {
       table.setDouble(row, column, value);
     }
 
-    @Override
     public void setDouble(String columnName, double value) {
       table.setDouble(row, columnName, value);
     }
