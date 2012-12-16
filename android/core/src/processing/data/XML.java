@@ -49,8 +49,8 @@ public class XML implements Serializable {
   /** The internal representation, a DOM node. */
   protected Node node;
 
-  /** Cached locally because it's used often. */
-  protected String name;
+//  /** Cached locally because it's used often. */
+//  protected String name;
 
   /** The parent element. */
   protected XML parent;
@@ -62,26 +62,40 @@ public class XML implements Serializable {
   protected XML() { }
 
 
-  /**
-   * Begin parsing XML data passed in from a PApplet. This code
-   * wraps exception handling, for more advanced exception handling,
-   * use the constructor that takes a Reader or InputStream.
-   *
-   * @throws SAXException
-   * @throws ParserConfigurationException
-   * @throws IOException
-   */
-  public XML(PApplet parent, String filename) throws IOException, ParserConfigurationException, SAXException {
-    this(parent.createReader(filename));
-  }
-
+//  /**
+//   * Begin parsing XML data passed in from a PApplet. This code
+//   * wraps exception handling, for more advanced exception handling,
+//   * use the constructor that takes a Reader or InputStream.
+//   *
+//   * @throws SAXException
+//   * @throws ParserConfigurationException
+//   * @throws IOException
+//   */
+//  public XML(PApplet parent, String filename) throws IOException, ParserConfigurationException, SAXException {
+//    this(parent.createReader(filename));
+//  }
 
   public XML(File file) throws IOException, ParserConfigurationException, SAXException {
-    this(PApplet.createReader(file));
+    this(file, null);
   }
 
 
-  public XML(Reader reader) throws IOException, ParserConfigurationException, SAXException {
+  public XML(File file, String options) throws IOException, ParserConfigurationException, SAXException {
+    this(PApplet.createReader(file), options);
+  }
+
+
+  public XML(InputStream input) throws IOException, ParserConfigurationException, SAXException {
+    this(input, null);
+  }
+
+
+  public XML(InputStream input, String options) throws IOException, ParserConfigurationException, SAXException {
+    this(PApplet.createReader(input), options);
+  }
+
+
+  protected XML(Reader reader, String options) throws IOException, ParserConfigurationException, SAXException {
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 
     // Prevent 503 errors from www.w3.org
@@ -115,7 +129,8 @@ public class XML implements Serializable {
 //      Document document = builder.parse(dataPath("1_alt.html"));
     Document document = builder.parse(new InputSource(reader));
     node = document.getDocumentElement();
-    name = node.getNodeName();
+//    name = node.getNodeName();
+
 //      NodeList nodeList = document.getDocumentElement().getChildNodes();
 //      for (int i = 0; i < nodeList.getLength(); i++) {
 //      }
@@ -124,46 +139,51 @@ public class XML implements Serializable {
 
 
   // TODO is there a more efficient way of doing this? wow.
-  // i.e. can we use one static document object for all PNodeXML objects?
-  public XML(String name) {
-    try {
-      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-      DocumentBuilder builder = factory.newDocumentBuilder();
-      Document document = builder.newDocument();
-      node = document.createElement(name);
-
-      this.name = name;
-      this.parent = null;
-
-    } catch (ParserConfigurationException e) {
-      e.printStackTrace();
-    }
+  public XML(String name) throws ParserConfigurationException {
+    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+    DocumentBuilder builder = factory.newDocumentBuilder();
+    Document document = builder.newDocument();
+    node = document.createElement(name);
+//      this.name = name;
+    this.parent = null;
   }
 
 
   protected XML(XML parent, Node node) {
     this.node = node;
     this.parent = parent;
-    this.name = node.getNodeName();
+//    this.name = node.getNodeName();
   }
 
 
-  static public XML parse(String xml) {
-    try {
-      return new XML(new StringReader(xml));
-    } catch (Exception e) {
-      e.printStackTrace();
-      return null;
-    }
+  /**
+   * xxxxxxx
+   *
+   * @webref xml:method
+   * @brief Converts String content to an XML object
+   * @param data the content to be parsed as XML
+   * @return an XML object, or null
+   * @throws SAXException
+   * @throws ParserConfigurationException
+   * @throws IOException
+   * @see PApplet#loadXML(String)
+   */
+  static public XML parse(String data) throws IOException, ParserConfigurationException, SAXException {
+    return XML.parse(data, null);
   }
 
 
-  public boolean save(OutputStream output) {
+  static public XML parse(String data, String options) throws IOException, ParserConfigurationException, SAXException {
+    return new XML(new StringReader(data), null);
+  }
+
+
+  protected boolean save(OutputStream output) {
     return save(PApplet.createWriter(output));
   }
 
 
-  public boolean save(File file) {
+  public boolean save(File file, String options) {
     return save(PApplet.createWriter(file));
   }
 
@@ -189,7 +209,7 @@ public class XML implements Serializable {
   /**
    * Internal function; not included in reference.
    */
-  protected Node getNode() {
+  protected Object getNative() {
     return node;
   }
 
@@ -203,7 +223,8 @@ public class XML implements Serializable {
    * @return the name, or null if the element only contains #PCDATA.
    */
   public String getName() {
-    return name;
+//    return name;
+    return node.getNodeName();
   }
 
   /**
@@ -213,7 +234,7 @@ public class XML implements Serializable {
   public void setName(String newName) {
     Document document = node.getOwnerDocument();
     node = document.renameNode(node, null, newName);
-    name = node.getNodeName();
+//    name = node.getNodeName();
   }
 
 
@@ -334,6 +355,9 @@ public class XML implements Serializable {
    * @return the first matching element
    */
   public XML getChild(String name) {
+    if (name.length() > 0 && name.charAt(0) == '/') {
+      throw new IllegalArgumentException("getChild() should not begin with a slash");
+    }
     if (name.indexOf('/') != -1) {
       return getChildRecursive(PApplet.split(name, '/'), 0);
     }
@@ -392,6 +416,9 @@ public class XML implements Serializable {
    * @author processing.org
    */
   public XML[] getChildren(String name) {
+    if (name.length() > 0 && name.charAt(0) == '/') {
+      throw new IllegalArgumentException("getChildren() should not begin with a slash");
+    }
     if (name.indexOf('/') != -1) {
       return getChildrenRecursive(PApplet.split(name, '/'), 0);
     }
@@ -441,7 +468,7 @@ public class XML implements Serializable {
 
   public XML addChild(XML child) {
     Document document = node.getOwnerDocument();
-    Node newChild = document.importNode(child.getNode(), true);
+    Node newChild = document.importNode((Node) child.getNative(), true);
     return appendChild(newChild);
   }
 
@@ -467,36 +494,53 @@ public class XML implements Serializable {
   }
 
 
-  /** Remove whitespace nodes. */
-  public void trim() {
-////    public static boolean isWhitespace(XML xml) {
-////      if (xml.node.getNodeType() != Node.TEXT_NODE)
-////        return false;
-////      Matcher m = whitespace.matcher(xml.node.getNodeValue());
-////      return m.matches();
-////    }
-//    trim(this);
+//  /** Remove whitespace nodes. */
+//  public void trim() {
+//////    public static boolean isWhitespace(XML xml) {
+//////      if (xml.node.getNodeType() != Node.TEXT_NODE)
+//////        return false;
+//////      Matcher m = whitespace.matcher(xml.node.getNodeValue());
+//////      return m.matches();
+//////    }
+////    trim(this);
+////  }
+//
+//    checkChildren();
+//    int index = 0;
+//    for (int i = 0; i < children.length; i++) {
+//      if (i != index) {
+//        children[index] = children[i];
+//      }
+//      Node childNode = (Node) children[i].getNative();
+//      if (childNode.getNodeType() != Node.TEXT_NODE ||
+//          children[i].getContent().trim().length() > 0) {
+//        children[i].trim();
+//        index++;
+//      }
+//    }
+//    if (index != children.length) {
+//      children = (XML[]) PApplet.subset(children, 0, index);
+//    }
+//
+//    // possibility, but would have to re-parse the object
+//// helpdesk.objects.com.au/java/how-do-i-remove-whitespace-from-an-xml-document
+////    TransformerFactory factory = TransformerFactory.newInstance();
+////    Transformer transformer = factory.newTransformer(new StreamSource("strip-space.xsl"));
+////    DOMSource source = new DOMSource(document);
+////    StreamResult result = new StreamResult(System.out);
+////    transformer.transform(source, result);
+//
+////    <xsl:stylesheet version="1.0"
+////      xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+////   <xsl:output method="xml" omit-xml-declaration="yes"/>
+////     <xsl:strip-space elements="*"/>
+////     <xsl:template match="@*|node()">
+////      <xsl:copy>
+////       <xsl:apply-templates select="@*|node()"/>
+////      </xsl:copy>
+////     </xsl:template>
+////   </xsl:stylesheet>
 //  }
-//
-//
-//  protected void trim() {
-    checkChildren();
-    int index = 0;
-    for (int i = 0; i < children.length; i++) {
-      if (i != index) {
-        children[index] = children[i];
-      }
-      Node childNode = children[i].getNode();
-      if (childNode.getNodeType() != Node.TEXT_NODE ||
-          children[i].getContent().trim().length() > 0) {
-        children[i].trim();
-        index++;
-      }
-    }
-    if (index != children.length) {
-      children = (XML[]) PApplet.subset(children, 0, index);
-    }
-  }
 
 
   /**
@@ -718,20 +762,30 @@ public class XML implements Serializable {
   }
 
 
+  /**
+   * Format this XML data as a String.
+   * @param indent -1 for a single line (and no declaration), >= 0 for indents and newlines
+   */
   public String format(int indent) {
     try {
-      DOMSource dumSource = new DOMSource(node);
       // entities = doctype.getEntities()
-      TransformerFactory tf = TransformerFactory.newInstance();
-      Transformer transformer = tf.newTransformer();
-      // if this is the root, output the decl, if not, hide it
+      TransformerFactory factory = TransformerFactory.newInstance();
+      if (indent != -1) {
+        factory.setAttribute("indent-number", indent);
+      }
+      Transformer transformer = factory.newTransformer();
+
+      // Add the XML declaration at the top if this node is the root and we're
+      // not writing to a single line (indent = -1 means single line).
       if (indent == -1 || parent != null) {
         transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
       } else {
         transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
       }
 //      transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, "sample.dtd");
+
       transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+
 //      transformer.setOutputProperty(OutputKeys.CDATA_SECTION_ELEMENTS, "yes");  // huh?
 
 //      transformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC,
@@ -745,18 +799,45 @@ public class XML implements Serializable {
 //      transformer.setOutputProperty(OutputKeys.CDATA_SECTION_ELEMENTS
       // indent by default, but sometimes this needs to be turned off
       if (indent != 0) {
-        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", String.valueOf(indent));
+        //transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", String.valueOf(indent));
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+      } else {
+        transformer.setOutputProperty(OutputKeys.INDENT, "no");
       }
 //      Properties p = transformer.getOutputProperties();
 //      for (Object key : p.keySet()) {
 //        System.out.println(key + " -> " + p.get(key));
 //      }
 
-      StringWriter sw = new StringWriter();
-      StreamResult sr = new StreamResult(sw);
-      transformer.transform(dumSource, sr);
-      return sw.toString();
+      // If you smell something, that's because this code stinks. No matter
+      // the settings of the Transformer object, if the XML document already
+      // has whitespace elements, it won't bother re-indenting/re-formatting.
+      // So instead, transform the data once into a single line string.
+      // If indent is -1, then we're done. Otherwise re-run and the settings
+      // of the factory will kick in. If you know a better way to do this,
+      // please contribute. I've wasted too much of my Sunday on it. But at
+      // least the Giants are getting blown out by the Falcons.
+
+      StringWriter tempWriter = new StringWriter();
+      StreamResult tempResult = new StreamResult(tempWriter);
+      transformer.transform(new DOMSource(node), tempResult);
+      String[] tempLines = PApplet.split(tempWriter.toString(), '\n');
+      if (tempLines[0].startsWith("<?xml")) {
+        // Remove XML declaration from the top before slamming into one line
+        tempLines = PApplet.subset(tempLines, 1);
+      }
+      String singleLine = PApplet.join(PApplet.trim(tempLines), "");
+      if (indent == -1) {
+        return singleLine;
+      }
+
+      StringWriter stringWriter = new StringWriter();
+      StreamResult xmlOutput = new StreamResult(stringWriter);
+//      DOMSource source = new DOMSource(node);
+      Source source = new StreamSource(new StringReader(singleLine));
+      transformer.transform(source, xmlOutput);
+      return stringWriter.toString();
+//      return xmlOutput.getWriter().toString();
 
     } catch (Exception e) {
       e.printStackTrace();
@@ -765,9 +846,13 @@ public class XML implements Serializable {
   }
 
 
+  /**
+   * Return the XML document formatted with two spaces for indents.
+   * Chosen to do this since it's the most common case (e.g. with println()).
+   * Same as format(2). Use the format() function for more options.
+   */
   @Override
-  /** Return the XML data as a single line, with no DOCTYPE declaration. */
   public String toString() {
-    return format(-1);
+    return format(2);
   }
 }

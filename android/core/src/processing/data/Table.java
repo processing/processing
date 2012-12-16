@@ -24,8 +24,11 @@
 package processing.data;
 
 import java.io.*;
-import java.lang.reflect.Array;
-import java.sql.*;
+import java.lang.reflect.*;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Types;
 import java.util.*;
 
 import processing.core.PApplet;
@@ -50,6 +53,7 @@ import processing.core.PConstants;
 // <p>By default, empty rows are skipped and so are lines that start with the
 // # character. Using # at the beginning of a line indicates a comment.</p>
 
+// attempt at a CSV spec: http://tools.ietf.org/html/rfc4180
 
 /**
  * <p>Generic class for handling tabular data, typically from a CSV, TSV, or
@@ -59,14 +63,17 @@ import processing.core.PConstants;
  * often with the data in quotes. TSV files use tabs as separators, and usually
  * don't bother with the quotes.</p>
  * <p>File names should end with .csv if they're comma separated.</p>
+ *
+ * @webref data:composite
  */
-public class Table implements Iterable<TableRow> {
+public class Table {
   protected int rowCount;
 
 //  protected boolean skipEmptyRows = true;
 //  protected boolean skipCommentLines = true;
-  protected boolean commaSeparatedValues = false;
-  protected boolean awfulCSV = false;
+//  protected String extension = null;
+//  protected boolean commaSeparatedValues = false;
+//  protected boolean awfulCSV = false;
 
   protected String missingString = null;
   protected int missingInt = 0;
@@ -79,78 +86,63 @@ public class Table implements Iterable<TableRow> {
   HashMapBlows[] columnCategories;
   HashMap<String, Integer> columnIndices;
 
-//  static final int TSV = 1;
-//  static final int CSV = 2;
-//  static final int AWFUL_CSV = 3;
-
-//  boolean typed;
-
-  // untyped data
-//  protected String[][] data;
-//  protected Object[] data;  // [row][column]
   protected Object[] columns;  // [column]
 
-  // typed data
   static final int STRING = 0;
   static final int INT = 1;
   static final int LONG = 2;
   static final int FLOAT = 3;
   static final int DOUBLE = 4;
   static final int CATEGORICAL = 5;
-//  static final int TIME = 5;
   int[] columnTypes;
 
-//  int[][] intData;  // [column][row]
-//  long[][] longData;
-//  float[][] floatData;
-//  double[][] doubleData;
-//  Object[][] objectData;
+  protected RowIterator rowIterator;
 
 
   /**
    * Creates a new, empty table. Use addRow() to add additional rows.
    */
   public Table() {
-    columns = new Object[0];
-    columnTypes = new int[0];
-    columnCategories = new HashMapBlows[0];
+    init();
   }
 
 
-  public Table(File file) {
-    this(PApplet.createReader(file));
+  public Table(File file) throws IOException {
+    this(file, null);
+  }
+
+
+  // version that uses a File object; future releases (or data types)
+  // may include additional optimizations here
+  public Table(File file, String options) throws IOException {
+    parse(new FileInputStream(file), checkOptions(file, options));
+  }
+
+
+  public Table(InputStream input) throws IOException {
+    this(input, null);
   }
 
 
   /**
-   * Can handle TSV or CSV files.
-   * @param parent
-   * @param filename
+   * Read the table from a stream. Possible options include:
+   * <ul>
+   * <li>csv - parse the table as comma-separated values
+   * <li>tsv - parse the table as tab-separated values
+   * <li>newlines - this CSV file contains newlines inside individual cells
+   * <li>header - this table has a header (title) row
+   * </ul>
+   * @param input
+   * @param options
+   * @throws IOException
    */
-  public Table(PApplet parent, String filename) {
-    this(parent.createReader(filename));
-  }
-
-
-  public Table(BufferedReader reader) {
-    columns = new Object[0];
-    columnTypes = new int[0];
-    columnCategories = new HashMapBlows[0];
-    try {
-      boolean csv = peekCSV(reader);
-      if (csv) {
-        parseCSV(reader);
-      } else {
-        parseTSV(reader);
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+  public Table(InputStream input, String options) throws IOException {
+    parse(input, options);
   }
 
 
   public Table(ResultSet rs) {
-    this();
+    init();
     try {
       ResultSetMetaData rsmd = rs.getMetaData();
 
@@ -207,97 +199,97 @@ public class Table implements Iterable<TableRow> {
   }
 
 
-  /**
-   * Guess whether this file is tab separated or comma separated by checking
-   * whether there are more tabs or commas in the first 100 characters.
-   */
-  protected boolean peekCSV(BufferedReader reader) throws IOException {
-    char[] buffer = new char[100];
-    int remaining = buffer.length;
-    reader.mark(remaining);
-//    int count = 0;
-    int commas = 0;
-    int tabs = 0;
-    for (int i = 0; i < remaining; i++) {
-      int c = reader.read();
-      if (c == -1) break;
-      if (c == ',') commas++;
-      if (c == '\t') tabs++;
-    }
-    reader.reset();
-    return (commas > tabs);
+  protected void init() {
+    columns = new Object[0];
+    columnTypes = new int[0];
+    columnCategories = new HashMapBlows[0];
   }
 
 
-  public void parse(BufferedReader reader) throws IOException {
-    if (commaSeparatedValues) {
-      if (awfulCSV) {
-        parseAwfulCSV(reader);
-      } else {
-        parseCSV(reader);
+  protected String checkOptions(File file, String options) throws IOException {
+    String extension = null;
+    String filename = file.getName();
+    int dotIndex = filename.lastIndexOf('.');
+    if (dotIndex != -1) {
+      extension = filename.substring(dotIndex + 1).toLowerCase();
+      if (!extension.equals("csv") &&
+          !extension.equals("tsv")) {
+        // ignore extension
+        extension = null;
       }
-    } else {
-      parseTSV(reader);
+    }
+    if (extension == null) {
+      if (options == null) {
+        throw new IOException("This table filename has no extension, and no options are set.");
+      }
+    } else {  // extension is not null
+      if (options == null) {
+        options = extension;
+      } else {
+        // prepend the extension, it will be overridden if there's an option for it.
+        options = extension + "," + options;
+      }
+    }
+    return options;
+  }
+
+
+  protected void parse(InputStream input, String options) throws IOException {
+    init();
+
+    boolean awfulCSV = false;
+    boolean header = false;
+    String extension = null;
+    if (options != null) {
+      String[] opts = PApplet.splitTokens(options, " ,");
+      for (String opt : opts) {
+        if (opt.equals("tsv")) {
+          extension = "tsv";
+        } else if (opt.equals("csv")) {
+          extension = "csv";
+        } else if (opt.equals("newlines")) {
+          awfulCSV = true;
+        } else if (opt.equals("header")) {
+          header = true;
+        } else {
+          throw new IllegalArgumentException("'" + opt + "' is not a valid option for loading a Table");
+        }
+      }
+    }
+
+    BufferedReader reader = PApplet.createReader(input);
+    if (awfulCSV) {
+      parseAwfulCSV(reader, header);
+    } else if ("tsv".equals(extension)) {
+      parseBasic(reader, header, true);
+    } else if ("csv".equals(extension)) {
+      parseBasic(reader, header, false);
     }
   }
 
 
-  public void parseTSV(BufferedReader reader) throws IOException {
-    parseBasic(reader, true);
-//    String line = null;
-//    int row = 0;
-//    if (rowCount == 0) {
-//      setRowCount(10);
-//    }
-//    while ((line = reader.readLine()) != null) {
-//      if (row == getRowCount()) {
-//        setRowCount(row << 1);
-//      }
-//      setRow(row, PApplet.split(line, '\t'));
-//      row++;
-//    }
-//    // shorten or lengthen based on what's left
-//    if (row != getRowCount()) {
-//      setRowCount(row);
-//    }
-  }
-
-
-  public void parseCSV(BufferedReader reader) throws IOException {
-    parseBasic(reader, false);
-//    String line = null;
-//    int row = 0;
-//    if (rowCount == 0) {
-//      setRowCount(10);
-//    }
-//    while ((line = reader.readLine()) != null) {
-//      if (row == getRowCount()) {
-//        setRowCount(row << 1);
-//      }
-//      setRow(row, splitLineCSV(line));
-//      row++;
-//    }
-//    // shorten or lengthen based on what's left
-//    if (row != getRowCount()) {
-//      setRowCount(row);
-//    }
-  }
-
-
-  protected void parseBasic(BufferedReader reader, boolean tsv) throws IOException {
+  protected void parseBasic(BufferedReader reader,
+                            boolean header, boolean tsv) throws IOException {
     String line = null;
     int row = 0;
     if (rowCount == 0) {
       setRowCount(10);
     }
-    int prev = 0;  //-1;
+    //int prev = 0;  //-1;
     while ((line = reader.readLine()) != null) {
       if (row == getRowCount()) {
         setRowCount(row << 1);
       }
-      setRow(row, tsv ? PApplet.split(line, '\t') : splitLineCSV(line));
-      row++;
+      if (row == 0 && header) {
+        setColumnTitles(tsv ? PApplet.split(line, '\t') : splitLineCSV(line));
+        header = false;
+      } else {
+        setRow(row, tsv ? PApplet.split(line, '\t') : splitLineCSV(line));
+        row++;
+      }
 
+      /*
+      // this is problematic unless we're going to calculate rowCount first
       if (row % 10000 == 0) {
         if (row < rowCount) {
           int pct = (100 * row) / rowCount;
@@ -312,6 +304,7 @@ public class Table implements Iterable<TableRow> {
           e.printStackTrace();
         }
       }
+      */
     }
     // shorten or lengthen based on what's left
     if (row != getRowCount()) {
@@ -320,86 +313,13 @@ public class Table implements Iterable<TableRow> {
   }
 
 
-  public void convertTSV(BufferedReader reader, File outputFile) throws IOException {
-    convertBasic(reader, true, outputFile);
-  }
+//  public void convertTSV(BufferedReader reader, File outputFile) throws IOException {
+//    convertBasic(reader, true, outputFile);
+//  }
 
 
-  protected void convertBasic(BufferedReader reader, boolean tsv,
-                              File outputFile) throws IOException {
-    FileOutputStream fos = new FileOutputStream(outputFile);
-    BufferedOutputStream bos = new BufferedOutputStream(fos, 16384);
-    DataOutputStream output = new DataOutputStream(bos);
-    output.writeInt(0);  // come back for row count
-    output.writeInt(getColumnCount());
-    if (columnTitles != null) {
-      output.writeBoolean(true);
-      for (String title : columnTitles) {
-        output.writeUTF(title);
-      }
-    } else {
-      output.writeBoolean(false);
-    }
-    for (int type : columnTypes) {
-      output.writeInt(type);
-    }
-
-    String line = null;
-    //setRowCount(1);
-    int prev = -1;
-    int row = 0;
-    while ((line = reader.readLine()) != null) {
-      convertRow(output, tsv ? PApplet.split(line, '\t') : splitLineCSV(line));
-      row++;
-
-      if (row % 10000 == 0) {
-        if (row < rowCount) {
-          int pct = (100 * row) / rowCount;
-          if (pct != prev) {
-            System.out.println(pct + "%");
-            prev = pct;
-          }
-        }
-//        try {
-//          Thread.sleep(5);
-//        } catch (InterruptedException e) {
-//          e.printStackTrace();
-//        }
-      }
-    }
-    // shorten or lengthen based on what's left
-//    if (row != getRowCount()) {
-//      setRowCount(row);
-//    }
-
-    // has to come afterwards, since these tables get built out during the conversion
-    int col = 0;
-    for (HashMapBlows hmb : columnCategories) {
-      if (hmb == null) {
-        output.writeInt(0);
-      } else {
-        hmb.write(output);
-        hmb.writeln(PApplet.createWriter(new File(columnTitles[col] + ".categories")));
-//        output.writeInt(hmb.size());
-//        for (Map.Entry<String,Integer> e : hmb.entrySet()) {
-//          output.writeUTF(e.getKey());
-//          output.writeInt(e.getValue());
-//        }
-      }
-      col++;
-    }
-
-    output.flush();
-    output.close();
-
-    // come back and write the row count
-    RandomAccessFile raf = new RandomAccessFile(outputFile, "rw");
-    raf.writeInt(rowCount);
-    raf.close();
-  }
-
-
-  public void parseAwfulCSV(BufferedReader reader) throws IOException {
+  protected void parseAwfulCSV(BufferedReader reader,
+                               boolean header) throws IOException {
     char[] c = new char[100];
     int count = 0;
     boolean insideQuote = false;
@@ -438,20 +358,23 @@ public class Table implements Iterable<TableRow> {
         if (ch == '\"') {
           insideQuote = true;
 
-        } else if (ch == '\r') {
-          // check to see if next is a '\n'
-          reader.mark(1);
-          if (reader.read() != '\n') {
-            reader.reset();
+        } else if (ch == '\r' || ch == '\n') {
+          if (ch == '\r') {
+            // check to see if next is a '\n'
+            reader.mark(1);
+            if (reader.read() != '\n') {
+              reader.reset();
+            }
           }
           setString(row, col, new String(c, 0, count));
           count = 0;
-          row++;
-          col = 0;
-
-        } else if (ch == '\n') {
-          setString(row, col, new String(c, 0, count));
-          count = 0;
+          if (row == 0 && header) {
+            // Use internal row removal (efficient because only one row).
+            removeTitleRow();
+            // Un-set the header variable so that next time around, we don't
+            // just get stuck into a loop, removing the 0th row repeatedly.
+            header = false;
+          }
           row++;
           col = 0;
 
@@ -477,11 +400,6 @@ public class Table implements Iterable<TableRow> {
   }
 
 
-  protected String[] splitLine(String line) {
-    return commaSeparatedValues ? splitLineCSV(line) : PApplet.split(line, '\t');
-  }
-
-
   /**
    * Parse a line of text as comma-separated values, returning each value as
    * one entry in an array of String objects. Remove quotes from entries that
@@ -489,7 +407,7 @@ public class Table implements Iterable<TableRow> {
    * @param line line of text to be parsed
    * @return an array of the individual values formerly separated by commas
    */
-  static public String[] splitLineCSV(String line) {
+  static protected String[] splitLineCSV(String line) {
     char[] c = line.toCharArray();
     int rough = 1;  // at least one
     boolean quote = false;
@@ -535,7 +453,7 @@ public class Table implements Iterable<TableRow> {
   }
 
 
-  static int nextComma(char[] c, int index) {
+  static protected int nextComma(char[] c, int index) {
     boolean quote = false;
     for (int i = index; i < c.length; i++) {
       if (!quote && (c[i] == ',')) {
@@ -548,7 +466,195 @@ public class Table implements Iterable<TableRow> {
   }
 
 
-  public void writeTSV(PrintWriter writer) {
+  // A 'Class' object is used here, so the syntax for this function is:
+  // Table t = loadTable("cars3.tsv", "header");
+  // Record[] records = (Record[]) t.parse(Record.class);
+  // While t.parse("Record") might be nicer, the class is likely to be an
+  // inner class (another tab in a PDE sketch) or even inside a package,
+  // so additional information would be needed to locate it. The name of the
+  // inner class would be "SketchName$Record" which isn't acceptable syntax
+  // to make people use. Better to just introduce the '.class' syntax.
+
+  // Unlike the Table class itself, this accepts char and boolean fields in
+  // the target class, since they're much more prevalent, and don't require
+  // a zillion extra methods and special cases in the rest of the class here.
+
+  // since this is likely an inner class, needs a reference to its parent,
+  // because that's passed to the constructor parameter (inserted by the
+  // compiler) of an inner class by the runtime.
+
+  /** incomplete, do not use */
+  public void parseInto(Object enclosingObject, String fieldName) {
+    Class<?> target = null;
+    Object outgoing = null;
+    Field targetField = null;
+    try {
+      // Object targetObject,
+      // Class target -> get this from the type of fieldName
+//      Class sketchClass = sketch.getClass();
+      Class<?> sketchClass = enclosingObject.getClass();
+      targetField = sketchClass.getDeclaredField(fieldName);
+//      PApplet.println("found " + targetField);
+      Class<?> targetArray = targetField.getType();
+      if (!targetArray.isArray()) {
+        // fieldName is not an array
+      } else {
+        target = targetArray.getComponentType();
+        outgoing = Array.newInstance(target, getRowCount());
+      }
+    } catch (NoSuchFieldException e) {
+      e.printStackTrace();
+    } catch (SecurityException e) {
+      e.printStackTrace();
+    }
+
+//    Object enclosingObject = sketch;
+//    PApplet.println("enclosing obj is " + enclosingObject);
+    Class<?> enclosingClass = target.getEnclosingClass();
+    Constructor<?> con = null;
+
+    try {
+      if (enclosingClass == null) {
+        con = target.getDeclaredConstructor();  //new Class[] { });
+//        PApplet.println("no enclosing class");
+      } else {
+        con = target.getDeclaredConstructor(new Class[] { enclosingClass });
+//        PApplet.println("enclosed by " + enclosingClass.getName());
+      }
+      if (!con.isAccessible()) {
+//        System.out.println("setting constructor to public");
+        con.setAccessible(true);
+      }
+    } catch (SecurityException e) {
+      e.printStackTrace();
+    } catch (NoSuchMethodException e) {
+      e.printStackTrace();
+    }
+
+    Field[] fields = target.getDeclaredFields();
+    ArrayList<Field> inuse = new ArrayList<Field>();
+    for (Field field : fields) {
+      String name = field.getName();
+      if (getColumnIndex(name, false) != -1) {
+//        System.out.println("found field " + name);
+        if (!field.isAccessible()) {
+//          PApplet.println("  changing field access");
+          field.setAccessible(true);
+        }
+        inuse.add(field);
+      } else {
+//        System.out.println("skipping field " + name);
+      }
+    }
+
+    int index = 0;
+    try {
+      for (TableRow row : rows()) {
+        Object item = null;
+        if (enclosingClass == null) {
+          //item = target.newInstance();
+          item = con.newInstance();
+        } else {
+          item = con.newInstance(new Object[] { enclosingObject });
+        }
+        //Object item = defaultCons.newInstance(new Object[] { });
+        for (Field field : inuse) {
+          String name = field.getName();
+          //PApplet.println("gonna set field " + name);
+
+          if (field.getType() == String.class) {
+            field.set(item, row.getString(name));
+
+          } else if (field.getType() == Integer.TYPE) {
+            field.setInt(item, row.getInt(name));
+
+          } else if (field.getType() == Long.TYPE) {
+            field.setLong(item, row.getLong(name));
+
+          } else if (field.getType() == Float.TYPE) {
+            field.setFloat(item, row.getFloat(name));
+
+          } else if (field.getType() == Double.TYPE) {
+            field.setDouble(item, row.getDouble(name));
+
+          } else if (field.getType() == Boolean.TYPE) {
+            String content = row.getString(name);
+            if (content != null) {
+              // Only bother setting if it's true,
+              // otherwise false by default anyway.
+              if (content.toLowerCase().equals("true") ||
+                  content.equals("1")) {
+                field.setBoolean(item, true);
+              }
+            }
+//            if (content == null) {
+//              field.setBoolean(item, false);  // necessary?
+//            } else if (content.toLowerCase().equals("true")) {
+//              field.setBoolean(item, true);
+//            } else if (content.equals("1")) {
+//              field.setBoolean(item, true);
+//            } else {
+//              field.setBoolean(item, false);  // necessary?
+//            }
+          } else if (field.getType() == Character.TYPE) {
+            String content = row.getString(name);
+            if (content != null && content.length() > 0) {
+              // Otherwise set to \0 anyway
+              field.setChar(item, content.charAt(0));
+            }
+          }
+        }
+//        list.add(item);
+        Array.set(outgoing, index++, item);
+      }
+      if (!targetField.isAccessible()) {
+//        PApplet.println("setting target field to public");
+        targetField.setAccessible(true);
+      }
+      // Set the array in the sketch
+//      targetField.set(sketch, outgoing);
+      targetField.set(enclosingObject, outgoing);
+
+    } catch (InstantiationException e) {
+      e.printStackTrace();
+    } catch (IllegalAccessException e) {
+      e.printStackTrace();
+    } catch (IllegalArgumentException e) {
+      e.printStackTrace();
+    } catch (InvocationTargetException e) {
+      e.printStackTrace();
+    }
+  }
+
+
+  public void save(File file, String options) throws IOException {
+    save(new FileOutputStream(file), checkOptions(file, options));
+  }
+
+
+  public void save(OutputStream output, String options) {
+    PrintWriter writer = PApplet.createWriter(output);
+    if (options != null) {
+      String[] opts = PApplet.splitTokens(options, ", ");
+      for (String opt : opts) {
+        if (opt.equals("csv")) {
+          writeCSV(writer);
+        } else if (opt.equals("tsv")) {
+          writeTSV(writer);
+        } else if (opt.equals("html")) {
+          writeHTML(writer);
+        } else {
+          throw new IllegalArgumentException("'" + opt + "' not understood. " +
+                                             "Only csv, tsv, and html are " +
+                                             "accepted as save parameters");
+        }
+      }
+    }
+    writer.close();
+  }
+
+
+  protected void writeTSV(PrintWriter writer) {
     if (columnTitles != null) {
       for (int col = 0; col < columns.length; col++) {
         if (col != 0) {
@@ -578,7 +684,7 @@ public class Table implements Iterable<TableRow> {
   }
 
 
-  public void writeCSV(PrintWriter writer) {
+  protected void writeCSV(PrintWriter writer) {
     if (columnTitles != null) {
       for (int col = 0; col < columns.length; col++) {
         if (col != 0) {
@@ -647,21 +753,29 @@ public class Table implements Iterable<TableRow> {
   }
 
 
-  public void writeHTML(PrintWriter writer) {
-    writer.println("<table>");
+  protected void writeHTML(PrintWriter writer) {
+    writer.println("<html>");
+
+    writer.println("<head>");
+    writer.println("  <meta http-equiv=\"content-type\" content=\"text/html;charset=utf-8\" />");
+    writer.println("</head>");
+
+    writer.println("<body>");
+    writer.println("  <table>");
     for (int row = 0; row < getRowCount(); row++) {
-      writer.println("  <tr>");
+      writer.println("    <tr>");
       for (int col = 0; col < getColumnCount(); col++) {
         String entry = getString(row, col);
-        writer.print("    <td>");
+        writer.print("      <td>");
         writeEntryHTML(writer, entry);
-//        String clean = (entry == null) ? "" : HTMLFairy.encodeEntities(entry);
-//        writer.println("    <td>" + clean + "</td>");
-        writer.println("</td>");
+        writer.println("      </td>");
       }
-      writer.println("  </tr>");
+      writer.println("    </tr>");
     }
-    writer.println("</table>");
+    writer.println("  </table>");
+    writer.println("</body>");
+
+    writer.println("</hmtl>");
     writer.flush();
   }
 
@@ -669,42 +783,27 @@ public class Table implements Iterable<TableRow> {
   protected void writeEntryHTML(PrintWriter writer, String entry) {
     //char[] chars = entry.toCharArray();
     for (char c : entry.toCharArray()) {  //chars) {
-      if (c < 32 || c > 127) {
-        writer.print("&#");
-        writer.print((int) c);
-        writer.print(';');
+      if (c == '<') {
+        writer.print("&lt;");
+      } else if (c == '>') {
+        writer.print("&gt;");
+      } else if (c == '&') {
+        writer.print("&amp;");
+      } else if (c == '\'') {
+        writer.print("&apos;");
+      } else if (c == '"') {
+        writer.print("&quot;");
+
+      // not necessary with UTF-8?
+//      } else if (c < 32 || c > 127) {
+//        writer.print("&#");
+//        writer.print((int) c);
+//        writer.print(';');
+
       } else {
         writer.print(c);
       }
     }
-  }
-
-
-  /**
-   * Write this table as a TSV file.
-   * Exceptions will be printed, but not thrown.
-   * @param file the location to write to.
-   * @return true if written successfully
-   */
-  public boolean writeCSV(File file) {
-    try {
-      writeCSV(new PrintWriter(new FileWriter(file)));
-    } catch (IOException e) {
-      e.printStackTrace();
-      return false;
-    }
-    return true;
-  }
-
-
-  public boolean writeTSV(File file) {
-    try {
-      writeTSV(new PrintWriter(new FileWriter(file)));
-    } catch (IOException e) {
-      e.printStackTrace();
-      return false;
-    }
-    return true;
   }
 
 
@@ -775,15 +874,15 @@ public class Table implements Iterable<TableRow> {
   }
 
 
-  public void removeColumn(String dead) {
-    removeColumn(getColumnIndex(dead));
+  public void removeColumn(String columnName) {
+    removeColumn(getColumnIndex(columnName));
   }
 
 
-  public void removeColumn(int index) {
+  public void removeColumn(int column) {
     Object[] temp = new Object[columns.length + 1];
-    System.arraycopy(columns, 0, temp, 0, index);
-    System.arraycopy(columns, index+1, temp, index, (columns.length - index) + 1);
+    System.arraycopy(columns, 0, temp, 0, column);
+    System.arraycopy(columns, column+1, temp, column, (columns.length - column) + 1);
     columns = temp;
   }
 
@@ -940,7 +1039,7 @@ public class Table implements Iterable<TableRow> {
    * Set the entire table to a specific data type.
    */
   public void setTableType(String type) {
-    for (int col = 0; col < columns.length; col++) {
+    for (int col = 0; col < getColumnCount(); col++) {
       setColumnType(col, type);
     }
   }
@@ -948,14 +1047,23 @@ public class Table implements Iterable<TableRow> {
 
   /**
    * Set the titles (and if a second column is present) the data types for
-   * this table based on a file loaded separately.
+   * this table based on a file loaded separately. This will look for the
+   * title in column 0, and the type in column 1. Better yet, specify a
+   * column named "title" and another named "type" in the dictionary table
+   * to future-proof the code.
    * @param dictionary
    */
   public void setColumnTypes(Table dictionary) {
-    setColumnTitles(dictionary.getStringColumn(0));
+    int titleCol = 0;
+    int typeCol = 1;
+    if (dictionary.hasColumnTitles()) {
+      titleCol = dictionary.getColumnIndex("title", true);
+      typeCol = dictionary.getColumnIndex("type", true);
+    }
+    setColumnTitles(dictionary.getStringColumn(titleCol));
     if (dictionary.getColumnCount() > 1) {
       for (int i = 0; i < dictionary.getRowCount(); i++) {
-        setColumnType(i, dictionary.getString(i, 1));
+        setColumnType(i, dictionary.getString(i, typeCol));
       }
     }
   }
@@ -966,7 +1074,9 @@ public class Table implements Iterable<TableRow> {
 
   /**
    * Remove the first row from the data set, and use it as the column titles.
+   * Use loadTable("table.csv", "header") instead.
    */
+  @Deprecated
   public String[] removeTitleRow() {
     String[] titles = getStringRow(0);
     removeRow(0);
@@ -994,6 +1104,11 @@ public class Table implements Iterable<TableRow> {
   }
 
 
+  public boolean hasColumnTitles() {
+    return columnTitles != null;
+  }
+
+
   public String[] getColumnTitles() {
     return columnTitles;
   }
@@ -1004,21 +1119,21 @@ public class Table implements Iterable<TableRow> {
   }
 
 
-  public int getColumnIndex(String name) {
-    return getColumnIndex(name, true);
+  public int getColumnIndex(String columnName) {
+    return getColumnIndex(columnName, true);
   }
 
 
   /**
    * Get the index of a column.
    * @param name Name of the column.
-   * @param report Whether to print to System.err if the column wasn't found.
+   * @param report Whether to throw an exception if the column wasn't found.
    * @return index of the found column, or -1 if not found.
    */
   protected int getColumnIndex(String name, boolean report) {
     if (columnTitles == null) {
       if (report) {
-        System.err.println("Can't get column indices because no column titles are set.");
+        throw new IllegalArgumentException("This table has no header, so no column titles are set.");
       }
       return -1;
     }
@@ -1033,7 +1148,9 @@ public class Table implements Iterable<TableRow> {
     Integer index = columnIndices.get(name);
     if (index == null) {
       if (report) {
-        System.err.println("No column named '" + name + "' was found.");
+        // Throws an exception here because the name is known and therefore most useful.
+        // (Rather than waiting for it to fail inside, say, getInt())
+        throw new IllegalArgumentException("This table has no column named '" + name + "'");
       }
       return -1;
     }
@@ -1064,6 +1181,11 @@ public class Table implements Iterable<TableRow> {
 
   public int getRowCount() {
     return rowCount;
+  }
+
+
+  public int lastRowIndex() {
+    return getRowCount() - 1;
   }
 
 
@@ -1099,17 +1221,19 @@ public class Table implements Iterable<TableRow> {
   }
 
 
-  public void addRow() {
+  public TableRow addRow() {
     setRowCount(rowCount + 1);
+    return new RowPointer(this, rowCount - 1);
   }
 
 
-  public void addRow(String[] columns) {
-    setRow(getRowCount(), columns);
+  public TableRow addRow(Object[] columnData) {
+    setRow(getRowCount(), columnData);
+    return new RowPointer(this, rowCount - 1);
   }
 
 
-  public void insertRow(int insert, String[] data) {
+  public void insertRow(int insert, Object[] columnData) {
     for (int col = 0; col < columns.length; col++) {
       switch (columnTypes[col]) {
         case CATEGORICAL:
@@ -1150,12 +1274,12 @@ public class Table implements Iterable<TableRow> {
         }
       }
     }
-    setRow(insert, data);
+    setRow(insert, columnData);
     rowCount++;
   }
 
 
-  public void removeRow(int dead) {
+  public void removeRow(int row) {
     for (int col = 0; col < columns.length; col++) {
       switch (columnTypes[col]) {
         case CATEGORICAL:
@@ -1164,8 +1288,8 @@ public class Table implements Iterable<TableRow> {
 //          int[] intData = (int[]) columns[col];
 //          System.arraycopy(intData, 0, intTemp, 0, dead);
 //          System.arraycopy(intData, dead+1, intTemp, dead, (rowCount - dead) + 1);
-          System.arraycopy(columns[col], 0, intTemp, 0, dead);
-          System.arraycopy(columns[col], dead+1, intTemp, dead, (rowCount - dead) - 1);
+          System.arraycopy(columns[col], 0, intTemp, 0, row);
+          System.arraycopy(columns[col], row+1, intTemp, row, (rowCount - row) - 1);
           columns[col] = intTemp;
           break;
         }
@@ -1174,8 +1298,8 @@ public class Table implements Iterable<TableRow> {
 //          long[] longData = (long[]) columns[col];
 //          System.arraycopy(longData, 0, longTemp, 0, dead);
 //          System.arraycopy(longData, dead+1, longTemp, dead, (rowCount - dead) + 1);
-          System.arraycopy(columns[col], 0, longTemp, 0, dead);
-          System.arraycopy(columns[col], dead+1, longTemp, dead, (rowCount - dead) - 1);
+          System.arraycopy(columns[col], 0, longTemp, 0, row);
+          System.arraycopy(columns[col], row+1, longTemp, row, (rowCount - row) - 1);
           columns[col] = longTemp;
           break;
         }
@@ -1184,8 +1308,8 @@ public class Table implements Iterable<TableRow> {
 //          float[] floatData = (float[]) columns[col];
 //          System.arraycopy(floatData, 0, floatTemp, 0, dead);
 //          System.arraycopy(floatData, dead+1, floatTemp, dead, (rowCount - dead) + 1);
-          System.arraycopy(columns[col], 0, floatTemp, 0, dead);
-          System.arraycopy(columns[col], dead+1, floatTemp, dead, (rowCount - dead) - 1);
+          System.arraycopy(columns[col], 0, floatTemp, 0, row);
+          System.arraycopy(columns[col], row+1, floatTemp, row, (rowCount - row) - 1);
           columns[col] = floatTemp;
           break;
         }
@@ -1194,15 +1318,15 @@ public class Table implements Iterable<TableRow> {
 //          double[] doubleData = (double[]) columns[col];
 //          System.arraycopy(doubleData, 0, doubleTemp, 0, dead);
 //          System.arraycopy(doubleData, dead+1, doubleTemp, dead, (rowCount - dead) + 1);
-          System.arraycopy(columns[col], 0, doubleTemp, 0, dead);
-          System.arraycopy(columns[col], dead+1, doubleTemp, dead, (rowCount - dead) - 1);
+          System.arraycopy(columns[col], 0, doubleTemp, 0, row);
+          System.arraycopy(columns[col], row+1, doubleTemp, row, (rowCount - row) - 1);
           columns[col] = doubleTemp;
           break;
         }
         case STRING: {
           String[] stringTemp = new String[rowCount-1];
-          System.arraycopy(columns[col], 0, stringTemp, 0, dead);
-          System.arraycopy(columns[col], dead+1, stringTemp, dead, (rowCount - dead) - 1);
+          System.arraycopy(columns[col], 0, stringTemp, 0, row);
+          System.arraycopy(columns[col], row+1, stringTemp, row, (rowCount - row) - 1);
           columns[col] = stringTemp;
         }
       }
@@ -1211,6 +1335,7 @@ public class Table implements Iterable<TableRow> {
   }
 
 
+  /*
   public void setRow(int row, String[] pieces) {
     checkSize(row, pieces.length - 1);
     // pieces.length may be less than columns.length, so loop over pieces
@@ -1222,134 +1347,122 @@ public class Table implements Iterable<TableRow> {
 
   protected void setRowCol(int row, int col, String piece) {
     switch (columnTypes[col]) {
+    case STRING:
+      String[] stringData = (String[]) columns[col];
+      stringData[row] = piece;
+      break;
+    case INT:
+      int[] intData = (int[]) columns[col];
+      intData[row] = PApplet.parseInt(piece, missingInt);
+      break;
+    case LONG:
+      long[] longData = (long[]) columns[col];
+      try {
+        longData[row] = Long.parseLong(piece);
+      } catch (NumberFormatException nfe) {
+        longData[row] = missingLong;
+      }
+      break;
+    case FLOAT:
+      float[] floatData = (float[]) columns[col];
+      floatData[row] = PApplet.parseFloat(piece, missingFloat);
+      break;
+    case DOUBLE:
+      double[] doubleData = (double[]) columns[col];
+      try {
+        doubleData[row] = Double.parseDouble(piece);
+      } catch (NumberFormatException nfe) {
+        doubleData[row] = missingDouble;
+      }
+      break;
+    case CATEGORICAL:
+      int[] indexData = (int[]) columns[col];
+      indexData[row] = columnCategories[col].index(piece);
+      break;
+    default:
+      throw new IllegalArgumentException("That's not a valid column type.");
+    }
+  }
+  */
+
+
+  public void setRow(int row, Object[] pieces) {
+    checkSize(row, pieces.length - 1);
+    // pieces.length may be less than columns.length, so loop over pieces
+    for (int col = 0; col < pieces.length; col++) {
+      setRowCol(row, col, pieces[col]);
+    }
+  }
+
+
+  protected void setRowCol(int row, int col, Object piece) {
+    switch (columnTypes[col]) {
       case STRING:
         String[] stringData = (String[]) columns[col];
-        stringData[row] = piece;
+        if (piece == null) {
+          stringData[row] = null;
+//        } else if (piece instanceof String) {
+//          stringData[row] = (String) piece;
+        } else {
+          // Calls toString() on the object, which is 'return this' for String
+          stringData[row] = String.valueOf(piece);
+        }
         break;
       case INT:
         int[] intData = (int[]) columns[col];
-        intData[row] = PApplet.parseInt(piece, missingInt);
+        //intData[row] = PApplet.parseInt(piece, missingInt);
+        if (piece == null) {
+          intData[row] = missingInt;
+        } else if (piece instanceof Integer) {
+          intData[row] = (Integer) piece;
+        } else {
+          intData[row] = PApplet.parseInt(String.valueOf(piece), missingInt);
+        }
         break;
       case LONG:
         long[] longData = (long[]) columns[col];
-        try {
-          longData[row] = Long.parseLong(piece);
-        } catch (NumberFormatException nfe) {
+        if (piece == null) {
           longData[row] = missingLong;
+        } else if (piece instanceof Long) {
+          longData[row] = (Long) piece;
+        } else {
+          try {
+            longData[row] = Long.parseLong(String.valueOf(piece));
+          } catch (NumberFormatException nfe) {
+            longData[row] = missingLong;
+          }
         }
         break;
       case FLOAT:
         float[] floatData = (float[]) columns[col];
-        floatData[row] = PApplet.parseFloat(piece, missingFloat);
+        if (piece == null) {
+          floatData[row] = missingFloat;
+        } else if (piece instanceof Float) {
+          floatData[row] = (Float) piece;
+        } else {
+          floatData[row] = PApplet.parseFloat(String.valueOf(piece), missingFloat);
+        }
         break;
       case DOUBLE:
         double[] doubleData = (double[]) columns[col];
-        try {
-          doubleData[row] = Double.parseDouble(piece);
-        } catch (NumberFormatException nfe) {
+        if (piece == null) {
           doubleData[row] = missingDouble;
+        } else if (piece instanceof Double) {
+          doubleData[row] = (Double) piece;
+        } else {
+          try {
+            doubleData[row] = Double.parseDouble(String.valueOf(piece));
+          } catch (NumberFormatException nfe) {
+            doubleData[row] = missingDouble;
+          }
         }
         break;
       case CATEGORICAL:
         int[] indexData = (int[]) columns[col];
-        indexData[row] = columnCategories[col].index(piece);
-        break;
-      default:
-        throw new IllegalArgumentException("That's not a valid column type.");
-    }
-  }
-
-
-  public void convertRow(DataOutputStream output, String[] pieces) throws IOException {
-    if (pieces.length > getColumnCount()) {
-      throw new IllegalArgumentException("Row with too many columns: " +
-                                         PApplet.join(pieces, ","));
-    }
-    // pieces.length may be less than columns.length, so loop over pieces
-    for (int col = 0; col < pieces.length; col++) {
-      switch (columnTypes[col]) {
-      case STRING:
-        output.writeUTF(pieces[col]);
-        break;
-      case INT:
-        output.writeInt(PApplet.parseInt(pieces[col], missingInt));
-        break;
-      case LONG:
-        try {
-          output.writeLong(Long.parseLong(pieces[col]));
-        } catch (NumberFormatException nfe) {
-          output.writeLong(missingLong);
-        }
-        break;
-      case FLOAT:
-        output.writeFloat(PApplet.parseFloat(pieces[col], missingFloat));
-        break;
-      case DOUBLE:
-        try {
-          output.writeDouble(Double.parseDouble(pieces[col]));
-        } catch (NumberFormatException nfe) {
-          output.writeDouble(missingDouble);
-        }
-        break;
-      case CATEGORICAL:
-        output.writeInt(columnCategories[col].index(pieces[col]));
-        break;
-      }
-    }
-    for (int col = pieces.length; col < getColumnCount(); col++) {
-      switch (columnTypes[col]) {
-      case STRING:
-        output.writeUTF("");
-        break;
-      case INT:
-        output.writeInt(missingInt);
-        break;
-      case LONG:
-        output.writeLong(missingLong);
-        break;
-      case FLOAT:
-        output.writeFloat(missingFloat);
-        break;
-      case DOUBLE:
-        output.writeDouble(missingDouble);
-        break;
-      case CATEGORICAL:
-        output.writeInt(missingCategory);
-        break;
-
-      }
-    }
-  }
-
-
-  protected void convertRowCol(DataOutputStream output, int row, int col, String piece) {
-    switch (columnTypes[col]) {
-      case STRING:
-        String[] stringData = (String[]) columns[col];
-        stringData[row] = piece;
-        break;
-      case INT:
-        int[] intData = (int[]) columns[col];
-        intData[row] = PApplet.parseInt(piece, missingInt);
-        break;
-      case LONG:
-        long[] longData = (long[]) columns[col];
-        try {
-          longData[row] = Long.parseLong(piece);
-        } catch (NumberFormatException nfe) {
-          longData[row] = missingLong;
-        }
-        break;
-      case FLOAT:
-        float[] floatData = (float[]) columns[col];
-        floatData[row] = PApplet.parseFloat(piece, missingFloat);
-        break;
-      case DOUBLE:
-        double[] doubleData = (double[]) columns[col];
-        try {
-          doubleData[row] = Double.parseDouble(piece);
-        } catch (NumberFormatException nfe) {
-          doubleData[row] = missingDouble;
+        if (piece == null) {
+          indexData[row] = missingCategory;
+        } else {
+          indexData[row] = columnCategories[col].index(String.valueOf(piece));
         }
         break;
       default:
@@ -1361,94 +1474,193 @@ public class Table implements Iterable<TableRow> {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  protected RowIterator rowIterator;
+  public TableRow getRow(int row) {
+    return new RowPointer(this, row);
+  }
+
 
   /**
-   * Note that this one iterator instance is shared by any calls to iterate the
-   * rows of this table. This is very efficient, but not very thread-safe. If
-   * you want to iterate in a multi-threaded manner, use createIterator().
+   * Note that this one iterator instance is shared by any calls to iterate
+   * the rows of this table. This is very efficient, but not thread-safe.
+   * If you want to iterate in a multi-threaded manner, don't use the iterator.
    */
-  public Iterator<TableRow> iterator() {
-    if (rowIterator == null) {
-      rowIterator = new RowIterator();
-    }
-    rowIterator.reset();
-    return rowIterator;
-  }
-
-
-  public Iterator<TableRow> createIterator() {
-    return new RowIterator();
-  }
-
-
-  // temporary objects inside loop! garbage collection! argh!
-//  public Iterator<TableRow> iterator() {
-//    return new RowIterator();
-//  }
-
-
-  class RowIterator implements Iterator<TableRow> {
-    int row;
-    TableRow tableRow = new TableRow() {
-      public String getString(int column) {
-        return Table.this.getString(row, column);
-      }
-
-      public String getString(String columnName) {
-        return Table.this.getString(row, columnName);
-      }
-
-      public int getInt(int column) {
-        return Table.this.getInt(row, column);
-      }
-
-      public int getInt(String columnName) {
-        return Table.this.getInt(row, columnName);
-      }
-
-      public long getLong(int column) {
-        return Table.this.getLong(row, column);
-      }
-
-      public long getLong(String columnName) {
-        return Table.this.getLong(row, columnName);
-      }
-
-      public float getFloat(int column) {
-        return Table.this.getFloat(row, column);
-      }
-
-      public float getFloat(String columnName) {
-        return Table.this.getFloat(row, columnName);
-      }
-
-      public double getDouble(int column) {
-        return Table.this.getDouble(row, column);
-      }
-
-      public double getDouble(String columnName) {
-        return Table.this.getDouble(row, columnName);
+  public Iterable<TableRow> rows() {
+    return new Iterable<TableRow>() {
+      public Iterator<TableRow> iterator() {
+        if (rowIterator == null) {
+          rowIterator = new RowIterator(Table.this);
+        } else {
+          rowIterator.reset();
+        }
+        return rowIterator;
       }
     };
+  }
+
+
+  public Iterator<TableRow> rows(int[] indices) {
+    return new RowIndexIterator(this, indices);
+  }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  static class RowPointer implements TableRow {
+    Table table;
+    int row;
+
+    public RowPointer(Table table, int row) {
+      this.table = table;
+      this.row = row;
+    }
+
+    public void setRow(int row) {
+      this.row = row;
+    }
+
+    public String getString(int column) {
+      return table.getString(row, column);
+    }
+
+    public String getString(String columnName) {
+      return table.getString(row, columnName);
+    }
+
+    public int getInt(int column) {
+      return table.getInt(row, column);
+    }
+
+    public int getInt(String columnName) {
+      return table.getInt(row, columnName);
+    }
+
+    public long getLong(int column) {
+      return table.getLong(row, column);
+    }
+
+    public long getLong(String columnName) {
+      return table.getLong(row, columnName);
+    }
+
+    public float getFloat(int column) {
+      return table.getFloat(row, column);
+    }
+
+    public float getFloat(String columnName) {
+      return table.getFloat(row, columnName);
+    }
+
+    public double getDouble(int column) {
+      return table.getDouble(row, column);
+    }
+
+    public double getDouble(String columnName) {
+      return table.getDouble(row, columnName);
+    }
+
+    public void setString(int column, String value) {
+      table.setString(row, column, value);
+    }
+
+    public void setString(String columnName, String value) {
+      table.setString(row, columnName, value);
+    }
+
+    public void setInt(int column, int value) {
+      table.setInt(row, column, value);
+    }
+
+    public void setInt(String columnName, int value) {
+      table.setInt(row, columnName, value);
+    }
+
+    public void setLong(int column, long value) {
+      table.setLong(row, column, value);
+    }
+
+    public void setLong(String columnName, long value) {
+      table.setLong(row, columnName, value);
+    }
+
+    public void setFloat(int column, float value) {
+      table.setFloat(row, column, value);
+    }
+
+    public void setFloat(String columnName, float value) {
+      table.setFloat(row, columnName, value);
+    }
+
+    public void setDouble(int column, double value) {
+      table.setDouble(row, column, value);
+    }
+
+    public void setDouble(String columnName, double value) {
+      table.setDouble(row, columnName, value);
+    }
+  }
+
+
+  static class RowIterator implements Iterator<TableRow> {
+    Table table;
+    RowPointer rp;
+    int row;
+
+    public RowIterator(Table table) {
+      this.table = table;
+      row = -1;
+      rp = new RowPointer(table, row);
+    }
 
     public void remove() {
-      removeRow(row);
+      table.removeRow(row);
     }
 
     public TableRow next() {
-      ++row;
-//      iteratorRow.setRow(row);
-//      return iteratorRow;
-      return tableRow;
+      rp.setRow(++row);
+      return rp;
     }
 
     public boolean hasNext() {
-      return row+1 < getRowCount();
+      return row+1 < table.getRowCount();
     }
 
     public void reset() {
       row = -1;
+    }
+  }
+
+
+  static class RowIndexIterator implements Iterator<TableRow> {
+    Table table;
+    RowPointer rp;
+    int[] indices;
+    int index;
+
+    public RowIndexIterator(Table table, int[] indices) {
+      this.table = table;
+      this.indices = indices;
+      index = -1;
+      // just set to something arbitrary
+      rp = new RowPointer(table, -1);
+    }
+
+    public void remove() {
+      table.removeRow(indices[index]);
+    }
+
+    public TableRow next() {
+      rp.setRow(indices[++index]);
+      return rp;
+    }
+
+    public boolean hasNext() {
+      //return row+1 < table.getRowCount();
+      return index + 1 < indices.length;
+    }
+
+    public void reset() {
+      index = -1;
     }
   }
 
@@ -1558,6 +1770,22 @@ public class Table implements Iterable<TableRow> {
               throw new RuntimeException(e);
             }
           }
+
+          public void setString(int column, String value) { immutable(); }
+          public void setString(String columnName, String value) { immutable(); }
+          public void setInt(int column, int value) { immutable(); }
+          public void setInt(String columnName, int value) { immutable(); }
+          public void setLong(int column, long value) { immutable(); }
+          public void setLong(String columnName, long value) { immutable(); }
+          public void setFloat(int column, float value) { immutable(); }
+          public void setFloat(String columnName, float value) { immutable(); }
+          public void setDouble(int column, double value) { immutable(); }
+          public void setDouble(String columnName, double value) { immutable(); }
+
+          private void immutable() {
+            throw new IllegalArgumentException("This TableRow cannot be modified.");
+          }
+
         };
       }
 
@@ -1593,9 +1821,9 @@ public class Table implements Iterable<TableRow> {
   }
 
 
-  public void setInt(int row, int column, int what) {
+  public void setInt(int row, int column, int value) {
     if (columnTypes[column] == STRING) {
-      setString(row, column, String.valueOf(what));
+      setString(row, column, String.valueOf(value));
 
     } else {
       checkSize(row, column);
@@ -1603,9 +1831,15 @@ public class Table implements Iterable<TableRow> {
         throw new IllegalArgumentException("Column " + column + " is not an int column.");
       }
       int[] intData = (int[]) columns[column];
-      intData[row] = what;
+      intData[row] = value;
     }
   }
+
+
+  public void setInt(int row, String columnName, int value) {
+    setInt(row, getColumnIndex(columnName), value);
+  }
+
 
 
   public int[] getIntColumn(String name) {
@@ -1663,9 +1897,9 @@ public class Table implements Iterable<TableRow> {
   }
 
 
-  public void setLong(int row, int column, long what) {
+  public void setLong(int row, int column, long value) {
     if (columnTypes[column] == STRING) {
-      setString(row, column, String.valueOf(what));
+      setString(row, column, String.valueOf(value));
 
     } else {
       checkSize(row, column);
@@ -1673,8 +1907,13 @@ public class Table implements Iterable<TableRow> {
         throw new IllegalArgumentException("Column " + column + " is not a 'long' column.");
       }
       long[] longData = (long[]) columns[column];
-      longData[row] = what;
+      longData[row] = value;
     }
+  }
+
+
+  public void setLong(int row, String columnName, long value) {
+    setLong(row, getColumnIndex(columnName), value);
   }
 
 
@@ -1734,9 +1973,9 @@ public class Table implements Iterable<TableRow> {
   }
 
 
-  public void setFloat(int row, int column, float what) {
+  public void setFloat(int row, int column, float value) {
     if (columnTypes[column] == STRING) {
-      setString(row, column, String.valueOf(what));
+      setString(row, column, String.valueOf(value));
 
     } else {
       checkSize(row, column);
@@ -1744,8 +1983,13 @@ public class Table implements Iterable<TableRow> {
         throw new IllegalArgumentException("Column " + column + " is not a float column.");
       }
       float[] longData = (float[]) columns[column];
-      longData[row] = what;
+      longData[row] = value;
     }
+  }
+
+
+  public void setFloat(int row, String columnName, float value) {
+    setFloat(row, getColumnIndex(columnName), value);
   }
 
 
@@ -1804,9 +2048,9 @@ public class Table implements Iterable<TableRow> {
   }
 
 
-  public void setDouble(int row, int column, double what) {
+  public void setDouble(int row, int column, double value) {
     if (columnTypes[column] == STRING) {
-      setString(row, column, String.valueOf(what));
+      setString(row, column, String.valueOf(value));
 
     } else {
       checkSize(row, column);
@@ -1814,8 +2058,13 @@ public class Table implements Iterable<TableRow> {
         throw new IllegalArgumentException("Column " + column + " is not a 'double' column.");
       }
       double[] doubleData = (double[]) columns[column];
-      doubleData[row] = what;
+      doubleData[row] = value;
     }
+  }
+
+
+  public void setDouble(int row, String columnName, double value) {
+    setDouble(row, getColumnIndex(columnName), value);
   }
 
 
@@ -1906,7 +2155,7 @@ public class Table implements Iterable<TableRow> {
    * Get a String value from the table. If the row is longer than the table
    * @param row
    * @param col
-   * @return
+   * @return the String defined by the row and col variables
    */
   public String getString(int row, int col) {
     checkBounds(row, col);
@@ -1932,19 +2181,19 @@ public class Table implements Iterable<TableRow> {
   }
 
 
-  public void setString(int row, int column, String what) {
+  public void setString(int row, int column, String value) {
     checkSize(row, column);
     if (columnTypes[column] != STRING) {
       throw new IllegalArgumentException("Column " + column + " is not a String column.");
     }
     String[] stringData = (String[]) columns[column];
-    stringData[row] = what;
+    stringData[row] = value;
   }
 
 
-  public void setString(int row, String columnName, String what) {
+  public void setString(int row, String columnName, String value) {
     int column = checkColumnIndex(columnName);
-    setString(row, column, what);
+    setString(row, column, value);
   }
 
 
@@ -1976,38 +2225,125 @@ public class Table implements Iterable<TableRow> {
 
 
   /**
-   * Set all 'null' entries to "" (zero length String objects).
-   * If columns are typed, then this will only apply to String columns.
+   * Return the row that contains the first String that matches.
+   * @param value the String to match
+   * @param column the column to search
    */
-  public void makeNullEmpty() {
-    for (int col = 0; col < columns.length; col++) {
-      if (columnTypes[col] == STRING) {
-        String[] stringData = (String[]) columns[col];
+  public int findRowIndex(String value, int column) {
+    checkBounds(-1, column);
+    if (columnTypes[column] == STRING) {
+      String[] stringData = (String[]) columns[column];
+      if (value == null) {
         for (int row = 0; row < rowCount; row++) {
-          if (stringData[row] == null) {
-            stringData[row] = "";
+          if (stringData[row] == null) return row;
+        }
+      } else {
+        for (int row = 0; row < rowCount; row++) {
+          if (stringData[row] != null && stringData[row].equals(value)) {
+            return row;
           }
         }
       }
+    } else {  // less efficient, includes conversion as necessary
+      for (int row = 0; row < rowCount; row++) {
+        String str = getString(row, column);
+        if (str == null) {
+          if (value == null) {
+            return row;
+          }
+        } else if (str.equals(value)) {
+          return row;
+        }
+      }
     }
+    return -1;
   }
 
 
   /**
-   * Set all "" entries (zero length String objects) to null values.
-   * If columns are typed, then this will only apply to String columns.
+   * Return the row that contains the first String that matches.
+   * @param value the String to match
+   * @param columnName the column to search
    */
-  public void makeEmptyNull() {
-    for (int col = 0; col < columns.length; col++) {
-      if (columnTypes[col] == STRING) {
-        String[] stringData = (String[]) columns[col];
+  public int findRowIndex(String value, String columnName) {
+    return findRowIndex(value, getColumnIndex(columnName));
+  }
+
+
+  /**
+   * Return a list of rows that contain the String passed in. If there are no
+   * matches, a zero length array will be returned (not a null array).
+   * @param value the String to match
+   * @param column the column to search
+   */
+  public int[] findRowIndices(String value, int column) {
+    int[] outgoing = new int[rowCount];
+    int count = 0;
+
+    checkBounds(-1, column);
+    if (columnTypes[column] == STRING) {
+      String[] stringData = (String[]) columns[column];
+      if (value == null) {
         for (int row = 0; row < rowCount; row++) {
-          if (stringData[row] != null && stringData[row].length() == 0) {
-            stringData[row] = null;
+          if (stringData[row] == null) {
+            outgoing[count++] = row;
+          }
+        }
+      } else {
+        for (int row = 0; row < rowCount; row++) {
+          if (stringData[row] != null && stringData[row].equals(value)) {
+            outgoing[count++] = row;
           }
         }
       }
+    } else {  // less efficient, includes conversion as necessary
+      for (int row = 0; row < rowCount; row++) {
+        String str = getString(row, column);
+        if (str == null) {
+          if (value == null) {
+            outgoing[count++] = row;
+          }
+        } else if (str.equals(value)) {
+          outgoing[count++] = row;
+        }
+      }
     }
+    return PApplet.subset(outgoing, 0, count);
+  }
+
+
+  /**
+   * Return a list of rows that contain the String passed in. If there are no
+   * matches, a zero length array will be returned (not a null array).
+   * @param value the String to match
+   * @param columnName the column to search
+   */
+  public int[] findRowIndices(String value, String columnName) {
+    return findRowIndices(value, getColumnIndex(columnName));
+  }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  public TableRow findRow(String value, int column) {
+    int row = findRowIndex(value, column);
+    return (row == -1) ? null : new RowPointer(this, row);
+  }
+
+
+  public TableRow findRow(String value, String columnName) {
+    return findRow(value, getColumnIndex(columnName));
+  }
+
+
+  public Iterator<TableRow> findRows(String value, int column) {
+    return new RowIndexIterator(this, findRowIndices(value, column));
+  }
+
+
+  public Iterator<TableRow> findRows(String value, String columnName) {
+    return findRows(value, getColumnIndex(columnName));
   }
 
 
@@ -2015,26 +2351,177 @@ public class Table implements Iterable<TableRow> {
 
 
   /**
-   * Searches the entire table for float values.
-   * Returns missing float (Float.NaN by default) if no valid numbers found.
+   * Return the row that contains the first String that matches.
+   * @param regexp the String to match
+   * @param column the column to search
    */
-  public float getMaxFloat() {
-    boolean found = false;
-    float max = PConstants.MIN_FLOAT;
-    for (int row = 0; row < getRowCount(); row++) {
-      for (int col = 0; col < getColumnCount(); col++) {
-        float value = getFloat(row, col);
-        if (!Float.isNaN(value)) {  // TODO no, this should be comparing to the missing value
-          if (!found) {
-            max = value;
-            found = true;
-          } else if (value > max) {
-            max = value;
-          }
+  public int matchRowIndex(String regexp, int column) {
+    checkBounds(-1, column);
+    if (columnTypes[column] == STRING) {
+      String[] stringData = (String[]) columns[column];
+      for (int row = 0; row < rowCount; row++) {
+        if (stringData[row] != null &&
+            PApplet.match(stringData[row], regexp) != null) {
+          return row;
+        }
+      }
+    } else {  // less efficient, includes conversion as necessary
+      for (int row = 0; row < rowCount; row++) {
+        String str = getString(row, column);
+        if (str != null &&
+            PApplet.match(str, regexp) != null) {
+          return row;
         }
       }
     }
-    return found ? max : missingFloat;
+    return -1;
+  }
+
+
+  /**
+   * Return the row that contains the first String that matches.
+   * @param what the String to match
+   * @param columnName the column to search
+   */
+  public int matchRowIndex(String what, String columnName) {
+    return matchRowIndex(what, getColumnIndex(columnName));
+  }
+
+
+  /**
+   * Return a list of rows that contain the String passed in. If there are no
+   * matches, a zero length array will be returned (not a null array).
+   * @param what the String to match
+   * @param column the column to search
+   */
+  public int[] matchRowIndices(String regexp, int column) {
+    int[] outgoing = new int[rowCount];
+    int count = 0;
+
+    checkBounds(-1, column);
+    if (columnTypes[column] == STRING) {
+      String[] stringData = (String[]) columns[column];
+      for (int row = 0; row < rowCount; row++) {
+        if (stringData[row] != null &&
+            PApplet.match(stringData[row], regexp) != null) {
+          outgoing[count++] = row;
+        }
+      }
+    } else {  // less efficient, includes conversion as necessary
+      for (int row = 0; row < rowCount; row++) {
+        String str = getString(row, column);
+        if (str != null &&
+            PApplet.match(str, regexp) != null) {
+          outgoing[count++] = row;
+        }
+      }
+    }
+    return PApplet.subset(outgoing, 0, count);
+  }
+
+
+  /**
+   * Return a list of rows that match the regex passed in. If there are no
+   * matches, a zero length array will be returned (not a null array).
+   * @param what the String to match
+   * @param columnName the column to search
+   */
+  public int[] matchRowIndices(String what, String columnName) {
+    return matchRowIndices(what, getColumnIndex(columnName));
+  }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  public TableRow matchRow(String regexp, int column) {
+    int row = matchRowIndex(regexp, column);
+    return (row == -1) ? null : new RowPointer(this, row);
+  }
+
+
+  public TableRow matchRow(String regexp, String columnName) {
+    return matchRow(regexp, getColumnIndex(columnName));
+  }
+
+
+  public Iterator<TableRow> matchRows(String value, int column) {
+    return new RowIndexIterator(this, matchRowIndices(value, column));
+  }
+
+
+  public Iterator<TableRow> matchRows(String value, String columnName) {
+    return matchRows(value, getColumnIndex(columnName));
+  }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  /**
+   * Replace a String with another. Set empty entries null by using
+   * replace("", null) or use replace(null, "") to go the other direction.
+   * If this is a typed table, only String columns will be modified.
+   * @param orig
+   * @param replacement
+   */
+  public void replace(String orig, String replacement) {
+    for (int col = 0; col < columns.length; col++) {
+      replace(orig, replacement, col);
+    }
+  }
+
+
+  public void replace(String orig, String replacement, int col) {
+    if (columnTypes[col] == STRING) {
+      String[] stringData = (String[]) columns[col];
+      for (int row = 0; row < rowCount; row++) {
+        if (stringData[row].equals(orig)) {
+          stringData[row] = replacement;
+        }
+      }
+    }
+  }
+
+
+  public void replace(String orig, String replacement, String colName) {
+    replace(orig, replacement, getColumnIndex(colName));
+  }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  public void replaceAll(String orig, String replacement) {
+    for (int col = 0; col < columns.length; col++) {
+      replaceAll(orig, replacement, col);
+    }
+  }
+
+
+  public void replaceAll(String regex, String replacement, int column) {
+    checkBounds(-1, column);
+    if (columnTypes[column] == STRING) {
+      String[] stringData = (String[]) columns[column];
+      for (int row = 0; row < rowCount; row++) {
+        if (stringData[row] != null) {
+          stringData[row] = stringData[row].replaceAll(regex, replacement);
+        }
+      }
+    } else {
+      throw new IllegalArgumentException("replaceAll() can only be used on String columns");
+    }
+  }
+
+
+  /**
+   * Run String.replaceAll() on all entries in a column.
+   * Only works with columns that are already String values.
+   * @param what the String to match
+   * @param columnName the column to search
+   */
+  public void replaceAll(String regex, String replacement, String columnName) {
+    replaceAll(regex, replacement, getColumnIndex(columnName));
   }
 
 
@@ -2080,236 +2567,35 @@ public class Table implements Iterable<TableRow> {
   }
 
 
-  public void removeTokens(String tokens, String column) {
-    removeTokens(tokens, getColumnIndex(column));
-  }
-
-
-  // TODO this isn't i18n correct, and it's a dumb implementation
-//  public void removeLetters(int column) {
-//    String alphabet = "abcdefghijklmnopqrstuvwxyz";
-//    removeTokens(alphabet + alphabet.toUpperCase(), column);
-//  }
-
-
-  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-
-
-  /**
-   * Return the row that contains the first String that matches.
-   * @param what the String to match
-   * @param column the column to search
-   */
-  public int findRow(String what, int column) {
-    checkBounds(-1, column);
-    if (columnTypes[column] == STRING) {
-      String[] stringData = (String[]) columns[column];
-      if (what == null) {
-        for (int row = 0; row < rowCount; row++) {
-          if (stringData[row] == null) return row;
-        }
-      } else {
-        for (int row = 0; row < rowCount; row++) {
-          if (stringData[row] != null && stringData[row].equals(what)) {
-            return row;
-          }
-        }
-      }
-    } else {  // less efficient, includes conversion as necessary
-      for (int row = 0; row < rowCount; row++) {
-        String str = getString(row, column);
-        if (str == null) {
-          if (what == null) {
-            return row;
-          }
-        } else if (str.equals(what)) {
-          return row;
-        }
-      }
-    }
-    return -1;
-  }
-
-
-  /**
-   * Return the row that contains the first String that matches.
-   * @param what the String to match
-   * @param columnName the column to search
-   */
-  public int findRow(String what, String columnName) {
-    return findRow(what, getColumnIndex(columnName));
-  }
-
-
-  /**
-   * Return a list of rows that contain the String passed in. If there are no
-   * matches, a zero length array will be returned (not a null array).
-   * @param what the String to match
-   * @param column the column to search
-   */
-  public int[] findRows(String what, int column) {
-    int[] outgoing = new int[rowCount];
-    int count = 0;
-
-    checkBounds(-1, column);
-    if (columnTypes[column] == STRING) {
-      String[] stringData = (String[]) columns[column];
-      if (what == null) {
-        for (int row = 0; row < rowCount; row++) {
-          if (stringData[row] == null) {
-            outgoing[count++] = row;
-          }
-        }
-      } else {
-        for (int row = 0; row < rowCount; row++) {
-          if (stringData[row] != null && stringData[row].equals(what)) {
-            outgoing[count++] = row;
-          }
-        }
-      }
-    } else {  // less efficient, includes conversion as necessary
-      for (int row = 0; row < rowCount; row++) {
-        String str = getString(row, column);
-        if (str == null) {
-          if (what == null) {
-            outgoing[count++] = row;
-          }
-        } else if (str.equals(what)) {
-          outgoing[count++] = row;
-        }
-      }
-    }
-    return PApplet.subset(outgoing, 0, count);
-  }
-
-
-  /**
-   * Return a list of rows that contain the String passed in. If there are no
-   * matches, a zero length array will be returned (not a null array).
-   * @param what the String to match
-   * @param columnName the column to search
-   */
-  public int[] findRows(String what, String columnName) {
-    return findRows(what, getColumnIndex(columnName));
+  public void removeTokens(String tokens, String columnName) {
+    removeTokens(tokens, getColumnIndex(columnName));
   }
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  /**
-   * Return the row that contains the first String that matches.
-   * @param what the String to match
-   * @param column the column to search
-   */
-  public int matchRow(String regexp, int column) {
-    checkBounds(-1, column);
-    if (columnTypes[column] == STRING) {
-      String[] stringData = (String[]) columns[column];
-      for (int row = 0; row < rowCount; row++) {
-        if (stringData[row] != null &&
-            PApplet.match(stringData[row], regexp) != null) {
-          return row;
-        }
-      }
-    } else {  // less efficient, includes conversion as necessary
-      for (int row = 0; row < rowCount; row++) {
-        String str = getString(row, column);
-        if (str != null &&
-            PApplet.match(str, regexp) != null) {
-          return row;
-        }
-      }
+  public void trim() {
+    for (int col = 0; col < getColumnCount(); col++) {
+      trim(col);
     }
-    return -1;
   }
 
 
-  /**
-   * Return the row that contains the first String that matches.
-   * @param what the String to match
-   * @param columnName the column to search
-   */
-  public int matchRow(String what, String columnName) {
-    return matchRow(what, getColumnIndex(columnName));
-  }
-
-
-  /**
-   * Return a list of rows that contain the String passed in. If there are no
-   * matches, a zero length array will be returned (not a null array).
-   * @param what the String to match
-   * @param column the column to search
-   */
-  public int[] matchRows(String regexp, int column) {
-    int[] outgoing = new int[rowCount];
-    int count = 0;
-
-    checkBounds(-1, column);
-    if (columnTypes[column] == STRING) {
-      String[] stringData = (String[]) columns[column];
-      for (int row = 0; row < rowCount; row++) {
-        if (stringData[row] != null &&
-            PApplet.match(stringData[row], regexp) != null) {
-          outgoing[count++] = row;
-        }
-      }
-    } else {  // less efficient, includes conversion as necessary
-      for (int row = 0; row < rowCount; row++) {
-        String str = getString(row, column);
-        if (str != null &&
-            PApplet.match(str, regexp) != null) {
-          outgoing[count++] = row;
-        }
-      }
-    }
-    return PApplet.subset(outgoing, 0, count);
-  }
-
-
-  /**
-   * Return a list of rows that match the regex passed in. If there are no
-   * matches, a zero length array will be returned (not a null array).
-   * @param what the String to match
-   * @param columnName the column to search
-   */
-  public int[] matchRows(String what, String columnName) {
-    return matchRows(what, getColumnIndex(columnName));
-  }
-
-
-  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-
-
-  /**
-   * Return a list of rows that contain the String passed in. If there are no
-   * matches, a zero length array will be returned (not a null array).
-   * @param what the String to match
-   * @param column the column to search
-   */
-  public void replaceAll(String regex, String replacement, int column) {
-    checkBounds(-1, column);
+  public void trim(int column) {
     if (columnTypes[column] == STRING) {
       String[] stringData = (String[]) columns[column];
       for (int row = 0; row < rowCount; row++) {
         if (stringData[row] != null) {
-          stringData[row] = stringData[row].replaceAll(regex, replacement);
+          stringData[row] = PApplet.trim(stringData[row]);
         }
       }
-    } else {
-      throw new IllegalArgumentException("replaceAll() can only be used on String columns");
     }
   }
 
 
-  /**
-   * Run String.replaceAll() on all entries in a column.
-   * Only works with columns that are already String values.
-   * @param what the String to match
-   * @param columnName the column to search
-   */
-  public void replaceAll(String regex, String replacement, String columnName) {
-    replaceAll(regex, replacement, getColumnIndex(columnName));
+  public void trim(String columnName) {
+    trim(getColumnIndex(columnName));
   }
 
 
@@ -2343,31 +2629,6 @@ public class Table implements Iterable<TableRow> {
     if (column < 0 || column >= columns.length) {
       throw new ArrayIndexOutOfBoundsException("Column " + column + " does not exist.");
     }
-  }
-
-
-  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-
-
-  public Table createSubset(int[] rowSubset) {
-    Table newbie = new Table();
-    newbie.setColumnTitles(columnTitles);  // also sets columns.length
-    newbie.columnTypes = columnTypes;
-    newbie.setRowCount(rowSubset.length);
-
-    for (int i = 0; i < rowSubset.length; i++) {
-      int row = rowSubset[i];
-      for (int col = 0; col < columns.length; col++) {
-        switch (columnTypes[col]) {
-          case STRING: newbie.setString(i, col, getString(row, col)); break;
-          case INT: newbie.setInt(i, col, getInt(row, col)); break;
-          case LONG: newbie.setLong(i, col, getLong(row, col)); break;
-          case FLOAT: newbie.setFloat(i, col, getFloat(row, col)); break;
-          case DOUBLE: newbie.setDouble(i, col, getDouble(row, col)); break;
-        }
-      }
-    }
-    return newbie;
   }
 
 
@@ -2424,19 +2685,8 @@ public class Table implements Iterable<TableRow> {
     }
   }
 
-//  class HashMapBlows extends HashMap<String,Integer> {
-//
-//    int index(String what) {
-//      Integer value = get(what);
-//      if (value != null) {
-//        return value;
-//      }
-//
-//      int v = size();
-//      put(what, v);
-//      return v;
-//    }
-//  }
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
   class HashMapSucks extends HashMap<String,Integer> {
@@ -2458,12 +2708,15 @@ public class Table implements Iterable<TableRow> {
   }
 
 
-  public String[] getUnique(String column) {
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  protected String[] getUnique(String column) {
     return getUnique(getColumnIndex(column));
   }
 
 
-  public String[] getUnique(int column) {
+  protected String[] getUnique(int column) {
     HashMapSucks found = new HashMapSucks();
     for (int row = 0; row < getRowCount(); row++) {
       found.check(getString(row, column));
@@ -2474,12 +2727,12 @@ public class Table implements Iterable<TableRow> {
   }
 
 
-  public HashMap<String,Integer> getUniqueCount(String columnName) {
+  protected HashMap<String,Integer> getUniqueCount(String columnName) {
     return getUniqueCount(getColumnIndex(columnName));
   }
 
 
-  public HashMap<String,Integer> getUniqueCount(int column) {
+  protected HashMap<String,Integer> getUniqueCount(int column) {
     HashMapSucks outgoing = new HashMapSucks();
     for (int row = 0; row < rowCount; row++) {
       String entry = getString(row, column);
@@ -2497,7 +2750,7 @@ public class Table implements Iterable<TableRow> {
    * found in the first column, getColumnRowLookup(0) would return an object
    * that would map each name back to its row.
    */
-  public HashMap<String,Integer> getRowLookup(int col) {
+  protected HashMap<String,Integer> getRowLookup(int col) {
     HashMap<String,Integer> outgoing = new HashMap<String, Integer>();
     for (int row = 0; row < getRowCount(); row++) {
       outgoing.put(getString(row, col), row);
@@ -2606,14 +2859,230 @@ public class Table implements Iterable<TableRow> {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  public void trim() {
-    for (int col = 0; col < columns.length; col++) {
-      String[] stringData = (String[]) columns[col];
-      for (int row = 0; row < rowCount; row++) {
-        if (stringData[row] != null) {
-          stringData[row] = PApplet.trim(stringData[row]);
+  // TODO naming/whether to include
+  protected Table createSubset(int[] rowSubset) {
+    Table newbie = new Table();
+    newbie.setColumnTitles(columnTitles);  // also sets columns.length
+    newbie.columnTypes = columnTypes;
+    newbie.setRowCount(rowSubset.length);
+
+    for (int i = 0; i < rowSubset.length; i++) {
+      int row = rowSubset[i];
+      for (int col = 0; col < columns.length; col++) {
+        switch (columnTypes[col]) {
+          case STRING: newbie.setString(i, col, getString(row, col)); break;
+          case INT: newbie.setInt(i, col, getInt(row, col)); break;
+          case LONG: newbie.setLong(i, col, getLong(row, col)); break;
+          case FLOAT: newbie.setFloat(i, col, getFloat(row, col)); break;
+          case DOUBLE: newbie.setDouble(i, col, getDouble(row, col)); break;
         }
       }
     }
+    return newbie;
   }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  /**
+   * Searches the entire table for float values.
+   * Returns missing float (Float.NaN by default) if no valid numbers found.
+   */
+  protected float getMaxFloat() {
+    boolean found = false;
+    float max = PConstants.MIN_FLOAT;
+    for (int row = 0; row < getRowCount(); row++) {
+      for (int col = 0; col < getColumnCount(); col++) {
+        float value = getFloat(row, col);
+        if (!Float.isNaN(value)) {  // TODO no, this should be comparing to the missing value
+          if (!found) {
+            max = value;
+            found = true;
+          } else if (value > max) {
+            max = value;
+          }
+        }
+      }
+    }
+    return found ? max : missingFloat;
+  }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  // converts a TSV or CSV file to binary.. do not use
+  protected void convertBasic(BufferedReader reader, boolean tsv,
+                              File outputFile) throws IOException {
+    FileOutputStream fos = new FileOutputStream(outputFile);
+    BufferedOutputStream bos = new BufferedOutputStream(fos, 16384);
+    DataOutputStream output = new DataOutputStream(bos);
+    output.writeInt(0);  // come back for row count
+    output.writeInt(getColumnCount());
+    if (columnTitles != null) {
+      output.writeBoolean(true);
+      for (String title : columnTitles) {
+        output.writeUTF(title);
+      }
+    } else {
+      output.writeBoolean(false);
+    }
+    for (int type : columnTypes) {
+      output.writeInt(type);
+    }
+
+    String line = null;
+    //setRowCount(1);
+    int prev = -1;
+    int row = 0;
+    while ((line = reader.readLine()) != null) {
+      convertRow(output, tsv ? PApplet.split(line, '\t') : splitLineCSV(line));
+      row++;
+
+      if (row % 10000 == 0) {
+        if (row < rowCount) {
+          int pct = (100 * row) / rowCount;
+          if (pct != prev) {
+            System.out.println(pct + "%");
+            prev = pct;
+          }
+        }
+//        try {
+//          Thread.sleep(5);
+//        } catch (InterruptedException e) {
+//          e.printStackTrace();
+//        }
+      }
+    }
+    // shorten or lengthen based on what's left
+//    if (row != getRowCount()) {
+//      setRowCount(row);
+//    }
+
+    // has to come afterwards, since these tables get built out during the conversion
+    int col = 0;
+    for (HashMapBlows hmb : columnCategories) {
+      if (hmb == null) {
+        output.writeInt(0);
+      } else {
+        hmb.write(output);
+        hmb.writeln(PApplet.createWriter(new File(columnTitles[col] + ".categories")));
+//        output.writeInt(hmb.size());
+//        for (Map.Entry<String,Integer> e : hmb.entrySet()) {
+//          output.writeUTF(e.getKey());
+//          output.writeInt(e.getValue());
+//        }
+      }
+      col++;
+    }
+
+    output.flush();
+    output.close();
+
+    // come back and write the row count
+    RandomAccessFile raf = new RandomAccessFile(outputFile, "rw");
+    raf.writeInt(rowCount);
+    raf.close();
+  }
+
+
+  protected void convertRow(DataOutputStream output, String[] pieces) throws IOException {
+    if (pieces.length > getColumnCount()) {
+      throw new IllegalArgumentException("Row with too many columns: " +
+                                         PApplet.join(pieces, ","));
+    }
+    // pieces.length may be less than columns.length, so loop over pieces
+    for (int col = 0; col < pieces.length; col++) {
+      switch (columnTypes[col]) {
+      case STRING:
+        output.writeUTF(pieces[col]);
+        break;
+      case INT:
+        output.writeInt(PApplet.parseInt(pieces[col], missingInt));
+        break;
+      case LONG:
+        try {
+          output.writeLong(Long.parseLong(pieces[col]));
+        } catch (NumberFormatException nfe) {
+          output.writeLong(missingLong);
+        }
+        break;
+      case FLOAT:
+        output.writeFloat(PApplet.parseFloat(pieces[col], missingFloat));
+        break;
+      case DOUBLE:
+        try {
+          output.writeDouble(Double.parseDouble(pieces[col]));
+        } catch (NumberFormatException nfe) {
+          output.writeDouble(missingDouble);
+        }
+        break;
+      case CATEGORICAL:
+        output.writeInt(columnCategories[col].index(pieces[col]));
+        break;
+      }
+    }
+    for (int col = pieces.length; col < getColumnCount(); col++) {
+      switch (columnTypes[col]) {
+      case STRING:
+        output.writeUTF("");
+        break;
+      case INT:
+        output.writeInt(missingInt);
+        break;
+      case LONG:
+        output.writeLong(missingLong);
+        break;
+      case FLOAT:
+        output.writeFloat(missingFloat);
+        break;
+      case DOUBLE:
+        output.writeDouble(missingDouble);
+        break;
+      case CATEGORICAL:
+        output.writeInt(missingCategory);
+        break;
+
+      }
+    }
+  }
+
+
+  /*
+  private void convertRowCol(DataOutputStream output, int row, int col, String piece) {
+    switch (columnTypes[col]) {
+      case STRING:
+        String[] stringData = (String[]) columns[col];
+        stringData[row] = piece;
+        break;
+      case INT:
+        int[] intData = (int[]) columns[col];
+        intData[row] = PApplet.parseInt(piece, missingInt);
+        break;
+      case LONG:
+        long[] longData = (long[]) columns[col];
+        try {
+          longData[row] = Long.parseLong(piece);
+        } catch (NumberFormatException nfe) {
+          longData[row] = missingLong;
+        }
+        break;
+      case FLOAT:
+        float[] floatData = (float[]) columns[col];
+        floatData[row] = PApplet.parseFloat(piece, missingFloat);
+        break;
+      case DOUBLE:
+        double[] doubleData = (double[]) columns[col];
+        try {
+          doubleData[row] = Double.parseDouble(piece);
+        } catch (NumberFormatException nfe) {
+          doubleData[row] = missingDouble;
+        }
+        break;
+      default:
+        throw new IllegalArgumentException("That's not a valid column type.");
+    }
+  }
+  */
 }

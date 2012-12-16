@@ -34,28 +34,6 @@ X   better to do this instead of bringing back the magic event
 X   or implementing the magic event on Android
 X   also problematic with it not being called now
 
-
-decisions on data
-X are we comfortable with setInt/Float/etc instead of just set(int, blah)
-X   yes, better to have parity
-X   too weird to have to explain why getXxx() needs types and set() doesn't
-X get/set with Java's 'Map' class?
-X   really useful, but leaning toward not including it
-X   or leave it in as an advanced feature?
-X createXxx() methods less important
-X   XML.parse() - or new XML("<tag>") or new XML("tag")
-_   add parseXML() and parseJSONObject(x)
-X api note: size() used in data classes
-X   length() too confusing w/ array.length being built-in (when to use ()?)
-X   size() a bit confusing with the p5 size command, but less problematic
-X   also shorter than getCount() or getLength()
-_ why not HashMap and ArrayList for JSON? 
-_   could enable loadHash() and loadArray() functions
-_   or loadDict() and loadList() as the case might be
-_ JSONObject.has(key) vs XML.hasAttribute(attr) vs HashMap.containsKey()
-_   and how it should be handled with hash/dict
-
-
 cleaning/earlier
 C textureWrap() CLAMP and REPEAT now added
 C begin/endContour()
@@ -77,7 +55,56 @@ X saveTable("filename.tsv") or saveTable("filename.txt", "tsv")
 X createTable() method in PApplet
 X removed getUniqueXxxx() and some others, pending names
 
-_ OutOfMemory in image()
+xml library
+X removed 'name' field to avoid possibility of random errors
+X confirmed that DOM "correct" version includes the text nodes
+X new XML(name) also throws an ex, use createXML() or appendChild("name")
+X remove XML.parse() from the reference (it throws an exception)
+X   use parseXML() instead
+o do we need a trim() method for XML?
+o   use XSL transform to strip whitespace
+o   helpdesk.objects.com.au/java/how-do-i-remove-whitespace-from-an-xml-document
+X   messy, just not great
+o isWhitespace() method for nodes? (that's the capitalization used in Character)
+X   doesn't help much
+o get back to PhiLho once finished
+X XML toString(0) means no indents or newlines
+X   but no way to remove indents and still have newlines... 
+X   toString(-1)? a new method?
+X   format(2), format(4)... toString() -> default to 2 params
+X   fix this across the other items
+X look into json and how it would work wrt XML
+o   1) we bring back getFloatAttribute() et al., 
+o      and make getFloat() be equivalent to parseFloat(xml.getContent())
+o   2) we keep getFloat() like it is, and add getFloatContent(), etc.
+o   3) we deprecate our nice short getFloat/getInt/etc and go with 
+o      getXxxxAttribute() and getXxxxContent() methods.
+X   not gonna do getFloatContent() since it's not really any shorter
+X beginning slash in getChild() threw an NPE
+
+decisions on data
+X are we comfortable with setInt/Float/etc instead of just set(int, blah)
+X   yes, better to have parity
+X   too weird to have to explain why getXxx() needs types and set() doesn't
+X get/set with Java's 'Map' class?
+X   really useful, but leaning toward not including it
+X   or leave it in as an advanced feature?
+X createXxx() methods less important
+X   XML.parse() - or new XML("<tag>") or new XML("tag")
+_   add parseXML() and parseJSONObject(x)
+X api note: size() used in data classes
+X   length() too confusing w/ array.length being built-in (when to use ()?)
+X   size() a bit confusing with the p5 size command, but less problematic
+X   also shorter than getCount() or getLength()
+_ why not HashMap and ArrayList for JSON? 
+_   could enable loadHash() and loadArray() functions
+_   or loadDict() and loadList() as the case might be
+_ JSONObject.has(key) vs XML.hasAttribute(attr) vs HashMap.containsKey()
+_   and how it should be handled with hash/dict
+_   right now using hasKey().. in JSONObject
+
+
+_ image caches not being properly disposed (weak references broken?)
 _   http://code.google.com/p/processing/issues/detail?id=1353
 
 _ shader syntax (Andres request)
@@ -129,33 +156,6 @@ _   void setPath()
 _ colorCalc() methods added to PShape.. should just be used from PGraphics
 _ loadShape() needs to live in PApplet
 _ make PShapeOpenGL a cache object
-
-xml library
-X removed 'name' field to avoid possibility of random errors
-X confirmed that DOM "correct" version includes the text nodes
-X new XML(name) also throws an ex, use createXML() or appendChild("name")
-X remove XML.parse() from the reference (it throws an exception)
-X   use parseXML() instead
-o do we need a trim() method for XML?
-o   use XSL transform to strip whitespace
-o   helpdesk.objects.com.au/java/how-do-i-remove-whitespace-from-an-xml-document
-X   messy, just not great
-o isWhitespace() method for nodes? (that's the capitalization used in Character)
-X   doesn't help much
-o get back to PhiLho once finished
-X XML toString(0) means no indents or newlines
-X   but no way to remove indents and still have newlines... 
-X   toString(-1)? a new method?
-X   format(2), format(4)... toString() -> default to 2 params
-X   fix this across the other items
-X look into json and how it would work wrt XML
-o   1) we bring back getFloatAttribute() et al., 
-o      and make getFloat() be equivalent to parseFloat(xml.getContent())
-o   2) we keep getFloat() like it is, and add getFloatContent(), etc.
-o   3) we deprecate our nice short getFloat/getInt/etc and go with 
-o      getXxxxAttribute() and getXxxxContent() methods.
-X   not gonna do getFloatContent() since it's not really any shorter
-X beginning slash in getChild() threw an NPE
 
 async requests
 Request r = createRequest("http://p5.org/feed/13134.jpg");
@@ -226,9 +226,6 @@ _     maybe a hack where a new menubar is added?
 
 _ splice() throws ClassCastException when used with objects like PVector 
 _   http://code.google.com/p/processing/issues/detail?id=1407
-
-_ add "CGAffineTransformInvert: singular matrix" problem to the Wiki
-_   http://code.google.com/p/processing/issues/detail?id=1363
 
 api to be fixed/removed
 _ remove PImage.delete() and friends from PImage, Movie, etc.
@@ -531,6 +528,12 @@ _   i.e. M with several coords means moveto followed by many linetos
 _   also curveto with multiple sets of points is ignored
 _ document somehow.. svg viewer will be discontinued
 _   http://www.adobe.com/svg/eol.html
+
+
+CORE / PGraphicsJava2D
+
+_ add "CGAffineTransformInvert: singular matrix" problem to the Wiki
+_   http://code.google.com/p/processing/issues/detail?id=1363
 
 
 CORE / OpenGL (Andres)

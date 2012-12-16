@@ -254,7 +254,7 @@ public class PGraphics2D extends PGraphicsOpenGL {
       try {
         InputStream input =
           new GZIPInputStream(pg.parent.createInput(filename));
-        XML xml = new XML(PApplet.createReader(input));
+        XML xml = new XML(input);
         svg = new PShapeSVG(xml);
       } catch (Exception e) {
         e.printStackTrace();

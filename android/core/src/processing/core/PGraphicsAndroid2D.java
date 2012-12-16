@@ -1081,7 +1081,7 @@ public class PGraphicsAndroid2D extends PGraphics {
     } else if (extension.equals("svgz")) {
       try {
         InputStream input = new GZIPInputStream(parent.createInput(filename));
-        XML xml = new XML(PApplet.createReader(input));
+        XML xml = new XML(input);
         svg = new PShapeSVG(xml);
       } catch (Exception e) {
         e.printStackTrace();
