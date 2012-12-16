@@ -426,14 +426,14 @@ public class PGL {
       glDepthStencil = allocateIntBuffer(1);
       glDepth = allocateIntBuffer(1);
       glStencil = allocateIntBuffer(1);
+
+      fboLayerCreated = false;
+      fboLayerInUse = false;
+      firstFrame = false;
     }
 
     byteBuffer = allocateByteBuffer(1);
     intBuffer = allocateIntBuffer(1);
-
-    fboLayerCreated = false;
-    fboLayerInUse = false;
-    firstFrame = false;
   }
 
 
@@ -461,6 +461,8 @@ public class PGL {
       deleteRenderbuffers(1, glStencil);
     }
     fboLayerCreated = false;
+    fboLayerInUse = false;
+    firstFrame = true;
   }
 
 
