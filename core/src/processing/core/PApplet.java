@@ -5793,7 +5793,11 @@ public class PApplet extends Applet
       String ext = checkExtension(filename);
       if (ext != null) {
         if (ext.equals("csv") || ext.equals("tsv")) {
-          options = ext + ",";
+          if (options == null) {
+            options = ext;
+          } else {
+            options = ext + "," + options;
+          }
         }
       }
       return new Table(createInput(filename), options);
