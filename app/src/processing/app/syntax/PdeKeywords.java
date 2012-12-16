@@ -26,6 +26,8 @@ package processing.app.syntax;
 
 import javax.swing.text.Segment;
 
+import processing.app.Editor;
+
 
 /**
  * This class reads a keywords.txt file to get coloring put links to reference
@@ -216,43 +218,6 @@ public class PdeKeywords extends TokenMarker {
   }
   
   
-  private boolean checkParen(char[] array, int index, int stop) {
-//    boolean paren = false;
-//    int stepper = i + 1;
-//    while (stepper < mlength) {
-//      if (array[stepper] == '(') {
-//        paren = true;
-//        break;
-//      }
-//      stepper++;
-//    }
-    while (index < stop) {
-//      if (array[index] == '(') {
-//        return true;
-//      } else if (!Character.isWhitespace(array[index])) {
-//        return false;
-//      }
-      switch (array[index]) {
-      case '(':
-        return true;
-        
-      case ' ':
-      case '\t':
-      case '\n':
-      case '\r':
-        index++;
-        break;
-        
-      default:
-//        System.out.println("defaulting because " + array[index] + " " + PApplet.hex(array[index]));
-        return false;
-      }
-    }
-//    System.out.println("exiting " + new String(array, index, stop - index));
-    return false;
-  }
-
-
   private boolean doKeyword(Segment line, int i, char c) {
 //    return doKeyword(line, i, false);
 //  }
@@ -263,7 +228,7 @@ public class PdeKeywords extends TokenMarker {
     int i1 = i + 1;
     int len = i - lastKeyword;
     
-    boolean paren = checkParen(line.array, i, line.array.length);
+    boolean paren = Editor.checkParen(line.array, i, line.array.length);
 //    String s = new String(line.array, lastKeyword, len);
 //    if (s.equals("mousePressed")) {
 //      System.out.println("found mousePressed" + (paren ? "()" : ""));

@@ -29,10 +29,12 @@ X   <string>true</string>
 X add basics of retina support to the toolbar and header
 X   getDefaultToolkit().getDesktopProperty("apple.awt.contentScaleFactor");
 X paper over ArrayIndexOutOfBoundsException in JEditTextArea.xToOffset() 
-
+X Fix IllegalStateException on Windows/Linux in Save prompt
+X   happened when hitting ESC or otherwise closing the window
 X "Find in Reference" largely broken in 2.0b7
 C   http://code.google.com/p/processing/issues/detail?id=1456
-_   shouldn't we be splitting the reference?
+X discern variable vs function with Find in Reference
+X if no selection, attempt to expand the selection for Find in Reference
 
 earlier
 X include debug mode as 'experimental'?
