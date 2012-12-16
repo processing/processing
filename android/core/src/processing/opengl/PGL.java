@@ -339,9 +339,6 @@ public class PGL {
   /** OpenGL thread */
   protected static Thread glThread;
 
-  /** Whether OpenGL has been initialized or not */
-  protected static boolean glInitialized = false;
-
   /** Which texturing targets are enabled */
   protected static boolean[] texturingTargets = { false };
 
@@ -433,6 +430,10 @@ public class PGL {
 
     byteBuffer = allocateByteBuffer(1);
     intBuffer = allocateIntBuffer(1);
+
+    fboLayerCreated = false;
+    fboLayerInUse = false;
+    firstFrame = false;
   }
 
 
@@ -445,6 +446,9 @@ public class PGL {
     // at the moment initPrimarySurface() gets called we
     // cannot rely on the GL surface being actually
     // available.
+    fboLayerCreated = false;
+    fboLayerInUse = false;
+    firstFrame = true;
   }
 
 
@@ -457,7 +461,6 @@ public class PGL {
       deleteRenderbuffers(1, glStencil);
     }
     fboLayerCreated = false;
-    glInitialized = false;
   }
 
 
@@ -660,7 +663,6 @@ public class PGL {
 
   int getBackTextureName() {
     return glColorTex.get(backTex);
-
   }
 
 
@@ -749,6 +751,7 @@ public class PGL {
       frontTex = backTex;
       backTex = temp;
     }
+    flush();
   }
 
 
@@ -2526,7 +2529,6 @@ public class PGL {
     public void onSurfaceCreated(GL10 igl, EGLConfig config) {
       gl = igl;
       context = ((EGL10)EGLContext.getEGL()).eglGetCurrentContext();
-      glInitialized = true;
     }
   }
 
