@@ -1809,6 +1809,126 @@ public abstract class Editor extends JFrame implements RunnerListener {
   }
 
 
+  static public boolean checkParen(char[] array, int index, int stop) {
+//  boolean paren = false;
+//  int stepper = i + 1;
+//  while (stepper < mlength) {
+//    if (array[stepper] == '(') {
+//      paren = true;
+//      break;
+//    }
+//    stepper++;
+//  }
+    while (index < stop) {
+//    if (array[index] == '(') {
+//      return true;
+//    } else if (!Character.isWhitespace(array[index])) {
+//      return false;
+//    }
+      switch (array[index]) {
+      case '(':
+        return true;
+
+      case ' ':
+      case '\t':
+      case '\n':
+      case '\r':
+        index++;
+        break;
+
+      default:
+//      System.out.println("defaulting because " + array[index] + " " + PApplet.hex(array[index]));
+        return false;
+      }
+    }
+//  System.out.println("exiting " + new String(array, index, stop - index));
+    return false;
+  }
+
+  
+  protected boolean functionable(char c) {
+    return (c == '_') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+  }
+  
+
+  /**
+   * Check the current selection for reference. If no selection is active, 
+   * expand the current selection.
+   * @return
+   */
+  protected String referenceCheck(boolean selectIfFound) {
+    int start = textarea.getSelectionStart();
+    int stop = textarea.getSelectionStop();
+    if (stop < start) {
+      int temp = stop;
+      stop = start;
+      start = temp;
+    }
+    char[] c = textarea.getText().toCharArray();
+    
+//    System.out.println("checking reference");
+    if (start == stop) {
+      while (start > 0 && functionable(c[start - 1])) {
+        start--;
+      }
+      while (stop < c.length && functionable(c[stop])) {
+        stop++;
+      }
+//      System.out.println("start is stop");
+    }
+    String text = new String(c, start, stop - start).trim();
+//    System.out.println("  reference piece is '" + text + "'");
+    if (checkParen(c, stop, c.length)) {
+      text += "_";
+    }
+    String ref = mode.lookupReference(text);
+    if (selectIfFound) {
+      textarea.select(start, stop);
+    }
+    return ref;
+  }
+  
+  
+  protected void handleFindReference() {
+    String ref = referenceCheck(true);
+    if (ref != null) {
+      showReference(ref + ".html");
+    } else {
+      String text = textarea.getSelectedText().trim();
+      if (text.length() == 0) {
+        statusNotice("First select a word to find in the reference.");
+      } else {
+        statusNotice("No reference available for \"" + text + "\"");
+      }
+    }
+  }
+  
+  
+  /*
+  protected void handleFindReference() {
+    String text = textarea.getSelectedText().trim();
+
+    if (text.length() == 0) {
+      statusNotice("First select a word to find in the reference.");
+
+    } else {
+      char[] c = textarea.getText().toCharArray();
+      int after = Math.max(textarea.getSelectionStart(), textarea.getSelectionStop());
+      if (checkParen(c, after, c.length)) {
+        text += "_";
+        System.out.println("looking up ref for " + text);
+      }
+      String referenceFile = mode.lookupReference(text);
+      System.out.println("reference file is " + referenceFile);
+      if (referenceFile == null) {
+        statusNotice("No reference available for \"" + text + "\"");
+      } else {
+        showReference(referenceFile + ".html");
+      }
+    }
+  }
+  
+  
   protected void handleFindReference() {
     String text = textarea.getSelectedText().trim();
 
@@ -1825,6 +1945,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
       }
     }
   }
+  */
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -2452,21 +2573,27 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
     // if no text is selected, disable copy and cut menu items
     public void show(Component component, int x, int y) {
-      if (textarea.isSelectionActive()) {
-        cutItem.setEnabled(true);
-        copyItem.setEnabled(true);
-        discourseItem.setEnabled(true);
-
-        String sel = textarea.getSelectedText().trim();
-        String referenceFile = mode.lookupReference(sel);
-        referenceItem.setEnabled(referenceFile != null);
-
-      } else {
-        cutItem.setEnabled(false);
-        copyItem.setEnabled(false);
-        discourseItem.setEnabled(false);
-        referenceItem.setEnabled(false);
-      }
+//      if (textarea.isSelectionActive()) {
+//        cutItem.setEnabled(true);
+//        copyItem.setEnabled(true);
+//        discourseItem.setEnabled(true);
+//        
+////        String sel = textarea.getSelectedText().trim();
+////        String referenceFile = mode.lookupReference(sel);
+////        referenceItem.setEnabled(referenceFile != null);
+//
+//      } else {
+//        cutItem.setEnabled(false);
+//        copyItem.setEnabled(false);
+//        discourseItem.setEnabled(false);
+////        referenceItem.setEnabled(false);
+//      }
+      boolean active = textarea.isSelectionActive();
+      cutItem.setEnabled(active);
+      copyItem.setEnabled(active);
+      discourseItem.setEnabled(active);
+      
+      referenceItem.setEnabled(referenceCheck(false) != null);
       super.show(component, x, y);
     }
   }

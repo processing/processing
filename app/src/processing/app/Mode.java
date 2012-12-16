@@ -113,6 +113,11 @@ public abstract class Mode {
         if (pieces.length == 3) {
           String htmlFilename = pieces[2];
           if (htmlFilename.length() > 0) {
+            // if the file is for the version with parens, 
+            // add a paren to the keyword
+            if (htmlFilename.endsWith("_")) {
+              keyword += "_";
+            }
             keywordToReference.put(keyword, htmlFilename);
           }
         }

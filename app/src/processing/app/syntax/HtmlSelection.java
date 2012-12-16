@@ -18,9 +18,7 @@ public class HtmlSelection implements Transferable {
       flavors.add(DataFlavor.stringFlavor);
       flavors.add(new DataFlavor("text/html;class=java.lang.String"));
       flavors.add(new DataFlavor("text/html;class=java.io.Reader"));
-      flavors
-        .add(new DataFlavor(
-                            "text/html;charset=unicode;class=java.io.InputStream"));
+      flavors.add(new DataFlavor("text/html;charset=unicode;class=java.io.InputStream"));
     } catch (ClassNotFoundException ex) {
       ex.printStackTrace();
     }
