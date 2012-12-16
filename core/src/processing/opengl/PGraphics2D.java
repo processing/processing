@@ -248,13 +248,13 @@ public class PGraphics2D extends PGraphicsOpenGL {
     PShapeSVG svg = null;
 
     if (extension.equals("svg")) {
-      svg = new PShapeSVG(pg.parent, filename);
+      svg = new PShapeSVG(pg.parent.loadXML(filename));
 
     } else if (extension.equals("svgz")) {
       try {
         InputStream input =
           new GZIPInputStream(pg.parent.createInput(filename));
-        XML xml = new XML(PApplet.createReader(input));
+        XML xml = new XML(input);
         svg = new PShapeSVG(xml);
       } catch (Exception e) {
         e.printStackTrace();

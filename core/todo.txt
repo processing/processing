@@ -77,6 +77,9 @@ X saveTable("filename.tsv") or saveTable("filename.txt", "tsv")
 X createTable() method in PApplet
 X removed getUniqueXxxx() and some others, pending names
 
+_ OutOfMemory in image()
+_   http://code.google.com/p/processing/issues/detail?id=1353
+
 _ shader syntax (Andres request)
 _   might also need a define inside the shader to control what type it is
 
@@ -98,6 +101,8 @@ _   dictionary support
 _   join tables together (static is kinda gross)
 
 shape
+_ major surgery to put loadShape() back into PApplet/PGraphics
+_   then have the OpenGL or Java2D versions as cached objects
 _ PShape s = createShape(); / s.beginShape(QUADS);
 _ createShape() not yet implemented for Java2D
 _   http://code.google.com/p/processing/issues/detail?id=1400
@@ -126,14 +131,25 @@ _ loadShape() needs to live in PApplet
 _ make PShapeOpenGL a cache object
 
 xml library
+X removed 'name' field to avoid possibility of random errors
+X confirmed that DOM "correct" version includes the text nodes
+X new XML(name) also throws an ex, use createXML() or appendChild("name")
+X remove XML.parse() from the reference (it throws an exception)
+X   use parseXML() instead
+o do we need a trim() method for XML?
+o   use XSL transform to strip whitespace
+o   helpdesk.objects.com.au/java/how-do-i-remove-whitespace-from-an-xml-document
+X   messy, just not great
+o isWhitespace() method for nodes? (that's the capitalization used in Character)
+X   doesn't help much
+o get back to PhiLho once finished
+
 _ beginning slash in getChild() threw an NPE
-_ do we need a trim() method for XML?
-_ isWhitespace() method for nodes? (that's the capitalization used in Character)
 _ XML toString(0) means no indents or newlines
 _   but no way to remove indents and still have newlines... 
 _   toString(-1)? a new method?
 _ format(2), format(4)... format() -> default to 2 params
-_ get back to PhiLho once finished
+
 _ look into json and how it would work wrt XML
 _   1) we bring back getFloatAttribute() et al., 
 _      and make getFloat() be equivalent to parseFloat(xml.getContent())
@@ -213,9 +229,6 @@ _   http://code.google.com/p/processing/issues/detail?id=1407
 
 _ add "CGAffineTransformInvert: singular matrix" problem to the Wiki
 _   http://code.google.com/p/processing/issues/detail?id=1363
-
-_ OutOfMemory in image()
-_   http://code.google.com/p/processing/issues/detail?id=1353
 
 api to be fixed/removed
 _ remove PImage.delete() and friends from PImage, Movie, etc.

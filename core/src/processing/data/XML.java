@@ -49,8 +49,8 @@ public class XML implements Serializable {
   /** The internal representation, a DOM node. */
   protected Node node;
 
-  /** Cached locally because it's used often. */
-  protected String name;
+//  /** Cached locally because it's used often. */
+//  protected String name;
 
   /** The parent element. */
   protected XML parent;
@@ -62,26 +62,40 @@ public class XML implements Serializable {
   protected XML() { }
 
 
-  /**
-   * Begin parsing XML data passed in from a PApplet. This code
-   * wraps exception handling, for more advanced exception handling,
-   * use the constructor that takes a Reader or InputStream.
-   *
-   * @throws SAXException
-   * @throws ParserConfigurationException
-   * @throws IOException
-   */
-  public XML(PApplet parent, String filename) throws IOException, ParserConfigurationException, SAXException {
-    this(parent.createReader(filename));
-  }
-
+//  /**
+//   * Begin parsing XML data passed in from a PApplet. This code
+//   * wraps exception handling, for more advanced exception handling,
+//   * use the constructor that takes a Reader or InputStream.
+//   *
+//   * @throws SAXException
+//   * @throws ParserConfigurationException
+//   * @throws IOException
+//   */
+//  public XML(PApplet parent, String filename) throws IOException, ParserConfigurationException, SAXException {
+//    this(parent.createReader(filename));
+//  }
 
   public XML(File file) throws IOException, ParserConfigurationException, SAXException {
-    this(PApplet.createReader(file));
+    this(file, null);
   }
 
 
-  public XML(Reader reader) throws IOException, ParserConfigurationException, SAXException {
+  public XML(File file, String options) throws IOException, ParserConfigurationException, SAXException {
+    this(PApplet.createReader(file), options);
+  }
+
+
+  public XML(InputStream input) throws IOException, ParserConfigurationException, SAXException {
+    this(input, null);
+  }
+
+
+  public XML(InputStream input, String options) throws IOException, ParserConfigurationException, SAXException {
+    this(PApplet.createReader(input), options);
+  }
+
+
+  protected XML(Reader reader, String options) throws IOException, ParserConfigurationException, SAXException {
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 
     // Prevent 503 errors from www.w3.org
@@ -115,7 +129,8 @@ public class XML implements Serializable {
 //      Document document = builder.parse(dataPath("1_alt.html"));
     Document document = builder.parse(new InputSource(reader));
     node = document.getDocumentElement();
-    name = node.getNodeName();
+//    name = node.getNodeName();
+
 //      NodeList nodeList = document.getDocumentElement().getChildNodes();
 //      for (int i = 0; i < nodeList.getLength(); i++) {
 //      }
@@ -124,27 +139,20 @@ public class XML implements Serializable {
 
 
   // TODO is there a more efficient way of doing this? wow.
-  // i.e. can we use one static document object for all PNodeXML objects?
-  public XML(String name) {
-    try {
-      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-      DocumentBuilder builder = factory.newDocumentBuilder();
-      Document document = builder.newDocument();
-      node = document.createElement(name);
-
-      this.name = name;
-      this.parent = null;
-
-    } catch (ParserConfigurationException e) {
-      e.printStackTrace();
-    }
+  public XML(String name) throws ParserConfigurationException {
+    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+    DocumentBuilder builder = factory.newDocumentBuilder();
+    Document document = builder.newDocument();
+    node = document.createElement(name);
+//      this.name = name;
+    this.parent = null;
   }
 
 
   protected XML(XML parent, Node node) {
     this.node = node;
     this.parent = parent;
-    this.name = node.getNodeName();
+//    this.name = node.getNodeName();
   }
 
 
@@ -155,30 +163,33 @@ public class XML implements Serializable {
    * @brief Converts String content to an XML object
    * @param data the content to be parsed as XML
    * @return an XML object, or null
+   * @throws SAXException
+   * @throws ParserConfigurationException
+   * @throws IOException
    * @see PApplet#loadXML(String)
    */
-  static public XML parse(String data) {
-    try {
-      return new XML(new StringReader(data));
-    } catch (Exception e) {
-      e.printStackTrace();
-      return null;
-    }
+  static public XML parse(String data) throws IOException, ParserConfigurationException, SAXException {
+    return XML.parse(data, null);
   }
 
 
-  public boolean save(OutputStream output) {
+  static public XML parse(String data, String options) throws IOException, ParserConfigurationException, SAXException {
+    return new XML(new StringReader(data), null);
+  }
+
+
+  protected boolean save(OutputStream output) {
     return save(PApplet.createWriter(output));
   }
 
 
-  public boolean save(File file) {
+  public boolean save(File file, String options) {
     return save(PApplet.createWriter(file));
   }
 
 
   public boolean save(PrintWriter output) {
-    output.print(format(2));
+    output.print(toString(2));
     output.flush();
     return true;
   }
@@ -198,7 +209,7 @@ public class XML implements Serializable {
   /**
    * Internal function; not included in reference.
    */
-  protected Node getNode() {
+  protected Object getNative() {
     return node;
   }
 
@@ -212,7 +223,8 @@ public class XML implements Serializable {
    * @return the name, or null if the element only contains #PCDATA.
    */
   public String getName() {
-    return name;
+//    return name;
+    return node.getNodeName();
   }
 
   /**
@@ -222,7 +234,7 @@ public class XML implements Serializable {
   public void setName(String newName) {
     Document document = node.getOwnerDocument();
     node = document.renameNode(node, null, newName);
-    name = node.getNodeName();
+//    name = node.getNodeName();
   }
 
 
@@ -450,7 +462,7 @@ public class XML implements Serializable {
 
   public XML addChild(XML child) {
     Document document = node.getOwnerDocument();
-    Node newChild = document.importNode(child.getNode(), true);
+    Node newChild = document.importNode((Node) child.getNative(), true);
     return appendChild(newChild);
   }
 
@@ -476,36 +488,53 @@ public class XML implements Serializable {
   }
 
 
-  /** Remove whitespace nodes. */
-  public void trim() {
-////    public static boolean isWhitespace(XML xml) {
-////      if (xml.node.getNodeType() != Node.TEXT_NODE)
-////        return false;
-////      Matcher m = whitespace.matcher(xml.node.getNodeValue());
-////      return m.matches();
-////    }
-//    trim(this);
+//  /** Remove whitespace nodes. */
+//  public void trim() {
+//////    public static boolean isWhitespace(XML xml) {
+//////      if (xml.node.getNodeType() != Node.TEXT_NODE)
+//////        return false;
+//////      Matcher m = whitespace.matcher(xml.node.getNodeValue());
+//////      return m.matches();
+//////    }
+////    trim(this);
+////  }
+//
+//    checkChildren();
+//    int index = 0;
+//    for (int i = 0; i < children.length; i++) {
+//      if (i != index) {
+//        children[index] = children[i];
+//      }
+//      Node childNode = (Node) children[i].getNative();
+//      if (childNode.getNodeType() != Node.TEXT_NODE ||
+//          children[i].getContent().trim().length() > 0) {
+//        children[i].trim();
+//        index++;
+//      }
+//    }
+//    if (index != children.length) {
+//      children = (XML[]) PApplet.subset(children, 0, index);
+//    }
+//
+//    // possibility, but would have to re-parse the object
+//// helpdesk.objects.com.au/java/how-do-i-remove-whitespace-from-an-xml-document
+////    TransformerFactory factory = TransformerFactory.newInstance();
+////    Transformer transformer = factory.newTransformer(new StreamSource("strip-space.xsl"));
+////    DOMSource source = new DOMSource(document);
+////    StreamResult result = new StreamResult(System.out);
+////    transformer.transform(source, result);
+//
+////    <xsl:stylesheet version="1.0"
+////      xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+////   <xsl:output method="xml" omit-xml-declaration="yes"/>
+////     <xsl:strip-space elements="*"/>
+////     <xsl:template match="@*|node()">
+////      <xsl:copy>
+////       <xsl:apply-templates select="@*|node()"/>
+////      </xsl:copy>
+////     </xsl:template>
+////   </xsl:stylesheet>
 //  }
-//
-//
-//  protected void trim() {
-    checkChildren();
-    int index = 0;
-    for (int i = 0; i < children.length; i++) {
-      if (i != index) {
-        children[index] = children[i];
-      }
-      Node childNode = children[i].getNode();
-      if (childNode.getNodeType() != Node.TEXT_NODE ||
-          children[i].getContent().trim().length() > 0) {
-        children[i].trim();
-        index++;
-      }
-    }
-    if (index != children.length) {
-      children = (XML[]) PApplet.subset(children, 0, index);
-    }
-  }
 
 
   /**
@@ -727,7 +756,7 @@ public class XML implements Serializable {
   }
 
 
-  public String format(int indent) {
+  public String toString(int indent) {
     try {
       DOMSource dumSource = new DOMSource(node);
       // entities = doctype.getEntities()
@@ -777,6 +806,6 @@ public class XML implements Serializable {
   @Override
   /** Return the XML data as a single line, with no DOCTYPE declaration. */
   public String toString() {
-    return format(-1);
+    return toString(-1);
   }
 }
