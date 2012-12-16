@@ -143,19 +143,20 @@ X   messy, just not great
 o isWhitespace() method for nodes? (that's the capitalization used in Character)
 X   doesn't help much
 o get back to PhiLho once finished
+X XML toString(0) means no indents or newlines
+X   but no way to remove indents and still have newlines... 
+X   toString(-1)? a new method?
+X   format(2), format(4)... toString() -> default to 2 params
+X   fix this across the other items
+X look into json and how it would work wrt XML
+o   1) we bring back getFloatAttribute() et al., 
+o      and make getFloat() be equivalent to parseFloat(xml.getContent())
+o   2) we keep getFloat() like it is, and add getFloatContent(), etc.
+o   3) we deprecate our nice short getFloat/getInt/etc and go with 
+o      getXxxxAttribute() and getXxxxContent() methods.
+X   not gonna do getFloatContent() since it's not really any shorter
 
 _ beginning slash in getChild() threw an NPE
-_ XML toString(0) means no indents or newlines
-_   but no way to remove indents and still have newlines... 
-_   toString(-1)? a new method?
-_ format(2), format(4)... format() -> default to 2 params
-
-_ look into json and how it would work wrt XML
-_   1) we bring back getFloatAttribute() et al., 
-_      and make getFloat() be equivalent to parseFloat(xml.getContent())
-_   2) we keep getFloat() like it is, and add getFloatContent(), etc.
-_   3) we deprecate our nice short getFloat/getInt/etc and go with 
-_      getXxxxAttribute() and getXxxxContent() methods.
 
 async requests
 Request r = createRequest("http://p5.org/feed/13134.jpg");
