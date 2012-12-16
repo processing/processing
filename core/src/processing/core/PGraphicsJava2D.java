@@ -187,7 +187,9 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
       image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
       g2 = (Graphics2D) image.getGraphics();
     }
-//    defaultComposite = g2.getComposite();
+    if (!useCanvas) {
+      defaultComposite = g2.getComposite();
+    }
 
     // can't un-set this because this may be only a resize
     // http://dev.processing.org/bugs/show_bug.cgi?id=463
@@ -249,10 +251,8 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
         bimage = gc.createCompatibleImage(width, height);
 //        image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         g2 = bimage.createGraphics();
+        defaultComposite = g2.getComposite();
       }
-    }
-    if (parent.frameCount == 0) {
-      defaultComposite = g2.getComposite();
     }
 
     checkSettings();
