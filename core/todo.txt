@@ -27,6 +27,12 @@ X add warning message when registering AWT mouse/key events
 X   don't let OpenGL fire those mouse events at all
 X   phrase the warning differently when OpenGL is in use (or only show then?)
 X   halt with OpenGL, otherwise will be ignored
+X show warning when registering mouse/key events with OpenGL
+X deprecate mouseEvent and keyEvent
+X add functions for mousePressed(event) and keyPressed(event) et al
+X   better to do this instead of bringing back the magic event
+X   or implementing the magic event on Android
+X   also problematic with it not being called now
 
 
 decisions on data
@@ -70,11 +76,6 @@ X makeEmptyNull() -> replace("", null);
 X saveTable("filename.tsv") or saveTable("filename.txt", "tsv")
 X createTable() method in PApplet
 X removed getUniqueXxxx() and some others, pending names
-
-_ implement mousePressed(Event) etc
-_   better to do this instead of bringing back the magic event
-_   or implementing the magic event on Android
-_   also problematic with it not being called now
 
 _ shader syntax (Andres request)
 _   might also need a define inside the shader to control what type it is
@@ -642,6 +643,8 @@ _     before rewriting all of createInput()
 
 LATER (post 2.0)
 
+_ handle repeat key events 
+_   and/or holding keys down and discerning repeats
 _ fillMode(NONZERO) and fillMode(ODD) to replace solid(boolean)?
 _ create PVec2D and PVec3D as separate classes
 _ gui priorities

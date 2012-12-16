@@ -567,6 +567,11 @@ public class PApplet extends Applet
    */
   public boolean mousePressed;
 
+
+  /**
+   * @deprecated Use a mouse event handler that passes an event instead.
+   */
+  @Deprecated
   public MouseEvent mouseEvent;
 
   /**
@@ -655,9 +660,12 @@ public class PApplet extends Applet
    */
   public boolean keyPressed;
 
+
   /**
    * The last KeyEvent object passed into a mouse function.
+   * @deprecated Use a key event handler that passes an event instead.
    */
+  @Deprecated
   public KeyEvent keyEvent;
 
   /**
@@ -2582,26 +2590,26 @@ public class PApplet extends Applet
     switch (event.getAction()) {
     case MouseEvent.PRESS:
 //      mousePressed = true;
-      mousePressed();
+      mousePressed(event);
       break;
     case MouseEvent.RELEASE:
 //      mousePressed = false;
-      mouseReleased();
+      mouseReleased(event);
       break;
     case MouseEvent.CLICK:
-      mouseClicked();
+      mouseClicked(event);
       break;
     case MouseEvent.DRAG:
-      mouseDragged();
+      mouseDragged(event);
       break;
     case MouseEvent.MOVE:
-      mouseMoved();
+      mouseMoved(event);
       break;
     case MouseEvent.ENTER:
-      mouseEntered();
+      mouseEntered(event);
       break;
     case MouseEvent.EXIT:
-      mouseExited();
+      mouseExited(event);
       break;
     }
 
@@ -2786,6 +2794,11 @@ public class PApplet extends Applet
   public void mousePressed() { }
 
 
+  public void mousePressed(MouseEvent event) {
+    mousePressed();
+  }
+
+
   /**
    * ( begin auto-generated from mouseReleased.xml )
    *
@@ -2803,6 +2816,12 @@ public class PApplet extends Applet
    * @see PApplet#mouseDragged()
    */
   public void mouseReleased() { }
+
+
+  public void mouseReleased(MouseEvent event) {
+    mouseReleased();
+  }
+
 
   /**
    * ( begin auto-generated from mouseClicked.xml )
@@ -2827,6 +2846,11 @@ public class PApplet extends Applet
   public void mouseClicked() { }
 
 
+  public void mouseClicked(MouseEvent event) {
+    mouseClicked();
+  }
+
+
   /**
    * ( begin auto-generated from mouseDragged.xml )
    *
@@ -2843,6 +2867,11 @@ public class PApplet extends Applet
    * @see PApplet#mouseMoved()
    */
   public void mouseDragged() { }
+
+
+  public void mouseDragged(MouseEvent event) {
+    mouseDragged();
+  }
 
 
   /**
@@ -2863,10 +2892,25 @@ public class PApplet extends Applet
   public void mouseMoved() { }
 
 
+  public void mouseMoved(MouseEvent event) {
+    mouseMoved();
+  }
+
+
   public void mouseEntered() { }
 
 
+  public void mouseEntered(MouseEvent event) {
+    mouseEntered();
+  }
+
+
   public void mouseExited() { }
+
+
+  public void mouseExited(MouseEvent event) {
+    mouseExited();
+  }
 
 
 
@@ -2948,14 +2992,14 @@ public class PApplet extends Applet
     switch (event.getAction()) {
     case KeyEvent.PRESS:
       keyPressed = true;
-      keyPressed();
+      keyPressed(keyEvent);
       break;
     case KeyEvent.RELEASE:
       keyPressed = false;
-      keyReleased();
+      keyReleased(keyEvent);
       break;
     case KeyEvent.TYPE:
-      keyTyped();
+      keyTyped(keyEvent);
       break;
     }
 
@@ -3129,6 +3173,11 @@ public class PApplet extends Applet
   public void keyPressed() { }
 
 
+  public void keyPressed(KeyEvent event) {
+    keyPressed();
+  }
+
+
   /**
    * ( begin auto-generated from keyReleased.xml )
    *
@@ -3144,6 +3193,11 @@ public class PApplet extends Applet
    * @see PApplet#keyPressed()
    */
   public void keyReleased() { }
+
+
+  public void keyReleased(KeyEvent event) {
+    keyReleased();
+  }
 
 
   /**
@@ -3163,6 +3217,12 @@ public class PApplet extends Applet
    * @see PApplet#keyReleased()
    */
   public void keyTyped() { }
+
+
+  public void keyTyped(KeyEvent event) {
+    keyTyped();
+  }
+
 
 
   //////////////////////////////////////////////////////////////
