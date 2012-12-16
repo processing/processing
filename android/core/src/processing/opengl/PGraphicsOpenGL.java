@@ -5067,7 +5067,7 @@ public class PGraphicsOpenGL extends PGraphics {
     endPixelsOp();
     try {
       // Idem...
-      PGL.getPixels(pixelBuffer, pixels);
+      PGL.getIntArray(pixelBuffer, pixels);
       PGL.nativeToJavaARGB(pixels, width, height);
     } catch (ArrayIndexOutOfBoundsException e) {
     }
@@ -5100,7 +5100,7 @@ public class PGraphicsOpenGL extends PGraphics {
       PGL.javaToNativeARGB(nativePixels, w, h);
     } catch (ArrayIndexOutOfBoundsException e) {
     }
-    PGL.putPixels(nativePixelBuffer, nativePixels);
+    PGL.putIntArray(nativePixelBuffer, nativePixels);
     // Copying pixel buffer to screen texture...
     if (primarySurface && !pgl.isFBOBacked()) {
       // First making sure that the screen texture is valid. Only in the case
