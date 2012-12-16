@@ -155,8 +155,7 @@ o   2) we keep getFloat() like it is, and add getFloatContent(), etc.
 o   3) we deprecate our nice short getFloat/getInt/etc and go with 
 o      getXxxxAttribute() and getXxxxContent() methods.
 X   not gonna do getFloatContent() since it's not really any shorter
-
-_ beginning slash in getChild() threw an NPE
+X beginning slash in getChild() threw an NPE
 
 async requests
 Request r = createRequest("http://p5.org/feed/13134.jpg");
