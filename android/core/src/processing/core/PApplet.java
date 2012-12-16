@@ -242,7 +242,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
   public boolean mousePressed;
 
-  public MouseEvent mouseEvent;
+//  public MouseEvent mouseEvent;
 
 //  public MotionEvent motionEvent;
 
@@ -274,7 +274,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
   /**
    * the last KeyEvent object passed into a mouse function.
    */
-  public KeyEvent keyEvent;
+//  public KeyEvent keyEvent;
 
   /**
    * Gets set to true/false as the applet gains/loses focus.
@@ -2139,7 +2139,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
 
   protected void handleMouseEvent(MouseEvent event) {
-    mouseEvent = event;
+//    mouseEvent = event;
 
     // http://dev.processing.org/bugs/show_bug.cgi?id=170
     // also prevents mouseExited() on the mac from hosing the mouse
@@ -2206,25 +2206,25 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
     switch (event.getAction()) {
     case MouseEvent.PRESS:
-      mousePressed();
+      mousePressed(event);
       break;
     case MouseEvent.RELEASE:
-      mouseReleased();
+      mouseReleased(event);
       break;
     case MouseEvent.CLICK:
-      mouseClicked();
+      mouseClicked(event);
       break;
     case MouseEvent.DRAG:
-      mouseDragged();
+      mouseDragged(event);
       break;
     case MouseEvent.MOVE:
-      mouseMoved();
+      mouseMoved(event);
       break;
     case MouseEvent.ENTER:
-      mouseEntered();
+      mouseEntered(event);
       break;
     case MouseEvent.EXIT:
-      mouseExited();
+      mouseExited(event);
       break;
     }
 
@@ -2617,17 +2617,62 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
   public void mousePressed() { }
 
+
+  public void mousePressed(MouseEvent event) {
+    mousePressed();
+  }
+
+
   public void mouseReleased() { }
 
+
+  public void mouseReleased(MouseEvent event) {
+    mouseReleased();
+  }
+
+
+  /**
+   * mouseClicked is currently not fired at all (no direct match on Android).
+   * http://code.google.com/p/processing/issues/detail?id=215
+   */
   public void mouseClicked() { }
+
+
+  public void mouseClicked(MouseEvent event) {
+    mouseClicked();
+  }
+
 
   public void mouseDragged() { }
 
+
+  public void mouseDragged(MouseEvent event) {
+    mouseDragged();
+  }
+
+
   public void mouseMoved() { }
+
+
+  public void mouseMoved(MouseEvent event) {
+    mouseMoved();
+  }
+
 
   public void mouseEntered() { }
 
+
+  public void mouseEntered(MouseEvent event) {
+    mouseEntered();
+  }
+
+
   public void mouseExited() { }
+
+
+  public void mouseExited(MouseEvent event) {
+    mouseExited();
+  }
 
 
 
@@ -2636,19 +2681,19 @@ public class PApplet extends Activity implements PConstants, Runnable {
   // unfinished API, do not use
 
 
-  protected void pressEvent() { }
-
-  protected void dragEvent() { }
-
-  protected void moveEvent() { }
-
-  protected void releaseEvent() { }
-
-  protected void zoomEvent(float x, float y, float d0, float d1) { }
-
-  protected void tapEvent(float x, float y) { }
-
-  protected void swipeEvent(float x0, float y0, float x1, float y1) { }
+//  protected void pressEvent() { }
+//
+//  protected void dragEvent() { }
+//
+//  protected void moveEvent() { }
+//
+//  protected void releaseEvent() { }
+//
+//  protected void zoomEvent(float x, float y, float d0, float d1) { }
+//
+//  protected void tapEvent(float x, float y) { }
+//
+//  protected void swipeEvent(float x0, float y0, float x1, float y1) { }
 
 
   //////////////////////////////////////////////////////////////
@@ -2677,18 +2722,18 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
 
   protected void handleKeyEvent(KeyEvent event) {
-    keyEvent = event;
+//    keyEvent = event;
     key = event.getKey();
     keyCode = event.getKeyCode();
 
     switch (event.getAction()) {
     case KeyEvent.PRESS:
       keyPressed = true;
-      keyPressed();
+      keyPressed(event);
       break;
     case KeyEvent.RELEASE:
       keyPressed = false;
-      keyReleased();
+      keyReleased(event);
       break;
     }
 
@@ -2740,66 +2785,12 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
-  /**
-   * Overriding keyXxxxx(KeyEvent e) functions will cause the 'key',
-   * 'keyCode', and 'keyEvent' variables to no longer work;
-   * key events will no longer be queued until the end of draw();
-   * and the keyPressed(), keyReleased() and keyTyped() methods
-   * will no longer be called.
-   */
-//  public void keyPressed(KeyEvent e) { checkKeyEvent(e); }
-//  public void keyReleased(KeyEvent e) { checkKeyEvent(e); }
-//  public void keyTyped(KeyEvent e) { checkKeyEvent(e); }
-
-
-  /**
-   * Called each time a single key on the keyboard is pressed.
-   * Because of how operating systems handle key repeats, holding
-   * down a key will cause multiple calls to keyPressed(), because
-   * the OS repeat takes over.
-   * <P>
-   * Examples for key handling:
-   * (Tested on Windows XP, please notify if different on other
-   * platforms, I have a feeling Mac OS and Linux may do otherwise)
-   * <PRE>
-   * 1. Pressing 'a' on the keyboard:
-   *    keyPressed  with key == 'a' and keyCode == 'A'
-   *    keyTyped    with key == 'a' and keyCode ==  0
-   *    keyReleased with key == 'a' and keyCode == 'A'
-   *
-   * 2. Pressing 'A' on the keyboard:
-   *    keyPressed  with key == 'A' and keyCode == 'A'
-   *    keyTyped    with key == 'A' and keyCode ==  0
-   *    keyReleased with key == 'A' and keyCode == 'A'
-   *
-   * 3. Pressing 'shift', then 'a' on the keyboard (caps lock is off):
-   *    keyPressed  with key == CODED and keyCode == SHIFT
-   *    keyPressed  with key == 'A'   and keyCode == 'A'
-   *    keyTyped    with key == 'A'   and keyCode == 0
-   *    keyReleased with key == 'A'   and keyCode == 'A'
-   *    keyReleased with key == CODED and keyCode == SHIFT
-   *
-   * 4. Holding down the 'a' key.
-   *    The following will happen several times,
-   *    depending on your machine's "key repeat rate" settings:
-   *    keyPressed  with key == 'a' and keyCode == 'A'
-   *    keyTyped    with key == 'a' and keyCode ==  0
-   *    When you finally let go, you'll get:
-   *    keyReleased with key == 'a' and keyCode == 'A'
-   *
-   * 5. Pressing and releasing the 'shift' key
-   *    keyPressed  with key == CODED and keyCode == SHIFT
-   *    keyReleased with key == CODED and keyCode == SHIFT
-   *    (note there is no keyTyped)
-   *
-   * 6. Pressing the tab key in an applet with Java 1.4 will
-   *    normally do nothing, but PApplet dynamically shuts
-   *    this behavior off if Java 1.4 is in use (tested 1.4.2_05 Windows).
-   *    Java 1.1 (Microsoft VM) passes the TAB key through normally.
-   *    Not tested on other platforms or for 1.3.
-   * </PRE>
-   */
   public void keyPressed() { }
+
+
+  public void keyPressed(KeyEvent event) {
+    keyPressed();
+  }
 
 
   /**
@@ -2808,11 +2799,21 @@ public class PApplet extends Activity implements PConstants, Runnable {
   public void keyReleased() { }
 
 
+  public void keyReleased(KeyEvent event) {
+    keyReleased();
+  }
+
+
   /**
-   * Only called for "regular" keys like letters,
-   * see keyPressed() for full documentation.
+   * Never currently called (does not exist) on Android.
+   * http://code.google.com/p/processing/issues/detail?id=1489
    */
   public void keyTyped() { }
+
+
+  public void keyTyped(KeyEvent event ) {
+    keyTyped();
+  }
 
 
   //////////////////////////////////////////////////////////////

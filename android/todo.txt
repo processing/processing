@@ -15,6 +15,7 @@ X   check on this, fixed one, all set
 o gui stuff: http://hg.postspectacular.com/cp5magic/wiki/Home
 X OpenGL sketches crashes on older Android devices
 X   http://code.google.com/p/processing/issues/detail?id=1455
+X remove mouseEvent and keyEvent variables (deprecated on desktop)
 
 earlier
 X inside AndroidPreprocessor
@@ -89,7 +90,6 @@ _ re: android libraries, from shawn van every
 The most powerful part were the libraries (and the ease with which they could be developed).  Location, SMS, Camera/Video, Bluetooth (for Arduino integration) and PClient/PRequest were by far the most used.  The ones that came with it, plus the ones from MJSoft were good though I ended up making a couple of very specific ones for my students: http://www.mobvcasting.com/wp/?cat=4
 
 _ process trackball events (they're only deltas)
-_ handle repeat key events 
 _ implement link()
 
 _ error in 'create avd' with "Emulator already exists" when it needs an upgrade
@@ -204,6 +204,8 @@ _   http://code.google.com/p/processing/issues/detail?id=552
 _ implement tap detection and set correct click count for mouseClicked()
 _   mouseClicked is currently not fired at all (no direct match on Android)
 _   http://code.google.com/p/processing/issues/detail?id=215
+_ keyTyped() does not exist on Android
+_   http://code.google.com/p/processing/issues/detail?id=1489
 _ implement multiple pointers and multi-touch
 _   http://code.google.com/p/processing/issues/detail?id=243
 
