@@ -355,6 +355,9 @@ public class XML implements Serializable {
    * @return the first matching element
    */
   public XML getChild(String name) {
+    if (name.length() > 0 && name.charAt(0) == '/') {
+      throw new IllegalArgumentException("getChild() should not begin with a slash");
+    }
     if (name.indexOf('/') != -1) {
       return getChildRecursive(PApplet.split(name, '/'), 0);
     }
@@ -413,6 +416,9 @@ public class XML implements Serializable {
    * @author processing.org
    */
   public XML[] getChildren(String name) {
+    if (name.length() > 0 && name.charAt(0) == '/') {
+      throw new IllegalArgumentException("getChildren() should not begin with a slash");
+    }
     if (name.indexOf('/') != -1) {
       return getChildrenRecursive(PApplet.split(name, '/'), 0);
     }
