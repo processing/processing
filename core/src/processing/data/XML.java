@@ -189,7 +189,7 @@ public class XML implements Serializable {
 
 
   public boolean save(PrintWriter output) {
-    output.print(toString(2));
+    output.print(format(2));
     output.flush();
     return true;
   }
@@ -756,20 +756,30 @@ public class XML implements Serializable {
   }
 
 
-  public String toString(int indent) {
+  /**
+   * Format this XML data as a String.
+   * @param indent -1 for a single line (and no declaration), >= 0 for indents and newlines
+   */
+  public String format(int indent) {
     try {
-      DOMSource dumSource = new DOMSource(node);
       // entities = doctype.getEntities()
-      TransformerFactory tf = TransformerFactory.newInstance();
-      Transformer transformer = tf.newTransformer();
-      // if this is the root, output the decl, if not, hide it
+      TransformerFactory factory = TransformerFactory.newInstance();
+      if (indent != -1) {
+        factory.setAttribute("indent-number", indent);
+      }
+      Transformer transformer = factory.newTransformer();
+
+      // Add the XML declaration at the top if this node is the root and we're
+      // not writing to a single line (indent = -1 means single line).
       if (indent == -1 || parent != null) {
         transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
       } else {
         transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
       }
 //      transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, "sample.dtd");
+
       transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+
 //      transformer.setOutputProperty(OutputKeys.CDATA_SECTION_ELEMENTS, "yes");  // huh?
 
 //      transformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC,
@@ -783,18 +793,45 @@ public class XML implements Serializable {
 //      transformer.setOutputProperty(OutputKeys.CDATA_SECTION_ELEMENTS
       // indent by default, but sometimes this needs to be turned off
       if (indent != 0) {
-        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", String.valueOf(indent));
+        //transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", String.valueOf(indent));
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+      } else {
+        transformer.setOutputProperty(OutputKeys.INDENT, "no");
       }
 //      Properties p = transformer.getOutputProperties();
 //      for (Object key : p.keySet()) {
 //        System.out.println(key + " -> " + p.get(key));
 //      }
 
-      StringWriter sw = new StringWriter();
-      StreamResult sr = new StreamResult(sw);
-      transformer.transform(dumSource, sr);
-      return sw.toString();
+      // If you smell something, that's because this code stinks. No matter
+      // the settings of the Transformer object, if the XML document already
+      // has whitespace elements, it won't bother re-indenting/re-formatting.
+      // So instead, transform the data once into a single line string.
+      // If indent is -1, then we're done. Otherwise re-run and the settings
+      // of the factory will kick in. If you know a better way to do this,
+      // please contribute. I've wasted too much of my Sunday on it. But at
+      // least the Giants are getting blown out by the Falcons.
+
+      StringWriter tempWriter = new StringWriter();
+      StreamResult tempResult = new StreamResult(tempWriter);
+      transformer.transform(new DOMSource(node), tempResult);
+      String[] tempLines = PApplet.split(tempWriter.toString(), '\n');
+      if (tempLines[0].startsWith("<?xml")) {
+        // Remove XML declaration from the top before slamming into one line
+        tempLines = PApplet.subset(tempLines, 1);
+      }
+      String singleLine = PApplet.join(PApplet.trim(tempLines), "");
+      if (indent == -1) {
+        return singleLine;
+      }
+
+      StringWriter stringWriter = new StringWriter();
+      StreamResult xmlOutput = new StreamResult(stringWriter);
+//      DOMSource source = new DOMSource(node);
+      Source source = new StreamSource(new StringReader(singleLine));
+      transformer.transform(source, xmlOutput);
+      return stringWriter.toString();
+//      return xmlOutput.getWriter().toString();
 
     } catch (Exception e) {
       e.printStackTrace();
@@ -803,9 +840,13 @@ public class XML implements Serializable {
   }
 
 
+  /**
+   * Return the XML document formatted with two spaces for indents.
+   * Chosen to do this since it's the most common case (e.g. with println()).
+   * Same as format(2). Use the format() function for more options.
+   */
   @Override
-  /** Return the XML data as a single line, with no DOCTYPE declaration. */
   public String toString() {
-    return toString(-1);
+    return format(2);
   }
 }

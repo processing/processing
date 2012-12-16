@@ -847,21 +847,16 @@ public class JSONArray {
 //  }
 
 
+
   /**
-   * Make a JSON text of this JSONArray as a single line. For compactness,
-   * no unnecessary whitespace is added. If it is not possible to produce
-   * a syntactically correct JSON text then null will be returned instead.
-   * This could occur if the array contains an invalid number.
-   * <p>
-   * Warning: This method assumes that the data structure is acyclic.
-   *
-   * @return a printable, displayable, transmittable
-   *  representation of the array.
+   * Return the JSON data formatted with two spaces for indents.
+   * Chosen to do this since it's the most common case (e.g. with println()).
+   * Same as format(2). Use the format() function for more options.
    */
   @Override
   public String toString() {
     try {
-      return toString(-1);
+      return format(2);
     } catch (Exception e) {
       return null;
     }
@@ -878,7 +873,7 @@ public class JSONArray {
    *  with <code>[</code>&nbsp;<small>(left bracket)</small> and ending
    *  with <code>]</code>&nbsp;<small>(right bracket)</small>.
    */
-  public String toString(int indentFactor) {
+  public String format(int indentFactor) {
     StringWriter sw = new StringWriter();
     synchronized (sw.getBuffer()) {
       return this.write(sw, indentFactor, 0).toString();

@@ -690,7 +690,7 @@ public class JSONObject {
    * @param key   A key string.
    * @return      true if the key exists in the JSONObject.
    */
-  public boolean has(String key) {
+  public boolean hasKey(String key) {
     return this.map.containsKey(key);
   }
 
@@ -1419,21 +1419,14 @@ public class JSONObject {
 
 
   /**
-   * Make a JSON text of this JSONObject. For compactness, no whitespace
-   * is added. If this would not result in a syntactically correct JSON text,
-   * then null will be returned instead.
-   * <p>
-   * Warning: This method assumes that the data structure is acyclical.
-   *
-   * @return a printable, displayable, portable, transmittable
-   *  representation of the object, beginning
-   *  with <code>{</code>&nbsp;<small>(left brace)</small> and ending
-   *  with <code>}</code>&nbsp;<small>(right brace)</small>.
+   * Return the JSON data formatted with two spaces for indents.
+   * Chosen to do this since it's the most common case (e.g. with println()).
+   * Same as format(2). Use the format() function for more options.
    */
   @Override
   public String toString() {
     try {
-      return this.toString(-1);
+      return format(2);
     } catch (Exception e) {
       return null;
     }
@@ -1452,7 +1445,7 @@ public class JSONObject {
    *  with <code>}</code>&nbsp;<small>(right brace)</small>.
    * @throws JSONException If the object contains an invalid number.
    */
-  public String toString(int indentFactor) {
+  public String format(int indentFactor) {
     StringWriter w = new StringWriter();
     synchronized (w.getBuffer()) {
       return this.write(w, indentFactor, 0).toString();
@@ -1578,7 +1571,7 @@ public class JSONObject {
    * @return The writer.
    * @throws JSONException
    */
-  public Writer write(Writer writer) {
+  protected Writer write(Writer writer) {
     return this.write(writer, 0, 0);
   }
 
