@@ -32,6 +32,7 @@ import java.util.zip.GZIPInputStream;
 
 import processing.data.XML;
 
+
 /**
  * Subclass for PGraphics that implements the graphics API using Java2D.
  *
@@ -52,7 +53,12 @@ import processing.data.XML;
  * if it breaks."</p>
  */
 public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
-//  Canvas canvas;
+  BufferStrategy strategy;
+  BufferedImage bimage;
+  VolatileImage vimage;
+  Canvas canvas;
+//  boolean useCanvas = true;
+  boolean useCanvas = false;
 
   public Graphics2D g2;
   protected BufferedImage offscreen;
@@ -137,23 +143,43 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
     // strange things to happen with blending.
 //    image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
     if (primarySurface) {
-//      if (canvas != null) {
-//        parent.removeListeners(canvas);
-//        parent.remove(canvas);
-//      }
-//      canvas = new Canvas();
-//      parent.setLayout(new BorderLayout());
-//      parent.add(canvas, BorderLayout.CENTER);
-//      parent.addListeners(canvas);
-////      canvas.createBufferStrategy(1);
-//      g2 = (Graphics2D) canvas.getGraphics();
-      parent.updateListeners(parent);  // in case they're already there
+      if (useCanvas) {
+        if (canvas != null) {
+          parent.removeListeners(canvas);
+          parent.remove(canvas);
+        }
+        canvas = new Canvas();
+        canvas.setIgnoreRepaint(true);
 
-      // Needs to be RGB otherwise there's a major performance hit [0204]
-      // http://code.google.com/p/processing/issues/detail?id=729
-      image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-      offscreen = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-      g2 = (Graphics2D) offscreen.getGraphics();
+//        parent.setLayout(new BorderLayout());
+//        parent.add(canvas, BorderLayout.CENTER);
+        parent.add(canvas);
+
+        if (canvas.getWidth() != width || canvas.getHeight() != height) {
+          PApplet.debug("PGraphicsJava2D comp size being set to " + width + "x" + height);
+          canvas.setSize(width, height);
+        } else {
+          PApplet.debug("PGraphicsJava2D comp size already " + width + "x" + height);
+        }
+
+        parent.addListeners(canvas);
+//        canvas.createBufferStrategy(1);
+//        g2 = (Graphics2D) canvas.getGraphics();
+
+      } else {
+        parent.updateListeners(parent);  // in case they're already there
+
+        // using a compatible image here doesn't seem to provide any performance boost
+
+        // Needs to be RGB otherwise there's a major performance hit [0204]
+        // http://code.google.com/p/processing/issues/detail?id=729
+        image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+//        GraphicsConfiguration gc = parent.getGraphicsConfiguration();
+//        image = gc.createCompatibleImage(width, height);
+        offscreen = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+//        offscreen = gc.createCompatibleImage(width, height);
+        g2 = (Graphics2D) offscreen.getGraphics();
+      }
     } else {
       // Since this buffer's offscreen anyway, no need for the extra offscreen
       // buffer. However, unlike the primary surface, this feller needs to be
@@ -161,7 +187,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
       image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
       g2 = (Graphics2D) image.getGraphics();
     }
-    defaultComposite = g2.getComposite();
+//    defaultComposite = g2.getComposite();
 
     // can't un-set this because this may be only a resize
     // http://dev.processing.org/bugs/show_bug.cgi?id=463
@@ -198,11 +224,39 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 
   @Override
   public void beginDraw() {
+    if (useCanvas && primarySurface) {
+      if (parent.frameCount == 0) {
+        canvas.createBufferStrategy(2);
+        strategy = canvas.getBufferStrategy();
+        PApplet.debug("PGraphicsJava2D.beginDraw() strategy is " + strategy);
+        BufferCapabilities caps = strategy.getCapabilities();
+        caps = strategy.getCapabilities();
+        PApplet.debug("PGraphicsJava2D.beginDraw() caps are " +
+                      " flipping: " + caps.isPageFlipping() +
+                      " front/back accel: " + caps.getFrontBufferCapabilities().isAccelerated() + " " +
+                      "/" + caps.getBackBufferCapabilities().isAccelerated());
+      }
+      GraphicsConfiguration gc = canvas.getGraphicsConfiguration();
+//      if (vimage == null || vimage.validate(gc) == VolatileImage.IMAGE_INCOMPATIBLE) {
+//        vimage = gc.createCompatibleVolatileImage(width, height);
+//      }
+//      g2 = (Graphics2D) vimage.getGraphics();
+
+      if (bimage == null ||
+          bimage.getWidth() != width ||
+          bimage.getHeight() != height) {
+        PApplet.debug("PGraphicsJava2D creating new image");
+        bimage = gc.createCompatibleImage(width, height);
+//        image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        g2 = bimage.createGraphics();
+      }
+    }
+    if (parent.frameCount == 0) {
+      defaultComposite = g2.getComposite();
+    }
+
     checkSettings();
-
     resetMatrix(); // reset model matrix
-
-    // reset vertices
     vertexCount = 0;
   }
 
@@ -214,10 +268,14 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
     //updatePixels();
 
     if (primarySurface) {
-      if (canvas != null) {
-        System.out.println(canvas);
-        canvas.repaint();
-        // ?? what to do for swapping buffers
+      //if (canvas != null) {
+      if (useCanvas) {
+        //System.out.println(canvas);
+
+        // alternate version
+        //canvas.repaint();  // ?? what to do for swapping buffers
+
+        redraw();
 
       } else {
         // don't copy the pixels/data elements of the buffered image directly,
@@ -239,6 +297,50 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
     // full copy of the pixels to the surface in this.updatePixels().
     setModified();
     super.updatePixels();
+  }
+
+
+  private void redraw() {
+    // only need this check if the validate() call will use redraw()
+//    if (strategy == null) return;
+    do {
+      PApplet.debug("PGraphicsJava2D.redraw() top of outer do { } block");
+      do {
+        PApplet.debug("PGraphicsJava2D.redraw() top of inner do { } block");
+        System.out.println("strategy is " + strategy);
+        Graphics bsg = strategy.getDrawGraphics();
+        if (vimage != null) {
+          bsg.drawImage(vimage, 0, 0, null);
+        } else {
+          bsg.drawImage(bimage, 0, 0, null);
+//      if (parent.frameCount == 0) {
+//        try {
+//          ImageIO.write(image, "jpg", new java.io.File("/Users/fry/Desktop/buff.jpg"));
+//        } catch (IOException e) {
+//          e.printStackTrace();
+//        }
+//      }
+        }
+        bsg.dispose();
+
+        // the strategy version
+//    g2.dispose();
+//      if (!strategy.contentsLost()) {
+//      if (parent.frameCount != 0) {
+//      Toolkit.getDefaultToolkit().sync();
+//      }
+//      } else {
+//        System.out.println("XXXXX strategy contents lost");
+//      }
+//    }
+//    }
+      } while (strategy.contentsRestored());
+
+      PApplet.debug("PGraphicsJava2D.redraw() showing strategy");
+      strategy.show();
+
+    } while (strategy.contentsLost());
+    PApplet.debug("PGraphicsJava2D.redraw() out of do { } block");
   }
 
 
