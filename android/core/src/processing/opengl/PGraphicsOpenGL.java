@@ -1586,10 +1586,8 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     if (primarySurface) {
-      updatePrimary();
-      pgl.beginDraw(clearColorBuffer);
+      beginOnscreenDraw();
     } else {
-      updateOffscreen();
       beginOffscreenDraw();
     }
     setDefaults();
@@ -1625,8 +1623,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     if (primarySurface) {
-      pgl.endDraw(clearColorBuffer0);
-      pgl.flush();
+      endOnscreenDraw();
     } else {
       endOffscreenDraw();
     }
@@ -5782,16 +5779,26 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void updatePrimary() {
+    pgl.update();
+  }
+
+
+  protected void beginOnscreenDraw() {
+    updatePrimary();
+    pgl.beginDraw(clearColorBuffer);
+
     if (drawFramebuffer == null) {
       drawFramebuffer = new FrameBuffer(parent, width, height, true);
-      setFramebuffer(drawFramebuffer);
     }
+    drawFramebuffer.setFBO(pgl.getDrawFramebuffer());
     if (readFramebuffer == null) {
       readFramebuffer = new FrameBuffer(parent, width, height, true);
     }
-
-    drawFramebuffer.setFBO(pgl.getDrawFramebuffer());
     readFramebuffer.setFBO(pgl.getReadFramebuffer());
+    if (currentFramebuffer == null) {
+      setFramebuffer(drawFramebuffer);
+    }
+
     if (pgl.isFBOBacked()) {
       if (texture == null) {
         texture = pgl.wrapBackTexture();
@@ -5804,8 +5811,11 @@ public class PGraphicsOpenGL extends PGraphics {
         ptexture.glName = pgl.getFrontTextureName();
       }
     }
+  }
 
-    pgl.update();
+
+  protected void endOnscreenDraw() {
+    pgl.endDraw(clearColorBuffer0);
   }
 
 
@@ -5884,6 +5894,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void beginOffscreenDraw() {
+    updateOffscreen();
+
     // Just in case the texture was recreated (in a resize event for example)
     offscreenFramebuffer.setColorBuffer(texture);
 

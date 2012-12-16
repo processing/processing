@@ -356,14 +356,13 @@ public class PGL {
   /** Selected GL profile */
   public static GLProfile profile;
 
-  /** OpenGL thread */
+  /** OpenGL thread:
+   * TODO
+   * http://forum.processing.org/topic/2-x-pgraphics-thread-crash */
   protected static Thread glThread;
 
   /** The PGraphics object using this interface */
   protected PGraphicsOpenGL pg;
-
-  /** Flag to signal rendering of first frame */
-  protected boolean firstFrame;
 
   /** The capabilities of the OpenGL rendering surface */
   protected static GLCapabilitiesImmutable capabilities;
@@ -422,17 +421,34 @@ public class PGL {
 
   // Objects for onscreen FBO-based rendering
 
-  /** Back (== draw, current frame) buffer */
-  protected static FBObject backFBO;
 
-  /** Sink buffer, used in the multisampled case */
-  protected static FBObject sinkFBO;
+  public static boolean FORCE_SCREEN_FBO = false;
+  protected static boolean fboLayerCreated = false;
+  protected static boolean fboLayerInUse = false;
+  protected static boolean firstFrame = true;
+  protected static IntBuffer glColorFbo;
+  protected static IntBuffer glColorTex;
+  protected static IntBuffer glDepthStencil;
+  protected static IntBuffer glDepth;
+  protected static IntBuffer glStencil;
+  protected static int fboWidth, fboHeight;
+  protected static int backTex, frontTex;
 
-  /** Front (== read, previous frame) buffer */
-  protected static FBObject frontFBO;
 
-  protected static FBObject.TextureAttachment backTex;
-  protected static FBObject.TextureAttachment frontTex;
+  protected static boolean needToClearBuffers;
+
+
+//  /** Back (== draw, current frame) buffer */
+//  protected static FBObject backFBO;
+//
+//  /** Sink buffer, used in the multisampled case */
+//  protected static FBObject sinkFBO;
+//
+//  /** Front (== read, previous frame) buffer */
+//  protected static FBObject frontFBO;
+//
+//  protected static FBObject.TextureAttachment backTex;
+//  protected static FBObject.TextureAttachment frontTex;
 
   ///////////////////////////////////////////////////////////
 
@@ -510,9 +526,22 @@ public class PGL {
     if (glu == null) {
       glu = new GLU();
     }
+    if (glColorTex == null) {
+      glColorTex = allocateIntBuffer(2);
+      glColorFbo = allocateIntBuffer(1);
+      glDepthStencil = allocateIntBuffer(1);
+      glDepth = allocateIntBuffer(1);
+      glStencil = allocateIntBuffer(1);
+    }
 
     byteBuffer = allocateByteBuffer(1);
     intBuffer = allocateIntBuffer(1);
+
+    fboLayerCreated = false;
+    fboLayerInUse = false;
+    firstFrame = false;
+    needToClearBuffers = false;
+
   }
 
 
@@ -560,34 +589,42 @@ public class PGL {
         window.removeGLEventListener(listener);
         pg.parent.remove(canvasNEWT);
       }
-      sinkFBO = backFBO = frontFBO = null;
+//      sinkFBO = backFBO = frontFBO = null;
       setFramerate = false;
     }
 
     // Setting up the desired GL capabilities;
+//    GLCapabilities caps = new GLCapabilities(profile);
+//    if (1 < antialias) {
+//      caps.setSampleBuffers(true);
+//      caps.setNumSamples(antialias);
+//    } else {
+//      caps.setSampleBuffers(false);
+//    }
+//
+//    if (PApplet.platform == PConstants.MACOSX) {
+//      caps.setFBO(enable_screen_FBO_macosx);
+//    } else if (PApplet.platform == PConstants.WINDOWS) {
+//      caps.setFBO(enable_screen_FBO_windows);
+//    } else if (PApplet.platform == PConstants.LINUX) {
+//      caps.setFBO(enable_screen_FBO_linux);
+//    } else {
+//      caps.setFBO(enable_screen_FBO_other);
+//    }
+//
+//    caps.setDepthBits(request_depth_bits);
+//    caps.setStencilBits(request_stencil_bits);
+//    caps.setAlphaBits(request_alpha_bits);
+//    caps.setBackgroundOpaque(true);
+//    caps.setOnscreen(true);
+
     GLCapabilities caps = new GLCapabilities(profile);
-    if (1 < antialias) {
-      caps.setSampleBuffers(true);
-      caps.setNumSamples(antialias);
-    } else {
-      caps.setSampleBuffers(false);
-    }
-
-    if (PApplet.platform == PConstants.MACOSX) {
-      caps.setFBO(enable_screen_FBO_macosx);
-    } else if (PApplet.platform == PConstants.WINDOWS) {
-      caps.setFBO(enable_screen_FBO_windows);
-    } else if (PApplet.platform == PConstants.LINUX) {
-      caps.setFBO(enable_screen_FBO_linux);
-    } else {
-      caps.setFBO(enable_screen_FBO_other);
-    }
-
-    caps.setDepthBits(request_depth_bits);
-    caps.setStencilBits(request_stencil_bits);
-    caps.setAlphaBits(request_alpha_bits);
+    caps.setSampleBuffers(false);
+    caps.setPBuffer(true);
+    caps.setFBO(false);
     caps.setBackgroundOpaque(true);
     caps.setOnscreen(true);
+
 
     if (toolkit == AWT) {
       canvasAWT = new GLCanvas(caps);
@@ -634,12 +671,14 @@ public class PGL {
       }
     }
 
+    fboLayerCreated = false;
+    fboLayerInUse = false;
     firstFrame = true;
+    needToClearBuffers = true;
   }
 
 
   protected void deleteSurface() {
-    /*
     if (glColorTex != null) {
       deleteTextures(2, glColorTex);
       deleteFramebuffers(1, glColorFbo);
@@ -648,8 +687,6 @@ public class PGL {
       deleteRenderbuffers(1, glStencil);
     }
     fboLayerCreated = false;
-    glInitialized = false;
-    */
   }
 
 
@@ -657,12 +694,112 @@ public class PGL {
     if (!setFramerate) {
       setFrameRate(targetFramerate);
     }
+
+    if (!fboLayerCreated) {
+      String ext = getString(EXTENSIONS);
+      if (-1 < ext.indexOf("texture_non_power_of_two")) {
+        fboWidth = pg.width;
+        fboHeight = pg.height;
+      } else {
+        fboWidth = nextPowerOfTwo(pg.width);
+        fboHeight = nextPowerOfTwo(pg.height);
+      }
+
+      boolean packed = ext.indexOf("packed_depth_stencil") != -1;
+      int depthBits = getDepthBits();
+      int stencilBits = getStencilBits();
+
+      genTextures(2, glColorTex);
+      for (int i = 0; i < 2; i++) {
+        bindTexture(TEXTURE_2D, glColorTex.get(i));
+        texParameteri(TEXTURE_2D, TEXTURE_MIN_FILTER, NEAREST);
+        texParameteri(TEXTURE_2D, TEXTURE_MAG_FILTER, NEAREST);
+        texParameteri(TEXTURE_2D, TEXTURE_WRAP_S, CLAMP_TO_EDGE);
+        texParameteri(TEXTURE_2D, TEXTURE_WRAP_T, CLAMP_TO_EDGE);
+        texImage2D(TEXTURE_2D, 0, RGBA, fboWidth, fboHeight, 0,
+                   RGBA, UNSIGNED_BYTE, null);
+        initTexture(TEXTURE_2D, RGBA, fboWidth, fboHeight);
+      }
+      bindTexture(TEXTURE_2D, 0);
+
+      backTex = 0;
+      frontTex = 1;
+
+      genFramebuffers(1, glColorFbo);
+      bindFramebuffer(FRAMEBUFFER, glColorFbo.get(0));
+      framebufferTexture2D(FRAMEBUFFER, COLOR_ATTACHMENT0, TEXTURE_2D,
+                           glColorTex.get(backTex), 0);
+
+      if (packed && depthBits == 24 && stencilBits == 8) {
+        // packed depth+stencil buffer
+
+        genRenderbuffers(1, glDepthStencil);
+        bindRenderbuffer(RENDERBUFFER, glDepthStencil.get(0));
+        renderbufferStorage(RENDERBUFFER, DEPTH24_STENCIL8,
+                            fboWidth, fboHeight);
+        framebufferRenderbuffer(FRAMEBUFFER, DEPTH_ATTACHMENT, RENDERBUFFER,
+                                glDepthStencil.get(0));
+        framebufferRenderbuffer(FRAMEBUFFER, STENCIL_ATTACHMENT, RENDERBUFFER,
+                                glDepthStencil.get(0));
+      } else { // separate depth and stencil buffers
+        if (0 < depthBits) {
+          int depthComponent = DEPTH_COMPONENT16;
+          if (depthBits == 32) {
+            depthComponent = DEPTH_COMPONENT32;
+          } else if (depthBits == 24) {
+            depthComponent = DEPTH_COMPONENT24;
+          } else if (depthBits == 16) {
+            depthComponent = DEPTH_COMPONENT16;
+          }
+
+          genRenderbuffers(1, glDepth);
+          bindRenderbuffer(RENDERBUFFER, glDepth.get(0));
+          renderbufferStorage(RENDERBUFFER, depthComponent, fboWidth, fboHeight);
+          framebufferRenderbuffer(FRAMEBUFFER, DEPTH_ATTACHMENT,
+                                  RENDERBUFFER, glDepth.get(0));
+        }
+
+        if (0 < stencilBits) {
+          int stencilIndex = STENCIL_INDEX1;
+          if (stencilBits == 8) {
+            stencilIndex = STENCIL_INDEX8;
+          } else if (stencilBits == 4) {
+            stencilIndex = STENCIL_INDEX4;
+          } else if (stencilBits == 1) {
+            stencilIndex = STENCIL_INDEX1;
+          }
+
+          genRenderbuffers(1, glStencil);
+          bindRenderbuffer(RENDERBUFFER, glStencil.get(0));
+          renderbufferStorage(RENDERBUFFER, stencilIndex, fboWidth, fboHeight);
+          framebufferRenderbuffer(FRAMEBUFFER, STENCIL_ATTACHMENT,
+                                  RENDERBUFFER, glStencil.get(0));
+        }
+      }
+      validateFramebuffer();
+
+      // Clear the depth and stencil buffers in the color FBO. There is no
+      // need to clear the color buffers because the textures attached were
+      // properly initialized blank.
+      clearDepth(1);
+      clearStencil(0);
+      clear(DEPTH_BUFFER_BIT | STENCIL_BUFFER_BIT);
+
+      bindFramebuffer(FRAMEBUFFER, 0);
+
+      fboLayerCreated = true;
+    }
   }
 
 
   protected int getReadFramebuffer() {
-    if (capabilities.isFBO()) {
-      return context.getDefaultReadFramebuffer();
+//    if (capabilities.isFBO()) {
+//      return context.getDefaultReadFramebuffer();
+//    } else {
+//      return 0;
+//    }
+    if (fboLayerInUse) {
+      return glColorFbo.get(0);
     } else {
       return 0;
     }
@@ -670,8 +807,13 @@ public class PGL {
 
 
   protected int getDrawFramebuffer() {
-    if (capabilities.isFBO()) {
-      return context.getDefaultDrawFramebuffer();
+//    if (capabilities.isFBO()) {
+//      return context.getDefaultDrawFramebuffer();
+//    } else {
+//      return 0;
+//    }
+    if (fboLayerInUse) {
+      return glColorFbo.get(0);
     } else {
       return 0;
     }
@@ -679,44 +821,64 @@ public class PGL {
 
 
   protected int getDefaultDrawBuffer() {
-    if (capabilities.isFBO()) {
-      return GL.GL_COLOR_ATTACHMENT0;
-    } else if (capabilities.getDoubleBuffered()) {
-      return GL.GL_BACK;
+//    if (capabilities.isFBO()) {
+//      return GL.GL_COLOR_ATTACHMENT0;
+//    } else if (capabilities.getDoubleBuffered()) {
+//      return GL.GL_BACK;
+//    } else {
+//      return GL.GL_FRONT;
+//    }
+
+    if (fboLayerInUse) {
+      return COLOR_ATTACHMENT0;
     } else {
-      return GL.GL_FRONT;
+      return BACK;
     }
   }
 
 
   protected int getDefaultReadBuffer() {
-    if (capabilities.isFBO()) {
-      return GL.GL_COLOR_ATTACHMENT0;
-    } else if (capabilities.getDoubleBuffered()) {
-      return GL.GL_BACK;
+//    if (capabilities.isFBO()) {
+//      return GL.GL_COLOR_ATTACHMENT0;
+//    } else if (capabilities.getDoubleBuffered()) {
+//      return GL.GL_BACK;
+//    } else {
+//      return GL.GL_FRONT;
+//    }
+
+    if (fboLayerInUse) {
+      return COLOR_ATTACHMENT0;
     } else {
-      return GL.GL_FRONT;
+      return FRONT;
     }
   }
 
 
   protected boolean isFBOBacked() {
-    return capabilities.isFBO();
+//    return capabilities.isFBO();
+    return fboLayerInUse;
   }
 
 
   protected boolean isMultisampled() {
-    return 0 < capabilities.getNumSamples();
+//    return 0 < capabilities.getNumSamples();
+    return false;
   }
 
 
   protected int getDepthBits() {
-    return capabilities.getDepthBits();
+//    return capabilities.getDepthBits();
+    intBuffer.rewind();
+    getIntegerv(DEPTH_BITS, intBuffer);
+    return intBuffer.get(0);
   }
 
 
   protected int getStencilBits() {
-    return capabilities.getStencilBits();
+//    return capabilities.getStencilBits();
+    intBuffer.rewind();
+    getIntegerv(STENCIL_BITS, intBuffer);
+    return intBuffer.get(0);
   }
 
 
@@ -735,12 +897,21 @@ public class PGL {
 
 
   protected Texture wrapBackTexture() {
+//    Texture tex = new Texture(pg.parent);
+//    tex.init(pg.width, pg.height,
+//             backTex.getName(), GL.GL_TEXTURE_2D, GL.GL_RGBA,
+//             backTex.getWidth(), backTex.getHeight(),
+//             backTex.minFilter, backTex.magFilter,
+//             backTex.wrapS, backTex.wrapT);
+//    tex.invertedY(true);
+//    tex.colorBufferOf(pg);
+//    pg.setCache(pg, tex);
+//    return tex;
     Texture tex = new Texture(pg.parent);
     tex.init(pg.width, pg.height,
-             backTex.getName(), GL.GL_TEXTURE_2D, GL.GL_RGBA,
-             backTex.getWidth(), backTex.getHeight(),
-             backTex.minFilter, backTex.magFilter,
-             backTex.wrapS, backTex.wrapT);
+             glColorTex.get(backTex), TEXTURE_2D, RGBA,
+             fboWidth, fboHeight, NEAREST, NEAREST,
+             CLAMP_TO_EDGE, CLAMP_TO_EDGE);
     tex.invertedY(true);
     tex.colorBufferOf(pg);
     pg.setCache(pg, tex);
@@ -749,12 +920,20 @@ public class PGL {
 
 
   protected Texture wrapFrontTexture() {
+//    Texture tex = new Texture(pg.parent);
+//    tex.init(pg.width, pg.height,
+//             backTex.getName(), GL.GL_TEXTURE_2D, GL.GL_RGBA,
+//             frontTex.getWidth(), frontTex.getHeight(),
+//             frontTex.minFilter, frontTex.magFilter,
+//             frontTex.wrapS, frontTex.wrapT);
+//    tex.invertedY(true);
+//    tex.colorBufferOf(pg);
+//    return tex;
     Texture tex = new Texture(pg.parent);
     tex.init(pg.width, pg.height,
-             backTex.getName(), GL.GL_TEXTURE_2D, GL.GL_RGBA,
-             frontTex.getWidth(), frontTex.getHeight(),
-             frontTex.minFilter, frontTex.magFilter,
-             frontTex.wrapS, frontTex.wrapT);
+             glColorTex.get(frontTex), TEXTURE_2D, RGBA,
+             fboWidth, fboHeight, NEAREST, NEAREST,
+             CLAMP_TO_EDGE, CLAMP_TO_EDGE);
     tex.invertedY(true);
     tex.colorBufferOf(pg);
     return tex;
@@ -762,43 +941,60 @@ public class PGL {
 
 
   int getBackTextureName() {
-    return backTex.getName();
+//    return backTex.getName();
+    return glColorTex.get(backTex);
   }
 
 
   int getFrontTextureName() {
-    return frontTex.getName();
+//    return frontTex.getName();
+    return glColorTex.get(frontTex);
   }
 
 
   protected void bindFrontTexture() {
-    if (!texturingIsEnabled(GL.GL_TEXTURE_2D)) {
-      enableTexturing(GL.GL_TEXTURE_2D);
+//    if (!texturingIsEnabled(GL.GL_TEXTURE_2D)) {
+//      enableTexturing(GL.GL_TEXTURE_2D);
+//    }
+//    gl.glBindTexture(GL.GL_TEXTURE_2D, frontTex.getName());
+    if (!texturingIsEnabled(TEXTURE_2D)) {
+      enableTexturing(TEXTURE_2D);
     }
-    gl.glBindTexture(GL.GL_TEXTURE_2D, frontTex.getName());
+    bindTexture(TEXTURE_2D, glColorTex.get(frontTex));
   }
 
 
   protected void unbindFrontTexture() {
-    if (textureIsBound(GL.GL_TEXTURE_2D, frontTex.getName())) {
+//    if (textureIsBound(GL.GL_TEXTURE_2D, frontTex.getName())) {
+//      // We don't want to unbind another texture
+//      // that might be bound instead of this one.
+//      if (!texturingIsEnabled(GL.GL_TEXTURE_2D)) {
+//        enableTexturing(GL.GL_TEXTURE_2D);
+//        gl.glBindTexture(GL.GL_TEXTURE_2D, 0);
+//        disableTexturing(GL.GL_TEXTURE_2D);
+//      } else {
+//        gl.glBindTexture(GL.GL_TEXTURE_2D, 0);
+//      }
+//    }
+    if (textureIsBound(TEXTURE_2D, glColorTex.get(frontTex))) {
       // We don't want to unbind another texture
       // that might be bound instead of this one.
-      if (!texturingIsEnabled(GL.GL_TEXTURE_2D)) {
-        enableTexturing(GL.GL_TEXTURE_2D);
-        gl.glBindTexture(GL.GL_TEXTURE_2D, 0);
-        disableTexturing(GL.GL_TEXTURE_2D);
+      if (!texturingIsEnabled(TEXTURE_2D)) {
+        enableTexturing(TEXTURE_2D);
+        bindTexture(TEXTURE_2D, 0);
+        disableTexturing(TEXTURE_2D);
       } else {
-        gl.glBindTexture(GL.GL_TEXTURE_2D, 0);
+        bindTexture(TEXTURE_2D, 0);
       }
     }
   }
 
 
   protected void syncBackTexture() {
-    if (0 < capabilities.getNumSamples()) {
-      backFBO.syncSamplingSink(gl);
-      backFBO.bind(gl);
-    }
+//    if (0 < capabilities.getNumSamples()) {
+//      backFBO.syncSamplingSink(gl);
+//      backFBO.bind(gl);
+//    }
   }
 
 
@@ -819,10 +1015,34 @@ public class PGL {
 
 
   protected void beginDraw(boolean clear0) {
+    if ((!clear0 || FORCE_SCREEN_FBO) && glColorFbo.get(0) != 0) {
+      bindFramebuffer(FRAMEBUFFER, glColorFbo.get(0));
+      framebufferTexture2D(FRAMEBUFFER, COLOR_ATTACHMENT0,
+                           TEXTURE_2D, glColorTex.get(backTex), 0);
+      if (firstFrame) {
+        // No need to draw back color buffer because we are in the first frame.
+        clearColor(0, 0, 0, 0);
+        clear(COLOR_BUFFER_BIT);
+      } else if (!clear0) {
+        // Render previous back texture (now is the front) as background,
+        // because no background() is being used ("incremental drawing")
+        drawTexture(TEXTURE_2D, glColorTex.get(frontTex),
+                    fboWidth, fboHeight, 0, 0, pg.width, pg.height,
+                                         0, 0, pg.width, pg.height);
+      }
+      fboLayerInUse = true;
+    } else {
+      fboLayerInUse = false;
+    }
+
+    if (firstFrame) {
+      firstFrame = false;
+    }
   }
 
 
-  protected void endDraw(boolean clear) {
+  protected void endDraw(boolean clear0) {
+    /*
     if (!clear && isFBOBacked() && !isMultisampled()) {
       // Draw the back texture into the front texture, which will be used as
       // back texture in the next frame. Otherwise flickering will occur if
@@ -834,6 +1054,27 @@ public class PGL {
                   0, 0, pg.width, pg.height, 0, 0, pg.width, pg.height);
       backFBO.bind(gl);
     }
+    */
+    if (fboLayerInUse) {
+      // Draw the contents of the back texture to the screen framebuffer.
+      bindFramebuffer(FRAMEBUFFER, 0);
+
+      clearDepth(1);
+      clearColor(0, 0, 0, 0);
+      clear(COLOR_BUFFER_BIT | DEPTH_BUFFER_BIT);
+
+      // Render current back texture to screen, without blending.
+      disable(BLEND);
+      drawTexture(TEXTURE_2D, glColorTex.get(backTex),
+                  fboWidth, fboHeight, 0, 0, pg.width, pg.height,
+                                       0, 0, pg.width, pg.height);
+
+      // Swapping front and back textures.
+      int temp = frontTex;
+      frontTex = backTex;
+      backTex = temp;
+    }
+    flush();
   }
 
 
@@ -870,7 +1111,6 @@ public class PGL {
   protected static boolean glThreadIsCurrent() {
     return Thread.currentThread() == glThread;
   }
-
 
 
   //////////////////////////////////////////////////////////////////////////////
@@ -2772,17 +3012,18 @@ public class PGL {
         gl2x = null;
       }
 
-      if (firstFrame) {
+      if (needToClearBuffers) {
         // Cleaning all buffers for the first time.
         gl.glClearDepthf(1);
         gl.glClearStencil(0);
         gl.glClearColor(0, 0, 0, 0);
         gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT |
                    GL.GL_STENCIL_BUFFER_BIT);
-        firstFrame = false;
+        needToClearBuffers = false;
         drawable.swapBuffers();
       }
 
+      /*
       if (capabilities.isFBO()) {
         // The onscreen drawing surface is backed by an FBO layer.
         GLFBODrawable fboDrawable = null;
@@ -2831,8 +3072,7 @@ public class PGL {
           }
         }
       }
-
-
+*/
 
       pg.parent.handleDraw();
     }
