@@ -106,6 +106,9 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // Basic rendering parameters:
 
+  /** Whether the PGraphics object is ready to render or not. */
+  protected boolean initialized;
+
   /** Flush modes: continuously (geometry is flushed after each call to
    * endShape) when-full (geometry is accumulated until a maximum size is
    * reached.  */
@@ -425,7 +428,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // Offscreen rendering:
 
-  protected boolean initializedOffscreen;
   protected FrameBuffer offscreenFramebuffer;
   protected FrameBuffer multisampleFramebuffer;
   protected boolean offscreenMultisample;
@@ -450,6 +452,12 @@ public class PGraphicsOpenGL extends PGraphics {
 
   /** IntBuffer wrapping the native pixels array. */
   protected IntBuffer nativePixelBuffer;
+
+  /** texture used to apply a filter on the screen image. */
+  protected Texture filterTexture;
+
+  /** PImage that wraps filterTexture. */
+  protected PImage filterImage;
 
   /** Flag to indicate if the user is manipulating the
    * pixels array through the set()/get() methods */
@@ -527,35 +535,15 @@ public class PGraphicsOpenGL extends PGraphics {
       tessellator = new Tessellator();
     }
 
-
-    intBuffer = PGL.allocateDirectIntBuffer(2);
-    floatBuffer = PGL.allocateDirectFloatBuffer(2);
-
-    viewport = PGL.allocateDirectIntBuffer(4);
+    intBuffer = PGL.allocateIntBuffer(2);
+    floatBuffer = PGL.allocateFloatBuffer(2);
+    viewport = PGL.allocateIntBuffer(4);
 
     inGeo = newInGeometry(IMMEDIATE);
     tessGeo = newTessGeometry(IMMEDIATE);
     texCache = newTexCache();
 
-    glPolyVertex = 0;
-    glPolyColor = 0;
-    glPolyNormal = 0;
-    glPolyTexcoord = 0;
-    glPolyAmbient = 0;
-    glPolySpecular = 0;
-    glPolyEmissive = 0;
-    glPolyShininess = 0;
-    glPolyIndex = 0;
-
-    glLineVertex = 0;
-    glLineColor = 0;
-    glLineAttrib = 0;
-    glLineIndex = 0;
-
-    glPointVertex = 0;
-    glPointColor = 0;
-    glPointAttrib = 0;
-    glPointIndex = 0;
+    initialized = false;
   }
 
 
@@ -603,7 +591,6 @@ public class PGraphicsOpenGL extends PGraphics {
     cameraAspect = (float) width / (float) height;
 
     // Forces a restart of OpenGL so the canvas has the right size.
-    //pgl.initialized = false;
     restartPGL();
 
     // set this flag so that beginDraw() will do an update to the camera.
@@ -653,6 +640,8 @@ public class PGraphicsOpenGL extends PGraphics {
     deletePolyBuffers();
     deleteLineBuffers();
     deletePointBuffers();
+    deleteDefaultShaders();
+    pgl.deleteSurface();
   }
 
 
@@ -718,10 +707,7 @@ public class PGraphicsOpenGL extends PGraphics {
     int id = intBuffer.get(0);
 
     GLResource res = new GLResource(id, context);
-
-    if (glTextureObjects.containsKey(res)) {
-      throw new RuntimeException("Adding same texture twice");
-    } else {
+    if (!glTextureObjects.containsKey(res)) {
       glTextureObjects.put(res, false);
     }
 
@@ -785,10 +771,7 @@ public class PGraphicsOpenGL extends PGraphics {
     int id = intBuffer.get(0);
 
     GLResource res = new GLResource(id, context);
-
-    if (glVertexBuffers.containsKey(res)) {
-      throw new RuntimeException("Adding same VBO twice");
-    } else {
+    if (!glVertexBuffers.containsKey(res)) {
       glVertexBuffers.put(res, false);
     }
 
@@ -852,10 +835,7 @@ public class PGraphicsOpenGL extends PGraphics {
     int id = intBuffer.get(0);
 
     GLResource res = new GLResource(id, context);
-
-    if (glFrameBuffers.containsKey(res)) {
-      throw new RuntimeException("Adding same FBO twice");
-    } else {
+    if (!glFrameBuffers.containsKey(res)) {
       glFrameBuffers.put(res, false);
     }
 
@@ -919,10 +899,7 @@ public class PGraphicsOpenGL extends PGraphics {
     int id = intBuffer.get(0);
 
     GLResource res = new GLResource(id, context);
-
-    if (glRenderBuffers.containsKey(res)) {
-      throw new RuntimeException("Adding same renderbuffer twice");
-    } else {
+    if (!glRenderBuffers.containsKey(res)) {
       glRenderBuffers.put(res, false);
     }
 
@@ -985,10 +962,7 @@ public class PGraphicsOpenGL extends PGraphics {
     int id = pgl.createProgram();
 
     GLResource res = new GLResource(id, context);
-
-    if (glslPrograms.containsKey(res)) {
-      throw new RuntimeException("Adding same glsl program twice");
-    } else {
+    if (!glslPrograms.containsKey(res)) {
       glslPrograms.put(res, false);
     }
 
@@ -1048,10 +1022,7 @@ public class PGraphicsOpenGL extends PGraphics {
     int id = pgl.createShader(PGL.VERTEX_SHADER);
 
     GLResource res = new GLResource(id, context);
-
-    if (glslVertexShaders.containsKey(res)) {
-      throw new RuntimeException("Adding same glsl vertex shader twice");
-    } else {
+    if (!glslVertexShaders.containsKey(res)) {
       glslVertexShaders.put(res, false);
     }
 
@@ -1112,10 +1083,7 @@ public class PGraphicsOpenGL extends PGraphics {
     int id = pgl.createShader(PGL.FRAGMENT_SHADER);
 
     GLResource res = new GLResource(id, context);
-
-    if (glslFragmentShaders.containsKey(res)) {
-      throw new RuntimeException("Adding same glsl fragment shader twice");
-    } else {
+    if (!glslFragmentShaders.containsKey(res)) {
       glslFragmentShaders.put(res, false);
     }
 
@@ -1583,7 +1551,7 @@ public class PGraphicsOpenGL extends PGraphics {
   @Override
   public void requestDraw() {
     if (primarySurface) {
-      if (pgl.initialized) {
+      if (initialized) {
         pgl.requestDraw();
       } else {
         initPrimary();
@@ -1624,8 +1592,8 @@ public class PGraphicsOpenGL extends PGraphics {
       updateOffscreen();
       beginOffscreenDraw();
     }
-
     setDefaults();
+
     pgCurrent = this;
     drawing = true;
 
@@ -1645,14 +1613,15 @@ public class PGraphicsOpenGL extends PGraphics {
     // Flushing any remaining geometry.
     flush();
 
-    if (!pgPrimary.pgl.initialized || parent.frameCount == 0) {
+    if (PGL.SAVE_SURFACE_TO_PIXELS &&
+        (!pgPrimary.initialized || parent.frameCount == 0)) {
       // Smooth was disabled/enabled at some point during drawing. We save
       // the current contents of the back buffer (because the  buffers haven't
       // been swapped yet) to the pixels array. The frameCount == 0 condition
       // is to handle the situation when no smooth is called in setup in the
       // PDE, but the OpenGL appears to be recreated due to the size() nastiness.
-//      saveSurfaceToPixels();
-//      restoreSurface = true;
+      saveSurfaceToPixels();
+      restoreSurface = true;
     }
 
     if (primarySurface) {
@@ -1695,7 +1664,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void restartPGL() {
-    pgl.initialized = false;
+    initialized = false;
   }
 
 
@@ -5041,7 +5010,7 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void allocatePixels() {
     if ((pixels == null) || (pixels.length != width * height)) {
       pixels = new int[width * height];
-      pixelBuffer = PGL.allocateDirectIntBuffer(width * height);
+      pixelBuffer = PGL.allocateIntBuffer(pixels);
     }
   }
 
@@ -5059,7 +5028,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void readPixels() {
     beginPixelsOp(OP_READ);
-    pixelBuffer.rewind();
     try {
       // The readPixels() call in inside a try/catch block because it appears
       // that (only sometimes) JOGL will run beginDraw/endDraw on the EDT
@@ -5074,9 +5042,7 @@ public class PGraphicsOpenGL extends PGraphics {
     endPixelsOp();
     try {
       // Idem...
-      pixelBuffer.position(0);
-      pixelBuffer.get(pixels);
-      pixelBuffer.rewind();
+      PGL.getIntArray(pixelBuffer, pixels);
       PGL.nativeToJavaARGB(pixels, width, height);
     } catch (ArrayIndexOutOfBoundsException e) {
     }
@@ -5087,7 +5053,7 @@ public class PGraphicsOpenGL extends PGraphics {
     int len = w * h;
     if (nativePixels == null || nativePixels.length < len) {
       nativePixels = new int[len];
-      nativePixelBuffer = PGL.allocateDirectIntBuffer(len);
+      nativePixelBuffer = PGL.allocateIntBuffer(nativePixels);
     }
 
     try {
@@ -5109,18 +5075,13 @@ public class PGraphicsOpenGL extends PGraphics {
       PGL.javaToNativeARGB(nativePixels, w, h);
     } catch (ArrayIndexOutOfBoundsException e) {
     }
-
+    PGL.putIntArray(nativePixelBuffer, nativePixels);
     // Copying pixel buffer to screen texture...
     if (primarySurface && !pgl.isFBOBacked()) {
       // First making sure that the screen texture is valid. Only in the case
       // of non-FBO-backed primary surface we might need to create the texture.
       loadTextureImpl(POINT, false);
     }
-
-    // Put native pixels in direct buffer for copy.
-    nativePixelBuffer.position(0);
-    nativePixelBuffer.put(nativePixels);
-    nativePixelBuffer.rewind();
 
     boolean needToDrawTex = primarySurface && (!pgl.isFBOBacked() ||
                             (pgl.isFBOBacked() && pgl.isMultisampled())) ||
@@ -5224,13 +5185,12 @@ public class PGraphicsOpenGL extends PGraphics {
         // then copy this array into the texture.
         if (nativePixels == null || nativePixels.length < width * height) {
           nativePixels = new int[width * height];
-          nativePixelBuffer = PGL.allocateDirectIntBuffer(width * height);
+          nativePixelBuffer = PGL.allocateIntBuffer(nativePixels);
         }
 
         beginPixelsOp(OP_READ);
         try {
           // Se comments in readPixels() for the reason for this try/catch.
-          nativePixelBuffer.rewind();
           pgl.readPixels(0, 0, width, height, PGL.RGBA, PGL.UNSIGNED_BYTE,
                          nativePixelBuffer);
         } catch (IndexOutOfBoundsException e) {
@@ -5295,7 +5255,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void loadTextureImpl(int sampling, boolean mipmap) {
-
     if (width == 0 || height == 0) return;
     if (texture == null || texture.contextIsOutdated()) {
       Texture.Parameters params = new Texture.Parameters(ARGB,
@@ -5410,6 +5369,13 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     loadTexture();
+    if (filterTexture == null || filterTexture.contextIsOutdated()) {
+      filterTexture = new Texture(parent, texture.width, texture.height,
+                                  texture.getParameters());
+      filterTexture.invertedY(true);
+      filterImage = wrapTexture(filterTexture);
+    }
+    filterTexture.set(texture);
 
     // Disable writing to the depth buffer, so that after applying the filter we
     // can still use the depth information to keep adding geometry to the scene.
@@ -5433,7 +5399,7 @@ public class PGraphicsOpenGL extends PGraphics {
     PolyTexShader prevTexShader = polyTexShader;
     polyTexShader = (PolyTexShader) shader;
     beginShape(QUADS);
-    texture(this);
+    texture(filterImage);
     vertex(0, 0, 0, 0);
     vertex(width, 0, 1, 0);
     vertex(width, height, 1, 1);
@@ -5806,13 +5772,12 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void initPrimary() {
     pgl.initSurface(quality);
-    if (pgPrimary == null) {
-      pgPrimary = this;
-    }
     if (texture != null) {
       pgPrimary.removeCache(this);
       texture = ptexture = null;
     }
+    pgPrimary = this;
+    initialized = true;
   }
 
 
@@ -5846,7 +5811,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void initOffscreen() {
     // Getting the context and capabilities from the main renderer.
-    pgPrimary = (PGraphicsOpenGL)parent.g;
     loadTextureImpl(Texture.BILINEAR, false);
 
     // In case of reinitialization (for example, when the smooth level
@@ -5887,12 +5851,12 @@ public class PGraphicsOpenGL extends PGraphics {
     offscreenFramebuffer.setColorBuffer(texture);
     offscreenFramebuffer.clear();
 
-    initializedOffscreen = true;
+    initialized = true;
   }
 
 
   protected void updateOffscreen() {
-    if (!initializedOffscreen) {
+    if (!initialized) {
       initOffscreen();
     } else {
       boolean outdated = offscreenFramebuffer != null &&
@@ -6339,6 +6303,20 @@ public class PGraphicsOpenGL extends PGraphics {
      type = PShader.TEXTURE;
     }
     return type;
+  }
+
+
+  protected void deleteDefaultShaders() {
+    // The default shaders contains references to the PGraphics object that
+    // creates them, so when restarting the renderer, those references should
+    // dissapear.
+    defPolyColorShader = null;
+    defPolyTexShader = null;
+    defPolyLightShader = null;
+    defPolyTexlightShader = null;
+    defLineShader = null;
+    defPointShader = null;
+    maskShader = null;
   }
 
 
@@ -7275,14 +7253,6 @@ public class PGraphicsOpenGL extends PGraphics {
       hasTexture = false;
     }
 
-    void dispose() {
-      textures = null;
-      firstIndex = null;
-      lastIndex = null;
-      firstCache = null;
-      lastCache = null;
-    }
-
     void beginRender() {
       tex0 = null;
     }
@@ -7575,21 +7545,6 @@ public class PGraphicsOpenGL extends PGraphics {
       edges = new int[PGL.DEFAULT_IN_EDGES][3];
 
       clear();
-    }
-
-    void dispose() {
-      breaks = null;
-      vertices = null;
-      colors = null;
-      normals = null;
-      texcoords = null;
-      strokeColors = null;
-      strokeWeights = null;
-      ambient = null;
-      specular = null;
-      emissive = null;
-      shininess = null;
-      edges = null;
     }
 
     void vertexCheck() {
@@ -9024,26 +8979,6 @@ public class PGraphicsOpenGL extends PGraphics {
     // Allocate/dispose
 
     void allocate() {
-      polyVerticesBuffer = PGL.allocateDirectFloatBuffer(4 * PGL.DEFAULT_TESS_VERTICES);
-      polyColorsBuffer = PGL.allocateDirectIntBuffer(PGL.DEFAULT_TESS_VERTICES);
-      polyNormalsBuffer = PGL.allocateDirectFloatBuffer(3 * PGL.DEFAULT_TESS_VERTICES);
-      polyTexcoordsBuffer = PGL.allocateDirectFloatBuffer(2 * PGL.DEFAULT_TESS_VERTICES);
-      polyAmbientBuffer = PGL.allocateDirectIntBuffer(PGL.DEFAULT_TESS_VERTICES);
-      polySpecularBuffer = PGL.allocateDirectIntBuffer(PGL.DEFAULT_TESS_VERTICES);
-      polyEmissiveBuffer = PGL.allocateDirectIntBuffer(PGL.DEFAULT_TESS_VERTICES);
-      polyShininessBuffer = PGL.allocateDirectFloatBuffer(PGL.DEFAULT_TESS_VERTICES);
-      polyIndicesBuffer = PGL.allocateDirectShortBuffer(PGL.DEFAULT_TESS_VERTICES);
-
-      lineVerticesBuffer = PGL.allocateDirectFloatBuffer(4 * PGL.DEFAULT_TESS_VERTICES);
-      lineColorsBuffer = PGL.allocateDirectIntBuffer(PGL.DEFAULT_TESS_VERTICES);
-      lineAttribsBuffer = PGL.allocateDirectFloatBuffer(4 * PGL.DEFAULT_TESS_VERTICES);
-      lineIndicesBuffer = PGL.allocateDirectShortBuffer(PGL.DEFAULT_TESS_VERTICES);
-
-      pointVerticesBuffer = PGL.allocateDirectFloatBuffer(4 * PGL.DEFAULT_TESS_VERTICES);
-      pointColorsBuffer = PGL.allocateDirectIntBuffer(PGL.DEFAULT_TESS_VERTICES);
-      pointAttribsBuffer = PGL.allocateDirectFloatBuffer(2 * PGL.DEFAULT_TESS_VERTICES);
-      pointIndicesBuffer = PGL.allocateDirectShortBuffer(PGL.DEFAULT_TESS_VERTICES);
-
       polyVertices = new float[4 * PGL.DEFAULT_TESS_VERTICES];
       polyColors = new int[PGL.DEFAULT_TESS_VERTICES];
       polyNormals = new float[3 * PGL.DEFAULT_TESS_VERTICES];
@@ -9064,6 +8999,26 @@ public class PGraphicsOpenGL extends PGraphics {
       pointAttribs = new float[2 * PGL.DEFAULT_TESS_VERTICES];
       pointIndices = new short[PGL.DEFAULT_TESS_VERTICES];
 
+      polyVerticesBuffer = PGL.allocateFloatBuffer(polyVertices);
+      polyColorsBuffer = PGL.allocateIntBuffer(polyColors);
+      polyNormalsBuffer = PGL.allocateFloatBuffer(polyNormals);
+      polyTexcoordsBuffer = PGL.allocateFloatBuffer(polyTexcoords);
+      polyAmbientBuffer = PGL.allocateIntBuffer(polyAmbient);
+      polySpecularBuffer = PGL.allocateIntBuffer(polySpecular);
+      polyEmissiveBuffer = PGL.allocateIntBuffer(polyEmissive);
+      polyShininessBuffer = PGL.allocateFloatBuffer(polyShininess);
+      polyIndicesBuffer = PGL.allocateShortBuffer(polyIndices);
+
+      lineVerticesBuffer = PGL.allocateFloatBuffer(lineVertices);
+      lineColorsBuffer = PGL.allocateIntBuffer(lineColors);
+      lineAttribsBuffer = PGL.allocateFloatBuffer(lineAttribs);
+      lineIndicesBuffer = PGL.allocateShortBuffer(lineIndices);
+
+      pointVerticesBuffer = PGL.allocateFloatBuffer(pointVertices);
+      pointColorsBuffer = PGL.allocateIntBuffer(pointColors);
+      pointAttribsBuffer = PGL.allocateFloatBuffer(pointAttribs);
+      pointIndicesBuffer = PGL.allocateShortBuffer(pointIndices);
+
       clear();
     }
 
@@ -9082,47 +9037,6 @@ public class PGraphicsOpenGL extends PGraphics {
       pointIndexCache.clear();
     }
 
-    void dipose() {
-      polyVerticesBuffer = null;
-      polyColorsBuffer = null;
-      polyNormalsBuffer = null;
-      polyTexcoordsBuffer = null;
-      polyAmbientBuffer = null;
-      polySpecularBuffer = null;
-      polyEmissiveBuffer = null;
-      polyShininessBuffer = null;
-      polyIndicesBuffer = null;
-
-      lineVerticesBuffer = null;
-      lineColorsBuffer = null;
-      lineAttribsBuffer = null;
-      lineIndicesBuffer = null;
-
-      pointVerticesBuffer = null;
-      pointColorsBuffer = null;
-      pointAttribsBuffer = null;
-      pointIndicesBuffer = null;
-
-      polyVertices = null;
-      polyColors = null;
-      polyNormals = null;
-      polyTexcoords = null;
-      polyAmbient = null;
-      polySpecular = null;
-      polyEmissive = null;
-      polyShininess = null;
-      polyIndices = null;
-
-      lineVertices = null;
-      lineColors = null;
-      lineAttribs = null;
-      lineIndices = null;
-
-      pointVertices = null;
-      pointColors = null;
-      pointAttribs = null;
-      pointIndices = null;
-    }
 
     void polyVertexCheck() {
       if (polyVertexCount == polyVertices.length / 4) {
@@ -9517,139 +9431,122 @@ public class PGraphicsOpenGL extends PGraphics {
     // Expand arrays
 
     void expandPolyVertices(int n) {
-      polyVerticesBuffer = PGL.allocateDirectFloatBuffer(4 * n);
-
       float temp[] = new float[4 * n];
       PApplet.arrayCopy(polyVertices, 0, temp, 0, 4 * polyVertexCount);
       polyVertices = temp;
+      polyVerticesBuffer = PGL.allocateFloatBuffer(polyVertices);
     }
 
     void expandPolyColors(int n) {
-      polyColorsBuffer = PGL.allocateDirectIntBuffer(n);
-
       int temp[] = new int[n];
       PApplet.arrayCopy(polyColors, 0, temp, 0, polyVertexCount);
       polyColors = temp;
+      polyColorsBuffer = PGL.allocateIntBuffer(polyColors);
     }
 
     void expandPolyNormals(int n) {
-      polyNormalsBuffer = PGL.allocateDirectFloatBuffer(3 * n);
-
       float temp[] = new float[3 * n];
       PApplet.arrayCopy(polyNormals, 0, temp, 0, 3 * polyVertexCount);
       polyNormals = temp;
+      polyNormalsBuffer = PGL.allocateFloatBuffer(polyNormals);
     }
 
     void expandPolyTexcoords(int n) {
-      polyTexcoordsBuffer = PGL.allocateDirectFloatBuffer(2 * n);
-
       float temp[] = new float[2 * n];
       PApplet.arrayCopy(polyTexcoords, 0, temp, 0, 2 * polyVertexCount);
       polyTexcoords = temp;
+      polyTexcoordsBuffer = PGL.allocateFloatBuffer(polyTexcoords);
     }
 
     void expandPolyAmbient(int n) {
-      polyAmbientBuffer = PGL.allocateDirectIntBuffer(n);
-
       int temp[] = new int[n];
       PApplet.arrayCopy(polyAmbient, 0, temp, 0, polyVertexCount);
       polyAmbient = temp;
+      polyAmbientBuffer = PGL.allocateIntBuffer(polyAmbient);
     }
 
     void expandPolySpecular(int n) {
-      polySpecularBuffer = PGL.allocateDirectIntBuffer(n);
-
       int temp[] = new int[n];
       PApplet.arrayCopy(polySpecular, 0, temp, 0, polyVertexCount);
       polySpecular = temp;
+      polySpecularBuffer = PGL.allocateIntBuffer(polySpecular);
     }
 
     void expandPolyEmissive(int n) {
-      polyEmissiveBuffer = PGL.allocateDirectIntBuffer(n);
-
       int temp[] = new int[n];
       PApplet.arrayCopy(polyEmissive, 0, temp, 0, polyVertexCount);
       polyEmissive = temp;
+      polyEmissiveBuffer = PGL.allocateIntBuffer(polyEmissive);
     }
 
     void expandPolyShininess(int n) {
-      polyShininessBuffer = PGL.allocateDirectFloatBuffer(n);
-
       float temp[] = new float[n];
       PApplet.arrayCopy(polyShininess, 0, temp, 0, polyVertexCount);
       polyShininess = temp;
+      polyShininessBuffer = PGL.allocateFloatBuffer(polyShininess);
     }
 
     void expandPolyIndices(int n) {
-      polyIndicesBuffer = PGL.allocateDirectShortBuffer(n);
-
       short temp[] = new short[n];
       PApplet.arrayCopy(polyIndices, 0, temp, 0, polyIndexCount);
       polyIndices = temp;
+      polyIndicesBuffer = PGL.allocateShortBuffer(polyIndices);
     }
 
     void expandLineVertices(int n) {
-      lineVerticesBuffer = PGL.allocateDirectFloatBuffer(4 * n);
-
       float temp[] = new float[4 * n];
       PApplet.arrayCopy(lineVertices, 0, temp, 0, 4 * lineVertexCount);
       lineVertices = temp;
+      lineVerticesBuffer = PGL.allocateFloatBuffer(lineVertices);
     }
 
     void expandLineColors(int n) {
-      lineColorsBuffer = PGL.allocateDirectIntBuffer(n);
-
       int temp[] = new int[n];
       PApplet.arrayCopy(lineColors, 0, temp, 0, lineVertexCount);
       lineColors = temp;
+      lineColorsBuffer = PGL.allocateIntBuffer(lineColors);
     }
 
     void expandLineAttribs(int n) {
-      lineAttribsBuffer = PGL.allocateDirectFloatBuffer(4 * n);
-
       float temp[] = new float[4 * n];
       PApplet.arrayCopy(lineAttribs, 0, temp, 0, 4 * lineVertexCount);
       lineAttribs = temp;
+      lineAttribsBuffer = PGL.allocateFloatBuffer(lineAttribs);
     }
 
     void expandLineIndices(int n) {
-      lineIndicesBuffer = PGL.allocateDirectShortBuffer(n);
-
       short temp[] = new short[n];
       PApplet.arrayCopy(lineIndices, 0, temp, 0, lineIndexCount);
       lineIndices = temp;
+      lineIndicesBuffer = PGL.allocateShortBuffer(lineIndices);
     }
 
     void expandPointVertices(int n) {
-      pointVerticesBuffer = PGL.allocateDirectFloatBuffer(4 * n);
-
       float temp[] = new float[4 * n];
       PApplet.arrayCopy(pointVertices, 0, temp, 0, 4 * pointVertexCount);
       pointVertices = temp;
+      pointVerticesBuffer = PGL.allocateFloatBuffer(pointVertices);
     }
 
     void expandPointColors(int n) {
-      pointColorsBuffer = PGL.allocateDirectIntBuffer(n);
-
       int temp[] = new int[n];
       PApplet.arrayCopy(pointColors, 0, temp, 0, pointVertexCount);
       pointColors = temp;
+      pointColorsBuffer = PGL.allocateIntBuffer(pointColors);
     }
 
     void expandPointAttribs(int n) {
-      pointAttribsBuffer = PGL.allocateDirectFloatBuffer(2 * n);
-
       float temp[] = new float[2 * n];
       PApplet.arrayCopy(pointAttribs, 0, temp, 0, 2 * pointVertexCount);
       pointAttribs = temp;
+      pointAttribsBuffer = PGL.allocateFloatBuffer(pointAttribs);
     }
 
     void expandPointIndices(int n) {
-      pointIndicesBuffer = PGL.allocateDirectShortBuffer(n);
-
       short temp[] = new short[n];
       PApplet.arrayCopy(pointIndices, 0, temp, 0, pointIndexCount);
       pointIndices = temp;
+      pointIndicesBuffer = PGL.allocateShortBuffer(pointIndices);
     }
 
     // -----------------------------------------------------------------
@@ -9694,139 +9591,122 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     void trimPolyVertices() {
-      polyVerticesBuffer = PGL.allocateDirectFloatBuffer(4 * polyVertexCount);
-
       float temp[] = new float[4 * polyVertexCount];
       PApplet.arrayCopy(polyVertices, 0, temp, 0, 4 * polyVertexCount);
       polyVertices = temp;
+      polyVerticesBuffer = PGL.allocateFloatBuffer(polyVertices);
     }
 
     void trimPolyColors() {
-      polyColorsBuffer = PGL.allocateDirectIntBuffer(polyVertexCount);
-
       int temp[] = new int[polyVertexCount];
       PApplet.arrayCopy(polyColors, 0, temp, 0, polyVertexCount);
       polyColors = temp;
+      polyColorsBuffer = PGL.allocateIntBuffer(polyColors);
     }
 
     void trimPolyNormals() {
-      polyNormalsBuffer = PGL.allocateDirectFloatBuffer(3 * polyVertexCount);
-
       float temp[] = new float[3 * polyVertexCount];
       PApplet.arrayCopy(polyNormals, 0, temp, 0, 3 * polyVertexCount);
       polyNormals = temp;
+      polyNormalsBuffer = PGL.allocateFloatBuffer(polyNormals);
     }
 
     void trimPolyTexcoords() {
-      polyTexcoordsBuffer = PGL.allocateDirectFloatBuffer(2 * polyVertexCount);
-
       float temp[] = new float[2 * polyVertexCount];
       PApplet.arrayCopy(polyTexcoords, 0, temp, 0, 2 * polyVertexCount);
       polyTexcoords = temp;
+      polyTexcoordsBuffer = PGL.allocateFloatBuffer(polyTexcoords);
     }
 
     void trimPolyAmbient() {
-      polyAmbientBuffer = PGL.allocateDirectIntBuffer(polyVertexCount);
-
       int temp[] = new int[polyVertexCount];
       PApplet.arrayCopy(polyAmbient, 0, temp, 0, polyVertexCount);
       polyAmbient = temp;
+      polyAmbientBuffer = PGL.allocateIntBuffer(polyAmbient);
     }
 
     void trimPolySpecular() {
-      polySpecularBuffer = PGL.allocateDirectIntBuffer(polyVertexCount);
-
       int temp[] = new int[polyVertexCount];
       PApplet.arrayCopy(polySpecular, 0, temp, 0, polyVertexCount);
       polySpecular = temp;
+      polySpecularBuffer = PGL.allocateIntBuffer(polySpecular);
     }
 
     void trimPolyEmissive() {
-      polyEmissiveBuffer = PGL.allocateDirectIntBuffer(polyVertexCount);
-
       int temp[] = new int[polyVertexCount];
       PApplet.arrayCopy(polyEmissive, 0, temp, 0, polyVertexCount);
       polyEmissive = temp;
+      polyEmissiveBuffer = PGL.allocateIntBuffer(polyEmissive);
     }
 
     void trimPolyShininess() {
-      polyShininessBuffer = PGL.allocateDirectFloatBuffer(polyVertexCount);
-
       float temp[] = new float[polyVertexCount];
       PApplet.arrayCopy(polyShininess, 0, temp, 0, polyVertexCount);
       polyShininess = temp;
+      polyShininessBuffer = PGL.allocateFloatBuffer(polyShininess);
     }
 
     void trimPolyIndices() {
-      polyIndicesBuffer = PGL.allocateDirectShortBuffer(polyIndexCount);
-
       short temp[] = new short[polyIndexCount];
       PApplet.arrayCopy(polyIndices, 0, temp, 0, polyIndexCount);
       polyIndices = temp;
+      polyIndicesBuffer = PGL.allocateShortBuffer(polyIndices);
     }
 
     void trimLineVertices() {
-      lineVerticesBuffer = PGL.allocateDirectFloatBuffer(4 * lineVertexCount);
-
       float temp[] = new float[4 * lineVertexCount];
       PApplet.arrayCopy(lineVertices, 0, temp, 0, 4 * lineVertexCount);
       lineVertices = temp;
+      lineVerticesBuffer = PGL.allocateFloatBuffer(lineVertices);
     }
 
     void trimLineColors() {
-      lineColorsBuffer = PGL.allocateDirectIntBuffer(lineVertexCount);
-
       int temp[] = new int[lineVertexCount];
       PApplet.arrayCopy(lineColors, 0, temp, 0, lineVertexCount);
       lineColors = temp;
+      lineColorsBuffer = PGL.allocateIntBuffer(lineColors);
     }
 
     void trimLineAttribs() {
-      lineAttribsBuffer = PGL.allocateDirectFloatBuffer(4 * lineVertexCount);
-
       float temp[] = new float[4 * lineVertexCount];
       PApplet.arrayCopy(lineAttribs, 0, temp, 0, 4 * lineVertexCount);
       lineAttribs = temp;
+      lineAttribsBuffer = PGL.allocateFloatBuffer(lineAttribs);
     }
 
     void trimLineIndices() {
-      lineIndicesBuffer = PGL.allocateDirectShortBuffer(lineIndexCount);
-
       short temp[] = new short[lineIndexCount];
       PApplet.arrayCopy(lineIndices, 0, temp, 0, lineIndexCount);
       lineIndices = temp;
+      lineIndicesBuffer = PGL.allocateShortBuffer(lineIndices);
     }
 
     void trimPointVertices() {
-      pointVerticesBuffer = PGL.allocateDirectFloatBuffer(4 * pointVertexCount);
-
       float temp[] = new float[4 * pointVertexCount];
       PApplet.arrayCopy(pointVertices, 0, temp, 0, 4 * pointVertexCount);
       pointVertices = temp;
+      pointVerticesBuffer = PGL.allocateFloatBuffer(pointVertices);
     }
 
     void trimPointColors() {
-      pointColorsBuffer = PGL.allocateDirectIntBuffer(pointVertexCount);
-
       int temp[] = new int[pointVertexCount];
       PApplet.arrayCopy(pointColors, 0, temp, 0, pointVertexCount);
       pointColors = temp;
+      pointColorsBuffer = PGL.allocateIntBuffer(pointColors);
     }
 
     void trimPointAttribs() {
-      pointAttribsBuffer = PGL.allocateDirectFloatBuffer(2 * pointVertexCount);
-
       float temp[] = new float[2 * pointVertexCount];
       PApplet.arrayCopy(pointAttribs, 0, temp, 0, 2 * pointVertexCount);
       pointAttribs = temp;
+      pointAttribsBuffer = PGL.allocateFloatBuffer(pointAttribs);
     }
 
     void trimPointIndices() {
-      pointIndicesBuffer = PGL.allocateDirectShortBuffer(pointIndexCount);
-
       short temp[] = new short[pointIndexCount];
       PApplet.arrayCopy(pointIndices, 0, temp, 0, pointIndexCount);
       pointIndices = temp;
+      pointIndicesBuffer = PGL.allocateShortBuffer(pointIndices);
     }
 
     // -----------------------------------------------------------------

@@ -543,26 +543,6 @@ public class PGraphicsOpenGL extends PGraphics {
     tessGeo = newTessGeometry(IMMEDIATE);
     texCache = newTexCache();
 
-    glPolyVertex = 0;
-    glPolyColor = 0;
-    glPolyNormal = 0;
-    glPolyTexcoord = 0;
-    glPolyAmbient = 0;
-    glPolySpecular = 0;
-    glPolyEmissive = 0;
-    glPolyShininess = 0;
-    glPolyIndex = 0;
-
-    glLineVertex = 0;
-    glLineColor = 0;
-    glLineAttrib = 0;
-    glLineIndex = 0;
-
-    glPointVertex = 0;
-    glPointColor = 0;
-    glPointAttrib = 0;
-    glPointIndex = 0;
-
     initialized = false;
   }
 
@@ -578,7 +558,6 @@ public class PGraphicsOpenGL extends PGraphics {
   public void setPrimary(boolean primary) {
     super.setPrimary(primary);
     format = ARGB;
-    pgPrimary = this;
   }
 
 
@@ -657,13 +636,11 @@ public class PGraphicsOpenGL extends PGraphics {
   @Override
   public void dispose() { // PGraphics
     super.dispose();
-
     deleteFinalizedGLResources();
     deletePolyBuffers();
     deleteLineBuffers();
     deletePointBuffers();
     deleteDefaultShaders();
-
     pgl.deleteSurface();
   }
 
@@ -1616,8 +1593,8 @@ public class PGraphicsOpenGL extends PGraphics {
       beginOffscreenDraw();
     }
     setDefaults();
-    pgCurrent = this;
 
+    pgCurrent = this;
     drawing = true;
 
     report("bot beginDraw()");
@@ -1661,9 +1638,7 @@ public class PGraphicsOpenGL extends PGraphics {
       // Done with an offscreen surface, going back to onscreen drawing.
       pgCurrent = pgPrimary;
     }
-
     drawing = false;
-    pgCurrent = null;
 
     report("bot endDraw()");
   }
@@ -5801,6 +5776,7 @@ public class PGraphicsOpenGL extends PGraphics {
       pgPrimary.removeCache(this);
       texture = ptexture = null;
     }
+    pgPrimary = this;
     initialized = true;
   }
 
