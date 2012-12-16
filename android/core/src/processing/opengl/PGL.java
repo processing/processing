@@ -2215,6 +2215,24 @@ public class PGL {
   }
 
 
+  protected static void getByteArray(ByteBuffer buf, byte[] arr) {
+    if (!buf.hasArray() || buf.array() != arr) {
+      buf.position(0);
+      buf.get(arr);
+      buf.rewind();
+    }
+  }
+
+
+  protected static void putByteArray(ByteBuffer buf, byte[] arr) {
+    if (!buf.hasArray() || buf.array() != arr) {
+      buf.position(0);
+      buf.put(arr);
+      buf.rewind();
+    }
+  }
+
+
   protected static void fillByteBuffer(ByteBuffer buf, int i0, int i1,
                                        byte val) {
     int n = i1 - i0;
@@ -2273,6 +2291,24 @@ public class PGL {
       }
     }
     return buf;
+  }
+
+
+  protected static void getShortArray(ShortBuffer buf, short[] arr) {
+    if (!buf.hasArray() || buf.array() != arr) {
+      buf.position(0);
+      buf.get(arr);
+      buf.rewind();
+    }
+  }
+
+
+  protected static void putShortArray(ShortBuffer buf, short[] arr) {
+    if (!buf.hasArray() || buf.array() != arr) {
+      buf.position(0);
+      buf.put(arr);
+      buf.rewind();
+    }
   }
 
 
@@ -2337,6 +2373,24 @@ public class PGL {
   }
 
 
+  protected static void getIntArray(IntBuffer buf, int[] arr) {
+    if (!buf.hasArray() || buf.array() != arr) {
+      buf.position(0);
+      buf.get(arr);
+      buf.rewind();
+    }
+  }
+
+
+  protected static void putIntArray(IntBuffer buf, int[] arr) {
+    if (!buf.hasArray() || buf.array() != arr) {
+      buf.position(0);
+      buf.put(arr);
+      buf.rewind();
+    }
+  }
+
+
   protected static void fillIntBuffer(IntBuffer buf, int i0, int i1, int val) {
     int n = i1 - i0;
     int[] temp = new int[n];
@@ -2397,6 +2451,24 @@ public class PGL {
   }
 
 
+  protected static void getFloatArray(FloatBuffer buf, float[] arr) {
+    if (!buf.hasArray() || buf.array() != arr) {
+      buf.position(0);
+      buf.get(arr);
+      buf.rewind();
+    }
+  }
+
+
+  protected static void putFloatArray(FloatBuffer buf, float[] arr) {
+    if (!buf.hasArray() || buf.array() != arr) {
+      buf.position(0);
+      buf.put(arr);
+      buf.rewind();
+    }
+  }
+
+
   protected static void fillFloatBuffer(FloatBuffer buf, int i0, int i1,
                                         float val) {
     int n = i1 - i0;
@@ -2405,24 +2477,6 @@ public class PGL {
     buf.position(i0);
     buf.put(temp, 0, n);
     buf.rewind();
-  }
-
-
-  protected static void getPixels(IntBuffer buf, int[] arr) {
-    if (USE_DIRECT_BUFFERS) {
-      buf.position(0);
-      buf.get(arr);
-      buf.rewind();
-    }
-  }
-
-
-  protected static void putPixels(IntBuffer buf, int[] arr) {
-    if (USE_DIRECT_BUFFERS) {
-      buf.position(0);
-      buf.put(arr);
-      buf.rewind();
-    }
   }
 
 
