@@ -103,7 +103,7 @@ public class PShader {
     firstTexUnit = 0;
 
     intBuffer = PGL.allocateIntBuffer(1);
-    floatBuffer = PGL.allocateDirectFloatBuffer(1);
+    floatBuffer = PGL.allocateFloatBuffer(1);
 
     bound = false;
   }

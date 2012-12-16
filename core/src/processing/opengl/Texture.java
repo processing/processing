@@ -93,6 +93,7 @@ public class Texture implements PConstants {
   protected boolean invertedX;
   protected boolean invertedY;
 
+  protected int[] rgbaPixels = null;
   protected IntBuffer pixelBuffer = null;
   protected FrameBuffer tempFbo = null;
 
@@ -211,6 +212,37 @@ public class Texture implements PConstants {
   }
 
 
+  /**
+   * Initializes the texture using GL parameters
+   */
+  public void init(int width, int height,
+                   int glName, int glTarget, int glFormat,
+                   int glWidth, int glHeight,
+                   int glMinFilter, int glMagFilter,
+                   int glWrapS, int glWrapT) {
+    this.width = width;
+    this.height = height;
+
+    this.glName = glName;
+    this.glTarget = glTarget;
+    this.glFormat = glFormat;
+    this.glWidth = glWidth;
+    this.glHeight = glHeight;
+    this.glMinFilter = glMinFilter;
+    this.glMagFilter = glMagFilter;
+    this.glWrapS = glWrapS;
+    this.glWrapT = glWrapT;
+
+    maxTexcoordU = (float)width / glWidth;
+    maxTexcoordV = (float)height / glHeight;
+
+    usingMipmaps = glMinFilter == PGL.LINEAR_MIPMAP_NEAREST ||
+                   glMinFilter == PGL.LINEAR_MIPMAP_LINEAR;
+
+    usingRepeat = glWrapS == PGL.REPEAT || glWrapT == PGL.REPEAT;
+  }
+
+
   public void resize(int wide, int high) {
     // Marking the texture object as finalized so it is deleted
     // when creating the new texture.
@@ -239,31 +271,6 @@ public class Texture implements PConstants {
     return 0 < glName;
   }
 
-  /**
-   * Initializes the texture using GL parameters
-   */
-  public void init(int glName, int glTarget, int glFormat, int glWidth, int glHeight,
-                   int glMinFilter, int glMagFilter, int glWrapS, int glWrapT) {
-    this.glName = glName;
-    this.glTarget = glTarget;
-    this.glFormat = glFormat;
-    this.glWidth = glWidth;
-    this.glHeight = glHeight;
-    this.glMinFilter = glMinFilter;
-    this.glMagFilter = glMagFilter;
-    this.glWrapS = glWrapS;
-    this.glWrapT = glWrapT;
-
-    width = glWidth;
-    height = glHeight;
-    maxTexcoordU = 1;
-    maxTexcoordV = 1;
-
-    usingMipmaps = glMinFilter == PGL.LINEAR_MIPMAP_NEAREST ||
-                   glMinFilter == PGL.LINEAR_MIPMAP_LINEAR;
-
-    usingRepeat = glWrapS == PGL.REPEAT || glWrapT == PGL.REPEAT;
-  }
 
   ////////////////////////////////////////////////////////////
 
@@ -347,13 +354,12 @@ public class Texture implements PConstants {
     if (usingMipmaps) {
       if (PGraphicsOpenGL.autoMipmapGenSupported) {
         // Automatic mipmap generation.
-        int[] rgbaPixels = new int[w * h];
+        loadPixels(w * h);
         convertToRGBA(pixels, rgbaPixels, format, w, h);
         updatePixelBuffer(rgbaPixels);
         pgl.texSubImage2D(glTarget, 0, x, y, w, h, PGL.RGBA, PGL.UNSIGNED_BYTE,
                           pixelBuffer);
         pgl.generateMipmap(glTarget);
-        rgbaPixels = null;
       } else {
         // TODO: finish manual mipmap generation, replacing Bitmap with AWT's BufferedImage,
         // making it work in npot textures (embed npot tex into larger pot tex?), subregions,
@@ -409,20 +415,18 @@ public class Texture implements PConstants {
         }
       */
 
-        int[] rgbaPixels = new int[w * h];
+        loadPixels(w * h);
         convertToRGBA(pixels, rgbaPixels, format, w, h);
         updatePixelBuffer(rgbaPixels);
         pgl.texSubImage2D(glTarget, 0, x, y, w, h, PGL.RGBA, PGL.UNSIGNED_BYTE,
                           pixelBuffer);
-        rgbaPixels = null;
       }
     } else {
-      int[] rgbaPixels = new int[w * h];
+      loadPixels(w * h);
       convertToRGBA(pixels, rgbaPixels, format, w, h);
       updatePixelBuffer(rgbaPixels);
       pgl.texSubImage2D(glTarget, 0, x, y, w, h, PGL.RGBA, PGL.UNSIGNED_BYTE,
                         pixelBuffer);
-      rgbaPixels = null;
     }
 
     pgl.bindTexture(glTarget, 0);
@@ -844,13 +848,15 @@ public class Texture implements PConstants {
   }
 
 
-  protected void updatePixelBuffer(int[] pixels) {
-    if (pixelBuffer == null || pixelBuffer.capacity() < pixels.length) {
-      pixelBuffer = PGL.allocateDirectIntBuffer(pixels.length);
+  protected void loadPixels(int len) {
+    if (rgbaPixels == null || rgbaPixels.length < len) {
+      rgbaPixels = new int[len];
     }
-    pixelBuffer.position(0);
-    pixelBuffer.put(pixels);
-    pixelBuffer.rewind();
+  }
+
+
+  protected void updatePixelBuffer(int[] pixels) {
+    pixelBuffer = PGL.updateIntBuffer(pixelBuffer, pixels, true);
   }
 
   ////////////////////////////////////////////////////////////

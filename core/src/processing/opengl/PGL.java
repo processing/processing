@@ -73,6 +73,10 @@ import com.jogamp.opengl.util.AnimatorBase;
  */
 @SuppressWarnings("static-access")
 public class PGL {
+  public static final boolean USE_DIRECT_BUFFERS = true;
+  public static final int MIN_DIRECT_BUFFER_SIZE = 1;
+  public static final boolean SAVE_SURFACE_TO_PIXELS = true;
+
   // The two windowing toolkits available to use in JOGL:
   protected static final int AWT  = 0; // http://jogamp.org/wiki/index.php/Using_JOGL_in_AWT_SWT_and_Swing
   protected static final int NEWT = 1; // http://jogamp.org/jogl/doc/NEWT-Overview.html
@@ -358,9 +362,6 @@ public class PGL {
   /** The PGraphics object using this interface */
   protected PGraphicsOpenGL pg;
 
-  /** Whether OpenGL has been initialized or not */
-  protected boolean initialized;
-
   /** Flag to signal rendering of first frame */
   protected boolean firstFrame;
 
@@ -509,13 +510,9 @@ public class PGL {
     if (glu == null) {
       glu = new GLU();
     }
-    if (byteBuffer == null) {
-      byteBuffer = allocateDirectByteBuffer(1);
-    }
-    if (intBuffer == null) {
-      intBuffer = allocateDirectIntBuffer(1);
-    }
-    initialized = false;
+
+    byteBuffer = allocateByteBuffer(1);
+    intBuffer = allocateIntBuffer(1);
   }
 
 
@@ -534,7 +531,7 @@ public class PGL {
         // Enabling/disabling v-sync, we force a
         // surface reinitialization to avoid screen
         // no-paint issue observed on MacOSX.
-        initialized = false;
+        pg.initialized = false;
       }
       targetFramerate = framerate;
       setFramerate = true;
@@ -638,7 +635,21 @@ public class PGL {
     }
 
     firstFrame = true;
-    initialized = true;
+  }
+
+
+  protected void deleteSurface() {
+    /*
+    if (glColorTex != null) {
+      deleteTextures(2, glColorTex);
+      deleteFramebuffers(1, glColorFbo);
+      deleteRenderbuffers(1, glDepthStencil);
+      deleteRenderbuffers(1, glDepth);
+      deleteRenderbuffers(1, glStencil);
+    }
+    fboLayerCreated = false;
+    glInitialized = false;
+    */
   }
 
 
@@ -709,10 +720,24 @@ public class PGL {
   }
 
 
+  protected boolean getDepthTest() {
+    intBuffer.rewind();
+    getBooleanv(DEPTH_TEST, intBuffer);
+    return intBuffer.get(0) == 0 ? false : true;
+  }
+
+
+  protected boolean getDepthWriteMask() {
+    intBuffer.rewind();
+    getBooleanv(DEPTH_WRITEMASK, intBuffer);
+    return intBuffer.get(0) == 0 ? false : true;
+  }
+
+
   protected Texture wrapBackTexture() {
     Texture tex = new Texture(pg.parent);
-    tex.init(backTex.getName(),
-             GL.GL_TEXTURE_2D, GL.GL_RGBA,
+    tex.init(pg.width, pg.height,
+             backTex.getName(), GL.GL_TEXTURE_2D, GL.GL_RGBA,
              backTex.getWidth(), backTex.getHeight(),
              backTex.minFilter, backTex.magFilter,
              backTex.wrapS, backTex.wrapT);
@@ -725,8 +750,8 @@ public class PGL {
 
   protected Texture wrapFrontTexture() {
     Texture tex = new Texture(pg.parent);
-    tex.init(backTex.getName(),
-             GL.GL_TEXTURE_2D, GL.GL_RGBA,
+    tex.init(pg.width, pg.height,
+             backTex.getName(), GL.GL_TEXTURE_2D, GL.GL_RGBA,
              frontTex.getWidth(), frontTex.getHeight(),
              frontTex.minFilter, frontTex.magFilter,
              frontTex.wrapS, frontTex.wrapT);
@@ -813,12 +838,12 @@ public class PGL {
 
 
   protected boolean canDraw() {
-    return initialized && pg.parent.isDisplayable();
+    return pg.initialized && pg.parent.isDisplayable();
   }
 
 
   protected void requestDraw() {
-    if (initialized) {
+    if (pg.initialized) {
       try {
         if (useAnimator) {
           animator.requestDisplay();
@@ -842,6 +867,12 @@ public class PGL {
   }
 
 
+  protected static boolean glThreadIsCurrent() {
+    return Thread.currentThread() == glThread;
+  }
+
+
+
   //////////////////////////////////////////////////////////////////////////////
 
   // Caps query
@@ -852,45 +883,22 @@ public class PGL {
   }
 
 
-//  public void getIntegerv(int name, int[] values, int offset) {
-//    gl.glGetIntegerv(name, values, offset);
-//  }
-
-
   public void getIntegerv(int name, IntBuffer values) {
     if (-1 < name) {
       gl.glGetIntegerv(name, values);
     } else {
-      fillBuffer(values, 0, values.capacity() - 1, 0);
+      fillIntBuffer(values, 0, values.capacity() - 1, 0);
     }
   }
-
-
-//  public void getFloatv(int name, float[] values, int offset) {
-//    gl.glGetFloatv(name, values, offset);
-//  }
 
 
   public void getFloatv(int name, FloatBuffer values) {
     if (-1 < name) {
       gl.glGetFloatv(name, values);
     } else {
-      fillBuffer(values, 0, values.capacity() - 1, 0);
+      fillFloatBuffer(values, 0, values.capacity() - 1, 0);
     }
   }
-
-
-//  public void getBooleanv(int name, boolean[] values, int offset) {
-//    if (-1 < name) {
-//      byte[] bvalues = new byte[values.length];
-//      gl.glGetBooleanv(name, bvalues, offset);
-//      for (int i = 0; i < values.length; i++) {
-//        values[i] = bvalues[i] != 0;
-//      }
-//    } else {
-//      Arrays.fill(values, false);
-//    }
-//  }
 
 
   public void getBooleanv(int name, IntBuffer values) {
@@ -903,7 +911,7 @@ public class PGL {
         values.put(i, byteBuffer.get(i));
       }
     } else {
-      fillBuffer(values, 0, values.capacity() - 1, 0);
+      fillIntBuffer(values, 0, values.capacity() - 1, 0);
     }
   }
 
@@ -987,19 +995,9 @@ public class PGL {
   // Textures
 
 
-//  public void genTextures(int n, int[] ids, int offset) {
-//    gl.glGenTextures(n, ids, offset);
-//  }
-
-
   public void genTextures(int n, IntBuffer ids) {
     gl.glGenTextures(n, ids);
   }
-
-
-//  public void deleteTextures(int n, int[] ids, int offset) {
-//    gl.glDeleteTextures(n, ids, offset);
-//  }
 
 
   public void deleteTextures(int n, IntBuffer ids) {
@@ -1048,12 +1046,6 @@ public class PGL {
   }
 
 
-//  public void getTexParameteriv(int target, int param, int[] values,
-//                                int offset) {
-//    gl.glGetTexParameteriv(target, param, values, offset);
-//  }
-
-
   public void getTexParameteriv(int target, int param, IntBuffer values) {
     gl.glGetTexParameteriv(target, param, values);
   }
@@ -1069,19 +1061,9 @@ public class PGL {
   // Vertex Buffers
 
 
-//  public void genBuffers(int n, int[] ids, int offset) {
-//    gl.glGenBuffers(n, ids, offset);
-//  }
-
-
   public void genBuffers(int n, IntBuffer ids) {
     gl.glGenBuffers(n, ids);
   }
-
-
-//  public void deleteBuffers(int n, int[] ids, int offset) {
-//    gl.glDeleteBuffers(n, ids, offset);
-//  }
 
 
   public void deleteBuffers(int n, IntBuffer ids) {
@@ -1161,19 +1143,9 @@ public class PGL {
   // Framebuffers, renderbuffers
 
 
-//  public void genFramebuffers(int n, int[] ids, int offset) {
-//    gl.glGenFramebuffers(n, ids, offset);
-//  }
-
-
   public void genFramebuffers(int n, IntBuffer ids) {
     gl.glGenFramebuffers(n, ids);
   }
-
-
-//  public void deleteFramebuffers(int n, int[] ids, int offset) {
-//    gl.glDeleteFramebuffers(n, ids, offset);
-//  }
 
 
   public void deleteFramebuffers(int n, IntBuffer ids) {
@@ -1181,19 +1153,9 @@ public class PGL {
   }
 
 
-//  public void genRenderbuffers(int n, int[] ids, int offset) {
-//    gl.glGenRenderbuffers(n, ids, offset);
-//  }
-
-
   public void genRenderbuffers(int n, IntBuffer ids) {
     gl.glGenRenderbuffers(n, ids);
   }
-
-
-//  public void deleteRenderbuffers(int n, int[] ids, int offset) {
-//    gl.glDeleteRenderbuffers(n, ids, offset);
-//  }
 
 
   public void deleteRenderbuffers(int n, IntBuffer ids) {
@@ -1345,19 +1307,9 @@ public class PGL {
   }
 
 
-//  public void uniform1iv(int loc, int count, int[] v, int offset) {
-//    gl2.glUniform1iv(loc, count, v, offset);
-//  }
-
-
   public void uniform1iv(int loc, int count, IntBuffer v) {
     gl2.glUniform1iv(loc, count, v);
   }
-
-
-//  public void uniform2iv(int loc, int count, int[] v, int offset) {
-//    gl2.glUniform2iv(loc, count, v, offset);
-//  }
 
 
   public void uniform2iv(int loc, int count, IntBuffer v) {
@@ -1365,19 +1317,9 @@ public class PGL {
   }
 
 
-//  public void uniform3iv(int loc, int count, int[] v, int offset) {
-//    gl2.glUniform3iv(loc, count, v, offset);
-//  }
-
-
   public void uniform3iv(int loc, int count, IntBuffer v) {
     gl2.glUniform3iv(loc, count, v);
   }
-
-
-//  public void uniform4iv(int loc, int count, int[] v, int offset) {
-//    gl2.glUniform4iv(loc, count, v, offset);
-//  }
 
 
   public void uniform4iv(int loc, int count, IntBuffer v) {
@@ -1385,19 +1327,9 @@ public class PGL {
   }
 
 
-//  public void uniform1fv(int loc, int count, float[] v, int offset) {
-//    gl2.glUniform1fv(loc, count, v, offset);
-//  }
-
-
   public void uniform1fv(int loc, int count, FloatBuffer v) {
     gl2.glUniform1fv(loc, count, v);
   }
-
-
-//  public void uniform2fv(int loc, int count, float[] v, int offset) {
-//    gl2.glUniform2fv(loc, count, v, offset);
-//  }
 
 
   public void uniform2fv(int loc, int count, FloatBuffer v) {
@@ -1405,30 +1337,14 @@ public class PGL {
   }
 
 
-//  public void uniform3fv(int loc, int count, float[] v, int offset) {
-//    gl2.glUniform3fv(loc, count, v, offset);
-//  }
-
-
   public void uniform3fv(int loc, int count, FloatBuffer v) {
     gl2.glUniform3fv(loc, count, v);
   }
 
 
-//  public void uniform4fv(int loc, int count, float[] v, int offset) {
-//    gl2.glUniform4fv(loc, count, v, offset);
-//  }
-
-
   public void uniform4fv(int loc, int count, FloatBuffer v) {
     gl2.glUniform4fv(loc, count, v);
   }
-
-
-//  public void uniformMatrix2fv(int loc, int count, boolean transpose,
-//                               float[] mat, int offset) {
-//    gl2.glUniformMatrix2fv(loc, count, transpose, mat, offset);
-//  }
 
 
   public void uniformMatrix2fv(int loc, int count, boolean transpose,
@@ -1437,22 +1353,10 @@ public class PGL {
   }
 
 
-//  public void uniformMatrix3fv(int loc, int count, boolean transpose,
-//                               float[] mat, int offset) {
-//    gl2.glUniformMatrix3fv(loc, count, transpose, mat, offset);
-//  }
-
-
   public void uniformMatrix3fv(int loc, int count, boolean transpose,
                                FloatBuffer mat) {
     gl2.glUniformMatrix3fv(loc, count, transpose, mat);
   }
-
-
-//  public void uniformMatrix4fv(int loc, int count, boolean transpose,
-//                               float[] mat, int offset) {
-//    gl2.glUniformMatrix4fv(loc, count, transpose, mat, offset);
-//  }
 
 
   public void uniformMatrix4fv(int loc, int count, boolean transpose,
@@ -1482,19 +1386,9 @@ public class PGL {
   }
 
 
-//  public void vertexAttrib1fv(int loc, float[] v, int offset) {
-//    gl2.glVertexAttrib1fv(loc, v, offset);
-//  }
-
-
   public void vertexAttrib1fv(int loc, FloatBuffer v) {
     gl2.glVertexAttrib1fv(loc, v);
   }
-
-
-//  public void vertexAttrib2fv(int loc, float[] v, int offset) {
-//    gl2.glVertexAttrib2fv(loc, v, offset);
-//  }
 
 
   public void vertexAttrib2fv(int loc, FloatBuffer v) {
@@ -1502,19 +1396,9 @@ public class PGL {
   }
 
 
-//  public void vertexAttrib3fv(int loc, float[] v, int offset) {
-//    gl2.glVertexAttrib3fv(loc, v, offset);
-//  }
-
-
   public void vertexAttrib3fv(int loc, FloatBuffer v) {
     gl2.glVertexAttrib3fv(loc, v);
   }
-
-
-//  public void vertexAttrib4fv(int loc, float[] v, int offset) {
-//    gl2.glVertexAttrib4fv(loc, v, offset);
-//  }
 
 
   public void vertexAttri4fv(int loc, FloatBuffer v) {
@@ -1537,11 +1421,6 @@ public class PGL {
   }
 
 
-//  public void getShaderiv(int shader, int pname, int[] params, int offset) {
-//    gl2.glGetShaderiv(shader, pname, params, offset);
-//  }
-
-
   public void getShaderiv(int shader, int pname, IntBuffer params) {
     gl2.glGetShaderiv(shader, pname, params);
   }
@@ -1556,11 +1435,6 @@ public class PGL {
     gl2.glGetShaderInfoLog(shader, length, val, 0, log, 0);
     return new String(log);
   }
-
-
-//  public void getProgramiv(int prog, int pname, int[] params, int offset) {
-//    gl2.glGetProgramiv(prog, pname, params, offset);
-//  }
 
 
   public void getProgramiv(int prog, int pname, IntBuffer params) {
@@ -1938,16 +1812,14 @@ public class PGL {
 
     if (0 < tex2DShaderProgram) {
       // The texture overwrites anything drawn earlier.
-      getBooleanv(DEPTH_TEST, intBuffer);
-      boolean depthTest = intBuffer.get(0) == 0 ? false : true;
+      boolean depthTest = getDepthTest();
       disable(DEPTH_TEST);
 
       // When drawing the texture we don't write to the
       // depth mask, so the texture remains in the background
       // and can be occluded by anything drawn later, even if
       // if it is behind it.
-      getBooleanv(DEPTH_WRITEMASK, intBuffer);
-      boolean depthMask = intBuffer.get(0) == 0 ? false : true;
+      boolean depthMask = getDepthWriteMask();
       depthMask(false);
 
       useProgram(tex2DShaderProgram);
@@ -2045,16 +1917,14 @@ public class PGL {
 
     if (0 < texRectShaderProgram) {
       // The texture overwrites anything drawn earlier.
-      getBooleanv(DEPTH_TEST, intBuffer);
-      boolean depthTest = intBuffer.get(0) == 0 ? false : true;
+      boolean depthTest = getDepthTest();
       disable(DEPTH_TEST);
 
       // When drawing the texture we don't write to the
       // depth mask, so the texture remains in the background
       // and can be occluded by anything drawn later, even if
       // if it is behind it.
-      getBooleanv(DEPTH_WRITEMASK, intBuffer);
-      boolean depthMask = intBuffer.get(0) == 0 ? false : true;
+      boolean depthMask = getDepthWriteMask();
       depthMask(false);
 
       useProgram(texRectShaderProgram);
@@ -2471,9 +2341,7 @@ public class PGL {
     if (shader != 0) {
       shaderSource(shader, source);
       compileShader(shader);
-      getShaderiv(shader, COMPILE_STATUS, intBuffer);
-      boolean compiled = intBuffer.get(0) == 0 ? false : true;
-      if (!compiled) {
+      if (!compiled(shader)) {
         System.err.println("Could not compile shader " + shaderType + ":");
         System.err.println(getShaderInfoLog(shader));
         deleteShader(shader);
@@ -2490,9 +2358,7 @@ public class PGL {
       attachShader(program, vertexShader);
       attachShader(program, fragmentShader);
       linkProgram(program);
-      getProgramiv(program, LINK_STATUS, intBuffer);
-      boolean linked = intBuffer.get(0) == 0 ? false : true;
-      if (!linked) {
+      if (!linked(program)) {
         System.err.println("Could not link program: ");
         System.err.println(getProgramInfoLog(program));
         deleteProgram(program);
@@ -2500,6 +2366,20 @@ public class PGL {
       }
     }
     return program;
+  }
+
+
+  protected boolean compiled(int shader) {
+    intBuffer.rewind();
+    getShaderiv(shader, COMPILE_STATUS, intBuffer);
+    return intBuffer.get(0) == 0 ? false : true;
+  }
+
+
+  protected boolean linked(int program) {
+    intBuffer.rewind();
+    getProgramiv(program, LINK_STATUS, intBuffer);
+    return intBuffer.get(0) == 0 ? false : true;
   }
 
 
@@ -2559,30 +2439,74 @@ public class PGL {
 
 
   protected static ByteBuffer allocateDirectByteBuffer(int size) {
-    return ByteBuffer.allocateDirect(size * SIZEOF_BYTE).
-           order(ByteOrder.nativeOrder());
+    int bytes = PApplet.max(MIN_DIRECT_BUFFER_SIZE, size) * SIZEOF_BYTE;
+    return ByteBuffer.allocateDirect(bytes).order(ByteOrder.nativeOrder());
   }
 
 
-  protected static ShortBuffer allocateDirectShortBuffer(int size) {
-    return ByteBuffer.allocateDirect(size * SIZEOF_SHORT).
-           order(ByteOrder.nativeOrder()).asShortBuffer();
+  protected static ByteBuffer allocateByteBuffer(int size) {
+    if (USE_DIRECT_BUFFERS) {
+      return allocateDirectByteBuffer(size);
+    } else {
+      return ByteBuffer.allocate(size);
+    }
   }
 
 
-  protected static IntBuffer allocateDirectIntBuffer(int size) {
-    return ByteBuffer.allocateDirect(size * SIZEOF_INT).
-           order(ByteOrder.nativeOrder()).asIntBuffer();
+  protected static ByteBuffer allocateByteBuffer(byte[] arr) {
+    if (USE_DIRECT_BUFFERS) {
+      return PGL.allocateDirectByteBuffer(arr.length);
+    } else {
+      return ByteBuffer.wrap(arr);
+    }
   }
 
 
-  protected static FloatBuffer allocateDirectFloatBuffer(int size) {
-    return ByteBuffer.allocateDirect(size * SIZEOF_FLOAT).
-           order(ByteOrder.nativeOrder()).asFloatBuffer();
+  protected static ByteBuffer updateByteBuffer(ByteBuffer buf, byte[] arr,
+                                               boolean wrap) {
+    if (USE_DIRECT_BUFFERS) {
+      if (buf == null || buf.capacity() < arr.length) {
+        buf = PGL.allocateDirectByteBuffer(arr.length);
+      }
+      buf.position(0);
+      buf.put(arr);
+      buf.rewind();
+    } else {
+      if (wrap) {
+        buf = ByteBuffer.wrap(arr);
+      } else {
+        if (buf == null || buf.capacity() < arr.length) {
+          buf = ByteBuffer.allocate(arr.length);
+        }
+        buf.position(0);
+        buf.put(arr);
+        buf.rewind();
+      }
+    }
+    return buf;
   }
 
 
-  protected static void fillBuffer(ByteBuffer buf, int i0, int i1, byte val) {
+  protected static void getByteArray(ByteBuffer buf, byte[] arr) {
+    if (!buf.hasArray() || buf.array() != arr) {
+      buf.position(0);
+      buf.get(arr);
+      buf.rewind();
+    }
+  }
+
+
+  protected static void putByteArray(ByteBuffer buf, byte[] arr) {
+    if (!buf.hasArray() || buf.array() != arr) {
+      buf.position(0);
+      buf.put(arr);
+      buf.rewind();
+    }
+  }
+
+
+  protected static void fillByteBuffer(ByteBuffer buf, int i0, int i1,
+                                       byte val) {
     int n = i1 - i0;
     byte[] temp = new byte[n];
     Arrays.fill(temp, 0, n, val);
@@ -2592,7 +2516,76 @@ public class PGL {
   }
 
 
-  protected static void fillBuffer(ShortBuffer buf, int i0, int i1, short val) {
+  protected static ShortBuffer allocateDirectShortBuffer(int size) {
+    int bytes = PApplet.max(MIN_DIRECT_BUFFER_SIZE, size) * SIZEOF_SHORT;
+    return ByteBuffer.allocateDirect(bytes).order(ByteOrder.nativeOrder()).
+           asShortBuffer();
+  }
+
+
+  protected static ShortBuffer allocateShortBuffer(int size) {
+    if (USE_DIRECT_BUFFERS) {
+      return allocateDirectShortBuffer(size);
+    } else {
+      return ShortBuffer.allocate(size);
+    }
+  }
+
+
+  protected static ShortBuffer allocateShortBuffer(short[] arr) {
+    if (USE_DIRECT_BUFFERS) {
+      return PGL.allocateDirectShortBuffer(arr.length);
+    } else {
+      return ShortBuffer.wrap(arr);
+    }
+  }
+
+
+  protected static ShortBuffer updateShortBuffer(ShortBuffer buf, short[] arr,
+                                                 boolean wrap) {
+    if (USE_DIRECT_BUFFERS) {
+      if (buf == null || buf.capacity() < arr.length) {
+        buf = PGL.allocateDirectShortBuffer(arr.length);
+      }
+      buf.position(0);
+      buf.put(arr);
+      buf.rewind();
+    } else {
+      if (wrap) {
+        buf = ShortBuffer.wrap(arr);
+      } else {
+        if (buf == null || buf.capacity() < arr.length) {
+          buf = ShortBuffer.allocate(arr.length);
+        }
+        buf.position(0);
+        buf.put(arr);
+        buf.rewind();
+      }
+    }
+    return buf;
+  }
+
+
+  protected static void getShortArray(ShortBuffer buf, short[] arr) {
+    if (!buf.hasArray() || buf.array() != arr) {
+      buf.position(0);
+      buf.get(arr);
+      buf.rewind();
+    }
+  }
+
+
+  protected static void putShortArray(ShortBuffer buf, short[] arr) {
+    if (!buf.hasArray() || buf.array() != arr) {
+      buf.position(0);
+      buf.put(arr);
+      buf.rewind();
+    }
+  }
+
+
+  protected static void fillShortBuffer(ShortBuffer buf, int i0, int i1,
+                                        short val) {
     int n = i1 - i0;
     short[] temp = new short[n];
     Arrays.fill(temp, 0, n, val);
@@ -2602,7 +2595,75 @@ public class PGL {
   }
 
 
-  protected static void fillBuffer(IntBuffer buf, int i0, int i1, int val) {
+  protected static IntBuffer allocateDirectIntBuffer(int size) {
+    int bytes = PApplet.max(MIN_DIRECT_BUFFER_SIZE, size) * SIZEOF_INT;
+    return ByteBuffer.allocateDirect(bytes).order(ByteOrder.nativeOrder()).
+           asIntBuffer();
+  }
+
+
+  protected static IntBuffer allocateIntBuffer(int size) {
+    if (USE_DIRECT_BUFFERS) {
+      return allocateDirectIntBuffer(size);
+    } else {
+      return IntBuffer.allocate(size);
+    }
+  }
+
+
+  protected static IntBuffer allocateIntBuffer(int[] arr) {
+    if (USE_DIRECT_BUFFERS) {
+      return PGL.allocateDirectIntBuffer(arr.length);
+    } else {
+      return IntBuffer.wrap(arr);
+    }
+  }
+
+
+  protected static IntBuffer updateIntBuffer(IntBuffer buf, int[] arr,
+                                             boolean wrap) {
+    if (USE_DIRECT_BUFFERS) {
+      if (buf == null || buf.capacity() < arr.length) {
+        buf = PGL.allocateDirectIntBuffer(arr.length);
+      }
+      buf.position(0);
+      buf.put(arr);
+      buf.rewind();
+    } else {
+      if (wrap) {
+        buf = IntBuffer.wrap(arr);
+      } else {
+        if (buf == null || buf.capacity() < arr.length) {
+          buf = IntBuffer.allocate(arr.length);
+        }
+        buf.position(0);
+        buf.put(arr);
+        buf.rewind();
+      }
+    }
+    return buf;
+  }
+
+
+  protected static void getIntArray(IntBuffer buf, int[] arr) {
+    if (!buf.hasArray() || buf.array() != arr) {
+      buf.position(0);
+      buf.get(arr);
+      buf.rewind();
+    }
+  }
+
+
+  protected static void putIntArray(IntBuffer buf, int[] arr) {
+    if (!buf.hasArray() || buf.array() != arr) {
+      buf.position(0);
+      buf.put(arr);
+      buf.rewind();
+    }
+  }
+
+
+  protected static void fillIntBuffer(IntBuffer buf, int i0, int i1, int val) {
     int n = i1 - i0;
     int[] temp = new int[n];
     Arrays.fill(temp, 0, n, val);
@@ -2612,18 +2673,82 @@ public class PGL {
   }
 
 
-  protected static void fillBuffer(FloatBuffer buf, int i0, int i1, float val) {
+  protected static FloatBuffer allocateDirectFloatBuffer(int size) {
+    int bytes = PApplet.max(MIN_DIRECT_BUFFER_SIZE, size) * SIZEOF_FLOAT;
+    return ByteBuffer.allocateDirect(bytes).order(ByteOrder.nativeOrder()).
+           asFloatBuffer();
+  }
+
+
+  protected static FloatBuffer allocateFloatBuffer(int size) {
+    if (USE_DIRECT_BUFFERS) {
+      return allocateDirectFloatBuffer(size);
+    } else {
+      return FloatBuffer.allocate(size);
+    }
+  }
+
+
+  protected static FloatBuffer allocateFloatBuffer(float[] arr) {
+    if (USE_DIRECT_BUFFERS) {
+      return PGL.allocateDirectFloatBuffer(arr.length);
+    } else {
+      return FloatBuffer.wrap(arr);
+    }
+  }
+
+
+  protected static FloatBuffer updateFloatBuffer(FloatBuffer buf, float[] arr,
+                                                 boolean wrap) {
+    if (USE_DIRECT_BUFFERS) {
+      if (buf == null || buf.capacity() < arr.length) {
+        buf = PGL.allocateDirectFloatBuffer(arr.length);
+      }
+      buf.position(0);
+      buf.put(arr);
+      buf.rewind();
+    } else {
+      if (wrap) {
+        buf = FloatBuffer.wrap(arr);
+      } else {
+        if (buf == null || buf.capacity() < arr.length) {
+          buf = FloatBuffer.allocate(arr.length);
+        }
+        buf.position(0);
+        buf.put(arr);
+        buf.rewind();
+      }
+    }
+    return buf;
+  }
+
+
+  protected static void getFloatArray(FloatBuffer buf, float[] arr) {
+    if (!buf.hasArray() || buf.array() != arr) {
+      buf.position(0);
+      buf.get(arr);
+      buf.rewind();
+    }
+  }
+
+
+  protected static void putFloatArray(FloatBuffer buf, float[] arr) {
+    if (!buf.hasArray() || buf.array() != arr) {
+      buf.position(0);
+      buf.put(arr);
+      buf.rewind();
+    }
+  }
+
+
+  protected static void fillFloatBuffer(FloatBuffer buf, int i0, int i1,
+                                        float val) {
     int n = i1 - i0;
     float[] temp = new float[n];
     Arrays.fill(temp, 0, n, val);
     buf.position(i0);
     buf.put(temp, 0, n);
     buf.rewind();
-  }
-
-
-  protected static boolean glThreadIsCurrent() {
-    return Thread.currentThread() == glThread;
   }
 
 
