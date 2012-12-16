@@ -1604,6 +1604,11 @@ public class PGraphics extends PImage implements PConstants {
    * @see PApplet#createShape()
    */
   public PShape loadShape(String filename) {
+    return loadShape(filename, null);
+  }
+
+
+  public PShape loadShape(String filename, String options) {
     showMissingWarning("loadShape");
     return null;
   }

@@ -119,6 +119,11 @@ public class Table {
   }
 
 
+  public Table(InputStream input) throws IOException {
+    this(input, null);
+  }
+
+
   /**
    * Read the table from a stream. Possible options include:
    * <ul>
@@ -479,7 +484,6 @@ public class Table {
   // compiler) of an inner class by the runtime.
 
   /** incomplete, do not use */
-//  public void parseInto(PApplet sketch, String fieldName) {
   public void parseInto(Object enclosingObject, String fieldName) {
     Class<?> target = null;
     Object outgoing = null;
@@ -1043,14 +1047,23 @@ public class Table {
 
   /**
    * Set the titles (and if a second column is present) the data types for
-   * this table based on a file loaded separately.
+   * this table based on a file loaded separately. This will look for the
+   * title in column 0, and the type in column 1. Better yet, specify a
+   * column named "title" and another named "type" in the dictionary table
+   * to future-proof the code.
    * @param dictionary
    */
   public void setColumnTypes(Table dictionary) {
-    setColumnTitles(dictionary.getStringColumn(0));
+    int titleCol = 0;
+    int typeCol = 1;
+    if (dictionary.hasColumnTitles()) {
+      titleCol = dictionary.getColumnIndex("title", true);
+      typeCol = dictionary.getColumnIndex("type", true);
+    }
+    setColumnTitles(dictionary.getStringColumn(titleCol));
     if (dictionary.getColumnCount() > 1) {
       for (int i = 0; i < dictionary.getRowCount(); i++) {
-        setColumnType(i, dictionary.getString(i, 1));
+        setColumnType(i, dictionary.getString(i, typeCol));
       }
     }
   }
@@ -1061,7 +1074,9 @@ public class Table {
 
   /**
    * Remove the first row from the data set, and use it as the column titles.
+   * Use loadTable("table.csv", "header") instead.
    */
+  @Deprecated
   public String[] removeTitleRow() {
     String[] titles = getStringRow(0);
     removeRow(0);
@@ -1086,6 +1101,11 @@ public class Table {
     }
     columnTitles[column] = title;
     columnIndices = null;  // reset these fellas
+  }
+
+
+  public boolean hasColumnTitles() {
+    return columnTitles != null;
   }
 
 

@@ -23,7 +23,6 @@ package processing.mode.android;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -201,7 +200,7 @@ public class Manifest {
     // load the copy from the build location and start messing with it
     XML mf = null;
     try {
-      mf = new XML(new FileReader(file));
+      mf = new XML(file);
 
       // package name, or default
       String p = mf.getString("package").trim();
@@ -241,7 +240,7 @@ public class Manifest {
     File manifestFile = getManifestFile();
     if (manifestFile.exists()) {
       try {
-        xml = new XML(new FileReader(manifestFile));
+        xml = new XML(manifestFile);
       } catch (Exception e) {
         e.printStackTrace();
         System.err.println("Problem reading AndroidManifest.xml, creating a new version");
@@ -261,7 +260,7 @@ public class Manifest {
     if (xml == null) {
       writeBlankManifest(manifestFile);
       try {
-        xml = new XML(new FileReader(manifestFile));
+        xml = new XML(manifestFile);
       } catch (FileNotFoundException e) {
         System.err.println("Could not read " + manifestFile.getAbsolutePath());
         e.printStackTrace();

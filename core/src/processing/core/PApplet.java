@@ -5822,12 +5822,43 @@ public class PApplet extends Applet
    * @see PApplet#loadTable(String)
    */
   public XML loadXML(String filename) {
+    return loadXML(filename, null);
+  }
+
+
+  // version that uses 'options' though there are currently no supported options
+  public XML loadXML(String filename, String options) {
     try {
-      return new XML(this, filename);
+      return new XML(createInput(filename), options);
     } catch (Exception e) {
       e.printStackTrace();
       return null;
     }
+  }
+
+
+  public XML parseXML(String xmlString) {
+    return parseXML(xmlString, null);
+  }
+
+
+  public XML parseXML(String xmlString, String options) {
+    try {
+      return XML.parse(xmlString, options);
+    } catch (Exception e) {
+      e.printStackTrace();
+      return null;
+    }
+  }
+
+
+  public boolean saveXML(XML xml, String filename) {
+    return saveXML(xml, filename, null);
+  }
+
+
+  public boolean saveXML(XML xml, String filename, String options) {
+    return xml.save(saveFile(filename), options);
   }
 
 
@@ -5869,17 +5900,19 @@ public class PApplet extends Applet
   }
 
 
-  public void saveTable(Table table, String filename) {
-    saveTable(table, filename, null);
+  public boolean saveTable(Table table, String filename) {
+    return saveTable(table, filename, null);
   }
 
 
-  public void saveTable(Table table, String filename, String options) {
+  public boolean saveTable(Table table, String filename, String options) {
     try {
       table.save(saveFile(filename), options);
+      return true;
     } catch (IOException e) {
       e.printStackTrace();
     }
+    return false;
   }
 
 
@@ -10844,6 +10877,11 @@ public class PApplet extends Applet
    */
   public PShape loadShape(String filename) {
     return g.loadShape(filename);
+  }
+
+
+  public PShape loadShape(String filename, String options) {
+    return g.loadShape(filename, options);
   }
 
 

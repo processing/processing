@@ -43,9 +43,10 @@ public class TableODS extends Table {
    */
   protected TableODS(InputStream input, String worksheet, boolean actual) {
     try {
-      InputStreamReader isr = new InputStreamReader(input, "UTF-8");
-      BufferedReader reader = new BufferedReader(isr);
-      read(reader, worksheet, actual);
+//      InputStreamReader isr = new InputStreamReader(input, "UTF-8");
+//      BufferedReader reader = new BufferedReader(isr);
+//      read(reader, worksheet, actual);
+      read(input, worksheet, actual);
 
     } catch (UnsupportedEncodingException uee) {
       uee.printStackTrace();
@@ -59,8 +60,11 @@ public class TableODS extends Table {
   }
 
 
-  protected void read(BufferedReader reader, String worksheet, boolean actual) throws IOException, ParserConfigurationException, SAXException {
-    XML xml = new XML(reader);
+//  protected void read(BufferedReader reader, String worksheet, boolean actual) throws IOException, ParserConfigurationException, SAXException {
+//    XML xml = new XML(reader);
+  protected void read(InputStream input, String worksheet, boolean actual) throws IOException, ParserConfigurationException, SAXException {
+    XML xml = new XML(input);
+
 //    XML x = new XML(reader);
 //    PApplet.saveStrings(new File("/Users/fry/Desktop/namespacefix.xml"), new String[] { xml.toString() });
 //    PApplet.saveStrings(new File("/Users/fry/Desktop/newparser.xml"), new String[] { x.toString() });
