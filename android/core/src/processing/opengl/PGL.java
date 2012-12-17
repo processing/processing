@@ -52,27 +52,18 @@ import android.opengl.GLU;
  *
  */
 public class PGL {
-  public static final boolean USE_DIRECT_BUFFERS = false;
-  public static final int MIN_DIRECT_BUFFER_SIZE = 1;
+
+  ///////////////////////////////////////////////////////////
+
+  // Parameters
+
+  public static boolean FORCE_SCREEN_FBO             = false;
+  public static final boolean USE_DIRECT_BUFFERS     = false;
+  public static final int MIN_DIRECT_BUFFER_SIZE     = 1;
   public static final boolean SAVE_SURFACE_TO_PIXELS = false;
 
-  /** Size of a short (in bytes). */
-  protected static final int SIZEOF_SHORT = Short.SIZE / 8;
-
-  /** Size of an int (in bytes). */
-  protected static final int SIZEOF_INT = Integer.SIZE / 8;
-
-  /** Size of a float (in bytes). */
-  protected static final int SIZEOF_FLOAT = Float.SIZE / 8;
-
-  /** Size of a byte (in bytes). */
-  protected static final int SIZEOF_BYTE = Byte.SIZE / 8;
-
-  /** Size of a vertex index. */
-  protected static final int SIZEOF_INDEX = SIZEOF_SHORT;
-
-  /** Type of a vertex index. */
-  protected static final int INDEX_TYPE = GLES20.GL_UNSIGNED_SHORT;
+  /** Enables/disables mipmap use. **/
+  protected static final boolean MIPMAPS_ENABLED     = false;
 
   /** Initial sizes for arrays of input and tessellated data. */
   protected static final int DEFAULT_IN_VERTICES   = 16;
@@ -115,8 +106,12 @@ public class PGL {
   /** Minimum array size to use arrayCopy method(). **/
   protected static final int MIN_ARRAYCOPY_SIZE = 2;
 
-  /** Enables/disables mipmap use. **/
-  protected static final boolean MIPMAPS_ENABLED = false;
+  protected static final int SIZEOF_SHORT = Short.SIZE / 8;
+  protected static final int SIZEOF_INT = Integer.SIZE / 8;
+  protected static final int SIZEOF_FLOAT = Float.SIZE / 8;
+  protected static final int SIZEOF_BYTE = Byte.SIZE / 8;
+  protected static final int SIZEOF_INDEX = SIZEOF_SHORT;
+  protected static final int INDEX_TYPE = GLES20.GL_UNSIGNED_SHORT;
 
   /** Machine Epsilon for float precision. **/
   protected static float FLOAT_EPS = Float.MIN_VALUE;
@@ -145,7 +140,7 @@ public class PGL {
     "precision mediump int;\n" +
     "#endif\n";
 
-  ///////////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////
 
   // OpenGL constants
 
@@ -349,11 +344,15 @@ public class PGL {
 
   // FBO layer
 
-  public static boolean FORCE_SCREEN_FBO = false;
+  protected static boolean fboLayerByDefault = FORCE_SCREEN_FBO;
   protected static boolean fboLayerCreated = false;
   protected static boolean fboLayerInUse = false;
   protected static boolean firstFrame = true;
+  protected static int reqNumSamples;
+  protected static int numSamples;
   protected static IntBuffer glColorFbo;
+  protected static IntBuffer glMultiFbo;
+  protected static IntBuffer glColorBuf;
   protected static IntBuffer glColorTex;
   protected static IntBuffer glDepthStencil;
   protected static IntBuffer glDepth;
@@ -423,6 +422,8 @@ public class PGL {
     if (glColorTex == null) {
       glColorTex = allocateIntBuffer(2);
       glColorFbo = allocateIntBuffer(1);
+      glMultiFbo = allocateIntBuffer(1);
+      glColorBuf = allocateIntBuffer(1);
       glDepthStencil = allocateIntBuffer(1);
       glDepth = allocateIntBuffer(1);
       glStencil = allocateIntBuffer(1);
@@ -442,10 +443,7 @@ public class PGL {
 
 
   protected void initSurface(int antialias) {
-    // We do the initialization in updatePrimary() because
-    // at the moment initPrimarySurface() gets called we
-    // cannot rely on the GL surface being actually
-    // available.
+    reqNumSamples = qualityToSamples(antialias);
     fboLayerCreated = false;
     fboLayerInUse = false;
     firstFrame = true;
@@ -456,6 +454,8 @@ public class PGL {
     if (glColorTex != null) {
       deleteTextures(2, glColorTex);
       deleteFramebuffers(1, glColorFbo);
+      deleteFramebuffers(1, glMultiFbo);
+      deleteRenderbuffers(1, glColorBuf);
       deleteRenderbuffers(1, glDepthStencil);
       deleteRenderbuffers(1, glDepth);
       deleteRenderbuffers(1, glStencil);
@@ -476,6 +476,13 @@ public class PGL {
         fboWidth = nextPowerOfTwo(pg.width);
         fboHeight = nextPowerOfTwo(pg.height);
       }
+
+      if (-1 < ext.indexOf("_framebuffer_multisample")) {
+        numSamples = reqNumSamples;
+      } else {
+        numSamples = 1;
+      }
+      boolean multisample = 1 < numSamples;
 
       boolean packed = ext.indexOf("packed_depth_stencil") != -1;
       int depthBits = getDepthBits();
@@ -502,18 +509,38 @@ public class PGL {
       framebufferTexture2D(FRAMEBUFFER, COLOR_ATTACHMENT0, TEXTURE_2D,
                            glColorTex.get(backTex), 0);
 
+      if (multisample) {
+        // Creating multisampled FBO
+        genFramebuffers(1, glMultiFbo);
+        bindFramebuffer(FRAMEBUFFER, glMultiFbo.get(0));
+
+        // color render buffer...
+        genRenderbuffers(1, glColorBuf);
+        bindRenderbuffer(RENDERBUFFER, glColorBuf.get(0));
+        renderbufferStorageMultisample(RENDERBUFFER, numSamples,
+                                       RGBA8, fboWidth, fboHeight);
+        framebufferRenderbuffer(FRAMEBUFFER, COLOR_ATTACHMENT0,
+                                RENDERBUFFER, glColorBuf.get(0));
+      }
+
+      // Creating depth and stencil buffers
       if (packed && depthBits == 24 && stencilBits == 8) {
         // packed depth+stencil buffer
-
         genRenderbuffers(1, glDepthStencil);
         bindRenderbuffer(RENDERBUFFER, glDepthStencil.get(0));
-        renderbufferStorage(RENDERBUFFER, DEPTH24_STENCIL8,
-                            fboWidth, fboHeight);
+        if (multisample) {
+          renderbufferStorageMultisample(RENDERBUFFER, numSamples,
+                                         DEPTH24_STENCIL8, fboWidth, fboHeight);
+        } else {
+          renderbufferStorage(RENDERBUFFER, DEPTH24_STENCIL8,
+                              fboWidth, fboHeight);
+        }
         framebufferRenderbuffer(FRAMEBUFFER, DEPTH_ATTACHMENT, RENDERBUFFER,
                                 glDepthStencil.get(0));
         framebufferRenderbuffer(FRAMEBUFFER, STENCIL_ATTACHMENT, RENDERBUFFER,
                                 glDepthStencil.get(0));
-      } else { // separate depth and stencil buffers
+      } else {
+        // separate depth and stencil buffers
         if (0 < depthBits) {
           int depthComponent = DEPTH_COMPONENT16;
           if (depthBits == 32) {
@@ -526,7 +553,13 @@ public class PGL {
 
           genRenderbuffers(1, glDepth);
           bindRenderbuffer(RENDERBUFFER, glDepth.get(0));
-          renderbufferStorage(RENDERBUFFER, depthComponent, fboWidth, fboHeight);
+          if (multisample) {
+            renderbufferStorageMultisample(RENDERBUFFER, numSamples,
+                                           depthComponent, fboWidth, fboHeight);
+          } else {
+            renderbufferStorage(RENDERBUFFER, depthComponent,
+                                fboWidth, fboHeight);
+          }
           framebufferRenderbuffer(FRAMEBUFFER, DEPTH_ATTACHMENT,
                                   RENDERBUFFER, glDepth.get(0));
         }
@@ -543,19 +576,25 @@ public class PGL {
 
           genRenderbuffers(1, glStencil);
           bindRenderbuffer(RENDERBUFFER, glStencil.get(0));
-          renderbufferStorage(RENDERBUFFER, stencilIndex, fboWidth, fboHeight);
+          if (multisample) {
+            renderbufferStorageMultisample(RENDERBUFFER, numSamples,
+                                           stencilIndex, fboWidth, fboHeight);
+          } else {
+            renderbufferStorage(RENDERBUFFER, stencilIndex,
+                                fboWidth, fboHeight);
+          }
           framebufferRenderbuffer(FRAMEBUFFER, STENCIL_ATTACHMENT,
                                   RENDERBUFFER, glStencil.get(0));
         }
       }
+
       validateFramebuffer();
 
-      // Clear the depth and stencil buffers in the color FBO. There is no
-      // need to clear the color buffers because the textures attached were
-      // properly initialized blank.
+      // Clear all buffers.
       clearDepth(1);
       clearStencil(0);
-      clear(DEPTH_BUFFER_BIT | STENCIL_BUFFER_BIT);
+      clearColor(0, 0, 0, 0);
+      clear(DEPTH_BUFFER_BIT | STENCIL_BUFFER_BIT | COLOR_BUFFER_BIT);
 
       bindFramebuffer(FRAMEBUFFER, 0);
 
@@ -602,6 +641,11 @@ public class PGL {
 
   protected boolean isFBOBacked() {
     return fboLayerInUse;
+  }
+
+
+  protected void needFBOLayer() {
+    FORCE_SCREEN_FBO = true;
   }
 
 
@@ -697,7 +741,24 @@ public class PGL {
 
 
   protected void syncBackTexture() {
-    // Nothing to do because there is no MSAA in GLES20
+    if (1 < numSamples) {
+      bindFramebuffer(READ_FRAMEBUFFER, glMultiFbo.get(0));
+      bindFramebuffer(DRAW_FRAMEBUFFER, glColorFbo.get(0));
+      blitFramebuffer(0, 0, fboWidth, fboHeight,
+                      0, 0, fboWidth, fboHeight,
+                      COLOR_BUFFER_BIT, NEAREST);
+    }
+  }
+
+
+  protected int qualityToSamples(int quality) {
+    if (quality <= 1) {
+      return 1;
+    } else {
+      // Number of samples is always an even number:
+      int n = 2 * (quality / 2);
+      return n;
+    }
   }
 
 
@@ -707,10 +768,15 @@ public class PGL {
 
 
   protected void beginDraw(boolean clear0) {
-    if ((!clear0 || FORCE_SCREEN_FBO) && glColorFbo.get(0) != 0) {
+    if (fboLayerInUse(clear0)) {
       bindFramebuffer(FRAMEBUFFER, glColorFbo.get(0));
       framebufferTexture2D(FRAMEBUFFER, COLOR_ATTACHMENT0,
                            TEXTURE_2D, glColorTex.get(backTex), 0);
+
+      if (1 < numSamples) {
+        bindFramebuffer(FRAMEBUFFER, glMultiFbo.get(0));
+      }
+
       if (firstFrame) {
         // No need to draw back color buffer because we are in the first frame.
         clearColor(0, 0, 0, 0);
@@ -722,6 +788,7 @@ public class PGL {
                     fboWidth, fboHeight, 0, 0, pg.width, pg.height,
                                          0, 0, pg.width, pg.height);
       }
+
       fboLayerInUse = true;
     } else {
       fboLayerInUse = false;
@@ -730,11 +797,21 @@ public class PGL {
     if (firstFrame) {
       firstFrame = false;
     }
+
+    if (!fboLayerByDefault) {
+      // The result of this assignment is the following: if the user requested
+      // at some point the use of the FBO layer, but subsequently didn't do
+      // request it again, then the rendering won't use the FBO layer if not
+      // needed, since it is slower than simple onscreen rendering.
+      FORCE_SCREEN_FBO = false;
+    }
   }
 
 
   protected void endDraw(boolean clear) {
     if (fboLayerInUse) {
+      syncBackTexture();
+
       // Draw the contents of the back texture to the screen framebuffer.
       bindFramebuffer(FRAMEBUFFER, 0);
 
@@ -769,6 +846,12 @@ public class PGL {
 
   protected static boolean glThreadIsCurrent() {
     return Thread.currentThread() == glThread;
+  }
+
+
+  protected boolean fboLayerInUse(boolean clear0) {
+    boolean cond = !clear0 || FORCE_SCREEN_FBO || 1 < numSamples;
+    return cond && glColorFbo.get(0) != 0;
   }
 
 
