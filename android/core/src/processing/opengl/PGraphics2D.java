@@ -248,7 +248,7 @@ public class PGraphics2D extends PGraphicsOpenGL {
     PShapeSVG svg = null;
 
     if (extension.equals("svg")) {
-      svg = new PShapeSVG(pg.parent, filename);
+      svg = new PShapeSVG(pg.parent.loadXML(filename));
 
     } else if (extension.equals("svgz")) {
       try {

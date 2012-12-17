@@ -1076,7 +1076,7 @@ public class PGraphicsAndroid2D extends PGraphics {
     PShapeSVG svg = null;
 
     if (extension.equals("svg")) {
-      svg = new PShapeSVG(parent, filename);
+      svg = new PShapeSVG(parent.loadXML(filename));
 
     } else if (extension.equals("svgz")) {
       try {

@@ -151,14 +151,14 @@ public class PShapeSVG extends PShape {
   String fillName;  // id of another object
 
 
-  /**
-   * Initializes a new SVG Object with the given filename.
-   */
-  public PShapeSVG(PApplet parent, String filename) {
-    // this will grab the root document, starting <svg ...>
-    // the xml version and initial comments are ignored
-    this(parent.loadXML(filename));
-  }
+//  /**
+//   * Initializes a new SVG Object with the given filename.
+//   */
+//  public PShapeSVG(PApplet parent, String filename) {
+//    // this will grab the root document, starting <svg ...>
+//    // the xml version and initial comments are ignored
+//    this(parent.loadXML(filename));
+//  }
 
 
   /**
@@ -206,7 +206,7 @@ public class PShapeSVG extends PShape {
   }
 
 
-  public PShapeSVG(PShapeSVG parent, XML properties, boolean parseKids) {
+  protected PShapeSVG(PShapeSVG parent, XML properties, boolean parseKids) {
     // Need to set this so that findChild() works.
     // Otherwise 'parent' is null until addChild() is called later.
     this.parent = parent;
