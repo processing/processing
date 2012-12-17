@@ -426,14 +426,17 @@ public class PGL {
   protected static boolean fboLayerCreated = false;
   protected static boolean fboLayerInUse = false;
   protected static boolean firstFrame = true;
+  protected static int reqNumSamples;
+  protected static int numSamples;
   protected static IntBuffer glColorFbo;
+  protected static IntBuffer glMultiFbo;
+  protected static IntBuffer glColorBuf;
   protected static IntBuffer glColorTex;
   protected static IntBuffer glDepthStencil;
   protected static IntBuffer glDepth;
   protected static IntBuffer glStencil;
   protected static int fboWidth, fboHeight;
   protected static int backTex, frontTex;
-
 
   protected static boolean needToClearBuffers;
 
@@ -529,6 +532,8 @@ public class PGL {
     if (glColorTex == null) {
       glColorTex = allocateIntBuffer(2);
       glColorFbo = allocateIntBuffer(1);
+      glMultiFbo = allocateIntBuffer(1);
+      glColorBuf = allocateIntBuffer(1);
       glDepthStencil = allocateIntBuffer(1);
       glDepth = allocateIntBuffer(1);
       glStencil = allocateIntBuffer(1);
@@ -619,11 +624,15 @@ public class PGL {
 
     GLCapabilities caps = new GLCapabilities(profile);
     caps.setSampleBuffers(false);
+//    caps.setDepthBits(request_depth_bits);
+//    caps.setStencilBits(request_stencil_bits);
+//    caps.setAlphaBits(request_alpha_bits);
     caps.setPBuffer(true);
     caps.setFBO(false);
     caps.setBackgroundOpaque(true);
     caps.setOnscreen(true);
 
+    reqNumSamples = qualityToSamples(antialias);
 
     if (toolkit == AWT) {
       canvasAWT = new GLCanvas(caps);
@@ -681,6 +690,8 @@ public class PGL {
     if (glColorTex != null) {
       deleteTextures(2, glColorTex);
       deleteFramebuffers(1, glColorFbo);
+      deleteFramebuffers(1, glMultiFbo);
+      deleteRenderbuffers(1, glColorBuf);
       deleteRenderbuffers(1, glDepthStencil);
       deleteRenderbuffers(1, glDepth);
       deleteRenderbuffers(1, glStencil);
@@ -707,6 +718,13 @@ public class PGL {
         fboHeight = nextPowerOfTwo(pg.height);
       }
 
+      if (-1 < ext.indexOf("_framebuffer_multisample")) {
+        numSamples = reqNumSamples;
+      } else {
+        numSamples = 1;
+      }
+      boolean multisample = 1 < numSamples;
+
       boolean packed = ext.indexOf("packed_depth_stencil") != -1;
       int depthBits = getDepthBits();
       int stencilBits = getStencilBits();
@@ -732,18 +750,38 @@ public class PGL {
       framebufferTexture2D(FRAMEBUFFER, COLOR_ATTACHMENT0, TEXTURE_2D,
                            glColorTex.get(backTex), 0);
 
+      if (multisample) {
+        // Creating multisampled FBO
+        genFramebuffers(1, glMultiFbo);
+        bindFramebuffer(FRAMEBUFFER, glMultiFbo.get(0));
+
+        // color render buffer...
+        genRenderbuffers(1, glColorBuf);
+        bindRenderbuffer(RENDERBUFFER, glColorBuf.get(0));
+        renderbufferStorageMultisample(RENDERBUFFER, numSamples,
+                                       RGBA8, fboWidth, fboHeight);
+        framebufferRenderbuffer(FRAMEBUFFER, COLOR_ATTACHMENT0,
+                                RENDERBUFFER, glColorBuf.get(0));
+      }
+
+      // Creating depth and stencil buffers
       if (packed && depthBits == 24 && stencilBits == 8) {
         // packed depth+stencil buffer
-
         genRenderbuffers(1, glDepthStencil);
         bindRenderbuffer(RENDERBUFFER, glDepthStencil.get(0));
-        renderbufferStorage(RENDERBUFFER, DEPTH24_STENCIL8,
-                            fboWidth, fboHeight);
+        if (multisample) {
+          renderbufferStorageMultisample(RENDERBUFFER, numSamples,
+                                         DEPTH24_STENCIL8, fboWidth, fboHeight);
+        } else {
+          renderbufferStorage(RENDERBUFFER, DEPTH24_STENCIL8,
+                              fboWidth, fboHeight);
+        }
         framebufferRenderbuffer(FRAMEBUFFER, DEPTH_ATTACHMENT, RENDERBUFFER,
                                 glDepthStencil.get(0));
         framebufferRenderbuffer(FRAMEBUFFER, STENCIL_ATTACHMENT, RENDERBUFFER,
                                 glDepthStencil.get(0));
-      } else { // separate depth and stencil buffers
+      } else {
+        // separate depth and stencil buffers
         if (0 < depthBits) {
           int depthComponent = DEPTH_COMPONENT16;
           if (depthBits == 32) {
@@ -756,7 +794,13 @@ public class PGL {
 
           genRenderbuffers(1, glDepth);
           bindRenderbuffer(RENDERBUFFER, glDepth.get(0));
-          renderbufferStorage(RENDERBUFFER, depthComponent, fboWidth, fboHeight);
+          if (multisample) {
+            renderbufferStorageMultisample(RENDERBUFFER, numSamples,
+                                           depthComponent, fboWidth, fboHeight);
+          } else {
+            renderbufferStorage(RENDERBUFFER, depthComponent,
+                                fboWidth, fboHeight);
+          }
           framebufferRenderbuffer(FRAMEBUFFER, DEPTH_ATTACHMENT,
                                   RENDERBUFFER, glDepth.get(0));
         }
@@ -773,19 +817,25 @@ public class PGL {
 
           genRenderbuffers(1, glStencil);
           bindRenderbuffer(RENDERBUFFER, glStencil.get(0));
-          renderbufferStorage(RENDERBUFFER, stencilIndex, fboWidth, fboHeight);
+          if (multisample) {
+            renderbufferStorageMultisample(RENDERBUFFER, numSamples,
+                                           stencilIndex, fboWidth, fboHeight);
+          } else {
+            renderbufferStorage(RENDERBUFFER, stencilIndex,
+                                fboWidth, fboHeight);
+          }
           framebufferRenderbuffer(FRAMEBUFFER, STENCIL_ATTACHMENT,
                                   RENDERBUFFER, glStencil.get(0));
         }
       }
+
       validateFramebuffer();
 
-      // Clear the depth and stencil buffers in the color FBO. There is no
-      // need to clear the color buffers because the textures attached were
-      // properly initialized blank.
+      // Clear all buffers.
       clearDepth(1);
       clearStencil(0);
-      clear(DEPTH_BUFFER_BIT | STENCIL_BUFFER_BIT);
+      clearColor(0, 0, 0, 0);
+      clear(DEPTH_BUFFER_BIT | STENCIL_BUFFER_BIT | COLOR_BUFFER_BIT);
 
       bindFramebuffer(FRAMEBUFFER, 0);
 
@@ -815,7 +865,11 @@ public class PGL {
 //      return 0;
 //    }
     if (fboLayerInUse) {
-      return glColorFbo.get(0);
+      if (1 < numSamples) {
+        return glMultiFbo.get(0);
+      } else {
+        return glColorFbo.get(0);
+      }
     } else {
       return 0;
     }
@@ -864,7 +918,7 @@ public class PGL {
 
   protected boolean isMultisampled() {
 //    return 0 < capabilities.getNumSamples();
-    return false;
+    return 1 < numSamples;
   }
 
 
@@ -997,6 +1051,14 @@ public class PGL {
 //      backFBO.syncSamplingSink(gl);
 //      backFBO.bind(gl);
 //    }
+
+    if (1 < numSamples) {
+    bindFramebuffer(READ_FRAMEBUFFER, glMultiFbo.get(0));
+    bindFramebuffer(DRAW_FRAMEBUFFER, glColorFbo.get(0));
+    blitFramebuffer(0, 0, fboWidth, fboHeight,
+                    0, 0, fboWidth, fboHeight,
+                    COLOR_BUFFER_BIT, NEAREST);
+    }
   }
 
 
@@ -1017,10 +1079,16 @@ public class PGL {
 
 
   protected void beginDraw(boolean clear0) {
-    if ((!clear0 || FORCE_SCREEN_FBO) && glColorFbo.get(0) != 0) {
+    if ((!clear0 || FORCE_SCREEN_FBO || 1 < numSamples) &&
+        glColorFbo.get(0) != 0) {
       bindFramebuffer(FRAMEBUFFER, glColorFbo.get(0));
       framebufferTexture2D(FRAMEBUFFER, COLOR_ATTACHMENT0,
                            TEXTURE_2D, glColorTex.get(backTex), 0);
+
+      if (1 < numSamples) {
+        bindFramebuffer(FRAMEBUFFER, glMultiFbo.get(0));
+      }
+
       if (firstFrame) {
         // No need to draw back color buffer because we are in the first frame.
         clearColor(0, 0, 0, 0);
@@ -1032,6 +1100,7 @@ public class PGL {
                     fboWidth, fboHeight, 0, 0, pg.width, pg.height,
                                          0, 0, pg.width, pg.height);
       }
+
       fboLayerInUse = true;
     } else {
       fboLayerInUse = false;
@@ -1058,6 +1127,8 @@ public class PGL {
     }
     */
     if (fboLayerInUse) {
+      syncBackTexture();
+
       // Draw the contents of the back texture to the screen framebuffer.
       bindFramebuffer(FRAMEBUFFER, 0);
 
