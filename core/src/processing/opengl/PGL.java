@@ -72,32 +72,19 @@ import com.jogamp.opengl.util.AnimatorBase;
  */
 @SuppressWarnings("static-access")
 public class PGL {
-  public static final boolean USE_JOGL_FBOLAYER  = true;
-  public static final boolean USE_DIRECT_BUFFERS = true;
-  public static final int MIN_DIRECT_BUFFER_SIZE = 1;
+
+  ///////////////////////////////////////////////////////////
+
+  // Parameters
+
+  public static final boolean USE_JOGL_FBOLAYER      = false;
+  public static boolean FORCE_SCREEN_FBO             = false;
+  public static final boolean USE_DIRECT_BUFFERS     = true;
+  public static final int MIN_DIRECT_BUFFER_SIZE     = 1;
   public static final boolean SAVE_SURFACE_TO_PIXELS = true;
 
-  // The two windowing toolkits available to use in JOGL:
-  protected static final int AWT  = 0; // http://jogamp.org/wiki/index.php/Using_JOGL_in_AWT_SWT_and_Swing
-  protected static final int NEWT = 1; // http://jogamp.org/jogl/doc/NEWT-Overview.html
-
-  /** Size of a short (in bytes). */
-  protected static final int SIZEOF_SHORT = Short.SIZE / 8;
-
-  /** Size of an int (in bytes). */
-  protected static final int SIZEOF_INT = Integer.SIZE / 8;
-
-  /** Size of a float (in bytes). */
-  protected static final int SIZEOF_FLOAT = Float.SIZE / 8;
-
-  /** Size of a byte (in bytes). */
-  protected static final int SIZEOF_BYTE = Byte.SIZE / 8;
-
-  /** Size of a vertex index. */
-  protected static final int SIZEOF_INDEX = SIZEOF_SHORT;
-
-  /** Type of a vertex index. */
-  protected static final int INDEX_TYPE = GL.GL_UNSIGNED_SHORT;
+  /** Enables/disables mipmap use. **/
+  protected static final boolean MIPMAPS_ENABLED = true;
 
   /** Initial sizes for arrays of input and tessellated data. */
   protected static final int DEFAULT_IN_VERTICES   = 64;
@@ -140,8 +127,30 @@ public class PGL {
   /** Minimum array size to use arrayCopy method(). **/
   protected static final int MIN_ARRAYCOPY_SIZE = 2;
 
-  /** Enables/disables mipmap use. **/
-  protected static final boolean MIPMAPS_ENABLED = true;
+  /** JOGL's windowing toolkit */
+  // The two windowing toolkits available to use in JOGL:
+  protected static final int AWT  = 0; // http://jogamp.org/wiki/index.php/Using_JOGL_in_AWT_SWT_and_Swing
+  protected static final int NEWT = 1; // http://jogamp.org/jogl/doc/NEWT-Overview.html
+  protected static int toolkit = NEWT;
+
+  /** Enables/disables use of animator */
+  protected static boolean useAnimator = false;
+
+  protected static boolean enable_screen_FBO_macosx  = true;
+  protected static boolean enable_screen_FBO_windows = true;
+  protected static boolean enable_screen_FBO_linux   = true;
+  protected static boolean enable_screen_FBO_other   = true;
+
+  protected static int request_depth_bits = 24;
+  protected static int request_stencil_bits = 8;
+  protected static int request_alpha_bits = 8;
+
+  protected static final int SIZEOF_SHORT = Short.SIZE / 8;
+  protected static final int SIZEOF_INT = Integer.SIZE / 8;
+  protected static final int SIZEOF_FLOAT = Float.SIZE / 8;
+  protected static final int SIZEOF_BYTE = Byte.SIZE / 8;
+  protected static final int SIZEOF_INDEX = SIZEOF_SHORT;
+  protected static final int INDEX_TYPE = GL.GL_UNSIGNED_SHORT;
 
   /** Machine Epsilon for float precision. **/
   protected static float FLOAT_EPS = Float.MIN_VALUE;
@@ -356,9 +365,7 @@ public class PGL {
   /** Selected GL profile */
   public static GLProfile profile;
 
-  /** OpenGL thread:
-   * TODO
-   * http://forum.processing.org/topic/2-x-pgraphics-thread-crash */
+  /** OpenGL thread */
   protected static Thread glThread;
 
   /** The PGraphics object using this interface */
@@ -376,21 +383,6 @@ public class PGL {
   /** GL2 desktop functionality (blit framebuffer, map buffer range,
    * multisampled renerbuffers) */
   protected static GL2 gl2x;
-
-  /** Windowing toolkit */
-  protected static int toolkit = NEWT;
-
-  /** Enables/disables use of animator */
-  protected static boolean useAnimator = false;
-
-  protected static boolean enable_screen_FBO_macosx  = true;
-  protected static boolean enable_screen_FBO_windows = true;
-  protected static boolean enable_screen_FBO_linux   = true;
-  protected static boolean enable_screen_FBO_other   = true;
-
-  protected static int request_depth_bits = 24;
-  protected static int request_stencil_bits = 8;
-  protected static int request_alpha_bits = 8;
 
   /** The AWT-OpenGL canvas */
   protected static GLCanvas canvasAWT;
@@ -419,10 +411,9 @@ public class PGL {
 
   ///////////////////////////////////////////////////////////
 
-  // Objects for onscreen FBO-based rendering
+  // FBO layer
 
-
-  public static boolean FORCE_SCREEN_FBO = false;
+  protected static boolean fboLayerByDefault = FORCE_SCREEN_FBO;
   protected static boolean fboLayerCreated = false;
   protected static boolean fboLayerInUse = false;
   protected static boolean firstFrame = true;
@@ -438,9 +429,6 @@ public class PGL {
   protected static int fboWidth, fboHeight;
   protected static int backTex, frontTex;
 
-  protected static boolean needToClearBuffers;
-
-
   /** Back (== draw, current frame) buffer */
   protected static FBObject backFBO;
   /** Sink buffer, used in the multisampled case */
@@ -449,6 +437,8 @@ public class PGL {
   protected static FBObject frontFBO;
   protected static FBObject.TextureAttachment backTexAttach;
   protected static FBObject.TextureAttachment frontTexAttach;
+
+  protected static boolean needToClearBuffers;
 
   ///////////////////////////////////////////////////////////
 
@@ -918,7 +908,11 @@ public class PGL {
     } else {
       return fboLayerInUse;
     }
+  }
 
+
+  protected void needFBOLayer() {
+    FORCE_SCREEN_FBO = true;
   }
 
 
@@ -1116,8 +1110,7 @@ public class PGL {
   protected void beginDraw(boolean clear0) {
     if (USE_JOGL_FBOLAYER) return;
 
-    if ((!clear0 || FORCE_SCREEN_FBO || 1 < numSamples) &&
-        glColorFbo.get(0) != 0) {
+    if (fboLayerInUse(clear0)) {
       bindFramebuffer(FRAMEBUFFER, glColorFbo.get(0));
       framebufferTexture2D(FRAMEBUFFER, COLOR_ATTACHMENT0,
                            TEXTURE_2D, glColorTex.get(backTex), 0);
@@ -1145,6 +1138,14 @@ public class PGL {
 
     if (firstFrame) {
       firstFrame = false;
+    }
+
+    if (!fboLayerByDefault) {
+      // The result of this assignment is the following: if the user requested
+      // at some point the use of the FBO layer, but subsequently didn't do
+      // request it again, then the rendering won't use the FBO layer if not
+      // needed, since it is slower than simple onscreen rendering.
+      FORCE_SCREEN_FBO = false;
     }
   }
 
@@ -1221,6 +1222,12 @@ public class PGL {
 
   protected static boolean glThreadIsCurrent() {
     return Thread.currentThread() == glThread;
+  }
+
+
+  protected boolean fboLayerInUse(boolean clear0) {
+    boolean cond = !clear0 || FORCE_SCREEN_FBO || 1 < numSamples;
+    return cond && glColorFbo.get(0) != 0;
   }
 
 

@@ -5365,6 +5365,7 @@ public class PGraphicsOpenGL extends PGraphics {
       return;
     }
 
+    pgl.needFBOLayer();
     loadTexture();
     if (filterTexture == null || filterTexture.contextIsOutdated()) {
       filterTexture = new Texture(parent, texture.width, texture.height,
@@ -6511,6 +6512,7 @@ public class PGraphicsOpenGL extends PGraphics {
     @Override
     public void unbind() {
       if (-1 < pframeSamplerLoc) {
+        pgl.needFBOLayer();
         pgl.activeTexture(PGL.TEXTURE0 + lastTexUnit);
         pgCurrent.unbindBackTexture();
         pgl.activeTexture(PGL.TEXTURE0);
