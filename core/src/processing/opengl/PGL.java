@@ -25,7 +25,6 @@ package processing.opengl;
 
 import java.awt.BorderLayout;
 import java.awt.Canvas;
-import java.awt.Color;
 import java.nio.Buffer;
 
 import java.nio.ByteBuffer;
@@ -73,6 +72,7 @@ import com.jogamp.opengl.util.AnimatorBase;
  */
 @SuppressWarnings("static-access")
 public class PGL {
+  public static final boolean USE_JOGL_FBOLAYER  = true;
   public static final boolean USE_DIRECT_BUFFERS = true;
   public static final int MIN_DIRECT_BUFFER_SIZE = 1;
   public static final boolean SAVE_SURFACE_TO_PIXELS = true;
@@ -441,17 +441,14 @@ public class PGL {
   protected static boolean needToClearBuffers;
 
 
-//  /** Back (== draw, current frame) buffer */
-//  protected static FBObject backFBO;
-//
-//  /** Sink buffer, used in the multisampled case */
-//  protected static FBObject sinkFBO;
-//
-//  /** Front (== read, previous frame) buffer */
-//  protected static FBObject frontFBO;
-//
-//  protected static FBObject.TextureAttachment backTex;
-//  protected static FBObject.TextureAttachment frontTex;
+  /** Back (== draw, current frame) buffer */
+  protected static FBObject backFBO;
+  /** Sink buffer, used in the multisampled case */
+  protected static FBObject sinkFBO;
+  /** Front (== read, previous frame) buffer */
+  protected static FBObject frontFBO;
+  protected static FBObject.TextureAttachment backTexAttach;
+  protected static FBObject.TextureAttachment frontTexAttach;
 
   ///////////////////////////////////////////////////////////
 
@@ -593,46 +590,41 @@ public class PGL {
         window.removeGLEventListener(listener);
         pg.parent.remove(canvasNEWT);
       }
-//      sinkFBO = backFBO = frontFBO = null;
+      sinkFBO = backFBO = frontFBO = null;
       setFramerate = false;
     }
 
     // Setting up the desired GL capabilities;
-//    GLCapabilities caps = new GLCapabilities(profile);
-//    if (1 < antialias) {
-//      caps.setSampleBuffers(true);
-//      caps.setNumSamples(antialias);
-//    } else {
-//      caps.setSampleBuffers(false);
-//    }
-//
-//    if (PApplet.platform == PConstants.MACOSX) {
-//      caps.setFBO(enable_screen_FBO_macosx);
-//    } else if (PApplet.platform == PConstants.WINDOWS) {
-//      caps.setFBO(enable_screen_FBO_windows);
-//    } else if (PApplet.platform == PConstants.LINUX) {
-//      caps.setFBO(enable_screen_FBO_linux);
-//    } else {
-//      caps.setFBO(enable_screen_FBO_other);
-//    }
-//
-//    caps.setDepthBits(request_depth_bits);
-//    caps.setStencilBits(request_stencil_bits);
-//    caps.setAlphaBits(request_alpha_bits);
-//    caps.setBackgroundOpaque(true);
-//    caps.setOnscreen(true);
-
     GLCapabilities caps = new GLCapabilities(profile);
-    caps.setSampleBuffers(false);
-//    caps.setDepthBits(request_depth_bits);
-//    caps.setStencilBits(request_stencil_bits);
-//    caps.setAlphaBits(request_alpha_bits);
-    caps.setPBuffer(true);
-    caps.setFBO(false);
     caps.setBackgroundOpaque(true);
     caps.setOnscreen(true);
-
-    reqNumSamples = qualityToSamples(antialias);
+    if (USE_JOGL_FBOLAYER) {
+      if (1 < antialias) {
+        caps.setSampleBuffers(true);
+        caps.setNumSamples(antialias);
+      } else {
+        caps.setSampleBuffers(false);
+      }
+      if (PApplet.platform == PConstants.MACOSX) {
+        caps.setFBO(enable_screen_FBO_macosx);
+      } else if (PApplet.platform == PConstants.WINDOWS) {
+        caps.setFBO(enable_screen_FBO_windows);
+      } else if (PApplet.platform == PConstants.LINUX) {
+        caps.setFBO(enable_screen_FBO_linux);
+      } else {
+        caps.setFBO(enable_screen_FBO_other);
+      }
+      caps.setDepthBits(request_depth_bits);
+      caps.setStencilBits(request_stencil_bits);
+      caps.setAlphaBits(request_alpha_bits);
+      caps.setBackgroundOpaque(true);
+      caps.setOnscreen(true);
+    } else {
+      caps.setSampleBuffers(false);
+      caps.setPBuffer(true);
+      caps.setFBO(false);
+      reqNumSamples = qualityToSamples(antialias);
+    }
 
     if (toolkit == AWT) {
       canvasAWT = new GLCanvas(caps);
@@ -657,7 +649,6 @@ public class PGL {
       window = GLWindow.create(caps);
       canvasNEWT = new NewtCanvasAWT(window);
       canvasNEWT.setBounds(0, 0, pg.width, pg.height);
-      canvasNEWT.setBackground(Color.GRAY);
 
       pg.parent.setLayout(new BorderLayout());
       pg.parent.add(canvasNEWT, BorderLayout.CENTER);
@@ -707,6 +698,7 @@ public class PGL {
     if (!setFramerate) {
       setFrameRate(targetFramerate);
     }
+    if (USE_JOGL_FBOLAYER) return;
 
     if (!fboLayerCreated) {
       String ext = getString(EXTENSIONS);
@@ -845,96 +837,119 @@ public class PGL {
 
 
   protected int getReadFramebuffer() {
-//    if (capabilities.isFBO()) {
-//      return context.getDefaultReadFramebuffer();
-//    } else {
-//      return 0;
-//    }
-    if (fboLayerInUse) {
-      return glColorFbo.get(0);
+    if (USE_JOGL_FBOLAYER) {
+      if (capabilities.isFBO()) {
+        return context.getDefaultReadFramebuffer();
+      } else {
+        return 0;
+      }
     } else {
-      return 0;
+      if (fboLayerInUse) {
+        return glColorFbo.get(0);
+      } else {
+        return 0;
+      }
     }
   }
 
 
   protected int getDrawFramebuffer() {
-//    if (capabilities.isFBO()) {
-//      return context.getDefaultDrawFramebuffer();
-//    } else {
-//      return 0;
-//    }
-    if (fboLayerInUse) {
-      if (1 < numSamples) {
-        return glMultiFbo.get(0);
+    if (USE_JOGL_FBOLAYER) {
+      if (capabilities.isFBO()) {
+        return context.getDefaultDrawFramebuffer();
       } else {
-        return glColorFbo.get(0);
+        return 0;
       }
     } else {
-      return 0;
+      if (fboLayerInUse) {
+        if (1 < numSamples) {
+          return glMultiFbo.get(0);
+        } else {
+          return glColorFbo.get(0);
+        }
+      } else {
+        return 0;
+      }
     }
   }
 
 
   protected int getDefaultDrawBuffer() {
-//    if (capabilities.isFBO()) {
-//      return GL.GL_COLOR_ATTACHMENT0;
-//    } else if (capabilities.getDoubleBuffered()) {
-//      return GL.GL_BACK;
-//    } else {
-//      return GL.GL_FRONT;
-//    }
-
-    if (fboLayerInUse) {
-      return COLOR_ATTACHMENT0;
+    if (USE_JOGL_FBOLAYER) {
+      if (capabilities.isFBO()) {
+        return GL.GL_COLOR_ATTACHMENT0;
+      } else if (capabilities.getDoubleBuffered()) {
+        return GL.GL_BACK;
+      } else {
+        return GL.GL_FRONT;
+      }
     } else {
-      return BACK;
+      if (fboLayerInUse) {
+        return COLOR_ATTACHMENT0;
+      } else {
+        return BACK;
+      }
     }
   }
 
 
   protected int getDefaultReadBuffer() {
-//    if (capabilities.isFBO()) {
-//      return GL.GL_COLOR_ATTACHMENT0;
-//    } else if (capabilities.getDoubleBuffered()) {
-//      return GL.GL_BACK;
-//    } else {
-//      return GL.GL_FRONT;
-//    }
-
-    if (fboLayerInUse) {
-      return COLOR_ATTACHMENT0;
+    if (USE_JOGL_FBOLAYER) {
+      if (capabilities.isFBO()) {
+        return GL.GL_COLOR_ATTACHMENT0;
+      } else if (capabilities.getDoubleBuffered()) {
+        return GL.GL_BACK;
+      } else {
+        return GL.GL_FRONT;
+      }
     } else {
-      return FRONT;
+      if (fboLayerInUse) {
+        return COLOR_ATTACHMENT0;
+      } else {
+        return FRONT;
+      }
     }
   }
 
 
   protected boolean isFBOBacked() {
-//    return capabilities.isFBO();
-    return fboLayerInUse;
+    if (USE_JOGL_FBOLAYER) {
+      return capabilities.isFBO();
+    } else {
+      return fboLayerInUse;
+    }
+
   }
 
 
   protected boolean isMultisampled() {
-//    return 0 < capabilities.getNumSamples();
-    return 1 < numSamples;
+    if (USE_JOGL_FBOLAYER) {
+      return 0 < capabilities.getNumSamples();
+    } else {
+      return 1 < numSamples;
+    }
   }
 
 
   protected int getDepthBits() {
-//    return capabilities.getDepthBits();
-    intBuffer.rewind();
-    getIntegerv(DEPTH_BITS, intBuffer);
-    return intBuffer.get(0);
+    if (USE_JOGL_FBOLAYER) {
+      return capabilities.getDepthBits();
+    } else {
+      intBuffer.rewind();
+      getIntegerv(DEPTH_BITS, intBuffer);
+      return intBuffer.get(0);
+    }
   }
 
 
   protected int getStencilBits() {
-//    return capabilities.getStencilBits();
-    intBuffer.rewind();
-    getIntegerv(STENCIL_BITS, intBuffer);
-    return intBuffer.get(0);
+    if (USE_JOGL_FBOLAYER) {
+      return capabilities.getStencilBits();
+    } else {
+      intBuffer.rewind();
+      getIntegerv(STENCIL_BITS, intBuffer);
+      return intBuffer.get(0);
+    }
   }
 
 
@@ -953,111 +968,131 @@ public class PGL {
 
 
   protected Texture wrapBackTexture() {
-//    Texture tex = new Texture(pg.parent);
-//    tex.init(pg.width, pg.height,
-//             backTex.getName(), GL.GL_TEXTURE_2D, GL.GL_RGBA,
-//             backTex.getWidth(), backTex.getHeight(),
-//             backTex.minFilter, backTex.magFilter,
-//             backTex.wrapS, backTex.wrapT);
-//    tex.invertedY(true);
-//    tex.colorBufferOf(pg);
-//    pg.setCache(pg, tex);
-//    return tex;
-    Texture tex = new Texture(pg.parent);
-    tex.init(pg.width, pg.height,
-             glColorTex.get(backTex), TEXTURE_2D, RGBA,
-             fboWidth, fboHeight, NEAREST, NEAREST,
-             CLAMP_TO_EDGE, CLAMP_TO_EDGE);
-    tex.invertedY(true);
-    tex.colorBufferOf(pg);
-    pg.setCache(pg, tex);
-    return tex;
+    if (USE_JOGL_FBOLAYER) {
+      Texture tex = new Texture(pg.parent);
+      tex.init(pg.width, pg.height,
+               backTexAttach.getName(), GL.GL_TEXTURE_2D, GL.GL_RGBA,
+               backTexAttach.getWidth(), backTexAttach.getHeight(),
+               backTexAttach.minFilter, backTexAttach.magFilter,
+               backTexAttach.wrapS, backTexAttach.wrapT);
+      tex.invertedY(true);
+      tex.colorBufferOf(pg);
+      pg.setCache(pg, tex);
+      return tex;
+    } else {
+      Texture tex = new Texture(pg.parent);
+      tex.init(pg.width, pg.height,
+               glColorTex.get(backTex), TEXTURE_2D, RGBA,
+               fboWidth, fboHeight, NEAREST, NEAREST,
+               CLAMP_TO_EDGE, CLAMP_TO_EDGE);
+      tex.invertedY(true);
+      tex.colorBufferOf(pg);
+      pg.setCache(pg, tex);
+      return tex;
+    }
   }
 
 
   protected Texture wrapFrontTexture() {
-//    Texture tex = new Texture(pg.parent);
-//    tex.init(pg.width, pg.height,
-//             backTex.getName(), GL.GL_TEXTURE_2D, GL.GL_RGBA,
-//             frontTex.getWidth(), frontTex.getHeight(),
-//             frontTex.minFilter, frontTex.magFilter,
-//             frontTex.wrapS, frontTex.wrapT);
-//    tex.invertedY(true);
-//    tex.colorBufferOf(pg);
-//    return tex;
-    Texture tex = new Texture(pg.parent);
-    tex.init(pg.width, pg.height,
-             glColorTex.get(frontTex), TEXTURE_2D, RGBA,
-             fboWidth, fboHeight, NEAREST, NEAREST,
-             CLAMP_TO_EDGE, CLAMP_TO_EDGE);
-    tex.invertedY(true);
-    tex.colorBufferOf(pg);
-    return tex;
+    if (USE_JOGL_FBOLAYER) {
+      Texture tex = new Texture(pg.parent);
+      tex.init(pg.width, pg.height,
+               backTexAttach.getName(), GL.GL_TEXTURE_2D, GL.GL_RGBA,
+               frontTexAttach.getWidth(), frontTexAttach.getHeight(),
+               frontTexAttach.minFilter, frontTexAttach.magFilter,
+               frontTexAttach.wrapS, frontTexAttach.wrapT);
+      tex.invertedY(true);
+      tex.colorBufferOf(pg);
+      return tex;
+    } else {
+      Texture tex = new Texture(pg.parent);
+      tex.init(pg.width, pg.height,
+               glColorTex.get(frontTex), TEXTURE_2D, RGBA,
+               fboWidth, fboHeight, NEAREST, NEAREST,
+               CLAMP_TO_EDGE, CLAMP_TO_EDGE);
+      tex.invertedY(true);
+      tex.colorBufferOf(pg);
+      return tex;
+    }
   }
 
 
   int getBackTextureName() {
-//    return backTex.getName();
-    return glColorTex.get(backTex);
+    if (USE_JOGL_FBOLAYER) {
+      return backTexAttach.getName();
+    } else {
+      return glColorTex.get(backTex);
+    }
   }
 
 
   int getFrontTextureName() {
-//    return frontTex.getName();
-    return glColorTex.get(frontTex);
+    if (USE_JOGL_FBOLAYER) {
+      return frontTexAttach.getName();
+    } else {
+      return glColorTex.get(frontTex);
+    }
   }
 
 
   protected void bindFrontTexture() {
-//    if (!texturingIsEnabled(GL.GL_TEXTURE_2D)) {
-//      enableTexturing(GL.GL_TEXTURE_2D);
-//    }
-//    gl.glBindTexture(GL.GL_TEXTURE_2D, frontTex.getName());
-    if (!texturingIsEnabled(TEXTURE_2D)) {
-      enableTexturing(TEXTURE_2D);
+    if (USE_JOGL_FBOLAYER) {
+      if (!texturingIsEnabled(GL.GL_TEXTURE_2D)) {
+        enableTexturing(GL.GL_TEXTURE_2D);
+      }
+      gl.glBindTexture(GL.GL_TEXTURE_2D, frontTexAttach.getName());
+    } else {
+      if (!texturingIsEnabled(TEXTURE_2D)) {
+        enableTexturing(TEXTURE_2D);
+      }
+      bindTexture(TEXTURE_2D, glColorTex.get(frontTex));
     }
-    bindTexture(TEXTURE_2D, glColorTex.get(frontTex));
   }
 
 
   protected void unbindFrontTexture() {
-//    if (textureIsBound(GL.GL_TEXTURE_2D, frontTex.getName())) {
-//      // We don't want to unbind another texture
-//      // that might be bound instead of this one.
-//      if (!texturingIsEnabled(GL.GL_TEXTURE_2D)) {
-//        enableTexturing(GL.GL_TEXTURE_2D);
-//        gl.glBindTexture(GL.GL_TEXTURE_2D, 0);
-//        disableTexturing(GL.GL_TEXTURE_2D);
-//      } else {
-//        gl.glBindTexture(GL.GL_TEXTURE_2D, 0);
-//      }
-//    }
-    if (textureIsBound(TEXTURE_2D, glColorTex.get(frontTex))) {
-      // We don't want to unbind another texture
-      // that might be bound instead of this one.
-      if (!texturingIsEnabled(TEXTURE_2D)) {
-        enableTexturing(TEXTURE_2D);
-        bindTexture(TEXTURE_2D, 0);
-        disableTexturing(TEXTURE_2D);
-      } else {
-        bindTexture(TEXTURE_2D, 0);
+    if (USE_JOGL_FBOLAYER) {
+      if (textureIsBound(GL.GL_TEXTURE_2D, frontTexAttach.getName())) {
+        // We don't want to unbind another texture
+        // that might be bound instead of this one.
+        if (!texturingIsEnabled(GL.GL_TEXTURE_2D)) {
+          enableTexturing(GL.GL_TEXTURE_2D);
+          gl.glBindTexture(GL.GL_TEXTURE_2D, 0);
+          disableTexturing(GL.GL_TEXTURE_2D);
+        } else {
+          gl.glBindTexture(GL.GL_TEXTURE_2D, 0);
+        }
+      }
+    } else {
+      if (textureIsBound(TEXTURE_2D, glColorTex.get(frontTex))) {
+        // We don't want to unbind another texture
+        // that might be bound instead of this one.
+        if (!texturingIsEnabled(TEXTURE_2D)) {
+          enableTexturing(TEXTURE_2D);
+          bindTexture(TEXTURE_2D, 0);
+          disableTexturing(TEXTURE_2D);
+        } else {
+          bindTexture(TEXTURE_2D, 0);
+        }
       }
     }
   }
 
 
   protected void syncBackTexture() {
-//    if (0 < capabilities.getNumSamples()) {
-//      backFBO.syncSamplingSink(gl);
-//      backFBO.bind(gl);
-//    }
-
-    if (1 < numSamples) {
-    bindFramebuffer(READ_FRAMEBUFFER, glMultiFbo.get(0));
-    bindFramebuffer(DRAW_FRAMEBUFFER, glColorFbo.get(0));
-    blitFramebuffer(0, 0, fboWidth, fboHeight,
-                    0, 0, fboWidth, fboHeight,
-                    COLOR_BUFFER_BIT, NEAREST);
+    if (USE_JOGL_FBOLAYER) {
+      if (0 < capabilities.getNumSamples()) {
+        backFBO.syncSamplingSink(gl);
+        backFBO.bind(gl);
+      }
+    } else {
+      if (1 < numSamples) {
+        bindFramebuffer(READ_FRAMEBUFFER, glMultiFbo.get(0));
+        bindFramebuffer(DRAW_FRAMEBUFFER, glColorFbo.get(0));
+        blitFramebuffer(0, 0, fboWidth, fboHeight,
+                        0, 0, fboWidth, fboHeight,
+                        COLOR_BUFFER_BIT, NEAREST);
+      }
     }
   }
 
@@ -1079,6 +1114,8 @@ public class PGL {
 
 
   protected void beginDraw(boolean clear0) {
+    if (USE_JOGL_FBOLAYER) return;
+
     if ((!clear0 || FORCE_SCREEN_FBO || 1 < numSamples) &&
         glColorFbo.get(0) != 0) {
       bindFramebuffer(FRAMEBUFFER, glColorFbo.get(0));
@@ -1113,39 +1150,40 @@ public class PGL {
 
 
   protected void endDraw(boolean clear0) {
-    /*
-    if (!clear && isFBOBacked() && !isMultisampled()) {
-      // Draw the back texture into the front texture, which will be used as
-      // back texture in the next frame. Otherwise flickering will occur if
-      // the sketch uses "incremental drawing" (background() not called).
-      frontFBO.bind(gl);
-      gl.glDisable(GL.GL_BLEND);
-      drawTexture(GL.GL_TEXTURE_2D, backTex.getName(),
-                  backTex.getWidth(), backTex.getHeight(),
-                  0, 0, pg.width, pg.height, 0, 0, pg.width, pg.height);
-      backFBO.bind(gl);
-    }
-    */
-    if (fboLayerInUse) {
-      syncBackTexture();
+    if (USE_JOGL_FBOLAYER) {
+      if (!clear0 && isFBOBacked() && !isMultisampled()) {
+        // Draw the back texture into the front texture, which will be used as
+        // back texture in the next frame. Otherwise flickering will occur if
+        // the sketch uses "incremental drawing" (background() not called).
+        frontFBO.bind(gl);
+        gl.glDisable(GL.GL_BLEND);
+        drawTexture(GL.GL_TEXTURE_2D, backTexAttach.getName(),
+                    backTexAttach.getWidth(), backTexAttach.getHeight(),
+                    0, 0, pg.width, pg.height, 0, 0, pg.width, pg.height);
+        backFBO.bind(gl);
+      }
+    } else {
+      if (fboLayerInUse) {
+        syncBackTexture();
 
-      // Draw the contents of the back texture to the screen framebuffer.
-      bindFramebuffer(FRAMEBUFFER, 0);
+        // Draw the contents of the back texture to the screen framebuffer.
+        bindFramebuffer(FRAMEBUFFER, 0);
 
-      clearDepth(1);
-      clearColor(0, 0, 0, 0);
-      clear(COLOR_BUFFER_BIT | DEPTH_BUFFER_BIT);
+        clearDepth(1);
+        clearColor(0, 0, 0, 0);
+        clear(COLOR_BUFFER_BIT | DEPTH_BUFFER_BIT);
 
-      // Render current back texture to screen, without blending.
-      disable(BLEND);
-      drawTexture(TEXTURE_2D, glColorTex.get(backTex),
-                  fboWidth, fboHeight, 0, 0, pg.width, pg.height,
-                                       0, 0, pg.width, pg.height);
+        // Render current back texture to screen, without blending.
+        disable(BLEND);
+        drawTexture(TEXTURE_2D, glColorTex.get(backTex),
+                    fboWidth, fboHeight, 0, 0, pg.width, pg.height,
+                                         0, 0, pg.width, pg.height);
 
-      // Swapping front and back textures.
-      int temp = frontTex;
-      frontTex = backTex;
-      backTex = temp;
+        // Swapping front and back textures.
+        int temp = frontTex;
+        frontTex = backTex;
+        backTex = temp;
+      }
     }
     flush();
   }
@@ -3096,8 +3134,7 @@ public class PGL {
         drawable.swapBuffers();
       }
 
-      /*
-      if (capabilities.isFBO()) {
+      if (USE_JOGL_FBOLAYER && capabilities.isFBO()) {
         // The onscreen drawing surface is backed by an FBO layer.
         GLFBODrawable fboDrawable = null;
 
@@ -3134,18 +3171,19 @@ public class PGL {
               backFBO.setSamplingSink(sinkFBO);
             }
 
-            backTex  = (FBObject.TextureAttachment) sinkFBO.getColorbuffer(0);
-            frontTex = (FBObject.TextureAttachment)frontFBO.getColorbuffer(0);
+            backTexAttach  = (FBObject.TextureAttachment) sinkFBO.
+                             getColorbuffer(0);
+            frontTexAttach = (FBObject.TextureAttachment)frontFBO.
+                             getColorbuffer(0);
           } else {
             // w/out multisampling, rendering is done on the back buffer.
             frontFBO = fboDrawable.getFBObject(GL.GL_FRONT);
 
-            backTex  = fboDrawable.getTextureBuffer(GL.GL_BACK);
-            frontTex = fboDrawable.getTextureBuffer(GL.GL_FRONT);
+            backTexAttach  = fboDrawable.getTextureBuffer(GL.GL_BACK);
+            frontTexAttach = fboDrawable.getTextureBuffer(GL.GL_FRONT);
           }
         }
       }
-*/
 
       pg.parent.handleDraw();
     }
