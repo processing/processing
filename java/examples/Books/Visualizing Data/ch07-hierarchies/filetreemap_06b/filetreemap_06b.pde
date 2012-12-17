@@ -16,7 +16,7 @@ Edition by Ben Fry. Copyright 2008 Ben Fry, 9780596514556.”
 If you feel your use of code examples falls outside fair use or the permission
 given above, feel free to contact us at permissions@oreilly.com.
 */
-import treemap.*;
+//import treemap.*;
 
 import javax.swing.*;
 
@@ -43,35 +43,23 @@ void setup() {
 
   font = createFont("SansSerif", 13);
 
-  selectRoot();
+  selectFolder("Choose a folder to browse...", "setRoot");
 }
 
-
-void selectRoot() {
-  SwingUtilities.invokeLater(new Runnable() {
-    public void run() {
-      JFileChooser fc = new JFileChooser();
-      fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-      fc.setDialogTitle("Choose a folder to browse...");
-
-      int returned = fc.showOpenDialog(frame);
-      if (returned == JFileChooser.APPROVE_OPTION) {
-        File file = fc.getSelectedFile();
-        setRoot(file);
-      }
-    }
-  });
-}
-
-  
+ 
 void setRoot(File folder) {
-  FolderItem tm = new FolderItem(null, folder, 0, 0);
-  tm.setBounds(0, 0, width, height);
-  tm.contentsVisible = true;
+  if (folder == null) {
+    println("No folder selected.");
     
-  rootItem = tm;
-  rootItem.zoomIn();
-  rootItem.updateColors();
+  } else {
+    FolderItem tm = new FolderItem(null, folder, 0, 0);
+    tm.setBounds(0, 0, width, height);
+    tm.contentsVisible = true;
+      
+    rootItem = tm;
+    rootItem.zoomIn();
+    rootItem.updateColors();
+  }
 }
 
 
