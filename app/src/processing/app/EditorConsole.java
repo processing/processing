@@ -257,6 +257,8 @@ public class EditorConsole extends JScrollPane {
       // Java on Mac OS X, but is widely reported as the source of any other
       // bug or problem that a user runs into. It may well be a Processing
       // bug, but until we know, we're suppressing the messages.
+    } else if (err && what.contains("Make pbuffer:")) { 
+      // Remove initalization warning from LWJGL.
     } else if (err && what.contains("XInitThreads() called for concurrent")) {
       // "Info: XInitThreads() called for concurrent Thread support" message on Linux
     } else {
