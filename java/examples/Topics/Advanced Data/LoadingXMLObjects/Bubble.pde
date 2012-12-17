@@ -1,9 +1,3 @@
-// Learning Processing
-// Daniel Shiffman
-// http://www.learningprocessing.com
-
-// Example 18-9: Using Processing's XML library
-
 // A Bubble class
 class Bubble {
   
