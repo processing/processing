@@ -11,7 +11,9 @@ Node rootNode;
 void setup() {
   size(400, 130);
   // Replace this location with a folder on your machine
-  File rootFile = new File("/Applications/Processing 0135");
+  //File rootFile = new File("/Applications/Processing.app");
+  //File rootFile = new File("c:\\processing-2.0");
+  File rootFile = new File(System.getProperty("user.home"));
   rootNode = new Node(rootFile);
   PFont font = createFont("SansSerif", 11);
   textFont(font);

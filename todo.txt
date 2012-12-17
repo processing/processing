@@ -35,6 +35,7 @@ X "Find in Reference" largely broken in 2.0b7
 C   http://code.google.com/p/processing/issues/detail?id=1456
 X discern variable vs function with Find in Reference
 X if no selection, attempt to expand the selection for Find in Reference
+X add cmd-shift-O to "Open Examples" on OS X with no window open
 
 earlier
 X include debug mode as 'experimental'?
@@ -49,26 +50,20 @@ X   removed in 2.0b7, because it has bugs and is no longer compatible
   <key>apple.awt.graphics.UseQuartz</key>
   <string>true</string>
 </dict>
-
-_ show warning when registering mouse/key events with OpenGL
+o also can have case of opening two of same sketch at once
+o   if sketch was open, then restart by dragging the .pde to p5.app
 
 https://processing-js.lighthouseapp.com/
+
+_ go through vida examples to make sure extra imports are not being used
+o   do command line to run through all examples? 
 
 _ remove sketch.properties when moving back to the default?
 _   or can we not do this, because the next mode needs this?
 
-_ go through examples to make sure extra imports are not being used
-_   vida examples use them sometimes
-_   do command line to run through all examples? 
-
 _ change error message for serial re: 64-bit
 _   "To use this library, switch to 32-bit mode in Preferences." (OS X)
 _   "To use this library, you must use the 32-bit version of Processing."
-
-_ temporary files (for sketches and logs) are not deleted
-_   http://code.google.com/p/processing/issues/detail?id=562
-
-_ renaming RGB (.pde) to Rgb.java says "a file named RGB.pde already exists"
 
 
 2.0 FINAL / library/tool/mode manager cleanup
@@ -105,8 +100,6 @@ _ setModified() getting called on Windows (probably Linux) for key cmds
 _ blank sketch opened even if another opened by double-click
 _   http://code.google.com/p/processing/issues/detail?id=179
 _   add a 150 ms or more lag before opening the untitled window (on os x)
-_ also can have case of opening two of same sketch at once
-_   if sketch was open, then restart by dragging the .pde to p5.app
 _ osx not opening a sketch at all on pde double-click? (though opening the app)
 _ active editor not being set null
 _   in Base.nextEditorLocation(), changed to "editors.size() == 0" 
@@ -226,6 +219,8 @@ _ 'recent' menu doesn't respect examples folder of other p5 versions
 _ 'recent' menu paths can get enormous
 _ add reference for contributed libraries to the Help menu
 _   http://code.google.com/p/processing/issues/detail?id=905
+_ temporary files (for sketches and logs) are not deleted
+_   http://code.google.com/p/processing/issues/detail?id=562
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -544,6 +539,7 @@ _   http://code.google.com/p/processing/issues/detail?id=8
 
 PDE / Editor
 
+_ renaming RGB (.pde) to Rgb.java says "a file named RGB.pde already exists"
 _ undo seems to not be going to the right location (now with example)
 _   http://code.google.com/p/processing/issues/detail?id=668
 _ improve update check message "a new release (1.0.1) is available"

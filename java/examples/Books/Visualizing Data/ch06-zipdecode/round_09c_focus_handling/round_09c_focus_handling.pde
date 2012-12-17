@@ -79,7 +79,7 @@ float boundsX2, boundsY2;
   
 
 public void setup() {
-  size(720, 453, P3D);
+  size(720, 453);
     
   mapX1 = 30;
   mapX2 = width - mapX1;
@@ -88,7 +88,6 @@ public void setup() {
    
   font = loadFont("ScalaSans-Regular-14.vlw");
   textFont(font);
-  textMode(SCREEN);
     
   messageX = 40;
   messageY = height - 40;
@@ -129,7 +128,6 @@ public void setup() {
   
 void readData() {
   new Slurper();
-  noLoop();  // done loading, can stop updating
 }
   
   

@@ -1,5 +1,7 @@
 // Code from Visualizing Data, First Edition, Copyright 2008 Ben Fry.
 
+import java.util.Arrays;
+
 
 class RankedLongArray {
   long[] values = new long[100];

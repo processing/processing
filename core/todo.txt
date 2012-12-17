@@ -95,10 +95,12 @@ _   add parseXML() and parseJSONObject(x)
 X api note: size() used in data classes
 X   length() too confusing w/ array.length being built-in (when to use ()?)
 X   size() a bit confusing with the p5 size command, but less problematic
-X   also shorter than getCount() or getLength()
-_ why not HashMap and ArrayList for JSON? 
-_   could enable loadHash() and loadArray() functions
-_   or loadDict() and loadList() as the case might be
+o   also shorter than getCount() or getLength()
+o why not HashMap and ArrayList for JSON? 
+o   could enable loadHash() and loadArray() functions
+X   because the types coming back out would always have to be cast
+_ add loadDict() and loadList() for JSON?
+_   Dict and List could be interfaces? 
 _ JSONObject.has(key) vs XML.hasAttribute(attr) vs HashMap.containsKey()
 _   and how it should be handled with hash/dict
 _   right now using hasKey().. in JSONObject
