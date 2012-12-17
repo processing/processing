@@ -106,6 +106,9 @@ _   and how it should be handled with hash/dict
 _   right now using hasKey().. in JSONObject
 
 
+_ add 'gz' as one of the loadXxx() options
+_   helps .svgz case from being weird, also generally dealing w/ compressed data
+
 _ image caches not being properly disposed (weak references broken?)
 _   http://code.google.com/p/processing/issues/detail?id=1353
 
