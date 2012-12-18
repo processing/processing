@@ -595,26 +595,30 @@ public class PGL {
       } else {
         caps.setSampleBuffers(false);
       }
-      if (PApplet.platform == PConstants.MACOSX) {
-        caps.setFBO(enable_screen_FBO_macosx);
-      } else if (PApplet.platform == PConstants.WINDOWS) {
-        caps.setFBO(enable_screen_FBO_windows);
-      } else if (PApplet.platform == PConstants.LINUX) {
-        caps.setFBO(enable_screen_FBO_linux);
-      } else {
-        caps.setFBO(enable_screen_FBO_other);
-      }
-      caps.setDepthBits(request_depth_bits);
-      caps.setStencilBits(request_stencil_bits);
-      caps.setAlphaBits(request_alpha_bits);
-      caps.setBackgroundOpaque(true);
-      caps.setOnscreen(true);
+//      if (PApplet.platform == PConstants.MACOSX) {
+//        caps.setFBO(enable_screen_FBO_macosx);
+//      } else if (PApplet.platform == PConstants.WINDOWS) {
+//        caps.setFBO(enable_screen_FBO_windows);
+//      } else if (PApplet.platform == PConstants.LINUX) {
+//        caps.setFBO(enable_screen_FBO_linux);
+//      } else {
+//        caps.setFBO(enable_screen_FBO_other);
+//      }
+//      caps.setDepthBits(request_depth_bits);
+//      caps.setStencilBits(request_stencil_bits);
+//      caps.setAlphaBits(request_alpha_bits);
+//      caps.setBackgroundOpaque(true);
+//      caps.setOnscreen(true);
     } else {
       caps.setSampleBuffers(false);
-      caps.setPBuffer(true);
-      caps.setFBO(false);
       reqNumSamples = qualityToSamples(antialias);
+//      caps.setPBuffer(true);
+//      caps.setFBO(false);
     }
+    caps.setDepthBits(request_depth_bits);
+    caps.setStencilBits(request_stencil_bits);
+    caps.setAlphaBits(request_alpha_bits);
+
 
     if (toolkit == AWT) {
       canvasAWT = new GLCanvas(caps);
@@ -827,87 +831,59 @@ public class PGL {
 
 
   protected int getReadFramebuffer() {
-    if (USE_JOGL_FBOLAYER) {
-      if (capabilities.isFBO()) {
-        return context.getDefaultReadFramebuffer();
-      } else {
-        return 0;
-      }
+    if (fboLayerInUse) {
+      return glColorFbo.get(0);
+    } else if (capabilities.isFBO()) {
+      return context.getDefaultReadFramebuffer();
     } else {
-      if (fboLayerInUse) {
-        return glColorFbo.get(0);
-      } else {
-        return 0;
-      }
+      return 0;
     }
   }
 
 
   protected int getDrawFramebuffer() {
-    if (USE_JOGL_FBOLAYER) {
-      if (capabilities.isFBO()) {
-        return context.getDefaultDrawFramebuffer();
+    if (fboLayerInUse) {
+      if (1 < numSamples) {
+        return glMultiFbo.get(0);
       } else {
-        return 0;
+        return glColorFbo.get(0);
       }
+    } else if (capabilities.isFBO()) {
+      return context.getDefaultDrawFramebuffer();
     } else {
-      if (fboLayerInUse) {
-        if (1 < numSamples) {
-          return glMultiFbo.get(0);
-        } else {
-          return glColorFbo.get(0);
-        }
-      } else {
-        return 0;
-      }
+      return 0;
     }
   }
 
 
   protected int getDefaultDrawBuffer() {
-    if (USE_JOGL_FBOLAYER) {
-      if (capabilities.isFBO()) {
-        return GL.GL_COLOR_ATTACHMENT0;
-      } else if (capabilities.getDoubleBuffered()) {
-        return GL.GL_BACK;
-      } else {
-        return GL.GL_FRONT;
-      }
+    if (fboLayerInUse) {
+      return COLOR_ATTACHMENT0;
+    } else if (capabilities.isFBO()) {
+      return GL.GL_COLOR_ATTACHMENT0;
+    } else if (capabilities.getDoubleBuffered()) {
+      return GL.GL_BACK;
     } else {
-      if (fboLayerInUse) {
-        return COLOR_ATTACHMENT0;
-      } else {
-        return BACK;
-      }
+      return GL.GL_FRONT;
     }
   }
 
 
   protected int getDefaultReadBuffer() {
-    if (USE_JOGL_FBOLAYER) {
-      if (capabilities.isFBO()) {
-        return GL.GL_COLOR_ATTACHMENT0;
-      } else if (capabilities.getDoubleBuffered()) {
-        return GL.GL_BACK;
-      } else {
-        return GL.GL_FRONT;
-      }
+    if (fboLayerInUse) {
+      return COLOR_ATTACHMENT0;
+    } else if (capabilities.isFBO()) {
+      return GL.GL_COLOR_ATTACHMENT0;
+    } else if (capabilities.getDoubleBuffered()) {
+      return GL.GL_BACK;
     } else {
-      if (fboLayerInUse) {
-        return COLOR_ATTACHMENT0;
-      } else {
-        return FRONT;
-      }
+      return GL.GL_FRONT;
     }
   }
 
 
   protected boolean isFBOBacked() {
-    if (USE_JOGL_FBOLAYER) {
-      return capabilities.isFBO();
-    } else {
-      return fboLayerInUse;
-    }
+    return fboLayerInUse || capabilities.isFBO();
   }
 
 
@@ -917,11 +893,7 @@ public class PGL {
 
 
   protected boolean isMultisampled() {
-    if (USE_JOGL_FBOLAYER) {
-      return 0 < capabilities.getNumSamples();
-    } else {
-      return 1 < numSamples;
-    }
+    return 1 < numSamples || 0 < capabilities.getNumSamples();
   }
 
 
