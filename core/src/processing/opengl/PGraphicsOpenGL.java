@@ -107,7 +107,7 @@ public class PGraphicsOpenGL extends PGraphics {
   // Basic rendering parameters:
 
   /** Whether the PGraphics object is ready to render or not. */
-  protected boolean initialized;
+  public boolean initialized;
 
   /** Flush modes: continuously (geometry is flushed after each call to
    * endShape) when-full (geometry is accumulated until a maximum size is
@@ -10317,7 +10317,7 @@ public class PGraphicsOpenGL extends PGraphics {
     int firstPointIndexCache;
     int lastPointIndexCache;
 
-    Tessellator() {
+    public Tessellator() {
       callback = new TessellatorCallback();
       gluTess = pgl.createTessellator(callback);
       rawIndices = new int[512];

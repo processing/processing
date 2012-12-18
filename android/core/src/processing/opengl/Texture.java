@@ -1250,7 +1250,7 @@ public class Texture implements PConstants {
   }
 
 
-  protected void colorBufferOf(PGraphicsOpenGL pgDraw) {
+  public void colorBufferOf(PGraphicsOpenGL pgDraw) {
     this.pgDraw = pgDraw;
   }
 
