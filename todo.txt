@@ -36,6 +36,8 @@ C   http://code.google.com/p/processing/issues/detail?id=1456
 X discern variable vs function with Find in Reference
 X if no selection, attempt to expand the selection for Find in Reference
 X add cmd-shift-O to "Open Examples" on OS X with no window open
+X go through vida examples to make sure extra imports are not being used
+o   do command line to run through all examples? 
 
 earlier
 X include debug mode as 'experimental'?
@@ -54,9 +56,6 @@ o also can have case of opening two of same sketch at once
 o   if sketch was open, then restart by dragging the .pde to p5.app
 
 https://processing-js.lighthouseapp.com/
-
-_ go through vida examples to make sure extra imports are not being used
-o   do command line to run through all examples? 
 
 _ remove sketch.properties when moving back to the default?
 _   or can we not do this, because the next mode needs this?
