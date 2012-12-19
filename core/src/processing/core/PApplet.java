@@ -5816,7 +5816,7 @@ public class PApplet extends Applet
   /**
    * @webref input:files
    * @param filename name of a file in the data folder or a URL.
-   * @see XML#parse(String)
+   * @see PApplet#parseXML(String)
    * @see PApplet#loadBytes(String)
    * @see PApplet#loadStrings(String)
    * @see PApplet#loadTable(String)
@@ -5836,7 +5836,13 @@ public class PApplet extends Applet
     }
   }
 
-
+  /**
+   * @webref input:files
+   * @brief Converts String content to an XML object
+   * @param data the content to be parsed as XML
+   * @return an XML object, or null
+   * @see PApplet#loadXML(String)
+   */
   public XML parseXML(String xmlString) {
     return parseXML(xmlString, null);
   }
