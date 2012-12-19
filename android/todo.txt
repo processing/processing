@@ -29,6 +29,11 @@ X   http://code.google.com/p/processing/issues/detail?id=767
 X Error for "android create avd" when the AVD is already installed
 X   http://code.google.com/p/processing/issues/detail?id=614
 
+_ requires deleting the app before reinstalling
+_   just fix this like the others
+debug:
+Failure [INSTALL_PARSE_FAILED_INCONSISTENT_CERTIFICATES]
+Shutting down any existing adb server...
 
 _ NullPointerException in AndroidBuild.writeLocalProps(AndroidBuild.java:458)
 _   prompts for SDK, works; then after restart breaks again
