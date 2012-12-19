@@ -5813,13 +5813,12 @@ public class PApplet extends Applet
   // DATA I/O
 
   /**
-   * xxxxxx scott is cleaning this up
-   *
    * @webref input:files
    * @brief Creates a new XML object
-   * @param data the content to be parsed as XML
+   * @param name the name to be given to the root element of the new XML object
    * @return an XML object, or null
    * @see PApplet#loadXML(String)
+   * @see PApplet#parseXML(String)
    */
   public XML createXML(String name) {
     try {
@@ -5833,6 +5832,7 @@ public class PApplet extends Applet
   /**
    * @webref input:files
    * @param filename name of a file in the data folder or a URL.
+   * @see PApplet#createXML(String)
    * @see PApplet#parseXML(String)
    * @see PApplet#saveXML(String)
    * @see PApplet#loadBytes(String)
@@ -5858,6 +5858,7 @@ public class PApplet extends Applet
    * @brief Converts String content to an XML object
    * @param data the content to be parsed as XML
    * @return an XML object, or null
+   * @see PApplet#createXML(String)
    * @see PApplet#loadXML(String)
    * @see PApplet#saveXML(String)
    */
@@ -5878,6 +5879,7 @@ public class PApplet extends Applet
    * @webref output:files
    * @param xml the XML object to save to disk
    * @param filename name of the file to write to
+   * @see PApplet#createXML(String)
    * @see PApplet#loadXML(String)
    * @see PApplet#parseXML(String)
    */
