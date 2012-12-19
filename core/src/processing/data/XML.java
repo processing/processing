@@ -157,8 +157,6 @@ public class XML implements Serializable {
 
 
   /**
-   * xxxxxxx
-   *
    * @webref xml:method
    * @brief Converts String content to an XML object
    * @param data the content to be parsed as XML
@@ -166,7 +164,6 @@ public class XML implements Serializable {
    * @throws SAXException
    * @throws ParserConfigurationException
    * @throws IOException
-   * @see PApplet#loadXML(String)
    */
   static public XML parse(String data) throws IOException, ParserConfigurationException, SAXException {
     return XML.parse(data, null);
