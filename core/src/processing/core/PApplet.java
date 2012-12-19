@@ -5812,7 +5812,15 @@ public class PApplet extends Applet
 
   // DATA I/O
 
-
+  /**
+   * xxxxxx scott is cleaning this up
+   *
+   * @webref input:files
+   * @brief Creates a new XML object
+   * @param data the content to be parsed as XML
+   * @return an XML object, or null
+   * @see PApplet#loadXML(String)
+   */
   public XML createXML(String name) {
     try {
       return new XML(name);
@@ -5822,11 +5830,11 @@ public class PApplet extends Applet
     }
   }
 
-
   /**
    * @webref input:files
    * @param filename name of a file in the data folder or a URL.
    * @see PApplet#parseXML(String)
+   * @see PApplet#saveXML(String)
    * @see PApplet#loadBytes(String)
    * @see PApplet#loadStrings(String)
    * @see PApplet#loadTable(String)
@@ -5834,7 +5842,6 @@ public class PApplet extends Applet
   public XML loadXML(String filename) {
     return loadXML(filename, null);
   }
-
 
   // version that uses 'options' though there are currently no supported options
   public XML loadXML(String filename, String options) {
@@ -5852,12 +5859,12 @@ public class PApplet extends Applet
    * @param data the content to be parsed as XML
    * @return an XML object, or null
    * @see PApplet#loadXML(String)
+   * @see PApplet#saveXML(String)
    */
   public XML parseXML(String xmlString) {
     return parseXML(xmlString, null);
   }
-
-
+  
   public XML parseXML(String xmlString, String options) {
     try {
       return XML.parse(xmlString, options);
@@ -5867,15 +5874,22 @@ public class PApplet extends Applet
     }
   }
 
-
+  /**
+   * @webref output:files
+   * @param xml the XML object to save to disk
+   * @param filename name of the file to write to
+   * @see PApplet#loadXML(String)
+   * @see PApplet#parseXML(String)
+   */
   public boolean saveXML(XML xml, String filename) {
     return saveXML(xml, filename, null);
   }
 
-
   public boolean saveXML(XML xml, String filename, String options) {
     return xml.save(saveFile(filename), options);
   }
+
+
 
 
   public Table createTable() {
