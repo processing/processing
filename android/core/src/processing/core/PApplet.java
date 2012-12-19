@@ -4151,6 +4151,16 @@ public class PApplet extends Activity implements PConstants, Runnable {
   // DATA I/O
 
 
+  public XML createXML(String name) {
+    try {
+      return new XML(name);
+    } catch (Exception e) {
+      e.printStackTrace();
+      return null;
+    }
+  }
+
+
   /**
    * @webref input:files
    * @param filename name of a file in the data folder or a URL.

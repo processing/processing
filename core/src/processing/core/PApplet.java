@@ -1371,9 +1371,9 @@ public class PApplet extends Applet
       // This will crash with OpenGL, so quit anyway
       if (g instanceof PGraphicsOpenGL) {
         PGraphics.showWarning("Stopping the sketch because this code will " +
-        		                  "not work correctly with OpenGL.");
+                                          "not work correctly with OpenGL.");
         throw new RuntimeException("This sketch uses a library that " +
-        		                       "needs to be updated for Processing 2.0.");
+                                               "needs to be updated for Processing 2.0.");
       }
     }
   }
@@ -5811,6 +5811,16 @@ public class PApplet extends Applet
   //////////////////////////////////////////////////////////////
 
   // DATA I/O
+
+
+  public XML createXML(String name) {
+    try {
+      return new XML(name);
+    } catch (Exception e) {
+      e.printStackTrace();
+      return null;
+    }
+  }
 
 
   /**
