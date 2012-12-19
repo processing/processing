@@ -67,7 +67,7 @@ public class Token {
   public static final byte FUNCTION3 = 13;
 
   /** Built-in Processing functions (setup, draw, mouseDragged). */
-  public static final byte FUNCTION4 = 13;
+  public static final byte FUNCTION4 = 14;
 
   /**
    * Operator token id. This can be used to mark an

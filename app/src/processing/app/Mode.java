@@ -102,7 +102,8 @@ public abstract class Mode {
     BufferedReader reader = PApplet.createReader(keywordFile);
     String line = null;
     while ((line = reader.readLine()) != null) {
-      String[] pieces = PApplet.trim(PApplet.split(line, '\t'));
+//      String[] pieces = PApplet.trim(PApplet.split(line, '\t'));
+      String[] pieces = PApplet.splitTokens(line);
       if (pieces.length >= 2) {
         String keyword = pieces[0];
         String coloring = pieces[1];
