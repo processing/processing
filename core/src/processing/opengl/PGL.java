@@ -505,6 +505,9 @@ public class PGL {
   protected FloatBuffer depthBuffer;
   protected ByteBuffer stencilBuffer;
 
+  protected float[] projMatrix;
+  protected float[] mvMatrix;
+
 
   ///////////////////////////////////////////////////////////
 
@@ -1200,6 +1203,57 @@ public class PGL {
   protected boolean fboLayerInUse(boolean clear0) {
     boolean cond = !clear0 || FORCE_SCREEN_FBO || 1 < numSamples;
     return cond && glColorFbo.get(0) != 0;
+  }
+
+
+  protected void beginGL() {
+    if (projMatrix == null) {
+      projMatrix = new float[16];
+    }
+    gl2x.glMatrixMode(GL2.GL_PROJECTION);
+    projMatrix[ 0] = pg.projection.m00;
+    projMatrix[ 1] = pg.projection.m10;
+    projMatrix[ 2] = pg.projection.m20;
+    projMatrix[ 3] = pg.projection.m30;
+    projMatrix[ 4] = pg.projection.m01;
+    projMatrix[ 5] = pg.projection.m11;
+    projMatrix[ 6] = pg.projection.m21;
+    projMatrix[ 7] = pg.projection.m31;
+    projMatrix[ 8] = pg.projection.m02;
+    projMatrix[ 9] = pg.projection.m12;
+    projMatrix[10] = pg.projection.m22;
+    projMatrix[11] = pg.projection.m32;
+    projMatrix[12] = pg.projection.m03;
+    projMatrix[13] = pg.projection.m13;
+    projMatrix[14] = pg.projection.m23;
+    projMatrix[15] = pg.projection.m33;
+    gl2x.glLoadMatrixf(projMatrix, 0);
+
+    if (mvMatrix == null) {
+      mvMatrix = new float[16];
+    }
+    gl2x.glMatrixMode(GL2.GL_MODELVIEW);
+    mvMatrix[ 0] = pg.modelview.m00;
+    mvMatrix[ 1] = pg.modelview.m10;
+    mvMatrix[ 2] = pg.modelview.m20;
+    mvMatrix[ 3] = pg.modelview.m30;
+    mvMatrix[ 4] = pg.modelview.m01;
+    mvMatrix[ 5] = pg.modelview.m11;
+    mvMatrix[ 6] = pg.modelview.m21;
+    mvMatrix[ 7] = pg.modelview.m31;
+    mvMatrix[ 8] = pg.modelview.m02;
+    mvMatrix[ 9] = pg.modelview.m12;
+    mvMatrix[10] = pg.modelview.m22;
+    mvMatrix[11] = pg.modelview.m32;
+    mvMatrix[12] = pg.modelview.m03;
+    mvMatrix[13] = pg.modelview.m13;
+    mvMatrix[14] = pg.modelview.m23;
+    mvMatrix[15] = pg.modelview.m33;
+    gl2x.glLoadMatrixf(mvMatrix, 0);
+  }
+
+
+  protected void endGL() {
   }
 
 
