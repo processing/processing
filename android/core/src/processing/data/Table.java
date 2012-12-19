@@ -1801,7 +1801,8 @@ public class Table {
 
   public int getInt(int row, int column) {
     checkBounds(row, column);
-    if (columnTypes[column] == INT) {
+    if (columnTypes[column] == INT ||
+        columnTypes[column] == CATEGORICAL) {
       int[] intData = (int[]) columns[column];
       return intData[row];
     }
