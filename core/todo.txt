@@ -34,6 +34,10 @@ X   better to do this instead of bringing back the magic event
 X   or implementing the magic event on Android
 X   also problematic with it not being called now
 
+andres
+A P3D sketches failing to run
+A   http://code.google.com/p/processing/issues/detail?id=1500
+
 cleaning/earlier
 C textureWrap() CLAMP and REPEAT now added
 C begin/endContour()
@@ -131,6 +135,10 @@ _     naming HTMLTable, TableHTML (ala PShapeSVG)
 _     or should it be HTMLTable / HtmlTable... then SVGShape / SvgShape
 _   dictionary support
 _   join tables together (static is kinda gross)
+_ getColumnType() - what should it return?
+_   Integer.TYPE, String.class? still nothing for categorical
+_   maybe it's Table.INT since it's for advanced users anyway
+_   problem is loading types from file, no way to access it from code
 
 shape
 _ major surgery to put loadShape() back into PApplet/PGraphics

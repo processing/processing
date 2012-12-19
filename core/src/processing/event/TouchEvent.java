@@ -39,6 +39,14 @@ rotate
 swipe
 pan
 longpress
+
+W3C touch events
+http://www.w3.org/TR/touch-events/
+http://www.w3.org/TR/2011/WD-touch-events-20110913/
+
+Pointer and gesture events (Windows)
+http://msdn.microsoft.com/en-US/library/ie/hh673557.aspx
+
 */
 public class TouchEvent extends Event {
 
