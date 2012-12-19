@@ -97,6 +97,8 @@ LINUX	LITERAL2
 MACOSX	LITERAL2
 MAX_FLOAT	LITERAL2
 MAX_INT	LITERAL2	
+MIN_FLOAT	LITERAL2
+MIN_INT	LITERAL2
 MITER	LITERAL2	stokeJoin_
 MODEL	LITERAL2	textMode_
 MOVE	LITERAL2	cursor_
@@ -248,11 +250,11 @@ catch	FUNCTION3	catch
 do	FUNCTION3
 for	FUNCTION3	for
 if	FUNCTION3	if
-else	FUNCTION3	else
+#else	FUNCTION3	else
 switch	FUNCTION3	switch
 synchronized	FUNCTION3
 while	FUNCTION3	while
-try	FUNCTION3	try
+#try	FUNCTION3	try
 
 
 # These items are a part of Processing but, but pages don't generate
@@ -416,7 +418,7 @@ directionalLight	FUNCTION1	directionalLight_
 displayHeight	KEYWORD4	displayHeight
 displayWidth	KEYWORD4	displayWidth
 dist	FUNCTION1	dist_
-draw	FUNCTION1	draw_
+draw	FUNCTION4	draw
 ellipse	FUNCTION1	ellipse_
 ellipseMode	FUNCTION1	ellipseMode_
 emissive	FUNCTION1	emissive_
@@ -448,10 +450,10 @@ imageMode	FUNCTION1	imageMode_
 join	FUNCTION1	join_
 key	KEYWORD4	key
 keyCode	KEYWORD4	keyCode
-keyPressed	FUNCTION1	keyPressed_
+keyPressed	FUNCTION4	keyPressed
 keyPressed	KEYWORD4	keyPressed
-keyReleased	FUNCTION1	keyReleased_
-keyTyped	FUNCTION1	keyTyped_
+keyReleased	FUNCTION4	keyReleased
+keyTyped	FUNCTION4	keyTyped
 lerp	FUNCTION1	lerp_
 lerpColor	FUNCTION1	lerpColor_
 lightFalloff	FUNCTION1	lightFalloff_
@@ -482,10 +484,10 @@ modelY	FUNCTION1	modelY_
 modelZ	FUNCTION1	modelZ_
 month	FUNCTION1	month_
 mouseButton	KEYWORD4	mouseButton
-mouseClicked	FUNCTION1	mouseClicked_
-mouseDragged	FUNCTION1	mouseDragged_
-mouseMoved	FUNCTION1	mouseMoved_
-mousePressed	FUNCTION1	mousePressed_
+mouseClicked	FUNCTION4	mouseClicked
+mouseDragged	FUNCTION4	mouseDragged
+mouseMoved	FUNCTION4	mouseMoved
+mousePressed	FUNCTION4	mousePressed
 mousePressed	KEYWORD4	mousePressed
 mouseReleased	FUNCTION1	mouseReleased_
 mouseX	KEYWORD4	mouseX
@@ -575,11 +577,18 @@ cross	FUNCTION2	PVector_cross_
 dist	FUNCTION2	PVector_dist_
 div	FUNCTION2	PVector_div_
 dot	FUNCTION2	PVector_dot_
+fromAngle	FUNCTION2	PVector_fromAngle_
 get	FUNCTION2	PVector_get_
+heading	FUNCTION2	PVector_heading_
+lerp	FUNCTION2	PVector_lerp_
 limit	FUNCTION2	PVector_limit_
 mag	FUNCTION2	PVector_mag_
+magSq	FUNCTION2	PVector_magSq_
 mult	FUNCTION2	PVector_mult_
 normalize	FUNCTION2	PVector_normalize_
+random2D	FUNCTION2	PVector_random2D_
+random3D	FUNCTION2	PVector_random3D_
+rotate	FUNCTION2	PVector_rotate_
 set	FUNCTION2	PVector_set_
 setMag	FUNCTION2	PVector_setMag_
 sub	FUNCTION2	PVector_sub_
@@ -619,7 +628,7 @@ selectFolder	FUNCTION1	selectFolder_
 selectInput	FUNCTION1	selectInput_
 selectOutput	FUNCTION1	selectOutput_
 set	FUNCTION1	set_
-setup	FUNCTION1	setup_
+setup	FUNCTION4	setup
 shader	FUNCTION1	shader_
 shape	FUNCTION1	shape_
 shapeMode	FUNCTION1	shapeMode_
@@ -684,6 +693,7 @@ hasAttribute	FUNCTION2	XML_hasAttribute_
 hasChildren	FUNCTION2	XML_hasChildren_
 listAttributes	FUNCTION2	XML_listAttributes_
 listChildren	FUNCTION2	XML_listChildren_
+parse	FUNCTION2	XML_parse_
 removeChild	FUNCTION2	XML_removeChild_
 setContent	FUNCTION2	XML_setContent_
 setFloat	FUNCTION2	XML_setFloat_

@@ -236,11 +236,11 @@ editor.token.function2.style = #006699,plain
 editor.token.function3.style = #669933,plain
 editor.token.function4.style = #006699,bold
 
-editor.token.keyword1.style = #996633,plain
-editor.token.keyword2.style = #996633,plain
+editor.token.keyword1.style = #549cc0,plain
+editor.token.keyword2.style = #549cc0,plain
 editor.token.keyword3.style = #669933,plain
 editor.token.keyword4.style = #ff6699,plain
-editor.token.keyword5.style = #cc6633,plain
+editor.token.keyword5.style = #e37139,plain
 
 editor.token.literal1.style = #7D4793,plain
 editor.token.literal2.style = #666666,plain
