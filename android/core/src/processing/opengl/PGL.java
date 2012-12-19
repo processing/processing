@@ -855,6 +855,14 @@ public class PGL {
   }
 
 
+  protected void beginGL() {
+  }
+
+
+  protected void endGL() {
+  }
+
+
   ///////////////////////////////////////////////////////////
 
   // Caps query

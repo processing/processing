@@ -1644,12 +1644,14 @@ public class PGraphicsOpenGL extends PGraphics {
   @Override
   public PGL beginPGL() {
     flush();
+    pgl.beginGL();
     return pgl;
   }
 
 
   @Override
   public void endPGL() {
+    pgl.endGL();
     restoreGL();
   }
 
