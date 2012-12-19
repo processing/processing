@@ -139,6 +139,8 @@ _ getColumnType() - what should it return?
 _   Integer.TYPE, String.class? still nothing for categorical
 _   maybe it's Table.INT since it's for advanced users anyway
 _   problem is loading types from file, no way to access it from code
+_ getInt() on categorial to return index?
+_   getCategories() and getCategory() methods to query names?
 
 shape
 _ major surgery to put loadShape() back into PApplet/PGraphics
