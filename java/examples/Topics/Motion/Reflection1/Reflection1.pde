@@ -17,7 +17,7 @@ float velocityX, velocityY;
 
 void setup(){
   size(640, 360);
-  frameRate(30);
+
   fill(128);
   baseX1 = 0;
   baseY1 = height-150;
@@ -32,8 +32,7 @@ void setup(){
   directionY = random(0.1, 0.99);
 
   // normalize direction vector
-  float directionVectLength = sqrt(directionX*directionX + 
-            directionY*directionY);
+  float directionVectLength = sqrt(directionX*directionX + directionY*directionY);
   directionX /= directionVectLength;
   directionY /= directionVectLength;
 }

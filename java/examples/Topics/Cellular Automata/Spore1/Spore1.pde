@@ -18,25 +18,26 @@ color spore_color;
 int runs_per_loop = 10000;
 color black = color(0, 0, 0);
   
-void setup()
-{
+void setup() {
   size(640, 360);
   frameRate(24);
-  clearscr();  
+  reset();
+}
+
+void reset() {
+  clearScreen();  
   w = new World();
   spore_color = color(172, 255, 128);
   seed();
 }
 
-void seed() 
-{
+void seed() {
   // Add cells at random places
   for (int i = 0; i < maxcells; i++)
   {
     int cX = (int)random(width);
     int cY = (int)random(height);
-    if (w.getpix(cX, cY) == black)
-    {
+    if (w.getpix(cX, cY) == black) {
       w.setpix(cX, cY, spore_color);
       cells[numcells] = new Cell(cX, cY);
       numcells++;
@@ -44,8 +45,7 @@ void seed()
   }
 }
 
-void draw()
-{
+void draw() {
   // Run cells in random order
   for (int i = 0; i < runs_per_loop; i++) {
     int selected = min((int)random(numcells), numcells - 1);
@@ -53,23 +53,19 @@ void draw()
   }
 }
 
-void clearscr()
-{
+void clearScreen() {
   background(0);
 }
 
-class Cell
-{
+class Cell {
   int x, y;
-  Cell(int xin, int yin)
-  {
+  Cell(int xin, int yin) {
     x = xin;
     y = yin;
   }
 
     // Perform action based on surroundings
-  void run()
-  {
+  void run() {
     // Fix cell coordinates
     while(x < 0) {
       x+=width;
@@ -106,8 +102,8 @@ class Cell
 //  The World class simply provides two functions, get and set, which access the
 //  display in the same way as getPixel and setPixel.  The only difference is that
 //  the World class's get and set do screen wraparound ("toroidal coordinates").
-class World
-{
+class World {
+  
   void setpix(int x, int y, int c) {
     while(x < 0) x+=width;
     while(x > width - 1) x-=width;
@@ -125,9 +121,8 @@ class World
   }
 }
 
-void mousePressed()
-{
+void mousePressed() {
   numcells = 0;
-  setup();
+  reset();
 }
 
