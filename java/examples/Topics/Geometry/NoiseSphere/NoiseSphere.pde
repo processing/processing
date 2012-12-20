@@ -44,8 +44,8 @@ void draw() {
 }
 
 
-class Pelo
-{
+class Pelo {
+  
   float z = random(-radio, radio);
   float phi = random(TWO_PI);
   float largo = random(1.15, 1.2);

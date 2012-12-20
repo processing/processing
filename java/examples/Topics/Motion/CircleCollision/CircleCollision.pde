@@ -5,7 +5,8 @@
  * Based on Keith Peter's Solution in
  * Foundation Actionscript Animation: Making Things Move!
  */
-
+ 
+ 
 Ball[] balls =  { 
   new Ball(100, 400, 20), 
   new Ball(700, 400, 80) 
@@ -24,7 +25,7 @@ void setup() {
 void draw() {
   background(51);
   fill(204);
-  for (int i=0; i< 2; i++){
+  for (int i = 0; i < 2; i++){
     balls[i].x += vels[i].x;
     balls[i].y += vels[i].y;
     ellipse(balls[i].x, balls[i].y, balls[i].r*2, balls[i].r*2);
@@ -52,7 +53,8 @@ void checkObjectCollision(Ball[] b, PVector[] v){
     /* bTemp will hold rotated ball positions. You 
      just need to worry about bTemp[1] position*/
     Ball[] bTemp = {  
-      new Ball(), new Ball()          };
+      new Ball(), new Ball()          
+    };
       
     /* b[1]'s position is relative to b[0]'s
      so you can use the vector between them (bVect) as the 
@@ -65,7 +67,8 @@ void checkObjectCollision(Ball[] b, PVector[] v){
 
     // rotate Temporary velocities
     PVector[] vTemp = { 
-      new PVector(), new PVector()         };
+      new PVector(), new PVector()         
+    };
     vTemp[0].x  = cosine * v[0].x + sine * v[0].y;
     vTemp[0].y  = cosine * v[0].y - sine * v[0].x;
     vTemp[1].x  = cosine * v[1].x + sine * v[1].y;
@@ -75,14 +78,15 @@ void checkObjectCollision(Ball[] b, PVector[] v){
      conservation of momentum equations to calculate 
      the final velocity along the x-axis. */
     PVector[] vFinal = {  
-      new PVector(), new PVector()          };
+      new PVector(), new PVector()          
+    };
     // final rotated velocity for b[0]
     vFinal[0].x = ((b[0].m - b[1].m) * vTemp[0].x + 2 * b[1].m * 
-      vTemp[1].x) / (b[0].m + b[1].m);
+                   vTemp[1].x) / (b[0].m + b[1].m);
     vFinal[0].y = vTemp[0].y;
     // final rotated velocity for b[0]
     vFinal[1].x = ((b[1].m - b[0].m) * vTemp[1].x + 2 * b[0].m * 
-      vTemp[0].x) / (b[0].m + b[1].m);
+                    vTemp[0].x) / (b[0].m + b[1].m);
     vFinal[1].y = vTemp[1].y;
 
     // hack to avoid clumping
@@ -94,7 +98,8 @@ void checkObjectCollision(Ball[] b, PVector[] v){
      in the opposite direction */
     // rotate balls
     Ball[] bFinal = { 
-      new Ball(), new Ball()         };
+      new Ball(), new Ball()         
+    };
     bFinal[0].x = cosine * bTemp[0].x - sine * bTemp[0].y;
     bFinal[0].y = cosine * bTemp[0].y + sine * bTemp[0].x;
     bFinal[1].x = cosine * bTemp[1].x - sine * bTemp[1].y;

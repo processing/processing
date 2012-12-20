@@ -12,17 +12,16 @@ float gravity = 0.03;
 float friction = -0.9;
 Ball[] balls = new Ball[numBalls];
 
-void setup() 
-{
+void setup() {
   size(640, 360);
-  noStroke();
   for (int i = 0; i < numBalls; i++) {
     balls[i] = new Ball(random(width), random(height), random(30, 70), i, balls);
   }
+  noStroke();
+  fill(255, 204);
 }
 
-void draw() 
-{
+void draw() {
   background(0);
   for (int i = 0; i < numBalls; i++) {
     balls[i].collide();
@@ -32,6 +31,7 @@ void draw()
 }
 
 class Ball {
+  
   float x, y;
   float diameter;
   float vx = 0;
@@ -90,7 +90,6 @@ class Ball {
   }
   
   void display() {
-    fill(255, 204);
     ellipse(x, y, diameter, diameter);
   }
 }

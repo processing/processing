@@ -26,7 +26,6 @@ void draw() {
   if (k.getCount() > 5) {
     k.restart();
   }
-
 }
 
 
@@ -38,24 +37,21 @@ class KochFractal {
   ArrayList lines;   // A list to keep track of all the lines
   int count;
   
-  public KochFractal()
-  {
-    start = new Point(0,height/2 + height/4);
-    end = new Point(width,height/2  + height/4);
+  KochFractal() {
+    start = new Point(0, height/2 + height/4);
+    end = new Point(width, height/2  + height/4);
     lines = new ArrayList();
     restart();
   }
 
-  void nextLevel()
-  {  
+  void nextLevel() {  
     // For every line that is in the arraylist
     // create 4 more lines in a new arraylist
     lines = iterate(lines);
     count++;
   }
 
-  void restart()
-  { 
+  void restart() { 
     count = 0;      // Reset count
     lines.clear();  // Empty the array list
     lines.add(new KochLine(start,end));  // Add the initial line (from one end point to the other)
@@ -66,8 +62,7 @@ class KochFractal {
   }
   
   // This is easy, just draw all the lines
-  void render()
-  {
+  void render() {
     for(int i = 0; i < lines.size(); i++) {
       KochLine l = (KochLine)lines.get(i);
       l.render();
@@ -82,11 +77,9 @@ class KochFractal {
   // Step 3: Return the new arraylist and it becomes the list of line segments for the structure
   
   // As we do this over and over again, each line gets broken into 4 lines, which gets broken into 4 lines, and so on. . . 
-  ArrayList iterate(ArrayList before)
-  {
+  ArrayList iterate(ArrayList before) {
     ArrayList now = new ArrayList();    //Create emtpy list
-    for(int i = 0; i < before.size(); i++)
-    {
+    for (int i = 0; i < before.size(); i++) {
       KochLine l = (KochLine)lines.get(i);   // A line segment inside the list
       // Calculate 5 koch points (done for us by the line object)
       Point a = l.start();                 
@@ -114,7 +107,7 @@ class KochLine {
   // Two points,
   // a is the "left" point and 
   // b is the "right point
-  Point a,b;
+  Point a, b;
   
   KochLine(Point a_, Point b_) {
      a = a_.copy();
@@ -123,7 +116,7 @@ class KochLine {
   
   void render() {
     stroke(255);
-    line(a.x,a.y,b.x,b.y);
+    line(a.x, a.y, b.x, b.y);
   }
   
   Point start() {
@@ -135,24 +128,21 @@ class KochLine {
   }
       
   // This is easy, just 1/3 of the way
-  Point kochleft()
-  {
+  Point kochleft() {
     float x = a.x + (b.x - a.x) / 3f;
     float y = a.y + (b.y - a.y) / 3f;
     return new Point(x,y);
   }    
   
   // More complicated, have to use a little trig to figure out where this point is!
-  Point kochmiddle()
-  {
+  Point kochmiddle() {
     float x = a.x + 0.5f * (b.x - a.x) + (sin(radians(60))*(b.y-a.y)) / 3;
     float y = a.y + 0.5f * (b.y - a.y) - (sin(radians(60))*(b.x-a.x)) / 3;
     return new Point(x,y);
   }    
 
   // Easy, just 2/3 of the way
-  Point kochright()
-  {
+  Point kochright() {
     float x = a.x + 2*(b.x - a.x) / 3f;
     float y = a.y + 2*(b.y - a.y) / 3f;
     return new Point(x,y);
