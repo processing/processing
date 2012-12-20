@@ -721,7 +721,6 @@ public class XML implements Serializable {
    *
    * @param name the non-null full name of the attribute.
    * @param defaultValue the default value of the attribute.
-   *
    * @return the value, or defaultValue if the attribute does not exist.
    */
   public double getDouble(String name, double defaultValue) {
@@ -761,7 +760,12 @@ public class XML implements Serializable {
 
   /**
    * Format this XML data as a String.
+   *
+   * @webref xml:method
+   * @brief Formats XML data as a String
    * @param indent -1 for a single line (and no declaration), >= 0 for indents and newlines
+   * @return the content
+   * @see XML#toString()
    */
   public String format(int indent) {
     try {
@@ -847,6 +851,11 @@ public class XML implements Serializable {
    * Return the XML document formatted with two spaces for indents.
    * Chosen to do this since it's the most common case (e.g. with println()).
    * Same as format(2). Use the format() function for more options.
+   *
+   * @webref xml:method
+   * @brief Gets XML data as a String using default formatting
+   * @return the content
+   * @see XML#format(int)
    */
   @Override
   public String toString() {
