@@ -652,12 +652,11 @@ public class PGL {
       pg.parent.setLayout(new BorderLayout());
       pg.parent.add(canvasNEWT, BorderLayout.CENTER);
 
-      com.jogamp.newt.event.MouseListener mouseListener = new NEWTMouseAdapter();
+      NEWTMouseListener mouseListener = new NEWTMouseListener();
       window.addMouseListener(mouseListener);
-      com.jogamp.newt.event.KeyListener keyListener = new NEWTKeyAdapter();
+      NEWTKeyListener keyListener = new NEWTKeyListener();
       window.addKeyListener(keyListener);
-
-      com.jogamp.newt.event.WindowListener winListener = new NEWTWindowListener();
+      NEWTWindowListener winListener = new NEWTWindowListener();
       window.addWindowListener(winListener);
 
       capabilities = window.getChosenGLCapabilities();
@@ -3304,11 +3303,13 @@ public class PGL {
   class NEWTWindowListener implements com.jogamp.newt.event.WindowListener {
     @Override
     public void windowGainedFocus(WindowEvent arg0) {
+      System.out.println("gained");
       pg.parent.focusGained(null);
     }
 
     @Override
     public void windowLostFocus(WindowEvent arg0) {
+      System.out.println("lost");
       pg.parent.focusLost(null);
     }
 
@@ -3329,7 +3330,7 @@ public class PGL {
   }
 
   // NEWT mouse listener
-  class NEWTMouseAdapter extends com.jogamp.newt.event.MouseAdapter {
+  class NEWTMouseListener extends com.jogamp.newt.event.MouseAdapter {
     @Override
     public void mousePressed(com.jogamp.newt.event.MouseEvent e) {
       nativeMouseEvent(e, MouseEvent.PRESS);
@@ -3365,7 +3366,7 @@ public class PGL {
   }
 
   // NEWT key listener
-  class NEWTKeyAdapter extends com.jogamp.newt.event.KeyAdapter {
+  class NEWTKeyListener extends com.jogamp.newt.event.KeyAdapter {
     @Override
     public void keyPressed(com.jogamp.newt.event.KeyEvent e) {
       nativeKeyEvent(e, KeyEvent.PRESS);
