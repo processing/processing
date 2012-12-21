@@ -2056,7 +2056,7 @@ public class PGL {
                           ((pixels[yindex] << 16) & 0xff0000) |
                           (pixels[yindex] & 0xff00) |
                           ((pixels[yindex] >> 16) & 0xff);
-          pixels[yindex] = (pixels[yindex] & 0xff000000) |
+          pixels[yindex] = (temp & 0xff000000) |
                            ((temp << 16) & 0xff0000) |
                            (temp & 0xff00) |
                            ((temp >> 16) & 0xff);
