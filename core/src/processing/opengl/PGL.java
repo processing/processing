@@ -3303,13 +3303,11 @@ public class PGL {
   class NEWTWindowListener implements com.jogamp.newt.event.WindowListener {
     @Override
     public void windowGainedFocus(WindowEvent arg0) {
-      System.out.println("gained");
       pg.parent.focusGained(null);
     }
 
     @Override
     public void windowLostFocus(WindowEvent arg0) {
-      System.out.println("lost");
       pg.parent.focusLost(null);
     }
 
