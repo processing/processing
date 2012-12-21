@@ -1668,7 +1668,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void restoreGL() {
-    blendMode(blendMode);
+    setBlendMode(blendMode);
 
     if (hints[DISABLE_DEPTH_TEST]) {
       pgl.disable(PGL.DEPTH_TEST);
@@ -5283,19 +5283,25 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void drawTexture() {
+    // No blend so the texure replaces wherever is on the screen,
+    // irrespective of the alpha
+    pgl.disable(PGL.BLEND);
     pgl.drawTexture(texture.glTarget, texture.glName,
                     texture.glWidth, texture.glHeight,
                     0, 0, width, height);
+    pgl.enable(PGL.BLEND);
   }
 
 
   protected void drawTexture(int x, int y, int w, int h) {
     // Processing Y axis is inverted with respect to OpenGL, so we need to
     // invert the y coordinates of the screen rectangle.
+    pgl.disable(PGL.BLEND);
     pgl.drawTexture(texture.glTarget, texture.glName,
                     texture.glWidth, texture.glHeight,
                     x, y, x + w, y + h,
                     x, height - (y + h), x + w, height - y);
+    pgl.enable(PGL.BLEND);
   }
 
 
@@ -5486,102 +5492,96 @@ public class PGraphicsOpenGL extends PGraphics {
     if (blendMode != mode) {
       // Flush any geometry that uses a different blending mode.
       flush();
-
-      blendMode = mode;
-      pgl.enable(PGL.BLEND);
-
-      if (mode == REPLACE) {
-        if (blendEqSupported) {
-          pgl.blendEquation(PGL.FUNC_ADD);
-        }
-        pgl.blendFunc(PGL.ONE, PGL.ZERO);
-
-      } else if (mode == BLEND) {
-        if (blendEqSupported) {
-          pgl.blendEquation(PGL.FUNC_ADD);
-        }
-        pgl.blendFunc(PGL.SRC_ALPHA, PGL.ONE_MINUS_SRC_ALPHA);
-
-      } else if (mode == ADD) {
-        if (blendEqSupported) {
-          pgl.blendEquation(PGL.FUNC_ADD);
-        }
-        pgl.blendFunc(PGL.SRC_ALPHA, PGL.ONE);
-
-      } else if (mode == SUBTRACT) {
-        if (blendEqSupported) {
-          pgl.blendEquation(PGL.FUNC_ADD);
-        }
-        pgl.blendFunc(PGL.ONE_MINUS_DST_COLOR, PGL.ZERO);
-
-      } else if (mode == LIGHTEST) {
-        if (blendEqSupported) {
-          pgl.blendEquation(PGL.FUNC_MAX);
-          pgl.blendFunc(PGL.SRC_ALPHA, PGL.DST_ALPHA);
-        } else {
-          PGraphics.showWarning(BLEND_DRIVER_ERROR, "LIGHTEST");
-        }
-
-      } else if (mode == DARKEST) {
-        if (blendEqSupported) {
-          pgl.blendEquation(PGL.FUNC_MIN);
-          pgl.blendFunc(PGL.SRC_ALPHA, PGL.DST_ALPHA);
-        } else {
-          PGraphics.showWarning(BLEND_DRIVER_ERROR, "DARKEST");
-        }
-
-      } else if (mode == DIFFERENCE) {
-        if (blendEqSupported) {
-          pgl.blendEquation(PGL.FUNC_REVERSE_SUBTRACT);
-          pgl.blendFunc(PGL.ONE, PGL.ONE);
-        } else {
-          PGraphics.showWarning(BLEND_DRIVER_ERROR, "DIFFERENCE");
-        }
-
-      } else if (mode == EXCLUSION) {
-        if (blendEqSupported) {
-          pgl.blendEquation(PGL.FUNC_ADD);
-        }
-        pgl.blendFunc(PGL.ONE_MINUS_DST_COLOR, PGL.ONE_MINUS_SRC_COLOR);
-
-      } else if (mode == MULTIPLY) {
-        if (blendEqSupported) {
-          pgl.blendEquation(PGL.FUNC_ADD);
-        }
-        pgl.blendFunc(PGL.DST_COLOR, PGL.SRC_COLOR);
-
-      } else if (mode == SCREEN) {
-        if (blendEqSupported) {
-          pgl.blendEquation(PGL.FUNC_ADD);
-        }
-        pgl.blendFunc(PGL.ONE_MINUS_DST_COLOR, PGL.ONE);
-
-      } else if (mode == OVERLAY) {
-        PGraphics.showWarning(BLEND_RENDERER_ERROR, "OVERLAY");
-
-      } else if (mode == HARD_LIGHT) {
-        PGraphics.showWarning(BLEND_RENDERER_ERROR, "HARD_LIGHT");
-
-      } else if (mode == SOFT_LIGHT) {
-        PGraphics.showWarning(BLEND_RENDERER_ERROR, "SOFT_LIGHT");
-
-      } else if (mode == DODGE) {
-        PGraphics.showWarning(BLEND_RENDERER_ERROR, "DODGE");
-
-      } else if (mode == BURN) {
-        PGraphics.showWarning(BLEND_RENDERER_ERROR, "BURN");
-      }
+      setBlendMode(mode);
     }
   }
 
 
-  protected void setDefaultBlend() {
-    blendMode = BLEND;
+  protected void setBlendMode(int mode) {
+    blendMode = mode;
     pgl.enable(PGL.BLEND);
-    if (blendEqSupported) {
-      pgl.blendEquation(PGL.FUNC_ADD);
+
+    if (mode == REPLACE) {
+      if (blendEqSupported) {
+        pgl.blendEquation(PGL.FUNC_ADD);
+      }
+      pgl.blendFunc(PGL.ONE, PGL.ZERO);
+
+    } else if (mode == BLEND) {
+      if (blendEqSupported) {
+        pgl.blendEquation(PGL.FUNC_ADD);
+      }
+      pgl.blendFunc(PGL.SRC_ALPHA, PGL.ONE_MINUS_SRC_ALPHA);
+
+    } else if (mode == ADD) {
+      if (blendEqSupported) {
+        pgl.blendEquation(PGL.FUNC_ADD);
+      }
+      pgl.blendFunc(PGL.SRC_ALPHA, PGL.ONE);
+
+    } else if (mode == SUBTRACT) {
+      if (blendEqSupported) {
+        pgl.blendEquation(PGL.FUNC_ADD);
+      }
+      pgl.blendFunc(PGL.ONE_MINUS_DST_COLOR, PGL.ZERO);
+
+    } else if (mode == LIGHTEST) {
+      if (blendEqSupported) {
+        pgl.blendEquation(PGL.FUNC_MAX);
+        pgl.blendFunc(PGL.SRC_ALPHA, PGL.DST_ALPHA);
+      } else {
+        PGraphics.showWarning(BLEND_DRIVER_ERROR, "LIGHTEST");
+      }
+
+    } else if (mode == DARKEST) {
+      if (blendEqSupported) {
+        pgl.blendEquation(PGL.FUNC_MIN);
+        pgl.blendFunc(PGL.SRC_ALPHA, PGL.DST_ALPHA);
+      } else {
+        PGraphics.showWarning(BLEND_DRIVER_ERROR, "DARKEST");
+      }
+
+    } else if (mode == DIFFERENCE) {
+      if (blendEqSupported) {
+        pgl.blendEquation(PGL.FUNC_REVERSE_SUBTRACT);
+        pgl.blendFunc(PGL.ONE, PGL.ONE);
+      } else {
+        PGraphics.showWarning(BLEND_DRIVER_ERROR, "DIFFERENCE");
+      }
+
+    } else if (mode == EXCLUSION) {
+      if (blendEqSupported) {
+        pgl.blendEquation(PGL.FUNC_ADD);
+      }
+      pgl.blendFunc(PGL.ONE_MINUS_DST_COLOR, PGL.ONE_MINUS_SRC_COLOR);
+
+    } else if (mode == MULTIPLY) {
+      if (blendEqSupported) {
+        pgl.blendEquation(PGL.FUNC_ADD);
+      }
+      pgl.blendFunc(PGL.DST_COLOR, PGL.SRC_COLOR);
+
+    } else if (mode == SCREEN) {
+      if (blendEqSupported) {
+        pgl.blendEquation(PGL.FUNC_ADD);
+      }
+      pgl.blendFunc(PGL.ONE_MINUS_DST_COLOR, PGL.ONE);
+
+    } else if (mode == OVERLAY) {
+      PGraphics.showWarning(BLEND_RENDERER_ERROR, "OVERLAY");
+
+    } else if (mode == HARD_LIGHT) {
+      PGraphics.showWarning(BLEND_RENDERER_ERROR, "HARD_LIGHT");
+
+    } else if (mode == SOFT_LIGHT) {
+      PGraphics.showWarning(BLEND_RENDERER_ERROR, "SOFT_LIGHT");
+
+    } else if (mode == DODGE) {
+      PGraphics.showWarning(BLEND_RENDERER_ERROR, "DODGE");
+
+    } else if (mode == BURN) {
+      PGraphics.showWarning(BLEND_RENDERER_ERROR, "BURN");
     }
-    pgl.blendFunc(PGL.SRC_ALPHA, PGL.ONE_MINUS_SRC_ALPHA);
   }
 
 
@@ -5949,10 +5949,10 @@ public class PGraphicsOpenGL extends PGraphics {
     super.noTexture();
 
     // Screen blend is needed for alpha (i.e. fonts) to work.
-    // Using setDefaultBlend() instead of blendMode() because
+    // Using setBlendMode() instead of blendMode() because
     // the latter will set the blend mode only if it is different
     // from current.
-    setDefaultBlend();
+    setBlendMode(BLEND);
 
     // this is necessary for 3D drawing
     if (hints[DISABLE_DEPTH_TEST]) {
