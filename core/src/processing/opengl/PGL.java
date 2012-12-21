@@ -60,6 +60,8 @@ import processing.event.MouseEvent;
 
 import com.jogamp.newt.awt.NewtCanvasAWT;
 import com.jogamp.newt.event.InputEvent;
+import com.jogamp.newt.event.WindowEvent;
+import com.jogamp.newt.event.WindowUpdateEvent;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.FBObject;
 import com.jogamp.opengl.util.AnimatorBase;
@@ -654,6 +656,9 @@ public class PGL {
       window.addMouseListener(mouseListener);
       com.jogamp.newt.event.KeyListener keyListener = new NEWTKeyAdapter();
       window.addKeyListener(keyListener);
+
+      com.jogamp.newt.event.WindowListener winListener = new NEWTWindowListener();
+      window.addWindowListener(winListener);
 
       capabilities = window.getChosenGLCapabilities();
       canvas = canvasNEWT;
@@ -3294,6 +3299,33 @@ public class PGL {
                                nativeEvent.getKeyCode());
 
     pg.parent.postEvent(ke);
+  }
+
+  class NEWTWindowListener implements com.jogamp.newt.event.WindowListener {
+    @Override
+    public void windowGainedFocus(WindowEvent arg0) {
+      pg.parent.focusGained(null);
+    }
+
+    @Override
+    public void windowLostFocus(WindowEvent arg0) {
+      pg.parent.focusLost(null);
+    }
+
+    @Override
+    public void windowDestroyNotify(WindowEvent arg0) { }
+
+    @Override
+    public void windowDestroyed(WindowEvent arg0) { }
+
+    @Override
+    public void windowMoved(WindowEvent arg0) { }
+
+    @Override
+    public void windowRepaint(WindowUpdateEvent arg0) { }
+
+    @Override
+    public void windowResized(WindowEvent arg0) { }
   }
 
   // NEWT mouse listener
