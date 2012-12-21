@@ -162,8 +162,6 @@ public class ErrorBar extends JPanel {
 				int currentTab = 0;
 				for (SketchCode sc : editor.getSketch().getCode()) {
 					if (sc.isExtension("pde")) {
-						sc.setPreprocOffset(bigCount);
-
 						try {
 							if (editor.getSketch().getCurrentCode().equals(sc)) {
 								// Adding + 1 to len because \n gets appended
