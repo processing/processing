@@ -73,11 +73,6 @@ public class ErrorCheckerService implements Runnable{
    */
   protected URL[] classpath;
 
-   /**
-   * P5 Preproc offset
-   */
-  private int scPreProcOffset = 0;
-
   /**
    * Stores all Problems in the sketch
    */
@@ -656,7 +651,7 @@ public class ErrorCheckerService implements Runnable{
    * Repaints the textarea if required
    */
   public void updateTextAreaPainter() {
-	// TODO: Make this fucntion of some use
+	// TODO: Make this function of some use
     editor.getTextArea().repaint();
     currentTab = editor.getSketch().getCodeIndex(
         editor.getSketch().getCurrentCode());
@@ -705,7 +700,6 @@ public class ErrorCheckerService implements Runnable{
   public int[] calculateTabIndexAndLineNumber(IProblem problem) {
     // String[] lines = {};// = PApplet.split(sourceString, '\n');
     int codeIndex = 0;
-    int bigCount = 0;
 
     int x = problem.getSourceLineNumber() - mainClassOffset;
     if (x < 0) {
@@ -730,7 +724,6 @@ public class ErrorCheckerService implements Runnable{
     try {
       for (SketchCode sc : editor.getSketch().getCode()) {
         if (sc.isExtension("pde")) {
-          sc.setPreprocOffset(bigCount);
           int len = 0;
           if (editor.getSketch().getCurrentCode().equals(sc)) {
             len = Base.countLines(sc.getDocument().getText(0,
@@ -769,7 +762,6 @@ public class ErrorCheckerService implements Runnable{
           }
 
         }
-        bigCount += sc.getLineCount();
       }
     } catch (Exception e) {
       System.err
@@ -804,14 +796,10 @@ public class ErrorCheckerService implements Runnable{
       for (SketchCode sc : editor.getSketch().getCode()) {
         if (sc.isExtension("pde")) {
 
-          sc.setPreprocOffset(scPreProcOffset);
-
           try {
 
             if (editor.getSketch().getCurrentCode().equals(sc)) {
 
-              // rawCode.append(sc.getDocument().getText(0,
-              // sc.getDocument().getLength()));
               rawCode.append(scrapImportStatements(sc.getDocument()
                                                    .getText(0,
                                                             sc.getDocument()
@@ -820,7 +808,6 @@ public class ErrorCheckerService implements Runnable{
                                                             .getCodeIndex(sc)));
             } else {
 
-              // rawCode.append(sc.getProgram());
               rawCode.append(scrapImportStatements(sc.getProgram(), editor
                                                    .getSketch().getCodeIndex(sc)));
 
@@ -831,7 +818,6 @@ public class ErrorCheckerService implements Runnable{
               + e.toString());
           }
           rawCode.append('\n');
-          scPreProcOffset += sc.getLineCount();
         }
       }
 
