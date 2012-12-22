@@ -22,11 +22,8 @@
 
 package processing.app.macosx;
 
-import java.awt.Insets;
 import java.io.File;
 import java.io.FileNotFoundException;
-
-import javax.swing.UIManager;
 
 import com.apple.eio.FileManager;
 
@@ -38,6 +35,8 @@ import processing.app.Base;
  */
 public class Platform extends processing.app.Platform {
 
+  // Removing for 2.0b8 because Quaqua doesn't have OS X 10.8 version.
+  /*
   public void setLookAndFeel() throws Exception {
     // Use the Quaqua L & F on OS X to make JFileChooser less awful
     UIManager.setLookAndFeel("ch.randelshofer.quaqua.QuaquaLookAndFeel");
@@ -45,6 +44,7 @@ public class Platform extends processing.app.Platform {
     // hacked that in, bit by bit, over the years
     UIManager.put("Component.visualMargin", new Insets(1, 1, 1, 1));
   }
+  */
 
 
   public void init(Base base) {

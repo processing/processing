@@ -39,6 +39,13 @@ X add cmd-shift-O to "Open Examples" on OS X with no window open
 X go through vida examples to make sure extra imports are not being used
 o   do command line to run through all examples? 
 
+_ remove Quaqua
+_   http://code.google.com/p/processing/issues/detail?id=1509
+_   remove separate launch of QT movie creator
+
+manindra
+M bug that was causing the Debugger to point to wrong break point line numbers
+
 earlier
 X include debug mode as 'experimental'?
 X   DebugMode throwing exception about breakpoints when trying to save
@@ -54,6 +61,9 @@ X   removed in 2.0b7, because it has bugs and is no longer compatible
 </dict>
 o also can have case of opening two of same sketch at once
 o   if sketch was open, then restart by dragging the .pde to p5.app
+
+_ crashes when selecting "Show Sketch Folder" with Windows 7
+_   http://code.google.com/p/processing/issues/detail?id=1473
 
 https://processing-js.lighthouseapp.com/
 
