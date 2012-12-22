@@ -34,8 +34,7 @@ public class MovieMaker implements Tool {
         e.printStackTrace();
       }
     } else {
-      System.out.println("null frame, yeah baby");
-      MovieMakerFrame.main(null);
+//      MovieMakerFrame.main(null);
     }
   }
 

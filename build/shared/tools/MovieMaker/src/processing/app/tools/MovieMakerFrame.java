@@ -15,7 +15,6 @@ import ch.randelshofer.gui.datatransfer.FileTextFieldTransferHandler;
 import ch.randelshofer.media.mp3.MP3AudioInputStream;
 import ch.randelshofer.media.quicktime.QuickTimeWriter;
 
-import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -41,6 +40,8 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileSystemView;
 
+import processing.app.Editor;
+
 
 // TODO [fry 2011-09-06]
 // + The dialog box is super ugly. It's a hacked up version of the previous
@@ -57,7 +58,7 @@ import javax.swing.filechooser.FileSystemView;
  * Hacked from Werner Randelshofer's QuickTimeWriter demo. The original version
  * can be found <a href="http://www.randelshofer.ch/blog/2010/10/writing-quicktime-movies-in-pure-java/">here</a>.
  */
-public class MovieMakerFrame extends JFrame {
+public class MovieMakerFrame extends JFrame implements Tool {
   private JFileChooser imageFolderChooser;
   private JFileChooser soundFileChooser;
   private JFileChooser movieFileChooser;
@@ -69,15 +70,15 @@ public class MovieMakerFrame extends JFrame {
 //m.setVisible(true);
 //m.pack();
 
-//  public String getMenuTitle() {
-//    return "Movie Maker";
-//  }
+  public String getMenuTitle() {
+    return "Movie Maker";
+  }
 
 
-//  public void run() {
-////    System.out.println("calling run() for MovieMaker " + EventQueue.isDispatchThread());
-//    setVisible(true);
-//  }
+  public void run() {
+//    System.out.println("calling run() for MovieMaker " + EventQueue.isDispatchThread());
+    setVisible(true);
+  }
 
 
 //  public void run() {
@@ -95,11 +96,7 @@ public class MovieMakerFrame extends JFrame {
 //  }
 
 
-//  public void init(Editor editor) {
-//  }
-
-
-  protected void init() {
+  public void init(Editor editor) {
 //    System.out.println("calling init for MovieMaker " + EventQueue.isDispatchThread());
 //    this.editor = editor;
     initComponents();
@@ -943,17 +940,17 @@ public class MovieMakerFrame extends JFrame {
 //  /**
 //   * @param args the command line arguments
 //   */
-  public static void main(String args[]) {
-    EventQueue.invokeLater(new Runnable() {
-      public void run() {
-        MovieMakerFrame m = new MovieMakerFrame();
-//        m.init(null);
-        m.init();
-        m.setVisible(true);
-//        m.pack();
-      }
-    });
-  }
+//  public static void main(String args[]) {
+//    EventQueue.invokeLater(new Runnable() {
+//      public void run() {
+//        MovieMakerFrame m = new MovieMakerFrame();
+////        m.init(null);
+//        m.init();
+//        m.setVisible(true);
+////        m.pack();
+//      }
+//    });
+//  }
 
   private JLabel aboutLabel;
   private JButton chooseImageFolderButton;
