@@ -829,25 +829,23 @@ public class XML implements Serializable {
       // least the Giants are getting blown out by the Falcons.
 
       final String decl = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
-
-      // needed for splitting or when adding decl below?
-      //System.getProperty("line.separator")
+      final String sep = System.getProperty("line.separator");
 
       StringWriter tempWriter = new StringWriter();
       StreamResult tempResult = new StreamResult(tempWriter);
       transformer.transform(new DOMSource(node), tempResult);
-      String[] tempLines = PApplet.split(tempWriter.toString(), '\n');
-      PApplet.println(tempLines);
-      if (tempLines[0].startsWith(decl)) {
+      String[] tempLines = PApplet.split(tempWriter.toString(), sep);
+//      PApplet.println(tempLines);
+      if (tempLines[0].startsWith("<?xml")) {
         // Remove XML declaration from the top before slamming into one line
         int declEnd = tempLines[0].indexOf("?>") + 2;
         //if (tempLines[0].length() == decl.length()) {
         if (tempLines[0].length() == declEnd) {
           // If it's all the XML declaration, remove it
-          PApplet.println("removing first line");
+//          PApplet.println("removing first line");
           tempLines = PApplet.subset(tempLines, 1);
         } else {
-          PApplet.println("removing part of first line");
+//          PApplet.println("removing part of first line");
           // If the first node has been moved to this line, be more careful
           //tempLines[0] = tempLines[0].substring(decl.length());
           tempLines[0] = tempLines[0].substring(declEnd);
@@ -866,7 +864,7 @@ public class XML implements Serializable {
 //      DOMSource source = new DOMSource(node);
       Source source = new StreamSource(new StringReader(singleLine));
       transformer.transform(source, xmlOutput);
-      return decl + "\n" + stringWriter.toString();
+      return decl + sep + stringWriter.toString();
 //      return xmlOutput.getWriter().toString();
 
     } catch (Exception e) {

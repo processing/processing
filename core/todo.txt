@@ -87,8 +87,9 @@ o   3) we deprecate our nice short getFloat/getInt/etc and go with
 o      getXxxxAttribute() and getXxxxContent() methods.
 X   not gonna do getFloatContent() since it's not really any shorter
 X beginning slash in getChild() threw an NPE
-_ XML.format(0) throws error
-_   http://code.google.com/p/processing/issues/detail?id=1512
+X XML.format(0) throws error
+X   http://code.google.com/p/processing/issues/detail?id=1512
+X fix XML problems on Android as well
 
 decisions on data
 X are we comfortable with setInt/Float/etc instead of just set(int, blah)
