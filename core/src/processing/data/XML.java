@@ -770,19 +770,25 @@ public class XML implements Serializable {
   public String format(int indent) {
     try {
       // entities = doctype.getEntities()
+      boolean useIndentAmount = false;
       TransformerFactory factory = TransformerFactory.newInstance();
       if (indent != -1) {
-        factory.setAttribute("indent-number", indent);
+        try {
+          factory.setAttribute("indent-number", indent);
+        } catch (IllegalArgumentException e) {
+          useIndentAmount = true;
+        }
       }
       Transformer transformer = factory.newTransformer();
 
       // Add the XML declaration at the top if this node is the root and we're
       // not writing to a single line (indent = -1 means single line).
-      if (indent == -1 || parent != null) {
+      if (indent == -1 || parent == null) {
         transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
       } else {
         transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
       }
+
 //      transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, "sample.dtd");
 
       transformer.setOutputProperty(OutputKeys.METHOD, "xml");
@@ -794,17 +800,20 @@ public class XML implements Serializable {
 //      transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM,
 //          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd");
 
+      // For Android, because (at least 2.3.3) doesn't like indent-number
+      if (useIndentAmount) {
+        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", String.valueOf(indent));
+      }
+
 //      transformer.setOutputProperty(OutputKeys.ENCODING,"ISO-8859-1");
 //      transformer.setOutputProperty(OutputKeys.ENCODING,"UTF8");
       transformer.setOutputProperty(OutputKeys.ENCODING,"UTF-8");
 //      transformer.setOutputProperty(OutputKeys.CDATA_SECTION_ELEMENTS
-      // indent by default, but sometimes this needs to be turned off
-      if (indent != 0) {
-        //transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", String.valueOf(indent));
-        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-      } else {
-        transformer.setOutputProperty(OutputKeys.INDENT, "no");
-      }
+
+      // Always indent, otherwise the XML declaration will just be jammed
+      // onto the first line with the XML code as well.
+      transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+
 //      Properties p = transformer.getOutputProperties();
 //      for (Object key : p.keySet()) {
 //        System.out.println(key + " -> " + p.get(key));
@@ -819,25 +828,45 @@ public class XML implements Serializable {
       // please contribute. I've wasted too much of my Sunday on it. But at
       // least the Giants are getting blown out by the Falcons.
 
+      final String decl = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+
+      // needed for splitting or when adding decl below?
+      //System.getProperty("line.separator")
+
       StringWriter tempWriter = new StringWriter();
       StreamResult tempResult = new StreamResult(tempWriter);
       transformer.transform(new DOMSource(node), tempResult);
       String[] tempLines = PApplet.split(tempWriter.toString(), '\n');
-      if (tempLines[0].startsWith("<?xml")) {
+      PApplet.println(tempLines);
+      if (tempLines[0].startsWith(decl)) {
         // Remove XML declaration from the top before slamming into one line
-        tempLines = PApplet.subset(tempLines, 1);
+        int declEnd = tempLines[0].indexOf("?>") + 2;
+        //if (tempLines[0].length() == decl.length()) {
+        if (tempLines[0].length() == declEnd) {
+          // If it's all the XML declaration, remove it
+          PApplet.println("removing first line");
+          tempLines = PApplet.subset(tempLines, 1);
+        } else {
+          PApplet.println("removing part of first line");
+          // If the first node has been moved to this line, be more careful
+          //tempLines[0] = tempLines[0].substring(decl.length());
+          tempLines[0] = tempLines[0].substring(declEnd);
+        }
       }
       String singleLine = PApplet.join(PApplet.trim(tempLines), "");
       if (indent == -1) {
         return singleLine;
       }
 
+      // Since the indent is not -1, bring back the XML declaration
+      //transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+
       StringWriter stringWriter = new StringWriter();
       StreamResult xmlOutput = new StreamResult(stringWriter);
 //      DOMSource source = new DOMSource(node);
       Source source = new StreamSource(new StringReader(singleLine));
       transformer.transform(source, xmlOutput);
-      return stringWriter.toString();
+      return decl + "\n" + stringWriter.toString();
 //      return xmlOutput.getWriter().toString();
 
     } catch (Exception e) {

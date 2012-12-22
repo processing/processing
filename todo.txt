@@ -44,6 +44,8 @@ X   remove separate launch of QT movie creator
 
 manindra
 M bug that was causing the Debugger to point to wrong break point line numbers
+M 'Debug' button does not re-run the project when it is already running.
+M   http://code.google.com/p/processing/issues/detail?id=1504
 
 earlier
 X include debug mode as 'experimental'?
@@ -61,10 +63,11 @@ X   removed in 2.0b7, because it has bugs and is no longer compatible
 o also can have case of opening two of same sketch at once
 o   if sketch was open, then restart by dragging the .pde to p5.app
 
-_ crashes when selecting "Show Sketch Folder" with Windows 7
-_   http://code.google.com/p/processing/issues/detail?id=1473
-
 https://processing-js.lighthouseapp.com/
+
+_ add Iterator as an import?
+_ for others like collections and Date, show warning and option to add?
+_   along with warning that it's not supported
 
 _ remove sketch.properties when moving back to the default?
 _   or can we not do this, because the next mode needs this?
@@ -862,6 +865,9 @@ _   avoid some confusion for when describing the libraries folder to users
 
 DIST / Windows
 
+_ crash when selecting "Show Sketch Folder" with Windows 7
+_   might be a java.awt.Desktop problem
+_   http://code.google.com/p/processing/issues/detail?id=1473
 _ does launching p5 from inside the .zip folder cause it to quit immediately?
 _ fix line endings in revisions.txt for windows
 _ exe instead of bat to make exported apps run in 64-bit
