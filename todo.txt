@@ -38,10 +38,9 @@ X if no selection, attempt to expand the selection for Find in Reference
 X add cmd-shift-O to "Open Examples" on OS X with no window open
 X go through vida examples to make sure extra imports are not being used
 o   do command line to run through all examples? 
-
-_ remove Quaqua
-_   http://code.google.com/p/processing/issues/detail?id=1509
-_   remove separate launch of QT movie creator
+X remove Quaqua
+X   http://code.google.com/p/processing/issues/detail?id=1509
+X   remove separate launch of QT movie creator
 
 manindra
 M bug that was causing the Debugger to point to wrong break point line numbers
