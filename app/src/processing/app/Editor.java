@@ -1086,7 +1086,10 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
 
   static public void showChanges() {
-    Base.openURL("http://wiki.processing.org/w/Changes");
+    // http://code.google.com/p/processing/issues/detail?id=1520
+    if (!Base.isCommandLine()) {
+      Base.openURL("http://wiki.processing.org/w/Changes");
+    }
   }
 
 
