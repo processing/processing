@@ -5893,7 +5893,11 @@ public class PApplet extends Applet
 
 
 
-
+  /**
+   * @webref input:files
+   * @see PApplet#loadTable(String)
+   * @see PApplet#saveTable(Table, String)
+   */
   public Table createTable() {
     return new Table();
   }
@@ -5902,6 +5906,8 @@ public class PApplet extends Applet
   /**
    * @webref input:files
    * @param filename name of a file in the data folder or a URL.
+   * @see PApplet#createTable()
+   * @see PApplet#saveTable(Table, String)
    * @see PApplet#loadBytes(String)
    * @see PApplet#loadStrings(String)
    * @see PApplet#loadXML(String)
@@ -5911,6 +5917,9 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * @param options may contain "header", "tsv", or "csv" separated by commas
+   */
   public Table loadTable(String filename, String options) {
     try {
       String ext = checkExtension(filename);
@@ -5932,11 +5941,21 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * @webref input:files
+   * @param table the Table object to save to a file
+   * @param filename the filename to which the Table should be saved
+   * @see PApplet#createTable()
+   * @see PApplet#loadTable(String)
+   */
   public boolean saveTable(Table table, String filename) {
     return saveTable(table, filename, null);
   }
 
 
+  /**
+   * @param options may contain "header", "tsv", or "csv" separated by commas
+   */
   public boolean saveTable(Table table, String filename, String options) {
     try {
       table.save(saveFile(filename), options);
