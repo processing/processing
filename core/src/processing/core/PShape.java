@@ -100,6 +100,9 @@ public class PShape implements PConstants {
   /** Texture or image data associated with this shape. */
   protected PImage image;
 
+  static final String RETAINED_CALL_ERROR =
+    "%1$s can only be called between beginShape() and endShape()";
+
   // boundary box of this shape
   //protected float x;
   //protected float y;
@@ -554,7 +557,7 @@ public class PShape implements PConstants {
 
   public void strokeWeight(float weight) {
     if (!openShape) {
-      PGraphics.showWarning("Need to call beginShape() first");
+      PGraphics.showWarning(RETAINED_CALL_ERROR, "strokeWeight()");
       return;
     }
 
@@ -563,7 +566,7 @@ public class PShape implements PConstants {
 
   public void strokeJoin(int join) {
     if (!openShape) {
-      PGraphics.showWarning("Need to call beginShape() first");
+      PGraphics.showWarning(RETAINED_CALL_ERROR, "strokeJoin()");
       return;
     }
 
@@ -572,7 +575,7 @@ public class PShape implements PConstants {
 
   public void strokeCap(int cap) {
     if (!openShape) {
-      PGraphics.showWarning("Need to call beginShape() first");
+      PGraphics.showWarning(RETAINED_CALL_ERROR, "strokeCap()");
       return;
     }
 
@@ -584,85 +587,175 @@ public class PShape implements PConstants {
 
   // FILL COLOR
 
+
   public void noFill() {
     if (!openShape) {
-      PGraphics.showWarning("Need to call beginShape() first");
+      PGraphics.showWarning(RETAINED_CALL_ERROR, "noFill()");
       return;
     }
 
     fill = false;
   }
 
-  public void fill(int argb) {
+
+  public void fill(int rgb) {
     if (!openShape) {
-      PGraphics.showWarning("Need to call beginShape() first");
+      PGraphics.showWarning(RETAINED_CALL_ERROR, "fill()");
       return;
     }
 
     fill = true;
-    fillColor = argb;
-
-    if (!setAmbient) {
-      ambientColor = argb;
-    }
+    colorCalc(rgb);
+    fillColor = calcColor;
   }
 
-  /*
+
   public void fill(int rgb, float alpha) {
+    if (!openShape) {
+      PGraphics.showWarning(RETAINED_CALL_ERROR, "fill()");
+      return;
+    }
+
+    fill = true;
+    colorCalc(rgb, alpha);
+    fillColor = calcColor;
   }
+
 
   public void fill(float gray) {
+    if (!openShape) {
+      PGraphics.showWarning(RETAINED_CALL_ERROR, "fill()");
+      return;
+    }
+
+    fill = true;
+    colorCalc(gray);
+    fillColor = calcColor;
   }
+
 
   public void fill(float gray, float alpha) {
+    if (!openShape) {
+      PGraphics.showWarning(RETAINED_CALL_ERROR, "fill()");
+      return;
+    }
+
+    fill = true;
+    colorCalc(gray, alpha);
+    fillColor = calcColor;
   }
+
 
   public void fill(float x, float y, float z) {
+    if (!openShape) {
+      PGraphics.showWarning(RETAINED_CALL_ERROR, "fill()");
+      return;
+    }
+
+    fill = true;
+    colorCalc(x, y, z);
+    fillColor = calcColor;
   }
 
+
   public void fill(float x, float y, float z, float a) {
+    if (!openShape) {
+      PGraphics.showWarning(RETAINED_CALL_ERROR, "fill()");
+      return;
+    }
+
+    fill = true;
+    colorCalc(x, y, z, a);
+    fillColor = calcColor;
   }
-  */
+
 
   //////////////////////////////////////////////////////////////
 
   // STROKE COLOR
 
+
   public void noStroke() {
     if (!openShape) {
-      PGraphics.showWarning("Need to call beginShape() first");
+      PGraphics.showWarning(RETAINED_CALL_ERROR, "noStroke()");
       return;
     }
 
     stroke = false;
   }
 
-  public void stroke(int argb) {
+
+  public void stroke(int rgb) {
     if (!openShape) {
-      PGraphics.showWarning("Need to call beginShape() first");
+      PGraphics.showWarning(RETAINED_CALL_ERROR, "stroke()");
       return;
     }
 
     stroke = true;
-    strokeColor = argb;
+    colorCalc(rgb);
+    strokeColor = calcColor;
   }
 
-  /*
+
   public void stroke(int rgb, float alpha) {
+    if (!openShape) {
+      PGraphics.showWarning(RETAINED_CALL_ERROR, "stroke()");
+      return;
+    }
+
+    stroke = true;
+    colorCalc(rgb, alpha);
+    strokeColor = calcColor;
   }
+
 
   public void stroke(float gray) {
+    if (!openShape) {
+      PGraphics.showWarning(RETAINED_CALL_ERROR, "stroke()");
+      return;
+    }
+
+    stroke = true;
+    colorCalc(gray);
+    strokeColor = calcColor;
   }
+
 
   public void stroke(float gray, float alpha) {
+    if (!openShape) {
+      PGraphics.showWarning(RETAINED_CALL_ERROR, "stroke()");
+      return;
+    }
+
+    stroke = true;
+    colorCalc(gray, alpha);
+    strokeColor = calcColor;
   }
+
 
   public void stroke(float x, float y, float z) {
+    if (!openShape) {
+      PGraphics.showWarning(RETAINED_CALL_ERROR, "stroke()");
+      return;
+    }
+
+    stroke = true;
+    colorCalc(x, y, z);
+    strokeColor = calcColor;
   }
 
+
   public void stroke(float x, float y, float z, float alpha) {
+    if (!openShape) {
+      PGraphics.showWarning(RETAINED_CALL_ERROR, "stroke()");
+      return;
+    }
+
+    stroke = true;
+    colorCalc(x, y, z, alpha);
+    strokeColor = calcColor;
   }
-*/
+
 
   //////////////////////////////////////////////////////////////
 
@@ -671,103 +764,199 @@ public class PShape implements PConstants {
 
   public void noTint() {
     if (!openShape) {
-      PGraphics.showWarning("Need to call beginShape() first");
+      PGraphics.showWarning(RETAINED_CALL_ERROR, "noTint()");
       return;
     }
 
     tint = false;
   }
 
-  public void tint(int argb) {
+
+  public void tint(int rgb) {
     if (!openShape) {
-      PGraphics.showWarning("Need to call beginShape() first");
+      PGraphics.showWarning(RETAINED_CALL_ERROR, "tint()");
       return;
     }
 
     tint = true;
-    tintColor = argb;
+    colorCalc(rgb);
+    tintColor = calcColor;
   }
 
-  /*
+
   public void tint(int rgb, float alpha) {
+    if (!openShape) {
+      PGraphics.showWarning(RETAINED_CALL_ERROR, "tint()");
+      return;
+    }
+
+    tint = true;
+    colorCalc(rgb, alpha);
+    tintColor = calcColor;
   }
+
 
   public void tint(float gray) {
+    if (!openShape) {
+      PGraphics.showWarning(RETAINED_CALL_ERROR, "tint()");
+      return;
+    }
+
+    tint = true;
+    colorCalc(gray);
+    tintColor = calcColor;
   }
+
 
   public void tint(float gray, float alpha) {
+    if (!openShape) {
+      PGraphics.showWarning(RETAINED_CALL_ERROR, "tint()");
+      return;
+    }
+
+    tint = true;
+    colorCalc(gray, alpha);
+    tintColor = calcColor;
   }
+
 
   public void tint(float x, float y, float z) {
+    if (!openShape) {
+      PGraphics.showWarning(RETAINED_CALL_ERROR, "tint()");
+      return;
+    }
+
+    tint = true;
+    colorCalc(x, y, z);
+    tintColor = calcColor;
   }
 
+
   public void tint(float x, float y, float z, float alpha) {
+    if (!openShape) {
+      PGraphics.showWarning(RETAINED_CALL_ERROR, "tint()");
+      return;
+    }
+
+    tint = true;
+    colorCalc(x, y, z, alpha);
+    tintColor = calcColor;
   }
-*/
+
 
   //////////////////////////////////////////////////////////////
 
   // Ambient set/update
 
-  public void ambient(int argb) {
+  public void ambient(int rgb) {
     if (!openShape) {
-      PGraphics.showWarning("Need to call beginShape() first");
+      PGraphics.showWarning(RETAINED_CALL_ERROR, "ambient()");
       return;
     }
 
     setAmbient = true;
-    ambientColor = argb;
+    colorCalc(rgb);
+    ambientColor = calcColor;
   }
 
-  /*
+
   public void ambient(float gray) {
+    if (!openShape) {
+      PGraphics.showWarning(RETAINED_CALL_ERROR, "ambient()");
+      return;
+    }
+
+    setAmbient = true;
+    colorCalc(gray);
+    ambientColor = calcColor;
   }
+
 
   public void ambient(float x, float y, float z) {
+    if (!openShape) {
+      PGraphics.showWarning(RETAINED_CALL_ERROR, "ambient()");
+      return;
+    }
+
+    setAmbient = true;
+    colorCalc(x, y, z);
+    ambientColor = calcColor;
   }
-*/
+
 
   //////////////////////////////////////////////////////////////
 
   // Specular set/update
 
-  public void specular(int argb) {
+  public void specular(int rgb) {
     if (!openShape) {
-      PGraphics.showWarning("Need to call beginShape() first");
+      PGraphics.showWarning(RETAINED_CALL_ERROR, "specular()");
       return;
     }
 
-    specularColor = argb;
+    colorCalc(rgb);
+    specularColor = calcColor;
   }
 
-  /*
+
   public void specular(float gray) {
+    if (!openShape) {
+      PGraphics.showWarning(RETAINED_CALL_ERROR, "specular()");
+      return;
+    }
+
+    colorCalc(gray);
+    specularColor = calcColor;
   }
+
 
   public void specular(float x, float y, float z) {
+    if (!openShape) {
+      PGraphics.showWarning(RETAINED_CALL_ERROR, "specular()");
+      return;
+    }
+
+    colorCalc(x, y, z);
+    specularColor = calcColor;
   }
-*/
+
 
   //////////////////////////////////////////////////////////////
 
   // Emissive set/update
 
-  public void emissive(int argb) {
+  public void emissive(int rgb) {
     if (!openShape) {
-      PGraphics.showWarning("Need to call beginShape() first");
+      PGraphics.showWarning(RETAINED_CALL_ERROR, "emissive()");
       return;
     }
 
-    emissiveColor = argb;
+    colorCalc(rgb);
+    emissiveColor = calcColor;
   }
 
-  /*
+
   public void emissive(float gray) {
+    if (!openShape) {
+      PGraphics.showWarning(RETAINED_CALL_ERROR, "emissive()");
+      return;
+    }
+
+    colorCalc(gray);
+    emissiveColor = calcColor;
   }
+
 
   public void emissive(float x, float y, float z) {
+    if (!openShape) {
+      PGraphics.showWarning(RETAINED_CALL_ERROR, "emissive()");
+      return;
+    }
+
+    colorCalc(x, y, z);
+    emissiveColor = calcColor;
   }
-*/
+
 
   //////////////////////////////////////////////////////////////
 
@@ -775,7 +964,7 @@ public class PShape implements PConstants {
 
   public void shininess(float shine) {
     if (!openShape) {
-      PGraphics.showWarning("Need to call beginShape() first");
+      PGraphics.showWarning(RETAINED_CALL_ERROR, "shininess()");
       return;
     }
 
