@@ -19,7 +19,8 @@ class Particle {
   Particle() {    
     partSize = random(10, 60);
     // The particle is a textured quad
-    part = createShape(QUAD);
+    part = createShape();
+    part.beginShape(QUAD);
     part.noStroke();
     part.texture(sprite);
     part.normal(0, 0, 1);
@@ -27,7 +28,7 @@ class Particle {
     part.vertex(+partSize/2, -partSize/2, sprite.width, 0);
     part.vertex(+partSize/2, +partSize/2, sprite.width, sprite.height);
     part.vertex(-partSize/2, +partSize/2, 0, sprite.height);
-    part.end();
+    part.endShape();
 
     // Initialize center vector
     center = new PVector(); 
@@ -72,7 +73,7 @@ class Particle {
     lifespan = lifespan - 1;
     // Apply gravity
     velocity.add(gravity);
-    part.tint(255, lifespan);
+    part.setTint(color(255, lifespan));
     // Move the particle according to its velocity
     part.translate(velocity.x, velocity.y);
     // and also update the center

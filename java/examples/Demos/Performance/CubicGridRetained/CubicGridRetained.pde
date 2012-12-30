@@ -15,7 +15,7 @@ void setup() {
   noSmooth();
   noStroke();
   
-  grid = createShape(PShape.GROUP);
+  grid = createShape(GROUP);
     
   // Build grid using multiple translations 
   for (float i =- depth/2+margin; i <= depth/2-margin; i += boxSize){
@@ -25,7 +25,7 @@ void setup() {
         // ensures values stay within legal range
         boxFill = color(abs(i), abs(j), abs(k), 50);        
         PShape cube = createShape(BOX, boxSize, boxSize, boxSize);
-        cube.fill(boxFill);
+        cube.setFill(boxFill);
         cube.translate(k, j, i);
         grid.addChild(cube);
       }
