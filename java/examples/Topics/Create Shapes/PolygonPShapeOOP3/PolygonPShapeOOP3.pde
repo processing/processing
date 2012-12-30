@@ -18,13 +18,14 @@ void setup() {
   smooth();
   
   shapes[0] = createShape(ELLIPSE,0,0,100,100);
-  shapes[0].fill(255,127);
-  shapes[0].noStroke();
+  shapes[0].setFill(color(255,127));
+  shapes[0].setStroke(false);
   shapes[1] = createShape(RECT,0,0,100,100);
-  shapes[1].fill(255,127);
-  shapes[1].noStroke();
-  shapes[2] = createShape();
-  shapes[2].fill(0,127);
+  shapes[1].setFill(color(255,127));
+  shapes[1].setStroke(false);
+  shapes[2] = createShape();  
+  shapes[2].beginShape();
+  shapes[2].fill(color(0,127));
   shapes[2].noStroke();
   shapes[2].vertex(0, -50);
   shapes[2].vertex(14, -20);
@@ -36,7 +37,7 @@ void setup() {
   shapes[2].vertex(-23, 7);
   shapes[2].vertex(-47, -15);
   shapes[2].vertex(-14, -20);
-  shapes[2].end(CLOSE);
+  shapes[2].endShape(CLOSE);
 
   // Make an ArrayList
   polygons = new ArrayList<Polygon>();

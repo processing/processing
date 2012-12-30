@@ -28,13 +28,14 @@ class Wiggler {
     
     // Now make the PShape with those vertices
     s = createShape();
-    s.fill(127);
-    s.stroke(0);
+    s.beginShape();
+    s.setFill(color(127));
+    s.stroke(color(0));
     s.strokeWeight(2);
     for (PVector v : original) {
       s.vertex(v.x, v.y);
     }
-    s.end(CLOSE);
+    s.endShape(CLOSE);
   }
 
   void wiggle() {

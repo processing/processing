@@ -16,8 +16,9 @@ void setup() {
   
   // Make a polygon PShape
   PShape star = createShape();
+  star.beginShape();
   star.noFill();
-  star.stroke(255);
+  star.stroke(0xFFFFFFFF);
   star.vertex(0, -50);
   star.vertex(14, -20);
   star.vertex(47, -15);
@@ -28,23 +29,23 @@ void setup() {
   star.vertex(-23, 7);
   star.vertex(-47, -15);
   star.vertex(-14, -20);
-  star.end(CLOSE);
+  star.endShape(CLOSE);
   
   // Make a path PShape
   PShape path = createShape();
-  path = createShape();
+  path.beginShape();
   path.noFill();
-  path.stroke(255);
+  path.stroke(0xFFFFFFFF);
   for (float a = -PI; a < 0; a += 0.1) {
     float r = random(60, 70);
     path.vertex(r*cos(a), r*sin(a));
   }
-  path.end();
+  path.endShape();
   
   // Make a primitive (Rectangle) PShape
   PShape rectangle = createShape(RECT,-10,-10,20,20);
-  rectangle.noFill();
-  rectangle.stroke(255);
+  rectangle.setFill(false);
+  rectangle.setStroke(0xFFFFFFFF);
   
   // Add them all to the group
   group.addChild(star);

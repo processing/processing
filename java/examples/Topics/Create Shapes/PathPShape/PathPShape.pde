@@ -12,9 +12,10 @@ void setup() {
   smooth();
   // Create the shape
   path = createShape();
+  path.beginShape();
   // Set fill and stroke
   path.noFill();
-  path.stroke(255);
+  path.stroke(color(255));
   path.strokeWeight(2);
   
   float x = 0;
@@ -24,7 +25,7 @@ void setup() {
     x+= 5;
   }
   // The path is complete
-  path.end();  
+  path.endShape();  
 
 }
 

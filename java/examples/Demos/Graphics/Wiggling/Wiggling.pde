@@ -47,11 +47,11 @@ public void keyPressed() {
   } else if (key == ' ') {
     restoreCube();
   } else if (key == '1') {
-    cube.strokeWeight(1);
+    cube.setStrokeWeight(1);
   } else if (key == '2') {
-    cube.strokeWeight(5);
+    cube.setStrokeWeight(5);
   } else if (key == '3') {
-    cube.strokeWeight(10);
+    cube.setStrokeWeight(10);
   }
 }
 
@@ -61,9 +61,10 @@ void createCube() {
   PShape face;
 
   // Front face         
-  face = createShape(POLYGON);
-  face.stroke(255, 0, 0);
-  face.fill(255);
+  face = createShape();
+  face.beginShape(POLYGON);
+  face.stroke(color(255, 0, 0));
+  face.fill(color(255));
   face.beginContour();
   face.vertex(-cubeSize/2, -cubeSize/2, +cubeSize/2);
   face.vertex(+cubeSize/2, -cubeSize/2, +cubeSize/2);
@@ -79,13 +80,14 @@ void createCube() {
     face.vertex(x, y, z);
   }
   face.endContour();
-  face.end(CLOSE);
+  face.endShape(CLOSE);
   cube.addChild(face);
 
   // Back face
-  face = createShape(POLYGON);
-  face.stroke(255, 0, 0);
-  face.fill(255);
+  face = createShape();
+  face.beginShape(POLYGON);
+  face.stroke(color(255, 0, 0));
+  face.fill(color(255));
   face.beginContour();
   face.vertex(+cubeSize/2, -cubeSize/2, -cubeSize/2);
   face.vertex(-cubeSize/2, -cubeSize/2, -cubeSize/2);
@@ -101,13 +103,14 @@ void createCube() {
     face.vertex(x, y, z);
   }
   face.endContour();
-  face.end(CLOSE);
+  face.endShape(CLOSE);
   cube.addChild(face);
 
   // Right face
-  face = createShape(POLYGON);
-  face.stroke(255, 0, 0);
-  face.fill(255);
+  face = createShape();
+  face.beginShape(POLYGON);
+  face.stroke(color(255, 0, 0));
+  face.fill(color(255));
   face.beginContour();
   face.vertex(+cubeSize/2, -cubeSize/2, +cubeSize/2);
   face.vertex(+cubeSize/2, -cubeSize/2, -cubeSize/2);
@@ -123,13 +126,14 @@ void createCube() {
     face.vertex(x, y, z);
   }
   face.endContour();
-  face.end(CLOSE);
+  face.endShape(CLOSE);
   cube.addChild(face);
 
   // Left face
-  face = createShape(POLYGON);
-  face.stroke(255, 0, 0);
-  face.fill(255);
+  face = createShape();
+  face.beginShape(POLYGON);
+  face.stroke(color(255, 0, 0));
+  face.fill(color(255));
   face.beginContour();
   face.vertex(-cubeSize/2, -cubeSize/2, -cubeSize/2);
   face.vertex(-cubeSize/2, -cubeSize/2, +cubeSize/2);
@@ -145,13 +149,14 @@ void createCube() {
     face.vertex(x, y, z);
   }
   face.endContour();
-  face.end(CLOSE);
+  face.endShape(CLOSE);
   cube.addChild(face);
 
   // Top face
-  face = createShape(POLYGON);
-  face.stroke(255, 0, 0);
-  face.fill(255);
+  face = createShape();
+  face.beginShape(POLYGON);
+  face.stroke(color(255, 0, 0));
+  face.fill(color(255));
   face.beginContour();
   face.vertex(-cubeSize/2, +cubeSize/2, +cubeSize/2);
   face.vertex(+cubeSize/2, +cubeSize/2, +cubeSize/2);
@@ -167,13 +172,14 @@ void createCube() {
     face.vertex(x, y, z);
   }
   face.endContour();
-  face.end(CLOSE);
+  face.endShape(CLOSE);
   cube.addChild(face);     
 
   // Bottom face
-  face = createShape(POLYGON);
-  face.stroke(255, 0, 0);
-  face.fill(255);
+  face = createShape();
+  face.beginShape(POLYGON);
+  face.stroke(color(255, 0, 0));
+  face.fill(color(255));
   face.beginContour();
   face.vertex(+cubeSize/2, -cubeSize/2, +cubeSize/2);
   face.vertex(-cubeSize/2, -cubeSize/2, +cubeSize/2);
@@ -189,7 +195,7 @@ void createCube() {
     face.vertex(x, y, z);
   }
   face.endContour();
-  face.end(CLOSE);
+  face.endShape(CLOSE);
   cube.addChild(face);
 }
 
