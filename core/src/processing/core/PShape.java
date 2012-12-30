@@ -135,6 +135,9 @@ public class PShape implements PConstants {
   // set to false if the object is hidden in the layers palette
   protected boolean visible = true;
 
+  /** Retained shape being created with beginShape/endShape */
+  protected boolean openShape = false;
+
   protected boolean stroke;
   protected int strokeColor;
   protected float strokeWeight; // default is 1
@@ -177,7 +180,6 @@ public class PShape implements PConstants {
   protected int[] vertexCodes;
   /** True if this is a closed path. */
   protected boolean close;
-
 
   // ........................................................
 
@@ -512,15 +514,36 @@ public class PShape implements PConstants {
   public void normal(float nx, float ny, float nz) {
   }
 
+  public void beginShape() {
+    beginShape(POLYGON);
+  }
+
+  public void beginShape(int kind) {
+    this.kind = kind;
+    openShape = true;
+  }
+
   /**
    * @webref pshape:method
    * @brief Finishes the creation of a new PShape
    * @see PApplet#createShape()
    */
-  public void end() {
+  public void endShape() {
+    endShape(OPEN);
   }
 
-  public void end(int mode) {
+  public void endShape(int mode) {
+    if (family == GROUP) {
+      PGraphics.showWarning("Cannot end GROUP shape");
+      return;
+    }
+
+    if (!openShape) {
+      PGraphics.showWarning("Need to call beginShape() first");
+      return;
+    }
+
+    openShape = false;
   }
 
 
@@ -530,12 +553,30 @@ public class PShape implements PConstants {
 
 
   public void strokeWeight(float weight) {
+    if (!openShape) {
+      PGraphics.showWarning("Need to call beginShape() first");
+      return;
+    }
+
+    strokeWeight = weight;
   }
 
   public void strokeJoin(int join) {
+    if (!openShape) {
+      PGraphics.showWarning("Need to call beginShape() first");
+      return;
+    }
+
+    strokeJoin = join;
   }
 
   public void strokeCap(int cap) {
+    if (!openShape) {
+      PGraphics.showWarning("Need to call beginShape() first");
+      return;
+    }
+
+    strokeCap = cap;
   }
 
 
@@ -544,11 +585,29 @@ public class PShape implements PConstants {
   // FILL COLOR
 
   public void noFill() {
+    if (!openShape) {
+      PGraphics.showWarning("Need to call beginShape() first");
+      return;
+    }
+
+    fill = false;
   }
 
-  public void fill(int rgb) {
+  public void fill(int argb) {
+    if (!openShape) {
+      PGraphics.showWarning("Need to call beginShape() first");
+      return;
+    }
+
+    fill = true;
+    fillColor = argb;
+
+    if (!setAmbient) {
+      ambientColor = argb;
+    }
   }
 
+  /*
   public void fill(int rgb, float alpha) {
   }
 
@@ -563,17 +622,32 @@ public class PShape implements PConstants {
 
   public void fill(float x, float y, float z, float a) {
   }
+  */
 
   //////////////////////////////////////////////////////////////
 
   // STROKE COLOR
 
   public void noStroke() {
+    if (!openShape) {
+      PGraphics.showWarning("Need to call beginShape() first");
+      return;
+    }
+
+    stroke = false;
   }
 
-  public void stroke(int rgb) {
+  public void stroke(int argb) {
+    if (!openShape) {
+      PGraphics.showWarning("Need to call beginShape() first");
+      return;
+    }
+
+    stroke = true;
+    strokeColor = argb;
   }
 
+  /*
   public void stroke(int rgb, float alpha) {
   }
 
@@ -588,6 +662,7 @@ public class PShape implements PConstants {
 
   public void stroke(float x, float y, float z, float alpha) {
   }
+*/
 
   //////////////////////////////////////////////////////////////
 
@@ -595,11 +670,25 @@ public class PShape implements PConstants {
 
 
   public void noTint() {
+    if (!openShape) {
+      PGraphics.showWarning("Need to call beginShape() first");
+      return;
+    }
+
+    tint = false;
   }
 
-  public void tint(int rgb) {
+  public void tint(int argb) {
+    if (!openShape) {
+      PGraphics.showWarning("Need to call beginShape() first");
+      return;
+    }
+
+    tint = true;
+    tintColor = argb;
   }
 
+  /*
   public void tint(int rgb, float alpha) {
   }
 
@@ -614,52 +703,83 @@ public class PShape implements PConstants {
 
   public void tint(float x, float y, float z, float alpha) {
   }
+*/
 
   //////////////////////////////////////////////////////////////
 
   // Ambient set/update
 
-  public void ambient(int rgb) {
+  public void ambient(int argb) {
+    if (!openShape) {
+      PGraphics.showWarning("Need to call beginShape() first");
+      return;
+    }
+
+    setAmbient = true;
+    ambientColor = argb;
   }
 
+  /*
   public void ambient(float gray) {
   }
 
   public void ambient(float x, float y, float z) {
   }
+*/
 
   //////////////////////////////////////////////////////////////
 
   // Specular set/update
 
-  public void specular(int rgb) {
+  public void specular(int argb) {
+    if (!openShape) {
+      PGraphics.showWarning("Need to call beginShape() first");
+      return;
+    }
+
+    specularColor = argb;
   }
 
+  /*
   public void specular(float gray) {
   }
 
   public void specular(float x, float y, float z) {
   }
-
+*/
 
   //////////////////////////////////////////////////////////////
 
   // Emissive set/update
 
-  public void emissive(int rgb) {
+  public void emissive(int argb) {
+    if (!openShape) {
+      PGraphics.showWarning("Need to call beginShape() first");
+      return;
+    }
+
+    emissiveColor = argb;
   }
 
+  /*
   public void emissive(float gray) {
   }
 
   public void emissive(float x, float y, float z) {
   }
+*/
 
   //////////////////////////////////////////////////////////////
 
   // Shininess set/update
 
   public void shininess(float shine) {
+    if (!openShape) {
+      PGraphics.showWarning("Need to call beginShape() first");
+      return;
+    }
+
+    shininess = shine;
   }
 
   ///////////////////////////////////////////////////////////
@@ -855,6 +975,8 @@ public class PShape implements PConstants {
 
   // TODO unapproved
   static protected void copyGeometry(PShape src, PShape dest) {
+    dest.beginShape(src.getKind());
+
     copyMatrix(src, dest);
     copyStyles(src, dest);
     copyImage(src, dest);
@@ -863,10 +985,12 @@ public class PShape implements PConstants {
       for (int i = 0; i < src.vertexCount; i++) {
         float[] vert = src.vertices[i];
 
-        dest.fill(vert[PGraphics.R] * 255,
-                  vert[PGraphics.G] * 255,
-                  vert[PGraphics.B] * 255,
-                  vert[PGraphics.A] * 255);
+
+
+        dest.fill((int)(vert[PGraphics.R] * 255) << 24 |
+                  (int)(vert[PGraphics.G] * 255) << 16 |
+                  (int)(vert[PGraphics.B] * 255) <<  8 |
+                  (int)(vert[PGraphics.A] * 255));
 
      // Do we need to copy these as well?
 //        dest.ambient(vert[PGraphics.AR] * 255, vert[PGraphics.AG] * 255, vert[PGraphics.AB] * 255);
@@ -896,7 +1020,7 @@ public class PShape implements PConstants {
       }
     }
 
-    dest.end();
+    dest.endShape();
   }
 
 
@@ -1613,19 +1737,72 @@ public class PShape implements PConstants {
 
 
   public int getFill(int index) {
-    int a = (int) (vertices[index][PGraphics.A] * 255);
-    int r = (int) (vertices[index][PGraphics.R] * 255);
-    int g = (int) (vertices[index][PGraphics.G] * 255);
-    int b = (int) (vertices[index][PGraphics.B] * 255);
-    return (a << 24) | (r << 16) | (g << 8) | b;
+    if (image == null) {
+      int a = (int) (vertices[index][PGraphics.A] * 255);
+      int r = (int) (vertices[index][PGraphics.R] * 255);
+      int g = (int) (vertices[index][PGraphics.G] * 255);
+      int b = (int) (vertices[index][PGraphics.B] * 255);
+      return (a << 24) | (r << 16) | (g << 8) | b;
+    } else {
+      return 0;
+    }
+  }
+
+
+  public void setFill(boolean fill) {
+    this.fill = fill;
+  }
+
+
+  public void setFill(int fill) {
+    for  (int i = 0; i < vertices.length; i++) {
+      setFill(i, fill);
+    }
   }
 
 
   public void setFill(int index, int fill) {
-    vertices[index][PGraphics.A] = ((fill >> 24) & 0xFF) / 255.0f;
-    vertices[index][PGraphics.R] = ((fill >> 16) & 0xFF) / 255.0f;
-    vertices[index][PGraphics.G] = ((fill >>  8) & 0xFF) / 255.0f;
-    vertices[index][PGraphics.B] = ((fill >>  0) & 0xFF) / 255.0f;
+    if (image == null) {
+      vertices[index][PGraphics.A] = ((fill >> 24) & 0xFF) / 255.0f;
+      vertices[index][PGraphics.R] = ((fill >> 16) & 0xFF) / 255.0f;
+      vertices[index][PGraphics.G] = ((fill >>  8) & 0xFF) / 255.0f;
+      vertices[index][PGraphics.B] = ((fill >>  0) & 0xFF) / 255.0f;
+    }
+  }
+
+
+  public int getTint(int index) {
+    if (image != null) {
+      int a = (int) (vertices[index][PGraphics.A] * 255);
+      int r = (int) (vertices[index][PGraphics.R] * 255);
+      int g = (int) (vertices[index][PGraphics.G] * 255);
+      int b = (int) (vertices[index][PGraphics.B] * 255);
+      return (a << 24) | (r << 16) | (g << 8) | b;
+    } else {
+      return 0;
+    }
+  }
+
+
+  public void setTint(boolean tint) {
+    this.tint = tint;
+  }
+
+
+  public void setTint(int fill) {
+    for  (int i = 0; i < vertices.length; i++) {
+      setFill(i, fill);
+    }
+  }
+
+
+  public void setTint(int index, int tint) {
+    if (image != null) {
+      vertices[index][PGraphics.A] = ((tint >> 24) & 0xFF) / 255.0f;
+      vertices[index][PGraphics.R] = ((tint >> 16) & 0xFF) / 255.0f;
+      vertices[index][PGraphics.G] = ((tint >>  8) & 0xFF) / 255.0f;
+      vertices[index][PGraphics.B] = ((tint >>  0) & 0xFF) / 255.0f;
+    }
   }
 
 
@@ -1638,6 +1815,18 @@ public class PShape implements PConstants {
   }
 
 
+  public void setStroke(boolean stroke) {
+    this.stroke = stroke;
+  }
+
+
+  public void setStroke(int stroke) {
+    for  (int i = 0; i < vertices.length; i++) {
+      setStroke(i, stroke);
+    }
+  }
+
+
   public void setStroke(int index, int stroke) {
     vertices[index][PGraphics.SA] = ((stroke >> 24) & 0xFF) / 255.0f;
     vertices[index][PGraphics.SR] = ((stroke >> 16) & 0xFF) / 255.0f;
@@ -1646,17 +1835,34 @@ public class PShape implements PConstants {
   }
 
 
-  protected float getStrokeWeight(int index) {
+  public float getStrokeWeight(int index) {
     return vertices[index][PGraphics.SW];
   }
 
 
-  protected void setStrokeWeight(int index, float weight) {
+  public void setStrokeWeight(float weight) {
+    for  (int i = 0; i < vertices.length; i++) {
+      setStrokeWeight(i, weight);
+    }
+  }
+
+
+  public void setStrokeWeight(int index, float weight) {
     vertices[index][PGraphics.SW] = weight;
   }
 
 
-  protected int getAmbient(int index) {
+  public void setStrokeJoin(int join) {
+    strokeJoin = join;
+  }
+
+
+  public void setStrokeCap(int cap) {
+    strokeCap = cap;
+  }
+
+
+  public int getAmbient(int index) {
     int r = (int) (vertices[index][PGraphics.AR] * 255);
     int g = (int) (vertices[index][PGraphics.AG] * 255);
     int b = (int) (vertices[index][PGraphics.AB] * 255);
@@ -1664,13 +1870,21 @@ public class PShape implements PConstants {
   }
 
 
-  protected void setAmbient(int index, int ambient) {
+  public void setAmbient(int ambient) {
+    for  (int i = 0; i < vertices.length; i++) {
+      setAmbient(i, ambient);
+    }
+  }
+
+
+  public void setAmbient(int index, int ambient) {
     vertices[index][PGraphics.AR] = ((ambient >> 16) & 0xFF) / 255.0f;
     vertices[index][PGraphics.AG] = ((ambient >>  8) & 0xFF) / 255.0f;
     vertices[index][PGraphics.AB] = ((ambient >>  0) & 0xFF) / 255.0f;
   }
 
-  protected int getSpecular(int index) {
+
+  public int getSpecular(int index) {
     int r = (int) (vertices[index][PGraphics.SPR] * 255);
     int g = (int) (vertices[index][PGraphics.SPG] * 255);
     int b = (int) (vertices[index][PGraphics.SPB] * 255);
@@ -1678,14 +1892,21 @@ public class PShape implements PConstants {
   }
 
 
-  protected void setSpecular(int index, int specular) {
+  public void setSpecular(int specular) {
+    for  (int i = 0; i < vertices.length; i++) {
+      setSpecular(i, specular);
+    }
+  }
+
+
+  public void setSpecular(int index, int specular) {
     vertices[index][PGraphics.SPR] = ((specular >> 16) & 0xFF) / 255.0f;
     vertices[index][PGraphics.SPG] = ((specular >>  8) & 0xFF) / 255.0f;
     vertices[index][PGraphics.SPB] = ((specular >>  0) & 0xFF) / 255.0f;
   }
 
 
-  protected int getEmissive(int index) {
+  public int getEmissive(int index) {
     int r = (int) (vertices[index][PGraphics.ER] * 255);
     int g = (int) (vertices[index][PGraphics.EG] * 255);
     int b = (int) (vertices[index][PGraphics.EB] * 255);
@@ -1693,19 +1914,33 @@ public class PShape implements PConstants {
   }
 
 
-  protected void setEmissive(int index, int emissive) {
+  public void setEmissive(int emissive) {
+    for  (int i = 0; i < vertices.length; i++) {
+      setEmissive(i, emissive);
+    }
+  }
+
+
+  public void setEmissive(int index, int emissive) {
     vertices[index][PGraphics.ER] = ((emissive >> 16) & 0xFF) / 255.0f;
     vertices[index][PGraphics.EG] = ((emissive >>  8) & 0xFF) / 255.0f;
     vertices[index][PGraphics.EB] = ((emissive >>  0) & 0xFF) / 255.0f;
   }
 
 
-  protected float getShininess(int index) {
+  public float getShininess(int index) {
     return vertices[index][PGraphics.SHINE];
   }
 
 
-  protected void setShininess(int index, float shine) {
+  public void setShininess(float shine) {
+    for  (int i = 0; i < vertices.length; i++) {
+      setShininess(i, shine);
+    }
+  }
+
+
+  public void setShininess(int index, float shine) {
     vertices[index][PGraphics.SHINE] = shine;
   }
 

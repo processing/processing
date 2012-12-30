@@ -1622,7 +1622,7 @@ public class PGraphics extends PImage implements PConstants {
   /**
    * @webref shape
    * @see PShape
-   * @see PShape#end()
+   * @see PShape#endShape()
    * @see PApplet#loadShape(String)
    */
   public PShape createShape() {
