@@ -150,7 +150,7 @@ public class PGraphics3D extends PGraphicsOpenGL {
 
   @Override
   public PShape createShape() {
-    return createShape(POLYGON);
+    return createShape(PShape.GEOMETRY);
   }
 
 
@@ -172,14 +172,22 @@ public class PGraphics3D extends PGraphicsOpenGL {
       shape = new PShapeOpenGL(parent, PConstants.GROUP);
     } else if (type == PShape.PATH) {
       shape = new PShapeOpenGL(parent, PShape.PATH);
-    } else if (type == POINTS) {
+    } else if (type == PShape.GEOMETRY) {
       shape = new PShapeOpenGL(parent, PShape.GEOMETRY);
+    }
+
+    /*
+    (type == POINTS) {
+      shape = new PShapeOpenGL(parent, PShape.GEOMETRY);
+
       shape.setKind(POINTS);
     } else if (type == LINES) {
       shape = new PShapeOpenGL(parent, PShape.GEOMETRY);
+
       shape.setKind(LINES);
     } else if (type == TRIANGLE || type == TRIANGLES) {
       shape = new PShapeOpenGL(parent, PShape.GEOMETRY);
+
       shape.setKind(TRIANGLES);
     } else if (type == TRIANGLE_FAN) {
       shape = new PShapeOpenGL(parent, PShape.GEOMETRY);
@@ -197,6 +205,8 @@ public class PGraphics3D extends PGraphicsOpenGL {
       shape = new PShapeOpenGL(parent, PShape.GEOMETRY);
       shape.setKind(POLYGON);
     }
+    */
+
     shape.is3D(true);
     return shape;
   }
