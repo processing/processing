@@ -15,8 +15,8 @@ void setup() {
   star = createShape();
   star.beginShape();
   // You can set fill and stroke
-  star.fill(color(102));
-  star.stroke(color(255));
+  star.fill(102);
+  star.stroke(255);
   star.strokeWeight(2);
   // Here, we are hardcoding a series of vertices
   star.vertex(0, -50);

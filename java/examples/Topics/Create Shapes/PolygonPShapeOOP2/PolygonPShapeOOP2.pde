@@ -17,7 +17,7 @@ void setup() {
   PShape star = createShape();
   star.beginShape();
   star.noStroke();
-  star.fill(color(0,127));
+  star.fill(0, 127);
   star.vertex(0, -50);
   star.vertex(14, -20);
   star.vertex(47, -15);
