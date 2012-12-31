@@ -100,8 +100,11 @@ public class PShape implements PConstants {
   /** Texture or image data associated with this shape. */
   protected PImage image;
 
-  static final String RETAINED_CALL_ERROR =
+  public static final String OUTSIDE_BEGIN_END_ERROR =
     "%1$s can only be called between beginShape() and endShape()";
+
+  public static final String INSIDE_BEGIN_END_ERROR =
+    "%1$s can only be called outside beginShape() and endShape()";
 
   // boundary box of this shape
   //protected float x;
@@ -138,8 +141,10 @@ public class PShape implements PConstants {
   // set to false if the object is hidden in the layers palette
   protected boolean visible = true;
 
-  /** Retained shape being created with beginShape/endShape */
+    /** Retained shape being created with beginShape/endShape */
   protected boolean openShape = false;
+
+  protected boolean openContour = false;
 
   protected boolean stroke;
   protected int strokeColor;
@@ -492,6 +497,21 @@ public class PShape implements PConstants {
    * @see PShape#endContour()
    */
   public void beginContour() {
+    if (!openShape) {
+      PGraphics.showWarning(OUTSIDE_BEGIN_END_ERROR, "beginContour()");
+      return;
+    }
+
+    if (family == GROUP) {
+      PGraphics.showWarning("Cannot begin contour in GROUP shapes");
+      return;
+    }
+
+    if (openContour) {
+      PGraphics.showWarning("Already called beginContour().");
+      return;
+    }
+    openContour = true;
   }
 
   /**
@@ -500,6 +520,21 @@ public class PShape implements PConstants {
    * @see PShape#beginContour()
    */
   public void endContour() {
+    if (!openShape) {
+      PGraphics.showWarning(OUTSIDE_BEGIN_END_ERROR, "endContour()");
+      return;
+    }
+
+    if (family == GROUP) {
+      PGraphics.showWarning("Cannot end contour in GROUP shapes");
+      return;
+    }
+
+    if (!openContour) {
+      PGraphics.showWarning("Need to call beginContour() first.");
+      return;
+    }
+    openContour = false;
   }
 
   public void vertex(float x, float y) {
@@ -557,7 +592,7 @@ public class PShape implements PConstants {
 
   public void strokeWeight(float weight) {
     if (!openShape) {
-      PGraphics.showWarning(RETAINED_CALL_ERROR, "strokeWeight()");
+      PGraphics.showWarning(OUTSIDE_BEGIN_END_ERROR, "strokeWeight()");
       return;
     }
 
@@ -566,7 +601,7 @@ public class PShape implements PConstants {
 
   public void strokeJoin(int join) {
     if (!openShape) {
-      PGraphics.showWarning(RETAINED_CALL_ERROR, "strokeJoin()");
+      PGraphics.showWarning(OUTSIDE_BEGIN_END_ERROR, "strokeJoin()");
       return;
     }
 
@@ -575,7 +610,7 @@ public class PShape implements PConstants {
 
   public void strokeCap(int cap) {
     if (!openShape) {
-      PGraphics.showWarning(RETAINED_CALL_ERROR, "strokeCap()");
+      PGraphics.showWarning(OUTSIDE_BEGIN_END_ERROR, "strokeCap()");
       return;
     }
 
@@ -590,7 +625,7 @@ public class PShape implements PConstants {
 
   public void noFill() {
     if (!openShape) {
-      PGraphics.showWarning(RETAINED_CALL_ERROR, "noFill()");
+      PGraphics.showWarning(OUTSIDE_BEGIN_END_ERROR, "noFill()");
       return;
     }
 
@@ -600,7 +635,7 @@ public class PShape implements PConstants {
 
   public void fill(int rgb) {
     if (!openShape) {
-      PGraphics.showWarning(RETAINED_CALL_ERROR, "fill()");
+      PGraphics.showWarning(OUTSIDE_BEGIN_END_ERROR, "fill()");
       return;
     }
 
@@ -612,7 +647,7 @@ public class PShape implements PConstants {
 
   public void fill(int rgb, float alpha) {
     if (!openShape) {
-      PGraphics.showWarning(RETAINED_CALL_ERROR, "fill()");
+      PGraphics.showWarning(OUTSIDE_BEGIN_END_ERROR, "fill()");
       return;
     }
 
@@ -624,7 +659,7 @@ public class PShape implements PConstants {
 
   public void fill(float gray) {
     if (!openShape) {
-      PGraphics.showWarning(RETAINED_CALL_ERROR, "fill()");
+      PGraphics.showWarning(OUTSIDE_BEGIN_END_ERROR, "fill()");
       return;
     }
 
@@ -636,7 +671,7 @@ public class PShape implements PConstants {
 
   public void fill(float gray, float alpha) {
     if (!openShape) {
-      PGraphics.showWarning(RETAINED_CALL_ERROR, "fill()");
+      PGraphics.showWarning(OUTSIDE_BEGIN_END_ERROR, "fill()");
       return;
     }
 
@@ -648,7 +683,7 @@ public class PShape implements PConstants {
 
   public void fill(float x, float y, float z) {
     if (!openShape) {
-      PGraphics.showWarning(RETAINED_CALL_ERROR, "fill()");
+      PGraphics.showWarning(OUTSIDE_BEGIN_END_ERROR, "fill()");
       return;
     }
 
@@ -660,7 +695,7 @@ public class PShape implements PConstants {
 
   public void fill(float x, float y, float z, float a) {
     if (!openShape) {
-      PGraphics.showWarning(RETAINED_CALL_ERROR, "fill()");
+      PGraphics.showWarning(OUTSIDE_BEGIN_END_ERROR, "fill()");
       return;
     }
 
@@ -677,7 +712,7 @@ public class PShape implements PConstants {
 
   public void noStroke() {
     if (!openShape) {
-      PGraphics.showWarning(RETAINED_CALL_ERROR, "noStroke()");
+      PGraphics.showWarning(OUTSIDE_BEGIN_END_ERROR, "noStroke()");
       return;
     }
 
@@ -687,7 +722,7 @@ public class PShape implements PConstants {
 
   public void stroke(int rgb) {
     if (!openShape) {
-      PGraphics.showWarning(RETAINED_CALL_ERROR, "stroke()");
+      PGraphics.showWarning(OUTSIDE_BEGIN_END_ERROR, "stroke()");
       return;
     }
 
@@ -699,7 +734,7 @@ public class PShape implements PConstants {
 
   public void stroke(int rgb, float alpha) {
     if (!openShape) {
-      PGraphics.showWarning(RETAINED_CALL_ERROR, "stroke()");
+      PGraphics.showWarning(OUTSIDE_BEGIN_END_ERROR, "stroke()");
       return;
     }
 
@@ -711,7 +746,7 @@ public class PShape implements PConstants {
 
   public void stroke(float gray) {
     if (!openShape) {
-      PGraphics.showWarning(RETAINED_CALL_ERROR, "stroke()");
+      PGraphics.showWarning(OUTSIDE_BEGIN_END_ERROR, "stroke()");
       return;
     }
 
@@ -723,7 +758,7 @@ public class PShape implements PConstants {
 
   public void stroke(float gray, float alpha) {
     if (!openShape) {
-      PGraphics.showWarning(RETAINED_CALL_ERROR, "stroke()");
+      PGraphics.showWarning(OUTSIDE_BEGIN_END_ERROR, "stroke()");
       return;
     }
 
@@ -735,7 +770,7 @@ public class PShape implements PConstants {
 
   public void stroke(float x, float y, float z) {
     if (!openShape) {
-      PGraphics.showWarning(RETAINED_CALL_ERROR, "stroke()");
+      PGraphics.showWarning(OUTSIDE_BEGIN_END_ERROR, "stroke()");
       return;
     }
 
@@ -747,7 +782,7 @@ public class PShape implements PConstants {
 
   public void stroke(float x, float y, float z, float alpha) {
     if (!openShape) {
-      PGraphics.showWarning(RETAINED_CALL_ERROR, "stroke()");
+      PGraphics.showWarning(OUTSIDE_BEGIN_END_ERROR, "stroke()");
       return;
     }
 
@@ -764,7 +799,7 @@ public class PShape implements PConstants {
 
   public void noTint() {
     if (!openShape) {
-      PGraphics.showWarning(RETAINED_CALL_ERROR, "noTint()");
+      PGraphics.showWarning(OUTSIDE_BEGIN_END_ERROR, "noTint()");
       return;
     }
 
@@ -774,7 +809,7 @@ public class PShape implements PConstants {
 
   public void tint(int rgb) {
     if (!openShape) {
-      PGraphics.showWarning(RETAINED_CALL_ERROR, "tint()");
+      PGraphics.showWarning(OUTSIDE_BEGIN_END_ERROR, "tint()");
       return;
     }
 
@@ -786,7 +821,7 @@ public class PShape implements PConstants {
 
   public void tint(int rgb, float alpha) {
     if (!openShape) {
-      PGraphics.showWarning(RETAINED_CALL_ERROR, "tint()");
+      PGraphics.showWarning(OUTSIDE_BEGIN_END_ERROR, "tint()");
       return;
     }
 
@@ -798,7 +833,7 @@ public class PShape implements PConstants {
 
   public void tint(float gray) {
     if (!openShape) {
-      PGraphics.showWarning(RETAINED_CALL_ERROR, "tint()");
+      PGraphics.showWarning(OUTSIDE_BEGIN_END_ERROR, "tint()");
       return;
     }
 
@@ -810,7 +845,7 @@ public class PShape implements PConstants {
 
   public void tint(float gray, float alpha) {
     if (!openShape) {
-      PGraphics.showWarning(RETAINED_CALL_ERROR, "tint()");
+      PGraphics.showWarning(OUTSIDE_BEGIN_END_ERROR, "tint()");
       return;
     }
 
@@ -822,7 +857,7 @@ public class PShape implements PConstants {
 
   public void tint(float x, float y, float z) {
     if (!openShape) {
-      PGraphics.showWarning(RETAINED_CALL_ERROR, "tint()");
+      PGraphics.showWarning(OUTSIDE_BEGIN_END_ERROR, "tint()");
       return;
     }
 
@@ -834,7 +869,7 @@ public class PShape implements PConstants {
 
   public void tint(float x, float y, float z, float alpha) {
     if (!openShape) {
-      PGraphics.showWarning(RETAINED_CALL_ERROR, "tint()");
+      PGraphics.showWarning(OUTSIDE_BEGIN_END_ERROR, "tint()");
       return;
     }
 
@@ -850,7 +885,7 @@ public class PShape implements PConstants {
 
   public void ambient(int rgb) {
     if (!openShape) {
-      PGraphics.showWarning(RETAINED_CALL_ERROR, "ambient()");
+      PGraphics.showWarning(OUTSIDE_BEGIN_END_ERROR, "ambient()");
       return;
     }
 
@@ -862,7 +897,7 @@ public class PShape implements PConstants {
 
   public void ambient(float gray) {
     if (!openShape) {
-      PGraphics.showWarning(RETAINED_CALL_ERROR, "ambient()");
+      PGraphics.showWarning(OUTSIDE_BEGIN_END_ERROR, "ambient()");
       return;
     }
 
@@ -874,7 +909,7 @@ public class PShape implements PConstants {
 
   public void ambient(float x, float y, float z) {
     if (!openShape) {
-      PGraphics.showWarning(RETAINED_CALL_ERROR, "ambient()");
+      PGraphics.showWarning(OUTSIDE_BEGIN_END_ERROR, "ambient()");
       return;
     }
 
@@ -890,7 +925,7 @@ public class PShape implements PConstants {
 
   public void specular(int rgb) {
     if (!openShape) {
-      PGraphics.showWarning(RETAINED_CALL_ERROR, "specular()");
+      PGraphics.showWarning(OUTSIDE_BEGIN_END_ERROR, "specular()");
       return;
     }
 
@@ -901,7 +936,7 @@ public class PShape implements PConstants {
 
   public void specular(float gray) {
     if (!openShape) {
-      PGraphics.showWarning(RETAINED_CALL_ERROR, "specular()");
+      PGraphics.showWarning(OUTSIDE_BEGIN_END_ERROR, "specular()");
       return;
     }
 
@@ -912,7 +947,7 @@ public class PShape implements PConstants {
 
   public void specular(float x, float y, float z) {
     if (!openShape) {
-      PGraphics.showWarning(RETAINED_CALL_ERROR, "specular()");
+      PGraphics.showWarning(OUTSIDE_BEGIN_END_ERROR, "specular()");
       return;
     }
 
@@ -927,7 +962,7 @@ public class PShape implements PConstants {
 
   public void emissive(int rgb) {
     if (!openShape) {
-      PGraphics.showWarning(RETAINED_CALL_ERROR, "emissive()");
+      PGraphics.showWarning(OUTSIDE_BEGIN_END_ERROR, "emissive()");
       return;
     }
 
@@ -938,7 +973,7 @@ public class PShape implements PConstants {
 
   public void emissive(float gray) {
     if (!openShape) {
-      PGraphics.showWarning(RETAINED_CALL_ERROR, "emissive()");
+      PGraphics.showWarning(OUTSIDE_BEGIN_END_ERROR, "emissive()");
       return;
     }
 
@@ -949,7 +984,7 @@ public class PShape implements PConstants {
 
   public void emissive(float x, float y, float z) {
     if (!openShape) {
-      PGraphics.showWarning(RETAINED_CALL_ERROR, "emissive()");
+      PGraphics.showWarning(OUTSIDE_BEGIN_END_ERROR, "emissive()");
       return;
     }
 
@@ -964,7 +999,7 @@ public class PShape implements PConstants {
 
   public void shininess(float shine) {
     if (!openShape) {
-      PGraphics.showWarning(RETAINED_CALL_ERROR, "shininess()");
+      PGraphics.showWarning(OUTSIDE_BEGIN_END_ERROR, "shininess()");
       return;
     }
 
@@ -1848,6 +1883,11 @@ public class PShape implements PConstants {
    * @see PShape#getVertexCount()
    */
   public void setVertex(int index, float x, float y) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setVertex()");
+      return;
+    }
+
     vertices[index][X] = x;
     vertices[index][Y] = y;
   }
@@ -1856,6 +1896,11 @@ public class PShape implements PConstants {
    * @param z the z value for the vertex
    */
   public void setVertex(int index, float x, float y, float z) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setVertex()");
+      return;
+    }
+
     vertices[index][X] = x;
     vertices[index][Y] = y;
     vertices[index][Z] = z;
@@ -1865,6 +1910,11 @@ public class PShape implements PConstants {
    * @param vec the PVector to define the x, y, z coordinates
    */
   public void setVertex(int index, PVector vec) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setVertex()");
+      return;
+    }
+
     vertices[index][X] = vec.x;
     vertices[index][Y] = vec.y;
     vertices[index][Z] = vec.z;
@@ -1903,6 +1953,11 @@ public class PShape implements PConstants {
 
 
   public void setNormal(int index, float nx, float ny, float nz) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setNormal()");
+      return;
+    }
+
     vertices[index][PGraphics.NX] = nx;
     vertices[index][PGraphics.NY] = ny;
     vertices[index][PGraphics.NZ] = nz;
@@ -1920,6 +1975,11 @@ public class PShape implements PConstants {
 
 
   public void setTextureUV(int index, float u, float v) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setTextureUV()");
+      return;
+    }
+
     vertices[index][PGraphics.U] = u;
     vertices[index][PGraphics.V] = v;
   }
@@ -1939,11 +1999,21 @@ public class PShape implements PConstants {
 
 
   public void setFill(boolean fill) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setFill()");
+      return;
+    }
+
     this.fill = fill;
   }
 
 
   public void setFill(int fill) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setFill()");
+      return;
+    }
+
     for  (int i = 0; i < vertices.length; i++) {
       setFill(i, fill);
     }
@@ -1951,6 +2021,11 @@ public class PShape implements PConstants {
 
 
   public void setFill(int index, int fill) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setFill()");
+      return;
+    }
+
     if (image == null) {
       vertices[index][PGraphics.A] = ((fill >> 24) & 0xFF) / 255.0f;
       vertices[index][PGraphics.R] = ((fill >> 16) & 0xFF) / 255.0f;
@@ -1974,11 +2049,21 @@ public class PShape implements PConstants {
 
 
   public void setTint(boolean tint) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setTint()");
+      return;
+    }
+
     this.tint = tint;
   }
 
 
   public void setTint(int fill) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setTint()");
+      return;
+    }
+
     for  (int i = 0; i < vertices.length; i++) {
       setFill(i, fill);
     }
@@ -1986,6 +2071,11 @@ public class PShape implements PConstants {
 
 
   public void setTint(int index, int tint) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setTint()");
+      return;
+    }
+
     if (image != null) {
       vertices[index][PGraphics.A] = ((tint >> 24) & 0xFF) / 255.0f;
       vertices[index][PGraphics.R] = ((tint >> 16) & 0xFF) / 255.0f;
@@ -2005,11 +2095,21 @@ public class PShape implements PConstants {
 
 
   public void setStroke(boolean stroke) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setStroke()");
+      return;
+    }
+
     this.stroke = stroke;
   }
 
 
   public void setStroke(int stroke) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setStroke()");
+      return;
+    }
+
     for  (int i = 0; i < vertices.length; i++) {
       setStroke(i, stroke);
     }
@@ -2017,6 +2117,11 @@ public class PShape implements PConstants {
 
 
   public void setStroke(int index, int stroke) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setStroke()");
+      return;
+    }
+
     vertices[index][PGraphics.SA] = ((stroke >> 24) & 0xFF) / 255.0f;
     vertices[index][PGraphics.SR] = ((stroke >> 16) & 0xFF) / 255.0f;
     vertices[index][PGraphics.SG] = ((stroke >>  8) & 0xFF) / 255.0f;
@@ -2030,6 +2135,11 @@ public class PShape implements PConstants {
 
 
   public void setStrokeWeight(float weight) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setStrokeWeight()");
+      return;
+    }
+
     for  (int i = 0; i < vertices.length; i++) {
       setStrokeWeight(i, weight);
     }
@@ -2037,16 +2147,31 @@ public class PShape implements PConstants {
 
 
   public void setStrokeWeight(int index, float weight) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setStrokeWeight()");
+      return;
+    }
+
     vertices[index][PGraphics.SW] = weight;
   }
 
 
   public void setStrokeJoin(int join) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setStrokeJoin()");
+      return;
+    }
+
     strokeJoin = join;
   }
 
 
   public void setStrokeCap(int cap) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setStrokeCap()");
+      return;
+    }
+
     strokeCap = cap;
   }
 
@@ -2060,6 +2185,11 @@ public class PShape implements PConstants {
 
 
   public void setAmbient(int ambient) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setAmbient()");
+      return;
+    }
+
     for  (int i = 0; i < vertices.length; i++) {
       setAmbient(i, ambient);
     }
@@ -2067,6 +2197,11 @@ public class PShape implements PConstants {
 
 
   public void setAmbient(int index, int ambient) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setAmbient()");
+      return;
+    }
+
     vertices[index][PGraphics.AR] = ((ambient >> 16) & 0xFF) / 255.0f;
     vertices[index][PGraphics.AG] = ((ambient >>  8) & 0xFF) / 255.0f;
     vertices[index][PGraphics.AB] = ((ambient >>  0) & 0xFF) / 255.0f;
@@ -2082,6 +2217,11 @@ public class PShape implements PConstants {
 
 
   public void setSpecular(int specular) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setSpecular()");
+      return;
+    }
+
     for  (int i = 0; i < vertices.length; i++) {
       setSpecular(i, specular);
     }
@@ -2089,6 +2229,11 @@ public class PShape implements PConstants {
 
 
   public void setSpecular(int index, int specular) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setSpecular()");
+      return;
+    }
+
     vertices[index][PGraphics.SPR] = ((specular >> 16) & 0xFF) / 255.0f;
     vertices[index][PGraphics.SPG] = ((specular >>  8) & 0xFF) / 255.0f;
     vertices[index][PGraphics.SPB] = ((specular >>  0) & 0xFF) / 255.0f;
@@ -2104,6 +2249,11 @@ public class PShape implements PConstants {
 
 
   public void setEmissive(int emissive) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setEmissive()");
+      return;
+    }
+
     for  (int i = 0; i < vertices.length; i++) {
       setEmissive(i, emissive);
     }
@@ -2111,6 +2261,11 @@ public class PShape implements PConstants {
 
 
   public void setEmissive(int index, int emissive) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setEmissive()");
+      return;
+    }
+
     vertices[index][PGraphics.ER] = ((emissive >> 16) & 0xFF) / 255.0f;
     vertices[index][PGraphics.EG] = ((emissive >>  8) & 0xFF) / 255.0f;
     vertices[index][PGraphics.EB] = ((emissive >>  0) & 0xFF) / 255.0f;
@@ -2123,6 +2278,11 @@ public class PShape implements PConstants {
 
 
   public void setShininess(float shine) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setShininess()");
+      return;
+    }
+
     for  (int i = 0; i < vertices.length; i++) {
       setShininess(i, shine);
     }
@@ -2130,6 +2290,11 @@ public class PShape implements PConstants {
 
 
   public void setShininess(int index, float shine) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setShininess()");
+      return;
+    }
+
     vertices[index][PGraphics.SHINE] = shine;
   }
 
