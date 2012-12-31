@@ -166,7 +166,6 @@ public class PShapeOpenGL extends PShape {
   protected boolean isSolid;
   protected boolean isClosed;
 
-  protected boolean openContour = false;
   protected boolean breakShape = false;
   protected boolean shapeCreated = false;
 
@@ -886,32 +885,8 @@ public class PShapeOpenGL extends PShape {
 
   @Override
   public void beginContour() {
-    if (family == GROUP) {
-      PGraphics.showWarning("Cannot begin contour in GROUP shapes");
-      return;
-    }
-
-    if (openContour) {
-      PGraphics.showWarning("Already called beginContour().");
-      return;
-    }
-    openContour = true;
+    super.beginContour();
     breakShape = true;
-  }
-
-
-  @Override
-  public void endContour() {
-    if (family == GROUP) {
-      PGraphics.showWarning("Cannot end contour in GROUP shapes");
-      return;
-    }
-
-    if (!openContour) {
-      PGraphics.showWarning("Need to call beginContour() first.");
-      return;
-    }
-    openContour = false;
   }
 
 
@@ -940,13 +915,13 @@ public class PShapeOpenGL extends PShape {
 
 
   protected void vertexImpl(float x, float y, float z, float u, float v) {
-    if (family == GROUP) {
-      PGraphics.showWarning("Cannot add vertices to GROUP shape");
+    if (!openShape) {
+      PGraphics.showWarning(OUTSIDE_BEGIN_END_ERROR, "vertex()");
       return;
     }
 
-    if (!openShape) {
-      PGraphics.showWarning("Need to call beginShape() first");
+    if (family == GROUP) {
+      PGraphics.showWarning("Cannot add vertices to GROUP shape");
       return;
     }
 
@@ -1000,13 +975,13 @@ public class PShapeOpenGL extends PShape {
 
   @Override
   public void normal(float nx, float ny, float nz) {
-    if (family == GROUP) {
-      PGraphics.showWarning("Cannot set normal in GROUP shape");
+    if (!openShape) {
+      PGraphics.showWarning(OUTSIDE_BEGIN_END_ERROR, "normal()");
       return;
     }
 
-    if (!openShape) {
-      PGraphics.showWarning("Need to call beginShape() first");
+    if (family == GROUP) {
+      PGraphics.showWarning("Cannot set normal in GROUP shape");
       return;
     }
 
@@ -2228,6 +2203,14 @@ public class PShapeOpenGL extends PShape {
 
   @Override
   public void setVertex(int index, float x, float y, float z) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setVertex()");
+      return;
+    }
+
+    // TODO: in certain cases (kind = TRIANGLE, etc) the correspondence between
+    // input and tessellated vertices is 1-1, so in those cases re-tessellation
+    // wouldnt' be neccessary.
     inGeo.vertices[3 * index + 0] = x;
     inGeo.vertices[3 * index + 1] = y;
     inGeo.vertices[3 * index + 2] = z;
@@ -2237,6 +2220,11 @@ public class PShapeOpenGL extends PShape {
 
   @Override
   public void setVertex(int index, PVector vec) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setVertex()");
+      return;
+    }
+
     inGeo.vertices[3 * index + 0] = vec.x;
     inGeo.vertices[3 * index + 1] = vec.y;
     inGeo.vertices[3 * index + 2] = vec.z;
@@ -2276,6 +2264,11 @@ public class PShapeOpenGL extends PShape {
 
   @Override
   public void setNormal(int index, float nx, float ny, float nz) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setNormal()");
+      return;
+    }
+
     inGeo.normals[3 * index + 0] = nx;
     inGeo.normals[3 * index + 1] = ny;
     inGeo.normals[3 * index + 2] = nz;
@@ -2297,6 +2290,11 @@ public class PShapeOpenGL extends PShape {
 
   @Override
   public void setTextureUV(int index, float u, float v) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setTextureUV()");
+      return;
+    }
+
     inGeo.texcoords[2 * index + 0] = u;
     inGeo.texcoords[2 * index + 1] = v;
     markForTessellation();
@@ -2315,6 +2313,11 @@ public class PShapeOpenGL extends PShape {
 
   @Override
   public void setFill(boolean fill) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setFill()");
+      return;
+    }
+
     if (family == GROUP) {
       for (int i = 0; i < childCount; i++) {
         PShapeOpenGL child = (PShapeOpenGL) children[i];
@@ -2329,6 +2332,11 @@ public class PShapeOpenGL extends PShape {
 
   @Override
   public void setFill(int fill) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setFill()");
+      return;
+    }
+
     if (family == GROUP) {
       for (int i = 0; i < childCount; i++) {
         PShapeOpenGL child = (PShapeOpenGL) children[i];
@@ -2376,6 +2384,11 @@ public class PShapeOpenGL extends PShape {
 
   @Override
   public void setFill(int index, int fill) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setFill()");
+      return;
+    }
+
     if (image == null) {
       inGeo.colors[index] = PGL.javaToNativeARGB(fill);
       markForTessellation();
@@ -2395,6 +2408,11 @@ public class PShapeOpenGL extends PShape {
 
   @Override
   public void setTint(boolean tint) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setTint()");
+      return;
+    }
+
     if (family == GROUP) {
       for (int i = 0; i < childCount; i++) {
         PShapeOpenGL child = (PShapeOpenGL) children[i];
@@ -2409,6 +2427,11 @@ public class PShapeOpenGL extends PShape {
 
   @Override
   public void setTint(int tint) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setTint()");
+      return;
+    }
+
     if (family == GROUP) {
       for (int i = 0; i < childCount; i++) {
         PShapeOpenGL child = (PShapeOpenGL) children[i];
@@ -2447,6 +2470,11 @@ public class PShapeOpenGL extends PShape {
 
   @Override
   public void setTint(int index, int tint) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setTint()");
+      return;
+    }
+
     if (image != null) {
       inGeo.colors[index] = PGL.javaToNativeARGB(tint);
       markForTessellation();
@@ -2466,6 +2494,11 @@ public class PShapeOpenGL extends PShape {
 
   @Override
   public void setStroke(boolean stroke) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setStroke()");
+      return;
+    }
+
     if (family == GROUP) {
       for (int i = 0; i < childCount; i++) {
         PShapeOpenGL child = (PShapeOpenGL) children[i];
@@ -2490,6 +2523,11 @@ public class PShapeOpenGL extends PShape {
 
   @Override
   public void setStroke(int stroke) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setStroke()");
+      return;
+    }
+
     if (family == GROUP) {
       for (int i = 0; i < childCount; i++) {
         PShapeOpenGL child = (PShapeOpenGL) children[i];
@@ -2536,6 +2574,11 @@ public class PShapeOpenGL extends PShape {
 
   @Override
   public void setStroke(int index, int stroke) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setStroke()");
+      return;
+    }
+
     inGeo.strokeColors[index] = PGL.javaToNativeARGB(stroke);
     markForTessellation();
   }
@@ -2551,9 +2594,13 @@ public class PShapeOpenGL extends PShape {
   }
 
 
-
   @Override
   public void setStrokeWeight(float weight) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setStrokeWeight()");
+      return;
+    }
+
     if (family == GROUP) {
       for (int i = 0; i < childCount; i++) {
         PShapeOpenGL child = (PShapeOpenGL) children[i];
@@ -2606,6 +2653,11 @@ public class PShapeOpenGL extends PShape {
 
   @Override
   public void setStrokeWeight(int index, float weight) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setStrokeWeight()");
+      return;
+    }
+
     inGeo.strokeWeights[index] = weight;
     markForTessellation();
   }
@@ -2613,6 +2665,11 @@ public class PShapeOpenGL extends PShape {
 
   @Override
   public void setStrokeJoin(int join) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setStrokeJoin()");
+      return;
+    }
+
     if (family == GROUP) {
       for (int i = 0; i < childCount; i++) {
         PShapeOpenGL child = (PShapeOpenGL) children[i];
@@ -2632,6 +2689,11 @@ public class PShapeOpenGL extends PShape {
 
   @Override
   public void setStrokeCap(int cap) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setStrokeCap()");
+      return;
+    }
+
     if (family == GROUP) {
       for (int i = 0; i < childCount; i++) {
         PShapeOpenGL child = (PShapeOpenGL) children[i];
@@ -2661,6 +2723,11 @@ public class PShapeOpenGL extends PShape {
 
   @Override
   public void setAmbient(int ambient) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setAmbient()");
+      return;
+    }
+
     if (family == GROUP) {
       for (int i = 0; i < childCount; i++) {
         PShapeOpenGL child = (PShapeOpenGL) children[i];
@@ -2698,6 +2765,11 @@ public class PShapeOpenGL extends PShape {
 
   @Override
   public void setAmbient(int index, int ambient) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setAmbient()");
+      return;
+    }
+
     inGeo.ambient[index] = PGL.javaToNativeARGB(ambient);
     markForTessellation();
     setAmbient = true;
@@ -2716,6 +2788,11 @@ public class PShapeOpenGL extends PShape {
 
   @Override
   public void setSpecular(int specular) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setSpecular()");
+      return;
+    }
+
     if (family == GROUP) {
       for (int i = 0; i < childCount; i++) {
         PShapeOpenGL child = (PShapeOpenGL) children[i];
@@ -2752,6 +2829,11 @@ public class PShapeOpenGL extends PShape {
 
   @Override
   public void setSpecular(int index, int specular) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setSpecular()");
+      return;
+    }
+
     inGeo.specular[index] = PGL.javaToNativeARGB(specular);
     markForTessellation();
   }
@@ -2769,6 +2851,11 @@ public class PShapeOpenGL extends PShape {
 
   @Override
   public void setEmissive(int emissive) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setEmissive()");
+      return;
+    }
+
     if (family == GROUP) {
       for (int i = 0; i < childCount; i++) {
         PShapeOpenGL child = (PShapeOpenGL) children[i];
@@ -2805,6 +2892,11 @@ public class PShapeOpenGL extends PShape {
 
   @Override
   public void setEmissive(int index, int emissive) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setEmissive()");
+      return;
+    }
+
     inGeo.emissive[index] = PGL.javaToNativeARGB(emissive);
     markForTessellation();
   }
@@ -2822,6 +2914,11 @@ public class PShapeOpenGL extends PShape {
 
   @Override
   public void setShininess(float shininess) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setShininess()");
+      return;
+    }
+
     if (family == GROUP) {
       for (int i = 0; i < childCount; i++) {
         PShapeOpenGL child = (PShapeOpenGL) children[i];
@@ -2856,6 +2953,11 @@ public class PShapeOpenGL extends PShape {
 
   @Override
   public void setShininess(int index, float shine) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setShininess()");
+      return;
+    }
+
     inGeo.shininess[index] = shine;
     markForTessellation();
   }
