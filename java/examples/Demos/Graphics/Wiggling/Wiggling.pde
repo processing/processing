@@ -63,8 +63,8 @@ void createCube() {
   // Front face         
   face = createShape();
   face.beginShape(POLYGON);
-  face.stroke(color(255, 0, 0));
-  face.fill(color(255));
+  face.stroke(255, 0, 0);
+  face.fill(255);
   face.beginContour();
   face.vertex(-cubeSize/2, -cubeSize/2, +cubeSize/2);
   face.vertex(+cubeSize/2, -cubeSize/2, +cubeSize/2);
@@ -86,8 +86,8 @@ void createCube() {
   // Back face
   face = createShape();
   face.beginShape(POLYGON);
-  face.stroke(color(255, 0, 0));
-  face.fill(color(255));
+  face.stroke(255, 0, 0);
+  face.fill(255);
   face.beginContour();
   face.vertex(+cubeSize/2, -cubeSize/2, -cubeSize/2);
   face.vertex(-cubeSize/2, -cubeSize/2, -cubeSize/2);
@@ -109,8 +109,8 @@ void createCube() {
   // Right face
   face = createShape();
   face.beginShape(POLYGON);
-  face.stroke(color(255, 0, 0));
-  face.fill(color(255));
+  face.stroke(255, 0, 0);
+  face.fill(255);
   face.beginContour();
   face.vertex(+cubeSize/2, -cubeSize/2, +cubeSize/2);
   face.vertex(+cubeSize/2, -cubeSize/2, -cubeSize/2);
@@ -132,8 +132,8 @@ void createCube() {
   // Left face
   face = createShape();
   face.beginShape(POLYGON);
-  face.stroke(color(255, 0, 0));
-  face.fill(color(255));
+  face.stroke(255, 0, 0);
+  face.fill(255);
   face.beginContour();
   face.vertex(-cubeSize/2, -cubeSize/2, -cubeSize/2);
   face.vertex(-cubeSize/2, -cubeSize/2, +cubeSize/2);
@@ -155,8 +155,8 @@ void createCube() {
   // Top face
   face = createShape();
   face.beginShape(POLYGON);
-  face.stroke(color(255, 0, 0));
-  face.fill(color(255));
+  face.stroke(255, 0, 0);
+  face.fill(255);
   face.beginContour();
   face.vertex(-cubeSize/2, +cubeSize/2, +cubeSize/2);
   face.vertex(+cubeSize/2, +cubeSize/2, +cubeSize/2);
@@ -178,8 +178,8 @@ void createCube() {
   // Bottom face
   face = createShape();
   face.beginShape(POLYGON);
-  face.stroke(color(255, 0, 0));
-  face.fill(color(255));
+  face.stroke(255, 0, 0);
+  face.fill(255);
   face.beginContour();
   face.vertex(+cubeSize/2, -cubeSize/2, +cubeSize/2);
   face.vertex(-cubeSize/2, -cubeSize/2, +cubeSize/2);

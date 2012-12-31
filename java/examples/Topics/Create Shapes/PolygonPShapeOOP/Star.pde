@@ -16,7 +16,7 @@ class Star {
     s = createShape();
     s.beginShape();
     // You can set fill and stroke
-    s.fill(color(255, 204));
+    s.fill(255, 204);
     s.noStroke();
     // Here, we are hardcoding a series of vertices
     s.vertex(0, -50);

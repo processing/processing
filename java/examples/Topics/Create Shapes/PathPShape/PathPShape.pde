@@ -15,7 +15,7 @@ void setup() {
   path.beginShape();
   // Set fill and stroke
   path.noFill();
-  path.stroke(color(255));
+  path.stroke(255);
   path.strokeWeight(2);
   
   float x = 0;

@@ -12,8 +12,8 @@ void setup() {
   // Make a shape
   s = createShape();
   s.beginShape();
-  s.fill(0xFF000000);
-  s.stroke(0xFFFFFFFF);
+  s.fill(0);
+  s.stroke(255);
   s.strokeWeight(2);
   // Exterior part of shape
   s.vertex(-100,-100);

@@ -23,7 +23,7 @@ void setup() {
     PShape part = createShape();
     part.beginShape(QUAD);
     part.noStroke();
-    part.tint(color(255));
+    part.tint(255);
     part.texture(sprite);
     part.normal(0, 0, 1);
     part.vertex(cx - partSize/2, cy - partSize/2, cz, 0, 0);
