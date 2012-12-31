@@ -97,6 +97,8 @@ public class PShape implements PConstants {
 
   protected PMatrix matrix;
 
+  protected int textureMode;
+
   /** Texture or image data associated with this shape. */
   protected PImage image;
 
@@ -481,10 +483,31 @@ public class PShape implements PConstants {
 
   // Drawing methods
 
+  public void textureMode(int mode) {
+    if (!openShape) {
+      PGraphics.showWarning(OUTSIDE_BEGIN_END_ERROR, "textureMode()");
+      return;
+    }
+
+    textureMode = mode;
+  }
+
   public void texture(PImage tex) {
+    if (!openShape) {
+      PGraphics.showWarning(OUTSIDE_BEGIN_END_ERROR, "texture()");
+      return;
+    }
+
+    image = tex;
   }
 
   public void noTexture() {
+    if (!openShape) {
+      PGraphics.showWarning(OUTSIDE_BEGIN_END_ERROR, "noTexture()");
+      return;
+    }
+
+    image = null;
   }
 
   // TODO unapproved
@@ -1982,6 +2005,26 @@ public class PShape implements PConstants {
 
     vertices[index][PGraphics.U] = u;
     vertices[index][PGraphics.V] = v;
+  }
+
+
+  public void setTextureMode(int mode) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setTextureMode()");
+      return;
+    }
+
+    textureMode = mode;
+  }
+
+
+  public void setTexture(PImage tex) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setTexture()");
+      return;
+    }
+
+    image = tex;
   }
 
 

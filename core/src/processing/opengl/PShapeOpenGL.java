@@ -184,7 +184,6 @@ public class PShapeOpenGL extends PShape {
 
   // Modes inherited from renderer
 
-  protected int textureMode;
   protected int rectMode;
   protected int ellipseMode;
   protected int shapeMode;
@@ -725,7 +724,13 @@ public class PShapeOpenGL extends PShape {
   // Drawing methods
 
 
-  public void textureMode(int mode) {
+  @Override
+  public void setTextureMode(int mode) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setTextureMode()");
+      return;
+    }
+
     if (family == GROUP) {
       for (int i = 0; i < childCount; i++) {
         PShapeOpenGL child = (PShapeOpenGL) children[i];
@@ -738,7 +743,12 @@ public class PShapeOpenGL extends PShape {
 
 
   @Override
-  public void texture(PImage tex) {
+  public void setTexture(PImage tex) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setTexture()");
+      return;
+    }
+
     if (family == GROUP) {
       for (int i = 0; i < childCount; i++) {
         PShapeOpenGL child = (PShapeOpenGL) children[i];
@@ -754,26 +764,6 @@ public class PShapeOpenGL extends PShape {
         ((PShapeOpenGL)parent).addTexture(image);
         if (is2D() && stroke) {
           ((PShapeOpenGL)parent).strokedTexture(true);
-        }
-      }
-    }
-  }
-
-
-  @Override
-  public void noTexture() {
-    if (family == GROUP) {
-      for (int i = 0; i < childCount; i++) {
-        PShapeOpenGL child = (PShapeOpenGL) children[i];
-        child.noTexture();
-      }
-    } else {
-      PImage tex0 = image;
-      image = null;
-      if (tex0 != null && parent != null) {
-        ((PShapeOpenGL)parent).removeTexture(tex0);
-        if (is2D()) {
-          ((PShapeOpenGL)parent).strokedTexture(false);
         }
       }
     }
