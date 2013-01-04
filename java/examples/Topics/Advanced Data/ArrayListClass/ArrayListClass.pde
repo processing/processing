@@ -9,15 +9,15 @@
  * Click the mouse to add bouncing balls.
  */
 
-ArrayList balls;
+ArrayList<Ball> balls;
 int ballWidth = 48;
 
 void setup() {
   size(640, 360);
   noStroke();
 
-  // Create an empty ArrayList
-  balls = new ArrayList();
+  // Create an empty ArrayList (will store Ball objects)
+  balls = new ArrayList<Ball>();
   
   // Start by adding one element
   balls.add(new Ball(width/2, 0, ballWidth));
@@ -32,7 +32,7 @@ void draw() {
   // This is because we are deleting elements from the list  
   for (int i = balls.size()-1; i >= 0; i--) { 
     // An ArrayList doesn't know what it is storing so we have to cast the object coming out
-    Ball ball = (Ball) balls.get(i);
+    Ball ball = balls.get(i);
     ball.move();
     ball.display();
     if (ball.finished()) {
