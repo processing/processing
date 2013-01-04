@@ -23,7 +23,7 @@ int counter;
 void setup() {
   size(640, 360);
   
-  words = new HashMap();
+  words = new HashMap<String,Word>();
 
   // Load file and chop it up
   String[] lines = loadStrings("dracula.txt");
