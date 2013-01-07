@@ -3292,9 +3292,16 @@ public class PGL {
                        InputEvent.META_MASK |
                        InputEvent.ALT_MASK);
 
+    char keyChar;
+    if ((int)nativeEvent.getKeyChar() == 0) {
+      keyChar = PConstants.CODED;
+    } else {
+      keyChar = nativeEvent.getKeyChar();
+    }
+
     KeyEvent ke = new KeyEvent(nativeEvent, nativeEvent.getWhen(),
                                peAction, peModifiers,
-                               nativeEvent.getKeyChar(),
+                               keyChar,
                                nativeEvent.getKeyCode());
 
     pg.parent.postEvent(ke);
