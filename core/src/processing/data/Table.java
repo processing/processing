@@ -30,6 +30,8 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -240,6 +242,7 @@ public class Table {
     boolean awfulCSV = false;
     boolean header = false;
     String extension = null;
+    boolean binary = false;
     if (options != null) {
       String[] opts = PApplet.splitTokens(options, " ,");
       for (String opt : opts) {
@@ -249,6 +252,8 @@ public class Table {
           extension = "csv";
         } else if (opt.equals("newlines")) {
           awfulCSV = true;
+        } else if (opt.equals("bin")) {
+          binary = true;
         } else if (opt.equals("header")) {
           header = true;
         } else {
@@ -257,13 +262,17 @@ public class Table {
       }
     }
 
-    BufferedReader reader = PApplet.createReader(input);
-    if (awfulCSV) {
-      parseAwfulCSV(reader, header);
-    } else if ("tsv".equals(extension)) {
-      parseBasic(reader, header, true);
-    } else if ("csv".equals(extension)) {
-      parseBasic(reader, header, false);
+    if (binary) {
+      loadBinary(input);
+    } else {
+      BufferedReader reader = PApplet.createReader(input);
+      if (awfulCSV) {
+        parseAwfulCSV(reader, header);
+      } else if ("tsv".equals(extension)) {
+        parseBasic(reader, header, true);
+      } else if ("csv".equals(extension)) {
+        parseBasic(reader, header, false);
+      }
     }
   }
 
@@ -627,12 +636,12 @@ public class Table {
   }
 
 
-  public void save(File file, String options) throws IOException {
-    save(new FileOutputStream(file), checkOptions(file, options));
+  public boolean save(File file, String options) throws IOException {
+    return save(new FileOutputStream(file), checkOptions(file, options));
   }
 
 
-  public void save(OutputStream output, String options) {
+  public boolean save(OutputStream output, String options) {
     PrintWriter writer = PApplet.createWriter(output);
     if (options != null) {
       String[] opts = PApplet.splitTokens(options, ", ");
@@ -643,6 +652,13 @@ public class Table {
           writeTSV(writer);
         } else if (opt.equals("html")) {
           writeHTML(writer);
+        } else if (opt.equals("bin")) {
+          try {
+            saveBinary(output);
+          } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+          }
         } else {
           throw new IllegalArgumentException("'" + opt + "' not understood. " +
                                              "Only csv, tsv, and html are " +
@@ -651,6 +667,7 @@ public class Table {
       }
     }
     writer.close();
+    return true;
   }
 
 
@@ -804,6 +821,166 @@ public class Table {
         writer.print(c);
       }
     }
+  }
+
+
+  protected void saveBinary(OutputStream os) throws IOException {
+    DataOutputStream output = new DataOutputStream(new BufferedOutputStream(os));
+    output.writeInt(0x9007AB1E);  // version
+    output.writeInt(getRowCount());
+    output.writeInt(getColumnCount());
+    if (columnTitles != null) {
+      output.writeBoolean(true);
+      for (String title : columnTitles) {
+        output.writeUTF(title);
+      }
+    } else {
+      output.writeBoolean(false);
+    }
+    for (int i = 0; i < getColumnCount(); i++) {
+      //System.out.println(i + " is " + columnTypes[i]);
+      output.writeInt(columnTypes[i]);
+    }
+
+    for (int i = 0; i < getColumnCount(); i++) {
+      if (columnTypes[i] == CATEGORICAL) {
+        columnCategories[i].write(output);
+      }
+    }
+    if (missingString == null) {
+      output.writeBoolean(false);
+    } else {
+      output.writeBoolean(true);
+      output.writeUTF(missingString);
+    }
+    output.writeInt(missingInt);
+    output.writeLong(missingLong);
+    output.writeFloat(missingFloat);
+    output.writeDouble(missingDouble);
+    output.writeInt(missingCategory);
+
+    for (TableRow row : rows()) {
+      for (int col = 0; col < getColumnCount(); col++) {
+        switch (columnTypes[col]) {
+        case STRING:
+          output.writeUTF(row.getString(col));
+          break;
+        case INT:
+          output.writeInt(row.getInt(col));
+          break;
+        case LONG:
+          output.writeLong(row.getLong(col));
+          break;
+        case FLOAT:
+          output.writeFloat(row.getFloat(col));
+          break;
+        case DOUBLE:
+          output.writeDouble(row.getDouble(col));
+          break;
+        case CATEGORICAL:
+          output.writeInt(columnCategories[col].index(row.getString(col)));
+          break;
+        }
+      }
+    }
+
+    output.flush();
+    output.close();
+  }
+
+
+  protected void loadBinary(InputStream is) throws IOException {
+    DataInputStream input = new DataInputStream(new BufferedInputStream(is));
+
+    int magic = input.readInt();
+    if (magic != 0x9007AB1E) {
+      throw new IOException("Not a compatible binary table (magic was " + PApplet.hex(magic) + ")");
+    }
+    int rowCount = input.readInt();
+    setRowCount(rowCount);
+    int columnCount = input.readInt();
+    setColumnCount(columnCount);
+
+    boolean hasTitles = input.readBoolean();
+    if (hasTitles) {
+      columnTitles = new String[getColumnCount()];
+      for (int i = 0; i < columnCount; i++) {
+        //columnTitles[i] = input.readUTF();
+        setColumnTitle(i, input.readUTF());
+      }
+    }
+    for (int column = 0; column < columnCount; column++) {
+      int newType = input.readInt();
+      columnTypes[column] = newType;
+      switch (newType) {
+      case INT:
+        columns[column] = new int[rowCount];
+        break;
+      case LONG:
+        columns[column] = new long[rowCount];;
+        break;
+      case FLOAT:
+        columns[column] = new float[rowCount];;
+        break;
+      case DOUBLE:
+        columns[column] = new double[rowCount];;
+        break;
+      case STRING:
+        columns[column] = new String[rowCount];;
+        break;
+      case CATEGORICAL:
+        columns[column] = new int[rowCount];;
+        break;
+      default:
+        throw new IllegalArgumentException(newType + " is not a valid column type.");
+      }
+    }
+
+    for (int i = 0; i < columnCount; i++) {
+      if (columnTypes[i] == CATEGORICAL) {
+        columnCategories[i] = new HashMapBlows(input);
+      }
+    }
+
+    if (input.readBoolean()) {
+      missingString = input.readUTF();
+    } else {
+      missingString = null;
+    }
+    missingInt = input.readInt();
+    missingLong = input.readLong();
+    missingFloat = input.readFloat();
+    missingDouble = input.readDouble();
+    missingCategory = input.readInt();
+
+    for (int row = 0; row < rowCount; row++) {
+      for (int col = 0; col < columnCount; col++) {
+        switch (columnTypes[col]) {
+        case STRING:
+          setString(row, col, input.readUTF());
+          break;
+        case INT:
+          setInt(row, col, input.readInt());
+          break;
+        case LONG:
+          setLong(row, col, input.readLong());
+          break;
+        case FLOAT:
+          setFloat(row, col, input.readFloat());
+          break;
+        case DOUBLE:
+          setDouble(row, col, input.readDouble());
+          break;
+        case CATEGORICAL:
+          int index = input.readInt();
+          //String name = columnCategories[col].key(index);
+          setInt(row, col, index);
+          break;
+        }
+      }
+    }
+
+    input.close();
   }
 
 
@@ -1053,7 +1230,7 @@ public class Table {
    * to future-proof the code.
    * @param dictionary
    */
-  public void setColumnTypes(Table dictionary) {
+  public void setColumnTypes(final Table dictionary) {
     int titleCol = 0;
     int typeCol = 1;
     if (dictionary.hasColumnTitles()) {
@@ -1061,9 +1238,30 @@ public class Table {
       typeCol = dictionary.getColumnIndex("type", true);
     }
     setColumnTitles(dictionary.getStringColumn(titleCol));
+    final String[] typeNames = dictionary.getStringColumn(typeCol);
+
     if (dictionary.getColumnCount() > 1) {
-      for (int i = 0; i < dictionary.getRowCount(); i++) {
-        setColumnType(i, dictionary.getString(i, typeCol));
+      if (getRowCount() > 1000) {
+        int proc = Runtime.getRuntime().availableProcessors();
+        ExecutorService pool = Executors.newFixedThreadPool(proc/2);
+        for (int i = 0; i < dictionary.getRowCount(); i++) {
+          final int col = i;
+          pool.execute(new Runnable() {
+            public void run() {
+              setColumnType(col, typeNames[col]);
+            }
+          });
+        }
+        pool.shutdown();
+        while (!pool.isTerminated()) {
+          Thread.yield();
+        }
+
+      } else {
+        for (int col = 0; col < dictionary.getRowCount(); col++) {
+//          setColumnType(i, dictionary.getString(i, typeCol));
+          setColumnType(col, typeNames[col]);
+        }
       }
     }
   }
@@ -1828,7 +2026,8 @@ public class Table {
 
     } else {
       checkSize(row, column);
-      if (columnTypes[column] != INT) {
+      if (columnTypes[column] != INT &&
+          columnTypes[column] != CATEGORICAL) {
         throw new IllegalArgumentException("Column " + column + " is not an int column.");
       }
       int[] intData = (int[]) columns[column];
@@ -2164,8 +2363,11 @@ public class Table {
       String[] stringData = (String[]) columns[col];
       return stringData[row];
     } else if (columnTypes[col] == CATEGORICAL) {
-      int index = getInt(row, col);
-      return columnCategories[col].key(index);
+      int cat = getInt(row, col);
+      if (cat == missingCategory) {
+        return missingString;
+      }
+      return columnCategories[col].key(cat);
     } else {
       return String.valueOf(Array.get(columns[col], row));
     }
@@ -2639,6 +2841,12 @@ public class Table {
   class HashMapBlows {
     HashMap<String,Integer> dataToIndex = new HashMap<String, Integer>();
     ArrayList<String> indexToData = new ArrayList<String>();
+
+    HashMapBlows() { }
+
+    HashMapBlows(DataInputStream input) throws IOException {
+      read(input);
+    }
 
     int index(String key) {
       Integer value = dataToIndex.get(key);
