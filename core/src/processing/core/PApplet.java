@@ -1366,7 +1366,7 @@ public class PApplet extends Applet
       PGraphics.showWarning("The class " + c.getName() +
                             " is incompatible with Processing 2.0.");
       PGraphics.showWarning("A library (or other code) is using register" +
-                            (mouse ? "Mouse" : "Key") + "Event()" +
+                            (mouse ? "Mouse" : "Key") + "Event() " +
                             "which is no longer available.");
       // This will crash with OpenGL, so quit anyway
       if (g instanceof PGraphicsOpenGL) {
@@ -1928,14 +1928,69 @@ public class PApplet extends Applet
     }
 */
 
-    // the 1.2.1 version
-    if ((g != null) && (g.image != null)) {
-//      println("inside paint(), screen.drawImage()");
-      screen.drawImage(g.image, 0, 0, null);
+//    if (insideDraw) {
+//      new Exception().printStackTrace(System.out);
+//    }
+    if (!insideDraw && (g != null) && (g.image != null)) {
+      if (useStrategy) {
+        render();
+      } else {
+        //screen.drawImage(g.image, 0, 0, null);  // not retina friendly
+        screen.drawImage(g.image, 0, 0, width, height, null);
+      }
     }
   }
 
 
+//  boolean useStrategy = true;
+  boolean useStrategy = false;
+  Canvas canvas;
+
+  protected synchronized void render() {
+    if (canvas == null) {
+      canvas = new Canvas();
+      add(canvas);
+      setIgnoreRepaint(true);
+      canvas.setIgnoreRepaint(true);
+//      add(canvas, BorderLayout.CENTER);
+//      doLayout();
+    }
+    canvas.setBounds(0, 0, width, height);
+    System.out.println("render(), canvas bounds are " + canvas.getBounds());
+    if (canvas.getBufferStrategy() == null) {  // whole block [121222]
+      System.out.println("creating a strategy");
+      canvas.createBufferStrategy(2);
+    }
+    BufferStrategy strategy = canvas.getBufferStrategy();
+    if (strategy == null) {
+      return;
+    }
+    // Render single frame
+    do {
+      // The following loop ensures that the contents of the drawing buffer
+      // are consistent in case the underlying surface was recreated
+      do {
+        Graphics draw = strategy.getDrawGraphics();
+        draw.drawImage(g.image, 0, 0, width, height, null);
+        draw.dispose();
+
+        // Repeat the rendering if the drawing buffer contents
+        // were restored
+        System.out.println("restored " + strategy.contentsRestored());
+      } while (strategy.contentsRestored());
+
+      // Display the buffer
+      System.out.println("showing");
+      strategy.show();
+
+      // Repeat the rendering if the drawing buffer was lost
+      System.out.println("lost " + strategy.contentsLost());
+      System.out.println();
+    } while (strategy.contentsLost());
+  }
+
+
+  /*
   // active paint method  (also the 1.2.1 version)
   protected void paint() {
     try {
@@ -1979,6 +2034,7 @@ public class PApplet extends Applet
       e.printStackTrace();
     }
   }
+  */
 
 
   //////////////////////////////////////////////////////////////
@@ -2109,6 +2165,8 @@ public class PApplet extends Applet
   }
 
 
+  protected boolean insideDraw;
+
   //synchronized public void handleDisplay() {
   public void handleDraw() {
     debug("handleDraw() " + g + " " + looping + " " + redraw + " valid:" + this.isValid() + " visible:" + this.isVisible());
@@ -2120,6 +2178,7 @@ public class PApplet extends Applet
         return;
       }
 
+      insideDraw = true;
       g.beginDraw();
       if (recorder != null) {
         recorder.beginDraw();
@@ -2188,10 +2247,10 @@ public class PApplet extends Applet
         // (only do this once draw() has run, not just setup())
       }
       g.endDraw();
-
       if (recorder != null) {
         recorder.endDraw();
       }
+      insideDraw = false;
 
       // 1.5.1 version
       repaint();
@@ -5865,7 +5924,7 @@ public class PApplet extends Applet
   public XML parseXML(String xmlString) {
     return parseXML(xmlString, null);
   }
-  
+
   public XML parseXML(String xmlString, String options) {
     try {
       return XML.parse(xmlString, options);
@@ -5924,7 +5983,7 @@ public class PApplet extends Applet
     try {
       String ext = checkExtension(filename);
       if (ext != null) {
-        if (ext.equals("csv") || ext.equals("tsv")) {
+        if (ext.equals("csv") || ext.equals("tsv") || ext.equals("bin")) {
           if (options == null) {
             options = ext;
           } else {
