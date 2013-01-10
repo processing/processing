@@ -41,6 +41,8 @@ o   do command line to run through all examples?
 X remove Quaqua
 X   http://code.google.com/p/processing/issues/detail?id=1509
 X   remove separate launch of QT movie creator
+X Don't open Changes page on the Wiki from command line
+X   http://code.google.com/p/processing/issues/detail?id=1520
 
 manindra
 M bug that was causing the Debugger to point to wrong break point line numbers

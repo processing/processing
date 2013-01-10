@@ -59,6 +59,9 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   Canvas canvas;
 //  boolean useCanvas = true;
   boolean useCanvas = false;
+//  boolean useRetina = true;
+//  boolean useOffscreen = true;  // ~40fps
+  boolean useOffscreen = false;
 
   public Graphics2D g2;
   protected BufferedImage offscreen;
@@ -154,6 +157,8 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 //        parent.setLayout(new BorderLayout());
 //        parent.add(canvas, BorderLayout.CENTER);
         parent.add(canvas);
+//        canvas.validate();
+//        parent.doLayout();
 
         if (canvas.getWidth() != width || canvas.getHeight() != height) {
           PApplet.debug("PGraphicsJava2D comp size being set to " + width + "x" + height);
@@ -171,14 +176,31 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 
         // using a compatible image here doesn't seem to provide any performance boost
 
-        // Needs to be RGB otherwise there's a major performance hit [0204]
-        // http://code.google.com/p/processing/issues/detail?id=729
-        image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        if (useOffscreen) {
+          // Needs to be RGB otherwise there's a major performance hit [0204]
+          // http://code.google.com/p/processing/issues/detail?id=729
+          image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 //        GraphicsConfiguration gc = parent.getGraphicsConfiguration();
 //        image = gc.createCompatibleImage(width, height);
-        offscreen = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+          offscreen = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 //        offscreen = gc.createCompatibleImage(width, height);
-        g2 = (Graphics2D) offscreen.getGraphics();
+          g2 = (Graphics2D) offscreen.getGraphics();
+
+        } else {
+//          System.out.println("hopefully faster " + width + " " + height);
+//          new Exception().printStackTrace(System.out);
+
+          GraphicsConfiguration gc = parent.getGraphicsConfiguration();
+          // If not realized (off-screen, i.e the Color Selector Tool),
+          // gc will be null.
+          if (gc == null) {
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            gc = ge.getDefaultScreenDevice().getDefaultConfiguration();
+          }
+
+          image = gc.createCompatibleImage(width, height);
+          g2 = (Graphics2D) image.getGraphics();
+        }
       }
     } else {
       // Since this buffer's offscreen anyway, no need for the extra offscreen
@@ -187,9 +209,9 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
       image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
       g2 = (Graphics2D) image.getGraphics();
     }
-    if (!useCanvas) {
-      defaultComposite = g2.getComposite();
-    }
+//    if (!useCanvas) {
+//      defaultComposite = g2.getComposite();
+//    }
 
     // can't un-set this because this may be only a resize
     // http://dev.processing.org/bugs/show_bug.cgi?id=463
@@ -226,6 +248,21 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 
   @Override
   public void beginDraw() {
+    if (primarySurface && !useOffscreen) {
+      GraphicsConfiguration gc = parent.getGraphicsConfiguration();
+      if (false) {
+        if (image == null || ((VolatileImage) image).validate(gc) == VolatileImage.IMAGE_INCOMPATIBLE) {
+          image = gc.createCompatibleVolatileImage(width, height);
+        }
+      } else {
+        if (image == null) {
+          image = gc.createCompatibleImage(width, height);
+          //System.out.println("image type is " + image);
+        }
+      }
+      g2 = (Graphics2D) image.getGraphics();
+    }
+
     if (useCanvas && primarySurface) {
       if (parent.frameCount == 0) {
         canvas.createBufferStrategy(2);
@@ -275,9 +312,12 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
         // alternate version
         //canvas.repaint();  // ?? what to do for swapping buffers
 
+//        System.out.println("endDraw() frameCount is " + parent.frameCount);
+//        if (parent.frameCount != 0) {
         redraw();
+//        }
 
-      } else {
+      } else if (useOffscreen) {
         // don't copy the pixels/data elements of the buffered image directly,
         // since it'll disable the nice speedy pipeline stuff, sending all drawing
         // into a world of suck that's rough 6 trillion times slower.
@@ -285,6 +325,10 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
           //System.out.println("inside j2d sync");
           image.getGraphics().drawImage(offscreen, 0, 0, null);
         }
+
+      } else {
+        g2.dispose();
+//        System.out.println("not doing anything special in endDraw()");
       }
     } else {
       // TODO this is probably overkill for most tasks...
@@ -353,7 +397,13 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   //protected void checkSettings()
 
 
-  //protected void defaultSettings()
+  @Override
+  protected void defaultSettings() {
+    if (!useCanvas) {
+      defaultComposite = g2.getComposite();
+    }
+    super.defaultSettings();
+  }
 
 
   //protected void reapplySettings()
@@ -2056,20 +2106,25 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   int[] clearPixels;
 
   protected void clearPixels(int color) {
+    // On a hi-res display, image may be larger than width/height
+    int imageWidth = image.getWidth(null);
+    int imageHeight = image.getHeight(null);
+
     // Create a small array that can be used to set the pixels several times.
     // Using a single-pixel line of length 'width' is a tradeoff between
     // speed (setting each pixel individually is too slow) and memory
     // (an array for width*height would waste lots of memory if it stayed
     // resident, and would terrify the gc if it were re-created on each trip
     // to background().
-    WritableRaster raster = ((BufferedImage) image).getRaster();
+//    WritableRaster raster = ((BufferedImage) image).getRaster();
 //    WritableRaster raster = image.getRaster();
-    if ((clearPixels == null) || (clearPixels.length < width)) {
-      clearPixels = new int[width];
+    WritableRaster raster = getRaster();
+    if ((clearPixels == null) || (clearPixels.length < imageWidth)) {
+      clearPixels = new int[imageWidth];
     }
-    Arrays.fill(clearPixels, backgroundColor);
-    for (int i = 0; i < height; i++) {
-      raster.setDataElements(0, i, width, 1, clearPixels);
+    Arrays.fill(clearPixels, 0, imageWidth, backgroundColor);
+    for (int i = 0; i < imageHeight; i++) {
+      raster.setDataElements(0, i, imageWidth, 1, clearPixels);
     }
   }
 
@@ -2101,7 +2156,9 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
       pushMatrix();
       resetMatrix();
       g2.setColor(bgColor); //, backgroundAlpha));
-      g2.fillRect(0, 0, width, height);
+//      g2.fillRect(0, 0, width, height);
+      // On a hi-res display, image may be larger than width/height
+      g2.fillRect(0, 0, image.getWidth(null), image.getHeight(null));
       popMatrix();
 
       g2.setComposite(oldComposite);
@@ -2200,15 +2257,31 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   // getImage, setCache, getCache, removeCache, isModified, setModified
 
 
+  protected WritableRaster getRaster() {
+    if (primarySurface) {
+      // 'offscreen' will probably be removed in the next release
+      if (useOffscreen) {
+        return ((BufferedImage) offscreen).getRaster();
+      }
+      // when possible, we'll try VolatileImage
+      if (image instanceof VolatileImage) {
+        return ((VolatileImage) image).getSnapshot().getRaster();
+      }
+    }
+    return ((BufferedImage) image).getRaster();
+    //((BufferedImage) (useOffscreen && primarySurface ? offscreen : image)).getRaster();
+  }
+
+
   @Override
   public void loadPixels() {
     if ((pixels == null) || (pixels.length != width * height)) {
       pixels = new int[width * height];
     }
     //((BufferedImage) image).getRGB(0, 0, width, height, pixels, 0, width);
-    WritableRaster raster = ((BufferedImage) (primarySurface ? offscreen : image)).getRaster();
+//    WritableRaster raster = ((BufferedImage) (useOffscreen && primarySurface ? offscreen : image)).getRaster();
 //    WritableRaster raster = image.getRaster();
-    raster.getDataElements(0, 0, width, height, pixels);
+    getRaster().getDataElements(0, 0, width, height, pixels);
   }
 
 
@@ -2221,9 +2294,9 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   @Override
   public void updatePixels() {
     //updatePixels(0, 0, width, height);
-    WritableRaster raster = ((BufferedImage) (primarySurface ? offscreen : image)).getRaster();
+//    WritableRaster raster = ((BufferedImage) (useOffscreen && primarySurface ? offscreen : image)).getRaster();
 //    WritableRaster raster = image.getRaster();
-    raster.setDataElements(0, 0, width, height, pixels);
+    getRaster().setDataElements(0, 0, width, height, pixels);
   }
 
 
@@ -2255,9 +2328,9 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   public int get(int x, int y) {
     if ((x < 0) || (y < 0) || (x >= width) || (y >= height)) return 0;
     //return ((BufferedImage) image).getRGB(x, y);
-    WritableRaster raster = ((BufferedImage) (primarySurface ? offscreen : image)).getRaster();
+//    WritableRaster raster = ((BufferedImage) (useOffscreen && primarySurface ? offscreen : image)).getRaster();
 //    WritableRaster raster = image.getRaster();
-    raster.getDataElements(x, y, getset);
+    getRaster().getDataElements(x, y, getset);
     return getset[0];
   }
 
@@ -2272,8 +2345,9 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
                          PImage target, int targetX, int targetY) {
     // last parameter to getRGB() is the scan size of the *target* buffer
     //((BufferedImage) image).getRGB(x, y, w, h, output.pixels, 0, w);
-    WritableRaster raster =
-      ((BufferedImage) (primarySurface ? offscreen : image)).getRaster();
+//    WritableRaster raster =
+//      ((BufferedImage) (useOffscreen && primarySurface ? offscreen : image)).getRaster();
+    WritableRaster raster = getRaster();
 
     if (sourceWidth == target.width && sourceHeight == target.height) {
       raster.getDataElements(sourceX, sourceY, sourceWidth, sourceHeight, target.pixels);
@@ -2306,9 +2380,9 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
     if ((x < 0) || (y < 0) || (x >= width) || (y >= height)) return;
 //    ((BufferedImage) image).setRGB(x, y, argb);
     getset[0] = argb;
-    WritableRaster raster = ((BufferedImage) (primarySurface ? offscreen : image)).getRaster();
+//    WritableRaster raster = ((BufferedImage) (useOffscreen && primarySurface ? offscreen : image)).getRaster();
 //    WritableRaster raster = image.getRaster();
-    raster.setDataElements(x, y, getset);
+    getRaster().setDataElements(x, y, getset);
   }
 
 
@@ -2320,8 +2394,8 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
                          int sourceX, int sourceY,
                          int sourceWidth, int sourceHeight,
                          int targetX, int targetY) {
-    WritableRaster raster =
-      ((BufferedImage) (primarySurface ? offscreen : image)).getRaster();
+    WritableRaster raster = getRaster();
+//      ((BufferedImage) (useOffscreen && primarySurface ? offscreen : image)).getRaster();
 
     if ((sourceX == 0) && (sourceY == 0) &&
         (sourceWidth == sourceImage.width) &&
@@ -2380,8 +2454,6 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   public void copy(int sx, int sy, int sw, int sh,
                    int dx, int dy, int dw, int dh) {
     if ((sw != dw) || (sh != dh)) {
-//      Image img = primarySurface ? offscreen : image;
-//      g2.drawImage(img, dx, dy, dx + dw, dy + dh, sx, sy, sx + sw, sy + sh, null);
       g2.drawImage(image, dx, dy, dx + dw, dy + dh, sx, sy, sx + sw, sy + sh, null);
 
     } else {

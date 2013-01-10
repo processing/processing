@@ -39,6 +39,8 @@ A P3D sketches failing to run
 A   http://code.google.com/p/processing/issues/detail?id=1500
 A transparent pixels are not set on multisampled offscreen GL surfaces
 A   http://code.google.com/p/processing/issues/detail?id=1516
+A clean-up PShape API
+A   http://code.google.com/p/processing/issues/detail?id=1518
 
 cleaning/earlier
 C textureWrap() CLAMP and REPEAT now added
@@ -113,6 +115,8 @@ o   Dict and List could be interfaces?
 _ JSONObject.has(key) vs XML.hasAttribute(attr) vs HashMap.containsKey()
 _   and how it should be handled with hash/dict
 _   right now using hasKey().. in JSONObject
+
+_ add randomGaussian()
 
 _ OpenGL/P3D sketches show graphical corruption
 _   http://code.google.com/p/processing/issues/detail?id=1452
