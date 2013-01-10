@@ -157,7 +157,6 @@ public class ErrorBar extends JPanel {
 			}
 
 			protected void done() {
-				int bigCount = 0;
 				int totalLines = 0;
 				int currentTab = 0;
 				for (SketchCode sc : editor.getSketch().getCode()) {
