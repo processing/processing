@@ -118,6 +118,9 @@ _   right now using hasKey().. in JSONObject
 
 _ add randomGaussian()
 
+_ noCursor() seems quite/somewhat broken
+X   started some work, ignores 'invisible' already being set
+
 _ OpenGL/P3D sketches show graphical corruption
 _   http://code.google.com/p/processing/issues/detail?id=1452
 

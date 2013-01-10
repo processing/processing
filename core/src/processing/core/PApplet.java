@@ -1935,30 +1935,36 @@ public class PApplet extends Applet
       if (useStrategy) {
         render();
       } else {
+//        System.out.println("drawing to screen");
         //screen.drawImage(g.image, 0, 0, null);  // not retina friendly
         screen.drawImage(g.image, 0, 0, width, height, null);
       }
+    //} else {
+    //  System.out.println(insideDraw + " " + g + " " + ((g != null) ? g.image : "-"));
     }
   }
 
 
+  boolean useActive = true;
 //  boolean useStrategy = true;
   boolean useStrategy = false;
   Canvas canvas;
 
   protected synchronized void render() {
     if (canvas == null) {
+      removeListeners(this);
       canvas = new Canvas();
       add(canvas);
       setIgnoreRepaint(true);
       canvas.setIgnoreRepaint(true);
+      addListeners(canvas);
 //      add(canvas, BorderLayout.CENTER);
 //      doLayout();
     }
     canvas.setBounds(0, 0, width, height);
-    System.out.println("render(), canvas bounds are " + canvas.getBounds());
+//    System.out.println("render(), canvas bounds are " + canvas.getBounds());
     if (canvas.getBufferStrategy() == null) {  // whole block [121222]
-      System.out.println("creating a strategy");
+//      System.out.println("creating a strategy");
       canvas.createBufferStrategy(2);
     }
     BufferStrategy strategy = canvas.getBufferStrategy();
@@ -1976,16 +1982,16 @@ public class PApplet extends Applet
 
         // Repeat the rendering if the drawing buffer contents
         // were restored
-        System.out.println("restored " + strategy.contentsRestored());
+//        System.out.println("restored " + strategy.contentsRestored());
       } while (strategy.contentsRestored());
 
       // Display the buffer
-      System.out.println("showing");
+//      System.out.println("showing");
       strategy.show();
 
       // Repeat the rendering if the drawing buffer was lost
-      System.out.println("lost " + strategy.contentsLost());
-      System.out.println();
+//      System.out.println("lost " + strategy.contentsLost());
+//      System.out.println();
     } while (strategy.contentsLost());
   }
 
@@ -2253,8 +2259,17 @@ public class PApplet extends Applet
       insideDraw = false;
 
       // 1.5.1 version
-      repaint();
-      getToolkit().sync();  // force repaint now (proper method)
+      if (useActive) {
+        if (useStrategy) {
+          render();
+        } else {
+          Graphics screen = getGraphics();
+          screen.drawImage(g.image, 0, 0, width, height, null);
+        }
+      } else {
+        repaint();
+      }
+//      getToolkit().sync();  // force repaint now (proper method)
 
       if (frameCount != 0) {
         handleMethods("post");
@@ -4038,7 +4053,8 @@ public class PApplet extends Applet
 
   int cursorType = ARROW; // cursor type
   boolean cursorVisible = true; // cursor visibility flag
-  PImage invisibleCursor;
+//  PImage invisibleCursor;
+  Cursor invisibleCursor;
 
 
   /**
@@ -4135,14 +4151,19 @@ public class PApplet extends Applet
    * @usage Application
    */
   public void noCursor() {
-    if (!cursorVisible) return;  // don't hide if already hidden.
+    // in 0216, just re-hide it?
+//    if (!cursorVisible) return;  // don't hide if already hidden.
 
     if (invisibleCursor == null) {
-      invisibleCursor = new PImage(16, 16, ARGB);
+      BufferedImage cursorImg =
+        new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+      invisibleCursor =
+        getToolkit().createCustomCursor(cursorImg, new Point(8, 8), "blank");
     }
     // was formerly 16x16, but the 0x0 was added by jdf as a fix
     // for macosx, which wasn't honoring the invisible cursor
-    cursor(invisibleCursor, 8, 8);
+//    cursor(invisibleCursor, 8, 8);
+    setCursor(invisibleCursor);
     cursorVisible = false;
   }
 
