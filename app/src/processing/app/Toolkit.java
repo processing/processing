@@ -138,10 +138,10 @@ public class Toolkit {
     } catch (InterruptedException e) { }
     return image;
   }
-  
-  
+
+
   static ArrayList<Image> iconImages;
-  
+
   /**
    * Give this Frame the Processing icon set. Ignored on OS X, because they
    * thought different and made this function set the minified image of the
@@ -212,10 +212,10 @@ public class Toolkit {
   static public Clipboard getSystemClipboard() {
     return awtToolkit.getSystemClipboard();
   }
-  
-  
-  static Boolean retinaProp; 
-  
+
+
+  static Boolean retinaProp;
+
   static public boolean isRetina() {
     if (Base.isMacOS()) {
       // This should probably be reset each time there's a display change.
@@ -224,7 +224,9 @@ public class Toolkit {
       if (retinaProp == null) {
         Float prop = (Float)
           awtToolkit.getDesktopProperty("apple.awt.contentScaleFactor");
-        retinaProp = prop == 2;
+        if (prop != null) {
+          retinaProp = prop == 2;
+        }
       }
       return retinaProp;
     }

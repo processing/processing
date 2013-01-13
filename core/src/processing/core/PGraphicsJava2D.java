@@ -2158,7 +2158,13 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
       g2.setColor(bgColor); //, backgroundAlpha));
 //      g2.fillRect(0, 0, width, height);
       // On a hi-res display, image may be larger than width/height
-      g2.fillRect(0, 0, image.getWidth(null), image.getHeight(null));
+      if (image != null) {
+        // image will be null in subclasses (i.e. PDF)
+        g2.fillRect(0, 0, image.getWidth(null), image.getHeight(null));
+      } else {
+        // hope for the best if image is null
+        g2.fillRect(0, 0, width, height);
+      }
       popMatrix();
 
       g2.setComposite(oldComposite);
