@@ -246,21 +246,37 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   }
 
 
+//  Graphics2D g2old;
+
   @Override
   public void beginDraw() {
+    // NOTE: Calling image.getGraphics() will create a new Graphics context,
+    // even if it's for the same image that's already had a context created.
+    // Seems like a speed/memory issue, and also requires that all smoothing,
+    // stroke, font and other props be reset. Can't find a good answer about
+    // whether getGraphics() and dispose() on each frame is 1) better practice
+    // and 2) minimal overhead, however. Instinct suggests #1 may be true,
+    // but #2 seems a problem.
     if (primarySurface && !useOffscreen) {
-      GraphicsConfiguration gc = parent.getGraphicsConfiguration();
       if (false) {
+        GraphicsConfiguration gc = parent.getGraphicsConfiguration();
         if (image == null || ((VolatileImage) image).validate(gc) == VolatileImage.IMAGE_INCOMPATIBLE) {
           image = gc.createCompatibleVolatileImage(width, height);
+          g2 = (Graphics2D) image.getGraphics();
         }
       } else {
         if (image == null) {
+          GraphicsConfiguration gc = parent.getGraphicsConfiguration();
           image = gc.createCompatibleImage(width, height);
-          //System.out.println("image type is " + image);
+          System.out.println("created new image, type is " + image);
+          g2 = (Graphics2D) image.getGraphics();
         }
       }
-      g2 = (Graphics2D) image.getGraphics();
+      //g2 = (Graphics2D) image.getGraphics();
+//      if (g2 != g2old) {
+//        System.out.println("new g2: " + g2);
+//        g2old = g2;
+//      }
     }
 
     if (useCanvas && primarySurface) {
@@ -327,7 +343,9 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
         }
 
       } else {
-        g2.dispose();
+        // changed to not dispose and get on each frame,
+        // otherwise a new Graphics context is used on each frame
+//        g2.dispose();
 //        System.out.println("not doing anything special in endDraw()");
       }
     } else {
