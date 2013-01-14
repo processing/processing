@@ -6905,7 +6905,15 @@ public class PApplet extends Applet
    */
   public byte[] loadBytes(String filename) {
     InputStream is = createInput(filename);
-    if (is != null) return loadBytes(is);
+    if (is != null) {
+      byte[] outgoing = loadBytes(is);
+      try {
+        is.close();
+      } catch (IOException e) {
+        e.printStackTrace();  // shouldn't happen
+      }
+      return outgoing;
+    }
 
     System.err.println("The file \"" + filename + "\" " +
                        "is missing or inaccessible, make sure " +
@@ -6949,7 +6957,15 @@ public class PApplet extends Applet
    */
   static public String[] loadStrings(File file) {
     InputStream is = createInput(file);
-    if (is != null) return loadStrings(is);
+    if (is != null) {
+      String[] outgoing = loadStrings(is);
+      try {
+        is.close();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+      return outgoing;
+    }
     return null;
   }
 
