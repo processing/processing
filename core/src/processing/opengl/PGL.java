@@ -994,7 +994,7 @@ public class PGL {
   }
 
 
-  int getBackTextureName() {
+  protected int getBackTextureName() {
     if (USE_JOGL_FBOLAYER) {
       return backTexAttach.getName();
     } else {
@@ -1003,7 +1003,7 @@ public class PGL {
   }
 
 
-  int getFrontTextureName() {
+  protected int getFrontTextureName() {
     if (USE_JOGL_FBOLAYER) {
       return frontTexAttach.getName();
     } else {
