@@ -32,7 +32,7 @@ void setup() {
   glossy.set("Sharpness", 0.0);
   
   ball = createShape(SPHERE, 50);
-  ball.noStroke();
+  ball.setStroke(false);
 }
 
 void draw() {
