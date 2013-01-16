@@ -89,7 +89,7 @@ public class PShader {
     parent = null;
     pgMain = null;
     pgl = null;
-    context = pgl.createEmptyContext();
+    context = -1;
 
     this.vertexURL = null;
     this.fragmentURL = null;
