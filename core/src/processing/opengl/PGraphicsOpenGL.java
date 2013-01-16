@@ -5741,7 +5741,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected boolean checkGLThread() {
-    if (PGL.glThreadIsCurrent()) {
+    if (pgl.threadIsCurrent()) {
       return true;
     } else {
       PGraphics.showWarning(OPENGL_THREAD_ERROR);

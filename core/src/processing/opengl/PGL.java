@@ -1203,7 +1203,7 @@ public class PGL {
   }
 
 
-  protected static boolean glThreadIsCurrent() {
+  protected boolean threadIsCurrent() {
     return Thread.currentThread() == glThread;
   }
 
