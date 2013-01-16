@@ -498,7 +498,7 @@ public class PShapeOpenGL extends PShape {
   // Shape creation (temporary hack)
 
 
-  static protected PShapeOpenGL createShape3D(PApplet parent, PShape src) {
+  public static PShapeOpenGL createShape3D(PApplet parent, PShape src) {
     PShapeOpenGL dest = null;
     if (src.getFamily() == GROUP) {
       dest = PGraphics3D.createShapeImpl(parent, GROUP);
