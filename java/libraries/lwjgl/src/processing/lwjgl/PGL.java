@@ -75,7 +75,7 @@ import processing.opengl.Texture;
  *
  */
 @SuppressWarnings("static-access")
-public class PGL {
+public class PGL extends processing.opengl.PGL {
 
   ///////////////////////////////////////////////////////////
 
@@ -455,8 +455,7 @@ public class PGL {
   ///////////////////////////////////////////////////////////
 
   // Initialization, finalization
-
-
+  
   public PGL(PGraphicsOpenGL pg) {
     this.pg = pg;
     if (glu == null) {
@@ -799,12 +798,12 @@ public class PGL {
   }
 
 
-  int getBackTextureName() {
+  protected int getBackTextureName() {
     return glColorTex.get(backTex);
   }
 
 
-  int getFrontTextureName() {
+  protected int getFrontTextureName() {
     return glColorTex.get(frontTex);
   }
 
@@ -940,7 +939,7 @@ public class PGL {
   }
 
 
-  protected static boolean glThreadIsCurrent() {
+  protected boolean threadIsCurrent() {
     return Thread.currentThread() == glThread;
   }
 
@@ -1609,48 +1608,13 @@ public class PGL {
   // Context interface
 
 
-  protected Context createEmptyContext() {
-    return new Context();
+  protected int createEmptyContext() {
+    return -1;
   }
 
 
-  protected Context getCurrentContext() {
-    return new Context(context);
-  }
-
-
-  protected class Context {
-    protected int id;
-
-    Context() {
-      id = -1;
-    }
-
-    Context(DummyContext context) {
-      if (context != null) {
-        id = context.hashCode();
-      } else {
-        id = -1;
-      }
-    }
-
-    boolean current() {
-      return equal(context);
-    }
-
-    boolean equal(DummyContext context) {
-      if (id == -1 || context == null) {
-        // A null context means a still non-created resource,
-        // so it is considered equal to the argument.
-        return true;
-      } else {
-        return id == context.hashCode();
-      }
-    }
-
-    int id() {
-      return id;
-    }
+  protected int getCurrentContext() {
+    return context.hashCode();
   }
 
 
@@ -1754,8 +1718,8 @@ public class PGL {
   // Utility functions
 
 
-  protected boolean contextIsCurrent(Context other) {
-    return other == null || other.current();
+  protected boolean contextIsCurrent(int other) {
+    return other == -1 || other == context.hashCode();
   }
 
 
