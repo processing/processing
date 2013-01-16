@@ -43,7 +43,7 @@ public class FrameBuffer implements PConstants {
   protected PApplet parent;
   protected PGraphicsOpenGL pg;
   protected PGL pgl;
-  protected PGL.Context context;   // The context that created this framebuffer.
+  protected int context;   // The context that created this framebuffer.
 
   public int glFbo;
   public int glDepth;
@@ -151,19 +151,19 @@ public class FrameBuffer implements PConstants {
     try {
       if (!screenFb) {
         if (glFbo != 0) {
-          pg.finalizeFrameBufferObject(glFbo, context.id());
+          pg.finalizeFrameBufferObject(glFbo, context);
         }
         if (glDepth != 0) {
-          pg.finalizeRenderBufferObject(glDepth, context.id());
+          pg.finalizeRenderBufferObject(glDepth, context);
         }
         if (glStencil != 0) {
-          pg.finalizeRenderBufferObject(glStencil, context.id());
+          pg.finalizeRenderBufferObject(glStencil, context);
         }
         if (glMultisample != 0) {
-          pg.finalizeRenderBufferObject(glMultisample, context.id());
+          pg.finalizeRenderBufferObject(glMultisample, context);
         }
         if (glDepthStencil != 0) {
-          pg.finalizeRenderBufferObject(glDepthStencil, context.id());
+          pg.finalizeRenderBufferObject(glDepthStencil, context);
         }
       }
     } finally {
@@ -345,7 +345,7 @@ public class FrameBuffer implements PConstants {
       glFbo = 0;
     } else {
       //create the FBO object...
-      glFbo = pg.createFrameBufferObject(context.id());
+      glFbo = pg.createFrameBufferObject(context);
 
       // ... and then create the rest of the stuff.
       if (multisample) {
@@ -370,23 +370,23 @@ public class FrameBuffer implements PConstants {
     if (screenFb) return;
 
     if (glFbo != 0) {
-      pg.finalizeFrameBufferObject(glFbo, context.id());
+      pg.finalizeFrameBufferObject(glFbo, context);
       glFbo = 0;
     }
     if (glDepth != 0) {
-      pg.finalizeRenderBufferObject(glDepth, context.id());
+      pg.finalizeRenderBufferObject(glDepth, context);
       glDepth = 0;
     }
     if (glStencil != 0) {
-      pg.finalizeRenderBufferObject(glStencil, context.id());
+      pg.finalizeRenderBufferObject(glStencil, context);
       glStencil = 0;
     }
     if (glMultisample != 0) {
-      pg.finalizeRenderBufferObject(glMultisample, context.id());
+      pg.finalizeRenderBufferObject(glMultisample, context);
       glMultisample = 0;
     }
     if (glDepthStencil != 0) {
-      pg.finalizeRenderBufferObject(glDepthStencil, context.id());
+      pg.finalizeRenderBufferObject(glDepthStencil, context);
       glDepthStencil = 0;
     }
   }
@@ -397,11 +397,11 @@ public class FrameBuffer implements PConstants {
 
     boolean outdated = !pgl.contextIsCurrent(context);
     if (outdated) {
-      pg.removeFrameBufferObject(glFbo, context.id());
-      pg.removeRenderBufferObject(glDepth, context.id());
-      pg.removeRenderBufferObject(glStencil, context.id());
-      pg.removeRenderBufferObject(glDepthStencil, context.id());
-      pg.removeRenderBufferObject(glMultisample, context.id());
+      pg.removeFrameBufferObject(glFbo, context);
+      pg.removeRenderBufferObject(glDepth, context);
+      pg.removeRenderBufferObject(glStencil, context);
+      pg.removeRenderBufferObject(glDepthStencil, context);
+      pg.removeRenderBufferObject(glMultisample, context);
 
       glFbo = 0;
       glDepth = 0;
@@ -423,7 +423,7 @@ public class FrameBuffer implements PConstants {
     pg.pushFramebuffer();
     pg.setFramebuffer(this);
 
-    glMultisample = pg.createRenderBufferObject(context.id());
+    glMultisample = pg.createRenderBufferObject(context);
     pgl.bindRenderbuffer(PGL.RENDERBUFFER, glMultisample);
     pgl.renderbufferStorageMultisample(PGL.RENDERBUFFER, nsamples,
                                        PGL.RGBA8, width, height);
@@ -444,7 +444,7 @@ public class FrameBuffer implements PConstants {
     pg.pushFramebuffer();
     pg.setFramebuffer(this);
 
-    glDepthStencil = pg.createRenderBufferObject(context.id());
+    glDepthStencil = pg.createRenderBufferObject(context);
     pgl.bindRenderbuffer(PGL.RENDERBUFFER, glDepthStencil);
 
     if (multisample) {
@@ -474,7 +474,7 @@ public class FrameBuffer implements PConstants {
     pg.pushFramebuffer();
     pg.setFramebuffer(this);
 
-    glDepth = pg.createRenderBufferObject(context.id());
+    glDepth = pg.createRenderBufferObject(context);
     pgl.bindRenderbuffer(PGL.RENDERBUFFER, glDepth);
 
     int glConst = PGL.DEPTH_COMPONENT16;
@@ -510,7 +510,7 @@ public class FrameBuffer implements PConstants {
     pg.pushFramebuffer();
     pg.setFramebuffer(this);
 
-    glStencil = pg.createRenderBufferObject(context.id());
+    glStencil = pg.createRenderBufferObject(context);
     pgl.bindRenderbuffer(PGL.RENDERBUFFER, glStencil);
 
     int glConst = PGL.STENCIL_INDEX1;
