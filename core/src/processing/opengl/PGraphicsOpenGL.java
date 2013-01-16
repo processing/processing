@@ -138,21 +138,21 @@ public class PGraphicsOpenGL extends PGraphics {
   public int glPolyShininess;
   public int glPolyIndex;
   protected boolean polyBuffersCreated = false;
-  protected PGL.Context polyBuffersContext;
+  protected int polyBuffersContext;
 
   public int glLineVertex;
   public int glLineColor;
   public int glLineAttrib;
   public int glLineIndex;
   protected boolean lineBuffersCreated = false;
-  protected PGL.Context lineBuffersContext;
+  protected int lineBuffersContext;
 
   public int glPointVertex;
   public int glPointColor;
   public int glPointAttrib;
   public int glPointIndex;
   protected boolean pointBuffersCreated = false;
-  protected PGL.Context pointBuffersContext;
+  protected int pointBuffersContext;
 
   protected static final int INIT_VERTEX_BUFFER_SIZE  = 256;
   protected static final int INIT_INDEX_BUFFER_SIZE   = 512;
@@ -1198,45 +1198,41 @@ public class PGraphicsOpenGL extends PGraphics {
       int sizei = INIT_VERTEX_BUFFER_SIZE * PGL.SIZEOF_INT;
       int sizex = INIT_INDEX_BUFFER_SIZE * PGL.SIZEOF_INDEX;
 
-      glPolyVertex = createVertexBufferObject(polyBuffersContext.id());
+      glPolyVertex = createVertexBufferObject(polyBuffersContext);
       pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolyVertex);
       pgl.bufferData(PGL.ARRAY_BUFFER, 3 * sizef, null, PGL.STATIC_DRAW);
 
-      glPolyColor = createVertexBufferObject(polyBuffersContext.id());
+      glPolyColor = createVertexBufferObject(polyBuffersContext);
       pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolyColor);
       pgl.bufferData(PGL.ARRAY_BUFFER, sizei, null, PGL.STATIC_DRAW);
 
-      glPolyNormal = createVertexBufferObject(polyBuffersContext.id());
+      glPolyNormal = createVertexBufferObject(polyBuffersContext);
       pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolyNormal);
       pgl.bufferData(PGL.ARRAY_BUFFER, 3 * sizef, null, PGL.STATIC_DRAW);
 
-      glPolyTexcoord = createVertexBufferObject(polyBuffersContext.id());
+      glPolyTexcoord = createVertexBufferObject(polyBuffersContext);
       pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolyTexcoord);
       pgl.bufferData(PGL.ARRAY_BUFFER, 2 * sizef, null, PGL.STATIC_DRAW);
 
-      glPolyAmbient = pgPrimary.createVertexBufferObject(
-        polyBuffersContext.id());
+      glPolyAmbient = pgPrimary.createVertexBufferObject(polyBuffersContext);
       pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolyAmbient);
       pgl.bufferData(PGL.ARRAY_BUFFER, sizei, null, PGL.STATIC_DRAW);
 
-      glPolySpecular = pgPrimary.createVertexBufferObject(
-        polyBuffersContext.id());
+      glPolySpecular = pgPrimary.createVertexBufferObject(polyBuffersContext);
       pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolySpecular);
       pgl.bufferData(PGL.ARRAY_BUFFER, sizei, null, PGL.STATIC_DRAW);
 
-      glPolyEmissive = pgPrimary.createVertexBufferObject(
-        polyBuffersContext.id());
+      glPolyEmissive = pgPrimary.createVertexBufferObject(polyBuffersContext);
       pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolyEmissive);
       pgl.bufferData(PGL.ARRAY_BUFFER, sizei, null, PGL.STATIC_DRAW);
 
-      glPolyShininess = pgPrimary.createVertexBufferObject(
-        polyBuffersContext.id());
+      glPolyShininess = pgPrimary.createVertexBufferObject(polyBuffersContext);
       pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolyShininess);
       pgl.bufferData(PGL.ARRAY_BUFFER, sizef, null, PGL.STATIC_DRAW);
 
       pgl.bindBuffer(PGL.ARRAY_BUFFER, 0);
 
-      glPolyIndex = createVertexBufferObject(polyBuffersContext.id());
+      glPolyIndex = createVertexBufferObject(polyBuffersContext);
       pgl.bindBuffer(PGL.ELEMENT_ARRAY_BUFFER, glPolyIndex);
       pgl.bufferData(PGL.ELEMENT_ARRAY_BUFFER, sizex, null, PGL.STATIC_DRAW);
 
@@ -1319,31 +1315,31 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void deletePolyBuffers() {
     if (polyBuffersCreated) {
-      deleteVertexBufferObject(glPolyVertex, polyBuffersContext.id());
+      deleteVertexBufferObject(glPolyVertex, polyBuffersContext);
       glPolyVertex = 0;
 
-      deleteVertexBufferObject(glPolyColor, polyBuffersContext.id());
+      deleteVertexBufferObject(glPolyColor, polyBuffersContext);
       glPolyColor = 0;
 
-      deleteVertexBufferObject(glPolyNormal, polyBuffersContext.id());
+      deleteVertexBufferObject(glPolyNormal, polyBuffersContext);
       glPolyNormal = 0;
 
-      deleteVertexBufferObject(glPolyTexcoord, polyBuffersContext.id());
+      deleteVertexBufferObject(glPolyTexcoord, polyBuffersContext);
       glPolyTexcoord = 0;
 
-      deleteVertexBufferObject(glPolyAmbient, polyBuffersContext.id());
+      deleteVertexBufferObject(glPolyAmbient, polyBuffersContext);
       glPolyAmbient = 0;
 
-      deleteVertexBufferObject(glPolySpecular, polyBuffersContext.id());
+      deleteVertexBufferObject(glPolySpecular, polyBuffersContext);
       glPolySpecular = 0;
 
-      deleteVertexBufferObject(glPolyEmissive, polyBuffersContext.id());
+      deleteVertexBufferObject(glPolyEmissive, polyBuffersContext);
       glPolyEmissive = 0;
 
-      deleteVertexBufferObject(glPolyShininess, polyBuffersContext.id());
+      deleteVertexBufferObject(glPolyShininess, polyBuffersContext);
       glPolyShininess = 0;
 
-      deleteVertexBufferObject(glPolyIndex, polyBuffersContext.id());
+      deleteVertexBufferObject(glPolyIndex, polyBuffersContext);
       glPolyIndex = 0;
 
       polyBuffersCreated = false;
@@ -1359,22 +1355,22 @@ public class PGraphicsOpenGL extends PGraphics {
       int sizei = INIT_VERTEX_BUFFER_SIZE * PGL.SIZEOF_INT;
       int sizex = INIT_INDEX_BUFFER_SIZE * PGL.SIZEOF_INDEX;
 
-      glLineVertex = createVertexBufferObject(lineBuffersContext.id());
+      glLineVertex = createVertexBufferObject(lineBuffersContext);
 
       pgl.bindBuffer(PGL.ARRAY_BUFFER, glLineVertex);
       pgl.bufferData(PGL.ARRAY_BUFFER, 3 * sizef, null, PGL.STATIC_DRAW);
 
-      glLineColor = createVertexBufferObject(lineBuffersContext.id());
+      glLineColor = createVertexBufferObject(lineBuffersContext);
       pgl.bindBuffer(PGL.ARRAY_BUFFER, glLineColor);
       pgl.bufferData(PGL.ARRAY_BUFFER, sizei, null, PGL.STATIC_DRAW);
 
-      glLineAttrib = createVertexBufferObject(lineBuffersContext.id());
+      glLineAttrib = createVertexBufferObject(lineBuffersContext);
       pgl.bindBuffer(PGL.ARRAY_BUFFER, glLineAttrib);
       pgl.bufferData(PGL.ARRAY_BUFFER, 4 * sizef, null, PGL.STATIC_DRAW);
 
       pgl.bindBuffer(PGL.ARRAY_BUFFER, 0);
 
-      glLineIndex = createVertexBufferObject(lineBuffersContext.id());
+      glLineIndex = createVertexBufferObject(lineBuffersContext);
       pgl.bindBuffer(PGL.ELEMENT_ARRAY_BUFFER, glLineIndex);
       pgl.bufferData(PGL.ELEMENT_ARRAY_BUFFER, sizex, null, PGL.STATIC_DRAW);
 
@@ -1428,16 +1424,16 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void deleteLineBuffers() {
     if (lineBuffersCreated) {
-      deleteVertexBufferObject(glLineVertex, lineBuffersContext.id());
+      deleteVertexBufferObject(glLineVertex, lineBuffersContext);
       glLineVertex = 0;
 
-      deleteVertexBufferObject(glLineColor, lineBuffersContext.id());
+      deleteVertexBufferObject(glLineColor, lineBuffersContext);
       glLineColor = 0;
 
-      deleteVertexBufferObject(glLineAttrib, lineBuffersContext.id());
+      deleteVertexBufferObject(glLineAttrib, lineBuffersContext);
       glLineAttrib = 0;
 
-      deleteVertexBufferObject(glLineIndex, lineBuffersContext.id());
+      deleteVertexBufferObject(glLineIndex, lineBuffersContext);
       glLineIndex = 0;
 
       lineBuffersCreated = false;
@@ -1453,21 +1449,21 @@ public class PGraphicsOpenGL extends PGraphics {
       int sizei = INIT_VERTEX_BUFFER_SIZE * PGL.SIZEOF_INT;
       int sizex = INIT_INDEX_BUFFER_SIZE * PGL.SIZEOF_INDEX;
 
-      glPointVertex = createVertexBufferObject(pointBuffersContext.id());
+      glPointVertex = createVertexBufferObject(pointBuffersContext);
       pgl.bindBuffer(PGL.ARRAY_BUFFER, glPointVertex);
       pgl.bufferData(PGL.ARRAY_BUFFER, 3 * sizef, null, PGL.STATIC_DRAW);
 
-      glPointColor = createVertexBufferObject(pointBuffersContext.id());
+      glPointColor = createVertexBufferObject(pointBuffersContext);
       pgl.bindBuffer(PGL.ARRAY_BUFFER, glPointColor);
       pgl.bufferData(PGL.ARRAY_BUFFER, sizei, null, PGL.STATIC_DRAW);
 
-      glPointAttrib = createVertexBufferObject(pointBuffersContext.id());
+      glPointAttrib = createVertexBufferObject(pointBuffersContext);
       pgl.bindBuffer(PGL.ARRAY_BUFFER, glPointAttrib);
       pgl.bufferData(PGL.ARRAY_BUFFER, 2 * sizef, null, PGL.STATIC_DRAW);
 
       pgl.bindBuffer(PGL.ARRAY_BUFFER, 0);
 
-      glPointIndex = createVertexBufferObject(pointBuffersContext.id());
+      glPointIndex = createVertexBufferObject(pointBuffersContext);
       pgl.bindBuffer(PGL.ELEMENT_ARRAY_BUFFER, glPointIndex);
       pgl.bufferData(PGL.ELEMENT_ARRAY_BUFFER, sizex, null, PGL.STATIC_DRAW);
 
@@ -1521,16 +1517,16 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void deletePointBuffers() {
     if (pointBuffersCreated) {
-      deleteVertexBufferObject(glPointVertex, pointBuffersContext.id());
+      deleteVertexBufferObject(glPointVertex, pointBuffersContext);
       glPointVertex = 0;
 
-      deleteVertexBufferObject(glPointColor, pointBuffersContext.id());
+      deleteVertexBufferObject(glPointColor, pointBuffersContext);
       glPointColor = 0;
 
-      deleteVertexBufferObject(glPointAttrib, pointBuffersContext.id());
+      deleteVertexBufferObject(glPointAttrib, pointBuffersContext);
       glPointAttrib = 0;
 
-      deleteVertexBufferObject(glPointIndex, pointBuffersContext.id());
+      deleteVertexBufferObject(glPointIndex, pointBuffersContext);
       glPointIndex = 0;
 
       pointBuffersCreated = false;
