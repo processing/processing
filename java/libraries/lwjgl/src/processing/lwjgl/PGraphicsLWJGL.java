@@ -22,7 +22,6 @@
 
 package processing.lwjgl;
 
-import processing.core.*;
 import processing.opengl.PGraphicsOpenGL;
 
 /**
@@ -30,8 +29,6 @@ import processing.opengl.PGraphicsOpenGL;
  *
  */
 public class PGraphicsLWJGL extends PGraphicsOpenGL {
-  /** Interface between Processing and OpenGL */
-  public PGL pgl;
 
   //////////////////////////////////////////////////////////////
 
@@ -54,6 +51,5 @@ public class PGraphicsLWJGL extends PGraphicsOpenGL {
     texCache = newTexCache();
 
     initialized = false;
-  }
-  
+  }  
 }
