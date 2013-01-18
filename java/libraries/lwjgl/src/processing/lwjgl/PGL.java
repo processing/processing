@@ -40,6 +40,7 @@ import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.EXTFramebufferObject;
 import org.lwjgl.opengl.EXTTextureFilterAnisotropic;
 import org.lwjgl.opengl.GL11;
@@ -349,7 +350,7 @@ public class PGL extends processing.opengl.PGL {
   protected static Thread glThread;
 
   /** Just holds a unique ID */
-  protected static DummyContext context;
+  protected static int context;
 
   /** The PGraphics object using this interface */
   protected PGraphicsOpenGL pg;
@@ -394,7 +395,7 @@ public class PGL extends processing.opengl.PGL {
   protected static int tex2DShaderProgram;
   protected static int tex2DVertShader;
   protected static int tex2DFragShader;
-  protected static DummyContext tex2DShaderContext;
+  protected static int tex2DShaderContext;
   protected static int tex2DVertLoc;
   protected static int tex2DTCoordLoc;
 
@@ -402,7 +403,7 @@ public class PGL extends processing.opengl.PGL {
   protected static int texRectShaderProgram;
   protected static int texRectVertShader;
   protected static int texRectFragShader;
-  protected static DummyContext texRectShaderContext;
+  protected static int texRectShaderContext;
   protected static int texRectVertLoc;
   protected static int texRectTCoordLoc;
 
@@ -500,27 +501,29 @@ public class PGL extends processing.opengl.PGL {
     }
 
     canvas = new Canvas();
-    canvas.setBounds(0, 0, pg.parent.width, pg.parent.height);
     canvas.setFocusable(true);
     canvas.requestFocus();
     canvas.setIgnoreRepaint(true);
     canvas.setBackground(Color.BLACK);
-
+    canvas.setForeground(Color.BLACK);
+    
     pg.parent.setLayout(new BorderLayout());
-    pg.parent.add(canvas, BorderLayout.CENTER);
-
-    try {
-      Display.setParent(canvas);
+    pg.parent.add(canvas, BorderLayout.CENTER); 
+    canvas.setBounds(0, 0, pg.parent.width, pg.parent.height);
+    
+    try {      
       PixelFormat format = new PixelFormat(32, request_alpha_bits,
                                                request_depth_bits,
                                                request_stencil_bits, 0);
+      Display.setDisplayMode(new DisplayMode(pg.parent.width, pg.parent.height));
+      Display.setParent(canvas);      
       Display.create(format);
       Display.setVSyncEnabled(true);
     } catch (LWJGLException e) {
       e.printStackTrace();
     }
-
-    context = new DummyContext(Display.getDrawable().hashCode());
+    
+    context = Display.getDrawable().hashCode();
 
     keyPoller = new KeyPoller(pg.parent);
     keyPoller.start();
@@ -1614,7 +1617,7 @@ public class PGL extends processing.opengl.PGL {
 
 
   protected int getCurrentContext() {
-    return context.hashCode();
+    return context;
   }
 
 
@@ -1719,7 +1722,7 @@ public class PGL extends processing.opengl.PGL {
 
 
   protected boolean contextIsCurrent(int other) {
-    return other == -1 || other == context.hashCode();
+    return other == -1 || other == context;
   }
 
 
@@ -1818,8 +1821,7 @@ public class PGL extends processing.opengl.PGL {
   protected void drawTexture2D(int id, int width, int height,
                                int texX0, int texY0, int texX1, int texY1,
                                int scrX0, int scrY0, int scrX1, int scrY1) {
-    if (!loadedTex2DShader ||
-        tex2DShaderContext.hashCode() != context.hashCode()) {
+    if (!loadedTex2DShader || tex2DShaderContext != context) {
       tex2DVertShader = createShader(VERTEX_SHADER, texVertShaderSource);
       tex2DFragShader = createShader(FRAGMENT_SHADER, tex2DFragShaderSource);
       if (0 < tex2DVertShader && 0 < tex2DFragShader) {
@@ -1922,8 +1924,7 @@ public class PGL extends processing.opengl.PGL {
   protected void drawTextureRect(int id, int width, int height,
                                  int texX0, int texY0, int texX1, int texY1,
                                  int scrX0, int scrY0, int scrX1, int scrY1) {
-    if (!loadedTexRectShader ||
-        texRectShaderContext.hashCode() != context.hashCode()) {
+    if (!loadedTexRectShader || texRectShaderContext != context) {
       texRectVertShader = createShader(VERTEX_SHADER, texVertShaderSource);
       texRectFragShader = createShader(FRAGMENT_SHADER, texRectFragShaderSource);
       if (0 < texRectVertShader && 0 < texRectFragShader) {
@@ -2986,13 +2987,6 @@ public class PGL extends processing.opengl.PGL {
 
     public void requestStop() {
       stopRequested = true;
-    }
-  }
-
-  protected class DummyContext {
-    int id;
-    DummyContext(int id) {
-      this.id = id;
     }
   }
 
