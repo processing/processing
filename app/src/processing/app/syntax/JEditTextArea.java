@@ -139,7 +139,30 @@ public class JEditTextArea extends JComponent
         if (scrollBarsInitialized) {
           if (e.getScrollType() == MouseWheelEvent.WHEEL_UNIT_SCROLL) {
             int amt = e.getUnitsToScroll();
-            vertical.setValue(vertical.getValue() + amt);
+//            int max = vertical.getMaximum();
+//            System.out.println("UNIT SCROLL of " + amt + " at value " + vertical.getValue() + " and max " + max);
+//            System.out.println("  get wheel rotation is " + e.getWheelRotation());
+//            int ex = e.getModifiersEx();
+//            String mods = InputEvent.getModifiersExText(ex);
+//            if (ex != 0) {
+//              System.out.println("  3 2         1         0");
+//              System.out.println("  10987654321098765432109876543210");
+//              System.out.println("  " + PApplet.binary(e.getModifiersEx()));
+////            if (mods.length() > 0) {
+//              System.out.println("  mods extext = " + mods + " " + mods.length() + " " + PApplet.hex(mods.charAt(0)));
+//            }
+//            System.out.println("  " + e);
+            
+            // inertia scrolling on OS X will fire several shift-wheel events 
+            // that are negative values.. this makes the scrolling area jump.
+            boolean skip = Base.isMacOS() && e.isShiftDown();
+            //if (ex == 0) {
+            if (!skip) {
+              vertical.setValue(vertical.getValue() + amt);
+//            } else {
+//              System.out.println("  ** skipping");
+            }
+//            System.out.println();
           }
         }
       }
@@ -2187,21 +2210,6 @@ public class JEditTextArea extends JComponent
     }
   }
 
-  /*
-#ifdef JDK14
-  class WheelHandler implements MouseWheelListener {
-
-    public void mouseWheelMoved(MouseWheelEvent e) {
-      if (!scrollBarsInitialized) return;
-
-      int amt = e.getWheelRotation();
-      //System.out.println(amt);
-      vertical.setValue(vertical.getValue() + amt * wheelMultiplier);
-    }
-  }
-#endif
-   */
-
   class AdjustHandler implements AdjustmentListener
   {
     public void adjustmentValueChanged(final AdjustmentEvent evt)
@@ -2209,16 +2217,17 @@ public class JEditTextArea extends JComponent
       if(!scrollBarsInitialized)
         return;
 
-      // If this is not done, mousePressed events accumilate
+      // If this is not done, mousePressed events accumulate
       // and the result is that scrolling doesn't stop after
       // the mouse is released
       SwingUtilities.invokeLater(new Runnable() {
         public void run()
         {
-          if(evt.getAdjustable() == vertical)
+          if (evt.getAdjustable() == vertical) {
             setFirstLine(vertical.getValue());
-          else
+          } else {
             setHorizontalOffset(-horizontal.getValue());
+          }
         }
       });
     }
