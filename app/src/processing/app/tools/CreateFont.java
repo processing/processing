@@ -116,6 +116,34 @@ public class CreateFont extends JFrame implements Tool {
       GraphicsEnvironment.getLocalGraphicsEnvironment();
 
     Font fonts[] = ge.getAllFonts();
+    
+    if (false) {
+      ArrayList<Font> fontList = new ArrayList<Font>();
+      File folderList = new File("/Users/fry/coconut/sys/fonts/web");
+      for (File folder : folderList.listFiles()) {
+        if (folder.isDirectory()) {
+          File[] items = folder.listFiles(new FilenameFilter() {
+            public boolean accept(File dir, String name) {
+              if (name.charAt(0) == '.') return false;
+              return (name.toLowerCase().endsWith(".ttf") ||
+                      name.toLowerCase().endsWith(".otf"));
+            }
+          });
+          for (File fontFile : items) {
+            try {
+              Font font = Font.createFont(Font.TRUETYPE_FONT, new FileInputStream(fontFile));
+              fontList.add(font);
+              
+            } catch (Exception e) {
+              System.out.println("Ignoring " + fontFile.getName());
+            }
+          }
+        }
+      }
+//      fonts = new Font[fontList.size()];
+//      fontList.toArray(fonts);
+      fonts = fontList.toArray(new Font[fontList.size()]);
+    }
 
     String flist[] = new String[fonts.length];
     table = new HashMap<String,Font>();
