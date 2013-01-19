@@ -39,6 +39,8 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.*;
@@ -153,7 +155,7 @@ import javax.swing.JFileChooser;
  */
 public class PApplet extends Applet
   implements PConstants, Runnable,
-             MouseListener, MouseMotionListener, KeyListener, FocusListener
+             MouseListener, MouseWheelListener, MouseMotionListener, KeyListener, FocusListener
 {
   /**
    * Full name of the Java version (i.e. 1.5.0_11).
@@ -2428,6 +2430,7 @@ public class PApplet extends Applet
 
   public void addListeners(Component comp) {
     comp.addMouseListener(this);
+    comp.addMouseWheelListener(this);
     comp.addMouseMotionListener(this);
     comp.addKeyListener(this);
     comp.addFocusListener(this);
@@ -2451,6 +2454,7 @@ public class PApplet extends Applet
 
   public void removeListeners(Component comp) {
     comp.removeMouseListener(this);
+    comp.removeMouseWheelListener(this);
     comp.removeMouseMotionListener(this);
     comp.removeKeyListener(this);
     comp.removeFocusListener(this);
@@ -2685,6 +2689,9 @@ public class PApplet extends Applet
     case MouseEvent.EXIT:
       mouseExited(event);
       break;
+    case MouseEvent.WHEEL:
+      mouseWheel(event);
+      break;
     }
 
     if ((event.getAction() == MouseEvent.DRAG) ||
@@ -2695,12 +2702,30 @@ public class PApplet extends Applet
   }
 
 
+  static protected Method preciseWheelMethod;
+  static {
+//    Class<?> callbackClass = callbackObject.getClass();
+//    Method selectMethod =
+//      callbackClass.getMethod(callbackMethod, new Class[] { File.class });
+//    selectMethod.invoke(callbackObject, new Object[] { selectedFile });
+    try {
+      preciseWheelMethod = MouseWheelEvent.class.getMethod("getPreciseWheelRotation", new Class[] { });
+    } catch (Exception e) {
+      // ignored, the method will just be set to null
+    }
+  }
+
+
   /**
    * Figure out how to process a mouse event. When loop() has been
    * called, the events will be queued up until drawing is complete.
    * If noLoop() has been called, then events will happen immediately.
    */
   protected void nativeMouseEvent(java.awt.event.MouseEvent nativeEvent) {
+    // the 'amount' is the number of button clicks for a click event,
+    // or the number of steps/clicks on the wheel for a mouse wheel event.
+    float peAmount = nativeEvent.getClickCount();
+
     int peAction = 0;
     switch (nativeEvent.getID()) {
     case java.awt.event.MouseEvent.MOUSE_PRESSED:
@@ -2723,6 +2748,19 @@ public class PApplet extends Applet
       break;
     case java.awt.event.MouseEvent.MOUSE_EXITED:
       peAction = MouseEvent.EXIT;
+      break;
+    case java.awt.event.MouseWheelEvent.WHEEL_UNIT_SCROLL:
+      peAction = MouseEvent.WHEEL;
+      if (preciseWheelMethod != null) {
+        try {
+          peAmount = ((Double) preciseWheelMethod.invoke(nativeEvent, (Object[]) null)).floatValue();
+        } catch (Exception e) {
+          preciseWheelMethod = null;
+        }
+      }
+      if (preciseWheelMethod == null) {
+        peAmount = ((MouseWheelEvent) nativeEvent).getWheelRotation();
+      }
       break;
     }
 
@@ -2776,7 +2814,7 @@ public class PApplet extends Applet
                              peAction, peModifiers,
                              nativeEvent.getX(), nativeEvent.getY(),
                              peButton,
-                             nativeEvent.getClickCount()));
+                             peAmount));
   }
 
 
@@ -2836,6 +2874,14 @@ public class PApplet extends Applet
    * @nowebref
    */
   public void mouseMoved(java.awt.event.MouseEvent e) {
+    nativeMouseEvent(e);
+  }
+
+
+  /**
+   * @nowebref
+   */
+  public void mouseWheelMoved(java.awt.event.MouseWheelEvent e) {
     nativeMouseEvent(e);
   }
 
@@ -2984,6 +3030,14 @@ public class PApplet extends Applet
 
   public void mouseExited(MouseEvent event) {
     mouseExited();
+  }
+
+
+  public void mouseWheel() { }
+
+
+  public void mouseWheel(MouseEvent event) {
+    mouseWheel();
   }
 
 
