@@ -43,6 +43,7 @@ X   http://code.google.com/p/processing/issues/detail?id=1509
 X   remove separate launch of QT movie creator
 X Don't open Changes page on the Wiki from command line
 X   http://code.google.com/p/processing/issues/detail?id=1520
+X prevent inertia scrolling on OS X from making editor jumpy
 
 manindra
 M bug that was causing the Debugger to point to wrong break point line numbers
@@ -85,10 +86,7 @@ _   http://code.google.com/p/processing/issues/detail?id=1212
 _ excessive CPU usage of PDE after using library manager
 _   http://code.google.com/p/processing/issues/detail?id=1036
 _   confirmed to still be a problem with b5/6
-_ remove PdeKeyListener, roll it into the Java InputHandler for JEditTextArea
-_   move Java-specific InputHandler to its own subclass
-_ problem changing sketchbook to new location (e.g. from ex to regular) 
-_   new libraries are not picked up
+_ new libraries not picked up when changing sketchbook location
 _ Contributed modes should show up in mode menu after installation
 _   http://code.google.com/p/processing/issues/detail?id=1466
 _ using "Add Library" requires restart of Processing before lib recognized
@@ -99,6 +97,8 @@ _   list on the website would be generated using the same web service
 _   All I would need to do is update web/contrib_generate/sources.conf 
 _     and the rest would happen automatically.
 _ alternating blue/white backgrounds aren't updated after changing filter
+_ remove PdeKeyListener, roll it into the Java InputHandler for JEditTextArea
+_   move Java-specific InputHandler to its own subclass
 
 
 2.0 FINAL / new interface

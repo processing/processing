@@ -3244,11 +3244,15 @@ public class PGL {
       peButton = PConstants.RIGHT;
     }
 
+    float peAmount = peAction == MouseEvent.WHEEL ?
+      nativeEvent.getWheelRotation() :
+      nativeEvent.getClickCount();
+
     MouseEvent me = new MouseEvent(nativeEvent, nativeEvent.getWhen(),
                                    peAction, peModifiers,
                                    nativeEvent.getX(), nativeEvent.getY(),
                                    peButton,
-                                   nativeEvent.getClickCount());
+                                   peAmount);
 
     pg.parent.postEvent(me);
   }
@@ -3335,7 +3339,7 @@ public class PGL {
     }
     @Override
     public void mouseWheelMoved(com.jogamp.newt.event.MouseEvent e) {
-      // Not supported in Processing.
+      nativeMouseEvent(e, MouseEvent.WHEEL);
     }
   }
 
