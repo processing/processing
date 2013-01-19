@@ -139,6 +139,7 @@ public class JEditTextArea extends JComponent
         if (scrollBarsInitialized) {
           if (e.getScrollType() == MouseWheelEvent.WHEEL_UNIT_SCROLL) {
             int amt = e.getUnitsToScroll();
+//            System.out.println("rot/amt = " + e.getWheelRotation() + " " + amt);
 //            int max = vertical.getMaximum();
 //            System.out.println("UNIT SCROLL of " + amt + " at value " + vertical.getValue() + " and max " + max);
 //            System.out.println("  get wheel rotation is " + e.getWheelRotation());
