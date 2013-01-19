@@ -5078,22 +5078,31 @@ public class PApplet extends Applet
    *
    */
   public final float random(float high) {
+    // avoid an infinite loop when 0 or NaN are passed in
+    if (high == 0 || high != high) {
+      return 0;
+    }
+
+    if (internalRandom == null) {
+      internalRandom = new Random();
+    }
+
     // for some reason (rounding error?) Math.random() * 3
     // can sometimes return '3' (once in ~30 million tries)
     // so a check was added to avoid the inclusion of 'howbig'
-
-    // avoid an infinite loop
-    if (high == 0) return 0;
-
-    // internal random number object
-    if (internalRandom == null) internalRandom = new Random();
-
     float value = 0;
     do {
-      //value = (float)Math.random() * howbig;
       value = internalRandom.nextFloat() * high;
     } while (value == high);
     return value;
+  }
+
+
+  public final float randomGaussian() {
+    if (internalRandom == null) {
+      internalRandom = new Random();
+    }
+    return (float) internalRandom.nextGaussian();
   }
 
 
@@ -5124,6 +5133,7 @@ public class PApplet extends Applet
     return random(diff) + low;
   }
 
+
  /**
    * ( begin auto-generated from randomSeed.xml )
    *
@@ -5140,8 +5150,9 @@ public class PApplet extends Applet
    * @see PApplet#noiseSeed(long)
    */
   public final void randomSeed(long seed) {
-    // internal random number object
-    if (internalRandom == null) internalRandom = new Random();
+    if (internalRandom == null) {
+      internalRandom = new Random();
+    }
     internalRandom.setSeed(seed);
   }
 
