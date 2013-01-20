@@ -228,6 +228,9 @@ public class PApplet extends Applet
    * This setting must be called before any AWT work happens, so that's why
    * it's such a terrible hack in how it's employed here. Calling setProperty()
    * inside setup() is a joke, since it's long since the AWT has been invoked.
+   * <p/>
+   * On OS X with a retina display, this option is ignored, because Apple's
+   * Java implementation takes over and forces the Quartz renderer.
    */
 //  static public boolean useQuartz = true;
   static public boolean useQuartz = false;
@@ -253,6 +256,13 @@ public class PApplet extends Applet
 
   /** The frame containing this applet (if any) */
   public Frame frame;
+
+  // disabled on retina inside init()
+  boolean useActive = true;
+//  boolean useActive = false;
+//  boolean useStrategy = true;
+  boolean useStrategy = false;
+  Canvas canvas;
 
 //  /**
 //   * Usually just 0, but with multiple displays, the X and Y coordinates of
@@ -818,6 +828,11 @@ public class PApplet extends Applet
   /** true if this sketch is being run by the PDE */
   boolean external = false;
 
+  /**
+   * Not official API, using internally because of the tweaks required.
+   */
+  boolean retina;
+
 
   static final String ERROR_MIN_MAX =
     "Cannot use min() or max() on an empty array.";
@@ -840,6 +855,20 @@ public class PApplet extends Applet
 //    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
 //    screenWidth = screen.width;
 //    screenHeight = screen.height;
+
+    if (platform == MACOSX) {
+      Float prop = (Float)
+        getToolkit().getDesktopProperty("apple.awt.contentScaleFactor");
+      if (prop != null) {
+        retina = prop == 2;
+        if (retina) {
+          // The active-mode rendering seems to be 2x slower, so disable it
+          // with retina. On a non-retina machine, however, useActive seems
+          // the only (or best?) way to handle the rendering.
+          useActive = false;
+        }
+      }
+    }
 
     // send tab keys through to the PApplet
     setFocusTraversalKeysEnabled(false);
@@ -1930,6 +1959,10 @@ public class PApplet extends Applet
     }
 */
 
+//    if (useActive) {
+//      return;
+//    }
+
 //    if (insideDraw) {
 //      new Exception().printStackTrace(System.out);
 //    }
@@ -1946,11 +1979,6 @@ public class PApplet extends Applet
     }
   }
 
-
-  boolean useActive = true;
-//  boolean useStrategy = true;
-  boolean useStrategy = false;
-  Canvas canvas;
 
   protected synchronized void render() {
     if (canvas == null) {

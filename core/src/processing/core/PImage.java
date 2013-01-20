@@ -833,6 +833,16 @@ public class PImage implements PConstants, Cloneable {
 
 
   /**
+   * Returns a copy of this PImage. Equivalent to get(0, 0, width, height).
+   */
+  public PImage get() {
+    // Formerly this used clone(), which caused memory problems.
+    // http://code.google.com/p/processing/issues/detail?id=42
+    return get(0, 0, width, height);
+  }
+
+
+  /**
    * Internal function to actually handle getting a block of pixels that
    * has already been properly cropped to a valid region. That is, x/y/w/h
    * are guaranteed to be inside the image space, so the implementation can
@@ -848,16 +858,6 @@ public class PImage implements PConstants, Cloneable {
       sourceIndex += width;
       targetIndex += target.width;
     }
-  }
-
-
-  /**
-   * Returns a copy of this PImage. Equivalent to get(0, 0, width, height).
-   */
-  public PImage get() {
-    // Formerly this used clone(), which caused memory problems.
-    // http://code.google.com/p/processing/issues/detail?id=42
-    return get(0, 0, width, height);
   }
 
 
