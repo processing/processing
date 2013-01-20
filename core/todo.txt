@@ -120,11 +120,11 @@ _   and how it should be handled with hash/dict
 _   right now using hasKey().. in JSONObject
 
 _ add mouse wheel support to 2.0 event system
+_   http://code.google.com/p/processing/issues/detail?id=1423
 X   this is fairly messy since desktop and JS behave a little differently
 o   wheel event should subclass mouse (since position still relevant)
 X     just another sub-event as part of mouse
 o   might be more effort than it's worth?
-_   http://code.google.com/p/processing/issues/detail?id=1423
 X   peasycam uses e.getWheelRotation()
 X   js has a couple versions
 X     http://www.javascriptkit.com/javatutors/onmousewheel.shtml
@@ -132,9 +132,12 @@ X     e.detail is 1 for 1 click up, -2 for 2 clicks down
 X     e.wheelDelta is 120 for 1 click up, -240 for two clicks down
 X   using float value (/120.0f)
 X   high-precision method grabbed if 1.7 is in use
-_   test with actual
+_   test with actual wheel mouse
+_   test on Windows
 _   add to the API docs
 _   decide on getAmount() and weirdness w/ clickCount
+_   get mouseWheel() added to api ref
+_   also added to keywords.txt
 
 andres
 _ P2D/P3D sketches don't get focus until click
@@ -144,6 +147,7 @@ _ OpenGL/P3D sketches show graphical corruption
 _   http://code.google.com/p/processing/issues/detail?id=1452
 _ noCursor() seems quite/somewhat broken
 X   started some work, ignores 'invisible' already being set
+_ several key/mouse event issues in the db
 
 _ add 'gz' as one of the loadXxx() options
 _   helps .svgz case from being weird, also generally dealing w/ compressed data

@@ -2363,7 +2363,12 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 
 
   @Override
-//  public PImage getImpl(int x, int y, int w, int h) {
+  public PImage get() {
+    return get(0, 0, width, height);
+  }
+
+
+  @Override
   protected void getImpl(int sourceX, int sourceY,
                          int sourceWidth, int sourceHeight,
                          PImage target, int targetX, int targetY) {
@@ -2394,12 +2399,6 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 
 
   @Override
-  public PImage get() {
-    return get(0, 0, width, height);
-  }
-
-
-  @Override
   public void set(int x, int y, int argb) {
     if ((x < 0) || (y < 0) || (x >= width) || (y >= height)) return;
 //    ((BufferedImage) image).setRGB(x, y, argb);
@@ -2410,9 +2409,9 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   }
 
 
+  //public void set(int x, int y, PImage img)
 
-//  protected void setImpl(int dx, int dy, int sx, int sy, int sw, int sh,
-//                         PImage src) {
+
   @Override
   protected void setImpl(PImage sourceImage,
                          int sourceX, int sourceY,

@@ -1,10 +1,12 @@
 package processing.core;
 
 import java.awt.*;
-import java.awt.image.*;
 
 
 public class PGraphicsRetina2D extends PGraphicsJava2D {
+  PImage retina;
+//  int retinaWidth;
+//  int retinaHeight;
 
 
   //////////////////////////////////////////////////////////////
@@ -12,7 +14,17 @@ public class PGraphicsRetina2D extends PGraphicsJava2D {
   // INTERNAL
 
 
-  public PGraphicsRetina2D() { }
+  public PGraphicsRetina2D() {
+    retina = new PImage();
+    retina.format = RGB;
+  }
+
+
+  @Override
+  public void setParent(PApplet parent) {
+    super.setParent(parent);
+    retina.parent = parent;
+  }
 
 
   @Override
@@ -80,16 +92,18 @@ public class PGraphicsRetina2D extends PGraphicsJava2D {
 //    g2 = (Graphics2D) parent.getGraphics();
 
     GraphicsConfiguration gc = parent.getGraphicsConfiguration();
-    if (false) {
-      if (image == null || ((VolatileImage) image).validate(gc) == VolatileImage.IMAGE_INCOMPATIBLE) {
-        image = gc.createCompatibleVolatileImage(width*2, height*2);
-      }
-    } else {
-      if (image == null) {
-        image = gc.createCompatibleImage(width*2, height*2);
+//    if (false) {
+//      if (image == null || ((VolatileImage) image).validate(gc) == VolatileImage.IMAGE_INCOMPATIBLE) {
+//        image = gc.createCompatibleVolatileImage(width*2, height*2);
+//      }
+//    } else {
+    if (image == null) {
+      retina.width = width * 2;
+      retina.height = height * 2;
+      image = gc.createCompatibleImage(retina.width, retina.height);
 //        System.out.println("image type is " + image);
-      }
     }
+//    }
     g2 = (Graphics2D) image.getGraphics();
 //    g2.scale(2, 2);
 
@@ -190,129 +204,430 @@ public class PGraphicsRetina2D extends PGraphicsJava2D {
   //////////////////////////////////////////////////////////////
 
 
-  /*
+//  int[] retinaPixels;
+
   @Override
   public void loadPixels() {
-    nope("loadPixels");
+    if ((retina.pixels == null) || (retina.pixels.length != retina.width * retina.height)) {
+      retina.pixels = new int[retina.width * retina.height];
+    }
+    getRaster().getDataElements(0, 0, retina.width, retina.height, retina.pixels);
+
+    if (hints[ENABLE_RETINA_PIXELS]) {
+      pixels = retina.pixels;
+
+    } else {
+      if ((pixels == null) || (pixels.length != width * height)) {
+        pixels = new int[width * height];
+      }
+      int offset = 0;
+      int roffset = 0;
+//      int offset01 = 1;
+//      int offset10 = retinaWidth;
+//      int offset11 = retinaWidth + 1;
+
+      for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+          int px00 = retina.pixels[roffset];
+          int px01 = retina.pixels[roffset + 1];
+          int px10 = retina.pixels[roffset + retina.width];
+          int px11 = retina.pixels[roffset + retina.width + 1];
+
+          int red = ((((px00 >> 16) & 0xff) +
+                      ((px01 >> 16) & 0xff) +
+                      ((px10 >> 16) & 0xff) +
+                      ((px11 >> 16) & 0xff)) << 14) & 0xFF0000;
+
+          int green = ((((px00 >> 8) & 0xff) +
+                        ((px01 >> 8) & 0xff) +
+                        ((px10 >> 8) & 0xff) +
+                        ((px11 >> 8) & 0xff)) << 6) & 0xFF00;
+
+          int blue = (((px00 & 0xff) +
+                       (px01 & 0xff) +
+                       (px10 & 0xff) +
+                       (px11 & 0xff)) >> 2) & 0xFF;
+
+          pixels[offset++] = 0xff000000 | red | green | blue;
+          roffset += 2;
+//          offset01 += 2;
+//          offset10 += 2;
+//          offset11 += 2;
+        }
+        roffset += retina.width;
+//        offset01 += retinaWidth;
+//        offset10 += retinaWidth;
+//        offset11 += retinaWidth;
+      }
+    }
   }
 
+
+  /**
+   * Update the pixels[] buffer to the PGraphics image.
+   * <P>
+   * Unlike in PImage, where updatePixels() only requests that the
+   * update happens, in PGraphicsJava2D, this will happen immediately.
+   */
   @Override
   public void updatePixels() {
-    nope("updatePixels");
+    if (!hints[ENABLE_RETINA_PIXELS]) {
+      int offset = 0;
+      int roffset = 0;
+      for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+          int orig = pixels[offset++];
+          retina.pixels[roffset] = orig;
+          retina.pixels[roffset + 1] = orig;
+          retina.pixels[roffset + retina.width] = orig;
+          retina.pixels[roffset + retina.width + 1] = orig;
+        }
+        roffset += retina.width;
+      }
+    }
+    getRaster().setDataElements(0, 0, retina.width, retina.height, retina.pixels);
   }
 
-  @Override
-  public void updatePixels(int x, int y, int c, int d) {
-    nope("updatePixels");
-  }
 
-  //
+  // No override necessary, just prints a warning and calls updatePixels()
+  //public void updatePixels(int x, int y, int c, int d);
+
+
+  static int rgetset[] = new int[4];
 
   @Override
   public int get(int x, int y) {
-    nope("get");
-    return 0;  // not reached
+    if (hints[ENABLE_RETINA_PIXELS]) {
+      if ((x < 0) || (y < 0) || (x >= retina.width) || (y >= retina.height)) {
+        return 0;
+      }
+      getRaster().getDataElements(x, y, getset);
+      return getset[0];
+
+    } else {
+      if ((x < 0) || (y < 0) || (x >= width) || (y >= height)) {
+        return 0;
+      }
+      getRaster().getDataElements(x, y, 2, 2, getset);
+
+      int red = ((((rgetset[0] >> 16) & 0xff) +
+                  ((rgetset[1] >> 16) & 0xff) +
+                  ((rgetset[2] >> 16) & 0xff) +
+                  ((rgetset[3] >> 16) & 0xff)) << 14) & 0xFF0000;
+
+      int green = ((((rgetset[0] >> 8) & 0xff) +
+                    ((rgetset[1] >> 8) & 0xff) +
+                    ((rgetset[2] >> 8) & 0xff) +
+                    ((rgetset[3] >> 8) & 0xff)) << 6) & 0xFF00;
+
+      int blue = (((rgetset[0] & 0xff) +
+                   (rgetset[1] & 0xff) +
+                   (rgetset[2] & 0xff) +
+                   (rgetset[3] & 0xff)) >> 2) & 0xFF;
+
+      return 0xff000000 | red | green | blue;
+    }
   }
+
 
   @Override
-  public PImage get(int x, int y, int c, int d) {
-    nope("get");
-    return null;  // not reached
+  public PImage get(int x, int y, int w, int h) {
+    int targetX = 0;
+    int targetY = 0;
+    int targetWidth = w;
+    int targetHeight = h;
+    boolean cropped = false;
+
+    if (x < 0) {
+      w += x; // x is negative, removes the left edge from the width
+      targetX = -x;
+      cropped = true;
+      x = 0;
+    }
+    if (y < 0) {
+      h += y; // y is negative, clip the number of rows
+      targetY = -y;
+      cropped = true;
+      y = 0;
+    }
+
+    if (hints[ENABLE_RETINA_PIXELS]) {
+      if (x + w > retina.width) {
+        w = retina.width - x;
+        cropped = true;
+      }
+      if (y + h > retina.height) {
+        h = retina.height - y;
+        cropped = true;
+      }
+    } else {
+      if (x + w > width) {
+        w = width - x;
+        cropped = true;
+      }
+      if (y + h > height) {
+        h = height - y;
+        cropped = true;
+      }
+    }
+
+    if (w < 0) {
+      w = 0;
+    }
+    if (h < 0) {
+      h = 0;
+    }
+
+    int targetFormat = format;
+    if (cropped && format == RGB) {
+      targetFormat = ARGB;
+    }
+
+    PImage target = new PImage(targetWidth, targetHeight, targetFormat);
+    target.parent = parent;  // parent may be null so can't use createImage()
+    if (w > 0 && h > 0) {
+      getImpl(x, y, w, h, target, targetX, targetY);
+    }
+    return target;
   }
 
+
+  // Replaces version found in PImage
   @Override
   public PImage get() {
-    nope("get");
-    return null;  // not reached
+    loadPixels();
+    PImage outgoing;
+    if (hints[ENABLE_RETINA_PIXELS]) {
+//      outgoing = new PImage(retinaWidth, retinaHeight, RGB);
+//      outgoing.pixels = new int[retinaWidth * retinaHeight];
+//      System.arraycopy(retinaPixels, 0, outgoing.pixels, 0, outgoing.pixels.length);
+//      outgoing.parent = parent;
+      outgoing = retina.get();
+      outgoing.parent = parent;
+
+    } else {
+      outgoing = new PImage(width, height, RGB);
+      outgoing.pixels = new int[width * height];
+      System.arraycopy(pixels, 0, outgoing.pixels, 0, outgoing.pixels.length);
+      outgoing.parent = parent;
+    }
+    return outgoing;
   }
+
+
+  // Found in PGraphicsJava2D
+  //protected void getImpl(int sourceX, int sourceY,
+  //                       int sourceWidth, int sourceHeight,
+  //                       PImage target, int targetX, int targetY)
+
 
   @Override
   public void set(int x, int y, int argb) {
-    nope("set");
+    if (hints[ENABLE_RETINA_PIXELS]) {
+      if (x >= 0 && y >= 0 && x < retina.width && y < retina.height) {
+        getset[0] = argb;
+        getRaster().setDataElements(x, y, getset);
+      }
+    } else {
+      if (x >= 0 && y >= 0 && x < width && y < height) {
+        for (int i = 0; i < 4; i++) {
+          rgetset[i] = argb;
+        }
+        getRaster().setDataElements(x, y, 2, 2, rgetset);
+      }
+    }
   }
 
+
+  // Replaces version found in PImage
   @Override
-  public void set(int x, int y, PImage image) {
-    nope("set");
+  public void set(int x, int y, PImage img) {
+    int sx = 0;
+    int sy = 0;
+    int sw = img.width;
+    int sh = img.height;
+
+    if (x < 0) {  // off left edge
+      sx -= x;
+      sw += x;
+      x = 0;
+    }
+    if (y < 0) {  // off top edge
+      sy -= y;
+      sh += y;
+      y = 0;
+    }
+    if (hints[ENABLE_RETINA_PIXELS]) {
+      if (x + sw > retina.width) {  // off right edge
+        sw = retina.width - x;
+      }
+      if (y + sh > retina.height) {  // off bottom edge
+        sh = retina.height - y;
+      }
+    } else {
+      if (x + sw > width) {  // off right edge
+        sw = width - x;
+      }
+      if (y + sh > height) {  // off bottom edge
+        sh = height - y;
+      }
+    }
+
+    // this could be nonexistent
+    if ((sw <= 0) || (sh <= 0)) return;
+
+    setImpl(img, sx, sy, sw, sh, x, y);
   }
 
-  //
 
-  @Override
-  public void mask(int alpha[]) {
-    nope("mask");
-  }
-
-  @Override
-  public void mask(PImage alpha) {
-    nope("mask");
-  }
-
-  //
-
-  @Override
-  public void filter(int kind) {
-    nope("filter");
-  }
-
-  @Override
-  public void filter(int kind, float param) {
-    nope("filter");
-  }
-
-  //
-
-  @Override
-  public void copy(int sx1, int sy1, int sx2, int sy2,
-                   int dx1, int dy1, int dx2, int dy2) {
-    nope("copy");
-  }
-
-  @Override
-  public void copy(PImage src,
-                   int sx1, int sy1, int sx2, int sy2,
-                   int dx1, int dy1, int dx2, int dy2) {
-    nope("copy");
-  }
-
-  //
-
-  public void blend(int sx, int sy, int dx, int dy, int mode) {
-    nope("blend");
-  }
-
-  public void blend(PImage src,
-                    int sx, int sy, int dx, int dy, int mode) {
-    nope("blend");
-  }
-
-  @Override
-  public void blend(int sx1, int sy1, int sx2, int sy2,
-                    int dx1, int dy1, int dx2, int dy2, int mode) {
-    nope("blend");
-  }
-
-  @Override
-  public void blend(PImage src,
-                    int sx1, int sy1, int sx2, int sy2,
-                    int dx1, int dy1, int dx2, int dy2, int mode) {
-    nope("blend");
-  }
-
-  //
-
-  @Override
-  public boolean save(String filename) {
-    nope("save");
-    return false;
-  }
-  */
+  // Handled by PGraphicsJava2D
+  //protected void setImpl(PImage sourceImage,
+  //                       int sourceX, int sourceY,
+  //                       int sourceWidth, int sourceHeight,
+  //                       int targetX, int targetY)
 
 
   //////////////////////////////////////////////////////////////
 
+  // MASK
 
-  protected void nope(String function) {
-    throw new RuntimeException("No " + function + "() for PGraphicsRetina2D");
+
+  @Override
+  public void mask(int alpha[]) {
+    showMethodWarning("mask");
+  }
+
+
+  @Override
+  public void mask(PImage alpha) {
+    showMethodWarning("mask");
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // FILTER
+
+
+  @Override
+  public void filter(int kind) {
+    if (hints[ENABLE_RETINA_PIXELS]) {
+      loadPixels();
+      // Wrap the pixels as a fake image so that width/height
+      // in the filter() commands work properly.
+//      PImage temp = new PImage();
+//      temp.width = retinaWidth;
+//      temp.height = retinaHeight;
+//      temp.format = RGB;
+//      temp.pixels = retinaPixels;
+//      temp.filter(kind);
+      retina.filter(kind);
+      updatePixels();
+
+    } else {
+      super.filter(kind);
+    }
+  }
+
+
+  @Override
+  public void filter(int kind, float param) {
+    if (hints[ENABLE_RETINA_PIXELS]) {
+      loadPixels();
+      retina.filter(kind, param);
+      updatePixels();
+
+    } else {
+      super.filter(kind);
+    }
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // COPY
+
+
+  @Override
+  public void copy(int sx, int sy, int sw, int sh,
+                   int dx, int dy, int dw, int dh) {
+    if (hints[ENABLE_RETINA_PIXELS]) {
+      super.copy(sx, sy, sw, sh, dx, dy, dw, dh);
+
+    } else {
+      // Since copying into itself, double pixels for both src and dest
+      if ((sw != dw) || (sh != dh)) {
+        g2.drawImage(image,
+                     dx*2, dy*2, (dx + dw)*2, (dy + dh)*2,
+                     sx*2, sy*2, (sx + sw)*2, (sy + sh)*2, null);
+      } else {
+        dx = dx - sx;  // java2d's "dx" is the delta, not dest
+        dy = dy - sy;
+        g2.copyArea(sx*2, sy*2, sw*2, sh*2, dx*2, dy*2);
+      }
+    }
+  }
+
+
+  @Override
+  public void copy(PImage src,
+                   int sx, int sy, int sw, int sh,
+                   int dx, int dy, int dw, int dh) {
+    if (hints[ENABLE_RETINA_PIXELS]) {
+      super.copy(src, sx, sy, sw, sh, dx, dy, dw, dh);
+
+    } else {
+      // Double the pixels from the source image when drawing into dest
+      g2.drawImage((Image) src.getNative(),
+                   dx*2, dy*2, (dx + dw)*2, (dy + dh)*2,
+                   sx, sy, sx + sw, sy + sh, null);
+    }
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // BLEND
+
+
+  @Override
+  public void blend(int sx, int sy, int sw, int sh,
+                    int dx, int dy, int dw, int dh, int mode) {
+    if (hints[ENABLE_RETINA_PIXELS]) {
+      retina.blend(sx, sy, sw, sh, dx, dy, dw, dh, mode);
+    } else {
+      super.blend(sx, sy, sw, sh, dx, dy, dw, dh, mode);
+    }
+  }
+
+
+  @Override
+  public void blend(PImage src,
+                    int sx, int sy, int sw, int sh,
+                    int dx, int dy, int dw, int dh, int mode) {
+    if (hints[ENABLE_RETINA_PIXELS]) {
+      retina.blend(src, sx, sy, sw, sh, dx, dy, dw, dh, mode);
+    } else {
+      super.blend(src, sx, sy, sw, sh, dx, dy, dw, dh, mode);
+    }
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // SAVE
+
+
+  @Override
+  public boolean save(String filename) {
+    if (hints[ENABLE_RETINA_PIXELS]) {
+      return retina.save(filename);
+    } else {
+      return super.save(filename);
+    }
   }
 }
