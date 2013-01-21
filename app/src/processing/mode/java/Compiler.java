@@ -28,6 +28,7 @@ import processing.core.*;
 
 import java.io.*;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 
 //import org.eclipse.jdt.core.compiler.batch.BatchCompiler;
 //import org.eclipse.jdt.core.compiler.CompilationProgress;
@@ -35,6 +36,16 @@ import java.lang.reflect.Method;
 
 public class Compiler {
 
+  static HashMap<String, String> importSuggestions;
+  static {
+    importSuggestions = new HashMap<String, String>();
+    importSuggestions.put("Arrays", "java.util.Arrays");
+    importSuggestions.put("Collections", "java.util.Collections");
+    importSuggestions.put("Date", "java.util.Date");
+    importSuggestions.put("Iterator", "java.util.Iterator");
+  }
+  
+  
 //  public Compiler() { }
 
   /**
@@ -283,6 +294,13 @@ public class Compiler {
           } else {
             exception.setMessage("Cannot find a class or type " +
                                  "named \u201C" + what + "\u201D");
+            
+            String suggestion = importSuggestions.get(what);
+            if (suggestion != null) {
+              System.err.println("You may need to add \"import " + suggestion + ";\" to the top of your sketch.");
+              System.err.println("To make sketches more portable, imports that are not part of the Processing API have been removed from Processing 2.0.");
+              System.err.println("See the changes page for more information: http://wiki.processing.org/w/Changes");
+            }
           }
 
         } else if (errorMessage.endsWith("cannot be resolved")) {
