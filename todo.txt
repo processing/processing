@@ -46,10 +46,14 @@ X   http://code.google.com/p/processing/issues/detail?id=1520
 X prevent inertia scrolling on OS X from making editor jumpy
 X Suggest possible import statements for common Java classes
 X   http://code.google.com/p/processing/issues/detail?id=1550
+X   for others like collections and Date, show warning and option to add?
+X   along with warning that it's not supported
 X processing-java throws java.lang.ArrayIndexOutOfBoundsException: -1
 X   http://code.google.com/p/processing/issues/detail?id=1548
 X Library manager leaves temporary folders in sketchbook folder
 X   http://code.google.com/p/processing/issues/detail?id=1527
+X "Auto format" should not scroll current line to first line
+X   http://code.google.com/p/processing/issues/detail?id=1533
 
 manindra
 M bug that was causing the Debugger to point to wrong break point line numbers
@@ -75,8 +79,6 @@ o   if sketch was open, then restart by dragging the .pde to p5.app
 https://processing-js.lighthouseapp.com/
 
 _ add Iterator as an import?
-_ for others like collections and Date, show warning and option to add?
-_   along with warning that it's not supported
 
 _ remove sketch.properties when moving back to the default?
 _   or can we not do this, because the next mode needs this?
