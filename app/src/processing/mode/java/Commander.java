@@ -312,16 +312,22 @@ public class Commander implements RunnerListener {
     if (exception instanceof SketchException) {
       SketchException re = (SketchException) exception;
 
-      // format the runner exception like emacs
-      //blah.java:2:10:2:13: Syntax Error: This is a big error message
-      String filename = sketch.getCode(re.getCodeIndex()).getFileName();
-      int line = re.getCodeLine() + 1;
-      int column = re.getCodeColumn() + 1;
-      //if (column == -1) column = 0;
-      // TODO if column not specified, should just select the whole line.
-      systemErr.println(filename + ":" +
-                         line + ":" + column + ":" +
-                         line + ":" + column + ":" + " " + re.getMessage());
+      int codeIndex = re.getCodeIndex();
+      if (codeIndex != -1) {
+        // format the runner exception like emacs
+        //blah.java:2:10:2:13: Syntax Error: This is a big error message
+        String filename = sketch.getCode(codeIndex).getFileName();
+        int line = re.getCodeLine() + 1;
+        int column = re.getCodeColumn() + 1;
+        //if (column == -1) column = 0;
+        // TODO if column not specified, should just select the whole line.
+        systemErr.println(filename + ":" +
+          line + ":" + column + ":" +
+          line + ":" + column + ":" + " " + re.getMessage());
+        
+      } else {  // no line number, pass the trace along to the user
+        exception.printStackTrace();
+      }
     } else {
       exception.printStackTrace();
     }
