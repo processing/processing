@@ -106,15 +106,15 @@ public class ContributionManager {
                                         final JProgressMonitor downloadProgressMonitor,
                                         final JProgressMonitor installProgressMonitor,
                                         final ErrorWidget statusBar) {
-    final File libDest = getTemporaryFile(url, statusBar);
 
     new Thread(new Runnable() {
       public void run() {
-        FileDownloader.downloadFile(url, libDest, downloadProgressMonitor);
+        final File libArchive = createTemporaryFile(url, statusBar);
+        FileDownloader.downloadFile(url, libArchive, downloadProgressMonitor);
         if (!downloadProgressMonitor.isCanceled() && !downloadProgressMonitor.isError()) {
           installProgressMonitor.startTask("Installing", ProgressMonitor.UNKNOWN);
           InstalledContribution contribution = null;
-          contribution = install(editor, libDest, ad, false, statusBar);
+          contribution = install(editor, libArchive, ad, false, statusBar);
 
           if (contribution != null) {
             contribListing.replaceContribution(ad, contribution);
@@ -122,6 +122,7 @@ public class ContributionManager {
           }
           installProgressMonitor.finished();
         }
+        libArchive.delete();
       }
     }).start();
   }
@@ -529,12 +530,14 @@ public class ContributionManager {
   }
 
 
-  static public File getTemporaryFile(URL url, ErrorWidget statusBar) {
+  static protected File createTemporaryFile(URL url, ErrorWidget statusBar) {
     try {
-      File tmpFolder = Base.createTempFolder("library", "download", Base.getSketchbookLibrariesFolder());
-
-      String[] segments = url.getFile().split("/");
-      File libFile = new File(tmpFolder, segments[segments.length - 1]);
+//      //File tmpFolder = Base.createTempFolder("library", "download", Base.getSketchbookLibrariesFolder());
+//      String[] segments = url.getFile().split("/");
+//      File libFile = new File(tmpFolder, segments[segments.length - 1]);
+      String filename = url.getFile();
+      filename = filename.substring(filename.lastIndexOf('/') + 1);
+      File libFile = File.createTempFile("download", filename, Base.getSketchbookLibrariesFolder());
       libFile.setWritable(true);
       return libFile;
 

@@ -44,6 +44,12 @@ X   remove separate launch of QT movie creator
 X Don't open Changes page on the Wiki from command line
 X   http://code.google.com/p/processing/issues/detail?id=1520
 X prevent inertia scrolling on OS X from making editor jumpy
+X Suggest possible import statements for common Java classes
+X   http://code.google.com/p/processing/issues/detail?id=1550
+X processing-java throws java.lang.ArrayIndexOutOfBoundsException: -1
+X   http://code.google.com/p/processing/issues/detail?id=1548
+X Library manager leaves temporary folders in sketchbook folder
+X   http://code.google.com/p/processing/issues/detail?id=1527
 
 manindra
 M bug that was causing the Debugger to point to wrong break point line numbers
