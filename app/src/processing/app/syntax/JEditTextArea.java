@@ -369,6 +369,14 @@ public class JEditTextArea extends JComponent
     painter.repaint();
   }
   
+  
+  /** 
+   * Convenience for checking what's on-screen. [fry] 
+   */
+  public final int getLastLine() {
+    return getFirstLine() + getVisibleLines();
+  }
+  
 
   /**
    * Returns the number of lines visible in this text area.

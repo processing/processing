@@ -1671,6 +1671,10 @@ public abstract class Editor extends JFrame implements RunnerListener {
       final String formattedText = createFormatter().format(source);
       // save current (rough) selection point
       int selectionEnd = getSelectionStop();
+      
+//      boolean wasVisible = 
+//        textarea.getSelectionStopLine() >= textarea.getFirstLine() && 
+//        textarea.getSelectionStopLine() < textarea.getLastLine();
 
       // make sure the caret would be past the end of the text
       if (formattedText.length() < selectionEnd - 1) {
@@ -1682,8 +1686,24 @@ public abstract class Editor extends JFrame implements RunnerListener {
       } else {
         // replace with new bootiful text
         // selectionEnd hopefully at least in the neighborhood
+        int scrollPos = textarea.getScrollPosition();
         setText(formattedText);
         setSelection(selectionEnd, selectionEnd);
+        
+        // Put the scrollbar position back, otherwise it jumps on each format.
+        // Since we're not doing a good job of maintaining position anyway, 
+        // a more complicated workaround here is fairly pointless.
+        // http://code.google.com/p/processing/issues/detail?id=1533
+        if (scrollPos != textarea.getScrollPosition()) {
+//          boolean wouldBeVisible = 
+//            scrollPos >= textarea.getFirstLine() && 
+//            scrollPos < textarea.getLastLine();
+//
+//          // if it was visible, and now it's not, then allow the scroll
+//          if (!(wasVisible && !wouldBeVisible)) {   
+          textarea.setScrollPosition(scrollPos);
+//          }
+        }
         getSketch().setModified(true);
         // mark as finished
         statusNotice("Auto Format finished.");
