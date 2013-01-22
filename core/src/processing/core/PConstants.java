@@ -128,8 +128,8 @@ public interface PConstants {
    * @see PConstants#TWO_PI
    * @see PConstants#QUARTER_PI
    */
-  static final float HALF_PI    = PI / 2.0f;
-  static final float THIRD_PI   = PI / 3.0f;
+  static final float HALF_PI = (float) (Math.PI / 2.0);
+  static final float THIRD_PI = (float) (Math.PI / 3.0);
   /**
    * ( begin auto-generated from QUARTER_PI.xml )
    *
@@ -144,7 +144,7 @@ public interface PConstants {
    * @see PConstants#TWO_PI
    * @see PConstants#HALF_PI
    */
-  static final float QUARTER_PI = PI / 4.0f;
+  static final float QUARTER_PI = (float) (Math.PI / 4.0);
   /**
    * ( begin auto-generated from TWO_PI.xml )
    *
@@ -159,7 +159,9 @@ public interface PConstants {
    * @see PConstants#HALF_PI
    * @see PConstants#QUARTER_PI
    */
-  static final float TWO_PI     = PI * 2.0f;
+  static final float TWO_PI = (float) (2.0 * Math.PI);
+
+  static final float TAU = (float) (2.0 * Math.PI);
 
   static final float DEG_TO_RAD = PI/180.0f;
   static final float RAD_TO_DEG = 180.0f/PI;
