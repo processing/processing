@@ -1409,60 +1409,82 @@ public class PGL extends processing.opengl.PGL {
 
 
   public void uniform1iv(int loc, int count, IntBuffer v) {
+    v.limit(count);
     GL20.glUniform1(loc, v);
+    v.clear();
   }
 
 
   public void uniform2iv(int loc, int count, IntBuffer v) {
+    v.limit(2 * count);
     GL20.glUniform2(loc, v);
+    v.clear();
   }
 
 
   public void uniform3iv(int loc, int count, IntBuffer v) {
+    v.limit(3 * count);
     GL20.glUniform3(loc, v);
+    v.clear();
   }
 
 
   public void uniform4iv(int loc, int count, IntBuffer v) {
+    v.limit(4 * count);
     GL20.glUniform4(loc, v);
+    v.clear();
   }
 
 
   public void uniform1fv(int loc, int count, FloatBuffer v) {
+    v.limit(count);
     GL20.glUniform1(loc, v);
+    v.clear();
   }
 
 
   public void uniform2fv(int loc, int count, FloatBuffer v) {
+    v.limit(2 * count);
     GL20.glUniform2(loc, v);
+    v.clear();
   }
 
 
   public void uniform3fv(int loc, int count, FloatBuffer v) {
+    v.limit(3 * count);
     GL20.glUniform3(loc, v);
+    v.clear();
   }
 
 
   public void uniform4fv(int loc, int count, FloatBuffer v) {
+    v.limit(4 * count);
     GL20.glUniform4(loc, v);
+    v.clear();
   }
 
 
   public void uniformMatrix2fv(int loc, int count, boolean transpose,
                                FloatBuffer mat) {
+    mat.limit(4);
     GL20.glUniformMatrix2(loc, transpose, mat);
+    mat.clear();
   }
 
 
   public void uniformMatrix3fv(int loc, int count, boolean transpose,
                                FloatBuffer mat) {
+    mat.limit(9);
     GL20.glUniformMatrix3(loc, transpose, mat);
+    mat.clear();
   }
 
 
   public void uniformMatrix4fv(int loc, int count, boolean transpose,
                                FloatBuffer mat) {
+    mat.limit(16);
     GL20.glUniformMatrix4(loc, transpose, mat);
+    mat.clear();
   }
 
 
