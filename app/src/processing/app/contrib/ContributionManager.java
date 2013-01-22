@@ -247,6 +247,7 @@ public class ContributionManager {
 
     File tempDir = ContributionManager.unzipFileToTemp(libFile, statusBar);
     List<File> libFolders = ContributionManager.discover(ad.getType(), tempDir);
+    InstalledContribution outgoing = null;
 
     if (libFolders.isEmpty()) {
       // Sometimes library authors place all their folders in the base
@@ -265,9 +266,9 @@ public class ContributionManager {
         InstalledContribution newContrib =
           ContributionManager.create(editor.getBase(), libFolder, ad.getType());
 
-        return ContributionManager.installContribution(editor, newContrib,
-                                                       confirmReplace,
-                                                       statusBar);
+        outgoing = ContributionManager.installContribution(editor, newContrib,
+                                                           confirmReplace,
+                                                           statusBar);
       } else {
         statusBar.setErrorMessage("Error overwriting .properties file.");
       }
@@ -286,7 +287,8 @@ public class ContributionManager {
       }
     }
 
-    return null;
+    Base.removeDir(tempDir);
+    return outgoing;
   }
 
 
@@ -566,11 +568,11 @@ public class ContributionManager {
     File tmpFolder = null;
 
     try {
-      tmpFolder = Base.createTempFolder(fileName, "uncompressed", Base.getSketchbookFolder());
-      tmpFolder = new File(tmpFolder, fileName);
-      tmpFolder.mkdirs();
+      tmpFolder = Base.createTempFolder(fileName, "uncompressed", Base.getSketchbookLibrariesFolder());
+//      tmpFolder = new File(tmpFolder, fileName);  // don't make another subdirectory
+//      tmpFolder.mkdirs();
     } catch (IOException e) {
-      statusBar.setErrorMessage("Could not create temp folder to uncompressed zip file.");
+      statusBar.setErrorMessage("Could not create temp folder to uncompress zip file.");
     }
 
     ContributionManager.unzip(libFile, tmpFolder);
