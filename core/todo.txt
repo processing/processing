@@ -36,6 +36,9 @@ X   also problematic with it not being called now
 X loadBytes does not close input stream
 X   http://code.google.com/p/processing/issues/detail?id=1542
 X add randomGaussian()
+X Add TAU as alias for TWO_PI
+X   http://code.google.com/p/processing/issues/detail?id=1488
+_   waiting on reference from Casey
 
 andres
 A P3D sketches failing to run
