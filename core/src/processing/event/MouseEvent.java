@@ -82,7 +82,6 @@ public class MouseEvent extends Event {
 //  }
 
 
-  @Deprecated
   public int getClickCount() {
     return (int) amount; //clickCount;
   }

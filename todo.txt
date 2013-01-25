@@ -78,6 +78,10 @@ o   if sketch was open, then restart by dragging the .pde to p5.app
 
 https://processing-js.lighthouseapp.com/
 
+_ add to build instructions for OS X:
+_   ant won't work w/ Java 1.7 until you set JAVA_HOME
+_   export JAVA_HOME=`/usr/libexec/java_home`
+
 _ add Iterator as an import?
 
 _ remove sketch.properties when moving back to the default?
