@@ -141,6 +141,10 @@ _   add to the API docs
 _   decide on getAmount() and weirdness w/ clickCount
 _   get mouseWheel() added to api ref
 _   also added to keywords.txt
+_   JOGL might be reporting backwards values
+_   action WHEEL only set with OpenGL?
+
+_ make hint(ENABLE_STROKE_PURE) the default
 
 andres
 _ P2D/P3D sketches don't get focus until click
