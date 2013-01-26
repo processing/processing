@@ -152,6 +152,8 @@ _ noCursor() seems quite/somewhat broken
 X   started some work, ignores 'invisible' already being set
 _ several key/mouse event issues in the db
 
+_ remap() instead of map()
+
 _ add 'gz' as one of the loadXxx() options
 _   helps .svgz case from being weird, also generally dealing w/ compressed data
 
