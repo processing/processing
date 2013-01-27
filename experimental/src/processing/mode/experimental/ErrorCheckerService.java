@@ -10,6 +10,7 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -221,6 +222,11 @@ public class ErrorCheckerService implements Runnable{
     });
   }
 
+  /**
+   * checkCode() only on text area update
+   */
+  protected AtomicInteger textModified = new AtomicInteger(0);
+  
   public void run() {
     stopThread = false;
     
@@ -237,11 +243,17 @@ public class ErrorCheckerService implements Runnable{
       if (pauseThread)
         continue;
 
+      if(textModified.get() == 0)
+    	  continue;
+      
       // Check every x seconds
       checkCode();
      
     }
   }
+  
+  
+  
   
   private boolean checkCode() {
     
@@ -270,6 +282,17 @@ public class ErrorCheckerService implements Runnable{
       editor.updateErrorBar(problemsList);
       updateEditorStatus();
       updateTextAreaPainter();
+      int x = textModified.get();
+      //System.out.println("TM " + x);
+      if(x>=3){
+    	  textModified.set(3);
+    	  x = 3;
+      }
+      
+      if(x>0)
+    	  textModified.set(x - 1);
+      else
+    	  textModified.set(0);
       return true;
 
     } catch (Exception e) {
