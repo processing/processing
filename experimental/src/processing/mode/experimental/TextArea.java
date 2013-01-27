@@ -21,6 +21,7 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.FontMetrics;
 import java.awt.event.ComponentListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -50,6 +51,7 @@ public class TextArea extends JEditTextArea {
     protected Map<Integer, String> gutterText = new HashMap(); // maps line index to gutter text
     protected Map<Integer, Color> gutterTextColors = new HashMap(); // maps line index to gutter text color
     protected TextAreaPainter customPainter;
+    protected ErrorCheckerService errorCheckerService;
     
     public TextArea(TextAreaDefaults defaults, DebugEditor editor) {
         super(defaults);
@@ -99,7 +101,15 @@ public class TextArea extends JEditTextArea {
      */
     public void setECSandThemeforTextArea(ErrorCheckerService ecs, ExperimentalMode mode)
     {
-      customPainter.setECSandTheme(ecs, mode);
+    	errorCheckerService = ecs;
+    	customPainter.setECSandTheme(ecs, mode);
+    }
+    
+    public void processKeyEvent(KeyEvent evt) {
+        super.processKeyEvent(evt);
+        if(evt.getID() == KeyEvent.KEY_TYPED){
+        	errorCheckerService.textModified.incrementAndGet();
+        }
     }
 
     /**
