@@ -677,12 +677,12 @@ public class ErrorCheckerService implements Runnable{
    */
   public void updatePaintedThingy() {
     editor.getTextArea().repaint();
+    updateEditorStatus();
     currentTab = editor.getSketch().getCodeIndex(
         editor.getSketch().getCurrentCode());
     if (currentTab != lastTab) {
       lastTab = currentTab;
-      editor.updateErrorBar(problemsList);
-      updateEditorStatus();
+      editor.updateErrorBar(problemsList);      
       return;
     }
 
