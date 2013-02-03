@@ -464,12 +464,11 @@ public class JavaEditor extends Editor {
 
 
   public void handleRun() {
-    toolbar.activate(JavaToolbar.RUN);
-
     new Thread(new Runnable() {
       public void run() {
         prepareRun();
         try {
+          toolbar.activate(JavaToolbar.RUN);
           runtime = jmode.handleRun(sketch, JavaEditor.this);
 //          System.out.println("runtime now " + runtime);
         } catch (Exception e) {
@@ -481,12 +480,11 @@ public class JavaEditor extends Editor {
 
 
   public void handlePresent() {
-    toolbar.activate(JavaToolbar.RUN);
-
     new Thread(new Runnable() {
       public void run() {
         prepareRun();
         try {
+          toolbar.activate(JavaToolbar.RUN);
           runtime = jmode.handlePresent(sketch, JavaEditor.this);
         } catch (Exception e) {
           statusError(e);

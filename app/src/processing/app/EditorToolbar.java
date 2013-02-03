@@ -310,7 +310,6 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
     int x = e.getX();
     int y = e.getY();
 
-    //      if (currentRollover != -1) {
     if (rollover != null) {
       //        if ((x > x1[currentRollover]) && (y > y1) &&
       //            (x < x2[currentRollover]) && (y < y2)) {
@@ -319,9 +318,9 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
         return;
 
       } else {
-        //          setState(currentRollover, INACTIVE, true);
-        rollover.setState(INACTIVE, true);
-        //          currentRollover = -1;
+        if (rollover.state == ROLLOVER) {
+          rollover.setState(INACTIVE, true);
+        }
         rollover = null;
       }
     }
@@ -429,7 +428,9 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
     // there is no more rollover, make sure that the rollover text goes away
 //    currentRollover = -1;
     if (rollover != null) {
-      rollover.setState(INACTIVE, true);
+      if (rollover.state == ROLLOVER) {
+        rollover.setState(INACTIVE, true);
+      }
       rollover = null;
     }
   }
