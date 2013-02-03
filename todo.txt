@@ -54,6 +54,9 @@ X Library manager leaves temporary folders in sketchbook folder
 X   http://code.google.com/p/processing/issues/detail?id=1527
 X "Auto format" should not scroll current line to first line
 X   http://code.google.com/p/processing/issues/detail?id=1533
+X add to build instructions for OS X:
+X   ant won't work w/ Java 1.7 until you set JAVA_HOME
+X   export JAVA_HOME=`/usr/libexec/java_home`
 
 manindra
 M bug that was causing the Debugger to point to wrong break point line numbers
@@ -78,9 +81,9 @@ o   if sketch was open, then restart by dragging the .pde to p5.app
 
 https://processing-js.lighthouseapp.com/
 
-_ add to build instructions for OS X:
-_   ant won't work w/ Java 1.7 until you set JAVA_HOME
-_   export JAVA_HOME=`/usr/libexec/java_home`
+Exception in thread "AWT-EventQueue-0" java.lang.IllegalArgumentException: Bounds out of range: 5374,5376 [5375]
+	at processing.app.syntax.JEditTextArea.select(JEditTextArea.java:1214)
+	at processing.app.Editor.handleIndentOutdent(Editor.java:1819)
 
 _ add Iterator as an import?
 
