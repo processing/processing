@@ -98,14 +98,6 @@ log CLASSPATH
 export PATH="$JDKDIR/bin":"$PATH"
 log PATH
 
-# Start Processing in the same directory as this script
-if [ "$1" ]; then
-  SKETCH=`readlink -f $1`
-else
-  SKETCH=
-fi
-cd "$APPDIR"
-
 current_name=`basename $0`
 cmd_name='processing-java'
 
@@ -113,5 +105,13 @@ if [ $current_name = $cmd_name ]
 then
     java processing.mode.java.Commander "$@"
 else
-    java processing.app.Base "$SKETCH" &
+  # Start Processing in the same directory as this script
+  if [ "$1" ]; then
+    SKETCH=`readlink -f $1`
+  else
+    SKETCH=
+  fi
+  cd "$APPDIR"
+
+  java processing.app.Base "$SKETCH" &
 fi

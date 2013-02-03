@@ -61,6 +61,13 @@ X fix "Bounds out of range" when outdenting a block of text
 X   Exception in thread "AWT-EventQueue-0" java.lang.IllegalArgumentException: Bounds out of range: 5374,5376 [5375]
 X   at processing.app.syntax.JEditTextArea.select(JEditTextArea.java:1214)
 X   at processing.app.Editor.handleIndentOutdent(Editor.java:1819)
+X play button (and others) no longer highlighting
+X   http://code.google.com/p/processing/issues/detail?id=688
+X   run button not properly unhighlighting
+X   patch from John Li (jli@circularly.org)
+X readlink error when running processing-java
+X   patch from richard@crash.net.nz
+X   http://code.google.com/p/processing/issues/detail?id=1578
 
 manindra
 M bug that was causing the Debugger to point to wrong break point line numbers
@@ -96,6 +103,7 @@ _   "To use this library, you must use the 32-bit version of Processing."
 
 
 2.0 FINAL / library/tool/mode manager cleanup
+_ boogers still being left around
 _ make already installed libraries distinguishable in the list
 _   http://code.google.com/p/processing/issues/detail?id=1212
 _ excessive CPU usage of PDE after using library manager
@@ -606,9 +614,7 @@ _   http://code.google.com/p/processing/issues/detail?id=174
 
 PDE / Editor Toolbar (Buttons)
 
-_ play button (and others) no longer highlighting
-_   http://code.google.com/p/processing/issues/detail?id=688
-_   run button not properly unhighlighting
+_ run button issues (unconfirmed)
 _   does it unhighlight after compile or runtime errors?
 _   also when using draw() instead of loop()
 _     applet needs to notify runner that it has terminated
