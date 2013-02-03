@@ -1816,7 +1816,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
         textarea.setSelectedText(tabString);
 
       } else {  // outdent
-        textarea.select(location, location + tabSize);
+        int last = Math.min(location + tabSize, textarea.getDocumentLength());
+        textarea.select(location, last);
         // Don't eat code if it's not indented
         if (textarea.getSelectedText().equals(tabString)) {
           textarea.setSelectedText("");

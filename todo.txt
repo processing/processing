@@ -57,6 +57,10 @@ X   http://code.google.com/p/processing/issues/detail?id=1533
 X add to build instructions for OS X:
 X   ant won't work w/ Java 1.7 until you set JAVA_HOME
 X   export JAVA_HOME=`/usr/libexec/java_home`
+X fix "Bounds out of range" when outdenting a block of text
+X   Exception in thread "AWT-EventQueue-0" java.lang.IllegalArgumentException: Bounds out of range: 5374,5376 [5375]
+X   at processing.app.syntax.JEditTextArea.select(JEditTextArea.java:1214)
+X   at processing.app.Editor.handleIndentOutdent(Editor.java:1819)
 
 manindra
 M bug that was causing the Debugger to point to wrong break point line numbers
@@ -80,10 +84,6 @@ o also can have case of opening two of same sketch at once
 o   if sketch was open, then restart by dragging the .pde to p5.app
 
 https://processing-js.lighthouseapp.com/
-
-Exception in thread "AWT-EventQueue-0" java.lang.IllegalArgumentException: Bounds out of range: 5374,5376 [5375]
-	at processing.app.syntax.JEditTextArea.select(JEditTextArea.java:1214)
-	at processing.app.Editor.handleIndentOutdent(Editor.java:1819)
 
 _ add Iterator as an import?
 
