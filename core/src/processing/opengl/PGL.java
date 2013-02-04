@@ -3119,6 +3119,8 @@ public class PGL {
   // Java specific stuff
 
   protected class PGLListener implements GLEventListener {
+    public PGLListener() {}
+
     @Override
     public void display(GLAutoDrawable glDrawable) {
       drawable = glDrawable;
