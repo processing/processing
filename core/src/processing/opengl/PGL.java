@@ -25,6 +25,7 @@ package processing.opengl;
 
 import java.awt.BorderLayout;
 import java.awt.Canvas;
+import java.awt.Color;
 import java.nio.Buffer;
 
 import java.nio.ByteBuffer;
@@ -632,6 +633,8 @@ public class PGL {
     if (toolkit == AWT) {
       canvasAWT = new GLCanvas(caps);
       canvasAWT.setBounds(0, 0, pg.width, pg.height);
+      canvasAWT.setBackground(Color.BLACK);
+      canvasAWT.setForeground(Color.BLACK);
 
       pg.parent.setLayout(new BorderLayout());
       pg.parent.add(canvasAWT, BorderLayout.CENTER);
@@ -652,6 +655,8 @@ public class PGL {
       window = GLWindow.create(caps);
       canvasNEWT = new NewtCanvasAWT(window);
       canvasNEWT.setBounds(0, 0, pg.width, pg.height);
+      canvasNEWT.setBackground(Color.BLACK);
+      canvasNEWT.setForeground(Color.BLACK);
 
       pg.parent.setLayout(new BorderLayout());
       pg.parent.add(canvasNEWT, BorderLayout.CENTER);

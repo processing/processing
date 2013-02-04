@@ -497,24 +497,24 @@ public class PGL extends processing.opengl.PGL {
         e.printStackTrace();
       }
       Display.destroy();
+      
       pg.parent.remove(canvas);
     }
 
     canvas = new Canvas();
     canvas.setFocusable(true);
     canvas.requestFocus();
-    canvas.setIgnoreRepaint(true);
     canvas.setBackground(Color.BLACK);
-    canvas.setForeground(Color.BLACK);
+    canvas.setForeground(Color.BLACK);   
+    canvas.setBounds(0, 0, pg.parent.width, pg.parent.height);
     
     pg.parent.setLayout(new BorderLayout());
-    pg.parent.add(canvas, BorderLayout.CENTER); 
-    canvas.setBounds(0, 0, pg.parent.width, pg.parent.height);
+    pg.parent.add(canvas, BorderLayout.CENTER);     
     
     try {      
       PixelFormat format = new PixelFormat(32, request_alpha_bits,
                                                request_depth_bits,
-                                               request_stencil_bits, 0);
+                                               request_stencil_bits, 1);
       Display.setDisplayMode(new DisplayMode(pg.parent.width, pg.parent.height));
       Display.setParent(canvas);      
       Display.create(format);
