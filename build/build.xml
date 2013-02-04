@@ -2,24 +2,50 @@
 <project name="Processing" default="build">
   
   <!-- Sets properties for macosx/windows/linux depending on current system -->
-  <condition property="macosx"><os family="mac" /></condition>
-  <condition property="windows"><os family="windows" /></condition>
-  <condition property="linux"><os family="unix" /></condition>
-  
-  <condition property="platform" 
-	     value="macosx"><os family="mac" /> </condition>
-  <condition property="platform" 
-	     value="windows"><os family="windows" /> </condition>
-  <condition property="platform" 
-	     value="linux"><os family="unix" /> </condition>
+  <condition property="platform" value="macosx">
+    <os family="mac" /> 
+  </condition>
 
-<!--  <echo message="" />-->
+  <condition property="platform" value="windows">
+    <os family="windows" /> 
+  </condition>
+
+  <condition property="platform" value="linux">
+    <and>
+      <os family="unix" />
+      <not>
+	<os family="mac" />
+      </not>
+    </and>
+  </condition>
+
+  <!-- Set a property named macosx, linux, or windows. 
+       The 'value' chosen is arbitrary. -->
+  <property name="${platform}" value="${platform}" />
 
   <property environment="env" />
+
+  <!-- code signing hack, turns on code signing during dist -->
   <condition property="codesign"> 
     <equals arg1="${env.USER}" arg2="fry" />
   </condition>
 
+  <!-- Make sure that we have a legitimate JDK... This was promoted 
+       from app/build.xml because we now need this on OS X as well. -->
+  <property name="java_home" value="${env.JAVA_HOME}" />
+  <available file="${env.JAVA_HOME}/lib/tools.jar"
+	     property="java_tools_found" />
+
+  <fail if="windows" unless="java_tools_found" 
+	message="The JAVA_HOME variable must be set to the location of a full JDK. For instance, on Windows, this might be c:\jdk1.6.0_19." />
+
+  <fail if="macosx" unless="java_tools_found"
+	message="To build on OS X, you must have a full JDK installed, and set JAVA_HOME=`/usr/libexec/java_home`" />
+
+  <fail if="linux" unless="java_tools_found" 
+	message="The JAVA_HOME variable must be set to the location of a full JDK. For instance, on Ubuntu Linux, this might be /usr/lib/jvm/java-6-sun." />
+	       
+  <!-- Figure out the platform-specific output directory for all this work. -->
   <condition property="target.path" 
 	     value="macosx/work/Processing.app/Contents/Resources/Java">
     <os family="mac" /> 
