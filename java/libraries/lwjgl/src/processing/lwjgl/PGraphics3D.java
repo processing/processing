@@ -14,7 +14,7 @@ public class PGraphics3D extends PGraphicsLWJGL {
 
   public PGraphics3D() {
     super();
-    hints[ENABLE_STROKE_PERSPECTIVE] = true;
+    hints[ENABLE_STROKE_PERSPECTIVE] = false;
   }
 
   //////////////////////////////////////////////////////////////
