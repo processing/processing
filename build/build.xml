@@ -40,11 +40,16 @@
   <available file="${env.JAVA_HOME}/lib/tools.jar"
 	     property="java_tools_found" />
 
-  <!-- On JDK 6 for OS X, it's at $JAVA_HOME/../Classes/classes.jar -->
-
   <fail if="windows" unless="java_tools_found" 
 	message="The JAVA_HOME variable must be set to the location of a full JDK. For instance, on Windows, this might be c:\jdk1.6.0_19." />
 
+  <!-- 
+       On JDK 6 for OS X, tools.jar is part of classes.jar, which lives at
+       $JAVA_HOME/../Classes/classes.jar 
+       Inside ../app/build.xml, we rely on $JAVA_HOME/lib/tools.jar
+       being available. We could do hoops to add the special case, 
+       or we can require JDK 7. No time to implement the special case.
+  -->
   <fail if="macosx" unless="java_tools_found"
 	message="To build on OS X, you must have JDK 7 (not just the plugin) installed, and set JAVA_HOME=`/usr/libexec/java_home`" />
 
