@@ -27,7 +27,7 @@ uniform vec3 scale;
 
 attribute vec4 vertex;
 attribute vec4 color;
-attribute vec4 endPoint;
+attribute vec4 endpoint;
 
 varying vec4 vertColor;
 
@@ -51,10 +51,10 @@ void main() {
   // http://www.opengl.org/discussion_boards/ubbthreads.php?ubb=showflat&Number=252848  
   v_p.xyz = v_p.xyz * scale;
   vec4 clip_p = projection * v_p;
-  float thickness = endPoint.w;
+  float thickness = endpoint.w;
   
   if (thickness != 0.0) {  
-    vec4 pos_q = vec4(endPoint.xyz, 1);
+    vec4 pos_q = vec4(endpoint.xyz, 1);
     vec4 v_q = modelview * pos_q;
     v_q.xyz = v_q.xyz * scale;  
     vec4 clip_q = projection * v_q; 

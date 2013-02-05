@@ -6991,7 +6991,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
     protected int vertexLoc;
     protected int colorLoc;
-    protected int endPointLoc;
+    protected int endpointLoc;
 
     public LineShader(PApplet parent) {
       super(parent);
@@ -7010,7 +7010,7 @@ public class PGraphicsOpenGL extends PGraphics {
     public void loadAttributes() {
       vertexLoc = getAttributeLoc("vertex");
       colorLoc = getAttributeLoc("color");
-      endPointLoc = getAttributeLoc("endPoint");
+      endpointLoc = getAttributeLoc("endpoint");
     }
 
     @Override
@@ -7036,7 +7036,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
     public void setLineAttribute(int vboId, int size, int type,
                                  int stride, int offset) {
-      setAttributeVBO(endPointLoc, vboId, size, type, false, stride, offset);
+      setAttributeVBO(endpointLoc, vboId, size, type, false, stride, offset);
     }
 
     @Override
@@ -7050,7 +7050,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
       if (-1 < vertexLoc) pgl.enableVertexAttribArray(vertexLoc);
       if (-1 < colorLoc)  pgl.enableVertexAttribArray(colorLoc);
-      if (-1 < endPointLoc) pgl.enableVertexAttribArray(endPointLoc);
+      if (-1 < endpointLoc) pgl.enableVertexAttribArray(endpointLoc);
 
       if (pgCurrent.getHint(ENABLE_STROKE_PERSPECTIVE) &&
           pgCurrent.nonOrthoProjection()) {
@@ -7076,7 +7076,7 @@ public class PGraphicsOpenGL extends PGraphics {
     public void unbind() {
       if (-1 < vertexLoc) pgl.disableVertexAttribArray(vertexLoc);
       if (-1 < colorLoc)  pgl.disableVertexAttribArray(colorLoc);
-      if (-1 < endPointLoc) pgl.disableVertexAttribArray(endPointLoc);
+      if (-1 < endpointLoc) pgl.disableVertexAttribArray(endpointLoc);
 
       super.unbind();
     }
