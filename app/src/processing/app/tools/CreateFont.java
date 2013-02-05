@@ -131,7 +131,10 @@ public class CreateFont extends JFrame implements Tool {
           });
           for (File fontFile : items) {
             try {
-              Font font = Font.createFont(Font.TRUETYPE_FONT, new FileInputStream(fontFile));
+              FileInputStream fis = new FileInputStream(fontFile);
+              BufferedInputStream input = new BufferedInputStream(fis);
+              Font font = Font.createFont(Font.TRUETYPE_FONT, input);
+              input.close();
               fontList.add(font);
               
             } catch (Exception e) {
