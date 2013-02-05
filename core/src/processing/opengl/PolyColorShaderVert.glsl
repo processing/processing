@@ -20,13 +20,13 @@
 
 uniform mat4 transform;
 
-attribute vec4 inVertex;
-attribute vec4 inColor;
+attribute vec4 vertex;
+attribute vec4 color;
 
 varying vec4 vertColor;
 
 void main() {
-  gl_Position = transform * inVertex;
+  gl_Position = transform * vertex;
     
-  vertColor = inColor;
+  vertColor = color;
 }

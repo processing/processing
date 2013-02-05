@@ -18,14 +18,14 @@
   Boston, MA  02111-1307  USA
  */
  
-uniform sampler2D textureSampler;
-uniform sampler2D maskSampler;
+uniform sampler2D texture;
+uniform sampler2D mask;
 
 varying vec4 vertTexcoord;
 
 void main() {
-  vec3 texColor = texture2D(textureSampler, vertTexcoord.st).rgb;
-  vec3 maskColor = texture2D(maskSampler, vertTexcoord.st).rgb;
+  vec3 texColor = texture2D(texture, vertTexcoord.st).rgb;
+  vec3 maskColor = texture2D(mask, vertTexcoord.st).rgb;
   float luminance = dot(maskColor, vec3(0.2126, 0.7152, 0.0722));
   gl_FragColor = vec4(texColor, luminance);  
 }

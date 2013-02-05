@@ -19,18 +19,18 @@
  */
 
 uniform mat4 transform;
-uniform mat4 texcoordMatrix;
+uniform mat4 texMatrix;
 
-attribute vec4 inVertex;
-attribute vec4 inColor;
-attribute vec2 inTexcoord;
+attribute vec4 vertex;
+attribute vec4 color;
+attribute vec2 texCoord;
 
 varying vec4 vertColor;
 varying vec4 vertTexcoord;
 
 void main() {
-  gl_Position = transform * inVertex;
+  gl_Position = transform * vertex;
     
-  vertColor = inColor;
-  vertTexcoord = texcoordMatrix * vec4(inTexcoord, 1.0, 1.0);
+  vertColor = color;
+  vertTexcoord = texMatrix * vec4(texCoord, 1.0, 1.0);
 }

@@ -24,9 +24,9 @@ uniform mat4 modelview;
 uniform vec4 viewport;
 uniform int perspective; 
  
-attribute vec4 inVertex;
-attribute vec4 inColor;
-attribute vec2 inPoint;
+attribute vec4 vertex;
+attribute vec4 color;
+attribute vec2 offset;
 
 varying vec4 vertColor;
 
@@ -36,18 +36,18 @@ vec4 windowToClipVector(vec2 window, vec4 viewport, float clip_w) {
 }  
 
 void main() {
-  vec4 pos = modelview * inVertex;
+  vec4 pos = modelview * vertex;
   vec4 clip = projection * pos;
   
   if (0 < perspective) {
     // Perspective correction (points will look thiner as they move away 
     // from the view position).
-    gl_Position = clip + projection * vec4(inPoint.xy, 0, 0);
+    gl_Position = clip + projection * vec4(offset.xy, 0, 0);
   } else {
     // No perspective correction.	
-    vec4 offset = windowToClipVector(inPoint.xy, viewport, clip.w);
+    vec4 offset = windowToClipVector(offset.xy, viewport, clip.w);
     gl_Position = clip + offset;
   }
   
-  vertColor = inColor;
+  vertColor = color;
 }

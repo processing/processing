@@ -25,9 +25,9 @@ uniform vec4 viewport;
 uniform int perspective;
 uniform vec3 scale;
 
-attribute vec4 inVertex;
-attribute vec4 inColor;
-attribute vec4 inLine;
+attribute vec4 vertex;
+attribute vec4 color;
+attribute vec4 endPoint;
 
 varying vec4 vertColor;
 
@@ -43,7 +43,7 @@ vec4 windowToClipVector(vec2 window, vec4 viewport, float clip_w) {
 }  
   
 void main() {
-  vec4 pos_p = inVertex;
+  vec4 pos_p = vertex;
   vec4 v_p = modelview * pos_p;  
   // Moving vertices slightly toward the camera
   // to avoid depth-fighting with the fill triangles.
@@ -51,10 +51,10 @@ void main() {
   // http://www.opengl.org/discussion_boards/ubbthreads.php?ubb=showflat&Number=252848  
   v_p.xyz = v_p.xyz * scale;
   vec4 clip_p = projection * v_p;
-  float thickness = inLine.w;
+  float thickness = endPoint.w;
   
   if (thickness != 0.0) {  
-    vec4 pos_q = vec4(inLine.xyz, 1);
+    vec4 pos_q = vec4(endPoint.xyz, 1);
     vec4 v_q = modelview * pos_q;
     v_q.xyz = v_q.xyz * scale;  
     vec4 clip_q = projection * v_q; 
@@ -81,5 +81,5 @@ void main() {
     gl_Position = clip_p;
   }
   
-  vertColor = inColor;
+  vertColor = color;
 }
