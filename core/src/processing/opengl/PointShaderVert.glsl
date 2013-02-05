@@ -1,7 +1,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2011-12 Ben Fry and Casey Reas
+  Copyright (c) 2011-13 Ben Fry and Casey Reas
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -18,8 +18,8 @@
   Boston, MA  02111-1307  USA
  */
 
-uniform mat4 projectionMatrix;
-uniform mat4 modelviewMatrix;
+uniform mat4 projection;
+uniform mat4 modelview;
  
 uniform vec4 viewport;
 uniform int perspective; 
@@ -36,13 +36,13 @@ vec4 windowToClipVector(vec2 window, vec4 viewport, float clip_w) {
 }  
 
 void main() {
-  vec4 pos = modelviewMatrix * inVertex;
-  vec4 clip = projectionMatrix * pos;
+  vec4 pos = modelview * inVertex;
+  vec4 clip = projection * pos;
   
   if (0 < perspective) {
     // Perspective correction (points will look thiner as they move away 
     // from the view position).
-    gl_Position = clip + projectionMatrix * vec4(inPoint.xy, 0, 0);
+    gl_Position = clip + projection * vec4(inPoint.xy, 0, 0);
   } else {
     // No perspective correction.	
     vec4 offset = windowToClipVector(inPoint.xy, viewport, clip.w);

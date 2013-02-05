@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-12 Ben Fry and Casey Reas
+  Copyright (c) 2004-13 Ben Fry and Casey Reas
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -6470,10 +6470,10 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected class BaseShader extends PShader {
-    protected int transformMatrixLoc;
-    protected int modelviewMatrixLoc;
-    protected int projectionMatrixLoc;
-    protected int bufferSamplerLoc;
+    protected int transformLoc;
+    protected int modelviewLoc;
+    protected int projectionLoc;
+    protected int bufferLoc;
     protected int viewportLoc;
 
     public BaseShader(PApplet parent) {
@@ -6490,16 +6490,16 @@ public class PGraphicsOpenGL extends PGraphics {
 
     @Override
     public void loadUniforms() {
-      transformMatrixLoc = getUniformLoc("transform");
-      modelviewMatrixLoc = getUniformLoc("modelviewMatrix");
-      projectionMatrixLoc = getUniformLoc("projectionMatrix");
+      transformLoc = getUniformLoc("transform");
+      modelviewLoc = getUniformLoc("modelview");
+      projectionLoc = getUniformLoc("projection");
       viewportLoc = getUniformLoc("viewport");
-      bufferSamplerLoc = getUniformLoc("buffer");
+      bufferLoc = getUniformLoc("buffer");
     }
 
     @Override
     public void unbind() {
-      if (-1 < bufferSamplerLoc) {
+      if (-1 < bufferLoc) {
         pgl.needFBOLayer();
         pgl.activeTexture(PGL.TEXTURE0 + lastTexUnit);
         pgCurrent.unbindBackTexture();
@@ -6512,19 +6512,19 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     protected void setCommonUniforms() {
-      if (-1 < transformMatrixLoc) {
+      if (-1 < transformLoc) {
         pgCurrent.updateGLProjmodelview();
-        setUniformMatrix(transformMatrixLoc, pgCurrent.glProjmodelview);
+        setUniformMatrix(transformLoc, pgCurrent.glProjmodelview);
       }
 
-      if (-1 < modelviewMatrixLoc) {
+      if (-1 < modelviewLoc) {
         pgCurrent.updateGLModelview();
-        setUniformMatrix(modelviewMatrixLoc, pgCurrent.glModelview);
+        setUniformMatrix(modelviewLoc, pgCurrent.glModelview);
       }
 
-      if (-1 < projectionMatrixLoc) {
+      if (-1 < projectionLoc) {
         pgCurrent.updateGLProjection();
-        setUniformMatrix(projectionMatrixLoc, pgCurrent.glProjection);
+        setUniformMatrix(projectionLoc, pgCurrent.glProjection);
       }
 
       if (-1 < viewportLoc) {
@@ -6535,8 +6535,8 @@ public class PGraphicsOpenGL extends PGraphics {
         setUniformValue(viewportLoc, x, y, w, h);
       }
 
-      if (-1 < bufferSamplerLoc) {
-        setUniformValue(bufferSamplerLoc, lastTexUnit);
+      if (-1 < bufferLoc) {
+        setUniformValue(bufferLoc, lastTexUnit);
         pgl.activeTexture(PGL.TEXTURE0 + lastTexUnit);
         pgCurrent.bindBackTexture();
       }

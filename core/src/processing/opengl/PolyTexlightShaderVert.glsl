@@ -1,7 +1,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2011-12 Ben Fry and Casey Reas
+  Copyright (c) 2011-13 Ben Fry and Casey Reas
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -18,7 +18,7 @@
   Boston, MA  02111-1307  USA
  */
 
-uniform mat4 modelviewMatrix;
+uniform mat4 modelview;
 uniform mat4 transform;
 uniform mat3 normalMatrix;
 uniform mat4 texcoordMatrix;
@@ -76,10 +76,10 @@ float blinnPhongFactor(vec3 lightDir, vec3 vertPos, vec3 vecNormal, float shine)
 
 void main() {
   // Vertex in clip coordinates
-  gl_Position = projmodelviewMatrix * inVertex;
+  gl_Position = transform * inVertex;
     
   // Vertex in eye coordinates
-  vec3 ecVertex = vec3(modelviewMatrix * inVertex);
+  vec3 ecVertex = vec3(modelview * inVertex);
   
   // Normal vector in eye coordinates
   vec3 ecNormal = normalize(normalMatrix * inNormal);
