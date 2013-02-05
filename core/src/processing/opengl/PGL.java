@@ -3251,6 +3251,13 @@ public class PGL {
       peButton = PConstants.RIGHT;
     }
 
+    if (PApplet.platform == PConstants.MACOSX) {
+      //if (nativeEvent.isPopupTrigger()) {
+      if ((modifiers & InputEvent.CTRL_MASK) != 0) {
+        peButton = PConstants.RIGHT;
+      }
+    }
+
     float peAmount = peAction == MouseEvent.WHEEL ?
       nativeEvent.getWheelRotation() :
       nativeEvent.getClickCount();
