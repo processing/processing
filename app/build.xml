@@ -78,6 +78,9 @@
 
     <mkdir dir="bin" />
 
+    <!-- env used to set classpath below -->
+    <property environment="env" />
+
     <!-- moved to the main build script -->
     <!-- ant seems to nuke ${java.home} for some reason, pointing at the JRE
 	 subfolder instead of the actual JDK found at JAVA_HOME. 
@@ -85,7 +88,6 @@
 	 and use that to specify the location of tools.jar. -->
     <!-- if someone is better with ant please help clean this up -->
     <!--
-    <property environment="env" />
     <property name="java_home" value="${env.JAVA_HOME}" />
     <available file="${env.JAVA_HOME}/lib/tools.jar"
 	       property="java_tools_found" />

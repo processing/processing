@@ -143,11 +143,13 @@ _   get mouseWheel() added to api ref
 _   also added to keywords.txt
 
 andres
+_ disable stroke perspective by default
+_   http://code.google.com/p/processing/issues/detail?id=1560
 _ P2D/P3D sketches don't get focus until click
 _   also problem for Java2D when canvas is used?
 _   need to standardize canvas handling
-_ OpenGL/P3D sketches show graphical corruption
-_   http://code.google.com/p/processing/issues/detail?id=1452
+A OpenGL/P3D sketches show graphical corruption
+A   http://code.google.com/p/processing/issues/detail?id=1452
 _ noCursor() seems quite/somewhat broken
 X   started some work, ignores 'invisible' already being set
 _ several key/mouse event issues in the db

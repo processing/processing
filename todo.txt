@@ -101,9 +101,14 @@ _ change error message for serial re: 64-bit
 _   "To use this library, switch to 32-bit mode in Preferences." (OS X)
 _   "To use this library, you must use the 32-bit version of Processing."
 
+before release
+_ make decision about where coloring is stored
+_   needs to be reset for this release, maybe others
 
 2.0 FINAL / library/tool/mode manager cleanup
 _ boogers still being left around
+_ Add Tool is having problems
+_   http://code.google.com/p/processing/issues/detail?id=1569
 _ make already installed libraries distinguishable in the list
 _   http://code.google.com/p/processing/issues/detail?id=1212
 _ excessive CPU usage of PDE after using library manager

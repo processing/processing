@@ -19,6 +19,10 @@
     </and>
   </condition>
 
+  <!--
+  <echo message="${java.class.path}" />
+  -->
+
   <!-- Set a property named macosx, linux, or windows. 
        The 'value' chosen is arbitrary. -->
   <property name="${platform}" value="${platform}" />
@@ -36,11 +40,13 @@
   <available file="${env.JAVA_HOME}/lib/tools.jar"
 	     property="java_tools_found" />
 
+  <!-- On JDK 6 for OS X, it's at $JAVA_HOME/../Classes/classes.jar -->
+
   <fail if="windows" unless="java_tools_found" 
 	message="The JAVA_HOME variable must be set to the location of a full JDK. For instance, on Windows, this might be c:\jdk1.6.0_19." />
 
   <fail if="macosx" unless="java_tools_found"
-	message="To build on OS X, you must have a full JDK installed, and set JAVA_HOME=`/usr/libexec/java_home`" />
+	message="To build on OS X, you must have JDK 7 (not just the plugin) installed, and set JAVA_HOME=`/usr/libexec/java_home`" />
 
   <fail if="linux" unless="java_tools_found" 
 	message="The JAVA_HOME variable must be set to the location of a full JDK. For instance, on Ubuntu Linux, this might be /usr/lib/jvm/java-6-sun." />
