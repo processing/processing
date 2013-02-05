@@ -43,7 +43,7 @@ attribute vec4 emissive;
 attribute float shininess;
 
 varying vec4 vertColor;
-varying vec4 vertTexcoord;
+varying vec4 vertTexCoord;
 
 const float zero_float = 0.0;
 const float one_float = 1.0;
@@ -141,5 +141,5 @@ void main() {
               vec4(emissive.rgb, 0); 
               
   // Calculating texture coordinates, with r and q set both to one
-  vertTexcoord = texMatrix * vec4(texCoord, 1.0, 1.0);        
+  vertTexCoord = texMatrix * vec4(texCoord, 1.0, 1.0);        
 }

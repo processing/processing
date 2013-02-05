@@ -28,8 +28,8 @@ uniform sampler2D texture;
 uniform vec2 texOffset;
 
 varying vec4 vertColor;
-varying vec4 vertTexcoord;
+varying vec4 vertTexCoord;
 
 void main() {
-  gl_FragColor = texture2D(shininess, vertTexcoord.st) * vertColor;
+  gl_FragColor = texture2D(shininess, vertTexCoord.st) * vertColor;
 }
