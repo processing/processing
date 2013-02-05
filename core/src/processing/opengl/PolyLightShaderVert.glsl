@@ -19,7 +19,7 @@
  */
 
 uniform mat4 modelviewMatrix;
-uniform mat4 projmodelviewMatrix;
+uniform mat4 transform;
 uniform mat3 normalMatrix;
 
 uniform int lightCount;
@@ -73,7 +73,7 @@ float blinnPhongFactor(vec3 lightDir, vec3 vertPos, vec3 vecNormal, float shine)
 
 void main() {
   // Vertex in clip coordinates
-  gl_Position = projmodelviewMatrix * inVertex;
+  gl_Position = transform * inVertex;
     
   // Vertex in eye coordinates
   vec3 ecVertex = vec3(modelviewMatrix * inVertex);

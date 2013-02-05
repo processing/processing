@@ -19,7 +19,7 @@
  */
 
 uniform mat4 modelviewMatrix;
-uniform mat4 projmodelviewMatrix;
+uniform mat4 transform;
 uniform mat3 normalMatrix;
 uniform mat4 texcoordMatrix;
 

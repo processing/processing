@@ -6470,15 +6470,11 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected class BaseShader extends PShader {
-    protected int projmodelviewMatrixLoc;
+    protected int transformMatrixLoc;
     protected int modelviewMatrixLoc;
     protected int projectionMatrixLoc;
-    protected int pframeSamplerLoc;
-    protected int resolutionLoc;
+    protected int bufferSamplerLoc;
     protected int viewportLoc;
-    protected int mouseLoc;
-    protected int pmouseLoc;
-    protected int timeLoc;
 
     public BaseShader(PApplet parent) {
       super(parent);
@@ -6494,22 +6490,16 @@ public class PGraphicsOpenGL extends PGraphics {
 
     @Override
     public void loadUniforms() {
-      projmodelviewMatrixLoc = getUniformLoc("projmodelviewMatrix");
+      transformMatrixLoc = getUniformLoc("transform");
       modelviewMatrixLoc = getUniformLoc("modelviewMatrix");
       projectionMatrixLoc = getUniformLoc("projectionMatrix");
-
-      resolutionLoc = getUniformLoc("resolution");
       viewportLoc = getUniformLoc("viewport");
-      mouseLoc = getUniformLoc("mouse");
-      pmouseLoc = getUniformLoc("pmouse");
-      timeLoc = getUniformLoc("time");
-
-      pframeSamplerLoc = getUniformLoc("pframeSampler");
+      bufferSamplerLoc = getUniformLoc("buffer");
     }
 
     @Override
     public void unbind() {
-      if (-1 < pframeSamplerLoc) {
+      if (-1 < bufferSamplerLoc) {
         pgl.needFBOLayer();
         pgl.activeTexture(PGL.TEXTURE0 + lastTexUnit);
         pgCurrent.unbindBackTexture();
@@ -6522,9 +6512,9 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     protected void setCommonUniforms() {
-      if (-1 < projmodelviewMatrixLoc) {
+      if (-1 < transformMatrixLoc) {
         pgCurrent.updateGLProjmodelview();
-        setUniformMatrix(projmodelviewMatrixLoc, pgCurrent.glProjmodelview);
+        setUniformMatrix(transformMatrixLoc, pgCurrent.glProjmodelview);
       }
 
       if (-1 < modelviewMatrixLoc) {
@@ -6537,12 +6527,6 @@ public class PGraphicsOpenGL extends PGraphics {
         setUniformMatrix(projectionMatrixLoc, pgCurrent.glProjection);
       }
 
-      if (1 < resolutionLoc) {
-        float w = pgCurrent.width;
-        float h = pgCurrent.height;
-        setUniformValue(resolutionLoc, w, h);
-      }
-
       if (-1 < viewportLoc) {
         float x = pgCurrent.viewport.get(0);
         float y = pgCurrent.viewport.get(1);
@@ -6551,25 +6535,8 @@ public class PGraphicsOpenGL extends PGraphics {
         setUniformValue(viewportLoc, x, y, w, h);
       }
 
-      if (-1 < mouseLoc) {
-        float mx = pgCurrent.parent.mouseX;
-        float my = pgCurrent.parent.height - pgCurrent.parent.mouseY;
-        setUniformValue(mouseLoc, mx, my);
-      }
-
-      if (-1 < pmouseLoc) {
-        float pmx = pgCurrent.parent.pmouseX;
-        float pmy = pgCurrent.parent.height - pgCurrent.parent.pmouseY;
-        setUniformValue(pmouseLoc, pmx, pmy);
-      }
-
-      if (-1 < timeLoc) {
-        float sec = pgCurrent.parent.millis() / 1000.0f;
-        setUniformValue(timeLoc, sec);
-      }
-
-      if (-1 < pframeSamplerLoc) {
-        setUniformValue(pframeSamplerLoc, lastTexUnit);
+      if (-1 < bufferSamplerLoc) {
+        setUniformValue(bufferSamplerLoc, lastTexUnit);
         pgl.activeTexture(PGL.TEXTURE0 + lastTexUnit);
         pgCurrent.bindBackTexture();
       }

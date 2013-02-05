@@ -18,7 +18,7 @@
   Boston, MA  02111-1307  USA
  */
 
-uniform mat4 projmodelviewMatrix;
+uniform mat4 transform;
 uniform mat4 texcoordMatrix;
 
 attribute vec4 inVertex;
@@ -29,7 +29,7 @@ varying vec4 vertColor;
 varying vec4 vertTexcoord;
 
 void main() {
-  gl_Position = projmodelviewMatrix * inVertex;
+  gl_Position = transform * inVertex;
     
   vertColor = inColor;
   vertTexcoord = texcoordMatrix * vec4(inTexcoord, 1.0, 1.0);
