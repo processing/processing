@@ -18,6 +18,8 @@
   Boston, MA  02111-1307  USA
  */
 
+#define PROCESSING_TEXTURE_SHADER
+
 uniform mat4 transform;
 uniform mat4 texMatrix;
 

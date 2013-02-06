@@ -18,6 +18,8 @@
   Boston, MA  02111-1307  USA
  */
 
+#define PROCESSING_COLOR_SHADER
+
 uniform mat4 transform;
 
 attribute vec4 vertex;

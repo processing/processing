@@ -27,7 +27,6 @@ import processing.core.*;
 import java.net.URL;
 import java.nio.*;
 import java.util.*;
-import java.util.regex.*;
 
 /**
  * OpenGL renderer.
@@ -6126,27 +6125,47 @@ public class PGraphicsOpenGL extends PGraphics {
 
   @Override
   public PShader loadShader(String fragFilename) {
-    int shaderType = getTypeFromFragmentShader(fragFilename);
+    int shaderType = getShaderType(fragFilename);
+    if (shaderType == -1) {
+      PGraphics.showWarning(INVALID_PROCESSING_SHADER_ERROR);
+      return null;
+    }
     PShader shader = null;
-    if (shaderType == PShader.TEXTURE) {
+    if (shaderType == PShader.POINT) {
+      shader = new PointShader(parent);
+      shader.setVertexShader(defPointShaderVertURL);
+    } else if (shaderType == PShader.LINE) {
+      shader = new LineShader(parent);
+      shader.setVertexShader(defLineShaderVertURL);
+    } else if (shaderType == PShader.TEXLIGHT) {
+      shader = new PolyTexlightShader(parent);
+      shader.setVertexShader(defPolyTexlightShaderVertURL);
+    } else if (shaderType == PShader.LIGHT) {
+      shader = new PolyLightShader(parent);
+      shader.setVertexShader(defPolyLightShaderVertURL);
+    } else if (shaderType == PShader.TEXTURE) {
       shader = new PolyTexShader(parent);
       shader.setVertexShader(defPolyTexShaderVertURL);
     } else if (shaderType == PShader.COLOR) {
       shader = new PolyColorShader(parent);
       shader.setVertexShader(defPolyColorShaderVertURL);
     }
-    if (shader == null){
-      PGraphics.showWarning(INVALID_PROCESSING_SHADER_ERROR);
-    } else {
-      shader.setFragmentShader(fragFilename);
-    }
+    shader.setFragmentShader(fragFilename);
     return shader;
   }
 
 
   @Override
   public PShader loadShader(String fragFilename, String vertFilename) {
-    int shaderType = getTypeFromVertexShader(vertFilename);
+    int shaderType = getShaderType(vertFilename);
+    if (shaderType == -1) {
+      shaderType = getShaderType(fragFilename);
+    }
+    if (shaderType == -1) {
+      PGraphics.showWarning(INVALID_PROCESSING_SHADER_ERROR);
+      return null;
+    }
+
     PShader shader = null;
     if (fragFilename == null || fragFilename.equals("")) {
       if (shaderType == PShader.POINT) {
@@ -6185,9 +6204,6 @@ public class PGraphicsOpenGL extends PGraphics {
       } else if (shaderType == PShader.COLOR) {
         shader = new PolyColorShader(parent, vertFilename, fragFilename);
       }
-    }
-    if (shader == null) {
-      PGraphics.showWarning(INVALID_PROCESSING_SHADER_ERROR);
     }
     return shader;
   }
@@ -6263,55 +6279,23 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  protected int getTypeFromFragmentShader(String filename) {
+  protected int getShaderType(String filename) {
     String[] source = parent.loadStrings(filename);
-
-    Pattern pattern = Pattern.compile("uniform *sampler2D *textureSampler");
-
-    int type = PShader.COLOR;
+    int type = -1;
     for (int i = 0; i < source.length; i++) {
-      Matcher matcher = pattern.matcher(source[i]);
-      if (matcher.find()) {
+      if (source[i].equals("#define PROCESSING_POINT_SHADER")) {
+        type = PShader.POINT;
+      } else if (source[i].equals("#define PROCESSING_LINE_SHADER")) {
+        type = PShader.LINE;
+      } else if (source[i].equals("#define PROCESSING_COLOR_SHADER")) {
+        type = PShader.COLOR;
+      } else if (source[i].equals("#define PROCESSING_LIGHT_SHADER")) {
+        type = PShader.LIGHT;
+      } else if (source[i].equals("#define PROCESSING_TEXTURE_SHADER")) {
         type = PShader.TEXTURE;
-        break;
+      } else if (source[i].equals("#define PROCESSING_TEXLIGHT_SHADER")) {
+        type = PShader.TEXLIGHT;
       }
-    }
-    return type;
-  }
-
-
-  protected int getTypeFromVertexShader(String filename) {
-    String[] source = parent.loadStrings(filename);
-
-    Pattern pointPattern  = Pattern.compile("attribute *vec2 *inPoint");
-    Pattern linePattern   = Pattern.compile("attribute *vec4 *inLine");
-    Pattern lightPattern1 = Pattern.compile("uniform *vec4 *lightPosition");
-    Pattern lightPattern2 = Pattern.compile("uniform *vec3 *lightNormal");
-    Pattern texPattern    = Pattern.compile("attribute vec2 inTexcoord");
-
-    boolean foundPoint = false;
-    boolean foundLine  = false;
-    boolean foundLight = false;
-    boolean foundTex   = false;
-    for (int i = 0; i < source.length; i++) {
-      foundPoint |= pointPattern.matcher(source[i]).find();
-      foundLine  |= linePattern.matcher(source[i]).find();
-      foundLight |= lightPattern1.matcher(source[i]).find();
-      foundLight |= lightPattern2.matcher(source[i]).find();
-      foundTex   |= texPattern.matcher(source[i]).find();
-    }
-
-    int type = PShader.COLOR;
-    if (foundPoint) {
-      type = PShader.POINT;
-     } else if (foundLine) {
-       type = PShader.LINE;
-     } else if (foundLight && foundTex) {
-       type = PShader.TEXLIGHT;
-     } else if (foundLight) {
-       type = PShader.LIGHT;
-     } else if (foundTex) {
-     type = PShader.TEXTURE;
     }
     return type;
   }

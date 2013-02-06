@@ -18,6 +18,8 @@
   Boston, MA  02111-1307  USA
  */
 
+#define PROCESSING_POINT_SHADER
+
 uniform mat4 projection;
 uniform mat4 modelview;
  
