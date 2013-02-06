@@ -7,14 +7,16 @@
 // Useful for ceramic or fluids - from Advanced 
 // Renderman, thanks to Larry Gritz
 
-uniform mat4 modelviewMatrix;
-uniform mat4 projmodelviewMatrix;
+#define PROCESSING_LIGHT_SHADER
+
+uniform mat4 modelview;
+uniform mat4 transform;
 uniform mat3 normalMatrix;
 
 uniform vec4 lightPosition[8];
 
-attribute vec4 inVertex;
-attribute vec3 inNormal;
+attribute vec4 vertex;
+attribute vec3 normal;
 
 varying vec3 N;
 varying vec3 P;
@@ -22,10 +24,10 @@ varying vec3 V;
 varying vec3 L;
 
 void main() {    
-  N = normalize(normalMatrix * inNormal); 
-  P = inVertex.xyz;
-  V = -vec3(modelviewMatrix * inVertex);
-  L = vec3(modelviewMatrix * (lightPosition[0] - inVertex));
-  gl_Position = projmodelviewMatrix * inVertex;
+  N = normalize(normalMatrix * normal); 
+  P = vertex.xyz;
+  V = -vec3(modelview * vertex);
+  L = vec3(modelview * (lightPosition[0] - vertex));
+  gl_Position = transform * vertex;
 }
 

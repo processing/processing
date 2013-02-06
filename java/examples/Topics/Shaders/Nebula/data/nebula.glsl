@@ -1,6 +1,7 @@
+#define PROCESSING_COLOR_SHADER
+
 uniform float time;
 uniform vec2 resolution;
-
 
 // NEBULA - CoffeeBreakStudios.com (CBS)
 // Work in progress...

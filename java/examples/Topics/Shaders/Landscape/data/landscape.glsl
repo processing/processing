@@ -12,6 +12,7 @@
 precision highp float;
 #endif
 
+#define PROCESSING_COLOR_SHADER
 
 uniform vec2 resolution;
 uniform float time;

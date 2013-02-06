@@ -10,11 +10,13 @@ precision mediump float;
 precision mediump int;
 #endif
 
-uniform sampler2D textureSampler;
-uniform mat4 texcoordMatrix;
+#define PROCESSING_TEXTURE_SHADER
+
+uniform sampler2D texture;
+uniform mat4 texMatrix;
 
 varying vec4 vertColor;
-varying vec4 vertTexcoord;
+varying vec4 vertTexCoord;
 
 uniform float aperture;
 
@@ -31,8 +33,8 @@ void main(void) {
   // The st factor takes into account the situation when non-pot
   // textures are not supported, so that the maximum texture
   // coordinate to cover the entire image might not be 1.
-  vec2 stFactor = vec2(1.0 / abs(texcoordMatrix[0][0]), 1.0 / abs(texcoordMatrix[1][1]));  
-  vec2 pos = (2.0 * vertTexcoord.st * stFactor - 1.0);
+  vec2 stFactor = vec2(1.0 / abs(texMatrix[0][0]), 1.0 / abs(texMatrix[1][1]));  
+  vec2 pos = (2.0 * vertTexCoord.st * stFactor - 1.0);
   
   float l = length(pos);
   if (l > 1.0) {
@@ -52,6 +54,6 @@ void main(void) {
     float u = r * cos(phi) + 0.5;
     float v = r * sin(phi) + 0.5;
 
-    gl_FragColor = texture2D(textureSampler, vec2(u, v) / stFactor) * vertColor;
+    gl_FragColor = texture2D(texture, vec2(u, v) / stFactor) * vertColor;
   }
 }

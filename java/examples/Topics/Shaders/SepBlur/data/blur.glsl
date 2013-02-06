@@ -6,13 +6,15 @@ precision mediump float;
 precision mediump int;
 #endif
 
-uniform sampler2D textureSampler;
+#define PROCESSING_TEXTURE_SHADER
+
+uniform sampler2D texture;
 
 // The inverse of the texture dimensions along X and Y
-uniform vec2 texcoordOffset;
+uniform vec2 texOffset;
 
 varying vec4 vertColor;
-varying vec4 vertTexcoord;
+varying vec4 vertTexCoord;
 
 uniform int blurSize;       
 uniform int horizontalPass; // 0 or 1 to indicate vertical or horizontal pass
@@ -39,15 +41,15 @@ void main() {
   float coefficientSum = 0.0;
 
   // Take the central sample first...
-  avgValue += texture2D(textureSampler, vertTexcoord.st) * incrementalGaussian.x;
+  avgValue += texture2D(texture, vertTexCoord.st) * incrementalGaussian.x;
   coefficientSum += incrementalGaussian.x;
   incrementalGaussian.xy *= incrementalGaussian.yz;
 
   // Go through the remaining 8 vertical samples (4 on each side of the center)
   for (float i = 1.0; i <= numBlurPixelsPerSide; i++) { 
-    avgValue += texture2D(textureSampler, vertTexcoord.st - i * texcoordOffset * 
+    avgValue += texture2D(texture, vertTexCoord.st - i * texOffset * 
                           blurMultiplyVec) * incrementalGaussian.x;         
-    avgValue += texture2D(textureSampler, vertTexcoord.st + i * texcoordOffset * 
+    avgValue += texture2D(texture, vertTexCoord.st + i * texOffset * 
                           blurMultiplyVec) * incrementalGaussian.x;         
     coefficientSum += 2.0 * incrementalGaussian.x;
     incrementalGaussian.xy *= incrementalGaussian.yz;

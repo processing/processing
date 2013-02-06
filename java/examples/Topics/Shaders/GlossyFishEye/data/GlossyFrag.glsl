@@ -27,19 +27,18 @@ varying vec3 P;
 varying vec3 V;
 varying vec3 L;
     
-void main()
-{ 
-	float w = 0.18*(1.0-Sharpness);
+void main() { 
+  float w = 0.18*(1.0-Sharpness);
 	
-    vec3 l = normalize(L);
-    vec3 n = normalize(N);
-    vec3 v = normalize(V);
-    vec3 h = normalize(l+v);
+  vec3 l = normalize(L);
+  vec3 n = normalize(N);
+  vec3 v = normalize(V);
+  vec3 h = normalize(l+v);
 
-    float diffuse = dot(l,n);
-    float specular = smoothstep(0.72-w,0.72+w,pow(max(0.0,dot(n,h)),1.0/Roughness));
+  float diffuse = dot(l,n);
+  float specular = smoothstep(0.72-w,0.72+w,pow(max(0.0,dot(n,h)),1.0/Roughness));
     
-    gl_FragColor = vec4(AmbientColour*AmbientIntensity + 
-                        DiffuseColour*diffuse*DiffuseIntensity +
-                        SpecularColour*specular*SpecularIntensity,1);
+  gl_FragColor = vec4(AmbientColour*AmbientIntensity + 
+                      DiffuseColour*diffuse*DiffuseIntensity +
+                      SpecularColour*specular*SpecularIntensity,1);
 }
