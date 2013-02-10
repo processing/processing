@@ -18,15 +18,16 @@
   Boston, MA  02111-1307  USA
  */
 
-uniform mat4 projmodelviewMatrix;
+#define PROCESSING_COLOR_SHADER
 
-attribute vec4 inVertex;
-attribute vec4 inColor;
+uniform mat4 transform;
+
+attribute vec4 vertex;
+attribute vec4 color;
 
 varying vec4 vertColor;
 
 void main() {
-  gl_Position = projmodelviewMatrix * inVertex;
-    
-  vertColor = inColor;
+  gl_Position = transform * vertex;    
+  vertColor = color;
 }

@@ -38,9 +38,9 @@ void draw() {
   
   pgl = beginPGL();
   flatShader.bind();
-
-  vertLoc = pgl.getAttribLocation(flatShader.glProgram, "inVertex");
-  colorLoc = pgl.getAttribLocation(flatShader.glProgram, "inColor");
+  
+  vertLoc = pgl.getAttribLocation(flatShader.glProgram, "vertex");
+  colorLoc = pgl.getAttribLocation(flatShader.glProgram, "color");
   
   pgl.enableVertexAttribArray(vertLoc);
   pgl.enableVertexAttribArray(colorLoc);
