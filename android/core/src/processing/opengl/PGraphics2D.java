@@ -283,7 +283,7 @@ public class PGraphics2D extends PGraphicsOpenGL {
 
   @Override
   public PShape createShape() {
-    return createShape(POLYGON);
+    return createShape(PShape.GEOMETRY);
   }
 
 
@@ -305,7 +305,12 @@ public class PGraphics2D extends PGraphicsOpenGL {
       shape = new PShapeOpenGL(parent, PConstants.GROUP);
     } else if (type == PShape.PATH) {
       shape = new PShapeOpenGL(parent, PShape.PATH);
-    } else if (type == POINTS) {
+    } else if (type == PShape.GEOMETRY) {
+      shape = new PShapeOpenGL(parent, PShape.GEOMETRY);
+    }
+
+    /*
+    if (type == POINTS) {
       shape = new PShapeOpenGL(parent, PShape.GEOMETRY);
       shape.setKind(POINTS);
     } else if (type == LINES) {
@@ -330,6 +335,8 @@ public class PGraphics2D extends PGraphicsOpenGL {
       shape = new PShapeOpenGL(parent, PShape.GEOMETRY);
       shape.setKind(POLYGON);
     }
+    */
+
     shape.is3D(false);
     return shape;
   }

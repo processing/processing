@@ -844,7 +844,7 @@ public class PGL {
   }
 
 
-  protected static boolean glThreadIsCurrent() {
+  protected boolean threadIsCurrent() {
     return Thread.currentThread() == glThread;
   }
 
@@ -1502,48 +1502,13 @@ public class PGL {
   // Context interface
 
 
-  protected Context createEmptyContext() {
-    return new Context();
+  protected int createEmptyContext() {
+    return -1;
   }
 
 
-  protected Context getCurrentContext() {
-    return new Context(context);
-  }
-
-
-  protected class Context {
-    protected int id;
-
-    Context() {
-      id = -1;
-    }
-
-    Context(EGLContext context) {
-      if (context != null) {
-        id = context.hashCode();
-      } else {
-        id = -1;
-      }
-    }
-
-    boolean current() {
-      return equal(context);
-    }
-
-    boolean equal(EGLContext context) {
-      if (id == -1 || context == null) {
-        // A null context means a still non-created resource,
-        // so it is considered equal to the argument.
-        return true;
-      } else {
-        return id == context.hashCode();
-      }
-    }
-
-    int id() {
-      return id;
-    }
+  protected int getCurrentContext() {
+    return context.hashCode();
   }
 
 
@@ -1648,8 +1613,8 @@ public class PGL {
   // Utility functions
 
 
-  protected boolean contextIsCurrent(Context other) {
-    return other == null || other.current();
+  protected boolean contextIsCurrent(int other) {
+    return other == -1 || other == context.hashCode();
   }
 
 
@@ -1742,8 +1707,6 @@ public class PGL {
     }
 
     if (texData == null) {
-      // This buffer has to be direct because vertexAttribPointer only accepts
-      // direct buffers.
       texData = allocateDirectFloatBuffer(texCoords.length);
     }
 
@@ -1766,25 +1729,21 @@ public class PGL {
 
       // Vertex coordinates of the textured quad are specified
       // in normalized screen space (-1, 1):
-
       // Corner 1
       texCoords[ 0] = 2 * (float)scrX0 / pg.width - 1;
       texCoords[ 1] = 2 * (float)scrY0 / pg.height - 1;
       texCoords[ 2] = (float)texX0 / width;
       texCoords[ 3] = (float)texY0 / height;
-
       // Corner 2
       texCoords[ 4] = 2 * (float)scrX1 / pg.width - 1;
       texCoords[ 5] = 2 * (float)scrY0 / pg.height - 1;
       texCoords[ 6] = (float)texX1 / width;
       texCoords[ 7] = (float)texY0 / height;
-
       // Corner 3
       texCoords[ 8] = 2 * (float)scrX0 / pg.width - 1;
       texCoords[ 9] = 2 * (float)scrY1 / pg.height - 1;
       texCoords[10] = (float)texX0 / width;
       texCoords[11] = (float)texY1 / height;
-
       // Corner 4
       texCoords[12] = 2 * (float)scrX1 / pg.width - 1;
       texCoords[13] = 2 * (float)scrY1 / pg.height - 1;
@@ -1801,6 +1760,8 @@ public class PGL {
         enabledTex = true;
       }
       bindTexture(target, id);
+
+      bindBuffer(ARRAY_BUFFER, 0); // Making sure that no VBO is bound at this point.
 
       texData.position(0);
       vertexAttribPointer(texVertLoc, 2, FLOAT, false, 4 * SIZEOF_FLOAT,

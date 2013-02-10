@@ -58,7 +58,7 @@ public class PShader {
   protected PGraphicsOpenGL pgCurrent;
 
   protected PGL pgl;
-  protected PGL.Context context;      // The context that created this shader.
+  protected int context;      // The context that created this shader.
 
   public int glProgram;
   public int glVertex;
@@ -89,7 +89,7 @@ public class PShader {
     parent = null;
     pgMain = null;
     pgl = null;
-    context = null;
+    context = -1;
 
     this.vertexURL = null;
     this.fragmentURL = null;
@@ -172,13 +172,13 @@ public class PShader {
   protected void finalize() throws Throwable {
     try {
       if (glVertex != 0) {
-        pgMain.finalizeGLSLVertShaderObject(glVertex, context.id());
+        pgMain.finalizeGLSLVertShaderObject(glVertex, context);
       }
       if (glFragment != 0) {
-        pgMain.finalizeGLSLFragShaderObject(glFragment, context.id());
+        pgMain.finalizeGLSLFragShaderObject(glFragment, context);
       }
       if (glProgram != 0) {
-        pgMain.finalizeGLSLProgramObject(glProgram, context.id());
+        pgMain.finalizeGLSLProgramObject(glProgram, context);
       }
     } finally {
       super.finalize();
@@ -698,7 +698,7 @@ public class PShader {
   protected void init() {
     if (glProgram == 0 || contextIsOutdated()) {
       context = pgl.getCurrentContext();
-      glProgram = pgMain.createGLSLProgramObject(context.id());
+      glProgram = pgMain.createGLSLProgramObject(context);
 
       boolean hasVert = false;
       if (vertexFilename != null) {
@@ -761,9 +761,9 @@ public class PShader {
   protected boolean contextIsOutdated() {
     boolean outdated = !pgl.contextIsCurrent(context);
     if (outdated) {
-      pgMain.removeGLSLProgramObject(glProgram, context.id());
-      pgMain.removeGLSLVertShaderObject(glVertex, context.id());
-      pgMain.removeGLSLFragShaderObject(glFragment, context.id());
+      pgMain.removeGLSLProgramObject(glProgram, context);
+      pgMain.removeGLSLVertShaderObject(glVertex, context);
+      pgMain.removeGLSLFragShaderObject(glFragment, context);
 
       glProgram = 0;
       glVertex = 0;
@@ -833,7 +833,7 @@ public class PShader {
    * @param shaderSource a string containing the shader's code
    */
   protected boolean compileVertexShader() {
-    glVertex = pgMain.createGLSLVertShaderObject(context.id());
+    glVertex = pgMain.createGLSLVertShaderObject(context);
 
     pgl.shaderSource(glVertex, vertexShaderSource);
     pgl.compileShader(glVertex);
@@ -854,7 +854,7 @@ public class PShader {
    * @param shaderSource a string containing the shader's code
    */
   protected boolean compileFragmentShader() {
-    glFragment = pgMain.createGLSLFragShaderObject(context.id());
+    glFragment = pgMain.createGLSLFragShaderObject(context);
 
     pgl.shaderSource(glFragment, fragmentShaderSource);
     pgl.compileShader(glFragment);
@@ -883,15 +883,15 @@ public class PShader {
 
   protected void release() {
     if (glVertex != 0) {
-      pgMain.deleteGLSLVertShaderObject(glVertex, context.id());
+      pgMain.deleteGLSLVertShaderObject(glVertex, context);
       glVertex = 0;
     }
     if (glFragment != 0) {
-      pgMain.deleteGLSLFragShaderObject(glFragment, context.id());
+      pgMain.deleteGLSLFragShaderObject(glFragment, context);
       glFragment = 0;
     }
     if (glProgram != 0) {
-      pgMain.deleteGLSLProgramObject(glProgram, context.id());
+      pgMain.deleteGLSLProgramObject(glProgram, context);
       glProgram = 0;
     }
   }
