@@ -667,6 +667,7 @@ public class PGL {
       window.addKeyListener(keyListener);
       NEWTWindowListener winListener = new NEWTWindowListener();
       window.addWindowListener(winListener);
+      canvasNEWT.addFocusListener(pg.parent); // So focus detection work.
 
       capabilities = window.getChosenGLCapabilities();
       canvas = canvasNEWT;
