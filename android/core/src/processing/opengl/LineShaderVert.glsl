@@ -1,7 +1,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2011-12 Ben Fry and Casey Reas
+  Copyright (c) 2011-13 Ben Fry and Casey Reas
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -18,16 +18,18 @@
   Boston, MA  02111-1307  USA
  */
 
-uniform mat4 modelviewMatrix;
-uniform mat4 projectionMatrix;
+#define PROCESSING_LINE_SHADER
+
+uniform mat4 modelview;
+uniform mat4 projection;
 
 uniform vec4 viewport;
 uniform int perspective;
 uniform vec3 scale;
 
-attribute vec4 inVertex;
-attribute vec4 inColor;
-attribute vec4 inLine;
+attribute vec4 vertex;
+attribute vec4 color;
+attribute vec4 endpoint;
 
 varying vec4 vertColor;
 
@@ -43,21 +45,21 @@ vec4 windowToClipVector(vec2 window, vec4 viewport, float clip_w) {
 }  
   
 void main() {
-  vec4 pos_p = inVertex;
-  vec4 v_p = modelviewMatrix * pos_p;  
+  vec4 pos_p = vertex;
+  vec4 v_p = modelview * pos_p;  
   // Moving vertices slightly toward the camera
   // to avoid depth-fighting with the fill triangles.
   // Discussed here:
   // http://www.opengl.org/discussion_boards/ubbthreads.php?ubb=showflat&Number=252848  
   v_p.xyz = v_p.xyz * scale;
-  vec4 clip_p = projectionMatrix * v_p;
-  float thickness = inLine.w;
+  vec4 clip_p = projection * v_p;
+  float thickness = endpoint.w;
   
   if (thickness != 0.0) {  
-    vec4 pos_q = vec4(inLine.xyz, 1);
-    vec4 v_q = modelviewMatrix * pos_q;
+    vec4 pos_q = vec4(endpoint.xyz, 1);
+    vec4 v_q = modelview * pos_q;
     v_q.xyz = v_q.xyz * scale;  
-    vec4 clip_q = projectionMatrix * v_q; 
+    vec4 clip_q = projection * v_q; 
   
     vec3 window_p = clipToWindow(clip_p, viewport); 
     vec3 window_q = clipToWindow(clip_q, viewport); 
@@ -81,5 +83,5 @@ void main() {
     gl_Position = clip_p;
   }
   
-  vertColor = inColor;
+  vertColor = color;
 }

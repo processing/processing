@@ -1,7 +1,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2011-12 Ben Fry and Casey Reas
+  Copyright (c) 2011-13 Ben Fry and Casey Reas
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -18,19 +18,21 @@
   Boston, MA  02111-1307  USA
  */
 
-uniform mat4 projmodelviewMatrix;
-uniform mat4 texcoordMatrix;
+#define PROCESSING_TEXTURE_SHADER
 
-attribute vec4 inVertex;
-attribute vec4 inColor;
-attribute vec2 inTexcoord;
+uniform mat4 transform;
+uniform mat4 texMatrix;
+
+attribute vec4 vertex;
+attribute vec4 color;
+attribute vec2 texCoord;
 
 varying vec4 vertColor;
-varying vec4 vertTexcoord;
+varying vec4 vertTexCoord;
 
 void main() {
-  gl_Position = projmodelviewMatrix * inVertex;
+  gl_Position = transform * vertex;
     
-  vertColor = inColor;
-  vertTexcoord = texcoordMatrix * vec4(inTexcoord, 1.0, 1.0);
+  vertColor = color;
+  vertTexCoord = texMatrix * vec4(texCoord, 1.0, 1.0);
 }

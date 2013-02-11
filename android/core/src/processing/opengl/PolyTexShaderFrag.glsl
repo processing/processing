@@ -1,7 +1,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2011-12 Ben Fry and Casey Reas
+  Copyright (c) 2011-13 Ben Fry and Casey Reas
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -23,13 +23,13 @@ precision mediump float;
 precision mediump int;
 #endif
 
-uniform sampler2D textureSampler;
+uniform sampler2D texture;
 
-uniform vec2 texcoordOffset;
+uniform vec2 texOffset;
 
 varying vec4 vertColor;
-varying vec4 vertTexcoord;
+varying vec4 vertTexCoord;
 
 void main() {
-  gl_FragColor = texture2D(textureSampler, vertTexcoord.st) * vertColor;
+  gl_FragColor = texture2D(texture, vertTexCoord.st) * vertColor;
 }

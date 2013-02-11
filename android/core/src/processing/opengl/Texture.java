@@ -78,10 +78,10 @@ public class Texture implements PConstants {
   public int glWidth;
   public int glHeight;
 
-  protected PApplet parent;           // The Processing applet
-  protected PGraphicsOpenGL pg;       // The main renderer
-  protected PGL pgl;                  // The interface between Processing and OpenGL.
-  protected PGL.Context context;      // The context that created this texture.
+  protected PApplet parent;         // The Processing applet
+  protected PGraphicsOpenGL pg;     // The main renderer
+  protected PGL pgl;                // The interface between Processing and OpenGL.
+  protected int context;            // The context that created this texture.
   protected PGraphicsOpenGL pgDraw; // The main renderer is the color buffer of.
 
   protected boolean usingMipmaps;
@@ -162,7 +162,7 @@ public class Texture implements PConstants {
   protected void finalize() throws Throwable {
     try {
       if (glName != 0) {
-        pg.finalizeTextureObject(glName, context.id());
+        pg.finalizeTextureObject(glName, context);
       }
     } finally {
       super.finalize();
@@ -1193,7 +1193,7 @@ public class Texture implements PConstants {
     }
 
     context = pgl.getCurrentContext();
-    glName = pg.createTextureObject(context.id());
+    glName = pg.createTextureObject(context);
 
     pgl.bindTexture(glTarget, glName);
     pgl.texParameteri(glTarget, PGL.TEXTURE_MIN_FILTER, glMinFilter);
@@ -1228,7 +1228,7 @@ public class Texture implements PConstants {
    */
   protected void release() {
     if (glName != 0) {
-      pg.finalizeTextureObject(glName, context.id());
+      pg.finalizeTextureObject(glName, context);
       glName = 0;
     }
   }
@@ -1240,7 +1240,7 @@ public class Texture implements PConstants {
       // Removing the texture object from the renderer's list so it
       // doesn't get deleted by OpenGL. The texture object was
       // automatically disposed when the old context was destroyed.
-      pg.removeTextureObject(glName, context.id());
+      pg.removeTextureObject(glName, context);
 
       // And then set the id to zero, so it doesn't try to be
       // deleted when the object's finalizer is invoked by the GC.

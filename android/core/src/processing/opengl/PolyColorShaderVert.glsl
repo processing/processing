@@ -1,7 +1,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2011-12 Ben Fry and Casey Reas
+  Copyright (c) 2011-13 Ben Fry and Casey Reas
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -18,15 +18,17 @@
   Boston, MA  02111-1307  USA
  */
 
-uniform mat4 projmodelviewMatrix;
+#define PROCESSING_COLOR_SHADER
 
-attribute vec4 inVertex;
-attribute vec4 inColor;
+uniform mat4 transform;
+
+attribute vec4 vertex;
+attribute vec4 color;
 
 varying vec4 vertColor;
 
 void main() {
-  gl_Position = projmodelviewMatrix * inVertex;
+  gl_Position = transform * vertex;
     
-  vertColor = inColor;
+  vertColor = color;
 }
