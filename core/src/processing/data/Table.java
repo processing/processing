@@ -2944,12 +2944,12 @@ public class Table {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  protected String[] getUnique(String column) {
-    return getUnique(getColumnIndex(column));
+  public String[] listUnique(String column) {
+    return listUnique(getColumnIndex(column));
   }
 
 
-  protected String[] getUnique(int column) {
+  public String[] listUnique(int column) {
     HashMapSucks found = new HashMapSucks();
     for (int row = 0; row < getRowCount(); row++) {
       found.check(getString(row, column));
@@ -2960,12 +2960,12 @@ public class Table {
   }
 
 
-  protected HashMap<String,Integer> getUniqueCount(String columnName) {
-    return getUniqueCount(getColumnIndex(columnName));
+  public HashMap<String,Integer> tallyUnique(String columnName) {
+    return tallyUnique(getColumnIndex(columnName));
   }
 
 
-  protected HashMap<String,Integer> getUniqueCount(int column) {
+  public HashMap<String,Integer> tallyUnique(int column) {
     HashMapSucks outgoing = new HashMapSucks();
     for (int row = 0; row < rowCount; row++) {
       String entry = getString(row, column);
