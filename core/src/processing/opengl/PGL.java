@@ -146,9 +146,11 @@ public class PGL {
       // https://jogamp.org/bugzilla/show_bug.cgi?id=409
       toolkit = AWT;
     } else if (PApplet.platform == PConstants.MACOSX) {
-      toolkit = NEWT; // Solves the issues with Java 7 and OS X 10.7+
-    } else if (PApplet.platform == PConstants.LINUX) {
+      // NEWT solves the issues with Java 7 and OS X 10.7+: calls to frame
+      // hanging the sketch, as well as cursor, etc.
       toolkit = NEWT;
+    } else if (PApplet.platform == PConstants.LINUX) {
+      toolkit = NEWT; // AWT extremely broken on Linux?
     } else if (PApplet.platform == PConstants.OTHER) {
       toolkit = NEWT; // NEWT should work on the Raspberry pi
     }
