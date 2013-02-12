@@ -134,7 +134,25 @@ public class PGL {
   // The two windowing toolkits available to use in JOGL:
   protected static final int AWT  = 0; // http://jogamp.org/wiki/index.php/Using_JOGL_in_AWT_SWT_and_Swing
   protected static final int NEWT = 1; // http://jogamp.org/jogl/doc/NEWT-Overview.html
-  protected static int toolkit = NEWT;
+
+  protected static int toolkit;
+  static {
+    if (PApplet.platform == PConstants.WINDOWS) {
+      // Using AWT on Windows because NEWT displays a black background while
+      // initializing, and the cursor functions don't work. GLWindow has some
+      // functions for basic cursor handling (hide/show):
+      // GLWindow.setPointerVisible(false);
+      // but apparently nothing to set the cursor icon:
+      // https://jogamp.org/bugzilla/show_bug.cgi?id=409
+      toolkit = AWT;
+    } else if (PApplet.platform == PConstants.MACOSX) {
+      toolkit = NEWT; // Solves the issues with Java 7 and OS X 10.7+
+    } else if (PApplet.platform == PConstants.LINUX) {
+      toolkit = NEWT;
+    } else if (PApplet.platform == PConstants.OTHER) {
+      toolkit = NEWT; // NEWT should work on the Raspberry pi
+    }
+  }
 
   /** Enables/disables use of animator */
   protected static boolean useAnimator = false;
