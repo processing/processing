@@ -81,7 +81,7 @@ public class PGL {
   // Parameters
 
   public static final boolean USE_JOGL_FBOLAYER      = false;
-  public static boolean FORCE_SCREEN_FBO             = true;
+  public static boolean FORCE_SCREEN_FBO             = false;
   public static final boolean USE_DIRECT_BUFFERS     = true;
   public static final int MIN_DIRECT_BUFFER_SIZE     = 1;
   public static final boolean SAVE_SURFACE_TO_PIXELS = true;
