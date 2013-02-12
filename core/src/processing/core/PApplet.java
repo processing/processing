@@ -10214,6 +10214,7 @@ public class PApplet extends Applet
     }
 
     Frame frame = new Frame(displayDevice.getDefaultConfiguration());
+    frame.setBackground(new Color(0xCC, 0xCC, 0xCC)); // default Processing gray
 //    JFrame frame = new JFrame(displayDevice.getDefaultConfiguration());
       /*
       Frame frame = null;

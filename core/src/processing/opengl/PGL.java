@@ -441,8 +441,6 @@ public class PGL {
   protected static FBObject.TextureAttachment backTexAttach;
   protected static FBObject.TextureAttachment frontTexAttach;
 
-  protected static boolean needToClearBuffers;
-
   ///////////////////////////////////////////////////////////
 
   // Texture rendering
@@ -538,7 +536,6 @@ public class PGL {
       fboLayerCreated = false;
       fboLayerInUse = false;
       firstFrame = false;
-      needToClearBuffers = false;
     }
 
     byteBuffer = allocateByteBuffer(1);
@@ -628,13 +625,12 @@ public class PGL {
     caps.setDepthBits(request_depth_bits);
     caps.setStencilBits(request_stencil_bits);
     caps.setAlphaBits(request_alpha_bits);
-
+    caps.setDefaultColor(pg.backgroundColor);
 
     if (toolkit == AWT) {
       canvasAWT = new GLCanvas(caps);
       canvasAWT.setBounds(0, 0, pg.width, pg.height);
-      canvasAWT.setBackground(Color.BLACK);
-      canvasAWT.setForeground(Color.BLACK);
+      canvasAWT.setBackground(new Color(pg.backgroundColor, true));
 
       pg.parent.setLayout(new BorderLayout());
       pg.parent.add(canvasAWT, BorderLayout.CENTER);
@@ -655,8 +651,7 @@ public class PGL {
       window = GLWindow.create(caps);
       canvasNEWT = new NewtCanvasAWT(window);
       canvasNEWT.setBounds(0, 0, pg.width, pg.height);
-      canvasNEWT.setBackground(Color.BLACK);
-      canvasNEWT.setForeground(Color.BLACK);
+      canvasNEWT.setBackground(new Color(pg.backgroundColor, true));
 
       pg.parent.setLayout(new BorderLayout());
       pg.parent.add(canvasNEWT, BorderLayout.CENTER);
@@ -684,7 +679,6 @@ public class PGL {
     fboLayerCreated = false;
     fboLayerInUse = false;
     firstFrame = true;
-    needToClearBuffers = true;
   }
 
 
@@ -701,7 +695,6 @@ public class PGL {
     fboLayerCreated = false;
     fboLayerInUse = false;
     firstFrame = false;
-    needToClearBuffers = false;
   }
 
 
@@ -3135,17 +3128,6 @@ public class PGL {
         gl2x = gl.getGL2();
       } catch (javax.media.opengl.GLException e) {
         gl2x = null;
-      }
-
-      if (needToClearBuffers) {
-        // Cleaning all buffers for the first time.
-        gl.glClearDepthf(1);
-        gl.glClearStencil(0);
-        gl.glClearColor(0, 0, 0, 0);
-        gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT |
-                   GL.GL_STENCIL_BUFFER_BIT);
-        needToClearBuffers = false;
-        drawable.swapBuffers();
       }
 
       if (USE_JOGL_FBOLAYER && capabilities.isFBO()) {
