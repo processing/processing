@@ -139,11 +139,6 @@ public class PGL {
   /** Enables/disables use of animator */
   protected static boolean useAnimator = false;
 
-  protected static boolean enable_screen_FBO_macosx  = true;
-  protected static boolean enable_screen_FBO_windows = true;
-  protected static boolean enable_screen_FBO_linux   = true;
-  protected static boolean enable_screen_FBO_other   = true;
-
   protected static int request_depth_bits = 24;
   protected static int request_stencil_bits = 8;
   protected static int request_alpha_bits = 8;
@@ -602,25 +597,9 @@ public class PGL {
       } else {
         caps.setSampleBuffers(false);
       }
-//      if (PApplet.platform == PConstants.MACOSX) {
-//        caps.setFBO(enable_screen_FBO_macosx);
-//      } else if (PApplet.platform == PConstants.WINDOWS) {
-//        caps.setFBO(enable_screen_FBO_windows);
-//      } else if (PApplet.platform == PConstants.LINUX) {
-//        caps.setFBO(enable_screen_FBO_linux);
-//      } else {
-//        caps.setFBO(enable_screen_FBO_other);
-//      }
-//      caps.setDepthBits(request_depth_bits);
-//      caps.setStencilBits(request_stencil_bits);
-//      caps.setAlphaBits(request_alpha_bits);
-//      caps.setBackgroundOpaque(true);
-//      caps.setOnscreen(true);
     } else {
       caps.setSampleBuffers(false);
       reqNumSamples = qualityToSamples(antialias);
-//      caps.setPBuffer(true);
-//      caps.setFBO(false);
     }
     caps.setDepthBits(request_depth_bits);
     caps.setStencilBits(request_stencil_bits);
