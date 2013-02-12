@@ -81,7 +81,7 @@ public class PGL {
   // Parameters
 
   public static final boolean USE_JOGL_FBOLAYER      = false;
-  public static boolean FORCE_SCREEN_FBO             = false;
+  public static boolean FORCE_SCREEN_FBO             = true;
   public static final boolean USE_DIRECT_BUFFERS     = true;
   public static final int MIN_DIRECT_BUFFER_SIZE     = 1;
   public static final boolean SAVE_SURFACE_TO_PIXELS = true;
@@ -625,7 +625,7 @@ public class PGL {
     caps.setDepthBits(request_depth_bits);
     caps.setStencilBits(request_stencil_bits);
     caps.setAlphaBits(request_alpha_bits);
-    caps.setDefaultColor(pg.backgroundColor);
+    caps.setDefaultColor(javaToNativeARGB(pg.backgroundColor));
 
     if (toolkit == AWT) {
       canvasAWT = new GLCanvas(caps);
@@ -734,7 +734,7 @@ public class PGL {
         texParameteri(TEXTURE_2D, TEXTURE_WRAP_T, CLAMP_TO_EDGE);
         texImage2D(TEXTURE_2D, 0, RGBA, fboWidth, fboHeight, 0,
                    RGBA, UNSIGNED_BYTE, null);
-        initTexture(TEXTURE_2D, RGBA, fboWidth, fboHeight);
+        initTexture(TEXTURE_2D, RGBA, fboWidth, fboHeight, pg.backgroundColor);
       }
       bindTexture(TEXTURE_2D, 0);
 
@@ -830,7 +830,13 @@ public class PGL {
       // Clear all buffers.
       clearDepth(1);
       clearStencil(0);
-      clearColor(0, 0, 0, 0);
+
+      int argb = pg.backgroundColor;
+      float a = ((argb >> 24) & 0xff) / 255.0f;
+      float r = ((argb >> 16) & 0xff) / 255.0f;
+      float g = ((argb >> 8) & 0xff) / 255.0f;
+      float b = ((argb) & 0xff) / 255.0f;
+      clearColor(r, g, b, a);
       clear(DEPTH_BUFFER_BIT | STENCIL_BUFFER_BIT | COLOR_BUFFER_BIT);
 
       bindFramebuffer(FRAMEBUFFER, 0);
@@ -1103,7 +1109,12 @@ public class PGL {
 
       if (firstFrame) {
         // No need to draw back color buffer because we are in the first frame.
-        clearColor(0, 0, 0, 0);
+        int argb = pg.backgroundColor;
+        float a = ((argb >> 24) & 0xff) / 255.0f;
+        float r = ((argb >> 16) & 0xff) / 255.0f;
+        float g = ((argb >> 8) & 0xff) / 255.0f;
+        float b = ((argb) & 0xff) / 255.0f;
+        clearColor(r, g, b, a);
         clear(COLOR_BUFFER_BIT);
       } else if (!clear0) {
         // Render previous back texture (now is the front) as background,
@@ -2095,7 +2106,17 @@ public class PGL {
 
 
   protected void initTexture(int target, int format, int width, int height) {
+    initTexture(target, format, width, height, 0);
+  }
+
+
+  protected void initTexture(int target, int format, int width, int height,
+                             int initColor) {
+    int[] glcolor = new int[16 * 16];
+    Arrays.fill(glcolor, javaToNativeARGB(initColor));
     IntBuffer texels = PGL.allocateDirectIntBuffer(16 * 16);
+    texels.put(glcolor);
+    texels.rewind();
     for (int y = 0; y < height; y += 16) {
       int h = PApplet.min(16, height - y);
       for (int x = 0; x < width; x += 16) {
