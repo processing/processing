@@ -1974,8 +1974,8 @@ public class PApplet extends Applet
         //screen.drawImage(g.image, 0, 0, null);  // not retina friendly
         screen.drawImage(g.image, 0, 0, width, height, null);
       }
-    //} else {
-    //  System.out.println(insideDraw + " " + g + " " + ((g != null) ? g.image : "-"));
+    } else {
+      debug(insideDraw + " " + g + " " + ((g != null) ? g.image : "-"));
     }
   }
 
@@ -2181,6 +2181,7 @@ public class PApplet extends Applet
       } else {    // sleepTime <= 0; the frame took longer than the period
 //        excess -= sleepTime;  // store excess time value
         overSleepTime = 0L;
+        noDelays++;
 
         if (noDelays > NO_DELAYS_PER_YIELD) {
           Thread.yield();   // give another thread a chance to run
@@ -2288,7 +2289,6 @@ public class PApplet extends Applet
       }
       insideDraw = false;
 
-      // 1.5.1 version
       if (useActive) {
         if (useStrategy) {
           render();

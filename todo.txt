@@ -107,6 +107,7 @@ _   needs to be reset for this release, maybe others
 
 2.0 FINAL / library/tool/mode manager cleanup
 _ boogers still being left around
+_ Add Mode is also reporting that it's a library that contains multiple
 _ Add Tool is having problems
 _   http://code.google.com/p/processing/issues/detail?id=1569
 _ make already installed libraries distinguishable in the list

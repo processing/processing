@@ -41,6 +41,9 @@ X   http://code.google.com/p/processing/issues/detail?id=1488
 _   waiting on reference from Casey
 X fixes for removeColumn()
 X remove SVG warning about "#text" ignored
+X fix bug where noDelays wasn't being used in PApplet
+X remove "ignoring #text tag" from SVG loader
+X   can ignore any # items altogether
 
 andres
 A P3D sketches failing to run
@@ -53,6 +56,18 @@ A several key/mouse event issues in the db
 A   http://code.google.com/p/processing/issues/detail?id=1464
 A finalize shader API
 A   https://github.com/processing/processing/issues/13
+A "focused" become false when window is clicked in OPENGL and P2D renderer
+A   http://code.google.com/p/processing/issues/detail?id=1483
+A   https://github.com/processing/processing/issues/1521
+A cursor(...) and noCursor() having trouble in P2D or P3D mode
+A   noCursor() seems quite/somewhat broken
+X   started some work, ignores 'invisible' already being set
+X   http://code.google.com/p/processing/issues/detail?id=1574
+X   https://github.com/processing/processing/issues/1612
+A OpenGL/P3D sketches show graphical corruption
+A   needs to be set to other color
+X   http://code.google.com/p/processing/issues/detail?id=1452
+X   https://github.com/processing/processing/issues/1490
 
 cleaning/earlier
 C textureWrap() CLAMP and REPEAT now added
@@ -74,6 +89,7 @@ X makeEmptyNull() -> replace("", null);
 X saveTable("filename.tsv") or saveTable("filename.txt", "tsv")
 X createTable() method in PApplet
 X removed getUniqueXxxx() and some others, pending names
+X added listUnique() and tallyUnique() 
 
 xml library
 X removed 'name' field to avoid possibility of random errors
@@ -148,22 +164,14 @@ _   decide on getAmount() and weirdness w/ clickCount
 _   get mouseWheel() added to api ref
 _   also added to keywords.txt
 
-_ remove "ignoring #text tag" from SVG loader
-_   can ignore any # items altogether
-
 andres
 _ with DISABLE_STROKE_PERSPECTIVE, use GL lines, not triangles to draw lines
-_   http://code.google.com/p/processing/issues/detail?id=1560
+_   https://github.com/processing/processing/issues/1598
+X   http://code.google.com/p/processing/issues/detail?id=1560
 A   disable stroke perspective by default (but this didn't fix it)
 _ P2D/P3D sketches don't get focus until click
 _   also problem for Java2D when canvas is used?
 _   need to standardize canvas handling
-A OpenGL/P3D sketches show graphical corruption
-_   needs to be set to other color
-_   http://code.google.com/p/processing/issues/detail?id=1452
-_ cursor(...) and noCursor() having trouble in P2D or P3D mode
-_   noCursor() seems quite/somewhat broken
-X   started some work, ignores 'invisible' already being set
 
 _ remap() instead of map()
 

@@ -9,6 +9,7 @@ ALPHA	LITERAL2
 ALPHA_MASK	LITERAL2
 ALT	LITERAL2
 AMBIENT	LITERAL2	
+ARC	LITERAL2	createShape_
 ARROW	LITERAL2	cursor_
 ARGB	LITERAL2
 BACKSPACE	LITERAL2	keyCode
@@ -18,6 +19,7 @@ BLEND	LITERAL2	blend_
 BLUE_MASK	LITERAL2
 BLUR	LITERAL2	filter_
 BOTTOM	LITERAL2	textAlign_
+BOX	LITERAL2	createShape_
 BURN	LITERAL2	blend_
 CENTER	LITERAL2	
 CHATTER	LITERAL2
@@ -61,6 +63,7 @@ DODGE	LITERAL2	blend_
 DOWN	LITERAL2	keyCode
 DRAG	LITERAL2
 DXF	LITERAL2	size_
+ELLIPSE	LITERAL2	createShape_
 ENABLE_ACCURATE_2D	LITERAL2
 ENABLE_DEPTH_MASK	LITERAL2
 ENABLE_DEPTH_SORT	LITERAL2
@@ -92,6 +95,7 @@ INVERT	LITERAL2	filter_
 JPEG	LITERAL2	
 LEFT	LITERAL2	keyCode
 LIGHTEST	LITERAL2	blend_
+LINE	LITERAL2	createShape_
 LINES	LITERAL2	beginShape_
 LINUX	LITERAL2
 MACOSX	LITERAL2
@@ -126,12 +130,14 @@ POSTERIZE	LITERAL2	filter_
 PRESS	LITERAL2
 PROBLEM	LITERAL2	
 PROJECT	LITERAL2	strokeCap_
+QUAD	LITERAL2	createShape_
 QUAD_STRIP	LITERAL2	beginShape_
 QUADS	LITERAL2	beginShape_
 QUARTER_PI	LITERAL2	QUARTER_PI
 RAD_TO_DEG	LITERAL2
 RADIUS	LITERAL2
 RADIANS	LITERAL2
+RECT	LITERAL2
 RED_MASK	LITERAL2
 RELEASE LITERAL2
 REPEAT	LITERAL2
@@ -145,6 +151,7 @@ SECAM	LITERAL2
 SHAPE	LITERAL2	textMode_
 SHIFT	LITERAL2	
 SPECULAR	LITERAL2
+SPHERE	LITERAL2	createShape_
 SOFT_LIGHT	LITERAL2	blend_
 SQUARE	LITERAL2	strokeCap_
 SUBTRACT	LITERAL2	blend_
@@ -157,6 +164,7 @@ THIRD_PI	LITERAL2
 THRESHOLD	LITERAL2	filter_
 TIFF	LITERAL2
 TOP	LITERAL2	textAlign_
+TRIANGLE	LITERAL2	createShape_
 TRIANGLE_FAN	LITERAL2	beginShape_
 TRIANGLES	LITERAL2	beginShape_
 TRIANGLE_STRIP	LITERAL2	beginShape_
@@ -404,7 +412,9 @@ createInput	FUNCTION1	createInput_
 createOutput	FUNCTION1	createOutput_
 createReader	FUNCTION1	createReader_
 createShape	FUNCTION1	createShape_
+loadTable	FUNCTION1	createTable_
 createWriter	FUNCTION1	createWriter_
+createXML	FUNCTION1	createXML_
 cursor	FUNCTION1	cursor_
 curve	FUNCTION1	curve_
 curveDetail	FUNCTION1	curveDetail_
@@ -511,6 +521,7 @@ noStroke	FUNCTION1	noStroke_
 noTint	FUNCTION1	noTint_
 open	FUNCTION1	open_
 ortho	FUNCTION1	ortho_
+parseXML	FUNCTION1	parseXML_
 perspective	FUNCTION1	perspective_
 PFont	KEYWORD5	PFont
 list	FUNCTION1	PFont_list_
@@ -551,8 +562,8 @@ addChild	FUNCTION2	PShape_addChild_
 beginContour	FUNCTION2	PShape_beginContour_
 disableStyle	FUNCTION2	PShape_disableStyle_
 enableStyle	FUNCTION2	PShape_enableStyle_
-end	FUNCTION2	PShape_end_
 endContour	FUNCTION2	PShape_endContour_
+end	FUNCTION2	PShape_endShape_
 getChild	FUNCTION2	PShape_getChild_
 getVertex	FUNCTION2	PShape_getVertex_
 getVertexCount	FUNCTION2	PShape_getVertexCount_
@@ -617,9 +628,9 @@ saveBytes	FUNCTION1	saveBytes_
 saveFrame	FUNCTION1	saveFrame_
 saveStream	FUNCTION1	saveStream_
 saveStrings	FUNCTION1	saveStrings_
+loadTable	FUNCTION1	saveTable_
+saveXML	FUNCTION1	saveXML_
 scale	FUNCTION1	scale_
-screenHeight	KEYWORD4	screenHeight
-screenWidth	KEYWORD4	screenWidth
 screenX	FUNCTION1	screenX_
 screenY	FUNCTION1	screenY_
 screenZ	FUNCTION1	screenZ_
@@ -679,9 +690,9 @@ updatePixels	FUNCTION1	updatePixels_
 vertex	FUNCTION1	vertex_
 XML	KEYWORD5	XML
 addChild	FUNCTION2	XML_addChild_
+format	FUNCTION2	XML_format_
 getAttributeCount	FUNCTION2	XML_getAttributeCount_
 getChild	FUNCTION2	XML_getChild_
-getChildCount	FUNCTION2	XML_getChildCount_
 getChildren	FUNCTION2	XML_getChildren_
 getContent	FUNCTION2	XML_getContent_
 getFloat	FUNCTION2	XML_getFloat_
@@ -693,11 +704,11 @@ hasAttribute	FUNCTION2	XML_hasAttribute_
 hasChildren	FUNCTION2	XML_hasChildren_
 listAttributes	FUNCTION2	XML_listAttributes_
 listChildren	FUNCTION2	XML_listChildren_
-parse	FUNCTION2	XML_parse_
 removeChild	FUNCTION2	XML_removeChild_
 setContent	FUNCTION2	XML_setContent_
 setFloat	FUNCTION2	XML_setFloat_
 setInt	FUNCTION2	XML_setInt_
 setName	FUNCTION2	XML_setName_
 setString	FUNCTION2	XML_setString_
+toString	FUNCTION2	XML_toString_
 year	FUNCTION1	year_
