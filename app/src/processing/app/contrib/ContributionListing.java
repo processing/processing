@@ -368,7 +368,7 @@ public class ContributionListing {
 
         URL url = null;
         try {
-          url = new URL("http://processing.googlecode.com/svn/trunk/web/contrib_generate/contributions.txt");
+          url = new URL("https://raw.github.com/processing/processing-web/master/contrib_generate/contributions.txt");
         } catch (MalformedURLException e) {
           progressMonitor.error(e);
           progressMonitor.finished();
