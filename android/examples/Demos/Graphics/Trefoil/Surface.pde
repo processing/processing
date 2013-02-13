@@ -10,7 +10,8 @@ PShape createTrefoil(float s, int ny, int nx, PImage tex) {
   PVector n0, n1, n2;
   float u0, u1, v0, v1;
   
-  PShape obj = createShape(TRIANGLES);
+  PShape obj = createShape();
+  obj.beginShape(TRIANGLES);
   obj.texture(tex);
     
   for (int j = 0; j < nx; j++) {
@@ -49,7 +50,7 @@ PShape createTrefoil(float s, int ny, int nx, PImage tex) {
       obj.vertex(s * p1.x, s * p1.y, s * p1.z, u1, v0);      
     }
   }
-  obj.end();
+  obj.endShape();
   return obj;
 }
 

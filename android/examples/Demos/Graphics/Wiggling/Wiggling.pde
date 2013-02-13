@@ -61,7 +61,8 @@ void createCube() {
   PShape face;
 
   // Front face         
-  face = createShape(POLYGON);
+  face = createShape();
+  face.beginShape(POLYGON);
   face.stroke(255, 0, 0);
   face.fill(255);
   face.beginContour();
@@ -79,11 +80,12 @@ void createCube() {
     face.vertex(x, y, z);
   }
   face.endContour();
-  face.end(CLOSE);
+  face.endShape(CLOSE);
   cube.addChild(face);
 
   // Back face
-  face = createShape(POLYGON);
+  face = createShape();
+  face.beginShape(POLYGON);
   face.stroke(255, 0, 0);
   face.fill(255);
   face.beginContour();
@@ -101,11 +103,12 @@ void createCube() {
     face.vertex(x, y, z);
   }
   face.endContour();
-  face.end(CLOSE);
+  face.endShape(CLOSE);
   cube.addChild(face);
 
   // Right face
-  face = createShape(POLYGON);
+  face = createShape();
+  face.beginShape(POLYGON);
   face.stroke(255, 0, 0);
   face.fill(255);
   face.beginContour();
@@ -123,11 +126,12 @@ void createCube() {
     face.vertex(x, y, z);
   }
   face.endContour();
-  face.end(CLOSE);
+  face.endShape(CLOSE);
   cube.addChild(face);
 
   // Left face
-  face = createShape(POLYGON);
+  face = createShape();
+  face.beginShape(POLYGON);
   face.stroke(255, 0, 0);
   face.fill(255);
   face.beginContour();
@@ -145,11 +149,12 @@ void createCube() {
     face.vertex(x, y, z);
   }
   face.endContour();
-  face.end(CLOSE);
+  face.endShape(CLOSE);
   cube.addChild(face);
 
   // Top face
-  face = createShape(POLYGON);
+  face = createShape();
+  face.beginShape(POLYGON);
   face.stroke(255, 0, 0);
   face.fill(255);
   face.beginContour();
@@ -167,11 +172,12 @@ void createCube() {
     face.vertex(x, y, z);
   }
   face.endContour();
-  face.end(CLOSE);
+  face.endShape(CLOSE);
   cube.addChild(face);     
 
   // Bottom face
-  face = createShape(POLYGON);
+  face = createShape();
+  face.beginShape(POLYGON);
   face.stroke(255, 0, 0);
   face.fill(255);
   face.beginContour();
@@ -189,7 +195,7 @@ void createCube() {
     face.vertex(x, y, z);
   }
   face.endContour();
-  face.end(CLOSE);
+  face.endShape(CLOSE);
   cube.addChild(face);
 }
 

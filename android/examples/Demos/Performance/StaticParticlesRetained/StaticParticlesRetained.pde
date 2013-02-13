@@ -21,7 +21,8 @@ void setup() {
     float cy = random(-500, +500); 
     float cz = random(-500, +500);
     
-    PShape part = createShape(QUAD);
+    PShape part = createShape();
+    part.beginShape(QUAD);
     part.noStroke();
     part.tint(255);
     part.texture(sprite);
@@ -30,7 +31,7 @@ void setup() {
     part.vertex(cx + partSize/2, cy - partSize/2, cz, sprite.width, 0);
     part.vertex(cx + partSize/2, cy + partSize/2, cz, sprite.width, sprite.height);
     part.vertex(cx - partSize/2, cy + partSize/2, cz, 0, sprite.height);    
-    part.end();    
+    part.endShape();    
     particles.addChild(part);
   }
 

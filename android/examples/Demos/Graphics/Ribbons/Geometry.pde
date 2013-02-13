@@ -50,6 +50,7 @@ void createRibbonModel(ArrayList residues, PShape model, ArrayList trj) {
 
   if (renderMode == 0) {
     model = createShape();
+    model.beginShape();
     model.stroke(ribbonColor);
     model.noFill();    
     model.beginContour();
@@ -70,12 +71,13 @@ void createRibbonModel(ArrayList residues, PShape model, ArrayList trj) {
       model.vertex(posVec.x, posVec.y, posVec.z);    
     }
     model.endContour();    
-    model.end(OPEN);    
+    model.endShape(OPEN);    
   } else {
     // The ribbon construction is fairly inneficient here, since
     // it could use triangle strips instead to avoid duplicating
     // shared vertices...
-    model = createShape(TRIANGLES);
+    model = createShape();
+    model.beginShape(TRIANGLES);
     model.noStroke();
     model.fill(ribbonColor);
     for (int i = 0; i < vertices.size(); i++) {
@@ -84,7 +86,7 @@ void createRibbonModel(ArrayList residues, PShape model, ArrayList trj) {
       model.normal(-normVec.x, -normVec.y, -normVec.z);
       model.vertex(posVec.x, posVec.y, posVec.z);
     }
-    model.end();
+    model.endShape();
   }
   
   trj.add(model);

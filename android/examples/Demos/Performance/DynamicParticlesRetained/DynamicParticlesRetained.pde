@@ -24,7 +24,8 @@ void setup() {
   sprite = loadImage("sprite.png");
 
   for (int n = 0; n < npartTotal; n++) {
-    PShape part = createShape(QUAD);
+    PShape part = createShape();
+    part.beginShape(QUAD);
     part.noStroke();
     part.texture(sprite);
     part.normal(0, 0, 1);
@@ -32,7 +33,7 @@ void setup() {
     part.vertex(+partSize/2, -partSize/2, sprite.width, 0);
     part.vertex(+partSize/2, +partSize/2, sprite.width, sprite.height);
     part.vertex(-partSize/2, +partSize/2, 0, sprite.height);
-    part.end();    
+    part.endShape();    
     particles.addChild(part);
   }
 
@@ -59,7 +60,7 @@ void draw () {
 
     if (0 <= lifetimes[n]) {
       float opacity = 1.0 - float(lifetimes[n]) / partLifetime;
-      part.tint(255, opacity * 255);
+      part.setTint(color(255, opacity * 255));
       
       if (lifetimes[n] == 0) {
         // Re-spawn dead particle
@@ -74,7 +75,7 @@ void draw () {
         velocities[n].y += gravity;
       }
     } else {
-      part.tint(0, 0);
+      part.setTint(color(0));
     }
   }
 
