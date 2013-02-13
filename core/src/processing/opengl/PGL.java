@@ -829,7 +829,6 @@ public class PGL {
       // Clear all buffers.
       clearDepth(1);
       clearStencil(0);
-
       int argb = pg.backgroundColor;
       float a = ((argb >> 24) & 0xff) / 255.0f;
       float r = ((argb >> 16) & 0xff) / 255.0f;
