@@ -42,8 +42,6 @@ void setup() {
   // Make an ArrayList
   polygons = new ArrayList<Polygon>();
   
-  polygons = new ArrayList<Polygon>();
-  
   for (int i = 0; i < 25; i++) {
     int selection = int(random(shapes.length));        // Pick a random index
     Polygon p = new Polygon(shapes[selection]);        // Use corresponding PShape to create Polygon
