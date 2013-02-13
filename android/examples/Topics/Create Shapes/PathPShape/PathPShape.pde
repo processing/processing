@@ -12,6 +12,7 @@ void setup() {
   orientation(LANDSCAPE);
   // Create the shape
   path = createShape();
+  path.beginShape();
   // Set fill and stroke
   path.noFill();
   path.stroke(255);
@@ -24,7 +25,7 @@ void setup() {
     x+= 5;
   }
   // The path is complete
-  path.end();  
+  path.endShape();  
 
 }
 

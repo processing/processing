@@ -13,18 +13,17 @@ void setup() {
   orientation(LANDSCAPE);
   // Creating the PShape as an ellipse
   // The corner is -50,-50 so that the center is at 0,0 
-  circle = createShape(RECT, -50, -25, 100, 50);
+  circle = createShape(ELLIPSE, -50, -25, 100, 50);
 }
 
 void draw() {
   background(51);
   // We can dynamically set the stroke and fill of the shape
-  circle.stroke(255);  
-  circle.strokeWeight(4);
-  circle.fill(map(mouseX, 0, width, 0, 255));
+  circle.setStroke(color(255));  
+  circle.setStrokeWeight(4);
+  circle.setFill(color(map(mouseX, 0, width, 0, 255)));
   // We can use translate to move the PShape
   translate(mouseX, mouseY);
   // Drawing the PShape
   shape(circle);
 }
-

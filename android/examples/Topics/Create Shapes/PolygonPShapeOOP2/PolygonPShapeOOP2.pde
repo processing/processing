@@ -15,8 +15,9 @@ void setup() {
   orientation(LANDSCAPE);
   // Make a PShape
   PShape star = createShape();
-  star.fill(0,127);
-  star.stroke(0);
+  star.beginShape();
+  star.noStroke();
+  star.fill(0, 127);
   star.vertex(0, -50);
   star.vertex(14, -20);
   star.vertex(47, -15);
@@ -27,7 +28,7 @@ void setup() {
   star.vertex(-23, 7);
   star.vertex(-47, -15);
   star.vertex(-14, -20);
-  star.end(CLOSE);
+  star.endShape(CLOSE);
   
   // Make an ArrayList
   polygons = new ArrayList<Polygon>();
