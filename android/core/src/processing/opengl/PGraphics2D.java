@@ -37,7 +37,6 @@ public class PGraphics2D extends PGraphicsOpenGL {
 
   public PGraphics2D() {
     super();
-    hints[ENABLE_STROKE_PERSPECTIVE] = false;
   }
 
 
