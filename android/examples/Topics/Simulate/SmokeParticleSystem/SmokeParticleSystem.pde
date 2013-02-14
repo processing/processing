@@ -1,9 +1,9 @@
 /**
  * Smoke Particle System
- * by Daniel Shiffman.  
- * 
- * A basic smoke effect using a particle system. 
- * Each particle is rendered as an alpha masked image. 
+ * by Daniel Shiffman.
+ *
+ * A basic smoke effect using a particle system.
+ * Each particle is rendered as an alpha masked image.
  */
 
 ParticleSystem ps;
@@ -48,7 +48,7 @@ void draw() {
     translate(x,y);
     stroke(255);
     // Call vector heading function to get direction (note that pointing up is a heading of 0) and rotate
-    rotate(v.heading2D());
+    rotate(v.heading());
     // Calculate length of vector & scale it to be bigger or smaller if necessary
     float len = v.mag()*scayl;
     // Draw three lines to make an arrow (draw pointing up since we've rotate to the proper direction)
@@ -56,7 +56,7 @@ void draw() {
     line(len,0,len-arrowsize,+arrowsize/2);
     line(len,0,len-arrowsize,-arrowsize/2);
     popMatrix();
-  } 
+  }
 
 
 
