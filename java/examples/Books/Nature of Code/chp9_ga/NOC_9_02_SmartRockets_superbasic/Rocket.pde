@@ -24,7 +24,7 @@ class Rocket {
   int geneCounter = 0;
 
   boolean hitTarget = false;   // Did I reach the target
-  
+
   //constructor
   Rocket(PVector l, DNA dna_) {
     acceleration = new PVector();
@@ -58,7 +58,7 @@ class Rocket {
     float d = dist(location.x, location.y, target.x, target.y);
     if (d < 12) {
       hitTarget = true;
-    } 
+    }
   }
 
   void applyForce(PVector f) {
@@ -72,7 +72,7 @@ class Rocket {
   }
 
   void display() {
-    float theta = velocity.heading2D() + PI/2;
+    float theta = velocity.heading() + PI/2;
     fill(200, 100);
     stroke(0);
     pushMatrix();

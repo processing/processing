@@ -15,7 +15,7 @@ void draw() {
 
   // A "vector" (really a point) to store the mouse location and screen center location
   PVector mouseLoc = new PVector(mouseX, mouseY);
-  PVector centerLoc = new PVector(width/2, height/2);  
+  PVector centerLoc = new PVector(width/2, height/2);
 
   // Aha, a vector to store the displacement between the mouse and center
   PVector v = PVector.sub(mouseLoc, centerLoc);
@@ -43,10 +43,10 @@ void drawVector(PVector v, PVector loc, float scayl) {
   stroke(0);
   strokeWeight(2);
   // Call vector heading function to get direction (pointing up is a heading of 0)
-  rotate(v.heading2D());
+  rotate(v.heading());
   // Calculate length of vector & scale it to be bigger or smaller if necessary
   float len = v.mag()*scayl;
-  // Draw three lines to make an arrow 
+  // Draw three lines to make an arrow
   line(0, 0, len, 0);
   line(len, 0, len-arrowsize, +arrowsize/2);
   line(len, 0, len-arrowsize, -arrowsize/2);
