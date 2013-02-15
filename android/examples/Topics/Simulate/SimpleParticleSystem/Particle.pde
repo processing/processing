@@ -6,7 +6,7 @@ class Particle {
   PVector acc;
   float r;
   float timer;
-  
+
   // Another constructor (the one we are using here)
   Particle(PVector l) {
     acc = new PVector(0,0.05,0);
@@ -36,7 +36,7 @@ class Particle {
     ellipse(loc.x,loc.y,r,r);
     displayVector(vel,loc.x,loc.y,10);
   }
-  
+
   // Is the particle still useful?
   boolean dead() {
     if (timer <= 0.0) {
@@ -45,7 +45,7 @@ class Particle {
       return false;
     }
   }
-  
+
    void displayVector(PVector v, float x, float y, float scayl) {
     pushMatrix();
     float arrowsize = 4;
@@ -53,7 +53,7 @@ class Particle {
     translate(x,y);
     stroke(255);
     // Call vector heading function to get direction (note that pointing up is a heading of 0) and rotate
-    rotate(v.heading2D());
+    rotate(v.heading());
     // Calculate length of vector & scale it to be bigger or smaller if necessary
     float len = v.mag()*scayl;
     // Draw three lines to make an arrow (draw pointing up since we've rotate to the proper direction)
@@ -61,7 +61,7 @@ class Particle {
     line(len,0,len-arrowsize,+arrowsize/2);
     line(len,0,len-arrowsize,-arrowsize/2);
     popMatrix();
-  } 
+  }
 
 }
 

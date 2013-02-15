@@ -7,7 +7,7 @@
 // A class for one branch in the system
 
 class Branch {
-  // Each has a location, velocity, and timer 
+  // Each has a location, velocity, and timer
   // We could implement this same idea with different data
   PVector start;
   PVector end;
@@ -44,7 +44,7 @@ class Branch {
     if (timer < 0 && growing) {
       growing = false;
       return true;
-    } 
+    }
     else {
       return false;
     }
@@ -53,7 +53,7 @@ class Branch {
   // Create a new branch at the current location, but change direction by a given angle
   Branch branch(float angle) {
     // What is my current heading
-    float theta = vel.heading2D();
+    float theta = vel.heading();
     // What is my current speed
     float mag = vel.mag();
     // Turn me

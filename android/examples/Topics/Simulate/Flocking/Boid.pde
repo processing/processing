@@ -75,7 +75,7 @@ class Boid {
       // Steering = Desired minus Velocity
       steer = target.sub(desired,vel);
       steer.limit(maxforce);  // Limit to maximum steering force
-    } 
+    }
     else {
       steer = new PVector(0,0);
     }
@@ -84,7 +84,7 @@ class Boid {
 
   void render() {
     // Draw a triangle rotated in the direction of velocity
-    float theta = vel.heading2D() + PI/2;
+    float theta = vel.heading() + PI/2;
     fill(200,100);
     stroke(255);
     pushMatrix();

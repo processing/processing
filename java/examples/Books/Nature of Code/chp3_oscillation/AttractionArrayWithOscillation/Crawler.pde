@@ -12,9 +12,9 @@ class Crawler {
   PVector vel;
   PVector acc;
   float mass;
-  
+
   Oscillator osc;
-    
+
   Crawler() {
     acc = new PVector();
     vel = new PVector(random(-1,1),random(-1,1));
@@ -22,9 +22,9 @@ class Crawler {
     mass = random(8,16);
     osc = new Oscillator(mass*2);
   }
-  
+
   void applyForce(PVector force) {
-    PVector f = force.get();  
+    PVector f = force.get();
     f.div(mass);
     acc.add(f);
   }
@@ -35,13 +35,13 @@ class Crawler {
     loc.add(vel);
     // Multiplying by 0 sets the all the components to 0
     acc.mult(0);
-    
+
     osc.update(vel.mag()/10);
   }
-  
+
   // Method to display
   void display() {
-    float angle = vel.heading2D();
+    float angle = vel.heading();
     pushMatrix();
     translate(loc.x,loc.y);
     rotate(angle);
@@ -49,10 +49,10 @@ class Crawler {
     stroke(0);
     fill(175,100);
     ellipse(0,0,mass*2,mass*2);
-    
+
     osc.display(loc);
     popMatrix();
-    
+
   }
 }
 

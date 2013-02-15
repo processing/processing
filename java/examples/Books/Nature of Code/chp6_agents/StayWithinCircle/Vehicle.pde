@@ -11,7 +11,7 @@ class Vehicle {
 
   float maxspeed;
   float maxforce;
-  
+
   Vehicle(float x, float y) {
     acceleration = new PVector(0, 0);
     velocity = new PVector(1,0);
@@ -41,13 +41,13 @@ class Vehicle {
   void boundaries() {
 
     PVector desired = null;
-    
+
     // Predict location 25 (arbitrary choice) frames ahead
     PVector predict = velocity.get();
     predict.mult(25);
     PVector futureLocation = PVector.add(location, predict);
     float distance = PVector.dist(futureLocation,circleLocation);
-    
+
     if (distance > circleRadius) {
       PVector toCenter = PVector.sub(circleLocation,location);
       toCenter.normalize();
@@ -62,11 +62,11 @@ class Vehicle {
       steer.limit(maxforce);
       applyForce(steer);
     }
-    
+
     fill(255,0,0);
     ellipse(futureLocation.x,futureLocation.y,4,4);
-    
-  }  
+
+  }
 
   void applyForce(PVector force) {
     // We could add mass here if we want A = F / M
@@ -76,7 +76,7 @@ class Vehicle {
 
   void display() {
     // Draw a triangle rotated in the direction of velocity
-    float theta = velocity.heading2D() + radians(90);
+    float theta = velocity.heading() + radians(90);
     fill(175);
     stroke(0);
     pushMatrix();
