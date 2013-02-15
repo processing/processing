@@ -49,7 +49,7 @@ class FlowField {
         pushMatrix();
         //translate(i*resolution+arrow.width/2,j*resolution+arrow.height/2);
         translate(i*resolution,j*resolution);
-        rotate(field[i][j].heading2D());
+        rotate(field[i][j].heading());
         imageMode(CENTER);
         //scale(0.2);
         image(a,0,0);
@@ -69,7 +69,7 @@ class FlowField {
     translate(x,y);
     stroke(0,100);
     // Call vector heading function to get direction (note that pointing up is a heading of 0) and rotate
-    rotate(v.heading2D());
+    rotate(v.heading());
     // Calculate length of vector & scale it to be bigger or smaller if necessary
     float len = v.mag()*scayl;
     // Draw three lines to make an arrow (draw pointing up since we've rotate to the proper direction)

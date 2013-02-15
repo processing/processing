@@ -1,14 +1,14 @@
 /**
  * Smoke Particle System
- * by Daniel Shiffman.  
- * 
- * A basic smoke effect using a particle system. Each particle 
- * is rendered as an alpha masked image. 
+ * by Daniel Shiffman.
+ *
+ * A basic smoke effect using a particle system. Each particle
+ * is rendered as an alpha masked image.
  */
 
-// @pjs preload must be used to preload media if the program is 
+// @pjs preload must be used to preload media if the program is
 // running with Processing.js
-/* @pjs preload="texture.png"; */  
+/* @pjs preload="texture.png"; */
 
 ParticleSystem ps;
 Random generator;
@@ -23,7 +23,7 @@ void setup() {
 
 void draw() {
   background(0);
-  
+
   // Calculate a "wind" force based on mouse horizontal position
   float dx = map(mouseX,0,width,-0.2,0.2);
   PVector wind = new PVector(dx,0);
@@ -32,7 +32,7 @@ void draw() {
   for (int i = 0; i < 2; i++) {
     ps.addParticle();
   }
-  
+
   // Draw an arrow representing the wind force
   drawVector(wind, new PVector(width/2,50,0),500);
 
@@ -46,7 +46,7 @@ void drawVector(PVector v, PVector loc, float scayl) {
   translate(loc.x,loc.y);
   stroke(255);
   // Call vector heading function to get direction (note that pointing up is a heading of 0) and rotate
-  rotate(v.heading2D());
+  rotate(v.heading());
   // Calculate length of vector & scale it to be bigger or smaller if necessary
   float len = v.mag()*scayl;
   // Draw three lines to make an arrow (draw pointing up since we've rotate to the proper direction)

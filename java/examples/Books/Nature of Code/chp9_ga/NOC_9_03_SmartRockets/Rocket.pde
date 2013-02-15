@@ -39,7 +39,7 @@ class Rocket {
     recordDist = 10000;      // Some high number that will be beat instantly
   }
 
-  // FITNESS FUNCTION 
+  // FITNESS FUNCTION
   // distance = distance from target
   // finish = what order did i finish (first, second, etc. . .)
   // f(distance,finish) =   (1.0f / finish^1.5) * (1.0f / distance^6);
@@ -80,7 +80,7 @@ class Rocket {
 
     if (target.contains(location) && !hitTarget) {
       hitTarget = true;
-    } 
+    }
     else if (!hitTarget) {
       finishTime++;
     }
@@ -108,7 +108,7 @@ class Rocket {
 
   void display() {
     //background(255,0,0);
-    float theta = velocity.heading2D() + PI/2;
+    float theta = velocity.heading() + PI/2;
     fill(200, 100);
     stroke(0);
     strokeWeight(1);

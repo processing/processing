@@ -5,7 +5,7 @@
 // The "Vehicle" class
 
 class Vehicle {
-  
+
   PVector location;
   PVector velocity;
   PVector acceleration;
@@ -57,11 +57,11 @@ class Vehicle {
     steer.limit(maxforce);  // Limit to maximum steering force
     applyForce(steer);
   }
-  
+
   void display() {
-    
+
     // Draw a triangle rotated in the direction of velocity
-    float theta = velocity.heading2D() + PI/2;
+    float theta = velocity.heading() + PI/2;
     fill(127);
     stroke(0);
     strokeWeight(1);
@@ -74,8 +74,8 @@ class Vehicle {
     vertex(r, r*2);
     endShape(CLOSE);
     popMatrix();
-    
-    
+
+
   }
 }
 
