@@ -559,6 +559,7 @@ _   http://code.google.com/p/processing/issues/detail?id=157
 _ don't allow people to override methods like paint() 
 _   make them final? just improve the error messages?
 _   http://code.google.com/p/processing/issues/detail?id=1020
+_   https://github.com/processing/processing/issues/1058
 _ Processing chokes if a sketch defines a class with same name as the sketch
 _   http://code.google.com/p/processing/issues/detail?id=157
 _   http://code.google.com/p/processing/issues/detail?id=168

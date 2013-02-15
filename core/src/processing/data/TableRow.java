@@ -23,4 +23,6 @@ public interface TableRow {
   public void setFloat(String columnName, float value);
   public void setDouble(int column, double value);
   public void setDouble(String columnName, double value);
+
+  public int getColumnCount();
 }

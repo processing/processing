@@ -38,7 +38,7 @@ X   http://code.google.com/p/processing/issues/detail?id=1542
 X add randomGaussian()
 X Add TAU as alias for TWO_PI
 X   http://code.google.com/p/processing/issues/detail?id=1488
-_   waiting on reference from Casey
+X   ref assigned here: https://github.com/processing/processing-web/issues/9
 X fixes for removeColumn()
 X remove SVG warning about "#text" ignored
 X fix bug where noDelays wasn't being used in PApplet
@@ -68,6 +68,11 @@ A OpenGL/P3D sketches show graphical corruption
 A   needs to be set to other color
 X   http://code.google.com/p/processing/issues/detail?id=1452
 X   https://github.com/processing/processing/issues/1490
+A with DISABLE_STROKE_PERSPECTIVE, use GL lines, not triangles to draw lines
+A   https://github.com/processing/processing/issues/1598
+X   http://code.google.com/p/processing/issues/detail?id=1560
+A   disable stroke perspective by default (but this didn't fix it)
+A   fixed the disappearance, though still imperfect
 
 cleaning/earlier
 C textureWrap() CLAMP and REPEAT now added
@@ -90,6 +95,8 @@ X saveTable("filename.tsv") or saveTable("filename.txt", "tsv")
 X createTable() method in PApplet
 X removed getUniqueXxxx() and some others, pending names
 X added listUnique() and tallyUnique() 
+X added getColumnCount() to TableRow
+X cleaned up checkBounds()
 
 xml library
 X removed 'name' field to avoid possibility of random errors
@@ -165,10 +172,6 @@ _   get mouseWheel() added to api ref
 _   also added to keywords.txt
 
 andres
-_ with DISABLE_STROKE_PERSPECTIVE, use GL lines, not triangles to draw lines
-_   https://github.com/processing/processing/issues/1598
-X   http://code.google.com/p/processing/issues/detail?id=1560
-A   disable stroke perspective by default (but this didn't fix it)
 _ P2D/P3D sketches don't get focus until click
 _   also problem for Java2D when canvas is used?
 _   need to standardize canvas handling

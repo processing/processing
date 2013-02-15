@@ -392,7 +392,7 @@ public class Table {
           count = 0;
           // starting a new column, make sure we have room
           col++;
-          checkColumn(col);
+          ensureColumn(col);
 
         } else {  // just a regular character, add it
           if (count == c.length) {
@@ -1309,7 +1309,7 @@ public class Table {
 
   public void setColumnTitles(String[] titles) {
     if (titles != null) {
-      checkColumn(titles.length - 1);
+      ensureColumn(titles.length - 1);
     }
     columnTitles = titles;
     columnIndices = null;  // remove the cache
@@ -1317,7 +1317,7 @@ public class Table {
 
 
   public void setColumnTitle(int column, String title) {
-    checkColumn(column);
+    ensureColumn(column);
     if (columnTitles == null) {
       columnTitles = new String[getColumnCount()];
     }
@@ -1446,6 +1446,37 @@ public class Table {
   public TableRow addRow() {
     setRowCount(rowCount + 1);
     return new RowPointer(this, rowCount - 1);
+  }
+
+
+  public TableRow addRow(TableRow source) {
+    int row = rowCount;
+    // Make sure there are enough columns to add this data
+    ensureBounds(row, source.getColumnCount() - 1);
+
+    for (int col = 0; col < columns.length; col++) {
+      switch (columnTypes[col]) {
+      case CATEGORICAL:
+      case INT:
+        setInt(row, col, source.getInt(col));
+        break;
+      case LONG:
+        setLong(row, col, source.getLong(col));
+        break;
+      case FLOAT:
+        setFloat(row, col, source.getFloat(col));
+        break;
+      case DOUBLE:
+        setDouble(row, col, source.getDouble(col));
+        break;
+      case STRING:
+        setString(row, col, source.getString(col));
+        break;
+      default:
+        throw new RuntimeException("no types");
+      }
+    }
+    return new RowPointer(this, row);
   }
 
 
@@ -1609,7 +1640,7 @@ public class Table {
 
 
   public void setRow(int row, Object[] pieces) {
-    checkSize(row, pieces.length - 1);
+    ensureBounds(row, pieces.length - 1);
     // pieces.length may be less than columns.length, so loop over pieces
     for (int col = 0; col < pieces.length; col++) {
       setRowCol(row, col, pieces[col]);
@@ -1820,6 +1851,10 @@ public class Table {
     public void setDouble(String columnName, double value) {
       table.setDouble(row, columnName, value);
     }
+
+    public int getColumnCount() {
+      return table.getColumnCount();
+    }
   }
 
 
@@ -2008,6 +2043,14 @@ public class Table {
             throw new IllegalArgumentException("This TableRow cannot be modified.");
           }
 
+          public int getColumnCount() {
+            try {
+              return rs.getMetaData().getColumnCount();
+            } catch (SQLException e) {
+              e.printStackTrace();
+              return -1;
+            }
+          }
         };
       }
 
@@ -2049,7 +2092,7 @@ public class Table {
       setString(row, column, String.valueOf(value));
 
     } else {
-      checkSize(row, column);
+      ensureBounds(row, column);
       if (columnTypes[column] != INT &&
           columnTypes[column] != CATEGORICAL) {
         throw new IllegalArgumentException("Column " + column + " is not an int column.");
@@ -2126,7 +2169,7 @@ public class Table {
       setString(row, column, String.valueOf(value));
 
     } else {
-      checkSize(row, column);
+      ensureBounds(row, column);
       if (columnTypes[column] != LONG) {
         throw new IllegalArgumentException("Column " + column + " is not a 'long' column.");
       }
@@ -2202,7 +2245,7 @@ public class Table {
       setString(row, column, String.valueOf(value));
 
     } else {
-      checkSize(row, column);
+      ensureBounds(row, column);
       if (columnTypes[column] != FLOAT) {
         throw new IllegalArgumentException("Column " + column + " is not a float column.");
       }
@@ -2277,7 +2320,7 @@ public class Table {
       setString(row, column, String.valueOf(value));
 
     } else {
-      checkSize(row, column);
+      ensureBounds(row, column);
       if (columnTypes[column] != DOUBLE) {
         throw new IllegalArgumentException("Column " + column + " is not a 'double' column.");
       }
@@ -2409,7 +2452,7 @@ public class Table {
 
 
   public void setString(int row, int column, String value) {
-    checkSize(row, column);
+    ensureBounds(row, column);
     if (columnTypes[column] != STRING) {
       throw new IllegalArgumentException("Column " + column + " is not a String column.");
     }
@@ -2457,7 +2500,7 @@ public class Table {
    * @param column the column to search
    */
   public int findRowIndex(String value, int column) {
-    checkBounds(-1, column);
+    checkColumn(column);
     if (columnTypes[column] == STRING) {
       String[] stringData = (String[]) columns[column];
       if (value == null) {
@@ -2507,7 +2550,7 @@ public class Table {
     int[] outgoing = new int[rowCount];
     int count = 0;
 
-    checkBounds(-1, column);
+    checkColumn(column);
     if (columnTypes[column] == STRING) {
       String[] stringData = (String[]) columns[column];
       if (value == null) {
@@ -2583,7 +2626,7 @@ public class Table {
    * @param column the column to search
    */
   public int matchRowIndex(String regexp, int column) {
-    checkBounds(-1, column);
+    checkColumn(column);
     if (columnTypes[column] == STRING) {
       String[] stringData = (String[]) columns[column];
       for (int row = 0; row < rowCount; row++) {
@@ -2625,7 +2668,7 @@ public class Table {
     int[] outgoing = new int[rowCount];
     int count = 0;
 
-    checkBounds(-1, column);
+    checkColumn(column);
     if (columnTypes[column] == STRING) {
       String[] stringData = (String[]) columns[column];
       for (int row = 0; row < rowCount; row++) {
@@ -2727,7 +2770,7 @@ public class Table {
 
 
   public void replaceAll(String regex, String replacement, int column) {
-    checkBounds(-1, column);
+    checkColumn(column);
     if (columnTypes[column] == STRING) {
       String[] stringData = (String[]) columns[column];
       for (int row = 0; row < rowCount; row++) {
@@ -2829,33 +2872,49 @@ public class Table {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  protected void checkColumn(int col) {
+  /** Make sure this is a legit column, and if not, expand the table. */
+  protected void ensureColumn(int col) {
     if (col >= columns.length) {
       setColumnCount(col + 1);
     }
   }
 
 
-  protected void checkRow(int row) {
+  /** Make sure this is a legit row, and if not, expand the table. */
+  protected void ensureRow(int row) {
     if (row >= rowCount) {
       setRowCount(row + 1);
     }
   }
 
 
-  protected void checkSize(int row, int col) {
-    checkRow(row);
-    checkColumn(col);
+  /** Make sure this is a legit row and column. If not, expand the table. */
+  protected void ensureBounds(int row, int col) {
+    ensureRow(row);
+    ensureColumn(col);
   }
 
 
-  protected void checkBounds(int row, int column) {
+  /** Throw an error if this row doesn't exist. */
+  protected void checkRow(int row) {
     if (row < 0 || row >= rowCount) {
       throw new ArrayIndexOutOfBoundsException("Row " + row + " does not exist.");
     }
+  }
+
+
+  /** Throw an error if this column doesn't exist. */
+  protected void checkColumn(int column) {
     if (column < 0 || column >= columns.length) {
       throw new ArrayIndexOutOfBoundsException("Column " + column + " does not exist.");
     }
+  }
+
+
+  /** Throw an error if this entry is out of bounds. */
+  protected void checkBounds(int row, int column) {
+    checkRow(row);
+    checkColumn(column);
   }
 
 

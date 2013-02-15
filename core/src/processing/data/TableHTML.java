@@ -187,7 +187,7 @@ public class TableHTML extends Table {
   void beginTableData(int advance) {
     colAdvance = advance;
     // expand the number of columns if necessary
-    checkColumn(colIndex + colAdvance - 1);
+    ensureColumn(colIndex + colAdvance - 1);
 //    if (colIndex + colAdvance > data[0].length) {
 //      int needed = (colIndex + colAdvance) * 2;
 //      for (int i = 0; i < data.length; i++) {
