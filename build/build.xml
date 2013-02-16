@@ -78,6 +78,10 @@
     <include name="app/lib/ant.jar" />
     <include name="app/lib/ant-launcher.jar" />
     <include name="app/lib/org-netbeans-swing-outline.jar" />
+    <include name="app/lib/jdi.jar" />
+    <include name="app/lib/jdimodel.jar" />
+    <include name="app/lib/org.eclipse.osgi_3.8.1.v20120830-144521.jar" />
+    <include name="app/lib/com.ibm.icu_4.4.2.v20110823.jar" />
   </fileset>
 
   <target name="build" description="Build Processing.">

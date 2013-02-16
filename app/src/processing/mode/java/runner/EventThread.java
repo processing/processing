@@ -363,7 +363,9 @@ public class EventThread extends Thread {
 //    com.sun.jdi.ObjectReference or = event.exception();
 //    System.out.println("exceptionEvent() fired " + or);
 //    System.out.println("catch location " + event.catchLocation());
-    
+    for (ThreadReference thread : vm.allThreads()) {
+      thread.suspend();
+    }
     parent.exception(event);
     
     /*

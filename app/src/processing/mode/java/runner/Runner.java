@@ -329,16 +329,13 @@ public class Runner implements MessageConsumer {
     // Using localhost instead of 127.0.0.1 sometimes causes a
     // "Transport Error 202" error message when trying to run.
     // http://dev.processing.org/bugs/show_bug.cgi?id=895
-    String addr = "127.0.0.1:" + (8000 + (int) (Math.random() * 1000));
+    // String addr = "127.0.0.1:" + (8000 + (int) (Math.random() * 1000));
     //String addr = "localhost:" + (8000 + (int) (Math.random() * 1000));
-    //String addr = "" + (8000 + (int) (Math.random() * 1000));
+    String addr = "" + (8000 + (int) (Math.random() * 1000));
 
     String commandArgs =
       "java -Xrunjdwp:transport=dt_socket,address=" + addr + ",suspend=y ";
-    if (Base.isWindows()) {
-      commandArgs =
-        "java -Xrunjdwp:transport=dt_shmem,address=" + addr + ",suspend=y ";
-    } else if (Base.isMacOS()) {
+    if (Base.isMacOS()) {
       // Decided to just set this to 1.6 only, because otherwise it's gonna
       // be a shitshow if folks are getting Apple's 1.6 with 32-bit and
       // Oracle's 1.7 when run in 64-bit mode. ("Why does my sketch suck in
@@ -484,7 +481,7 @@ public class Runner implements MessageConsumer {
     //if (writer != null) {
     eventThread = new EventThread(this, vm, excludes, writer);
     eventThread.start();
-    eventThread.setEventRequests(watchFields);
+    //eventThread.setEventRequests(watchFields); //redundant?
     //}
 
     //redirectOutput();
@@ -538,9 +535,9 @@ public class Runner implements MessageConsumer {
 
 
   protected Connector findConnector(String connectorName) {
-    List connectors = Bootstrap.virtualMachineManager().allConnectors();
-//    List connectors =
-//      org.eclipse.jdi.Bootstrap.virtualMachineManager().allConnectors();
+//    List connectors = Bootstrap.virtualMachineManager().allConnectors();
+    List connectors =
+      org.eclipse.jdi.Bootstrap.virtualMachineManager().allConnectors();
 
     // debug: code to list available connectors
 //    Iterator iter2 = connectors.iterator();

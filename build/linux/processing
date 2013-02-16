@@ -17,7 +17,7 @@
 
 
 # JARs required from JDK (anywhere in/below the JDK home directory)
-JDKLIBS="rt.jar tools.jar"
+JDKLIBS="rt.jar"
 
 # Set this to non-zero for logging
 LOGGING=0
