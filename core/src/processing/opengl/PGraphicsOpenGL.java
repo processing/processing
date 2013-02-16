@@ -2247,7 +2247,6 @@ public class PGraphicsOpenGL extends PGraphics {
       // the changes need to be copied to the screen before
       // drawing any new geometry.
       flushPixels();
-      setgetPixels = false;
     }
 
     if (hasPoints || hasLines || hasPolys) {
@@ -2298,6 +2297,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
     tessGeo.clear();
     texCache.clear();
+    setgetPixels = false;
   }
 
 
