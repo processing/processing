@@ -40,7 +40,6 @@ import java.io.File;
 import java.net.*;
 
 import processing.app.Base;
-import processing.app.contrib.ContributionListing.AdvertisedContribution;
 import processing.app.contrib.ContributionListing.ContributionChangeListener;
 
 public class ContributionListPanel extends JPanel implements Scrollable, ContributionChangeListener {

@@ -80,7 +80,7 @@ public class ContributionListing {
     listingFile = file;
 
     advertisedContributions.clear();
-    advertisedContributions.addAll(getLibraries(listingFile));
+    advertisedContributions.addAll(parseContribList(listingFile));
     for (Contribution contribution : advertisedContributions) {
       addContribution(contribution);
     }
@@ -246,12 +246,13 @@ public class ContributionListing {
       // Chances are the person is still typing the property, so rather than
       // make the list flash empty (because nothing contains "is:" or "has:",
       // just return true.
-      if (!isProperty(property))
+      if (!isProperty(property)) {
         return true;
+      }
 
       if ("is".equals(isText) || "has".equals(isText)) {
         return hasProperty(contrib, filter.substring(colon + 1));
-      } else  if ("not".equals(isText)) {
+      } else if ("not".equals(isText)) {
         return !hasProperty(contrib, filter.substring(colon + 1));
       }
     }
@@ -324,6 +325,7 @@ public class ContributionListing {
     }
   }
 
+  
   public void addContributionListener(ContributionChangeListener listener) {
     for (Contribution contrib : allContributions) {
       listener.contributionAdded(contrib);
@@ -331,14 +333,17 @@ public class ContributionListing {
     listeners.add(listener);
   }
 
+  
   public void removeContributionListener(ContributionChangeListener listener) {
     listeners.remove(listener);
   }
 
+  
   public ArrayList<ContributionChangeListener> getContributionListeners() {
     return new ArrayList<ContributionChangeListener>(listeners);
   }
 
+  
   /**
    * Starts a new thread to download the advertised list of contributions. 
    * Only one instance will run at a time.
@@ -360,7 +365,7 @@ public class ContributionListing {
         }
 
         if (!progressMonitor.isFinished()) {
-          FileDownloader.downloadFile(url, listingFile, progressMonitor);
+          download(url, listingFile, progressMonitor);
           if (!progressMonitor.isCanceled() && !progressMonitor.isError()) {
             hasDownloadedLatestList = true;
             setAdvertisedList(listingFile);
@@ -369,6 +374,56 @@ public class ContributionListing {
         downloadingListingLock.unlock();
       }
     }).start();
+  }
+  
+  
+  /**
+   * Blocks until the file is downloaded or an error occurs. 
+   * Returns true if the file was successfully downloaded, false otherwise.
+   * 
+   * @param source
+   *          the URL of the file to download
+   * @param dest
+   *          the file on the local system where the file will be written. This
+   *          must be a file (not a directory), and must already exist.
+   * @param progress
+   * @throws FileNotFoundException
+   *           if an error occurred downloading the file
+   */
+  static boolean download(URL source, File dest, ProgressMonitor progress) {
+    boolean success = false;
+    try {
+//      System.out.println("downloading file " + source);
+      URLConnection conn = source.openConnection();
+      conn.setConnectTimeout(1000);
+      conn.setReadTimeout(5000);
+  
+      // TODO this is often -1, may need to set progress to indeterminate
+      int fileSize = conn.getContentLength();
+//      System.out.println("file size is " + fileSize);
+      progress.startTask("Downloading", fileSize);
+  
+      InputStream in = conn.getInputStream();
+      FileOutputStream out = new FileOutputStream(dest);
+  
+      byte[] b = new byte[8192];
+      int amount;
+      int total = 0;
+      while (!progress.isCanceled() && (amount = in.read(b)) != -1) {
+        out.write(b, 0, amount);
+        total += amount;  
+        progress.setProgress(total);
+      }
+      out.flush();
+      out.close();
+      success = true;
+      
+    } catch (IOException ioe) {
+      progress.error(ioe);
+      ioe.printStackTrace();
+    }
+    progress.finished();
+    return success;
   }
 
   
@@ -434,7 +489,7 @@ public class ContributionListing {
   }
 
   
-  public ArrayList<AdvertisedContribution> getLibraries(File f) {
+  public ArrayList<AdvertisedContribution> parseContribList(File f) {
     ArrayList<AdvertisedContribution> outgoing = new ArrayList<AdvertisedContribution>();
 
     if (f != null && f.exists()) {
@@ -473,116 +528,6 @@ public class ContributionListing {
       }
     }
     return outgoing;
-  }
-
-  
-  static class AdvertisedContribution implements Contribution {
-    protected final String name;             // "pdf" or "PDF Export"
-    protected final ContributionType type;   // Library, tool, etc.
-    protected final String category;         // "Sound"
-    protected final String authorList;       // [Ben Fry](http://benfry.com/)
-    protected final String url;              // http://processing.org
-    protected final String sentence;         // Write graphics to PDF files.
-    protected final String paragraph;        // <paragraph length description for site>
-    protected final int version;             // 102
-    protected final String prettyVersion;    // "1.0.2"
-    protected final String link;             // Direct link to download the file
-
-    public AdvertisedContribution(ContributionType type, HashMap<String, String> exports) {
-
-      this.type = type;
-      name = exports.get("name");
-      category = ContributionListing.getCategory(exports.get("category"));
-      authorList = exports.get("authorList");
-
-      url = exports.get("url");
-      sentence = exports.get("sentence");
-      paragraph = exports.get("paragraph");
-
-      int v = 0;
-      try {
-        v = Integer.parseInt(exports.get("version"));
-      } catch (NumberFormatException e) {
-      }
-      version = v;
-
-      prettyVersion = exports.get("prettyVersion");
-
-      this.link = exports.get("download");
-    }
-
-    public boolean isInstalled() {
-      return false;
-    }
-
-    public ContributionType getType() {
-      return type;
-    }
-
-    public String getTypeName() {
-      return type.toString();
-    }
-
-    public String getCategory() {
-      return category;
-    }
-
-    public String getName() {
-      return name;
-    }
-
-    public String getAuthorList() {
-      return authorList;
-    }
-
-    public String getUrl() {
-      return url;
-    }
-
-    public String getSentence() {
-      return sentence;
-    }
-
-    public String getParagraph() {
-      return paragraph;
-    }
-
-    public int getVersion() {
-      return version;
-    }
-
-    public String getPrettyVersion() {
-      return prettyVersion;
-    }
-
-    public boolean writePropertiesFile(File propFile) {
-      try {
-        if (propFile.delete() && propFile.createNewFile() && propFile.setWritable(true)) {
-          //BufferedWriter bw = new BufferedWriter(new FileWriter(propFile));
-          PrintWriter writer = PApplet.createWriter(propFile);
-
-          writer.println("name=" + getName());
-          writer.println("category=" + getCategory());
-          writer.println("authorList=" + getAuthorList());
-          writer.println("url=" + getUrl());
-          writer.println("sentence=" + getSentence());
-          writer.println("paragraph=" + getParagraph());
-          writer.println("version=" + getVersion());
-          writer.println("prettyVersion=" + getPrettyVersion());
-
-          writer.flush();
-          writer.close();
-        }
-        return true;
-
-      } catch (FileNotFoundException e) {
-        e.printStackTrace();
-
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-      return false;
-    }
   }
 
   

@@ -6,13 +6,10 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.zip.*;
 
-import javax.swing.JOptionPane;
-
 import processing.app.Base;
 import processing.app.Editor;
 import processing.app.Library;
 import processing.app.Preferences;
-import processing.app.contrib.ContributionListing.AdvertisedContribution;
 
 
 interface ErrorWidget {
@@ -102,26 +99,40 @@ public class ContributionManager {
   static public void downloadAndInstall(final Editor editor,
                                         final URL url,
                                         final AdvertisedContribution ad,
-                                        final JProgressMonitor downloadProgressMonitor,
-                                        final JProgressMonitor installProgressMonitor,
+                                        final JProgressMonitor downloadProgress,
+                                        final JProgressMonitor installProgress,
                                         final ErrorWidget statusBar) {
 
     new Thread(new Runnable() {
       public void run() {
-        final File libArchive = createTemporaryFile(url, statusBar);
-        FileDownloader.downloadFile(url, libArchive, downloadProgressMonitor);
-        if (!downloadProgressMonitor.isCanceled() && !downloadProgressMonitor.isError()) {
-          installProgressMonitor.startTask("Installing", ProgressMonitor.UNKNOWN);
-          InstalledContribution contribution = null;
-          contribution = install(editor, libArchive, ad, false, statusBar);
+        String filename = url.getFile();
+        filename = filename.substring(filename.lastIndexOf('/') + 1);
+        try {
+          File contribZip = File.createTempFile("download", filename);
+          contribZip.setWritable(true);  // necessary?
 
-          if (contribution != null) {
-            contribListing.replaceContribution(ad, contribution);
-            refreshInstalled(editor);
+          try {
+            ContributionListing.download(url, contribZip, downloadProgress);
+            
+            if (!downloadProgress.isCanceled() && !downloadProgress.isError()) {
+              installProgress.startTask("Installing", ProgressMonitor.UNKNOWN);
+              InstalledContribution contribution = null;
+              contribution = ad.install(editor, contribZip, false, statusBar);
+
+              if (contribution != null) {
+                contribListing.replaceContribution(ad, contribution);
+                refreshInstalled(editor);
+              }
+              installProgress.finished();
+            }
+            contribZip.delete();
+
+          } catch (Exception e) {
+            statusBar.setErrorMessage("Error during download and install.");
           }
-          installProgressMonitor.finished();
+        } catch (IOException e) {
+          statusBar.setErrorMessage("Could not write to temporary directory.");
         }
-        libArchive.delete();
       }
     }).start();
   }
@@ -133,23 +144,23 @@ public class ContributionManager {
   }
 
 
-  /**
-   * Used after unpacking a contrib download do determine the file contents.
-   */
-  static List<File> discover(ContributionType type, File tempDir) {
-    switch (type) {
-    case LIBRARY:
-      return Library.discover(tempDir);
-//    case LIBRARY_COMPILATION:
-//      // XXX Implement
-//      return null;
-    case TOOL:
-      return ToolContribution.discover(tempDir);
-    case MODE:
-      return ModeContribution.discover(tempDir);
-    }
-    return null;
-  }
+//  /**
+//   * Used after unpacking a contrib download do determine the file contents.
+//   */
+//  static List<File> discover(ContributionType type, File tempDir) {
+//    switch (type) {
+//    case LIBRARY:
+//      return Library.discover(tempDir);
+////    case LIBRARY_COMPILATION:
+////      // XXX Implement
+////      return null;
+//    case TOOL:
+//      return ToolContribution.discover(tempDir);
+//    case MODE:
+//      return ModeContribution.discover(tempDir);
+//    }
+//    return null;
+//  }
 
 
 //  static String getPropertiesFileName(Type type) {
@@ -182,7 +193,7 @@ public class ContributionManager {
   }
 
 
-  static InstalledContribution create(Base base, File folder, ContributionType type) {
+  static InstalledContribution load(Base base, File folder, ContributionType type) {
     switch (type) {
     case LIBRARY:
       return new Library(folder);
@@ -239,31 +250,55 @@ public class ContributionManager {
    *          the library when a library by the same name already exists
    * @return
    */
+  /*
   static public InstalledContribution install(Editor editor, File libFile,
                                               AdvertisedContribution ad,
                                               boolean confirmReplace,
                                               ErrorWidget statusBar) {
+    
+    ContributionType type = ad.getType();
+    
+    // Unzip the file into the modes, tools, or libraries folder inside the 
+    // sketchbook. Unzipping to /tmp is problematic because it may be on 
+    // another file system, so move/rename operations will break.
+    File sketchbookContribFolder = 
+      getSketchbookContribFolder(editor.getBase(), type);
+    File tempFolder = null; 
+    
+    try {
+      tempFolder = 
+        Base.createTempFolder(type.toString(), "tmp", sketchbookContribFolder);
+    } catch (IOException e) {
+      statusBar.setErrorMessage("Could not create a temporary folder to install.");
+      return null;
+    }
+    ContributionManager.unzip(libFile, tempFolder);
 
-    File tempDir = ContributionManager.unzipFileToTemp(libFile, statusBar);
-    List<File> libFolders = ContributionManager.discover(ad.getType(), tempDir);
-    InstalledContribution outgoing = null;
-
-    if (libFolders.isEmpty()) {
-      // Sometimes library authors place all their folders in the base
-      // directory of a zip file instead of in single folder as the
-      // guidelines suggest. If this is the case, we might be able to find the
-      // library by stepping up a directory and searching for libraries again.
-      libFolders = ContributionManager.discover(ad.getType(), tempDir.getParentFile());
+    // Now go looking for a legit contrib inside what's been unpacked.
+    File contribFolder = null;
+    
+    // Sometimes contrib authors place all their folders in the base directory 
+    // of the .zip file instead of in single folder as the guidelines suggest. 
+    if (InstalledContribution.isCandidate(tempFolder, type)) {
+      contribFolder = tempFolder;
     }
 
-    if (libFolders != null && libFolders.size() == 1) {
-      File libFolder = libFolders.get(0);
-//      File propFile = new File(libFolder, getPropertiesFileName(ad.getType()));
-      File propFile = new File(libFolder, ad.getTypeName() + ".properties");
+    if (contribFolder == null) {
+      // Find the first legitimate looking folder in what we just unzipped
+      contribFolder = InstalledContribution.findCandidate(tempFolder, type);
+    }
+    
+    InstalledContribution outgoing = null;
+
+    if (contribFolder == null) {
+      statusBar.setErrorMessage("Could not find a " + type + " in the downloaded file.");
+      
+    } else {
+      File propFile = new File(contribFolder, type + ".properties");
 
       if (ad.writePropertiesFile(propFile)) {
         InstalledContribution newContrib =
-          ContributionManager.create(editor.getBase(), libFolder, ad.getType());
+          ContributionManager.create(editor.getBase(), contribFolder, type);
 
         outgoing = ContributionManager.installContribution(editor, newContrib,
                                                            confirmReplace,
@@ -271,24 +306,15 @@ public class ContributionManager {
       } else {
         statusBar.setErrorMessage("Error overwriting .properties file.");
       }
-    } else {
-      // Diagnose the problem and notify the user
-      if (libFolders == null) {
-        statusBar.setErrorMessage("An internal error occured while searching "
-            + "for contributions in the downloaded file.");
-      } else if (libFolders.isEmpty()) {
-        statusBar.setErrorMessage("Maybe it's just me, but it looks like " +
-                                  "there are no contributions in the file " +
-                                  "for \"" + ad.getName() + ".\"");
-      } else {
-        statusBar.setErrorMessage("There were multiple libraries in the file, " +
-                                  "so we're ignoring it.");
-      }
     }
 
-    Base.removeDir(tempDir);
+    // Remove any remaining boogers
+    if (tempFolder.exists()) {
+      Base.removeDir(tempFolder);
+    }
     return outgoing;
   }
+  */
 
 
   /**
@@ -297,19 +323,21 @@ public class ContributionManager {
    *          ask the user if it's okay to replace the library. If false, the
    *          library is always replaced with the new copy.
    */
+  /*
   static public InstalledContribution installContribution(Editor editor, InstalledContribution newContrib,
                                                           boolean confirmReplace, ErrorWidget statusBar) {
+    ArrayList<InstalledContribution> oldContribs = 
+      getContributions(newContrib.getType(), editor);
+    
+    String contribFolderName = newContrib.getFolder().getName();
 
-    ArrayList<InstalledContribution> oldContribs = getContributions(newContrib.getType(), editor);
-    String libFolderName = newContrib.getFolder().getName();
-
-    File libraryDestination =
-      ContributionManager.getSketchbookContribFolder(editor.getBase(), newContrib.getType());
-    File newContribDest = new File(libraryDestination, libFolderName);
+    File contribTypeFolder =
+      getSketchbookContribFolder(editor.getBase(), newContrib.getType());
+    File contribFolder = new File(contribTypeFolder, contribFolderName);
 
     for (InstalledContribution oldContrib : oldContribs) {
 
-      if ((oldContrib.getFolder().exists() && oldContrib.getFolder().equals(newContribDest)) ||
+      if ((oldContrib.getFolder().exists() && oldContrib.getFolder().equals(contribFolder)) ||
           (oldContrib.getId() != null && oldContrib.getId().equals(newContrib.getId()))) {
 
         if (ContributionManager.requiresRestart(oldContrib)) {
@@ -352,15 +380,15 @@ public class ContributionManager {
       }
     }
 
-    if (newContribDest.exists()) {
-      Base.removeDir(newContribDest);
+    if (contribFolder.exists()) {
+      Base.removeDir(contribFolder);
     }
 
     // Move newLib to the sketchbook library folder
-    if (newContrib.getFolder().renameTo(newContribDest)) {
+    if (newContrib.getFolder().renameTo(contribFolder)) {
       Base base = editor.getBase();
-      /* InstalledContribution contrib = */
-      ContributionManager.create(base, newContribDest, newContrib.getType());
+      // InstalledContribution contrib =
+      ContributionManager.create(base, contribFolder, newContrib.getType());
 //      try {
 //        initialize(contrib, base);
 //        return contrib;
@@ -391,6 +419,7 @@ public class ContributionManager {
     }
     return null;
   }
+  */
 
 
   /*
@@ -531,52 +560,52 @@ public class ContributionManager {
   }
 
 
-  static protected File createTemporaryFile(URL url, ErrorWidget statusBar) {
-    try {
-//      //File tmpFolder = Base.createTempFolder("library", "download", Base.getSketchbookLibrariesFolder());
-//      String[] segments = url.getFile().split("/");
-//      File libFile = new File(tmpFolder, segments[segments.length - 1]);
-      String filename = url.getFile();
-      filename = filename.substring(filename.lastIndexOf('/') + 1);
-      File libFile = File.createTempFile("download", filename, Base.getSketchbookLibrariesFolder());
-      libFile.setWritable(true);
-      return libFile;
+//  static protected File createTemporaryFile(URL url, ErrorWidget statusBar) {
+//    try {
+////      //File tmpFolder = Base.createTempFolder("library", "download", Base.getSketchbookLibrariesFolder());
+////      String[] segments = url.getFile().split("/");
+////      File libFile = new File(tmpFolder, segments[segments.length - 1]);
+//      String filename = url.getFile();
+//      filename = filename.substring(filename.lastIndexOf('/') + 1);
+//      File libFile = File.createTempFile("download", filename, Base.getSketchbookLibrariesFolder());
+//      libFile.setWritable(true);
+//      return libFile;
+//
+//    } catch (IOException e) {
+//      statusBar.setErrorMessage("Could not create a temp folder for download.");
+//    }
+//    return null;
+//  }
 
-    } catch (IOException e) {
-      statusBar.setErrorMessage("Could not create a temp folder for download.");
-    }
-    return null;
-  }
 
-
-  /**
-   * Creates a temporary folder and unzips a file to a subdirectory of the temp
-   * folder. The subdirectory is the only file of the tempo folder.
-   *
-   * e.g. if the contents of foo.zip are /hello and /world, then the resulting
-   * files will be
-   *     /tmp/foo9432423uncompressed/foo/hello
-   *     /tmp/foo9432423uncompress/foo/world
-   * ...and "/tmp/id9432423uncompress/foo/" will be returned.
-   *
-   * @return the folder where the zips contents have been unzipped to (the
-   *         subdirectory of the temp folder).
-   */
-  static public File unzipFileToTemp(File libFile, ErrorWidget statusBar) {
-    String fileName = ContributionManager.getFileName(libFile);
-    File tmpFolder = null;
-
-    try {
-      tmpFolder = Base.createTempFolder(fileName, "uncompressed", Base.getSketchbookLibrariesFolder());
-//      tmpFolder = new File(tmpFolder, fileName);  // don't make another subdirectory
-//      tmpFolder.mkdirs();
-    } catch (IOException e) {
-      statusBar.setErrorMessage("Could not create temp folder to uncompress zip file.");
-    }
-
-    ContributionManager.unzip(libFile, tmpFolder);
-    return tmpFolder;
-  }
+//  /**
+//   * Creates a temporary folder and unzips a file to a subdirectory of the temp
+//   * folder. The subdirectory is the only file of the tempo folder.
+//   *
+//   * e.g. if the contents of foo.zip are /hello and /world, then the resulting
+//   * files will be
+//   *     /tmp/foo9432423uncompressed/foo/hello
+//   *     /tmp/foo9432423uncompress/foo/world
+//   * ...and "/tmp/id9432423uncompress/foo/" will be returned.
+//   *
+//   * @return the folder where the zips contents have been unzipped to (the
+//   *         subdirectory of the temp folder).
+//   */
+//  static public File unzipFileToTemp(File libFile, ErrorWidget statusBar) {
+//    String fileName = ContributionManager.getFileName(libFile);
+//    File tmpFolder = null;
+//
+//    try {
+//      tmpFolder = Base.createTempFolder(fileName, "uncompressed", Base.getSketchbookLibrariesFolder());
+////      tmpFolder = new File(tmpFolder, fileName);  // don't make another subdirectory
+////      tmpFolder.mkdirs();
+//    } catch (IOException e) {
+//      statusBar.setErrorMessage("Could not create temp folder to uncompress zip file.");
+//    }
+//
+//    ContributionManager.unzip(libFile, tmpFolder);
+//    return tmpFolder;
+//  }
 
 
   /**

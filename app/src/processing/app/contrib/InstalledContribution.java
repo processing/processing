@@ -23,17 +23,17 @@
 package processing.app.contrib;
 
 import java.io.*;
-import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
 import java.util.zip.*;
 
+import javax.swing.JOptionPane;
+
 import processing.app.*;
 
 
 public abstract class InstalledContribution implements Contribution {
-
   protected String name;          // "pdf" or "PDF Export"
   protected String id;            // 1
   protected String category;      // "Sound"
@@ -112,7 +112,7 @@ public abstract class InstalledContribution implements Contribution {
       if (archives != null && archives.length > 0) {
         URL[] urlList = new URL[archives.length];
         for (int j = 0; j < urlList.length; j++) {
-          Base.log("found lib: " + archives[j] + " for " + getName());
+          Base.log("Found archive " + archives[j] + " for " + getName());
           urlList[j] = archives[j].toURI().toURL();
         }
 //        loader = new URLClassLoader(urlList, Thread.currentThread().getContextClassLoader());
@@ -131,6 +131,7 @@ public abstract class InstalledContribution implements Contribution {
   }
 
 
+  /*
   // doesn't work with URLClassLoader, but works with the system CL
   static void listClasses(ClassLoader loader) {
 //    loader = Thread.currentThread().getContextClassLoader();
@@ -145,20 +146,114 @@ public abstract class InstalledContribution implements Contribution {
       e.printStackTrace();
     }
   }
+  */
 
 
+  static protected boolean isCandidate(File potential, final ContributionType type) {
+    return (potential.isDirectory() &&
+      new File(potential, type.getFolderName()).exists());
+  }
+  
+  
   /**
    * Return a list of directories that have the necessary subfolder for this
    * contribution type. For instance, a list of folders that have a 'mode'
    * subfolder if this is a ModeContribution.
    */
-  static protected File[] listCandidates(File folder, final String typeName) {
+  static protected File[] listCandidates(File folder, final ContributionType type) {
     return folder.listFiles(new FileFilter() {
       public boolean accept(File potential) {
-        return (potential.isDirectory() &&
-                new File(potential, typeName).exists());
+        return isCandidate(potential, type);
       }
     });
+  }
+
+
+  /**
+   * Return the first directory that has the necessary subfolder for this
+   * contribution type. For instance, the first folder that has a 'mode'
+   * subfolder if this is a ModeContribution.
+   */
+  static protected File findCandidate(File folder, final ContributionType type) {
+    File[] folders = listCandidates(folder, type);
+    
+    if (folders.length == 0) {
+      return null;
+    
+    } else if (folders.length > 1) {
+      Base.log("More than one " + type.toString() + " found inside " + folder.getAbsolutePath());
+    }
+    return folders[0];
+  }
+  
+  
+  InstalledContribution install(Editor editor, 
+                                            boolean confirmReplace, 
+                                            ErrorWidget statusBar) {
+    ArrayList<InstalledContribution> oldContribs = 
+      ContributionManager.getContributions(getType(), editor);
+    
+    String contribFolderName = getFolder().getName();
+
+    File contribTypeFolder =
+      ContributionManager.getSketchbookContribFolder(editor.getBase(), getType());
+    File contribFolder = new File(contribTypeFolder, contribFolderName);
+
+    for (InstalledContribution oldContrib : oldContribs) {
+      if ((oldContrib.getFolder().exists() && oldContrib.getFolder().equals(contribFolder)) ||
+          (oldContrib.getId() != null && oldContrib.getId().equals(getId()))) {
+
+        if (ContributionManager.requiresRestart(oldContrib)) {
+          // XXX: We can't replace stuff, soooooo.... do something different
+          if (!ContributionManager.backupContribution(editor, oldContrib, false, statusBar)) {
+            return null;
+          }
+        } else {
+          int result = 0;
+          boolean doBackup = Preferences.getBoolean("contribution.backup.on_install");
+          if (confirmReplace) {
+            if (doBackup) {
+              result = Base.showYesNoQuestion(editor, "Replace",
+                     "Replace pre-existing \"" + oldContrib.getName() + "\" library?",
+                     "A pre-existing copy of the \"" + oldContrib.getName() + "\" library<br>"+
+                     "has been found in your sketchbook. Clicking “Yes”<br>"+
+                     "will move the existing library to a backup folder<br>" +
+                     " in <i>libraries/old</i> before replacing it.");
+              if (result != JOptionPane.YES_OPTION || !ContributionManager.backupContribution(editor, oldContrib, true, statusBar)) {
+                return null;
+              }
+            } else {
+              result = Base.showYesNoQuestion(editor, "Replace",
+                     "Replace pre-existing \"" + oldContrib.getName() + "\" library?",
+                     "A pre-existing copy of the \"" + oldContrib.getName() + "\" library<br>"+
+                     "has been found in your sketchbook. Clicking “Yes”<br>"+
+                     "will permanently delete this library and all of its contents<br>"+
+                     "before replacing it.");
+              if (result != JOptionPane.YES_OPTION || !oldContrib.getFolder().delete()) {
+                return null;
+              }
+            }
+          } else {
+            if ((doBackup && !ContributionManager.backupContribution(editor, oldContrib, true, statusBar)) ||
+                (!doBackup && !oldContrib.getFolder().delete())) {
+              return null;
+            }
+          }
+        }
+      }
+    }
+
+    // At this point it should be safe to replace this fella
+    if (contribFolder.exists()) {
+      Base.removeDir(contribFolder);
+    }
+
+    if (!getFolder().renameTo(contribFolder)) {
+      statusBar.setErrorMessage("Could not move " + getTypeName() + 
+                                " \"" + getName() + "\" to the sketchbook.");
+      return null;
+    }
+    return ContributionManager.load(editor.getBase(), contribFolder, getType());
   }
 
 

@@ -33,6 +33,11 @@ public enum ContributionType {
       }
       return null;  // should be unreachable
     }
+    
+    
+//    public String getPropertiesName() {
+//      return toString() + ".properties";
+//    }
 
     
     static public ContributionType fromName(String s) {
