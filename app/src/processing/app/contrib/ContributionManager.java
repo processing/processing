@@ -115,9 +115,9 @@ public class ContributionManager {
             ContributionListing.download(url, contribZip, downloadProgress);
             
             if (!downloadProgress.isCanceled() && !downloadProgress.isError()) {
-              installProgress.startTask("Installing", ProgressMonitor.UNKNOWN);
-              InstalledContribution contribution = null;
-              contribution = ad.install(editor, contribZip, false, statusBar);
+              installProgress.startTask("Installing...", ProgressMonitor.UNKNOWN);
+              InstalledContribution contribution = 
+                ad.install(editor, contribZip, false, statusBar);
 
               if (contribution != null) {
                 contribListing.replaceContribution(ad, contribution);
@@ -179,20 +179,6 @@ public class ContributionManager {
 //  }
 
 
-  static File getSketchbookContribFolder(Base base, ContributionType type) {
-    switch (type) {
-    case LIBRARY:
-//    case LIBRARY_COMPILATION:
-      return Base.getSketchbookLibrariesFolder();
-    case TOOL:
-      return Base.getSketchbookToolsFolder();
-    case MODE:
-      return Base.getSketchbookModesFolder();
-    }
-    return null;
-  }
-
-
   static InstalledContribution load(Base base, File folder, ContributionType type) {
     switch (type) {
     case LIBRARY:
@@ -208,7 +194,7 @@ public class ContributionManager {
   }
 
 
-  static ArrayList<InstalledContribution> getContributions(ContributionType type, Editor editor) {
+  static ArrayList<InstalledContribution> listContributions(ContributionType type, Editor editor) {
     ArrayList<InstalledContribution> contribs = new ArrayList<InstalledContribution>();
     switch (type) {
     case LIBRARY:

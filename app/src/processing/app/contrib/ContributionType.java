@@ -1,5 +1,9 @@
 package processing.app.contrib;
 
+import java.io.File;
+
+import processing.app.Base;
+
 public enum ContributionType {
 //    LIBRARY, LIBRARY_COMPILATION, TOOL, MODE;
     LIBRARY, TOOL, MODE;
@@ -58,6 +62,19 @@ public enum ContributionType {
       return null;
     }
     
+    
+    public File getSketchbookContribFolder() {
+      switch (this) {
+      case LIBRARY:
+        return Base.getSketchbookLibrariesFolder();
+      case TOOL:
+        return Base.getSketchbookToolsFolder();
+      case MODE:
+        return Base.getSketchbookModesFolder();
+      }
+      return null;
+    }
+
     
 //    static public boolean validName(String s) {
 //      return "library".equals(s) || "tool".equals(s) || "mode".equals(s); 

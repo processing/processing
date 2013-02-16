@@ -67,8 +67,7 @@ class AdvertisedContribution implements Contribution {
     // Unzip the file into the modes, tools, or libraries folder inside the 
     // sketchbook. Unzipping to /tmp is problematic because it may be on 
     // another file system, so move/rename operations will break.
-    File sketchbookContribFolder = 
-      ContributionManager.getSketchbookContribFolder(editor.getBase(), type);
+    File sketchbookContribFolder = type.getSketchbookContribFolder();
     File tempFolder = null; 
     
     try {
@@ -94,7 +93,7 @@ class AdvertisedContribution implements Contribution {
       contribFolder = InstalledContribution.findCandidate(tempFolder, type);
     }
     
-    InstalledContribution outgoing = null;
+    InstalledContribution installedContrib = null;
 
     if (contribFolder == null) {
       statusBar.setErrorMessage("Could not find a " + type + " in the downloaded file.");
@@ -102,11 +101,15 @@ class AdvertisedContribution implements Contribution {
     } else {
       File propFile = new File(contribFolder, type + ".properties");
 
-      if (writePropertiesFile(propFile)) {
+      if (!writePropertiesFile(propFile)) {        
+        // 1. contribFolder now has a legit contribution, load it to get info. 
         InstalledContribution newContrib =
           ContributionManager.load(editor.getBase(), contribFolder, type);
-        outgoing = 
-          newContrib.install(editor, confirmReplace, statusBar);
+        
+        // 2. Check to make sure nothing has the same name already, 
+        // backup old if needed, then move things into place and reload.
+        installedContrib = 
+          newContrib.moveAndLoad(editor, confirmReplace, statusBar);
         
       } else {
         statusBar.setErrorMessage("Error overwriting .properties file.");
@@ -117,7 +120,7 @@ class AdvertisedContribution implements Contribution {
     if (tempFolder.exists()) {
       Base.removeDir(tempFolder);
     }
-    return outgoing;
+    return installedContrib;
   }
 
   

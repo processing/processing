@@ -187,16 +187,15 @@ public abstract class InstalledContribution implements Contribution {
   }
   
   
-  InstalledContribution install(Editor editor, 
-                                            boolean confirmReplace, 
-                                            ErrorWidget statusBar) {
+  InstalledContribution moveAndLoad(Editor editor, 
+                                    boolean confirmReplace, 
+                                    ErrorWidget statusBar) {
     ArrayList<InstalledContribution> oldContribs = 
-      ContributionManager.getContributions(getType(), editor);
+      ContributionManager.listContributions(getType(), editor);
     
     String contribFolderName = getFolder().getName();
 
-    File contribTypeFolder =
-      ContributionManager.getSketchbookContribFolder(editor.getBase(), getType());
+    File contribTypeFolder = getType().getSketchbookContribFolder();
     File contribFolder = new File(contribTypeFolder, contribFolderName);
 
     for (InstalledContribution oldContrib : oldContribs) {
