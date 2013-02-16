@@ -487,7 +487,7 @@ public class ContributionListing {
   }
 
   
-  public ArrayList<AdvertisedContribution> parseContribList(File f) {
+  ArrayList<AdvertisedContribution> parseContribList(File f) {
     ArrayList<AdvertisedContribution> outgoing = new ArrayList<AdvertisedContribution>();
 
     if (f != null && f.exists()) {
@@ -534,8 +534,32 @@ public class ContributionListing {
   }
 
   
-  public static interface Filter {
+  static interface Filter {
     boolean matches(Contribution contrib);
+  }
+  
+  
+  /** 
+   * Create a filter for a specific contribution type.
+   * @param type The type, or null for a generic update checker.
+   */
+  static Filter createFilter(final ContributionType type) {
+    if (type == null) {
+      return new Filter() {
+        public boolean matches(Contribution contrib) {
+          return contrib.getType() == type;
+        }
+      };
+    } else {
+      return new Filter() {
+        public boolean matches(Contribution contrib) {
+          if (contrib instanceof InstalledContribution) {
+            return ContributionListing.getInstance().hasUpdates(contrib);
+          }
+          return false;
+        }
+      };
+    }
   }
   
 

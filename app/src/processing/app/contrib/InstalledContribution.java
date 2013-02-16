@@ -34,22 +34,12 @@ import processing.app.*;
 
 
 public abstract class InstalledContribution extends Contribution {
-//public abstract class InstalledContribution implements Contribution {
-//  protected String name;          // "pdf" or "PDF Export"
-//  protected String category;      // "Sound"
-//  protected String authorList;    // Ben Fry
-//  protected String url;           // http://processing.org
-//  protected String sentence;      // Write graphics to PDF files.
-//  protected String paragraph;     // <paragraph length description for site>
-//  protected int version;          // 102
-//  protected String prettyVersion; // "1.0.2"
-
-  protected String id;            // 1
-  protected int latestVersion;    // 103
+  static public final String DELETION_FLAG = "flagged_for_deletion";
+  
+  protected String id;          // 1
+  protected int latestVersion;  // 103
   protected File folder;
-
   protected HashMap<String, String> properties;
-
   protected ClassLoader loader;
 
 
@@ -192,7 +182,7 @@ public abstract class InstalledContribution extends Contribution {
                                     boolean confirmReplace, 
                                     ErrorWidget statusBar) {
     ArrayList<InstalledContribution> oldContribs = 
-      ContributionManager.listContributions(getType(), editor);
+      getType().listContributions(editor);
     
     String contribFolderName = getFolder().getName();
 
@@ -203,9 +193,9 @@ public abstract class InstalledContribution extends Contribution {
       if ((oldContrib.getFolder().exists() && oldContrib.getFolder().equals(contribFolder)) ||
           (oldContrib.getId() != null && oldContrib.getId().equals(getId()))) {
 
-        if (ContributionManager.requiresRestart(oldContrib)) {
+        if (oldContrib.requiresRestart()) {
           // XXX: We can't replace stuff, soooooo.... do something different
-          if (!oldContrib.backupContribution(editor, false, statusBar)) {
+          if (!oldContrib.backup(editor, false, statusBar)) {
             return null;
           }
         } else {
@@ -219,7 +209,7 @@ public abstract class InstalledContribution extends Contribution {
                      "has been found in your sketchbook. Clicking “Yes”<br>"+
                      "will move the existing library to a backup folder<br>" +
                      " in <i>libraries/old</i> before replacing it.");
-              if (result != JOptionPane.YES_OPTION || !oldContrib.backupContribution(editor, true, statusBar)) {
+              if (result != JOptionPane.YES_OPTION || !oldContrib.backup(editor, true, statusBar)) {
                 return null;
               }
             } else {
@@ -234,7 +224,7 @@ public abstract class InstalledContribution extends Contribution {
               }
             }
           } else {
-            if ((doBackup && !oldContrib.backupContribution(editor, true, statusBar)) ||
+            if ((doBackup && !oldContrib.backup(editor, true, statusBar)) ||
                 (!doBackup && !oldContrib.getFolder().delete())) {
               return null;
             }
@@ -253,23 +243,20 @@ public abstract class InstalledContribution extends Contribution {
                                 " \"" + getName() + "\" to the sketchbook.");
       return null;
     }
-    return ContributionManager.load(editor.getBase(), contribFolder, getType());
+    return getType().load(editor.getBase(), contribFolder);
   }
 
 
   /**
    * Moves the given contribution to a backup folder.
-   * @param doDeleteOriginal
+   * @param deleteOriginal
    *          true if the file should be moved to the directory, false if it
    *          should instead be copied, leaving the original in place
    */
-  boolean backupContribution(Editor editor,
-                                     boolean doDeleteOriginal,
-                                     ErrorWidget statusBar) {
+  boolean backup(Editor editor, boolean deleteOriginal, ErrorWidget status) {
 
     boolean success = false;
-    File backupFolder = 
-      createBackupFolder(statusBar, getType());
+    File backupFolder = getType().createBackupFolder(status);
     
     if (backupFolder != null) {
       String libFolderName = getFolder().getName();
@@ -277,7 +264,7 @@ public abstract class InstalledContribution extends Contribution {
       final String backupName = prefix + "_" + libFolderName;
       File backupSubFolder = ContributionManager.getUniqueName(backupFolder, backupName);
 
-      if (doDeleteOriginal) {
+      if (deleteOriginal) {
         success = getFolder().renameTo(backupSubFolder);
       } else {
         try {
@@ -286,25 +273,73 @@ public abstract class InstalledContribution extends Contribution {
         } catch (IOException e) { }
       }
       if (!success) {
-        statusBar.setErrorMessage("Could not move contribution to backup folder.");
+        status.setErrorMessage("Could not move contribution to backup folder.");
       }
     }
     return success;
   }
 
 
-  static public File createBackupFolder(ErrorWidget status, ContributionType type) {
-    File backupFolder = new File(type.getSketchbookFolder(), "old");
-    if (!backupFolder.isDirectory()) {
-      status.setErrorMessage("Remove the file named \"old\" from the " + 
-                             type.getFolderName() + " folder in the sketchbook.");
-      return null;
+  /**
+   * Non-blocking call to remove a contribution in a new thread.
+   */
+  void removeContribution(final Editor editor,
+                          final ProgressMonitor pm,
+                          final ErrorWidget statusBar) {
+//    final ContributionListing contribListing = ContributionListing.getInstance();
+//    final ProgressMonitor progressMonitor = ;
+
+    new Thread(new Runnable() {
+      public void run() {
+        remove(editor,
+               (pm != null) ? pm : new NullProgressMonitor(),
+               statusBar, 
+               ContributionListing.getInstance()); 
+      }
+    }).start();
+  }
+  
+  
+  void remove(final Editor editor,
+              final ProgressMonitor pm,
+              final ErrorWidget statusBar, 
+              final ContributionListing contribListing) {
+    pm.startTask("Removing", ProgressMonitor.UNKNOWN);
+
+    boolean doBackup = Preferences.getBoolean("contribution.backup.on_remove");
+    if (requiresRestart()) {
+      if (!doBackup || (doBackup && backup(editor, false, statusBar))) {
+        if (setDeletionFlag()) {
+          contribListing.replaceContribution(this, this);
+        }
+      }
+    } else {
+      boolean success = false;
+      if (doBackup) {
+        success = backup(editor, true, statusBar);
+      } else {
+        Base.removeDir(getFolder());
+        success = !getFolder().exists();
+      }
+
+      if (success) {
+        Contribution advertisedVersion =
+          contribListing.getAdvertisedContribution(this);
+
+        if (advertisedVersion == null) {
+          contribListing.removeContribution(this);
+        } else {
+          contribListing.replaceContribution(this, advertisedVersion);
+        }
+      } else {
+        // There was a failure backing up the folder
+        if (!doBackup) {
+          statusBar.setErrorMessage("Could not delete the contribution's files");
+        }
+      }
     }
-    if (!backupFolder.exists() && !backupFolder.mkdirs()) {
-      status.setErrorMessage("Could not create a " + type + " backup folder.");
-      return null;
-    }
-    return backupFolder;
+    ContributionManager.refreshInstalled(editor);
+    pm.finished();
   }
 
   
@@ -315,6 +350,33 @@ public abstract class InstalledContribution extends Contribution {
 
   public boolean isInstalled() {
     return folder != null;
+  }
+  
+  
+  boolean setDeletionFlag() {
+    // Only returns false if the file already exists, so we can
+    // ignore the return value.
+    try {
+      new File(getFolder(), DELETION_FLAG).createNewFile();
+      return true;
+    } catch (IOException e) {
+      return false;
+    }
+  }
+
+
+  boolean unsetDeletionFlag() {
+    return new File(getFolder(), DELETION_FLAG).delete();
+  }
+
+
+  boolean isDeletionFlagged() {
+    return isDeletionFlagged(getFolder());
+  }
+
+
+  static boolean isDeletionFlagged(File folder) {
+    return new File(folder, DELETION_FLAG).exists();
   }
 
 

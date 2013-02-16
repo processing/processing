@@ -40,6 +40,7 @@ import java.net.*;
 
 import processing.app.Base;
 import processing.app.contrib.ContributionListing.ContributionChangeListener;
+import processing.core.PApplet;
 
 
 public class ContributionListPanel extends JPanel implements Scrollable, ContributionChangeListener {
@@ -278,18 +279,21 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     }
   }
 
-  static String toHex(Color c) {
-    StringBuilder hex = new StringBuilder();
-    hex.append(Integer.toString(c.getRed(), 16));
-    hex.append(Integer.toString(c.getGreen(), 16));
-    hex.append(Integer.toString(c.getBlue(), 16));
-    return hex.toString();
-  }
+  
+//  static String toHex(Color c) {
+//    StringBuilder hex = new StringBuilder();
+//    hex.append(Integer.toString(c.getRed(), 16));
+//    hex.append(Integer.toString(c.getGreen(), 16));
+//    hex.append(Integer.toString(c.getBlue(), 16));
+//    return hex.toString();
+//  }
 
+  
   public Dimension getPreferredScrollableViewportSize() {
     return getPreferredSize();
   }
 
+  
   /**
    * Amount to scroll to reveal a new page of items
    */
@@ -308,6 +312,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     return 0;
   }
 
+  
   /**
    * Amount to scroll to reveal the rest of something we are on or a new item
    */
@@ -458,8 +463,8 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         public void actionPerformed(ActionEvent e) {
           if (contrib instanceof InstalledContribution) {
             InstalledContribution installed = (InstalledContribution) contrib;
-            ContributionManager.unsetDeletionFlag(installed);
-            contribListing.replaceContribution(contrib, contrib);
+            installed.unsetDeletionFlag();
+            contribListing.replaceContribution(contrib, contrib);  // ?? 
           }
         }
       };
@@ -472,9 +477,8 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
 
             installProgressBar.setVisible(true);
 
-            ContributionManager.removeContribution(contribManager.editor,
-                                                   (InstalledContribution) contrib,
-                                                   new JProgressMonitor(installProgressBar) {
+            ((InstalledContribution) contrib).removeContribution(contribManager.editor,
+                                                                 new JProgressMonitor(installProgressBar) {
               public void finishedAction() {
                 // Finished uninstalling the library
                 resetInstallProgressBarState();
@@ -711,7 +715,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       StringBuilder description = new StringBuilder();
       description.append("<html><body>");
 
-      boolean isFlagged = ContributionManager.isDeletionFlagSet(contrib);
+      boolean isFlagged = contrib.isDeletionFlagged();
       if (isFlagged) {
         description.append(ContributionListPanel.DELETION_MESSAGE);
       } else {
@@ -737,7 +741,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
           versionText.append("To finish an update, reinstall this contribution after the restart.");
         } else {
           versionText.append("New version available!");
-          if (ContributionManager.requiresRestart(contrib)) {
+          if (contrib.requiresRestart()) {
             versionText.append(" To update, first remove the current version.");
           }
         }
@@ -750,7 +754,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       }
 
       updateButton.setEnabled(true);
-      if (contrib != null && !ContributionManager.requiresRestart(contrib)) {
+      if (contrib != null && !contrib.requiresRestart()) {
         updateButton.setVisible(isSelected()
             && contribListing.hasUpdates(contrib));
       }
@@ -877,7 +881,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       //   hyperlink, it will be opened as the mouse is released.
       enableHyperlinks = alreadySelected;
 
-      if (contrib != null && !ContributionManager.requiresRestart(contrib)) {
+      if (contrib != null && !contrib.requiresRestart()) {
         updateButton.setVisible(isSelected()
             && contribListing.hasUpdates(contrib));
       }
@@ -928,8 +932,8 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
           if (doc instanceof HTMLDocument) {
             HTMLDocument html = (HTMLDocument) doc;
             StyleSheet stylesheet = html.getStyleSheet();
-            stylesheet.addRule("body {color:" + ContributionListPanel.toHex(fg) + ";}");
-            stylesheet.addRule("a {color:" + ContributionListPanel.toHex(fg) + "}");
+            stylesheet.addRule("body {color:" + PApplet.hex(fg.getRGB()).substring(8) + ";}");
+            stylesheet.addRule("a {color:" + PApplet.hex(fg.getRGB()).substring(8) + "}");
           }
         }
       }

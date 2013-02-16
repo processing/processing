@@ -334,9 +334,7 @@ public class Base {
 //        removeDir(contrib.getFolder());
 //      }
 //    }
-    ContributionManager.checkDeletions(getSketchbookModesFolder());
-    ContributionManager.checkDeletions(getSketchbookToolsFolder());
-
+    ContributionManager.deleteFlagged();
     buildCoreModes();
     rebuildContribModes();
 
@@ -362,37 +360,15 @@ public class Base {
       }
     }
 
-    libraryManagerFrame = new ContributionManagerDialog("Library Manager",
-                                                        new ContributionListing.Filter() {
-      public boolean matches(Contribution contrib) {
-        return contrib.getType() == ContributionType.LIBRARY;
-//        return contrib.getType() == Contribution.Type.LIBRARY
-//            || contrib.getType() == Contribution.Type.LIBRARY_COMPILATION;
-      }
-    });
-    toolManagerFrame = new ContributionManagerDialog("Tool Manager",
-                                                     new ContributionListing.Filter() {
-      public boolean matches(Contribution contrib) {
-        return contrib.getType() == ContributionType.TOOL;
-      }
-    });
-    modeManagerFrame = new ContributionManagerDialog("Mode Manager",
-                                                     new ContributionListing.Filter() {
-      public boolean matches(Contribution contrib) {
-        return contrib.getType() == ContributionType.MODE;
-      }
-    });
-    updateManagerFrame = new ContributionManagerDialog("Update Manager",
-                                                       new ContributionListing.Filter() {
-      public boolean matches(Contribution contrib) {
-        if (contrib instanceof InstalledContribution) {
-          return ContributionListing.getInstance().hasUpdates(contrib);
-        }
-
-        return false;
-      }
-    });
-
+    libraryManagerFrame = 
+      new ContributionManagerDialog(ContributionType.LIBRARY);
+    toolManagerFrame = 
+      new ContributionManagerDialog(ContributionType.TOOL);
+    modeManagerFrame = 
+      new ContributionManagerDialog(ContributionType.MODE);
+    updateManagerFrame = 
+      new ContributionManagerDialog(null);
+    
     // Make sure ThinkDifferent has library examples too
     nextMode.rebuildLibraryList();
 

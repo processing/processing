@@ -90,4 +90,19 @@ abstract public class Contribution {
   
   
   abstract public boolean isInstalled();
+  
+  
+  /** 
+   * Returns true if the type of contribution requires the PDE to restart
+   * when being added or removed. 
+   */
+  public boolean requiresRestart() {
+    return getType() == ContributionType.TOOL || getType() == ContributionType.MODE;
+  }
+  
+
+  /** Overridden by InstalledContribution. */
+  boolean isDeletionFlagged() {
+    return false;
+  }
 }

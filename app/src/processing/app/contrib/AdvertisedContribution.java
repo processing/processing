@@ -128,7 +128,7 @@ class AdvertisedContribution extends Contribution {
       if (!writePropertiesFile(propFile)) {        
         // 1. contribFolder now has a legit contribution, load it to get info. 
         InstalledContribution newContrib =
-          ContributionManager.load(editor.getBase(), contribFolder, type);
+          type.load(editor.getBase(), contribFolder);
         
         // 2. Check to make sure nothing has the same name already, 
         // backup old if needed, then move things into place and reload.

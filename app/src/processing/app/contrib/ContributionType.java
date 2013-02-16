@@ -23,8 +23,11 @@ package processing.app.contrib;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.util.ArrayList;
 
 import processing.app.Base;
+import processing.app.Editor;
+import processing.app.Library;
 
 public enum ContributionType {
 //    LIBRARY, LIBRARY_COMPILATION, TOOL, MODE;
@@ -44,6 +47,13 @@ public enum ContributionType {
     }
     return null;  // should be unreachable
   };
+  
+  
+  /** Return Mode for mode, Tool for tool, etc. */
+  public String getTitle() {
+    String s = toString();
+    return Character.toUpperCase(s.charAt(0)) + s.substring(1);
+  }
     
     
   public String getFolderName() {
@@ -134,8 +144,49 @@ public enum ContributionType {
     }
     return folders[0];
   }
-    
-//    static public boolean validName(String s) {
-//      return "library".equals(s) || "tool".equals(s) || "mode".equals(s); 
-//    }
+  
+  
+  InstalledContribution load(Base base, File folder) {
+    switch (this) {
+    case LIBRARY:
+      return new Library(folder);
+    case TOOL:
+      return ToolContribution.load(folder);
+    case MODE:
+      return ModeContribution.load(base, folder);
+    }
+    return null;
   }
+
+
+  ArrayList<InstalledContribution> listContributions(Editor editor) {
+    ArrayList<InstalledContribution> contribs = new ArrayList<InstalledContribution>();
+    switch (this) {
+    case LIBRARY:
+      contribs.addAll(editor.getMode().contribLibraries);
+      break;
+    case TOOL:
+      contribs.addAll(editor.contribTools);
+      break;
+    case MODE:
+      contribs.addAll(editor.getBase().getModeContribs());
+      break;
+    }
+    return contribs;
+  }
+  
+  
+  File createBackupFolder(ErrorWidget status) {
+    File backupFolder = new File(getSketchbookFolder(), "old");
+    if (!backupFolder.isDirectory()) {
+      status.setErrorMessage("Remove the file named \"old\" from the " + 
+                             getFolderName() + " folder in the sketchbook.");
+      return null;
+    }
+    if (!backupFolder.exists() && !backupFolder.mkdirs()) {
+      status.setErrorMessage("Could not create a " + toString() + " backup folder.");
+      return null;
+    }
+    return backupFolder;
+  }
+}

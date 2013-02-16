@@ -57,15 +57,12 @@ public class ContributionManagerDialog {
   ContributionListing contribListing;
 
 
-  public ContributionManagerDialog(String title,
-                                   ContributionListing.Filter filter) {
-
-    this.title = title;
-    this.permaFilter = filter;
-
+  public ContributionManagerDialog(ContributionType type) {
+    this.title = type.getTitle() + " Manager";
+    this.permaFilter = ContributionListing.createFilter(type);
+    
     contribListing = ContributionListing.getInstance();
-
-    contributionListPanel = new ContributionListPanel(this, filter);
+    contributionListPanel = new ContributionListPanel(this, permaFilter);
     contribListing.addContributionListener(contributionListPanel);
   }
 
