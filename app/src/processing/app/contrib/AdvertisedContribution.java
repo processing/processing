@@ -1,26 +1,46 @@
+/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+
+/*
+  Part of the Processing project - http://processing.org
+
+  Copyright (c) 2013 The Processing Foundation
+  Copyright (c) 2011-12 Ben Fry and Casey Reas
+
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License version 2
+  as published by the Free Software Foundation.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License along 
+  with this program; if not, write to the Free Software Foundation, Inc.
+  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
 package processing.app.contrib;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.HashMap;
 
 import processing.app.Base;
 import processing.app.Editor;
 import processing.core.PApplet;
 
-class AdvertisedContribution implements Contribution {
-  protected final String name;             // "pdf" or "PDF Export"
+
+class AdvertisedContribution extends Contribution {
   protected final ContributionType type;   // Library, tool, etc.
-  protected final String category;         // "Sound"
-  protected final String authorList;       // [Ben Fry](http://benfry.com/)
-  protected final String url;              // http://processing.org
-  protected final String sentence;         // Write graphics to PDF files.
-  protected final String paragraph;        // <paragraph length description for site>
-  protected final int version;             // 102
-  protected final String prettyVersion;    // "1.0.2"
   protected final String link;             // Direct link to download the file
+  
+//  protected final String category;         // "Sound"
+//  protected final String name;             // "pdf" or "PDF Export"
+//  protected final String authorList;       // [Ben Fry](http://benfry.com/)
+//  protected final String url;              // http://processing.org
+//  protected final String sentence;         // Write graphics to PDF files.
+//  protected final String paragraph;        // <paragraph length description for site>
+//  protected final int version;             // 102
+//  protected final String prettyVersion;    // "1.0.2"  
 
   
   public AdvertisedContribution(ContributionType type, HashMap<String, String> exports) {
@@ -128,47 +148,57 @@ class AdvertisedContribution implements Contribution {
     return false;
   }
 
+  
   public ContributionType getType() {
     return type;
   }
 
-  public String getTypeName() {
-    return type.toString();
-  }
   
-  public String getCategory() {
-    return category;
-  }
+//  public String getTypeName() {
+//    return type.toString();
+//  }
+//  
+//  public String getCategory() {
+//    return category;
+//  }
+//
+//  public String getName() {
+//    return name;
+//  }
+//
+//  public String getAuthorList() {
+//    return authorList;
+//  }
+//
+//  public String getUrl() {
+//    return url;
+//  }
+//
+//  public String getSentence() {
+//    return sentence;
+//  }
+//
+//  public String getParagraph() {
+//    return paragraph;
+//  }
+//
+//  public int getVersion() {
+//    return version;
+//  }
+//
+//  public String getPrettyVersion() {
+//    return prettyVersion;
+//  }
 
-  public String getName() {
-    return name;
-  }
 
-  public String getAuthorList() {
-    return authorList;
-  }
-
-  public String getUrl() {
-    return url;
-  }
-
-  public String getSentence() {
-    return sentence;
-  }
-
-  public String getParagraph() {
-    return paragraph;
-  }
-
-  public int getVersion() {
-    return version;
-  }
-
-  public String getPrettyVersion() {
-    return prettyVersion;
-  }
-
-  
+  /**
+   * We overwrite the properties file with the curated version from the 
+   * Processing site. This ensures that things have been cleaned up (for 
+   * instance, that the "sentence" is really a sentence) and that bad data 
+   * from the contrib's .properties file doesn't break the manager. 
+   * @param propFile
+   * @return
+   */
   public boolean writePropertiesFile(File propFile) {
     try {
       if (propFile.delete() && propFile.createNewFile() && propFile.setWritable(true)) {

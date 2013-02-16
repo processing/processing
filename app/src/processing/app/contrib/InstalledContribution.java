@@ -3,8 +3,8 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-12 Ben Fry and Casey Reas
-  Copyright (c) 2001-04 Massachusetts Institute of Technology
+  Copyright (c) 2013 The Processing Foundation
+  Copyright (c) 2011-12 Ben Fry and Casey Reas
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License version 2
@@ -15,11 +15,10 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, write to the Free Software Foundation,
-  Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+  You should have received a copy of the GNU General Public License along 
+  with this program; if not, write to the Free Software Foundation, Inc.
+  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
 package processing.app.contrib;
 
 import java.io.*;
@@ -33,18 +32,19 @@ import javax.swing.JOptionPane;
 import processing.app.*;
 
 
-public abstract class InstalledContribution implements Contribution {
-  protected String name;          // "pdf" or "PDF Export"
-  protected String id;            // 1
-  protected String category;      // "Sound"
-  protected String authorList;    // Ben Fry
-  protected String url;           // http://processing.org
-  protected String sentence;      // Write graphics to PDF files.
-  protected String paragraph;     // <paragraph length description for site>
-  protected int version;          // 102
-  protected int latestVersion;    // 103
-  protected String prettyVersion; // "1.0.2"
+public abstract class InstalledContribution extends Contribution {
+//public abstract class InstalledContribution implements Contribution {
+//  protected String name;          // "pdf" or "PDF Export"
+//  protected String category;      // "Sound"
+//  protected String authorList;    // Ben Fry
+//  protected String url;           // http://processing.org
+//  protected String sentence;      // Write graphics to PDF files.
+//  protected String paragraph;     // <paragraph length description for site>
+//  protected int version;          // 102
+//  protected String prettyVersion; // "1.0.2"
 
+  protected String id;            // 1
+  protected int latestVersion;    // 103
   protected File folder;
 
   protected HashMap<String, String> properties;
@@ -266,14 +266,14 @@ public abstract class InstalledContribution implements Contribution {
   }
 
 
-  public String getCategory() {
-    return category;
-  }
-
-
-  public String getName() {
-    return name;
-  }
+//  public String getCategory() {
+//    return category;
+//  }
+//
+//
+//  public String getName() {
+//    return name;
+//  }
 
 
   public String getId() {
@@ -281,29 +281,29 @@ public abstract class InstalledContribution implements Contribution {
   }
 
 
-  public String getAuthorList() {
-    return authorList;
-  }
-
-
-  public String getUrl() {
-    return url;
-  }
-
-
-  public String getSentence() {
-    return sentence;
-  }
-
-
-  public String getParagraph() {
-    return paragraph;
-  }
-
-
-  public int getVersion() {
-    return version;
-  }
+//  public String getAuthorList() {
+//    return authorList;
+//  }
+//
+//
+//  public String getUrl() {
+//    return url;
+//  }
+//
+//
+//  public String getSentence() {
+//    return sentence;
+//  }
+//
+//
+//  public String getParagraph() {
+//    return paragraph;
+//  }
+//
+//
+//  public int getVersion() {
+//    return version;
+//  }
 
 
   public int getLatestVersion() {
@@ -311,14 +311,14 @@ public abstract class InstalledContribution implements Contribution {
   }
 
 
-  public String getPrettyVersion() {
-    return prettyVersion;
-  }
-
-
-  public String getTypeName() {
-    return getType().toString();
-  }
+//  public String getPrettyVersion() {
+//    return prettyVersion;
+//  }
+//
+//
+//  public String getTypeName() {
+//    return getType().toString();
+//  }
 
 
   /*

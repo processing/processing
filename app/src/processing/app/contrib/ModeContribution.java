@@ -3,8 +3,8 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-11 Ben Fry and Casey Reas
-  Copyright (c) 2001-04 Massachusetts Institute of Technology
+  Copyright (c) 2013 The Processing Foundation
+  Copyright (c) 2011-12 Ben Fry and Casey Reas
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License version 2
@@ -15,15 +15,13 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, write to the Free Software Foundation,
-  Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+  You should have received a copy of the GNU General Public License along 
+  with this program; if not, write to the Free Software Foundation, Inc.
+  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
 package processing.app.contrib;
 
 import java.io.File;
-//import java.io.FileFilter;
 import java.lang.reflect.Constructor;
 import java.util.*;
 import java.util.HashMap;
