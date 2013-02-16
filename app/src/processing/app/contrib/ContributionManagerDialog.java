@@ -306,23 +306,23 @@ public class ContributionManagerDialog {
       return;
 
     ArrayList<Library> libraries = new ArrayList<Library>(editor.getMode().contribLibraries);
-    ArrayList<LibraryCompilation> compilations = LibraryCompilation.list(libraries);
-
-    // Remove libraries from the list that are part of a compilations
-    for (LibraryCompilation compilation : compilations) {
-      Iterator<Library> it = libraries.iterator();
-      while (it.hasNext()) {
-        Library current = it.next();
-        if (compilation.getFolder().equals(current.getFolder().getParentFile())) {
-          it.remove();
-        }
-      }
-    }
+//    ArrayList<LibraryCompilation> compilations = LibraryCompilation.list(libraries);
+//
+//    // Remove libraries from the list that are part of a compilations
+//    for (LibraryCompilation compilation : compilations) {
+//      Iterator<Library> it = libraries.iterator();
+//      while (it.hasNext()) {
+//        Library current = it.next();
+//        if (compilation.getFolder().equals(current.getFolder().getParentFile())) {
+//          it.remove();
+//        }
+//      }
+//    }
 
     ArrayList<Contribution> contributions = new ArrayList<Contribution>();
     contributions.addAll(editor.contribTools);
     contributions.addAll(libraries);
-    contributions.addAll(compilations);
+//    contributions.addAll(compilations);
 
     contribListing.updateInstalledList(contributions);
   }

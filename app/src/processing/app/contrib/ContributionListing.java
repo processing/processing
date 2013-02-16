@@ -31,8 +31,12 @@ import java.util.concurrent.locks.ReentrantLock;
 import processing.app.Base;
 import processing.core.PApplet;
 
-public class ContributionListing {
 
+public class ContributionListing {
+  static final String LISTING_URL = 
+    "https://raw.github.com/processing/processing-web/master/contrib_generate/contributions.txt";
+
+  File listingFile;
   ArrayList<ContributionChangeListener> listeners;
   ArrayList<AdvertisedContribution> advertisedContributions;
   Map<String, List<Contribution>> librariesByCategory;
@@ -45,15 +49,8 @@ public class ContributionListing {
     "I/O", "Math", "Simulation", "Sound", "Utilities", "Typography",
     "Video & Vision" };
 
-  static Comparator<Contribution> contribComparator = new Comparator<Contribution>() {
-    public int compare(Contribution o1, Contribution o2) {
-      return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
-    }
-  };
-
-  File listingFile;
-
   static ContributionListing singleInstance;
+  
 
 
   private ContributionListing() {
@@ -72,15 +69,14 @@ public class ContributionListing {
 
 
   static public ContributionListing getInstance() {
-    if (singleInstance == null)
+    if (singleInstance == null) {
       singleInstance = new ContributionListing();
-
+    }
     return singleInstance;
   }
 
 
   void setAdvertisedList(File file) {
-
     listingFile = file;
 
     advertisedContributions.clear();
@@ -90,35 +86,31 @@ public class ContributionListing {
     }
 
     Collections.sort(allContributions, contribComparator);
-
   }
 
+  
   public Comparator<? super Contribution> getComparator() {
     return contribComparator;
   }
 
+  
   /**
    * Adds the installed libraries to the listing of libraries, replacing any
    * pre-existing libraries by the same name as one in the list.
    */
   public void updateInstalledList(List<Contribution> installedContributions) {
-
     for (Contribution contribution : installedContributions) {
-
       Contribution preexistingContribution = getContribution(contribution);
-
       if (preexistingContribution != null) {
         replaceContribution(preexistingContribution, contribution);
       } else {
         addContribution(contribution);
       }
     }
-
   }
 
 
   public void replaceContribution(Contribution oldLib, Contribution newLib) {
-
     if (oldLib == null || newLib == null) {
       return;
     }
@@ -144,21 +136,18 @@ public class ContributionListing {
 
 
   public void addContribution(Contribution contribution) {
-
     if (librariesByCategory.containsKey(contribution.getCategory())) {
       List<Contribution> list = librariesByCategory.get(contribution.getCategory());
       list.add(contribution);
-
       Collections.sort(list, contribComparator);
+      
     } else {
       ArrayList<Contribution> list = new ArrayList<Contribution>();
       list.add(contribution);
       librariesByCategory.put(contribution.getCategory(), list);
     }
     allContributions.add(contribution);
-
     notifyAdd(contribution);
-
     Collections.sort(allContributions, contribComparator);
   }
 
@@ -168,7 +157,6 @@ public class ContributionListing {
       librariesByCategory.get(info.getCategory()).remove(info);
     }
     allContributions.remove(info);
-
     notifyRemove(info);
   }
 
@@ -186,18 +174,15 @@ public class ContributionListing {
 
   public AdvertisedContribution getAdvertisedContribution(Contribution info) {
     for (AdvertisedContribution advertised : advertisedContributions) {
-
-      if (advertised.getType() == info.getType()
-          && advertised.getName().equals(info.getName())) {
-
+      if (advertised.getType() == info.getType() && 
+          advertised.getName().equals(info.getName())) {
         return advertised;
       }
-
     }
-
     return null;
   }
 
+  
   public Set<String> getCategories(Filter filter) {
     Set<String> outgoing = new HashSet<String>();
 
@@ -217,10 +202,12 @@ public class ContributionListing {
     return outgoing;
   }
 
+  
   public List<Contribution> getAllContributions() {
     return new ArrayList<Contribution>(allContributions);
   }
 
+  
   public List<Contribution> getLibararies(String category) {
     ArrayList<Contribution> libinfos =
         new ArrayList<Contribution>(librariesByCategory.get(category));
@@ -228,13 +215,13 @@ public class ContributionListing {
     return libinfos;
   }
 
+  
   public List<Contribution> getFilteredLibraryList(String category, List<String> filters) {
     ArrayList<Contribution> filteredList = new ArrayList<Contribution>(allContributions);
 
     Iterator<Contribution> it = filteredList.iterator();
     while (it.hasNext()) {
       Contribution libInfo = it.next();
-
       if (category != null && !category.equals(libInfo.getCategory())) {
         it.remove();
       } else {
@@ -245,9 +232,7 @@ public class ContributionListing {
           }
         }
       }
-
     }
-
     return filteredList;
   }
 
@@ -301,18 +286,19 @@ public class ContributionListing {
       return contrib.isInstalled();
     }
     if (property.equals("tool")) {
-      return contrib.getType() == Contribution.Type.TOOL;
+      return contrib.getType() == ContributionType.TOOL;
     }
     if (property.startsWith("lib")) {
-      return contrib.getType() == Contribution.Type.LIBRARY
-          || contrib.getType() == Contribution.Type.LIBRARY_COMPILATION;
+      return contrib.getType() == ContributionType.LIBRARY;
+//      return contrib.getType() == Contribution.Type.LIBRARY
+//          || contrib.getType() == Contribution.Type.LIBRARY_COMPILATION;
     }
     if (property.equals("mode")) {
-      return contrib.getType() == Contribution.Type.MODE;
+      return contrib.getType() == ContributionType.MODE;
     }
-    if (property.equals("compilation")) {
-      return contrib.getType() == Contribution.Type.LIBRARY_COMPILATION;
-    }
+//    if (property.equals("compilation")) {
+//      return contrib.getType() == Contribution.Type.LIBRARY_COMPILATION;
+//    }
 
     return false;
   }
@@ -354,21 +340,20 @@ public class ContributionListing {
   }
 
   /**
-   * Starts a new thread to download the advertised list of contributions. Only
-   * one instance will run at a time.
+   * Starts a new thread to download the advertised list of contributions. 
+   * Only one instance will run at a time.
    */
   public void getAdvertisedContributions(ProgressMonitor pm) {
-
-    final ProgressMonitor progressMonitor = (pm != null) ? pm : new NullProgressMonitor();
+    final ProgressMonitor progressMonitor = 
+      (pm != null) ? pm : new NullProgressMonitor();
 
     new Thread(new Runnable() {
-
       public void run() {
         downloadingListingLock.lock();
 
         URL url = null;
         try {
-          url = new URL("https://raw.github.com/processing/processing-web/master/contrib_generate/contributions.txt");
+          url = new URL(LISTING_URL);
         } catch (MalformedURLException e) {
           progressMonitor.error(e);
           progressMonitor.finished();
@@ -381,12 +366,12 @@ public class ContributionListing {
             setAdvertisedList(listingFile);
           }
         }
-
         downloadingListingLock.unlock();
       }
     }).start();
   }
 
+  
   public boolean hasUpdates() {
     for (Contribution info : allContributions) {
       if (hasUpdates(info)) {
@@ -400,29 +385,27 @@ public class ContributionListing {
   public boolean hasUpdates(Contribution contribution) {
     if (contribution.isInstalled()) {
       Contribution advertised = getAdvertisedContribution(contribution);
-      if (advertised == null)
+      if (advertised == null) {
         return false;
-
+      }
       return advertised.getVersion() > contribution.getVersion();
     }
-
     return false;
   }
 
+  
   public boolean hasDownloadedLatestList() {
     return hasDownloadedLatestList;
   }
 
+  
   public static interface ContributionChangeListener {
-
     public void contributionAdded(Contribution Contribution);
-
     public void contributionRemoved(Contribution Contribution);
-
     public void contributionChanged(Contribution oldLib, Contribution newLib);
-
   }
 
+  
   /**
    * @return a lowercase string with all non-alphabetic characters removed
    */
@@ -430,6 +413,7 @@ public class ContributionListing {
     return s.toLowerCase().replaceAll("^\\p{Lower}", "");
   }
 
+  
   /**
    * @return the proper, valid name of this category to be displayed in the UI
    *         (e.g. "Typography / Geometry"). "Unknown" if the category null.
@@ -438,7 +422,6 @@ public class ContributionListing {
     if (category == null) {
       return "Unknown";
     }
-
     String normCatName = normalize(category);
 
     for (String validCatName : validCategories) {
@@ -447,10 +430,10 @@ public class ContributionListing {
         return validCatName;
       }
     }
-
     return category;
   }
 
+  
   public ArrayList<AdvertisedContribution> getLibraries(File f) {
     ArrayList<AdvertisedContribution> outgoing = new ArrayList<AdvertisedContribution>();
 
@@ -459,41 +442,43 @@ public class ContributionListing {
 
       int start = 0;
       while (start < lines.length) {
-        // Only consider 'invalid' lines. These lines contain the type of
-        // software: library, tool, mode
-        if (!lines[start].contains("=")) {
-          String type = lines[start];
-
-          // Scan forward for the next blank line
-          int end = ++start;
-          while (end < lines.length && !lines[end].equals("")) {
-            end++;
-          }
-
-          int length = end - start;
-          String strings[] = new String[length];
-          System.arraycopy(lines, start, strings, 0, length);
-
-          HashMap<String,String> exports = new HashMap<String,String>();
-          Base.readSettings(null, strings, exports);
-
-          Contribution.Type kind = Contribution.Type.toType(type);
-          outgoing.add(new AdvertisedContribution(kind, exports));
-
-          start = end + 1;
-        } else {
-          start++;
+//        // Only consider 'invalid' lines. These lines contain the type of
+//        // software: library, tool, mode
+//        if (!lines[start].contains("=")) {
+        String type = lines[start];
+        ContributionType contribType = ContributionType.fromName(type);
+        if (contribType == null) {
+          System.err.println("Error in contribution listing file on line " + (start+1));
+          return outgoing;
         }
+
+        // Scan forward for the next blank line
+        int end = ++start;
+        while (end < lines.length && !lines[end].equals("")) {
+          end++;
+        }
+
+        int length = end - start;
+        String[] contribLines = new String[length];
+        System.arraycopy(lines, start, contribLines, 0, length);
+
+        HashMap<String,String> contribParams = new HashMap<String,String>();
+        Base.readSettings(f.getName(), contribLines, contribParams);
+        
+        outgoing.add(new AdvertisedContribution(contribType, contribParams));
+        start = end + 1;
+//        } else {
+//          start++;
+//        }
       }
     }
-
     return outgoing;
   }
 
+  
   static class AdvertisedContribution implements Contribution {
-
     protected final String name;             // "pdf" or "PDF Export"
-    protected final Type type;               // Library, tool, etc.
+    protected final ContributionType type;   // Library, tool, etc.
     protected final String category;         // "Sound"
     protected final String authorList;       // [Ben Fry](http://benfry.com/)
     protected final String url;              // http://processing.org
@@ -503,7 +488,7 @@ public class ContributionListing {
     protected final String prettyVersion;    // "1.0.2"
     protected final String link;             // Direct link to download the file
 
-    public AdvertisedContribution(Type type, HashMap<String, String> exports) {
+    public AdvertisedContribution(ContributionType type, HashMap<String, String> exports) {
 
       this.type = type;
       name = exports.get("name");
@@ -530,7 +515,7 @@ public class ContributionListing {
       return false;
     }
 
-    public Type getType() {
+    public ContributionType getType() {
       return type;
     }
 
@@ -600,13 +585,20 @@ public class ContributionListing {
     }
   }
 
+  
   public boolean isDownloadingListing() {
     return downloadingListingLock.isLocked();
   }
 
+  
   public static interface Filter {
-
     boolean matches(Contribution contrib);
   }
+  
 
+  static Comparator<Contribution> contribComparator = new Comparator<Contribution>() {
+    public int compare(Contribution o1, Contribution o2) {
+      return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
+    }
+  };
 }

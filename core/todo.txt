@@ -150,6 +150,7 @@ o   Dict and List could be interfaces?
 _ JSONObject.has(key) vs XML.hasAttribute(attr) vs HashMap.containsKey()
 _   and how it should be handled with hash/dict
 _   right now using hasKey().. in JSONObject
+_ add() to add things to lists, sum() for the math (sum is used less after all)
 
 _ add mouse wheel support to 2.0 event system
 _   http://code.google.com/p/processing/issues/detail?id=1423
@@ -388,8 +389,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=1025 (no gcode)
 _ y2 position of rectangles not same as y2 position of lines
 _   happens when the rectangle is flipped on the x or y axis
 _   probably a hack that draws the "last" point differently
-
-_ add() to add things to lists, sum() for the math (sum is used less after all)
 
 _ add inputPath() and outputPath() -> sketch folder or sd card
 _   or should this just be a change to sketchPath() on Android?

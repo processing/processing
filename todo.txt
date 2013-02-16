@@ -92,6 +92,11 @@ o   if sketch was open, then restart by dragging the .pde to p5.app
 
 https://processing-js.lighthouseapp.com/
 
+library changes
+_ remove netscape.javascript stuff
+_ move minim out to its own contrib section
+_ move arduino out to its own library
+
 _ add Iterator as an import?
 
 _ remove sketch.properties when moving back to the default?
@@ -110,6 +115,7 @@ _ boogers still being left around
 _ Add Mode is also reporting that it's a library that contains multiple
 _ Add Tool is having problems
 _   http://code.google.com/p/processing/issues/detail?id=1569
+_   https://github.com/processing/processing/issues/1607
 _ make already installed libraries distinguishable in the list
 _   http://code.google.com/p/processing/issues/detail?id=1212
 _ excessive CPU usage of PDE after using library manager
@@ -128,6 +134,9 @@ _     and the rest would happen automatically.
 _ alternating blue/white backgrounds aren't updated after changing filter
 _ remove PdeKeyListener, roll it into the Java InputHandler for JEditTextArea
 _   move Java-specific InputHandler to its own subclass
+_ ExceptionInitializerError on startup in ContributionListing, line 50
+_   https://github.com/processing/processing/issues/1601
+_   problem is a proxy server requirement
 
 
 2.0 FINAL / new interface
@@ -263,6 +272,12 @@ _ add reference for contributed libraries to the Help menu
 _   http://code.google.com/p/processing/issues/detail?id=905
 _ temporary files (for sketches and logs) are not deleted
 _   http://code.google.com/p/processing/issues/detail?id=562
+
+
+_ proxy server requirement causes problems
+_   contrib manager, update checks are broken
+_   https://github.com/processing/processing/issues/1476
+X   http://code.google.com/p/processing/issues/detail?id=1438
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 

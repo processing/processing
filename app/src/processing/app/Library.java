@@ -416,12 +416,14 @@ public class Library extends InstalledContribution {
     }
   };
 
-  public static ArrayList<File> discover(File folder) {
+  
+  static public ArrayList<File> discover(File folder) {
     ArrayList<File> libraries = new ArrayList<File>();
     discover(folder, libraries);
     return libraries;
   }
 
+  
   static public void discover(File folder, ArrayList<File> libraries) {
     String[] list = folder.list(junkFolderFilter);
 
@@ -456,12 +458,14 @@ public class Library extends InstalledContribution {
     }
   }
 
+  
   static protected ArrayList<Library> list(File folder) {
     ArrayList<Library> libraries = new ArrayList<Library>();
     list(folder, libraries);
     return libraries;
   }
 
+  
   static protected void list(File folder, ArrayList<Library> libraries) {
     ArrayList<File> librariesFolders = new ArrayList<File>();
     discover(folder, librariesFolders);
@@ -487,7 +491,8 @@ public class Library extends InstalledContribution {
     }
   }
 
-  public Type getType() {
-    return Type.LIBRARY;
+  
+  public ContributionType getType() {
+    return ContributionType.LIBRARY;
   }
 }

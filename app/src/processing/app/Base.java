@@ -365,20 +365,21 @@ public class Base {
     libraryManagerFrame = new ContributionManagerDialog("Library Manager",
                                                         new ContributionListing.Filter() {
       public boolean matches(Contribution contrib) {
-        return contrib.getType() == Contribution.Type.LIBRARY
-            || contrib.getType() == Contribution.Type.LIBRARY_COMPILATION;
+        return contrib.getType() == ContributionType.LIBRARY;
+//        return contrib.getType() == Contribution.Type.LIBRARY
+//            || contrib.getType() == Contribution.Type.LIBRARY_COMPILATION;
       }
     });
     toolManagerFrame = new ContributionManagerDialog("Tool Manager",
                                                      new ContributionListing.Filter() {
       public boolean matches(Contribution contrib) {
-        return contrib.getType() == Contribution.Type.TOOL;
+        return contrib.getType() == ContributionType.TOOL;
       }
     });
     modeManagerFrame = new ContributionManagerDialog("Mode Manager",
                                                      new ContributionListing.Filter() {
       public boolean matches(Contribution contrib) {
-        return contrib.getType() == Contribution.Type.MODE;
+        return contrib.getType() == ContributionType.MODE;
       }
     });
     updateManagerFrame = new ContributionManagerDialog("Update Manager",
@@ -2465,7 +2466,6 @@ public class Base {
   }
 
 
-
   /**
    * Read from a file with a bunch of attribute/value pairs
    * that are separated by = and ignore comments with #.
@@ -2478,46 +2478,50 @@ public class Base {
     }
     return outgoing;
   }
+  
 
-  static public void readSettings(String fileName, String lines[],
-                                  HashMap<String, String> exports) {
+  static public void readSettings(String filename, String lines[],
+                                  HashMap<String, String> settings) {
     for (int i = 0; i < lines.length; i++) {
       int hash = lines[i].indexOf('#');
-      String line = (hash == -1) ?
+      String line = (hash == -1) ? 
         lines[i].trim() : lines[i].substring(0, hash).trim();
-        if (line.length() == 0) continue;
-
-      int equals = line.indexOf('=');
-      if (equals == -1) {
-        if (fileName != null)
-        System.err.println("ignoring illegal line in " + fileName);
-        System.err.println("  " + line);
-        continue;
+        
+      if (line.length() != 0) {
+        int equals = line.indexOf('=');
+        if (equals == -1) {
+          if (filename != null) {
+            System.err.println("Ignoring illegal line in " + filename);
+            System.err.println("  " + line);
+          }
+        } else {
+          String attr = line.substring(0, equals).trim();
+          String valu = line.substring(equals + 1).trim();
+          settings.put(attr, valu);
+        }
       }
-      String attr = line.substring(0, equals).trim();
-      String valu = line.substring(equals + 1).trim();
-      exports.put(attr, valu);
     }
   }
 
 
   static public void copyFile(File sourceFile,
                               File targetFile) throws IOException {
-    InputStream from =
+    BufferedInputStream from =
       new BufferedInputStream(new FileInputStream(sourceFile));
-    OutputStream to =
+    BufferedOutputStream to =
       new BufferedOutputStream(new FileOutputStream(targetFile));
     byte[] buffer = new byte[16 * 1024];
     int bytesRead;
     while ((bytesRead = from.read(buffer)) != -1) {
       to.write(buffer, 0, bytesRead);
     }
-    to.flush();
-    from.close(); // ??
+    from.close();
     from = null;
-    to.close(); // ??
-    to = null;
 
+    to.flush();
+    to.close();
+    to = null;
+    
     targetFile.setLastModified(sourceFile.lastModified());
   }
 

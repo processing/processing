@@ -49,44 +49,7 @@ public interface Contribution {
 
   boolean isInstalled();
 
-  Type getType();
+  ContributionType getType();
 
   String getTypeName();
-
-
-  public static enum Type {
-    LIBRARY, LIBRARY_COMPILATION, TOOL, MODE;
-
-    public String toString() {
-      switch (this) {
-      case LIBRARY:
-        return "library";
-      case LIBRARY_COMPILATION:
-        return "compilation";
-      case TOOL:
-        return "tool";
-      case MODE:
-        return "mode";
-      }
-      return "contribution";
-    };
-
-    static public Type toType(String s) {
-      if (s != null) {
-        if ("library".equals(s.toLowerCase())) {
-          return LIBRARY;
-        }
-        if ("compilation".equals(s.toLowerCase())) {
-          return LIBRARY_COMPILATION;
-        }
-        if ("tool".equals(s.toLowerCase())) {
-          return TOOL;
-        }
-        if ("mode".equals(s.toLowerCase())) {
-          return MODE;
-        }
-      }
-      return null;
-    }
-  }
 }

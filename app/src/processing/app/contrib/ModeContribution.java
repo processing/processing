@@ -179,8 +179,8 @@ public class ModeContribution extends InstalledContribution {
   }
 
 
-  public Type getType() {
-    return Type.MODE;
+  public ContributionType getType() {
+    return ContributionType.MODE;
   }
 
 

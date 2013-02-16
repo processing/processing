@@ -12,7 +12,6 @@ import processing.app.Base;
 import processing.app.Editor;
 import processing.app.Library;
 import processing.app.Preferences;
-import processing.app.contrib.Contribution.Type;
 import processing.app.contrib.ContributionListing.AdvertisedContribution;
 
 
@@ -137,13 +136,13 @@ public class ContributionManager {
   /**
    * Used after unpacking a contrib download do determine the file contents.
    */
-  static List<File> discover(Contribution.Type type, File tempDir) {
+  static List<File> discover(ContributionType type, File tempDir) {
     switch (type) {
     case LIBRARY:
       return Library.discover(tempDir);
-    case LIBRARY_COMPILATION:
-      // XXX Implement
-      return null;
+//    case LIBRARY_COMPILATION:
+//      // XXX Implement
+//      return null;
     case TOOL:
       return ToolContribution.discover(tempDir);
     case MODE:
@@ -169,10 +168,10 @@ public class ContributionManager {
 //  }
 
 
-  static File getSketchbookContribFolder(Base base, Type type) {
+  static File getSketchbookContribFolder(Base base, ContributionType type) {
     switch (type) {
     case LIBRARY:
-    case LIBRARY_COMPILATION:
+//    case LIBRARY_COMPILATION:
       return Base.getSketchbookLibrariesFolder();
     case TOOL:
       return Base.getSketchbookToolsFolder();
@@ -183,12 +182,12 @@ public class ContributionManager {
   }
 
 
-  static InstalledContribution create(Base base, File folder, Type type) {
+  static InstalledContribution create(Base base, File folder, ContributionType type) {
     switch (type) {
     case LIBRARY:
       return new Library(folder);
-    case LIBRARY_COMPILATION:
-      return LibraryCompilation.create(folder);
+//    case LIBRARY_COMPILATION:
+//      return LibraryCompilation.create(folder);
     case TOOL:
       return ToolContribution.load(folder);
     case MODE:
@@ -198,15 +197,15 @@ public class ContributionManager {
   }
 
 
-  static ArrayList<InstalledContribution> getContributions(Type type, Editor editor) {
+  static ArrayList<InstalledContribution> getContributions(ContributionType type, Editor editor) {
     ArrayList<InstalledContribution> contribs = new ArrayList<InstalledContribution>();
     switch (type) {
     case LIBRARY:
       contribs.addAll(editor.getMode().contribLibraries);
       break;
-    case LIBRARY_COMPILATION:
-      contribs.addAll(LibraryCompilation.list(editor.getMode().contribLibraries));
-      break;
+//    case LIBRARY_COMPILATION:
+//      contribs.addAll(LibraryCompilation.list(editor.getMode().contribLibraries));
+//      break;
     case TOOL:
       contribs.addAll(editor.contribTools);
       break;
@@ -380,8 +379,8 @@ public class ContributionManager {
       case LIBRARY:
         errorMsg = "Could not move library \"" + newContrib.getName() + "\" to sketchbook.";
         break;
-      case LIBRARY_COMPILATION:
-        break;
+//      case LIBRARY_COMPILATION:
+//        break;
       case TOOL:
         errorMsg = "Could not move tool \"" + newContrib.getName() + "\" to sketchbook.";
         break;
@@ -441,7 +440,7 @@ public class ContributionManager {
 
     switch (contribution.getType()) {
     case LIBRARY:
-    case LIBRARY_COMPILATION:
+//    case LIBRARY_COMPILATION:
       backupFolder = createLibraryBackupFolder(editor, statusBar);
       break;
     case MODE:
@@ -643,7 +642,7 @@ public class ContributionManager {
   /** Returns true if the type of contribution requires the PDE to restart
    * when being removed. */
   static public boolean requiresRestart(Contribution contrib) {
-    return contrib.getType() == Type.TOOL || contrib.getType() == Type.MODE;
+    return contrib.getType() == ContributionType.TOOL || contrib.getType() == ContributionType.MODE;
   }
 
 

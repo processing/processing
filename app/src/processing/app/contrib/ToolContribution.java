@@ -244,7 +244,7 @@ public class ToolContribution extends InstalledContribution implements Tool {
   }
 
 
-  public Type getType() {
-    return Type.TOOL;
+  public ContributionType getType() {
+    return ContributionType.TOOL;
   }
 }
