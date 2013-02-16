@@ -69,7 +69,7 @@ public class ToolContribution extends InstalledContribution implements Tool {
 
 
   static public ArrayList<ToolContribution> loadAll(File toolsFolder) {
-    File[] list = listCandidates(toolsFolder, ContributionType.TOOL);
+    File[] list = ContributionType.TOOL.listCandidates(toolsFolder);
     ArrayList<ToolContribution> outgoing = new ArrayList<ToolContribution>();
     for (File folder : list) {
       try {

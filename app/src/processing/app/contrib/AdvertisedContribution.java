@@ -23,6 +23,10 @@ package processing.app.contrib;
 
 import java.io.*;
 import java.util.HashMap;
+import java.util.zip.Adler32;
+import java.util.zip.CheckedInputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import processing.app.Base;
 import processing.app.Editor;
@@ -87,7 +91,7 @@ class AdvertisedContribution extends Contribution {
     // Unzip the file into the modes, tools, or libraries folder inside the 
     // sketchbook. Unzipping to /tmp is problematic because it may be on 
     // another file system, so move/rename operations will break.
-    File sketchbookContribFolder = type.getSketchbookContribFolder();
+    File sketchbookContribFolder = type.getSketchbookFolder();
     File tempFolder = null; 
     
     try {
@@ -97,20 +101,20 @@ class AdvertisedContribution extends Contribution {
       statusBar.setErrorMessage("Could not create a temporary folder to install.");
       return null;
     }
-    ContributionManager.unzip(contribArchive, tempFolder);
+    unzip(contribArchive, tempFolder);
 
     // Now go looking for a legit contrib inside what's been unpacked.
     File contribFolder = null;
     
     // Sometimes contrib authors place all their folders in the base directory 
     // of the .zip file instead of in single folder as the guidelines suggest. 
-    if (InstalledContribution.isCandidate(tempFolder, type)) {
+    if (type.isCandidate(tempFolder)) {
       contribFolder = tempFolder;
     }
 
     if (contribFolder == null) {
       // Find the first legitimate looking folder in what we just unzipped
-      contribFolder = InstalledContribution.findCandidate(tempFolder, type);
+      contribFolder = type.findCandidate(tempFolder);
     }
     
     InstalledContribution installedContrib = null;
@@ -141,6 +145,39 @@ class AdvertisedContribution extends Contribution {
       Base.removeDir(tempFolder);
     }
     return installedContrib;
+  }
+  
+  
+  static private void unzip(File zipFile, File dest) {
+    try {
+      FileInputStream fis = new FileInputStream(zipFile);
+      CheckedInputStream checksum = new CheckedInputStream(fis, new Adler32());
+      ZipInputStream zis = new ZipInputStream(new BufferedInputStream(checksum));
+      ZipEntry next = null;
+      while ((next = zis.getNextEntry()) != null) {
+        File currentFile = new File(dest, next.getName());
+        if (next.isDirectory()) {
+          currentFile.mkdirs();
+        } else {
+          currentFile.createNewFile();
+          unzipEntry(zis, currentFile);
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+
+  static private void unzipEntry(ZipInputStream zin, File f) throws IOException {
+    FileOutputStream out = new FileOutputStream(f);
+    byte[] b = new byte[512];
+    int len = 0;
+    while ((len = zin.read(b)) != -1) {
+      out.write(b, 0, len);
+    }
+    out.flush();
+    out.close();
   }
 
   

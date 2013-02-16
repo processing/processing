@@ -44,40 +44,33 @@ import processing.app.contrib.ContributionListing.ContributionChangeListener;
 
 public class ContributionListPanel extends JPanel implements Scrollable, ContributionChangeListener {
 
-  static public final String DELETION_MESSAGE = "<i>This tool has "
-      + "been flagged for deletion. Restart all instances of the editor to "
-      + "finalize the removal process.</i>";
+  static public final String DELETION_MESSAGE = 
+    "<i>This tool has been flagged for deletion. " +
+    "Restart Proessing to finalize the removal process.</i>";
 
   static public final String INSTALL_FAILURE_TITLE = "Install Failed";
 
   static public final String MALFORMED_URL_MESSAGE =
-                      "The link fetched from Processing.org is invalid.\n"
-                    + "You can still intall this library manually by visiting\n"
-                    + "the library's website.";
+    "The link fetched from Processing.org is not valid.\n" + 
+    "You can still install this library manually by visiting\n" + 
+    "the library's website.";
 
   ContributionManagerDialog contribManager;
-
   TreeMap<Contribution, ContributionPanel> panelByContribution;
 
   static private HyperlinkListener nullHyperlinkListener = new HyperlinkListener() {
-
-    public void hyperlinkUpdate(HyperlinkEvent e) {
-    }
+    public void hyperlinkUpdate(HyperlinkEvent e) { }
   };
 
   protected ContributionPanel selectedPanel;
-
   protected JPanel statusPlaceholder;
-
   ContributionListing.Filter permaFilter;
-
   ContributionListing contribListing;
 
+  
   public ContributionListPanel(ContributionManagerDialog libraryManager,
                                ContributionListing.Filter filter) {
-
     super();
-
     this.contribManager = libraryManager;
     this.permaFilter = filter;
 
@@ -102,6 +95,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     statusPlaceholder.setVisible(false);
   }
 
+  
   private void updatePanelOrdering() {
     int row = 0;
     for (Entry<Contribution, ContributionPanel> entry : panelByContribution.entrySet()) {
@@ -125,8 +119,8 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     add(statusPlaceholder, c);
   }
 
+  
   public void contributionAdded(final Contribution contribution) {
-
     if (permaFilter.matches(contribution)) {
       SwingUtilities.invokeLater(new Runnable() {
 
@@ -141,10 +135,8 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
             panelByContribution.put(contribution, newPanel);
           }
 
-
           if (newPanel != null) {
             newPanel.setContribution(contribution);
-
             add(newPanel);
             updatePanelOrdering();
             updateColors();
@@ -154,8 +146,9 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     }
   }
 
+  
   public void contributionRemoved(final Contribution contribution) {
-    SwingUtilities.invokeLater(new Runnable() {
+    EventQueue.invokeLater(new Runnable() {
       public void run() {
         synchronized (panelByContribution) {
           ContributionPanel panel = panelByContribution.get(contribution);
@@ -172,11 +165,11 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     });
   }
 
+  
   public void contributionChanged(final Contribution oldContrib,
                                   final Contribution newContrib) {
 
-    SwingUtilities.invokeLater(new Runnable() {
-
+    EventQueue.invokeLater(new Runnable() {
       public void run() {
         synchronized (panelByContribution) {
           ContributionPanel panel = panelByContribution.get(oldContrib);
@@ -409,45 +402,33 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
    * Panel that expands and gives a brief overview of a library when clicked.
    */
   private class ContributionPanel extends JPanel {
-
     private static final int BUTTON_WIDTH = 100;
 
-    /** Should only be set through setContribution(), otherwise UI components
-     *  will not be updated. */
-    Contribution contrib;
+    /** 
+     * Should only be set through setContribution(), 
+     * otherwise UI components will not be updated. 
+     */
+    private Contribution contrib;
 
-    boolean alreadySelected;
-
-    boolean enableHyperlinks;
-
-    HyperlinkListener conditionalHyperlinkOpener;
-
-    JTextPane headerText;
-
-    JTextPane descriptionText;
-
-    JTextPane updateNotificationLabel;
-
-    JButton updateButton;
-
-    JProgressBar installProgressBar;
-
-    JButton installRemoveButton;
-
-    JPopupMenu contextMenu;
-
-    JMenuItem openFolder;
+    private boolean alreadySelected;
+    private boolean enableHyperlinks;
+    private HyperlinkListener conditionalHyperlinkOpener;
+    private JTextPane headerText;
+    private JTextPane descriptionText;
+    private JTextPane updateNotificationLabel;
+    private JButton updateButton;
+    private JProgressBar installProgressBar;
+    private JButton installRemoveButton;
+    private JPopupMenu contextMenu;
+    private JMenuItem openFolder;
 
     private HashSet<JTextPane> htmlPanes;
-
     private ActionListener removeActionListener;
-
     private ActionListener installActionListener;
-
     private ActionListener undoActionListener;
 
+    
     private ContributionPanel() {
-
       htmlPanes = new HashSet<JTextPane>();
 
       enableHyperlinks = false;
@@ -533,9 +514,10 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       });
     }
 
+    
     /**
-     * Create the widgets for the header panel which is visible when the library
-     * panel is not clicked
+     * Create the widgets for the header panel which is visible when the 
+     * library panel is not clicked.
      */
     private void addPaneComponents() {
       setLayout(new GridBagLayout());
@@ -584,10 +566,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
           descriptionPanel.add(descriptionText, dc);
         }
 
-        int margin = 5;
-        if (Base.isMacOS()) {
-          margin = 15;
-        }
+        int margin = Base.isMacOS() ? 15 : 5;
         {
           GridBagConstraints dc = new GridBagConstraints();
           dc.gridx = 1;
@@ -818,31 +797,31 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
 
       try {
         URL downloadUrl = new URL(url);
-
         installProgressBar.setVisible(true);
 
+        JProgressMonitor downloadProgress = new JProgressMonitor(installProgressBar) {
+          public void finishedAction() {
+            // Finished downloading library
+          }
+        };
+        
+        JProgressMonitor installProgress = new JProgressMonitor(installProgressBar) {
+          public void finishedAction() {
+            // Finished installing library
+            resetInstallProgressBarState();
+            installRemoveButton.setEnabled(true);
+
+            if (isError()) {
+              contribManager.statusBar.setErrorMessage("An error occured when "
+                                             + "downloading the contribution.");
+            }
+          }
+        };
+        
         ContributionManager.downloadAndInstall(contribManager.editor,
-                                          downloadUrl, ad,
-          new JProgressMonitor(installProgressBar) {
-
-            public void finishedAction() {
-              // Finished downloading library
-            }
-          },
-          new JProgressMonitor(installProgressBar) {
-
-            public void finishedAction() {
-              // Finished installing library
-              resetInstallProgressBarState();
-              installRemoveButton.setEnabled(true);
-
-              if (isError()) {
-                contribManager.statusBar.setErrorMessage("An error occured when "
-                                               + "downloading the contribution.");
-              }
-            }
-          },
-          contribManager.statusBar
+                                               downloadUrl, ad, 
+                                               downloadProgress, installProgress,
+                                               contribManager.statusBar
         );
 
       } catch (MalformedURLException e) {

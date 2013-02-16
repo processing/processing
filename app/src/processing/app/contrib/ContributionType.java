@@ -22,42 +22,43 @@
 package processing.app.contrib;
 
 import java.io.File;
+import java.io.FileFilter;
 
 import processing.app.Base;
 
 public enum ContributionType {
 //    LIBRARY, LIBRARY_COMPILATION, TOOL, MODE;
-    LIBRARY, TOOL, MODE;
+  LIBRARY, TOOL, MODE;
 
     
-    public String toString() {
-      switch (this) {
-      case LIBRARY:
-        return "library";
+  public String toString() {
+    switch (this) {
+    case LIBRARY:
+      return "library";
 //      case LIBRARY_COMPILATION:
 //        return "compilation";
-      case TOOL:
-        return "tool";
-      case MODE:
-        return "mode";
-      }
-      return null;  // should be unreachable
-    };
+    case TOOL:
+      return "tool";
+    case MODE:
+      return "mode";
+    }
+    return null;  // should be unreachable
+  };
     
     
-    public String getFolderName() {
-      switch (this) {
-      case LIBRARY:
-        return "libraries";
+  public String getFolderName() {
+    switch (this) {
+    case LIBRARY:
+      return "libraries";
 //      case LIBRARY_COMPILATION:
 //        return "libraries";
-      case TOOL:
-        return "tools";
-      case MODE:
-        return "modes";
-      }
-      return null;  // should be unreachable
+    case TOOL:
+      return "tools";
+    case MODE:
+      return "modes";
     }
+    return null;  // should be unreachable
+  }
     
     
 //    public String getPropertiesName() {
@@ -65,37 +66,74 @@ public enum ContributionType {
 //    }
 
     
-    static public ContributionType fromName(String s) {
-      if (s != null) {
-        if ("library".equals(s.toLowerCase())) {
-          return LIBRARY;
-        }
+  static public ContributionType fromName(String s) {
+    if (s != null) {
+      if ("library".equals(s.toLowerCase())) {
+        return LIBRARY;
+      }
 //        if ("compilation".equals(s.toLowerCase())) {
 //          return LIBRARY_COMPILATION;
 //        }
-        if ("tool".equals(s.toLowerCase())) {
-          return TOOL;
-        }
-        if ("mode".equals(s.toLowerCase())) {
-          return MODE;
-        }
+      if ("tool".equals(s.toLowerCase())) {
+        return TOOL;
       }
-      return null;
-    }
-    
-    
-    public File getSketchbookContribFolder() {
-      switch (this) {
-      case LIBRARY:
-        return Base.getSketchbookLibrariesFolder();
-      case TOOL:
-        return Base.getSketchbookToolsFolder();
-      case MODE:
-        return Base.getSketchbookModesFolder();
+      if ("mode".equals(s.toLowerCase())) {
+        return MODE;
       }
-      return null;
     }
+    return null;
+  }
 
+
+  public File getSketchbookFolder() {
+    switch (this) {
+    case LIBRARY:
+      return Base.getSketchbookLibrariesFolder();
+    case TOOL:
+      return Base.getSketchbookToolsFolder();
+    case MODE:
+      return Base.getSketchbookModesFolder();
+    }
+    return null;
+  }
+
+
+  boolean isCandidate(File potential) {
+    return (potential.isDirectory() &&
+      new File(potential, getFolderName()).exists());
+  }
+
+
+  /**
+   * Return a list of directories that have the necessary subfolder for this
+   * contribution type. For instance, a list of folders that have a 'mode'
+   * subfolder if this is a ModeContribution.
+   */
+  File[] listCandidates(File folder) {
+    return folder.listFiles(new FileFilter() {
+      public boolean accept(File potential) {
+        return isCandidate(potential);
+      }
+    });
+  }
+
+
+  /**
+   * Return the first directory that has the necessary subfolder for this
+   * contribution type. For instance, the first folder that has a 'mode'
+   * subfolder if this is a ModeContribution.
+   */
+  File findCandidate(File folder) {
+    File[] folders = listCandidates(folder);
+
+    if (folders.length == 0) {
+      return null;
+
+    } else if (folders.length > 1) {
+      Base.log("More than one " + toString() + " found inside " + folder.getAbsolutePath());
+    }
+    return folders[0];
+  }
     
 //    static public boolean validName(String s) {
 //      return "library".equals(s) || "tool".equals(s) || "mode".equals(s); 

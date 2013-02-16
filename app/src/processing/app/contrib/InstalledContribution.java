@@ -24,6 +24,7 @@ package processing.app.contrib;
 import java.io.*;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.zip.*;
 
@@ -149,42 +150,42 @@ public abstract class InstalledContribution extends Contribution {
   */
 
 
-  static protected boolean isCandidate(File potential, final ContributionType type) {
-    return (potential.isDirectory() &&
-      new File(potential, type.getFolderName()).exists());
-  }
-  
-  
-  /**
-   * Return a list of directories that have the necessary subfolder for this
-   * contribution type. For instance, a list of folders that have a 'mode'
-   * subfolder if this is a ModeContribution.
-   */
-  static protected File[] listCandidates(File folder, final ContributionType type) {
-    return folder.listFiles(new FileFilter() {
-      public boolean accept(File potential) {
-        return isCandidate(potential, type);
-      }
-    });
-  }
-
-
-  /**
-   * Return the first directory that has the necessary subfolder for this
-   * contribution type. For instance, the first folder that has a 'mode'
-   * subfolder if this is a ModeContribution.
-   */
-  static protected File findCandidate(File folder, final ContributionType type) {
-    File[] folders = listCandidates(folder, type);
-    
-    if (folders.length == 0) {
-      return null;
-    
-    } else if (folders.length > 1) {
-      Base.log("More than one " + type.toString() + " found inside " + folder.getAbsolutePath());
-    }
-    return folders[0];
-  }
+//  static protected boolean isCandidate(File potential, final ContributionType type) {
+//    return (potential.isDirectory() &&
+//      new File(potential, type.getFolderName()).exists());
+//  }
+//  
+//  
+//  /**
+//   * Return a list of directories that have the necessary subfolder for this
+//   * contribution type. For instance, a list of folders that have a 'mode'
+//   * subfolder if this is a ModeContribution.
+//   */
+//  static protected File[] listCandidates(File folder, final ContributionType type) {
+//    return folder.listFiles(new FileFilter() {
+//      public boolean accept(File potential) {
+//        return isCandidate(potential, type);
+//      }
+//    });
+//  }
+//
+//
+//  /**
+//   * Return the first directory that has the necessary subfolder for this
+//   * contribution type. For instance, the first folder that has a 'mode'
+//   * subfolder if this is a ModeContribution.
+//   */
+//  static protected File findCandidate(File folder, final ContributionType type) {
+//    File[] folders = listCandidates(folder, type);
+//    
+//    if (folders.length == 0) {
+//      return null;
+//    
+//    } else if (folders.length > 1) {
+//      Base.log("More than one " + type.toString() + " found inside " + folder.getAbsolutePath());
+//    }
+//    return folders[0];
+//  }
   
   
   InstalledContribution moveAndLoad(Editor editor, 
@@ -195,7 +196,7 @@ public abstract class InstalledContribution extends Contribution {
     
     String contribFolderName = getFolder().getName();
 
-    File contribTypeFolder = getType().getSketchbookContribFolder();
+    File contribTypeFolder = getType().getSketchbookFolder();
     File contribFolder = new File(contribTypeFolder, contribFolderName);
 
     for (InstalledContribution oldContrib : oldContribs) {
@@ -204,7 +205,7 @@ public abstract class InstalledContribution extends Contribution {
 
         if (ContributionManager.requiresRestart(oldContrib)) {
           // XXX: We can't replace stuff, soooooo.... do something different
-          if (!ContributionManager.backupContribution(editor, oldContrib, false, statusBar)) {
+          if (!oldContrib.backupContribution(editor, false, statusBar)) {
             return null;
           }
         } else {
@@ -218,7 +219,7 @@ public abstract class InstalledContribution extends Contribution {
                      "has been found in your sketchbook. Clicking “Yes”<br>"+
                      "will move the existing library to a backup folder<br>" +
                      " in <i>libraries/old</i> before replacing it.");
-              if (result != JOptionPane.YES_OPTION || !ContributionManager.backupContribution(editor, oldContrib, true, statusBar)) {
+              if (result != JOptionPane.YES_OPTION || !oldContrib.backupContribution(editor, true, statusBar)) {
                 return null;
               }
             } else {
@@ -233,7 +234,7 @@ public abstract class InstalledContribution extends Contribution {
               }
             }
           } else {
-            if ((doBackup && !ContributionManager.backupContribution(editor, oldContrib, true, statusBar)) ||
+            if ((doBackup && !oldContrib.backupContribution(editor, true, statusBar)) ||
                 (!doBackup && !oldContrib.getFolder().delete())) {
               return null;
             }
@@ -256,6 +257,57 @@ public abstract class InstalledContribution extends Contribution {
   }
 
 
+  /**
+   * Moves the given contribution to a backup folder.
+   * @param doDeleteOriginal
+   *          true if the file should be moved to the directory, false if it
+   *          should instead be copied, leaving the original in place
+   */
+  boolean backupContribution(Editor editor,
+                                     boolean doDeleteOriginal,
+                                     ErrorWidget statusBar) {
+
+    boolean success = false;
+    File backupFolder = 
+      createBackupFolder(statusBar, getType());
+    
+    if (backupFolder != null) {
+      String libFolderName = getFolder().getName();
+      String prefix = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+      final String backupName = prefix + "_" + libFolderName;
+      File backupSubFolder = ContributionManager.getUniqueName(backupFolder, backupName);
+
+      if (doDeleteOriginal) {
+        success = getFolder().renameTo(backupSubFolder);
+      } else {
+        try {
+          Base.copyDir(getFolder(), backupSubFolder);
+          success = true;
+        } catch (IOException e) { }
+      }
+      if (!success) {
+        statusBar.setErrorMessage("Could not move contribution to backup folder.");
+      }
+    }
+    return success;
+  }
+
+
+  static public File createBackupFolder(ErrorWidget status, ContributionType type) {
+    File backupFolder = new File(type.getSketchbookFolder(), "old");
+    if (!backupFolder.isDirectory()) {
+      status.setErrorMessage("Remove the file named \"old\" from the " + 
+                             type.getFolderName() + " folder in the sketchbook.");
+      return null;
+    }
+    if (!backupFolder.exists() && !backupFolder.mkdirs()) {
+      status.setErrorMessage("Could not create a " + type + " backup folder.");
+      return null;
+    }
+    return backupFolder;
+  }
+
+  
   public File getFolder() {
     return folder;
   }

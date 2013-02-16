@@ -23,9 +23,7 @@ package processing.app.contrib;
 
 import java.io.*;
 import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.zip.*;
 
 import processing.app.Base;
 import processing.app.Editor;
@@ -65,7 +63,7 @@ public class ContributionManager {
           boolean doBackup = Preferences.getBoolean("contribution.backup.on_remove");
           if (ContributionManager.requiresRestart(contribution)) {
 
-            if (!doBackup || (doBackup && backupContribution(editor, contribution, false, statusBar))) {
+            if (!doBackup || (doBackup && contribution.backupContribution(editor, false, statusBar))) {
               if (ContributionManager.setDeletionFlag(contribution)) {
                 contribListing.replaceContribution(contribution, contribution);
               }
@@ -73,7 +71,7 @@ public class ContributionManager {
           } else {
             boolean success = false;
             if (doBackup) {
-              success = backupContribution(editor, contribution, true, statusBar);
+              success = contribution.backupContribution(editor, true, statusBar);
             } else {
               Base.removeDir(contribution.getFolder());
               success = !contribution.getFolder().exists();
@@ -117,12 +115,12 @@ public class ContributionManager {
    *          old version of a contribution that is being updated). Must not be
    *          null.
    */
-  static public void downloadAndInstall(final Editor editor,
-                                        final URL url,
-                                        final AdvertisedContribution ad,
-                                        final JProgressMonitor downloadProgress,
-                                        final JProgressMonitor installProgress,
-                                        final ErrorWidget statusBar) {
+  static void downloadAndInstall(final Editor editor,
+                                 final URL url,
+                                 final AdvertisedContribution ad,
+                                 final JProgressMonitor downloadProgress,
+                                 final JProgressMonitor installProgress,
+                                 final ErrorWidget statusBar) {
 
     new Thread(new Runnable() {
       public void run() {
@@ -461,86 +459,31 @@ public class ContributionManager {
   */
 
 
-  /**
-   * Moves the given contribution to a backup folder.
-   * @param doDeleteOriginal
-   *          true if the file should be moved to the directory, false if it
-   *          should instead be copied, leaving the original in place
-   */
-  static public boolean backupContribution(Editor editor,
-                                           InstalledContribution contribution,
-                                           boolean doDeleteOriginal,
-                                           ErrorWidget statusBar) {
-
-    File backupFolder = null;
-
-    switch (contribution.getType()) {
-    case LIBRARY:
-//    case LIBRARY_COMPILATION:
-      backupFolder = createLibraryBackupFolder(editor, statusBar);
-      break;
-    case MODE:
-      break;
-    case TOOL:
-      backupFolder = createToolBackupFolder(editor, statusBar);
-      break;
-    }
-
-    if (backupFolder == null) return false;
-
-    String libFolderName = contribution.getFolder().getName();
-
-    String prefix = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-    final String backupName = prefix + "_" + libFolderName;
-    File backupSubFolder = ContributionManager.getUniqueName(backupFolder, backupName);
-
-//    try {
-//      FileUtils.moveDirectory(lib.folder, backupFolderForLib);
-//      return true;
-
-    boolean success = false;
-    if (doDeleteOriginal) {
-      success = contribution.getFolder().renameTo(backupSubFolder);
-    } else {
-      try {
-        Base.copyDir(contribution.getFolder(), backupSubFolder);
-        success = true;
-      } catch (IOException e) {
-      }
-    }
-//    } catch (IOException e) {
-    if (!success) {
-      statusBar.setErrorMessage("Could not move contribution to backup folder.");
-    }
-    return success;
-  }
-
-
-  static public File createLibraryBackupFolder(Editor editor, ErrorWidget logger) {
-    File libraryBackupFolder = new File(Base.getSketchbookLibrariesFolder(), "old");
-    return createBackupFolder(libraryBackupFolder, logger,
-                              "Could not create backup folder for library.");
-  }
-
-
-  static public File createToolBackupFolder(Editor editor, ErrorWidget logger) {
-    File libraryBackupFolder = new File(Base.getSketchbookToolsFolder(), "old");
-    return createBackupFolder(libraryBackupFolder, logger,
-                              "Could not create backup folder for tool.");
-  }
-
-
-  static private File createBackupFolder(File backupFolder,
-                                  ErrorWidget logger,
-                                  String errorMessage) {
-    if (!backupFolder.exists() || !backupFolder.isDirectory()) {
-      if (!backupFolder.mkdirs()) {
-        logger.setErrorMessage(errorMessage);
-        return null;
-      }
-    }
-    return backupFolder;
-  }
+//  static public File createLibraryBackupFolder(Editor editor, ErrorWidget logger) {
+//    File libraryBackupFolder = new File(Base.getSketchbookLibrariesFolder(), "old");
+//    return createBackupFolder(libraryBackupFolder, logger,
+//                              "Could not create backup folder for library.");
+//  }
+//
+//
+//  static public File createToolBackupFolder(Editor editor, ErrorWidget logger) {
+//    File libraryBackupFolder = new File(Base.getSketchbookToolsFolder(), "old");
+//    return createBackupFolder(libraryBackupFolder, logger,
+//                              "Could not create backup folder for tool.");
+//  }
+//
+//
+//  static private File createBackupFolder(File backupFolder,
+//                                  ErrorWidget logger,
+//                                  String errorMessage) {
+//    if (!backupFolder.exists() || !backupFolder.isDirectory()) {
+//      if (!backupFolder.mkdirs()) {
+//        logger.setErrorMessage(errorMessage);
+//        return null;
+//      }
+//    }
+//    return backupFolder;
+//  }
 
 
   /**
@@ -639,39 +582,6 @@ public class ContributionManager {
     }
 
     return fileName;
-  }
-
-
-  public static void unzip(File zipFile, File dest) {
-    try {
-      FileInputStream fis = new FileInputStream(zipFile);
-      CheckedInputStream checksum = new CheckedInputStream(fis, new Adler32());
-      ZipInputStream zis = new ZipInputStream(new BufferedInputStream(checksum));
-      ZipEntry next = null;
-      while ((next = zis.getNextEntry()) != null) {
-        File currentFile = new File(dest, next.getName());
-        if (next.isDirectory()) {
-          currentFile.mkdirs();
-        } else {
-          currentFile.createNewFile();
-          ContributionManager.unzipEntry(zis, currentFile);
-        }
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
-
-
-  private static void unzipEntry(ZipInputStream zin, File f) throws IOException {
-    FileOutputStream out = new FileOutputStream(f);
-    byte[] b = new byte[512];
-    int len = 0;
-    while ((len = zin.read(b)) != -1) {
-      out.write(b, 0, len);
-    }
-    out.flush();
-    out.close();
   }
 
 
