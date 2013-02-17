@@ -31,7 +31,7 @@ import processing.app.Editor;
 import processing.app.tools.Tool;
 
 
-public class ToolContribution extends InstalledContribution implements Tool {
+public class ToolContribution extends LocalContribution implements Tool {
   private Tool tool;
 
 
@@ -69,7 +69,7 @@ public class ToolContribution extends InstalledContribution implements Tool {
 
 
   static public ArrayList<ToolContribution> loadAll(File toolsFolder) {
-    File[] list = listCandidates(toolsFolder, ContributionType.TOOL);
+    File[] list = ContributionType.TOOL.listCandidates(toolsFolder);
     ArrayList<ToolContribution> outgoing = new ArrayList<ToolContribution>();
     for (File folder : list) {
       try {

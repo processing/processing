@@ -39,12 +39,11 @@ import processing.app.contrib.ContributionListing.Filter;
 
 
 public class ContributionManagerDialog {
-
   static final String ANY_CATEGORY = "All";
 
   JFrame dialog;
   String title;
-  Filter permaFilter;
+  Filter filter;
   JComboBox categoryChooser;
   JScrollPane scrollPane;
   ContributionListPanel contributionListPanel;
@@ -57,14 +56,14 @@ public class ContributionManagerDialog {
   ContributionListing contribListing;
 
 
-  public ContributionManagerDialog(String title,
-                                   ContributionListing.Filter filter) {
-
-    this.title = title;
-    this.permaFilter = filter;
-
+  public ContributionManagerDialog(ContributionType type) {
+    if (type == null) {
+      title = "Update Manager";
+    } else {
+      title = type.getTitle() + " Manager";
+    }
+    filter = ContributionListing.createFilter(type);    
     contribListing = ContributionListing.getInstance();
-
     contributionListPanel = new ContributionListPanel(this, filter);
     contribListing.addContributionListener(contributionListPanel);
   }
@@ -116,10 +115,10 @@ public class ContributionManagerDialog {
         }
       });
     }
-
     updateContributionListing();
   }
 
+  
   /**
    * Close the window after an OK or Cancel.
    */
@@ -127,6 +126,7 @@ public class ContributionManagerDialog {
     dialog.dispose();
     editor = null;
   }
+  
 
   /** Creates and arranges the Swing components in the dialog. */
   private void createComponents() {
@@ -243,12 +243,13 @@ public class ContributionManagerDialog {
 
     dialog.setMinimumSize(new Dimension(450, 400));
   }
+  
 
   private void updateCategoryChooser() {
     if (categoryChooser != null) {
       ArrayList<String> categories;
       categoryChooser.removeAllItems();
-      categories = new ArrayList<String>(contribListing.getCategories(permaFilter));
+      categories = new ArrayList<String>(contribListing.getCategories(filter));
 //      for (int i = 0; i < categories.size(); i++) {
 //        System.out.println(i + " category: " + categories.get(i));
 //      }
@@ -262,6 +263,7 @@ public class ContributionManagerDialog {
     }
   }
 
+  
   private void registerDisposeListeners() {
     dialog.addWindowListener(new WindowAdapter() {
       public void windowClosing(WindowEvent e) {
@@ -289,19 +291,17 @@ public class ContributionManagerDialog {
     });
   }
 
-  public void filterLibraries(String category, List<String> filters) {
-
-    List<Contribution> filteredLibraries = contribListing
-        .getFilteredLibraryList(category, filters);
-
+  
+  protected void filterLibraries(String category, List<String> filters) {
+    List<Contribution> filteredLibraries = 
+      contribListing.getFilteredLibraryList(category, filters);
     contributionListPanel.filterLibraries(filteredLibraries);
   }
 
+  
   protected void updateContributionListing() {
-    if (editor == null)
-      return;
-
-    ArrayList<Library> libraries = new ArrayList<Library>(editor.getMode().contribLibraries);
+    if (editor != null) {
+      ArrayList<Library> libraries = new ArrayList<Library>(editor.getMode().contribLibraries);
 //    ArrayList<LibraryCompilation> compilations = LibraryCompilation.list(libraries);
 //
 //    // Remove libraries from the list that are part of a compilations
@@ -315,65 +315,63 @@ public class ContributionManagerDialog {
 //      }
 //    }
 
-    ArrayList<Contribution> contributions = new ArrayList<Contribution>();
-    contributions.addAll(editor.contribTools);
-    contributions.addAll(libraries);
+      ArrayList<Contribution> contributions = new ArrayList<Contribution>();
+      contributions.addAll(editor.contribTools);
+      contributions.addAll(libraries);
 //    contributions.addAll(compilations);
 
-    contribListing.updateInstalledList(contributions);
+      contribListing.updateInstalledList(contributions);
+    }
   }
 
-  public void setFilterText(String filter) {
+  
+  protected void setFilterText(String filter) {
     if (filter == null || filter.isEmpty()) {
       filterField.setText("");
-      filterField.isShowingHint = true;
+      filterField.showingHint = true;
     } else {
       filterField.setText(filter);
-      filterField.isShowingHint = false;
+      filterField.showingHint = false;
     }
     filterField.applyFilter();
-
   }
+  
+  
+  protected JPanel getPlaceholder() {
+    return contributionListPanel.statusPlaceholder;
+  }
+  
 
   class FilterField extends JTextField {
-
     final static String filterHint = "Filter your search...";
-
-    boolean isShowingHint;
-
+    boolean showingHint;
     List<String> filters;
 
     public FilterField () {
       super(filterHint);
-
-      isShowingHint = true;
-
+      
+      showingHint = true;
       filters = new ArrayList<String>();
-
       updateStyle();
 
       addFocusListener(new FocusListener() {
-
         public void focusLost(FocusEvent focusEvent) {
           if (filterField.getText().isEmpty()) {
-            isShowingHint = true;
+            showingHint = true;
           }
-
           updateStyle();
         }
 
         public void focusGained(FocusEvent focusEvent) {
-          if (isShowingHint) {
-            isShowingHint = false;
+          if (showingHint) {
+            showingHint = false;
             filterField.setText("");
           }
-
           updateStyle();
         }
       });
 
       getDocument().addDocumentListener(new DocumentListener() {
-
         public void removeUpdate(DocumentEvent e) {
           applyFilter();
         }
@@ -399,11 +397,11 @@ public class ContributionManagerDialog {
     }
 
     public String getFilterText() {
-      return isShowingHint ? "" : getText();
+      return showingHint ? "" : getText();
     }
 
     public void updateStyle() {
-      if (isShowingHint) {
+      if (showingHint) {
         setText(filterHint);
 
         // setForeground(UIManager.getColor("TextField.light")); // too light
@@ -416,12 +414,13 @@ public class ContributionManagerDialog {
     }
   }
 
+  
   public boolean hasAlreadyBeenOpened() {
     return dialog != null;
   }
 
+  
   class StatusPanel extends JPanel implements ErrorWidget {
-
     String errorMessage;
 
     StatusPanel() {
@@ -457,27 +456,22 @@ public class ContributionManagerDialog {
       errorMessage = message;
       setVisible(true);
 
-      JPanel placeholder = ContributionManagerDialog.this.contributionListPanel.statusPlaceholder;
+      JPanel placeholder = getPlaceholder();
       Dimension d = getPreferredSize();
       if (Base.isWindows()) {
         d.height += 5;
         placeholder.setPreferredSize(d);
       }
       placeholder.setVisible(true);
-
-//      Rectangle rect = scrollPane.getViewport().getViewRect();
-//      rect.x += d.height;
-//      scrollPane.getViewport().scrollRectToVisible(rect);
     }
 
     void clearErrorMessage() {
       errorMessage = null;
       repaint();
 
-      ContributionManagerDialog.this.contributionListPanel.statusPlaceholder
-          .setVisible(false);
+      getPlaceholder().setVisible(false);
     }
-  }
+  }  
 }
 
 

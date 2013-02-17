@@ -653,6 +653,11 @@ public class PShape implements PConstants {
     }
 
     fill = false;
+    fillColor = 0x0;
+
+    if (!setAmbient) {
+      ambientColor = fillColor;
+    }
   }
 
 
@@ -665,6 +670,10 @@ public class PShape implements PConstants {
     fill = true;
     colorCalc(rgb);
     fillColor = calcColor;
+
+    if (!setAmbient) {
+      ambientColor = fillColor;
+    }
   }
 
 
@@ -677,6 +686,10 @@ public class PShape implements PConstants {
     fill = true;
     colorCalc(rgb, alpha);
     fillColor = calcColor;
+
+    if (!setAmbient) {
+      ambientColor = fillColor;
+    }
   }
 
 
@@ -689,6 +702,10 @@ public class PShape implements PConstants {
     fill = true;
     colorCalc(gray);
     fillColor = calcColor;
+
+    if (!setAmbient) {
+      ambientColor = fillColor;
+    }
   }
 
 
@@ -701,6 +718,15 @@ public class PShape implements PConstants {
     fill = true;
     colorCalc(gray, alpha);
     fillColor = calcColor;
+
+    if (!setAmbient) {
+      ambient(fillColor);
+      setAmbient = false;
+    }
+
+    if (!setAmbient) {
+      ambientColor = fillColor;
+    }
   }
 
 
@@ -713,6 +739,10 @@ public class PShape implements PConstants {
     fill = true;
     colorCalc(x, y, z);
     fillColor = calcColor;
+
+    if (!setAmbient) {
+      ambientColor = fillColor;
+    }
   }
 
 
@@ -725,6 +755,10 @@ public class PShape implements PConstants {
     fill = true;
     colorCalc(x, y, z, a);
     fillColor = calcColor;
+
+    if (!setAmbient) {
+      ambientColor = fillColor;
+    }
   }
 
 

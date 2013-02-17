@@ -30,7 +30,7 @@ import processing.app.Base;
 import processing.app.Mode;
 
 
-public class ModeContribution extends InstalledContribution {
+public class ModeContribution extends LocalContribution {
   private Mode mode;
 
 
@@ -91,7 +91,7 @@ public class ModeContribution extends InstalledContribution {
     for (ModeContribution contrib : contribModes) {
       existing.put(contrib.getFolder(), contrib);
     }
-    File[] potential = listCandidates(modesFolder, ContributionType.MODE);
+    File[] potential = ContributionType.MODE.listCandidates(modesFolder);
     for (File folder : potential) {
       if (!existing.containsKey(folder)) {
           try {

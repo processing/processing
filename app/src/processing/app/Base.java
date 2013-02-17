@@ -334,9 +334,7 @@ public class Base {
 //        removeDir(contrib.getFolder());
 //      }
 //    }
-    ContributionManager.checkDeletions(getSketchbookModesFolder());
-    ContributionManager.checkDeletions(getSketchbookToolsFolder());
-
+    ContributionManager.deleteFlagged();
     buildCoreModes();
     rebuildContribModes();
 
@@ -362,37 +360,15 @@ public class Base {
       }
     }
 
-    libraryManagerFrame = new ContributionManagerDialog("Library Manager",
-                                                        new ContributionListing.Filter() {
-      public boolean matches(Contribution contrib) {
-        return contrib.getType() == ContributionType.LIBRARY;
-//        return contrib.getType() == Contribution.Type.LIBRARY
-//            || contrib.getType() == Contribution.Type.LIBRARY_COMPILATION;
-      }
-    });
-    toolManagerFrame = new ContributionManagerDialog("Tool Manager",
-                                                     new ContributionListing.Filter() {
-      public boolean matches(Contribution contrib) {
-        return contrib.getType() == ContributionType.TOOL;
-      }
-    });
-    modeManagerFrame = new ContributionManagerDialog("Mode Manager",
-                                                     new ContributionListing.Filter() {
-      public boolean matches(Contribution contrib) {
-        return contrib.getType() == ContributionType.MODE;
-      }
-    });
-    updateManagerFrame = new ContributionManagerDialog("Update Manager",
-                                                       new ContributionListing.Filter() {
-      public boolean matches(Contribution contrib) {
-        if (contrib instanceof InstalledContribution) {
-          return ContributionListing.getInstance().hasUpdates(contrib);
-        }
-
-        return false;
-      }
-    });
-
+    libraryManagerFrame = 
+      new ContributionManagerDialog(ContributionType.LIBRARY);
+    toolManagerFrame = 
+      new ContributionManagerDialog(ContributionType.TOOL);
+    modeManagerFrame = 
+      new ContributionManagerDialog(ContributionType.MODE);
+    updateManagerFrame = 
+      new ContributionManagerDialog(null);
+    
     // Make sure ThinkDifferent has library examples too
     nextMode.rebuildLibraryList();
 
@@ -2906,6 +2882,39 @@ public class Base {
         }
       }
     }
+  }
+  
+  
+  static public void unzip(File zipFile, File dest) {
+    try {
+      FileInputStream fis = new FileInputStream(zipFile);
+      CheckedInputStream checksum = new CheckedInputStream(fis, new Adler32());
+      ZipInputStream zis = new ZipInputStream(new BufferedInputStream(checksum));
+      ZipEntry next = null;
+      while ((next = zis.getNextEntry()) != null) {
+        File currentFile = new File(dest, next.getName());
+        if (next.isDirectory()) {
+          currentFile.mkdirs();
+        } else {
+          currentFile.createNewFile();
+          unzipEntry(zis, currentFile);
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+
+  static protected void unzipEntry(ZipInputStream zin, File f) throws IOException {
+    FileOutputStream out = new FileOutputStream(f);
+    byte[] b = new byte[512];
+    int len = 0;
+    while ((len = zin.read(b)) != -1) {
+      out.write(b, 0, len);
+    }
+    out.flush();
+    out.close();
   }
 
 

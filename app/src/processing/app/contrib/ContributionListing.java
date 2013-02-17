@@ -36,7 +36,7 @@ public class ContributionListing {
 
   File listingFile;
   ArrayList<ContributionChangeListener> listeners;
-  ArrayList<AdvertisedContribution> advertisedContributions;
+  ArrayList<AvailableContribution> advertisedContributions;
   Map<String, List<Contribution>> librariesByCategory;
   ArrayList<Contribution> allContributions;
   boolean hasDownloadedLatestList;
@@ -53,7 +53,7 @@ public class ContributionListing {
 
   private ContributionListing() {
     listeners = new ArrayList<ContributionChangeListener>();
-    advertisedContributions = new ArrayList<AdvertisedContribution>();
+    advertisedContributions = new ArrayList<AvailableContribution>();
     librariesByCategory = new HashMap<String, List<Contribution>>();
     allContributions = new ArrayList<Contribution>();
     downloadingListingLock = new ReentrantLock();
@@ -82,7 +82,6 @@ public class ContributionListing {
     for (Contribution contribution : advertisedContributions) {
       addContribution(contribution);
     }
-
     Collections.sort(allContributions, contribComparator);
   }
 
@@ -170,8 +169,8 @@ public class ContributionListing {
   }
 
 
-  public AdvertisedContribution getAdvertisedContribution(Contribution info) {
-    for (AdvertisedContribution advertised : advertisedContributions) {
+  public AvailableContribution getAdvertisedContribution(Contribution info) {
+    for (AvailableContribution advertised : advertisedContributions) {
       if (advertised.getType() == info.getType() && 
           advertised.getName().equals(info.getName())) {
         return advertised;
@@ -487,11 +486,11 @@ public class ContributionListing {
   }
 
   
-  public ArrayList<AdvertisedContribution> parseContribList(File f) {
-    ArrayList<AdvertisedContribution> outgoing = new ArrayList<AdvertisedContribution>();
+  ArrayList<AvailableContribution> parseContribList(File file) {
+    ArrayList<AvailableContribution> outgoing = new ArrayList<AvailableContribution>();
 
-    if (f != null && f.exists()) {
-      String lines[] = PApplet.loadStrings(f);
+    if (file != null && file.exists()) {
+      String lines[] = PApplet.loadStrings(file);
 
       int start = 0;
       while (start < lines.length) {
@@ -516,9 +515,9 @@ public class ContributionListing {
         System.arraycopy(lines, start, contribLines, 0, length);
 
         HashMap<String,String> contribParams = new HashMap<String,String>();
-        Base.readSettings(f.getName(), contribLines, contribParams);
+        Base.readSettings(file.getName(), contribLines, contribParams);
         
-        outgoing.add(new AdvertisedContribution(contribType, contribParams));
+        outgoing.add(new AvailableContribution(contribType, contribParams));
         start = end + 1;
 //        } else {
 //          start++;
@@ -534,8 +533,32 @@ public class ContributionListing {
   }
 
   
-  public static interface Filter {
+  static interface Filter {
     boolean matches(Contribution contrib);
+  }
+  
+  
+  /** 
+   * Create a filter for a specific contribution type.
+   * @param type The type, or null for a generic update checker.
+   */
+  static Filter createFilter(final ContributionType type) {
+    if (type == null) {
+      return new Filter() {
+        public boolean matches(Contribution contrib) {
+          if (contrib instanceof LocalContribution) {
+            return ContributionListing.getInstance().hasUpdates(contrib);
+          }
+          return false;
+        }
+      };
+    } else {
+      return new Filter() {
+        public boolean matches(Contribution contrib) {
+          return contrib.getType() == type;
+        }
+      };
+    }
   }
   
 
