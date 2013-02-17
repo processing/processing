@@ -61,8 +61,6 @@ import processing.event.MouseEvent;
 
 import com.jogamp.newt.awt.NewtCanvasAWT;
 import com.jogamp.newt.event.InputEvent;
-import com.jogamp.newt.event.WindowEvent;
-import com.jogamp.newt.event.WindowUpdateEvent;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.FBObject;
 import com.jogamp.opengl.util.AnimatorBase;
@@ -630,6 +628,7 @@ public class PGL {
       canvasAWT = new GLCanvas(caps);
       canvasAWT.setBounds(0, 0, pg.width, pg.height);
       canvasAWT.setBackground(new Color(pg.backgroundColor, true));
+      canvasAWT.setFocusable(true);
 
       pg.parent.setLayout(new BorderLayout());
       pg.parent.add(canvasAWT, BorderLayout.CENTER);
@@ -651,9 +650,7 @@ public class PGL {
       canvasNEWT = new NewtCanvasAWT(window);
       canvasNEWT.setBounds(0, 0, pg.width, pg.height);
       canvasNEWT.setBackground(new Color(pg.backgroundColor, true));
-
-      pg.parent.setLayout(new BorderLayout());
-      pg.parent.add(canvasNEWT, BorderLayout.CENTER);
+      canvasNEWT.setFocusable(true);
 
       NEWTMouseListener mouseListener = new NEWTMouseListener();
       window.addMouseListener(mouseListener);
@@ -662,6 +659,9 @@ public class PGL {
       NEWTWindowListener winListener = new NEWTWindowListener();
       window.addWindowListener(winListener);
       canvasNEWT.addFocusListener(pg.parent); // So focus detection work.
+
+      pg.parent.setLayout(new BorderLayout());
+      pg.parent.add(canvasNEWT, BorderLayout.CENTER);
 
       capabilities = window.getChosenGLCapabilities();
       canvas = canvasNEWT;
@@ -3237,6 +3237,7 @@ public class PGL {
 
   protected void nativeMouseEvent(com.jogamp.newt.event.MouseEvent nativeEvent,
                                   int peAction) {
+    if (!hasFocus) return;
     int modifiers = nativeEvent.getModifiers();
     int peModifiers = modifiers &
                       (InputEvent.SHIFT_MASK |
@@ -3296,31 +3297,44 @@ public class PGL {
     pg.parent.postEvent(ke);
   }
 
+  boolean hasFocus = true;
   class NEWTWindowListener implements com.jogamp.newt.event.WindowListener {
     @Override
-    public void windowGainedFocus(WindowEvent arg0) {
+    public void windowGainedFocus(com.jogamp.newt.event.WindowEvent arg0) {
+      PApplet.println("window gained focus");
       pg.parent.focusGained(null);
+      hasFocus = true;
     }
 
     @Override
-    public void windowLostFocus(WindowEvent arg0) {
+    public void windowLostFocus(com.jogamp.newt.event.WindowEvent arg0) {
+      PApplet.println("window lost focus");
       pg.parent.focusLost(null);
+      hasFocus = false;
     }
 
     @Override
-    public void windowDestroyNotify(WindowEvent arg0) { }
+    public void windowDestroyNotify(com.jogamp.newt.event.WindowEvent arg0) {
+      PApplet.println("destroy");
+    }
 
     @Override
-    public void windowDestroyed(WindowEvent arg0) { }
+    public void windowDestroyed(com.jogamp.newt.event.WindowEvent arg0) {
+      PApplet.println("destroyed");
+    }
 
     @Override
-    public void windowMoved(WindowEvent arg0) { }
+    public void windowMoved(com.jogamp.newt.event.WindowEvent arg0) {
+      PApplet.println("moved");
+    }
 
     @Override
-    public void windowRepaint(WindowUpdateEvent arg0) { }
+    public void windowRepaint(com.jogamp.newt.event.WindowUpdateEvent arg0) {
+      PApplet.println("window repaint");
+    }
 
     @Override
-    public void windowResized(WindowEvent arg0) { }
+    public void windowResized(com.jogamp.newt.event.WindowEvent arg0) { }
   }
 
   // NEWT mouse listener
