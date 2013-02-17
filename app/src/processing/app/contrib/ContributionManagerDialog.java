@@ -21,16 +21,16 @@
 */
 package processing.app.contrib;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.event.*;
 import java.util.*;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.*;
 
 import processing.app.*;
@@ -132,16 +132,18 @@ public class ContributionManagerDialog {
     dialog.setResizable(true);
 
     Container pane = dialog.getContentPane();
-    pane.setLayout(new GridBagLayout());
-
-    { // Shows "Filter by Category" and the combo box for selecting a category
-      GridBagConstraints c = new GridBagConstraints();
-      c.gridx = 0;
-      c.gridy = 0;
+//    pane.setLayout(new GridBagLayout());
+//
+//    { // Shows "Filter by Category" and the combo box for selecting a category
+//      GridBagConstraints c = new GridBagConstraints();
+//      c.gridx = 0;
+//      c.gridy = 0;
+    pane.setLayout(new BorderLayout());
 
       JPanel filterPanel = new JPanel();
       filterPanel.setLayout(new BoxLayout(filterPanel, BoxLayout.X_AXIS));
-      pane.add(filterPanel, c);
+//      pane.add(filterPanel, c);
+      pane.add(filterPanel, BorderLayout.NORTH);
 
       filterPanel.add(Box.createHorizontalStrut(6));
 
@@ -153,7 +155,8 @@ public class ContributionManagerDialog {
       categoryChooser = new JComboBox();
       categoryChooser.setMaximumRowCount(20);
       updateCategoryChooser();
-      filterPanel.add(categoryChooser, c);
+//      filterPanel.add(categoryChooser, c);
+      filterPanel.add(categoryChooser);
       categoryChooser.addItemListener(new ItemListener() {
         public void itemStateChanged(ItemEvent e) {
           category = (String) categoryChooser.getSelectedItem();
@@ -169,68 +172,80 @@ public class ContributionManagerDialog {
       filterField = new FilterField();
       filterPanel.add(filterField);
 //      filterPanel.add(Box.createHorizontalGlue());
-    }
-
-    { // The scroll area containing the contribution listing and the status bar.
-      GridBagConstraints c = new GridBagConstraints();
-      c.fill = GridBagConstraints.BOTH;
-      c.gridx = 0;
-      c.gridy = 1;
-      c.gridwidth = 2;
-      c.weighty = 1;
-      c.weightx = 1;
+//    }
+      //filterPanel.setBorder(new EmptyBorder(13, 13, 13, 13));
+      filterPanel.setBorder(new EmptyBorder(7, 7, 7, 7));
+      
+//    { // The scroll area containing the contribution listing and the status bar.
+//      GridBagConstraints c = new GridBagConstraints();
+//      c.fill = GridBagConstraints.BOTH;
+//      c.gridx = 0;
+//      c.gridy = 1;
+//      c.gridwidth = 2;
+//      c.weighty = 1;
+//      c.weightx = 1;
 
       scrollPane = new JScrollPane();
       scrollPane.setPreferredSize(new Dimension(300, 300));
       scrollPane.setViewportView(contributionListPanel);
-      scrollPane.getViewport().setOpaque(true);
-      scrollPane.getViewport().setBackground(contributionListPanel.getBackground());
+//      scrollPane.getViewport().setOpaque(true);
+//      scrollPane.getViewport().setBackground(contributionListPanel.getBackground());
       scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
       scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+//      scrollPane.setBorder(new EmptyBorder(0, 7, 0, 7));
+      pane.add(scrollPane, BorderLayout.CENTER);
+      
+      pane.add(Box.createHorizontalStrut(10), BorderLayout.WEST);
+      pane.add(Box.createHorizontalStrut(10), BorderLayout.EAST);
 
       status = new StatusPanel();
-      status.setBorder(BorderFactory.createEtchedBorder());
+      status.setBorder(new EmptyBorder(4, 7, 3, 7));
+      pane.add(status, BorderLayout.SOUTH);
 
-      final JLayeredPane layeredPane = new JLayeredPane();
-      layeredPane.add(scrollPane, JLayeredPane.DEFAULT_LAYER);
-      layeredPane.add(status, JLayeredPane.PALETTE_LAYER);
+      
+//      status = new StatusPanel();
+//      status.setBorder(BorderFactory.createEtchedBorder());
 
-      layeredPane.addComponentListener(new ComponentAdapter() {
-
-        void resizeLayers() {
-          scrollPane.setSize(layeredPane.getSize());
-          scrollPane.updateUI();
-        }
-
-        public void componentShown(ComponentEvent e) {
-          resizeLayers();
-        }
-
-        public void componentResized(ComponentEvent arg0) {
-          resizeLayers();
-        }
-      });
-
-      final JViewport viewport = scrollPane.getViewport();
-      viewport.addComponentListener(new ComponentAdapter() {
-        void resizeLayers() {
-          status.setLocation(0, viewport.getHeight() - 18);
-
-          Dimension d = viewport.getSize();
-          d.height = 20;
-          d.width += 3;
-          status.setSize(d);
-        }
-        public void componentShown(ComponentEvent e) {
-          resizeLayers();
-        }
-        public void componentResized(ComponentEvent e) {
-          resizeLayers();
-        }
-      });
-
-      pane.add(layeredPane, c);
-    }
+//      final JLayeredPane layeredPane = new JLayeredPane();
+//      layeredPane.add(scrollPane, JLayeredPane.DEFAULT_LAYER);
+//      layeredPane.add(status, JLayeredPane.PALETTE_LAYER);
+//
+//      layeredPane.addComponentListener(new ComponentAdapter() {
+//
+//        void resizeLayers() {
+//          scrollPane.setSize(layeredPane.getSize());
+//          scrollPane.updateUI();
+//        }
+//
+//        public void componentShown(ComponentEvent e) {
+//          resizeLayers();
+//        }
+//
+//        public void componentResized(ComponentEvent arg0) {
+//          resizeLayers();
+//        }
+//      });
+//
+//      final JViewport viewport = scrollPane.getViewport();
+//      viewport.addComponentListener(new ComponentAdapter() {
+//        void resizeLayers() {
+//          status.setLocation(0, viewport.getHeight() - 18);
+//
+//          Dimension d = viewport.getSize();
+//          d.height = 20;
+//          d.width += 3;
+//          status.setSize(d);
+//        }
+//        public void componentShown(ComponentEvent e) {
+//          resizeLayers();
+//        }
+//        public void componentResized(ComponentEvent e) {
+//          resizeLayers();
+//        }
+//      });
+//
+//      pane.add(layeredPane, c);
+//    }
 
 //    { // The filter text area
 //      GridBagConstraints c = new GridBagConstraints();
@@ -346,7 +361,7 @@ public class ContributionManagerDialog {
   
 
   class FilterField extends JTextField {
-    final static String filterHint = "Filter your search...     ";
+    final static String filterHint = "Filter your search...";
     boolean showingHint;
     List<String> filters;
 

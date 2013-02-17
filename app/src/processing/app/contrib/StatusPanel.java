@@ -28,10 +28,11 @@ import javax.swing.JLabel;
 
 class StatusPanel extends JLabel {
   
-//  public StatusPanel() {
+  public StatusPanel() {
+    super(" ");  // need to have some size
 //    setBackground(null);
 //    setBorder(null);
-//  }
+  }
   
   void setMessage(String message) {
     setForeground(Color.BLACK);
