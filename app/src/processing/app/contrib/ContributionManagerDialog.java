@@ -25,7 +25,6 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.*;
@@ -47,7 +46,7 @@ public class ContributionManagerDialog {
   JComboBox categoryChooser;
   JScrollPane scrollPane;
   ContributionListPanel contributionListPanel;
-  StatusPanel statusBar;
+  StatusPanel status;
   FilterField filterField;
 
   // the calling editor, so updates can be applied
@@ -97,7 +96,7 @@ public class ContributionManagerDialog {
     dialog.setVisible(true);
 
     if (!contribListing.hasDownloadedLatestList()) {
-      contribListing.getAdvertisedContributions(new AbstractProgressMonitor() {
+      contribListing.downloadAvailableList(new AbstractProgressMonitor() {
         public void startTask(String name, int maxValue) {
         }
 
@@ -107,10 +106,10 @@ public class ContributionManagerDialog {
           updateContributionListing();
           updateCategoryChooser();
           if (isError()) {
-            statusBar.setErrorMessage("An error occured when downloading " +
+            status.setErrorMessage("An error occured when downloading " +
                                       "the list of available contributions.");
           } else {
-            statusBar.updateUI();
+            status.updateUI();
           }
         }
       });
@@ -185,12 +184,12 @@ public class ContributionManagerDialog {
       scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
       scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
-      statusBar = new StatusPanel();
-      statusBar.setBorder(BorderFactory.createEtchedBorder());
+      status = new StatusPanel();
+      status.setBorder(BorderFactory.createEtchedBorder());
 
       final JLayeredPane layeredPane = new JLayeredPane();
       layeredPane.add(scrollPane, JLayeredPane.DEFAULT_LAYER);
-      layeredPane.add(statusBar, JLayeredPane.PALETTE_LAYER);
+      layeredPane.add(status, JLayeredPane.PALETTE_LAYER);
 
       layeredPane.addComponentListener(new ComponentAdapter() {
 
@@ -211,12 +210,12 @@ public class ContributionManagerDialog {
       final JViewport viewport = scrollPane.getViewport();
       viewport.addComponentListener(new ComponentAdapter() {
         void resizeLayers() {
-          statusBar.setLocation(0, viewport.getHeight() - 18);
+          status.setLocation(0, viewport.getHeight() - 18);
 
           Dimension d = viewport.getSize();
           d.height = 20;
           d.width += 3;
-          statusBar.setSize(d);
+          status.setSize(d);
         }
         public void componentShown(ComponentEvent e) {
           resizeLayers();
@@ -337,9 +336,9 @@ public class ContributionManagerDialog {
   }
   
   
-  protected JPanel getPlaceholder() {
-    return contributionListPanel.statusPlaceholder;
-  }
+//  private JPanel getPlaceholder() {
+//    return contributionListPanel.statusPlaceholder;
+//  }
   
 
   class FilterField extends JTextField {
@@ -418,88 +417,4 @@ public class ContributionManagerDialog {
   public boolean hasAlreadyBeenOpened() {
     return dialog != null;
   }
-
-  
-  class StatusPanel extends JPanel implements ErrorWidget {
-    String errorMessage;
-
-    StatusPanel() {
-      addMouseListener(new MouseAdapter() {
-
-        public void mousePressed(MouseEvent e) {
-          clearErrorMessage();
-        }
-      });
-    }
-
-    @Override
-    protected void paintComponent(Graphics g) {
-      super.paintComponent(g);
-
-      g.setFont(new Font("SansSerif", Font.PLAIN, 10));
-      int baseline = (getSize().height + g.getFontMetrics().getAscent()) / 2;
-
-      if (contribListing.isDownloadingListing()) {
-        g.setColor(Color.black);
-        g.drawString("Downloading software listing...", 2, baseline);
-        setVisible(true);
-      } else if (errorMessage != null) {
-        g.setColor(Color.red);
-        g.drawString(errorMessage, 2, baseline);
-        setVisible(true);
-      } else {
-        setVisible(false);
-      }
-    }
-
-    public void setErrorMessage(String message) {
-      errorMessage = message;
-      setVisible(true);
-
-      JPanel placeholder = getPlaceholder();
-      Dimension d = getPreferredSize();
-      if (Base.isWindows()) {
-        d.height += 5;
-        placeholder.setPreferredSize(d);
-      }
-      placeholder.setVisible(true);
-    }
-
-    void clearErrorMessage() {
-      errorMessage = null;
-      repaint();
-
-      getPlaceholder().setVisible(false);
-    }
-  }  
-}
-
-
-abstract class JProgressMonitor extends AbstractProgressMonitor {
-  JProgressBar progressBar;
-
-  public JProgressMonitor(JProgressBar progressBar) {
-    this.progressBar = progressBar;
-  }
-
-  public void startTask(String name, int maxValue) {
-    isFinished = false;
-    progressBar.setString(name);
-    progressBar.setIndeterminate(maxValue == UNKNOWN);
-    progressBar.setMaximum(maxValue);
-  }
-
-  public void setProgress(int value) {
-    super.setProgress(value);
-    progressBar.setValue(value);
-  }
-
-  @Override
-  public void finished() {
-    super.finished();
-    finishedAction();
-  }
-
-  public abstract void finishedAction();
-
 }

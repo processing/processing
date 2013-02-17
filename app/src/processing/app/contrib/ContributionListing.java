@@ -34,6 +34,8 @@ public class ContributionListing {
   static final String LISTING_URL = 
     "https://raw.github.com/processing/processing-web/master/contrib_generate/contributions.txt";
 
+  static ContributionListing singleInstance;
+  
   File listingFile;
   ArrayList<ContributionChangeListener> listeners;
   ArrayList<AvailableContribution> advertisedContributions;
@@ -42,13 +44,11 @@ public class ContributionListing {
   boolean hasDownloadedLatestList;
   ReentrantLock downloadingListingLock;
 
-  static protected final String validCategories[] = {
-    "3D", "Animation", "Compilations", "Data", "Geometry", "GUI", "Hardware",
-    "I/O", "Math", "Simulation", "Sound", "Utilities", "Typography",
-    "Video & Vision" };
-
-  static ContributionListing singleInstance;
-  
+  static final String[] validCategories = {
+    "3D", "Animation", "Compilations", "Data", "Geometry", "GUI", 
+    "Hardware", "I/O", "Math", "Simulation", "Sound", "Typography",
+    "Utilities", "Video & Vision" 
+  };
 
 
   private ContributionListing() {
@@ -66,7 +66,7 @@ public class ContributionListing {
   }
 
 
-  static public ContributionListing getInstance() {
+  static ContributionListing getInstance() {
     if (singleInstance == null) {
       singleInstance = new ContributionListing();
     }
@@ -169,7 +169,7 @@ public class ContributionListing {
   }
 
 
-  public AvailableContribution getAdvertisedContribution(Contribution info) {
+  public AvailableContribution getAvailableContribution(Contribution info) {
     for (AvailableContribution advertised : advertisedContributions) {
       if (advertised.getType() == info.getType() && 
           advertised.getName().equals(info.getName())) {
@@ -345,7 +345,7 @@ public class ContributionListing {
    * Starts a new thread to download the advertised list of contributions. 
    * Only one instance will run at a time.
    */
-  public void getAdvertisedContributions(ProgressMonitor pm) {
+  public void downloadAvailableList(ProgressMonitor pm) {
     final ProgressMonitor progressMonitor = 
       (pm != null) ? pm : new NullProgressMonitor();
 
@@ -436,7 +436,7 @@ public class ContributionListing {
 
   public boolean hasUpdates(Contribution contribution) {
     if (contribution.isInstalled()) {
-      Contribution advertised = getAdvertisedContribution(contribution);
+      Contribution advertised = getAvailableContribution(contribution);
       if (advertised == null) {
         return false;
       }

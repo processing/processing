@@ -109,8 +109,7 @@ public enum ContributionType {
 
 
   boolean isCandidate(File potential) {
-    return (potential.isDirectory() &&
-      new File(potential, getFolderName()).exists());
+    return (potential.isDirectory() && new File(potential, toString()).exists());
   }
 
 
@@ -176,7 +175,7 @@ public enum ContributionType {
   }
   
   
-  File createBackupFolder(ErrorWidget status) {
+  File createBackupFolder(StatusPanel status) {
     File backupFolder = new File(getSketchbookFolder(), "old");
     if (!backupFolder.isDirectory()) {
       status.setErrorMessage("Remove the file named \"old\" from the " + 
