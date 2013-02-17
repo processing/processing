@@ -80,6 +80,18 @@ o arc with large strokeWeight is very slow in P2D renderer
 A   marked WontFix, workaround is to create a PShape
 A   https://github.com/processing/processing/issues/1583
 A   http://code.google.com/p/processing/issues/detail?id=1545
+A child PShape disappears when geometric transformations are applied
+A   http://code.google.com/p/processing/issues/detail?id=1460
+A   https://github.com/processing/processing/issues/1498
+A repeated fill() in P3D throws ex for groups, weird behavior for single shapes
+A   http://code.google.com/p/processing/issues/detail?id=1524
+A   https://github.com/processing/processing/issues/1562
+A Incorrect sampler2D alpha channel from PGraphics.filter(shader)
+A   https://github.com/processing/processing/issues/1557
+X   http://code.google.com/p/processing/issues/detail?id=1519
+_ Default filter on PGraphics does nothing (JAVA2D) or causes crash (P2D/P3D)
+_   http://code.google.com/p/processing/issues/detail?id=1496
+_   https://github.com/processing/processing/issues/1534
 
 cleaning/earlier
 C textureWrap() CLAMP and REPEAT now added
