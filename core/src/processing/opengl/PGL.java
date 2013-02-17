@@ -3237,7 +3237,7 @@ public class PGL {
 
   protected void nativeMouseEvent(com.jogamp.newt.event.MouseEvent nativeEvent,
                                   int peAction) {
-    if (!hasFocus) return;
+//    if (!hasFocus) return;
     int modifiers = nativeEvent.getModifiers();
     int peModifiers = modifiers &
                       (InputEvent.SHIFT_MASK |
