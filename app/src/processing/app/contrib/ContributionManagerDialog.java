@@ -139,32 +139,36 @@ public class ContributionManagerDialog {
       c.gridx = 0;
       c.gridy = 0;
 
-      JPanel categorySelector = new JPanel();
-      categorySelector.setLayout(new BoxLayout(categorySelector, BoxLayout.X_AXIS));
-      pane.add(categorySelector, c);
+      JPanel filterPanel = new JPanel();
+      filterPanel.setLayout(new BoxLayout(filterPanel, BoxLayout.X_AXIS));
+      pane.add(filterPanel, c);
 
-      categorySelector.add(Box.createHorizontalStrut(6));
+      filterPanel.add(Box.createHorizontalStrut(6));
 
-      JLabel categoryLabel = new JLabel("Filter by Category:");
-      categorySelector.add(categoryLabel);
+      JLabel categoryLabel = new JLabel("Category:");
+      filterPanel.add(categoryLabel);
 
-      categorySelector.add(Box.createHorizontalStrut(5));
+      filterPanel.add(Box.createHorizontalStrut(5));
 
       categoryChooser = new JComboBox();
       categoryChooser.setMaximumRowCount(20);
       updateCategoryChooser();
-      categorySelector.add(categoryChooser, c);
+      filterPanel.add(categoryChooser, c);
       categoryChooser.addItemListener(new ItemListener() {
-
         public void itemStateChanged(ItemEvent e) {
           category = (String) categoryChooser.getSelectedItem();
           if (ContributionManagerDialog.ANY_CATEGORY.equals(category)) {
             category = null;
           }
-
           filterLibraries(category, filterField.filters);
         }
       });
+      
+      filterPanel.add(Box.createHorizontalStrut(5));
+//      filterPanel.add(Box.createHorizontalGlue());
+      filterField = new FilterField();
+      filterPanel.add(filterField);
+//      filterPanel.add(Box.createHorizontalGlue());
     }
 
     { // The scroll area containing the contribution listing and the status bar.
@@ -228,17 +232,17 @@ public class ContributionManagerDialog {
       pane.add(layeredPane, c);
     }
 
-    { // The filter text area
-      GridBagConstraints c = new GridBagConstraints();
-      c.gridx = 0;
-      c.gridy = 2;
-      c.gridwidth = 2;
-      c.weightx = 1;
-      c.fill = GridBagConstraints.HORIZONTAL;
-      filterField = new FilterField();
-
-      pane.add(filterField, c);
-    }
+//    { // The filter text area
+//      GridBagConstraints c = new GridBagConstraints();
+//      c.gridx = 0;
+//      c.gridy = 2;
+//      c.gridwidth = 2;
+//      c.weightx = 1;
+//      c.fill = GridBagConstraints.HORIZONTAL;
+//      filterField = new FilterField();
+//
+//      pane.add(filterField, c);
+//    }
 
     dialog.setMinimumSize(new Dimension(450, 400));
   }
@@ -342,7 +346,7 @@ public class ContributionManagerDialog {
   
 
   class FilterField extends JTextField {
-    final static String filterHint = "Filter your search...";
+    final static String filterHint = "Filter your search...     ";
     boolean showingHint;
     List<String> filters;
 
