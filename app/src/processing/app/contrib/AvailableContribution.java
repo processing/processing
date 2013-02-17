@@ -77,7 +77,7 @@ class AvailableContribution extends Contribution {
     }
     Base.unzip(contribArchive, tempFolder);
 //    System.out.println("temp folder is " + tempFolder);
-    Base.openFolder(tempFolder);
+//    Base.openFolder(tempFolder);
 
     // Now go looking for a legit contrib inside what's been unpacked.
     File contribFolder = null;
@@ -102,14 +102,12 @@ class AvailableContribution extends Contribution {
       */
       status.setErrorMessage("This " + type + " needs to be repackaged according to the guidelines.");
       return null;
-
     }
 
-    if (contribFolder == null) {
-      // Find the first legitimate looking folder in what we just unzipped
-      contribFolder = type.findCandidate(tempFolder);
-    }
-    
+//    if (contribFolder == null) {
+    // Find the first legitimate looking folder in what we just unzipped
+    contribFolder = type.findCandidate(tempFolder);
+//    }
     LocalContribution installedContrib = null;
 
     if (contribFolder == null) {
