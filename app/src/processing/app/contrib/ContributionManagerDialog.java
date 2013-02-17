@@ -44,7 +44,7 @@ public class ContributionManagerDialog {
 
   JFrame dialog;
   String title;
-  Filter permaFilter;
+  Filter filter;
   JComboBox categoryChooser;
   JScrollPane scrollPane;
   ContributionListPanel contributionListPanel;
@@ -58,11 +58,14 @@ public class ContributionManagerDialog {
 
 
   public ContributionManagerDialog(ContributionType type) {
-    this.title = type.getTitle() + " Manager";
-    this.permaFilter = ContributionListing.createFilter(type);
-    
+    if (type == null) {
+      title = "Update Manager";
+    } else {
+      title = type.getTitle() + " Manager";
+    }
+    filter = ContributionListing.createFilter(type);    
     contribListing = ContributionListing.getInstance();
-    contributionListPanel = new ContributionListPanel(this, permaFilter);
+    contributionListPanel = new ContributionListPanel(this, filter);
     contribListing.addContributionListener(contributionListPanel);
   }
 
@@ -245,7 +248,7 @@ public class ContributionManagerDialog {
     if (categoryChooser != null) {
       ArrayList<String> categories;
       categoryChooser.removeAllItems();
-      categories = new ArrayList<String>(contribListing.getCategories(permaFilter));
+      categories = new ArrayList<String>(contribListing.getCategories(filter));
 //      for (int i = 0; i < categories.size(); i++) {
 //        System.out.println(i + " category: " + categories.get(i));
 //      }
