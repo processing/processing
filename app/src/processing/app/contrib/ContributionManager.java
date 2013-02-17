@@ -54,7 +54,7 @@ public class ContributionManager {
    */
   static void downloadAndInstall(final Editor editor,
                                  final URL url,
-                                 final AdvertisedContribution ad,
+                                 final AvailableContribution ad,
                                  final JProgressMonitor downloadProgress,
                                  final JProgressMonitor installProgress,
                                  final ErrorWidget statusBar) {
@@ -72,7 +72,7 @@ public class ContributionManager {
             
             if (!downloadProgress.isCanceled() && !downloadProgress.isError()) {
               installProgress.startTask("Installing...", ProgressMonitor.UNKNOWN);
-              InstalledContribution contribution = 
+              LocalContribution contribution = 
                 ad.install(editor, contribZip, false, statusBar);
 
               if (contribution != null) {
@@ -533,7 +533,7 @@ public class ContributionManager {
     File[] markedForDeletion = root.listFiles(new FileFilter() {
       public boolean accept(File folder) {
         return (folder.isDirectory() && 
-                InstalledContribution.isDeletionFlagged(folder));
+                LocalContribution.isDeletionFlagged(folder));
       }
     });
     for (File folder : markedForDeletion) {

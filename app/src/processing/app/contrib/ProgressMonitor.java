@@ -88,8 +88,8 @@ public interface ProgressMonitor {
    * task was cancelled.
    */
   public void finished();
-  
 }
+
 
 abstract class AbstractProgressMonitor implements ProgressMonitor {
   boolean isCanceled = false;

@@ -146,7 +146,7 @@ public enum ContributionType {
   }
   
   
-  InstalledContribution load(Base base, File folder) {
+  LocalContribution load(Base base, File folder) {
     switch (this) {
     case LIBRARY:
       return new Library(folder);
@@ -159,8 +159,8 @@ public enum ContributionType {
   }
 
 
-  ArrayList<InstalledContribution> listContributions(Editor editor) {
-    ArrayList<InstalledContribution> contribs = new ArrayList<InstalledContribution>();
+  ArrayList<LocalContribution> listContributions(Editor editor) {
+    ArrayList<LocalContribution> contribs = new ArrayList<LocalContribution>();
     switch (this) {
     case LIBRARY:
       contribs.addAll(editor.getMode().contribLibraries);

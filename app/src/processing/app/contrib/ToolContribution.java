@@ -31,7 +31,7 @@ import processing.app.Editor;
 import processing.app.tools.Tool;
 
 
-public class ToolContribution extends InstalledContribution implements Tool {
+public class ToolContribution extends LocalContribution implements Tool {
   private Tool tool;
 
 

@@ -453,16 +453,16 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
 
       installActionListener = new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          if (contrib instanceof AdvertisedContribution) {
-            installContribution((AdvertisedContribution) contrib);
+          if (contrib instanceof AvailableContribution) {
+            installContribution((AvailableContribution) contrib);
           }
         }
       };
 
       undoActionListener = new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          if (contrib instanceof InstalledContribution) {
-            InstalledContribution installed = (InstalledContribution) contrib;
+          if (contrib instanceof LocalContribution) {
+            LocalContribution installed = (LocalContribution) contrib;
             installed.unsetDeletionFlag();
             contribListing.replaceContribution(contrib, contrib);  // ?? 
           }
@@ -471,13 +471,13 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
 
       removeActionListener = new ActionListener() {
         public void actionPerformed(ActionEvent arg) {
-          if (contrib.isInstalled() && contrib instanceof InstalledContribution) {
+          if (contrib.isInstalled() && contrib instanceof LocalContribution) {
             updateButton.setEnabled(false);
             installRemoveButton.setEnabled(false);
 
             installProgressBar.setVisible(true);
 
-            ((InstalledContribution) contrib).removeContribution(contribManager.editor,
+            ((LocalContribution) contrib).removeContribution(contribManager.editor,
                                                                  new JProgressMonitor(installProgressBar) {
               public void finishedAction() {
                 // Finished uninstalling the library
@@ -494,8 +494,8 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       openFolder = new JMenuItem("Open Folder");
       openFolder.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          if (contrib instanceof InstalledContribution) {
-            File folder = ((InstalledContribution) contrib).getFolder();
+          if (contrib instanceof LocalContribution) {
+            File folder = ((LocalContribution) contrib).getFolder();
             Base.openFolder(folder);
           }
         }
@@ -618,7 +618,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
 
           public void actionPerformed(ActionEvent e) {
             updateButton.setEnabled(false);
-            AdvertisedContribution ad = contribListing
+            AvailableContribution ad = contribListing
                 .getAdvertisedContribution(contrib);
              String url = ad.link;
             installContribution(ad, url);
@@ -785,7 +785,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
 
     }
 
-    private void installContribution(AdvertisedContribution info) {
+    private void installContribution(AvailableContribution info) {
       if (info.link == null) {
         contribManager.statusBar.setErrorMessage("Your operating system "
             + "doesn't appear to be supported. You should visit the "
@@ -795,7 +795,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       }
     }
 
-    private void installContribution(AdvertisedContribution ad, String url) {
+    private void installContribution(AvailableContribution ad, String url) {
 
       installRemoveButton.setEnabled(false);
 
@@ -932,8 +932,8 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
           if (doc instanceof HTMLDocument) {
             HTMLDocument html = (HTMLDocument) doc;
             StyleSheet stylesheet = html.getStyleSheet();
-            stylesheet.addRule("body {color:" + PApplet.hex(fg.getRGB()).substring(8) + ";}");
-            stylesheet.addRule("a {color:" + PApplet.hex(fg.getRGB()).substring(8) + "}");
+            stylesheet.addRule("body {color:" + PApplet.hex(fg.getRGB()).substring(2) + ";}");
+            stylesheet.addRule("a {color:" + PApplet.hex(fg.getRGB()).substring(2) + "}");
           }
         }
       }

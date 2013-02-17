@@ -23,71 +23,45 @@ package processing.app.contrib;
 
 import java.io.*;
 import java.util.HashMap;
-import java.util.zip.Adler32;
-import java.util.zip.CheckedInputStream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 import processing.app.Base;
 import processing.app.Editor;
 import processing.core.PApplet;
 
 
-class AdvertisedContribution extends Contribution {
+/**
+ * A class to hold information about a Contribution that can be downloaded. 
+ */
+class AvailableContribution extends Contribution {
   protected final ContributionType type;   // Library, tool, etc.
   protected final String link;             // Direct link to download the file
-  
-//  protected final String category;         // "Sound"
-//  protected final String name;             // "pdf" or "PDF Export"
-//  protected final String authorList;       // [Ben Fry](http://benfry.com/)
-//  protected final String url;              // http://processing.org
-//  protected final String sentence;         // Write graphics to PDF files.
-//  protected final String paragraph;        // <paragraph length description for site>
-//  protected final int version;             // 102
-//  protected final String prettyVersion;    // "1.0.2"  
 
   
-  public AdvertisedContribution(ContributionType type, HashMap<String, String> exports) {
-
+  public AvailableContribution(ContributionType type, HashMap<String, String> params) {
     this.type = type;
-    name = exports.get("name");
-    category = ContributionListing.getCategory(exports.get("category"));
-    authorList = exports.get("authorList");
-
-    url = exports.get("url");
-    sentence = exports.get("sentence");
-    paragraph = exports.get("paragraph");
-
-    int v = 0;
-    try {
-      v = Integer.parseInt(exports.get("version"));
-    } catch (NumberFormatException e) {
-    }
-    version = v;
-
-    prettyVersion = exports.get("prettyVersion");
-
-    this.link = exports.get("download");
+    this.link = params.get("download");
+    
+    category = ContributionListing.getCategory(params.get("category"));
+    name = params.get("name");
+    authorList = params.get("authorList");
+    url = params.get("url");
+    sentence = params.get("sentence");
+    paragraph = params.get("paragraph");
+    version = PApplet.parseInt(params.get("version"), 0);
+    prettyVersion = params.get("prettyVersion");
   }
   
   
   /**
    * @param contribArchive
    *          a zip file containing the library to install
-   * @param ad
-   *          the advertised version of this library, if it was downloaded
-   *          through the Contribution Manager. This is used to check the type
-   *          of library being installed, and to replace the .properties file in
-   *          the zip
    * @param confirmReplace
    *          true to open a dialog asking the user to confirm removing/moving
    *          the library when a library by the same name already exists
    * @return
    */
-  public InstalledContribution install(Editor editor, File contribArchive,
-                                       boolean confirmReplace,
-                                       ErrorWidget statusBar) {
-    
+  public LocalContribution install(Editor editor, File contribArchive,
+                                   boolean confirmReplace, ErrorWidget status) {
     // Unzip the file into the modes, tools, or libraries folder inside the 
     // sketchbook. Unzipping to /tmp is problematic because it may be on 
     // another file system, so move/rename operations will break.
@@ -98,10 +72,10 @@ class AdvertisedContribution extends Contribution {
       tempFolder = 
         Base.createTempFolder(type.toString(), "tmp", sketchbookContribFolder);
     } catch (IOException e) {
-      statusBar.setErrorMessage("Could not create a temporary folder to install.");
+      status.setErrorMessage("Could not create a temporary folder to install.");
       return null;
     }
-    unzip(contribArchive, tempFolder);
+    Base.unzip(contribArchive, tempFolder);
 
     // Now go looking for a legit contrib inside what's been unpacked.
     File contribFolder = null;
@@ -117,26 +91,26 @@ class AdvertisedContribution extends Contribution {
       contribFolder = type.findCandidate(tempFolder);
     }
     
-    InstalledContribution installedContrib = null;
+    LocalContribution installedContrib = null;
 
     if (contribFolder == null) {
-      statusBar.setErrorMessage("Could not find a " + type + " in the downloaded file.");
+      status.setErrorMessage("Could not find a " + type + " in the downloaded file.");
       
     } else {
       File propFile = new File(contribFolder, type + ".properties");
 
       if (!writePropertiesFile(propFile)) {        
         // 1. contribFolder now has a legit contribution, load it to get info. 
-        InstalledContribution newContrib =
+        LocalContribution newContrib =
           type.load(editor.getBase(), contribFolder);
         
         // 2. Check to make sure nothing has the same name already, 
         // backup old if needed, then move things into place and reload.
         installedContrib = 
-          newContrib.moveAndLoad(editor, confirmReplace, statusBar);
+          newContrib.moveAndLoad(editor, confirmReplace, status);
         
       } else {
-        statusBar.setErrorMessage("Error overwriting .properties file.");
+        status.setErrorMessage("Error overwriting .properties file.");
       }
     }
 
@@ -148,39 +122,6 @@ class AdvertisedContribution extends Contribution {
   }
   
   
-  static private void unzip(File zipFile, File dest) {
-    try {
-      FileInputStream fis = new FileInputStream(zipFile);
-      CheckedInputStream checksum = new CheckedInputStream(fis, new Adler32());
-      ZipInputStream zis = new ZipInputStream(new BufferedInputStream(checksum));
-      ZipEntry next = null;
-      while ((next = zis.getNextEntry()) != null) {
-        File currentFile = new File(dest, next.getName());
-        if (next.isDirectory()) {
-          currentFile.mkdirs();
-        } else {
-          currentFile.createNewFile();
-          unzipEntry(zis, currentFile);
-        }
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
-
-
-  static private void unzipEntry(ZipInputStream zin, File f) throws IOException {
-    FileOutputStream out = new FileOutputStream(f);
-    byte[] b = new byte[512];
-    int len = 0;
-    while ((len = zin.read(b)) != -1) {
-      out.write(b, 0, len);
-    }
-    out.flush();
-    out.close();
-  }
-
-  
   public boolean isInstalled() {
     return false;
   }
@@ -189,43 +130,6 @@ class AdvertisedContribution extends Contribution {
   public ContributionType getType() {
     return type;
   }
-
-  
-//  public String getTypeName() {
-//    return type.toString();
-//  }
-//  
-//  public String getCategory() {
-//    return category;
-//  }
-//
-//  public String getName() {
-//    return name;
-//  }
-//
-//  public String getAuthorList() {
-//    return authorList;
-//  }
-//
-//  public String getUrl() {
-//    return url;
-//  }
-//
-//  public String getSentence() {
-//    return sentence;
-//  }
-//
-//  public String getParagraph() {
-//    return paragraph;
-//  }
-//
-//  public int getVersion() {
-//    return version;
-//  }
-//
-//  public String getPrettyVersion() {
-//    return prettyVersion;
-//  }
 
 
   /**
@@ -239,7 +143,6 @@ class AdvertisedContribution extends Contribution {
   public boolean writePropertiesFile(File propFile) {
     try {
       if (propFile.delete() && propFile.createNewFile() && propFile.setWritable(true)) {
-        //BufferedWriter bw = new BufferedWriter(new FileWriter(propFile));
         PrintWriter writer = PApplet.createWriter(propFile);
 
         writer.println("name=" + getName());

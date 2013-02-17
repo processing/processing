@@ -2883,6 +2883,39 @@ public class Base {
       }
     }
   }
+  
+  
+  static public void unzip(File zipFile, File dest) {
+    try {
+      FileInputStream fis = new FileInputStream(zipFile);
+      CheckedInputStream checksum = new CheckedInputStream(fis, new Adler32());
+      ZipInputStream zis = new ZipInputStream(new BufferedInputStream(checksum));
+      ZipEntry next = null;
+      while ((next = zis.getNextEntry()) != null) {
+        File currentFile = new File(dest, next.getName());
+        if (next.isDirectory()) {
+          currentFile.mkdirs();
+        } else {
+          currentFile.createNewFile();
+          unzipEntry(zis, currentFile);
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+
+  static protected void unzipEntry(ZipInputStream zin, File f) throws IOException {
+    FileOutputStream out = new FileOutputStream(f);
+    byte[] b = new byte[512];
+    int len = 0;
+    while ((len = zin.read(b)) != -1) {
+      out.write(b, 0, len);
+    }
+    out.flush();
+    out.close();
+  }
 
 
   static public void log(Object from, String message) {

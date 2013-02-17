@@ -30,7 +30,7 @@ import processing.app.Base;
 import processing.app.Mode;
 
 
-public class ModeContribution extends InstalledContribution {
+public class ModeContribution extends LocalContribution {
   private Mode mode;
 
 

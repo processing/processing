@@ -7,7 +7,7 @@ import processing.app.contrib.*;
 import processing.core.*;
 
 
-public class Library extends InstalledContribution {
+public class Library extends LocalContribution {
   static final String[] platformNames = PConstants.platformNames;
 
   //protected File folder;          // /path/to/shortname

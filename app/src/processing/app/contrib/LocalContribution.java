@@ -33,7 +33,11 @@ import javax.swing.JOptionPane;
 import processing.app.*;
 
 
-public abstract class InstalledContribution extends Contribution {
+/** 
+ * A contribution that has been downloaded to the disk, and may or may not
+ * be installed.
+ */
+public abstract class LocalContribution extends Contribution {
   static public final String DELETION_FLAG = "flagged_for_deletion";
   
   protected String id;          // 1
@@ -43,7 +47,7 @@ public abstract class InstalledContribution extends Contribution {
   protected ClassLoader loader;
 
 
-  public InstalledContribution(File folder) {
+  public LocalContribution(File folder) {
     this.folder = folder;
 
     // required for contributed modes, but not for built-in core modes
@@ -178,10 +182,10 @@ public abstract class InstalledContribution extends Contribution {
 //  }
   
   
-  InstalledContribution moveAndLoad(Editor editor, 
+  LocalContribution moveAndLoad(Editor editor, 
                                     boolean confirmReplace, 
                                     ErrorWidget statusBar) {
-    ArrayList<InstalledContribution> oldContribs = 
+    ArrayList<LocalContribution> oldContribs = 
       getType().listContributions(editor);
     
     String contribFolderName = getFolder().getName();
@@ -189,7 +193,7 @@ public abstract class InstalledContribution extends Contribution {
     File contribTypeFolder = getType().getSketchbookFolder();
     File contribFolder = new File(contribTypeFolder, contribFolderName);
 
-    for (InstalledContribution oldContrib : oldContribs) {
+    for (LocalContribution oldContrib : oldContribs) {
       if ((oldContrib.getFolder().exists() && oldContrib.getFolder().equals(contribFolder)) ||
           (oldContrib.getId() != null && oldContrib.getId().equals(getId()))) {
 
