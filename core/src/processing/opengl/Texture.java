@@ -328,7 +328,6 @@ public class Texture implements PConstants {
 
   public void set(int[] pixels, int x, int y, int w, int h, int format) {
     if (pixels == null) {
-      pixels = null;
       PGraphics.showWarning("The pixels array is null.");
       return;
     }
@@ -1283,6 +1282,9 @@ public class Texture implements PConstants {
     // FBO copy:
     pg.pushFramebuffer();
     pg.setFramebuffer(tempFbo);
+    // Clear the color buffer to make sure that the alpha of the
+    pgl.clearColor(0, 0, 0, 0);
+    pgl.clear(PGL.COLOR_BUFFER_BIT);
     if (scale) {
       // Rendering tex into "this", and scaling the source rectangle
       // to cover the entire destination region.
