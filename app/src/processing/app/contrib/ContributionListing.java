@@ -1,26 +1,24 @@
 /* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
- Part of the Processing project - http://processing.org
+  Part of the Processing project - http://processing.org
 
- Copyright (c) 2004-11 Ben Fry and Casey Reas
- Copyright (c) 2001-04 Massachusetts Institute of Technology
+  Copyright (c) 2013 The Processing Foundation
+  Copyright (c) 2011-12 Ben Fry and Casey Reas
 
- This program is free software; you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation; either version 2 of the License, or
- (at your option) any later version.
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License version 2
+  as published by the Free Software Foundation.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
 
- You should have received a copy of the GNU General Public License
- along with this program; if not, write to the Free Software Foundation,
- Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- */
-
+  You should have received a copy of the GNU General Public License along 
+  with this program; if not, write to the Free Software Foundation, Inc.
+  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
 package processing.app.contrib;
 
 import java.io.*;
@@ -38,7 +36,7 @@ public class ContributionListing {
 
   File listingFile;
   ArrayList<ContributionChangeListener> listeners;
-  ArrayList<AdvertisedContribution> advertisedContributions;
+  ArrayList<AvailableContribution> advertisedContributions;
   Map<String, List<Contribution>> librariesByCategory;
   ArrayList<Contribution> allContributions;
   boolean hasDownloadedLatestList;
@@ -55,7 +53,7 @@ public class ContributionListing {
 
   private ContributionListing() {
     listeners = new ArrayList<ContributionChangeListener>();
-    advertisedContributions = new ArrayList<AdvertisedContribution>();
+    advertisedContributions = new ArrayList<AvailableContribution>();
     librariesByCategory = new HashMap<String, List<Contribution>>();
     allContributions = new ArrayList<Contribution>();
     downloadingListingLock = new ReentrantLock();
@@ -80,11 +78,10 @@ public class ContributionListing {
     listingFile = file;
 
     advertisedContributions.clear();
-    advertisedContributions.addAll(getLibraries(listingFile));
+    advertisedContributions.addAll(parseContribList(listingFile));
     for (Contribution contribution : advertisedContributions) {
       addContribution(contribution);
     }
-
     Collections.sort(allContributions, contribComparator);
   }
 
@@ -172,8 +169,8 @@ public class ContributionListing {
   }
 
 
-  public AdvertisedContribution getAdvertisedContribution(Contribution info) {
-    for (AdvertisedContribution advertised : advertisedContributions) {
+  public AvailableContribution getAdvertisedContribution(Contribution info) {
+    for (AvailableContribution advertised : advertisedContributions) {
       if (advertised.getType() == info.getType() && 
           advertised.getName().equals(info.getName())) {
         return advertised;
@@ -246,12 +243,13 @@ public class ContributionListing {
       // Chances are the person is still typing the property, so rather than
       // make the list flash empty (because nothing contains "is:" or "has:",
       // just return true.
-      if (!isProperty(property))
+      if (!isProperty(property)) {
         return true;
+      }
 
       if ("is".equals(isText) || "has".equals(isText)) {
         return hasProperty(contrib, filter.substring(colon + 1));
-      } else  if ("not".equals(isText)) {
+      } else if ("not".equals(isText)) {
         return !hasProperty(contrib, filter.substring(colon + 1));
       }
     }
@@ -324,6 +322,7 @@ public class ContributionListing {
     }
   }
 
+  
   public void addContributionListener(ContributionChangeListener listener) {
     for (Contribution contrib : allContributions) {
       listener.contributionAdded(contrib);
@@ -331,14 +330,17 @@ public class ContributionListing {
     listeners.add(listener);
   }
 
+  
   public void removeContributionListener(ContributionChangeListener listener) {
     listeners.remove(listener);
   }
 
+  
   public ArrayList<ContributionChangeListener> getContributionListeners() {
     return new ArrayList<ContributionChangeListener>(listeners);
   }
 
+  
   /**
    * Starts a new thread to download the advertised list of contributions. 
    * Only one instance will run at a time.
@@ -360,7 +362,7 @@ public class ContributionListing {
         }
 
         if (!progressMonitor.isFinished()) {
-          FileDownloader.downloadFile(url, listingFile, progressMonitor);
+          download(url, listingFile, progressMonitor);
           if (!progressMonitor.isCanceled() && !progressMonitor.isError()) {
             hasDownloadedLatestList = true;
             setAdvertisedList(listingFile);
@@ -369,6 +371,56 @@ public class ContributionListing {
         downloadingListingLock.unlock();
       }
     }).start();
+  }
+  
+  
+  /**
+   * Blocks until the file is downloaded or an error occurs. 
+   * Returns true if the file was successfully downloaded, false otherwise.
+   * 
+   * @param source
+   *          the URL of the file to download
+   * @param dest
+   *          the file on the local system where the file will be written. This
+   *          must be a file (not a directory), and must already exist.
+   * @param progress
+   * @throws FileNotFoundException
+   *           if an error occurred downloading the file
+   */
+  static boolean download(URL source, File dest, ProgressMonitor progress) {
+    boolean success = false;
+    try {
+//      System.out.println("downloading file " + source);
+      URLConnection conn = source.openConnection();
+      conn.setConnectTimeout(1000);
+      conn.setReadTimeout(5000);
+  
+      // TODO this is often -1, may need to set progress to indeterminate
+      int fileSize = conn.getContentLength();
+//      System.out.println("file size is " + fileSize);
+      progress.startTask("Downloading", fileSize);
+  
+      InputStream in = conn.getInputStream();
+      FileOutputStream out = new FileOutputStream(dest);
+  
+      byte[] b = new byte[8192];
+      int amount;
+      int total = 0;
+      while (!progress.isCanceled() && (amount = in.read(b)) != -1) {
+        out.write(b, 0, amount);
+        total += amount;  
+        progress.setProgress(total);
+      }
+      out.flush();
+      out.close();
+      success = true;
+      
+    } catch (IOException ioe) {
+      progress.error(ioe);
+      ioe.printStackTrace();
+    }
+    progress.finished();
+    return success;
   }
 
   
@@ -434,11 +486,11 @@ public class ContributionListing {
   }
 
   
-  public ArrayList<AdvertisedContribution> getLibraries(File f) {
-    ArrayList<AdvertisedContribution> outgoing = new ArrayList<AdvertisedContribution>();
+  ArrayList<AvailableContribution> parseContribList(File file) {
+    ArrayList<AvailableContribution> outgoing = new ArrayList<AvailableContribution>();
 
-    if (f != null && f.exists()) {
-      String lines[] = PApplet.loadStrings(f);
+    if (file != null && file.exists()) {
+      String lines[] = PApplet.loadStrings(file);
 
       int start = 0;
       while (start < lines.length) {
@@ -463,9 +515,9 @@ public class ContributionListing {
         System.arraycopy(lines, start, contribLines, 0, length);
 
         HashMap<String,String> contribParams = new HashMap<String,String>();
-        Base.readSettings(f.getName(), contribLines, contribParams);
+        Base.readSettings(file.getName(), contribLines, contribParams);
         
-        outgoing.add(new AdvertisedContribution(contribType, contribParams));
+        outgoing.add(new AvailableContribution(contribType, contribParams));
         start = end + 1;
 //        } else {
 //          start++;
@@ -476,123 +528,37 @@ public class ContributionListing {
   }
 
   
-  static class AdvertisedContribution implements Contribution {
-    protected final String name;             // "pdf" or "PDF Export"
-    protected final ContributionType type;   // Library, tool, etc.
-    protected final String category;         // "Sound"
-    protected final String authorList;       // [Ben Fry](http://benfry.com/)
-    protected final String url;              // http://processing.org
-    protected final String sentence;         // Write graphics to PDF files.
-    protected final String paragraph;        // <paragraph length description for site>
-    protected final int version;             // 102
-    protected final String prettyVersion;    // "1.0.2"
-    protected final String link;             // Direct link to download the file
-
-    public AdvertisedContribution(ContributionType type, HashMap<String, String> exports) {
-
-      this.type = type;
-      name = exports.get("name");
-      category = ContributionListing.getCategory(exports.get("category"));
-      authorList = exports.get("authorList");
-
-      url = exports.get("url");
-      sentence = exports.get("sentence");
-      paragraph = exports.get("paragraph");
-
-      int v = 0;
-      try {
-        v = Integer.parseInt(exports.get("version"));
-      } catch (NumberFormatException e) {
-      }
-      version = v;
-
-      prettyVersion = exports.get("prettyVersion");
-
-      this.link = exports.get("download");
-    }
-
-    public boolean isInstalled() {
-      return false;
-    }
-
-    public ContributionType getType() {
-      return type;
-    }
-
-    public String getTypeName() {
-      return type.toString();
-    }
-
-    public String getCategory() {
-      return category;
-    }
-
-    public String getName() {
-      return name;
-    }
-
-    public String getAuthorList() {
-      return authorList;
-    }
-
-    public String getUrl() {
-      return url;
-    }
-
-    public String getSentence() {
-      return sentence;
-    }
-
-    public String getParagraph() {
-      return paragraph;
-    }
-
-    public int getVersion() {
-      return version;
-    }
-
-    public String getPrettyVersion() {
-      return prettyVersion;
-    }
-
-    public boolean writePropertiesFile(File propFile) {
-      try {
-        if (propFile.delete() && propFile.createNewFile() && propFile.setWritable(true)) {
-          //BufferedWriter bw = new BufferedWriter(new FileWriter(propFile));
-          PrintWriter writer = PApplet.createWriter(propFile);
-
-          writer.println("name=" + getName());
-          writer.println("category=" + getCategory());
-          writer.println("authorList=" + getAuthorList());
-          writer.println("url=" + getUrl());
-          writer.println("sentence=" + getSentence());
-          writer.println("paragraph=" + getParagraph());
-          writer.println("version=" + getVersion());
-          writer.println("prettyVersion=" + getPrettyVersion());
-
-          writer.flush();
-          writer.close();
-        }
-        return true;
-
-      } catch (FileNotFoundException e) {
-        e.printStackTrace();
-
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-      return false;
-    }
-  }
-
-  
   public boolean isDownloadingListing() {
     return downloadingListingLock.isLocked();
   }
 
   
-  public static interface Filter {
+  static interface Filter {
     boolean matches(Contribution contrib);
+  }
+  
+  
+  /** 
+   * Create a filter for a specific contribution type.
+   * @param type The type, or null for a generic update checker.
+   */
+  static Filter createFilter(final ContributionType type) {
+    if (type == null) {
+      return new Filter() {
+        public boolean matches(Contribution contrib) {
+          if (contrib instanceof LocalContribution) {
+            return ContributionListing.getInstance().hasUpdates(contrib);
+          }
+          return false;
+        }
+      };
+    } else {
+      return new Filter() {
+        public boolean matches(Contribution contrib) {
+          return contrib.getType() == type;
+        }
+      };
+    }
   }
   
 

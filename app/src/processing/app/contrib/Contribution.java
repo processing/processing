@@ -3,8 +3,8 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-11 Ben Fry and Casey Reas
-  Copyright (c) 2001-04 Massachusetts Institute of Technology
+  Copyright (c) 2013 The Processing Foundation
+  Copyright (c) 2011-12 Ben Fry and Casey Reas
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License version 2
@@ -15,41 +15,94 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, write to the Free Software Foundation,
-  Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+  You should have received a copy of the GNU General Public License along 
+  with this program; if not, write to the Free Software Foundation, Inc.
+  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
 package processing.app.contrib;
 
-public interface Contribution {
+
+abstract public class Contribution {
+  protected String category;      // "Sound"
+  protected String name;          // "pdf" or "PDF Export"
+  protected String authorList;    // Ben Fry
+  protected String url;           // http://processing.org
+  protected String sentence;      // Write graphics to PDF files.
+  protected String paragraph;     // <paragraph length description for site>
+  protected int version;          // 102
+  protected String prettyVersion; // "1.0.2"
+  
+  
   // "Sound"
-  String getCategory();
+  public String getCategory() {
+    return category;
+  }
+
 
   // "pdf" or "PDF Export"
-  String getName();
+  public String getName() {
+    return name;
+  }
+
 
   // "[Ben Fry](http://benfry.com/)"
-  String getAuthorList();
+  public String getAuthorList() {
+    return authorList;
+  }
+
 
   // "http://processing.org"
-  String getUrl();
+  public String getUrl() {
+    return url;
+  }
+
 
   // "Write graphics to PDF files."
-  String getSentence();
+  public String getSentence() {
+    return sentence;
+  }
+
 
   // <paragraph length description for site>
-  String getParagraph();
+  public String getParagraph() {
+    return paragraph;
+  }
+
 
   // 102
-  int getVersion();
+  public int getVersion() {
+    return version;
+  }
+
 
   // "1.0.2"
-  String getPrettyVersion();
+  public String getPrettyVersion() {
+    return prettyVersion;
+  }
 
-  boolean isInstalled();
 
-  ContributionType getType();
+  abstract public ContributionType getType();
+  
+  
+  public String getTypeName() {
+    return getType().toString();
+  }
+  
+  
+  abstract public boolean isInstalled();
+  
+  
+  /** 
+   * Returns true if the type of contribution requires the PDE to restart
+   * when being added or removed. 
+   */
+  public boolean requiresRestart() {
+    return getType() == ContributionType.TOOL || getType() == ContributionType.MODE;
+  }
+  
 
-  String getTypeName();
+  /** Overridden by InstalledContribution. */
+  boolean isDeletionFlagged() {
+    return false;
+  }
 }

@@ -100,7 +100,7 @@ public class JavaMode extends Mode {
   public Library getCoreLibrary() {
     if (coreLibrary == null) {
       File coreFolder = Base.getContentFile("core");
-      coreLibrary = new Library(coreFolder, null);
+      coreLibrary = new Library(coreFolder);
     }
     return coreLibrary;
   }

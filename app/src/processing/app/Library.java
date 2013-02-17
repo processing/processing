@@ -6,7 +6,8 @@ import java.util.*;
 import processing.app.contrib.*;
 import processing.core.*;
 
-public class Library extends InstalledContribution {
+
+public class Library extends LocalContribution {
   static final String[] platformNames = PConstants.platformNames;
 
   //protected File folder;          // /path/to/shortname
@@ -14,7 +15,10 @@ public class Library extends InstalledContribution {
   protected File examplesFolder;  // shortname/examples
   protected File referenceFile;   // shortname/reference/index.html
 
-  /** Subfolder for grouping libraries in a menu. */
+  /** 
+   * Subfolder for grouping libraries in a menu. Basic subfolder support 
+   * is provided so that basic organization can be done in the import menu. 
+   */
   protected String group;
 
   /** Packages provided by this library. */

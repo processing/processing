@@ -73,6 +73,13 @@ A   https://github.com/processing/processing/issues/1598
 X   http://code.google.com/p/processing/issues/detail?id=1560
 A   disable stroke perspective by default (but this didn't fix it)
 A   fixed the disappearance, though still imperfect
+A Fix get()/set() problems with images and OpenGL
+A   https://github.com/processing/processing/issues/1613
+X   http://code.google.com/p/processing/issues/detail?id=1575
+o arc with large strokeWeight is very slow in P2D renderer
+A   marked WontFix, workaround is to create a PShape
+A   https://github.com/processing/processing/issues/1583
+A   http://code.google.com/p/processing/issues/detail?id=1545
 
 cleaning/earlier
 C textureWrap() CLAMP and REPEAT now added
