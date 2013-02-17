@@ -3416,7 +3416,7 @@ public class PShapeOpenGL extends PShape {
       d = params[3];
     }
 
-    ellipseMode = CORNER;
+//    ellipseMode = CORNER;
     inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
                       ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);
@@ -3428,20 +3428,24 @@ public class PShapeOpenGL extends PShape {
   protected void tessellateArc() {
     float a = 0, b = 0, c = 0, d = 0;
     float start = 0, stop = 0;
-    if (params.length == 6) {
+    int mode = 0;
+    if (params.length == 6 || params.length == 7) {
       a = params[0];
       b = params[1];
       c = params[2];
       d = params[3];
       start = params[4];
       stop = params[5];
+      if (params.length == 7) {
+        mode = (int)(params[6]);
+      }
     }
 
-    ellipseMode = CORNER;
+//    ellipseMode = CORNER;
     inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
                       ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);
-    inGeo.addArc(a, b, c, d, start, stop, fill, stroke, ellipseMode);
+    inGeo.addArc(a, b, c, d, start, stop, fill, stroke, mode);
     tessellator.tessellateTriangleFan();
   }
 
