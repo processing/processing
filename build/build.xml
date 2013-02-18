@@ -51,7 +51,7 @@
        or we can require JDK 7. No time to implement the special case.
   -->
   <fail if="macosx" unless="java_tools_found"
-	message="To build on OS X, you must have JDK 7 (not just the plugin) installed, and set JAVA_HOME=`/usr/libexec/java_home`" />
+	message="To build on OS X, you must have JDK 7 (not just the plugin, and not just Apple's Java) installed. Then add this line: ${line.separator}export JAVA_HOME=`/usr/libexec/java_home`${line.separator}to ~/.profile and open a new Terminal window." />
 
   <fail if="linux" unless="java_tools_found" 
 	message="The JAVA_HOME variable must be set to the location of a full JDK. For instance, on Ubuntu Linux, this might be /usr/lib/jvm/java-6-sun." />

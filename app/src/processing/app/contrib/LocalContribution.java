@@ -184,7 +184,7 @@ public abstract class LocalContribution extends Contribution {
   
   LocalContribution moveAndLoad(Editor editor, 
                                     boolean confirmReplace, 
-                                    ErrorWidget statusBar) {
+                                    StatusPanel status) {
     ArrayList<LocalContribution> oldContribs = 
       getType().listContributions(editor);
     
@@ -199,7 +199,7 @@ public abstract class LocalContribution extends Contribution {
 
         if (oldContrib.requiresRestart()) {
           // XXX: We can't replace stuff, soooooo.... do something different
-          if (!oldContrib.backup(editor, false, statusBar)) {
+          if (!oldContrib.backup(editor, false, status)) {
             return null;
           }
         } else {
@@ -213,7 +213,7 @@ public abstract class LocalContribution extends Contribution {
                      "has been found in your sketchbook. Clicking “Yes”<br>"+
                      "will move the existing library to a backup folder<br>" +
                      " in <i>libraries/old</i> before replacing it.");
-              if (result != JOptionPane.YES_OPTION || !oldContrib.backup(editor, true, statusBar)) {
+              if (result != JOptionPane.YES_OPTION || !oldContrib.backup(editor, true, status)) {
                 return null;
               }
             } else {
@@ -228,7 +228,7 @@ public abstract class LocalContribution extends Contribution {
               }
             }
           } else {
-            if ((doBackup && !oldContrib.backup(editor, true, statusBar)) ||
+            if ((doBackup && !oldContrib.backup(editor, true, status)) ||
                 (!doBackup && !oldContrib.getFolder().delete())) {
               return null;
             }
@@ -243,7 +243,7 @@ public abstract class LocalContribution extends Contribution {
     }
 
     if (!getFolder().renameTo(contribFolder)) {
-      statusBar.setErrorMessage("Could not move " + getTypeName() + 
+      status.setErrorMessage("Could not move " + getTypeName() + 
                                 " \"" + getName() + "\" to the sketchbook.");
       return null;
     }
@@ -257,7 +257,7 @@ public abstract class LocalContribution extends Contribution {
    *          true if the file should be moved to the directory, false if it
    *          should instead be copied, leaving the original in place
    */
-  boolean backup(Editor editor, boolean deleteOriginal, ErrorWidget status) {
+  boolean backup(Editor editor, boolean deleteOriginal, StatusPanel status) {
 
     boolean success = false;
     File backupFolder = getType().createBackupFolder(status);
@@ -289,15 +289,12 @@ public abstract class LocalContribution extends Contribution {
    */
   void removeContribution(final Editor editor,
                           final ProgressMonitor pm,
-                          final ErrorWidget statusBar) {
-//    final ContributionListing contribListing = ContributionListing.getInstance();
-//    final ProgressMonitor progressMonitor = ;
-
+                          final StatusPanel status) {
     new Thread(new Runnable() {
       public void run() {
         remove(editor,
                (pm != null) ? pm : new NullProgressMonitor(),
-               statusBar, 
+               status, 
                ContributionListing.getInstance()); 
       }
     }).start();
@@ -306,13 +303,13 @@ public abstract class LocalContribution extends Contribution {
   
   void remove(final Editor editor,
               final ProgressMonitor pm,
-              final ErrorWidget statusBar, 
+              final StatusPanel status, 
               final ContributionListing contribListing) {
     pm.startTask("Removing", ProgressMonitor.UNKNOWN);
 
     boolean doBackup = Preferences.getBoolean("contribution.backup.on_remove");
     if (requiresRestart()) {
-      if (!doBackup || (doBackup && backup(editor, false, statusBar))) {
+      if (!doBackup || (doBackup && backup(editor, false, status))) {
         if (setDeletionFlag()) {
           contribListing.replaceContribution(this, this);
         }
@@ -320,7 +317,7 @@ public abstract class LocalContribution extends Contribution {
     } else {
       boolean success = false;
       if (doBackup) {
-        success = backup(editor, true, statusBar);
+        success = backup(editor, true, status);
       } else {
         Base.removeDir(getFolder());
         success = !getFolder().exists();
@@ -328,7 +325,7 @@ public abstract class LocalContribution extends Contribution {
 
       if (success) {
         Contribution advertisedVersion =
-          contribListing.getAdvertisedContribution(this);
+          contribListing.getAvailableContribution(this);
 
         if (advertisedVersion == null) {
           contribListing.removeContribution(this);
@@ -338,7 +335,7 @@ public abstract class LocalContribution extends Contribution {
       } else {
         // There was a failure backing up the folder
         if (!doBackup) {
-          statusBar.setErrorMessage("Could not delete the contribution's files");
+          status.setErrorMessage("Could not delete the contribution's files");
         }
       }
     }

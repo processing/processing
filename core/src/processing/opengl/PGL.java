@@ -2862,6 +2862,16 @@ public class PGL {
   }
 
 
+  protected static void updateByteBuffer(ByteBuffer buf, byte[] arr,
+                                         int offset, int size) {
+    if (USE_DIRECT_BUFFERS || (buf.hasArray() && buf.array() != arr)) {
+      buf.position(offset);
+      buf.put(arr, offset, size);
+      buf.rewind();
+    }
+  }
+
+
   protected static void getByteArray(ByteBuffer buf, byte[] arr) {
     if (!buf.hasArray() || buf.array() != arr) {
       buf.position(0);
@@ -2938,6 +2948,16 @@ public class PGL {
       }
     }
     return buf;
+  }
+
+
+  protected static void updateShortBuffer(ShortBuffer buf, short[] arr,
+                                          int offset, int size) {
+    if (USE_DIRECT_BUFFERS || (buf.hasArray() && buf.array() != arr)) {
+      buf.position(offset);
+      buf.put(arr, offset, size);
+      buf.rewind();
+    }
   }
 
 
@@ -3020,6 +3040,16 @@ public class PGL {
   }
 
 
+  protected static void updateIntBuffer(IntBuffer buf, int[] arr,
+                                        int offset, int size) {
+     if (USE_DIRECT_BUFFERS || (buf.hasArray() && buf.array() != arr)) {
+       buf.position(offset);
+       buf.put(arr, offset, size);
+       buf.rewind();
+     }
+   }
+
+
   protected static void getIntArray(IntBuffer buf, int[] arr) {
     if (!buf.hasArray() || buf.array() != arr) {
       buf.position(0);
@@ -3096,6 +3126,16 @@ public class PGL {
     }
     return buf;
   }
+
+
+  protected static void updateFloatBuffer(FloatBuffer buf, float[] arr,
+                                        int offset, int size) {
+     if (USE_DIRECT_BUFFERS || (buf.hasArray() && buf.array() != arr)) {
+       buf.position(offset);
+       buf.put(arr, offset, size);
+       buf.rewind();
+     }
+   }
 
 
   protected static void getFloatArray(FloatBuffer buf, float[] arr) {
@@ -3339,37 +3379,55 @@ public class PGL {
 
   // NEWT mouse listener
   class NEWTMouseListener extends com.jogamp.newt.event.MouseAdapter {
+    boolean pointerInside = false;
+
     @Override
     public void mousePressed(com.jogamp.newt.event.MouseEvent e) {
-      nativeMouseEvent(e, MouseEvent.PRESS);
+      if (pointerInside) {
+        nativeMouseEvent(e, MouseEvent.PRESS);
+      }
     }
     @Override
     public void mouseReleased(com.jogamp.newt.event.MouseEvent e) {
-      nativeMouseEvent(e, MouseEvent.RELEASE);
+      if (pointerInside) {
+        nativeMouseEvent(e, MouseEvent.RELEASE);
+      }
     }
     @Override
     public void mouseClicked(com.jogamp.newt.event.MouseEvent e) {
-      nativeMouseEvent(e, MouseEvent.CLICK);
+      if (pointerInside) {
+        nativeMouseEvent(e, MouseEvent.CLICK);
+      }
     }
     @Override
     public void mouseDragged(com.jogamp.newt.event.MouseEvent e) {
-      nativeMouseEvent(e, MouseEvent.DRAG);
+      if (pointerInside) {
+        nativeMouseEvent(e, MouseEvent.DRAG);
+      }
     }
     @Override
     public void mouseMoved(com.jogamp.newt.event.MouseEvent e) {
-      nativeMouseEvent(e, MouseEvent.MOVE);
+      if (pointerInside) {
+        nativeMouseEvent(e, MouseEvent.MOVE);
+      }
+    }
+    @Override
+    public void mouseWheelMoved(com.jogamp.newt.event.MouseEvent e) {
+      if (pointerInside) {
+        nativeMouseEvent(e, MouseEvent.WHEEL);
+      }
     }
     @Override
     public void mouseEntered(com.jogamp.newt.event.MouseEvent e) {
+      PApplet.println("mouse entered");
+      pointerInside = true;
       nativeMouseEvent(e, MouseEvent.ENTER);
     }
     @Override
     public void mouseExited(com.jogamp.newt.event.MouseEvent e) {
+      PApplet.println("mouse exited");
+      pointerInside = false;
       nativeMouseEvent(e, MouseEvent.EXIT);
-    }
-    @Override
-    public void mouseWheelMoved(com.jogamp.newt.event.MouseEvent e) {
-      nativeMouseEvent(e, MouseEvent.WHEEL);
     }
   }
 
