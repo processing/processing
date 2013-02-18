@@ -23,6 +23,7 @@ package processing.app.contrib;
 
 import java.io.*;
 import java.net.URL;
+import java.net.URLConnection;
 
 import processing.app.Base;
 import processing.app.Editor;
@@ -36,6 +37,56 @@ public class ContributionManager {
   }
 
 
+  /**
+   * Blocks until the file is downloaded or an error occurs. 
+   * Returns true if the file was successfully downloaded, false otherwise.
+   * 
+   * @param source
+   *          the URL of the file to download
+   * @param dest
+   *          the file on the local system where the file will be written. This
+   *          must be a file (not a directory), and must already exist.
+   * @param progress
+   * @throws FileNotFoundException
+   *           if an error occurred downloading the file
+   */
+  static boolean download(URL source, File dest, ProgressMonitor progress) {
+    boolean success = false;
+    try {
+//      System.out.println("downloading file " + source);
+      URLConnection conn = source.openConnection();
+      conn.setConnectTimeout(1000);
+      conn.setReadTimeout(5000);
+  
+      // TODO this is often -1, may need to set progress to indeterminate
+      int fileSize = conn.getContentLength();
+//      System.out.println("file size is " + fileSize);
+      progress.startTask("Downloading", fileSize);
+  
+      InputStream in = conn.getInputStream();
+      FileOutputStream out = new FileOutputStream(dest);
+  
+      byte[] b = new byte[8192];
+      int amount;
+      int total = 0;
+      while (!progress.isCanceled() && (amount = in.read(b)) != -1) {
+        out.write(b, 0, amount);
+        total += amount;  
+        progress.setProgress(total);
+      }
+      out.flush();
+      out.close();
+      success = true;
+      
+    } catch (IOException ioe) {
+      progress.error(ioe);
+      ioe.printStackTrace();
+    }
+    progress.finished();
+    return success;
+  }
+
+  
   /**
    * Non-blocking call to download and install a contribution in a new thread.
    *
@@ -63,7 +114,7 @@ public class ContributionManager {
           contribZip.setWritable(true);  // necessary?
 
           try {
-            ContributionListing.download(url, contribZip, downloadProgress);
+            download(url, contribZip, downloadProgress);
             
             if (!downloadProgress.isCanceled() && !downloadProgress.isError()) {
               installProgress.startTask("Installing...", ProgressMonitor.UNKNOWN);

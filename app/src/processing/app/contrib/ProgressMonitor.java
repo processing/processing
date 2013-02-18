@@ -174,5 +174,4 @@ abstract class JProgressMonitor extends AbstractProgressMonitor {
   }
 
   public abstract void finishedAction();
-
 }
