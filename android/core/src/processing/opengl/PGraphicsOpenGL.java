@@ -2247,7 +2247,6 @@ public class PGraphicsOpenGL extends PGraphics {
       // the changes need to be copied to the screen before
       // drawing any new geometry.
       flushPixels();
-      setgetPixels = false;
     }
 
     if (hasPoints || hasLines || hasPolys) {
@@ -2298,6 +2297,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
     tessGeo.clear();
     texCache.clear();
+    setgetPixels = false;
   }
 
 
@@ -4971,8 +4971,8 @@ public class PGraphicsOpenGL extends PGraphics {
   // color buffer into it.
   @Override
   public void loadPixels() {
-    if (sized) {
-      // Something wrong going on with threading, sized can never be true if the
+    if (primarySurface && sized) {
+      // Something wrong going on with threading, sized can never be true if
       // all the steps in a resize happen inside the Animation thread.
       return;
     }
@@ -5397,6 +5397,8 @@ public class PGraphicsOpenGL extends PGraphics {
     textureMode = NORMAL;
     boolean prevStroke = stroke;
     stroke = false;
+//    int prevBlendMode = blendMode;
+//    blendMode(REPLACE);
     PolyTexShader prevTexShader = polyTexShader;
     polyTexShader = (PolyTexShader) shader;
     beginShape(QUADS);
@@ -5414,6 +5416,7 @@ public class PGraphicsOpenGL extends PGraphics {
     stroke = prevStroke;
     lights = prevLights;
     textureMode = prevTextureMode;
+//    blendMode(prevBlendMode);
 
     if (!hints[DISABLE_DEPTH_TEST]) {
       pgl.enable(PGL.DEPTH_TEST);

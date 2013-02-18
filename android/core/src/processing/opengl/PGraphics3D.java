@@ -260,7 +260,7 @@ public class PGraphics3D extends PGraphicsOpenGL {
       shape = new PShapeOpenGL(parent, PShape.PRIMITIVE);
       shape.setKind(ELLIPSE);
     } else if (kind == ARC) {
-      if (len != 6) {
+      if (len != 6 && len != 7) {
         showWarning("Wrong number of parameters");
         return null;
       }
