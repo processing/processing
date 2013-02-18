@@ -58,6 +58,11 @@ public class PGL {
   // Parameters
 
   public static boolean FORCE_SCREEN_FBO             = false;
+  // The use of indirect buffers creates problems with glBufferSubData because
+  // the buffer position is ignored:
+  // http://stackoverflow.com/questions/3380489/glbuffersubdata-with-an-offset-into-buffer-without-causing-garbage
+  // http://code.google.com/p/android/issues/detail?id=12245
+  // This doesn't happen with direct buffers.
   public static final boolean USE_DIRECT_BUFFERS     = true;
   public static final int MIN_DIRECT_BUFFER_SIZE     = 1;
   public static final boolean SAVE_SURFACE_TO_PIXELS = false;
