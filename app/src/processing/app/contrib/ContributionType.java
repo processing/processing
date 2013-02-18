@@ -188,4 +188,29 @@ public enum ContributionType {
     }
     return backupFolder;
   }
+  
+  
+  /** 
+   * Create a filter for a specific contribution type.
+   * @param type The type, or null for a generic update checker.
+   */
+  ContributionFilter createFilter() {
+    return new ContributionFilter() {
+      public boolean matches(Contribution contrib) {
+        return contrib.getType() == ContributionType.this;
+      }
+    };
+  }
+  
+  
+  static ContributionFilter createUpdateFilter() {
+    return new ContributionFilter() {
+      public boolean matches(Contribution contrib) {
+        if (contrib instanceof LocalContribution) {
+          return ContributionListing.getInstance().hasUpdates(contrib);
+        }
+        return false;
+      }
+    };
+  }
 }

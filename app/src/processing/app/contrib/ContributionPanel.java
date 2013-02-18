@@ -21,32 +21,15 @@
 */
 package processing.app.contrib;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.*;
+import java.awt.event.*;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JEditorPane;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JProgressBar;
-import javax.swing.JTextPane;
+import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.text.Document;
@@ -54,7 +37,6 @@ import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.StyleSheet;
 
 import processing.app.Base;
-import processing.core.PApplet;
 
 
 /**
@@ -64,7 +46,7 @@ class ContributionPanel extends JPanel {
   private final ContributionListPanel listPanel;
   private final ContributionListing contribListing = ContributionListing.getInstance();
 
-  private static final int BUTTON_WIDTH = 100;
+  static private final int BUTTON_WIDTH = 100;
 
   /** 
    * Should only be set through setContribution(), 
@@ -84,7 +66,7 @@ class ContributionPanel extends JPanel {
   private JPopupMenu contextMenu;
   private JMenuItem openFolder;
 
-  private HashSet<JTextPane> htmlPanes;
+//  private HashSet<JTextPane> headerPaneSet;
   private ActionListener removeActionListener;
   private ActionListener installActionListener;
   private ActionListener undoActionListener;
@@ -92,12 +74,11 @@ class ContributionPanel extends JPanel {
 
   ContributionPanel(ContributionListPanel contributionListPanel) {
     listPanel = contributionListPanel;
-    htmlPanes = new HashSet<JTextPane>();
+//    headerPaneSet = new HashSet<JTextPane>();
 
     enableHyperlinks = false;
     alreadySelected = false;
     conditionalHyperlinkOpener = new HyperlinkListener() {
-
       public void hyperlinkUpdate(HyperlinkEvent e) {
         if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
           if (enableHyperlinks) {
@@ -132,7 +113,6 @@ class ContributionPanel extends JPanel {
         if (contrib.isInstalled() && contrib instanceof LocalContribution) {
           updateButton.setEnabled(false);
           installRemoveButton.setEnabled(false);
-
           installProgressBar.setVisible(true);
 
           ((LocalContribution) contrib).removeContribution(listPanel.contribManager.editor,
@@ -196,7 +176,10 @@ class ContributionPanel extends JPanel {
       Insets margin = headerText.getMargin();
       margin.bottom = 0;
       headerText.setMargin(margin);
-      setHtmlTextStyle(headerText);
+      headerText.setContentType("text/html");
+      setTextStyle(headerText);
+      headerText.setOpaque(false);
+//      headerPaneSet.add(headerText);
       stripTextSelectionListeners(headerText);
       add(headerText, c);
     }
@@ -223,7 +206,9 @@ class ContributionPanel extends JPanel {
 
         descriptionText = new JTextPane();
         descriptionText.setInheritsPopupMenu(true);
-        setHtmlTextStyle(descriptionText);
+        descriptionText.setContentType("text/html");
+        setTextStyle(descriptionText);
+        descriptionText.setOpaque(false);
         descriptionPanel.add(descriptionText, dc);
       }
 
@@ -249,7 +234,7 @@ class ContributionPanel extends JPanel {
       updateNotificationLabel = new JTextPane();
       updateNotificationLabel.setInheritsPopupMenu(true);
       updateNotificationLabel.setVisible(false);
-      setHtmlTextStyle(updateNotificationLabel);
+      setTextStyle(updateNotificationLabel);
       stripTextSelectionListeners(updateNotificationLabel);
       add(updateNotificationLabel, c);
     }
@@ -263,7 +248,7 @@ class ContributionPanel extends JPanel {
       c.insets = new Insets(-5, 0, 0, 0);
       c.anchor = GridBagConstraints.EAST;
 
-      updateButton = new JButton("Update now");
+      updateButton = new JButton("Update");
       updateButton.setInheritsPopupMenu(true);
       Dimension installButtonDimensions = updateButton.getPreferredSize();
       installButtonDimensions.width = ContributionPanel.BUTTON_WIDTH;
@@ -272,7 +257,6 @@ class ContributionPanel extends JPanel {
       updateButton.setOpaque(false);
       updateButton.setVisible(false);
       updateButton.addActionListener(new ActionListener() {
-
         public void actionPerformed(ActionEvent e) {
           updateButton.setEnabled(false);
           AvailableContribution ad = contribListing.getAvailableContribution(contrib);
@@ -363,7 +347,7 @@ class ContributionPanel extends JPanel {
     String authorList = contrib.getAuthorList();
     if (authorList != null && !authorList.isEmpty()) {
       nameText.append(" by ");
-      nameText.append(ContributionListPanel.toHtmlLinks(contrib.getAuthorList()));
+      nameText.append(toHtmlLinks(contrib.getAuthorList()));
     }
     nameText.append("</body></html>");
     headerText.setText(nameText.toString());
@@ -376,14 +360,12 @@ class ContributionPanel extends JPanel {
       description.append(ContributionListPanel.DELETION_MESSAGE);
     } else {
       String sentence = contrib.getSentence();
-
       if (sentence == null || sentence.isEmpty()) {
         sentence = "<i>Description unavailable.</i>";
       } else {
-        sentence = ContributionListPanel.sanitizeHtmlTags(sentence);
-        sentence = ContributionListPanel.toHtmlLinks(sentence);
+        sentence = sanitizeHtmlTags(sentence);
+        sentence = toHtmlLinks(sentence);
       }
-
       description.append(sentence);
     }
 
@@ -489,23 +471,6 @@ class ContributionPanel extends JPanel {
   }
 
   
-  void setHtmlTextStyle(JTextPane textPane) {
-    textPane.setContentType("text/html");
-    Document doc = textPane.getDocument();
-
-    if (doc instanceof HTMLDocument) {
-      HTMLDocument html = (HTMLDocument) doc;
-      StyleSheet stylesheet = html.getStyleSheet();
-
-      stylesheet.addRule("body {margin: 0; padding: 0;"
-        + "font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;"
-        + "font-size: 100%;" + "font-size: 0.95em;}");
-    }
-    htmlPanes.add(textPane);
-    textPane.setOpaque(false);
-  }
-  
-
   void stripTextSelectionListeners(JEditorPane editorPane) {
     for (MouseListener listener : editorPane.getMouseListeners()) {
       String className = listener.getClass().getName();
@@ -541,7 +506,9 @@ class ContributionPanel extends JPanel {
     }
     installRemoveButton.setVisible(isSelected());
 
-    for (JTextPane textPane : htmlPanes) {
+//    for (JTextPane textPane : headerPaneSet) {
+    { 
+      JTextPane textPane = headerText;
       JEditorPane editorPane = textPane;
 
       editorPane.removeHyperlinkListener(ContributionListPanel.nullHyperlinkListener);
@@ -555,24 +522,14 @@ class ContributionPanel extends JPanel {
       }
 
       // Update style of hyperlinks
-      Document doc = textPane.getDocument();
-      if (doc instanceof HTMLDocument) {
-        HTMLDocument html = (HTMLDocument) doc;
-        StyleSheet stylesheet = html.getStyleSheet();
-
-        if (isSelected()) {
-          stylesheet.addRule("a {text-decoration:underline}");
-        } else {
-          stylesheet.addRule("a {text-decoration:none}");
-        }
-      }
+      setSelectionStyle(textPane, isSelected());
     }
     alreadySelected = isSelected();
   }
   
 
   public boolean isSelected() {
-    return this == listPanel.selectedPanel;
+    return listPanel.selectedPanel == this;
   }
 
 
@@ -591,20 +548,109 @@ class ContributionPanel extends JPanel {
 //      writer.flush();
 //      writer.close();
 
-    if (htmlPanes != null) {
-      for (JTextPane pane : htmlPanes) {
-        Document doc = pane.getDocument();
+//    if (headerPaneSet != null) {
+//      System.out.println(headerPaneSet.size());
+////      int rgb = fg.getRGB();
+//      for (JTextPane pane : headerPaneSet) {
+////        setForegroundStyle(pane, rgb);
+//        setForegroundStyle(pane, contrib.isInstalled());
+//      }
+//    }
+    if (contrib != null) {
+      boolean installed = contrib.isInstalled(); 
+      setForegroundStyle(headerText, installed);
+      setForegroundStyle(descriptionText, installed);
+    }
+  }
+  
+  
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+  
+  
+  static String sanitizeHtmlTags(String stringIn) {
+    stringIn = stringIn.replaceAll("<", "&lt;");
+    stringIn = stringIn.replaceAll(">", "&gt;");
+    return stringIn;
+  }
 
-        if (doc instanceof HTMLDocument) {
-          HTMLDocument html = (HTMLDocument) doc;
-          StyleSheet stylesheet = html.getStyleSheet();
-//            System.out.println("adding " +  contrib.getName());
-//            new Exception().printStackTrace();
-//            System.exit(0);
-//            System.out.println("color is " + PApplet.hex(fg.getRGB()));
-          stylesheet.addRule("body {color:" + PApplet.hex(fg.getRGB()).substring(2) + ";}");
-          stylesheet.addRule("a {color:" + PApplet.hex(fg.getRGB()).substring(2) + "}");
-        }
+  
+  /**
+   * This has a [link](http://example.com/) in [it](http://example.org/).
+   *
+   * Becomes...
+   *
+   * This has a <a href="http://example.com/">link</a> in <a
+   * href="http://example.org/">it</a>.
+   */
+  static String toHtmlLinks(String stringIn) {
+    Pattern p = Pattern.compile("\\[(.*?)\\]\\((.*?)\\)");
+    Matcher m = p.matcher(stringIn);
+
+    StringBuilder sb = new StringBuilder();
+
+    int start = 0;
+    while (m.find(start)) {
+      sb.append(stringIn.substring(start, m.start()));
+
+      String text = m.group(1);
+      String url = m.group(2);
+
+      sb.append("<a href=\"");
+      sb.append(url);
+      sb.append("\">");
+      sb.append(text);
+      sb.append("</a>");
+
+      start = m.end();
+    }
+    sb.append(stringIn.substring(start));
+    return sb.toString();
+  }
+  
+  
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+  
+  /** 
+   * Sets coloring based on whether installed or not; 
+   * also makes ugly blue HTML links into the specified color (black).
+   */
+  static void setForegroundStyle(JTextPane textPane, boolean installed) {
+    Document doc = textPane.getDocument();
+    if (doc instanceof HTMLDocument) {
+      HTMLDocument html = (HTMLDocument) doc;
+      StyleSheet stylesheet = html.getStyleSheet();
+      
+      String c = installed ? "#808080" : "#000000";
+      stylesheet.addRule("body { color:" + c + "; }");
+      stylesheet.addRule("a { color:" + c + "; }");
+    }
+  }
+  
+  
+  static void setTextStyle(JTextPane textPane) {
+    Document doc = textPane.getDocument();
+    if (doc instanceof HTMLDocument) {
+      HTMLDocument html = (HTMLDocument) doc;
+      StyleSheet stylesheet = html.getStyleSheet();
+      stylesheet.addRule("body { " + 
+                         "  margin: 0; padding: 0;" + 
+                         "  font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;" + 
+                         "  font-size: 100%;" + "font-size: 0.95em; " +
+                         "}");
+    }
+  }
+  
+  
+  static void setSelectionStyle(JTextPane textPane, boolean selected) {
+    Document doc = textPane.getDocument();
+    if (doc instanceof HTMLDocument) {
+      HTMLDocument html = (HTMLDocument) doc;
+      StyleSheet styleSheet = html.getStyleSheet();
+      if (selected) {
+        styleSheet.addRule("a { text-decoration:underline } ");
+      } else {
+        styleSheet.addRule("a { text-decoration:none }");
       }
     }
   }

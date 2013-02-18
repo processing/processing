@@ -24,8 +24,6 @@ package processing.app.contrib;
 import java.util.*;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.swing.*;
 import javax.swing.border.*;
@@ -34,7 +32,6 @@ import javax.swing.event.*;
 import java.awt.*;
 
 import processing.app.Base;
-import processing.app.contrib.ContributionListing.ContributionChangeListener;
 
 
 public class ContributionListPanel extends JPanel implements Scrollable, ContributionChangeListener {
@@ -60,13 +57,13 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
   protected ContributionPanel selectedPanel;
 //  protected JPanel statusPlaceholder;
   protected StatusPanel status;
-  ContributionListing.Filter filter;
+  ContributionFilter filter;
 //  private ContributionListing contribListing;
   private ContributionListing contribListing = ContributionListing.getInstance();
 
   
   public ContributionListPanel(ContributionManagerDialog libraryManager,
-                               ContributionListing.Filter filter) {
+                               ContributionFilter filter) {
     super();
     this.contribManager = libraryManager;
     this.filter = filter;
@@ -135,12 +132,10 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
               newPanel.setContribution(contribution);
               add(newPanel);
               updatePanelOrdering();
-//              if (contribution.getName().equals("FluidFormsLibs")) {
 //                PrintWriter writer = PApplet.createWriter(new File("/Users/fry/Desktop/traces/" + PApplet.nf(++inc, 4) + ".txt"));
 //                new Exception().printStackTrace(writer);
 //                writer.flush();
 //                writer.close();
-//              }
               updateColors();  // XXX this is the place
             }
           }
@@ -170,7 +165,6 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
   
   public void contributionChanged(final Contribution oldContrib,
                                   final Contribution newContrib) {
-//    System.out.println(oldContrib.getName() + " -> " + newContrib.getName());
     EventQueue.invokeLater(new Runnable() {
       public void run() {
         synchronized (panelByContribution) {
@@ -179,10 +173,8 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
             contributionAdded(newContrib);
           } else {
             panelByContribution.remove(oldContrib);
-
             panel.setContribution(newContrib);
             panelByContribution.put(newContrib, panel);
-
             updatePanelOrdering();
           }
         }
@@ -252,15 +244,15 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
           if (panel.isVisible()) {
             if (Base.isMacOS()) {
               if (count % 2 == 1) {
-                border = UIManager.getBorder("List.evenRowBackgroundPainter");
-              } else {
                 border = UIManager.getBorder("List.oddRowBackgroundPainter");
+              } else {
+                border = UIManager.getBorder("List.evenRowBackgroundPainter");
               }
             } else {
               if (count % 2 == 1) {
-                panel.setBackground(new Color(241, 241, 241));
-              } else {
                 panel.setBackground(new Color(219, 224, 229));
+              } else {
+                panel.setBackground(new Color(241, 241, 241));
               }
             }
             count++;
@@ -350,47 +342,5 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
   
   public boolean getScrollableTracksViewportWidth() {
     return true;
-  }
-
-  
-  static public String sanitizeHtmlTags(String stringIn) {
-    stringIn = stringIn.replaceAll("<", "&lt;");
-    stringIn = stringIn.replaceAll(">", "&gt;");
-    return stringIn;
-  }
-
-  
-  /**
-   * This has a [link](http://example.com/) in [it](http://example.org/).
-   *
-   * Becomes...
-   *
-   * This has a <a href="http://example.com/">link</a> in <a
-   * href="http://example.org/">it</a>.
-   */
-  static public String toHtmlLinks(String stringIn) {
-    Pattern p = Pattern.compile("\\[(.*?)\\]\\((.*?)\\)");
-    Matcher m = p.matcher(stringIn);
-
-    StringBuilder sb = new StringBuilder();
-
-    int start = 0;
-    while (m.find(start)) {
-      sb.append(stringIn.substring(start, m.start()));
-
-      String text = m.group(1);
-      String url = m.group(2);
-
-      sb.append("<a href=\"");
-      sb.append(url);
-      sb.append("\">");
-      sb.append(text);
-      sb.append("</a>");
-
-      start = m.end();
-    }
-    sb.append(stringIn.substring(start));
-
-    return sb.toString();
-  }
+  }  
 }

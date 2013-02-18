@@ -34,7 +34,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.*;
 
 import processing.app.*;
-import processing.app.contrib.ContributionListing.Filter;
 
 
 public class ContributionManagerDialog {
@@ -42,7 +41,7 @@ public class ContributionManagerDialog {
 
   JFrame dialog;
   String title;
-  Filter filter;
+  ContributionFilter filter;
   JComboBox categoryChooser;
   JScrollPane scrollPane;
   ContributionListPanel contributionListPanel;
@@ -58,10 +57,11 @@ public class ContributionManagerDialog {
   public ContributionManagerDialog(ContributionType type) {
     if (type == null) {
       title = "Update Manager";
+      filter = ContributionType.createUpdateFilter();
     } else {
       title = type.getTitle() + " Manager";
+      filter = type.createFilter();    
     }
-    filter = ContributionListing.createFilter(type);    
     contribListing = ContributionListing.getInstance();
     contributionListPanel = new ContributionListPanel(this, filter);
     contribListing.addContributionListener(contributionListPanel);

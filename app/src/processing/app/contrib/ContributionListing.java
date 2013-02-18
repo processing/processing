@@ -82,12 +82,12 @@ public class ContributionListing {
     for (Contribution contribution : advertisedContributions) {
       addContribution(contribution);
     }
-    Collections.sort(allContributions, contribComparator);
+    Collections.sort(allContributions, nameComparator);
   }
 
   
   public Comparator<? super Contribution> getComparator() {
-    return contribComparator;
+    return nameComparator;
   }
 
   
@@ -136,7 +136,7 @@ public class ContributionListing {
     if (librariesByCategory.containsKey(contribution.getCategory())) {
       List<Contribution> list = librariesByCategory.get(contribution.getCategory());
       list.add(contribution);
-      Collections.sort(list, contribComparator);
+      Collections.sort(list, nameComparator);
       
     } else {
       ArrayList<Contribution> list = new ArrayList<Contribution>();
@@ -145,7 +145,7 @@ public class ContributionListing {
     }
     allContributions.add(contribution);
     notifyAdd(contribution);
-    Collections.sort(allContributions, contribComparator);
+    Collections.sort(allContributions, nameComparator);
   }
 
 
@@ -180,7 +180,7 @@ public class ContributionListing {
   }
 
   
-  public Set<String> getCategories(Filter filter) {
+  public Set<String> getCategories(ContributionFilter filter) {
     Set<String> outgoing = new HashSet<String>();
 
     Set<String> categorySet = librariesByCategory.keySet();
@@ -208,7 +208,7 @@ public class ContributionListing {
   public List<Contribution> getLibararies(String category) {
     ArrayList<Contribution> libinfos =
         new ArrayList<Contribution>(librariesByCategory.get(category));
-    Collections.sort(libinfos, contribComparator);
+    Collections.sort(libinfos, nameComparator);
     return libinfos;
   }
 
@@ -424,7 +424,7 @@ public class ContributionListing {
   }
 
   
-  public boolean hasUpdates() {
+  boolean hasUpdates() {
     for (Contribution info : allContributions) {
       if (hasUpdates(info)) {
         return true;
@@ -434,7 +434,7 @@ public class ContributionListing {
   }
 
 
-  public boolean hasUpdates(Contribution contribution) {
+  boolean hasUpdates(Contribution contribution) {
     if (contribution.isInstalled()) {
       Contribution advertised = getAvailableContribution(contribution);
       if (advertised == null) {
@@ -446,15 +446,8 @@ public class ContributionListing {
   }
 
   
-  public boolean hasDownloadedLatestList() {
+  boolean hasDownloadedLatestList() {
     return hasDownloadedLatestList;
-  }
-
-  
-  public static interface ContributionChangeListener {
-    public void contributionAdded(Contribution Contribution);
-    public void contributionRemoved(Contribution Contribution);
-    public void contributionChanged(Contribution oldLib, Contribution newLib);
   }
 
   
@@ -528,41 +521,12 @@ public class ContributionListing {
   }
 
   
-  public boolean isDownloadingListing() {
-    return downloadingListingLock.isLocked();
-  }
+//  boolean isDownloadingListing() {
+//    return downloadingListingLock.isLocked();
+//  }
 
   
-  static interface Filter {
-    boolean matches(Contribution contrib);
-  }
-  
-  
-  /** 
-   * Create a filter for a specific contribution type.
-   * @param type The type, or null for a generic update checker.
-   */
-  static Filter createFilter(final ContributionType type) {
-    if (type == null) {
-      return new Filter() {
-        public boolean matches(Contribution contrib) {
-          if (contrib instanceof LocalContribution) {
-            return ContributionListing.getInstance().hasUpdates(contrib);
-          }
-          return false;
-        }
-      };
-    } else {
-      return new Filter() {
-        public boolean matches(Contribution contrib) {
-          return contrib.getType() == type;
-        }
-      };
-    }
-  }
-  
-
-  static Comparator<Contribution> contribComparator = new Comparator<Contribution>() {
+  static Comparator<Contribution> nameComparator = new Comparator<Contribution>() {
     public int compare(Contribution o1, Contribution o2) {
       return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
     }
