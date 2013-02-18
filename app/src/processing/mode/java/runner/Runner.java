@@ -290,8 +290,7 @@ public class Runner implements MessageConsumer {
       }
 
       params.add(PApplet.ARGS_DISPLAY + "=" + runDisplay);
-      params.add(PApplet.ARGS_SKETCH_FOLDER + "=" +
-                 build.getSketchPath());
+      
 
       if (presenting) {
         params.add(PApplet.ARGS_FULL_SCREEN);
@@ -305,6 +304,10 @@ public class Runner implements MessageConsumer {
       }
 
       params.add(build.getSketchClassName());
+      params.add(PApplet.ARGS_SKETCH_FOLDER + "=" +
+        build.getSketchPath());
+      // Adding sketch path in the end coz it's likely to
+      // contain spaces and things go wrong on UNIX systems.
     }
 
 //    String outgoing[] = new String[params.size()];
