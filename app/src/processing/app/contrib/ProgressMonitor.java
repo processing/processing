@@ -21,6 +21,8 @@
 */
 package processing.app.contrib;
 
+import javax.swing.JProgressBar;
+
 
 /**
  * The ProgressMonitor interface should be implemented by objects that observe
@@ -138,12 +140,39 @@ abstract class AbstractProgressMonitor implements ProgressMonitor {
   public void finished() {
     isFinished = true;
   }
-
 }
 
+
 class NullProgressMonitor extends AbstractProgressMonitor {
+  public void startTask(String name, int maxValue) { }
+}
+
+
+abstract class JProgressMonitor extends AbstractProgressMonitor {
+  JProgressBar progressBar;
+
+  public JProgressMonitor(JProgressBar progressBar) {
+    this.progressBar = progressBar;
+  }
 
   public void startTask(String name, int maxValue) {
+    isFinished = false;
+    progressBar.setString(name);
+    progressBar.setIndeterminate(maxValue == UNKNOWN);
+    progressBar.setMaximum(maxValue);
   }
-  
+
+  public void setProgress(int value) {
+    super.setProgress(value);
+    progressBar.setValue(value);
+  }
+
+  @Override
+  public void finished() {
+    super.finished();
+    finishedAction();
+  }
+
+  public abstract void finishedAction();
+
 }

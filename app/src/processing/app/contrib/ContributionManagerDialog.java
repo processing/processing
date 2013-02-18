@@ -21,21 +21,19 @@
 */
 package processing.app.contrib;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.event.*;
 import java.util.*;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.*;
 
 import processing.app.*;
-import processing.app.contrib.ContributionListing.Filter;
 
 
 public class ContributionManagerDialog {
@@ -43,11 +41,11 @@ public class ContributionManagerDialog {
 
   JFrame dialog;
   String title;
-  Filter filter;
+  ContributionFilter filter;
   JComboBox categoryChooser;
   JScrollPane scrollPane;
   ContributionListPanel contributionListPanel;
-  StatusPanel statusBar;
+  StatusPanel status;
   FilterField filterField;
 
   // the calling editor, so updates can be applied
@@ -59,10 +57,11 @@ public class ContributionManagerDialog {
   public ContributionManagerDialog(ContributionType type) {
     if (type == null) {
       title = "Update Manager";
+      filter = ContributionType.createUpdateFilter();
     } else {
       title = type.getTitle() + " Manager";
+      filter = type.createFilter();    
     }
-    filter = ContributionListing.createFilter(type);    
     contribListing = ContributionListing.getInstance();
     contributionListPanel = new ContributionListPanel(this, filter);
     contribListing.addContributionListener(contributionListPanel);
@@ -97,7 +96,7 @@ public class ContributionManagerDialog {
     dialog.setVisible(true);
 
     if (!contribListing.hasDownloadedLatestList()) {
-      contribListing.getAdvertisedContributions(new AbstractProgressMonitor() {
+      contribListing.downloadAvailableList(new AbstractProgressMonitor() {
         public void startTask(String name, int maxValue) {
         }
 
@@ -107,10 +106,10 @@ public class ContributionManagerDialog {
           updateContributionListing();
           updateCategoryChooser();
           if (isError()) {
-            statusBar.setErrorMessage("An error occured when downloading " +
+            status.setErrorMessage("An error occured when downloading " +
                                       "the list of available contributions.");
           } else {
-            statusBar.updateUI();
+            status.updateUI();
           }
         }
       });
@@ -133,113 +132,132 @@ public class ContributionManagerDialog {
     dialog.setResizable(true);
 
     Container pane = dialog.getContentPane();
-    pane.setLayout(new GridBagLayout());
+//    pane.setLayout(new GridBagLayout());
+//
+//    { // Shows "Filter by Category" and the combo box for selecting a category
+//      GridBagConstraints c = new GridBagConstraints();
+//      c.gridx = 0;
+//      c.gridy = 0;
+    pane.setLayout(new BorderLayout());
 
-    { // Shows "Filter by Category" and the combo box for selecting a category
-      GridBagConstraints c = new GridBagConstraints();
-      c.gridx = 0;
-      c.gridy = 0;
+      JPanel filterPanel = new JPanel();
+      filterPanel.setLayout(new BoxLayout(filterPanel, BoxLayout.X_AXIS));
+//      pane.add(filterPanel, c);
+      pane.add(filterPanel, BorderLayout.NORTH);
 
-      JPanel categorySelector = new JPanel();
-      categorySelector.setLayout(new BoxLayout(categorySelector, BoxLayout.X_AXIS));
-      pane.add(categorySelector, c);
+      filterPanel.add(Box.createHorizontalStrut(6));
 
-      categorySelector.add(Box.createHorizontalStrut(6));
+      JLabel categoryLabel = new JLabel("Category:");
+      filterPanel.add(categoryLabel);
 
-      JLabel categoryLabel = new JLabel("Filter by Category:");
-      categorySelector.add(categoryLabel);
-
-      categorySelector.add(Box.createHorizontalStrut(5));
+      filterPanel.add(Box.createHorizontalStrut(5));
 
       categoryChooser = new JComboBox();
       categoryChooser.setMaximumRowCount(20);
       updateCategoryChooser();
-      categorySelector.add(categoryChooser, c);
+//      filterPanel.add(categoryChooser, c);
+      filterPanel.add(categoryChooser);
       categoryChooser.addItemListener(new ItemListener() {
-
         public void itemStateChanged(ItemEvent e) {
           category = (String) categoryChooser.getSelectedItem();
           if (ContributionManagerDialog.ANY_CATEGORY.equals(category)) {
             category = null;
           }
-
           filterLibraries(category, filterField.filters);
         }
       });
-    }
-
-    { // The scroll area containing the contribution listing and the status bar.
-      GridBagConstraints c = new GridBagConstraints();
-      c.fill = GridBagConstraints.BOTH;
-      c.gridx = 0;
-      c.gridy = 1;
-      c.gridwidth = 2;
-      c.weighty = 1;
-      c.weightx = 1;
+      
+      filterPanel.add(Box.createHorizontalStrut(5));
+//      filterPanel.add(Box.createHorizontalGlue());
+      filterField = new FilterField();
+      filterPanel.add(filterField);
+//      filterPanel.add(Box.createHorizontalGlue());
+//    }
+      //filterPanel.setBorder(new EmptyBorder(13, 13, 13, 13));
+      filterPanel.setBorder(new EmptyBorder(7, 7, 7, 7));
+      
+//    { // The scroll area containing the contribution listing and the status bar.
+//      GridBagConstraints c = new GridBagConstraints();
+//      c.fill = GridBagConstraints.BOTH;
+//      c.gridx = 0;
+//      c.gridy = 1;
+//      c.gridwidth = 2;
+//      c.weighty = 1;
+//      c.weightx = 1;
 
       scrollPane = new JScrollPane();
       scrollPane.setPreferredSize(new Dimension(300, 300));
       scrollPane.setViewportView(contributionListPanel);
-      scrollPane.getViewport().setOpaque(true);
-      scrollPane.getViewport().setBackground(contributionListPanel.getBackground());
+//      scrollPane.getViewport().setOpaque(true);
+//      scrollPane.getViewport().setBackground(contributionListPanel.getBackground());
       scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
       scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+//      scrollPane.setBorder(new EmptyBorder(0, 7, 0, 7));
+      pane.add(scrollPane, BorderLayout.CENTER);
+      
+      pane.add(Box.createHorizontalStrut(10), BorderLayout.WEST);
+      pane.add(Box.createHorizontalStrut(10), BorderLayout.EAST);
 
-      statusBar = new StatusPanel();
-      statusBar.setBorder(BorderFactory.createEtchedBorder());
+      status = new StatusPanel();
+      status.setBorder(new EmptyBorder(7, 7, 7, 7));
+      pane.add(status, BorderLayout.SOUTH);
 
-      final JLayeredPane layeredPane = new JLayeredPane();
-      layeredPane.add(scrollPane, JLayeredPane.DEFAULT_LAYER);
-      layeredPane.add(statusBar, JLayeredPane.PALETTE_LAYER);
+      
+//      status = new StatusPanel();
+//      status.setBorder(BorderFactory.createEtchedBorder());
 
-      layeredPane.addComponentListener(new ComponentAdapter() {
+//      final JLayeredPane layeredPane = new JLayeredPane();
+//      layeredPane.add(scrollPane, JLayeredPane.DEFAULT_LAYER);
+//      layeredPane.add(status, JLayeredPane.PALETTE_LAYER);
+//
+//      layeredPane.addComponentListener(new ComponentAdapter() {
+//
+//        void resizeLayers() {
+//          scrollPane.setSize(layeredPane.getSize());
+//          scrollPane.updateUI();
+//        }
+//
+//        public void componentShown(ComponentEvent e) {
+//          resizeLayers();
+//        }
+//
+//        public void componentResized(ComponentEvent arg0) {
+//          resizeLayers();
+//        }
+//      });
+//
+//      final JViewport viewport = scrollPane.getViewport();
+//      viewport.addComponentListener(new ComponentAdapter() {
+//        void resizeLayers() {
+//          status.setLocation(0, viewport.getHeight() - 18);
+//
+//          Dimension d = viewport.getSize();
+//          d.height = 20;
+//          d.width += 3;
+//          status.setSize(d);
+//        }
+//        public void componentShown(ComponentEvent e) {
+//          resizeLayers();
+//        }
+//        public void componentResized(ComponentEvent e) {
+//          resizeLayers();
+//        }
+//      });
+//
+//      pane.add(layeredPane, c);
+//    }
 
-        void resizeLayers() {
-          scrollPane.setSize(layeredPane.getSize());
-          scrollPane.updateUI();
-        }
-
-        public void componentShown(ComponentEvent e) {
-          resizeLayers();
-        }
-
-        public void componentResized(ComponentEvent arg0) {
-          resizeLayers();
-        }
-      });
-
-      final JViewport viewport = scrollPane.getViewport();
-      viewport.addComponentListener(new ComponentAdapter() {
-        void resizeLayers() {
-          statusBar.setLocation(0, viewport.getHeight() - 18);
-
-          Dimension d = viewport.getSize();
-          d.height = 20;
-          d.width += 3;
-          statusBar.setSize(d);
-        }
-        public void componentShown(ComponentEvent e) {
-          resizeLayers();
-        }
-        public void componentResized(ComponentEvent e) {
-          resizeLayers();
-        }
-      });
-
-      pane.add(layeredPane, c);
-    }
-
-    { // The filter text area
-      GridBagConstraints c = new GridBagConstraints();
-      c.gridx = 0;
-      c.gridy = 2;
-      c.gridwidth = 2;
-      c.weightx = 1;
-      c.fill = GridBagConstraints.HORIZONTAL;
-      filterField = new FilterField();
-
-      pane.add(filterField, c);
-    }
+//    { // The filter text area
+//      GridBagConstraints c = new GridBagConstraints();
+//      c.gridx = 0;
+//      c.gridy = 2;
+//      c.gridwidth = 2;
+//      c.weightx = 1;
+//      c.fill = GridBagConstraints.HORIZONTAL;
+//      filterField = new FilterField();
+//
+//      pane.add(filterField, c);
+//    }
 
     dialog.setMinimumSize(new Dimension(450, 400));
   }
@@ -337,9 +355,9 @@ public class ContributionManagerDialog {
   }
   
   
-  protected JPanel getPlaceholder() {
-    return contributionListPanel.statusPlaceholder;
-  }
+//  private JPanel getPlaceholder() {
+//    return contributionListPanel.statusPlaceholder;
+//  }
   
 
   class FilterField extends JTextField {
@@ -418,88 +436,4 @@ public class ContributionManagerDialog {
   public boolean hasAlreadyBeenOpened() {
     return dialog != null;
   }
-
-  
-  class StatusPanel extends JPanel implements ErrorWidget {
-    String errorMessage;
-
-    StatusPanel() {
-      addMouseListener(new MouseAdapter() {
-
-        public void mousePressed(MouseEvent e) {
-          clearErrorMessage();
-        }
-      });
-    }
-
-    @Override
-    protected void paintComponent(Graphics g) {
-      super.paintComponent(g);
-
-      g.setFont(new Font("SansSerif", Font.PLAIN, 10));
-      int baseline = (getSize().height + g.getFontMetrics().getAscent()) / 2;
-
-      if (contribListing.isDownloadingListing()) {
-        g.setColor(Color.black);
-        g.drawString("Downloading software listing...", 2, baseline);
-        setVisible(true);
-      } else if (errorMessage != null) {
-        g.setColor(Color.red);
-        g.drawString(errorMessage, 2, baseline);
-        setVisible(true);
-      } else {
-        setVisible(false);
-      }
-    }
-
-    public void setErrorMessage(String message) {
-      errorMessage = message;
-      setVisible(true);
-
-      JPanel placeholder = getPlaceholder();
-      Dimension d = getPreferredSize();
-      if (Base.isWindows()) {
-        d.height += 5;
-        placeholder.setPreferredSize(d);
-      }
-      placeholder.setVisible(true);
-    }
-
-    void clearErrorMessage() {
-      errorMessage = null;
-      repaint();
-
-      getPlaceholder().setVisible(false);
-    }
-  }  
-}
-
-
-abstract class JProgressMonitor extends AbstractProgressMonitor {
-  JProgressBar progressBar;
-
-  public JProgressMonitor(JProgressBar progressBar) {
-    this.progressBar = progressBar;
-  }
-
-  public void startTask(String name, int maxValue) {
-    isFinished = false;
-    progressBar.setString(name);
-    progressBar.setIndeterminate(maxValue == UNKNOWN);
-    progressBar.setMaximum(maxValue);
-  }
-
-  public void setProgress(int value) {
-    super.setProgress(value);
-    progressBar.setValue(value);
-  }
-
-  @Override
-  public void finished() {
-    super.finished();
-    finishedAction();
-  }
-
-  public abstract void finishedAction();
-
 }

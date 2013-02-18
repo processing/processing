@@ -61,7 +61,7 @@ class AvailableContribution extends Contribution {
    * @return
    */
   public LocalContribution install(Editor editor, File contribArchive,
-                                   boolean confirmReplace, ErrorWidget status) {
+                                   boolean confirmReplace, StatusPanel status) {
     // Unzip the file into the modes, tools, or libraries folder inside the 
     // sketchbook. Unzipping to /tmp is problematic because it may be on 
     // another file system, so move/rename operations will break.
@@ -76,6 +76,8 @@ class AvailableContribution extends Contribution {
       return null;
     }
     Base.unzip(contribArchive, tempFolder);
+//    System.out.println("temp folder is " + tempFolder);
+//    Base.openFolder(tempFolder);
 
     // Now go looking for a legit contrib inside what's been unpacked.
     File contribFolder = null;
@@ -83,14 +85,30 @@ class AvailableContribution extends Contribution {
     // Sometimes contrib authors place all their folders in the base directory 
     // of the .zip file instead of in single folder as the guidelines suggest. 
     if (type.isCandidate(tempFolder)) {
-      contribFolder = tempFolder;
+      /*
+      // Can't just rename the temp folder, because a contrib with this name
+      // may already exist. Instead, create a new temp folder, and rename the 
+      // old one to be the correct folder.
+      File enclosingFolder = null;  
+      try {
+        enclosingFolder = Base.createTempFolder(type.toString(), "tmp", sketchbookContribFolder);
+      } catch (IOException e) {
+        status.setErrorMessage("Could not create a secondary folder to install.");
+        return null;
+      }
+      contribFolder = new File(enclosingFolder, getName());
+      tempFolder.renameTo(contribFolder);
+      tempFolder = enclosingFolder;
+      */
+      status.setErrorMessage(getName() + " needs to be repackaged according to the " + type.getTitle() + " guidelines.");
+      //status.setErrorMessage("This " + type + " needs to be repackaged according to the guidelines.");
+      return null;
     }
 
-    if (contribFolder == null) {
-      // Find the first legitimate looking folder in what we just unzipped
-      contribFolder = type.findCandidate(tempFolder);
-    }
-    
+//    if (contribFolder == null) {
+    // Find the first legitimate looking folder in what we just unzipped
+    contribFolder = type.findCandidate(tempFolder);
+//    }
     LocalContribution installedContrib = null;
 
     if (contribFolder == null) {
@@ -98,8 +116,7 @@ class AvailableContribution extends Contribution {
       
     } else {
       File propFile = new File(contribFolder, type + ".properties");
-
-      if (!writePropertiesFile(propFile)) {        
+      if (writePropertiesFile(propFile)) {        
         // 1. contribFolder now has a legit contribution, load it to get info. 
         LocalContribution newContrib =
           type.load(editor.getBase(), contribFolder);
