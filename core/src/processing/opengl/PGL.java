@@ -416,8 +416,8 @@ public class PGL {
   /** The listener that fires the frame rendering in Processing */
   protected static PGLListener listener;
 
-  /** Animator to drive the rendering thread in NEWT */
-  protected static PGLAnimator animator;
+  /** Animator to drive the rendering thread */
+//  protected static PGLAnimator animator;
 
   /** Desired target framerate */
   protected float targetFramerate = 60;
@@ -589,18 +589,18 @@ public class PGL {
     } else {
       // Restarting...
       if (canvasAWT != null) {
-        if (useAnimator) {
-          animator.stop();
-          animator.remove(canvasAWT);
-        }
+//        if (useAnimator) {
+//          animator.stop();
+//          animator.remove(canvasAWT);
+//        }
         canvasAWT.removeGLEventListener(listener);
         pg.parent.removeListeners(canvasAWT);
         pg.parent.remove(canvasAWT);
       } else if (canvasNEWT != null) {
-        if (useAnimator) {
-          animator.stop();
-          animator.remove(window);
-        }
+//        if (useAnimator) {
+//          animator.stop();
+//          animator.remove(window);
+//        }
         window.removeGLEventListener(listener);
         pg.parent.remove(canvasNEWT);
       }
@@ -645,10 +645,10 @@ public class PGL {
 
       listener = new PGLListener();
       canvasAWT.addGLEventListener(listener);
-      if (useAnimator) {
-        animator = new PGLAnimator(canvasAWT);
-        animator.start();
-      }
+//      if (useAnimator) {
+//        animator = new PGLAnimator(canvasAWT);
+//        animator.start();
+//      }
     } else if (toolkit == NEWT) {
       window = GLWindow.create(caps);
       canvasNEWT = new NewtCanvasAWT(window);
@@ -678,10 +678,10 @@ public class PGL {
 
       listener = new PGLListener();
       window.addGLEventListener(listener);
-      if (useAnimator) {
-        animator = new PGLAnimator(window);
-        animator.start();
-      }
+//      if (useAnimator) {
+//        animator = new PGLAnimator(window);
+//        animator.start();
+//      }
     }
 
     fboLayerCreated = false;
@@ -1198,15 +1198,21 @@ public class PGL {
   protected void requestDraw() {
     if (pg.initialized) {
       try {
-        if (useAnimator) {
-          animator.requestDisplay();
-        } else {
-          if (toolkit == AWT) {
-            canvasAWT.display();
-          } else if (toolkit == NEWT) {
-            window.display();
-          }
+        if (toolkit == AWT) {
+          canvasAWT.display();
+        } else if (toolkit == NEWT) {
+          window.display();
         }
+
+//        if (useAnimator) {
+//          animator.requestDisplay();
+//        } else {
+//          if (toolkit == AWT) {
+//            canvasAWT.display();
+//          } else if (toolkit == NEWT) {
+//            window.display();
+//          }
+//        }
       } catch (GLException e) {
         // Unwrap GLException so that only the causing exception is shown.
         Throwable tr = e.getCause();
@@ -3428,7 +3434,8 @@ public class PGL {
     }
   }
 
-  // Animator to drive render loop when using NEWT.
+  /*
+  // Animator to drive render loop.
   protected static class PGLAnimator extends AnimatorBase {
     private static int count = 0;
     private Timer timer = null;
@@ -3439,9 +3446,7 @@ public class PGL {
       return prefix + "PGLAnimator";
     }
 
-    /** Creates an CustomAnimator with an initial drawable to
-     * animate.
-     */
+    // Creates an CustomAnimator with an initial drawable to animate.
     public PGLAnimator(GLAutoDrawable drawable) {
       if (drawable != null) {
         add(drawable);
@@ -3497,7 +3502,7 @@ public class PGL {
       return true;
     }
 
-    /** Stops this CustomAnimator. */
+    // Stops this CustomAnimator.
     public synchronized boolean stop() {
       if (timer == null) {
         return false;
@@ -3564,4 +3569,5 @@ public class PGL {
       }
     }
   }
+  */
 }
