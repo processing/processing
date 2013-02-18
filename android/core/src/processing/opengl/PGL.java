@@ -58,7 +58,7 @@ public class PGL {
   // Parameters
 
   public static boolean FORCE_SCREEN_FBO             = false;
-  public static final boolean USE_DIRECT_BUFFERS     = false;
+  public static final boolean USE_DIRECT_BUFFERS     = true;
   public static final int MIN_DIRECT_BUFFER_SIZE     = 1;
   public static final boolean SAVE_SURFACE_TO_PIXELS = false;
 
@@ -2292,6 +2292,16 @@ public class PGL {
   }
 
 
+  protected static void updateByteBuffer(ByteBuffer buf, byte[] arr,
+                                         int offset, int size) {
+    if (USE_DIRECT_BUFFERS || (buf.hasArray() && buf.array() != arr)) {
+      buf.position(offset);
+      buf.put(arr, offset, size);
+      buf.rewind();
+    }
+  }
+
+
   protected static void getByteArray(ByteBuffer buf, byte[] arr) {
     if (!buf.hasArray() || buf.array() != arr) {
       buf.position(0);
@@ -2368,6 +2378,16 @@ public class PGL {
       }
     }
     return buf;
+  }
+
+
+  protected static void updateShortBuffer(ShortBuffer buf, short[] arr,
+                                          int offset, int size) {
+    if (USE_DIRECT_BUFFERS || (buf.hasArray() && buf.array() != arr)) {
+      buf.position(offset);
+      buf.put(arr, offset, size);
+      buf.rewind();
+    }
   }
 
 
@@ -2450,6 +2470,16 @@ public class PGL {
   }
 
 
+  protected static void updateIntBuffer(IntBuffer buf, int[] arr,
+                                        int offset, int size) {
+     if (USE_DIRECT_BUFFERS || (buf.hasArray() && buf.array() != arr)) {
+       buf.position(offset);
+       buf.put(arr, offset, size);
+       buf.rewind();
+     }
+   }
+
+
   protected static void getIntArray(IntBuffer buf, int[] arr) {
     if (!buf.hasArray() || buf.array() != arr) {
       buf.position(0);
@@ -2526,6 +2556,16 @@ public class PGL {
     }
     return buf;
   }
+
+
+  protected static void updateFloatBuffer(FloatBuffer buf, float[] arr,
+                                        int offset, int size) {
+     if (USE_DIRECT_BUFFERS || (buf.hasArray() && buf.array() != arr)) {
+       buf.position(offset);
+       buf.put(arr, offset, size);
+       buf.rewind();
+     }
+   }
 
 
   protected static void getFloatArray(FloatBuffer buf, float[] arr) {
