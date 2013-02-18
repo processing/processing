@@ -46,17 +46,15 @@ void setup() {
   // Make a primitive (Rectangle) PShape
   PShape rectangle = createShape(RECT,-10,-10,20,20);
   rectangle.setFill(false);
-  rectangle.setStroke(255);
+  rectangle.setStroke(color(255));
   
   // Add them all to the group
   group.addChild(star);
   group.addChild(path);
-  group.addChild(rectangle); // Rectangle is missing???
-
+  group.addChild(rectangle);
 }
 
-void draw() {
-  
+void draw() {  
   // We can access them individually via the group PShape
   PShape rectangle = group.getChild(2);
   // Shapes can be rotated
