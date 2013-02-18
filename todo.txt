@@ -129,6 +129,7 @@ X   https://github.com/processing/processing/issues/1250
 X   http://code.google.com/p/processing/issues/detail?id=1212
 
 medium
+_ highlight color seems to be incorrect?
 _ Contributed modes should show up in mode menu after installation
 _   https://github.com/processing/processing/issues/1504
 X   http://code.google.com/p/processing/issues/detail?id=1466
@@ -141,9 +142,12 @@ _   or if a bad document comes through, it can recover
 _ gracefully recover from proxy problems
 _   https://github.com/processing/processing/issues/1601
 _ alternating blue/white backgrounds aren't updated after changing filter
+_   just need to call a repaint() after selection change?
 _ move styling to separate constants that are more accessible
 _ work on the design of the list entries themselves
 _ check with Casey about coloring for error messages
+_ test on Windows and Linux
+_ add "Installed" indicator? or show the Remove button?
 
 low
 _ after installing, the item in the manager list doesn't change color

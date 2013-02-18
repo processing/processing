@@ -80,22 +80,24 @@ public class ContributionManagerDialog {
       dialog = new JFrame(title);
 
       Toolkit.setIcon(dialog);
-
       createComponents();
-
       registerDisposeListeners();
 
       dialog.pack();
-      Dimension screen = Toolkit.getScreenSize();
-      dialog.setLocation((screen.width - dialog.getWidth()) / 2,
-                         (screen.height - dialog.getHeight()) / 2);
+      dialog.setLocationRelativeTo(null);
+//      Dimension screen = Toolkit.getScreenSize();
+//      dialog.setLocation((screen.width - dialog.getWidth()) / 2,
+//                         (screen.height - dialog.getHeight()) / 2);
 
       contributionListPanel.grabFocus();
     }
 
     dialog.setVisible(true);
 
-    if (!contribListing.hasDownloadedLatestList()) {
+    if (contribListing.hasDownloadedLatestList()) {
+      updateContributionListing();
+
+    } else {
       contribListing.downloadAvailableList(new AbstractProgressMonitor() {
         public void startTask(String name, int maxValue) {
         }
@@ -107,14 +109,13 @@ public class ContributionManagerDialog {
           updateCategoryChooser();
           if (isError()) {
             status.setErrorMessage("An error occured when downloading " +
-                                      "the list of available contributions.");
+                                   "the list of available contributions.");
           } else {
             status.updateUI();
           }
         }
       });
     }
-    updateContributionListing();
   }
 
   

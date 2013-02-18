@@ -59,6 +59,7 @@ class ContributionPanel extends JPanel {
   private HyperlinkListener conditionalHyperlinkOpener;
   private JTextPane headerText;
   private JTextPane descriptionText;
+  private JTextPane textBlock;
   private JTextPane updateNotificationLabel;
   private JButton updateButton;
   private JProgressBar installProgressBar;
@@ -406,6 +407,7 @@ class ContributionPanel extends JPanel {
     } else if (contrib.isInstalled()) {
       installRemoveButton.addActionListener(removeActionListener);
       installRemoveButton.setText("Remove");
+      installRemoveButton.setVisible(true);
     } else {
       installRemoveButton.addActionListener(installActionListener);
       installRemoveButton.setText("Install");
@@ -504,7 +506,7 @@ class ContributionPanel extends JPanel {
     if (contrib != null && !contrib.requiresRestart()) {
       updateButton.setVisible(isSelected() && contribListing.hasUpdates(contrib));
     }
-    installRemoveButton.setVisible(isSelected());
+    installRemoveButton.setVisible(isSelected() || installRemoveButton.getText().equals("Remove"));
 
 //    for (JTextPane textPane : headerPaneSet) {
     { 
@@ -529,7 +531,7 @@ class ContributionPanel extends JPanel {
   
 
   public boolean isSelected() {
-    return listPanel.selectedPanel == this;
+    return listPanel.getSelectedPanel() == this;
   }
 
 
@@ -621,7 +623,8 @@ class ContributionPanel extends JPanel {
       HTMLDocument html = (HTMLDocument) doc;
       StyleSheet stylesheet = html.getStyleSheet();
       
-      String c = installed ? "#808080" : "#000000";
+      String c = installed ? "#404040" : "#000000";  // slightly grayed when installed
+//      String c = "#000000";  // just make them both black
       stylesheet.addRule("body { color:" + c + "; }");
       stylesheet.addRule("a { color:" + c + "; }");
     }

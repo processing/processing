@@ -34,6 +34,10 @@ import java.awt.*;
 import processing.app.Base;
 
 
+// The "Scrollable" implementation and its methods here take care of preventing
+// the scrolling area from running exceptionally slowly. Not sure why they're
+// necessary in the first place, however; seems like odd behavior.
+
 public class ContributionListPanel extends JPanel implements Scrollable, ContributionChangeListener {
 
   static public final String DELETION_MESSAGE = 
@@ -54,10 +58,10 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     public void hyperlinkUpdate(HyperlinkEvent e) { }
   };
 
-  protected ContributionPanel selectedPanel;
+  private ContributionPanel selectedPanel;
 //  protected JPanel statusPlaceholder;
-  protected StatusPanel status;
-  ContributionFilter filter;
+  private StatusPanel status;
+  private ContributionFilter filter;
 //  private ContributionListing contribListing;
   private ContributionListing contribListing = ContributionListing.getInstance();
 
@@ -222,6 +226,11 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       requestFocusInWindow();
     }
   }
+  
+  
+  protected ContributionPanel getSelectedPanel() {
+    return selectedPanel;
+  }
 
   
   /**
@@ -298,7 +307,6 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
    */
   public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
     if (orientation == SwingConstants.VERTICAL) {
-
       int lastHeight = 0, height = 0;
       int bottomOfScrollArea = visibleRect.y + visibleRect.height;
 

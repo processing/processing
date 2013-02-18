@@ -86,16 +86,11 @@ public class ContributionListing {
   }
 
   
-  public Comparator<? super Contribution> getComparator() {
-    return nameComparator;
-  }
-
-  
   /**
    * Adds the installed libraries to the listing of libraries, replacing any
    * pre-existing libraries by the same name as one in the list.
    */
-  public void updateInstalledList(List<Contribution> installedContributions) {
+  protected void updateInstalledList(List<Contribution> installedContributions) {
     for (Contribution contribution : installedContributions) {
       Contribution preexistingContribution = getContribution(contribution);
       if (preexistingContribution != null) {
@@ -107,7 +102,7 @@ public class ContributionListing {
   }
 
 
-  public void replaceContribution(Contribution oldLib, Contribution newLib) {
+  protected void replaceContribution(Contribution oldLib, Contribution newLib) {
     if (oldLib == null || newLib == null) {
       return;
     }
@@ -132,7 +127,7 @@ public class ContributionListing {
   }
 
 
-  public void addContribution(Contribution contribution) {
+  private void addContribution(Contribution contribution) {
     if (librariesByCategory.containsKey(contribution.getCategory())) {
       List<Contribution> list = librariesByCategory.get(contribution.getCategory());
       list.add(contribution);
@@ -149,7 +144,7 @@ public class ContributionListing {
   }
 
 
-  public void removeContribution(Contribution info) {
+  protected void removeContribution(Contribution info) {
     if (librariesByCategory.containsKey(info.getCategory())) {
       librariesByCategory.get(info.getCategory()).remove(info);
     }
@@ -158,18 +153,18 @@ public class ContributionListing {
   }
 
 
-  public Contribution getContribution(Contribution contribution) {
-    for (Contribution preexistingContribution : allContributions) {
-      if (preexistingContribution.getName().equals(contribution.getName())
-          && preexistingContribution.getType() == contribution.getType()) {
-        return preexistingContribution;
+  private Contribution getContribution(Contribution contribution) {
+    for (Contribution c : allContributions) {
+      if (c.getName().equals(contribution.getName()) && 
+          c.getType() == contribution.getType()) {
+        return c;
       }
     }
     return null;
   }
 
 
-  public AvailableContribution getAvailableContribution(Contribution info) {
+  protected AvailableContribution getAvailableContribution(Contribution info) {
     for (AvailableContribution advertised : advertisedContributions) {
       if (advertised.getType() == info.getType() && 
           advertised.getName().equals(info.getName())) {
@@ -180,7 +175,7 @@ public class ContributionListing {
   }
 
   
-  public Set<String> getCategories(ContributionFilter filter) {
+  protected Set<String> getCategories(ContributionFilter filter) {
     Set<String> outgoing = new HashSet<String>();
 
     Set<String> categorySet = librariesByCategory.keySet();
@@ -200,20 +195,20 @@ public class ContributionListing {
   }
 
   
-  public List<Contribution> getAllContributions() {
-    return new ArrayList<Contribution>(allContributions);
-  }
+//  public List<Contribution> getAllContributions() {
+//    return new ArrayList<Contribution>(allContributions);
+//  }
 
   
-  public List<Contribution> getLibararies(String category) {
-    ArrayList<Contribution> libinfos =
-        new ArrayList<Contribution>(librariesByCategory.get(category));
-    Collections.sort(libinfos, nameComparator);
-    return libinfos;
-  }
+//  public List<Contribution> getLibararies(String category) {
+//    ArrayList<Contribution> libinfos =
+//        new ArrayList<Contribution>(librariesByCategory.get(category));
+//    Collections.sort(libinfos, nameComparator);
+//    return libinfos;
+//  }
 
   
-  public List<Contribution> getFilteredLibraryList(String category, List<String> filters) {
+  protected List<Contribution> getFilteredLibraryList(String category, List<String> filters) {
     ArrayList<Contribution> filteredList = new ArrayList<Contribution>(allContributions);
 
     Iterator<Contribution> it = filteredList.iterator();
@@ -234,7 +229,7 @@ public class ContributionListing {
   }
 
 
-  public boolean matches(Contribution contrib, String filter) {
+  private boolean matches(Contribution contrib, String filter) {
     int colon = filter.indexOf(":");
     if (colon != -1) {
       String isText = filter.substring(0, colon);
@@ -261,11 +256,10 @@ public class ContributionListing {
         || contrib.getParagraph() != null && contrib.getParagraph().toLowerCase().matches(filter)
         || contrib.getCategory() != null && contrib.getCategory().toLowerCase().matches(filter)
         || contrib.getName() != null && contrib.getName().toLowerCase().matches(filter);
-
   }
 
 
-  public boolean isProperty(String property) {
+  private boolean isProperty(String property) {
     return property.startsWith("updat") || property.startsWith("upgrad")
         || property.startsWith("instal") && !property.startsWith("installabl")
         || property.equals("tool") || property.startsWith("lib")
@@ -273,9 +267,11 @@ public class ContributionListing {
   }
 
 
-  /** Returns true if the contribution fits the given property, false otherwise.
-   *  If the property is invalid, returns false. */
-  public boolean hasProperty(Contribution contrib, String property) {
+  /** 
+   * Returns true if the contribution fits the given property, false otherwise.
+   * If the property is invalid, returns false. 
+   */
+  private boolean hasProperty(Contribution contrib, String property) {
     // update, updates, updatable, upgrade
     if (property.startsWith("updat") || property.startsWith("upgrad")) {
       return hasUpdates(contrib);
@@ -323,7 +319,7 @@ public class ContributionListing {
   }
 
   
-  public void addContributionListener(ContributionChangeListener listener) {
+  protected void addContributionListener(ContributionChangeListener listener) {
     for (Contribution contrib : allContributions) {
       listener.contributionAdded(contrib);
     }
@@ -331,21 +327,23 @@ public class ContributionListing {
   }
 
   
-  public void removeContributionListener(ContributionChangeListener listener) {
+  /*
+  private void removeContributionListener(ContributionChangeListener listener) {
     listeners.remove(listener);
   }
 
   
-  public ArrayList<ContributionChangeListener> getContributionListeners() {
+  private ArrayList<ContributionChangeListener> getContributionListeners() {
     return new ArrayList<ContributionChangeListener>(listeners);
   }
+  */
 
   
   /**
    * Starts a new thread to download the advertised list of contributions. 
    * Only one instance will run at a time.
    */
-  public void downloadAvailableList(ProgressMonitor pm) {
+  protected void downloadAvailableList(ProgressMonitor pm) {
     final ProgressMonitor progressMonitor = 
       (pm != null) ? pm : new NullProgressMonitor();
 
@@ -362,7 +360,7 @@ public class ContributionListing {
         }
 
         if (!progressMonitor.isFinished()) {
-          download(url, listingFile, progressMonitor);
+          ContributionManager.download(url, listingFile, progressMonitor);
           if (!progressMonitor.isCanceled() && !progressMonitor.isError()) {
             hasDownloadedLatestList = true;
             setAdvertisedList(listingFile);
@@ -373,56 +371,6 @@ public class ContributionListing {
     }).start();
   }
   
-  
-  /**
-   * Blocks until the file is downloaded or an error occurs. 
-   * Returns true if the file was successfully downloaded, false otherwise.
-   * 
-   * @param source
-   *          the URL of the file to download
-   * @param dest
-   *          the file on the local system where the file will be written. This
-   *          must be a file (not a directory), and must already exist.
-   * @param progress
-   * @throws FileNotFoundException
-   *           if an error occurred downloading the file
-   */
-  static boolean download(URL source, File dest, ProgressMonitor progress) {
-    boolean success = false;
-    try {
-//      System.out.println("downloading file " + source);
-      URLConnection conn = source.openConnection();
-      conn.setConnectTimeout(1000);
-      conn.setReadTimeout(5000);
-  
-      // TODO this is often -1, may need to set progress to indeterminate
-      int fileSize = conn.getContentLength();
-//      System.out.println("file size is " + fileSize);
-      progress.startTask("Downloading", fileSize);
-  
-      InputStream in = conn.getInputStream();
-      FileOutputStream out = new FileOutputStream(dest);
-  
-      byte[] b = new byte[8192];
-      int amount;
-      int total = 0;
-      while (!progress.isCanceled() && (amount = in.read(b)) != -1) {
-        out.write(b, 0, amount);
-        total += amount;  
-        progress.setProgress(total);
-      }
-      out.flush();
-      out.close();
-      success = true;
-      
-    } catch (IOException ioe) {
-      progress.error(ioe);
-      ioe.printStackTrace();
-    }
-    progress.finished();
-    return success;
-  }
-
   
   boolean hasUpdates() {
     for (Contribution info : allContributions) {
@@ -524,6 +472,11 @@ public class ContributionListing {
 //  boolean isDownloadingListing() {
 //    return downloadingListingLock.isLocked();
 //  }
+
+  
+  public Comparator<? super Contribution> getComparator() {
+    return nameComparator;
+  }
 
   
   static Comparator<Contribution> nameComparator = new Comparator<Contribution>() {
