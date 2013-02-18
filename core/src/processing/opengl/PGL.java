@@ -2865,8 +2865,8 @@ public class PGL {
   protected static void updateByteBuffer(ByteBuffer buf, byte[] arr,
                                          int offset, int size) {
     if (USE_DIRECT_BUFFERS || (buf.hasArray() && buf.array() != arr)) {
-      buf.position(4 * offset);
-      buf.put(arr, 4 * offset, 4 * size);
+      buf.position(offset);
+      buf.put(arr, offset, size);
       buf.rewind();
     }
   }
@@ -2954,8 +2954,8 @@ public class PGL {
   protected static void updateShortBuffer(ShortBuffer buf, short[] arr,
                                           int offset, int size) {
     if (USE_DIRECT_BUFFERS || (buf.hasArray() && buf.array() != arr)) {
-      buf.position(4 * offset);
-      buf.put(arr, 4 * offset, 4 * size);
+      buf.position(offset);
+      buf.put(arr, offset, size);
       buf.rewind();
     }
   }
@@ -3043,8 +3043,8 @@ public class PGL {
   protected static void updateIntBuffer(IntBuffer buf, int[] arr,
                                         int offset, int size) {
      if (USE_DIRECT_BUFFERS || (buf.hasArray() && buf.array() != arr)) {
-       buf.position(4 * offset);
-       buf.put(arr, 4 * offset, 4 * size);
+       buf.position(offset);
+       buf.put(arr, offset, size);
        buf.rewind();
      }
    }
@@ -3131,8 +3131,8 @@ public class PGL {
   protected static void updateFloatBuffer(FloatBuffer buf, float[] arr,
                                         int offset, int size) {
      if (USE_DIRECT_BUFFERS || (buf.hasArray() && buf.array() != arr)) {
-       buf.position(4 * offset);
-       buf.put(arr, 4 * offset, 4 * size);
+       buf.position(offset);
+       buf.put(arr, offset, size);
        buf.rewind();
      }
    }
