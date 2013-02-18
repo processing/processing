@@ -1287,10 +1287,10 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     if (tex) {
-      tessGeo.updatePolyTexcoordsBuffer();
+      tessGeo.updatePolyTexCoordsBuffer();
       pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolyTexcoord);
       pgl.bufferData(PGL.ARRAY_BUFFER, 2 * sizef,
-                     tessGeo.polyTexcoordsBuffer, PGL.STATIC_DRAW);
+                     tessGeo.polyTexCoordsBuffer, PGL.STATIC_DRAW);
     }
 
     tessGeo.updatePolyIndicesBuffer();
@@ -2373,7 +2373,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
     float[] vertices = tessGeo.polyVertices;
     int[] color = tessGeo.polyColors;
-    float[] uv = tessGeo.polyTexcoords;
+    float[] uv = tessGeo.polyTexCoords;
     short[] indices = tessGeo.polyIndices;
 
     for (int i = 0; i < texCache.size; i++) {
@@ -7520,7 +7520,7 @@ public class PGraphicsOpenGL extends PGraphics {
         expandVertices(newSize);
         expandColors(newSize);
         expandNormals(newSize);
-        expandTexcoords(newSize);
+        expandTexCoords(newSize);
         expandStrokeColors(newSize);
         expandStrokeWeights(newSize);
         expandAmbient(newSize);
@@ -7648,7 +7648,7 @@ public class PGraphicsOpenGL extends PGraphics {
       normals = temp;
     }
 
-    void expandTexcoords(int n) {
+    void expandTexCoords(int n) {
       float temp[] = new float[2 * n];
       PApplet.arrayCopy(texcoords, 0, temp, 0, 2 * vertexCount);
       texcoords = temp;
@@ -7711,7 +7711,7 @@ public class PGraphicsOpenGL extends PGraphics {
         trimVertices();
         trimColors();
         trimNormals();
-        trimTexcoords();
+        trimTexCoords();
         trimStrokeColors();
         trimStrokeWeights();
         trimAmbient();
@@ -7744,7 +7744,7 @@ public class PGraphicsOpenGL extends PGraphics {
       normals = temp;
     }
 
-    void trimTexcoords() {
+    void trimTexCoords() {
       float temp[] = new float[2 * vertexCount];
       PApplet.arrayCopy(texcoords, 0, temp, 0, 2 * vertexCount);
       texcoords = temp;
@@ -8873,7 +8873,7 @@ public class PGraphicsOpenGL extends PGraphics {
     FloatBuffer polyVerticesBuffer;
     IntBuffer polyColorsBuffer;
     FloatBuffer polyNormalsBuffer;
-    FloatBuffer polyTexcoordsBuffer;
+    FloatBuffer polyTexCoordsBuffer;
 
     // Polygon material properties (polyColors is used
     // as the diffuse color when lighting is enabled)
@@ -8920,7 +8920,7 @@ public class PGraphicsOpenGL extends PGraphics {
     float[] polyVertices;
     int[] polyColors;
     float[] polyNormals;
-    float[] polyTexcoords;
+    float[] polyTexCoords;
     int[] polyAmbient;
     int[] polySpecular;
     int[] polyEmissive;
@@ -8948,7 +8948,7 @@ public class PGraphicsOpenGL extends PGraphics {
       polyVertices = new float[4 * PGL.DEFAULT_TESS_VERTICES];
       polyColors = new int[PGL.DEFAULT_TESS_VERTICES];
       polyNormals = new float[3 * PGL.DEFAULT_TESS_VERTICES];
-      polyTexcoords = new float[2 * PGL.DEFAULT_TESS_VERTICES];
+      polyTexCoords = new float[2 * PGL.DEFAULT_TESS_VERTICES];
       polyAmbient = new int[PGL.DEFAULT_TESS_VERTICES];
       polySpecular = new int[PGL.DEFAULT_TESS_VERTICES];
       polyEmissive = new int[PGL.DEFAULT_TESS_VERTICES];
@@ -8968,7 +8968,7 @@ public class PGraphicsOpenGL extends PGraphics {
       polyVerticesBuffer = PGL.allocateFloatBuffer(polyVertices);
       polyColorsBuffer = PGL.allocateIntBuffer(polyColors);
       polyNormalsBuffer = PGL.allocateFloatBuffer(polyNormals);
-      polyTexcoordsBuffer = PGL.allocateFloatBuffer(polyTexcoords);
+      polyTexCoordsBuffer = PGL.allocateFloatBuffer(polyTexCoords);
       polyAmbientBuffer = PGL.allocateIntBuffer(polyAmbient);
       polySpecularBuffer = PGL.allocateIntBuffer(polySpecular);
       polyEmissiveBuffer = PGL.allocateIntBuffer(polyEmissive);
@@ -9011,7 +9011,7 @@ public class PGraphicsOpenGL extends PGraphics {
         expandPolyVertices(newSize);
         expandPolyColors(newSize);
         expandPolyNormals(newSize);
-        expandPolyTexcoords(newSize);
+        expandPolyTexCoords(newSize);
         expandPolyAmbient(newSize);
         expandPolySpecular(newSize);
         expandPolyEmissive(newSize);
@@ -9031,7 +9031,7 @@ public class PGraphicsOpenGL extends PGraphics {
         expandPolyVertices(newSize);
         expandPolyColors(newSize);
         expandPolyNormals(newSize);
-        expandPolyTexcoords(newSize);
+        expandPolyTexCoords(newSize);
         expandPolyAmbient(newSize);
         expandPolySpecular(newSize);
         expandPolyEmissive(newSize);
@@ -9248,12 +9248,12 @@ public class PGraphicsOpenGL extends PGraphics {
                             3 * offset, 3 * size);
     }
 
-    protected void updatePolyTexcoordsBuffer() {
-      updatePolyTexcoordsBuffer(0, polyVertexCount);
+    protected void updatePolyTexCoordsBuffer() {
+      updatePolyTexCoordsBuffer(0, polyVertexCount);
     }
 
-    protected void updatePolyTexcoordsBuffer(int offset, int size) {
-      PGL.updateFloatBuffer(polyTexcoordsBuffer, polyTexcoords,
+    protected void updatePolyTexCoordsBuffer(int offset, int size) {
+      PGL.updateFloatBuffer(polyTexCoordsBuffer, polyTexCoords,
                             2 * offset, 2 * size);
     }
 
@@ -9390,11 +9390,11 @@ public class PGraphicsOpenGL extends PGraphics {
       polyNormalsBuffer = PGL.allocateFloatBuffer(polyNormals);
     }
 
-    void expandPolyTexcoords(int n) {
+    void expandPolyTexCoords(int n) {
       float temp[] = new float[2 * n];
-      PApplet.arrayCopy(polyTexcoords, 0, temp, 0, 2 * polyVertexCount);
-      polyTexcoords = temp;
-      polyTexcoordsBuffer = PGL.allocateFloatBuffer(polyTexcoords);
+      PApplet.arrayCopy(polyTexCoords, 0, temp, 0, 2 * polyVertexCount);
+      polyTexCoords = temp;
+      polyTexCoordsBuffer = PGL.allocateFloatBuffer(polyTexCoords);
     }
 
     void expandPolyAmbient(int n) {
@@ -9497,7 +9497,7 @@ public class PGraphicsOpenGL extends PGraphics {
         trimPolyVertices();
         trimPolyColors();
         trimPolyNormals();
-        trimPolyTexcoords();
+        trimPolyTexCoords();
         trimPolyAmbient();
         trimPolySpecular();
         trimPolyEmissive();
@@ -9550,11 +9550,11 @@ public class PGraphicsOpenGL extends PGraphics {
       polyNormalsBuffer = PGL.allocateFloatBuffer(polyNormals);
     }
 
-    void trimPolyTexcoords() {
+    void trimPolyTexCoords() {
       float temp[] = new float[2 * polyVertexCount];
-      PApplet.arrayCopy(polyTexcoords, 0, temp, 0, 2 * polyVertexCount);
-      polyTexcoords = temp;
-      polyTexcoordsBuffer = PGL.allocateFloatBuffer(polyTexcoords);
+      PApplet.arrayCopy(polyTexCoords, 0, temp, 0, 2 * polyVertexCount);
+      polyTexCoords = temp;
+      polyTexCoordsBuffer = PGL.allocateFloatBuffer(polyTexCoords);
     }
 
     void trimPolyAmbient() {
@@ -9902,8 +9902,8 @@ public class PGraphicsOpenGL extends PGraphics {
       polyColors[tessIdx] = rgba;
 
       index = 2 * tessIdx;
-      polyTexcoords[index++] = u;
-      polyTexcoords[index  ] = v;
+      polyTexCoords[index++] = u;
+      polyTexCoords[index  ] = v;
 
       polyAmbient[tessIdx] = am;
       polySpecular[tessIdx] = sp;
@@ -10008,8 +10008,8 @@ public class PGraphicsOpenGL extends PGraphics {
           polyColors[tessIdx] = in.colors[inIdx];
 
           index = 2 * tessIdx;
-          polyTexcoords[index++] = u;
-          polyTexcoords[index  ] = v;
+          polyTexCoords[index++] = u;
+          polyTexCoords[index  ] = v;
 
           polyAmbient[tessIdx] = in.ambient[inIdx];
           polySpecular[tessIdx] = in.specular[inIdx];
@@ -10020,7 +10020,7 @@ public class PGraphicsOpenGL extends PGraphics {
         PApplet.arrayCopy(in.colors, i0,
                           polyColors, firstPolyVertex, nvert);
         PApplet.arrayCopy(in.texcoords, 2 * i0,
-                          polyTexcoords, 2 * firstPolyVertex, 2 * nvert);
+                          polyTexCoords, 2 * firstPolyVertex, 2 * nvert);
         PApplet.arrayCopy(in.ambient, i0,
                           polyAmbient, firstPolyVertex, nvert);
         PApplet.arrayCopy(in.specular, i0,
