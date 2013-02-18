@@ -134,6 +134,7 @@ public class PGL {
   protected static final int NEWT = 1; // http://jogamp.org/jogl/doc/NEWT-Overview.html
 
   protected static int toolkit;
+  protected static int events;
   static {
     if (PApplet.platform == PConstants.WINDOWS) {
       // Using AWT on Windows because NEWT displays a black background while
@@ -143,14 +144,17 @@ public class PGL {
       // but apparently nothing to set the cursor icon:
       // https://jogamp.org/bugzilla/show_bug.cgi?id=409
       toolkit = AWT;
+      events = AWT;
     } else if (PApplet.platform == PConstants.MACOSX) {
       // NEWT solves the issues with Java 7 and OS X 10.7+: calls to frame
       // hanging the sketch, as well as cursor, etc.
       toolkit = NEWT;
+      events = AWT;
     } else if (PApplet.platform == PConstants.LINUX) {
       toolkit = NEWT; // AWT extremely broken on Linux?
     } else if (PApplet.platform == PConstants.OTHER) {
       toolkit = NEWT; // NEWT should work on the Raspberry pi
+      events = NEWT;
     }
   }
 
@@ -652,16 +656,21 @@ public class PGL {
       canvasNEWT.setBackground(new Color(pg.backgroundColor, true));
       canvasNEWT.setFocusable(true);
 
-      NEWTMouseListener mouseListener = new NEWTMouseListener();
-      window.addMouseListener(mouseListener);
-      NEWTKeyListener keyListener = new NEWTKeyListener();
-      window.addKeyListener(keyListener);
-      NEWTWindowListener winListener = new NEWTWindowListener();
-      window.addWindowListener(winListener);
-      canvasNEWT.addFocusListener(pg.parent); // So focus detection work.
-
       pg.parent.setLayout(new BorderLayout());
       pg.parent.add(canvasNEWT, BorderLayout.CENTER);
+
+      if (events == NEWT) {
+        NEWTMouseListener mouseListener = new NEWTMouseListener();
+        window.addMouseListener(mouseListener);
+        NEWTKeyListener keyListener = new NEWTKeyListener();
+        window.addKeyListener(keyListener);
+        NEWTWindowListener winListener = new NEWTWindowListener();
+        window.addWindowListener(winListener);
+        canvasNEWT.addFocusListener(pg.parent); // So focus detection work.
+      } else if (events == AWT) {
+        pg.parent.removeListeners(canvasNEWT);
+        pg.parent.addListeners(canvasNEWT);
+      }
 
       capabilities = window.getChosenGLCapabilities();
       canvas = canvasNEWT;
@@ -3277,7 +3286,6 @@ public class PGL {
 
   protected void nativeMouseEvent(com.jogamp.newt.event.MouseEvent nativeEvent,
                                   int peAction) {
-//    if (!hasFocus) return;
     int modifiers = nativeEvent.getModifiers();
     int peModifiers = modifiers &
                       (InputEvent.SHIFT_MASK |
@@ -3337,40 +3345,31 @@ public class PGL {
     pg.parent.postEvent(ke);
   }
 
-  boolean hasFocus = true;
   class NEWTWindowListener implements com.jogamp.newt.event.WindowListener {
     @Override
     public void windowGainedFocus(com.jogamp.newt.event.WindowEvent arg0) {
-      PApplet.println("window gained focus");
       pg.parent.focusGained(null);
-      hasFocus = true;
     }
 
     @Override
     public void windowLostFocus(com.jogamp.newt.event.WindowEvent arg0) {
-      PApplet.println("window lost focus");
       pg.parent.focusLost(null);
-      hasFocus = false;
     }
 
     @Override
     public void windowDestroyNotify(com.jogamp.newt.event.WindowEvent arg0) {
-      PApplet.println("destroy");
     }
 
     @Override
     public void windowDestroyed(com.jogamp.newt.event.WindowEvent arg0) {
-      PApplet.println("destroyed");
     }
 
     @Override
     public void windowMoved(com.jogamp.newt.event.WindowEvent arg0) {
-      PApplet.println("moved");
     }
 
     @Override
     public void windowRepaint(com.jogamp.newt.event.WindowUpdateEvent arg0) {
-      PApplet.println("window repaint");
     }
 
     @Override
@@ -3379,54 +3378,36 @@ public class PGL {
 
   // NEWT mouse listener
   class NEWTMouseListener extends com.jogamp.newt.event.MouseAdapter {
-    boolean pointerInside = false;
-
     @Override
     public void mousePressed(com.jogamp.newt.event.MouseEvent e) {
-      if (pointerInside) {
-        nativeMouseEvent(e, MouseEvent.PRESS);
-      }
+      nativeMouseEvent(e, MouseEvent.PRESS);
     }
     @Override
     public void mouseReleased(com.jogamp.newt.event.MouseEvent e) {
-      if (pointerInside) {
-        nativeMouseEvent(e, MouseEvent.RELEASE);
-      }
+      nativeMouseEvent(e, MouseEvent.RELEASE);
     }
     @Override
     public void mouseClicked(com.jogamp.newt.event.MouseEvent e) {
-      if (pointerInside) {
-        nativeMouseEvent(e, MouseEvent.CLICK);
-      }
+      nativeMouseEvent(e, MouseEvent.CLICK);
     }
     @Override
     public void mouseDragged(com.jogamp.newt.event.MouseEvent e) {
-      if (pointerInside) {
-        nativeMouseEvent(e, MouseEvent.DRAG);
-      }
+      nativeMouseEvent(e, MouseEvent.DRAG);
     }
     @Override
     public void mouseMoved(com.jogamp.newt.event.MouseEvent e) {
-      if (pointerInside) {
-        nativeMouseEvent(e, MouseEvent.MOVE);
-      }
+      nativeMouseEvent(e, MouseEvent.MOVE);
     }
     @Override
     public void mouseWheelMoved(com.jogamp.newt.event.MouseEvent e) {
-      if (pointerInside) {
-        nativeMouseEvent(e, MouseEvent.WHEEL);
-      }
+      nativeMouseEvent(e, MouseEvent.WHEEL);
     }
     @Override
     public void mouseEntered(com.jogamp.newt.event.MouseEvent e) {
-      PApplet.println("mouse entered");
-      pointerInside = true;
       nativeMouseEvent(e, MouseEvent.ENTER);
     }
     @Override
     public void mouseExited(com.jogamp.newt.event.MouseEvent e) {
-      PApplet.println("mouse exited");
-      pointerInside = false;
       nativeMouseEvent(e, MouseEvent.EXIT);
     }
   }
