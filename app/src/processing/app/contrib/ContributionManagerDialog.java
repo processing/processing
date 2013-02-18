@@ -199,7 +199,7 @@ public class ContributionManagerDialog {
       pane.add(Box.createHorizontalStrut(10), BorderLayout.EAST);
 
       status = new StatusPanel();
-      status.setBorder(new EmptyBorder(4, 7, 3, 7));
+      status.setBorder(new EmptyBorder(7, 7, 7, 7));
       pane.add(status, BorderLayout.SOUTH);
 
       

@@ -110,6 +110,7 @@ before release
 _ make decision about where coloring is stored
 _   needs to be reset for this release, maybe others
 
+
 2.0 FINAL / library/tool/mode manager cleanup
 X from Casey
 X   list in the PDE would be updated automatically by querying a web service
@@ -117,16 +118,14 @@ X   list on the website would be generated using the same web service
 X   All I would need to do is update web/contrib_generate/sources.conf 
 X     and the rest would happen automatically.
 X general cleanup of the visuals/layout
-
-high
-_ extra files still being left around during install
+X extra files still being left around during install
 X Add Mode is also reporting that it's a library that contains multiple
 X   fixed the 'library' part, and its legitimately bad
-_ Add Tool is having problems
-_   https://github.com/processing/processing/issues/1607
+X Add Tool is having problems
+X   https://github.com/processing/processing/issues/1607
 X   http://code.google.com/p/processing/issues/detail?id=1569
 X make already installed libraries distinguishable in the list
-_   https://github.com/processing/processing/issues/1250
+X   https://github.com/processing/processing/issues/1250
 X   http://code.google.com/p/processing/issues/detail?id=1212
 
 medium
@@ -147,8 +146,11 @@ _ work on the design of the list entries themselves
 _ check with Casey about coloring for error messages
 
 low
-_ wheel mouse is super jumpy
+_ after installing, the item in the manager list doesn't change color
+_ wheel mouse is super jumpy 
+_   something about unit increment in ContributionListPanel
 _ arrow keys up/down move scroll bar, not selection
+_ scrolls to bottom of window on opening
 _ excessive CPU usage of PDE after using library manager
 _   confirmed to still be a problem with b5/6
 _   https://github.com/processing/processing/issues/1074

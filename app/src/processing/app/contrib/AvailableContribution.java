@@ -100,7 +100,8 @@ class AvailableContribution extends Contribution {
       tempFolder.renameTo(contribFolder);
       tempFolder = enclosingFolder;
       */
-      status.setErrorMessage("This " + type + " needs to be repackaged according to the guidelines.");
+      status.setErrorMessage(getName() + " needs to be repackaged according to the " + type.getTitle() + " guidelines.");
+      //status.setErrorMessage("This " + type + " needs to be repackaged according to the guidelines.");
       return null;
     }
 

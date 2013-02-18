@@ -22,7 +22,6 @@
 package processing.app.contrib;
 
 import java.awt.Color;
-
 import javax.swing.JLabel;
 
 
@@ -41,7 +40,8 @@ class StatusPanel extends JLabel {
   }
   
   void setErrorMessage(String message) {
-    setForeground(Color.RED);
+    //setForeground(Color.RED);
+    setForeground(new Color(160, 0, 0));
     setText(message);
     repaint();
   }
