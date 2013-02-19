@@ -209,42 +209,42 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // Shaders
 
-  static protected URL defPolyColorShaderVertURL =
-    PGraphicsOpenGL.class.getResource("PolyColorShaderVert.glsl");
-  static protected URL defPolyTexShaderVertURL =
-    PGraphicsOpenGL.class.getResource("PolyTexShaderVert.glsl");
-  static protected URL defPolyLightShaderVertURL =
-    PGraphicsOpenGL.class.getResource("PolyLightShaderVert.glsl");
-  static protected URL defPolyTexlightShaderVertURL =
-    PGraphicsOpenGL.class.getResource("PolyTexlightShaderVert.glsl");
-  static protected URL defPolyNoTexShaderFragURL =
-    PGraphicsOpenGL.class.getResource("PolyNoTexShaderFrag.glsl");
-  static protected URL defPolyTexShaderFragURL =
-    PGraphicsOpenGL.class.getResource("PolyTexShaderFrag.glsl");
+  static protected URL defColorShaderVertURL =
+    PGraphicsOpenGL.class.getResource("ColorVert.glsl");
+  static protected URL defTextureShaderVertURL =
+    PGraphicsOpenGL.class.getResource("TextureVert.glsl");
+  static protected URL defLightShaderVertURL =
+    PGraphicsOpenGL.class.getResource("LightVert.glsl");
+  static protected URL defTexlightShaderVertURL =
+    PGraphicsOpenGL.class.getResource("TexlightVert.glsl");
+  static protected URL defColorShaderFragURL =
+    PGraphicsOpenGL.class.getResource("ColorFrag.glsl");
+  static protected URL defTextureShaderFragURL =
+    PGraphicsOpenGL.class.getResource("TextureFrag.glsl");
   static protected URL defLineShaderVertURL =
-    PGraphicsOpenGL.class.getResource("LineShaderVert.glsl");
+    PGraphicsOpenGL.class.getResource("LineVert.glsl");
   static protected URL defLineShaderFragURL =
-    PGraphicsOpenGL.class.getResource("LineShaderFrag.glsl");
+    PGraphicsOpenGL.class.getResource("LineFrag.glsl");
   static protected URL defPointShaderVertURL =
-    PGraphicsOpenGL.class.getResource("PointShaderVert.glsl");
+    PGraphicsOpenGL.class.getResource("PointVert.glsl");
   static protected URL defPointShaderFragURL =
-    PGraphicsOpenGL.class.getResource("PointShaderFrag.glsl");
+    PGraphicsOpenGL.class.getResource("PointFrag.glsl");
 
-  static protected PolyColorShader defPolyColorShader;
-  static protected PolyTexShader defPolyTexShader;
-  static protected PolyLightShader defPolyLightShader;
-  static protected PolyTexlightShader defPolyTexlightShader;
+  static protected ColorShader defColorShader;
+  static protected TexureShader defTextureShader;
+  static protected LightShader defLightShader;
+  static protected TexlightShader defTexlightShader;
   static protected LineShader defLineShader;
   static protected PointShader defPointShader;
 
   static protected URL maskShaderFragURL =
-    PGraphicsOpenGL.class.getResource("MaskShaderFrag.glsl");
-  static protected PolyTexShader maskShader;
+    PGraphicsOpenGL.class.getResource("MaskFrag.glsl");
+  static protected TexureShader maskShader;
 
-  protected PolyColorShader polyColorShader;
-  protected PolyTexShader polyTexShader;
-  protected PolyLightShader polyLightShader;
-  protected PolyTexlightShader polyTexlightShader;
+  protected ColorShader colorShader;
+  protected TexureShader textureShader;
+  protected LightShader lightShader;
+  protected TexlightShader texlightShader;
   protected LineShader lineShader;
   protected PointShader pointShader;
 
@@ -1397,10 +1397,10 @@ public class PGraphicsOpenGL extends PGraphics {
     pgl.bufferData(PGL.ARRAY_BUFFER, sizei,
                    tessGeo.lineColorsBuffer, PGL.STATIC_DRAW);
 
-    tessGeo.updateLineAttribsBuffer();
+    tessGeo.updateLineDirectionsBuffer();
     pgl.bindBuffer(PGL.ARRAY_BUFFER, glLineAttrib);
     pgl.bufferData(PGL.ARRAY_BUFFER, 4 * sizef,
-                   tessGeo.lineAttribsBuffer, PGL.STATIC_DRAW);
+                   tessGeo.lineDirectionsBuffer, PGL.STATIC_DRAW);
 
     tessGeo.updateLineIndicesBuffer();
     pgl.bindBuffer(PGL.ELEMENT_ARRAY_BUFFER, glLineIndex);
@@ -1490,10 +1490,10 @@ public class PGraphicsOpenGL extends PGraphics {
     pgl.bufferData(PGL.ARRAY_BUFFER, sizei,
                    tessGeo.pointColorsBuffer, PGL.STATIC_DRAW);
 
-    tessGeo.updatePointAttribsBuffer();
+    tessGeo.updatePointOffsetsBuffer();
     pgl.bindBuffer(PGL.ARRAY_BUFFER, glPointAttrib);
     pgl.bufferData(PGL.ARRAY_BUFFER, 2 * sizef,
-                   tessGeo.pointAttribsBuffer, PGL.STATIC_DRAW);
+                   tessGeo.pointOffsetsBuffer, PGL.STATIC_DRAW);
 
     tessGeo.updatePointIndicesBuffer();
     pgl.bindBuffer(PGL.ELEMENT_ARRAY_BUFFER, glPointIndex);
@@ -2511,7 +2511,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
     float[] vertices = tessGeo.lineVertices;
     int[] color = tessGeo.lineColors;
-    float[] attribs = tessGeo.lineAttribs;
+    float[] attribs = tessGeo.lineDirections;
     short[] indices = tessGeo.lineIndices;
 
     IndexCache cache = tessGeo.lineIndexCache;
@@ -2614,7 +2614,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
     float[] vertices = tessGeo.pointVertices;
     int[] color = tessGeo.pointColors;
-    float[] attribs = tessGeo.pointAttribs;
+    float[] attribs = tessGeo.pointOffsets;
     short[] indices = tessGeo.pointIndices;
 
     IndexCache cache = tessGeo.pointIndexCache;
@@ -5321,7 +5321,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     if (maskShader == null) {
-      maskShader = new PolyTexShader(parent, defPolyTexShaderVertURL,
+      maskShader = new TexureShader(parent, defTextureShaderVertURL,
                                              maskShaderFragURL);
     }
     maskShader.set("mask", alpha);
@@ -5363,7 +5363,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   @Override
   public void filter(PShader shader) {
-    if (!(shader instanceof PolyTexShader)) {
+    if (!(shader instanceof TexureShader)) {
       PGraphics.showWarning(INVALID_FILTER_SHADER_ERROR);
       return;
     }
@@ -5399,8 +5399,8 @@ public class PGraphicsOpenGL extends PGraphics {
     stroke = false;
 //    int prevBlendMode = blendMode;
 //    blendMode(REPLACE);
-    PolyTexShader prevTexShader = polyTexShader;
-    polyTexShader = (PolyTexShader) shader;
+    TexureShader prevTexShader = textureShader;
+    textureShader = (TexureShader) shader;
     beginShape(QUADS);
     texture(filterImage);
     vertex(0, 0, 0, 0);
@@ -5410,7 +5410,7 @@ public class PGraphicsOpenGL extends PGraphics {
     endShape();
     end2D();
 
-    polyTexShader = prevTexShader;
+    textureShader = prevTexShader;
 
     // Restoring previous configuration.
     stroke = prevStroke;
@@ -6141,17 +6141,17 @@ public class PGraphicsOpenGL extends PGraphics {
       shader = new LineShader(parent);
       shader.setVertexShader(defLineShaderVertURL);
     } else if (shaderType == PShader.TEXLIGHT) {
-      shader = new PolyTexlightShader(parent);
-      shader.setVertexShader(defPolyTexlightShaderVertURL);
+      shader = new TexlightShader(parent);
+      shader.setVertexShader(defTexlightShaderVertURL);
     } else if (shaderType == PShader.LIGHT) {
-      shader = new PolyLightShader(parent);
-      shader.setVertexShader(defPolyLightShaderVertURL);
+      shader = new LightShader(parent);
+      shader.setVertexShader(defLightShaderVertURL);
     } else if (shaderType == PShader.TEXTURE) {
-      shader = new PolyTexShader(parent);
-      shader.setVertexShader(defPolyTexShaderVertURL);
+      shader = new TexureShader(parent);
+      shader.setVertexShader(defTextureShaderVertURL);
     } else if (shaderType == PShader.COLOR) {
-      shader = new PolyColorShader(parent);
-      shader.setVertexShader(defPolyColorShaderVertURL);
+      shader = new ColorShader(parent);
+      shader.setVertexShader(defColorShaderVertURL);
     }
     shader.setFragmentShader(fragFilename);
     return shader;
@@ -6178,17 +6178,17 @@ public class PGraphicsOpenGL extends PGraphics {
         shader = new LineShader(parent);
         shader.setFragmentShader(defLineShaderFragURL);
       } else if (shaderType == PShader.TEXLIGHT) {
-        shader = new PolyTexlightShader(parent);
-        shader.setFragmentShader(defPolyTexShaderFragURL);
+        shader = new TexlightShader(parent);
+        shader.setFragmentShader(defTextureShaderFragURL);
       } else if (shaderType == PShader.LIGHT) {
-        shader = new PolyLightShader(parent);
-        shader.setFragmentShader(defPolyNoTexShaderFragURL);
+        shader = new LightShader(parent);
+        shader.setFragmentShader(defColorShaderFragURL);
       } else if (shaderType == PShader.TEXTURE) {
-        shader = new PolyTexShader(parent);
-        shader.setFragmentShader(defPolyTexShaderFragURL);
+        shader = new TexureShader(parent);
+        shader.setFragmentShader(defTextureShaderFragURL);
       } else if (shaderType == PShader.COLOR) {
-        shader = new PolyColorShader(parent);
-        shader.setFragmentShader(defPolyNoTexShaderFragURL);
+        shader = new ColorShader(parent);
+        shader.setFragmentShader(defColorShaderFragURL);
       }
       if (shader != null) {
         shader.setVertexShader(vertFilename);
@@ -6199,13 +6199,13 @@ public class PGraphicsOpenGL extends PGraphics {
       } else if (shaderType == PShader.LINE) {
         shader = new LineShader(parent, vertFilename, fragFilename);
       } else if (shaderType == PShader.TEXLIGHT) {
-        shader = new PolyTexlightShader(parent, vertFilename, fragFilename);
+        shader = new TexlightShader(parent, vertFilename, fragFilename);
       } else if (shaderType == PShader.LIGHT) {
-        shader = new PolyLightShader(parent, vertFilename, fragFilename);
+        shader = new LightShader(parent, vertFilename, fragFilename);
       } else if (shaderType == PShader.TEXTURE) {
-        shader = new PolyTexShader(parent, vertFilename, fragFilename);
+        shader = new TexureShader(parent, vertFilename, fragFilename);
       } else if (shaderType == PShader.COLOR) {
-        shader = new PolyColorShader(parent, vertFilename, fragFilename);
+        shader = new ColorShader(parent, vertFilename, fragFilename);
       }
     }
     return shader;
@@ -6223,14 +6223,14 @@ public class PGraphicsOpenGL extends PGraphics {
     flush(); // Flushing geometry drawn with a different shader.
 
     if (kind == TRIANGLES || kind == QUADS || kind == POLYGON) {
-      if (shader instanceof PolyTexShader) {
-        polyTexShader = (PolyTexShader) shader;
-      } else if (shader instanceof PolyColorShader) {
-        polyColorShader = (PolyColorShader) shader;
-      } else if (shader instanceof PolyTexlightShader) {
-        polyTexlightShader = (PolyTexlightShader) shader;
-      } else if (shader instanceof PolyLightShader) {
-        polyLightShader = (PolyLightShader) shader;
+      if (shader instanceof TexureShader) {
+        textureShader = (TexureShader) shader;
+      } else if (shader instanceof ColorShader) {
+        colorShader = (ColorShader) shader;
+      } else if (shader instanceof TexlightShader) {
+        texlightShader = (TexlightShader) shader;
+      } else if (shader instanceof LightShader) {
+        lightShader = (LightShader) shader;
       } else {
         PGraphics.showWarning(WRONG_SHADER_TYPE_ERROR);
       }
@@ -6263,10 +6263,10 @@ public class PGraphicsOpenGL extends PGraphics {
     flush(); // Flushing geometry drawn with a different shader.
 
     if (kind == TRIANGLES || kind == QUADS || kind == POLYGON) {
-      polyTexShader = null;
-      polyColorShader = null;
-      polyTexlightShader = null;
-      polyLightShader = null;
+      textureShader = null;
+      colorShader = null;
+      texlightShader = null;
+      lightShader = null;
     } else if (kind == LINES) {
       lineShader = null;
     } else if (kind == POINTS) {
@@ -6308,10 +6308,10 @@ public class PGraphicsOpenGL extends PGraphics {
     // The default shaders contains references to the PGraphics object that
     // creates them, so when restarting the renderer, those references should
     // dissapear.
-    defPolyColorShader = null;
-    defPolyTexShader = null;
-    defPolyLightShader = null;
-    defPolyTexlightShader = null;
+    defColorShader = null;
+    defTextureShader = null;
+    defLightShader = null;
+    defTexlightShader = null;
     defLineShader = null;
     defPointShader = null;
     maskShader = null;
@@ -6322,54 +6322,54 @@ public class PGraphicsOpenGL extends PGraphics {
     BaseShader shader;
     if (lit) {
       if (tex) {
-        if (polyTexlightShader == null) {
-          if (defPolyTexlightShader == null) {
-            defPolyTexlightShader = new PolyTexlightShader(parent,
-                                                   defPolyTexlightShaderVertURL,
-                                                   defPolyTexShaderFragURL);
+        if (texlightShader == null) {
+          if (defTexlightShader == null) {
+            defTexlightShader = new TexlightShader(parent,
+                                                   defTexlightShaderVertURL,
+                                                   defTextureShaderFragURL);
           }
-          shader = defPolyTexlightShader;
+          shader = defTexlightShader;
           texlightShaderCheck();
         } else {
-          shader = polyTexlightShader;
+          shader = texlightShader;
         }
       } else {
-        if (polyLightShader == null) {
-          if (defPolyLightShader == null) {
-            defPolyLightShader = new PolyLightShader(parent,
-                                                     defPolyLightShaderVertURL,
-                                                     defPolyNoTexShaderFragURL);
+        if (lightShader == null) {
+          if (defLightShader == null) {
+            defLightShader = new LightShader(parent,
+                                             defLightShaderVertURL,
+                                             defColorShaderFragURL);
           }
-          shader = defPolyLightShader;
+          shader = defLightShader;
           lightShaderCheck();
         } else {
-          shader = polyLightShader;
+          shader = lightShader;
         }
       }
     } else {
       if (tex) {
-        if (polyTexShader == null) {
-          if (defPolyTexShader == null) {
-            defPolyTexShader = new PolyTexShader(parent,
-                                                 defPolyTexShaderVertURL,
-                                                 defPolyTexShaderFragURL);
+        if (textureShader == null) {
+          if (defTextureShader == null) {
+            defTextureShader = new TexureShader(parent,
+                                                defTextureShaderVertURL,
+                                                defTextureShaderFragURL);
           }
-          shader = defPolyTexShader;
-          texShaderCheck();
+          shader = defTextureShader;
+          textureShaderCheck();
         } else {
-          shader = polyTexShader;
+          shader = textureShader;
         }
       } else {
-        if (polyColorShader == null) {
-          if (defPolyColorShader == null) {
-            defPolyColorShader = new PolyColorShader(parent,
-                                                   defPolyColorShaderVertURL,
-                                                   defPolyNoTexShaderFragURL);
+        if (colorShader == null) {
+          if (defColorShader == null) {
+            defColorShader = new ColorShader(parent,
+                                             defColorShaderVertURL,
+                                             defColorShaderFragURL);
           }
-          shader = defPolyColorShader;
+          shader = defColorShader;
           colorShaderCheck();
         } else {
-          shader = polyColorShader;
+          shader = colorShader;
         }
       }
     }
@@ -6382,9 +6382,9 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void texlightShaderCheck() {
     if (shaderWarningsEnabled &&
-        (polyLightShader != null ||
-         polyTexShader != null ||
-         polyColorShader != null)) {
+        (lightShader != null ||
+         textureShader != null ||
+         colorShader != null)) {
       PGraphics.showWarning(NO_TEXLIGHT_SHADER_ERROR);
     }
   }
@@ -6392,19 +6392,19 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void lightShaderCheck() {
     if (shaderWarningsEnabled &&
-        (polyTexlightShader != null ||
-         polyTexShader != null ||
-         polyColorShader != null)) {
+        (texlightShader != null ||
+         textureShader != null ||
+         colorShader != null)) {
       PGraphics.showWarning(NO_LIGHT_SHADER_ERROR);
     }
   }
 
 
-  protected void texShaderCheck() {
+  protected void textureShaderCheck() {
     if (shaderWarningsEnabled &&
-        (polyTexlightShader != null ||
-         polyLightShader != null ||
-         polyColorShader != null)) {
+        (texlightShader != null ||
+         lightShader != null ||
+         colorShader != null)) {
       PGraphics.showWarning(NO_TEXTURE_SHADER_ERROR);
     }
   }
@@ -6412,9 +6412,9 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void colorShaderCheck() {
     if (shaderWarningsEnabled &&
-        (polyTexlightShader != null ||
-         polyLightShader != null ||
-         polyTexShader != null)) {
+        (texlightShader != null ||
+         lightShader != null ||
+         textureShader != null)) {
       PGraphics.showWarning(NO_COLOR_SHADER_ERROR);
     }
   }
@@ -6549,20 +6549,20 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  protected class PolyColorShader extends BaseShader {
+  protected class ColorShader extends BaseShader {
     protected int vertexLoc;
     protected int colorLoc;
 
-    public PolyColorShader(PApplet parent) {
+    public ColorShader(PApplet parent) {
       super(parent);
     }
 
-    public PolyColorShader(PApplet parent, String vertFilename,
+    public ColorShader(PApplet parent, String vertFilename,
                                           String fragFilename) {
       super(parent, vertFilename, fragFilename);
     }
 
-    public PolyColorShader(PApplet parent, URL vertURL, URL fragURL) {
+    public ColorShader(PApplet parent, URL vertURL, URL fragURL) {
       super(parent, vertURL, fragURL);
     }
 
@@ -6599,7 +6599,7 @@ public class PGraphicsOpenGL extends PGraphics {
       }
 
       if (-1 < vertexLoc) pgl.enableVertexAttribArray(vertexLoc);
-      if (-1 < colorLoc)  pgl.enableVertexAttribArray(colorLoc);
+      if (-1 < colorLoc) pgl.enableVertexAttribArray(colorLoc);
 
       setCommonUniforms();
     }
@@ -6607,14 +6607,14 @@ public class PGraphicsOpenGL extends PGraphics {
     @Override
     public void unbind() {
       if (-1 < vertexLoc) pgl.disableVertexAttribArray(vertexLoc);
-      if (-1 < colorLoc)  pgl.disableVertexAttribArray(colorLoc);
+      if (-1 < colorLoc) pgl.disableVertexAttribArray(colorLoc);
 
       super.unbind();
     }
   }
 
 
-  protected class PolyLightShader extends BaseShader {
+  protected class LightShader extends BaseShader {
     protected int normalMatrixLoc;
 
     protected int lightCountLoc;
@@ -6635,16 +6635,16 @@ public class PGraphicsOpenGL extends PGraphics {
     protected int emissiveLoc;
     protected int shininessLoc;
 
-    public PolyLightShader(PApplet parent) {
+    public LightShader(PApplet parent) {
       super(parent);
     }
 
-    public PolyLightShader(PApplet parent, String vertFilename,
+    public LightShader(PApplet parent, String vertFilename,
                                            String fragFilename) {
       super(parent, vertFilename, fragFilename);
     }
 
-    public PolyLightShader(PApplet parent, URL vertURL, URL fragURL) {
+    public LightShader(PApplet parent, URL vertURL, URL fragURL) {
       super(parent, vertURL, fragURL);
     }
 
@@ -6728,13 +6728,13 @@ public class PGraphicsOpenGL extends PGraphics {
       }
 
       if (-1 < vertexLoc) pgl.enableVertexAttribArray(vertexLoc);
-      if (-1 < colorLoc)  pgl.enableVertexAttribArray(colorLoc);
+      if (-1 < colorLoc) pgl.enableVertexAttribArray(colorLoc);
       if (-1 < normalLoc) pgl.enableVertexAttribArray(normalLoc);
 
-      if (-1 < ambientLoc)  pgl.enableVertexAttribArray(ambientLoc);
+      if (-1 < ambientLoc) pgl.enableVertexAttribArray(ambientLoc);
       if (-1 < specularLoc) pgl.enableVertexAttribArray(specularLoc);
       if (-1 < emissiveLoc) pgl.enableVertexAttribArray(emissiveLoc);
-      if (-1 < shininessLoc)    pgl.enableVertexAttribArray(shininessLoc);
+      if (-1 < shininessLoc) pgl.enableVertexAttribArray(shininessLoc);
 
       if (-1 < normalMatrixLoc) {
         pgCurrent.updateGLNormal();
@@ -6748,10 +6748,9 @@ public class PGraphicsOpenGL extends PGraphics {
       setUniformVector(lightAmbientLoc, pgCurrent.lightAmbient, 3, count);
       setUniformVector(lightDiffuseLoc, pgCurrent.lightDiffuse, 3, count);
       setUniformVector(lightSpecularLoc, pgCurrent.lightSpecular, 3, count);
-      setUniformVector(lightFalloffLoc,
-                       pgCurrent.lightFalloffCoefficients, 3, count);
-      setUniformVector(lightSpotLoc,
-                       pgCurrent.lightSpotParameters, 2, count);
+      setUniformVector(lightFalloffLoc, pgCurrent.lightFalloffCoefficients,
+                       3, count);
+      setUniformVector(lightSpotLoc, pgCurrent.lightSpotParameters, 2, count);
 
       setCommonUniforms();
     }
@@ -6759,10 +6758,10 @@ public class PGraphicsOpenGL extends PGraphics {
     @Override
     public void unbind() {
       if (-1 < vertexLoc) pgl.disableVertexAttribArray(vertexLoc);
-      if (-1 < colorLoc)  pgl.disableVertexAttribArray(colorLoc);
+      if (-1 < colorLoc) pgl.disableVertexAttribArray(colorLoc);
       if (-1 < normalLoc) pgl.disableVertexAttribArray(normalLoc);
 
-      if (-1 < ambientLoc)  pgl.disableVertexAttribArray(ambientLoc);
+      if (-1 < ambientLoc) pgl.disableVertexAttribArray(ambientLoc);
       if (-1 < specularLoc) pgl.disableVertexAttribArray(specularLoc);
       if (-1 < emissiveLoc) pgl.disableVertexAttribArray(emissiveLoc);
       if (-1 < shininessLoc) pgl.disableVertexAttribArray(shininessLoc);
@@ -6772,7 +6771,7 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  protected class PolyTexShader extends PolyColorShader {
+  protected class TexureShader extends ColorShader {
     protected int texCoordLoc;
 
     protected int textureLoc;
@@ -6781,16 +6780,16 @@ public class PGraphicsOpenGL extends PGraphics {
 
     protected float[] tcmat;
 
-    public PolyTexShader(PApplet parent) {
+    public TexureShader(PApplet parent) {
       super(parent);
     }
 
-    public PolyTexShader(PApplet parent, String vertFilename,
+    public TexureShader(PApplet parent, String vertFilename,
                                          String fragFilename) {
       super(parent, vertFilename, fragFilename);
     }
 
-    public PolyTexShader(PApplet parent, URL vertURL, URL fragURL) {
+    public TexureShader(PApplet parent, URL vertURL, URL fragURL) {
       super(parent, vertURL, fragURL);
     }
 
@@ -6872,7 +6871,7 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  protected class PolyTexlightShader extends PolyLightShader {
+  protected class TexlightShader extends LightShader {
     protected int texCoordLoc;
 
     protected int textureLoc;
@@ -6881,16 +6880,16 @@ public class PGraphicsOpenGL extends PGraphics {
 
     protected float[] tcmat;
 
-    public PolyTexlightShader(PApplet parent) {
+    public TexlightShader(PApplet parent) {
       super(parent);
     }
 
-    public PolyTexlightShader(PApplet parent, String vertFilename,
+    public TexlightShader(PApplet parent, String vertFilename,
                                           String fragFilename) {
       super(parent, vertFilename, fragFilename);
     }
 
-    public PolyTexlightShader(PApplet parent, URL vertURL, URL fragURL) {
+    public TexlightShader(PApplet parent, URL vertURL, URL fragURL) {
       super(parent, vertURL, fragURL);
     }
 
@@ -6978,7 +6977,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
     protected int vertexLoc;
     protected int colorLoc;
-    protected int endpointLoc;
+    protected int directionLoc;
 
     public LineShader(PApplet parent) {
       super(parent);
@@ -6997,7 +6996,7 @@ public class PGraphicsOpenGL extends PGraphics {
     public void loadAttributes() {
       vertexLoc = getAttributeLoc("vertex");
       colorLoc = getAttributeLoc("color");
-      endpointLoc = getAttributeLoc("endpoint");
+      directionLoc = getAttributeLoc("direction");
     }
 
     @Override
@@ -7023,7 +7022,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
     public void setLineAttribute(int vboId, int size, int type,
                                  int stride, int offset) {
-      setAttributeVBO(endpointLoc, vboId, size, type, false, stride, offset);
+      setAttributeVBO(directionLoc, vboId, size, type, false, stride, offset);
     }
 
     @Override
@@ -7036,8 +7035,8 @@ public class PGraphicsOpenGL extends PGraphics {
       }
 
       if (-1 < vertexLoc) pgl.enableVertexAttribArray(vertexLoc);
-      if (-1 < colorLoc)  pgl.enableVertexAttribArray(colorLoc);
-      if (-1 < endpointLoc) pgl.enableVertexAttribArray(endpointLoc);
+      if (-1 < colorLoc) pgl.enableVertexAttribArray(colorLoc);
+      if (-1 < directionLoc) pgl.enableVertexAttribArray(directionLoc);
 
       if (pgCurrent.getHint(ENABLE_STROKE_PERSPECTIVE) &&
           pgCurrent.nonOrthoProjection()) {
@@ -7062,8 +7061,8 @@ public class PGraphicsOpenGL extends PGraphics {
     @Override
     public void unbind() {
       if (-1 < vertexLoc) pgl.disableVertexAttribArray(vertexLoc);
-      if (-1 < colorLoc)  pgl.disableVertexAttribArray(colorLoc);
-      if (-1 < endpointLoc) pgl.disableVertexAttribArray(endpointLoc);
+      if (-1 < colorLoc) pgl.disableVertexAttribArray(colorLoc);
+      if (-1 < directionLoc) pgl.disableVertexAttribArray(directionLoc);
 
       super.unbind();
     }
@@ -7131,8 +7130,8 @@ public class PGraphicsOpenGL extends PGraphics {
       }
 
       if (-1 < vertexLoc) pgl.enableVertexAttribArray(vertexLoc);
-      if (-1 < colorLoc)  pgl.enableVertexAttribArray(colorLoc);
-      if (-1 < offsetLoc)  pgl.enableVertexAttribArray(offsetLoc);
+      if (-1 < colorLoc) pgl.enableVertexAttribArray(colorLoc);
+      if (-1 < offsetLoc) pgl.enableVertexAttribArray(offsetLoc);
 
       if (pgCurrent.getHint(ENABLE_STROKE_PERSPECTIVE) &&
           pgCurrent.nonOrthoProjection()) {
@@ -7147,8 +7146,8 @@ public class PGraphicsOpenGL extends PGraphics {
     @Override
     public void unbind() {
       if (-1 < vertexLoc) pgl.disableVertexAttribArray(vertexLoc);
-      if (-1 < colorLoc)  pgl.disableVertexAttribArray(colorLoc);
-      if (-1 < offsetLoc)  pgl.disableVertexAttribArray(offsetLoc);
+      if (-1 < colorLoc) pgl.disableVertexAttribArray(colorLoc);
+      if (-1 < offsetLoc) pgl.disableVertexAttribArray(offsetLoc);
 
       super.unbind();
     }
@@ -8894,7 +8893,7 @@ public class PGraphicsOpenGL extends PGraphics {
     int lastLineVertex;
     FloatBuffer lineVerticesBuffer;
     IntBuffer lineColorsBuffer;
-    FloatBuffer lineAttribsBuffer;
+    FloatBuffer lineDirectionsBuffer;
 
     int lineIndexCount;
     int firstLineIndex;
@@ -8908,7 +8907,7 @@ public class PGraphicsOpenGL extends PGraphics {
     int lastPointVertex;
     FloatBuffer pointVerticesBuffer;
     IntBuffer pointColorsBuffer;
-    FloatBuffer pointAttribsBuffer;
+    FloatBuffer pointOffsetsBuffer;
 
     int pointIndexCount;
     int firstPointIndex;
@@ -8928,11 +8927,11 @@ public class PGraphicsOpenGL extends PGraphics {
     short[] polyIndices;
     float[] lineVertices;
     int[] lineColors;
-    float[] lineAttribs;
+    float[] lineDirections;
     short[] lineIndices;
     float[] pointVertices;
     int[] pointColors;
-    float[] pointAttribs;
+    float[] pointOffsets;
     short[] pointIndices;
 
     TessGeometry(int mode) {
@@ -8957,12 +8956,12 @@ public class PGraphicsOpenGL extends PGraphics {
 
       lineVertices = new float[4 * PGL.DEFAULT_TESS_VERTICES];
       lineColors = new int[PGL.DEFAULT_TESS_VERTICES];
-      lineAttribs = new float[4 * PGL.DEFAULT_TESS_VERTICES];
+      lineDirections = new float[4 * PGL.DEFAULT_TESS_VERTICES];
       lineIndices = new short[PGL.DEFAULT_TESS_VERTICES];
 
       pointVertices = new float[4 * PGL.DEFAULT_TESS_VERTICES];
       pointColors = new int[PGL.DEFAULT_TESS_VERTICES];
-      pointAttribs = new float[2 * PGL.DEFAULT_TESS_VERTICES];
+      pointOffsets = new float[2 * PGL.DEFAULT_TESS_VERTICES];
       pointIndices = new short[PGL.DEFAULT_TESS_VERTICES];
 
       polyVerticesBuffer = PGL.allocateFloatBuffer(polyVertices);
@@ -8977,12 +8976,12 @@ public class PGraphicsOpenGL extends PGraphics {
 
       lineVerticesBuffer = PGL.allocateFloatBuffer(lineVertices);
       lineColorsBuffer = PGL.allocateIntBuffer(lineColors);
-      lineAttribsBuffer = PGL.allocateFloatBuffer(lineAttribs);
+      lineDirectionsBuffer = PGL.allocateFloatBuffer(lineDirections);
       lineIndicesBuffer = PGL.allocateShortBuffer(lineIndices);
 
       pointVerticesBuffer = PGL.allocateFloatBuffer(pointVertices);
       pointColorsBuffer = PGL.allocateIntBuffer(pointColors);
-      pointAttribsBuffer = PGL.allocateFloatBuffer(pointAttribs);
+      pointOffsetsBuffer = PGL.allocateFloatBuffer(pointOffsets);
       pointIndicesBuffer = PGL.allocateShortBuffer(pointIndices);
 
       clear();
@@ -9075,7 +9074,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
         expandLineVertices(newSize);
         expandLineColors(newSize);
-        expandLineAttribs(newSize);
+        expandLineDirections(newSize);
       }
 
       firstLineVertex = lineVertexCount;
@@ -9103,7 +9102,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
         expandPointVertices(newSize);
         expandPointColors(newSize);
-        expandPointAttribs(newSize);
+        expandPointOffsets(newSize);
       }
 
       firstPointVertex = pointVertexCount;
@@ -9314,12 +9313,12 @@ public class PGraphicsOpenGL extends PGraphics {
       PGL.updateIntBuffer(lineColorsBuffer, lineColors, offset, size);
     }
 
-    protected void updateLineAttribsBuffer() {
-      updateLineAttribsBuffer(0, lineVertexCount);
+    protected void updateLineDirectionsBuffer() {
+      updateLineDirectionsBuffer(0, lineVertexCount);
     }
 
-    protected void updateLineAttribsBuffer(int offset, int size) {
-      PGL.updateFloatBuffer(lineAttribsBuffer, lineAttribs,
+    protected void updateLineDirectionsBuffer(int offset, int size) {
+      PGL.updateFloatBuffer(lineDirectionsBuffer, lineDirections,
                             4 * offset, 4 * size);
     }
 
@@ -9348,12 +9347,12 @@ public class PGraphicsOpenGL extends PGraphics {
       PGL.updateIntBuffer(pointColorsBuffer, pointColors, offset, size);
     }
 
-    protected void updatePointAttribsBuffer() {
-      updatePointAttribsBuffer(0, pointVertexCount);
+    protected void updatePointOffsetsBuffer() {
+      updatePointOffsetsBuffer(0, pointVertexCount);
     }
 
-    protected void updatePointAttribsBuffer(int offset, int size) {
-      PGL.updateFloatBuffer(pointAttribsBuffer, pointAttribs,
+    protected void updatePointOffsetsBuffer(int offset, int size) {
+      PGL.updateFloatBuffer(pointOffsetsBuffer, pointOffsets,
                             2 * offset, 2 * size);
     }
 
@@ -9446,11 +9445,11 @@ public class PGraphicsOpenGL extends PGraphics {
       lineColorsBuffer = PGL.allocateIntBuffer(lineColors);
     }
 
-    void expandLineAttribs(int n) {
+    void expandLineDirections(int n) {
       float temp[] = new float[4 * n];
-      PApplet.arrayCopy(lineAttribs, 0, temp, 0, 4 * lineVertexCount);
-      lineAttribs = temp;
-      lineAttribsBuffer = PGL.allocateFloatBuffer(lineAttribs);
+      PApplet.arrayCopy(lineDirections, 0, temp, 0, 4 * lineVertexCount);
+      lineDirections = temp;
+      lineDirectionsBuffer = PGL.allocateFloatBuffer(lineDirections);
     }
 
     void expandLineIndices(int n) {
@@ -9474,11 +9473,11 @@ public class PGraphicsOpenGL extends PGraphics {
       pointColorsBuffer = PGL.allocateIntBuffer(pointColors);
     }
 
-    void expandPointAttribs(int n) {
+    void expandPointOffsets(int n) {
       float temp[] = new float[2 * n];
-      PApplet.arrayCopy(pointAttribs, 0, temp, 0, 2 * pointVertexCount);
-      pointAttribs = temp;
-      pointAttribsBuffer = PGL.allocateFloatBuffer(pointAttribs);
+      PApplet.arrayCopy(pointOffsets, 0, temp, 0, 2 * pointVertexCount);
+      pointOffsets = temp;
+      pointOffsetsBuffer = PGL.allocateFloatBuffer(pointOffsets);
     }
 
     void expandPointIndices(int n) {
@@ -9511,7 +9510,7 @@ public class PGraphicsOpenGL extends PGraphics {
       if (0 < lineVertexCount && lineVertexCount < lineVertices.length / 4) {
         trimLineVertices();
         trimLineColors();
-        trimLineAttribs();
+        trimLineDirections();
       }
 
       if (0 < lineIndexCount && lineIndexCount < lineIndices.length) {
@@ -9521,7 +9520,7 @@ public class PGraphicsOpenGL extends PGraphics {
       if (0 < pointVertexCount && pointVertexCount < pointVertices.length / 4) {
         trimPointVertices();
         trimPointColors();
-        trimPointAttribs();
+        trimPointOffsets();
       }
 
       if (0 < pointIndexCount && pointIndexCount < pointIndices.length) {
@@ -9606,11 +9605,11 @@ public class PGraphicsOpenGL extends PGraphics {
       lineColorsBuffer = PGL.allocateIntBuffer(lineColors);
     }
 
-    void trimLineAttribs() {
+    void trimLineDirections() {
       float temp[] = new float[4 * lineVertexCount];
-      PApplet.arrayCopy(lineAttribs, 0, temp, 0, 4 * lineVertexCount);
-      lineAttribs = temp;
-      lineAttribsBuffer = PGL.allocateFloatBuffer(lineAttribs);
+      PApplet.arrayCopy(lineDirections, 0, temp, 0, 4 * lineVertexCount);
+      lineDirections = temp;
+      lineDirectionsBuffer = PGL.allocateFloatBuffer(lineDirections);
     }
 
     void trimLineIndices() {
@@ -9634,11 +9633,11 @@ public class PGraphicsOpenGL extends PGraphics {
       pointColorsBuffer = PGL.allocateIntBuffer(pointColors);
     }
 
-    void trimPointAttribs() {
+    void trimPointOffsets() {
       float temp[] = new float[2 * pointVertexCount];
-      PApplet.arrayCopy(pointAttribs, 0, temp, 0, 2 * pointVertexCount);
-      pointAttribs = temp;
-      pointAttribsBuffer = PGL.allocateFloatBuffer(pointAttribs);
+      PApplet.arrayCopy(pointOffsets, 0, temp, 0, 2 * pointVertexCount);
+      pointOffsets = temp;
+      pointOffsetsBuffer = PGL.allocateFloatBuffer(pointOffsets);
     }
 
     void trimPointIndices() {
@@ -9787,10 +9786,10 @@ public class PGraphicsOpenGL extends PGraphics {
 
       lineColors[tessIdx] = rgba;
       index = 4 * tessIdx;
-      lineAttribs[index++] = 0;
-      lineAttribs[index++] = 0;
-      lineAttribs[index++] = 0;
-      lineAttribs[index  ] = 0;
+      lineDirections[index++] = 0;
+      lineDirections[index++] = 0;
+      lineDirections[index++] = 0;
+      lineDirections[index  ] = 0;
     }
 
     // Sets line vertex with index tessIdx using the data from input vertices
@@ -9809,6 +9808,10 @@ public class PGraphicsOpenGL extends PGraphics {
       float y1 = in.vertices[index++];
       float z1 = in.vertices[index  ];
 
+      float dx = x1 - x0;
+      float dy = y1 - y0;
+      float dz = z1 - z0;
+
       if (renderMode == IMMEDIATE && flushMode == FLUSH_WHEN_FULL) {
         PMatrix3D mm = modelview;
 
@@ -9819,9 +9822,9 @@ public class PGraphicsOpenGL extends PGraphics {
         lineVertices[index  ] = x0*mm.m30 + y0*mm.m31 + z0*mm.m32 + mm.m33;
 
         index = 4 * tessIdx;
-        lineAttribs[index++] = x1*mm.m00 + y1*mm.m01 + z1*mm.m02 + mm.m03;
-        lineAttribs[index++] = x1*mm.m10 + y1*mm.m11 + z1*mm.m12 + mm.m13;
-        lineAttribs[index  ] = x1*mm.m20 + y1*mm.m21 + z1*mm.m22 + mm.m23;
+        lineDirections[index++] = dx*mm.m00 + dy*mm.m01 + dz*mm.m02;
+        lineDirections[index++] = dx*mm.m10 + dy*mm.m11 + dz*mm.m12;
+        lineDirections[index  ] = dx*mm.m20 + dy*mm.m21 + dz*mm.m22;
       } else {
         index = 4 * tessIdx;
         lineVertices[index++] = x0;
@@ -9830,13 +9833,13 @@ public class PGraphicsOpenGL extends PGraphics {
         lineVertices[index  ] = 1;
 
         index = 4 * tessIdx;
-        lineAttribs[index++] = x1;
-        lineAttribs[index++] = y1;
-        lineAttribs[index  ] = z1;
+        lineDirections[index++] = dx;
+        lineDirections[index++] = dy;
+        lineDirections[index  ] = dz;
       }
 
       lineColors[tessIdx] = rgba;
-      lineAttribs[4 * tessIdx + 3] = weight;
+      lineDirections[4 * tessIdx + 3] = weight;
     }
 
     // -----------------------------------------------------------------
@@ -10094,16 +10097,19 @@ public class PGraphicsOpenGL extends PGraphics {
           float y = lineVertices[index  ];
 
           index = 4 * i;
-          float xa = lineAttribs[index++];
-          float ya = lineAttribs[index  ];
+          float xa = lineDirections[index++];
+          float ya = lineDirections[index  ];
+
+          float dx = xa - x;
+          float dy = ya - y;
 
           index = 4 * i;
           lineVertices[index++] = x*tr.m00 + y*tr.m01 + tr.m02;
           lineVertices[index  ] = x*tr.m10 + y*tr.m11 + tr.m12;
 
           index = 4 * i;
-          lineAttribs[index++] = xa*tr.m00 + ya*tr.m01 + tr.m02;
-          lineAttribs[index  ] = xa*tr.m10 + ya*tr.m11 + tr.m12;
+          lineDirections[index++] = dx*tr.m00 + dy*tr.m01;
+          lineDirections[index  ] = dx*tr.m10 + dy*tr.m11;
         }
       }
     }
@@ -10166,9 +10172,13 @@ public class PGraphicsOpenGL extends PGraphics {
           float w = lineVertices[index  ];
 
           index = 4 * i;
-          float xa = lineAttribs[index++];
-          float ya = lineAttribs[index++];
-          float za = lineAttribs[index  ];
+          float xa = lineDirections[index++];
+          float ya = lineDirections[index++];
+          float za = lineDirections[index  ];
+
+          float dx = xa - x;
+          float dy = ya - y;
+          float dz = za - z;
 
           index = 4 * i;
           lineVertices[index++] = x*tr.m00 + y*tr.m01 + z*tr.m02 + w*tr.m03;
@@ -10177,9 +10187,9 @@ public class PGraphicsOpenGL extends PGraphics {
           lineVertices[index  ] = x*tr.m30 + y*tr.m31 + z*tr.m32 + w*tr.m33;
 
           index = 4 * i;
-          lineAttribs[index++] = xa*tr.m00 + ya*tr.m01 + za*tr.m02 + tr.m03;
-          lineAttribs[index++] = xa*tr.m10 + ya*tr.m11 + za*tr.m12 + tr.m13;
-          lineAttribs[index  ] = xa*tr.m20 + ya*tr.m21 + za*tr.m22 + tr.m23;
+          lineDirections[index++] = dx*tr.m00 + dy*tr.m01 + dz*tr.m02;
+          lineDirections[index++] = dx*tr.m10 + dy*tr.m11 + dz*tr.m12;
+          lineDirections[index  ] = dx*tr.m20 + dy*tr.m21 + dz*tr.m22;
         }
       }
     }
@@ -10384,15 +10394,15 @@ public class PGraphicsOpenGL extends PGraphics {
         // the circle perimeter. The point shader will read these attributes and
         // displace the vertices in screen coordinates so the circles are always
         // camera facing (bilboards)
-        tess.pointAttribs[2 * attribIdx + 0] = 0;
-        tess.pointAttribs[2 * attribIdx + 1] = 0;
+        tess.pointOffsets[2 * attribIdx + 0] = 0;
+        tess.pointOffsets[2 * attribIdx + 1] = 0;
         attribIdx++;
         float val = 0;
         float inc = (float) SINCOS_LENGTH / perim;
         for (int k = 0; k < perim; k++) {
-          tess.pointAttribs[2 * attribIdx + 0] =
+          tess.pointOffsets[2 * attribIdx + 0] =
             0.5f * cosLUT[(int) val] * strokeWeight;
-          tess.pointAttribs[2 * attribIdx + 1] =
+          tess.pointOffsets[2 * attribIdx + 1] =
             0.5f * sinLUT[(int) val] * strokeWeight;
           val = (val + inc) % SINCOS_LENGTH;
           attribIdx++;
@@ -10515,13 +10525,13 @@ public class PGraphicsOpenGL extends PGraphics {
         // the quad corners. The point shader will read these attributes and
         // displace the vertices in screen coordinates so the quads are always
         // camera facing (bilboards)
-        tess.pointAttribs[2 * attribIdx + 0] = 0;
-        tess.pointAttribs[2 * attribIdx + 1] = 0;
+        tess.pointOffsets[2 * attribIdx + 0] = 0;
+        tess.pointOffsets[2 * attribIdx + 1] = 0;
         attribIdx++;
         for (int k = 0; k < 4; k++) {
-          tess.pointAttribs[2 * attribIdx + 0] =
+          tess.pointOffsets[2 * attribIdx + 0] =
             0.5f * QUAD_POINT_SIGNS[k][0] * strokeWeight;
-          tess.pointAttribs[2 * attribIdx + 1] =
+          tess.pointOffsets[2 * attribIdx + 1] =
             0.5f * QUAD_POINT_SIGNS[k][1] * strokeWeight;
           attribIdx++;
         }
