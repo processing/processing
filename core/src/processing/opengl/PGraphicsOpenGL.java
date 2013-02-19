@@ -6355,7 +6355,7 @@ public class PGraphicsOpenGL extends PGraphics {
                                                  defTextureShaderFragURL);
           }
           shader = defTextureShader;
-          texShaderCheck();
+          textureShaderCheck();
         } else {
           shader = textureShader;
         }
@@ -6400,7 +6400,7 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  protected void texShaderCheck() {
+  protected void textureShaderCheck() {
     if (shaderWarningsEnabled &&
         (texlightShader != null ||
          lightShader != null ||
