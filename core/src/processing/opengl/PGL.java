@@ -61,7 +61,6 @@ import com.jogamp.newt.awt.NewtCanvasAWT;
 import com.jogamp.newt.event.InputEvent;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.FBObject;
-import com.jogamp.opengl.util.AnimatorBase;
 
 /**
  * Processing-OpenGL abstraction layer.
@@ -150,6 +149,7 @@ public class PGL {
       events = AWT;
     } else if (PApplet.platform == PConstants.LINUX) {
       toolkit = NEWT; // AWT extremely broken on Linux?
+      events = NEWT;
     } else if (PApplet.platform == PConstants.OTHER) {
       toolkit = NEWT; // NEWT should work on the Raspberry pi
       events = NEWT;
