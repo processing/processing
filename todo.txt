@@ -68,6 +68,8 @@ X   patch from John Li (jli@circularly.org)
 X readlink error when running processing-java
 X   patch from richard@crash.net.nz
 X   http://code.google.com/p/processing/issues/detail?id=1578
+o add Iterator as an import?
+X   nope, added warning message instead
 
 manindra
 M bug that was causing the Debugger to point to wrong break point line numbers
@@ -92,12 +94,10 @@ o   if sketch was open, then restart by dragging the .pde to p5.app
 
 https://processing-js.lighthouseapp.com/
 
-library changes
+library changes (site only?)
 _ remove netscape.javascript stuff
 _ move minim out to its own contrib section
 _ move arduino out to its own library
-
-_ add Iterator as an import?
 
 _ remove sketch.properties when moving back to the default?
 _   or can we not do this, because the next mode needs this?
@@ -127,38 +127,41 @@ X   http://code.google.com/p/processing/issues/detail?id=1569
 X make already installed libraries distinguishable in the list
 X   https://github.com/processing/processing/issues/1250
 X   http://code.google.com/p/processing/issues/detail?id=1212
+X work on the design of the list entries themselves
+X add "Installed" indicator? or show the Remove button?
+X using "Add Library" requires restart of Processing before lib recognized
+X   https://github.com/processing/processing/issues/1425
+X   http://code.google.com/p/processing/issues/detail?id=1387
 
 medium
-_ highlight color seems to be incorrect?
 _ Contributed modes should show up in mode menu after installation
+_   waiting for fixed CoffeeScript mode to test this one
 _   https://github.com/processing/processing/issues/1504
 X   http://code.google.com/p/processing/issues/detail?id=1466
-_ using "Add Library" requires restart of Processing before lib recognized
-_   https://github.com/processing/processing/issues/1425
-X   http://code.google.com/p/processing/issues/detail?id=1387
 _ new libraries not picked up when changing sketchbook location
-_ make sure it can run w/o a network connection
+_ make sure contrib manager can run w/o a network connection
 _   or if a bad document comes through, it can recover
 _ gracefully recover from proxy problems
 _   https://github.com/processing/processing/issues/1601
 _ alternating blue/white backgrounds aren't updated after changing filter
-_   just need to call a repaint() after selection change?
-_ move styling to separate constants that are more accessible
-_ work on the design of the list entries themselves
+_   just need to call a repaint() after a filter change?
 _ check with Casey about coloring for error messages
 _ test on Windows and Linux
-_ add "Installed" indicator? or show the Remove button?
+_ scrolls to bottom of window after updating the list
 
 low
+_ font size for "Downloading" on progress bar is too large
+_   but changing the size breaks the vertical centering
+_ highlight color seems to be incorrect?
 _ after installing, the item in the manager list doesn't change color
 _ wheel mouse is super jumpy 
 _   something about unit increment in ContributionListPanel
 _ arrow keys up/down move scroll bar, not selection
-_ scrolls to bottom of window on opening
 _ excessive CPU usage of PDE after using library manager
 _   confirmed to still be a problem with b5/6
 _   https://github.com/processing/processing/issues/1074
 X   http://code.google.com/p/processing/issues/detail?id=1036
+_ move styling to separate constants that are more accessible
 
 
 2.0 FINAL / new interface

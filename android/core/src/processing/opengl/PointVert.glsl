@@ -32,9 +32,9 @@ attribute vec2 offset;
 
 varying vec4 vertColor;
 
-vec4 windowToClipVector(vec2 window, vec4 viewport, float clip_w) {
+vec4 windowToClipVector(vec2 window, vec4 viewport, float clipw) {
   vec2 xypos = (window / viewport.zw) * 2.0;
-  return vec4(xypos, 0.0, 0.0) * clip_w;
+  return vec4(xypos, 0.0, 0.0) * clipw;
 }  
 
 void main() {

@@ -293,7 +293,7 @@ public abstract class LocalContribution extends Contribution {
     new Thread(new Runnable() {
       public void run() {
         remove(editor,
-               (pm != null) ? pm : new NullProgressMonitor(),
+               pm,
                status, 
                ContributionListing.getInstance()); 
       }

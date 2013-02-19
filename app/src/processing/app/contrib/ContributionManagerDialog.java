@@ -98,10 +98,10 @@ public class ContributionManagerDialog {
       updateContributionListing();
 
     } else {
-      contribListing.downloadAvailableList(new AbstractProgressMonitor() {
-        public void startTask(String name, int maxValue) {
-        }
-
+      contribListing.downloadAvailableList(new ProgressMonitor() {
+//        public void startTask(String name, int maxValue) {
+//        }
+//
         public void finished() {
           super.finished();
 

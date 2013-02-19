@@ -42,6 +42,7 @@ public class Compiler {
     importSuggestions.put("Arrays", "java.util.Arrays");
     importSuggestions.put("Collections", "java.util.Collections");
     importSuggestions.put("Date", "java.util.Date");
+    importSuggestions.put("Frame", "java.awt.Frame");
     importSuggestions.put("Iterator", "java.util.Iterator");
   }
   

@@ -29,7 +29,7 @@ uniform vec3 scale;
 
 attribute vec4 vertex;
 attribute vec4 color;
-attribute vec4 endpoint;
+attribute vec4 direction;
 
 varying vec4 vertColor;
 
@@ -45,42 +45,40 @@ vec4 windowToClipVector(vec2 window, vec4 viewport, float clip_w) {
 }  
   
 void main() {
-  vec4 pos_p = vertex;
-  vec4 v_p = modelview * pos_p;  
+  vec4 posp = modelview * vertex;
+    
   // Moving vertices slightly toward the camera
   // to avoid depth-fighting with the fill triangles.
   // Discussed here:
   // http://www.opengl.org/discussion_boards/ubbthreads.php?ubb=showflat&Number=252848  
-  v_p.xyz = v_p.xyz * scale;
-  vec4 clip_p = projection * v_p;
-  float thickness = endpoint.w;
+  posp.xyz = posp.xyz * scale;
+  vec4 clipp = projection * posp;
+  float thickness = direction.w;
   
   if (thickness != 0.0) {  
-    vec4 pos_q = vec4(endpoint.xyz, 1);
-    vec4 v_q = modelview * pos_q;
-    v_q.xyz = v_q.xyz * scale;  
-    vec4 clip_q = projection * v_q; 
+    vec4 posq = posp + modelview * vec4(direction.xyz, 1);
+    posq.xyz = posq.xyz * scale;  
+    vec4 clipq = projection * posq; 
   
-    vec3 window_p = clipToWindow(clip_p, viewport); 
-    vec3 window_q = clipToWindow(clip_q, viewport); 
+    vec3 window_p = clipToWindow(clipp, viewport); 
+    vec3 window_q = clipToWindow(clipq, viewport); 
     vec3 tangent = window_q - window_p;
     
     vec2 perp = normalize(vec2(-tangent.y, tangent.x));
-    vec2 window_offset = perp * thickness;
+    vec2 offset = perp * thickness;
 
     if (0 < perspective) {
       // Perspective correction (lines will look thiner as they move away 
       // from the view position).  
-      gl_Position.xy = clip_p.xy + window_offset.xy;
-      gl_Position.zw = clip_p.zw;
+      gl_Position.xy = clipp.xy + offset.xy;
+      gl_Position.zw = clipp.zw;
     } else {
       // No perspective correction.	
-      float clip_p_w = clip_p.w;
-      vec4 offset_p = windowToClipVector(window_offset, viewport, clip_p_w);
-      gl_Position = clip_p + offset_p;
+      vec4 offsetp = windowToClipVector(offset, viewport, clipp.w);
+      gl_Position = clipp + offsetp;
     }  
   } else {
-    gl_Position = clip_p;
+    gl_Position = clipp;
   }
   
   vertColor = color;
