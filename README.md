@@ -17,10 +17,15 @@ The [processing-web](https://github.com/processing/processing-web/) repository
 contains reference, examples, and the site. 
 (Please use that link to file issues regarding the web site, the examples, or the reference.)
 
-Someday maybe I'll even take the time to update the build instructions, write code style guidelines, 
-fix all these bugs, throw together hundreds of unit tests, and solve the Israeli-Palestinian conflict. 
+The instructions for building the source [are here](https://github.com/processing/processing/wiki/Build-Instructions), 
+although they [need an update](https://github.com/processing/processing/issues/1629).
 
-But in the meantime, I ask for your patience, participation, and patches.
+Someday we'll also write code style guidelines, fix all these bugs, 
+throw together hundreds of unit tests, and solve the Israeli-Palestinian conflict. 
+
+But in the meantime, I ask for your patience, 
+[participation](https://github.com/processing/processing/wiki/Project-List), 
+and [patches](https://github.com/processing/processing/pulls).
 
 Ben Fry, 3 February 2013
-Last updated 11 February 2013
+Last updated 19 February 2013
