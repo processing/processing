@@ -34,8 +34,6 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 import java.util.Arrays;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
@@ -157,9 +155,6 @@ public class PGL {
       events = NEWT;
     }
   }
-
-  /** Enables/disables use of animator */
-  protected static boolean useAnimator = false;
 
   protected static int request_depth_bits = 24;
   protected static int request_stencil_bits = 8;
@@ -416,9 +411,6 @@ public class PGL {
   /** The listener that fires the frame rendering in Processing */
   protected static PGLListener listener;
 
-  /** Animator to drive the rendering thread */
-//  protected static PGLAnimator animator;
-
   /** Desired target framerate */
   protected float targetFramerate = 60;
   protected boolean setFramerate = false;
@@ -589,18 +581,10 @@ public class PGL {
     } else {
       // Restarting...
       if (canvasAWT != null) {
-//        if (useAnimator) {
-//          animator.stop();
-//          animator.remove(canvasAWT);
-//        }
         canvasAWT.removeGLEventListener(listener);
         pg.parent.removeListeners(canvasAWT);
         pg.parent.remove(canvasAWT);
       } else if (canvasNEWT != null) {
-//        if (useAnimator) {
-//          animator.stop();
-//          animator.remove(window);
-//        }
         window.removeGLEventListener(listener);
         pg.parent.remove(canvasNEWT);
       }
@@ -645,10 +629,6 @@ public class PGL {
 
       listener = new PGLListener();
       canvasAWT.addGLEventListener(listener);
-//      if (useAnimator) {
-//        animator = new PGLAnimator(canvasAWT);
-//        animator.start();
-//      }
     } else if (toolkit == NEWT) {
       window = GLWindow.create(caps);
       canvasNEWT = new NewtCanvasAWT(window);
@@ -678,10 +658,6 @@ public class PGL {
 
       listener = new PGLListener();
       window.addGLEventListener(listener);
-//      if (useAnimator) {
-//        animator = new PGLAnimator(window);
-//        animator.start();
-//      }
     }
 
     fboLayerCreated = false;
@@ -1203,16 +1179,6 @@ public class PGL {
         } else if (toolkit == NEWT) {
           window.display();
         }
-
-//        if (useAnimator) {
-//          animator.requestDisplay();
-//        } else {
-//          if (toolkit == AWT) {
-//            canvasAWT.display();
-//          } else if (toolkit == NEWT) {
-//            window.display();
-//          }
-//        }
       } catch (GLException e) {
         // Unwrap GLException so that only the causing exception is shown.
         Throwable tr = e.getCause();
@@ -3433,141 +3399,4 @@ public class PGL {
       nativeKeyEvent(e, KeyEvent.TYPE);
     }
   }
-
-  /*
-  // Animator to drive render loop.
-  protected static class PGLAnimator extends AnimatorBase {
-    private static int count = 0;
-    private Timer timer = null;
-    private Task task = null;
-
-    @Override
-    protected String getBaseName(String prefix) {
-      return prefix + "PGLAnimator";
-    }
-
-    // Creates an CustomAnimator with an initial drawable to animate.
-    public PGLAnimator(GLAutoDrawable drawable) {
-      if (drawable != null) {
-        add(drawable);
-      }
-    }
-
-    public void requestDisplay() {
-      if (task != null) {
-        task.shouldRun();
-      }
-    }
-
-    @Override
-    public final boolean isStarted() {
-      stateSync.lock();
-      try {
-        return (timer != null);
-      } finally {
-        stateSync.unlock();
-      }
-    }
-
-    public final boolean isAnimating() {
-      stateSync.lock();
-      try {
-        return (timer != null) && (task != null);
-      } finally {
-        stateSync.unlock();
-      }
-    }
-
-    private void startTask() {
-      if (null != task) {
-        return;
-      }
-
-      task = new Task();
-      fpsCounter.resetFPSCounter();
-      timer.schedule(task, 0, 1);
-    }
-
-    public synchronized boolean  start() {
-      if (timer != null) {
-        return false;
-      }
-      stateSync.lock();
-      try {
-        timer = new Timer();
-        startTask();
-      } finally {
-        stateSync.unlock();
-      }
-      return true;
-    }
-
-    // Stops this CustomAnimator.
-    public synchronized boolean stop() {
-      if (timer == null) {
-        return false;
-      }
-      stateSync.lock();
-      try {
-        if (null != task) {
-          task.cancel();
-          task = null;
-        }
-        if (null != timer) {
-          timer.cancel();
-          timer = null;
-        }
-        animThread = null;
-        try {
-          Thread.sleep(20); // ~ 1/60 hz wait, since we can't ctrl stopped threads
-        } catch (InterruptedException e) { }
-      } finally {
-        stateSync.unlock();
-      }
-      return true;
-    }
-
-    public final boolean isPaused() { return false; }
-    public synchronized boolean resume() { return false; }
-    public synchronized boolean pause() { return false; }
-
-    private class Task extends TimerTask {
-      private boolean firstRun = true;
-      private boolean shouldRun = false;
-
-      public void shouldRun() {
-        synchronized (this) {
-          shouldRun = true;
-        }
-      }
-
-      @Override
-      public void run() {
-        if (firstRun) {
-          Thread.currentThread().setName("PGL-RenderQueue-" + count);
-          firstRun = false;
-          count++;
-        }
-        if (shouldRun) {
-          PGLAnimator.this.animThread = Thread.currentThread();
-          // display impl. uses synchronized block on the animator instance
-          display();
-          synchronized (this) {
-            // done with current frame.
-            shouldRun = false;
-          }
-        }
-      }
-
-      @Override
-      public boolean cancel() {
-        synchronized (this) {
-          // done with current frame.
-          shouldRun = false;
-        }
-        return super.cancel();
-      }
-    }
-  }
-  */
 }
