@@ -10202,6 +10202,16 @@ public class PApplet extends Applet
       argIndex++;
     }
 
+    // Now that sketch path is passed in args after the sketch name
+    // it's not set in the above loop(the above loop breaks after
+    // finding sketch name). So setting sketch path here.
+    for (int i = 0; i < args.length; i++) {
+      if(args[i].startsWith(ARGS_SKETCH_FOLDER)){
+        folder = args[i].substring(args[i].indexOf('=') + 1);
+        //System.err.println("SF set " + folder);
+      }
+    }
+
     // Set this property before getting into any GUI init code
     //System.setProperty("com.apple.mrj.application.apple.menu.about.name", name);
     // This )*)(*@#$ Apple crap don't work no matter where you put it
