@@ -50,6 +50,10 @@
        being available. We could do hoops to add the special case, 
        or we can require JDK 7. No time to implement the special case.
   -->
+  <!-- OS X gets a second chance that covers JDK 6, 
+       a necessity for building on OS X 10.6. -->
+  <available file="/System/Library/Frameworks/JavaVM.framework/Classes/classes.jar" property="java_tools_found" />
+
   <fail if="macosx" unless="java_tools_found"
 	message="To build on OS X, you must have JDK 7 (not just the plugin, and not just Apple's Java) installed. Then add this line: ${line.separator}export JAVA_HOME=`/usr/libexec/java_home`${line.separator}to ~/.profile and open a new Terminal window." />
 
