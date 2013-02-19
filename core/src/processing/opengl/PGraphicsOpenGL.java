@@ -6337,8 +6337,8 @@ public class PGraphicsOpenGL extends PGraphics {
         if (lightShader == null) {
           if (defLightShader == null) {
             defLightShader = new LightShader(parent,
-                                                     defLightShaderVertURL,
-                                                     defColorShaderFragURL);
+                                             defLightShaderVertURL,
+                                             defColorShaderFragURL);
           }
           shader = defLightShader;
           lightShaderCheck();
@@ -6351,8 +6351,8 @@ public class PGraphicsOpenGL extends PGraphics {
         if (textureShader == null) {
           if (defTextureShader == null) {
             defTextureShader = new TexureShader(parent,
-                                                 defTextureShaderVertURL,
-                                                 defTextureShaderFragURL);
+                                                defTextureShaderVertURL,
+                                                defTextureShaderFragURL);
           }
           shader = defTextureShader;
           textureShaderCheck();
@@ -6363,8 +6363,8 @@ public class PGraphicsOpenGL extends PGraphics {
         if (colorShader == null) {
           if (defColorShader == null) {
             defColorShader = new ColorShader(parent,
-                                                   defColorShaderVertURL,
-                                                   defColorShaderFragURL);
+                                             defColorShaderVertURL,
+                                             defColorShaderFragURL);
           }
           shader = defColorShader;
           colorShaderCheck();
@@ -6599,7 +6599,7 @@ public class PGraphicsOpenGL extends PGraphics {
       }
 
       if (-1 < vertexLoc) pgl.enableVertexAttribArray(vertexLoc);
-      if (-1 < colorLoc)  pgl.enableVertexAttribArray(colorLoc);
+      if (-1 < colorLoc) pgl.enableVertexAttribArray(colorLoc);
 
       setCommonUniforms();
     }
@@ -6607,7 +6607,7 @@ public class PGraphicsOpenGL extends PGraphics {
     @Override
     public void unbind() {
       if (-1 < vertexLoc) pgl.disableVertexAttribArray(vertexLoc);
-      if (-1 < colorLoc)  pgl.disableVertexAttribArray(colorLoc);
+      if (-1 < colorLoc) pgl.disableVertexAttribArray(colorLoc);
 
       super.unbind();
     }
@@ -6728,13 +6728,13 @@ public class PGraphicsOpenGL extends PGraphics {
       }
 
       if (-1 < vertexLoc) pgl.enableVertexAttribArray(vertexLoc);
-      if (-1 < colorLoc)  pgl.enableVertexAttribArray(colorLoc);
+      if (-1 < colorLoc) pgl.enableVertexAttribArray(colorLoc);
       if (-1 < normalLoc) pgl.enableVertexAttribArray(normalLoc);
 
-      if (-1 < ambientLoc)  pgl.enableVertexAttribArray(ambientLoc);
+      if (-1 < ambientLoc) pgl.enableVertexAttribArray(ambientLoc);
       if (-1 < specularLoc) pgl.enableVertexAttribArray(specularLoc);
       if (-1 < emissiveLoc) pgl.enableVertexAttribArray(emissiveLoc);
-      if (-1 < shininessLoc)    pgl.enableVertexAttribArray(shininessLoc);
+      if (-1 < shininessLoc) pgl.enableVertexAttribArray(shininessLoc);
 
       if (-1 < normalMatrixLoc) {
         pgCurrent.updateGLNormal();
@@ -6748,10 +6748,9 @@ public class PGraphicsOpenGL extends PGraphics {
       setUniformVector(lightAmbientLoc, pgCurrent.lightAmbient, 3, count);
       setUniformVector(lightDiffuseLoc, pgCurrent.lightDiffuse, 3, count);
       setUniformVector(lightSpecularLoc, pgCurrent.lightSpecular, 3, count);
-      setUniformVector(lightFalloffLoc,
-                       pgCurrent.lightFalloffCoefficients, 3, count);
-      setUniformVector(lightSpotLoc,
-                       pgCurrent.lightSpotParameters, 2, count);
+      setUniformVector(lightFalloffLoc, pgCurrent.lightFalloffCoefficients,
+                       3, count);
+      setUniformVector(lightSpotLoc, pgCurrent.lightSpotParameters, 2, count);
 
       setCommonUniforms();
     }
@@ -6759,10 +6758,10 @@ public class PGraphicsOpenGL extends PGraphics {
     @Override
     public void unbind() {
       if (-1 < vertexLoc) pgl.disableVertexAttribArray(vertexLoc);
-      if (-1 < colorLoc)  pgl.disableVertexAttribArray(colorLoc);
+      if (-1 < colorLoc) pgl.disableVertexAttribArray(colorLoc);
       if (-1 < normalLoc) pgl.disableVertexAttribArray(normalLoc);
 
-      if (-1 < ambientLoc)  pgl.disableVertexAttribArray(ambientLoc);
+      if (-1 < ambientLoc) pgl.disableVertexAttribArray(ambientLoc);
       if (-1 < specularLoc) pgl.disableVertexAttribArray(specularLoc);
       if (-1 < emissiveLoc) pgl.disableVertexAttribArray(emissiveLoc);
       if (-1 < shininessLoc) pgl.disableVertexAttribArray(shininessLoc);
@@ -7036,7 +7035,7 @@ public class PGraphicsOpenGL extends PGraphics {
       }
 
       if (-1 < vertexLoc) pgl.enableVertexAttribArray(vertexLoc);
-      if (-1 < colorLoc)  pgl.enableVertexAttribArray(colorLoc);
+      if (-1 < colorLoc) pgl.enableVertexAttribArray(colorLoc);
       if (-1 < directionLoc) pgl.enableVertexAttribArray(directionLoc);
 
       if (pgCurrent.getHint(ENABLE_STROKE_PERSPECTIVE) &&
@@ -7062,7 +7061,7 @@ public class PGraphicsOpenGL extends PGraphics {
     @Override
     public void unbind() {
       if (-1 < vertexLoc) pgl.disableVertexAttribArray(vertexLoc);
-      if (-1 < colorLoc)  pgl.disableVertexAttribArray(colorLoc);
+      if (-1 < colorLoc) pgl.disableVertexAttribArray(colorLoc);
       if (-1 < directionLoc) pgl.disableVertexAttribArray(directionLoc);
 
       super.unbind();
@@ -7131,8 +7130,8 @@ public class PGraphicsOpenGL extends PGraphics {
       }
 
       if (-1 < vertexLoc) pgl.enableVertexAttribArray(vertexLoc);
-      if (-1 < colorLoc)  pgl.enableVertexAttribArray(colorLoc);
-      if (-1 < offsetLoc)  pgl.enableVertexAttribArray(offsetLoc);
+      if (-1 < colorLoc) pgl.enableVertexAttribArray(colorLoc);
+      if (-1 < offsetLoc) pgl.enableVertexAttribArray(offsetLoc);
 
       if (pgCurrent.getHint(ENABLE_STROKE_PERSPECTIVE) &&
           pgCurrent.nonOrthoProjection()) {
@@ -7147,8 +7146,8 @@ public class PGraphicsOpenGL extends PGraphics {
     @Override
     public void unbind() {
       if (-1 < vertexLoc) pgl.disableVertexAttribArray(vertexLoc);
-      if (-1 < colorLoc)  pgl.disableVertexAttribArray(colorLoc);
-      if (-1 < offsetLoc)  pgl.disableVertexAttribArray(offsetLoc);
+      if (-1 < colorLoc) pgl.disableVertexAttribArray(colorLoc);
+      if (-1 < offsetLoc) pgl.disableVertexAttribArray(offsetLoc);
 
       super.unbind();
     }
