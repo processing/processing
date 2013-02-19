@@ -1397,10 +1397,10 @@ public class PGraphicsOpenGL extends PGraphics {
     pgl.bufferData(PGL.ARRAY_BUFFER, sizei,
                    tessGeo.lineColorsBuffer, PGL.STATIC_DRAW);
 
-    tessGeo.updateLineAttribsBuffer();
+    tessGeo.updateLineDirectionsBuffer();
     pgl.bindBuffer(PGL.ARRAY_BUFFER, glLineAttrib);
     pgl.bufferData(PGL.ARRAY_BUFFER, 4 * sizef,
-                   tessGeo.lineAttribsBuffer, PGL.STATIC_DRAW);
+                   tessGeo.lineDirectionsBuffer, PGL.STATIC_DRAW);
 
     tessGeo.updateLineIndicesBuffer();
     pgl.bindBuffer(PGL.ELEMENT_ARRAY_BUFFER, glLineIndex);
@@ -1490,10 +1490,10 @@ public class PGraphicsOpenGL extends PGraphics {
     pgl.bufferData(PGL.ARRAY_BUFFER, sizei,
                    tessGeo.pointColorsBuffer, PGL.STATIC_DRAW);
 
-    tessGeo.updatePointAttribsBuffer();
+    tessGeo.updatePointOffsetsBuffer();
     pgl.bindBuffer(PGL.ARRAY_BUFFER, glPointAttrib);
     pgl.bufferData(PGL.ARRAY_BUFFER, 2 * sizef,
-                   tessGeo.pointAttribsBuffer, PGL.STATIC_DRAW);
+                   tessGeo.pointOffsetsBuffer, PGL.STATIC_DRAW);
 
     tessGeo.updatePointIndicesBuffer();
     pgl.bindBuffer(PGL.ELEMENT_ARRAY_BUFFER, glPointIndex);
@@ -2511,7 +2511,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
     float[] vertices = tessGeo.lineVertices;
     int[] color = tessGeo.lineColors;
-    float[] attribs = tessGeo.lineAttribs;
+    float[] attribs = tessGeo.lineDirections;
     short[] indices = tessGeo.lineIndices;
 
     IndexCache cache = tessGeo.lineIndexCache;
@@ -2614,7 +2614,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
     float[] vertices = tessGeo.pointVertices;
     int[] color = tessGeo.pointColors;
-    float[] attribs = tessGeo.pointAttribs;
+    float[] attribs = tessGeo.pointOffsets;
     short[] indices = tessGeo.pointIndices;
 
     IndexCache cache = tessGeo.pointIndexCache;
@@ -6978,7 +6978,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
     protected int vertexLoc;
     protected int colorLoc;
-    protected int endpointLoc;
+    protected int directionLoc;
 
     public LineShader(PApplet parent) {
       super(parent);
@@ -6997,7 +6997,7 @@ public class PGraphicsOpenGL extends PGraphics {
     public void loadAttributes() {
       vertexLoc = getAttributeLoc("vertex");
       colorLoc = getAttributeLoc("color");
-      endpointLoc = getAttributeLoc("endpoint");
+      directionLoc = getAttributeLoc("direction");
     }
 
     @Override
@@ -7023,7 +7023,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
     public void setLineAttribute(int vboId, int size, int type,
                                  int stride, int offset) {
-      setAttributeVBO(endpointLoc, vboId, size, type, false, stride, offset);
+      setAttributeVBO(directionLoc, vboId, size, type, false, stride, offset);
     }
 
     @Override
@@ -7037,7 +7037,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
       if (-1 < vertexLoc) pgl.enableVertexAttribArray(vertexLoc);
       if (-1 < colorLoc)  pgl.enableVertexAttribArray(colorLoc);
-      if (-1 < endpointLoc) pgl.enableVertexAttribArray(endpointLoc);
+      if (-1 < directionLoc) pgl.enableVertexAttribArray(directionLoc);
 
       if (pgCurrent.getHint(ENABLE_STROKE_PERSPECTIVE) &&
           pgCurrent.nonOrthoProjection()) {
@@ -7063,7 +7063,7 @@ public class PGraphicsOpenGL extends PGraphics {
     public void unbind() {
       if (-1 < vertexLoc) pgl.disableVertexAttribArray(vertexLoc);
       if (-1 < colorLoc)  pgl.disableVertexAttribArray(colorLoc);
-      if (-1 < endpointLoc) pgl.disableVertexAttribArray(endpointLoc);
+      if (-1 < directionLoc) pgl.disableVertexAttribArray(directionLoc);
 
       super.unbind();
     }
@@ -8894,7 +8894,7 @@ public class PGraphicsOpenGL extends PGraphics {
     int lastLineVertex;
     FloatBuffer lineVerticesBuffer;
     IntBuffer lineColorsBuffer;
-    FloatBuffer lineAttribsBuffer;
+    FloatBuffer lineDirectionsBuffer;
 
     int lineIndexCount;
     int firstLineIndex;
@@ -8908,7 +8908,7 @@ public class PGraphicsOpenGL extends PGraphics {
     int lastPointVertex;
     FloatBuffer pointVerticesBuffer;
     IntBuffer pointColorsBuffer;
-    FloatBuffer pointAttribsBuffer;
+    FloatBuffer pointOffsetsBuffer;
 
     int pointIndexCount;
     int firstPointIndex;
@@ -8928,11 +8928,11 @@ public class PGraphicsOpenGL extends PGraphics {
     short[] polyIndices;
     float[] lineVertices;
     int[] lineColors;
-    float[] lineAttribs;
+    float[] lineDirections;
     short[] lineIndices;
     float[] pointVertices;
     int[] pointColors;
-    float[] pointAttribs;
+    float[] pointOffsets;
     short[] pointIndices;
 
     TessGeometry(int mode) {
@@ -8957,12 +8957,12 @@ public class PGraphicsOpenGL extends PGraphics {
 
       lineVertices = new float[4 * PGL.DEFAULT_TESS_VERTICES];
       lineColors = new int[PGL.DEFAULT_TESS_VERTICES];
-      lineAttribs = new float[4 * PGL.DEFAULT_TESS_VERTICES];
+      lineDirections = new float[4 * PGL.DEFAULT_TESS_VERTICES];
       lineIndices = new short[PGL.DEFAULT_TESS_VERTICES];
 
       pointVertices = new float[4 * PGL.DEFAULT_TESS_VERTICES];
       pointColors = new int[PGL.DEFAULT_TESS_VERTICES];
-      pointAttribs = new float[2 * PGL.DEFAULT_TESS_VERTICES];
+      pointOffsets = new float[2 * PGL.DEFAULT_TESS_VERTICES];
       pointIndices = new short[PGL.DEFAULT_TESS_VERTICES];
 
       polyVerticesBuffer = PGL.allocateFloatBuffer(polyVertices);
@@ -8977,12 +8977,12 @@ public class PGraphicsOpenGL extends PGraphics {
 
       lineVerticesBuffer = PGL.allocateFloatBuffer(lineVertices);
       lineColorsBuffer = PGL.allocateIntBuffer(lineColors);
-      lineAttribsBuffer = PGL.allocateFloatBuffer(lineAttribs);
+      lineDirectionsBuffer = PGL.allocateFloatBuffer(lineDirections);
       lineIndicesBuffer = PGL.allocateShortBuffer(lineIndices);
 
       pointVerticesBuffer = PGL.allocateFloatBuffer(pointVertices);
       pointColorsBuffer = PGL.allocateIntBuffer(pointColors);
-      pointAttribsBuffer = PGL.allocateFloatBuffer(pointAttribs);
+      pointOffsetsBuffer = PGL.allocateFloatBuffer(pointOffsets);
       pointIndicesBuffer = PGL.allocateShortBuffer(pointIndices);
 
       clear();
@@ -9075,7 +9075,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
         expandLineVertices(newSize);
         expandLineColors(newSize);
-        expandLineAttribs(newSize);
+        expandLineDirections(newSize);
       }
 
       firstLineVertex = lineVertexCount;
@@ -9103,7 +9103,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
         expandPointVertices(newSize);
         expandPointColors(newSize);
-        expandPointAttribs(newSize);
+        expandPointOffsets(newSize);
       }
 
       firstPointVertex = pointVertexCount;
@@ -9314,12 +9314,12 @@ public class PGraphicsOpenGL extends PGraphics {
       PGL.updateIntBuffer(lineColorsBuffer, lineColors, offset, size);
     }
 
-    protected void updateLineAttribsBuffer() {
-      updateLineAttribsBuffer(0, lineVertexCount);
+    protected void updateLineDirectionsBuffer() {
+      updateLineDirectionsBuffer(0, lineVertexCount);
     }
 
-    protected void updateLineAttribsBuffer(int offset, int size) {
-      PGL.updateFloatBuffer(lineAttribsBuffer, lineAttribs,
+    protected void updateLineDirectionsBuffer(int offset, int size) {
+      PGL.updateFloatBuffer(lineDirectionsBuffer, lineDirections,
                             4 * offset, 4 * size);
     }
 
@@ -9348,12 +9348,12 @@ public class PGraphicsOpenGL extends PGraphics {
       PGL.updateIntBuffer(pointColorsBuffer, pointColors, offset, size);
     }
 
-    protected void updatePointAttribsBuffer() {
-      updatePointAttribsBuffer(0, pointVertexCount);
+    protected void updatePointOffsetsBuffer() {
+      updatePointOffsetsBuffer(0, pointVertexCount);
     }
 
-    protected void updatePointAttribsBuffer(int offset, int size) {
-      PGL.updateFloatBuffer(pointAttribsBuffer, pointAttribs,
+    protected void updatePointOffsetsBuffer(int offset, int size) {
+      PGL.updateFloatBuffer(pointOffsetsBuffer, pointOffsets,
                             2 * offset, 2 * size);
     }
 
@@ -9446,11 +9446,11 @@ public class PGraphicsOpenGL extends PGraphics {
       lineColorsBuffer = PGL.allocateIntBuffer(lineColors);
     }
 
-    void expandLineAttribs(int n) {
+    void expandLineDirections(int n) {
       float temp[] = new float[4 * n];
-      PApplet.arrayCopy(lineAttribs, 0, temp, 0, 4 * lineVertexCount);
-      lineAttribs = temp;
-      lineAttribsBuffer = PGL.allocateFloatBuffer(lineAttribs);
+      PApplet.arrayCopy(lineDirections, 0, temp, 0, 4 * lineVertexCount);
+      lineDirections = temp;
+      lineDirectionsBuffer = PGL.allocateFloatBuffer(lineDirections);
     }
 
     void expandLineIndices(int n) {
@@ -9474,11 +9474,11 @@ public class PGraphicsOpenGL extends PGraphics {
       pointColorsBuffer = PGL.allocateIntBuffer(pointColors);
     }
 
-    void expandPointAttribs(int n) {
+    void expandPointOffsets(int n) {
       float temp[] = new float[2 * n];
-      PApplet.arrayCopy(pointAttribs, 0, temp, 0, 2 * pointVertexCount);
-      pointAttribs = temp;
-      pointAttribsBuffer = PGL.allocateFloatBuffer(pointAttribs);
+      PApplet.arrayCopy(pointOffsets, 0, temp, 0, 2 * pointVertexCount);
+      pointOffsets = temp;
+      pointOffsetsBuffer = PGL.allocateFloatBuffer(pointOffsets);
     }
 
     void expandPointIndices(int n) {
@@ -9511,7 +9511,7 @@ public class PGraphicsOpenGL extends PGraphics {
       if (0 < lineVertexCount && lineVertexCount < lineVertices.length / 4) {
         trimLineVertices();
         trimLineColors();
-        trimLineAttribs();
+        trimLineDirections();
       }
 
       if (0 < lineIndexCount && lineIndexCount < lineIndices.length) {
@@ -9521,7 +9521,7 @@ public class PGraphicsOpenGL extends PGraphics {
       if (0 < pointVertexCount && pointVertexCount < pointVertices.length / 4) {
         trimPointVertices();
         trimPointColors();
-        trimPointAttribs();
+        trimPointOffsets();
       }
 
       if (0 < pointIndexCount && pointIndexCount < pointIndices.length) {
@@ -9606,11 +9606,11 @@ public class PGraphicsOpenGL extends PGraphics {
       lineColorsBuffer = PGL.allocateIntBuffer(lineColors);
     }
 
-    void trimLineAttribs() {
+    void trimLineDirections() {
       float temp[] = new float[4 * lineVertexCount];
-      PApplet.arrayCopy(lineAttribs, 0, temp, 0, 4 * lineVertexCount);
-      lineAttribs = temp;
-      lineAttribsBuffer = PGL.allocateFloatBuffer(lineAttribs);
+      PApplet.arrayCopy(lineDirections, 0, temp, 0, 4 * lineVertexCount);
+      lineDirections = temp;
+      lineDirectionsBuffer = PGL.allocateFloatBuffer(lineDirections);
     }
 
     void trimLineIndices() {
@@ -9634,11 +9634,11 @@ public class PGraphicsOpenGL extends PGraphics {
       pointColorsBuffer = PGL.allocateIntBuffer(pointColors);
     }
 
-    void trimPointAttribs() {
+    void trimPointOffsets() {
       float temp[] = new float[2 * pointVertexCount];
-      PApplet.arrayCopy(pointAttribs, 0, temp, 0, 2 * pointVertexCount);
-      pointAttribs = temp;
-      pointAttribsBuffer = PGL.allocateFloatBuffer(pointAttribs);
+      PApplet.arrayCopy(pointOffsets, 0, temp, 0, 2 * pointVertexCount);
+      pointOffsets = temp;
+      pointOffsetsBuffer = PGL.allocateFloatBuffer(pointOffsets);
     }
 
     void trimPointIndices() {
@@ -9787,10 +9787,10 @@ public class PGraphicsOpenGL extends PGraphics {
 
       lineColors[tessIdx] = rgba;
       index = 4 * tessIdx;
-      lineAttribs[index++] = 0;
-      lineAttribs[index++] = 0;
-      lineAttribs[index++] = 0;
-      lineAttribs[index  ] = 0;
+      lineDirections[index++] = 0;
+      lineDirections[index++] = 0;
+      lineDirections[index++] = 0;
+      lineDirections[index  ] = 0;
     }
 
     // Sets line vertex with index tessIdx using the data from input vertices
@@ -9809,6 +9809,10 @@ public class PGraphicsOpenGL extends PGraphics {
       float y1 = in.vertices[index++];
       float z1 = in.vertices[index  ];
 
+      float dx = x1 - x0;
+      float dy = y1 - y0;
+      float dz = z1 - z0;
+
       if (renderMode == IMMEDIATE && flushMode == FLUSH_WHEN_FULL) {
         PMatrix3D mm = modelview;
 
@@ -9819,9 +9823,9 @@ public class PGraphicsOpenGL extends PGraphics {
         lineVertices[index  ] = x0*mm.m30 + y0*mm.m31 + z0*mm.m32 + mm.m33;
 
         index = 4 * tessIdx;
-        lineAttribs[index++] = x1*mm.m00 + y1*mm.m01 + z1*mm.m02 + mm.m03;
-        lineAttribs[index++] = x1*mm.m10 + y1*mm.m11 + z1*mm.m12 + mm.m13;
-        lineAttribs[index  ] = x1*mm.m20 + y1*mm.m21 + z1*mm.m22 + mm.m23;
+        lineDirections[index++] = dx*mm.m00 + dy*mm.m01 + dz*mm.m02;
+        lineDirections[index++] = dx*mm.m10 + dy*mm.m11 + dz*mm.m12;
+        lineDirections[index  ] = dx*mm.m20 + dy*mm.m21 + dz*mm.m22;
       } else {
         index = 4 * tessIdx;
         lineVertices[index++] = x0;
@@ -9830,13 +9834,13 @@ public class PGraphicsOpenGL extends PGraphics {
         lineVertices[index  ] = 1;
 
         index = 4 * tessIdx;
-        lineAttribs[index++] = x1;
-        lineAttribs[index++] = y1;
-        lineAttribs[index  ] = z1;
+        lineDirections[index++] = dx;
+        lineDirections[index++] = dy;
+        lineDirections[index  ] = dz;
       }
 
       lineColors[tessIdx] = rgba;
-      lineAttribs[4 * tessIdx + 3] = weight;
+      lineDirections[4 * tessIdx + 3] = weight;
     }
 
     // -----------------------------------------------------------------
@@ -10094,16 +10098,19 @@ public class PGraphicsOpenGL extends PGraphics {
           float y = lineVertices[index  ];
 
           index = 4 * i;
-          float xa = lineAttribs[index++];
-          float ya = lineAttribs[index  ];
+          float xa = lineDirections[index++];
+          float ya = lineDirections[index  ];
+
+          float dx = xa - x;
+          float dy = ya - y;
 
           index = 4 * i;
           lineVertices[index++] = x*tr.m00 + y*tr.m01 + tr.m02;
           lineVertices[index  ] = x*tr.m10 + y*tr.m11 + tr.m12;
 
           index = 4 * i;
-          lineAttribs[index++] = xa*tr.m00 + ya*tr.m01 + tr.m02;
-          lineAttribs[index  ] = xa*tr.m10 + ya*tr.m11 + tr.m12;
+          lineDirections[index++] = dx*tr.m00 + dy*tr.m01;
+          lineDirections[index  ] = dx*tr.m10 + dy*tr.m11;
         }
       }
     }
@@ -10166,9 +10173,13 @@ public class PGraphicsOpenGL extends PGraphics {
           float w = lineVertices[index  ];
 
           index = 4 * i;
-          float xa = lineAttribs[index++];
-          float ya = lineAttribs[index++];
-          float za = lineAttribs[index  ];
+          float xa = lineDirections[index++];
+          float ya = lineDirections[index++];
+          float za = lineDirections[index  ];
+
+          float dx = xa - x;
+          float dy = ya - y;
+          float dz = za - z;
 
           index = 4 * i;
           lineVertices[index++] = x*tr.m00 + y*tr.m01 + z*tr.m02 + w*tr.m03;
@@ -10177,9 +10188,9 @@ public class PGraphicsOpenGL extends PGraphics {
           lineVertices[index  ] = x*tr.m30 + y*tr.m31 + z*tr.m32 + w*tr.m33;
 
           index = 4 * i;
-          lineAttribs[index++] = xa*tr.m00 + ya*tr.m01 + za*tr.m02 + tr.m03;
-          lineAttribs[index++] = xa*tr.m10 + ya*tr.m11 + za*tr.m12 + tr.m13;
-          lineAttribs[index  ] = xa*tr.m20 + ya*tr.m21 + za*tr.m22 + tr.m23;
+          lineDirections[index++] = dx*tr.m00 + dy*tr.m01 + dz*tr.m02;
+          lineDirections[index++] = dx*tr.m10 + dy*tr.m11 + dz*tr.m12;
+          lineDirections[index  ] = dx*tr.m20 + dy*tr.m21 + dz*tr.m22;
         }
       }
     }
@@ -10384,15 +10395,15 @@ public class PGraphicsOpenGL extends PGraphics {
         // the circle perimeter. The point shader will read these attributes and
         // displace the vertices in screen coordinates so the circles are always
         // camera facing (bilboards)
-        tess.pointAttribs[2 * attribIdx + 0] = 0;
-        tess.pointAttribs[2 * attribIdx + 1] = 0;
+        tess.pointOffsets[2 * attribIdx + 0] = 0;
+        tess.pointOffsets[2 * attribIdx + 1] = 0;
         attribIdx++;
         float val = 0;
         float inc = (float) SINCOS_LENGTH / perim;
         for (int k = 0; k < perim; k++) {
-          tess.pointAttribs[2 * attribIdx + 0] =
+          tess.pointOffsets[2 * attribIdx + 0] =
             0.5f * cosLUT[(int) val] * strokeWeight;
-          tess.pointAttribs[2 * attribIdx + 1] =
+          tess.pointOffsets[2 * attribIdx + 1] =
             0.5f * sinLUT[(int) val] * strokeWeight;
           val = (val + inc) % SINCOS_LENGTH;
           attribIdx++;
@@ -10515,13 +10526,13 @@ public class PGraphicsOpenGL extends PGraphics {
         // the quad corners. The point shader will read these attributes and
         // displace the vertices in screen coordinates so the quads are always
         // camera facing (bilboards)
-        tess.pointAttribs[2 * attribIdx + 0] = 0;
-        tess.pointAttribs[2 * attribIdx + 1] = 0;
+        tess.pointOffsets[2 * attribIdx + 0] = 0;
+        tess.pointOffsets[2 * attribIdx + 1] = 0;
         attribIdx++;
         for (int k = 0; k < 4; k++) {
-          tess.pointAttribs[2 * attribIdx + 0] =
+          tess.pointOffsets[2 * attribIdx + 0] =
             0.5f * QUAD_POINT_SIGNS[k][0] * strokeWeight;
-          tess.pointAttribs[2 * attribIdx + 1] =
+          tess.pointOffsets[2 * attribIdx + 1] =
             0.5f * QUAD_POINT_SIGNS[k][1] * strokeWeight;
           attribIdx++;
         }
