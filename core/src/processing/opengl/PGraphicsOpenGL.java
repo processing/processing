@@ -209,42 +209,42 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // Shaders
 
-  static protected URL defPolyColorShaderVertURL =
-    PGraphicsOpenGL.class.getResource("PolyColorShaderVert.glsl");
-  static protected URL defPolyTexShaderVertURL =
-    PGraphicsOpenGL.class.getResource("PolyTexShaderVert.glsl");
-  static protected URL defPolyLightShaderVertURL =
-    PGraphicsOpenGL.class.getResource("PolyLightShaderVert.glsl");
-  static protected URL defPolyTexlightShaderVertURL =
-    PGraphicsOpenGL.class.getResource("PolyTexlightShaderVert.glsl");
-  static protected URL defPolyNoTexShaderFragURL =
-    PGraphicsOpenGL.class.getResource("PolyNoTexShaderFrag.glsl");
-  static protected URL defPolyTexShaderFragURL =
-    PGraphicsOpenGL.class.getResource("PolyTexShaderFrag.glsl");
+  static protected URL defColorShaderVertURL =
+    PGraphicsOpenGL.class.getResource("ColorVert.glsl");
+  static protected URL defTextureShaderVertURL =
+    PGraphicsOpenGL.class.getResource("TextureVert.glsl");
+  static protected URL defLightShaderVertURL =
+    PGraphicsOpenGL.class.getResource("LightVert.glsl");
+  static protected URL defTexlightShaderVertURL =
+    PGraphicsOpenGL.class.getResource("TexlightVert.glsl");
+  static protected URL defColorShaderFragURL =
+    PGraphicsOpenGL.class.getResource("ColorFrag.glsl");
+  static protected URL defTextureShaderFragURL =
+    PGraphicsOpenGL.class.getResource("TextureFrag.glsl");
   static protected URL defLineShaderVertURL =
-    PGraphicsOpenGL.class.getResource("LineShaderVert.glsl");
+    PGraphicsOpenGL.class.getResource("LineVert.glsl");
   static protected URL defLineShaderFragURL =
-    PGraphicsOpenGL.class.getResource("LineShaderFrag.glsl");
+    PGraphicsOpenGL.class.getResource("LineFrag.glsl");
   static protected URL defPointShaderVertURL =
-    PGraphicsOpenGL.class.getResource("PointShaderVert.glsl");
+    PGraphicsOpenGL.class.getResource("PointVert.glsl");
   static protected URL defPointShaderFragURL =
-    PGraphicsOpenGL.class.getResource("PointShaderFrag.glsl");
+    PGraphicsOpenGL.class.getResource("PointFrag.glsl");
 
-  static protected PolyColorShader defPolyColorShader;
-  static protected PolyTexShader defPolyTexShader;
-  static protected PolyLightShader defPolyLightShader;
-  static protected PolyTexlightShader defPolyTexlightShader;
+  static protected ColorShader defColorShader;
+  static protected TexureShader defTextureShader;
+  static protected LightShader defLightShader;
+  static protected TexlightShader defTexlightShader;
   static protected LineShader defLineShader;
   static protected PointShader defPointShader;
 
   static protected URL maskShaderFragURL =
-    PGraphicsOpenGL.class.getResource("MaskShaderFrag.glsl");
-  static protected PolyTexShader maskShader;
+    PGraphicsOpenGL.class.getResource("MaskFrag.glsl");
+  static protected TexureShader maskShader;
 
-  protected PolyColorShader polyColorShader;
-  protected PolyTexShader polyTexShader;
-  protected PolyLightShader polyLightShader;
-  protected PolyTexlightShader polyTexlightShader;
+  protected ColorShader colorShader;
+  protected TexureShader textureShader;
+  protected LightShader lightShader;
+  protected TexlightShader texlightShader;
   protected LineShader lineShader;
   protected PointShader pointShader;
 
@@ -5321,7 +5321,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     if (maskShader == null) {
-      maskShader = new PolyTexShader(parent, defPolyTexShaderVertURL,
+      maskShader = new TexureShader(parent, defTextureShaderVertURL,
                                              maskShaderFragURL);
     }
     maskShader.set("mask", alpha);
@@ -5363,7 +5363,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   @Override
   public void filter(PShader shader) {
-    if (!(shader instanceof PolyTexShader)) {
+    if (!(shader instanceof TexureShader)) {
       PGraphics.showWarning(INVALID_FILTER_SHADER_ERROR);
       return;
     }
@@ -5399,8 +5399,8 @@ public class PGraphicsOpenGL extends PGraphics {
     stroke = false;
 //    int prevBlendMode = blendMode;
 //    blendMode(REPLACE);
-    PolyTexShader prevTexShader = polyTexShader;
-    polyTexShader = (PolyTexShader) shader;
+    TexureShader prevTexShader = textureShader;
+    textureShader = (TexureShader) shader;
     beginShape(QUADS);
     texture(filterImage);
     vertex(0, 0, 0, 0);
@@ -5410,7 +5410,7 @@ public class PGraphicsOpenGL extends PGraphics {
     endShape();
     end2D();
 
-    polyTexShader = prevTexShader;
+    textureShader = prevTexShader;
 
     // Restoring previous configuration.
     stroke = prevStroke;
@@ -6141,17 +6141,17 @@ public class PGraphicsOpenGL extends PGraphics {
       shader = new LineShader(parent);
       shader.setVertexShader(defLineShaderVertURL);
     } else if (shaderType == PShader.TEXLIGHT) {
-      shader = new PolyTexlightShader(parent);
-      shader.setVertexShader(defPolyTexlightShaderVertURL);
+      shader = new TexlightShader(parent);
+      shader.setVertexShader(defTexlightShaderVertURL);
     } else if (shaderType == PShader.LIGHT) {
-      shader = new PolyLightShader(parent);
-      shader.setVertexShader(defPolyLightShaderVertURL);
+      shader = new LightShader(parent);
+      shader.setVertexShader(defLightShaderVertURL);
     } else if (shaderType == PShader.TEXTURE) {
-      shader = new PolyTexShader(parent);
-      shader.setVertexShader(defPolyTexShaderVertURL);
+      shader = new TexureShader(parent);
+      shader.setVertexShader(defTextureShaderVertURL);
     } else if (shaderType == PShader.COLOR) {
-      shader = new PolyColorShader(parent);
-      shader.setVertexShader(defPolyColorShaderVertURL);
+      shader = new ColorShader(parent);
+      shader.setVertexShader(defColorShaderVertURL);
     }
     shader.setFragmentShader(fragFilename);
     return shader;
@@ -6178,17 +6178,17 @@ public class PGraphicsOpenGL extends PGraphics {
         shader = new LineShader(parent);
         shader.setFragmentShader(defLineShaderFragURL);
       } else if (shaderType == PShader.TEXLIGHT) {
-        shader = new PolyTexlightShader(parent);
-        shader.setFragmentShader(defPolyTexShaderFragURL);
+        shader = new TexlightShader(parent);
+        shader.setFragmentShader(defTextureShaderFragURL);
       } else if (shaderType == PShader.LIGHT) {
-        shader = new PolyLightShader(parent);
-        shader.setFragmentShader(defPolyNoTexShaderFragURL);
+        shader = new LightShader(parent);
+        shader.setFragmentShader(defColorShaderFragURL);
       } else if (shaderType == PShader.TEXTURE) {
-        shader = new PolyTexShader(parent);
-        shader.setFragmentShader(defPolyTexShaderFragURL);
+        shader = new TexureShader(parent);
+        shader.setFragmentShader(defTextureShaderFragURL);
       } else if (shaderType == PShader.COLOR) {
-        shader = new PolyColorShader(parent);
-        shader.setFragmentShader(defPolyNoTexShaderFragURL);
+        shader = new ColorShader(parent);
+        shader.setFragmentShader(defColorShaderFragURL);
       }
       if (shader != null) {
         shader.setVertexShader(vertFilename);
@@ -6199,13 +6199,13 @@ public class PGraphicsOpenGL extends PGraphics {
       } else if (shaderType == PShader.LINE) {
         shader = new LineShader(parent, vertFilename, fragFilename);
       } else if (shaderType == PShader.TEXLIGHT) {
-        shader = new PolyTexlightShader(parent, vertFilename, fragFilename);
+        shader = new TexlightShader(parent, vertFilename, fragFilename);
       } else if (shaderType == PShader.LIGHT) {
-        shader = new PolyLightShader(parent, vertFilename, fragFilename);
+        shader = new LightShader(parent, vertFilename, fragFilename);
       } else if (shaderType == PShader.TEXTURE) {
-        shader = new PolyTexShader(parent, vertFilename, fragFilename);
+        shader = new TexureShader(parent, vertFilename, fragFilename);
       } else if (shaderType == PShader.COLOR) {
-        shader = new PolyColorShader(parent, vertFilename, fragFilename);
+        shader = new ColorShader(parent, vertFilename, fragFilename);
       }
     }
     return shader;
@@ -6223,14 +6223,14 @@ public class PGraphicsOpenGL extends PGraphics {
     flush(); // Flushing geometry drawn with a different shader.
 
     if (kind == TRIANGLES || kind == QUADS || kind == POLYGON) {
-      if (shader instanceof PolyTexShader) {
-        polyTexShader = (PolyTexShader) shader;
-      } else if (shader instanceof PolyColorShader) {
-        polyColorShader = (PolyColorShader) shader;
-      } else if (shader instanceof PolyTexlightShader) {
-        polyTexlightShader = (PolyTexlightShader) shader;
-      } else if (shader instanceof PolyLightShader) {
-        polyLightShader = (PolyLightShader) shader;
+      if (shader instanceof TexureShader) {
+        textureShader = (TexureShader) shader;
+      } else if (shader instanceof ColorShader) {
+        colorShader = (ColorShader) shader;
+      } else if (shader instanceof TexlightShader) {
+        texlightShader = (TexlightShader) shader;
+      } else if (shader instanceof LightShader) {
+        lightShader = (LightShader) shader;
       } else {
         PGraphics.showWarning(WRONG_SHADER_TYPE_ERROR);
       }
@@ -6263,10 +6263,10 @@ public class PGraphicsOpenGL extends PGraphics {
     flush(); // Flushing geometry drawn with a different shader.
 
     if (kind == TRIANGLES || kind == QUADS || kind == POLYGON) {
-      polyTexShader = null;
-      polyColorShader = null;
-      polyTexlightShader = null;
-      polyLightShader = null;
+      textureShader = null;
+      colorShader = null;
+      texlightShader = null;
+      lightShader = null;
     } else if (kind == LINES) {
       lineShader = null;
     } else if (kind == POINTS) {
@@ -6308,10 +6308,10 @@ public class PGraphicsOpenGL extends PGraphics {
     // The default shaders contains references to the PGraphics object that
     // creates them, so when restarting the renderer, those references should
     // dissapear.
-    defPolyColorShader = null;
-    defPolyTexShader = null;
-    defPolyLightShader = null;
-    defPolyTexlightShader = null;
+    defColorShader = null;
+    defTextureShader = null;
+    defLightShader = null;
+    defTexlightShader = null;
     defLineShader = null;
     defPointShader = null;
     maskShader = null;
@@ -6322,54 +6322,54 @@ public class PGraphicsOpenGL extends PGraphics {
     BaseShader shader;
     if (lit) {
       if (tex) {
-        if (polyTexlightShader == null) {
-          if (defPolyTexlightShader == null) {
-            defPolyTexlightShader = new PolyTexlightShader(parent,
-                                                   defPolyTexlightShaderVertURL,
-                                                   defPolyTexShaderFragURL);
+        if (texlightShader == null) {
+          if (defTexlightShader == null) {
+            defTexlightShader = new TexlightShader(parent,
+                                                   defTexlightShaderVertURL,
+                                                   defTextureShaderFragURL);
           }
-          shader = defPolyTexlightShader;
+          shader = defTexlightShader;
           texlightShaderCheck();
         } else {
-          shader = polyTexlightShader;
+          shader = texlightShader;
         }
       } else {
-        if (polyLightShader == null) {
-          if (defPolyLightShader == null) {
-            defPolyLightShader = new PolyLightShader(parent,
-                                                     defPolyLightShaderVertURL,
-                                                     defPolyNoTexShaderFragURL);
+        if (lightShader == null) {
+          if (defLightShader == null) {
+            defLightShader = new LightShader(parent,
+                                                     defLightShaderVertURL,
+                                                     defColorShaderFragURL);
           }
-          shader = defPolyLightShader;
+          shader = defLightShader;
           lightShaderCheck();
         } else {
-          shader = polyLightShader;
+          shader = lightShader;
         }
       }
     } else {
       if (tex) {
-        if (polyTexShader == null) {
-          if (defPolyTexShader == null) {
-            defPolyTexShader = new PolyTexShader(parent,
-                                                 defPolyTexShaderVertURL,
-                                                 defPolyTexShaderFragURL);
+        if (textureShader == null) {
+          if (defTextureShader == null) {
+            defTextureShader = new TexureShader(parent,
+                                                 defTextureShaderVertURL,
+                                                 defTextureShaderFragURL);
           }
-          shader = defPolyTexShader;
+          shader = defTextureShader;
           texShaderCheck();
         } else {
-          shader = polyTexShader;
+          shader = textureShader;
         }
       } else {
-        if (polyColorShader == null) {
-          if (defPolyColorShader == null) {
-            defPolyColorShader = new PolyColorShader(parent,
-                                                   defPolyColorShaderVertURL,
-                                                   defPolyNoTexShaderFragURL);
+        if (colorShader == null) {
+          if (defColorShader == null) {
+            defColorShader = new ColorShader(parent,
+                                                   defColorShaderVertURL,
+                                                   defColorShaderFragURL);
           }
-          shader = defPolyColorShader;
+          shader = defColorShader;
           colorShaderCheck();
         } else {
-          shader = polyColorShader;
+          shader = colorShader;
         }
       }
     }
@@ -6382,9 +6382,9 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void texlightShaderCheck() {
     if (shaderWarningsEnabled &&
-        (polyLightShader != null ||
-         polyTexShader != null ||
-         polyColorShader != null)) {
+        (lightShader != null ||
+         textureShader != null ||
+         colorShader != null)) {
       PGraphics.showWarning(NO_TEXLIGHT_SHADER_ERROR);
     }
   }
@@ -6392,9 +6392,9 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void lightShaderCheck() {
     if (shaderWarningsEnabled &&
-        (polyTexlightShader != null ||
-         polyTexShader != null ||
-         polyColorShader != null)) {
+        (texlightShader != null ||
+         textureShader != null ||
+         colorShader != null)) {
       PGraphics.showWarning(NO_LIGHT_SHADER_ERROR);
     }
   }
@@ -6402,9 +6402,9 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void texShaderCheck() {
     if (shaderWarningsEnabled &&
-        (polyTexlightShader != null ||
-         polyLightShader != null ||
-         polyColorShader != null)) {
+        (texlightShader != null ||
+         lightShader != null ||
+         colorShader != null)) {
       PGraphics.showWarning(NO_TEXTURE_SHADER_ERROR);
     }
   }
@@ -6412,9 +6412,9 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void colorShaderCheck() {
     if (shaderWarningsEnabled &&
-        (polyTexlightShader != null ||
-         polyLightShader != null ||
-         polyTexShader != null)) {
+        (texlightShader != null ||
+         lightShader != null ||
+         textureShader != null)) {
       PGraphics.showWarning(NO_COLOR_SHADER_ERROR);
     }
   }
@@ -6549,20 +6549,20 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  protected class PolyColorShader extends BaseShader {
+  protected class ColorShader extends BaseShader {
     protected int vertexLoc;
     protected int colorLoc;
 
-    public PolyColorShader(PApplet parent) {
+    public ColorShader(PApplet parent) {
       super(parent);
     }
 
-    public PolyColorShader(PApplet parent, String vertFilename,
+    public ColorShader(PApplet parent, String vertFilename,
                                           String fragFilename) {
       super(parent, vertFilename, fragFilename);
     }
 
-    public PolyColorShader(PApplet parent, URL vertURL, URL fragURL) {
+    public ColorShader(PApplet parent, URL vertURL, URL fragURL) {
       super(parent, vertURL, fragURL);
     }
 
@@ -6614,7 +6614,7 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  protected class PolyLightShader extends BaseShader {
+  protected class LightShader extends BaseShader {
     protected int normalMatrixLoc;
 
     protected int lightCountLoc;
@@ -6635,16 +6635,16 @@ public class PGraphicsOpenGL extends PGraphics {
     protected int emissiveLoc;
     protected int shininessLoc;
 
-    public PolyLightShader(PApplet parent) {
+    public LightShader(PApplet parent) {
       super(parent);
     }
 
-    public PolyLightShader(PApplet parent, String vertFilename,
+    public LightShader(PApplet parent, String vertFilename,
                                            String fragFilename) {
       super(parent, vertFilename, fragFilename);
     }
 
-    public PolyLightShader(PApplet parent, URL vertURL, URL fragURL) {
+    public LightShader(PApplet parent, URL vertURL, URL fragURL) {
       super(parent, vertURL, fragURL);
     }
 
@@ -6772,7 +6772,7 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  protected class PolyTexShader extends PolyColorShader {
+  protected class TexureShader extends ColorShader {
     protected int texCoordLoc;
 
     protected int textureLoc;
@@ -6781,16 +6781,16 @@ public class PGraphicsOpenGL extends PGraphics {
 
     protected float[] tcmat;
 
-    public PolyTexShader(PApplet parent) {
+    public TexureShader(PApplet parent) {
       super(parent);
     }
 
-    public PolyTexShader(PApplet parent, String vertFilename,
+    public TexureShader(PApplet parent, String vertFilename,
                                          String fragFilename) {
       super(parent, vertFilename, fragFilename);
     }
 
-    public PolyTexShader(PApplet parent, URL vertURL, URL fragURL) {
+    public TexureShader(PApplet parent, URL vertURL, URL fragURL) {
       super(parent, vertURL, fragURL);
     }
 
@@ -6872,7 +6872,7 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  protected class PolyTexlightShader extends PolyLightShader {
+  protected class TexlightShader extends LightShader {
     protected int texCoordLoc;
 
     protected int textureLoc;
@@ -6881,16 +6881,16 @@ public class PGraphicsOpenGL extends PGraphics {
 
     protected float[] tcmat;
 
-    public PolyTexlightShader(PApplet parent) {
+    public TexlightShader(PApplet parent) {
       super(parent);
     }
 
-    public PolyTexlightShader(PApplet parent, String vertFilename,
+    public TexlightShader(PApplet parent, String vertFilename,
                                           String fragFilename) {
       super(parent, vertFilename, fragFilename);
     }
 
-    public PolyTexlightShader(PApplet parent, URL vertURL, URL fragURL) {
+    public TexlightShader(PApplet parent, URL vertURL, URL fragURL) {
       super(parent, vertURL, fragURL);
     }
 
