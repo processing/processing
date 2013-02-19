@@ -343,10 +343,7 @@ public class ContributionListing {
    * Starts a new thread to download the advertised list of contributions. 
    * Only one instance will run at a time.
    */
-  protected void downloadAvailableList(ProgressMonitor pm) {
-    final ProgressMonitor progressMonitor = 
-      (pm != null) ? pm : new NullProgressMonitor();
-
+  protected void downloadAvailableList(final ProgressMonitor progress) {
     new Thread(new Runnable() {
       public void run() {
         downloadingListingLock.lock();
@@ -355,13 +352,13 @@ public class ContributionListing {
         try {
           url = new URL(LISTING_URL);
         } catch (MalformedURLException e) {
-          progressMonitor.error(e);
-          progressMonitor.finished();
+          progress.error(e);
+          progress.finished();
         }
 
-        if (!progressMonitor.isFinished()) {
-          ContributionManager.download(url, listingFile, progressMonitor);
-          if (!progressMonitor.isCanceled() && !progressMonitor.isError()) {
+        if (!progress.isFinished()) {
+          ContributionManager.download(url, listingFile, progress);
+          if (!progress.isCanceled() && !progress.isError()) {
             hasDownloadedLatestList = true;
             setAdvertisedList(listingFile);
           }

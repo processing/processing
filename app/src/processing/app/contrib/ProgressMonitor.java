@@ -24,85 +24,88 @@ package processing.app.contrib;
 import javax.swing.JProgressBar;
 
 
-/**
- * The ProgressMonitor interface should be implemented by objects that observe
- * progress of a task or activity.
- */
-public interface ProgressMonitor {
+// 4 classes is more abstraction than is necessary for a single progress bar
 
-  int UNKNOWN = -1;
+///**
+// * The ProgressMonitor interface should be implemented by objects that observe
+// * progress of a task or activity.
+// */
+//public interface ProgressMonitor {
+//
+//  int UNKNOWN = -1;
+//
+//  /**
+//   * Starts a new task with the given name.
+//   * 
+//   * @param maxValue
+//   *          the amount of progress that must be made before a task is
+//   *          finished. This may be set to UNKNOWN.
+//   */
+//  public void startTask(String name, int maxValue);
+//
+//  /**
+//   * Updates the amount of progress for the current task.
+//   */
+//  public void setProgress(int value);
+//
+//  /**
+//   * Returns the progress made toward the current task, as previously set by a
+//   * call to setProgress().
+//   */
+//  public int getProgress();
+//
+//  /**
+//   * @return <code>true</code> if a cancellation has been requested, false
+//   *         otherwise
+//   */
+//  public boolean isCanceled();
+//
+//  /**
+//   * Requests for the task to be cancelled by setting isCanceled() to true.
+//   */
+//  public void cancel();
+//  
+//  /**
+//   * @return <code>true</code> if an error occured while completing the task
+//   */
+//  public boolean isError();
+//  
+//  /**
+//   * @return an exception that caused the error, may be null.
+//   */
+//  public Exception getException();
+//  
+//  /**
+//   * Indicates that an error occurred while performing the task. Exception may
+//   * be null.
+//   */
+//  public void error(Exception e);
+//  
+//  /**
+//   * Returns true if this task is complete
+//   */
+//  public boolean isFinished();
+//  
+//  /**
+//   * This is called when the current task is finished. This should always be
+//   * called when a task is finished, whether or not an error occurred or the
+//   * task was cancelled.
+//   */
+//  public void finished();
+//}
 
-  /**
-   * Starts a new task with the given name.
-   * 
-   * @param maxValue
-   *          the amount of progress that must be made before a task is
-   *          finished. This may be set to UNKNOWN.
-   */
-  public void startTask(String name, int maxValue);
 
-  /**
-   * Updates the amount of progress for the current task.
-   */
-  public void setProgress(int value);
-
-  /**
-   * Returns the progress made toward the current task, as previously set by a
-   * call to setProgress().
-   */
-  public int getProgress();
-
-  /**
-   * @return <code>true</code> if a cancellation has been requested, false
-   *         otherwise
-   */
-  public boolean isCanceled();
-
-  /**
-   * Requests for the task to be cancelled by setting isCanceled() to true.
-   */
-  public void cancel();
-  
-  /**
-   * @return <code>true</code> if an error occured while completing the task
-   */
-  public boolean isError();
-  
-  /**
-   * @return an exception that caused the error, may be null.
-   */
-  public Exception getException();
-  
-  /**
-   * Indicates that an error occurred while performing the task. Exception may
-   * be null.
-   */
-  public void error(Exception e);
-  
-  /**
-   * Returns true if this task is complete
-   */
-  public boolean isFinished();
-  
-  /**
-   * This is called when the current task is finished. This should always be
-   * called when a task is finished, whether or not an error occurred or the
-   * task was cancelled.
-   */
-  public void finished();
-}
-
-
-abstract class AbstractProgressMonitor implements ProgressMonitor {
-  boolean isCanceled = false;
-
-  boolean isError = false;
-  
-  boolean isFinished = false;
-  
+//abstract class AbstractProgressMonitor implements ProgressMonitor {
+abstract class ProgressMonitor {
+  static final int UNKNOWN = -1;
+  boolean canceled = false;
+  boolean error = false;
+  boolean finished = false;
   Exception exception;
-  
   int progress = 0;
+  
+  public void startTask(String name, int maxValue) {
+  }
   
   public void setProgress(int value) {
     progress = value;
@@ -113,15 +116,15 @@ abstract class AbstractProgressMonitor implements ProgressMonitor {
   }
 
   public boolean isCanceled() {
-    return isCanceled;
+    return canceled;
   }
 
   public void cancel() {
-    isCanceled = true;
+    canceled = true;
   }
   
   public boolean isError() {
-    return isError;
+    return error;
   }
 
   public Exception getException() {
@@ -129,34 +132,36 @@ abstract class AbstractProgressMonitor implements ProgressMonitor {
   }
 
   public void error(Exception e) {
-    isError = true;
+    error = true;
     exception = e;
   }
   
   public boolean isFinished() {
-    return isFinished;
+    return finished;
   }
   
   public void finished() {
-    isFinished = true;
+    finished = true;
   }
 }
 
 
-class NullProgressMonitor extends AbstractProgressMonitor {
-  public void startTask(String name, int maxValue) { }
-}
+//class NullProgressMonitor extends AbstractProgressMonitor {
+//  public void startTask(String name, int maxValue) { }
+//}
 
 
-abstract class JProgressMonitor extends AbstractProgressMonitor {
+abstract class JProgressMonitor extends ProgressMonitor {
   JProgressBar progressBar;
 
   public JProgressMonitor(JProgressBar progressBar) {
     this.progressBar = progressBar;
+    // doesn't center properly
+//    progressBar.setFont(new Font("Dialog", Font.PLAIN, 10));
   }
 
   public void startTask(String name, int maxValue) {
-    isFinished = false;
+    finished = false;
     progressBar.setString(name);
     progressBar.setIndeterminate(maxValue == UNKNOWN);
     progressBar.setMaximum(maxValue);
