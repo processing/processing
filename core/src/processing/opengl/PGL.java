@@ -679,6 +679,7 @@ public class PGL {
     fboLayerCreated = false;
     fboLayerInUse = false;
     firstFrame = false;
+    GLProfile.shutdown();
   }
 
 
