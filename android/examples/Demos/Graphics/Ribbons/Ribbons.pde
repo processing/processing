@@ -9,12 +9,12 @@ String pdbFile = "4HHB.pdb"; // PDB file to read
 //String pdbFile = "2POR.pdb";
 
 // Some parameters to control the visual appearance:
-float scaleFactor = 5;          // Size factor
+float scaleFactor = 10;          // Size factor
 int renderMode = 1;             // 0 = lines, 1 = flat ribbons
-int ribbonDetail = 3;           // Ribbon detail: from 1 (lowest) to 4 (highest)
+int ribbonDetail = 4;           // Ribbon detail: from 1 (lowest) to 4 (highest)
 float helixDiam = 10;           // Helix diameter.
 int[] ribbonWidth = {10, 7, 2}; // Ribbon widths for helix, strand and coil
-color ribbonColor = color(20, 30, 200, 255); // Ribbon color
+color ribbonColor = color(0, 102, 153, 255); // Ribbon color
 
 // All the molecular models read from the PDB file (it could contain more than one)
 ArrayList models;
