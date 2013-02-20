@@ -88,8 +88,10 @@ _   returning from pause needs to reset the clock
 _   this is currently draining batteries
 _ thread is continually running - 'inside handleDraw()' running continually
 _   inside run() it shouldn't still be going
-_ need sizeChanged() method... 
+_ avoid sketch restart on orientation change
+_   need sizeChanged() method... 
 _   also add the param to the xml file saying that it can deal w/ rotation
+_   https://github.com/processing/processing/issues/1640
 
 _ re: android libraries, from shawn van every
 The most powerful part were the libraries (and the ease with which they could be developed).  Location, SMS, Camera/Video, Bluetooth (for Arduino integration) and PClient/PRequest were by far the most used.  The ones that came with it, plus the ones from MJSoft were good though I ended up making a couple of very specific ones for my students: http://www.mobvcasting.com/wp/?cat=4

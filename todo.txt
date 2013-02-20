@@ -624,6 +624,8 @@ _   http://code.google.com/p/processing/issues/detail?id=8
 
 PDE / Editor
 
+_ the PDE uses 15% of CPU while just sitting idle
+_   https://github.com/processing/processing/issues/1561
 _ renaming RGB (.pde) to Rgb.java says "a file named RGB.pde already exists"
 _ undo seems to not be going to the right location (now with example)
 _   http://code.google.com/p/processing/issues/detail?id=668
