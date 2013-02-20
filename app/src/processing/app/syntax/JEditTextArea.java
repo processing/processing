@@ -78,6 +78,7 @@ public class JEditTextArea extends JComponent
   private InputMethodSupport inputMethodSupport = null;
 
   private Brackets bracketHelper = new Brackets();
+  
 
   /**
    * Creates a new JEditTextArea with the specified settings.
@@ -87,15 +88,17 @@ public class JEditTextArea extends JComponent
     // Enable the necessary events
     enableEvents(AWTEvent.KEY_EVENT_MASK);
 
-    caretTimer = new Timer(500, new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        if (hasFocus()) {
-          blinkCaret();
+    if (!DISABLE_CARET) {
+      caretTimer = new Timer(500, new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          if (hasFocus()) {
+            blinkCaret();
+          }
         }
-      }
-    }); //new CaretBlinker//new CaretBlinker());
-    caretTimer.setInitialDelay(500);
-    caretTimer.start();
+      });
+      caretTimer.setInitialDelay(500);
+      caretTimer.start();
+    }
 
     // Initialize some misc. stuff
     painter = new TextAreaPainter(this, defaults);
@@ -1251,7 +1254,9 @@ public class JEditTextArea extends JComponent
     // When the user is typing, etc, we don't want the caret
     // to blink
     blink = true;
-    caretTimer.restart();
+    if (!DISABLE_CARET) {
+      caretTimer.restart();
+    }
 
     // Disable rectangle select if selection start = selection end
     if(selectionStart == selectionEnd)
@@ -1903,7 +1908,9 @@ public class JEditTextArea extends JComponent
     super.removeNotify();
 //    if(focusedComponent == this)
 //      focusedComponent = null;
-    caretTimer.stop();
+    if (!DISABLE_CARET) {
+      caretTimer.stop();
+    }
   }
 
   /**
@@ -1952,6 +1959,7 @@ public class JEditTextArea extends JComponent
 
 //  protected static JEditTextArea focusedComponent;
   protected Timer caretTimer;
+  private boolean DISABLE_CARET = false;
 
   protected TextAreaPainter painter;
 
