@@ -110,8 +110,8 @@ public class ContributionManagerDialog {
           if (isError()) {
             status.setErrorMessage("An error occured when downloading " +
                                    "the list of available contributions.");
-          } else {
-            status.updateUI();
+//          } else {
+//            status.updateUI();
           }
         }
       });
@@ -289,14 +289,12 @@ public class ContributionManagerDialog {
         disposeFrame();
       }
     });
-    ActionListener disposer = new ActionListener() {
+    // handle window closing commands for ctrl/cmd-W or hitting ESC.
+    Toolkit.registerWindowCloseKeys(dialog.getRootPane(), new ActionListener() {
       public void actionPerformed(ActionEvent actionEvent) {
         disposeFrame();
       }
-    };
-    Toolkit.registerWindowCloseKeys(dialog.getRootPane(), disposer);
-
-    // handle window closing commands for ctrl/cmd-W or hitting ESC.
+    });
 
     dialog.getContentPane().addKeyListener(new KeyAdapter() {
       public void keyPressed(KeyEvent e) {
@@ -422,7 +420,6 @@ public class ContributionManagerDialog {
     public void updateStyle() {
       if (showingHint) {
         setText(filterHint);
-
         // setForeground(UIManager.getColor("TextField.light")); // too light
         setForeground(Color.gray);
         setFont(getFont().deriveFont(Font.ITALIC));

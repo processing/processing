@@ -22,6 +22,7 @@
 package processing.app.contrib;
 
 import java.io.*;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -55,7 +56,7 @@ public class ContributionManager {
     try {
 //      System.out.println("downloading file " + source);
       URLConnection conn = source.openConnection();
-      conn.setConnectTimeout(1000);
+      conn.setConnectTimeout(2000);
       conn.setReadTimeout(5000);
   
       // TODO this is often -1, may need to set progress to indeterminate
@@ -77,6 +78,9 @@ public class ContributionManager {
       out.flush();
       out.close();
       success = true;
+      
+    } catch (SocketTimeoutException ste) {
+      progress.error(ste);
       
     } catch (IOException ioe) {
       progress.error(ioe);

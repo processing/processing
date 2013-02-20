@@ -96,10 +96,9 @@ A   https://github.com/processing/processing/issues/1483
 A   http://code.google.com/p/processing/issues/detail?id=1445
 A exit() crashes Java on P2D and 3D when fullscreen only
 A   https://github.com/processing/processing/issues/12
-
 _ Default filter on PGraphics does nothing (JAVA2D) or causes crash (P2D/P3D)
 _   http://code.google.com/p/processing/issues/detail?id=1496
-_   https://github.com/processing/processing/issues/1534
+X   https://github.com/processing/processing/issues/1534
 
 cleaning/earlier
 C textureWrap() CLAMP and REPEAT now added
