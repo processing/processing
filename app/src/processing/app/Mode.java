@@ -604,7 +604,7 @@ public abstract class Mode {
 
       tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
       tree.setShowsRootHandles(true);
-      tree.setToggleClickCount(2);
+//      tree.setToggleClickCount(2);
       // expand the root
       tree.expandRow(0);
       // now hide the root
@@ -663,7 +663,11 @@ public abstract class Mode {
       });
 
       tree.setBorder(new EmptyBorder(5, 5, 5, 5));
-      tree.setToggleClickCount(1);
+      if (Base.isMacOS()) {
+        tree.setToggleClickCount(2);
+      } else {
+        tree.setToggleClickCount(1);
+      }
       JScrollPane treePane = new JScrollPane(tree);
       treePane.setPreferredSize(new Dimension(250, 450));
       treePane.setBorder(new EmptyBorder(0, 0, 0, 0));

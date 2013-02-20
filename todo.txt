@@ -70,6 +70,7 @@ X   patch from richard@crash.net.nz
 X   http://code.google.com/p/processing/issues/detail?id=1578
 o add Iterator as an import?
 X   nope, added warning message instead
+X disable single-click expand on OS X for the examples
 
 manindra
 M bug that was causing the Debugger to point to wrong break point line numbers
