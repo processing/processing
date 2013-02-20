@@ -667,7 +667,7 @@ public class PGL {
 
 
   protected void deleteSurface() {
-    if (glColorTex != null) {
+    if (threadIsCurrent() && fboLayerCreated) {
       deleteTextures(2, glColorTex);
       deleteFramebuffers(1, glColorFbo);
       deleteFramebuffers(1, glMultiFbo);
@@ -676,10 +676,22 @@ public class PGL {
       deleteRenderbuffers(1, glDepth);
       deleteRenderbuffers(1, glStencil);
     }
+
+    if (canvasAWT != null) {
+      canvasAWT.removeGLEventListener(listener);
+      pg.parent.removeListeners(canvasAWT);
+      pg.parent.remove(canvasAWT);
+    } else if (canvasNEWT != null) {
+      window.removeGLEventListener(listener);
+      pg.parent.remove(canvasNEWT);
+    }
+
     fboLayerCreated = false;
     fboLayerInUse = false;
     firstFrame = false;
+
     GLProfile.shutdown();
+
   }
 
 
