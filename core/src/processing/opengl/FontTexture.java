@@ -339,17 +339,17 @@ class FontTexture implements PConstants {
   }
 
 
-  public class TextureInfo {
-    public int texIndex;
-    public int width;
-    public int height;
-    public int[] crop;
-    public float u0, u1;
-    public float v0, v1;
-    public int[] pixels;
+  class TextureInfo {
+    int texIndex;
+    int width;
+    int height;
+    int[] crop;
+    float u0, u1;
+    float v0, v1;
+    int[] pixels;
 
-    public TextureInfo(int tidx, int cropX, int cropY, int cropW, int cropH,
-                       int[] pix) {
+    TextureInfo(int tidx, int cropX, int cropY, int cropW, int cropH,
+                int[] pix) {
       texIndex = tidx;
       crop = new int[4];
       // The region of the texture corresponding to the glyph is surrounded by a
