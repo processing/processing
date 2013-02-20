@@ -717,7 +717,7 @@ public class PGraphicsOpenGL extends PGraphics {
     GLResource res = new GLResource(id, context);
     if (glTextureObjects.containsKey(res)) {
       intBuffer.put(0, id);
-      pgl.deleteTextures(1, intBuffer);
+      if (pgl.threadIsCurrent()) pgl.deleteTextures(1, intBuffer);
       glTextureObjects.remove(res);
     }
   }
@@ -725,7 +725,7 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void deleteAllTextureObjects() {
     for (GLResource res : glTextureObjects.keySet()) {
       intBuffer.put(0, res.id);
-      pgl.deleteTextures(1, intBuffer);
+      if (pgl.threadIsCurrent()) pgl.deleteTextures(1, intBuffer);
     }
     glTextureObjects.clear();
   }
@@ -745,7 +745,7 @@ public class PGraphicsOpenGL extends PGraphics {
       if (glTextureObjects.get(res)) {
         finalized.add(res);
         intBuffer.put(0, res.id);
-        pgl.deleteTextures(1, intBuffer);
+        if (pgl.threadIsCurrent()) pgl.deleteTextures(1, intBuffer);
       }
     }
 
@@ -781,7 +781,7 @@ public class PGraphicsOpenGL extends PGraphics {
     GLResource res = new GLResource(id, context);
     if (glVertexBuffers.containsKey(res)) {
       intBuffer.put(0, id);
-      pgl.deleteBuffers(1, intBuffer);
+      if (pgl.threadIsCurrent()) pgl.deleteBuffers(1, intBuffer);
       glVertexBuffers.remove(res);
     }
   }
@@ -789,7 +789,7 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void deleteAllVertexBufferObjects() {
     for (GLResource res : glVertexBuffers.keySet()) {
       intBuffer.put(0, res.id);
-      pgl.deleteBuffers(1, intBuffer);
+      if (pgl.threadIsCurrent()) pgl.deleteBuffers(1, intBuffer);
     }
     glVertexBuffers.clear();
   }
@@ -809,7 +809,7 @@ public class PGraphicsOpenGL extends PGraphics {
       if (glVertexBuffers.get(res)) {
         finalized.add(res);
         intBuffer.put(0, res.id);
-        pgl.deleteBuffers(1, intBuffer);
+        if (pgl.threadIsCurrent()) pgl.deleteBuffers(1, intBuffer);
       }
     }
 
@@ -845,7 +845,7 @@ public class PGraphicsOpenGL extends PGraphics {
     GLResource res = new GLResource(id, context);
     if (glFrameBuffers.containsKey(res)) {
       intBuffer.put(0, id);
-      pgl.deleteFramebuffers(1, intBuffer);
+      if (pgl.threadIsCurrent()) pgl.deleteFramebuffers(1, intBuffer);
       glFrameBuffers.remove(res);
     }
   }
@@ -853,7 +853,7 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void deleteAllFrameBufferObjects() {
     for (GLResource res : glFrameBuffers.keySet()) {
       intBuffer.put(0, res.id);
-      pgl.deleteFramebuffers(1, intBuffer);
+      if (pgl.threadIsCurrent()) pgl.deleteFramebuffers(1, intBuffer);
     }
     glFrameBuffers.clear();
   }
@@ -873,7 +873,7 @@ public class PGraphicsOpenGL extends PGraphics {
       if (glFrameBuffers.get(res)) {
         finalized.add(res);
         intBuffer.put(0, res.id);
-        pgl.deleteFramebuffers(1, intBuffer);
+        if (pgl.threadIsCurrent()) pgl.deleteFramebuffers(1, intBuffer);
       }
     }
 
@@ -909,7 +909,7 @@ public class PGraphicsOpenGL extends PGraphics {
     GLResource res = new GLResource(id, context);
     if (glRenderBuffers.containsKey(res)) {
       intBuffer.put(0, id);
-      pgl.deleteRenderbuffers(1, intBuffer);
+      if (pgl.threadIsCurrent()) pgl.deleteRenderbuffers(1, intBuffer);
       glRenderBuffers.remove(res);
     }
   }
@@ -917,7 +917,7 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void deleteAllRenderBufferObjects() {
     for (GLResource res : glRenderBuffers.keySet()) {
       intBuffer.put(0, res.id);
-      pgl.deleteRenderbuffers(1, intBuffer);
+      if (pgl.threadIsCurrent()) pgl.deleteRenderbuffers(1, intBuffer);
     }
     glRenderBuffers.clear();
   }
@@ -937,7 +937,7 @@ public class PGraphicsOpenGL extends PGraphics {
       if (glRenderBuffers.get(res)) {
         finalized.add(res);
         intBuffer.put(0, res.id);
-        pgl.deleteRenderbuffers(1, intBuffer);
+        if (pgl.threadIsCurrent()) pgl.deleteRenderbuffers(1, intBuffer);
       }
     }
 
@@ -971,14 +971,14 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void deleteGLSLProgramObject(int id, int context) {
     GLResource res = new GLResource(id, context);
     if (glslPrograms.containsKey(res)) {
-      pgl.deleteProgram(res.id);
+      if (pgl.threadIsCurrent()) pgl.deleteProgram(res.id);
       glslPrograms.remove(res);
     }
   }
 
   protected void deleteAllGLSLProgramObjects() {
     for (GLResource res : glslPrograms.keySet()) {
-      pgl.deleteProgram(res.id);
+      if (pgl.threadIsCurrent()) pgl.deleteProgram(res.id);
     }
     glslPrograms.clear();
   }
@@ -997,7 +997,7 @@ public class PGraphicsOpenGL extends PGraphics {
     for (GLResource res : glslPrograms.keySet()) {
       if (glslPrograms.get(res)) {
         finalized.add(res);
-        pgl.deleteProgram(res.id);
+        if (pgl.threadIsCurrent()) pgl.deleteProgram(res.id);
       }
     }
 
@@ -1031,14 +1031,14 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void deleteGLSLVertShaderObject(int id, int context) {
     GLResource res = new GLResource(id, context);
     if (glslVertexShaders.containsKey(res)) {
-      pgl.deleteShader(res.id);
+      if (pgl.threadIsCurrent()) pgl.deleteShader(res.id);
       glslVertexShaders.remove(res);
     }
   }
 
   protected void deleteAllGLSLVertShaderObjects() {
     for (GLResource res : glslVertexShaders.keySet()) {
-      pgl.deleteShader(res.id);
+      if (pgl.threadIsCurrent()) pgl.deleteShader(res.id);
     }
     glslVertexShaders.clear();
   }
@@ -1058,7 +1058,7 @@ public class PGraphicsOpenGL extends PGraphics {
     for (GLResource res : glslVertexShaders.keySet()) {
       if (glslVertexShaders.get(res)) {
         finalized.add(res);
-        pgl.deleteShader(res.id);
+        if (pgl.threadIsCurrent()) pgl.deleteShader(res.id);
       }
     }
 
@@ -1092,14 +1092,14 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void deleteGLSLFragShaderObject(int id, int context) {
     GLResource res = new GLResource(id, context);
     if (glslFragmentShaders.containsKey(res)) {
-      pgl.deleteShader(res.id);
+      if (pgl.threadIsCurrent()) pgl.deleteShader(res.id);
       glslFragmentShaders.remove(res);
     }
   }
 
   protected void deleteAllGLSLFragShaderObjects() {
     for (GLResource res : glslFragmentShaders.keySet()) {
-      pgl.deleteShader(res.id);
+      if (pgl.threadIsCurrent()) pgl.deleteShader(res.id);
     }
     glslFragmentShaders.clear();
   }
@@ -1119,7 +1119,7 @@ public class PGraphicsOpenGL extends PGraphics {
     for (GLResource res : glslFragmentShaders.keySet()) {
       if (glslFragmentShaders.get(res)) {
         finalized.add(res);
-        pgl.deleteShader(res.id);
+        if (pgl.threadIsCurrent()) pgl.deleteShader(res.id);
       }
     }
 
