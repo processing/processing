@@ -118,6 +118,10 @@ public class PGL {
   protected static final int SIZEOF_INDEX = SIZEOF_SHORT;
   protected static final int INDEX_TYPE = GLES20.GL_UNSIGNED_SHORT;
 
+  /** Error string from framebuffer errors **/
+  protected static final String FRAMEBUFFER_ERROR_MESSAGE =
+    "Framebuffer error (%1$s), rendering will probably not work as expected";
+
   /** Machine Epsilon for float precision. **/
   protected static float FLOAT_EPS = Float.MIN_VALUE;
   // Calculation of the Machine Epsilon for float precision. From:
@@ -482,7 +486,9 @@ public class PGL {
         fboHeight = nextPowerOfTwo(pg.height);
       }
 
-      if (-1 < ext.indexOf("_framebuffer_multisample")) {
+      getIntegerv(MAX_SAMPLES, intBuffer);
+      if (-1 < ext.indexOf("_framebuffer_multisample") &&
+          1 < intBuffer.get(0)) {
         numSamples = reqNumSamples;
       } else {
         numSamples = 1;
@@ -2198,26 +2204,25 @@ public class PGL {
     if (status == FRAMEBUFFER_COMPLETE) {
       return true;
     } else if (status == FRAMEBUFFER_INCOMPLETE_ATTACHMENT) {
-      throw new RuntimeException(
-        "GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT (" +
-        Integer.toHexString(status) + ")");
+      System.err.println(String.format(FRAMEBUFFER_ERROR_MESSAGE,
+                                       "incomplete attachment"));
     } else if (status == FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT) {
-      throw new RuntimeException(
-        "GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT (" +
-        Integer.toHexString(status) + ")");
+      System.err.println(String.format(FRAMEBUFFER_ERROR_MESSAGE,
+                                       "incomplete missing attachment"));
     } else if (status == FRAMEBUFFER_INCOMPLETE_DIMENSIONS) {
-      throw new RuntimeException("GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS (" +
-                                 Integer.toHexString(status) + ")");
+      System.err.println(String.format(FRAMEBUFFER_ERROR_MESSAGE,
+                                       "incomplete dimensions"));
     } else if (status == FRAMEBUFFER_INCOMPLETE_FORMATS) {
-      throw new RuntimeException("GL_FRAMEBUFFER_INCOMPLETE_FORMATS (" +
-                                 Integer.toHexString(status) + ")");
+      System.err.println(String.format(FRAMEBUFFER_ERROR_MESSAGE,
+                                       "incomplete formats"));
     } else if (status == FRAMEBUFFER_UNSUPPORTED) {
-      throw new RuntimeException("GL_FRAMEBUFFER_UNSUPPORTED" +
-                                 Integer.toHexString(status));
+      System.err.println(String.format(FRAMEBUFFER_ERROR_MESSAGE,
+                                       "framebuffer unsupported"));
     } else {
-      throw new RuntimeException("unknown framebuffer error (" +
-                                 Integer.toHexString(status) + ")");
+      System.err.println(String.format(FRAMEBUFFER_ERROR_MESSAGE,
+                                       "unknown error"));
     }
+    return false;
   }
 
 
