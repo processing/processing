@@ -10662,8 +10662,10 @@ public class PGraphicsOpenGL extends PGraphics {
         for (int ln = 0; ln < lineCount; ln++) {
           int i0 = first + 2 * ln + 0;
           int i1 = first + 2 * ln + 1;
-          path.moveTo(in.vertices[3 * i0 + 0], in.vertices[3 * i0 + 1]);
-          path.lineTo(in.vertices[3 * i1 + 0], in.vertices[3 * i1 + 1]);
+          path.moveTo(in.vertices[3 * i0 + 0], in.vertices[3 * i0 + 1],
+                      in.strokeColors[i0]);
+          path.lineTo(in.vertices[3 * i1 + 0], in.vertices[3 * i1 + 1],
+                      in.strokeColors[i1]);
         }
         tessellateLinePath(path);
       }
@@ -10729,10 +10731,12 @@ public class PGraphicsOpenGL extends PGraphics {
       } else {  // full stroking algorithm
         int first = in.firstVertex;
         LinePath path = new LinePath(LinePath.WIND_NON_ZERO);
-        path.moveTo(in.vertices[3 * first + 0], in.vertices[3 * first + 1]);
+        path.moveTo(in.vertices[3 * first + 0], in.vertices[3 * first + 1],
+                    in.strokeColors[first]);
         for (int ln = 0; ln < lineCount; ln++) {
           int i1 = first + ln + 1;
-          path.lineTo(in.vertices[3 * i1 + 0], in.vertices[3 * i1 + 1]);
+          path.lineTo(in.vertices[3 * i1 + 0], in.vertices[3 * i1 + 1],
+                      in.strokeColors[i1]);
         }
         tessellateLinePath(path);
       }
@@ -10802,10 +10806,12 @@ public class PGraphicsOpenGL extends PGraphics {
       } else { // full stroking algorithm
         int first = in.firstVertex;
         LinePath path = new LinePath(LinePath.WIND_NON_ZERO);
-        path.moveTo(in.vertices[3 * first + 0], in.vertices[3 * first + 1]);
+        path.moveTo(in.vertices[3 * first + 0], in.vertices[3 * first + 1],
+                    in.strokeColors[first]);
         for (int ln = 0; ln < lineCount - 1; ln++) {
           int i1 = first + ln + 1;
-          path.lineTo(in.vertices[3 * i1 + 0], in.vertices[3 * i1 + 1]);
+          path.lineTo(in.vertices[3 * i1 + 0], in.vertices[3 * i1 + 1],
+                      in.strokeColors[i1]);
         }
         path.closePath();
         tessellateLinePath(path);
@@ -10845,13 +10851,13 @@ public class PGraphicsOpenGL extends PGraphics {
         int i0 = edge[0];
         int i1 = edge[1];
         if (bevel) {
-          index = addLine3D(i0, i1, index, lastInd, true);
+          index = addLine3D(i0, i1, index, lastInd, false);
           if (edge[2] == EDGE_STOP || edge[2] == EDGE_SINGLE) {
             // No join with next line segment.
             lastInd[0] = lastInd[1] = -1;
           }
         } else {
-          index = addLine3D(i0, i1, index, null, true);
+          index = addLine3D(i0, i1, index, null, false);
         }
       }
       lastLineIndexCache = index;
@@ -10872,7 +10878,7 @@ public class PGraphicsOpenGL extends PGraphics {
           int[] edge = in.edges[i];
           int i0 = edge[0];
           int i1 = edge[1];
-          index = addLine2D(i0, i1, index, true);
+          index = addLine2D(i0, i1, index, false);
         }
         lastLineIndexCache = lastPolyIndexCache = index;
       } else { // full stroking algorithm
@@ -10883,20 +10889,28 @@ public class PGraphicsOpenGL extends PGraphics {
           int i1 = edge[1];
           switch (edge[2]) {
           case EDGE_MIDDLE:
-            path.lineTo(in.vertices[3 * i1 + 0], in.vertices[3 * i1 + 1]);
+            path.lineTo(in.vertices[3 * i1 + 0], in.vertices[3 * i1 + 1],
+                        in.strokeColors[i1]);
             break;
           case EDGE_START:
-            path.moveTo(in.vertices[3 * i0 + 0], in.vertices[3 * i0 + 1]);
-            path.lineTo(in.vertices[3 * i1 + 0], in.vertices[3 * i1 + 1]);
+            path.moveTo(in.vertices[3 * i0 + 0], in.vertices[3 * i0 + 1],
+                        in.strokeColors[i0]);
+            path.lineTo(in.vertices[3 * i1 + 0], in.vertices[3 * i1 + 1],
+                        in.strokeColors[i1]);
             break;
           case EDGE_STOP:
-            path.lineTo(in.vertices[3 * i1 + 0], in.vertices[3 * i1 + 1]);
-            path.moveTo(in.vertices[3 * i1 + 0], in.vertices[3 * i1 + 1]);
+            path.lineTo(in.vertices[3 * i1 + 0], in.vertices[3 * i1 + 1],
+                        in.strokeColors[i1]);
+            path.moveTo(in.vertices[3 * i1 + 0], in.vertices[3 * i1 + 1],
+                        in.strokeColors[i1]);
             break;
           case EDGE_SINGLE:
-            path.moveTo(in.vertices[3 * i0 + 0], in.vertices[3 * i0 + 1]);
-            path.lineTo(in.vertices[3 * i1 + 0], in.vertices[3 * i1 + 1]);
-            path.moveTo(in.vertices[3 * i1 + 0], in.vertices[3 * i1 + 1]);
+            path.moveTo(in.vertices[3 * i0 + 0], in.vertices[3 * i0 + 1],
+                        in.strokeColors[i0]);
+            path.lineTo(in.vertices[3 * i1 + 0], in.vertices[3 * i1 + 1],
+                        in.strokeColors[i1]);
+            path.moveTo(in.vertices[3 * i1 + 0], in.vertices[3 * i1 + 1],
+                        in.strokeColors[i1]);
             break;
           }
         }
@@ -11549,11 +11563,6 @@ public class PGraphicsOpenGL extends PGraphics {
       }
 
       while (!iter.isDone()) {
-        float sr = 0;
-        float sg = 0;
-        float sb = 0;
-        float sa = 0;
-
         switch (iter.currentSegment(coords)) {
 
         case LinePath.SEG_MOVETO:
@@ -11561,15 +11570,10 @@ public class PGraphicsOpenGL extends PGraphics {
 
           // $FALL-THROUGH$
         case LinePath.SEG_LINETO:
-          sa = (strokeColor >> 24) & 0xFF;
-          sr = (strokeColor >> 16) & 0xFF;
-          sg = (strokeColor >>  8) & 0xFF;
-          sb = (strokeColor >>  0) & 0xFF;
-
           // Vertex data includes coordinates, colors, normals, texture
           // coordinates, and material properties.
           vertex = new double[] { coords[0], coords[1], 0,
-                                  sa, sr, sg, sb,
+                                  coords[2], coords[3], coords[4], coords[5],
                                   0, 0, 1,
                                   0, 0,
                                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};

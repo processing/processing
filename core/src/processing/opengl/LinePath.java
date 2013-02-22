@@ -119,6 +119,8 @@ public class LinePath {
 
   protected float[] floatCoords;
 
+  protected int[] pointColors;
+
   protected int numTypes;
 
   protected int numCoords;
@@ -164,10 +166,11 @@ public class LinePath {
     setWindingRule(rule);
     this.pointTypes = new byte[initialCapacity];
     floatCoords = new float[initialCapacity * 2];
+    pointColors = new int[initialCapacity];
   }
 
 
-  void needRoom(boolean needMove, int newCoords) {
+  void needRoom(boolean needMove, int newPoints) {
     if (needMove && numTypes == 0) {
       throw new RuntimeException("missing initial moveto "
         + "in path definition");
@@ -181,15 +184,26 @@ public class LinePath {
       pointTypes = copyOf(pointTypes, size + grow);
     }
     size = floatCoords.length;
-    if (numCoords + newCoords > size) {
+    if (numCoords + newPoints * 2 > size) {
       int grow = size;
       if (grow > EXPAND_MAX * 2) {
         grow = EXPAND_MAX * 2;
       }
-      if (grow < newCoords) {
-        grow = newCoords;
+      if (grow < newPoints * 2) {
+        grow = newPoints * 2;
       }
       floatCoords = copyOf(floatCoords, size + grow);
+    }
+    size = pointColors.length;
+    if (numCoords + newPoints > size) {
+      int grow = size;
+      if (grow > EXPAND_MAX) {
+        grow = EXPAND_MAX;
+      }
+      if (grow < newPoints) {
+        grow = newPoints;
+      }
+      pointColors = copyOf(pointColors, size + grow);
     }
   }
 
@@ -207,15 +221,17 @@ public class LinePath {
    *          the specified Y coordinate
    * @see LinePath#moveTo
    */
-  public final void moveTo(float x, float y) {
+  public final void moveTo(float x, float y, int c) {
     if (numTypes > 0 && pointTypes[numTypes - 1] == SEG_MOVETO) {
       floatCoords[numCoords - 2] = x;
       floatCoords[numCoords - 1] = y;
+      pointColors[numCoords/2] = c;
     } else {
-      needRoom(false, 2);
+      needRoom(false, 1);
       pointTypes[numTypes++] = SEG_MOVETO;
       floatCoords[numCoords++] = x;
       floatCoords[numCoords++] = y;
+      pointColors[numCoords/2-1] = c;
     }
   }
 
@@ -233,11 +249,12 @@ public class LinePath {
    *          the specified Y coordinate
    * @see LinePath#lineTo
    */
-  public final void lineTo(float x, float y) {
-    needRoom(true, 2);
+  public final void lineTo(float x, float y, int c) {
+    needRoom(true, 1);
     pointTypes[numTypes++] = SEG_LINETO;
     floatCoords[numCoords++] = x;
     floatCoords[numCoords++] = y;
+    pointColors[numCoords/2-1] = c;
   }
 
 
@@ -313,6 +330,8 @@ public class LinePath {
 
     int pointIdx;
 
+    int colorIdx;
+
     LinePath path;
 
     static final int curvecoords[] = { 2, 2, 0 };
@@ -327,6 +346,11 @@ public class LinePath {
       int numCoords = curvecoords[type];
       if (numCoords > 0) {
         System.arraycopy(floatCoords, pointIdx, coords, 0, numCoords);
+        int color = path.pointColors[colorIdx];
+        coords[numCoords + 0] = (color >> 24) & 0xFF;
+        coords[numCoords + 1] = (color >> 16) & 0xFF;
+        coords[numCoords + 2] = (color >>  8) & 0xFF;
+        coords[numCoords + 3] = (color >>  0) & 0xFF;
       }
       return type;
     }
@@ -338,6 +362,11 @@ public class LinePath {
         for (int i = 0; i < numCoords; i++) {
           coords[i] = floatCoords[pointIdx + i];
         }
+        int color = path.pointColors[colorIdx];
+        coords[numCoords + 0] = (color >> 24) & 0xFF;
+        coords[numCoords + 1] = (color >> 16) & 0xFF;
+        coords[numCoords + 2] = (color >>  8) & 0xFF;
+        coords[numCoords + 3] = (color >>  0) & 0xFF;
       }
       return type;
     }
@@ -353,6 +382,7 @@ public class LinePath {
     public void next() {
       int type = path.pointTypes[typeIdx++];
       pointIdx += curvecoords[type];
+      colorIdx++;
     }
   }
 
@@ -396,8 +426,8 @@ public class LinePath {
 
     strokeTo(src, weight, caps, join, miterlimit, transform, new LineStroker() {
       @Override
-      public void moveTo(int x0, int y0) {
-        dest.moveTo(S15_16ToFloat(x0), S15_16ToFloat(y0));
+      public void moveTo(int x0, int y0, int c0) {
+        dest.moveTo(S15_16ToFloat(x0), S15_16ToFloat(y0), c0);
       }
 
       @Override
@@ -405,8 +435,8 @@ public class LinePath {
       }
 
       @Override
-      public void lineTo(int x1, int y1) {
-        dest.lineTo(S15_16ToFloat(x1), S15_16ToFloat(y1));
+      public void lineTo(int x1, int y1, int c1) {
+        dest.lineTo(S15_16ToFloat(x1), S15_16ToFloat(y1), c1);
       }
 
       @Override
@@ -436,15 +466,24 @@ public class LinePath {
 
 
   private static void pathTo(PathIterator pi, LineStroker lsink) {
-    float coords[] = new float[2];
+    float coords[] = new float[6];
     while (!pi.isDone()) {
+      int color;
       switch (pi.currentSegment(coords)) {
       case SEG_MOVETO:
-        lsink.moveTo(FloatToS15_16(coords[0]), FloatToS15_16(coords[1]));
+        color = ((int)coords[2]<<24) |
+                ((int)coords[3]<<16) |
+                ((int)coords[4]<< 8) |
+                 (int)coords[5];
+        lsink.moveTo(FloatToS15_16(coords[0]), FloatToS15_16(coords[1]), color);
         break;
       case SEG_LINETO:
+        color = ((int)coords[2]<<24) |
+                ((int)coords[3]<<16) |
+                ((int)coords[4]<< 8) |
+                 (int)coords[5];
         lsink.lineJoin();
-        lsink.lineTo(FloatToS15_16(coords[0]), FloatToS15_16(coords[1]));
+        lsink.lineTo(FloatToS15_16(coords[0]), FloatToS15_16(coords[1]), color);
         break;
       case SEG_CLOSE:
         lsink.lineJoin();
@@ -478,6 +517,18 @@ public class LinePath {
 
   public static byte[] copyOf(byte[] source, int length) {
     byte[] target = new byte[length];
+    for (int i = 0; i < target.length; i++) {
+      if (i > source.length - 1)
+        target[i] = 0;
+      else
+        target[i] = source[i];
+    }
+    return target;
+  }
+
+
+  public static int[] copyOf(int[] source, int length) {
+    int[] target = new int[length];
     for (int i = 0; i < target.length; i++) {
       if (i > source.length - 1)
         target[i] = 0;

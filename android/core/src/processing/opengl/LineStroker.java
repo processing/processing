@@ -31,10 +31,8 @@ import processing.core.PMatrix2D;
 
 public class LineStroker  {
   private LineStroker output;
-//  private int lineWidth;
   private int capStyle;
   private int joinStyle;
-//  private int miterLimit;
   private int m00, m01;
   private int m10, m11;
   private int lineWidth2;
@@ -68,10 +66,8 @@ public class LineStroker  {
   private boolean started;
   private boolean lineToOrigin;
   private boolean joinToOrigin;
-//  private int sx0, sy0, sx1, sy1, x0, y0, x1, y1;
-//  private int mx0, my0, mx1, my1, omx, omy;
-//  private int lx0, ly0, lx1, ly1, lx0p, ly0p, px0, py0;
   private int sx0, sy0, sx1, sy1, x0, y0;
+  private int scolor0, pcolor0, color0;
   private int mx0, my0, omx, omy;
   private int px0, py0;
   private double m00_2_m01_2;
@@ -87,7 +83,7 @@ public class LineStroker  {
 
   /**
    * Constructs a <code>LineStroker</code>.
-   * 
+   *
    * @param output
    *          an output <code>LineStroker</code>.
    * @param lineWidth
@@ -114,7 +110,7 @@ public class LineStroker  {
 
   /**
    * Sets the output <code>LineStroker</code> of this <code>LineStroker</code>.
-   * 
+   *
    * @param output
    *          an output <code>LineStroker</code>.
    */
@@ -124,7 +120,7 @@ public class LineStroker  {
 
   /**
    * Sets the parameters of this <code>LineStroker</code>.
-   * 
+   *
    * @param lineWidth
    *          the desired line width in pixels, in S15.16 format.
    * @param capStyle
@@ -148,12 +144,10 @@ public class LineStroker  {
     this.m10 = LinePath.FloatToS15_16(transform.m10);
     this.m11 = LinePath.FloatToS15_16(transform.m11);
 
-//    this.lineWidth = lineWidth;
     this.lineWidth2 = lineWidth >> 1;
     this.scaledLineWidth2 = ((long) m00 * lineWidth2) >> 16;
     this.capStyle = capStyle;
     this.joinStyle = joinStyle;
-//    this.miterLimit = miterLimit;
 
     this.m00_2_m01_2 = (double) m00 * m00 + (double) m01 * m01;
     this.m10_2_m11_2 = (double) m10 * m10 + (double) m11 * m11;
@@ -323,7 +317,8 @@ public class LineStroker  {
   private static final long ROUND_JOIN_INTERNAL_THRESHOLD = 1000000000L;
 
   private void drawRoundJoin(int x, int y, int omx, int omy, int mx, int my,
-                             int side, boolean flip, boolean rev, long threshold) {
+                             int side, int color,
+                             boolean flip, boolean rev, long threshold) {
     if ((omx == 0 && omy == 0) || (mx == 0 && my == 0)) {
       return;
     }
@@ -349,7 +344,7 @@ public class LineStroker  {
 
     int npoints = computeRoundJoin(x, y, bx0, by0, bx1, by1, side, flip, join);
     for (int i = 0; i < npoints; i++) {
-      emitLineTo(join[2 * i], join[2 * i + 1], rev);
+      emitLineTo(join[2 * i], join[2 * i + 1], color, rev);
     }
   }
 
@@ -385,7 +380,8 @@ public class LineStroker  {
   }
 
   private void drawMiter(int px0, int py0, int x0, int y0, int x1, int y1,
-                         int omx, int omy, int mx, int my, boolean rev) {
+                         int omx, int omy, int mx, int my, int color,
+                         boolean rev) {
     if (mx == omx && my == omy) {
       return;
     }
@@ -414,16 +410,16 @@ public class LineStroker  {
     long lenSq = a * a + b * b;
 
     if (lenSq < miterLimitSq) {
-      emitLineTo(miter[0], miter[1], rev);
+      emitLineTo(miter[0], miter[1], color, rev);
     }
   }
 
-  public void moveTo(int x0, int y0) {
+  public void moveTo(int x0, int y0, int c0) {
     // System.out.println("LineStroker.moveTo(" + x0/65536.0 + ", " + y0/65536.0 + ")");
 
     if (lineToOrigin) {
       // not closing the path, do the previous lineTo
-      lineToImpl(sx0, sy0, joinToOrigin);
+      lineToImpl(sx0, sy0, scolor0, joinToOrigin);
       lineToOrigin = false;
     }
 
@@ -433,6 +429,7 @@ public class LineStroker  {
 
     this.sx0 = this.x0 = x0;
     this.sy0 = this.y0 = y0;
+    this.scolor0 = this.color0 = c0;
     this.rindex = 0;
     this.started = false;
     this.joinSegment = false;
@@ -446,7 +443,7 @@ public class LineStroker  {
     this.joinSegment = true;
   }
 
-  public void lineTo(int x1, int y1) {
+  public void lineTo(int x1, int y1, int c1) {
     // System.out.println("LineStroker.lineTo(" + x1/65536.0 + ", " + y1/65536.0 + ")");
 
     if (lineToOrigin) {
@@ -456,7 +453,7 @@ public class LineStroker  {
       }
 
       // not closing the path, do the previous lineTo
-      lineToImpl(sx0, sy0, joinToOrigin);
+      lineToImpl(sx0, sy0, scolor0, joinToOrigin);
       lineToOrigin = false;
     } else if (x1 == x0 && y1 == y0) {
       return;
@@ -467,17 +464,17 @@ public class LineStroker  {
       return;
     }
 
-    lineToImpl(x1, y1, joinSegment);
+    lineToImpl(x1, y1, c1, joinSegment);
     joinSegment = false;
   }
 
-  private void lineToImpl(int x1, int y1, boolean joinSegment) {
+  private void lineToImpl(int x1, int y1, int c1, boolean joinSegment) {
     computeOffset(x0, y0, x1, y1, offset);
     int mx = offset[0];
     int my = offset[1];
 
     if (!started) {
-      emitMoveTo(x0 + mx, y0 + my);
+      emitMoveTo(x0 + mx, y0 + my, color0);
       this.sx1 = x1;
       this.sy1 = y1;
       this.mx0 = mx;
@@ -487,45 +484,38 @@ public class LineStroker  {
       boolean ccw = isCCW(px0, py0, x0, y0, x1, y1);
       if (joinSegment) {
         if (joinStyle == LinePath.JOIN_MITER) {
-          drawMiter(px0, py0, x0, y0, x1, y1, omx, omy, mx, my, ccw);
+          drawMiter(px0, py0, x0, y0, x1, y1, omx, omy, mx, my, color0, ccw);
         } else if (joinStyle == LinePath.JOIN_ROUND) {
-          drawRoundJoin(x0, y0, omx, omy, mx, my, 0, false, ccw,
+          drawRoundJoin(x0, y0, omx, omy, mx, my, 0, color0, false, ccw,
                         ROUND_JOIN_THRESHOLD);
         }
       } else {
         // Draw internal joins as round
-        drawRoundJoin(x0, y0, omx, omy, mx, my, 0, false, ccw,
+        drawRoundJoin(x0, y0, omx, omy, mx, my, 0, color0, false, ccw,
                       ROUND_JOIN_INTERNAL_THRESHOLD);
       }
 
-      emitLineTo(x0, y0, !ccw);
+      emitLineTo(x0, y0, color0, !ccw);
     }
 
-    emitLineTo(x0 + mx, y0 + my, false);
-    emitLineTo(x1 + mx, y1 + my, false);
+    emitLineTo(x0 + mx, y0 + my, color0, false);
+    emitLineTo(x1 + mx, y1 + my, c1, false);
 
-    emitLineTo(x0 - mx, y0 - my, true);
-    emitLineTo(x1 - mx, y1 - my, true);
-
-//    lx0 = x1 + mx;
-//    ly0 = y1 + my;
-//    lx0p = x1 - mx;
-//    ly0p = y1 - my;
-//    lx1 = x1;
-//    ly1 = y1;
+    emitLineTo(x0 - mx, y0 - my, color0, true);
+    emitLineTo(x1 - mx, y1 - my, c1, true);
 
     this.omx = mx;
     this.omy = my;
     this.px0 = x0;
     this.py0 = y0;
+    this.pcolor0 = color0;
     this.x0 = x1;
     this.y0 = y1;
+    this.color0 = c1;
     this.prev = LinePath.SEG_LINETO;
   }
 
   public void close() {
-    // System.out.println("LineStroker.close()");
-
     if (lineToOrigin) {
       // ignore the previous lineTo
       lineToOrigin = false;
@@ -544,49 +534,50 @@ public class LineStroker  {
     boolean ccw = isCCW(px0, py0, x0, y0, sx0, sy0);
     if (joinSegment) {
       if (joinStyle == LinePath.JOIN_MITER) {
-        drawMiter(px0, py0, x0, y0, sx0, sy0, omx, omy, mx, my, ccw);
+        drawMiter(px0, py0, x0, y0, sx0, sy0, omx, omy, mx, my, pcolor0, ccw);
       } else if (joinStyle == LinePath.JOIN_ROUND) {
-        drawRoundJoin(x0, y0, omx, omy, mx, my, 0, false, ccw,
+        drawRoundJoin(x0, y0, omx, omy, mx, my, 0, color0, false, ccw,
                       ROUND_JOIN_THRESHOLD);
       }
     } else {
       // Draw internal joins as round
-      drawRoundJoin(x0, y0, omx, omy, mx, my, 0, false, ccw,
+      drawRoundJoin(x0, y0, omx, omy, mx, my, 0, color0, false, ccw,
                     ROUND_JOIN_INTERNAL_THRESHOLD);
     }
 
-    emitLineTo(x0 + mx, y0 + my);
-    emitLineTo(sx0 + mx, sy0 + my);
+    emitLineTo(x0 + mx, y0 + my, color0);
+    emitLineTo(sx0 + mx, sy0 + my, scolor0);
 
     ccw = isCCW(x0, y0, sx0, sy0, sx1, sy1);
 
     // Draw final join on the outside
     if (!ccw) {
       if (joinStyle == LinePath.JOIN_MITER) {
-        drawMiter(x0, y0, sx0, sy0, sx1, sy1, mx, my, mx0, my0, false);
+        drawMiter(x0, y0, sx0, sy0, sx1, sy1, mx, my, mx0, my0, color0, false);
       } else if (joinStyle == LinePath.JOIN_ROUND) {
-        drawRoundJoin(sx0, sy0, mx, my, mx0, my0, 0, false, false,
+        drawRoundJoin(sx0, sy0, mx, my, mx0, my0, 0, scolor0, false, false,
                       ROUND_JOIN_THRESHOLD);
       }
     }
 
-    emitLineTo(sx0 + mx0, sy0 + my0);
-    emitLineTo(sx0 - mx0, sy0 - my0); // same as reverse[0], reverse[1]
+    emitLineTo(sx0 + mx0, sy0 + my0, scolor0);
+    emitLineTo(sx0 - mx0, sy0 - my0, scolor0); // same as reverse[0], reverse[1]
 
     // Draw final join on the inside
     if (ccw) {
       if (joinStyle == LinePath.JOIN_MITER) {
-        drawMiter(x0, y0, sx0, sy0, sx1, sy1, -mx, -my, -mx0, -my0, false);
+        drawMiter(x0, y0, sx0, sy0, sx1, sy1, -mx, -my, -mx0, -my0, color0,
+                  false);
       } else if (joinStyle == LinePath.JOIN_ROUND) {
-        drawRoundJoin(sx0, sy0, -mx, -my, -mx0, -my0, 0, true, false,
+        drawRoundJoin(sx0, sy0, -mx, -my, -mx0, -my0, 0, scolor0, true, false,
                       ROUND_JOIN_THRESHOLD);
       }
     }
 
-    emitLineTo(sx0 - mx, sy0 - my);
-    emitLineTo(x0 - mx, y0 - my);
-    for (int i = rindex - 2; i >= 0; i -= 2) {
-      emitLineTo(reverse[i], reverse[i + 1]);
+    emitLineTo(sx0 - mx, sy0 - my, scolor0);
+    emitLineTo(x0 - mx, y0 - my, color0);
+    for (int i = rindex - 3; i >= 0; i -= 3) {
+      emitLineTo(reverse[i], reverse[i + 1], reverse[i + 2]);
     }
 
     this.x0 = this.sx0;
@@ -599,11 +590,9 @@ public class LineStroker  {
   }
 
   public void end() {
-    // System.out.println("LineStroker.end()");
-
     if (lineToOrigin) {
       // not closing the path, do the previous lineTo
-      lineToImpl(sx0, sy0, joinToOrigin);
+      lineToImpl(sx0, sy0, scolor0, joinToOrigin);
       lineToOrigin = false;
     }
 
@@ -626,7 +615,7 @@ public class LineStroker  {
 
   private void finish() {
     if (capStyle == LinePath.CAP_ROUND) {
-      drawRoundJoin(x0, y0, omx, omy, -omx, -omy, 1, false, false,
+      drawRoundJoin(x0, y0, omx, omy, -omx, -omy, 1, color0, false, false,
                     ROUND_JOIN_THRESHOLD);
     } else if (capStyle == LinePath.CAP_SQUARE) {
       long ldx = px0 - x0;
@@ -638,18 +627,18 @@ public class LineStroker  {
         int capx = x0 - (int) (ldx * s >> 16);
         int capy = y0 - (int) (ldy * s >> 16);
 
-        emitLineTo(capx + omx, capy + omy);
-        emitLineTo(capx - omx, capy - omy);
+        emitLineTo(capx + omx, capy + omy, color0);
+        emitLineTo(capx - omx, capy - omy, color0);
       }
     }
 
-    for (int i = rindex - 2; i >= 0; i -= 2) {
-      emitLineTo(reverse[i], reverse[i + 1]);
+    for (int i = rindex - 3; i >= 0; i -= 3) {
+      emitLineTo(reverse[i], reverse[i + 1], reverse[i + 2]);
     }
     this.rindex = 0;
 
     if (capStyle == LinePath.CAP_ROUND) {
-      drawRoundJoin(sx0, sy0, -mx0, -my0, mx0, my0, 1, false, false,
+      drawRoundJoin(sx0, sy0, -mx0, -my0, mx0, my0, 1, scolor0, false, false,
                     ROUND_JOIN_THRESHOLD);
     } else if (capStyle == LinePath.CAP_SQUARE) {
       long ldx = sx1 - sx0;
@@ -661,8 +650,8 @@ public class LineStroker  {
         int capx = sx0 - (int) (ldx * s >> 16);
         int capy = sy0 - (int) (ldy * s >> 16);
 
-        emitLineTo(capx - mx0, capy - my0);
-        emitLineTo(capx + mx0, capy + my0);
+        emitLineTo(capx - mx0, capy - my0, scolor0);
+        emitLineTo(capx + mx0, capy + my0, scolor0);
       }
     }
 
@@ -670,28 +659,26 @@ public class LineStroker  {
     this.joinSegment = false;
   }
 
-  private void emitMoveTo(int x0, int y0) {
-    // System.out.println("LineStroker.emitMoveTo(" + x0/65536.0 + ", " + y0/65536.0 + ")");
-    output.moveTo(x0, y0);
+  private void emitMoveTo(int x0, int y0, int c0) {
+    output.moveTo(x0, y0, c0);
   }
 
-  private void emitLineTo(int x1, int y1) {
-    // System.out.println("LineStroker.emitLineTo(" + x0/65536.0 + ", " + y0/65536.0 + ")");
-    output.lineTo(x1, y1);
+  private void emitLineTo(int x1, int y1, int c1) {
+    output.lineTo(x1, y1, c1);
   }
 
-  private void emitLineTo(int x1, int y1, boolean rev) {
+  private void emitLineTo(int x1, int y1, int c1, boolean rev) {
     if (rev) {
-      ensureCapacity(rindex + 2);
+      ensureCapacity(rindex + 3);
       reverse[rindex++] = x1;
       reverse[rindex++] = y1;
+      reverse[rindex++] = c1;
     } else {
-      emitLineTo(x1, y1);
+      emitLineTo(x1, y1, c1);
     }
   }
 
   private void emitClose() {
-    // System.out.println("LineStroker.emitClose()");
     output.close();
   }
 }
