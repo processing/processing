@@ -1,4 +1,6 @@
-// An ArrayList is used to manage the list of Particles 
+// An ArrayList is used to manage the list of Particles
+// An Iterator is used to remove "dead" particles while iterating over the list
+import java.util.Iterator;
 
 class ParticleSystem {
 
