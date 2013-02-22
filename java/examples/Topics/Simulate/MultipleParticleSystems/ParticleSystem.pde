@@ -16,7 +16,7 @@ class ParticleSystem {
   }
 
   void run() {
-    // Cycle through the ArrayList using Iterator we are deleting
+    // Cycle through the ArrayList using Iterator, because we are deleting while iterating
     Iterator<Particle> it = particles.iterator();
     while (it.hasNext()) {
       Particle p = it.next();
@@ -28,7 +28,14 @@ class ParticleSystem {
   }
 
   void addParticle() {
-    particles.add(new Particle(origin));
+    Particle p;
+    // Add either a Particle or CrazyParticle to the system
+    if (int(random(0, 2)) == 0) {
+      p = new Particle(origin);
+    } else {
+      p = new CrazyParticle(origin);
+    }
+    particles.add(p);
   }
 
   void addParticle(Particle p) {
@@ -37,11 +44,7 @@ class ParticleSystem {
 
   // A method to test if the particle system still has particles
   boolean dead() {
-    if (particles.isEmpty()) {
-      return true;
-    } else {
-      return false;
-    }
+    return particles.isEmpty();
   }
 
 }
