@@ -44,6 +44,11 @@ X remove SVG warning about "#text" ignored
 X fix bug where noDelays wasn't being used in PApplet
 X remove "ignoring #text tag" from SVG loader
 X   can ignore any # items altogether
+o add "CGAffineTransformInvert: singular matrix" problem to the Wiki
+X   http://code.google.com/p/processing/issues/detail?id=1363
+X   confirmed fixed with 6u41
+_ don't allocate Java2D buffer inside beginDraw()
+_   otherwise PDF will make an enormous image even if it's not needed
 
 andres
 A P3D sketches failing to run
@@ -97,8 +102,10 @@ A   http://code.google.com/p/processing/issues/detail?id=1445
 A exit() crashes Java on P2D and 3D when fullscreen only
 A   https://github.com/processing/processing/issues/12
 _ Default filter on PGraphics does nothing (JAVA2D) or causes crash (P2D/P3D)
-_   http://code.google.com/p/processing/issues/detail?id=1496
-X   https://github.com/processing/processing/issues/1534
+_   https://github.com/processing/processing/issues/1534
+X   http://code.google.com/p/processing/issues/detail?id=1496
+A crash when running latest P2D/P3D under VMware
+A   https://github.com/processing/processing/issues/1644
 
 cleaning/earlier
 C textureWrap() CLAMP and REPEAT now added
@@ -638,12 +645,6 @@ _ document somehow.. svg viewer will be discontinued
 _   http://www.adobe.com/svg/eol.html
 
 
-CORE / PGraphicsJava2D
-
-_ add "CGAffineTransformInvert: singular matrix" problem to the Wiki
-_   http://code.google.com/p/processing/issues/detail?id=1363
-
-
 CORE / OpenGL (Andres)
 
 _ ortho() issues
@@ -655,7 +656,8 @@ _   http://code.google.com/p/processing/issues/detail?id=121
 _ first few frames of OpenGL sketches on Windows run slowly
 _   http://code.google.com/p/processing/issues/detail?id=107
 _ implement textMode(SHAPE) with OPENGL
-_   http://code.google.com/p/processing/issues/detail?id=738
+_   https://github.com/processing/processing/issues/777
+X   http://code.google.com/p/processing/issues/detail?id=738
 _ Signature issue on contributed libraries affects unrelated opengl sketches
 _   http://code.google.com/p/processing/issues/detail?id=261
 _ simple NPE in OpenGL causes really large, not useful, stack trace
