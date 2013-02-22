@@ -12,7 +12,6 @@ class CrazyParticle extends Particle {
     super(l);
     // One more line of code to deal with the new variable, theta
     theta = 0.0;
-
   }
 
   // Notice we don't have the method run() here; it is inherited from Particle
@@ -25,11 +24,10 @@ class CrazyParticle extends Particle {
     theta += theta_vel;
   }
 
-  // Method to display
+  // This display() method overrides the parent class display() method
   void display() {
     // Render the ellipse just like in a regular particle
     super.display();
-
     // Then add a rotating line
     pushMatrix();
     translate(location.x,location.y);
@@ -38,5 +36,5 @@ class CrazyParticle extends Particle {
     line(0,0,25,0);
     popMatrix();
   }
-}
 
+}
