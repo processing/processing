@@ -515,6 +515,9 @@ public class PShapeOpenGL extends PShape {
       PShape.copyPath(src, dest);
     }
     dest.setName(src.getName());
+    dest.width = src.width;
+    dest.height = src.height;
+    dest.depth = src.depth;
     return dest;
   }
 
@@ -536,6 +539,8 @@ public class PShapeOpenGL extends PShape {
       PShape.copyPath(src, dest);
     }
     dest.setName(src.getName());
+    dest.width = src.width;
+    dest.height = src.height;
     return dest;
   }
 
