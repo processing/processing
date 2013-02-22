@@ -31,14 +31,10 @@ class Particle {
     fill(255,lifespan);
     ellipse(location.x,location.y,8,8);
   }
-  
+
   // Is the particle still useful?
   boolean isDead() {
-    if (lifespan < 0.0) {
-      return true;
-    } else {
-      return false;
-    }
+    return (lifespan < 0.0);
   }
-}
 
+}

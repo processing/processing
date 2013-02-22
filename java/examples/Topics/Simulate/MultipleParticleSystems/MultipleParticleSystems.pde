@@ -1,13 +1,13 @@
 /**
  * Multiple Particle Systems
- * by Daniel Shiffman.  
- * 
+ * by Daniel Shiffman.
+ *
  * Click the mouse to generate a burst of particles
- * at mouse location. 
- * 
+ * at mouse location.
+ *
  * Each burst is one instance of a particle system
  * with Particles and CrazyParticles (a subclass of Particle)
- * Note use of Inheritance and Polymorphism here. 
+ * Note use of Inheritance and Polymorphism here.
  */
 
 ArrayList<ParticleSystem> systems;
@@ -24,7 +24,6 @@ void draw() {
     ps.run();
     ps.addParticle();
   }
-
   if (systems.isEmpty()) {
     fill(255);
     textAlign(CENTER);
@@ -35,13 +34,3 @@ void draw() {
 void mousePressed() {
   systems.add(new ParticleSystem(1, new PVector(mouseX, mouseY)));
 }
-
-
-
-
-
-
-
-
-
-
