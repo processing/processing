@@ -144,7 +144,12 @@ public class PGraphicsPDF extends PGraphicsJava2D {
 //      g2 = template.createGraphics(width, height, mapper);
     }
 //    System.out.println("beginDraw " + (System.currentTimeMillis() - t0));
-    super.beginDraw();
+    
+    // super in Java2D now creates an image buffer, don't do that
+//    super.beginDraw();
+    checkSettings();
+    resetMatrix(); // reset model matrix
+    vertexCount = 0;
 
     // Also need to push the matrix since the matrix doesn't reset on each run
     // http://dev.processing.org/bugs/show_bug.cgi?id=1227
