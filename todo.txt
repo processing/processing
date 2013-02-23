@@ -93,8 +93,6 @@ X   removed in 2.0b7, because it has bugs and is no longer compatible
 o also can have case of opening two of same sketch at once
 o   if sketch was open, then restart by dragging the .pde to p5.app
 
-https://processing-js.lighthouseapp.com/
-
 library changes (site only?)
 _ remove netscape.javascript stuff
 _ move minim out to its own contrib section
@@ -962,6 +960,8 @@ _   In regedit: Navigate to Computer\HKEY_CLASSES_ROOT\Applications and find you
 
 
 DIST / Mac OS X
+_ keep an eye on the Java 8 builds, since all the effort goes there
+_   https://wikis.oracle.com/display/OpenJDK/Mac+OS+X+Port
 _ change cmd line for OS X to use symlink? 
 _   otherwise updates are going to require reinstall..
 _   or that it's gonna need to parse and say "update command line?" 
