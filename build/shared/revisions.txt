@@ -1,6 +1,6 @@
 PROCESSING 2.0b8 (REV 0216) 23 February 2013
 
-Yet another bug-fixing batch on the road to 2.0
+Dead bugs on the windscreen as we head down the road to 2.0. 
 
 [ bugs fixed ] 
 
@@ -19,7 +19,7 @@ Yet another bug-fixing batch on the road to 2.0
 + MovieMaker tool will not start on Windows 8
   http://code.google.com/p/processing/issues/detail?id=1447
 
-+ On Windows, the Help menu seems to start with a separator
++ On Windows, the Help menu starts with a separator (no more)
 
 + Color coding for if/else in Processing IDE doesn't match
   http://code.google.com/p/processing/issues/detail?id=1457
@@ -182,7 +182,7 @@ Yet another bug-fixing batch on the road to 2.0
 
 + Added getColumnCount() to TableRow
 
-[ andres attacks ] 
+[ andres assault ] 
 
 + P3D sketches failing to run
   http://code.google.com/p/processing/issues/detail?id=1500
@@ -254,6 +254,9 @@ Yet another bug-fixing batch on the road to 2.0
 + Re-implement per-vertex coloring in P2D/P3D
   https://github.com/processing/processing/issues/1196
   http://code.google.com/p/processing/issues/detail?id=1158
+
++ P2D, P3D drawing errors in static mode, gray screen
+  https://github.com/processing/processing/issues/1648
 
 [ manindra magic ]
 

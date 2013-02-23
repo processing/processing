@@ -115,8 +115,8 @@ A   https://github.com/processing/processing/issues/1641
 A Re-implement per-vertex coloring in P2D/P3D
 A   https://github.com/processing/processing/issues/1196
 X   http://code.google.com/p/processing/issues/detail?id=1158
-_ P2D, P3D drawing errors in static mode, gray screen
-_   https://github.com/processing/processing/issues/1648
+A P2D, P3D drawing errors in static mode, gray screen
+A   https://github.com/processing/processing/issues/1648
 
 cleaning/earlier
 C textureWrap() CLAMP and REPEAT now added
