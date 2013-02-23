@@ -47,8 +47,12 @@ X   can ignore any # items altogether
 o add "CGAffineTransformInvert: singular matrix" problem to the Wiki
 X   http://code.google.com/p/processing/issues/detail?id=1363
 X   confirmed fixed with 6u41
-_ don't allocate Java2D buffer inside beginDraw()
-_   otherwise PDF will make an enormous image even if it's not needed
+X Default Renderer slow on retina displays
+X   http://code.google.com/p/processing/issues/detail?id=1262
+X   https://github.com/processing/processing/issues/1300
+o don't allocate Java2D buffer inside beginDraw()
+X   otherwise PDF will make an enormous image even if it's not needed
+X   modify PDF to not call super.beginDraw()
 
 andres
 A P3D sketches failing to run
@@ -106,6 +110,13 @@ _   https://github.com/processing/processing/issues/1534
 X   http://code.google.com/p/processing/issues/detail?id=1496
 A crash when running latest P2D/P3D under VMware
 A   https://github.com/processing/processing/issues/1644
+A SVG width and height not properly set with P2D, P3D & OPENGL renderers
+A   https://github.com/processing/processing/issues/1641
+A Re-implement per-vertex coloring in P2D/P3D
+A   https://github.com/processing/processing/issues/1196
+X   http://code.google.com/p/processing/issues/detail?id=1158
+_ P2D, P3D drawing errors in static mode, gray screen
+_   https://github.com/processing/processing/issues/1648
 
 cleaning/earlier
 C textureWrap() CLAMP and REPEAT now added
@@ -389,8 +400,6 @@ _ can't really change the smoothing/options on offscreen
 _   is this still true?
 
 rendering/performance/threading
-_ Default Renderer slow on retina displays
-_   http://code.google.com/p/processing/issues/detail?id=1262
 _ hint(DISABLE_LOAD_PIXELS) -> faster rendering in Java2D
 _ problems with 2D rendering speed
 _   volatile images
