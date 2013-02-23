@@ -2207,7 +2207,7 @@ public class PApplet extends Applet
   //synchronized public void handleDisplay() {
   public void handleDraw() {
     debug("handleDraw() " + g + " " + looping + " " + redraw + " valid:" + this.isValid() + " visible:" + this.isVisible());
-    if (g != null && (looping || redraw)) {
+    if (canDraw()) {
       if (!g.canDraw()) {
         debug("g.canDraw() is false");
         // Don't draw if the renderer is not yet ready.
@@ -2308,6 +2308,12 @@ public class PApplet extends Applet
       frameRateLastNanos = now;
       frameCount++;
     }
+  }
+
+
+  /** Not official API, not guaranteed to work in the future. */
+  public boolean canDraw() {
+    return g != null && (looping || redraw);
   }
 
 

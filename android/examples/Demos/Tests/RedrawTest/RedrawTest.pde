@@ -1,7 +1,5 @@
-// Issues: doesn't redraw
-
 void setup() {
-  size(400, 400, P3D);  
+  size(400, 400, P2D);  
   noLoop();
 }
 
@@ -11,6 +9,7 @@ void draw() {
   println("draw");  
 }
 
-void keyPressed() {
+void mousePressed() {
   redraw();
 }
+

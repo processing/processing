@@ -659,6 +659,13 @@ public class PApplet extends Activity implements PConstants, Runnable {
 //    return surfaceHolder;
   }
 
+
+  /** Not official API, not guaranteed to work in the future. */
+  public SurfaceView getSurfaceView() {
+    return surfaceView;
+  }
+
+
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
@@ -921,17 +928,6 @@ public class PApplet extends Activity implements PConstants, Runnable {
 //      super.onDetachedFromWindow();
 //      stop();
 //    }
-  }
-
-
-  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-
-
-  /** Holy crap this was an ugly one. Need to fix. */
-  public void andresNeedsBetterAPI() {
-    if (looping) { // This "if" is needed to avoid flickering when looping is disabled.
-      ((GLSurfaceView) surfaceView).requestRender();
-    }
   }
 
 
@@ -1933,7 +1929,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
     // width and height that have been set by surfaceChanged().
 //    boolean validSize = width != 0 && height != 0;
 //    println("valid size = " + validSize + " (" + width + "x" + height + ")");
-    if (g != null && surfaceReady && !paused && (looping || redraw)) {
+    if (canDraw()) {
 //      if (!g.canDraw()) {
 //        // Don't draw if the renderer is not yet ready.
 //        // (e.g. OpenGL has to wait for a peer to be on screen)
@@ -2005,6 +2001,12 @@ public class PApplet extends Activity implements PConstants, Runnable {
       frameRateLastNanos = now;
       frameCount++;
     }
+  }
+
+
+  /** Not official API, not guaranteed to work in the future. */
+  public boolean canDraw() {
+    return g != null && surfaceReady && !paused && (looping || redraw);
   }
 
 

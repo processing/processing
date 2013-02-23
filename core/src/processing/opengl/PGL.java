@@ -1189,7 +1189,7 @@ public class PGL {
 
 
   protected void requestDraw() {
-    if (pg.initialized) {
+    if (pg.initialized && pg.parent.canDraw()) {
       try {
         if (toolkit == AWT) {
           canvasAWT.display();

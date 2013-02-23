@@ -333,6 +333,9 @@ public class PGL {
   /** The current opengl context */
   public static EGLContext context;
 
+  /** The current surface view */
+  public static GLSurfaceView glview;
+
   /** The PGraphics object using this interface */
   protected PGraphicsOpenGL pg;
 
@@ -452,6 +455,7 @@ public class PGL {
 
 
   protected void initSurface(int antialias) {
+    glview = (GLSurfaceView)pg.parent.getSurfaceView();
     reqNumSamples = qualityToSamples(antialias);
     fboLayerCreated = false;
     fboLayerInUse = false;
@@ -460,7 +464,7 @@ public class PGL {
 
 
   protected void deleteSurface() {
-    if (glColorTex != null) {
+    if (threadIsCurrent() && glColorTex != null) {
       deleteTextures(2, glColorTex);
       deleteFramebuffers(1, glColorFbo);
       deleteFramebuffers(1, glMultiFbo);
@@ -469,6 +473,7 @@ public class PGL {
       deleteRenderbuffers(1, glDepth);
       deleteRenderbuffers(1, glStencil);
     }
+
     fboLayerCreated = false;
     fboLayerInUse = false;
     firstFrame = true;
@@ -821,9 +826,9 @@ public class PGL {
 
     if (!fboLayerByDefault) {
       // The result of this assignment is the following: if the user requested
-      // at some point the use of the FBO layer, but subsequently didn't do
+      // at some point the use of the FBO layer, but subsequently didn't
       // request it again, then the rendering won't use the FBO layer if not
-      // needed, since it is slower than simple onscreen rendering.
+      // needed, since it is slower than simple on-screen rendering.
       FORCE_SCREEN_FBO = false;
     }
   }
@@ -861,7 +866,9 @@ public class PGL {
 
 
   protected void requestDraw() {
-    pg.parent.andresNeedsBetterAPI();
+    if (pg.initialized && pg.parent.canDraw()) {
+      glview.requestRender();
+    }
   }
 
 
