@@ -684,10 +684,8 @@ public class PGL {
     if (canvasAWT != null) {
       canvasAWT.removeGLEventListener(listener);
       pg.parent.removeListeners(canvasAWT);
-      pg.parent.remove(canvasAWT);
     } else if (canvasNEWT != null) {
       window.removeGLEventListener(listener);
-      pg.parent.remove(canvasNEWT);
     }
 
     fboLayerCreated = false;
