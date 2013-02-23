@@ -1,5 +1,253 @@
-PROCESSING 2.0b8 (REV 0216) X December 2012
+PROCESSING 2.0b8 (REV 0216) 23 February 2013
 
+Yet another bug-fixing batch on the road to 2.0
+
+[ bugs fixed ] 
+
++ "Find in Reference" broken in 2.0b7
+   http://code.google.com/p/processing/issues/detail?id=1456
+
++ Add java.io.File to default imports
+  http://code.google.com/p/processing/issues/detail?id=1453
+
++ Default Renderer slow on retina displays
+  http://code.google.com/p/processing/issues/detail?id=1262
+  https://github.com/processing/processing/issues/1300
+
++ Remove extra separator at the top of the Help menu on Windows and Linux
+
++ MovieMaker tool will not start on Windows 8
+  http://code.google.com/p/processing/issues/detail?id=1447
+
++ On Windows, the Help menu seems to start with a separator
+
++ Color coding for if/else in Processing IDE doesn't match
+  http://code.google.com/p/processing/issues/detail?id=1457
+
++ Ignore ArrayIndexOutOfBoundsException in JEditTextArea.xToOffset() 
+
++ Fix IllegalStateException on Windows/Linux in Save prompt
+  happened when hitting ESC or otherwise closing the window
+
++ Don't open Changes page on the Wiki from command line
+  http://code.google.com/p/processing/issues/detail?id=1520
+
++ Prevent inertia scrolling on OS X from making the editor jumpy
+
++ processing-java throws java.lang.ArrayIndexOutOfBoundsException: -1
+  http://code.google.com/p/processing/issues/detail?id=1548
+
++ "Auto format" should not scroll current line to first line
+  http://code.google.com/p/processing/issues/detail?id=1533
+
++ Fix "Bounds out of range" when outdenting a block of text
+  Exception in thread "AWT-EventQueue-0" 
+  java.lang.IllegalArgumentException: Bounds out of range: 5374,5376 [5375]
+  at processing.app.syntax.JEditTextArea.select(JEditTextArea.java:1214)
+  at processing.app.Editor.handleIndentOutdent(Editor.java:1819)
+
++ Play button (and others) no longer highlighting
+  http://code.google.com/p/processing/issues/detail?id=688
+  Patch from John Li (jli at circularly.org) Thanks!
+
++ readlink error when running processing-java on Linux
+  Patch from richard at crash.net.nz. Thanks!
+  http://code.google.com/p/processing/issues/detail?id=1578
+
++ Fix table loading quirk with extensions
+
++ PImage.resize() greater than image size hangs 
+  http://code.google.com/p/processing/issues/detail?id=1463
+
++ loadBytes() does not close input stream
+  http://code.google.com/p/processing/issues/detail?id=1542
+
++ Fixes for removeColumn()
+
++ Remove SVG warning about "#text" ignored
+
++ Fix bug where noDelays wasn't being used in PApplet
+
++ XML.format(0) throws error
+  http://code.google.com/p/processing/issues/detail?id=1512
+
+[ improvements, updates, and changes ]
+
++ Add basic retina support (text/labels, buttons not yet updated) 
+  to the Mac OS X version.
+
++ Clean up the code and interface for the Movie Maker tool
+  http://code.google.com/p/processing/issues/detail?id=836 
+
++ Suggest possible import statements for common Java classes
+  http://code.google.com/p/processing/issues/detail?id=1550
+
++ Add 6u37 as the Java runtime (unfortunately woefully outdated by now)
+
++ Add ESC and cmd/ctrl-W to the Examples window
+
++ Move token/syntax coloring out of theme.txt and back into preferences
+
++ Discern variable vs function with Find in Reference
+
++ If no selection, attempt to expand the selection for Find in Reference
+
++ Add cmd-shift-O to "Open Examples" on OS X with no window open
+
++ Remove Quaqua library
+  http://code.google.com/p/processing/issues/detail?id=1509
+
++ Most recent moved to the top of the "Recent" menu
+
++ Disable single-click expand on OS X for the examples
+
++ Add clear() to replace background(0, 0, 0, 0)
+  http://code.google.com/p/processing/issues/detail?id=1446
+
++ Change heading2D() to just heading() 
+  http://code.google.com/p/processing/issues/detail?id=987
+
++ Remove hint(ENABLE_NATIVE_FONTS)
+
++ Add warning message when registering AWT mouse/key events
+
++ Show warning when registering mouse/key events with OpenGL
+
++ Add functions for mousePressed(event) and keyPressed(event) et al
+
++ Add randomGaussian() method
+
++ Add TAU as alias for TWO_PI
+  http://code.google.com/p/processing/issues/detail?id=1488
+  reference: https://github.com/processing/processing-web/issues/9
+
++ Miscellaneous XML fixes and cleanups
+
+[ tool/mode/library manager ] 
+
++ General cleanup of the visuals/layout
+
++ Library manager leaves temporary folders in sketchbook folder
+  http://code.google.com/p/processing/issues/detail?id=1527
+
++ Add Mode is also reporting that it's a library that contains multiple
+
++ Add Tool is having problems
+  https://github.com/processing/processing/issues/1607
+  http://code.google.com/p/processing/issues/detail?id=1569
+
++ Make already installed libraries distinguishable in the list
+  https://github.com/processing/processing/issues/1250
+  http://code.google.com/p/processing/issues/detail?id=1212
+
++ Fix up the design of the list entries themselves
+
++ Using "Add Library" requires restart of Processing before lib recognized
+  https://github.com/processing/processing/issues/1425
+  http://code.google.com/p/processing/issues/detail?id=1387
+
+[ table ] 
+
++ Added lastRowIndex()
+
++ rows() instead of getRows() (doesn't perform like our other get() functions)
+
++ addRow() returns TableRow object to be modified
+
++ lastRowIndex() (to avoid getRowCount() - 1)
+
++ Change makeNullEmpty() -> replace(null, ""); and
+  makeEmptyNull() -> replace("", null);
+
++ Add saveTable("filename.tsv") or saveTable("filename.txt", "tsv")
+
++ createTable() method in PApplet
+
++ Removed getUniqueXxxx() and some others, pending naming decision
+
++ Added getColumnCount() to TableRow
+
+[ andres attacks ] 
+
++ P3D sketches failing to run
+  http://code.google.com/p/processing/issues/detail?id=1500
+
++ Transparent pixels are not set on multisampled offscreen GL surfaces
+  http://code.google.com/p/processing/issues/detail?id=1516
+
++ Clean-up PShape API
+  http://code.google.com/p/processing/issues/detail?id=1518
+
++ Several key/mouse event issues in the db
+  http://code.google.com/p/processing/issues/detail?id=1464
+
++ Finalize shader API
+  https://github.com/processing/processing/issues/13
+
++ "focused" become false when window is clicked in OPENGL and P2D renderer
+  http://code.google.com/p/processing/issues/detail?id=1483
+  https://github.com/processing/processing/issues/1521
+
++ cursor(...) and noCursor() having trouble in P2D or P3D mode
+  http://code.google.com/p/processing/issues/detail?id=1574
+  https://github.com/processing/processing/issues/1612
+
++ OpenGL/P3D sketches show graphical corruption
+  http://code.google.com/p/processing/issues/detail?id=1452
+  https://github.com/processing/processing/issues/1490
+
++ Disable stroke perspective by default
+  https://github.com/processing/processing/issues/1598
+  http://code.google.com/p/processing/issues/detail?id=1560
+
++ Fix get()/set() problems with images and OpenGL
+  https://github.com/processing/processing/issues/1613
+  http://code.google.com/p/processing/issues/detail?id=1575
+
++ Child PShape disappears when geometric transformations are applied
+  http://code.google.com/p/processing/issues/detail?id=1460
+  https://github.com/processing/processing/issues/1498
+
++ Repeated fill() in P3D throws ex for groups, weird behavior for single shapes
+  http://code.google.com/p/processing/issues/detail?id=1524
+  https://github.com/processing/processing/issues/1562
+
++ Incorrect sampler2D alpha channel from PGraphics.filter(shader)
+  https://github.com/processing/processing/issues/1557
+  http://code.google.com/p/processing/issues/detail?id=1519
+
++ Mouse data erratic in P2D
+  https://github.com/processing/processing/issues/1626
+
++ Destroying an OpenGL PApplet doesn't terminate SharedResourceRunner thread
+  https://github.com/processing/processing/issues/1483
+  http://code.google.com/p/processing/issues/detail?id=1445
+
++ exit() crashes Java on P2D and 3D when fullscreen only
+  https://github.com/processing/processing/issues/12
+
++ Default filter on PGraphics does nothing (JAVA2D) or causes crash (P2D/P3D)
+  https://github.com/processing/processing/issues/1534
+  http://code.google.com/p/processing/issues/detail?id=1496
+
++ Crash when running latest P2D/P3D under VMware
+  https://github.com/processing/processing/issues/1644
+
++ SVG width and height not properly set with P2D, P3D & OPENGL renderers
+  https://github.com/processing/processing/issues/1641
+
++ Re-implement per-vertex coloring in P2D/P3D
+  https://github.com/processing/processing/issues/1196
+  http://code.google.com/p/processing/issues/detail?id=1158
+
+[ manindra magic ]
+
++ Error checker broken in experimental mode (fix from Manindra)
+  http://code.google.com/p/processing/issues/detail?id=1449
+
++ Bug that was causing the Debugger to point to wrong break point line numbers
+  'Debug' button does not re-run the project when it is already running.
+  http://code.google.com/p/processing/issues/detail?id=1504
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 

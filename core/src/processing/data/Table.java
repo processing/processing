@@ -3003,11 +3003,13 @@ public class Table {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
+  /** Not to be documented yet, API not complete. */
   public String[] listUnique(String column) {
     return listUnique(getColumnIndex(column));
   }
 
 
+  /** Not to be documented yet, API not complete. */
   public String[] listUnique(int column) {
     HashMapSucks found = new HashMapSucks();
     for (int row = 0; row < getRowCount(); row++) {
@@ -3019,11 +3021,13 @@ public class Table {
   }
 
 
+  /** Not to be documented yet, API not complete. */
   public HashMap<String,Integer> tallyUnique(String columnName) {
     return tallyUnique(getColumnIndex(columnName));
   }
 
 
+  /** Not to be documented yet, API not complete. */
   public HashMap<String,Integer> tallyUnique(int column) {
     HashMapSucks outgoing = new HashMapSucks();
     for (int row = 0; row < rowCount; row++) {
