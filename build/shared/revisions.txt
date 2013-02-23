@@ -146,6 +146,21 @@ Yet another bug-fixing batch on the road to 2.0
   https://github.com/processing/processing/issues/1425
   http://code.google.com/p/processing/issues/detail?id=1387
 
+[ android ] 
+
++ Update documentation and tools for Android SDK Tools revision 21
+  http://code.google.com/p/processing/issues/detail?id=1398
+
++ Update Wiki to reflect no need for Google APIs
+
++ Add clear and close to some stream methods
+  http://code.google.com/p/processing/issues/detail?id=244
+
++ OpenGL sketch crashes on older Android devices
+  http://code.google.com/p/processing/issues/detail?id=1455
+
++ Remove mouseEvent and keyEvent variables (deprecated on desktop)
+
 [ table ] 
 
 + Added lastRowIndex()
