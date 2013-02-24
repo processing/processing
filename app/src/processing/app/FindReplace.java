@@ -26,6 +26,8 @@ import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.*;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
 
 
 /**
@@ -317,7 +319,17 @@ public class FindReplace extends JFrame {
               break;
             }
 
-            text = sketch.getCode(tabIndex + 1).getProgram();
+            try {
+              Document doc = sketch.getCode(tabIndex + 1).getDocument(); 
+              if(doc != null) {
+                text = doc.getText(0, doc.getLength()); // this thing has the latest changes
+              }
+              else { 
+                text = sketch.getCode(tabIndex + 1).getProgram(); // not this thing.
+              }
+            } catch (BadLocationException e) {
+              e.printStackTrace();
+            }
             tabIndex++;
             if (ignoreCase) {
               text = text.toLowerCase();
@@ -358,7 +370,17 @@ public class FindReplace extends JFrame {
             } else if (tabIndex == 0) {
               break;
             }
-            text = sketch.getCode(tabIndex - 1).getProgram();
+            try {
+              Document doc = sketch.getCode(tabIndex - 1).getDocument(); 
+              if(doc != null) {
+                text = doc.getText(0, doc.getLength()); // this thing has the latest changes
+              }
+              else { 
+                text = sketch.getCode(tabIndex - 1).getProgram(); // not this thing.
+              }
+            } catch (BadLocationException e) {
+              e.printStackTrace();
+            }
             tabIndex--;
             if (ignoreCase) {
               text = text.toLowerCase();
