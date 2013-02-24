@@ -39,7 +39,7 @@ we're still a little ways off from 2.0 final.)
 + processing-java throws java.lang.ArrayIndexOutOfBoundsException: -1
   http://code.google.com/p/processing/issues/detail?id=1548
 
-+ "Auto format" should not scroll current line to first line
++ "Auto Format" should not scroll current line to first line
   http://code.google.com/p/processing/issues/detail?id=1533
 
 + Fix "Bounds out of range" when outdenting a block of text
