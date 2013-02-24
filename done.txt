@@ -1,3 +1,125 @@
+0216 pde (2.0b8)
+X remove extra separator at the top of the Help menu on Windows and Linux
+X MovieMaker tool will not start on Windows 8
+X   make a little less fragile by not launching as separate process
+X   http://code.google.com/p/processing/issues/detail?id=1447
+X clean up the code and interface for the Movie Maker tool
+X   http://code.google.com/p/processing/issues/detail?id=836 
+X on Windows, the Help menu seems to start with a separator
+X add 6u37 as the Java runtime
+o TextAreaDefaults - is editable in use?
+X add java.io.File to default imports
+X   http://code.google.com/p/processing/issues/detail?id=1453
+X update the JavaDoc for the latest release
+X   implement from build.xml as well
+X make sure javadoc builds and uploads properly
+X error checker broken in experimental mode (fix from Manindra)
+X   http://code.google.com/p/processing/issues/detail?id=1449
+X Color coding for if/else in Processing IDE doesn't match
+X   http://code.google.com/p/processing/issues/detail?id=1457
+X add ESC and cmd/ctrl-W to the Examples window
+X move token/syntax coloring out of theme.txt and back into preferences
+X what order should 'recent' menu use?
+X   most recent is at the top
+X check on new JDK and how it works on OS X
+X   http://jdk7.java.net/macportpreview/
+X add retina support to Info.plist
+X   <key>NSHighResolutionCapable</key>
+X   <string>true</string>
+X add basics of retina support to the toolbar and header
+X   getDefaultToolkit().getDesktopProperty("apple.awt.contentScaleFactor");
+X paper over ArrayIndexOutOfBoundsException in JEditTextArea.xToOffset() 
+X Fix IllegalStateException on Windows/Linux in Save prompt
+X   happened when hitting ESC or otherwise closing the window
+X "Find in Reference" largely broken in 2.0b7
+C   http://code.google.com/p/processing/issues/detail?id=1456
+X discern variable vs function with Find in Reference
+X if no selection, attempt to expand the selection for Find in Reference
+X add cmd-shift-O to "Open Examples" on OS X with no window open
+X go through vida examples to make sure extra imports are not being used
+o   do command line to run through all examples? 
+X remove Quaqua
+X   http://code.google.com/p/processing/issues/detail?id=1509
+X   remove separate launch of QT movie creator
+X Don't open Changes page on the Wiki from command line
+X   http://code.google.com/p/processing/issues/detail?id=1520
+X prevent inertia scrolling on OS X from making editor jumpy
+X Suggest possible import statements for common Java classes
+X   http://code.google.com/p/processing/issues/detail?id=1550
+X   for others like collections and Date, show warning and option to add?
+X   along with warning that it's not supported
+X processing-java throws java.lang.ArrayIndexOutOfBoundsException: -1
+X   http://code.google.com/p/processing/issues/detail?id=1548
+X Library manager leaves temporary folders in sketchbook folder
+X   http://code.google.com/p/processing/issues/detail?id=1527
+X "Auto format" should not scroll current line to first line
+X   http://code.google.com/p/processing/issues/detail?id=1533
+X add to build instructions for OS X:
+X   ant won't work w/ Java 1.7 until you set JAVA_HOME
+X   export JAVA_HOME=`/usr/libexec/java_home`
+X fix "Bounds out of range" when outdenting a block of text
+X   Exception in thread "AWT-EventQueue-0" java.lang.IllegalArgumentException: Bounds out of range: 5374,5376 [5375]
+X   at processing.app.syntax.JEditTextArea.select(JEditTextArea.java:1214)
+X   at processing.app.Editor.handleIndentOutdent(Editor.java:1819)
+X play button (and others) no longer highlighting
+X   http://code.google.com/p/processing/issues/detail?id=688
+X   run button not properly unhighlighting
+X   patch from John Li (jli@circularly.org)
+X readlink error when running processing-java
+X   patch from richard@crash.net.nz
+X   http://code.google.com/p/processing/issues/detail?id=1578
+o add Iterator as an import?
+X   nope, added warning message instead
+X disable single-click expand on OS X for the examples
+
+manindra
+M bug that was causing the Debugger to point to wrong break point line numbers
+M 'Debug' button does not re-run the project when it is already running.
+M   http://code.google.com/p/processing/issues/detail?id=1504
+M Problems with Find & Replace getting stuck in a loop
+M   or replacing with odd text
+M   https://github.com/processing/processing/issues/1643
+M   https://github.com/processing/processing/pull/1652
+
+earlier
+X include debug mode as 'experimental'?
+X   DebugMode throwing exception about breakpoints when trying to save
+X   what to call it? change java2 folder name?
+X check into apple.awt.graphics.UseQuartz again
+X   both for p5.app and for the exported app
+X   also need to look at the main to see what it's doing
+X   removed in 2.0b7, because it has bugs and is no longer compatible
+<key>Properties</key>
+<dict>
+  <key>apple.awt.graphics.UseQuartz</key>
+  <string>true</string>
+</dict>
+o also can have case of opening two of same sketch at once
+o   if sketch was open, then restart by dragging the .pde to p5.app
+
+tool manager
+X from Casey
+X   list in the PDE would be updated automatically by querying a web service
+X   list on the website would be generated using the same web service
+X   All I would need to do is update web/contrib_generate/sources.conf 
+X     and the rest would happen automatically.
+X general cleanup of the visuals/layout
+X extra files still being left around during install
+X Add Mode is also reporting that it's a library that contains multiple
+X   fixed the 'library' part, and its legitimately bad
+X Add Tool is having problems
+X   https://github.com/processing/processing/issues/1607
+X   http://code.google.com/p/processing/issues/detail?id=1569
+X make already installed libraries distinguishable in the list
+X   https://github.com/processing/processing/issues/1250
+X   http://code.google.com/p/processing/issues/detail?id=1212
+X work on the design of the list entries themselves
+X add "Installed" indicator? or show the Remove button?
+X using "Add Library" requires restart of Processing before lib recognized
+X   https://github.com/processing/processing/issues/1425
+X   http://code.google.com/p/processing/issues/detail?id=1387
+
+
 0215 pde (2.0b7)
 X "expecting EOF, found 'import'" on previously working sketch 
 X   http://code.google.com/p/processing/issues/detail?id=1376
