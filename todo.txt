@@ -76,6 +76,10 @@ manindra
 M bug that was causing the Debugger to point to wrong break point line numbers
 M 'Debug' button does not re-run the project when it is already running.
 M   http://code.google.com/p/processing/issues/detail?id=1504
+M Problems with Find & Replace getting stuck in a loop
+M   or replacing with odd text
+M   https://github.com/processing/processing/issues/1643
+M   https://github.com/processing/processing/pull/1652
 
 earlier
 X include debug mode as 'experimental'?
