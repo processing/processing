@@ -661,7 +661,7 @@ public class Table {
           }
         } else {
           throw new IllegalArgumentException("'" + opt + "' not understood. " +
-                                             "Only csv, tsv, and html are " +
+                                             "Only csv, tsv, bin, and html are " +
                                              "accepted as save parameters");
         }
       }
@@ -1414,7 +1414,7 @@ public class Table {
   public void setRowCount(int newCount) {
     if (newCount != rowCount) {
       if (newCount > 1000000) {
-        System.out.println("setting row count to " + PApplet.nfc(newCount));
+        System.out.print("Note: setting maximum row count to " + PApplet.nfc(newCount));
       }
       long t = System.currentTimeMillis();
       for (int col = 0; col < columns.length; col++) {
@@ -1436,7 +1436,7 @@ public class Table {
       }
       if (newCount > 1000000) {
         int ms = (int) (System.currentTimeMillis() - t);
-        System.out.println("  resize took " + PApplet.nfc(ms) + " ms");
+        System.out.println(" (resize took " + PApplet.nfc(ms) + " ms)");
       }
     }
     rowCount = newCount;

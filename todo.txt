@@ -1,6 +1,13 @@
 0217 pde
 
 
+_ incorporate JDI changes from Manindra
+_   how does this affect Experimental? duplicate libs? loader issues?
+_ move Android mode out to its own repo
+_ move JavaScript mode out to its own repo
+_ change line endings on Windows to only be replaced during dist
+_   otherwise marks revisions.txt as changed
+
 library changes (site only?)
 _ remove netscape.javascript stuff
 _ move minim out to its own contrib section

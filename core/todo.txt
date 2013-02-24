@@ -1,4 +1,5 @@
 0217 core
+X improve load/save of .gz files with Table, clear up some .bin issues
 
 
 decisions on data

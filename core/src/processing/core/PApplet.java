@@ -6097,7 +6097,7 @@ public class PApplet extends Applet
 
 
   /**
-   * @param options may contain "header", "tsv", or "csv" separated by commas
+   * @param options may contain "header", "tsv", "csv", or "bin" separated by commas
    */
   public Table loadTable(String filename, String options) {
     try {
@@ -6133,20 +6133,32 @@ public class PApplet extends Applet
 
 
   /**
-   * @param options may contain "header", "tsv", or "csv" separated by commas
+   * @param options can be one of "tsv", "csv", "bin", or "html"
    */
   public boolean saveTable(Table table, String filename, String options) {
-    try {
-      table.save(saveFile(filename), options);
-      return true;
-    } catch (IOException e) {
-      e.printStackTrace();
+    String ext = checkExtension(filename);
+    if (ext != null) {
+      if (ext.equals("csv") || ext.equals("tsv") || ext.equals("bin") || ext.equals("html")) {
+        if (options == null) {
+          options = ext;
+        } else {
+          options = ext + "," + options;
+        }
+      }
     }
-    return false;
+    // Figure out location and make sure the target path exists
+    File outputFile = saveFile(filename);
+    // Open a stream and take care of .gz if necessary
+    return table.save(createOutput(outputFile), options);
   }
 
 
   protected String checkExtension(String filename) {
+    // Don't consider the .gz as part of the name, createInput()
+    // and createOuput() will take care of fixing that up.
+    if (filename.toLowerCase().endsWith(".gz")) {
+      filename = filename.substring(0, filename.length() - 3);
+    }
     int index = filename.lastIndexOf('.');
     if (index == -1) {
       return null;
