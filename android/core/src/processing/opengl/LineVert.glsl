@@ -56,7 +56,7 @@ void main() {
   float thickness = direction.w;
   
   if (thickness != 0.0) {  
-    vec4 posq = posp + modelview * vec4(direction.xyz, 1);
+    vec4 posq = posp + modelview * vec4(direction.xyz, 0);
     posq.xyz = posq.xyz * scale;  
     vec4 clipq = projection * posq; 
   
@@ -76,7 +76,7 @@ void main() {
       // No perspective correction.	
       vec4 offsetp = windowToClipVector(offset, viewport, clipp.w);
       gl_Position = clipp + offsetp;
-    }  
+    }    
   } else {
     gl_Position = clipp;
   }
