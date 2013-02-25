@@ -44,9 +44,9 @@ import processing.core.*;
  * files and images, etc) that comes from that.
  */
 public class Base {
-  static public final int REVISION = 216;
+  static public final int REVISION = 217;
   /** This might be replaced by main() if there's a lib/version.txt file. */
-  static public String VERSION_NAME = "0216";
+  static public String VERSION_NAME = "0217";
   /** Set true if this a proper release rather than a numbered revision. */
   static public boolean RELEASE = false;
 
@@ -360,15 +360,15 @@ public class Base {
       }
     }
 
-    libraryManagerFrame = 
+    libraryManagerFrame =
       new ContributionManagerDialog(ContributionType.LIBRARY);
-    toolManagerFrame = 
+    toolManagerFrame =
       new ContributionManagerDialog(ContributionType.TOOL);
-    modeManagerFrame = 
+    modeManagerFrame =
       new ContributionManagerDialog(ContributionType.MODE);
-    updateManagerFrame = 
+    updateManagerFrame =
       new ContributionManagerDialog(null);
-    
+
     // Make sure ThinkDifferent has library examples too
     nextMode.rebuildLibraryList();
 
@@ -2454,15 +2454,15 @@ public class Base {
     }
     return outgoing;
   }
-  
+
 
   static public void readSettings(String filename, String lines[],
                                   HashMap<String, String> settings) {
     for (int i = 0; i < lines.length; i++) {
       int hash = lines[i].indexOf('#');
-      String line = (hash == -1) ? 
+      String line = (hash == -1) ?
         lines[i].trim() : lines[i].substring(0, hash).trim();
-        
+
       if (line.length() != 0) {
         int equals = line.indexOf('=');
         if (equals == -1) {
@@ -2497,7 +2497,7 @@ public class Base {
     to.flush();
     to.close();
     to = null;
-    
+
     targetFile.setLastModified(sourceFile.lastModified());
   }
 
@@ -2883,8 +2883,8 @@ public class Base {
       }
     }
   }
-  
-  
+
+
   static public void unzip(File zipFile, File dest) {
     try {
       FileInputStream fis = new FileInputStream(zipFile);

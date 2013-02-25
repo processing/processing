@@ -1,33 +1,5 @@
-0216 android
-X Update documentation and tools for Android SDK Tools revision 21
-X   http://code.google.com/p/processing/issues/detail?id=1398
-X update Wiki to reflect no need for Google APIs
-o instructions on installing the usb driver for windows
-o   http://developer.android.com/sdk/win-usb.html
-o need to post android examples
-o check out andres' changes for PShape
-X look into touch event code, see if there's a good way to integrate
-o   make a decision on how to integrate touch event code
-X   punting until later
-X add clear and close to all stream methods?
-X   http://code.google.com/p/processing/issues/detail?id=244
-X   check on this, fixed one, all set
-o gui stuff: http://hg.postspectacular.com/cp5magic/wiki/Home
-X OpenGL sketches crashes on older Android devices
-X   http://code.google.com/p/processing/issues/detail?id=1455
-X remove mouseEvent and keyEvent variables (deprecated on desktop)
+0217 android 
 
-earlier
-X inside AndroidPreprocessor
-X   processing.mode.java.JavaBuild.scrubComments(sketch.getCode(0).getProgram())
-X   PApplet.match(scrubbed, processing.mode.java.JavaBuild.SIZE_REGEX);
-X   clean up earlier when size() stuff was moved up
-o test libraries on android
-X Implement a way to include the resources directory of an Android app
-X   USB host and NFC reader need other changes to the app hierarchy to work
-X   http://code.google.com/p/processing/issues/detail?id=767
-X Error for "android create avd" when the AVD is already installed
-X   http://code.google.com/p/processing/issues/detail?id=614
 
 _ requires deleting the app before reinstalling
 _   just fix this like the others

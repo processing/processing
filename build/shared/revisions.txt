@@ -1,6 +1,8 @@
-PROCESSING 2.0b8 (REV 0216) 23 February 2013
+PROCESSING 2.0b8 (REV 0216) 24 February 2013
 
 Dead bugs on the windscreen as we head down the road to 2.0. 
+(The fact that we're still in bad metaphor territory suggests
+we're still a little ways off from 2.0 final.)
 
 [ bugs fixed ] 
 
@@ -37,7 +39,7 @@ Dead bugs on the windscreen as we head down the road to 2.0.
 + processing-java throws java.lang.ArrayIndexOutOfBoundsException: -1
   http://code.google.com/p/processing/issues/detail?id=1548
 
-+ "Auto format" should not scroll current line to first line
++ "Auto Format" should not scroll current line to first line
   http://code.google.com/p/processing/issues/detail?id=1533
 
 + Fix "Bounds out of range" when outdenting a block of text
@@ -257,8 +259,15 @@ Dead bugs on the windscreen as we head down the road to 2.0.
 
 + P2D, P3D drawing errors in static mode, gray screen
   https://github.com/processing/processing/issues/1648
+  Still seeing a few of these in some cases, but hopefully 
+  this is fixed for the most part.
 
 [ manindra magic ]
+
++ Problems with Find & Replace getting stuck in a loop, or replacing
+  with odd text after text was no longer found.
+  https://github.com/processing/processing/issues/1643
+  https://github.com/processing/processing/pull/1652
 
 + Error checker broken in experimental mode (fix from Manindra)
   http://code.google.com/p/processing/issues/detail?id=1449
