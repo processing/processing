@@ -158,6 +158,7 @@ SUBTRACT	LITERAL2	blend_
 SVIDEO	LITERAL2	
 TAB	LITERAL2	keyCode
 TARGA	LITERAL2
+TAU	LITERAL2	TAU
 TEXT	LITERAL2	cursor_
 TFF	LITERAL2
 THIRD_PI	LITERAL2
@@ -530,7 +531,6 @@ beginDraw	FUNCTION2	PGraphics_beginDraw_
 endDraw	FUNCTION2	PGraphics_endDraw_
 PI	LITERAL2	PI
 PImage	KEYWORD5	PImage
-alpha	FUNCTION2	PImage_alpha_
 blend	FUNCTION2	PImage_blend_
 copy	FUNCTION2	PImage_copy_
 filter	FUNCTION2	PImage_filter_
@@ -563,7 +563,7 @@ beginContour	FUNCTION2	PShape_beginContour_
 disableStyle	FUNCTION2	PShape_disableStyle_
 enableStyle	FUNCTION2	PShape_enableStyle_
 endContour	FUNCTION2	PShape_endContour_
-end	FUNCTION2	PShape_endShape_
+endShape	FUNCTION2	PShape_endShape_
 getChild	FUNCTION2	PShape_getChild_
 getVertex	FUNCTION2	PShape_getVertex_
 getVertexCount	FUNCTION2	PShape_getVertexCount_
@@ -608,6 +608,7 @@ quadraticVertex	FUNCTION1	quadraticVertex_
 QUARTER_PI	LITERAL2	QUARTER_PI
 radians	FUNCTION1	radians_
 random	FUNCTION1	random_
+randomGaussian	FUNCTION1	randomGaussian_
 randomSeed	FUNCTION1	randomSeed_
 rect	FUNCTION1	rect_
 rectMode	FUNCTION1	rectMode_
@@ -667,6 +668,7 @@ strokeWeight	FUNCTION1	strokeWeight_
 subset	FUNCTION1	subset_
 Table	KEYWORD5	Table
 tan	FUNCTION1	tan_
+TAU	LITERAL2	TAU
 text	FUNCTION1	text_
 textAlign	FUNCTION1	textAlign_
 textAscent	FUNCTION1	textAscent_
