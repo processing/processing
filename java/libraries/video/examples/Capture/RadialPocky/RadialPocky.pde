@@ -21,9 +21,13 @@ void setup() {
   // size must be set to video.width*video.height*2 in both directions
   size(600, 600, P2D); 
 
-  // Uses the default video input, see the reference if this causes an error
+  // This the default video input, see the GettingStartedCapture 
+  // example if it creates an error
   video = new Capture(this, 160, 120);
-  video.start();
+  
+  // Start capturing the images from the camera
+  video.start();  
+  
   videoCount = video.width * video.height;
 
   pixelCount = width*height;
@@ -70,6 +74,8 @@ void draw() {
     updatePixels();
     
     currentAngle++;
-    if (currentAngle == angleCount) currentAngle = 0;
+    if (currentAngle == angleCount) {
+      currentAngle = 0;
+    }
   }
 }

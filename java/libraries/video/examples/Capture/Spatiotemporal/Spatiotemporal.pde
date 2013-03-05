@@ -24,8 +24,13 @@ int currentX = 0;
 
 void setup() {
   size(640, 480);
-  video = new Capture(this, width, height, 30);
-  video.start();
+  
+  // This the default video input, see the GettingStartedCapture 
+  // example if it creates an error
+  video = new Capture(this, width, height);
+  
+  // Start capturing the images from the camera
+  video.start();  
 }
 
 void captureEvent(Capture c) {

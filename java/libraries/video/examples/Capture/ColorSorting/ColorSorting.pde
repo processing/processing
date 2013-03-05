@@ -19,13 +19,14 @@ int[] bright;
 // How many pixels to skip in either direction
 int increment = 5;
 
-
 void setup() {
   size(800, 600, P2D);
-
-  noCursor();
-  // Uses the default video input, see the reference if this causes an error
+  
+  // This the default video input, see the GettingStartedCapture 
+  // example if it creates an error
   video = new Capture(this, 160, 120);
+  
+  // Start capturing the images from the camera
   video.start();  
   
   int count = (video.width * video.height) / (increment * increment);

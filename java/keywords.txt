@@ -526,7 +526,7 @@ parseXML	FUNCTION1	parseXML_
 perspective	FUNCTION1	perspective_
 PFont	KEYWORD5	PFont
 list	FUNCTION1	PFont_list_
-PGraphics	FUNCTION1	PGraphics_
+PGraphics	KEYWORD5	PGraphics
 beginDraw	FUNCTION2	PGraphics_beginDraw_
 endDraw	FUNCTION2	PGraphics_endDraw_
 PI	LITERAL2	PI
