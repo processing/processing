@@ -11,14 +11,11 @@
 /* @pjs preload="texture.png"; */
 
 ParticleSystem ps;
-Random generator;
 
 void setup() {
   size(640,360);
-  generator = new Random();
   PImage img = loadImage("texture.png");
   ps = new ParticleSystem(0,new PVector(width/2,height-60),img);
-  smooth();
 }
 
 void draw() {

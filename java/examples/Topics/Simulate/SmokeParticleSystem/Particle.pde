@@ -10,8 +10,8 @@ class Particle {
 
   Particle(PVector l,PImage img_) {
     acc = new PVector(0,0);
-    float vx = (float) generator.nextGaussian()*0.3;
-    float vy = (float) generator.nextGaussian()*0.3 - 1.0;
+    float vx = randomGaussian()*0.3;
+    float vy = randomGaussian()*0.3 - 1.0;
     vel = new PVector(vx,vy);
     loc = l.get();
     lifespan = 100.0;
@@ -33,8 +33,8 @@ class Particle {
   void update() {
     vel.add(acc);
     loc.add(vel);
-    acc.mult(0); // clear Acceleration
     lifespan -= 2.5;
+    acc.mult(0); // clear Acceleration
   }
 
   // Method to display
@@ -42,10 +42,14 @@ class Particle {
     imageMode(CENTER);
     tint(255,lifespan);
     image(img,loc.x,loc.y);
+    // Drawing a circle instead
+    // fill(255,lifespan);
+    // noStroke();
+    // ellipse(loc.x,loc.y,img.width,img.height);
   }
 
   // Is the particle still useful?
-  boolean dead() {
+  boolean isDead() {
     if (lifespan <= 0.0) {
       return true;
     } else {
@@ -53,7 +57,4 @@ class Particle {
     }
   }
 }
-
-
-
 
