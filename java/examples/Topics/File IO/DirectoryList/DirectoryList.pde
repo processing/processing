@@ -10,6 +10,7 @@
  *    of files in a directory and all subdirectories (using recursion) 
  */
 
+import java.util.Date;
 
 void setup() {
 
@@ -33,10 +34,9 @@ void setup() {
   }
   
   println("\nListing info about all files in a directory and all subdirectories: ");
-  ArrayList allFiles = listFilesRecursive(path);
+  ArrayList<File> allFiles = listFilesRecursive(path);
   
-  for (int i = 0; i < allFiles.size(); i++) {
-    File f = (File) allFiles.get(i);    
+  for (File f: allFiles) {
     println("Name: " + f.getName());
     println("Full path: " + f.getAbsolutePath());
     println("Is directory: " + f.isDirectory());
@@ -81,14 +81,14 @@ File[] listFiles(String dir) {
 }
 
 // Function to get a list of all files in a directory and all subdirectories
-ArrayList listFilesRecursive(String dir) {
-   ArrayList fileList = new ArrayList(); 
+ArrayList<File> listFilesRecursive(String dir) {
+   ArrayList<File> fileList = new ArrayList<File>(); 
    recurseDir(fileList,dir);
    return fileList;
 }
 
 // Recursive function to traverse subdirectories
-void recurseDir(ArrayList a, String dir) {
+void recurseDir(ArrayList<File> a, String dir) {
   File file = new File(dir);
   if (file.isDirectory()) {
     // If you want to include directories in the list
