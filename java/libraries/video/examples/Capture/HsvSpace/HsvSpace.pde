@@ -37,8 +37,13 @@ boolean blobby = false;
 void setup() {
   size(640, 480, P3D);
 
+  // This the default video input, see the GettingStartedCapture 
+  // example if it creates an error
   video = new Capture(this, 160, 120);
-  video.start();
+  
+  // Start capturing the images from the camera
+  video.start();  
+  
   count = video.width * video.height;
 
   sphereDetail(60);
@@ -63,8 +68,10 @@ void setup() {
 void draw() {
   background(0);
 
-  if (!blobby) lights();
-
+  if (!blobby) {
+    lights();
+  }
+  
   pushMatrix();
   translate(width/2, height/2);
   scale(min(width, height) / 10.0);

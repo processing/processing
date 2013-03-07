@@ -18,9 +18,12 @@ int buffer[];
 void setup() {
   size(600, 400, P2D);
 
-  // Uses the default video input, see the reference if this causes an error
+  // This the default video input, see the GettingStartedCapture 
+  // example if it creates an error
   video = new Capture(this, 320, 240);
-  video.start();
+  
+  // Start capturing the images from the camera
+  video.start();  
 
   maxRows = height * 2;
   buffer = new int[width * maxRows];

@@ -15,12 +15,11 @@ class ParticleSystem {
   }
 
   void run() {
-    Iterator<Particle> it = particles.iterator();
-    while (it.hasNext()) {
-      Particle p = it.next();
+    for (int i = particles.size()-1; i >= 0; i--) {
+      Particle p = particles.get(i);
       p.run();
       if (p.isDead()) {
-        it.remove(); 
+        particles.remove(i);
       }
     }
   }

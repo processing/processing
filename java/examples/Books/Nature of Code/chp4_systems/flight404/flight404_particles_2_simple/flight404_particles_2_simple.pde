@@ -58,11 +58,9 @@
 
 import damkjer.ocd.*;
 import toxi.geom.*;
-import processing.opengl.*;
-import javax.media.opengl.*;
+import java.util.*;
 
-PGraphicsOpenGL pgl;
-GL gl;
+PGL pgl;
 
 POV pov;
 Images images;
@@ -71,9 +69,6 @@ Cursor mouse;
 
 Vec3D gravity;
 float floorLevel;
-
-
-
 
 int counter;
 int saveCount;
@@ -90,13 +85,11 @@ boolean ALLOWFLOOR    = true;
 
 
 void setup() {
-  size( 750, 750, OPENGL );
-  hint( ENABLE_OPENGL_4X_SMOOTH );
+  size( 750, 750, P3D );
+  smooth(4);
   colorMode( RGB, 1.0 );
 
-  pgl           = (PGraphicsOpenGL) g;
-  gl            = pgl.gl;
-
+  pgl           = ((PGraphicsOpenGL) g).pgl;
 
   xSize         = width;
   ySize         = height;
@@ -117,13 +110,13 @@ void draw() {
   pov.exist();
   mouse.exist();
 
-  gl.glDepthMask(false);
-  gl.glEnable( GL.GL_BLEND );
-  gl.glBlendFunc(GL.GL_SRC_ALPHA,GL.GL_ONE);
+  pgl.depthMask(false);
+  pgl.enable( PGL.BLEND );
+  pgl.blendFunc(PGL.SRC_ALPHA,PGL.ONE);
 
   emitter.exist();
 
-  if( mousePressed && mouseButton == LEFT )
+  if (mousePressed) 
     emitter.addParticles(2);
 
   counter ++;

@@ -4,25 +4,24 @@
 class ParticleSystem {
 
   ArrayList<Particle> particles;    // An arraylist for all the particles
-  PVector origin;        // An origin point for where particles are birthed
+  PVector origin;                   // An origin point for where particles are birthed
   PImage img;
   
   ParticleSystem(int num, PVector v, PImage img_) {
     particles = new ArrayList<Particle>();              // Initialize the arraylist
-    origin = v.get();                        // Store the origin point
+    origin = v.get();                                   // Store the origin point
     img = img_;
     for (int i = 0; i < num; i++) {
-      particles.add(new Particle(origin, img));    // Add "num" amount of particles to the arraylist
+      particles.add(new Particle(origin, img));         // Add "num" amount of particles to the arraylist
     }
   }
 
   void run() {
-    Iterator<Particle> it = particles.iterator();
-    while (it.hasNext()) {
-      Particle p = it.next();
+    for (int i = particles.size()-1; i >= 0; i--) {
+      Particle p = particles.get(i);
       p.run();
-      if (p.dead()) {
-        it.remove();
+      if (p.isDead()) {
+        particles.remove(i);
       }
     }
   }
@@ -38,19 +37,6 @@ class ParticleSystem {
 
   void addParticle() {
     particles.add(new Particle(origin,img));
-  }
-
-  void addParticle(Particle p) {
-    particles.add(p);
-  }
-
-  // A method to test if the particle system still has particles
-  boolean dead() {
-    if (particles.isEmpty()) {
-      return true;
-    } else {
-      return false;
-    }
   }
 
 }

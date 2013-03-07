@@ -34,7 +34,7 @@ class Rocket {
     recordDist = width;
   }
 
-  // FITNESS FUNCTION
+  // FITNESS FUNCTION 
   // distance = distance from target
   // finish = what order did i finish (first, second, etc. . .)
   // f(distance,finish) =   (1.0f / finish^1.5) * (1.0f / distance^6);
@@ -121,7 +121,7 @@ class Rocket {
     //fill(0,150);
     //stroke(0);
     //ellipse(location.x,location.y,r,r);
-    float theta = velocity.heading() + PI/2;
+    float theta = velocity.heading2D() + PI/2;
     fill(200,100);
     stroke(0);
     pushMatrix();
@@ -133,8 +133,8 @@ class Rocket {
     vertex(r, r*2);
     endShape();
     popMatrix();
-
-
+    
+    
   }
 
   float getFitness() {

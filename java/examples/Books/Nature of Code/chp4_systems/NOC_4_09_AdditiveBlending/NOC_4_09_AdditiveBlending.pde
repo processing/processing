@@ -2,28 +2,31 @@
 // Daniel Shiffman
 // http://natureofcode.com
 
-// Smoke Particle System
+// Additive Blending
 
-// A basic smoke effect using a particle system
-// Each particle is rendered as an alpha masked image
+// This example demonstrates a "glow" like effect using
+// additive blending with a Particle system.  By playing
+// with colors, textures, etc. you can achieve a variety
+// of looks.
 
 ParticleSystem ps;
 
 PImage img;
 
 void setup() {
-  size(800, 200, P2D);
+  size(640, 360, P2D);
 
   // Create an alpha masked image to be applied as the particle's texture
   img = loadImage("texture.png");
 
   ps = new ParticleSystem(0, new PVector(width/2, 50));
-  }
+}
 
 void draw() {
-  
+
+  // Additive blending!
   blendMode(ADD);
-  
+
   background(0);
 
   ps.run();

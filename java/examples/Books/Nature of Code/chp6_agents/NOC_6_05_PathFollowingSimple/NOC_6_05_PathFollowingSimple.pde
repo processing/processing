@@ -17,7 +17,7 @@ Vehicle car1;
 Vehicle car2;
 
 void setup() {
-  size(800, 200);
+  size(640, 360);
   path = new Path();
 
   // Each vehicle has different maxspeed and maxforce for demo purposes

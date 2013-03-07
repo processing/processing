@@ -29,11 +29,15 @@ float fontSize = 1.5;
 void setup() {
   size(640, 480, P2D);
 
-  // Uses the default video input, see the reference if this causes an error
+  // This the default video input, see the GettingStartedCapture 
+  // example if it creates an error
   video = new Capture(this, 160, 120);
+  
+  // Start capturing the images from the camera
   video.start();  
+  
   int count = video.width * video.height;
-  println(count);
+  //println(count);
 
   font = loadFont("UniversLTStd-Light-48.vlw");
 

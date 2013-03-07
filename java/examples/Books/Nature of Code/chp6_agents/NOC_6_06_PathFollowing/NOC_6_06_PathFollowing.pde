@@ -16,7 +16,7 @@ Vehicle car1;
 Vehicle car2;
 
 void setup() {
-  size(800, 200);
+  size(640, 360);
   // Call a function to generate new Path object
   newPath();
 

@@ -11,7 +11,7 @@
 Flock flock;
 
 void setup() {
-  size(800,200);
+  size(640,360);
   flock = new Flock();
   // Add an initial set of boids into the system
   for (int i = 0; i < 200; i++) {

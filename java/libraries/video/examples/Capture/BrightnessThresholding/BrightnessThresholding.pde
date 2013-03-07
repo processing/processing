@@ -17,9 +17,14 @@ Capture video;
 void setup() {
   size(640, 480, P2D); // Change size to 320 x 240 if too slow at 640 x 480
   strokeWeight(5);
-  // Uses the default video input, see the reference if this causes an error
+  
+  // This the default video input, see the GettingStartedCapture 
+  // example if it creates an error
   video = new Capture(this, width, height);
-  video.start();  
+  
+  // Start capturing the images from the camera
+  video.start(); 
+  
   numPixels = video.width * video.height;
   noCursor();
   smooth();
