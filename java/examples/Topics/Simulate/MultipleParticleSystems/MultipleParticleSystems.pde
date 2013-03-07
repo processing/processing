@@ -15,7 +15,6 @@ ArrayList<ParticleSystem> systems;
 void setup() {
   size(640, 360);
   systems = new ArrayList<ParticleSystem>();
-  smooth();
 }
 
 void draw() {
