@@ -5,7 +5,7 @@
 ParticleSystem ps;
 
 void setup() {
-  size(800,200);
+  size(640,360);
   ps = new ParticleSystem(new PVector(width/2,50));
 }
 

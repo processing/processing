@@ -53,7 +53,7 @@ class Particle {
   }
 
   // Is the particle still useful?
-  boolean dead() {
+  boolean isDead() {
     if (lifespan <= 0.0) {
       return true;
     } else {

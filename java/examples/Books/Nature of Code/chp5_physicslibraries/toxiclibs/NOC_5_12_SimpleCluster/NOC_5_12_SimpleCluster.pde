@@ -22,8 +22,7 @@ boolean showParticles = true;
 PFont f;
 
 void setup() {
-  size(800, 200);
-  frameRate(30);
+  size(640, 360);
   f = createFont("Georgia", 12, true);
 
   // Initialize the physics

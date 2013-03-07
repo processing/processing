@@ -35,7 +35,7 @@ class Mover {
   }
 
   void display() {
-    float theta = velocity.heading();
+    float theta = velocity.heading2D();
 
     stroke(0);
     strokeWeight(2);
@@ -52,14 +52,14 @@ class Mover {
 
     if (location.x > width) {
       location.x = 0;
-    }
+    } 
     else if (location.x < 0) {
       location.x = width;
     }
 
     if (location.y > height) {
       location.y = 0;
-    }
+    } 
     else if (location.y < 0) {
       location.y = height;
     }

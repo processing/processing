@@ -28,7 +28,7 @@ class Emitter{
     iterateListExist();
     render();
     
-    gl.glDisable( GL.GL_TEXTURE_2D );
+    pgl.disable( PGL.TEXTURE_2D );
     
     if( ALLOWTRAILS )
       iterateListRenderTrails();
@@ -51,7 +51,7 @@ class Emitter{
   }
   
   void iterateListExist(){
-    gl.glEnable( GL.GL_TEXTURE_2D );
+    pgl.enable( PGL.TEXTURE_2D );
     
     
     int mylength = particles.size(); 

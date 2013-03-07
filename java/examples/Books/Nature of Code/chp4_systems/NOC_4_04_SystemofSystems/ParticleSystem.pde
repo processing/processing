@@ -21,19 +21,13 @@ class ParticleSystem {
   }
 
   void run() {
-    // Using the Iterator b/c we are deleting from list while iterating
-    Iterator<Particle> it = particles.iterator();
-    while (it.hasNext()) {
-      Particle p = it.next();
+    for (int i = particles.size()-1; i >= 0; i--) {
+      Particle p = particles.get(i);
       p.run();
       if (p.isDead()) {
-        it.remove();
+        particles.remove(i);
       }
     }
-  }
-
-  void addParticle() {
-    particles.add(new Particle(origin));
   }
 
   void addParticle(Particle p) {
@@ -44,12 +38,11 @@ class ParticleSystem {
   boolean dead() {
     if (particles.isEmpty()) {
       return true;
-    } else {
+    } 
+    else {
       return false;
     }
   }
-
 }
-
 
 

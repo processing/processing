@@ -3,10 +3,7 @@
 // http://natureofcode.com
 
 // Updated version of flight404 Particle Emitter release 1
-// This works with Processing 1.0
-// All of the advanced openGL direct calls that use display lists, etc. have been stripped out
-// It's my intention to redo this example using GlGraphics (http://glgraphics.sourceforge.net/)
-// But for now, just want to make sure it works in principal
+// This works with Processing 2.0
 
 // February 28 2011
 // Daniel Shiffman
@@ -49,12 +46,9 @@
 
 
 import toxi.geom.*;
-import processing.opengl.*;
-import javax.media.opengl.*;
+import java.util.*;
 
-PGraphicsOpenGL pgl;
-GL gl;
-
+PGL pgl;
 
 Emitter emitter;
 Vec3D gravity;
@@ -74,17 +68,17 @@ boolean ALLOWFLOOR;      // add a floor?
                          // slow down. 
 
 void setup(){
-  size( 600, 600, OPENGL );
+  size( 600, 600, P3D );
+  smooth(4);
   // Lately I have gotten into the habit of limiting the color range to be 
   // 0.0 to 1.0. It works this way in OpenGL so I might as well get used to it.
   colorMode( RGB, 1.0 );
   
   // Turn on 4X antialiasing
-  hint( ENABLE_OPENGL_4X_SMOOTH );
+  //hint( ENABLE_OPENGL_4X_SMOOTH );
   
   // More OpenGL necessity.
-  pgl         = (PGraphicsOpenGL) g;
-  gl          = pgl.gl;
+  pgl         = ((PGraphicsOpenGL) g).pgl;  
   
   // Loads in a particle image from the data folder. Image size should be a power of 2.
   particleImg = loadImage( "particle.png" );
@@ -101,9 +95,9 @@ void draw(){
   
   // Turns on additive blending so we can draw a bunch of glowing images without
   // needing to do any depth testing.
-  gl.glDepthMask(false);
-  gl.glEnable( GL.GL_BLEND );
-  gl.glBlendFunc(GL.GL_SRC_ALPHA,GL.GL_ONE);
+  pgl.depthMask(false);
+  pgl.enable( PGL.BLEND );
+  pgl.blendFunc(PGL.SRC_ALPHA, PGL.ONE);
   
   emitter.exist();
   

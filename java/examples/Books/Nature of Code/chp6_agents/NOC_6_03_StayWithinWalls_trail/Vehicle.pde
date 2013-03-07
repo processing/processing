@@ -14,7 +14,7 @@ class Vehicle {
 
   float maxspeed;
   float maxforce;
-
+  
   Vehicle(float x, float y) {
     acceleration = new PVector(0, 0);
     velocity = new PVector(3, -2);
@@ -39,7 +39,7 @@ class Vehicle {
     location.add(velocity);
     // Reset accelertion to 0 each cycle
     acceleration.mult(0);
-
+    
         history.add(location.get());
     if (history.size() > 500) {
       history.remove(0);
@@ -52,17 +52,17 @@ class Vehicle {
 
     if (location.x < d) {
       desired = new PVector(maxspeed, velocity.y);
-    }
+    } 
     else if (location.x > width -d) {
       desired = new PVector(-maxspeed, velocity.y);
-    }
+    } 
 
     if (location.y < d) {
       desired = new PVector(velocity.x, maxspeed);
-    }
+    } 
     else if (location.y > height-d) {
       desired = new PVector(velocity.x, -maxspeed);
-    }
+    } 
 
     if (desired != null) {
       desired.normalize();
@@ -71,7 +71,7 @@ class Vehicle {
       steer.limit(maxforce);
       applyForce(steer);
     }
-  }
+  }  
 
   void applyForce(PVector force) {
     // We could add mass here if we want A = F / M
@@ -88,10 +88,10 @@ class Vehicle {
       vertex(v.x,v.y);
     }
     endShape();
-
-
+    
+    
     // Draw a triangle rotated in the direction of velocity
-    float theta = velocity.heading() + radians(90);
+    float theta = velocity.heading2D() + radians(90);
     fill(127);
     stroke(0);
     pushMatrix();

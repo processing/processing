@@ -9,7 +9,7 @@ class ParticleSystem {
 
   ArrayList<Particle> particles;    // An arraylist for all the particles
   PVector origin;        // An origin point for where particles are birthed
-  
+
   PImage tex;
 
   ParticleSystem(int num, PVector v) {
@@ -21,12 +21,11 @@ class ParticleSystem {
   }
 
   void run() {
-    Iterator<Particle> it = particles.iterator();
-    while (it.hasNext()) {
-      Particle p = it.next();
+    for (int i = particles.size()-1; i >= 0; i--) {
+      Particle p = particles.get(i);
       p.run();
-      if (p.dead()) {
-       it.remove();
+      if (p.isDead()) {
+        particles.remove(i);
       }
     }
   }
@@ -43,12 +42,11 @@ class ParticleSystem {
   boolean dead() {
     if (particles.isEmpty()) {
       return true;
-    } else {
+    } 
+    else {
       return false;
     }
   }
-
 }
-
 
 

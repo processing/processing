@@ -13,7 +13,7 @@ ArrayList<Box> boxes;
 PBox2D box2d;		
 
 void setup() {
-  size(800, 200);
+  size(640, 360);
   // Initialize and create the Box2D world
   box2d = new PBox2D(this);	
   box2d.createWorld();
