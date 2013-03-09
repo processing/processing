@@ -69,6 +69,12 @@ void mousePressed() {
   row.setFloat("y", mouseY);
   row.setFloat("diameter", random(40, 80));
   row.setString("name", "Blah");
+  
+  // If the table has more than 10 rows
+  if (table.getRowCount() > 10) {
+    // Delete the oldest row
+    table.removeRow(0); 
+  }
 
   // Writing the CSV back to the same file
   saveTable(table,"data/data.csv");
