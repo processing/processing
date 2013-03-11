@@ -8,17 +8,25 @@
  *
  * Here is what the XML looks like:
  *
-   x,y,diameter,name
-   160,103,43.19838,Happy
-   372,137,52.42526,Sad
-   273,235,61.14072,Joyous
-   121,179,44.758068,Melancholy
+<?xml version="1.0"?>
+<bubbles>
+  <bubble>
+    <position x="160" y="103"/>
+    <diameter>43.19838</diameter>
+    <label>Happy</label>
+  </bubble>
+  <bubble>
+    <position x="372" y="137"/>
+    <diameter>52.42526</diameter>
+    <label>Sad</label>
+  </bubble>
+</bubbles>
  */
  
 // An Array of Bubble objects
 Bubble[] bubbles;
 // A Table object
-Table table;
+XML xml;
 
 void setup() {
   size(640, 360);
@@ -39,29 +47,41 @@ void draw() {
 }
 
 void loadData() {
-  // Load CSV file into a Table object
-  // "header" option indicates the file has a header row
-  table = loadTable("data.csv","header");
+  // Load XML file
+  xml = loadXML("data.xml");
+  // Get all the child nodes named "bubble"
+  XML[] children = xml.getChildren("bubble");
 
-  // The size of the array of Bubble objects is determined by the total number of rows in the CSV
-  bubbles = new Bubble[table.getRowCount()]; 
+  // The size of the array of Bubble objects is determined by the total XML elements named "bubble"
+  bubbles = new Bubble[children.length]; 
 
-  // You can access iterate over all the rows in a table
-  int rowCount = 0;
-  for (TableRow row : table.rows()) {
-    // You can access the fields via their column name (or index)
-    float x = row.getFloat("x");
-    float y = row.getFloat("y");
-    float d = row.getFloat("diameter");
-    String n = row.getString("name");
+  for (int i = 0; i < bubbles.length; i++) {
+    
+    
+    // The position element has two attributes: x and y
+    XML positionElement = children[i].getChild("position");
+    // Note how with attributes we can get an integer or float directly
+    float x = positionElement.getInt("x");
+    float y = positionElement.getInt("y");
+    
+    // The diameter is the content of the child named "diamater"
+    XML diameterElement = children[i].getChild("diameter");
+    // Note how with the content of an XML node, we retrieve as a String and then convert
+    float diameter = float(diameterElement.getContent());
+
+    // The label is the content of the child named "label"
+    XML labelElement = children[i].getChild("label");
+    String label = labelElement.getContent();
+
     // Make a Bubble object out of the data read
-    bubbles[rowCount] = new Bubble(x, y, d, n);
-    rowCount++;
+    bubbles[i] = new Bubble(x, y, diameter, label);
   }  
 
 }
 
-void mousePressed() {
+// Still need to work on adding and deleting
+
+/*void mousePressed() {
   // Create a new row
   TableRow row = table.addRow();
   // Set the values of that row
@@ -80,5 +100,5 @@ void mousePressed() {
   saveTable(table,"data/data.csv");
   // And reloading it
   loadData();
-}
+}*/
 
