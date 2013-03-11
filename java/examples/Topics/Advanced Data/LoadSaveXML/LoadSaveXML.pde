@@ -57,7 +57,6 @@ void loadData() {
 
   for (int i = 0; i < bubbles.length; i++) {
     
-    
     // The position element has two attributes: x and y
     XML positionElement = children[i].getChild("position");
     // Note how with attributes we can get an integer or float directly
@@ -81,24 +80,39 @@ void loadData() {
 
 // Still need to work on adding and deleting
 
-/*void mousePressed() {
-  // Create a new row
-  TableRow row = table.addRow();
-  // Set the values of that row
-  row.setFloat("x", mouseX);
-  row.setFloat("y", mouseY);
-  row.setFloat("diameter", random(40, 80));
-  row.setString("name", "Blah");
+void mousePressed() {
   
-  // If the table has more than 10 rows
-  if (table.getRowCount() > 10) {
-    // Delete the oldest row
-    table.removeRow(0); 
+  // Create a new XML bubble element
+  XML bubble = xml.addChild("bubble");
+  
+  // Set the poisition element
+  XML position = bubble.addChild("position");
+  // Here we can set attributes as integers directly
+  position.setInt("x",mouseX);
+  position.setInt("y",mouseY);
+  
+  // Set the diameter element
+  XML diameter = bubble.addChild("diameter");
+  // Here for a node's content, we have to convert to a String
+  diameter.setContent("" + random(40,80));
+  
+  // Set a label
+  XML label = bubble.addChild("label");
+  label.setContent("New label");
+  
+  
+  // Here we are removing the oldest bubble if there are more than 10
+  XML[] children = xml.getChildren("bubble");
+    // If the XML file has more than 10 bubble elements
+  if (children.length > 10) {
+    // Delete the first one
+    xml.removeChild(children[0]);
   }
-
-  // Writing the CSV back to the same file
-  saveTable(table,"data/data.csv");
-  // And reloading it
+  
+  // Save a new XML file
+  saveXML(xml,"data/data.xml");
+  
+  // reload the new data 
   loadData();
-}*/
+}
 
