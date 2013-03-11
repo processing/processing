@@ -1,0 +1,75 @@
+/**
+ * CountingString example
+ * by Daniel Shiffman.  
+ * 
+ * This example demonstrates how to use a StringHash to store 
+ * a number associated with a String.  Java HashMaps can also
+ * be used for this, however, this example uses the simple StringHash
+ * class offered by Processing's data package.
+ 
+ */
+
+// The next line is needed if running in JavaScript Mode with Processing.js
+/* @pjs font="Georgia.ttf"; */
+
+IntHash concordance;  // HashMap object
+String[] tokens;
+int counter = 0;
+
+void setup() {
+  size(640, 360);
+
+  concordance = new IntHash();
+
+  // Load file and chop it up
+  String[] lines = loadStrings("dracula.txt");
+  String allText = join(lines, " ");
+  tokens = splitTokens(allText, " ,.?!:;[]-");
+
+  // Create the font
+  textFont(createFont("Georgia", 24));
+}
+
+void draw() {
+  background(51);
+  fill(255);
+
+  // Look at words one at a time
+  String s = tokens[counter];
+  counter = (counter + 1) % tokens.length;
+  concordance.increment(s);
+
+  // x and y will be used to locate each word
+  float x = 0;
+  float y = 100;
+
+  concordance.sortValues();
+
+  String[] keys = concordance.keyArray();
+
+  // Look at each word
+  for (String word : keys) {
+    int count = concordance.get(word);
+
+    // Only display words that appear 3 times
+    if (count > 3) {
+      // The size is the count
+      int fsize = constrain(count, 0, 100);
+      textSize(fsize);
+      text(word, x, y);
+      // Move along the x-axis
+      x += textWidth(word + " ");
+    }
+
+    // If x gets to the end, move y
+    if (x > width) {
+      x = 0;
+      y += 100;
+      // If y gets to the end, we're done
+      if (y > height) {
+        break;
+      }
+    }
+  }
+}
+
