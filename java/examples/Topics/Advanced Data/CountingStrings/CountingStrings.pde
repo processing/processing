@@ -2,11 +2,11 @@
  * CountingString example
  * by Daniel Shiffman.  
  * 
- * This example demonstrates how to use a StringHash to store 
+ * This example demonstrates how to use a IntHash to store 
  * a number associated with a String.  Java HashMaps can also
- * be used for this, however, this example uses the simple StringHash
- * class offered by Processing's data package.
- 
+ * be used for this, however, this example uses the IntHash
+ * class offered by Processing's data package for simplicity
+ * and added functionality. 
  */
 
 // The next line is needed if running in JavaScript Mode with Processing.js
