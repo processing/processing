@@ -67,6 +67,9 @@ import processing.core.PConstants;
  * <p>File names should end with .csv if they're comma separated.</p>
  *
  * @webref data:composite
+ * @see PApplet#createTable()
+ * @see PApplet#loadTable(String)
+ * @see PApplet#saveTable(Table, String)
  */
 public class Table {
   protected int rowCount;
