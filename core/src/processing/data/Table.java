@@ -990,16 +990,26 @@ public class Table {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
+  /**
+   * @webref table:method
+   * @brief Adds a new column to the table
+   */
   public void addColumn() {
     addColumn(null, STRING);
   }
 
 
+  /**
+   * @param title the title to be used for the new column
+   */
   public void addColumn(String title) {
     addColumn(title, STRING);
   }
 
 
+  /**
+   * @param type the type to be used for the new column: INT, LONG, FLOAT, DOUBLE, STRING, or CATEGORICAL
+   */
   public void addColumn(String title, int type) {
     insertColumn(columns.length, title, type);
   }
