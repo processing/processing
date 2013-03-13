@@ -10974,6 +10974,7 @@ public class PApplet extends Applet
    * @webref image:textures
    * @param mode either IMAGE or NORMAL
    * @see PGraphics#texture(PImage)
+   * @see PGraphics#textureWrap(int)
    */
   public void textureMode(int mode) {
     if (recorder != null) recorder.textureMode(mode);
@@ -10990,6 +10991,8 @@ public class PApplet extends Applet
    *
    * @webref image:textures
    * @param wrap Either CLAMP (default) or REPEAT
+   * @see PGraphics#texture(PImage)
+   * @see PGraphics#textureMode(int)
    */
   public void textureWrap(int wrap) {
     if (recorder != null) recorder.textureWrap(wrap);
@@ -11011,6 +11014,7 @@ public class PApplet extends Applet
    * @webref image:textures
    * @param image reference to a PImage object
    * @see PGraphics#textureMode(int)
+   * @see PGraphics#textureWrap(int)
    * @see PGraphics#beginShape(int)
    * @see PGraphics#endShape(int)
    * @see PGraphics#vertex(float, float, float, float, float)
