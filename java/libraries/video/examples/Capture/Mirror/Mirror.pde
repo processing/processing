@@ -23,9 +23,12 @@ void setup() {
   rows = height / cellSize;
   colorMode(RGB, 255, 255, 255, 100);
 
-  // Uses the default video input, see the reference if this causes an error
+  // This the default video input, see the GettingStartedCapture 
+  // example if it creates an error
   video = new Capture(this, width, height);
-  video.start();
+  
+  // Start capturing the images from the camera
+  video.start();  
   
   background(0);
 }
@@ -35,9 +38,6 @@ void draw() {
   if (video.available()) {
     video.read();
     video.loadPixels();
-    
-    // Not bothering to clear background
-    // background(0);
   
     // Begin loop for columns
     for (int i = 0; i < cols; i++) {

@@ -5,9 +5,8 @@
 ArrayList<Particle> particles;
 
 void setup() {
-  size(800,200);
+  size(640,360);
   particles = new ArrayList<Particle>();
-  smooth();
 }
 
 void draw() {
@@ -15,13 +14,12 @@ void draw() {
 
   particles.add(new Particle(new PVector(width/2,50)));
   
-  // Using the iterator 
-  Iterator<Particle> it = particles.iterator();
-  while (it.hasNext()) {
-    Particle p = it.next();
+  // Looping through backwards to delete
+  for (int i = particles.size()-1; i >= 0; i--) {
+    Particle p = particles.get(i);
     p.run();
     if (p.isDead()) {
-      it.remove();
+      particles.remove(i);
     }
   }
 }

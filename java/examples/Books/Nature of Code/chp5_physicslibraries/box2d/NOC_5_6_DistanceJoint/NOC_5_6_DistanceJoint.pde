@@ -25,7 +25,7 @@ ArrayList<Boundary> boundaries;
 ArrayList<Pair> pairs;
 
 void setup() {
-  size(800,200);
+  size(640,360);
   // Initialize box2d physics and create the world
   box2d = new PBox2D(this);
   box2d.createWorld();

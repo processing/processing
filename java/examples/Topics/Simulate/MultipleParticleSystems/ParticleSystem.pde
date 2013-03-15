@@ -1,6 +1,4 @@
 // An ArrayList is used to manage the list of Particles
-// An Iterator is used to remove "dead" particles while iterating over the list
-import java.util.Iterator;
 
 class ParticleSystem {
 
@@ -15,14 +13,14 @@ class ParticleSystem {
     }
   }
 
+
   void run() {
-    // Cycle through the ArrayList using Iterator, because we are deleting while iterating
-    Iterator<Particle> it = particles.iterator();
-    while (it.hasNext()) {
-      Particle p = it.next();
+    // Cycle through the ArrayList backwards, because we are deleting while iterating
+    for (int i = particles.size()-1; i >= 0; i--) {
+      Particle p = particles.get(i);
       p.run();
       if (p.isDead()) {
-        it.remove();
+        particles.remove(i);
       }
     }
   }
@@ -32,7 +30,8 @@ class ParticleSystem {
     // Add either a Particle or CrazyParticle to the system
     if (int(random(0, 2)) == 0) {
       p = new Particle(origin);
-    } else {
+    } 
+    else {
       p = new CrazyParticle(origin);
     }
     particles.add(p);
@@ -46,5 +45,5 @@ class ParticleSystem {
   boolean dead() {
     return particles.isEmpty();
   }
-
 }
+

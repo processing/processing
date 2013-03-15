@@ -5,7 +5,7 @@
  */
 
 /* 
- * Copyright (c) 2010 Daniel Shiffmann
+ * Copyright (c) 2010 Daniel Shiffman
  * 
  * This demo & library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -35,7 +35,7 @@ VerletPhysics2D physics;
 Chain chain;
 
 void setup() {
-  size(800, 200);
+  size(640, 360);
   // Initialize the physics world
   physics=new VerletPhysics2D();
   physics.addBehavior(new GravityBehavior(new Vec2D(0, 0.1)));

@@ -20,10 +20,12 @@ int[] scoot;
 void setup() {
   size(640, 480, P2D);
 
-  // Uses the default video input, see the reference if this causes an error
+  // This the default video input, see the GettingStartedCapture 
+  // example if it creates an error
   video = new Capture(this, 160, 120);
-  video.start();  
-  // Also try with other video sizes
+  
+  // Start capturing the images from the camera
+  video.start(); 
   
   column = 0;
   columnCount = width / video.width;

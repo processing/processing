@@ -14,9 +14,14 @@ Capture video;
 
 void setup() {
   size(640, 480, P2D);
-  // Uses the default video input, see the reference if this causes an error
+  
+  // This the default video input, see the GettingStartedCapture 
+  // example if it creates an error
   video = new Capture(this, width, height);
-  video.start();  
+  
+  // Start capturing the images from the camera
+  video.start(); 
+  
   numPixels = video.width * video.height;
   // Create an array to store the previously captured frame
   previousFrame = new int[numPixels];

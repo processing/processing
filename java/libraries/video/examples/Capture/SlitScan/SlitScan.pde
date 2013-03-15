@@ -7,6 +7,8 @@
  * consider using the image copy() function rather than the 
  * direct pixel-accessing approach I have used here. 
  */
+ 
+ 
 import processing.video.*;
 
 Capture video;
@@ -17,9 +19,12 @@ int drawPositionX;
 void setup() {
   size(600, 240, P2D);
   
-  // Uses the default video input, see the reference if this causes an error
-  video = new Capture(this, 320, 240);
-  video.start();
+  // This the default video input, see the GettingStartedCapture 
+  // example if it creates an error
+  video = new Capture(this,320, 240);
+  
+  // Start capturing the images from the camera
+  video.start();  
   
   videoSliceX = video.width / 2;
   drawPositionX = width - 1;

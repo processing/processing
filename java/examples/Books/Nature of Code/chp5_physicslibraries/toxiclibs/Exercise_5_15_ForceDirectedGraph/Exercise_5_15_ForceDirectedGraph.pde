@@ -6,7 +6,7 @@
  */
 
 /* 
- * Copyright (c) 2010 Daniel Schiffmann
+ * Copyright (c) 2010 Daniel Shiffman
  * 
  * This demo & library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -43,7 +43,7 @@ boolean showParticles = true;
 PFont f;
 
 void setup() {
-  size(800,300);
+  size(640,360);
   f = createFont("Georgia",12,true);
 
   // Initialize the physics

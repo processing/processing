@@ -9,7 +9,7 @@ Bob bob;
 Spring spring;
 
 void setup() {
-  size(800,200);
+  size(640,360);
   // Create objects at starting location
   // Note third argument in Spring constructor is "rest length"
   spring = new Spring(width/2,10,100); 
