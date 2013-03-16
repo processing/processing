@@ -1,6 +1,9 @@
 0217 core
 X improve load/save of .gz files with Table, clear up some .bin issues
 
+andres
+A lines not properly renderered in P3D when using ortographic projection
+A   https://github.com/processing/processing/issues/1661
 
 decisions on data
 X are we comfortable with setInt/Float/etc instead of just set(int, blah)
@@ -27,7 +30,8 @@ _   right now using hasKey().. in JSONObject
 _ add() to add things to lists, sum() for the math (sum is used less after all)
 
 _ add mouse wheel support to 2.0 event system
-_   http://code.google.com/p/processing/issues/detail?id=1423
+X   http://code.google.com/p/processing/issues/detail?id=1423
+_   https://github.com/processing/processing/issues/1461
 X   this is fairly messy since desktop and JS behave a little differently
 o   wheel event should subclass mouse (since position still relevant)
 X     just another sub-event as part of mouse

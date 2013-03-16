@@ -137,6 +137,7 @@ import javax.sound.sampled.AudioFormat;
  * specification.
  * <br>0.1 2010-09-30 Created.
  */
+@SuppressWarnings("resource")
 public class QuickTimeWriter {
 
     /** An {@code Edit} define the portions of the media that are to be used to
@@ -2007,8 +2008,6 @@ public class QuickTimeWriter {
                 }
                 seekRelative(pointer);
                 finished = true;
-                headerData.flush();
-                headerData.close();
             }
         }
 
@@ -2077,8 +2076,6 @@ public class QuickTimeWriter {
                 if (sizeBefore != sizeAfter) {
                     System.err.println("size mismatch " + sizeBefore + ".." + sizeAfter);
                 }
-                headerData.flush();
-                headerData.close();
             }
         }
 
@@ -2150,8 +2147,6 @@ public class QuickTimeWriter {
 
                 seekRelative(pointer);
                 finished = true;
-                headerData.flush();
-                headerData.close();
             }
         }
 
@@ -3336,8 +3331,6 @@ public class QuickTimeWriter {
                     for (int i = 0; i < freeSize; i++) {
                         daos.write(0);
                     }
-                    daos.flush();
-                    daos.close();
                 }
 
             }

@@ -1,5 +1,11 @@
 0217 pde
+X fix MovieMaker, it was completely broken
+X   https://github.com/processing/processing/issues/1669
+X create missing parent directories when unpacking zip files
+X   fixes library problems with hemesh
 
+
+_ "New version available" mesage is showing html tags around it
 
 _ incorporate JDI changes from Manindra
 _   how does this affect Experimental? duplicate libs? loader issues?
@@ -522,7 +528,8 @@ _ the PDE uses 15% of CPU while just sitting idle
 _   https://github.com/processing/processing/issues/1561
 _ renaming RGB (.pde) to Rgb.java says "a file named RGB.pde already exists"
 _ undo seems to not be going to the right location (now with example)
-_   http://code.google.com/p/processing/issues/detail?id=668
+_   https://github.com/processing/processing/issues/707
+X   http://code.google.com/p/processing/issues/detail?id=668
 _ improve update check message "a new release (1.0.1) is available"
 _   be more descriptive, use a second line in latest.txt
 _   maybe just include the full text of the update message there?
@@ -857,6 +864,7 @@ _   In regedit: Navigate to Computer\HKEY_CLASSES_ROOT\Applications and find you
 DIST / Mac OS X
 _ keep an eye on the Java 8 builds, since all the effort goes there
 _   https://wikis.oracle.com/display/OpenJDK/Mac+OS+X+Port
+_   ./jdk8/build/macosx-x86_64-normal-server-release/jdk/bin/java
 _ change cmd line for OS X to use symlink? 
 _   otherwise updates are going to require reinstall..
 _   or that it's gonna need to parse and say "update command line?" 

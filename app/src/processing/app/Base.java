@@ -2896,6 +2896,11 @@ public class Base {
         if (next.isDirectory()) {
           currentFile.mkdirs();
         } else {
+          File parentDir = currentFile.getParentFile();
+          // Sometimes the directory entries aren't already created
+          if (!parentDir.exists()) {
+            parentDir.mkdirs();
+          }
           currentFile.createNewFile();
           unzipEntry(zis, currentFile);
         }
