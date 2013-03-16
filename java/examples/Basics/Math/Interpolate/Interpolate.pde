@@ -11,7 +11,6 @@
  
 float x;
 float y;
-float easing = 0.05;
 
 void setup() {
   size(640, 360); 
