@@ -13,6 +13,9 @@
  * offer a simpler way of pairing Strings with numbers or other Strings.
  * Here we use a HashMap because we want to pair a String with a custom
  * object, in this case a "Word" object that stores two numbers.
+ *
+ * In this example, words that appear in one book (Dracula) only are colored white 
+ * while words the other (Frankenstein) are colored black.
  */
 
 // The next line is needed if running in JavaScript Mode with Processing.js
@@ -35,7 +38,7 @@ void setup() {
 }
 
 void draw() {
-  background(0);
+  background(126);
   
   // Show words
   for (Word w : words.values()) {

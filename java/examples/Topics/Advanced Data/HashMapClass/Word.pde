@@ -43,7 +43,7 @@ class Word {
   
   // The more often it appears, the faster it falls
   void move() {
-    float speed = map(totalCount,5,25,0.1,3);
+    float speed = map(totalCount, 5, 25, 0.1, 0.4);
     speed = constrain(speed,0,10);
     position.y += speed;
 
@@ -56,10 +56,10 @@ class Word {
   // Depending on which book it gets a color
   void display() {
     if (countDracula > 0) {
-      fill(121, 0, 31);
+      fill(255);
     } 
     else if (countFranken > 0) {
-      fill(33, 72, 122);
+      fill(0);
     }
     // Its size is also tied to number of occurences
     float fs = map(totalCount,5,25,2,24);
