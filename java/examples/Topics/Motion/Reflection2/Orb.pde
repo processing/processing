@@ -26,13 +26,11 @@ class Orb {
   void checkWallCollision() {
     if (position.x > width-r) {
       position.x = width-r;
-      velocity.x *= -1;
-      velocity.x *= damping;
+      velocity.x *= -damping;
     } 
     else if (position.x < r) {
       position.x = r;
-      velocity.x *= -1;
-      velocity.x *= damping;
+      velocity.x *= -damping;
     }
   }
 
