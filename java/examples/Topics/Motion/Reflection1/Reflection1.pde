@@ -7,17 +7,21 @@
  * vector.
  */
 
+// Position of left hand side of floor
 PVector base1;
+// Position of right hand side of floor
 PVector base2;
+// Length of floor
 float baseLength;
 
+// An array of subpoints along the floor path
 PVector[] coords;
 
+// Variables related to moving ball
 PVector position;
-float r = 6;
-PVector direction;
-float speed = 3.5;
 PVector velocity;
+float r = 6;
+float speed = 3.5;
 
 void setup() {
   size(640, 360);
@@ -30,10 +34,9 @@ void setup() {
   // start ellipse at middle top of screen
   position = new PVector(width/2, 0);
 
-  // calculate initial random direction
-  direction = PVector.random2D();
-
-  velocity = new PVector();
+  // calculate initial random velocity
+  velocity = PVector.random2D();
+  velocity.mult(speed);
 }
 
 void draw() {
@@ -41,11 +44,6 @@ void draw() {
   fill(0, 12);
   noStroke();
   rect(0, 0, width, height);
-
-  for (int i=0; i<coords.length; i++) {
-    coords[i].x = base1.x + ((base2.x-base1.x)/baseLength)*i;
-    coords[i].y = base1.y + ((base2.y-base1.y)/baseLength)*i;
-  }
 
   // draw base
   fill(200);
@@ -61,15 +59,12 @@ void draw() {
   fill(255);
   ellipse(position.x, position.y, r*2, r*2);
 
-  // calculate ellipse velocity
-  velocity.set(direction);
-  velocity.mult(speed);
-
   // move elipse
   position.add(velocity);
 
   // normalized incidence vector
-  PVector incidence = PVector.mult(direction, -1);
+  PVector incidence = PVector.mult(velocity, -1);
+  incidence.normalize();
 
   // detect and handle collision
   for (int i=0; i<coords.length; i++) {
@@ -81,7 +76,8 @@ void draw() {
 
       // calculate reflection vector
       // assign reflection vector to direction vector
-      direction.set(2*normal.x*dot - incidence.x, 2*normal.y*dot - incidence.y, 0);
+      velocity.set(2*normal.x*dot - incidence.x, 2*normal.y*dot - incidence.y, 0);
+      velocity.mult(speed);
 
       // draw base top normal at collision point
       stroke(255, 128, 0);
@@ -93,17 +89,17 @@ void draw() {
   // right
   if (position.x > width-r) {
     position.x = width-r;
-    direction.x *= -1;
+    velocity.x *= -1;
   }
   // left 
   if (position.x < r) {
     position.x = r;
-    direction.x *= -1;
+    velocity.x *= -1;
   }
   // top
   if (position.y < r) {
     position.y = r;
-    direction.y *= -1;
+    velocity.y *= -1;
     // randomize base top
     base1.y = random(height-100, height);
     base2.y = random(height-100, height);
@@ -111,6 +107,8 @@ void draw() {
   }
 }
 
+
+// Calculate variables for the ground
 void createGround() {
   // calculate length of base top
   baseLength = PVector.dist(base1, base2);
