@@ -9,16 +9,17 @@
 Orb orb;
 
 PVector gravity = new PVector(0,0.05);
+// The ground is an array of "Ground" objects
 int segments = 40;
 Ground[] ground = new Ground[segments];
-float[] peakHeights = new float[segments+1];
 
 void setup(){
   size(640, 360);
+  // An orb object that will fall and bounce around
   orb = new Orb(50, 50, 3);
 
-
   // Calculate ground peak heights 
+  float[] peakHeights = new float[segments+1];
   for (int i=0; i<peakHeights.length; i++){
     peakHeights[i] = random(height-40, height-30);
   }
@@ -28,8 +29,7 @@ void setup(){
    display window, regardless of segment number. */
   float segs = segments;
   for (int i=0; i<segments; i++){
-    ground[i]  = new Ground(width/segs*i, peakHeights[i],
-    width/segs*(i+1), peakHeights[i+1]);
+    ground[i]  = new Ground(width/segs*i, peakHeights[i], width/segs*(i+1), peakHeights[i+1]);
   }
 }
 
@@ -40,9 +40,17 @@ void draw(){
   fill(0, 15);
   rect(0, 0, width, height);
   
+  // Move and display the orb
   orb.move();
   orb.display();
+  // Check walls
   orb.checkWallCollision();
+
+  // Check against all the ground segments
+  for (int i=0; i<segments; i++){
+    orb.checkGroundCollision(ground[i]);
+  }
+
   
   // Draw ground
   fill(127);
@@ -56,9 +64,6 @@ void draw(){
   endShape(CLOSE);
 
 
-  for (int i=0; i<segments; i++){
-    orb.checkGroundCollision(ground[i]);
-  }
 }
 
 

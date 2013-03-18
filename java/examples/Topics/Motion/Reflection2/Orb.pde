@@ -1,7 +1,9 @@
 class Orb {
+  // Orb has positio and velocity
   PVector position;
   PVector velocity;
   float r;
+  // A damping of 80% slows it down when it hits the ground
   float damping = 0.8;
 
   Orb(float x, float y, float r_) {
@@ -22,7 +24,8 @@ class Orb {
     fill(200);
     ellipse(position.x, position.y, r*2, r*2);
   }
-
+  
+  // Check boundaries of window
   void checkWallCollision() {
     if (position.x > width-r) {
       position.x = width-r;
