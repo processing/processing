@@ -7,7 +7,7 @@ class KochFractal {
   ArrayList<KochLine> lines;   // A list to keep track of all the lines
   int count;
   
-  public KochFractal() {
+  KochFractal() {
     start = new PVector(0,height-20);
     end = new PVector(width,height-20);
     lines = new ArrayList<KochLine>();

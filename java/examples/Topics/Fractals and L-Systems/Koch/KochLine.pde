@@ -48,12 +48,11 @@ class KochLine {
     PVector p = a.get();
     p.add(v);
     
-    rotate(v,-radians(60));
+    v.rotate(-radians(60));
     p.add(v);
     
     return p;
   }    
-
 
   // Easy, just 2/3 of the way
   PVector kochright() {
@@ -64,11 +63,5 @@ class KochLine {
   }
 }
 
-  public void rotate(PVector v, float theta) {
-    float xTemp = v.x;
-    // Might need to check for rounding errors like with angleBetween function?
-    v.x = v.x*cos(theta) - v.y*sin(theta);
-    v.y = xTemp*sin(theta) + v.y*cos(theta);
-  }
 
 

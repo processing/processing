@@ -30,6 +30,7 @@ void draw() {
   translate(width/2,height/2);
   // Draw the resulting vector
   stroke(255);
+  strokeWeight(4);
   line(0,0,mouse.x,mouse.y);
   
 }
