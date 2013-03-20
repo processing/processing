@@ -1120,12 +1120,12 @@ public class JSONObject {
   }
 
 
-  public JSONObject setJSONObject(String key, String value) {
+  public JSONObject setJSONObject(String key, JSONObject/*String*/ value) {
     return put(key, value);
   }
 
 
-  public JSONObject setJSONArray(String key, String value) {
+  public JSONObject setJSONArray(String key, JSONArray/*String*/ value) {
     return put(key, value);
   }
 
