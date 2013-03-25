@@ -3901,31 +3901,42 @@ public class PShapeOpenGL extends PShape {
   // Style handling
 
 
+  @Override
+  public void disableStyle() {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "disableStyle()");
+      return;
+    }
+
+    super.disableStyle();
+  }
+
+
   // Applies the styles of g.
   @Override
   protected void styles(PGraphics g) {
     if (g instanceof PGraphicsOpenGL) {
       if (stroke) {
-        stroke(g.strokeColor);
-        strokeWeight(g.strokeWeight);
+        setStroke(g.strokeColor);
+        setStrokeWeight(g.strokeWeight);
 
         // These two don't to nothing probably:
-        strokeCap(g.strokeCap);
-        strokeJoin(g.strokeJoin);
+        setStrokeCap(g.strokeCap);
+        setStrokeJoin(g.strokeJoin);
       } else {
-        noStroke();
+        setStroke(false);
       }
 
       if (fill) {
-        fill(g.fillColor);
+        setFill(g.fillColor);
       } else {
-        noFill();
+        setFill(false);
       }
 
-      ambient(g.ambientColor);
-      specular(g.specularColor);
-      emissive(g.emissiveColor);
-      shininess(g.shininess);
+      setAmbient(g.ambientColor);
+      setSpecular(g.specularColor);
+      setEmissive(g.emissiveColor);
+      setShininess(g.shininess);
 
       // What about other style parameters, such as rectMode, etc?
       // These should force a tessellation update, same as stroke
