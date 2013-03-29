@@ -107,7 +107,7 @@ public class JSONArray {
    * @param x A JSONTokener
    * @throws JSONException If there is a syntax error.
    */
-  private JSONArray(JSONTokener x) {
+  /*private*/protected JSONArray(JSONTokener x) {
     this();
     if (x.nextClean() != '[') {
       throw new RuntimeException("A JSONArray text must start with '['");
