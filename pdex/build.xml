@@ -56,4 +56,10 @@
   <target name="build" depends="compile" description="Build Experimental mode">
     <jar basedir="bin" destfile="mode/experimental.jar" />
   </target>
+	
+  <target name="install" depends="build">  	
+	<copy todir="../app/modes/experimental/mode">
+	<fileset file="mode/experimental.jar" />
+	</copy>
+  </target>
 </project>

@@ -28,6 +28,7 @@ import processing.app.Base;
 import processing.app.Library;
 import processing.app.SketchCode;
 import processing.core.PApplet;
+import processing.mode.java.preproc.PdePreprocessor;
 
 public class ErrorCheckerService implements Runnable{
   
@@ -87,6 +88,11 @@ public class ErrorCheckerService implements Runnable{
    */
   public int mainClassOffset;
 
+  /**
+   * Fixed p5 offsets for all sketches
+   */
+  public int defaultImportsOffset;
+  
   /**
    * Is the sketch running in static mode or active mode?
    */
@@ -173,6 +179,9 @@ public class ErrorCheckerService implements Runnable{
     initParser();
     initializeErrorWindow();
     xqpreproc = new XQPreprocessor();
+    PdePreprocessor pdePrepoc = new PdePreprocessor(null);
+    defaultImportsOffset = pdePrepoc.getCoreImports().length + 
+        pdePrepoc.getDefaultImports().length + 1;
   }
   
   /**
@@ -222,11 +231,6 @@ public class ErrorCheckerService implements Runnable{
     });
   }
 
-  /**
-   * checkCode() only on text area update
-   */
-  protected AtomicInteger textModified = new AtomicInteger(0);
-  
   public void run() {
     stopThread = false;
     
@@ -239,62 +243,62 @@ public class ErrorCheckerService implements Runnable{
         System.out.println("Oops! [ErrorCheckerThreaded]: " + e);
         // e.printStackTrace();
       }
-
+      
+      updatePaintedThingys();
+      
       if (pauseThread)
         continue;
-
-      updatePaintedThingy();
-      
       if(textModified.get() == 0)
     	  continue;
-      
       // Check every x seconds
       checkCode();
      
     }
   }
   
-  
-  
-  
+  ASTGenerator astGenerator = new ASTGenerator(this);
+  AtomicInteger textModified = new AtomicInteger();
   private boolean checkCode() {
-    
+    System.out.println("checkCode() " + textModified.get() );
     lastTimeStamp = System.currentTimeMillis();
     try {
       sourceCode = preprocessCode(editor.getSketch().getMainProgram());
       
       syntaxCheck();
-      
+       System.err.println(editor.getSketch().getName()+ " MCO " + mainClassOffset);
       // No syntax errors, proceed for compilation check, Stage 2.
+       
       if (problems.length == 0 && editor.compilationCheckEnabled) {
+        astGenerator.buildAST();
         sourceCode = xqpreproc.doYourThing(sourceCode, programImports);
         prepareCompilerClasspath();
-        mainClassOffset = xqpreproc.mainClassOffset; // tiny, but
-                                // significant
-        if (staticMode) {
-        	mainClassOffset++; // Extra line for setup() decl.
-        }
+//        mainClassOffset = xqpreproc.mainClassOffset; // tiny, but
+//                                // significant
+//        if (staticMode) {
+//        	mainClassOffset++; // Extra line for setup() decl.
+//        }
         //         System.out.println(sourceCode);
         //         System.out.println("--------------------------");
         compileCheck();
+        
       }
       
       
       updateErrorTable();
       editor.updateErrorBar(problemsList);
       updateEditorStatus();
-      // updatePaintedThingy();
+      updatePaintedThingys();
       int x = textModified.get();
       //System.out.println("TM " + x);
       if(x>=3){
-    	  textModified.set(3);
-    	  x = 3;
+        textModified.set(3);
+        x = 3;
       }
       
       if(x>0)
-    	  textModified.set(x - 1);
+        textModified.set(x - 1);
       else
-    	  textModified.set(0);
+        textModified.set(0);
       return true;
 
     } catch (Exception e) {
@@ -675,14 +679,15 @@ public class ErrorCheckerService implements Runnable{
   /**
    * Repaints the textarea if required
    */
-  public void updatePaintedThingy() {
+  public void updatePaintedThingys() {
     editor.getTextArea().repaint();
     updateEditorStatus();
     currentTab = editor.getSketch().getCodeIndex(
         editor.getSketch().getCurrentCode());
+    //System.out.println("awesome! " + currentTab + " LT " + lastTab);
     if (currentTab != lastTab) {
+      textModified.incrementAndGet();
       lastTab = currentTab;
-      editor.updateErrorBar(problemsList);      
       return;
     }
 
@@ -725,7 +730,7 @@ public class ErrorCheckerService implements Runnable{
     // String[] lines = {};// = PApplet.split(sourceString, '\n');
     int codeIndex = 0;
 
-    int x = problem.getSourceLineNumber() - mainClassOffset;
+    int x = problem.getSourceLineNumber() - mainClassOffset + 1;
     if (x < 0) {
       // System.out.println("Negative line number "
       // + problem.getSourceLineNumber() + " , offset "
@@ -900,23 +905,31 @@ public class ErrorCheckerService implements Runnable{
     className = (editor == null) ? "DefaultClass" : editor.getSketch()
       .getName();
 
+    
     // Check whether the code is being written in STATIC mode(no function
     // declarations) - append class declaration and void setup() declaration
     Matcher matcher = FUNCTION_DECL.matcher(sourceAlt);
     if (!matcher.find()) {
-      sourceAlt = "public class " + className + " extends PApplet {\n"
+      sourceAlt = xqpreproc.prepareImports(programImports) + "public class " + className + " extends PApplet {\n"
         + "public void setup() {\n" + sourceAlt
         + "\nnoLoop();\n}\n" + "\n}\n";
-      staticMode = true;
-      mainClassOffset = 2;
+      staticMode = true;           
 
     } else {
-      sourceAlt = "public class " + className + " extends PApplet {\n"
+      sourceAlt = xqpreproc.prepareImports(programImports) + "public class " + className + " extends PApplet {\n"
         + sourceAlt + "\n}";
-      staticMode = false;
-      mainClassOffset = 1;
+      staticMode = false;     
     }
-
+    
+    int position = sourceAlt.indexOf("{") + 1;
+    mainClassOffset = 1;
+    for (int i = 0; i <= position; i++) {
+      if (sourceAlt.charAt(i) == '\n') {
+        mainClassOffset++;
+      }
+    }
+    if(staticMode) mainClassOffset++;
+    //mainClassOffset += 2;
     // Handle unicode characters
     sourceAlt = substituteUnicode(sourceAlt);
 
@@ -963,6 +976,36 @@ public class ErrorCheckerService implements Runnable{
     }
   }
   
+  public void scrollToErrorLine(Problem p) {
+	    if (editor == null) {
+	      return;
+	    }
+	    if(p==null)
+	    	return;	   
+	      try {
+	        editor.toFront();
+	        editor.getSketch().setCurrentCode(p.tabIndex);
+	        
+	        editor.setSelection(editor.getTextArea()
+	            .getLineStartNonWhiteSpaceOffset(p.lineNumber - 1)
+	            + editor.getTextArea().getLineText(p.lineNumber - 1)
+	                .trim().length(), editor.getTextArea()
+	            .getLineStartNonWhiteSpaceOffset(p.lineNumber - 1));
+	        editor.getTextArea().scrollTo(p.lineNumber - 1, 0);
+	        editor.repaint();
+	      } catch (Exception e) {
+	        System.err
+	            .println(e
+	                + " : Error while selecting text in scrollToErrorLine()");
+	         e.printStackTrace();
+	      }
+	      // System.out.println("---");
+
+	    
+	  }
+  
+  
+  
   /**
    * Checks if import statements in the sketch have changed. If they have,
    * compiler classpath needs to be updated.
@@ -1000,7 +1043,7 @@ public class ErrorCheckerService implements Runnable{
    * @return String - Tab code with imports replaced with white spaces
    */
   private String scrapImportStatements(String tabProgram, int tabNumber) {
-
+	//TODO: Commented out imports are still detected as main imports.
     String tabSource = new String(tabProgram);
     do {
       // System.out.println("-->\n" + sourceAlt + "\n<--");
@@ -1025,7 +1068,7 @@ public class ErrorCheckerService implements Runnable{
       programImports.add(new ImportStatement(piece, tabNumber, Base
         .countLines(tabSource.substring(0, idx))));
       // Remove the import from the main program
-      // Substitue with white spaces
+      // Substitute with white spaces
       String whiteSpace = "";
       for (int j = 0; j < piece.length(); j++) {
         whiteSpace += " ";

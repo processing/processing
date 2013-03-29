@@ -179,7 +179,9 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         checkForJavaTabs();
         initializeErrorChecker();
         ta.setECSandThemeforTextArea(errorCheckerService, dmode);
-        addXQModeUI();        
+        addXQModeUI();    
+        //TODO: Remove this later
+        setBounds(160, 400, getWidth(), getHeight());
     }
     
     private void addXQModeUI(){

@@ -130,7 +130,7 @@ public class Problem {
   public static String process(String message) {
     // Remove all instances of token
     // "Syntax error on token 'blah', delete this token"
-
+	if(message == null) return null;  
     pattern = Pattern.compile(tokenRegExp);
     matcher = pattern.matcher(message);
     message = matcher.replaceAll("");

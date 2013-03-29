@@ -55,7 +55,6 @@ import processing.mode.java.preproc.PdePreprocessor;
 public class XQPreprocessor {
 
 	private ASTRewrite rewrite = null;
-	public int mainClassOffset = 0;
 	private ArrayList<String> imports;
 	private ArrayList<ImportStatement> extraImports;
 	
@@ -76,7 +75,7 @@ public class XQPreprocessor {
 	public String doYourThing(String source,
 			ArrayList<ImportStatement> programImports) {
 		this.extraImports = programImports;
-		source = prepareImports() + source;
+		//source = prepareImports() + source;
 		Document doc = new Document(source);
 
 		ASTParser parser = ASTParser.newParser(AST.JLS4);
@@ -117,7 +116,6 @@ public class XQPreprocessor {
 		}
 		lines += 2;
 		// System.out.println("Lines: " + lines);
-		mainClassOffset = lines;
 
 		return doc.get();
 	}
@@ -145,6 +143,11 @@ public class XQPreprocessor {
 		}
 		totalImports += "\n";
 		return totalImports;
+	}
+	
+	public String prepareImports(ArrayList<ImportStatement> programImports) {
+	  this.extraImports = programImports;
+	  return prepareImports();
 	}
 
 	/**
