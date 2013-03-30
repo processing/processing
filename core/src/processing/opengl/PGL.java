@@ -624,6 +624,7 @@ public class PGL {
 
       pg.parent.setLayout(new BorderLayout());
       pg.parent.add(canvasAWT, BorderLayout.CENTER);
+      pg.parent.validate();
       pg.parent.removeListeners(pg.parent);
       pg.parent.addListeners(canvasAWT);
 
@@ -641,6 +642,7 @@ public class PGL {
 
       pg.parent.setLayout(new BorderLayout());
       pg.parent.add(canvasNEWT, BorderLayout.CENTER);
+      pg.parent.validate();
 
       if (events == NEWT) {
         NEWTMouseListener mouseListener = new NEWTMouseListener();
