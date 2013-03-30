@@ -627,7 +627,6 @@ public class PGL {
       pg.parent.removeListeners(pg.parent);
       pg.parent.addListeners(canvasAWT);
 
-      capabilities = canvasAWT.getChosenGLCapabilities();
       canvas = canvasAWT;
       canvasNEWT = null;
 
@@ -656,7 +655,6 @@ public class PGL {
         pg.parent.addListeners(canvasNEWT);
       }
 
-      capabilities = window.getChosenGLCapabilities();
       canvas = canvasNEWT;
       canvasAWT = null;
 
@@ -3248,6 +3246,7 @@ public class PGL {
     public void init(GLAutoDrawable adrawable) {
       drawable = adrawable;
       context = adrawable.getContext();
+      capabilities = adrawable.getChosenGLCapabilities();
 
       gl = context.getGL();
       String extensions = gl.glGetString(GL.GL_EXTENSIONS);
