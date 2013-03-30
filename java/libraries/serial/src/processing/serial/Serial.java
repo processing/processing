@@ -185,7 +185,11 @@ public class Serial implements SerialPortEventListener {
           }
         }
       }
-
+    } catch (portInUseException e) {
+      errorMessage("<init>", e);
+      port = null;
+      input = null;
+      output = null;
     } catch (Exception e) {
       errorMessage("<init>", e);
       //exception = e;
