@@ -420,7 +420,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter {
     loadTheme(mode);
   }
 
-  public String getToolTipText(java.awt.event.MouseEvent evt) {System.err.println("GET");
+  public String getToolTipText(java.awt.event.MouseEvent evt) {
     int off = ta.xyToOffset(evt.getX(), evt.getY());
     if (off < 0)
       return null;

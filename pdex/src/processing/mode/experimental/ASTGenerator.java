@@ -96,7 +96,6 @@ import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.WhileStatement;
 import org.eclipse.jdt.internal.compiler.problem.DefaultProblem;
 
-
 import processing.app.Base;
 import processing.app.SketchCode;
 import processing.app.syntax.InputHandler.clipboard_copy;
@@ -347,58 +346,31 @@ public class ASTGenerator {
     } else if (expression instanceof FieldAccess) {
       return findDeclaration2(((FieldAccess) expression).getName(), nearestNode);
     } else if (expression instanceof QualifiedName) {
-      return findDeclaration2(((QualifiedName) expression).getName(),
+      System.out.println("1. Resolving "
+          + ((QualifiedName) expression).getQualifier() + " ||| "
+          + ((QualifiedName) expression).getName());
+      return findDeclaration2(((QualifiedName) expression).getQualifier(),
                               nearestNode);
     }
 
-//    if (anode != null) {
-//      System.out.println("Expression: " + anode);
-//      anode = resolveExpression(nearestNode, anode);
-//    }
-//    String word = anode.toString();
-//    // Here expression should be a SN type hopefully.
-//    System.out.println("Final Expression: " + word);
-////    anode = expression.getParent();
-//    
-//    anode = nearestNode.getParent();
-//    ASTNode matchinNode = null;
-//    while (anode != null) {
-//
-//      List<StructuralPropertyDescriptor> sprops = anode
-//          .structuralPropertiesForType();
-//      for (StructuralPropertyDescriptor sprop : sprops) {
-//        ASTNode cnode = null;
-//        if (!sprop.isChildListProperty()) {
-//          if (anode.getStructuralProperty(sprop) instanceof ASTNode) {
-//            cnode = (ASTNode) anode.getStructuralProperty(sprop);
-//            String[] types = checkForTypes(cnode);
-//            if (types != null) {
-//              for (int i = 0; i < types.length; i++) {
-//                if (types[i].startsWith(word))
-//                {
-//                  System.out.println("match: "+types[i]);
-//                }
-//              }
-//            }
-//          }
-//        } else {
-//          // Childlist prop
-//          List<ASTNode> nodelist = (List<ASTNode>) anode
-//              .getStructuralProperty(sprop);
-//          for (ASTNode clnode : nodelist) {
-//            String[] types = checkForTypes(clnode);
-//            if (types != null) {
-//              for (int i = 0; i < types.length; i++) {
-//                if (types[i].startsWith(word))
-//                  System.out.println("match: "+types[i]);;
-//              }
-//            }
-//          }
-//        }
-//      }
-//      anode = anode.getParent();
-//    }
+    return null;
+  }
 
+  /**
+   * For a().abc.a123 this would return a123
+   * 
+   * @param expression
+   * @return
+   */
+  public static ASTNode resolveChildExpression(ASTNode expression) {
+//    ASTNode anode = null;
+    if (expression instanceof SimpleName) {
+      return expression;
+    } else if (expression instanceof FieldAccess) {
+      return ((FieldAccess) expression).getExpression();
+    } else if (expression instanceof QualifiedName) {
+      return ((QualifiedName) expression).getName();
+    }
     return null;
   }
 
@@ -439,20 +411,27 @@ public class ASTGenerator {
 
         }
 
+        // Now parse the expression into an ASTNode object
         ASTNode anode = null;
         ASTParser parser = ASTParser.newParser(AST.JLS4);
         parser.setKind(ASTParser.K_EXPRESSION);
         parser.setSource(word.toCharArray());
         ASTNode testnode = parser.createAST(null);
-        System.out.print("Typed: " + word + "|");
+
+        // Find closest ASTNode of the document to this word
+        System.err.print("Typed: " + word + "|");
         anode = findClosestNode(lineNumber, (ASTNode) compilationUnit.types()
             .get(0));
-        System.out.println(lineNumber + " Nearest ASTNode to PRED "
+        System.err.println(lineNumber + " Nearest ASTNode to PRED "
             + getNodeAsString(anode));
 
         ArrayList<String> candidates = new ArrayList<String>();
 
+        // Determine the expression typed
+
         if (testnode instanceof SimpleName) {
+
+          // Simple one word exprssion - so is just an identifier
           anode = anode.getParent();
           while (anode != null) {
 
@@ -490,9 +469,15 @@ public class ASTGenerator {
           }
         } else {
 
-          // Complicated completion
-          System.out.println("Not a SN " + getNodeAsString(testnode));
+          // Complex expression of type blah.blah2().doIt,etc
+          // Have to resolve it by carefully traversing AST of testNode
+          System.err.println("Complex expression " + getNodeAsString(testnode));
+
           ASTNode det = resolveExpression(anode, testnode);
+          // Find the parent of the expression
+          // in a().b, this would give me the return type of a(), so that we can 
+          // find all children of a() begininng with b
+          System.err.println("DET " + getNodeAsString(det));
           if (det != null) {
             TypeDeclaration td = null;
             if (det instanceof MethodDeclaration) {
@@ -507,16 +492,33 @@ public class ASTGenerator {
                     .getType());
                 td = (TypeDeclaration) findDeclaration(stp.getName());
               }
+            } else if (det instanceof VariableDeclarationStatement) {
+              SimpleType stp = (SimpleType) (((VariableDeclarationStatement) det)
+                  .getType());
+              td = (TypeDeclaration) findDeclaration(stp.getName());
             }
 
-            System.out.println(getNodeAsString(det) + " defined in "
+            // Now td contains the type returned by a()
+            System.err.println(getNodeAsString(det) + " defined in "
                 + getNodeAsString(td));
+
             if (td != null) {
+              ASTNode child = resolveChildExpression(testnode);
+              System.out.println("Completion candidate: "
+                  + getNodeAsString(child));
               for (int i = 0; i < td.getFields().length; i++) {
-                candidates.add(getNodeAsString(td.getFields()[i]));
+                List<VariableDeclarationFragment> vdfs = td.getFields()[i]
+                    .fragments();
+                for (VariableDeclarationFragment vdf : vdfs) {
+                  if (vdf.getName().toString().startsWith(child.toString()))
+                    candidates.add(getNodeAsString(vdf));
+                }
+
               }
               for (int i = 0; i < td.getMethods().length; i++) {
-                candidates.add(getNodeAsString(td.getMethods()[i]));
+                if (td.getMethods()[i].getName().toString()
+                    .startsWith(child.toString()))
+                  candidates.add(getNodeAsString(td.getMethods()[i]));
               }
             }
 
@@ -557,7 +559,7 @@ public class ASTGenerator {
 //              .println(node.getStructuralProperty(prop) + " -> " + (prop));
           if (node.getStructuralProperty(prop) instanceof ASTNode) {
             ASTNode cnode = (ASTNode) node.getStructuralProperty(prop);
-            System.out.println("Looking at " + getNodeAsString(cnode));
+//            System.out.println("Looking at " + getNodeAsString(cnode));
             int cLineNum = ((CompilationUnit) cnode.getRoot())
                 .getLineNumber(cnode.getStartPosition() + cnode.getLength());
             if (getLineNumber(cnode) <= lineNumber && lineNumber <= cLineNum) {
@@ -573,7 +575,7 @@ public class ASTGenerator {
         for (ASTNode cnode : nodelist) {
           int cLineNum = ((CompilationUnit) cnode.getRoot())
               .getLineNumber(cnode.getStartPosition() + cnode.getLength());
-          System.out.println("Looking at " + getNodeAsString(cnode));
+//          System.out.println("Looking at " + getNodeAsString(cnode));
           if (getLineNumber(cnode) <= lineNumber && lineNumber <= cLineNum) {
             return findClosestParentNode(lineNumber, cnode);
           }
@@ -755,7 +757,7 @@ public class ASTGenerator {
       int[] position = errorCheckerService.calculateTabIndexAndLineNumber(dpr);
       System.out.println("Tab " + position[0] + ", Line: " + (position[1]));
       Problem p = new Problem(dpr, position[0], position[1]);
-      //errorCheckerService.scrollToErrorLine(p);
+      errorCheckerService.scrollToErrorLine(p);
     } // uncomment this one, it works
 
     return null;
@@ -1119,16 +1121,16 @@ public class ASTGenerator {
         StructuralPropertyDescriptor prop = (StructuralPropertyDescriptor) oprop;
         if (prop.isChildProperty() || prop.isSimpleProperty()) {
           if (parent.getStructuralProperty(prop) instanceof ASTNode) {
-            System.out.println(prop + " C/S Prop of -> "
-                + getNodeAsString(parent));
+//            System.out.println(prop + " C/S Prop of -> "
+//                + getNodeAsString(parent));
             ret = definedIn((ASTNode) parent.getStructuralProperty(prop),
                             findMe.toString(), constrains, declaringClass);
             if (ret != null)
               return ret;
           }
         } else if (prop.isChildListProperty()) {
-          System.out.println((prop) + " ChildList props of "
-              + getNodeAsString(parent));
+//          System.out.println((prop) + " ChildList props of "
+//              + getNodeAsString(parent));
           List<ASTNode> nodelist = (List<ASTNode>) parent
               .getStructuralProperty(prop);
           for (ASTNode retNode : nodelist) {
@@ -1272,14 +1274,14 @@ public class ASTGenerator {
     }
     System.out.println("Alternate parent: " + getNodeAsString(alternateParent));
     while (alternateParent != null) {
-      System.out.println("findDeclaration2 -> "
-          + getNodeAsString(alternateParent));
+//      System.out.println("findDeclaration2 -> "
+//          + getNodeAsString(alternateParent));
       for (Object oprop : alternateParent.structuralPropertiesForType()) {
         StructuralPropertyDescriptor prop = (StructuralPropertyDescriptor) oprop;
         if (prop.isChildProperty() || prop.isSimpleProperty()) {
           if (alternateParent.getStructuralProperty(prop) instanceof ASTNode) {
-            System.out.println(prop + " C/S Prop of -> "
-                + getNodeAsString(alternateParent));
+//            System.out.println(prop + " C/S Prop of -> "
+//                + getNodeAsString(alternateParent));
             ret = definedIn((ASTNode) alternateParent
                                 .getStructuralProperty(prop),
                             findMe.toString(), constrains, declaringClass);
@@ -1287,8 +1289,8 @@ public class ASTGenerator {
               return ret;
           }
         } else if (prop.isChildListProperty()) {
-          System.out.println((prop) + " ChildList props of "
-              + getNodeAsString(alternateParent));
+//          System.out.println((prop) + " ChildList props of "
+//              + getNodeAsString(alternateParent));
           List<ASTNode> nodelist = (List<ASTNode>) alternateParent
               .getStructuralProperty(prop);
           for (ASTNode retNode : nodelist) {
@@ -1340,14 +1342,14 @@ public class ASTGenerator {
     if (node == null)
       return null;
     if (constrains != null) {
-      System.out.println("Looking at " + getNodeAsString(node) + " for " + name
-          + " in definedIn");
+//      System.out.println("Looking at " + getNodeAsString(node) + " for " + name
+//          + " in definedIn");
       if (!constrains.contains(node.getNodeType()) && constrains.size() > 0) {
-        System.err.print("definedIn -1 " + " But constrain was ");
-        for (Integer integer : constrains) {
-          System.out.print(ASTNode.nodeClassForType(integer) + ",");
-        }
-        System.out.println();
+//        System.err.print("definedIn -1 " + " But constrain was ");
+//        for (Integer integer : constrains) {
+//          System.out.print(ASTNode.nodeClassForType(integer) + ",");
+//        }
+//        System.out.println();
         return null;
       }
     }
@@ -1462,6 +1464,8 @@ public class ASTGenerator {
       value = node.toString() + className;
     else if (node instanceof SimpleName)
       value = ((SimpleName) node).getFullyQualifiedName() + " | " + className;
+    else if (node instanceof QualifiedName)
+      value = node.toString() + " | " + className;
     else if (className.startsWith("Variable"))
       value = node.toString() + " | " + className;
     else if (className.endsWith("Type"))
