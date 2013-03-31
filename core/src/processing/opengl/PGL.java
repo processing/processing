@@ -624,10 +624,10 @@ public class PGL {
 
       pg.parent.setLayout(new BorderLayout());
       pg.parent.add(canvasAWT, BorderLayout.CENTER);
+      pg.parent.validate();
       pg.parent.removeListeners(pg.parent);
       pg.parent.addListeners(canvasAWT);
 
-      capabilities = canvasAWT.getChosenGLCapabilities();
       canvas = canvasAWT;
       canvasNEWT = null;
 
@@ -642,6 +642,7 @@ public class PGL {
 
       pg.parent.setLayout(new BorderLayout());
       pg.parent.add(canvasNEWT, BorderLayout.CENTER);
+      pg.parent.validate();
 
       if (events == NEWT) {
         NEWTMouseListener mouseListener = new NEWTMouseListener();
@@ -656,7 +657,6 @@ public class PGL {
         pg.parent.addListeners(canvasNEWT);
       }
 
-      capabilities = window.getChosenGLCapabilities();
       canvas = canvasNEWT;
       canvasAWT = null;
 
@@ -3248,20 +3248,13 @@ public class PGL {
     public void init(GLAutoDrawable adrawable) {
       drawable = adrawable;
       context = adrawable.getContext();
+      capabilities = adrawable.getChosenGLCapabilities();
 
-      gl = context.getGL();
-      String extensions = gl.glGetString(GL.GL_EXTENSIONS);
-      if (-1 == extensions.indexOf("_framebuffer_object")) {
-        throw new RuntimeException("No framebuffer objects available");
+      if (!context.hasBasicFBOSupport()) {
+        throw new RuntimeException("No basic FBO support is available");
       }
-      if (-1 == extensions.indexOf("_vertex_buffer_object")) {
-        throw new RuntimeException("No vertex buffer objects available");
-      }
-      if (-1 == extensions.indexOf("_vertex_shader")) {
-        throw new RuntimeException("No vertex shaders available");
-      }
-      if (-1 == extensions.indexOf("_fragment_shader")) {
-        throw new RuntimeException("No fragment shaders available");
+      if (!context.hasGLSL()) {
+        throw new RuntimeException("No GLSL support is available");
       }
     }
 
