@@ -42,7 +42,10 @@ import processing.core.PApplet;
  * representing a single node of an XML tree.
  *
  * @webref data:composite
+ * @see PApplet#createXML(String)
  * @see PApplet#loadXML(String)
+ * @see PApplet#parseXML(String)
+ * @see PApplet#saveXML(XML, String)
  */
 public class XML implements Serializable {
 

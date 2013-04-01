@@ -6012,8 +6012,10 @@ public class PApplet extends Applet
    * @brief Creates a new XML object
    * @param name the name to be given to the root element of the new XML object
    * @return an XML object, or null
+   * @see XML
    * @see PApplet#loadXML(String)
    * @see PApplet#parseXML(String)
+   * @see PApplet#saveXML(XML, String)
    */
   public XML createXML(String name) {
     try {
@@ -6027,9 +6029,10 @@ public class PApplet extends Applet
   /**
    * @webref input:files
    * @param filename name of a file in the data folder or a URL.
+   * @see XML
    * @see PApplet#createXML(String)
    * @see PApplet#parseXML(String)
-   * @see PApplet#saveXML(String)
+   * @see PApplet#saveXML(XML, String)
    * @see PApplet#loadBytes(String)
    * @see PApplet#loadStrings(String)
    * @see PApplet#loadTable(String)
@@ -6053,9 +6056,10 @@ public class PApplet extends Applet
    * @brief Converts String content to an XML object
    * @param data the content to be parsed as XML
    * @return an XML object, or null
+   * @see XML
    * @see PApplet#createXML(String)
    * @see PApplet#loadXML(String)
-   * @see PApplet#saveXML(String)
+   * @see PApplet#saveXML(XML, String)
    */
   public XML parseXML(String xmlString) {
     return parseXML(xmlString, null);
@@ -6074,6 +6078,7 @@ public class PApplet extends Applet
    * @webref output:files
    * @param xml the XML object to save to disk
    * @param filename name of the file to write to
+   * @see XML
    * @see PApplet#createXML(String)
    * @see PApplet#loadXML(String)
    * @see PApplet#parseXML(String)
