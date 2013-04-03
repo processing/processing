@@ -6042,6 +6042,9 @@ public class PApplet extends Applet
   }
 
   // version that uses 'options' though there are currently no supported options
+  /**
+   * @nowebref
+   */
   public XML loadXML(String filename, String options) {
     try {
       return new XML(createInput(filename), options);
