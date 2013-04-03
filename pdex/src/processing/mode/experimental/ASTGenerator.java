@@ -338,13 +338,16 @@ public class ASTGenerator {
   public static ASTNode resolveExpression(ASTNode nearestNode,
                                           ASTNode expression) {
 //    ASTNode anode = null;
+    System.out.println("Resolving " + getNodeAsString(expression));
     if (expression instanceof SimpleName) {
       return findDeclaration2(((SimpleName) expression), nearestNode);
     } else if (expression instanceof MethodInvocation) {
       return findDeclaration2(((MethodInvocation) expression).getName(),
                               nearestNode);
     } else if (expression instanceof FieldAccess) {
-      return findDeclaration2(((FieldAccess) expression).getName(), nearestNode);
+      System.out.println("2. Field access " + getNodeAsString(((FieldAccess)expression).getExpression()));
+      return resolveExpression(nearestNode, ((FieldAccess)expression).getExpression());
+      //return findDeclaration2(((FieldAccess) expression).getExpression(), nearestNode);
     } else if (expression instanceof QualifiedName) {
       System.out.println("1. Resolving "
           + ((QualifiedName) expression).getQualifier() + " ||| "
@@ -367,10 +370,12 @@ public class ASTGenerator {
     if (expression instanceof SimpleName) {
       return expression;
     } else if (expression instanceof FieldAccess) {
-      return ((FieldAccess) expression).getExpression();
+      return ((FieldAccess) expression).getName();
     } else if (expression instanceof QualifiedName) {
       return ((QualifiedName) expression).getName();
     }
+    System.out.println(" resolveChildExpression returning NULL for "
+        + getNodeAsString(expression));
     return null;
   }
 
@@ -393,9 +398,15 @@ public class ASTGenerator {
       }
 
       protected void done() {
-//        ArrayList<ASTNodeWrapper> candidates = new ArrayList<ASTGenerator.ASTNodeWrapper>();
 
-        //ASTNodeWrapper[][] candi = new ASTNodeWrapper[80][1];
+        String word2 = word;
+        boolean noCompare = false;
+        if (word2.endsWith(".")) {
+          // return all matches
+          word2 = word2.substring(0, word.length() - 1);
+          noCompare = true;
+        }
+
         int lineNumber = line;
         // Adjust line number for tabbed sketches
         if (errorCheckerService != null) {
@@ -415,11 +426,11 @@ public class ASTGenerator {
         ASTNode anode = null;
         ASTParser parser = ASTParser.newParser(AST.JLS4);
         parser.setKind(ASTParser.K_EXPRESSION);
-        parser.setSource(word.toCharArray());
+        parser.setSource(word2.toCharArray());
         ASTNode testnode = parser.createAST(null);
 
         // Find closest ASTNode of the document to this word
-        System.err.print("Typed: " + word + "|");
+        System.err.print("Typed: " + word2 + "|");
         anode = findClosestNode(lineNumber, (ASTNode) compilationUnit.types()
             .get(0));
         System.err.println(lineNumber + " Nearest ASTNode to PRED "
@@ -429,8 +440,10 @@ public class ASTGenerator {
 
         // Determine the expression typed
 
-        if (testnode instanceof SimpleName) {
+        if (testnode instanceof SimpleName && !noCompare) {
 
+          System.err
+              .println("One word expression " + getNodeAsString(testnode));
           // Simple one word exprssion - so is just an identifier
           anode = anode.getParent();
           while (anode != null) {
@@ -445,7 +458,7 @@ public class ASTGenerator {
                   String[] types = checkForTypes(cnode);
                   if (types != null) {
                     for (int i = 0; i < types.length; i++) {
-                      if (types[i].startsWith(word))
+                      if (types[i].startsWith(word2))
                         candidates.add(types[i]);
                     }
                   }
@@ -458,7 +471,7 @@ public class ASTGenerator {
                   String[] types = checkForTypes(clnode);
                   if (types != null) {
                     for (int i = 0; i < types.length; i++) {
-                      if (types[i].startsWith(word))
+                      if (types[i].startsWith(word2))
                         candidates.add(types[i]);
                     }
                   }
@@ -510,13 +523,18 @@ public class ASTGenerator {
                 List<VariableDeclarationFragment> vdfs = td.getFields()[i]
                     .fragments();
                 for (VariableDeclarationFragment vdf : vdfs) {
-                  if (vdf.getName().toString().startsWith(child.toString()))
+                  if (noCompare) {
+                    candidates.add(getNodeAsString(vdf));
+                  } else if (vdf.getName().toString()
+                      .startsWith(child.toString()))
                     candidates.add(getNodeAsString(vdf));
                 }
 
               }
               for (int i = 0; i < td.getMethods().length; i++) {
-                if (td.getMethods()[i].getName().toString()
+                if (noCompare) {
+                  candidates.add(getNodeAsString(td.getMethods()[i]));
+                } else if (td.getMethods()[i].getName().toString()
                     .startsWith(child.toString()))
                   candidates.add(getNodeAsString(td.getMethods()[i]));
               }

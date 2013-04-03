@@ -228,8 +228,8 @@ public class TextArea extends JEditTextArea {
     if (Character.isDigit(word.charAt(0)))
       return null;
     word = word.trim();
-    if (word.endsWith("."))
-      word = word.substring(0, word.length() - 1);
+//    if (word.endsWith("."))
+//      word = word.substring(0, word.length() - 1);
     errorCheckerService.astGenerator.updatePredictions(word, line
         + errorCheckerService.mainClassOffset);
     return word;
