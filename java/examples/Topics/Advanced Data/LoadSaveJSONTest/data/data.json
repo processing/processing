@@ -1,0 +1,36 @@
+{
+  "bubbles": [
+      {
+        "position": {
+          "x": 160,
+          "y": 103
+        },
+        "diameter": 43.19838,
+        "label": "Happy"
+      },
+      {
+        "position": {
+          "x": 372,
+          "y": 137
+        },
+        "diameter": 52.42526,
+        "label": "Sad"
+      },
+      {
+        "position": {
+          "x": 273,
+          "y": 235
+        },
+        "diameter": 61.14072,
+        "label": "Joyous"
+      },
+      {
+        "position": {
+          "x": 121,
+          "y": 179
+        },
+        "diameter": 44.758068,
+        "label": "Melancholy"
+      }
+    ]
+}
