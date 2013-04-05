@@ -9,10 +9,10 @@ void setup() {
   //size(200, 200);
   smooth();
   noStroke();
-  ellipseMode(CENTER_RADIUS);
+  ellipseMode(RADIUS);
   randomSeed(0);
   for(int i=0; i<sps.length; i++) {
-    sps[i] = new Spot();  
+    sps[i] = new Spot();
   }
 }
 
@@ -21,12 +21,12 @@ void draw() {
   rect(0, 0, width, height);
   fill(0);
   for(int i=0; i<sps.length; i++) {
-    sps[i].updateDisplay();  
+    sps[i].updateDisplay();
   }
 }
 
 void mousePressed() {
-  save("page_278.tif"); 
+  save("page_278.tif");
 }
 
 
@@ -46,18 +46,18 @@ class Spot {
     if (r < .25) {
       directionX = 1;
       directionY = 1;
-    } 
+    }
     else if (r < .5) {
       directionX = -1;
-      directionY = 1;    
-    } 
+      directionY = 1;
+    }
     else if (r < .75) {
       directionX = 1;
-      directionY = -1;    
-    } 
+      directionY = -1;
+    }
     else {
       directionX = -1;
-      directionY = -1;    
+      directionY = -1;
     }
   }
 
