@@ -1,7 +1,7 @@
 /**
  * Tile Images
- * 
- * Draws an image larger than the screen by tiling it into small sections.
+ *
+ * Draws an image larger than the screen, and saves the image as six tiles.
  * The scaleValue variable sets amount of scaling: 1 is 100%, 2 is 200%, etc.
  */
 
@@ -15,22 +15,23 @@ void setup() {
 }
 
 void draw() {
+  background(204);
   scale(scaleValue);
-  translate(xoffset *(-width / scaleValue), yoffset *(-height / scaleValue));
+  translate(xoffset * (-width / scaleValue), yoffset * (-height / scaleValue));
   line(10, 150, 500, 50);
   line(0, 600, 600, 0);
+  save("lines-" + yoffset + "-" + xoffset + ".png");
   setOffset();
 }
 
 void setOffset() {
-  save("lines-" + xoffset + "-" + yoffset + ".png");
   xoffset++;
   if (xoffset == scaleValue) {
     xoffset = 0;
     yoffset++;
     if (yoffset == scaleValue) {
+      println("Tiles saved.");
       exit();
     }
   }
-  background(204);
 }
