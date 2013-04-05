@@ -1,6 +1,7 @@
 
 // Based on code 32-07 (p. 297)
 
+import processing.pdf.*;
 
 float inc = 0.0;
 
@@ -12,11 +13,11 @@ void setup() {
 }
 
 void draw() {
-  
+
   if(record) {
     beginRecord(PDF, "page_290.pdf");
   }
-  
+
   stroke(0, 143);
   randomSeed(0);
   background(255);
@@ -33,12 +34,12 @@ void draw() {
     tail(i, 300, int(random(5, 12)), angle*random(1.0, 1.3));
     tail(i, 400, int(random(5, 12)), -angle*random(1.0, 1.3));
   }
-  
+
   if(record) {
     endRecord();
-    record = false; 
+    record = false;
   }
-  
+
 }
 
 void mousePressed() {
