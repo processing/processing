@@ -1,9 +1,10 @@
 
 // Based on code 45-04 (p. 424)
 
+import processing.pdf.*;
 
 void setup() {
-  size(513, 666); 
+  size(513, 666);
 }
 
 void draw() {
@@ -11,17 +12,17 @@ void draw() {
     point(mouseX, mouseY);
     println("hi");
   }
-} 
+}
 
 void mousePressed() {
-  beginRecord(PDF, "page_420.pdf"); 
+  beginRecord(PDF, "page_420.pdf");
   background(255);
   stroke(0);
   strokeCap(ROUND);
 }
 
 void mouseReleased() {
-  endRecord(); 
+  endRecord();
 }
 
 
