@@ -1884,8 +1884,8 @@ public class PApplet extends Applet
    * @param w width in pixels
    * @param h height in pixels
    * @param format Either RGB, ARGB, ALPHA (grayscale alpha channel)
-   * @see PImage#PImage
-   * @see PGraphics#PGraphics
+   * @see PImage
+   * @see PGraphics
    */
   public PImage createImage(int w, int h, int format) {
     PImage image = new PImage(w, h, format);
@@ -5527,7 +5527,7 @@ public class PApplet extends Applet
    *
    * @webref image:loading_displaying
    * @param filename name of file to load, can be .gif, .jpg, .tga, or a handful of other image types depending on your platform
-   * @see PImage#PImage
+   * @see PImage
    * @see PGraphics#image(PImage, float, float, float, float)
    * @see PGraphics#imageMode(int)
    * @see PGraphics#background(float, float, float, float)
@@ -5676,8 +5676,8 @@ public class PApplet extends Applet
    * @webref image:loading_displaying
    * @param filename name of the file to load, can be .gif, .jpg, .tga, or a handful of other image types depending on your platform
    * @param extension the type of image to load, for example "png", "gif", "jpg"
+   * @see PImage
    * @see PApplet#loadImage(String, String)
-   * @see PImage#PImage
    */
   public PImage requestImage(String filename, String extension) {
     PImage vessel = createImage(0, 0, ARGB);
@@ -6012,8 +6012,10 @@ public class PApplet extends Applet
    * @brief Creates a new XML object
    * @param name the name to be given to the root element of the new XML object
    * @return an XML object, or null
+   * @see XML
    * @see PApplet#loadXML(String)
    * @see PApplet#parseXML(String)
+   * @see PApplet#saveXML(XML, String)
    */
   public XML createXML(String name) {
     try {
@@ -6027,9 +6029,10 @@ public class PApplet extends Applet
   /**
    * @webref input:files
    * @param filename name of a file in the data folder or a URL.
+   * @see XML
    * @see PApplet#createXML(String)
    * @see PApplet#parseXML(String)
-   * @see PApplet#saveXML(String)
+   * @see PApplet#saveXML(XML, String)
    * @see PApplet#loadBytes(String)
    * @see PApplet#loadStrings(String)
    * @see PApplet#loadTable(String)
@@ -6039,6 +6042,9 @@ public class PApplet extends Applet
   }
 
   // version that uses 'options' though there are currently no supported options
+  /**
+   * @nowebref
+   */
   public XML loadXML(String filename, String options) {
     try {
       return new XML(createInput(filename), options);
@@ -6053,9 +6059,10 @@ public class PApplet extends Applet
    * @brief Converts String content to an XML object
    * @param data the content to be parsed as XML
    * @return an XML object, or null
+   * @see XML
    * @see PApplet#createXML(String)
    * @see PApplet#loadXML(String)
-   * @see PApplet#saveXML(String)
+   * @see PApplet#saveXML(XML, String)
    */
   public XML parseXML(String xmlString) {
     return parseXML(xmlString, null);
@@ -6074,6 +6081,7 @@ public class PApplet extends Applet
    * @webref output:files
    * @param xml the XML object to save to disk
    * @param filename name of the file to write to
+   * @see XML
    * @see PApplet#createXML(String)
    * @see PApplet#loadXML(String)
    * @see PApplet#parseXML(String)
@@ -6090,6 +6098,7 @@ public class PApplet extends Applet
 
   /**
    * @webref input:files
+   * @see Table
    * @see PApplet#loadTable(String)
    * @see PApplet#saveTable(Table, String)
    */
@@ -6101,6 +6110,7 @@ public class PApplet extends Applet
   /**
    * @webref input:files
    * @param filename name of a file in the data folder or a URL.
+   * @see Table
    * @see PApplet#createTable()
    * @see PApplet#saveTable(Table, String)
    * @see PApplet#loadBytes(String)
@@ -6140,6 +6150,7 @@ public class PApplet extends Applet
    * @webref input:files
    * @param table the Table object to save to a file
    * @param filename the filename to which the Table should be saved
+   * @see Table
    * @see PApplet#createTable()
    * @see PApplet#loadTable(String)
    */
@@ -6216,7 +6227,7 @@ public class PApplet extends Applet
    * ( end auto-generated )
   * @webref typography:loading_displaying
   * @param filename name of the font to load
-  * @see PFont#PFont(Font, boolean)
+  * @see PFont
   * @see PGraphics#textFont(PFont, float)
   * @see PApplet#createFont(String, float, boolean, char[])
   */
@@ -6298,7 +6309,7 @@ public class PApplet extends Applet
    * @param size point size of the font
    * @param smooth true for an antialiased font, false for aliased
    * @param charset array containing characters to be generated
-   * @see PFont#PFont
+   * @see PFont
    * @see PGraphics#textFont(PFont, float)
    * @see PGraphics#text(String, float, float, float, float, float)
    * @see PApplet#loadFont(String)
@@ -10913,6 +10924,7 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref shape:vertex
    * @param kind Either POINTS, LINES, TRIANGLES, TRIANGLE_FAN, TRIANGLE_STRIP, QUADS, or QUAD_STRIP
+   * @see PShape
    * @see PGraphics#endShape()
    * @see PGraphics#vertex(float, float, float, float, float)
    * @see PGraphics#curveVertex(float, float, float)
@@ -11140,6 +11152,7 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref shape:vertex
    * @param mode use CLOSE to close the shape
+   * @see PShape
    * @see PGraphics#beginShape(int)
    */
   public void endShape(int mode) {
@@ -12325,6 +12338,7 @@ public class PApplet extends Applet
    *
    * @webref shape:loading_displaying
    * @param mode either CORNER, CORNERS, CENTER
+   * @see PShape
    * @see PGraphics#shape(PShape)
    * @see PGraphics#rectMode(int)
    */
@@ -12498,7 +12512,7 @@ public class PApplet extends Applet
    * @param which any variable of the type PFont
    * @see PApplet#createFont(String, float, boolean)
    * @see PApplet#loadFont(String)
-   * @see PFont#PFont
+   * @see PFont
    * @see PGraphics#text(String, float, float)
    */
   public void textFont(PFont which) {

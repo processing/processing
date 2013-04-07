@@ -1,6 +1,7 @@
 
 // Based on code 33-14 (p. 307)
 
+import processing.pdf.*;
 
 float inc = 0.0;
 
@@ -17,7 +18,7 @@ void setup() {
   size(180, 666);
   smooth();
   noFill();
-  strokeWeight(0.25);  
+  strokeWeight(0.25);
   y = new float[height];
   x = new float[height];
 
@@ -32,9 +33,9 @@ void draw() {
   background(255);
 
   // Shift the values to the right
-  for (int i = y.length-1; i > 0; i--) { 
+  for (int i = y.length-1; i > 0; i--) {
     y[i] = y[i-1];
-  } 
+  }
   // Add new values to the beginning
   my += (mouseX-my) * 0.1;
   y[0] = my;
@@ -46,9 +47,9 @@ void draw() {
   endShape();
 
   // Shift the values to the right
-  for (int i = x.length-1; i > 0; i--) { 
+  for (int i = x.length-1; i > 0; i--) {
     x[i] = x[i-1];
-  } 
+  }
   // Add new values to the beginning
   mx += (mouseY-mx) * 0.1;
   x[0] = mx;
@@ -62,7 +63,7 @@ void draw() {
 
   if(record) {
     endRecord();
-    record = false; 
+    record = false;
   }
 
 }

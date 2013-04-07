@@ -42,7 +42,10 @@ import processing.core.PApplet;
  * representing a single node of an XML tree.
  *
  * @webref data:composite
+ * @see PApplet#createXML(String)
  * @see PApplet#loadXML(String)
+ * @see PApplet#parseXML(String)
+ * @see PApplet#saveXML(XML, String)
  */
 public class XML implements Serializable {
 
@@ -75,16 +78,26 @@ public class XML implements Serializable {
 //    this(parent.createReader(filename));
 //  }
 
+
+  /**
+   * @param file description TBD
+   */
   public XML(File file) throws IOException, ParserConfigurationException, SAXException {
     this(file, null);
   }
 
 
+  /**
+   * @param options description TBD
+   */
   public XML(File file, String options) throws IOException, ParserConfigurationException, SAXException {
     this(PApplet.createReader(file), options);
   }
 
 
+  /**
+   * @param input description TBD
+   */
   public XML(InputStream input) throws IOException, ParserConfigurationException, SAXException {
     this(input, null);
   }
@@ -138,6 +151,9 @@ public class XML implements Serializable {
   }
 
 
+  /**
+   * @param name description TBD
+   */
   // TODO is there a more efficient way of doing this? wow.
   public XML(String name) throws ParserConfigurationException {
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
