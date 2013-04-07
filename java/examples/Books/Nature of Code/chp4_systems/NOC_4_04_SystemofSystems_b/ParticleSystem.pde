@@ -5,7 +5,7 @@
 // Simple Particle System
 
 // A class to describe a group of Particles
-// An ArrayList is used to manage the list of Particles 
+// An ArrayList is used to manage the list of Particles
 
 class ParticleSystem {
 
@@ -21,13 +21,11 @@ class ParticleSystem {
   }
 
   void run() {
-    // Using the Iterator b/c we are deleting from list while iterating
-    Iterator<Particle> it = particles.iterator();
-    while (it.hasNext()) {
-      Particle p = it.next();
+    for (int i = particles.size()-1; i >= 0; i--) {
+      Particle p = particles.get(i);
       p.run();
       if (p.isDead()) {
-        it.remove();
+        particles.remove(i);
       }
     }
   }
@@ -50,6 +48,3 @@ class ParticleSystem {
   }
 
 }
-
-
-
