@@ -6,6 +6,7 @@
 // Neural network code is all in the "code" folder
 
 import nn.*;
+import java.text.DecimalFormat;
 
 ArrayList inputs;  // List of training input values
 Network nn;        // Neural Network Object
@@ -29,17 +30,17 @@ void setup() {
   // Create a list of 4 training inputs
   inputs = new ArrayList();
   float[] input = new float[2];
-  input[0] = 1; 
-  input[1] = 0;  
+  input[0] = 1;
+  input[1] = 0;
   inputs.add((float []) input.clone());
-  input[0] = 0; 
-  input[1] = 1;  
+  input[0] = 0;
+  input[1] = 1;
   inputs.add((float []) input.clone());
-  input[0] = 1; 
-  input[1] = 1;  
+  input[0] = 1;
+  input[1] = 1;
   inputs.add((float []) input.clone());
-  input[0] = 0; 
-  input[1] = 0;  
+  input[0] = 0;
+  input[1] = 0;
   inputs.add((float []) input.clone());
 }
 
@@ -51,7 +52,7 @@ void draw() {
     // Pick a random training input
     int pick = int(random(inputs.size()));
     // Grab that input
-    float[] inp = (float[]) inputs.get(pick); 
+    float[] inp = (float[]) inputs.get(pick);
     // Compute XOR
     float known = 1;
     if ((inp[0] == 1.0 && inp[1] == 1.0) || (inp[0] == 0 && inp[1] == 0)) known = 0;
@@ -77,7 +78,7 @@ void draw() {
   // Draw the landscape
   popMatrix();
   land.calculate(nn);
-  land.render(); 
+  land.render();
   theta += 0.0025;
   popMatrix();
 
@@ -96,7 +97,7 @@ void networkStatus() {
   text("Total iterations: " + count,10,40);
 
   for (int i = 0; i < inputs.size(); i++) {
-    float[] inp = (float[]) inputs.get(i); 
+    float[] inp = (float[]) inputs.get(i);
     float known = 1;
     if ((inp[0] == 1.0 && inp[1] == 1.0) || (inp[0] == 0 && inp[1] == 0)) known = 0;
     float result = nn.feedForward(inp);
