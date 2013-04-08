@@ -1,6 +1,5 @@
 {
-  "bubbles": {
-    "bubble": [
+  "bubbles": [
       {
         "position": {
           "x": 160,
@@ -34,5 +33,4 @@
         "label": "Melancholy"
       }
     ]
-  }
 }

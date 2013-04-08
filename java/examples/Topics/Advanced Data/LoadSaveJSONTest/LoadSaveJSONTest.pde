@@ -36,7 +36,7 @@ import org.json.JSONObject;
 
 // An Array of Bubble objects
 Bubble[] bubbles;
-// A Table object
+// A JSON object
 JSONObject json;
 
 void setup() {
