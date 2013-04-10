@@ -1939,8 +1939,12 @@ public class PGraphicsOpenGL extends PGraphics {
       flush();
       setFlushMode(FLUSH_WHEN_FULL);
     } else if (which == DISABLE_OPTIMIZED_STROKE) {
-      flush();
-      setFlushMode(FLUSH_CONTINUOUSLY);
+      if (is2D()) {
+        PGraphics.showWarning("Optimized strokes can only be disabled in 3D");
+      } else {
+        flush();
+        setFlushMode(FLUSH_CONTINUOUSLY);
+      }
     } else if (which == DISABLE_STROKE_PERSPECTIVE) {
       if (0 < tessGeo.lineVertexCount && 0 < tessGeo.lineIndexCount) {
         // We flush the geometry using the previous line setting.
