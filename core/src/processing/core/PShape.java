@@ -1266,12 +1266,10 @@ public class PShape implements PConstants {
       for (int i = 0; i < src.vertexCount; i++) {
         float[] vert = src.vertices[i];
 
-
-
-        dest.fill((int)(vert[PGraphics.R] * 255) << 24 |
-                  (int)(vert[PGraphics.G] * 255) << 16 |
-                  (int)(vert[PGraphics.B] * 255) <<  8 |
-                  (int)(vert[PGraphics.A] * 255));
+        dest.fill((int)(vert[PGraphics.A] * 255) << 24 |
+                  (int)(vert[PGraphics.R] * 255) << 16 |
+                  (int)(vert[PGraphics.G] * 255) <<  8 |
+                  (int)(vert[PGraphics.B] * 255));
 
      // Do we need to copy these as well?
 //        dest.ambient(vert[PGraphics.AR] * 255, vert[PGraphics.AG] * 255, vert[PGraphics.AB] * 255);
