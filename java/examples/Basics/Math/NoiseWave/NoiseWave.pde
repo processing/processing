@@ -4,54 +4,37 @@
  * 
  * Using Perlin Noise to generate a wave-like pattern. 
  */
- 
-int xspacing = 8;   // How far apart should each horizontal location be spaced
-int w;              // Width of entire wave
 
-float yoff = 0.0f;        // 2nd dimension of perlin noise
-float[] yvalues;          // Using an array to store height values for the wave (not entirely necessary)
+float yoff = 0.0;        // 2nd dimension of perlin noise
 
 void setup() {
   size(640, 360);
-  colorMode(RGB,255,255,255,100);
-  w = width+16;
-  yvalues = new float[w/xspacing];
 }
 
 void draw() {
-  background(0);
-  calcWave();
-  renderWave();
-}
+  background(51);
 
-void calcWave() {
-  float dx = 0.05f;
-  float dy = 0.01f;
-  float amplitude = 100.0f;
-
-  // Increment y ('time')
-  yoff += dy;
-
-  //float xoff = 0.0;  // Option #1
-  float xoff = yoff; // Option #2
-
-  for (int i = 0; i < yvalues.length; i++) {
-    // Using 2D noise function
-    //yvalues[i] = (2*noise(xoff,yoff)-1)*amplitude; // Option #1
-    // Using 1D noise function
-    yvalues[i] = (2*noise(xoff)-1)*amplitude;    // Option #2
-    xoff+=dx;
+  fill(255);
+  // We are going to draw a polygon out of the wave points
+  beginShape(); 
+  
+  float xoff = 0;       // Option #1: 2D Noise
+  // float xoff = yoff; // Option #2: 1D Noise
+  
+  // Iterate over horizontal pixels
+  for (float x = 0; x <= width; x += 10) {
+    // Calculate a y value according to noise, map to 
+    float y = map(noise(xoff, yoff), 0, 1, 200,300); // Option #1: 2D Noise
+    // float y = map(noise(xoff), 0, 1, 200,300);    // Option #2: 1D Noise
+    
+    // Set the vertex
+    vertex(x, y); 
+    // Increment x dimension for noise
+    xoff += 0.05;
   }
-
+  // increment y dimension for noise
+  yoff += 0.01;
+  vertex(width, height);
+  vertex(0, height);
+  endShape(CLOSE);
 }
-
-void renderWave() {
-  // A simple way to draw the wave with an ellipse at each location
-  for (int x = 0; x < yvalues.length; x++) {
-    noStroke();
-    fill(255,50);
-    ellipseMode(CENTER);
-    ellipse(x*xspacing,width/2+yvalues[x],16,16);
-  }
-}
-

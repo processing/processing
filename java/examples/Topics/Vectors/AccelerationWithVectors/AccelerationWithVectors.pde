@@ -15,7 +15,6 @@ Mover mover;
 
 void setup() {
   size(640,360);
-  smooth();
   mover = new Mover(); 
 }
 

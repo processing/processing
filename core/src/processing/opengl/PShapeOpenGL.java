@@ -357,10 +357,10 @@ public class PShapeOpenGL extends PShape {
 
 
   @Override
-  public void addChild(PShape child) {
-    if (child instanceof PShapeOpenGL) {
+  public void addChild(PShape who) {
+    if (who instanceof PShapeOpenGL) {
       if (family == GROUP) {
-        PShapeOpenGL c3d = (PShapeOpenGL)child;
+        PShapeOpenGL c3d = (PShapeOpenGL)who;
 
         super.addChild(c3d);
         c3d.updateRoot(root);
@@ -388,8 +388,52 @@ public class PShapeOpenGL extends PShape {
         PGraphics.showWarning("Cannot add child shape to non-group shape.");
       }
     } else {
-      PGraphics.showWarning("Shape must be 3D to be added to the group.");
+      PGraphics.showWarning("Shape must be OpenGL to be added to the group.");
     }
+  }
+
+
+  @Override
+  public void addChild(PShape who, int idx) {
+    if (who instanceof PShapeOpenGL) {
+      if (family == GROUP) {
+        PShapeOpenGL c3d = (PShapeOpenGL)who;
+
+        super.addChild(c3d, idx);
+        c3d.updateRoot(root);
+        markForTessellation();
+
+        if (c3d.family == GROUP) {
+          if (c3d.textures != null) {
+            for (PImage tex: c3d.textures) {
+              addTexture(tex);
+            }
+          }
+          if (c3d.strokedTexture) {
+            strokedTexture(true);
+          }
+        } else {
+          if (c3d.image != null) {
+            addTexture(c3d.image);
+            if (c3d.stroke) {
+              strokedTexture(true);
+            }
+          }
+        }
+
+      } else {
+        PGraphics.showWarning("Cannot add child shape to non-group shape.");
+      }
+    } else {
+      PGraphics.showWarning("Shape must be OpenGL to be added to the group.");
+    }
+  }
+
+
+  @Override
+  public void removeChild(int idx) {
+    super.removeChild(idx);
+    markForTessellation();
   }
 
 
@@ -3901,31 +3945,42 @@ public class PShapeOpenGL extends PShape {
   // Style handling
 
 
+  @Override
+  public void disableStyle() {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "disableStyle()");
+      return;
+    }
+
+    super.disableStyle();
+  }
+
+
   // Applies the styles of g.
   @Override
   protected void styles(PGraphics g) {
     if (g instanceof PGraphicsOpenGL) {
       if (stroke) {
-        stroke(g.strokeColor);
-        strokeWeight(g.strokeWeight);
+        setStroke(g.strokeColor);
+        setStrokeWeight(g.strokeWeight);
 
         // These two don't to nothing probably:
-        strokeCap(g.strokeCap);
-        strokeJoin(g.strokeJoin);
+        setStrokeCap(g.strokeCap);
+        setStrokeJoin(g.strokeJoin);
       } else {
-        noStroke();
+        setStroke(false);
       }
 
       if (fill) {
-        fill(g.fillColor);
+        setFill(g.fillColor);
       } else {
-        noFill();
+        setFill(false);
       }
 
-      ambient(g.ambientColor);
-      specular(g.specularColor);
-      emissive(g.emissiveColor);
-      shininess(g.shininess);
+      setAmbient(g.ambientColor);
+      setSpecular(g.specularColor);
+      setEmissive(g.emissiveColor);
+      setShininess(g.shininess);
 
       // What about other style parameters, such as rectMode, etc?
       // These should force a tessellation update, same as stroke

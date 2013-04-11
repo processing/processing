@@ -1,4 +1,4 @@
- /**
+/**
  * Non-orthogonal Reflection 
  * by Ira Greenberg. 
  * 
@@ -7,121 +7,118 @@
  * vector.
  */
 
-float baseX1, baseY1, baseX2, baseY2;
+// Position of left hand side of floor
+PVector base1;
+// Position of right hand side of floor
+PVector base2;
+// Length of floor
 float baseLength;
-float[] xCoords, yCoords;
-float ellipseX, ellipseY, ellipseRadius = 6;
-float directionX, directionY;
-float ellipseSpeed = 3.5;
-float velocityX, velocityY; 
 
-void setup(){
+// An array of subpoints along the floor path
+PVector[] coords;
+
+// Variables related to moving ball
+PVector position;
+PVector velocity;
+float r = 6;
+float speed = 3.5;
+
+void setup() {
   size(640, 360);
 
   fill(128);
-  baseX1 = 0;
-  baseY1 = height-150;
-  baseX2 = width;
-  baseY2 = height;
+  base1 = new PVector(0, height-150);
+  base2 = new PVector(width, height);
+  createGround();
 
   // start ellipse at middle top of screen
-  ellipseX = width/2;
-  
-  // calculate initial random direction
-  directionX = random(0.1, 0.99);
-  directionY = random(0.1, 0.99);
+  position = new PVector(width/2, 0);
 
-  // normalize direction vector
-  float directionVectLength = sqrt(directionX*directionX + directionY*directionY);
-  directionX /= directionVectLength;
-  directionY /= directionVectLength;
+  // calculate initial random velocity
+  velocity = PVector.random2D();
+  velocity.mult(speed);
 }
 
-void draw(){
+void draw() {
   // draw background
   fill(0, 12);
   noStroke();
   rect(0, 0, width, height);
 
-  // calculate length of base top
-  baseLength = dist(baseX1, baseY1, baseX2, baseY2);
-  xCoords = new float[ceil(baseLength)];
-  yCoords = new float[ceil(baseLength)];
-
-  // fill base top coordinate array
-  for (int i=0; i<xCoords.length; i++){
-    xCoords[i] = baseX1 + ((baseX2-baseX1)/baseLength)*i;
-    yCoords[i] = baseY1 + ((baseY2-baseY1)/baseLength)*i;
-  }
-
   // draw base
   fill(200);
-  quad(baseX1, baseY1, baseX2, baseY2, baseX2, height, 0, height);
+  quad(base1.x, base1.y, base2.x, base2.y, base2.x, height, 0, height);
 
   // calculate base top normal
-  float baseDeltaX = (baseX2-baseX1)/baseLength;
-  float baseDeltaY = (baseY2-baseY1)/baseLength;
-  float normalX = -baseDeltaY;
-  float normalY = baseDeltaX;
+  PVector baseDelta = PVector.sub(base2, base1);
+  baseDelta.normalize();
+  PVector normal = new PVector(-baseDelta.y, baseDelta.x);
 
   // draw ellipse
   noStroke();
   fill(255);
-  ellipse(ellipseX, ellipseY, ellipseRadius*2, ellipseRadius*2);
-
-  // calculate ellipse velocity
-  velocityX = directionX * ellipseSpeed;
-  velocityY = directionY * ellipseSpeed;
+  ellipse(position.x, position.y, r*2, r*2);
 
   // move elipse
-  ellipseX += velocityX;
-  ellipseY += velocityY;
+  position.add(velocity);
 
   // normalized incidence vector
-  float incidenceVectorX = -directionX;
-  float incidenceVectorY = -directionY;
+  PVector incidence = PVector.mult(velocity, -1);
+  incidence.normalize();
 
   // detect and handle collision
-  for (int i=0; i<xCoords.length; i++){
+  for (int i=0; i<coords.length; i++) {
     // check distance between ellipse and base top coordinates
-    if (dist(ellipseX, ellipseY, xCoords[i], yCoords[i]) < ellipseRadius){
+    if (PVector.dist(position, coords[i]) < r) {
 
       // calculate dot product of incident vector and base top normal 
-      float dot = incidenceVectorX*normalX + incidenceVectorY*normalY;
+      float dot = incidence.dot(normal);
 
       // calculate reflection vector
-      float reflectionVectorX = 2*normalX*dot - incidenceVectorX;
-      float reflectionVectorY = 2*normalY*dot - incidenceVectorY;
-
       // assign reflection vector to direction vector
-      directionX = reflectionVectorX;
-      directionY = reflectionVectorY;
+      velocity.set(2*normal.x*dot - incidence.x, 2*normal.y*dot - incidence.y, 0);
+      velocity.mult(speed);
 
       // draw base top normal at collision point
       stroke(255, 128, 0);
-      line(ellipseX, ellipseY, ellipseX-normalX*100, 
-            ellipseY-normalY*100);
+      line(position.x, position.y, position.x-normal.x*100, position.y-normal.y*100);
     }
   }
 
   // detect boundary collision
   // right
-  if (ellipseX > width-ellipseRadius){
-    ellipseX = width-ellipseRadius;
-    directionX *= -1;
+  if (position.x > width-r) {
+    position.x = width-r;
+    velocity.x *= -1;
   }
   // left 
-  if (ellipseX < ellipseRadius){
-    ellipseX = ellipseRadius;
-    directionX *= -1;
+  if (position.x < r) {
+    position.x = r;
+    velocity.x *= -1;
   }
   // top
-  if (ellipseY < ellipseRadius){
-    ellipseY = ellipseRadius;
-    directionY *= -1;
+  if (position.y < r) {
+    position.y = r;
+    velocity.y *= -1;
     // randomize base top
-    baseY1 = random(height-100, height);
-    baseY2 = random(height-100, height);
+    base1.y = random(height-100, height);
+    base2.y = random(height-100, height);
+    createGround();
+  }
+}
+
+
+// Calculate variables for the ground
+void createGround() {
+  // calculate length of base top
+  baseLength = PVector.dist(base1, base2);
+
+  // fill base top coordinate array
+  coords = new PVector[ceil(baseLength)];
+  for (int i=0; i<coords.length; i++) {
+    coords[i] = new PVector();
+    coords[i].x = base1.x + ((base2.x-base1.x)/baseLength)*i;
+    coords[i].y = base1.y + ((base2.y-base1.y)/baseLength)*i;
   }
 }
 
