@@ -116,7 +116,7 @@
 	   excludes="**/tools/format/**" 
 	   encoding="UTF-8" 
 	   includeAntRuntime="false" 
-	   classpath="../core/library/core.jar; ${env.JAVA_HOME}/lib/tools.jar; lib/ant.jar; lib/ant-launcher.jar; lib/antlr.jar; lib/apple.jar; lib/jdt-core.jar; lib/jna.jar; lib/org-netbeans-swing-outline.jar"
+	   classpath="../core/library/core.jar; lib/ant.jar; lib/ant-launcher.jar; lib/antlr.jar; lib/apple.jar; lib/jdt-core.jar; lib/jna.jar; lib/org-netbeans-swing-outline.jar;lib/com.ibm.icu_4.4.2.v20110823.jar;lib/jdi.jar;lib/jdimodel.jar;lib/org.eclipse.osgi_3.8.1.v20120830-144521.jar"
 	   debug="on">
       <src path="src" />
       <src path="generated" />
