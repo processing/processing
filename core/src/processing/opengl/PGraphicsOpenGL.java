@@ -9884,10 +9884,17 @@ public class PGraphicsOpenGL extends PGraphics {
         PMatrix3D nm = modelviewInv;
 
         index = 4 * tessIdx;
-        polyVertices[index++] = x*mm.m00 + y*mm.m01 + z*mm.m02 + mm.m03;
-        polyVertices[index++] = x*mm.m10 + y*mm.m11 + z*mm.m12 + mm.m13;
-        polyVertices[index++] = x*mm.m20 + y*mm.m21 + z*mm.m22 + mm.m23;
-        polyVertices[index  ] = x*mm.m30 + y*mm.m31 + z*mm.m32 + mm.m33;
+        if (is2D()) {
+          polyVertices[index++] = (int)(x*mm.m00 + y*mm.m01 + z*mm.m02 + mm.m03);
+          polyVertices[index++] = (int)(x*mm.m10 + y*mm.m11 + z*mm.m12 + mm.m13);
+          polyVertices[index++] = (int)(x*mm.m20 + y*mm.m21 + z*mm.m22 + mm.m23);
+          polyVertices[index  ] =      (x*mm.m30 + y*mm.m31 + z*mm.m32 + mm.m33);
+        } else {
+          polyVertices[index++] = x*mm.m00 + y*mm.m01 + z*mm.m02 + mm.m03;
+          polyVertices[index++] = x*mm.m10 + y*mm.m11 + z*mm.m12 + mm.m13;
+          polyVertices[index++] = x*mm.m20 + y*mm.m21 + z*mm.m22 + mm.m23;
+          polyVertices[index  ] = x*mm.m30 + y*mm.m31 + z*mm.m32 + mm.m33;
+        }
 
         index = 3 * tessIdx;
         polyNormals[index++] = nx*nm.m00 + ny*nm.m10 + nz*nm.m20;
@@ -9951,10 +9958,17 @@ public class PGraphicsOpenGL extends PGraphics {
           float nz = in.normals[index  ];
 
           index = 4 * tessIdx;
-          polyVertices[index++] = x*mm.m00 + y*mm.m01 + z*mm.m02 + mm.m03;
-          polyVertices[index++] = x*mm.m10 + y*mm.m11 + z*mm.m12 + mm.m13;
-          polyVertices[index++] = x*mm.m20 + y*mm.m21 + z*mm.m22 + mm.m23;
-          polyVertices[index  ] = x*mm.m30 + y*mm.m31 + z*mm.m32 + mm.m33;
+          if (is2D()) {
+            polyVertices[index++] = (int)(x*mm.m00 + y*mm.m01 + z*mm.m02 + mm.m03);
+            polyVertices[index++] = (int)(x*mm.m10 + y*mm.m11 + z*mm.m12 + mm.m13);
+            polyVertices[index++] = (int)(x*mm.m20 + y*mm.m21 + z*mm.m22 + mm.m23);
+            polyVertices[index  ] =      (x*mm.m30 + y*mm.m31 + z*mm.m32 + mm.m33);
+          } else {
+            polyVertices[index++] = x*mm.m00 + y*mm.m01 + z*mm.m02 + mm.m03;
+            polyVertices[index++] = x*mm.m10 + y*mm.m11 + z*mm.m12 + mm.m13;
+            polyVertices[index++] = x*mm.m20 + y*mm.m21 + z*mm.m22 + mm.m23;
+            polyVertices[index  ] = x*mm.m30 + y*mm.m31 + z*mm.m32 + mm.m33;
+          }
 
           index = 3 * tessIdx;
           polyNormals[index++] = nx*nm.m00 + ny*nm.m10 + nz*nm.m20;
