@@ -217,11 +217,11 @@
     </copy>
 -->
 
-    <copy todir="${target.path}/modes/javascript">
+<!--     <copy todir="${target.path}/modes/javascript">
       <fileset dir="../javascript">
       	<exclude name="**/._*" />
       </fileset>
-    </copy>
+    </copy> -->
 
     <copy todir="${target.path}/modes/android">
       <fileset dir="../android">
