@@ -1,5 +1,8 @@
 0217 core
 X improve load/save of .gz files with Table, clear up some .bin issues
+X add set(x, y) to PVector (shiffman)
+X loadImage() with TGA causing images to be upside-down
+X   https://github.com/processing/processing/issues/1682
 
 _ implement content specifiers
 getIntContent()
@@ -60,9 +63,10 @@ _   get mouseWheel() added to api ref
 _   also added to keywords.txt
 
 andres
-_ P2D/P3D sketches don't get focus until click
+_ P2D/P3D sketches don't get focus until clicked
 _   also problem for Java2D when canvas is used?
 _   need to standardize canvas handling
+_   https://github.com/processing/processing/issues/1700
 
 _ remap() instead of map()
 
@@ -425,6 +429,8 @@ _   uses gluTessBeginContour and gluTessEndContour
 _   and then does 5 step sizes for each curveto
 _ show an error when using a font character that isn't available
 _   maybe fall back on other characters instead?
+_ some font weights cannot be specified/selected on OS X
+_   https://github.com/processing/processing/issues/1727
 
 
 CORE / PImage

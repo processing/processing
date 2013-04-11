@@ -5874,7 +5874,9 @@ public class PApplet extends Applet
 
     // where "reversed" means upper-left corner (normal for most of
     // the modernized world, but "reversed" for the tga spec)
-    boolean reversed = (header[17] & 0x20) != 0;
+    //boolean reversed = (header[17] & 0x20) != 0;
+    // https://github.com/processing/processing/issues/1682
+    boolean reversed = (header[17] & 0x20) == 0;
 
     if ((header[2] == 2) || (header[2] == 3)) {  // not RLE encoded
       if (reversed) {
