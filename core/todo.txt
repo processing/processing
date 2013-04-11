@@ -1,6 +1,15 @@
 0217 core
 X improve load/save of .gz files with Table, clear up some .bin issues
 
+_ implement content specifiers
+getIntContent()
+getFloatContent()
+getContent() or getStringContent()?
+
+_ Dan having trouble with JSON
+_ keys() vs keySet() in JSON.. 
+_   keys() doesn't iterate, keySet() introduces 'Set' type
+
 andres
 A lines not properly renderered in P3D when using ortographic projection
 A   https://github.com/processing/processing/issues/1661

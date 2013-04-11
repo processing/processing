@@ -6082,10 +6082,16 @@ public class PApplet extends Applet
     return saveXML(xml, filename, null);
   }
 
+
   public boolean saveXML(XML xml, String filename, String options) {
     return xml.save(saveFile(filename), options);
   }
 
+
+  public JSONObject loadJSONObject(String filename) {
+    JSONTokener tokener = new JSONTokener(createReader(filename));
+    return new JSONObject(tokener);
+  }
 
 
   /**
