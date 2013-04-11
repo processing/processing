@@ -149,11 +149,10 @@ public class PVector implements Serializable {
     this.z = 0;
   }
 
-
   /**
    * ( begin auto-generated from PVector_set.xml )
    *
-   * Sets the x, y, and z component of the vector using three separate
+   * Sets the x, y, and z component of the vector using two or three separate
    * variables, the data from a PVector, or the values from a float array.
    *
    * ( end auto-generated )
@@ -170,6 +169,17 @@ public class PVector implements Serializable {
     this.z = z;
   }
 
+  /**
+   *
+   * @webref pvector:method
+   * @param x the x component of the vector
+   * @param y the y component of the vector
+   * @brief Set the x, y components of the vector
+   */
+  public void set(float x, float y) {
+    this.x = x;
+    this.y = y;
+  }
 
   /**
    * @param v any variable of type PVector
