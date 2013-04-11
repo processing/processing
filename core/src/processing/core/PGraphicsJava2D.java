@@ -1258,7 +1258,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
     }
 
     if (who.modified) {
-      cash.update(tint, tintColor);
+      cash.update(who, tint, tintColor);
       who.modified = false;
     }
 
@@ -1291,14 +1291,13 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 
 
   class ImageCache {
-    PImage source;
     boolean tinted;
     int tintedColor;
     int tintedPixels[];  // one row of tinted pixels
     BufferedImage image;
 
     public ImageCache(PImage source) {
-      this.source = source;
+//      this.source = source;
       // even if RGB, set the image type to ARGB, because the
       // image may have an alpha value for its tint().
 //      int type = BufferedImage.TYPE_INT_ARGB;
@@ -1311,7 +1310,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
      * has changed, or the pixels have changed, so should just go through
      * with the update without further checks.
      */
-    public void update(boolean tint, int tintColor) {
+    public void update(PImage source, boolean tint, int tintColor) {
       int bufferType = BufferedImage.TYPE_INT_ARGB;
       boolean opaque = (tintColor & 0xFF000000) == 0xFF000000;
       if (source.format == RGB) {

@@ -8,27 +8,31 @@
  *
  * Here is what the JSON looks like (partial):
  *
- {
- "bubbles": [
- {
- "position": {
- "x": 160,
- "y": 103
- },
- "diameter": 43.19838,
- "label": "Happy"
- },
- {
- "position": {
- "x": 372,
- "y": 137
- },
- "diameter": 52.42526,
- "label": "Sad"
- }
- ]
- }
+{
+  "bubbles": [
+      {
+        "position": {
+          "x": 160,
+          "y": 103
+        },
+        "diameter": 43.19838,
+        "label": "Happy"
+      },
+      {
+        "position": {
+          "x": 372,
+          "y": 137
+        },
+        "diameter": 52.42526,
+        "label": "Sad"
+      }
+    ]
+}
  */
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 // An Array of Bubble objects
 Bubble[] bubbles;
@@ -53,30 +57,32 @@ void draw() {
   //  text("Click to add bubbles.", 10, height-10);
 }
 
-
 void loadData() {
   // Load JSON file
   String jsonString = join(loadStrings("data.json"), "\n");
   //println(jsonString);
 
-  json =  JSONObject.parse(jsonString);
-  println(json);
+  try {
+    json =  new JSONObject(jsonString);
+    JSONArray bubbleData = json.getJSONArray("bubbles");
 
-  JSONArray bubbleData = json.getJSONArray("bubbles");
+    // The size of the array of Bubble objects is determined by the total XML elements named "bubble"
+    bubbles = new Bubble[bubbleData.length()]; 
 
-  // The size of the array of Bubble objects is determined by the total XML elements named "bubble"
-  bubbles = new Bubble[bubbleData.size()]; 
+    for (int i = 0; i < bubbleData.length(); i++) {
+      JSONObject bubble = bubbleData.getJSONObject(i); 
+      JSONObject position = bubble.getJSONObject("position");
+      int x = position.getInt("x");
+      int y = position.getInt("y");
 
-  for (int i = 0; i < bubbleData.size(); i++) {
-    /*JSONObject bubble = bubbleData.getJSONObject(i); 
-    JSONObject position = bubble.getJSONObject("position");
-    int x = position.getInt("x");
-    int y = position.getInt("y");
+      float diameter = (float)bubble.getDouble("diameter");
+      String label = bubble.getString("label");
 
-    float diameter = (float)bubble.getDouble("diameter");
-    String label = bubble.getString("label");
-
-    bubbles[i] = new Bubble(x, y, diameter, label);*/
+      bubbles[i] = new Bubble(x, y, diameter, label);
+    }
+  } 
+  catch (JSONException e) {
+    e.printStackTrace();
   }
 }
 
