@@ -522,6 +522,10 @@ public class PGraphicsOpenGL extends PGraphics {
   protected IntBuffer intBuffer;
   protected FloatBuffer floatBuffer;
 
+
+  /** Flag used to disable coord clamping in 2D when strokes have fractional weight */
+  protected boolean clampingEnabled = false;
+
   //////////////////////////////////////////////////////////////
 
   // INIT/ALLOCATE/FINISH
@@ -9884,11 +9888,15 @@ public class PGraphicsOpenGL extends PGraphics {
         PMatrix3D nm = modelviewInv;
 
         index = 4 * tessIdx;
-        if (is2D()) {
-          polyVertices[index++] = (int)(x*mm.m00 + y*mm.m01 + z*mm.m02 + mm.m03);
-          polyVertices[index++] = (int)(x*mm.m10 + y*mm.m11 + z*mm.m12 + mm.m13);
-          polyVertices[index++] = (int)(x*mm.m20 + y*mm.m21 + z*mm.m22 + mm.m23);
-          polyVertices[index  ] =      (x*mm.m30 + y*mm.m31 + z*mm.m32 + mm.m33);
+        if (is2D() && clampingEnabled) {
+          // ceil emulates the behavior of JAVA2D
+          polyVertices[index++] =
+            PApplet.ceil(x*mm.m00 + y*mm.m01 + z*mm.m02 + mm.m03);
+          polyVertices[index++] =
+            PApplet.ceil(x*mm.m10 + y*mm.m11 + z*mm.m12 + mm.m13);
+          polyVertices[index++] =
+            PApplet.ceil(x*mm.m20 + y*mm.m21 + z*mm.m22 + mm.m23);
+          polyVertices[index  ] = x*mm.m30 + y*mm.m31 + z*mm.m32 + mm.m33;
         } else {
           polyVertices[index++] = x*mm.m00 + y*mm.m01 + z*mm.m02 + mm.m03;
           polyVertices[index++] = x*mm.m10 + y*mm.m11 + z*mm.m12 + mm.m13;
@@ -9958,11 +9966,14 @@ public class PGraphicsOpenGL extends PGraphics {
           float nz = in.normals[index  ];
 
           index = 4 * tessIdx;
-          if (is2D()) {
-            polyVertices[index++] = (int)(x*mm.m00 + y*mm.m01 + z*mm.m02 + mm.m03);
-            polyVertices[index++] = (int)(x*mm.m10 + y*mm.m11 + z*mm.m12 + mm.m13);
-            polyVertices[index++] = (int)(x*mm.m20 + y*mm.m21 + z*mm.m22 + mm.m23);
-            polyVertices[index  ] =      (x*mm.m30 + y*mm.m31 + z*mm.m32 + mm.m33);
+          if (is2D() && clampingEnabled) {
+            polyVertices[index++] =
+              PApplet.ceil(x*mm.m00 + y*mm.m01 + z*mm.m02 + mm.m03);
+            polyVertices[index++] =
+              PApplet.ceil(x*mm.m10 + y*mm.m11 + z*mm.m12 + mm.m13);
+            polyVertices[index++] =
+              PApplet.ceil(x*mm.m20 + y*mm.m21 + z*mm.m22 + mm.m23);
+            polyVertices[index  ] = x*mm.m30 + y*mm.m31 + z*mm.m32 + mm.m33;
           } else {
             polyVertices[index++] = x*mm.m00 + y*mm.m01 + z*mm.m02 + mm.m03;
             polyVertices[index++] = x*mm.m10 + y*mm.m11 + z*mm.m12 + mm.m13;
@@ -10256,6 +10267,7 @@ public class PGraphicsOpenGL extends PGraphics {
     boolean accurate2DStrokes;
 
     PMatrix transform;
+    float transformScale;
     boolean is2D, is3D;
 
     int[] rawIndices;
@@ -10342,6 +10354,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
     void setTransform(PMatrix transform) {
       this.transform = transform;
+      transformScale = -1;
     }
 
     // -----------------------------------------------------------------
@@ -11032,6 +11045,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
       int color = constStroke ? strokeColor : in.strokeColors[i0];
       float weight = constStroke ? strokeWeight : in.strokeWeights[i0];
+      if (subPixelStroke(weight)) clampingEnabled = false;
 
       float x0 = in.vertices[3 * i0 + 0];
       float y0 = in.vertices[3 * i0 + 1];
@@ -11044,25 +11058,40 @@ public class PGraphicsOpenGL extends PGraphics {
       float diry = y1 - y0;
       float llen = PApplet.sqrt(dirx * dirx + diry * diry);
       float normx = 0, normy = 0;
+      float dirdx = 0, dirdy = 0;
       if (nonZero(llen)) {
         normx = -diry / llen;
         normy = +dirx / llen;
+
+        // Displacement along the direction of the line to force rounding to next
+        // integer and so making sure that no pixels are missing, some relevant
+        // links:
+        // http://stackoverflow.com/questions/10040961/opengl-pixel-perfect-2d-drawing
+        // http://msdn.microsoft.com/en-us/library/dd374282(VS.85)
+        dirdx = (dirx / llen) * PApplet.min(0.75f, weight/2);
+        dirdy = (diry / llen) * PApplet.min(0.75f, weight/2);
       }
 
-      tess.setPolyVertex(vidx++, x0 + normx * weight/2, y0 + normy * weight/2,
+      float normdx = normx * weight/2;
+      float normdy = normy * weight/2;
+
+      tess.setPolyVertex(vidx++, x0 + normdx - dirdx, y0 + normdy - dirdy,
                          0, color);
       tess.polyIndices[iidx++] = (short) (count + 0);
 
-      tess.setPolyVertex(vidx++, x0 - normx * weight/2, y0 - normy * weight/2,
+      tess.setPolyVertex(vidx++, x0 - normdx - dirdx, y0 - normdy - dirdy,
                          0, color);
       tess.polyIndices[iidx++] = (short) (count + 1);
 
       if (!constStroke) {
         color =  in.strokeColors[i1];
         weight = in.strokeWeights[i1];
+        normdx = normx * weight/2;
+        normdy = normy * weight/2;
+        if (subPixelStroke(weight)) clampingEnabled = false;
       }
 
-      tess.setPolyVertex(vidx++, x1 - normx * weight/2, y1 - normy * weight/2,
+      tess.setPolyVertex(vidx++, x1 - normdx + dirdx, y1 - normdy + dirdy,
                          0, color);
       tess.polyIndices[iidx++] = (short) (count + 2);
 
@@ -11070,11 +11099,13 @@ public class PGraphicsOpenGL extends PGraphics {
       tess.polyIndices[iidx++] = (short) (count + 2);
       tess.polyIndices[iidx++] = (short) (count + 0);
 
-      tess.setPolyVertex(vidx++, x1 + normx * weight/2, y1 + normy * weight/2,
+      tess.setPolyVertex(vidx++, x1 + normdx + dirdx, y1 + normdy + dirdy,
                          0, color);
       tess.polyIndices[iidx++] = (short) (count + 3);
 
       cache.incCounts(index, 6, 4);
+
+      clampingEnabled = true;
       return index;
     }
 
@@ -11090,30 +11121,41 @@ public class PGraphicsOpenGL extends PGraphics {
       }
     }
 
+    boolean subPixelStroke(float weight) {
+      float sw = transformScale() * weight;
+      return PApplet.abs(sw - (int)sw) > 0;
+    }
+
     boolean noCapsJoins() {
-      // We first calculate the (volumetric) scaling factor that is associated
-      // to the current transformation matrix, which is given by the absolute
-      // value of its determinant:
-      float scaleFactor = 1;
+      // The stroke weight is scaled so it correspons to the current
+      // "zoom level" being applied on the geometry due to scaling:
+      return transformScale() * strokeWeight < PGL.MIN_CAPS_JOINS_WEIGHT;
+    }
+
+    float transformScale() {
+      if (-1 < transformScale) return transformScale;
+
+      // Volumetric scaling factor that is associated to the current
+      // transformation matrix, which is given by the absolute value of its
+      // determinant:
+      float factor = 1;
 
       if (transform != null) {
         if (transform instanceof PMatrix2D) {
           PMatrix2D tr = (PMatrix2D)transform;
           float areaScaleFactor = Math.abs(tr.m00 * tr.m11 - tr.m01 * tr.m10);
-          scaleFactor = (float) Math.sqrt(areaScaleFactor);
+          factor = (float) Math.sqrt(areaScaleFactor);
         } else if (transform instanceof PMatrix3D) {
           PMatrix3D tr = (PMatrix3D)transform;
           float volumeScaleFactor =
             Math.abs(tr.m00 * (tr.m11 * tr.m22 - tr.m12 * tr.m21) +
                      tr.m01 * (tr.m12 * tr.m20 - tr.m10 * tr.m22) +
                      tr.m02 * (tr.m10 * tr.m21 - tr.m11 * tr.m20));
-          scaleFactor = (float) Math.pow(volumeScaleFactor, 1.0f / 3.0f);
+          factor = (float) Math.pow(volumeScaleFactor, 1.0f / 3.0f);
         }
       }
 
-      // The stroke weight is scaled so it correspons to the current
-      // "zoom level" being applied on the geometry due to scaling:
-      return scaleFactor * strokeWeight < PGL.MIN_CAPS_JOINS_WEIGHT;
+      return transformScale = factor;
     }
 
     // -----------------------------------------------------------------
@@ -11560,6 +11602,8 @@ public class PGraphicsOpenGL extends PGraphics {
                  strokeJoin == BEVEL ? LinePath.JOIN_BEVEL :
                  LinePath.JOIN_MITER;
 
+      if (subPixelStroke(strokeWeight)) clampingEnabled = false;
+
       // Make the outline of the stroke from the path
       LinePath strokedPath = LinePath.createStrokedPath(path, strokeWeight,
                                                         cap, join);
@@ -11606,6 +11650,8 @@ public class PGraphicsOpenGL extends PGraphics {
         iter.next();
       }
       gluTess.endPolygon();
+
+      clampingEnabled = true;
     }
 
     /////////////////////////////////////////
