@@ -67,6 +67,7 @@ class AndroidBuild extends JavaBuild {
    * @throws IOException
    */
   public File build(String target) throws IOException, SketchException {
+    System.out.println("ANDROID BUILD!");
     this.target = target;
     File folder = createProject();
     if (folder != null) {
@@ -496,7 +497,7 @@ class AndroidBuild extends JavaBuild {
 
 
   String getPathForAPK() {
-    String suffix = target.equals("release") ? "unsigned" : "debug";
+    String suffix = target.equals("release") ? "release-unsigned" : "debug";
     String apkName = "bin/" + sketch.getName() + "-" + suffix + ".apk";
     final File apkFile = new File(tmpFolder, apkName);
     if (!apkFile.exists()) {
