@@ -20,7 +20,7 @@
 JDKLIBS="rt.jar tools.jar"
 
 # Set this to non-zero for logging
-LOGGING=5
+LOGGING=0
 
 # Logs name and value of a variable to stdout if LOGGING is non-zero.
 # Expects the variable name as parameter $1.

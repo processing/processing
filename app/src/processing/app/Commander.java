@@ -8,6 +8,7 @@ public class Commander {
   public static void main(String[] args) throws Exception {
     if (args.length <= 1) {
       printHelp(System.out);
+      return;
     }
 
     Class<?> commander = Class.forName("processing.mode." + args[0] + ".Commander");
