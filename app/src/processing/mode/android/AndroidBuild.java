@@ -67,7 +67,6 @@ class AndroidBuild extends JavaBuild {
    * @throws IOException
    */
   public File build(String target) throws IOException, SketchException {
-    System.out.println("ANDROID BUILD!");
     this.target = target;
     File folder = createProject();
     if (folder != null) {

@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 
 import javax.swing.JFileChooser;
@@ -316,7 +315,6 @@ class AndroidSDK {
       PApplet.println(adbCmd);
     }
 //    try {
-    System.out.println("EXECUTING ADB: "+Arrays.toString(adbCmd));
     ProcessResult adbResult = new ProcessHelper(adbCmd).execute();
     // Ignore messages about starting up an adb daemon
     String out = adbResult.getStdout();
