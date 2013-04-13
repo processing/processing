@@ -9894,8 +9894,7 @@ public class PGraphicsOpenGL extends PGraphics {
             PApplet.ceil(x*mm.m00 + y*mm.m01 + z*mm.m02 + mm.m03);
           polyVertices[index++] =
             PApplet.ceil(x*mm.m10 + y*mm.m11 + z*mm.m12 + mm.m13);
-          polyVertices[index++] =
-            PApplet.ceil(x*mm.m20 + y*mm.m21 + z*mm.m22 + mm.m23);
+          polyVertices[index++] = x*mm.m20 + y*mm.m21 + z*mm.m22 + mm.m23;
           polyVertices[index  ] = x*mm.m30 + y*mm.m31 + z*mm.m32 + mm.m33;
         } else {
           polyVertices[index++] = x*mm.m00 + y*mm.m01 + z*mm.m02 + mm.m03;
@@ -9971,8 +9970,7 @@ public class PGraphicsOpenGL extends PGraphics {
               PApplet.ceil(x*mm.m00 + y*mm.m01 + z*mm.m02 + mm.m03);
             polyVertices[index++] =
               PApplet.ceil(x*mm.m10 + y*mm.m11 + z*mm.m12 + mm.m13);
-            polyVertices[index++] =
-              PApplet.ceil(x*mm.m20 + y*mm.m21 + z*mm.m22 + mm.m23);
+            polyVertices[index++] = x*mm.m20 + y*mm.m21 + z*mm.m22 + mm.m23;
             polyVertices[index  ] = x*mm.m30 + y*mm.m31 + z*mm.m32 + mm.m33;
           } else {
             polyVertices[index++] = x*mm.m00 + y*mm.m01 + z*mm.m02 + mm.m03;
@@ -11083,6 +11081,18 @@ public class PGraphicsOpenGL extends PGraphics {
                          0, color);
       tess.polyIndices[iidx++] = (short) (count + 1);
 
+      if (clampingEnabled) {
+        // Check for degeneracy due to coordinate clamping
+        float xac = tess.polyVertices[4 * (vidx - 2) + 0];
+        float yac = tess.polyVertices[4 * (vidx - 2) + 1];
+        float xbc = tess.polyVertices[4 * (vidx - 1) + 0];
+        float ybc = tess.polyVertices[4 * (vidx - 1) + 1];
+        if (!(PApplet.abs(xac - xbc) > 0 || PApplet.abs(yac - ybc) > 0)) {
+          unclampLine2D(vidx - 2, x0 + normdx - dirdx, y0 + normdy - dirdy);
+          unclampLine2D(vidx - 1, x0 - normdx - dirdx, y0 - normdy - dirdy);
+        }
+      }
+
       if (!constStroke) {
         color =  in.strokeColors[i1];
         weight = in.strokeWeights[i1];
@@ -11103,10 +11113,29 @@ public class PGraphicsOpenGL extends PGraphics {
                          0, color);
       tess.polyIndices[iidx++] = (short) (count + 3);
 
+      if (clampingEnabled) {
+        // Check for degeneracy due to coordinate clamping
+        float xac = tess.polyVertices[4 * (vidx - 2) + 0];
+        float yac = tess.polyVertices[4 * (vidx - 2) + 1];
+        float xbc = tess.polyVertices[4 * (vidx - 1) + 0];
+        float ybc = tess.polyVertices[4 * (vidx - 1) + 1];
+        if (!(PApplet.abs(xac - xbc) > 0 || PApplet.abs(yac - ybc) > 0)) {
+          unclampLine2D(vidx - 2, x1 - normdx + dirdx, y1 - normdy + dirdy);
+          unclampLine2D(vidx - 1, x1 + normdx + dirdx, y1 + normdy + dirdy);
+        }
+      }
+
       cache.incCounts(index, 6, 4);
 
       clampingEnabled = true;
       return index;
+    }
+
+    void unclampLine2D(int tessIdx, float x, float y) {
+      PMatrix3D mm = modelview;
+      int index = 4 * tessIdx;
+      tess.polyVertices[index++] = x*mm.m00 + y*mm.m01 + mm.m03;
+      tess.polyVertices[index++] = x*mm.m10 + y*mm.m11 + mm.m13;
     }
 
     boolean noCapsJoins(int nInVert) {
