@@ -37,7 +37,7 @@ import processing.app.contrib.ModeContribution;
 
 /**
  * Class to handle running Android mode of Processing from the command line.
- * 
+ *
  * @author ostap.andrusiv
  */
 public class Commander implements RunnerListener {
@@ -92,8 +92,9 @@ public class Commander implements RunnerListener {
   }
 
   public Commander(String[] args) {
-    System.out.println("WOOOHOOOO ANDROOOOOOOOOOID CLI BUILD!");
-    System.out.println(Arrays.toString(args));
+    if (processing.app.Base.DEBUG) {
+      System.out.println(Arrays.toString(args));
+    }
     // Turns out the output goes as MacRoman or something else useless.
     // http://code.google.com/p/processing/issues/detail?id=1418
     try {
@@ -149,7 +150,7 @@ public class Commander implements RunnerListener {
    * extractValue("--target=",        "--target", "debug") ==> ""
    * extractValue("--target",         "--target", "debug") ==> "debug"
    * </pre>
-   * 
+   *
    * @param arg
    * @param template
    * @param def
@@ -198,7 +199,8 @@ public class Commander implements RunnerListener {
       systemOut.println("--run:    " + (task == RUN));
       systemOut.println("--export: " + (task == EXPORT));
       systemOut.println();
-    }    
+    }
+
     if (task == HELP) {
       printCommandLine(systemOut);
       System.exit(0);
@@ -216,24 +218,24 @@ public class Commander implements RunnerListener {
 
         if (task == RUN) {
           AndroidRunner runner = new AndroidRunner(build, this);
-          runner.launch(runArg_EMULATOR.equals(device) ? 
-              Devices.getInstance().getEmulator() : 
+          runner.launch(runArg_EMULATOR.equals(device) ?
+              Devices.getInstance().getEmulator() :
               Devices.getInstance().getHardware());
         }
 
         success = true;
-      
+
       } else if (task == EXPORT) {
         AndroidBuild build = new AndroidBuild(sketch, androidMode);
         build.exportProject();
-        
+
         success = true;
       }
-      
+
       if (!success) { // error already printed
         System.exit(1);
       }
-      
+
       systemOut.println("Finished.");
       System.exit(0);
     } catch (SketchException re) {
