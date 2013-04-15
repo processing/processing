@@ -265,10 +265,11 @@ public class ErrorCheckerService implements Runnable{
       sourceCode = preprocessCode(editor.getSketch().getMainProgram());
       
       syntaxCheck();
-       System.err.println(editor.getSketch().getName()+ " MCO " + mainClassOffset);
+       System.err.println(editor.getSketch().getName()+ "1 MCO " + mainClassOffset);
       // No syntax errors, proceed for compilation check, Stage 2.
        
       if (problems.length == 0 && editor.compilationCheckEnabled) {
+        mainClassOffset++; // just a hack.
         astGenerator.buildAST();
         sourceCode = xqpreproc.doYourThing(sourceCode, programImports);
         prepareCompilerClasspath();
@@ -280,7 +281,7 @@ public class ErrorCheckerService implements Runnable{
         //         System.out.println(sourceCode);
         //         System.out.println("--------------------------");
         compileCheck();
-        
+        System.err.println(editor.getSketch().getName()+ "2 MCO " + mainClassOffset);
       }
       
       
@@ -332,7 +333,7 @@ public class ErrorCheckerService implements Runnable{
       // System.out.println(p.toString());
     }
   }
-  
+  protected URLClassLoader classLoader;
   private void compileCheck() {
 
     // Currently (Sept, 2012) I'm using Java's reflection api to load the
@@ -370,19 +371,21 @@ public class ErrorCheckerService implements Runnable{
 
         File[] jarFiles = f.listFiles(fileFilter);
         // System.out.println( "Jar files found? " + (jarFiles != null));
-        for (File jarFile : jarFiles) {
-          classpathJars.add(jarFile.toURI().toURL());
-        }
+        //for (File jarFile : jarFiles) {
+          //classpathJars.add(jarFile.toURI().toURL());
+        //}
 
-        classpath = new URL[classpathJars.size()]; // + 1 for
-                              // Compilation
-                              // Checker class
-        for (int i = 0; i < classpathJars.size(); i++) {
-          classpath[i] = classpathJars.get(i);
+        classpath = new URL[classpathJars.size() + jarFiles.length]; 
+        int ii = 0;
+        for (; ii < classpathJars.size(); ii++) {
+          classpath[ii] = classpathJars.get(ii);
+        }
+        for (int i = 0; i < jarFiles.length; i++) {
+          classpath[ii++] = jarFiles[i].toURI().toURL();
         }
 
         // System.out.println("CP Len -- " + classpath.length);
-        URLClassLoader classLoader = new URLClassLoader(classpath);
+        classLoader = new URLClassLoader(classpath);
         // System.out.println("1.");
         checkerClass = Class.forName("CompilationChecker", true,
             classLoader);

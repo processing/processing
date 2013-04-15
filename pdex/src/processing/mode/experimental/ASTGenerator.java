@@ -7,6 +7,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -46,6 +50,12 @@ import org.eclipse.jdt.core.dom.VariableDeclarationExpression;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.internal.compiler.problem.DefaultProblem;
+
+import com.google.classpath.ClassPath;
+import com.google.classpath.ClassPathFactory;
+import com.google.classpath.RegExpResourceFilter;
+import com.ibm.icu.util.StringTokenizer;
+import com.sun.jdi.Type;
 
 import processing.app.Base;
 import processing.app.SketchCode;
@@ -87,7 +97,7 @@ public class ASTGenerator {
     JScrollPane sp2 = new JScrollPane();
     sp2.setViewportView(tableAuto);
     frameAutoComp.add(sp2);
-
+    //loadJars();
   }
 
   public class ASTNodeWrapper {
@@ -162,8 +172,11 @@ public class ASTGenerator {
 //						return;
           jtree.setModel(new DefaultTreeModel(codeTree));
           ((DefaultTreeModel) jtree.getModel()).reload();
-          if (!frame2.isVisible())
+          if (!frame2.isVisible()) {
             frame2.setVisible(true);
+            loadJars();
+            //System.out.println(System.getProperty("java.home"));
+          }
           if (!frameAutoComp.isVisible())
             frameAutoComp.setVisible(true);
           jtree.validate();
@@ -171,8 +184,53 @@ public class ASTGenerator {
       }
     };
     worker.execute();
-
+    System.err.println("++>" + System.getProperty("java.class.path"));
+//    System.out.println(System.getProperty("java.class.path"));
+//    System.out.println("-------------------------------");
     return codeTree;
+  }
+
+  private ClassPathFactory factory;
+
+  private ClassPath classPath;
+
+  private void loadJars() {
+    try {
+      factory = new ClassPathFactory();
+
+      String tehPaths = System.getProperty("java.class.path")
+          + File.pathSeparatorChar + System.getProperty("java.home")
+          + "/lib/rt.jar";
+      StringBuffer tehPath = new StringBuffer(System.getProperty("java.class.path")
+                                              + File.pathSeparatorChar + System.getProperty("java.home")
+                                              + "/lib/rt.jar");
+      if(errorCheckerService.classpathJars != null){
+        for (URL jarPath : errorCheckerService.classpathJars) {
+          tehPath.append(jarPath.getPath() + File.pathSeparatorChar);
+        }
+      }
+      
+      //String paths[] = tehPaths.split(File.separatorChar +"");
+      StringTokenizer st = new StringTokenizer(tehPath.toString(), File.pathSeparatorChar
+          + "");
+      while (st.hasMoreElements()) {
+        System.out.println("- " + st.nextToken());
+      }
+      classPath = factory.createFromPath(tehPath.toString());
+      for (String packageName : classPath.listPackages("")) {
+        System.out.println(packageName);
+      }
+      RegExpResourceFilter regExpResourceFilter = new RegExpResourceFilter(
+                                                                           ".*",
+                                                                           "Vec3D.class");
+      String[] resources = classPath.findResources("", regExpResourceFilter);
+      for (String className : resources) {
+        System.out.println("-> " + className);
+      }
+    } catch (Exception e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
 
   public DefaultMutableTreeNode buildAST() {
@@ -295,8 +353,10 @@ public class ASTGenerator {
       return findDeclaration2(((MethodInvocation) expression).getName(),
                               nearestNode);
     } else if (expression instanceof FieldAccess) {
-      System.out.println("2. Field access " + getNodeAsString(((FieldAccess)expression).getExpression()));
-      return resolveExpression(nearestNode, ((FieldAccess)expression).getExpression());
+      System.out.println("2. Field access "
+          + getNodeAsString(((FieldAccess) expression).getExpression()));
+      return resolveExpression(nearestNode,
+                               ((FieldAccess) expression).getExpression());
       //return findDeclaration2(((FieldAccess) expression).getExpression(), nearestNode);
     } else if (expression instanceof QualifiedName) {
       System.out.println("1. Resolving "
@@ -430,6 +490,9 @@ public class ASTGenerator {
             }
             anode = anode.getParent();
           }
+          
+          
+
         } else {
 
           // Complex expression of type blah.blah2().doIt,etc
@@ -443,24 +506,23 @@ public class ASTGenerator {
           System.err.println("DET " + getNodeAsString(det));
           if (det != null) {
             TypeDeclaration td = null;
+            SimpleType stp = null;
             if (det instanceof MethodDeclaration) {
               if (((MethodDeclaration) det).getReturnType2() instanceof SimpleType) {
-                SimpleType stp = (SimpleType) (((MethodDeclaration) det)
-                    .getReturnType2());
+                stp = (SimpleType) (((MethodDeclaration) det).getReturnType2());
                 td = (TypeDeclaration) findDeclaration(stp.getName());
               }
             } else if (det instanceof FieldDeclaration) {
               if (((FieldDeclaration) det).getType() instanceof SimpleType) {
-                SimpleType stp = (SimpleType) (((FieldDeclaration) det)
-                    .getType());
+                stp = (SimpleType) (((FieldDeclaration) det).getType());
                 td = (TypeDeclaration) findDeclaration(stp.getName());
               }
             } else if (det instanceof VariableDeclarationStatement) {
-              SimpleType stp = (SimpleType) (((VariableDeclarationStatement) det)
+              stp = (SimpleType) (((VariableDeclarationStatement) det)
                   .getType());
               td = (TypeDeclaration) findDeclaration(stp.getName());
             }
-
+            System.out.println("ST is " + stp.getName());
             // Now td contains the type returned by a()
             System.err.println(getNodeAsString(det) + " defined in "
                 + getNodeAsString(td));
@@ -487,6 +549,45 @@ public class ASTGenerator {
                 } else if (td.getMethods()[i].getName().toString()
                     .startsWith(child.toString()))
                   candidates.add(getNodeAsString(td.getMethods()[i]));
+              }
+            } else {
+              if (stp != null) {
+                System.out.println("Couldn't determine type! "
+                    + stp.getName().toString());
+                RegExpResourceFilter regExpResourceFilter;
+                regExpResourceFilter = new RegExpResourceFilter(".*", stp
+                    .getName().toString() + ".class");
+                String[] resources = classPath
+                    .findResources("", regExpResourceFilter);
+                for (String className : resources) {
+                  System.out.println("-> " + className);
+                }
+                if(resources.length > 0){
+                  String matchedClass = resources[0];
+                  matchedClass = matchedClass.substring(0,matchedClass.length() - 6);
+                  matchedClass = matchedClass.replace('/', '.');
+                  System.out.println("Matched class: " + matchedClass);
+                  try {
+                    Class<?> probableClass = Class.forName(matchedClass, false, errorCheckerService.classLoader);
+                    for (Method method : probableClass.getMethods()) {
+                      StringBuffer label = new StringBuffer(method.getName() + "(");
+                      for (Class<?> type : method.getParameterTypes()) {
+                        label.append(type.getSimpleName() + ",");
+                      }
+                      label.append(")");
+                      candidates.add(label.toString());
+                    }
+                    for (Field field : probableClass.getFields()) {
+                      candidates.add(field.getName());
+                    }
+                  } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                    System.out.println("Couldn't load " + matchedClass);
+                  }
+                  
+                  //processing/core/PVector.class
+                  //
+                }
               }
             }
 
