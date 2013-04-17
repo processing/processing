@@ -10778,7 +10778,8 @@ public class PGraphicsOpenGL extends PGraphics {
         for (int ln = 0; ln < lineCount; ln++) {
           int i0 = first + 2 * ln + 0;
           int i1 = first + 2 * ln + 1;
-          res &= segmentIsAxisAligned(i0, i1);
+          res = segmentIsAxisAligned(i0, i1);
+          if (!res) break;
         }
       }
       return res;
@@ -10862,7 +10863,8 @@ public class PGraphicsOpenGL extends PGraphics {
         int i0 = in.firstVertex;
         for (int ln = 0; ln < lineCount; ln++) {
           int i1 = in.firstVertex + ln + 1;
-          res &= segmentIsAxisAligned(i0, i1);
+          res = segmentIsAxisAligned(i0, i1);
+          if (!res) break;
         }
       }
       return res;
@@ -10956,7 +10958,8 @@ public class PGraphicsOpenGL extends PGraphics {
         int i0 = in.firstVertex;
         for (int ln = 0; ln < lineCount; ln++) {
           int i1 = in.firstVertex + ln + 1;
-          res &= segmentIsAxisAligned(i0, i1);
+          res = segmentIsAxisAligned(i0, i1);
+          if (!res) break;
         }
       }
       return res;
@@ -11077,7 +11080,8 @@ public class PGraphicsOpenGL extends PGraphics {
           if (edge[2] == EDGE_CLOSE) continue; // ignoring edge closures when not doing caps or joins.
           int i0 = edge[0];
           int i1 = edge[1];
-          res &= segmentIsAxisAligned(i0, i1);
+          res = segmentIsAxisAligned(i0, i1);
+          if (!res) break;
         }
       }
       return res;
@@ -11442,6 +11446,17 @@ public class PGraphicsOpenGL extends PGraphics {
     boolean clampTriangleFan() {
       boolean res = clamp2D();
       if (res) {
+        for (int i = in.firstVertex + 1; i < in.lastVertex; i++) {
+          int i0 = in.firstVertex;
+          int i1 = i;
+          int i2 = i + 1;
+          int count = 0;
+          if (segmentIsAxisAligned(i0, i1)) count++;
+          if (segmentIsAxisAligned(i0, i2)) count++;
+          if (segmentIsAxisAligned(i1, i2)) count++;
+          res = 1 < count;
+          if (!res) break;
+        }
       }
       return res;
     }
@@ -11514,12 +11529,12 @@ public class PGraphicsOpenGL extends PGraphics {
           int i1 = in.firstVertex + 4 * qd + 1;
           int i2 = in.firstVertex + 4 * qd + 2;
           int i3 = in.firstVertex + 4 * qd + 3;
-          res &= segmentIsAxisAligned(i0, i1) &&
-                 segmentIsAxisAligned(i1, i2) &&
-                 segmentIsAxisAligned(i2, i3);
+          res = segmentIsAxisAligned(i0, i1) &&
+                segmentIsAxisAligned(i1, i2) &&
+                segmentIsAxisAligned(i2, i3);
+          if (!res) break;
         }
       }
-      PApplet.println("quads are axis aligned " + res);
       return res;
     }
 
