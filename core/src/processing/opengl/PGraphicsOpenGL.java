@@ -523,10 +523,6 @@ public class PGraphicsOpenGL extends PGraphics {
   protected IntBuffer intBuffer;
   protected FloatBuffer floatBuffer;
 
-
-  /** Flag used to disable coord clamping in 2D when strokes have fractional weight */
-  protected boolean clampingEnabled = false;
-
   //////////////////////////////////////////////////////////////
 
   // INIT/ALLOCATE/FINISH
@@ -2193,6 +2189,8 @@ public class PGraphicsOpenGL extends PGraphics {
       if (normalMode == NORMAL_MODE_AUTO) inGeo.calcTriangleStripNormals();
       tessellator.tessellateTriangleStrip();
     } else if (shape == QUAD || shape == QUADS) {
+
+
       if (stroke && defaultEdges) inGeo.addQuadsEdges();
       if (normalMode == NORMAL_MODE_AUTO) inGeo.calcQuadsNormals();
       tessellator.tessellateQuads();
@@ -9909,29 +9907,32 @@ public class PGraphicsOpenGL extends PGraphics {
                        int rgba,
                        float nx, float ny, float nz,
                        float u, float v,
-                       int am, int sp, int em, float shine) {
+                       int am, int sp, int em, float shine,
+                       boolean clamp) {
       polyVertexCheck();
       int tessIdx = polyVertexCount - 1;
       setPolyVertex(tessIdx, x, y, z,
                     rgba,
                     nx, ny, nz,
                     u, v,
-                    am, sp, em, shine);
+                    am, sp, em, shine, clamp);
     }
 
-    void setPolyVertex(int tessIdx, float x, float y, float z, int rgba) {
+    void setPolyVertex(int tessIdx, float x, float y, float z, int rgba,
+                       boolean clamp) {
       setPolyVertex(tessIdx, x, y, z,
                     rgba,
                     0, 0, 1,
                     0, 0,
-                    0, 0, 0, 0);
+                    0, 0, 0, 0, clamp);
     }
 
     void setPolyVertex(int tessIdx, float x, float y, float z,
                        int rgba,
                        float nx, float ny, float nz,
                        float u, float v,
-                       int am, int sp, int em, float shine) {
+                       int am, int sp, int em, float shine,
+                       boolean clamp) {
       int index;
 
       if (renderMode == IMMEDIATE && flushMode == FLUSH_WHEN_FULL) {
@@ -9939,20 +9940,18 @@ public class PGraphicsOpenGL extends PGraphics {
         PMatrix3D nm = modelviewInv;
 
         index = 4 * tessIdx;
-        if (is2D() && clampingEnabled) {
+        if (is2D() && clamp) {
           // ceil emulates the behavior of JAVA2D
           polyVertices[index++] =
             PApplet.ceil(x*mm.m00 + y*mm.m01 + z*mm.m02 + mm.m03);
           polyVertices[index++] =
             PApplet.ceil(x*mm.m10 + y*mm.m11 + z*mm.m12 + mm.m13);
-          polyVertices[index++] = x*mm.m20 + y*mm.m21 + z*mm.m22 + mm.m23;
-          polyVertices[index  ] = x*mm.m30 + y*mm.m31 + z*mm.m32 + mm.m33;
         } else {
           polyVertices[index++] = x*mm.m00 + y*mm.m01 + z*mm.m02 + mm.m03;
           polyVertices[index++] = x*mm.m10 + y*mm.m11 + z*mm.m12 + mm.m13;
-          polyVertices[index++] = x*mm.m20 + y*mm.m21 + z*mm.m22 + mm.m23;
-          polyVertices[index  ] = x*mm.m30 + y*mm.m31 + z*mm.m32 + mm.m33;
         }
+        polyVertices[index++] = x*mm.m20 + y*mm.m21 + z*mm.m22 + mm.m23;
+        polyVertices[index  ] = x*mm.m30 + y*mm.m31 + z*mm.m32 + mm.m33;
 
         index = 3 * tessIdx;
         polyNormals[index++] = nx*nm.m00 + ny*nm.m10 + nz*nm.m20;
@@ -9983,15 +9982,15 @@ public class PGraphicsOpenGL extends PGraphics {
       polyShininess[tessIdx] = shine;
     }
 
-    void addPolyVertices(InGeometry in) {
-      addPolyVertices(in, in.firstVertex, in.lastVertex);
+    void addPolyVertices(InGeometry in, boolean clamp) {
+      addPolyVertices(in, in.firstVertex, in.lastVertex, clamp);
     }
 
-    void addPolyVertex(InGeometry in, int i) {
-      addPolyVertices(in, i, i);
+    void addPolyVertex(InGeometry in, int i, boolean clamp) {
+      addPolyVertices(in, i, i, clamp);
     }
 
-    void addPolyVertices(InGeometry in, int i0, int i1) {
+    void addPolyVertices(InGeometry in, int i0, int i1, boolean clamp) {
       int index;
       int nvert = i1 - i0 + 1;
 
@@ -10016,19 +10015,18 @@ public class PGraphicsOpenGL extends PGraphics {
           float nz = in.normals[index  ];
 
           index = 4 * tessIdx;
-          if (is2D() && clampingEnabled) {
+          if (is2D() && clamp) {
+            // ceil emulates the behavior of JAVA2D
             polyVertices[index++] =
               PApplet.ceil(x*mm.m00 + y*mm.m01 + z*mm.m02 + mm.m03);
             polyVertices[index++] =
               PApplet.ceil(x*mm.m10 + y*mm.m11 + z*mm.m12 + mm.m13);
-            polyVertices[index++] = x*mm.m20 + y*mm.m21 + z*mm.m22 + mm.m23;
-            polyVertices[index  ] = x*mm.m30 + y*mm.m31 + z*mm.m32 + mm.m33;
           } else {
             polyVertices[index++] = x*mm.m00 + y*mm.m01 + z*mm.m02 + mm.m03;
             polyVertices[index++] = x*mm.m10 + y*mm.m11 + z*mm.m12 + mm.m13;
-            polyVertices[index++] = x*mm.m20 + y*mm.m21 + z*mm.m22 + mm.m23;
-            polyVertices[index  ] = x*mm.m30 + y*mm.m31 + z*mm.m32 + mm.m33;
           }
+          polyVertices[index++] = x*mm.m20 + y*mm.m21 + z*mm.m22 + mm.m23;
+          polyVertices[index  ] = x*mm.m30 + y*mm.m31 + z*mm.m32 + mm.m33;
 
           index = 3 * tessIdx;
           polyNormals[index++] = nx*nm.m00 + ny*nm.m10 + nz*nm.m20;
@@ -10528,13 +10526,13 @@ public class PGraphicsOpenGL extends PGraphics {
 
         float val = 0;
         float inc = (float) SINCOS_LENGTH / perim;
-        tess.setPolyVertex(vertIdx, x0, y0, 0, rgba);
+        tess.setPolyVertex(vertIdx, x0, y0, 0, rgba, false);
         vertIdx++;
         for (int k = 0; k < perim; k++) {
           tess.setPolyVertex(vertIdx,
                              x0 + 0.5f * cosLUT[(int) val] * strokeWeight,
                              y0 + 0.5f * sinLUT[(int) val] * strokeWeight,
-                             0, rgba);
+                             0, rgba, false);
           vertIdx++;
           val = (val + inc) % SINCOS_LENGTH;
         }
@@ -10636,6 +10634,7 @@ public class PGraphicsOpenGL extends PGraphics {
     void tessellateSquarePoints2D(int nvertTot, int nindTot) {
       tess.polyVertexCheck(nvertTot);
       tess.polyIndexCheck(nindTot);
+      boolean clamp = clampSquarePoints2D();
       int vertIdx = tess.firstPolyVertex;
       int indIdx = tess.firstPolyIndex;
       IndexCache cache = tess.polyIndexCache;
@@ -10654,13 +10653,13 @@ public class PGraphicsOpenGL extends PGraphics {
         float y0 = in.vertices[3 * i + 1];
         int rgba = in.strokeColors[i];
 
-        tess.setPolyVertex(vertIdx, x0, y0, 0, rgba);
+        tess.setPolyVertex(vertIdx, x0, y0, 0, rgba, clamp);
         vertIdx++;
         for (int k = 0; k < nvert - 1; k++) {
           tess.setPolyVertex(vertIdx,
                              x0 + 0.5f * QUAD_POINT_SIGNS[k][0] * strokeWeight,
                              y0 + 0.5f * QUAD_POINT_SIGNS[k][1] * strokeWeight,
-                             0, rgba);
+                             0, rgba, clamp);
           vertIdx++;
         }
 
@@ -10677,6 +10676,15 @@ public class PGraphicsOpenGL extends PGraphics {
         cache.incCounts(index, 12, 5);
       }
       lastPointIndexCache = lastPolyIndexCache = index;
+    }
+
+    boolean clamp2D() {
+      return is2D && tess.renderMode == IMMEDIATE &&
+             zero(modelview.m01) && zero(modelview.m10);
+    }
+
+    boolean clampSquarePoints2D() {
+      return clamp2D();
     }
 
     // -----------------------------------------------------------------
@@ -10714,10 +10722,21 @@ public class PGraphicsOpenGL extends PGraphics {
       for (int ln = 0; ln < lineCount; ln++) {
         int i0 = first + 2 * ln + 0;
         int i1 = first + 2 * ln + 1;
-        index = addLine3D(i0, i1, index, null, false);
+        index = addLineSegment3D(i0, i1, index, null, false);
       }
       lastLineIndexCache = index;
     }
+
+    boolean segmentIsAxisAligned(int i0, int i1) {
+      float x0 = in.vertices[3 * i0 + 0];
+      float y0 = in.vertices[3 * i0 + 1];
+
+      float x1 = in.vertices[3 * i1 + 0];
+      float y1 = in.vertices[3 * i1 + 1];
+
+      return zero(x0 - x1) || zero(y0 - y1);
+    }
+
 
     void tessellateLines2D(int lineCount) {
       int nvert = lineCount * 4;
@@ -10731,10 +10750,11 @@ public class PGraphicsOpenGL extends PGraphics {
                                                 tess.polyIndexCache.getLast();
         firstLineIndexCache = index;
         if (firstPolyIndexCache == -1) firstPolyIndexCache = index; // If the geometry has no fill, needs the first poly index.
+        boolean clamp = clampLines2D(lineCount);
         for (int ln = 0; ln < lineCount; ln++) {
           int i0 = first + 2 * ln + 0;
           int i1 = first + 2 * ln + 1;
-          index = addLine2D(i0, i1, index, false);
+          index = addLineSegment2D(i0, i1, index, false, clamp);
         }
         lastLineIndexCache = lastPolyIndexCache = index;
       } else { // full stroking algorithm
@@ -10749,6 +10769,19 @@ public class PGraphicsOpenGL extends PGraphics {
         }
         tessellateLinePath(path);
       }
+    }
+
+    boolean clampLines2D(int lineCount) {
+      boolean res = clamp2D();
+      if (res) {
+        int first = in.firstVertex;
+        for (int ln = 0; ln < lineCount; ln++) {
+          int i0 = first + 2 * ln + 0;
+          int i1 = first + 2 * ln + 1;
+          res &= segmentIsAxisAligned(i0, i1);
+        }
+      }
+      return res;
     }
 
     void tessellateLineStrip() {
@@ -10781,9 +10814,9 @@ public class PGraphicsOpenGL extends PGraphics {
       for (int ln = 0; ln < lineCount; ln++) {
         int i1 = in.firstVertex + ln + 1;
         if (0 < nBevelTr) {
-          index = addLine3D(i0, i1, index, lastInd, false);
+          index = addLineSegment3D(i0, i1, index, lastInd, false);
         } else {
-          index = addLine3D(i0, i1, index, null, false);
+          index = addLineSegment3D(i0, i1, index, null, false);
         }
         i0 = i1;
       }
@@ -10802,9 +10835,10 @@ public class PGraphicsOpenGL extends PGraphics {
         firstLineIndexCache = index;
         if (firstPolyIndexCache == -1) firstPolyIndexCache = index; // If the geometry has no fill, needs the first poly index.
         int i0 = in.firstVertex;
+        boolean clamp = clampLineStrip2D(lineCount);
         for (int ln = 0; ln < lineCount; ln++) {
           int i1 = in.firstVertex + ln + 1;
-          index = addLine2D(i0, i1, index, false);
+          index = addLineSegment2D(i0, i1, index, false, clamp);
           i0 = i1;
         }
         lastLineIndexCache = lastPolyIndexCache = index;
@@ -10820,6 +10854,18 @@ public class PGraphicsOpenGL extends PGraphics {
         }
         tessellateLinePath(path);
       }
+    }
+
+    boolean clampLineStrip2D(int lineCount) {
+      boolean res = clamp2D();
+      if (res) {
+        int i0 = in.firstVertex;
+        for (int ln = 0; ln < lineCount; ln++) {
+          int i1 = in.firstVertex + ln + 1;
+          res &= segmentIsAxisAligned(i0, i1);
+        }
+      }
+      return res;
     }
 
     void tessellateLineLoop() {
@@ -10853,14 +10899,15 @@ public class PGraphicsOpenGL extends PGraphics {
       for (int ln = 0; ln < lineCount - 1; ln++) {
         int i1 = in.firstVertex + ln + 1;
         if (0 < nBevelTr) {
-          index = addLine3D(i0, i1, index, lastInd, false);
+          index = addLineSegment3D(i0, i1, index, lastInd, false);
           if (ln == 0) firstInd = (short)(lastInd[0] - 2);
         } else {
-          index = addLine3D(i0, i1, index, null, false);
+          index = addLineSegment3D(i0, i1, index, null, false);
         }
         i0 = i1;
       }
-      index = addLine3D(in.lastVertex, in.firstVertex, index, lastInd, false);
+      index = addLineSegment3D(in.lastVertex, in.firstVertex, index, lastInd,
+                               false);
       if (0 < nBevelTr) {
         index = addBevel3D(in.firstVertex, index, lastInd, firstInd, false);
       }
@@ -10879,12 +10926,14 @@ public class PGraphicsOpenGL extends PGraphics {
         firstLineIndexCache = index;
         if (firstPolyIndexCache == -1) firstPolyIndexCache = index; // If the geometry has no fill, needs the first poly index.
         int i0 = in.firstVertex;
+        boolean clamp = clampLineLoop2D(lineCount);
         for (int ln = 0; ln < lineCount - 1; ln++) {
           int i1 = in.firstVertex + ln + 1;
-          index = addLine2D(i0, i1, index, false);
+          index = addLineSegment2D(i0, i1, index, false, clamp);
           i0 = i1;
         }
-        index = addLine2D(in.lastVertex, in.firstVertex, index, false);
+        index = addLineSegment2D(in.lastVertex, in.firstVertex, index, false,
+                                 clamp);
         lastLineIndexCache = lastPolyIndexCache = index;
       } else { // full stroking algorithm
         int first = in.firstVertex;
@@ -10899,6 +10948,18 @@ public class PGraphicsOpenGL extends PGraphics {
         path.closePath();
         tessellateLinePath(path);
       }
+    }
+
+    boolean clampLineLoop2D(int lineCount) {
+      boolean res = clamp2D();
+      if (res) {
+        int i0 = in.firstVertex;
+        for (int ln = 0; ln < lineCount; ln++) {
+          int i1 = in.firstVertex + ln + 1;
+          res &= segmentIsAxisAligned(i0, i1);
+        }
+      }
+      return res;
     }
 
     void tessellateEdges() {
@@ -10935,14 +10996,14 @@ public class PGraphicsOpenGL extends PGraphics {
             index = addBevel3D(edge[1], index, lastInd, firstInd, false);
             lastInd[0] = lastInd[1] = -1; // No join with next line segment.
           } else {
-            index = addLine3D(i0, i1, index, lastInd, false);
+            index = addLineSegment3D(i0, i1, index, lastInd, false);
             if (edge[2] == EDGE_START) firstInd = (short)(lastInd[0] - 2);
             if (edge[2] == EDGE_STOP || edge[2] == EDGE_SINGLE) {
               lastInd[0] = lastInd[1] = -1; // No join with next line segment.
             }
           }
         } else {
-          index = addLine3D(i0, i1, index, null, false);
+          index = addLineSegment3D(i0, i1, index, null, false);
         }
       }
       lastLineIndexCache = index;
@@ -10959,12 +11020,13 @@ public class PGraphicsOpenGL extends PGraphics {
                                                 tess.polyIndexCache.getLast();
         firstLineIndexCache = index;
         if (firstPolyIndexCache == -1) firstPolyIndexCache = index; // If the geometry has no fill, needs the first poly index.
+        boolean clamp = clampEdges2D();
         for (int i = in.firstEdge; i <= in.lastEdge; i++) {
           int[] edge = in.edges[i];
           if (edge[2] == EDGE_CLOSE) continue; // ignoring edge closures when not doing caps or joins.
           int i0 = edge[0];
           int i1 = edge[1];
-          index = addLine2D(i0, i1, index, false);
+          index = addLineSegment2D(i0, i1, index, false, clamp);
         }
         lastLineIndexCache = lastPolyIndexCache = index;
       } else { // full stroking algorithm
@@ -11007,9 +11069,23 @@ public class PGraphicsOpenGL extends PGraphics {
       }
     }
 
+    boolean clampEdges2D() {
+      boolean res = clamp2D();
+      if (res) {
+        for (int i = in.firstEdge; i <= in.lastEdge; i++) {
+          int[] edge = in.edges[i];
+          if (edge[2] == EDGE_CLOSE) continue; // ignoring edge closures when not doing caps or joins.
+          int i0 = edge[0];
+          int i1 = edge[1];
+          res &= segmentIsAxisAligned(i0, i1);
+        }
+      }
+      return res;
+    }
+
     // Adding the data that defines a quad starting at vertex i0 and
     // ending at i1.
-    int addLine3D(int i0, int i1, int index, short[] lastInd,
+    int addLineSegment3D(int i0, int i1, int index, short[] lastInd,
                   boolean constStroke) {
       IndexCache cache = tess.lineIndexCache;
       int count = cache.vertexCount[index];
@@ -11139,7 +11215,8 @@ public class PGraphicsOpenGL extends PGraphics {
     // Adding the data that defines a quad starting at vertex i0 and
     // ending at i1, in the case of pure 2D renderers (line geometry
     // is added to the poly arrays).
-    int addLine2D(int i0, int i1, int index, boolean constStroke) {
+    int addLineSegment2D(int i0, int i1, int index,
+                  boolean constStroke, boolean clampXY) {
       IndexCache cache = tess.polyIndexCache;
       int count = cache.vertexCount[index];
       if (PGL.MAX_VERTEX_INDEX1 <= count + 4) {
@@ -11152,7 +11229,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
       int color = constStroke ? strokeColor : in.strokeColors[i0];
       float weight = constStroke ? strokeWeight : in.strokeWeights[i0];
-      if (subPixelStroke(weight)) clampingEnabled = false;
+      if (subPixelStroke(weight)) clampXY = false;
 
       float x0 = in.vertices[3 * i0 + 0];
       float y0 = in.vertices[3 * i0 + 1];
@@ -11183,14 +11260,14 @@ public class PGraphicsOpenGL extends PGraphics {
       float normdy = normy * weight/2;
 
       tess.setPolyVertex(vidx++, x0 + normdx - dirdx, y0 + normdy - dirdy,
-                         0, color);
+                         0, color, clampXY);
       tess.polyIndices[iidx++] = (short) (count + 0);
 
       tess.setPolyVertex(vidx++, x0 - normdx - dirdx, y0 - normdy - dirdy,
-                         0, color);
+                         0, color, clampXY);
       tess.polyIndices[iidx++] = (short) (count + 1);
 
-      if (clampingEnabled) {
+      if (clampXY) {
         // Check for degeneracy due to coordinate clamping
         float xac = tess.polyVertices[4 * (vidx - 2) + 0];
         float yac = tess.polyVertices[4 * (vidx - 2) + 1];
@@ -11207,11 +11284,11 @@ public class PGraphicsOpenGL extends PGraphics {
         weight = in.strokeWeights[i1];
         normdx = normx * weight/2;
         normdy = normy * weight/2;
-        if (subPixelStroke(weight)) clampingEnabled = false;
+        if (subPixelStroke(weight)) clampXY = false;
       }
 
       tess.setPolyVertex(vidx++, x1 - normdx + dirdx, y1 - normdy + dirdy,
-                         0, color);
+                         0, color, clampXY);
       tess.polyIndices[iidx++] = (short) (count + 2);
 
       // Starting a new triangle re-using prev vertices.
@@ -11219,10 +11296,10 @@ public class PGraphicsOpenGL extends PGraphics {
       tess.polyIndices[iidx++] = (short) (count + 0);
 
       tess.setPolyVertex(vidx++, x1 + normdx + dirdx, y1 + normdy + dirdy,
-                         0, color);
+                         0, color, clampXY);
       tess.polyIndices[iidx++] = (short) (count + 3);
 
-      if (clampingEnabled) {
+      if (clampXY) {
         // Check for degeneracy due to coordinate clamping
         float xac = tess.polyVertices[4 * (vidx - 2) + 0];
         float yac = tess.polyVertices[4 * (vidx - 2) + 1];
@@ -11235,8 +11312,6 @@ public class PGraphicsOpenGL extends PGraphics {
       }
 
       cache.incCounts(index, 6, 4);
-
-      clampingEnabled = true;
       return index;
     }
 
@@ -11307,13 +11382,21 @@ public class PGraphicsOpenGL extends PGraphics {
         int nInInd = nInVert;
         setRawSize(nInInd);
         int idx = 0;
+        boolean clamp = clampTriangles();
         for (int i = in.firstVertex; i <= in.lastVertex; i++) {
           rawIndices[idx++] = i;
         }
-        splitRawIndices();
+        splitRawIndices(clamp);
       }
       endTex();
       tessellateEdges();
+    }
+
+    boolean clampTriangles() {
+      boolean res = clamp2D();
+      if (res) {
+      }
+      return res;
     }
 
     void tessellateTriangles(int[] indices) {
@@ -11323,10 +11406,18 @@ public class PGraphicsOpenGL extends PGraphics {
         int nInInd = indices.length;
         setRawSize(nInInd);
         PApplet.arrayCopy(indices, rawIndices, nInInd);
-        splitRawIndices();
+        boolean clamp = clampTriangles(indices);
+        splitRawIndices(clamp);
       }
       endTex();
       tessellateEdges();
+    }
+
+    boolean clampTriangles(int[] indices) {
+      boolean res = clamp2D();
+      if (res) {
+      }
+      return res;
     }
 
     void tessellateTriangleFan() {
@@ -11336,15 +11427,23 @@ public class PGraphicsOpenGL extends PGraphics {
         int nInInd = 3 * (nInVert - 2);
         setRawSize(nInInd);
         int idx = 0;
+        boolean clamp = clampTriangleFan();
         for (int i = in.firstVertex + 1; i < in.lastVertex; i++) {
           rawIndices[idx++] = in.firstVertex;
           rawIndices[idx++] = i;
           rawIndices[idx++] = i + 1;
         }
-        splitRawIndices();
+        splitRawIndices(clamp);
       }
       endTex();
       tessellateEdges();
+    }
+
+    boolean clampTriangleFan() {
+      boolean res = clamp2D();
+      if (res) {
+      }
+      return res;
     }
 
     void tessellateTriangleStrip() {
@@ -11354,6 +11453,7 @@ public class PGraphicsOpenGL extends PGraphics {
         int nInInd = 3 * (nInVert - 2);
         setRawSize(nInInd);
         int idx = 0;
+        boolean clamp = clampTriangleStrip();
         for (int i = in.firstVertex + 1; i < in.lastVertex; i++) {
           rawIndices[idx++] = i;
           if (i % 2 == 0) {
@@ -11364,10 +11464,17 @@ public class PGraphicsOpenGL extends PGraphics {
             rawIndices[idx++] = i - 1;
           }
         }
-        splitRawIndices();
+        splitRawIndices(clamp);
       }
       endTex();
       tessellateEdges();
+    }
+
+    boolean clampTriangleStrip() {
+      boolean res = clamp2D();
+      if (res) {
+      }
+      return res;
     }
 
     void tessellateQuads() {
@@ -11378,6 +11485,7 @@ public class PGraphicsOpenGL extends PGraphics {
         int nInInd = 6 * quadCount;
         setRawSize(nInInd);
         int idx = 0;
+        boolean clamp = clampQuads(quadCount);
         for (int qd = 0; qd < quadCount; qd++) {
           int i0 = in.firstVertex + 4 * qd + 0;
           int i1 = in.firstVertex + 4 * qd + 1;
@@ -11392,10 +11500,27 @@ public class PGraphicsOpenGL extends PGraphics {
           rawIndices[idx++] = i3;
           rawIndices[idx++] = i0;
         }
-        splitRawIndices();
+        splitRawIndices(clamp);
       }
       endTex();
       tessellateEdges();
+    }
+
+    boolean clampQuads(int quadCount) {
+      boolean res = clamp2D();
+      if (res) {
+        for (int qd = 0; qd < quadCount; qd++) {
+          int i0 = in.firstVertex + 4 * qd + 0;
+          int i1 = in.firstVertex + 4 * qd + 1;
+          int i2 = in.firstVertex + 4 * qd + 2;
+          int i3 = in.firstVertex + 4 * qd + 3;
+          res &= segmentIsAxisAligned(i0, i1) &&
+                 segmentIsAxisAligned(i1, i2) &&
+                 segmentIsAxisAligned(i2, i3);
+        }
+      }
+      PApplet.println("quads are axis aligned " + res);
+      return res;
     }
 
     void tessellateQuadStrip() {
@@ -11406,6 +11531,7 @@ public class PGraphicsOpenGL extends PGraphics {
         int nInInd = 6 * quadCount;
         setRawSize(nInInd);
         int idx = 0;
+        boolean clamp = clampQuadStrip();
         for (int qd = 1; qd < nInVert / 2; qd++) {
           int i0 = in.firstVertex + 2 * (qd - 1);
           int i1 = in.firstVertex + 2 * (qd - 1) + 1;
@@ -11420,10 +11546,17 @@ public class PGraphicsOpenGL extends PGraphics {
           rawIndices[idx++] = i2;
           rawIndices[idx++] = i3;
         }
-        splitRawIndices();
+        splitRawIndices(clamp);
       }
       endTex();
       tessellateEdges();
+    }
+
+    boolean clampQuadStrip() {
+      boolean res = clamp2D();
+      if (res) {
+      }
+      return res;
     }
 
     // Uses the raw indices to split the geometry into contiguous
@@ -11442,7 +11575,7 @@ public class PGraphicsOpenGL extends PGraphics {
     // http://gameangst.com/?p=9
     // http://home.comcast.net/~tom_forsyth/papers/fast_vert_cache_opt.html
     // http://www.ludicon.com/castano/blog/2009/02/optimal-grid-rendering/
-    void splitRawIndices() {
+    void splitRawIndices(boolean clampXY) {
       tess.polyIndexCheck(rawSize);
       int offset = tess.firstPolyIndex;
 
@@ -11522,17 +11655,17 @@ public class PGraphicsOpenGL extends PGraphics {
 
             if (inMaxVertRef <= inMaxVert1) {
               // Copy non-duplicated vertices from current region first
-              tess.addPolyVertices(in, inMaxVertRef, inMaxVert1);
+              tess.addPolyVertices(in, inMaxVertRef, inMaxVert1, clampXY);
               nondupCount = inMaxVert1 - inMaxVertRef + 1;
             }
 
             // Copy duplicated vertices from previous regions last
             for (int i = 0; i < dupCount; i++) {
-              tess.addPolyVertex(in, dupIndices[i] + inMaxVertRef);
+              tess.addPolyVertex(in, dupIndices[i] + inMaxVertRef, clampXY);
             }
           } else {
             // Copy non-duplicated vertices from current region first
-            tess.addPolyVertices(in, inMaxVert0, inMaxVert1);
+            tess.addPolyVertices(in, inMaxVert0, inMaxVert1, clampXY);
             nondupCount = inMaxVert1 - inMaxVert0 + 1;
           }
 
@@ -11664,7 +11797,8 @@ public class PGraphicsOpenGL extends PGraphics {
       if (fill && 3 <= nInVert) {
         firstPolyIndexCache = -1;
 
-        callback.init(in.renderMode == RETAINED, false, calcNormals);
+        boolean clamp = clampPolygon();
+        callback.init(in.renderMode == RETAINED, false, calcNormals, clamp);
 
         gluTess.beginPolygon();
 
@@ -11727,11 +11861,17 @@ public class PGraphicsOpenGL extends PGraphics {
       tessellateEdges();
     }
 
+    boolean clampPolygon() {
+      return false;
+    }
+
     // Tessellates the path given as parameter. This will work only in 2D.
     // Based on the opengl stroke hack described here:
     // http://wiki.processing.org/w/Stroke_attributes_in_OpenGL
     public void tessellateLinePath(LinePath path) {
-      callback.init(in.renderMode == RETAINED, true, false);
+      boolean clamp = clampLinePath();
+
+      callback.init(in.renderMode == RETAINED, true, false, clamp);
 
       int cap = strokeCap == ROUND ? LinePath.CAP_ROUND :
                 strokeCap == PROJECT ? LinePath.CAP_SQUARE :
@@ -11739,8 +11879,6 @@ public class PGraphicsOpenGL extends PGraphics {
       int join = strokeJoin == ROUND ? LinePath.JOIN_ROUND :
                  strokeJoin == BEVEL ? LinePath.JOIN_BEVEL :
                  LinePath.JOIN_MITER;
-
-      if (subPixelStroke(strokeWeight)) clampingEnabled = false;
 
       // Make the outline of the stroke from the path
       LinePath strokedPath = LinePath.createStrokedPath(path, strokeWeight,
@@ -11788,8 +11926,12 @@ public class PGraphicsOpenGL extends PGraphics {
         iter.next();
       }
       gluTess.endPolygon();
+    }
 
-      clampingEnabled = true;
+    boolean clampLinePath() {
+      return clamp2D() &&
+             strokeCap == PROJECT && strokeJoin == BEVEL &&
+             !subPixelStroke(strokeWeight);
     }
 
     /////////////////////////////////////////
@@ -11810,15 +11952,18 @@ public class PGraphicsOpenGL extends PGraphics {
     protected class TessellatorCallback implements PGL.TessellatorCallback {
       boolean calcNormals;
       boolean strokeTess;
+      boolean clampXY;
       IndexCache cache;
       int cacheIndex;
       int vertFirst;
       int vertCount;
       int primitive;
 
-      public void init(boolean addCache, boolean strokeTess, boolean calcNorm) {
+      public void init(boolean addCache, boolean strokeTess, boolean calcNorm,
+                       boolean clampXY) {
         this.strokeTess = strokeTess;
         this.calcNormals = calcNorm;
+        this.clampXY = clampXY;
 
         cache = tess.polyIndexCache;
         if (addCache) {
@@ -11949,7 +12094,7 @@ public class PGraphicsOpenGL extends PGraphics {
                                (float) d[ 7],  (float) d[ 8], (float) d[ 9],
                                (float) d[10], (float) d[11],
                                acolor, scolor, ecolor,
-                               (float) d[24]);
+                               (float) d[24], clampXY);
 
             vertCount++;
           } else {
