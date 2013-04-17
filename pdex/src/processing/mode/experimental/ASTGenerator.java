@@ -10,13 +10,14 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTree;
@@ -50,15 +51,18 @@ import org.eclipse.jdt.core.dom.VariableDeclarationExpression;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.internal.compiler.problem.DefaultProblem;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import processing.app.Base;
+import processing.app.SketchCode;
 
 import com.google.classpath.ClassPath;
 import com.google.classpath.ClassPathFactory;
 import com.google.classpath.RegExpResourceFilter;
 import com.ibm.icu.util.StringTokenizer;
-import com.sun.jdi.Type;
-
-import processing.app.Base;
-import processing.app.SketchCode;
 
 public class ASTGenerator {
 
@@ -77,6 +81,8 @@ public class ASTGenerator {
   private CompilationUnit compilationUnit;
 
   private JTable tableAuto;
+
+  private JLabel jdocLabel;
 
   public ASTGenerator(ErrorCheckerService ecs) {
     this.errorCheckerService = ecs;
@@ -97,6 +103,13 @@ public class ASTGenerator {
     JScrollPane sp2 = new JScrollPane();
     sp2.setViewportView(tableAuto);
     frameAutoComp.add(sp2);
+
+    jdocWindow = new JFrame();
+    jdocWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    jdocWindow.setBounds(new Rectangle(280, 100, 460, 460));
+    jdocLabel = new JLabel();
+    jdocWindow.add(jdocLabel);
+    jdocMap = new TreeMap<String, String>(); 
     //loadJars();
   }
 
@@ -175,10 +188,13 @@ public class ASTGenerator {
           if (!frame2.isVisible()) {
             frame2.setVisible(true);
             loadJars();
+            loadJavaDoc();
             //System.out.println(System.getProperty("java.home"));
           }
           if (!frameAutoComp.isVisible())
             frameAutoComp.setVisible(true);
+          if(!jdocWindow.isVisible())
+            jdocWindow.setVisible(true);
           jtree.validate();
         }
       }
@@ -194,6 +210,8 @@ public class ASTGenerator {
 
   private ClassPath classPath;
 
+  private JFrame jdocWindow;
+
   private void loadJars() {
     try {
       factory = new ClassPathFactory();
@@ -201,18 +219,22 @@ public class ASTGenerator {
       String tehPaths = System.getProperty("java.class.path")
           + File.pathSeparatorChar + System.getProperty("java.home")
           + "/lib/rt.jar";
-      StringBuffer tehPath = new StringBuffer(System.getProperty("java.class.path")
-                                              + File.pathSeparatorChar + System.getProperty("java.home")
-                                              + "/lib/rt.jar");
-      if(errorCheckerService.classpathJars != null){
+      StringBuffer tehPath = new StringBuffer(
+                                              System
+                                                  .getProperty("java.class.path")
+                                                  + File.pathSeparatorChar
+                                                  + System
+                                                      .getProperty("java.home")
+                                                  + "/lib/rt.jar");
+      if (errorCheckerService.classpathJars != null) {
         for (URL jarPath : errorCheckerService.classpathJars) {
           tehPath.append(jarPath.getPath() + File.pathSeparatorChar);
         }
       }
-      
+
       //String paths[] = tehPaths.split(File.separatorChar +"");
-      StringTokenizer st = new StringTokenizer(tehPath.toString(), File.pathSeparatorChar
-          + "");
+      StringTokenizer st = new StringTokenizer(tehPath.toString(),
+                                               File.pathSeparatorChar + "");
       while (st.hasMoreElements()) {
         System.out.println("- " + st.nextToken());
       }
@@ -229,6 +251,70 @@ public class ASTGenerator {
       }
     } catch (Exception e) {
       // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
+  }
+  private TreeMap<String, String> jdocMap;
+  private void loadJavaDoc() {
+    Document doc;
+
+    String primTypes[] = {
+      "void", "int", "short", "byte", "boolean", "char", "float", "double",
+      "long" };
+    try {
+      File javaDocFile = new File(
+                                  "/home/quarkninja/Documents/Processing/libraries/SimpleOpenNI/documentation/SimpleOpenNI/SimpleOpenNI.html");
+      //SimpleOpenNI.SimpleOpenNI
+      doc = Jsoup.parse(javaDocFile, null);
+      
+      String msg = "";
+      Elements elm = doc.getElementsByTag("pre");
+      Elements desc = doc.getElementsByTag("dl");
+      //System.out.println(elm.toString());
+
+
+      for (Iterator iterator = elm.iterator(); iterator.hasNext();) {
+        Element element = (Element) iterator.next();
+
+        //System.out.println(element.text());
+//        if (element.nextElementSibling() != null)
+//          System.out.println(element.nextElementSibling().text());
+        System.out.println("-------------------");
+          msg = "<html><body> <strong><div style=\"width: 300px; text-justification: justify;\"></strong>"
+              + element.html()
+              + element.nextElementSibling()
+              + "</div></html></body></html>";
+
+        String parts[] = element.text().split("\\s|\\(|,|\\)");
+        int i = 0;
+        if (parts[i].equals("public"))
+          i++;
+        if (parts[i].equals("static") || parts[i].equals("final"))
+          i++;
+        if (parts[i].equals("static") || parts[i].equals("final"))
+          i++;
+//        System.out.println("Ret Type " + parts[i]);
+        
+        i++; // return type
+
+        //        System.out.println("Name " + parts[i]);
+        jdocMap.put(parts[i], msg);
+//        if (parts[i].startsWith("draw")) {
+//          match = element.text();
+//          msg = "<html><body> <strong><div style=\"width: 300px; text-justification: justify;\"></strong>"
+//              + element.html()
+//              + element.nextElementSibling()
+//              + "</div></html></body></html>";
+//          System.out.println(match + " " + msg);
+//        }
+      }
+      System.out.println("JDoc loaded");
+      for (String key : jdocMap.keySet()) {
+        System.out.println("Method: " + key);
+        System.out.println("Method: " + jdocMap.get(key));
+      }
+    } catch (Exception e) {
       e.printStackTrace();
     }
   }
@@ -451,13 +537,27 @@ public class ASTGenerator {
         // Determine the expression typed
 
         if (testnode instanceof SimpleName && !noCompare) {
-
           System.err
               .println("One word expression " + getNodeAsString(testnode));
           // Simple one word exprssion - so is just an identifier
           anode = anode.getParent();
           while (anode != null) {
 
+            if (anode instanceof TypeDeclaration) {
+              TypeDeclaration td = (TypeDeclaration) anode;
+              if (td
+                  .getStructuralProperty(TypeDeclaration.SUPERCLASS_TYPE_PROPERTY) != null) {
+                SimpleType st = (SimpleType) td
+                    .getStructuralProperty(TypeDeclaration.SUPERCLASS_TYPE_PROPERTY);
+                System.out.println("Superclass " + st.getName());
+                for (String can : getMembersForType(st.getName().toString(),
+                                                    word2, noCompare)) {
+                  candidates.add(can);
+                }
+                //findDeclaration(st.getName())
+
+              }
+            }
             List<StructuralPropertyDescriptor> sprops = anode
                 .structuralPropertiesForType();
             for (StructuralPropertyDescriptor sprop : sprops) {
@@ -490,8 +590,6 @@ public class ASTGenerator {
             }
             anode = anode.getParent();
           }
-          
-          
 
         } else {
 
@@ -526,9 +624,9 @@ public class ASTGenerator {
             // Now td contains the type returned by a()
             System.err.println(getNodeAsString(det) + " defined in "
                 + getNodeAsString(td));
-
+            ASTNode child = resolveChildExpression(testnode);
             if (td != null) {
-              ASTNode child = resolveChildExpression(testnode);
+
               System.out.println("Completion candidate: "
                   + getNodeAsString(child));
               for (int i = 0; i < td.getFields().length; i++) {
@@ -552,42 +650,56 @@ public class ASTGenerator {
               }
             } else {
               if (stp != null) {
-                System.out.println("Couldn't determine type! "
-                    + stp.getName().toString());
-                RegExpResourceFilter regExpResourceFilter;
-                regExpResourceFilter = new RegExpResourceFilter(".*", stp
-                    .getName().toString() + ".class");
-                String[] resources = classPath
-                    .findResources("", regExpResourceFilter);
-                for (String className : resources) {
-                  System.out.println("-> " + className);
-                }
-                if(resources.length > 0){
-                  String matchedClass = resources[0];
-                  matchedClass = matchedClass.substring(0,matchedClass.length() - 6);
-                  matchedClass = matchedClass.replace('/', '.');
-                  System.out.println("Matched class: " + matchedClass);
-                  try {
-                    Class<?> probableClass = Class.forName(matchedClass, false, errorCheckerService.classLoader);
-                    for (Method method : probableClass.getMethods()) {
-                      StringBuffer label = new StringBuffer(method.getName() + "(");
-                      for (Class<?> type : method.getParameterTypes()) {
-                        label.append(type.getSimpleName() + ",");
-                      }
-                      label.append(")");
-                      candidates.add(label.toString());
-                    }
-                    for (Field field : probableClass.getFields()) {
-                      candidates.add(field.getName());
-                    }
-                  } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                    System.out.println("Couldn't load " + matchedClass);
-                  }
-                  
-                  //processing/core/PVector.class
-                  //
-                }
+//                System.out.println("Couldn't determine type! "
+//                    + stp.getName().toString());
+//                RegExpResourceFilter regExpResourceFilter;
+//                regExpResourceFilter = new RegExpResourceFilter(".*", stp
+//                    .getName().toString() + ".class");
+//                String[] resources = classPath
+//                    .findResources("", regExpResourceFilter);
+//                for (String className : resources) {
+//                  System.out.println("-> " + className);
+//                }
+//                if (resources.length > 0) {
+//                  String matchedClass = resources[0];
+//                  matchedClass = matchedClass
+//                      .substring(0, matchedClass.length() - 6);
+//                  matchedClass = matchedClass.replace('/', '.');
+//                  System.out.println("Matched class: " + matchedClass);
+//                  System.out.println("Looking for match " + child.toString());
+//                  try {
+//                    Class<?> probableClass = Class
+//                        .forName(matchedClass, false,
+//                                 errorCheckerService.classLoader);
+//                    for (Method method : probableClass.getMethods()) {
+//                      StringBuffer label = new StringBuffer(method.getName()
+//                          + "(");
+//                      for (Class<?> type : method.getParameterTypes()) {
+//                        label.append(type.getSimpleName() + ",");
+//                      }
+//                      label.append(")");
+//                      if (noCompare)
+//                        candidates.add(label.toString());
+//                      else if (label.toString().startsWith(child.toString()))
+//                        candidates.add(label.toString());
+//                    }
+//                    for (Field field : probableClass.getFields()) {
+//                      if (noCompare)
+//
+//                        candidates.add(field.getName());
+//                      else if (field.getName().startsWith(child.toString()))
+//                        candidates.add(field.getName());
+//                    }
+//                  } catch (ClassNotFoundException e) {
+//                    e.printStackTrace();
+//                    System.out.println("Couldn't load " + matchedClass);
+//                  }
+//
+//                  //processing/core/PVector.class
+//                  //
+//                }
+                candidates = getMembersForType(stp.getName().toString(),
+                                               child.toString(), noCompare);
               }
             }
 
@@ -611,6 +723,78 @@ public class ASTGenerator {
 
     worker.execute();
 
+  }
+
+  public ArrayList<String> getMembersForType(String typeName, String child,
+                                             boolean noCompare) {
+    ArrayList<String> candidates = new ArrayList<String>();
+    RegExpResourceFilter regExpResourceFilter;
+    regExpResourceFilter = new RegExpResourceFilter(".*", typeName + ".class");
+    String[] resources = classPath.findResources("", regExpResourceFilter);
+    for (String className : resources) {
+      System.out.println("-> " + className);
+    }
+    if (resources.length > 0) {
+      String matchedClass = resources[0];
+      matchedClass = matchedClass.substring(0, matchedClass.length() - 6);
+      matchedClass = matchedClass.replace('/', '.');
+      System.out.println("Matched class: " + matchedClass);
+      System.out.println("Looking for match " + child.toString());
+      try {
+        Class<?> probableClass = Class.forName(matchedClass, false,
+                                               errorCheckerService.classLoader);
+        
+        for (Method method : probableClass.getMethods()) {
+          StringBuffer label = new StringBuffer(method.getName() + "(");
+          for (Class<?> type : method.getParameterTypes()) {
+            label.append(type.getSimpleName() + ",");
+          }
+          label.append(")");
+          if (noCompare)
+            candidates.add(label.toString());
+          else if (label.toString().startsWith(child.toString()))
+            candidates.add(label.toString());
+        }
+        for (Field field : probableClass.getFields()) {
+          if (noCompare)
+
+            candidates.add(field.getName());
+          else if (field.getName().startsWith(child.toString()))
+            candidates.add(field.getName());
+        }
+      } catch (ClassNotFoundException e) {
+        e.printStackTrace();
+        System.out.println("Couldn't load " + matchedClass);
+      }
+    }
+    if(candidates.size() > 0){
+      String methodmatch = candidates.get(0);
+      System.out.println("jdoc match " + methodmatch);
+      for (final String key : jdocMap.keySet()) {
+        if(methodmatch.startsWith(key) && key.length() > 4)
+        {
+          System.out.println("Matched jdoc" +key);
+          jdocLabel.setText(jdocMap.get(key));
+          visitRecur((ASTNode) compilationUnit.types().get(0), codeTree);
+          SwingWorker worker = new SwingWorker() {
+
+            @Override
+            protected Object doInBackground() throws Exception {
+              return null;
+            }
+
+            protected void done() {
+              System.out.println(jdocMap.get(key));
+              jdocLabel.repaint();   
+            }
+          };
+          worker.execute();
+          
+          break;
+        }
+      }
+    }
+    return candidates;
   }
 
   @SuppressWarnings("unchecked")

@@ -269,7 +269,7 @@ public class ErrorCheckerService implements Runnable{
       // No syntax errors, proceed for compilation check, Stage 2.
        
       if (problems.length == 0 && editor.compilationCheckEnabled) {
-        mainClassOffset++; // just a hack.
+        //mainClassOffset++; // just a hack.
         astGenerator.buildAST();
         sourceCode = xqpreproc.doYourThing(sourceCode, programImports);
         prepareCompilerClasspath();
