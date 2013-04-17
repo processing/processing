@@ -499,6 +499,7 @@ public class PGraphicsOpenGL extends PGraphics {
   static protected final int EDGE_START  = 1;
   static protected final int EDGE_STOP   = 2;
   static protected final int EDGE_SINGLE = 3;
+  static protected final int EDGE_CLOSE  = -1;
 
   /** Used in round point and ellipse tessellation. The
    * number of subdivisions per round point or ellipse is
@@ -2006,17 +2007,12 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void endShape(int[] indices) {
-    endShape(indices, null);
-  }
-
-
-  protected void endShape(int[] indices, int[] edges) {
     if (shape != TRIANGLE && shape != TRIANGLES) {
       throw new RuntimeException("Indices and edges can only be set for " +
                                  "TRIANGLE shapes");
     }
 
-    tessellate(indices, edges);
+    tessellate(indices);
 
     if (flushMode == FLUSH_CONTINUOUSLY ||
         (flushMode == FLUSH_WHEN_FULL && tessGeo.isFull())) {
@@ -2211,16 +2207,8 @@ public class PGraphicsOpenGL extends PGraphics {
     }
   }
 
-  protected void tessellate(int[] indices, int[] edges) {
-    if (edges != null) {
-      int nedges = edges.length / 2;
-      for (int n = 0; n < nedges; n++) {
-        int i0 = edges[2 * n + 0];
-        int i1 = edges[2 * n + 1];
-        inGeo.addEdge(i0, i1, n == 0, n == nedges - 1);
-      }
-    }
 
+  protected void tessellate(int[] indices) {
     tessellator.setInGeometry(inGeo);
     tessellator.setTessGeometry(tessGeo);
     tessellator.setFill(fill || textureImage != null);
@@ -2233,7 +2221,7 @@ public class PGraphicsOpenGL extends PGraphics {
     tessellator.setTransform(modelview);
     tessellator.set3D(is3D());
 
-    if (stroke && defaultEdges && edges == null) inGeo.addTrianglesEdges();
+    if (stroke && defaultEdges) inGeo.addTrianglesEdges();
     if (normalMode == NORMAL_MODE_AUTO) inGeo.calcTrianglesNormals();
     tessellator.tessellateTriangles(indices);
   }
@@ -7574,32 +7562,42 @@ public class PGraphicsOpenGL extends PGraphics {
       return vertices[3 * (vertexCount - 1) + 2];
     }
 
+    int getNumEdgeClosures() {
+      int count = 0;
+      for (int i = firstEdge; i <= lastEdge; i++) {
+        if (edges[i][2] == EDGE_CLOSE) count++;
+      }
+      return count;
+    }
+
     int getNumEdgeVertices(boolean bevel) {
-      int segVert = 4 * (lastEdge - firstEdge + 1);
+      int segVert = lastEdge - firstEdge + 1;
       int bevVert = 0;
       if (bevel) {
         for (int i = firstEdge; i <= lastEdge; i++) {
           int[] edge = edges[i];
-          if (edge[2] == EDGE_MIDDLE || edge[2] == EDGE_START) {
-            bevVert++;
-          }
+          if (edge[2] == EDGE_MIDDLE || edge[2] == EDGE_START) bevVert++;
+          if (edge[2] == EDGE_CLOSE) segVert--;
         }
+      } else {
+        segVert -= getNumEdgeClosures();
       }
-      return segVert + bevVert;
+      return 4 * segVert + bevVert;
     }
 
     int getNumEdgeIndices(boolean bevel) {
-      int segInd = 6 * (lastEdge - firstEdge + 1);
+      int segInd = lastEdge - firstEdge + 1;
       int bevInd = 0;
       if (bevel) {
         for (int i = firstEdge; i <= lastEdge; i++) {
           int[] edge = edges[i];
-          if (edge[2] == EDGE_MIDDLE || edge[2] == EDGE_START) {
-            bevInd += 6;
-          }
+          if (edge[2] == EDGE_MIDDLE || edge[2] == EDGE_START) bevInd++;
+          if (edge[2] == EDGE_CLOSE) segInd--;
         }
+      } else {
+        segInd -= getNumEdgeClosures();
       }
-      return segInd + bevInd;
+      return 6 * (segInd + bevInd);
     }
 
     void getVertexMin(PVector v) {
@@ -8113,6 +8111,20 @@ public class PGraphicsOpenGL extends PGraphics {
       return lastEdge;
     }
 
+    int closeEdge(int i, int j) {
+      edgeCheck();
+
+      int[] edge = edges[edgeCount];
+      edge[0] = i;
+      edge[1] = j;
+      edge[2] = -1;
+
+      lastEdge = edgeCount;
+      edgeCount++;
+
+      return lastEdge;
+    }
+
     void addTrianglesEdges() {
       for (int i = 0; i < (lastVertex - firstVertex + 1) / 3; i++) {
         int i0 = 3 * i + 0;
@@ -8121,7 +8133,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
         addEdge(i0, i1,  true, false);
         addEdge(i1, i2, false, false);
-        addEdge(i2, i0, false,  true);
+        addEdge(i2, i0, false,  false);
+        closeEdge(i2, i0);
       }
     }
 
@@ -8133,7 +8146,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
         addEdge(i0, i1,  true, false);
         addEdge(i1, i2, false, false);
-        addEdge(i2, i0, false,  true);
+        addEdge(i2, i0, false,  false);
+        closeEdge(i2, i0);
       }
     }
 
@@ -8151,7 +8165,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
         addEdge(i0, i1,  true, false);
         addEdge(i1, i2, false, false);
-        addEdge(i2, i0, false,  true);
+        addEdge(i2, i0, false,  false);
+        closeEdge(i2, i0);
       }
     }
 
@@ -8165,7 +8180,8 @@ public class PGraphicsOpenGL extends PGraphics {
         addEdge(i0, i1,  true, false);
         addEdge(i1, i2, false, false);
         addEdge(i2, i3, false,  false);
-        addEdge(i3, i0, false,  true);
+        addEdge(i3, i0, false,  false);
+        closeEdge(i3, i0);
       }
     }
 
@@ -8180,6 +8196,7 @@ public class PGraphicsOpenGL extends PGraphics {
         addEdge(i1, i2, false, false);
         addEdge(i2, i3, false,  false);
         addEdge(i3, i0, false,  true);
+        closeEdge(i3, i0);
       }
     }
 
@@ -8190,7 +8207,8 @@ public class PGraphicsOpenGL extends PGraphics {
         if (breaks[i]) {
           if (closed) {
             // Closing previous contour.
-            addEdge(i - 1, start, begin, true);
+            addEdge(i - 1, start, begin, false);
+            closeEdge(i - 1, start);
           }
 
           // Starting new contour.
@@ -8202,7 +8220,8 @@ public class PGraphicsOpenGL extends PGraphics {
               // Closing the end of the last contour, if it
               // has more than 1 segment.
               addEdge(i - 1, i, begin, false);
-              addEdge(i, start, false, true);
+              addEdge(i, start, false, false);
+              closeEdge(i, start);
             } else {
               // Leaving the last contour open.
               addEdge(i - 1, i, begin, true);
@@ -8388,7 +8407,8 @@ public class PGraphicsOpenGL extends PGraphics {
       if (stroke) {
         addEdge(idx1, idx2, true, false);
         addEdge(idx2, idx3, false, false);
-        addEdge(idx3, idx1, false, true);
+        addEdge(idx3, idx1, false, false);
+        closeEdge(idx3, idx1);
       }
     }
 
@@ -8405,7 +8425,8 @@ public class PGraphicsOpenGL extends PGraphics {
         addEdge(idx1, idx2, true, false);
         addEdge(idx2, idx3, false, false);
         addEdge(idx3, idx4, false, false);
-        addEdge(idx4, idx1, false, true);
+        addEdge(idx4, idx1, false, false);
+        closeEdge(idx4, idx1);
       }
     }
 
@@ -8597,7 +8618,10 @@ public class PGraphicsOpenGL extends PGraphics {
       addVertex(centerX + cosLUT[0] * radiusH,
                 centerY + sinLUT[0] * radiusV,
                 VERTEX);
-      if (stroke) addEdge(idx, idx0, false, true);
+      if (stroke) {
+        addEdge(idx, idx0, false, false);
+        closeEdge(idx, idx0);
+      }
     }
 
     // arcMode can be 0, OPEN, CHORD, or PIE
@@ -8618,8 +8642,8 @@ public class PGraphicsOpenGL extends PGraphics {
       }
 
       int increment = 1; // what's a good algorithm? stopLUT - startLUT;
-      int pidx, idx;
-      pidx = idx = 0;
+      int idx0, pidx, idx;
+      idx0 = pidx = idx = 0;
       for (int i = startLUT; i < stopLUT; i += increment) {
         int ii = i % SINCOS_LENGTH;
         // modulo won't make the value positive
@@ -8637,6 +8661,7 @@ public class PGraphicsOpenGL extends PGraphics {
           }
         }
 
+        if (startLUT == i) idx0 = idx;
         pidx = idx;
       }
       // draw last point explicitly for accuracy
@@ -8645,7 +8670,8 @@ public class PGraphicsOpenGL extends PGraphics {
                       VERTEX);
       if (stroke) {
         if (arcMode == PIE) {
-          addEdge(idx, 0, false, true);
+          addEdge(idx, idx0, false, false);
+          closeEdge(idx, idx0);
         }
       }
       if (arcMode == CHORD || arcMode == OPEN) {
@@ -8669,65 +8695,91 @@ public class PGraphicsOpenGL extends PGraphics {
       float y1 = -h/2f; float y2 = h/2f;
       float z1 = -d/2f; float z2 = d/2f;
 
+      int idx1 = 0, idx2 = 0, idx3 = 0, idx4 = 0;
       if (fill || stroke) {
         // front face
         setNormal(0, 0, 1);
-        addVertex(x1, y1, z1, 0, 0, VERTEX);
-        addVertex(x2, y1, z1, 1, 0, VERTEX);
-        addVertex(x2, y2, z1, 1, 1, VERTEX);
-        addVertex(x1, y2, z1, 0, 1, VERTEX);
-
-        // right face
-        setNormal(1, 0, 0);
-        addVertex(x2, y1, z1, 0, 0, VERTEX);
-        addVertex(x2, y1, z2, 1, 0, VERTEX);
-        addVertex(x2, y2, z2, 1, 1, VERTEX);
-        addVertex(x2, y2, z1, 0, 1, VERTEX);
+        idx1 = addVertex(x1, y1, z1, 0, 0, VERTEX);
+        idx2 = addVertex(x2, y1, z1, 1, 0, VERTEX);
+        idx3 = addVertex(x2, y2, z1, 1, 1, VERTEX);
+        idx4 = addVertex(x1, y2, z1, 0, 1, VERTEX);
+        if (stroke) {
+          addEdge(idx1, idx2, true, false);
+          addEdge(idx2, idx3, false, false);
+          addEdge(idx3, idx4, false, false);
+          addEdge(idx4, idx1, false, false);
+          closeEdge(idx4, idx1);
+        }
 
         // back face
         setNormal(0, 0, -1);
-        addVertex(x2, y1, z2, 0, 0, VERTEX);
-        addVertex(x1, y1, z2, 1, 0, VERTEX);
-        addVertex(x1, y2, z2, 1, 1, VERTEX);
-        addVertex(x2, y2, z2, 0, 1, VERTEX);
+        idx1 = addVertex(x2, y1, z2, 0, 0, VERTEX);
+        idx2 = addVertex(x1, y1, z2, 1, 0, VERTEX);
+        idx3 = addVertex(x1, y2, z2, 1, 1, VERTEX);
+        idx4 = addVertex(x2, y2, z2, 0, 1, VERTEX);
+        if (stroke) {
+          addEdge(idx1, idx2, true, false);
+          addEdge(idx2, idx3, false, false);
+          addEdge(idx3, idx4, false, false);
+          addEdge(idx4, idx1, false, false);
+          closeEdge(idx4, idx1);
+        }
+
+        // right face
+        setNormal(1, 0, 0);
+        idx1 = addVertex(x2, y1, z1, 0, 0, VERTEX);
+        idx2 = addVertex(x2, y1, z2, 1, 0, VERTEX);
+        idx3 = addVertex(x2, y2, z2, 1, 1, VERTEX);
+        idx4 = addVertex(x2, y2, z1, 0, 1, VERTEX);
+        if (stroke) {
+          addEdge(idx1, idx2, true, false);
+          addEdge(idx2, idx3, false, false);
+          addEdge(idx3, idx4, false, false);
+          addEdge(idx4, idx1, false, false);
+          closeEdge(idx4, idx1);
+        }
 
         // left face
         setNormal(-1, 0, 0);
-        addVertex(x1, y1, z2, 0, 0, VERTEX);
-        addVertex(x1, y1, z1, 1, 0, VERTEX);
-        addVertex(x1, y2, z1, 1, 1, VERTEX);
-        addVertex(x1, y2, z2, 0, 1, VERTEX);
+        idx1 = addVertex(x1, y1, z2, 0, 0, VERTEX);
+        idx2 = addVertex(x1, y1, z1, 1, 0, VERTEX);
+        idx3 = addVertex(x1, y2, z1, 1, 1, VERTEX);
+        idx4 = addVertex(x1, y2, z2, 0, 1, VERTEX);
+        if (stroke) {
+          addEdge(idx1, idx2, true, false);
+          addEdge(idx2, idx3, false, false);
+          addEdge(idx3, idx4, false, false);
+          addEdge(idx4, idx1, false, false);
+          closeEdge(idx4, idx1);
+        }
 
         // top face
         setNormal(0, 1, 0);
-        addVertex(x1, y1, z2, 0, 0, VERTEX);
-        addVertex(x2, y1, z2, 1, 0, VERTEX);
-        addVertex(x2, y1, z1, 1, 1, VERTEX);
-        addVertex(x1, y1, z1, 0, 1, VERTEX);
+        idx1 = addVertex(x1, y1, z2, 0, 0, VERTEX);
+        idx2 = addVertex(x2, y1, z2, 1, 0, VERTEX);
+        idx3 = addVertex(x2, y1, z1, 1, 1, VERTEX);
+        idx4 = addVertex(x1, y1, z1, 0, 1, VERTEX);
+        if (stroke) {
+          addEdge(idx1, idx2, true, false);
+          addEdge(idx2, idx3, false, false);
+          addEdge(idx3, idx4, false, false);
+          addEdge(idx4, idx1, false, false);
+          closeEdge(idx4, idx1);
+        }
 
         // bottom face
         setNormal(0, -1, 0);
-        addVertex(x1, y2, z1, 0, 0, VERTEX);
-        addVertex(x2, y2, z1, 1, 0, VERTEX);
-        addVertex(x2, y2, z2, 1, 1, VERTEX);
-        addVertex(x1, y2, z2, 0, 1, VERTEX);
-      }
-
-      if (stroke) {
-        addEdge(0, 1, true, true);
-        addEdge(1, 2, true, true);
-        addEdge(2, 3, true, true);
-        addEdge(3, 0, true, true);
-
-        addEdge(0,  9, true, true);
-        addEdge(1,  8, true, true);
-        addEdge(2, 11, true, true);
-        addEdge(3, 10, true, true);
-
-        addEdge( 8,  9, true, true);
-        addEdge( 9, 10, true, true);
-        addEdge(10, 11, true, true);
-        addEdge(11,  8, true, true);
+        idx1 = addVertex(x1, y2, z1, 0, 0, VERTEX);
+        idx2 = addVertex(x2, y2, z1, 1, 0, VERTEX);
+        idx3 = addVertex(x2, y2, z2, 1, 1, VERTEX);
+        idx4 = addVertex(x1, y2, z2, 0, 1, VERTEX);
+        if (stroke) {
+          addEdge(idx1, idx2, true, false);
+          addEdge(idx2, idx3, false, false);
+          addEdge(idx3, idx4, false, false);
+          addEdge(idx4, idx1, false, false);
+          closeEdge(idx4, idx1);
+        }
       }
     }
 
@@ -9009,7 +9061,6 @@ public class PGraphicsOpenGL extends PGraphics {
       lineIndexCache.clear();
       pointIndexCache.clear();
     }
-
 
     void polyVertexCheck() {
       if (polyVertexCount == polyVertices.length / 4) {
@@ -10787,9 +10838,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     void tessellateLineLoop3D(int lineCount) {
-      // TODO: This calculation doesn't add the bevel join between
-      // the first and last vertex, need to fix.
-      int nBevelTr = noCapsJoins() ? 0 : (lineCount - 1);
+      int nBevelTr = noCapsJoins() ? 0 : lineCount;
       int nvert = lineCount * 4 + nBevelTr;
       int nind = lineCount * 2 * 3 + nBevelTr * 2 * 3;
 
@@ -10800,16 +10849,21 @@ public class PGraphicsOpenGL extends PGraphics {
       firstLineIndexCache = index;
       int i0 = in.firstVertex;
       short[] lastInd = {-1, -1};
+      short firstInd = -1;
       for (int ln = 0; ln < lineCount - 1; ln++) {
         int i1 = in.firstVertex + ln + 1;
         if (0 < nBevelTr) {
           index = addLine3D(i0, i1, index, lastInd, false);
+          if (ln == 0) firstInd = (short)(lastInd[0] - 2);
         } else {
           index = addLine3D(i0, i1, index, null, false);
         }
         i0 = i1;
       }
       index = addLine3D(in.lastVertex, in.firstVertex, index, lastInd, false);
+      if (0 < nBevelTr) {
+        index = addBevel3D(in.firstVertex, index, lastInd, firstInd, false);
+      }
       lastLineIndexCache = index;
     }
 
@@ -10849,9 +10903,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
     void tessellateEdges() {
       if (stroke) {
-        if (in.edgeCount == 0) {
-          return;
-        }
+        if (in.edgeCount == 0) return;
         if (is3D) {
           tessellateEdges3D();
         } else if (is2D) {
@@ -10863,8 +10915,6 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     void tessellateEdges3D() {
-      // This calculation doesn't add the bevel join between
-      // the first and last vertex, need to fix.
       boolean bevel = !noCapsJoins();
       int nInVert = in.getNumEdgeVertices(bevel);
       int nInInd = in.getNumEdgeIndices(bevel);
@@ -10875,15 +10925,21 @@ public class PGraphicsOpenGL extends PGraphics {
                                               tess.lineIndexCache.getLast();
       firstLineIndexCache = index;
       short[] lastInd = {-1, -1};
+      short firstInd = -1;
       for (int i = in.firstEdge; i <= in.lastEdge; i++) {
         int[] edge = in.edges[i];
         int i0 = edge[0];
         int i1 = edge[1];
         if (bevel) {
-          index = addLine3D(i0, i1, index, lastInd, false);
-          if (edge[2] == EDGE_STOP || edge[2] == EDGE_SINGLE) {
-            // No join with next line segment.
-            lastInd[0] = lastInd[1] = -1;
+          if (edge[2] == EDGE_CLOSE) {
+            index = addBevel3D(edge[1], index, lastInd, firstInd, false);
+            lastInd[0] = lastInd[1] = -1; // No join with next line segment.
+          } else {
+            index = addLine3D(i0, i1, index, lastInd, false);
+            if (edge[2] == EDGE_START) firstInd = (short)(lastInd[0] - 2);
+            if (edge[2] == EDGE_STOP || edge[2] == EDGE_SINGLE) {
+              lastInd[0] = lastInd[1] = -1; // No join with next line segment.
+            }
           }
         } else {
           index = addLine3D(i0, i1, index, null, false);
@@ -10905,6 +10961,7 @@ public class PGraphicsOpenGL extends PGraphics {
         if (firstPolyIndexCache == -1) firstPolyIndexCache = index; // If the geometry has no fill, needs the first poly index.
         for (int i = in.firstEdge; i <= in.lastEdge; i++) {
           int[] edge = in.edges[i];
+          if (edge[2] == EDGE_CLOSE) continue; // ignoring edge closures when not doing caps or joins.
           int i0 = edge[0];
           int i1 = edge[1];
           index = addLine2D(i0, i1, index, false);
@@ -10940,6 +10997,9 @@ public class PGraphicsOpenGL extends PGraphics {
                         in.strokeColors[i1]);
             path.moveTo(in.vertices[3 * i1 + 0], in.vertices[3 * i1 + 1],
                         in.strokeColors[i1]);
+            break;
+          case EDGE_CLOSE:
+            path.closePath();
             break;
           }
         }
@@ -11027,6 +11087,55 @@ public class PGraphicsOpenGL extends PGraphics {
       return index;
     }
 
+    int addBevel3D(int i0, int index, short[] lastInd, short firstInd,
+                   boolean constStroke) {
+      IndexCache cache = tess.lineIndexCache;
+      int count = cache.vertexCount[index];
+      boolean addBevel = lastInd != null && -1 < lastInd[0] && -1 < lastInd[1];
+      boolean newCache = false;
+      if (PGL.MAX_VERTEX_INDEX1 <= count + (addBevel ? 1 : 0)) {
+        // We need to start a new index block for this line.
+        index = cache.addNew();
+        count = 0;
+        newCache = true;
+      }
+      int iidx = cache.indexOffset[index] + cache.indexCount[index];
+      int vidx = cache.vertexOffset[index] + cache.vertexCount[index];
+      int color0 = constStroke ? strokeColor : in.strokeColors[i0];
+
+      if (lastInd != null) {
+        if (-1 < lastInd[0] && -1 < lastInd[1]) {
+          tess.setLineVertex(vidx, in, i0, color0);
+
+          if (newCache) {
+            PGraphics.showWarning(TOO_LONG_STROKE_PATH_ERROR);
+
+            // TODO: Fix this situation, the vertices from the previous cache
+            // block should be copied in the newly created one.
+//            tess.lineIndices[iidx++] = (short) (count + 4);
+//            tess.lineIndices[iidx++] = (short) (count + 0);
+//            tess.lineIndices[iidx++] = (short) (count + 0);
+//
+//            tess.lineIndices[iidx++] = (short) (count + 4);
+//            tess.lineIndices[iidx++] = (short) (count + 1);
+//            tess.lineIndices[iidx  ] = (short) (count + 1);
+          } else {
+            tess.lineIndices[iidx++] = (short) (count + 0);
+            tess.lineIndices[iidx++] = lastInd[0];
+            tess.lineIndices[iidx++] = (short) (firstInd + 0);
+
+            tess.lineIndices[iidx++] = (short) (count + 0);
+            tess.lineIndices[iidx++] = lastInd[1];
+            tess.lineIndices[iidx  ] = (short) (firstInd + 1);
+          }
+
+          cache.incCounts(index, 6, 1);
+        }
+      }
+
+      return index;
+    }
+
     // Adding the data that defines a quad starting at vertex i0 and
     // ending at i1, in the case of pure 2D renderers (line geometry
     // is added to the poly arrays).
@@ -11087,7 +11196,7 @@ public class PGraphicsOpenGL extends PGraphics {
         float yac = tess.polyVertices[4 * (vidx - 2) + 1];
         float xbc = tess.polyVertices[4 * (vidx - 1) + 0];
         float ybc = tess.polyVertices[4 * (vidx - 1) + 1];
-        if (!(PApplet.abs(xac - xbc) > 0 || PApplet.abs(yac - ybc) > 0)) {
+        if (same(xac, xbc) && same(yac, ybc)) {
           unclampLine2D(vidx - 2, x0 + normdx - dirdx, y0 + normdy - dirdy);
           unclampLine2D(vidx - 1, x0 - normdx - dirdx, y0 - normdy - dirdy);
         }
@@ -11119,7 +11228,7 @@ public class PGraphicsOpenGL extends PGraphics {
         float yac = tess.polyVertices[4 * (vidx - 2) + 1];
         float xbc = tess.polyVertices[4 * (vidx - 1) + 0];
         float ybc = tess.polyVertices[4 * (vidx - 1) + 1];
-        if (!(PApplet.abs(xac - xbc) > 0 || PApplet.abs(yac - ybc) > 0)) {
+        if (same(xac, xbc) && same(yac, ybc)) {
           unclampLine2D(vidx - 2, x1 - normdx + dirdx, y1 - normdy + dirdy);
           unclampLine2D(vidx - 1, x1 + normdx + dirdx, y1 + normdy + dirdy);
         }
