@@ -226,6 +226,8 @@ public class Toolkit {
           awtToolkit.getDesktopProperty("apple.awt.contentScaleFactor");
         if (prop != null) {
           retinaProp = prop == 2;
+        } else {
+          retinaProp = false;
         }
       }
       return retinaProp;

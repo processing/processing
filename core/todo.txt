@@ -3,12 +3,19 @@ X improve load/save of .gz files with Table, clear up some .bin issues
 X add set(x, y) to PVector (shiffman)
 X loadImage() with TGA causing images to be upside-down
 X   https://github.com/processing/processing/issues/1682
+A image caches not being properly disposed (weak references broken?)
+X   http://code.google.com/p/processing/issues/detail?id=1353
+A   https://github.com/processing/processing/issues/1391
+
 
 _ implement content specifiers
 getIntContent()
 getFloatContent()
 getContent() or getStringContent()?
 
+finish json support
+_ https://github.com/processing/processing/issues/1660
+_ https://github.com/processing/processing/issues/1680
 _ Dan having trouble with JSON
 _ keys() vs keySet() in JSON.. 
 _   keys() doesn't iterate, keySet() introduces 'Set' type
@@ -72,9 +79,6 @@ _ remap() instead of map()
 
 _ add 'gz' as one of the loadXxx() options
 _   helps .svgz case from being weird, also generally dealing w/ compressed data
-
-_ image caches not being properly disposed (weak references broken?)
-_   http://code.google.com/p/processing/issues/detail?id=1353
 
 _ shader syntax (Andres request)
 _   might also need a define inside the shader to control what type it is
