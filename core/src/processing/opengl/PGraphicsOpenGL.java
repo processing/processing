@@ -11335,7 +11335,8 @@ public class PGraphicsOpenGL extends PGraphics {
     boolean noCapsJoins() {
       // The stroke weight is scaled so it correspons to the current
       // "zoom level" being applied on the geometry due to scaling:
-      return transformScale() * strokeWeight < PGL.MIN_CAPS_JOINS_WEIGHT;
+      return tess.renderMode == IMMEDIATE &&
+             transformScale() * strokeWeight < PGL.MIN_CAPS_JOINS_WEIGHT;
     }
 
     float transformScale() {
