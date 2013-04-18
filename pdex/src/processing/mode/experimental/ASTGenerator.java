@@ -1,6 +1,9 @@
 package processing.mode.experimental;
 
+import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,9 +24,11 @@ import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTree;
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.text.BadLocationException;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
@@ -58,6 +63,7 @@ import org.jsoup.select.Elements;
 
 import processing.app.Base;
 import processing.app.SketchCode;
+import processing.app.syntax.JEditTextArea;
 
 import com.google.classpath.ClassPath;
 import com.google.classpath.ClassPathFactory;
@@ -109,8 +115,125 @@ public class ASTGenerator {
     jdocWindow.setBounds(new Rectangle(280, 100, 460, 460));
     jdocLabel = new JLabel();
     jdocWindow.add(jdocLabel);
-    jdocMap = new TreeMap<String, String>(); 
+    jdocMap = new TreeMap<String, String>();
     //loadJars();
+
+    //addCompletionPopupListner();
+  }
+
+  private SuggestionPanel suggestion;
+
+  JEditTextArea textarea;
+
+  private void addCompletionPopupListner() {
+    textarea = errorCheckerService.getEditor().textArea();
+    textarea.addKeyListener(new KeyListener() {
+
+      @Override
+      public void keyTyped(KeyEvent e) {
+        if (e.getKeyChar() == KeyEvent.VK_ENTER) {
+          if (suggestion != null) {
+            if (suggestion.insertSelection()) {
+              e.consume();
+              final int position = textarea.getCaretPosition();
+              SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                  try {
+                    textarea.getDocument().remove(position - 1, 1);
+                  } catch (BadLocationException e) {
+                    e.printStackTrace();
+                  }
+                }
+              });
+            }
+          }
+        } else if (e.getKeyChar() == KeyEvent.VK_BACK_SPACE) {
+          System.out.println("BK Key");
+        }
+      }
+
+      @Override
+      public void keyReleased(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_DOWN && suggestion != null) {
+          suggestion.moveDown();
+        } else if (e.getKeyCode() == KeyEvent.VK_UP && suggestion != null) {
+          suggestion.moveUp();
+        } else if (Character.isLetterOrDigit(e.getKeyChar())
+            || e.getKeyChar() == KeyEvent.VK_BACK_SPACE
+            || e.getKeyChar() == KeyEvent.VK_DELETE) {
+          SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+              showSuggestion();
+            }
+
+          });
+        } else if (Character.isWhitespace(e.getKeyChar())) {
+          hideSuggestion();
+        }
+      }
+
+      @Override
+      public void keyPressed(KeyEvent e) {
+
+      }
+    });
+  }
+
+  protected void showSuggestionLater() {
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        showSuggestion();
+      }
+
+    });
+  }
+
+  protected void showSuggestion() {
+    hideSuggestion();
+    final int position = textarea.getCaretPosition();
+    Point location = new Point();
+    try {
+      location.x = textarea.offsetToX(textarea.getCaretLine(), position
+          - textarea.getLineStartOffset(textarea.getCaretLine()));
+      location.y = textarea.lineToY(textarea.getCaretLine())
+          + textarea.getPainter().getFontMetrics().getHeight();
+    } catch (Exception e2) {
+      e2.printStackTrace();
+      return;
+    }
+    String text = textarea.getText();
+    int start = Math.max(0, position - 1);
+    while (start > 0) {
+      if (!Character.isWhitespace(text.charAt(start))) {
+        start--;
+      } else {
+        start++;
+        break;
+      }
+    }
+    if (start > position) {
+      return;
+    }
+    final String subWord = text.substring(start, position);
+    if (subWord.length() < 2) {
+      return;
+    }
+    suggestion = new SuggestionPanel(textarea, position, subWord, location);
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        textarea.requestFocusInWindow();
+      }
+    });
+  }
+
+  private void hideSuggestion() {
+    if (suggestion != null) {
+      suggestion.hide();
+    }
   }
 
   public class ASTNodeWrapper {
@@ -189,11 +312,12 @@ public class ASTGenerator {
             frame2.setVisible(true);
             loadJars();
             loadJavaDoc();
+            addCompletionPopupListner();
             //System.out.println(System.getProperty("java.home"));
           }
           if (!frameAutoComp.isVisible())
             frameAutoComp.setVisible(true);
-          if(!jdocWindow.isVisible())
+          if (!jdocWindow.isVisible())
             jdocWindow.setVisible(true);
           jtree.validate();
         }
@@ -216,9 +340,6 @@ public class ASTGenerator {
     try {
       factory = new ClassPathFactory();
 
-      String tehPaths = System.getProperty("java.class.path")
-          + File.pathSeparatorChar + System.getProperty("java.home")
-          + "/lib/rt.jar";
       StringBuffer tehPath = new StringBuffer(
                                               System
                                                   .getProperty("java.class.path")
@@ -255,24 +376,25 @@ public class ASTGenerator {
     }
 
   }
+
   private TreeMap<String, String> jdocMap;
+
   private void loadJavaDoc() {
     Document doc;
 
-    String primTypes[] = {
-      "void", "int", "short", "byte", "boolean", "char", "float", "double",
-      "long" };
+//    String primTypes[] = {
+//      "void", "int", "short", "byte", "boolean", "char", "float", "double",
+//      "long" };
     try {
       File javaDocFile = new File(
                                   "/home/quarkninja/Documents/Processing/libraries/SimpleOpenNI/documentation/SimpleOpenNI/SimpleOpenNI.html");
       //SimpleOpenNI.SimpleOpenNI
       doc = Jsoup.parse(javaDocFile, null);
-      
+
       String msg = "";
       Elements elm = doc.getElementsByTag("pre");
-      Elements desc = doc.getElementsByTag("dl");
+//      Elements desc = doc.getElementsByTag("dl");
       //System.out.println(elm.toString());
-
 
       for (Iterator iterator = elm.iterator(); iterator.hasNext();) {
         Element element = (Element) iterator.next();
@@ -281,10 +403,10 @@ public class ASTGenerator {
 //        if (element.nextElementSibling() != null)
 //          System.out.println(element.nextElementSibling().text());
         System.out.println("-------------------");
-          msg = "<html><body> <strong><div style=\"width: 300px; text-justification: justify;\"></strong>"
-              + element.html()
-              + element.nextElementSibling()
-              + "</div></html></body></html>";
+        msg = "<html><body> <strong><div style=\"width: 300px; text-justification: justify;\"></strong>"
+            + element.html()
+            + element.nextElementSibling()
+            + "</div></html></body></html>";
 
         String parts[] = element.text().split("\\s|\\(|,|\\)");
         int i = 0;
@@ -295,7 +417,7 @@ public class ASTGenerator {
         if (parts[i].equals("static") || parts[i].equals("final"))
           i++;
 //        System.out.println("Ret Type " + parts[i]);
-        
+
         i++; // return type
 
         //        System.out.println("Name " + parts[i]);
@@ -743,7 +865,7 @@ public class ASTGenerator {
       try {
         Class<?> probableClass = Class.forName(matchedClass, false,
                                                errorCheckerService.classLoader);
-        
+
         for (Method method : probableClass.getMethods()) {
           StringBuffer label = new StringBuffer(method.getName() + "(");
           for (Class<?> type : method.getParameterTypes()) {
@@ -767,13 +889,12 @@ public class ASTGenerator {
         System.out.println("Couldn't load " + matchedClass);
       }
     }
-    if(candidates.size() > 0){
+    if (candidates.size() > 0) {
       String methodmatch = candidates.get(0);
       System.out.println("jdoc match " + methodmatch);
       for (final String key : jdocMap.keySet()) {
-        if(methodmatch.startsWith(key) && key.length() > 4)
-        {
-          System.out.println("Matched jdoc" +key);
+        if (methodmatch.startsWith(key) && key.length() > 4) {
+          System.out.println("Matched jdoc" + key);
           jdocLabel.setText(jdocMap.get(key));
           visitRecur((ASTNode) compilationUnit.types().get(0), codeTree);
           SwingWorker worker = new SwingWorker() {
@@ -785,11 +906,11 @@ public class ASTGenerator {
 
             protected void done() {
               System.out.println(jdocMap.get(key));
-              jdocLabel.repaint();   
+              jdocLabel.repaint();
             }
           };
           worker.execute();
-          
+
           break;
         }
       }
