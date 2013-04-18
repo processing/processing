@@ -10994,7 +10994,7 @@ public class PGraphicsOpenGL extends PGraphics {
               lastInd[0] = lastInd[1] = -1; // No join with next line segment.
             }
           }
-        } else {
+        } else if (edge[2] != EDGE_CLOSE) {
           index = addLineSegment3D(i0, i1, index, null, false);
         }
       }
