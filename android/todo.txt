@@ -1,5 +1,9 @@
 0217 android 
 
+moving mode out to its own package
+_ make sure the download of the mode works properly 
+_   maybe even straight from github
+_ change build script to use ../processing instead of .. as path
 
 _ requires deleting the app before reinstalling
 _   just fix this like the others

@@ -1,9 +1,8 @@
 <?xml version="1.0"?>
 
-<!-- NOT YET FINISHED -->
-
 <project name="Android Mode for Processing" default="build">
 
+  <!-- path to the main processing repo --> 
   <property name="processing.dir" value=".." />
   <property name="jar.name" value="mode/android-mode.jar" />
   
@@ -13,10 +12,10 @@
   </target>
 
   <target name="compile" description="Compile sources">
+
     <condition property="core-built">
       <available file="${processing.dir}/core/library/core.jar" />
     </condition>
-
     <fail unless="core-built" 
 	  message="Please build the core library first and make sure it sits in ${processing.dir}/core/library/core.jar" />
 
