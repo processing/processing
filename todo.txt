@@ -10,6 +10,9 @@ X   http://code.google.com/p/processing/issues/detail?id=325
 X   https://github.com/processing/processing/issues/364
 X fix problem with retina checking on Java 7
 
+_ table writing twice when .csv is added 
+_   https://github.com/processing/processing/issues/1734
+
 _ / breaks syntax highlighting
 _   https://github.com/processing/processing/issues/1681
 
@@ -879,9 +882,15 @@ _   In regedit: Navigate to Computer\HKEY_CLASSES_ROOT\Applications and find you
 
 
 DIST / Mac OS X
+_ waiting on retina support for JDK 7
+_   http://bugs.sun.com/view_bug.do?bug_id=8009754
+_   b86 supposed to have some support (not available yet)
+_     http://jdk8.java.net/download.html
 _ keep an eye on the Java 8 builds, since all the effort goes there
 _   https://wikis.oracle.com/display/OpenJDK/Mac+OS+X+Port
 _   ./jdk8/build/macosx-x86_64-normal-server-release/jdk/bin/java
+_ LWJGL forum discussion 
+_   http://lwjgl.org/forum/index.php/topic,4711.225.html
 _ change cmd line for OS X to use symlink? 
 _   otherwise updates are going to require reinstall..
 _   or that it's gonna need to parse and say "update command line?" 
