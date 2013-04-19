@@ -270,14 +270,15 @@ public class Base {
     Mode javaMode =
       ModeContribution.load(this, getContentFile("modes/java"),
                             "processing.mode.java.JavaMode").getMode();
-    Mode androidMode =
-      ModeContribution.load(this, getContentFile("modes/android"),
-                            "processing.mode.android.AndroidMode").getMode();
+//    Mode androidMode =
+//      ModeContribution.load(this, getContentFile("modes/android"),
+//                            "processing.mode.android.AndroidMode").getMode();
     // Mode javaScriptMode =
     //   ModeContribution.load(this, getContentFile("modes/javascript"),
     //                         "processing.mode.javascript.JavaScriptMode").getMode();
 
-    coreModes = new Mode[] { javaMode, androidMode };
+    //coreModes = new Mode[] { javaMode, androidMode };
+    coreModes = new Mode[] { javaMode };
 
     // check for the new mode in case it's available
 //    try {
@@ -287,7 +288,8 @@ public class Base {
         "processing.mode.experimental.ExperimentalMode");
     if (experimentalContrib != null) {
       Mode experimentalMode = experimentalContrib.getMode();
-      coreModes = new Mode[] { javaMode, androidMode, experimentalMode };
+      //coreModes = new Mode[] { javaMode, androidMode, experimentalMode };
+      coreModes = new Mode[] { javaMode, experimentalMode };
     }
 //    } catch (ClassNotFoundException e) { }
 

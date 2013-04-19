@@ -888,6 +888,8 @@ _   b86 supposed to have some support (not available yet)
 _     http://jdk8.java.net/download.html
 _ keep an eye on the Java 8 builds, since all the effort goes there
 _   https://wikis.oracle.com/display/OpenJDK/Mac+OS+X+Port
+_   sudo port install mercurial
+_   ./get_source.sh
 _   ./jdk8/build/macosx-x86_64-normal-server-release/jdk/bin/java
 _ LWJGL forum discussion 
 _   http://lwjgl.org/forum/index.php/topic,4711.225.html
