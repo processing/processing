@@ -19,10 +19,9 @@ X   https://github.com/processing/processing/issues/1684
 X shift color of installed items when selected 
 X   was ugly gray over selection color
 X fix layout of the update button
-_ get update text to align vertically
-
-_ "Update" not working in the library manager
-_   https://github.com/processing/processing/issues/1701
+X get update text to align vertically
+X "Update" not working in the library manager
+X   https://github.com/processing/processing/issues/1701
 
 _ how does new JDI affect Experimental? duplicate libs? loader issues?
 _ move Android mode out to its own repo

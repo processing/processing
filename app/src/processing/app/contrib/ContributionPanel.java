@@ -59,7 +59,8 @@ class ContributionPanel extends JPanel {
   private boolean enableHyperlinks;
   private HyperlinkListener conditionalHyperlinkOpener;
   private JTextPane descriptionBlock;
-  private JTextPane notificationBlock;
+//  private JTextPane notificationBlock;
+  private JLabel notificationBlock;
   private JButton updateButton;
   private JProgressBar installProgressBar;
   private JButton installRemoveButton;
@@ -161,18 +162,7 @@ class ContributionPanel extends JPanel {
    * library panel is not clicked.
    */
   private void addPaneComponents() {
-//    setLayout(new GridBagLayout());
     setLayout(new BorderLayout());
-
-//    { // Header text area. The name of the contribution and its authors.
-//      GridBagConstraints c = new GridBagConstraints();
-//      c.gridx = 0;
-//      c.gridy = 0;
-//      c.weightx = 1;
-//      c.weighty = 1;
-//      c.gridwidth = 2;
-//      c.fill = GridBagConstraints.BOTH;
-//      c.anchor = GridBagConstraints.WEST;
 
     descriptionBlock = new JTextPane();
     descriptionBlock.setInheritsPopupMenu(true);
@@ -182,103 +172,24 @@ class ContributionPanel extends JPanel {
     descriptionBlock.setContentType("text/html");
     setTextStyle(descriptionBlock);
     descriptionBlock.setOpaque(false);
-    stripTextSelectionListeners(descriptionBlock);
-//    }
+//    stripTextSelectionListeners(descriptionBlock);
+
     descriptionBlock.setBorder(new EmptyBorder(4, 7, 7, 7));
     descriptionBlock.setHighlighter(null);
     add(descriptionBlock, BorderLayout.CENTER);
     
-//    { // Header text area. The name of the contribution and its authors.
-//      GridBagConstraints c = new GridBagConstraints();
-//      c.gridx = 0;
-//      c.gridy = 0;
-//      c.weightx = 1;
-//      c.fill = GridBagConstraints.BOTH;
-//      c.anchor = GridBagConstraints.WEST;
-//
-//      headerText = new JTextPane();
-//      headerText.setInheritsPopupMenu(true);
-//      Insets margin = headerText.getMargin();
-//      margin.bottom = 0;
-//      headerText.setMargin(margin);
-//      headerText.setContentType("text/html");
-//      setTextStyle(headerText);
-//      headerText.setOpaque(false);
-////      headerPaneSet.add(headerText);
-//      stripTextSelectionListeners(headerText);
-//      add(headerText, c);
-//    }
-//
-//    { // The bottom right of the description, used to show text describing it
-//      GridBagConstraints c = new GridBagConstraints();
-//      c.gridx = 0;
-//      c.gridy = 1;
-//      c.weighty = 1;
-//      c.weightx = 1;
-//      c.gridwidth = 2;
-//      c.fill = GridBagConstraints.BOTH;
-//      c.anchor = GridBagConstraints.NORTHEAST;
-//
-//      JPanel descriptionPanel = new JPanel(new GridBagLayout());
-//      descriptionPanel.setInheritsPopupMenu(true);
-//      descriptionPanel.setOpaque(false);
-//      add(descriptionPanel, c);
-//
-//      {
-//        GridBagConstraints dc = new GridBagConstraints();
-//        dc.fill = GridBagConstraints.HORIZONTAL;
-//        dc.weightx = 1;
-//
-//        descriptionText = new JTextPane();
-//        descriptionText.setInheritsPopupMenu(true);
-//        descriptionText.setContentType("text/html");
-//        setTextStyle(descriptionText);
-//        descriptionText.setOpaque(false);
-//        descriptionPanel.add(descriptionText, dc);
-//      }
-//
-//      int margin = Base.isMacOS() ? 15 : 5;
-//      {
-//        GridBagConstraints dc = new GridBagConstraints();
-//        dc.gridx = 1;
-//        descriptionPanel.add(Box.createHorizontalStrut(margin), dc);
-//      }
-//    }
-
-//    { // A label below the description text showing notifications for when
-//      // updates are available, or instructing the user to restart the PDE if
-//      // necessary
-//      GridBagConstraints c = new GridBagConstraints();
-//      c.gridx = 0;
-//      c.gridy = 2;
-//      c.weightx = 1;
-//      c.insets = new Insets(-5, 0, 0, 0);
-//      c.fill = GridBagConstraints.HORIZONTAL;
-//      c.anchor = GridBagConstraints.EAST;
-
     Box updateBox = Box.createHorizontalBox();  //new BoxLayout(filterPanel, BoxLayout.X_AXIS)
     
-//    BoxLayout
-    notificationBlock = new JTextPane();
+    notificationBlock = new JLabel();
     notificationBlock.setInheritsPopupMenu(true);
     notificationBlock.setVisible(false);
     notificationBlock.setOpaque(false);
-    notificationBlock.setContentType("text/html");
-    notificationBlock.setHighlighter(null);
-
-    setTextStyle(notificationBlock);
-    stripTextSelectionListeners(notificationBlock);
-//    add(updateNotificationLabel, c);
-//    }
-
-//    { // An update button, shown in the description area, but only visible for
-//      // contributions that do not require a restart.
-//      GridBagConstraints c = new GridBagConstraints();
-//      c.gridx = 1;
-//      c.gridy = 2;
-//      c.weightx = 1;
-//      c.insets = new Insets(-5, 0, 0, 0);
-//      c.anchor = GridBagConstraints.EAST;
+    // not needed after changing to JLabel
+//    notificationBlock.setContentType("text/html");
+//    notificationBlock.setHighlighter(null);
+//    setTextStyle(notificationBlock);
+    notificationBlock.setFont(new Font("Verdana", Font.ITALIC, 10));
+//    stripTextSelectionListeners(notificationBlock);
 
       updateButton = new JButton("Update");
       updateButton.setInheritsPopupMenu(true);
@@ -543,7 +454,9 @@ class ContributionPanel extends JPanel {
   }
 
   
-  void stripTextSelectionListeners(JEditorPane editorPane) {
+  // This doesn't actually seem to work?
+  /*
+  static void stripTextSelectionListeners(JEditorPane editorPane) {
     for (MouseListener listener : editorPane.getMouseListeners()) {
       String className = listener.getClass().getName();
       if (className.endsWith("MutableCaretEvent") || 
@@ -553,6 +466,7 @@ class ContributionPanel extends JPanel {
       }
     }
   }
+  */
   
 
   protected void resetInstallProgressBarState() {
