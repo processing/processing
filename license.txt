@@ -3,8 +3,9 @@ For the 'core' library, it's LGPL, for everything else, it's GPL.
 
 Over the course of many years of development, files being moved around,
 and other code being added and removed, the license information has become
-quite a mess. Please help us clean this up:
-http://code.google.com/p/processing/issues/detail?id=185
+quite a mess. Please help us clean this up so that others are properly 
+credited and licenses are consistently/correctly noted:
+https://github.com/processing/processing/issues/224
 
 
 .....................................................................

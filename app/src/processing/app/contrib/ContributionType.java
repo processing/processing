@@ -177,13 +177,14 @@ public enum ContributionType {
   
   File createBackupFolder(StatusPanel status) {
     File backupFolder = new File(getSketchbookFolder(), "old");
-    if (!backupFolder.isDirectory()) {
-      status.setErrorMessage("Remove the file named \"old\" from the " + 
+    if (backupFolder.isDirectory()) {
+      status.setErrorMessage("First remove the folder named \"old\" from the " + 
                              getFolderName() + " folder in the sketchbook.");
       return null;
     }
-    if (!backupFolder.exists() && !backupFolder.mkdirs()) {
-      status.setErrorMessage("Could not create a " + toString() + " backup folder.");
+    if (!backupFolder.mkdirs()) {
+      status.setErrorMessage("Could not create a backup folder in the " +
+      		                   "sketchbook " + toString() + " folder.");
       return null;
     }
     return backupFolder;

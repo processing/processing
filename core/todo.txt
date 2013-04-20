@@ -3,15 +3,65 @@ X improve load/save of .gz files with Table, clear up some .bin issues
 X add set(x, y) to PVector (shiffman)
 X loadImage() with TGA causing images to be upside-down
 X   https://github.com/processing/processing/issues/1682
+A image caches not being properly disposed (weak references broken?)
+X   http://code.google.com/p/processing/issues/detail?id=1353
+A   https://github.com/processing/processing/issues/1391
+X implement content specifiers
+X   getIntContent()
+X   getFloatContent()
+X   getContent() or getStringContent()?
 
-_ implement content specifiers
-getIntContent()
-getFloatContent()
-getContent() or getStringContent()?
+_ draw() called again before finishing on OS X (retina issue)
+_   https://github.com/processing/processing/issues/1709
 
+_ tint() with JAVA2D does not automatically refresh (with possible fix)
+_   https://github.com/processing/processing/issues/1730
+
+hash/dict/etc
+_ need to sort out the final version of these and their names
+
+table
+_ table writing twice when .csv is added 
+_   https://github.com/processing/processing/issues/1734
+_ add 'gz' as one of the loadXxx() options
+_   helps .svgz case from being weird, also generally dealing w/ compressed data
+_ naming for these (or whether to include hash)
+_   Table createSubset() -> leave out?
+_   String[] getUnique(col) (SQL DISTINCT, sort --unique)
+_   HashMap<String,Integer> getUniqueCount(col)
+_ really need to get an option to grab matches based on a col
+_   i.e. get unique tables based on a particular column
+_   or, get uniques, then grab rows that match a name in a particular col
+_ possible features
+_   create table from TableRow iterator...allows for subset and find
+_     downside is types are not included
+_   getMaxFloat() (whole table) or getMaxFloat(col) 
+_     that's max(getFloatColumn(n))
+_     also important b/c can leave out missing values
+_   include SQL, HTML, ODS, binary?
+_     naming HTMLTable, TableHTML (ala PShapeSVG)
+_     or should it be HTMLTable / HtmlTable... then SVGShape / SvgShape
+_   dictionary support
+_   join tables together (static is kinda gross)
+_ getColumnType() - what should it return?
+_   Integer.TYPE, String.class? still nothing for categorical
+_   maybe it's Table.INT since it's for advanced users anyway
+_   problem is loading types from file, no way to access it from code
+_   CATEGORICAL -> CATEGORY? ORDINAL?
+_ getInt() on categorial to return index?
+_   getCategories() and getCategory() methods to query names?
+
+json
+_ https://github.com/processing/processing/issues/1660
+_ https://github.com/processing/processing/issues/1680
 _ Dan having trouble with JSON
 _ keys() vs keySet() in JSON.. 
 _   keys() doesn't iterate, keySet() introduces 'Set' type
+_ add parseXML() and parseJSONObject(x)
+_ JSONObject.has(key) vs XML.hasAttribute(attr) vs HashMap.containsKey()
+_   and how it should be handled with hash/dict
+_   right now using hasKey().. in JSONObject
+_ add() to add things to lists, sum() for the math (sum is used less after all)
 
 andres
 A lines not properly renderered in P3D when using ortographic projection
@@ -26,7 +76,6 @@ X   really useful, but leaning toward not including it
 X   or leave it in as an advanced feature?
 X createXxx() methods less important
 X   XML.parse() - or new XML("<tag>") or new XML("tag")
-_   add parseXML() and parseJSONObject(x)
 X api note: size() used in data classes
 X   length() too confusing w/ array.length being built-in (when to use ()?)
 X   size() a bit confusing with the p5 size command, but less problematic
@@ -36,14 +85,10 @@ o   could enable loadHash() and loadArray() functions
 X   because the types coming back out would always have to be cast
 o add loadDict() and loadList() for JSON?
 o   Dict and List could be interfaces? 
-_ JSONObject.has(key) vs XML.hasAttribute(attr) vs HashMap.containsKey()
-_   and how it should be handled with hash/dict
-_   right now using hasKey().. in JSONObject
-_ add() to add things to lists, sum() for the math (sum is used less after all)
 
 _ add mouse wheel support to 2.0 event system
-X   http://code.google.com/p/processing/issues/detail?id=1423
 _   https://github.com/processing/processing/issues/1461
+X   http://code.google.com/p/processing/issues/detail?id=1423
 X   this is fairly messy since desktop and JS behave a little differently
 o   wheel event should subclass mouse (since position still relevant)
 X     just another sub-event as part of mouse
@@ -68,39 +113,10 @@ _   also problem for Java2D when canvas is used?
 _   need to standardize canvas handling
 _   https://github.com/processing/processing/issues/1700
 
-_ remap() instead of map()
-
-_ add 'gz' as one of the loadXxx() options
-_   helps .svgz case from being weird, also generally dealing w/ compressed data
-
-_ image caches not being properly disposed (weak references broken?)
-_   http://code.google.com/p/processing/issues/detail?id=1353
+_ introduce remap() instead of map() (if not deprecate?)
 
 _ shader syntax (Andres request)
 _   might also need a define inside the shader to control what type it is
-
-more table
-_ naming for these (or whether to include hash)
-_   Table createSubset() -> leave out?
-_   String[] getUnique(col) (SQL DISTINCT, sort --unique)
-_   HashMap<String,Integer> getUniqueCount(col)
-_ possible features
-_   create table from TableRow iterator...allows for subset and find
-_     downside is types are not included
-_   getMaxFloat() (whole table) or getMaxFloat(col) 
-_     that's max(getFloatColumn(n))
-_     also important b/c can leave out missing values
-_   include SQL, HTML, ODS, binary?
-_     naming HTMLTable, TableHTML (ala PShapeSVG)
-_     or should it be HTMLTable / HtmlTable... then SVGShape / SvgShape
-_   dictionary support
-_   join tables together (static is kinda gross)
-_ getColumnType() - what should it return?
-_   Integer.TYPE, String.class? still nothing for categorical
-_   maybe it's Table.INT since it's for advanced users anyway
-_   problem is loading types from file, no way to access it from code
-_ getInt() on categorial to return index?
-_   getCategories() and getCategory() methods to query names?
 
 shape
 _ major surgery to put loadShape() back into PApplet/PGraphics

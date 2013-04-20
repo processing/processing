@@ -1,6 +1,15 @@
 0217 android 
 
 
+mode split
+X build core when building the mode itself
+X where should core files be stored?
+_ make sure the download of the mode works properly 
+o   maybe even straight from github
+X   means 4 MB files for each repo update
+_ change build script to use ../processing instead of .. as path
+
+
 _ requires deleting the app before reinstalling
 _   just fix this like the others
 debug:

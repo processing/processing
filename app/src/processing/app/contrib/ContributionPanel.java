@@ -58,10 +58,9 @@ class ContributionPanel extends JPanel {
   private boolean alreadySelected;
   private boolean enableHyperlinks;
   private HyperlinkListener conditionalHyperlinkOpener;
-//  private JTextPane headerText;
-//  private JTextPane descriptionText;
-  private JTextPane textBlock;
-  private JTextPane updateNotificationLabel;
+  private JTextPane descriptionBlock;
+//  private JTextPane notificationBlock;
+  private JLabel notificationBlock;
   private JButton updateButton;
   private JProgressBar installProgressBar;
   private JButton installRemoveButton;
@@ -163,119 +162,34 @@ class ContributionPanel extends JPanel {
    * library panel is not clicked.
    */
   private void addPaneComponents() {
-//    setLayout(new GridBagLayout());
     setLayout(new BorderLayout());
 
-//    { // Header text area. The name of the contribution and its authors.
-//      GridBagConstraints c = new GridBagConstraints();
-//      c.gridx = 0;
-//      c.gridy = 0;
-//      c.weightx = 1;
-//      c.weighty = 1;
-//      c.gridwidth = 2;
-//      c.fill = GridBagConstraints.BOTH;
-//      c.anchor = GridBagConstraints.WEST;
-
-    textBlock = new JTextPane();
-    textBlock.setInheritsPopupMenu(true);
-    Insets margin = textBlock.getMargin();
+    descriptionBlock = new JTextPane();
+    descriptionBlock.setInheritsPopupMenu(true);
+    Insets margin = descriptionBlock.getMargin();
     margin.bottom = 0;
-    textBlock.setMargin(margin);
-    textBlock.setContentType("text/html");
-    setTextStyle(textBlock);
-    textBlock.setOpaque(false);
-    stripTextSelectionListeners(textBlock);
-//    }
-    textBlock.setBorder(new EmptyBorder(4, 7, 7, 7));
-    add(textBlock, BorderLayout.CENTER);
+    descriptionBlock.setMargin(margin);
+    descriptionBlock.setContentType("text/html");
+    setTextStyle(descriptionBlock);
+    descriptionBlock.setOpaque(false);
+//    stripTextSelectionListeners(descriptionBlock);
+
+    descriptionBlock.setBorder(new EmptyBorder(4, 7, 7, 7));
+    descriptionBlock.setHighlighter(null);
+    add(descriptionBlock, BorderLayout.CENTER);
     
-//    { // Header text area. The name of the contribution and its authors.
-//      GridBagConstraints c = new GridBagConstraints();
-//      c.gridx = 0;
-//      c.gridy = 0;
-//      c.weightx = 1;
-//      c.fill = GridBagConstraints.BOTH;
-//      c.anchor = GridBagConstraints.WEST;
-//
-//      headerText = new JTextPane();
-//      headerText.setInheritsPopupMenu(true);
-//      Insets margin = headerText.getMargin();
-//      margin.bottom = 0;
-//      headerText.setMargin(margin);
-//      headerText.setContentType("text/html");
-//      setTextStyle(headerText);
-//      headerText.setOpaque(false);
-////      headerPaneSet.add(headerText);
-//      stripTextSelectionListeners(headerText);
-//      add(headerText, c);
-//    }
-//
-//    { // The bottom right of the description, used to show text describing it
-//      GridBagConstraints c = new GridBagConstraints();
-//      c.gridx = 0;
-//      c.gridy = 1;
-//      c.weighty = 1;
-//      c.weightx = 1;
-//      c.gridwidth = 2;
-//      c.fill = GridBagConstraints.BOTH;
-//      c.anchor = GridBagConstraints.NORTHEAST;
-//
-//      JPanel descriptionPanel = new JPanel(new GridBagLayout());
-//      descriptionPanel.setInheritsPopupMenu(true);
-//      descriptionPanel.setOpaque(false);
-//      add(descriptionPanel, c);
-//
-//      {
-//        GridBagConstraints dc = new GridBagConstraints();
-//        dc.fill = GridBagConstraints.HORIZONTAL;
-//        dc.weightx = 1;
-//
-//        descriptionText = new JTextPane();
-//        descriptionText.setInheritsPopupMenu(true);
-//        descriptionText.setContentType("text/html");
-//        setTextStyle(descriptionText);
-//        descriptionText.setOpaque(false);
-//        descriptionPanel.add(descriptionText, dc);
-//      }
-//
-//      int margin = Base.isMacOS() ? 15 : 5;
-//      {
-//        GridBagConstraints dc = new GridBagConstraints();
-//        dc.gridx = 1;
-//        descriptionPanel.add(Box.createHorizontalStrut(margin), dc);
-//      }
-//    }
-
-//    { // A label below the description text showing notifications for when
-//      // updates are available, or instructing the user to restart the PDE if
-//      // necessary
-//      GridBagConstraints c = new GridBagConstraints();
-//      c.gridx = 0;
-//      c.gridy = 2;
-//      c.weightx = 1;
-//      c.insets = new Insets(-5, 0, 0, 0);
-//      c.fill = GridBagConstraints.HORIZONTAL;
-//      c.anchor = GridBagConstraints.EAST;
-
     Box updateBox = Box.createHorizontalBox();  //new BoxLayout(filterPanel, BoxLayout.X_AXIS)
     
-//    BoxLayout
-    updateNotificationLabel = new JTextPane();
-    updateNotificationLabel.setInheritsPopupMenu(true);
-    updateNotificationLabel.setVisible(false);
-    setTextStyle(updateNotificationLabel);
-    stripTextSelectionListeners(updateNotificationLabel);
-//    add(updateNotificationLabel, c);
-//    }
-
-//    { // An update button, shown in the description area, but only visible for
-//      // contributions that do not require a restart.
-//      GridBagConstraints c = new GridBagConstraints();
-//      c.gridx = 1;
-//      c.gridy = 2;
-//      c.weightx = 1;
-//      c.insets = new Insets(-5, 0, 0, 0);
-//      c.anchor = GridBagConstraints.EAST;
+    notificationBlock = new JLabel();
+    notificationBlock.setInheritsPopupMenu(true);
+    notificationBlock.setVisible(false);
+    notificationBlock.setOpaque(false);
+    // not needed after changing to JLabel
+//    notificationBlock.setContentType("text/html");
+//    notificationBlock.setHighlighter(null);
+//    setTextStyle(notificationBlock);
+    notificationBlock.setFont(new Font("Verdana", Font.ITALIC, 10));
+//    stripTextSelectionListeners(notificationBlock);
 
       updateButton = new JButton("Update");
       updateButton.setInheritsPopupMenu(true);
@@ -296,7 +210,8 @@ class ContributionPanel extends JPanel {
 //      add(updateButton, c);
 //    }
     updateBox.add(updateButton);
-    updateBox.add(updateNotificationLabel);
+    updateBox.add(notificationBlock);
+    updateBox.setBorder(new EmptyBorder(4, 7, 7, 7));
     add(updateBox, BorderLayout.SOUTH);
     
 //  }
@@ -436,7 +351,7 @@ class ContributionPanel extends JPanel {
     }
     description.append("</body></html>");
     //descriptionText.setText(description.toString());
-    textBlock.setText(description.toString());
+    descriptionBlock.setText(description.toString());
 //    System.out.println(description);
 
     if (contribListing.hasUpdates(contrib)) {
@@ -451,11 +366,11 @@ class ContributionPanel extends JPanel {
         }
       }
       versionText.append("</i></body></html>");
-      updateNotificationLabel.setText(versionText.toString());
-      updateNotificationLabel.setVisible(true);
+      notificationBlock.setText(versionText.toString());
+      notificationBlock.setVisible(true);
     } else {
-      updateNotificationLabel.setText("");
-      updateNotificationLabel.setVisible(false);
+      notificationBlock.setText("");
+      notificationBlock.setVisible(false);
     }
 
     updateButton.setEnabled(true);
@@ -539,7 +454,9 @@ class ContributionPanel extends JPanel {
   }
 
   
-  void stripTextSelectionListeners(JEditorPane editorPane) {
+  // This doesn't actually seem to work?
+  /*
+  static void stripTextSelectionListeners(JEditorPane editorPane) {
     for (MouseListener listener : editorPane.getMouseListeners()) {
       String className = listener.getClass().getName();
       if (className.endsWith("MutableCaretEvent") || 
@@ -549,6 +466,7 @@ class ContributionPanel extends JPanel {
       }
     }
   }
+  */
   
 
   protected void resetInstallProgressBarState() {
@@ -578,7 +496,7 @@ class ContributionPanel extends JPanel {
     { 
 //      JTextPane textPane = headerText;
 //      JTextPane textPane = textBlock;
-      JEditorPane editorPane = textBlock;  //textPane;
+      JEditorPane editorPane = descriptionBlock;  //textPane;
 
       editorPane.removeHyperlinkListener(ContributionListPanel.nullHyperlinkListener);
       editorPane.removeHyperlinkListener(conditionalHyperlinkOpener);
@@ -592,7 +510,7 @@ class ContributionPanel extends JPanel {
 
       // Update style of hyperlinks
 //      setSelectionStyle(textPane, isSelected());
-      setSelectionStyle(textBlock, isSelected());
+      setSelectionStyle(descriptionBlock, isSelected());
     }
     alreadySelected = isSelected();
   }
@@ -630,7 +548,7 @@ class ContributionPanel extends JPanel {
       boolean installed = contrib.isInstalled(); 
 //      setForegroundStyle(headerText, installed);
 //      setForegroundStyle(descriptionText, installed);
-      setForegroundStyle(textBlock, installed);
+      setForegroundStyle(descriptionBlock, installed, isSelected());
     }
   }
   
@@ -686,13 +604,13 @@ class ContributionPanel extends JPanel {
    * Sets coloring based on whether installed or not; 
    * also makes ugly blue HTML links into the specified color (black).
    */
-  static void setForegroundStyle(JTextPane textPane, boolean installed) {
+  static void setForegroundStyle(JTextPane textPane, boolean installed, boolean selected) {
     Document doc = textPane.getDocument();
     if (doc instanceof HTMLDocument) {
       HTMLDocument html = (HTMLDocument) doc;
       StyleSheet stylesheet = html.getStyleSheet();
       
-      String c = installed ? "#555555" : "#000000";  // slightly grayed when installed
+      String c = (installed && !selected) ? "#555555" : "#000000";  // slightly grayed when installed
 //      String c = "#000000";  // just make them both black
       stylesheet.addRule("body { color:" + c + "; }");
       stylesheet.addRule("a { color:" + c + "; }");

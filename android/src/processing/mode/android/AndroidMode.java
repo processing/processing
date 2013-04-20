@@ -92,6 +92,7 @@ public class AndroidMode extends JavaMode {
 
   protected File getCoreZipLocation() {
     if (coreZipLocation == null) {
+      /*
       // for debugging only, check to see if this is an svn checkout
       File debugFile = new File("../../../android/core.zip");
       if (!debugFile.exists() && Base.isMacOS()) {
@@ -103,6 +104,7 @@ public class AndroidMode extends JavaMode {
 //        return debugFile;
         coreZipLocation = debugFile;
       }
+      */
 
       // otherwise do the usual
       //    return new File(base.getSketchbookFolder(), ANDROID_CORE_FILENAME);

@@ -56,6 +56,7 @@
       </dict>
     </array>
 
+    <!-- Do not change this. If you do, do not file a bug. -->
     <key>LSMinimumSystemVersion</key>
     <string>10.6.8</string>
 
@@ -76,7 +77,9 @@
       <key>MainClass</key>
       <string>processing.app.Base</string>
 
-      <!-- As of 2.0a2 we are now requiring Java 1.6 -->
+      <!-- As of 2.0a2 we are now requiring Java 1.6. We don't yet support
+	   Java 7 on OS X (because of lack of retina and JOGL support).
+	   Switching this to 1.7 will likely break lots of things. -->
       <key>JVMVersion</key>
       <string>1.6*</string>
 

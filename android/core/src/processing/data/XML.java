@@ -43,6 +43,8 @@ import processing.core.PApplet;
  *
  * @webref data:composite
  * @see PApplet#loadXML(String)
+ * @see PApplet#parseXML(String)
+ * @see PApplet#saveXML(XML, String)
  */
 public class XML implements Serializable {
 
@@ -75,16 +77,26 @@ public class XML implements Serializable {
 //    this(parent.createReader(filename));
 //  }
 
+
+  /**
+   * @param file description TBD
+   */
   public XML(File file) throws IOException, ParserConfigurationException, SAXException {
     this(file, null);
   }
 
 
+  /**
+   * @param options description TBD
+   */
   public XML(File file, String options) throws IOException, ParserConfigurationException, SAXException {
     this(PApplet.createReader(file), options);
   }
 
 
+  /**
+   * @param input description TBD
+   */
   public XML(InputStream input) throws IOException, ParserConfigurationException, SAXException {
     this(input, null);
   }
@@ -138,6 +150,9 @@ public class XML implements Serializable {
   }
 
 
+  /**
+   * @param name description TBD
+   */
   // TODO is there a more efficient way of doing this? wow.
   public XML(String name) throws ParserConfigurationException {
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -749,12 +764,84 @@ public class XML implements Serializable {
   }
 
 
+  public int getIntContent() {
+    return getIntContent(0);
+  }
+
+
+  public int getIntContent(int defaultValue) {
+    return PApplet.parseInt(node.getTextContent(), defaultValue);
+  }
+
+
+  public float getFloatContent() {
+    return getFloatContent(0);
+  }
+
+
+  public float getFloatContent(float defaultValue) {
+    return PApplet.parseFloat(node.getTextContent(), defaultValue);
+  }
+
+
+  public long getLongContent() {
+    return getLongContent(0);
+  }
+
+
+  public long getLongContent(long defaultValue) {
+    String c = node.getTextContent();
+    if (c != null) {
+      try {
+        return Long.parseLong(c);
+      } catch (NumberFormatException nfe) { }
+    }
+    return defaultValue;
+  }
+
+
+  public double getDoubleContent() {
+    return getDoubleContent(0);
+  }
+
+
+  public double getDoubleContent(double defaultValue) {
+    String c = node.getTextContent();
+    if (c != null) {
+      try {
+        return Double.parseDouble(c);
+      } catch (NumberFormatException nfe) { }
+    }
+    return defaultValue;
+  }
+
+
   /**
    * @webref xml:method
    * @brief Sets the content of an element
    */
   public void setContent(String text) {
     node.setTextContent(text);
+  }
+
+
+  public void setIntContent(int value) {
+    setContent(String.valueOf(value));
+  }
+
+
+  public void setFloatContent(float value) {
+    setContent(String.valueOf(value));
+  }
+
+
+  public void setLongContent(long value) {
+    setContent(String.valueOf(value));
+  }
+
+
+  public void setDoubleContent(double value) {
+    setContent(String.valueOf(value));
   }
 
 

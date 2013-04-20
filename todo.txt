@@ -8,73 +8,51 @@ X incorporate JDI changes from Manindra
 X fix autoformat to indent like the p5 book/examples
 X   http://code.google.com/p/processing/issues/detail?id=325
 X   https://github.com/processing/processing/issues/364
+X fix NPE problem with retina checking on Java 7
+o deleting tools folder while running causes exception when changing modes
+o   https://github.com/processing/processing/issues/1707
+X   won't bother fixing this one
+X remove netscape.javascript stuff
+o move arduino out to its own library (already done, just not on site)
+o crash when selecting "Show Sketch Folder" with Windows 7
+o   might be a java.awt.Desktop problem
+X   http://code.google.com/p/processing/issues/detail?id=1473
+X   marked cantfix back in December
 
-_ / breaks syntax highlighting
-_   https://github.com/processing/processing/issues/1681
+manager
+X "New version available" mesage is showing html tags around it
+X   https://github.com/processing/processing/issues/1684
+X shift color of installed items when selected 
+X   was ugly gray over selection color
+X fix layout of the update button
+X get update text to align vertically
+X "Update" not working in the library manager
+X   https://github.com/processing/processing/issues/1701
 
-_ draw() called again before finishing on OS X
-_   https://github.com/processing/processing/issues/1709
+
+_ send info on 'check for updates' so we know about libs/modes/etc?
+_   how to disclose to users?
+_   only send for items that are part of the public list 
+_     otherwise we're sending private libraries/installs
+_     although this won't pick up old libraries not on the new system
+
 
 _ how does new JDI affect Experimental? duplicate libs? loader issues?
 _ move Android mode out to its own repo
 _ change line endings on Windows to only be replaced during dist
 _   otherwise marks revisions.txt as changed
 
-library changes (site only?)
-_ remove netscape.javascript stuff
-_ move minim out to its own contrib section
-_ move arduino out to its own library
-
 _ remove sketch.properties when moving back to the default?
-_   or can we not do this, because the next mode needs this?
+_   or can we not do this, because it's used to set the 'next' mode
 
 _ change error message for serial re: 64-bit
 _   "To use this library, switch to 32-bit mode in Preferences." (OS X)
 _   "To use this library, you must use the 32-bit version of Processing."
 
-before release
-_ make decision about where coloring is stored
-_   needs to be reset for this release, maybe others
-
-
-2.0 FINAL / library/tool/mode manager cleanup
-
-_ "Update" not working in the library manager
-_   https://github.com/processing/processing/issues/1701
-_ "New version available" mesage is showing html tags around it
-_   https://github.com/processing/processing/issues/1684
-
-medium
-_ deleting tools folder while running causes exception when changing modes
-_   https://github.com/processing/processing/issues/1707
-_ Contributed modes should show up in mode menu after installation
-_   waiting for fixed CoffeeScript mode to test this one
-_   https://github.com/processing/processing/issues/1504
-X   http://code.google.com/p/processing/issues/detail?id=1466
-_ new libraries not picked up when changing sketchbook location
-_ make sure contrib manager can run w/o a network connection
-_   or if a bad document comes through, it can recover
-_ gracefully recover from proxy problems
-_   https://github.com/processing/processing/issues/1601
-_ alternating blue/white backgrounds aren't updated after changing filter
-_   just need to call a repaint() after a filter change?
-_ check with Casey about coloring for error messages
-_ test on Windows and Linux
-_ scrolls to bottom of window after updating the list
-
-low
-_ font size for "Downloading" on progress bar is too large
-_   but changing the size breaks the vertical centering
-_ highlight color seems to be incorrect?
-_ after installing, the item in the manager list doesn't change color
-_ wheel mouse is super jumpy 
-_   something about unit increment in ContributionListPanel
-_ arrow keys up/down move scroll bar, not selection
-_ excessive CPU usage of PDE after using library manager
-_   confirmed to still be a problem with b5/6
-_   https://github.com/processing/processing/issues/1074
-X   http://code.google.com/p/processing/issues/detail?id=1036
-_ move styling to separate constants that are more accessible
+_ Linux sometimes not responding correctly w/ the size() command
+_   https://github.com/processing/processing/issues/1672
+_ processing-java output as UTF-8 makes Windows unhappy
+_   https://github.com/processing/processing/issues/1633
 
 
 2.0 FINAL / new interface
@@ -85,6 +63,8 @@ _   for that matter, need to decide on how much modes can customize themselves
 _ remove PdeKeyListener, roll it into the Java InputHandler for JEditTextArea
 _   move Java-specific InputHandler to its own subclass
 _ setModified() getting called on Windows (probably Linux) for key cmds
+_ make decision about where coloring is stored
+_   needs to be reset for this release, maybe others
 
 
 2.0 FINAL / more open/save/etc
@@ -537,6 +517,8 @@ _   http://code.google.com/p/processing/issues/detail?id=8
 
 PDE / Editor
 
+_ / breaks syntax highlighting
+_   https://github.com/processing/processing/issues/1681
 _ the PDE uses 15% of CPU while just sitting idle
 _   https://github.com/processing/processing/issues/1561
 _ renaming RGB (.pde) to Rgb.java says "a file named RGB.pde already exists"
@@ -653,6 +635,38 @@ _   just do them from psk files
 _ sketch.isReadOnly returns false for examples coming from multiple modes
 _   http://code.google.com/p/processing/issues/detail?id=734
 _ see how library installation goes, then possibly do same w/ examples
+
+
+
+PDE / Manager
+
+_ Contributed modes should show up in mode menu after installation
+_   waiting for fixed CoffeeScript mode to test this one
+_   https://github.com/processing/processing/issues/1504
+X   http://code.google.com/p/processing/issues/detail?id=1466
+_ new libraries not picked up when changing sketchbook location
+_ make sure contrib manager can run w/o a network connection
+_   or if a bad document comes through, it can recover
+_ gracefully recover from proxy problems
+_   https://github.com/processing/processing/issues/1601
+_ alternating blue/white backgrounds aren't updated after changing filter
+_   just need to call a repaint() after a filter change?
+_ check with Casey about coloring for error messages
+_ test on Windows and Linux
+_ scrolls to bottom of window after updating the list
+_ font size for "Downloading" on progress bar is too large
+_   but changing the size breaks the vertical centering
+_ highlight color seems to be incorrect?
+_ after installing, the item in the manager list doesn't change color
+_ wheel mouse is super jumpy 
+_   something about unit increment in ContributionListPanel
+_ arrow keys up/down move scroll bar, not selection
+_ excessive CPU usage of PDE after using library manager
+_   confirmed to still be a problem with b5/6
+_   https://github.com/processing/processing/issues/1074
+X   http://code.google.com/p/processing/issues/detail?id=1036
+_ fonts/etc need to be set in one place where they can be edited
+_   move styling to separate constants that are more accessible
 
 
 PDE / Preferences
@@ -821,6 +835,10 @@ How the environment gets packed up, downloaded, and installed.
 
 DIST / General 
 
+_ should be able to build p5 without a JDK install, just a JRE
+_   need to have ecj.jar accessible to ant, then modify build.xml to use this:
+_   <property name="build.compiler" 
+_             value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
 _ add means to move changes from desktop to Android (and vice-versa)
 _ add bootclasspath for 1.6
 _   would require --install for command line on OS X
@@ -851,9 +869,8 @@ _   avoid some confusion for when describing the libraries folder to users
 
 DIST / Windows
 
-_ crash when selecting "Show Sketch Folder" with Windows 7
-_   might be a java.awt.Desktop problem
-_   http://code.google.com/p/processing/issues/detail?id=1473
+_ updated launch4j 3.1 beta
+_   http://sourceforge.net/projects/launch4j/files/launch4j-3/
 _ does launching p5 from inside the .zip folder cause it to quit immediately?
 _ fix line endings in revisions.txt for windows
 _ exe instead of bat to make exported apps run in 64-bit
@@ -873,9 +890,12 @@ _   In regedit: Navigate to Computer\HKEY_CLASSES_ROOT\Applications and find you
 
 
 DIST / Mac OS X
-_ keep an eye on the Java 8 builds, since all the effort goes there
-_   https://wikis.oracle.com/display/OpenJDK/Mac+OS+X+Port
-_   ./jdk8/build/macosx-x86_64-normal-server-release/jdk/bin/java
+_ waiting on retina support for JDK 7
+_   http://bugs.sun.com/view_bug.do?bug_id=8009754
+_   b86 supposed to have some support (not available yet)
+_     http://jdk8.java.net/download.html
+_ LWJGL forum discussion 
+_   http://lwjgl.org/forum/index.php/topic,4711.225.html
 _ change cmd line for OS X to use symlink? 
 _   otherwise updates are going to require reinstall..
 _   or that it's gonna need to parse and say "update command line?" 
