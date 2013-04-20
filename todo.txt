@@ -12,6 +12,12 @@ X fix NPE problem with retina checking on Java 7
 o deleting tools folder while running causes exception when changing modes
 o   https://github.com/processing/processing/issues/1707
 X   won't bother fixing this one
+X remove netscape.javascript stuff
+o move arduino out to its own library (already done, just not on site)
+o crash when selecting "Show Sketch Folder" with Windows 7
+o   might be a java.awt.Desktop problem
+X   http://code.google.com/p/processing/issues/detail?id=1473
+X   marked cantfix back in December
 
 manager
 X "New version available" mesage is showing html tags around it
@@ -23,15 +29,18 @@ X get update text to align vertically
 X "Update" not working in the library manager
 X   https://github.com/processing/processing/issues/1701
 
+
+_ send info on 'check for updates' so we know about libs/modes/etc?
+_   how to disclose to users?
+_   only send for items that are part of the public list 
+_     otherwise we're sending private libraries/installs
+_     although this won't pick up old libraries not on the new system
+
+
 _ how does new JDI affect Experimental? duplicate libs? loader issues?
 _ move Android mode out to its own repo
 _ change line endings on Windows to only be replaced during dist
 _   otherwise marks revisions.txt as changed
-
-library changes (site only?)
-_ remove netscape.javascript stuff
-_ move minim out to its own contrib section
-_ move arduino out to its own library
 
 _ remove sketch.properties when moving back to the default?
 _   or can we not do this, because it's used to set the 'next' mode
@@ -44,41 +53,6 @@ _ Linux sometimes not responding correctly w/ the size() command
 _   https://github.com/processing/processing/issues/1672
 _ processing-java output as UTF-8 makes Windows unhappy
 _   https://github.com/processing/processing/issues/1633
-
-
-2.0 FINAL / library/tool/mode manager cleanup
-
-medium
-_ send info on 'check for updates' so we know about libs/modes/etc?
-_   how to disclose to users?
-_ Contributed modes should show up in mode menu after installation
-_   waiting for fixed CoffeeScript mode to test this one
-_   https://github.com/processing/processing/issues/1504
-X   http://code.google.com/p/processing/issues/detail?id=1466
-_ new libraries not picked up when changing sketchbook location
-_ make sure contrib manager can run w/o a network connection
-_   or if a bad document comes through, it can recover
-_ gracefully recover from proxy problems
-_   https://github.com/processing/processing/issues/1601
-_ alternating blue/white backgrounds aren't updated after changing filter
-_   just need to call a repaint() after a filter change?
-_ check with Casey about coloring for error messages
-_ test on Windows and Linux
-_ scrolls to bottom of window after updating the list
-
-low
-_ font size for "Downloading" on progress bar is too large
-_   but changing the size breaks the vertical centering
-_ highlight color seems to be incorrect?
-_ after installing, the item in the manager list doesn't change color
-_ wheel mouse is super jumpy 
-_   something about unit increment in ContributionListPanel
-_ arrow keys up/down move scroll bar, not selection
-_ excessive CPU usage of PDE after using library manager
-_   confirmed to still be a problem with b5/6
-_   https://github.com/processing/processing/issues/1074
-X   http://code.google.com/p/processing/issues/detail?id=1036
-_ move styling to separate constants that are more accessible
 
 
 2.0 FINAL / new interface
@@ -663,6 +637,38 @@ _   http://code.google.com/p/processing/issues/detail?id=734
 _ see how library installation goes, then possibly do same w/ examples
 
 
+
+PDE / Manager
+
+_ Contributed modes should show up in mode menu after installation
+_   waiting for fixed CoffeeScript mode to test this one
+_   https://github.com/processing/processing/issues/1504
+X   http://code.google.com/p/processing/issues/detail?id=1466
+_ new libraries not picked up when changing sketchbook location
+_ make sure contrib manager can run w/o a network connection
+_   or if a bad document comes through, it can recover
+_ gracefully recover from proxy problems
+_   https://github.com/processing/processing/issues/1601
+_ alternating blue/white backgrounds aren't updated after changing filter
+_   just need to call a repaint() after a filter change?
+_ check with Casey about coloring for error messages
+_ test on Windows and Linux
+_ scrolls to bottom of window after updating the list
+_ font size for "Downloading" on progress bar is too large
+_   but changing the size breaks the vertical centering
+_ highlight color seems to be incorrect?
+_ after installing, the item in the manager list doesn't change color
+_ wheel mouse is super jumpy 
+_   something about unit increment in ContributionListPanel
+_ arrow keys up/down move scroll bar, not selection
+_ excessive CPU usage of PDE after using library manager
+_   confirmed to still be a problem with b5/6
+_   https://github.com/processing/processing/issues/1074
+X   http://code.google.com/p/processing/issues/detail?id=1036
+_ fonts/etc need to be set in one place where they can be edited
+_   move styling to separate constants that are more accessible
+
+
 PDE / Preferences
 
 _ the .macosx, .linux, etc prefs should be stripped
@@ -863,9 +869,8 @@ _   avoid some confusion for when describing the libraries folder to users
 
 DIST / Windows
 
-_ crash when selecting "Show Sketch Folder" with Windows 7
-_   might be a java.awt.Desktop problem
-_   http://code.google.com/p/processing/issues/detail?id=1473
+_ updated launch4j 3.1 beta
+_   http://sourceforge.net/projects/launch4j/files/launch4j-3/
 _ does launching p5 from inside the .zip folder cause it to quit immediately?
 _ fix line endings in revisions.txt for windows
 _ exe instead of bat to make exported apps run in 64-bit
