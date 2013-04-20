@@ -97,14 +97,17 @@
     <antcall target="${platform}-dist" />
   </target>
 
+<!--
   <target name="android-dist-check">
+-->
     <!-- ensure that the android-core.zip file has been built -->
+<!--
     <available file="${target.path}/modes/android/android-core.zip" 
 	       property="android-core-present" />
-    <!--<echo message="${target.path}/modes/android/android-core.zip" />-->
     <fail unless="android-core-present" 
 	  message="android-core.zip was not built, but is required for dist. Install the Android tools, set ANDROID_SDK, and try again." />
   </target>
+-->
 
   <!-- "§$§$&, ant doesn't have a built-in help target :(  -->
   <target name="help" description="Show project help">
@@ -126,7 +129,9 @@
     <subant buildpath="../java/libraries/serial" target="clean"/>
     <subant buildpath="../java/libraries/video" target="clean"/>
     <subant buildpath="../experimental" target="clean"/>
+<!--
     <subant buildpath="../android/core" target="clean"/>
+-->
     <subant buildpath="shared/tools/MovieMaker" target="clean"/>
   </target>
   
@@ -139,7 +144,9 @@
     <subant buildpath="../java/libraries/serial" target="build"/>
     <subant buildpath="../java/libraries/video" target="build"/>
     <subant buildpath="../experimental" target="build"/>
+<!--
     <subant buildpath="../android/core" target="build"/>
+-->
     <subant buildpath="shared/tools/MovieMaker" target="build"/>
   </target>
   
@@ -223,6 +230,7 @@
       </fileset>
     </copy> -->
 
+<!--
     <copy todir="${target.path}/modes/android">
       <fileset dir="../android">
 	<include name="android-core.zip" />
@@ -230,15 +238,18 @@
 	<include name="icons/**" />
 	<include name="theme/**" />
 	<include name="keywords.txt" />
-<!--
+	<exclude name="**/._*" />
+-->
+<!-- these had already been commented out 
 	<exclude name="**/bin/**" />
 	<exclude name="**/src/**" />
 	<exclude name="cmd" />
 	<exclude name="reference.zip" />
 -->
-	<exclude name="**/._*" />
+<!--
       </fileset>
     </copy>
+-->
     
     <!-- copy libraries -->
 <!--
@@ -453,7 +464,7 @@
   </target>
 
   <target name="macosx-dist" if="macosx" 
-	  depends="macosx-build,android-dist-check" 
+	  depends="macosx-build" 
 	  description="Create a downloadable .zip for the Mac OS X version">
 
     <!-- The ant copy command does not preserve permissions. -->
@@ -627,7 +638,7 @@
     <exec executable="./processing" dir="linux/work" spawn="true"/>
   </target>
   
-  <target name="linux-dist" depends="linux-build,android-dist-check" 
+  <target name="linux-dist" depends="linux-build" 
 	  description="Build .tar.gz of linux version">
 
 <!--
@@ -782,7 +793,7 @@
 	  dir="windows/work" spawn="true"/>
   </target>
 
-  <target name="windows-dist" depends="windows-build,android-dist-check" 
+  <target name="windows-dist" depends="windows-build" 
 	  description="Create .zip files of windows version">
     <!--
     <zip basedir="windows/work" 

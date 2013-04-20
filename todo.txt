@@ -9,6 +9,12 @@ X fix autoformat to indent like the p5 book/examples
 X   http://code.google.com/p/processing/issues/detail?id=325
 X   https://github.com/processing/processing/issues/364
 X fix NPE problem with retina checking on Java 7
+o deleting tools folder while running causes exception when changing modes
+o   https://github.com/processing/processing/issues/1707
+X   won't bother fixing this one
+
+_ send info on 'check for updates' so we know about libs/modes/etc?
+_   how to disclose to users?
 
 _ / breaks syntax highlighting
 _   https://github.com/processing/processing/issues/1681
@@ -39,10 +45,6 @@ _   https://github.com/processing/processing/issues/1672
 _ processing-java output as UTF-8 makes Windows unhappy
 _   https://github.com/processing/processing/issues/1633
 
-before release
-_ make decision about where coloring is stored
-_   needs to be reset for this release, maybe others
-
 
 2.0 FINAL / library/tool/mode manager cleanup
 
@@ -52,8 +54,6 @@ _ "New version available" mesage is showing html tags around it
 _   https://github.com/processing/processing/issues/1684
 
 medium
-_ deleting tools folder while running causes exception when changing modes
-_   https://github.com/processing/processing/issues/1707
 _ Contributed modes should show up in mode menu after installation
 _   waiting for fixed CoffeeScript mode to test this one
 _   https://github.com/processing/processing/issues/1504
@@ -92,6 +92,8 @@ _   for that matter, need to decide on how much modes can customize themselves
 _ remove PdeKeyListener, roll it into the Java InputHandler for JEditTextArea
 _   move Java-specific InputHandler to its own subclass
 _ setModified() getting called on Windows (probably Linux) for key cmds
+_ make decision about where coloring is stored
+_   needs to be reset for this release, maybe others
 
 
 2.0 FINAL / more open/save/etc
