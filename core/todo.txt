@@ -11,6 +11,9 @@ X   getIntContent()
 X   getFloatContent()
 X   getContent() or getStringContent()?
 
+_ draw() called again before finishing on OS X
+_   https://github.com/processing/processing/issues/1709
+
 _ tint() with JAVA2D does not automatically refresh (with possible fix)
 _   https://github.com/processing/processing/issues/1730
 
