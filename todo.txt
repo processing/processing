@@ -8,10 +8,7 @@ X incorporate JDI changes from Manindra
 X fix autoformat to indent like the p5 book/examples
 X   http://code.google.com/p/processing/issues/detail?id=325
 X   https://github.com/processing/processing/issues/364
-X fix problem with retina checking on Java 7
-
-_ table writing twice when .csv is added 
-_   https://github.com/processing/processing/issues/1734
+X fix NPE problem with retina checking on Java 7
 
 _ / breaks syntax highlighting
 _   https://github.com/processing/processing/issues/1681

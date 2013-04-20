@@ -6,14 +6,16 @@ X   https://github.com/processing/processing/issues/1682
 A image caches not being properly disposed (weak references broken?)
 X   http://code.google.com/p/processing/issues/detail?id=1353
 A   https://github.com/processing/processing/issues/1391
+X implement content specifiers
+X   getIntContent()
+X   getFloatContent()
+X   getContent() or getStringContent()?
 
 _ tint() with JAVA2D does not automatically refresh (with possible fix)
 _   https://github.com/processing/processing/issues/1730
 
-_ implement content specifiers
-getIntContent()
-getFloatContent()
-getContent() or getStringContent()?
+_ table writing twice when .csv is added 
+_   https://github.com/processing/processing/issues/1734
 
 finish json support
 _ https://github.com/processing/processing/issues/1660
