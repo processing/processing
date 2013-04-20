@@ -121,121 +121,6 @@ public class ASTGenerator {
     //addCompletionPopupListner();
   }
 
-  private SuggestionPanel suggestion;
-
-  JEditTextArea textarea;
-
-  private void addCompletionPopupListner() {
-    textarea = errorCheckerService.getEditor().textArea();
-    textarea.addKeyListener(new KeyListener() {
-
-      @Override
-      public void keyTyped(KeyEvent e) {
-        if (e.getKeyChar() == KeyEvent.VK_ENTER) {
-          if (suggestion != null) {
-            if (suggestion.insertSelection()) {
-              e.consume();
-              final int position = textarea.getCaretPosition();
-              SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                  try {
-                    textarea.getDocument().remove(position - 1, 1);
-                  } catch (BadLocationException e) {
-                    e.printStackTrace();
-                  }
-                }
-              });
-            }
-          }
-        } else if (e.getKeyChar() == KeyEvent.VK_BACK_SPACE) {
-          System.out.println("BK Key");
-        }
-      }
-
-      @Override
-      public void keyReleased(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_DOWN && suggestion != null) {
-          suggestion.moveDown();
-        } else if (e.getKeyCode() == KeyEvent.VK_UP && suggestion != null) {
-          suggestion.moveUp();
-        } else if (Character.isLetterOrDigit(e.getKeyChar())
-            || e.getKeyChar() == KeyEvent.VK_BACK_SPACE
-            || e.getKeyChar() == KeyEvent.VK_DELETE) {
-          SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-              showSuggestion();
-            }
-
-          });
-        } else if (Character.isWhitespace(e.getKeyChar())) {
-          hideSuggestion();
-        }
-      }
-
-      @Override
-      public void keyPressed(KeyEvent e) {
-
-      }
-    });
-  }
-
-  protected void showSuggestionLater() {
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        showSuggestion();
-      }
-
-    });
-  }
-
-  protected void showSuggestion() {
-    hideSuggestion();
-    final int position = textarea.getCaretPosition();
-    Point location = new Point();
-    try {
-      location.x = textarea.offsetToX(textarea.getCaretLine(), position
-          - textarea.getLineStartOffset(textarea.getCaretLine()));
-      location.y = textarea.lineToY(textarea.getCaretLine())
-          + textarea.getPainter().getFontMetrics().getHeight();
-    } catch (Exception e2) {
-      e2.printStackTrace();
-      return;
-    }
-    String text = textarea.getText();
-    int start = Math.max(0, position - 1);
-    while (start > 0) {
-      if (!Character.isWhitespace(text.charAt(start))) {
-        start--;
-      } else {
-        start++;
-        break;
-      }
-    }
-    if (start > position) {
-      return;
-    }
-    final String subWord = text.substring(start, position);
-    if (subWord.length() < 2) {
-      return;
-    }
-    suggestion = new SuggestionPanel(textarea, position, subWord, location);
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        textarea.requestFocusInWindow();
-      }
-    });
-  }
-
-  private void hideSuggestion() {
-    if (suggestion != null) {
-      suggestion.hide();
-    }
-  }
-
   public class ASTNodeWrapper {
     private ASTNode node;
 
@@ -308,15 +193,17 @@ public class ASTGenerator {
 //						return;
           jtree.setModel(new DefaultTreeModel(codeTree));
           ((DefaultTreeModel) jtree.getModel()).reload();
-          if (!frame2.isVisible()) {
-            frame2.setVisible(true);
+//          if (!frame2.isVisible()) {
+//            frame2.setVisible(true);
+//          }
+          if (!frameAutoComp.isVisible()){
+            frameAutoComp.setVisible(true);
+            long t = System.currentTimeMillis();
             loadJars();
             loadJavaDoc();
-            addCompletionPopupListner();
-            //System.out.println(System.getProperty("java.home"));
+            System.out.println("Time taken: "
+                + (System.currentTimeMillis() - t));
           }
-          if (!frameAutoComp.isVisible())
-            frameAutoComp.setVisible(true);
           if (!jdocWindow.isVisible())
             jdocWindow.setVisible(true);
           jtree.validate();
@@ -324,7 +211,7 @@ public class ASTGenerator {
       }
     };
     worker.execute();
-    System.err.println("++>" + System.getProperty("java.class.path"));
+//    System.err.println("++>" + System.getProperty("java.class.path"));
 //    System.out.println(System.getProperty("java.class.path"));
 //    System.out.println("-------------------------------");
     return codeTree;
@@ -354,22 +241,20 @@ public class ASTGenerator {
       }
 
       //String paths[] = tehPaths.split(File.separatorChar +"");
-      StringTokenizer st = new StringTokenizer(tehPath.toString(),
-                                               File.pathSeparatorChar + "");
-      while (st.hasMoreElements()) {
-        System.out.println("- " + st.nextToken());
-      }
+//      StringTokenizer st = new StringTokenizer(tehPath.toString(),
+//                                               File.pathSeparatorChar + "");
+
       classPath = factory.createFromPath(tehPath.toString());
-      for (String packageName : classPath.listPackages("")) {
-        System.out.println(packageName);
-      }
+//      for (String packageName : classPath.listPackages("")) {
+//        System.out.println(packageName);
+//      }
       RegExpResourceFilter regExpResourceFilter = new RegExpResourceFilter(
                                                                            ".*",
                                                                            "Vec3D.class");
-      String[] resources = classPath.findResources("", regExpResourceFilter);
-      for (String className : resources) {
-        System.out.println("-> " + className);
-      }
+//      String[] resources = classPath.findResources("", regExpResourceFilter);
+//      for (String className : resources) {
+//        System.out.println("-> " + className);
+//      }
     } catch (Exception e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -402,7 +287,7 @@ public class ASTGenerator {
         //System.out.println(element.text());
 //        if (element.nextElementSibling() != null)
 //          System.out.println(element.nextElementSibling().text());
-        System.out.println("-------------------");
+        //System.out.println("-------------------");
         msg = "<html><body> <strong><div style=\"width: 300px; text-justification: justify;\"></strong>"
             + element.html()
             + element.nextElementSibling()
@@ -432,10 +317,10 @@ public class ASTGenerator {
 //        }
       }
       System.out.println("JDoc loaded");
-      for (String key : jdocMap.keySet()) {
-        System.out.println("Method: " + key);
-        System.out.println("Method: " + jdocMap.get(key));
-      }
+//      for (String key : jdocMap.keySet()) {
+//        System.out.println("Method: " + key);
+//        System.out.println("Method: " + jdocMap.get(key));
+//      }
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -491,14 +376,14 @@ public class ASTGenerator {
     List<VariableDeclarationFragment> vdfs = null;
     switch (node.getNodeType()) {
     case ASTNode.TYPE_DECLARATION:
-      return new String[] { getNodeAsString(node) };
+      return new String[] { getNodeAsString2(node) };
 
     case ASTNode.METHOD_DECLARATION:
-      String[] ret1 = new String[] { getNodeAsString(node) };
+      String[] ret1 = new String[] { getNodeAsString2(node) };
       return ret1;
 
     case ASTNode.SINGLE_VARIABLE_DECLARATION:
-      return new String[] { getNodeAsString(node) };
+      return new String[] { getNodeAsString2(node) };
 
     case ASTNode.FIELD_DECLARATION:
       vdfs = ((FieldDeclaration) node).fragments();
@@ -517,7 +402,7 @@ public class ASTGenerator {
       String ret[] = new String[vdfs.size()];
       int i = 0;
       for (VariableDeclarationFragment vdf : vdfs) {
-        ret[i++] = getNodeAsString(vdf);
+        ret[i++] = getNodeAsString2(vdf);
       }
       return ret;
     }
@@ -756,19 +641,19 @@ public class ASTGenerator {
                     .fragments();
                 for (VariableDeclarationFragment vdf : vdfs) {
                   if (noCompare) {
-                    candidates.add(getNodeAsString(vdf));
+                    candidates.add(getNodeAsString2(vdf));
                   } else if (vdf.getName().toString()
                       .startsWith(child.toString()))
-                    candidates.add(getNodeAsString(vdf));
+                    candidates.add(getNodeAsString2(vdf));
                 }
 
               }
               for (int i = 0; i < td.getMethods().length; i++) {
                 if (noCompare) {
-                  candidates.add(getNodeAsString(td.getMethods()[i]));
+                  candidates.add(getNodeAsString2(td.getMethods()[i]));
                 } else if (td.getMethods()[i].getName().toString()
                     .startsWith(child.toString()))
-                  candidates.add(getNodeAsString(td.getMethods()[i]));
+                  candidates.add(getNodeAsString2(td.getMethods()[i]));
               }
             } else {
               if (stp != null) {
@@ -830,6 +715,7 @@ public class ASTGenerator {
         }
 
         String[][] candi = new String[candidates.size()][1];
+
         for (int i = 0; i < candi.length; i++) {
           candi[i][0] = candidates.get(i);
         }
@@ -840,6 +726,13 @@ public class ASTGenerator {
         tableAuto.setModel(tm);
         tableAuto.validate();
         tableAuto.repaint();
+        //String[] items = 
+        String[] candi2 = candidates.toArray(new String[candidates
+                                                        .size()]);
+        errorCheckerService
+            .getEditor()
+            .textArea()
+            .showSuggestion(candi2);
       }
     };
 
@@ -868,9 +761,11 @@ public class ASTGenerator {
 
         for (Method method : probableClass.getMethods()) {
           StringBuffer label = new StringBuffer(method.getName() + "(");
-          for (Class<?> type : method.getParameterTypes()) {
-            label.append(type.getSimpleName() + ",");
+          for (int i = 0; i < method.getParameterTypes().length; i++) {
+            if(i < method.getParameterTypes().length - 1)
+              label.append(method.getParameterTypes()[i].getSimpleName() + ",");
           }
+          
           label.append(")");
           if (noCompare)
             candidates.add(label.toString());
@@ -891,26 +786,22 @@ public class ASTGenerator {
     }
     if (candidates.size() > 0) {
       String methodmatch = candidates.get(0);
+      if(methodmatch.indexOf('(') != -1){
+        methodmatch = methodmatch.substring(0, methodmatch.indexOf('(') - 1);
+      }
       System.out.println("jdoc match " + methodmatch);
       for (final String key : jdocMap.keySet()) {
-        if (methodmatch.startsWith(key) && key.length() > 4) {
+        if (key.startsWith(methodmatch) && key.length() > 3) {
           System.out.println("Matched jdoc" + key);
-          jdocLabel.setText(jdocMap.get(key));
-          visitRecur((ASTNode) compilationUnit.types().get(0), codeTree);
-          SwingWorker worker = new SwingWorker() {
-
+         
+          //visitRecur((ASTNode) compilationUnit.types().get(0), codeTree);
+          SwingUtilities.invokeLater(new Runnable() {
+            
             @Override
-            protected Object doInBackground() throws Exception {
-              return null;
+            public void run() {
+              jdocLabel.setText(jdocMap.get(key));
             }
-
-            protected void done() {
-              System.out.println(jdocMap.get(key));
-              jdocLabel.repaint();
-            }
-          };
-          worker.execute();
-
+          });
           break;
         }
       }
@@ -1851,6 +1742,58 @@ public class ASTGenerator {
             .getStartPosition());
     return value;
   }
+  
+  /**
+   * CompletionPanel name  
+   * @param node
+   * @return
+   */
+  static private String getNodeAsString2(ASTNode node) {
+    if (node == null)
+      return "NULL";
+    String className = node.getClass().getName();
+    int index = className.lastIndexOf(".");
+    if (index > 0)
+      className = className.substring(index + 1);
+
+    // if(node instanceof BodyDeclaration)
+    // return className;
+
+    String value = className;
+
+    if (node instanceof TypeDeclaration)
+      value = ((TypeDeclaration) node).getName().toString();
+    else if (node instanceof MethodDeclaration)
+      value = ((MethodDeclaration) node).getName().toString();
+    else if (node instanceof MethodInvocation)
+      value = ((MethodInvocation) node).getName().toString() + " | "
+          + className;
+    else if (node instanceof FieldDeclaration)
+      value = ((FieldDeclaration) node).toString();
+    else if (node instanceof SingleVariableDeclaration)
+      value = ((SingleVariableDeclaration) node).getName().toString() ;
+    else if (node instanceof ExpressionStatement)
+      value = node.toString() + className;
+    else if (node instanceof SimpleName)
+      value = ((SimpleName) node).getFullyQualifiedName() + " | " + className;
+    else if (node instanceof QualifiedName)
+      value = node.toString();
+    else if (node instanceof VariableDeclarationFragment)
+      value = ((VariableDeclarationFragment)node).getName().toString();
+    else if (className.startsWith("Variable"))
+      value = node.toString() ;
+    else if (node instanceof VariableDeclarationStatement)
+      value = ((VariableDeclarationStatement)node).toString();
+    else if (className.endsWith("Type"))
+      value = node.toString() ;
+//    value += " [" + node.getStartPosition() + ","
+//        + (node.getStartPosition() + node.getLength()) + "]";
+//    value += " Line: "
+//        + ((CompilationUnit) node.getRoot()).getLineNumber(node
+//            .getStartPosition());
+    return value;
+  }
+  
 
   public static String readFile(String path) {
     BufferedReader reader = null;

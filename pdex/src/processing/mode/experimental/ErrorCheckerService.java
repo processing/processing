@@ -733,7 +733,7 @@ public class ErrorCheckerService implements Runnable{
     // String[] lines = {};// = PApplet.split(sourceString, '\n');
     int codeIndex = 0;
 
-    int x = problem.getSourceLineNumber() - mainClassOffset + 1;
+    int x = problem.getSourceLineNumber() - mainClassOffset;
     if (x < 0) {
       // System.out.println("Negative line number "
       // + problem.getSourceLineNumber() + " , offset "

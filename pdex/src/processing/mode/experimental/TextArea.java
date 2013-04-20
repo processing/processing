@@ -20,13 +20,18 @@ package processing.mode.experimental;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.FontMetrics;
+import java.awt.Point;
 import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.swing.SwingUtilities;
+import javax.swing.text.BadLocationException;
 
 import processing.app.syntax.JEditTextArea;
 import processing.app.syntax.TextAreaDefaults;
@@ -94,7 +99,7 @@ public class TextArea extends JEditTextArea {
     MouseHandler mouseHandler = new MouseHandler();
     painter.addMouseListener(mouseHandler);
     painter.addMouseMotionListener(mouseHandler);
-
+    addCompletionPopupListner();
     add(CENTER, painter);
 
     // load settings from theme.txt
@@ -121,6 +126,44 @@ public class TextArea extends JEditTextArea {
   }
 
   public void processKeyEvent(KeyEvent evt) {
+    if (evt.getID() == KeyEvent.KEY_PRESSED) {
+      if (evt.getKeyCode() == KeyEvent.VK_DOWN && suggestion != null) {
+        if (suggestion.isVisible()) {
+          //System.out.println("KeyDown");
+          suggestion.moveDown();
+          return;
+        }
+      } else if (evt.getKeyCode() == KeyEvent.VK_UP && suggestion != null) {
+        if (suggestion.isVisible()) {
+          //System.out.println("KeyUp");
+          suggestion.moveUp();
+          return;
+        }
+      }
+      if (evt.getKeyChar() == KeyEvent.VK_ENTER) {
+        if (suggestion != null) {
+          if (suggestion.isVisible()){
+            if (suggestion.insertSelection()) {
+              final int position = getCaretPosition();
+              SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                  try {
+                    //getDocument().remove(position - 1, 1);
+                  } catch (Exception e) {
+                    e.printStackTrace();
+                  }
+                }
+              });
+              return;
+            }
+          }
+        }
+      } else if (evt.getKeyChar() == KeyEvent.VK_BACK_SPACE) {
+        System.out.println("BK Key");
+      }
+    }
+
     super.processKeyEvent(evt);
     if (evt.getID() == KeyEvent.KEY_TYPED) {
       errorCheckerService.textModified.incrementAndGet();
@@ -181,9 +224,8 @@ public class TextArea extends JEditTextArea {
       //TODO: currently works on single line only. "a. <new line> b()" won't be detected
       if (x1 >= 0) {
 //        if (s.charAt(x1) != ';' && s.charAt(x1) != ',' && s.charAt(x1) != '(')
-          if (Character.isLetterOrDigit(s.charAt(x1)) || s.charAt(x1) == '_'
-          || s.charAt(x1) == '.' || s.charAt(x1) == ')')
-        {
+        if (Character.isLetterOrDigit(s.charAt(x1)) || s.charAt(x1) == '_'
+            || s.charAt(x1) == '.' || s.charAt(x1) == ')') {
 
           if (s.charAt(x1) == ')') {
             word = s.charAt(x1--) + word;
@@ -232,6 +274,7 @@ public class TextArea extends JEditTextArea {
 //      word = word.substring(0, word.length() - 1);
     errorCheckerService.astGenerator.updatePredictions(word, line
         + errorCheckerService.mainClassOffset);
+    //showSuggestionLater();
     return word;
 
     //}
@@ -488,6 +531,97 @@ public class TextArea extends JEditTextArea {
         }
       }
       lastX = me.getX();
+    }
+  }
+
+  private CompletionPanel suggestion;
+
+  //JEditTextArea textarea;
+
+  private void addCompletionPopupListner() {
+    this.addKeyListener(new KeyListener() {
+
+      @Override
+      public void keyTyped(KeyEvent e) {
+
+      }
+
+      @Override
+      public void keyReleased(KeyEvent e) {
+        if (Character.isLetterOrDigit(e.getKeyChar())
+            || e.getKeyChar() == KeyEvent.VK_BACK_SPACE
+            || e.getKeyChar() == KeyEvent.VK_DELETE) {
+//          SwingUtilities.invokeLater(new Runnable() {
+//            @Override
+//            public void run() {
+//              showSuggestion();
+//            }
+//
+//          });
+        } else if (Character.isWhitespace(e.getKeyChar())) {
+          hideSuggestion();
+        }
+      }
+
+      @Override
+      public void keyPressed(KeyEvent e) {
+      }
+    });
+  }
+
+  public void showSuggestionLater(final String[] items) {
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        showSuggestion(items);
+      }
+
+    });
+  }
+
+  protected void showSuggestion(String[] items) {
+    hideSuggestion();
+    final int position = getCaretPosition();
+    Point location = new Point();
+    try {
+      location.x = offsetToX(getCaretLine(), position
+          - getLineStartOffset(getCaretLine()));
+      location.y = lineToY(getCaretLine())
+          + getPainter().getFontMetrics().getHeight();
+    } catch (Exception e2) {
+      e2.printStackTrace();
+      return;
+    }
+    String text = getText();
+    int start = Math.max(0, position - 1);
+    while (start > 0) {
+      if (!Character.isWhitespace(text.charAt(start))) {
+        start--;
+      } else {
+        start++;
+        break;
+      }
+    }
+    if (start > position) {
+      return;
+    }
+    final String subWord = text.substring(start, position);
+    if (subWord.length() < 2) {
+      return;
+    }
+    suggestion = new CompletionPanel(this, position, subWord, items, location);
+    requestFocusInWindow();
+//    SwingUtilities.invokeLater(new Runnable() {
+//      @Override
+//      public void run() {
+//        requestFocusInWindow();
+//      }
+//    });
+  }
+
+  private void hideSuggestion() {
+    if (suggestion != null) {
+      suggestion.hide();
     }
   }
 
