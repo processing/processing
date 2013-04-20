@@ -13,6 +13,17 @@ o deleting tools folder while running causes exception when changing modes
 o   https://github.com/processing/processing/issues/1707
 X   won't bother fixing this one
 
+manager
+X "New version available" mesage is showing html tags around it
+X   https://github.com/processing/processing/issues/1684
+X shift color of installed items when selected 
+X   was ugly gray over selection color
+X fix layout of the update button
+_ get update text to align vertically
+
+_ "Update" not working in the library manager
+_   https://github.com/processing/processing/issues/1701
+
 _ how does new JDI affect Experimental? duplicate libs? loader issues?
 _ move Android mode out to its own repo
 _ change line endings on Windows to only be replaced during dist
@@ -37,11 +48,6 @@ _   https://github.com/processing/processing/issues/1633
 
 
 2.0 FINAL / library/tool/mode manager cleanup
-
-_ "Update" not working in the library manager
-_   https://github.com/processing/processing/issues/1701
-_ "New version available" mesage is showing html tags around it
-_   https://github.com/processing/processing/issues/1684
 
 medium
 _ send info on 'check for updates' so we know about libs/modes/etc?
