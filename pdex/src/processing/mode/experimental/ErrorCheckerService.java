@@ -270,7 +270,7 @@ public class ErrorCheckerService implements Runnable{
        
       if (problems.length == 0 && editor.compilationCheckEnabled) {
         //mainClassOffset++; // just a hack.
-        astGenerator.buildAST();
+        astGenerator.buildAST(cu);
         sourceCode = xqpreproc.doYourThing(sourceCode, programImports);
         prepareCompilerClasspath();
 //        mainClassOffset = xqpreproc.mainClassOffset; // tiny, but

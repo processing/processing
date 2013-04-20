@@ -612,13 +612,13 @@ public class TextArea extends JEditTextArea {
       return;
     }
     suggestion = new CompletionPanel(this, position, subWord, items, location);
-    requestFocusInWindow();
-//    SwingUtilities.invokeLater(new Runnable() {
-//      @Override
-//      public void run() {
-//        requestFocusInWindow();
-//      }
-//    });
+//    requestFocusInWindow();
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        requestFocusInWindow();
+      }
+    });
   }
 
   private void hideSuggestion() {

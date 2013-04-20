@@ -6,12 +6,14 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -21,6 +23,7 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
@@ -69,6 +72,7 @@ import processing.app.syntax.JEditTextArea;
 
 import com.google.classpath.ClassPath;
 import com.google.classpath.ClassPathFactory;
+import com.google.classpath.DirectoryClassPath.FileFileFilter;
 import com.google.classpath.RegExpResourceFilter;
 import com.ibm.icu.util.StringTokenizer;
 
@@ -90,7 +94,9 @@ public class ASTGenerator {
 
   private JTable tableAuto;
 
-  private JLabel jdocLabel;
+  private JEditorPane javadocPane;
+
+  private JScrollPane scrollPane;
 
   public ASTGenerator(ErrorCheckerService ecs) {
     this.errorCheckerService = ecs;
@@ -113,9 +119,15 @@ public class ASTGenerator {
     frameAutoComp.add(sp2);
 
     jdocWindow = new JFrame();
-    jdocWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    jdocLabel = new JLabel();
-    jdocWindow.add(jdocLabel);
+    jdocWindow.setTitle("P5 InstaHelp");
+    //jdocWindow.setUndecorated(true);
+    jdocWindow.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+    javadocPane = new JEditorPane();
+    javadocPane.setContentType("text/html");
+    javadocPane.setEditable(false);
+    scrollPane = new JScrollPane();
+    scrollPane.setViewportView(javadocPane);
+    jdocWindow.add(scrollPane);
     jdocMap = new TreeMap<String, String>();
     //loadJars();
 
@@ -164,23 +176,28 @@ public class ASTGenerator {
     }
   }
 
-  private DefaultMutableTreeNode buildAST2(String source) {
-    ASTParser parser = ASTParser.newParser(AST.JLS4);
-    parser.setSource(source.toCharArray());
-    parser.setKind(ASTParser.K_COMPILATION_UNIT);
+  private DefaultMutableTreeNode buildAST2(String source, CompilationUnit cu) {
+    if (cu == null) {
+      ASTParser parser = ASTParser.newParser(AST.JLS4);
+      parser.setSource(source.toCharArray());
+      parser.setKind(ASTParser.K_COMPILATION_UNIT);
 
-    Map<String, String> options = JavaCore.getOptions();
+      Map<String, String> options = JavaCore.getOptions();
 
-    JavaCore.setComplianceOptions(JavaCore.VERSION_1_6, options);
-    options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_6);
-    parser.setCompilerOptions(options);
-    compilationUnit = (CompilationUnit) parser.createAST(null);
+      JavaCore.setComplianceOptions(JavaCore.VERSION_1_6, options);
+      options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_6);
+      parser.setCompilerOptions(options);
+      compilationUnit = (CompilationUnit) parser.createAST(null);
+    } else {
+      compilationUnit = cu;
+      System.out.println("Other cu");
+    }
 //    OutlineVisitor visitor = new OutlineVisitor();
 //    compilationUnit.accept(visitor);
-    codeTree = new DefaultMutableTreeNode(
-                                          getNodeAsString((ASTNode) compilationUnit
-                                              .types().get(0)));
-    visitRecur((ASTNode) compilationUnit.types().get(0), codeTree);
+//    codeTree = new DefaultMutableTreeNode(
+//                                          getNodeAsString((ASTNode) compilationUnit
+//                                              .types().get(0)));
+//    visitRecur((ASTNode) compilationUnit.types().get(0), codeTree);
     SwingWorker worker = new SwingWorker() {
 
       @Override
@@ -210,7 +227,7 @@ public class ASTGenerator {
             jdocWindow.setBounds(new Rectangle(errorCheckerService.getEditor()
                 .getX() + errorCheckerService.getEditor().getWidth(),
                                                errorCheckerService.getEditor()
-                                                   .getY(), 400, 400));
+                                                   .getY(), 450, 600));
             jdocWindow.setVisible(true);
           }
           jtree.validate();
@@ -240,28 +257,32 @@ public class ASTGenerator {
                                                   + File.pathSeparatorChar
                                                   + System
                                                       .getProperty("java.home")
-                                                  + "/lib/rt.jar");
+                                                  + "/lib/rt.jar"+ File.pathSeparatorChar);
       if (errorCheckerService.classpathJars != null) {
         for (URL jarPath : errorCheckerService.classpathJars) {
           tehPath.append(jarPath.getPath() + File.pathSeparatorChar);
         }
       }
 
-      //String paths[] = tehPaths.split(File.separatorChar +"");
-//      StringTokenizer st = new StringTokenizer(tehPath.toString(),
-//                                               File.pathSeparatorChar + "");
+//      String paths[] = tehPath.toString().split(File.separatorChar +"");
+      StringTokenizer st = new StringTokenizer(tehPath.toString(),
+                                               File.pathSeparatorChar + "");
+      while (st.hasMoreElements()) {
+        String sstr = (String) st.nextElement();
+        System.out.println(sstr);
+      }
 
       classPath = factory.createFromPath(tehPath.toString());
-//      for (String packageName : classPath.listPackages("")) {
-//        System.out.println(packageName);
-//      }
+      for (String packageName : classPath.listPackages("")) {
+        System.out.println(packageName);
+      }
       RegExpResourceFilter regExpResourceFilter = new RegExpResourceFilter(
                                                                            ".*",
-                                                                           "Vec3D.class");
-//      String[] resources = classPath.findResources("", regExpResourceFilter);
-//      for (String className : resources) {
-//        System.out.println("-> " + className);
-//      }
+                                                                           "ArrayList.class");
+      String[] resources = classPath.findResources("", regExpResourceFilter);
+      for (String className : resources) {
+        System.out.println("-> " + className);
+      }
     } catch (Exception e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -272,84 +293,21 @@ public class ASTGenerator {
   private TreeMap<String, String> jdocMap;
 
   private void loadJavaDoc() {
-    
+
     // presently loading only p5 reference for PApplet
     Thread t = new Thread(new Runnable() {
 
       @Override
       public void run() {
-        Document doc;
-
-        Pattern pat = Pattern.compile("\\w+");
-        try {
-          File javaDocFile = new File(
-                                      "/home/quarkninja/Workspaces/processing-workspace/processing/build/javadoc/core/processing/core/PApplet.html");
-          //SimpleOpenNI.SimpleOpenNI
-          doc = Jsoup.parse(javaDocFile, null);
-
-          String msg = "";
-          Elements elm = doc.getElementsByTag("pre");
-//          Elements desc = doc.getElementsByTag("dl");
-          //System.out.println(elm.toString());
-
-          for (Iterator iterator = elm.iterator(); iterator.hasNext();) {
-            Element element = (Element) iterator.next();
-
-            //System.out.println(element.text());
-//            if (element.nextElementSibling() != null)
-//              System.out.println(element.nextElementSibling().text());
-            //System.out.println("-------------------");
-            msg = "<html><body> <strong><div style=\"width: 300px; text-justification: justify;\"></strong>"
-                + element.html()
-                + element.nextElementSibling()
-                + "</div></html></body></html>";
-            int k = 0;
-            Matcher matcher = pat.matcher(element.text());
-            ArrayList<String> parts = new ArrayList<String>();
-            while (matcher.find()) {
-//              System.out.print("Start index: " + matcher.start());
-//              System.out.print(" End index: " + matcher.end() + " ");
-              if (k == 0 && !matcher.group().equals("public")) {
-                k = -1;
-                break;
-              }
-              // System.out.print(matcher.group() + " ");
-              parts.add(matcher.group());
-              k++;
-            }
-            if (k <= 0 || parts.size() < 3)
-              continue;
-            int i = 0;
-            if (parts.get(i).equals("public"))
-              i++;
-            if (parts.get(i).equals("static") || parts.get(i).equals("final")
-                || parts.get(i).equals("class"))
-              i++;
-            if (parts.get(i).equals("static") || parts.get(i).equals("final"))
-              i++;
-//            System.out.println("Ret Type " + parts.get(i));
-
-            i++; // return type
-
-            //System.out.println("Name " + parts.get(i));
-            jdocMap.put(parts.get(i), msg);
-          }
-          System.out.println("JDoc loaded");
-//          for (String key : jdocMap.keySet()) {
-//            System.out.println("Method: " + key);
-//            System.out.println("Method: " + jdocMap.get(key));
-//          }
-        } catch (Exception e) {
-          e.printStackTrace();
-        }
+        JavadocHelper.loadJavaDoc(jdocMap);
       }
     });
     t.start();
 
   }
 
-  public DefaultMutableTreeNode buildAST() {
-    return buildAST2(errorCheckerService.sourceCode);
+  public DefaultMutableTreeNode buildAST(CompilationUnit cu) {
+    return buildAST2(errorCheckerService.sourceCode,cu);
   }
 
   public String[] checkForTypes2(ASTNode node) {
@@ -570,6 +528,9 @@ public class ASTGenerator {
         System.err.print("Typed: " + word2 + "|");
         anode = findClosestNode(lineNumber, (ASTNode) compilationUnit.types()
             .get(0));
+        if(anode == null)
+        //Make sure anode is not NULL if couldn't find a closeset node
+          anode = (ASTNode)compilationUnit.types().get(0);  
         System.err.println(lineNumber + " Nearest ASTNode to PRED "
             + getNodeAsString(anode));
 
@@ -592,7 +553,7 @@ public class ASTGenerator {
                     .getStructuralProperty(TypeDeclaration.SUPERCLASS_TYPE_PROPERTY);
                 System.out.println("Superclass " + st.getName());
                 for (CompletionCandidate can : getMembersForType(st.getName()
-                    .toString(), word2, noCompare)) {
+                    .toString(), word2, noCompare,false)) {
                   candidates.add(can);
                 }
                 //findDeclaration(st.getName())
@@ -696,10 +657,21 @@ public class ASTGenerator {
             } else {
               if (stp != null) {
                 candidates = getMembersForType(stp.getName().toString(),
-                                               child.toString(), noCompare);
+                                               child.toString(), noCompare,false);
               }
             }
 
+          }
+          else if(word.length() - word2.length() == 1){
+//            int dC = 0;
+//            for (int i = 0; i < word.length(); i++) {
+//              if(word.charAt(i) == '.')
+//                dC++;              
+//            }
+//            if(dC == 1 && word.charAt(word.length() - 1) == '.'){
+            System.out.println("All members of " + word2);
+              candidates = getMembersForType(word2, "", true,true);
+//            }
           }
 
         }
@@ -729,9 +701,16 @@ public class ASTGenerator {
 
   }
 
+  /**
+   * Loads classes from .jar files in sketch classpath
+   * @param typeName
+   * @param child
+   * @param noCompare
+   * @return
+   */
   public ArrayList<CompletionCandidate> getMembersForType(String typeName,
                                                           String child,
-                                                          boolean noCompare) {
+                                                          boolean noCompare,boolean staticOnly) {
     ArrayList<CompletionCandidate> candidates = new ArrayList<CompletionCandidate>();
     RegExpResourceFilter regExpResourceFilter;
     regExpResourceFilter = new RegExpResourceFilter(".*", typeName + ".class");
@@ -750,6 +729,8 @@ public class ASTGenerator {
                                                errorCheckerService.classLoader);
 
         for (Method method : probableClass.getMethods()) {
+          if(!Modifier.isStatic(method.getModifiers()) && staticOnly)
+            continue;
           StringBuffer label = new StringBuffer(method.getName() + "(");
           for (int i = 0; i < method.getParameterTypes().length; i++) {
             label.append(method.getParameterTypes()[i].getSimpleName());
@@ -768,6 +749,8 @@ public class ASTGenerator {
                                                        .toString()));
         }
         for (Field field : probableClass.getFields()) {
+          if(!Modifier.isStatic(field.getModifiers()) && staticOnly)
+            continue;
           if (noCompare)
 
             candidates.add(new CompletionCandidate(field.getName(),
@@ -804,14 +787,19 @@ public class ASTGenerator {
 
             System.out.println("Class: " + candidate.getDefiningClass());
             if (candidate.getDefiningClass().equals("processing.core.PApplet"))
-              jdocLabel.setText(jdocMap.get(key));
+            {  javadocPane.setText(jdocMap.get(key));
+                //jdocWindow.setVisible(true);
+                //editor.textArea().requestFocus()
+            }
             else
-              jdocLabel.setText("");
+              javadocPane.setText("");
+            javadocPane.setCaretPosition(0);
           }
         });
         break;
       }
     }
+    //jdocWindow.setVisible(false);
 
   }
 
@@ -876,15 +864,18 @@ public class ASTGenerator {
       return null;
     }
 
-    ASTNode retNode = nodes.get(0);
-    for (ASTNode cNode : nodes) {
-      if (getLineNumber(cNode) <= lineNumber)
-        retNode = cNode;
-      else
-        break;
-    }
+    if (nodes.size() > 0) {
+      ASTNode retNode = nodes.get(0);
+      for (ASTNode cNode : nodes) {
+        if (getLineNumber(cNode) <= lineNumber)
+          retNode = cNode;
+        else
+          break;
+      }
 
-    return retNode;
+      return retNode;
+    }
+    return null;
   }
 
 //  static DefaultMutableTreeNode findNodeBS(DefaultMutableTreeNode tree,
@@ -1799,6 +1790,10 @@ public class ASTGenerator {
 //        + ((CompilationUnit) node.getRoot()).getLineNumber(node
 //            .getStartPosition());
     return value;
+  }
+  
+  public void jdocWindowVisible(boolean visible){
+    jdocWindow.setVisible(visible);
   }
 
   public static String readFile(String path) {

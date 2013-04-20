@@ -9,6 +9,7 @@ import java.awt.event.MouseEvent;
 import javax.swing.BorderFactory;
 import javax.swing.JList;
 import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.text.BadLocationException;
 
@@ -25,6 +26,8 @@ public class CompletionPanel {
 
   private TextArea textarea;
 
+  private JScrollPane scrollPane;
+
   public CompletionPanel(JEditTextArea textarea, int position, String subWord,
                          CompletionCandidate[] items, Point location) {
     this.textarea = (TextArea) textarea;
@@ -37,12 +40,14 @@ public class CompletionPanel {
     popupMenu.removeAll();
     popupMenu.setOpaque(false);
     popupMenu.setBorder(null);
-    popupMenu.add(list = createSuggestionList(position, items),
-                  BorderLayout.CENTER);
+    scrollPane = new JScrollPane();
+    scrollPane.setViewportView(list = createSuggestionList(position, items));
+    popupMenu.add(scrollPane, BorderLayout.CENTER);
+    this.textarea.errorCheckerService.astGenerator
+        .updateJavaDoc((CompletionCandidate) list.getSelectedValue());
     popupMenu.show(textarea, location.x, textarea.getBaseline(0, 0)
         + location.y);
-    this.textarea.errorCheckerService.astGenerator.updateJavaDoc((CompletionCandidate) list
-                                                            .getSelectedValue());
+
   }
 
   public void hide() {
@@ -53,7 +58,8 @@ public class CompletionPanel {
     return popupMenu.isVisible();
   }
 
-  public JList createSuggestionList(final int position, final CompletionCandidate[] items) {
+  public JList createSuggestionList(final int position,
+                                    final CompletionCandidate[] items) {
 
     JList list = new JList(items);
     list.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY, 1));
@@ -74,8 +80,8 @@ public class CompletionPanel {
   public boolean insertSelection() {
     if (list.getSelectedValue() != null) {
       try {
-        final String selectedSuggestion = ((CompletionCandidate) list.getSelectedValue()).toString()
-            .substring(subWord.length());
+        final String selectedSuggestion = ((CompletionCandidate) list
+            .getSelectedValue()).toString().substring(subWord.length());
         textarea.getDocument().insertString(insertionPosition,
                                             selectedSuggestion, null);
         textarea.setCaretPosition(insertionPosition
@@ -91,30 +97,47 @@ public class CompletionPanel {
 
   public void hideSuggestion() {
     hide();
+    //textarea.errorCheckerService.astGenerator.jdocWindowVisible(false);
   }
 
   public void moveUp() {
     if (list.getSelectedIndex() == 0) {
+      scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
       selectIndex(list.getModel().getSize() - 1);
+      return;
     } else {
       int index = Math.max(list.getSelectedIndex() - 1, 0);
       selectIndex(index);
     }
-    textarea.errorCheckerService.astGenerator.updateJavaDoc((CompletionCandidate) list
-        .getSelectedValue());
+    int step = scrollPane.getVerticalScrollBar().getMaximum()
+        / list.getModel().getSize();
+    scrollPane.getVerticalScrollBar().setValue(scrollPane
+                                                   .getVerticalScrollBar()
+                                                   .getValue()
+                                                   - step);
+    textarea.errorCheckerService.astGenerator
+        .updateJavaDoc((CompletionCandidate) list.getSelectedValue());
 
   }
 
   public void moveDown() {
     if (list.getSelectedIndex() == list.getModel().getSize() - 1) {
+      scrollPane.getVerticalScrollBar().setValue(0);
       selectIndex(0);
+      return;
     } else {
       int index = Math.min(list.getSelectedIndex() + 1, list.getModel()
           .getSize() - 1);
       selectIndex(index);
     }
-    textarea.errorCheckerService.astGenerator.updateJavaDoc((CompletionCandidate) list
-                                                            .getSelectedValue());
+    textarea.errorCheckerService.astGenerator
+        .updateJavaDoc((CompletionCandidate) list.getSelectedValue());
+    int step = scrollPane.getVerticalScrollBar().getMaximum()
+        / list.getModel().getSize();
+    scrollPane.getVerticalScrollBar().setValue(scrollPane
+                                                   .getVerticalScrollBar()
+                                                   .getValue()
+                                                   + step);
   }
 
   private void selectIndex(int index) {
