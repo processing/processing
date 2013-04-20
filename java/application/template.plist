@@ -40,6 +40,8 @@
       <key>MainClass</key>
       <string>@@sketch@@</string>
 
+      <!-- We don't support Java 7 on OS X. 
+	   Using it will break lots of things. -->
       <key>JVMVersion</key>
       <string>1.6*</string>
 
