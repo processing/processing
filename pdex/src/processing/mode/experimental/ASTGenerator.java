@@ -18,6 +18,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -112,7 +114,6 @@ public class ASTGenerator {
 
     jdocWindow = new JFrame();
     jdocWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    jdocWindow.setBounds(new Rectangle(280, 100, 460, 460));
     jdocLabel = new JLabel();
     jdocWindow.add(jdocLabel);
     jdocMap = new TreeMap<String, String>();
@@ -196,7 +197,8 @@ public class ASTGenerator {
 //          if (!frame2.isVisible()) {
 //            frame2.setVisible(true);
 //          }
-          if (!frameAutoComp.isVisible()){
+          if (!frameAutoComp.isVisible()) {
+
             frameAutoComp.setVisible(true);
             long t = System.currentTimeMillis();
             loadJars();
@@ -204,8 +206,13 @@ public class ASTGenerator {
             System.out.println("Time taken: "
                 + (System.currentTimeMillis() - t));
           }
-          if (!jdocWindow.isVisible())
+          if (!jdocWindow.isVisible()) {
+            jdocWindow.setBounds(new Rectangle(errorCheckerService.getEditor()
+                .getX() + errorCheckerService.getEditor().getWidth(),
+                                               errorCheckerService.getEditor()
+                                                   .getY(), 400, 400));
             jdocWindow.setVisible(true);
+          }
           jtree.validate();
         }
       }
@@ -265,65 +272,80 @@ public class ASTGenerator {
   private TreeMap<String, String> jdocMap;
 
   private void loadJavaDoc() {
-    Document doc;
+    
+    // presently loading only p5 reference for PApplet
+    Thread t = new Thread(new Runnable() {
 
-//    String primTypes[] = {
-//      "void", "int", "short", "byte", "boolean", "char", "float", "double",
-//      "long" };
-    try {
-      File javaDocFile = new File(
-                                  "/home/quarkninja/Documents/Processing/libraries/SimpleOpenNI/documentation/SimpleOpenNI/SimpleOpenNI.html");
-      //SimpleOpenNI.SimpleOpenNI
-      doc = Jsoup.parse(javaDocFile, null);
+      @Override
+      public void run() {
+        Document doc;
 
-      String msg = "";
-      Elements elm = doc.getElementsByTag("pre");
-//      Elements desc = doc.getElementsByTag("dl");
-      //System.out.println(elm.toString());
+        Pattern pat = Pattern.compile("\\w+");
+        try {
+          File javaDocFile = new File(
+                                      "/home/quarkninja/Workspaces/processing-workspace/processing/build/javadoc/core/processing/core/PApplet.html");
+          //SimpleOpenNI.SimpleOpenNI
+          doc = Jsoup.parse(javaDocFile, null);
 
-      for (Iterator iterator = elm.iterator(); iterator.hasNext();) {
-        Element element = (Element) iterator.next();
+          String msg = "";
+          Elements elm = doc.getElementsByTag("pre");
+//          Elements desc = doc.getElementsByTag("dl");
+          //System.out.println(elm.toString());
 
-        //System.out.println(element.text());
-//        if (element.nextElementSibling() != null)
-//          System.out.println(element.nextElementSibling().text());
-        //System.out.println("-------------------");
-        msg = "<html><body> <strong><div style=\"width: 300px; text-justification: justify;\"></strong>"
-            + element.html()
-            + element.nextElementSibling()
-            + "</div></html></body></html>";
+          for (Iterator iterator = elm.iterator(); iterator.hasNext();) {
+            Element element = (Element) iterator.next();
 
-        String parts[] = element.text().split("\\s|\\(|,|\\)");
-        int i = 0;
-        if (parts[i].equals("public"))
-          i++;
-        if (parts[i].equals("static") || parts[i].equals("final"))
-          i++;
-        if (parts[i].equals("static") || parts[i].equals("final"))
-          i++;
-//        System.out.println("Ret Type " + parts[i]);
+            //System.out.println(element.text());
+//            if (element.nextElementSibling() != null)
+//              System.out.println(element.nextElementSibling().text());
+            //System.out.println("-------------------");
+            msg = "<html><body> <strong><div style=\"width: 300px; text-justification: justify;\"></strong>"
+                + element.html()
+                + element.nextElementSibling()
+                + "</div></html></body></html>";
+            int k = 0;
+            Matcher matcher = pat.matcher(element.text());
+            ArrayList<String> parts = new ArrayList<String>();
+            while (matcher.find()) {
+//              System.out.print("Start index: " + matcher.start());
+//              System.out.print(" End index: " + matcher.end() + " ");
+              if (k == 0 && !matcher.group().equals("public")) {
+                k = -1;
+                break;
+              }
+              // System.out.print(matcher.group() + " ");
+              parts.add(matcher.group());
+              k++;
+            }
+            if (k <= 0 || parts.size() < 3)
+              continue;
+            int i = 0;
+            if (parts.get(i).equals("public"))
+              i++;
+            if (parts.get(i).equals("static") || parts.get(i).equals("final")
+                || parts.get(i).equals("class"))
+              i++;
+            if (parts.get(i).equals("static") || parts.get(i).equals("final"))
+              i++;
+//            System.out.println("Ret Type " + parts.get(i));
 
-        i++; // return type
+            i++; // return type
 
-        //        System.out.println("Name " + parts[i]);
-        jdocMap.put(parts[i], msg);
-//        if (parts[i].startsWith("draw")) {
-//          match = element.text();
-//          msg = "<html><body> <strong><div style=\"width: 300px; text-justification: justify;\"></strong>"
-//              + element.html()
-//              + element.nextElementSibling()
-//              + "</div></html></body></html>";
-//          System.out.println(match + " " + msg);
-//        }
+            //System.out.println("Name " + parts.get(i));
+            jdocMap.put(parts.get(i), msg);
+          }
+          System.out.println("JDoc loaded");
+//          for (String key : jdocMap.keySet()) {
+//            System.out.println("Method: " + key);
+//            System.out.println("Method: " + jdocMap.get(key));
+//          }
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
       }
-      System.out.println("JDoc loaded");
-//      for (String key : jdocMap.keySet()) {
-//        System.out.println("Method: " + key);
-//        System.out.println("Method: " + jdocMap.get(key));
-//      }
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+    });
+    t.start();
+
   }
 
   public DefaultMutableTreeNode buildAST() {
@@ -371,19 +393,31 @@ public class ASTGenerator {
     return null;
   }
 
-  public static String[] checkForTypes(ASTNode node) {
+  public static CompletionCandidate[] checkForTypes(ASTNode node) {
 
     List<VariableDeclarationFragment> vdfs = null;
     switch (node.getNodeType()) {
     case ASTNode.TYPE_DECLARATION:
-      return new String[] { getNodeAsString2(node) };
+      return new CompletionCandidate[] { new CompletionCandidate(
+                                                                 getNodeAsString2(node),
+                                                                 ((TypeDeclaration) node)
+                                                                     .getName()
+                                                                     .toString()) };
 
     case ASTNode.METHOD_DECLARATION:
-      String[] ret1 = new String[] { getNodeAsString2(node) };
-      return ret1;
+      MethodDeclaration md = (MethodDeclaration) node;
+      List<ASTNode> params = (List<ASTNode>) md
+          .getStructuralProperty(MethodDeclaration.PARAMETERS_PROPERTY);
+      CompletionCandidate[] cand = new CompletionCandidate[params.size() + 1];
+      cand[0] = new CompletionCandidate(md.getName().toString());
+      for (int i = 0; i < params.size(); i++) {
+        cand[i + 1] = new CompletionCandidate(params.get(i).toString());
+      }
+      return cand;
 
     case ASTNode.SINGLE_VARIABLE_DECLARATION:
-      return new String[] { getNodeAsString2(node) };
+      return new CompletionCandidate[] { new CompletionCandidate(
+                                                                 getNodeAsString2(node)) };
 
     case ASTNode.FIELD_DECLARATION:
       vdfs = ((FieldDeclaration) node).fragments();
@@ -399,10 +433,10 @@ public class ASTGenerator {
     }
 
     if (vdfs != null) {
-      String ret[] = new String[vdfs.size()];
+      CompletionCandidate ret[] = new CompletionCandidate[vdfs.size()];
       int i = 0;
       for (VariableDeclarationFragment vdf : vdfs) {
-        ret[i++] = getNodeAsString2(vdf);
+        ret[i++] = new CompletionCandidate(getNodeAsString2(vdf));
       }
       return ret;
     }
@@ -539,7 +573,7 @@ public class ASTGenerator {
         System.err.println(lineNumber + " Nearest ASTNode to PRED "
             + getNodeAsString(anode));
 
-        ArrayList<String> candidates = new ArrayList<String>();
+        ArrayList<CompletionCandidate> candidates = new ArrayList<CompletionCandidate>();
 
         // Determine the expression typed
 
@@ -557,8 +591,8 @@ public class ASTGenerator {
                 SimpleType st = (SimpleType) td
                     .getStructuralProperty(TypeDeclaration.SUPERCLASS_TYPE_PROPERTY);
                 System.out.println("Superclass " + st.getName());
-                for (String can : getMembersForType(st.getName().toString(),
-                                                    word2, noCompare)) {
+                for (CompletionCandidate can : getMembersForType(st.getName()
+                    .toString(), word2, noCompare)) {
                   candidates.add(can);
                 }
                 //findDeclaration(st.getName())
@@ -572,10 +606,10 @@ public class ASTGenerator {
               if (!sprop.isChildListProperty()) {
                 if (anode.getStructuralProperty(sprop) instanceof ASTNode) {
                   cnode = (ASTNode) anode.getStructuralProperty(sprop);
-                  String[] types = checkForTypes(cnode);
+                  CompletionCandidate[] types = checkForTypes(cnode);
                   if (types != null) {
                     for (int i = 0; i < types.length; i++) {
-                      if (types[i].startsWith(word2))
+                      if (types[i].getElementName().startsWith(word2))
                         candidates.add(types[i]);
                     }
                   }
@@ -585,10 +619,10 @@ public class ASTGenerator {
                 List<ASTNode> nodelist = (List<ASTNode>) anode
                     .getStructuralProperty(sprop);
                 for (ASTNode clnode : nodelist) {
-                  String[] types = checkForTypes(clnode);
+                  CompletionCandidate[] types = checkForTypes(clnode);
                   if (types != null) {
                     for (int i = 0; i < types.length; i++) {
-                      if (types[i].startsWith(word2))
+                      if (types[i].getElementName().startsWith(word2))
                         candidates.add(types[i]);
                     }
                   }
@@ -641,70 +675,26 @@ public class ASTGenerator {
                     .fragments();
                 for (VariableDeclarationFragment vdf : vdfs) {
                   if (noCompare) {
-                    candidates.add(getNodeAsString2(vdf));
+                    candidates
+                        .add(new CompletionCandidate(getNodeAsString2(vdf)));
                   } else if (vdf.getName().toString()
                       .startsWith(child.toString()))
-                    candidates.add(getNodeAsString2(vdf));
+                    candidates
+                        .add(new CompletionCandidate(getNodeAsString2(vdf)));
                 }
 
               }
               for (int i = 0; i < td.getMethods().length; i++) {
                 if (noCompare) {
-                  candidates.add(getNodeAsString2(td.getMethods()[i]));
+                  candidates.add(new CompletionCandidate(getNodeAsString2(td
+                      .getMethods()[i]), td.getName().toString()));
                 } else if (td.getMethods()[i].getName().toString()
                     .startsWith(child.toString()))
-                  candidates.add(getNodeAsString2(td.getMethods()[i]));
+                  candidates.add(new CompletionCandidate(getNodeAsString2(td
+                      .getMethods()[i]), td.getName().toString()));
               }
             } else {
               if (stp != null) {
-//                System.out.println("Couldn't determine type! "
-//                    + stp.getName().toString());
-//                RegExpResourceFilter regExpResourceFilter;
-//                regExpResourceFilter = new RegExpResourceFilter(".*", stp
-//                    .getName().toString() + ".class");
-//                String[] resources = classPath
-//                    .findResources("", regExpResourceFilter);
-//                for (String className : resources) {
-//                  System.out.println("-> " + className);
-//                }
-//                if (resources.length > 0) {
-//                  String matchedClass = resources[0];
-//                  matchedClass = matchedClass
-//                      .substring(0, matchedClass.length() - 6);
-//                  matchedClass = matchedClass.replace('/', '.');
-//                  System.out.println("Matched class: " + matchedClass);
-//                  System.out.println("Looking for match " + child.toString());
-//                  try {
-//                    Class<?> probableClass = Class
-//                        .forName(matchedClass, false,
-//                                 errorCheckerService.classLoader);
-//                    for (Method method : probableClass.getMethods()) {
-//                      StringBuffer label = new StringBuffer(method.getName()
-//                          + "(");
-//                      for (Class<?> type : method.getParameterTypes()) {
-//                        label.append(type.getSimpleName() + ",");
-//                      }
-//                      label.append(")");
-//                      if (noCompare)
-//                        candidates.add(label.toString());
-//                      else if (label.toString().startsWith(child.toString()))
-//                        candidates.add(label.toString());
-//                    }
-//                    for (Field field : probableClass.getFields()) {
-//                      if (noCompare)
-//
-//                        candidates.add(field.getName());
-//                      else if (field.getName().startsWith(child.toString()))
-//                        candidates.add(field.getName());
-//                    }
-//                  } catch (ClassNotFoundException e) {
-//                    e.printStackTrace();
-//                    System.out.println("Couldn't load " + matchedClass);
-//                  }
-//
-//                  //processing/core/PVector.class
-//                  //
-//                }
                 candidates = getMembersForType(stp.getName().toString(),
                                                child.toString(), noCompare);
               }
@@ -714,7 +704,8 @@ public class ASTGenerator {
 
         }
 
-        String[][] candi = new String[candidates.size()][1];
+        CompletionCandidate[][] candi = new CompletionCandidate[candidates
+            .size()][1];
 
         for (int i = 0; i < candi.length; i++) {
           candi[i][0] = candidates.get(i);
@@ -727,12 +718,10 @@ public class ASTGenerator {
         tableAuto.validate();
         tableAuto.repaint();
         //String[] items = 
-        String[] candi2 = candidates.toArray(new String[candidates
-                                                        .size()]);
-        errorCheckerService
-            .getEditor()
-            .textArea()
-            .showSuggestion(candi2);
+        CompletionCandidate[] candi2 = candidates
+            .toArray(new CompletionCandidate[candidates.size()]);
+        if (candidates.size() > 0)
+          errorCheckerService.getEditor().textArea().showSuggestion(candi2);
       }
     };
 
@@ -740,9 +729,10 @@ public class ASTGenerator {
 
   }
 
-  public ArrayList<String> getMembersForType(String typeName, String child,
-                                             boolean noCompare) {
-    ArrayList<String> candidates = new ArrayList<String>();
+  public ArrayList<CompletionCandidate> getMembersForType(String typeName,
+                                                          String child,
+                                                          boolean noCompare) {
+    ArrayList<CompletionCandidate> candidates = new ArrayList<CompletionCandidate>();
     RegExpResourceFilter regExpResourceFilter;
     regExpResourceFilter = new RegExpResourceFilter(".*", typeName + ".class");
     String[] resources = classPath.findResources("", regExpResourceFilter);
@@ -762,51 +752,67 @@ public class ASTGenerator {
         for (Method method : probableClass.getMethods()) {
           StringBuffer label = new StringBuffer(method.getName() + "(");
           for (int i = 0; i < method.getParameterTypes().length; i++) {
-            if(i < method.getParameterTypes().length - 1)
-              label.append(method.getParameterTypes()[i].getSimpleName() + ",");
+            label.append(method.getParameterTypes()[i].getSimpleName());
+            if (i < method.getParameterTypes().length - 1)
+              label.append(",");
           }
-          
+
           label.append(")");
           if (noCompare)
-            candidates.add(label.toString());
+            candidates.add(new CompletionCandidate(method.getName(),
+                                                   matchedClass, label
+                                                       .toString()));
           else if (label.toString().startsWith(child.toString()))
-            candidates.add(label.toString());
+            candidates.add(new CompletionCandidate(method.getName(),
+                                                   matchedClass, label
+                                                       .toString()));
         }
         for (Field field : probableClass.getFields()) {
           if (noCompare)
 
-            candidates.add(field.getName());
+            candidates.add(new CompletionCandidate(field.getName(),
+                                                   matchedClass));
           else if (field.getName().startsWith(child.toString()))
-            candidates.add(field.getName());
+            candidates.add(new CompletionCandidate(field.getName(),
+                                                   matchedClass));
         }
       } catch (ClassNotFoundException e) {
         e.printStackTrace();
         System.out.println("Couldn't load " + matchedClass);
       }
     }
-    if (candidates.size() > 0) {
-      String methodmatch = candidates.get(0);
-      if(methodmatch.indexOf('(') != -1){
-        methodmatch = methodmatch.substring(0, methodmatch.indexOf('(') - 1);
-      }
-      System.out.println("jdoc match " + methodmatch);
-      for (final String key : jdocMap.keySet()) {
-        if (key.startsWith(methodmatch) && key.length() > 3) {
-          System.out.println("Matched jdoc" + key);
-         
-          //visitRecur((ASTNode) compilationUnit.types().get(0), codeTree);
-          SwingUtilities.invokeLater(new Runnable() {
-            
-            @Override
-            public void run() {
+    //updateJavaDoc(methodmatch)
+
+    return candidates;
+  }
+
+  public void updateJavaDoc(final CompletionCandidate candidate) {
+    String methodmatch = candidate.toString();
+    if (methodmatch.indexOf('(') != -1) {
+      methodmatch = methodmatch.substring(0, methodmatch.indexOf('('));
+    }
+
+    //System.out.println("jdoc match " + methodmatch);
+    for (final String key : jdocMap.keySet()) {
+      if (key.startsWith(methodmatch) && key.length() > 3) {
+        System.out.println("Matched jdoc " + key);
+
+        //visitRecur((ASTNode) compilationUnit.types().get(0), codeTree);
+        SwingUtilities.invokeLater(new Runnable() {
+          @Override
+          public void run() {
+
+            System.out.println("Class: " + candidate.getDefiningClass());
+            if (candidate.getDefiningClass().equals("processing.core.PApplet"))
               jdocLabel.setText(jdocMap.get(key));
-            }
-          });
-          break;
-        }
+            else
+              jdocLabel.setText("");
+          }
+        });
+        break;
       }
     }
-    return candidates;
+
   }
 
   @SuppressWarnings("unchecked")
@@ -1742,9 +1748,10 @@ public class ASTGenerator {
             .getStartPosition());
     return value;
   }
-  
+
   /**
-   * CompletionPanel name  
+   * CompletionPanel name
+   * 
    * @param node
    * @return
    */
@@ -1771,7 +1778,7 @@ public class ASTGenerator {
     else if (node instanceof FieldDeclaration)
       value = ((FieldDeclaration) node).toString();
     else if (node instanceof SingleVariableDeclaration)
-      value = ((SingleVariableDeclaration) node).getName().toString() ;
+      value = ((SingleVariableDeclaration) node).getName().toString();
     else if (node instanceof ExpressionStatement)
       value = node.toString() + className;
     else if (node instanceof SimpleName)
@@ -1779,13 +1786,13 @@ public class ASTGenerator {
     else if (node instanceof QualifiedName)
       value = node.toString();
     else if (node instanceof VariableDeclarationFragment)
-      value = ((VariableDeclarationFragment)node).getName().toString();
+      value = ((VariableDeclarationFragment) node).getName().toString();
     else if (className.startsWith("Variable"))
-      value = node.toString() ;
+      value = node.toString();
     else if (node instanceof VariableDeclarationStatement)
-      value = ((VariableDeclarationStatement)node).toString();
+      value = ((VariableDeclarationStatement) node).toString();
     else if (className.endsWith("Type"))
-      value = node.toString() ;
+      value = node.toString();
 //    value += " [" + node.getStartPosition() + ","
 //        + (node.getStartPosition() + node.getLength()) + "]";
 //    value += " Line: "
@@ -1793,7 +1800,6 @@ public class ASTGenerator {
 //            .getStartPosition());
     return value;
   }
-  
 
   public static String readFile(String path) {
     BufferedReader reader = null;

@@ -191,6 +191,8 @@ public class TextArea extends JEditTextArea {
     //System.out.print(s + " len " + s.length());
 
     int x = getCaretPosition() - getLineStartOffset(line) - 1, x2 = x + 1, x1 = x - 1;
+    if(x >= s.length() || x < 0)
+      return null; //TODO: Does this check cause problems? Verify.
     System.out.print(" x char: " + s.charAt(x));
     //int xLS = off - getLineStartNonWhiteSpaceOffset(line);
     char keyChar = evt.getKeyChar();
@@ -569,7 +571,7 @@ public class TextArea extends JEditTextArea {
     });
   }
 
-  public void showSuggestionLater(final String[] items) {
+  public void showSuggestionLater(final CompletionCandidate[] items) {
     SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
@@ -579,7 +581,7 @@ public class TextArea extends JEditTextArea {
     });
   }
 
-  protected void showSuggestion(String[] items) {
+  protected void showSuggestion(CompletionCandidate[] items) {
     hideSuggestion();
     final int position = getCaretPosition();
     Point location = new Point();
