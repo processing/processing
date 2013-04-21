@@ -253,11 +253,9 @@ public class ASTGenerator {
 
       StringBuffer tehPath = new StringBuffer(
                                               System
-                                                  .getProperty("java.class.path")
-                                                  + File.pathSeparatorChar
-                                                  + System
-                                                      .getProperty("java.home")
-                                                  + "/lib/rt.jar"+ File.pathSeparatorChar);
+                                                  .getProperty("java.class.path"));
+      tehPath.append(+File.pathSeparatorChar + System.getProperty("java.home")
+          + "/lib/rt.jar" + File.pathSeparatorChar);
       if (errorCheckerService.classpathJars != null) {
         for (URL jarPath : errorCheckerService.classpathJars) {
           tehPath.append(jarPath.getPath() + File.pathSeparatorChar);
@@ -307,7 +305,7 @@ public class ASTGenerator {
   }
 
   public DefaultMutableTreeNode buildAST(CompilationUnit cu) {
-    return buildAST2(errorCheckerService.sourceCode,cu);
+    return buildAST2(errorCheckerService.sourceCode, cu);
   }
 
   public String[] checkForTypes2(ASTNode node) {
@@ -364,18 +362,20 @@ public class ASTGenerator {
 
     case ASTNode.METHOD_DECLARATION:
       MethodDeclaration md = (MethodDeclaration) node;
+      System.out.println(getNodeAsString(md));
       List<ASTNode> params = (List<ASTNode>) md
           .getStructuralProperty(MethodDeclaration.PARAMETERS_PROPERTY);
       CompletionCandidate[] cand = new CompletionCandidate[params.size() + 1];
-      cand[0] = new CompletionCandidate(md.getName().toString());
+      cand[0] = new CompletionCandidate(md);
       for (int i = 0; i < params.size(); i++) {
-        cand[i + 1] = new CompletionCandidate(params.get(i).toString());
+        cand[i + 1] = new CompletionCandidate(params.get(i).toString(), "", "",
+                                              CompletionCandidate.LOCAL_VAR);
       }
       return cand;
 
     case ASTNode.SINGLE_VARIABLE_DECLARATION:
       return new CompletionCandidate[] { new CompletionCandidate(
-                                                                 getNodeAsString2(node)) };
+                                                                 getNodeAsString2(node),"","",CompletionCandidate.LOCAL_VAR) };
 
     case ASTNode.FIELD_DECLARATION:
       vdfs = ((FieldDeclaration) node).fragments();
@@ -394,7 +394,7 @@ public class ASTGenerator {
       CompletionCandidate ret[] = new CompletionCandidate[vdfs.size()];
       int i = 0;
       for (VariableDeclarationFragment vdf : vdfs) {
-        ret[i++] = new CompletionCandidate(getNodeAsString2(vdf));
+        ret[i++] = new CompletionCandidate(getNodeAsString2(vdf),"","",CompletionCandidate.LOCAL_VAR);
       }
       return ret;
     }
@@ -528,9 +528,9 @@ public class ASTGenerator {
         System.err.print("Typed: " + word2 + "|");
         anode = findClosestNode(lineNumber, (ASTNode) compilationUnit.types()
             .get(0));
-        if(anode == null)
-        //Make sure anode is not NULL if couldn't find a closeset node
-          anode = (ASTNode)compilationUnit.types().get(0);  
+        if (anode == null)
+          //Make sure anode is not NULL if couldn't find a closeset node
+          anode = (ASTNode) compilationUnit.types().get(0);
         System.err.println(lineNumber + " Nearest ASTNode to PRED "
             + getNodeAsString(anode));
 
@@ -553,7 +553,7 @@ public class ASTGenerator {
                     .getStructuralProperty(TypeDeclaration.SUPERCLASS_TYPE_PROPERTY);
                 System.out.println("Superclass " + st.getName());
                 for (CompletionCandidate can : getMembersForType(st.getName()
-                    .toString(), word2, noCompare,false)) {
+                    .toString(), word2, noCompare, false)) {
                   candidates.add(can);
                 }
                 //findDeclaration(st.getName())
@@ -647,22 +647,26 @@ public class ASTGenerator {
               }
               for (int i = 0; i < td.getMethods().length; i++) {
                 if (noCompare) {
-                  candidates.add(new CompletionCandidate(getNodeAsString2(td
-                      .getMethods()[i]), td.getName().toString()));
+                  candidates
+                      .add(new CompletionCandidate(getNodeAsString2(td
+                          .getMethods()[i]), td.getName().toString(), "",
+                                                   CompletionCandidate.METHOD));
                 } else if (td.getMethods()[i].getName().toString()
                     .startsWith(child.toString()))
-                  candidates.add(new CompletionCandidate(getNodeAsString2(td
-                      .getMethods()[i]), td.getName().toString()));
+                  candidates
+                      .add(new CompletionCandidate(getNodeAsString2(td
+                          .getMethods()[i]), td.getName().toString(), "",
+                                                   CompletionCandidate.METHOD));
               }
             } else {
               if (stp != null) {
                 candidates = getMembersForType(stp.getName().toString(),
-                                               child.toString(), noCompare,false);
+                                               child.toString(), noCompare,
+                                               false);
               }
             }
 
-          }
-          else if(word.length() - word2.length() == 1){
+          } else if (word.length() - word2.length() == 1) {
 //            int dC = 0;
 //            for (int i = 0; i < word.length(); i++) {
 //              if(word.charAt(i) == '.')
@@ -670,7 +674,7 @@ public class ASTGenerator {
 //            }
 //            if(dC == 1 && word.charAt(word.length() - 1) == '.'){
             System.out.println("All members of " + word2);
-              candidates = getMembersForType(word2, "", true,true);
+            candidates = getMembersForType(word2, "", true, true);
 //            }
           }
 
@@ -703,6 +707,7 @@ public class ASTGenerator {
 
   /**
    * Loads classes from .jar files in sketch classpath
+   * 
    * @param typeName
    * @param child
    * @param noCompare
@@ -710,7 +715,8 @@ public class ASTGenerator {
    */
   public ArrayList<CompletionCandidate> getMembersForType(String typeName,
                                                           String child,
-                                                          boolean noCompare,boolean staticOnly) {
+                                                          boolean noCompare,
+                                                          boolean staticOnly) {
     ArrayList<CompletionCandidate> candidates = new ArrayList<CompletionCandidate>();
     RegExpResourceFilter regExpResourceFilter;
     regExpResourceFilter = new RegExpResourceFilter(".*", typeName + ".class");
@@ -729,7 +735,7 @@ public class ASTGenerator {
                                                errorCheckerService.classLoader);
 
         for (Method method : probableClass.getMethods()) {
-          if(!Modifier.isStatic(method.getModifiers()) && staticOnly)
+          if (!Modifier.isStatic(method.getModifiers()) && staticOnly)
             continue;
           StringBuffer label = new StringBuffer(method.getName() + "(");
           for (int i = 0; i < method.getParameterTypes().length; i++) {
@@ -740,24 +746,17 @@ public class ASTGenerator {
 
           label.append(")");
           if (noCompare)
-            candidates.add(new CompletionCandidate(method.getName(),
-                                                   matchedClass, label
-                                                       .toString()));
+            candidates.add(new CompletionCandidate(method));
           else if (label.toString().startsWith(child.toString()))
-            candidates.add(new CompletionCandidate(method.getName(),
-                                                   matchedClass, label
-                                                       .toString()));
+            candidates.add(new CompletionCandidate(method));
         }
         for (Field field : probableClass.getFields()) {
-          if(!Modifier.isStatic(field.getModifiers()) && staticOnly)
+          if (!Modifier.isStatic(field.getModifiers()) && staticOnly)
             continue;
           if (noCompare)
-
-            candidates.add(new CompletionCandidate(field.getName(),
-                                                   matchedClass));
+            candidates.add(new CompletionCandidate(field));            
           else if (field.getName().startsWith(child.toString()))
-            candidates.add(new CompletionCandidate(field.getName(),
-                                                   matchedClass));
+            candidates.add(new CompletionCandidate(field));
         }
       } catch (ClassNotFoundException e) {
         e.printStackTrace();
@@ -786,12 +785,11 @@ public class ASTGenerator {
           public void run() {
 
             System.out.println("Class: " + candidate.getDefiningClass());
-            if (candidate.getDefiningClass().equals("processing.core.PApplet"))
-            {  javadocPane.setText(jdocMap.get(key));
-                //jdocWindow.setVisible(true);
-                //editor.textArea().requestFocus()
-            }
-            else
+            if (candidate.getDefiningClass().equals("processing.core.PApplet")) {
+              javadocPane.setText(jdocMap.get(key));
+              //jdocWindow.setVisible(true);
+              //editor.textArea().requestFocus()
+            } else
               javadocPane.setText("");
             javadocPane.setCaretPosition(0);
           }
@@ -1791,8 +1789,8 @@ public class ASTGenerator {
 //            .getStartPosition());
     return value;
   }
-  
-  public void jdocWindowVisible(boolean visible){
+
+  public void jdocWindowVisible(boolean visible) {
     jdocWindow.setVisible(visible);
   }
 
