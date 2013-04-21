@@ -693,7 +693,6 @@ public class PGL {
     firstFrame = false;
 
     GLProfile.shutdown();
-
   }
 
 
@@ -951,7 +950,7 @@ public class PGL {
 
   protected Texture wrapBackTexture() {
     if (USE_JOGL_FBOLAYER) {
-      Texture tex = new Texture(pg.parent);
+      Texture tex = new Texture();
       tex.init(pg.width, pg.height,
                backTexAttach.getName(), GL.GL_TEXTURE_2D, GL.GL_RGBA,
                backTexAttach.getWidth(), backTexAttach.getHeight(),
@@ -962,7 +961,7 @@ public class PGL {
       pg.setCache(pg, tex);
       return tex;
     } else {
-      Texture tex = new Texture(pg.parent);
+      Texture tex = new Texture();
       tex.init(pg.width, pg.height,
                glColorTex.get(backTex), TEXTURE_2D, RGBA,
                fboWidth, fboHeight, NEAREST, NEAREST,
@@ -977,7 +976,7 @@ public class PGL {
 
   protected Texture wrapFrontTexture() {
     if (USE_JOGL_FBOLAYER) {
-      Texture tex = new Texture(pg.parent);
+      Texture tex = new Texture();
       tex.init(pg.width, pg.height,
                backTexAttach.getName(), GL.GL_TEXTURE_2D, GL.GL_RGBA,
                frontTexAttach.getWidth(), frontTexAttach.getHeight(),
@@ -987,7 +986,7 @@ public class PGL {
       tex.colorBufferOf(pg);
       return tex;
     } else {
-      Texture tex = new Texture(pg.parent);
+      Texture tex = new Texture();
       tex.init(pg.width, pg.height,
                glColorTex.get(frontTex), TEXTURE_2D, RGBA,
                fboWidth, fboHeight, NEAREST, NEAREST,

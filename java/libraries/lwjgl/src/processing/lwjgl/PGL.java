@@ -786,7 +786,7 @@ public class PGL extends processing.opengl.PGL {
 
 
   protected Texture wrapBackTexture() {
-    Texture tex = new Texture(pg.parent);
+    Texture tex = new Texture();
     tex.init(pg.width, pg.height,
              glColorTex.get(backTex), TEXTURE_2D, RGBA,
              fboWidth, fboHeight, NEAREST, NEAREST,
@@ -799,7 +799,7 @@ public class PGL extends processing.opengl.PGL {
 
 
   protected Texture wrapFrontTexture() {
-    Texture tex = new Texture(pg.parent);
+    Texture tex = new Texture();
     tex.init(pg.width, pg.height,
              glColorTex.get(frontTex), TEXTURE_2D, RGBA,
              fboWidth, fboHeight, NEAREST, NEAREST,

@@ -47,10 +47,7 @@ import java.util.HashMap;
  * @author Andres Colubri
  */
 class FontTexture implements PConstants {
-  protected PApplet parent;
-  protected PGraphicsOpenGL pg;
   protected PGL pgl;
-  protected PFont font;
   protected boolean is3D;
 
   protected int maxTexWidth;
@@ -65,15 +62,12 @@ class FontTexture implements PConstants {
   protected TextureInfo[] glyphTexinfos;
   protected HashMap<PFont.Glyph, TextureInfo> texinfoMap;
 
-  public FontTexture(PApplet parent, PFont font, int maxw, int maxh,
+  public FontTexture(PGraphicsOpenGL pg, PFont font, int maxw, int maxh,
                       boolean is3D) {
-    this.parent = parent;
-    this.font = font;
-    pg = (PGraphicsOpenGL)parent.g;
-    pgl = pg.pgl;
+    pgl = PGraphicsOpenGL.pgl;
     this.is3D = is3D;
 
-    initTexture(maxw, maxh);
+    initTexture(pg, font, maxw, maxh);
   }
 
 
@@ -83,14 +77,14 @@ class FontTexture implements PConstants {
   }
 
 
-  protected void initTexture(int w, int h) {
+  protected void initTexture(PGraphicsOpenGL pg, PFont font, int w, int h) {
     maxTexWidth = w;
     maxTexHeight = h;
 
     currentTex = -1;
     lastTex = -1;
 
-    addTexture();
+    addTexture(pg);
 
     offsetX = 0;
     offsetY = 0;
@@ -98,11 +92,11 @@ class FontTexture implements PConstants {
 
     texinfoMap = new HashMap<PFont.Glyph, TextureInfo>();
     glyphTexinfos = new TextureInfo[font.getGlyphCount()];
-    addAllGlyphsToTexture();
+    addAllGlyphsToTexture(pg, font);
   }
 
 
-  public boolean addTexture() {
+  public boolean addTexture(PGraphicsOpenGL pg) {
     int w, h;
     boolean resize;
 
@@ -122,15 +116,15 @@ class FontTexture implements PConstants {
     if (is3D) {
       // Bilinear sampling ensures that the texture doesn't look pixelated
       // either when it is magnified or minified...
-      tex = new Texture(parent, w, h,
-                        new Texture.Parameters(ARGB, Texture.BILINEAR, false));
+      tex = new Texture(w, h, new Texture.Parameters(ARGB, Texture.BILINEAR,
+                                                     false));
     } else {
       // ...however, the effect of bilinear sampling is to add some blurriness
       // to the text in its original size. In 2D, we assume that text will be
       // shown at its original size, so linear sampling is chosen instead (which
       // only affects minimized text).
-      tex = new Texture(parent, w, h,
-                        new Texture.Parameters(ARGB, Texture.LINEAR, false));
+      tex = new Texture(w, h, new Texture.Parameters(ARGB, Texture.LINEAR,
+                                                     false));
     }
 
     if (textures == null) {
@@ -205,10 +199,10 @@ class FontTexture implements PConstants {
 
 
   // Add all the current glyphs to opengl texture.
-  public void addAllGlyphsToTexture() {
+  public void addAllGlyphsToTexture(PGraphicsOpenGL pg, PFont font) {
     // loop over current glyphs.
     for (int i = 0; i < font.getGlyphCount(); i++) {
-      addToTexture(i, font.getGlyph(i));
+      addToTexture(pg, i, font.getGlyph(i));
     }
   }
 
@@ -230,12 +224,12 @@ class FontTexture implements PConstants {
   }
 
 
-  public TextureInfo addToTexture(PFont.Glyph glyph) {
+  public TextureInfo addToTexture(PGraphicsOpenGL pg, PFont.Glyph glyph) {
     int n = glyphTexinfos.length;
     if (n == 0) {
       glyphTexinfos = new TextureInfo[1];
     }
-    addToTexture(n, glyph);
+    addToTexture(pg, n, glyph);
     return glyphTexinfos[n];
   }
 
@@ -249,7 +243,8 @@ class FontTexture implements PConstants {
     }
     if (outdated) {
       for (int i = 0; i < textures.length; i++) {
-        pg.removeTextureObject(textures[i].glName, textures[i].context);
+        PGraphicsOpenGL.removeTextureObject(textures[i].glName,
+                                            textures[i].context);
         textures[i].glName = 0;
       }
     }
@@ -257,7 +252,7 @@ class FontTexture implements PConstants {
   }
 
   // Adds this glyph to the opengl texture in PFont.
-  protected void addToTexture(int idx, PFont.Glyph glyph) {
+  protected void addToTexture(PGraphicsOpenGL pg, int idx, PFont.Glyph glyph) {
     // We add one pixel to avoid issues when sampling the font texture at
     // fractional screen positions. I.e.: the pixel on the screen only contains
     // half of the font rectangle, so it would sample half of the color from the
@@ -310,7 +305,7 @@ class FontTexture implements PConstants {
     boolean resized = false;
     if (offsetY + lineHeight > textures[currentTex].glHeight) {
       // We run out of space in the current texture, so we add a new texture:
-      resized = addTexture();
+      resized = addTexture(pg);
       if (resized) {
         // Because the current texture has been resized, we need to
         // update the UV coordinates of all the glyphs associated to it:

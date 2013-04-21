@@ -34,7 +34,7 @@ import java.util.*;
  */
 public class PGraphicsOpenGL extends PGraphics {
   /** Interface between Processing and OpenGL */
-  public PGL pgl;
+  public static PGL pgl;
 
   /** The main PApplet renderer. */
   protected static PGraphicsOpenGL pgPrimary = null;
@@ -520,8 +520,8 @@ public class PGraphicsOpenGL extends PGraphics {
     { {-1, +1}, {-1, -1}, {+1, -1}, {+1, +1} };
 
   /** To get data from OpenGL. */
-  protected IntBuffer intBuffer;
-  protected FloatBuffer floatBuffer;
+  static protected IntBuffer intBuffer;
+  static protected FloatBuffer floatBuffer;
 
   //////////////////////////////////////////////////////////////
 
@@ -529,14 +529,19 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   public PGraphicsOpenGL() {
-    pgl = new PGL(this);
+    if (pgl == null) {
+      pgl = new PGL(this);
+    }
 
     if (tessellator == null) {
       tessellator = new Tessellator();
     }
 
-    intBuffer = PGL.allocateIntBuffer(2);
-    floatBuffer = PGL.allocateFloatBuffer(2);
+    if (intBuffer == null) {
+      intBuffer = PGL.allocateIntBuffer(2);
+      floatBuffer = PGL.allocateFloatBuffer(2);
+    }
+
     viewport = PGL.allocateIntBuffer(4);
 
     inGeo = newInGeometry(IMMEDIATE);
@@ -636,14 +641,52 @@ public class PGraphicsOpenGL extends PGraphics {
   @Override
   public void dispose() { // PGraphics
     super.dispose();
-    deleteFinalizedGLResources();
+
     deletePolyBuffers();
     deleteLineBuffers();
     deletePointBuffers();
-    deleteDefaultShaders();
-    pgl.deleteSurface();
+
+    deleteSurfaceTextures();
+    if (primarySurface) {
+      deleteDefaultShaders();
+    } else {
+      if (offscreenFramebuffer != null) {
+        offscreenFramebuffer.release();
+      }
+      if (multisampleFramebuffer != null) {
+        multisampleFramebuffer.release();
+      }
+    }
+
+    deleteFinalizedGLResources();
+
+    if (primarySurface) pgl.deleteSurface();
   }
 
+//  @Override
+  @Override
+  protected void finalize() throws Throwable {
+    try {
+      deletePolyBuffers();
+      deleteLineBuffers();
+      deletePointBuffers();
+
+      deleteSurfaceTextures();
+      if (!primarySurface) {
+        PApplet.println("finalize offscreen surface");
+        if (offscreenFramebuffer != null) {
+          offscreenFramebuffer.release();
+          offscreenFramebuffer = null;
+        }
+        if (multisampleFramebuffer != null) {
+          multisampleFramebuffer.release();
+          multisampleFramebuffer = null;
+        }
+      }
+    } finally {
+      super.finalize();
+    }
+  }
 
   protected void setFlushMode(int mode) {
     flushMode = mode;
@@ -673,7 +716,7 @@ public class PGraphicsOpenGL extends PGraphics {
   // RESOURCE HANDLING
 
 
-  protected class GLResource {
+  protected static class GLResource {
     int id;
     int context;
 
@@ -700,7 +743,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // Texture Objects -----------------------------------------------------------
 
-  protected int createTextureObject(int context) {
+  protected static int createTextureObject(int context) {
     deleteFinalizedTextureObjects();
 
     pgl.genTextures(1, intBuffer);
@@ -714,7 +757,7 @@ public class PGraphicsOpenGL extends PGraphics {
     return id;
   }
 
-  protected void deleteTextureObject(int id, int context) {
+  protected static void deleteTextureObject(int id, int context) {
     GLResource res = new GLResource(id, context);
     if (glTextureObjects.containsKey(res)) {
       intBuffer.put(0, id);
@@ -723,7 +766,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
   }
 
-  protected void deleteAllTextureObjects() {
+  protected static void deleteAllTextureObjects() {
     for (GLResource res : glTextureObjects.keySet()) {
       intBuffer.put(0, res.id);
       if (pgl.threadIsCurrent()) pgl.deleteTextures(1, intBuffer);
@@ -732,14 +775,14 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
   // This is synchronized because it is called from the GC thread.
-  synchronized protected void finalizeTextureObject(int id, int context) {
+  synchronized protected static void finalizeTextureObject(int id, int context) {
     GLResource res = new GLResource(id, context);
     if (glTextureObjects.containsKey(res)) {
       glTextureObjects.put(res, true);
     }
   }
 
-  protected void deleteFinalizedTextureObjects() {
+  protected static void deleteFinalizedTextureObjects() {
     Set<GLResource> finalized = new HashSet<GLResource>();
 
     for (GLResource res : glTextureObjects.keySet()) {
@@ -753,9 +796,10 @@ public class PGraphicsOpenGL extends PGraphics {
     for (GLResource res : finalized) {
       glTextureObjects.remove(res);
     }
+    if (0 < finalized.size()) PApplet.println("Deleted " + finalized.size() + " texture objects, " + glTextureObjects.size() + " remaining");
   }
 
-  protected void removeTextureObject(int id, int context) {
+  protected static void removeTextureObject(int id, int context) {
     GLResource res = new GLResource(id, context);
     if (glTextureObjects.containsKey(res)) {
       glTextureObjects.remove(res);
@@ -764,7 +808,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // Vertex Buffer Objects -----------------------------------------------------
 
-  protected int createVertexBufferObject(int context) {
+  protected static int createVertexBufferObject(int context) {
     deleteFinalizedVertexBufferObjects();
 
     pgl.genBuffers(1, intBuffer);
@@ -778,7 +822,7 @@ public class PGraphicsOpenGL extends PGraphics {
     return id;
   }
 
-  protected void deleteVertexBufferObject(int id, int context) {
+  protected static void deleteVertexBufferObject(int id, int context) {
     GLResource res = new GLResource(id, context);
     if (glVertexBuffers.containsKey(res)) {
       intBuffer.put(0, id);
@@ -787,7 +831,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
   }
 
-  protected void deleteAllVertexBufferObjects() {
+  protected static void deleteAllVertexBufferObjects() {
     for (GLResource res : glVertexBuffers.keySet()) {
       intBuffer.put(0, res.id);
       if (pgl.threadIsCurrent()) pgl.deleteBuffers(1, intBuffer);
@@ -796,14 +840,14 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
   // This is synchronized because it is called from the GC thread.
-  synchronized protected void finalizeVertexBufferObject(int id, int context) {
+  synchronized static protected void finalizeVertexBufferObject(int id, int context) {
     GLResource res = new GLResource(id, context);
     if (glVertexBuffers.containsKey(res)) {
       glVertexBuffers.put(res, true);
     }
   }
 
-  protected void deleteFinalizedVertexBufferObjects() {
+  protected static void deleteFinalizedVertexBufferObjects() {
     Set<GLResource> finalized = new HashSet<GLResource>();
 
     for (GLResource res : glVertexBuffers.keySet()) {
@@ -817,9 +861,10 @@ public class PGraphicsOpenGL extends PGraphics {
     for (GLResource res : finalized) {
       glVertexBuffers.remove(res);
     }
+    if (0 < finalized.size()) PApplet.println("Deleted " + finalized.size() + " vertex buffer objects, " + glVertexBuffers.size() + " remaining");
   }
 
-  protected void removeVertexBufferObject(int id, int context) {
+  protected static void removeVertexBufferObject(int id, int context) {
     GLResource res = new GLResource(id, context);
     if (glVertexBuffers.containsKey(res)) {
       glVertexBuffers.remove(res);
@@ -828,7 +873,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // FrameBuffer Objects -------------------------------------------------------
 
-  protected int createFrameBufferObject(int context) {
+  protected static int createFrameBufferObject(int context) {
     deleteFinalizedFrameBufferObjects();
 
     pgl.genFramebuffers(1, intBuffer);
@@ -842,7 +887,7 @@ public class PGraphicsOpenGL extends PGraphics {
     return id;
   }
 
-  protected void deleteFrameBufferObject(int id, int context) {
+  protected static void deleteFrameBufferObject(int id, int context) {
     GLResource res = new GLResource(id, context);
     if (glFrameBuffers.containsKey(res)) {
       intBuffer.put(0, id);
@@ -851,7 +896,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
   }
 
-  protected void deleteAllFrameBufferObjects() {
+  protected static void deleteAllFrameBufferObjects() {
     for (GLResource res : glFrameBuffers.keySet()) {
       intBuffer.put(0, res.id);
       if (pgl.threadIsCurrent()) pgl.deleteFramebuffers(1, intBuffer);
@@ -860,30 +905,33 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
   // This is synchronized because it is called from the GC thread.
-  synchronized protected void finalizeFrameBufferObject(int id, int context) {
+  synchronized static protected void finalizeFrameBufferObject(int id, int context) {
     GLResource res = new GLResource(id, context);
     if (glFrameBuffers.containsKey(res)) {
       glFrameBuffers.put(res, true);
     }
   }
 
-  protected void deleteFinalizedFrameBufferObjects() {
+  protected static void deleteFinalizedFrameBufferObjects() {
     Set<GLResource> finalized = new HashSet<GLResource>();
 
     for (GLResource res : glFrameBuffers.keySet()) {
       if (glFrameBuffers.get(res)) {
         finalized.add(res);
         intBuffer.put(0, res.id);
-        if (pgl.threadIsCurrent()) pgl.deleteFramebuffers(1, intBuffer);
+        if (pgl.threadIsCurrent()) {
+          pgl.deleteFramebuffers(1, intBuffer);
+        }
       }
     }
 
     for (GLResource res : finalized) {
       glFrameBuffers.remove(res);
     }
+    if (0 < finalized.size()) PApplet.println("Deleted " + finalized.size() + " framebuffer objects, " + glFrameBuffers.size() + " remaining");
   }
 
-  protected void removeFrameBufferObject(int id, int context) {
+  protected static void removeFrameBufferObject(int id, int context) {
     GLResource res = new GLResource(id, context);
     if (glFrameBuffers.containsKey(res)) {
       glFrameBuffers.remove(res);
@@ -892,7 +940,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // RenderBuffer Objects ------------------------------------------------------
 
-  protected int createRenderBufferObject(int context) {
+  protected static int createRenderBufferObject(int context) {
     deleteFinalizedRenderBufferObjects();
 
     pgl.genRenderbuffers(1, intBuffer);
@@ -906,7 +954,7 @@ public class PGraphicsOpenGL extends PGraphics {
     return id;
   }
 
-  protected void deleteRenderBufferObject(int id, int context) {
+  protected static void deleteRenderBufferObject(int id, int context) {
     GLResource res = new GLResource(id, context);
     if (glRenderBuffers.containsKey(res)) {
       intBuffer.put(0, id);
@@ -915,7 +963,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
   }
 
-  protected void deleteAllRenderBufferObjects() {
+  protected static void deleteAllRenderBufferObjects() {
     for (GLResource res : glRenderBuffers.keySet()) {
       intBuffer.put(0, res.id);
       if (pgl.threadIsCurrent()) pgl.deleteRenderbuffers(1, intBuffer);
@@ -924,14 +972,14 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
   // This is synchronized because it is called from the GC thread.
-  synchronized protected void finalizeRenderBufferObject(int id, int context) {
+  synchronized static protected void finalizeRenderBufferObject(int id, int context) {
     GLResource res = new GLResource(id, context);
     if (glRenderBuffers.containsKey(res)) {
       glRenderBuffers.put(res, true);
     }
   }
 
-  protected void deleteFinalizedRenderBufferObjects() {
+  protected static void deleteFinalizedRenderBufferObjects() {
     Set<GLResource> finalized = new HashSet<GLResource>();
 
     for (GLResource res : glRenderBuffers.keySet()) {
@@ -945,9 +993,10 @@ public class PGraphicsOpenGL extends PGraphics {
     for (GLResource res : finalized) {
       glRenderBuffers.remove(res);
     }
+    if (0 < finalized.size()) PApplet.println("Deleted " + finalized.size() + " renderbuffer objects, " + glRenderBuffers.size() + " remaining");
   }
 
-  protected void removeRenderBufferObject(int id, int context) {
+  protected static void removeRenderBufferObject(int id, int context) {
     GLResource res = new GLResource(id, context);
     if (glRenderBuffers.containsKey(res)) {
       glRenderBuffers.remove(res);
@@ -956,7 +1005,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // GLSL Program Objects ------------------------------------------------------
 
-  protected int createGLSLProgramObject(int context) {
+  protected static int createGLSLProgramObject(int context) {
     deleteFinalizedGLSLProgramObjects();
 
     int id = pgl.createProgram();
@@ -969,7 +1018,7 @@ public class PGraphicsOpenGL extends PGraphics {
     return id;
   }
 
-  protected void deleteGLSLProgramObject(int id, int context) {
+  protected static void deleteGLSLProgramObject(int id, int context) {
     GLResource res = new GLResource(id, context);
     if (glslPrograms.containsKey(res)) {
       if (pgl.threadIsCurrent()) pgl.deleteProgram(res.id);
@@ -977,7 +1026,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
   }
 
-  protected void deleteAllGLSLProgramObjects() {
+  protected static void deleteAllGLSLProgramObjects() {
     for (GLResource res : glslPrograms.keySet()) {
       if (pgl.threadIsCurrent()) pgl.deleteProgram(res.id);
     }
@@ -985,14 +1034,14 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
   // This is synchronized because it is called from the GC thread.
-  synchronized protected void finalizeGLSLProgramObject(int id, int context) {
+  synchronized static protected void finalizeGLSLProgramObject(int id, int context) {
     GLResource res = new GLResource(id, context);
     if (glslPrograms.containsKey(res)) {
       glslPrograms.put(res, true);
     }
   }
 
-  protected void deleteFinalizedGLSLProgramObjects() {
+  protected static void deleteFinalizedGLSLProgramObjects() {
     Set<GLResource> finalized = new HashSet<GLResource>();
 
     for (GLResource res : glslPrograms.keySet()) {
@@ -1005,9 +1054,10 @@ public class PGraphicsOpenGL extends PGraphics {
     for (GLResource res : finalized) {
       glslPrograms.remove(res);
     }
+    if (0 < finalized.size()) PApplet.println("Deleted " + finalized.size() + " GLSL program objects, " + glslPrograms.size() + " remaining");
   }
 
-  protected void removeGLSLProgramObject(int id, int context) {
+  protected static void removeGLSLProgramObject(int id, int context) {
     GLResource res = new GLResource(id, context);
     if (glslPrograms.containsKey(res)) {
       glslPrograms.remove(res);
@@ -1016,7 +1066,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // GLSL Vertex Shader Objects ------------------------------------------------
 
-  protected int createGLSLVertShaderObject(int context) {
+  protected static int createGLSLVertShaderObject(int context) {
     deleteFinalizedGLSLVertShaderObjects();
 
     int id = pgl.createShader(PGL.VERTEX_SHADER);
@@ -1029,7 +1079,7 @@ public class PGraphicsOpenGL extends PGraphics {
     return id;
   }
 
-  protected void deleteGLSLVertShaderObject(int id, int context) {
+  protected static void deleteGLSLVertShaderObject(int id, int context) {
     GLResource res = new GLResource(id, context);
     if (glslVertexShaders.containsKey(res)) {
       if (pgl.threadIsCurrent()) pgl.deleteShader(res.id);
@@ -1037,7 +1087,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
   }
 
-  protected void deleteAllGLSLVertShaderObjects() {
+  protected static void deleteAllGLSLVertShaderObjects() {
     for (GLResource res : glslVertexShaders.keySet()) {
       if (pgl.threadIsCurrent()) pgl.deleteShader(res.id);
     }
@@ -1045,7 +1095,7 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
   // This is synchronized because it is called from the GC thread.
-  synchronized protected void finalizeGLSLVertShaderObject(int id,
+  synchronized static protected void finalizeGLSLVertShaderObject(int id,
                                                            int context) {
     GLResource res = new GLResource(id, context);
     if (glslVertexShaders.containsKey(res)) {
@@ -1053,7 +1103,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
   }
 
-  protected void deleteFinalizedGLSLVertShaderObjects() {
+  protected static void deleteFinalizedGLSLVertShaderObjects() {
     Set<GLResource> finalized = new HashSet<GLResource>();
 
     for (GLResource res : glslVertexShaders.keySet()) {
@@ -1066,9 +1116,10 @@ public class PGraphicsOpenGL extends PGraphics {
     for (GLResource res : finalized) {
       glslVertexShaders.remove(res);
     }
+    if (0 < finalized.size()) PApplet.println("Deleted " + finalized.size() + " GLSL vertex shader objects, " + glslVertexShaders.size() + " remaining");
   }
 
-  protected void removeGLSLVertShaderObject(int id, int context) {
+  protected static void removeGLSLVertShaderObject(int id, int context) {
     GLResource res = new GLResource(id, context);
     if (glslVertexShaders.containsKey(res)) {
       glslVertexShaders.remove(res);
@@ -1077,7 +1128,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // GLSL Fragment Shader Objects ----------------------------------------------
 
-  protected int createGLSLFragShaderObject(int context) {
+  protected static int createGLSLFragShaderObject(int context) {
     deleteFinalizedGLSLFragShaderObjects();
 
     int id = pgl.createShader(PGL.FRAGMENT_SHADER);
@@ -1090,7 +1141,7 @@ public class PGraphicsOpenGL extends PGraphics {
     return id;
   }
 
-  protected void deleteGLSLFragShaderObject(int id, int context) {
+  protected static void deleteGLSLFragShaderObject(int id, int context) {
     GLResource res = new GLResource(id, context);
     if (glslFragmentShaders.containsKey(res)) {
       if (pgl.threadIsCurrent()) pgl.deleteShader(res.id);
@@ -1098,7 +1149,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
   }
 
-  protected void deleteAllGLSLFragShaderObjects() {
+  protected static void deleteAllGLSLFragShaderObjects() {
     for (GLResource res : glslFragmentShaders.keySet()) {
       if (pgl.threadIsCurrent()) pgl.deleteShader(res.id);
     }
@@ -1106,7 +1157,7 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
   // This is synchronized because it is called from the GC thread.
-  synchronized protected void finalizeGLSLFragShaderObject(int id,
+  synchronized static protected void finalizeGLSLFragShaderObject(int id,
                                                            int context) {
     GLResource res = new GLResource(id, context);
     if (glslFragmentShaders.containsKey(res)) {
@@ -1114,7 +1165,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
   }
 
-  protected void deleteFinalizedGLSLFragShaderObjects() {
+  protected static void deleteFinalizedGLSLFragShaderObjects() {
     Set<GLResource> finalized = new HashSet<GLResource>();
 
     for (GLResource res : glslFragmentShaders.keySet()) {
@@ -1127,9 +1178,10 @@ public class PGraphicsOpenGL extends PGraphics {
     for (GLResource res : finalized) {
       glslFragmentShaders.remove(res);
     }
+    if (0 < finalized.size()) PApplet.println("Deleted " + finalized.size() + " GLSL fragment shader objects, " + glslFragmentShaders.size() + " remaining");
   }
 
-  protected void removeGLSLFragShaderObject(int id, int context) {
+  protected static void removeGLSLFragShaderObject(int id, int context) {
     GLResource res = new GLResource(id, context);
     if (glslFragmentShaders.containsKey(res)) {
       glslFragmentShaders.remove(res);
@@ -1138,7 +1190,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // All OpenGL resources ------------------------------------------------------
 
-  protected void deleteFinalizedGLResources() {
+  protected static void deleteFinalizedGLResources() {
     deleteFinalizedTextureObjects();
     deleteFinalizedVertexBufferObjects();
     deleteFinalizedFrameBufferObjects();
@@ -1154,7 +1206,7 @@ public class PGraphicsOpenGL extends PGraphics {
   // FRAMEBUFFERS
 
 
-  protected void pushFramebuffer() {
+  protected static void pushFramebuffer() {
     if (fbStackDepth == FB_STACK_DEPTH) {
       throw new RuntimeException("Too many pushFramebuffer calls");
     }
@@ -1163,7 +1215,7 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  protected void setFramebuffer(FrameBuffer fbo) {
+  protected static void setFramebuffer(FrameBuffer fbo) {
     if (currentFramebuffer != fbo) {
       currentFramebuffer = fbo;
       currentFramebuffer.bind();
@@ -1171,14 +1223,14 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  protected void popFramebuffer() {
+  protected static void popFramebuffer() {
     if (fbStackDepth == 0) {
       throw new RuntimeException("popFramebuffer call is unbalanced.");
     }
     fbStackDepth--;
     FrameBuffer fbo = fbStack[fbStackDepth];
     if (currentFramebuffer != fbo) {
-      currentFramebuffer.finish();
+      currentFramebuffer.finish(pgPrimary);
       currentFramebuffer = fbo;
       currentFramebuffer.bind();
     }
@@ -1214,19 +1266,19 @@ public class PGraphicsOpenGL extends PGraphics {
       pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolyTexcoord);
       pgl.bufferData(PGL.ARRAY_BUFFER, 2 * sizef, null, PGL.STATIC_DRAW);
 
-      glPolyAmbient = pgPrimary.createVertexBufferObject(polyBuffersContext);
+      glPolyAmbient = createVertexBufferObject(polyBuffersContext);
       pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolyAmbient);
       pgl.bufferData(PGL.ARRAY_BUFFER, sizei, null, PGL.STATIC_DRAW);
 
-      glPolySpecular = pgPrimary.createVertexBufferObject(polyBuffersContext);
+      glPolySpecular = createVertexBufferObject(polyBuffersContext);
       pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolySpecular);
       pgl.bufferData(PGL.ARRAY_BUFFER, sizei, null, PGL.STATIC_DRAW);
 
-      glPolyEmissive = pgPrimary.createVertexBufferObject(polyBuffersContext);
+      glPolyEmissive = createVertexBufferObject(polyBuffersContext);
       pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolyEmissive);
       pgl.bufferData(PGL.ARRAY_BUFFER, sizei, null, PGL.STATIC_DRAW);
 
-      glPolyShininess = pgPrimary.createVertexBufferObject(polyBuffersContext);
+      glPolyShininess = createVertexBufferObject(polyBuffersContext);
       pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolyShininess);
       pgl.bufferData(PGL.ARRAY_BUFFER, sizef, null, PGL.STATIC_DRAW);
 
@@ -3224,12 +3276,12 @@ public class PGraphicsOpenGL extends PGraphics {
                               float x, float y) {
     textTex = pgPrimary.getFontTexture(textFont);
     if (textTex == null) {
-      textTex = new FontTexture(parent, textFont, maxTextureSize,
-                                 maxTextureSize, is3D());
+      textTex = new FontTexture(pgPrimary, textFont, maxTextureSize,
+                                maxTextureSize, is3D());
       pgPrimary.setFontTexture(textFont, textTex);
     } else {
       if (textTex.contextIsOutdated()) {
-        textTex = new FontTexture(parent, textFont,
+        textTex = new FontTexture(pgPrimary, textFont,
           PApplet.min(PGL.MAX_FONT_TEX_SIZE, maxTextureSize),
           PApplet.min(PGL.MAX_FONT_TEX_SIZE, maxTextureSize), is3D());
         pgPrimary.setFontTexture(textFont, textTex);
@@ -3288,7 +3340,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
       if (tinfo == null) {
         // Adding new glyph to the font texture.
-        tinfo = textTex.addToTexture(glyph);
+        tinfo = textTex.addToTexture(pgPrimary, glyph);
       }
 
       if (textMode == MODEL) {
@@ -5247,13 +5299,13 @@ public class PGraphicsOpenGL extends PGraphics {
     if (texture == null || texture.contextIsOutdated()) {
       Texture.Parameters params = new Texture.Parameters(ARGB,
                                                          sampling, mipmap);
-      texture = new Texture(parent, width, height, params);
+      texture = new Texture(width, height, params);
       texture.invertedY(true);
       texture.colorBufferOf(this);
       pgPrimary.setCache(this, texture);
 
       if (!primarySurface) {
-        ptexture = new Texture(parent, width, height, params);
+        ptexture = new Texture(width, height, params);
         ptexture.invertedY(true);
         ptexture.colorBufferOf(this);
       }
@@ -5365,7 +5417,7 @@ public class PGraphicsOpenGL extends PGraphics {
     pgl.needFBOLayer();
     loadTexture();
     if (filterTexture == null || filterTexture.contextIsOutdated()) {
-      filterTexture = new Texture(parent, texture.width, texture.height,
+      filterTexture = new Texture(texture.width, texture.height,
                                   texture.getParameters());
       filterTexture.invertedY(true);
       filterImage = wrapTexture(filterTexture);
@@ -5684,7 +5736,7 @@ public class PGraphicsOpenGL extends PGraphics {
     if (img.parent == null) {
       img.parent = parent;
     }
-    Texture tex = new Texture(img.parent, img.width, img.height, params);
+    Texture tex = new Texture(/*img.parent,*/ img.width, img.height, params);
     pgPrimary.setCache(img, tex);
     return tex;
   }
@@ -5736,6 +5788,21 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
+  protected void deleteSurfaceTextures() {
+    if (texture != null) {
+      texture.release();
+    }
+
+    if (ptexture != null) {
+      ptexture.release();
+    }
+
+    if (filterTexture != null) {
+      filterTexture.release();
+    }
+  }
+
+
   protected boolean checkGLThread() {
     if (pgl.threadIsCurrent()) {
       return true;
@@ -5783,11 +5850,11 @@ public class PGraphicsOpenGL extends PGraphics {
     pgl.beginDraw(clearColorBuffer);
 
     if (drawFramebuffer == null) {
-      drawFramebuffer = new FrameBuffer(parent, width, height, true);
+      drawFramebuffer = new FrameBuffer(width, height, true);
     }
     drawFramebuffer.setFBO(pgl.getDrawFramebuffer());
     if (readFramebuffer == null) {
-      readFramebuffer = new FrameBuffer(parent, width, height, true);
+      readFramebuffer = new FrameBuffer(width, height, true);
     }
     readFramebuffer.setFBO(pgl.getReadFramebuffer());
     if (currentFramebuffer == null) {
@@ -5832,7 +5899,7 @@ public class PGraphicsOpenGL extends PGraphics {
                      packedDepthStencilSupported;
     if (PGraphicsOpenGL.fboMultisampleSupported && 1 < quality) {
       multisampleFramebuffer =
-        new FrameBuffer(parent, texture.glWidth, texture.glHeight, quality, 0,
+        new FrameBuffer(texture.glWidth, texture.glHeight, quality, 0,
                         depthBits, stencilBits, packed, false);
 
       multisampleFramebuffer.clear();
@@ -5842,13 +5909,13 @@ public class PGraphicsOpenGL extends PGraphics {
       // to doesn't need depth and stencil buffers since they are part of the
       // multisampled framebuffer.
       offscreenFramebuffer =
-        new FrameBuffer(parent, texture.glWidth, texture.glHeight, 1, 1, 0, 0,
+        new FrameBuffer(texture.glWidth, texture.glHeight, 1, 1, 0, 0,
                         false, false);
 
     } else {
       quality = 0;
       offscreenFramebuffer =
-        new FrameBuffer(parent, texture.glWidth, texture.glHeight, 1, 1,
+        new FrameBuffer(texture.glWidth, texture.glHeight, 1, 1,
                         depthBits, stencilBits, packed, false);
       offscreenMultisample = false;
     }
