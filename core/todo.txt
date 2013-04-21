@@ -39,17 +39,18 @@ _   HashMap<String,Integer> getUniqueCount(col)
 _ really need to get an option to grab matches based on a col
 _   i.e. get unique tables based on a particular column
 _   or, get uniques, then grab rows that match a name in a particular col
-_ possible features
-_   create table from TableRow iterator...allows for subset and find
-_     downside is types are not included
-_   getMaxFloat() (whole table) or getMaxFloat(col) 
-_     that's max(getFloatColumn(n))
-_     also important b/c can leave out missing values
-_   include SQL, HTML, ODS, binary?
-_     naming HTMLTable, TableHTML (ala PShapeSVG)
-_     or should it be HTMLTable / HtmlTable... then SVGShape / SvgShape
-_   dictionary support
-_   join tables together (static is kinda gross)
+_ create table from TableRow iterator...allows for subset and find
+_   downside is types are not included
+_ getMaxFloat() (whole table) or getMaxFloat(col) 
+_   that's max(getFloatColumn(n))
+_   also important b/c can leave out missing values
+_ include SQL, HTML, ODS, binary?
+_   naming HTMLTable, TableHTML (ala PShapeSVG)
+_   or should it be HTMLTable / HtmlTable... then SVGShape / SvgShape
+_ dictionary support
+_ join tables together (static is kinda gross)
+_   table.append(anotherTable)? 
+_   table.join(anotherTable)
 _ getColumnType() - what should it return?
 _   Integer.TYPE, String.class? still nothing for categorical
 _   maybe it's Table.INT since it's for advanced users anyway
