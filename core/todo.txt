@@ -19,6 +19,13 @@ _   https://github.com/processing/processing/issues/1730
 
 hash/dict/etc
 _ need to sort out the final version of these and their names
+_ JSONObject.has(key) vs XML.hasAttribute(attr) vs HashMap.containsKey()
+_   and how it should be handled with hash/dict
+_   right now using hasKey().. in JSONObject
+_   contains() as default, then containsValue() as the alternate
+_     instead of containsKey() and containsValue()
+_ add() to add things to lists, inc/dec for the math
+_   inc/dec/sum is used less, after all
 
 table
 _ table writing twice when .csv is added 
@@ -58,10 +65,6 @@ _ Dan having trouble with JSON
 _ keys() vs keySet() in JSON.. 
 _   keys() doesn't iterate, keySet() introduces 'Set' type
 _ add parseXML() and parseJSONObject(x)
-_ JSONObject.has(key) vs XML.hasAttribute(attr) vs HashMap.containsKey()
-_   and how it should be handled with hash/dict
-_   right now using hasKey().. in JSONObject
-_ add() to add things to lists, sum() for the math (sum is used less after all)
 
 andres
 A lines not properly renderered in P3D when using ortographic projection
