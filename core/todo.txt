@@ -17,6 +17,13 @@ _   https://github.com/processing/processing/issues/1709
 _ tint() with JAVA2D does not automatically refresh (with possible fix)
 _   https://github.com/processing/processing/issues/1730
 
+_ include Instant and Interval?
+
+_ naming for descending sort
+_   rsort(), sortReverse(), sortKeysReverse, 
+_   sortDescend, sortDescending, sortKeysDescending, 
+_   sortHighLow, sortHigh, sortHighest, sortDown
+
 hash/dict/etc
 _ need to sort out the final version of these and their names
 _ JSONObject.has(key) vs XML.hasAttribute(attr) vs HashMap.containsKey()
@@ -26,6 +33,13 @@ _   contains() as default, then containsValue() as the alternate
 _     instead of containsKey() and containsValue()
 _ add() to add things to lists, inc/dec for the math
 _   inc/dec/sum is used less, after all
+_ will also need an iterator for the Dict class ala Map.Entry
+
+List: remove(), append(), index(), etc all use values
+  removeIndex(index) is the other
+  otherwise remove() would be the only one that dealt with indices
+  Dict will use remove(key), so using remove(index) as default
+    and removeValue(value) is probably used less
 
 table
 _ table writing twice when .csv is added 
