@@ -254,7 +254,7 @@ public class ASTGenerator {
       StringBuffer tehPath = new StringBuffer(
                                               System
                                                   .getProperty("java.class.path"));
-      tehPath.append(+File.pathSeparatorChar + System.getProperty("java.home")
+      tehPath.append(File.pathSeparatorChar + System.getProperty("java.home")
           + "/lib/rt.jar" + File.pathSeparatorChar);
       if (errorCheckerService.classpathJars != null) {
         for (URL jarPath : errorCheckerService.classpathJars) {
@@ -271,18 +271,18 @@ public class ASTGenerator {
       }
 
       classPath = factory.createFromPath(tehPath.toString());
-      for (String packageName : classPath.listPackages("")) {
-        System.out.println(packageName);
-      }
-      RegExpResourceFilter regExpResourceFilter = new RegExpResourceFilter(
-                                                                           ".*",
-                                                                           "ArrayList.class");
-      String[] resources = classPath.findResources("", regExpResourceFilter);
-      for (String className : resources) {
-        System.out.println("-> " + className);
-      }
+//      for (String packageName : classPath.listPackages("")) {
+//        System.out.println(packageName);
+//      }
+//      RegExpResourceFilter regExpResourceFilter = new RegExpResourceFilter(
+//                                                                           ".*",
+//                                                                           "ArrayList.class");
+//      String[] resources = classPath.findResources("", regExpResourceFilter);
+//      for (String className : resources) {
+//        System.out.println("-> " + className);
+//      }
+      System.out.println("jars loaded.");
     } catch (Exception e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
 
@@ -297,7 +297,7 @@ public class ASTGenerator {
 
       @Override
       public void run() {
-        JavadocHelper.loadJavaDoc(jdocMap);
+        JavadocHelper.loadJavaDoc(jdocMap,editor.mode().getReferenceFolder());
       }
     });
     t.start();
@@ -667,6 +667,7 @@ public class ASTGenerator {
             }
 
           } else if (word.length() - word2.length() == 1) {
+            System.out.println(word +" w2 " + word2);
 //            int dC = 0;
 //            for (int i = 0; i < word.length(); i++) {
 //              if(word.charAt(i) == '.')
@@ -676,6 +677,13 @@ public class ASTGenerator {
             System.out.println("All members of " + word2);
             candidates = getMembersForType(word2, "", true, true);
 //            }
+          }
+          else{
+            System.out.println("Some members of " + word2);
+            int x = word2.indexOf('.');
+            if(x != -1){
+              candidates = getMembersForType(word2.substring(0, x), word2.substring(x+1), false, true);
+            }
           }
 
         }

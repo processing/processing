@@ -81,7 +81,7 @@ public class CompletionPanel {
     if (list.getSelectedValue() != null) {
       try {
         final String selectedSuggestion = ((CompletionCandidate) list
-            .getSelectedValue()).toString().substring(subWord.length());
+            .getSelectedValue()).getCompletionString().substring(subWord.length());
         textarea.getDocument().insertString(insertionPosition,
                                             selectedSuggestion, null);
         textarea.setCaretPosition(insertionPosition

@@ -12,13 +12,17 @@ import org.jsoup.select.Elements;
 
 public class JavadocHelper {
 
-  public static void loadJavaDoc(TreeMap<String, String> jdocMap){
+  public static void loadJavaDoc(TreeMap<String, String> jdocMap, File p5Ref){
     Document doc;
 
     //Pattern pat = Pattern.compile("\\w+");
     try {
-      File p5Ref = new File(
-          "/home/quarkninja/Workspaces/processing-workspace/processing/build/linux/work/modes/java/reference");
+      if (p5Ref == null) {
+        System.out.println("P5 Ref location null");
+        p5Ref = new File(
+                         "/home/quarkninja/Workspaces/processing-workspace/processing/build/linux/work/modes/java/reference");
+      }
+     
       FileFilter fileFilter = new FileFilter() {
         public boolean accept(File file) {
           if(!file.getName().endsWith("_.html"))
@@ -52,7 +56,7 @@ public class JavadocHelper {
         }
         jdocMap.put(methodName, msg);
       }
-      
+      System.out.println("JDoc loaded "+jdocMap.size());
      /* File javaDocFile = new File(
                                   "/home/quarkninja/Workspaces/processing-workspace/processing/build/javadoc/core/processing/core/PApplet.html");
       //SimpleOpenNI.SimpleOpenNI
@@ -105,7 +109,7 @@ public class JavadocHelper {
         //System.out.println("Name " + parts.get(i));
         jdocMap.put(parts.get(i), msg);
       }
-      System.out.println("JDoc loaded");
+      
 //      for (String key : jdocMap.keySet()) {
 //        System.out.println("Method: " + key);
 //        System.out.println("Method: " + jdocMap.get(key));

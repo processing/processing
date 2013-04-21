@@ -182,6 +182,7 @@ public class ErrorCheckerService implements Runnable{
     PdePreprocessor pdePrepoc = new PdePreprocessor(null);
     defaultImportsOffset = pdePrepoc.getCoreImports().length + 
         pdePrepoc.getDefaultImports().length + 1;
+    astGenerator = new ASTGenerator(this);
   }
   
   /**
@@ -256,7 +257,7 @@ public class ErrorCheckerService implements Runnable{
     }
   }
   
-  ASTGenerator astGenerator = new ASTGenerator(this);
+  protected ASTGenerator astGenerator;
   AtomicInteger textModified = new AtomicInteger();
   private boolean checkCode() {
     System.out.println("checkCode() " + textModified.get() );
