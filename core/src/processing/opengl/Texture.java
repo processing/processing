@@ -80,7 +80,8 @@ public class Texture implements PConstants {
 
   protected PGL pgl;                // The interface between Processing and OpenGL.
   protected int context;            // The context that created this texture.
-  protected PGraphicsOpenGL pgDraw; // The main renderer is the color buffer of.
+  protected boolean isColorBuffer;  // true if it is the color attachment of
+                                    // FrameBuffer object.
 
   protected boolean usingMipmaps;
   protected boolean usingRepeat;
@@ -113,7 +114,7 @@ public class Texture implements PConstants {
     pgl = PGraphicsOpenGL.pgl;
     context = pgl.createEmptyContext();
 
-    pgDraw = null;
+    isColorBuffer = false;
 
     glName = 0;
   }
@@ -141,7 +142,7 @@ public class Texture implements PConstants {
     pgl = PGraphicsOpenGL.pgl;
     context = pgl.createEmptyContext();
 
-    pgDraw = null;
+    isColorBuffer = false;
 
     glName = 0;
 
@@ -152,6 +153,7 @@ public class Texture implements PConstants {
   @Override
   protected void finalize() throws Throwable {
     try {
+      PApplet.println("finalize texture");
       if (glName != 0) {
         PGraphicsOpenGL.finalizeTextureObject(glName, context);
       }
@@ -1240,13 +1242,13 @@ public class Texture implements PConstants {
   }
 
 
-  public void colorBufferOf(PGraphicsOpenGL pgDraw) {
-    this.pgDraw = pgDraw;
+  protected void setAsColorBuffer() {
+    isColorBuffer = true;
   }
 
 
   protected boolean isColorBuffer() {
-    return pgDraw != null;
+    return isColorBuffer;
   }
 
 
