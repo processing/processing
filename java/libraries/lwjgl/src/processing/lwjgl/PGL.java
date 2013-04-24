@@ -792,7 +792,7 @@ public class PGL extends processing.opengl.PGL {
              fboWidth, fboHeight, NEAREST, NEAREST,
              CLAMP_TO_EDGE, CLAMP_TO_EDGE);
     tex.invertedY(true);
-    tex.colorBufferOf(pg);
+    tex.colorBuffer(true);
     pg.setCache(pg, tex);
     return tex;
   }
@@ -805,7 +805,7 @@ public class PGL extends processing.opengl.PGL {
              fboWidth, fboHeight, NEAREST, NEAREST,
              CLAMP_TO_EDGE, CLAMP_TO_EDGE);
     tex.invertedY(true);
-    tex.colorBufferOf(pg);
+    tex.colorBuffer(true);
     return tex;
   }
 

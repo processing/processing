@@ -957,7 +957,7 @@ public class PGL {
                backTexAttach.minFilter, backTexAttach.magFilter,
                backTexAttach.wrapS, backTexAttach.wrapT);
       tex.invertedY(true);
-      tex.setAsColorBuffer();
+      tex.colorBuffer(true);
       pg.setCache(pg, tex);
       return tex;
     } else {
@@ -967,7 +967,7 @@ public class PGL {
                fboWidth, fboHeight, NEAREST, NEAREST,
                CLAMP_TO_EDGE, CLAMP_TO_EDGE);
       tex.invertedY(true);
-      tex.setAsColorBuffer();
+      tex.colorBuffer(true);
       pg.setCache(pg, tex);
       return tex;
     }
@@ -983,7 +983,7 @@ public class PGL {
                frontTexAttach.minFilter, frontTexAttach.magFilter,
                frontTexAttach.wrapS, frontTexAttach.wrapT);
       tex.invertedY(true);
-      tex.setAsColorBuffer();
+      tex.colorBuffer(true);
       return tex;
     } else {
       Texture tex = new Texture();
@@ -992,7 +992,7 @@ public class PGL {
                fboWidth, fboHeight, NEAREST, NEAREST,
                CLAMP_TO_EDGE, CLAMP_TO_EDGE);
       tex.invertedY(true);
-      tex.setAsColorBuffer();
+      tex.colorBuffer(true);
       return tex;
     }
   }

@@ -5302,13 +5302,13 @@ public class PGraphicsOpenGL extends PGraphics {
                                                          sampling, mipmap);
       texture = new Texture(width, height, params);
       texture.invertedY(true);
-      texture.setAsColorBuffer();
+      texture.colorBuffer(true);
       pgPrimary.setCache(this, texture);
 
       if (!primarySurface) {
         ptexture = new Texture(width, height, params);
         ptexture.invertedY(true);
-        ptexture.setAsColorBuffer();
+        ptexture.colorBuffer(true);
       }
     }
   }
@@ -5744,7 +5744,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void checkTexture(Texture tex) {
-    if (!tex.isColorBuffer() &&
+    if (!tex.colorBuffer() &&
         tex.usingMipmaps == hints[DISABLE_TEXTURE_MIPMAPS]) {
       if (hints[DISABLE_TEXTURE_MIPMAPS]) {
         tex.usingMipmaps(false, textureSampling);

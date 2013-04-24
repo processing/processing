@@ -80,7 +80,7 @@ public class Texture implements PConstants {
 
   protected PGL pgl;                // The interface between Processing and OpenGL.
   protected int context;            // The context that created this texture.
-  protected boolean isColorBuffer;  // true if it is the color attachment of
+  protected boolean colorBuffer;  // true if it is the color attachment of
                                     // FrameBuffer object.
 
   protected boolean usingMipmaps;
@@ -114,7 +114,7 @@ public class Texture implements PConstants {
     pgl = PGraphicsOpenGL.pgl;
     context = pgl.createEmptyContext();
 
-    isColorBuffer = false;
+    colorBuffer = false;
 
     glName = 0;
   }
@@ -142,7 +142,7 @@ public class Texture implements PConstants {
     pgl = PGraphicsOpenGL.pgl;
     context = pgl.createEmptyContext();
 
-    isColorBuffer = false;
+    colorBuffer = false;
 
     glName = 0;
 
@@ -1242,13 +1242,13 @@ public class Texture implements PConstants {
   }
 
 
-  protected void setAsColorBuffer() {
-    isColorBuffer = true;
+  public void colorBuffer(boolean value) {
+    colorBuffer = value;
   }
 
 
-  protected boolean isColorBuffer() {
-    return isColorBuffer;
+  public boolean colorBuffer() {
+    return colorBuffer;
   }
 
 
