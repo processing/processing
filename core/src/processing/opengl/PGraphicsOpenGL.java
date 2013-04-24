@@ -651,10 +651,10 @@ public class PGraphicsOpenGL extends PGraphics {
       deleteDefaultShaders();
     } else {
       if (offscreenFramebuffer != null) {
-        offscreenFramebuffer.release();
+        offscreenFramebuffer.dispose();
       }
       if (multisampleFramebuffer != null) {
-        multisampleFramebuffer.release();
+        multisampleFramebuffer.dispose();
       }
     }
 
@@ -676,11 +676,11 @@ public class PGraphicsOpenGL extends PGraphics {
       deleteSurfaceTextures();
       if (!primarySurface) {
         if (offscreenFramebuffer != null) {
-          offscreenFramebuffer.release();
+          offscreenFramebuffer.dispose();
           offscreenFramebuffer = null;
         }
         if (multisampleFramebuffer != null) {
-          multisampleFramebuffer.release();
+          multisampleFramebuffer.dispose();
           multisampleFramebuffer = null;
         }
       }
@@ -5791,15 +5791,15 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void deleteSurfaceTextures() {
     if (texture != null) {
-      texture.release();
+      texture.dispose();
     }
 
     if (ptexture != null) {
-      ptexture.release();
+      ptexture.dispose();
     }
 
     if (filterTexture != null) {
-      filterTexture.release();
+      filterTexture.dispose();
     }
   }
 
@@ -5890,10 +5890,10 @@ public class PGraphicsOpenGL extends PGraphics {
     // is changed), we make sure that all the OpenGL resources associated
     // to the surface are released by calling delete().
     if (offscreenFramebuffer != null) {
-      offscreenFramebuffer.release();
+      offscreenFramebuffer.dispose();
     }
     if (multisampleFramebuffer != null) {
-      multisampleFramebuffer.release();
+      multisampleFramebuffer.dispose();
     }
 
     boolean packed = depthBits == 24 && stencilBits == 8 &&

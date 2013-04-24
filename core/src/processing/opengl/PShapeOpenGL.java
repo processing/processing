@@ -3436,7 +3436,7 @@ public class PShapeOpenGL extends PShape {
   // Deletion methods
 
 
-  protected void release() {
+  protected void dispose() {
     deletePolyBuffers();
     deleteLineBuffers();
     deletePointBuffers();

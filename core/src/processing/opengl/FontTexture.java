@@ -77,6 +77,13 @@ class FontTexture implements PConstants {
   }
 
 
+  protected void dispose() {
+    for (int i = 0; i < textures.length; i++) {
+      textures[i].dispose();
+    }
+  }
+
+
   protected void initTexture(PGraphicsOpenGL pg, PFont font, int w, int h) {
     maxTexWidth = w;
     maxTexHeight = h;

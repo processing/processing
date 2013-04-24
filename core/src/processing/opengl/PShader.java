@@ -882,7 +882,7 @@ public class PShader {
   protected void loadUniforms() { }
 
 
-  protected void release() {
+  protected void dispose() {
     if (glVertex != 0) {
       PGraphicsOpenGL.deleteGLSLVertShaderObject(glVertex, context);
       glVertex = 0;
