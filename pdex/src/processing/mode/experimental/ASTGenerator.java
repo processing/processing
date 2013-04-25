@@ -214,16 +214,17 @@ public class ASTGenerator {
 //          if (!frame2.isVisible()) {
 //            frame2.setVisible(true);
 //          }
-          if (!frameAutoComp.isVisible()) {
-
-            frameAutoComp.setVisible(true);
+//          if (!frameAutoComp.isVisible()) {
+//
+//            frameAutoComp.setVisible(true);
+//            
+//          }
+          if (!jdocWindow.isVisible()) {
             long t = System.currentTimeMillis();
             loadJars();
             loadJavaDoc();
             System.out.println("Time taken: "
                 + (System.currentTimeMillis() - t));
-          }
-          if (!jdocWindow.isVisible()) {
             jdocWindow.setBounds(new Rectangle(errorCheckerService.getEditor()
                 .getX() + errorCheckerService.getEditor().getWidth(),
                                                errorCheckerService.getEditor()
