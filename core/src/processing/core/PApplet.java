@@ -6109,10 +6109,31 @@ public class PApplet extends Applet
   }
 
 
+  public boolean saveJSONObject(JSONObject json, String filename) {
+    return saveJSONObject(json, filename);
+  }
+
+
+  public boolean saveJSONObject(JSONObject json, String filename, String options) {
+    return json.save(saveFile(filename), options);
+  }
+
+
   public JSONArray loadJSONArray(String filename) {
     JSONTokener tokener = new JSONTokener(createReader(filename));
     return new JSONArray(tokener);
   }
+
+
+  public boolean saveJSONArray(JSONArray json, String filename) {
+    return saveJSONArray(json, filename);
+  }
+
+
+  public boolean saveJSONArray(JSONArray json, String filename, String options) {
+    return json.save(saveFile(filename), options);
+  }
+
 
 
   /**

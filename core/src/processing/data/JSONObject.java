@@ -34,7 +34,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 
+import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.Method;
@@ -44,6 +47,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+
+import processing.core.PApplet;
 
 /**
  * A JSONObject is an unordered collection of name/value pairs. Its external
@@ -1412,6 +1417,23 @@ public class JSONObject {
 //    }
 //    return ja;
 //  }
+
+
+  protected boolean save(OutputStream output) {
+    return save(PApplet.createWriter(output));
+  }
+
+
+  public boolean save(File file, String options) {
+    return save(PApplet.createWriter(file));
+  }
+
+
+  public boolean save(PrintWriter output) {
+    output.print(format(2));
+    output.flush();
+    return true;
+  }
 
 
   /**

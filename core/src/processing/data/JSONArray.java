@@ -34,11 +34,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 
+import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+
+import processing.core.PApplet;
 
 /**
  * A JSONArray is an ordered sequence of values. Its external text form is a
@@ -846,6 +851,22 @@ public class JSONArray {
 //    return jo;
 //  }
 
+
+  protected boolean save(OutputStream output) {
+    return save(PApplet.createWriter(output));
+  }
+
+
+  public boolean save(File file, String options) {
+    return save(PApplet.createWriter(file));
+  }
+
+
+  public boolean save(PrintWriter output) {
+    output.print(format(2));
+    output.flush();
+    return true;
+  }
 
 
   /**
