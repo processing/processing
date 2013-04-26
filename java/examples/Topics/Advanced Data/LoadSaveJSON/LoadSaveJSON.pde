@@ -48,19 +48,14 @@ void draw() {
     b.rollover(mouseX, mouseY);
   }
   //
-  //  textAlign(LEFT);
-  //  fill(0);
-  //  text("Click to add bubbles.", 10, height-10);
+  textAlign(LEFT);
+  fill(0);
+  text("Click to add bubbles.", 10, height-10);
 }
-
-
-void loadData() {
+ void loadData() {
   // Load JSON file
-  String jsonString = join(loadStrings("data.json"), "\n");
-  //println(jsonString);
-
-  json =  JSONObject.parse(jsonString);
-  println(json);
+  // Temporary full path until path problem resolved.
+  json = loadJSONObject("/Users/shiffman/Desktop/LoadSaveJSON/data/data.json");
 
   JSONArray bubbleData = json.getJSONArray("bubbles");
 
@@ -68,7 +63,7 @@ void loadData() {
   bubbles = new Bubble[bubbleData.size()]; 
 
   for (int i = 0; i < bubbleData.size(); i++) {
-    /*JSONObject bubble = bubbleData.getJSONObject(i); 
+    JSONObject bubble = bubbleData.getObject(i); 
     JSONObject position = bubble.getJSONObject("position");
     int x = position.getInt("x");
     int y = position.getInt("y");
@@ -76,45 +71,37 @@ void loadData() {
     float diameter = (float)bubble.getDouble("diameter");
     String label = bubble.getString("label");
 
-    bubbles[i] = new Bubble(x, y, diameter, label);*/
+    bubbles[i] = new Bubble(x, y, diameter, label);
   }
 }
 
-// Still need to work on adding and deleting
+ void mousePressed() {
+  // Create a new JSON bubble object
+  JSONObject newBubble = new JSONObject();
 
-void mousePressed() {
+  // Create a new JSON position object
+  JSONObject position = new JSONObject();
+  position.setInt("x", mouseX);
+  position.setInt("y", mouseY);
 
-  // Create a new XML bubble element
-  //  XML bubble = xml.addChild("bubble");
-  //  
-  //  // Set the poisition element
-  //  XML position = bubble.addChild("position");
-  //  // Here we can set attributes as integers directly
-  //  position.setInt("x",mouseX);
-  //  position.setInt("y",mouseY);
-  //  
-  //  // Set the diameter element
-  //  XML diameter = bubble.addChild("diameter");
-  //  // Here for a node's content, we have to convert to a String
-  //  diameter.setContent("" + random(40,80));
-  //  
-  //  // Set a label
-  //  XML label = bubble.addChild("label");
-  //  label.setContent("New label");
-  //  
-  //  
-  //  // Here we are removing the oldest bubble if there are more than 10
-  //  XML[] children = xml.getChildren("bubble");
-  //    // If the XML file has more than 10 bubble elements
-  //  if (children.length > 10) {
-  //    // Delete the first one
-  //    xml.removeChild(children[0]);
-  //  }
-  //  
-  //  // Save a new XML file
-  //  saveXML(xml,"data/data.xml");
-  //  
-  //  // reload the new data 
-  //  loadData();
+  // Add position to bubble
+  //newBubble.setJSONObject("position", position);
+
+  // Add diamater and label to bubble
+  newBubble.setFloat("diameter", random(40, 80));
+  newBubble.setString("label", "New label");
+
+  // Append the new JSON bubble object to the array
+  JSONArray bubbleData = json.getJSONArray("bubbles");
+  bubbleData.append(newBubble);
+
+  if (bubbleData.size() > 10) {
+    bubbleData.removeIndex(0);
+  }
+
+  println(json);
+  // Not implemented yet
+  //saveJSONObject(json,"data.json");
+  //loadData();
 }
 
