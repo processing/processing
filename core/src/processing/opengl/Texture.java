@@ -80,7 +80,8 @@ public class Texture implements PConstants {
 
   protected PGL pgl;                // The interface between Processing and OpenGL.
   protected int context;            // The context that created this texture.
-  protected PGraphicsOpenGL pgDraw; // The main renderer is the color buffer of.
+  protected boolean colorBuffer;  // true if it is the color attachment of
+                                    // FrameBuffer object.
 
   protected boolean usingMipmaps;
   protected boolean usingRepeat;
@@ -113,7 +114,7 @@ public class Texture implements PConstants {
     pgl = PGraphicsOpenGL.pgl;
     context = pgl.createEmptyContext();
 
-    pgDraw = null;
+    colorBuffer = false;
 
     glName = 0;
   }
@@ -141,7 +142,7 @@ public class Texture implements PConstants {
     pgl = PGraphicsOpenGL.pgl;
     context = pgl.createEmptyContext();
 
-    pgDraw = null;
+    colorBuffer = false;
 
     glName = 0;
 
@@ -152,6 +153,7 @@ public class Texture implements PConstants {
   @Override
   protected void finalize() throws Throwable {
     try {
+      PApplet.println("finalize texture");
       if (glName != 0) {
         PGraphicsOpenGL.finalizeTextureObject(glName, context);
       }
@@ -237,7 +239,7 @@ public class Texture implements PConstants {
   public void resize(int wide, int high) {
     // Marking the texture object as finalized so it is deleted
     // when creating the new texture.
-    release();
+    dispose();
 
     // Creating new texture with the appropriate size.
     Texture tex = new Texture(wide, high, getParameters());
@@ -1174,7 +1176,7 @@ public class Texture implements PConstants {
    * Allocates the opengl texture object.
    */
   protected void allocate() {
-    release(); // Just in the case this object is being re-allocated.
+    dispose(); // Just in the case this object is being re-allocated.
 
     boolean enabledTex = false;
     if (!pgl.texturingIsEnabled(glTarget)) {
@@ -1216,7 +1218,7 @@ public class Texture implements PConstants {
   /**
    * Marks the texture object for deletion.
    */
-  protected void release() {
+  protected void dispose() {
     if (glName != 0) {
       PGraphicsOpenGL.finalizeTextureObject(glName, context);
       glName = 0;
@@ -1240,13 +1242,13 @@ public class Texture implements PConstants {
   }
 
 
-  public void colorBufferOf(PGraphicsOpenGL pgDraw) {
-    this.pgDraw = pgDraw;
+  public void colorBuffer(boolean value) {
+    colorBuffer = value;
   }
 
 
-  protected boolean isColorBuffer() {
-    return pgDraw != null;
+  public boolean colorBuffer() {
+    return colorBuffer;
   }
 
 
@@ -1330,7 +1332,7 @@ public class Texture implements PConstants {
   protected void copyObject(Texture src) {
     // The OpenGL texture of this object is replaced with the one from the
     // source object, so we delete the former to avoid resource wasting.
-    release();
+    dispose();
 
     width = src.width;
     height = src.height;

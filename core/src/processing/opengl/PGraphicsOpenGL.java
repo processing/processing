@@ -651,10 +651,10 @@ public class PGraphicsOpenGL extends PGraphics {
       deleteDefaultShaders();
     } else {
       if (offscreenFramebuffer != null) {
-        offscreenFramebuffer.release();
+        offscreenFramebuffer.dispose();
       }
       if (multisampleFramebuffer != null) {
-        multisampleFramebuffer.release();
+        multisampleFramebuffer.dispose();
       }
     }
 
@@ -667,19 +667,20 @@ public class PGraphicsOpenGL extends PGraphics {
   @Override
   protected void finalize() throws Throwable {
     try {
+      PApplet.println("finalize surface");
+
       deletePolyBuffers();
       deleteLineBuffers();
       deletePointBuffers();
 
       deleteSurfaceTextures();
       if (!primarySurface) {
-        PApplet.println("finalize offscreen surface");
         if (offscreenFramebuffer != null) {
-          offscreenFramebuffer.release();
+          offscreenFramebuffer.dispose();
           offscreenFramebuffer = null;
         }
         if (multisampleFramebuffer != null) {
-          multisampleFramebuffer.release();
+          multisampleFramebuffer.dispose();
           multisampleFramebuffer = null;
         }
       }
@@ -796,7 +797,7 @@ public class PGraphicsOpenGL extends PGraphics {
     for (GLResource res : finalized) {
       glTextureObjects.remove(res);
     }
-    if (0 < finalized.size()) PApplet.println("Deleted " + finalized.size() + " texture objects, " + glTextureObjects.size() + " remaining");
+    PApplet.println("Deleted " + finalized.size() + " texture objects, " + glTextureObjects.size() + " remaining");
   }
 
   protected static void removeTextureObject(int id, int context) {
@@ -861,7 +862,7 @@ public class PGraphicsOpenGL extends PGraphics {
     for (GLResource res : finalized) {
       glVertexBuffers.remove(res);
     }
-    if (0 < finalized.size()) PApplet.println("Deleted " + finalized.size() + " vertex buffer objects, " + glVertexBuffers.size() + " remaining");
+//    PApplet.println("Deleted " + finalized.size() + " vertex buffer objects, " + glVertexBuffers.size() + " remaining");
   }
 
   protected static void removeVertexBufferObject(int id, int context) {
@@ -928,7 +929,7 @@ public class PGraphicsOpenGL extends PGraphics {
     for (GLResource res : finalized) {
       glFrameBuffers.remove(res);
     }
-    if (0 < finalized.size()) PApplet.println("Deleted " + finalized.size() + " framebuffer objects, " + glFrameBuffers.size() + " remaining");
+    PApplet.println("Deleted " + finalized.size() + " framebuffer objects, " + glFrameBuffers.size() + " remaining");
   }
 
   protected static void removeFrameBufferObject(int id, int context) {
@@ -993,7 +994,7 @@ public class PGraphicsOpenGL extends PGraphics {
     for (GLResource res : finalized) {
       glRenderBuffers.remove(res);
     }
-    if (0 < finalized.size()) PApplet.println("Deleted " + finalized.size() + " renderbuffer objects, " + glRenderBuffers.size() + " remaining");
+    PApplet.println("Deleted " + finalized.size() + " renderbuffer objects, " + glRenderBuffers.size() + " remaining");
   }
 
   protected static void removeRenderBufferObject(int id, int context) {
@@ -1054,7 +1055,7 @@ public class PGraphicsOpenGL extends PGraphics {
     for (GLResource res : finalized) {
       glslPrograms.remove(res);
     }
-    if (0 < finalized.size()) PApplet.println("Deleted " + finalized.size() + " GLSL program objects, " + glslPrograms.size() + " remaining");
+//    PApplet.println("Deleted " + finalized.size() + " GLSL program objects, " + glslPrograms.size() + " remaining");
   }
 
   protected static void removeGLSLProgramObject(int id, int context) {
@@ -1116,7 +1117,7 @@ public class PGraphicsOpenGL extends PGraphics {
     for (GLResource res : finalized) {
       glslVertexShaders.remove(res);
     }
-    if (0 < finalized.size()) PApplet.println("Deleted " + finalized.size() + " GLSL vertex shader objects, " + glslVertexShaders.size() + " remaining");
+//    PApplet.println("Deleted " + finalized.size() + " GLSL vertex shader objects, " + glslVertexShaders.size() + " remaining");
   }
 
   protected static void removeGLSLVertShaderObject(int id, int context) {
@@ -1178,7 +1179,7 @@ public class PGraphicsOpenGL extends PGraphics {
     for (GLResource res : finalized) {
       glslFragmentShaders.remove(res);
     }
-    if (0 < finalized.size()) PApplet.println("Deleted " + finalized.size() + " GLSL fragment shader objects, " + glslFragmentShaders.size() + " remaining");
+//    PApplet.println("Deleted " + finalized.size() + " GLSL fragment shader objects, " + glslFragmentShaders.size() + " remaining");
   }
 
   protected static void removeGLSLFragShaderObject(int id, int context) {
@@ -5301,13 +5302,13 @@ public class PGraphicsOpenGL extends PGraphics {
                                                          sampling, mipmap);
       texture = new Texture(width, height, params);
       texture.invertedY(true);
-      texture.colorBufferOf(this);
+      texture.colorBuffer(true);
       pgPrimary.setCache(this, texture);
 
       if (!primarySurface) {
         ptexture = new Texture(width, height, params);
         ptexture.invertedY(true);
-        ptexture.colorBufferOf(this);
+        ptexture.colorBuffer(true);
       }
     }
   }
@@ -5723,7 +5724,7 @@ public class PGraphicsOpenGL extends PGraphics {
   protected Texture addTexture(PImage img) {
     Texture.Parameters params =
       new Texture.Parameters(ARGB, textureSampling,
-                             getHint(ENABLE_TEXTURE_MIPMAPS),textureWrap);
+                             getHint(ENABLE_TEXTURE_MIPMAPS), textureWrap);
     return addTexture(img, params);
   }
 
@@ -5736,14 +5737,14 @@ public class PGraphicsOpenGL extends PGraphics {
     if (img.parent == null) {
       img.parent = parent;
     }
-    Texture tex = new Texture(/*img.parent,*/ img.width, img.height, params);
+    Texture tex = new Texture(img.width, img.height, params);
     pgPrimary.setCache(img, tex);
     return tex;
   }
 
 
   protected void checkTexture(Texture tex) {
-    if (!tex.isColorBuffer() &&
+    if (!tex.colorBuffer() &&
         tex.usingMipmaps == hints[DISABLE_TEXTURE_MIPMAPS]) {
       if (hints[DISABLE_TEXTURE_MIPMAPS]) {
         tex.usingMipmaps(false, textureSampling);
@@ -5790,15 +5791,15 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void deleteSurfaceTextures() {
     if (texture != null) {
-      texture.release();
+      texture.dispose();
     }
 
     if (ptexture != null) {
-      ptexture.release();
+      ptexture.dispose();
     }
 
     if (filterTexture != null) {
-      filterTexture.release();
+      filterTexture.dispose();
     }
   }
 
@@ -5889,10 +5890,10 @@ public class PGraphicsOpenGL extends PGraphics {
     // is changed), we make sure that all the OpenGL resources associated
     // to the surface are released by calling delete().
     if (offscreenFramebuffer != null) {
-      offscreenFramebuffer.release();
+      offscreenFramebuffer.dispose();
     }
     if (multisampleFramebuffer != null) {
-      multisampleFramebuffer.release();
+      multisampleFramebuffer.dispose();
     }
 
     boolean packed = depthBits == 24 && stencilBits == 8 &&

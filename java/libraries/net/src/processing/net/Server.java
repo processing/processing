@@ -31,16 +31,16 @@ import java.lang.reflect.*;
 import java.net.*;
 
 /**
-   * ( begin auto-generated from Server.xml )
-   * 
-   * A server sends and receives data to and from its associated clients 
-   * (other programs connected to it). When a server is started, it begins 
-   * listening for connections on the port specified by the <b>port</b> 
-   * parameter. Computers have many ports for transferring data and some are 
-   * commonly used so be sure to not select one of these. For example, web 
-   * servers usually use port 80 and POP mail uses port 110.
-   * 
-   * ( end auto-generated )
+ * ( begin auto-generated from Server.xml )
+ * 
+ * A server sends and receives data to and from its associated clients 
+ * (other programs connected to it). When a server is started, it begins 
+ * listening for connections on the port specified by the <b>port</b> 
+ * parameter. Computers have many ports for transferring data and some are 
+ * commonly used so be sure to not select one of these. For example, web 
+ * servers usually use port 80 and POP mail uses port 110.
+ * 
+ * ( end auto-generated )
  * @webref net
  * @usage application
  * @brief The server class is used to create server objects which send and receives data to and from its associated clients (other programs connected to it). 
@@ -104,8 +104,7 @@ public class Server implements Runnable {
    * Disconnect a particular client.
    * 
    * ( end auto-generated )
-   * 
-   * ( end auto-generated )
+   * @brief Disconnect a particular client.
    * @webref server:server
    * @param client the client to disconnect
    */
@@ -169,8 +168,7 @@ public class Server implements Runnable {
    * Returns the next client in line with a new message.
    * 
    * ( end auto-generated )
-   * 
-   * ( end auto-generated )
+   * @brief Returns the next client in line with a new message.
    * @webref server
    * @usage application
    */
@@ -198,12 +196,11 @@ public class Server implements Runnable {
    * Disconnects all clients and stops the server.
    * 
    * ( end auto-generated )
-   * 
    * <h3>Advanced</h3>
-   * <p/>
    * Use this to shut down the server if you finish using it while your applet 
    * is still running. Otherwise, it will be automatically be shut down by the 
    * host PApplet using dispose(), which is identical. 
+   * @brief Disconnects all clients and stops the server.
    * @webref server
    * @usage application
    */
@@ -273,7 +270,6 @@ public class Server implements Runnable {
    * Server object.
    * 
    * ( end auto-generated )
-   * 
    * @webref server
    * @brief Writes data to all connected clients
    * @param data data to write

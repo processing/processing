@@ -338,7 +338,7 @@ public class FrameBuffer implements PConstants {
 
 
   protected void allocate() {
-    release(); // Just in the case this object is being re-allocated.
+    dispose(); // Just in the case this object is being re-allocated.
 
     context = pgl.getCurrentContext();
 
@@ -367,7 +367,7 @@ public class FrameBuffer implements PConstants {
   }
 
 
-  protected void release() {
+  protected void dispose() {
     if (screenFb) return;
 
     if (glFbo != 0) {
