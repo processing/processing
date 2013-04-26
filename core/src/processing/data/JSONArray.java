@@ -107,7 +107,7 @@ public class JSONArray {
    * @param x A JSONTokener
    * @throws JSONException If there is a syntax error.
    */
-  protected JSONArray(JSONTokener x) {
+  public JSONArray(JSONTokener x) {
     this();
     if (x.nextClean() != '[') {
       throw new RuntimeException("A JSONArray text must start with '['");
@@ -332,7 +332,7 @@ public class JSONArray {
    * @throws JSONException If there is no value for the index. or if the
    * value is not a JSONArray
    */
-  public JSONArray getArray(int index) {
+  public JSONArray getJSONArray(int index) {
     Object object = this.get(index);
     if (object instanceof JSONArray) {
       return (JSONArray)object;
@@ -348,7 +348,7 @@ public class JSONArray {
    * @throws JSONException If there is no value for the index or if the
    * value is not a JSONObject
    */
-  public JSONObject getObject(int index) {
+  public JSONObject getJSONObject(int index) {
     Object object = this.get(index);
     if (object instanceof JSONObject) {
       return (JSONObject)object;

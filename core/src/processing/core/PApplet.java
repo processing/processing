@@ -6028,6 +6028,7 @@ public class PApplet extends Applet
     }
   }
 
+
   /**
    * @webref input:files
    * @param filename name of a file in the data folder or a URL.
@@ -6043,6 +6044,7 @@ public class PApplet extends Applet
     return loadXML(filename, null);
   }
 
+
   // version that uses 'options' though there are currently no supported options
   /**
    * @nowebref
@@ -6055,6 +6057,7 @@ public class PApplet extends Applet
       return null;
     }
   }
+
 
   /**
    * @webref input:files
@@ -6070,6 +6073,7 @@ public class PApplet extends Applet
     return parseXML(xmlString, null);
   }
 
+
   public XML parseXML(String xmlString, String options) {
     try {
       return XML.parse(xmlString, options);
@@ -6078,6 +6082,7 @@ public class PApplet extends Applet
       return null;
     }
   }
+
 
   /**
    * @webref output:files
@@ -6101,6 +6106,12 @@ public class PApplet extends Applet
   public JSONObject loadJSONObject(String filename) {
     JSONTokener tokener = new JSONTokener(createReader(filename));
     return new JSONObject(tokener);
+  }
+
+
+  public JSONArray loadJSONArray(String filename) {
+    JSONTokener tokener = new JSONTokener(createReader(filename));
+    return new JSONArray(tokener);
   }
 
 
@@ -6884,8 +6895,9 @@ public class PApplet extends Applet
       File file = new File(dataPath(filename));
       if (!file.exists()) {
         // next see if it's just in the sketch folder
-        file = new File(sketchPath, filename);
+        file = sketchFile(filename);
       }
+
       if (file.isDirectory()) {
         return null;
       }
