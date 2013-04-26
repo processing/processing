@@ -63,14 +63,19 @@ void draw() {
   bubbles = new Bubble[bubbleData.size()]; 
 
   for (int i = 0; i < bubbleData.size(); i++) {
+    // Get each object in the array
     JSONObject bubble = bubbleData.getObject(i); 
+    // Get a position object
     JSONObject position = bubble.getJSONObject("position");
+    // Get x,y from position
     int x = position.getInt("x");
     int y = position.getInt("y");
-
-    float diameter = (float)bubble.getDouble("diameter");
+    
+    // Get diamter and label
+    float diameter = bubble.getFloat("diameter");
     String label = bubble.getString("label");
 
+    // Put object in array
     bubbles[i] = new Bubble(x, y, diameter, label);
   }
 }
@@ -85,7 +90,7 @@ void draw() {
   position.setInt("y", mouseY);
 
   // Add position to bubble
-  //newBubble.setJSONObject("position", position);
+  newBubble.setJSONObject("position", position);
 
   // Add diamater and label to bubble
   newBubble.setFloat("diameter", random(40, 80));
