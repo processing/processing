@@ -261,6 +261,9 @@ public class EditorConsole extends JScrollPane {
       // Remove initalization warning from LWJGL.
     } else if (err && what.contains("XInitThreads() called for concurrent")) {
       // "Info: XInitThreads() called for concurrent Thread support" message on Linux
+    } else if (!err && what.contains("Listening for transport dt_socket at address")) {
+      // Message from the JVM about the socket launch for debug 
+      // Listening for transport dt_socket at address: 8727
     } else {
       // Append a piece of text to the console. Swing components are NOT
       // thread-safe, and since the MessageSiphon instantiates new threads,

@@ -23,7 +23,7 @@ X   "To use this library, switch to 32-bit mode in Preferences." (OS X)
 X   "To use this library, you must use the 32-bit version of Processing."
 X rebuild Runner to use SocketAttach
 X   deals with spaces in path problem, but also opens a port
-_ remove "Listening for transport dt_socket at address: 8727" message
+X remove "Listening for transport dt_socket at address: 8727" message
 
 manager
 X "New version available" mesage is showing html tags around it

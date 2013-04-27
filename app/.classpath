@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src"/>
+	<classpathentry excluding="processing/mode/java/runner/EventThread.java" kind="src" path="src"/>
 	<classpathentry kind="src" path="generated">
 		<attributes>
 			<attribute name="ignore_optional_problems" value="true"/>
