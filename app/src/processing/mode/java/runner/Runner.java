@@ -35,15 +35,8 @@ import java.util.*;
 
 import com.sun.jdi.*;
 import com.sun.jdi.connect.*;
-import com.sun.jdi.event.Event;
-import com.sun.jdi.event.EventQueue;
-import com.sun.jdi.event.EventSet;
-import com.sun.jdi.event.ExceptionEvent;
-import com.sun.jdi.event.VMDisconnectEvent;
-import com.sun.jdi.event.VMStartEvent;
-//import com.sun.jdi.request.EventRequest;
-//import com.sun.jdi.request.EventRequestManager;
-//import com.sun.jdi.request.ExceptionRequest;
+import com.sun.jdi.event.*;
+import com.sun.jdi.request.*;
 
 
 /**
@@ -668,34 +661,68 @@ public class Runner implements MessageConsumer {
 ////    System.out.println("event requests set");
 ////    //}
     
+    // Calling this seems to set something internally to make the 
+    // Eclipse JDI wake up. Without it, an ObjectCollectedException
+    // is thrown on excReq.enable(). No idea why this works, 
+    // but at least exception handling has returned. (Suspect that it may 
+    // block until all or at least some threads are available, meaning 
+    // that the app has launched and we have legit objects to talk to). 
+    vm.allThreads();
+    // The bug may not have been noticed because the test suite waits for 
+    // a thread to be available, and queries it by calling allThreads(). 
+    // See org.eclipse.debug.jdi.tests.AbstractJDITest for the example.
+    
+    EventRequestManager mgr = vm.eventRequestManager();
+    // get only the uncaught exceptions
+    ExceptionRequest excReq = mgr.createExceptionRequest(null, false, true);
+//    System.out.println(excReq);
+    // this version reports all exceptions, caught or uncaught
+//  ExceptionRequest excReq = mgr.createExceptionRequest(null, true, true);
+    // suspend so we can step
+    excReq.setSuspendPolicy(EventRequest.SUSPEND_ALL);
+//    excReq.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
+//  excReq.setSuspendPolicy(EventRequest.SUSPEND_NONE);  // another option?
+    excReq.enable();
+    
     Thread eventThread = new Thread() {
       public void run() {
         try {
           boolean connected = true;
           while (connected) {
             EventQueue eventQueue = vm.eventQueue();
-            EventSet eventSet = eventQueue.remove();
+            // remove() blocks until event(s) available
+            EventSet eventSet = eventQueue.remove();  
 //            listener.vmEvent(eventSet);
 
             for (Event event : eventSet) {  //.iterator()) {
 //              System.out.println("EventThread.handleEvent -> " + event);
-              if (event instanceof VMStartEvent) {
-//                EventRequestManager mgr = vm.eventRequestManager();
-//                // get only the uncaught exceptions
-//                ExceptionRequest excReq = mgr.createExceptionRequest(null, false, true);
-//                // this version reports all exceptions, caught or uncaught
-////              ExceptionRequest excReq = mgr.createExceptionRequest(null, true, true);
-//                // suspend so we can step
-////                excReq.setSuspendPolicy(EventRequest.SUSPEND_ALL);
+              /*if (event instanceof VMStartEvent) {
+//                for (ThreadReference thread : vm.allThreads()) {
+//                  System.out.println("thread: " + thread);
+//                }
+                // Calling this seems to set something internally to make the 
+                // Eclipse JDI wake up. Without it, an ObjectCollectedException
+                // is thrown on excReq.enable(). No idea why this works, 
+                // but at least exception handling has returned. 
+                vm.allThreads();
+                
+                EventRequestManager mgr = vm.eventRequestManager();
+                // get only the uncaught exceptions
+                ExceptionRequest excReq = mgr.createExceptionRequest(null, false, true);
+//                System.out.println(excReq);
+                // this version reports all exceptions, caught or uncaught
+//              ExceptionRequest excReq = mgr.createExceptionRequest(null, true, true);
+                // suspend so we can step
+                excReq.setSuspendPolicy(EventRequest.SUSPEND_ALL);
 //                excReq.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
-////              excReq.setSuspendPolicy(EventRequest.SUSPEND_NONE);  // another option?
-//                excReq.enable();
+//              excReq.setSuspendPolicy(EventRequest.SUSPEND_NONE);  // another option?
+                excReq.enable();
 
-              } else if (event instanceof ExceptionEvent) {
+              } else*/ if (event instanceof ExceptionEvent) {
                 for (ThreadReference thread : vm.allThreads()) {
                   thread.suspend();
                 }
-                exceptionEvent((ExceptionEvent)event);
+                exceptionEvent((ExceptionEvent) event);
               } else if (event instanceof VMDisconnectEvent) {
                 connected = false;
               } 
@@ -765,7 +792,8 @@ public class Runner implements MessageConsumer {
 
 
   protected Connector findConnector(String connectorName) {
-//    List connectors = Bootstrap.virtualMachineManager().allConnectors();
+//    List connectors = 
+//      com.sun.jdi.Bootstrap.virtualMachineManager().allConnectors();
     List connectors =
       org.eclipse.jdi.Bootstrap.virtualMachineManager().allConnectors();
 
@@ -787,7 +815,10 @@ public class Runner implements MessageConsumer {
         return connector;
       }
     }
-    throw new Error("No Connector available for Runner");
+    Base.showError("Compiler Error", 
+                   "findConnector() failed to find " + 
+                    connectorName + " inside Runner", null);
+    return null; // Not reachable
   }
 
 
@@ -919,13 +950,13 @@ public class Runner implements MessageConsumer {
       // it's something that needs to be debugged separately.
       e.printStackTrace();
     }
-    //// before giving up, try to extract from the throwable object itself
-    //// since sometimes exceptions are re-thrown from a different context
+    // before giving up, try to extract from the throwable object itself
+    // since sometimes exceptions are re-thrown from a different context
     try {
-      //// assume object reference is Throwable, get stack trace
+      // assume object reference is Throwable, get stack trace
       Method method = ((ClassType) or.referenceType()).concreteMethodByName("getStackTrace", "()[Ljava/lang/StackTraceElement;");
       ArrayReference result = (ArrayReference) or.invokeMethod(thread, method, new ArrayList<Value>(), ObjectReference.INVOKE_SINGLE_THREADED);
-      //// iterate through stack frames and pull filename and line number for each
+      // iterate through stack frames and pull filename and line number for each
       for (Value val: result.getValues()) {
         ObjectReference ref = (ObjectReference)val;
         method = ((ClassType) ref.referenceType()).concreteMethodByName("getFileName", "()Ljava/lang/String;");
