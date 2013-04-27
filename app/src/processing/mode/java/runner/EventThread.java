@@ -81,6 +81,7 @@ public class EventThread extends Thread {
    */
   public void run() { 
     EventQueue queue = vm.eventQueue();
+//    setEventRequests(false);  // ATTEMPT TO MOVE HERE 130427
     while (connected) {
       try {
         EventSet eventSet = queue.remove();
@@ -114,9 +115,10 @@ public class EventThread extends Thread {
     // get only the uncaught exceptions
     ExceptionRequest excReq = mgr.createExceptionRequest(null, false, true);
     // this version reports all exceptions, caught or uncaught
-    //ExceptionRequest excReq = mgr.createExceptionRequest(null, true, true);
+//    ExceptionRequest excReq = mgr.createExceptionRequest(null, true, true);
     // suspend so we can step
     excReq.setSuspendPolicy(EventRequest.SUSPEND_ALL);
+//    excReq.setSuspendPolicy(EventRequest.SUSPEND_NONE);  // another option?
     excReq.enable();
 
     /*
@@ -251,6 +253,7 @@ public class EventThread extends Thread {
    * Dispatch incoming events
    */
   private void handleEvent(Event event) {
+    System.out.println("EventThread.handleEvent -> " + event);
     if (event instanceof ExceptionEvent) {
       exceptionEvent((ExceptionEvent)event);
     } else if (event instanceof ModificationWatchpointEvent) {
@@ -366,7 +369,7 @@ public class EventThread extends Thread {
     for (ThreadReference thread : vm.allThreads()) {
       thread.suspend();
     }
-    parent.exception(event);
+    parent.exceptionEvent(event);
     
     /*
     ObjectReference or = event.exception();

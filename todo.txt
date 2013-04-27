@@ -18,6 +18,12 @@ o crash when selecting "Show Sketch Folder" with Windows 7
 o   might be a java.awt.Desktop problem
 X   http://code.google.com/p/processing/issues/detail?id=1473
 X   marked cantfix back in December
+X change error message for libraries (especially serial) for 32- vs 64-bit
+X   "To use this library, switch to 32-bit mode in Preferences." (OS X)
+X   "To use this library, you must use the 32-bit version of Processing."
+X rebuild Runner to use SocketAttach
+X   deals with spaces in path problem, but also opens a port
+_ remove "Listening for transport dt_socket at address: 8727" message
 
 manager
 X "New version available" mesage is showing html tags around it
@@ -30,12 +36,13 @@ X "Update" not working in the library manager
 X   https://github.com/processing/processing/issues/1701
 
 
+_ reference for normal() uses '50' as z value.. use something normalized
+
 _ send info on 'check for updates' so we know about libs/modes/etc?
 _   how to disclose to users?
 _   only send for items that are part of the public list 
 _     otherwise we're sending private libraries/installs
 _     although this won't pick up old libraries not on the new system
-
 
 _ how does new JDI affect Experimental? duplicate libs? loader issues?
 _ move Android mode out to its own repo
@@ -44,10 +51,6 @@ _   otherwise marks revisions.txt as changed
 
 _ remove sketch.properties when moving back to the default?
 _   or can we not do this, because it's used to set the 'next' mode
-
-_ change error message for serial re: 64-bit
-_   "To use this library, switch to 32-bit mode in Preferences." (OS X)
-_   "To use this library, you must use the 32-bit version of Processing."
 
 _ Linux sometimes not responding correctly w/ the size() command
 _   https://github.com/processing/processing/issues/1672

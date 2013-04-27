@@ -44,18 +44,18 @@ public class DebugRunner extends processing.mode.java.runner.Runner {
      * @return debuggee VM or null on failure
      */
     public VirtualMachine launch() {
-        String[] machineParamList = getMachineParams();
-        String[] sketchParamList = getSketchParams();
-        /*
-         * System.out.println("vm launch sketch params:"); for (int i=0;
-         * i<sketchParamList.length; i++) {
-         * System.out.println(sketchParamList[i]); } System.out.println("vm
-         * launch machine params:"); for (int i=0; i<machineParamList.length;
-         * i++) { System.out.println(machineParamList[i]); }
-         *
-         */
-        vm = launchVirtualMachine(machineParamList, sketchParamList); // will return null on failure
-        if (vm != null) {
+//        String[] machineParamList = getMachineParams();
+//        String[] sketchParamList = getSketchParams(false);
+//        /*
+//         * System.out.println("vm launch sketch params:"); for (int i=0;
+//         * i<sketchParamList.length; i++) {
+//         * System.out.println(sketchParamList[i]); } System.out.println("vm
+//         * launch machine params:"); for (int i=0; i<machineParamList.length;
+//         * i++) { System.out.println(machineParamList[i]); }
+//         *
+//         */
+//        vm = launchVirtualMachine(machineParamList, sketchParamList); // will return null on failure
+        if (launchVirtualMachine(false)) {  // will return null on failure
             redirectStreams(vm);
         }
         return vm;
@@ -67,9 +67,9 @@ public class DebugRunner extends processing.mode.java.runner.Runner {
      * @param vm the VM
      */
     protected void redirectStreams(VirtualMachine vm) {
-        MessageSiphon ms = new MessageSiphon(vm.process().getErrorStream(), this);
+        MessageSiphon ms = new MessageSiphon(process.getErrorStream(), this);
         errThread = ms.getThread();
-        outThread = new StreamRedirectThread("VM output reader", vm.process().getInputStream(), System.out);
+        outThread = new StreamRedirectThread("VM output reader", process.getInputStream(), System.out);
         errThread.start();
         outThread.start();
     }

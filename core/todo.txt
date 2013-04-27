@@ -33,7 +33,15 @@ _   contains() as default, then containsValue() as the alternate
 _     instead of containsKey() and containsValue()
 _ add() to add things to lists, inc/dec for the math
 _   inc/dec/sum is used less, after all
+_ or append()? since that's what JSON is currently using
 _ will also need an iterator for the Dict class ala Map.Entry
+_ Lookup instead of Hash or Dict?
+inc(), inc(amount)
+dec(), dec(amount)
+increment, decrement, increase, decrease instead of add/subtract
+does double duty for incrementing/decrementing easily
+_ getIntArray() or toIntArray() (also for JSONArray)
+_ add indent= as option for XML, JSON save
 
 List: remove(), append(), index(), etc all use values
   removeIndex(index) is the other
@@ -130,6 +138,8 @@ _ P2D/P3D sketches don't get focus until clicked
 _   also problem for Java2D when canvas is used?
 _   need to standardize canvas handling
 _   https://github.com/processing/processing/issues/1700
+_ warning message present
+_   Deleted 1 texture objects, 0 remaining
 
 _ introduce remap() instead of map() (if not deprecate?)
 
