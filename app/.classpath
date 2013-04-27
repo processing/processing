@@ -22,8 +22,8 @@
 	<classpathentry kind="lib" path="test/lib/junit-4.8.1.jar"/>
 	<classpathentry kind="lib" path="lib/org-netbeans-swing-outline.jar"/>
 	<classpathentry kind="lib" path="lib/com.ibm.icu_4.4.2.v20110823.jar"/>
-	<classpathentry kind="lib" path="lib/jdi.jar"/>
-	<classpathentry kind="lib" path="lib/jdimodel.jar"/>
+	<classpathentry kind="lib" path="lib/jdi.jar" sourcepath="/processing-experimental/mode/jdi-src.zip"/>
+	<classpathentry kind="lib" path="lib/jdimodel.jar" sourcepath="/processing-experimental/mode/jdimodel-src.zip"/>
 	<classpathentry kind="lib" path="lib/org.eclipse.osgi_3.8.1.v20120830-144521.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
