@@ -145,6 +145,30 @@ public class JSONArray {
   }
 
 
+  public JSONArray(IntList list) {
+    myArrayList = new ArrayList<Object>();
+    for (int item : list.values()) {
+      myArrayList.add(new Integer(item));
+    }
+  }
+
+
+  public JSONArray(FloatList list) {
+    myArrayList = new ArrayList<Object>();
+    for (float item : list.values()) {
+      myArrayList.add(new Float(item));
+    }
+  }
+
+
+  public JSONArray(StringList list) {
+    myArrayList = new ArrayList<Object>();
+    for (String item : list.values()) {
+      myArrayList.add(item);
+    }
+  }
+
+
   /**
    * Construct a JSONArray from a source JSON text.
    * @param source     A string that begins with

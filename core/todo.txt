@@ -24,6 +24,8 @@ _   rsort(), sortReverse(), sortKeysReverse,
 _   sortDescend, sortDescending, sortKeysDescending, 
 _   sortHighLow, sortHigh, sortHighest, sortDown
 
+"hash.toJSONObject()" or "new JSONObject(hash)"
+
 hash/dict/etc
 _ need to sort out the final version of these and their names
 _ JSONObject.has(key) vs XML.hasAttribute(attr) vs HashMap.containsKey()
@@ -50,6 +52,8 @@ _   could use an int array instead, but a bit hokey in places
 
 replace? (especially for NaN)
 match? find? on StringList?
+
+decide on TableODS, TableHTML
 
 Iterable, Iterator, or [] returned for keys(), rows(), etc.
   list, dict, json, table are each more efficient at different things

@@ -293,6 +293,30 @@ public class JSONObject {
   }
 
 
+  public JSONObject(IntHash dict) {
+    map = new HashMap<String, Object>();
+    for (int i = 0; i < dict.size(); i++) {
+      setInt(dict.key(i), dict.value(i));
+    }
+  }
+
+
+  public JSONObject(FloatHash dict) {
+    map = new HashMap<String, Object>();
+    for (int i = 0; i < dict.size(); i++) {
+      setFloat(dict.key(i), dict.value(i));
+    }
+  }
+
+
+  public JSONObject(StringHash dict) {
+    map = new HashMap<String, Object>();
+    for (int i = 0; i < dict.size(); i++) {
+      setString(dict.key(i), dict.value(i));
+    }
+  }
+
+
   /**
    * Construct a JSONObject from an Object using bean getters.
    * It reflects on all of the public methods of the object.

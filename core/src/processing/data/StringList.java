@@ -7,31 +7,22 @@ import java.util.Random;
 import processing.core.PApplet;
 
 
-// splice, slice, subset, concat, reverse
-
-// trim, join for String versions
-
-
-/**
- * Helper class for a list of ints. By design (for efficiency), functions like
- * sort() and shuffle() always act on the list itself. To get a sorted copy,
- * use list.copy().sort().
- */
-public class IntList {
-  protected int count;
-  protected int[] data;
+public class StringList {
+  int count;
+  String[] data;
 
 
-  public IntList() {
-    data = new int[10];
+  public StringList() {
+    data = new String[10];
   }
 
 
-  public IntList(int[] source) {
-    count = source.length;
-    data = new int[count];
-    System.arraycopy(source, 0, data, 0, count);
+  public StringList(String[] list) {
+    count = list.length;
+    data = new String[count];
+    System.arraycopy(list, 0, data, 0, count);
   }
+
 
 
   /**
@@ -57,7 +48,7 @@ public class IntList {
 
   public void resize(int length) {
     if (length > data.length) {
-      int[] temp = new int[length];
+      String[] temp = new String[length];
       System.arraycopy(data, 0, temp, 0, count);
       data = temp;
 
@@ -79,7 +70,7 @@ public class IntList {
   /**
    * Get an entry at a particular index.
    */
-  public int get(int index) {
+  public String get(int index) {
     return data[index];
   }
 
@@ -89,11 +80,11 @@ public class IntList {
    * the list, it'll expand the list to accommodate, and fill the intermediate
    * entries with 0s.
    */
-  public void set(int index, int what) {
+  public void set(int index, String what) {
     if (index >= count) {
       data = PApplet.expand(data, index+1);
       for (int i = count; i < index; i++) {
-        data[i] = 0;
+        data[i] = null;
       }
       count = index+1;
     }
@@ -116,18 +107,27 @@ public class IntList {
 
 
   /** Remove the first instance of a particular value */
-  public boolean removeValue(int value) {
-    int index = index(value);
-    if (index != -1) {
-      remove(index);
-      return true;
+  public boolean removeValue(String value) {
+    if (value == null) {
+      for (int i = 0; i < count; i++) {
+        if (data[i] == null) {
+          remove(i);
+          return true;
+        }
+      }
+    } else {
+      int index = index(value);
+      if (index != -1) {
+        remove(index);
+        return true;
+      }
     }
     return false;
   }
 
 
   /** Remove all instances of a particular value */
-  public boolean removeValues(int value) {
+  public boolean removeValues(String value) {
     int ii = 0;
     for (int i = 0; i < count; i++) {
       if (data[i] != value) {
@@ -140,8 +140,49 @@ public class IntList {
   }
 
 
+  public boolean replaceValue(String value, String newValue) {
+    if (value == null) {
+      for (int i = 0; i < count; i++) {
+        if (data[i] == null) {
+          data[i] = newValue;
+          return true;
+        }
+      }
+    } else {
+      for (int i = 0; i < count; i++) {
+        if (value.equals(data[i])) {
+          data[i] = newValue;
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+
+  public boolean replaceValues(String value, String newValue) {
+    boolean changed = false;
+    if (value == null) {
+      for (int i = 0; i < count; i++) {
+        if (data[i] == null) {
+          data[i] = newValue;
+          changed = true;
+        }
+      }
+    } else {
+      for (int i = 0; i < count; i++) {
+        if (value.equals(data[i])) {
+          data[i] = newValue;
+          changed = true;
+        }
+      }
+    }
+    return changed;
+  }
+
+
   /** Add a new entry to the list. */
-  public void append(int value) {
+  public void append(String value) {
     if (count == data.length) {
       data = PApplet.expand(data);
     }
@@ -149,15 +190,15 @@ public class IntList {
   }
 
 
-  public void append(int[] values) {
-    for (int v : values) {
+  public void append(String[] values) {
+    for (String v : values) {
       append(v);
     }
   }
 
 
-  public void append(IntList list) {
-    for (int v : list.values()) {  // will concat the list...
+  public void append(StringList list) {
+    for (String v : list.values()) {  // will concat the list...
       append(v);
     }
   }
@@ -202,7 +243,7 @@ public class IntList {
       throw new IllegalArgumentException("insert() index " + index + " is past the end of this list");
     }
 
-    int[] temp = new int[count + values.length];
+    String[] temp = new String[count + values.length];
 
     // Copy the old values, but not more than already exist
     System.arraycopy(data, 0, temp, 0, Math.min(count, index));
@@ -271,19 +312,18 @@ public class IntList {
 
 
   /** Return the first index of a particular value. */
-  public int index(int what) {
-    /*
-    if (indexCache != null) {
-      try {
-        return indexCache.get(what);
-      } catch (Exception e) {  // not there
-        return -1;
+  public int index(String what) {
+    if (what == null) {
+      for (int i = 0; i < count; i++) {
+        if (data[i] == null) {
+          return i;
+        }
       }
-    }
-    */
-    for (int i = 0; i < count; i++) {
-      if (data[i] == what) {
-        return i;
+    } else {
+      for (int i = 0; i < count; i++) {
+        if (what.equals(data[i])) {
+          return i;
+        }
       }
     }
     return -1;
@@ -300,77 +340,116 @@ public class IntList {
 //  }
 
 
-  public boolean hasValue(int value) {
-//    if (indexCache == null) {
-//      cacheIndices();
-//    }
-//    return index(what) != -1;
-    for (int i = 0; i < count; i++) {
-      if (data[i] == value) {
-        return true;
+  public boolean hasValue(String value) {
+    if (value == null) {
+      for (int i = 0; i < count; i++) {
+        if (data[i] == null) {
+          return true;
+        }
+      }
+    } else {
+      for (int i = 0; i < count; i++) {
+        if (value.equals(data[i])) {
+          return true;
+        }
       }
     }
     return false;
   }
 
 
-  public void increment(int index) {
-    data[index]++;
-  }
+//  public void increment(int index) {
+//    data[index]++;
+//  }
+//
+//
+//  public void add(int index, int amount) {
+//    data[index] += amount;
+//  }
+//
+//
+//  public void sub(int index, int amount) {
+//    data[index] -= amount;
+//  }
+//
+//
+//  public void mul(int index, int amount) {
+//    data[index] *= amount;
+//  }
+//
+//
+//  public void div(int index, int amount) {
+//    data[index] /= amount;
+//  }
 
 
-  public void add(int index, int amount) {
-    data[index] += amount;
-  }
+//  public String min() {
+//    if (count == 0) {
+//      throw new ArrayIndexOutOfBoundsException("Cannot use min() on IntList of length 0.");
+//    }
+//    if (data.length == 0) {
+//      return String.NaN;
+//    }
+//    String m = Float.NaN;
+//    for (int i = 0; i < data.length; i++) {
+//      // find one good value to start
+//      if (data[i] == data[i]) {
+//        m = data[i];
+//
+//        // calculate the rest
+//        for (int j = i+1; j < data.length; j++) {
+//          float d = data[j];
+//          if (!Float.isNaN(d) && (d < m)) {
+//            m = data[j];
+//          }
+//        }
+//        break;
+//      }
+//    }
+//    return m;
+//  }
 
 
-  public void sub(int index, int amount) {
-    data[index] -= amount;
-  }
-
-
-  public void mul(int index, int amount) {
-    data[index] *= amount;
-  }
-
-
-  public void div(int index, int amount) {
-    data[index] /= amount;
-  }
-
-
-  public int min() {
-    if (count == 0) {
-      throw new ArrayIndexOutOfBoundsException("Cannot use min() on IntList of length 0.");
-    }
-    int outgoing = data[0];
-    for (int i = 1; i < data.length; i++) {
-      if (data[i] < outgoing) outgoing = data[i];
-    }
-    return outgoing;
-  }
-
-
-  public int max() {
-    if (count == 0) {
-      throw new ArrayIndexOutOfBoundsException("Cannot use max() on IntList of length 0.");
-    }
-    int outgoing = data[0];
-    for (int i = 1; i < data.length; i++) {
-      if (data[i] > outgoing) outgoing = data[i];
-    }
-    return outgoing;
-  }
+//  public float max() {
+//    if (count == 0) {
+//      throw new ArrayIndexOutOfBoundsException("Cannot use max() on IntList of length 0.");
+//    }
+//    if (data.length == 0) {
+//      return Float.NaN;
+//    }
+//    float m = Float.NaN;
+//    for (int i = 0; i < data.length; i++) {
+//      // find one good value to start
+//      if (data[i] == data[i]) {
+//        m = data[i];
+//
+//        // calculate the rest
+//        for (int j = i+1; j < data.length; j++) {
+//          float d = data[j];
+//          if (!Float.isNaN(d) && (d > m)) {
+//            m = data[j];
+//          }
+//        }
+//        break;
+//      }
+//    }
+//    return m;
+//  }
 
 
   /** Sorts the array in place. */
   public void sort() {
-    Arrays.sort(data, 0, count);
+    sortImpl(false);
   }
 
 
   /** reverse sort, orders values from highest to lowest */
   public void sortReverse() {
+    sortImpl(true);
+  }
+
+
+  private void sortImpl(final boolean reverse) {
     new Sort() {
       @Override
       public int size() {
@@ -379,7 +458,8 @@ public class IntList {
 
       @Override
       public float compare(int a, int b) {
-        return data[a] - data[b];
+        float diff = data[a].compareToIgnoreCase(data[b]);
+        return reverse ? -diff : diff;
       }
 
       @Override
@@ -413,7 +493,7 @@ public class IntList {
   public void reverse() {
     int ii = count - 1;
     for (int i = 0; i < count/2; i++) {
-      int t = data[i];
+      String t = data[i];
       data[i] = data[ii];
       data[ii] = t;
       --ii;
@@ -431,7 +511,7 @@ public class IntList {
     while (num > 1) {
       int value = r.nextInt(num);
       num--;
-      int temp = data[num];
+      String temp = data[num];
       data[num] = data[value];
       data[value] = temp;
     }
@@ -447,15 +527,15 @@ public class IntList {
     while (num > 1) {
       int value = (int) sketch.random(num);
       num--;
-      int temp = data[num];
+      String temp = data[num];
       data[num] = data[value];
       data[value] = temp;
     }
   }
 
 
-  public IntList copy() {
-    IntList outgoing = new IntList(data);
+  public StringList copy() {
+    StringList outgoing = new StringList(data);
     outgoing.count = count;
     return outgoing;
   }
@@ -466,21 +546,21 @@ public class IntList {
    * iterating with a for() loop, but modifying the list could cause terrible
    * things to happen.
    */
-  public int[] values() {
+  public String[] values() {
     crop();
     return data;
   }
 
 
-  public Iterator<Integer> valueIterator() {
-    return new Iterator<Integer>() {
+  public Iterator<String> valueIterator() {
+    return new Iterator<String>() {
       int index = -1;
 
       public void remove() {
-        IntList.this.remove(index);
+        StringList.this.remove(index);
       }
 
-      public Integer next() {
+      public String next() {
         return data[++index];
       }
 
@@ -511,47 +591,4 @@ public class IntList {
     System.arraycopy(data, 0, array, 0, count);
     return array;
   }
-
-
-//  public int[] toIntArray() {
-//    int[] outgoing = new int[count];
-//    for (int i = 0; i < count; i++) {
-//      outgoing[i] = (int) data[i];
-//    }
-//    return outgoing;
-//  }
-
-
-//  public long[] toLongArray() {
-//    long[] outgoing = new long[count];
-//    for (int i = 0; i < count; i++) {
-//      outgoing[i] = (long) data[i];
-//    }
-//    return outgoing;
-//  }
-
-
-//  public float[] toFloatArray() {
-//    float[] outgoing = new float[count];
-//    System.arraycopy(data, 0, outgoing, 0, count);
-//    return outgoing;
-//  }
-
-
-//  public double[] toDoubleArray() {
-//    double[] outgoing = new double[count];
-//    for (int i = 0; i < count; i++) {
-//      outgoing[i] = data[i];
-//    }
-//    return outgoing;
-//  }
-
-
-//  public String[] toStringArray() {
-//    String[] outgoing = new String[count];
-//    for (int i = 0; i < count; i++) {
-//      outgoing[i] = String.valueOf(data[i]);
-//    }
-//    return outgoing;
-//  }
 }
