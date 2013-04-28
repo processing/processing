@@ -44,6 +44,9 @@ _ getIntArray() or toIntArray() (also for JSONArray)
 _ add indent= as option for XML, JSON save
 _ not doing print() methods, since alternatives are more descriptive
 _   println(obj) and obj.write(System.out) are both better
+_ using Iterable for rows(), keys(), etc
+_   generally more efficient for Table, but slower for FloatHash and IntHash
+_   could use an int array instead, but a bit hokey in places
 
 List: remove(), append(), index(), etc all use values
   removeIndex(index) is the other

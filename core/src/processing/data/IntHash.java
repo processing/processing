@@ -2,6 +2,7 @@ package processing.data;
 
 import java.io.*;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import processing.core.PApplet;
 
@@ -21,10 +22,14 @@ public class IntHash {
   private HashMap<String, Integer> indices = new HashMap<String, Integer>();
 
 
-  static public IntHash fromTally(String[] list) {
+  /**
+   * Create a new object by counting the number of times each unique entry
+   * shows up in the specified String array.
+   */
+  static public IntHash fromCount(String[] list) {
     IntHash outgoing = new IntHash();
     for (String s : list) {
-      outgoing.increment(s);
+      outgoing.inc(s);
     }
     outgoing.crop();
     return outgoing;
@@ -47,6 +52,10 @@ public class IntHash {
   }
 
 
+  /**
+   * Create a new lookup with a specific size. This is more efficient than not
+   * specifying a size. Use it when you know the rough size of the thing you're creating.
+   */
   public IntHash(int length) {
     count = 0;
     keys = new String[length];
@@ -54,23 +63,18 @@ public class IntHash {
   }
 
 
-  public IntHash(String[] k, int[] v) {
-    count = Math.min(k.length, v.length);
-    keys = new String[count];
-    values = new int[count];
-    System.arraycopy(k, 0, keys, 0, count);
-    System.arraycopy(v, 0, values, 0, count);
-  }
-
-
-  public IntHash(PApplet parent, String filename) {
-    String[] lines = parent.loadStrings(filename);
+  /**
+   * Read a set of entries from a Reader that has each key/value pair on
+   * a single line, separated by a tab.
+   */
+  public IntHash(BufferedReader reader) {
+//  public IntHash(PApplet parent, String filename) {
+    String[] lines = PApplet.loadStrings(reader);
     keys = new String[lines.length];
     values = new int[lines.length];
 
 //    boolean csv = (lines[0].indexOf('\t') == -1);
     for (int i = 0; i < lines.length; i++) {
-//    if (lines[i].trim().length() != 0) {
 //      String[] pieces = csv ? Table.splitLineCSV(lines[i]) : PApplet.split(lines[i], '\t');
       String[] pieces = PApplet.split(lines[i], '\t');
       if (pieces.length == 2) {
@@ -100,13 +104,38 @@ public class IntHash {
   }
 
 
-  /**
-   * Return the internal array being used to store the keys. Allocated but
-   * unused entries will be removed. This array should not be modified.
-   */
-  public String[] keys() {
-    crop();
-    return keys;
+//  /**
+//   * Return the internal array being used to store the keys. Allocated but
+//   * unused entries will be removed. This array should not be modified.
+//   */
+//  public String[] keys() {
+//    crop();
+//    return keys;
+//  }
+
+
+  public Iterable<String> keys() {
+    return new Iterable<String>() {
+
+      @Override
+      public Iterator<String> iterator() {
+        return new Iterator<String>() {
+          int index = -1;
+
+          public void remove() {
+            removeIndex(index);
+          }
+
+          public String next() {
+            return key(++index);
+          }
+
+          public boolean hasNext() {
+            return index+1 < size();
+          }
+        };
+      }
+    };
   }
 
 
@@ -114,7 +143,14 @@ public class IntHash {
    * Return a copy of the internal keys array. This array can be modified.
    */
   public String[] keyArray() {
-    String[] outgoing = new String[count];
+    return keyArray(null);
+  }
+
+
+  public String[] keyArray(String[] outgoing) {
+    if (outgoing == null || outgoing.length != count) {
+      outgoing = new String[count];
+    }
     System.arraycopy(keys, 0, outgoing, 0, count);
     return outgoing;
   }
@@ -125,52 +161,112 @@ public class IntHash {
   }
 
 
-  public int[] values() {
-    crop();
-    return values;
+  public Iterable<Integer> values() {
+    return new Iterable<Integer>() {
+
+      @Override
+      public Iterator<Integer> iterator() {
+        return new Iterator<Integer>() {
+          int index = -1;
+
+          public void remove() {
+            removeIndex(index);
+          }
+
+          public Integer next() {
+            return value(++index);
+          }
+
+          public boolean hasNext() {
+            return index+1 < size();
+          }
+        };
+      }
+    };
   }
 
 
+  /**
+   * Create a new array and copy each of the values into it.
+   */
   public int[] valueArray() {
-    int[] outgoing = new int[count];
-    System.arraycopy(values, 0, outgoing, 0, count);
-    return outgoing;
+    return valueArray(null);
   }
 
 
-  public int get(String what) {
-    int index = index(what);
+  /**
+   * Fill an already-allocated array with the values (more efficient than
+   * creating a new array each time). If 'array' is null, or not the same
+   * size as the number of values, a new array will be allocated and returned.
+   */
+  public int[] valueArray(int[] array) {
+    if (array == null || array.length != size()) {
+      array = new int[count];
+    }
+    System.arraycopy(values, 0, array, 0, count);
+    return array;
+  }
+
+
+  /**
+   * Return a value for the specified key.
+   */
+  public int get(String key) {
+    int index = index(key);
     if (index == -1) return 0;
     return values[index];
   }
 
 
-  public void set(String who, int amount) {
-    int index = index(who);
+  public void set(String key, int amount) {
+    int index = index(key);
     if (index == -1) {
-      create(who, amount);
+      create(key, amount);
     } else {
       values[index] = amount;
     }
   }
 
 
-  public void add(String who, int amount) {
-    int index = index(who);
+  /** Increase the value of a specific key by 1. */
+  public void inc(String key) {
+    inc(key, 1);
+  }
+
+
+  public void inc(String key, int amount) {
+    int index = index(key);
     if (index == -1) {
-      create(who, amount);
+      create(key, amount);
     } else {
       values[index] += amount;
     }
   }
 
 
-  public void increment(String who) {
-    int index = index(who);
-    if (index == -1) {
-      create(who, 1);
-    } else {
-      values[index]++;
+  /** Decrease the value of a key by 1. */
+  public void dec(String key) {
+    inc(key, -1);
+  }
+
+
+  public void dec(String key, int amount) {
+    inc(key, -amount);
+  }
+
+
+  public void mul(String key, int amount) {
+    int index = index(key);
+    if (index != -1) {
+      values[index] *= amount;
+    }
+  }
+
+
+  public void div(String key, int amount) {
+    int index = index(key);
+    if (index != -1) {
+      values[index] /= amount;
     }
   }
 
@@ -183,12 +279,8 @@ public class IntHash {
 
   protected void create(String what, int much) {
     if (count == keys.length) {
-      String ktemp[] = new String[count << 1];
-      System.arraycopy(keys, 0, ktemp, 0, count);
-      keys = ktemp;
-      int vtemp[] = new int[count << 1];
-      System.arraycopy(values, 0, vtemp, 0, count);
-      values = vtemp;
+      keys = PApplet.expand(keys);
+      values = PApplet.expand(values);
     }
     indices.put(what, new Integer(count));
     keys[count] = what;
@@ -197,28 +289,15 @@ public class IntHash {
   }
 
 
-  public void print() {
-    write(new PrintWriter(System.out));
+  public void remove(String key) {
+    removeIndex(index(key));
   }
 
 
-  public void write(PrintWriter writer) {
-    for (int i = 0; i < count; i++) {
-      writer.println(keys[i] + "\t" + values[i]);
-    }
-    writer.flush();
-  }
-
-
-  public void remove(String which) {
-    removeIndex(index(which));
-  }
-
-
-  public void removeIndex(int which) {
+  public void removeIndex(int index) {
     //System.out.println("index is " + which + " and " + keys[which]);
-    indices.remove(keys[which]);
-    for (int i = which; i < count-1; i++) {
+    indices.remove(keys[index]);
+    for (int i = index; i < count-1; i++) {
       keys[i] = keys[i+1];
       values[i] = values[i+1];
       indices.put(keys[i], i);
@@ -242,28 +321,17 @@ public class IntHash {
   }
 
 
+  /**
+   * Sort the keys alphabetically (ignoring case). Uses the value as a
+   * tie-breaker (only really possible with a key that has a case change).
+   */
   public void sortKeys() {
-    Sort s = new Sort() {
-      @Override
-      public int size() {
-        return count;
-      }
+    sortImpl(true, false);
+  }
 
-      @Override
-      public float compare(int a, int b) {
-        int result = keys[a].compareToIgnoreCase(keys[b]);
-        if (result != 0) {
-          return result;
-        }
-        return values[b] - values[a];
-      }
 
-      @Override
-      public void swap(int a, int b) {
-        IntHash.this.swap(a, b);
-      }
-    };
-    s.run();
+  public void sortKeysReverse() {
+    sortImpl(true, true);
   }
 
 
@@ -271,15 +339,16 @@ public class IntHash {
    * Sort by values in descending order (largest value will be at [0]).
    */
   public void sortValues() {
-    sortValues(true);
+    sortImpl(false, false);
   }
 
 
-  /**
-   * Sort by values. Identical values will use the keys as tie-breaker.
-   * @param descending true to put the largest value at position 0.
-   */
-  public void sortValues(final boolean descending) {
+  public void sortValuesReverse() {
+    sortImpl(false, true);
+  }
+
+
+  protected void sortImpl(final boolean useKeys, final boolean reverse) {
     Sort s = new Sort() {
       @Override
       public int size() {
@@ -288,11 +357,19 @@ public class IntHash {
 
       @Override
       public float compare(int a, int b) {
-        int diff = values[b] - values[a];
-        if (diff == 0) {
+        int diff = 0;
+        if (useKeys) {
+          diff = values[a] - values[b];
+          if (diff == 0) {
+            diff = keys[a].compareToIgnoreCase(keys[b]);
+          }
+        } else {  // sort values
           diff = keys[a].compareToIgnoreCase(keys[b]);
+          if (diff == 0) {
+            return values[a] - values[b];
+          }
         }
-        return descending ? diff : -diff;
+        return reverse ? diff : -diff;
       }
 
       @Override
@@ -301,5 +378,44 @@ public class IntHash {
       }
     };
     s.run();
+  }
+
+
+  /** Returns a duplicate copy of this object. */
+  public IntHash copy() {
+    IntHash outgoing = new IntHash(count);
+    System.arraycopy(keys, 0, outgoing.keys, 0, count);
+    System.arraycopy(values, 0, outgoing.values, 0, count);
+    for (int i = 0; i < count; i++) {
+      outgoing.indices.put(keys[i], i);
+    }
+    return outgoing;
+  }
+
+
+  /**
+   * Write tab-delimited entries out to
+   * @param writer
+   */
+  public void write(PrintWriter writer) {
+    for (int i = 0; i < count; i++) {
+      writer.println(keys[i] + "\t" + values[i]);
+    }
+    writer.flush();
+  }
+
+
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append(getClass().getName() + " size= " + size() + " { ");
+    for (int i = 0; i < size(); i++) {
+      if (i != 0) {
+        sb.append(", ");
+      }
+      sb.append("\"" + keys[i] + "\": " + values[i]);
+    }
+    sb.append(" }");
+    return sb.toString();
   }
 }
