@@ -601,15 +601,15 @@ public class StringList implements Iterable<String> {
 
   /** Remove all non-unique entries. */
   public void unique() {
-    IntHash cheat = getTally();
+    IntDict cheat = getTally();
     data = cheat.keyArray();
     count = cheat.size();
   }
 
 
   /** Count the number of times each String entry is found in this list. */
-  public IntHash getTally() {
-    IntHash outgoing = new IntHash();
+  public IntDict getTally() {
+    IntDict outgoing = new IntDict();
     for (int i = 0; i < count; i++) {
       outgoing.increment(data[i]);
     }
@@ -618,8 +618,8 @@ public class StringList implements Iterable<String> {
 
 
   /** Create a dictionary associating each entry in this list to its index. */
-  public IntHash getOrder() {
-    IntHash outgoing = new IntHash();
+  public IntDict getOrder() {
+    IntDict outgoing = new IntDict();
     for (int i = 0; i < count; i++) {
       outgoing.set(data[i], i);
     }

@@ -12,10 +12,13 @@ X   getFloatContent()
 X   getContent() or getStringContent()?
 X switch to CATEGORY instead of CATEGORICAL
 
+https://blogs.oracle.com/CoreJavaTechTips/entry/using_enhanced_for_loops_with
+
 table
 X do we need getColumnType() inside TableRow? 
 X   also inside Table
 X   also do we make the constants public?
+
 
 // function that will convert awful CSV to TSV.. or something else?
 //   maybe to write binary instead? then read the binary file once it's ok?
@@ -53,6 +56,7 @@ _   sortHighLow, sortHigh, sortHighest, sortDown
 
 it's going to be File or Reader (mostly BufferedReader) everywhere
   though TableODS needs an InputStream... 
+  and XML could use InputStream if we hope to be able to reflect doc encoding
 
 setMissingXxxx() -> should this live in PApplet? be static?
   cons: static stinks, diff tables might use diff values

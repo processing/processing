@@ -80,7 +80,7 @@ public class XML implements Serializable {
 
 
   /**
-   * @param file description TBD
+   * Advanced users only; see loadXML() in PApplet.
    */
   public XML(File file) throws IOException, ParserConfigurationException, SAXException {
     this(file, null);
@@ -88,31 +88,39 @@ public class XML implements Serializable {
 
 
   /**
-   * @param options description TBD
+   * Advanced users only; see loadXML() in PApplet.
    */
   public XML(File file, String options) throws IOException, ParserConfigurationException, SAXException {
     this(PApplet.createReader(file), options);
   }
 
 
-//  /**
-//   * @param input description TBD
-//   */
-//  public XML(InputStream input) throws IOException, ParserConfigurationException, SAXException {
-//    this(input, null);
-//  }
+  public XML(InputStream input) throws IOException, ParserConfigurationException, SAXException {
+    this(input, null);
+  }
 
 
-//  public XML(InputStream input, String options) throws IOException, ParserConfigurationException, SAXException {
-//    this(PApplet.createReader(input), options);
-//  }
+  /**
+   * Shouldn't be part of main p5 reference, this is for advanced users.
+   * Note that while it doesn't accept anything but UTF-8, this is preserved
+   * so that we have some chance of implementing that in the future.
+   */
+  public XML(InputStream input, String options) throws IOException, ParserConfigurationException, SAXException {
+    this(PApplet.createReader(input), options);
+  }
 
 
+  /**
+   * Advanced users only; see loadXML() in PApplet.
+   */
   public XML(Reader reader) throws IOException, ParserConfigurationException, SAXException {
     this(reader, null);
   }
 
 
+  /**
+   * Advanced users only; see loadXML() in PApplet.
+   */
   public XML(Reader reader, String options) throws IOException, ParserConfigurationException, SAXException {
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 

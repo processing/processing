@@ -299,7 +299,7 @@ public class JSONObject {
   }
 
 
-  public JSONObject(IntHash dict) {
+  public JSONObject(IntDict dict) {
     map = new HashMap<String, Object>();
     for (int i = 0; i < dict.size(); i++) {
       setInt(dict.key(i), dict.value(i));
@@ -307,7 +307,7 @@ public class JSONObject {
   }
 
 
-  public JSONObject(FloatHash dict) {
+  public JSONObject(FloatDict dict) {
     map = new HashMap<String, Object>();
     for (int i = 0; i < dict.size(); i++) {
       setFloat(dict.key(i), dict.value(i));
@@ -315,7 +315,7 @@ public class JSONObject {
   }
 
 
-  public JSONObject(StringHash dict) {
+  public JSONObject(StringDict dict) {
     map = new HashMap<String, Object>();
     for (int i = 0; i < dict.size(); i++) {
       setString(dict.key(i), dict.value(i));

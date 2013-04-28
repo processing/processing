@@ -10,7 +10,7 @@ import processing.core.PApplet;
 /**
  * A simple class to use a String as a lookup for an int value.
  */
-public class IntHash {
+public class IntDict {
 
   /** Number of elements in the table */
   protected int count;
@@ -45,7 +45,7 @@ public class IntHash {
 //  }
 
 
-  public IntHash() {
+  public IntDict() {
     count = 0;
     keys = new String[10];
     values = new int[10];
@@ -56,7 +56,7 @@ public class IntHash {
    * Create a new lookup with a specific size. This is more efficient than not
    * specifying a size. Use it when you know the rough size of the thing you're creating.
    */
-  public IntHash(int length) {
+  public IntDict(int length) {
     count = 0;
     keys = new String[length];
     values = new int[length];
@@ -67,7 +67,7 @@ public class IntHash {
    * Read a set of entries from a Reader that has each key/value pair on
    * a single line, separated by a tab.
    */
-  public IntHash(BufferedReader reader) {
+  public IntDict(BufferedReader reader) {
 //  public IntHash(PApplet parent, String filename) {
     String[] lines = PApplet.loadStrings(reader);
     keys = new String[lines.length];
@@ -375,7 +375,7 @@ public class IntHash {
 
       @Override
       public void swap(int a, int b) {
-        IntHash.this.swap(a, b);
+        IntDict.this.swap(a, b);
       }
     };
     s.run();
@@ -383,8 +383,8 @@ public class IntHash {
 
 
   /** Returns a duplicate copy of this object. */
-  public IntHash copy() {
-    IntHash outgoing = new IntHash(count);
+  public IntDict copy() {
+    IntDict outgoing = new IntDict(count);
     System.arraycopy(keys, 0, outgoing.keys, 0, count);
     System.arraycopy(values, 0, outgoing.values, 0, count);
     for (int i = 0; i < count; i++) {

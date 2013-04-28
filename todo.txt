@@ -545,6 +545,7 @@ _ when opening from double-click on the mac, doesn't replace untitled
 _   or in general, issues between opening new window and another launching
 _   probably need to synchronize the file open methods inside Base
 _   (could in fact cause nastiness with editors[] access)
+_   https://github.com/processing/processing/issues/1745
 _ editors opening up at the same time on load?
 _   either synchronize the open (at a minimum)
 _   or wait for mac handlers to register an open event
