@@ -66,6 +66,12 @@ public class StringHash {
   }
 
 
+  /** Remove all entries. */
+  public void clear() {
+    count = 0;
+  }
+
+
   public String key(int index) {
     return keys[index];
   }

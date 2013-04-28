@@ -91,12 +91,18 @@ public class IntHash {
   }
 
 
+  /** Remove all entries. */
+  public void clear() {
+    count = 0;
+  }
+
+
   public String key(int index) {
     return keys[index];
   }
 
 
-  protected void crop() {
+  private void crop() {
     if (count != keys.length) {
       keys = PApplet.subset(keys, 0, count);
       values = PApplet.subset(values, 0, count);
@@ -104,38 +110,39 @@ public class IntHash {
   }
 
 
-//  /**
-//   * Return the internal array being used to store the keys. Allocated but
-//   * unused entries will be removed. This array should not be modified.
-//   */
-//  public String[] keys() {
-//    crop();
-//    return keys;
-//  }
+  /**
+   * Return the internal array being used to store the keys. Allocated but
+   * unused entries will be removed. This array should not be modified.
+   */
+  public String[] keys() {
+    crop();
+    return keys;
+  }
 
 
-  public Iterable<String> keys() {
-    return new Iterable<String>() {
+//  public Iterable<String> keys() {
+//    return new Iterable<String>() {
+//
+//      @Override
+//      public Iterator<String> iterator() {
+  public Iterator<String> keyIterator() {
+    return new Iterator<String>() {
+      int index = -1;
 
-      @Override
-      public Iterator<String> iterator() {
-        return new Iterator<String>() {
-          int index = -1;
+      public void remove() {
+        removeIndex(index);
+      }
 
-          public void remove() {
-            removeIndex(index);
-          }
+      public String next() {
+        return key(++index);
+      }
 
-          public String next() {
-            return key(++index);
-          }
-
-          public boolean hasNext() {
-            return index+1 < size();
-          }
-        };
+      public boolean hasNext() {
+        return index+1 < size();
       }
     };
+//      }
+//    };
   }
 
 

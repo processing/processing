@@ -36,7 +36,6 @@ SOFTWARE.
 
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -741,7 +740,7 @@ public class JSONObject {
    *
    * @return An iterator of the keys.
    */
-  public Iterator keys() {
+  public Iterator keyIterator() {
 //    return this.keySet().iterator();
     return map.keySet().iterator();
   }
@@ -752,7 +751,7 @@ public class JSONObject {
    *
    * @return A keySet.
    */
-  public Set keySet() {
+  public Set keys() {
     return this.map.keySet();
   }
 
@@ -1419,17 +1418,17 @@ public class JSONObject {
 //  }
 
 
-  protected boolean save(OutputStream output) {
-    return save(PApplet.createWriter(output));
-  }
+//  protected boolean save(OutputStream output) {
+//    return save(PApplet.createWriter(output));
+//  }
 
 
   public boolean save(File file, String options) {
-    return save(PApplet.createWriter(file));
+    return write(PApplet.createWriter(file));
   }
 
 
-  public boolean save(PrintWriter output) {
+  public boolean write(PrintWriter output) {
     output.print(format(2));
     output.flush();
     return true;
@@ -1580,18 +1579,18 @@ public class JSONObject {
   }
 
 
-  /**
-   * Write the contents of the JSONObject as JSON text to a writer.
-   * For compactness, no whitespace is added.
-   * <p>
-   * Warning: This method assumes that the data structure is acyclical.
-   *
-   * @return The writer.
-   * @throws JSONException
-   */
-  protected Writer write(Writer writer) {
-    return this.write(writer, 0, 0);
-  }
+//  /**
+//   * Write the contents of the JSONObject as JSON text to a writer.
+//   * For compactness, no whitespace is added.
+//   * <p>
+//   * Warning: This method assumes that the data structure is acyclical.
+//   *
+//   * @return The writer.
+//   * @throws JSONException
+//   */
+//  protected Writer write(Writer writer) {
+//    return this.write(writer, 0, 0);
+//  }
 
 
   static final Writer writeValue(Writer writer, Object value,
@@ -1649,7 +1648,7 @@ public class JSONObject {
     try {
       boolean commanate = false;
       final int length = this.size();
-      Iterator keys = this.keys();
+      Iterator keys = this.keyIterator();
       writer.write('{');
 
       int actualFactor = (indentFactor == -1) ? 0 : indentFactor;

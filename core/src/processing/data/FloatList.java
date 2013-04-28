@@ -170,7 +170,7 @@ public class FloatList {
   */
 
 
-  public void crop() {
+  private void crop() {
     if (count != data.length) {
       data = PApplet.subset(data, 0, count);
     }

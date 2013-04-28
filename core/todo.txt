@@ -48,6 +48,32 @@ _ using Iterable for rows(), keys(), etc
 _   generally more efficient for Table, but slower for FloatHash and IntHash
 _   could use an int array instead, but a bit hokey in places
 
+replace? (especially for NaN)
+match? find? on StringList?
+
+Iterable, Iterator, or [] returned for keys(), rows(), etc.
+  list, dict, json, table are each more efficient at different things
+  keys(), rows(), etc. should return something Iterable
+    whether that means an array or an actual Iterator or even a Set
+    that way we can do what's most efficient
+  add nodes() (no) or children() to XML?
+  then we add keyIterator() and others to handle the other case (deletion)
+means that JSON.keys() -> JSON.keyIterator(), JSON.keySet() -> JSON.keys()
+
+what should they all return? 
+  remove -> true/false based on whether it found something?
+  remove all -> the number removed?
+
+with removeValue(), add removeValues() for all values that match?
+  also support NaN here
+
+hasAttribute in XML, containsKey in java's Map, hasKey in JSON
+  hasChildren() is another precedent
+  -> hasKey/hasValue is better; fewest changes and most descriptive
+  -> contains() is nicer, but containsKey() is weird, often not 'containing'
+
+listAttributes() in XML is like array from keys() etc in our data classes
+
 List: remove(), append(), index(), etc all use values
   removeIndex(index) is the other
   otherwise remove() would be the only one that dealt with indices
