@@ -246,6 +246,11 @@ public class FloatDict {
   }
 
 
+  public boolean hasKey(String key) {
+    return index(key) != -1;
+  }
+
+
 //  /** Increase the value of a specific key by 1. */
 //  public void inc(String key) {
 //    inc(key, 1);

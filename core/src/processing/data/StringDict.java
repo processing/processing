@@ -215,6 +215,11 @@ public class StringDict {
   }
 
 
+  public boolean hasKey(String key) {
+    return index(key) != -1;
+  }
+
+
   protected void create(String key, String value) {
     if (count == keys.length) {
       keys = PApplet.expand(keys);
