@@ -38,7 +38,7 @@ SOFTWARE.
  * @author JSON.org
  * @version 2012-02-16
  */
-public class JSONTokener {
+class JSONTokener {
 
   private long    character;
   private boolean eof;

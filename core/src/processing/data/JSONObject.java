@@ -37,6 +37,7 @@ SOFTWARE.
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.Method;
@@ -214,13 +215,18 @@ public class JSONObject {
 //  }
 
 
+  public JSONObject(Reader reader) {
+    this(new JSONTokener(reader));
+  }
+
+
   /**
    * Construct a JSONObject from a JSONTokener.
    * @param x A JSONTokener object containing the source string.
    * @throws JSONException If there is a syntax error in the source string
    *  or a duplicated key.
    */
-  public JSONObject(JSONTokener x) {
+  protected JSONObject(JSONTokener x) {
     this();
     char c;
     String key;
@@ -336,7 +342,7 @@ public class JSONObject {
    * @param bean An object that has getter methods that should be used
    * to make a JSONObject.
    */
-  public JSONObject(Object bean) {
+  protected JSONObject(Object bean) {
     this();
     this.populateMap(bean);
   }

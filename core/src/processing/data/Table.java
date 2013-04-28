@@ -2975,7 +2975,7 @@ public class Table {
       }
     }
 
-    void writeln(PrintWriter writer) throws IOException {
+    private void writeln(PrintWriter writer) throws IOException {
       for (String str : indexToData) {
         writer.println(str);
       }
@@ -2998,63 +2998,67 @@ public class Table {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  class HashMapSucks extends HashMap<String,Integer> {
-
-    void increment(String what) {
-      Integer value = get(what);
-      if (value == null) {
-        put(what, 1);
-      } else {
-        put(what, value + 1);
-      }
-    }
-
-    void check(String what) {
-      if (get(what) == null) {
-        put(what, 0);
-      }
-    }
-  }
+//  class HashMapSucks extends HashMap<String,Integer> {
+//
+//    void increment(String what) {
+//      Integer value = get(what);
+//      if (value == null) {
+//        put(what, 1);
+//      } else {
+//        put(what, value + 1);
+//      }
+//    }
+//
+//    void check(String what) {
+//      if (get(what) == null) {
+//        put(what, 0);
+//      }
+//    }
+//  }
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  /** Not to be documented yet, API not complete. */
-  public String[] listUnique(String column) {
-    return listUnique(getColumnIndex(column));
-  }
+  // replaced with StringList.fromUnique(String[] list)
+//  public String[] listUnique(String column) {
+//    return listUnique(getColumnIndex(column));
+//  }
 
 
-  /** Not to be documented yet, API not complete. */
-  public String[] listUnique(int column) {
-    HashMapSucks found = new HashMapSucks();
-    for (int row = 0; row < getRowCount(); row++) {
-      found.check(getString(row, column));
-    }
-    String[] outgoing = new String[found.size()];
-    found.keySet().toArray(outgoing);
-    return outgoing;
-  }
+//  IntHash found = IntHash.fromTally(getStringColumn(column));
+//  return found.keyArray();
+
+  // replaced with StringList.fromUnique(String[] list)
+//  public String[] listUnique(int column) {
+//    HashMapSucks found = new HashMapSucks();
+//
+//    for (int row = 0; row < getRowCount(); row++) {
+//      found.check(getString(row, column));
+//    }
+//    String[] outgoing = new String[found.size()];
+//    found.keySet().toArray(outgoing);
+//    return outgoing;
+//  }
 
 
-  /** Not to be documented yet, API not complete. */
-  public HashMap<String,Integer> tallyUnique(String columnName) {
-    return tallyUnique(getColumnIndex(columnName));
-  }
+  // replaced with StringDict.fromTally(String[] list)
+//  public HashMap<String,Integer> tallyUnique(String columnName) {
+//    return tallyUnique(getColumnIndex(columnName));
+//  }
 
 
-  /** Not to be documented yet, API not complete. */
-  public HashMap<String,Integer> tallyUnique(int column) {
-    HashMapSucks outgoing = new HashMapSucks();
-    for (int row = 0; row < rowCount; row++) {
-      String entry = getString(row, column);
-      if (entry != null) {
-        outgoing.increment(entry);
-      }
-    }
-    return outgoing;
-  }
+  // replaced with StringDict.fromTally(String[] list)
+//  public HashMap<String,Integer> tallyUnique(int column) {
+//    HashMapSucks outgoing = new HashMapSucks();
+//    for (int row = 0; row < rowCount; row++) {
+//      String entry = getString(row, column);
+//      if (entry != null) {
+//        outgoing.increment(entry);
+//      }
+//    }
+//    return outgoing;
+//  }
 
 
   /**

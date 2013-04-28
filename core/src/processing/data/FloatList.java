@@ -7,7 +7,7 @@ import java.util.Random;
 import processing.core.PApplet;
 
 
-public class FloatList {
+public class FloatList implements Iterable<Float> {
   int count;
   float[] data;
 
@@ -550,9 +550,9 @@ public class FloatList {
 
 
   /**
-   * Returns the actual array being used to store the data. Suitable for
-   * iterating with a for() loop, but modifying the list could cause terrible
-   * things to happen.
+   * Returns the actual array being used to store the data. For advanced users,
+   * this is the fastest way to access a large list. Suitable for iterating
+   * with a for() loop, but modifying the list will have terrible consequences.
    */
   public float[] values() {
     crop();
@@ -560,7 +560,13 @@ public class FloatList {
   }
 
 
-  public Iterator<Float> valueIterator() {
+  /** Implemented this way so that we can use a FloatList in a for loop. */
+  @Override
+  public Iterator<Float> iterator() {
+//  }
+//
+//
+//  public Iterator<Float> valueIterator() {
     return new Iterator<Float>() {
       int index = -1;
 
@@ -583,8 +589,8 @@ public class FloatList {
    * Create a new array with a copy of all the values.
    * @return an array sized by the length of the list with each of the values.
    */
-  public int[] valueArray() {
-    return valueArray(null);
+  public int[] array() {
+    return array(null);
   }
 
 
@@ -592,7 +598,7 @@ public class FloatList {
    * Copy as many values as possible into the specified array.
    * @param array
    */
-  public int[] valueArray(int[] array) {
+  public int[] array(int[] array) {
     if (array == null || array.length != count) {
       array = new int[count];
     }

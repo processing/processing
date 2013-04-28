@@ -6051,7 +6051,7 @@ public class PApplet extends Applet
    */
   public XML loadXML(String filename, String options) {
     try {
-      return new XML(createInput(filename), options);
+      return new XML(createReader(filename), options);
     } catch (Exception e) {
       e.printStackTrace();
       return null;
@@ -6104,8 +6104,9 @@ public class PApplet extends Applet
 
 
   public JSONObject loadJSONObject(String filename) {
-    JSONTokener tokener = new JSONTokener(createReader(filename));
-    return new JSONObject(tokener);
+    //JSONTokener tokener = new JSONTokener(createReader(filename));
+    //return new JSONObject(tokener);
+    return new JSONObject(createReader(filename));
   }
 
 
@@ -6120,8 +6121,9 @@ public class PApplet extends Applet
 
 
   public JSONArray loadJSONArray(String filename) {
-    JSONTokener tokener = new JSONTokener(createReader(filename));
-    return new JSONArray(tokener);
+//    JSONTokener tokener = new JSONTokener(createReader(filename));
+//    return new JSONArray(tokener);
+    return new JSONArray(createReader(filename));
   }
 
 

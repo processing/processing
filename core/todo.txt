@@ -24,6 +24,12 @@ _   rsort(), sortReverse(), sortKeysReverse,
 _   sortDescend, sortDescending, sortKeysDescending, 
 _   sortHighLow, sortHigh, sortHighest, sortDown
 
+it's going to be File or Reader (mostly BufferedReader) everywhere
+  though TableODS needs an InputStream... 
+
+setMissingXxxx() -> should this live in PApplet? be static?
+  cons: static stinks, diff tables might use diff values
+
 "hash.toJSONObject()" or "new JSONObject(hash)"
 
 hash/dict/etc

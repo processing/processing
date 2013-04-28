@@ -7,7 +7,7 @@ import java.util.Random;
 import processing.core.PApplet;
 
 
-public class StringList {
+public class StringList implements Iterable<String> {
   int count;
   String[] data;
 
@@ -235,7 +235,7 @@ public class StringList {
 
 
   // same as splice
-  public void insert(int index, int[] values) {
+  public void insert(int index, String[] values) {
     if (index < 0) {
       throw new IllegalArgumentException("insert() index cannot be negative: it was " + index);
     }
@@ -263,7 +263,7 @@ public class StringList {
   }
 
 
-  public void insert(int index, IntList list) {
+  public void insert(int index, StringList list) {
     insert(index, list.values());
   }
 
@@ -552,7 +552,13 @@ public class StringList {
   }
 
 
-  public Iterator<String> valueIterator() {
+  @Override
+  public Iterator<String> iterator() {
+//    return valueIterator();
+//  }
+//
+//
+//  public Iterator<String> valueIterator() {
     return new Iterator<String>() {
       int index = -1;
 
@@ -575,8 +581,8 @@ public class StringList {
    * Create a new array with a copy of all the values.
    * @return an array sized by the length of the list with each of the values.
    */
-  public int[] valueArray() {
-    return valueArray(null);
+  public String[] array() {
+    return array(null);
   }
 
 
@@ -584,11 +590,39 @@ public class StringList {
    * Copy as many values as possible into the specified array.
    * @param array
    */
-  public int[] valueArray(int[] array) {
+  public String[] array(String[] array) {
     if (array == null || array.length != count) {
-      array = new int[count];
+      array = new String[count];
     }
     System.arraycopy(data, 0, array, 0, count);
     return array;
+  }
+
+
+  /** Remove all non-unique entries. */
+  public void unique() {
+    IntHash cheat = getTally();
+    data = cheat.keyArray();
+    count = cheat.size();
+  }
+
+
+  /** Count the number of times each String entry is found in this list. */
+  public IntHash getTally() {
+    IntHash outgoing = new IntHash();
+    for (int i = 0; i < count; i++) {
+      outgoing.inc(data[i]);
+    }
+    return outgoing;
+  }
+
+
+  /** Create a dictionary associating each entry in this list to its index. */
+  public IntHash getOrder() {
+    IntHash outgoing = new IntHash();
+    for (int i = 0; i < count; i++) {
+      outgoing.set(data[i], i);
+    }
+    return outgoing;
   }
 }

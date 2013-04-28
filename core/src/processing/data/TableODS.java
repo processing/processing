@@ -63,7 +63,7 @@ public class TableODS extends Table {
 //  protected void read(BufferedReader reader, String worksheet, boolean actual) throws IOException, ParserConfigurationException, SAXException {
 //    XML xml = new XML(reader);
   protected void read(InputStream input, String worksheet, boolean actual) throws IOException, ParserConfigurationException, SAXException {
-    XML xml = new XML(input);
+    XML xml = new XML(PApplet.createReader(input));
 
 //    XML x = new XML(reader);
 //    PApplet.saveStrings(new File("/Users/fry/Desktop/namespacefix.xml"), new String[] { xml.toString() });

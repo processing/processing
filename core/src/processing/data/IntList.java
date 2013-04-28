@@ -17,7 +17,7 @@ import processing.core.PApplet;
  * sort() and shuffle() always act on the list itself. To get a sorted copy,
  * use list.copy().sort().
  */
-public class IntList {
+public class IntList implements Iterable<Integer> {
   protected int count;
   protected int[] data;
 
@@ -462,9 +462,9 @@ public class IntList {
 
 
   /**
-   * Returns the actual array being used to store the data. Suitable for
-   * iterating with a for() loop, but modifying the list could cause terrible
-   * things to happen.
+   * Returns the actual array being used to store the data. For advanced users,
+   * this is the fastest way to access a large list. Suitable for iterating
+   * with a for() loop, but modifying the list will have terrible consequences.
    */
   public int[] values() {
     crop();
@@ -472,7 +472,9 @@ public class IntList {
   }
 
 
-  public Iterator<Integer> valueIterator() {
+  @Override
+  public Iterator<Integer> iterator() {
+//  public Iterator<Integer> valueIterator() {
     return new Iterator<Integer>() {
       int index = -1;
 
@@ -495,8 +497,8 @@ public class IntList {
    * Create a new array with a copy of all the values.
    * @return an array sized by the length of the list with each of the values.
    */
-  public int[] valueArray() {
-    return valueArray(null);
+  public int[] array() {
+    return array(null);
   }
 
 
@@ -504,7 +506,7 @@ public class IntList {
    * Copy as many values as possible into the specified array.
    * @param array
    */
-  public int[] valueArray(int[] array) {
+  public int[] array(int[] array) {
     if (array == null || array.length != count) {
       array = new int[count];
     }

@@ -95,20 +95,25 @@ public class XML implements Serializable {
   }
 
 
-  /**
-   * @param input description TBD
-   */
-  public XML(InputStream input) throws IOException, ParserConfigurationException, SAXException {
-    this(input, null);
+//  /**
+//   * @param input description TBD
+//   */
+//  public XML(InputStream input) throws IOException, ParserConfigurationException, SAXException {
+//    this(input, null);
+//  }
+
+
+//  public XML(InputStream input, String options) throws IOException, ParserConfigurationException, SAXException {
+//    this(PApplet.createReader(input), options);
+//  }
+
+
+  public XML(Reader reader) throws IOException, ParserConfigurationException, SAXException {
+    this(reader, null);
   }
 
 
-  public XML(InputStream input, String options) throws IOException, ParserConfigurationException, SAXException {
-    this(PApplet.createReader(input), options);
-  }
-
-
-  protected XML(Reader reader, String options) throws IOException, ParserConfigurationException, SAXException {
+  public XML(Reader reader, String options) throws IOException, ParserConfigurationException, SAXException {
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 
     // Prevent 503 errors from www.w3.org
@@ -191,17 +196,21 @@ public class XML implements Serializable {
   }
 
 
-  protected boolean save(OutputStream output) {
-    return save(PApplet.createWriter(output));
-  }
+//  protected boolean save(OutputStream output) {
+//    return write(PApplet.createWriter(output));
+//  }
 
 
   public boolean save(File file, String options) {
-    return save(PApplet.createWriter(file));
+    PrintWriter writer = PApplet.createWriter(file);
+    boolean result = write(writer);
+    writer.flush();
+    writer.close();
+    return result;
   }
 
 
-  public boolean save(PrintWriter output) {
+  public boolean write(PrintWriter output) {
     output.print(format(2));
     output.flush();
     return true;

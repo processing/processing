@@ -38,6 +38,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.Array;
@@ -93,7 +94,6 @@ import processing.core.PApplet;
  */
 public class JSONArray {
 
-
   /**
    * The arrayList where the JSONArray's properties are kept.
    */
@@ -107,12 +107,18 @@ public class JSONArray {
     this.myArrayList = new ArrayList<Object>();
   }
 
+
+  public JSONArray(Reader reader) {
+    this(new JSONTokener(reader));
+  }
+
+
   /**
    * Construct a JSONArray from a JSONTokener.
    * @param x A JSONTokener
    * @throws JSONException If there is a syntax error.
    */
-  public JSONArray(JSONTokener x) {
+  protected JSONArray(JSONTokener x) {
     this();
     if (x.nextClean() != '[') {
       throw new RuntimeException("A JSONArray text must start with '['");
