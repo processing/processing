@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2011-12 Ben Fry and Casey Reas
+  Copyright (c) 2011-13 Ben Fry and Casey Reas
   Copyright (c) 2006-11 Ben Fry
 
   This library is free software; you can redistribute it and/or
@@ -36,26 +36,6 @@ import java.util.concurrent.Executors;
 import processing.core.PApplet;
 import processing.core.PConstants;
 
-// function that will convert awful CSV to TSV.. or something else?
-//   maybe to write binary instead? then read the binary file once it's ok?
-
-// if loading from a File object (or PApplet is passed in and we can check online)
-// then check the (probable) size of the file before loading
-
-// implement binary tables
-
-// no column max/min functions since it needs to be per-datatype
-// better to use float mx = max(float(getColumn(3)));
-// *** but what to do with null entries?
-
-// todo: need a method to reset the row/column indices after add/remove
-// or just make sure that it's covered for all cases
-
-// no longer the case, ja?
-// <p>By default, empty rows are skipped and so are lines that start with the
-// # character. Using # at the beginning of a line indicates a comment.</p>
-
-// attempt at a CSV spec: http://tools.ietf.org/html/rfc4180
 
 /**
  * <p>Generic class for handling tabular data, typically from a CSV, TSV, or
@@ -65,6 +45,7 @@ import processing.core.PConstants;
  * often with the data in quotes. TSV files use tabs as separators, and usually
  * don't bother with the quotes.</p>
  * <p>File names should end with .csv if they're comma separated.</p>
+ * <p>A rough "spec" for CSV can be found <a href="http://tools.ietf.org/html/rfc4180">here</a>.</p>
  *
  * @webref data:composite
  * @see PApplet#createTable()
@@ -93,12 +74,13 @@ public class Table {
 
   protected Object[] columns;  // [column]
 
-  static final int STRING = 0;
-  static final int INT = 1;
-  static final int LONG = 2;
-  static final int FLOAT = 3;
-  static final int DOUBLE = 4;
-  static final int CATEGORICAL = 5;
+  // accessible for advanced users
+  static public final int STRING = 0;
+  static public final int INT = 1;
+  static public final int LONG = 2;
+  static public final int FLOAT = 3;
+  static public final int DOUBLE = 4;
+  static public final int CATEGORY = 5;
   int[] columnTypes;
 
   protected RowIterator rowIterator;
@@ -846,7 +828,7 @@ public class Table {
     }
 
     for (int i = 0; i < getColumnCount(); i++) {
-      if (columnTypes[i] == CATEGORICAL) {
+      if (columnTypes[i] == CATEGORY) {
         columnCategories[i].write(output);
       }
     }
@@ -880,7 +862,7 @@ public class Table {
         case DOUBLE:
           output.writeDouble(row.getDouble(col));
           break;
-        case CATEGORICAL:
+        case CATEGORY:
           output.writeInt(columnCategories[col].index(row.getString(col)));
           break;
         }
@@ -931,7 +913,7 @@ public class Table {
       case STRING:
         columns[column] = new String[rowCount];;
         break;
-      case CATEGORICAL:
+      case CATEGORY:
         columns[column] = new int[rowCount];;
         break;
       default:
@@ -940,7 +922,7 @@ public class Table {
     }
 
     for (int i = 0; i < columnCount; i++) {
-      if (columnTypes[i] == CATEGORICAL) {
+      if (columnTypes[i] == CATEGORY) {
         columnCategories[i] = new HashMapBlows(input);
       }
     }
@@ -974,7 +956,7 @@ public class Table {
         case DOUBLE:
           setDouble(row, col, input.readDouble());
           break;
-        case CATEGORICAL:
+        case CATEGORY:
           int index = input.readInt();
           //String name = columnCategories[col].key(index);
           setInt(row, col, index);
@@ -1008,7 +990,7 @@ public class Table {
 
 
   /**
-   * @param type the type to be used for the new column: INT, LONG, FLOAT, DOUBLE, STRING, or CATEGORICAL
+   * @param type the type to be used for the new column: INT, LONG, FLOAT, DOUBLE, STRING, or CATEGORY
    */
   public void addColumn(String title, int type) {
     insertColumn(columns.length, title, type);
@@ -1059,7 +1041,7 @@ public class Table {
       case FLOAT: columns[index] = new float[rowCount]; break;
       case DOUBLE: columns[index] = new double[rowCount]; break;
       case STRING: columns[index] = new String[rowCount]; break;
-      case CATEGORICAL: columns[index] = new int[rowCount]; break;
+      case CATEGORY: columns[index] = new int[rowCount]; break;
     }
   }
 
@@ -1153,8 +1135,8 @@ public class Table {
       type = FLOAT;
     } else if (columnType.equals("double")) {
       type = DOUBLE;
-    } else if (columnType.equals("categorical")) {
-      type = CATEGORICAL;
+    } else if (columnType.equals("category")) {
+      type = CATEGORY;
     } else {
       throw new IllegalArgumentException("'" + columnType + "' is not a valid column type.");
     }
@@ -1162,7 +1144,7 @@ public class Table {
   }
 
 
-  protected void setColumnType(String columnName, int newType) {
+  public void setColumnType(String columnName, int newType) {
     setColumnType(checkColumnIndex(columnName), newType);
   }
 
@@ -1173,7 +1155,7 @@ public class Table {
    * @param column the column whose type should be changed
    * @param newType something fresh, maybe try an int or a float for size?
    */
-  protected void setColumnType(int column, int newType) {
+  public void setColumnType(int column, int newType) {
     switch (newType) {
       case INT: {
         int[] intData = new int[rowCount];
@@ -1229,7 +1211,7 @@ public class Table {
         }
         break;
       }
-      case CATEGORICAL: {
+      case CATEGORY: {
         int[] indexData = new int[rowCount];
         HashMapBlows categories = new HashMapBlows();
         for (int row = 0; row < rowCount; row++) {
@@ -1301,6 +1283,17 @@ public class Table {
         }
       }
     }
+  }
+
+
+  public int getColumnType(String columnName) {
+    return getColumnType(getColumnIndex(columnName));
+  }
+
+
+  /** Returns one of Table.STRING, Table.INT, etc... */
+  public int getColumnType(int column) {
+    return columnTypes[column];
   }
 
 
@@ -1437,7 +1430,7 @@ public class Table {
           case FLOAT: columns[col] = PApplet.expand((float[]) columns[col], newCount); break;
           case DOUBLE: columns[col] = PApplet.expand((double[]) columns[col], newCount); break;
           case STRING: columns[col] = PApplet.expand((String[]) columns[col], newCount); break;
-          case CATEGORICAL: columns[col] = PApplet.expand((int[]) columns[col], newCount); break;
+          case CATEGORY: columns[col] = PApplet.expand((int[]) columns[col], newCount); break;
         }
         if (newCount > 1000000) {
           try {
@@ -1469,7 +1462,7 @@ public class Table {
 
     for (int col = 0; col < columns.length; col++) {
       switch (columnTypes[col]) {
-      case CATEGORICAL:
+      case CATEGORY:
       case INT:
         setInt(row, col, source.getInt(col));
         break;
@@ -1502,7 +1495,7 @@ public class Table {
   public void insertRow(int insert, Object[] columnData) {
     for (int col = 0; col < columns.length; col++) {
       switch (columnTypes[col]) {
-        case CATEGORICAL:
+        case CATEGORY:
         case INT: {
           int[] intTemp = new int[rowCount+1];
           System.arraycopy(columns[col], 0, intTemp, 0, insert);
@@ -1548,7 +1541,7 @@ public class Table {
   public void removeRow(int row) {
     for (int col = 0; col < columns.length; col++) {
       switch (columnTypes[col]) {
-        case CATEGORICAL:
+        case CATEGORY:
         case INT: {
           int[] intTemp = new int[rowCount-1];
 //          int[] intData = (int[]) columns[col];
@@ -1641,7 +1634,7 @@ public class Table {
         doubleData[row] = missingDouble;
       }
       break;
-    case CATEGORICAL:
+    case CATEGORY:
       int[] indexData = (int[]) columns[col];
       indexData[row] = columnCategories[col].index(piece);
       break;
@@ -1723,7 +1716,7 @@ public class Table {
           }
         }
         break;
-      case CATEGORICAL:
+      case CATEGORY:
         int[] indexData = (int[]) columns[col];
         if (piece == null) {
           indexData[row] = missingCategory;
@@ -1872,6 +1865,14 @@ public class Table {
     public int getColumnCount() {
       return table.getColumnCount();
     }
+
+    public int getColumnType(String columnName) {
+      return table.getColumnType(columnName);
+    }
+
+    public int getColumnType(int column) {
+      return table.getColumnType(column);
+    }
   }
 
 
@@ -1939,6 +1940,7 @@ public class Table {
   }
 
 
+  /*
   static public Iterator<TableRow> createIterator(final ResultSet rs) {
     return new Iterator<TableRow>() {
       boolean already;
@@ -2068,6 +2070,17 @@ public class Table {
               return -1;
             }
           }
+
+
+          public int getColumnType(String columnName) {
+            // unimplemented
+          }
+
+
+          public int getColumnType(int column) {
+            // unimplemented
+          }
+
         };
       }
 
@@ -2076,6 +2089,7 @@ public class Table {
       }
     };
   }
+  */
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -2084,7 +2098,7 @@ public class Table {
   public int getInt(int row, int column) {
     checkBounds(row, column);
     if (columnTypes[column] == INT ||
-        columnTypes[column] == CATEGORICAL) {
+        columnTypes[column] == CATEGORY) {
       int[] intData = (int[]) columns[column];
       return intData[row];
     }
@@ -2111,7 +2125,7 @@ public class Table {
     } else {
       ensureBounds(row, column);
       if (columnTypes[column] != INT &&
-          columnTypes[column] != CATEGORICAL) {
+          columnTypes[column] != CATEGORY) {
         throw new IllegalArgumentException("Column " + column + " is not an int column.");
       }
       int[] intData = (int[]) columns[column];
@@ -2446,7 +2460,7 @@ public class Table {
     if (columnTypes[col] == STRING) {
       String[] stringData = (String[]) columns[col];
       return stringData[row];
-    } else if (columnTypes[col] == CATEGORICAL) {
+    } else if (columnTypes[col] == CATEGORY) {
       int cat = getInt(row, col);
       if (cat == missingCategory) {
         return missingString;
@@ -3335,7 +3349,7 @@ public class Table {
           output.writeDouble(missingDouble);
         }
         break;
-      case CATEGORICAL:
+      case CATEGORY:
         output.writeInt(columnCategories[col].index(pieces[col]));
         break;
       }
@@ -3357,7 +3371,7 @@ public class Table {
       case DOUBLE:
         output.writeDouble(missingDouble);
         break;
-      case CATEGORICAL:
+      case CATEGORY:
         output.writeInt(missingCategory);
         break;
 

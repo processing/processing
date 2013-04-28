@@ -25,4 +25,6 @@ public interface TableRow {
   public void setDouble(String columnName, double value);
 
   public int getColumnCount();
+  public int getColumnType(String columnName);
+  public int getColumnType(int column);
 }

@@ -10,6 +10,33 @@ X implement content specifiers
 X   getIntContent()
 X   getFloatContent()
 X   getContent() or getStringContent()?
+X switch to CATEGORY instead of CATEGORICAL
+
+table
+X do we need getColumnType() inside TableRow? 
+X   also inside Table
+X   also do we make the constants public?
+
+// function that will convert awful CSV to TSV.. or something else?
+//   maybe to write binary instead? then read the binary file once it's ok?
+
+// if loading from a File object (or PApplet is passed in and we can check online)
+// then check the (probable) size of the file before loading
+
+// implement binary tables
+
+// no column max/min functions since it needs to be per-datatype
+// better to use float mx = max(float(getColumn(3)));
+// *** but what to do with null entries?
+
+// todo: need a method to reset the row/column indices after add/remove
+// or just make sure that it's covered for all cases
+
+// no longer the case, ja?
+// <p>By default, empty rows are skipped and so are lines that start with the
+// # character. Using # at the beginning of a line indicates a comment.</p>
+
+// attempt at a CSV spec:
 
 _ draw() called again before finishing on OS X (retina issue)
 _   https://github.com/processing/processing/issues/1709
@@ -32,6 +59,17 @@ setMissingXxxx() -> should this live in PApplet? be static?
 
 "hash.toJSONObject()" or "new JSONObject(hash)"
 
+no save/load in hash and list classes
+  no native format
+removeIndex() vs removeValue() vs remove() 
+  remove() refers to an index (with array) or key (with hash)
+  more consistent with other APIs (Java)
+  replaceValue[s]() the same, though more on the line
+  should we not have remove() and removeIndex()
+    and instead always specify? removeKey(), removeIndex(), removeValue()?
+    would mean that hash would only have removeKey
+    downside: remove() takes whatever get() takes as arg
+
 hash/dict/etc
 _ need to sort out the final version of these and their names
 _ JSONObject.has(key) vs XML.hasAttribute(attr) vs HashMap.containsKey()
@@ -48,7 +86,7 @@ inc(), inc(amount)
 dec(), dec(amount)
 increment, decrement, increase, decrease instead of add/subtract
 does double duty for incrementing/decrementing easily
-_ getIntArray() or toIntArray() (also for JSONArray)
+X getIntArray() for JSONArray
 _ add indent= as option for XML, JSON save
 _ not doing print() methods, since alternatives are more descriptive
 _   println(obj) and obj.write(System.out) are both better

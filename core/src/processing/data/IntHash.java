@@ -236,12 +236,12 @@ public class IntHash {
 
 
   /** Increase the value of a specific key by 1. */
-  public void inc(String key) {
-    inc(key, 1);
+  public void increment(String key) {
+    add(key, 1);
   }
 
 
-  public void inc(String key, int amount) {
+  public void add(String key, int amount) {
     int index = index(key);
     if (index == -1) {
       create(key, amount);
@@ -251,14 +251,8 @@ public class IntHash {
   }
 
 
-  /** Decrease the value of a key by 1. */
-  public void dec(String key) {
-    inc(key, -1);
-  }
-
-
-  public void dec(String key, int amount) {
-    inc(key, -amount);
+  public void sub(String key, int amount) {
+    add(key, -amount);
   }
 
 

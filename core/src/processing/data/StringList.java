@@ -611,7 +611,7 @@ public class StringList implements Iterable<String> {
   public IntHash getTally() {
     IntHash outgoing = new IntHash();
     for (int i = 0; i < count; i++) {
-      outgoing.inc(data[i]);
+      outgoing.increment(data[i]);
     }
     return outgoing;
   }

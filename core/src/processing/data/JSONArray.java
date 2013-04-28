@@ -392,6 +392,56 @@ public class JSONArray {
   }
 
 
+  /** Get this entire array as an int array. Everything must be an int. */
+  public int[] getIntArray() {
+    int[] outgoing = new int[size()];
+    for (int i = 0; i < size(); i++) {
+      outgoing[i] = getInt(i);
+    }
+    return outgoing;
+  }
+
+
+  /** Get this entire array as a long array. Everything must be an long. */
+  public long[] getLongArray() {
+    long[] outgoing = new long[size()];
+    for (int i = 0; i < size(); i++) {
+      outgoing[i] = getLong(i);
+    }
+    return outgoing;
+  }
+
+
+  /** Get this entire array as a float array. Everything must be an float. */
+  public float[] getFloatArray() {
+    float[] outgoing = new float[size()];
+    for (int i = 0; i < size(); i++) {
+      outgoing[i] = getFloat(i);
+    }
+    return outgoing;
+  }
+
+
+  /** Get this entire array as a double array. Everything must be an double. */
+  public double[] getDoubleArray() {
+    double[] outgoing = new double[size()];
+    for (int i = 0; i < size(); i++) {
+      outgoing[i] = getDouble(i);
+    }
+    return outgoing;
+  }
+
+
+  /** Get this entire array as a boolean array. Everything must be a boolean. */
+  public boolean[] getBooleanArray() {
+    boolean[] outgoing = new boolean[size()];
+    for (int i = 0; i < size(); i++) {
+      outgoing[i] = getBoolean(i);
+    }
+    return outgoing;
+  }
+
+
 //  /**
 //   * Get the optional boolean value associated with an index.
 //   * It returns false if there is no value at that index,

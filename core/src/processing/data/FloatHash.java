@@ -246,19 +246,19 @@ public class FloatHash {
   }
 
 
-  /** Increase the value of a specific key by 1. */
-  public void inc(String key) {
-    inc(key, 1);
-//    int index = index(key);
-//    if (index == -1) {
-//      create(key, 1);
-//    } else {
-//      values[index]++;
-//    }
-  }
+//  /** Increase the value of a specific key by 1. */
+//  public void inc(String key) {
+//    inc(key, 1);
+////    int index = index(key);
+////    if (index == -1) {
+////      create(key, 1);
+////    } else {
+////      values[index]++;
+////    }
+//  }
 
 
-  public void inc(String key, float amount) {
+  public void add(String key, float amount) {
     int index = index(key);
     if (index == -1) {
       create(key, amount);
@@ -268,14 +268,14 @@ public class FloatHash {
   }
 
 
-  /** Decrease the value of a key by 1. */
-  public void dec(String key) {
-    inc(key, -1);
-  }
+//  /** Decrease the value of a key by 1. */
+//  public void dec(String key) {
+//    inc(key, -1);
+//  }
 
 
-  public void dec(String key, float amount) {
-    inc(key, -amount);
+  public void sub(String key, float amount) {
+    add(key, -amount);
   }
 
 
