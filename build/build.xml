@@ -713,8 +713,7 @@
       <fileset file="shared/revisions.txt" />
     </copy>
 
-    <fixcrlf srcdir="shared" eol="crlf" encoding="UTF-8"
-	     includes="revisions.txt" />
+    <fixcrlf file="windows/work/revisions.txt" eol="crlf" encoding="UTF-8" />
 
     <property name="launch4j.dir" value="windows/work/launch4j" />
 
