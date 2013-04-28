@@ -17,7 +17,7 @@ _   https://github.com/processing/processing/issues/1709
 _ tint() with JAVA2D does not automatically refresh (with possible fix)
 _   https://github.com/processing/processing/issues/1730
 
-_ include Instant and Interval?
+_ include Instant and Interval? (or just Time and TimeSpan)
 
 _ naming for descending sort
 _   rsort(), sortReverse(), sortKeysReverse, 
@@ -42,6 +42,8 @@ increment, decrement, increase, decrease instead of add/subtract
 does double duty for incrementing/decrementing easily
 _ getIntArray() or toIntArray() (also for JSONArray)
 _ add indent= as option for XML, JSON save
+_ not doing print() methods, since alternatives are more descriptive
+_   println(obj) and obj.write(System.out) are both better
 
 List: remove(), append(), index(), etc all use values
   removeIndex(index) is the other

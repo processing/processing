@@ -1764,8 +1764,12 @@ public class Table {
   }
 
 
-  public Iterator<TableRow> rows(int[] indices) {
-    return new RowIndexIterator(this, indices);
+  public Iterable<TableRow> rows(final int[] indices) {
+    return new Iterable<TableRow>() {
+      public Iterator<TableRow> iterator() {
+        return new RowIndexIterator(Table.this, indices);
+      }
+    };
   }
 
 

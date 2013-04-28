@@ -2,6 +2,7 @@ package processing.data;
 
 import java.io.*;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import processing.core.PApplet;
 
@@ -12,18 +13,9 @@ import processing.core.PApplet;
 public class FloatHash {
 
   /** Number of elements in the table */
-  public int count;
+  protected int count;
 
-  /**
-   * List of keys, available for sake of speed,
-   * but should be manipulated (consider it read-only).
-   */
   protected String[] keys;
-
-  /**
-   * List of values, available for sake of speed,
-   * but should be manipulated (consider it read-only).
-   */
   protected float[] values;
 
   /** Internal implementation for faster lookups */
@@ -37,6 +29,10 @@ public class FloatHash {
   }
 
 
+  /**
+   * Create a new lookup with a specific size. This is more efficient than not
+   * specifying a size. Use it when you know the rough size of the thing you're creating.
+   */
   public FloatHash(int length) {
     count = 0;
     keys = new String[length];
@@ -44,13 +40,17 @@ public class FloatHash {
   }
 
 
-  public FloatHash(PApplet parent, String filename) {
-    String[] lines = parent.loadStrings(filename);
+  /**
+   * Read a set of entries from a Reader that has each key/value pair on
+   * a single line, separated by a tab.
+   */
+  public FloatHash(BufferedReader reader) {
+//  public FloatHash(PApplet parent, String filename) {
+    String[] lines = PApplet.loadStrings(reader);
     keys = new String[lines.length];
     values = new float[lines.length];
 
 //    boolean csv = (lines[0].indexOf('\t') == -1);
-
     for (int i = 0; i < lines.length; i++) {
 //      String[] pieces = csv ? Table.splitLineCSV(lines[i]) : PApplet.split(lines[i], '\t');
       String[] pieces = PApplet.split(lines[i], '\t');
@@ -63,7 +63,7 @@ public class FloatHash {
   }
 
 
-  public int getCount() {
+  public int size() {
     return count;
   }
 
@@ -81,14 +81,68 @@ public class FloatHash {
   }
 
 
-  /**
-   * Return the internal array being used to store the keys. Allocated but
-   * unused entries will be removed. This array should not be modified.
-   */
-  public String[] keys() {
-    crop();
-    return keys;
+//  /**
+//   * Return the internal array being used to store the keys. Allocated but
+//   * unused entries will be removed. This array should not be modified.
+//   */
+//  public String[] keys() {
+//    crop();
+//    return keys;
+//  }
+
+
+  public Iterable<String> keys() {
+    return new Iterable<String>() {
+
+      @Override
+      public Iterator<String> iterator() {
+        return new Iterator<String>() {
+          int index = -1;
+
+          public void remove() {
+            removeIndex(index);
+          }
+
+          public String next() {
+            return key(++index);
+          }
+
+          public boolean hasNext() {
+            return index+1 < size();
+          }
+        };
+      }
+    };
   }
+
+
+  /*
+  static class KeyIterator implements Iterator<String> {
+    FloatHash parent;
+    int index;
+
+    public KeyIterator(FloatHash parent) {
+      this.parent = parent;
+      index = -1;
+    }
+
+    public void remove() {
+      parent.removeIndex(index);
+    }
+
+    public String next() {
+      return parent.key(++index);
+    }
+
+    public boolean hasNext() {
+      return index+1 < parent.size();
+    }
+
+    public void reset() {
+      index = -1;
+    }
+  }
+  */
 
 
   /**
@@ -113,52 +167,124 @@ public class FloatHash {
   }
 
 
-  public float[] values() {
-    crop();
-    return values;
+//  public float[] values() {
+//    crop();
+//    return values;
+//  }
+
+
+  public Iterable<Float> values() {
+    return new Iterable<Float>() {
+
+      @Override
+      public Iterator<Float> iterator() {
+        return new Iterator<Float>() {
+          int index = -1;
+
+          public void remove() {
+            removeIndex(index);
+          }
+
+          public Float next() {
+            return value(++index);
+          }
+
+          public boolean hasNext() {
+            return index+1 < size();
+          }
+        };
+      }
+    };
   }
 
 
-  public int[] valueArray() {
-    int[] outgoing = new int[count];
-    System.arraycopy(values, 0, outgoing, 0, count);
-    return outgoing;
+  /**
+   * Create a new array and copy each of the values into it.
+   */
+  public float[] valueArray() {
+    return valueArray(null);
   }
 
 
-  public float get(String what) {
-    int index = index(what);
+  /**
+   * Fill an already-allocated array with the values (more efficient than
+   * creating a new array each time). If 'array' is null, or not the same
+   * size as the number of values, a new array will be allocated and returned.
+   */
+  public float[] valueArray(float[] array) {
+    if (array == null || array.length != size()) {
+      array = new float[count];
+    }
+    System.arraycopy(values, 0, array, 0, count);
+    return array;
+  }
+
+
+  /**
+   * Return a value for the specified key.
+   */
+  public float get(String key) {
+    int index = index(key);
     if (index == -1) return 0;
     return values[index];
   }
 
 
-  public void set(String who, int amount) {
-    int index = index(who);
+  public void set(String key, int amount) {
+    int index = index(key);
     if (index == -1) {
-      create(who, amount);
+      create(key, amount);
     } else {
       values[index] = amount;
     }
   }
 
 
-  public void add(String who, int amount) {
-    int index = index(who);
+  /** Increase the value of a specific key by 1. */
+  public void inc(String key) {
+    inc(key, 1);
+//    int index = index(key);
+//    if (index == -1) {
+//      create(key, 1);
+//    } else {
+//      values[index]++;
+//    }
+  }
+
+
+  public void inc(String key, float amount) {
+    int index = index(key);
     if (index == -1) {
-      create(who, amount);
+      create(key, amount);
     } else {
       values[index] += amount;
     }
   }
 
 
-  public void increment(String who) {
-    int index = index(who);
-    if (index == -1) {
-      create(who, 1);
-    } else {
-      values[index]++;
+  /** Decrease the value of a key by 1. */
+  public void dec(String key) {
+    inc(key, -1);
+  }
+
+
+  public void dec(String key, float amount) {
+    inc(key, -amount);
+  }
+
+
+  public void mul(String key, float amount) {
+    int index = index(key);
+    if (index != -1) {
+      values[index] *= amount;
+    }
+  }
+
+
+  public void div(String key, float amount) {
+    int index = index(key);
+    if (index != -1) {
+      values[index] /= amount;
     }
   }
 
@@ -169,16 +295,19 @@ public class FloatHash {
   }
 
 
-  protected void create(String what, int much) {
+//  public void add(String key) {
+//    if (index(key) != -1) {
+//      throw new IllegalArgumentException("Use inc() to increment an entry, " +
+//      		                               "add() is for adding a new key");
+//    }
+//    add(key, 0);
+//  }
+
+
+  protected void create(String what, float much) {
     if (count == keys.length) {
       keys = PApplet.expand(keys);
-//      String ktemp[] = new String[count << 1];
-//      System.arraycopy(keys, 0, ktemp, 0, count);
-//      keys = ktemp;
       values = PApplet.expand(values);
-//      float vtemp[] = new float[count << 1];
-//      System.arraycopy(values, 0, vtemp, 0, count);
-//      values = vtemp;
     }
     indices.put(what, new Integer(count));
     keys[count] = what;
@@ -187,28 +316,15 @@ public class FloatHash {
   }
 
 
-  public void print() {
-    write(new PrintWriter(System.out));
+  public void remove(String key) {
+    removeIndex(index(key));
   }
 
 
-  public void write(PrintWriter writer) {
-    for (int i = 0; i < count; i++) {
-      writer.println(keys[i] + "\t" + values[i]);
-    }
-    writer.flush();
-  }
-
-
-  public void remove(String which) {
-    removeIndex(index(which));
-  }
-
-
-  public void removeIndex(int which) {
+  public void removeIndex(int index) {
     //System.out.println("index is " + which + " and " + keys[which]);
-    indices.remove(keys[which]);
-    for (int i = which; i < count-1; i++) {
+    indices.remove(keys[index]);
+    for (int i = index; i < count-1; i++) {
       keys[i] = keys[i+1];
       values[i] = values[i+1];
       indices.put(keys[i], i);
@@ -219,7 +335,7 @@ public class FloatHash {
   }
 
 
-  public void swap(int a, int b) {
+  protected void swap(int a, int b) {
     String tkey = keys[a];
     float tvalue = values[a];
     keys[a] = keys[b];
@@ -232,28 +348,50 @@ public class FloatHash {
   }
 
 
+//  abstract class InternalSort extends Sort {
+//    @Override
+//    public int size() {
+//      return count;
+//    }
+//
+//    @Override
+//    public void swap(int a, int b) {
+//      FloatHash.this.swap(a, b);
+//    }
+//  }
+
+
+  /**
+   * Sort the keys alphabetically (ignoring case). Uses the value as a
+   * tie-breaker (only really possible with a key that has a case change).
+   */
   public void sortKeys() {
-    Sort s = new Sort() {
-      @Override
-      public int size() {
-        return count;
-      }
+    sortImpl(true, false);
+//    new InternalSort() {
+//      @Override
+//      public float compare(int a, int b) {
+//        int result = keys[a].compareToIgnoreCase(keys[b]);
+//        if (result != 0) {
+//          return result;
+//        }
+//        return values[b] - values[a];
+//      }
+//    }.run();
+  }
 
-      @Override
-      public float compare(int a, int b) {
-        int result = keys[a].compareToIgnoreCase(keys[b]);
-        if (result != 0) {
-          return result;
-        }
-        return values[b] - values[a];
-      }
 
-      @Override
-      public void swap(int a, int b) {
-        FloatHash.this.swap(a, b);
-      }
-    };
-    s.run();
+  public void sortKeysReverse() {
+    sortImpl(true, true);
+//    new InternalSort() {
+//      @Override
+//      public float compare(int a, int b) {
+//        int result = keys[b].compareToIgnoreCase(keys[a]);
+//        if (result != 0) {
+//          return result;
+//        }
+//        return values[a] - values[b];
+//      }
+//    }.run();
   }
 
 
@@ -261,18 +399,61 @@ public class FloatHash {
    * Sort by values in descending order (largest value will be at [0]).
    */
   public void sortValues() {
-    sortValues(true, true);
+    sortImpl(false, false);
+//    new InternalSort() {
+//      @Override
+//      public float compare(int a, int b) {
+//
+//      }
+//    }.run();
   }
 
 
-  public void sortValues(final boolean descending) {
-    sortValues(descending, true);
+  public void sortValuesReverse() {
+    sortImpl(false, true);
+//    new InternalSort() {
+//      @Override
+//      public float compare(int a, int b) {
+//        float diff = values[b] - values[a];
+//        if (diff == 0 && keys[a] != null && keys[b] != null) {
+//          diff = keys[a].compareToIgnoreCase(keys[b]);
+//        }
+//        return descending ? diff : -diff;
+//      }
+//    }.run();
   }
 
 
-  // ascending puts the largest value at the end
-  // descending puts the largest value at 0
-  public void sortValues(final boolean descending, final boolean tiebreaker) {
+//  // ascending puts the largest value at the end
+//  // descending puts the largest value at 0
+//  public void sortValues(final boolean descending, final boolean tiebreaker) {
+//    Sort s = new Sort() {
+//      @Override
+//      public int size() {
+//        return count;
+//      }
+//
+//      @Override
+//      public float compare(int a, int b) {
+//        float diff = values[b] - values[a];
+//        if (tiebreaker) {
+//          if (diff == 0) {
+//            diff = keys[a].compareToIgnoreCase(keys[b]);
+//          }
+//        }
+//        return descending ? diff : -diff;
+//      }
+//
+//      @Override
+//      public void swap(int a, int b) {
+//        FloatHash.this.swap(a, b);
+//      }
+//    };
+//    s.run();
+//  }
+
+
+  protected void sortImpl(final boolean useKeys, final boolean reverse) {
     Sort s = new Sort() {
       @Override
       public int size() {
@@ -281,13 +462,19 @@ public class FloatHash {
 
       @Override
       public float compare(int a, int b) {
-        float diff = values[b] - values[a];
-        if (tiebreaker) {
+        float diff = 0;
+        if (useKeys) {
+          diff = values[a] - values[b];
           if (diff == 0) {
             diff = keys[a].compareToIgnoreCase(keys[b]);
           }
+        } else {  // sort values
+          diff = keys[a].compareToIgnoreCase(keys[b]);
+          if (diff == 0) {
+            return values[a] - values[b];
+          }
         }
-        return descending ? diff : -diff;
+        return reverse ? diff : -diff;
       }
 
       @Override
@@ -296,5 +483,52 @@ public class FloatHash {
       }
     };
     s.run();
+  }
+
+
+  /** Returns a duplicate copy of this object. */
+  public FloatHash copy() {
+    FloatHash outgoing = new FloatHash(count);
+    System.arraycopy(keys, 0, outgoing.keys, 0, count);
+    System.arraycopy(values, 0, outgoing.values, 0, count);
+    for (int i = 0; i < count; i++) {
+      outgoing.indices.put(keys[i], i);
+    }
+    return outgoing;
+  }
+
+
+//  /**
+//   * Write tab-delimited entries out to the console.
+//   */
+//  public void print() {
+//    write(new PrintWriter(System.out));
+//  }
+
+
+  /**
+   * Write tab-delimited entries out to
+   * @param writer
+   */
+  public void write(PrintWriter writer) {
+    for (int i = 0; i < count; i++) {
+      writer.println(keys[i] + "\t" + values[i]);
+    }
+    writer.flush();
+  }
+
+
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append(getClass().getName() + " size= " + size() + " { ");
+    for (int i = 0; i < size(); i++) {
+      if (i != 0) {
+        sb.append(", ");
+      }
+      sb.append("\"" + keys[i] + "\": " + values[i]);
+    }
+    sb.append(" }");
+    return sb.toString();
   }
 }

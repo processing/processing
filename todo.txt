@@ -24,6 +24,12 @@ X   "To use this library, you must use the 32-bit version of Processing."
 X rebuild Runner to use SocketAttach
 X   deals with spaces in path problem, but also opens a port
 X remove "Listening for transport dt_socket at address: 8727" message
+X reference for normal() uses '50' as z value.. use something normalized
+X how does new JDI affect Experimental? duplicate libs? loader issues?
+X   seems to be working fine
+X move Android mode out to its own repo
+X fix line endings in revisions.txt for windows
+X   was modifying the wrong file (the source dir, not the work dir)
 
 manager
 X "New version available" mesage is showing html tags around it
@@ -36,7 +42,8 @@ X "Update" not working in the library manager
 X   https://github.com/processing/processing/issues/1701
 
 
-_ reference for normal() uses '50' as z value.. use something normalized
+_ figure out Android issues so we can remove tools.jar and javac
+_   also to the p5 repo with just a JRE
 
 _ send info on 'check for updates' so we know about libs/modes/etc?
 _   how to disclose to users?
@@ -44,8 +51,6 @@ _   only send for items that are part of the public list
 _     otherwise we're sending private libraries/installs
 _     although this won't pick up old libraries not on the new system
 
-_ how does new JDI affect Experimental? duplicate libs? loader issues?
-_ move Android mode out to its own repo
 _ change line endings on Windows to only be replaced during dist
 _   otherwise marks revisions.txt as changed
 
@@ -838,6 +843,11 @@ How the environment gets packed up, downloaded, and installed.
 
 DIST / General 
 
+_ line ending issues
+_   doesn't really help on Windows since we use Cygwin
+_     but it would be helpful for people not using it (ant/other LF issues)
+_   https://help.github.com/articles/dealing-with-line-endings
+_   http://stackoverflow.com/questions/170961/whats-the-best-crlf-handling-strategy-with-git
 _ should be able to build p5 without a JDK install, just a JRE
 _   need to have ecj.jar accessible to ant, then modify build.xml to use this:
 _   <property name="build.compiler" 
@@ -875,7 +885,6 @@ DIST / Windows
 _ updated launch4j 3.1 beta
 _   http://sourceforge.net/projects/launch4j/files/launch4j-3/
 _ does launching p5 from inside the .zip folder cause it to quit immediately?
-_ fix line endings in revisions.txt for windows
 _ exe instead of bat to make exported apps run in 64-bit
 _   http://code.google.com/p/processing/issues/detail?id=885
 _   might not be necessary with new launch4j!

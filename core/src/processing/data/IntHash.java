@@ -7,27 +7,37 @@ import processing.core.PApplet;
 
 
 /**
- * A simple table class to use a String as a lookup for an int value.
+ * A simple class to use a String as a lookup for an int value.
  */
 public class IntHash {
 
   /** Number of elements in the table */
   protected int count;
 
-  /**
-   * List of keys, available for sake of speed,
-   * but should be manipulated (consider it read-only).
-   */
   protected String[] keys;
-
-  /**
-   * List of values, available for sake of speed,
-   * but should be manipulated (consider it read-only).
-   */
   protected int[] values;
 
   /** Internal implementation for faster lookups */
   private HashMap<String, Integer> indices = new HashMap<String, Integer>();
+
+
+  static public IntHash fromTally(String[] list) {
+    IntHash outgoing = new IntHash();
+    for (String s : list) {
+      outgoing.increment(s);
+    }
+    outgoing.crop();
+    return outgoing;
+  }
+
+
+  static public IntHash fromOrder(String[] list) {
+    IntHash outgoing = new IntHash();
+    for (int i = 0; i < list.length; i++) {
+      outgoing.set(list[i], i);
+    }
+    return outgoing;
+  }
 
 
   public IntHash() {
@@ -50,25 +60,6 @@ public class IntHash {
     values = new int[count];
     System.arraycopy(k, 0, keys, 0, count);
     System.arraycopy(v, 0, values, 0, count);
-  }
-
-
-  static public IntHash fromTally(String[] list) {
-    IntHash outgoing = new IntHash();
-    for (String s : list) {
-      outgoing.increment(s);
-    }
-    outgoing.crop();
-    return outgoing;
-  }
-
-
-  static public IntHash fromOrder(String[] list) {
-    IntHash outgoing = new IntHash();
-    for (int i = 0; i < list.length; i++) {
-      outgoing.set(list[i], i);
-    }
-    return outgoing;
   }
 
 
