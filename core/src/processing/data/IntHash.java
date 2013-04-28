@@ -359,14 +359,14 @@ public class IntHash {
       public float compare(int a, int b) {
         int diff = 0;
         if (useKeys) {
-          diff = values[a] - values[b];
-          if (diff == 0) {
-            diff = keys[a].compareToIgnoreCase(keys[b]);
-          }
-        } else {  // sort values
           diff = keys[a].compareToIgnoreCase(keys[b]);
           if (diff == 0) {
             return values[a] - values[b];
+          }
+        } else {  // sort values
+          diff = values[a] - values[b];
+          if (diff == 0) {
+            diff = keys[a].compareToIgnoreCase(keys[b]);
           }
         }
         return reverse ? diff : -diff;
