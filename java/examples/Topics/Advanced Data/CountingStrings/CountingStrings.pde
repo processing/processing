@@ -2,13 +2,13 @@
  * CountingString example
  * by Daniel Shiffman.  
  * 
- * This example demonstrates how to use a IntHash to store 
+ * This example demonstrates how to use a IntDict to store 
  * a number associated with a String.  Java HashMaps can also
- * be used for this, however, this example uses the IntHash
+ * be used for this, however, this example uses the IntDict
  * class offered by Processing's data package for simplicity
  * and added functionality. 
  *
- * This example uses the IntHash to perform a simple concordance
+ * This example uses the IntDict to perform a simple concordance
  * http://en.wikipedia.org/wiki/Concordance_(publishing)
  *
  */
@@ -16,8 +16,8 @@
 // The next line is needed if running in JavaScript Mode with Processing.js
 /* @pjs font="Georgia.ttf"; */
 
-// An IntHash pairs Strings with integers
-IntHash concordance;
+// An IntDict pairs Strings with integers
+IntDict concordance;
 
 // The raw array of words in 
 String[] tokens;
@@ -26,7 +26,7 @@ int counter = 0;
 void setup() {
   size(640, 360);
 
-  concordance = new IntHash();
+  concordance = new IntDict();
 
   // Load file and chop it up
   String[] lines = loadStrings("dracula.txt");
