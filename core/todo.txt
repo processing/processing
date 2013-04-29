@@ -13,13 +13,116 @@ X   getContent() or getStringContent()?
 X switch to CATEGORY instead of CATEGORICAL
 X removed createXML() and createTable()... just use 'new' for these
 
-https://blogs.oracle.com/CoreJavaTechTips/entry/using_enhanced_for_loops_with
-
 _ draw() called again before finishing on OS X (retina issue)
 _   https://github.com/processing/processing/issues/1709
 
 _ tint() with JAVA2D does not automatically refresh (with possible fix)
 _   https://github.com/processing/processing/issues/1730
+
+data
+X are we comfortable with setInt/Float/etc instead of just set(int, blah)
+X   yes, better to have parity
+X   too weird to have to explain why getXxx() needs types and set() doesn't
+X get/set with Java's 'Map' class?
+X   really useful, but leaning toward not including it
+X   or leave it in as an advanced feature?
+X createXxx() methods less important
+X   XML.parse() - or new XML("<tag>") or new XML("tag")
+X api note: size() used in data classes
+X   length() too confusing w/ array.length being built-in (when to use ()?)
+X   size() a bit confusing with the p5 size command, but less problematic
+o   also shorter than getCount() or getLength()
+o why not HashMap and ArrayList for JSON? 
+o   could enable loadHash() and loadArray() functions
+X   because the types coming back out would always have to be cast
+o add loadDict() and loadList() for JSON?
+o   Dict and List could be interfaces? 
+X "hash.toJSONObject()" or "new JSONObject(hash)"
+X   opted to use "new JSONObject" version, appears less awkward
+o match? find? on StringList?
+_ can we use String... for options? or does it screw up the method signature?
+_   and would we have to always concatenate arrays to prepend extensions, etc
+_ include Instant and Interval? (or just Time and TimeSpan)
+_ naming for descending sort
+_   rsort(), sortReverse(), sortKeysReverse, 
+_   sortDescend, sortDescending, sortKeysDescending, 
+_   sortHighLow, sortHigh, sortHighest, sortDown
+_ it's going to be File or Reader (mostly BufferedReader) everywhere
+_   though TableODS needs an InputStream... 
+_   and XML could use InputStream if we hope to be able to reflect doc encoding
+_   ok, so File, Reader, and InputStream (where needed)
+_ setMissingXxxx() -> should this live in PApplet? be static?
+_   cons: static stinks, diff tables might use diff values
+_ will also need an iterator for the Dict class ala Map.Entry
+_ using Iterable for rows(), keys(), etc
+_   generally more efficient for Table, but slower for FloatHash and IntHash
+_   could use an int array instead, but a bit hokey in places
+_ Iterable, Iterator, or [] returned for keys(), rows(), etc.
+_   list, dict, json, table are each more efficient at different things
+_   keys(), rows(), etc. should return something Iterable
+_     whether that means an array or an actual Iterator or even a Set
+_     that way we can do what's most efficient
+_   then we add keyIterator() and others to handle the other case (deletion)
+_   blogs.oracle.com/CoreJavaTechTips/entry/using_enhanced_for_loops_with
+_ means that JSON.keys() -> JSON.keyIterator(), JSON.keySet() -> JSON.keys()
+_ what should they all return? 
+_   remove -> true/false based on whether it found something?
+_   remove all -> the number removed?
+_ List: remove(), append(), index(), etc all use values
+_   removeIndex(index) is the other
+_   otherwise remove() would be the only one that dealt with indices
+_   Dict will use remove(key), so using remove(index) as default
+_     and removeValue(value) is probably used less
+_ introduce remap() instead of map() (if not deprecate?)
+
+data / document
+X no save/load for hash and list classes
+X   because no native format
+X   write() and constructor are enough for advanced users
+o add() to add things to lists, inc/dec for the math
+o   inc/dec/sum is used less, after all
+X   or append()? since that's what JSON is currently using
+X   append() nicer, inc/dec felt arcane (and forced)
+o Lookup instead of Hash or Dict?
+o increment, decrement, increase, decrease instead of add/subtract
+o   does double duty for incrementing/decrementing easily
+o   inc(), inc(amount), dec(), dec(amount)
+X replace (especially for null and NaN)
+X   make note that these work, and are special cases
+o listAttributes() in XML is like array from keys() etc in our data classes
+_ removeIndex() vs removeValue() vs remove() 
+_   remove() refers to an index (with array) or key (with hash)
+_   more consistent with other APIs (Java)
+_   replaceValue[s]() the same, though more on the line
+_   should we not have remove() and removeIndex()
+_     and instead always specify? removeKey(), removeIndex(), removeValue()?
+_     would mean that hash would only have removeKey
+_     downside: remove() takes whatever get() takes as arg
+_   with removeValue(), add removeValues() for all values that match?
+_     also support NaN here
+_ need to sort out the final version of hash/dict/etc and their names
+_ JSONObject.has(key) vs XML.hasAttribute(attr) vs HashMap.containsKey()
+_   and how it should be handled with hash/dict
+_   right now using hasKey().. in JSONObject
+_   contains() as default, then containsValue() as the alternate
+_     instead of containsKey() and containsValue()
+_   hasAttribute in XML, containsKey in java's Map, hasKey in JSON
+_   hasChildren() is another precedent
+o   contains() is nice, but containsKey() is weird, often not 'containing'
+X   hasKey/hasValue is best; fewest changes and most descriptive
+_ not doing print() methods, since alternatives are more descriptive
+_   println(obj) and obj.write(System.out) are both better
+
+json
+X getIntArray() for JSONArray
+X misc bugs with last release
+X   https://github.com/processing/processing/issues/1660
+X   https://github.com/processing/processing/issues/1680
+X Dan having trouble with JSON
+X keys() vs keySet() in JSON.. 
+X   keys() doesn't iterate, keySet() introduces 'Set' type
+X parseJSONObject(x) and parseJSONArray(x)
+_ add indent= as option for JSON save
 
 table
 X do we need getColumnType() inside TableRow? 
@@ -43,103 +146,7 @@ _   but what to do with null entries?
 _ need a method to reset the row/column indices after add/remove
 _   or just make sure that it's covered for all cases
 _ prefixes like # as comments? easy to remove?
-
-data
-X "hash.toJSONObject()" or "new JSONObject(hash)"
-X   opted to use "new JSONObject" version, appears less awkward
-o match? find? on StringList?
-_ can we use String... for options? or does it screw up the method signature?
-_   and would we have to always concatenate arrays to prepend extensions, etc
-_ include Instant and Interval? (or just Time and TimeSpan)
-_ naming for descending sort
-_   rsort(), sortReverse(), sortKeysReverse, 
-_   sortDescend, sortDescending, sortKeysDescending, 
-_   sortHighLow, sortHigh, sortHighest, sortDown
-_ it's going to be File or Reader (mostly BufferedReader) everywhere
-_   though TableODS needs an InputStream... 
-_   and XML could use InputStream if we hope to be able to reflect doc encoding
-_   ok, so File, Reader, and InputStream (where needed)
-_ setMissingXxxx() -> should this live in PApplet? be static?
-_   cons: static stinks, diff tables might use diff values
-_ will also need an iterator for the Dict class ala Map.Entry
-
-json
-X getIntArray() for JSONArray
-X misc bugs with last release
-X   https://github.com/processing/processing/issues/1660
-X   https://github.com/processing/processing/issues/1680
-X Dan having trouble with JSON
-X keys() vs keySet() in JSON.. 
-X   keys() doesn't iterate, keySet() introduces 'Set' type
-X parseJSONObject(x) and parseJSONArray(x)
-
-data / document
-X no save/load for hash and list classes
-X   because no native format
-X   write() and constructor are enough for advanced users
-o add() to add things to lists, inc/dec for the math
-o   inc/dec/sum is used less, after all
-X   or append()? since that's what JSON is currently using
-X   append() nicer, inc/dec felt arcane (and forced)
-o Lookup instead of Hash or Dict?
-o increment, decrement, increase, decrease instead of add/subtract
-o   does double duty for incrementing/decrementing easily
-o   inc(), inc(amount), dec(), dec(amount)
-X replace (especially for null and NaN)
-X   make note that these work, and are special cases
-_ removeIndex() vs removeValue() vs remove() 
-_   remove() refers to an index (with array) or key (with hash)
-_   more consistent with other APIs (Java)
-_   replaceValue[s]() the same, though more on the line
-_   should we not have remove() and removeIndex()
-_     and instead always specify? removeKey(), removeIndex(), removeValue()?
-_     would mean that hash would only have removeKey
-_     downside: remove() takes whatever get() takes as arg
-_ need to sort out the final version of hash/dict/etc and their names
-_ JSONObject.has(key) vs XML.hasAttribute(attr) vs HashMap.containsKey()
-_   and how it should be handled with hash/dict
-_   right now using hasKey().. in JSONObject
-_   contains() as default, then containsValue() as the alternate
-_     instead of containsKey() and containsValue()
-_   hasAttribute in XML, containsKey in java's Map, hasKey in JSON
-_   hasChildren() is another precedent
-o   contains() is nice, but containsKey() is weird, often not 'containing'
-X   hasKey/hasValue is best; fewest changes and most descriptive
-
-_ add indent= as option for XML, JSON save
-_ not doing print() methods, since alternatives are more descriptive
-_   println(obj) and obj.write(System.out) are both better
-_ using Iterable for rows(), keys(), etc
-_   generally more efficient for Table, but slower for FloatHash and IntHash
-_   could use an int array instead, but a bit hokey in places
-
-decide on TableODS, TableHTML
-
-Iterable, Iterator, or [] returned for keys(), rows(), etc.
-  list, dict, json, table are each more efficient at different things
-  keys(), rows(), etc. should return something Iterable
-    whether that means an array or an actual Iterator or even a Set
-    that way we can do what's most efficient
-  add nodes() (no) or children() to XML?
-  then we add keyIterator() and others to handle the other case (deletion)
-means that JSON.keys() -> JSON.keyIterator(), JSON.keySet() -> JSON.keys()
-
-what should they all return? 
-  remove -> true/false based on whether it found something?
-  remove all -> the number removed?
-
-with removeValue(), add removeValues() for all values that match?
-  also support NaN here
-
-listAttributes() in XML is like array from keys() etc in our data classes
-
-List: remove(), append(), index(), etc all use values
-  removeIndex(index) is the other
-  otherwise remove() would be the only one that dealt with indices
-  Dict will use remove(key), so using remove(index) as default
-    and removeValue(value) is probably used less
-
-table
+_ decide on TableODS, TableHTML
 _ add 'gz' as one of the loadXxx() options
 _   helps .svgz case from being weird, also generally dealing w/ compressed data
 _ naming for these (or whether to include hash)
@@ -169,28 +176,22 @@ _   CATEGORICAL -> CATEGORY? ORDINAL?
 _ getInt() on categorial to return index?
 _   getCategories() and getCategory() methods to query names?
 
+xml
+o add nodes() (no) or children() to XML?
+X   not necessary, getChildren() already exists
+_ add indent= as option for XML, JSON save
+
 andres
 A lines not properly renderered in P3D when using ortographic projection
 A   https://github.com/processing/processing/issues/1661
-
-decisions on data
-X are we comfortable with setInt/Float/etc instead of just set(int, blah)
-X   yes, better to have parity
-X   too weird to have to explain why getXxx() needs types and set() doesn't
-X get/set with Java's 'Map' class?
-X   really useful, but leaning toward not including it
-X   or leave it in as an advanced feature?
-X createXxx() methods less important
-X   XML.parse() - or new XML("<tag>") or new XML("tag")
-X api note: size() used in data classes
-X   length() too confusing w/ array.length being built-in (when to use ()?)
-X   size() a bit confusing with the p5 size command, but less problematic
-o   also shorter than getCount() or getLength()
-o why not HashMap and ArrayList for JSON? 
-o   could enable loadHash() and loadArray() functions
-X   because the types coming back out would always have to be cast
-o add loadDict() and loadList() for JSON?
-o   Dict and List could be interfaces? 
+_ P2D/P3D sketches don't get focus until clicked
+_   also problem for Java2D when canvas is used?
+_   need to standardize canvas handling
+_   https://github.com/processing/processing/issues/1700
+_ warning message present
+_   Deleted 1 texture objects, 0 remaining
+_ shader syntax (Andres request)
+_   might also need a define inside the shader to control what type it is
 
 _ add mouse wheel support to 2.0 event system
 _   https://github.com/processing/processing/issues/1461
@@ -212,19 +213,6 @@ _   add to the API docs
 _   decide on getAmount() and weirdness w/ clickCount
 _   get mouseWheel() added to api ref
 _   also added to keywords.txt
-
-andres
-_ P2D/P3D sketches don't get focus until clicked
-_   also problem for Java2D when canvas is used?
-_   need to standardize canvas handling
-_   https://github.com/processing/processing/issues/1700
-_ warning message present
-_   Deleted 1 texture objects, 0 remaining
-
-_ introduce remap() instead of map() (if not deprecate?)
-
-_ shader syntax (Andres request)
-_   might also need a define inside the shader to control what type it is
 
 shape
 _ major surgery to put loadShape() back into PApplet/PGraphics
@@ -323,21 +311,19 @@ _     so that it could avoid quitting if the sketch hasn't been stopped
 _     or if the sketch window is foremost
 _     maybe a hack where a new menubar is added? 
 
-_ splice() throws ClassCastException when used with objects like PVector 
-_   http://code.google.com/p/processing/issues/detail?id=1407
-
 api to be fixed/removed
 _ remove PImage.delete() and friends from PImage, Movie, etc.
 _ delete()/dispose() being used in the movie
 _ buffer sink methods in movie
 _ 'newFrame' is 'available', and ready() is part of that
-
+_ splice() throws ClassCastException when used with objects like PVector 
+_   http://code.google.com/p/processing/issues/detail?id=1407
+_ deprecate the older splice() etc API inside PApplet?
 _ wrap exceptions with die() and warn() methods
 _   this way, people can make use of exceptions if they would rather
 _   or shut them off if they don't want to 
 _   also need to explain exception handling in general
 _   http://code.google.com/p/processing/issues/detail?id=183
-
 _ bring PConstants back in line w/ previous 1.5 (can't renumber)
 
 docs (2.0)
