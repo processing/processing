@@ -22,6 +22,8 @@ _   https://github.com/processing/processing/issues/1730
 _ Linux sometimes not responding correctly w/ the size() command
 _   https://github.com/processing/processing/issues/1672
 
+_ image memory issue was huge, need to close that one
+
 data
 X are we comfortable with setInt/Float/etc instead of just set(int, blah)
 X   yes, better to have parity

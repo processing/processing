@@ -114,7 +114,6 @@ public class CreateFont extends JFrame implements Tool {
     // getFontList is deprecated in 1.4, so this has to be used
     GraphicsEnvironment ge =
       GraphicsEnvironment.getLocalGraphicsEnvironment();
-
     Font fonts[] = ge.getAllFonts();
     
     if (false) {
@@ -159,6 +158,11 @@ public class CreateFont extends JFrame implements Tool {
       try {
         flist[index++] = fonts[i].getPSName();
         table.put(fonts[i].getPSName(), fonts[i]);
+        // Checking into http://processing.org/bugs/bugzilla/407.html
+        // and https://github.com/processing/processing/issues/1727
+//        if (fonts[i].getPSName().contains("Helv")) {
+//          System.out.println(fonts[i].getPSName() + " -> " + fonts[i]);
+//        }
       } catch (Exception e) {
         // Sometimes fonts cause lots of trouble.
         // http://code.google.com/p/processing/issues/detail?id=442
@@ -309,7 +313,8 @@ public class CreateFont extends JFrame implements Tool {
     if ((fontsize > 0) && (fontsize < 256) && (selection != -1)) {
       //font = new Font(list[selection], Font.PLAIN, fontsize);
       Font instance = table.get(list[selection]);
-      font = instance.deriveFont(Font.PLAIN, fontsize);
+//      font = instance.deriveFont(Font.PLAIN, fontsize);
+      font = instance.deriveFont((float) fontsize);
       //System.out.println("setting font to " + font);
       sample.setFont(font);
 
