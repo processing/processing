@@ -46,22 +46,6 @@ X "Update" not working in the library manager
 X   https://github.com/processing/processing/issues/1701
 
 
-_ figure out Android issues so we can remove tools.jar and javac
-_   also to the p5 repo with just a JRE
-
-_ send info on 'check for updates' so we know about libs/modes/etc?
-_   how to disclose to users?
-_   only send for items that are part of the public list 
-_     otherwise we're sending private libraries/installs
-_     although this won't pick up old libraries not on the new system
-
-_ remove sketch.properties when moving back to the default?
-_   or can we not do this, because it's used to set the 'next' mode
-
-_ Linux sometimes not responding correctly w/ the size() command
-_   https://github.com/processing/processing/issues/1672
-
-
 2.0 FINAL / new interface
 _ most of theme probably moves back into lib
 _   editor.bgcolor probably moves out of the theme.txt file for the mode
@@ -90,8 +74,8 @@ _   don't allow adding files w/o saving
 _   others?
 _ when creating a sketch within non-Java mode, should write the settings file
 _   so that it re-loads in the proper environment
-_ processing-java output as UTF-8 makes Windows unhappy
-_   https://github.com/processing/processing/issues/1633
+_ remove sketch.properties when moving back to the default?
+_   or can we not do this, because it's used to set the 'next' mode
 
 
 2.0 FINAL / libraries & classpaths
@@ -200,12 +184,19 @@ _   or write the path as shown in the PDE to the file as simpler
 _ 'recent' menu paths can get enormous
 _ temporary files (for sketches and logs) are not deleted
 _   http://code.google.com/p/processing/issues/detail?id=562
-
-
 _ proxy server requirement causes problems
 _   contrib manager, update checks are broken
 _   https://github.com/processing/processing/issues/1476
 X   http://code.google.com/p/processing/issues/detail?id=1438
+_ processing-java output as UTF-8 makes Windows unhappy
+_   https://github.com/processing/processing/issues/1633
+_ figure out Android issues so we can remove tools.jar and javac
+_   also to the p5 repo with just a JRE
+_ send info on 'check for updates' so we know about libs/modes/etc?
+_   how to disclose to users?
+_   only send for items that are part of the public list 
+_     otherwise we're sending private libraries/installs
+_     although this won't pick up old libraries not on the new system
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -300,35 +291,6 @@ _   it will be *extremely* slow, which is part of why it's not documented yet.
 _   but it will work with beginRaw().
 
 
-DOC / Discourse Board
-
-_ auto-close threads when not posted to for 30(?) days
-_ add basic guidelines for posting to the board
-_   0. be polite. going on about how much something "sucks" or is "stupid" will make you look like an eight-year-old.
-_   1. don't double (or triple) post
-_   2. if you're having trouble, first see the troubleshooting page
-_   3. if you have a bug, first search the bugs database
-_   4. first check the FAQ
-_   5. use the search bar at the top of every page
-_   6. read revisions.txt
-_ someone wrote up an initial version of this
-_ how to put [code] around blocks of code
-_   also mention contributed plugin for formatting
-_   also the reference page on the bb commands
-_ i don't answer to instant messages
-_ i don't answer email
-_ use the bugs db instead of the bugs board
-_ use the search box (not the forum search)
-_ read the faq, read the faq
-_ read the reference.. right-click on a word and choose "find in ref"
-_ non-processing posts will be deleted (not a java discussion board)
-_ no duplicate posts - find an area and post to
-_ explanation of what the areas are
-_ be sure to look at the reference, especially the extended reference
-_   questions like 'how do i do x' are often solved by looking at the api
-_   for instance, to get the framerate, use framerate()
-
-
 DOC / Other
 
 _ why adding .0001 to a float doesn't work
@@ -368,10 +330,6 @@ _   what are the necessary bits that need to be subclassed
 _   simple handling of colors, what fields are available
 _   how to get the matrices
 _   simple endshape handler
-
-
-DOC / Site
-
 _ also mention in keyPressed docs that ASCII key codes will not be coded
 _   it's just how java is (maybe this is already in there?)
 _ add note about adding libraries to the sketchbook to the reference
