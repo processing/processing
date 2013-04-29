@@ -744,6 +744,7 @@ LATER (post 2.0)
 
 _ handle repeat key events 
 _   and/or holding keys down and discerning repeats
+_   https://github.com/processing/processing/issues/1622
 _ fillMode(NONZERO) and fillMode(ODD) to replace solid(boolean)?
 _ create PVec2D and PVec3D as separate classes
 _ gui priorities
@@ -818,3 +819,4 @@ _   mostly just change the examples to not use loadPixels() anymore
 _ put a Hash<Something> class in there
 _   will this work to sort by the values?
 _   there was another concern as well..
+_ save() should probably come out of image, ja?

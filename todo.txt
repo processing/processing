@@ -76,6 +76,8 @@ _ when creating a sketch within non-Java mode, should write the settings file
 _   so that it re-loads in the proper environment
 _ remove sketch.properties when moving back to the default?
 _   or can we not do this, because it's used to set the 'next' mode
+_ add means to import .zip files from file/url into sketchbook, library, etc.
+_   super easy given current code implementation, might help usability
 
 
 2.0 FINAL / libraries & classpaths
