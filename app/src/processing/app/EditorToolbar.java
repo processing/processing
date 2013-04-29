@@ -24,6 +24,7 @@ package processing.app;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import javax.swing.*;
@@ -96,17 +97,6 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
 //    this.menu = menu;
 
     buttons = new ArrayList<Button>();
-//    buttonCount = 0;
-//    which = new int[BUTTON_COUNT];
-
-//    which[buttonCount++] = RUN;
-//    which[buttonCount++] = STOP;
-//    which[buttonCount++] = NEW;
-//    which[buttonCount++] = OPEN;
-//    which[buttonCount++] = SAVE;
-//    which[buttonCount++] = EXPORT;
-
-//    currentRollover = -1;
     rollover = null;
 
     mode = editor.getMode();
@@ -131,23 +121,37 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
    * otherwise createImage() might fail.
    */
   public Image[][] loadImages() {
-//    Image allButtons = Base.getThemeImage("buttons.gif", this);
-//    Image allButtons = Base.loadImage(file);
-    Image allButtons = mode.loadImage("theme/buttons.gif");
-    int count = allButtons.getWidth(this) / BUTTON_WIDTH;
-//    System.out.println("width is " + allButtons.getWidth(this));
+    int res = Toolkit.isRetina() ? 2 : 1;
+    
+    Image allButtons = null;
+    // Some modes may not have a 2x version. If a mode doesn't have a 1x 
+    // version, this will cause an error... they should always have 1x.
+    if (res == 2) {
+      allButtons = mode.loadImage("theme/buttons-2x.png");
+      if (allButtons == null) {
+        res = 1;  // take him down a notch
+      }
+    }
+    if (res == 1) {
+      allButtons = mode.loadImage("theme/buttons.png");
+      if (allButtons == null) {
+        // use the old (pre-2.0b9) file name
+        allButtons = mode.loadImage("theme/buttons.gif");
+      }
+    }
+
+    int count = allButtons.getWidth(this) / BUTTON_WIDTH*res;
     Image[][] buttonImages = new Image[count][3];
     
     for (int i = 0; i < count; i++) {
       for (int state = 0; state < 3; state++) {
-//        Toolkit tk = Toolkit.getDefaultToolkit();
-//        Image image = tk.createImage(BUTTON_WIDTH, BUTTON_HEIGHT);
-//        System.out.println("image is " + image + " " + BUTTON_WIDTH + " " + BUTTON_HEIGHT);
-        Image image = createImage(BUTTON_WIDTH, BUTTON_HEIGHT);
+//        Image image = createImage(BUTTON_WIDTH*res, BUTTON_HEIGHT*res);
+        Image image = new BufferedImage(BUTTON_WIDTH*res, BUTTON_HEIGHT*res, BufferedImage.TYPE_INT_ARGB);
         Graphics g = image.getGraphics();
         g.drawImage(allButtons, 
-                    -(i*BUTTON_IMAGE_SIZE) - 3, 
-                    (-2 + state)*BUTTON_IMAGE_SIZE, null);
+                    -(i*BUTTON_IMAGE_SIZE*res) - 3, 
+                    (state-2)*BUTTON_IMAGE_SIZE*res, null);
+        g.dispose();
         buttonImages[i][state] = image;
       }
     }

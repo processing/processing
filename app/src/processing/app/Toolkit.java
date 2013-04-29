@@ -216,6 +216,7 @@ public class Toolkit {
 
   static Boolean retinaProp;
 
+  /** Yes, retina is a marketing term. But no, nobody else has implemented hi-dpi. */
   static public boolean isRetina() {
     if (Base.isMacOS()) {
       // This should probably be reset each time there's a display change.

@@ -803,6 +803,9 @@ public abstract class Mode {
    */
   public Image loadImage(String filename) {
     File file = new File(folder, filename);
+    if (!file.exists()) {
+      return null;
+    }
     return new ImageIcon(file.getAbsolutePath()).getImage();
   }
 
