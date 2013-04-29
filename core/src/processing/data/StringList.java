@@ -464,9 +464,9 @@ public class StringList implements Iterable<String> {
 
       @Override
       public void swap(int a, int b) {
-        int temp = a;
-        a = b;
-        b = temp;
+        String temp = data[a];
+        data[a] = data[b];
+        data[b] = temp;
       }
     }.run();
   }
@@ -599,11 +599,9 @@ public class StringList implements Iterable<String> {
   }
 
 
-  /** Remove all non-unique entries. */
-  public void unique() {
-    IntDict cheat = getTally();
-    data = cheat.keyArray();
-    count = cheat.size();
+  /** Get a list of all unique entries. */
+  public String[] getUnique() {
+    return getTally().keyArray();
   }
 
 
@@ -624,5 +622,28 @@ public class StringList implements Iterable<String> {
       outgoing.set(data[i], i);
     }
     return outgoing;
+  }
+
+
+//  public void println() {
+//    for (int i = 0; i < count; i++) {
+//      System.out.println("[" + i + "] " + data[i]);
+//    }
+//    System.out.flush();
+//  }
+
+
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append(getClass().getSimpleName() + " size=" + size() + " [ ");
+    for (int i = 0; i < size(); i++) {
+      if (i != 0) {
+        sb.append(", ");
+      }
+      sb.append(i + ": \"" + data[i] + "\"");
+    }
+    sb.append(" ]");
+    return sb.toString();
   }
 }

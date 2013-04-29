@@ -61,6 +61,16 @@ public class StringDict {
   }
 
 
+  public StringDict(String[] keys, String[] values) {
+    if (keys.length != values.length) {
+      throw new IllegalArgumentException("key and value arrays must be the same length");
+    }
+    this.keys = keys;
+    this.values = values;
+    count = keys.length;
+  }
+
+
   public int size() {
     return count;
   }
@@ -312,7 +322,7 @@ public class StringDict {
             diff = keys[a].compareToIgnoreCase(keys[b]);
           }
         }
-        return reverse ? diff : -diff;
+        return reverse ? -diff : diff;
       }
 
       @Override
@@ -351,12 +361,12 @@ public class StringDict {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append(getClass().getName() + " size= " + size() + " { ");
+    sb.append(getClass().getSimpleName() + " size=" + size() + " { ");
     for (int i = 0; i < size(); i++) {
       if (i != 0) {
         sb.append(", ");
       }
-      sb.append("\"" + keys[i] + "\": " + values[i]);
+      sb.append("\"" + keys[i] + "\": \"" + values[i] + "\"");
     }
     sb.append(" }");
     return sb.toString();

@@ -379,14 +379,14 @@ public class IntList implements Iterable<Integer> {
 
       @Override
       public float compare(int a, int b) {
-        return data[a] - data[b];
+        return data[b] - data[a];
       }
 
       @Override
       public void swap(int a, int b) {
-        int temp = a;
-        a = b;
-        b = temp;
+        int temp = data[a];
+        data[a] = data[b];
+        data[b] = temp;
       }
     }.run();
   }
@@ -556,4 +556,19 @@ public class IntList implements Iterable<Integer> {
 //    }
 //    return outgoing;
 //  }
+
+
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append(getClass().getSimpleName() + " size=" + size() + " [ ");
+    for (int i = 0; i < size(); i++) {
+      if (i != 0) {
+        sb.append(", ");
+      }
+      sb.append(i + ": " + data[i]);
+    }
+    sb.append(" ]");
+    return sb.toString();
+  }
 }

@@ -3044,60 +3044,129 @@ public class Table {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  // replaced with StringList.fromUnique(String[] list)
-//  public String[] listUnique(String column) {
-//    return listUnique(getColumnIndex(column));
-//  }
+  // TODO maybe these aren't needed. better to use getStringList().getUnique()?
 
-
-//  IntHash found = IntHash.fromTally(getStringColumn(column));
-//  return found.keyArray();
-
-  // replaced with StringList.fromUnique(String[] list)
-//  public String[] listUnique(int column) {
-//    HashMapSucks found = new HashMapSucks();
-//
-//    for (int row = 0; row < getRowCount(); row++) {
-//      found.check(getString(row, column));
-//    }
-//    String[] outgoing = new String[found.size()];
-//    found.keySet().toArray(outgoing);
-//    return outgoing;
-//  }
-
-
-  // replaced with StringDict.fromTally(String[] list)
-//  public HashMap<String,Integer> tallyUnique(String columnName) {
-//    return tallyUnique(getColumnIndex(columnName));
-//  }
-
-
-  // replaced with StringDict.fromTally(String[] list)
-//  public HashMap<String,Integer> tallyUnique(int column) {
-//    HashMapSucks outgoing = new HashMapSucks();
-//    for (int row = 0; row < rowCount; row++) {
-//      String entry = getString(row, column);
-//      if (entry != null) {
-//        outgoing.increment(entry);
-//      }
-//    }
-//    return outgoing;
-//  }
-
-
-  /**
-   * Return an object that maps the String values in one column back to the
-   * row from which they came. For instance, if the "name" of each row is
-   * found in the first column, getColumnRowLookup(0) would return an object
-   * that would map each name back to its row.
-   */
-  protected HashMap<String,Integer> getRowLookup(int col) {
-    HashMap<String,Integer> outgoing = new HashMap<String, Integer>();
-    for (int row = 0; row < getRowCount(); row++) {
-      outgoing.put(getString(row, col), row);
-    }
-    return outgoing;
+  public String[] getUnique(String columnName) {
+    return getUnique(getColumnIndex(columnName));
   }
+
+
+  public String[] getUnique(int column) {
+    StringList list = new StringList(getStringColumn(column));
+    return list.getUnique();
+  }
+
+
+  public IntDict getTally(String columnName) {
+    return getTally(getColumnIndex(columnName));
+  }
+
+
+  public IntDict getTally(int column) {
+    StringList list = new StringList(getStringColumn(column));
+    return list.getTally();
+  }
+
+
+  public IntDict getOrder(String columnName) {
+    return getOrder(getColumnIndex(columnName));
+  }
+
+
+  public IntDict getOrder(int column) {
+    StringList list = new StringList(getStringColumn(column));
+    return list.getOrder();
+  }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  public IntList getIntList(String columnName) {
+    return new IntList(getIntColumn(columnName));
+  }
+
+
+  public IntList getIntList(int column) {
+    return new IntList(getIntColumn(column));
+  }
+
+
+  public FloatList getFloatList(String columnName) {
+    return new FloatList(getFloatColumn(columnName));
+  }
+
+
+  public FloatList getFloatList(int column) {
+    return new FloatList(getFloatColumn(column));
+  }
+
+
+  public StringList getStringList(String columnName) {
+    return new StringList(getStringColumn(columnName));
+  }
+
+
+  public StringList getStringList(int column) {
+    return new StringList(getStringColumn(column));
+  }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  public IntDict getIntDict(String keyColumnName, String valueColumnName) {
+    return new IntDict(getStringColumn(keyColumnName),
+                       getIntColumn(valueColumnName));
+  }
+
+
+  public IntDict getIntDict(int keyColumn, int valueColumn) {
+    return new IntDict(getStringColumn(keyColumn),
+                       getIntColumn(valueColumn));
+  }
+
+
+  public FloatDict getFloatDict(String keyColumnName, String valueColumnName) {
+    return new FloatDict(getStringColumn(keyColumnName),
+                         getFloatColumn(valueColumnName));
+  }
+
+
+  public FloatDict getFloatDict(int keyColumn, int valueColumn) {
+    return new FloatDict(getStringColumn(keyColumn),
+                       getFloatColumn(valueColumn));
+  }
+
+
+  public StringDict getStringDict(String keyColumnName, String valueColumnName) {
+    return new StringDict(getStringColumn(keyColumnName),
+                         getStringColumn(valueColumnName));
+  }
+
+
+  public StringDict getStringDict(int keyColumn, int valueColumn) {
+    return new StringDict(getStringColumn(keyColumn),
+                       getStringColumn(valueColumn));
+  }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+//  /**
+//   * Return an object that maps the String values in one column back to the
+//   * row from which they came. For instance, if the "name" of each row is
+//   * found in the first column, getColumnRowLookup(0) would return an object
+//   * that would map each name back to its row.
+//   */
+//  protected HashMap<String,Integer> getRowLookup(int col) {
+//    HashMap<String,Integer> outgoing = new HashMap<String, Integer>();
+//    for (int row = 0; row < getRowCount(); row++) {
+//      outgoing.put(getString(row, col), row);
+//    }
+//    return outgoing;
+//  }
 
 
   // incomplete, basically this is silly to write all this repetitive code when
