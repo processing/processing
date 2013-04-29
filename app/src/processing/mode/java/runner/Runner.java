@@ -69,12 +69,12 @@ public class Runner implements MessageConsumer {
   //  Do we want to watch assignments to fields
 //  protected boolean watchFields = false;
 
-  // Class patterns for which we don't want events
-  protected String[] excludes = {
-      "java.*", "javax.*", "sun.*", "com.sun.*",
-      "apple.*",
-      "processing.*"
-  };
+//  // Class patterns for which we don't want events
+//  protected String[] excludes = {
+//      "java.*", "javax.*", "sun.*", "com.sun.*",
+//      "apple.*",
+//      "processing.*"
+//  };
 
   protected SketchException exception;
   protected Editor editor;
@@ -133,8 +133,11 @@ public class Runner implements MessageConsumer {
     int port = 8000 + (int) (Math.random() * 1000);
     String portStr = String.valueOf(port);
 
-    String jdwpArg = "-Xrunjdwp:transport=dt_socket,address=" + portStr + ",server=y,suspend=y";
-//    String debugArg = "-Xdebug";  // not needed?
+    // Older (Java 1.5 and earlier) version, go figure
+//    String jdwpArg = "-Xrunjdwp:transport=dt_socket,address=" + portStr + ",server=y,suspend=y";
+//    String debugArg = "-Xdebug"; 
+    // Newer (Java 1.5+) version that uses JVMTI
+    String jdwpArg = "-agentlib:jdwp=transport=dt_socket,address=" + portStr + ",server=y,suspend=y";
 
     String[] commandArgs = null;
     if (!Base.isMacOS()) {
@@ -653,14 +656,6 @@ public class Runner implements MessageConsumer {
     // For internal debugging
     PrintWriter writer = null;
     
-//    EventThread eventThread = new EventThread(this, vm, excludes, writer);
-////    System.out.println("generateTrace starting event thread");
-//    eventThread.start();
-////    System.out.println("generateTrace started event thread");
-//    eventThread.setEventRequests(false);
-////    System.out.println("event requests set");
-////    //}
-    
     // Calling this seems to set something internally to make the 
     // Eclipse JDI wake up. Without it, an ObjectCollectedException
     // is thrown on excReq.enable(). No idea why this works, 
@@ -694,31 +689,9 @@ public class Runner implements MessageConsumer {
             EventSet eventSet = eventQueue.remove();  
 //            listener.vmEvent(eventSet);
 
-            for (Event event : eventSet) {  //.iterator()) {
+            for (Event event : eventSet) {
 //              System.out.println("EventThread.handleEvent -> " + event);
-              /*if (event instanceof VMStartEvent) {
-//                for (ThreadReference thread : vm.allThreads()) {
-//                  System.out.println("thread: " + thread);
-//                }
-                // Calling this seems to set something internally to make the 
-                // Eclipse JDI wake up. Without it, an ObjectCollectedException
-                // is thrown on excReq.enable(). No idea why this works, 
-                // but at least exception handling has returned. 
-                vm.allThreads();
-                
-                EventRequestManager mgr = vm.eventRequestManager();
-                // get only the uncaught exceptions
-                ExceptionRequest excReq = mgr.createExceptionRequest(null, false, true);
-//                System.out.println(excReq);
-                // this version reports all exceptions, caught or uncaught
-//              ExceptionRequest excReq = mgr.createExceptionRequest(null, true, true);
-                // suspend so we can step
-                excReq.setSuspendPolicy(EventRequest.SUSPEND_ALL);
-//                excReq.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
-//              excReq.setSuspendPolicy(EventRequest.SUSPEND_NONE);  // another option?
-                excReq.enable();
-
-              } else*/ if (event instanceof ExceptionEvent) {
+              if (event instanceof ExceptionEvent) {
                 for (ThreadReference thread : vm.allThreads()) {
                   thread.suspend();
                 }
@@ -727,7 +700,6 @@ public class Runner implements MessageConsumer {
                 connected = false;
               } 
             }
-            // for (Event e : eventSet) { System.out.println("VM Event: " + e.toString()); }
           }
 //        } catch (VMDisconnectedException e) {
 //          Logger.getLogger(VMEventReader.class.getName()).log(Level.INFO, "VMEventReader quit on VM disconnect");
@@ -740,25 +712,13 @@ public class Runner implements MessageConsumer {
     };
     eventThread.start();
 
-    //redirectOutput();
+    
+    errThread = 
+      new MessageSiphon(process.getErrorStream(), this).getThread();
 
-//    Process process = vm.process();
-//    Process process = javaProcess;
-
-//  processInput = new SystemOutSiphon(process.getInputStream());
-//  processError = new MessageSiphon(process.getErrorStream(), this);
-
-    // Copy target's output and error to our output and error.
-//    errThread = new StreamRedirectThread("error reader",
-//        process.getErrorStream(),
-//        System.err);
-    MessageSiphon ms = new MessageSiphon(process.getErrorStream(), this);
-    errThread = ms.getThread();
-
-    outThread = new StreamRedirectThread("output reader",
+    outThread = new StreamRedirectThread("JVM stdout Reader",
                                          process.getInputStream(),
                                          System.out);
-
     errThread.start();
     outThread.start();
 
