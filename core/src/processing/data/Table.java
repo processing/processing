@@ -32,6 +32,12 @@ import java.sql.Types;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.SAXException;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -102,7 +108,9 @@ public class Table {
   // version that uses a File object; future releases (or data types)
   // may include additional optimizations here
   public Table(File file, String options) throws IOException {
-    parse(new FileInputStream(file), checkOptions(file, options));
+    // uses createInput() to handle .gz (and eventually .bz2) files
+    parse(PApplet.createInput(file),
+          extensionOptions(true, file.getName(), options));
   }
 
 
@@ -193,6 +201,7 @@ public class Table {
   }
 
 
+  /*
   protected String checkOptions(File file, String options) throws IOException {
     String extension = null;
     String filename = file.getName();
@@ -221,6 +230,29 @@ public class Table {
     }
     return options;
   }
+  */
+
+
+  static final String[] loadExtensions = { "csv", "tsv", "ods", "bin" };
+  static final String[] saveExtensions = { "csv", "tsv", "html", "bin" };
+
+  static public String extensionOptions(boolean loading, String filename, String options) {
+    String extension = PApplet.checkExtension(filename);
+    if (extension != null) {
+      for (String possible : loading ? loadExtensions : saveExtensions) {
+        if (extension.equals(possible)) {
+          if (options == null) {
+            return extension;
+          } else {
+            // prepend the extension to the options (will be replaced by other
+            // options that override it later in the load loop)
+            return extension + "," + options;
+          }
+        }
+      }
+    }
+    return options;
+  }
 
 
   protected void parse(InputStream input, String options) throws IOException {
@@ -230,27 +262,48 @@ public class Table {
     boolean header = false;
     String extension = null;
     boolean binary = false;
+
+    String worksheet = null;
+    final String sheetParam = "worksheet=";
+
+    String[] opts = null;
     if (options != null) {
-      String[] opts = PApplet.splitTokens(options, " ,");
+      opts = PApplet.splitTokens(options, " ,");
       for (String opt : opts) {
         if (opt.equals("tsv")) {
           extension = "tsv";
         } else if (opt.equals("csv")) {
           extension = "csv";
+        } else if (opt.equals("ods")) {
+          extension = "ods";
+
         } else if (opt.equals("newlines")) {
           awfulCSV = true;
+
         } else if (opt.equals("bin")) {
           binary = true;
         } else if (opt.equals("header")) {
           header = true;
+
+        } else if (opt.startsWith(sheetParam)) {
+          worksheet = opt.substring(sheetParam.length());
+
         } else {
           throw new IllegalArgumentException("'" + opt + "' is not a valid option for loading a Table");
         }
       }
     }
 
+    if (extension == null) {
+      throw new IllegalArgumentException("No extension specified for this Table");
+    }
+
     if (binary) {
       loadBinary(input);
+
+    } else if (extension.equals("ods")) {
+      odsParse(input, worksheet);
+
     } else {
       BufferedReader reader = PApplet.createReader(input);
       if (awfulCSV) {
@@ -462,6 +515,189 @@ public class Table {
   }
 
 
+  /**
+   * Read a .ods (OpenDoc spreadsheet) zip file from an InputStream, and
+   * return the InputStream for content.xml contained inside.
+   */
+  private InputStream odsFindContentXML(InputStream input) {
+    ZipInputStream zis = new ZipInputStream(input);
+    ZipEntry entry = null;
+    try {
+      while ((entry = zis.getNextEntry()) != null) {
+        if (entry.getName().equals("content.xml")) {
+          return zis;
+        }
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return null;
+  }
+
+
+  protected void odsParse(InputStream input, String worksheet) {
+    try {
+      InputStream contentStream = odsFindContentXML(input);
+      XML xml = new XML(contentStream);
+
+      // table files will have multiple sheets..
+      // <table:table table:name="Sheet1" table:style-name="ta1" table:print="false">
+      // <table:table table:name="Sheet2" table:style-name="ta1" table:print="false">
+      // <table:table table:name="Sheet3" table:style-name="ta1" table:print="false">
+      XML[] sheets =
+        xml.getChildren("office:body/office:spreadsheet/table:table");
+
+      boolean found = false;
+      for (XML sheet : sheets) {
+//        System.out.println(sheet.getAttribute("table:name"));
+        if (worksheet == null || worksheet.equals(sheet.getString("table:name"))) {
+          odsParseSheet(sheet);
+          found = true;
+          if (worksheet == null) {
+            break;  // only read the first sheet
+          }
+        }
+      }
+      if (!found) {
+        if (worksheet == null) {
+          throw new RuntimeException("No worksheets found in the ODS file.");
+        } else {
+          throw new RuntimeException("No worksheet named " + worksheet +
+                                     " found in the ODS file.");
+        }
+      }
+    } catch (UnsupportedEncodingException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    } catch (ParserConfigurationException e) {
+      e.printStackTrace();
+    } catch (SAXException e) {
+      e.printStackTrace();
+    }
+  }
+
+
+  /**
+   * Parses a single sheet of XML from this file.
+   * @param The XML object for a single worksheet from the ODS file
+   */
+  private void odsParseSheet(XML sheet) {
+    // Extra <p> or <a> tags inside the text tag for the cell will be stripped.
+    // Different from showing formulas, and not quite the same as 'save as
+    // displayed' option when saving from inside OpenOffice. Only time we
+    // wouldn't want this would be so that we could parse hyperlinks and
+    // styling information intact, but that's out of scope for the p5 version.
+    final boolean ignoreTags = true;
+
+    XML[] rows = sheet.getChildren("table:table-row");
+    //xml.getChildren("office:body/office:spreadsheet/table:table/table:table-row");
+
+    int rowIndex = 0;
+    for (XML row : rows) {
+      int rowRepeat = row.getInt("table:number-rows-repeated", 1);
+//      if (rowRepeat != 1) {
+//          System.out.println(rowRepeat + " " + rowCount + " " + (rowCount + rowRepeat));
+//      }
+      boolean rowNotNull = false;
+      XML[] cells = row.getChildren();
+      int columnIndex = 0;
+
+      for (XML cell : cells) {
+        int cellRepeat = cell.getInt("table:number-columns-repeated", 1);
+
+//        <table:table-cell table:formula="of:=SUM([.E7:.E8])" office:value-type="float" office:value="4150">
+//        <text:p>4150.00</text:p>
+//        </table:table-cell>
+
+        String cellData = ignoreTags ? cell.getString("office:value") : null;
+
+        // if there's an office:value in the cell, just roll with that
+        if (cellData == null) {
+          int cellKids = cell.getChildCount();
+          if (cellKids != 0) {
+            XML[] paragraphElements = cell.getChildren("text:p");
+            if (paragraphElements.length != 1) {
+              for (XML el : paragraphElements) {
+                System.err.println(el.toString());
+              }
+              throw new RuntimeException("found more than one text:p element");
+            }
+            XML textp = paragraphElements[0];
+            String textpContent = textp.getContent();
+            // if there are sub-elements, the content shows up as a child element
+            // (for which getName() returns null.. which seems wrong)
+            if (textpContent != null) {
+              cellData = textpContent;  // nothing fancy, the text is in the text:p element
+            } else {
+              XML[] textpKids = textp.getChildren();
+              StringBuffer cellBuffer = new StringBuffer();
+              for (XML kid : textpKids) {
+                String kidName = kid.getName();
+                if (kidName == null) {
+                  odsAppendNotNull(kid, cellBuffer);
+
+                } else if (kidName.equals("text:s")) {
+                  int spaceCount = kid.getInt("text:c", 1);
+                  for (int space = 0; space < spaceCount; space++) {
+                    cellBuffer.append(' ');
+                  }
+                } else if (kidName.equals("text:span")) {
+                  odsAppendNotNull(kid, cellBuffer);
+
+                } else if (kidName.equals("text:a")) {
+                  // <text:a xlink:href="http://blah.com/">blah.com</text:a>
+                  if (ignoreTags) {
+                    cellBuffer.append(kid.getString("xlink:href"));
+                  } else {
+                    odsAppendNotNull(kid, cellBuffer);
+                  }
+
+                } else {
+                  odsAppendNotNull(kid, cellBuffer);
+                  System.err.println(getClass().getName() + ": don't understand: " + kid);
+                  //throw new RuntimeException("I'm not used to this.");
+                }
+              }
+              cellData = cellBuffer.toString();
+            }
+            //setString(rowIndex, columnIndex, c); //text[0].getContent());
+            //columnIndex++;
+          }
+        }
+        for (int r = 0; r < cellRepeat; r++) {
+          if (cellData != null) {
+            //System.out.println("setting " + rowIndex + "," + columnIndex + " to " + cellData);
+            setString(rowIndex, columnIndex, cellData);
+          }
+          columnIndex++;
+          if (cellData != null) {
+//            if (columnIndex > columnMax) {
+//              columnMax = columnIndex;
+//            }
+            rowNotNull = true;
+          }
+        }
+      }
+      if (rowNotNull && rowRepeat > 1) {
+        String[] rowStrings = getStringRow(rowIndex);
+        for (int r = 1; r < rowRepeat; r++) {
+          addRow(rowStrings);
+        }
+      }
+      rowIndex += rowRepeat;
+    }
+  }
+
+
+  private void odsAppendNotNull(XML kid, StringBuffer buffer) {
+    String content = kid.getContent();
+    if (content != null) {
+      buffer.append(content);
+    }
+  }
+
+
   // A 'Class' object is used here, so the syntax for this function is:
   // Table t = loadTable("cars3.tsv", "header");
   // Record[] records = (Record[]) t.parse(Record.class);
@@ -624,35 +860,40 @@ public class Table {
 
 
   public boolean save(File file, String options) throws IOException {
-    return save(new FileOutputStream(file), checkOptions(file, options));
+    return save(PApplet.createOutput(file),
+                Table.extensionOptions(false, file.getName(), options));
   }
 
 
   public boolean save(OutputStream output, String options) {
     PrintWriter writer = PApplet.createWriter(output);
-    String opt = null;
-    if (options != null) {
-      String[] opts = PApplet.splitTokens(options, ", ");
-      opt = opts[opts.length - 1];
-      if (!opt.equals("csv") &&
-          !opt.equals("tsv") &&
-          !opt.equals("html") &&
-          !opt.equals("bin")) {
-        throw new IllegalArgumentException("'" + opt + "' not understood. " +
-          "Only csv, tsv, bin, and html are " +
-          "accepted as save parameters");
-      }
-    } else {
-      opt = "tsv";  // fall back to saving as TSV
+    String extension = null;
+    if (options == null) {
+      throw new IllegalArgumentException("No extension specified for saving this Table");
     }
 
-    if (opt.equals("csv")) {
+    String[] opts = PApplet.splitTokens(options, ", ");
+    // Only option for save is the extension, so we can safely grab the last
+    extension = opts[opts.length - 1];
+    boolean found = false;
+    for (String ext : saveExtensions) {
+      if (extension.equals(ext)) {
+        found = true;
+        break;
+      }
+    }
+    // Not providing a fallback; let's make users specify an extension
+    if (!found) {
+      throw new IllegalArgumentException("'" + extension + "' not available for Table");
+    }
+
+    if (extension.equals("csv")) {
       writeCSV(writer);
-    } else if (opt.equals("tsv")) {
+    } else if (extension.equals("tsv")) {
       writeTSV(writer);
-    } else if (opt.equals("html")) {
+    } else if (extension.equals("html")) {
       writeHTML(writer);
-    } else if (opt.equals("bin")) {
+    } else if (extension.equals("bin")) {
       try {
         saveBinary(output);
       } catch (IOException e) {

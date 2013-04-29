@@ -6180,17 +6180,18 @@ public class PApplet extends Applet
    */
   public Table loadTable(String filename, String options) {
     try {
-      String ext = checkExtension(filename);
-      if (ext != null) {
-        if (ext.equals("csv") || ext.equals("tsv") || ext.equals("bin")) {
-          if (options == null) {
-            options = ext;
-          } else {
-            options = ext + "," + options;
-          }
-        }
-      }
-      return new Table(createInput(filename), options);
+//      String ext = checkExtension(filename);
+//      if (ext != null) {
+//        if (ext.equals("csv") || ext.equals("tsv") || ext.equals("bin")) {
+//          if (options == null) {
+//            options = ext;
+//          } else {
+//            options = ext + "," + options;
+//          }
+//        }
+//      }
+      return new Table(createInput(filename),
+                       Table.extensionOptions(true, filename, options));
 
     } catch (IOException e) {
       e.printStackTrace();
@@ -6216,34 +6217,27 @@ public class PApplet extends Applet
    * @param options can be one of "tsv", "csv", "bin", or "html"
    */
   public boolean saveTable(Table table, String filename, String options) {
-    String ext = checkExtension(filename);
-    if (ext != null) {
-      if (ext.equals("csv") || ext.equals("tsv") || ext.equals("bin") || ext.equals("html")) {
-        if (options == null) {
-          options = ext;
-        } else {
-          options = ext + "," + options;
-        }
-      }
-    }
-    // Figure out location and make sure the target path exists
-    File outputFile = saveFile(filename);
-    // Open a stream and take care of .gz if necessary
-    return table.save(createOutput(outputFile), options);
-  }
+//    String ext = checkExtension(filename);
+//    if (ext != null) {
+//      if (ext.equals("csv") || ext.equals("tsv") || ext.equals("bin") || ext.equals("html")) {
+//        if (options == null) {
+//          options = ext;
+//        } else {
+//          options = ext + "," + options;
+//        }
+//      }
+//    }
 
+    try {
+      // Figure out location and make sure the target path exists
+      File outputFile = saveFile(filename);
+      // Open a stream and take care of .gz if necessary
+      return table.save(outputFile, options);
 
-  protected String checkExtension(String filename) {
-    // Don't consider the .gz as part of the name, createInput()
-    // and createOuput() will take care of fixing that up.
-    if (filename.toLowerCase().endsWith(".gz")) {
-      filename = filename.substring(0, filename.length() - 3);
+    } catch (IOException e) {
+      e.printStackTrace();
+      return false;
     }
-    int index = filename.lastIndexOf('.');
-    if (index == -1) {
-      return null;
-    }
-    return filename.substring(index + 1).toLowerCase();
   }
 
 
@@ -6633,6 +6627,31 @@ public class PApplet extends Applet
     } catch (NoSuchMethodException nsme) {
       System.err.println(callbackMethod + "() could not be found");
     }
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // EXTENSIONS
+
+
+  /**
+   * Get the compression-free extension for this filename.
+   * @param filename The filename to check
+   * @return an extension, skipping past .gz if it's present
+   */
+  static public String checkExtension(String filename) {
+    // Don't consider the .gz as part of the name, createInput()
+    // and createOuput() will take care of fixing that up.
+    if (filename.toLowerCase().endsWith(".gz")) {
+      filename = filename.substring(0, filename.length() - 3);
+    }
+    int dotIndex = filename.lastIndexOf('.');
+    if (dotIndex != -1) {
+      return filename.substring(dotIndex + 1).toLowerCase();
+    }
+    return null;
   }
 
 
