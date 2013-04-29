@@ -13,7 +13,12 @@ public class StringList implements Iterable<String> {
 
 
   public StringList() {
-    data = new String[10];
+    this(10);
+  }
+
+
+  public StringList(int length) {
+    data = new String[length];
   }
 
 
@@ -358,85 +363,6 @@ public class StringList implements Iterable<String> {
   }
 
 
-//  public void increment(int index) {
-//    data[index]++;
-//  }
-//
-//
-//  public void add(int index, int amount) {
-//    data[index] += amount;
-//  }
-//
-//
-//  public void sub(int index, int amount) {
-//    data[index] -= amount;
-//  }
-//
-//
-//  public void mul(int index, int amount) {
-//    data[index] *= amount;
-//  }
-//
-//
-//  public void div(int index, int amount) {
-//    data[index] /= amount;
-//  }
-
-
-//  public String min() {
-//    if (count == 0) {
-//      throw new ArrayIndexOutOfBoundsException("Cannot use min() on IntList of length 0.");
-//    }
-//    if (data.length == 0) {
-//      return String.NaN;
-//    }
-//    String m = Float.NaN;
-//    for (int i = 0; i < data.length; i++) {
-//      // find one good value to start
-//      if (data[i] == data[i]) {
-//        m = data[i];
-//
-//        // calculate the rest
-//        for (int j = i+1; j < data.length; j++) {
-//          float d = data[j];
-//          if (!Float.isNaN(d) && (d < m)) {
-//            m = data[j];
-//          }
-//        }
-//        break;
-//      }
-//    }
-//    return m;
-//  }
-
-
-//  public float max() {
-//    if (count == 0) {
-//      throw new ArrayIndexOutOfBoundsException("Cannot use max() on IntList of length 0.");
-//    }
-//    if (data.length == 0) {
-//      return Float.NaN;
-//    }
-//    float m = Float.NaN;
-//    for (int i = 0; i < data.length; i++) {
-//      // find one good value to start
-//      if (data[i] == data[i]) {
-//        m = data[i];
-//
-//        // calculate the rest
-//        for (int j = i+1; j < data.length; j++) {
-//          float d = data[j];
-//          if (!Float.isNaN(d) && (d > m)) {
-//            m = data[j];
-//          }
-//        }
-//        break;
-//      }
-//    }
-//    return m;
-//  }
-
-
   /** Sorts the array in place. */
   public void sort() {
     sortImpl(false);
@@ -477,17 +403,17 @@ public class StringList implements Iterable<String> {
 //  }
 
 
-  public void subset(int start) {
-    subset(start, count - start);
-  }
-
-
-  public void subset(int start, int num) {
-    for (int i = 0; i < num; i++) {
-      data[i] = data[i+start];
-    }
-    count = num;
-  }
+//  public void subset(int start) {
+//    subset(start, count - start);
+//  }
+//
+//
+//  public void subset(int start, int num) {
+//    for (int i = 0; i < num; i++) {
+//      data[i] = data[i+start];
+//    }
+//    count = num;
+//  }
 
 
   public void reverse() {
@@ -530,6 +456,26 @@ public class StringList implements Iterable<String> {
       String temp = data[num];
       data[num] = data[value];
       data[value] = temp;
+    }
+  }
+
+
+  /** Make the entire list lower case. */
+  public void lower() {
+    for (int i = 0; i < count; i++) {
+      if (data[i] != null) {
+        data[i] = data[i].toLowerCase();
+      }
+    }
+  }
+
+
+  /** Make the entire list upper case. */
+  public void upper() {
+    for (int i = 0; i < count; i++) {
+      if (data[i] != null) {
+        data[i] = data[i].toUpperCase();
+      }
     }
   }
 
@@ -596,6 +542,20 @@ public class StringList implements Iterable<String> {
     }
     System.arraycopy(data, 0, array, 0, count);
     return array;
+  }
+
+
+  public StringList getSubset(int start) {
+    return getSubset(start, count - start);
+  }
+
+
+  public StringList getSubset(int start, int num) {
+    StringList outgoing = new StringList(num);
+    for (int i = 0; i < num; i++) {
+      System.arraycopy(data, start, outgoing.data, 0, num);
+    }
+    return outgoing;
   }
 
 

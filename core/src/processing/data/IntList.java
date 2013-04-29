@@ -27,6 +27,11 @@ public class IntList implements Iterable<Integer> {
   }
 
 
+  public IntList(int length) {
+    data = new int[length];
+  }
+
+
   public IntList(int[] source) {
     count = source.length;
     data = new int[count];
@@ -329,7 +334,7 @@ public class IntList implements Iterable<Integer> {
   }
 
 
-  public void mul(int index, int amount) {
+  public void mult(int index, int amount) {
     data[index] *= amount;
   }
 
@@ -397,17 +402,17 @@ public class IntList implements Iterable<Integer> {
 //  }
 
 
-  public void subset(int start) {
-    subset(start, count - start);
-  }
-
-
-  public void subset(int start, int num) {
-    for (int i = 0; i < num; i++) {
-      data[i] = data[i+start];
-    }
-    count = num;
-  }
+//  public void subset(int start) {
+//    subset(start, count - start);
+//  }
+//
+//
+//  public void subset(int start, int num) {
+//    for (int i = 0; i < num; i++) {
+//      data[i] = data[i+start];
+//    }
+//    count = num;
+//  }
 
 
   public void reverse() {
@@ -556,6 +561,20 @@ public class IntList implements Iterable<Integer> {
 //    }
 //    return outgoing;
 //  }
+
+
+  public IntList getSubset(int start) {
+    return getSubset(start, count - start);
+  }
+
+
+  public IntList getSubset(int start, int num) {
+    IntList outgoing = new IntList(num);
+    for (int i = 0; i < num; i++) {
+      System.arraycopy(data, start, outgoing.data, 0, num);
+    }
+    return outgoing;
+  }
 
 
   @Override

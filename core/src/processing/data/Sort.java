@@ -1,6 +1,10 @@
 package processing.data;
 
 
+/**
+ * Internal sorter used by several data classes.
+ * Advanced users only, not official API.
+ */
 public abstract class Sort implements Runnable {
 
   public Sort() { }

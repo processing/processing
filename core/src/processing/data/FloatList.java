@@ -17,6 +17,11 @@ public class FloatList implements Iterable<Float> {
   }
 
 
+  public FloatList(int length) {
+    data = new float[length];
+  }
+
+
   public FloatList(float[] list) {
     count = list.length;
     data = new float[count];
@@ -387,7 +392,7 @@ public class FloatList implements Iterable<Float> {
   }
 
 
-  public void mul(int index, float amount) {
+  public void mult(int index, float amount) {
     data[index] *= amount;
   }
 
