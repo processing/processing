@@ -167,14 +167,18 @@ public class XML implements Serializable {
   /**
    * @param name description TBD
    */
-  // TODO is there a more efficient way of doing this? wow.
-  public XML(String name) throws ParserConfigurationException {
-    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-    DocumentBuilder builder = factory.newDocumentBuilder();
-    Document document = builder.newDocument();
-    node = document.createElement(name);
-//      this.name = name;
-    this.parent = null;
+  public XML(String name) {
+    try {
+      // TODO is there a more efficient way of doing this? wow.
+      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+      DocumentBuilder builder = factory.newDocumentBuilder();
+      Document document = builder.newDocument();
+      node = document.createElement(name);
+      this.parent = null;
+
+    } catch (ParserConfigurationException pce) {
+      throw new RuntimeException(pce);
+    }
   }
 
 

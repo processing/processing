@@ -200,7 +200,9 @@ public class Table {
     if (dotIndex != -1) {
       extension = filename.substring(dotIndex + 1).toLowerCase();
       if (!extension.equals("csv") &&
-          !extension.equals("tsv")) {
+          !extension.equals("tsv") &&
+          !extension.equals("html") &&
+          !extension.equals("bin")) {
         // ignore extension
         extension = null;
       }
@@ -628,29 +630,37 @@ public class Table {
 
   public boolean save(OutputStream output, String options) {
     PrintWriter writer = PApplet.createWriter(output);
+    String opt = null;
     if (options != null) {
       String[] opts = PApplet.splitTokens(options, ", ");
-      for (String opt : opts) {
-        if (opt.equals("csv")) {
-          writeCSV(writer);
-        } else if (opt.equals("tsv")) {
-          writeTSV(writer);
-        } else if (opt.equals("html")) {
-          writeHTML(writer);
-        } else if (opt.equals("bin")) {
-          try {
-            saveBinary(output);
-          } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-          }
-        } else {
-          throw new IllegalArgumentException("'" + opt + "' not understood. " +
-                                             "Only csv, tsv, bin, and html are " +
-                                             "accepted as save parameters");
-        }
+      opt = opts[opts.length - 1];
+      if (!opt.equals("csv") &&
+          !opt.equals("tsv") &&
+          !opt.equals("html") &&
+          !opt.equals("bin")) {
+        throw new IllegalArgumentException("'" + opt + "' not understood. " +
+          "Only csv, tsv, bin, and html are " +
+          "accepted as save parameters");
+      }
+    } else {
+      opt = "tsv";  // fall back to saving as TSV
+    }
+
+    if (opt.equals("csv")) {
+      writeCSV(writer);
+    } else if (opt.equals("tsv")) {
+      writeTSV(writer);
+    } else if (opt.equals("html")) {
+      writeHTML(writer);
+    } else if (opt.equals("bin")) {
+      try {
+        saveBinary(output);
+      } catch (IOException e) {
+        e.printStackTrace();
+        return false;
       }
     }
+    writer.flush();
     writer.close();
     return true;
   }

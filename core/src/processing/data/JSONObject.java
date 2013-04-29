@@ -129,7 +129,6 @@ public class JSONObject {
    * undefined.
    */
   private static final class Null {
-
     /**
      * There is only intended to be a single instance of the NULL object,
      * so the clone method returns itself.

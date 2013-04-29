@@ -30,6 +30,8 @@ X   seems to be working fine
 X move Android mode out to its own repo
 X fix line endings in revisions.txt for windows
 X   was modifying the wrong file (the source dir, not the work dir)
+X change line endings on Windows to only be replaced during dist
+X   otherwise marks revisions.txt as changed
 
 manager
 X "New version available" mesage is showing html tags around it
@@ -51,16 +53,11 @@ _   only send for items that are part of the public list
 _     otherwise we're sending private libraries/installs
 _     although this won't pick up old libraries not on the new system
 
-_ change line endings on Windows to only be replaced during dist
-_   otherwise marks revisions.txt as changed
-
 _ remove sketch.properties when moving back to the default?
 _   or can we not do this, because it's used to set the 'next' mode
 
 _ Linux sometimes not responding correctly w/ the size() command
 _   https://github.com/processing/processing/issues/1672
-_ processing-java output as UTF-8 makes Windows unhappy
-_   https://github.com/processing/processing/issues/1633
 
 
 2.0 FINAL / new interface
@@ -77,9 +74,9 @@ _   needs to be reset for this release, maybe others
 
 2.0 FINAL / more open/save/etc
 _ blank sketch opened even if another opened by double-click
-_   http://code.google.com/p/processing/issues/detail?id=179
 _   add a 150 ms or more lag before opening the untitled window (on os x)
-_ osx not opening a sketch at all on pde double-click? (though opening the app)
+_   https://github.com/processing/processing/issues/218
+_ OS X not opening a sketch at all on pde double-click? (though opening the app)
 _ active editor not being set null
 _   in Base.nextEditorLocation(), changed to "editors.size() == 0" 
 _   instead of (activeEditor == null), but that's papering over a problem
@@ -89,8 +86,10 @@ o   don't use tmp folder for sketches?
 _   restrict more things like "show sketch folder"
 _   don't allow adding files w/o saving
 _   others?
-_ when creating a sketch within non-java mode, should write the settings file
+_ when creating a sketch within non-Java mode, should write the settings file
 _   so that it re-loads in the proper environment
+_ processing-java output as UTF-8 makes Windows unhappy
+_   https://github.com/processing/processing/issues/1633
 
 
 2.0 FINAL / libraries & classpaths
@@ -149,9 +148,7 @@ _ library installation should use the sketchbook folder, not the p5 folder
 _   actually enforce this, give users a warning about other libs
 _ java.extension.dirs has the library/extn stuff
 _   can probably set this blank
-_ the jar from which a class file has been loaded
-_   getClass().getProtectionDomain().getCodeSource().getLocation().getFile() 
-_ example from jsyn
+_   example from jsyn
 JSyn Installer build 011
 java.vm.version = 1.5.0_07-87
 java.library.path = .:/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java
@@ -190,14 +187,15 @@ _   check if libraries folder does not exist
 _   check to see if other libraries are installed
 _   warn user about moving libraries and restarting
 _ support the reference folder of contributed libraries
-_   http://code.google.com/p/processing/issues/detail?id=905
+_   add reference for contributed libraries to the Help menu
+_   https://github.com/processing/processing/issues/943
 
 
 2.0 FINAL / misc pde cleanups
 _ 'recent' menu doesn't respect examples folder of other p5 versions
+_   could write that into the file, that it's an example
+_   or write the path as shown in the PDE to the file as simpler
 _ 'recent' menu paths can get enormous
-_ add reference for contributed libraries to the Help menu
-_   http://code.google.com/p/processing/issues/detail?id=905
 _ temporary files (for sketches and logs) are not deleted
 _   http://code.google.com/p/processing/issues/detail?id=562
 

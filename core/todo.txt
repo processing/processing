@@ -11,35 +11,9 @@ X   getIntContent()
 X   getFloatContent()
 X   getContent() or getStringContent()?
 X switch to CATEGORY instead of CATEGORICAL
+X removed createXML() and createTable()... just use 'new' for these
 
 https://blogs.oracle.com/CoreJavaTechTips/entry/using_enhanced_for_loops_with
-
-table
-X do we need getColumnType() inside TableRow? 
-X   also inside Table
-X   also do we make the constants public?
-
-
-// function that will convert awful CSV to TSV.. or something else?
-//   maybe to write binary instead? then read the binary file once it's ok?
-
-// if loading from a File object (or PApplet is passed in and we can check online)
-// then check the (probable) size of the file before loading
-
-// implement binary tables
-
-// no column max/min functions since it needs to be per-datatype
-// better to use float mx = max(float(getColumn(3)));
-// *** but what to do with null entries?
-
-// todo: need a method to reset the row/column indices after add/remove
-// or just make sure that it's covered for all cases
-
-// no longer the case, ja?
-// <p>By default, empty rows are skipped and so are lines that start with the
-// # character. Using # at the beginning of a line indicates a comment.</p>
-
-// attempt at a CSV spec:
 
 _ draw() called again before finishing on OS X (retina issue)
 _   https://github.com/processing/processing/issues/1709
@@ -47,59 +21,97 @@ _   https://github.com/processing/processing/issues/1709
 _ tint() with JAVA2D does not automatically refresh (with possible fix)
 _   https://github.com/processing/processing/issues/1730
 
-_ include Instant and Interval? (or just Time and TimeSpan)
+table
+X do we need getColumnType() inside TableRow? 
+X   also inside Table
+X   also do we make the constants public?
+X table writing twice when .csv is added 
+X   https://github.com/processing/processing/issues/1734
+_ checkOptions() is a mess.. need to use different options for load/save
+_   rewrite it as necessary
+_ function that will convert awful CSV to TSV.. or something else?
+_   maybe to write binary instead? then read the binary file once it's ok?
+_ if loading from a File object
+_   (or PApplet is passed in and we can check online)
+_   then check the (probable) size of the file before loading
+_ implement binary tables
+_   these might be partially set
+_ add .gz as option for writing (and bz2?)
+_ no column max/min functions since it needs to be per-datatype
+_   better to use float mx = max(float(getColumn(3)));
+_   but what to do with null entries?
+_ need a method to reset the row/column indices after add/remove
+_   or just make sure that it's covered for all cases
+_ prefixes like # as comments? easy to remove?
 
+data
+X "hash.toJSONObject()" or "new JSONObject(hash)"
+X   opted to use "new JSONObject" version, appears less awkward
+o match? find? on StringList?
+_ can we use String... for options? or does it screw up the method signature?
+_   and would we have to always concatenate arrays to prepend extensions, etc
+_ include Instant and Interval? (or just Time and TimeSpan)
 _ naming for descending sort
 _   rsort(), sortReverse(), sortKeysReverse, 
 _   sortDescend, sortDescending, sortKeysDescending, 
 _   sortHighLow, sortHigh, sortHighest, sortDown
+_ it's going to be File or Reader (mostly BufferedReader) everywhere
+_   though TableODS needs an InputStream... 
+_   and XML could use InputStream if we hope to be able to reflect doc encoding
+_   ok, so File, Reader, and InputStream (where needed)
+_ setMissingXxxx() -> should this live in PApplet? be static?
+_   cons: static stinks, diff tables might use diff values
+_ will also need an iterator for the Dict class ala Map.Entry
 
-it's going to be File or Reader (mostly BufferedReader) everywhere
-  though TableODS needs an InputStream... 
-  and XML could use InputStream if we hope to be able to reflect doc encoding
+json
+X getIntArray() for JSONArray
+X misc bugs with last release
+X   https://github.com/processing/processing/issues/1660
+X   https://github.com/processing/processing/issues/1680
+X Dan having trouble with JSON
+X keys() vs keySet() in JSON.. 
+X   keys() doesn't iterate, keySet() introduces 'Set' type
+X parseJSONObject(x) and parseJSONArray(x)
 
-setMissingXxxx() -> should this live in PApplet? be static?
-  cons: static stinks, diff tables might use diff values
-
-"hash.toJSONObject()" or "new JSONObject(hash)"
-
-no save/load in hash and list classes
-  no native format
-removeIndex() vs removeValue() vs remove() 
-  remove() refers to an index (with array) or key (with hash)
-  more consistent with other APIs (Java)
-  replaceValue[s]() the same, though more on the line
-  should we not have remove() and removeIndex()
-    and instead always specify? removeKey(), removeIndex(), removeValue()?
-    would mean that hash would only have removeKey
-    downside: remove() takes whatever get() takes as arg
-
-hash/dict/etc
-_ need to sort out the final version of these and their names
+data / document
+X no save/load for hash and list classes
+X   because no native format
+X   write() and constructor are enough for advanced users
+o add() to add things to lists, inc/dec for the math
+o   inc/dec/sum is used less, after all
+X   or append()? since that's what JSON is currently using
+X   append() nicer, inc/dec felt arcane (and forced)
+o Lookup instead of Hash or Dict?
+o increment, decrement, increase, decrease instead of add/subtract
+o   does double duty for incrementing/decrementing easily
+o   inc(), inc(amount), dec(), dec(amount)
+X replace (especially for null and NaN)
+X   make note that these work, and are special cases
+_ removeIndex() vs removeValue() vs remove() 
+_   remove() refers to an index (with array) or key (with hash)
+_   more consistent with other APIs (Java)
+_   replaceValue[s]() the same, though more on the line
+_   should we not have remove() and removeIndex()
+_     and instead always specify? removeKey(), removeIndex(), removeValue()?
+_     would mean that hash would only have removeKey
+_     downside: remove() takes whatever get() takes as arg
+_ need to sort out the final version of hash/dict/etc and their names
 _ JSONObject.has(key) vs XML.hasAttribute(attr) vs HashMap.containsKey()
 _   and how it should be handled with hash/dict
 _   right now using hasKey().. in JSONObject
 _   contains() as default, then containsValue() as the alternate
 _     instead of containsKey() and containsValue()
-_ add() to add things to lists, inc/dec for the math
-_   inc/dec/sum is used less, after all
-_ or append()? since that's what JSON is currently using
-_ will also need an iterator for the Dict class ala Map.Entry
-_ Lookup instead of Hash or Dict?
-inc(), inc(amount)
-dec(), dec(amount)
-increment, decrement, increase, decrease instead of add/subtract
-does double duty for incrementing/decrementing easily
-X getIntArray() for JSONArray
+_   hasAttribute in XML, containsKey in java's Map, hasKey in JSON
+_   hasChildren() is another precedent
+o   contains() is nice, but containsKey() is weird, often not 'containing'
+X   hasKey/hasValue is best; fewest changes and most descriptive
+
 _ add indent= as option for XML, JSON save
 _ not doing print() methods, since alternatives are more descriptive
 _   println(obj) and obj.write(System.out) are both better
 _ using Iterable for rows(), keys(), etc
 _   generally more efficient for Table, but slower for FloatHash and IntHash
 _   could use an int array instead, but a bit hokey in places
-
-replace? (especially for NaN)
-match? find? on StringList?
 
 decide on TableODS, TableHTML
 
@@ -119,11 +131,6 @@ what should they all return?
 with removeValue(), add removeValues() for all values that match?
   also support NaN here
 
-hasAttribute in XML, containsKey in java's Map, hasKey in JSON
-  hasChildren() is another precedent
-  -> hasKey/hasValue is better; fewest changes and most descriptive
-  -> contains() is nicer, but containsKey() is weird, often not 'containing'
-
 listAttributes() in XML is like array from keys() etc in our data classes
 
 List: remove(), append(), index(), etc all use values
@@ -133,8 +140,6 @@ List: remove(), append(), index(), etc all use values
     and removeValue(value) is probably used less
 
 table
-_ table writing twice when .csv is added 
-_   https://github.com/processing/processing/issues/1734
 _ add 'gz' as one of the loadXxx() options
 _   helps .svgz case from being weird, also generally dealing w/ compressed data
 _ naming for these (or whether to include hash)
@@ -163,14 +168,6 @@ _   problem is loading types from file, no way to access it from code
 _   CATEGORICAL -> CATEGORY? ORDINAL?
 _ getInt() on categorial to return index?
 _   getCategories() and getCategory() methods to query names?
-
-json
-_ https://github.com/processing/processing/issues/1660
-_ https://github.com/processing/processing/issues/1680
-_ Dan having trouble with JSON
-_ keys() vs keySet() in JSON.. 
-_   keys() doesn't iterate, keySet() introduces 'Set' type
-_ add parseXML() and parseJSONObject(x)
 
 andres
 A lines not properly renderered in P3D when using ortographic projection

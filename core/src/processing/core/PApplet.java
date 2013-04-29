@@ -6009,24 +6009,25 @@ public class PApplet extends Applet
 
   // DATA I/O
 
-  /**
-   * @webref input:files
-   * @brief Creates a new XML object
-   * @param name the name to be given to the root element of the new XML object
-   * @return an XML object, or null
-   * @see XML
-   * @see PApplet#loadXML(String)
-   * @see PApplet#parseXML(String)
-   * @see PApplet#saveXML(XML, String)
-   */
-  public XML createXML(String name) {
-    try {
-      return new XML(name);
-    } catch (Exception e) {
-      e.printStackTrace();
-      return null;
-    }
-  }
+
+//  /**
+//   * @webref input:files
+//   * @brief Creates a new XML object
+//   * @param name the name to be given to the root element of the new XML object
+//   * @return an XML object, or null
+//   * @see XML
+//   * @see PApplet#loadXML(String)
+//   * @see PApplet#parseXML(String)
+//   * @see PApplet#saveXML(XML, String)
+//   */
+//  public XML createXML(String name) {
+//    try {
+//      return new XML(name);
+//    } catch (Exception e) {
+//      e.printStackTrace();
+//      return null;
+//    }
+//  }
 
 
   /**
@@ -6103,6 +6104,11 @@ public class PApplet extends Applet
   }
 
 
+  public JSONObject parseJSONObject(String input) {
+    return new JSONObject(new StringReader(input));
+  }
+
+
   public JSONObject loadJSONObject(String filename) {
     //JSONTokener tokener = new JSONTokener(createReader(filename));
     //return new JSONObject(tokener);
@@ -6117,6 +6123,11 @@ public class PApplet extends Applet
 
   public boolean saveJSONObject(JSONObject json, String filename, String options) {
     return json.save(saveFile(filename), options);
+  }
+
+
+  public JSONArray parseJSONArray(String input) {
+    return new JSONArray(new StringReader(input));
   }
 
 
@@ -6138,15 +6149,15 @@ public class PApplet extends Applet
 
 
 
-  /**
-   * @webref input:files
-   * @see Table
-   * @see PApplet#loadTable(String)
-   * @see PApplet#saveTable(Table, String)
-   */
-  public Table createTable() {
-    return new Table();
-  }
+//  /**
+//   * @webref input:files
+//   * @see Table
+//   * @see PApplet#loadTable(String)
+//   * @see PApplet#saveTable(Table, String)
+//   */
+//  public Table createTable() {
+//    return new Table();
+//  }
 
 
   /**
