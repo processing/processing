@@ -130,25 +130,40 @@ X   also inside Table
 X   also do we make the constants public?
 X table writing twice when .csv is added 
 X   https://github.com/processing/processing/issues/1734
-_ checkOptions() is a mess.. need to use different options for load/save
-_   rewrite it as necessary
+X checkOptions() is a mess.. need to use different options for load/save
+X   rewrite it as necessary
+X implement binary tables
+X   these might be partially set
+o add .gz as option for writing (and bz2?)
+X   handling gz properly, but gz has to be the extension
+X   adding it to options is too messy
+o add 'gz' as one of the loadXxx() options
+o   helps .svgz case from being weird, also generally dealing w/ compressed data
+X include SQL, HTML, ODS, binary? 
+X   decide on TableODS, TableHTML
+X   HTML is out--too confusing
+X   ODS is in for loading, and finished
+o   naming HTMLTable, TableHTML (ala PShapeSVG)
+o   or should it be HTMLTable / HtmlTable... then SVGShape / SvgShape
+X   SQL can be done with a constructor
+X   this will just be available for advanced users
+X getColumnType() - what should it return?
+o   Integer.TYPE, String.class? still nothing for categorical
+o   maybe it's Table.INT since it's for advanced users anyway
+o   problem is loading types from file, no way to access it from code
+o   CATEGORICAL -> CATEGORY? ORDINAL?
+
 _ function that will convert awful CSV to TSV.. or something else?
 _   maybe to write binary instead? then read the binary file once it's ok?
 _ if loading from a File object
 _   (or PApplet is passed in and we can check online)
 _   then check the (probable) size of the file before loading
-_ implement binary tables
-_   these might be partially set
-_ add .gz as option for writing (and bz2?)
 _ no column max/min functions since it needs to be per-datatype
 _   better to use float mx = max(float(getColumn(3)));
 _   but what to do with null entries?
 _ need a method to reset the row/column indices after add/remove
 _   or just make sure that it's covered for all cases
 _ prefixes like # as comments? easy to remove?
-_ decide on TableODS, TableHTML
-_ add 'gz' as one of the loadXxx() options
-_   helps .svgz case from being weird, also generally dealing w/ compressed data
 _ naming for these (or whether to include hash)
 _   Table createSubset() -> leave out?
 _   String[] getUnique(col) (SQL DISTINCT, sort --unique)
@@ -161,18 +176,10 @@ _   downside is types are not included
 _ getMaxFloat() (whole table) or getMaxFloat(col) 
 _   that's max(getFloatColumn(n))
 _   also important b/c can leave out missing values
-_ include SQL, HTML, ODS, binary?
-_   naming HTMLTable, TableHTML (ala PShapeSVG)
-_   or should it be HTMLTable / HtmlTable... then SVGShape / SvgShape
 _ dictionary support
 _ join tables together (static is kinda gross)
-_   table.append(anotherTable)? 
+_   table.append(anotherTable)?
 _   table.join(anotherTable)
-_ getColumnType() - what should it return?
-_   Integer.TYPE, String.class? still nothing for categorical
-_   maybe it's Table.INT since it's for advanced users anyway
-_   problem is loading types from file, no way to access it from code
-_   CATEGORICAL -> CATEGORY? ORDINAL?
 _ getInt() on categorial to return index?
 _   getCategories() and getCategory() methods to query names?
 

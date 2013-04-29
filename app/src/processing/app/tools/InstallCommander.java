@@ -63,7 +63,7 @@ public class InstallCommander implements Tool {
                                       "<html> " +
                                       "<head> <style type=\"text/css\">"+
                                       "b { font: 13pt \"Lucida Grande\" }"+
-                                      "p { font: 11pt \"Lucida Grande\"; margin-top: 8px }"+
+                                      "p { font: 11pt \"Lucida Grande\"; margin-top: 8px; width: 300px }"+
                                       "</style> </head>" +
                                       "<b>" + primary + "</b>" +
                                       "<p>" + secondary + "</p>",

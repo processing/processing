@@ -1040,7 +1040,7 @@ public class Base {
             "<html> " +
             "<head> <style type=\"text/css\">"+
             "b { font: 13pt \"Lucida Grande\" }"+
-            "p { font: 11pt \"Lucida Grande\"; margin-top: 8px }"+
+            "p { font: 11pt \"Lucida Grande\"; margin-top: 8px; width: 300px }"+
             "</style> </head>" +
             "<b>Are you sure you want to Quit?</b>" +
             "<p>Closing the last open sketch will quit Processing.";
@@ -2118,7 +2118,7 @@ public class Base {
           new JOptionPane("<html> " +
                           "<head> <style type=\"text/css\">"+
                           "b { font: 13pt \"Lucida Grande\" }"+
-                          "p { font: 11pt \"Lucida Grande\"; margin-top: 8px }"+
+                          "p { font: 11pt \"Lucida Grande\"; margin-top: 8px; width: 300px }"+
                           "</style> </head>" +
                           "<b>" + primary + "</b>" +
                           "<p>" + secondary + "</p>",
@@ -2201,7 +2201,7 @@ public class Base {
         new JOptionPane("<html> " +
                         "<head> <style type=\"text/css\">"+
                         "b { font: 13pt \"Lucida Grande\" }"+
-                        "p { font: 11pt \"Lucida Grande\"; margin-top: 8px }"+
+                        "p { font: 11pt \"Lucida Grande\"; margin-top: 8px; width: 300px }"+
                         "</style> </head>" +
                         "<b>Do you want to save changes to this sketch<BR>" +
                         " before closing?</b>" +
@@ -2266,7 +2266,7 @@ public class Base {
         new JOptionPane("<html> " +
                         "<head> <style type=\"text/css\">"+
                         "b { font: 13pt \"Lucida Grande\" }"+
-                        "p { font: 11pt \"Lucida Grande\"; margin-top: 8px }"+
+                        "p { font: 11pt \"Lucida Grande\"; margin-top: 8px; width: 300px }"+
                         "</style> </head>" +
                         "<b>" + primary + "</b>" +
                         "<p>" + secondary + "</p>",

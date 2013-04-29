@@ -32,6 +32,8 @@ X fix line endings in revisions.txt for windows
 X   was modifying the wrong file (the source dir, not the work dir)
 X change line endings on Windows to only be replaced during dist
 X   otherwise marks revisions.txt as changed
+X processing-java dialog window huge
+X   https://github.com/processing/processing/issues/1748
 
 manager
 X "New version available" mesage is showing html tags around it
