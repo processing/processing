@@ -172,6 +172,12 @@ public abstract class Mode {
     try {
       //theme = new Settings(new File(folder, "theme/theme.txt"));
       theme = new Settings(Base.getContentFile("lib/theme.txt"));
+      
+      File modeTheme = new File(folder, "theme/theme.txt");
+      if (modeTheme.exists()) {
+        // Override the built-in settings with what the theme provides
+        theme.load(modeTheme);
+      }
 
       // other things that have to be set explicitly for the defaults
       theme.setColor("run.window.bgcolor", SystemColor.control);

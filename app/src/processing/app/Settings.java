@@ -67,7 +67,12 @@ public class Settings {
 
 
   public void load() {
-    String[] lines = PApplet.loadStrings(file);
+    load(file);
+  }
+
+  
+  public void load(File additions) {
+    String[] lines = PApplet.loadStrings(additions);
     for (String line : lines) {
       if ((line.length() == 0) ||
           (line.charAt(0) == '#')) continue;
