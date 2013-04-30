@@ -277,7 +277,9 @@ public class EditorHeader extends JComponent {
 //    menuRight = sizeW - 16;
 //    menuLeft = menuRight - pieces[0][MENU].getWidth(this);
 //    menuLeft = menuRight - 50;  // FIXME!!
-    int tabMax = menuLeft - (MARGIN_WIDTH + SCROLLBAR_WIDTH);
+    int leftover = 
+      ARROW_GAP_WIDTH + ARROW_WIDTH + MARGIN_WIDTH; // + SCROLLBAR_WIDTH;
+    int tabMax = getWidth() - leftover;
 
     // reset all tab positions
     for (Tab tab : tabs) {
