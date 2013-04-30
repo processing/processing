@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-10 Ben Fry and Casey Reas
+  Copyright (c) 2004-13 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -89,6 +89,12 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
   JMenu modeMenu;
   
   protected ArrayList<Button> buttons;
+  
+  static final int ARROW_WIDTH = 6;
+  static final int ARROW_HEIGHT = 6;
+  Image modeArrow;
+  
+  protected Image backgroundImage;
 
 
   public EditorToolbar(Editor editor, Base base) {  //, JMenu menu) {
@@ -103,7 +109,8 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
     bgcolor = mode.getColor("buttons.bgcolor");
     statusFont = mode.getFont("buttons.status.font");
     statusColor = mode.getColor("buttons.status.color");
-    modeTitle = mode.getTitle().toUpperCase();
+//    modeTitle = mode.getTitle().toUpperCase();
+    modeTitle = mode.getTitle();
     modeTextFont = mode.getFont("mode.button.font");
     modeButtonColor = mode.getColor("mode.button.color");
 
@@ -123,20 +130,24 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
   public Image[][] loadImages() {
     int res = Toolkit.isRetina() ? 2 : 1;
     
+    String suffix = null; 
     Image allButtons = null;
     // Some modes may not have a 2x version. If a mode doesn't have a 1x 
     // version, this will cause an error... they should always have 1x.
     if (res == 2) {
-      allButtons = mode.loadImage("theme/buttons-2x.png");
+      suffix = "-2x.png";
+      allButtons = mode.loadImage("theme/buttons" + suffix);
       if (allButtons == null) {
         res = 1;  // take him down a notch
       }
     }
     if (res == 1) {
-      allButtons = mode.loadImage("theme/buttons.png");
+      suffix = ".png";
+      allButtons = mode.loadImage("theme/buttons" + suffix);
       if (allButtons == null) {
         // use the old (pre-2.0b9) file name
-        allButtons = mode.loadImage("theme/buttons.gif");
+        suffix = ".gif";
+        allButtons = mode.loadImage("theme/buttons" + suffix);
       }
     }
 
@@ -145,7 +156,6 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
     
     for (int i = 0; i < count; i++) {
       for (int state = 0; state < 3; state++) {
-//        Image image = createImage(BUTTON_WIDTH*res, BUTTON_HEIGHT*res);
         Image image = new BufferedImage(BUTTON_WIDTH*res, BUTTON_HEIGHT*res, BufferedImage.TYPE_INT_ARGB);
         Graphics g = image.getGraphics();
         g.drawImage(allButtons, 
@@ -155,6 +165,10 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
         buttonImages[i][state] = image;
       }
     }
+    
+    // Load the dropdown arrow, based on all the work done above
+    modeArrow = mode.loadImage("theme/mode-arrow" + suffix);
+    
     return buttonImages;
   }
   
@@ -167,24 +181,6 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
     if (buttons.size() == 0) {
       init();
     }
-
-    // this data is shared by all EditorToolbar instances
-//    if (buttonImages == null) {
-//      loadButtons();
-//    }
-
-    // this happens once per instance of EditorToolbar
-//    if (stateImage == null) {
-//      state = new int[buttonCount];
-//      stateImage = new Image[buttonCount];
-//      for (int i = 0; i < buttonCount; i++) {
-//        setState(i, INACTIVE, false);
-//      }
-//      y1 = 0;
-//      y2 = BUTTON_HEIGHT;
-//      x1 = new int[buttonCount];
-//      x2 = new int[buttonCount];
-//    }
 
     Dimension size = getSize();
     if ((offscreen == null) ||
@@ -254,34 +250,33 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
       g.drawString(status, buttons.size() * BUTTON_WIDTH + 3 * BUTTON_GAP, statusY);
     }
 
-//    Color modeButtonColor;
-//    Font modeTextFont;
-//    Color modeTextColor;
     g.setFont(modeTextFont);
     FontMetrics metrics = g.getFontMetrics();
-    int modeH = metrics.getAscent();
-    int modeW = metrics.stringWidth(modeTitle);
-    final int modeGapH = 6;
-    final int modeGapV = 3;
+    int modeTextHeight = metrics.getAscent();
+    int modeTextWidth = metrics.stringWidth(modeTitle);
+    final int modeGapWidth = 6;
+    final int modeBoxHeight = 20;
     modeX2 = getWidth() - 16;
-    modeX1 = modeX2 - (modeGapH + modeW + modeGapH);
-    modeY1 = (getHeight() - modeH)/2 - modeGapV;
-    modeY2 = modeY1 + modeH + modeGapV*2;
-//    g.setColor(modeButtonColor);
-//    g.fillRect(modeX1, modeY1, modeX2 - modeX1, modeY2 - modeY1);
-//    g.setColor(modeTextColor);
-//    g.drawString(modeTitle, modeX1 + modeGapH, modeY2 - modeGapV);
+    modeX1 = modeX2 - (modeGapWidth + modeTextWidth + modeGapWidth + ARROW_WIDTH + modeGapWidth);
+    modeY1 = (getHeight() - modeBoxHeight) / 2;
+    modeY2 = modeY1 + modeBoxHeight; //modeY1 + modeH + modeGapV*2;
     g.setColor(modeButtonColor);
     g.drawRect(modeX1, modeY1, modeX2 - modeX1, modeY2 - modeY1);
-    g.drawString(modeTitle, modeX1 + modeGapH, modeY2 - modeGapV);
+    g.drawString(modeTitle, 
+                 modeX1 + modeGapWidth, 
+                 modeY1 + modeTextHeight + (modeBoxHeight - modeTextHeight) / 2);
+    g.drawImage(modeArrow, 
+                modeX2 - ARROW_WIDTH - modeGapWidth, 
+                modeY1 + (modeBoxHeight - ARROW_HEIGHT) / 2, 
+                ARROW_WIDTH, ARROW_HEIGHT, this);
 
     screen.drawImage(offscreen, 0, 0, size.width, size.height, null);
 
     // dim things out when not enabled (not currently in use) 
-    if (!isEnabled()) {
-      screen.setColor(new Color(0, 0, 0, 100));
-      screen.fillRect(0, 0, getWidth(), getHeight());
-    }
+//    if (!isEnabled()) {
+//      screen.setColor(new Color(0, 0, 0, 100));
+//      screen.fillRect(0, 0, getWidth(), getHeight());
+//    }
   }
 
   
