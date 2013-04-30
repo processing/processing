@@ -276,18 +276,16 @@ public class Table {
           extension = "csv";
         } else if (opt.equals("ods")) {
           extension = "ods";
-
         } else if (opt.equals("newlines")) {
           awfulCSV = true;
-
+          extension = "csv";
         } else if (opt.equals("bin")) {
           binary = true;
+          extension = "bin";
         } else if (opt.equals("header")) {
           header = true;
-
         } else if (opt.startsWith(sheetParam)) {
           worksheet = opt.substring(sheetParam.length());
-
         } else {
           throw new IllegalArgumentException("'" + opt + "' is not a valid option for loading a Table");
         }
