@@ -157,6 +157,7 @@ o   Integer.TYPE, String.class? still nothing for categorical
 o   maybe it's Table.INT since it's for advanced users anyway
 o   problem is loading types from file, no way to access it from code
 o   CATEGORICAL -> CATEGORY? ORDINAL?
+X add clearRows()
 
 _ function that will convert awful CSV to TSV.. or something else?
 _   maybe to write binary instead? then read the binary file once it's ok?

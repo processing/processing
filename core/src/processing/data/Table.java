@@ -1666,6 +1666,11 @@ public class Table {
   }
 
 
+  public void clearRows() {
+    setRowCount(0);
+  }
+
+
   public void setRowCount(int newCount) {
     if (newCount != rowCount) {
       if (newCount > 1000000) {
