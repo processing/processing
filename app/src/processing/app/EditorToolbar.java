@@ -42,7 +42,7 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
   static final int BUTTON_HEIGHT = 32;
   /** The amount of space between groups of buttons on the toolbar. */
   static final int BUTTON_GAP = 5;
-  /** Size of the button image being chopped up. */
+  /** Size (both width and height) of the buttons in the source image. */
   static final int BUTTON_IMAGE_SIZE = 33;
 
   static final int INACTIVE = 0;
@@ -58,20 +58,7 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
 
   Color bgcolor;
 
-//  static Image[][] buttonImages;
-//  int currentRollover;
   protected Button rollover;
-
-//  int buttonCount;
-  /** Current state for this button */
-//  int[] state; // = new int[BUTTON_COUNT];
-  /** Current image for this button's state */
-//  Image[] stateImage;
-//  int which[]; // mapping indices to implementation
-
-//  int x1[], x2[];
-  static final int TOP = 2; 
-  static final int BOTTOM = BUTTON_HEIGHT;
 
   Font statusFont;
   Color statusColor;
@@ -82,19 +69,18 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
   Color modeButtonColor;
   Font modeTextFont;
   Color modeTextColor;
-  String modeTitle;  // = "JAVA"; //"Java";
-//  String modeTitle = "ANDROID"; //"Java";
+  String modeTitle;
   int modeX1, modeY1;
   int modeX2, modeY2;
   JMenu modeMenu;
   
   protected ArrayList<Button> buttons;
-  
+
   static final int ARROW_WIDTH = 6;
   static final int ARROW_HEIGHT = 6;
-  Image modeArrow;
-  
+  static Image modeArrow;
 
+  
   public EditorToolbar(Editor editor, Base base) {  //, JMenu menu) {
     this.editor = editor;
     this.base = base;
@@ -112,6 +98,11 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
     modeTextFont = mode.getFont("mode.button.font");
     modeButtonColor = mode.getColor("mode.button.color");
 
+    if (modeArrow == null) {
+      String suffix = Toolkit.highResDisplay() ? "-2x.png" : ".png";
+      modeArrow = Toolkit.getLibImage("mode-arrow" + suffix);
+    }
+
     addMouseListener(this);
     addMouseMotionListener(this);
   }
@@ -122,11 +113,13 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
 
 
   /**
-   * Only call this from paintComponent, or when the comp is displayable, 
-   * otherwise createImage() might fail.
+   * Load button images and slice them up. Only call this from paintComponent,  
+   * or when the comp is displayable, otherwise createImage() might fail.
+   * (Using BufferedImage instead of createImage() nowadays, so that may 
+   * no longer be relevant.) 
    */
   public Image[][] loadImages() {
-    int res = Toolkit.isRetina() ? 2 : 1;
+    int res = Toolkit.highResDisplay() ? 2 : 1;
     
     String suffix = null; 
     Image allButtons = null;
@@ -164,11 +157,6 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
       }
     }
     
-    // Load the dropdown arrow, based on all the work done above
-    modeArrow = mode.loadImage("theme/mode-arrow" + suffix);
-    // And the background image
-//    backgroundImage = mode.loadImage("theme/mode" + suffix);
-    
     return buttonImages;
   }
   
@@ -185,7 +173,7 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
     Dimension size = getSize();
     if ((offscreen == null) ||
         (size.width != width) || (size.height != height)) {
-      if (Toolkit.isRetina()) {
+      if (Toolkit.highResDisplay()) {
         offscreen = createImage(size.width*2, size.height*2);
       } else {
         offscreen = createImage(size.width, size.height);
@@ -213,7 +201,7 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
     Graphics g = offscreen.getGraphics();    
     Graphics2D g2 = (Graphics2D) g;
     
-    if (Toolkit.isRetina()) {
+    if (Toolkit.highResDisplay()) {
       // scale everything 2x, will be scaled down when drawn to the screen
       g2.scale(2, 2);
     } else {
@@ -233,7 +221,7 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
 //      g.drawImage(stateImage[i], x1[i], y1, null);
 //    }
     for (Button b : buttons) {
-      g.drawImage(b.stateImage, b.left, TOP, BUTTON_WIDTH, BUTTON_HEIGHT, null);
+      g.drawImage(b.stateImage, b.left, 0, BUTTON_WIDTH, BUTTON_HEIGHT, null);
     }
 
     g.setColor(statusColor);
@@ -314,9 +302,8 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
     int y = e.getY();
 
     if (rollover != null) {
-      //        if ((x > x1[currentRollover]) && (y > y1) &&
-      //            (x < x2[currentRollover]) && (y < y2)) {
-      if (y > TOP && y < BOTTOM && x > rollover.left && x < rollover.right) {
+      //if (y > TOP && y < BOTTOM && x > rollover.left && x < rollover.right) {
+      if (y > 0 && y < getHeight() && x > rollover.left && x < rollover.right) {
         // nothing has changed
         return;
 
@@ -386,7 +373,7 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
   private Button findSelection(int x, int y) {
     // if app loads slowly and cursor is near the buttons
     // when it comes up, the app may not have time to load
-    if (offscreen != null && y > TOP && y < BOTTOM) {
+    if (offscreen != null && y > 0 && y < getHeight()) {
       for (Button b : buttons) {
         if (x > b.left && x < b.right) {
           return b;

@@ -184,7 +184,7 @@ public class EditorStatus extends JPanel {
       sizeW = size.width;
       sizeH = size.height;
       setButtonBounds();
-      if (Toolkit.isRetina()) {
+      if (Toolkit.highResDisplay()) {
         offscreen = createImage(sizeW*2, sizeH*2);
       } else {
         offscreen = createImage(sizeW, sizeH);
@@ -194,7 +194,7 @@ public class EditorStatus extends JPanel {
     Graphics g = offscreen.getGraphics();
 
     Graphics2D g2 = (Graphics2D) g;
-    if (Toolkit.isRetina()) {
+    if (Toolkit.highResDisplay()) {
       g2.scale(2, 2);
     } else {
       g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,

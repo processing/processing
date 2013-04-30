@@ -104,7 +104,7 @@ public class JavaEditor extends Editor {
       item = new JMenuItem("About Processing");
       item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          base.handleAbout();
+          new About(JavaEditor.this);
         }
       });
       menu.add(item);

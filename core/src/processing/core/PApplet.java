@@ -10079,7 +10079,7 @@ public class PApplet extends Applet
       try {
         if (iconImages == null) {
           iconImages = new ArrayList<Image>();
-          final int[] sizes = { 16, 24, 32, 48, 64 };
+          final int[] sizes = { 16, 32, 48, 64 };
 
           for (int sz : sizes) {
             URL url = getClass().getResource("/icon/icon-" + sz + ".png");

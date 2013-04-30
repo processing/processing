@@ -76,10 +76,10 @@ public class EditorHeader extends JComponent {
   static final int UNSELECTED = 0;
   static final int SELECTED = 1;
 
-  static final String WHERE[] = { "left", "mid", "right" }; //, "menu" };
-  static final int LEFT = 0;
-  static final int MIDDLE = 1;
-  static final int RIGHT = 2;
+//  static final String WHERE[] = { "left", "mid", "right" }; //, "menu" };
+//  static final int LEFT = 0;
+//  static final int MIDDLE = 1;
+//  static final int RIGHT = 2;
 //  static final int MENU = 3;
 
   static final int PIECE_WIDTH = 4;
@@ -88,7 +88,7 @@ public class EditorHeader extends JComponent {
   
   static final int ARROW_WIDTH = 14;
   static final int ARROW_HEIGHT = 14;
-  Image tabArrow;
+  static Image tabArrow;
 
   //
 
@@ -153,39 +153,41 @@ public class EditorHeader extends JComponent {
   }
 
 
-  protected String tabFile(int status, int where) {
-    return "theme/tab-" + STATUS[status] + "-" + WHERE[where];
-  }
+//  protected String tabFile(int status, int where) {
+//    return "theme/tab-" + STATUS[status] + "-" + WHERE[where];
+//  }
   
   
   public void updateMode() {
     Mode mode = editor.getMode();
-    int res = Toolkit.isRetina() ? 2 : 1;
+//    int res = Toolkit.isRetina() ? 2 : 1;
+//    String suffix = "-2x.png";  // wishful thinking
+//    // Some modes may not have a 2x version. If a mode doesn't have a 1x 
+//    // version, this will cause an error... they should always have 1x.
+//    if (res == 2) {
+//      if (!mode.getContentFile(tabFile(0, 0) + suffix).exists()) {
+//        res = 1;
+//      }
+//    }
+//    if (res == 1) {
+//      suffix = ".png";
+//      if (!mode.getContentFile(tabFile(0, 0) + suffix).exists()) {
+//        suffix = ".gif";
+//      }
+//    }
+//    
+//    pieces = new Image[STATUS.length][WHERE.length];
+//    for (int status = 0; status < STATUS.length; status++) {
+//      for (int where = 0; where < WHERE.length; where++) {
+//        //String filename = "theme/tab-" + STATUS[i] + "-" + WHERE[j] + ".gif";
+//        pieces[status][where] = mode.loadImage(tabFile(status, where) + suffix);
+//      }
+//    }
     
-    String suffix = "-2x.png";  // wishful thinking
-    // Some modes may not have a 2x version. If a mode doesn't have a 1x 
-    // version, this will cause an error... they should always have 1x.
-    if (res == 2) {
-      if (!mode.getContentFile(tabFile(0, 0) + suffix).exists()) {
-        res = 1;
-      }
+    if (tabArrow == null) {
+      String suffix = Toolkit.highResDisplay() ? "-2x.png" : ".png";
+      tabArrow = Toolkit.getLibImage("tab-arrow" + suffix);
     }
-    if (res == 1) {
-      suffix = ".png";
-      if (!mode.getContentFile(tabFile(0, 0) + suffix).exists()) {
-        suffix = ".gif";
-      }
-    }
-    
-    pieces = new Image[STATUS.length][WHERE.length];
-    for (int status = 0; status < STATUS.length; status++) {
-      for (int where = 0; where < WHERE.length; where++) {
-        //String filename = "theme/tab-" + STATUS[i] + "-" + WHERE[j] + ".gif";
-        pieces[status][where] = mode.loadImage(tabFile(status, where) + suffix);
-      }
-    }
-    
-    tabArrow = mode.loadImage("theme/tab-arrow" + suffix);
 
     backgroundColor = mode.getColor("header.bgcolor");
     textColor[SELECTED] = mode.getColor("header.text.selected.color");
@@ -223,7 +225,7 @@ public class EditorHeader extends JComponent {
       sizeH = size.height;
       imageW = sizeW;
       imageH = sizeH;
-      if (Toolkit.isRetina()) {
+      if (Toolkit.highResDisplay()) {
         offscreen = createImage(imageW*2, imageH*2);
       } else {
         offscreen = createImage(imageW, imageH);
@@ -237,7 +239,7 @@ public class EditorHeader extends JComponent {
 
     Graphics2D g2 = (Graphics2D) g;
     
-    if (Toolkit.isRetina()) {
+    if (Toolkit.highResDisplay()) {
       // scale everything 2x, will be scaled down when drawn to the screen
       g2.scale(2, 2);
     } else {

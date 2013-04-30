@@ -1500,35 +1500,12 @@ public class Base {
   // .................................................................
 
 
-  /**
-   * Show the About box.
-   */
-  public void handleAbout() {
-    final Image image = Toolkit.getLibImage("about.jpg", activeEditor);
-    final Window window = new Window(activeEditor) {
-        public void paint(Graphics g) {
-          g.drawImage(image, 0, 0, null);
-
-          Graphics2D g2 = (Graphics2D) g;
-          g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-                              RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
-
-          g.setFont(new Font("SansSerif", Font.PLAIN, 11));
-          g.setColor(Color.white);
-          g.drawString(Base.VERSION_NAME, 50, 30);
-        }
-      };
-    window.addMouseListener(new MouseAdapter() {
-        public void mousePressed(MouseEvent e) {
-          window.dispose();
-        }
-      });
-    int w = image.getWidth(activeEditor);
-    int h = image.getHeight(activeEditor);
-    Dimension screen = Toolkit.getScreenSize();
-    window.setBounds((screen.width-w)/2, (screen.height-h)/2, w, h);
-    window.setVisible(true);
-  }
+//  /**
+//   * Show the About box.
+//   */
+//  static public void handleAbout() {
+//    new About(activeEditor);
+//  }
 
 
   /**
@@ -2371,8 +2348,8 @@ public class Base {
     */
     return new File(processingRoot, name);
   }
-
-
+  
+  
 //  /**
 //   * Get an image associated with the current color theme.
 //   * @deprecated

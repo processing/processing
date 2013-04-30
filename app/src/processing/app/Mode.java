@@ -84,8 +84,7 @@ public abstract class Mode {
 
   static final int BACKGROUND_WIDTH = 580;
   static final int BACKGROUND_HEIGHT = 250;
-  protected Image backgroundImage;
-
+  protected Image backgroundImage;  
 
 //  public Mode(Base base, File folder) {
 //    this(base, folder, base.getSketchbookLibrariesFolder());
@@ -171,12 +170,13 @@ public abstract class Mode {
    */
   public void setupGUI() {
     try {
-      theme = new Settings(new File(folder, "theme/theme.txt"));
+      //theme = new Settings(new File(folder, "theme/theme.txt"));
+      theme = new Settings(Base.getContentFile("theme.txt"));
 
       // other things that have to be set explicitly for the defaults
       theme.setColor("run.window.bgcolor", SystemColor.control);
 
-      String suffix = Toolkit.isRetina() ? "-2x.png" : ".png";
+      String suffix = Toolkit.highResDisplay() ? "-2x.png" : ".png";
       backgroundImage = loadImage("theme/mode" + suffix);
 
     } catch (IOException e) {

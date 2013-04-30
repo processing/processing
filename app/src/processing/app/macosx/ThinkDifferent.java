@@ -29,6 +29,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
+import processing.app.About;
 import processing.app.Base;
 import processing.app.Toolkit;
 import processing.core.PApplet;
@@ -152,7 +153,7 @@ public class ThinkDifferent implements ApplicationListener {
   public void handleAbout(ApplicationEvent ae) {
     if (base != null) {
       ae.setHandled(true);
-      base.handleAbout();
+      new About(null);
     } else {
       throw new IllegalStateException("handleAbout: Base instance detached from listener");
     }
