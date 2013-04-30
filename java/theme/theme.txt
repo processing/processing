@@ -11,11 +11,15 @@ status.font = SansSerif,plain,12
 # GUI - TABS
 # settings for the tabs at the top
 # (tab images are stored in the lib/theme folder)
-header.bgcolor = #818b95
-header.text.selected.color = #1a1a00
+#header.bgcolor = #818b95
+header.bgcolor = #000000
+#header.text.selected.color = #1a1a00
+header.text.selected.color = #000000
 header.text.unselected.color = #ffffff
-header.text.font = SansSerif,plain,12
+header.text.font = SansSerif,plain,11
 #header.text.font.macosx = Helvetica,plain,12
+header.tab.selected.color = #a2afba
+header.tab.unselected.color = #2a4159
 
 # GUI - CONSOLE
 # font is handled by preferences, since size/etc is modifiable

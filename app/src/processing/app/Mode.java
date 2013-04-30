@@ -1,3 +1,26 @@
+/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+
+/*
+  Part of the Processing project - http://processing.org
+
+  Copyright (c) 2013 The Processing Foundation
+  Copyright (c) 2010-13 Ben Fry and Casey Reas
+
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software Foundation,
+  Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
 package processing.app;
 
 import java.awt.*;
@@ -58,6 +81,10 @@ public abstract class Mode {
    * to grab any additional classes that subclass what's in the mode folder. 
    */
   protected ClassLoader classLoader;
+
+  static final int BACKGROUND_WIDTH = 580;
+  static final int BACKGROUND_HEIGHT = 250;
+  protected Image backgroundImage;
 
 
 //  public Mode(Base base, File folder) {
@@ -149,9 +176,20 @@ public abstract class Mode {
       // other things that have to be set explicitly for the defaults
       theme.setColor("run.window.bgcolor", SystemColor.control);
 
+      String suffix = Toolkit.isRetina() ? "-2x.png" : ".png";
+      backgroundImage = loadImage("theme/mode" + suffix);
+
     } catch (IOException e) {
       Base.showError("Problem loading theme.txt",
                      "Could not load theme.txt, please re-install Processing", e);
+    }
+  }
+  
+  
+  public void drawBackground(Graphics g, int offset) {
+    if (backgroundImage != null) {
+      g.drawImage(backgroundImage, 0, -offset, 
+                  BACKGROUND_WIDTH, BACKGROUND_HEIGHT, null);
     }
   }
 

@@ -70,7 +70,7 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
 //  int which[]; // mapping indices to implementation
 
 //  int x1[], x2[];
-  static final int TOP = 0; 
+  static final int TOP = 2; 
   static final int BOTTOM = BUTTON_HEIGHT;
 
   Font statusFont;
@@ -94,8 +94,6 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
   static final int ARROW_HEIGHT = 6;
   Image modeArrow;
   
-  protected Image backgroundImage;
-
 
   public EditorToolbar(Editor editor, Base base) {  //, JMenu menu) {
     this.editor = editor;
@@ -168,6 +166,8 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
     
     // Load the dropdown arrow, based on all the work done above
     modeArrow = mode.loadImage("theme/mode-arrow" + suffix);
+    // And the background image
+//    backgroundImage = mode.loadImage("theme/mode" + suffix);
     
     return buttonImages;
   }
@@ -224,6 +224,10 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
 
     g.setColor(bgcolor); //getBackground());
     g.fillRect(0, 0, width, height);
+//    if (backgroundImage != null) {
+//      g.drawImage(backgroundImage, 0, 0, BACKGROUND_WIDTH, BACKGROUND_HEIGHT, null);
+//    }
+    mode.drawBackground(g, 0);
 
 //    for (int i = 0; i < buttonCount; i++) {
 //      g.drawImage(stateImage[i], x1[i], y1, null);
@@ -254,11 +258,11 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
     FontMetrics metrics = g.getFontMetrics();
     int modeTextHeight = metrics.getAscent();
     int modeTextWidth = metrics.stringWidth(modeTitle);
-    final int modeGapWidth = 6;
+    final int modeGapWidth = 8;
     final int modeBoxHeight = 20;
     modeX2 = getWidth() - 16;
     modeX1 = modeX2 - (modeGapWidth + modeTextWidth + modeGapWidth + ARROW_WIDTH + modeGapWidth);
-    modeY1 = (getHeight() - modeBoxHeight) / 2;
+    modeY1 = 8; //(getHeight() - modeBoxHeight) / 2;
     modeY2 = modeY1 + modeBoxHeight; //modeY1 + modeH + modeGapV*2;
     g.setColor(modeButtonColor);
     g.drawRect(modeX1, modeY1, modeX2 - modeX1, modeY2 - modeY1);
@@ -268,7 +272,7 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
     g.drawImage(modeArrow, 
                 modeX2 - ARROW_WIDTH - modeGapWidth, 
                 modeY1 + (modeBoxHeight - ARROW_HEIGHT) / 2, 
-                ARROW_WIDTH, ARROW_HEIGHT, this);
+                ARROW_WIDTH, ARROW_HEIGHT, null);
 
     screen.drawImage(offscreen, 0, 0, size.width, size.height, null);
 
