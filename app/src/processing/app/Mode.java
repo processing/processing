@@ -171,7 +171,7 @@ public abstract class Mode {
   public void setupGUI() {
     try {
       //theme = new Settings(new File(folder, "theme/theme.txt"));
-      theme = new Settings(Base.getContentFile("theme.txt"));
+      theme = new Settings(Base.getContentFile("lib/theme.txt"));
 
       // other things that have to be set explicitly for the defaults
       theme.setColor("run.window.bgcolor", SystemColor.control);
