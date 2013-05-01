@@ -2736,18 +2736,20 @@ public class PApplet extends Applet
   }
 
 
+  /*
+  // disabling for now; requires Java 1.7 and "precise" semantics are odd...
+  // returns 0.1 for tick-by-tick scrolling on OS X, but it's not a matter of
+  // calling ceil() on the value: 1.5 goes to 1, but 2.3 goes to 2.
+  // "precise" is a whole different animal, so add later API to shore that up.
   static protected Method preciseWheelMethod;
   static {
-//    Class<?> callbackClass = callbackObject.getClass();
-//    Method selectMethod =
-//      callbackClass.getMethod(callbackMethod, new Class[] { File.class });
-//    selectMethod.invoke(callbackObject, new Object[] { selectedFile });
     try {
       preciseWheelMethod = MouseWheelEvent.class.getMethod("getPreciseWheelRotation", new Class[] { });
     } catch (Exception e) {
       // ignored, the method will just be set to null
     }
   }
+  */
 
 
   /**
@@ -2758,7 +2760,7 @@ public class PApplet extends Applet
   protected void nativeMouseEvent(java.awt.event.MouseEvent nativeEvent) {
     // the 'amount' is the number of button clicks for a click event,
     // or the number of steps/clicks on the wheel for a mouse wheel event.
-    float peAmount = nativeEvent.getClickCount();
+    int peCount = nativeEvent.getClickCount();
 
     int peAction = 0;
     switch (nativeEvent.getID()) {
@@ -2783,8 +2785,10 @@ public class PApplet extends Applet
     case java.awt.event.MouseEvent.MOUSE_EXITED:
       peAction = MouseEvent.EXIT;
       break;
-    case java.awt.event.MouseWheelEvent.WHEEL_UNIT_SCROLL:
+    //case java.awt.event.MouseWheelEvent.WHEEL_UNIT_SCROLL:
+    case java.awt.event.MouseEvent.MOUSE_WHEEL:
       peAction = MouseEvent.WHEEL;
+      /*
       if (preciseWheelMethod != null) {
         try {
           peAmount = ((Double) preciseWheelMethod.invoke(nativeEvent, (Object[]) null)).floatValue();
@@ -2792,9 +2796,8 @@ public class PApplet extends Applet
           preciseWheelMethod = null;
         }
       }
-      if (preciseWheelMethod == null) {
-        peAmount = ((MouseWheelEvent) nativeEvent).getWheelRotation();
-      }
+      */
+      peCount = ((MouseWheelEvent) nativeEvent).getWheelRotation();
       break;
     }
 
@@ -2848,7 +2851,7 @@ public class PApplet extends Applet
                              peAction, peModifiers,
                              nativeEvent.getX(), nativeEvent.getY(),
                              peButton,
-                             peAmount));
+                             peCount));
   }
 
 

@@ -38,7 +38,8 @@ public class MouseEvent extends Event {
   protected int x, y;
   protected int button;
 //  protected int clickCount;
-  protected float amount;
+//  protected float amount;
+  protected int count;
 
 
 //  public MouseEvent(int x, int y) {
@@ -50,14 +51,15 @@ public class MouseEvent extends Event {
 
   public MouseEvent(Object nativeObject,
                     long millis, int action, int modifiers,
-                    int x, int y, int button, float amount) {  //int clickCount) {
+                    int x, int y, int button, int count) {  //float amount) {  //int clickCount) {
     super(nativeObject, millis, action, modifiers);
     this.flavor = MOUSE;
     this.x = x;
     this.y = y;
     this.button = button;
     //this.clickCount = clickCount;
-    this.amount = amount;
+    //this.amount = amount;
+    this.count = count;
   }
 
 
@@ -82,8 +84,19 @@ public class MouseEvent extends Event {
 //  }
 
 
+  /** Do not use, getCount() is the correct method. */
+  @Deprecated
   public int getClickCount() {
-    return (int) amount; //clickCount;
+    //return (int) amount; //clickCount;
+    return count;
+  }
+
+
+  /** Do not use, getCount() is the correct method. */
+  @Deprecated
+  public float getAmount() {
+    //return amount;
+    return count;
   }
 
 
@@ -91,8 +104,8 @@ public class MouseEvent extends Event {
    * Number of clicks for mouse button events, or the number of steps (positive
    * or negative depending on direction) for a mouse wheel event.
    */
-  public float getAmount() {
-    return amount;
+  public int getCount() {
+    return count;
   }
 
 

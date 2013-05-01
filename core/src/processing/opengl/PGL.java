@@ -3289,15 +3289,15 @@ public class PGL {
       }
     }
 
-    float peAmount = peAction == MouseEvent.WHEEL ?
-      nativeEvent.getWheelRotation() :
+    int peCount = peAction == MouseEvent.WHEEL ?
+      (int) nativeEvent.getWheelRotation() :
       nativeEvent.getClickCount();
 
     MouseEvent me = new MouseEvent(nativeEvent, nativeEvent.getWhen(),
                                    peAction, peModifiers,
                                    nativeEvent.getX(), nativeEvent.getY(),
                                    peButton,
-                                   peAmount);
+                                   peCount);
 
     pg.parent.postEvent(me);
   }
