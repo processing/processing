@@ -2783,7 +2783,7 @@ public class PApplet extends Applet
     case java.awt.event.MouseEvent.MOUSE_EXITED:
       peAction = MouseEvent.EXIT;
       break;
-    case java.awt.event.MouseWheelEvent.WHEEL_UNIT_SCROLL:
+    case java.awt.event.MouseEvent.MOUSE_WHEEL:
       peAction = MouseEvent.WHEEL;
       if (preciseWheelMethod != null) {
         try {

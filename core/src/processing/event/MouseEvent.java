@@ -95,6 +95,34 @@ public class MouseEvent extends Event {
     return amount;
   }
 
+  public static String eventName(final int eventCode) {
+    switch (eventCode) {
+    case PRESS:
+      return "PRESS";
+    case RELEASE:
+      return "RELEASE";
+    case CLICK:
+      return "CLICK";
+    case DRAG:
+      return "DRAG";
+    case MOVE:
+      return "MOVE";
+    case ENTER:
+      return "ENTER";
+    case EXIT:
+      return "EXIT";
+    case WHEEL:
+      return "WHEEL";
+    default:
+      return "Unknown event code " + String.valueOf(eventCode);
+    }
+  }
+
+  @Override
+  public String toString() {
+    return String.format("MouseEvent<%s at %d,%d b(%d) amount(%f)>",
+                         eventName(getAction()), x, y, button, amount);
+  }
 
 //  public void setClickCount(int clickCount) {
 //    this.clickCount = clickCount;
