@@ -209,8 +209,8 @@ _   Deleted 1 texture objects, 0 remaining
 _ shader syntax (Andres request)
 _   might also need a define inside the shader to control what type it is
 
-_ add mouse wheel support to 2.0 event system
-_   https://github.com/processing/processing/issues/1461
+X add mouse wheel support to 2.0 event system
+X   https://github.com/processing/processing/issues/1461
 X   http://code.google.com/p/processing/issues/detail?id=1423
 X   this is fairly messy since desktop and JS behave a little differently
 o   wheel event should subclass mouse (since position still relevant)
@@ -222,24 +222,22 @@ X     http://www.javascriptkit.com/javatutors/onmousewheel.shtml
 X     e.detail is 1 for 1 tick upward (away), -2 for 2 ticks down
 X     e.wheelDelta is 120 for 1 click up, -240 for two clicks down
 X     this is for non-natural! opposite of Java.. ugh
-_ testing with Java on OS X
-
-natural on OS X: up is 1 unit, down is -1 units
-  non-natural: up is -1 units, down is +1 unit
-Windows says 3 units per notch, OS X says just 1
-appears to be opposite of JS
-
-ref: "negative values if the mouse wheel was rotated up or away from the user"
-http://docs.oracle.com/javase/7/docs/api/java/awt/event/MouseWheelEvent.html#getWheelRotation()
-
+X testing with Java on OS X
+X   natural on OS X: up is 1 unit, down is -1 units
+X     non-natural: up is -1 units, down is +1 unit
+X   Windows says 3 units per notch, OS X says just 1
+X   appears to be opposite of JS
 X   using float value (/120.0f)
 X   high-precision method grabbed if 1.7 is in use
-_   test with actual wheel mouse
-_   test on Windows
-_   add to the API docs
-_   decide on getAmount() and weirdness w/ clickCount
-_   get mouseWheel() added to api ref
-_   also added to keywords.txt
+X   test with actual wheel mouse
+X   test on Windows
+X   decide on getAmount() and weirdness w/ clickCount
+X   add note re: API docs
+X     get mouseWheel() added to api ref
+o     also added to keywords.txt
+X   ref: "negative values if the mouse wheel was rotated up or away from the user"
+X   http://docs.oracle.com/javase/6/docs/api/java/awt/event/MouseWheelEvent.html#getWheelRotation()
+X   http://docs.oracle.com/javase/7/docs/api/java/awt/event/MouseWheelEvent.html#getWheelRotation()
 
 shape
 _ major surgery to put loadShape() back into PApplet/PGraphics
