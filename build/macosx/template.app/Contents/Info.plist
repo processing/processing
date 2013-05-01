@@ -66,8 +66,7 @@
     <key>Java</key>
     <dict>
       <key>SplashFile</key>
-      <string>about-multi.tif</string>
-<!--      <string>$JAVAROOT/lib/about.jpg</string>-->
+      <string>$JAVAROOT/lib/about.jpg</string>
 
       <key>VMOptions</key>
       <array>
