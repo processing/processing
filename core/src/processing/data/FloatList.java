@@ -29,6 +29,13 @@ public class FloatList implements Iterable<Float> {
   }
 
 
+  public FloatList(Iterable<Float> iter) {
+    this(10);
+    for (float v : iter) {
+      append(v);
+    }
+  }
+
 
   /**
    * Improve efficiency by removing allocated but unused entries from the

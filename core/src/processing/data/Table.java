@@ -3391,7 +3391,7 @@ public class Table {
 
   public StringDict getStringDict(int keyColumn, int valueColumn) {
     return new StringDict(getStringColumn(keyColumn),
-                       getStringColumn(valueColumn));
+                          getStringColumn(valueColumn));
   }
 
 

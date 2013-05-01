@@ -29,6 +29,15 @@ public class StringList implements Iterable<String> {
   }
 
 
+  // Create from something iterable, for instance:
+  // StringList list = new StringList(hashMap.keySet());
+  public StringList(Iterable<String> iter) {
+    this(10);
+    for (String s : iter) {
+      append(s);
+    }
+  }
+
 
   /**
    * Improve efficiency by removing allocated but unused entries from the

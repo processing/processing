@@ -39,6 +39,14 @@ public class IntList implements Iterable<Integer> {
   }
 
 
+  public IntList(Iterable<Integer> iter) {
+    this(10);
+    for (int v : iter) {
+      append(v);
+    }
+  }
+
+
   /**
    * Improve efficiency by removing allocated but unused entries from the
    * internal array used to store the data. Set to private, though it could

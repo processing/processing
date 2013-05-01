@@ -70,6 +70,9 @@ public class FloatDict {
     this.keys = keys;
     this.values = values;
     count = keys.length;
+    for (int i = 0; i < count; i++) {
+      indices.put(keys[i], i);
+    }
   }
 
 
@@ -81,6 +84,7 @@ public class FloatDict {
   /** Remove all entries. */
   public void clear() {
     count = 0;
+    indices = new HashMap<String, Integer>();
   }
 
 
