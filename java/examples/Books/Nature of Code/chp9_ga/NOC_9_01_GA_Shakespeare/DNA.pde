@@ -41,6 +41,8 @@ class DNA {
           score++;
         }
      }
+     
+     
      fitness = (float)score / (float)target.length();
   }
   

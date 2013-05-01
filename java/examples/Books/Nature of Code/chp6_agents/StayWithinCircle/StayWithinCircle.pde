@@ -20,8 +20,6 @@ void setup() {
   
   circleLocation = new PVector(width/2,height/2);
   circleRadius = height/2-25;
-  
-  smooth();
 }
 
 void draw() {

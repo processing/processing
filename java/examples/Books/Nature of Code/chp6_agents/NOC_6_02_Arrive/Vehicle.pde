@@ -43,13 +43,12 @@ class Vehicle {
   void arrive(PVector target) {
     PVector desired = PVector.sub(target,location);  // A vector pointing from the location to the target
     float d = desired.mag();
-    // Normalize desired and scale with arbitrary damping within 100 pixels
-    desired.normalize();
+    // Scale with arbitrary damping within 100 pixels
     if (d < 100) {
       float m = map(d,0,100,0,maxspeed);
-      desired.mult(m);
+      desired.setMag(m);
     } else {
-      desired.mult(maxspeed);
+      desired.setMag(maxspeed);
     }
 
     // Steering = Desired minus Velocity

@@ -55,7 +55,7 @@ void draw() {
  void loadData() {
   // Load JSON file
   // Temporary full path until path problem resolved.
-  json = loadJSONObject("/Users/shiffman/Desktop/LoadSaveJSON/data/data.json");
+  json = loadJSONObject("data.json");
 
   JSONArray bubbleData = json.getJSONArray("bubbles");
 
@@ -64,7 +64,7 @@ void draw() {
 
   for (int i = 0; i < bubbleData.size(); i++) {
     // Get each object in the array
-    JSONObject bubble = bubbleData.getObject(i); 
+    JSONObject bubble = bubbleData.getJSONObject(i); 
     // Get a position object
     JSONObject position = bubble.getJSONObject("position");
     // Get x,y from position
@@ -104,9 +104,8 @@ void draw() {
     bubbleData.removeIndex(0);
   }
 
-  println(json);
-  // Not implemented yet
-  //saveJSONObject(json,"data.json");
-  //loadData();
+  // Save new data
+  saveJSONObject(json,"data/data.json");
+  loadData();
 }
 

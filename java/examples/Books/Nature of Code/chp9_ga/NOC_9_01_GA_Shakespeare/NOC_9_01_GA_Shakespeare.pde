@@ -36,7 +36,7 @@ float mutationRate;
 Population population;
 
 void setup() {
-  size(800, 200);
+  size(640, 360);
   f = createFont("Courier", 32, true);
   target = "To be or not to be.";
   popmax = 150;
@@ -71,19 +71,19 @@ void displayInfo() {
   fill(0);
   
   
-  textSize(16);
+  textSize(24);
   text("Best phrase:",20,30);
-  textSize(32);
-  text(answer, 20, 75);
+  textSize(40);
+  text(answer, 20, 100);
 
-  textSize(12);
-  text("total generations: " + population.getGenerations(), 20, 140);
-  text("average fitness: " + nf(population.getAverageFitness(), 0, 2), 20, 155);
-  text("total populationation: " + popmax, 20, 170);
-  text("mutation rate: " + int(mutationRate * 100) + "%", 20, 185);
+  textSize(18);
+  text("total generations:     " + population.getGenerations(), 20, 160);
+  text("average fitness:       " + nf(population.getAverageFitness(), 0, 2), 20, 180);
+  text("total population: " + popmax, 20, 200);
+  text("mutation rate:         " + int(mutationRate * 100) + "%", 20, 220);
  
   textSize(10);
-  text("All phrases:\n" + population.allPhrases(), 650, 10);
+  text("All phrases:\n" + population.allPhrases(), 500, 10);
 }
 
 

@@ -15,8 +15,7 @@ class DNA {
   DNA(int num) {
     genes = new PVector[num];
     for (int i = 0; i < genes.length; i++) {
-      float angle = random(TWO_PI);
-      genes[i] = new PVector(cos(angle), sin(angle));
+      genes[i] = PVector.random2D();
     }
   }
 
@@ -46,10 +45,38 @@ class DNA {
   void mutate(float m) {
     for (int i = 0; i < genes.length; i++) {
       if (random(1) < m) {
-        float angle = random(TWO_PI);
-        genes[i] = new PVector(cos(angle), sin(angle));
+        genes[i] = PVector.random2D();
       }
     }
   }
+  
+  void debugDraw() {
+    int cols = width / gridscale;
+    int rows = height / gridscale;
+        for (int i = 0; i < cols; i++) {
+      for (int j = 0; j < rows; j++) {
+        drawVector(genes[i+j*cols],i*gridscale,j*gridscale,gridscale-2);
+      }
+    }
+  }
+
+  // Renders a vector object 'v' as an arrow and a location 'x,y'
+  void drawVector(PVector v, float x, float y, float scayl) {
+    pushMatrix();
+    float arrowsize = 4;
+    // Translate to location to render vector
+    translate(x+gridscale/2,y);
+    stroke(0,100);
+    // Call vector heading function to get direction (note that pointing up is a heading of 0) and rotate
+    rotate(v.heading());
+    // Calculate length of vector & scale it to be bigger or smaller if necessary
+    float len = v.mag()*scayl;
+    // Draw three lines to make an arrow (draw pointing up since we've rotate to the proper direction)
+    line(-len/2,0,len/2,0);
+    //noFill();
+    //ellipse(-len/2,0,2,2);
+    popMatrix();
+  }
+  
 }
 
