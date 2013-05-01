@@ -330,3 +330,8 @@ run.present.stop.color = #cccccc
 #run.present.exclusive = false
 # use this by default to hide the menu bar and dock on osx
 #run.present.exclusive.macosx = true
+
+# true to disable warning messages when you are running Processing with
+# unsupported JDK such as OpenJDK or GCJ. You should NOT true this until
+# you understand what you are doing.
+run.jdk.unsupported = false
