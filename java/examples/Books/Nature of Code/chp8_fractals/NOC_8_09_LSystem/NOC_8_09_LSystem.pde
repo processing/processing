@@ -6,7 +6,7 @@ LSystem lsys;
 Turtle turtle;
 
 void setup() {
-  size(800, 200);
+  size(600, 600);
   /*
   // Create an empty ruleset
    Rule[] ruleset = new Rule[2];
@@ -52,6 +52,7 @@ void mousePressed() {
   if (counter < 5) {
     pushMatrix();
     lsys.generate();
+    //println(lsys.getSentence());
     turtle.setToDo(lsys.getSentence());
     turtle.changeLen(0.5);
     popMatrix();

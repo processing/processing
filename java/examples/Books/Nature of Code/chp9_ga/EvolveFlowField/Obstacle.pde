@@ -16,6 +16,10 @@ class Obstacle {
   Obstacle(int x, int y, int w, int h) {
     r = new Rectangle(x,y,w,h);
   }
+  
+  Obstacle(Rectangle r_) {
+    r = r_;
+  }
 
   void display() {
     stroke(0);

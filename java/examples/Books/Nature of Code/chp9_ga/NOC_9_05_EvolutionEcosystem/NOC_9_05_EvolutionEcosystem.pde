@@ -13,7 +13,7 @@
 World world;
 
 void setup() {
-  size(800, 200);
+  size(640, 360);
   // World starts with 20 creatures
   // and 20 pieces of food
   world = new World(20);
@@ -27,6 +27,10 @@ void draw() {
 
 // We can add a creature manually if we so desire
 void mousePressed() {
+  world.born(mouseX,mouseY); 
+}
+
+void mouseDragged() {
   world.born(mouseX,mouseY); 
 }
 

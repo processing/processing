@@ -1,4 +1,4 @@
-// The Nature of Code
+  // The Nature of Code
 // Daniel Shiffman
 // http://natureofcode.com
 
@@ -12,7 +12,7 @@
 
 import java.awt.Rectangle;
 
-int gridscale = 24;              // Scale of grid is 1/24 of screen size
+int gridscale = 10;              // Scale of grid is 1/24 of screen size
 
 // DNA needs one vector for every spot on the grid 
 // (it's like a pixel array, but with vectors instead of colors)
@@ -20,9 +20,6 @@ int dnasize;
 
 int lifetime;  // How long should each generation live
 
-// Global maxforce and maxspeed (hmmm, could make this part of DNA??)
-float maxspeed = 4.0;
-float maxforce = 1.0;
 
 Population population;  // Population
 int lifecycle;          // Timer for cycle of generation
@@ -33,10 +30,14 @@ int diam = 24;          // Size of target
 
 ArrayList<Obstacle> obstacles;  //an array list to keep track of all the obstacles!
 
+boolean debug = false;
+
+Rectangle newObstacle = null;
+
 void setup() {
-  size(640,480);
+  size(640,360);
   dnasize = (width / gridscale) * (height / gridscale); 
-  lifetime = width/2;
+  lifetime = width/3;
 
   // Initialize variables
   lifecycle = 0;
@@ -46,22 +47,23 @@ void setup() {
 
   // Create a population with a mutation rate, and population max
   int popmax = 1000;
-  float mutationRate = 0.05;
+  float mutationRate = 0.02;
   population = new Population(mutationRate,popmax);
 
   // Create the obstacle course  
   obstacles = new ArrayList<Obstacle>();
-  obstacles.add(new Obstacle(width/4,40,10,height-80));
-  obstacles.add(new Obstacle(width/2,0,10,height/2-10));
-  obstacles.add(new Obstacle(width/2,height-height/2+10,10,height/2-10));
-  obstacles.add(new Obstacle(2*width/3,height/2-height/8,10,height/4));
+  
+  
+  /*obstacles.add(new Obstacle(width/4,80,10,height-160));
+  obstacles.add(new Obstacle(width/2,0,10,height/2-20));
+  obstacles.add(new Obstacle(width/2,height-height/2+20,10,height/2-20));
+  obstacles.add(new Obstacle(2*width/3,height/2-height/8,10,height/4));*/
 }
 
 void draw() {
   background(255);
 
- // Draw the start and target locations
- start.display();
+ // Draw the target locations
  target.display();
   
   // Draw the obstacles
@@ -89,15 +91,31 @@ void draw() {
    textAlign(RIGHT);
    fill(0);
    text("Generation #:" + population.getGenerations(),width-10,18);
-   text("Cycles left:" + ((lifetime-lifecycle)/10),width-10,36);
+   text("Cycles left:" + ((lifetime-lifecycle)),width-10,36);
    text("Record cycles: " + recordtime,width-10,54);
+   
+   if (newObstacle != null) {
+     rect(newObstacle.x,newObstacle.y,newObstacle.width,newObstacle.height); 
+   }
    
 }
 
-// Move the target if the mouse is pressed
-// System will adapt to new target
-void mousePressed() {
-  target = new Obstacle(mouseX,mouseY,diam,diam);
-  recordtime = lifetime;
+void keyPressed() {
+  if (key == 'd') {
+    debug = !debug; 
+  }
 }
 
+void mousePressed() {
+  newObstacle = new Rectangle(mouseX,mouseY,0,0);
+}
+
+void mouseDragged() {
+  newObstacle.width = mouseX-newObstacle.x; 
+  newObstacle.height = mouseY-newObstacle.y; 
+}
+
+void mouseReleased() {
+  obstacles.add(new Obstacle(newObstacle));
+  newObstacle = null;
+}

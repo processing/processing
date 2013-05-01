@@ -13,9 +13,8 @@ float d = 25;
 
 
 void setup() {
-  size(800, 200);
+  size(640, 360);
   v = new Vehicle(width/2, height/2);
-  smooth();
 }
 
 void draw() {

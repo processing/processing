@@ -29,8 +29,7 @@ class Vehicle {
   // Main "run" function
   public void run() {
     update();
-    borders();
-    render();
+    display();
   }
 
 
@@ -38,10 +37,11 @@ class Vehicle {
   // http://www.red3d.com/cwr/steer/PathFollow.html
   void follow(Path p) {
 
-    // Predict location 25 (arbitrary choice) frames ahead
+    // Predict location 50 (arbitrary choice) frames ahead
+    // This could be based on speed 
     PVector predict = velocity.get();
     predict.normalize();
-    predict.mult(25);
+    predict.mult(50);
     PVector predictLoc = PVector.add(location, predict);
 
     // Now we must find the normal to the path from the predicted location
@@ -165,7 +165,7 @@ class Vehicle {
       applyForce(steer);
   }
 
-  void render() {
+  void display() {
     // Draw a triangle rotated in the direction of velocity
     float theta = velocity.heading2D() + radians(90);
     fill(175);
@@ -182,11 +182,11 @@ class Vehicle {
   }
 
   // Wraparound
-  void borders() {
-    if (location.x < -r) location.x = width+r;
-    //if (location.y < -r) location.y = height+r;
-    if (location.x > width+r) location.x = -r;
-    //if (location.y > height+r) location.y = -r;
+  void borders(Path p) {
+    if (location.x > p.getEnd().x + r) {
+      location.x = p.getStart().x - r;
+      location.y = p.getStart().y + (location.y-p.getEnd().y);
+    }
   }
 }
 
