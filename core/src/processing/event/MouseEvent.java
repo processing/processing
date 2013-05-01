@@ -103,6 +103,11 @@ public class MouseEvent extends Event {
   /**
    * Number of clicks for mouse button events, or the number of steps (positive
    * or negative depending on direction) for a mouse wheel event.
+   * Wheel events follow Java (see <a href="http://docs.oracle.com/javase/6/docs/api/java/awt/event/MouseWheelEvent.html#getWheelRotation()">here</a>), so
+   * getAmount() will return "negative values if the mouse wheel was rotated
+   * up or away from the user" and positive values in the other direction.
+   * On Mac OS X, this will be reversed when "natural" scrolling is enabled
+   * in System Preferences &rarr Mouse.
    */
   public int getCount() {
     return count;
