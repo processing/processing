@@ -40,7 +40,6 @@ String allData;
 
 void setup() {
   size(640, 360);
-  smooth();
   // Spawn the thread!
   thread("loadData");
 }
@@ -60,7 +59,7 @@ void draw() {
     // The size of the rectangle is mapped to the percentage completed
     float w = map(percent, 0, 1, 0, 300);
     rect(width/2-150, height/2, w, 10);
-    textSize(14);
+    textSize(16);
     textAlign(CENTER);
     fill(255);
     text("Loading", width/2, height/2+30);
