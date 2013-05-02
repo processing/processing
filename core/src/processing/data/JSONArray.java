@@ -620,6 +620,18 @@ public class JSONArray {
 
 
   /**
+   * Append an String value. This increases the array's length by one.
+   *
+   * @param value A String value.
+   * @return this.
+   */
+  public JSONArray append(String value) {
+    this.append((Object)value);
+    return this;
+  }
+
+
+  /**
    * Append an int value. This increases the array's length by one.
    *
    * @param value An int value.
@@ -758,6 +770,21 @@ public class JSONArray {
    */
   public JSONArray setInt(int index, int value) {
     this.set(index, new Integer(value));
+    return this;
+  }
+
+
+  /**
+   * Put or replace a String value. If the index is greater than the length of
+   *  the JSONArray, then null elements will be added as necessary to pad
+   *  it out.
+   * @param index The subscript.
+   * @param value A String value.
+   * @return this.
+   * @throws JSONException If the index is negative.
+   */
+  public JSONArray setString(int index, String value) {
+    this.set(index, value);
     return this;
   }
 
