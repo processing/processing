@@ -392,6 +392,16 @@ public class JSONArray {
   }
 
 
+  /** Get this entire array as a String array. */
+  public String[] getStringArray() {
+    String[] outgoing = new String[size()];
+    for (int i = 0; i < size(); i++) {
+      outgoing[i] = getString(i);
+    }
+    return outgoing;
+  }
+
+
   /** Get this entire array as an int array. Everything must be an int. */
   public int[] getIntArray() {
     int[] outgoing = new int[size()];
@@ -760,21 +770,6 @@ public class JSONArray {
 
 
   /**
-   * Put or replace an int value. If the index is greater than the length of
-   *  the JSONArray, then null elements will be added as necessary to pad
-   *  it out.
-   * @param index The subscript.
-   * @param value An int value.
-   * @return this.
-   * @throws JSONException If the index is negative.
-   */
-  public JSONArray setInt(int index, int value) {
-    this.set(index, new Integer(value));
-    return this;
-  }
-
-
-  /**
    * Put or replace a String value. If the index is greater than the length of
    *  the JSONArray, then null elements will be added as necessary to pad
    *  it out.
@@ -785,6 +780,21 @@ public class JSONArray {
    */
   public JSONArray setString(int index, String value) {
     this.set(index, value);
+    return this;
+  }
+
+
+  /**
+   * Put or replace an int value. If the index is greater than the length of
+   *  the JSONArray, then null elements will be added as necessary to pad
+   *  it out.
+   * @param index The subscript.
+   * @param value An int value.
+   * @return this.
+   * @throws JSONException If the index is negative.
+   */
+  public JSONArray setInt(int index, int value) {
+    this.set(index, new Integer(value));
     return this;
   }
 
@@ -863,13 +873,13 @@ public class JSONArray {
 //  }
 
 
-  public JSONArray setArray(int index, JSONArray value) {
+  public JSONArray setJSONArray(int index, JSONArray value) {
     set(index, value);
     return this;
   }
 
 
-  public JSONArray setObject(int index, JSONObject value) {
+  public JSONArray setJSONObject(int index, JSONObject value) {
     set(index, value);
     return this;
   }
@@ -931,7 +941,7 @@ public class JSONArray {
    * @return The value that was associated with the index,
    * or null if there was no value.
    */
-  public Object removeIndex(int index) {
+  public Object remove(int index) {
     Object o = this.opt(index);
     this.myArrayList.remove(index);
     return o;
