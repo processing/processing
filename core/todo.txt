@@ -23,6 +23,16 @@ X   https://github.com/processing/processing/issues/1730
 X change how updatePixels() is called in PGraphicsJava2D
 X   only call setModified(), not updatePixels() in endDraw()
 
+earlier
+X decision on registered methods
+X   remove registerPre() et al
+X   add register("pause", ...) 
+X   size() should be resize(), so it can be overridden (ala pause())
+X   add PEvent
+X need to wrap mouse/key events for p5
+X   need a version that works with both android and desktop
+X   also need to interleave events properly (as per report)
+
 mouse wheel
 X add mouse wheel support to 2.0 event system
 X   https://github.com/processing/processing/issues/1461
@@ -54,24 +64,22 @@ X   ref: "negative values if the mouse wheel was rotated up or away from the use
 X   http://docs.oracle.com/javase/6/docs/api/java/awt/event/MouseWheelEvent.html#getWheelRotation()
 X   http://docs.oracle.com/javase/7/docs/api/java/awt/event/MouseWheelEvent.html#getWheelRotation()
 
-_ add options for image.save() (or sageImage?)
+before release
+_ "deleted n framebuffer objects" 
+_ add options for image.save() (or saveImage?)
 _   add quality=[0,1] for jpeg images
 _   add dpi=[0,n] for for png images
 
+before 2.0
 _ PImage.loadPixels() shouldn't be calling out to the renderer
 _   setting image.parent = null for it makes it work again for get().save() case
 _ PShape should be cached as well
 
-before release
-_ "deleted n framebuffer objects" 
-
+high
 _ draw() called again before finishing on OS X (retina issue)
 _   https://github.com/processing/processing/issues/1709
-
 _ Linux sometimes not responding correctly w/ the size() command
 _   https://github.com/processing/processing/issues/1672
-
-_ image memory issue was huge, need to close that one
 
 
 data
@@ -434,12 +442,7 @@ _   have to pass PApplet just to make the rendering work to both renderers
 _   should instead be a renderer that splits things out
 
 
-2.0 / methods
-_ decision on registered methods
-_   remove registerPre() et al
-_   add register("pause", ...) 
-_   size() should be resize(), so it can be overridden (ala pause())
-_   add PEvent
+2.0
 _ size() and resize() and whatever? 
 _   should be setSize(), but that's odd for image files
 _   -> resize() is fine with PImage and PGraphics... 
@@ -447,12 +450,6 @@ _   we may be inheriting the resize() from Java -> make it final?
 _   add resize().. make it call setSize().
 _     also needs to do a redraw if noLoop() has been called
 _   the registered method for size() also needs to be called
-_ need to wrap mouse/key events for p5
-_   need a version that works with both android and desktop
-_   also need to interleave events properly (as per report)
-
-
-2.0
 _ get() or copy()? for vectors, image, etc.
 _ PVector chaining -> Dan looking into this
 _ PNode.getChildren() shouldn't make a new array.. toArray() can do that
@@ -492,6 +489,7 @@ _   jer and dan will look at their code, plus toxiclibs
 _ modify PVector to include better methods for chaining operations
 _   http://code.google.com/p/processing/issues/detail?id=218
 _ add screen(PVector), model(PVector) and world(PVector)?
+_   maybe screenVec()? or screenXYZ()?
 
 decisions to make
 _ possible addition for 'implementation' variable

@@ -3122,7 +3122,9 @@ public class PImage implements PConstants, Cloneable {
       }
       if ((writer = imageioWriter("png")) != null) {
         param = writer.getDefaultWriteParam();
-        metadata = imageioDPI(writer, param, 100);
+        if (false) {
+          metadata = imageioDPI(writer, param, 100);
+        }
       }
       if (writer != null) {
         BufferedOutputStream output =
