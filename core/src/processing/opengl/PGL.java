@@ -614,7 +614,6 @@ public class PGL {
     caps.setDepthBits(request_depth_bits);
     caps.setStencilBits(request_stencil_bits);
     caps.setAlphaBits(request_alpha_bits);
-//    caps.setDefaultColor(javaToNativeARGB(pg.backgroundColor));
 
     if (toolkit == AWT) {
       canvasAWT = new GLCanvas(caps);
@@ -624,7 +623,6 @@ public class PGL {
 
       pg.parent.setLayout(new BorderLayout());
       pg.parent.add(canvasAWT, BorderLayout.CENTER);
-//      pg.parent.validate();
       pg.parent.removeListeners(pg.parent);
       pg.parent.addListeners(canvasAWT);
 
@@ -642,7 +640,6 @@ public class PGL {
 
       pg.parent.setLayout(new BorderLayout());
       pg.parent.add(canvasNEWT, BorderLayout.CENTER);
-//      pg.parent.validate();
 
       if (events == NEWT) {
         NEWTMouseListener mouseListener = new NEWTMouseListener();
@@ -2809,6 +2806,30 @@ public class PGL {
   }
 
 
+  protected boolean hasFBOs() {
+    return context.hasBasicFBOSupport();
+  }
+
+
+  protected boolean hasShaders() {
+    if (context.hasGLSL()) return true;
+
+    // GLSL might still be available through extensions. For instance,
+    // GLContext.hasGLSL() gives false for older intel integrated chipsets on
+    // OSX, where OpenGL is 1.4 but shaders are available.
+    int major = getGLVersion()[0];
+    if (major < 2) {
+      String ext = getString(EXTENSIONS);
+      return ext.indexOf("_fragment_shader")  != -1 &&
+             ext.indexOf("_vertex_shader")    != -1 &&
+             ext.indexOf("_shader_objects")   != -1 &&
+             ext.indexOf("_shading_language") != -1;
+    }
+
+    return false;
+  }
+
+
   protected static ByteBuffer allocateDirectByteBuffer(int size) {
     int bytes = PApplet.max(MIN_DIRECT_BUFFER_SIZE, size) * SIZEOF_BYTE;
     return ByteBuffer.allocateDirect(bytes).order(ByteOrder.nativeOrder());
@@ -3248,12 +3269,13 @@ public class PGL {
       drawable = adrawable;
       context = adrawable.getContext();
       capabilities = adrawable.getChosenGLCapabilities();
+      gl = context.getGL();
 
-      if (!context.hasBasicFBOSupport()) {
-        throw new RuntimeException("No basic FBO support is available");
+      if (!hasFBOs()) {
+        throw new RuntimeException("Framebuffer objects are not supported by this hardware (or driver)");
       }
-      if (!context.hasGLSL()) {
-        throw new RuntimeException("No GLSL support is available");
+      if (!hasShaders()) {
+        throw new RuntimeException("GLSL shaders are not supported by this hardware (or driver)");
       }
     }
 
@@ -3289,6 +3311,7 @@ public class PGL {
       }
     }
 
+    @SuppressWarnings("deprecation")
     int peCount = peAction == MouseEvent.WHEEL ?
       (int) nativeEvent.getWheelRotation() :
       nativeEvent.getClickCount();

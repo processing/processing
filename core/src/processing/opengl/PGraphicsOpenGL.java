@@ -6128,19 +6128,6 @@ public class PGraphicsOpenGL extends PGraphics {
     OPENGL_EXTENSIONS = pgl.getString(PGL.EXTENSIONS);
     GLSL_VERSION      = pgl.getString(PGL.SHADING_LANGUAGE_VERSION);
 
-    int major = pgl.getGLVersion()[0];
-    if (major < 2) {
-      // GLSL might still be available through extensions.
-      if (OPENGL_EXTENSIONS.indexOf("_fragment_shader")  == -1 ||
-          OPENGL_EXTENSIONS.indexOf("_vertex_shader")    == -1 ||
-          OPENGL_EXTENSIONS.indexOf("_shader_objects")   == -1 ||
-          OPENGL_EXTENSIONS.indexOf("_shading_language") == -1) {
-        // GLSL extensions are not present, we cannot do anything else here.
-        throw new RuntimeException("Processing cannot run because GLSL shaders" +
-                                   " are not available.");
-      }
-    }
-
     npotTexSupported =
       -1 < OPENGL_EXTENSIONS.indexOf("_texture_non_power_of_two");
     autoMipmapGenSupported =

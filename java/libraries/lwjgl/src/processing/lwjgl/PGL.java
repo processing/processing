@@ -562,6 +562,13 @@ public class PGL extends processing.opengl.PGL {
 
   protected void update() {
     if (!fboLayerCreated) {
+      if (!hasFBOs()) {
+        throw new RuntimeException("Framebuffer objects are not supported by this hardware (or driver)");
+      }
+      if (!hasShaders()) {
+        throw new RuntimeException("GLSL shaders are not supported by this hardware (or driver)");
+      }      
+      
       String ext = getString(EXTENSIONS);
       if (-1 < ext.indexOf("texture_non_power_of_two")) {
         fboWidth = pg.width;
@@ -2511,7 +2518,33 @@ public class PGL extends processing.opengl.PGL {
     return res;
   }
 
+  
+  protected boolean hasFBOs() {
+    int major = getGLVersion()[0];
+    if (major < 2) {
+      String ext = getString(EXTENSIONS);
+      return ext.indexOf("_framebuffer_object")  != -1;
+    } 
+    return true; // Assuming FBOs are always available for OpenGL >= 2.0
+  }
+  
+  
+  protected boolean hasShaders() {
+    // GLSL might still be available through extensions. For instance,
+    // GLContext.hasGLSL() gives false for older intel integrated chipsets on
+    // OSX, where OpenGL is 1.4 but shaders are available.
+    int major = getGLVersion()[0];
+    if (major < 2) {
+      String ext = getString(EXTENSIONS);
+      return ext.indexOf("_fragment_shader")  != -1 &&
+             ext.indexOf("_vertex_shader")    != -1 &&
+             ext.indexOf("_shader_objects")   != -1 &&
+             ext.indexOf("_shading_language") != -1;
+    } 
+    return true; // Assuming shaders are always available for OpenGL >= 2.0
+  }  
 
+  
   protected static ByteBuffer allocateDirectByteBuffer(int size) {
     int bytes = PApplet.max(MIN_DIRECT_BUFFER_SIZE, size) * SIZEOF_BYTE;
     return ByteBuffer.allocateDirect(bytes).order(ByteOrder.nativeOrder());
