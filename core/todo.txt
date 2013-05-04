@@ -12,6 +12,12 @@ X   getFloatContent()
 X   getContent() or getStringContent()?
 X switch to CATEGORY instead of CATEGORICAL
 X removed createXML() and createTable()... just use 'new' for these
+X implement means for setting dpi in PNG images
+X   need to add something for API yet
+o   JAI handles setting image size for png (check javax.imageio?) 
+o   PNGEncodeParam png = PNGEncodeParam.getDefaultEncodeParam(bufImage);
+o   png.setPhysicalDimension(round(dpi*39.370079), round(dpi*39.370079), 1);
+o   JAI.create("filestore", bufImage, filename+".png", "PNG");
 
 mouse wheel
 X add mouse wheel support to 2.0 event system
@@ -44,6 +50,13 @@ X   ref: "negative values if the mouse wheel was rotated up or away from the use
 X   http://docs.oracle.com/javase/6/docs/api/java/awt/event/MouseWheelEvent.html#getWheelRotation()
 X   http://docs.oracle.com/javase/7/docs/api/java/awt/event/MouseWheelEvent.html#getWheelRotation()
 
+_ add options for image.save() (or sageImage?)
+_   add quality=[0,1] for jpeg images
+_   add dpi=[0,n] for for png images
+
+_ PImage.loadPixels() shouldn't be calling out to the renderer
+_   setting image.parent = null for it makes it work again for get().save() case
+_ PShape should be cached as well
 
 before release
 _ "deleted n framebuffer objects" 
