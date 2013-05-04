@@ -511,9 +511,15 @@ public class PGL extends processing.opengl.PGL {
     pg.parent.add(canvas, BorderLayout.CENTER);     
     
     try {      
-      PixelFormat format = new PixelFormat(32, request_alpha_bits,
-                                               request_depth_bits,
-                                               request_stencil_bits, 1);
+      DisplayMode[] modes = Display.getAvailableDisplayModes();
+      int bpp = 0; 
+      for (int i = 0; i < modes.length; i++) {
+        System.out.println(modes[i].getBitsPerPixel());
+        bpp = PApplet.max(modes[i].getBitsPerPixel(), bpp);
+      }
+      PixelFormat format = new PixelFormat(bpp, request_alpha_bits,
+                                                request_depth_bits,
+                                                request_stencil_bits, 1);
       Display.setDisplayMode(new DisplayMode(pg.parent.width, pg.parent.height));
       int argb = pg.backgroundColor;
       float r = ((argb >> 16) & 0xff) / 255.0f;
