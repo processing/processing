@@ -18,6 +18,10 @@ o   JAI handles setting image size for png (check javax.imageio?)
 o   PNGEncodeParam png = PNGEncodeParam.getDefaultEncodeParam(bufImage);
 o   png.setPhysicalDimension(round(dpi*39.370079), round(dpi*39.370079), 1);
 o   JAI.create("filestore", bufImage, filename+".png", "PNG");
+X tint() with JAVA2D does not automatically refresh (with possible fix)
+X   https://github.com/processing/processing/issues/1730
+X change how updatePixels() is called in PGraphicsJava2D
+X   only call setModified(), not updatePixels() in endDraw()
 
 mouse wheel
 X add mouse wheel support to 2.0 event system
@@ -63,9 +67,6 @@ _ "deleted n framebuffer objects"
 
 _ draw() called again before finishing on OS X (retina issue)
 _   https://github.com/processing/processing/issues/1709
-
-_ tint() with JAVA2D does not automatically refresh (with possible fix)
-_   https://github.com/processing/processing/issues/1730
 
 _ Linux sometimes not responding correctly w/ the size() command
 _   https://github.com/processing/processing/issues/1672

@@ -494,7 +494,8 @@ public class PImage implements PConstants, Cloneable {
 
 
   public void updatePixels() {  // ignore
-    updatePixelsImpl(0, 0, width, height);
+//    updatePixelsImpl(0, 0, width, height);
+    updatePixels(0, 0, width, height);
   }
 
 
@@ -530,11 +531,15 @@ public class PImage implements PConstants, Cloneable {
    * @param h height
    */
   public void updatePixels(int x, int y, int w, int h) {  // ignore
-    updatePixelsImpl(x, y, w, h);
-  }
-
-
-  protected void updatePixelsImpl(int x, int y, int w, int h) {
+//    updatePixelsImpl(x, y, w, h);
+//  }
+//
+//
+//  /**
+//   * Broken out as separate impl to signify that the w/y/w/h numbers have
+//   * already been tested and their bounds set properly.
+//   */
+//  protected void updatePixelsImpl(int x, int y, int w, int h) {
     int x2 = x + w;
     int y2 = y + h;
 
@@ -896,7 +901,8 @@ public class PImage implements PConstants, Cloneable {
   public void set(int x, int y, int c) {
     if ((x < 0) || (y < 0) || (x >= width) || (y >= height)) return;
     pixels[y*width + x] = c;
-    updatePixelsImpl(x, y, 1, 1);  // slow?
+    //updatePixelsImpl(x, y, 1, 1);  // slow?
+    updatePixels(x, y, 1, 1);  // slow?
   }
 
 
@@ -955,7 +961,8 @@ public class PImage implements PConstants, Cloneable {
       targetOffset += width;
     }
 
-    updatePixelsImpl(targetX, targetY, sourceWidth, sourceHeight);
+    //updatePixelsImpl(targetX, targetY, sourceWidth, sourceHeight);
+    updatePixels(targetX, targetY, sourceWidth, sourceHeight);
   }
 
 
