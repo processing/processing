@@ -22,11 +22,11 @@ public class About extends Window {
     super(frame);
     
     if (Toolkit.highResDisplay()) {
-      image = Toolkit.getLibImage("about-2x.jpg");
+      image = Toolkit.getLibImage("about-2x.jpg"); //$NON-NLS-1$
       width = image.getWidth(null) / 2;
       height = image.getHeight(null) / 2;
     } else {
-      image = Toolkit.getLibImage("about.jpg");
+      image = Toolkit.getLibImage("about.jpg"); //$NON-NLS-1$
       width = image.getWidth(null);
       height = image.getHeight(null);
     }
@@ -50,7 +50,7 @@ public class About extends Window {
     g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
                         RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
 
-    g.setFont(new Font("SansSerif", Font.PLAIN, 11));
+    g.setFont(new Font("SansSerif", Font.PLAIN, 11)); //$NON-NLS-1$
     g.setColor(Color.white);
     g.drawString(Base.VERSION_NAME, 50, 30);
   }

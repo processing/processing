@@ -64,7 +64,7 @@ public class Preferences {
 
   // what to call the feller
 
-  static final String PREFS_FILE = "preferences.txt";
+  static final String PREFS_FILE = "preferences.txt"; //$NON-NLS-1$
 
 
   // prompt text stuff
@@ -143,14 +143,14 @@ public class Preferences {
     // start by loading the defaults, in case something
     // important was deleted from the user prefs
     try {
-      load(Base.getLibStream("preferences.txt"));
+      load(Base.getLibStream("preferences.txt")); //$NON-NLS-1$
     } catch (Exception e) {
       Base.showError(null, "Could not read default settings.\n" +
                            "You'll need to reinstall Processing.", e);
     }
 
     // check for platform-specific properties in the defaults
-    String platformExt = "." + PConstants.platformNames[PApplet.platform];
+    String platformExt = "." + PConstants.platformNames[PApplet.platform]; //$NON-NLS-1$
     int platformExtLength = platformExt.length();
 //    Enumeration e = table.keys();
 //    while (e.hasMoreElements()) {
@@ -183,7 +183,7 @@ public class Preferences {
     defaults = (HashMap<String, String>) table.clone();
 
     // other things that have to be set explicitly for the defaults
-    setColor("run.window.bgcolor", SystemColor.control);
+    setColor("run.window.bgcolor", SystemColor.control); //$NON-NLS-1$
 
     // Load a prefs file if specified on the command line
 //    if (commandLinePrefs != null) {
@@ -219,7 +219,7 @@ public class Preferences {
 //      }
     }
 
-    PApplet.useNativeSelect = Preferences.getBoolean("chooser.files.native");
+    PApplet.useNativeSelect = Preferences.getBoolean("chooser.files.native"); //$NON-NLS-1$
   }
 
 
@@ -585,11 +585,11 @@ public class Preferences {
    * then send a message to the editor saying that it's time to do the same.
    */
   protected void applyFrame() {
-    setBoolean("editor.antialias", editorAntialiasBox.isSelected());
+    setBoolean("editor.antialias", editorAntialiasBox.isSelected()); //$NON-NLS-1$
 
 //    setBoolean("export.applet.separate_jar_files",
 //               exportSeparateBox.isSelected());
-    setBoolean("export.delete_target_folder",
+    setBoolean("export.delete_target_folder", //$NON-NLS-1$
                deletePreviousBox.isSelected());
 
 //    setBoolean("sketchbook.closing_last_window_quits",
@@ -598,16 +598,16 @@ public class Preferences {
     //setBoolean("sketchbook.auto_clean", sketchCleanBox.isSelected());
 
     // if the sketchbook path has changed, rebuild the menus
-    String oldPath = get("sketchbook.path");
+    String oldPath = get("sketchbook.path"); //$NON-NLS-1$
     String newPath = sketchbookLocationField.getText();
     if (!newPath.equals(oldPath)) {
       base.setSketchbookFolder(new File(newPath));
     }
 
 //    setBoolean("editor.external", externalEditorBox.isSelected());
-    setBoolean("update.check", checkUpdatesBox.isSelected());
+    setBoolean("update.check", checkUpdatesBox.isSelected()); //$NON-NLS-1$
 
-    int oldDisplayIndex = getInteger("run.display");
+    int oldDisplayIndex = getInteger("run.display"); //$NON-NLS-1$
     int displayIndex = 0;
     for (int d = 0; d < displaySelectionBox.getItemCount(); d++) {
       if (displaySelectionBox.getSelectedIndex() == d) {
@@ -615,20 +615,20 @@ public class Preferences {
       }
     }
     if (oldDisplayIndex != displayIndex) {
-      setInteger("run.display", displayIndex);
+      setInteger("run.display", displayIndex); //$NON-NLS-1$
       for (Editor editor : base.getEditors()) {
         editor.setSketchLocation(null);
       }
     }
 
-    setBoolean("run.options.memory", memoryOverrideBox.isSelected());
-    int memoryMin = Preferences.getInteger("run.options.memory.initial");
-    int memoryMax = Preferences.getInteger("run.options.memory.maximum");
+    setBoolean("run.options.memory", memoryOverrideBox.isSelected()); //$NON-NLS-1$
+    int memoryMin = Preferences.getInteger("run.options.memory.initial"); //$NON-NLS-1$
+    int memoryMax = Preferences.getInteger("run.options.memory.maximum"); //$NON-NLS-1$
     try {
       memoryMax = Integer.parseInt(memoryField.getText().trim());
       // make sure memory setting isn't too small
       if (memoryMax < memoryMin) memoryMax = memoryMin;
-      setInteger("run.options.memory.maximum", memoryMax);
+      setInteger("run.options.memory.maximum", memoryMax); //$NON-NLS-1$
     } catch (NumberFormatException e) {
       System.err.println("Ignoring bad memory setting");
     }
@@ -648,10 +648,10 @@ public class Preferences {
     // If a change has been made between 32- and 64-bit, the libraries need
     // to be reloaded so that their native paths are set correctly.
     if (Base.isMacOS()) {
-      String oldBits = get("run.options.bits");
-      String newBits = bitsThirtyTwoButton.isSelected() ? "32" : "64";
+      String oldBits = get("run.options.bits"); //$NON-NLS-1$
+      String newBits = bitsThirtyTwoButton.isSelected() ? "32" : "64"; //$NON-NLS-1$ //$NON-NLS-2$
       if (!oldBits.equals(newBits)) {
-        set("run.options.bits", newBits);
+        set("run.options.bits", newBits); //$NON-NLS-1$
         for (Mode m : base.getModeList()) {
           m.rebuildLibraryList();
         }
@@ -661,18 +661,18 @@ public class Preferences {
     String newSizeText = fontSizeField.getText();
     try {
       int newSize = Integer.parseInt(newSizeText.trim());
-      String pieces[] = PApplet.split(get("editor.font"), ',');
+      String pieces[] = PApplet.split(get("editor.font"), ','); //$NON-NLS-1$
       pieces[2] = String.valueOf(newSize);
-      set("editor.font", PApplet.join(pieces, ','));
+      set("editor.font", PApplet.join(pieces, ',')); //$NON-NLS-1$
 
     } catch (Exception e) {
-      System.err.println("ignoring invalid font size " + newSizeText);
+      Base.log("ignoring invalid font size " + newSizeText); //$NON-NLS-1$
     }
     
-    setBoolean("editor.input_method_support", inputMethodBox.isSelected());
+    setBoolean("editor.input_method_support", inputMethodBox.isSelected()); //$NON-NLS-1$
 
     if (autoAssociateBox != null) {
-      setBoolean("platform.auto_file_type_associations",
+      setBoolean("platform.auto_file_type_associations", //$NON-NLS-1$
                  autoAssociateBox.isSelected());
     }
 
@@ -683,14 +683,14 @@ public class Preferences {
 
 
   protected void showFrame() {
-    editorAntialiasBox.setSelected(getBoolean("editor.antialias"));
-    inputMethodBox.setSelected(getBoolean("editor.input_method_support"));
+    editorAntialiasBox.setSelected(getBoolean("editor.antialias")); //$NON-NLS-1$
+    inputMethodBox.setSelected(getBoolean("editor.input_method_support")); //$NON-NLS-1$
 
     // set all settings entry boxes to their actual status
 //    exportSeparateBox.
 //      setSelected(getBoolean("export.applet.separate_jar_files"));
     deletePreviousBox.
-      setSelected(getBoolean("export.delete_target_folder"));
+      setSelected(getBoolean("export.delete_target_folder")); //$NON-NLS-1$
 
     //closingLastQuitsBox.
     //  setSelected(getBoolean("sketchbook.closing_last_window_quits"));
@@ -700,14 +700,14 @@ public class Preferences {
     //  setSelected(getBoolean("sketchbook.auto_clean"));
 
     sketchbookLocationField.
-      setText(get("sketchbook.path"));
+      setText(get("sketchbook.path")); //$NON-NLS-1$
 //    externalEditorBox.
 //      setSelected(getBoolean("editor.external"));
     checkUpdatesBox.
-      setSelected(getBoolean("update.check"));
+      setSelected(getBoolean("update.check")); //$NON-NLS-1$
 
     updateDisplayList();
-    int displayNum = getInteger("run.display");
+    int displayNum = getInteger("run.display"); //$NON-NLS-1$
 //    System.out.println("display is " + displayNum + ", d count is " + displayCount);
     if (displayNum >= 0 && displayNum < displayCount) {
 //      System.out.println("setting num to " + displayNum);
@@ -715,19 +715,19 @@ public class Preferences {
     }
 
     memoryOverrideBox.
-      setSelected(getBoolean("run.options.memory"));
+      setSelected(getBoolean("run.options.memory")); //$NON-NLS-1$
     memoryField.
-      setText(get("run.options.memory.maximum"));
+      setText(get("run.options.memory.maximum")); //$NON-NLS-1$
 
     if (Base.isMacOS()) {
-      String bits = Preferences.get("run.options.bits");
-      if (bits.equals("32")) {
+      String bits = Preferences.get("run.options.bits"); //$NON-NLS-1$
+      if (bits.equals("32")) { //$NON-NLS-1$
         bitsThirtyTwoButton.setSelected(true);
-      } else if (bits.equals("64")) {
+      } else if (bits.equals("64")) { //$NON-NLS-1$
         bitsSixtyFourButton.setSelected(true);
       }
       // in case we go back and support OS X 10.5...
-      if (System.getProperty("os.version").startsWith("10.5")) {
+      if (System.getProperty("os.version").startsWith("10.5")) { //$NON-NLS-1$ //$NON-NLS-2$
         bitsSixtyFourButton.setSelected(true);
         bitsThirtyTwoButton.setEnabled(false);
       }
@@ -735,7 +735,7 @@ public class Preferences {
 
     if (autoAssociateBox != null) {
       autoAssociateBox.
-        setSelected(getBoolean("platform.auto_file_type_associations"));
+        setSelected(getBoolean("platform.auto_file_type_associations")); //$NON-NLS-1$
     }
 
     dialog.setVisible(true);
@@ -814,7 +814,7 @@ public class Preferences {
     String[] keyList = table.keySet().toArray(new String[table.size()]);
     keyList = PApplet.sort(keyList);
     for (String key : keyList) {
-      writer.println(key + "=" + table.get(key));
+      writer.println(key + "=" + table.get(key)); //$NON-NLS-1$
     }
 
     writer.flush();
@@ -883,7 +883,7 @@ public class Preferences {
 
 
   static public void setBoolean(String attribute, boolean value) {
-    set(attribute, value ? "true" : "false");
+    set(attribute, value ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
   }
 
 
@@ -916,7 +916,7 @@ public class Preferences {
   static public Color getColor(String name) {
     Color parsed = Color.GRAY;  // set a default
     String s = get(name);
-    if ((s != null) && (s.indexOf("#") == 0)) {
+    if ((s != null) && (s.indexOf("#") == 0)) { //$NON-NLS-1$
       try {
         parsed = new Color(Integer.parseInt(s.substring(1), 16));
       } catch (Exception e) { }
@@ -926,7 +926,7 @@ public class Preferences {
 
 
   static public void setColor(String attr, Color what) {
-    set(attr, "#" + PApplet.hex(what.getRGB() & 0xffffff, 6));
+    set(attr, "#" + PApplet.hex(what.getRGB() & 0xffffff, 6)); //$NON-NLS-1$
   }
 
 
@@ -950,10 +950,10 @@ public class Preferences {
 
     String name = pieces[0];
     int style = Font.PLAIN;  // equals zero
-    if (pieces[1].indexOf("bold") != -1) {
+    if (pieces[1].indexOf("bold") != -1) { //$NON-NLS-1$
       style |= Font.BOLD;
     }
-    if (pieces[1].indexOf("italic") != -1) {
+    if (pieces[1].indexOf("italic") != -1) { //$NON-NLS-1$
       style |= Font.ITALIC;
     }
     int size = PApplet.parseInt(pieces[2], 12);
@@ -968,21 +968,21 @@ public class Preferences {
   }
 
 
-  static public SyntaxStyle getStyle(String what /*, String dflt*/) {
-    String str = get("editor." + what + ".style"); //, dflt);
+  static public SyntaxStyle getStyle(String what) {
+    String str = get("editor." + what + ".style"); //, dflt); //$NON-NLS-1$ //$NON-NLS-2$
 
-    StringTokenizer st = new StringTokenizer(str, ",");
+    StringTokenizer st = new StringTokenizer(str, ","); //$NON-NLS-1$
 
     String s = st.nextToken();
-    if (s.indexOf("#") == 0) s = s.substring(1);
+    if (s.indexOf("#") == 0) s = s.substring(1); //$NON-NLS-1$
     Color color = Color.DARK_GRAY;
     try {
       color = new Color(Integer.parseInt(s, 16));
     } catch (Exception e) { }
 
     s = st.nextToken();
-    boolean bold = (s.indexOf("bold") != -1);
-    boolean italic = (s.indexOf("italic") != -1);
+    boolean bold = (s.indexOf("bold") != -1); //$NON-NLS-1$
+    boolean italic = (s.indexOf("italic") != -1); //$NON-NLS-1$
     //System.out.println(what + " = " + str + " " + bold + " " + italic);
 
     return new SyntaxStyle(color, italic, bold);

@@ -45,6 +45,14 @@ X get update text to align vertically
 X "Update" not working in the library manager
 X   https://github.com/processing/processing/issues/1701
 
+_ library with bad version number in version causes crash
+_ UnsatisfiedLinkError causes huge message... 
+_   error report cleanups haven't been fixed yet
+_ update mode images again from Casey
+_   also send pull request for Florian
+_ remove initRequirements from Base (no longer need JDI)
+_   move this into Android mode?
+
 
 2.0 FINAL / new interface
 _ most of theme probably moves back into lib
@@ -365,12 +373,6 @@ _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=
 
 DOC / Hacks
 
-_ JAI handles setting image size for png (check javax.imageio?) 
-_   PNGEncodeParam png = PNGEncodeParam.getDefaultEncodeParam(bufImage);
-_   png.setPhysicalDimension(round(dpi*39.370079), round(dpi*39.370079), 1);
-_   JAI.create("filestore", bufImage, filename+".png", "PNG");
-_ also an example of setting the jpeg compression (included in bug report)
-_   http://code.google.com/p/processing/issues/detail?id=58
 _ write a timer class/example library
 _ how do i add gui to a sketch?
 _   don't use awt components
