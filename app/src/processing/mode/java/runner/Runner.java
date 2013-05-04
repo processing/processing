@@ -676,7 +676,7 @@ public class Runner implements MessageConsumer {
     // suspend so we can step
     excReq.setSuspendPolicy(EventRequest.SUSPEND_ALL);
 //    excReq.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
-//  excReq.setSuspendPolicy(EventRequest.SUSPEND_NONE);  // another option?
+//    excReq.setSuspendPolicy(EventRequest.SUSPEND_NONE);  // another option?
     excReq.enable();
     
     Thread eventThread = new Thread() {
@@ -692,9 +692,10 @@ public class Runner implements MessageConsumer {
             for (Event event : eventSet) {
 //              System.out.println("EventThread.handleEvent -> " + event);
               if (event instanceof ExceptionEvent) {
-                for (ThreadReference thread : vm.allThreads()) {
-                  thread.suspend();
-                }
+//                for (ThreadReference thread : vm.allThreads()) {
+//                  System.out.println("thread : " + thread);
+////                  thread.suspend();
+//                }
                 exceptionEvent((ExceptionEvent) event);
               } else if (event instanceof VMDisconnectEvent) {
                 connected = false;
@@ -931,6 +932,14 @@ public class Runner implements MessageConsumer {
           return rex;
         }
       }
+//      for (Method m : ((ClassType) or.referenceType()).allMethods()) {
+//        System.out.println(m + " | " + m.signature() + " | " + m.genericSignature());
+//      }
+      // Implemented for 2.0b9, writes a stack trace when there's an internal error inside core.
+      method = ((ClassType) or.referenceType()).concreteMethodByName("printStackTrace", "()V");
+//      System.err.println("got method " + method);
+      or.invokeMethod(thread, method, new ArrayList<Value>(), ObjectReference.INVOKE_SINGLE_THREADED);
+      
     } catch (Exception e) {
       e.printStackTrace();
     }
