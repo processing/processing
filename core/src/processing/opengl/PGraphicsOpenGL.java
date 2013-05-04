@@ -6335,17 +6335,19 @@ public class PGraphicsOpenGL extends PGraphics {
     String[] source = parent.loadStrings(filename);
     int type = -1;
     for (int i = 0; i < source.length; i++) {
-      if (source[i].equals("#define PROCESSING_POINT_SHADER")) {
+      String line = source[i].trim();
+
+      if (line.indexOf("#define PROCESSING_POINT_SHADER") == 0) {
         type = PShader.POINT;
-      } else if (source[i].equals("#define PROCESSING_LINE_SHADER")) {
+      } else if (line.indexOf("#define PROCESSING_LINE_SHADER") == 0) {
         type = PShader.LINE;
-      } else if (source[i].equals("#define PROCESSING_COLOR_SHADER")) {
+      } else if (line.indexOf("#define PROCESSING_COLOR_SHADER") == 0) {
         type = PShader.COLOR;
-      } else if (source[i].equals("#define PROCESSING_LIGHT_SHADER")) {
+      } else if (line.indexOf("#define PROCESSING_LIGHT_SHADER") == 0) {
         type = PShader.LIGHT;
-      } else if (source[i].equals("#define PROCESSING_TEXTURE_SHADER")) {
+      } else if (line.indexOf("#define PROCESSING_TEXTURE_SHADER") == 0) {
         type = PShader.TEXTURE;
-      } else if (source[i].equals("#define PROCESSING_TEXLIGHT_SHADER")) {
+      } else if (line.indexOf("#define PROCESSING_TEXLIGHT_SHADER") == 0) {
         type = PShader.TEXLIGHT;
       }
     }
