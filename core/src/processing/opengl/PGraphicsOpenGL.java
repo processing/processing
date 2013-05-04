@@ -667,7 +667,7 @@ public class PGraphicsOpenGL extends PGraphics {
   @Override
   protected void finalize() throws Throwable {
     try {
-      PApplet.println("finalize surface");
+//      PApplet.println("finalize surface");
 
       deletePolyBuffers();
       deleteLineBuffers();
@@ -797,7 +797,7 @@ public class PGraphicsOpenGL extends PGraphics {
     for (GLResource res : finalized) {
       glTextureObjects.remove(res);
     }
-    PApplet.println("Deleted " + finalized.size() + " texture objects, " + glTextureObjects.size() + " remaining");
+//    PApplet.println("Deleted " + finalized.size() + " texture objects, " + glTextureObjects.size() + " remaining");
   }
 
   protected static void removeTextureObject(int id, int context) {
@@ -929,7 +929,7 @@ public class PGraphicsOpenGL extends PGraphics {
     for (GLResource res : finalized) {
       glFrameBuffers.remove(res);
     }
-    PApplet.println("Deleted " + finalized.size() + " framebuffer objects, " + glFrameBuffers.size() + " remaining");
+//    PApplet.println("Deleted " + finalized.size() + " framebuffer objects, " + glFrameBuffers.size() + " remaining");
   }
 
   protected static void removeFrameBufferObject(int id, int context) {
@@ -994,7 +994,7 @@ public class PGraphicsOpenGL extends PGraphics {
     for (GLResource res : finalized) {
       glRenderBuffers.remove(res);
     }
-    PApplet.println("Deleted " + finalized.size() + " renderbuffer objects, " + glRenderBuffers.size() + " remaining");
+//    PApplet.println("Deleted " + finalized.size() + " renderbuffer objects, " + glRenderBuffers.size() + " remaining");
   }
 
   protected static void removeRenderBufferObject(int id, int context) {
