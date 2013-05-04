@@ -514,7 +514,6 @@ public class PGL extends processing.opengl.PGL {
       DisplayMode[] modes = Display.getAvailableDisplayModes();
       int bpp = 0; 
       for (int i = 0; i < modes.length; i++) {
-        System.out.println(modes[i].getBitsPerPixel());
         bpp = PApplet.max(modes[i].getBitsPerPixel(), bpp);
       }
       PixelFormat format = new PixelFormat(bpp, request_alpha_bits,
@@ -527,8 +526,15 @@ public class PGL extends processing.opengl.PGL {
       float b = ((argb) & 0xff) / 255.0f; 
       Display.setInitialBackground(r, g, b); 
       Display.setParent(canvas);      
+      Display.setVSyncEnabled(true);
       Display.create(format);
-      Display.setVSyncEnabled(true);      
+
+      // Might be useful later to specify the context attributes.
+      // http://lwjgl.org/javadoc/org/lwjgl/opengl/ContextAttribs.html
+//      ContextAttribs contextAtrributes = new ContextAttribs(4, 0);
+//      contextAtrributes.withForwardCompatible(true);
+//      contextAtrributes.withProfileCore(true);
+//      Display.create(pixelFormat, contextAtrributes);      
     } catch (LWJGLException e) {
       e.printStackTrace();
     }
