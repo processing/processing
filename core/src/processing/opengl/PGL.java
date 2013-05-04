@@ -145,7 +145,7 @@ public class PGL {
     } else if (PApplet.platform == PConstants.MACOSX) {
       // NEWT solves the issues with Java 7 and OS X 10.7+: calls to frame
       // hanging the sketch, as well as cursor, etc.
-      toolkit = NEWT;
+      toolkit = AWT;
       events = AWT;
     } else if (PApplet.platform == PConstants.LINUX) {
       toolkit = NEWT; // AWT extremely broken on Linux?
@@ -614,7 +614,7 @@ public class PGL {
     caps.setDepthBits(request_depth_bits);
     caps.setStencilBits(request_stencil_bits);
     caps.setAlphaBits(request_alpha_bits);
-    caps.setDefaultColor(javaToNativeARGB(pg.backgroundColor));
+//    caps.setDefaultColor(javaToNativeARGB(pg.backgroundColor));
 
     if (toolkit == AWT) {
       canvasAWT = new GLCanvas(caps);
@@ -624,7 +624,7 @@ public class PGL {
 
       pg.parent.setLayout(new BorderLayout());
       pg.parent.add(canvasAWT, BorderLayout.CENTER);
-      pg.parent.validate();
+//      pg.parent.validate();
       pg.parent.removeListeners(pg.parent);
       pg.parent.addListeners(canvasAWT);
 
@@ -642,7 +642,7 @@ public class PGL {
 
       pg.parent.setLayout(new BorderLayout());
       pg.parent.add(canvasNEWT, BorderLayout.CENTER);
-      pg.parent.validate();
+//      pg.parent.validate();
 
       if (events == NEWT) {
         NEWTMouseListener mouseListener = new NEWTMouseListener();
