@@ -957,7 +957,8 @@ public class PGL extends processing.opengl.PGL {
       frontTex = backTex;
       backTex = temp;
     }
-    flush();
+//    flush();
+    finish();
   }
 
 

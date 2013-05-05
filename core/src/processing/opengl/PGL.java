@@ -1175,7 +1175,8 @@ public class PGL {
         backTex = temp;
       }
     }
-    flush();
+//    flush();
+    finish();
   }
 
 
