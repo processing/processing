@@ -359,6 +359,13 @@ public class PGL extends processing.opengl.PGL {
   protected static KeyPoller keyPoller;
   protected static MousePoller mousePoller;
 
+  /** Desired target framerate */
+  protected float targetFps = 60;
+  protected float currentFps = 60;
+  protected boolean setFps = false;
+  protected int fcount, lastm;
+  protected int fint = 3; 
+  
   /** Which texturing targets are enabled */
   protected static boolean[] texturingTargets = { false, false };
 
@@ -483,6 +490,10 @@ public class PGL extends processing.opengl.PGL {
 
 
   protected void setFrameRate(float framerate) {
+    if (targetFps != framerate) {
+      targetFps = currentFps = framerate;
+      setFps = true;      
+    }
   }
 
 
@@ -957,8 +968,19 @@ public class PGL extends processing.opengl.PGL {
       frontTex = backTex;
       backTex = temp;
     }
-//    flush();
-    finish();
+
+    // call (gl)finish() only if the rendering of each frame is taking too long,
+    // to make sure that commands are not accumulating in the GL command queue.
+    fcount += 1;
+    int m = pg.parent.millis();
+    if (m - lastm > 1000 * fint) {
+      currentFps = (float)(fcount) / fint;
+      fcount = 0;
+      lastm = m;
+    }
+    if (currentFps < 0.5f * targetFps) {
+      finish();
+    }
   }
 
 

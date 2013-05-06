@@ -416,8 +416,11 @@ public class PGL {
   protected static PGLListener listener;
 
   /** Desired target framerate */
-  protected float targetFramerate = 60;
-  protected boolean setFramerate = false;
+  protected float targetFps = 60;
+  protected float currentFps = 60;
+  protected boolean setFps = false;
+  protected int fcount, lastm;
+  protected int fint = 3;
 
   /** Which texturing targets are enabled */
   protected static boolean[] texturingTargets = { false, false };
@@ -557,7 +560,7 @@ public class PGL {
 
 
   protected void setFrameRate(float framerate) {
-    if (targetFramerate != framerate) {
+    if (targetFps != framerate) {
       if (60 < framerate) {
         // Disables v-sync
         gl.setSwapInterval(0);
@@ -566,15 +569,15 @@ public class PGL {
       } else {
         gl.setSwapInterval(2);
       }
-      if ((60 < framerate && targetFramerate <= 60) ||
-          (framerate <= 60 && 60 < targetFramerate)) {
+      if ((60 < framerate && targetFps <= 60) ||
+          (framerate <= 60 && 60 < targetFps)) {
         // Enabling/disabling v-sync, we force a
         // surface reinitialization to avoid screen
         // no-paint issue observed on MacOSX.
         pg.initialized = false;
       }
-      targetFramerate = framerate;
-      setFramerate = true;
+      targetFps = currentFps = framerate;
+      setFps = true;
     }
   }
 
@@ -593,7 +596,7 @@ public class PGL {
         pg.parent.remove(canvasNEWT);
       }
       sinkFBO = backFBO = frontFBO = null;
-      setFramerate = false;
+      setFps = false;
     }
 
     // Setting up the desired GL capabilities;
@@ -617,6 +620,9 @@ public class PGL {
 
     if (toolkit == AWT) {
       canvasAWT = new GLCanvas(caps);
+
+      //canvas = new GLCanvas(caps, context);
+
       canvasAWT.setBounds(0, 0, pg.width, pg.height);
       canvasAWT.setBackground(new Color(pg.backgroundColor, true));
       canvasAWT.setFocusable(true);
@@ -694,8 +700,8 @@ public class PGL {
 
 
   protected void update() {
-    if (!setFramerate) {
-      setFrameRate(targetFramerate);
+    if (!setFps) {
+      setFrameRate(targetFps);
     }
     if (USE_JOGL_FBOLAYER) return;
 
@@ -1138,7 +1144,6 @@ public class PGL {
     }
   }
 
-
   protected void endDraw(boolean clear0) {
     if (USE_JOGL_FBOLAYER) {
       if (!clear0 && isFBOBacked() && !isMultisampled()) {
@@ -1175,8 +1180,19 @@ public class PGL {
         backTex = temp;
       }
     }
-//    flush();
-    finish();
+
+    // call (gl)finish() only if the rendering of each frame is taking too long,
+    // to make sure that commands are not accumulating in the GL command queue.
+    fcount += 1;
+    int m = pg.parent.millis();
+    if (m - lastm > 1000 * fint) {
+      currentFps = (float)(fcount) / fint;
+      fcount = 0;
+      lastm = m;
+    }
+    if (currentFps < 0.5f * targetFps) {
+      finish();
+    }
   }
 
 
