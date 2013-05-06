@@ -82,8 +82,8 @@ public abstract class Mode {
    */
   protected ClassLoader classLoader;
 
-  static final int BACKGROUND_WIDTH = 580;
-  static final int BACKGROUND_HEIGHT = 250;
+  static final int BACKGROUND_WIDTH = 1025;
+  static final int BACKGROUND_HEIGHT = 65;
   protected Image backgroundImage;  
 
 //  public Mode(Base base, File folder) {
@@ -170,9 +170,13 @@ public abstract class Mode {
    */
   public void setupGUI() {
     try {
-      //theme = new Settings(new File(folder, "theme/theme.txt"));
+      // First load the default theme data for the whole PDE. 
       theme = new Settings(Base.getContentFile("lib/theme.txt"));
       
+      // The mode-specific theme.txt file should only contain additions, 
+      // and in extremely rare cases, it might override entries from the 
+      // main theme. Do not override for style changes unless they are 
+      // objectively necessary for your Mode.
       File modeTheme = new File(folder, "theme/theme.txt");
       if (modeTheme.exists()) {
         // Override the built-in settings with what the theme provides
@@ -182,8 +186,7 @@ public abstract class Mode {
       // other things that have to be set explicitly for the defaults
       theme.setColor("run.window.bgcolor", SystemColor.control);
 
-      String suffix = Toolkit.highResDisplay() ? "-2x.png" : ".png";
-      backgroundImage = loadImage("theme/mode" + suffix);
+      loadBackground();
 
     } catch (IOException e) {
       Base.showError("Problem loading theme.txt",
@@ -192,8 +195,30 @@ public abstract class Mode {
   }
   
   
+  protected void loadBackground() {
+    String suffix = Toolkit.highResDisplay() ? "-2x.png" : ".png";
+    backgroundImage = loadImage("theme/mode" + suffix);
+    if (backgroundImage == null) {
+      // If the image wasn't available, try the other resolution.
+      // i.e. we don't (currently) have low-res versions of mode.png,
+      // so this will grab the 2x version and scale it when drawn.
+      suffix = !Toolkit.highResDisplay() ? "-2x.png" : ".png";
+      backgroundImage = loadImage("theme/mode" + suffix);
+    }
+  }
+  
+  
   public void drawBackground(Graphics g, int offset) {
     if (backgroundImage != null) {
+      if (!Toolkit.highResDisplay()) {
+        // Image might be downsampled from a 2x version. If so, we need nice
+        // anti-aliasing for the very geometric images we're using.
+        Graphics2D g2 = (Graphics2D) g;
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                            RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                            RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+      }
       g.drawImage(backgroundImage, 0, -offset, 
                   BACKGROUND_WIDTH, BACKGROUND_HEIGHT, null);
     }
