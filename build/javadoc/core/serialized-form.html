@@ -88,6 +88,18 @@
 <div class="block">The frame containing this applet (if any)</div>
 </li>
 <li class="blockList">
+<h4>useActive</h4>
+<pre>boolean useActive</pre>
+</li>
+<li class="blockList">
+<h4>useStrategy</h4>
+<pre>boolean useStrategy</pre>
+</li>
+<li class="blockList">
+<h4>canvas</h4>
+<pre>java.awt.Canvas canvas</pre>
+</li>
+<li class="blockList">
 <h4>displayWidth</h4>
 <pre>int displayWidth</pre>
 <div class="block">( begin auto-generated from screenWidth.xml )
@@ -363,6 +375,7 @@
 <li class="blockList">
 <h4>mouseEvent</h4>
 <pre><a href="processing/event/MouseEvent.html" title="class in processing.event">MouseEvent</a> mouseEvent</pre>
+<div class="block"><span class="strong">Deprecated.</span>&nbsp;<i>Use a mouse event handler that passes an event instead.</i></div>
 </li>
 <li class="blockList">
 <h4>key</h4>
@@ -448,6 +461,7 @@
 <li class="blockList">
 <h4>keyEvent</h4>
 <pre><a href="processing/event/KeyEvent.html" title="class in processing.event">KeyEvent</a> keyEvent</pre>
+<div class="block"><span class="strong">Deprecated.</span>&nbsp;<i>Use a key event handler that passes an event instead.</i></div>
 <div class="block">The last KeyEvent object passed into a mouse function.</div>
 </li>
 <li class="blockList">
@@ -555,6 +569,11 @@
 <div class="block">true if this sketch is being run by the PDE</div>
 </li>
 <li class="blockList">
+<h4>retina</h4>
+<pre>boolean retina</pre>
+<div class="block">Not official API, using internally because of the tweaks required.</div>
+</li>
+<li class="blockList">
 <h4>registerMap</h4>
 <pre>java.util.HashMap&lt;K,V&gt; registerMap</pre>
 <div class="block">Map of registered methods, stored by name.</div>
@@ -566,6 +585,10 @@
 <li class="blockList">
 <h4>keyEventMethods</h4>
 <pre>processing.core.PApplet.RegisteredMethods keyEventMethods</pre>
+</li>
+<li class="blockList">
+<h4>insideDraw</h4>
+<pre>boolean insideDraw</pre>
 </li>
 <li class="blockList">
 <h4>eventQueue</h4>
@@ -581,7 +604,7 @@
 </li>
 <li class="blockList">
 <h4>invisibleCursor</h4>
-<pre><a href="processing/core/PImage.html" title="class in processing.core">PImage</a> invisibleCursor</pre>
+<pre>java.awt.Cursor invisibleCursor</pre>
 </li>
 <li class="blockList">
 <h4>internalRandom</h4>
@@ -714,11 +737,6 @@
 <h4>node</h4>
 <pre>org.w3c.dom.Node node</pre>
 <div class="block">The internal representation, a DOM node.</div>
-</li>
-<li class="blockList">
-<h4>name</h4>
-<pre>java.lang.String name</pre>
-<div class="block">Cached locally because it's used often.</div>
 </li>
 <li class="blockList">
 <h4>parent</h4>

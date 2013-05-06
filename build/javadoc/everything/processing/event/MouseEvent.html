@@ -146,6 +146,10 @@ extends <a href="../../processing/event/Event.html" title="class in processing.e
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><strong><a href="../../processing/event/MouseEvent.html#RELEASE">RELEASE</a></strong></code>&nbsp;</td>
 </tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static int</code></td>
+<td class="colLast"><code><strong><a href="../../processing/event/MouseEvent.html#WHEEL">WHEEL</a></strong></code>&nbsp;</td>
+</tr>
 </table>
 <ul class="blockList">
 <li class="blockList"><a name="fields_inherited_from_class_processing.event.Event">
@@ -175,7 +179,7 @@ extends <a href="../../processing/event/Event.html" title="class in processing.e
           int&nbsp;x,
           int&nbsp;y,
           int&nbsp;button,
-          int&nbsp;clickCount)</code>&nbsp;</td>
+          int&nbsp;count)</code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -193,14 +197,29 @@ extends <a href="../../processing/event/Event.html" title="class in processing.e
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>float</code></td>
+<td class="colLast"><code><strong><a href="../../processing/event/MouseEvent.html#getAmount()">getAmount</a></strong>()</code>
+<div class="block"><strong>Deprecated.</strong>&nbsp;</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../processing/event/MouseEvent.html#getButton()">getButton</a></strong>()</code>
 <div class="block">Which button was pressed, either LEFT, CENTER, or RIGHT.</div>
 </td>
 </tr>
+<tr class="altColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../processing/event/MouseEvent.html#getClickCount()">getClickCount</a></strong>()</code>
+<div class="block"><strong>Deprecated.</strong>&nbsp;</div>
+</td>
+</tr>
 <tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><strong><a href="../../processing/event/MouseEvent.html#getClickCount()">getClickCount</a></strong>()</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../processing/event/MouseEvent.html#getCount()">getCount</a></strong>()</code>
+<div class="block">Number of clicks for mouse button events, or the number of steps (positive
+ or negative depending on direction) for a mouse wheel event.</div>
+</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>int</code></td>
@@ -302,11 +321,21 @@ extends <a href="../../processing/event/Event.html" title="class in processing.e
 <a name="EXIT">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>EXIT</h4>
 <pre>public static final&nbsp;int EXIT</pre>
 <dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#processing.event.MouseEvent.EXIT">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="WHEEL">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>WHEEL</h4>
+<pre>public static final&nbsp;int WHEEL</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#processing.event.MouseEvent.WHEEL">Constant Field Values</a></dd></dl>
 </li>
 </ul>
 </li>
@@ -330,7 +359,7 @@ extends <a href="../../processing/event/Event.html" title="class in processing.e
           int&nbsp;x,
           int&nbsp;y,
           int&nbsp;button,
-          int&nbsp;clickCount)</pre>
+          int&nbsp;count)</pre>
 </li>
 </ul>
 </li>
@@ -372,10 +401,41 @@ extends <a href="../../processing/event/Event.html" title="class in processing.e
 <a name="getClickCount()">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>getClickCount</h4>
-<pre>public&nbsp;int&nbsp;getClickCount()</pre>
+<pre>@Deprecated
+public&nbsp;int&nbsp;getClickCount()</pre>
+<div class="block"><span class="strong">Deprecated.</span>&nbsp;</div>
+<div class="block">Do not use, getCount() is the correct method.</div>
+</li>
+</ul>
+<a name="getAmount()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getAmount</h4>
+<pre>@Deprecated
+public&nbsp;float&nbsp;getAmount()</pre>
+<div class="block"><span class="strong">Deprecated.</span>&nbsp;</div>
+<div class="block">Do not use, getCount() is the correct method.</div>
+</li>
+</ul>
+<a name="getCount()">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>getCount</h4>
+<pre>public&nbsp;int&nbsp;getCount()</pre>
+<div class="block">Number of clicks for mouse button events, or the number of steps (positive
+ or negative depending on direction) for a mouse wheel event.
+ Wheel events follow Java (see <a href="http://docs.oracle.com/javase/6/docs/api/java/awt/event/MouseWheelEvent.html#getWheelRotation()">here</a>), so
+ getAmount() will return "negative values if the mouse wheel was rotated
+ up or away from the user" and positive values in the other direction.
+ On Mac OS X, this will be reversed when "natural" scrolling is enabled
+ in System Preferences &rarr Mouse.</div>
 </li>
 </ul>
 </li>

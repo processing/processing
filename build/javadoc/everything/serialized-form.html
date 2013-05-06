@@ -67,6 +67,32 @@
 <li class="blockList">
 <h2 title="Package">Package&nbsp;processing.app</h2>
 <ul class="blockList">
+<li class="blockList"><a name="processing.app.About">
+<!--   -->
+</a>
+<h3>Class <a href="processing/app/About.html" title="class in processing.app">processing.app.About</a> extends java.awt.Window implements Serializable</h3>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>image</h4>
+<pre>java.awt.Image image</pre>
+</li>
+<li class="blockList">
+<h4>width</h4>
+<pre>int width</pre>
+</li>
+<li class="blockListLast">
+<h4>height</h4>
+<pre>int height</pre>
+</li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="blockList"><a name="processing.app.Editor">
 <!--   -->
 </a>
@@ -272,6 +298,10 @@
 <pre>java.awt.Color[] textColor</pre>
 </li>
 <li class="blockList">
+<h4>tabColor</h4>
+<pre>java.awt.Color[] tabColor</pre>
+</li>
+<li class="blockList">
 <h4>editor</h4>
 <pre><a href="processing/app/Editor.html" title="class in processing.app">Editor</a> editor</pre>
 </li>
@@ -442,14 +472,6 @@
 <li class="blockList">
 <h4>sizeH</h4>
 <pre>int sizeH</pre>
-</li>
-<li class="blockList">
-<h4>imageW</h4>
-<pre>int imageW</pre>
-</li>
-<li class="blockList">
-<h4>imageH</h4>
-<pre>int imageH</pre>
 </li>
 <li class="blockList">
 <h4>cancelButton</h4>
@@ -694,15 +716,15 @@
 </li>
 <li class="blockList">
 <h4>selectedPanel</h4>
-<pre>processing.app.contrib.ContributionListPanel.ContributionPanel selectedPanel</pre>
+<pre>processing.app.contrib.ContributionPanel selectedPanel</pre>
 </li>
 <li class="blockList">
-<h4>statusPlaceholder</h4>
-<pre>javax.swing.JPanel statusPlaceholder</pre>
+<h4>status</h4>
+<pre>processing.app.contrib.StatusPanel status</pre>
 </li>
 <li class="blockList">
-<h4>permaFilter</h4>
-<pre><a href="processing/app/contrib/ContributionListing.Filter.html" title="interface in processing.app.contrib">ContributionListing.Filter</a> permaFilter</pre>
+<h4>filter</h4>
+<pre>processing.app.contrib.ContributionFilter filter</pre>
 </li>
 <li class="blockListLast">
 <h4>contribListing</h4>
@@ -750,6 +772,10 @@
 <li class="blockList">
 <h4>caretTimer</h4>
 <pre>javax.swing.Timer caretTimer</pre>
+</li>
+<li class="blockList">
+<h4>DISABLE_CARET</h4>
+<pre>boolean DISABLE_CARET</pre>
 </li>
 <li class="blockList">
 <h4>painter</h4>
@@ -1151,6 +1177,18 @@
 <div class="block">The frame containing this applet (if any)</div>
 </li>
 <li class="blockList">
+<h4>useActive</h4>
+<pre>boolean useActive</pre>
+</li>
+<li class="blockList">
+<h4>useStrategy</h4>
+<pre>boolean useStrategy</pre>
+</li>
+<li class="blockList">
+<h4>canvas</h4>
+<pre>java.awt.Canvas canvas</pre>
+</li>
+<li class="blockList">
 <h4>displayWidth</h4>
 <pre>int displayWidth</pre>
 <div class="block">( begin auto-generated from screenWidth.xml )
@@ -1426,6 +1464,7 @@
 <li class="blockList">
 <h4>mouseEvent</h4>
 <pre><a href="processing/event/MouseEvent.html" title="class in processing.event">MouseEvent</a> mouseEvent</pre>
+<div class="block"><span class="strong">Deprecated.</span>&nbsp;<i>Use a mouse event handler that passes an event instead.</i></div>
 </li>
 <li class="blockList">
 <h4>key</h4>
@@ -1511,6 +1550,7 @@
 <li class="blockList">
 <h4>keyEvent</h4>
 <pre><a href="processing/event/KeyEvent.html" title="class in processing.event">KeyEvent</a> keyEvent</pre>
+<div class="block"><span class="strong">Deprecated.</span>&nbsp;<i>Use a key event handler that passes an event instead.</i></div>
 <div class="block">The last KeyEvent object passed into a mouse function.</div>
 </li>
 <li class="blockList">
@@ -1618,6 +1658,11 @@
 <div class="block">true if this sketch is being run by the PDE</div>
 </li>
 <li class="blockList">
+<h4>retina</h4>
+<pre>boolean retina</pre>
+<div class="block">Not official API, using internally because of the tweaks required.</div>
+</li>
+<li class="blockList">
 <h4>registerMap</h4>
 <pre>java.util.HashMap&lt;K,V&gt; registerMap</pre>
 <div class="block">Map of registered methods, stored by name.</div>
@@ -1629,6 +1674,10 @@
 <li class="blockList">
 <h4>keyEventMethods</h4>
 <pre>processing.core.PApplet.RegisteredMethods keyEventMethods</pre>
+</li>
+<li class="blockList">
+<h4>insideDraw</h4>
+<pre>boolean insideDraw</pre>
 </li>
 <li class="blockList">
 <h4>eventQueue</h4>
@@ -1644,7 +1693,7 @@
 </li>
 <li class="blockList">
 <h4>invisibleCursor</h4>
-<pre><a href="processing/core/PImage.html" title="class in processing.core">PImage</a> invisibleCursor</pre>
+<pre>java.awt.Cursor invisibleCursor</pre>
 </li>
 <li class="blockList">
 <h4>internalRandom</h4>
@@ -1779,11 +1828,6 @@
 <div class="block">The internal representation, a DOM node.</div>
 </li>
 <li class="blockList">
-<h4>name</h4>
-<pre>java.lang.String name</pre>
-<div class="block">Cached locally because it's used often.</div>
-</li>
-<li class="blockList">
 <h4>parent</h4>
 <pre><a href="processing/data/XML.html" title="class in processing.data">XML</a> parent</pre>
 <div class="block">The parent element.</div>
@@ -1792,92 +1836,6 @@
 <h4>children</h4>
 <pre><a href="processing/data/XML.html" title="class in processing.data">XML</a>[] children</pre>
 <div class="block">Child elements, once loaded.</div>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="blockList">
-<h2 title="Package">Package&nbsp;processing.mode.android</h2>
-<ul class="blockList">
-<li class="blockList"><a name="processing.mode.android.AndroidEditor">
-<!--   -->
-</a>
-<h3>Class <a href="processing/mode/android/AndroidEditor.html" title="class in processing.mode.android">processing.mode.android.AndroidEditor</a> extends <a href="processing/mode/java/JavaEditor.html" title="class in processing.mode.java">JavaEditor</a> implements Serializable</h3>
-<ul class="blockList">
-<li class="blockList"><a name="serializedForm">
-<!--   -->
-</a>
-<h3>Serialized Fields</h3>
-<ul class="blockList">
-<li class="blockListLast">
-<h4>androidMode</h4>
-<pre><a href="processing/mode/android/AndroidMode.html" title="class in processing.mode.android">AndroidMode</a> androidMode</pre>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="blockList"><a name="processing.mode.android.AndroidToolbar">
-<!--   -->
-</a>
-<h3>Class <a href="processing/mode/android/AndroidToolbar.html" title="class in processing.mode.android">processing.mode.android.AndroidToolbar</a> extends <a href="processing/app/EditorToolbar.html" title="class in processing.app">EditorToolbar</a> implements Serializable</h3>
-</li>
-<li class="blockList"><a name="processing.mode.android.BadSDKException">
-<!--   -->
-</a>
-<h3>Class <a href="processing/mode/android/BadSDKException.html" title="class in processing.mode.android">processing.mode.android.BadSDKException</a> extends java.lang.Exception implements Serializable</h3>
-</li>
-<li class="blockList"><a name="processing.mode.android.Export">
-<!--   -->
-</a>
-<h3>Class processing.mode.android.Export extends java.lang.Object implements Serializable</h3>
-</li>
-<li class="blockList"><a name="processing.mode.android.Keys">
-<!--   -->
-</a>
-<h3>Class <a href="processing/mode/android/Keys.html" title="class in processing.mode.android">processing.mode.android.Keys</a> extends javax.swing.JFrame implements Serializable</h3>
-<ul class="blockList">
-<li class="blockList"><a name="serializedForm">
-<!--   -->
-</a>
-<h3>Serialized Fields</h3>
-<ul class="blockList">
-<li class="blockListLast">
-<h4>editor</h4>
-<pre><a href="processing/app/Editor.html" title="class in processing.app">Editor</a> editor</pre>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="blockList"><a name="processing.mode.android.Permissions">
-<!--   -->
-</a>
-<h3>Class <a href="processing/mode/android/Permissions.html" title="class in processing.mode.android">processing.mode.android.Permissions</a> extends javax.swing.JFrame implements Serializable</h3>
-<ul class="blockList">
-<li class="blockList"><a name="serializedForm">
-<!--   -->
-</a>
-<h3>Serialized Fields</h3>
-<ul class="blockList">
-<li class="blockList">
-<h4>permissionScroller</h4>
-<pre>javax.swing.JScrollPane permissionScroller</pre>
-</li>
-<li class="blockList">
-<h4>permissionList</h4>
-<pre>javax.swing.JList&lt;E&gt; permissionList</pre>
-</li>
-<li class="blockList">
-<h4>descriptionLabel</h4>
-<pre>javax.swing.JLabel descriptionLabel</pre>
-</li>
-<li class="blockListLast">
-<h4>sketch</h4>
-<pre><a href="processing/app/Sketch.html" title="class in processing.app">Sketch</a> sketch</pre>
 </li>
 </ul>
 </li>
@@ -1918,64 +1876,6 @@
 <!--   -->
 </a>
 <h3>Class <a href="processing/mode/java/JavaToolbar.html" title="class in processing.mode.java">processing.mode.java.JavaToolbar</a> extends <a href="processing/app/EditorToolbar.html" title="class in processing.app">EditorToolbar</a> implements Serializable</h3>
-</li>
-</ul>
-</li>
-<li class="blockList">
-<h2 title="Package">Package&nbsp;processing.mode.javascript</h2>
-<ul class="blockList">
-<li class="blockList"><a name="processing.mode.javascript.JavaScriptEditor">
-<!--   -->
-</a>
-<h3>Class <a href="processing/mode/javascript/JavaScriptEditor.html" title="class in processing.mode.javascript">processing.mode.javascript.JavaScriptEditor</a> extends <a href="processing/mode/javascript/ServingEditor.html" title="class in processing.mode.javascript">ServingEditor</a> implements Serializable</h3>
-<ul class="blockList">
-<li class="blockList"><a name="serializedForm">
-<!--   -->
-</a>
-<h3>Serialized Fields</h3>
-<ul class="blockList">
-<li class="blockList">
-<h4>jsMode</h4>
-<pre><a href="processing/mode/javascript/JavaScriptMode.html" title="class in processing.mode.javascript">JavaScriptMode</a> jsMode</pre>
-</li>
-<li class="blockList">
-<h4>directivesEditor</h4>
-<pre><a href="processing/mode/javascript/DirectivesEditor.html" title="class in processing.mode.javascript">DirectivesEditor</a> directivesEditor</pre>
-</li>
-<li class="blockListLast">
-<h4>listener</h4>
-<pre><a href="processing/mode/java/PdeKeyListener.html" title="class in processing.mode.java">PdeKeyListener</a> listener</pre>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="blockList"><a name="processing.mode.javascript.JavaScriptToolbar">
-<!--   -->
-</a>
-<h3>Class <a href="processing/mode/javascript/JavaScriptToolbar.html" title="class in processing.mode.javascript">processing.mode.javascript.JavaScriptToolbar</a> extends <a href="processing/app/EditorToolbar.html" title="class in processing.app">EditorToolbar</a> implements Serializable</h3>
-</li>
-<li class="blockList"><a name="processing.mode.javascript.ServingEditor">
-<!--   -->
-</a>
-<h3>Class <a href="processing/mode/javascript/ServingEditor.html" title="class in processing.mode.javascript">processing.mode.javascript.ServingEditor</a> extends <a href="processing/app/Editor.html" title="class in processing.app">Editor</a> implements Serializable</h3>
-<ul class="blockList">
-<li class="blockList"><a name="serializedForm">
-<!--   -->
-</a>
-<h3>Serialized Fields</h3>
-<ul class="blockList">
-<li class="blockList">
-<h4>server</h4>
-<pre>processing.mode.javascript.BasicServer server</pre>
-</li>
-<li class="blockListLast">
-<h4>showSizeWarning</h4>
-<pre>boolean showSizeWarning</pre>
-</li>
-</ul>
-</li>
-</ul>
 </li>
 </ul>
 </li>

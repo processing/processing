@@ -45,6 +45,9 @@ X get update text to align vertically
 X "Update" not working in the library manager
 X   https://github.com/processing/processing/issues/1701
 
+_ move old Google Code SVN back to processing.org
+_   then cull out the old branches/tags from the Github repo
+
 _ library with bad version number in version causes crash
 _ UnsatisfiedLinkError causes huge message... 
 _   error report cleanups haven't been fixed yet
@@ -980,7 +983,13 @@ _   list of license issues
 _   http://code.google.com/p/processing/issues/detail?id=575
 _ Internationalization
 _   http://code.google.com/p/processing/issues/detail?id=593
-_   l10n, i18n of environment/core - Arduino pushing on this one
+_   l10n, i18n of environment/core
+_   http://docs.oracle.com/javase/tutorial/i18n/format/messageintro.html
+_   http://docs.oracle.com/javase/tutorial/i18n/format/numberFormat.html
+_   http://docs.oracle.com/javase/tutorial/i18n/format/choiceFormat.html
+_   http://docs.oracle.com/javase/tutorial/i18n/format/messageFormat.html
+_   http://docs.oracle.com/javase/7/docs/api/java/text/MessageFormat.html
+_   http://docs.oracle.com/javase/tutorial/i18n/intro/checklist.html
 _ write up code guidelines for project
 _   make proper Eclipse style prefs to reinforce
 _ write up guidelines for modes

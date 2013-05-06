@@ -890,9 +890,11 @@
 -->
 
     <!-- set the MIME type so that Google Code shows the files properly -->
+<!--
     <exec executable="find" dir=".">
       <arg line="javadoc -name '*.html' -exec svn propset svn:mime-type text/html {} ';'" />
     </exec>
+-->
 
   </target>
 

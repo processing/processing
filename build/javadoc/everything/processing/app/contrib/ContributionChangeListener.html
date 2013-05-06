@@ -2,13 +2,13 @@
 <!-- NewPage -->
 <html lang="en">
 <head>
-<title>ContributionListing.ContributionChangeListener</title>
+<title>ContributionChangeListener</title>
 <link rel="stylesheet" type="text/css" href="../../../stylesheet.css" title="Style">
 </head>
 <body>
 <script type="text/javascript"><!--
     if (location.href.indexOf('is-external=true') == -1) {
-        parent.document.title="ContributionListing.ContributionChangeListener";
+        parent.document.title="ContributionChangeListener";
     }
 //-->
 </script>
@@ -33,12 +33,12 @@
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../processing/app/contrib/ContributionListing.html" title="class in processing.app.contrib"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../../processing/app/contrib/ContributionListing.Filter.html" title="interface in processing.app.contrib"><span class="strong">Next Class</span></a></li>
+<li><a href="../../../processing/app/contrib/Contribution.html" title="class in processing.app.contrib"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../../processing/app/contrib/ContributionListing.html" title="class in processing.app.contrib"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
-<li><a href="../../../index.html?processing/app/contrib/ContributionListing.ContributionChangeListener.html" target="_top">Frames</a></li>
-<li><a href="ContributionListing.ContributionChangeListener.html" target="_top">No Frames</a></li>
+<li><a href="../../../index.html?processing/app/contrib/ContributionChangeListener.html" target="_top">Frames</a></li>
+<li><a href="ContributionChangeListener.html" target="_top">No Frames</a></li>
 </ul>
 <ul class="navList" id="allclasses_navbar_top">
 <li><a href="../../../allclasses-noframe.html">All Classes</a></li>
@@ -77,7 +77,7 @@
 <!-- ======== START OF CLASS DATA ======== -->
 <div class="header">
 <div class="subTitle">processing.app.contrib</div>
-<h2 title="Interface ContributionListing.ContributionChangeListener" class="title">Interface ContributionListing.ContributionChangeListener</h2>
+<h2 title="Interface ContributionChangeListener" class="title">Interface ContributionChangeListener</h2>
 </div>
 <div class="contentContainer">
 <div class="description">
@@ -87,13 +87,9 @@
 <dt>All Known Implementing Classes:</dt>
 <dd><a href="../../../processing/app/contrib/ContributionListPanel.html" title="class in processing.app.contrib">ContributionListPanel</a></dd>
 </dl>
-<dl>
-<dt>Enclosing class:</dt>
-<dd><a href="../../../processing/app/contrib/ContributionListing.html" title="class in processing.app.contrib">ContributionListing</a></dd>
-</dl>
 <hr>
 <br>
-<pre>public static interface <span class="strong">ContributionListing.ContributionChangeListener</span></pre>
+<pre>public interface <span class="strong">ContributionChangeListener</span></pre>
 </li>
 </ul>
 </div>
@@ -114,16 +110,16 @@
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../processing/app/contrib/ContributionListing.ContributionChangeListener.html#contributionAdded(processing.app.contrib.Contribution)">contributionAdded</a></strong>(<a href="../../../processing/app/contrib/Contribution.html" title="interface in processing.app.contrib">Contribution</a>&nbsp;Contribution)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../processing/app/contrib/ContributionChangeListener.html#contributionAdded(processing.app.contrib.Contribution)">contributionAdded</a></strong>(<a href="../../../processing/app/contrib/Contribution.html" title="class in processing.app.contrib">Contribution</a>&nbsp;Contribution)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../processing/app/contrib/ContributionListing.ContributionChangeListener.html#contributionChanged(processing.app.contrib.Contribution, processing.app.contrib.Contribution)">contributionChanged</a></strong>(<a href="../../../processing/app/contrib/Contribution.html" title="interface in processing.app.contrib">Contribution</a>&nbsp;oldLib,
-                   <a href="../../../processing/app/contrib/Contribution.html" title="interface in processing.app.contrib">Contribution</a>&nbsp;newLib)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../processing/app/contrib/ContributionChangeListener.html#contributionChanged(processing.app.contrib.Contribution, processing.app.contrib.Contribution)">contributionChanged</a></strong>(<a href="../../../processing/app/contrib/Contribution.html" title="class in processing.app.contrib">Contribution</a>&nbsp;oldLib,
+                   <a href="../../../processing/app/contrib/Contribution.html" title="class in processing.app.contrib">Contribution</a>&nbsp;newLib)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../processing/app/contrib/ContributionListing.ContributionChangeListener.html#contributionRemoved(processing.app.contrib.Contribution)">contributionRemoved</a></strong>(<a href="../../../processing/app/contrib/Contribution.html" title="interface in processing.app.contrib">Contribution</a>&nbsp;Contribution)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../processing/app/contrib/ContributionChangeListener.html#contributionRemoved(processing.app.contrib.Contribution)">contributionRemoved</a></strong>(<a href="../../../processing/app/contrib/Contribution.html" title="class in processing.app.contrib">Contribution</a>&nbsp;Contribution)</code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -146,7 +142,7 @@
 <ul class="blockList">
 <li class="blockList">
 <h4>contributionAdded</h4>
-<pre>void&nbsp;contributionAdded(<a href="../../../processing/app/contrib/Contribution.html" title="interface in processing.app.contrib">Contribution</a>&nbsp;Contribution)</pre>
+<pre>void&nbsp;contributionAdded(<a href="../../../processing/app/contrib/Contribution.html" title="class in processing.app.contrib">Contribution</a>&nbsp;Contribution)</pre>
 </li>
 </ul>
 <a name="contributionRemoved(processing.app.contrib.Contribution)">
@@ -155,7 +151,7 @@
 <ul class="blockList">
 <li class="blockList">
 <h4>contributionRemoved</h4>
-<pre>void&nbsp;contributionRemoved(<a href="../../../processing/app/contrib/Contribution.html" title="interface in processing.app.contrib">Contribution</a>&nbsp;Contribution)</pre>
+<pre>void&nbsp;contributionRemoved(<a href="../../../processing/app/contrib/Contribution.html" title="class in processing.app.contrib">Contribution</a>&nbsp;Contribution)</pre>
 </li>
 </ul>
 <a name="contributionChanged(processing.app.contrib.Contribution, processing.app.contrib.Contribution)">
@@ -164,8 +160,8 @@
 <ul class="blockListLast">
 <li class="blockList">
 <h4>contributionChanged</h4>
-<pre>void&nbsp;contributionChanged(<a href="../../../processing/app/contrib/Contribution.html" title="interface in processing.app.contrib">Contribution</a>&nbsp;oldLib,
-                       <a href="../../../processing/app/contrib/Contribution.html" title="interface in processing.app.contrib">Contribution</a>&nbsp;newLib)</pre>
+<pre>void&nbsp;contributionChanged(<a href="../../../processing/app/contrib/Contribution.html" title="class in processing.app.contrib">Contribution</a>&nbsp;oldLib,
+                       <a href="../../../processing/app/contrib/Contribution.html" title="class in processing.app.contrib">Contribution</a>&nbsp;newLib)</pre>
 </li>
 </ul>
 </li>
@@ -193,12 +189,12 @@
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../processing/app/contrib/ContributionListing.html" title="class in processing.app.contrib"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../../processing/app/contrib/ContributionListing.Filter.html" title="interface in processing.app.contrib"><span class="strong">Next Class</span></a></li>
+<li><a href="../../../processing/app/contrib/Contribution.html" title="class in processing.app.contrib"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../../processing/app/contrib/ContributionListing.html" title="class in processing.app.contrib"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
-<li><a href="../../../index.html?processing/app/contrib/ContributionListing.ContributionChangeListener.html" target="_top">Frames</a></li>
-<li><a href="ContributionListing.ContributionChangeListener.html" target="_top">No Frames</a></li>
+<li><a href="../../../index.html?processing/app/contrib/ContributionChangeListener.html" target="_top">Frames</a></li>
+<li><a href="ContributionChangeListener.html" target="_top">No Frames</a></li>
 </ul>
 <ul class="navList" id="allclasses_navbar_bottom">
 <li><a href="../../../allclasses-noframe.html">All Classes</a></li>
