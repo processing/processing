@@ -498,6 +498,22 @@ extends java.awt.event.KeyAdapter</pre>
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>static int</code></td>
+<td class="colLast"><code><strong><a href="../../../processing/app/syntax/InputHandler.html#findWordEnd(java.lang.String, int, java.lang.String)">findWordEnd</a></strong>(java.lang.String&nbsp;line,
+           int&nbsp;pos,
+           java.lang.String&nbsp;noWordSep)</code>
+<div class="block">Locates the end of the word at the specified position.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static int</code></td>
+<td class="colLast"><code><strong><a href="../../../processing/app/syntax/InputHandler.html#findWordStart(java.lang.String, int, java.lang.String)">findWordStart</a></strong>(java.lang.String&nbsp;line,
+             int&nbsp;pos,
+             java.lang.String&nbsp;noWordSep)</code>
+<div class="block">Locates the start of the word at the specified position.</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>static java.awt.event.ActionListener</code></td>
 <td class="colLast"><code><strong><a href="../../../processing/app/syntax/InputHandler.html#getAction(java.lang.String)">getAction</a></strong>(java.lang.String&nbsp;name)</code>
 <div class="block">Returns a named text area action.</div>
@@ -1181,12 +1197,40 @@ extends java.awt.event.KeyAdapter</pre>
 <a name="getTextArea(java.util.EventObject)">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>getTextArea</h4>
 <pre>public static&nbsp;<a href="../../../processing/app/syntax/JEditTextArea.html" title="class in processing.app.syntax">JEditTextArea</a>&nbsp;getTextArea(java.util.EventObject&nbsp;evt)</pre>
 <div class="block">Returns the text area that fired the specified event.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>evt</code> - The event</dd></dl>
+</li>
+</ul>
+<a name="findWordStart(java.lang.String, int, java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>findWordStart</h4>
+<pre>public static&nbsp;int&nbsp;findWordStart(java.lang.String&nbsp;line,
+                int&nbsp;pos,
+                java.lang.String&nbsp;noWordSep)</pre>
+<div class="block">Locates the start of the word at the specified position.
+ Moved from TextUtilities.java [fry 121210].</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>line</code> - The text</dd><dd><code>pos</code> - The position</dd></dl>
+</li>
+</ul>
+<a name="findWordEnd(java.lang.String, int, java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>findWordEnd</h4>
+<pre>public static&nbsp;int&nbsp;findWordEnd(java.lang.String&nbsp;line,
+              int&nbsp;pos,
+              java.lang.String&nbsp;noWordSep)</pre>
+<div class="block">Locates the end of the word at the specified position.
+ Moved from TextUtilities.java [fry 121210].</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>line</code> - The text</dd><dd><code>pos</code> - The position</dd></dl>
 </li>
 </ul>
 </li>

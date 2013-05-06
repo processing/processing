@@ -149,7 +149,7 @@ implements <a href="../../../../processing/mode/java/runner/MessageConsumer.html
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../processing/mode/java/runner/Runner.html#exception(ExceptionEvent)">exception</a></strong>(ExceptionEvent&nbsp;event)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../processing/mode/java/runner/Runner.html#exceptionEvent(ExceptionEvent)">exceptionEvent</a></strong>(ExceptionEvent&nbsp;event)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static boolean</code></td>
@@ -162,6 +162,10 @@ implements <a href="../../../../processing/mode/java/runner/MessageConsumer.html
 <td class="colLast"><code><strong><a href="../../../../processing/mode/java/runner/Runner.html#launch(boolean)">launch</a></strong>(boolean&nbsp;presenting)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../../processing/mode/java/runner/Runner.html#launchVirtualMachine(boolean)">launchVirtualMachine</a></strong>(boolean&nbsp;presenting)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../processing/mode/java/runner/Runner.html#message(java.lang.String)">message</a></strong>(java.lang.String&nbsp;s)</code>&nbsp;</td>
 </tr>
@@ -217,13 +221,22 @@ implements <a href="../../../../processing/mode/java/runner/MessageConsumer.html
 <pre>public&nbsp;void&nbsp;launch(boolean&nbsp;presenting)</pre>
 </li>
 </ul>
-<a name="exception(ExceptionEvent)">
+<a name="launchVirtualMachine(boolean)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>exception</h4>
-<pre>public&nbsp;void&nbsp;exception(ExceptionEvent&nbsp;event)</pre>
+<h4>launchVirtualMachine</h4>
+<pre>public&nbsp;boolean&nbsp;launchVirtualMachine(boolean&nbsp;presenting)</pre>
+</li>
+</ul>
+<a name="exceptionEvent(ExceptionEvent)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>exceptionEvent</h4>
+<pre>public&nbsp;void&nbsp;exceptionEvent(ExceptionEvent&nbsp;event)</pre>
 </li>
 </ul>
 <a name="handleCommonErrors(java.lang.String, java.lang.String, processing.app.RunnerListener)">

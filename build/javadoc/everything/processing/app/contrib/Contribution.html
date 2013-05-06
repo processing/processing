@@ -34,7 +34,7 @@
 <div class="subNav">
 <ul class="navList">
 <li>Prev Class</li>
-<li><a href="../../../processing/app/contrib/Contribution.Type.html" title="enum in processing.app.contrib"><span class="strong">Next Class</span></a></li>
+<li><a href="../../../processing/app/contrib/ContributionChangeListener.html" title="interface in processing.app.contrib"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../index.html?processing/app/contrib/Contribution.html" target="_top">Frames</a></li>
@@ -58,15 +58,15 @@
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li><a href="#nested_class_summary">Nested</a>&nbsp;|&nbsp;</li>
+<li>Nested&nbsp;|&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
-<li>Constr&nbsp;|&nbsp;</li>
+<li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method_summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
-<li>Constr&nbsp;|&nbsp;</li>
+<li><a href="#constructor_detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method_detail">Method</a></li>
 </ul>
 </div>
@@ -77,40 +77,47 @@
 <!-- ======== START OF CLASS DATA ======== -->
 <div class="header">
 <div class="subTitle">processing.app.contrib</div>
-<h2 title="Interface Contribution" class="title">Interface Contribution</h2>
+<h2 title="Class Contribution" class="title">Class Contribution</h2>
 </div>
 <div class="contentContainer">
+<ul class="inheritance">
+<li>java.lang.Object</li>
+<li>
+<ul class="inheritance">
+<li>processing.app.contrib.Contribution</li>
+</ul>
+</li>
+</ul>
 <div class="description">
 <ul class="blockList">
 <li class="blockList">
 <dl>
-<dt>All Known Implementing Classes:</dt>
-<dd><a href="../../../processing/app/contrib/InstalledContribution.html" title="class in processing.app.contrib">InstalledContribution</a>, <a href="../../../processing/app/Library.html" title="class in processing.app">Library</a>, <a href="../../../processing/app/contrib/LibraryCompilation.html" title="class in processing.app.contrib">LibraryCompilation</a>, <a href="../../../processing/app/contrib/ModeContribution.html" title="class in processing.app.contrib">ModeContribution</a>, <a href="../../../processing/app/contrib/ToolContribution.html" title="class in processing.app.contrib">ToolContribution</a></dd>
+<dt>Direct Known Subclasses:</dt>
+<dd><a href="../../../processing/app/contrib/LocalContribution.html" title="class in processing.app.contrib">LocalContribution</a></dd>
 </dl>
 <hr>
 <br>
-<pre>public interface <span class="strong">Contribution</span></pre>
+<pre>public abstract class <span class="strong">Contribution</span>
+extends java.lang.Object</pre>
 </li>
 </ul>
 </div>
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
-<!-- ======== NESTED CLASS SUMMARY ======== -->
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
 <ul class="blockList">
-<li class="blockList"><a name="nested_class_summary">
+<li class="blockList"><a name="constructor_summary">
 <!--   -->
 </a>
-<h3>Nested Class Summary</h3>
-<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Nested Class Summary table, listing nested classes, and an explanation">
-<caption><span>Nested Classes</span><span class="tabEnd">&nbsp;</span></caption>
+<h3>Constructor Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Constructor Summary table, listing constructors, and an explanation">
+<caption><span>Constructors</span><span class="tabEnd">&nbsp;</span></caption>
 <tr>
-<th class="colFirst" scope="col">Modifier and Type</th>
-<th class="colLast" scope="col">Interface and Description</th>
+<th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>static class&nbsp;</code></td>
-<td class="colLast"><code><strong><a href="../../../processing/app/contrib/Contribution.Type.html" title="enum in processing.app.contrib">Contribution.Type</a></strong></code>&nbsp;</td>
+<td class="colOne"><code><strong><a href="../../../processing/app/contrib/Contribution.html#Contribution()">Contribution</a></strong>()</code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -152,7 +159,7 @@
 <td class="colLast"><code><strong><a href="../../../processing/app/contrib/Contribution.html#getSentence()">getSentence</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code><a href="../../../processing/app/contrib/Contribution.Type.html" title="enum in processing.app.contrib">Contribution.Type</a></code></td>
+<td class="colFirst"><code>abstract <a href="../../../processing/app/contrib/ContributionType.html" title="enum in processing.app.contrib">ContributionType</a></code></td>
 <td class="colLast"><code><strong><a href="../../../processing/app/contrib/Contribution.html#getType()">getType</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
@@ -168,10 +175,24 @@
 <td class="colLast"><code><strong><a href="../../../processing/app/contrib/Contribution.html#getVersion()">getVersion</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>boolean</code></td>
+<td class="colFirst"><code>abstract boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../processing/app/contrib/Contribution.html#isInstalled()">isInstalled</a></strong>()</code>&nbsp;</td>
 </tr>
+<tr class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../processing/app/contrib/Contribution.html#requiresRestart()">requiresRestart</a></strong>()</code>
+<div class="block">Returns true if the type of contribution requires the PDE to restart
+ when being added or removed.</div>
+</td>
+</tr>
 </table>
+<ul class="blockList">
+<li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
+<!--   -->
+</a>
+<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
+<code>equals, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
+</ul>
 </li>
 </ul>
 </li>
@@ -180,6 +201,23 @@
 <div class="details">
 <ul class="blockList">
 <li class="blockList">
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="constructor_detail">
+<!--   -->
+</a>
+<h3>Constructor Detail</h3>
+<a name="Contribution()">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>Contribution</h4>
+<pre>public&nbsp;Contribution()</pre>
+</li>
+</ul>
+</li>
+</ul>
 <!-- ============ METHOD DETAIL ========== -->
 <ul class="blockList">
 <li class="blockList"><a name="method_detail">
@@ -192,7 +230,7 @@
 <ul class="blockList">
 <li class="blockList">
 <h4>getCategory</h4>
-<pre>java.lang.String&nbsp;getCategory()</pre>
+<pre>public&nbsp;java.lang.String&nbsp;getCategory()</pre>
 </li>
 </ul>
 <a name="getName()">
@@ -201,7 +239,7 @@
 <ul class="blockList">
 <li class="blockList">
 <h4>getName</h4>
-<pre>java.lang.String&nbsp;getName()</pre>
+<pre>public&nbsp;java.lang.String&nbsp;getName()</pre>
 </li>
 </ul>
 <a name="getAuthorList()">
@@ -210,7 +248,7 @@
 <ul class="blockList">
 <li class="blockList">
 <h4>getAuthorList</h4>
-<pre>java.lang.String&nbsp;getAuthorList()</pre>
+<pre>public&nbsp;java.lang.String&nbsp;getAuthorList()</pre>
 </li>
 </ul>
 <a name="getUrl()">
@@ -219,7 +257,7 @@
 <ul class="blockList">
 <li class="blockList">
 <h4>getUrl</h4>
-<pre>java.lang.String&nbsp;getUrl()</pre>
+<pre>public&nbsp;java.lang.String&nbsp;getUrl()</pre>
 </li>
 </ul>
 <a name="getSentence()">
@@ -228,7 +266,7 @@
 <ul class="blockList">
 <li class="blockList">
 <h4>getSentence</h4>
-<pre>java.lang.String&nbsp;getSentence()</pre>
+<pre>public&nbsp;java.lang.String&nbsp;getSentence()</pre>
 </li>
 </ul>
 <a name="getParagraph()">
@@ -237,7 +275,7 @@
 <ul class="blockList">
 <li class="blockList">
 <h4>getParagraph</h4>
-<pre>java.lang.String&nbsp;getParagraph()</pre>
+<pre>public&nbsp;java.lang.String&nbsp;getParagraph()</pre>
 </li>
 </ul>
 <a name="getVersion()">
@@ -246,7 +284,7 @@
 <ul class="blockList">
 <li class="blockList">
 <h4>getVersion</h4>
-<pre>int&nbsp;getVersion()</pre>
+<pre>public&nbsp;int&nbsp;getVersion()</pre>
 </li>
 </ul>
 <a name="getPrettyVersion()">
@@ -255,16 +293,7 @@
 <ul class="blockList">
 <li class="blockList">
 <h4>getPrettyVersion</h4>
-<pre>java.lang.String&nbsp;getPrettyVersion()</pre>
-</li>
-</ul>
-<a name="isInstalled()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>isInstalled</h4>
-<pre>boolean&nbsp;isInstalled()</pre>
+<pre>public&nbsp;java.lang.String&nbsp;getPrettyVersion()</pre>
 </li>
 </ul>
 <a name="getType()">
@@ -273,16 +302,36 @@
 <ul class="blockList">
 <li class="blockList">
 <h4>getType</h4>
-<pre><a href="../../../processing/app/contrib/Contribution.Type.html" title="enum in processing.app.contrib">Contribution.Type</a>&nbsp;getType()</pre>
+<pre>public abstract&nbsp;<a href="../../../processing/app/contrib/ContributionType.html" title="enum in processing.app.contrib">ContributionType</a>&nbsp;getType()</pre>
 </li>
 </ul>
 <a name="getTypeName()">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>getTypeName</h4>
-<pre>java.lang.String&nbsp;getTypeName()</pre>
+<pre>public&nbsp;java.lang.String&nbsp;getTypeName()</pre>
+</li>
+</ul>
+<a name="isInstalled()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isInstalled</h4>
+<pre>public abstract&nbsp;boolean&nbsp;isInstalled()</pre>
+</li>
+</ul>
+<a name="requiresRestart()">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>requiresRestart</h4>
+<pre>public&nbsp;boolean&nbsp;requiresRestart()</pre>
+<div class="block">Returns true if the type of contribution requires the PDE to restart
+ when being added or removed.</div>
 </li>
 </ul>
 </li>
@@ -311,7 +360,7 @@
 <div class="subNav">
 <ul class="navList">
 <li>Prev Class</li>
-<li><a href="../../../processing/app/contrib/Contribution.Type.html" title="enum in processing.app.contrib"><span class="strong">Next Class</span></a></li>
+<li><a href="../../../processing/app/contrib/ContributionChangeListener.html" title="interface in processing.app.contrib"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../index.html?processing/app/contrib/Contribution.html" target="_top">Frames</a></li>
@@ -335,15 +384,15 @@
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li><a href="#nested_class_summary">Nested</a>&nbsp;|&nbsp;</li>
+<li>Nested&nbsp;|&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
-<li>Constr&nbsp;|&nbsp;</li>
+<li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method_summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
-<li>Constr&nbsp;|&nbsp;</li>
+<li><a href="#constructor_detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method_detail">Method</a></li>
 </ul>
 </div>

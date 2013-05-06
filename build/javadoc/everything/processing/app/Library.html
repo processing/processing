@@ -84,7 +84,10 @@
 <li>java.lang.Object</li>
 <li>
 <ul class="inheritance">
-<li><a href="../../processing/app/contrib/InstalledContribution.html" title="class in processing.app.contrib">processing.app.contrib.InstalledContribution</a></li>
+<li><a href="../../processing/app/contrib/Contribution.html" title="class in processing.app.contrib">processing.app.contrib.Contribution</a></li>
+<li>
+<ul class="inheritance">
+<li><a href="../../processing/app/contrib/LocalContribution.html" title="class in processing.app.contrib">processing.app.contrib.LocalContribution</a></li>
 <li>
 <ul class="inheritance">
 <li>processing.app.Library</li>
@@ -93,38 +96,21 @@
 </ul>
 </li>
 </ul>
+</li>
+</ul>
 <div class="description">
 <ul class="blockList">
 <li class="blockList">
-<dl>
-<dt>All Implemented Interfaces:</dt>
-<dd><a href="../../processing/app/contrib/Contribution.html" title="interface in processing.app.contrib">Contribution</a></dd>
-</dl>
 <hr>
 <br>
 <pre>public class <span class="strong">Library</span>
-extends <a href="../../processing/app/contrib/InstalledContribution.html" title="class in processing.app.contrib">InstalledContribution</a></pre>
+extends <a href="../../processing/app/contrib/LocalContribution.html" title="class in processing.app.contrib">LocalContribution</a></pre>
 </li>
 </ul>
 </div>
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
-<!-- ======== NESTED CLASS SUMMARY ======== -->
-<ul class="blockList">
-<li class="blockList"><a name="nested_class_summary">
-<!--   -->
-</a>
-<h3>Nested Class Summary</h3>
-<ul class="blockList">
-<li class="blockList"><a name="nested_classes_inherited_from_class_processing.app.contrib.Contribution">
-<!--   -->
-</a>
-<h3>Nested classes/interfaces inherited from interface&nbsp;processing.app.contrib.<a href="../../processing/app/contrib/Contribution.html" title="interface in processing.app.contrib">Contribution</a></h3>
-<code><a href="../../processing/app/contrib/Contribution.Type.html" title="enum in processing.app.contrib">Contribution.Type</a></code></li>
-</ul>
-</li>
-</ul>
 <!-- =========== FIELD SUMMARY =========== -->
 <ul class="blockList">
 <li class="blockList"><a name="field_summary">
@@ -142,6 +128,13 @@ extends <a href="../../processing/app/contrib/InstalledContribution.html" title=
 <td class="colLast"><code><strong><a href="../../processing/app/Library.html#propertiesFileName">propertiesFileName</a></strong></code>&nbsp;</td>
 </tr>
 </table>
+<ul class="blockList">
+<li class="blockList"><a name="fields_inherited_from_class_processing.app.contrib.LocalContribution">
+<!--   -->
+</a>
+<h3>Fields inherited from class&nbsp;processing.app.contrib.<a href="../../processing/app/contrib/LocalContribution.html" title="class in processing.app.contrib">LocalContribution</a></h3>
+<code><a href="../../processing/app/contrib/LocalContribution.html#DELETION_FLAG">DELETION_FLAG</a></code></li>
+</ul>
 </li>
 </ul>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
@@ -245,7 +238,7 @@ extends <a href="../../processing/app/contrib/InstalledContribution.html" title=
 <td class="colLast"><code><strong><a href="../../processing/app/Library.html#getPath()">getPath</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code><a href="../../processing/app/contrib/Contribution.Type.html" title="enum in processing.app.contrib">Contribution.Type</a></code></td>
+<td class="colFirst"><code><a href="../../processing/app/contrib/ContributionType.html" title="enum in processing.app.contrib">ContributionType</a></code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Library.html#getType()">getType</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
@@ -268,11 +261,18 @@ extends <a href="../../processing/app/contrib/InstalledContribution.html" title=
 </tr>
 </table>
 <ul class="blockList">
-<li class="blockList"><a name="methods_inherited_from_class_processing.app.contrib.InstalledContribution">
+<li class="blockList"><a name="methods_inherited_from_class_processing.app.contrib.LocalContribution">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;processing.app.contrib.<a href="../../processing/app/contrib/InstalledContribution.html" title="class in processing.app.contrib">InstalledContribution</a></h3>
-<code><a href="../../processing/app/contrib/InstalledContribution.html#getAuthorList()">getAuthorList</a>, <a href="../../processing/app/contrib/InstalledContribution.html#getCategory()">getCategory</a>, <a href="../../processing/app/contrib/InstalledContribution.html#getFolder()">getFolder</a>, <a href="../../processing/app/contrib/InstalledContribution.html#getId()">getId</a>, <a href="../../processing/app/contrib/InstalledContribution.html#getLatestVersion()">getLatestVersion</a>, <a href="../../processing/app/contrib/InstalledContribution.html#getName()">getName</a>, <a href="../../processing/app/contrib/InstalledContribution.html#getParagraph()">getParagraph</a>, <a href="../../processing/app/contrib/InstalledContribution.html#getPrettyVersion()">getPrettyVersion</a>, <a href="../../processing/app/contrib/InstalledContribution.html#getSentence()">getSentence</a>, <a href="../../processing/app/contrib/InstalledContribution.html#getTypeName()">getTypeName</a>, <a href="../../processing/app/contrib/InstalledContribution.html#getUrl()">getUrl</a>, <a href="../../processing/app/contrib/InstalledContribution.html#getVersion()">getVersion</a>, <a href="../../processing/app/contrib/InstalledContribution.html#initLoader(java.lang.String)">initLoader</a>, <a href="../../processing/app/contrib/InstalledContribution.html#isInstalled()">isInstalled</a></code></li>
+<h3>Methods inherited from class&nbsp;processing.app.contrib.<a href="../../processing/app/contrib/LocalContribution.html" title="class in processing.app.contrib">LocalContribution</a></h3>
+<code><a href="../../processing/app/contrib/LocalContribution.html#getFolder()">getFolder</a>, <a href="../../processing/app/contrib/LocalContribution.html#getId()">getId</a>, <a href="../../processing/app/contrib/LocalContribution.html#getLatestVersion()">getLatestVersion</a>, <a href="../../processing/app/contrib/LocalContribution.html#initLoader(java.lang.String)">initLoader</a>, <a href="../../processing/app/contrib/LocalContribution.html#isInstalled()">isInstalled</a></code></li>
+</ul>
+<ul class="blockList">
+<li class="blockList"><a name="methods_inherited_from_class_processing.app.contrib.Contribution">
+<!--   -->
+</a>
+<h3>Methods inherited from class&nbsp;processing.app.contrib.<a href="../../processing/app/contrib/Contribution.html" title="class in processing.app.contrib">Contribution</a></h3>
+<code><a href="../../processing/app/contrib/Contribution.html#getAuthorList()">getAuthorList</a>, <a href="../../processing/app/contrib/Contribution.html#getCategory()">getCategory</a>, <a href="../../processing/app/contrib/Contribution.html#getName()">getName</a>, <a href="../../processing/app/contrib/Contribution.html#getParagraph()">getParagraph</a>, <a href="../../processing/app/contrib/Contribution.html#getPrettyVersion()">getPrettyVersion</a>, <a href="../../processing/app/contrib/Contribution.html#getSentence()">getSentence</a>, <a href="../../processing/app/contrib/Contribution.html#getTypeName()">getTypeName</a>, <a href="../../processing/app/contrib/Contribution.html#getUrl()">getUrl</a>, <a href="../../processing/app/contrib/Contribution.html#getVersion()">getVersion</a>, <a href="../../processing/app/contrib/Contribution.html#requiresRestart()">requiresRestart</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
@@ -523,7 +523,11 @@ extends <a href="../../processing/app/contrib/InstalledContribution.html" title=
 <ul class="blockListLast">
 <li class="blockList">
 <h4>getType</h4>
-<pre>public&nbsp;<a href="../../processing/app/contrib/Contribution.Type.html" title="enum in processing.app.contrib">Contribution.Type</a>&nbsp;getType()</pre>
+<pre>public&nbsp;<a href="../../processing/app/contrib/ContributionType.html" title="enum in processing.app.contrib">ContributionType</a>&nbsp;getType()</pre>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../processing/app/contrib/Contribution.html#getType()">getType</a></code>&nbsp;in class&nbsp;<code><a href="../../processing/app/contrib/Contribution.html" title="class in processing.app.contrib">Contribution</a></code></dd>
+</dl>
 </li>
 </ul>
 </li>
