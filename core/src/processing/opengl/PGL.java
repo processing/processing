@@ -559,24 +559,17 @@ public class PGL {
   }
 
 
-  protected void setFrameRate(float framerate) {
-    if (targetFps != framerate) {
-      if (60 < framerate) {
+  protected void setFps(float fps) {
+    if (!setFps || targetFps != fps) {
+      if (60 < fps) {
         // Disables v-sync
         gl.setSwapInterval(0);
-      } else if (30 < framerate) {
+      } else if (30 < fps) {
         gl.setSwapInterval(1);
       } else {
         gl.setSwapInterval(2);
       }
-      if ((60 < framerate && targetFps <= 60) ||
-          (framerate <= 60 && 60 < targetFps)) {
-        // Enabling/disabling v-sync, we force a
-        // surface reinitialization to avoid screen
-        // no-paint issue observed on MacOSX.
-        pg.initialized = false;
-      }
-      targetFps = currentFps = framerate;
+      targetFps = currentFps = fps;
       setFps = true;
     }
   }
@@ -596,7 +589,6 @@ public class PGL {
         pg.parent.remove(canvasNEWT);
       }
       sinkFBO = backFBO = frontFBO = null;
-      setFps = false;
     }
 
     // Setting up the desired GL capabilities;
@@ -670,6 +662,8 @@ public class PGL {
     fboLayerCreated = false;
     fboLayerInUse = false;
     firstFrame = true;
+
+    setFps = false;
   }
 
 
@@ -700,9 +694,8 @@ public class PGL {
 
 
   protected void update() {
-    if (!setFps) {
-      setFrameRate(targetFps);
-    }
+    if (!setFps) setFps(targetFps);
+
     if (USE_JOGL_FBOLAYER) return;
 
     if (!fboLayerCreated) {

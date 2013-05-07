@@ -489,9 +489,16 @@ public class PGL extends processing.opengl.PGL {
   }
 
 
-  protected void setFrameRate(float framerate) {
-    if (targetFps != framerate) {
-      targetFps = currentFps = framerate;
+  protected void setFps(float fps) {
+    if (!setFps || targetFps != fps) {
+      if (60 < fps) {
+        // Disables v-sync
+        Display.setVSyncEnabled(false);
+        Display.sync((int)fps);
+      } else  {
+        Display.setVSyncEnabled(true);
+      }
+      targetFps = currentFps = fps; 
       setFps = true;      
     }
   }
@@ -537,7 +544,6 @@ public class PGL extends processing.opengl.PGL {
       float b = ((argb) & 0xff) / 255.0f; 
       Display.setInitialBackground(r, g, b); 
       Display.setParent(canvas);      
-      Display.setVSyncEnabled(true);
       Display.create(format);
 
       // Might be useful later to specify the context attributes.
@@ -563,6 +569,8 @@ public class PGL extends processing.opengl.PGL {
     fboLayerInUse = false;
     firstFrame = true;
     needToClearBuffers = true;
+    
+    setFps = false;
   }
 
 
@@ -583,7 +591,9 @@ public class PGL extends processing.opengl.PGL {
   }
 
 
-  protected void update() {
+  protected void update() {    
+    if (!setFps) setFps(targetFps);
+    
     if (!fboLayerCreated) {
       if (!hasFBOs()) {
         throw new RuntimeException("Framebuffer objects are not supported by this hardware (or driver)");

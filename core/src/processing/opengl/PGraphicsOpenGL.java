@@ -574,7 +574,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   @Override
   public void setFrameRate(float frameRate) {
-    pgl.setFrameRate(frameRate);
+    pgl.setFps(frameRate);
   }
 
 
