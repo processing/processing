@@ -979,6 +979,12 @@ public class PVector implements Serializable {
    * @brief Calculate and return the angle between two vectors
    */
   static public float angleBetween(PVector v1, PVector v2) {
+
+    // We get NaN if we pass in a zero vector which can cause problems
+    // Zero seems like a reasonable angle between a (0,0) vector and something else
+    if (v1.x == 0 && v1.y == 0) return 0.0f;
+    if (v2.x == 0 && v2.y == 0) return 0.0f;
+
     double dot = v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
     double v1mag = Math.sqrt(v1.x * v1.x + v1.y * v1.y + v1.z * v1.z);
     double v2mag = Math.sqrt(v2.x * v2.x + v2.y * v2.y + v2.z * v2.z);
