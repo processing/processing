@@ -298,7 +298,7 @@ public class FloatDict {
   }
 
 
-  public void mul(String key, float amount) {
+  public void mult(String key, float amount) {
     int index = index(key);
     if (index != -1) {
       values[index] *= amount;
