@@ -573,30 +573,6 @@ public class PVector implements Serializable {
     return target;
   }
 
-  public void mult(PVector v) {
-    x *= v.x;
-    y *= v.y;
-    z *= v.z;
-  }
-
-
-  /**
-   * @param v1 the x, y, and z components of a PVector
-   * @param v2 the x, y, and z components of a PVector
-   */
-  static public PVector mult(PVector v1, PVector v2) {
-    return mult(v1, v2, null);
-  }
-
-
-  static public PVector mult(PVector v1, PVector v2, PVector target) {
-    if (target == null) {
-      target = new PVector(v1.x*v2.x, v1.y*v2.y, v1.z*v2.z);
-    } else {
-      target.set(v1.x*v2.x, v1.y*v2.y, v1.z*v2.z);
-    }
-    return target;
-  }
 
 
   /**
@@ -639,34 +615,6 @@ public class PVector implements Serializable {
       target = new PVector(v.x/n, v.y/n, v.z/n);
     } else {
       target.set(v.x/n, v.y/n, v.z/n);
-    }
-    return target;
-  }
-
-
-  /**
-   * Divide each element of one vector by the elements of another vector.
-   */
-  public void div(PVector v) {
-    x /= v.x;
-    y /= v.y;
-    z /= v.z;
-  }
-
-
-  /**
-   * Divide each element of one vector by the individual elements of another
-   * vector, and return the result as a new PVector.
-   */
-  static public PVector div(PVector v1, PVector v2) {
-    return div(v1, v2, null);
-  }
-
-  static public PVector div(PVector v1, PVector v2, PVector target) {
-    if (target == null) {
-      target = new PVector(v1.x/v2.x, v1.y/v2.y, v1.z/v2.z);
-    } else {
-      target.set(v1.x/v2.x, v1.y/v2.y, v1.z/v2.z);
     }
     return target;
   }
