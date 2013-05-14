@@ -153,24 +153,24 @@ o   inc(), inc(amount), dec(), dec(amount)
 X replace (especially for null and NaN)
 X   make note that these work, and are special cases
 o listAttributes() in XML is like array from keys() etc in our data classes
-_ removeIndex() vs removeValue() vs remove() 
-_   remove() refers to an index (with array) or key (with hash)
-_   more consistent with other APIs (Java)
-_   replaceValue[s]() the same, though more on the line
-_   should we not have remove() and removeIndex()
-_     and instead always specify? removeKey(), removeIndex(), removeValue()?
-_     would mean that hash would only have removeKey
-_     downside: remove() takes whatever get() takes as arg
-_   with removeValue(), add removeValues() for all values that match?
-_     also support NaN here
-_ need to sort out the final version of hash/dict/etc and their names
-_ JSONObject.has(key) vs XML.hasAttribute(attr) vs HashMap.containsKey()
-_   and how it should be handled with hash/dict
-_   right now using hasKey().. in JSONObject
-_   contains() as default, then containsValue() as the alternate
-_     instead of containsKey() and containsValue()
-_   hasAttribute in XML, containsKey in java's Map, hasKey in JSON
-_   hasChildren() is another precedent
+X removeIndex() vs removeValue() vs remove() 
+X   remove() refers to an index (with array) or key (with hash)
+X   more consistent with other APIs (Java)
+X   replaceValue[s]() the same, though more on the line
+o   should we not have remove() and removeIndex()
+o     and instead always specify? removeKey(), removeIndex(), removeValue()?
+o     would mean that hash would only have removeKey
+o     downside: remove() takes whatever get() takes as arg
+X   with removeValue(), add removeValues() for all values that match?
+X     also support NaN here
+X need to sort out the final version of hash/dict/etc and their names
+X JSONObject.has(key) vs XML.hasAttribute(attr) vs HashMap.containsKey()
+X   and how it should be handled with hash/dict
+X   right now using hasKey().. in JSONObject
+o   contains() as default, then containsValue() as the alternate
+o     instead of containsKey() and containsValue()
+X   hasAttribute in XML, containsKey in java's Map, hasKey in JSON
+X   hasChildren() is another precedent
 o   contains() is nice, but containsKey() is weird, often not 'containing'
 X   hasKey/hasValue is best; fewest changes and most descriptive
 _ not doing print() methods, since alternatives are more descriptive

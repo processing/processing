@@ -872,6 +872,8 @@ _ waiting on retina support for JDK 7
 _   http://bugs.sun.com/view_bug.do?bug_id=8009754
 _   b86 supposed to have some support (not available yet)
 _     http://jdk8.java.net/download.html
+_ "Are you sure you want to quit?" when switching modes on Oracle JVM
+_   because it's OS X, but menubar isn't available
 _ LWJGL forum discussion 
 _   http://lwjgl.org/forum/index.php/topic,4711.225.html
 _ change cmd line for OS X to use symlink? 

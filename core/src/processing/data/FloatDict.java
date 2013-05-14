@@ -519,6 +519,7 @@ public class FloatDict {
     for (int i = 0; i < count; i++) {
       outgoing.indices.put(keys[i], i);
     }
+    outgoing.count = count;
     return outgoing;
   }
 
