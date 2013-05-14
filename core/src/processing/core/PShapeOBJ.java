@@ -5,6 +5,11 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 
 /**
+ * This class is not part of the Processing API and should not be used
+ * directly. Instead, use loadShape() and methods like it, which will make
+ * use of this class. Using this class directly will cause your code to break
+ * when combined with future versions of Processing.
+ * <p>
  * OBJ loading implemented using code from Saito's OBJLoader library:
  * http://code.google.com/p/saitoobjloader/
  * and OBJReader from Ahmet Kizilay
