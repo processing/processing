@@ -40,7 +40,7 @@ import processing.app.*;
 public abstract class LocalContribution extends Contribution {
   static public final String DELETION_FLAG = "flagged_for_deletion";
   
-  protected String id;          // 1
+  protected String id;          // 1 (unique id for this library)
   protected int latestVersion;  // 103
   protected File folder;
   protected HashMap<String, String> properties;
