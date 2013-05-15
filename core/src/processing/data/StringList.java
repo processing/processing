@@ -143,9 +143,17 @@ public class StringList implements Iterable<String> {
   /** Remove all instances of a particular value */
   public boolean removeValues(String value) {
     int ii = 0;
-    for (int i = 0; i < count; i++) {
-      if (data[i] != value) {
-        data[ii++] = data[i];
+    if (value == null) {
+      for (int i = 0; i < count; i++) {
+        if (data[i] != null) {
+          data[ii++] = data[i];
+        }
+      }
+    } else {
+      for (int i = 0; i < count; i++) {
+        if (!value.equals(data[i])) {
+          data[ii++] = data[i];
+        }
       }
     }
     boolean changed = count == ii;
