@@ -69,7 +69,9 @@ public abstract class LocalContribution extends Contribution {
       try {
         version = Integer.parseInt(properties.get("version"));
       } catch (NumberFormatException e) {
-        e.printStackTrace();
+        System.err.println("The version number for the “" + name + "” library is not set properly.");
+        System.err.println("Please contact the library author to fix it according to the guidelines.");
+        //e.printStackTrace();
       }
       prettyVersion = properties.get("prettyVersion");
       
