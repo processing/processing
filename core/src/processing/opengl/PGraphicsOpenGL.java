@@ -3276,18 +3276,14 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void textLineImpl(char buffer[], int start, int stop,
                               float x, float y) {
     textTex = pgPrimary.getFontTexture(textFont);
-    if (textTex == null) {
-      textTex = new FontTexture(pgPrimary, textFont, maxTextureSize,
-                                maxTextureSize, is3D());
-      pgPrimary.setFontTexture(textFont, textTex);
-    } else {
-      if (textTex.contextIsOutdated()) {
-        textTex = new FontTexture(pgPrimary, textFont,
+
+    if (textTex == null || textTex.contextIsOutdated()) {
+      textTex = new FontTexture(pgPrimary, textFont,
           PApplet.min(PGL.MAX_FONT_TEX_SIZE, maxTextureSize),
           PApplet.min(PGL.MAX_FONT_TEX_SIZE, maxTextureSize), is3D());
-        pgPrimary.setFontTexture(textFont, textTex);
-      }
+      pgPrimary.setFontTexture(textFont, textTex);
     }
+    
     textTex.begin();
 
     // Saving style parameters modified by text rendering.
