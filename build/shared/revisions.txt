@@ -1,3 +1,104 @@
+PROCESSING 2.0b9 (REV 0217) 17 Mary 2013
+
+The 2.0 interface has arrived! Mmm... pretty.
+
+We've removed Android and JavaScript modes from the default download. You 
+can easily install them by selected "Add Mode" from the Mode menu. They've
+been removed because the changes have not kept pace with the rest of 
+Processing, and it was holding up the release of 2.0. As separate projects, 
+we hope it'll be easier for volunteers to get involved, rather than our
+tiny, worn out development team. View the projects here:
+https://github.com/fjenett/javascript-mode-processing
+https://github.com/processing/processing-android
+
+There are also lots of goodies in the new data classes found in the
+processing.data package that will make it much easier to handle data from
+inside Processing. More documentation coming soon!
+
+We're hoping this is the last beta before 2.0, but we're still haggling
+with one or two issues that could require a beta 10. That's a lot of beta.
+
+[ fixes ] 
+
++ Major OutOfMemoryError problem with images fixed by Andres!
+  http://code.google.com/p/processing/issues/detail?id=1353
+  https://github.com/processing/processing/issues/1391
+
++ Lots of fixes for the library/mode/tool manager. 
+  Repairing colors, layout, etc. along with lots of internal fixes.
+
++ Fix MovieMaker, it was completely broken
+  https://github.com/processing/processing/issues/1669
+
++ processing-java dialog window was huge
+  https://github.com/processing/processing/issues/1748
+
++ Library with bad version number in version causes stack trace to print. 
+  Added warning message about it with a pointer to the remedy.
+
++ "New version available" mesage is showing HTML tags around it
+   https://github.com/processing/processing/issues/1684
+
++ "Update" not working in the manager
+  https://github.com/processing/processing/issues/1701
+
++ tint() with JAVA2D does not automatically refresh (with possible fix)
+  https://github.com/processing/processing/issues/1730
+
++ Lines not properly renderered in P3D when using ortographic projection
+  https://github.com/processing/processing/issues/1661
+
++ Fix JSON and get it working properly. Now official API.
+  https://github.com/processing/processing/issues/1660
+  https://github.com/processing/processing/issues/1680
+
++ Plus dozens of other P2D/P3D fixes that Andres snuck in there.
+
+[ changes ]
+
++ New images for modes. New design!
+
++ Added loadJSONArray(), loadJSONObject. 
+
++ Hundreds of changes to the new data classes, sorting out their API, etc.
+
++ Fix autoformat to indent like the p5 book/examples. Thanks pif!
+  http://code.google.com/p/processing/issues/detail?id=325
+  https://github.com/processing/processing/issues/364
+
++ Removed netscape.javascript stuff that was only relevant for applets
+
++ Change error message for libraries (especially serial) for 32- vs 64-bit
+  to clarify that the 32- or 64-bit version of Processing can be used instead.
+
++ Rebuilt the internal Runner to use SocketAttach... This may bring up 
+  a firewall message on some machines. Don't worry, it's safe (as long as
+  the message is showing up when you hit Run, that's expected).
+
++ Add set(x, y) to PVector. 
+
++ Removed div() and mult() from PVector, since not a legit math operation.
+  https://code.google.com/p/processing/issues/detail?id=1506
+  https://github.com/processing/processing/issues/1544
+
++ loadImage() with TGA causing images to be upside-down
+  https://github.com/processing/processing/issues/1682
+
++ Added getIntContent(), getFloatContent() to XML
+
++ Table switch to CATEGORY instead of CATEGORICAL (not documented)
+
++ removed createXML() and createTable()... just use 'new' for these
+
++ Add official API for mouse wheel support
+  https://github.com/processing/processing/issues/1461
+  http://code.google.com/p/processing/issues/detail?id=1423
+
++ Incorporated JDI changes from Manindra. This makes the download a little
+  larger, but is a step toward being able to have a simpler download that
+  only requires a JRE (and is therefore much smaller!)
+
+
 PROCESSING 2.0b8 (REV 0216) 24 February 2013
 
 Dead bugs on the windscreen as we head down the road to 2.0. 
