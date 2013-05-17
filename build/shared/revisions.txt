@@ -1,4 +1,4 @@
-PROCESSING 2.0b9 (REV 0217) 17 Mary 2013
+PROCESSING 2.0b9 (REV 0217) 18 May 2013
 
 The 2.0 interface has arrived! Mmm... pretty.
 
