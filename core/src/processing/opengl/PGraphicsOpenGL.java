@@ -77,7 +77,7 @@ public class PGraphicsOpenGL extends PGraphics {
   static final String UNSUPPORTED_SHAPE_FORMAT_ERROR =
     "Unsupported shape format";
   static final String INVALID_FILTER_SHADER_ERROR =
-    "Object is not a valid shader to use as filter";
+    "Your shader needs to be of TEXTURE type to be used as a filter";
   static final String INVALID_PROCESSING_SHADER_ERROR =
     "The GLSL code doesn't seem to contain a valid shader to use in Processing";
   static final String WRONG_SHADER_TYPE_ERROR =
@@ -85,17 +85,17 @@ public class PGraphicsOpenGL extends PGraphics {
   static final String UNKNOWN_SHADER_KIND_ERROR =
     "Unknown shader kind";
   static final String NO_TEXLIGHT_SHADER_ERROR =
-    "Your shader cannot be used to render textured " +
-    "and lit geometry, using default shader instead.";
+    "Your shader needs to be of TEXLIGHT type " +
+    "to render this geometry properly, using default shader instead.";
   static final String NO_LIGHT_SHADER_ERROR =
-    "Your shader cannot be used to render lit " +
-    "geometry, using default shader instead.";
+    "Your shader needs to be of LIGHT type " +
+    "to render this geometry properly, using default shader instead.";
   static final String NO_TEXTURE_SHADER_ERROR =
-    "Your shader cannot be used to render textured " +
-    "geometry, using default shader instead.";
+    "Your shader needs to be of TEXTURE type " +
+    "to render this geometry properly, using default shader instead.";
   static final String NO_COLOR_SHADER_ERROR =
-    "Your shader cannot be used to render colored " +
-    "geometry, using default shader instead.";
+    "Your shader needs to be of COLOR type " +
+    "to render this geometry properly, using default shader instead.";
   static final String TOO_LONG_STROKE_PATH_ERROR =
     "Stroke path is too long, some bevel triangles won't be added";
   static final String TESSELLATION_ERROR =
@@ -11491,9 +11491,9 @@ public class PGraphicsOpenGL extends PGraphics {
 
     void tessellateTriangles(int[] indices) {
       beginTex();
-      int nTri = (in.lastVertex - in.firstVertex + 1) / 3;
-      if (fill && 1 <= nTri) {
-        int nInInd = 3 * nTri;
+      int nInVert = in.lastVertex - in.firstVertex + 1;
+      if (fill && 3 <= nInVert) {
+        int nInInd = indices.length;
         setRawSize(nInInd);
         PApplet.arrayCopy(indices, rawIndices, nInInd);
         boolean clamp = clampTriangles(indices);
