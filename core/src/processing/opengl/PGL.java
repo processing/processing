@@ -1851,9 +1851,13 @@ public class PGL {
     gl2.glGetShaderiv(prog, GL2.GL_INFO_LOG_LENGTH, val, 0);
     int length = val[0];
 
-    byte[] log = new byte[length];
-    gl2.glGetProgramInfoLog(prog, length, val, 0, log, 0);
-    return new String(log);
+    if (0 < length) {
+      byte[] log = new byte[length];
+      gl2.glGetProgramInfoLog(prog, length, val, 0, log, 0);
+      return new String(log);
+    } else {
+      return "Unknow error";
+    }
   }
 
 
