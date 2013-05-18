@@ -11433,13 +11433,13 @@ public class PGraphicsOpenGL extends PGraphics {
 
     void tessellateTriangles() {
       beginTex();
-      int nInVert = in.lastVertex - in.firstVertex + 1;
-      if (fill && 3 <= nInVert) {
-        int nInInd = nInVert;
+      int nTri = (in.lastVertex - in.firstVertex + 1) / 3;
+      if (fill && 1 <= nTri) {
+        int nInInd = 3 * nTri;
         setRawSize(nInInd);
         int idx = 0;
         boolean clamp = clampTriangles();
-        for (int i = in.firstVertex; i <= in.lastVertex; i++) {
+        for (int i = in.firstVertex; i < in.firstVertex + 3 * nTri; i++) {
           rawIndices[idx++] = i;
         }
         splitRawIndices(clamp);
@@ -11469,9 +11469,9 @@ public class PGraphicsOpenGL extends PGraphics {
 
     void tessellateTriangles(int[] indices) {
       beginTex();
-      int nInVert = in.lastVertex - in.firstVertex + 1;
-      if (fill && 3 <= nInVert) {
-        int nInInd = indices.length;
+      int nTri = (in.lastVertex - in.firstVertex + 1) / 3;
+      if (fill && 1 <= nTri) {
+        int nInInd = 3 * nTri;
         setRawSize(nInInd);
         PApplet.arrayCopy(indices, rawIndices, nInInd);
         boolean clamp = clampTriangles(indices);
@@ -11587,9 +11587,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
     void tessellateQuads() {
       beginTex();
-      int nInVert = in.lastVertex - in.firstVertex + 1;
-      if (fill && 4 <= nInVert) {
-        int quadCount = nInVert / 4;
+      int quadCount = (in.lastVertex - in.firstVertex + 1) / 4;
+      if (fill && 1 <= quadCount) {
         int nInInd = 6 * quadCount;
         setRawSize(nInInd);
         int idx = 0;
@@ -11633,14 +11632,13 @@ public class PGraphicsOpenGL extends PGraphics {
 
     void tessellateQuadStrip() {
       beginTex();
-      int nInVert = in.lastVertex - in.firstVertex + 1;
-      if (fill && 4 <= nInVert) {
-        int quadCount = nInVert / 2 - 1;
+      int quadCount = (in.lastVertex - in.firstVertex + 1) / 2 - 1;
+      if (fill && 1 <= quadCount) {
         int nInInd = 6 * quadCount;
         setRawSize(nInInd);
         int idx = 0;
-        boolean clamp = clampQuadStrip(nInVert);
-        for (int qd = 1; qd < nInVert / 2; qd++) {
+        boolean clamp = clampQuadStrip(quadCount);
+        for (int qd = 1; qd < quadCount + 1; qd++) {
           int i0 = in.firstVertex + 2 * (qd - 1);
           int i1 = in.firstVertex + 2 * (qd - 1) + 1;
           int i2 = in.firstVertex + 2 * qd + 1;
@@ -11660,10 +11658,10 @@ public class PGraphicsOpenGL extends PGraphics {
       tessellateEdges();
     }
 
-    boolean clampQuadStrip(int nInVert) {
+    boolean clampQuadStrip(int quadCount) {
       boolean res = clamp2D();
       if (res) {
-        for (int qd = 1; qd < nInVert / 2; qd++) {
+        for (int qd = 1; qd < quadCount + 1; qd++) {
           int i0 = in.firstVertex + 2 * (qd - 1);
           int i1 = in.firstVertex + 2 * (qd - 1) + 1;
           int i2 = in.firstVertex + 2 * qd + 1;
