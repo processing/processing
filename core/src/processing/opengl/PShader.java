@@ -78,7 +78,8 @@ public class PShader {
   protected HashMap<Integer, UniformValue> uniformValues = null;
 
   protected HashMap<Integer, Texture> textures;
-  protected int firstTexUnit;
+  protected HashMap<Integer, Integer> texUnits;
+//  protected int firstTexUnit;
   protected int lastTexUnit;
 
   // Direct buffers to pass shader data to GL
@@ -101,7 +102,7 @@ public class PShader {
     glVertex = 0;
     glFragment = 0;
 
-    firstTexUnit = 0;
+//    firstTexUnit = 0;
 
     intBuffer = PGL.allocateIntBuffer(1);
     floatBuffer = PGL.allocateFloatBuffer(1);
@@ -212,10 +213,12 @@ public class PShader {
    */
   public void bind() {
     init();
-    pgl.useProgram(glProgram);
-    bound = true;
-    consumeUniforms();
-    bindTextures();
+    if (!bound) {
+      pgl.useProgram(glProgram);
+      bound = true;
+      consumeUniforms();
+      bindTextures();
+    }
   }
 
 
@@ -223,9 +226,11 @@ public class PShader {
    * Unbinds the shader program.
    */
   public void unbind() {
-    unbindTextures();
-    pgl.useProgram(0);
-    bound = false;
+    if (bound) {
+      unbindTextures();
+      pgl.useProgram(0);
+      bound = false;
+    }
   }
 
 
@@ -521,43 +526,16 @@ public class PShader {
 
 
   protected void setUniformTex(int loc, Texture tex) {
-    // get unit from last value in bindTextures ...
-  //  pgl.activeTexture(PGL.TEXTURE0 + unit);
-    tex.bind();
-  }
-
-
-  /*
-  // The individual attribute setters are not really needed, read this:
-  // http://stackoverflow.com/questions/7718976/what-is-glvertexattrib-versus-glvertexattribpointer-used-for
-  // except for setting a constant vertex attribute value.
-  public void set1FloatAttribute(int loc, float x) {
-    if (-1 < loc) {
-      pgl.glVertexAttrib1f(loc, x);
+    if (texUnits != null) {
+      Integer unit = texUnits.get(loc);
+      if (unit != null) {
+        pgl.activeTexture(PGL.TEXTURE0 + unit);
+        tex.bind();
+      } else {
+        throw new RuntimeException("Cannot find unit for texture " + tex);
+      }
     }
   }
-
-
-  public void set2FloatAttribute(int loc, float x, float y) {
-    if (-1 < loc) {
-      pgl.glVertexAttrib2f(loc, x, y);
-    }
-  }
-
-
-  public void set3FloatAttribute(int loc, float x, float y, float z) {
-    if (-1 < loc) {
-      pgl.glVertexAttrib3f(loc, x, y, z);
-    }
-  }
-
-
-  public void set4FloatAttribute(int loc, float x, float y, float z, float w) {
-    if (-1 < loc) {
-      pgl.glVertexAttrib4f(loc, x, y, z, w);
-    }
-  }
-  */
 
 
   protected void setUniformImpl(String name, int type, Object value) {
@@ -576,7 +554,7 @@ public class PShader {
 
   protected void consumeUniforms() {
     if (uniformValues != null && 0 < uniformValues.size()) {
-      lastTexUnit = firstTexUnit;
+      lastTexUnit = 0; //firstTexUnit;
       for (Integer loc: uniformValues.keySet()) {
         UniformValue val = uniformValues.get(loc);
         if (val.type == UniformValue.INT1) {
@@ -650,11 +628,18 @@ public class PShader {
         } else if (val.type == UniformValue.SAMPLER2D) {
           PImage img = (PImage)val.value;
           Texture tex = pgMain.getTexture(img);
-          pgl.uniform1i(loc, lastTexUnit);
-          if (textures == null) {
-            textures = new HashMap<Integer, Texture>();
+
+          if (textures == null) textures = new HashMap<Integer, Texture>();
+          textures.put(loc, tex);
+
+          if (texUnits == null) texUnits = new HashMap<Integer, Integer>();
+          if (texUnits.containsKey(loc)) {
+            lastTexUnit = texUnits.get(loc);
+            pgl.uniform1i(loc, lastTexUnit);
+          } else {
+            texUnits.put(loc, lastTexUnit);
+            pgl.uniform1i(loc, lastTexUnit);
           }
-          textures.put(lastTexUnit, tex);
           lastTexUnit++;
         }
       }
@@ -674,27 +659,42 @@ public class PShader {
 
 
   protected void bindTextures() {
-    if (textures != null) {
-      for (int unit: textures.keySet()) {
-        Texture tex = textures.get(unit);
-        pgl.activeTexture(PGL.TEXTURE0 + unit);
-        tex.bind();
+    if (textures != null && texUnits != null) {
+      for (int loc: textures.keySet()) {
+        Texture tex = textures.get(loc);
+        Integer unit = texUnits.get(loc);
+        if (unit != null) {
+          pgl.activeTexture(PGL.TEXTURE0 + unit);
+          tex.bind();
+        } else {
+          throw new RuntimeException("Cannot find unit for texture " + tex);
+        }
       }
     }
   }
 
 
   protected void unbindTextures() {
-    if (textures != null) {
-      for (int unit: textures.keySet()) {
-        Texture tex = textures.get(unit);
-        pgl.activeTexture(PGL.TEXTURE0 + unit);
-        tex.unbind();
+    if (textures != null && texUnits != null) {
+      for (int loc: textures.keySet()) {
+        Texture tex = textures.get(loc);
+        Integer unit = texUnits.get(loc);
+        if (unit != null) {
+          pgl.activeTexture(PGL.TEXTURE0 + unit);
+          tex.unbind();
+        } else {
+          throw new RuntimeException("Cannot find unit for texture " + tex);
+        }
       }
       pgl.activeTexture(PGL.TEXTURE0);
     }
   }
 
+
+  protected int getLastTexUnit() {
+    if (texUnits == null) return -1;
+    else return texUnits.size() - 1;
+  }
 
   protected void init() {
     if (glProgram == 0 || contextIsOutdated()) {
@@ -929,4 +929,36 @@ public class PShader {
       this.value = value;
     }
   }
+
+  /*
+  // The individual attribute setters are not really needed, read this:
+  // http://stackoverflow.com/questions/7718976/what-is-glvertexattrib-versus-glvertexattribpointer-used-for
+  // except for setting a constant vertex attribute value.
+  public void set1FloatAttribute(int loc, float x) {
+    if (-1 < loc) {
+      pgl.glVertexAttrib1f(loc, x);
+    }
+  }
+
+
+  public void set2FloatAttribute(int loc, float x, float y) {
+    if (-1 < loc) {
+      pgl.glVertexAttrib2f(loc, x, y);
+    }
+  }
+
+
+  public void set3FloatAttribute(int loc, float x, float y, float z) {
+    if (-1 < loc) {
+      pgl.glVertexAttrib3f(loc, x, y, z);
+    }
+  }
+
+
+  public void set4FloatAttribute(int loc, float x, float y, float z, float w) {
+    if (-1 < loc) {
+      pgl.glVertexAttrib4f(loc, x, y, z, w);
+    }
+  }
+  */
 }

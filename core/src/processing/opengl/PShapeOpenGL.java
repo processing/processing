@@ -4124,13 +4124,7 @@ public class PShapeOpenGL extends PShape {
 
 
   protected void renderPolys(PGraphicsOpenGL g, PImage textureImage) {
-    Texture tex = null;
-    if (textureImage != null) {
-      tex = g.getTexture(textureImage);
-      if (tex != null) {
-        tex.bind();
-      }
-    }
+    Texture tex = textureImage != null ? g.getTexture(textureImage) : null;
 
     boolean renderingFill = false, renderingStroke = false;
     BaseShader shader = null;
@@ -4206,10 +4200,6 @@ public class PShapeOpenGL extends PShape {
 
     if (shader != null && shader.bound()) {
       shader.unbind();
-    }
-
-    if (tex != null) {
-      tex.unbind();
     }
   }
 

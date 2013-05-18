@@ -231,7 +231,7 @@ public class PGraphicsOpenGL extends PGraphics {
     PGraphicsOpenGL.class.getResource("PointFrag.glsl");
 
   static protected ColorShader defColorShader;
-  static protected TexureShader defTextureShader;
+  static protected TextureShader defTextureShader;
   static protected LightShader defLightShader;
   static protected TexlightShader defTexlightShader;
   static protected LineShader defLineShader;
@@ -239,10 +239,10 @@ public class PGraphicsOpenGL extends PGraphics {
 
   static protected URL maskShaderFragURL =
     PGraphicsOpenGL.class.getResource("MaskFrag.glsl");
-  static protected TexureShader maskShader;
+  static protected TextureShader maskShader;
 
   protected ColorShader colorShader;
-  protected TexureShader textureShader;
+  protected TextureShader textureShader;
   protected LightShader lightShader;
   protected TexlightShader texlightShader;
   protected LineShader lineShader;
@@ -2355,9 +2355,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void flushPolys() {
-    updatePolyBuffers(lights, texCache.hasTexture);
+    updatePolyBuffers(lights, texCache.hasTextures);
 
-    texCache.beginRender();
     for (int i = 0; i < texCache.size; i++) {
       Texture tex = texCache.getTexture(i);
 
@@ -2410,7 +2409,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
       shader.unbind();
     }
-    texCache.endRender();
     unbindPolyBuffers();
   }
 
@@ -5370,7 +5368,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     if (maskShader == null) {
-      maskShader = new TexureShader(parent, defTextureShaderVertURL,
+      maskShader = new TextureShader(parent, defTextureShaderVertURL,
                                              maskShaderFragURL);
     }
     maskShader.set("mask", alpha);
@@ -5412,7 +5410,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   @Override
   public void filter(PShader shader) {
-    if (!(shader instanceof TexureShader)) {
+    if (!(shader instanceof TextureShader)) {
       PGraphics.showWarning(INVALID_FILTER_SHADER_ERROR);
       return;
     }
@@ -5448,8 +5446,8 @@ public class PGraphicsOpenGL extends PGraphics {
     stroke = false;
 //    int prevBlendMode = blendMode;
 //    blendMode(REPLACE);
-    TexureShader prevTexShader = textureShader;
-    textureShader = (TexureShader) shader;
+    TextureShader prevTexShader = textureShader;
+    textureShader = (TextureShader) shader;
     beginShape(QUADS);
     texture(filterImage);
     vertex(0, 0, 0, 0);
@@ -6198,7 +6196,7 @@ public class PGraphicsOpenGL extends PGraphics {
       shader = new LightShader(parent);
       shader.setVertexShader(defLightShaderVertURL);
     } else if (shaderType == PShader.TEXTURE) {
-      shader = new TexureShader(parent);
+      shader = new TextureShader(parent);
       shader.setVertexShader(defTextureShaderVertURL);
     } else if (shaderType == PShader.COLOR) {
       shader = new ColorShader(parent);
@@ -6235,7 +6233,7 @@ public class PGraphicsOpenGL extends PGraphics {
         shader = new LightShader(parent);
         shader.setFragmentShader(defColorShaderFragURL);
       } else if (shaderType == PShader.TEXTURE) {
-        shader = new TexureShader(parent);
+        shader = new TextureShader(parent);
         shader.setFragmentShader(defTextureShaderFragURL);
       } else if (shaderType == PShader.COLOR) {
         shader = new ColorShader(parent);
@@ -6254,7 +6252,7 @@ public class PGraphicsOpenGL extends PGraphics {
       } else if (shaderType == PShader.LIGHT) {
         shader = new LightShader(parent, vertFilename, fragFilename);
       } else if (shaderType == PShader.TEXTURE) {
-        shader = new TexureShader(parent, vertFilename, fragFilename);
+        shader = new TextureShader(parent, vertFilename, fragFilename);
       } else if (shaderType == PShader.COLOR) {
         shader = new ColorShader(parent, vertFilename, fragFilename);
       }
@@ -6274,8 +6272,8 @@ public class PGraphicsOpenGL extends PGraphics {
     flush(); // Flushing geometry drawn with a different shader.
 
     if (kind == TRIANGLES || kind == QUADS || kind == POLYGON) {
-      if (shader instanceof TexureShader) {
-        textureShader = (TexureShader) shader;
+      if (shader instanceof TextureShader) {
+        textureShader = (TextureShader) shader;
       } else if (shader instanceof ColorShader) {
         colorShader = (ColorShader) shader;
       } else if (shader instanceof TexlightShader) {
@@ -6403,7 +6401,7 @@ public class PGraphicsOpenGL extends PGraphics {
       if (tex) {
         if (textureShader == null) {
           if (defTextureShader == null) {
-            defTextureShader = new TexureShader(parent,
+            defTextureShader = new TextureShader(parent,
                                                 defTextureShaderVertURL,
                                                 defTextureShaderFragURL);
           }
@@ -6514,6 +6512,7 @@ public class PGraphicsOpenGL extends PGraphics {
     protected int modelviewLoc;
     protected int projectionLoc;
     protected int bufferLoc;
+    protected int bufferUnit;
     protected int viewportLoc;
 
     public BaseShader(PApplet parent) {
@@ -6541,7 +6540,7 @@ public class PGraphicsOpenGL extends PGraphics {
     public void unbind() {
       if (-1 < bufferLoc) {
         pgl.needFBOLayer();
-        pgl.activeTexture(PGL.TEXTURE0 + lastTexUnit);
+        pgl.activeTexture(PGL.TEXTURE0 + bufferUnit);
         pgCurrent.unbindBackTexture();
         pgl.activeTexture(PGL.TEXTURE0);
       }
@@ -6576,9 +6575,12 @@ public class PGraphicsOpenGL extends PGraphics {
       }
 
       if (-1 < bufferLoc) {
-        setUniformValue(bufferLoc, lastTexUnit);
-        pgl.activeTexture(PGL.TEXTURE0 + lastTexUnit);
+        bufferUnit = getLastTexUnit() + 1;
+        setUniformValue(bufferLoc, bufferUnit);
+        pgl.activeTexture(PGL.TEXTURE0 + bufferUnit);
         pgCurrent.bindBackTexture();
+      } else {
+        bufferUnit = -1;
       }
     }
 
@@ -6824,7 +6826,9 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  protected class TexureShader extends ColorShader {
+  protected class TextureShader extends ColorShader {
+    protected Texture texture;
+    protected int texUnit;
     protected int texCoordLoc;
 
     protected int textureLoc;
@@ -6836,16 +6840,16 @@ public class PGraphicsOpenGL extends PGraphics {
 
     protected float[] tcmat;
 
-    public TexureShader(PApplet parent) {
+    public TextureShader(PApplet parent) {
       super(parent);
     }
 
-    public TexureShader(PApplet parent, String vertFilename,
+    public TextureShader(PApplet parent, String vertFilename,
                                          String fragFilename) {
       super(parent, vertFilename, fragFilename);
     }
 
-    public TexureShader(PApplet parent, URL vertURL, URL fragURL) {
+    public TextureShader(PApplet parent, URL vertURL, URL fragURL) {
       super(parent, vertURL, fragURL);
     }
 
@@ -6916,13 +6920,17 @@ public class PGraphicsOpenGL extends PGraphics {
 
       setUniformValue(texOffsetLoc, 1.0f / tex.width, 1.0f / tex.height);
 
-      setUniformValue(textureLoc, 0);
+      if (-1 < textureLoc) {
+        texUnit = bufferUnit + 1;
+        setUniformValue(textureLoc, texUnit);
+        pgl.activeTexture(PGL.TEXTURE0 + texUnit);
+        tex.bind();
+        texture = tex;
+      }
     }
 
     @Override
     public void bind() {
-      firstTexUnit = 1; // 0 will be used by the textureSampler
-
       super.bind();
 
       if (-1 < texCoordLoc) pgl.enableVertexAttribArray(texCoordLoc);
@@ -6939,12 +6947,21 @@ public class PGraphicsOpenGL extends PGraphics {
       if (-1 < texCoordLoc) pgl.disableVertexAttribArray(texCoordLoc);
       if (-1 < normalLoc) pgl.disableVertexAttribArray(normalLoc);
 
+      if (-1 < textureLoc && texture != null) {
+        pgl.activeTexture(PGL.TEXTURE0 + texUnit);
+        texture.unbind();
+        pgl.activeTexture(PGL.TEXTURE0);
+        texture = null;
+      }
+
       super.unbind();
     }
   }
 
 
   protected class TexlightShader extends LightShader {
+    protected Texture texture;
+    protected int texUnit;
     protected int texCoordLoc;
 
     protected int textureLoc;
@@ -7023,13 +7040,17 @@ public class PGraphicsOpenGL extends PGraphics {
 
       setUniformValue(texOffsetLoc, 1.0f / tex.width, 1.0f / tex.height);
 
-      setUniformValue(textureLoc, 0);
+      if (-1 < textureLoc) {
+        texUnit = bufferUnit + 1;
+        setUniformValue(textureLoc, texUnit);
+        pgl.activeTexture(PGL.TEXTURE0 + texUnit);
+        tex.bind();
+        texture = tex;
+      }
     }
 
     @Override
     public void bind() {
-      firstTexUnit = 1; // 0 will be used by the textureSampler
-
       super.bind();
 
       if (-1 < texCoordLoc) pgl.enableVertexAttribArray(texCoordLoc);
@@ -7038,6 +7059,13 @@ public class PGraphicsOpenGL extends PGraphics {
     @Override
     public void unbind() {
       if (-1 < texCoordLoc) pgl.disableVertexAttribArray(texCoordLoc);
+
+      if (-1 < textureLoc && texture != null) {
+        pgl.activeTexture(PGL.TEXTURE0 + texUnit);
+        texture.unbind();
+        pgl.activeTexture(PGL.TEXTURE0);
+        texture = null;
+      }
 
       super.unbind();
     }
@@ -7268,8 +7296,7 @@ public class PGraphicsOpenGL extends PGraphics {
     int[] lastIndex;
     int[] firstCache;
     int[] lastCache;
-    boolean hasTexture;
-    Texture tex0;
+    boolean hasTextures;
 
     TexCache() {
       allocate();
@@ -7282,17 +7309,13 @@ public class PGraphicsOpenGL extends PGraphics {
       firstCache = new int[PGL.DEFAULT_IN_TEXTURES];
       lastCache = new int[PGL.DEFAULT_IN_TEXTURES];
       size = 0;
-      hasTexture = false;
+      hasTextures = false;
     }
 
     void clear() {
       java.util.Arrays.fill(textures, 0, size, null);
       size = 0;
-      hasTexture = false;
-    }
-
-    void beginRender() {
-      tex0 = null;
+      hasTextures = false;
     }
 
     PImage getTextureImage(int i) {
@@ -7305,33 +7328,9 @@ public class PGraphicsOpenGL extends PGraphics {
 
       if (img != null) {
         tex = pgPrimary.getTexture(img);
-        if (tex != null) {
-          tex.bind();
-          tex0 = tex;
-        }
-      }
-      if (tex == null && tex0 != null) {
-        tex0.unbind();
-        pgl.disableTexturing(tex0.glTarget);
       }
 
       return tex;
-    }
-
-    void endRender() {
-      if (hasTexture) {
-        // Unbinding all the textures in the cache.
-        for (int i = 0; i < size; i++) {
-          PImage img = textures[i];
-          if (img != null) {
-            Texture tex = pgPrimary.getTexture(img);
-            if (tex != null) {
-              tex.unbind();
-              pgl.disableTexturing(tex.glTarget);
-            }
-          }
-        }
-      }
     }
 
     void addTexture(PImage img, int firsti, int firstb, int lasti, int lastb) {
@@ -7344,7 +7343,7 @@ public class PGraphicsOpenGL extends PGraphics {
       lastCache[size] = lastb;
 
       // At least one non-null texture since last reset.
-      hasTexture |= img != null;
+      hasTextures |= img != null;
 
       size++;
     }
