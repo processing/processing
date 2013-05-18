@@ -1,4 +1,4 @@
-0217 core
+0217 core (2.0b9)
 X add set(x, y) to PVector (shiffman)
 X loadImage() with TGA causing images to be upside-down
 X   https://github.com/processing/processing/issues/1682
