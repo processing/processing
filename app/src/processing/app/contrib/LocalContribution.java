@@ -40,7 +40,7 @@ import processing.app.*;
 public abstract class LocalContribution extends Contribution {
   static public final String DELETION_FLAG = "flagged_for_deletion";
   
-  protected String id;          // 1
+  protected String id;          // 1 (unique id for this library)
   protected int latestVersion;  // 103
   protected File folder;
   protected HashMap<String, String> properties;
@@ -69,7 +69,9 @@ public abstract class LocalContribution extends Contribution {
       try {
         version = Integer.parseInt(properties.get("version"));
       } catch (NumberFormatException e) {
-        e.printStackTrace();
+        System.err.println("The version number for the “" + name + "” library is not set properly.");
+        System.err.println("Please contact the library author to fix it according to the guidelines.");
+        //e.printStackTrace();
       }
       prettyVersion = properties.get("prettyVersion");
       

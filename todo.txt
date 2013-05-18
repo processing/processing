@@ -34,6 +34,10 @@ X change line endings on Windows to only be replaced during dist
 X   otherwise marks revisions.txt as changed
 X processing-java dialog window huge
 X   https://github.com/processing/processing/issues/1748
+X library with bad version number in version causes stack trace to print
+X   added println warning message about it
+X update mode images again from Casey
+o   also send pull request for Florian
 
 manager
 X "New version available" mesage is showing html tags around it
@@ -44,17 +48,6 @@ X fix layout of the update button
 X get update text to align vertically
 X "Update" not working in the library manager
 X   https://github.com/processing/processing/issues/1701
-
-_ move old Google Code SVN back to processing.org
-_   then cull out the old branches/tags from the Github repo
-
-_ library with bad version number in version causes crash
-_ UnsatisfiedLinkError causes huge message... 
-_   error report cleanups haven't been fixed yet
-_ update mode images again from Casey
-_   also send pull request for Florian
-_ remove initRequirements from Base (no longer need JDI)
-_   move this into Android mode?
 
 
 2.0 FINAL / new interface
@@ -210,6 +203,12 @@ _   how to disclose to users?
 _   only send for items that are part of the public list 
 _     otherwise we're sending private libraries/installs
 _     although this won't pick up old libraries not on the new system
+_ move old Google Code SVN back to processing.org
+_   then cull out the old branches/tags from the Github repo
+_ UnsatisfiedLinkError causes huge message... 
+_   error report cleanups haven't been fixed yet
+_ remove initRequirements from Base (no longer need JDI)
+_   move this into Android mode?
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 

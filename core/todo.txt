@@ -1,5 +1,4 @@
 0217 core
-X improve load/save of .gz files with Table, clear up some .bin issues
 X add set(x, y) to PVector (shiffman)
 X loadImage() with TGA causing images to be upside-down
 X   https://github.com/processing/processing/issues/1682
@@ -22,6 +21,11 @@ X tint() with JAVA2D does not automatically refresh (with possible fix)
 X   https://github.com/processing/processing/issues/1730
 X change how updatePixels() is called in PGraphicsJava2D
 X   only call setModified(), not updatePixels() in endDraw()
+
+andres
+A lines not properly renderered in P3D when using ortographic projection
+A   https://github.com/processing/processing/issues/1661
+A "deleted n framebuffer objects" 
 
 earlier
 X decision on registered methods
@@ -64,24 +68,6 @@ X   ref: "negative values if the mouse wheel was rotated up or away from the use
 X   http://docs.oracle.com/javase/6/docs/api/java/awt/event/MouseWheelEvent.html#getWheelRotation()
 X   http://docs.oracle.com/javase/7/docs/api/java/awt/event/MouseWheelEvent.html#getWheelRotation()
 
-before release
-_ "deleted n framebuffer objects" 
-_ add options for image.save() (or saveImage?)
-_   add quality=[0,1] for jpeg images
-_   add dpi=[0,n] for for png images
-
-before 2.0
-_ PImage.loadPixels() shouldn't be calling out to the renderer
-_   setting image.parent = null for it makes it work again for get().save() case
-_ PShape should be cached as well
-
-high
-_ draw() called again before finishing on OS X (retina issue)
-_   https://github.com/processing/processing/issues/1709
-_ Linux sometimes not responding correctly w/ the size() command
-_   https://github.com/processing/processing/issues/1672
-
-
 data
 X are we comfortable with setInt/Float/etc instead of just set(int, blah)
 X   yes, better to have parity
@@ -103,40 +89,11 @@ o   Dict and List could be interfaces?
 X "hash.toJSONObject()" or "new JSONObject(hash)"
 X   opted to use "new JSONObject" version, appears less awkward
 o match? find? on StringList?
-_ can we use String... for options? or does it screw up the method signature?
-_   and would we have to always concatenate arrays to prepend extensions, etc
-_ include Instant and Interval? (or just Time and TimeSpan)
-_ naming for descending sort
-_   rsort(), sortReverse(), sortKeysReverse, 
-_   sortDescend, sortDescending, sortKeysDescending, 
-_   sortHighLow, sortHigh, sortHighest, sortDown
-_ it's going to be File or Reader (mostly BufferedReader) everywhere
-_   though TableODS needs an InputStream... 
-_   and XML could use InputStream if we hope to be able to reflect doc encoding
-_   ok, so File, Reader, and InputStream (where needed)
-_ setMissingXxxx() -> should this live in PApplet? be static?
-_   cons: static stinks, diff tables might use diff values
-_ will also need an iterator for the Dict class ala Map.Entry
-_ using Iterable for rows(), keys(), etc
-_   generally more efficient for Table, but slower for FloatHash and IntHash
-_   could use an int array instead, but a bit hokey in places
-_ Iterable, Iterator, or [] returned for keys(), rows(), etc.
-_   list, dict, json, table are each more efficient at different things
-_   keys(), rows(), etc. should return something Iterable
-_     whether that means an array or an actual Iterator or even a Set
-_     that way we can do what's most efficient
-_   then we add keyIterator() and others to handle the other case (deletion)
-_   blogs.oracle.com/CoreJavaTechTips/entry/using_enhanced_for_loops_with
-_ means that JSON.keys() -> JSON.keyIterator(), JSON.keySet() -> JSON.keys()
-_ what should they all return? 
-_   remove -> true/false based on whether it found something?
-_   remove all -> the number removed?
-_ List: remove(), append(), index(), etc all use values
-_   removeIndex(index) is the other
-_   otherwise remove() would be the only one that dealt with indices
-_   Dict will use remove(key), so using remove(index) as default
-_     and removeValue(value) is probably used less
-_ introduce remap() instead of map() (if not deprecate?)
+X naming for descending sort
+o   rsort(), sortReverse(), sortKeysReverse, 
+o   sortDescend, sortDescending, sortKeysDescending, 
+o   sortHighLow, sortHigh, sortHighest, sortDown
+X   sortReverse() is the final decision
 
 data / document
 X no save/load for hash and list classes
@@ -173,10 +130,9 @@ X   hasAttribute in XML, containsKey in java's Map, hasKey in JSON
 X   hasChildren() is another precedent
 o   contains() is nice, but containsKey() is weird, often not 'containing'
 X   hasKey/hasValue is best; fewest changes and most descriptive
-_ not doing print() methods, since alternatives are more descriptive
-_   println(obj) and obj.write(System.out) are both better
 
 json
+X loadJSONArray, loadJSONObject
 X getIntArray() for JSONArray
 X misc bugs with last release
 X   https://github.com/processing/processing/issues/1660
@@ -185,7 +141,6 @@ X Dan having trouble with JSON
 X keys() vs keySet() in JSON.. 
 X   keys() doesn't iterate, keySet() introduces 'Set' type
 X parseJSONObject(x) and parseJSONArray(x)
-_ add indent= as option for JSON save
 
 table
 X do we need getColumnType() inside TableRow? 
@@ -216,6 +171,26 @@ o   maybe it's Table.INT since it's for advanced users anyway
 o   problem is loading types from file, no way to access it from code
 o   CATEGORICAL -> CATEGORY? ORDINAL?
 X add clearRows()
+X improve load/save of .gz files with Table, clear up some .bin issues
+
+xml
+o add nodes() (no) or children() to XML?
+X   not necessary, getChildren() already exists
+
+before 2.0
+_ PImage.loadPixels() shouldn't be calling out to the renderer
+_   setting image.parent = null for it makes it work again for get().save() case
+_ PShape should be cached as well
+_ add options for image.save() (or saveImage?)
+_   add quality=[0,1] for jpeg images
+_   add dpi=[0,n] for for png images
+
+high
+_ draw() called again before finishing on OS X (retina issue)
+_   https://github.com/processing/processing/issues/1709
+_ Linux sometimes not responding correctly w/ the size() command
+_   https://github.com/processing/processing/issues/1672
+
 _ function that will convert awful CSV to TSV.. or something else?
 _   maybe to write binary instead? then read the binary file once it's ok?
 _ if loading from a File object
@@ -246,14 +221,43 @@ _   table.join(anotherTable)
 _ getInt() on categorial to return index?
 _   getCategories() and getCategory() methods to query names?
 
-xml
-o add nodes() (no) or children() to XML?
-X   not necessary, getChildren() already exists
+data
 _ add indent= as option for XML save
+_ add indent= as option for JSON save
+_ not doing print() methods, since alternatives are more descriptive
+_   println(obj) and obj.write(System.out) are both better
+_ can we use String... for options? or does it screw up the method signature?
+_   and would we have to always concatenate arrays to prepend extensions, etc
+_ include Instant and Interval? (or just Time and TimeSpan)
+_ it's going to be File or Reader (mostly BufferedReader) everywhere
+_   though TableODS needs an InputStream... 
+_   and XML could use InputStream if we hope to be able to reflect doc encoding
+_   ok, so File, Reader, and InputStream (where needed)
+_ setMissingXxxx() -> should this live in PApplet? be static?
+_   cons: static stinks, diff tables might use diff values
+_ will also need an iterator for the Dict class ala Map.Entry
+_ using Iterable for rows(), keys(), etc
+_   generally more efficient for Table, but slower for FloatHash and IntHash
+_   could use an int array instead, but a bit hokey in places
+_ Iterable, Iterator, or [] returned for keys(), rows(), etc.
+_   list, dict, json, table are each more efficient at different things
+_   keys(), rows(), etc. should return something Iterable
+_     whether that means an array or an actual Iterator or even a Set
+_     that way we can do what's most efficient
+_   then we add keyIterator() and others to handle the other case (deletion)
+_   blogs.oracle.com/CoreJavaTechTips/entry/using_enhanced_for_loops_with
+_ means that JSON.keys() -> JSON.keyIterator(), JSON.keySet() -> JSON.keys()
+_ what should they all return? 
+_   remove -> true/false based on whether it found something?
+_   remove all -> the number removed?
+_ List: remove(), append(), index(), etc all use values
+_   removeIndex(index) is the other
+_   otherwise remove() would be the only one that dealt with indices
+_   Dict will use remove(key), so using remove(index) as default
+_     and removeValue(value) is probably used less
+_ introduce remap() instead of map() (if not deprecate?)
 
 andres
-A lines not properly renderered in P3D when using ortographic projection
-A   https://github.com/processing/processing/issues/1661
 _ P2D/P3D sketches don't get focus until clicked
 _   also problem for Java2D when canvas is used?
 _   need to standardize canvas handling
