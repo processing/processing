@@ -44,9 +44,9 @@ import processing.core.*;
  * files and images, etc) that comes from that.
  */
 public class Base {
-  static public final int REVISION = 217;
+  static public final int REVISION = 218;
   /** This might be replaced by main() if there's a lib/version.txt file. */
-  static public String VERSION_NAME = "0217"; //$NON-NLS-1$
+  static public String VERSION_NAME = "0218"; //$NON-NLS-1$
   /** Set true if this a proper release rather than a numbered revision. */
   static public boolean RELEASE = false;
 
@@ -2348,8 +2348,8 @@ public class Base {
     */
     return new File(processingRoot, name);
   }
-  
-  
+
+
 //  /**
 //   * Get an image associated with the current color theme.
 //   * @deprecated
@@ -2914,8 +2914,8 @@ public class Base {
       System.out.println(message);
     }
   }
-  
-  
+
+
   static public void logf(String message, Object... args) {
     if (DEBUG) {
       System.out.println(String.format(message, args));

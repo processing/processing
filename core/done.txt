@@ -1,3 +1,189 @@
+0217 core (2.0b9)
+X add set(x, y) to PVector (shiffman)
+X loadImage() with TGA causing images to be upside-down
+X   https://github.com/processing/processing/issues/1682
+A image caches not being properly disposed (weak references broken?)
+X   http://code.google.com/p/processing/issues/detail?id=1353
+A   https://github.com/processing/processing/issues/1391
+X implement content specifiers
+X   getIntContent()
+X   getFloatContent()
+X   getContent() or getStringContent()?
+X switch to CATEGORY instead of CATEGORICAL
+X removed createXML() and createTable()... just use 'new' for these
+X implement means for setting dpi in PNG images
+X   need to add something for API yet
+o   JAI handles setting image size for png (check javax.imageio?) 
+o   PNGEncodeParam png = PNGEncodeParam.getDefaultEncodeParam(bufImage);
+o   png.setPhysicalDimension(round(dpi*39.370079), round(dpi*39.370079), 1);
+o   JAI.create("filestore", bufImage, filename+".png", "PNG");
+X tint() with JAVA2D does not automatically refresh (with possible fix)
+X   https://github.com/processing/processing/issues/1730
+X change how updatePixels() is called in PGraphicsJava2D
+X   only call setModified(), not updatePixels() in endDraw()
+
+andres
+A lines not properly renderered in P3D when using ortographic projection
+A   https://github.com/processing/processing/issues/1661
+A "deleted n framebuffer objects" 
+A last lines of a beginShape(LINES) are invisible in the P2D renderer
+A   https://github.com/processing/processing/issues/1761
+A Incorrect number of vertices on beginShape(TRIANGLES) affect subsequent Shapes
+A   https://github.com/processing/processing/issues/1760
+A rendering unlit geometry with TEXLIGHT shader throws misleading error message
+A   https://github.com/processing/processing/issues/1757
+
+earlier
+X decision on registered methods
+X   remove registerPre() et al
+X   add register("pause", ...) 
+X   size() should be resize(), so it can be overridden (ala pause())
+X   add PEvent
+X need to wrap mouse/key events for p5
+X   need a version that works with both android and desktop
+X   also need to interleave events properly (as per report)
+
+mouse wheel
+X add mouse wheel support to 2.0 event system
+X   https://github.com/processing/processing/issues/1461
+X   http://code.google.com/p/processing/issues/detail?id=1423
+X   this is fairly messy since desktop and JS behave a little differently
+o   wheel event should subclass mouse (since position still relevant)
+X     just another sub-event as part of mouse
+o   might be more effort than it's worth?
+X   peasycam uses e.getWheelRotation()
+X   js has a couple versions
+X     http://www.javascriptkit.com/javatutors/onmousewheel.shtml
+X     e.detail is 1 for 1 tick upward (away), -2 for 2 ticks down
+X     e.wheelDelta is 120 for 1 click up, -240 for two clicks down
+X     this is for non-natural! opposite of Java.. ugh
+X testing with Java on OS X
+X   natural on OS X: up is 1 unit, down is -1 units
+X     non-natural: up is -1 units, down is +1 unit
+X   Windows says 3 units per notch, OS X says just 1
+X   appears to be opposite of JS
+X   using float value (/120.0f)
+X   high-precision method grabbed if 1.7 is in use
+X   test with actual wheel mouse
+X   test on Windows
+X   decide on getAmount() and weirdness w/ clickCount
+X   add note re: API docs
+X     get mouseWheel() added to api ref
+o     also added to keywords.txt
+X   ref: "negative values if the mouse wheel was rotated up or away from the user"
+X   http://docs.oracle.com/javase/6/docs/api/java/awt/event/MouseWheelEvent.html#getWheelRotation()
+X   http://docs.oracle.com/javase/7/docs/api/java/awt/event/MouseWheelEvent.html#getWheelRotation()
+
+data
+X are we comfortable with setInt/Float/etc instead of just set(int, blah)
+X   yes, better to have parity
+X   too weird to have to explain why getXxx() needs types and set() doesn't
+X get/set with Java's 'Map' class?
+X   really useful, but leaning toward not including it
+X   or leave it in as an advanced feature?
+X createXxx() methods less important
+X   XML.parse() - or new XML("<tag>") or new XML("tag")
+X api note: size() used in data classes
+X   length() too confusing w/ array.length being built-in (when to use ()?)
+X   size() a bit confusing with the p5 size command, but less problematic
+o   also shorter than getCount() or getLength()
+o why not HashMap and ArrayList for JSON? 
+o   could enable loadHash() and loadArray() functions
+X   because the types coming back out would always have to be cast
+o add loadDict() and loadList() for JSON?
+o   Dict and List could be interfaces? 
+X "hash.toJSONObject()" or "new JSONObject(hash)"
+X   opted to use "new JSONObject" version, appears less awkward
+o match? find? on StringList?
+X naming for descending sort
+o   rsort(), sortReverse(), sortKeysReverse, 
+o   sortDescend, sortDescending, sortKeysDescending, 
+o   sortHighLow, sortHigh, sortHighest, sortDown
+X   sortReverse() is the final decision
+
+data / document
+X no save/load for hash and list classes
+X   because no native format
+X   write() and constructor are enough for advanced users
+o add() to add things to lists, inc/dec for the math
+o   inc/dec/sum is used less, after all
+X   or append()? since that's what JSON is currently using
+X   append() nicer, inc/dec felt arcane (and forced)
+o Lookup instead of Hash or Dict?
+o increment, decrement, increase, decrease instead of add/subtract
+o   does double duty for incrementing/decrementing easily
+o   inc(), inc(amount), dec(), dec(amount)
+X replace (especially for null and NaN)
+X   make note that these work, and are special cases
+o listAttributes() in XML is like array from keys() etc in our data classes
+X removeIndex() vs removeValue() vs remove() 
+X   remove() refers to an index (with array) or key (with hash)
+X   more consistent with other APIs (Java)
+X   replaceValue[s]() the same, though more on the line
+o   should we not have remove() and removeIndex()
+o     and instead always specify? removeKey(), removeIndex(), removeValue()?
+o     would mean that hash would only have removeKey
+o     downside: remove() takes whatever get() takes as arg
+X   with removeValue(), add removeValues() for all values that match?
+X     also support NaN here
+X need to sort out the final version of hash/dict/etc and their names
+X JSONObject.has(key) vs XML.hasAttribute(attr) vs HashMap.containsKey()
+X   and how it should be handled with hash/dict
+X   right now using hasKey().. in JSONObject
+o   contains() as default, then containsValue() as the alternate
+o     instead of containsKey() and containsValue()
+X   hasAttribute in XML, containsKey in java's Map, hasKey in JSON
+X   hasChildren() is another precedent
+o   contains() is nice, but containsKey() is weird, often not 'containing'
+X   hasKey/hasValue is best; fewest changes and most descriptive
+
+json
+X loadJSONArray, loadJSONObject
+X getIntArray() for JSONArray
+X misc bugs with last release
+X   https://github.com/processing/processing/issues/1660
+X   https://github.com/processing/processing/issues/1680
+X Dan having trouble with JSON
+X keys() vs keySet() in JSON.. 
+X   keys() doesn't iterate, keySet() introduces 'Set' type
+X parseJSONObject(x) and parseJSONArray(x)
+
+table
+X do we need getColumnType() inside TableRow? 
+X   also inside Table
+X   also do we make the constants public?
+X table writing twice when .csv is added 
+X   https://github.com/processing/processing/issues/1734
+X checkOptions() is a mess.. need to use different options for load/save
+X   rewrite it as necessary
+X implement binary tables
+X   these might be partially set
+o add .gz as option for writing (and bz2?)
+X   handling gz properly, but gz has to be the extension
+X   adding it to options is too messy
+o add 'gz' as one of the loadXxx() options
+o   helps .svgz case from being weird, also generally dealing w/ compressed data
+X include SQL, HTML, ODS, binary? 
+X   decide on TableODS, TableHTML
+X   HTML is out--too confusing
+X   ODS is in for loading, and finished
+o   naming HTMLTable, TableHTML (ala PShapeSVG)
+o   or should it be HTMLTable / HtmlTable... then SVGShape / SvgShape
+X   SQL can be done with a constructor
+X   this will just be available for advanced users
+X getColumnType() - what should it return?
+o   Integer.TYPE, String.class? still nothing for categorical
+o   maybe it's Table.INT since it's for advanced users anyway
+o   problem is loading types from file, no way to access it from code
+o   CATEGORICAL -> CATEGORY? ORDINAL?
+X add clearRows()
+X improve load/save of .gz files with Table, clear up some .bin issues
+
+xml
+o add nodes() (no) or children() to XML?
+X   not necessary, getChildren() already exists
+
+
 0216 core (2.0b8)
 X Add clear() to replace background(0, 0, 0, 0)
 X   http://code.google.com/p/processing/issues/detail?id=1446
