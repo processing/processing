@@ -2395,6 +2395,8 @@ public class PGraphicsOpenGL extends PGraphics {
         }
 
         if (tex != null) {
+          shader.setNormalAttribute(glPolyNormal, 3, PGL.FLOAT, 0,
+                                    3 * voffset * PGL.SIZEOF_FLOAT);
           shader.setTexcoordAttribute(glPolyTexcoord, 2, PGL.FLOAT, 0,
                                       2 * voffset * PGL.SIZEOF_FLOAT);
           shader.setTexture(tex);
@@ -6829,6 +6831,9 @@ public class PGraphicsOpenGL extends PGraphics {
     protected int texMatrixLoc;
     protected int texOffsetLoc;
 
+    protected int normalMatrixLoc;
+    protected int normalLoc;
+
     protected float[] tcmat;
 
     public TexureShader(PApplet parent) {
@@ -6851,6 +6856,8 @@ public class PGraphicsOpenGL extends PGraphics {
       textureLoc = getUniformLoc("texture");
       texMatrixLoc = getUniformLoc("texMatrix");
       texOffsetLoc = getUniformLoc("texOffset");
+
+      normalMatrixLoc = getUniformLoc("normalMatrix");
     }
 
     @Override
@@ -6858,6 +6865,14 @@ public class PGraphicsOpenGL extends PGraphics {
       super.loadAttributes();
 
       texCoordLoc = getAttributeLoc("texCoord");
+
+      normalLoc = getAttributeLoc("normal");
+    }
+
+    @Override
+    public void setNormalAttribute(int vboId, int size, int type,
+                                   int stride, int offset) {
+      setAttributeVBO(normalLoc, vboId, size, type, false, stride, offset);
     }
 
     @Override
@@ -6911,11 +6926,18 @@ public class PGraphicsOpenGL extends PGraphics {
       super.bind();
 
       if (-1 < texCoordLoc) pgl.enableVertexAttribArray(texCoordLoc);
+
+      if (-1 < normalLoc) pgl.enableVertexAttribArray(normalLoc);
+      if (-1 < normalMatrixLoc) {
+        pgCurrent.updateGLNormal();
+        setUniformMatrix(normalMatrixLoc, pgCurrent.glNormal);
+      }
     }
 
     @Override
     public void unbind() {
       if (-1 < texCoordLoc) pgl.disableVertexAttribArray(texCoordLoc);
+      if (-1 < normalLoc) pgl.disableVertexAttribArray(normalLoc);
 
       super.unbind();
     }

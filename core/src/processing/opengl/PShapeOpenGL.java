@@ -4191,6 +4191,8 @@ public class PShapeOpenGL extends PShape {
       }
 
       if (tex != null) {
+        shader.setNormalAttribute(root.glPolyNormal, 3, PGL.FLOAT,
+                                  0, 3 * voffset * PGL.SIZEOF_FLOAT);
         shader.setTexcoordAttribute(root.glPolyTexcoord, 2, PGL.FLOAT,
                                     0, 2 * voffset * PGL.SIZEOF_FLOAT);
         shader.setTexture(tex);
