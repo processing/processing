@@ -26,6 +26,12 @@ andres
 A lines not properly renderered in P3D when using ortographic projection
 A   https://github.com/processing/processing/issues/1661
 A "deleted n framebuffer objects" 
+A last lines of a beginShape(LINES) are invisible in the P2D renderer
+A   https://github.com/processing/processing/issues/1761
+A Incorrect number of vertices on beginShape(TRIANGLES) affect subsequent Shapes
+A   https://github.com/processing/processing/issues/1760
+A rendering unlit geometry with TEXLIGHT shader throws misleading error message
+A   https://github.com/processing/processing/issues/1757
 
 earlier
 X decision on registered methods

@@ -978,6 +978,7 @@ Things to fix on the source code side of things.
 
 _ update license info to state gplv2 not v3
 _   add Processing Foundation as 2012
+_   https://github.com/processing/processing/issues/1777
 _ add proper copyright and license information for all included projects
 _   http://code.google.com/p/processing/issues/detail?id=185
 _   list of license issues

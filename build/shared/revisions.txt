@@ -54,6 +54,15 @@ with one or two issues that could require a beta 10. That's a lot of beta.
 
 + Plus dozens of other P2D/P3D fixes that Andres snuck in there.
 
++ Last lines of a beginShape(LINES) are invisible in the P2D renderer
+  https://github.com/processing/processing/issues/1761
+
++ Incorrect number of vertices on beginShape(TRIANGLES) affect subsequent Shapes
+  https://github.com/processing/processing/issues/1760
+
++ Rendering unlit geometry with TEXLIGHT shader throws misleading error message
+  https://github.com/processing/processing/issues/1757
+
 [ changes ]
 
 + New images for modes. New design!
