@@ -101,7 +101,7 @@ void draw() {
   bubbleData.append(newBubble);
 
   if (bubbleData.size() > 10) {
-    bubbleData.removeIndex(0);
+    bubbleData.remove(0);
   }
 
   // Save new data
