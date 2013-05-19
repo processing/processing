@@ -6,7 +6,9 @@ import java.util.Random;
 
 import processing.core.PApplet;
 
-
+/**
+ * @webref data:composite
+ */
 public class StringList implements Iterable<String> {
   int count;
   String[] data;

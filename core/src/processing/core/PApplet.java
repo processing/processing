@@ -6037,7 +6037,6 @@ public class PApplet extends Applet
    * @webref input:files
    * @param filename name of a file in the data folder or a URL.
    * @see XML
-   * @see PApplet#createXML(String)
    * @see PApplet#parseXML(String)
    * @see PApplet#saveXML(XML, String)
    * @see PApplet#loadBytes(String)
@@ -6069,7 +6068,6 @@ public class PApplet extends Applet
    * @param data the content to be parsed as XML
    * @return an XML object, or null
    * @see XML
-   * @see PApplet#createXML(String)
    * @see PApplet#loadXML(String)
    * @see PApplet#saveXML(XML, String)
    */
@@ -6093,7 +6091,6 @@ public class PApplet extends Applet
    * @param xml the XML object to save to disk
    * @param filename name of the file to write to
    * @see XML
-   * @see PApplet#createXML(String)
    * @see PApplet#loadXML(String)
    * @see PApplet#parseXML(String)
    */
@@ -6111,12 +6108,16 @@ public class PApplet extends Applet
     return new JSONObject(new StringReader(input));
   }
 
-
+  /**
+   * @webref output:files
+   */
   public JSONObject loadJSONObject(String filename) {
     return new JSONObject(createReader(filename));
   }
 
-
+  /**
+   * @webref output:files
+   */
   public boolean saveJSONObject(JSONObject json, String filename) {
     return saveJSONObject(json, filename, null);
   }
@@ -6131,12 +6132,16 @@ public class PApplet extends Applet
     return new JSONArray(new StringReader(input));
   }
 
-
+  /**
+   * @webref output:files
+   */
   public JSONArray loadJSONArray(String filename) {
     return new JSONArray(createReader(filename));
   }
 
-
+  /**
+   * @webref output:files
+   */
   public boolean saveJSONArray(JSONArray json, String filename) {
     return saveJSONArray(json, filename);
   }
@@ -6163,7 +6168,6 @@ public class PApplet extends Applet
    * @webref input:files
    * @param filename name of a file in the data folder or a URL.
    * @see Table
-   * @see PApplet#createTable()
    * @see PApplet#saveTable(Table, String)
    * @see PApplet#loadBytes(String)
    * @see PApplet#loadStrings(String)
@@ -6204,7 +6208,6 @@ public class PApplet extends Applet
    * @param table the Table object to save to a file
    * @param filename the filename to which the Table should be saved
    * @see Table
-   * @see PApplet#createTable()
    * @see PApplet#loadTable(String)
    */
   public boolean saveTable(Table table, String filename) {

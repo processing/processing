@@ -16,6 +16,7 @@ import processing.core.PApplet;
  * Helper class for a list of ints. By design (for efficiency), functions like
  * sort() and shuffle() always act on the list itself. To get a sorted copy,
  * use list.copy().sort().
+ * @webref data:composite
  */
 public class IntList implements Iterable<Integer> {
   protected int count;

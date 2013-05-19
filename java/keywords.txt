@@ -443,6 +443,8 @@ exp	FUNCTION1	exp_
 expand	FUNCTION1	expand_
 fill	FUNCTION1	fill_
 filter	FUNCTION1	filter_
+FloatDict	KEYWORD5	FloatDict
+FloatList	KEYWORD5	FloatList
 floor	FUNCTION1	floor_
 focused	KEYWORD4	focused
 frameCount	KEYWORD4	frameCount
@@ -458,7 +460,11 @@ hour	FUNCTION1	hour_
 hue	FUNCTION1	hue_
 image	FUNCTION1	image_
 imageMode	FUNCTION1	imageMode_
+IntDict	KEYWORD5	IntDict
+IntList	KEYWORD5	IntList
 join	FUNCTION1	join_
+JSONArray	KEYWORD5	JSONArray
+JSONObject	KEYWORD5	JSONObject
 key	KEYWORD4	key
 keyCode	KEYWORD4	keyCode
 keyPressed	FUNCTION4	keyPressed
@@ -474,6 +480,8 @@ line	FUNCTION1	line_
 loadBytes	FUNCTION1	loadBytes_
 loadFont	FUNCTION1	loadFont_
 loadImage	FUNCTION1	loadImage_
+loadJSONArray	FUNCTION1	loadJSONArray_
+loadJSONObject	FUNCTION1	loadJSONObject_
 loadPixels	FUNCTION1	loadPixels_
 loadShader	FUNCTION1	loadShader_
 loadShape	FUNCTION1	loadShape_
@@ -586,7 +594,6 @@ array	FUNCTION2	PVector_array_
 copy	FUNCTION2	PVector_copy_
 cross	FUNCTION2	PVector_cross_
 dist	FUNCTION2	PVector_dist_
-div	FUNCTION2	PVector_div_
 dot	FUNCTION2	PVector_dot_
 fromAngle	FUNCTION2	PVector_fromAngle_
 get	FUNCTION2	PVector_get_
@@ -595,7 +602,6 @@ lerp	FUNCTION2	PVector_lerp_
 limit	FUNCTION2	PVector_limit_
 mag	FUNCTION2	PVector_mag_
 magSq	FUNCTION2	PVector_magSq_
-mult	FUNCTION2	PVector_mult_
 normalize	FUNCTION2	PVector_normalize_
 random2D	FUNCTION2	PVector_random2D_
 random3D	FUNCTION2	PVector_random3D_
@@ -627,6 +633,8 @@ saturation	FUNCTION1	saturation_
 save	FUNCTION1	save_
 saveBytes	FUNCTION1	saveBytes_
 saveFrame	FUNCTION1	saveFrame_
+saveJSONArray	FUNCTION1	saveJSONArray_
+saveJSONObject	FUNCTION1	saveJSONObject_
 saveStream	FUNCTION1	saveStream_
 saveStrings	FUNCTION1	saveStrings_
 loadTable	FUNCTION1	saveTable_
@@ -661,12 +669,16 @@ splitTokens	FUNCTION1	splitTokens_
 spotLight	FUNCTION1	spotLight_
 sq	FUNCTION1	sq_
 sqrt	FUNCTION1	sqrt_
+StringDict	KEYWORD5	StringDict
+StringList	KEYWORD5	StringList
 stroke	FUNCTION1	stroke_
 strokeCap	FUNCTION1	strokeCap_
 strokeJoin	FUNCTION1	strokeJoin_
 strokeWeight	FUNCTION1	strokeWeight_
 subset	FUNCTION1	subset_
 Table	KEYWORD5	Table
+addColumn	FUNCTION2	Table_addColumn_
+TableRow	KEYWORD5	TableRow
 tan	FUNCTION1	tan_
 TAU	LITERAL2	TAU
 text	FUNCTION1	text_

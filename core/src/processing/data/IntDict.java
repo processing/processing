@@ -9,6 +9,8 @@ import processing.core.PApplet;
 
 /**
  * A simple class to use a String as a lookup for an int value.
+ * 
+ * @webref data:composite
  */
 public class IntDict {
 

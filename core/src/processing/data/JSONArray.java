@@ -91,6 +91,7 @@ import processing.core.PApplet;
  *
  * @author JSON.org
  * @version 2012-11-13
+ * @webref data:composite
  */
 public class JSONArray {
 
@@ -258,6 +259,8 @@ public class JSONArray {
    * @param index The index must be between 0 and length() - 1.
    * @return      A string value.
    * @throws JSONException If there is no string value for the index.
+   * @webref jsonarray:method
+   * @brief Get the string associated with an index
    */
   public String getString(int index) {
     Object object = this.get(index);
@@ -274,6 +277,8 @@ public class JSONArray {
    * @param index The index must be between 0 and length() - 1.
    * @return      The value.
    * @throws   JSONException If the key is not found or if the value is not a number.
+   * @webref jsonarray:method
+   * @brief Get the int value associated with an index
    */
   public int getInt(int index) {
     Object object = this.get(index);
@@ -310,6 +315,9 @@ public class JSONArray {
   /**
    * Get a value from an index as a float. JSON uses 'double' values
    * internally, so this is simply getDouble() cast to a float.
+   * 
+   * @webref jsonarray:method
+   * @brief To come...
    */
   public float getFloat(int index) {
     return (float) getDouble(index);
@@ -344,6 +352,8 @@ public class JSONArray {
    * @return      The truth.
    * @throws JSONException If there is no value for the index or if the
    *  value is not convertible to boolean.
+   * @webref jsonarray:method
+   * @brief Get the boolean value associated with an index
    */
   public boolean getBoolean(int index) {
     Object object = this.get(index);
@@ -362,10 +372,13 @@ public class JSONArray {
 
   /**
    * Get the JSONArray associated with an index.
+   * 
    * @param index The index must be between 0 and length() - 1.
    * @return      A JSONArray value.
    * @throws JSONException If there is no value for the index. or if the
    * value is not a JSONArray
+   * @webref jsonarray:method
+   * @brief Get the JSONArray associated with an index
    */
   public JSONArray getJSONArray(int index) {
     Object object = this.get(index);
@@ -378,10 +391,13 @@ public class JSONArray {
 
   /**
    * Get the JSONObject associated with an index.
+   * 
    * @param index subscript
    * @return      A JSONObject value.
    * @throws JSONException If there is no value for the index or if the
    * value is not a JSONObject
+   * @webref jsonarray:method
+   * @brief Get the JSONObject associated with an index
    */
   public JSONObject getJSONObject(int index) {
     Object object = this.get(index);
@@ -392,7 +408,12 @@ public class JSONArray {
   }
 
 
-  /** Get this entire array as a String array. */
+  /** 
+   * Get this entire array as a String array. 
+   * 
+   * @webref jsonarray:method
+   * @brief Get this entire array as a String array
+   */
   public String[] getStringArray() {
     String[] outgoing = new String[size()];
     for (int i = 0; i < size(); i++) {
@@ -402,7 +423,12 @@ public class JSONArray {
   }
 
 
-  /** Get this entire array as an int array. Everything must be an int. */
+  /** 
+   * Get this entire array as an int array. Everything must be an int. 
+   * 
+   * @webref jsonarray:method
+   * @brief Get this entire array as an int array
+   */
   public int[] getIntArray() {
     int[] outgoing = new int[size()];
     for (int i = 0; i < size(); i++) {
@@ -634,6 +660,8 @@ public class JSONArray {
    *
    * @param value A String value.
    * @return this.
+   * @webref jsonarray:method
+   * @brief Append an String value. This increases the array's length by one.
    */
   public JSONArray append(String value) {
     this.append((Object)value);
@@ -777,6 +805,8 @@ public class JSONArray {
    * @param value A String value.
    * @return this.
    * @throws JSONException If the index is negative.
+   * @webref jsonarray:method
+   * @brief Put or replace a String value
    */
   public JSONArray setString(int index, String value) {
     this.set(index, value);
@@ -792,6 +822,8 @@ public class JSONArray {
    * @param value An int value.
    * @return this.
    * @throws JSONException If the index is negative.
+   * @webref jsonarray:method
+   * @brief Put or replace an int value
    */
   public JSONArray setInt(int index, int value) {
     this.set(index, new Integer(value));
@@ -823,6 +855,8 @@ public class JSONArray {
    * @return this.
    * @throws RuntimeException If the index is negative or if the value is
    * not finite.
+   * @webref jsonarray:method
+   * @brief Put or replace a float value
    */
   public JSONArray setFloat(int index, float value) {
     return setDouble(index, value);
@@ -852,6 +886,8 @@ public class JSONArray {
    * @param value A boolean value.
    * @return this.
    * @throws JSONException If the index is negative.
+   * @webref jsonarray:method
+   * @brief Put or replace a boolean value
    */
   public JSONArray setBoolean(int index, boolean value) {
     return set(index, value ? Boolean.TRUE : Boolean.FALSE);
@@ -872,13 +908,19 @@ public class JSONArray {
 //    return this;
 //  }
 
-
+  /**
+   * @webref jsonarray:method
+   * @brief To come...
+   */
   public JSONArray setJSONArray(int index, JSONArray value) {
     set(index, value);
     return this;
   }
 
-
+  /**
+   * @webref jsonarray:method
+   * @brief To come...
+   */
   public JSONArray setJSONObject(int index, JSONObject value) {
     set(index, value);
     return this;
@@ -918,6 +960,8 @@ public class JSONArray {
    * Get the number of elements in the JSONArray, included nulls.
    *
    * @return The length (or size).
+   * @webref jsonarray:method
+   * @brief Get the number of elements in the JSONArray, included nulls
    */
   public int size() {
     return myArrayList.size();
@@ -937,9 +981,12 @@ public class JSONArray {
 
   /**
    * Remove an index and close the hole.
+   * 
    * @param index The index of the element to be removed.
    * @return The value that was associated with the index,
    * or null if there was no value.
+   * @webref jsonarray:method
+   * @brief Remove an index and close the hole
    */
   public Object remove(int index) {
     Object o = this.opt(index);

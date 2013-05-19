@@ -9,6 +9,8 @@ import processing.core.PApplet;
 
 /**
  * A simple table class to use a String as a lookup for an float value.
+ * 
+ * @webref data:composite
  */
 public class FloatDict {
 

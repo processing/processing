@@ -7,6 +7,9 @@ import java.util.Random;
 import processing.core.PApplet;
 
 
+/**
+ * @webref data:composite
+ */
 public class FloatList implements Iterable<Float> {
   int count;
   float[] data;
