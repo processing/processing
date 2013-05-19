@@ -79,8 +79,6 @@ public class PShader {
 
   protected HashMap<Integer, Texture> textures;
   protected HashMap<Integer, Integer> texUnits;
-//  protected int firstTexUnit;
-  protected int lastTexUnit;
 
   // Direct buffers to pass shader data to GL
   protected IntBuffer intBuffer;
@@ -554,7 +552,7 @@ public class PShader {
 
   protected void consumeUniforms() {
     if (uniformValues != null && 0 < uniformValues.size()) {
-      lastTexUnit = 0; //firstTexUnit;
+      int unit = 0;
       for (Integer loc: uniformValues.keySet()) {
         UniformValue val = uniformValues.get(loc);
         if (val.type == UniformValue.INT1) {
@@ -634,13 +632,13 @@ public class PShader {
 
           if (texUnits == null) texUnits = new HashMap<Integer, Integer>();
           if (texUnits.containsKey(loc)) {
-            lastTexUnit = texUnits.get(loc);
-            pgl.uniform1i(loc, lastTexUnit);
+            unit = texUnits.get(loc);
+            pgl.uniform1i(loc, unit);
           } else {
-            texUnits.put(loc, lastTexUnit);
-            pgl.uniform1i(loc, lastTexUnit);
+            texUnits.put(loc, unit);
+            pgl.uniform1i(loc, unit);
           }
-          lastTexUnit++;
+          unit++;
         }
       }
       uniformValues.clear();
