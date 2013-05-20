@@ -29,6 +29,7 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import processing.app.Base;
+import processing.app.Editor;
 import processing.app.EditorState;
 import processing.app.Mode;
 import processing.mode.java.JavaMode;
@@ -115,7 +116,7 @@ public class ExperimentalMode extends JavaMode {
    * Create a new editor associated with this mode.
    */
   @Override
-  public processing.app.Editor createEditor(Base base, String path, EditorState state) {
+  public Editor createEditor(Base base, String path, EditorState state) {
     return new DebugEditor(base, path, state, this);
   }
 
@@ -133,7 +134,7 @@ public class ExperimentalMode extends JavaMode {
     if (newString != null) {
       return newString;
     }
-    Logger.getLogger(ExperimentalMode.class.getName()).log(Level.WARNING, "Error loading String: {0}", attribute);
+    Logger.getLogger(getClass().getName()).log(Level.WARNING, "Error loading String: {0}", attribute);
     return defaultValue;
   }
     

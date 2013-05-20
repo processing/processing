@@ -6,7 +6,9 @@ import java.util.Random;
 
 import processing.core.PApplet;
 
-
+/**
+ * @webref data:composite
+ */
 public class StringList implements Iterable<String> {
   int count;
   String[] data;
@@ -28,6 +30,15 @@ public class StringList implements Iterable<String> {
     System.arraycopy(list, 0, data, 0, count);
   }
 
+
+  // Create from something iterable, for instance:
+  // StringList list = new StringList(hashMap.keySet());
+  public StringList(Iterable<String> iter) {
+    this(10);
+    for (String s : iter) {
+      append(s);
+    }
+  }
 
 
   /**
@@ -134,9 +145,17 @@ public class StringList implements Iterable<String> {
   /** Remove all instances of a particular value */
   public boolean removeValues(String value) {
     int ii = 0;
-    for (int i = 0; i < count; i++) {
-      if (data[i] != value) {
-        data[ii++] = data[i];
+    if (value == null) {
+      for (int i = 0; i < count; i++) {
+        if (data[i] != null) {
+          data[ii++] = data[i];
+        }
+      }
+    } else {
+      for (int i = 0; i < count; i++) {
+        if (!value.equals(data[i])) {
+          data[ii++] = data[i];
+        }
       }
     }
     boolean changed = count == ii;

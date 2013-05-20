@@ -16,6 +16,7 @@ import processing.core.PApplet;
  * Helper class for a list of ints. By design (for efficiency), functions like
  * sort() and shuffle() always act on the list itself. To get a sorted copy,
  * use list.copy().sort().
+ * @webref data:composite
  */
 public class IntList implements Iterable<Integer> {
   protected int count;
@@ -36,6 +37,14 @@ public class IntList implements Iterable<Integer> {
     count = source.length;
     data = new int[count];
     System.arraycopy(source, 0, data, 0, count);
+  }
+
+
+  public IntList(Iterable<Integer> iter) {
+    this(10);
+    for (int v : iter) {
+      append(v);
+    }
   }
 
 

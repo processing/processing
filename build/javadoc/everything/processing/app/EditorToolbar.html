@@ -112,7 +112,7 @@
 </dl>
 <dl>
 <dt>Direct Known Subclasses:</dt>
-<dd><a href="../../processing/mode/android/AndroidToolbar.html" title="class in processing.mode.android">AndroidToolbar</a>, <a href="../../processing/mode/javascript/JavaScriptToolbar.html" title="class in processing.mode.javascript">JavaScriptToolbar</a>, <a href="../../processing/mode/java/JavaToolbar.html" title="class in processing.mode.java">JavaToolbar</a></dd>
+<dd><a href="../../processing/mode/java/JavaToolbar.html" title="class in processing.mode.java">JavaToolbar</a></dd>
 </dl>
 <hr>
 <br>
@@ -276,8 +276,7 @@ implements javax.swing.event.MouseInputListener, java.awt.event.KeyListener</pre
 <tr class="rowColor">
 <td class="colFirst"><code>java.awt.Image[][]</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/EditorToolbar.html#loadImages()">loadImages</a></strong>()</code>
-<div class="block">Only call this from paintComponent, or when the comp is displayable, 
- otherwise createImage() might fail.</div>
+<div class="block">Load button images and slice them up.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -390,8 +389,10 @@ implements javax.swing.event.MouseInputListener, java.awt.event.KeyListener</pre
 <li class="blockList">
 <h4>loadImages</h4>
 <pre>public&nbsp;java.awt.Image[][]&nbsp;loadImages()</pre>
-<div class="block">Only call this from paintComponent, or when the comp is displayable, 
- otherwise createImage() might fail.</div>
+<div class="block">Load button images and slice them up. Only call this from paintComponent,  
+ or when the comp is displayable, otherwise createImage() might fail.
+ (Using BufferedImage instead of createImage() nowadays, so that may 
+ no longer be relevant.)</div>
 </li>
 </ul>
 <a name="paintComponent(java.awt.Graphics)">

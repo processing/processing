@@ -353,12 +353,13 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
       loadPixels();
     }
 
-    // Marking as modified, and then calling updatePixels() in
-    // the super class, which just sets the mx1, my1, mx2, my2
-    // coordinates of the modified area. This avoids doing the
-    // full copy of the pixels to the surface in this.updatePixels().
-    setModified();
-    super.updatePixels();
+//    // Marking as modified, and then calling updatePixels() in
+//    // the super class, which just sets the mx1, my1, mx2, my2
+//    // coordinates of the modified area. This avoids doing the
+//    // full copy of the pixels to the surface in this.updatePixels().
+//    setModified();
+//    super.updatePixels();
+    setModified();  // marks pixels as modified so that the pixels will be updated
   }
 
 
@@ -1253,7 +1254,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
     if ((tint && !cash.tinted) ||
         (tint && (cash.tintedColor != tintColor)) ||
         (!tint && cash.tinted)) {
-      // for tint change, mark all pixels as needing update
+      // For tint change, mark all pixels as needing update.
       who.updatePixels();
     }
 
@@ -1602,13 +1603,16 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
     return super.textWidthImpl(buffer, start, stop);
   }
 
-  protected void beginTextScreenMode() {
-    loadPixels();
-  }
 
-  protected void endTextScreenMode() {
-    updatePixels();
-  }
+//  protected void beginTextScreenMode() {
+//    loadPixels();
+//  }
+
+
+//  protected void endTextScreenMode() {
+//    updatePixels();
+//  }
+
 
   //////////////////////////////////////////////////////////////
 
@@ -2308,19 +2312,19 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   }
 
 
-  /**
-   * Update the pixels[] buffer to the PGraphics image.
-   * <P>
-   * Unlike in PImage, where updatePixels() only requests that the
-   * update happens, in PGraphicsJava2D, this will happen immediately.
-   */
-  @Override
-  public void updatePixels() {
-    //updatePixels(0, 0, width, height);
-//    WritableRaster raster = ((BufferedImage) (useOffscreen && primarySurface ? offscreen : image)).getRaster();
-//    WritableRaster raster = image.getRaster();
-    getRaster().setDataElements(0, 0, width, height, pixels);
-  }
+//  /**
+//   * Update the pixels[] buffer to the PGraphics image.
+//   * <P>
+//   * Unlike in PImage, where updatePixels() only requests that the
+//   * update happens, in PGraphicsJava2D, this will happen immediately.
+//   */
+//  @Override
+//  public void updatePixels() {
+//    //updatePixels(0, 0, width, height);
+////    WritableRaster raster = ((BufferedImage) (useOffscreen && primarySurface ? offscreen : image)).getRaster();
+////    WritableRaster raster = image.getRaster();
+//    updatePixels(0, 0, width, height);
+//  }
 
 
   /**
@@ -2336,8 +2340,26 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
       // Show a warning message, but continue anyway.
       showVariationWarning("updatePixels(x, y, w, h)");
     }
-    updatePixels();
+//    updatePixels();
+    if (pixels != null) {
+      getRaster().setDataElements(0, 0, width, height, pixels);
+    }
+    modified = true;
   }
+
+
+//  @Override
+//  protected void updatePixelsImpl(int x, int y, int w, int h) {
+//    super.updatePixelsImpl(x, y, w, h);
+//
+//    if ((x != 0) || (y != 0) || (w != width) || (h != height)) {
+//      // Show a warning message, but continue anyway.
+//      showVariationWarning("updatePixels(x, y, w, h)");
+//    }
+//    getRaster().setDataElements(0, 0, width, height, pixels);
+//  }
+
+
 
   //////////////////////////////////////////////////////////////
 

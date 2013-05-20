@@ -6,8 +6,7 @@
 // Using the dot product to compute the angle between two vectors
 
 void setup() {
-  size(383, 200);
-  smooth();
+  size(640, 360);
 }
 
 void draw() {

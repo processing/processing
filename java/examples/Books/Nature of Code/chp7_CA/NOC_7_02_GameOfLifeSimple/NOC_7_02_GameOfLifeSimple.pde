@@ -12,6 +12,7 @@ GOL gol;
 
 void setup() {
   size(640, 360);
+  frameRate(24);
   gol = new GOL();
 }
 

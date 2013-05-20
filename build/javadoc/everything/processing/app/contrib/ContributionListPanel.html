@@ -33,7 +33,7 @@
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../processing/app/contrib/ContributionListing.Filter.html" title="interface in processing.app.contrib"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../../processing/app/contrib/ContributionListing.html" title="class in processing.app.contrib"><span class="strong">Prev Class</span></a></li>
 <li><a href="../../../processing/app/contrib/ContributionManager.html" title="class in processing.app.contrib"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
@@ -113,13 +113,13 @@
 <li class="blockList">
 <dl>
 <dt>All Implemented Interfaces:</dt>
-<dd>java.awt.image.ImageObserver, java.awt.MenuContainer, java.io.Serializable, javax.accessibility.Accessible, javax.swing.Scrollable, <a href="../../../processing/app/contrib/ContributionListing.ContributionChangeListener.html" title="interface in processing.app.contrib">ContributionListing.ContributionChangeListener</a></dd>
+<dd>java.awt.image.ImageObserver, java.awt.MenuContainer, java.io.Serializable, javax.accessibility.Accessible, javax.swing.Scrollable, <a href="../../../processing/app/contrib/ContributionChangeListener.html" title="interface in processing.app.contrib">ContributionChangeListener</a></dd>
 </dl>
 <hr>
 <br>
 <pre>public class <span class="strong">ContributionListPanel</span>
 extends javax.swing.JPanel
-implements javax.swing.Scrollable, <a href="../../../processing/app/contrib/ContributionListing.ContributionChangeListener.html" title="interface in processing.app.contrib">ContributionListing.ContributionChangeListener</a></pre>
+implements javax.swing.Scrollable, <a href="../../../processing/app/contrib/ContributionChangeListener.html" title="interface in processing.app.contrib">ContributionChangeListener</a></pre>
 <dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../serialized-form.html#processing.app.contrib.ContributionListPanel">Serialized Form</a></dd></dl>
 </li>
 </ul>
@@ -209,8 +209,8 @@ implements javax.swing.Scrollable, <a href="../../../processing/app/contrib/Cont
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../processing/app/contrib/ContributionListPanel.html#ContributionListPanel(processing.app.contrib.ContributionManagerDialog, processing.app.contrib.ContributionListing.Filter)">ContributionListPanel</a></strong>(<a href="../../../processing/app/contrib/ContributionManagerDialog.html" title="class in processing.app.contrib">ContributionManagerDialog</a>&nbsp;libraryManager,
-                     <a href="../../../processing/app/contrib/ContributionListing.Filter.html" title="interface in processing.app.contrib">ContributionListing.Filter</a>&nbsp;filter)</code>&nbsp;</td>
+<td class="colOne"><code><strong><a href="../../../processing/app/contrib/ContributionListPanel.html#ContributionListPanel(processing.app.contrib.ContributionManagerDialog, processing.app.contrib.ContributionFilter)">ContributionListPanel</a></strong>(<a href="../../../processing/app/contrib/ContributionManagerDialog.html" title="class in processing.app.contrib">ContributionManagerDialog</a>&nbsp;libraryManager,
+                     processing.app.contrib.ContributionFilter&nbsp;filter)</code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -229,20 +229,20 @@ implements javax.swing.Scrollable, <a href="../../../processing/app/contrib/Cont
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../processing/app/contrib/ContributionListPanel.html#contributionAdded(processing.app.contrib.Contribution)">contributionAdded</a></strong>(<a href="../../../processing/app/contrib/Contribution.html" title="interface in processing.app.contrib">Contribution</a>&nbsp;contribution)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../processing/app/contrib/ContributionListPanel.html#contributionAdded(processing.app.contrib.Contribution)">contributionAdded</a></strong>(<a href="../../../processing/app/contrib/Contribution.html" title="class in processing.app.contrib">Contribution</a>&nbsp;contribution)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../processing/app/contrib/ContributionListPanel.html#contributionChanged(processing.app.contrib.Contribution, processing.app.contrib.Contribution)">contributionChanged</a></strong>(<a href="../../../processing/app/contrib/Contribution.html" title="interface in processing.app.contrib">Contribution</a>&nbsp;oldContrib,
-                   <a href="../../../processing/app/contrib/Contribution.html" title="interface in processing.app.contrib">Contribution</a>&nbsp;newContrib)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../processing/app/contrib/ContributionListPanel.html#contributionChanged(processing.app.contrib.Contribution, processing.app.contrib.Contribution)">contributionChanged</a></strong>(<a href="../../../processing/app/contrib/Contribution.html" title="class in processing.app.contrib">Contribution</a>&nbsp;oldContrib,
+                   <a href="../../../processing/app/contrib/Contribution.html" title="class in processing.app.contrib">Contribution</a>&nbsp;newContrib)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../processing/app/contrib/ContributionListPanel.html#contributionRemoved(processing.app.contrib.Contribution)">contributionRemoved</a></strong>(<a href="../../../processing/app/contrib/Contribution.html" title="interface in processing.app.contrib">Contribution</a>&nbsp;contribution)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../processing/app/contrib/ContributionListPanel.html#contributionRemoved(processing.app.contrib.Contribution)">contributionRemoved</a></strong>(<a href="../../../processing/app/contrib/Contribution.html" title="class in processing.app.contrib">Contribution</a>&nbsp;contribution)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../processing/app/contrib/ContributionListPanel.html#filterLibraries(java.util.List)">filterLibraries</a></strong>(java.util.List&lt;<a href="../../../processing/app/contrib/Contribution.html" title="interface in processing.app.contrib">Contribution</a>&gt;&nbsp;filteredContributions)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../processing/app/contrib/ContributionListPanel.html#filterLibraries(java.util.List)">filterLibraries</a></strong>(java.util.List&lt;<a href="../../../processing/app/contrib/Contribution.html" title="class in processing.app.contrib">Contribution</a>&gt;&nbsp;filteredContributions)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>java.awt.Dimension</code></td>
@@ -270,16 +270,6 @@ implements javax.swing.Scrollable, <a href="../../../processing/app/contrib/Cont
                           int&nbsp;orientation,
                           int&nbsp;direction)</code>
 <div class="block">Amount to scroll to reveal the rest of something we are on or a new item</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static java.lang.String</code></td>
-<td class="colLast"><code><strong><a href="../../../processing/app/contrib/ContributionListPanel.html#sanitizeHtmlTags(java.lang.String)">sanitizeHtmlTags</a></strong>(java.lang.String&nbsp;stringIn)</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static java.lang.String</code></td>
-<td class="colLast"><code><strong><a href="../../../processing/app/contrib/ContributionListPanel.html#toHtmlLinks(java.lang.String)">toHtmlLinks</a></strong>(java.lang.String&nbsp;stringIn)</code>
-<div class="block">This has a [link](http://example.com/) in [it](http://example.org/).</div>
 </td>
 </tr>
 </table>
@@ -370,14 +360,14 @@ implements javax.swing.Scrollable, <a href="../../../processing/app/contrib/Cont
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="ContributionListPanel(processing.app.contrib.ContributionManagerDialog, processing.app.contrib.ContributionListing.Filter)">
+<a name="ContributionListPanel(processing.app.contrib.ContributionManagerDialog, processing.app.contrib.ContributionFilter)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>ContributionListPanel</h4>
 <pre>public&nbsp;ContributionListPanel(<a href="../../../processing/app/contrib/ContributionManagerDialog.html" title="class in processing.app.contrib">ContributionManagerDialog</a>&nbsp;libraryManager,
-                     <a href="../../../processing/app/contrib/ContributionListing.Filter.html" title="interface in processing.app.contrib">ContributionListing.Filter</a>&nbsp;filter)</pre>
+                     processing.app.contrib.ContributionFilter&nbsp;filter)</pre>
 </li>
 </ul>
 </li>
@@ -394,10 +384,10 @@ implements javax.swing.Scrollable, <a href="../../../processing/app/contrib/Cont
 <ul class="blockList">
 <li class="blockList">
 <h4>contributionAdded</h4>
-<pre>public&nbsp;void&nbsp;contributionAdded(<a href="../../../processing/app/contrib/Contribution.html" title="interface in processing.app.contrib">Contribution</a>&nbsp;contribution)</pre>
+<pre>public&nbsp;void&nbsp;contributionAdded(<a href="../../../processing/app/contrib/Contribution.html" title="class in processing.app.contrib">Contribution</a>&nbsp;contribution)</pre>
 <dl>
 <dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../processing/app/contrib/ContributionListing.ContributionChangeListener.html#contributionAdded(processing.app.contrib.Contribution)">contributionAdded</a></code>&nbsp;in interface&nbsp;<code><a href="../../../processing/app/contrib/ContributionListing.ContributionChangeListener.html" title="interface in processing.app.contrib">ContributionListing.ContributionChangeListener</a></code></dd>
+<dd><code><a href="../../../processing/app/contrib/ContributionChangeListener.html#contributionAdded(processing.app.contrib.Contribution)">contributionAdded</a></code>&nbsp;in interface&nbsp;<code><a href="../../../processing/app/contrib/ContributionChangeListener.html" title="interface in processing.app.contrib">ContributionChangeListener</a></code></dd>
 </dl>
 </li>
 </ul>
@@ -407,10 +397,10 @@ implements javax.swing.Scrollable, <a href="../../../processing/app/contrib/Cont
 <ul class="blockList">
 <li class="blockList">
 <h4>contributionRemoved</h4>
-<pre>public&nbsp;void&nbsp;contributionRemoved(<a href="../../../processing/app/contrib/Contribution.html" title="interface in processing.app.contrib">Contribution</a>&nbsp;contribution)</pre>
+<pre>public&nbsp;void&nbsp;contributionRemoved(<a href="../../../processing/app/contrib/Contribution.html" title="class in processing.app.contrib">Contribution</a>&nbsp;contribution)</pre>
 <dl>
 <dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../processing/app/contrib/ContributionListing.ContributionChangeListener.html#contributionRemoved(processing.app.contrib.Contribution)">contributionRemoved</a></code>&nbsp;in interface&nbsp;<code><a href="../../../processing/app/contrib/ContributionListing.ContributionChangeListener.html" title="interface in processing.app.contrib">ContributionListing.ContributionChangeListener</a></code></dd>
+<dd><code><a href="../../../processing/app/contrib/ContributionChangeListener.html#contributionRemoved(processing.app.contrib.Contribution)">contributionRemoved</a></code>&nbsp;in interface&nbsp;<code><a href="../../../processing/app/contrib/ContributionChangeListener.html" title="interface in processing.app.contrib">ContributionChangeListener</a></code></dd>
 </dl>
 </li>
 </ul>
@@ -420,11 +410,11 @@ implements javax.swing.Scrollable, <a href="../../../processing/app/contrib/Cont
 <ul class="blockList">
 <li class="blockList">
 <h4>contributionChanged</h4>
-<pre>public&nbsp;void&nbsp;contributionChanged(<a href="../../../processing/app/contrib/Contribution.html" title="interface in processing.app.contrib">Contribution</a>&nbsp;oldContrib,
-                       <a href="../../../processing/app/contrib/Contribution.html" title="interface in processing.app.contrib">Contribution</a>&nbsp;newContrib)</pre>
+<pre>public&nbsp;void&nbsp;contributionChanged(<a href="../../../processing/app/contrib/Contribution.html" title="class in processing.app.contrib">Contribution</a>&nbsp;oldContrib,
+                       <a href="../../../processing/app/contrib/Contribution.html" title="class in processing.app.contrib">Contribution</a>&nbsp;newContrib)</pre>
 <dl>
 <dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../processing/app/contrib/ContributionListing.ContributionChangeListener.html#contributionChanged(processing.app.contrib.Contribution, processing.app.contrib.Contribution)">contributionChanged</a></code>&nbsp;in interface&nbsp;<code><a href="../../../processing/app/contrib/ContributionListing.ContributionChangeListener.html" title="interface in processing.app.contrib">ContributionListing.ContributionChangeListener</a></code></dd>
+<dd><code><a href="../../../processing/app/contrib/ContributionChangeListener.html#contributionChanged(processing.app.contrib.Contribution, processing.app.contrib.Contribution)">contributionChanged</a></code>&nbsp;in interface&nbsp;<code><a href="../../../processing/app/contrib/ContributionChangeListener.html" title="interface in processing.app.contrib">ContributionChangeListener</a></code></dd>
 </dl>
 </li>
 </ul>
@@ -434,7 +424,7 @@ implements javax.swing.Scrollable, <a href="../../../processing/app/contrib/Cont
 <ul class="blockList">
 <li class="blockList">
 <h4>filterLibraries</h4>
-<pre>public&nbsp;void&nbsp;filterLibraries(java.util.List&lt;<a href="../../../processing/app/contrib/Contribution.html" title="interface in processing.app.contrib">Contribution</a>&gt;&nbsp;filteredContributions)</pre>
+<pre>public&nbsp;void&nbsp;filterLibraries(java.util.List&lt;<a href="../../../processing/app/contrib/Contribution.html" title="class in processing.app.contrib">Contribution</a>&gt;&nbsp;filteredContributions)</pre>
 </li>
 </ul>
 <a name="getPreferredScrollableViewportSize()">
@@ -498,7 +488,7 @@ implements javax.swing.Scrollable, <a href="../../../processing/app/contrib/Cont
 <a name="getScrollableTracksViewportWidth()">
 <!--   -->
 </a>
-<ul class="blockList">
+<ul class="blockListLast">
 <li class="blockList">
 <h4>getScrollableTracksViewportWidth</h4>
 <pre>public&nbsp;boolean&nbsp;getScrollableTracksViewportWidth()</pre>
@@ -506,30 +496,6 @@ implements javax.swing.Scrollable, <a href="../../../processing/app/contrib/Cont
 <dt><strong>Specified by:</strong></dt>
 <dd><code>getScrollableTracksViewportWidth</code>&nbsp;in interface&nbsp;<code>javax.swing.Scrollable</code></dd>
 </dl>
-</li>
-</ul>
-<a name="sanitizeHtmlTags(java.lang.String)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>sanitizeHtmlTags</h4>
-<pre>public static&nbsp;java.lang.String&nbsp;sanitizeHtmlTags(java.lang.String&nbsp;stringIn)</pre>
-</li>
-</ul>
-<a name="toHtmlLinks(java.lang.String)">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>toHtmlLinks</h4>
-<pre>public static&nbsp;java.lang.String&nbsp;toHtmlLinks(java.lang.String&nbsp;stringIn)</pre>
-<div class="block">This has a [link](http://example.com/) in [it](http://example.org/).
-
- Becomes...
-
- This has a <a href="http://example.com/">link</a> in <a
- href="http://example.org/">it</a>.</div>
 </li>
 </ul>
 </li>
@@ -557,7 +523,7 @@ implements javax.swing.Scrollable, <a href="../../../processing/app/contrib/Cont
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../processing/app/contrib/ContributionListing.Filter.html" title="interface in processing.app.contrib"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../../processing/app/contrib/ContributionListing.html" title="class in processing.app.contrib"><span class="strong">Prev Class</span></a></li>
 <li><a href="../../../processing/app/contrib/ContributionManager.html" title="class in processing.app.contrib"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">

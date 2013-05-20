@@ -263,6 +263,16 @@ public class PGraphicsRetina2D extends PGraphicsJava2D {
   }
 
 
+  @Override
+  public void updatePixels() {
+    if (hints[ENABLE_RETINA_PIXELS]) {
+      updatePixels(0, 0, retina.width, retina.height);
+    } else {
+      updatePixels(0, 0, width, height);
+    }
+  }
+
+
   /**
    * Update the pixels[] buffer to the PGraphics image.
    * <P>
@@ -270,7 +280,14 @@ public class PGraphicsRetina2D extends PGraphicsJava2D {
    * update happens, in PGraphicsJava2D, this will happen immediately.
    */
   @Override
-  public void updatePixels() {
+  public void updatePixels(int ux, int uy, int uw, int uh) {
+    int wide = hints[ENABLE_RETINA_PIXELS] ? retina.width : width;
+    int high = hints[ENABLE_RETINA_PIXELS] ? retina.height : height;
+    if ((ux != 0) || (uy != 0) || (uw != wide) || (uh != high)) {
+      // Show a warning message, but continue anyway.
+      showVariationWarning("updatePixels(x, y, w, h)");
+    }
+    // If not using retina pixels, will need to first downsample
     if (!hints[ENABLE_RETINA_PIXELS]) {
       int offset = 0;
       int roffset = 0;
@@ -286,11 +303,8 @@ public class PGraphicsRetina2D extends PGraphicsJava2D {
       }
     }
     getRaster().setDataElements(0, 0, retina.width, retina.height, retina.pixels);
+    modified = true;
   }
-
-
-  // No override necessary, just prints a warning and calls updatePixels()
-  //public void updatePixels(int x, int y, int c, int d);
 
 
   static int rgetset[] = new int[4];

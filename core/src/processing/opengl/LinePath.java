@@ -195,7 +195,7 @@ public class LinePath {
       floatCoords = copyOf(floatCoords, size + grow);
     }
     size = pointColors.length;
-    if (numCoords + newPoints > size) {
+    if (numCoords/2 + newPoints > size) {
       int grow = size;
       if (grow > EXPAND_MAX) {
         grow = EXPAND_MAX;
@@ -225,7 +225,7 @@ public class LinePath {
     if (numTypes > 0 && pointTypes[numTypes - 1] == SEG_MOVETO) {
       floatCoords[numCoords - 2] = x;
       floatCoords[numCoords - 1] = y;
-      pointColors[numCoords/2] = c;
+      pointColors[numCoords/2-1] = c;
     } else {
       needRoom(false, 1);
       pointTypes[numTypes++] = SEG_MOVETO;
@@ -339,6 +339,8 @@ public class LinePath {
     PathIterator(LinePath p2df) {
       this.path = p2df;
       this.floatCoords = p2df.floatCoords;
+      pointIdx = 0;
+      colorIdx = 0;
     }
 
     public int currentSegment(float[] coords) {
@@ -381,8 +383,10 @@ public class LinePath {
 
     public void next() {
       int type = path.pointTypes[typeIdx++];
-      pointIdx += curvecoords[type];
-      colorIdx++;
+      if (0 < curvecoords[type]) {
+        pointIdx += curvecoords[type];
+        colorIdx++;
+      }
     }
   }
 

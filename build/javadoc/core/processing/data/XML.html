@@ -102,7 +102,10 @@ extends java.lang.Object
 implements java.io.Serializable</pre>
 <div class="block">This is the base class used for the Processing XML library,
  representing a single node of an XML tree.</div>
-<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../processing/core/PApplet.html#loadXML(java.lang.String)"><code>PApplet.loadXML(String)</code></a>, 
+<dl><dt><span class="strong">See Also:</span></dt><dd><code>PApplet#createXML(String)</code>, 
+<a href="../../processing/core/PApplet.html#loadXML(java.lang.String)"><code>PApplet.loadXML(String)</code></a>, 
+<a href="../../processing/core/PApplet.html#parseXML(java.lang.String)"><code>PApplet.parseXML(String)</code></a>, 
+<a href="../../processing/core/PApplet.html#saveXML(processing.data.XML, java.lang.String)"><code>PApplet.saveXML(XML, String)</code></a>, 
 <a href="../../serialized-form.html#processing.data.XML">Serialized Form</a></dd></dl>
 </li>
 </ul>
@@ -122,18 +125,37 @@ implements java.io.Serializable</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../processing/data/XML.html#XML(java.io.File)">XML</a></strong>(java.io.File&nbsp;file)</code>&nbsp;</td>
+<td class="colOne"><code><strong><a href="../../processing/data/XML.html#XML(java.io.File)">XML</a></strong>(java.io.File&nbsp;file)</code>
+<div class="block">Advanced users only; see loadXML() in PApplet.</div>
+</td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><strong><a href="../../processing/data/XML.html#XML(processing.core.PApplet, java.lang.String)">XML</a></strong>(<a href="../../processing/core/PApplet.html" title="class in processing.core">PApplet</a>&nbsp;parent,
-   java.lang.String&nbsp;filename)</code>
-<div class="block">Begin parsing XML data passed in from a PApplet.</div>
+<td class="colOne"><code><strong><a href="../../processing/data/XML.html#XML(java.io.File, java.lang.String)">XML</a></strong>(java.io.File&nbsp;file,
+   java.lang.String&nbsp;options)</code>
+<div class="block">Advanced users only; see loadXML() in PApplet.</div>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../processing/data/XML.html#XML(java.io.Reader)">XML</a></strong>(java.io.Reader&nbsp;reader)</code>&nbsp;</td>
+<td class="colOne"><code><strong><a href="../../processing/data/XML.html#XML(java.io.InputStream)">XML</a></strong>(java.io.InputStream&nbsp;input)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../processing/data/XML.html#XML(java.io.InputStream, java.lang.String)">XML</a></strong>(java.io.InputStream&nbsp;input,
+   java.lang.String&nbsp;options)</code>
+<div class="block">Shouldn't be part of main p5 reference, this is for advanced users.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../processing/data/XML.html#XML(java.io.Reader)">XML</a></strong>(java.io.Reader&nbsp;reader)</code>
+<div class="block">Advanced users only; see loadXML() in PApplet.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../processing/data/XML.html#XML(java.io.Reader, java.lang.String)">XML</a></strong>(java.io.Reader&nbsp;reader,
+   java.lang.String&nbsp;options)</code>
+<div class="block">Advanced users only; see loadXML() in PApplet.</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colOne"><code><strong><a href="../../processing/data/XML.html#XML(java.lang.String)">XML</a></strong>(java.lang.String&nbsp;name)</code>&nbsp;</td>
 </tr>
 </table>
@@ -161,7 +183,9 @@ implements java.io.Serializable</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><strong><a href="../../processing/data/XML.html#format(int)">format</a></strong>(int&nbsp;indent)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../processing/data/XML.html#format(int)">format</a></strong>(int&nbsp;indent)</code>
+<div class="block">Format this XML data as a String.</div>
+</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
@@ -217,6 +241,14 @@ implements java.io.Serializable</pre>
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>double</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/XML.html#getDoubleContent()">getDoubleContent</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>double</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/XML.html#getDoubleContent(double)">getDoubleContent</a></strong>(double&nbsp;defaultValue)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>float</code></td>
 <td class="colLast"><code><strong><a href="../../processing/data/XML.html#getFloat(java.lang.String)">getFloat</a></strong>(java.lang.String&nbsp;name)</code>
 <div class="block">Returns the value of an attribute, or zero if not present.</div>
@@ -230,6 +262,14 @@ implements java.io.Serializable</pre>
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>float</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/XML.html#getFloatContent()">getFloatContent</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>float</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/XML.html#getFloatContent(float)">getFloatContent</a></strong>(float&nbsp;defaultValue)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../processing/data/XML.html#getInt(java.lang.String)">getInt</a></strong>(java.lang.String&nbsp;name)</code>&nbsp;</td>
 </tr>
@@ -239,6 +279,14 @@ implements java.io.Serializable</pre>
       int&nbsp;defaultValue)</code>
 <div class="block">Returns the value of an attribute.</div>
 </td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/XML.html#getIntContent()">getIntContent</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/XML.html#getIntContent(int)">getIntContent</a></strong>(int&nbsp;defaultValue)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
@@ -252,6 +300,14 @@ implements java.io.Serializable</pre>
        long&nbsp;defaultValue)</code>
 <div class="block">Returns the value of an attribute.</div>
 </td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>long</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/XML.html#getLongContent()">getLongContent</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>long</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/XML.html#getLongContent(long)">getLongContent</a></strong>(long&nbsp;defaultValue)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
@@ -300,32 +356,34 @@ implements java.io.Serializable</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../processing/data/XML.html" title="class in processing.data">XML</a></code></td>
-<td class="colLast"><code><strong><a href="../../processing/data/XML.html#parse(java.lang.String)">parse</a></strong>(java.lang.String&nbsp;xml)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../processing/data/XML.html#parse(java.lang.String)">parse</a></strong>(java.lang.String&nbsp;data)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>static <a href="../../processing/data/XML.html" title="class in processing.data">XML</a></code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/XML.html#parse(java.lang.String, java.lang.String)">parse</a></strong>(java.lang.String&nbsp;data,
+     java.lang.String&nbsp;options)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/data/XML.html#removeChild(processing.data.XML)">removeChild</a></strong>(<a href="../../processing/data/XML.html" title="class in processing.data">XML</a>&nbsp;kid)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><strong><a href="../../processing/data/XML.html#save(java.io.File)">save</a></strong>(java.io.File&nbsp;file)</code>&nbsp;</td>
-</tr>
 <tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><strong><a href="../../processing/data/XML.html#save(java.io.OutputStream)">save</a></strong>(java.io.OutputStream&nbsp;output)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../processing/data/XML.html#save(java.io.File, java.lang.String)">save</a></strong>(java.io.File&nbsp;file,
+    java.lang.String&nbsp;options)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><strong><a href="../../processing/data/XML.html#save(java.io.PrintWriter)">save</a></strong>(java.io.PrintWriter&nbsp;output)</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/data/XML.html#setContent(java.lang.String)">setContent</a></strong>(java.lang.String&nbsp;text)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/data/XML.html#setDouble(java.lang.String, double)">setDouble</a></strong>(java.lang.String&nbsp;name,
          double&nbsp;value)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/XML.html#setDoubleContent(double)">setDoubleContent</a></strong>(double&nbsp;value)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
@@ -334,8 +392,16 @@ implements java.io.Serializable</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/XML.html#setFloatContent(float)">setFloatContent</a></strong>(float&nbsp;value)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/data/XML.html#setInt(java.lang.String, int)">setInt</a></strong>(java.lang.String&nbsp;name,
       int&nbsp;value)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/XML.html#setIntContent(int)">setIntContent</a></strong>(int&nbsp;value)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
@@ -344,22 +410,26 @@ implements java.io.Serializable</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/data/XML.html#setName(java.lang.String)">setName</a></strong>(java.lang.String&nbsp;newName)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../processing/data/XML.html#setLongContent(long)">setLongContent</a></strong>(long&nbsp;value)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/XML.html#setName(java.lang.String)">setName</a></strong>(java.lang.String&nbsp;newName)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/data/XML.html#setString(java.lang.String, java.lang.String)">setString</a></strong>(java.lang.String&nbsp;name,
          java.lang.String&nbsp;value)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
-<td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><strong><a href="../../processing/data/XML.html#toString()">toString</a></strong>()</code>&nbsp;</td>
-</tr>
 <tr class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/data/XML.html#trim()">trim</a></strong>()</code>
-<div class="block">Remove whitespace nodes.</div>
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/XML.html#toString()">toString</a></strong>()</code>
+<div class="block">Return the XML document formatted with two spaces for indents.</div>
 </td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/XML.html#write(java.io.PrintWriter)">write</a></strong>(java.io.PrintWriter&nbsp;output)</code>&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -383,26 +453,6 @@ implements java.io.Serializable</pre>
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="XML(processing.core.PApplet, java.lang.String)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>XML</h4>
-<pre>public&nbsp;XML(<a href="../../processing/core/PApplet.html" title="class in processing.core">PApplet</a>&nbsp;parent,
-   java.lang.String&nbsp;filename)
-    throws java.io.IOException,
-           javax.xml.parsers.ParserConfigurationException,
-           org.xml.sax.SAXException</pre>
-<div class="block">Begin parsing XML data passed in from a PApplet. This code
- wraps exception handling, for more advanced exception handling,
- use the constructor that takes a Reader or InputStream.</div>
-<dl><dt><span class="strong">Throws:</span></dt>
-<dd><code>org.xml.sax.SAXException</code></dd>
-<dd><code>javax.xml.parsers.ParserConfigurationException</code></dd>
-<dd><code>java.io.IOException</code></dd></dl>
-</li>
-</ul>
 <a name="XML(java.io.File)">
 <!--   -->
 </a>
@@ -413,6 +463,61 @@ implements java.io.Serializable</pre>
     throws java.io.IOException,
            javax.xml.parsers.ParserConfigurationException,
            org.xml.sax.SAXException</pre>
+<div class="block">Advanced users only; see loadXML() in PApplet.</div>
+<dl><dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd>
+<dd><code>javax.xml.parsers.ParserConfigurationException</code></dd>
+<dd><code>org.xml.sax.SAXException</code></dd></dl>
+</li>
+</ul>
+<a name="XML(java.io.File, java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>XML</h4>
+<pre>public&nbsp;XML(java.io.File&nbsp;file,
+   java.lang.String&nbsp;options)
+    throws java.io.IOException,
+           javax.xml.parsers.ParserConfigurationException,
+           org.xml.sax.SAXException</pre>
+<div class="block">Advanced users only; see loadXML() in PApplet.</div>
+<dl><dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd>
+<dd><code>javax.xml.parsers.ParserConfigurationException</code></dd>
+<dd><code>org.xml.sax.SAXException</code></dd></dl>
+</li>
+</ul>
+<a name="XML(java.io.InputStream)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>XML</h4>
+<pre>public&nbsp;XML(java.io.InputStream&nbsp;input)
+    throws java.io.IOException,
+           javax.xml.parsers.ParserConfigurationException,
+           org.xml.sax.SAXException</pre>
+<dl><dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd>
+<dd><code>javax.xml.parsers.ParserConfigurationException</code></dd>
+<dd><code>org.xml.sax.SAXException</code></dd></dl>
+</li>
+</ul>
+<a name="XML(java.io.InputStream, java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>XML</h4>
+<pre>public&nbsp;XML(java.io.InputStream&nbsp;input,
+   java.lang.String&nbsp;options)
+    throws java.io.IOException,
+           javax.xml.parsers.ParserConfigurationException,
+           org.xml.sax.SAXException</pre>
+<div class="block">Shouldn't be part of main p5 reference, this is for advanced users.
+ Note that while it doesn't accept anything but UTF-8, this is preserved
+ so that we have some chance of implementing that in the future.</div>
 <dl><dt><span class="strong">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd>
 <dd><code>javax.xml.parsers.ParserConfigurationException</code></dd>
@@ -429,6 +534,25 @@ implements java.io.Serializable</pre>
     throws java.io.IOException,
            javax.xml.parsers.ParserConfigurationException,
            org.xml.sax.SAXException</pre>
+<div class="block">Advanced users only; see loadXML() in PApplet.</div>
+<dl><dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd>
+<dd><code>javax.xml.parsers.ParserConfigurationException</code></dd>
+<dd><code>org.xml.sax.SAXException</code></dd></dl>
+</li>
+</ul>
+<a name="XML(java.io.Reader, java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>XML</h4>
+<pre>public&nbsp;XML(java.io.Reader&nbsp;reader,
+   java.lang.String&nbsp;options)
+    throws java.io.IOException,
+           javax.xml.parsers.ParserConfigurationException,
+           org.xml.sax.SAXException</pre>
+<div class="block">Advanced users only; see loadXML() in PApplet.</div>
 <dl><dt><span class="strong">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd>
 <dd><code>javax.xml.parsers.ParserConfigurationException</code></dd>
@@ -442,6 +566,7 @@ implements java.io.Serializable</pre>
 <li class="blockList">
 <h4>XML</h4>
 <pre>public&nbsp;XML(java.lang.String&nbsp;name)</pre>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>name</code> - description TBD</dd></dl>
 </li>
 </ul>
 </li>
@@ -458,34 +583,52 @@ implements java.io.Serializable</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>parse</h4>
-<pre>public static&nbsp;<a href="../../processing/data/XML.html" title="class in processing.data">XML</a>&nbsp;parse(java.lang.String&nbsp;xml)</pre>
+<pre>public static&nbsp;<a href="../../processing/data/XML.html" title="class in processing.data">XML</a>&nbsp;parse(java.lang.String&nbsp;data)
+                 throws java.io.IOException,
+                        javax.xml.parsers.ParserConfigurationException,
+                        org.xml.sax.SAXException</pre>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - the content to be parsed as XML</dd>
+<dt><span class="strong">Returns:</span></dt><dd>an XML object, or null</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>org.xml.sax.SAXException</code></dd>
+<dd><code>javax.xml.parsers.ParserConfigurationException</code></dd>
+<dd><code>java.io.IOException</code></dd></dl>
 </li>
 </ul>
-<a name="save(java.io.OutputStream)">
+<a name="parse(java.lang.String, java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>parse</h4>
+<pre>public static&nbsp;<a href="../../processing/data/XML.html" title="class in processing.data">XML</a>&nbsp;parse(java.lang.String&nbsp;data,
+        java.lang.String&nbsp;options)
+                 throws java.io.IOException,
+                        javax.xml.parsers.ParserConfigurationException,
+                        org.xml.sax.SAXException</pre>
+<dl><dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd>
+<dd><code>javax.xml.parsers.ParserConfigurationException</code></dd>
+<dd><code>org.xml.sax.SAXException</code></dd></dl>
+</li>
+</ul>
+<a name="save(java.io.File, java.lang.String)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>save</h4>
-<pre>public&nbsp;boolean&nbsp;save(java.io.OutputStream&nbsp;output)</pre>
+<pre>public&nbsp;boolean&nbsp;save(java.io.File&nbsp;file,
+           java.lang.String&nbsp;options)</pre>
 </li>
 </ul>
-<a name="save(java.io.File)">
+<a name="write(java.io.PrintWriter)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>save</h4>
-<pre>public&nbsp;boolean&nbsp;save(java.io.File&nbsp;file)</pre>
-</li>
-</ul>
-<a name="save(java.io.PrintWriter)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>save</h4>
-<pre>public&nbsp;boolean&nbsp;save(java.io.PrintWriter&nbsp;output)</pre>
+<h4>write</h4>
+<pre>public&nbsp;boolean&nbsp;write(java.io.PrintWriter&nbsp;output)</pre>
 </li>
 </ul>
 <a name="getParent()">
@@ -634,16 +777,6 @@ implements java.io.Serializable</pre>
 <li class="blockList">
 <h4>removeChild</h4>
 <pre>public&nbsp;void&nbsp;removeChild(<a href="../../processing/data/XML.html" title="class in processing.data">XML</a>&nbsp;kid)</pre>
-</li>
-</ul>
-<a name="trim()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>trim</h4>
-<pre>public&nbsp;void&nbsp;trim()</pre>
-<div class="block">Remove whitespace nodes.</div>
 </li>
 </ul>
 <a name="getAttributeCount()">
@@ -839,6 +972,78 @@ implements java.io.Serializable</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd>the content.</dd></dl>
 </li>
 </ul>
+<a name="getIntContent()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getIntContent</h4>
+<pre>public&nbsp;int&nbsp;getIntContent()</pre>
+</li>
+</ul>
+<a name="getIntContent(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getIntContent</h4>
+<pre>public&nbsp;int&nbsp;getIntContent(int&nbsp;defaultValue)</pre>
+</li>
+</ul>
+<a name="getFloatContent()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getFloatContent</h4>
+<pre>public&nbsp;float&nbsp;getFloatContent()</pre>
+</li>
+</ul>
+<a name="getFloatContent(float)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getFloatContent</h4>
+<pre>public&nbsp;float&nbsp;getFloatContent(float&nbsp;defaultValue)</pre>
+</li>
+</ul>
+<a name="getLongContent()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getLongContent</h4>
+<pre>public&nbsp;long&nbsp;getLongContent()</pre>
+</li>
+</ul>
+<a name="getLongContent(long)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getLongContent</h4>
+<pre>public&nbsp;long&nbsp;getLongContent(long&nbsp;defaultValue)</pre>
+</li>
+</ul>
+<a name="getDoubleContent()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getDoubleContent</h4>
+<pre>public&nbsp;double&nbsp;getDoubleContent()</pre>
+</li>
+</ul>
+<a name="getDoubleContent(double)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getDoubleContent</h4>
+<pre>public&nbsp;double&nbsp;getDoubleContent(double&nbsp;defaultValue)</pre>
+</li>
+</ul>
 <a name="setContent(java.lang.String)">
 <!--   -->
 </a>
@@ -848,6 +1053,42 @@ implements java.io.Serializable</pre>
 <pre>public&nbsp;void&nbsp;setContent(java.lang.String&nbsp;text)</pre>
 </li>
 </ul>
+<a name="setIntContent(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setIntContent</h4>
+<pre>public&nbsp;void&nbsp;setIntContent(int&nbsp;value)</pre>
+</li>
+</ul>
+<a name="setFloatContent(float)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setFloatContent</h4>
+<pre>public&nbsp;void&nbsp;setFloatContent(float&nbsp;value)</pre>
+</li>
+</ul>
+<a name="setLongContent(long)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setLongContent</h4>
+<pre>public&nbsp;void&nbsp;setLongContent(long&nbsp;value)</pre>
+</li>
+</ul>
+<a name="setDoubleContent(double)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setDoubleContent</h4>
+<pre>public&nbsp;void&nbsp;setDoubleContent(double&nbsp;value)</pre>
+</li>
+</ul>
 <a name="format(int)">
 <!--   -->
 </a>
@@ -855,6 +1096,9 @@ implements java.io.Serializable</pre>
 <li class="blockList">
 <h4>format</h4>
 <pre>public&nbsp;java.lang.String&nbsp;format(int&nbsp;indent)</pre>
+<div class="block">Format this XML data as a String.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>indent</code> - -1 for a single line (and no declaration), >= 0 for indents and newlines</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the content</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../processing/data/XML.html#toString()"><code>toString()</code></a></dd></dl>
 </li>
 </ul>
 <a name="toString()">
@@ -864,10 +1108,13 @@ implements java.io.Serializable</pre>
 <li class="blockList">
 <h4>toString</h4>
 <pre>public&nbsp;java.lang.String&nbsp;toString()</pre>
+<div class="block">Return the XML document formatted with two spaces for indents.
+ Chosen to do this since it's the most common case (e.g. with println()).
+ Same as format(2). Use the format() function for more options.</div>
 <dl>
 <dt><strong>Overrides:</strong></dt>
 <dd><code>toString</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
-</dl>
+<dt><span class="strong">Returns:</span></dt><dd>the content</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../processing/data/XML.html#format(int)"><code>format(int)</code></a></dd></dl>
 </li>
 </ul>
 </li>

@@ -165,8 +165,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static java.awt.Image</code></td>
-<td class="colLast"><code><strong><a href="../../processing/app/Toolkit.html#getLibImage(java.lang.String, java.awt.Component)">getLibImage</a></strong>(java.lang.String&nbsp;name,
-           java.awt.Component&nbsp;who)</code>
+<td class="colLast"><code><strong><a href="../../processing/app/Toolkit.html#getLibImage(java.lang.String)">getLibImage</a></strong>(java.lang.String&nbsp;filename)</code>
 <div class="block">Return an Image object from inside the Processing lib folder.</div>
 </td>
 </tr>
@@ -179,11 +178,15 @@ extends java.lang.Object</pre>
 <td class="colLast"><code><strong><a href="../../processing/app/Toolkit.html#getSystemClipboard()">getSystemClipboard</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>static boolean</code></td>
+<td class="colLast"><code><strong><a href="../../processing/app/Toolkit.html#highResDisplay()">highResDisplay</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>static javax.swing.JCheckBoxMenuItem</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Toolkit.html#newJCheckBoxMenuItem(java.lang.String, int)">newJCheckBoxMenuItem</a></strong>(java.lang.String&nbsp;title,
                     int&nbsp;what)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static javax.swing.JMenuItem</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Toolkit.html#newJMenuItem(java.lang.String, int)">newJMenuItem</a></strong>(java.lang.String&nbsp;title,
             int&nbsp;what)</code>
@@ -191,7 +194,7 @@ extends java.lang.Object</pre>
  taken away.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static javax.swing.JMenuItem</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Toolkit.html#newJMenuItemAlt(java.lang.String, int)">newJMenuItemAlt</a></strong>(java.lang.String&nbsp;title,
                int&nbsp;what)</code>
@@ -199,14 +202,14 @@ extends java.lang.Object</pre>
  or OPTION (on Mac OS X) key as a modifier.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static javax.swing.JMenuItem</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Toolkit.html#newJMenuItemShift(java.lang.String, int)">newJMenuItemShift</a></strong>(java.lang.String&nbsp;title,
                  int&nbsp;what)</code>
 <div class="block">Like newJMenuItem() but adds shift as a modifier for the shortcut.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Toolkit.html#registerWindowCloseKeys(javax.swing.JRootPane, java.awt.event.ActionListener)">registerWindowCloseKeys</a></strong>(javax.swing.JRootPane&nbsp;root,
                        java.awt.event.ActionListener&nbsp;disposer)</code>
@@ -214,7 +217,7 @@ extends java.lang.Object</pre>
  that will take care of disposing the window.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Toolkit.html#setIcon(java.awt.Frame)">setIcon</a></strong>(java.awt.Frame&nbsp;frame)</code>
 <div class="block">Give this Frame the Processing icon set.</div>
@@ -343,15 +346,15 @@ extends java.lang.Object</pre>
 <pre>public static&nbsp;java.awt.Dimension&nbsp;getScreenSize()</pre>
 </li>
 </ul>
-<a name="getLibImage(java.lang.String, java.awt.Component)">
+<a name="getLibImage(java.lang.String)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getLibImage</h4>
-<pre>public static&nbsp;java.awt.Image&nbsp;getLibImage(java.lang.String&nbsp;name,
-                         java.awt.Component&nbsp;who)</pre>
-<div class="block">Return an Image object from inside the Processing lib folder.</div>
+<pre>public static&nbsp;java.awt.Image&nbsp;getLibImage(java.lang.String&nbsp;filename)</pre>
+<div class="block">Return an Image object from inside the Processing lib folder.
+ Moved here so that Base can stay headless.</div>
 </li>
 </ul>
 <a name="setIcon(java.awt.Frame)">
@@ -390,10 +393,19 @@ extends java.lang.Object</pre>
 <a name="getSystemClipboard()">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>getSystemClipboard</h4>
 <pre>public static&nbsp;java.awt.datatransfer.Clipboard&nbsp;getSystemClipboard()</pre>
+</li>
+</ul>
+<a name="highResDisplay()">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>highResDisplay</h4>
+<pre>public static&nbsp;boolean&nbsp;highResDisplay()</pre>
 </li>
 </ul>
 </li>

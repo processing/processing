@@ -1,49 +1,4 @@
-0217 pde
-X fix MovieMaker, it was completely broken
-X   https://github.com/processing/processing/issues/1669
-X create missing parent directories when unpacking zip files
-X   fixes library problems with hemesh
-F move JavaScript mode out to its own repo
-X incorporate JDI changes from Manindra
-X fix autoformat to indent like the p5 book/examples
-X   http://code.google.com/p/processing/issues/detail?id=325
-X   https://github.com/processing/processing/issues/364
-X fix NPE problem with retina checking on Java 7
-o deleting tools folder while running causes exception when changing modes
-o   https://github.com/processing/processing/issues/1707
-X   won't bother fixing this one
-X remove netscape.javascript stuff
-o move arduino out to its own library (already done, just not on site)
-o crash when selecting "Show Sketch Folder" with Windows 7
-o   might be a java.awt.Desktop problem
-X   http://code.google.com/p/processing/issues/detail?id=1473
-X   marked cantfix back in December
-X change error message for libraries (especially serial) for 32- vs 64-bit
-X   "To use this library, switch to 32-bit mode in Preferences." (OS X)
-X   "To use this library, you must use the 32-bit version of Processing."
-X rebuild Runner to use SocketAttach
-X   deals with spaces in path problem, but also opens a port
-X remove "Listening for transport dt_socket at address: 8727" message
-X reference for normal() uses '50' as z value.. use something normalized
-X how does new JDI affect Experimental? duplicate libs? loader issues?
-X   seems to be working fine
-X move Android mode out to its own repo
-X fix line endings in revisions.txt for windows
-X   was modifying the wrong file (the source dir, not the work dir)
-X change line endings on Windows to only be replaced during dist
-X   otherwise marks revisions.txt as changed
-X processing-java dialog window huge
-X   https://github.com/processing/processing/issues/1748
-
-manager
-X "New version available" mesage is showing html tags around it
-X   https://github.com/processing/processing/issues/1684
-X shift color of installed items when selected 
-X   was ugly gray over selection color
-X fix layout of the update button
-X get update text to align vertically
-X "Update" not working in the library manager
-X   https://github.com/processing/processing/issues/1701
+0218 pde (2.0b10 or 2.0)
 
 
 2.0 FINAL / new interface
@@ -199,6 +154,12 @@ _   how to disclose to users?
 _   only send for items that are part of the public list 
 _     otherwise we're sending private libraries/installs
 _     although this won't pick up old libraries not on the new system
+_ move old Google Code SVN back to processing.org
+_   then cull out the old branches/tags from the Github repo
+_ UnsatisfiedLinkError causes huge message... 
+_   error report cleanups haven't been fixed yet
+_ remove initRequirements from Base (no longer need JDI)
+_   move this into Android mode?
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -365,12 +326,6 @@ _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=
 
 DOC / Hacks
 
-_ JAI handles setting image size for png (check javax.imageio?) 
-_   PNGEncodeParam png = PNGEncodeParam.getDefaultEncodeParam(bufImage);
-_   png.setPhysicalDimension(round(dpi*39.370079), round(dpi*39.370079), 1);
-_   JAI.create("filestore", bufImage, filename+".png", "PNG");
-_ also an example of setting the jpeg compression (included in bug report)
-_   http://code.google.com/p/processing/issues/detail?id=58
 _ write a timer class/example library
 _ how do i add gui to a sketch?
 _   don't use awt components
@@ -867,6 +822,8 @@ _ waiting on retina support for JDK 7
 _   http://bugs.sun.com/view_bug.do?bug_id=8009754
 _   b86 supposed to have some support (not available yet)
 _     http://jdk8.java.net/download.html
+_ "Are you sure you want to quit?" when switching modes on Oracle JVM
+_   because it's OS X, but menubar isn't available
 _ LWJGL forum discussion 
 _   http://lwjgl.org/forum/index.php/topic,4711.225.html
 _ change cmd line for OS X to use symlink? 
@@ -972,13 +929,20 @@ Things to fix on the source code side of things.
 
 _ update license info to state gplv2 not v3
 _   add Processing Foundation as 2012
+_   https://github.com/processing/processing/issues/1777
 _ add proper copyright and license information for all included projects
 _   http://code.google.com/p/processing/issues/detail?id=185
 _   list of license issues
 _   http://code.google.com/p/processing/issues/detail?id=575
 _ Internationalization
 _   http://code.google.com/p/processing/issues/detail?id=593
-_   l10n, i18n of environment/core - Arduino pushing on this one
+_   l10n, i18n of environment/core
+_   http://docs.oracle.com/javase/tutorial/i18n/format/messageintro.html
+_   http://docs.oracle.com/javase/tutorial/i18n/format/numberFormat.html
+_   http://docs.oracle.com/javase/tutorial/i18n/format/choiceFormat.html
+_   http://docs.oracle.com/javase/tutorial/i18n/format/messageFormat.html
+_   http://docs.oracle.com/javase/7/docs/api/java/text/MessageFormat.html
+_   http://docs.oracle.com/javase/tutorial/i18n/intro/checklist.html
 _ write up code guidelines for project
 _   make proper Eclipse style prefs to reinforce
 _ write up guidelines for modes

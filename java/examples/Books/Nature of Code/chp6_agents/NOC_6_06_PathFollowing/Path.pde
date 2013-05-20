@@ -22,6 +22,15 @@ class Path {
     PVector point = new PVector(x, y);
     points.add(point);
   }
+  
+  PVector getStart() {
+     return points.get(0);
+  }
+
+  PVector getEnd() {
+     return points.get(points.size()-1);
+  }
+
 
   // Draw the path
   void display() {

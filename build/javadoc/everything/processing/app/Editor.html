@@ -122,7 +122,7 @@
 </dl>
 <dl>
 <dt>Direct Known Subclasses:</dt>
-<dd><a href="../../processing/mode/java/JavaEditor.html" title="class in processing.mode.java">JavaEditor</a>, <a href="../../processing/mode/javascript/ServingEditor.html" title="class in processing.mode.javascript">ServingEditor</a></dd>
+<dd><a href="../../processing/mode/java/JavaEditor.html" title="class in processing.mode.java">JavaEditor</a></dd>
 </dl>
 <hr>
 <br>
@@ -248,320 +248,326 @@ implements <a href="../../processing/app/RunnerListener.html" title="interface i
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#buildSketchMenu()">buildSketchMenu</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>static boolean</code></td>
+<td class="colLast"><code><strong><a href="../../processing/app/Editor.html#checkParen(char[], int, int)">checkParen</a></strong>(char[]&nbsp;array,
+          int&nbsp;index,
+          int&nbsp;stop)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#clearNotice(java.lang.String)">clearNotice</a></strong>(java.lang.String&nbsp;msg)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>abstract <a href="../../processing/app/Formatter.html" title="interface in processing.app">Formatter</a></code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#createFormatter()">createFormatter</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>abstract <a href="../../processing/app/EditorToolbar.html" title="class in processing.app">EditorToolbar</a></code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#createToolbar()">createToolbar</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>abstract void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#deactivateRun()">deactivateRun</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../processing/app/Base.html" title="class in processing.app">Base</a></code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#getBase()">getBase</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#getCaretOffset()">getCaretOffset</a></strong>()</code>
 <div class="block">Get the position (character offset) of the caret.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>abstract java.lang.String</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#getCommentPrefix()">getCommentPrefix</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../processing/app/EditorState.html" title="class in processing.app">EditorState</a></code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#getEditorState()">getEditorState</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#getLineCount()">getLineCount</a></strong>()</code>
 <div class="block">Get the number of lines in the currently displayed buffer.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#getLineStartOffset(int)">getLineStartOffset</a></strong>(int&nbsp;line)</code>
 <div class="block">Get character offset for the start of a given line of text.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#getLineStopOffset(int)">getLineStopOffset</a></strong>(int&nbsp;line)</code>
 <div class="block">Get character offset for end of a given line of text.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#getLineText(int)">getLineText</a></strong>(int&nbsp;line)</code>
 <div class="block">Get text for a specified line.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../processing/app/Mode.html" title="class in processing.app">Mode</a></code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#getMode()">getMode</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>javax.swing.JMenu</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#getModeMenu()">getModeMenu</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#getScrollPosition()">getScrollPosition</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#getSelectedText()">getSelectedText</a></strong>()</code>
 <div class="block">Called to update the text but not switch to a different set of code
  (which would affect the undo manager).</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#getSelectionStart()">getSelectionStart</a></strong>()</code>
 <div class="block">Get the beginning point of the current selection.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#getSelectionStop()">getSelectionStop</a></strong>()</code>
 <div class="block">Get the end point of the current selection.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../processing/app/Sketch.html" title="class in processing.app">Sketch</a></code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#getSketch()">getSketch</a></strong>()</code>
 <div class="block">Gets the current sketch object.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>java.awt.Point</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#getSketchLocation()">getSketchLocation</a></strong>()</code>
 <div class="block">Get the last location of the sketch's run window.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#getText()">getText</a></strong>()</code>
 <div class="block">Get the contents of the current buffer.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#getText(int, int)">getText</a></strong>(int&nbsp;start,
        int&nbsp;stop)</code>
 <div class="block">Get a range of text from the current buffer.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../processing/app/syntax/JEditTextArea.html" title="class in processing.app.syntax">JEditTextArea</a></code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#getTextArea()">getTextArea</a></strong>()</code>
 <div class="block">Get the JEditTextArea object for use (not recommended).</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>javax.swing.JMenu</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#getToolMenu()">getToolMenu</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#handleAutoFormat()">handleAutoFormat</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#handleCopy()">handleCopy</a></strong>()</code>
 <div class="block">Implements Edit &rarr; Copy.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#handleCopyAsHTML()">handleCopyAsHTML</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#handleCut()">handleCut</a></strong>()</code>
 <div class="block">Implements Edit &rarr; Cut.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>abstract void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#handleImportLibrary(java.lang.String)">handleImportLibrary</a></strong>(java.lang.String&nbsp;jarPath)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#handleIndent()">handleIndent</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#handleIndentOutdent(boolean)">handleIndentOutdent</a></strong>(boolean&nbsp;indent)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#handleOutdent()">handleOutdent</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#handlePageSetup()">handlePageSetup</a></strong>()</code>
 <div class="block">Handler for File &rarr; Page Setup.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#handlePaste()">handlePaste</a></strong>()</code>
 <div class="block">Implements Edit &rarr; Paste.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#handlePrint()">handlePrint</a></strong>()</code>
 <div class="block">Handler for File &rarr; Print.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#handleSave(boolean)">handleSave</a></strong>(boolean&nbsp;immediately)</code>
 <div class="block">Actually handle the save command.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#handleSaveAs()">handleSaveAs</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#handleSelectAll()">handleSelectAll</a></strong>()</code>
 <div class="block">Implements Edit &rarr; Select All.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#insertText(java.lang.String)">insertText</a></strong>(java.lang.String&nbsp;what)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>abstract void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#internalCloseRunner()">internalCloseRunner</a></strong>()</code>
 <div class="block">Halt the current runner for whatever reason.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#isHalted()">isHalted</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#isSelectionActive()">isSelectionActive</a></strong>()</code>
 <div class="block">True if some text is currently selected.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#prepareRun()">prepareRun</a></strong>()</code>
 <div class="block">Grab current contents of the sketch window, advance the console,
  stop any other running sketches...</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#rebuildToolMenu()">rebuildToolMenu</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#removeRecent()">removeRecent</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#setLineText(int, java.lang.String)">setLineText</a></strong>(int&nbsp;line,
            java.lang.String&nbsp;what)</code>
 <div class="block">Replace the text on a specified line.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#setSelectedText(java.lang.String)">setSelectedText</a></strong>(java.lang.String&nbsp;what)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#setSelection(int, int)">setSelection</a></strong>(int&nbsp;start,
             int&nbsp;stop)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#setSketchLocation(java.awt.Point)">setSketchLocation</a></strong>(java.awt.Point&nbsp;p)</code>
 <div class="block">Set the location of the sketch run window.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#setText(java.lang.String)">setText</a></strong>(java.lang.String&nbsp;what)</code>
 <div class="block">Replace the entire contents of the front-most tab.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#showChanges()">showChanges</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#showReference(java.lang.String)">showReference</a></strong>(java.lang.String&nbsp;filename)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#startCompoundEdit()">startCompoundEdit</a></strong>()</code>
 <div class="block">Use before a manipulating text to group editing operations together as a
  single undo.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#startIndeterminate()">startIndeterminate</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#statusEmpty()">statusEmpty</a></strong>()</code>
 <div class="block">Clear the status area.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#statusError(java.lang.Exception)">statusError</a></strong>(java.lang.Exception&nbsp;e)</code>
 <div class="block">Show an exception in the editor status bar.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#statusError(java.lang.String)">statusError</a></strong>(java.lang.String&nbsp;what)</code>
 <div class="block">Show an error in the status bar.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#statusHalt()">statusHalt</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#statusNotice(java.lang.String)">statusNotice</a></strong>(java.lang.String&nbsp;msg)</code>
 <div class="block">Show a notice message in the editor status bar.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#stopCompoundEdit()">stopCompoundEdit</a></strong>()</code>
 <div class="block">Use with startCompoundEdit() to group edit operations in a single undo.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#stopIndeterminate()">stopIndeterminate</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Editor.html#updateTitle()">updateTitle</a></strong>()</code>
 <div class="block">Set the title of the PDE window based on the current sketch, i.e.</div>
@@ -1112,6 +1118,17 @@ implements <a href="../../processing/app/RunnerListener.html" title="interface i
 <li class="blockList">
 <h4>handleIndentOutdent</h4>
 <pre>public&nbsp;void&nbsp;handleIndentOutdent(boolean&nbsp;indent)</pre>
+</li>
+</ul>
+<a name="checkParen(char[], int, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>checkParen</h4>
+<pre>public static&nbsp;boolean&nbsp;checkParen(char[]&nbsp;array,
+                 int&nbsp;index,
+                 int&nbsp;stop)</pre>
 </li>
 </ul>
 <a name="setSketchLocation(java.awt.Point)">

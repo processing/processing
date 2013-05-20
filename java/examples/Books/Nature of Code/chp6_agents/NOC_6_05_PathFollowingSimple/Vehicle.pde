@@ -27,8 +27,7 @@ class Vehicle {
   // Main "run" function
   void run() {
     update();
-    borders();
-    render();
+    display();
   }
 
 
@@ -36,10 +35,10 @@ class Vehicle {
   // http://www.red3d.com/cwr/steer/PathFollow.html
   void follow(Path p) {
 
-    // Predict location 25 (arbitrary choice) frames ahead
+    // Predict location 50 (arbitrary choice) frames ahead
     PVector predict = velocity.get();
     predict.normalize();
-    predict.mult(25);
+    predict.mult(50);
     PVector predictLoc = PVector.add(location, predict);
 
     // Look at the line segment
@@ -134,7 +133,7 @@ class Vehicle {
       applyForce(steer);
   }
 
-  void render() {
+  void display() {
     // Draw a triangle rotated in the direction of velocity
     float theta = velocity.heading2D() + radians(90);
     fill(175);
@@ -151,11 +150,11 @@ class Vehicle {
   }
 
   // Wraparound
-  void borders() {
-    if (location.x < -r) location.x = width+r;
-    //if (location.y < -r) location.y = height+r;
-    if (location.x > width+r) location.x = -r;
-    //if (location.y > height+r) location.y = -r;
+  void borders(Path p) {
+    if (location.x > p.end.x + r) {
+      location.x = p.start.x - r;
+      location.y = p.start.y + (location.y-p.end.y);
+    }
   }
 }
 

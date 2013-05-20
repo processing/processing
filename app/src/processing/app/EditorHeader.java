@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-11 Ben Fry and Casey Reas
+  Copyright (c) 2004-13 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -25,6 +25,7 @@ package processing.app;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.GeneralPath;
 import java.util.Arrays;
 
 import javax.swing.*;
@@ -34,8 +35,25 @@ import javax.swing.*;
  * Sketch tabs at the top of the editor window.
  */
 public class EditorHeader extends JComponent {
+  // standard UI sizing (OS-specific, but generally consistent)
+  static final int SCROLLBAR_WIDTH = 16;
+  // amount of space on the left edge before the tabs start
+  static final int MARGIN_WIDTH = 6;
+  // distance from the righthand side of a tab to the drop-down arrow
+  static final int ARROW_GAP_WIDTH = 8;
+  // indent x/y for notch on the tab
+  static final int NOTCH = 4;
+  // how far to raise the tab from the bottom of this Component
+  static final int TAB_HEIGHT = 27;
+  // amount of margin on the left/right for the text on the tab
+  static final int TEXT_MARGIN = 5;
+  // width of the tab when no text visible 
+  // (total tab width will be this plus TEXT_MARGIN*2)
+  static final int NO_TEXT_WIDTH = 10;
+
   Color backgroundColor;
   Color textColor[] = new Color[2];
+  Color tabColor[] = new Color[2];
 
   Editor editor;
 
@@ -58,15 +76,19 @@ public class EditorHeader extends JComponent {
   static final int UNSELECTED = 0;
   static final int SELECTED = 1;
 
-  static final String WHERE[] = { "left", "mid", "right", "menu" };
-  static final int LEFT = 0;
-  static final int MIDDLE = 1;
-  static final int RIGHT = 2;
-  static final int MENU = 3;
+//  static final String WHERE[] = { "left", "mid", "right" }; //, "menu" };
+//  static final int LEFT = 0;
+//  static final int MIDDLE = 1;
+//  static final int RIGHT = 2;
+//  static final int MENU = 3;
 
   static final int PIECE_WIDTH = 4;
-
+  static final int PIECE_HEIGHT = 33;
   Image[][] pieces;
+  
+  static final int ARROW_WIDTH = 14;
+  static final int ARROW_HEIGHT = 14;
+  static Image tabArrow;
 
   //
 
@@ -131,20 +153,49 @@ public class EditorHeader extends JComponent {
   }
 
 
+//  protected String tabFile(int status, int where) {
+//    return "theme/tab-" + STATUS[status] + "-" + WHERE[where];
+//  }
+  
+  
   public void updateMode() {
     Mode mode = editor.getMode();
-    pieces = new Image[STATUS.length][WHERE.length];
-    for (int i = 0; i < STATUS.length; i++) {
-      for (int j = 0; j < WHERE.length; j++) {
-        String filename = "theme/tab-" + STATUS[i] + "-" + WHERE[j] + ".gif";
-        pieces[i][j] = mode.loadImage(filename);
-      }
+//    int res = Toolkit.isRetina() ? 2 : 1;
+//    String suffix = "-2x.png";  // wishful thinking
+//    // Some modes may not have a 2x version. If a mode doesn't have a 1x 
+//    // version, this will cause an error... they should always have 1x.
+//    if (res == 2) {
+//      if (!mode.getContentFile(tabFile(0, 0) + suffix).exists()) {
+//        res = 1;
+//      }
+//    }
+//    if (res == 1) {
+//      suffix = ".png";
+//      if (!mode.getContentFile(tabFile(0, 0) + suffix).exists()) {
+//        suffix = ".gif";
+//      }
+//    }
+//    
+//    pieces = new Image[STATUS.length][WHERE.length];
+//    for (int status = 0; status < STATUS.length; status++) {
+//      for (int where = 0; where < WHERE.length; where++) {
+//        //String filename = "theme/tab-" + STATUS[i] + "-" + WHERE[j] + ".gif";
+//        pieces[status][where] = mode.loadImage(tabFile(status, where) + suffix);
+//      }
+//    }
+    
+    if (tabArrow == null) {
+      String suffix = Toolkit.highResDisplay() ? "-2x.png" : ".png";
+      tabArrow = Toolkit.getLibImage("tab-arrow" + suffix);
     }
 
     backgroundColor = mode.getColor("header.bgcolor");
     textColor[SELECTED] = mode.getColor("header.text.selected.color");
     textColor[UNSELECTED] = mode.getColor("header.text.unselected.color");
     font = mode.getFont("header.text.font");
+    
+    tabColor[SELECTED] = mode.getColor("header.tab.selected.color");
+    tabColor[UNSELECTED] = mode.getColor("header.tab.unselected.color");
   }
 
 
@@ -174,7 +225,7 @@ public class EditorHeader extends JComponent {
       sizeH = size.height;
       imageW = sizeW;
       imageH = sizeH;
-      if (Toolkit.isRetina()) {
+      if (Toolkit.highResDisplay()) {
         offscreen = createImage(imageW*2, imageH*2);
       } else {
         offscreen = createImage(imageW, imageH);
@@ -188,7 +239,7 @@ public class EditorHeader extends JComponent {
 
     Graphics2D g2 = (Graphics2D) g;
     
-    if (Toolkit.isRetina()) {
+    if (Toolkit.highResDisplay()) {
       // scale everything 2x, will be scaled down when drawn to the screen
       g2.scale(2, 2);
     } else {
@@ -200,6 +251,15 @@ public class EditorHeader extends JComponent {
     // set the background for the offscreen
     g.setColor(backgroundColor);
     g.fillRect(0, 0, imageW, imageH);
+    
+//    EditorToolbar toolbar = editor.toolbar;
+//    if (toolbar != null && toolbar.backgroundImage != null) {
+//      g.drawImage(toolbar.backgroundImage, 
+//                  0, -toolbar.getHeight(), 
+//                  EditorToolbar.BACKGROUND_WIDTH, 
+//                  EditorToolbar.BACKGROUND_HEIGHT, null);
+//    }
+    editor.getMode().drawBackground(g, EditorToolbar.BUTTON_HEIGHT);
 
 //    int codeCount = sketch.getCodeCount();
 //    if ((tabLeft == null) || (tabLeft.length < codeCount)) {
@@ -214,12 +274,12 @@ public class EditorHeader extends JComponent {
       visitOrder = new Tab[sketch.getCodeCount() - 1];
     }
 
-//    int x = 6; // offset from left edge of the component
-    menuRight = sizeW - 16;
-    menuLeft = menuRight - pieces[0][MENU].getWidth(this);
-//    int tabMax = menuLeft - x;
-    int tabLeft = 6;
-    int tabMax = menuLeft - tabLeft;
+//    menuRight = sizeW - 16;
+//    menuLeft = menuRight - pieces[0][MENU].getWidth(this);
+//    menuLeft = menuRight - 50;  // FIXME!!
+    int leftover = 
+      ARROW_GAP_WIDTH + ARROW_WIDTH + MARGIN_WIDTH; // + SCROLLBAR_WIDTH;
+    int tabMax = getWidth() - leftover;
 
     // reset all tab positions
     for (Tab tab : tabs) {
@@ -238,7 +298,7 @@ public class EditorHeader extends JComponent {
     }
 
     // make sure everything can fit
-    if (!placeTabs(tabLeft, tabMax, null)) {
+    if (!placeTabs(MARGIN_WIDTH, tabMax, null)) {
       //System.arraycopy(tabs, 0, visitOrder, 0, tabs.length);
       // always show the tab with the sketch's name
 //      System.arraycopy(tabs, 1, visitOrder, 0, tabs.length - 1);
@@ -253,100 +313,103 @@ public class EditorHeader extends JComponent {
 //      }
 //      System.out.println();
 
+      // Keep shrinking the tabs one-by-one until things fit properly
       for (int i = 0; i < visitOrder.length; i++) {
         tabs[visitOrder[i].index].textVisible = false;
-        if (placeTabs(tabLeft, tabMax, null)) {
+        if (placeTabs(MARGIN_WIDTH, tabMax, null)) {
           break;
         }
       }
     }
 
     // now actually draw the tabs
-    placeTabs(tabLeft, tabMax, g);
+    placeTabs(MARGIN_WIDTH, tabMax, g2);
 
-//    for (int i = 0; i < sketch.getCodeCount(); i++) {
-//      SketchCode code = sketch.getCode(i);
-//      Tab tab = tabs[i];
-//
-//      int pieceCount = 2 + (tab.textWidth / PIECE_WIDTH);
-//      int pieceWidth = pieceCount * PIECE_WIDTH;
-//
-//      int state = (code == sketch.getCurrentCode()) ? SELECTED : UNSELECTED;
-//      g.drawImage(pieces[state][LEFT], x, 0, null);
-//      x += PIECE_WIDTH;
-//
-//      int contentLeft = x;
-//      tab.left = x;
-//      for (int j = 0; j < pieceCount; j++) {
-//        g.drawImage(pieces[state][MIDDLE], x, 0, null);
-//        x += PIECE_WIDTH;
-//      }
-//      tab.right = x;
-//      int textLeft = contentLeft + (pieceWidth - tab.textWidth) / 2;
-//
-//      g.setColor(textColor[state]);
-//      int baseline = (sizeH + fontAscent) / 2;
-//      //g.drawString(sketch.code[i].name, textLeft, baseline);
-//      g.drawString(tab.text, textLeft, baseline);
-//
-//      g.drawImage(pieces[state][RIGHT], x, 0, null);
-//      x += PIECE_WIDTH - 1;  // overlap by 1 pixel
-//    }
-
-//    menuLeft = sizeW - (16 + pieces[0][MENU].getWidth(this));
-//    menuRight = sizeW - 16;
     // draw the dropdown menu target
-    g.drawImage(pieces[popup.isVisible() ? SELECTED : UNSELECTED][MENU],
-                menuLeft, 0, null);
+    menuLeft = tabs[tabs.length - 1].right + ARROW_GAP_WIDTH;
+    menuRight = menuLeft + ARROW_WIDTH;
+    int arrowY = (getHeight() - TAB_HEIGHT) + (TAB_HEIGHT - ARROW_HEIGHT)/2;
+    g.drawImage(tabArrow, menuLeft, arrowY, 
+                ARROW_WIDTH, ARROW_HEIGHT, null);
+//    g.drawImage(pieces[popup.isVisible() ? SELECTED : UNSELECTED][MENU],
+//                menuLeft, 0, null);
 
     screen.drawImage(offscreen, 0, 0, imageW, imageH, null);
   }
 
 
-  private boolean placeTabs(int left, int right, Graphics g) {
+  private boolean placeTabs(int left, int right, Graphics2D g) {
     Sketch sketch = editor.getSketch();
     int x = left;
 
+    final int bottom = getHeight();
+    final int top = bottom - TAB_HEIGHT;
+    GeneralPath path = null;
+    
     for (int i = 0; i < sketch.getCodeCount(); i++) {
       SketchCode code = sketch.getCode(i);
       Tab tab = tabs[i];
 
-      int pieceCount = 2 + (tab.textWidth / PIECE_WIDTH);
-      if (tab.textVisible == false) {
-        pieceCount = 4;
-      }
-      int pieceWidth = pieceCount * PIECE_WIDTH;
+//      int pieceCount = 2 + (tab.textWidth / PIECE_WIDTH);
+//      if (tab.textVisible == false) {
+//        pieceCount = 4;
+//      }
+//      int pieceWidth = pieceCount * PIECE_WIDTH;
 
       int state = (code == sketch.getCurrentCode()) ? SELECTED : UNSELECTED;
       if (g != null) {
-        g.drawImage(pieces[state][LEFT], x, 0, null);
+        //g.drawImage(pieces[state][LEFT], x, 0, PIECE_WIDTH, PIECE_HEIGHT, null);
+        path = new GeneralPath();
+        path.moveTo(x, bottom);
+        path.lineTo(x, top + NOTCH);
+        path.lineTo(x + NOTCH, top);
       }
-      x += PIECE_WIDTH;
-
-      int contentLeft = x;
       tab.left = x;
-      for (int j = 0; j < pieceCount; j++) {
-        if (g != null) {
-          g.drawImage(pieces[state][MIDDLE], x, 0, null);
-        }
-        x += PIECE_WIDTH;
-      }
+      x += TEXT_MARGIN;
+//      x += PIECE_WIDTH;
+
+//      int contentLeft = x;
+//      for (int j = 0; j < pieceCount; j++) {
+//        if (g != null) {
+//          g.drawImage(pieces[state][MIDDLE], x, 0, PIECE_WIDTH, PIECE_HEIGHT, null);
+//        }
+//        x += PIECE_WIDTH;
+//      }
+//      if (g != null) {
+      int drawWidth = tab.textVisible ? tab.textWidth : NO_TEXT_WIDTH;
+      x += drawWidth + TEXT_MARGIN;
+//        path.moveTo(x, top);
+//      }
       tab.right = x;
 
+      if (g != null) {
+        path.lineTo(x - NOTCH, top);
+        path.lineTo(x, top + NOTCH);
+        path.lineTo(x, bottom);
+        path.closePath();
+        g.setColor(tabColor[state]);
+        g.fill(path);
+        //g.drawImage(pieces[state][RIGHT], x, 0, PIECE_WIDTH, PIECE_HEIGHT, null);
+      }
+
       if (tab.textVisible) {
-        int textLeft = contentLeft + (pieceWidth - tab.textWidth) / 2;
+//        int textLeft = contentLeft + (pieceWidth - tab.textWidth) / 2;
         if (g != null) {
+          int textLeft = tab.left + ((tab.right - tab.left) - tab.textWidth) / 2;
           g.setColor(textColor[state]);
-          int baseline = (sizeH + fontAscent) / 2;
+//          int baseline = (int) Math.ceil((sizeH + fontAscent) / 2.0);
+          int baseline = bottom - (TAB_HEIGHT - fontAscent)/2 - 1;
           //g.drawString(sketch.code[i].name, textLeft, baseline);
           g.drawString(tab.text, textLeft, baseline);
+//          g.drawLine(tab.left, baseline-fontAscent, tab.right, baseline-fontAscent);
         }
       }
 
-      if (g != null) {
-        g.drawImage(pieces[state][RIGHT], x, 0, null);
-      }
-      x += PIECE_WIDTH - 1;  // overlap by 1 pixel
+//      if (g != null) {
+//        g.drawImage(pieces[state][RIGHT], x, 0, PIECE_WIDTH, PIECE_HEIGHT, null);
+//      }
+//      x += PIECE_WIDTH - 1;  // overlap by 1 pixel
+      x += 1;
     }
     return x <= right;
   }

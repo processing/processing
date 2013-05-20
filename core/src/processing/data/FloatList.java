@@ -7,6 +7,9 @@ import java.util.Random;
 import processing.core.PApplet;
 
 
+/**
+ * @webref data:composite
+ */
 public class FloatList implements Iterable<Float> {
   int count;
   float[] data;
@@ -28,6 +31,13 @@ public class FloatList implements Iterable<Float> {
     System.arraycopy(list, 0, data, 0, count);
   }
 
+
+  public FloatList(Iterable<Float> iter) {
+    this(10);
+    for (float v : iter) {
+      append(v);
+    }
+  }
 
 
   /**

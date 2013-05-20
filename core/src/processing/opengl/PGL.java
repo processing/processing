@@ -145,7 +145,7 @@ public class PGL {
     } else if (PApplet.platform == PConstants.MACOSX) {
       // NEWT solves the issues with Java 7 and OS X 10.7+: calls to frame
       // hanging the sketch, as well as cursor, etc.
-      toolkit = NEWT;
+      toolkit = AWT;
       events = AWT;
     } else if (PApplet.platform == PConstants.LINUX) {
       toolkit = NEWT; // AWT extremely broken on Linux?
@@ -416,8 +416,11 @@ public class PGL {
   protected static PGLListener listener;
 
   /** Desired target framerate */
-  protected float targetFramerate = 60;
-  protected boolean setFramerate = false;
+  protected float targetFps = 60;
+  protected float currentFps = 60;
+  protected boolean setFps = false;
+  protected int fcount, lastm;
+  protected int fint = 3;
 
   /** Which texturing targets are enabled */
   protected static boolean[] texturingTargets = { false, false };
@@ -556,25 +559,18 @@ public class PGL {
   }
 
 
-  protected void setFrameRate(float framerate) {
-    if (targetFramerate != framerate) {
-      if (60 < framerate) {
+  protected void setFps(float fps) {
+    if (!setFps || targetFps != fps) {
+      if (60 < fps) {
         // Disables v-sync
         gl.setSwapInterval(0);
-      } else if (30 < framerate) {
+      } else if (30 < fps) {
         gl.setSwapInterval(1);
       } else {
         gl.setSwapInterval(2);
       }
-      if ((60 < framerate && targetFramerate <= 60) ||
-          (framerate <= 60 && 60 < targetFramerate)) {
-        // Enabling/disabling v-sync, we force a
-        // surface reinitialization to avoid screen
-        // no-paint issue observed on MacOSX.
-        pg.initialized = false;
-      }
-      targetFramerate = framerate;
-      setFramerate = true;
+      targetFps = currentFps = fps;
+      setFps = true;
     }
   }
 
@@ -593,7 +589,6 @@ public class PGL {
         pg.parent.remove(canvasNEWT);
       }
       sinkFBO = backFBO = frontFBO = null;
-      setFramerate = false;
     }
 
     // Setting up the desired GL capabilities;
@@ -614,17 +609,18 @@ public class PGL {
     caps.setDepthBits(request_depth_bits);
     caps.setStencilBits(request_stencil_bits);
     caps.setAlphaBits(request_alpha_bits);
-    caps.setDefaultColor(javaToNativeARGB(pg.backgroundColor));
 
     if (toolkit == AWT) {
       canvasAWT = new GLCanvas(caps);
+
+      //canvas = new GLCanvas(caps, context);
+
       canvasAWT.setBounds(0, 0, pg.width, pg.height);
       canvasAWT.setBackground(new Color(pg.backgroundColor, true));
       canvasAWT.setFocusable(true);
 
       pg.parent.setLayout(new BorderLayout());
       pg.parent.add(canvasAWT, BorderLayout.CENTER);
-      pg.parent.validate();
       pg.parent.removeListeners(pg.parent);
       pg.parent.addListeners(canvasAWT);
 
@@ -642,7 +638,6 @@ public class PGL {
 
       pg.parent.setLayout(new BorderLayout());
       pg.parent.add(canvasNEWT, BorderLayout.CENTER);
-      pg.parent.validate();
 
       if (events == NEWT) {
         NEWTMouseListener mouseListener = new NEWTMouseListener();
@@ -667,6 +662,8 @@ public class PGL {
     fboLayerCreated = false;
     fboLayerInUse = false;
     firstFrame = true;
+
+    setFps = false;
   }
 
 
@@ -697,9 +694,8 @@ public class PGL {
 
 
   protected void update() {
-    if (!setFramerate) {
-      setFrameRate(targetFramerate);
-    }
+    if (!setFps) setFps(targetFps);
+
     if (USE_JOGL_FBOLAYER) return;
 
     if (!fboLayerCreated) {
@@ -1141,7 +1137,6 @@ public class PGL {
     }
   }
 
-
   protected void endDraw(boolean clear0) {
     if (USE_JOGL_FBOLAYER) {
       if (!clear0 && isFBOBacked() && !isMultisampled()) {
@@ -1178,7 +1173,19 @@ public class PGL {
         backTex = temp;
       }
     }
-    flush();
+
+    // call (gl)finish() only if the rendering of each frame is taking too long,
+    // to make sure that commands are not accumulating in the GL command queue.
+    fcount += 1;
+    int m = pg.parent.millis();
+    if (m - lastm > 1000 * fint) {
+      currentFps = (float)(fcount) / fint;
+      fcount = 0;
+      lastm = m;
+    }
+    if (currentFps < 0.5f * targetFps) {
+      finish();
+    }
   }
 
 
@@ -1844,9 +1851,13 @@ public class PGL {
     gl2.glGetShaderiv(prog, GL2.GL_INFO_LOG_LENGTH, val, 0);
     int length = val[0];
 
-    byte[] log = new byte[length];
-    gl2.glGetProgramInfoLog(prog, length, val, 0, log, 0);
-    return new String(log);
+    if (0 < length) {
+      byte[] log = new byte[length];
+      gl2.glGetProgramInfoLog(prog, length, val, 0, log, 0);
+      return new String(log);
+    } else {
+      return "Unknow error";
+    }
   }
 
 
@@ -2809,6 +2820,30 @@ public class PGL {
   }
 
 
+  protected boolean hasFBOs() {
+    return context.hasBasicFBOSupport();
+  }
+
+
+  protected boolean hasShaders() {
+    if (context.hasGLSL()) return true;
+
+    // GLSL might still be available through extensions. For instance,
+    // GLContext.hasGLSL() gives false for older intel integrated chipsets on
+    // OSX, where OpenGL is 1.4 but shaders are available.
+    int major = getGLVersion()[0];
+    if (major < 2) {
+      String ext = getString(EXTENSIONS);
+      return ext.indexOf("_fragment_shader")  != -1 &&
+             ext.indexOf("_vertex_shader")    != -1 &&
+             ext.indexOf("_shader_objects")   != -1 &&
+             ext.indexOf("_shading_language") != -1;
+    }
+
+    return false;
+  }
+
+
   protected static ByteBuffer allocateDirectByteBuffer(int size) {
     int bytes = PApplet.max(MIN_DIRECT_BUFFER_SIZE, size) * SIZEOF_BYTE;
     return ByteBuffer.allocateDirect(bytes).order(ByteOrder.nativeOrder());
@@ -3248,12 +3283,13 @@ public class PGL {
       drawable = adrawable;
       context = adrawable.getContext();
       capabilities = adrawable.getChosenGLCapabilities();
+      gl = context.getGL();
 
-      if (!context.hasBasicFBOSupport()) {
-        throw new RuntimeException("No basic FBO support is available");
+      if (!hasFBOs()) {
+        throw new RuntimeException("Framebuffer objects are not supported by this hardware (or driver)");
       }
-      if (!context.hasGLSL()) {
-        throw new RuntimeException("No GLSL support is available");
+      if (!hasShaders()) {
+        throw new RuntimeException("GLSL shaders are not supported by this hardware (or driver)");
       }
     }
 
@@ -3289,15 +3325,16 @@ public class PGL {
       }
     }
 
-    float peAmount = peAction == MouseEvent.WHEEL ?
-      nativeEvent.getWheelRotation() :
+    @SuppressWarnings("deprecation")
+    int peCount = peAction == MouseEvent.WHEEL ?
+      (int) nativeEvent.getWheelRotation() :
       nativeEvent.getClickCount();
 
     MouseEvent me = new MouseEvent(nativeEvent, nativeEvent.getWhen(),
                                    peAction, peModifiers,
                                    nativeEvent.getX(), nativeEvent.getY(),
                                    peButton,
-                                   peAmount);
+                                   peCount);
 
     pg.parent.postEvent(me);
   }

@@ -18,7 +18,7 @@ import com.sun.jna.win32.*;
  * @author TB
  */
 public interface Advapi32  extends StdCallLibrary {
-  Advapi32 INSTANCE = (Advapi32) Native.loadLibrary("Advapi32", Advapi32.class, Options.UNICODE_OPTIONS);
+  Advapi32 INSTANCE = (Advapi32) Native.loadLibrary("Advapi32", Advapi32.class, Options.UNICODE_OPTIONS); //$NON-NLS-1$
   
 /*  
 BOOL WINAPI LookupAccountName(

@@ -7,15 +7,15 @@
 Network network;
 
 void setup() {
-  size(800, 200); 
+  size(640, 360); 
   // Create the Network object
   network = new Network(width/2,height/2);
   
   // Create a bunch of Neurons
-  Neuron a = new Neuron(-300,0);
+  Neuron a = new Neuron(-200,0);
   Neuron b = new Neuron(0,75);
   Neuron c = new Neuron(0,-75);
-  Neuron d = new Neuron(300,0);
+  Neuron d = new Neuron(200,0);
   
   // Connect them
   network.connect(a,b);

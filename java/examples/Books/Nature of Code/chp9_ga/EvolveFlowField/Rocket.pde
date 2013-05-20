@@ -15,11 +15,17 @@ class Rocket {
   PVector acceleration;
   float r;
   float recordDist;
-
+  
   float fitness;
   DNA dna;
+  
+  // Could make this part of DNA??)
+  float maxspeed = 6.0;
+  float maxforce = 1.0;
 
   boolean stopped;  // Am I stuck?
+  boolean dead; // Did I hit an obstacle?
+  
   int finish;       // What was my finish? (first, second, etc. . . )
 
   //constructor
@@ -46,6 +52,8 @@ class Rocket {
     }
     // Reward finishing faster and getting closer
     fitness = (1.0f / pow(finish,1.5)) * (1 / (pow(d,6)));
+    
+    //if (dead) fitness = 0;
   }
 
   void setFinish(int f) {
@@ -60,6 +68,7 @@ class Rocket {
       // If I hit an edge or an obstacle
       if ((borders()) || (obstacles(o))) {
         stopped = true;
+        dead = true;
       }
     }
     // Draw me!
@@ -78,7 +87,9 @@ class Rocket {
   // Did I make it to the target?
   boolean finished() {
     float d = dist(location.x,location.y,target.r.x,target.r.y);
-    if (d < recordDist) recordDist = d;
+    if (d < recordDist) {
+      recordDist = d;
+    }
     if (target.contains(location)) {
       stopped = true;
       return true;
@@ -105,11 +116,13 @@ class Rocket {
       y = constrain(y,0,height/gridscale-1); // Make sure we are not off the edge
 
       // Get the steering vector out of our genes in the right spot
-      // We could do (desired - velocity) to be more in line with the Reynolds flow field following
-      acceleration.add(dna.genes[x+y*width/gridscale]);
-
-      // This is all the same stuff we've done before
-      acceleration.mult(maxforce);
+      // A little Reynolds steering here
+      PVector desired = dna.genes[x+y*(width/gridscale)].get();
+      desired.mult(maxspeed);
+      PVector steer = PVector.sub(desired,velocity);
+      acceleration.add(steer);
+      acceleration.limit(maxforce);
+      
       velocity.add(acceleration);
       velocity.limit(maxspeed);
       location.add(velocity);
@@ -121,7 +134,7 @@ class Rocket {
     //fill(0,150);
     //stroke(0);
     //ellipse(location.x,location.y,r,r);
-    float theta = velocity.heading2D() + PI/2;
+    float theta = velocity.heading() + PI/2;
     fill(200,100);
     stroke(0);
     pushMatrix();
@@ -133,8 +146,14 @@ class Rocket {
     vertex(r, r*2);
     endShape();
     popMatrix();
-    
-    
+  }
+  
+  void highlight() {
+    stroke(0);
+    line(location.x,location.y,target.r.x,target.r.y);
+    fill(255,0,0,100);
+    ellipse(location.x,location.y,16,16);
+ 
   }
 
   float getFitness() {

@@ -44,9 +44,9 @@ import processing.core.*;
  * files and images, etc) that comes from that.
  */
 public class Base {
-  static public final int REVISION = 217;
+  static public final int REVISION = 218;
   /** This might be replaced by main() if there's a lib/version.txt file. */
-  static public String VERSION_NAME = "0217";
+  static public String VERSION_NAME = "0218"; //$NON-NLS-1$
   /** Set true if this a proper release rather than a numbered revision. */
   static public boolean RELEASE = false;
 
@@ -57,16 +57,16 @@ public class Base {
   static HashMap<Integer, String> platformNames =
     new HashMap<Integer, String>();
   static {
-    platformNames.put(PConstants.WINDOWS, "windows");
-    platformNames.put(PConstants.MACOSX, "macosx");
-    platformNames.put(PConstants.LINUX, "linux");
+    platformNames.put(PConstants.WINDOWS, "windows"); //$NON-NLS-1$
+    platformNames.put(PConstants.MACOSX, "macosx"); //$NON-NLS-1$
+    platformNames.put(PConstants.LINUX, "linux"); //$NON-NLS-1$
   }
 
   static HashMap<String, Integer> platformIndices = new HashMap<String, Integer>();
   static {
-    platformIndices.put("windows", PConstants.WINDOWS);
-    platformIndices.put("macosx", PConstants.MACOSX);
-    platformIndices.put("linux", PConstants.LINUX);
+    platformIndices.put("windows", PConstants.WINDOWS); //$NON-NLS-1$
+    platformIndices.put("macosx", PConstants.MACOSX); //$NON-NLS-1$
+    platformIndices.put("linux", PConstants.LINUX); //$NON-NLS-1$
   }
   static Platform platform;
 
@@ -74,14 +74,14 @@ public class Base {
   static int nativeBits;
   static {
     nativeBits = 32;  // perhaps start with 32
-    String bits = System.getProperty("sun.arch.data.model");
+    String bits = System.getProperty("sun.arch.data.model"); //$NON-NLS-1$
     if (bits != null) {
-      if (bits.equals("64")) {
+      if (bits.equals("64")) { //$NON-NLS-1$
         nativeBits = 64;
       }
     } else {
       // if some other strange vm, maybe try this instead
-      if (System.getProperty("java.vm.name").contains("64")) {
+      if (System.getProperty("java.vm.name").contains("64")) { //$NON-NLS-1$ //$NON-NLS-2$
         nativeBits = 64;
       }
     }
@@ -142,7 +142,7 @@ public class Base {
 
   static private void createAndShowGUI(String[] args) {
     try {
-      File versionFile = getContentFile("lib/version.txt");
+      File versionFile = getContentFile("lib/version.txt"); //$NON-NLS-1$
       if (versionFile.exists()) {
         String version = PApplet.loadStrings(versionFile)[0];
         if (!version.equals(VERSION_NAME)) {
@@ -179,10 +179,10 @@ public class Base {
       try {
         platform.setLookAndFeel();
       } catch (Exception e) {
-        String mess = e.getMessage();
-        if (!mess.contains("ch.randelshofer.quaqua.QuaquaLookAndFeel")) {
-          log("Could not set the Look & Feel", e);
-        }
+//        String mess = e.getMessage();
+//        if (!mess.contains("ch.randelshofer.quaqua.QuaquaLookAndFeel")) {
+        log("Could not set the Look & Feel", e); //$NON-NLS-1$
+//        }
       }
 
       // Create a location for untitled sketches
@@ -195,11 +195,11 @@ public class Base {
                        "That's gonna prevent us from continuing.", e);
       }
 
-      log("about to create base...");
+      log("about to create base..."); //$NON-NLS-1$
       Base base = new Base(args);
       // Prevent more than one copy of the PDE from running.
       SingleInstance.startServer(base);
-      log("done creating base...");
+      log("done creating base..."); //$NON-NLS-1$
     }
   }
 
@@ -216,13 +216,13 @@ public class Base {
 
   static public void initPlatform() {
     try {
-      Class<?> platformClass = Class.forName("processing.app.Platform");
+      Class<?> platformClass = Class.forName("processing.app.Platform"); //$NON-NLS-1$
       if (Base.isMacOS()) {
-        platformClass = Class.forName("processing.app.macosx.Platform");
+        platformClass = Class.forName("processing.app.macosx.Platform"); //$NON-NLS-1$
       } else if (Base.isWindows()) {
-        platformClass = Class.forName("processing.app.windows.Platform");
+        platformClass = Class.forName("processing.app.windows.Platform"); //$NON-NLS-1$
       } else if (Base.isLinux()) {
-        platformClass = Class.forName("processing.app.linux.Platform");
+        platformClass = Class.forName("processing.app.linux.Platform"); //$NON-NLS-1$
       }
       platform = (Platform) platformClass.newInstance();
     } catch (Exception e) {
@@ -235,7 +235,7 @@ public class Base {
 
   public static void initRequirements() {
     try {
-      Class.forName("com.sun.jdi.VirtualMachine");
+      Class.forName("com.sun.jdi.VirtualMachine"); //$NON-NLS-1$
     } catch (ClassNotFoundException cnfe) {
       //String cp = System.getProperty("java.class.path").replace(File.pathSeparatorChar, '\n');
 //      String cp = System.getProperty("sun.boot.class.path").replace(File.pathSeparatorChar, '\n');
@@ -268,8 +268,8 @@ public class Base {
 //      ModeContribution.getCoreMode(this, "processing.mode.javascript.JavaScriptMode",
 //                                   getContentFile("modes/javascript"));
     Mode javaMode =
-      ModeContribution.load(this, getContentFile("modes/java"),
-                            "processing.mode.java.JavaMode").getMode();
+      ModeContribution.load(this, getContentFile("modes/java"), //$NON-NLS-1$
+                            "processing.mode.java.JavaMode").getMode(); //$NON-NLS-1$
 //    Mode androidMode =
 //      ModeContribution.load(this, getContentFile("modes/android"),
 //                            "processing.mode.android.AndroidMode").getMode();
@@ -284,8 +284,8 @@ public class Base {
 //    try {
 //      Class.forName("processing.mode.java2.DebugMode");
     ModeContribution experimentalContrib =
-      ModeContribution.load(this, getContentFile("modes/experimental"),
-        "processing.mode.experimental.ExperimentalMode");
+      ModeContribution.load(this, getContentFile("modes/experimental"), //$NON-NLS-1$
+        "processing.mode.experimental.ExperimentalMode"); //$NON-NLS-1$
     if (experimentalContrib != null) {
       Mode experimentalMode = experimentalContrib.getMode();
       //coreModes = new Mode[] { javaMode, androidMode, experimentalMode };
@@ -345,20 +345,20 @@ public class Base {
     // marked as an example.
     recent = new Recent(this);
 
-    String lastModeIdentifier = Preferences.get("last.sketch.mode");
+    String lastModeIdentifier = Preferences.get("last.sketch.mode"); //$NON-NLS-1$
     if (lastModeIdentifier == null) {
       nextMode = coreModes[0];
-      log("Nothing set for last.sketch.mode, using coreMode[0].");
+      log("Nothing set for last.sketch.mode, using coreMode[0]."); //$NON-NLS-1$
     } else {
       for (Mode m : getModeList()) {
         if (m.getIdentifier().equals(lastModeIdentifier)) {
-          log("Setting next mode to " + lastModeIdentifier);
+          log("Setting next mode to " + lastModeIdentifier); //$NON-NLS-1$
           nextMode = m;
         }
       }
       if (nextMode == null) {
         nextMode = coreModes[0];
-        log("Could not find mode " + lastModeIdentifier + ", using default.");
+        logf("Could not find mode {0}, using default.", lastModeIdentifier); //$NON-NLS-1$
       }
     }
 
@@ -413,7 +413,7 @@ public class Base {
     }
 
     // check for updates
-    if (Preferences.getBoolean("update.check")) {
+    if (Preferences.getBoolean("update.check")) { //$NON-NLS-1$
       new UpdateCheck(this);
     }
   }
@@ -601,13 +601,13 @@ public class Base {
         boolean wasUntitled = sketch.isUntitled();
 
         // save a mode file into this sketch folder
-        File sketchProps = new File(sketch.getFolder(), "sketch.properties");
+        File sketchProps = new File(sketch.getFolder(), "sketch.properties"); //$NON-NLS-1$
         try {
           Settings props = new Settings(sketchProps);
           // Include the pretty name for error messages to show the user
-          props.set("mode", mode.getTitle());
+          props.set("mode", mode.getTitle()); //$NON-NLS-1$
           // Actual identifier to be used to resurrect the mode
-          props.set("mode.id", mode.getIdentifier());
+          props.set("mode.id", mode.getIdentifier()); //$NON-NLS-1$
           props.save();
         } catch (IOException e) {
           e.printStackTrace();
@@ -661,7 +661,7 @@ public class Base {
 
     // make this the next mode to be loaded
     nextMode = whichEditor.getMode();
-    Preferences.set("last.sketch.mode", nextMode.getIdentifier());
+    Preferences.set("last.sketch.mode", nextMode.getIdentifier()); //$NON-NLS-1$
   }
 
 
@@ -735,7 +735,7 @@ public class Base {
 
       // Make an empty pde file
       File newbieFile =
-        new File(newbieDir, newbieName + "." + nextMode.getDefaultExtension());
+        new File(newbieDir, newbieName + "." + nextMode.getDefaultExtension()); //$NON-NLS-1$
       if (!newbieFile.createNewFile()) {
         throw new IOException(newbieFile + " already exists.");
       }
@@ -812,7 +812,7 @@ public class Base {
     }
 
     final String prompt = "Open a Processing sketch...";
-    if (Preferences.getBoolean("chooser.files.native")) {  // don't use native dialogs on Linux
+    if (Preferences.getBoolean("chooser.files.native")) {  // don't use native dialogs on Linux //$NON-NLS-1$
       // get the front-most window frame for placing file dialog
       FileDialog fd = new FileDialog(activeEditor, prompt, FileDialog.LOAD);
 
@@ -821,7 +821,7 @@ public class Base {
         public boolean accept(File dir, String name) {
           // confirmed to be working properly [fry 110128]
           for (String ext : extensions) {
-            if (name.toLowerCase().endsWith("." + ext)) {
+            if (name.toLowerCase().endsWith("." + ext)) { //$NON-NLS-1$
               return true;
             }
           }
@@ -851,7 +851,7 @@ public class Base {
             return true;
           }
           for (String ext : extensions) {
-            if (file.getName().toLowerCase().endsWith("." + ext)) {
+            if (file.getName().toLowerCase().endsWith("." + ext)) { //$NON-NLS-1$
               return true;
             }
           }
@@ -932,11 +932,11 @@ public class Base {
 //    Mode nextMode = nextEditorMode();
     try {
       File sketchFolder = new File(path).getParentFile();
-      File sketchProps = new File(sketchFolder, "sketch.properties");
+      File sketchProps = new File(sketchFolder, "sketch.properties"); //$NON-NLS-1$
       if (sketchProps.exists()) {
         Settings props = new Settings(sketchProps);
-        String modeTitle = props.get("mode");
-        String modeIdentifier = props.get("mode.id");
+        String modeTitle = props.get("mode"); //$NON-NLS-1$
+        String modeIdentifier = props.get("mode.id"); //$NON-NLS-1$
         if (modeTitle != null && modeIdentifier != null) {
 //          nextMode = findMode(modeTitle);
           Mode mode = findMode(modeIdentifier);
@@ -1060,8 +1060,8 @@ public class Base {
         }
       }
 
-      Preferences.unset("server.port");
-      Preferences.unset("server.key");
+      Preferences.unset("server.port"); //$NON-NLS-1$
+      Preferences.unset("server.key"); //$NON-NLS-1$
 
       // This will store the sketch count as zero
       editors.remove(editor);
@@ -1471,7 +1471,7 @@ public class Base {
    */
   File checkSketchFolder(File subfolder, String item) {
     for (Mode mode : getModeList()) {
-      File entry = new File(subfolder, item + "." + mode.getDefaultExtension());
+      File entry = new File(subfolder, item + "." + mode.getDefaultExtension()); //$NON-NLS-1$
       // if a .pde file of the same prefix as the folder exists..
       if (entry.exists()) {
         return entry;
@@ -1500,35 +1500,12 @@ public class Base {
   // .................................................................
 
 
-  /**
-   * Show the About box.
-   */
-  public void handleAbout() {
-    final Image image = Toolkit.getLibImage("about.jpg", activeEditor);
-    final Window window = new Window(activeEditor) {
-        public void paint(Graphics g) {
-          g.drawImage(image, 0, 0, null);
-
-          Graphics2D g2 = (Graphics2D) g;
-          g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-                              RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
-
-          g.setFont(new Font("SansSerif", Font.PLAIN, 11));
-          g.setColor(Color.white);
-          g.drawString(Base.VERSION_NAME, 50, 30);
-        }
-      };
-    window.addMouseListener(new MouseAdapter() {
-        public void mousePressed(MouseEvent e) {
-          window.dispose();
-        }
-      });
-    int w = image.getWidth(activeEditor);
-    int h = image.getHeight(activeEditor);
-    Dimension screen = Toolkit.getScreenSize();
-    window.setBounds((screen.width-w)/2, (screen.height-h)/2, w, h);
-    window.setVisible(true);
-  }
+//  /**
+//   * Show the About box.
+//   */
+//  static public void handleAbout() {
+//    new About(activeEditor);
+//  }
 
 
   /**
@@ -1616,7 +1593,7 @@ public class Base {
    */
   static public int getNativeBits() {
     if (Base.isMacOS()) {
-      return Preferences.getInteger("run.options.bits");
+      return Preferences.getInteger("run.options.bits"); //$NON-NLS-1$
     }
     return nativeBits;
   }
@@ -1667,7 +1644,7 @@ public class Base {
    */
   static public boolean isMacOS() {
     //return PApplet.platform == PConstants.MACOSX;
-    return System.getProperty("os.name").indexOf("Mac") != -1;
+    return System.getProperty("os.name").indexOf("Mac") != -1; //$NON-NLS-1$ //$NON-NLS-2$
   }
 
 
@@ -1676,7 +1653,7 @@ public class Base {
    */
   static public boolean isWindows() {
     //return PApplet.platform == PConstants.WINDOWS;
-    return System.getProperty("os.name").indexOf("Windows") != -1;
+    return System.getProperty("os.name").indexOf("Windows") != -1; //$NON-NLS-1$ //$NON-NLS-2$
   }
 
 
@@ -1685,7 +1662,7 @@ public class Base {
    */
   static public boolean isLinux() {
     //return PApplet.platform == PConstants.LINUX;
-    return System.getProperty("os.name").indexOf("Linux") != -1;
+    return System.getProperty("os.name").indexOf("Linux") != -1; //$NON-NLS-1$ //$NON-NLS-2$
   }
 
 
@@ -1695,7 +1672,7 @@ public class Base {
   static public File getSettingsFolder() {
     File settingsFolder = null;
 
-    String preferencesPath = Preferences.get("settings.path");
+    String preferencesPath = Preferences.get("settings.path"); //$NON-NLS-1$
     if (preferencesPath != null) {
       settingsFolder = new File(preferencesPath);
 
@@ -1807,7 +1784,7 @@ public class Base {
   static public void locateSketchbookFolder() {
     // If a value is at least set, first check to see if the folder exists.
     // If it doesn't, warn the user that the sketchbook folder is being reset.
-    String sketchbookPath = Preferences.get("sketchbook.path");
+    String sketchbookPath = Preferences.get("sketchbook.path"); //$NON-NLS-1$
     if (sketchbookPath != null) {
       sketchbookFolder = new File(sketchbookPath);
       if (!sketchbookFolder.exists()) {
@@ -2935,6 +2912,13 @@ public class Base {
   static public void log(String message) {
     if (DEBUG) {
       System.out.println(message);
+    }
+  }
+
+
+  static public void logf(String message, Object... args) {
+    if (DEBUG) {
+      System.out.println(String.format(message, args));
     }
   }
 

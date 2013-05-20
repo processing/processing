@@ -1,3 +1,55 @@
+0217 pde (2.0b9)
+X fix MovieMaker, it was completely broken
+X   https://github.com/processing/processing/issues/1669
+X create missing parent directories when unpacking zip files
+X   fixes library problems with hemesh
+F move JavaScript mode out to its own repo
+X incorporate JDI changes from Manindra
+X fix autoformat to indent like the p5 book/examples
+X   http://code.google.com/p/processing/issues/detail?id=325
+X   https://github.com/processing/processing/issues/364
+X fix NPE problem with retina checking on Java 7
+o deleting tools folder while running causes exception when changing modes
+o   https://github.com/processing/processing/issues/1707
+X   won't bother fixing this one
+X remove netscape.javascript stuff
+o move arduino out to its own library (already done, just not on site)
+o crash when selecting "Show Sketch Folder" with Windows 7
+o   might be a java.awt.Desktop problem
+X   http://code.google.com/p/processing/issues/detail?id=1473
+X   marked cantfix back in December
+X change error message for libraries (especially serial) for 32- vs 64-bit
+X   "To use this library, switch to 32-bit mode in Preferences." (OS X)
+X   "To use this library, you must use the 32-bit version of Processing."
+X rebuild Runner to use SocketAttach
+X   deals with spaces in path problem, but also opens a port
+X remove "Listening for transport dt_socket at address: 8727" message
+X reference for normal() uses '50' as z value.. use something normalized
+X how does new JDI affect Experimental? duplicate libs? loader issues?
+X   seems to be working fine
+X move Android mode out to its own repo
+X fix line endings in revisions.txt for windows
+X   was modifying the wrong file (the source dir, not the work dir)
+X change line endings on Windows to only be replaced during dist
+X   otherwise marks revisions.txt as changed
+X processing-java dialog window huge
+X   https://github.com/processing/processing/issues/1748
+X library with bad version number in version causes stack trace to print
+X   added println warning message about it
+X update mode images again from Casey
+o   also send pull request for Florian
+
+manager
+X "New version available" mesage is showing html tags around it
+X   https://github.com/processing/processing/issues/1684
+X shift color of installed items when selected 
+X   was ugly gray over selection color
+X fix layout of the update button
+X get update text to align vertically
+X "Update" not working in the library manager
+X   https://github.com/processing/processing/issues/1701
+
+
 0216 pde (2.0b8)
 X remove extra separator at the top of the Help menu on Windows and Linux
 X MovieMaker tool will not start on Windows 8

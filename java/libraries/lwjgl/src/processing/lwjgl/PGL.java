@@ -359,6 +359,13 @@ public class PGL extends processing.opengl.PGL {
   protected static KeyPoller keyPoller;
   protected static MousePoller mousePoller;
 
+  /** Desired target framerate */
+  protected float targetFps = 60;
+  protected float currentFps = 60;
+  protected boolean setFps = false;
+  protected int fcount, lastm;
+  protected int fint = 3; 
+  
   /** Which texturing targets are enabled */
   protected static boolean[] texturingTargets = { false, false };
 
@@ -482,7 +489,18 @@ public class PGL extends processing.opengl.PGL {
   }
 
 
-  protected void setFrameRate(float framerate) {
+  protected void setFps(float fps) {
+    if (!setFps || targetFps != fps) {
+      if (60 < fps) {
+        // Disables v-sync
+        Display.setVSyncEnabled(false);
+        Display.sync((int)fps);
+      } else  {
+        Display.setVSyncEnabled(true);
+      }
+      targetFps = currentFps = fps; 
+      setFps = true;      
+    }
   }
 
 
@@ -511,9 +529,14 @@ public class PGL extends processing.opengl.PGL {
     pg.parent.add(canvas, BorderLayout.CENTER);     
     
     try {      
-      PixelFormat format = new PixelFormat(32, request_alpha_bits,
-                                               request_depth_bits,
-                                               request_stencil_bits, 1);
+      DisplayMode[] modes = Display.getAvailableDisplayModes();
+      int bpp = 0; 
+      for (int i = 0; i < modes.length; i++) {
+        bpp = PApplet.max(modes[i].getBitsPerPixel(), bpp);
+      }
+      PixelFormat format = new PixelFormat(bpp, request_alpha_bits,
+                                                request_depth_bits,
+                                                request_stencil_bits, 1);
       Display.setDisplayMode(new DisplayMode(pg.parent.width, pg.parent.height));
       int argb = pg.backgroundColor;
       float r = ((argb >> 16) & 0xff) / 255.0f;
@@ -522,7 +545,13 @@ public class PGL extends processing.opengl.PGL {
       Display.setInitialBackground(r, g, b); 
       Display.setParent(canvas);      
       Display.create(format);
-      Display.setVSyncEnabled(true);      
+
+      // Might be useful later to specify the context attributes.
+      // http://lwjgl.org/javadoc/org/lwjgl/opengl/ContextAttribs.html
+//      ContextAttribs contextAtrributes = new ContextAttribs(4, 0);
+//      contextAtrributes.withForwardCompatible(true);
+//      contextAtrributes.withProfileCore(true);
+//      Display.create(pixelFormat, contextAtrributes);      
     } catch (LWJGLException e) {
       e.printStackTrace();
     }
@@ -540,6 +569,8 @@ public class PGL extends processing.opengl.PGL {
     fboLayerInUse = false;
     firstFrame = true;
     needToClearBuffers = true;
+    
+    setFps = false;
   }
 
 
@@ -560,8 +591,17 @@ public class PGL extends processing.opengl.PGL {
   }
 
 
-  protected void update() {
+  protected void update() {    
+    if (!setFps) setFps(targetFps);
+    
     if (!fboLayerCreated) {
+      if (!hasFBOs()) {
+        throw new RuntimeException("Framebuffer objects are not supported by this hardware (or driver)");
+      }
+      if (!hasShaders()) {
+        throw new RuntimeException("GLSL shaders are not supported by this hardware (or driver)");
+      }      
+      
       String ext = getString(EXTENSIONS);
       if (-1 < ext.indexOf("texture_non_power_of_two")) {
         fboWidth = pg.width;
@@ -938,7 +978,19 @@ public class PGL extends processing.opengl.PGL {
       frontTex = backTex;
       backTex = temp;
     }
-    flush();
+
+    // call (gl)finish() only if the rendering of each frame is taking too long,
+    // to make sure that commands are not accumulating in the GL command queue.
+    fcount += 1;
+    int m = pg.parent.millis();
+    if (m - lastm > 1000 * fint) {
+      currentFps = (float)(fcount) / fint;
+      fcount = 0;
+      lastm = m;
+    }
+    if (currentFps < 0.5f * targetFps) {
+      finish();
+    }
   }
 
 
@@ -2511,7 +2563,33 @@ public class PGL extends processing.opengl.PGL {
     return res;
   }
 
+  
+  protected boolean hasFBOs() {
+    int major = getGLVersion()[0];
+    if (major < 2) {
+      String ext = getString(EXTENSIONS);
+      return ext.indexOf("_framebuffer_object")  != -1;
+    } 
+    return true; // Assuming FBOs are always available for OpenGL >= 2.0
+  }
+  
+  
+  protected boolean hasShaders() {
+    // GLSL might still be available through extensions. For instance,
+    // GLContext.hasGLSL() gives false for older intel integrated chipsets on
+    // OSX, where OpenGL is 1.4 but shaders are available.
+    int major = getGLVersion()[0];
+    if (major < 2) {
+      String ext = getString(EXTENSIONS);
+      return ext.indexOf("_fragment_shader")  != -1 &&
+             ext.indexOf("_vertex_shader")    != -1 &&
+             ext.indexOf("_shader_objects")   != -1 &&
+             ext.indexOf("_shading_language") != -1;
+    } 
+    return true; // Assuming shaders are always available for OpenGL >= 2.0
+  }  
 
+  
   protected static ByteBuffer allocateDirectByteBuffer(int size) {
     int bytes = PApplet.max(MIN_DIRECT_BUFFER_SIZE, size) * SIZEOF_BYTE;
     return ByteBuffer.allocateDirect(bytes).order(ByteOrder.nativeOrder());

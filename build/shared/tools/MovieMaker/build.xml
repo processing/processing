@@ -3,7 +3,10 @@
   
   <target name="clean" description="Clean the build directories">
     <delete dir="bin" />
+    <delete dir="tool" />
+<!--
     <delete file="tool/MovieMaker.jar" />
+-->
   </target>
 
   <target name="compile" description="Compile sources">
@@ -25,6 +28,7 @@
   </target>
 
   <target name="build" depends="compile" description="Build Movie Maker Tool">
+    <mkdir dir="tool" />
     <jar basedir="bin" destfile="tool/MovieMaker.jar" />
   </target>
 </project>

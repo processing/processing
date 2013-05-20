@@ -1,162 +1,19 @@
-0217 core
-X improve load/save of .gz files with Table, clear up some .bin issues
-X add set(x, y) to PVector (shiffman)
-X loadImage() with TGA causing images to be upside-down
-X   https://github.com/processing/processing/issues/1682
-A image caches not being properly disposed (weak references broken?)
-X   http://code.google.com/p/processing/issues/detail?id=1353
-A   https://github.com/processing/processing/issues/1391
-X implement content specifiers
-X   getIntContent()
-X   getFloatContent()
-X   getContent() or getStringContent()?
-X switch to CATEGORY instead of CATEGORICAL
-X removed createXML() and createTable()... just use 'new' for these
+0218 core (2.0b10 or 2.0)
 
+
+before 2.0
+_ PImage.loadPixels() shouldn't be calling out to the renderer
+_   setting image.parent = null for it makes it work again for get().save() case
+_ PShape should be cached as well
+_ add options for image.save() (or saveImage?)
+_   add quality=[0,1] for jpeg images
+_   add dpi=[0,n] for for png images
+
+high
 _ draw() called again before finishing on OS X (retina issue)
 _   https://github.com/processing/processing/issues/1709
-
-_ tint() with JAVA2D does not automatically refresh (with possible fix)
-_   https://github.com/processing/processing/issues/1730
-
 _ Linux sometimes not responding correctly w/ the size() command
 _   https://github.com/processing/processing/issues/1672
-
-_ image memory issue was huge, need to close that one
-
-data
-X are we comfortable with setInt/Float/etc instead of just set(int, blah)
-X   yes, better to have parity
-X   too weird to have to explain why getXxx() needs types and set() doesn't
-X get/set with Java's 'Map' class?
-X   really useful, but leaning toward not including it
-X   or leave it in as an advanced feature?
-X createXxx() methods less important
-X   XML.parse() - or new XML("<tag>") or new XML("tag")
-X api note: size() used in data classes
-X   length() too confusing w/ array.length being built-in (when to use ()?)
-X   size() a bit confusing with the p5 size command, but less problematic
-o   also shorter than getCount() or getLength()
-o why not HashMap and ArrayList for JSON? 
-o   could enable loadHash() and loadArray() functions
-X   because the types coming back out would always have to be cast
-o add loadDict() and loadList() for JSON?
-o   Dict and List could be interfaces? 
-X "hash.toJSONObject()" or "new JSONObject(hash)"
-X   opted to use "new JSONObject" version, appears less awkward
-o match? find? on StringList?
-_ can we use String... for options? or does it screw up the method signature?
-_   and would we have to always concatenate arrays to prepend extensions, etc
-_ include Instant and Interval? (or just Time and TimeSpan)
-_ naming for descending sort
-_   rsort(), sortReverse(), sortKeysReverse, 
-_   sortDescend, sortDescending, sortKeysDescending, 
-_   sortHighLow, sortHigh, sortHighest, sortDown
-_ it's going to be File or Reader (mostly BufferedReader) everywhere
-_   though TableODS needs an InputStream... 
-_   and XML could use InputStream if we hope to be able to reflect doc encoding
-_   ok, so File, Reader, and InputStream (where needed)
-_ setMissingXxxx() -> should this live in PApplet? be static?
-_   cons: static stinks, diff tables might use diff values
-_ will also need an iterator for the Dict class ala Map.Entry
-_ using Iterable for rows(), keys(), etc
-_   generally more efficient for Table, but slower for FloatHash and IntHash
-_   could use an int array instead, but a bit hokey in places
-_ Iterable, Iterator, or [] returned for keys(), rows(), etc.
-_   list, dict, json, table are each more efficient at different things
-_   keys(), rows(), etc. should return something Iterable
-_     whether that means an array or an actual Iterator or even a Set
-_     that way we can do what's most efficient
-_   then we add keyIterator() and others to handle the other case (deletion)
-_   blogs.oracle.com/CoreJavaTechTips/entry/using_enhanced_for_loops_with
-_ means that JSON.keys() -> JSON.keyIterator(), JSON.keySet() -> JSON.keys()
-_ what should they all return? 
-_   remove -> true/false based on whether it found something?
-_   remove all -> the number removed?
-_ List: remove(), append(), index(), etc all use values
-_   removeIndex(index) is the other
-_   otherwise remove() would be the only one that dealt with indices
-_   Dict will use remove(key), so using remove(index) as default
-_     and removeValue(value) is probably used less
-_ introduce remap() instead of map() (if not deprecate?)
-
-data / document
-X no save/load for hash and list classes
-X   because no native format
-X   write() and constructor are enough for advanced users
-o add() to add things to lists, inc/dec for the math
-o   inc/dec/sum is used less, after all
-X   or append()? since that's what JSON is currently using
-X   append() nicer, inc/dec felt arcane (and forced)
-o Lookup instead of Hash or Dict?
-o increment, decrement, increase, decrease instead of add/subtract
-o   does double duty for incrementing/decrementing easily
-o   inc(), inc(amount), dec(), dec(amount)
-X replace (especially for null and NaN)
-X   make note that these work, and are special cases
-o listAttributes() in XML is like array from keys() etc in our data classes
-_ removeIndex() vs removeValue() vs remove() 
-_   remove() refers to an index (with array) or key (with hash)
-_   more consistent with other APIs (Java)
-_   replaceValue[s]() the same, though more on the line
-_   should we not have remove() and removeIndex()
-_     and instead always specify? removeKey(), removeIndex(), removeValue()?
-_     would mean that hash would only have removeKey
-_     downside: remove() takes whatever get() takes as arg
-_   with removeValue(), add removeValues() for all values that match?
-_     also support NaN here
-_ need to sort out the final version of hash/dict/etc and their names
-_ JSONObject.has(key) vs XML.hasAttribute(attr) vs HashMap.containsKey()
-_   and how it should be handled with hash/dict
-_   right now using hasKey().. in JSONObject
-_   contains() as default, then containsValue() as the alternate
-_     instead of containsKey() and containsValue()
-_   hasAttribute in XML, containsKey in java's Map, hasKey in JSON
-_   hasChildren() is another precedent
-o   contains() is nice, but containsKey() is weird, often not 'containing'
-X   hasKey/hasValue is best; fewest changes and most descriptive
-_ not doing print() methods, since alternatives are more descriptive
-_   println(obj) and obj.write(System.out) are both better
-
-json
-X getIntArray() for JSONArray
-X misc bugs with last release
-X   https://github.com/processing/processing/issues/1660
-X   https://github.com/processing/processing/issues/1680
-X Dan having trouble with JSON
-X keys() vs keySet() in JSON.. 
-X   keys() doesn't iterate, keySet() introduces 'Set' type
-X parseJSONObject(x) and parseJSONArray(x)
-_ add indent= as option for JSON save
-
-table
-X do we need getColumnType() inside TableRow? 
-X   also inside Table
-X   also do we make the constants public?
-X table writing twice when .csv is added 
-X   https://github.com/processing/processing/issues/1734
-X checkOptions() is a mess.. need to use different options for load/save
-X   rewrite it as necessary
-X implement binary tables
-X   these might be partially set
-o add .gz as option for writing (and bz2?)
-X   handling gz properly, but gz has to be the extension
-X   adding it to options is too messy
-o add 'gz' as one of the loadXxx() options
-o   helps .svgz case from being weird, also generally dealing w/ compressed data
-X include SQL, HTML, ODS, binary? 
-X   decide on TableODS, TableHTML
-X   HTML is out--too confusing
-X   ODS is in for loading, and finished
-o   naming HTMLTable, TableHTML (ala PShapeSVG)
-o   or should it be HTMLTable / HtmlTable... then SVGShape / SvgShape
-X   SQL can be done with a constructor
-X   this will just be available for advanced users
-X getColumnType() - what should it return?
-o   Integer.TYPE, String.class? still nothing for categorical
-o   maybe it's Table.INT since it's for advanced users anyway
-o   problem is loading types from file, no way to access it from code
-o   CATEGORICAL -> CATEGORY? ORDINAL?
 
 _ function that will convert awful CSV to TSV.. or something else?
 _   maybe to write binary instead? then read the binary file once it's ok?
@@ -188,14 +45,43 @@ _   table.join(anotherTable)
 _ getInt() on categorial to return index?
 _   getCategories() and getCategory() methods to query names?
 
-xml
-o add nodes() (no) or children() to XML?
-X   not necessary, getChildren() already exists
-_ add indent= as option for XML, JSON save
+data
+_ add indent= as option for XML save
+_ add indent= as option for JSON save
+_ not doing print() methods, since alternatives are more descriptive
+_   println(obj) and obj.write(System.out) are both better
+_ can we use String... for options? or does it screw up the method signature?
+_   and would we have to always concatenate arrays to prepend extensions, etc
+_ include Instant and Interval? (or just Time and TimeSpan)
+_ it's going to be File or Reader (mostly BufferedReader) everywhere
+_   though TableODS needs an InputStream... 
+_   and XML could use InputStream if we hope to be able to reflect doc encoding
+_   ok, so File, Reader, and InputStream (where needed)
+_ setMissingXxxx() -> should this live in PApplet? be static?
+_   cons: static stinks, diff tables might use diff values
+_ will also need an iterator for the Dict class ala Map.Entry
+_ using Iterable for rows(), keys(), etc
+_   generally more efficient for Table, but slower for FloatHash and IntHash
+_   could use an int array instead, but a bit hokey in places
+_ Iterable, Iterator, or [] returned for keys(), rows(), etc.
+_   list, dict, json, table are each more efficient at different things
+_   keys(), rows(), etc. should return something Iterable
+_     whether that means an array or an actual Iterator or even a Set
+_     that way we can do what's most efficient
+_   then we add keyIterator() and others to handle the other case (deletion)
+_   blogs.oracle.com/CoreJavaTechTips/entry/using_enhanced_for_loops_with
+_ means that JSON.keys() -> JSON.keyIterator(), JSON.keySet() -> JSON.keys()
+_ what should they all return? 
+_   remove -> true/false based on whether it found something?
+_   remove all -> the number removed?
+_ List: remove(), append(), index(), etc all use values
+_   removeIndex(index) is the other
+_   otherwise remove() would be the only one that dealt with indices
+_   Dict will use remove(key), so using remove(index) as default
+_     and removeValue(value) is probably used less
+_ introduce remap() instead of map() (if not deprecate?)
 
 andres
-A lines not properly renderered in P3D when using ortographic projection
-A   https://github.com/processing/processing/issues/1661
 _ P2D/P3D sketches don't get focus until clicked
 _   also problem for Java2D when canvas is used?
 _   need to standardize canvas handling
@@ -204,27 +90,6 @@ _ warning message present
 _   Deleted 1 texture objects, 0 remaining
 _ shader syntax (Andres request)
 _   might also need a define inside the shader to control what type it is
-
-_ add mouse wheel support to 2.0 event system
-_   https://github.com/processing/processing/issues/1461
-X   http://code.google.com/p/processing/issues/detail?id=1423
-X   this is fairly messy since desktop and JS behave a little differently
-o   wheel event should subclass mouse (since position still relevant)
-X     just another sub-event as part of mouse
-o   might be more effort than it's worth?
-X   peasycam uses e.getWheelRotation()
-X   js has a couple versions
-X     http://www.javascriptkit.com/javatutors/onmousewheel.shtml
-X     e.detail is 1 for 1 click up, -2 for 2 clicks down
-X     e.wheelDelta is 120 for 1 click up, -240 for two clicks down
-X   using float value (/120.0f)
-X   high-precision method grabbed if 1.7 is in use
-_   test with actual wheel mouse
-_   test on Windows
-_   add to the API docs
-_   decide on getAmount() and weirdness w/ clickCount
-_   get mouseWheel() added to api ref
-_   also added to keywords.txt
 
 shape
 _ major surgery to put loadShape() back into PApplet/PGraphics
@@ -255,16 +120,6 @@ _   void setPath()
 _ colorCalc() methods added to PShape.. should just be used from PGraphics
 _ loadShape() needs to live in PApplet
 _ make PShapeOpenGL a cache object
-
-async requests
-Request r = createRequest("http://p5.org/feed/13134.jpg");
-Request r = createRequest("http://p5.org/feed/13134.jpg", "callbackName");
-Request r = createRequest("http://p5.org/feed/13134, "callbackName", "jpg");
-_ implement callbacks for images and other loadXxxx() functions
-_   remove requestImage() and friends
-_ callback for requestImage()
-_   http://code.google.com/p/processing/issues/detail?id=641
-_ remove/update requestImage example
 
 stop() mess
 _ in PApplet.main(), windowClosing() should probably be calling 'exit()'
@@ -415,12 +270,7 @@ _   have to pass PApplet just to make the rendering work to both renderers
 _   should instead be a renderer that splits things out
 
 
-2.0 / methods
-_ decision on registered methods
-_   remove registerPre() et al
-_   add register("pause", ...) 
-_   size() should be resize(), so it can be overridden (ala pause())
-_   add PEvent
+2.0
 _ size() and resize() and whatever? 
 _   should be setSize(), but that's odd for image files
 _   -> resize() is fine with PImage and PGraphics... 
@@ -428,12 +278,6 @@ _   we may be inheriting the resize() from Java -> make it final?
 _   add resize().. make it call setSize().
 _     also needs to do a redraw if noLoop() has been called
 _   the registered method for size() also needs to be called
-_ need to wrap mouse/key events for p5
-_   need a version that works with both android and desktop
-_   also need to interleave events properly (as per report)
-
-
-2.0
 _ get() or copy()? for vectors, image, etc.
 _ PVector chaining -> Dan looking into this
 _ PNode.getChildren() shouldn't make a new array.. toArray() can do that
@@ -473,6 +317,7 @@ _   jer and dan will look at their code, plus toxiclibs
 _ modify PVector to include better methods for chaining operations
 _   http://code.google.com/p/processing/issues/detail?id=218
 _ add screen(PVector), model(PVector) and world(PVector)?
+_   maybe screenVec()? or screenXYZ()?
 
 decisions to make
 _ possible addition for 'implementation' variable
@@ -822,3 +667,12 @@ _ put a Hash<Something> class in there
 _   will this work to sort by the values?
 _   there was another concern as well..
 _ save() should probably come out of image, ja?
+_ async requests
+_   Request r = createRequest("http://p5.org/feed/13134.jpg");
+_   Request r = createRequest("http://p5.org/feed/13134.jpg", "callbackName");
+_   Request r = createRequest("http://p5.org/feed/13134, "callbackName", "jpg");
+_   implement callbacks for images and other loadXxxx() functions
+_     remove requestImage() and friends
+_   callback for requestImage()
+_     http://code.google.com/p/processing/issues/detail?id=641
+_   remove/update requestImage example

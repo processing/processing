@@ -129,16 +129,16 @@ public class Archiver implements Tool {
                        ZipOutputStream zos) throws IOException {
     String files[] = dir.list();
     for (int i = 0; i < files.length; i++) {
-      if (files[i].equals(".") ||
-          files[i].equals("..")) continue;
+      if (files[i].equals(".") || //$NON-NLS-1$
+          files[i].equals("..")) continue; //$NON-NLS-1$
 
       File sub = new File(dir, files[i]);
       String nowfar = (sofar == null) ?
-        files[i] : (sofar + "/" + files[i]);
+        files[i] : (sofar + "/" + files[i]); //$NON-NLS-1$
 
       if (sub.isDirectory()) {
         // directories are empty entries and have / at the end
-        ZipEntry entry = new ZipEntry(nowfar + "/");
+        ZipEntry entry = new ZipEntry(nowfar + "/"); //$NON-NLS-1$
         //System.out.println(entry);
         zos.putNextEntry(entry);
         zos.closeEntry();

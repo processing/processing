@@ -276,18 +276,16 @@ public class Table {
           extension = "csv";
         } else if (opt.equals("ods")) {
           extension = "ods";
-
         } else if (opt.equals("newlines")) {
           awfulCSV = true;
-
+          extension = "csv";
         } else if (opt.equals("bin")) {
           binary = true;
+          extension = "bin";
         } else if (opt.equals("header")) {
           header = true;
-
         } else if (opt.startsWith(sheetParam)) {
           worksheet = opt.substring(sheetParam.length());
-
         } else {
           throw new IllegalArgumentException("'" + opt + "' is not a valid option for loading a Table");
         }
@@ -1296,11 +1294,13 @@ public class Table {
     }
   }
 
-
+ /**
+   * @webref table:method
+   * @brief Removes a column from the table
+   */
   public void removeColumn(String columnName) {
     removeColumn(getColumnIndex(columnName));
   }
-
 
   public void removeColumn(int column) {
     int newCount = columns.length - 1;
@@ -1333,7 +1333,10 @@ public class Table {
     }
   }
 
-
+  /**
+   * @webref table:method
+   * @brief To come...
+   */
   public int getColumnCount() {
     return columns.length;
   }
@@ -1657,7 +1660,10 @@ public class Table {
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
-
+  /**
+   * @webref table:method
+   * @brief To come...
+   */
   public int getRowCount() {
     return rowCount;
   }
@@ -1665,6 +1671,14 @@ public class Table {
 
   public int lastRowIndex() {
     return getRowCount() - 1;
+  }
+
+  /**
+   * @webref table:method
+   * @brief Removes all rows from a table
+   */
+  public void clearRows() {
+    setRowCount(0);
   }
 
 
@@ -1699,7 +1713,10 @@ public class Table {
     rowCount = newCount;
   }
 
-
+  /**
+   * @webref table:method
+   * @brief Adds a row to the table
+   */
   public TableRow addRow() {
     setRowCount(rowCount + 1);
     return new RowPointer(this, rowCount - 1);
@@ -1788,7 +1805,10 @@ public class Table {
     rowCount++;
   }
 
-
+  /**
+   * @webref table:method
+   * @brief Removes a row from the table
+   */
   public void removeRow(int row) {
     for (int col = 0; col < columns.length; col++) {
       switch (columnTypes[col]) {
@@ -1983,7 +2003,10 @@ public class Table {
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
-
+  /**
+   * @webref table:method
+   * @brief Gets a row from the table
+   */
   public TableRow getRow(int row) {
     return new RowPointer(this, row);
   }
@@ -1993,6 +2016,9 @@ public class Table {
    * Note that this one iterator instance is shared by any calls to iterate
    * the rows of this table. This is very efficient, but not thread-safe.
    * If you want to iterate in a multi-threaded manner, don't use the iterator.
+   * 
+   * @webref table:method
+   * @brief To come...
    */
   public Iterable<TableRow> rows() {
     return new Iterable<TableRow>() {
@@ -2748,7 +2774,10 @@ public class Table {
     setString(row, column, value);
   }
 
-
+  /**
+   * @webref table:method
+   * @brief To come...
+   */
   public String[] getStringColumn(String name) {
     int col = getColumnIndex(name);
     return (col == -1) ? null : getStringColumn(col);
@@ -2877,7 +2906,10 @@ public class Table {
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
-
+  /**
+   * @webref table:method
+   * @brief To come...
+   */
   public TableRow findRow(String value, int column) {
     int row = findRowIndex(value, column);
     return (row == -1) ? null : new RowPointer(this, row);
@@ -2888,7 +2920,10 @@ public class Table {
     return findRow(value, getColumnIndex(columnName));
   }
 
-
+  /**
+   * @webref table:method
+   * @brief To come...
+   */
   public Iterator<TableRow> findRows(String value, int column) {
     return new RowIndexIterator(this, findRowIndices(value, column));
   }
@@ -2985,7 +3020,10 @@ public class Table {
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
-
+  /**
+   * @webref table:method
+   * @brief To come...
+   */
   public TableRow matchRow(String regexp, int column) {
     int row = matchRowIndex(regexp, column);
     return (row == -1) ? null : new RowPointer(this, row);
@@ -2996,7 +3034,10 @@ public class Table {
     return matchRow(regexp, getColumnIndex(columnName));
   }
 
-
+  /**
+   * @webref table:method
+   * @brief To come...
+   */
   public Iterator<TableRow> matchRows(String value, int column) {
     return new RowIndexIterator(this, matchRowIndices(value, column));
   }
@@ -3082,6 +3123,9 @@ public class Table {
 
   /**
    * Remove any of the specified characters from the entire table.
+   * 
+   * @webref table:method
+   * @brief Remove characters from the entire table
    */
   public void removeTokens(String tokens) {
     for (int col = 0; col < getColumnCount(); col++) {
@@ -3126,7 +3170,10 @@ public class Table {
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
-
+  /**
+   * @webref table:method
+   * @brief To come...
+   */
   public void trim() {
     for (int col = 0; col < getColumnCount(); col++) {
       trim(col);
@@ -3388,7 +3435,7 @@ public class Table {
 
   public StringDict getStringDict(int keyColumn, int valueColumn) {
     return new StringDict(getStringColumn(keyColumn),
-                       getStringColumn(valueColumn));
+                          getStringColumn(valueColumn));
   }
 
 

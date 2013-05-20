@@ -2736,18 +2736,20 @@ public class PApplet extends Applet
   }
 
 
+  /*
+  // disabling for now; requires Java 1.7 and "precise" semantics are odd...
+  // returns 0.1 for tick-by-tick scrolling on OS X, but it's not a matter of
+  // calling ceil() on the value: 1.5 goes to 1, but 2.3 goes to 2.
+  // "precise" is a whole different animal, so add later API to shore that up.
   static protected Method preciseWheelMethod;
   static {
-//    Class<?> callbackClass = callbackObject.getClass();
-//    Method selectMethod =
-//      callbackClass.getMethod(callbackMethod, new Class[] { File.class });
-//    selectMethod.invoke(callbackObject, new Object[] { selectedFile });
     try {
       preciseWheelMethod = MouseWheelEvent.class.getMethod("getPreciseWheelRotation", new Class[] { });
     } catch (Exception e) {
       // ignored, the method will just be set to null
     }
   }
+  */
 
 
   /**
@@ -2758,7 +2760,7 @@ public class PApplet extends Applet
   protected void nativeMouseEvent(java.awt.event.MouseEvent nativeEvent) {
     // the 'amount' is the number of button clicks for a click event,
     // or the number of steps/clicks on the wheel for a mouse wheel event.
-    float peAmount = nativeEvent.getClickCount();
+    int peCount = nativeEvent.getClickCount();
 
     int peAction = 0;
     switch (nativeEvent.getID()) {
@@ -2783,8 +2785,10 @@ public class PApplet extends Applet
     case java.awt.event.MouseEvent.MOUSE_EXITED:
       peAction = MouseEvent.EXIT;
       break;
-    case java.awt.event.MouseWheelEvent.WHEEL_UNIT_SCROLL:
+    //case java.awt.event.MouseWheelEvent.WHEEL_UNIT_SCROLL:
+    case java.awt.event.MouseEvent.MOUSE_WHEEL:
       peAction = MouseEvent.WHEEL;
+      /*
       if (preciseWheelMethod != null) {
         try {
           peAmount = ((Double) preciseWheelMethod.invoke(nativeEvent, (Object[]) null)).floatValue();
@@ -2792,9 +2796,8 @@ public class PApplet extends Applet
           preciseWheelMethod = null;
         }
       }
-      if (preciseWheelMethod == null) {
-        peAmount = ((MouseWheelEvent) nativeEvent).getWheelRotation();
-      }
+      */
+      peCount = ((MouseWheelEvent) nativeEvent).getWheelRotation();
       break;
     }
 
@@ -2848,7 +2851,7 @@ public class PApplet extends Applet
                              peAction, peModifiers,
                              nativeEvent.getX(), nativeEvent.getY(),
                              peButton,
-                             peAmount));
+                             peCount));
   }
 
 
@@ -6034,7 +6037,6 @@ public class PApplet extends Applet
    * @webref input:files
    * @param filename name of a file in the data folder or a URL.
    * @see XML
-   * @see PApplet#createXML(String)
    * @see PApplet#parseXML(String)
    * @see PApplet#saveXML(XML, String)
    * @see PApplet#loadBytes(String)
@@ -6066,7 +6068,6 @@ public class PApplet extends Applet
    * @param data the content to be parsed as XML
    * @return an XML object, or null
    * @see XML
-   * @see PApplet#createXML(String)
    * @see PApplet#loadXML(String)
    * @see PApplet#saveXML(XML, String)
    */
@@ -6090,7 +6091,6 @@ public class PApplet extends Applet
    * @param xml the XML object to save to disk
    * @param filename name of the file to write to
    * @see XML
-   * @see PApplet#createXML(String)
    * @see PApplet#loadXML(String)
    * @see PApplet#parseXML(String)
    */
@@ -6108,12 +6108,16 @@ public class PApplet extends Applet
     return new JSONObject(new StringReader(input));
   }
 
-
+  /**
+   * @webref output:files
+   */
   public JSONObject loadJSONObject(String filename) {
     return new JSONObject(createReader(filename));
   }
 
-
+  /**
+   * @webref output:files
+   */
   public boolean saveJSONObject(JSONObject json, String filename) {
     return saveJSONObject(json, filename, null);
   }
@@ -6128,12 +6132,16 @@ public class PApplet extends Applet
     return new JSONArray(new StringReader(input));
   }
 
-
+  /**
+   * @webref output:files
+   */
   public JSONArray loadJSONArray(String filename) {
     return new JSONArray(createReader(filename));
   }
 
-
+  /**
+   * @webref output:files
+   */
   public boolean saveJSONArray(JSONArray json, String filename) {
     return saveJSONArray(json, filename);
   }
@@ -6160,7 +6168,6 @@ public class PApplet extends Applet
    * @webref input:files
    * @param filename name of a file in the data folder or a URL.
    * @see Table
-   * @see PApplet#createTable()
    * @see PApplet#saveTable(Table, String)
    * @see PApplet#loadBytes(String)
    * @see PApplet#loadStrings(String)
@@ -6201,7 +6208,6 @@ public class PApplet extends Applet
    * @param table the Table object to save to a file
    * @param filename the filename to which the Table should be saved
    * @see Table
-   * @see PApplet#createTable()
    * @see PApplet#loadTable(String)
    */
   public boolean saveTable(Table table, String filename) {
@@ -10079,7 +10085,7 @@ public class PApplet extends Applet
       try {
         if (iconImages == null) {
           iconImages = new ArrayList<Image>();
-          final int[] sizes = { 16, 24, 32, 48, 64 };
+          final int[] sizes = { 16, 32, 48, 64 };
 
           for (int sz : sizes) {
             URL url = getClass().getResource("/icon/icon-" + sz + ".png");

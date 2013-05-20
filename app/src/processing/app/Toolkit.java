@@ -21,11 +21,9 @@
 
 package processing.app;
 
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Image;
-import java.awt.MediaTracker;
 import java.awt.datatransfer.Clipboard;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -33,6 +31,7 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.ArrayList;
 
+import javax.swing.ImageIcon;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
@@ -124,19 +123,14 @@ public class Toolkit {
 
   /**
    * Return an Image object from inside the Processing lib folder.
+   * Moved here so that Base can stay headless.
    */
-  static public Image getLibImage(String name, Component who) {
-    Image image = null;
-//    Toolkit tk = Toolkit.getDefaultToolkit();
-
-    File imageLocation = new File(Base.getContentFile("lib"), name);
-    image = java.awt.Toolkit.getDefaultToolkit().getImage(imageLocation.getAbsolutePath());
-    MediaTracker tracker = new MediaTracker(who);
-    tracker.addImage(image, 0);
-    try {
-      tracker.waitForAll();
-    } catch (InterruptedException e) { }
-    return image;
+  static public Image getLibImage(String filename) {
+    File file = Base.getContentFile("lib/" + filename);
+    if (!file.exists()) {
+      return null;
+    }
+    return new ImageIcon(file.getAbsolutePath()).getImage();
   }
 
 
@@ -155,9 +149,9 @@ public class Toolkit {
 
       if (iconImages == null) {
         iconImages = new ArrayList<Image>();
-        final int[] sizes = { 16, 24, 32, 48, 64, 128, 256 };
+        final int[] sizes = { 16, 32, 48, 64, 128, 256, 512 };
         for (int sz : sizes) {
-          iconImages.add(Toolkit.getLibImage("icons/pde-" + sz + ".png", frame));
+          iconImages.add(Toolkit.getLibImage("icons/pde-" + sz + ".png"));
         }
       }
       frame.setIconImages(iconImages);
@@ -216,8 +210,7 @@ public class Toolkit {
 
   static Boolean retinaProp;
 
-  /** Yes, retina is a marketing term. But no, nobody else has implemented hi-dpi. */
-  static public boolean isRetina() {
+  static public boolean highResDisplay() {
     if (Base.isMacOS()) {
       // This should probably be reset each time there's a display change.
       // A 5-minute search didn't turn up any such event in the Java API.

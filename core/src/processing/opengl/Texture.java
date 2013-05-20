@@ -153,7 +153,7 @@ public class Texture implements PConstants {
   @Override
   protected void finalize() throws Throwable {
     try {
-      PApplet.println("finalize texture");
+//      PApplet.println("finalize texture");
       if (glName != 0) {
         PGraphicsOpenGL.finalizeTextureObject(glName, context);
       }

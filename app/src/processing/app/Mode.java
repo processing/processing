@@ -1,3 +1,26 @@
+/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+
+/*
+  Part of the Processing project - http://processing.org
+
+  Copyright (c) 2013 The Processing Foundation
+  Copyright (c) 2010-13 Ben Fry and Casey Reas
+
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software Foundation,
+  Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
 package processing.app;
 
 import java.awt.*;
@@ -59,6 +82,9 @@ public abstract class Mode {
    */
   protected ClassLoader classLoader;
 
+  static final int BACKGROUND_WIDTH = 1025;
+  static final int BACKGROUND_HEIGHT = 65;
+  protected Image backgroundImage;  
 
 //  public Mode(Base base, File folder) {
 //    this(base, folder, base.getSketchbookLibrariesFolder());
@@ -144,14 +170,57 @@ public abstract class Mode {
    */
   public void setupGUI() {
     try {
-      theme = new Settings(new File(folder, "theme/theme.txt"));
+      // First load the default theme data for the whole PDE. 
+      theme = new Settings(Base.getContentFile("lib/theme.txt"));
+      
+      // The mode-specific theme.txt file should only contain additions, 
+      // and in extremely rare cases, it might override entries from the 
+      // main theme. Do not override for style changes unless they are 
+      // objectively necessary for your Mode.
+      File modeTheme = new File(folder, "theme/theme.txt");
+      if (modeTheme.exists()) {
+        // Override the built-in settings with what the theme provides
+        theme.load(modeTheme);
+      }
 
       // other things that have to be set explicitly for the defaults
       theme.setColor("run.window.bgcolor", SystemColor.control);
 
+      loadBackground();
+
     } catch (IOException e) {
       Base.showError("Problem loading theme.txt",
                      "Could not load theme.txt, please re-install Processing", e);
+    }
+  }
+  
+  
+  protected void loadBackground() {
+    String suffix = Toolkit.highResDisplay() ? "-2x.png" : ".png";
+    backgroundImage = loadImage("theme/mode" + suffix);
+    if (backgroundImage == null) {
+      // If the image wasn't available, try the other resolution.
+      // i.e. we don't (currently) have low-res versions of mode.png,
+      // so this will grab the 2x version and scale it when drawn.
+      suffix = !Toolkit.highResDisplay() ? "-2x.png" : ".png";
+      backgroundImage = loadImage("theme/mode" + suffix);
+    }
+  }
+  
+  
+  public void drawBackground(Graphics g, int offset) {
+    if (backgroundImage != null) {
+      if (!Toolkit.highResDisplay()) {
+        // Image might be downsampled from a 2x version. If so, we need nice
+        // anti-aliasing for the very geometric images we're using.
+        Graphics2D g2 = (Graphics2D) g;
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                            RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                            RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+      }
+      g.drawImage(backgroundImage, 0, -offset, 
+                  BACKGROUND_WIDTH, BACKGROUND_HEIGHT, null);
     }
   }
 

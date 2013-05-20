@@ -544,6 +544,7 @@ public class PVector implements Serializable {
    * @usage web_application
    * @param n the number to multiply with the vector
    * @brief Multiply a vector by a scalar or one vector by another
+   * @nowebref
    */
   public void mult(float n) {
     x *= n;
@@ -554,6 +555,7 @@ public class PVector implements Serializable {
 
   /**
    * @param v the vector to multiply by the scalar
+   * @nowebref
    */
   static public PVector mult(PVector v, float n) {
     return mult(v, n, null);
@@ -563,6 +565,7 @@ public class PVector implements Serializable {
   /**
    * Multiply a vector by a scalar, and write the result into a target PVector.
    * @param target PVector to store the result
+   * @nowebref
    */
   static public PVector mult(PVector v, float n, PVector target) {
     if (target == null) {
@@ -573,30 +576,6 @@ public class PVector implements Serializable {
     return target;
   }
 
-  public void mult(PVector v) {
-    x *= v.x;
-    y *= v.y;
-    z *= v.z;
-  }
-
-
-  /**
-   * @param v1 the x, y, and z components of a PVector
-   * @param v2 the x, y, and z components of a PVector
-   */
-  static public PVector mult(PVector v1, PVector v2) {
-    return mult(v1, v2, null);
-  }
-
-
-  static public PVector mult(PVector v1, PVector v2, PVector target) {
-    if (target == null) {
-      target = new PVector(v1.x*v2.x, v1.y*v2.y, v1.z*v2.z);
-    } else {
-      target.set(v1.x*v2.x, v1.y*v2.y, v1.z*v2.z);
-    }
-    return target;
-  }
 
 
   /**
@@ -610,6 +589,7 @@ public class PVector implements Serializable {
    * @usage web_application
    * @param n the value to divide by
    * @brief Divide a vector by a scalar or one vector by another
+   * @nowebref
    */
   public void div(float n) {
     x /= n;
@@ -623,6 +603,7 @@ public class PVector implements Serializable {
    * @param v any variable of type PVector
    * @param n the number to divide with the vector
    * @return a new vector that is v1 / n
+   * @nowebref
    */
   static public PVector div(PVector v, float n) {
     return div(v, n, null);
@@ -633,40 +614,13 @@ public class PVector implements Serializable {
    * @param v any variable of type PVector
    * @param n the number to divide with the vector
    * @param target PVector to store the result
+   * @nowebref
    */
   static public PVector div(PVector v, float n, PVector target) {
     if (target == null) {
       target = new PVector(v.x/n, v.y/n, v.z/n);
     } else {
       target.set(v.x/n, v.y/n, v.z/n);
-    }
-    return target;
-  }
-
-
-  /**
-   * Divide each element of one vector by the elements of another vector.
-   */
-  public void div(PVector v) {
-    x /= v.x;
-    y /= v.y;
-    z /= v.z;
-  }
-
-
-  /**
-   * Divide each element of one vector by the individual elements of another
-   * vector, and return the result as a new PVector.
-   */
-  static public PVector div(PVector v1, PVector v2) {
-    return div(v1, v2, null);
-  }
-
-  static public PVector div(PVector v1, PVector v2, PVector target) {
-    if (target == null) {
-      target = new PVector(v1.x/v2.x, v1.y/v2.y, v1.z/v2.z);
-    } else {
-      target.set(v1.x/v2.x, v1.y/v2.y, v1.z/v2.z);
     }
     return target;
   }
@@ -979,6 +933,12 @@ public class PVector implements Serializable {
    * @brief Calculate and return the angle between two vectors
    */
   static public float angleBetween(PVector v1, PVector v2) {
+
+    // We get NaN if we pass in a zero vector which can cause problems
+    // Zero seems like a reasonable angle between a (0,0) vector and something else
+    if (v1.x == 0 && v1.y == 0) return 0.0f;
+    if (v2.x == 0 && v2.y == 0) return 0.0f;
+
     double dot = v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
     double v1mag = Math.sqrt(v1.x * v1.x + v1.y * v1.y + v1.z * v1.z);
     double v2mag = Math.sqrt(v2.x * v2.x + v2.y * v2.y + v2.z * v2.z);

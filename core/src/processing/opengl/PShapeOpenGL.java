@@ -4124,13 +4124,7 @@ public class PShapeOpenGL extends PShape {
 
 
   protected void renderPolys(PGraphicsOpenGL g, PImage textureImage) {
-    Texture tex = null;
-    if (textureImage != null) {
-      tex = g.getTexture(textureImage);
-      if (tex != null) {
-        tex.bind();
-      }
-    }
+    Texture tex = textureImage != null ? g.getTexture(textureImage) : null;
 
     boolean renderingFill = false, renderingStroke = false;
     BaseShader shader = null;
@@ -4191,6 +4185,8 @@ public class PShapeOpenGL extends PShape {
       }
 
       if (tex != null) {
+        shader.setNormalAttribute(root.glPolyNormal, 3, PGL.FLOAT,
+                                  0, 3 * voffset * PGL.SIZEOF_FLOAT);
         shader.setTexcoordAttribute(root.glPolyTexcoord, 2, PGL.FLOAT,
                                     0, 2 * voffset * PGL.SIZEOF_FLOAT);
         shader.setTexture(tex);
@@ -4204,10 +4200,6 @@ public class PShapeOpenGL extends PShape {
 
     if (shader != null && shader.bound()) {
       shader.unbind();
-    }
-
-    if (tex != null) {
-      tex.unbind();
     }
   }
 

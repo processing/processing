@@ -29,7 +29,7 @@ class Population {
     finished = false;
     generations = 0;
     
-    perfectScore = int(pow(2,target.length()));
+    perfectScore = 1;
   }
 
   // Fill our fitness array with a value for every member of the population
@@ -82,7 +82,7 @@ class Population {
 
   // Compute the current "most fit" member of the population
   String getBest() {
-    float worldrecord = 0.0f;
+    float worldrecord = 0.0;
     int index = 0;
     for (int i = 0; i < population.length; i++) {
       if (population[i].fitness > worldrecord) {
@@ -90,7 +90,7 @@ class Population {
         worldrecord = population[i].fitness;
       }
     }
-
+    
     if (worldrecord == perfectScore ) finished = true;
     return population[index].getPhrase();
   }

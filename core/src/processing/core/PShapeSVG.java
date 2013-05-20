@@ -39,6 +39,11 @@ import java.util.HashMap;
 
 
 /**
+ * This class is not part of the Processing API and should not be used
+ * directly. Instead, use loadShape() and methods like it, which will make
+ * use of this class. Using this class directly will cause your code to break
+ * when combined with future versions of Processing.
+ * <p>
  * SVG stands for Scalable Vector Graphics, a portable graphics format. It is
  * a vector format so it allows for infinite resolution and relatively small
  * file sizes. Most modern media software can view SVG files, including Adobe

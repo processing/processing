@@ -30,8 +30,8 @@ class ParticleSystem {
     }
   }
 
-  void addParticle(Particle p) {
-    particles.add(p);
+  void addParticle() {
+    particles.add(new Particle(origin));
   }
 
   // A method to test if the particle system still has particles

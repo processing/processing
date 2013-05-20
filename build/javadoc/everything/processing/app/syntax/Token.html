@@ -33,7 +33,7 @@
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../processing/app/syntax/TextUtilities.html" title="class in processing.app.syntax"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../../processing/app/syntax/TextAreaPainter.Highlight.html" title="interface in processing.app.syntax"><span class="strong">Prev Class</span></a></li>
 <li><a href="../../../processing/app/syntax/TokenMarker.html" title="class in processing.app.syntax"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
@@ -156,92 +156,110 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>static byte</code></td>
+<td class="colLast"><code><strong><a href="../../../processing/app/syntax/Token.html#FUNCTION4">FUNCTION4</a></strong></code>
+<div class="block">Built-in Processing functions (setup, draw, mouseDragged).</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>byte</code></td>
 <td class="colLast"><code><strong><a href="../../../processing/app/syntax/Token.html#id">id</a></strong></code>
 <div class="block">The id of this token.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static byte</code></td>
 <td class="colLast"><code><strong><a href="../../../processing/app/syntax/Token.html#ID_COUNT">ID_COUNT</a></strong></code>
 <div class="block">The total number of defined token ids.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static byte</code></td>
 <td class="colLast"><code><strong><a href="../../../processing/app/syntax/Token.html#INTERNAL_FIRST">INTERNAL_FIRST</a></strong></code>
 <div class="block">The first id that can be used for internal state
  in a token marker.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static byte</code></td>
 <td class="colLast"><code><strong><a href="../../../processing/app/syntax/Token.html#INTERNAL_LAST">INTERNAL_LAST</a></strong></code>
 <div class="block">The last id that can be used for internal state
  in a token marker.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static byte</code></td>
 <td class="colLast"><code><strong><a href="../../../processing/app/syntax/Token.html#INVALID">INVALID</a></strong></code>
 <div class="block">Invalid token id.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static byte</code></td>
 <td class="colLast"><code><strong><a href="../../../processing/app/syntax/Token.html#KEYWORD1">KEYWORD1</a></strong></code>
-<div class="block">Datatypes and keywords (void, int, boolean, etc.)</div>
+<div class="block">Keywords (void, int, boolean, etc.)</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static byte</code></td>
 <td class="colLast"><code><strong><a href="../../../processing/app/syntax/Token.html#KEYWORD2">KEYWORD2</a></strong></code>
 <div class="block">Fields [variables within a class]</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static byte</code></td>
 <td class="colLast"><code><strong><a href="../../../processing/app/syntax/Token.html#KEYWORD3">KEYWORD3</a></strong></code>
+<div class="block">Loop/function-like blocks (for, while, etc.)</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static byte</code></td>
+<td class="colLast"><code><strong><a href="../../../processing/app/syntax/Token.html#KEYWORD4">KEYWORD4</a></strong></code>
 <div class="block">Processing variables (width, height, focused, etc.)</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static byte</code></td>
+<td class="colLast"><code><strong><a href="../../../processing/app/syntax/Token.html#KEYWORD5">KEYWORD5</a></strong></code>
+<div class="block">Datatypes (int, boolean, etc.)</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static byte</code></td>
 <td class="colLast"><code><strong><a href="../../../processing/app/syntax/Token.html#LABEL">LABEL</a></strong></code>
 <div class="block">Label token id.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../processing/app/syntax/Token.html#length">length</a></strong></code>
 <div class="block">The length of this token.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static byte</code></td>
 <td class="colLast"><code><strong><a href="../../../processing/app/syntax/Token.html#LITERAL1">LITERAL1</a></strong></code>
 <div class="block">Strings in quotes</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static byte</code></td>
 <td class="colLast"><code><strong><a href="../../../processing/app/syntax/Token.html#LITERAL2">LITERAL2</a></strong></code>
 <div class="block">Constants (QUARTER_PI, CORNERS, etc.)</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../processing/app/syntax/Token.html" title="class in processing.app.syntax">Token</a></code></td>
 <td class="colLast"><code><strong><a href="../../../processing/app/syntax/Token.html#next">next</a></strong></code>
 <div class="block">The next token in the linked list.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static byte</code></td>
 <td class="colLast"><code><strong><a href="../../../processing/app/syntax/Token.html#NULL">NULL</a></strong></code>
 <div class="block">Normal text token id.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static byte</code></td>
 <td class="colLast"><code><strong><a href="../../../processing/app/syntax/Token.html#OPERATOR">OPERATOR</a></strong></code>
 <div class="block">Operator token id.</div>
@@ -384,7 +402,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>KEYWORD1</h4>
 <pre>public static final&nbsp;byte KEYWORD1</pre>
-<div class="block">Datatypes and keywords (void, int, boolean, etc.)</div>
+<div class="block">Keywords (void, int, boolean, etc.)</div>
 <dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../constant-values.html#processing.app.syntax.Token.KEYWORD1">Constant Field Values</a></dd></dl>
 </li>
 </ul>
@@ -406,8 +424,30 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>KEYWORD3</h4>
 <pre>public static final&nbsp;byte KEYWORD3</pre>
-<div class="block">Processing variables (width, height, focused, etc.)</div>
+<div class="block">Loop/function-like blocks (for, while, etc.)</div>
 <dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../constant-values.html#processing.app.syntax.Token.KEYWORD3">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="KEYWORD4">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>KEYWORD4</h4>
+<pre>public static final&nbsp;byte KEYWORD4</pre>
+<div class="block">Processing variables (width, height, focused, etc.)</div>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../constant-values.html#processing.app.syntax.Token.KEYWORD4">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="KEYWORD5">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>KEYWORD5</h4>
+<pre>public static final&nbsp;byte KEYWORD5</pre>
+<div class="block">Datatypes (int, boolean, etc.)</div>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../constant-values.html#processing.app.syntax.Token.KEYWORD5">Constant Field Values</a></dd></dl>
 </li>
 </ul>
 <a name="FUNCTION1">
@@ -441,6 +481,17 @@ extends java.lang.Object</pre>
 <pre>public static final&nbsp;byte FUNCTION3</pre>
 <div class="block">Loop/function-like blocks (for, while, etc.)</div>
 <dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../constant-values.html#processing.app.syntax.Token.FUNCTION3">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="FUNCTION4">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>FUNCTION4</h4>
+<pre>public static final&nbsp;byte FUNCTION4</pre>
+<div class="block">Built-in Processing functions (setup, draw, mouseDragged).</div>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../constant-values.html#processing.app.syntax.Token.FUNCTION4">Constant Field Values</a></dd></dl>
 </li>
 </ul>
 <a name="OPERATOR">
@@ -613,7 +664,7 @@ extends java.lang.Object</pre>
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../processing/app/syntax/TextUtilities.html" title="class in processing.app.syntax"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../../processing/app/syntax/TextAreaPainter.Highlight.html" title="interface in processing.app.syntax"><span class="strong">Prev Class</span></a></li>
 <li><a href="../../../processing/app/syntax/TokenMarker.html" title="class in processing.app.syntax"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">

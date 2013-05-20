@@ -38,7 +38,8 @@ public class MouseEvent extends Event {
   protected int x, y;
   protected int button;
 //  protected int clickCount;
-  protected float amount;
+//  protected float amount;
+  protected int count;
 
 
 //  public MouseEvent(int x, int y) {
@@ -50,14 +51,15 @@ public class MouseEvent extends Event {
 
   public MouseEvent(Object nativeObject,
                     long millis, int action, int modifiers,
-                    int x, int y, int button, float amount) {  //int clickCount) {
+                    int x, int y, int button, int count) {  //float amount) {  //int clickCount) {
     super(nativeObject, millis, action, modifiers);
     this.flavor = MOUSE;
     this.x = x;
     this.y = y;
     this.button = button;
     //this.clickCount = clickCount;
-    this.amount = amount;
+    //this.amount = amount;
+    this.count = count;
   }
 
 
@@ -82,17 +84,33 @@ public class MouseEvent extends Event {
 //  }
 
 
+  /** Do not use, getCount() is the correct method. */
+  @Deprecated
   public int getClickCount() {
-    return (int) amount; //clickCount;
+    //return (int) amount; //clickCount;
+    return count;
+  }
+
+
+  /** Do not use, getCount() is the correct method. */
+  @Deprecated
+  public float getAmount() {
+    //return amount;
+    return count;
   }
 
 
   /**
    * Number of clicks for mouse button events, or the number of steps (positive
    * or negative depending on direction) for a mouse wheel event.
+   * Wheel events follow Java (see <a href="http://docs.oracle.com/javase/6/docs/api/java/awt/event/MouseWheelEvent.html#getWheelRotation()">here</a>), so
+   * getAmount() will return "negative values if the mouse wheel was rotated
+   * up or away from the user" and positive values in the other direction.
+   * On Mac OS X, this will be reversed when "natural" scrolling is enabled
+   * in System Preferences &rarr Mouse.
    */
-  public float getAmount() {
-    return amount;
+  public int getCount() {
+    return count;
   }
 
 

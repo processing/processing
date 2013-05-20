@@ -276,13 +276,18 @@ extends java.lang.Object</pre>
       int&nbsp;length)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>static int[]</code></td>
+<td class="colLast"><code><strong><a href="../../processing/opengl/LinePath.html#copyOf(int[], int)">copyOf</a></strong>(int[]&nbsp;source,
+      int&nbsp;length)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>static <a href="../../processing/opengl/LinePath.html" title="class in processing.opengl">LinePath</a></code></td>
 <td class="colLast"><code><strong><a href="../../processing/opengl/LinePath.html#createStrokedPath(processing.opengl.LinePath, float, int, int)">createStrokedPath</a></strong>(<a href="../../processing/opengl/LinePath.html" title="class in processing.opengl">LinePath</a>&nbsp;src,
                  float&nbsp;weight,
                  int&nbsp;caps,
                  int&nbsp;join)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../processing/opengl/LinePath.html" title="class in processing.opengl">LinePath</a></code></td>
 <td class="colLast"><code><strong><a href="../../processing/opengl/LinePath.html#createStrokedPath(processing.opengl.LinePath, float, int, int, float)">createStrokedPath</a></strong>(<a href="../../processing/opengl/LinePath.html" title="class in processing.opengl">LinePath</a>&nbsp;src,
                  float&nbsp;weight,
@@ -290,7 +295,7 @@ extends java.lang.Object</pre>
                  int&nbsp;join,
                  float&nbsp;miterlimit)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static <a href="../../processing/opengl/LinePath.html" title="class in processing.opengl">LinePath</a></code></td>
 <td class="colLast"><code><strong><a href="../../processing/opengl/LinePath.html#createStrokedPath(processing.opengl.LinePath, float, int, int, float, processing.core.PMatrix2D)">createStrokedPath</a></strong>(<a href="../../processing/opengl/LinePath.html" title="class in processing.opengl">LinePath</a>&nbsp;src,
                  float&nbsp;weight,
@@ -301,7 +306,7 @@ extends java.lang.Object</pre>
 <div class="block">Constructs a solid <code>LinePath</code> with the specified attributes.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../processing/opengl/LinePath.PathIterator.html" title="class in processing.opengl">LinePath.PathIterator</a></code></td>
 <td class="colLast"><code><strong><a href="../../processing/opengl/LinePath.html#getPathIterator()">getPathIterator</a></strong>()</code>
 <div class="block">The iterator for this class is not multi-threaded safe, which means that
@@ -310,58 +315,60 @@ extends java.lang.Object</pre>
  geometry that are already in process.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../processing/opengl/LinePath.html#getWindingRule()">getWindingRule</a></strong>()</code>
 <div class="block">Returns the fill style winding rule.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static double</code></td>
 <td class="colLast"><code><strong><a href="../../processing/opengl/LinePath.html#hypot(double, double)">hypot</a></strong>(double&nbsp;x,
      double&nbsp;y)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><strong><a href="../../processing/opengl/LinePath.html#hypot(int, int)">hypot</a></strong>(int&nbsp;x,
      int&nbsp;y)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static long</code></td>
 <td class="colLast"><code><strong><a href="../../processing/opengl/LinePath.html#hypot(long, long)">hypot</a></strong>(long&nbsp;x,
      long&nbsp;y)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><strong><a href="../../processing/opengl/LinePath.html#isqrt(int)">isqrt</a></strong>(int&nbsp;x)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/LinePath.html#lineTo(float, float)">lineTo</a></strong>(float&nbsp;x,
-      float&nbsp;y)</code>
+<td class="colLast"><code><strong><a href="../../processing/opengl/LinePath.html#lineTo(float, float, int)">lineTo</a></strong>(float&nbsp;x,
+      float&nbsp;y,
+      int&nbsp;c)</code>
 <div class="block">Adds a point to the path by drawing a straight line from the current
  coordinates to the new specified coordinates specified in float precision.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static long</code></td>
 <td class="colLast"><code><strong><a href="../../processing/opengl/LinePath.html#lsqrt(long)">lsqrt</a></strong>(long&nbsp;x)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/LinePath.html#moveTo(float, float)">moveTo</a></strong>(float&nbsp;x,
-      float&nbsp;y)</code>
+<td class="colLast"><code><strong><a href="../../processing/opengl/LinePath.html#moveTo(float, float, int)">moveTo</a></strong>(float&nbsp;x,
+      float&nbsp;y,
+      int&nbsp;c)</code>
 <div class="block">Adds a point to the path by moving to the specified coordinates specified
  in float precision.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/opengl/LinePath.html#reset()">reset</a></strong>()</code>
 <div class="block">Resets the path to empty.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/opengl/LinePath.html#setWindingRule(int)">setWindingRule</a></strong>(int&nbsp;rule)</code>
 <div class="block">Sets the winding rule for this path to the specified value.</div>
@@ -580,36 +587,38 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="moveTo(float, float)">
+<a name="moveTo(float, float, int)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>moveTo</h4>
 <pre>public final&nbsp;void&nbsp;moveTo(float&nbsp;x,
-          float&nbsp;y)</pre>
+          float&nbsp;y,
+          int&nbsp;c)</pre>
 <div class="block">Adds a point to the path by moving to the specified coordinates specified
  in float precision.
  <p>
  This method provides a single precision variant of the double precision
  <code>moveTo()</code> method on the base <code>LinePath</code> class.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>x</code> - the specified X coordinate</dd><dd><code>y</code> - the specified Y coordinate</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../processing/opengl/LinePath.html#moveTo(float, float)"><code>moveTo(float, float)</code></a></dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>x</code> - the specified X coordinate</dd><dd><code>y</code> - the specified Y coordinate</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../processing/opengl/LinePath.html#moveTo(float, float, int)"><code>moveTo(float, float, int)</code></a></dd></dl>
 </li>
 </ul>
-<a name="lineTo(float, float)">
+<a name="lineTo(float, float, int)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>lineTo</h4>
 <pre>public final&nbsp;void&nbsp;lineTo(float&nbsp;x,
-          float&nbsp;y)</pre>
+          float&nbsp;y,
+          int&nbsp;c)</pre>
 <div class="block">Adds a point to the path by drawing a straight line from the current
  coordinates to the new specified coordinates specified in float precision.
  <p>
  This method provides a single precision variant of the double precision
  <code>lineTo()</code> method on the base <code>LinePath</code> class.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>x</code> - the specified X coordinate</dd><dd><code>y</code> - the specified Y coordinate</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../processing/opengl/LinePath.html#lineTo(float, float)"><code>lineTo(float, float)</code></a></dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>x</code> - the specified X coordinate</dd><dd><code>y</code> - the specified Y coordinate</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../processing/opengl/LinePath.html#lineTo(float, float, int)"><code>lineTo(float, float, int)</code></a></dd></dl>
 </li>
 </ul>
 <a name="getPathIterator()">
@@ -734,6 +743,16 @@ extends java.lang.Object</pre>
 <h4>copyOf</h4>
 <pre>public static&nbsp;byte[]&nbsp;copyOf(byte[]&nbsp;source,
             int&nbsp;length)</pre>
+</li>
+</ul>
+<a name="copyOf(int[], int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>copyOf</h4>
+<pre>public static&nbsp;int[]&nbsp;copyOf(int[]&nbsp;source,
+           int&nbsp;length)</pre>
 </li>
 </ul>
 <a name="isqrt(int)">

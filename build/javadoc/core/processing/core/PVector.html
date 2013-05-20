@@ -599,20 +599,25 @@ implements java.io.Serializable</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/core/PVector.html#set(float, float)">set</a></strong>(float&nbsp;x,
+   float&nbsp;y)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/core/PVector.html#set(float, float, float)">set</a></strong>(float&nbsp;x,
    float&nbsp;y,
    float&nbsp;z)</code>
 <div class="block">( begin auto-generated from PVector_set.xml )
 
- Sets the x, y, and z component of the vector using three separate
+ Sets the x, y, and z component of the vector using two or three separate
  variables, the data from a PVector, or the values from a float array.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/core/PVector.html#set(processing.core.PVector)">set</a></strong>(<a href="../../processing/core/PVector.html" title="class in processing.core">PVector</a>&nbsp;v)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/core/PVector.html#setMag(float)">setMag</a></strong>(float&nbsp;len)</code>
 <div class="block">( begin auto-generated from PVector_setMag.xml )
@@ -620,20 +625,20 @@ implements java.io.Serializable</pre>
  Set the magnitude of this vector to the value used for the <b>len</b> parameter.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../processing/core/PVector.html" title="class in processing.core">PVector</a></code></td>
 <td class="colLast"><code><strong><a href="../../processing/core/PVector.html#setMag(processing.core.PVector, float)">setMag</a></strong>(<a href="../../processing/core/PVector.html" title="class in processing.core">PVector</a>&nbsp;target,
       float&nbsp;len)</code>
 <div class="block">Sets the magnitude of this vector, storing the result in another vector.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/core/PVector.html#sub(float, float, float)">sub</a></strong>(float&nbsp;x,
    float&nbsp;y,
    float&nbsp;z)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/core/PVector.html#sub(processing.core.PVector)">sub</a></strong>(<a href="../../processing/core/PVector.html" title="class in processing.core">PVector</a>&nbsp;v)</code>
 <div class="block">( begin auto-generated from PVector_sub.xml )
@@ -642,14 +647,14 @@ implements java.io.Serializable</pre>
  from another, or subtracts two independent vectors.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../processing/core/PVector.html" title="class in processing.core">PVector</a></code></td>
 <td class="colLast"><code><strong><a href="../../processing/core/PVector.html#sub(processing.core.PVector, processing.core.PVector)">sub</a></strong>(<a href="../../processing/core/PVector.html" title="class in processing.core">PVector</a>&nbsp;v1,
    <a href="../../processing/core/PVector.html" title="class in processing.core">PVector</a>&nbsp;v2)</code>
 <div class="block">Subtract one vector from another</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static <a href="../../processing/core/PVector.html" title="class in processing.core">PVector</a></code></td>
 <td class="colLast"><code><strong><a href="../../processing/core/PVector.html#sub(processing.core.PVector, processing.core.PVector, processing.core.PVector)">sub</a></strong>(<a href="../../processing/core/PVector.html" title="class in processing.core">PVector</a>&nbsp;v1,
    <a href="../../processing/core/PVector.html" title="class in processing.core">PVector</a>&nbsp;v2,
@@ -657,7 +662,7 @@ implements java.io.Serializable</pre>
 <div class="block">Subtract one vector from another and store in another vector</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><strong><a href="../../processing/core/PVector.html#toString()">toString</a></strong>()</code>&nbsp;</td>
 </tr>
@@ -789,11 +794,22 @@ implements java.io.Serializable</pre>
        float&nbsp;z)</pre>
 <div class="block">( begin auto-generated from PVector_set.xml )
 
- Sets the x, y, and z component of the vector using three separate
+ Sets the x, y, and z component of the vector using two or three separate
  variables, the data from a PVector, or the values from a float array.
 
  ( end auto-generated )</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>x</code> - the x component of the vector</dd><dd><code>y</code> - the y component of the vector</dd><dd><code>z</code> - the z component of the vector</dd></dl>
+</li>
+</ul>
+<a name="set(float, float)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>set</h4>
+<pre>public&nbsp;void&nbsp;set(float&nbsp;x,
+       float&nbsp;y)</pre>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>x</code> - the x component of the vector</dd><dd><code>y</code> - the y component of the vector</dd></dl>
 </li>
 </ul>
 <a name="set(processing.core.PVector)">
@@ -829,7 +845,7 @@ implements java.io.Serializable</pre>
  Make a new 2D unit vector with a random direction.  If you pass in "this"
  as an argument, it will use the PApplet's random number generator.  You can
  also pass in a target PVector to fill.</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd>the random PVector</dd></dl>
+<dl><dt><span class="strong">Returns:</span></dt><dd>the random PVector</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../processing/core/PVector.html#random3D()"><code>random3D()</code></a></dd></dl>
 </li>
 </ul>
 <a name="random2D(processing.core.PApplet)">
@@ -866,8 +882,7 @@ implements java.io.Serializable</pre>
 <pre>public static&nbsp;<a href="../../processing/core/PVector.html" title="class in processing.core">PVector</a>&nbsp;random2D(<a href="../../processing/core/PVector.html" title="class in processing.core">PVector</a>&nbsp;target,
                <a href="../../processing/core/PApplet.html" title="class in processing.core">PApplet</a>&nbsp;parent)</pre>
 <div class="block">Make a new 2D unit vector with a random direction</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>parent</code> - current PApplet instance</dd><dd><code>target</code> - the target vector (if null, a new vector will be created)</dd>
-<dt><span class="strong">Returns:</span></dt><dd>the random PVector</dd></dl>
+<dl><dt><span class="strong">Returns:</span></dt><dd>the random PVector</dd></dl>
 </li>
 </ul>
 <a name="random3D()">
@@ -882,7 +897,7 @@ implements java.io.Serializable</pre>
  Make a new 3D unit vector with a random direction.  If you pass in "this"
  as an argument, it will use the PApplet's random number generator.  You can
  also pass in a target PVector to fill.</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd>the random PVector</dd></dl>
+<dl><dt><span class="strong">Returns:</span></dt><dd>the random PVector</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../processing/core/PVector.html#random2D()"><code>random2D()</code></a></dd></dl>
 </li>
 </ul>
 <a name="random3D(processing.core.PApplet)">
@@ -919,8 +934,7 @@ implements java.io.Serializable</pre>
 <pre>public static&nbsp;<a href="../../processing/core/PVector.html" title="class in processing.core">PVector</a>&nbsp;random3D(<a href="../../processing/core/PVector.html" title="class in processing.core">PVector</a>&nbsp;target,
                <a href="../../processing/core/PApplet.html" title="class in processing.core">PApplet</a>&nbsp;parent)</pre>
 <div class="block">Make a new 3D unit vector with a random direction</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>target</code> - the target vector (if null, a new vector will be created)</dd><dd><code>parent</code> - current PApplet instance</dd>
-<dt><span class="strong">Returns:</span></dt><dd>the random PVector</dd></dl>
+<dl><dt><span class="strong">Returns:</span></dt><dd>the random PVector</dd></dl>
 </li>
 </ul>
 <a name="fromAngle(float)">
@@ -948,7 +962,7 @@ implements java.io.Serializable</pre>
 <pre>public static&nbsp;<a href="../../processing/core/PVector.html" title="class in processing.core">PVector</a>&nbsp;fromAngle(float&nbsp;angle,
                 <a href="../../processing/core/PVector.html" title="class in processing.core">PVector</a>&nbsp;target)</pre>
 <div class="block">Make a new 2D unit vector from an angle</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>angle</code> - the angle</dd><dd><code>target</code> - the target vector (if null, a new vector will be created)</dd>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>target</code> - the target vector (if null, a new vector will be created)</dd>
 <dt><span class="strong">Returns:</span></dt><dd>the PVector</dd></dl>
 </li>
 </ul>
@@ -989,7 +1003,7 @@ implements java.io.Serializable</pre>
  as a float (this is simply the equation <em>sqrt(x*x + y*y + z*z)</em>.)
 
  ( end auto-generated )</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd>magnitude (length) of the vector</dd></dl>
+<dl><dt><span class="strong">Returns:</span></dt><dd>magnitude (length) of the vector</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../processing/core/PVector.html#magSq()"><code>magSq()</code></a></dd></dl>
 </li>
 </ul>
 <a name="magSq()">
@@ -1007,7 +1021,7 @@ implements java.io.Serializable</pre>
  case of comparing vectors, etc.
 
  ( end auto-generated )</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd>squared magnitude of the vector</dd></dl>
+<dl><dt><span class="strong">Returns:</span></dt><dd>squared magnitude of the vector</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../processing/core/PVector.html#mag()"><code>mag()</code></a></dd></dl>
 </li>
 </ul>
 <a name="add(processing.core.PVector)">
@@ -1494,8 +1508,7 @@ public&nbsp;float&nbsp;heading2D()</pre>
  Linear interpolate the vector to another vector
 
  ( end auto-generated )</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>v</code> - the vector to lerp to</dd><dd><code>amt</code> - The amt parameter is the amount to interpolate between the two vectors where 1.0 equal to the new vector
- 0.1 is very near the new vector, 0.5 is half-way in between.</dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>v</code> - the vector to lerp to</dd><dd><code>amt</code> - The amount of interpolation; some value between 0.0 (old vector) and 1.0 (new vector). 0.1 is very near the new vector. 0.5 is halfway in between.</dd></dl>
 </li>
 </ul>
 <a name="lerp(processing.core.PVector, processing.core.PVector, float)">
@@ -1508,9 +1521,7 @@ public&nbsp;float&nbsp;heading2D()</pre>
            <a href="../../processing/core/PVector.html" title="class in processing.core">PVector</a>&nbsp;v2,
            float&nbsp;amt)</pre>
 <div class="block">Linear interpolate between two vectors (returns a new PVector object)</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>v1</code> - the vector</dd><dd><code>v2</code> - the vector to lerp to</dd><dd><code>amt</code> - The amt parameter is the amount to interpolate between the two vectors where 1.0 equal to the new vector
- 0.1 is very near the new vector, 0.5 is half-way in between.</dd>
-<dt><span class="strong">Returns:</span></dt><dd>the resulting lerped PVector</dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>v1</code> - the vector to start from</dd><dd><code>v2</code> - the vector to lerp to</dd></dl>
 </li>
 </ul>
 <a name="lerp(float, float, float, float)">
@@ -1524,8 +1535,7 @@ public&nbsp;float&nbsp;heading2D()</pre>
         float&nbsp;z,
         float&nbsp;amt)</pre>
 <div class="block">Linear interpolate the vector to x,y,z values</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>x</code> - the x component to lerp to</dd><dd><code>y</code> - the y component to lerp to</dd><dd><code>z</code> - the z component to lerp to</dd><dd><code>amt</code> - The amt parameter is the amount to interpolate between the two vectors where 1.0 equal to the new vector
- 0.1 is very near the new vector, 0.5 is half-way in between.</dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>x</code> - the x component to lerp to</dd><dd><code>y</code> - the y component to lerp to</dd><dd><code>z</code> - the z component to lerp to</dd></dl>
 </li>
 </ul>
 <a name="angleBetween(processing.core.PVector, processing.core.PVector)">

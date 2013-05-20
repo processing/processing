@@ -149,7 +149,7 @@ public class FrameBuffer implements PConstants {
   @Override
   protected void finalize() throws Throwable {
     try {
-      PApplet.println("finalize FBO");
+//      PApplet.println("finalize FBO");
       if (!screenFb) {
         if (glFbo != 0) {
           PGraphicsOpenGL.finalizeFrameBufferObject(glFbo, context);

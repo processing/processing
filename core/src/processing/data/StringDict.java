@@ -9,6 +9,8 @@ import processing.core.PApplet;
 
 /**
  * A simple table class to use a String as a lookup for another String value.
+ * 
+ * @webref data:composite
  */
 public class StringDict {
 
@@ -68,6 +70,9 @@ public class StringDict {
     this.keys = keys;
     this.values = values;
     count = keys.length;
+    for (int i = 0; i < count; i++) {
+      indices.put(keys[i], i);
+    }
   }
 
 
@@ -79,6 +84,7 @@ public class StringDict {
   /** Remove all entries. */
   public void clear() {
     count = 0;
+    indices = new HashMap<String, Integer>();
   }
 
 
@@ -342,6 +348,7 @@ public class StringDict {
     for (int i = 0; i < count; i++) {
       outgoing.indices.put(keys[i], i);
     }
+    outgoing.count = count;
     return outgoing;
   }
 
