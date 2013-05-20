@@ -9,6 +9,8 @@ import processing.core.PApplet;
 
 /**
  * A simple table class to use a String as a lookup for an float value.
+ * 
+ * @webref data:composite
  */
 public class FloatDict {
 
@@ -75,13 +77,21 @@ public class FloatDict {
     }
   }
 
-
+  /**
+   * @webref floatdict:method
+   * @brief To come...
+   */
   public int size() {
     return count;
   }
 
 
-  /** Remove all entries. */
+  /** 
+   * Remove all entries.
+   * 
+   * @webref floatdict:method
+   * @brief Remove all entries
+   */ 
   public void clear() {
     count = 0;
     indices = new HashMap<String, Integer>();
@@ -110,7 +120,10 @@ public class FloatDict {
 //    return keys;
 //  }
 
-
+  /**
+   * @webref floatdict:method
+   * @brief To come...
+   */
   public Iterable<String> keys() {
     return new Iterable<String>() {
 
@@ -167,6 +180,9 @@ public class FloatDict {
 
   /**
    * Return a copy of the internal keys array. This array can be modified.
+   * 
+   * @webref floatdict:method
+   * @brief Return a copy of the internal keys array
    */
   public String[] keyArray() {
     return keyArray(null);
@@ -192,7 +208,10 @@ public class FloatDict {
 //    return values;
 //  }
 
-
+  /**
+   * @webref floatdict:method
+   * @brief To come...
+   */
   public Iterable<Float> values() {
     return new Iterable<Float>() {
 
@@ -220,6 +239,9 @@ public class FloatDict {
 
   /**
    * Create a new array and copy each of the values into it.
+   *
+   * @webref floatdict:method
+   * @brief Create a new array and copy each of the values into it
    */
   public float[] valueArray() {
     return valueArray(null);
@@ -242,6 +264,9 @@ public class FloatDict {
 
   /**
    * Return a value for the specified key.
+   * 
+   * @webref floatdict:method
+   * @brief Return a value for the specified key
    */
   public float get(String key) {
     int index = index(key);
@@ -250,6 +275,10 @@ public class FloatDict {
   }
 
 
+  /**
+   * @webref floatdict:method
+   * @brief To come...
+   */
   public void set(String key, int amount) {
     int index = index(key);
     if (index == -1) {
@@ -260,6 +289,10 @@ public class FloatDict {
   }
 
 
+  /**
+   * @webref floatdict:method
+   * @brief To come...
+   */
   public boolean hasKey(String key) {
     return index(key) != -1;
   }
@@ -277,6 +310,10 @@ public class FloatDict {
 //  }
 
 
+  /**
+   * @webref floatdict:method
+   * @brief To come...
+   */
   public void add(String key, float amount) {
     int index = index(key);
     if (index == -1) {
@@ -293,11 +330,19 @@ public class FloatDict {
 //  }
 
 
+  /**
+   * @webref floatdict:method
+   * @brief To come...
+   */
   public void sub(String key, float amount) {
     add(key, -amount);
   }
 
 
+  /**
+   * @webref floatdict:method
+   * @brief To come...
+   */
   public void mult(String key, float amount) {
     int index = index(key);
     if (index != -1) {
@@ -306,6 +351,10 @@ public class FloatDict {
   }
 
 
+  /**
+   * @webref floatdict:method
+   * @brief To come...
+   */
   public void div(String key, float amount) {
     int index = index(key);
     if (index != -1) {
@@ -341,6 +390,10 @@ public class FloatDict {
   }
 
 
+  /**
+   * @webref floatdict:method
+   * @brief To come...
+   */
   public void remove(String key) {
     removeIndex(index(key));
   }
@@ -389,6 +442,9 @@ public class FloatDict {
   /**
    * Sort the keys alphabetically (ignoring case). Uses the value as a
    * tie-breaker (only really possible with a key that has a case change).
+   * 
+   * @webref floatdict:method
+   * @brief Sort the keys alphabetically 
    */
   public void sortKeys() {
     sortImpl(true, false);
@@ -405,6 +461,10 @@ public class FloatDict {
   }
 
 
+  /**
+   * @webref floatdict:method
+   * @brief To come...
+   */
   public void sortKeysReverse() {
     sortImpl(true, true);
 //    new InternalSort() {
@@ -422,6 +482,9 @@ public class FloatDict {
 
   /**
    * Sort by values in descending order (largest value will be at [0]).
+   * 
+   * @webref floatdict:method
+   * @brief Sort by values in descending order  
    */
   public void sortValues() {
     sortImpl(false, false);
@@ -434,6 +497,10 @@ public class FloatDict {
   }
 
 
+  /**
+   * @webref floatdict:method
+   * @brief To come...
+   */
   public void sortValuesReverse() {
     sortImpl(false, true);
 //    new InternalSort() {

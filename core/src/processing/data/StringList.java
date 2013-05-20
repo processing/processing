@@ -6,7 +6,9 @@ import java.util.Random;
 
 import processing.core.PApplet;
 
-
+/**
+ * @webref data:composite
+ */
 public class StringList implements Iterable<String> {
   int count;
   String[] data;
@@ -54,6 +56,9 @@ public class StringList implements Iterable<String> {
 
   /**
    * Get the length of the list.
+   *
+   * @webref stringlist:method
+   * @brief Get the length of the list
    */
   public int size() {
     return count;
@@ -75,6 +80,9 @@ public class StringList implements Iterable<String> {
 
   /**
    * Remove all entries from the list.
+   *
+   * @webref stringlist:method
+   * @brief Remove all entries from the list
    */
   public void clear() {
     count = 0;
@@ -83,6 +91,9 @@ public class StringList implements Iterable<String> {
 
   /**
    * Get an entry at a particular index.
+   *
+   * @webref stringlist:method
+   * @brief Get an entry at a particular index
    */
   public String get(int index) {
     return data[index];
@@ -93,6 +104,9 @@ public class StringList implements Iterable<String> {
    * Set the entry at a particular index. If the index is past the length of
    * the list, it'll expand the list to accommodate, and fill the intermediate
    * entries with 0s.
+   *
+   * @webref stringlist:method
+   * @brief Set an entry at a particular index
    */
   public void set(int index, String what) {
     if (index >= count) {
@@ -106,7 +120,12 @@ public class StringList implements Iterable<String> {
   }
 
 
-  /** remove an element from the specified index */
+  /** 
+   * Remove an element from the specified index. 
+   * 
+   * @webref stringlist:method
+   * @brief Remove an element from the specified index
+   */
   public void remove(int index) {
 //    int[] outgoing = new int[count - 1];
 //    System.arraycopy(data, 0, outgoing, 0, index);
@@ -203,7 +222,12 @@ public class StringList implements Iterable<String> {
   }
 
 
-  /** Add a new entry to the list. */
+  /** 
+   * Add a new entry to the list.  
+   * 
+   * @webref stringlist:method
+   * @brief Add a new entry to the list
+   */
   public void append(String value) {
     if (count == data.length) {
       data = PApplet.expand(data);
@@ -361,7 +385,10 @@ public class StringList implements Iterable<String> {
 //    }
 //  }
 
-
+  /**
+   * @webref stringlist:method
+   * @brief To come...
+   */
   public boolean hasValue(String value) {
     if (value == null) {
       for (int i = 0; i < count; i++) {
@@ -380,13 +407,23 @@ public class StringList implements Iterable<String> {
   }
 
 
-  /** Sorts the array in place. */
+  /** 
+   * Sorts the array in place. 
+   * 
+   * @webref stringlist:method
+   * @brief Sorts the array in place
+   */
   public void sort() {
     sortImpl(false);
   }
 
 
-  /** reverse sort, orders values from highest to lowest */
+  /** 
+   * Reverse sort, orders values from highest to lowest.
+   * 
+   * @webref stringlist:method
+   * @brief Reverse sort, orders values from highest to lowest 
+   */
   public void sortReverse() {
     sortImpl(true);
   }
@@ -432,7 +469,10 @@ public class StringList implements Iterable<String> {
 //    count = num;
 //  }
 
-
+  /**
+   * @webref stringlist:method
+   * @brief To come... 
+   */
   public void reverse() {
     int ii = count - 1;
     for (int i = 0; i < count/2; i++) {
@@ -447,6 +487,9 @@ public class StringList implements Iterable<String> {
   /**
    * Randomize the order of the list elements. Note that this does not
    * obey the randomSeed() function in PApplet.
+   * 
+   * @webref stringlist:method
+   * @brief Randomize the order of the list elements
    */
   public void shuffle() {
     Random r = new Random();
@@ -477,7 +520,12 @@ public class StringList implements Iterable<String> {
   }
 
 
-  /** Make the entire list lower case. */
+  /** 
+   * Make the entire list lower case. 
+   * 
+   * @webref stringlist:method
+   * @brief Make the entire list lower case
+   */
   public void lower() {
     for (int i = 0; i < count; i++) {
       if (data[i] != null) {
@@ -487,7 +535,12 @@ public class StringList implements Iterable<String> {
   }
 
 
-  /** Make the entire list upper case. */
+  /** 
+   * Make the entire list upper case. 
+   *
+   * @webref stringlist:method
+   * @brief Make the entire list upper case
+   */
   public void upper() {
     for (int i = 0; i < count; i++) {
       if (data[i] != null) {
@@ -542,7 +595,10 @@ public class StringList implements Iterable<String> {
 
   /**
    * Create a new array with a copy of all the values.
+   * 
    * @return an array sized by the length of the list with each of the values.
+   * @webref stringlist:method
+   * @brief Create a new array with a copy of all the values
    */
   public String[] array() {
     return array(null);

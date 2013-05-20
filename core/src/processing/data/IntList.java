@@ -16,6 +16,8 @@ import processing.core.PApplet;
  * Helper class for a list of ints. By design (for efficiency), functions like
  * sort() and shuffle() always act on the list itself. To get a sorted copy,
  * use list.copy().sort().
+ * 
+ * @webref data:composite
  */
 public class IntList implements Iterable<Integer> {
   protected int count;
@@ -62,6 +64,9 @@ public class IntList implements Iterable<Integer> {
 
   /**
    * Get the length of the list.
+   * 
+   * @webref floatlist:method
+   * @brief Get the length of the list
    */
   public int size() {
     return count;
@@ -83,6 +88,9 @@ public class IntList implements Iterable<Integer> {
 
   /**
    * Remove all entries from the list.
+   * 
+   * @webref floatlist:method
+   * @brief Remove all entries from the list
    */
   public void clear() {
     count = 0;
@@ -91,6 +99,9 @@ public class IntList implements Iterable<Integer> {
 
   /**
    * Get an entry at a particular index.
+   *
+   * @webref floatlist:method
+   * @brief Get an entry at a particular index
    */
   public int get(int index) {
     return data[index];
@@ -101,6 +112,9 @@ public class IntList implements Iterable<Integer> {
    * Set the entry at a particular index. If the index is past the length of
    * the list, it'll expand the list to accommodate, and fill the intermediate
    * entries with 0s.
+   *
+   * @webref floatlist:method
+   * @brief Set the entry at a particular index
    */
   public void set(int index, int what) {
     if (index >= count) {
@@ -114,7 +128,12 @@ public class IntList implements Iterable<Integer> {
   }
 
 
-  /** remove an element from the specified index */
+  /** 
+   * Remove an element from the specified index 
+   *
+   * @webref floatlist:method
+   * @brief Remove an element from the specified index
+   */
   public void remove(int index) {
 //    int[] outgoing = new int[count - 1];
 //    System.arraycopy(data, 0, outgoing, 0, index);
@@ -153,7 +172,12 @@ public class IntList implements Iterable<Integer> {
   }
 
 
-  /** Add a new entry to the list. */
+  /** 
+   * Add a new entry to the list.
+   *
+   * @webref floatlist:method
+   * @brief Add a new entry to the list 
+   */
   public void append(int value) {
     if (count == data.length) {
       data = PApplet.expand(data);
@@ -312,7 +336,10 @@ public class IntList implements Iterable<Integer> {
 //    }
 //  }
 
-
+  /**
+   * @webref floatlist:method
+   * @brief To come...
+   */
   public boolean hasValue(int value) {
 //    if (indexCache == null) {
 //      cacheIndices();
@@ -326,32 +353,50 @@ public class IntList implements Iterable<Integer> {
     return false;
   }
 
-
+  /**
+   * @webref floatlist:method
+   * @brief To come...
+   */
   public void increment(int index) {
     data[index]++;
   }
 
-
+  /**
+   * @webref floatlist:method
+   * @brief To come...
+   */
   public void add(int index, int amount) {
     data[index] += amount;
   }
 
-
+  /**
+   * @webref floatlist:method
+   * @brief To come...
+   */
   public void sub(int index, int amount) {
     data[index] -= amount;
   }
 
-
+  /**
+   * @webref floatlist:method
+   * @brief To come...
+   */
   public void mult(int index, int amount) {
     data[index] *= amount;
   }
 
-
+  /**
+   * @webref floatlist:method
+   * @brief To come...
+   */
   public void div(int index, int amount) {
     data[index] /= amount;
   }
 
-
+  /**
+   * @webref floatlist:method
+   * @brief To come...
+   */
   public int min() {
     if (count == 0) {
       throw new ArrayIndexOutOfBoundsException("Cannot use min() on IntList of length 0.");
@@ -363,7 +408,10 @@ public class IntList implements Iterable<Integer> {
     return outgoing;
   }
 
-
+  /**
+   * @webref floatlist:method
+   * @brief To come...
+   */
   public int max() {
     if (count == 0) {
       throw new ArrayIndexOutOfBoundsException("Cannot use max() on IntList of length 0.");
@@ -376,13 +424,23 @@ public class IntList implements Iterable<Integer> {
   }
 
 
-  /** Sorts the array in place. */
+  /** 
+   * Sorts the array in place. 
+   * 
+   * @webref floatlist:method
+   * @brief Sorts the array in place
+   */
   public void sort() {
     Arrays.sort(data, 0, count);
   }
 
 
-  /** reverse sort, orders values from highest to lowest */
+  /** 
+   * Reverse sort, orders values from highest to lowest. 
+   *
+   * @webref floatlist:method
+   * @brief Reverse sort, orders values from highest to lowest
+   */
   public void sortReverse() {
     new Sort() {
       @Override
@@ -422,7 +480,10 @@ public class IntList implements Iterable<Integer> {
 //    count = num;
 //  }
 
-
+  /** 
+   * @webref floatlist:method
+   * @brief To come...
+   */
   public void reverse() {
     int ii = count - 1;
     for (int i = 0; i < count/2; i++) {
@@ -437,6 +498,9 @@ public class IntList implements Iterable<Integer> {
   /**
    * Randomize the order of the list elements. Note that this does not
    * obey the randomSeed() function in PApplet.
+   *
+   * @webref floatlist:method
+   * @brief Randomize the order of the list elements
    */
   public void shuffle() {
     Random r = new Random();
@@ -508,7 +572,10 @@ public class IntList implements Iterable<Integer> {
 
   /**
    * Create a new array with a copy of all the values.
+   * 
    * @return an array sized by the length of the list with each of the values.
+   * @webref floatlist:method
+   * @brief Create a new array with a copy of all the values
    */
   public int[] array() {
     return array(null);

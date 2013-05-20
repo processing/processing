@@ -9,6 +9,8 @@ import processing.core.PApplet;
 
 /**
  * A simple table class to use a String as a lookup for another String value.
+ * 
+ * @webref data:composite
  */
 public class StringDict {
 
@@ -73,13 +75,21 @@ public class StringDict {
     }
   }
 
-
+  /**
+   * @webref stringdict:method
+   * @brief To come...
+   */
   public int size() {
     return count;
   }
 
 
-  /** Remove all entries. */
+  /** 
+   * Remove all entries. 
+   *
+   * @webref stringdict:method
+   * @brief Remove all entries
+   */
   public void clear() {
     count = 0;
     indices = new HashMap<String, Integer>();
@@ -108,7 +118,10 @@ public class StringDict {
 //    return keys;
 //  }
 
-
+  /**
+   * @webref stringdict:method
+   * @brief To come...
+   */
   public Iterable<String> keys() {
     return new Iterable<String>() {
 
@@ -136,6 +149,9 @@ public class StringDict {
 
   /**
    * Return a copy of the internal keys array. This array can be modified.
+   * 
+   * @webref stringdict:method
+   * @brief Return a copy of the internal keys array
    */
   public String[] keyArray() {
     return keyArray(null);
@@ -155,7 +171,10 @@ public class StringDict {
     return values[index];
   }
 
-
+  /**
+   * @webref stringdict:method
+   * @brief To come...
+   */
   public Iterable<String> values() {
     return new Iterable<String>() {
 
@@ -183,6 +202,9 @@ public class StringDict {
 
   /**
    * Create a new array and copy each of the values into it.
+   *
+   * @webref stringdict:method
+   * @brief Create a new array and copy each of the values into it
    */
   public int[] valueArray() {
     return valueArray(null);
@@ -205,6 +227,9 @@ public class StringDict {
 
   /**
    * Return a value for the specified key.
+   * 
+   * @webref stringdict:method
+   * @brief Return a value for the specified key
    */
   public String get(String key) {
     int index = index(key);
@@ -212,7 +237,10 @@ public class StringDict {
     return values[index];
   }
 
-
+  /**
+   * @webref stringdict:method
+   * @brief To come...
+   */
   public void set(String key, String amount) {
     int index = index(key);
     if (index == -1) {
@@ -228,7 +256,10 @@ public class StringDict {
     return (found == null) ? -1 : found.intValue();
   }
 
-
+  /**
+   * @webref stringdict:method
+   * @brief To come...
+   */
   public boolean hasKey(String key) {
     return index(key) != -1;
   }
@@ -245,7 +276,10 @@ public class StringDict {
     count++;
   }
 
-
+  /**
+   * @webref stringdict:method
+   * @brief To come...
+   */
   public void remove(String key) {
     removeIndex(index(key));
   }
@@ -281,12 +315,18 @@ public class StringDict {
   /**
    * Sort the keys alphabetically (ignoring case). Uses the value as a
    * tie-breaker (only really possible with a key that has a case change).
+   * 
+   * @webref stringdict:method
+   * @brief Sort the keys alphabetically
    */
   public void sortKeys() {
     sortImpl(true, false);
   }
 
-
+  /**
+   * @webref stringdict:method
+   * @brief To come...
+   */
   public void sortKeysReverse() {
     sortImpl(true, true);
   }
@@ -294,12 +334,19 @@ public class StringDict {
 
   /**
    * Sort by values in descending order (largest value will be at [0]).
+   *
+   * @webref stringdict:method
+   * @brief Sort by values in descending order
    */
   public void sortValues() {
     sortImpl(false, false);
   }
 
 
+  /**
+   * @webref stringdict:method
+   * @brief To come...
+   */
   public void sortValuesReverse() {
     sortImpl(false, true);
   }
