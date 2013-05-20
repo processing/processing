@@ -100,13 +100,21 @@ public class IntDict {
     }
   }
 
-
+  /**
+   * @webref intdict:method
+   * @brief To come...
+   */
   public int size() {
     return count;
   }
 
 
-  /** Remove all entries. */
+  /** 
+   * Remove all entries.
+   * 
+   * @webref intdict:method
+   * @brief Remove all entries
+   */
   public void clear() {
     count = 0;
     indices = new HashMap<String, Integer>();
@@ -129,6 +137,9 @@ public class IntDict {
   /**
    * Return the internal array being used to store the keys. Allocated but
    * unused entries will be removed. This array should not be modified.
+   * 
+   * @webref intdict:method
+   * @brief Return the internal array being used to store the keys
    */
   public String[] keys() {
     crop();
@@ -164,6 +175,9 @@ public class IntDict {
 
   /**
    * Return a copy of the internal keys array. This array can be modified.
+   *
+   * @webref intdict:method
+   * @brief Return a copy of the internal keys array
    */
   public String[] keyArray() {
     return keyArray(null);
@@ -183,7 +197,10 @@ public class IntDict {
     return values[index];
   }
 
-
+  /** 
+   * @webref intdict:method
+   * @brief To come...
+   */
   public Iterable<Integer> values() {
     return new Iterable<Integer>() {
 
@@ -211,6 +228,9 @@ public class IntDict {
 
   /**
    * Create a new array and copy each of the values into it.
+   *
+   * @webref intdict:method
+   * @brief Create a new array and copy each of the values into it
    */
   public int[] valueArray() {
     return valueArray(null);
@@ -233,6 +253,9 @@ public class IntDict {
 
   /**
    * Return a value for the specified key.
+   *
+   * @webref intdict:method
+   * @brief Return a value for the specified key
    */
   public int get(String key) {
     int index = index(key);
@@ -240,7 +263,10 @@ public class IntDict {
     return values[index];
   }
 
-
+  /**
+   * @webref intdict:method
+   * @brief To come...
+   */
   public void set(String key, int amount) {
     int index = index(key);
     if (index == -1) {
@@ -250,18 +276,29 @@ public class IntDict {
     }
   }
 
-
+  /**
+   * @webref intdict:method
+   * @brief To come...
+   */
   public boolean hasKey(String key) {
     return index(key) != -1;
   }
 
 
-  /** Increase the value of a specific key by 1. */
+  /** 
+   * Increase the value of a specific key by 1. 
+   * 
+   * @webref intdict:method
+   * @brief Increase the value of a specific key by 1
+   */
   public void increment(String key) {
     add(key, 1);
   }
 
-
+  /**
+   * @webref intdict:method
+   * @brief To come...
+   */
   public void add(String key, int amount) {
     int index = index(key);
     if (index == -1) {
@@ -271,12 +308,18 @@ public class IntDict {
     }
   }
 
-
+  /**
+   * @webref intdict:method
+   * @brief To come...
+   */
   public void sub(String key, int amount) {
     add(key, -amount);
   }
 
-
+  /**
+   * @webref intdict:method
+   * @brief To come...
+   */
   public void mult(String key, int amount) {
     int index = index(key);
     if (index != -1) {
@@ -284,7 +327,10 @@ public class IntDict {
     }
   }
 
-
+  /**
+   * @webref intdict:method
+   * @brief To come...
+   */
   public void div(String key, int amount) {
     int index = index(key);
     if (index != -1) {
@@ -310,7 +356,10 @@ public class IntDict {
     count++;
   }
 
-
+  /**
+   * @webref intdict:method
+   * @brief To come...
+   */
   public void remove(String key) {
     removeIndex(index(key));
   }
@@ -346,12 +395,18 @@ public class IntDict {
   /**
    * Sort the keys alphabetically (ignoring case). Uses the value as a
    * tie-breaker (only really possible with a key that has a case change).
+   *
+   * @webref intdict:method
+   * @brief Sort the keys alphabetically
    */
   public void sortKeys() {
     sortImpl(true, false);
   }
 
-
+  /**
+   * @webref intdict:method
+   * @brief To come...
+   */
   public void sortKeysReverse() {
     sortImpl(true, true);
   }
@@ -359,12 +414,18 @@ public class IntDict {
 
   /**
    * Sort by values in descending order (largest value will be at [0]).
+   * 
+   * @webref intdict:method
+   * @brief Sort by values in descending order
    */
   public void sortValues() {
     sortImpl(false, false);
   }
 
-
+  /**
+   * @webref intdict:method
+   * @brief To come...
+   */
   public void sortValuesReverse() {
     sortImpl(false, true);
   }
