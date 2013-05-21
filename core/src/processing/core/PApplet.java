@@ -6493,21 +6493,25 @@ public class PApplet extends Applet
     selectInput(prompt, callback, null);
   }
 
-
-  public void selectInput(String prompt, String callback, File file) {
-    selectInput(prompt, callback, file, this);
+  public void selectInput(String prompt, String callback, Object callerData) {
+    selectInput(prompt, callback, callerData, null);
   }
 
 
-  public void selectInput(String prompt, String callback,
+  public void selectInput(String prompt, String callback, Object callerData, File file) {
+    selectInput(prompt, callback, callerData, file, this);
+  }
+
+
+  public void selectInput(String prompt, String callback, Object callerData,
                           File file, Object callbackObject) {
-    selectInput(prompt, callback, file, callbackObject, selectFrame());
+    selectInput(prompt, callback, callerData, file, callbackObject, selectFrame());
   }
 
 
-  static public void selectInput(String prompt, String callbackMethod,
+  static public void selectInput(String prompt, String callbackMethod, Object callerData,
                                  File file, Object callbackObject, Frame parent) {
-    selectImpl(prompt, callbackMethod, file, callbackObject, parent, FileDialog.LOAD);
+    selectImpl(prompt, callbackMethod, callerData, file, callbackObject, parent, FileDialog.LOAD);
   }
 
 
@@ -6522,25 +6526,30 @@ public class PApplet extends Applet
     selectOutput(prompt, callback, null);
   }
 
-  public void selectOutput(String prompt, String callback, File file) {
-    selectOutput(prompt, callback, file, this);
+  public void selectOutput(String prompt, String callback, Object callerData) {
+    selectOutput(prompt, callback, callerData, null);
+  }
+
+  public void selectOutput(String prompt, String callback, Object callerData, File file) {
+    selectOutput(prompt, callback, callerData, file, this);
   }
 
 
-  public void selectOutput(String prompt, String callback,
+  public void selectOutput(String prompt, String callback, Object callerData,
                            File file, Object callbackObject) {
-    selectOutput(prompt, callback, file, callbackObject, selectFrame());
+    selectOutput(prompt, callback, callerData, file, callbackObject, selectFrame());
   }
 
 
-  static public void selectOutput(String prompt, String callbackMethod,
+  static public void selectOutput(String prompt, String callbackMethod, Object callerData,
                                   File file, Object callbackObject, Frame parent) {
-    selectImpl(prompt, callbackMethod, file, callbackObject, parent, FileDialog.SAVE);
+    selectImpl(prompt, callbackMethod, callerData, file, callbackObject, parent, FileDialog.SAVE);
   }
 
 
   static protected void selectImpl(final String prompt,
                                    final String callbackMethod,
+								   final Object callerData,
                                    final File defaultSelection,
                                    final Object callbackObject,
                                    final Frame parentFrame,
@@ -6579,7 +6588,7 @@ public class PApplet extends Applet
             selectedFile = chooser.getSelectedFile();
           }
         }
-        selectCallback(selectedFile, callbackMethod, callbackObject);
+        selectCallback(selectedFile, callbackMethod, callbackObject, callerData);
       }
     });
   }
@@ -6596,20 +6605,25 @@ public class PApplet extends Applet
     selectFolder(prompt, callback, null);
   }
 
-
-  public void selectFolder(String prompt, String callback, File file) {
-    selectFolder(prompt, callback, file, this);
+  public void selectFolder(String prompt, String callback, Object callerData) {
+    selectFolder(prompt, callback, callerData, null);
   }
 
 
-  public void selectFolder(String prompt, String callback,
+  public void selectFolder(String prompt, String callback, Object callerData, File file) {
+    selectFolder(prompt, callback, callerData, file, this);
+  }
+
+
+  public void selectFolder(String prompt, String callback, Object callerData,
                            File file, Object callbackObject) {
-    selectFolder(prompt, callback, file, callbackObject, selectFrame());
+    selectFolder(prompt, callback, callerData, file, callbackObject, selectFrame());
   }
 
 
   static public void selectFolder(final String prompt,
                                   final String callbackMethod,
+								  final Object callerData,
                                   final File defaultSelection,
                                   final Object callbackObject,
                                   final Frame parentFrame) {
@@ -6640,7 +6654,7 @@ public class PApplet extends Applet
             selectedFile = fileChooser.getSelectedFile();
           }
         }
-        selectCallback(selectedFile, callbackMethod, callbackObject);
+        selectCallback(selectedFile, callbackMethod, callbackObject, callerData);
       }
     });
   }
@@ -6648,12 +6662,13 @@ public class PApplet extends Applet
 
   static private void selectCallback(File selectedFile,
                                      String callbackMethod,
-                                     Object callbackObject) {
+                                     Object callbackObject,
+									 Object callerData) {
     try {
       Class<?> callbackClass = callbackObject.getClass();
       Method selectMethod =
-        callbackClass.getMethod(callbackMethod, new Class[] { File.class });
-      selectMethod.invoke(callbackObject, new Object[] { selectedFile });
+        callbackClass.getMethod(callbackMethod, new Class[] { File.class, Object.class });
+      selectMethod.invoke(callbackObject, new Object[] { selectedFile, callerData });
 
     } catch (IllegalAccessException iae) {
       System.err.println(callbackMethod + "() must be public");
