@@ -131,6 +131,10 @@ public class PGL extends processing.opengl.PGL {
   /** Minimum array size to use arrayCopy method(). **/
   protected static final int MIN_ARRAYCOPY_SIZE = 2;
 
+  /** Factor used to displace the stroke vertices towards the camera in
+   * order to make sure the lines are always on top of the fill geometry **/
+  protected static final float STROKE_DISPLACEMENT = 0.999f;
+  
   protected static int request_depth_bits = 24;
   protected static int request_stencil_bits = 8;
   protected static int request_alpha_bits = 8;
