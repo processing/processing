@@ -5,9 +5,6 @@
  * The letters can be aligned left, center, or right with the 
  * textAlign() function. 
  */
-
-// The next line is needed if running in JavaScript Mode with Processing.js
-/* @pjs font="Georgia.ttf"; */
   
 PFont f;
   
@@ -16,7 +13,7 @@ void setup() {
   
   // Create the font
   println(PFont.list());
-  f = createFont("Serif", 24);
+  f = createFont("Georgia", 24);
   textFont(f);
 }
 
