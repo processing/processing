@@ -54,8 +54,8 @@ void draw()
 
 void keyPressed()
 {
-  // If the key is between 'A'(65) and 'z'(122)
-  if( key >= 'A' && key <= 'z') {
+  // If the key is between 'A'(65) to 'Z' and 'a' to 'z'(122)
+  if((key >= 'A' && key <= 'Z') || (key >= 'a' && key <= 'z')) {
     int keyIndex;
     if(key <= 'Z') {
       keyIndex = key-'A';
