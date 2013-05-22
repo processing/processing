@@ -7149,10 +7149,11 @@ public class PGraphicsOpenGL extends PGraphics {
       if (pgCurrent.getHint(DISABLE_OPTIMIZED_STROKE)) {
         setUniformValue(scaleLoc, 1.0f, 1.0f, 1.0f);
       } else {
+        float f = PGL.STROKE_DISPLACEMENT;
         if (orthoProjection()) {
-          setUniformValue(scaleLoc, 1.0f, 1.0f, 0.99f);
+          setUniformValue(scaleLoc, 1, 1, f);
         } else {
-          setUniformValue(scaleLoc, 0.99f, 0.99f, 0.99f);
+          setUniformValue(scaleLoc, f, f, f);
         }
       }
 
