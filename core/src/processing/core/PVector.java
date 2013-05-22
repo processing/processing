@@ -543,8 +543,7 @@ public class PVector implements Serializable {
    * @webref pvector:method
    * @usage web_application
    * @param n the number to multiply with the vector
-   * @brief Multiply a vector by a scalar or one vector by another
-   * @nowebref
+   * @brief Multiply a vector by a scalar
    */
   public void mult(float n) {
     x *= n;
@@ -588,8 +587,7 @@ public class PVector implements Serializable {
    * @webref pvector:method
    * @usage web_application
    * @param n the value to divide by
-   * @brief Divide a vector by a scalar or one vector by another
-   * @nowebref
+   * @brief Divide a vector by a scalar
    */
   public void div(float n) {
     x /= n;
