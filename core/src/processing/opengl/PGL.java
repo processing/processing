@@ -125,6 +125,10 @@ public class PGL {
   /** Minimum array size to use arrayCopy method(). **/
   protected static final int MIN_ARRAYCOPY_SIZE = 2;
 
+  /** Factor used to displace the stroke vertices towards the camera in
+   * order to make sure the lines are always on top of the fill geometry **/
+  protected static final float STROKE_DISPLACEMENT = 0.999f;
+
   /** JOGL's windowing toolkit */
   // The two windowing toolkits available to use in JOGL:
   protected static final int AWT  = 0; // http://jogamp.org/wiki/index.php/Using_JOGL_in_AWT_SWT_and_Swing

@@ -182,15 +182,6 @@ public class PShapeOpenGL extends PShape {
 
   // ........................................................
 
-  // Modes inherited from renderer
-
-  protected int rectMode;
-  protected int ellipseMode;
-  protected int shapeMode;
-  protected int imageMode;
-
-  // ........................................................
-
   // Bezier and Catmull-Rom curves
 
   protected int bezierDetail = 20;
@@ -307,12 +298,8 @@ public class PShapeOpenGL extends PShape {
       inGeo = pg.newInGeometry(PGraphicsOpenGL.RETAINED);
     }
 
-    // Modes are retrieved from the current values in the renderer.
+    // Style parameters are retrieved from the current values in the renderer.
     textureMode = pg.textureMode;
-    rectMode = pg.rectMode;
-    ellipseMode = pg.ellipseMode;
-    shapeMode = pg.shapeMode;
-    imageMode = pg.imageMode;
 
     colorMode(pg.colorMode,
               pg.colorModeX, pg.colorModeY, pg.colorModeZ, pg.colorModeA);
@@ -757,10 +744,25 @@ public class PShapeOpenGL extends PShape {
     if (family == GROUP) {
       for (int i = 0; i < childCount; i++) {
         PShapeOpenGL child = (PShapeOpenGL) children[i];
-        child.textureMode(mode);
+        child.setTextureMode(mode);
       }
     } else {
-      textureMode = mode;
+      setTextureModeImpl(mode);
+    }
+  }
+
+
+  protected void setTextureModeImpl(int mode) {
+    if (textureMode == mode) return;
+    textureMode = mode;
+    if (image != null) {
+      float uFactor = image.width;
+      float vFactor = image.height;
+      if (textureMode == NORMAL) {
+        uFactor = 1.0f / uFactor;
+        vFactor = 1.0f / vFactor;
+      }
+      scaleTextureUV(uFactor, vFactor);
     }
   }
 
@@ -778,17 +780,69 @@ public class PShapeOpenGL extends PShape {
         child.texture(tex);
       }
     } else {
-      PImage tex0 = image;
-      image = tex;
-      if (tex0 != tex && parent != null) {
-        ((PShapeOpenGL)parent).removeTexture(tex);
+      setTextureImpl(tex);
+    }
+  }
+
+
+  protected void setTextureImpl(PImage tex) {
+    PImage image0 = image;
+    image = tex;
+
+    if (textureMode == IMAGE && image0 != image) {
+      // Need to rescale the texture coordinates
+      float uFactor = 1;
+      float vFactor = 1;
+      if (image != null) {
+        uFactor /= image.width;
+        vFactor /= image.height;
       }
-      if (parent != null) {
-        ((PShapeOpenGL)parent).addTexture(image);
-        if (is2D() && stroke) {
-          ((PShapeOpenGL)parent).strokedTexture(true);
-        }
+      if (image0 != null) {
+        uFactor *= image0.width;
+        vFactor *= image0.height;
       }
+      scaleTextureUV(uFactor, vFactor);
+    }
+
+    if (image0 != tex && parent != null) {
+      ((PShapeOpenGL)parent).removeTexture(tex);
+    }
+    if (parent != null) {
+      ((PShapeOpenGL)parent).addTexture(image);
+      if (is2D() && stroke) {
+        ((PShapeOpenGL)parent).strokedTexture(true);
+      }
+    }
+  }
+
+
+  protected void scaleTextureUV(float uFactor, float vFactor) {
+    if (PGraphicsOpenGL.same(uFactor, 1) &&
+        PGraphicsOpenGL.same(vFactor, 1)) return;
+
+    for (int i = 0; i < inGeo.vertexCount; i++) {
+      float u = inGeo.texcoords[2 * i + 0];
+      float v = inGeo.texcoords[2 * i + 1];
+      inGeo.texcoords[2 * i + 0] = PApplet.min(1, u * uFactor);
+      inGeo.texcoords[2 * i + 1] = PApplet.min(1, v * uFactor);
+    }
+
+    if (shapeCreated && tessellated && hasPolys) {
+      int last1 = 0;
+      if (is3D()) {
+        last1 = lastPolyVertex + 1;
+      } else if (is2D()) {
+        last1 = lastPolyVertex + 1;
+        if (-1 < firstLineVertex) last1 = firstLineVertex;
+        if (-1 < firstPointVertex) last1 = firstPointVertex;
+      }
+      for (int i = firstLineVertex; i < last1; i++) {
+        float u = tessGeo.polyTexCoords[2 * i + 0];
+        float v = tessGeo.polyTexCoords[2 * i + 1];
+        tessGeo.polyTexCoords[2 * i + 0] = PApplet.min(1, u * uFactor);
+        tessGeo.polyTexCoords[2 * i + 1] = PApplet.min(1, v * uFactor);
+      }
+      root.setModifiedPolyTexCoords(firstPolyVertex, last1 - 1);
     }
   }
 
@@ -1524,8 +1578,13 @@ public class PShapeOpenGL extends PShape {
       return;
     }
 
+    if (image != null && textureMode == IMAGE) {
+      u = PApplet.min(1, u / image.width);
+      v = PApplet.min(1, v / image.height);
+    }
     inGeo.texcoords[2 * index + 0] = u;
     inGeo.texcoords[2 * index + 1] = v;
+
     markForTessellation();
   }
 
@@ -2629,18 +2688,17 @@ public class PShapeOpenGL extends PShape {
       rounded = true;
     }
 
-    rectMode = CORNER;
     inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
                       ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);
     if (rounded) {
       inGeo.addRect(a, b, c, d,
                     tl, tr, br, bl,
-                    fill, stroke, bezierDetail, rectMode);
+                    fill, stroke, bezierDetail, CORNER);
       tessellator.tessellatePolygon(false, true, true);
     } else {
       inGeo.addRect(a, b, c, d,
-                   fill, stroke, rectMode);
+                   fill, stroke, CORNER);
       tessellator.tessellateQuads();
     }
   }
@@ -2655,11 +2713,10 @@ public class PShapeOpenGL extends PShape {
       d = params[3];
     }
 
-//    ellipseMode = CORNER;
     inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
                       ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);
-    inGeo.addEllipse(a, b, c, d, fill, stroke, ellipseMode);
+    inGeo.addEllipse(a, b, c, d, fill, stroke, CORNER);
     tessellator.tessellateTriangleFan();
   }
 
@@ -2667,7 +2724,7 @@ public class PShapeOpenGL extends PShape {
   protected void tessellateArc() {
     float a = 0, b = 0, c = 0, d = 0;
     float start = 0, stop = 0;
-    int mode = 0;
+//    int mode = 0;
     if (params.length == 6 || params.length == 7) {
       a = params[0];
       b = params[1];
@@ -2675,16 +2732,16 @@ public class PShapeOpenGL extends PShape {
       d = params[3];
       start = params[4];
       stop = params[5];
-      if (params.length == 7) {
-        mode = (int)(params[6]);
-      }
+      // Not using arc mode since PShape only uses CORNER
+//      if (params.length == 7) {
+//        mode = (int)(params[6]);
+//      }
     }
 
-//    ellipseMode = CORNER;
     inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
                       ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);
-    inGeo.addArc(a, b, c, d, start, stop, fill, stroke, mode);
+    inGeo.addArc(a, b, c, d, start, stop, fill, stroke, CORNER);
     tessellator.tessellateTriangleFan();
   }
 
@@ -3960,21 +4017,26 @@ public class PShapeOpenGL extends PShape {
   @Override
   protected void styles(PGraphics g) {
     if (g instanceof PGraphicsOpenGL) {
-      if (stroke) {
+      if (g.stroke) {
+        setStroke(true);
         setStroke(g.strokeColor);
         setStrokeWeight(g.strokeWeight);
-
-        // These two don't to nothing probably:
         setStrokeCap(g.strokeCap);
         setStrokeJoin(g.strokeJoin);
       } else {
         setStroke(false);
       }
 
-      if (fill) {
+      if (g.fill) {
+        setFill(true);
         setFill(g.fillColor);
       } else {
         setFill(false);
+      }
+
+      if (g.tint) {
+        setTint(true);
+        setTint(g.tintColor);
       }
 
       setAmbient(g.ambientColor);
@@ -3982,9 +4044,9 @@ public class PShapeOpenGL extends PShape {
       setEmissive(g.emissiveColor);
       setShininess(g.shininess);
 
-      // What about other style parameters, such as rectMode, etc?
-      // These should force a tessellation update, same as stroke
-      // cap and weight... right?
+      if (image != null) {
+        setTextureMode(g.textureMode);
+      }
     } else {
       super.styles(g);
     }
