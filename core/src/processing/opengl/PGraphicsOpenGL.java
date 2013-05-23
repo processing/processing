@@ -2149,8 +2149,8 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     if (textured && textureMode == IMAGE) {
-      u = PApplet.min(1, u / textureImage.width);
-      v = PApplet.min(1, v / textureImage.height);
+      u /= textureImage.width;
+      v /= textureImage.height;
     }
 
     inGeo.addVertex(x, y, z,
