@@ -1297,11 +1297,15 @@ public class Table {
  /**
    * @webref table:method
    * @brief Removes a column from the table
+   * @param columnName the title of the column to be removed
    */
   public void removeColumn(String columnName) {
     removeColumn(getColumnIndex(columnName));
   }
 
+ /**
+   * @param column the index number of the column to be removed
+   */
   public void removeColumn(int column) {
     int newCount = columns.length - 1;
 
