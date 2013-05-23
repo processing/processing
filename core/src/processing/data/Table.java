@@ -1816,6 +1816,7 @@ public class Table {
   /**
    * @webref table:method
    * @brief Removes a row from the table
+   * @param row ID value of the row to remove
    */
   public void removeRow(int row) {
     for (int col = 0; col < columns.length; col++) {
@@ -2014,6 +2015,7 @@ public class Table {
   /**
    * @webref table:method
    * @brief Gets a row from the table
+   * @param row ID value of the row to get
    */
   public TableRow getRow(int row) {
     return new RowPointer(this, row);
@@ -2026,7 +2028,7 @@ public class Table {
    * If you want to iterate in a multi-threaded manner, don't use the iterator.
    * 
    * @webref table:method
-   * @brief To come...
+   * @brief Gets multiple rows from the table
    */
   public Iterable<TableRow> rows() {
     return new Iterable<TableRow>() {
@@ -2916,14 +2918,18 @@ public class Table {
 
   /**
    * @webref table:method
-   * @brief To come...
+   * @brief Finds a row that matches given criteria
+   * @param value the value to match
+   * @param column ID number of the column to search
    */
   public TableRow findRow(String value, int column) {
     int row = findRowIndex(value, column);
     return (row == -1) ? null : new RowPointer(this, row);
   }
 
-
+  /**
+   * @param columnName title the column to search
+   */
   public TableRow findRow(String value, String columnName) {
     return findRow(value, getColumnIndex(columnName));
   }
