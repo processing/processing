@@ -61,7 +61,9 @@ public class XML implements Serializable {
   /** Child elements, once loaded. */
   protected XML[] children;
 
-
+  /**
+   * @nowebref
+   */
   protected XML() { }
 
 
@@ -81,6 +83,8 @@ public class XML implements Serializable {
 
   /**
    * Advanced users only; see loadXML() in PApplet.
+   *
+   * @nowebref
    */
   public XML(File file) throws IOException, ParserConfigurationException, SAXException {
     this(file, null);
@@ -89,12 +93,16 @@ public class XML implements Serializable {
 
   /**
    * Advanced users only; see loadXML() in PApplet.
+   *
+   * @nowebref
    */
   public XML(File file, String options) throws IOException, ParserConfigurationException, SAXException {
     this(PApplet.createReader(file), options);
   }
 
-
+  /**
+   * @nowebref
+   */
   public XML(InputStream input) throws IOException, ParserConfigurationException, SAXException {
     this(input, null);
   }
@@ -104,6 +112,8 @@ public class XML implements Serializable {
    * Shouldn't be part of main p5 reference, this is for advanced users.
    * Note that while it doesn't accept anything but UTF-8, this is preserved
    * so that we have some chance of implementing that in the future.
+   *
+   * @nowebref
    */
   public XML(InputStream input, String options) throws IOException, ParserConfigurationException, SAXException {
     this(PApplet.createReader(input), options);
@@ -112,6 +122,8 @@ public class XML implements Serializable {
 
   /**
    * Advanced users only; see loadXML() in PApplet.
+   *
+   * @nowebref
    */
   public XML(Reader reader) throws IOException, ParserConfigurationException, SAXException {
     this(reader, null);
@@ -120,6 +132,8 @@ public class XML implements Serializable {
 
   /**
    * Advanced users only; see loadXML() in PApplet.
+   *
+   * @nowebref
    */
   public XML(Reader reader, String options) throws IOException, ParserConfigurationException, SAXException {
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -166,6 +180,8 @@ public class XML implements Serializable {
 
   /**
    * @param name description TBD
+   *
+   * @nowebref
    */
   public XML(String name) {
     try {
@@ -181,7 +197,9 @@ public class XML implements Serializable {
     }
   }
 
-
+  /**
+   * @nowebref
+   */
   protected XML(XML parent, Node node) {
     this.node = node;
     this.parent = parent;
@@ -197,12 +215,15 @@ public class XML implements Serializable {
    * @throws SAXException
    * @throws ParserConfigurationException
    * @throws IOException
+   * @nowebref
    */
   static public XML parse(String data) throws IOException, ParserConfigurationException, SAXException {
     return XML.parse(data, null);
   }
 
-
+  /**
+   * @nowebref
+   */
   static public XML parse(String data, String options) throws IOException, ParserConfigurationException, SAXException {
     return new XML(new StringReader(data), null);
   }

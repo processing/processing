@@ -1647,6 +1647,10 @@ public class PShape implements PConstants {
     return parent;
   }
 
+  /**
+   * @webref
+   * @brief Returns the number of children
+   */
   public int getChildCount() {
     return childCount;
   }
