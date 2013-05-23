@@ -3278,12 +3278,10 @@ public class PGraphicsOpenGL extends PGraphics {
     textTex = pgPrimary.getFontTexture(textFont);
 
     if (textTex == null || textTex.contextIsOutdated()) {
-      textTex = new FontTexture(pgPrimary, textFont,
-          PApplet.min(PGL.MAX_FONT_TEX_SIZE, maxTextureSize),
-          PApplet.min(PGL.MAX_FONT_TEX_SIZE, maxTextureSize), is3D());
+      textTex = new FontTexture(pgPrimary, textFont, is3D());
       pgPrimary.setFontTexture(textFont, textTex);
     }
-    
+
     textTex.begin();
 
     // Saving style parameters modified by text rendering.

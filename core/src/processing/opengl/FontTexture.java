@@ -26,6 +26,7 @@ package processing.opengl;
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PFont;
+import processing.core.PGraphics;
 import processing.core.PImage;
 
 import java.util.HashMap;
@@ -50,8 +51,8 @@ class FontTexture implements PConstants {
   protected PGL pgl;
   protected boolean is3D;
 
-  protected int maxTexWidth;
-  protected int maxTexHeight;
+  protected int minSize;
+  protected int maxSize;
   protected int offsetX;
   protected int offsetY;
   protected int lineHeight;
@@ -62,12 +63,11 @@ class FontTexture implements PConstants {
   protected TextureInfo[] glyphTexinfos;
   protected HashMap<PFont.Glyph, TextureInfo> texinfoMap;
 
-  public FontTexture(PGraphicsOpenGL pg, PFont font, int maxw, int maxh,
-                      boolean is3D) {
+  public FontTexture(PGraphicsOpenGL pg, PFont font, boolean is3D) {
     pgl = PGraphicsOpenGL.pgl;
     this.is3D = is3D;
 
-    initTexture(pg, font, maxw, maxh);
+    initTexture(pg, font);
   }
 
 
@@ -84,12 +84,20 @@ class FontTexture implements PConstants {
   }
 
 
-  protected void initTexture(PGraphicsOpenGL pg, PFont font, int w, int h) {
-    maxTexWidth = w;
-    maxTexHeight = h;
-
+  protected void initTexture(PGraphicsOpenGL pg, PFont font) {
     currentTex = -1;
     lastTex = -1;
+
+    int spow = PGL.nextPowerOfTwo(font.getSize());
+    minSize = PApplet.min(PGraphicsOpenGL.maxTextureSize,
+                          PApplet.max(PGL.MIN_FONT_TEX_SIZE, spow));
+    maxSize = PApplet.min(PGraphicsOpenGL.maxTextureSize,
+                          PApplet.max(PGL.MAX_FONT_TEX_SIZE, 2 * spow));
+
+    if (maxSize < spow) {
+      PGraphics.showWarning("The font size is too large to be properly " +
+                            "displayed with OpenGL");
+    }
 
     addTexture(pg);
 
@@ -107,15 +115,14 @@ class FontTexture implements PConstants {
     int w, h;
     boolean resize;
 
-    w = maxTexWidth;
-    if (-1 < currentTex && textures[currentTex].glHeight < maxTexHeight) {
+    w = maxSize;
+    if (-1 < currentTex && textures[currentTex].glHeight < maxSize) {
       // The height of the current texture is less than the maximum, this
       // means we can replace it with a larger texture.
-      h = PApplet.min(2 * textures[currentTex].glHeight, maxTexHeight);
+      h = PApplet.min(2 * textures[currentTex].glHeight, maxSize);
       resize = true;
     } else {
-      h = PApplet.min(PGraphicsOpenGL.maxTextureSize, PGL.MAX_FONT_TEX_SIZE / 2,
-                                                      maxTexHeight / 4);
+      h = minSize;
       resize = false;
     }
 
