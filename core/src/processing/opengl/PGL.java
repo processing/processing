@@ -361,6 +361,19 @@ public class PGL {
   protected float[] projMatrix;
   protected float[] mvMatrix;
 
+  ///////////////////////////////////////////////////////////
+
+  // Error messages
+
+  protected static final String MISSING_FBO_ERROR =
+    "Framebuffer objects are not supported by this hardware (or driver)";
+
+  protected static final String MISSING_GLSL_ERROR =
+    "GLSL shaders are not supported by this hardware (or driver)";
+
+  protected static final String MISSING_GLFUNC_ERROR =
+    "GL function %1$s is not available on this hardware (or driver)";
+
 
   ///////////////////////////////////////////////////////////
 
@@ -2450,10 +2463,10 @@ public class PGL {
       gl = context.getGL();
 
       if (!hasFBOs()) {
-        throw new RuntimeException("Framebuffer objects are not supported by this hardware (or driver)");
+        throw new RuntimeException(MISSING_FBO_ERROR);
       }
       if (!hasShaders()) {
-        throw new RuntimeException("GLSL shaders are not supported by this hardware (or driver)");
+        throw new RuntimeException(MISSING_GLSL_ERROR);
       }
     }
 
@@ -2631,17 +2644,28 @@ public class PGL {
   public static final int FALSE = GL.GL_FALSE;
   public static final int TRUE  = GL.GL_TRUE;
 
-  public static final int INT = GL2.GL_INT;
-  public static final int BYTE  = GL.GL_BYTE;
-  public static final int SHORT  = GL.GL_SHORT;
+  public static final int INT            = GL2.GL_INT;
+  public static final int BYTE           = GL.GL_BYTE;
+  public static final int SHORT          = GL.GL_SHORT;
   public static final int FLOAT          = GL.GL_FLOAT;
+  public static final int BOOL           = GL2.GL_BOOL;
   public static final int UNSIGNED_INT   = GL.GL_UNSIGNED_INT;
   public static final int UNSIGNED_BYTE  = GL.GL_UNSIGNED_BYTE;
   public static final int UNSIGNED_SHORT = GL.GL_UNSIGNED_SHORT;
 
-  public static final int RGB            = GL.GL_RGB;
-  public static final int RGBA           = GL.GL_RGBA;
-  public static final int ALPHA          = GL.GL_ALPHA;
+  public static final int RGB             = GL.GL_RGB;
+  public static final int RGBA            = GL.GL_RGBA;
+  public static final int ALPHA           = GL.GL_ALPHA;
+  public static final int LUMINANCE       = GL.GL_LUMINANCE;
+  public static final int LUMINANCE_ALPHA = GL.GL_LUMINANCE_ALPHA;
+
+  public static final int UNSIGNED_SHORT_5_6_5   = GL.GL_UNSIGNED_SHORT_5_6_5;
+  public static final int UNSIGNED_SHORT_4_4_4_4 = GL.GL_UNSIGNED_SHORT_4_4_4_4;
+  public static final int UNSIGNED_SHORT_5_5_5_1 = GL.GL_UNSIGNED_SHORT_5_5_5_1;
+
+  public static final int RGBA4   = GL2.GL_RGBA4;
+  public static final int RGB5_A1 = GL2.GL_RGB5_A1;
+  public static final int RGB565  = GL2.GL_RGB565;
 
   public static final int READ_ONLY  = GL2.GL_READ_ONLY;
   public static final int WRITE_ONLY = GL2.GL_WRITE_ONLY;
@@ -2651,31 +2675,34 @@ public class PGL {
   public static final int TESS_WINDING_ODD     = GLU.GLU_TESS_WINDING_ODD;
 
   public static final int GENERATE_MIPMAP_HINT = GL.GL_GENERATE_MIPMAP_HINT;
-  public static final int FASTEST = GL.GL_FASTEST;
-  public static final int NICEST = GL.GL_NICEST;
-  public static final int DONT_CARE = GL.GL_DONT_CARE;
+  public static final int FASTEST              = GL.GL_FASTEST;
+  public static final int NICEST               = GL.GL_NICEST;
+  public static final int DONT_CARE            = GL.GL_DONT_CARE;
 
   public static final int VENDOR                   = GL.GL_VENDOR;
   public static final int RENDERER                 = GL.GL_RENDERER;
   public static final int VERSION                  = GL.GL_VERSION;
   public static final int EXTENSIONS               = GL.GL_EXTENSIONS;
-  public static final int SHADING_LANGUAGE_VERSION =
-    GL2ES2.GL_SHADING_LANGUAGE_VERSION;
+  public static final int SHADING_LANGUAGE_VERSION = GL2ES2.GL_SHADING_LANGUAGE_VERSION;
 
-  public static final int ALIASED_LINE_WIDTH_RANGE =
-    GL.GL_ALIASED_LINE_WIDTH_RANGE;
-  public static final int ALIASED_POINT_SIZE_RANGE =
-    GL.GL_ALIASED_POINT_SIZE_RANGE;
-  public static final int DEPTH_BITS = GL.GL_DEPTH_BITS;
+  public static final int MAX_SAMPLES = GL2.GL_MAX_SAMPLES;
+  public static final int SAMPLES     = GL.GL_SAMPLES;
+
+  public static final int ALIASED_LINE_WIDTH_RANGE = GL.GL_ALIASED_LINE_WIDTH_RANGE;
+  public static final int ALIASED_POINT_SIZE_RANGE = GL.GL_ALIASED_POINT_SIZE_RANGE;
+
+  public static final int DEPTH_BITS   = GL.GL_DEPTH_BITS;
   public static final int STENCIL_BITS = GL.GL_STENCIL_BITS;
 
-  public static final int CCW       = GL.GL_CCW;
-  public static final int CW        = GL.GL_CW;
+  public static final int CCW = GL.GL_CCW;
+  public static final int CW  = GL.GL_CW;
+
   public static final int VIEWPORT = GL.GL_VIEWPORT;
-  public static final int SAMPLES = GL.GL_SAMPLES;
 
   public static final int ARRAY_BUFFER         = GL.GL_ARRAY_BUFFER;
   public static final int ELEMENT_ARRAY_BUFFER = GL.GL_ELEMENT_ARRAY_BUFFER;
+
+  public static final int MAX_VERTEX_ATTRIBS  = GL2.GL_MAX_VERTEX_ATTRIBS;
 
   public static final int STATIC_DRAW  = GL.GL_STATIC_DRAW;
   public static final int DYNAMIC_DRAW = GL.GL_DYNAMIC_DRAW;
@@ -2684,15 +2711,13 @@ public class PGL {
   public static final int BUFFER_SIZE  = GL.GL_BUFFER_SIZE;
   public static final int BUFFER_USAGE = GL.GL_BUFFER_USAGE;
 
-  public static final int POINTS  = GL.GL_POINTS;
-  public static final int LINE_STRIP  = GL.GL_LINE_STRIP;
-  public static final int LINE_LOOP  = GL.GL_LINE_LOOP;
-  public static final int LINES  = GL.GL_LINES;
+  public static final int POINTS         = GL.GL_POINTS;
+  public static final int LINE_STRIP     = GL.GL_LINE_STRIP;
+  public static final int LINE_LOOP      = GL.GL_LINE_LOOP;
+  public static final int LINES          = GL.GL_LINES;
   public static final int TRIANGLE_FAN   = GL.GL_TRIANGLE_FAN;
   public static final int TRIANGLE_STRIP = GL.GL_TRIANGLE_STRIP;
   public static final int TRIANGLES      = GL.GL_TRIANGLES;
-
-  public static final int MAX_VERTEX_ATTRIBS  = GL2.GL_MAX_VERTEX_ATTRIBS;
 
   public static final int CULL_FACE      = GL.GL_CULL_FACE;
   public static final int FRONT          = GL.GL_FRONT;
@@ -2702,26 +2727,25 @@ public class PGL {
   public static final int POLYGON_OFFSET_FILL = GL.GL_POLYGON_OFFSET_FILL;
 
   public static final int UNPACK_ALIGNMENT = GL.GL_UNPACK_ALIGNMENT;
-  public static final int PACK_ALIGNMENT = GL.GL_PACK_ALIGNMENT;
+  public static final int PACK_ALIGNMENT   = GL.GL_PACK_ALIGNMENT;
 
   public static final int TEXTURE_2D        = GL.GL_TEXTURE_2D;
   public static final int TEXTURE_RECTANGLE = GL2.GL_TEXTURE_RECTANGLE;
 
   public static final int TEXTURE_BINDING_2D        = GL.GL_TEXTURE_BINDING_2D;
-  public static final int TEXTURE_BINDING_RECTANGLE =
-    GL2.GL_TEXTURE_BINDING_RECTANGLE;
+  public static final int TEXTURE_BINDING_RECTANGLE = GL2.GL_TEXTURE_BINDING_RECTANGLE;
 
-  public static final int MAX_TEXTURE_SIZE         = GL.GL_MAX_TEXTURE_SIZE;
+  public static final int MAX_TEXTURE_SIZE           = GL.GL_MAX_TEXTURE_SIZE;
+  public static final int TEXTURE_MAX_ANISOTROPY     = GL.GL_TEXTURE_MAX_ANISOTROPY_EXT;
+  public static final int MAX_TEXTURE_MAX_ANISOTROPY = GL.GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT;
+
+  public static final int MAX_VERTEX_TEXTURE_IMAGE_UNITS = GL2ES2.GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS;
+  public static final int MAX_TEXTURE_IMAGE_UNITS        = GL2ES2.GL_MAX_TEXTURE_IMAGE_UNITS;
 
   public static final int NEAREST               = GL.GL_NEAREST;
   public static final int LINEAR                = GL.GL_LINEAR;
   public static final int LINEAR_MIPMAP_NEAREST = GL.GL_LINEAR_MIPMAP_NEAREST;
   public static final int LINEAR_MIPMAP_LINEAR  = GL.GL_LINEAR_MIPMAP_LINEAR;
-
-  public static final int TEXTURE_MAX_ANISOTROPY =
-    GL.GL_TEXTURE_MAX_ANISOTROPY_EXT;
-  public static final int MAX_TEXTURE_MAX_ANISOTROPY =
-    GL.GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT;
 
   public static final int CLAMP_TO_EDGE = GL.GL_CLAMP_TO_EDGE;
   public static final int REPEAT        = GL.GL_REPEAT;
@@ -2735,32 +2759,13 @@ public class PGL {
   public static final int TEXTURE_WRAP_S     = GL.GL_TEXTURE_WRAP_S;
   public static final int TEXTURE_WRAP_T     = GL.GL_TEXTURE_WRAP_T;
 
-  public static final int MAX_VERTEX_TEXTURE_IMAGE_UNITS =
-    GL2ES2.GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS;
-  public static final int MAX_TEXTURE_IMAGE_UNITS =
-    GL2ES2.GL_MAX_TEXTURE_IMAGE_UNITS;
-
-  public static final int TEXTURE_CUBE_MAP_POSITIVE_X =
-    GL.GL_TEXTURE_CUBE_MAP_POSITIVE_X;
-  public static final int TEXTURE_CUBE_MAP_POSITIVE_Y =
-    GL.GL_TEXTURE_CUBE_MAP_POSITIVE_Y;
-  public static final int TEXTURE_CUBE_MAP_POSITIVE_Z =
-    GL.GL_TEXTURE_CUBE_MAP_POSITIVE_Z;
-  public static final int TEXTURE_CUBE_MAP_NEGATIVE_X =
-    GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_X;
-  public static final int TEXTURE_CUBE_MAP_NEGATIVE_Y =
-    GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_Y;
-  public static final int TEXTURE_CUBE_MAP_NEGATIVE_Z =
-    GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z;
-
-  public static final int LUMINANCE = GL.GL_LUMINANCE;
-  public static final int LUMINANCE_ALPHA = GL.GL_LUMINANCE_ALPHA;
-
-  public static final int UNSIGNED_SHORT_5_6_5 = GL.GL_UNSIGNED_SHORT_5_6_5;
-  public static final int UNSIGNED_SHORT_4_4_4_4 = GL.GL_UNSIGNED_SHORT_4_4_4_4;
-  public static final int UNSIGNED_SHORT_5_5_5_1 = GL.GL_UNSIGNED_SHORT_5_5_5_1;
-
   public static final int TEXTURE_CUBE_MAP = GL.GL_TEXTURE_CUBE_MAP;
+  public static final int TEXTURE_CUBE_MAP_POSITIVE_X = GL.GL_TEXTURE_CUBE_MAP_POSITIVE_X;
+  public static final int TEXTURE_CUBE_MAP_POSITIVE_Y = GL.GL_TEXTURE_CUBE_MAP_POSITIVE_Y;
+  public static final int TEXTURE_CUBE_MAP_POSITIVE_Z = GL.GL_TEXTURE_CUBE_MAP_POSITIVE_Z;
+  public static final int TEXTURE_CUBE_MAP_NEGATIVE_X = GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_X;
+  public static final int TEXTURE_CUBE_MAP_NEGATIVE_Y = GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_Y;
+  public static final int TEXTURE_CUBE_MAP_NEGATIVE_Z = GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z;
 
   public static final int VERTEX_SHADER        = GL2.GL_VERTEX_SHADER;
   public static final int FRAGMENT_SHADER      = GL2.GL_FRAGMENT_SHADER;
@@ -2769,41 +2774,39 @@ public class PGL {
   public static final int COMPILE_STATUS       = GL2.GL_COMPILE_STATUS;
   public static final int LINK_STATUS          = GL2.GL_LINK_STATUS;
   public static final int VALIDATE_STATUS      = GL2.GL_VALIDATE_STATUS;
+  public static final int SHADER_TYPE          = GL2.GL_SHADER_TYPE;
+  public static final int DELETE_STATUS        = GL2.GL_DELETE_STATUS;
 
-  public static final int FLOAT_VEC2 = GL2.GL_FLOAT_VEC2;
-  public static final int FLOAT_VEC3 = GL2.GL_FLOAT_VEC3;
-  public static final int FLOAT_VEC4 = GL2.GL_FLOAT_VEC4;
-  public static final int FLOAT_MAT2 = GL2.GL_FLOAT_MAT2;
-  public static final int FLOAT_MAT3 = GL2.GL_FLOAT_MAT3;
-  public static final int FLOAT_MAT4 = GL2.GL_FLOAT_MAT4;
-  public static final int INT_VEC2 = GL2.GL_INT_VEC2;
-  public static final int INT_VEC3 = GL2.GL_INT_VEC3;
-  public static final int INT_VEC4 = GL2.GL_INT_VEC4;
-  public static final int BOOL = GL2.GL_BOOL;
-  public static final int BOOL_VEC2 = GL2.GL_BOOL_VEC2;
-  public static final int BOOL_VEC3 = GL2.GL_BOOL_VEC3;
-  public static final int BOOL_VEC4 = GL2.GL_BOOL_VEC4;
-  public static final int SAMPLER_2D = GL2.GL_SAMPLER_2D;
+  public static final int FLOAT_VEC2   = GL2.GL_FLOAT_VEC2;
+  public static final int FLOAT_VEC3   = GL2.GL_FLOAT_VEC3;
+  public static final int FLOAT_VEC4   = GL2.GL_FLOAT_VEC4;
+  public static final int FLOAT_MAT2   = GL2.GL_FLOAT_MAT2;
+  public static final int FLOAT_MAT3   = GL2.GL_FLOAT_MAT3;
+  public static final int FLOAT_MAT4   = GL2.GL_FLOAT_MAT4;
+  public static final int INT_VEC2     = GL2.GL_INT_VEC2;
+  public static final int INT_VEC3     = GL2.GL_INT_VEC3;
+  public static final int INT_VEC4     = GL2.GL_INT_VEC4;
+  public static final int BOOL_VEC2    = GL2.GL_BOOL_VEC2;
+  public static final int BOOL_VEC3    = GL2.GL_BOOL_VEC3;
+  public static final int BOOL_VEC4    = GL2.GL_BOOL_VEC4;
+  public static final int SAMPLER_2D   = GL2.GL_SAMPLER_2D;
   public static final int SAMPLER_CUBE = GL2.GL_SAMPLER_CUBE;
 
-  public static final int SHADER_TYPE = GL2.GL_SHADER_TYPE;
-  public static final int DELETE_STATUS = GL2.GL_DELETE_STATUS;
-
-  public static final int LOW_FLOAT = GL2.GL_LOW_FLOAT;
+  public static final int LOW_FLOAT    = GL2.GL_LOW_FLOAT;
   public static final int MEDIUM_FLOAT = GL2.GL_MEDIUM_FLOAT;
-  public static final int HIGH_FLOAT = GL2.GL_HIGH_FLOAT;
-  public static final int LOW_INT = GL2.GL_LOW_INT;
-  public static final int MEDIUM_INT = GL2.GL_MEDIUM_INT;
-  public static final int HIGH_INT = GL2.GL_HIGH_INT;
+  public static final int HIGH_FLOAT   = GL2.GL_HIGH_FLOAT;
+  public static final int LOW_INT      = GL2.GL_LOW_INT;
+  public static final int MEDIUM_INT   = GL2.GL_MEDIUM_INT;
+  public static final int HIGH_INT     = GL2.GL_HIGH_INT;
 
   public static final int CURRENT_VERTEX_ATTRIB = GL2.GL_CURRENT_VERTEX_ATTRIB;
 
   public static final int VERTEX_ATTRIB_ARRAY_BUFFER_BINDING = GL2.GL_VERTEX_ATTRIB_ARRAY_BUFFER_BINDING;
-  public static final int VERTEX_ATTRIB_ARRAY_ENABLED = GL2.GL_VERTEX_ATTRIB_ARRAY_ENABLED;
-  public static final int VERTEX_ATTRIB_ARRAY_SIZE = GL2.GL_VERTEX_ATTRIB_ARRAY_SIZE;
-  public static final int VERTEX_ATTRIB_ARRAY_STRIDE = GL2.GL_VERTEX_ATTRIB_ARRAY_STRIDE;
-  public static final int VERTEX_ATTRIB_ARRAY_TYPE = GL2.GL_VERTEX_ATTRIB_ARRAY_TYPE;
-  public static final int VERTEX_ATTRIB_ARRAY_NORMALIZED = GL2.GL_VERTEX_ATTRIB_ARRAY_NORMALIZED;
+  public static final int VERTEX_ATTRIB_ARRAY_ENABLED        = GL2.GL_VERTEX_ATTRIB_ARRAY_ENABLED;
+  public static final int VERTEX_ATTRIB_ARRAY_SIZE           = GL2.GL_VERTEX_ATTRIB_ARRAY_SIZE;
+  public static final int VERTEX_ATTRIB_ARRAY_STRIDE         = GL2.GL_VERTEX_ATTRIB_ARRAY_STRIDE;
+  public static final int VERTEX_ATTRIB_ARRAY_TYPE           = GL2.GL_VERTEX_ATTRIB_ARRAY_TYPE;
+  public static final int VERTEX_ATTRIB_ARRAY_NORMALIZED     = GL2.GL_VERTEX_ATTRIB_ARRAY_NORMALIZED;
 
   public static final int BLEND               = GL.GL_BLEND;
   public static final int ONE                 = GL.GL_ONE;
@@ -2817,43 +2820,43 @@ public class PGL {
   public static final int SRC_COLOR           = GL.GL_SRC_COLOR;
 
   public static final int SAMPLE_ALPHA_TO_COVERAGE = GL.GL_SAMPLE_ALPHA_TO_COVERAGE;
-  public static final int SAMPLE_COVERAGE = GL.GL_SAMPLE_COVERAGE;
+  public static final int SAMPLE_COVERAGE          = GL.GL_SAMPLE_COVERAGE;
 
-  public static final int KEEP = GL.GL_KEEP;
-  public static final int REPLACE = GL.GL_REPLACE;
-  public static final int INCR = GL.GL_INCR;
-  public static final int DECR = GL.GL_DECR;
-  public static final int INVERT = GL.GL_INVERT;
+  public static final int KEEP      = GL.GL_KEEP;
+  public static final int REPLACE   = GL.GL_REPLACE;
+  public static final int INCR      = GL.GL_INCR;
+  public static final int DECR      = GL.GL_DECR;
+  public static final int INVERT    = GL.GL_INVERT;
   public static final int INCR_WRAP = GL.GL_INCR_WRAP;
   public static final int DECR_WRAP = GL.GL_DECR_WRAP;
-  public static final int NEVER = GL.GL_NEVER;
-  public static final int ALWAYS = GL.GL_ALWAYS;
+  public static final int NEVER     = GL.GL_NEVER;
+  public static final int ALWAYS    = GL.GL_ALWAYS;
 
-  public static final int EQUAL = GL.GL_EQUAL;
-  public static final int LESS      = GL.GL_LESS;
-  public static final int LEQUAL    = GL.GL_LEQUAL;
-  public static final int GREATER = GL.GL_GREATER;
-  public static final int GEQUAL = GL.GL_GEQUAL;
+  public static final int EQUAL    = GL.GL_EQUAL;
+  public static final int LESS     = GL.GL_LESS;
+  public static final int LEQUAL   = GL.GL_LEQUAL;
+  public static final int GREATER  = GL.GL_GREATER;
+  public static final int GEQUAL   = GL.GL_GEQUAL;
   public static final int NOTEQUAL = GL.GL_NOTEQUAL;
 
   public static final int FUNC_ADD              = GL.GL_FUNC_ADD;
   public static final int FUNC_MIN              = GL2.GL_MIN;
   public static final int FUNC_MAX              = GL2.GL_MAX;
   public static final int FUNC_REVERSE_SUBTRACT = GL.GL_FUNC_REVERSE_SUBTRACT;
-  public static final int FUNC_SUBTRACT = GL.GL_FUNC_SUBTRACT;
+  public static final int FUNC_SUBTRACT         = GL.GL_FUNC_SUBTRACT;
 
   public static final int DITHER = GL.GL_DITHER;
 
-  public static final int CONSTANT_COLOR = GL2.GL_CONSTANT_COLOR;
-  public static final int CONSTANT_ALPHA = GL2.GL_CONSTANT_ALPHA;
+  public static final int CONSTANT_COLOR           = GL2.GL_CONSTANT_COLOR;
+  public static final int CONSTANT_ALPHA           = GL2.GL_CONSTANT_ALPHA;
   public static final int ONE_MINUS_CONSTANT_COLOR = GL2.GL_ONE_MINUS_CONSTANT_COLOR;
   public static final int ONE_MINUS_CONSTANT_ALPHA = GL2.GL_ONE_MINUS_CONSTANT_ALPHA;
-  public static final int SRC_ALPHA_SATURATE = GL.GL_SRC_ALPHA_SATURATE;
+  public static final int SRC_ALPHA_SATURATE       = GL.GL_SRC_ALPHA_SATURATE;
 
   public static final int SCISSOR_TEST    = GL.GL_SCISSOR_TEST;
   public static final int DEPTH_TEST      = GL.GL_DEPTH_TEST;
   public static final int DEPTH_WRITEMASK = GL.GL_DEPTH_WRITEMASK;
-  public static final int ALPHA_TEST = GL2.GL_ALPHA_TEST;
+  public static final int ALPHA_TEST      = GL2.GL_ALPHA_TEST;
 
   public static final int COLOR_BUFFER_BIT   = GL.GL_COLOR_BUFFER_BIT;
   public static final int DEPTH_BUFFER_BIT   = GL.GL_DEPTH_BUFFER_BIT;
@@ -2883,43 +2886,29 @@ public class PGL {
   public static final int STENCIL_INDEX4 = GL.GL_STENCIL_INDEX4;
   public static final int STENCIL_INDEX8 = GL.GL_STENCIL_INDEX8;
 
-  public static final int FRAMEBUFFER_COMPLETE                      =
-    GL.GL_FRAMEBUFFER_COMPLETE;
-  public static final int FRAMEBUFFER_INCOMPLETE_ATTACHMENT         =
-    GL.GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT;
-  public static final int FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT =
-    GL.GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT;
-  public static final int FRAMEBUFFER_INCOMPLETE_DIMENSIONS         =
-    GL.GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS;
-  public static final int FRAMEBUFFER_INCOMPLETE_FORMATS            =
-    GL.GL_FRAMEBUFFER_INCOMPLETE_FORMATS;
-  public static final int FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER        =
-    GL2.GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER;
-  public static final int FRAMEBUFFER_INCOMPLETE_READ_BUFFER        =
-    GL2.GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER;
-  public static final int FRAMEBUFFER_UNSUPPORTED                   =
-    GL.GL_FRAMEBUFFER_UNSUPPORTED;
+  public static final int FRAMEBUFFER_COMPLETE                      = GL.GL_FRAMEBUFFER_COMPLETE;
+  public static final int FRAMEBUFFER_INCOMPLETE_ATTACHMENT         = GL.GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT;
+  public static final int FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT = GL.GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT;
+  public static final int FRAMEBUFFER_INCOMPLETE_DIMENSIONS         = GL.GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS;
+  public static final int FRAMEBUFFER_INCOMPLETE_FORMATS            = GL.GL_FRAMEBUFFER_INCOMPLETE_FORMATS;
+  public static final int FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER        = GL2.GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER;
+  public static final int FRAMEBUFFER_INCOMPLETE_READ_BUFFER        = GL2.GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER;
+  public static final int FRAMEBUFFER_UNSUPPORTED                   = GL.GL_FRAMEBUFFER_UNSUPPORTED;
 
-  public static final int FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE = GL2.GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE;
-  public static final int FRAMEBUFFER_ATTACHMENT_OBJECT_NAME = GL2.GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME;
-  public static final int FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL = GL2.GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL;
+  public static final int FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE           = GL2.GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE;
+  public static final int FRAMEBUFFER_ATTACHMENT_OBJECT_NAME           = GL2.GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME;
+  public static final int FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL         = GL2.GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL;
   public static final int FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE = GL2.GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE;
 
-  public static final int RENDERBUFFER_WIDTH = GL2.GL_RENDERBUFFER_WIDTH;
-  public static final int RENDERBUFFER_HEIGHT = GL2.GL_RENDERBUFFER_HEIGHT;
-  public static final int RENDERBUFFER_RED_SIZE = GL2.GL_RENDERBUFFER_RED_SIZE;
-  public static final int RENDERBUFFER_GREEN_SIZE = GL2.GL_RENDERBUFFER_GREEN_SIZE;
-  public static final int RENDERBUFFER_BLUE_SIZE = GL2.GL_RENDERBUFFER_BLUE_SIZE;
-  public static final int RENDERBUFFER_ALPHA_SIZE = GL2.GL_RENDERBUFFER_ALPHA_SIZE;
-  public static final int RENDERBUFFER_DEPTH_SIZE = GL2.GL_RENDERBUFFER_DEPTH_SIZE;
-  public static final int RENDERBUFFER_STENCIL_SIZE = GL2.GL_RENDERBUFFER_STENCIL_SIZE;
+  public static final int RENDERBUFFER_WIDTH           = GL2.GL_RENDERBUFFER_WIDTH;
+  public static final int RENDERBUFFER_HEIGHT          = GL2.GL_RENDERBUFFER_HEIGHT;
+  public static final int RENDERBUFFER_RED_SIZE        = GL2.GL_RENDERBUFFER_RED_SIZE;
+  public static final int RENDERBUFFER_GREEN_SIZE      = GL2.GL_RENDERBUFFER_GREEN_SIZE;
+  public static final int RENDERBUFFER_BLUE_SIZE       = GL2.GL_RENDERBUFFER_BLUE_SIZE;
+  public static final int RENDERBUFFER_ALPHA_SIZE      = GL2.GL_RENDERBUFFER_ALPHA_SIZE;
+  public static final int RENDERBUFFER_DEPTH_SIZE      = GL2.GL_RENDERBUFFER_DEPTH_SIZE;
+  public static final int RENDERBUFFER_STENCIL_SIZE    = GL2.GL_RENDERBUFFER_STENCIL_SIZE;
   public static final int RENDERBUFFER_INTERNAL_FORMAT = GL2.GL_RENDERBUFFER_INTERNAL_FORMAT;
-
-  public static final int RGBA4 = GL2.GL_RGBA4;
-  public static final int RGB5_A1 = GL2.GL_RGB5_A1;
-  public static final int RGB565 = GL2.GL_RGB565;
-
-  public static final int MAX_SAMPLES              = GL2.GL_MAX_SAMPLES;
 
   public static final int MULTISAMPLE    = GL.GL_MULTISAMPLE;
   public static final int POINT_SMOOTH   = GL2.GL_POINT_SMOOTH;
@@ -3044,8 +3033,7 @@ public class PGL {
     return gl2.glMapBuffer(target, access);
   }
 
-  public ByteBuffer mapBufferRange(int target, int offset, int length,
-                                   int access) {
+  public ByteBuffer mapBufferRange(int target, int offset, int length, int access) {
     if (gl2x != null) {
       return gl2x.glMapBufferRange(target, offset, length, access);
     } else {
@@ -3073,8 +3061,7 @@ public class PGL {
 
   // Reading Pixels
 
-  public void readPixels(int x, int y, int width, int height, int format,
-                         int type, Buffer buffer) {
+  public void readPixels(int x, int y, int width, int height, int format, int type, Buffer buffer) {
     gl.glReadPixels(x, y, width, height, format, type, buffer);
   }
 
@@ -3090,13 +3077,11 @@ public class PGL {
     gl2.glVertexAttrib2f(index, value0, value1);
   }
 
-  public void vertexAttrib3f(int index, float value0, float value1,
-                                        float value2){
+  public void vertexAttrib3f(int index, float value0, float value1, float value2) {
     gl2.glVertexAttrib3f(index, value0, value1, value2);
   }
 
-  public void vertexAttrib4f(int index, float value0, float value1,
-                                        float value2, float value3) {
+  public void vertexAttrib4f(int index, float value0, float value1, float value2, float value3) {
     gl2.glVertexAttrib4f(index, value0, value1, value2, value3);
   }
 
@@ -3116,13 +3101,11 @@ public class PGL {
     gl2.glVertexAttrib4fv(index, values);
   }
 
-  public void vertexAttribPointer(int index, int size, int type,
-                                  boolean normalized, int stride, int offset) {
+  public void vertexAttribPointer(int index, int size, int type, boolean normalized, int stride, int offset) {
     gl2.glVertexAttribPointer(index, size, type, normalized, stride, offset);
   }
 
-  public void vertexAttribPointer(int index, int size, int type,
-                                  boolean normalized, int stride, Buffer data) {
+  public void vertexAttribPointer(int index, int size, int type, boolean normalized, int stride, Buffer data) {
     gl2.glVertexAttribPointer(index, size, type, normalized, stride, data);
   }
 
@@ -3182,45 +3165,28 @@ public class PGL {
     gl.glActiveTexture(texture);
   }
 
-  public void texImage2D(int target, int level, int internalFormat,
-                         int width, int height, int border, int format,
-                         int type, Buffer data) {
-    gl.glTexImage2D(target, level, internalFormat,
-                    width, height, border, format, type, data);
+  public void texImage2D(int target, int level, int internalFormat, int width, int height, int border, int format, int type, Buffer data) {
+    gl.glTexImage2D(target, level, internalFormat, width, height, border, format, type, data);
   }
 
-  public void copyTexImage2D(int target, int level, int internalFormat,
-                         int x, int y, int width, int height, int border) {
-    gl.glCopyTexImage2D(target, level, internalFormat,
-                        x, y, width, height, border);
+  public void copyTexImage2D(int target, int level, int internalFormat, int x, int y, int width, int height, int border) {
+    gl.glCopyTexImage2D(target, level, internalFormat, x, y, width, height, border);
   }
 
-  public void texSubImage2D(int target, int level, int xOffset, int yOffset,
-                            int width, int height, int format,
-                            int type, Buffer data) {
-    gl.glTexSubImage2D(target, level, xOffset, yOffset,
-                       width, height, format, type, data);
+  public void texSubImage2D(int target, int level, int xOffset, int yOffset, int width, int height, int format, int type, Buffer data) {
+    gl.glTexSubImage2D(target, level, xOffset, yOffset, width, height, format, type, data);
   }
 
-  public void copyTexSubImage2D(int target, int level, int xOffset, int yOffset,
-                                int x, int y, int width, int height) {
-    gl.glCopyTexSubImage2D(target, level, x, y, xOffset, xOffset,
-                           width, height);
+  public void copyTexSubImage2D(int target, int level, int xOffset, int yOffset, int x, int y, int width, int height) {
+    gl.glCopyTexSubImage2D(target, level, x, y, xOffset, xOffset, width, height);
   }
 
-  public void compressedTexImage2D(int target, int level, int internalFormat,
-                                   int width, int height, int border,
-                                   int imageSize, Buffer data) {
-    gl.glCompressedTexImage2D(target, level, internalFormat,
-                              width, height, border, imageSize, data);
+  public void compressedTexImage2D(int target, int level, int internalFormat, int width, int height, int border, int imageSize, Buffer data) {
+    gl.glCompressedTexImage2D(target, level, internalFormat, width, height, border, imageSize, data);
   }
 
-  public void compressedTexSubImage2D(int target, int level,
-                                      int xOffset, int yOffset,
-                                      int width, int height, int format,
-                                      int imageSize, Buffer data) {
-    gl.glCompressedTexSubImage2D(target, level, xOffset, yOffset,
-                                 width, height, format, imageSize, data);
+  public void compressedTexSubImage2D(int target, int level, int xOffset, int yOffset, int width, int height, int format, int imageSize, Buffer data) {
+    gl.glCompressedTexSubImage2D(target, level, xOffset, yOffset, width, height, format, imageSize, data);
   }
 
   public void texParameteri(int target, int pname, int param) {
@@ -3280,24 +3246,23 @@ public class PGL {
     return gl2.glCreateShader(type);
   }
 
-  public void shaderSource(int id, String source) {
-    gl2.glShaderSource(id, 1, new String[] { source }, (int[]) null, 0);
+  public void shaderSource(int shader, String source) {
+    gl2.glShaderSource(shader, 1, new String[] { source }, (int[]) null, 0);
   }
 
-  public void compileShader(int id) {
-    gl2.glCompileShader(id);
+  public void compileShader(int shader) {
+    gl2.glCompileShader(shader);
   }
 
   public void releaseShaderCompiler() {
     gl2.glReleaseShaderCompiler();
   }
 
-  public void deleteShader(int id) {
-    gl2.glDeleteShader(id);
+  public void deleteShader(int shader) {
+    gl2.glDeleteShader(shader);
   }
 
-  public void shaderBinary(int count, IntBuffer shaders, int binaryFormat,
-                           Buffer binary, int length) {
+  public void shaderBinary(int count, IntBuffer shaders, int binaryFormat, Buffer binary, int length) {
     gl2.glShaderBinary(count, shaders, binaryFormat, binary, length);
   }
 
@@ -3325,28 +3290,34 @@ public class PGL {
     gl2.glDeleteProgram(program);
   }
 
-  public void getActiveAttrib(int program, int index, int bufSize,
-                              IntBuffer length, IntBuffer size, IntBuffer type,
-                              ByteBuffer name) {
-    gl2.glGetActiveAttrib(program, index, bufSize, length, size, type, name);
+  public void getActiveAttrib(int program, int index, int[] size, int[] type, String[] name) {
+    int[] tmp = {0, 0, 0};
+    byte[] namebuf = new byte[1024];
+    gl2.glGetActiveAttrib(program, index, 1024, tmp, 0, tmp, 1, tmp, 2, namebuf, 0);
+    if (size != null && size.length != 0) size[0] = tmp[1];
+    if (type != null && type.length != 0) type[0] = tmp[2];
+    if (name != null && name.length != 0) name[0] = new String(namebuf, 0, tmp[0]);
   }
 
-  public int getAttribLocation(int prog, String name) {
-    return gl2.glGetAttribLocation(prog, name);
+  public int getAttribLocation(int program, String name) {
+    return gl2.glGetAttribLocation(program, name);
   }
 
   public void bindAttribLocation(int program, int index, String name) {
     gl2.glBindAttribLocation(program, index, name);
   }
 
-  public int getUniformLocation(int prog, String name) {
-    return gl2.glGetUniformLocation(prog, name);
+  public int getUniformLocation(int program, String name) {
+    return gl2.glGetUniformLocation(program, name);
   }
 
-  public void getActiveUniform(int program, int index, int bufSize,
-                               IntBuffer length, IntBuffer size, IntBuffer type,
-                               ByteBuffer name) {
-    gl2.glGetActiveUniform(program, index, bufSize, length, size, type, name);
+  public void getActiveUniform(int program, int index, int[] size,int[] type, String[] name) {
+    int[] tmp= {0, 0, 0};
+    byte[] namebuf = new byte[1024];
+    gl2.glGetActiveUniform(program, index, 1024, tmp, 0, tmp, 1, tmp, 2, namebuf, 0);
+    if (size != null && size.length != 0) size[0] = tmp[1];
+    if (type != null && type.length != 0) type[0] = tmp[2];
+    if (name != null && name.length != 0) name[0] = new String(namebuf, 0, tmp[0]);
   }
 
   public void uniform1i(int location, int value) {
@@ -3361,8 +3332,7 @@ public class PGL {
     gl2.glUniform3i(location, value0, value1, value2);
   }
 
-  public void uniform4i(int location, int value0, int value1, int value2,
-                                      int value3) {
+  public void uniform4i(int location, int value0, int value1, int value2, int value3) {
     gl2.glUniform4i(location, value0, value1, value2, value3);
   }
 
@@ -3374,13 +3344,11 @@ public class PGL {
     gl2.glUniform2f(location, value0, value1);
   }
 
-  public void uniform3f(int location, float value0, float value1,
-                                      float value2) {
+  public void uniform3f(int location, float value0, float value1, float value2) {
     gl2.glUniform3f(location, value0, value1, value2);
   }
 
-  public void uniform4f(int location, float value0, float value1, float value2,
-                                      float value3) {
+  public void uniform4f(int location, float value0, float value1, float value2, float value3) {
     gl2.glUniform4f(location, value0, value1, value2, value3);
   }
 
@@ -3416,23 +3384,20 @@ public class PGL {
     gl2.glUniform4fv(location, count, v);
   }
 
-  public void uniformMatrix2fv(int location, int count, boolean transpose,
-                                             FloatBuffer mat) {
+  public void uniformMatrix2fv(int location, int count, boolean transpose, FloatBuffer mat) {
     gl2.glUniformMatrix2fv(location, count, transpose, mat);
   }
 
-  public void uniformMatrix3fv(int location, int count, boolean transpose,
-                                             FloatBuffer mat) {
+  public void uniformMatrix3fv(int location, int count, boolean transpose, FloatBuffer mat) {
     gl2.glUniformMatrix3fv(location, count, transpose, mat);
   }
 
-  public void uniformMatrix4fv(int location, int count, boolean transpose,
-                                             FloatBuffer mat) {
+  public void uniformMatrix4fv(int location, int count, boolean transpose, FloatBuffer mat) {
     gl2.glUniformMatrix4fv(location, count, transpose, mat);
   }
 
-  public void validateProgram(int prog) {
-    gl2.glValidateProgram(prog);
+  public void validateProgram(int program) {
+    gl2.glValidateProgram(program);
   }
 
   public boolean isShader(int shader) {
@@ -3443,8 +3408,7 @@ public class PGL {
     gl2.glGetShaderiv(shader, pname, params);
   }
 
-  public void getAttachedShaders(int program, int maxCount, IntBuffer count,
-                                              IntBuffer shaders) {
+  public void getAttachedShaders(int program, int maxCount, IntBuffer count, IntBuffer shaders) {
     gl2.glGetAttachedShaders(program, maxCount, count, shaders);
   }
 
@@ -3458,13 +3422,14 @@ public class PGL {
     return new String(log);
   }
 
-  public void getShaderSource(int shader, int bufSize, IntBuffer length,
-                                          ByteBuffer source) {
-    gl2.glGetShaderSource(shader, bufSize, length, source);
+  public String getShaderSource(int shader) {
+    int[] len = {0};
+    byte[] buf = new byte[1024];
+    gl2.glGetShaderSource(shader, 1024, len, 0, buf, 0);
+    return new String(buf, 0, len[0]);
   }
 
-  public void getShaderPrecisionFormat(int shaderType, int precisionType,
-                                       IntBuffer range, IntBuffer precision) {
+  public void getShaderPrecisionFormat(int shaderType, int precisionType, IntBuffer range, IntBuffer precision) {
     gl2.glGetShaderPrecisionFormat(shaderType, precisionType, range, precision);
   }
 
@@ -3477,7 +3442,7 @@ public class PGL {
   }
 
   public void getVertexAttribPointerv() {
-    throw new RuntimeException("Function glGetVertexAttribPointerv() is not available");
+    throw new RuntimeException(String.format(MISSING_GLFUNC_ERROR, "glGetVertexAttribPointerv()"));
   }
 
   public void getUniformfv(int program, int location, FloatBuffer params) {
@@ -3492,18 +3457,18 @@ public class PGL {
     return gl2.glIsProgram(program);
   }
 
-  public void getProgramiv(int prog, int pname, IntBuffer params) {
-    gl2.glGetProgramiv(prog, pname, params);
+  public void getProgramiv(int program, int pname, IntBuffer params) {
+    gl2.glGetProgramiv(program, pname, params);
   }
 
-  public String getProgramInfoLog(int prog) {
+  public String getProgramInfoLog(int program) {
     int[] val = { 0 };
-    gl2.glGetShaderiv(prog, GL2.GL_INFO_LOG_LENGTH, val, 0);
+    gl2.glGetShaderiv(program, GL2.GL_INFO_LOG_LENGTH, val, 0);
     int length = val[0];
 
     if (0 < length) {
       byte[] log = new byte[length];
-      gl2.glGetProgramInfoLog(prog, length, val, 0, log, 0);
+      gl2.glGetProgramInfoLog(program, length, val, 0, log, 0);
       return new String(log);
     } else {
       return "Unknow error";
@@ -3554,8 +3519,7 @@ public class PGL {
     gl.glBlendFunc(src, dst);
   }
 
-  public void blendFuncSeparate(int srcRGB, int dstRGB,
-                                int srcAlpha, int dstAlpha) {
+  public void blendFuncSeparate(int srcRGB, int dstRGB, int srcAlpha, int dstAlpha) {
     gl.glBlendFuncSeparate(srcRGB, dstRGB, srcAlpha, dstAlpha);
   }
 
@@ -3633,19 +3597,15 @@ public class PGL {
     gl.glGenRenderbuffers(n, renderbuffers);
   }
 
-  public void renderbufferStorage(int target, int internalFormat,
-                                  int width, int height) {
+  public void renderbufferStorage(int target, int internalFormat, int width, int height) {
     gl.glRenderbufferStorage(target, internalFormat, width, height);
   }
 
-  public void framebufferRenderbuffer(int target, int attachment,
-                                      int rendbuferfTarget, int renderbuffer) {
-    gl.glFramebufferRenderbuffer(target, attachment, rendbuferfTarget,
-                                 renderbuffer);
+  public void framebufferRenderbuffer(int target, int attachment, int rendbuferfTarget, int renderbuffer) {
+    gl.glFramebufferRenderbuffer(target, attachment, rendbuferfTarget, renderbuffer);
   }
 
-  public void framebufferTexture2D(int target, int attachment, int texTarget,
-                                   int texture, int level) {
+  public void framebufferTexture2D(int target, int attachment, int texTarget, int texture, int level) {
     gl.glFramebufferTexture2D(target, attachment, texTarget, texture, level);
   }
 
@@ -3657,35 +3617,27 @@ public class PGL {
     return gl2.glIsFramebuffer(framebuffer);
   }
 
-  public void getFramebufferAttachmentParameteriv(int target, int attachment,
-                                                  int pname, IntBuffer params) {
-    gl2.glGetFramebufferAttachmentParameteriv(target, attachment, pname,
-                                              params);
+  public void getFramebufferAttachmentParameteriv(int target, int attachment, int pname, IntBuffer params) {
+    gl2.glGetFramebufferAttachmentParameteriv(target, attachment, pname, params);
   }
 
   public boolean isRenderbuffer(int renderbuffer) {
     return gl2.glIsRenderbuffer(renderbuffer);
   }
 
-  public void getRenderbufferParameteriv(int target, int pname,
-                                         IntBuffer params) {
+  public void getRenderbufferParameteriv(int target, int pname, IntBuffer params) {
     gl2.glGetRenderbufferParameteriv(target, pname, params);
   }
 
-  public void blitFramebuffer(int srcX0, int srcY0, int srcX1, int srcY1,
-                              int dstX0, int dstY0, int dstX1, int dstY1,
-                              int mask, int filter) {
+  public void blitFramebuffer(int srcX0, int srcY0, int srcX1, int srcY1, int dstX0, int dstY0, int dstX1, int dstY1, int mask, int filter) {
     if (gl2x != null) {
-      gl2x.glBlitFramebuffer(srcX0, srcY0, srcX1, srcY1,
-                             dstX0, dstY0, dstX1, dstY1, mask, filter);
+      gl2x.glBlitFramebuffer(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);
     }
   }
 
-  public void renderbufferStorageMultisample(int target, int samples,
-                                             int format, int width, int height){
+  public void renderbufferStorageMultisample(int target, int samples, int format, int width, int height) {
     if (gl2x != null) {
-      gl2x.glRenderbufferStorageMultisample(target, samples, format,
-                                            width, height);
+      gl2x.glRenderbufferStorageMultisample(target, samples, format, width, height);
     }
   }
 
