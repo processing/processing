@@ -77,15 +77,24 @@ import processing.opengl.Texture;
  */
 @SuppressWarnings("static-access")
 public class PGL extends processing.opengl.PGL {
+  ///////////////////////////////////////////////////////////
 
+  // Public members to access the underlying GL objects and context
+  
+  /** GLU interface **/
+  public static GLU glu;
+
+  /** The canvas where OpenGL rendering takes place */
+  public static Canvas canvas;
+  
   ///////////////////////////////////////////////////////////
 
   // Parameters
 
-  public static boolean FORCE_SCREEN_FBO             = false;
-  public static final boolean USE_DIRECT_BUFFERS     = true;
-  public static final int MIN_DIRECT_BUFFER_SIZE     = 16;
-  public static final boolean SAVE_SURFACE_TO_PIXELS = true;
+  protected static boolean FORCE_SCREEN_FBO             = false;
+  protected static final boolean USE_DIRECT_BUFFERS     = true;
+  protected static final int MIN_DIRECT_BUFFER_SIZE     = 16;
+  protected static final boolean SAVE_SURFACE_TO_PIXELS = true;
 
   /** Enables/disables mipmap use. **/
   protected static final boolean MIPMAPS_ENABLED = true;
@@ -172,183 +181,6 @@ public class PGL extends processing.opengl.PGL {
     "precision mediump float;\n" +
     "precision mediump int;\n" +
     "#endif\n";
-
-  ///////////////////////////////////////////////////////////
-
-  // OpenGL constants
-
-  public static final int FALSE = GL11.GL_FALSE;
-  public static final int TRUE  = GL11.GL_TRUE;
-
-  public static final int LESS      = GL11.GL_LESS;
-  public static final int LEQUAL    = GL11.GL_LEQUAL;
-
-  public static final int CCW       = GL11.GL_CCW;
-  public static final int CW        = GL11.GL_CW;
-
-  public static final int CULL_FACE      = GL11.GL_CULL_FACE;
-  public static final int FRONT          = GL11.GL_FRONT;
-  public static final int BACK           = GL11.GL_BACK;
-  public static final int FRONT_AND_BACK = GL11.GL_FRONT_AND_BACK;
-
-  public static final int VIEWPORT = GL11.GL_VIEWPORT;
-
-  public static final int SCISSOR_TEST    = GL11.GL_SCISSOR_TEST;
-  public static final int DEPTH_TEST      = GL11.GL_DEPTH_TEST;
-  public static final int DEPTH_WRITEMASK = GL11.GL_DEPTH_WRITEMASK;
-
-  public static final int COLOR_BUFFER_BIT   = GL11.GL_COLOR_BUFFER_BIT;
-  public static final int DEPTH_BUFFER_BIT   = GL11.GL_DEPTH_BUFFER_BIT;
-  public static final int STENCIL_BUFFER_BIT = GL11.GL_STENCIL_BUFFER_BIT;
-
-  public static final int FUNC_ADD              = GL14.GL_FUNC_ADD;
-  public static final int FUNC_MIN              = GL14.GL_MIN;
-  public static final int FUNC_MAX              = GL14.GL_MAX;
-  public static final int FUNC_REVERSE_SUBTRACT = GL14.GL_FUNC_REVERSE_SUBTRACT;
-
-  public static final int TEXTURE_2D        = GL11.GL_TEXTURE_2D;
-  public static final int TEXTURE_RECTANGLE = GL31.GL_TEXTURE_RECTANGLE;
-
-  public static final int TEXTURE_BINDING_2D        = GL11.GL_TEXTURE_BINDING_2D;
-  public static final int TEXTURE_BINDING_RECTANGLE =
-    GL31.GL_TEXTURE_BINDING_RECTANGLE;
-
-  public static final int RGB            = GL11.GL_RGB;
-  public static final int RGBA           = GL11.GL_RGBA;
-  public static final int ALPHA          = GL11.GL_ALPHA;
-  public static final int UNSIGNED_INT   = GL11.GL_UNSIGNED_INT;
-  public static final int UNSIGNED_BYTE  = GL11.GL_UNSIGNED_BYTE;
-  public static final int UNSIGNED_SHORT = GL11.GL_UNSIGNED_SHORT;
-  public static final int FLOAT          = GL11.GL_FLOAT;
-
-  public static final int NEAREST               = GL11.GL_NEAREST;
-  public static final int LINEAR                = GL11.GL_LINEAR;
-  public static final int LINEAR_MIPMAP_NEAREST = GL11.GL_LINEAR_MIPMAP_NEAREST;
-  public static final int LINEAR_MIPMAP_LINEAR  = GL11.GL_LINEAR_MIPMAP_LINEAR;
-
-  public static final int TEXTURE_MAX_ANISOTROPY =
-    EXTTextureFilterAnisotropic.GL_TEXTURE_MAX_ANISOTROPY_EXT;
-  public static final int MAX_TEXTURE_MAX_ANISOTROPY =
-    EXTTextureFilterAnisotropic.GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT;
-
-  public static final int CLAMP_TO_EDGE = GL12.GL_CLAMP_TO_EDGE;
-  public static final int REPEAT        = GL11.GL_REPEAT;
-
-  public static final int RGBA8            = GL11.GL_RGBA8;
-  public static final int DEPTH24_STENCIL8 = GL30.GL_DEPTH24_STENCIL8;
-
-  public static final int DEPTH_COMPONENT   = GL11.GL_DEPTH_COMPONENT;
-  public static final int DEPTH_COMPONENT16 = GL14.GL_DEPTH_COMPONENT16;
-  public static final int DEPTH_COMPONENT24 = GL14.GL_DEPTH_COMPONENT24;
-  public static final int DEPTH_COMPONENT32 = GL14.GL_DEPTH_COMPONENT32;
-
-  public static final int STENCIL_INDEX  = GL11.GL_STENCIL_INDEX;
-  public static final int STENCIL_INDEX1 = GL30.GL_STENCIL_INDEX1;
-  public static final int STENCIL_INDEX4 = GL30.GL_STENCIL_INDEX4;
-  public static final int STENCIL_INDEX8 = GL30.GL_STENCIL_INDEX8;
-
-  public static final int ARRAY_BUFFER         = GL15.GL_ARRAY_BUFFER;
-  public static final int ELEMENT_ARRAY_BUFFER = GL15.GL_ELEMENT_ARRAY_BUFFER;
-
-  public static final int SAMPLES = GL13.GL_SAMPLES;
-
-  public static final int FRAMEBUFFER_COMPLETE                      =
-    GL30.GL_FRAMEBUFFER_COMPLETE;
-  public static final int FRAMEBUFFER_INCOMPLETE_ATTACHMENT         =
-    GL30.GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT;
-  public static final int FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT =
-    GL30.GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT;
-  public static final int FRAMEBUFFER_INCOMPLETE_DIMENSIONS         =
-    EXTFramebufferObject.GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT;
-  public static final int FRAMEBUFFER_INCOMPLETE_FORMATS            =
-    EXTFramebufferObject.GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT;
-  public static final int FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER        =
-    GL30.GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER;
-  public static final int FRAMEBUFFER_INCOMPLETE_READ_BUFFER        =
-    GL30.GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER;
-  public static final int FRAMEBUFFER_UNSUPPORTED                   =
-    GL30.GL_FRAMEBUFFER_UNSUPPORTED;
-
-  public static final int STATIC_DRAW  = GL15.GL_STATIC_DRAW;
-  public static final int DYNAMIC_DRAW = GL15.GL_DYNAMIC_DRAW;
-  public static final int STREAM_DRAW  = GL15.GL_STREAM_DRAW;
-
-  public static final int READ_ONLY  = GL15.GL_READ_ONLY;
-  public static final int WRITE_ONLY = GL15.GL_WRITE_ONLY;
-  public static final int READ_WRITE = GL15.GL_READ_WRITE;
-
-  public static final int TRIANGLE_FAN   = GL11.GL_TRIANGLE_FAN;
-  public static final int TRIANGLE_STRIP = GL11.GL_TRIANGLE_STRIP;
-  public static final int TRIANGLES      = GL11.GL_TRIANGLES;
-
-  public static final int VENDOR                   = GL11.GL_VENDOR;
-  public static final int RENDERER                 = GL11.GL_RENDERER;
-  public static final int VERSION                  = GL11.GL_VERSION;
-  public static final int EXTENSIONS               = GL11.GL_EXTENSIONS;
-  public static final int SHADING_LANGUAGE_VERSION =
-    GL20.GL_SHADING_LANGUAGE_VERSION;
-
-  public static final int MAX_TEXTURE_SIZE         = GL11.GL_MAX_TEXTURE_SIZE;
-  public static final int MAX_SAMPLES              = GL30.GL_MAX_SAMPLES;
-  public static final int ALIASED_LINE_WIDTH_RANGE =
-    GL12.GL_ALIASED_LINE_WIDTH_RANGE;
-  public static final int ALIASED_POINT_SIZE_RANGE =
-    GL12.GL_ALIASED_POINT_SIZE_RANGE;
-  public static final int DEPTH_BITS = GL11.GL_DEPTH_BITS;
-  public static final int STENCIL_BITS = GL11.GL_STENCIL_BITS;
-
-  public static final int TESS_WINDING_NONZERO = GLU.GLU_TESS_WINDING_NONZERO;
-  public static final int TESS_WINDING_ODD     = GLU.GLU_TESS_WINDING_ODD;
-
-  public static final int TEXTURE0           = GL13.GL_TEXTURE0;
-  public static final int TEXTURE1           = GL13.GL_TEXTURE1;
-  public static final int TEXTURE2           = GL13.GL_TEXTURE2;
-  public static final int TEXTURE3           = GL13.GL_TEXTURE3;
-  public static final int TEXTURE_MIN_FILTER = GL11.GL_TEXTURE_MIN_FILTER;
-  public static final int TEXTURE_MAG_FILTER = GL11.GL_TEXTURE_MAG_FILTER;
-  public static final int TEXTURE_WRAP_S     = GL11.GL_TEXTURE_WRAP_S;
-  public static final int TEXTURE_WRAP_T     = GL11.GL_TEXTURE_WRAP_T;
-
-  public static final int BLEND               = GL11.GL_BLEND;
-  public static final int ONE                 = GL11.GL_ONE;
-  public static final int ZERO                = GL11.GL_ZERO;
-  public static final int SRC_ALPHA           = GL11.GL_SRC_ALPHA;
-  public static final int DST_ALPHA           = GL11.GL_DST_ALPHA;
-  public static final int ONE_MINUS_SRC_ALPHA = GL11.GL_ONE_MINUS_SRC_ALPHA;
-  public static final int ONE_MINUS_DST_COLOR = GL11.GL_ONE_MINUS_DST_COLOR;
-  public static final int ONE_MINUS_SRC_COLOR = GL11.GL_ONE_MINUS_SRC_COLOR;
-  public static final int DST_COLOR           = GL11.GL_DST_COLOR;
-  public static final int SRC_COLOR           = GL11.GL_SRC_COLOR;
-
-  public static final int FRAMEBUFFER        = GL30.GL_FRAMEBUFFER;
-  public static final int COLOR_ATTACHMENT0  = GL30.GL_COLOR_ATTACHMENT0;
-  public static final int COLOR_ATTACHMENT1  = GL30.GL_COLOR_ATTACHMENT1;
-  public static final int COLOR_ATTACHMENT2  = GL30.GL_COLOR_ATTACHMENT2;
-  public static final int COLOR_ATTACHMENT3  = GL30.GL_COLOR_ATTACHMENT3;
-  public static final int RENDERBUFFER       = GL30.GL_RENDERBUFFER;
-  public static final int DEPTH_ATTACHMENT   = GL30.GL_DEPTH_ATTACHMENT;
-  public static final int STENCIL_ATTACHMENT = GL30.GL_STENCIL_ATTACHMENT;
-  public static final int READ_FRAMEBUFFER   = GL30.GL_READ_FRAMEBUFFER;
-  public static final int DRAW_FRAMEBUFFER   = GL30.GL_DRAW_FRAMEBUFFER;
-
-  public static final int VERTEX_SHADER        = GL20.GL_VERTEX_SHADER;
-  public static final int FRAGMENT_SHADER      = GL20.GL_FRAGMENT_SHADER;
-  public static final int INFO_LOG_LENGTH      = GL20.GL_INFO_LOG_LENGTH;
-  public static final int SHADER_SOURCE_LENGTH = GL20.GL_SHADER_SOURCE_LENGTH;
-  public static final int COMPILE_STATUS       = GL20.GL_COMPILE_STATUS;
-  public static final int LINK_STATUS          = GL20.GL_LINK_STATUS;
-  public static final int VALIDATE_STATUS      = GL20.GL_VALIDATE_STATUS;
-
-  public static final int MULTISAMPLE    = GL13.GL_MULTISAMPLE;
-  public static final int POINT_SMOOTH   = GL11.GL_POINT_SMOOTH;
-  public static final int LINE_SMOOTH    = GL11.GL_LINE_SMOOTH;
-  public static final int POLYGON_SMOOTH = GL11.GL_POLYGON_SMOOTH;
-
-  /** GLU interface **/
-  public static GLU glu;
-
-  /** The canvas where OpenGL rendering takes place */
-  public static Canvas canvas;
 
   /** OpenGL thread */
   protected static Thread glThread;
@@ -466,7 +298,22 @@ public class PGL extends processing.opengl.PGL {
 
   ///////////////////////////////////////////////////////////
 
+  // Error messages
+
+  protected static final String MISSING_FBO_ERROR =
+    "Framebuffer objects are not supported by this hardware (or driver)";
+
+  protected static final String MISSING_GLSL_ERROR =
+    "GLSL shaders are not supported by this hardware (or driver)";
+
+  protected static final String MISSING_GLFUNC_ERROR =
+    "GL function %1$s is not available on this hardware (or driver)";
+  
+  
+  ///////////////////////////////////////////////////////////
+
   // Initialization, finalization
+  
   
   public PGL(PGraphicsOpenGL pg) {
     this.pg = pg;
@@ -1020,681 +867,6 @@ public class PGL extends processing.opengl.PGL {
   protected boolean fboLayerInUse(boolean clear0) {
     boolean cond = !clear0 || FORCE_SCREEN_FBO || 1 < numSamples;
     return cond && glColorFbo.get(0) != 0;
-  }
-
-
-  //////////////////////////////////////////////////////////////////////////////
-
-  // Caps query
-
-
-  public String getString(int name) {
-    return GL11.glGetString(name);
-  }
-
-
-  public void getIntegerv(int name, IntBuffer values) {
-    if (-1 < name) {
-      GL11.glGetInteger(name, values);
-    } else {
-      fillIntBuffer(values, 0, values.capacity() - 1, 0);
-    }
-  }
-
-
-  public void getFloatv(int name, FloatBuffer values) {
-    if (-1 < name) {
-      GL11.glGetFloat(name, values);
-    } else {
-      fillFloatBuffer(values, 0, values.capacity() - 1, 0);
-    }
-  }
-
-
-  public void getBooleanv(int name, IntBuffer values) {
-    if (-1 < name) {
-      if (byteBuffer.capacity() < values.capacity()) {
-        byteBuffer = allocateDirectByteBuffer(values.capacity());
-      }
-      GL11.glGetBoolean(name, byteBuffer);
-      for (int i = 0; i < values.capacity(); i++) {
-        values.put(i, byteBuffer.get(i));
-      }
-    } else {
-      fillIntBuffer(values, 0, values.capacity() - 1, 0);
-    }
-  }
-
-
-  ///////////////////////////////////////////////////////////
-
-  // Enable/disable caps
-
-
-  public void enable(int cap) {
-    if (-1 < cap) {
-      GL11.glEnable(cap);
-    }
-  }
-
-
-  public void disable(int cap) {
-    if (-1 < cap) {
-      GL11.glDisable(cap);
-    }
-  }
-
-
-  ///////////////////////////////////////////////////////////
-
-  // Render control
-
-
-  public void flush() {
-    GL11.glFlush();
-  }
-
-
-  public void finish() {
-    GL11.glFinish();
-  }
-
-
-  ///////////////////////////////////////////////////////////
-
-  // Error handling
-
-
-  public int getError() {
-    return GL11.glGetError();
-  }
-
-
-  public String errorString(int err) {
-    return glu.gluErrorString(err);
-  }
-
-
-  ///////////////////////////////////////////////////////////
-
-  // Rendering options
-
-
-  public void frontFace(int mode) {
-    GL11.glFrontFace(mode);
-  }
-
-
-  public void cullFace(int mode) {
-    GL11.glCullFace(mode);
-  }
-
-
-  public void depthMask(boolean flag) {
-    GL11.glDepthMask(flag);
-  }
-
-
-  public void depthFunc(int func) {
-    GL11.glDepthFunc(func);
-  }
-
-
-  ///////////////////////////////////////////////////////////
-
-  // Textures
-
-
-  public void genTextures(int n, IntBuffer ids) {
-    GL11.glGenTextures(ids);
-  }
-
-
-  public void deleteTextures(int n, IntBuffer ids) {
-    GL11.glDeleteTextures(ids);
-  }
-
-
-  public void activeTexture(int unit) {
-    GL13.glActiveTexture(unit);
-  }
-
-
-  public void bindTexture(int target, int id) {
-    GL11.glBindTexture(target, id);
-    if (target == TEXTURE_2D) {
-      boundTextures[0] = id;
-    } else if (target == TEXTURE_RECTANGLE) {
-      boundTextures[1] = id;
-    }
-  }
-
-
-  public void texImage2D(int target, int level, int internalFormat,
-                         int width, int height, int border, int format,
-                         int type, Buffer data) {
-    GL11.glTexImage2D(target, level, internalFormat,
-                      width, height, border, format, type, (IntBuffer)data);
-  }
-
-
-  public void texSubImage2D(int target, int level, int xOffset, int yOffset,
-                            int width, int height, int format,
-                            int type, Buffer data) {
-    GL11.glTexSubImage2D(target, level, xOffset, yOffset,
-                       width, height, format, type, (IntBuffer)data);
-  }
-
-
-  public void texParameteri(int target, int param, int value) {
-    GL11.glTexParameteri(target, param, value);
-  }
-
-
-  public void texParameterf(int target, int param, float value) {
-    GL11.glTexParameterf(target, param, value);
-  }
-
-
-  public void getTexParameteriv(int target, int param, IntBuffer values) {
-    GL11.glGetTexParameter(target, param, values);
-  }
-
-
-  public void generateMipmap(int target) {
-    GL30.glGenerateMipmap(target);
-  }
-
-
-  ///////////////////////////////////////////////////////////
-
-  // Vertex Buffers
-
-
-  public void genBuffers(int n, IntBuffer ids) {
-    GL15.glGenBuffers(ids);
-  }
-
-
-  public void deleteBuffers(int n, IntBuffer ids) {
-    GL15.glDeleteBuffers(ids);
-  }
-
-
-  public void bindBuffer(int target, int id) {
-    GL15.glBindBuffer(target, id);
-  }
-
-
-  public void bufferData(int target, int size, Buffer data, int usage) {
-    if (data == null) {
-      FloatBuffer empty = BufferUtils.createFloatBuffer(size);
-      GL15.glBufferData(target, empty, usage);
-    } else {
-      if (data instanceof ByteBuffer) {
-        GL15.glBufferData(target, (ByteBuffer)data, usage);
-      } else if (data instanceof ShortBuffer) {
-        GL15.glBufferData(target, (ShortBuffer)data, usage);
-      } else if (data instanceof IntBuffer) {
-        GL15.glBufferData(target, (IntBuffer)data, usage);
-      } else if (data instanceof FloatBuffer) {
-        GL15.glBufferData(target, (FloatBuffer)data, usage);
-      }
-    }
-  }
-
-
-  public void bufferSubData(int target, int offset, int size, Buffer data) {
-    if (data instanceof ByteBuffer) {
-      GL15.glBufferSubData(target, offset, (ByteBuffer)data);
-    } else if (data instanceof ShortBuffer) {
-      GL15.glBufferSubData(target, offset, (ShortBuffer)data);
-    } else if (data instanceof IntBuffer) {
-      GL15.glBufferSubData(target, offset, (IntBuffer)data);
-    } else if (data instanceof FloatBuffer) {
-      GL15.glBufferSubData(target, offset, (FloatBuffer)data);
-    }
-  }
-
-
-  public void drawArrays(int mode, int first, int count) {
-    GL11.glDrawArrays(mode, first, count);
-  }
-
-
-  public void drawElements(int mode, int count, int type, int offset) {
-    GL11.glDrawElements(mode, count, type, offset);
-  }
-
-
-  public void enableVertexAttribArray(int loc) {
-    GL20.glEnableVertexAttribArray(loc);
-  }
-
-
-  public void disableVertexAttribArray(int loc) {
-    GL20.glDisableVertexAttribArray(loc);
-  }
-
-
-  public void vertexAttribPointer(int loc, int size, int type,
-                                  boolean normalized, int stride, int offset) {
-    GL20.glVertexAttribPointer(loc, size, type, normalized, stride, offset);
-  }
-
-
-  public void vertexAttribPointer(int loc, int size, int type,
-                                  boolean normalized, int stride, Buffer data) {
-    if (type == UNSIGNED_INT) {
-      GL20.glVertexAttribPointer(loc, size, true, normalized, stride, (IntBuffer)data);
-    } else if (type == UNSIGNED_BYTE) {
-      GL20.glVertexAttribPointer(loc, size, true, normalized, stride, (ByteBuffer)data);
-    } else if (type == UNSIGNED_SHORT) {
-      GL20.glVertexAttribPointer(loc, size, true, normalized, stride, (ShortBuffer)data);
-    } else if (type == FLOAT) {
-      GL20.glVertexAttribPointer(loc, size, normalized, stride, (FloatBuffer)data);
-    }
-  }
-
-
-  public ByteBuffer mapBuffer(int target, int access) {
-    return GL15.glMapBuffer(target, access, null);
-  }
-
-
-  public ByteBuffer mapBufferRange(int target, int offset, int length,
-                                   int access) {
-    return GL30.glMapBufferRange(target, offset, length, access, null);
-  }
-
-
-  public void unmapBuffer(int target) {
-    GL15.glUnmapBuffer(target);
-  }
-
-
-  ///////////////////////////////////////////////////////////
-
-  // Framebuffers, renderbuffers
-
-
-  public void genFramebuffers(int n, IntBuffer ids) {
-    GL30.glGenFramebuffers(ids);
-  }
-
-
-  public void deleteFramebuffers(int n, IntBuffer ids) {
-    GL30.glDeleteFramebuffers(ids);
-  }
-
-
-  public void genRenderbuffers(int n, IntBuffer ids) {
-    GL30.glGenRenderbuffers(ids);
-  }
-
-
-  public void deleteRenderbuffers(int n, IntBuffer ids) {
-    GL30.glDeleteRenderbuffers(ids);
-  }
-
-
-  public void bindFramebuffer(int target, int id) {
-    GL30.glBindFramebuffer(target, id);
-  }
-
-
-  public void blitFramebuffer(int srcX0, int srcY0, int srcX1, int srcY1,
-                              int dstX0, int dstY0, int dstX1, int dstY1,
-                              int mask, int filter) {
-    GL30.glBlitFramebuffer(srcX0, srcY0, srcX1, srcY1,
-                           dstX0, dstY0, dstX1, dstY1, mask, filter);
-  }
-
-
-  public void framebufferTexture2D(int target, int attachment, int texTarget,
-                                   int texId, int level) {
-    GL30.glFramebufferTexture2D(target, attachment, texTarget, texId, level);
-  }
-
-
-  public void bindRenderbuffer(int target, int id) {
-    GL30.glBindRenderbuffer(target, id);
-  }
-
-
-  public void renderbufferStorageMultisample(int target, int samples,
-                                             int format, int width, int height){
-    GL30.glRenderbufferStorageMultisample(target, samples, format,
-                                          width, height);
-  }
-
-
-  public void renderbufferStorage(int target, int format,
-                                  int width, int height) {
-    GL30.glRenderbufferStorage(target, format, width, height);
-  }
-
-
-  public void framebufferRenderbuffer(int target, int attachment,
-                                      int rendbufTarget, int rendbufId) {
-    GL30.glFramebufferRenderbuffer(target, attachment, rendbufTarget, rendbufId);
-  }
-
-
-  public int checkFramebufferStatus(int target) {
-    return GL30.glCheckFramebufferStatus(target);
-  }
-
-
-  ///////////////////////////////////////////////////////////
-
-  // Shaders
-
-
-  public int createProgram() {
-    return GL20.glCreateProgram();
-  }
-
-
-  public void deleteProgram(int id) {
-    GL20.glDeleteProgram(id);
-  }
-
-
-  public int createShader(int type) {
-    return GL20.glCreateShader(type);
-  }
-
-
-  public void deleteShader(int id) {
-    GL20.glDeleteShader(id);
-  }
-
-
-  public void linkProgram(int prog) {
-    GL20.glLinkProgram(prog);
-  }
-
-
-  public void validateProgram(int prog) {
-    GL20.glValidateProgram(prog);
-  }
-
-
-  public void useProgram(int prog) {
-    GL20.glUseProgram(prog);
-  }
-
-
-  public int getAttribLocation(int prog, String name) {
-    return GL20.glGetAttribLocation(prog, name);
-  }
-
-
-  public int getUniformLocation(int prog, String name) {
-    return GL20.glGetUniformLocation(prog, name);
-  }
-
-
-  public void uniform1i(int loc, int value) {
-    GL20.glUniform1i(loc, value);
-  }
-
-
-  public void uniform2i(int loc, int value0, int value1) {
-    GL20.glUniform2i(loc, value0, value1);
-  }
-
-
-  public void uniform3i(int loc, int value0, int value1, int value2) {
-    GL20.glUniform3i(loc, value0, value1, value2);
-  }
-
-
-  public void uniform4i(int loc, int value0, int value1, int value2,
-                                 int value3) {
-    GL20.glUniform4i(loc, value0, value1, value2, value3);
-  }
-
-
-  public void uniform1f(int loc, float value) {
-    GL20.glUniform1f(loc, value);
-  }
-
-
-  public void uniform2f(int loc, float value0, float value1) {
-    GL20.glUniform2f(loc, value0, value1);
-  }
-
-
-  public void uniform3f(int loc, float value0, float value1, float value2) {
-    GL20.glUniform3f(loc, value0, value1, value2);
-  }
-
-
-  public void uniform4f(int loc, float value0, float value1, float value2,
-                                 float value3) {
-    GL20.glUniform4f(loc, value0, value1, value2, value3);
-  }
-
-
-  public void uniform1iv(int loc, int count, IntBuffer v) {
-    v.limit(count);
-    GL20.glUniform1(loc, v);
-    v.clear();
-  }
-
-
-  public void uniform2iv(int loc, int count, IntBuffer v) {
-    v.limit(2 * count);
-    GL20.glUniform2(loc, v);
-    v.clear();
-  }
-
-
-  public void uniform3iv(int loc, int count, IntBuffer v) {
-    v.limit(3 * count);
-    GL20.glUniform3(loc, v);
-    v.clear();
-  }
-
-
-  public void uniform4iv(int loc, int count, IntBuffer v) {
-    v.limit(4 * count);
-    GL20.glUniform4(loc, v);
-    v.clear();
-  }
-
-
-  public void uniform1fv(int loc, int count, FloatBuffer v) {
-    v.limit(count);
-    GL20.glUniform1(loc, v);
-    v.clear();
-  }
-
-
-  public void uniform2fv(int loc, int count, FloatBuffer v) {
-    v.limit(2 * count);
-    GL20.glUniform2(loc, v);
-    v.clear();
-  }
-
-
-  public void uniform3fv(int loc, int count, FloatBuffer v) {
-    v.limit(3 * count);
-    GL20.glUniform3(loc, v);
-    v.clear();
-  }
-
-
-  public void uniform4fv(int loc, int count, FloatBuffer v) {
-    v.limit(4 * count);
-    GL20.glUniform4(loc, v);
-    v.clear();
-  }
-
-
-  public void uniformMatrix2fv(int loc, int count, boolean transpose,
-                               FloatBuffer mat) {
-    mat.limit(4);
-    GL20.glUniformMatrix2(loc, transpose, mat);
-    mat.clear();
-  }
-
-
-  public void uniformMatrix3fv(int loc, int count, boolean transpose,
-                               FloatBuffer mat) {
-    mat.limit(9);
-    GL20.glUniformMatrix3(loc, transpose, mat);
-    mat.clear();
-  }
-
-
-  public void uniformMatrix4fv(int loc, int count, boolean transpose,
-                               FloatBuffer mat) {
-    mat.limit(16);
-    GL20.glUniformMatrix4(loc, transpose, mat);
-    mat.clear();
-  }
-
-
-  public void vertexAttrib1f(int loc, float value) {
-    GL20.glVertexAttrib1f(loc, value);
-  }
-
-
-  public void vertexAttrib2f(int loc, float value0, float value1) {
-    GL20.glVertexAttrib2f(loc, value0, value1);
-  }
-
-
-  public void vertexAttrib3f(int loc, float value0, float value1, float value2){
-    GL20.glVertexAttrib3f(loc, value0, value1, value2);
-  }
-
-
-  public void vertexAttrib4f(int loc, float value0, float value1, float value2,
-                                      float value3) {
-    GL20.glVertexAttrib4f(loc, value0, value1, value2, value3);
-  }
-
-
-  public void shaderSource(int id, String source) {
-    GL20.glShaderSource(id, source);
-  }
-
-
-  public void compileShader(int id) {
-    GL20.glCompileShader(id);
-  }
-
-
-  public void attachShader(int prog, int shader) {
-    GL20.glAttachShader(prog, shader);
-  }
-
-
-  public void getShaderiv(int shader, int pname, IntBuffer params) {
-    GL20.glGetShader(shader, pname, params);
-  }
-
-
-  public String getShaderInfoLog(int shader) {
-    int len = GL20.glGetShaderi(shader, GL20.GL_INFO_LOG_LENGTH);
-    return GL20.glGetShaderInfoLog(shader, len);
-  }
-
-
-  public void getProgramiv(int prog, int pname, IntBuffer params) {
-    GL20.glGetProgram(prog, pname, params);
-  }
-
-
-  public String getProgramInfoLog(int prog) {
-    int len = GL20.glGetProgrami(prog, GL20.GL_INFO_LOG_LENGTH);
-    return GL20.glGetProgramInfoLog(prog, len);
-  }
-
-
-  ///////////////////////////////////////////////////////////
-
-  // Viewport
-
-
-  public void viewport(int x, int y, int width, int height) {
-    GL11.glViewport(x, y, width, height);
-  }
-
-
-  ///////////////////////////////////////////////////////////
-
-  // Clipping (scissor test)
-
-
-  public void scissor(int x, int y, int w, int h) {
-    GL11.glScissor(x, y, w, h);
-  }
-
-
-  ///////////////////////////////////////////////////////////
-
-  // Blending
-
-
-  public void blendEquation(int eq) {
-    GL14.glBlendEquation(eq);
-  }
-
-
-  public void blendFunc(int srcFactor, int dstFactor) {
-    GL11.glBlendFunc(srcFactor, dstFactor);
-  }
-
-
-  ///////////////////////////////////////////////////////////
-
-  // Pixels
-
-
-  public void readBuffer(int buf) {
-    GL11.glReadBuffer(buf);
-  }
-
-
-  public void readPixels(int x, int y, int width, int height, int format,
-                         int type, Buffer buffer) {
-
-    GL11.glReadPixels(x, y, width, height, format, type, (IntBuffer)buffer);
-  }
-
-
-  public void drawBuffer(int buf) {
-    GL11.glDrawBuffer(buf);
-  }
-
-
-  public void clearDepth(float d) {
-    GL11.glClearDepth(d);
-  }
-
-
-  public void clearStencil(int s) {
-    GL11.glClearStencil(s);
-  }
-
-
-  public void colorMask(boolean wr, boolean wg, boolean wb, boolean wa) {
-    GL11.glColorMask(wr, wg, wb, wa);
-  }
-
-
-  public void clearColor(float r, float g, float b, float a) {
-    GL11.glClearColor(r, g, b, a);
-  }
-
-
-  public void clear(int mask) {
-    GL11.glClear(mask);
   }
 
 
@@ -3345,5 +2517,857 @@ public class PGL extends processing.opengl.PGL {
     default:
       return 0;
     }
+  }
+  
+  
+  
+  
+  // OPENGL API: Still need to add all the missing functions to expose the entire
+  // GLES 2.0 API
+    
+  ///////////////////////////////////////////////////////////
+
+  // OpenGL constants
+
+  public static final int FALSE = GL11.GL_FALSE;
+  public static final int TRUE  = GL11.GL_TRUE;
+
+  public static final int LESS      = GL11.GL_LESS;
+  public static final int LEQUAL    = GL11.GL_LEQUAL;
+
+  public static final int CCW       = GL11.GL_CCW;
+  public static final int CW        = GL11.GL_CW;
+
+  public static final int CULL_FACE      = GL11.GL_CULL_FACE;
+  public static final int FRONT          = GL11.GL_FRONT;
+  public static final int BACK           = GL11.GL_BACK;
+  public static final int FRONT_AND_BACK = GL11.GL_FRONT_AND_BACK;
+
+  public static final int VIEWPORT = GL11.GL_VIEWPORT;
+
+  public static final int SCISSOR_TEST    = GL11.GL_SCISSOR_TEST;
+  public static final int DEPTH_TEST      = GL11.GL_DEPTH_TEST;
+  public static final int DEPTH_WRITEMASK = GL11.GL_DEPTH_WRITEMASK;
+
+  public static final int COLOR_BUFFER_BIT   = GL11.GL_COLOR_BUFFER_BIT;
+  public static final int DEPTH_BUFFER_BIT   = GL11.GL_DEPTH_BUFFER_BIT;
+  public static final int STENCIL_BUFFER_BIT = GL11.GL_STENCIL_BUFFER_BIT;
+
+  public static final int FUNC_ADD              = GL14.GL_FUNC_ADD;
+  public static final int FUNC_MIN              = GL14.GL_MIN;
+  public static final int FUNC_MAX              = GL14.GL_MAX;
+  public static final int FUNC_REVERSE_SUBTRACT = GL14.GL_FUNC_REVERSE_SUBTRACT;
+
+  public static final int TEXTURE_2D        = GL11.GL_TEXTURE_2D;
+  public static final int TEXTURE_RECTANGLE = GL31.GL_TEXTURE_RECTANGLE;
+
+  public static final int TEXTURE_BINDING_2D        = GL11.GL_TEXTURE_BINDING_2D;
+  public static final int TEXTURE_BINDING_RECTANGLE =
+    GL31.GL_TEXTURE_BINDING_RECTANGLE;
+
+  public static final int RGB            = GL11.GL_RGB;
+  public static final int RGBA           = GL11.GL_RGBA;
+  public static final int ALPHA          = GL11.GL_ALPHA;
+  public static final int UNSIGNED_INT   = GL11.GL_UNSIGNED_INT;
+  public static final int UNSIGNED_BYTE  = GL11.GL_UNSIGNED_BYTE;
+  public static final int UNSIGNED_SHORT = GL11.GL_UNSIGNED_SHORT;
+  public static final int FLOAT          = GL11.GL_FLOAT;
+
+  public static final int NEAREST               = GL11.GL_NEAREST;
+  public static final int LINEAR                = GL11.GL_LINEAR;
+  public static final int LINEAR_MIPMAP_NEAREST = GL11.GL_LINEAR_MIPMAP_NEAREST;
+  public static final int LINEAR_MIPMAP_LINEAR  = GL11.GL_LINEAR_MIPMAP_LINEAR;
+
+  public static final int TEXTURE_MAX_ANISOTROPY =
+    EXTTextureFilterAnisotropic.GL_TEXTURE_MAX_ANISOTROPY_EXT;
+  public static final int MAX_TEXTURE_MAX_ANISOTROPY =
+    EXTTextureFilterAnisotropic.GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT;
+
+  public static final int CLAMP_TO_EDGE = GL12.GL_CLAMP_TO_EDGE;
+  public static final int REPEAT        = GL11.GL_REPEAT;
+
+  public static final int RGBA8            = GL11.GL_RGBA8;
+  public static final int DEPTH24_STENCIL8 = GL30.GL_DEPTH24_STENCIL8;
+
+  public static final int DEPTH_COMPONENT   = GL11.GL_DEPTH_COMPONENT;
+  public static final int DEPTH_COMPONENT16 = GL14.GL_DEPTH_COMPONENT16;
+  public static final int DEPTH_COMPONENT24 = GL14.GL_DEPTH_COMPONENT24;
+  public static final int DEPTH_COMPONENT32 = GL14.GL_DEPTH_COMPONENT32;
+
+  public static final int STENCIL_INDEX  = GL11.GL_STENCIL_INDEX;
+  public static final int STENCIL_INDEX1 = GL30.GL_STENCIL_INDEX1;
+  public static final int STENCIL_INDEX4 = GL30.GL_STENCIL_INDEX4;
+  public static final int STENCIL_INDEX8 = GL30.GL_STENCIL_INDEX8;
+
+  public static final int ARRAY_BUFFER         = GL15.GL_ARRAY_BUFFER;
+  public static final int ELEMENT_ARRAY_BUFFER = GL15.GL_ELEMENT_ARRAY_BUFFER;
+
+  public static final int SAMPLES = GL13.GL_SAMPLES;
+
+  public static final int FRAMEBUFFER_COMPLETE                      =
+    GL30.GL_FRAMEBUFFER_COMPLETE;
+  public static final int FRAMEBUFFER_INCOMPLETE_ATTACHMENT         =
+    GL30.GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT;
+  public static final int FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT =
+    GL30.GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT;
+  public static final int FRAMEBUFFER_INCOMPLETE_DIMENSIONS         =
+    EXTFramebufferObject.GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT;
+  public static final int FRAMEBUFFER_INCOMPLETE_FORMATS            =
+    EXTFramebufferObject.GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT;
+  public static final int FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER        =
+    GL30.GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER;
+  public static final int FRAMEBUFFER_INCOMPLETE_READ_BUFFER        =
+    GL30.GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER;
+  public static final int FRAMEBUFFER_UNSUPPORTED                   =
+    GL30.GL_FRAMEBUFFER_UNSUPPORTED;
+
+  public static final int STATIC_DRAW  = GL15.GL_STATIC_DRAW;
+  public static final int DYNAMIC_DRAW = GL15.GL_DYNAMIC_DRAW;
+  public static final int STREAM_DRAW  = GL15.GL_STREAM_DRAW;
+
+  public static final int READ_ONLY  = GL15.GL_READ_ONLY;
+  public static final int WRITE_ONLY = GL15.GL_WRITE_ONLY;
+  public static final int READ_WRITE = GL15.GL_READ_WRITE;
+
+  public static final int TRIANGLE_FAN   = GL11.GL_TRIANGLE_FAN;
+  public static final int TRIANGLE_STRIP = GL11.GL_TRIANGLE_STRIP;
+  public static final int TRIANGLES      = GL11.GL_TRIANGLES;
+
+  public static final int VENDOR                   = GL11.GL_VENDOR;
+  public static final int RENDERER                 = GL11.GL_RENDERER;
+  public static final int VERSION                  = GL11.GL_VERSION;
+  public static final int EXTENSIONS               = GL11.GL_EXTENSIONS;
+  public static final int SHADING_LANGUAGE_VERSION =
+    GL20.GL_SHADING_LANGUAGE_VERSION;
+
+  public static final int MAX_TEXTURE_SIZE         = GL11.GL_MAX_TEXTURE_SIZE;
+  public static final int MAX_SAMPLES              = GL30.GL_MAX_SAMPLES;
+  public static final int ALIASED_LINE_WIDTH_RANGE =
+    GL12.GL_ALIASED_LINE_WIDTH_RANGE;
+  public static final int ALIASED_POINT_SIZE_RANGE =
+    GL12.GL_ALIASED_POINT_SIZE_RANGE;
+  public static final int DEPTH_BITS = GL11.GL_DEPTH_BITS;
+  public static final int STENCIL_BITS = GL11.GL_STENCIL_BITS;
+
+  public static final int TESS_WINDING_NONZERO = GLU.GLU_TESS_WINDING_NONZERO;
+  public static final int TESS_WINDING_ODD     = GLU.GLU_TESS_WINDING_ODD;
+
+  public static final int TEXTURE0           = GL13.GL_TEXTURE0;
+  public static final int TEXTURE1           = GL13.GL_TEXTURE1;
+  public static final int TEXTURE2           = GL13.GL_TEXTURE2;
+  public static final int TEXTURE3           = GL13.GL_TEXTURE3;
+  public static final int TEXTURE_MIN_FILTER = GL11.GL_TEXTURE_MIN_FILTER;
+  public static final int TEXTURE_MAG_FILTER = GL11.GL_TEXTURE_MAG_FILTER;
+  public static final int TEXTURE_WRAP_S     = GL11.GL_TEXTURE_WRAP_S;
+  public static final int TEXTURE_WRAP_T     = GL11.GL_TEXTURE_WRAP_T;
+
+  public static final int BLEND               = GL11.GL_BLEND;
+  public static final int ONE                 = GL11.GL_ONE;
+  public static final int ZERO                = GL11.GL_ZERO;
+  public static final int SRC_ALPHA           = GL11.GL_SRC_ALPHA;
+  public static final int DST_ALPHA           = GL11.GL_DST_ALPHA;
+  public static final int ONE_MINUS_SRC_ALPHA = GL11.GL_ONE_MINUS_SRC_ALPHA;
+  public static final int ONE_MINUS_DST_COLOR = GL11.GL_ONE_MINUS_DST_COLOR;
+  public static final int ONE_MINUS_SRC_COLOR = GL11.GL_ONE_MINUS_SRC_COLOR;
+  public static final int DST_COLOR           = GL11.GL_DST_COLOR;
+  public static final int SRC_COLOR           = GL11.GL_SRC_COLOR;
+
+  public static final int FRAMEBUFFER        = GL30.GL_FRAMEBUFFER;
+  public static final int COLOR_ATTACHMENT0  = GL30.GL_COLOR_ATTACHMENT0;
+  public static final int COLOR_ATTACHMENT1  = GL30.GL_COLOR_ATTACHMENT1;
+  public static final int COLOR_ATTACHMENT2  = GL30.GL_COLOR_ATTACHMENT2;
+  public static final int COLOR_ATTACHMENT3  = GL30.GL_COLOR_ATTACHMENT3;
+  public static final int RENDERBUFFER       = GL30.GL_RENDERBUFFER;
+  public static final int DEPTH_ATTACHMENT   = GL30.GL_DEPTH_ATTACHMENT;
+  public static final int STENCIL_ATTACHMENT = GL30.GL_STENCIL_ATTACHMENT;
+  public static final int READ_FRAMEBUFFER   = GL30.GL_READ_FRAMEBUFFER;
+  public static final int DRAW_FRAMEBUFFER   = GL30.GL_DRAW_FRAMEBUFFER;
+
+  public static final int VERTEX_SHADER        = GL20.GL_VERTEX_SHADER;
+  public static final int FRAGMENT_SHADER      = GL20.GL_FRAGMENT_SHADER;
+  public static final int INFO_LOG_LENGTH      = GL20.GL_INFO_LOG_LENGTH;
+  public static final int SHADER_SOURCE_LENGTH = GL20.GL_SHADER_SOURCE_LENGTH;
+  public static final int COMPILE_STATUS       = GL20.GL_COMPILE_STATUS;
+  public static final int LINK_STATUS          = GL20.GL_LINK_STATUS;
+  public static final int VALIDATE_STATUS      = GL20.GL_VALIDATE_STATUS;
+
+  public static final int MULTISAMPLE    = GL13.GL_MULTISAMPLE;
+  public static final int POINT_SMOOTH   = GL11.GL_POINT_SMOOTH;
+  public static final int LINE_SMOOTH    = GL11.GL_LINE_SMOOTH;
+  public static final int POLYGON_SMOOTH = GL11.GL_POLYGON_SMOOTH;
+  
+  
+  //////////////////////////////////////////////////////////////////////////////
+
+  // Caps query
+
+
+  public String getString(int name) {
+    return GL11.glGetString(name);
+  }
+
+
+  public void getIntegerv(int name, IntBuffer values) {
+    if (-1 < name) {
+      GL11.glGetInteger(name, values);
+    } else {
+      fillIntBuffer(values, 0, values.capacity() - 1, 0);
+    }
+  }
+
+
+  public void getFloatv(int name, FloatBuffer values) {
+    if (-1 < name) {
+      GL11.glGetFloat(name, values);
+    } else {
+      fillFloatBuffer(values, 0, values.capacity() - 1, 0);
+    }
+  }
+
+
+  public void getBooleanv(int name, IntBuffer values) {
+    if (-1 < name) {
+      if (byteBuffer.capacity() < values.capacity()) {
+        byteBuffer = allocateDirectByteBuffer(values.capacity());
+      }
+      GL11.glGetBoolean(name, byteBuffer);
+      for (int i = 0; i < values.capacity(); i++) {
+        values.put(i, byteBuffer.get(i));
+      }
+    } else {
+      fillIntBuffer(values, 0, values.capacity() - 1, 0);
+    }
+  }
+
+
+  ///////////////////////////////////////////////////////////
+
+  // Enable/disable caps
+
+
+  public void enable(int cap) {
+    if (-1 < cap) {
+      GL11.glEnable(cap);
+    }
+  }
+
+
+  public void disable(int cap) {
+    if (-1 < cap) {
+      GL11.glDisable(cap);
+    }
+  }
+
+
+  ///////////////////////////////////////////////////////////
+
+  // Render control
+
+
+  public void flush() {
+    GL11.glFlush();
+  }
+
+
+  public void finish() {
+    GL11.glFinish();
+  }
+
+
+  ///////////////////////////////////////////////////////////
+
+  // Error handling
+
+
+  public int getError() {
+    return GL11.glGetError();
+  }
+
+
+  public String errorString(int err) {
+    return glu.gluErrorString(err);
+  }
+
+
+  ///////////////////////////////////////////////////////////
+
+  // Rendering options
+
+
+  public void frontFace(int mode) {
+    GL11.glFrontFace(mode);
+  }
+
+
+  public void cullFace(int mode) {
+    GL11.glCullFace(mode);
+  }
+
+
+  public void depthMask(boolean flag) {
+    GL11.glDepthMask(flag);
+  }
+
+
+  public void depthFunc(int func) {
+    GL11.glDepthFunc(func);
+  }
+
+
+  ///////////////////////////////////////////////////////////
+
+  // Textures
+
+
+  public void genTextures(int n, IntBuffer ids) {
+    GL11.glGenTextures(ids);
+  }
+
+
+  public void deleteTextures(int n, IntBuffer ids) {
+    GL11.glDeleteTextures(ids);
+  }
+
+
+  public void activeTexture(int unit) {
+    GL13.glActiveTexture(unit);
+  }
+
+
+  public void bindTexture(int target, int id) {
+    GL11.glBindTexture(target, id);
+    if (target == TEXTURE_2D) {
+      boundTextures[0] = id;
+    } else if (target == TEXTURE_RECTANGLE) {
+      boundTextures[1] = id;
+    }
+  }
+
+
+  public void texImage2D(int target, int level, int internalFormat,
+                         int width, int height, int border, int format,
+                         int type, Buffer data) {
+    GL11.glTexImage2D(target, level, internalFormat,
+                      width, height, border, format, type, (IntBuffer)data);
+  }
+
+
+  public void texSubImage2D(int target, int level, int xOffset, int yOffset,
+                            int width, int height, int format,
+                            int type, Buffer data) {
+    GL11.glTexSubImage2D(target, level, xOffset, yOffset,
+                       width, height, format, type, (IntBuffer)data);
+  }
+
+
+  public void texParameteri(int target, int param, int value) {
+    GL11.glTexParameteri(target, param, value);
+  }
+
+
+  public void texParameterf(int target, int param, float value) {
+    GL11.glTexParameterf(target, param, value);
+  }
+
+
+  public void getTexParameteriv(int target, int param, IntBuffer values) {
+    GL11.glGetTexParameter(target, param, values);
+  }
+
+
+  public void generateMipmap(int target) {
+    GL30.glGenerateMipmap(target);
+  }
+
+
+  ///////////////////////////////////////////////////////////
+
+  // Vertex Buffers
+
+
+  public void genBuffers(int n, IntBuffer ids) {
+    GL15.glGenBuffers(ids);
+  }
+
+
+  public void deleteBuffers(int n, IntBuffer ids) {
+    GL15.glDeleteBuffers(ids);
+  }
+
+
+  public void bindBuffer(int target, int id) {
+    GL15.glBindBuffer(target, id);
+  }
+
+
+  public void bufferData(int target, int size, Buffer data, int usage) {
+    if (data == null) {
+      FloatBuffer empty = BufferUtils.createFloatBuffer(size);
+      GL15.glBufferData(target, empty, usage);
+    } else {
+      if (data instanceof ByteBuffer) {
+        GL15.glBufferData(target, (ByteBuffer)data, usage);
+      } else if (data instanceof ShortBuffer) {
+        GL15.glBufferData(target, (ShortBuffer)data, usage);
+      } else if (data instanceof IntBuffer) {
+        GL15.glBufferData(target, (IntBuffer)data, usage);
+      } else if (data instanceof FloatBuffer) {
+        GL15.glBufferData(target, (FloatBuffer)data, usage);
+      }
+    }
+  }
+
+
+  public void bufferSubData(int target, int offset, int size, Buffer data) {
+    if (data instanceof ByteBuffer) {
+      GL15.glBufferSubData(target, offset, (ByteBuffer)data);
+    } else if (data instanceof ShortBuffer) {
+      GL15.glBufferSubData(target, offset, (ShortBuffer)data);
+    } else if (data instanceof IntBuffer) {
+      GL15.glBufferSubData(target, offset, (IntBuffer)data);
+    } else if (data instanceof FloatBuffer) {
+      GL15.glBufferSubData(target, offset, (FloatBuffer)data);
+    }
+  }
+
+
+  public void drawArrays(int mode, int first, int count) {
+    GL11.glDrawArrays(mode, first, count);
+  }
+
+
+  public void drawElements(int mode, int count, int type, int offset) {
+    GL11.glDrawElements(mode, count, type, offset);
+  }
+
+
+  public void enableVertexAttribArray(int loc) {
+    GL20.glEnableVertexAttribArray(loc);
+  }
+
+
+  public void disableVertexAttribArray(int loc) {
+    GL20.glDisableVertexAttribArray(loc);
+  }
+
+
+  public void vertexAttribPointer(int loc, int size, int type,
+                                  boolean normalized, int stride, int offset) {
+    GL20.glVertexAttribPointer(loc, size, type, normalized, stride, offset);
+  }
+
+
+  public void vertexAttribPointer(int loc, int size, int type,
+                                  boolean normalized, int stride, Buffer data) {
+    if (type == UNSIGNED_INT) {
+      GL20.glVertexAttribPointer(loc, size, true, normalized, stride, (IntBuffer)data);
+    } else if (type == UNSIGNED_BYTE) {
+      GL20.glVertexAttribPointer(loc, size, true, normalized, stride, (ByteBuffer)data);
+    } else if (type == UNSIGNED_SHORT) {
+      GL20.glVertexAttribPointer(loc, size, true, normalized, stride, (ShortBuffer)data);
+    } else if (type == FLOAT) {
+      GL20.glVertexAttribPointer(loc, size, normalized, stride, (FloatBuffer)data);
+    }
+  }
+
+
+  public ByteBuffer mapBuffer(int target, int access) {
+    return GL15.glMapBuffer(target, access, null);
+  }
+
+
+  public ByteBuffer mapBufferRange(int target, int offset, int length,
+                                   int access) {
+    return GL30.glMapBufferRange(target, offset, length, access, null);
+  }
+
+
+  public void unmapBuffer(int target) {
+    GL15.glUnmapBuffer(target);
+  }
+
+
+  ///////////////////////////////////////////////////////////
+
+  // Framebuffers, renderbuffers
+
+
+  public void genFramebuffers(int n, IntBuffer ids) {
+    GL30.glGenFramebuffers(ids);
+  }
+
+
+  public void deleteFramebuffers(int n, IntBuffer ids) {
+    GL30.glDeleteFramebuffers(ids);
+  }
+
+
+  public void genRenderbuffers(int n, IntBuffer ids) {
+    GL30.glGenRenderbuffers(ids);
+  }
+
+
+  public void deleteRenderbuffers(int n, IntBuffer ids) {
+    GL30.glDeleteRenderbuffers(ids);
+  }
+
+
+  public void bindFramebuffer(int target, int id) {
+    GL30.glBindFramebuffer(target, id);
+  }
+
+
+  public void blitFramebuffer(int srcX0, int srcY0, int srcX1, int srcY1,
+                              int dstX0, int dstY0, int dstX1, int dstY1,
+                              int mask, int filter) {
+    GL30.glBlitFramebuffer(srcX0, srcY0, srcX1, srcY1,
+                           dstX0, dstY0, dstX1, dstY1, mask, filter);
+  }
+
+
+  public void framebufferTexture2D(int target, int attachment, int texTarget,
+                                   int texId, int level) {
+    GL30.glFramebufferTexture2D(target, attachment, texTarget, texId, level);
+  }
+
+
+  public void bindRenderbuffer(int target, int id) {
+    GL30.glBindRenderbuffer(target, id);
+  }
+
+
+  public void renderbufferStorageMultisample(int target, int samples,
+                                             int format, int width, int height){
+    GL30.glRenderbufferStorageMultisample(target, samples, format,
+                                          width, height);
+  }
+
+
+  public void renderbufferStorage(int target, int format,
+                                  int width, int height) {
+    GL30.glRenderbufferStorage(target, format, width, height);
+  }
+
+
+  public void framebufferRenderbuffer(int target, int attachment,
+                                      int rendbufTarget, int rendbufId) {
+    GL30.glFramebufferRenderbuffer(target, attachment, rendbufTarget, rendbufId);
+  }
+
+
+  public int checkFramebufferStatus(int target) {
+    return GL30.glCheckFramebufferStatus(target);
+  }
+
+
+  ///////////////////////////////////////////////////////////
+
+  // Shaders
+
+
+  public int createProgram() {
+    return GL20.glCreateProgram();
+  }
+
+
+  public void deleteProgram(int id) {
+    GL20.glDeleteProgram(id);
+  }
+
+
+  public int createShader(int type) {
+    return GL20.glCreateShader(type);
+  }
+
+
+  public void deleteShader(int id) {
+    GL20.glDeleteShader(id);
+  }
+
+
+  public void linkProgram(int prog) {
+    GL20.glLinkProgram(prog);
+  }
+
+
+  public void validateProgram(int prog) {
+    GL20.glValidateProgram(prog);
+  }
+
+
+  public void useProgram(int prog) {
+    GL20.glUseProgram(prog);
+  }
+
+
+  public int getAttribLocation(int prog, String name) {
+    return GL20.glGetAttribLocation(prog, name);
+  }
+
+
+  public int getUniformLocation(int prog, String name) {
+    return GL20.glGetUniformLocation(prog, name);
+  }
+
+
+  public void uniform1i(int loc, int value) {
+    GL20.glUniform1i(loc, value);
+  }
+
+
+  public void uniform2i(int loc, int value0, int value1) {
+    GL20.glUniform2i(loc, value0, value1);
+  }
+
+
+  public void uniform3i(int loc, int value0, int value1, int value2) {
+    GL20.glUniform3i(loc, value0, value1, value2);
+  }
+
+
+  public void uniform4i(int loc, int value0, int value1, int value2,
+                                 int value3) {
+    GL20.glUniform4i(loc, value0, value1, value2, value3);
+  }
+
+
+  public void uniform1f(int loc, float value) {
+    GL20.glUniform1f(loc, value);
+  }
+
+
+  public void uniform2f(int loc, float value0, float value1) {
+    GL20.glUniform2f(loc, value0, value1);
+  }
+
+
+  public void uniform3f(int loc, float value0, float value1, float value2) {
+    GL20.glUniform3f(loc, value0, value1, value2);
+  }
+
+
+  public void uniform4f(int loc, float value0, float value1, float value2,
+                                 float value3) {
+    GL20.glUniform4f(loc, value0, value1, value2, value3);
+  }
+
+
+  public void uniform1iv(int loc, int count, IntBuffer v) {
+    v.limit(count);
+    GL20.glUniform1(loc, v);
+    v.clear();
+  }
+
+
+  public void uniform2iv(int loc, int count, IntBuffer v) {
+    v.limit(2 * count);
+    GL20.glUniform2(loc, v);
+    v.clear();
+  }
+
+
+  public void uniform3iv(int loc, int count, IntBuffer v) {
+    v.limit(3 * count);
+    GL20.glUniform3(loc, v);
+    v.clear();
+  }
+
+
+  public void uniform4iv(int loc, int count, IntBuffer v) {
+    v.limit(4 * count);
+    GL20.glUniform4(loc, v);
+    v.clear();
+  }
+
+
+  public void uniform1fv(int loc, int count, FloatBuffer v) {
+    v.limit(count);
+    GL20.glUniform1(loc, v);
+    v.clear();
+  }
+
+
+  public void uniform2fv(int loc, int count, FloatBuffer v) {
+    v.limit(2 * count);
+    GL20.glUniform2(loc, v);
+    v.clear();
+  }
+
+
+  public void uniform3fv(int loc, int count, FloatBuffer v) {
+    v.limit(3 * count);
+    GL20.glUniform3(loc, v);
+    v.clear();
+  }
+
+
+  public void uniform4fv(int loc, int count, FloatBuffer v) {
+    v.limit(4 * count);
+    GL20.glUniform4(loc, v);
+    v.clear();
+  }
+
+
+  public void uniformMatrix2fv(int loc, int count, boolean transpose,
+                               FloatBuffer mat) {
+    mat.limit(4);
+    GL20.glUniformMatrix2(loc, transpose, mat);
+    mat.clear();
+  }
+
+
+  public void uniformMatrix3fv(int loc, int count, boolean transpose,
+                               FloatBuffer mat) {
+    mat.limit(9);
+    GL20.glUniformMatrix3(loc, transpose, mat);
+    mat.clear();
+  }
+
+
+  public void uniformMatrix4fv(int loc, int count, boolean transpose,
+                               FloatBuffer mat) {
+    mat.limit(16);
+    GL20.glUniformMatrix4(loc, transpose, mat);
+    mat.clear();
+  }
+
+
+  public void vertexAttrib1f(int loc, float value) {
+    GL20.glVertexAttrib1f(loc, value);
+  }
+
+
+  public void vertexAttrib2f(int loc, float value0, float value1) {
+    GL20.glVertexAttrib2f(loc, value0, value1);
+  }
+
+
+  public void vertexAttrib3f(int loc, float value0, float value1, float value2){
+    GL20.glVertexAttrib3f(loc, value0, value1, value2);
+  }
+
+
+  public void vertexAttrib4f(int loc, float value0, float value1, float value2,
+                                      float value3) {
+    GL20.glVertexAttrib4f(loc, value0, value1, value2, value3);
+  }
+
+
+  public void shaderSource(int id, String source) {
+    GL20.glShaderSource(id, source);
+  }
+
+
+  public void compileShader(int id) {
+    GL20.glCompileShader(id);
+  }
+
+
+  public void attachShader(int prog, int shader) {
+    GL20.glAttachShader(prog, shader);
+  }
+
+
+  public void getShaderiv(int shader, int pname, IntBuffer params) {
+    GL20.glGetShader(shader, pname, params);
+  }
+
+
+  public String getShaderInfoLog(int shader) {
+    int len = GL20.glGetShaderi(shader, GL20.GL_INFO_LOG_LENGTH);
+    return GL20.glGetShaderInfoLog(shader, len);
+  }
+
+
+  public void getProgramiv(int prog, int pname, IntBuffer params) {
+    GL20.glGetProgram(prog, pname, params);
+  }
+
+
+  public String getProgramInfoLog(int prog) {
+    int len = GL20.glGetProgrami(prog, GL20.GL_INFO_LOG_LENGTH);
+    return GL20.glGetProgramInfoLog(prog, len);
+  }
+
+
+  ///////////////////////////////////////////////////////////
+
+  // Viewport
+
+
+  public void viewport(int x, int y, int width, int height) {
+    GL11.glViewport(x, y, width, height);
+  }
+
+
+  ///////////////////////////////////////////////////////////
+
+  // Clipping (scissor test)
+
+
+  public void scissor(int x, int y, int w, int h) {
+    GL11.glScissor(x, y, w, h);
+  }
+
+
+  ///////////////////////////////////////////////////////////
+
+  // Blending
+
+
+  public void blendEquation(int eq) {
+    GL14.glBlendEquation(eq);
+  }
+
+
+  public void blendFunc(int srcFactor, int dstFactor) {
+    GL11.glBlendFunc(srcFactor, dstFactor);
+  }
+
+
+  ///////////////////////////////////////////////////////////
+
+  // Pixels
+
+
+  public void readBuffer(int buf) {
+    GL11.glReadBuffer(buf);
+  }
+
+
+  public void readPixels(int x, int y, int width, int height, int format,
+                         int type, Buffer buffer) {
+
+    GL11.glReadPixels(x, y, width, height, format, type, (IntBuffer)buffer);
+  }
+
+
+  public void drawBuffer(int buf) {
+    GL11.glDrawBuffer(buf);
+  }
+
+
+  public void clearDepth(float d) {
+    GL11.glClearDepth(d);
+  }
+
+
+  public void clearStencil(int s) {
+    GL11.glClearStencil(s);
+  }
+
+
+  public void colorMask(boolean wr, boolean wg, boolean wb, boolean wa) {
+    GL11.glColorMask(wr, wg, wb, wa);
+  }
+
+
+  public void clearColor(float r, float g, float b, float a) {
+    GL11.glClearColor(r, g, b, a);
+  }
+
+
+  public void clear(int mask) {
+    GL11.glClear(mask);
   }
 }
