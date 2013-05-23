@@ -521,7 +521,7 @@ public class PVector implements Serializable {
    * Subtract one vector from another and store in another vector
    * @param v1 the x, y, and z components of a PVector object
    * @param v2 the x, y, and z components of a PVector object
-   * @param target PVector to store the result
+   * @param target PVector in which to store the result
    */
   static public PVector sub(PVector v1, PVector v2, PVector target) {
     if (target == null) {
@@ -542,8 +542,8 @@ public class PVector implements Serializable {
    *
    * @webref pvector:method
    * @usage web_application
-   * @param n the number to multiply with the vector
    * @brief Multiply a vector by a scalar
+   * @param n the number to multiply with the vector
    */
   public void mult(float n) {
     x *= n;
@@ -554,7 +554,6 @@ public class PVector implements Serializable {
 
   /**
    * @param v the vector to multiply by the scalar
-   * @nowebref
    */
   static public PVector mult(PVector v, float n) {
     return mult(v, n, null);
@@ -563,8 +562,7 @@ public class PVector implements Serializable {
 
   /**
    * Multiply a vector by a scalar, and write the result into a target PVector.
-   * @param target PVector to store the result
-   * @nowebref
+   * @param target PVector in which to store the result
    */
   static public PVector mult(PVector v, float n, PVector target) {
     if (target == null) {
@@ -586,8 +584,8 @@ public class PVector implements Serializable {
    *
    * @webref pvector:method
    * @usage web_application
-   * @param n the value to divide by
    * @brief Divide a vector by a scalar
+   * @param n the number by which to divide the vector
    */
   public void div(float n) {
     x /= n;
@@ -598,10 +596,8 @@ public class PVector implements Serializable {
 
   /**
    * Divide a vector by a scalar and return the result in a new vector.
-   * @param v any variable of type PVector
-   * @param n the number to divide with the vector
+   * @param v the vector to divide by the scalar
    * @return a new vector that is v1 / n
-   * @nowebref
    */
   static public PVector div(PVector v, float n) {
     return div(v, n, null);
@@ -609,10 +605,7 @@ public class PVector implements Serializable {
 
   /**
    * Divide a vector by a scalar and store the result in another vector.
-   * @param v any variable of type PVector
-   * @param n the number to divide with the vector
-   * @param target PVector to store the result
-   * @nowebref
+   * @param target PVector in which to store the result
    */
   static public PVector div(PVector v, float n, PVector target) {
     if (target == null) {

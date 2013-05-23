@@ -1717,7 +1717,7 @@ public class Table {
     rowCount = newCount;
   }
 
-  /**
+ /**
    * @webref table:method
    * @brief Adds a row to the table
    */
@@ -1726,7 +1726,9 @@ public class Table {
     return new RowPointer(this, rowCount - 1);
   }
 
-
+ /**
+   * @param source a reference to the original row to be duplicated
+   */
   public TableRow addRow(TableRow source) {
     int row = rowCount;
     // Make sure there are enough columns to add this data
@@ -1757,7 +1759,9 @@ public class Table {
     return new RowPointer(this, row);
   }
 
-
+ /**
+   * @nowebref
+   */
   public TableRow addRow(Object[] columnData) {
     setRow(getRowCount(), columnData);
     return new RowPointer(this, rowCount - 1);
