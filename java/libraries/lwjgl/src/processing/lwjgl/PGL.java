@@ -124,7 +124,8 @@ public class PGL extends processing.opengl.PGL {
    */
   protected static final int FLUSH_VERTEX_COUNT = MAX_VERTEX_INDEX1;
 
-  /** Maximum dimension of a texture used to hold font data. **/
+  /** Minimum/maximum dimensions of a texture used to hold font data. **/
+  protected static final int MIN_FONT_TEX_SIZE = 256;
   protected static final int MAX_FONT_TEX_SIZE = 1024;
 
   /** Minimum stroke weight needed to apply the full path stroking
