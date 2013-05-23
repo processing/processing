@@ -1006,9 +1006,9 @@ public class PShapeOpenGL extends PShape {
       }
     }
 
-    if (image != null && textureMode == IMAGE) {
-      u = PApplet.min(1, u / image.width);
-      v = PApplet.min(1, v / image.height);
+    if (textureMode == IMAGE && image != null) {
+      u /= image.width;
+      v /= image.height;
     }
 
     int scolor = 0x00;
@@ -1578,9 +1578,9 @@ public class PShapeOpenGL extends PShape {
       return;
     }
 
-    if (image != null && textureMode == IMAGE) {
-      u = PApplet.min(1, u / image.width);
-      v = PApplet.min(1, v / image.height);
+    if (textureMode == IMAGE && image != null) {
+      u /= image.width;
+      v /= image.height;
     }
     inGeo.texcoords[2 * index + 0] = u;
     inGeo.texcoords[2 * index + 1] = v;
