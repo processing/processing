@@ -312,7 +312,7 @@ public class FloatDict {
 
   /**
    * @webref floatdict:method
-   * @brief To come...
+   * @brief Add to a value
    */
   public void add(String key, float amount) {
     int index = index(key);
@@ -332,7 +332,7 @@ public class FloatDict {
 
   /**
    * @webref floatdict:method
-   * @brief To come...
+   * @brief Subtract from a value
    */
   public void sub(String key, float amount) {
     add(key, -amount);
@@ -341,7 +341,7 @@ public class FloatDict {
 
   /**
    * @webref floatdict:method
-   * @brief To come...
+   * @brief Multiply a value
    */
   public void mult(String key, float amount) {
     int index = index(key);
@@ -353,7 +353,7 @@ public class FloatDict {
 
   /**
    * @webref floatdict:method
-   * @brief To come...
+   * @brief Divide a value
    */
   public void div(String key, float amount) {
     int index = index(key);

@@ -101,8 +101,10 @@ public class IntDict {
   }
 
   /**
+   * Returns the number of key/value pairs
+   * 
    * @webref intdict:method
-   * @brief To come...
+   * @brief Returns the number of key/value pairs
    */
   public int size() {
     return count;
@@ -241,6 +243,8 @@ public class IntDict {
    * Fill an already-allocated array with the values (more efficient than
    * creating a new array each time). If 'array' is null, or not the same
    * size as the number of values, a new array will be allocated and returned.
+   *
+   * @param array values to copy into the array
    */
   public int[] valueArray(int[] array) {
     if (array == null || array.length != size()) {
@@ -264,8 +268,10 @@ public class IntDict {
   }
 
   /**
+   * Create a new key/value pair or change the value of one.
+   * 
    * @webref intdict:method
-   * @brief To come...
+   * @brief Create a new key/value pair or change the value of one
    */
   public void set(String key, int amount) {
     int index = index(key);
@@ -278,7 +284,7 @@ public class IntDict {
 
   /**
    * @webref intdict:method
-   * @brief To come...
+   * @brief Check if a key is a part of the data structure
    */
   public boolean hasKey(String key) {
     return index(key) != -1;
@@ -286,10 +292,10 @@ public class IntDict {
 
 
   /** 
-   * Increase the value of a specific key by 1. 
+   * Increase the value of a specific key value by 1. 
    * 
    * @webref intdict:method
-   * @brief Increase the value of a specific key by 1
+   * @brief Increase the value of a specific key value by 1
    */
   public void increment(String key) {
     add(key, 1);
@@ -297,7 +303,7 @@ public class IntDict {
 
   /**
    * @webref intdict:method
-   * @brief To come...
+   * @brief Add to a value
    */
   public void add(String key, int amount) {
     int index = index(key);
@@ -310,7 +316,7 @@ public class IntDict {
 
   /**
    * @webref intdict:method
-   * @brief To come...
+   * @brief Subtract from a value
    */
   public void sub(String key, int amount) {
     add(key, -amount);
@@ -318,7 +324,7 @@ public class IntDict {
 
   /**
    * @webref intdict:method
-   * @brief To come...
+   * @brief Multiply a value
    */
   public void mult(String key, int amount) {
     int index = index(key);
@@ -329,7 +335,7 @@ public class IntDict {
 
   /**
    * @webref intdict:method
-   * @brief To come...
+   * @brief Divide a value
    */
   public void div(String key, int amount) {
     int index = index(key);
@@ -358,7 +364,7 @@ public class IntDict {
 
   /**
    * @webref intdict:method
-   * @brief To come...
+   * @brief Remove a key/value pair
    */
   public void remove(String key) {
     removeIndex(index(key));
@@ -404,8 +410,11 @@ public class IntDict {
   }
 
   /**
+   * Sort the keys alphabetically in reverse (ignoring case). Uses the value as a
+   * tie-breaker (only really possible with a key that has a case change).
+   *
    * @webref intdict:method
-   * @brief To come...
+   * @brief Sort the keys alphabetially in reverse
    */
   public void sortKeysReverse() {
     sortImpl(true, true);
@@ -413,18 +422,20 @@ public class IntDict {
 
 
   /**
-   * Sort by values in descending order (largest value will be at [0]).
+   * Sort by values in ascending order. The smallest value will be at [0].
    * 
    * @webref intdict:method
-   * @brief Sort by values in descending order
+   * @brief Sort by values in ascending order
    */
   public void sortValues() {
     sortImpl(false, false);
   }
 
   /**
+   * Sort by values in descending order. The largest value will be at [0].
+   * 
    * @webref intdict:method
-   * @brief To come...
+   * @brief Sort by values in descending order
    */
   public void sortValuesReverse() {
     sortImpl(false, true);
