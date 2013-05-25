@@ -2372,7 +2372,7 @@ public class PShapeOpenGL extends PShape {
   }
 
 
-  public void markForTessellation() {
+  protected void markForTessellation() {
     root.tessellated = false;
     tessellated = false;
   }
