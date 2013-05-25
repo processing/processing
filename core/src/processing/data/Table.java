@@ -2043,7 +2043,9 @@ public class Table {
     };
   }
 
-
+  /**
+   * @nowebref
+   */
   public Iterable<TableRow> rows(final int[] indices) {
     return new Iterable<TableRow>() {
       public Iterator<TableRow> iterator() {
@@ -2918,7 +2920,7 @@ public class Table {
 
   /**
    * @webref table:method
-   * @brief Finds a row that matches given criteria
+   * @brief Finds a row that contains the given value
    * @param value the value to match
    * @param column ID number of the column to search
    */
@@ -2928,7 +2930,7 @@ public class Table {
   }
 
   /**
-   * @param columnName title the column to search
+   * @param columnName title of the column to search
    */
   public TableRow findRow(String value, String columnName) {
     return findRow(value, getColumnIndex(columnName));
@@ -2936,13 +2938,17 @@ public class Table {
 
   /**
    * @webref table:method
-   * @brief To come...
+   * @brief Finds multiple rows that contain the given value
+   * @param value the value to match
+   * @param column ID number of the column to search
    */
   public Iterator<TableRow> findRows(String value, int column) {
     return new RowIndexIterator(this, findRowIndices(value, column));
   }
 
-
+  /**
+   * @param columnName title of the column to search
+   */
   public Iterator<TableRow> findRows(String value, String columnName) {
     return findRows(value, getColumnIndex(columnName));
   }
@@ -3036,27 +3042,35 @@ public class Table {
 
   /**
    * @webref table:method
-   * @brief To come...
+   * @brief Finds a row that matches the given expression
+   * @param regexp the regular expression to match
+   * @param column ID number of the column to search
    */
   public TableRow matchRow(String regexp, int column) {
     int row = matchRowIndex(regexp, column);
     return (row == -1) ? null : new RowPointer(this, row);
   }
 
-
+  /**
+   * @param columnName title of the column to search
+   */
   public TableRow matchRow(String regexp, String columnName) {
     return matchRow(regexp, getColumnIndex(columnName));
   }
 
   /**
    * @webref table:method
-   * @brief To come...
+   * @brief Finds multiple rows that match the given expression
+   * @param value the regular expression to match
+   * @param column ID number of the column to search
    */
   public Iterator<TableRow> matchRows(String value, int column) {
     return new RowIndexIterator(this, matchRowIndices(value, column));
   }
 
-
+  /**
+   * @param columnName title of the column to search
+   */
   public Iterator<TableRow> matchRows(String value, String columnName) {
     return matchRows(value, getColumnIndex(columnName));
   }
