@@ -912,7 +912,7 @@ public class PImage implements PConstants, Cloneable {
    * No variations are employed, meaning that any scale, tint, or imageMode
    * settings will be ignored.
    *
-   * @param img image to draw on screen
+   * @param img image to copy into the original image
    */
   public void set(int x, int y, PImage img) {
     int sx = 0;
