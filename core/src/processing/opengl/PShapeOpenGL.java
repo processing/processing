@@ -1446,7 +1446,6 @@ public class PShapeOpenGL extends PShape {
 
   @Override
   public int getVertexCount() {
-    updateTessellation();
     return family == GROUP ? 0 : inGeo.vertexCount;
   }
 
