@@ -52,6 +52,7 @@ import java.text.*;
 import java.util.*;
 import java.util.regex.*;
 import java.util.zip.*;
+import java.util.concurrent.SynchronousQueue;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
@@ -6461,6 +6462,41 @@ public class PApplet extends Applet
 
 
   /**
+   * Synchronized quque to pass file object from callbacks to
+   * selectInput/Output/Folder.
+   */
+  private SynchronousQueue<String> pathQueue = new SynchronousQueue<String>();
+  private Object chooserLock = new Object();
+
+  /**
+   * Open a platform-specific file chooser dialog to select a file for input.
+   * This simulates the previous behaviour of selectInput(). It returns a path
+   * string: there is no need to use callback mechanism.
+   *
+   * @webref input:files
+   * @param prompt message to the user
+   * @return an absolute path to the selected flie
+   */
+  public String selectInput() {
+	  return selectInput("Select a file...");
+  }
+
+  public String selectInput(String prompt) {
+	  String str;
+	  synchronized(chooserLock) {
+		  selectInput(prompt, "_selectFileCallback");
+		  try {
+			  str = pathQueue.take();
+		  } catch (InterruptedException e) {
+			  str = "";
+		  }
+	  }
+	  if(str.equals("")) return null;
+
+	  return str;
+  }
+
+  /**
    * Open a platform-specific file chooser dialog to select a file for input.
    * After the selection is made, the selected File will be passed to the
    * 'callback' function. If the dialog is closed or canceled, null will be
@@ -6514,6 +6550,35 @@ public class PApplet extends Applet
     selectImpl(prompt, callbackMethod, callerData, file, callbackObject, parent, FileDialog.LOAD);
   }
 
+
+  /**
+   * Open a platform-specific file chooser dialog to select a file for output.
+   * This simulates the previous behaviour of selectOutput(). It returns a path
+   * string: there is no need to use callback mechanism.
+   *
+   * @webref output:files
+   * @param prompt message to the user
+   * @return an absolute path to the selected flie
+   */
+
+  public String selectOutput() {
+	  return selectOutput("Save as...");
+  }
+
+  public String selectOutput(String prompt) {
+	  String str;
+	  synchronized(chooserLock) {
+		  selectOutput(prompt, "_selectFileCallback");
+		  try {
+			  str = pathQueue.take();
+		  } catch (InterruptedException e) {
+			  str = "";
+		  }
+	  }
+	  if(str.equals("")) return null;
+
+	  return str;
+  }
 
   /**
    * See selectInput() for details.
@@ -6594,6 +6659,34 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * Open a platform-specific file chooser dialog to select a file for input.
+   * This simulates the previous behaviour of selectInput(). It returns a path
+   * string: there is no need to use callback mechanism.
+   *
+   * @webref output:files
+   * @param prompt message to the user
+   * @return an absolute path to the selected flie
+   */
+
+  public String selectFolder() {
+	  return selectFolder("Select a folder...");
+  }
+
+  public String selectFolder(String prompt) {
+	  String str;
+	  synchronized(chooserLock) {
+		  selectFolder(prompt, "_selectFileCallback");
+		  try {
+			  str = pathQueue.take();
+		  } catch (InterruptedException e) {
+			  str = "";
+		  }
+	  }
+	  if(str.equals("")) return null;
+
+	  return str;
+  }
   /**
    * See selectInput() for details.
    *
@@ -6679,6 +6772,19 @@ public class PApplet extends Applet
     } catch (NoSuchMethodException nsme) {
       System.err.println(callbackMethod + "() could not be found");
     }
+  }
+
+  public void _selectFileCallback(File selection, Object data)
+  {
+	  try{
+		  if(selection != null) {
+			  pathQueue.put(selection.getAbsolutePath());
+		  } else {
+			  pathQueue.put("");
+		  }
+	  } catch (InterruptedException e) {
+		  System.err.println("Failed to return a path.");
+	  }
   }
 
 
