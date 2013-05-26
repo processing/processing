@@ -76,8 +76,8 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
   
   protected ArrayList<Button> buttons;
 
-  static final int ARROW_WIDTH = 7;
-  static final int ARROW_HEIGHT = 4;
+  static final int ARROW_WIDTH = 14;
+  static final int ARROW_HEIGHT = 14;
   static Image modeArrow;
 
   
@@ -248,15 +248,15 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
     int modeTextWidth = metrics.stringWidth(modeTitle);
     final int modeGapWidth = 8;
     final int modeBoxHeight = 20;
-    modeX2 = getWidth() - 16;
+    modeX2 = getWidth();
     modeX1 = modeX2 - (modeGapWidth + modeTextWidth + modeGapWidth + ARROW_WIDTH + modeGapWidth);
     modeY1 = 6; //(getHeight() - modeBoxHeight) / 2;
     modeY2 = modeY1 + modeBoxHeight; //modeY1 + modeH + modeGapV*2;
     g.setColor(modeButtonColor);
-    g.drawRect(modeX1, modeY1, modeX2 - modeX1, modeY2 - modeY1);
+    //g.drawRect(modeX1, modeY1, modeX2 - modeX1, modeY2 - modeY1);
     g.drawString(modeTitle, 
                  modeX1 + modeGapWidth, 
-                 modeY1 + modeTextHeight + (modeBoxHeight - modeTextHeight) / 2 - 2); // minimum offset to the bottom to center the text visually, not mathematically
+                 modeY1 + modeTextHeight + (modeBoxHeight - modeTextHeight) / 2 - 3); // minimal offset to the bottom to center the text visually, not mathematically
     g.drawImage(modeArrow, 
                 modeX2 - ARROW_WIDTH - modeGapWidth, 
                 modeY1 + (modeBoxHeight - ARROW_HEIGHT) / 2, 
