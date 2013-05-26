@@ -1223,7 +1223,7 @@ public class Table {
 
   /**
    * @webref table:method
-   * @brief Adds a new column to the table
+   * @brief Adds a new column to a table
    */
   public void addColumn() {
     addColumn(null, STRING);
@@ -1296,7 +1296,7 @@ public class Table {
 
  /**
    * @webref table:method
-   * @brief Removes a column from the table
+   * @brief Removes a column from a table
    * @param columnName the title of the column to be removed
    */
   public void removeColumn(String columnName) {
@@ -1339,7 +1339,7 @@ public class Table {
 
   /**
    * @webref table:method
-   * @brief To come...
+   * @brief Gets the number of columns in a table
    */
   public int getColumnCount() {
     return columns.length;
@@ -1666,7 +1666,7 @@ public class Table {
 
   /**
    * @webref table:method
-   * @brief To come...
+   * @brief Gets the number of rows in a table
    */
   public int getRowCount() {
     return rowCount;
@@ -1719,7 +1719,7 @@ public class Table {
 
  /**
    * @webref table:method
-   * @brief Adds a row to the table
+   * @brief Adds a row to a table
    */
   public TableRow addRow() {
     setRowCount(rowCount + 1);
@@ -1815,7 +1815,7 @@ public class Table {
 
   /**
    * @webref table:method
-   * @brief Removes a row from the table
+   * @brief Removes a row from a table
    * @param row ID number of the row to remove
    */
   public void removeRow(int row) {
@@ -2014,7 +2014,7 @@ public class Table {
 
   /**
    * @webref table:method
-   * @brief Gets a row from the table
+   * @brief Gets a row from a table
    * @param row ID number of the row to get
    */
   public TableRow getRow(int row) {
@@ -2028,7 +2028,7 @@ public class Table {
    * If you want to iterate in a multi-threaded manner, don't use the iterator.
    * 
    * @webref table:method
-   * @brief Gets multiple rows from the table
+   * @brief Gets multiple rows from a table
    */
   public Iterable<TableRow> rows() {
     return new Iterable<TableRow>() {
@@ -2834,18 +2834,22 @@ public class Table {
 
   /**
    * @webref table:method
-   * @brief To come...
+   * @brief Gets all values in the specified column
+   * @param columnName title of the column to search
    */
-  public String[] getStringColumn(String name) {
-    int col = getColumnIndex(name);
+  public String[] getStringColumn(String columnName) {
+    int col = getColumnIndex(columnName);
     return (col == -1) ? null : getStringColumn(col);
   }
 
 
-  public String[] getStringColumn(int col) {
+  /**
+   * @param column ID number of the column to search
+   */
+  public String[] getStringColumn(int column) {
     String[] outgoing = new String[rowCount];
     for (int i = 0; i < rowCount; i++) {
-      outgoing[i] = getString(i, col);
+      outgoing[i] = getString(i, column);
     }
     return outgoing;
   }
@@ -3199,7 +3203,8 @@ public class Table {
    * Remove any of the specified characters from the entire table.
    * 
    * @webref table:method
-   * @brief Remove characters from the entire table
+   * @brief Removes characters from the table
+   * @param tokens a list of individual characters to be removed
    */
   public void removeTokens(String tokens) {
     for (int col = 0; col < getColumnCount(); col++) {
@@ -3214,6 +3219,8 @@ public class Table {
    * <pre>
    * table.removeTokens(",$", 2);
    * </pre>
+   *
+   * @param column ID number of the column to process
    */
   public void removeTokens(String tokens, int column) {
     for (int row = 0; row < rowCount; row++) {
@@ -3236,7 +3243,9 @@ public class Table {
     }
   }
 
-
+  /**
+   * @param columnName title of the column to process
+   */
   public void removeTokens(String tokens, String columnName) {
     removeTokens(tokens, getColumnIndex(columnName));
   }
@@ -3246,7 +3255,7 @@ public class Table {
 
   /**
    * @webref table:method
-   * @brief To come...
+   * @brief Trims whitespace from values
    */
   public void trim() {
     for (int col = 0; col < getColumnCount(); col++) {
@@ -3254,7 +3263,9 @@ public class Table {
     }
   }
 
-
+  /**
+   * @param column ID number of the column to trim
+   */
   public void trim(int column) {
     if (columnTypes[column] == STRING) {
       String[] stringData = (String[]) columns[column];
@@ -3266,7 +3277,9 @@ public class Table {
     }
   }
 
-
+  /**
+   * @param columnName title of the column to trim
+   */
   public void trim(String columnName) {
     trim(getColumnIndex(columnName));
   }
