@@ -46,10 +46,12 @@ public class EditorHeader extends JComponent {
   // how far to raise the tab from the bottom of this Component
   static final int TAB_HEIGHT = 27;
   // amount of margin on the left/right for the text on the tab
-  static final int TEXT_MARGIN = 5;
+  static final int TEXT_MARGIN = 8;
   // width of the tab when no text visible 
   // (total tab width will be this plus TEXT_MARGIN*2)
   static final int NO_TEXT_WIDTH = 10;
+	// height of the bar that connects the tabs with the editor
+	static final int TAB_BASE_HEIGHT = 3;
 
   Color backgroundColor;
   Color textColor[] = new Color[2];
@@ -360,6 +362,7 @@ public class EditorHeader extends JComponent {
 //      int pieceWidth = pieceCount * PIECE_WIDTH;
 
       int state = (code == sketch.getCurrentCode()) ? SELECTED : UNSELECTED;
+      int inverseState = (code != sketch.getCurrentCode()) ? SELECTED : UNSELECTED;
       if (g != null) {
         //g.drawImage(pieces[state][LEFT], x, 0, PIECE_WIDTH, PIECE_HEIGHT, null);
         path = new GeneralPath();
@@ -398,8 +401,8 @@ public class EditorHeader extends JComponent {
 				if ( code.isModified() ) {
 					g.setColor( modifiedColor );
 					g.fillRect( tab.left, top, tab.right-tab.left, 1 );
-					g.setColor( backgroundColor );
-					g.fillRect( tab.left, top+1, tab.right-tab.left, 1 );
+					//g.setColor( backgroundColor );
+					//g.fillRect( tab.left, top+1, tab.right-tab.left, 1 );
 				}
       }
 
@@ -426,7 +429,7 @@ public class EditorHeader extends JComponent {
 		// a line that ties the selected tab to the code window
 		if ( g != null ) {
 			g.setColor( tabColor[SELECTED] );
-			g.fillRect( 0, bottom-2, sizeW, 2 );
+			g.fillRect( 0, bottom-TAB_BASE_HEIGHT, sizeW, TAB_BASE_HEIGHT );
 		}
 
     return x <= right;
