@@ -46,7 +46,7 @@ public class EditorHeader extends JComponent {
   // how far to raise the tab from the bottom of this Component
   static final int TAB_HEIGHT = 27;
   // amount of margin on the left/right for the text on the tab
-  static final int TEXT_MARGIN = 8;
+  static final int TEXT_MARGIN = 4;
   // width of the tab when no text visible 
   // (total tab width will be this plus TEXT_MARGIN*2)
   static final int NO_TEXT_WIDTH = 10;
