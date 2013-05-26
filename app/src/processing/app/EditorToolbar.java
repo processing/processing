@@ -76,8 +76,8 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
   
   protected ArrayList<Button> buttons;
 
-  static final int ARROW_WIDTH = 6;
-  static final int ARROW_HEIGHT = 6;
+  static final int ARROW_WIDTH = 7;
+  static final int ARROW_HEIGHT = 4;
   static Image modeArrow;
 
   
@@ -95,7 +95,7 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
     statusColor = mode.getColor("buttons.status.color");
 //    modeTitle = mode.getTitle().toUpperCase();
     modeTitle = mode.getTitle();
-    modeTextFont = mode.getFont("mode.button.font");
+    modeTextFont = mode.getFont("header.text.font");
     modeButtonColor = mode.getColor("mode.button.color");
 
     if (modeArrow == null) {
@@ -250,13 +250,13 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
     final int modeBoxHeight = 20;
     modeX2 = getWidth() - 16;
     modeX1 = modeX2 - (modeGapWidth + modeTextWidth + modeGapWidth + ARROW_WIDTH + modeGapWidth);
-    modeY1 = 8; //(getHeight() - modeBoxHeight) / 2;
+    modeY1 = 6; //(getHeight() - modeBoxHeight) / 2;
     modeY2 = modeY1 + modeBoxHeight; //modeY1 + modeH + modeGapV*2;
     g.setColor(modeButtonColor);
     g.drawRect(modeX1, modeY1, modeX2 - modeX1, modeY2 - modeY1);
     g.drawString(modeTitle, 
                  modeX1 + modeGapWidth, 
-                 modeY1 + modeTextHeight + (modeBoxHeight - modeTextHeight) / 2);
+                 modeY1 + modeTextHeight + (modeBoxHeight - modeTextHeight) / 2 - 2); // minimum offset to the bottom to center the text visually, not mathematically
     g.drawImage(modeArrow, 
                 modeX2 - ARROW_WIDTH - modeGapWidth, 
                 modeY1 + (modeBoxHeight - ARROW_HEIGHT) / 2, 
