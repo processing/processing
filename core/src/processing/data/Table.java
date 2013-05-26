@@ -54,9 +54,9 @@ import processing.core.PConstants;
  * <p>A rough "spec" for CSV can be found <a href="http://tools.ietf.org/html/rfc4180">here</a>.</p>
  *
  * @webref data:composite
- * @see PApplet#createTable()
  * @see PApplet#loadTable(String)
  * @see PApplet#saveTable(Table, String)
+ * @see TableRow
  */
 public class Table {
   protected int rowCount;
@@ -1224,6 +1224,7 @@ public class Table {
   /**
    * @webref table:method
    * @brief Adds a new column to a table
+   * @see Table#removeColumn(String)
    */
   public void addColumn() {
     addColumn(null, STRING);
@@ -1298,6 +1299,7 @@ public class Table {
    * @webref table:method
    * @brief Removes a column from a table
    * @param columnName the title of the column to be removed
+   * @see Table#addColumn()
    */
   public void removeColumn(String columnName) {
     removeColumn(getColumnIndex(columnName));
