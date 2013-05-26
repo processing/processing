@@ -215,7 +215,7 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
 //    if (backgroundImage != null) {
 //      g.drawImage(backgroundImage, 0, 0, BACKGROUND_WIDTH, BACKGROUND_HEIGHT, null);
 //    }
-    mode.drawBackground(g, 0);
+    mode.drawBackground(g, 0, this.getWidth()); // also pass the width in order to tile the background image
 
 //    for (int i = 0; i < buttonCount; i++) {
 //      g.drawImage(stateImage[i], x1[i], y1, null);

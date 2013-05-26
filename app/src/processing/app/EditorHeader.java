@@ -264,7 +264,7 @@ public class EditorHeader extends JComponent {
 //                  EditorToolbar.BACKGROUND_WIDTH, 
 //                  EditorToolbar.BACKGROUND_HEIGHT, null);
 //    }
-    editor.getMode().drawBackground(g, EditorToolbar.BUTTON_HEIGHT);
+    editor.getMode().drawBackground(g, EditorToolbar.BUTTON_HEIGHT, this.getWidth()); // also pass the width in order to tile the background image
 
 //    int codeCount = sketch.getCodeCount();
 //    if ((tabLeft == null) || (tabLeft.length < codeCount)) {
