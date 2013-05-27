@@ -333,7 +333,7 @@ public class EditorHeader extends JComponent {
     // draw the dropdown menu target
     menuLeft = tabs[tabs.length - 1].right + ARROW_GAP_WIDTH;
     menuRight = menuLeft + ARROW_WIDTH;
-    int arrowY = (getHeight() - TAB_HEIGHT) + (TAB_HEIGHT - ARROW_HEIGHT)/2;
+    int arrowY = (getHeight() - TAB_HEIGHT) + (TAB_HEIGHT - ARROW_HEIGHT)/2 - 1;
     g.drawImage(tabArrow, menuLeft, arrowY, 
                 ARROW_WIDTH, ARROW_HEIGHT, null);
 //    g.drawImage(pieces[popup.isVisible() ? SELECTED : UNSELECTED][MENU],
