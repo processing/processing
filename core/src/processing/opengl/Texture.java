@@ -80,7 +80,7 @@ public class Texture implements PConstants {
 
   protected PGL pgl;                // The interface between Processing and OpenGL.
   protected int context;            // The context that created this texture.
-  protected boolean colorBuffer;  // true if it is the color attachment of
+  protected boolean colorBuffer;    // true if it is the color attachment of
                                     // FrameBuffer object.
 
   protected boolean usingMipmaps;
@@ -268,18 +268,6 @@ public class Texture implements PConstants {
   ////////////////////////////////////////////////////////////
 
   // Set methods
-
-
-//  public void set(PImage tex) {
-//    Texture tex = (Texture)pg.getCache(img);
-//    set(tex);
-//  }
-
-
-//  public void set(PImage img, int x, int y, int w, int h) {
-//    Texture tex = (Texture)pg.getCache(img);
-//    set(tex, x, y, w, h);
-//  }
 
 
   public void set(Texture tex) {
@@ -851,6 +839,7 @@ public class Texture implements PConstants {
     pixelBuffer = PGL.updateIntBuffer(pixelBuffer, pixels, true);
   }
 
+
   ////////////////////////////////////////////////////////////
 
   // Buffer sink interface.
@@ -1135,7 +1124,6 @@ public class Texture implements PConstants {
   }
 
 
-
   ///////////////////////////////////////////////////////////
 
   // Allocate/release texture.
@@ -1281,18 +1269,21 @@ public class Texture implements PConstants {
     if (scale) {
       // Rendering tex into "this", and scaling the source rectangle
       // to cover the entire destination region.
-      pgl.drawTexture(tex.glTarget, tex.glName, tex.glWidth, tex.glHeight,
+      pgl.drawTexture(tex.glTarget, tex.glName,
+                      tex.glWidth, tex.glHeight, tempFbo.width, tempFbo.height,
                       x, y, w, h, 0, 0, width, height);
 
     } else {
       // Rendering tex into "this" but without scaling so the contents
       // of the source texture fall in the corresponding texels of the
       // destination.
-      pgl.drawTexture(tex.glTarget, tex.glName, tex.glWidth, tex.glHeight,
+      pgl.drawTexture(tex.glTarget, tex.glName,
+                      tex.glWidth, tex.glHeight, tempFbo.width, tempFbo.height,
                       x, y, w, h, x, y, w, h);
     }
     PGraphicsOpenGL.popFramebuffer();
     updateTexels(x, y, w, h);
+    PApplet.println(width + " " + height + " " + tempFbo.width + " " + tempFbo.height);
   }
 
 
@@ -1314,18 +1305,22 @@ public class Texture implements PConstants {
     if (scale) {
       // Rendering tex into "this", and scaling the source rectangle
       // to cover the entire destination region.
-      pgl.drawTexture(texTarget, texName, texWidth, texHeight,
+      pgl.drawTexture(texTarget, texName,
+                      texWidth, texHeight, tempFbo.width, tempFbo.height,
                       x, y, w, h, 0, 0, width, height);
 
     } else {
       // Rendering tex into "this" but without scaling so the contents
       // of the source texture fall in the corresponding texels of the
       // destination.
-      pgl.drawTexture(texTarget, texName, texWidth, texHeight,
+      pgl.drawTexture(texTarget, texName,
+                      texWidth, texHeight, tempFbo.width, tempFbo.height,
                       x, y, w, h, x, y, w, h);
     }
     PGraphicsOpenGL.popFramebuffer();
     updateTexels(x, y, w, h);
+
+    PApplet.println(width + " " + height + " " + tempFbo.width + " " + tempFbo.height);
   }
 
 

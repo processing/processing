@@ -965,7 +965,8 @@ public class PGL {
         // Render previous back texture (now is the front) as background,
         // because no background() is being used ("incremental drawing")
         drawTexture(TEXTURE_2D, glColorTex.get(frontTex),
-                    fboWidth, fboHeight, 0, 0, pg.width, pg.height,
+                    fboWidth, fboHeight, pg.width, pg.height,
+                                         0, 0, pg.width, pg.height,
                                          0, 0, pg.width, pg.height);
       }
 
@@ -997,6 +998,7 @@ public class PGL {
         gl.glDisable(GL.GL_BLEND);
         drawTexture(GL.GL_TEXTURE_2D, backTexAttach.getName(),
                     backTexAttach.getWidth(), backTexAttach.getHeight(),
+                    pg.width, pg.height,
                     0, 0, pg.width, pg.height, 0, 0, pg.width, pg.height);
         backFBO.bind(gl);
       }
@@ -1014,7 +1016,8 @@ public class PGL {
         // Render current back texture to screen, without blending.
         disable(BLEND);
         drawTexture(TEXTURE_2D, glColorTex.get(backTex),
-                    fboWidth, fboHeight, 0, 0, pg.width, pg.height,
+                    fboWidth, fboHeight, pg.width, pg.height,
+                                         0, 0, pg.width, pg.height,
                                          0, 0, pg.width, pg.height);
 
         // Swapping front and back textures.
@@ -1329,26 +1332,28 @@ public class PGL {
 
   protected void drawTexture(int target, int id, int width, int height,
                              int X0, int Y0, int X1, int Y1) {
-    drawTexture(target, id, width, height, X0, Y0, X1, Y1, X0, Y0, X1, Y1);
+    drawTexture(target, id, width, height, width, height,
+                            X0, Y0, X1, Y1, X0, Y0, X1, Y1);
   }
 
 
-  protected void drawTexture(int target, int id, int width, int height,
+  protected void drawTexture(int target, int id,
+                             int texW, int texH, int scrW, int scrH,
                              int texX0, int texY0, int texX1, int texY1,
                              int scrX0, int scrY0, int scrX1, int scrY1) {
     if (target == TEXTURE_2D) {
-      drawTexture2D(id, width, height,
+      drawTexture2D(id, texW, texH, scrW, scrH,
                     texX0, texY0, texX1, texY1,
                     scrX0, scrY0, scrX1, scrY1);
     } else if (target == TEXTURE_RECTANGLE) {
-      drawTextureRect(id, width, height,
+      drawTextureRect(id, texW, texH, scrW, scrH,
                       texX0, texY0, texX1, texY1,
                       scrX0, scrY0, scrX1, scrY1);
     }
   }
 
 
-  protected void drawTexture2D(int id, int width, int height,
+  protected void drawTexture2D(int id, int texW, int texH, int scrW, int scrH,
                                int texX0, int texY0, int texX1, int texY1,
                                int scrX0, int scrY0, int scrX1, int scrY1) {
     if (!loadedTex2DShader ||
@@ -1390,25 +1395,25 @@ public class PGL {
       // Vertex coordinates of the textured quad are specified
       // in normalized screen space (-1, 1):
       // Corner 1
-      texCoords[ 0] = 2 * (float)scrX0 / pg.width - 1;
-      texCoords[ 1] = 2 * (float)scrY0 / pg.height - 1;
-      texCoords[ 2] = (float)texX0 / width;
-      texCoords[ 3] = (float)texY0 / height;
+      texCoords[ 0] = 2 * (float)scrX0 / scrW - 1;
+      texCoords[ 1] = 2 * (float)scrY0 / scrH - 1;
+      texCoords[ 2] = (float)texX0 / texW;
+      texCoords[ 3] = (float)texY0 / texH;
       // Corner 2
-      texCoords[ 4] = 2 * (float)scrX1 / pg.width - 1;
-      texCoords[ 5] = 2 * (float)scrY0 / pg.height - 1;
-      texCoords[ 6] = (float)texX1 / width;
-      texCoords[ 7] = (float)texY0 / height;
+      texCoords[ 4] = 2 * (float)scrX1 / scrW - 1;
+      texCoords[ 5] = 2 * (float)scrY0 / scrH - 1;
+      texCoords[ 6] = (float)texX1 / texW;
+      texCoords[ 7] = (float)texY0 / texH;
       // Corner 3
-      texCoords[ 8] = 2 * (float)scrX0 / pg.width - 1;
-      texCoords[ 9] = 2 * (float)scrY1 / pg.height - 1;
-      texCoords[10] = (float)texX0 / width;
-      texCoords[11] = (float)texY1 / height;
+      texCoords[ 8] = 2 * (float)scrX0 / scrW - 1;
+      texCoords[ 9] = 2 * (float)scrY1 / scrH - 1;
+      texCoords[10] = (float)texX0 / texW;
+      texCoords[11] = (float)texY1 / texH;
       // Corner 4
-      texCoords[12] = 2 * (float)scrX1 / pg.width - 1;
-      texCoords[13] = 2 * (float)scrY1 / pg.height - 1;
-      texCoords[14] = (float)texX1 / width;
-      texCoords[15] = (float)texY1 / height;
+      texCoords[12] = 2 * (float)scrX1 / scrW - 1;
+      texCoords[13] = 2 * (float)scrY1 / scrH - 1;
+      texCoords[14] = (float)texX1 / texW;
+      texCoords[15] = (float)texY1 / texH;
 
       texData.rewind();
       texData.put(texCoords);
@@ -1452,7 +1457,7 @@ public class PGL {
   }
 
 
-  protected void drawTextureRect(int id, int width, int height,
+  protected void drawTextureRect(int id, int texW, int texH, int scrW, int scrH,
                                  int texX0, int texY0, int texX1, int texY1,
                                  int scrX0, int scrY0, int scrX1, int scrY1) {
     if (!loadedTexRectShader ||
@@ -1495,23 +1500,23 @@ public class PGL {
       // Vertex coordinates of the textured quad are specified
       // in normalized screen space (-1, 1):
       // Corner 1
-      texCoords[ 0] = 2 * (float)scrX0 / pg.width - 1;
-      texCoords[ 1] = 2 * (float)scrY0 / pg.height - 1;
+      texCoords[ 0] = 2 * (float)scrX0 / scrW - 1;
+      texCoords[ 1] = 2 * (float)scrY0 / scrH - 1;
       texCoords[ 2] = texX0;
       texCoords[ 3] = texY0;
       // Corner 2
-      texCoords[ 4] = 2 * (float)scrX1 / pg.width - 1;
-      texCoords[ 5] = 2 * (float)scrY0 / pg.height - 1;
+      texCoords[ 4] = 2 * (float)scrX1 / scrW - 1;
+      texCoords[ 5] = 2 * (float)scrY0 / scrH - 1;
       texCoords[ 6] = texX1;
       texCoords[ 7] = texY0;
       // Corner 3
-      texCoords[ 8] = 2 * (float)scrX0 / pg.width - 1;
-      texCoords[ 9] = 2 * (float)scrY1 / pg.height - 1;
+      texCoords[ 8] = 2 * (float)scrX0 / scrW - 1;
+      texCoords[ 9] = 2 * (float)scrY1 / scrH - 1;
       texCoords[10] = texX0;
       texCoords[11] = texY1;
       // Corner 4
-      texCoords[12] = 2 * (float)scrX1 / pg.width - 1;
-      texCoords[13] = 2 * (float)scrY1 / pg.height - 1;
+      texCoords[12] = 2 * (float)scrX1 / scrW - 1;
+      texCoords[13] = 2 * (float)scrY1 / scrH - 1;
       texCoords[14] = texX1;
       texCoords[15] = texY1;
 
