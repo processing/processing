@@ -93,13 +93,18 @@ public class PGL {
 
   // Parameters
 
-  protected static final boolean USE_JOGL_FBOLAYER      = false;
-  protected static boolean FORCE_SCREEN_FBO             = false;
-  protected static final boolean USE_DIRECT_BUFFERS     = true;
-  protected static final int MIN_DIRECT_BUFFER_SIZE     = 1;
-  protected static final boolean SAVE_SURFACE_TO_PIXELS = true;
+  /** Switches between the use of regular and direct buffers. */
+  protected static final boolean USE_DIRECT_BUFFERS = true;
+  protected static final int MIN_DIRECT_BUFFER_SIZE = 1;
 
-  /** Enables/disables mipmap use. **/
+  /** This flag enables/disables a hack to make sure that anything drawn
+   * in setup will be maintained even a renderer restart (e.g.: smooth change).
+   * See the code and comments involving this constant in
+   * PGraphicsOpenGL.endDraw().
+   */
+  protected static final boolean SAVE_SURFACE_TO_PIXELS_HACK = true;
+
+  /** Enables/disables mipmap use. */
   protected static final boolean MIPMAPS_ENABLED = true;
 
   /** Initial sizes for arrays of input and tessellated data. */
@@ -115,7 +120,8 @@ public class PGL {
   /** Maximum index value of a tessellated vertex. GLES restricts the vertex
    * indices to be of type unsigned short. Since Java only supports signed
    * shorts as primitive type we have 2^15 = 32768 as the maximum number of
-   * vertices that can be referred to within a single VBO. */
+   * vertices that can be referred to within a single VBO.
+   */
   protected static final int MAX_VERTEX_INDEX  = 32767;
   protected static final int MAX_VERTEX_INDEX1 = MAX_VERTEX_INDEX + 1;
 
@@ -127,7 +133,7 @@ public class PGL {
    */
   protected static final int FLUSH_VERTEX_COUNT = MAX_VERTEX_INDEX1;
 
-  /** Minimum/maximum dimensions of a texture used to hold font data. **/
+  /** Minimum/maximum dimensions of a texture used to hold font data. */
   protected static final int MIN_FONT_TEX_SIZE = 256;
   protected static final int MAX_FONT_TEX_SIZE = 1024;
 
@@ -141,11 +147,11 @@ public class PGL {
    */
   protected static final int MAX_CAPS_JOINS_LENGTH = 5000;
 
-  /** Minimum array size to use arrayCopy method(). **/
+  /** Minimum array size to use arrayCopy method(). */
   protected static final int MIN_ARRAYCOPY_SIZE = 2;
 
   /** Factor used to displace the stroke vertices towards the camera in
-   * order to make sure the lines are always on top of the fill geometry **/
+   * order to make sure the lines are always on top of the fill geometry */
   protected static final float STROKE_DISPLACEMENT = 0.999f;
 
   /** JOGL's windowing toolkit */
@@ -153,8 +159,14 @@ public class PGL {
   protected static final int AWT  = 0; // http://jogamp.org/wiki/index.php/Using_JOGL_in_AWT_SWT_and_Swing
   protected static final int NEWT = 1; // http://jogamp.org/jogl/doc/NEWT-Overview.html
 
-  protected static int toolkit;
-  protected static int events;
+  /** OS-specific configuration */
+  protected static int WINDOW_TOOLKIT;
+  protected static int EVENTS_TOOLKIT;
+  protected static boolean USE_FBOLAYER_BY_DEFAULT;
+  protected static boolean USE_JOGL_FBOLAYER;
+  protected static int REQUESTED_DEPTH_BITS = 24;
+  protected static int REQUESTED_STENCIL_BITS = 8;
+  protected static int REQUESTED_ALPHA_BITS = 8;
   static {
     if (PApplet.platform == PConstants.WINDOWS) {
       // Using AWT on Windows because NEWT displays a black background while
@@ -163,26 +175,43 @@ public class PGL {
       // GLWindow.setPointerVisible(false);
       // but apparently nothing to set the cursor icon:
       // https://jogamp.org/bugzilla/show_bug.cgi?id=409
-      toolkit = AWT;
-      events = AWT;
+      WINDOW_TOOLKIT = AWT;
+      EVENTS_TOOLKIT = AWT;
+      USE_FBOLAYER_BY_DEFAULT = false;
+      USE_JOGL_FBOLAYER = false;
+      REQUESTED_DEPTH_BITS = 24;
+      REQUESTED_STENCIL_BITS = 8;
+      REQUESTED_ALPHA_BITS = 8;
     } else if (PApplet.platform == PConstants.MACOSX) {
       // NEWT solves the issues with Java 7 and OS X 10.7+: calls to frame
       // hanging the sketch, as well as cursor, etc.
-      toolkit = AWT;
-      events = AWT;
+      WINDOW_TOOLKIT = AWT;
+      EVENTS_TOOLKIT = AWT;
+      USE_FBOLAYER_BY_DEFAULT = true;
+      USE_JOGL_FBOLAYER = true;
+      REQUESTED_DEPTH_BITS = 24;
+      REQUESTED_STENCIL_BITS = 8;
+      REQUESTED_ALPHA_BITS = 8;
     } else if (PApplet.platform == PConstants.LINUX) {
-      toolkit = NEWT; // AWT extremely broken on Linux?
-      events = NEWT;
+      WINDOW_TOOLKIT = NEWT; // AWT extremely broken on Linux?
+      EVENTS_TOOLKIT = NEWT;
+      USE_FBOLAYER_BY_DEFAULT = false;
+      USE_JOGL_FBOLAYER = false;
+      REQUESTED_DEPTH_BITS = 24;
+      REQUESTED_STENCIL_BITS = 8;
+      REQUESTED_ALPHA_BITS = 8;
     } else if (PApplet.platform == PConstants.OTHER) {
-      toolkit = NEWT; // NEWT should work on the Raspberry pi
-      events = NEWT;
+      WINDOW_TOOLKIT = NEWT; // NEWT should work on the Raspberry pi
+      EVENTS_TOOLKIT = NEWT;
+      USE_FBOLAYER_BY_DEFAULT = false;
+      USE_JOGL_FBOLAYER = false;
+      REQUESTED_DEPTH_BITS = 24;
+      REQUESTED_STENCIL_BITS = 8;
+      REQUESTED_ALPHA_BITS = 8;
     }
   }
 
-  protected static int request_depth_bits = 24;
-  protected static int request_stencil_bits = 8;
-  protected static int request_alpha_bits = 8;
-
+  /** Size of different types in bytes */
   protected static final int SIZEOF_SHORT = Short.SIZE / 8;
   protected static final int SIZEOF_INT = Integer.SIZE / 8;
   protected static final int SIZEOF_FLOAT = Float.SIZE / 8;
@@ -190,11 +219,7 @@ public class PGL {
   protected static final int SIZEOF_INDEX = SIZEOF_SHORT;
   protected static final int INDEX_TYPE = GL.GL_UNSIGNED_SHORT;
 
-  /** Error string from framebuffer errors **/
-  protected static final String FRAMEBUFFER_ERROR_MESSAGE =
-    "Framebuffer error (%1$s), rendering will probably not work as expected";
-
-  /** Machine Epsilon for float precision. **/
+  /** Machine Epsilon for float precision. */
   protected static float FLOAT_EPS = Float.MIN_VALUE;
   // Calculation of the Machine Epsilon for float precision. From:
   // http://en.wikipedia.org/wiki/Machine_epsilon#Approximation_using_Java
@@ -268,8 +293,7 @@ public class PGL {
   ///////////////////////////////////////////////////////////
 
   // FBO layer
-
-  protected static boolean fboLayerByDefault = FORCE_SCREEN_FBO;
+  protected static boolean fboLayerRequested = false;
   protected static boolean fboLayerCreated = false;
   protected static boolean fboLayerInUse = false;
   protected static boolean firstFrame = true;
@@ -366,6 +390,9 @@ public class PGL {
 
   // Error messages
 
+  protected static final String FRAMEBUFFER_ERROR =
+    "Framebuffer error (%1$s), rendering will probably not work as expected";
+
   protected static final String MISSING_FBO_ERROR =
     "Framebuffer objects are not supported by this hardware (or driver)";
 
@@ -441,10 +468,42 @@ public class PGL {
       sinkFBO = backFBO = frontFBO = null;
     }
 
-    // Setting up the desired GL capabilities;
+    // Setting up the desired capabilities;
     GLCapabilities caps = new GLCapabilities(profile);
     caps.setBackgroundOpaque(true);
     caps.setOnscreen(true);
+    if (USE_FBOLAYER_BY_DEFAULT) {
+      if (USE_JOGL_FBOLAYER) {
+        caps.setPBuffer(false);
+        caps.setFBO(true);
+        if (1 < antialias) {
+          caps.setSampleBuffers(true);
+          caps.setNumSamples(antialias);
+        } else {
+          caps.setSampleBuffers(false);
+        }
+        fboLayerRequested = false;
+      } else {
+        caps.setPBuffer(false);
+        caps.setFBO(false);
+        caps.setSampleBuffers(false);
+        fboLayerRequested = 1 < antialias;
+      }
+    } else {
+      if (1 < antialias) {
+        caps.setSampleBuffers(true);
+        caps.setNumSamples(antialias);
+      } else {
+        caps.setSampleBuffers(false);
+      }
+      fboLayerRequested = false;
+    }
+    caps.setDepthBits(REQUESTED_DEPTH_BITS);
+    caps.setStencilBits(REQUESTED_STENCIL_BITS);
+    caps.setAlphaBits(REQUESTED_ALPHA_BITS);
+    reqNumSamples = qualityToSamples(antialias);
+
+/*
     if (USE_JOGL_FBOLAYER) {
       if (1 < antialias) {
         caps.setSampleBuffers(true);
@@ -452,15 +511,16 @@ public class PGL {
       } else {
         caps.setSampleBuffers(false);
       }
+      fboLayerRequested = false;
     } else {
       caps.setSampleBuffers(false);
       reqNumSamples = qualityToSamples(antialias);
+      fboLayerRequested = 1 < reqNumSamples;
     }
-    caps.setDepthBits(request_depth_bits);
-    caps.setStencilBits(request_stencil_bits);
-    caps.setAlphaBits(request_alpha_bits);
+    */
 
-    if (toolkit == AWT) {
+
+    if (WINDOW_TOOLKIT == AWT) {
       canvasAWT = new GLCanvas(caps);
 
       //canvas = new GLCanvas(caps, context);
@@ -479,7 +539,7 @@ public class PGL {
 
       listener = new PGLListener();
       canvasAWT.addGLEventListener(listener);
-    } else if (toolkit == NEWT) {
+    } else if (WINDOW_TOOLKIT == NEWT) {
       window = GLWindow.create(caps);
       canvasNEWT = new NewtCanvasAWT(window);
       canvasNEWT.setBounds(0, 0, pg.width, pg.height);
@@ -489,7 +549,7 @@ public class PGL {
       pg.parent.setLayout(new BorderLayout());
       pg.parent.add(canvasNEWT, BorderLayout.CENTER);
 
-      if (events == NEWT) {
+      if (EVENTS_TOOLKIT == NEWT) {
         NEWTMouseListener mouseListener = new NEWTMouseListener();
         window.addMouseListener(mouseListener);
         NEWTKeyListener keyListener = new NEWTKeyListener();
@@ -497,7 +557,7 @@ public class PGL {
         NEWTWindowListener winListener = new NEWTWindowListener();
         window.addWindowListener(winListener);
         canvasNEWT.addFocusListener(pg.parent); // So focus detection work.
-      } else if (events == AWT) {
+      } else if (EVENTS_TOOLKIT == AWT) {
         pg.parent.removeListeners(canvasNEWT);
         pg.parent.addListeners(canvasNEWT);
       }
@@ -546,148 +606,13 @@ public class PGL {
   protected void update() {
     if (!setFps) setFps(targetFps);
 
-    if (USE_JOGL_FBOLAYER) return;
-
-    if (!fboLayerCreated) {
-      String ext = getString(EXTENSIONS);
-      if (-1 < ext.indexOf("texture_non_power_of_two")) {
-        fboWidth = pg.width;
-        fboHeight = pg.height;
-      } else {
-        fboWidth = nextPowerOfTwo(pg.width);
-        fboHeight = nextPowerOfTwo(pg.height);
-      }
-
-      getIntegerv(MAX_SAMPLES, intBuffer);
-      if (-1 < ext.indexOf("_framebuffer_multisample") &&
-          1 < intBuffer.get(0)) {
-        numSamples = reqNumSamples;
-      } else {
-        numSamples = 1;
-      }
-      boolean multisample = 1 < numSamples;
-
-      boolean packed = ext.indexOf("packed_depth_stencil") != -1;
-      int depthBits = getDepthBits();
-      int stencilBits = getStencilBits();
-
-      genTextures(2, glColorTex);
-      for (int i = 0; i < 2; i++) {
-        bindTexture(TEXTURE_2D, glColorTex.get(i));
-        texParameteri(TEXTURE_2D, TEXTURE_MIN_FILTER, NEAREST);
-        texParameteri(TEXTURE_2D, TEXTURE_MAG_FILTER, NEAREST);
-        texParameteri(TEXTURE_2D, TEXTURE_WRAP_S, CLAMP_TO_EDGE);
-        texParameteri(TEXTURE_2D, TEXTURE_WRAP_T, CLAMP_TO_EDGE);
-        texImage2D(TEXTURE_2D, 0, RGBA, fboWidth, fboHeight, 0,
-                   RGBA, UNSIGNED_BYTE, null);
-        initTexture(TEXTURE_2D, RGBA, fboWidth, fboHeight, pg.backgroundColor);
-      }
-      bindTexture(TEXTURE_2D, 0);
-
-      backTex = 0;
-      frontTex = 1;
-
-      genFramebuffers(1, glColorFbo);
-      bindFramebuffer(FRAMEBUFFER, glColorFbo.get(0));
-      framebufferTexture2D(FRAMEBUFFER, COLOR_ATTACHMENT0, TEXTURE_2D,
-                           glColorTex.get(backTex), 0);
-
-      if (multisample) {
-        // Creating multisampled FBO
-        genFramebuffers(1, glMultiFbo);
-        bindFramebuffer(FRAMEBUFFER, glMultiFbo.get(0));
-
-        // color render buffer...
-        genRenderbuffers(1, glColorBuf);
-        bindRenderbuffer(RENDERBUFFER, glColorBuf.get(0));
-        renderbufferStorageMultisample(RENDERBUFFER, numSamples,
-                                       RGBA8, fboWidth, fboHeight);
-        framebufferRenderbuffer(FRAMEBUFFER, COLOR_ATTACHMENT0,
-                                RENDERBUFFER, glColorBuf.get(0));
-      }
-
-      // Creating depth and stencil buffers
-      if (packed && depthBits == 24 && stencilBits == 8) {
-        // packed depth+stencil buffer
-        genRenderbuffers(1, glDepthStencil);
-        bindRenderbuffer(RENDERBUFFER, glDepthStencil.get(0));
-        if (multisample) {
-          renderbufferStorageMultisample(RENDERBUFFER, numSamples,
-                                         DEPTH24_STENCIL8, fboWidth, fboHeight);
-        } else {
-          renderbufferStorage(RENDERBUFFER, DEPTH24_STENCIL8,
-                              fboWidth, fboHeight);
-        }
-        framebufferRenderbuffer(FRAMEBUFFER, DEPTH_ATTACHMENT, RENDERBUFFER,
-                                glDepthStencil.get(0));
-        framebufferRenderbuffer(FRAMEBUFFER, STENCIL_ATTACHMENT, RENDERBUFFER,
-                                glDepthStencil.get(0));
-      } else {
-        // separate depth and stencil buffers
-        if (0 < depthBits) {
-          int depthComponent = DEPTH_COMPONENT16;
-          if (depthBits == 32) {
-            depthComponent = DEPTH_COMPONENT32;
-          } else if (depthBits == 24) {
-            depthComponent = DEPTH_COMPONENT24;
-          } else if (depthBits == 16) {
-            depthComponent = DEPTH_COMPONENT16;
-          }
-
-          genRenderbuffers(1, glDepth);
-          bindRenderbuffer(RENDERBUFFER, glDepth.get(0));
-          if (multisample) {
-            renderbufferStorageMultisample(RENDERBUFFER, numSamples,
-                                           depthComponent, fboWidth, fboHeight);
-          } else {
-            renderbufferStorage(RENDERBUFFER, depthComponent,
-                                fboWidth, fboHeight);
-          }
-          framebufferRenderbuffer(FRAMEBUFFER, DEPTH_ATTACHMENT,
-                                  RENDERBUFFER, glDepth.get(0));
-        }
-
-        if (0 < stencilBits) {
-          int stencilIndex = STENCIL_INDEX1;
-          if (stencilBits == 8) {
-            stencilIndex = STENCIL_INDEX8;
-          } else if (stencilBits == 4) {
-            stencilIndex = STENCIL_INDEX4;
-          } else if (stencilBits == 1) {
-            stencilIndex = STENCIL_INDEX1;
-          }
-
-          genRenderbuffers(1, glStencil);
-          bindRenderbuffer(RENDERBUFFER, glStencil.get(0));
-          if (multisample) {
-            renderbufferStorageMultisample(RENDERBUFFER, numSamples,
-                                           stencilIndex, fboWidth, fboHeight);
-          } else {
-            renderbufferStorage(RENDERBUFFER, stencilIndex,
-                                fboWidth, fboHeight);
-          }
-          framebufferRenderbuffer(FRAMEBUFFER, STENCIL_ATTACHMENT,
-                                  RENDERBUFFER, glStencil.get(0));
-        }
-      }
-
-      validateFramebuffer();
-
-      // Clear all buffers.
-      clearDepth(1);
-      clearStencil(0);
-      int argb = pg.backgroundColor;
-      float a = ((argb >> 24) & 0xff) / 255.0f;
-      float r = ((argb >> 16) & 0xff) / 255.0f;
-      float g = ((argb >> 8) & 0xff) / 255.0f;
-      float b = ((argb) & 0xff) / 255.0f;
-      clearColor(r, g, b, a);
-      clear(DEPTH_BUFFER_BIT | STENCIL_BUFFER_BIT | COLOR_BUFFER_BIT);
-
-      bindFramebuffer(FRAMEBUFFER, 0);
-
-      fboLayerCreated = true;
+    if (fboLayerRequested && !fboLayerCreated && !USE_JOGL_FBOLAYER) {
+      createFBOLayer();
     }
+//    if (USE_JOGL_FBOLAYER) return;
+//    if (!fboLayerCreated) {
+//      createFBOLayer();
+//    }
   }
 
 
@@ -748,8 +673,8 @@ public class PGL {
   }
 
 
-  protected void needFBOLayer() {
-    FORCE_SCREEN_FBO = true;
+  protected void requestFBOLayer() {
+    fboLayerRequested = true;
   }
 
 
@@ -935,6 +860,148 @@ public class PGL {
   }
 
 
+  protected void createFBOLayer() {
+    String ext = getString(EXTENSIONS);
+    if (-1 < ext.indexOf("texture_non_power_of_two")) {
+      fboWidth = pg.width;
+      fboHeight = pg.height;
+    } else {
+      fboWidth = nextPowerOfTwo(pg.width);
+      fboHeight = nextPowerOfTwo(pg.height);
+    }
+
+    getIntegerv(MAX_SAMPLES, intBuffer);
+    if (-1 < ext.indexOf("_framebuffer_multisample") &&
+        1 < intBuffer.get(0)) {
+      numSamples = reqNumSamples;
+    } else {
+      numSamples = 1;
+    }
+    boolean multisample = 1 < numSamples;
+
+    boolean packed = ext.indexOf("packed_depth_stencil") != -1;
+    int depthBits = getDepthBits();
+    int stencilBits = getStencilBits();
+
+    genTextures(2, glColorTex);
+    for (int i = 0; i < 2; i++) {
+      bindTexture(TEXTURE_2D, glColorTex.get(i));
+      texParameteri(TEXTURE_2D, TEXTURE_MIN_FILTER, NEAREST);
+      texParameteri(TEXTURE_2D, TEXTURE_MAG_FILTER, NEAREST);
+      texParameteri(TEXTURE_2D, TEXTURE_WRAP_S, CLAMP_TO_EDGE);
+      texParameteri(TEXTURE_2D, TEXTURE_WRAP_T, CLAMP_TO_EDGE);
+      texImage2D(TEXTURE_2D, 0, RGBA, fboWidth, fboHeight, 0,
+                 RGBA, UNSIGNED_BYTE, null);
+      initTexture(TEXTURE_2D, RGBA, fboWidth, fboHeight, pg.backgroundColor);
+    }
+    bindTexture(TEXTURE_2D, 0);
+
+    backTex = 0;
+    frontTex = 1;
+
+    genFramebuffers(1, glColorFbo);
+    bindFramebuffer(FRAMEBUFFER, glColorFbo.get(0));
+    framebufferTexture2D(FRAMEBUFFER, COLOR_ATTACHMENT0, TEXTURE_2D,
+                         glColorTex.get(backTex), 0);
+
+    if (multisample) {
+      // Creating multisampled FBO
+      genFramebuffers(1, glMultiFbo);
+      bindFramebuffer(FRAMEBUFFER, glMultiFbo.get(0));
+
+      // color render buffer...
+      genRenderbuffers(1, glColorBuf);
+      bindRenderbuffer(RENDERBUFFER, glColorBuf.get(0));
+      renderbufferStorageMultisample(RENDERBUFFER, numSamples,
+                                     RGBA8, fboWidth, fboHeight);
+      framebufferRenderbuffer(FRAMEBUFFER, COLOR_ATTACHMENT0,
+                              RENDERBUFFER, glColorBuf.get(0));
+    }
+
+    // Creating depth and stencil buffers
+    if (packed && depthBits == 24 && stencilBits == 8) {
+      // packed depth+stencil buffer
+      genRenderbuffers(1, glDepthStencil);
+      bindRenderbuffer(RENDERBUFFER, glDepthStencil.get(0));
+      if (multisample) {
+        renderbufferStorageMultisample(RENDERBUFFER, numSamples,
+                                       DEPTH24_STENCIL8, fboWidth, fboHeight);
+      } else {
+        renderbufferStorage(RENDERBUFFER, DEPTH24_STENCIL8,
+                            fboWidth, fboHeight);
+      }
+      framebufferRenderbuffer(FRAMEBUFFER, DEPTH_ATTACHMENT, RENDERBUFFER,
+                              glDepthStencil.get(0));
+      framebufferRenderbuffer(FRAMEBUFFER, STENCIL_ATTACHMENT, RENDERBUFFER,
+                              glDepthStencil.get(0));
+    } else {
+      // separate depth and stencil buffers
+      if (0 < depthBits) {
+        int depthComponent = DEPTH_COMPONENT16;
+        if (depthBits == 32) {
+          depthComponent = DEPTH_COMPONENT32;
+        } else if (depthBits == 24) {
+          depthComponent = DEPTH_COMPONENT24;
+        } else if (depthBits == 16) {
+          depthComponent = DEPTH_COMPONENT16;
+        }
+
+        genRenderbuffers(1, glDepth);
+        bindRenderbuffer(RENDERBUFFER, glDepth.get(0));
+        if (multisample) {
+          renderbufferStorageMultisample(RENDERBUFFER, numSamples,
+                                         depthComponent, fboWidth, fboHeight);
+        } else {
+          renderbufferStorage(RENDERBUFFER, depthComponent,
+                              fboWidth, fboHeight);
+        }
+        framebufferRenderbuffer(FRAMEBUFFER, DEPTH_ATTACHMENT,
+                                RENDERBUFFER, glDepth.get(0));
+      }
+
+      if (0 < stencilBits) {
+        int stencilIndex = STENCIL_INDEX1;
+        if (stencilBits == 8) {
+          stencilIndex = STENCIL_INDEX8;
+        } else if (stencilBits == 4) {
+          stencilIndex = STENCIL_INDEX4;
+        } else if (stencilBits == 1) {
+          stencilIndex = STENCIL_INDEX1;
+        }
+
+        genRenderbuffers(1, glStencil);
+        bindRenderbuffer(RENDERBUFFER, glStencil.get(0));
+        if (multisample) {
+          renderbufferStorageMultisample(RENDERBUFFER, numSamples,
+                                         stencilIndex, fboWidth, fboHeight);
+        } else {
+          renderbufferStorage(RENDERBUFFER, stencilIndex,
+                              fboWidth, fboHeight);
+        }
+        framebufferRenderbuffer(FRAMEBUFFER, STENCIL_ATTACHMENT,
+                                RENDERBUFFER, glStencil.get(0));
+      }
+    }
+
+    validateFramebuffer();
+
+    // Clear all buffers.
+    clearDepth(1);
+    clearStencil(0);
+    int argb = pg.backgroundColor;
+    float a = ((argb >> 24) & 0xff) / 255.0f;
+    float r = ((argb >> 16) & 0xff) / 255.0f;
+    float g = ((argb >> 8) & 0xff) / 255.0f;
+    float b = ((argb) & 0xff) / 255.0f;
+    clearColor(r, g, b, a);
+    clear(DEPTH_BUFFER_BIT | STENCIL_BUFFER_BIT | COLOR_BUFFER_BIT);
+
+    bindFramebuffer(FRAMEBUFFER, 0);
+
+    fboLayerCreated = true;
+  }
+
+
   ///////////////////////////////////////////////////////////
 
   // Frame rendering
@@ -943,7 +1010,7 @@ public class PGL {
   protected void beginDraw(boolean clear0) {
     if (USE_JOGL_FBOLAYER) return;
 
-    if (fboLayerInUse(clear0)) {
+    if (needFBOLayer(clear0)) {
       bindFramebuffer(FRAMEBUFFER, glColorFbo.get(0));
       framebufferTexture2D(FRAMEBUFFER, COLOR_ATTACHMENT0,
                            TEXTURE_2D, glColorTex.get(backTex), 0);
@@ -979,31 +1046,33 @@ public class PGL {
       firstFrame = false;
     }
 
-    if (!fboLayerByDefault) {
+    if (!USE_FBOLAYER_BY_DEFAULT) {
       // The result of this assignment is the following: if the user requested
-      // at some point the use of the FBO layer, but subsequently didn't do
-      // request it again, then the rendering won't use the FBO layer if not
-      // needed, since it is slower than simple onscreen rendering.
-      FORCE_SCREEN_FBO = false;
+      // at some point the use of the FBO layer, but subsequently didn't
+      // request it again, then the rendering won't render to the FBO layer if
+      // not needed by the condif, since it is slower than simple onscreen
+      // rendering.
+      fboLayerRequested = false;
     }
   }
 
+
   protected void endDraw(boolean clear0) {
-    if (USE_JOGL_FBOLAYER) {
-      if (!clear0 && isFBOBacked() && !isMultisampled()) {
-        // Draw the back texture into the front texture, which will be used as
-        // back texture in the next frame. Otherwise flickering will occur if
-        // the sketch uses "incremental drawing" (background() not called).
-        frontFBO.bind(gl);
-        gl.glDisable(GL.GL_BLEND);
-        drawTexture(GL.GL_TEXTURE_2D, backTexAttach.getName(),
-                    backTexAttach.getWidth(), backTexAttach.getHeight(),
-                    pg.width, pg.height,
-                    0, 0, pg.width, pg.height, 0, 0, pg.width, pg.height);
-        backFBO.bind(gl);
-      }
-    } else {
-      if (fboLayerInUse) {
+    if (isFBOBacked()) {
+      if (USE_JOGL_FBOLAYER) {
+        if (!clear0 && isFBOBacked() && !isMultisampled()) {
+          // Draw the back texture into the front texture, which will be used as
+          // back texture in the next frame. Otherwise flickering will occur if
+          // the sketch uses "incremental drawing" (background() not called).
+          frontFBO.bind(gl);
+          gl.glDisable(GL.GL_BLEND);
+          drawTexture(GL.GL_TEXTURE_2D, backTexAttach.getName(),
+                      backTexAttach.getWidth(), backTexAttach.getHeight(),
+                      pg.width, pg.height,
+                      0, 0, pg.width, pg.height, 0, 0, pg.width, pg.height);
+          backFBO.bind(gl);
+        }
+      } else if (fboLayerInUse) {
         syncBackTexture();
 
         // Draw the contents of the back texture to the screen framebuffer.
@@ -1050,9 +1119,9 @@ public class PGL {
   protected void requestDraw() {
     if (pg.initialized && pg.parent.canDraw()) {
       try {
-        if (toolkit == AWT) {
+        if (WINDOW_TOOLKIT == AWT) {
           canvasAWT.display();
-        } else if (toolkit == NEWT) {
+        } else if (WINDOW_TOOLKIT == NEWT) {
           window.display();
         }
       } catch (GLException e) {
@@ -1073,8 +1142,8 @@ public class PGL {
   }
 
 
-  protected boolean fboLayerInUse(boolean clear0) {
-    boolean cond = !clear0 || FORCE_SCREEN_FBO || 1 < numSamples;
+  protected boolean needFBOLayer(boolean clear0) {
+    boolean cond = !clear0 || fboLayerRequested || 1 < numSamples;
     return cond && glColorFbo.get(0) != 0;
   }
 
@@ -1953,22 +2022,22 @@ public class PGL {
     if (status == FRAMEBUFFER_COMPLETE) {
       return true;
     } else if (status == FRAMEBUFFER_INCOMPLETE_ATTACHMENT) {
-      System.err.println(String.format(FRAMEBUFFER_ERROR_MESSAGE,
+      System.err.println(String.format(FRAMEBUFFER_ERROR,
                                        "incomplete attachment"));
     } else if (status == FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT) {
-      System.err.println(String.format(FRAMEBUFFER_ERROR_MESSAGE,
+      System.err.println(String.format(FRAMEBUFFER_ERROR,
                                        "incomplete missing attachment"));
     } else if (status == FRAMEBUFFER_INCOMPLETE_DIMENSIONS) {
-      System.err.println(String.format(FRAMEBUFFER_ERROR_MESSAGE,
+      System.err.println(String.format(FRAMEBUFFER_ERROR,
                                        "incomplete dimensions"));
     } else if (status == FRAMEBUFFER_INCOMPLETE_FORMATS) {
-      System.err.println(String.format(FRAMEBUFFER_ERROR_MESSAGE,
+      System.err.println(String.format(FRAMEBUFFER_ERROR,
                                        "incomplete formats"));
     } else if (status == FRAMEBUFFER_UNSUPPORTED) {
-      System.err.println(String.format(FRAMEBUFFER_ERROR_MESSAGE,
+      System.err.println(String.format(FRAMEBUFFER_ERROR,
                                        "framebuffer unsupported"));
     } else {
-      System.err.println(String.format(FRAMEBUFFER_ERROR_MESSAGE,
+      System.err.println(String.format(FRAMEBUFFER_ERROR,
                                        "unknown error"));
     }
     return false;
@@ -2407,7 +2476,7 @@ public class PGL {
         // The onscreen drawing surface is backed by an FBO layer.
         GLFBODrawable fboDrawable = null;
 
-        if (toolkit == AWT) {
+        if (WINDOW_TOOLKIT == AWT) {
           GLCanvas glCanvas = (GLCanvas)glDrawable;
           fboDrawable = (GLFBODrawable)glCanvas.getDelegatedDrawable();
         } else {

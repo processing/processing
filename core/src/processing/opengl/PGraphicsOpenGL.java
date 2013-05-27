@@ -1652,7 +1652,7 @@ public class PGraphicsOpenGL extends PGraphics {
     // Flushing any remaining geometry.
     flush();
 
-    if (PGL.SAVE_SURFACE_TO_PIXELS &&
+    if (PGL.SAVE_SURFACE_TO_PIXELS_HACK &&
         (!pgPrimary.initialized || parent.frameCount == 0)) {
       // Smooth was disabled/enabled at some point during drawing. We save
       // the current contents of the back buffer (because the  buffers haven't
@@ -5416,7 +5416,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     boolean needEndDraw = false;
-    if (primarySurface) pgl.needFBOLayer();
+    if (primarySurface) pgl.requestFBOLayer();
     else if (!drawing) {
       beginDraw();
       needEndDraw = true;
@@ -6535,7 +6535,7 @@ public class PGraphicsOpenGL extends PGraphics {
     @Override
     public void unbind() {
       if (-1 < bufferLoc) {
-        pgl.needFBOLayer();
+        pgl.requestFBOLayer();
         pgl.activeTexture(PGL.TEXTURE0 + bufferUnit);
         pgCurrent.unbindBackTexture();
         pgl.activeTexture(PGL.TEXTURE0);
