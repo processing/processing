@@ -503,28 +503,8 @@ public class PGL {
     caps.setAlphaBits(REQUESTED_ALPHA_BITS);
     reqNumSamples = qualityToSamples(antialias);
 
-/*
-    if (USE_JOGL_FBOLAYER) {
-      if (1 < antialias) {
-        caps.setSampleBuffers(true);
-        caps.setNumSamples(antialias);
-      } else {
-        caps.setSampleBuffers(false);
-      }
-      fboLayerRequested = false;
-    } else {
-      caps.setSampleBuffers(false);
-      reqNumSamples = qualityToSamples(antialias);
-      fboLayerRequested = 1 < reqNumSamples;
-    }
-    */
-
-
     if (WINDOW_TOOLKIT == AWT) {
       canvasAWT = new GLCanvas(caps);
-
-      //canvas = new GLCanvas(caps, context);
-
       canvasAWT.setBounds(0, 0, pg.width, pg.height);
       canvasAWT.setBackground(new Color(pg.backgroundColor, true));
       canvasAWT.setFocusable(true);
