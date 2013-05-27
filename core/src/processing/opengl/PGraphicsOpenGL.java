@@ -1636,15 +1636,9 @@ public class PGraphicsOpenGL extends PGraphics {
     pgCurrent = this;
     drawing = true;
 
-    clearCalled = false;
-    clearColorBuffer0 = clearColorBuffer;
-    clearColorBuffer = false;
-
     report("bot beginDraw()");
   }
 
-  boolean clearCalled;
-  boolean clearEveryFrame;
 
   @Override
   public void endDraw() {
@@ -1653,10 +1647,6 @@ public class PGraphicsOpenGL extends PGraphics {
     if (!drawing) {
       PGraphics.showWarning(NO_BEGIN_DRAW_ERROR);
       return;
-    }
-
-    if (!clearCalled && 0 < parent.frameCount) {
-      clearEveryFrame = false;
     }
 
     // Flushing any remaining geometry.
@@ -1947,7 +1937,6 @@ public class PGraphicsOpenGL extends PGraphics {
     manipulatingCamera = false;
 
     clearColorBuffer = false;
-    clearEveryFrame = true;
 
     // easiest for beginners
     textureMode(IMAGE);
@@ -4902,7 +4891,6 @@ public class PGraphicsOpenGL extends PGraphics {
     if (0 < parent.frameCount) {
       clearColorBuffer = true;
     }
-    clearCalled = true;
   }
 
 
@@ -4924,7 +4912,6 @@ public class PGraphicsOpenGL extends PGraphics {
     if (0 < parent.frameCount) {
       clearColorBuffer = true;
     }
-    clearCalled = true;
   }
 
 
@@ -5303,10 +5290,6 @@ public class PGraphicsOpenGL extends PGraphics {
       texture.invertedY(true);
       texture.colorBuffer(true);
       pgPrimary.setCache(this, texture);
-
-      if (!primarySurface) {
-        createPTexture();
-      }
     }
   }
 
@@ -5986,18 +5969,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void beginOffscreenDraw() {
     updateOffscreen();
-    /*
-    if (!clearColorBuffer) {
-      // Render previous back texture (now is the front) as background,
-      // because no background() is being used ("incremental drawing")
-      drawPTexture();
-    }
-    if (!clearEveryFrame) {
-      drawPTexture();
-    }
-    */
+    // Render previous back texture (now is the front) as background
     drawPTexture();
-    //texture.set(ptexture);
 
     // Restoring the clipping configuration of the offscreen surface.
     if (clip) {
@@ -6135,6 +6108,9 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     pixelsOp = OP_NONE;
+
+    clearColorBuffer0 = clearColorBuffer;
+    clearColorBuffer = false;
 
     modified = false;
     setgetPixels = false;
