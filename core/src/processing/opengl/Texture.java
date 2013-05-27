@@ -1283,7 +1283,6 @@ public class Texture implements PConstants {
     }
     PGraphicsOpenGL.popFramebuffer();
     updateTexels(x, y, w, h);
-    PApplet.println(width + " " + height + " " + tempFbo.width + " " + tempFbo.height);
   }
 
 
@@ -1319,8 +1318,6 @@ public class Texture implements PConstants {
     }
     PGraphicsOpenGL.popFramebuffer();
     updateTexels(x, y, w, h);
-
-    PApplet.println(width + " " + height + " " + tempFbo.width + " " + tempFbo.height);
   }
 
 

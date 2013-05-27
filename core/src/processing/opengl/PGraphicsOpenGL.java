@@ -552,13 +552,6 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  // now implemented in PGraphics
-//  public void setParent(PApplet parent)  {
-//    super.setParent(parent);
-//    quality = parent.sketchQuality();
-//  }
-
-
   @Override
   public void setPrimary(boolean primary) {
     super.setPrimary(primary);
@@ -1621,22 +1614,24 @@ public class PGraphicsOpenGL extends PGraphics {
       return;
     }
 
+    if (!primarySurface && pgPrimary.texCache.containsTexture(this)) {
+      // This offscreen surface is being used as a texture earlier in draw,
+      // so we should update the rendering up to this point since it will
+      // modified.
+      pgPrimary.flush();
+    }
+
     if (!glParamsRead) {
       getGLParameters();
     }
 
+    setViewport();
     if (primarySurface) {
       beginOnscreenDraw();
     } else {
-      if (pgPrimary.texCache.containsTexture(this)) {
-        // This offscreen surface is being used as a texture earlier in draw,
-        // so we should update the rendering up to this point since it will
-        // modified.
-        pgPrimary.flush();
-      }
       beginOffscreenDraw();
     }
-    setDefaults();
+    setDrawDefaults();
 
     pgCurrent = this;
     drawing = true;
@@ -5323,14 +5318,12 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  protected void swapTextures() {
+  protected void swapOffscreenTextures() {
     if (ptexture != null) {
       int temp = texture.glName;
       texture.glName = ptexture.glName;
       ptexture.glName = temp;
-      if (!primarySurface) {
-        offscreenFramebuffer.setColorBuffer(texture);
-      }
+      offscreenFramebuffer.setColorBuffer(texture);
     }
   }
 
@@ -5366,20 +5359,6 @@ public class PGraphicsOpenGL extends PGraphics {
       pgl.drawTexture(ptexture.glTarget, ptexture.glName,
                       ptexture.glWidth, ptexture.glHeight,
                       0, 0, width, height);
-      pgl.enable(PGL.BLEND);
-    }
-  }
-
-
-  protected void drawPTexture(int x, int y, int w, int h) {
-    if (ptexture != null) {
-      // Processing Y axis is inverted with respect to OpenGL, so we need to
-      // invert the y coordinates of the screen rectangle.
-      pgl.disable(PGL.BLEND);
-      pgl.drawTexture(ptexture.glTarget, ptexture.glName,
-                      ptexture.glWidth, ptexture.glHeight, width, height,
-                      x, y, x + w, y + h,
-                      x, height - (y + h), x + w, height - y);
       pgl.enable(PGL.BLEND);
     }
   }
@@ -5468,7 +5447,6 @@ public class PGraphicsOpenGL extends PGraphics {
       filterImage = wrapTexture(filterTexture);
     }
     filterTexture.set(texture);
-//    filterTexture.set(ptexture);
 
     // Disable writing to the depth buffer, so that after applying the filter we
     // can still use the depth information to keep adding geometry to the scene.
@@ -5993,7 +5971,7 @@ public class PGraphicsOpenGL extends PGraphics {
         // The back texture of the past frame becomes the front,
         // and the front texture becomes the new back texture where the
         // new frame is drawn to.
-        swapTextures();
+        swapOffscreenTextures();
       }
     }
 
@@ -6019,6 +5997,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     */
     drawPTexture();
+    //texture.set(ptexture);
 
     // Restoring the clipping configuration of the offscreen surface.
     if (clip) {
@@ -6042,7 +6021,15 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  protected void setDefaults() {
+  protected void setViewport() {
+    viewport.put(0, 0); viewport.put(1, 0);
+    viewport.put(2, width); viewport.put(3, height);
+    pgl.viewport(viewport.get(0), viewport.get(1),
+                 viewport.get(2), viewport.get(3));
+  }
+
+
+  protected void setDrawDefaults() {
     inGeo.clear();
     tessGeo.clear();
     texCache.clear();
@@ -6086,12 +6073,6 @@ public class PGraphicsOpenGL extends PGraphics {
     pgl.disable(PGL.POINT_SMOOTH);
     pgl.disable(PGL.LINE_SMOOTH);
     pgl.disable(PGL.POLYGON_SMOOTH);
-
-    // setup opengl viewport.
-    viewport.put(0, 0); viewport.put(1, 0);
-    viewport.put(2, width); viewport.put(3, height);
-    pgl.viewport(viewport.get(0), viewport.get(1),
-                 viewport.get(2), viewport.get(3));
 
     if (sized) {
       // To avoid having garbage in the screen after a resize,
