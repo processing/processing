@@ -79,7 +79,7 @@ public class FloatDict {
 
   /**
    * @webref floatdict:method
-   * @brief To come...
+   * @brief Returns the number of key/value pairs
    */
   public int size() {
     return count;
@@ -122,7 +122,7 @@ public class FloatDict {
 
   /**
    * @webref floatdict:method
-   * @brief To come...
+   * @brief Return the internal array being used to store the keys
    */
   public Iterable<String> keys() {
     return new Iterable<String>() {
@@ -210,7 +210,7 @@ public class FloatDict {
 
   /**
    * @webref floatdict:method
-   * @brief To come...
+   * @brief Return the internal array being used to store the values
    */
   public Iterable<Float> values() {
     return new Iterable<Float>() {
@@ -277,9 +277,9 @@ public class FloatDict {
 
   /**
    * @webref floatdict:method
-   * @brief To come...
+   * @brief Create a new key/value pair or change the value of one
    */
-  public void set(String key, int amount) {
+  public void set(String key, float amount) {
     int index = index(key);
     if (index == -1) {
       create(key, amount);
@@ -291,7 +291,7 @@ public class FloatDict {
 
   /**
    * @webref floatdict:method
-   * @brief To come...
+   * @brief Check if a key is a part of the data structure
    */
   public boolean hasKey(String key) {
     return index(key) != -1;
@@ -392,7 +392,7 @@ public class FloatDict {
 
   /**
    * @webref floatdict:method
-   * @brief To come...
+   * @brief Remove a key/value pair
    */
   public void remove(String key) {
     removeIndex(index(key));
@@ -463,7 +463,7 @@ public class FloatDict {
 
   /**
    * @webref floatdict:method
-   * @brief To come...
+   * @brief Sort the keys alphabetially in reverse
    */
   public void sortKeysReverse() {
     sortImpl(true, true);
@@ -484,7 +484,7 @@ public class FloatDict {
    * Sort by values in descending order (largest value will be at [0]).
    * 
    * @webref floatdict:method
-   * @brief Sort by values in descending order  
+   * @brief Sort by values in ascending order  
    */
   public void sortValues() {
     sortImpl(false, false);
@@ -499,7 +499,7 @@ public class FloatDict {
 
   /**
    * @webref floatdict:method
-   * @brief To come...
+   * @brief Sort by values in descending order
    */
   public void sortValuesReverse() {
     sortImpl(false, true);
