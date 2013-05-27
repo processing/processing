@@ -250,7 +250,7 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
     final int modeBoxHeight = 20;
     modeX2 = getWidth();
     modeX1 = modeX2 - (modeGapWidth + modeTextWidth + modeGapWidth + ARROW_WIDTH + modeGapWidth);
-    modeY1 = 6; //(getHeight() - modeBoxHeight) / 2;
+    modeY1 = 9; //(getHeight() - modeBoxHeight) / 2;
     modeY2 = modeY1 + modeBoxHeight; //modeY1 + modeH + modeGapV*2;
     g.setColor(modeButtonColor);
     //g.drawRect(modeX1, modeY1, modeX2 - modeX1, modeY2 - modeY1);
