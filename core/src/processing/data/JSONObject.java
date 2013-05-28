@@ -104,6 +104,11 @@ import processing.core.PApplet;
  * @author JSON.org
  * @version 2012-12-01
  * @webref data:composite
+ * @see JSONArray
+ * @see PApplet#loadJSONObject(String)
+ * @see PApplet#loadJSONArray(String)
+ * @see PApplet#saveJSONObject(JSONObject, String)
+ * @see PApplet#saveJSONArray(JSONArray, String)
  */
 public class JSONObject {
   /**
@@ -189,6 +194,7 @@ public class JSONObject {
 
   /**
    * Construct an empty JSONObject.
+   * @nowebref
    */
   public JSONObject() {
     this.map = new HashMap<String, Object>();
@@ -215,6 +221,9 @@ public class JSONObject {
 //  }
 
 
+  /**
+   * @nowebref
+   */
   public JSONObject(Reader reader) {
     this(new JSONTokener(reader));
   }
@@ -299,6 +308,9 @@ public class JSONObject {
   }
 
 
+  /**
+   * @nowebref
+   */
   public JSONObject(IntDict dict) {
     map = new HashMap<String, Object>();
     for (int i = 0; i < dict.size(); i++) {
@@ -307,6 +319,9 @@ public class JSONObject {
   }
 
 
+  /**
+   * @nowebref
+   */
   public JSONObject(FloatDict dict) {
     map = new HashMap<String, Object>();
     for (int i = 0; i < dict.size(); i++) {
@@ -315,6 +330,9 @@ public class JSONObject {
   }
 
 
+  /**
+   * @nowebref
+   */
   public JSONObject(StringDict dict) {
     map = new HashMap<String, Object>();
     for (int i = 0; i < dict.size(); i++) {
