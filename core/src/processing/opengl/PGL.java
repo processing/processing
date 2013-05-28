@@ -2803,6 +2803,9 @@ public class PGL {
   public static final int MAX_TEXTURE_IMAGE_UNITS          = GL2ES2.GL_MAX_TEXTURE_IMAGE_UNITS;
   public static final int MAX_COMBINED_TEXTURE_IMAGE_UNITS = GL2ES2.GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS;
 
+  public static final int NUM_COMPRESSED_TEXTURE_FORMATS = GL2ES2.GL_NUM_COMPRESSED_TEXTURE_FORMATS;
+  public static final int COMPRESSED_TEXTURE_FORMATS     = GL2ES2.GL_COMPRESSED_TEXTURE_FORMATS;
+
   public static final int NEAREST               = GL.GL_NEAREST;
   public static final int LINEAR                = GL.GL_LINEAR;
   public static final int LINEAR_MIPMAP_NEAREST = GL.GL_LINEAR_MIPMAP_NEAREST;
