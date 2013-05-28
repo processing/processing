@@ -13,9 +13,12 @@ import processing.core.PApplet;
 
 
 /**
- * Helper class for a list of ints. By design (for efficiency), functions like
- * sort() and shuffle() always act on the list itself. To get a sorted copy,
- * use list.copy().sort().
+ * Helper class for a list of ints. Lists are designed to have some of the 
+ * features of ArrayLists, but to maintain the simplicity and efficiency of
+ * working with arrays. 
+ * 
+ * Functions like sort() and shuffle() always act on the list itself. To get 
+ * a sorted copy, use list.copy().sort().
  * 
  * @webref data:composite
  */
@@ -338,7 +341,7 @@ public class IntList implements Iterable<Integer> {
 
   /**
    * @webref floatlist:method
-   * @brief Check if a number is a part of the data structure
+   * @brief Check if a number is a part of the list
    */
   public boolean hasValue(int value) {
 //    if (indexCache == null) {

@@ -5852,13 +5852,7 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  protected void updatePrimary() {
-    pgl.update();
-  }
-
-
   protected void beginOnscreenDraw() {
-    updatePrimary();
     pgl.beginDraw(clearColorBuffer);
 
     if (drawFramebuffer == null) {
@@ -5939,7 +5933,7 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  protected void updateOffscreen() {
+  protected void beginOffscreenDraw() {
     if (!initialized) {
       initOffscreen();
     } else {
@@ -5964,11 +5958,7 @@ public class PGraphicsOpenGL extends PGraphics {
     } else {
       setFramebuffer(offscreenFramebuffer);
     }
-  }
 
-
-  protected void beginOffscreenDraw() {
-    updateOffscreen();
     // Render previous back texture (now is the front) as background
     drawPTexture();
 

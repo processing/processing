@@ -8,6 +8,13 @@ import processing.core.PApplet;
 
 
 /**
+ * Helper class for a list of floats. Lists are designed to have some of the 
+ * features of ArrayLists, but to maintain the simplicity and efficiency of
+ * working with arrays. 
+ * 
+ * Functions like sort() and shuffle() always act on the list itself. To get 
+ * a sorted copy, use list.copy().sort().
+ * 
  * @webref data:composite
  */
 public class FloatList implements Iterable<Float> {
@@ -665,7 +672,7 @@ public class FloatList implements Iterable<Float> {
    * @webref floatlist:method
    * @brief Create a new array with a copy of all the values
    */
-  public int[] array() {
+  public float[] array() {
     return array(null);
   }
 
@@ -674,9 +681,9 @@ public class FloatList implements Iterable<Float> {
    * Copy as many values as possible into the specified array.
    * @param array
    */
-  public int[] array(int[] array) {
+  public float[] array(float[] array) {
     if (array == null || array.length != count) {
-      array = new int[count];
+      array = new float[count];
     }
     System.arraycopy(data, 0, array, 0, count);
     return array;
