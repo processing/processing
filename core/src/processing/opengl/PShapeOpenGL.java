@@ -780,7 +780,7 @@ public class PShapeOpenGL extends PShape {
     if (family == GROUP) {
       for (int i = 0; i < childCount; i++) {
         PShapeOpenGL child = (PShapeOpenGL) children[i];
-        child.texture(tex);
+        child.setTexture(tex);
       }
     } else {
       setTextureImpl(tex);

@@ -15250,7 +15250,7 @@ public class PApplet extends Applet
    * No variations are employed, meaning that any scale, tint, or imageMode
    * settings will be ignored.
    *
-   * @param img image to draw on screen
+   * @param img image to copy into the original image
    */
   public void set(int x, int y, PImage img) {
     if (recorder != null) recorder.set(x, y, img);

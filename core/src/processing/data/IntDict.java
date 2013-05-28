@@ -201,7 +201,7 @@ public class IntDict {
 
   /** 
    * @webref intdict:method
-   * @brief To come...
+   * @brief Return the internal array being used to store the keys
    */
   public Iterable<Integer> values() {
     return new Iterable<Integer>() {

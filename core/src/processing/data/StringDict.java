@@ -77,7 +77,7 @@ public class StringDict {
 
   /**
    * @webref stringdict:method
-   * @brief To come...
+   * @brief Returns the number of key/value pairs
    */
   public int size() {
     return count;
@@ -120,7 +120,7 @@ public class StringDict {
 
   /**
    * @webref stringdict:method
-   * @brief To come...
+   * @brief Return the internal array being used to store the keys
    */
   public Iterable<String> keys() {
     return new Iterable<String>() {
@@ -173,7 +173,7 @@ public class StringDict {
 
   /**
    * @webref stringdict:method
-   * @brief To come...
+   * @brief Return the internal array being used to store the values
    */
   public Iterable<String> values() {
     return new Iterable<String>() {
@@ -206,7 +206,7 @@ public class StringDict {
    * @webref stringdict:method
    * @brief Create a new array and copy each of the values into it
    */
-  public int[] valueArray() {
+  public String[] valueArray() {
     return valueArray(null);
   }
 
@@ -216,9 +216,9 @@ public class StringDict {
    * creating a new array each time). If 'array' is null, or not the same
    * size as the number of values, a new array will be allocated and returned.
    */
-  public int[] valueArray(int[] array) {
+  public String[] valueArray(String[] array) {
     if (array == null || array.length != size()) {
-      array = new int[count];
+      array = new String[count];
     }
     System.arraycopy(values, 0, array, 0, count);
     return array;
@@ -239,7 +239,7 @@ public class StringDict {
 
   /**
    * @webref stringdict:method
-   * @brief To come...
+   * @brief Create a new key/value pair or change the value of one
    */
   public void set(String key, String amount) {
     int index = index(key);
@@ -258,7 +258,7 @@ public class StringDict {
 
   /**
    * @webref stringdict:method
-   * @brief To come...
+   * @brief Check if a key is a part of the data structure
    */
   public boolean hasKey(String key) {
     return index(key) != -1;
@@ -278,7 +278,7 @@ public class StringDict {
 
   /**
    * @webref stringdict:method
-   * @brief To come...
+   * @brief Remove a key/value pair
    */
   public void remove(String key) {
     removeIndex(index(key));
@@ -325,7 +325,7 @@ public class StringDict {
 
   /**
    * @webref stringdict:method
-   * @brief To come...
+   * @brief Sort the keys alphabetially in reverse
    */
   public void sortKeysReverse() {
     sortImpl(true, true);
@@ -336,7 +336,7 @@ public class StringDict {
    * Sort by values in descending order (largest value will be at [0]).
    *
    * @webref stringdict:method
-   * @brief Sort by values in descending order
+   * @brief Sort by values in ascending order
    */
   public void sortValues() {
     sortImpl(false, false);
@@ -345,7 +345,7 @@ public class StringDict {
 
   /**
    * @webref stringdict:method
-   * @brief To come...
+   * @brief Sort by values in descending order
    */
   public void sortValuesReverse() {
     sortImpl(false, true);

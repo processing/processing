@@ -639,7 +639,7 @@ public class PGL extends processing.opengl.PGL {
   }
 
 
-  protected void needFBOLayer() {
+  protected void requestFBOLayer() {
     FORCE_SCREEN_FBO = true;
   }
 
@@ -763,7 +763,7 @@ public class PGL extends processing.opengl.PGL {
 
 
   protected void beginDraw(boolean clear0) {
-    if (fboLayerInUse(clear0)) {
+    if (needFBOLayer(clear0)) {
       bindFramebuffer(FRAMEBUFFER, glColorFbo.get(0));
       framebufferTexture2D(FRAMEBUFFER, COLOR_ATTACHMENT0,
                            TEXTURE_2D, glColorTex.get(backTex), 0);
@@ -865,7 +865,7 @@ public class PGL extends processing.opengl.PGL {
   }
 
 
-  protected boolean fboLayerInUse(boolean clear0) {
+  protected boolean needFBOLayer(boolean clear0) {
     boolean cond = !clear0 || FORCE_SCREEN_FBO || 1 < numSamples;
     return cond && glColorFbo.get(0) != 0;
   }
