@@ -92,6 +92,11 @@ import processing.core.PApplet;
  * @author JSON.org
  * @version 2012-11-13
  * @webref data:composite
+ * @see JSONObject
+ * @see PApplet#loadJSONObject(String)
+ * @see PApplet#loadJSONArray(String)
+ * @see PApplet#saveJSONObject(JSONObject, String)
+ * @see PApplet#saveJSONArray(JSONArray, String)
  */
 public class JSONArray {
 
@@ -103,12 +108,16 @@ public class JSONArray {
 
   /**
    * Construct an empty JSONArray.
+   * @nowebref
    */
   public JSONArray() {
     this.myArrayList = new ArrayList<Object>();
   }
 
 
+  /**
+   * @nowebref
+   */
   public JSONArray(Reader reader) {
     this(new JSONTokener(reader));
   }
@@ -152,6 +161,9 @@ public class JSONArray {
   }
 
 
+  /**
+   * @nowebref
+   */
   public JSONArray(IntList list) {
     myArrayList = new ArrayList<Object>();
     for (int item : list.values()) {
@@ -160,6 +172,9 @@ public class JSONArray {
   }
 
 
+  /**
+   * @nowebref
+   */
   public JSONArray(FloatList list) {
     myArrayList = new ArrayList<Object>();
     for (float item : list.values()) {
@@ -168,6 +183,9 @@ public class JSONArray {
   }
 
 
+  /**
+   * @nowebref
+   */
   public JSONArray(StringList list) {
     myArrayList = new ArrayList<Object>();
     for (String item : list.values()) {
@@ -658,10 +676,10 @@ public class JSONArray {
   /**
    * Append an String value. This increases the array's length by one.
    *
+   * @webref jsonarray:method
+   * @brief Appends a String value, increasing the array's length by one
    * @param value A String value.
    * @return this.
-   * @webref jsonarray:method
-   * @brief Append an String value. This increases the array's length by one.
    */
   public JSONArray append(String value) {
     this.append((Object)value);
@@ -959,9 +977,9 @@ public class JSONArray {
   /**
    * Get the number of elements in the JSONArray, included nulls.
    *
-   * @return The length (or size).
    * @webref jsonarray:method
-   * @brief Get the number of elements in the JSONArray, included nulls
+   * @brief Gets the number of elements in the JSONArray, included nulls
+   * @return The length (or size).
    */
   public int size() {
     return myArrayList.size();
@@ -982,11 +1000,10 @@ public class JSONArray {
   /**
    * Remove an index and close the hole.
    * 
-   * @param index The index of the element to be removed.
-   * @return The value that was associated with the index,
-   * or null if there was no value.
    * @webref jsonarray:method
    * @brief Remove an index and close the hole
+   * @param index The index of the element to be removed.
+   * @return The value that was associated with the index, or null if there was no value.
    */
   public Object remove(int index) {
     Object o = this.opt(index);

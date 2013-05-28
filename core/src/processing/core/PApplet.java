@@ -6119,6 +6119,12 @@ public class PApplet extends Applet
 
   /**
    * @webref output:files
+   * @param filename name of a file in the data folder or a URL
+   * @see JSONObject
+   * @see JSONArray
+   * @see PApplet#loadJSONArray(String)
+   * @see PApplet#saveJSONObject(JSONObject, String)
+   * @see PApplet#saveJSONArray(JSONArray, String)
    */
   public JSONObject loadJSONObject(String filename) {
     return new JSONObject(createReader(filename));
@@ -6126,6 +6132,11 @@ public class PApplet extends Applet
 
   /**
    * @webref output:files
+   * @see JSONObject
+   * @see JSONArray
+   * @see PApplet#loadJSONObject(String)
+   * @see PApplet#loadJSONArray(String)
+   * @see PApplet#saveJSONArray(JSONArray, String)
    */
   public boolean saveJSONObject(JSONObject json, String filename) {
     return saveJSONObject(json, filename, null);
@@ -6143,6 +6154,12 @@ public class PApplet extends Applet
 
   /**
    * @webref output:files
+   * @param filename name of a file in the data folder or a URL
+   * @see JSONObject
+   * @see JSONArray
+   * @see PApplet#loadJSONObject(String)
+   * @see PApplet#saveJSONObject(JSONObject, String)
+   * @see PApplet#saveJSONArray(JSONArray, String)
    */
   public JSONArray loadJSONArray(String filename) {
     return new JSONArray(createReader(filename));
@@ -6150,6 +6167,11 @@ public class PApplet extends Applet
 
   /**
    * @webref output:files
+   * @see JSONObject
+   * @see JSONArray
+   * @see PApplet#loadJSONObject(String)
+   * @see PApplet#loadJSONArray(String)
+   * @see PApplet#saveJSONObject(JSONObject, String)
    */
   public boolean saveJSONArray(JSONArray json, String filename) {
     return saveJSONArray(json, filename);
