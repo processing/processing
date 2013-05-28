@@ -295,6 +295,7 @@ public class PGL {
   ///////////////////////////////////////////////////////////
 
   // FBO layer
+
   protected static boolean fboLayerRequested = false;
   protected static boolean fboLayerCreated = false;
   protected static boolean fboLayerInUse = false;
@@ -585,19 +586,6 @@ public class PGL {
     firstFrame = false;
 
     GLProfile.shutdown();
-  }
-
-
-  protected void update() {
-    if (!setFps) setFps(targetFps);
-
-    if (fboLayerRequested && !fboLayerCreated && !USE_JOGL_FBOLAYER) {
-      createFBOLayer();
-    }
-//    if (USE_JOGL_FBOLAYER) return;
-//    if (!fboLayerCreated) {
-//      createFBOLayer();
-//    }
   }
 
 
@@ -993,9 +981,13 @@ public class PGL {
 
 
   protected void beginDraw(boolean clear0) {
+    if (!setFps) setFps(targetFps);
+
     if (USE_JOGL_FBOLAYER) return;
 
     if (needFBOLayer(clear0)) {
+      if (!fboLayerCreated) createFBOLayer();
+
       bindFramebuffer(FRAMEBUFFER, glColorFbo.get(0));
       framebufferTexture2D(FRAMEBUFFER, COLOR_ATTACHMENT0,
                            TEXTURE_2D, glColorTex.get(backTex), 0);
