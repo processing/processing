@@ -5056,13 +5056,13 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void readPixels() {
     beginPixelsOp(OP_READ);
     try {
-      // The readPixels() call in inside a try/catch block because it appears
+      // The readPixelsImpl() call in inside a try/catch block because it appears
       // that (only sometimes) JOGL will run beginDraw/endDraw on the EDT
       // thread instead of the Animation thread right after a resize. Because
       // of this the width and height might have a different size than the
       // one of the pixels arrays.
-      pgl.readPixels(0, 0, width, height, PGL.RGBA, PGL.UNSIGNED_BYTE,
-                     pixelBuffer);
+      pgl.readPixelsImpl(0, 0, width, height, PGL.RGBA, PGL.UNSIGNED_BYTE,
+                         pixelBuffer);
     } catch (IndexOutOfBoundsException e) {
       // Silently catch the exception.
     }
@@ -5217,9 +5217,9 @@ public class PGraphicsOpenGL extends PGraphics {
 
         beginPixelsOp(OP_READ);
         try {
-          // Se comments in readPixels() for the reason for this try/catch.
-          pgl.readPixels(0, 0, width, height, PGL.RGBA, PGL.UNSIGNED_BYTE,
-                         nativePixelBuffer);
+          // See comments in readPixels() for the reason for this try/catch.
+          pgl.readPixelsImpl(0, 0, width, height, PGL.RGBA, PGL.UNSIGNED_BYTE,
+                             nativePixelBuffer);
         } catch (IndexOutOfBoundsException e) {
         }
         endPixelsOp();

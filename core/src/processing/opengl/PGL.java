@@ -3117,6 +3117,14 @@ public class PGL {
   // Reading Pixels
 
   public void readPixels(int x, int y, int width, int height, int format, int type, Buffer buffer) {
+    // The beginPixelsOp/endPixelsOp calls are needed to properly setup the
+    // framebuffers to read from.
+    PGraphicsOpenGL.pgCurrent.beginPixelsOp(PGraphicsOpenGL.OP_READ);
+    readPixelsImpl(x, y, width, height, format, type, buffer);
+    PGraphicsOpenGL.pgCurrent.endPixelsOp();
+  }
+
+  protected void readPixelsImpl(int x, int y, int width, int height, int format, int type, Buffer buffer) {
     gl.glReadPixels(x, y, width, height, format, type, buffer);
   }
 
