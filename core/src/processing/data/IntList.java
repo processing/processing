@@ -338,7 +338,7 @@ public class IntList implements Iterable<Integer> {
 
   /**
    * @webref floatlist:method
-   * @brief To come...
+   * @brief Check if a number is a part of the data structure
    */
   public boolean hasValue(int value) {
 //    if (indexCache == null) {
@@ -355,7 +355,7 @@ public class IntList implements Iterable<Integer> {
 
   /**
    * @webref floatlist:method
-   * @brief To come...
+   * @brief Add one to a value
    */
   public void increment(int index) {
     data[index]++;
@@ -363,7 +363,7 @@ public class IntList implements Iterable<Integer> {
 
   /**
    * @webref floatlist:method
-   * @brief To come...
+   * @brief Add to a value
    */
   public void add(int index, int amount) {
     data[index] += amount;
@@ -371,7 +371,7 @@ public class IntList implements Iterable<Integer> {
 
   /**
    * @webref floatlist:method
-   * @brief To come...
+   * @brief Subtract from a value
    */
   public void sub(int index, int amount) {
     data[index] -= amount;
@@ -379,7 +379,7 @@ public class IntList implements Iterable<Integer> {
 
   /**
    * @webref floatlist:method
-   * @brief To come...
+   * @brief Multiply a value
    */
   public void mult(int index, int amount) {
     data[index] *= amount;
@@ -387,7 +387,7 @@ public class IntList implements Iterable<Integer> {
 
   /**
    * @webref floatlist:method
-   * @brief To come...
+   * @brief Divide a value
    */
   public void div(int index, int amount) {
     data[index] /= amount;
@@ -395,7 +395,7 @@ public class IntList implements Iterable<Integer> {
 
   /**
    * @webref floatlist:method
-   * @brief To come...
+   * @brief Return the smallest value
    */
   public int min() {
     if (count == 0) {
@@ -410,7 +410,7 @@ public class IntList implements Iterable<Integer> {
 
   /**
    * @webref floatlist:method
-   * @brief To come...
+   * @brief Return the largest value
    */
   public int max() {
     if (count == 0) {
@@ -428,7 +428,7 @@ public class IntList implements Iterable<Integer> {
    * Sorts the array in place. 
    * 
    * @webref floatlist:method
-   * @brief Sorts the array in place
+   * @brief Sorts the array, lowest to highest
    */
   public void sort() {
     Arrays.sort(data, 0, count);
@@ -482,7 +482,7 @@ public class IntList implements Iterable<Integer> {
 
   /** 
    * @webref floatlist:method
-   * @brief To come...
+   * @brief Reverse sort, orders values by first digit
    */
   public void reverse() {
     int ii = count - 1;

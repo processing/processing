@@ -387,7 +387,7 @@ public class StringList implements Iterable<String> {
 
   /**
    * @webref stringlist:method
-   * @brief To come...
+   * @brief Check if a value is a part of the list
    */
   public boolean hasValue(String value) {
     if (value == null) {
