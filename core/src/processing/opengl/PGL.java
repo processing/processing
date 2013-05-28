@@ -287,8 +287,10 @@ public class PGL {
   /** Which texturing targets are enabled */
   protected static boolean[] texturingTargets = { false, false };
 
-  /** Which textures are bound to each target */
-  protected static int[] boundTextures = { 0, 0 };
+  /** Used to keep track of which textures are bound to each target */
+  protected static int maxTexUnits;
+  protected static int activeTexUnit = 0;
+  protected static int[][] boundTextures;
 
   ///////////////////////////////////////////////////////////
 
@@ -401,6 +403,9 @@ public class PGL {
 
   protected static final String MISSING_GLFUNC_ERROR =
     "GL function %1$s is not available on this hardware (or driver)";
+
+  protected static final String TEXUNIT_ERROR =
+    "Number of texture units not supported by this hardware (or driver)";
 
 
   ///////////////////////////////////////////////////////////
@@ -703,7 +708,7 @@ public class PGL {
     if (USE_JOGL_FBOLAYER) {
       Texture tex = new Texture();
       tex.init(pg.width, pg.height,
-               backTexAttach.getName(), GL.GL_TEXTURE_2D, GL.GL_RGBA,
+               backTexAttach.getName(), TEXTURE_2D, RGBA,
                backTexAttach.getWidth(), backTexAttach.getHeight(),
                backTexAttach.minFilter, backTexAttach.magFilter,
                backTexAttach.wrapS, backTexAttach.wrapT);
@@ -729,7 +734,7 @@ public class PGL {
     if (USE_JOGL_FBOLAYER) {
       Texture tex = new Texture();
       tex.init(pg.width, pg.height,
-               backTexAttach.getName(), GL.GL_TEXTURE_2D, GL.GL_RGBA,
+               backTexAttach.getName(), TEXTURE_2D, RGBA,
                frontTexAttach.getWidth(), frontTexAttach.getHeight(),
                frontTexAttach.minFilter, frontTexAttach.magFilter,
                frontTexAttach.wrapS, frontTexAttach.wrapT);
@@ -769,10 +774,10 @@ public class PGL {
 
   protected void bindFrontTexture() {
     if (USE_JOGL_FBOLAYER) {
-      if (!texturingIsEnabled(GL.GL_TEXTURE_2D)) {
-        enableTexturing(GL.GL_TEXTURE_2D);
+      if (!texturingIsEnabled(TEXTURE_2D)) {
+        enableTexturing(TEXTURE_2D);
       }
-      gl.glBindTexture(GL.GL_TEXTURE_2D, frontTexAttach.getName());
+      bindTexture(TEXTURE_2D, frontTexAttach.getName());
     } else {
       if (!texturingIsEnabled(TEXTURE_2D)) {
         enableTexturing(TEXTURE_2D);
@@ -784,15 +789,15 @@ public class PGL {
 
   protected void unbindFrontTexture() {
     if (USE_JOGL_FBOLAYER) {
-      if (textureIsBound(GL.GL_TEXTURE_2D, frontTexAttach.getName())) {
+      if (textureIsBound(TEXTURE_2D, frontTexAttach.getName())) {
         // We don't want to unbind another texture
         // that might be bound instead of this one.
-        if (!texturingIsEnabled(GL.GL_TEXTURE_2D)) {
-          enableTexturing(GL.GL_TEXTURE_2D);
-          gl.glBindTexture(GL.GL_TEXTURE_2D, 0);
-          disableTexturing(GL.GL_TEXTURE_2D);
+        if (!texturingIsEnabled(TEXTURE_2D)) {
+          enableTexturing(TEXTURE_2D);
+          bindTexture(TEXTURE_2D, 0);
+          disableTexturing(TEXTURE_2D);
         } else {
-          gl.glBindTexture(GL.GL_TEXTURE_2D, 0);
+          bindTexture(TEXTURE_2D, 0);
         }
       }
     } else {
@@ -1046,7 +1051,7 @@ public class PGL {
           // the sketch uses "incremental drawing" (background() not called).
           frontFBO.bind(gl);
           gl.glDisable(GL.GL_BLEND);
-          drawTexture(GL.GL_TEXTURE_2D, backTexAttach.getName(),
+          drawTexture(TEXTURE_2D, backTexAttach.getName(),
                       backTexAttach.getWidth(), backTexAttach.getHeight(),
                       pg.width, pg.height,
                       0, 0, pg.width, pg.height, 0, 0, pg.width, pg.height);
@@ -1330,10 +1335,12 @@ public class PGL {
 
 
   protected boolean textureIsBound(int target, int id) {
+    if (boundTextures == null) return false;
+
     if (target == TEXTURE_2D) {
-      return boundTextures[0] == id;
+      return boundTextures[activeTexUnit][0] == id;
     } else if (target == TEXTURE_RECTANGLE) {
-      return boundTextures[1] == id;
+      return boundTextures[activeTexUnit][1] == id;
     } else {
       return false;
     }
@@ -2075,6 +2082,12 @@ public class PGL {
   }
 
 
+  protected int getMaxTexUnits() {
+    getIntegerv(MAX_TEXTURE_IMAGE_UNITS, intBuffer);
+    return intBuffer.get(0);
+  }
+
+
   protected static ByteBuffer allocateDirectByteBuffer(int size) {
     int bytes = PApplet.max(MIN_DIRECT_BUFFER_SIZE, size) * SIZEOF_BYTE;
     return ByteBuffer.allocateDirect(bytes).order(ByteOrder.nativeOrder());
@@ -2794,8 +2807,9 @@ public class PGL {
   public static final int TEXTURE_MAX_ANISOTROPY     = GL.GL_TEXTURE_MAX_ANISOTROPY_EXT;
   public static final int MAX_TEXTURE_MAX_ANISOTROPY = GL.GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT;
 
-  public static final int MAX_VERTEX_TEXTURE_IMAGE_UNITS = GL2ES2.GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS;
-  public static final int MAX_TEXTURE_IMAGE_UNITS        = GL2ES2.GL_MAX_TEXTURE_IMAGE_UNITS;
+  public static final int MAX_VERTEX_TEXTURE_IMAGE_UNITS   = GL2ES2.GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS;
+  public static final int MAX_TEXTURE_IMAGE_UNITS          = GL2ES2.GL_MAX_TEXTURE_IMAGE_UNITS;
+  public static final int MAX_COMBINED_TEXTURE_IMAGE_UNITS = GL2ES2.GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS;
 
   public static final int NEAREST               = GL.GL_NEAREST;
   public static final int LINEAR                = GL.GL_LINEAR;
@@ -3226,6 +3240,7 @@ public class PGL {
 
   public void activeTexture(int texture) {
     gl.glActiveTexture(texture);
+    activeTexUnit = texture - TEXTURE0;
   }
 
   public void texImage2D(int target, int level, int internalFormat, int width, int height, int border, int format, int type, Buffer data) {
@@ -3274,10 +3289,20 @@ public class PGL {
 
   public void bindTexture(int target, int texture) {
     gl.glBindTexture(target, texture);
+
+    if (boundTextures == null) {
+      maxTexUnits = getMaxTexUnits();
+      boundTextures = new int[maxTexUnits][2];
+    }
+
+    if (maxTexUnits <= activeTexUnit) {
+      throw new RuntimeException(TEXUNIT_ERROR);
+    }
+
     if (target == TEXTURE_2D) {
-      boundTextures[0] = texture;
+      boundTextures[activeTexUnit][0] = texture;
     } else if (target == TEXTURE_RECTANGLE) {
-      boundTextures[1] = texture;
+      boundTextures[activeTexUnit][1] = texture;
     }
   }
 
