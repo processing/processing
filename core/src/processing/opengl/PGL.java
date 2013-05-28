@@ -193,8 +193,8 @@ public class PGL {
       REQUESTED_STENCIL_BITS = 8;
       REQUESTED_ALPHA_BITS = 8;
     } else if (PApplet.platform == PConstants.LINUX) {
-      WINDOW_TOOLKIT = NEWT; // AWT extremely broken on Linux?
-      EVENTS_TOOLKIT = NEWT;
+      WINDOW_TOOLKIT = AWT; // AWT extremely broken on Linux? With jogl-2.0-b993
+      EVENTS_TOOLKIT = AWT; // appears not.
       USE_FBOLAYER_BY_DEFAULT = false;
       USE_JOGL_FBOLAYER = false;
       REQUESTED_DEPTH_BITS = 24;
