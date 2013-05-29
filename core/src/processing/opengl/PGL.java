@@ -26,6 +26,12 @@ package processing.opengl;
 import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.Shape;
+import java.awt.font.FontRenderContext;
+import java.awt.font.GlyphVector;
+import java.awt.geom.PathIterator;
 import java.nio.Buffer;
 
 import java.nio.ByteBuffer;
@@ -1282,6 +1288,49 @@ public class PGL {
     public void combine(double[] coords, Object[] data,
                         float[] weight, Object[] outData);
     public void error(int errnum);
+  }
+
+
+  ///////////////////////////////////////////////////////////
+
+  // FontOutline interface
+
+
+  protected final static boolean SHAPE_TEXT_SUPPORTED = true;
+
+  protected final static int SEG_MOVETO  = PathIterator.SEG_MOVETO;
+  protected final static int SEG_LINETO  = PathIterator.SEG_LINETO;
+  protected final static int SEG_QUADTO  = PathIterator.SEG_QUADTO;
+  protected final static int SEG_CUBICTO = PathIterator.SEG_CUBICTO;
+  protected final static int SEG_CLOSE   = PathIterator.SEG_CLOSE;
+
+  protected FontOutline createFontOutline(char ch, Object font) {
+    return new FontOutline(ch, font);
+  }
+
+  protected class FontOutline {
+    PathIterator iter;
+
+    public FontOutline(char ch, Object font) {
+      char textArray[] = new char[] { ch };
+      Graphics2D graphics = (Graphics2D) pg.parent.getGraphics();
+      FontRenderContext frc = graphics.getFontRenderContext();
+      GlyphVector gv = ((Font)font).createGlyphVector(frc, textArray);
+      Shape shp = gv.getOutline();
+      iter = shp.getPathIterator(null);
+    }
+
+    public boolean isDone() {
+      return iter.isDone();
+    }
+
+    public int currentSegment(float coords[]) {
+      return iter.currentSegment(coords);
+    }
+
+    public void next() {
+      iter.next();
+    }
   }
 
 

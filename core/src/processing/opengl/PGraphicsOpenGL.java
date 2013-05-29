@@ -24,12 +24,6 @@ package processing.opengl;
 
 import processing.core.*;
 
-import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.Shape;
-import java.awt.font.FontRenderContext;
-import java.awt.font.GlyphVector;
-import java.awt.geom.PathIterator;
 import java.net.URL;
 import java.nio.*;
 import java.util.*;
@@ -3247,7 +3241,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   @Override
   protected boolean textModeCheck(int mode) {
-    return mode == MODEL || mode == SHAPE;
+    return mode == MODEL || (mode == SHAPE && PGL.SHAPE_TEXT_SUPPORTED);
   }
 
   // public void textSize(float size)
@@ -3325,7 +3319,6 @@ public class PGraphicsOpenGL extends PGraphics {
     } else if (textMode == SHAPE) {
       super.textLineImpl(buffer, start, stop, x, y);
     }
-
   }
 
 
@@ -3378,150 +3371,22 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  protected void textCharShapeImpl(char ch, float x, float y) {
-    // save the current stroke because it needs to be disabled
-    // while the text is being drawn
-    boolean strokeSaved = stroke;
-    stroke = false;
-
-    char textArray[] = new char[] { ch };
-    Graphics2D graphics = (Graphics2D) parent.getGraphics();
-    FontRenderContext frc = graphics.getFontRenderContext();
-    Font font = (Font) textFont.getNative();
-    GlyphVector gv = font.createGlyphVector(frc, textArray);
-    Shape shp = gv.getOutline();
-    PathIterator iter = shp.getPathIterator(null);
-
-    PApplet.println("Drawing model of character " + ch);
-
-    // six element array received from the Java2D path iterator
-    float textPoints[] = new float[6];
-    float lastX = 0;
-    float lastY = 0;
-
-    beginShape();
-    while (!iter.isDone()) {
-      int type = iter.currentSegment(textPoints);
-      switch (type) {
-      case PathIterator.SEG_MOVETO:   // 1 point (2 vars) in textPoints
-      case PathIterator.SEG_LINETO:   // 1 point
-        if (type == PathIterator.SEG_MOVETO) {
-          PApplet.println("moveto");
-          beginContour();
-
-//          if (DEBUG_OPCODES) {
-//            System.out.println("moveto\t" +
-//                               textPoints[0] + "\t" + textPoints[1]);
-//          }
-//          glu.gluTessBeginContour(tobj);
-        }
-        vertex(x + textPoints[0], y + textPoints[1]);
-
-//        vertex = new double[] {
-//          x + textPoints[0], y + textPoints[1], 0
-//        };
-//        glu.gluTessVertex(tobj, vertex, 0, vertex);
-        lastX = textPoints[0];
-        lastY = textPoints[1];
-        break;
-
-      case PathIterator.SEG_QUADTO:   // 2 points
-        PApplet.println("quadto");
-//        if (DEBUG_OPCODES) {
-//          System.out.println("quadto\t" +
-//                             textPoints[0] + "\t" + textPoints[1] + "\t" +
-//                             textPoints[2] + "\t" + textPoints[3]);
-//        }
-
-        for (int i = 1; i < bezierDetail; i++) {
-          float t = (float)i / (float)bezierDetail;
-//          vertex = new double[] {
-//            x + bezierPoint(lastX,
-//                            lastX + (float) ((textPoints[0] - lastX) * 2/3.0),
-//                            textPoints[2] + (float) ((textPoints[0] - textPoints[2]) * 2/3.0),
-//                            textPoints[2], t),
-//            y + bezierPoint(lastY,
-//                            lastY + (float) ((textPoints[1] - lastY) * 2/3.0),
-//                            textPoints[3] + (float) ((textPoints[1] - textPoints[3]) * 2/3.0),
-//                            textPoints[3], t),
-//            0.0f
-//          };
-          vertex(x + bezierPoint(lastX,
-                            lastX + (float) ((textPoints[0] - lastX) * 2/3.0),
-                            textPoints[2] + (float) ((textPoints[0] - textPoints[2]) * 2/3.0),
-                            textPoints[2], t),
-                 y + bezierPoint(lastY,
-                            lastY + (float) ((textPoints[1] - lastY) * 2/3.0),
-                            textPoints[3] + (float) ((textPoints[1] - textPoints[3]) * 2/3.0),
-                            textPoints[3], t));
-          //glu.gluTessVertex(tobj, vertex, 0, vertex);
-        }
-
-        lastX = textPoints[2];
-        lastY = textPoints[3];
-        break;
-
-      case PathIterator.SEG_CUBICTO:  // 3 points
-        PApplet.println("cubicto");
-//        if (DEBUG_OPCODES) {
-//          System.out.println("cubicto\t" +
-//                             textPoints[0] + "\t" + textPoints[1] + "\t" +
-//                             textPoints[2] + "\t" + textPoints[3] + "\t" +
-//                             textPoints[4] + "\t" + textPoints[5]);
-//        }
-
-        for (int i = 1; i < bezierDetail; i++) {
-          float t = (float)i / (float)bezierDetail;
-          vertex(x + bezierPoint(lastX, textPoints[0],
-                                 textPoints[2], textPoints[4], t),
-                 y + bezierPoint(lastY, textPoints[1],
-                                 textPoints[3], textPoints[5], t));
-//          vertex = new double[] {
-//            x + bezierPoint(lastX, textPoints[0],
-//                            textPoints[2], textPoints[4], t),
-//            y + bezierPoint(lastY, textPoints[1],
-//                            textPoints[3], textPoints[5], t), 0
-//          };
-          //glu.gluTessVertex(tobj, vertex, 0, vertex);
-        }
-
-        lastX = textPoints[4];
-        lastY = textPoints[5];
-        break;
-
-      case PathIterator.SEG_CLOSE:
-        PApplet.println("close");
-//        if (DEBUG_OPCODES) {
-//          System.out.println("close");
-//          System.out.println();
-//        }
-//        glu.gluTessEndContour(tobj);
-        endContour();
-        break;
-      }
-      iter.next();
-      PApplet.println(lastX + " " + lastY);
-    }
-    endShape();
-   // glu.gluTessEndPolygon(tobj);
-
-    PApplet.println("*********************");
-
-    // re-enable stroke if it was in use before
-    stroke = strokeSaved;
-  }
-
-  // ORIGINAL CODE FROM 1.5.1
   /**
-   * This uses the tesselation functions from GLU to handle triangulation
-   * to convert the character into a series of shapes.
-   * <p/>
+   * Ported from the implementation of textCharShapeImpl() in 1.5.1
+   *
    * <EM>No attempt has been made to optimize this code</EM>
    * <p/>
-   * TODO: Should instead override textPlacedImpl() because createGlyphVector
-   * takes a char array. Or better yet, cache the font on a per-char basis,
-   * so that it's not being re-tessellated each time, could make it into
-   * a display list which would be nice and speedy.
+   * TODO: Implement a FontShape class where each glyph is tessellated and
+   * stored inside a larger PShapeOpenGL object (which needs to be expanded as
+   * new glyphs are added and exceed the initial capacity in a similar way as
+   * the textures in FontTexture work). When a string of text is to be rendered
+   * in shape mode, then the correct sequences of vertex indices are computed
+   * (akin to the texcoords in the texture case) and used to draw only those
+   * parts of the PShape object that are required for the text.
+   * <p/>
+   *
+   * Some issues of the original implementation probably remain, so they are
+   * reproduced below:
    * <p/>
    * Also a problem where some fonts seem to be a bit slight, as if the
    * control points aren't being mapped quite correctly. Probably doing
@@ -3535,133 +3400,69 @@ public class PGraphicsOpenGL extends PGraphics {
    * tested with Akzidenz Grotesk Light). But this won't be visible
    * with the stroke shut off, so tabling that bug for now.
    */
-  /*
   protected void textCharShapeImpl(char ch, float x, float y) {
     // save the current stroke because it needs to be disabled
     // while the text is being drawn
     boolean strokeSaved = stroke;
     stroke = false;
 
+    PGL.FontOutline outline = pgl.createFontOutline(ch, textFont.getNative());
+
     // six element array received from the Java2D path iterator
     float textPoints[] = new float[6];
-
-    // array passed to createGylphVector
-    char textArray[] = new char[] { ch };
-
-    Graphics2D graphics = (Graphics2D) parent.getGraphics();
-    FontRenderContext frc = graphics.getFontRenderContext();
-    Font font = textFont.getFont();
-    GlyphVector gv = font.createGlyphVector(frc, textArray);
-    Shape shp = gv.getOutline();
-    //PathIterator iter = shp.getPathIterator(null, 0.05);
-    PathIterator iter = shp.getPathIterator(null);
-
-    glu.gluTessBeginPolygon(tobj, null);
-    // second param to gluTessVertex is for a user defined object that contains
-    // additional info about this point, but that's not needed for anything
-
     float lastX = 0;
     float lastY = 0;
 
-    // unfortunately the tesselator won't work properly unless a
-    // new array of doubles is allocated for each point. that bites ass,
-    // but also just reaffirms that in order to make things fast,
-    // display lists will be the way to go.
-    double vertex[];
-
-    final boolean DEBUG_OPCODES = false; //true;
-
-    while (!iter.isDone()) {
-      int type = iter.currentSegment(textPoints);
+    beginShape();
+    while (!outline.isDone()) {
+      int type = outline.currentSegment(textPoints);
       switch (type) {
-      case PathIterator.SEG_MOVETO:   // 1 point (2 vars) in textPoints
-      case PathIterator.SEG_LINETO:   // 1 point
-        if (type == PathIterator.SEG_MOVETO) {
-          if (DEBUG_OPCODES) {
-            System.out.println("moveto\t" +
-                               textPoints[0] + "\t" + textPoints[1]);
-          }
-          glu.gluTessBeginContour(tobj);
-        } else {
-          if (DEBUG_OPCODES) {
-            System.out.println("lineto\t" +
-                               textPoints[0] + "\t" + textPoints[1]);
-           }
+      case PGL.SEG_MOVETO:   // 1 point (2 vars) in textPoints
+      case PGL.SEG_LINETO:   // 1 point
+        if (type == PGL.SEG_MOVETO) {
+          beginContour();
         }
-        vertex = new double[] {
-          x + textPoints[0], y + textPoints[1], 0
-        };
-        glu.gluTessVertex(tobj, vertex, 0, vertex);
+        vertex(x + textPoints[0], y + textPoints[1]);
         lastX = textPoints[0];
         lastY = textPoints[1];
         break;
-
-      case PathIterator.SEG_QUADTO:   // 2 points
-        if (DEBUG_OPCODES) {
-          System.out.println("quadto\t" +
-                             textPoints[0] + "\t" + textPoints[1] + "\t" +
-                             textPoints[2] + "\t" + textPoints[3]);
-        }
-
+      case PGL.SEG_QUADTO:   // 2 points
         for (int i = 1; i < bezierDetail; i++) {
           float t = (float)i / (float)bezierDetail;
-          vertex = new double[] {
-            x + bezierPoint(lastX,
+          vertex(x + bezierPoint(lastX,
                             lastX + (float) ((textPoints[0] - lastX) * 2/3.0),
                             textPoints[2] + (float) ((textPoints[0] - textPoints[2]) * 2/3.0),
                             textPoints[2], t),
-            y + bezierPoint(lastY,
+                 y + bezierPoint(lastY,
                             lastY + (float) ((textPoints[1] - lastY) * 2/3.0),
                             textPoints[3] + (float) ((textPoints[1] - textPoints[3]) * 2/3.0),
-                            textPoints[3], t),
-            0.0f
-          };
-          glu.gluTessVertex(tobj, vertex, 0, vertex);
+                            textPoints[3], t));
         }
-
         lastX = textPoints[2];
         lastY = textPoints[3];
         break;
-
-      case PathIterator.SEG_CUBICTO:  // 3 points
-        if (DEBUG_OPCODES) {
-          System.out.println("cubicto\t" +
-                             textPoints[0] + "\t" + textPoints[1] + "\t" +
-                             textPoints[2] + "\t" + textPoints[3] + "\t" +
-                             textPoints[4] + "\t" + textPoints[5]);
-        }
-
+      case PGL.SEG_CUBICTO:  // 3 points
         for (int i = 1; i < bezierDetail; i++) {
           float t = (float)i / (float)bezierDetail;
-          vertex = new double[] {
-            x + bezierPoint(lastX, textPoints[0],
-                            textPoints[2], textPoints[4], t),
-            y + bezierPoint(lastY, textPoints[1],
-                            textPoints[3], textPoints[5], t), 0
-          };
-          glu.gluTessVertex(tobj, vertex, 0, vertex);
+          vertex(x + bezierPoint(lastX, textPoints[0],
+                                 textPoints[2], textPoints[4], t),
+                 y + bezierPoint(lastY, textPoints[1],
+                                 textPoints[3], textPoints[5], t));
         }
-
         lastX = textPoints[4];
         lastY = textPoints[5];
         break;
-
-      case PathIterator.SEG_CLOSE:
-        if (DEBUG_OPCODES) {
-          System.out.println("close");
-          System.out.println();
-        }
-        glu.gluTessEndContour(tobj);
+      case PGL.SEG_CLOSE:
+        endContour();
         break;
       }
-      iter.next();
+      outline.next();
     }
-    glu.gluTessEndPolygon(tobj);
+    endShape();
 
     // re-enable stroke if it was in use before
     stroke = strokeSaved;
   }
-   */
 
 
   //////////////////////////////////////////////////////////////
