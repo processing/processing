@@ -8,6 +8,13 @@ import processing.core.PApplet;
 
 
 /**
+ * Helper class for a list of floats. Lists are designed to have some of the 
+ * features of ArrayLists, but to maintain the simplicity and efficiency of
+ * working with arrays. 
+ * 
+ * Functions like sort() and shuffle() always act on the list itself. To get 
+ * a sorted copy, use list.copy().sort().
+ * 
  * @webref data:composite
  */
 public class FloatList implements Iterable<Float> {
@@ -391,7 +398,7 @@ public class FloatList implements Iterable<Float> {
 
   /**
    * @webref floatlist:method
-   * @brief To come...
+   * @brief Check if a number is a part of the list
    */
   public boolean hasValue(float value) {
     if (Float.isNaN(value)) {
@@ -418,7 +425,7 @@ public class FloatList implements Iterable<Float> {
 
   /**
    * @webref floatlist:method
-   * @brief To come...
+   * @brief Add to a value
    */
   public void add(int index, float amount) {
     data[index] += amount;
@@ -426,7 +433,7 @@ public class FloatList implements Iterable<Float> {
 
   /**
    * @webref floatlist:method
-   * @brief To come...
+   * @brief Subtract from a value
    */
   public void sub(int index, float amount) {
     data[index] -= amount;
@@ -434,7 +441,7 @@ public class FloatList implements Iterable<Float> {
 
   /**
    * @webref floatlist:method
-   * @brief To come...
+   * @brief Multiply a value
    */
   public void mult(int index, float amount) {
     data[index] *= amount;
@@ -442,7 +449,7 @@ public class FloatList implements Iterable<Float> {
 
   /**
    * @webref floatlist:method
-   * @brief To come...
+   * @brief Divide a value
    */
   public void div(int index, float amount) {
     data[index] /= amount;
@@ -450,7 +457,7 @@ public class FloatList implements Iterable<Float> {
 
   /**
    * @webref floatlist:method
-   * @brief To come...
+   * @brief Return the smallest value
    */
   public float min() {
     if (count == 0) {
@@ -480,7 +487,7 @@ public class FloatList implements Iterable<Float> {
 
   /**
    * @webref floatlist:method
-   * @brief To come...
+   * @brief Return the largest value
    */
   public float max() {
     if (count == 0) {
@@ -513,7 +520,7 @@ public class FloatList implements Iterable<Float> {
    * Sorts the array in place. 
    *
    * @webref floatlist:method
-   * @brief Sorts an array in place
+   * @brief Sorts an array, lowest to highest
    */
   public void sort() {
     Arrays.sort(data, 0, count);
@@ -524,7 +531,7 @@ public class FloatList implements Iterable<Float> {
    * Reverse sort, orders values from highest to lowest 
    *
    * @webref floatlist:method
-   * @brief To come...
+   * @brief Reverse sort, orders values from highest to lowest
    */
   public void sortReverse() {
     new Sort() {
@@ -567,7 +574,7 @@ public class FloatList implements Iterable<Float> {
 
   /** 
    * @webref floatlist:method
-   * @brief To come...
+   * @brief Reverse sort, orders values by first digit
    */
   public void reverse() {
     int ii = count - 1;
@@ -665,7 +672,7 @@ public class FloatList implements Iterable<Float> {
    * @webref floatlist:method
    * @brief Create a new array with a copy of all the values
    */
-  public int[] array() {
+  public float[] array() {
     return array(null);
   }
 
@@ -674,9 +681,9 @@ public class FloatList implements Iterable<Float> {
    * Copy as many values as possible into the specified array.
    * @param array
    */
-  public int[] array(int[] array) {
+  public float[] array(float[] array) {
     if (array == null || array.length != count) {
-      array = new int[count];
+      array = new float[count];
     }
     System.arraycopy(data, 0, array, 0, count);
     return array;

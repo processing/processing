@@ -5,9 +5,6 @@
  * setting the font, and then drawing the letters.
  */
 
-// The next line is needed if running in JavaScript Mode with Processing.js
-/* @pjs font="Courier.ttf"; */
-
 PFont f;
 
 void setup() {
@@ -16,7 +13,7 @@ void setup() {
 
   // Create the font
   println(PFont.list());
-  f = createFont("Monospaced", 24);
+  f = createFont("Georgia", 24);
   textFont(f);
   textAlign(CENTER, CENTER);
 } 

@@ -13,9 +13,12 @@ import processing.core.PApplet;
 
 
 /**
- * Helper class for a list of ints. By design (for efficiency), functions like
- * sort() and shuffle() always act on the list itself. To get a sorted copy,
- * use list.copy().sort().
+ * Helper class for a list of ints. Lists are designed to have some of the 
+ * features of ArrayLists, but to maintain the simplicity and efficiency of
+ * working with arrays. 
+ * 
+ * Functions like sort() and shuffle() always act on the list itself. To get 
+ * a sorted copy, use list.copy().sort().
  * 
  * @webref data:composite
  */
@@ -338,7 +341,7 @@ public class IntList implements Iterable<Integer> {
 
   /**
    * @webref floatlist:method
-   * @brief To come...
+   * @brief Check if a number is a part of the list
    */
   public boolean hasValue(int value) {
 //    if (indexCache == null) {
@@ -355,7 +358,7 @@ public class IntList implements Iterable<Integer> {
 
   /**
    * @webref floatlist:method
-   * @brief To come...
+   * @brief Add one to a value
    */
   public void increment(int index) {
     data[index]++;
@@ -363,7 +366,7 @@ public class IntList implements Iterable<Integer> {
 
   /**
    * @webref floatlist:method
-   * @brief To come...
+   * @brief Add to a value
    */
   public void add(int index, int amount) {
     data[index] += amount;
@@ -371,7 +374,7 @@ public class IntList implements Iterable<Integer> {
 
   /**
    * @webref floatlist:method
-   * @brief To come...
+   * @brief Subtract from a value
    */
   public void sub(int index, int amount) {
     data[index] -= amount;
@@ -379,7 +382,7 @@ public class IntList implements Iterable<Integer> {
 
   /**
    * @webref floatlist:method
-   * @brief To come...
+   * @brief Multiply a value
    */
   public void mult(int index, int amount) {
     data[index] *= amount;
@@ -387,7 +390,7 @@ public class IntList implements Iterable<Integer> {
 
   /**
    * @webref floatlist:method
-   * @brief To come...
+   * @brief Divide a value
    */
   public void div(int index, int amount) {
     data[index] /= amount;
@@ -395,7 +398,7 @@ public class IntList implements Iterable<Integer> {
 
   /**
    * @webref floatlist:method
-   * @brief To come...
+   * @brief Return the smallest value
    */
   public int min() {
     if (count == 0) {
@@ -410,7 +413,7 @@ public class IntList implements Iterable<Integer> {
 
   /**
    * @webref floatlist:method
-   * @brief To come...
+   * @brief Return the largest value
    */
   public int max() {
     if (count == 0) {
@@ -428,7 +431,7 @@ public class IntList implements Iterable<Integer> {
    * Sorts the array in place. 
    * 
    * @webref floatlist:method
-   * @brief Sorts the array in place
+   * @brief Sorts the array, lowest to highest
    */
   public void sort() {
     Arrays.sort(data, 0, count);
@@ -482,7 +485,7 @@ public class IntList implements Iterable<Integer> {
 
   /** 
    * @webref floatlist:method
-   * @brief To come...
+   * @brief Reverse sort, orders values by first digit
    */
   public void reverse() {
     int ii = count - 1;

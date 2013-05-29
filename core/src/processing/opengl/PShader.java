@@ -84,7 +84,6 @@ public class PShader {
   protected IntBuffer intBuffer;
   protected FloatBuffer floatBuffer;
 
-
   public PShader() {
     parent = null;
     pgMain = null;
@@ -99,8 +98,6 @@ public class PShader {
     glProgram = 0;
     glVertex = 0;
     glFragment = 0;
-
-//    firstTexUnit = 0;
 
     intBuffer = PGL.allocateIntBuffer(1);
     floatBuffer = PGL.allocateFloatBuffer(1);
@@ -927,36 +924,4 @@ public class PShader {
       this.value = value;
     }
   }
-
-  /*
-  // The individual attribute setters are not really needed, read this:
-  // http://stackoverflow.com/questions/7718976/what-is-glvertexattrib-versus-glvertexattribpointer-used-for
-  // except for setting a constant vertex attribute value.
-  public void set1FloatAttribute(int loc, float x) {
-    if (-1 < loc) {
-      pgl.glVertexAttrib1f(loc, x);
-    }
-  }
-
-
-  public void set2FloatAttribute(int loc, float x, float y) {
-    if (-1 < loc) {
-      pgl.glVertexAttrib2f(loc, x, y);
-    }
-  }
-
-
-  public void set3FloatAttribute(int loc, float x, float y, float z) {
-    if (-1 < loc) {
-      pgl.glVertexAttrib3f(loc, x, y, z);
-    }
-  }
-
-
-  public void set4FloatAttribute(int loc, float x, float y, float z, float w) {
-    if (-1 < loc) {
-      pgl.glVertexAttrib4f(loc, x, y, z, w);
-    }
-  }
-  */
 }

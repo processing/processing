@@ -3069,10 +3069,19 @@ public class PApplet extends Applet
     mouseExited();
   }
 
-
+  /**
+   * @nowebref
+   */
   public void mouseWheel() { }
 
-
+  /**
+   * The event.getAmount() method returns negative values if the mouse wheel 
+   * if rotated up or away from the user and positive in the other direction. 
+   * On OS X with "natural" scrolling enabled, the values are opposite.
+   *
+   * @webref input:mouse
+   * @param event the MouseEvent
+   */
   public void mouseWheel(MouseEvent event) {
     mouseWheel();
   }
@@ -6110,6 +6119,12 @@ public class PApplet extends Applet
 
   /**
    * @webref output:files
+   * @param filename name of a file in the data folder or a URL
+   * @see JSONObject
+   * @see JSONArray
+   * @see PApplet#loadJSONArray(String)
+   * @see PApplet#saveJSONObject(JSONObject, String)
+   * @see PApplet#saveJSONArray(JSONArray, String)
    */
   public JSONObject loadJSONObject(String filename) {
     return new JSONObject(createReader(filename));
@@ -6117,6 +6132,11 @@ public class PApplet extends Applet
 
   /**
    * @webref output:files
+   * @see JSONObject
+   * @see JSONArray
+   * @see PApplet#loadJSONObject(String)
+   * @see PApplet#loadJSONArray(String)
+   * @see PApplet#saveJSONArray(JSONArray, String)
    */
   public boolean saveJSONObject(JSONObject json, String filename) {
     return saveJSONObject(json, filename, null);
@@ -6134,6 +6154,12 @@ public class PApplet extends Applet
 
   /**
    * @webref output:files
+   * @param filename name of a file in the data folder or a URL
+   * @see JSONObject
+   * @see JSONArray
+   * @see PApplet#loadJSONObject(String)
+   * @see PApplet#saveJSONObject(JSONObject, String)
+   * @see PApplet#saveJSONArray(JSONArray, String)
    */
   public JSONArray loadJSONArray(String filename) {
     return new JSONArray(createReader(filename));
@@ -6141,6 +6167,11 @@ public class PApplet extends Applet
 
   /**
    * @webref output:files
+   * @see JSONObject
+   * @see JSONArray
+   * @see PApplet#loadJSONObject(String)
+   * @see PApplet#loadJSONArray(String)
+   * @see PApplet#saveJSONObject(JSONObject, String)
    */
   public boolean saveJSONArray(JSONArray json, String filename) {
     return saveJSONArray(json, filename);
@@ -15241,7 +15272,7 @@ public class PApplet extends Applet
    * No variations are employed, meaning that any scale, tint, or imageMode
    * settings will be ignored.
    *
-   * @param img image to draw on screen
+   * @param img image to copy into the original image
    */
   public void set(int x, int y, PImage img) {
     if (recorder != null) recorder.set(x, y, img);
