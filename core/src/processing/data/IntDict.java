@@ -9,7 +9,7 @@ import processing.core.PApplet;
 
 /**
  * A simple class to use a String as a lookup for an int value.
- * 
+ *
  * @webref data:composite
  */
 public class IntDict {
@@ -109,9 +109,9 @@ public class IntDict {
   }
 
 
-  /** 
+  /**
    * Remove all entries.
-   * 
+   *
    * @webref intdict:method
    * @brief Remove all entries
    */
@@ -126,25 +126,25 @@ public class IntDict {
   }
 
 
-  private void crop() {
-    if (count != keys.length) {
-      keys = PApplet.subset(keys, 0, count);
-      values = PApplet.subset(values, 0, count);
-    }
-  }
+//  private void crop() {
+//    if (count != keys.length) {
+//      keys = PApplet.subset(keys, 0, count);
+//      values = PApplet.subset(values, 0, count);
+//    }
+//  }
 
 
   /**
    * Return the internal array being used to store the keys. Allocated but
    * unused entries will be removed. This array should not be modified.
-   * 
+   *
    * @webref intdict:method
    * @brief Return the internal array being used to store the keys
    */
-  public String[] keys() {
-    crop();
-    return keys;
-  }
+//  public String[] keys() {
+//    crop();
+//    return keys;
+//  }
 
 
 //  public Iterable<String> keys() {
@@ -152,6 +152,54 @@ public class IntDict {
 //
 //      @Override
 //      public Iterator<String> iterator() {
+//        return new Iterator<String>() {
+//          int index = -1;
+//
+//          public void remove() {
+//            removeIndex(index);
+//          }
+//
+//          public String next() {
+//            return key(++index);
+//          }
+//
+//          public boolean hasNext() {
+//            return index+1 < size();
+//          }
+//        };
+//      }
+//    };
+//  }
+
+
+  // Use this with 'for' loops
+  public Iterable<String> keys() {
+    return new Iterable<String>() {
+
+      @Override
+      public Iterator<String> iterator() {
+        return keyIterator();
+//        return new Iterator<String>() {
+//          int index = -1;
+//
+//          public void remove() {
+//            removeIndex(index);
+//          }
+//
+//          public String next() {
+//            return key(++index);
+//          }
+//
+//          public boolean hasNext() {
+//            return index+1 < size();
+//          }
+//        };
+      }
+    };
+  }
+
+
+  // Use this to iterate when you want to be able to remove elements along the way
   public Iterator<String> keyIterator() {
     return new Iterator<String>() {
       int index = -1;
@@ -168,8 +216,6 @@ public class IntDict {
         return index+1 < size();
       }
     };
-//      }
-//    };
   }
 
 
@@ -197,7 +243,8 @@ public class IntDict {
     return values[index];
   }
 
-  /** 
+
+  /**
    * @webref intdict:method
    * @brief To come...
    */
@@ -206,21 +253,26 @@ public class IntDict {
 
       @Override
       public Iterator<Integer> iterator() {
-        return new Iterator<Integer>() {
-          int index = -1;
+        return valueIterator();
+      }
+    };
+  }
 
-          public void remove() {
-            removeIndex(index);
-          }
 
-          public Integer next() {
-            return value(++index);
-          }
+  public Iterator<Integer> valueIterator() {
+    return new Iterator<Integer>() {
+      int index = -1;
 
-          public boolean hasNext() {
-            return index+1 < size();
-          }
-        };
+      public void remove() {
+        removeIndex(index);
+      }
+
+      public Integer next() {
+        return value(++index);
+      }
+
+      public boolean hasNext() {
+        return index+1 < size();
       }
     };
   }
@@ -285,9 +337,9 @@ public class IntDict {
   }
 
 
-  /** 
-   * Increase the value of a specific key by 1. 
-   * 
+  /**
+   * Increase the value of a specific key by 1.
+   *
    * @webref intdict:method
    * @brief Increase the value of a specific key by 1
    */
@@ -414,7 +466,7 @@ public class IntDict {
 
   /**
    * Sort by values in descending order (largest value will be at [0]).
-   * 
+   *
    * @webref intdict:method
    * @brief Sort by values in descending order
    */
