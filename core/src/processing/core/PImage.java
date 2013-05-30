@@ -27,7 +27,6 @@ package processing.core;
 import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
-import java.lang.reflect.Method;
 import java.util.Iterator;
 
 import javax.imageio.*;
@@ -139,6 +138,8 @@ public class PImage implements PConstants, Cloneable {
   protected boolean modified;
   protected int mx1, my1, mx2, my2;
 
+  /** Loaded pixels flag */
+  public boolean loaded = false;
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
@@ -472,7 +473,9 @@ public class PImage implements PConstants, Cloneable {
     if (pixels == null || pixels.length != width*height) {
       pixels = new int[width*height];
     }
+    isLoaded();
 
+/*
     if (parent != null) {
       Object cache = parent.g.initCache(this);
       if (cache != null) {
@@ -490,6 +493,7 @@ public class PImage implements PConstants, Cloneable {
         }
       }
     }
+*/
   }
 
 
@@ -709,6 +713,25 @@ public class PImage implements PConstants, Cloneable {
     return outgoing;
   }
 
+
+  //////////////////////////////////////////////////////////////
+
+  // MARKING IMAGE AS LOADED / FOR USE IN RENDERERS
+
+
+  public boolean isLoaded() { // ignore
+    return loaded;
+  }
+
+
+  public void setLoaded() {  // ignore
+    loaded = true;
+  }
+
+
+  public void setLoaded(boolean l) {  // ignore
+    loaded = l;
+  }
 
 
   //////////////////////////////////////////////////////////////
