@@ -3132,6 +3132,7 @@ public class PImage implements PConstants, Cloneable {
       ImageWriter writer = null;
       ImageWriteParam param = null;
       IIOMetadata metadata = null;
+      
       if (extension.equals("jpg") || extension.equals("jpeg")) {
         if ((writer = imageioWriter("jpeg")) != null) {
           // Set JPEG quality to 90% with baseline optimization. Setting this
@@ -3143,12 +3144,16 @@ public class PImage implements PConstants, Cloneable {
           param.setCompressionQuality(0.9f);
         }
       }
-      if ((writer = imageioWriter("png")) != null) {
-        param = writer.getDefaultWriteParam();
-        if (false) {
-          metadata = imageioDPI(writer, param, 100);
+
+      if (extension.equals("png")) {
+        if ((writer = imageioWriter("png")) != null) {
+          param = writer.getDefaultWriteParam();
+          if (false) {
+            metadata = imageioDPI(writer, param, 100);
+          }
         }
       }
+
       if (writer != null) {
         BufferedOutputStream output =
           new BufferedOutputStream(PApplet.createOutput(file));
