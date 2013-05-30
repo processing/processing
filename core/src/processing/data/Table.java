@@ -2028,7 +2028,7 @@ public class Table {
    * Note that this one iterator instance is shared by any calls to iterate
    * the rows of this table. This is very efficient, but not thread-safe.
    * If you want to iterate in a multi-threaded manner, don't use the iterator.
-   * 
+   *
    * @webref table:method
    * @brief Gets multiple rows from a table
    */
@@ -2981,6 +2981,7 @@ public class Table {
     return (row == -1) ? null : new RowPointer(this, row);
   }
 
+
   /**
    * @param columnName title of the column to search
    */
@@ -2988,21 +2989,37 @@ public class Table {
     return findRow(value, getColumnIndex(columnName));
   }
 
+
+  public Iterable<TableRow> findRows(final String value, final int column) {
+    return new Iterable<TableRow>() {
+      public Iterator<TableRow> iterator() {
+        return findRowIterator(value, column);
+      }
+    };
+  }
+
+
+  public Iterable<TableRow> findRows(final String value, final String columnName) {
+    return findRows(value, getColumnIndex(columnName));
+  }
+
+
   /**
    * @webref table:method
    * @brief Finds multiple rows that contain the given value
    * @param value the value to match
    * @param column ID number of the column to search
    */
-  public Iterator<TableRow> findRows(String value, int column) {
+  public Iterator<TableRow> findRowIterator(String value, int column) {
     return new RowIndexIterator(this, findRowIndices(value, column));
   }
+
 
   /**
    * @param columnName title of the column to search
    */
-  public Iterator<TableRow> findRows(String value, String columnName) {
-    return findRows(value, getColumnIndex(columnName));
+  public Iterator<TableRow> findRowIterator(String value, String columnName) {
+    return findRowIterator(value, getColumnIndex(columnName));
   }
 
 
@@ -3103,6 +3120,7 @@ public class Table {
     return (row == -1) ? null : new RowPointer(this, row);
   }
 
+
   /**
    * @param columnName title of the column to search
    */
@@ -3110,21 +3128,37 @@ public class Table {
     return matchRow(regexp, getColumnIndex(columnName));
   }
 
+
+  public Iterable<TableRow> matchRows(final String value, final int column) {
+    return new Iterable<TableRow>() {
+      public Iterator<TableRow> iterator() {
+        return matchRowIterator(value, column);
+      }
+    };
+  }
+
+
+  public Iterable<TableRow> matchRows(String value, String columnName) {
+    return matchRows(value, getColumnIndex(columnName));
+  }
+
+
   /**
    * @webref table:method
    * @brief Finds multiple rows that match the given expression
    * @param value the regular expression to match
    * @param column ID number of the column to search
    */
-  public Iterator<TableRow> matchRows(String value, int column) {
+  public Iterator<TableRow> matchRowIterator(String value, int column) {
     return new RowIndexIterator(this, matchRowIndices(value, column));
   }
+
 
   /**
    * @param columnName title of the column to search
    */
-  public Iterator<TableRow> matchRows(String value, String columnName) {
-    return matchRows(value, getColumnIndex(columnName));
+  public Iterator<TableRow> matchRowIterator(String value, String columnName) {
+    return matchRowIterator(value, getColumnIndex(columnName));
   }
 
 
@@ -3203,7 +3237,7 @@ public class Table {
 
   /**
    * Remove any of the specified characters from the entire table.
-   * 
+   *
    * @webref table:method
    * @brief Removes characters from the table
    * @param tokens a list of individual characters to be removed
