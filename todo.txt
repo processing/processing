@@ -1,4 +1,8 @@
 0218 pde (2.0b10 or 2.0)
+X Example window has the Java application icon
+X   https://github.com/processing/processing/issues/1800
+X in some cases, pde.jar was not getting built
+X   https://github.com/processing/processing/issues/1792
 
 
 2.0 FINAL / new interface
