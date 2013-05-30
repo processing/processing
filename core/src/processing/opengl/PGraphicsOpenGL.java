@@ -5773,7 +5773,7 @@ public class PGraphicsOpenGL extends PGraphics {
     Texture tex = (Texture)initCache(img);
     if (tex == null) return null;
 
-    if (img.isModified()) {
+    if (img.isModified() || img.isLoaded()) {
       if (img.width != tex.width || img.height != tex.height) {
         tex.init(img.width, img.height);
       }
@@ -5801,7 +5801,8 @@ public class PGraphicsOpenGL extends PGraphics {
       tex = addTexture(img);
       if (tex != null) {
         img.loadPixels();
-        tex.set(img.pixels);
+        tex.set(img.pixels, img.format);
+        img.setLoaded(false);
       }
     }
     return tex;
@@ -5897,6 +5898,7 @@ public class PGraphicsOpenGL extends PGraphics {
       tex.set(img.pixels, x, y, w, h, img.format);
     }
     img.setModified(false);
+    img.setLoaded(false);
   }
 
 

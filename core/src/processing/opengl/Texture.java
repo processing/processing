@@ -524,21 +524,21 @@ public class Texture implements PConstants {
    * Copies the contents of the texture to the pixels array.
    * @param pixels
    */
-  public void loadPixels(int[] pixels) {
-    if (hasBuffers()) {
-      // Updates the texture AND the pixels array of the image at the same time,
-      // getting the pixels directly from the buffer data (and thus avoiding
-      // expensive transfer between video and main memory).
-      bufferUpdate(pixels);
-    }
-
-    if (isModified()) {
-      // Regular pixel copy from texture.
-      get(pixels);
-    }
-
-    setModified(false);
-  }
+//  public void loadPixels(int[] pixels) {
+//    if (hasBuffers()) {
+//      // Updates the texture AND the pixels array of the image at the same time,
+//      // getting the pixels directly from the buffer data (and thus avoiding
+//      // expensive transfer between video and main memory).
+//      bufferUpdate(pixels);
+//    }
+//
+//    if (isModified()) {
+//      // Regular pixel copy from texture.
+//      get(pixels);
+//    }
+//
+//    setModified(false);
+//  }
 
 
   ////////////////////////////////////////////////////////////
