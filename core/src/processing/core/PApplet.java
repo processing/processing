@@ -6174,7 +6174,7 @@ public class PApplet extends Applet
    * @see PApplet#saveJSONObject(JSONObject, String)
    */
   public boolean saveJSONArray(JSONArray json, String filename) {
-    return saveJSONArray(json, filename);
+    return saveJSONArray(json, filename, null);
   }
 
 
