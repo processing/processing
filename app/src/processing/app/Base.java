@@ -1293,7 +1293,8 @@ public class Base {
       return false;
     }
 
-    if (folder.getName().equals("libraries")) {
+    if (folder.getName().equals("libraries") ||
+        folder.getName().equals("modes")) {
       return false;  // let's not go there
     }
 
