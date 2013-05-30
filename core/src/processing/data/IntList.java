@@ -13,13 +13,13 @@ import processing.core.PApplet;
 
 
 /**
- * Helper class for a list of ints. Lists are designed to have some of the 
+ * Helper class for a list of ints. Lists are designed to have some of the
  * features of ArrayLists, but to maintain the simplicity and efficiency of
- * working with arrays. 
- * 
- * Functions like sort() and shuffle() always act on the list itself. To get 
+ * working with arrays.
+ *
+ * Functions like sort() and shuffle() always act on the list itself. To get
  * a sorted copy, use list.copy().sort().
- * 
+ *
  * @webref data:composite
  */
 public class IntList implements Iterable<Integer> {
@@ -67,7 +67,7 @@ public class IntList implements Iterable<Integer> {
 
   /**
    * Get the length of the list.
-   * 
+   *
    * @webref floatlist:method
    * @brief Get the length of the list
    */
@@ -91,7 +91,7 @@ public class IntList implements Iterable<Integer> {
 
   /**
    * Remove all entries from the list.
-   * 
+   *
    * @webref floatlist:method
    * @brief Remove all entries from the list
    */
@@ -131,8 +131,8 @@ public class IntList implements Iterable<Integer> {
   }
 
 
-  /** 
-   * Remove an element from the specified index 
+  /**
+   * Remove an element from the specified index
    *
    * @webref floatlist:method
    * @brief Remove an element from the specified index
@@ -143,7 +143,7 @@ public class IntList implements Iterable<Integer> {
 //    count--;
 //    System.arraycopy(data, index + 1, outgoing, 0, count - index);
 //    data = outgoing;
-    for (int i = index; i < count; i++) {
+    for (int i = index; i < count-1; i++) {
       data[i] = data[i+1];
     }
     count--;
@@ -175,11 +175,11 @@ public class IntList implements Iterable<Integer> {
   }
 
 
-  /** 
+  /**
    * Add a new entry to the list.
    *
    * @webref floatlist:method
-   * @brief Add a new entry to the list 
+   * @brief Add a new entry to the list
    */
   public void append(int value) {
     if (count == data.length) {
@@ -427,9 +427,9 @@ public class IntList implements Iterable<Integer> {
   }
 
 
-  /** 
-   * Sorts the array in place. 
-   * 
+  /**
+   * Sorts the array in place.
+   *
    * @webref floatlist:method
    * @brief Sorts the array, lowest to highest
    */
@@ -438,8 +438,8 @@ public class IntList implements Iterable<Integer> {
   }
 
 
-  /** 
-   * Reverse sort, orders values from highest to lowest. 
+  /**
+   * Reverse sort, orders values from highest to lowest.
    *
    * @webref floatlist:method
    * @brief Reverse sort, orders values from highest to lowest
@@ -483,7 +483,7 @@ public class IntList implements Iterable<Integer> {
 //    count = num;
 //  }
 
-  /** 
+  /**
    * @webref floatlist:method
    * @brief Reverse sort, orders values by first digit
    */
@@ -575,7 +575,7 @@ public class IntList implements Iterable<Integer> {
 
   /**
    * Create a new array with a copy of all the values.
-   * 
+   *
    * @return an array sized by the length of the list with each of the values.
    * @webref floatlist:method
    * @brief Create a new array with a copy of all the values

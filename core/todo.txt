@@ -7,6 +7,8 @@ X patch to make font textures smaller in P2D/P3D
 X   https://github.com/processing/processing/pull/1775
 X .png data written when .jpg file specified with save/saveFrame()
 X   https://github.com/processing/processing/issues/1810
+X remove() not working for intList, floatList, StringList
+X   https://github.com/processing/processing/issues/1826
 
 andres
 A PImage not drawn after resize()/get() in P2D/P3D

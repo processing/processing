@@ -8,13 +8,13 @@ import processing.core.PApplet;
 
 
 /**
- * Helper class for a list of floats. Lists are designed to have some of the 
+ * Helper class for a list of floats. Lists are designed to have some of the
  * features of ArrayLists, but to maintain the simplicity and efficiency of
- * working with arrays. 
- * 
- * Functions like sort() and shuffle() always act on the list itself. To get 
+ * working with arrays.
+ *
+ * Functions like sort() and shuffle() always act on the list itself. To get
  * a sorted copy, use list.copy().sort().
- * 
+ *
  * @webref data:composite
  */
 public class FloatList implements Iterable<Float> {
@@ -62,7 +62,7 @@ public class FloatList implements Iterable<Float> {
 
   /**
    * Get the length of the list.
-   *    
+   *
    * @webref floatlist:method
    * @brief Get the length of the list
    */
@@ -127,8 +127,8 @@ public class FloatList implements Iterable<Float> {
 
 
   /**
-   * Remove an element from the specified index. 
-   * 
+   * Remove an element from the specified index.
+   *
    * @webref floatlist:method
    * @brief Remove an element from the specified index
    */
@@ -138,7 +138,7 @@ public class FloatList implements Iterable<Float> {
 //    count--;
 //    System.arraycopy(data, index + 1, outgoing, 0, count - index);
 //    data = outgoing;
-    for (int i = index; i < count; i++) {
+    for (int i = index; i < count-1; i++) {
       data[i] = data[i+1];
     }
     count--;
@@ -232,8 +232,8 @@ public class FloatList implements Iterable<Float> {
 
 
 
-  /** 
-   * Add a new entry to the list. 
+  /**
+   * Add a new entry to the list.
    *
    * @webref floatlist:method
    * @brief Add a new entry to the list
@@ -516,8 +516,8 @@ public class FloatList implements Iterable<Float> {
   }
 
 
-  /** 
-   * Sorts the array in place. 
+  /**
+   * Sorts the array in place.
    *
    * @webref floatlist:method
    * @brief Sorts an array, lowest to highest
@@ -527,8 +527,8 @@ public class FloatList implements Iterable<Float> {
   }
 
 
-  /** 
-   * Reverse sort, orders values from highest to lowest 
+  /**
+   * Reverse sort, orders values from highest to lowest
    *
    * @webref floatlist:method
    * @brief Reverse sort, orders values from highest to lowest
@@ -572,7 +572,7 @@ public class FloatList implements Iterable<Float> {
     count = num;
   }
 
-  /** 
+  /**
    * @webref floatlist:method
    * @brief Reverse sort, orders values by first digit
    */

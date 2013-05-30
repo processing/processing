@@ -7,13 +7,13 @@ import java.util.Random;
 import processing.core.PApplet;
 
 /**
- * Helper class for a list of Strings. Lists are designed to have some of the 
+ * Helper class for a list of Strings. Lists are designed to have some of the
  * features of ArrayLists, but to maintain the simplicity and efficiency of
- * working with arrays. 
- * 
- * Functions like sort() and shuffle() always act on the list itself. To get 
+ * working with arrays.
+ *
+ * Functions like sort() and shuffle() always act on the list itself. To get
  * a sorted copy, use list.copy().sort().
- * 
+ *
  * @webref data:composite
  */
 public class StringList implements Iterable<String> {
@@ -127,9 +127,9 @@ public class StringList implements Iterable<String> {
   }
 
 
-  /** 
-   * Remove an element from the specified index. 
-   * 
+  /**
+   * Remove an element from the specified index.
+   *
    * @webref stringlist:method
    * @brief Remove an element from the specified index
    */
@@ -139,7 +139,7 @@ public class StringList implements Iterable<String> {
 //    count--;
 //    System.arraycopy(data, index + 1, outgoing, 0, count - index);
 //    data = outgoing;
-    for (int i = index; i < count; i++) {
+    for (int i = index; i < count-1; i++) {
       data[i] = data[i+1];
     }
     count--;
@@ -229,9 +229,9 @@ public class StringList implements Iterable<String> {
   }
 
 
-  /** 
-   * Add a new entry to the list.  
-   * 
+  /**
+   * Add a new entry to the list.
+   *
    * @webref stringlist:method
    * @brief Add a new entry to the list
    */
@@ -414,9 +414,9 @@ public class StringList implements Iterable<String> {
   }
 
 
-  /** 
-   * Sorts the array in place. 
-   * 
+  /**
+   * Sorts the array in place.
+   *
    * @webref stringlist:method
    * @brief Sorts the array in place
    */
@@ -425,11 +425,11 @@ public class StringList implements Iterable<String> {
   }
 
 
-  /** 
+  /**
    * Reverse sort, orders values from highest to lowest.
-   * 
+   *
    * @webref stringlist:method
-   * @brief Reverse sort, orders values from highest to lowest 
+   * @brief Reverse sort, orders values from highest to lowest
    */
   public void sortReverse() {
     sortImpl(true);
@@ -478,7 +478,7 @@ public class StringList implements Iterable<String> {
 
   /**
    * @webref stringlist:method
-   * @brief To come... 
+   * @brief To come...
    */
   public void reverse() {
     int ii = count - 1;
@@ -494,7 +494,7 @@ public class StringList implements Iterable<String> {
   /**
    * Randomize the order of the list elements. Note that this does not
    * obey the randomSeed() function in PApplet.
-   * 
+   *
    * @webref stringlist:method
    * @brief Randomize the order of the list elements
    */
@@ -527,9 +527,9 @@ public class StringList implements Iterable<String> {
   }
 
 
-  /** 
-   * Make the entire list lower case. 
-   * 
+  /**
+   * Make the entire list lower case.
+   *
    * @webref stringlist:method
    * @brief Make the entire list lower case
    */
@@ -542,8 +542,8 @@ public class StringList implements Iterable<String> {
   }
 
 
-  /** 
-   * Make the entire list upper case. 
+  /**
+   * Make the entire list upper case.
    *
    * @webref stringlist:method
    * @brief Make the entire list upper case
@@ -602,7 +602,7 @@ public class StringList implements Iterable<String> {
 
   /**
    * Create a new array with a copy of all the values.
-   * 
+   *
    * @return an array sized by the length of the list with each of the values.
    * @webref stringlist:method
    * @brief Create a new array with a copy of all the values
