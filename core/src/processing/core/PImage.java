@@ -474,26 +474,6 @@ public class PImage implements PConstants, Cloneable {
       pixels = new int[width*height];
     }
     isLoaded();
-
-/*
-    if (parent != null) {
-      Object cache = parent.g.initCache(this);
-      if (cache != null) {
-        Method loadPixelsMethod = null;
-        try {
-          loadPixelsMethod = cache.getClass().getMethod("loadPixels", new Class[] { int[].class });
-        } catch (Exception e) { }
-
-        if (loadPixelsMethod != null) {
-          try {
-            loadPixelsMethod.invoke(cache, new Object[] { pixels });
-          } catch (Exception e) {
-            e.printStackTrace();
-          }
-        }
-      }
-    }
-*/
   }
 
 
@@ -3132,7 +3112,7 @@ public class PImage implements PConstants, Cloneable {
       ImageWriter writer = null;
       ImageWriteParam param = null;
       IIOMetadata metadata = null;
-      
+
       if (extension.equals("jpg") || extension.equals("jpeg")) {
         if ((writer = imageioWriter("jpeg")) != null) {
           // Set JPEG quality to 90% with baseline optimization. Setting this
