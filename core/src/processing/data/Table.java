@@ -2990,6 +2990,12 @@ public class Table {
   }
 
 
+  /**
+   * @webref table:method
+   * @brief Finds multiple rows that contain the given value
+   * @param value the value to match
+   * @param column ID number of the column to search
+   */
   public Iterable<TableRow> findRows(final String value, final int column) {
     return new Iterable<TableRow>() {
       public Iterator<TableRow> iterator() {
@@ -2999,13 +3005,15 @@ public class Table {
   }
 
 
+  /**
+   * @param columnName title of the column to search
+   */
   public Iterable<TableRow> findRows(final String value, final String columnName) {
     return findRows(value, getColumnIndex(columnName));
   }
 
 
   /**
-   * @webref table:method
    * @brief Finds multiple rows that contain the given value
    * @param value the value to match
    * @param column ID number of the column to search
@@ -3129,6 +3137,12 @@ public class Table {
   }
 
 
+  /**
+   * @webref table:method
+   * @brief Finds multiple rows that match the given expression
+   * @param value the regular expression to match
+   * @param column ID number of the column to search
+   */
   public Iterable<TableRow> matchRows(final String value, final int column) {
     return new Iterable<TableRow>() {
       public Iterator<TableRow> iterator() {
@@ -3138,6 +3152,9 @@ public class Table {
   }
 
 
+  /**
+   * @param columnName title of the column to search
+   */
   public Iterable<TableRow> matchRows(String value, String columnName) {
     return matchRows(value, getColumnIndex(columnName));
   }
