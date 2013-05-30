@@ -17,9 +17,6 @@ public interface TableRow {
    * @param column ID number of the column to reference
    * @see TableRow#getInt(int)
    * @see TableRow#getFloat(int)
-   * @see Table#getInt(int, int)
-   * @see Table#getFloat(int, int)
-   * @see Table#getString(int, int)
    */
   public String getString(int column);
   /**
@@ -33,9 +30,6 @@ public interface TableRow {
    * @param column ID number of the column to reference
    * @see TableRow#getFloat(int)
    * @see TableRow#getString(int)
-   * @see Table#getInt(int, int)
-   * @see Table#getFloat(int, int)
-   * @see Table#getString(int, int)
    */
   public int getInt(int column);
   /**
@@ -52,9 +46,6 @@ public interface TableRow {
    * @param column ID number of the column to reference
    * @see TableRow#getInt(int)
    * @see TableRow#getString(int)
-   * @see Table#getInt(int, int)
-   * @see Table#getFloat(int, int)
-   * @see Table#getString(int, int)
    */
   public float getFloat(int column);
   /**
@@ -72,9 +63,6 @@ public interface TableRow {
    * @param value value to assign
    * @see TableRow#setInt(int, int)
    * @see TableRow#setFloat(int, float)
-   * @see Table#setInt(int, int, int)
-   * @see Table#setFloat(int, int, float)
-   * @see Table#setString(int, int, String)
    */
   public void setString(int column, String value);
   /**
@@ -89,9 +77,6 @@ public interface TableRow {
    * @param value value to assign
    * @see TableRow#setFloat(int, float)
    * @see TableRow#setString(int, String)
-   * @see Table#setInt(int, int, int)
-   * @see Table#setFloat(int, int, float)
-   * @see Table#setString(int, int, String)
    */
   public void setInt(int column, int value);
   /**
@@ -109,9 +94,6 @@ public interface TableRow {
    * @param value value to assign
    * @see TableRow#setInt(int, int)
    * @see TableRow#setString(int, String)
-   * @see Table#setInt(int, int, int)
-   * @see Table#setFloat(int, int, float)
-   * @see Table#setString(int, int, String)
    */
   public void setFloat(int column, float value);
   /**
