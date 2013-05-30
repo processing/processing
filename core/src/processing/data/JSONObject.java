@@ -553,13 +553,13 @@ public class JSONObject {
 
 
   /**
-   * Get the string associated with a key.
+   * Gets the String associated with a key
    *
    * @param key   A key string.
    * @return      A string which is the value.
    * @throws   JSONException if there is no string value for the key.
    * @webref jsonobject:method
-   * @brief Get the string associated with a key
+   * @brief Gets the string associated with a key
    */
   public String getString(String key) {
     Object object = this.get(key);
@@ -571,14 +571,14 @@ public class JSONObject {
 
 
   /**
-   * Get the int value associated with a key.
+   * Gets the int value associated with a key
    *
    * @param key   A key string.
    * @return      The integer value.
    * @throws   JSONException if the key is not found or if the value cannot
    *  be converted to an integer.
    * @webref jsonobject:method
-   * @brief Get the int value associated with a key
+   * @brief Gets the int value associated with a key
    */
   public int getInt(String key) {
     Object object = this.get(key);
@@ -646,7 +646,7 @@ public class JSONObject {
    * @return      The truth.
    * @throws      JSONException if the value is not a Boolean or the String "true" or "false".
    * @webref jsonobject:method
-   * @brief Get the boolean value associated with a key
+   * @brief Gets the boolean value associated with a key
    */
   public boolean getBoolean(String key) {
     Object object = this.get(key);
@@ -666,11 +666,11 @@ public class JSONObject {
   /**
    * Get the JSONArray value associated with a key.
    *
-   * @param key   A key string.
+   * @brief Gets the JSONArray value associated with a key
+   * @webref jsonobject:method
+   * @param key A key string
    * @return      A JSONArray which is the value.
    * @throws      JSONException if the key is not found or if the value is not a JSONArray.
-   * @webref jsonobject:method
-   * @brief Get the JSONArray value associated with a key
    */
   public JSONArray getJSONArray(String key) {
     Object object = this.get(key);
@@ -688,7 +688,7 @@ public class JSONObject {
    * @return      A JSONObject which is the value.
    * @throws      JSONException if the key is not found or if the value is not a JSONObject.
    * @webref jsonobject:method
-   * @brief Get the JSONObject value associated with a key
+   * @brief Gets the JSONObject value associated with a key
    */
   public JSONObject getJSONObject(String key) {
     Object object = this.get(key);
