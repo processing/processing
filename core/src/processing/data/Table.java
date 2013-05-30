@@ -3140,13 +3140,13 @@ public class Table {
   /**
    * @webref table:method
    * @brief Finds multiple rows that match the given expression
-   * @param value the regular expression to match
+   * @param regexp the regular expression to match
    * @param column ID number of the column to search
    */
-  public Iterable<TableRow> matchRows(final String value, final int column) {
+  public Iterable<TableRow> matchRows(final String regexp, final int column) {
     return new Iterable<TableRow>() {
       public Iterator<TableRow> iterator() {
-        return matchRowIterator(value, column);
+        return matchRowIterator(regexp, column);
       }
     };
   }
@@ -3155,8 +3155,8 @@ public class Table {
   /**
    * @param columnName title of the column to search
    */
-  public Iterable<TableRow> matchRows(String value, String columnName) {
-    return matchRows(value, getColumnIndex(columnName));
+  public Iterable<TableRow> matchRows(String regexp, String columnName) {
+    return matchRows(regexp, getColumnIndex(columnName));
   }
 
 
