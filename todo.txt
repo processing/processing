@@ -3,40 +3,37 @@ X Example window has the Java application icon
 X   https://github.com/processing/processing/issues/1800
 X in some cases, pde.jar was not getting built
 X   https://github.com/processing/processing/issues/1792
+X ignore modes folder in sketchbook listing
+X   https://github.com/processing/processing/issues/1832
 
+cleaning
+X most of theme probably moves back into lib
+o   editor.bgcolor probably moves out of the theme.txt file for the mode
+o   or should it be a user preference thing
+o   for that matter, need to decide on how much modes can customize themselves
+X   make decision about where coloring is stored
+o   needs to be reset for this release, maybe others
 
-2.0 FINAL / new interface
-_ most of theme probably moves back into lib
-_   editor.bgcolor probably moves out of the theme.txt file for the mode
-_   or should it be a user preference thing
-_   for that matter, need to decide on how much modes can customize themselves
-_ remove PdeKeyListener, roll it into the Java InputHandler for JEditTextArea
-_   move Java-specific InputHandler to its own subclass
-_ setModified() getting called on Windows (probably Linux) for key cmds
-_ make decision about where coloring is stored
-_   needs to be reset for this release, maybe others
+cleaning/libraries
+o proper libraries warning dialog
+o   check if libraries folder does not exist
+o   check to see if other libraries are installed
+X   warn user about moving libraries and restarting
+X add "pretty menu name" to the export.txt file
+o move export.txt to xml? 
+X   nah, it's only flat information
+X tools -> get library
+X   library url: [ http://blahblah.org/something ]
+X   this would grab something.version, and something.zip
+X   maybe something.xml that would include a bunch of background
+X tools -> update libraries
+X   this would check the something.version to see if it's newer
+o document how to add libraries: put in sketchbook (not libraries folder)
+o library/download.url and library/home.url
+o if there's a reference subfolder, add that to the help menu
+o   and enable it for "find in reference"
+X     nice idea but too error-prone
 
-
-2.0 FINAL / more open/save/etc
-_ blank sketch opened even if another opened by double-click
-_   add a 150 ms or more lag before opening the untitled window (on os x)
-_   https://github.com/processing/processing/issues/218
-_ OS X not opening a sketch at all on pde double-click? (though opening the app)
-_ active editor not being set null
-_   in Base.nextEditorLocation(), changed to "editors.size() == 0" 
-_   instead of (activeEditor == null), but that's papering over a problem
-_   where the active editor is not being set null
-_ don't let people into the /tmp folder for sketches
-o   don't use tmp folder for sketches? 
-_   restrict more things like "show sketch folder"
-_   don't allow adding files w/o saving
-_   others?
-_ when creating a sketch within non-Java mode, should write the settings file
-_   so that it re-loads in the proper environment
-_ remove sketch.properties when moving back to the default?
-_   or can we not do this, because it's used to set the 'next' mode
-_ add means to import .zip files from file/url into sketchbook, library, etc.
-_   super easy given current code implementation, might help usability
 
 
 2.0 FINAL / libraries & classpaths
@@ -51,7 +48,7 @@ _     the /Library one is empty (by default), maybe skip it?
 _ classpath conflicts also problem with PDE itself
 _   catch antlr conflicts, and put up an error message
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1225 (no Google issue)
-_ when a conflicting library is found, need to report it
+_ when a conflicting library (bad link w/ core) is found, need to report it
 _   altho prolly only when it's actually different (md5hash it?)
 _   this seems to be causing a lot of trouble with recent releases
 _   (opengl changes and whatnot)
@@ -85,11 +82,9 @@ _   on osx, just ignore anything in /Library/Java/Extensions (but not others)?
 _ native lib stuff, use native.txt in lib folder, then:
 _   String osName = System.getProperty("os.name");
 _   String osArch = System.getProperty("os.arch");
-_ http://stackoverflow.com/questions/1611357/how-to-make-a-jar-file-that-include-dll-files
+_   http://stackoverflow.com/questions/1611357/how-to-make-a-jar-file-that-include-dll-files
 _ add control for dependencies (i.e. svg needs xml), needed for export
 _   http://code.google.com/p/processing/issues/detail?id=70
-_ add "pretty menu name" to the export.txt file
-_ move export.txt to xml? (nah, it's only flat information)
 _ need better platform designation setup for libs
 _ library installation should use the sketchbook folder, not the p5 folder
 _   actually enforce this, give users a warning about other libs
@@ -117,22 +112,7 @@ _   e.g. ocd is broken in 0125 because of method signature changes
 _ could have library developers update compatability note
 _   so they would need to test library and say "compatible with 0110"
 _   before it would automatically update or show as an update
-_ tools -> get library
-_   library url: [ http://blahblah.org/something ]
-_   this would grab something.version, and something.zip
-_   maybe something.xml that would include a bunch of background
-_ tools -> update libraries
-_   this would check the something.version to see if it's newer
-_ document how to add libraries: put in sketchbook (not libraries folder)
-_ library/download.url and library/home.url
-_ if there's a reference subfolder, add that to the help menu
-o   and enable it for "find in reference"
-X     nice idea but too error-prone
 _ need an "install library" option to deal with urls.. oy
-_ proper libraries warning dialog
-_   check if libraries folder does not exist
-_   check to see if other libraries are installed
-_   warn user about moving libraries and restarting
 _ support the reference folder of contributed libraries
 _   add reference for contributed libraries to the Help menu
 _   https://github.com/processing/processing/issues/943
@@ -148,22 +128,21 @@ _   http://code.google.com/p/processing/issues/detail?id=562
 _ proxy server requirement causes problems
 _   contrib manager, update checks are broken
 _   https://github.com/processing/processing/issues/1476
-X   http://code.google.com/p/processing/issues/detail?id=1438
-_ processing-java output as UTF-8 makes Windows unhappy
-_   https://github.com/processing/processing/issues/1633
-_ figure out Android issues so we can remove tools.jar and javac
+_ figure out Android build w/o javac so we can remove tools.jar and javac
 _   also to the p5 repo with just a JRE
+_   remove initRequirements from Base (no longer need JDI)
+_     move this into Android mode?
 _ send info on 'check for updates' so we know about libs/modes/etc?
 _   how to disclose to users?
 _   only send for items that are part of the public list 
 _     otherwise we're sending private libraries/installs
 _     although this won't pick up old libraries not on the new system
+
 _ move old Google Code SVN back to processing.org
 _   then cull out the old branches/tags from the Github repo
 _ UnsatisfiedLinkError causes huge message... 
 _   error report cleanups haven't been fixed yet
-_ remove initRequirements from Base (no longer need JDI)
-_   move this into Android mode?
+_   reported by Dan
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -443,9 +422,23 @@ _   http://code.google.com/p/processing/issues/detail?id=8
 
 
 PDE / Editor
-
+_ don't let people into the /tmp folder for sketches
+o   don't use tmp folder for sketches? 
+_   restrict more things like "show sketch folder"
+_   don't allow adding files w/o saving
+_   others?
+_ when creating a sketch within non-Java mode, should write the settings file
+_   so that it re-loads in the proper environment
+_ remove sketch.properties when moving back to the default?
+_   or can we not do this, because it's used to set the 'next' mode
+_ add means to import .zip files from file/url into sketchbook, library, etc.
+_   super easy given current code implementation, might help usability
 _ / breaks syntax highlighting
 _   https://github.com/processing/processing/issues/1681
+_ active editor not being set null
+_   in Base.nextEditorLocation(), changed to "editors.size() == 0" 
+_   instead of (activeEditor == null), but that's papering over a problem
+_   where the active editor is not being set null
 _ the PDE uses 15% of CPU while just sitting idle
 _   https://github.com/processing/processing/issues/1561
 _ renaming RGB (.pde) to Rgb.java says "a file named RGB.pde already exists"
@@ -485,6 +478,9 @@ _ sketches should only write to the console of their editor window
 _   http://code.google.com/p/processing/issues/detail?id=114
 _ problems with file/print
 _   http://code.google.com/p/processing/issues/detail?id=174
+_ remove PdeKeyListener, roll it into the Java InputHandler for JEditTextArea
+_   move Java-specific InputHandler to its own subclass
+_ setModified() getting called on Windows (probably Linux) for key cmds
 
 
 PDE / Editor Toolbar (Buttons)
@@ -802,6 +798,8 @@ _   avoid some confusion for when describing the libraries folder to users
 
 DIST / Windows
 
+_ processing-java output as UTF-8 makes Windows unhappy
+_   https://github.com/processing/processing/issues/1633
 _ updated launch4j 3.1 beta
 _   http://sourceforge.net/projects/launch4j/files/launch4j-3/
 _ does launching p5 from inside the .zip folder cause it to quit immediately?
@@ -822,6 +820,10 @@ _   In regedit: Navigate to Computer\HKEY_CLASSES_ROOT\Applications and find you
 
 
 DIST / Mac OS X
+_ blank sketch opened even if another opened by double-click
+_   add a 150 ms or more lag before opening the untitled window (on os x)
+_   https://github.com/processing/processing/issues/218
+_ OS X not opening a sketch at all on pde double-click? (though opening the app)
 _ waiting on retina support for JDK 7
 _   http://bugs.sun.com/view_bug.do?bug_id=8009754
 _   b86 supposed to have some support (not available yet)
