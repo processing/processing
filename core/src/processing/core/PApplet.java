@@ -56,6 +56,31 @@ import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 
 
+class NullApplet extends Container {
+
+  public Object getAppletContext() {
+    return null;
+  }
+
+  public URL getDocumentBase() {
+    return null;
+  }
+
+  public String getParameter(String param) {
+    return null;
+  }
+
+  public void showStatus(String status) { }
+
+  public void destroy() { }
+
+  public void init() { }
+
+  public void start() { }
+
+  public void stop() { }
+}
+
 /**
  * Base class for all sketches that use processing.core.
  * <p/>
@@ -153,7 +178,7 @@ import javax.swing.JFileChooser;
  * </PRE>
  * @usage Web &amp; Application
  */
-public class PApplet extends Applet
+public class PApplet extends NullApplet
   implements PConstants, Runnable,
              MouseListener, MouseWheelListener, MouseMotionListener, KeyListener, FocusListener
 {
@@ -3075,8 +3100,8 @@ public class PApplet extends Applet
   public void mouseWheel() { }
 
   /**
-   * The event.getAmount() method returns negative values if the mouse wheel 
-   * if rotated up or away from the user and positive in the other direction. 
+   * The event.getAmount() method returns negative values if the mouse wheel
+   * if rotated up or away from the user and positive in the other direction.
    * On OS X with "natural" scrolling enabled, the values are opposite.
    *
    * @webref input:mouse
