@@ -56,31 +56,6 @@ import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 
 
-class NullApplet extends Container {
-
-  public Object getAppletContext() {
-    return null;
-  }
-
-  public URL getDocumentBase() {
-    return null;
-  }
-
-  public String getParameter(String param) {
-    return null;
-  }
-
-  public void showStatus(String status) { }
-
-  public void destroy() { }
-
-  public void init() { }
-
-  public void start() { }
-
-  public void stop() { }
-}
-
 /**
  * Base class for all sketches that use processing.core.
  * <p/>
@@ -178,7 +153,7 @@ class NullApplet extends Container {
  * </PRE>
  * @usage Web &amp; Application
  */
-public class PApplet extends NullApplet
+public class PApplet extends Applet
   implements PConstants, Runnable,
              MouseListener, MouseWheelListener, MouseMotionListener, KeyListener, FocusListener
 {
@@ -15538,3 +15513,31 @@ public class PApplet extends NullApplet
     g.blend(src, sx, sy, sw, sh, dx, dy, dw, dh, mode);
   }
 }
+
+
+/*
+class NullApplet extends Container {
+
+  public Object getAppletContext() {
+    return null;
+  }
+
+  public URL getDocumentBase() {
+    return null;
+  }
+
+  public String getParameter(String param) {
+    return null;
+  }
+
+  public void showStatus(String status) { }
+
+  public void destroy() { }
+
+  public void init() { }
+
+  public void start() { }
+
+  public void stop() { }
+}
+*/
