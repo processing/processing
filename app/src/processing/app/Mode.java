@@ -208,7 +208,7 @@ public abstract class Mode {
   }
   
   
-  public void drawBackground(Graphics g, int offset) {
+  public void drawBackground(Graphics g, int offset, int windowWidth) {
     if (backgroundImage != null) {
       if (!Toolkit.highResDisplay()) {
         // Image might be downsampled from a 2x version. If so, we need nice
@@ -219,8 +219,14 @@ public abstract class Mode {
         g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
                             RenderingHints.VALUE_INTERPOLATION_BICUBIC);
       }
-      g.drawImage(backgroundImage, 0, -offset, 
-                  BACKGROUND_WIDTH, BACKGROUND_HEIGHT, null);
+			
+			// tile the background image until the entire screen is filled
+		  int totalWidth = 0;
+			while ( totalWidth < windowWidth ) {
+				g.drawImage(backgroundImage, totalWidth, -offset, 
+										BACKGROUND_WIDTH, BACKGROUND_HEIGHT, null);
+				totalWidth += BACKGROUND_WIDTH;
+			}
     }
   }
 

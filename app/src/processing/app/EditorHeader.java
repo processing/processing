@@ -46,14 +46,17 @@ public class EditorHeader extends JComponent {
   // how far to raise the tab from the bottom of this Component
   static final int TAB_HEIGHT = 27;
   // amount of margin on the left/right for the text on the tab
-  static final int TEXT_MARGIN = 5;
+  static final int TEXT_MARGIN = 4;
   // width of the tab when no text visible 
   // (total tab width will be this plus TEXT_MARGIN*2)
   static final int NO_TEXT_WIDTH = 10;
+	// height of the bar that connects the tabs with the editor
+	static final int TAB_BASE_HEIGHT = 3;
 
   Color backgroundColor;
   Color textColor[] = new Color[2];
   Color tabColor[] = new Color[2];
+	Color modifiedColor;
 
   Editor editor;
 
@@ -196,6 +199,8 @@ public class EditorHeader extends JComponent {
     
     tabColor[SELECTED] = mode.getColor("header.tab.selected.color");
     tabColor[UNSELECTED] = mode.getColor("header.tab.unselected.color");
+
+		modifiedColor = mode.getColor( "header.tab.modifiedcolor" );
   }
 
 
@@ -259,7 +264,7 @@ public class EditorHeader extends JComponent {
 //                  EditorToolbar.BACKGROUND_WIDTH, 
 //                  EditorToolbar.BACKGROUND_HEIGHT, null);
 //    }
-    editor.getMode().drawBackground(g, EditorToolbar.BUTTON_HEIGHT);
+    editor.getMode().drawBackground(g, EditorToolbar.BUTTON_HEIGHT, this.getWidth()); // also pass the width in order to tile the background image
 
 //    int codeCount = sketch.getCodeCount();
 //    if ((tabLeft == null) || (tabLeft.length < codeCount)) {
@@ -291,7 +296,7 @@ public class EditorHeader extends JComponent {
       boolean hide = editor.getMode().hideExtension(code.getExtension());
       String codeName = hide ? code.getPrettyName() : code.getFileName();
       // if modified, add the li'l glyph next to the name
-      tab.text = "  " + codeName + (code.isModified() ? " \u00A7" : "  ");
+      tab.text = codeName;// (code.isModified() ? " \u00A7" : "  ");
 
       tab.textWidth = (int)
         font.getStringBounds(tab.text, g2.getFontRenderContext()).getWidth();
@@ -328,7 +333,7 @@ public class EditorHeader extends JComponent {
     // draw the dropdown menu target
     menuLeft = tabs[tabs.length - 1].right + ARROW_GAP_WIDTH;
     menuRight = menuLeft + ARROW_WIDTH;
-    int arrowY = (getHeight() - TAB_HEIGHT) + (TAB_HEIGHT - ARROW_HEIGHT)/2;
+    int arrowY = (getHeight() - TAB_HEIGHT) + (TAB_HEIGHT - ARROW_HEIGHT)/2 - 1;
     g.drawImage(tabArrow, menuLeft, arrowY, 
                 ARROW_WIDTH, ARROW_HEIGHT, null);
 //    g.drawImage(pieces[popup.isVisible() ? SELECTED : UNSELECTED][MENU],
@@ -357,12 +362,13 @@ public class EditorHeader extends JComponent {
 //      int pieceWidth = pieceCount * PIECE_WIDTH;
 
       int state = (code == sketch.getCurrentCode()) ? SELECTED : UNSELECTED;
+      int inverseState = (code != sketch.getCurrentCode()) ? SELECTED : UNSELECTED;
       if (g != null) {
         //g.drawImage(pieces[state][LEFT], x, 0, PIECE_WIDTH, PIECE_HEIGHT, null);
         path = new GeneralPath();
         path.moveTo(x, bottom);
-        path.lineTo(x, top + NOTCH);
-        path.lineTo(x + NOTCH, top);
+        path.lineTo(x, top);
+        path.lineTo(x, top);
       }
       tab.left = x;
       x += TEXT_MARGIN;
@@ -377,19 +383,27 @@ public class EditorHeader extends JComponent {
 //      }
 //      if (g != null) {
       int drawWidth = tab.textVisible ? tab.textWidth : NO_TEXT_WIDTH;
-      x += drawWidth + TEXT_MARGIN;
+      x += drawWidth + TEXT_MARGIN*2;
 //        path.moveTo(x, top);
 //      }
       tab.right = x;
 
       if (g != null) {
-        path.lineTo(x - NOTCH, top);
-        path.lineTo(x, top + NOTCH);
+        path.lineTo(x, top);
+        path.lineTo(x, top);
         path.lineTo(x, bottom);
         path.closePath();
         g.setColor(tabColor[state]);
         g.fill(path);
         //g.drawImage(pieces[state][RIGHT], x, 0, PIECE_WIDTH, PIECE_HEIGHT, null);
+				
+				// graphic indicator when the file is modified
+				if ( code.isModified() ) {
+					g.setColor( modifiedColor );
+					g.fillRect( tab.left, top, tab.right-tab.left, 1 );
+					//g.setColor( backgroundColor );
+					//g.fillRect( tab.left, top+1, tab.right-tab.left, 1 );
+				}
       }
 
       if (tab.textVisible) {
@@ -398,7 +412,7 @@ public class EditorHeader extends JComponent {
           int textLeft = tab.left + ((tab.right - tab.left) - tab.textWidth) / 2;
           g.setColor(textColor[state]);
 //          int baseline = (int) Math.ceil((sizeH + fontAscent) / 2.0);
-          int baseline = bottom - (TAB_HEIGHT - fontAscent)/2 - 1;
+          int baseline = bottom - (TAB_HEIGHT - fontAscent)/2 - 3;
           //g.drawString(sketch.code[i].name, textLeft, baseline);
           g.drawString(tab.text, textLeft, baseline);
 //          g.drawLine(tab.left, baseline-fontAscent, tab.right, baseline-fontAscent);
@@ -411,6 +425,13 @@ public class EditorHeader extends JComponent {
 //      x += PIECE_WIDTH - 1;  // overlap by 1 pixel
       x += 1;
     }
+
+		// a line that ties the selected tab to the code window
+		if ( g != null ) {
+			g.setColor( tabColor[SELECTED] );
+			g.fillRect( 0, bottom-TAB_BASE_HEIGHT, sizeW, TAB_BASE_HEIGHT );
+		}
+
     return x <= right;
   }
 

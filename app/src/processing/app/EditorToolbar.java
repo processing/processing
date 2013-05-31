@@ -76,8 +76,8 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
   
   protected ArrayList<Button> buttons;
 
-  static final int ARROW_WIDTH = 6;
-  static final int ARROW_HEIGHT = 6;
+  static final int ARROW_WIDTH = 14;
+  static final int ARROW_HEIGHT = 14;
   static Image modeArrow;
 
   
@@ -95,7 +95,7 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
     statusColor = mode.getColor("buttons.status.color");
 //    modeTitle = mode.getTitle().toUpperCase();
     modeTitle = mode.getTitle();
-    modeTextFont = mode.getFont("mode.button.font");
+    modeTextFont = mode.getFont("header.text.font");
     modeButtonColor = mode.getColor("mode.button.color");
 
     if (modeArrow == null) {
@@ -215,7 +215,7 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
 //    if (backgroundImage != null) {
 //      g.drawImage(backgroundImage, 0, 0, BACKGROUND_WIDTH, BACKGROUND_HEIGHT, null);
 //    }
-    mode.drawBackground(g, 0);
+    mode.drawBackground(g, 0, this.getWidth()); // also pass the width in order to tile the background image
 
 //    for (int i = 0; i < buttonCount; i++) {
 //      g.drawImage(stateImage[i], x1[i], y1, null);
@@ -248,15 +248,15 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
     int modeTextWidth = metrics.stringWidth(modeTitle);
     final int modeGapWidth = 8;
     final int modeBoxHeight = 20;
-    modeX2 = getWidth() - 16;
+    modeX2 = getWidth();
     modeX1 = modeX2 - (modeGapWidth + modeTextWidth + modeGapWidth + ARROW_WIDTH + modeGapWidth);
-    modeY1 = 8; //(getHeight() - modeBoxHeight) / 2;
+    modeY1 = 9; //(getHeight() - modeBoxHeight) / 2;
     modeY2 = modeY1 + modeBoxHeight; //modeY1 + modeH + modeGapV*2;
     g.setColor(modeButtonColor);
-    g.drawRect(modeX1, modeY1, modeX2 - modeX1, modeY2 - modeY1);
+    //g.drawRect(modeX1, modeY1, modeX2 - modeX1, modeY2 - modeY1);
     g.drawString(modeTitle, 
                  modeX1 + modeGapWidth, 
-                 modeY1 + modeTextHeight + (modeBoxHeight - modeTextHeight) / 2);
+                 modeY1 + modeTextHeight + (modeBoxHeight - modeTextHeight) / 2 - 3); // minimal offset to the bottom to center the text visually, not mathematically
     g.drawImage(modeArrow, 
                 modeX2 - ARROW_WIDTH - modeGapWidth, 
                 modeY1 + (modeBoxHeight - ARROW_HEIGHT) / 2, 

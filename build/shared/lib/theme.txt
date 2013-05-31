@@ -20,6 +20,7 @@ header.text.font = SansSerif,plain,12
 #header.text.font.macosx = Helvetica,plain,12
 header.tab.selected.color = #a2afba
 header.tab.unselected.color = #2a4159
+header.tab.modifiedcolor = #fec709
 
 # GUI - CONSOLE
 # font is handled by preferences, since size/etc is modifiable
@@ -42,7 +43,7 @@ mode.button.font = Monospaced,plain,11
 mode.button.font.macosx = Monaco,plain,10
 #mode.button.color = #4a545e
 #mode.button.color = #9ca6b0
-mode.button.color = #ffffff
+mode.button.color = #a2afba
 
 # GUI - LINESTATUS
 linestatus.color = #ffffff
