@@ -59,14 +59,14 @@ void loadData() {
     
     // The position element has two attributes: x and y
     XML positionElement = children[i].getChild("position");
-    // Note how with attributes we can get an integer or float directly
+    // Note how with attributes we can get an integer or float via getInt() and getFloat()
     float x = positionElement.getInt("x");
     float y = positionElement.getInt("y");
     
     // The diameter is the content of the child named "diamater"
     XML diameterElement = children[i].getChild("diameter");
-    // Note how with the content of an XML node, we retrieve as a String and then convert
-    float diameter = float(diameterElement.getContent());
+    // Note how with the content of an XML node, we retrieve via getIntContent() and getFloatContent()
+    float diameter = diameterElement.getFloatContent();
 
     // The label is the content of the child named "label"
     XML labelElement = children[i].getChild("label");
