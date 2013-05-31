@@ -15513,31 +15513,3 @@ public class PApplet extends Applet
     g.blend(src, sx, sy, sw, sh, dx, dy, dw, dh, mode);
   }
 }
-
-
-/*
-class NullApplet extends Container {
-
-  public Object getAppletContext() {
-    return null;
-  }
-
-  public URL getDocumentBase() {
-    return null;
-  }
-
-  public String getParameter(String param) {
-    return null;
-  }
-
-  public void showStatus(String status) { }
-
-  public void destroy() { }
-
-  public void init() { }
-
-  public void start() { }
-
-  public void stop() { }
-}
-*/
