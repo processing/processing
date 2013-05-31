@@ -9,8 +9,10 @@ import processing.core.PApplet;
 
 /**
  * A simple table class to use a String as a lookup for an float value.
- * 
+ *
  * @webref data:composite
+ * @see IntDict
+ * @see StringDict
  */
 public class FloatDict {
 
@@ -86,12 +88,12 @@ public class FloatDict {
   }
 
 
-  /** 
+  /**
    * Remove all entries.
-   * 
+   *
    * @webref floatdict:method
    * @brief Remove all entries
-   */ 
+   */
   public void clear() {
     count = 0;
     indices = new HashMap<String, Integer>();
@@ -180,7 +182,7 @@ public class FloatDict {
 
   /**
    * Return a copy of the internal keys array. This array can be modified.
-   * 
+   *
    * @webref floatdict:method
    * @brief Return a copy of the internal keys array
    */
@@ -264,7 +266,7 @@ public class FloatDict {
 
   /**
    * Return a value for the specified key.
-   * 
+   *
    * @webref floatdict:method
    * @brief Return a value for the specified key
    */
@@ -442,9 +444,9 @@ public class FloatDict {
   /**
    * Sort the keys alphabetically (ignoring case). Uses the value as a
    * tie-breaker (only really possible with a key that has a case change).
-   * 
+   *
    * @webref floatdict:method
-   * @brief Sort the keys alphabetically 
+   * @brief Sort the keys alphabetically
    */
   public void sortKeys() {
     sortImpl(true, false);
@@ -482,9 +484,9 @@ public class FloatDict {
 
   /**
    * Sort by values in descending order (largest value will be at [0]).
-   * 
+   *
    * @webref floatdict:method
-   * @brief Sort by values in ascending order  
+   * @brief Sort by values in ascending order
    */
   public void sortValues() {
     sortImpl(false, false);

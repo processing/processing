@@ -3075,8 +3075,8 @@ public class PApplet extends Applet
   public void mouseWheel() { }
 
   /**
-   * The event.getAmount() method returns negative values if the mouse wheel
-   * if rotated up or away from the user and positive in the other direction.
+   * The event.getAmount() method returns negative values if the mouse wheel 
+   * if rotated up or away from the user and positive in the other direction. 
    * On OS X with "natural" scrolling enabled, the values are opposite.
    *
    * @webref input:mouse
