@@ -9,8 +9,10 @@ import processing.core.PApplet;
 
 /**
  * A simple table class to use a String as a lookup for another String value.
- * 
+ *
  * @webref data:composite
+ * @see IntDict
+ * @see FloatDict
  */
 public class StringDict {
 
@@ -84,8 +86,8 @@ public class StringDict {
   }
 
 
-  /** 
-   * Remove all entries. 
+  /**
+   * Remove all entries.
    *
    * @webref stringdict:method
    * @brief Remove all entries
@@ -149,7 +151,7 @@ public class StringDict {
 
   /**
    * Return a copy of the internal keys array. This array can be modified.
-   * 
+   *
    * @webref stringdict:method
    * @brief Return a copy of the internal keys array
    */
@@ -227,7 +229,7 @@ public class StringDict {
 
   /**
    * Return a value for the specified key.
-   * 
+   *
    * @webref stringdict:method
    * @brief Return a value for the specified key
    */
@@ -315,7 +317,7 @@ public class StringDict {
   /**
    * Sort the keys alphabetically (ignoring case). Uses the value as a
    * tie-breaker (only really possible with a key that has a case change).
-   * 
+   *
    * @webref stringdict:method
    * @brief Sort the keys alphabetically
    */
