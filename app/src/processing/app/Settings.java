@@ -176,42 +176,60 @@ public class Settings {
   }
 
 
+  // identical version found in Preferences.java 
   public Font getFont(String attr) {
-    boolean replace = false;
-    String value = get(attr);
-    if (value == null) {
-      //System.out.println("reset 1");
-      value = getDefault(attr);
-      replace = true;
-    }
+    try {
+      boolean replace = false;
+      String value = get(attr);
+      if (value == null) {
+        // use the default font instead
+        value = getDefault(attr);
+        replace = true;
+      }
 
-    String[] pieces = PApplet.split(value, ',');
-    if (pieces.length != 3) {
-      value = getDefault(attr);
-      //System.out.println("reset 2 for " + attr);
-      pieces = PApplet.split(value, ',');
-      //PApplet.println(pieces);
-      replace = true;
-    }
+      String[] pieces = PApplet.split(value, ',');
 
-    String name = pieces[0];
-    int style = Font.PLAIN;  // equals zero
-    if (pieces[1].indexOf("bold") != -1) {
-      style |= Font.BOLD;
-    }
-    if (pieces[1].indexOf("italic") != -1) {
-      style |= Font.ITALIC;
-    }
-    int size = PApplet.parseInt(pieces[2], 12);
-    Font font = new Font(name, style, size);
+      if (pieces.length != 3) {
+        value = getDefault(attr);
+        pieces = PApplet.split(value, ',');
+        replace = true;
+      }
 
-    // replace bad font with the default
-    if (replace) {
-      //System.out.println(attr + " > " + value);
-      //setString(attr, font.getName() + ",plain," + font.getSize());
-      set(attr, value);
-    }
+      String name = pieces[0];
+      int style = Font.PLAIN;  // equals zero
+      if (pieces[1].indexOf("bold") != -1) { //$NON-NLS-1$
+        style |= Font.BOLD;
+      }
+      if (pieces[1].indexOf("italic") != -1) { //$NON-NLS-1$
+        style |= Font.ITALIC;
+      }
+      int size = PApplet.parseInt(pieces[2], 12);
+      
+      // replace bad font with the default from lib/preferences.txt
+      if (replace) {
+        set(attr, value);
+      }
 
-    return font;
+      if (!name.startsWith("processing.")) {
+        return new Font(name, style, size);
+
+      } else {
+        if (pieces[0].equals("processing.sans")) {
+          if (style == Font.BOLD) {
+            return Toolkit.getBoldFont(size);
+          } else {
+            return Toolkit.getPlainFont(size);
+          }
+        } else if (pieces[0].equals("processing.mono")) {
+          return Toolkit.getMonoFont(size);
+        }
+      }
+
+    } catch (Exception e) {
+      // Adding try/catch block because this may be where 
+      // a lot of startup crashes are happening. 
+      Base.log("Error with font " + get(attr) + " for attribute " + attr); 
+    }
+    return new Font("Dialog", Font.PLAIN, 12);
   }
 }

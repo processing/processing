@@ -22,13 +22,18 @@
 package processing.app;
 
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.Frame;
 import java.awt.Image;
 import java.awt.datatransfer.Clipboard;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
@@ -227,5 +232,58 @@ public class Toolkit {
       return retinaProp;
     }
     return false;
+  }
+  
+  
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+  
+  static Font monoFont;
+  static Font plainFont;
+  static Font boldFont;
+  
+  
+  static public Font getMonoFont(int size) {
+    if (monoFont == null) {
+      try {
+        monoFont = createFont("DroidSansMono.ttf", size);
+      } catch (Exception e) {
+        monoFont = new Font("Monospaced", Font.PLAIN, size);
+      }
+    }
+    return monoFont;
+  }
+  
+
+  static public Font getPlainFont(int size) {
+    if (plainFont == null) {
+      try {
+        plainFont = createFont("DroidSans.ttf", size);
+      } catch (Exception e) {
+        plainFont = new Font("SansSerif", Font.PLAIN, size);
+      }
+    }
+    return plainFont;
+  }
+  
+  
+  static public Font getBoldFont(int size) {
+    if (boldFont == null) {
+      try {
+        boldFont = createFont("DroidSans-Bold.ttf", size);
+      } catch (Exception e) {
+        boldFont = new Font("SansSerif", Font.BOLD, size);
+      }
+    }
+    return boldFont;
+  }
+
+
+  static private Font createFont(String filename, int size) throws IOException, FontFormatException {
+    InputStream is = Base.getLibStream("fonts/" + filename);
+    BufferedInputStream input = new BufferedInputStream(is);
+    Font font = Font.createFont(Font.TRUETYPE_FONT, input);
+    input.close();
+    return font.deriveFont((float) size);
   }
 }
