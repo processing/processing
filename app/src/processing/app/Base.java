@@ -44,11 +44,13 @@ import processing.core.*;
  * files and images, etc) that comes from that.
  */
 public class Base {
-  static public final int REVISION = 218;
+  // Added accessors for 0218 because the UpdateCheck class was not properly 
+  // updating the values, because javac was inlining the static final values.
+  static private final int REVISION = 218;
   /** This might be replaced by main() if there's a lib/version.txt file. */
-  static public String VERSION_NAME = "0218"; //$NON-NLS-1$
+  static private String VERSION_NAME = "0218"; //$NON-NLS-1$
   /** Set true if this a proper release rather than a numbered revision. */
-  static public boolean RELEASE = false;
+//  static private boolean RELEASE = false;
 
   /** True if heavy debugging error/log messages are enabled */
   static public boolean DEBUG = false;
@@ -147,7 +149,7 @@ public class Base {
         String version = PApplet.loadStrings(versionFile)[0];
         if (!version.equals(VERSION_NAME)) {
           VERSION_NAME = version;
-          RELEASE = true;
+//          RELEASE = true;
         }
       }
     } catch (Exception e) {
@@ -1547,33 +1549,25 @@ public class Base {
     updateManagerFrame.showFrame(activeEditor);
   }
 
+
   // ...................................................................
 
 
+  static public int getRevision() {
+    return REVISION;
+  }
+  
+
   /**
-   * Get list of platform constants.
+   * Return the version name, something like 1.5 or 2.0b8 or 0213 if it's not
+   * a release version.
    */
-//  static public int[] getPlatforms() {
-//    return platforms;
-//  }
+  static public String getVersionName() {
+    return VERSION_NAME;
+  }
 
-
-//  static public int getPlatform() {
-//    String osname = System.getProperty("os.name");
-//
-//    if (osname.indexOf("Mac") != -1) {
-//      return PConstants.MACOSX;
-//
-//    } else if (osname.indexOf("Windows") != -1) {
-//      return PConstants.WINDOWS;
-//
-//    } else if (osname.equals("Linux")) {  // true for the ibm vm
-//      return PConstants.LINUX;
-//
-//    } else {
-//      return PConstants.OTHER;
-//    }
-//  }
+  
+  //...................................................................
 
 
   static public Platform getPlatform() {

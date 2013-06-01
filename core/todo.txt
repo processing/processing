@@ -29,6 +29,9 @@ A Implement textMode(SHAPE) for 3D
 A   https://github.com/processing/processing/issues/777
 A PImage.loadPixels() shouldn't be calling out to the renderer
 A   setting image.parent = null for it makes it work again for get().save() case
+A Setting smooth(n) affects disables background in setup()
+A   https://github.com/processing/processing/issues/1452
+
 
 _ data decision stuff
 _   key/valueIterator to get a version that can be removed in a loop

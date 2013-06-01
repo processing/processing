@@ -1529,7 +1529,7 @@ public class JavaBuild {
 
     String contents =
       "Manifest-Version: 1.0\n" +
-      "Created-By: Processing " + Base.VERSION_NAME + "\n" +
+      "Created-By: Processing " + Base.getVersionName() + "\n" +
       "Main-Class: " + sketch.getName() + "\n";  // TODO not package friendly
     zos.write(contents.getBytes());
     zos.closeEntry();

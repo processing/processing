@@ -88,7 +88,7 @@ public class UpdateCheck {
     }
 
     String info = PApplet.urlEncode(id + "\t" +
-                                    PApplet.nf(Base.REVISION, 4) + "\t" +
+                                    PApplet.nf(Base.getRevision(), 4) + "\t" +
                                     System.getProperty("java.version") + "\t" +
                                     System.getProperty("java.vendor") + "\t" +
                                     System.getProperty("os.name") + "\t" +
@@ -111,9 +111,9 @@ public class UpdateCheck {
     if (base.activeEditor != null) {
       boolean offerToUpdateContributions = true;
 
-      if (latest > Base.REVISION) {
+      if (latest > Base.getRevision()) {
         System.out.println("You are running Processing revision " +
-                           Base.REVISION + ", the latest is " + latest + ".");
+                           Base.getRevision() + ", the latest is " + latest + ".");
         // Assume the person is busy downloading the latest version
         offerToUpdateContributions = !promptToVisitDownloadPage();
       }
