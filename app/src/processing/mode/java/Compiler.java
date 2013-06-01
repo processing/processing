@@ -149,8 +149,12 @@ public class Compiler {
       writer.flush();
       writer.close();
 
+      String errorString = errorBuffer.toString();
+      if (errorString.trim().length() != 0) {
+        success = false;
+      }
       BufferedReader reader =
-        new BufferedReader(new StringReader(errorBuffer.toString()));
+        new BufferedReader(new StringReader(errorString));
       //System.err.println(errorBuffer.toString());
 
       String line = null;
