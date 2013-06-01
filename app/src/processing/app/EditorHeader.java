@@ -339,7 +339,7 @@ public class EditorHeader extends JComponent {
     // draw the dropdown menu target
     menuLeft = tabs[tabs.length - 1].right + ARROW_GAP_WIDTH;
     menuRight = menuLeft + ARROW_WIDTH;
-    int arrowY = (getHeight() - TAB_HEIGHT) + (TAB_HEIGHT - ARROW_HEIGHT)/2;
+    int arrowY = (getHeight() - TAB_HEIGHT - TAB_STRETCH) + (TAB_HEIGHT - ARROW_HEIGHT)/2;
     g.drawImage(tabArrow, menuLeft, arrowY,
                 ARROW_WIDTH, ARROW_HEIGHT, null);
 //    g.drawImage(pieces[popup.isVisible() ? SELECTED : UNSELECTED][MENU],
@@ -405,6 +405,8 @@ public class EditorHeader extends JComponent {
         path.closePath();
         g.setColor(tabColor[state]);
         g.fill(path);
+        // have to draw an extra outline to make things line up on retina
+        g.draw(path);
         //g.drawImage(pieces[state][RIGHT], x, 0, PIECE_WIDTH, PIECE_HEIGHT, null);
 
         if (tab.textVisible) {
