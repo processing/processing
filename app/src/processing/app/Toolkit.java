@@ -233,16 +233,16 @@ public class Toolkit {
     }
     return false;
   }
-  
-  
+
+
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
-  
+
 //  static Font monoFont;
 //  static Font plainFont;
 //  static Font boldFont;
-//  
-//  
+//
+//
 //  static public Font getMonoFont(int size) {
 //    if (monoFont == null) {
 //      try {
@@ -253,7 +253,7 @@ public class Toolkit {
 //    }
 //    return monoFont;
 //  }
-//  
+//
 //
 //  static public Font getPlainFont(int size) {
 //    if (plainFont == null) {
@@ -265,8 +265,8 @@ public class Toolkit {
 //    }
 //    return plainFont;
 //  }
-//  
-//  
+//
+//
 //  static public Font getBoldFont(int size) {
 //    if (boldFont == null) {
 //      try {
@@ -277,19 +277,19 @@ public class Toolkit {
 //    }
 //    return boldFont;
 //  }
-  
-  
+
+
   static Font monoFont;
   static Font monoBoldFont;
   static Font sansFont;
   static Font sansBoldFont;
-  
-  
+
+
   static public Font getMonoFont(int size, int style) {
     if (monoFont == null) {
       try {
-        monoFont = createFont("SourceCodePro-Regular.otf", size);
-        monoBoldFont = createFont("SourceCodePro-Semibold.otf", size);
+        monoFont = createFont("SourceCodePro-Regular.ttf", size);
+        monoBoldFont = createFont("SourceCodePro-Semibold.ttf", size);
       } catch (Exception e) {
         monoFont = new Font("Monospaced", Font.PLAIN, size);
         monoBoldFont = new Font("Monospaced", Font.BOLD, size);
@@ -310,25 +310,25 @@ public class Toolkit {
         return monoFont.deriveFont((float) size);
       }
     }
-//    return style == Font.BOLD ? 
-//      monoBoldFont.deriveFont((float) size) : 
-//      monoFont.deriveFont((float) size); 
+//    return style == Font.BOLD ?
+//      monoBoldFont.deriveFont((float) size) :
+//      monoFont.deriveFont((float) size);
   }
-  
+
 
   static public Font getSansFont(int size, int style) {
     if (sansFont == null) {
       try {
-        sansFont = createFont("SourceSansPro-Regular.otf", size);
-        sansBoldFont = createFont("SourceSansPro-Semibold.otf", size);
+        sansFont = createFont("SourceSansPro-Regular.ttf", size);
+        sansBoldFont = createFont("SourceSansPro-Semibold.ttf", size);
       } catch (Exception e) {
         sansFont = new Font("Monospaced", Font.PLAIN, size);
         sansBoldFont = new Font("Monospaced", Font.BOLD, size);
       }
     }
 //    System.out.println("deriving new font");
-//    return style == Font.BOLD ? 
-//      sansBoldFont.deriveFont((float) size) : 
+//    return style == Font.BOLD ?
+//      sansBoldFont.deriveFont((float) size) :
 //      sansFont.deriveFont((float) size);
     if (style == Font.BOLD) {
       if (size == sansBoldFont.getSize()) {
@@ -346,8 +346,8 @@ public class Toolkit {
       }
     }
   }
-  
-  
+
+
   static private Font createFont(String filename, int size) throws IOException, FontFormatException {
     InputStream is = Base.getLibStream("fonts/" + filename);
     BufferedInputStream input = new BufferedInputStream(is);
