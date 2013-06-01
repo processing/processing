@@ -56,6 +56,9 @@ o   Exception in thread "Animation Thread" java.lang.UnsatisfiedLinkError: no gl
 o   cannot really.. part of the launcher
 
 
+_ mac os x command line broken
+
+
 2.0 FINAL / libraries & classpaths
 _ need to deal with classpath conflicts
 _   avoid garbage that people have installed on their machines
