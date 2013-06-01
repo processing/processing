@@ -25,7 +25,10 @@ package processing.app;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.font.FontRenderContext;
+import java.awt.font.TextLayout;
 import java.awt.geom.GeneralPath;
+import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
 
 import javax.swing.*;
@@ -238,7 +241,11 @@ public class EditorHeader extends JComponent {
     fontAscent = metrics.getAscent();
 
     Graphics2D g2 = (Graphics2D) g;
-    
+
+    FontRenderContext frc = g2.getFontRenderContext();
+    //fontAscent = (int) new TextLayout("H", font, frc).getAscent();
+    fontAscent = (int) new TextLayout("H", font, frc).getBounds().getHeight();
+
     if (Toolkit.highResDisplay()) {
       // scale everything 2x, will be scaled down when drawn to the screen
       g2.scale(2, 2);
