@@ -555,11 +555,11 @@ public class JSONObject {
   /**
    * Gets the String associated with a key
    *
-   * @param key   A key string.
-   * @return      A string which is the value.
-   * @throws   JSONException if there is no string value for the key.
    * @webref jsonobject:method
    * @brief Gets the string associated with a key
+   * @param key a key string
+   * @return A string which is the value.
+   * @throws JSONException if there is no string value for the key.
    */
   public String getString(String key) {
     Object object = this.get(key);
@@ -573,12 +573,12 @@ public class JSONObject {
   /**
    * Gets the int value associated with a key
    *
-   * @param key   A key string.
-   * @return      The integer value.
-   * @throws   JSONException if the key is not found or if the value cannot
-   *  be converted to an integer.
    * @webref jsonobject:method
    * @brief Gets the int value associated with a key
+   * @param key a key string
+   * @return The integer value.
+   * @throws JSONException if the key is not found or if the value cannot
+   *  be converted to an integer.
    */
   public int getInt(String key) {
     Object object = this.get(key);
@@ -613,7 +613,8 @@ public class JSONObject {
 
   /**
    * @webref jsonobject:method
-   * @brief To come...
+   * @brief Gets the float value associated with a key
+   * @param key a key string
    */
   public float getFloat(String key) {
     return (float) getDouble(key);
@@ -642,11 +643,11 @@ public class JSONObject {
   /**
    * Get the boolean value associated with a key.
    *
-   * @param key   A key string.
-   * @return      The truth.
-   * @throws      JSONException if the value is not a Boolean or the String "true" or "false".
    * @webref jsonobject:method
    * @brief Gets the boolean value associated with a key
+   * @param key a key string
+   * @return The truth.
+   * @throws JSONException if the value is not a Boolean or the String "true" or "false".
    */
   public boolean getBoolean(String key) {
     Object object = this.get(key);
