@@ -45,6 +45,8 @@ _   methods for max, min, index of max/min entries? valueIndex?
 high
 _ draw() called again before finishing on OS X (retina issue)
 _   https://github.com/processing/processing/issues/1709
+_ screen stops updating sometimes with retina
+_   https://github.com/processing/processing/issues/1699
 _ Linux sometimes not responding correctly w/ the size() command
 _   https://github.com/processing/processing/issues/1672
 
