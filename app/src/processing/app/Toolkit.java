@@ -291,6 +291,7 @@ public class Toolkit {
         monoFont = createFont("SourceCodePro-Regular.ttf", size);
         monoBoldFont = createFont("SourceCodePro-Semibold.ttf", size);
       } catch (Exception e) {
+        Base.log("Could not load mono font", e);
         monoFont = new Font("Monospaced", Font.PLAIN, size);
         monoBoldFont = new Font("Monospaced", Font.BOLD, size);
       }
@@ -322,6 +323,7 @@ public class Toolkit {
         sansFont = createFont("SourceSansPro-Regular.ttf", size);
         sansBoldFont = createFont("SourceSansPro-Semibold.ttf", size);
       } catch (Exception e) {
+        Base.log("Could not load sans font", e);
         sansFont = new Font("Monospaced", Font.PLAIN, size);
         sansBoldFont = new Font("Monospaced", Font.BOLD, size);
       }

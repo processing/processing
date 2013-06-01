@@ -44,7 +44,7 @@ import processing.core.*;
  * files and images, etc) that comes from that.
  */
 public class Base {
-  // Added accessors for 0218 because the UpdateCheck class was not properly 
+  // Added accessors for 0218 because the UpdateCheck class was not properly
   // updating the values, because javac was inlining the static final values.
   static private final int REVISION = 218;
   /** This might be replaced by main() if there's a lib/version.txt file. */
@@ -53,8 +53,8 @@ public class Base {
 //  static private boolean RELEASE = false;
 
   /** True if heavy debugging error/log messages are enabled */
-  static public boolean DEBUG = false;
-//  static public boolean DEBUG = true;
+  //  static public boolean DEBUG = false;
+  static public boolean DEBUG = true;
 
   static HashMap<Integer, String> platformNames =
     new HashMap<Integer, String>();
@@ -1556,7 +1556,7 @@ public class Base {
   static public int getRevision() {
     return REVISION;
   }
-  
+
 
   /**
    * Return the version name, something like 1.5 or 2.0b8 or 0213 if it's not
@@ -1566,7 +1566,7 @@ public class Base {
     return VERSION_NAME;
   }
 
-  
+
   //...................................................................
 
 
