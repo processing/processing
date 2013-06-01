@@ -97,8 +97,6 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
     modeTitle = mode.getTitle();
     modeTextFont = mode.getFont("mode.button.font");
     modeButtonColor = mode.getColor("mode.button.color");
-    
-    System.out.println(modeTextFont.getPSName() + " " + mode.theme.get("mode.button.font"));
 
     if (modeArrow == null) {
       String suffix = Toolkit.highResDisplay() ? "-2x.png" : ".png";

@@ -102,14 +102,18 @@ editor.window.height.min.macosx = 450
 editor.window.height.min.windows = 530
 
 # font size for editor
-editor.font=Monospaced,plain,12
+#editor.font=Monospaced,plain,12
 # Monaco is nicer on Mac OS X, so use that explicitly
-editor.font.macosx = Monaco,plain,10
+#editor.font.macosx = Monaco,plain,10
+# trying for a built-in, consistent monospace for 2.0
+editor.font=processing.mono,plain,12
 
 # anti-aliased text, turned off by default
-editor.antialias=false
+#editor.antialias=false
 # linux fonts are hideous without anti-aliasing [0191]
-editor.antialias.linux=true
+#editor.antialias.linux=true
+# turning anti-aliasing on by default for 2.0
+editor.antialias=true
 
 # blink the caret by default
 editor.caret.blink = true
@@ -127,12 +131,12 @@ editor.keys.shift_backspace_is_delete = false
 
 # home and end keys should only travel to the start/end of the current line
 editor.keys.home_and_end_travel_far = false
-# home and end keys move to the first/last non-whitespace character, and move
-# to the actual start/end when pressed a second time. Only works if
-# editor.keys.home_and_end_travel_far is false
+# home and end keys move to the first/last non-whitespace character,
+# and move to the actual start/end when pressed a second time. 
+# Only works if editor.keys.home_and_end_travel_far is false.
 editor.keys.home_and_end_travel_smart = true
-# the OS X HI Guidelines say that home/end are relative to the document
-# if you don't like it, this is the preference to change
+# The OS X HI Guidelines say that home/end are relative to the document, 
+# but that drives some people nuts. This pref enables/disables it.
 editor.keys.home_and_end_travel_far.macosx = true
 
 # Enable/disable support for complex scripts. Used for Japanese and others, 
@@ -141,7 +145,7 @@ editor.input_method_support = false
 
 # convert tabs to spaces? how many spaces?
 editor.tabs.expand = true
-editor.tabs.size   = 2
+editor.tabs.size = 2
 
 # automatically indent each line
 editor.indent = true
@@ -154,8 +158,9 @@ editor.divider.size = 0
 editor.divider.size.windows = 2
 
 # font choice and size for the console
-console.font = Monospaced,plain,11
-console.font.macosx = Monaco,plain,10
+#console.font = Monospaced,plain,11
+#console.font.macosx = Monaco,plain,10
+console.font = processing.mono,plain,11
 
 # number of lines to show by default
 console.lines = 4
@@ -168,10 +173,8 @@ console.auto_clear = true
 # the default is 500, lengthen at your own peril
 console.length = 500
 
-# any additional java options when running externally
-# (for applets that are run external to the environment...
-# those with a code folder, or using any libraries)
-# if you hose this and can't run things, it's your own durn fault 
+# Any additional Java options when running. 
+# If you change this and can't run things, it's your own durn fault.
 run.options = 
 
 # settings for the -XmsNNNm and -XmxNNNm command line option
@@ -179,14 +182,10 @@ run.options.memory = false
 run.options.memory.initial = 64
 run.options.memory.maximum = 256
 
-# By default, Mac OS X 10.6 launches applications in 32-bit mode.
-# Changing this doesn't do anything on other platforms. On OS X 10.5,
-# only 64-bit is supported, because Apple didn't release a 32-bit 
-# version of Java 1.6 for OS X 10.5.
+# By default, Mac OS X 10.6 launches applications in 32-bit mode, 
+# which is more compatible with libraries (many have not updated to 64-bit).
+# Changing this doesn't do anything on other platforms. 
 run.options.bits.macosx = 32
-
-# example of increasing the memory size for applets run externally
-#run.options = -Xms128m -Xmx1024m
 
 # Index of the display to use for running sketches (starts at 1). 
 # Kept this 1-indexed because older vesions of Processing were setting
@@ -204,13 +203,12 @@ run.display = 0
 #sketchbook.closing_last_window_quits.macosx = false
 
 editor.untitled.prefix=sketch_
-# old (pre-1.0, back for 2.0) style for default sketch name
-editor.untitled.suffix=yyMMdd
-# new (1.0) style for sketch naming. if you change this, be sure that 
-# this will work with your language settings. for instance, MMMdd won't work
-# on Korean-language systems because it will insert non-ascii characters.
+# The old (pre-1.0, back for 2.0) style for default sketch name.
+# If you change this, be careful that this will work with your language 
+# settings. For instance, MMMdd won't work on Korean-language systems 
+# because it'll insert non-ASCII characters and break the environment.
 # http://code.google.com/p/processing/issues/detail?id=283
-#editor.untitled.suffix=MMMdd
+editor.untitled.suffix=yyMMdd
 
 # Set the default look & feel on Linux to something other than 
 # the 'native' platform default, which is usually Metal (yuck!)
@@ -259,11 +257,6 @@ editor.token.invalid.style = #666666,bold
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-
-#history.recording = true
-
-# for advanced users, enable option to export a library
-#export.library = false
 
 # which platforms to export by default
 export.application.platform.windows = true
@@ -314,7 +307,7 @@ preproc.output_parse_tree = false
 # imports that aren't covered by the reference. This has been done to improve
 # overall cross-platform parity and to avoid users unknowingly adding 
 # Java classes, and then the sadness that comes when switching to Android
-# or JavaScript modes
+# or JavaScript modes.
 #preproc.imports.list = java.applet.*,java.awt.Dimension,java.awt.Frame,java.awt.event.MouseEvent,java.awt.event.KeyEvent,java.awt.event.FocusEvent,java.awt.Image,java.io.*,java.net.*,java.text.*,java.util.*,java.util.zip.*,java.util.regex.*
 #preproc.imports = java.io.*,java.net.*,java.text.*,java.util.*,java.util.zip.*,java.util.regex.*
 #preproc.imports = java.io.*,java.util.*

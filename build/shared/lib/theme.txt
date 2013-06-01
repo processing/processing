@@ -11,7 +11,6 @@ status.font = processing.sans,plain,12
 
 # GUI - TABS
 # settings for the tabs at the top
-# (tab images are stored in the lib/theme folder)
 #header.bgcolor = #818b95
 header.bgcolor = #000000
 #header.text.selected.color = #1a1a00
