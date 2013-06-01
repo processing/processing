@@ -25,11 +25,15 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.Frame;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.datatransfer.Clipboard;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.font.FontRenderContext;
+import java.awt.font.TextLayout;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -356,5 +360,13 @@ public class Toolkit {
     Font font = Font.createFont(Font.TRUETYPE_FONT, input);
     input.close();
     return font.deriveFont((float) size);
+  }
+  
+  
+  static double getAscent(Graphics g) { //, Font font) {
+    Graphics2D g2 = (Graphics2D) g;
+    FontRenderContext frc = g2.getFontRenderContext();
+    //return new TextLayout("H", font, frc).getBounds().getHeight();
+    return new TextLayout("H", g.getFont(), frc).getBounds().getHeight();
   }
 }

@@ -25,8 +25,6 @@ package processing.app;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.font.FontRenderContext;
-import java.awt.font.TextLayout;
 import java.awt.geom.GeneralPath;
 import java.util.Arrays;
 
@@ -63,7 +61,7 @@ public class EditorHeader extends JComponent {
   Tab[] visitOrder;
 
   Font font;
-  FontMetrics metrics;
+//  FontMetrics metrics;
   int fontAscent;
 
   JMenu menu;
@@ -236,14 +234,13 @@ public class EditorHeader extends JComponent {
 
     Graphics g = offscreen.getGraphics();
     g.setFont(font);  // need to set this each time through
-    metrics = g.getFontMetrics();
-    fontAscent = metrics.getAscent();
+//    metrics = g.getFontMetrics();
+//    fontAscent = metrics.getAscent();
+    if (fontAscent == 0) {
+      fontAscent = (int) Toolkit.getAscent(g);
+    }
 
     Graphics2D g2 = (Graphics2D) g;
-
-    FontRenderContext frc = g2.getFontRenderContext();
-    //fontAscent = (int) new TextLayout("H", font, frc).getAscent();
-    fontAscent = (int) new TextLayout("H", font, frc).getBounds().getHeight();
 
     if (Toolkit.highResDisplay()) {
       // scale everything 2x, will be scaled down when drawn to the screen
@@ -409,8 +406,8 @@ public class EditorHeader extends JComponent {
           int baseline = top + (tabHeight + fontAscent) / 2;
           //g.drawString(sketch.code[i].name, textLeft, baseline);
           g.drawString(tab.text, textLeft, baseline);
-          g.drawLine(tab.left, baseline-fontAscent, tab.right, baseline-fontAscent);
-          g.drawLine(tab.left, baseline, tab.right, baseline);
+//          g.drawLine(tab.left, baseline-fontAscent, tab.right, baseline-fontAscent);
+//          g.drawLine(tab.left, baseline, tab.right, baseline);
         }
       }
 

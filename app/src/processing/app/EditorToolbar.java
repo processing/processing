@@ -61,6 +61,7 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
   protected Button rollover;
 
   Font statusFont;
+  int statusAscent;
   Color statusColor;
   
   boolean shiftPressed;
@@ -68,6 +69,7 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
   // what the mode indicator looks like
   Color modeButtonColor;
   Font modeTextFont;
+  int modeTextAscent;
   Color modeTextColor;
   String modeTitle;
   int modeX1, modeY1;
@@ -226,6 +228,9 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
 
     g.setColor(statusColor);
     g.setFont(statusFont);
+    if (statusAscent == 0) {
+      statusAscent = (int) Toolkit.getAscent(g);
+    }
 
     // If I ever find the guy who wrote the Java2D API, I will hurt him.
 //    Graphics2D g2 = (Graphics2D) g;
@@ -236,7 +241,8 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
 
 //    if (currentRollover != -1) {
     if (rollover != null) {
-      int statusY = (BUTTON_HEIGHT + g.getFontMetrics().getAscent()) / 2;
+      //int statusY = (BUTTON_HEIGHT + g.getFontMetrics().getAscent()) / 2;
+      int statusY = (BUTTON_HEIGHT + statusAscent) / 2;
       //String status = shiftPressed ? titleShift[currentRollover] : title[currentRollover];
       String status = shiftPressed ? rollover.titleShift : rollover.title;
       g.drawString(status, buttons.size() * BUTTON_WIDTH + 3 * BUTTON_GAP, statusY);
@@ -244,19 +250,23 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
 
     g.setFont(modeTextFont);
     FontMetrics metrics = g.getFontMetrics();
-    int modeTextHeight = metrics.getAscent();
+    if (modeTextAscent == 0) {
+      modeTextAscent = (int) Toolkit.getAscent(g); //metrics.getAscent();
+    }
     int modeTextWidth = metrics.stringWidth(modeTitle);
     final int modeGapWidth = 8;
     final int modeBoxHeight = 20;
     modeX2 = getWidth() - 16;
     modeX1 = modeX2 - (modeGapWidth + modeTextWidth + modeGapWidth + ARROW_WIDTH + modeGapWidth);
-    modeY1 = 8; //(getHeight() - modeBoxHeight) / 2;
+//    modeY1 = 8; //(getHeight() - modeBoxHeight) / 2;
+    modeY1 = (getHeight() - modeBoxHeight) / 2;
     modeY2 = modeY1 + modeBoxHeight; //modeY1 + modeH + modeGapV*2;
     g.setColor(modeButtonColor);
     g.drawRect(modeX1, modeY1, modeX2 - modeX1, modeY2 - modeY1);
     g.drawString(modeTitle, 
                  modeX1 + modeGapWidth, 
-                 modeY1 + modeTextHeight + (modeBoxHeight - modeTextHeight) / 2);
+                 modeY1 + (modeBoxHeight + modeTextAscent) / 2);
+                 //modeY1 + modeTextAscent + (modeBoxHeight - modeTextAscent) / 2);
     g.drawImage(modeArrow, 
                 modeX2 - ARROW_WIDTH - modeGapWidth, 
                 modeY1 + (modeBoxHeight - ARROW_HEIGHT) / 2, 
