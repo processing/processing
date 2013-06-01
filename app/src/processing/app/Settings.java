@@ -215,13 +215,9 @@ public class Settings {
 
       } else {
         if (pieces[0].equals("processing.sans")) {
-          if (style == Font.BOLD) {
-            return Toolkit.getBoldFont(size);
-          } else {
-            return Toolkit.getPlainFont(size);
-          }
+          return Toolkit.getSansFont(size, style);
         } else if (pieces[0].equals("processing.mono")) {
-          return Toolkit.getMonoFont(size);
+          return Toolkit.getMonoFont(size, style);
         }
       }
 

@@ -18,7 +18,7 @@ header.text.selected.color = #000000
 header.text.unselected.color = #ffffff
 #header.text.font = SansSerif,plain,12
 #header.text.font.macosx = Helvetica,plain,12
-header.text.font = processing.sans,plain,12
+header.text.font = processing.sans,plain,16
 header.tab.selected.color = #a2afba
 header.tab.unselected.color = #2a4159
 

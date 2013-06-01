@@ -26,8 +26,7 @@ import java.awt.print.*;
  * @author Slava Pestov
  */
 public class TextAreaPainter extends JComponent
-implements TabExpander, Printable
-{
+implements TabExpander, Printable {
   /** True if inside printing, will handle disabling the highlight */
   boolean printing;
   /** Current setting for editor.antialias preference */

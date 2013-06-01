@@ -238,47 +238,116 @@ public class Toolkit {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
   
+//  static Font monoFont;
+//  static Font plainFont;
+//  static Font boldFont;
+//  
+//  
+//  static public Font getMonoFont(int size) {
+//    if (monoFont == null) {
+//      try {
+//        monoFont = createFont("DroidSansMono.ttf", size);
+//      } catch (Exception e) {
+//        monoFont = new Font("Monospaced", Font.PLAIN, size);
+//      }
+//    }
+//    return monoFont;
+//  }
+//  
+//
+//  static public Font getPlainFont(int size) {
+//    if (plainFont == null) {
+//      try {
+//        plainFont = createFont("DroidSans.ttf", size);
+//      } catch (Exception e) {
+//        plainFont = new Font("SansSerif", Font.PLAIN, size);
+//      }
+//    }
+//    return plainFont;
+//  }
+//  
+//  
+//  static public Font getBoldFont(int size) {
+//    if (boldFont == null) {
+//      try {
+//        boldFont = createFont("DroidSans-Bold.ttf", size);
+//      } catch (Exception e) {
+//        boldFont = new Font("SansSerif", Font.BOLD, size);
+//      }
+//    }
+//    return boldFont;
+//  }
+  
+  
   static Font monoFont;
-  static Font plainFont;
-  static Font boldFont;
+  static Font monoBoldFont;
+  static Font sansFont;
+  static Font sansBoldFont;
   
   
-  static public Font getMonoFont(int size) {
+  static public Font getMonoFont(int size, int style) {
     if (monoFont == null) {
       try {
-        monoFont = createFont("DroidSansMono.ttf", size);
+        monoFont = createFont("SourceCodePro-Regular.otf", size);
+        monoBoldFont = createFont("SourceCodePro-Semibold.otf", size);
       } catch (Exception e) {
         monoFont = new Font("Monospaced", Font.PLAIN, size);
+        monoBoldFont = new Font("Monospaced", Font.BOLD, size);
       }
     }
-    return monoFont;
+    if (style == Font.BOLD) {
+      if (size == monoBoldFont.getSize()) {
+        return monoBoldFont;
+      } else {
+//        System.out.println("deriving new font");
+        return monoBoldFont.deriveFont((float) size);
+      }
+    } else {
+      if (size == monoFont.getSize()) {
+        return monoFont;
+      } else {
+//        System.out.println("deriving new font");
+        return monoFont.deriveFont((float) size);
+      }
+    }
+//    return style == Font.BOLD ? 
+//      monoBoldFont.deriveFont((float) size) : 
+//      monoFont.deriveFont((float) size); 
   }
   
 
-  static public Font getPlainFont(int size) {
-    if (plainFont == null) {
+  static public Font getSansFont(int size, int style) {
+    if (sansFont == null) {
       try {
-        plainFont = createFont("DroidSans.ttf", size);
+        sansFont = createFont("SourceSansPro-Regular.otf", size);
+        sansBoldFont = createFont("SourceSansPro-Semibold.otf", size);
       } catch (Exception e) {
-        plainFont = new Font("SansSerif", Font.PLAIN, size);
+        sansFont = new Font("Monospaced", Font.PLAIN, size);
+        sansBoldFont = new Font("Monospaced", Font.BOLD, size);
       }
     }
-    return plainFont;
+//    System.out.println("deriving new font");
+//    return style == Font.BOLD ? 
+//      sansBoldFont.deriveFont((float) size) : 
+//      sansFont.deriveFont((float) size);
+    if (style == Font.BOLD) {
+      if (size == sansBoldFont.getSize()) {
+        return sansBoldFont;
+      } else {
+//        System.out.println("deriving new font");
+        return sansBoldFont.deriveFont((float) size);
+      }
+    } else {
+      if (size == sansFont.getSize()) {
+        return sansFont;
+      } else {
+//        System.out.println("deriving new font");
+        return sansFont.deriveFont((float) size);
+      }
+    }
   }
   
   
-  static public Font getBoldFont(int size) {
-    if (boldFont == null) {
-      try {
-        boldFont = createFont("DroidSans-Bold.ttf", size);
-      } catch (Exception e) {
-        boldFont = new Font("SansSerif", Font.BOLD, size);
-      }
-    }
-    return boldFont;
-  }
-
-
   static private Font createFont(String filename, int size) throws IOException, FontFormatException {
     InputStream is = Base.getLibStream("fonts/" + filename);
     BufferedInputStream input = new BufferedInputStream(is);

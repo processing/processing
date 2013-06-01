@@ -398,10 +398,12 @@ public class EditorHeader extends JComponent {
           int textLeft = tab.left + ((tab.right - tab.left) - tab.textWidth) / 2;
           g.setColor(textColor[state]);
 //          int baseline = (int) Math.ceil((sizeH + fontAscent) / 2.0);
-          int baseline = bottom - (TAB_HEIGHT - fontAscent)/2;
+          //int baseline = bottom - (TAB_HEIGHT - fontAscent)/2;
+          int tabHeight = TAB_HEIGHT; //bottom - top;
+          int baseline = top + (tabHeight + fontAscent) / 2;
           //g.drawString(sketch.code[i].name, textLeft, baseline);
           g.drawString(tab.text, textLeft, baseline);
-//          g.drawLine(tab.left, baseline-fontAscent, tab.right, baseline-fontAscent);
+          g.drawLine(tab.left, baseline-fontAscent, tab.right, baseline-fontAscent);
         }
       }
 

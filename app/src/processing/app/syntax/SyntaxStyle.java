@@ -78,31 +78,59 @@ public class SyntaxStyle
     if(font.equals(lastFont))
       return lastStyledFont;
     lastFont = font;
-    lastStyledFont = new Font(font.getFamily(),
-                              (bold ? Font.BOLD : 0)
-                              | (italic ? Font.ITALIC : 0),
-                              font.getSize());
+//    lastStyledFont = new Font(font.getFamily(),
+//                              (bold ? Font.BOLD : 0)
+//                              | (italic ? Font.ITALIC : 0),
+//                              font.getSize());
+    lastStyledFont = 
+      findFont(font.getFamily(), bold ? Font.BOLD : Font.PLAIN, font.getSize());
     return lastStyledFont;
   }
 
   /**
    * Returns the font metrics for the styled font.
    */
-  public FontMetrics getFontMetrics(Font font, JComponent comp)
-  {
-    if(font == null)
-      throw new NullPointerException("font param must not"
-                                     + " be null");
-    if(font.equals(lastFont) && fontMetrics != null)
+  public FontMetrics getFontMetrics(Font font, JComponent comp) {
+    if (font == null) {
+      throw new NullPointerException("font param must not be null");
+    }
+    if (font.equals(lastFont) && fontMetrics != null) {
       return fontMetrics;
+    }
     lastFont = font;
-    lastStyledFont = new Font(font.getFamily(),
-                              (bold ? Font.BOLD : 0)
-                              | (italic ? Font.ITALIC : 0),
-                              font.getSize());
+//    lastStyledFont = new Font(font.getFamily(),
+//                              (bold ? Font.BOLD : 0)
+//                              | (italic ? Font.ITALIC : 0),
+//                              font.getSize());
+    lastStyledFont = 
+      findFont(font.getFamily(), bold ? Font.BOLD : Font.PLAIN, font.getSize());
+
     //fontMetrics = Toolkit.getDefaultToolkit().getFontMetrics(lastStyledFont);
     fontMetrics = comp.getFontMetrics(lastStyledFont);
     return fontMetrics;
+  }
+  
+  private String monoFontFamily;
+  
+  private Font findFont(String familyName, int style, int size) {
+    if (monoFontFamily == null) {
+      // Just get the font family name for comparison
+      monoFontFamily = 
+        processing.app.Toolkit.getMonoFont(size, style).getFamily();
+      //processing.app.Toolkit.getMonoFont(size, style).getFamily();
+//      Font mono = processing.app.Toolkit.getMonoFont(size, style);
+//      System.out.println("mono family " + mono.getFamily());
+//      System.out.println("mono fontname " + mono.getFontName());
+//      System.out.println("mono name " + mono.getName());
+//      System.out.println("mono psname " + mono.getPSName());
+    }
+    if (familyName.equals(monoFontFamily)) {
+//      System.out.println("getting style bold? " + (style == Font.BOLD));
+      return processing.app.Toolkit.getMonoFont(size, style);
+    } else {
+//      System.out.println("name is " + name + " mono name is " + monoFontName + " " + style);
+      return new Font(familyName, style, size);
+    }
   }
 
   /**
