@@ -89,11 +89,10 @@ public class Preferences {
    * inside a static block.
    */
   static public int BUTTON_HEIGHT = 24;
-
-  // value for the size bars, buttons, etc
-
-  static final int GRID_SIZE     = 33;
-
+  
+  /** height of the EditorHeader, EditorToolbar, and EditorStatus */
+  static final int GRID_SIZE = 32;
+  //static final int GRID_SIZE = 33;
 
   // indents and spacing standards. these probably need to be modified
   // per platform as well, since macosx is so huge, windows is smaller,

@@ -42,11 +42,13 @@ public class EditorHeader extends JComponent {
   // distance from the righthand side of a tab to the drop-down arrow
   static final int ARROW_GAP_WIDTH = 8;
   // indent x/y for notch on the tab
-  static final int NOTCH = 4;
+  static final int NOTCH = 0;
   // how far to raise the tab from the bottom of this Component
-  static final int TAB_HEIGHT = 27;
+  static final int TAB_HEIGHT = 25;
+  // line that continues across all of the tabs for the current one
+  static final int TAB_STRETCH = 3;
   // amount of margin on the left/right for the text on the tab
-  static final int TEXT_MARGIN = 5;
+  static final int TEXT_MARGIN = 10;
   // width of the tab when no text visible
   // (total tab width will be this plus TEXT_MARGIN*2)
   static final int NO_TEXT_WIDTH = 10;
@@ -54,6 +56,7 @@ public class EditorHeader extends JComponent {
   Color backgroundColor;
   Color textColor[] = new Color[2];
   Color tabColor[] = new Color[2];
+  Color modifiedColor;
 
   Editor editor;
 
@@ -196,6 +199,8 @@ public class EditorHeader extends JComponent {
 
     tabColor[SELECTED] = mode.getColor("header.tab.selected.color");
     tabColor[UNSELECTED] = mode.getColor("header.tab.unselected.color");
+    
+    modifiedColor = mode.getColor("editor.selection.color");
   }
 
 
@@ -262,7 +267,8 @@ public class EditorHeader extends JComponent {
 //                  EditorToolbar.BACKGROUND_WIDTH,
 //                  EditorToolbar.BACKGROUND_HEIGHT, null);
 //    }
-    editor.getMode().drawBackground(g, EditorToolbar.BUTTON_HEIGHT);
+    //editor.getMode().drawBackground(g, EditorToolbar.BUTTON_HEIGHT);
+    editor.getMode().drawBackground(g, Preferences.GRID_SIZE);
 
 //    int codeCount = sketch.getCodeCount();
 //    if ((tabLeft == null) || (tabLeft.length < codeCount)) {
@@ -292,10 +298,12 @@ public class EditorHeader extends JComponent {
 
       // hide extensions for .pde files (or whatever else is the norm elsewhere
       boolean hide = editor.getMode().hideExtension(code.getExtension());
-      String codeName = hide ? code.getPrettyName() : code.getFileName();
+//      String codeName = hide ? code.getPrettyName() : code.getFileName();
       // if modified, add the li'l glyph next to the name
-      tab.text = "  " + codeName + (code.isModified() ? " \u00A7" : "  ");
-
+//      tab.text = "  " + codeName + (code.isModified() ? " \u00A7" : "  ");
+//      tab.text = "  " + codeName + "  ";
+      tab.text = hide ? code.getPrettyName() : code.getFileName();
+      
       tab.textWidth = (int)
         font.getStringBounds(tab.text, g2.getFontRenderContext()).getWidth();
     }
@@ -345,9 +353,14 @@ public class EditorHeader extends JComponent {
     Sketch sketch = editor.getSketch();
     int x = left;
 
-    final int bottom = getHeight();
+    final int bottom = getHeight() - TAB_STRETCH;
     final int top = bottom - TAB_HEIGHT;
     GeneralPath path = null;
+    
+    if (g != null) {
+      g.setColor(tabColor[SELECTED]);
+      g.fillRect(0, bottom, getWidth(), TAB_STRETCH);
+    }
 
     for (int i = 0; i < sketch.getCodeCount(); i++) {
       SketchCode code = sketch.getCode(i);
@@ -393,11 +406,8 @@ public class EditorHeader extends JComponent {
         g.setColor(tabColor[state]);
         g.fill(path);
         //g.drawImage(pieces[state][RIGHT], x, 0, PIECE_WIDTH, PIECE_HEIGHT, null);
-      }
 
-      if (tab.textVisible) {
-//        int textLeft = contentLeft + (pieceWidth - tab.textWidth) / 2;
-        if (g != null) {
+        if (tab.textVisible) {
           int textLeft = tab.left + ((tab.right - tab.left) - tab.textWidth) / 2;
           g.setColor(textColor[state]);
 //          int baseline = (int) Math.ceil((sizeH + fontAscent) / 2.0);
@@ -409,6 +419,11 @@ public class EditorHeader extends JComponent {
 //          g.drawLine(tab.left, baseline-fontAscent, tab.right, baseline-fontAscent);
 //          g.drawLine(tab.left, baseline, tab.right, baseline);
         }
+      
+        if (code.isModified()) {
+          g.setColor(modifiedColor);
+          g.drawLine(tab.left + NOTCH, top, tab.right - NOTCH, top);
+        }
       }
 
 //      if (g != null) {
@@ -416,6 +431,7 @@ public class EditorHeader extends JComponent {
 //      }
 //      x += PIECE_WIDTH - 1;  // overlap by 1 pixel
       x += 1;
+      
     }
     return x <= right;
   }
@@ -590,18 +606,18 @@ public class EditorHeader extends JComponent {
 
 
   public Dimension getMinimumSize() {
-    if (Base.isMacOS()) {
-      return new Dimension(300, Preferences.GRID_SIZE);
-    }
-    return new Dimension(300, Preferences.GRID_SIZE - 1);
+//    if (Base.isMacOS()) {
+    return new Dimension(300, Preferences.GRID_SIZE);
+//    }
+//    return new Dimension(300, Preferences.GRID_SIZE - 1);
   }
 
 
   public Dimension getMaximumSize() {
-    if (Base.isMacOS()) {
-      return new Dimension(3000, Preferences.GRID_SIZE);
-    }
-    return new Dimension(3000, Preferences.GRID_SIZE - 1);
+//    if (Base.isMacOS()) {
+    return new Dimension(3000, Preferences.GRID_SIZE);
+//    }
+//    return new Dimension(3000, Preferences.GRID_SIZE - 1);
   }
 
 

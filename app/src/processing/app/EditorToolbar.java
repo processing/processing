@@ -39,7 +39,7 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
   /** Width of each toolbar button. */
   static final int BUTTON_WIDTH = 27;
   /** Height of each toolbar button. */
-  static final int BUTTON_HEIGHT = 32;
+//  static final int BUTTON_HEIGHT = 32;
   /** The amount of space between groups of buttons on the toolbar. */
   static final int BUTTON_GAP = 5;
   /** Size (both width and height) of the buttons in the source image. */
@@ -149,7 +149,7 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
     
     for (int i = 0; i < count; i++) {
       for (int state = 0; state < 3; state++) {
-        Image image = new BufferedImage(BUTTON_WIDTH*res, BUTTON_HEIGHT*res, BufferedImage.TYPE_INT_ARGB);
+        Image image = new BufferedImage(BUTTON_WIDTH*res, Preferences.GRID_SIZE*res, BufferedImage.TYPE_INT_ARGB);
         Graphics g = image.getGraphics();
         g.drawImage(allButtons, 
                     -(i*BUTTON_IMAGE_SIZE*res) - 3, 
@@ -223,7 +223,7 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
 //      g.drawImage(stateImage[i], x1[i], y1, null);
 //    }
     for (Button b : buttons) {
-      g.drawImage(b.stateImage, b.left, 0, BUTTON_WIDTH, BUTTON_HEIGHT, null);
+      g.drawImage(b.stateImage, b.left, 0, BUTTON_WIDTH, Preferences.GRID_SIZE, null);
     }
 
     g.setColor(statusColor);
@@ -242,7 +242,7 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
 //    if (currentRollover != -1) {
     if (rollover != null) {
       //int statusY = (BUTTON_HEIGHT + g.getFontMetrics().getAscent()) / 2;
-      int statusY = (BUTTON_HEIGHT + statusAscent) / 2;
+      int statusY = (Preferences.GRID_SIZE + statusAscent) / 2;
       //String status = shiftPressed ? titleShift[currentRollover] : title[currentRollover];
       String status = shiftPressed ? rollover.titleShift : rollover.title;
       g.drawString(status, buttons.size() * BUTTON_WIDTH + 3 * BUTTON_GAP, statusY);
@@ -503,12 +503,12 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
 
 
   public Dimension getMinimumSize() {
-    return new Dimension((buttons.size() + 1)*BUTTON_WIDTH, BUTTON_HEIGHT);
+    return new Dimension((buttons.size() + 1)*BUTTON_WIDTH, Preferences.GRID_SIZE);
   }
 
 
   public Dimension getMaximumSize() {
-    return new Dimension(3000, BUTTON_HEIGHT);
+    return new Dimension(3000, Preferences.GRID_SIZE);
   }
 
 
