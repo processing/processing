@@ -108,7 +108,7 @@ public class PGL {
    * See the code and comments involving this constant in
    * PGraphicsOpenGL.endDraw().
    */
-  protected static final boolean SAVE_SURFACE_TO_PIXELS_HACK = true;
+  protected static final boolean SAVE_SURFACE_TO_PIXELS_HACK = false;
 
   /** Enables/disables mipmap use. */
   protected static final boolean MIPMAPS_ENABLED = true;
@@ -194,7 +194,7 @@ public class PGL {
       WINDOW_TOOLKIT = AWT;
       EVENTS_TOOLKIT = AWT;
       USE_FBOLAYER_BY_DEFAULT = true;
-      USE_JOGL_FBOLAYER = true;
+      USE_JOGL_FBOLAYER = false;
       REQUESTED_DEPTH_BITS = 24;
       REQUESTED_STENCIL_BITS = 8;
       REQUESTED_ALPHA_BITS = 8;
@@ -1126,8 +1126,7 @@ public class PGL {
 
 
   protected boolean needFBOLayer(boolean clear0) {
-    boolean cond = !clear0 || fboLayerRequested || 1 < numSamples;
-    return cond && glColorFbo.get(0) != 0;
+    return !clear0 || fboLayerRequested || 1 < numSamples;
   }
 
 
