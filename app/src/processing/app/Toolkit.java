@@ -288,8 +288,8 @@ public class Toolkit {
   static public Font getMonoFont(int size, int style) {
     if (monoFont == null) {
       try {
-        monoFont = createFont("SourceCodePro-Regular.otf", size);
-        monoBoldFont = createFont("SourceCodePro-Semibold.otf", size);
+        monoFont = createFont("SourceCodePro-Regular.ttf", size);
+        monoBoldFont = createFont("SourceCodePro-Semibold.ttf", size);
       } catch (Exception e) {
         Base.log("Could not load mono font", e);
         monoFont = new Font("Monospaced", Font.PLAIN, size);
@@ -320,8 +320,8 @@ public class Toolkit {
   static public Font getSansFont(int size, int style) {
     if (sansFont == null) {
       try {
-        sansFont = createFont("SourceSansPro-Regular.otf", size);
-        sansBoldFont = createFont("SourceSansPro-Semibold.otf", size);
+        sansFont = createFont("SourceSansPro-Regular.ttf", size);
+        sansBoldFont = createFont("SourceSansPro-Semibold.ttf", size);
       } catch (Exception e) {
         Base.log("Could not load sans font", e);
         sansFont = new Font("Monospaced", Font.PLAIN, size);
