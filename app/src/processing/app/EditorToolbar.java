@@ -262,7 +262,8 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
     modeY1 = (getHeight() - modeBoxHeight) / 2;
     modeY2 = modeY1 + modeBoxHeight; //modeY1 + modeH + modeGapV*2;
     g.setColor(modeButtonColor);
-    g.drawRect(modeX1, modeY1, modeX2 - modeX1, modeY2 - modeY1);
+    g.drawRect(modeX1, modeY1, modeX2 - modeX1, modeY2 - modeY1 - 1);
+    
     g.drawString(modeTitle, 
                  modeX1 + modeGapWidth, 
                  modeY1 + (modeBoxHeight + modeTextAscent) / 2);
@@ -272,6 +273,10 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
                 modeY1 + (modeBoxHeight - ARROW_HEIGHT) / 2, 
                 ARROW_WIDTH, ARROW_HEIGHT, null);
 
+//    g.drawLine(modeX1, modeY2, modeX2, modeY2);
+//    g.drawLine(0, size.height, size.width, size.height);
+//    g.fillRect(modeX1 - modeGapWidth*2,  modeY1, modeGapWidth, modeBoxHeight);
+    
     screen.drawImage(offscreen, 0, 0, size.width, size.height, null);
 
     // dim things out when not enabled (not currently in use) 
