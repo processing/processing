@@ -47,7 +47,7 @@ public class EditorHeader extends JComponent {
   static final int TAB_HEIGHT = 27;
   // amount of margin on the left/right for the text on the tab
   static final int TEXT_MARGIN = 5;
-  // width of the tab when no text visible 
+  // width of the tab when no text visible
   // (total tab width will be this plus TEXT_MARGIN*2)
   static final int NO_TEXT_WIDTH = 10;
 
@@ -85,7 +85,7 @@ public class EditorHeader extends JComponent {
   static final int PIECE_WIDTH = 4;
   static final int PIECE_HEIGHT = 33;
   Image[][] pieces;
-  
+
   static final int ARROW_WIDTH = 14;
   static final int ARROW_HEIGHT = 14;
   static Image tabArrow;
@@ -156,13 +156,13 @@ public class EditorHeader extends JComponent {
 //  protected String tabFile(int status, int where) {
 //    return "theme/tab-" + STATUS[status] + "-" + WHERE[where];
 //  }
-  
-  
+
+
   public void updateMode() {
     Mode mode = editor.getMode();
 //    int res = Toolkit.isRetina() ? 2 : 1;
 //    String suffix = "-2x.png";  // wishful thinking
-//    // Some modes may not have a 2x version. If a mode doesn't have a 1x 
+//    // Some modes may not have a 2x version. If a mode doesn't have a 1x
 //    // version, this will cause an error... they should always have 1x.
 //    if (res == 2) {
 //      if (!mode.getContentFile(tabFile(0, 0) + suffix).exists()) {
@@ -175,7 +175,7 @@ public class EditorHeader extends JComponent {
 //        suffix = ".gif";
 //      }
 //    }
-//    
+//
 //    pieces = new Image[STATUS.length][WHERE.length];
 //    for (int status = 0; status < STATUS.length; status++) {
 //      for (int where = 0; where < WHERE.length; where++) {
@@ -183,7 +183,7 @@ public class EditorHeader extends JComponent {
 //        pieces[status][where] = mode.loadImage(tabFile(status, where) + suffix);
 //      }
 //    }
-    
+
     if (tabArrow == null) {
       String suffix = Toolkit.highResDisplay() ? "-2x.png" : ".png";
       tabArrow = Toolkit.getLibImage("tab-arrow" + suffix);
@@ -193,7 +193,7 @@ public class EditorHeader extends JComponent {
     textColor[SELECTED] = mode.getColor("header.text.selected.color");
     textColor[UNSELECTED] = mode.getColor("header.text.unselected.color");
     font = mode.getFont("header.text.font");
-    
+
     tabColor[SELECTED] = mode.getColor("header.tab.selected.color");
     tabColor[UNSELECTED] = mode.getColor("header.tab.unselected.color");
   }
@@ -238,7 +238,7 @@ public class EditorHeader extends JComponent {
     fontAscent = metrics.getAscent();
 
     Graphics2D g2 = (Graphics2D) g;
-    
+
     if (Toolkit.highResDisplay()) {
       // scale everything 2x, will be scaled down when drawn to the screen
       g2.scale(2, 2);
@@ -251,12 +251,12 @@ public class EditorHeader extends JComponent {
     // set the background for the offscreen
     g.setColor(backgroundColor);
     g.fillRect(0, 0, imageW, imageH);
-    
+
 //    EditorToolbar toolbar = editor.toolbar;
 //    if (toolbar != null && toolbar.backgroundImage != null) {
-//      g.drawImage(toolbar.backgroundImage, 
-//                  0, -toolbar.getHeight(), 
-//                  EditorToolbar.BACKGROUND_WIDTH, 
+//      g.drawImage(toolbar.backgroundImage,
+//                  0, -toolbar.getHeight(),
+//                  EditorToolbar.BACKGROUND_WIDTH,
 //                  EditorToolbar.BACKGROUND_HEIGHT, null);
 //    }
     editor.getMode().drawBackground(g, EditorToolbar.BUTTON_HEIGHT);
@@ -277,7 +277,7 @@ public class EditorHeader extends JComponent {
 //    menuRight = sizeW - 16;
 //    menuLeft = menuRight - pieces[0][MENU].getWidth(this);
 //    menuLeft = menuRight - 50;  // FIXME!!
-    int leftover = 
+    int leftover =
       ARROW_GAP_WIDTH + ARROW_WIDTH + MARGIN_WIDTH; // + SCROLLBAR_WIDTH;
     int tabMax = getWidth() - leftover;
 
@@ -329,7 +329,7 @@ public class EditorHeader extends JComponent {
     menuLeft = tabs[tabs.length - 1].right + ARROW_GAP_WIDTH;
     menuRight = menuLeft + ARROW_WIDTH;
     int arrowY = (getHeight() - TAB_HEIGHT) + (TAB_HEIGHT - ARROW_HEIGHT)/2;
-    g.drawImage(tabArrow, menuLeft, arrowY, 
+    g.drawImage(tabArrow, menuLeft, arrowY,
                 ARROW_WIDTH, ARROW_HEIGHT, null);
 //    g.drawImage(pieces[popup.isVisible() ? SELECTED : UNSELECTED][MENU],
 //                menuLeft, 0, null);
@@ -345,7 +345,7 @@ public class EditorHeader extends JComponent {
     final int bottom = getHeight();
     final int top = bottom - TAB_HEIGHT;
     GeneralPath path = null;
-    
+
     for (int i = 0; i < sketch.getCodeCount(); i++) {
       SketchCode code = sketch.getCode(i);
       Tab tab = tabs[i];
@@ -404,6 +404,7 @@ public class EditorHeader extends JComponent {
           //g.drawString(sketch.code[i].name, textLeft, baseline);
           g.drawString(tab.text, textLeft, baseline);
           g.drawLine(tab.left, baseline-fontAscent, tab.right, baseline-fontAscent);
+          g.drawLine(tab.left, baseline, tab.right, baseline);
         }
       }
 
