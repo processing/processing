@@ -150,9 +150,9 @@ public class Compiler {
       writer.close();
 
       String errorString = errorBuffer.toString();
-      if (errorString.trim().length() != 0) {
-        success = false;
-      }
+//      if (errorString.trim().length() != 0) {
+//        success = false;
+//      }
       BufferedReader reader =
         new BufferedReader(new StringReader(errorString));
       //System.err.println(errorBuffer.toString());
