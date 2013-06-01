@@ -661,7 +661,7 @@ public class XML implements Serializable {
 
   /**
    * @webref xml:method
-   * @brief Gets the content of an element as a String
+   * @brief Gets the content of an attribute as a String
    */
   public String getString(String name) {
     return getString(name, null);
@@ -676,7 +676,7 @@ public class XML implements Serializable {
 
   /**
    * @webref xml:method
-   * @brief Sets the content of an element as a String
+   * @brief Sets the content of an attribute as a String
    */
   public void setString(String name, String value) {
     ((Element) node).setAttribute(name, value);
@@ -685,7 +685,7 @@ public class XML implements Serializable {
 
   /**
    * @webref xml:method
-   * @brief Gets the content of an element as an int
+   * @brief Gets the content of an attribute as an int
    */
   public int getInt(String name) {
     return getInt(name, 0);
@@ -694,7 +694,7 @@ public class XML implements Serializable {
 
   /**
    * @webref xml:method
-   * @brief Sets the content of an element as an int
+   * @brief Sets the content of an attribute as an int
    */
   public void setInt(String name, int value) {
     setString(name, String.valueOf(value));
@@ -704,9 +704,9 @@ public class XML implements Serializable {
   /**
    * Returns the value of an attribute.
    *
-   * @param name the non-null full name of the attribute.
-   * @param defaultValue the default value of the attribute.
-   * @return the value, or defaultValue if the attribute does not exist.
+   * @param name the non-null full name of the attribute
+   * @param defaultValue the default value of the attribute
+   * @return the value, or defaultValue if the attribute does not exist
    */
   public int getInt(String name, int defaultValue) {
     String value = getString(name);
@@ -740,7 +740,7 @@ public class XML implements Serializable {
    * Returns the value of an attribute, or zero if not present.
    *
    * @webref xml:method
-   * @brief Gets the content of an element as a float
+   * @brief Gets the content of an attribute as a float
    */
   public float getFloat(String name) {
     return getFloat(name, 0);
@@ -762,7 +762,7 @@ public class XML implements Serializable {
 
   /**
    * @webref xml:method
-   * @brief Sets the content of an element as a float
+   * @brief Sets the content of an attribute as a float
    */
   public void setFloat(String name, float value) {
     setString(name, String.valueOf(value));
@@ -777,9 +777,9 @@ public class XML implements Serializable {
   /**
    * Returns the value of an attribute.
    *
-   * @param name the non-null full name of the attribute.
-   * @param defaultValue the default value of the attribute.
-   * @return the value, or defaultValue if the attribute does not exist.
+   * @param name the non-null full name of the attribute
+   * @param defaultValue the default value of the attribute
+   * @return the value, or defaultValue if the attribute does not exist
    */
   public double getDouble(String name, double defaultValue) {
     String value = getString(name);
@@ -801,27 +801,49 @@ public class XML implements Serializable {
    * @webref xml:method
    * @brief Gets the content of an element
    * @return the content.
+   * @see XML#getIntContent()
+   * @see XML#getFloatContent()
    */
   public String getContent() {
     return node.getTextContent();
   }
 
 
+  /**
+   * @webref xml:method
+   * @brief Gets the content of an element as an int
+   * @return the content.
+   * @see XML#getContent()
+   * @see XML#getFloatContent()
+   */
   public int getIntContent() {
     return getIntContent(0);
   }
 
 
+  /**
+   * @param defaultValue the default value of the attribute
+   */
   public int getIntContent(int defaultValue) {
     return PApplet.parseInt(node.getTextContent(), defaultValue);
   }
 
 
+  /**
+   * @webref xml:method
+   * @brief Gets the content of an element as a float
+   * @return the content.
+   * @see XML#getContent()
+   * @see XML#getIntContent()
+   */
   public float getFloatContent() {
     return getFloatContent(0);
   }
 
 
+  /**
+   * @param defaultValue the default value of the attribute
+   */
   public float getFloatContent(float defaultValue) {
     return PApplet.parseFloat(node.getTextContent(), defaultValue);
   }
