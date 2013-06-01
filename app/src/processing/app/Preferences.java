@@ -300,6 +300,22 @@ public class Preferences {
     Font editorFont = Preferences.getFont("editor.font");
     fontSizeField.setText(String.valueOf(editorFont.getSize()));
     top += d.height + GUI_BETWEEN;
+    
+
+    // Nevermind on this for now.. Java doesn't seem to have a method for 
+    // enumerating only the fixed-width (monospaced) fonts. To do this 
+    // properly, we'd need to list the fonts, and compare the metrics of 
+    // i and M for each. When they're identical (and not degenerate), 
+    // we'd call that font fixed width. That's all a very expensive set of 
+    // operations, so it should also probably be cached between runs and 
+    // updated in the background.
+    
+//    // Editor font
+//    
+//    GraphicsEnvironment ge =
+//      GraphicsEnvironment.getLocalGraphicsEnvironment();
+//    Font fonts[] = ge.getAllFonts();
+//    ArrayList<Font> monoFonts = new ArrayList<Font>();
 
 
     // [ ] Use smooth text in editor window

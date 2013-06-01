@@ -610,8 +610,9 @@ _   when are prefs saved? could instead save whenever changes are made
 _   and then if the file gets modified, it'll put up an error message
 _   also, this may be part of why other sketches aren't reloading properly
 _ control text size in console
-_   why aren't prefs from theme.txt showing up in preferences.txt? hrm
-_   or rather, why can't they be overridden? 
+o   why aren't prefs from theme.txt showing up in preferences.txt? hrm
+o   or rather, why can't they be overridden? 
+X     because theme.txt data is a different animal / that's part of the point
 _   should fonts at least be in prefs.txt?
 _   http://code.google.com/p/processing/issues/detail?id=226
 _ simple prefs implementation to set key/value pairs using a JTable
