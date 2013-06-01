@@ -531,6 +531,8 @@ public class PGL {
 
       listener = new PGLListener();
       canvasAWT.addGLEventListener(listener);
+
+      canvasAWT.requestFocus();
     } else if (WINDOW_TOOLKIT == NEWT) {
       window = GLWindow.create(caps);
       canvasNEWT = new NewtCanvasAWT(window);
@@ -548,7 +550,6 @@ public class PGL {
         window.addKeyListener(keyListener);
         NEWTWindowListener winListener = new NEWTWindowListener();
         window.addWindowListener(winListener);
-        canvasNEWT.addFocusListener(pg.parent); // So focus detection work.
       } else if (EVENTS_TOOLKIT == AWT) {
         pg.parent.removeListeners(canvasNEWT);
         pg.parent.addListeners(canvasNEWT);
@@ -559,6 +560,8 @@ public class PGL {
 
       listener = new PGLListener();
       window.addGLEventListener(listener);
+
+      canvasNEWT.requestFocus();
     }
 
     fboLayerCreated = false;
