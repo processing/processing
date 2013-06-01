@@ -666,11 +666,11 @@ public class JSONObject {
   /**
    * Get the JSONArray value associated with a key.
    *
-   * @brief Gets the JSONArray value associated with a key
    * @webref jsonobject:method
-   * @param key A key string
-   * @return      A JSONArray which is the value.
-   * @throws      JSONException if the key is not found or if the value is not a JSONArray.
+   * @brief Gets the JSONArray value associated with a key
+   * @param key a key string
+   * @return A JSONArray which is the value.
+   * @throws JSONException if the key is not found or if the value is not a JSONArray.
    */
   public JSONArray getJSONArray(String key) {
     Object object = this.get(key);
@@ -684,11 +684,11 @@ public class JSONObject {
   /**
    * Get the JSONObject value associated with a key.
    *
-   * @param key   A key string.
-   * @return      A JSONObject which is the value.
-   * @throws      JSONException if the key is not found or if the value is not a JSONObject.
    * @webref jsonobject:method
    * @brief Gets the JSONObject value associated with a key
+   * @param key a key string
+   * @return A JSONObject which is the value.
+   * @throws JSONException if the key is not found or if the value is not a JSONObject.
    */
   public JSONObject getJSONObject(String key) {
     Object object = this.get(key);
@@ -1190,7 +1190,9 @@ public class JSONObject {
 
   /**
    * @webref jsonobject:method
-   * @brief To come...
+   * @brief Sets the JSONObject value associated with a key
+   * @param key a key string
+   * @param value value to assign
    */
   public JSONObject setJSONObject(String key, JSONObject value) {
     return put(key, value);
@@ -1198,7 +1200,9 @@ public class JSONObject {
 
   /**
    * @webref jsonobject:method
-   * @brief To come...
+   * @brief Sets the JSONArray value associated with a key
+   * @param key a key string
+   * @param value value to assign
    */
   public JSONObject setJSONArray(String key, JSONArray value) {
     return put(key, value);
