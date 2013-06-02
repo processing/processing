@@ -1,221 +1,352 @@
- // Some hills...
-// rotwang: @mod* lowered cam for better flight feeling
-// @mod+ mouse y controls flight height
-// @mod* some color tests
-// @mod+ Canyon
-// @emackey: Simple sky blue (no clouds...)
-// @rotwang: mod* sky gradient, different terrain front and backcolor
-// @mod* stripes texture
-// @mod* terrain variation
-// @psonice flyover adjusted so height depends on terrain. WOuld be better with spline interpolation, if you have the time go do it :)
+// Elevated shader
+// https://www.shadertoy.com/view/MdX3Rr by inigo quilez
+
+// Created by inigo quilez - iq/2013
+// License Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
+
+// Processing port by Raphaël de Courville.
+
 #ifdef GL_ES
 precision highp float;
 #endif
 
+// Type of shader expected by Processing
 #define PROCESSING_COLOR_SHADER
 
-uniform vec2 resolution;
+// Processing specific input
 uniform float time;
+uniform vec2 resolution;
 uniform vec2 mouse;
-//Simple raymarching sandbox with camera
 
-//Raymarching Distance Fields
-//About http://www.iquilezles.org/www/articles/raymarchingdf/raymarchingdf.htm
-//Also known as Sphere Tracing
-//Original seen here: http://twitter.com/#!/paulofalcao/statuses/134807547860353024
+// Layer between Processing and Shadertoy uniforms
+vec3 iResolution = vec3(resolution,0.0);
+float iGlobalTime = time;
+vec4 iMouse = vec4(mouse,0.0,0.0); // zw would normally be the click status
 
-//Util Start
+// ------- Below is the unmodified Shadertoy code ----------
+// Created by inigo quilez - iq/2013
+// License Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
 
-mat2 m = mat2( 0.80,  0.60, -0.60,  0.80 );
+//stereo thanks to Croqueteer
+//#define STEREO 
+
+mat3 m = mat3( 0.00,  0.80,  0.60,
+              -0.80,  0.36, -0.48,
+              -0.60, -0.48,  0.64 );
 
 float hash( float n )
 {
-    return fract(sin(n)*43758.5453);
+    return fract(sin(n)*43758.5453123);
+}
+
+
+float noise( in vec3 x )
+{
+    vec3 p = floor(x);
+    vec3 f = fract(x);
+
+    f = f*f*(3.0-2.0*f);
+
+    float n = p.x + p.y*57.0 + 113.0*p.z;
+
+    float res = mix(mix(mix( hash(n+  0.0), hash(n+  1.0),f.x),
+                        mix( hash(n+ 57.0), hash(n+ 58.0),f.x),f.y),
+                    mix(mix( hash(n+113.0), hash(n+114.0),f.x),
+                        mix( hash(n+170.0), hash(n+171.0),f.x),f.y),f.z);
+    return res;
+}
+
+
+
+
+vec3 noised( in vec2 x )
+{
+    vec2 p = floor(x);
+    vec2 f = fract(x);
+
+    vec2 u = f*f*(3.0-2.0*f);
+
+    float n = p.x + p.y*57.0;
+
+    float a = hash(n+  0.0);
+    float b = hash(n+  1.0);
+    float c = hash(n+ 57.0);
+    float d = hash(n+ 58.0);
+	return vec3(a+(b-a)*u.x+(c-a)*u.y+(a-b-c+d)*u.x*u.y,
+				30.0*f*f*(f*(f-2.0)+1.0)*(vec2(b-a,c-a)+(a-b-c+d)*u.yx));
+
 }
 
 float noise( in vec2 x )
 {
     vec2 p = floor(x);
     vec2 f = fract(x);
+
     f = f*f*(3.0-2.0*f);
+
     float n = p.x + p.y*57.0;
-    float res = mix(mix( hash(n+  0.0), hash(n+  1.0),f.x), mix( hash(n+ 57.0), hash(n+ 58.0),f.x),f.y);
+
+    float res = mix(mix( hash(n+  0.0), hash(n+  1.0),f.x),
+                    mix( hash(n+ 57.0), hash(n+ 58.0),f.x),f.y);
+
     return res;
 }
 
-float fbm_5oct( vec2 p )
+float fbm( vec3 p )
 {
     float f = 0.0;
-    f += 0.50000*noise( p ); p = m*p*2.02;
-    f += 0.25000*noise( p ); p = m*p*2.03;
-    f += 0.12500*noise( p ); p = m*p*2.01;
-    f += 0.06250*noise( p ); p = m*p*2.04;
-    f += 0.03125*noise( p );
-    return f/0.984375;
+
+    f += 0.5000*noise( p ); p = m*p*2.02;
+    f += 0.2500*noise( p ); p = m*p*2.03;
+    f += 0.1250*noise( p ); p = m*p*2.01;
+    f += 0.0625*noise( p );
+
+    return f/0.9375;
 }
 
-float fbm_3oct( vec2 p )
+mat2 m2 = mat2(1.6,-1.2,1.2,1.6);
+	
+float fbm( vec2 p )
 {
     float f = 0.0;
-    f += 0.50000*noise( p ); p = m*p*2.02;
-    f += 0.25000*noise( p ); p = m*p*2.03;
-    f += 0.12500*noise( p ); p = m*p*2.01;
 
-    return f/0.875;
+    f += 0.5000*noise( p ); p = m2*p*2.02;
+    f += 0.2500*noise( p ); p = m2*p*2.03;
+    f += 0.1250*noise( p ); p = m2*p*2.01;
+    f += 0.0625*noise( p );
+
+    return f/0.9375;
 }
 
-vec2 ObjUnion(in vec2 obj_floor,in vec2 obj_roundBox){
-  if (obj_floor.x<obj_roundBox.x)
-  	return obj_floor;
-  else
-  	return obj_roundBox;
-}
-//Util End
-
-//Scene Start
-
-//Torus
-float torus(in vec3 p, in vec2 t){
-	vec2 q = vec2(length(vec2(p.x,p.z))-t.x, p.y);
-	return length(q) - t.y;
-}
-
-//Sphere
-float sphere(in vec3 p, float radius){
-	float length = sqrt(p.x*p.x + p.y*p.y + p.z*p.z);
-	return length-radius;
-}
-
-
-vec2 terrain(in vec3 p){
-	
-
-	float da = sin(0.9*p.y)*fbm_3oct(p.xz); 
-  	vec2 vd = vec2(p.y+fbm_3oct(p.xz / 9.0) * 9.33 ,0);
-	vd.x += da;
- 	
-	return vd;
-}
-
-vec3 hsv2rgb(float h,float s,float v) {
-	return mix(vec3(1.),clamp((abs(fract(h+vec3(3.,2.,1.)/3.)*6.-3.)-1.),0.,1.),s)*v;
-}
-
-/**
-@rotwang:
-smoothes between 2 vectors a and b (eg colors)
-using a source value and a smooth amount
-about the base as center.
-*/
-vec3 smoothmix(vec3 a, vec3 b, float base, float smooth, float source)
+float terrain( in vec2 x )
 {
-	float f = smoothstep(base-smooth, base+smooth, source );
-	vec3 vec = mix(a, b, f);
-	return vec;
+	vec2  p = x*0.003;
+    float a = 0.0;
+    float b = 1.0;
+	vec2  d = vec2(0.0);
+    for(int i=0;i<5; i++)
+    {
+        vec3 n = noised(p);
+        d += n.yz;
+        a += b*n.x/(1.0+dot(d,d));
+		b *= 0.5;
+        p=mat2(1.6,-1.2,1.2,1.6)*p;
+    }
+
+    return 140.0*a;
+}
+
+float terrain2( in vec2 x )
+{
+	vec2  p = x*0.003;
+    float a = 0.0;
+    float b = 1.0;
+	vec2  d = vec2(0.0);
+    for(int i=0;i<14; i++)
+    {
+        vec3 n = noised(p);
+        d += n.yz;
+        a += b*n.x/(1.0+dot(d,d));
+		b *= 0.5;
+        p=m2*p;
+    }
+
+    return 140.0*a;
 }
 
 
-//Terrain Color 
-vec3 terrain_clr(in vec3 p){
+float map( in vec3 p )
+{
+	float h = terrain(p.xz);
 	
+	float ss = 0.03;
+	float hh = h*ss;
+	float fh = fract(hh);
+	float ih = floor(hh);
+	fh = mix( sqrt(fh), fh, smoothstep(50.0,140.0,h) );
+	h = (ih+fh)/ss;
 	
-	vec3 clr_a = vec3(0.4, 0.5, 0.2);
-	vec3 clr_b = vec3(0.3, 0.3, 0.3);
-	float m = fract(p.y*4.0);
-	float g = fbm_3oct(p.xz * 28.0);
-	clr_b += g;
-	vec3 clr =  smoothmix(clr_a, clr_b,0.76, 0.3, m );
-	clr = mix( clr, g*clr, 0.6);
+    return p.y - h;
+}
+
+float map2( in vec3 p )
+{
+	float h = terrain2(p.xz);
 
 	
- 	return clr; 
-}
-
-//IQs RoundBox (try other objects http://www.iquilezles.org/www/articles/distfunctions/distfunctions.htm)
-vec2 obj_roundBox(in vec3 p){
-  return vec2(length(max(abs(p)-vec3(1,1,1),0.0))-0.25,1);
-}
-
-vec2 obj_sphere(in vec3 p){
-  return vec2(length(p)-2.0);
-}
-
-//RoundBox with simple solid color
-vec3 obj_roundBox_c(in vec3 p){
-	return vec3(1.0,0.5,0.2);
-}
-
-//Objects union
-vec2 inObj(in vec3 p){
-  return terrain(p);
-}
-
-//Scene End
-
-void main(void){
-  //Camera animation
-  vec3 U=vec3(0,1,0);//Camera Up Vector
-
-	float speed = time*2.0;
-	float my =  sin(time/8.0); // mouse.y*4.0;
-	float camy = -1.0+my; 
-	float tary = -1.0+my; 
-  vec3 E=vec3(0., camy, speed);//vec3(-sin(time/4.0)*8.0,4,cos(time/4.0)*8.0); //Camera location; Change camera path position here
-	E.y += .2;
-  vec3 viewDir=vec3(E.x-sin(mouse.x*0.0),tary,E.z+cos(mouse.x*0.0)); //Change camere view vector here
-  //vec3 E=vec3(mouse.x*0.0, 4, mouse.y*4.0); //Camera location; Change camera path position here
+	float ss = 0.03;
+	float hh = h*ss;
+	float fh = fract(hh);
+	float ih = floor(hh);
+	fh = mix( sqrt(fh), fh, smoothstep(50.0,140.0,h) );
+	h = (ih+fh)/ss;
 	
-  //Camera setup
-  vec3 C=normalize(viewDir-E);
-  vec3 A=cross(C, U);
-  vec3 B=cross(A, C);
-  vec3 M=(E+C);
-  
-  vec2 vPos=2.0*gl_FragCoord.xy/resolution.xy - 1.0; // (2*Sx-1) where Sx = x in screen space (between 0 and 1)
-  vec3 scrCoord=M + vPos.x*A*resolution.x/resolution.y + vPos.y*B; //normalize resolution in either x or y direction (ie resolution.x/resolution.y)
-  vec3 scp=normalize(scrCoord-E);
- // scp.z += 1.;
-  scp.y -=0.25;
-  E.y -= (terrain(E).x + terrain(E + vec3(0., 0., 0.1)).x + terrain(E + vec3(0., 0., -0.1)).x) / 3.;
-	E.y += 2.;
-  //Raymarching
-  const vec3 e=vec3(0.1,0,0);
-  const float MAX_DEPTH=60.0; //Max depth0.
+    return p.y - h;
+}
 
-  vec2 s=vec2(0.1,0.0);
-  vec3 c,p,n;
+bool jinteresct(in vec3 rO, in vec3 rD, out float resT )
+{
+    float h = 0.0;
+    float t = 0.0;
+	for( int j=0; j<120; j++ )
+	{
+        //if( t>2000.0 ) break;
+		
+	    vec3 p = rO + t*rD;
+if( p.y>300.0 ) break;
+        h = map( p );
 
-  float f=1.0;
-  for(int i=0;i<100;i++){
-    if (abs(s.x)<.01||f>MAX_DEPTH) break;
-    f+=s.x;
-    p=E+scp*f;
-    s=inObj(p);
-  }
-  
-  if (f<MAX_DEPTH){
-    if (s.y==0.0)
-      c=terrain_clr(p);
-vec3 cc = vec3(0.7, c.g, c.b);
-	 
-	float m = smoothstep(3.0, 20.0, f);
-	 c = mix(c,cc, 1.0-m);
+		if( h<0.1 )
+		{
+			resT = t; 
+			return true;
+		}
+		t += max(0.1,0.5*h);
 
-	  
-    n=normalize(
-      vec3(s.x-inObj(p-e.xyy).x,
-           s.x-inObj(p-e.yxy).x,
-           s.x-inObj(p-e.yyx).x));
-    float b=dot(n,normalize(E-p));
-	  
-    gl_FragColor=vec4(b*c*(2.0-f*.01),1.0);//simple phong LightPosition=CameraPosition
-  }
-	else {
-		float invy = 1.0-vPos.y;
-		float r = invy*0.8;
-		float g = 0.2 + invy*0.7;
-		vec3 sky_clr = vec3(r,g,0.9);
-		gl_FragColor=vec4( sky_clr,1.0); //background color
 	}
+
+	if( h<5.0 )
+    {
+	    resT = t;
+	    return true;
+	}
+	return false;
+}
+
+float sinteresct(in vec3 rO, in vec3 rD )
+{
+    float res = 1.0;
+    float t = 0.0;
+	for( int j=0; j<50; j++ )
+	{
+        //if( t>1000.0 ) break;
+	    vec3 p = rO + t*rD;
+
+        float h = map( p );
+
+		if( h<0.1 )
+		{
+			return 0.0;
+		}
+		res = min( res, 16.0*h/t );
+		t += h;
+
+	}
+
+	return clamp( res, 0.0, 1.0 );
+}
+
+vec3 calcNormal( in vec3 pos, float t )
+{
+	float e = 0.001;
+	e = 0.001*t;
+    vec3  eps = vec3(e,0.0,0.0);
+    vec3 nor;
+    nor.x = map2(pos+eps.xyy) - map2(pos-eps.xyy);
+    nor.y = map2(pos+eps.yxy) - map2(pos-eps.yxy);
+    nor.z = map2(pos+eps.yyx) - map2(pos-eps.yyx);
+    return normalize(nor);
+}
+
+vec3 camPath( float time )
+{
+    vec2 p = 600.0*vec2( cos(1.4+0.37*time), 
+                         cos(3.2+0.31*time) );
+
+	return vec3( p.x, 0.0, p.y );
+}
+
+void main(void)
+{
+    vec2 xy = -1.0 + 2.0*gl_FragCoord.xy / iResolution.xy;
+
+	vec2 s = xy*vec2(1.75,1.0);
+
+	#ifdef STEREO
+	float isCyan = mod(gl_FragCoord.x + mod(gl_FragCoord.y,2.0),2.0);
+    #endif
 	
+    float time = iGlobalTime*.15;
+
+	vec3 light1 = normalize( vec3(  0.4, 0.22,  0.6 ) );
+	vec3 light2 = vec3( -0.707, 0.000, -0.707 );
+
+
+	vec3 campos = camPath( time );
+	vec3 camtar = camPath( time + 3.0 );
+	campos.y = terrain( campos.xz ) + 15.0;
+	camtar.y = campos.y*0.5;
+
+	float roll = 0.1*cos(0.1*time);
+	vec3 cw = normalize(camtar-campos);
+	vec3 cp = vec3(sin(roll), cos(roll),0.0);
+	vec3 cu = normalize(cross(cw,cp));
+	vec3 cv = normalize(cross(cu,cw));
+	vec3 rd = normalize( s.x*cu + s.y*cv + 1.6*cw );
+
+	#ifdef STEREO
+	campos += 2.0*cu*isCyan; // move camera to the right - the rd vector is still good
+    #endif
+
+	float sundot = clamp(dot(rd,light1),0.0,1.0);
+	vec3 col;
+    float t;
+    if( !jinteresct(campos,rd,t) )
+    {
+     	col = 0.9*vec3(0.97,.99,1.0)*(1.0-0.3*rd.y);
+		col += 0.2*vec3(0.8,0.7,0.5)*pow( sundot, 4.0 );
+	}
+	else
+	{
+		vec3 pos = campos + t*rd;
+
+        vec3 nor = calcNormal( pos, t );
+
+		float dif1 = clamp( dot( light1, nor ), 0.0, 1.0 );
+		float dif2 = clamp( 0.2 + 0.8*dot( light2, nor ), 0.0, 1.0 );
+		float sh = 1.0;
+		if( dif1>0.001 ) 
+			sh = sinteresct(pos+light1*20.0,light1);
+		
+		vec3 dif1v = vec3(dif1);
+		dif1v *= vec3( sh, sh*sh*0.5+0.5*sh, sh*sh );
+
+		float r = noise( 7.0*pos.xz );
+
+        col = (r*0.25+0.75)*0.9*mix( vec3(0.10,0.05,0.03), vec3(0.13,0.10,0.08), clamp(terrain2( vec2(pos.x,pos.y*48.0))/200.0,0.0,1.0) );
+		col = mix( col, 0.17*vec3(0.5,.23,0.04)*(0.50+0.50*r),smoothstep(0.70,0.9,nor.y) );
+        col = mix( col, 0.10*vec3(0.2,.30,0.00)*(0.25+0.75*r),smoothstep(0.95,1.0,nor.y) );
+  	    col *= 0.75;
+         // snow
+        #if 1
+		float h = smoothstep(55.0,80.0,pos.y + 25.0*fbm(0.01*pos.xz) );
+        float e = smoothstep(1.0-0.5*h,1.0-0.1*h,nor.y);
+        float o = 0.3 + 0.7*smoothstep(0.0,0.1,nor.x+h*h);
+        float s = h*e*o;
+        s = smoothstep( 0.1, 0.9, s );
+        col = mix( col, 0.4*vec3(0.6,0.65,0.7), s );
+        #endif
+
+		
+		vec3 brdf  = 2.0*vec3(0.17,0.19,0.20)*clamp(nor.y,0.0,1.0);
+		     brdf += 6.0*vec3(1.00,0.95,0.80)*dif1v;
+		     brdf += 2.0*vec3(0.20,0.20,0.20)*dif2;
+
+		col *= brdf;
+		
+		float fo = 1.0-exp(-pow(0.0015*t,1.5));
+		vec3 fco = vec3(0.7) + 0.6*vec3(0.8,0.7,0.5)*pow( sundot, 4.0 );
+		col = mix( col, fco, fo );
+	}
+
+	col = sqrt(col);
+
+	vec2 uv = xy*0.5+0.5;
+	col *= 0.7 + 0.3*pow(16.0*uv.x*uv.y*(1.0-uv.x)*(1.0-uv.y),0.1);
+	
+    #ifdef STEREO	
+    col *= vec3( isCyan, 1.0-isCyan, 1.0-isCyan );	
+	#endif
+	
+	gl_FragColor=vec4(col,1.0);
 }
