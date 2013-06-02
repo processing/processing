@@ -40,6 +40,8 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 import java.util.Arrays;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
@@ -108,7 +110,7 @@ public class PGL {
    * See the code and comments involving this constant in
    * PGraphicsOpenGL.endDraw().
    */
-  protected static final boolean SAVE_SURFACE_TO_PIXELS_HACK = false;
+  protected static final boolean SAVE_SURFACE_TO_PIXELS_HACK = true;
 
   /** Enables/disables mipmap use. */
   protected static final boolean MIPMAPS_ENABLED = true;
@@ -194,7 +196,7 @@ public class PGL {
       WINDOW_TOOLKIT = AWT;
       EVENTS_TOOLKIT = AWT;
       USE_FBOLAYER_BY_DEFAULT = true;
-      USE_JOGL_FBOLAYER = false;
+      USE_JOGL_FBOLAYER = true;
       REQUESTED_DEPTH_BITS = 24;
       REQUESTED_STENCIL_BITS = 8;
       REQUESTED_ALPHA_BITS = 8;
@@ -467,6 +469,26 @@ public class PGL {
   protected void initSurface(int antialias) {
     if (profile == null) {
       profile = GLProfile.getDefault();
+    }
+    GLCapabilities reqCaps = new GLCapabilities(profile);
+    reqCaps.setDepthBits(REQUESTED_DEPTH_BITS);
+    reqCaps.setStencilBits(REQUESTED_STENCIL_BITS);
+    reqCaps.setAlphaBits(REQUESTED_ALPHA_BITS);
+    initSurface(antialias, reqCaps, null);
+  }
+
+
+  protected void initSurface(int antialias, Object reqCaps, Object sharedCtx) {
+    if (reqCaps != null && !(reqCaps instanceof GLCapabilities)) {
+      throw new RuntimeException("Argument is not an instance of GLCapabilities");
+    }
+
+    if (sharedCtx != null && !(sharedCtx instanceof GLContext)) {
+      throw new RuntimeException("Argument is not an instance of GLContext");
+    }
+
+    if (profile == null) {
+      profile = GLProfile.getDefault();
     } else {
       // Restarting...
       if (canvasAWT != null) {
@@ -481,7 +503,8 @@ public class PGL {
     }
 
     // Setting up the desired capabilities;
-    GLCapabilities caps = new GLCapabilities(profile);
+    GLCapabilities caps = reqCaps != null ? (GLCapabilities)reqCaps :
+                                            new GLCapabilities(profile);
     caps.setBackgroundOpaque(true);
     caps.setOnscreen(true);
     if (USE_FBOLAYER_BY_DEFAULT) {
@@ -516,7 +539,11 @@ public class PGL {
     reqNumSamples = qualityToSamples(antialias);
 
     if (WINDOW_TOOLKIT == AWT) {
-      canvasAWT = new GLCanvas(caps);
+      if (sharedCtx == null) {
+        canvasAWT = new GLCanvas(caps);
+      } else {
+        canvasAWT = new GLCanvas(caps, (GLContext)sharedCtx);
+      }
       canvasAWT.setBounds(0, 0, pg.width, pg.height);
       canvasAWT.setBackground(new Color(pg.backgroundColor, true));
       canvasAWT.setFocusable(true);
@@ -535,6 +562,9 @@ public class PGL {
       canvasAWT.requestFocus();
     } else if (WINDOW_TOOLKIT == NEWT) {
       window = GLWindow.create(caps);
+      if (sharedCtx != null) {
+        window.setSharedContext((GLContext)sharedCtx);
+      }
       canvasNEWT = new NewtCanvasAWT(window);
       canvasNEWT.setBounds(0, 0, pg.width, pg.height);
       canvasNEWT.setBackground(new Color(pg.backgroundColor, true));
@@ -1102,13 +1132,21 @@ public class PGL {
   }
 
 
+  protected CountDownLatch latch;
   protected void requestDraw() {
     if (pg.initialized && pg.parent.canDraw()) {
+      System.out.println("requestDraw "+ pg.parent.frameCount);
       try {
+        latch = new CountDownLatch(1);
         if (WINDOW_TOOLKIT == AWT) {
           canvasAWT.display();
         } else if (WINDOW_TOOLKIT == NEWT) {
           window.display();
+        }
+        try {
+          latch.await(1, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+          e.printStackTrace();
         }
       } catch (GLException e) {
         // Unwrap GLException so that only the causing exception is shown.
@@ -2495,6 +2533,8 @@ public class PGL {
 
     @Override
     public void display(GLAutoDrawable glDrawable) {
+      if (latch == null || latch.getCount() == 0) return;
+      System.out.println("display " + pg.parent.frameCount);
       drawable = glDrawable;
       context = glDrawable.getContext();
 
@@ -2560,6 +2600,9 @@ public class PGL {
       }
 
       pg.parent.handleDraw();
+      if (latch != null) {
+        latch.countDown();
+      }
     }
 
     @Override

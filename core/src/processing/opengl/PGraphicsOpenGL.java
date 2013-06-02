@@ -5149,6 +5149,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void restoreSurfaceFromPixels() {
+    System.out.println("restoreSurfaceFromPixels");
     drawPixels(0, 0, width, height);
   }
 
@@ -6170,7 +6171,9 @@ public class PGraphicsOpenGL extends PGraphics {
 
     if (restoreSurface) {
       restoreSurfaceFromPixels();
+      if (1 < parent.frameCount) {
       restoreSurface = false;
+      }
     }
 
     if (hints[DISABLE_DEPTH_MASK]) {
