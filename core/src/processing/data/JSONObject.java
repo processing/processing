@@ -560,6 +560,9 @@ public class JSONObject {
    * @param key a key string
    * @return A string which is the value.
    * @throws JSONException if there is no string value for the key.
+   * @see JSONObject#getInt(String)
+   * @see JSONObject#getFloat(String)
+   * @see JSONObject#getBoolean(String)
    */
   public String getString(String key) {
     Object object = this.get(key);
@@ -579,6 +582,9 @@ public class JSONObject {
    * @return The integer value.
    * @throws JSONException if the key is not found or if the value cannot
    *  be converted to an integer.
+   * @see JSONObject#getFloat(String)
+   * @see JSONObject#getString(String)
+   * @see JSONObject#getBoolean(String)
    */
   public int getInt(String key) {
     Object object = this.get(key);
@@ -615,6 +621,9 @@ public class JSONObject {
    * @webref jsonobject:method
    * @brief Gets the float value associated with a key
    * @param key a key string
+   * @see JSONObject#getInt(String)
+   * @see JSONObject#getString(String)
+   * @see JSONObject#getBoolean(String)
    */
   public float getFloat(String key) {
     return (float) getDouble(key);
@@ -648,6 +657,9 @@ public class JSONObject {
    * @param key a key string
    * @return The truth.
    * @throws JSONException if the value is not a Boolean or the String "true" or "false".
+   * @see JSONObject#getInt(String)
+   * @see JSONObject#getFloat(String)
+   * @see JSONObject#getString(String)
    */
   public boolean getBoolean(String key) {
     Object object = this.get(key);
@@ -672,6 +684,9 @@ public class JSONObject {
    * @param key a key string
    * @return A JSONArray which is the value.
    * @throws JSONException if the key is not found or if the value is not a JSONArray.
+   * @see JSONObject#getJSONObject(String)
+   * @see JSONObject#setJSONObject(String, JSONObject)
+   * @see JSONObject#setJSONArray(String, JSONArray)
    */
   public JSONArray getJSONArray(String key) {
     Object object = this.get(key);
@@ -690,6 +705,9 @@ public class JSONObject {
    * @param key a key string
    * @return A JSONObject which is the value.
    * @throws JSONException if the key is not found or if the value is not a JSONObject.
+   * @see JSONObject#getJSONArray(String)
+   * @see JSONObject#setJSONObject(String, JSONObject)
+   * @see JSONObject#setJSONArray(String, JSONArray)
    */
   public JSONObject getJSONObject(String key) {
     Object object = this.get(key);
@@ -1117,6 +1135,9 @@ public class JSONObject {
    * @brief Put a key/String pair in the JSONObject
    * @param key a key string
    * @param value the value to assign
+   * @see JSONObject#setInt(String, int)
+   * @see JSONObject#setFloat(String, float)
+   * @see JSONObject#setBoolean(String, boolean)
    */
   public JSONObject setString(String key, String value) {
     return put(key, value);
@@ -1132,6 +1153,9 @@ public class JSONObject {
    * @param value the value to assign
    * @return this.
    * @throws JSONException If the key is null.
+   * @see JSONObject#setFloat(String, float)
+   * @see JSONObject#setString(String, String)
+   * @see JSONObject#setBoolean(String, boolean)
    */
   public JSONObject setInt(String key, int value) {
     this.put(key, new Integer(value));
@@ -1157,6 +1181,9 @@ public class JSONObject {
    * @brief Put a key/float pair in the JSONObject
    * @param key a key string
    * @param value the value to assign
+   * @see JSONObject#setInt(String, int)
+   * @see JSONObject#setString(String, String)
+   * @see JSONObject#setBoolean(String, boolean)
    */
   public JSONObject setFloat(String key, float value) {
     this.put(key, new Double(value));
@@ -1187,6 +1214,9 @@ public class JSONObject {
    * @param value the value to assign
    * @return this.
    * @throws JSONException If the key is null.
+   * @see JSONObject#setInt(String, int)
+   * @see JSONObject#setFloat(String, float)
+   * @see JSONObject#setString(String, String)
    */
   public JSONObject setBoolean(String key, boolean value) {
     this.put(key, value ? Boolean.TRUE : Boolean.FALSE);
@@ -1198,6 +1228,9 @@ public class JSONObject {
    * @brief Sets the JSONObject value associated with a key
    * @param key a key string
    * @param value value to assign
+   * @see JSONObject#setJSONArray(String, JSONArray)
+   * @see JSONObject#getJSONObject(String)
+   * @see JSONObject#getJSONArray(String)
    */
   public JSONObject setJSONObject(String key, JSONObject value) {
     return put(key, value);
@@ -1208,6 +1241,9 @@ public class JSONObject {
    * @brief Sets the JSONArray value associated with a key
    * @param key a key string
    * @param value value to assign
+   * @see JSONObject#setJSONObject(String, JSONObject)
+   * @see JSONObject#getJSONObject(String)
+   * @see JSONObject#getJSONArray(String)
    */
   public JSONObject setJSONArray(String key, JSONArray value) {
     return put(key, value);
