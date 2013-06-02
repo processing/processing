@@ -698,7 +698,7 @@ public class PGL {
 
 
   protected boolean isMultisampled() {
-    return 1 < numSamples || 0 < capabilities.getNumSamples();
+    return 1 < numSamples;
   }
 
 
@@ -850,7 +850,7 @@ public class PGL {
   protected void syncBackTexture() {
     if (usingFrontTex) needSepFrontTex = true;
     if (USE_JOGL_FBOLAYER) {
-      if (0 < capabilities.getNumSamples()) {
+      if (1 < numSamples) {
         backFBO.syncSamplingSink(gl);
         backFBO.bind(gl);
       }
@@ -887,10 +887,9 @@ public class PGL {
       fboHeight = nextPowerOfTwo(pg.height);
     }
 
-    getIntegerv(MAX_SAMPLES, intBuffer);
-    if (-1 < ext.indexOf("_framebuffer_multisample") &&
-        1 < intBuffer.get(0)) {
-      numSamples = reqNumSamples;
+    int maxs = maxSamples();
+    if (-1 < ext.indexOf("_framebuffer_multisample") && 1 < maxs) {
+      numSamples = PApplet.min(reqNumSamples, maxs);
     } else {
       numSamples = 1;
     }
@@ -1126,7 +1125,7 @@ public class PGL {
       fcount = 0;
       lastm = m;
     }
-    if (currentFps < 0.5f * targetFps) {
+    if (currentFps < 0.25f * targetFps) {
       finish();
     }
   }
@@ -2181,6 +2180,12 @@ public class PGL {
   }
 
 
+  protected int maxSamples() {
+    getIntegerv(MAX_SAMPLES, intBuffer);
+    return intBuffer.get(0);
+  }
+
+
   protected int getMaxTexUnits() {
     getIntegerv(MAX_TEXTURE_IMAGE_UNITS, intBuffer);
     return intBuffer.get(0);
@@ -2580,7 +2585,7 @@ public class PGL {
         }
         if (fboDrawable != null) {
           backFBO = fboDrawable.getFBObject(GL.GL_BACK);
-          if (0 < capabilities.getNumSamples()) {
+          if (1 < numSamples) {
             if (needSepFrontTex) {
               // When using multisampled FBO, the back buffer is the MSAA
               // surface so it cannot be read from. The sink buffer contains
@@ -2650,6 +2655,10 @@ public class PGL {
       }
       if (!hasShaders()) {
         throw new RuntimeException(MISSING_GLSL_ERROR);
+      }
+      if (USE_JOGL_FBOLAYER && capabilities.isFBO()) {
+        int maxs = maxSamples();
+        numSamples = PApplet.min(capabilities.getNumSamples(), maxs);
       }
     }
 
