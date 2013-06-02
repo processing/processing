@@ -556,7 +556,7 @@ public class JSONObject {
    * Gets the String associated with a key
    *
    * @webref jsonobject:method
-   * @brief Gets the string associated with a key
+   * @brief Gets the string value associated with a key
    * @param key a key string
    * @return A string which is the value.
    * @throws JSONException if there is no string value for the key.

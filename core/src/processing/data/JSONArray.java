@@ -245,7 +245,7 @@ public class JSONArray {
 
   /**
    * Get the optional object value associated with an index.
-   * @param index The index must be between 0 and length() - 1.
+   * @param index must be between 0 and length() - 1
    * @return      An object value, or null if there is no
    *              object at that index.
    */
@@ -259,7 +259,7 @@ public class JSONArray {
 
   /**
    * Get the object value associated with an index.
-   * @param index The index must be between 0 and length() - 1.
+   * @param index must be between 0 and length() - 1
    * @return An object value.
    * @throws JSONException If there is no value for the index.
    */
@@ -274,11 +274,12 @@ public class JSONArray {
 
   /**
    * Get the string associated with an index.
-   * @param index The index must be between 0 and length() - 1.
+   *
+   * @webref jsonarray:method
+   * @brief Gets the String value associated with an index
+   * @param index must be between 0 and length() - 1
    * @return      A string value.
    * @throws JSONException If there is no string value for the index.
-   * @webref jsonarray:method
-   * @brief Get the string associated with an index
    */
   public String getString(int index) {
     Object object = this.get(index);
@@ -292,11 +293,11 @@ public class JSONArray {
   /**
    * Get the int value associated with an index.
    *
-   * @param index The index must be between 0 and length() - 1.
-   * @return      The value.
-   * @throws   JSONException If the key is not found or if the value is not a number.
    * @webref jsonarray:method
-   * @brief Get the int value associated with an index
+   * @brief Gets the int value associated with an index
+   * @param index must be between 0 and length() - 1
+   * @return The value.
+   * @throws JSONException If the key is not found or if the value is not a number.
    */
   public int getInt(int index) {
     Object object = this.get(index);
@@ -313,7 +314,7 @@ public class JSONArray {
   /**
    * Get the long value associated with an index.
    *
-   * @param index The index must be between 0 and length() - 1.
+   * @param index The index must be between 0 and length() - 1
    * @return      The value.
    * @throws   JSONException If the key is not found or if the value cannot
    *  be converted to a number.
@@ -335,7 +336,8 @@ public class JSONArray {
    * internally, so this is simply getDouble() cast to a float.
    * 
    * @webref jsonarray:method
-   * @brief To come...
+   * @brief Gets the float value associated with an index
+   * @param index must be between 0 and length() - 1
    */
   public float getFloat(int index) {
     return (float) getDouble(index);
@@ -345,7 +347,7 @@ public class JSONArray {
   /**
    * Get the double value associated with an index.
    *
-   * @param index The index must be between 0 and length() - 1.
+   * @param index must be between 0 and length() - 1
    * @return      The value.
    * @throws   JSONException If the key is not found or if the value cannot
    *  be converted to a number.
@@ -366,12 +368,12 @@ public class JSONArray {
    * Get the boolean value associated with an index.
    * The string values "true" and "false" are converted to boolean.
    *
-   * @param index The index must be between 0 and length() - 1.
+   * @webref jsonarray:method
+   * @brief Gets the boolean value associated with an index
+   * @param index must be between 0 and length() - 1
    * @return      The truth.
    * @throws JSONException If there is no value for the index or if the
    *  value is not convertible to boolean.
-   * @webref jsonarray:method
-   * @brief Get the boolean value associated with an index
    */
   public boolean getBoolean(int index) {
     Object object = this.get(index);
@@ -393,7 +395,7 @@ public class JSONArray {
    * 
    * @webref jsonobject:method
    * @brief Gets the JSONArray associated with an index value
-   * @param index must be between 0 and length() - 1.
+   * @param index must be between 0 and length() - 1
    * @return A JSONArray value.
    * @throws JSONException If there is no value for the index. or if the
    * value is not a JSONArray
@@ -819,12 +821,13 @@ public class JSONArray {
    * Put or replace a String value. If the index is greater than the length of
    *  the JSONArray, then null elements will be added as necessary to pad
    *  it out.
-   * @param index The subscript.
-   * @param value A String value.
+   *
+   * @webref jsonarray:method
+   * @brief Put a key/String pair in the JSONArray
+   * @param index an index value
+   * @param value the value to assign
    * @return this.
    * @throws JSONException If the index is negative.
-   * @webref jsonarray:method
-   * @brief Put or replace a String value
    */
   public JSONArray setString(int index, String value) {
     this.set(index, value);
@@ -836,12 +839,13 @@ public class JSONArray {
    * Put or replace an int value. If the index is greater than the length of
    *  the JSONArray, then null elements will be added as necessary to pad
    *  it out.
-   * @param index The subscript.
-   * @param value An int value.
+   *
+   * @webref jsonarray:method
+   * @brief Put a key/int pair in the JSONArray
+   * @param index an index value
+   * @param value the value to assign
    * @return this.
    * @throws JSONException If the index is negative.
-   * @webref jsonarray:method
-   * @brief Put or replace an int value
    */
   public JSONArray setInt(int index, int value) {
     this.set(index, new Integer(value));
@@ -868,13 +872,14 @@ public class JSONArray {
    * of the JSONArray, then null elements will be added as necessary to pad
    * it out. There are no 'double' values in JSON, so this is passed to
    * setDouble(value).
-   * @param index The subscript.
-   * @param value A float value.
+   *
+   * @webref jsonarray:method
+   * @brief Put a key/float pair in the JSONArray
+   * @param index an index value
+   * @param value the value to assign
    * @return this.
    * @throws RuntimeException If the index is negative or if the value is
    * not finite.
-   * @webref jsonarray:method
-   * @brief Put or replace a float value
    */
   public JSONArray setFloat(int index, float value) {
     return setDouble(index, value);
@@ -900,12 +905,13 @@ public class JSONArray {
    * Put or replace a boolean value in the JSONArray. If the index is greater
    * than the length of the JSONArray, then null elements will be added as
    * necessary to pad it out.
-   * @param index The subscript.
-   * @param value A boolean value.
+   *
+   * @webref jsonarray:method
+   * @brief Put a key/boolean pair in the JSONArray
+   * @param index an index value
+   * @param value the value to assign
    * @return this.
    * @throws JSONException If the index is negative.
-   * @webref jsonarray:method
-   * @brief Put or replace a boolean value
    */
   public JSONArray setBoolean(int index, boolean value) {
     return set(index, value ? Boolean.TRUE : Boolean.FALSE);
@@ -992,7 +998,7 @@ public class JSONArray {
 
   /**
    * Determine if the value is null.
-   * @param index The index must be between 0 and length() - 1.
+   * @param index must be between 0 and length() - 1
    * @return true if the value at the index is null, or if there is no value.
    */
   // TODO not sure on this one
