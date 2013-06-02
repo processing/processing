@@ -679,8 +679,8 @@ public class JSONArray {
    * Append an String value. This increases the array's length by one.
    *
    * @webref jsonarray:method
-   * @brief Appends a String value, increasing the array's length by one
-   * @param value A String value.
+   * @brief Appends a value, increasing the array's length by one
+   * @param value a String value
    * @return this.
    */
   public JSONArray append(String value) {
@@ -692,7 +692,7 @@ public class JSONArray {
   /**
    * Append an int value. This increases the array's length by one.
    *
-   * @param value An int value.
+   * @param value an int value
    * @return this.
    */
   public JSONArray append(int value) {
@@ -704,6 +704,7 @@ public class JSONArray {
   /**
    * Append an long value. This increases the array's length by one.
    *
+   * @nowebref
    * @param value A long value.
    * @return this.
    */
@@ -717,7 +718,7 @@ public class JSONArray {
    * Append a float value. This increases the array's length by one.
    * This will store the value as a double, since there are no floats in JSON.
    *
-   * @param value A float value.
+   * @param value a float value
    * @throws JSONException if the value is not finite.
    * @return this.
    */
@@ -729,6 +730,7 @@ public class JSONArray {
   /**
    * Append a double value. This increases the array's length by one.
    *
+   * @nowebref
    * @param value A double value.
    * @throws JSONException if the value is not finite.
    * @return this.
@@ -744,7 +746,7 @@ public class JSONArray {
   /**
    * Append a boolean value. This increases the array's length by one.
    *
-   * @param value A boolean value.
+   * @param value a boolean value
    * @return this.
    */
   public JSONArray append(boolean value) {
@@ -777,12 +779,18 @@ public class JSONArray {
 //  }
 
 
+  /**
+   * @param value a JSONArray value
+   */
   public JSONArray append(JSONArray value) {
     myArrayList.add(value);
     return this;
   }
 
 
+  /**
+   * @param value a JSONObject value
+   */
   public JSONArray append(JSONObject value) {
     myArrayList.add(value);
     return this;
