@@ -162,6 +162,11 @@ public class PGL {
    * order to make sure the lines are always on top of the fill geometry */
   protected static final float STROKE_DISPLACEMENT = 0.999f;
 
+  /** Time that the Processing's animation thread will wait for JOGL's rendering
+   * thread to be done with a single frame.
+   */
+  protected static final int DRAW_TIMEOUT_MILLIS = 500;
+
   /** JOGL's windowing toolkit */
   // The two windowing toolkits available to use in JOGL:
   protected static final int AWT  = 0; // http://jogamp.org/wiki/index.php/Using_JOGL_in_AWT_SWT_and_Swing
@@ -285,6 +290,10 @@ public class PGL {
   /** The listener that fires the frame rendering in Processing */
   protected static PGLListener listener;
 
+  /** This countdown latch is used to maintain the synchronization between
+   * Processing's drawing thread and JOGL's rendering thread */
+  protected CountDownLatch drawLatch;
+
   /** Desired target framerate */
   protected float targetFps = 60;
   protected float currentFps = 60;
@@ -328,6 +337,11 @@ public class PGL {
   protected static FBObject frontFBO;
   protected static FBObject.TextureAttachment backTexAttach;
   protected static FBObject.TextureAttachment frontTexAttach;
+
+  /** Flags used to handle the creation of a separte front texture */
+  protected boolean usingFrontTex = false;
+  protected boolean needSepFrontTex = false;
+
 
   ///////////////////////////////////////////////////////////
 
@@ -478,15 +492,8 @@ public class PGL {
   }
 
 
-  protected void initSurface(int antialias, Object reqCaps, Object sharedCtx) {
-    if (reqCaps != null && !(reqCaps instanceof GLCapabilities)) {
-      throw new RuntimeException("Argument is not an instance of GLCapabilities");
-    }
-
-    if (sharedCtx != null && !(sharedCtx instanceof GLContext)) {
-      throw new RuntimeException("Argument is not an instance of GLContext");
-    }
-
+  protected void initSurface(int antialias, GLCapabilities reqCaps,
+                                            GLContext sharedCtx) {
     if (profile == null) {
       profile = GLProfile.getDefault();
     } else {
@@ -503,8 +510,8 @@ public class PGL {
     }
 
     // Setting up the desired capabilities;
-    GLCapabilities caps = reqCaps != null ? (GLCapabilities)reqCaps :
-                                            new GLCapabilities(profile);
+    GLCapabilities caps = reqCaps == null ? new GLCapabilities(profile) :
+                                            reqCaps;
     caps.setBackgroundOpaque(true);
     caps.setOnscreen(true);
     if (USE_FBOLAYER_BY_DEFAULT) {
@@ -542,7 +549,7 @@ public class PGL {
       if (sharedCtx == null) {
         canvasAWT = new GLCanvas(caps);
       } else {
-        canvasAWT = new GLCanvas(caps, (GLContext)sharedCtx);
+        canvasAWT = new GLCanvas(caps, sharedCtx);
       }
       canvasAWT.setBounds(0, 0, pg.width, pg.height);
       canvasAWT.setBackground(new Color(pg.backgroundColor, true));
@@ -563,7 +570,7 @@ public class PGL {
     } else if (WINDOW_TOOLKIT == NEWT) {
       window = GLWindow.create(caps);
       if (sharedCtx != null) {
-        window.setSharedContext((GLContext)sharedCtx);
+        window.setSharedContext(sharedCtx);
       }
       canvasNEWT = new NewtCanvasAWT(window);
       canvasNEWT.setBounds(0, 0, pg.width, pg.height);
@@ -734,7 +741,6 @@ public class PGL {
   protected Texture wrapBackTexture(Texture texture) {
     if (texture == null || changedBackTex) {
       if (USE_JOGL_FBOLAYER) {
-        System.out.println("back texture: " + backTexAttach.getName());
         texture = new Texture();
         texture.init(pg.width, pg.height,
                      backTexAttach.getName(), TEXTURE_2D, RGBA,
@@ -760,7 +766,6 @@ public class PGL {
       } else {
         texture.glName = glColorTex.get(backTex);
       }
-//      texture.glName = getBackTextureName();
     }
     return texture;
   }
@@ -769,7 +774,6 @@ public class PGL {
   protected Texture wrapFrontTexture(Texture texture) {
     if (texture == null || changedFrontTex) {
       if (USE_JOGL_FBOLAYER) {
-        System.out.println("front texture: " + frontTexAttach.getName());
         texture = new Texture();
         texture.init(pg.width, pg.height,
                      backTexAttach.getName(), TEXTURE_2D, RGBA,
@@ -793,38 +797,11 @@ public class PGL {
       } else {
         texture.glName = glColorTex.get(frontTex);
       }
-//      texture.glName = getFrontTextureName();
     }
     return texture;
   }
 
-//  protected boolean frontTextureChanged() {
-//    return changedFrontTex;
-//  }
-//
-//  protected boolean backTextureChanged() {
-//    return changedBackTex;
-//  }
 
-//  protected int getBackTextureName() {
-//    if (USE_JOGL_FBOLAYER) {
-//      return backTexAttach.getName();
-//    } else {
-//      return glColorTex.get(backTex);
-//    }
-//  }
-//
-//
-//  protected int getFrontTextureName() {
-//    if (USE_JOGL_FBOLAYER) {
-//      return frontTexAttach.getName();
-//    } else {
-//      return glColorTex.get(frontTex);
-//    }
-//  }
-
-
-  protected boolean usingFrontTex = false;
   protected void bindFrontTexture() {
     usingFrontTex = true;
     if (USE_JOGL_FBOLAYER) {
@@ -870,7 +847,6 @@ public class PGL {
   }
 
 
-  protected boolean needSepFrontTex = false;
   protected void syncBackTexture() {
     if (usingFrontTex) needSepFrontTex = true;
     if (USE_JOGL_FBOLAYER) {
@@ -1161,19 +1137,17 @@ public class PGL {
   }
 
 
-  protected CountDownLatch latch;
   protected void requestDraw() {
     if (pg.initialized && pg.parent.canDraw()) {
-//      System.out.println("requestDraw "+ pg.parent.frameCount);
       try {
-        latch = new CountDownLatch(1);
+        drawLatch = new CountDownLatch(1);
         if (WINDOW_TOOLKIT == AWT) {
           canvasAWT.display();
         } else if (WINDOW_TOOLKIT == NEWT) {
           window.display();
         }
         try {
-          latch.await(1, TimeUnit.SECONDS);
+          drawLatch.await(DRAW_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
           e.printStackTrace();
         }
@@ -2563,8 +2537,7 @@ public class PGL {
 
     @Override
     public void display(GLAutoDrawable glDrawable) {
-      if (latch == null || latch.getCount() == 0) return;
-      //System.out.println("display " + pg.parent.frameCount);
+      if (drawLatch == null || drawLatch.getCount() == 0) return;
       drawable = glDrawable;
       context = glDrawable.getContext();
 
@@ -2603,7 +2576,6 @@ public class PGL {
               // with the contents of the MSAA back buffer when requested.
               if (frontFBO == null) {
                 // init
-                System.out.println("init");
                 frontFBO = new FBObject();
                 frontFBO.reset(gl, pg.width, pg.height);
                 frontFBO.attachTexture2D(gl, 0, true);
@@ -2611,7 +2583,6 @@ public class PGL {
                 changedFrontTex = changedBackTex = true;
               } else {
                 // swap
-                System.out.println("swap");
                 FBObject temp = sinkFBO;
                 sinkFBO = frontFBO;
                 frontFBO = temp;
@@ -2642,8 +2613,8 @@ public class PGL {
       }
 
       pg.parent.handleDraw();
-      if (latch != null) {
-        latch.countDown();
+      if (drawLatch != null) {
+        drawLatch.countDown();
       }
     }
 
