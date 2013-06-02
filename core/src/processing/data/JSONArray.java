@@ -928,7 +928,9 @@ public class JSONArray {
 
   /**
    * @webref jsonarray:method
-   * @brief To come...
+   * @brief Sets the JSONArray value associated with an index value
+   * @param index the index value to target
+   * @param value the value to assign
    */
   public JSONArray setJSONArray(int index, JSONArray value) {
     set(index, value);
