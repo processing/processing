@@ -1342,6 +1342,7 @@ public class Table {
   /**
    * @webref table:method
    * @brief Gets the number of columns in a table
+   * @see Table#getRowCount()
    */
   public int getColumnCount() {
     return columns.length;
@@ -1669,6 +1670,7 @@ public class Table {
   /**
    * @webref table:method
    * @brief Gets the number of rows in a table
+   * @see Table#getColumnCount()
    */
   public int getRowCount() {
     return rowCount;
@@ -1682,6 +1684,8 @@ public class Table {
   /**
    * @webref table:method
    * @brief Removes all rows from a table
+   * @see Table#addRow()
+   * @see Table#removeRow(int)
    */
   public void clearRows() {
     setRowCount(0);
@@ -1722,6 +1726,8 @@ public class Table {
  /**
    * @webref table:method
    * @brief Adds a row to a table
+   * @see Table#removeRow(int)
+   * @see Table#clearRows()
    */
   public TableRow addRow() {
     setRowCount(rowCount + 1);
@@ -1819,6 +1825,8 @@ public class Table {
    * @webref table:method
    * @brief Removes a row from a table
    * @param row ID number of the row to remove
+   * @see Table#addRow()
+   * @see Table#clearRows()
    */
   public void removeRow(int row) {
     for (int col = 0; col < columns.length; col++) {
@@ -2018,6 +2026,11 @@ public class Table {
    * @webref table:method
    * @brief Gets a row from a table
    * @param row ID number of the row to get
+   * @see Table#rows()
+   * @see Table#findRow(String, int)
+   * @see Table#findRows(String, int)
+   * @see Table#matchRow(String, int)
+   * @see Table#matchRows(String, int)
    */
   public TableRow getRow(int row) {
     return new RowPointer(this, row);
@@ -2031,6 +2044,11 @@ public class Table {
    *
    * @webref table:method
    * @brief Gets multiple rows from a table
+   * @see Table#getRow(int)
+   * @see Table#findRow(String, int)
+   * @see Table#findRows(String, int)
+   * @see Table#matchRow(String, int)
+   * @see Table#matchRows(String, int)
    */
   public Iterable<TableRow> rows() {
     return new Iterable<TableRow>() {
@@ -2391,6 +2409,12 @@ public class Table {
    * @brief Get an integer value from the specified row and column
    * @param row ID number of the row to reference
    * @param column ID number of the column to reference
+   * @see Table#getFloat(int, int)
+   * @see Table#getString(int, int)
+   * @see Table#getStringColumn(String)
+   * @see Table#setInt(int, int, int)
+   * @see Table#setFloat(int, int, float)
+   * @see Table#setString(int, int, String)
    */
   public int getInt(int row, int column) {
     checkBounds(row, column);
@@ -2423,6 +2447,12 @@ public class Table {
    * @param row ID number of the target row
    * @param column ID number of the target column
    * @param value value to assign
+   * @see Table#setFloat(int, int, float)
+   * @see Table#setString(int, int, String)
+   * @see Table#getInt(int, int)
+   * @see Table#getFloat(int, int)
+   * @see Table#getString(int, int)
+   * @see Table#getStringColumn(String)
    */
   public void setInt(int row, int column, int value) {
     if (columnTypes[column] == STRING) {
@@ -2559,6 +2589,12 @@ public class Table {
    * @brief Get a float value from the specified row and column
    * @param row ID number of the row to reference
    * @param column ID number of the column to reference
+   * @see Table#getInt(int, int)
+   * @see Table#getString(int, int)
+   * @see Table#getStringColumn(String)
+   * @see Table#setInt(int, int, int)
+   * @see Table#setFloat(int, int, float)
+   * @see Table#setString(int, int, String)
    */
   public float getFloat(int row, int column) {
     checkBounds(row, column);
@@ -2592,6 +2628,12 @@ public class Table {
    * @param row ID number of the target row
    * @param column ID number of the target column
    * @param value value to assign
+   * @see Table#setInt(int, int, int)
+   * @see Table#setString(int, int, String)
+   * @see Table#getInt(int, int)
+   * @see Table#getFloat(int, int)
+   * @see Table#getString(int, int)
+   * @see Table#getStringColumn(String)
    */
   public void setFloat(int row, int column, float value) {
     if (columnTypes[column] == STRING) {
@@ -2780,6 +2822,12 @@ public class Table {
    * @brief Get an String value from the specified row and column
    * @param row ID number of the row to reference
    * @param column ID number of the column to reference
+   * @see Table#getInt(int, int)
+   * @see Table#getFloat(int, int)
+   * @see Table#getStringColumn(String)
+   * @see Table#setInt(int, int, int)
+   * @see Table#setFloat(int, int, float)
+   * @see Table#setString(int, int, String)
    */
   public String getString(int row, int column) {
     checkBounds(row, column);
@@ -2816,6 +2864,12 @@ public class Table {
    * @param row ID number of the target row
    * @param column ID number of the target column
    * @param value value to assign
+   * @see Table#setInt(int, int, int)
+   * @see Table#setFloat(int, int, float)
+   * @see Table#getInt(int, int)
+   * @see Table#getFloat(int, int)
+   * @see Table#getString(int, int)
+   * @see Table#getStringColumn(String)
    */
   public void setString(int row, int column, String value) {
     ensureBounds(row, column);
@@ -2838,6 +2892,12 @@ public class Table {
    * @webref table:method
    * @brief Gets all values in the specified column
    * @param columnName title of the column to search
+   * @see Table#getInt(int, int)
+   * @see Table#getFloat(int, int)
+   * @see Table#getString(int, int)
+   * @see Table#setInt(int, int, int)
+   * @see Table#setFloat(int, int, float)
+   * @see Table#setString(int, int, String)
    */
   public String[] getStringColumn(String columnName) {
     int col = getColumnIndex(columnName);
@@ -2975,6 +3035,11 @@ public class Table {
    * @brief Finds a row that contains the given value
    * @param value the value to match
    * @param column ID number of the column to search
+   * @see Table#getRow(int)
+   * @see Table#rows()
+   * @see Table#findRows(String, int)
+   * @see Table#matchRow(String, int)
+   * @see Table#matchRows(String, int)
    */
   public TableRow findRow(String value, int column) {
     int row = findRowIndex(value, column);
@@ -2995,6 +3060,11 @@ public class Table {
    * @brief Finds multiple rows that contain the given value
    * @param value the value to match
    * @param column ID number of the column to search
+   * @see Table#getRow(int)
+   * @see Table#rows()
+   * @see Table#findRow(String, int)
+   * @see Table#matchRow(String, int)
+   * @see Table#matchRows(String, int)
    */
   public Iterable<TableRow> findRows(final String value, final int column) {
     return new Iterable<TableRow>() {
@@ -3122,6 +3192,11 @@ public class Table {
    * @brief Finds a row that matches the given expression
    * @param regexp the regular expression to match
    * @param column ID number of the column to search
+   * @see Table#getRow(int)
+   * @see Table#rows()
+   * @see Table#findRow(String, int)
+   * @see Table#findRows(String, int)
+   * @see Table#matchRows(String, int)
    */
   public TableRow matchRow(String regexp, int column) {
     int row = matchRowIndex(regexp, column);
@@ -3142,6 +3217,11 @@ public class Table {
    * @brief Finds multiple rows that match the given expression
    * @param regexp the regular expression to match
    * @param column ID number of the column to search
+   * @see Table#getRow(int)
+   * @see Table#rows()
+   * @see Table#findRow(String, int)
+   * @see Table#findRows(String, int)
+   * @see Table#matchRow(String, int)
    */
   public Iterable<TableRow> matchRows(final String regexp, final int column) {
     return new Iterable<TableRow>() {
@@ -3258,6 +3338,7 @@ public class Table {
    * @webref table:method
    * @brief Removes characters from the table
    * @param tokens a list of individual characters to be removed
+   * @see Table#trim()
    */
   public void removeTokens(String tokens) {
     for (int col = 0; col < getColumnCount(); col++) {
@@ -3309,6 +3390,7 @@ public class Table {
   /**
    * @webref table:method
    * @brief Trims whitespace from values
+   * @see Table#removeTokens(String)
    */
   public void trim() {
     for (int col = 0; col < getColumnCount(); col++) {
