@@ -50,6 +50,7 @@ public class Commander implements RunnerListener {
   static final String exportApplicationArg = "--export";
   static final String platformArg = "--platform=";
   static final String bitsArg = "--bits=";
+  static final String cleanupArg = "--cleanup";
 //  static final String preferencesArg = "--preferences=";
 
   static final int HELP = -1;
@@ -105,6 +106,7 @@ public class Commander implements RunnerListener {
     String outputPath = null;
     File outputFolder = null;
     boolean force = false;  // replace that no good output folder
+    boolean cleanup = false;  // delete output folder after run
 //    String preferencesPath = null;
     int platform = PApplet.platform; // default to this platform
     int platformBits = 0;
@@ -184,6 +186,9 @@ public class Commander implements RunnerListener {
 
       } else if (arg.equals(forceArg)) {
         force = true;
+
+      } else if (arg.equals(cleanupArg)) {
+        cleanup = true;
 
       } else {
         complainAndQuit("I don't know anything about " + arg + ".", true);
@@ -284,6 +289,12 @@ public class Commander implements RunnerListener {
         if (!success) {  // error already printed
           System.exit(1);
         }
+
+
+        if (cleanup && outputFolder.exists()) {
+          Base.removeDir(outputFolder);
+        } 
+
         systemOut.println("Finished.");
         System.exit(0);
 
@@ -368,6 +379,7 @@ public class Commander implements RunnerListener {
     out.println("--bits               Must be specified if libraries are used that are");
     out.println("                     32- or 64-bit specific such as the OpenGL library.");
     out.println("                     Otherwise specify 0 or leave it out.");
+    out.println("--cleanup            Delete output folder after run");
     out.println();
   }
 
