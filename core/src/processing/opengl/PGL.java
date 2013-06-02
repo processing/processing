@@ -870,9 +870,9 @@ public class PGL {
   }
 
 
-  protected boolean needSepFrontBackTex = false;
+  protected boolean needSepFrontTex = false;
   protected void syncBackTexture() {
-    if (usingFrontTex) needSepFrontBackTex = true;
+    if (usingFrontTex) needSepFrontTex = true;
     if (USE_JOGL_FBOLAYER) {
       if (0 < capabilities.getNumSamples()) {
         backFBO.syncSamplingSink(gl);
@@ -2592,7 +2592,7 @@ public class PGL {
         if (fboDrawable != null) {
           backFBO = fboDrawable.getFBObject(GL.GL_BACK);
           if (0 < capabilities.getNumSamples()) {
-            if (needSepFrontBackTex) {
+            if (needSepFrontTex) {
               // When using multisampled FBO, the back buffer is the MSAA
               // surface so it cannot be read from. The sink buffer contains
               // the readable 2D texture.
