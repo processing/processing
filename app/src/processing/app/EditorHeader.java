@@ -47,6 +47,8 @@ public class EditorHeader extends JComponent {
   static final int TAB_HEIGHT = 25;
   // line that continues across all of the tabs for the current one
   static final int TAB_STRETCH = 3;
+  // amount of extra space between individual tabs
+  static final int TAB_BETWEEN = 2;
   // amount of margin on the left/right for the text on the tab
   static final int TEXT_MARGIN = 10;
   // width of the tab when no text visible
@@ -357,11 +359,6 @@ public class EditorHeader extends JComponent {
     final int top = bottom - TAB_HEIGHT;
     GeneralPath path = null;
     
-    if (g != null) {
-      g.setColor(tabColor[SELECTED]);
-      g.fillRect(0, bottom, getWidth(), TAB_STRETCH);
-    }
-
     for (int i = 0; i < sketch.getCodeCount(); i++) {
       SketchCode code = sketch.getCode(i);
       Tab tab = tabs[i];
@@ -432,9 +429,15 @@ public class EditorHeader extends JComponent {
 //        g.drawImage(pieces[state][RIGHT], x, 0, PIECE_WIDTH, PIECE_HEIGHT, null);
 //      }
 //      x += PIECE_WIDTH - 1;  // overlap by 1 pixel
-      x += 1;
-      
+      x += TAB_BETWEEN;
     }
+    
+    // Draw this last because of half-pixel overlaps on retina displays
+    if (g != null) {
+      g.setColor(tabColor[SELECTED]);
+      g.fillRect(0, bottom, getWidth(), TAB_STRETCH);
+    }
+    
     return x <= right;
   }
 
