@@ -555,11 +555,11 @@ public class JSONObject {
   /**
    * Gets the String associated with a key
    *
-   * @param key   A key string.
-   * @return      A string which is the value.
-   * @throws   JSONException if there is no string value for the key.
    * @webref jsonobject:method
    * @brief Gets the string associated with a key
+   * @param key a key string
+   * @return A string which is the value.
+   * @throws JSONException if there is no string value for the key.
    */
   public String getString(String key) {
     Object object = this.get(key);
@@ -573,12 +573,12 @@ public class JSONObject {
   /**
    * Gets the int value associated with a key
    *
-   * @param key   A key string.
-   * @return      The integer value.
-   * @throws   JSONException if the key is not found or if the value cannot
-   *  be converted to an integer.
    * @webref jsonobject:method
    * @brief Gets the int value associated with a key
+   * @param key a key string
+   * @return The integer value.
+   * @throws JSONException if the key is not found or if the value cannot
+   *  be converted to an integer.
    */
   public int getInt(String key) {
     Object object = this.get(key);
@@ -613,7 +613,8 @@ public class JSONObject {
 
   /**
    * @webref jsonobject:method
-   * @brief To come...
+   * @brief Gets the float value associated with a key
+   * @param key a key string
    */
   public float getFloat(String key) {
     return (float) getDouble(key);
@@ -642,11 +643,11 @@ public class JSONObject {
   /**
    * Get the boolean value associated with a key.
    *
-   * @param key   A key string.
-   * @return      The truth.
-   * @throws      JSONException if the value is not a Boolean or the String "true" or "false".
    * @webref jsonobject:method
    * @brief Gets the boolean value associated with a key
+   * @param key a key string
+   * @return The truth.
+   * @throws JSONException if the value is not a Boolean or the String "true" or "false".
    */
   public boolean getBoolean(String key) {
     Object object = this.get(key);
@@ -666,11 +667,11 @@ public class JSONObject {
   /**
    * Get the JSONArray value associated with a key.
    *
-   * @brief Gets the JSONArray value associated with a key
    * @webref jsonobject:method
-   * @param key A key string
-   * @return      A JSONArray which is the value.
-   * @throws      JSONException if the key is not found or if the value is not a JSONArray.
+   * @brief Gets the JSONArray value associated with a key
+   * @param key a key string
+   * @return A JSONArray which is the value.
+   * @throws JSONException if the key is not found or if the value is not a JSONArray.
    */
   public JSONArray getJSONArray(String key) {
     Object object = this.get(key);
@@ -684,11 +685,11 @@ public class JSONObject {
   /**
    * Get the JSONObject value associated with a key.
    *
-   * @param key   A key string.
-   * @return      A JSONObject which is the value.
-   * @throws      JSONException if the key is not found or if the value is not a JSONObject.
    * @webref jsonobject:method
    * @brief Gets the JSONObject value associated with a key
+   * @param key a key string
+   * @return A JSONObject which is the value.
+   * @throws JSONException if the key is not found or if the value is not a JSONObject.
    */
   public JSONObject getJSONObject(String key) {
     Object object = this.get(key);
@@ -1113,7 +1114,9 @@ public class JSONObject {
 
   /**
    * @webref jsonobject:method
-   * @brief To come...
+   * @brief Put a key/String pair in the JSONObject
+   * @param key a key string
+   * @param value the value to assign
    */
   public JSONObject setString(String key, String value) {
     return put(key, value);
@@ -1123,12 +1126,12 @@ public class JSONObject {
   /**
    * Put a key/int pair in the JSONObject.
    *
-   * @param key   A key string.
-   * @param value An int which is the value.
-   * @return this.
-   * @throws JSONException If the key is null.
    * @webref jsonobject:method
    * @brief Put a key/int pair in the JSONObject
+   * @param key a key string
+   * @param value the value to assign
+   * @return this.
+   * @throws JSONException If the key is null.
    */
   public JSONObject setInt(String key, int value) {
     this.put(key, new Integer(value));
@@ -1151,7 +1154,9 @@ public class JSONObject {
 
   /**
    * @webref jsonobject:method
-   * @brief To come...
+   * @brief Put a key/float pair in the JSONObject
+   * @param key a key string
+   * @param value the value to assign
    */
   public JSONObject setFloat(String key, float value) {
     this.put(key, new Double(value));
@@ -1176,12 +1181,12 @@ public class JSONObject {
   /**
    * Put a key/boolean pair in the JSONObject.
    *
-   * @param key   A key string.
-   * @param value A boolean which is the value.
-   * @return this.
-   * @throws JSONException If the key is null.
    * @webref jsonobject:method
    * @brief Put a key/boolean pair in the JSONObject
+   * @param key a key string
+   * @param value the value to assign
+   * @return this.
+   * @throws JSONException If the key is null.
    */
   public JSONObject setBoolean(String key, boolean value) {
     this.put(key, value ? Boolean.TRUE : Boolean.FALSE);
@@ -1190,7 +1195,9 @@ public class JSONObject {
 
   /**
    * @webref jsonobject:method
-   * @brief To come...
+   * @brief Sets the JSONObject value associated with a key
+   * @param key a key string
+   * @param value value to assign
    */
   public JSONObject setJSONObject(String key, JSONObject value) {
     return put(key, value);
@@ -1198,7 +1205,9 @@ public class JSONObject {
 
   /**
    * @webref jsonobject:method
-   * @brief To come...
+   * @brief Sets the JSONArray value associated with a key
+   * @param key a key string
+   * @param value value to assign
    */
   public JSONObject setJSONArray(String key, JSONArray value) {
     return put(key, value);

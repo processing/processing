@@ -78,7 +78,7 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
   
   protected ArrayList<Button> buttons;
 
-  static final int ARROW_WIDTH = 6;
+  static final int ARROW_WIDTH = 7;
   static final int ARROW_HEIGHT = 6;
   static Image modeArrow;
 

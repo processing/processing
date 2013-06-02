@@ -563,8 +563,8 @@ getString	FUNCTION2	JSONObject_getString_
 setBoolean	FUNCTION2	JSONObject_setBoolean_
 setFloat	FUNCTION2	JSONObject_setFloat_
 setInt	FUNCTION2	JSONObject_setInt_
-getJSONArray	FUNCTION2	JSONObject_setJSONArray_
-getJSONObject	FUNCTION2	JSONObject_setJSONObject_
+setJSONArray	FUNCTION2	JSONObject_setJSONArray_
+setJSONObject	FUNCTION2	JSONObject_setJSONObject_
 setString	FUNCTION2	JSONObject_setString_
 key	KEYWORD4	key
 keyCode	KEYWORD4	keyCode
@@ -610,6 +610,7 @@ mouseMoved	FUNCTION4	mouseMoved
 mousePressed	FUNCTION4	mousePressed
 mousePressed	KEYWORD4	mousePressed
 mouseReleased	FUNCTION1	mouseReleased_
+mouseWheel	FUNCTION4	mouseWheel
 mouseX	KEYWORD4	mouseX
 mouseY	KEYWORD4	mouseY
 nf	FUNCTION1	nf_
@@ -674,6 +675,7 @@ enableStyle	FUNCTION2	PShape_enableStyle_
 endContour	FUNCTION2	PShape_endContour_
 endShape	FUNCTION2	PShape_endShape_
 getChild	FUNCTION2	PShape_getChild_
+getChildCount	FUNCTION2	PShape_getChildCount_
 getVertex	FUNCTION2	PShape_getVertex_
 getVertexCount	FUNCTION2	PShape_getVertexCount_
 isVisible	FUNCTION2	PShape_isVisible_
@@ -695,6 +697,7 @@ array	FUNCTION2	PVector_array_
 copy	FUNCTION2	PVector_copy_
 cross	FUNCTION2	PVector_cross_
 dist	FUNCTION2	PVector_dist_
+div	FUNCTION2	PVector_div_
 dot	FUNCTION2	PVector_dot_
 fromAngle	FUNCTION2	PVector_fromAngle_
 get	FUNCTION2	PVector_get_
@@ -703,6 +706,7 @@ lerp	FUNCTION2	PVector_lerp_
 limit	FUNCTION2	PVector_limit_
 mag	FUNCTION2	PVector_mag_
 magSq	FUNCTION2	PVector_magSq_
+mult	FUNCTION2	PVector_mult_
 normalize	FUNCTION2	PVector_normalize_
 random2D	FUNCTION2	PVector_random2D_
 random3D	FUNCTION2	PVector_random3D_
@@ -812,8 +816,11 @@ clearRows	FUNCTION2	Table_clearRows_
 findRow	FUNCTION2	Table_findRow_
 findRows	FUNCTION2	Table_findRows_
 getColumnCount	FUNCTION2	Table_getColumnCount_
+getFloat	FUNCTION2	Table_getFloat_
+getInt	FUNCTION2	Table_getInt_
 getRow	FUNCTION2	Table_getRow_
 getRowCount	FUNCTION2	Table_getRowCount_
+getString	FUNCTION2	Table_getString_
 getStringColumn	FUNCTION2	Table_getStringColumn_
 matchRow	FUNCTION2	Table_matchRow_
 matchRows	FUNCTION2	Table_matchRows_
@@ -821,6 +828,9 @@ removeColumn	FUNCTION2	Table_removeColumn_
 removeRow	FUNCTION2	Table_removeRow_
 removeTokens	FUNCTION2	Table_removeTokens_
 rows	FUNCTION2	Table_rows_
+setFloat	FUNCTION2	Table_setFloat_
+setInt	FUNCTION2	Table_setInt_
+setString	FUNCTION2	Table_setString_
 trim	FUNCTION2	Table_trim_
 TableRow	KEYWORD5	TableRow
 getFloat	FUNCTION2	TableRow_getFloat_
@@ -860,7 +870,9 @@ getChild	FUNCTION2	XML_getChild_
 getChildren	FUNCTION2	XML_getChildren_
 getContent	FUNCTION2	XML_getContent_
 getFloat	FUNCTION2	XML_getFloat_
+getContent	FUNCTION2	XML_getFloatContent_
 getInt	FUNCTION2	XML_getInt_
+getContent	FUNCTION2	XML_getIntContent_
 getName	FUNCTION2	XML_getName_
 getParent	FUNCTION2	XML_getParent_
 getString	FUNCTION2	XML_getString_

@@ -391,12 +391,12 @@ public class JSONArray {
   /**
    * Get the JSONArray associated with an index.
    * 
-   * @param index The index must be between 0 and length() - 1.
-   * @return      A JSONArray value.
+   * @webref jsonobject:method
+   * @brief Gets the JSONArray associated with an index value
+   * @param index must be between 0 and length() - 1.
+   * @return A JSONArray value.
    * @throws JSONException If there is no value for the index. or if the
    * value is not a JSONArray
-   * @webref jsonarray:method
-   * @brief Get the JSONArray associated with an index
    */
   public JSONArray getJSONArray(int index) {
     Object object = this.get(index);
@@ -410,12 +410,12 @@ public class JSONArray {
   /**
    * Get the JSONObject associated with an index.
    * 
-   * @param index subscript
-   * @return      A JSONObject value.
+   * @webref jsonobject:method
+   * @brief Gets the JSONObject associated with an index value
+   * @param index the index value of the object to get
+   * @return A JSONObject value.
    * @throws JSONException If there is no value for the index or if the
    * value is not a JSONObject
-   * @webref jsonarray:method
-   * @brief Get the JSONObject associated with an index
    */
   public JSONObject getJSONObject(int index) {
     Object object = this.get(index);
@@ -928,7 +928,9 @@ public class JSONArray {
 
   /**
    * @webref jsonarray:method
-   * @brief To come...
+   * @brief Sets the JSONArray value associated with an index value
+   * @param index the index value to target
+   * @param value the value to assign
    */
   public JSONArray setJSONArray(int index, JSONArray value) {
     set(index, value);
@@ -937,7 +939,9 @@ public class JSONArray {
 
   /**
    * @webref jsonarray:method
-   * @brief To come...
+   * @brief Sets the JSONObject value associated with an index value
+   * @param index the index value to target
+   * @param value the value to assign
    */
   public JSONArray setJSONObject(int index, JSONObject value) {
     set(index, value);
@@ -978,7 +982,7 @@ public class JSONArray {
    * Get the number of elements in the JSONArray, included nulls.
    *
    * @webref jsonarray:method
-   * @brief Gets the number of elements in the JSONArray, included nulls
+   * @brief Gets the number of elements in the JSONArray
    * @return The length (or size).
    */
   public int size() {
@@ -1001,8 +1005,8 @@ public class JSONArray {
    * Remove an index and close the hole.
    * 
    * @webref jsonarray:method
-   * @brief Remove an index and close the hole
-   * @param index The index of the element to be removed.
+   * @brief Removes an element
+   * @param index the index value of the element to be removed
    * @return The value that was associated with the index, or null if there was no value.
    */
   public Object remove(int index) {
