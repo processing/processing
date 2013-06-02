@@ -1,4 +1,86 @@
-PROCESSING 2.0b9 (REV 0217) 18 May 2013
+PROCESSING 2.0 (REV 0218) - 3 June 2013
+
+And just like that, here we are at 2.0. 
+
+[ bug fixes ] 
+
++ Example window has the Java application icon
+  https://github.com/processing/processing/issues/1800
+
++ The update checker sometimes insisted there were updates, 
+  even though there were not, due to a build problem.
+  https://github.com/processing/processing/issues/1792
+
++ Removed the 'modes' folder from the sketchbook listing
+  https://github.com/processing/processing/issues/1832
+
++ Add return code to processing-java on Linux
+  https://github.com/processing/processing/issues/1798
+
++ Command line tool on OS X was broken due to classpath problems.
+  https://github.com/processing/processing/issues/1787
+
++ saveJSONArray() loops forever, triggers error
+  https://github.com/processing/processing/issues/1827
+
++ patch to make font textures smaller in P2D/P3D
+  https://github.com/processing/processing/pull/1775
+
++ A handful of tweaks to the user interface, also incorporating 
+  built-in fonts for the UI and for the default editor font.
+
++ .png data written when .jpg file specified with save/saveFrame()
+  https://github.com/processing/processing/issues/1810
+
++ remove() broken in the List classes
+  https://github.com/processing/processing/issues/1826
+
++ PGraphics objects that used JAVA2D weren't updating when used with OpenGL
+  https://github.com/processing/processing/issues/1786
+
+[ andres on the attack ] 
+
++ PImage not drawn after resize()/get() in P2D/P3D
+  https://github.com/processing/processing/issues/1830
+
++ Can't disable textures for loaded OBJ shapes (2b9)
+  https://github.com/processing/processing/issues/1825
+
++ Can't mask PGraphics with another PGraphics
+  https://github.com/processing/processing/issues/1738
+
++ PGL.readPixels() causes "invalid operation" error
+  https://github.com/processing/processing/issues/1666
+
++ Strange behavior of PGraphics pixels[] when using P2D and P3D renderer
+  https://github.com/processing/processing/issues/1815
+
++ PShape setVertex has a memory leak
+  https://github.com/processing/processing/issues/1670
+
++ PGL lacks a wrapper for the alphaFunc() method and the ALPHA_TEST constant
+  https://github.com/processing/processing/issues/1703
+
++ Implement textMode(SHAPE) for 3D
+  https://github.com/processing/processing/issues/777
+
++ An internal change so that PImage.loadPixels() doesn't call the renderer.
+  Fixes some odd quirks in saveFrame() and other draw/get/save operations.
+
++ Setting smooth(n) affects disables background in setup()
+  https://github.com/processing/processing/issues/1452
+
++ P2D/P3D sketches don't get focus until clicked
+  https://github.com/processing/processing/issues/1700
+
++ textureWrap(REPEAT) + textureMode(IMAGE) clamps positive coordinates
+  https://github.com/processing/processing/issues/1809
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
+PROCESSING 2.0b9 (REV 0217) - 18 May 2013
 
 The 2.0 interface has arrived! Mmm... pretty.
 
@@ -108,7 +190,10 @@ with one or two issues that could require a beta 10. That's a lot of beta.
   only requires a JRE (and is therefore much smaller!)
 
 
-PROCESSING 2.0b8 (REV 0216) 24 February 2013
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
+PROCESSING 2.0b8 (REV 0216) - 24 February 2013
 
 Dead bugs on the windscreen as we head down the road to 2.0. 
 (The fact that we're still in bad metaphor territory suggests

@@ -10,6 +10,7 @@ X   https://github.com/processing/processing/issues/1810
 X remove() broken in the List classes
 X   https://github.com/processing/processing/issues/1826
 X Java2D surfaces not updating when used with OpenGL
+X   PGraphics using JAVA2D will not update when used with P2D or P3D
 X   https://github.com/processing/processing/issues/1786
 
 andres
@@ -33,6 +34,13 @@ A PImage.loadPixels() shouldn't be calling out to the renderer
 A   setting image.parent = null for it makes it work again for get().save() case
 A Setting smooth(n) affects disables background in setup()
 A   https://github.com/processing/processing/issues/1452
+A P2D/P3D sketches don't get focus until clicked
+A   also problem for Java2D when canvas is used?
+A   need to standardize canvas handling
+A   https://github.com/processing/processing/issues/1700
+o warning message present
+o   Deleted 1 texture objects, 0 remaining
+A   fixed in last round
 
 
 _ data decision stuff
@@ -119,12 +127,6 @@ _     and removeValue(value) is probably used less
 _ introduce remap() instead of map() (if not deprecate?)
 
 andres
-_ P2D/P3D sketches don't get focus until clicked
-_   also problem for Java2D when canvas is used?
-_   need to standardize canvas handling
-_   https://github.com/processing/processing/issues/1700
-_ warning message present
-_   Deleted 1 texture objects, 0 remaining
 _ shader syntax (Andres request)
 _   might also need a define inside the shader to control what type it is
 
