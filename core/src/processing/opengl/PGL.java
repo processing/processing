@@ -824,7 +824,9 @@ public class PGL {
 //  }
 
 
+  protected boolean usingFrontTex = false;
   protected void bindFrontTexture() {
+    usingFrontTex = true;
     if (USE_JOGL_FBOLAYER) {
       if (!texturingIsEnabled(TEXTURE_2D)) {
         enableTexturing(TEXTURE_2D);
@@ -868,7 +870,9 @@ public class PGL {
   }
 
 
+  protected boolean needSepFrontBackTex = false;
   protected void syncBackTexture() {
+    if (usingFrontTex) needSepFrontBackTex = true;
     if (USE_JOGL_FBOLAYER) {
       if (0 < capabilities.getNumSamples()) {
         backFBO.syncSamplingSink(gl);
@@ -1160,7 +1164,7 @@ public class PGL {
   protected CountDownLatch latch;
   protected void requestDraw() {
     if (pg.initialized && pg.parent.canDraw()) {
-      System.out.println("requestDraw "+ pg.parent.frameCount);
+//      System.out.println("requestDraw "+ pg.parent.frameCount);
       try {
         latch = new CountDownLatch(1);
         if (WINDOW_TOOLKIT == AWT) {
@@ -2560,7 +2564,7 @@ public class PGL {
     @Override
     public void display(GLAutoDrawable glDrawable) {
       if (latch == null || latch.getCount() == 0) return;
-      System.out.println("display " + pg.parent.frameCount);
+      //System.out.println("display " + pg.parent.frameCount);
       drawable = glDrawable;
       context = glDrawable.getContext();
 
@@ -2588,16 +2592,15 @@ public class PGL {
         if (fboDrawable != null) {
           backFBO = fboDrawable.getFBObject(GL.GL_BACK);
           if (0 < capabilities.getNumSamples()) {
-            // When using multisampled FBO, the back buffer is the MSAA
-            // surface so it cannot be read from. The sink buffer contains
-            // the readable 2D texture.
-            // In this case, we create an auxiliary "front" buffer that it is
-            // swapped with the sink buffer at the beginning of each frame.
-            // In this way, we always have a readable copy of the previous
-            // frame in the front texture, while the back is synchronized
-            // with the contents of the MSAA back buffer when requested.
-
-            if (1 < pg.parent.frameCount) {
+            if (needSepFrontBackTex) {
+              // When using multisampled FBO, the back buffer is the MSAA
+              // surface so it cannot be read from. The sink buffer contains
+              // the readable 2D texture.
+              // In this case, we create an auxiliary "front" buffer that it is
+              // swapped with the sink buffer at the beginning of each frame.
+              // In this way, we always have a readable copy of the previous
+              // frame in the front texture, while the back is synchronized
+              // with the contents of the MSAA back buffer when requested.
               if (frontFBO == null) {
                 // init
                 System.out.println("init");
@@ -2620,9 +2623,12 @@ public class PGL {
               frontTexAttach = (FBObject.TextureAttachment)frontFBO.
                                getColorbuffer(0);
             } else {
+              // Default setting (to save resources): the front and back
+              // textures are the same.
               sinkFBO = backFBO.getSamplingSinkFBO();
-              frontTexAttach = backTexAttach  = (FBObject.TextureAttachment) sinkFBO.
-                                                getColorbuffer(0);
+              backTexAttach = (FBObject.TextureAttachment) sinkFBO.
+                              getColorbuffer(0);
+              frontTexAttach = backTexAttach;
             }
 
           } else {
