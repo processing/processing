@@ -731,74 +731,97 @@ public class PGL {
   }
 
 
-  protected Texture wrapBackTexture() {
-    if (USE_JOGL_FBOLAYER) {
-      System.out.println("back texture: " + backTexAttach.getName());
-      Texture tex = new Texture();
-      tex.init(pg.width, pg.height,
-               backTexAttach.getName(), TEXTURE_2D, RGBA,
-               backTexAttach.getWidth(), backTexAttach.getHeight(),
-               backTexAttach.minFilter, backTexAttach.magFilter,
-               backTexAttach.wrapS, backTexAttach.wrapT);
-      tex.invertedY(true);
-      tex.colorBuffer(true);
-      pg.setCache(pg, tex);
-      return tex;
+  protected Texture wrapBackTexture(Texture texture) {
+    if (texture == null || changedBackTex) {
+      if (USE_JOGL_FBOLAYER) {
+        System.out.println("back texture: " + backTexAttach.getName());
+        texture = new Texture();
+        texture.init(pg.width, pg.height,
+                     backTexAttach.getName(), TEXTURE_2D, RGBA,
+                     backTexAttach.getWidth(), backTexAttach.getHeight(),
+                     backTexAttach.minFilter, backTexAttach.magFilter,
+                     backTexAttach.wrapS, backTexAttach.wrapT);
+        texture.invertedY(true);
+        texture.colorBuffer(true);
+        pg.setCache(pg, texture);
+      } else {
+        texture = new Texture();
+        texture.init(pg.width, pg.height,
+                     glColorTex.get(backTex), TEXTURE_2D, RGBA,
+                     fboWidth, fboHeight, NEAREST, NEAREST,
+                     CLAMP_TO_EDGE, CLAMP_TO_EDGE);
+        texture.invertedY(true);
+        texture.colorBuffer(true);
+        pg.setCache(pg, texture);
+      }
     } else {
-      Texture tex = new Texture();
-      tex.init(pg.width, pg.height,
-               glColorTex.get(backTex), TEXTURE_2D, RGBA,
-               fboWidth, fboHeight, NEAREST, NEAREST,
-               CLAMP_TO_EDGE, CLAMP_TO_EDGE);
-      tex.invertedY(true);
-      tex.colorBuffer(true);
-      pg.setCache(pg, tex);
-      return tex;
+      if (USE_JOGL_FBOLAYER) {
+        texture.glName = backTexAttach.getName();
+      } else {
+        texture.glName = glColorTex.get(backTex);
+      }
+//      texture.glName = getBackTextureName();
     }
+    return texture;
   }
 
 
-  protected Texture wrapFrontTexture() {
-    if (USE_JOGL_FBOLAYER) {
-      System.out.println("front texture: " + frontTexAttach.getName());
-      Texture tex = new Texture();
-      tex.init(pg.width, pg.height,
-               backTexAttach.getName(), TEXTURE_2D, RGBA,
-               frontTexAttach.getWidth(), frontTexAttach.getHeight(),
-               frontTexAttach.minFilter, frontTexAttach.magFilter,
-               frontTexAttach.wrapS, frontTexAttach.wrapT);
-      tex.invertedY(true);
-      tex.colorBuffer(true);
-      return tex;
+  protected Texture wrapFrontTexture(Texture texture) {
+    if (texture == null || changedFrontTex) {
+      if (USE_JOGL_FBOLAYER) {
+        System.out.println("front texture: " + frontTexAttach.getName());
+        texture = new Texture();
+        texture.init(pg.width, pg.height,
+                     backTexAttach.getName(), TEXTURE_2D, RGBA,
+                     frontTexAttach.getWidth(), frontTexAttach.getHeight(),
+                     frontTexAttach.minFilter, frontTexAttach.magFilter,
+                     frontTexAttach.wrapS, frontTexAttach.wrapT);
+        texture.invertedY(true);
+        texture.colorBuffer(true);
+      } else {
+        texture = new Texture();
+        texture.init(pg.width, pg.height,
+                     glColorTex.get(frontTex), TEXTURE_2D, RGBA,
+                     fboWidth, fboHeight, NEAREST, NEAREST,
+                     CLAMP_TO_EDGE, CLAMP_TO_EDGE);
+        texture.invertedY(true);
+        texture.colorBuffer(true);
+      }
     } else {
-      Texture tex = new Texture();
-      tex.init(pg.width, pg.height,
-               glColorTex.get(frontTex), TEXTURE_2D, RGBA,
-               fboWidth, fboHeight, NEAREST, NEAREST,
-               CLAMP_TO_EDGE, CLAMP_TO_EDGE);
-      tex.invertedY(true);
-      tex.colorBuffer(true);
-      return tex;
+      if (USE_JOGL_FBOLAYER) {
+        texture.glName = frontTexAttach.getName();
+      } else {
+        texture.glName = glColorTex.get(frontTex);
+      }
+//      texture.glName = getFrontTextureName();
     }
+    return texture;
   }
 
+//  protected boolean frontTextureChanged() {
+//    return changedFrontTex;
+//  }
+//
+//  protected boolean backTextureChanged() {
+//    return changedBackTex;
+//  }
 
-  protected int getBackTextureName() {
-    if (USE_JOGL_FBOLAYER) {
-      return backTexAttach.getName();
-    } else {
-      return glColorTex.get(backTex);
-    }
-  }
-
-
-  protected int getFrontTextureName() {
-    if (USE_JOGL_FBOLAYER) {
-      return frontTexAttach.getName();
-    } else {
-      return glColorTex.get(frontTex);
-    }
-  }
+//  protected int getBackTextureName() {
+//    if (USE_JOGL_FBOLAYER) {
+//      return backTexAttach.getName();
+//    } else {
+//      return glColorTex.get(backTex);
+//    }
+//  }
+//
+//
+//  protected int getFrontTextureName() {
+//    if (USE_JOGL_FBOLAYER) {
+//      return frontTexAttach.getName();
+//    } else {
+//      return glColorTex.get(frontTex);
+//    }
+//  }
 
 
   protected void bindFrontTexture() {
@@ -2528,7 +2551,8 @@ public class PGL {
   ///////////////////////////////////////////////////////////
 
   // Event listeners
-
+  protected boolean changedFrontTex = false;
+  protected boolean changedBackTex = false;
 
   protected class PGLListener implements GLEventListener {
     public PGLListener() {}
@@ -2581,6 +2605,7 @@ public class PGL {
                 frontFBO.reset(gl, pg.width, pg.height);
                 frontFBO.attachTexture2D(gl, 0, true);
                 sinkFBO = backFBO.getSamplingSinkFBO();
+                changedFrontTex = changedBackTex = true;
               } else {
                 // swap
                 System.out.println("swap");
@@ -2588,15 +2613,18 @@ public class PGL {
                 sinkFBO = frontFBO;
                 frontFBO = temp;
                 backFBO.setSamplingSink(sinkFBO);
+                changedFrontTex = changedBackTex = false;
               }
+              backTexAttach  = (FBObject.TextureAttachment) sinkFBO.
+                               getColorbuffer(0);
+              frontTexAttach = (FBObject.TextureAttachment)frontFBO.
+                               getColorbuffer(0);
             } else {
-              frontFBO = sinkFBO = backFBO.getSamplingSinkFBO();
+              sinkFBO = backFBO.getSamplingSinkFBO();
+              frontTexAttach = backTexAttach  = (FBObject.TextureAttachment) sinkFBO.
+                                                getColorbuffer(0);
             }
 
-            backTexAttach  = (FBObject.TextureAttachment)sinkFBO.
-                             getColorbuffer(0);
-            frontTexAttach = (FBObject.TextureAttachment)frontFBO.
-                             getColorbuffer(0);
           } else {
             // w/out multisampling, rendering is done on the back buffer.
             frontFBO = fboDrawable.getFBObject(GL.GL_FRONT);

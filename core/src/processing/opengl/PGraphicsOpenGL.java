@@ -5951,16 +5951,21 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     if (pgl.isFBOBacked()) {
-      if (texture == null) {
+      texture = pgl.wrapBackTexture(texture);
+      ptexture = pgl.wrapFrontTexture(ptexture);
+
+      /*
+      if (texture == null || pgl.backTextureChanged()) {
         texture = pgl.wrapBackTexture();
       } else {
         texture.glName = pgl.getBackTextureName();
       }
-      if (ptexture == null) {
+      if (ptexture == null || pgl.frontTextureChanged()) {
         ptexture = pgl.wrapFrontTexture();
       } else {
         ptexture.glName = pgl.getFrontTextureName();
       }
+      */
     }
   }
 
