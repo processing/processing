@@ -5157,7 +5157,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void restoreSurfaceFromPixels() {
-    System.out.println("restoreSurfaceFromPixels");
     drawPixels(0, 0, width, height);
   }
 

@@ -342,6 +342,10 @@ public class PGL {
   protected boolean usingFrontTex = false;
   protected boolean needSepFrontTex = false;
 
+  /** Flag used to do request final display() call to make sure that the
+   * buffers are properly swapped.
+   */
+  protected boolean prevCanDraw = false;
 
   ///////////////////////////////////////////////////////////
 
@@ -1136,10 +1140,8 @@ public class PGL {
   }
 
 
-  protected boolean prevCanDraw = false;
   protected void requestDraw() {
     boolean canDraw = pg.parent.canDraw();
-    System.out.println(canDraw + " " + pg.parent.frameCount);
     if (pg.initialized && (canDraw || prevCanDraw)) {
       try {
         drawLatch = new CountDownLatch(1);
@@ -2558,7 +2560,7 @@ public class PGL {
     @Override
     public void display(GLAutoDrawable glDrawable) {
       if (drawLatch == null || drawLatch.getCount() == 0) return;
-      System.out.println("display " + pg.parent.frameCount);
+
       drawable = glDrawable;
       context = glDrawable.getContext();
 
