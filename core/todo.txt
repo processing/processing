@@ -9,6 +9,8 @@ X .png data written when .jpg file specified with save/saveFrame()
 X   https://github.com/processing/processing/issues/1810
 X remove() broken in the List classes
 X   https://github.com/processing/processing/issues/1826
+X Java2D surfaces not updating when used with OpenGL
+X   https://github.com/processing/processing/issues/1786
 
 andres
 A PImage not drawn after resize()/get() in P2D/P3D

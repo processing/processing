@@ -359,7 +359,10 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 //    // full copy of the pixels to the surface in this.updatePixels().
 //    setModified();
 //    super.updatePixels();
-    setModified();  // marks pixels as modified so that the pixels will be updated
+
+    // Marks pixels as modified so that the pixels will be updated.
+    // Also sets mx1/y1/x2/y2 so that OpenGL will pick it up.
+    setModified();
   }
 
 
