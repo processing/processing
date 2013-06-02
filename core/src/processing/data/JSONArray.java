@@ -978,7 +978,7 @@ public class JSONArray {
    * Get the number of elements in the JSONArray, included nulls.
    *
    * @webref jsonarray:method
-   * @brief Gets the number of elements in the JSONArray, included nulls
+   * @brief Gets the number of elements in the JSONArray
    * @return The length (or size).
    */
   public int size() {
@@ -1001,8 +1001,8 @@ public class JSONArray {
    * Remove an index and close the hole.
    * 
    * @webref jsonarray:method
-   * @brief Remove an index and close the hole
-   * @param index The index of the element to be removed.
+   * @brief Removes an element
+   * @param index the index value of the element to be removed
    * @return The value that was associated with the index, or null if there was no value.
    */
   public Object remove(int index) {
