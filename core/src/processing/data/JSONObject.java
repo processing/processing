@@ -1114,7 +1114,9 @@ public class JSONObject {
 
   /**
    * @webref jsonobject:method
-   * @brief To come...
+   * @brief Put a key/String pair in the JSONObject
+   * @param key a key string
+   * @param value the value to assign
    */
   public JSONObject setString(String key, String value) {
     return put(key, value);
@@ -1124,12 +1126,12 @@ public class JSONObject {
   /**
    * Put a key/int pair in the JSONObject.
    *
-   * @param key   A key string.
-   * @param value An int which is the value.
-   * @return this.
-   * @throws JSONException If the key is null.
    * @webref jsonobject:method
    * @brief Put a key/int pair in the JSONObject
+   * @param key a key string
+   * @param value the value to assign
+   * @return this.
+   * @throws JSONException If the key is null.
    */
   public JSONObject setInt(String key, int value) {
     this.put(key, new Integer(value));
@@ -1152,7 +1154,9 @@ public class JSONObject {
 
   /**
    * @webref jsonobject:method
-   * @brief To come...
+   * @brief Put a key/float pair in the JSONObject
+   * @param key a key string
+   * @param value the value to assign
    */
   public JSONObject setFloat(String key, float value) {
     this.put(key, new Double(value));
@@ -1177,12 +1181,12 @@ public class JSONObject {
   /**
    * Put a key/boolean pair in the JSONObject.
    *
-   * @param key   A key string.
-   * @param value A boolean which is the value.
-   * @return this.
-   * @throws JSONException If the key is null.
    * @webref jsonobject:method
    * @brief Put a key/boolean pair in the JSONObject
+   * @param key a key string
+   * @param value the value to assign
+   * @return this.
+   * @throws JSONException If the key is null.
    */
   public JSONObject setBoolean(String key, boolean value) {
     this.put(key, value ? Boolean.TRUE : Boolean.FALSE);
