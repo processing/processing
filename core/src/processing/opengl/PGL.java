@@ -733,6 +733,7 @@ public class PGL {
 
   protected Texture wrapBackTexture() {
     if (USE_JOGL_FBOLAYER) {
+      System.out.println("back texture: " + backTexAttach.getName());
       Texture tex = new Texture();
       tex.init(pg.width, pg.height,
                backTexAttach.getName(), TEXTURE_2D, RGBA,
@@ -759,6 +760,7 @@ public class PGL {
 
   protected Texture wrapFrontTexture() {
     if (USE_JOGL_FBOLAYER) {
+      System.out.println("front texture: " + frontTexAttach.getName());
       Texture tex = new Texture();
       tex.init(pg.width, pg.height,
                backTexAttach.getName(), TEXTURE_2D, RGBA,
@@ -2565,27 +2567,33 @@ public class PGL {
             // When using multisampled FBO, the back buffer is the MSAA
             // surface so it cannot be read from. The sink buffer contains
             // the readable 2D texture.
-            // In this case, we create an auxiliar "front" buffer that it is
+            // In this case, we create an auxiliary "front" buffer that it is
             // swapped with the sink buffer at the beginning of each frame.
             // In this way, we always have a readable copy of the previous
             // frame in the front texture, while the back is synchronized
             // with the contents of the MSAA back buffer when requested.
 
-            if (frontFBO == null) {
-              // init
-              frontFBO = new FBObject();
-              frontFBO.reset(gl, pg.width, pg.height);
-              frontFBO.attachTexture2D(gl, 0, true);
-              sinkFBO = backFBO.getSamplingSinkFBO();
+            if (1 < pg.parent.frameCount) {
+              if (frontFBO == null) {
+                // init
+                System.out.println("init");
+                frontFBO = new FBObject();
+                frontFBO.reset(gl, pg.width, pg.height);
+                frontFBO.attachTexture2D(gl, 0, true);
+                sinkFBO = backFBO.getSamplingSinkFBO();
+              } else {
+                // swap
+                System.out.println("swap");
+                FBObject temp = sinkFBO;
+                sinkFBO = frontFBO;
+                frontFBO = temp;
+                backFBO.setSamplingSink(sinkFBO);
+              }
             } else {
-              // swap
-              FBObject temp = sinkFBO;
-              sinkFBO = frontFBO;
-              frontFBO = temp;
-              backFBO.setSamplingSink(sinkFBO);
+              frontFBO = sinkFBO = backFBO.getSamplingSinkFBO();
             }
 
-            backTexAttach  = (FBObject.TextureAttachment) sinkFBO.
+            backTexAttach  = (FBObject.TextureAttachment)sinkFBO.
                              getColorbuffer(0);
             frontTexAttach = (FBObject.TextureAttachment)frontFBO.
                              getColorbuffer(0);

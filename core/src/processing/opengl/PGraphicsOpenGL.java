@@ -5790,7 +5790,7 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  protected void bindBackTexture() {
+  protected void bindFrontTexture() {
     if (primarySurface) {
       pgl.bindFrontTexture();
     } else {
@@ -5800,7 +5800,7 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  protected void unbindBackTexture() {
+  protected void unbindFrontTexture() {
     if (primarySurface) {
       pgl.unbindFrontTexture();
     } else {
@@ -6171,9 +6171,9 @@ public class PGraphicsOpenGL extends PGraphics {
 
     if (restoreSurface) {
       restoreSurfaceFromPixels();
-      if (1 < parent.frameCount) {
+      //if (1 < parent.frameCount) {
       restoreSurface = false;
-      }
+      //}
     }
 
     if (hints[DISABLE_DEPTH_MASK]) {
@@ -6612,7 +6612,7 @@ public class PGraphicsOpenGL extends PGraphics {
       if (-1 < bufferLoc) {
         pgl.requestFBOLayer();
         pgl.activeTexture(PGL.TEXTURE0 + bufferUnit);
-        pgCurrent.unbindBackTexture();
+        pgCurrent.unbindFrontTexture();
         pgl.activeTexture(PGL.TEXTURE0);
       }
 
@@ -6649,7 +6649,7 @@ public class PGraphicsOpenGL extends PGraphics {
         bufferUnit = getLastTexUnit() + 1;
         setUniformValue(bufferLoc, bufferUnit);
         pgl.activeTexture(PGL.TEXTURE0 + bufferUnit);
-        pgCurrent.bindBackTexture();
+        pgCurrent.bindFrontTexture();
       } else {
         bufferUnit = -1;
       }
