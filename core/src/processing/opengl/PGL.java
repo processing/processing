@@ -1129,7 +1129,7 @@ public class PGL {
       fcount = 0;
       lastm = m;
     }
-    if (currentFps < 0.25f * targetFps) {
+    if (currentFps < targetFps/2) {
       finish();
     }
   }
