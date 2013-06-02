@@ -1137,8 +1137,11 @@ public class PGL {
   }
 
 
+  protected boolean prevCanDraw = false;
   protected void requestDraw() {
-    if (pg.initialized && pg.parent.canDraw()) {
+    boolean canDraw = pg.parent.canDraw();
+    System.out.println(canDraw + " " + pg.parent.frameCount);
+    if (pg.initialized && (canDraw || prevCanDraw)) {
       try {
         drawLatch = new CountDownLatch(1);
         if (WINDOW_TOOLKIT == AWT) {
@@ -1151,6 +1154,9 @@ public class PGL {
         } catch (InterruptedException e) {
           e.printStackTrace();
         }
+
+        if (canDraw) prevCanDraw = true;
+        else prevCanDraw = false;
       } catch (GLException e) {
         // Unwrap GLException so that only the causing exception is shown.
         Throwable tr = e.getCause();
@@ -1160,6 +1166,15 @@ public class PGL {
           throw new RuntimeException(tr);
         }
       }
+    }
+  }
+
+
+  protected void swapBuffers() {
+    if (WINDOW_TOOLKIT == AWT) {
+      canvasAWT.swapBuffers();
+    } else if (WINDOW_TOOLKIT == NEWT) {
+      window.swapBuffers();
     }
   }
 
@@ -2538,6 +2553,7 @@ public class PGL {
     @Override
     public void display(GLAutoDrawable glDrawable) {
       if (drawLatch == null || drawLatch.getCount() == 0) return;
+      System.out.println("display " + pg.parent.frameCount);
       drawable = glDrawable;
       context = glDrawable.getContext();
 
