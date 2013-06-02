@@ -5149,7 +5149,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void restoreSurfaceFromPixels() {
-    System.out.println("restoreSurfaceFromPixels");
     drawPixels(0, 0, width, height);
   }
 
@@ -5953,19 +5952,6 @@ public class PGraphicsOpenGL extends PGraphics {
     if (pgl.isFBOBacked()) {
       texture = pgl.wrapBackTexture(texture);
       ptexture = pgl.wrapFrontTexture(ptexture);
-
-      /*
-      if (texture == null || pgl.backTextureChanged()) {
-        texture = pgl.wrapBackTexture();
-      } else {
-        texture.glName = pgl.getBackTextureName();
-      }
-      if (ptexture == null || pgl.frontTextureChanged()) {
-        ptexture = pgl.wrapFrontTexture();
-      } else {
-        ptexture.glName = pgl.getFrontTextureName();
-      }
-      */
     }
   }
 
