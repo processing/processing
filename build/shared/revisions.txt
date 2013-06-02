@@ -90,6 +90,12 @@ And just like that, here we are at 2.0.
 + P2D, P3D drawing errors in static mode, gray screen
   https://github.com/processing/processing/issues/1648
 
++ Window shorter than 127 pixels high is not rendered correctly in P2D/P3D
+  https://github.com/processing/processing/issues/1683
+
++ Multiple screen crash with OpenGL
+  https://github.com/processing/processing/issues/1515
+
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
