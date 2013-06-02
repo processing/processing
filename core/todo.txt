@@ -41,6 +41,8 @@ A   https://github.com/processing/processing/issues/1700
 o warning message present
 o   Deleted 1 texture objects, 0 remaining
 A   fixed in last round
+A P2D, P3D drawing errors in static mode, gray screen
+A   https://github.com/processing/processing/issues/1648
 
 
 _ data decision stuff

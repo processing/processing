@@ -26,12 +26,6 @@ And just like that, here we are at 2.0.
 + patch to make font textures smaller in P2D/P3D
   https://github.com/processing/processing/pull/1775
 
-+ A handful of tweaks to the user interface, also incorporating 
-  built-in fonts for the UI and for the default editor font.
-  Incorporates some of the feedback suggested here, 
-  while trying to preserve the look & feel of the PDE.
-  https://github.com/processing/processing/pull/1822
-
 + .png data written when .jpg file specified with save/saveFrame()
   https://github.com/processing/processing/issues/1810
 
@@ -40,6 +34,20 @@ And just like that, here we are at 2.0.
 
 + PGraphics objects that used JAVA2D weren't updating when used with OpenGL
   https://github.com/processing/processing/issues/1786
+
+[ changes ] 
+
++ A handful of tweaks to smooth out the 2.0 user interface. 
+  Incorporates some of the feedback suggested here: 
+  https://github.com/processing/processing/pull/1822
+  while trying to preserve the look & feel of our PDE design.
+
++ Added built-in fonts (Source Sans and Source Code from Adobe)
+  as the default font for the UI and editor. As usual, the editor 
+  font can be changed in preferences.txt. And if you already have 
+  a preferences.txt file, the new font won't override it. Fonts
+  for GUI elements can be modified in lib/theme.txt, but be careful
+  with those, and don't complain if/when they break.
 
 [ andres on the attack ] 
 
@@ -78,6 +86,9 @@ And just like that, here we are at 2.0.
 
 + textureWrap(REPEAT) + textureMode(IMAGE) clamps positive coordinates
   https://github.com/processing/processing/issues/1809
+
++ P2D, P3D drawing errors in static mode, gray screen
+  https://github.com/processing/processing/issues/1648
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
