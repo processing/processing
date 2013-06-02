@@ -24,30 +24,33 @@ void draw() {
   background(51);
 
   lottery.shuffle();
-  
-  showList(lottery,16,48);
-  showList(results,16,100);
-  showList(ticket,16,140);
-  
+
+  showList(lottery, 16, 48);
+  showList(results, 16, 100);
+  showList(ticket, 16, 140);
+
   for (int i = 0; i < results.size(); i++) {
     if (results.get(i) == ticket.get(i)) {
-      fill(0,255,0,100);
-    } else {
-      fill(255,0,0,100);
+      fill(0, 255, 0, 100);
+    } 
+    else {
+      fill(255, 0, 0, 100);
     }
     ellipse(16+i*32, 140, 24, 24);
   }
 
   if (frameCount % 30 == 0) {
+    // Pick a new lottery number!
     if (results.size() < 5) {
-    int val = lottery.get(0);
-    lottery.remove(0);
-    results.append(val);
+      int val = lottery.get(0);
+      lottery.remove(0);
+      results.append(val);
     } else {
-     for (int i = 0; i < results.size(); i++) {
-       lottery.append(results.get(i)); 
-     }
-     results.clear();
+      // Ok we picked five numbers, let's reset
+      for (int i = 0; i < results.size(); i++) {
+        lottery.append(results.get(i));
+      }
+      results.clear();
     }
   }
 }
