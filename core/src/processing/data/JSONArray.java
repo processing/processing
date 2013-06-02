@@ -391,12 +391,12 @@ public class JSONArray {
   /**
    * Get the JSONArray associated with an index.
    * 
-   * @param index The index must be between 0 and length() - 1.
-   * @return      A JSONArray value.
+   * @webref jsonobject:method
+   * @brief Gets the JSONArray associated with an index value
+   * @param index must be between 0 and length() - 1.
+   * @return A JSONArray value.
    * @throws JSONException If there is no value for the index. or if the
    * value is not a JSONArray
-   * @webref jsonarray:method
-   * @brief Get the JSONArray associated with an index
    */
   public JSONArray getJSONArray(int index) {
     Object object = this.get(index);
@@ -410,12 +410,12 @@ public class JSONArray {
   /**
    * Get the JSONObject associated with an index.
    * 
-   * @param index subscript
-   * @return      A JSONObject value.
+   * @webref jsonobject:method
+   * @brief Gets the JSONObject associated with an index value
+   * @param index the index value of the object to get
+   * @return A JSONObject value.
    * @throws JSONException If there is no value for the index or if the
    * value is not a JSONObject
-   * @webref jsonarray:method
-   * @brief Get the JSONObject associated with an index
    */
   public JSONObject getJSONObject(int index) {
     Object object = this.get(index);
