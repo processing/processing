@@ -432,7 +432,7 @@ public class JSONArray {
    * Get this entire array as a String array. 
    * 
    * @webref jsonarray:method
-   * @brief Get this entire array as a String array
+   * @brief Gets the entire array as an array of Strings
    */
   public String[] getStringArray() {
     String[] outgoing = new String[size()];
@@ -447,7 +447,7 @@ public class JSONArray {
    * Get this entire array as an int array. Everything must be an int. 
    * 
    * @webref jsonarray:method
-   * @brief Get this entire array as an int array
+   * @brief Gets the entire array as array of ints
    */
   public int[] getIntArray() {
     int[] outgoing = new int[size()];
@@ -823,7 +823,7 @@ public class JSONArray {
    *  it out.
    *
    * @webref jsonarray:method
-   * @brief Put a key/String pair in the JSONArray
+   * @brief Put a String value in the JSONArray
    * @param index an index value
    * @param value the value to assign
    * @return this.
@@ -841,7 +841,7 @@ public class JSONArray {
    *  it out.
    *
    * @webref jsonarray:method
-   * @brief Put a key/int pair in the JSONArray
+   * @brief Put an int value in the JSONArray
    * @param index an index value
    * @param value the value to assign
    * @return this.
@@ -874,7 +874,7 @@ public class JSONArray {
    * setDouble(value).
    *
    * @webref jsonarray:method
-   * @brief Put a key/float pair in the JSONArray
+   * @brief Put a float value in the JSONArray
    * @param index an index value
    * @param value the value to assign
    * @return this.
@@ -907,7 +907,7 @@ public class JSONArray {
    * necessary to pad it out.
    *
    * @webref jsonarray:method
-   * @brief Put a key/boolean pair in the JSONArray
+   * @brief Put a boolean value in the JSONArray
    * @param index an index value
    * @param value the value to assign
    * @return this.
