@@ -280,6 +280,9 @@ public class JSONArray {
    * @param index must be between 0 and length() - 1
    * @return      A string value.
    * @throws JSONException If there is no string value for the index.
+   * @see JSONArray#getInt(int)
+   * @see JSONArray#getFloat(int)
+   * @see JSONArray#getBoolean(int)
    */
   public String getString(int index) {
     Object object = this.get(index);
@@ -298,6 +301,9 @@ public class JSONArray {
    * @param index must be between 0 and length() - 1
    * @return The value.
    * @throws JSONException If the key is not found or if the value is not a number.
+   * @see JSONArray#getFloat(int)
+   * @see JSONArray#getString(int)
+   * @see JSONArray#getBoolean(int)
    */
   public int getInt(int index) {
     Object object = this.get(index);
@@ -338,6 +344,9 @@ public class JSONArray {
    * @webref jsonarray:method
    * @brief Gets the float value associated with an index
    * @param index must be between 0 and length() - 1
+   * @see JSONArray#getInt(int)
+   * @see JSONArray#getString(int)
+   * @see JSONArray#getBoolean(int)
    */
   public float getFloat(int index) {
     return (float) getDouble(index);
@@ -374,6 +383,9 @@ public class JSONArray {
    * @return      The truth.
    * @throws JSONException If there is no value for the index or if the
    *  value is not convertible to boolean.
+   * @see JSONArray#getInt(int)
+   * @see JSONArray#getFloat(int)
+   * @see JSONArray#getString(int)
    */
   public boolean getBoolean(int index) {
     Object object = this.get(index);
@@ -399,6 +411,9 @@ public class JSONArray {
    * @return A JSONArray value.
    * @throws JSONException If there is no value for the index. or if the
    * value is not a JSONArray
+   * @see JSONArray#getJSONObject(int)
+   * @see JSONArray#setJSONObject(int, JSONObject)
+   * @see JSONArray#setJSONArray(int, JSONArray)
    */
   public JSONArray getJSONArray(int index) {
     Object object = this.get(index);
@@ -418,6 +433,9 @@ public class JSONArray {
    * @return A JSONObject value.
    * @throws JSONException If there is no value for the index or if the
    * value is not a JSONObject
+   * @see JSONArray#getJSONArray(int)
+   * @see JSONArray#setJSONObject(int, JSONObject)
+   * @see JSONArray#setJSONArray(int, JSONArray)
    */
   public JSONObject getJSONObject(int index) {
     Object object = this.get(index);
@@ -433,6 +451,7 @@ public class JSONArray {
    * 
    * @webref jsonarray:method
    * @brief Gets the entire array as an array of Strings
+   * @see JSONArray#getIntArray()
    */
   public String[] getStringArray() {
     String[] outgoing = new String[size()];
@@ -448,6 +467,7 @@ public class JSONArray {
    * 
    * @webref jsonarray:method
    * @brief Gets the entire array as array of ints
+   * @see JSONArray#getStringArray()
    */
   public int[] getIntArray() {
     int[] outgoing = new int[size()];
@@ -682,6 +702,8 @@ public class JSONArray {
    * @brief Appends a value, increasing the array's length by one
    * @param value a String value
    * @return this.
+   * @see JSONArray#size()
+   * @see JSONArray#remove(int)
    */
   public JSONArray append(String value) {
     this.append((Object)value);
@@ -836,6 +858,9 @@ public class JSONArray {
    * @param value the value to assign
    * @return this.
    * @throws JSONException If the index is negative.
+   * @see JSONArray#setInt(int, int)
+   * @see JSONArray#setFloat(int, float)
+   * @see JSONArray#setBoolean(int, boolean)
    */
   public JSONArray setString(int index, String value) {
     this.set(index, value);
@@ -854,6 +879,9 @@ public class JSONArray {
    * @param value the value to assign
    * @return this.
    * @throws JSONException If the index is negative.
+   * @see JSONArray#setFloat(int, float)
+   * @see JSONArray#setString(int, String)
+   * @see JSONArray#setBoolean(int, boolean)
    */
   public JSONArray setInt(int index, int value) {
     this.set(index, new Integer(value));
@@ -888,6 +916,9 @@ public class JSONArray {
    * @return this.
    * @throws RuntimeException If the index is negative or if the value is
    * not finite.
+   * @see JSONArray#setInt(int, int)
+   * @see JSONArray#setString(int, String)
+   * @see JSONArray#setBoolean(int, boolean)
    */
   public JSONArray setFloat(int index, float value) {
     return setDouble(index, value);
@@ -920,6 +951,9 @@ public class JSONArray {
    * @param value the value to assign
    * @return this.
    * @throws JSONException If the index is negative.
+   * @see JSONArray#setInt(int, int)
+   * @see JSONArray#setFloat(int, float)
+   * @see JSONArray#setString(int, String)
    */
   public JSONArray setBoolean(int index, boolean value) {
     return set(index, value ? Boolean.TRUE : Boolean.FALSE);
@@ -945,6 +979,9 @@ public class JSONArray {
    * @brief Sets the JSONArray value associated with an index value
    * @param index the index value to target
    * @param value the value to assign
+   * @see JSONArray#setJSONObject(int, JSONObject)
+   * @see JSONArray#getJSONObject(int)
+   * @see JSONArray#getJSONArray(int)
    */
   public JSONArray setJSONArray(int index, JSONArray value) {
     set(index, value);
@@ -956,6 +993,9 @@ public class JSONArray {
    * @brief Sets the JSONObject value associated with an index value
    * @param index the index value to target
    * @param value the value to assign
+   * @see JSONArray#setJSONArray(int, JSONArray)
+   * @see JSONArray#getJSONObject(int)
+   * @see JSONArray#getJSONArray(int)
    */
   public JSONArray setJSONObject(int index, JSONObject value) {
     set(index, value);
@@ -998,6 +1038,8 @@ public class JSONArray {
    * @webref jsonarray:method
    * @brief Gets the number of elements in the JSONArray
    * @return The length (or size).
+   * @see JSONArray#append(String)
+   * @see JSONArray#remove(int)
    */
   public int size() {
     return myArrayList.size();
@@ -1022,6 +1064,8 @@ public class JSONArray {
    * @brief Removes an element
    * @param index the index value of the element to be removed
    * @return The value that was associated with the index, or null if there was no value.
+   * @see JSONArray#size()
+   * @see JSONArray#append(String)
    */
   public Object remove(int index) {
     Object o = this.opt(index);
