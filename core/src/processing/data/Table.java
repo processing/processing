@@ -1097,7 +1097,13 @@ public class Table {
       for (int col = 0; col < getColumnCount(); col++) {
         switch (columnTypes[col]) {
         case STRING:
-          output.writeUTF(row.getString(col));
+          String str = row.getString(col);
+          if (str == null) {
+            output.writeBoolean(false);
+          } else {
+            output.writeBoolean(true);
+            output.writeUTF(str);
+          }
           break;
         case INT:
           output.writeInt(row.getInt(col));
@@ -1191,7 +1197,11 @@ public class Table {
       for (int col = 0; col < columnCount; col++) {
         switch (columnTypes[col]) {
         case STRING:
-          setString(row, col, input.readUTF());
+          String str = null;
+          if (input.readBoolean()) {
+            str = input.readUTF();
+          }
+          setString(row, col, str);
           break;
         case INT:
           setInt(row, col, input.readInt());

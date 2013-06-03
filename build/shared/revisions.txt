@@ -49,6 +49,13 @@ And just like that, here we are at 2.0.
   for GUI elements can be modified in lib/theme.txt, but be careful
   with those, and don't complain if/when they break.
 
++ Added several additional functions for data classes. More details 
+  in the reference and coming soon.
+
++ Changed how null values were handled with binary tables. If anyone
+  was using the (undocument) .bin format for Table, you'll need to 
+  re-save your data.
+
 [ andres on the attack ] 
 
 + PImage not drawn after resize()/get() in P2D/P3D
