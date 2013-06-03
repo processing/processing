@@ -1581,7 +1581,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   @Override
   public void requestFocus() {  // ignore
-    pgl.requestFocus();
+    //pgl.requestFocus();
   }
 
 
