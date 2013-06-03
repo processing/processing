@@ -1008,6 +1008,13 @@ public class XML implements Serializable {
         return singleLine;
       }
 
+      // Might just be whitespace, which won't be valid XML. And in that case,
+      // even adding the decl to the top seems dumb, so don't spew out a decl.
+      // https://github.com/processing/processing/issues/1796
+      if (singleLine.trim().length() == 0) {
+        return "";
+      }
+
       // Since the indent is not -1, bring back the XML declaration
       //transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
 
@@ -1016,8 +1023,13 @@ public class XML implements Serializable {
 //      DOMSource source = new DOMSource(node);
       Source source = new StreamSource(new StringReader(singleLine));
       transformer.transform(source, xmlOutput);
-      return decl + sep + stringWriter.toString();
-//      return xmlOutput.getWriter().toString();
+      String outgoing = stringWriter.toString();
+      if (!outgoing.startsWith(decl)) {
+        // Add the XML declaration to the top if it's not there already
+        return decl + sep + outgoing;
+      } else {
+        return outgoing;
+      }
 
     } catch (Exception e) {
       e.printStackTrace();
