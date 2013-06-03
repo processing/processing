@@ -14,11 +14,11 @@ int[] backgroundPixels;
 Capture video;
 
 void setup() {
-  size(640, 480, P2D); 
+  size(640, 480); 
   
   // This the default video input, see the GettingStartedCapture 
   // example if it creates an error
-  video = new Capture(this, 160, 120);
+  //video = new Capture(this, 160, 120);
   video = new Capture(this, width, height);
   
   // Start capturing the images from the camera

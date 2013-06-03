@@ -1,4 +1,4 @@
-0218 core (2.0b10 or 2.0)
+0218 core (2.0)
 X textureWrap(REPEAT) + textureMode(IMAGE) clamps positive coordinates
 X   https://github.com/processing/processing/issues/1809
 X saveJSONArray() loops forever, triggers error

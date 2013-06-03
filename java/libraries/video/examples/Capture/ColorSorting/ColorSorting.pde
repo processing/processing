@@ -20,7 +20,7 @@ int[] bright;
 int increment = 5;
 
 void setup() {
-  size(800, 600, P2D);
+  size(800, 600);
   
   // This the default video input, see the GettingStartedCapture 
   // example if it creates an error
