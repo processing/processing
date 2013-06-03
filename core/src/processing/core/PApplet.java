@@ -2157,7 +2157,7 @@ public class PApplet extends Applet
             //requestFocusInWindow();
 
             // For 2.0, pass this to the renderer, to lend a hand to OpenGL
-            g.requestFocus(PApplet.this);
+            g.requestFocus();
           }
         });
       }

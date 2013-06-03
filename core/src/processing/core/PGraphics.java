@@ -808,8 +808,10 @@ public class PGraphics extends PImage implements PConstants {
    * Handle grabbing the focus from the parent applet. Other renderers can
    * override this if handling needs to be different.
    */
-  public void requestFocus(Component parent) {  // ignore
-    parent.requestFocusInWindow();
+  public void requestFocus() {  // ignore
+    if (parent != null) {
+      parent.requestFocusInWindow();
+    }
   }
 
 
