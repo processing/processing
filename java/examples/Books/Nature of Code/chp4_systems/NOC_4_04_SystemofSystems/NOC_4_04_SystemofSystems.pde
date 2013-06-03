@@ -21,6 +21,9 @@ void draw() {
     ps.run();
     ps.addParticle(); 
   }
+  
+  fill(0);
+  text("click mouse to add particle systems",10,height-30);
 }
 
 void mousePressed() {
