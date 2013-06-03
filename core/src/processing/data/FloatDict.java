@@ -491,6 +491,9 @@ public class FloatDict {
 
 
   public String removeIndex(int index) {
+    if (index < 0 || index >= count) {
+      throw new ArrayIndexOutOfBoundsException(index);
+    }
     String key = keys[index];
     //System.out.println("index is " + which + " and " + keys[which]);
     indices.remove(keys[index]);

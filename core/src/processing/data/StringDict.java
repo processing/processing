@@ -292,6 +292,9 @@ public class StringDict {
 
 
   public String removeIndex(int index) {
+    if (index < 0 || index >= count) {
+      throw new ArrayIndexOutOfBoundsException(index);
+    }
     //System.out.println("index is " + which + " and " + keys[which]);
     String key = keys[index];
     indices.remove(key);
