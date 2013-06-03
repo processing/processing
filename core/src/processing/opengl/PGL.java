@@ -562,6 +562,7 @@ public class PGL {
       pg.parent.setLayout(new BorderLayout());
       pg.parent.add(canvasAWT, BorderLayout.CENTER);
       System.out.println("focus requested result was " + canvasAWT.requestFocusInWindow());
+
       pg.parent.removeListeners(pg.parent);
       pg.parent.addListeners(canvasAWT);
 
@@ -582,6 +583,7 @@ public class PGL {
 
       pg.parent.setLayout(new BorderLayout());
       pg.parent.add(canvasNEWT, BorderLayout.CENTER);
+      System.out.println("focus requested result was " + canvasNEWT.requestFocusInWindow());
 
       if (EVENTS_TOOLKIT == NEWT) {
         NEWTMouseListener mouseListener = new NEWTMouseListener();
@@ -1134,7 +1136,6 @@ public class PGL {
 
   protected void requestFocus() {
     if (canvas != null) {
-      System.out.println("request focus for the GL canvas");
       canvas.requestFocus();
     }
   }
