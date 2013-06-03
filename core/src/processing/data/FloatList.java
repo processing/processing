@@ -132,41 +132,38 @@ public class FloatList implements Iterable<Float> {
    * @webref floatlist:method
    * @brief Remove an element from the specified index
    */
-  public void remove(int index) {
+  public float remove(int index) {
+    float entry = data[index];
 //    int[] outgoing = new int[count - 1];
 //    System.arraycopy(data, 0, outgoing, 0, index);
 //    count--;
 //    System.arraycopy(data, index + 1, outgoing, 0, count - index);
 //    data = outgoing;
+    // For most cases, this actually appears to be faster
+    // than arraycopy() on an array copying into itself.
     for (int i = index; i < count-1; i++) {
       data[i] = data[i+1];
     }
     count--;
+    return entry;
   }
 
 
-  /** Remove the first instance of a particular value */
-  public boolean removeValue(float value) {
-    if (Float.isNaN(value)) {
-      for (int i = 0; i < count; i++) {
-        if (Float.isNaN(data[i])) {
-          remove(i);
-          return true;
-        }
-      }
-    } else {
-      int index = index(value);
-      if (index != -1) {
-        remove(index);
-        return true;
-      }
+  // Remove the first instance of a particular value,
+  // and return the index at which it was found.
+  public int removeValue(int value) {
+    int index = index(value);
+    if (index != -1) {
+      remove(index);
+      return index;
     }
-    return false;
+    return -1;
   }
 
 
-  /** Remove all instances of a particular value */
-  public boolean removeValues(float value) {
+  // Remove all instances of a particular value,
+  // and return the number of values found and removed
+  public int removeValues(int value) {
     int ii = 0;
     if (Float.isNaN(value)) {
       for (int i = 0; i < count; i++) {
@@ -181,11 +178,9 @@ public class FloatList implements Iterable<Float> {
         }
       }
     }
-    if (count == ii) {
-      return false;
-    }
+    int removed = count - ii;
     count = ii;
-    return true;
+    return removed;
   }
 
 
@@ -387,15 +382,6 @@ public class FloatList implements Iterable<Float> {
   }
 
 
-  // !!! TODO this is not yet correct, because it's not being reset when
-  // the rest of the entries are changed
-//  protected void cacheIndices() {
-//    indexCache = new HashMap<Integer, Integer>();
-//    for (int i = 0; i < count; i++) {
-//      indexCache.put(data[i], i);
-//    }
-//  }
-
   /**
    * @webref floatlist:method
    * @brief Check if a number is a part of the list
@@ -418,11 +404,6 @@ public class FloatList implements Iterable<Float> {
   }
 
 
-  // doesn't really make sense with float.. use add() if you need it
-//  public void increment(int index) {
-//    data[index]++;
-//  }
-
   /**
    * @webref floatlist:method
    * @brief Add to a value
@@ -430,6 +411,7 @@ public class FloatList implements Iterable<Float> {
   public void add(int index, float amount) {
     data[index] += amount;
   }
+
 
   /**
    * @webref floatlist:method
@@ -439,6 +421,7 @@ public class FloatList implements Iterable<Float> {
     data[index] -= amount;
   }
 
+
   /**
    * @webref floatlist:method
    * @brief Multiply a value
@@ -446,6 +429,7 @@ public class FloatList implements Iterable<Float> {
   public void mult(int index, float amount) {
     data[index] *= amount;
   }
+
 
   /**
    * @webref floatlist:method
@@ -455,64 +439,86 @@ public class FloatList implements Iterable<Float> {
     data[index] /= amount;
   }
 
+
+  private void checkMinMax(String functionName) {
+    if (count == 0) {
+      String msg =
+        String.format("Cannot use %s() on an empty %s.",
+                      functionName, getClass().getSimpleName());
+      throw new RuntimeException(msg);
+    }
+  }
+
+
   /**
    * @webref floatlist:method
    * @brief Return the smallest value
    */
   public float min() {
-    if (count == 0) {
-      throw new ArrayIndexOutOfBoundsException("Cannot use min() on IntList of length 0.");
-    }
-    if (data.length == 0) {
-      return Float.NaN;
-    }
+    checkMinMax("min");
+    int index = minIndex();
+    return index == -1 ? Float.NaN : data[index];
+  }
+
+
+  public int minIndex() {
+    checkMinMax("minIndex");
     float m = Float.NaN;
-    for (int i = 0; i < data.length; i++) {
+    int mi = -1;
+    for (int i = 0; i < count; i++) {
       // find one good value to start
       if (data[i] == data[i]) {
         m = data[i];
+        mi = i;
 
         // calculate the rest
-        for (int j = i+1; j < data.length; j++) {
+        for (int j = i+1; j < count; j++) {
           float d = data[j];
           if (!Float.isNaN(d) && (d < m)) {
             m = data[j];
+            mi = j;
           }
         }
         break;
       }
     }
-    return m;
+    return mi;
   }
+
 
   /**
    * @webref floatlist:method
    * @brief Return the largest value
    */
   public float max() {
-    if (count == 0) {
-      throw new ArrayIndexOutOfBoundsException("Cannot use max() on IntList of length 0.");
-    }
-    if (data.length == 0) {
-      return Float.NaN;
-    }
+    checkMinMax("max");
+    int index = maxIndex();
+    return index == -1 ? Float.NaN : data[index];
+  }
+
+
+  public int maxIndex() {
+    checkMinMax("maxIndex");
     float m = Float.NaN;
-    for (int i = 0; i < data.length; i++) {
+    int mi = -1;
+    for (int i = 0; i < count; i++) {
       // find one good value to start
       if (data[i] == data[i]) {
         m = data[i];
+        mi = i;
 
         // calculate the rest
-        for (int j = i+1; j < data.length; j++) {
+        for (int j = i+1; j < count; j++) {
           float d = data[j];
           if (!Float.isNaN(d) && (d > m)) {
             m = data[j];
+            mi = j;
           }
         }
         break;
       }
     }
-    return m;
+    return mi;
   }
 
 

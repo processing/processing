@@ -133,7 +133,8 @@ public class StringList implements Iterable<String> {
    * @webref stringlist:method
    * @brief Remove an element from the specified index
    */
-  public void remove(int index) {
+  public String remove(int index) {
+    String entry = data[index];
 //    int[] outgoing = new int[count - 1];
 //    System.arraycopy(data, 0, outgoing, 0, index);
 //    count--;
@@ -143,31 +144,32 @@ public class StringList implements Iterable<String> {
       data[i] = data[i+1];
     }
     count--;
+    return entry;
   }
 
 
-  /** Remove the first instance of a particular value */
-  public boolean removeValue(String value) {
+  // Remove the first instance of a particular value and return its index.
+  public int removeValue(String value) {
     if (value == null) {
       for (int i = 0; i < count; i++) {
         if (data[i] == null) {
           remove(i);
-          return true;
+          return i;
         }
       }
     } else {
       int index = index(value);
       if (index != -1) {
         remove(index);
-        return true;
+        return index;
       }
     }
-    return false;
+    return -1;
   }
 
 
-  /** Remove all instances of a particular value */
-  public boolean removeValues(String value) {
+  // Remove all instances of a particular value and return the count removed.
+  public int removeValues(String value) {
     int ii = 0;
     if (value == null) {
       for (int i = 0; i < count; i++) {
@@ -182,46 +184,48 @@ public class StringList implements Iterable<String> {
         }
       }
     }
-    boolean changed = count == ii;
+    int removed = count - ii;
     count = ii;
-    return changed;
+    return removed;
   }
 
 
-  public boolean replaceValue(String value, String newValue) {
+  // replace the first value that matches, return the index that was replaced
+  public int replaceValue(String value, String newValue) {
     if (value == null) {
       for (int i = 0; i < count; i++) {
         if (data[i] == null) {
           data[i] = newValue;
-          return true;
+          return i;
         }
       }
     } else {
       for (int i = 0; i < count; i++) {
         if (value.equals(data[i])) {
           data[i] = newValue;
-          return true;
+          return i;
         }
       }
     }
-    return false;
+    return -1;
   }
 
 
-  public boolean replaceValues(String value, String newValue) {
-    boolean changed = false;
+  // replace all values that match, return the count of those replaced
+  public int replaceValues(String value, String newValue) {
+    int changed = 0;
     if (value == null) {
       for (int i = 0; i < count; i++) {
         if (data[i] == null) {
           data[i] = newValue;
-          changed = true;
+          changed++;
         }
       }
     } else {
       for (int i = 0; i < count; i++) {
         if (value.equals(data[i])) {
           data[i] = newValue;
-          changed = true;
+          changed++;
         }
       }
     }

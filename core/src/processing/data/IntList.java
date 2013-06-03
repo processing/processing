@@ -137,41 +137,47 @@ public class IntList implements Iterable<Integer> {
    * @webref floatlist:method
    * @brief Remove an element from the specified index
    */
-  public void remove(int index) {
+  public int remove(int index) {
+    int entry = data[index];
 //    int[] outgoing = new int[count - 1];
 //    System.arraycopy(data, 0, outgoing, 0, index);
 //    count--;
 //    System.arraycopy(data, index + 1, outgoing, 0, count - index);
 //    data = outgoing;
+    // For most cases, this actually appears to be faster
+    // than arraycopy() on an array copying into itself.
     for (int i = index; i < count-1; i++) {
       data[i] = data[i+1];
     }
     count--;
+    return entry;
   }
 
 
-  /** Remove the first instance of a particular value */
-  public boolean removeValue(int value) {
+  // Remove the first instance of a particular value,
+  // and return the index at which it was found.
+  public int removeValue(int value) {
     int index = index(value);
     if (index != -1) {
       remove(index);
-      return true;
+      return index;
     }
-    return false;
+    return -1;
   }
 
 
-  /** Remove all instances of a particular value */
-  public boolean removeValues(int value) {
+  // Remove all instances of a particular value,
+  // and return the number of values found and removed
+  public int removeValues(int value) {
     int ii = 0;
     for (int i = 0; i < count; i++) {
       if (data[i] != value) {
         data[ii++] = data[i];
       }
     }
-    boolean changed = count == ii;
+    int removed = count - ii;
     count = ii;
-    return changed;
+    return removed;
   }
 
 
@@ -396,34 +402,74 @@ public class IntList implements Iterable<Integer> {
     data[index] /= amount;
   }
 
+
+  private void checkMinMax(String functionName) {
+    if (count == 0) {
+      String msg =
+        String.format("Cannot use %s() on an empty %s.",
+                      functionName, getClass().getSimpleName());
+      throw new RuntimeException(msg);
+    }
+  }
+
+
   /**
    * @webref floatlist:method
    * @brief Return the smallest value
    */
   public int min() {
-    if (count == 0) {
-      throw new ArrayIndexOutOfBoundsException("Cannot use min() on IntList of length 0.");
-    }
+    checkMinMax("min");
     int outgoing = data[0];
-    for (int i = 1; i < data.length; i++) {
+    for (int i = 1; i < count; i++) {
       if (data[i] < outgoing) outgoing = data[i];
     }
     return outgoing;
   }
+
+
+  // returns the index of the minimum value.
+  // if there are ties, it returns the first one found.
+  public int minIndex() {
+    checkMinMax("minIndex");
+    int value = data[0];
+    int index = 0;
+    for (int i = 1; i < count; i++) {
+      if (data[i] < value) {
+        value = data[i];
+        index = i;
+      }
+    }
+    return index;
+  }
+
 
   /**
    * @webref floatlist:method
    * @brief Return the largest value
    */
   public int max() {
-    if (count == 0) {
-      throw new ArrayIndexOutOfBoundsException("Cannot use max() on IntList of length 0.");
-    }
+    checkMinMax("max");
     int outgoing = data[0];
-    for (int i = 1; i < data.length; i++) {
+    for (int i = 1; i < count; i++) {
       if (data[i] > outgoing) outgoing = data[i];
     }
     return outgoing;
+  }
+
+
+  // returns the index of the maximum value.
+  // if there are ties, it returns the first one found.
+  public int maxIndex() {
+    checkMinMax("maxIndex");
+    int value = data[0];
+    int index = 0;
+    for (int i = 1; i < count; i++) {
+      if (data[i] > value) {
+        value = data[i];
+        index = i;
+      }
+    }
+    return index;
   }
 
 

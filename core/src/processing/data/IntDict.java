@@ -355,6 +355,7 @@ public class IntDict {
     add(key, 1);
   }
 
+
   /**
    * @webref intdict:method
    * @brief Add to a value
@@ -368,6 +369,7 @@ public class IntDict {
     }
   }
 
+
   /**
    * @webref intdict:method
    * @brief Subtract from a value
@@ -375,6 +377,7 @@ public class IntDict {
   public void sub(String key, int amount) {
     add(key, -amount);
   }
+
 
   /**
    * @webref intdict:method
@@ -387,6 +390,7 @@ public class IntDict {
     }
   }
 
+
   /**
    * @webref intdict:method
    * @brief Divide a value
@@ -396,6 +400,74 @@ public class IntDict {
     if (index != -1) {
       values[index] /= amount;
     }
+  }
+
+
+  private void checkMinMax(String functionName) {
+    if (count == 0) {
+      String msg =
+        String.format("Cannot use %s() on an empty %s.",
+                      functionName, getClass().getSimpleName());
+      throw new RuntimeException(msg);
+    }
+  }
+
+
+  // return the index of the minimum value
+  public int minIndex() {
+    checkMinMax("minIndex");
+    int index = 0;
+    int value = values[0];
+    for (int i = 1; i < count; i++) {
+      if (values[i] < value) {
+        index = i;
+        value = values[i];
+      }
+    }
+    return index;
+  }
+
+
+  // return the minimum value
+  public int minValue() {
+    checkMinMax("minValue");
+    return values[minIndex()];
+  }
+
+
+  // return the key for the minimum value
+  public String minKey() {
+    checkMinMax("minKey");
+    return keys[minIndex()];
+  }
+
+
+  // return the index of the max value
+  public int maxIndex() {
+    checkMinMax("maxIndex");
+    int index = 0;
+    int value = values[0];
+    for (int i = 1; i < count; i++) {
+      if (values[i] > value) {
+        index = i;
+        value = values[i];
+      }
+    }
+    return index;
+  }
+
+
+  // return the maximum value
+  public int maxValue() {
+    checkMinMax("maxValue");
+    return values[maxIndex()];
+  }
+
+
+  // return the key for the maximum value
+  public String maxKey() {
+    checkMinMax("maxKey");
+    return keys[maxIndex()];
   }
 
 
@@ -420,13 +492,18 @@ public class IntDict {
    * @webref intdict:method
    * @brief Remove a key/value pair
    */
-  public void remove(String key) {
-    removeIndex(index(key));
+  public int remove(String key) {
+    int index = index(key);
+    if (index != -1) {
+      removeIndex(index);
+    }
+    return index;
   }
 
 
-  public void removeIndex(int index) {
+  public String removeIndex(int index) {
     //System.out.println("index is " + which + " and " + keys[which]);
+    String key = keys[index];
     indices.remove(keys[index]);
     for (int i = index; i < count-1; i++) {
       keys[i] = keys[i+1];
@@ -436,6 +513,7 @@ public class IntDict {
     count--;
     keys[count] = null;
     values[count] = 0;
+    return key;
   }
 
 

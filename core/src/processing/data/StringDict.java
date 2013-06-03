@@ -282,14 +282,19 @@ public class StringDict {
    * @webref stringdict:method
    * @brief Remove a key/value pair
    */
-  public void remove(String key) {
-    removeIndex(index(key));
+  public int remove(String key) {
+    int index = index(key);
+    if (index != -1) {
+      removeIndex(index);
+    }
+    return index;
   }
 
 
-  public void removeIndex(int index) {
+  public String removeIndex(int index) {
     //System.out.println("index is " + which + " and " + keys[which]);
-    indices.remove(keys[index]);
+    String key = keys[index];
+    indices.remove(key);
     for (int i = index; i < count-1; i++) {
       keys[i] = keys[i+1];
       values[i] = values[i+1];
@@ -298,6 +303,7 @@ public class StringDict {
     count--;
     keys[count] = null;
     values[count] = null;
+    return key;
   }
 
 

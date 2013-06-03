@@ -365,19 +365,104 @@ public class FloatDict {
   }
 
 
+  private void checkMinMax(String functionName) {
+    if (count == 0) {
+      String msg =
+        String.format("Cannot use %s() on an empty %s.",
+                      functionName, getClass().getSimpleName());
+      throw new RuntimeException(msg);
+    }
+  }
+
+
+  /**
+   * @webref floatlist:method
+   * @brief Return the smallest value
+   */
+  public int minIndex() {
+    checkMinMax("minIndex");
+    // Will still return NaN if there is 1 or more entries, and they're all NaN
+    float m = Float.NaN;
+    int mi = -1;
+    for (int i = 0; i < count; i++) {
+      // find one good value to start
+      if (values[i] == values[i]) {
+        m = values[i];
+        mi = i;
+
+        // calculate the rest
+        for (int j = i+1; j < count; j++) {
+          float d = values[j];
+          if (!Float.isNaN(d) && (d < m)) {
+            m = values[j];
+            mi = j;
+          }
+        }
+        break;
+      }
+    }
+    return mi;
+  }
+
+
+  public String minKey() {
+    checkMinMax("minKey");
+    return keys[minIndex()];
+  }
+
+
+  public float minValue() {
+    checkMinMax("minValue");
+    return values[minIndex()];
+  }
+
+
+  /**
+   * @webref floatlist:method
+   * @brief Return the largest value
+   */
+  public int maxIndex() {
+    checkMinMax("maxIndex");
+    // Will still return NaN if there is 1 or more entries, and they're all NaN
+    float m = Float.NaN;
+    int mi = -1;
+    for (int i = 0; i < count; i++) {
+      // find one good value to start
+      if (values[i] == values[i]) {
+        m = values[i];
+        mi = i;
+
+        // calculate the rest
+        for (int j = i+1; j < count; j++) {
+          float d = values[j];
+          if (!Float.isNaN(d) && (d > m)) {
+            m = values[j];
+            mi = j;
+          }
+        }
+        break;
+      }
+    }
+    return mi;
+  }
+
+
+  public String maxKey() {
+    checkMinMax("maxKey");
+    return keys[maxIndex()];
+  }
+
+
+  public float maxValue() {
+    checkMinMax("maxValue");
+    return values[maxIndex()];
+  }
+
+
   public int index(String what) {
     Integer found = indices.get(what);
     return (found == null) ? -1 : found.intValue();
   }
-
-
-//  public void add(String key) {
-//    if (index(key) != -1) {
-//      throw new IllegalArgumentException("Use inc() to increment an entry, " +
-//      		                               "add() is for adding a new key");
-//    }
-//    add(key, 0);
-//  }
 
 
   protected void create(String what, float much) {
@@ -396,12 +481,17 @@ public class FloatDict {
    * @webref floatdict:method
    * @brief Remove a key/value pair
    */
-  public void remove(String key) {
-    removeIndex(index(key));
+  public int remove(String key) {
+    int index = index(key);
+    if (index != -1) {
+      removeIndex(index);
+    }
+    return index;
   }
 
 
-  public void removeIndex(int index) {
+  public String removeIndex(int index) {
+    String key = keys[index];
     //System.out.println("index is " + which + " and " + keys[which]);
     indices.remove(keys[index]);
     for (int i = index; i < count-1; i++) {
@@ -412,6 +502,7 @@ public class FloatDict {
     count--;
     keys[count] = null;
     values[count] = 0;
+    return key;
   }
 
 
