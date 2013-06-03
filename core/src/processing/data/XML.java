@@ -242,6 +242,8 @@ public class XML implements Serializable {
   }
 
 
+  // Sends this object and its kids to a Writer with an indent of 2 spaces,
+  // including the declaration at the top so that the output will be valid XML.
   public boolean write(PrintWriter output) {
     output.print(format(2));
     output.flush();
@@ -1010,10 +1012,10 @@ public class XML implements Serializable {
       // Might just be whitespace, which won't be valid XML for parsing below.
       // https://github.com/processing/processing/issues/1796
       // Since indent is not -1, that means they want valid XML,
-      // so we'll give them the single line plus the decl.
+      // so we'll give them the single line plus the decl... Lame? sure.
       if (singleLine.trim().length() == 0) {
         // You want whitespace? I've got your whitespace right here.
-        return singleLine;
+        return decl + sep + singleLine;
       }
 
       // Since the indent is not -1, bring back the XML declaration
@@ -1025,8 +1027,9 @@ public class XML implements Serializable {
       Source source = new StreamSource(new StringReader(singleLine));
       transformer.transform(source, xmlOutput);
       String outgoing = stringWriter.toString();
+
+      // Add the XML declaration to the top if it's not there already
       if (!outgoing.startsWith(decl)) {
-        // Add the XML declaration to the top if it's not there already
         return decl + sep + outgoing;
       } else {
         return outgoing;
