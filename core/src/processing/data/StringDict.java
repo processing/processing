@@ -37,6 +37,8 @@ public class StringDict {
    * Create a new lookup pre-allocated to a specific length. This will not
    * change the size(), but is more efficient than not specifying a length.
    * Use it when you know the rough size of the thing you're creating.
+   *
+   * @nowebref
    */
   public StringDict(int length) {
     count = 0;
@@ -48,6 +50,8 @@ public class StringDict {
   /**
    * Read a set of entries from a Reader that has each key/value pair on
    * a single line, separated by a tab.
+   *
+   * @nowebref
    */
   public StringDict(BufferedReader reader) {
     String[] lines = PApplet.loadStrings(reader);
@@ -64,7 +68,9 @@ public class StringDict {
     }
   }
 
-
+  /**
+   * @nowebref
+   */
   public StringDict(String[] keys, String[] values) {
     if (keys.length != values.length) {
       throw new IllegalArgumentException("key and value arrays must be the same length");

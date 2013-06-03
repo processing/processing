@@ -25,12 +25,16 @@ public class StringList implements Iterable<String> {
     this(10);
   }
 
-
+  /**
+   * @nowebref
+   */
   public StringList(int length) {
     data = new String[length];
   }
 
-
+  /**
+   * @nowebref
+   */
   public StringList(String[] list) {
     count = list.length;
     data = new String[count];
@@ -38,8 +42,12 @@ public class StringList implements Iterable<String> {
   }
 
 
-  // Create from something iterable, for instance:
-  // StringList list = new StringList(hashMap.keySet());
+  /**
+   * Create from something iterable, for instance:
+   * StringList list = new StringList(hashMap.keySet());
+   *
+   * @nowebref
+   */
   public StringList(Iterable<String> iter) {
     this(10);
     for (String s : iter) {

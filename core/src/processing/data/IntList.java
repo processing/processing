@@ -31,19 +31,25 @@ public class IntList implements Iterable<Integer> {
     data = new int[10];
   }
 
-
+  /**
+   * @nowebref
+   */
   public IntList(int length) {
     data = new int[length];
   }
 
-
+  /**
+   * @nowebref
+   */
   public IntList(int[] source) {
     count = source.length;
     data = new int[count];
     System.arraycopy(source, 0, data, 0, count);
   }
 
-
+  /**
+   * @nowebref
+   */
   public IntList(Iterable<Integer> iter) {
     this(10);
     for (int v : iter) {

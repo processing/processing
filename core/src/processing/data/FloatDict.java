@@ -36,6 +36,8 @@ public class FloatDict {
   /**
    * Create a new lookup with a specific size. This is more efficient than not
    * specifying a size. Use it when you know the rough size of the thing you're creating.
+   *
+   * @nowebref
    */
   public FloatDict(int length) {
     count = 0;
@@ -47,6 +49,8 @@ public class FloatDict {
   /**
    * Read a set of entries from a Reader that has each key/value pair on
    * a single line, separated by a tab.
+   *
+   * @nowebref
    */
   public FloatDict(BufferedReader reader) {
 //  public FloatHash(PApplet parent, String filename) {
@@ -66,7 +70,9 @@ public class FloatDict {
     }
   }
 
-
+  /**
+   * @nowebref
+   */
   public FloatDict(String[] keys, float[] values) {
     if (keys.length != values.length) {
       throw new IllegalArgumentException("key and value arrays must be the same length");
