@@ -67,10 +67,8 @@ void draw() {
   // One every 30 frames we pick a new lottery number to go in results
   if (frameCount % 30 == 0) {
     if (results.size() < 5) {
-      // Get the first value in the lottery list
-      int val = lottery.get(0);
-      // Remove it from the lottery list
-      lottery.remove(0);
+      // Get the first value in the lottery list and remove it
+      int val = lottery.remove(0);
       // Put it in the results
       results.append(val);
     } else {
