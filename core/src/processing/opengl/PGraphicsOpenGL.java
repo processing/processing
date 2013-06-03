@@ -2349,7 +2349,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void flushPixels() {
-    drawPixels(mx1, my1, mx2 - mx1 + 1, my2 - my1 + 1);
+    drawPixels(mx1, my1, mx2 - mx1, my2 - my1);
     modified = false;
   }
 
@@ -5881,8 +5881,8 @@ public class PGraphicsOpenGL extends PGraphics {
     if (tex != null) {
       int x = img.getModifiedX1();
       int y = img.getModifiedY1();
-      int w = img.getModifiedX2() - x + 1;
-      int h = img.getModifiedY2() - y + 1;
+      int w = img.getModifiedX2() - x;
+      int h = img.getModifiedY2() - y;
       tex.set(img.pixels, x, y, w, h, img.format);
     }
     img.setModified(false);
