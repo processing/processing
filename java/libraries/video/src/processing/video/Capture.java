@@ -236,6 +236,8 @@ public class Capture extends PImage implements PConstants {
 
   /**
    * Disposes all the native resources associated to this capture device.
+   * 
+   * NOTE: This is not official API and may/will be removed at any time.
    */
   public void dispose() {
     if (pipeline != null) {
@@ -1070,6 +1072,8 @@ public class Capture extends PImage implements PConstants {
    * The color conversion mask is automatically set to the one required to
    * copy the frames to OpenGL.
    *
+   * NOTE: This is not official API and may/will be removed at any time.
+   * 
    * @param Object dest
    */
   public void setBufferSink(Object sink) {
@@ -1080,6 +1084,8 @@ public class Capture extends PImage implements PConstants {
 
   /**
    * Sets the object to use as destination for the frames read from the stream.
+   * 
+   * NOTE: This is not official API and may/will be removed at any time.
    *
    * @param Object dest
    * @param String mask
@@ -1090,11 +1096,17 @@ public class Capture extends PImage implements PConstants {
   }
 
 
+  /**
+   * NOTE: This is not official API and may/will be removed at any time.
+   */
   public boolean hasBufferSink() {
     return bufferSink != null;
   }
 
 
+  /**
+   * NOTE: This is not official API and may/will be removed at any time.
+   */
   public synchronized void disposeBuffer(Object buf) {
     ((Buffer)buf).dispose();
   }
