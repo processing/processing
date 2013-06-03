@@ -2559,8 +2559,6 @@ public class PGL {
 
     @Override
     public void display(GLAutoDrawable glDrawable) {
-      if (drawLatch == null || drawLatch.getCount() == 0) return;
-
       drawable = glDrawable;
       context = glDrawable.getContext();
 
@@ -2636,9 +2634,7 @@ public class PGL {
       }
 
       pg.parent.handleDraw();
-      if (drawLatch != null) {
-        drawLatch.countDown();
-      }
+      drawLatch.countDown();
     }
 
     @Override
