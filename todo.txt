@@ -61,94 +61,24 @@ o   Exception in thread "Animation Thread" java.lang.UnsatisfiedLinkError: no gl
 o   cannot really.. part of the launcher
 
 
-2.0 FINAL / libraries & classpaths
-_ need to deal with classpath conflicts
-_   avoid garbage that people have installed on their machines
-_   antlr.jar in the classpath will cause trouble.. 
-_     http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1138652326
-_   jogl jar files, or jogl install will cause trouble
-_     /System/Library/Java/Extensions or /Library/Java/Extensions
-_     the /System one contains qtjava
-_     the /Library one is empty (by default), maybe skip it?
-_ classpath conflicts also problem with PDE itself
-_   catch antlr conflicts, and put up an error message
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1225 (no Google issue)
-_ when a conflicting library (bad link w/ core) is found, need to report it
-_   altho prolly only when it's actually different (md5hash it?)
-_   this seems to be causing a lot of trouble with recent releases
-_   (opengl changes and whatnot)
-_ jar files like the bad aiexport plugin will cause serious problems
-_   need to ignore processing.core classes showing up in other jar files
-_   tougher than it looks, because it all depends on what java wants to use
-_     i.e. even if not specified, the stuff will be in the classpath
-_   need to make classpath code be less promiscuous
-_   the order of adding libraries to classpath should be opposite
-_     the important local libraries should be first in cp, user contrib later
-_   http://code.google.com/p/processing/issues/detail?id=56
-_ changing the sketchbook folder will make libraries show up
-_   but it won't reload the library mapping table
-_ make sure there aren't library jar files named the same thing 
-_   i.e. if one library has db.jar, then that's gonna kill another db.jar
-_   when the files are copied over
-_ libraries in java tabs (separate .java files) are reported missing
-_   need to scan the .java files for imports that need to be included
-_   http://code.google.com/p/processing/issues/detail?id=459
-_ library.properties and tool.properties should reflect supported modes
-_   http://code.google.com/p/processing/issues/detail?id=1050
-_ versioning info 
-_   http://java.sun.com/j2se/1.5.0/docs/guide/extensions/versioning.html
-_ java.ext.dirs for /System/Library/Java/Extensions
-_   http://java.sun.com/j2se/1.5.0/docs/guide/extensions/spec.html
-_   can set java.ext.dirs to something else 
-_   on osx, just ignore anything in /Library/Java/Extensions (but not others)?
-_ native lib stuff, use native.txt in lib folder, then:
-_   String osName = System.getProperty("os.name");
-_   String osArch = System.getProperty("os.arch");
-_   http://stackoverflow.com/questions/1611357/how-to-make-a-jar-file-that-include-dll-files
-_ add control for dependencies (i.e. svg needs xml), needed for export
-_   http://code.google.com/p/processing/issues/detail?id=70
-_ need better platform designation setup for libs
-_ library installation should use the sketchbook folder, not the p5 folder
-_   actually enforce this, give users a warning about other libs
-_ set DYLD_LIBRARY_PATH to include .dylib and other framework stuff
-_   java.library.path will only handle .jnilib stuff
-_ need better error messages for broken api / library troubles
-_   e.g. ocd is broken in 0125 because of method signature changes
-_ could have library developers update compatability note
-_   so they would need to test library and say "compatible with 0110"
-_   before it would automatically update or show as an update
-_ need an "install library" option to deal with urls..
-_ support the reference folder of contributed libraries
-_   add reference for contributed libraries to the Help menu
-_   https://github.com/processing/processing/issues/943
-
-
-2.0 FINAL / misc pde cleanups
-_ 'recent' menu doesn't respect examples folder of other p5 versions
-_   could write that into the file, that it's an example
-_   or write the path as shown in the PDE to the file as simpler
-_ 'recent' menu paths can get enormous
-_ temporary files (for sketches and logs) are not deleted
-_   http://code.google.com/p/processing/issues/detail?id=562
-_ proxy server requirement causes problems
-_   contrib manager, update checks are broken
-_   https://github.com/processing/processing/issues/1476
-_ figure out Android build w/o javac so we can remove tools.jar and javac
-_   also to the p5 repo with just a JRE
-_   remove initRequirements from Base (no longer need JDI)
-_     move this into Android mode?
-_ send info on 'check for updates' so we know about libs/modes/etc?
-_   how to disclose to users?
-_   only send for items that are part of the public list 
-_     otherwise we're sending private libraries/installs
-_     although this won't pick up old libraries not on the new system
-
-
+high
 _ move old Google Code SVN back to processing.org
 _   then cull out the old branches/tags from the Github repo
 _ UnsatisfiedLinkError causes huge message... 
 _   error report cleanups haven't been fixed yet
 _   reported by Dan
+_ proxy server requirement causes problems
+_   contrib manager, update checks are broken
+_   https://github.com/processing/processing/issues/1476
+_ send info on 'check for updates' so we know about libs/modes/etc?
+_   how to disclose to users?
+_   only send for items that are part of the public list 
+_     otherwise we're sending private libraries/installs
+_     although this won't pick up old libraries not on the new system
+_ figure out Android build w/o javac so we can remove tools.jar and javac
+_   also to the p5 repo with just a JRE
+_   remove initRequirements from Base (no longer need JDI)
+_     move this into Android mode?
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -428,6 +358,13 @@ _   http://code.google.com/p/processing/issues/detail?id=8
 
 
 PDE / Editor
+
+_ 'recent' menu doesn't respect examples folder of other p5 versions
+_   could write that into the file, that it's an example
+_   or write the path as shown in the PDE to the file as simpler
+_ 'recent' menu paths can get enormous
+_ temporary files (for sketches and logs) are not deleted
+_   http://code.google.com/p/processing/issues/detail?id=562
 _ don't let people into the /tmp folder for sketches
 o   don't use tmp folder for sketches? 
 _   restrict more things like "show sketch folder"
@@ -566,6 +503,69 @@ _ sketch.isReadOnly returns false for examples coming from multiple modes
 _   http://code.google.com/p/processing/issues/detail?id=734
 _ see how library installation goes, then possibly do same w/ examples
 
+
+
+PDE / Libraries
+
+_ need to deal with classpath conflicts
+_   avoid garbage that people have installed on their machines
+_   antlr.jar in the classpath will cause trouble.. 
+_     http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1138652326
+_   jogl jar files, or jogl install will cause trouble
+_     /System/Library/Java/Extensions or /Library/Java/Extensions
+_     the /System one contains qtjava
+_     the /Library one is empty (by default), maybe skip it?
+_ classpath conflicts also problem with PDE itself
+_   catch antlr conflicts, and put up an error message
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1225 (no Google issue)
+_ when a conflicting library (bad link w/ core) is found, need to report it
+_   altho prolly only when it's actually different (md5hash it?)
+_   this seems to be causing a lot of trouble with recent releases
+_   (opengl changes and whatnot)
+_ jar files like the bad aiexport plugin will cause serious problems
+_   need to ignore processing.core classes showing up in other jar files
+_   tougher than it looks, because it all depends on what java wants to use
+_     i.e. even if not specified, the stuff will be in the classpath
+_   need to make classpath code be less promiscuous
+_   the order of adding libraries to classpath should be opposite
+_     the important local libraries should be first in cp, user contrib later
+_   http://code.google.com/p/processing/issues/detail?id=56
+_ changing the sketchbook folder will make libraries show up
+_   but it won't reload the library mapping table
+_ make sure there aren't library jar files named the same thing 
+_   i.e. if one library has db.jar, then that's gonna kill another db.jar
+_   when the files are copied over
+_ libraries in java tabs (separate .java files) are reported missing
+_   need to scan the .java files for imports that need to be included
+_   http://code.google.com/p/processing/issues/detail?id=459
+_ library.properties and tool.properties should reflect supported modes
+_   http://code.google.com/p/processing/issues/detail?id=1050
+_ versioning info 
+_   http://java.sun.com/j2se/1.5.0/docs/guide/extensions/versioning.html
+_ java.ext.dirs for /System/Library/Java/Extensions
+_   http://java.sun.com/j2se/1.5.0/docs/guide/extensions/spec.html
+_   can set java.ext.dirs to something else 
+_   on osx, just ignore anything in /Library/Java/Extensions (but not others)?
+_ native lib stuff, use native.txt in lib folder, then:
+_   String osName = System.getProperty("os.name");
+_   String osArch = System.getProperty("os.arch");
+_   http://stackoverflow.com/questions/1611357/how-to-make-a-jar-file-that-include-dll-files
+_ add control for dependencies (i.e. svg needs xml), needed for export
+_   http://code.google.com/p/processing/issues/detail?id=70
+_ need better platform designation setup for libs
+_ library installation should use the sketchbook folder, not the p5 folder
+_   actually enforce this, give users a warning about other libs
+_ set DYLD_LIBRARY_PATH to include .dylib and other framework stuff
+_   java.library.path will only handle .jnilib stuff
+_ need better error messages for broken api / library troubles
+_   e.g. ocd is broken in 0125 because of method signature changes
+_ could have library developers update compatability note
+_   so they would need to test library and say "compatible with 0110"
+_   before it would automatically update or show as an update
+_ need an "install library" option to deal with urls..
+_ support the reference folder of contributed libraries
+_   add reference for contributed libraries to the Help menu
+_   https://github.com/processing/processing/issues/943
 
 
 PDE / Manager
