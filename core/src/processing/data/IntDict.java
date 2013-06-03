@@ -59,6 +59,8 @@ public class IntDict {
   /**
    * Create a new lookup with a specific size. This is more efficient than not
    * specifying a size. Use it when you know the rough size of the thing you're creating.
+   *
+   * @nowebref
    */
   public IntDict(int length) {
     count = 0;
@@ -70,6 +72,8 @@ public class IntDict {
   /**
    * Read a set of entries from a Reader that has each key/value pair on
    * a single line, separated by a tab.
+   *
+   * @nowebref
    */
   public IntDict(BufferedReader reader) {
 //  public IntHash(PApplet parent, String filename) {
@@ -89,7 +93,9 @@ public class IntDict {
     }
   }
 
-
+  /**
+   * @nowebref
+   */
   public IntDict(String[] keys, int[] values) {
     if (keys.length != values.length) {
       throw new IllegalArgumentException("key and value arrays must be the same length");

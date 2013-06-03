@@ -569,8 +569,6 @@ public class PGL {
 
       listener = new PGLListener();
       canvasAWT.addGLEventListener(listener);
-
-      canvasAWT.requestFocus();
     } else if (WINDOW_TOOLKIT == NEWT) {
       window = GLWindow.create(caps);
       if (sharedCtx != null) {
@@ -601,8 +599,6 @@ public class PGL {
 
       listener = new PGLListener();
       window.addGLEventListener(listener);
-
-      canvasNEWT.requestFocus();
     }
 
     fboLayerCreated = false;
@@ -1131,6 +1127,14 @@ public class PGL {
     }
     if (currentFps < targetFps/2) {
       finish();
+    }
+  }
+
+
+  protected void requestFocus() {
+    if (canvas != null) {
+      System.out.println("request focus for the GL canvas");
+      canvas.requestFocus();
     }
   }
 

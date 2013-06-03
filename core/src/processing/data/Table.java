@@ -99,21 +99,29 @@ public class Table {
     init();
   }
 
-
+  /**
+   * @nowebref
+   */
   public Table(File file) throws IOException {
     this(file, null);
   }
 
 
-  // version that uses a File object; future releases (or data types)
-  // may include additional optimizations here
+  /**
+   * version that uses a File object; future releases (or data types)
+   * may include additional optimizations here
+   *
+   * @nowebref
+   */
   public Table(File file, String options) throws IOException {
     // uses createInput() to handle .gz (and eventually .bz2) files
     parse(PApplet.createInput(file),
           extensionOptions(true, file.getName(), options));
   }
 
-
+  /**
+   * @nowebref
+   */
   public Table(InputStream input) throws IOException {
     this(input, null);
   }
@@ -127,6 +135,8 @@ public class Table {
    * <li>newlines - this CSV file contains newlines inside individual cells
    * <li>header - this table has a header (title) row
    * </ul>
+   *
+   * @nowebref
    * @param input
    * @param options
    * @throws IOException
@@ -135,7 +145,9 @@ public class Table {
     parse(input, options);
   }
 
-
+  /**
+   * @nowebref
+   */
   public Table(ResultSet rs) {
     init();
     try {

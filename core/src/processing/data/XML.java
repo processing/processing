@@ -63,7 +63,7 @@ public class XML implements Serializable {
 
   /**
    * @nowebref
-   */
+   */ 
   protected XML() { }
 
 
@@ -179,9 +179,8 @@ public class XML implements Serializable {
 
 
   /**
-   * @param name description TBD
+   * @param name creates a node with this name
    *
-   * @nowebref
    */
   public XML(String name) {
     try {

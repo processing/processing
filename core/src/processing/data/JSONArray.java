@@ -108,7 +108,6 @@ public class JSONArray {
 
   /**
    * Construct an empty JSONArray.
-   * @nowebref
    */
   public JSONArray() {
     this.myArrayList = new ArrayList<Object>();
@@ -125,8 +124,10 @@ public class JSONArray {
 
   /**
    * Construct a JSONArray from a JSONTokener.
+   *
    * @param x A JSONTokener
    * @throws JSONException If there is a syntax error.
+   * @nowebref
    */
   protected JSONArray(JSONTokener x) {
     this();

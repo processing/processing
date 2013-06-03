@@ -26,19 +26,25 @@ public class FloatList implements Iterable<Float> {
     data = new float[10];
   }
 
-
+  /**
+   * @nowebref
+   */
   public FloatList(int length) {
     data = new float[length];
   }
 
-
+  /**
+   * @nowebref
+   */
   public FloatList(float[] list) {
     count = list.length;
     data = new float[count];
     System.arraycopy(list, 0, data, 0, count);
   }
 
-
+  /**
+   * @nowebref
+   */
   public FloatList(Iterable<Float> iter) {
     this(10);
     for (float v : iter) {
