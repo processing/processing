@@ -63,7 +63,7 @@ public class XML implements Serializable {
 
   /**
    * @nowebref
-   */ 
+   */
   protected XML() { }
 
 
@@ -1007,11 +1007,13 @@ public class XML implements Serializable {
         return singleLine;
       }
 
-      // Might just be whitespace, which won't be valid XML. And in that case,
-      // even adding the decl to the top seems dumb, so don't spew out a decl.
+      // Might just be whitespace, which won't be valid XML for parsing below.
       // https://github.com/processing/processing/issues/1796
+      // Since indent is not -1, that means they want valid XML,
+      // so we'll give them the single line plus the decl.
       if (singleLine.trim().length() == 0) {
-        return "";
+        // You want whitespace? I've got your whitespace right here.
+        return singleLine;
       }
 
       // Since the indent is not -1, bring back the XML declaration
@@ -1049,6 +1051,7 @@ public class XML implements Serializable {
    */
   @Override
   public String toString() {
-    return format(2);
+    //return format(2);
+    return format(-1);
   }
 }
