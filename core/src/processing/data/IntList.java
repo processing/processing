@@ -138,6 +138,9 @@ public class IntList implements Iterable<Integer> {
    * @brief Remove an element from the specified index
    */
   public int remove(int index) {
+    if (index < 0 || index >= count) {
+      throw new ArrayIndexOutOfBoundsException(index);
+    }
     int entry = data[index];
 //    int[] outgoing = new int[count - 1];
 //    System.arraycopy(data, 0, outgoing, 0, index);

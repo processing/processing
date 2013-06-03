@@ -134,6 +134,9 @@ public class StringList implements Iterable<String> {
    * @brief Remove an element from the specified index
    */
   public String remove(int index) {
+    if (index < 0 || index >= count) {
+      throw new ArrayIndexOutOfBoundsException(index);
+    }
     String entry = data[index];
 //    int[] outgoing = new int[count - 1];
 //    System.arraycopy(data, 0, outgoing, 0, index);

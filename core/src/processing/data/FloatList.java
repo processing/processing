@@ -133,6 +133,9 @@ public class FloatList implements Iterable<Float> {
    * @brief Remove an element from the specified index
    */
   public float remove(int index) {
+    if (index < 0 || index >= count) {
+      throw new ArrayIndexOutOfBoundsException(index);
+    }
     float entry = data[index];
 //    int[] outgoing = new int[count - 1];
 //    System.arraycopy(data, 0, outgoing, 0, index);

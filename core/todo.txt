@@ -52,15 +52,6 @@ A Multiple screen crash with OpenGL
 A   https://github.com/processing/processing/issues/1515
 
 
-_ data decision stuff
-_   key/valueIterator to get a version that can be removed in a loop
-_     in Table, added an Iterator function
-_   should keys() returns cropped internal array after all?
-_     right now it's making a copy (which is safer, so folks don't modify)
-_     but this means that we don't have a fast method for access
-_   methods for max, min, index of max/min entries? valueIndex?
-
-
 high
 _ draw() called again before finishing on OS X (retina issue)
 _   https://github.com/processing/processing/issues/1709
@@ -69,6 +60,7 @@ _   https://github.com/processing/processing/issues/1699
 _ Linux sometimes not responding correctly w/ the size() command
 _   https://github.com/processing/processing/issues/1672
 
+table
 _ function that will convert awful CSV to TSV.. or something else?
 _   maybe to write binary instead? then read the binary file once it's ok?
 _ if loading from a File object
@@ -134,10 +126,12 @@ _   otherwise remove() would be the only one that dealt with indices
 _   Dict will use remove(key), so using remove(index) as default
 _     and removeValue(value) is probably used less
 _ introduce remap() instead of map() (if not deprecate?)
-
-andres
-_ shader syntax (Andres request)
-_   might also need a define inside the shader to control what type it is
+_ key/valueIterator to get a version that can be removed in a loop
+_   in Table, added an Iterator function
+_ should keys() returns cropped internal array after all?
+_   right now it's making a copy (which is safer, so folks don't modify)
+_   but this means that we don't have a fast method for access
+_ methods for max, min, index of max/min entries? valueIndex?
 
 shape
 _ PShape should be cached as well
