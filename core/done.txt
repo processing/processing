@@ -1,3 +1,70 @@
+0218 core (2.0)
+X textureWrap(REPEAT) + textureMode(IMAGE) clamps positive coordinates
+X   https://github.com/processing/processing/issues/1809
+X saveJSONArray() loops forever, triggers error
+X   https://github.com/processing/processing/issues/1827
+X patch to make font textures smaller in P2D/P3D
+X   https://github.com/processing/processing/pull/1775
+X .png data written when .jpg file specified with save/saveFrame()
+X   https://github.com/processing/processing/issues/1810
+X remove() broken in the List classes
+X   https://github.com/processing/processing/issues/1826
+X Java2D surfaces not updating when used with OpenGL
+X   PGraphics using JAVA2D will not update when used with P2D or P3D
+X   https://github.com/processing/processing/issues/1786
+X several additional functions for data classes
+X change to the binary table file format
+X   not backwards compatible, b/c this feature is unannounced
+X parse exception thrown when using getChildren() on an XML object
+X   https://github.com/processing/processing/issues/1796
+X change XML.toString() to just send a single line of text
+X   instead of a full XML-formatted beastie
+o PNode.getChildren() shouldn't make a new array.. toArray() can do that
+
+cleaning
+X move requestFocusInWindow() to safter EDT place
+A remove PImage.delete() and friends from PImage, Movie, etc.
+o add shuffle methods for arrays
+X   http://code.google.com/p/processing/issues/detail?id=229
+X   https://github.com/processing/processing/issues/268
+X   now implemented in the List classes
+
+andres
+A PImage not drawn after resize()/get() in P2D/P3D
+A   https://github.com/processing/processing/issues/1830
+A Can't disable textures for loaded OBJ shapes (2b9)
+A   https://github.com/processing/processing/issues/1825
+A Can't mask PGraphics with another PGraphics
+A   https://github.com/processing/processing/issues/1738
+A PGL.readPixels() causes "invalid operation" error
+A   https://github.com/processing/processing/issues/1666
+A Strange behavior of PGraphics pixels[] when using P2D and P3D renderer
+A   https://github.com/processing/processing/issues/1815
+A PShape setVertex has a memory leak
+A   https://github.com/processing/processing/issues/1670
+A PGL lacks a wrapper for the alphaFunc() method and the ALPHA_TEST constant
+A   https://github.com/processing/processing/issues/1703
+A Implement textMode(SHAPE) for 3D
+A   https://github.com/processing/processing/issues/777
+A PImage.loadPixels() shouldn't be calling out to the renderer
+A   setting image.parent = null for it makes it work again for get().save() case
+A Setting smooth(n) affects disables background in setup()
+A   https://github.com/processing/processing/issues/1452
+A P2D/P3D sketches don't get focus until clicked
+A   also problem for Java2D when canvas is used?
+A   need to standardize canvas handling
+A   https://github.com/processing/processing/issues/1700
+o warning message present
+o   Deleted 1 texture objects, 0 remaining
+A   fixed in last round
+A P2D, P3D drawing errors in static mode, gray screen
+A   https://github.com/processing/processing/issues/1648
+A Window shorter than 127 pixels high is not rendered correctly in P2D/P3D
+A   https://github.com/processing/processing/issues/1683
+A Multiple screen crash with OpenGL
+A   https://github.com/processing/processing/issues/1515
+
+
 0217 core (2.0b9)
 X add set(x, y) to PVector (shiffman)
 X loadImage() with TGA causing images to be upside-down
