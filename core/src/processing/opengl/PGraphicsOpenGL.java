@@ -1579,6 +1579,12 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
+  @Override
+  public void requestFocus() {  // ignore
+    pgl.requestFocus();
+  }
+
+
   /**
    * OpenGL cannot draw until a proper native peer is available, so this
    * returns the value of PApplet.isDisplayable() (inherited from Component).
