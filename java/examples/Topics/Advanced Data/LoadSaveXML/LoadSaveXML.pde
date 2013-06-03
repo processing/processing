@@ -94,7 +94,7 @@ void mousePressed() {
   // Set the diameter element
   XML diameter = bubble.addChild("diameter");
   // Here for a node's content, we have to convert to a String
-  diameter.setContent("" + random(40,80));
+  diameter.setFloatContent(random(40,80));
   
   // Set a label
   XML label = bubble.addChild("label");

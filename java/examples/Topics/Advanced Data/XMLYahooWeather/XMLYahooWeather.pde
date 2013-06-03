@@ -29,7 +29,7 @@ void setup() {
   XML xml = loadXML(url);
 
   // Grab the element we want
-  XML forecast = xml.getChild("channel").getChild("item").getChild("yweather:forecast");
+  XML forecast = xml.getChild("channel/item/yweather:forecast");
   
   // Get the attributes we want
   temperature = forecast.getInt("high");
