@@ -41,6 +41,12 @@ A   https://github.com/processing/processing/issues/1700
 o warning message present
 o   Deleted 1 texture objects, 0 remaining
 A   fixed in last round
+A P2D, P3D drawing errors in static mode, gray screen
+A   https://github.com/processing/processing/issues/1648
+A Window shorter than 127 pixels high is not rendered correctly in P2D/P3D
+A   https://github.com/processing/processing/issues/1683
+A Multiple screen crash with OpenGL
+A   https://github.com/processing/processing/issues/1515
 
 
 _ data decision stuff

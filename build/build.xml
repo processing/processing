@@ -129,9 +129,6 @@
     <subant buildpath="../java/libraries/serial" target="clean"/>
     <subant buildpath="../java/libraries/video" target="clean"/>
     <subant buildpath="../experimental" target="clean"/>
-<!--
-    <subant buildpath="../android/core" target="clean"/>
--->
     <subant buildpath="shared/tools/MovieMaker" target="clean"/>
   </target>
   
@@ -144,9 +141,6 @@
     <subant buildpath="../java/libraries/serial" target="build"/>
     <subant buildpath="../java/libraries/video" target="build"/>
     <subant buildpath="../experimental" target="build"/>
-<!--
-    <subant buildpath="../android/core" target="build"/>
--->
     <subant buildpath="shared/tools/MovieMaker" target="build"/>
   </target>
   
@@ -177,6 +171,8 @@
 
     <copy todir="${target.path}/modes/java">
       <fileset dir="../java">
+	<!-- don't include LWJGL, it's not operational -->
+	<exclude name="libraries/lwjgl/**" />
 <!--
 	<exclude name="**/bin/*" />
 	<exclude name="**/src/*" />
@@ -452,7 +448,9 @@
 
   <target name="macosx-dist-sign" if="codesign">
     <echo>
-      It code signing fails, may need to use:
+      Code signing will only work if you have a $99/yr Apple developer ID.
+
+      With a proper ID, if code signing fails, you may need to use:
       export CODESIGN_ALLOCATE="/Applications/Xcode.app/Contents/Developer/usr/bin/codesign_allocate"
     </echo>
     <exec executable="codesign" dir="macosx/work">

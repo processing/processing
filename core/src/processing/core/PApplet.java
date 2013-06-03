@@ -6119,7 +6119,7 @@ public class PApplet extends Applet
   }
 
   /**
-   * @webref output:files
+   * @webref input:files
    * @param filename name of a file in the data folder or a URL
    * @see JSONObject
    * @see JSONArray
@@ -6154,7 +6154,7 @@ public class PApplet extends Applet
   }
 
   /**
-   * @webref output:files
+   * @webref input:files
    * @param filename name of a file in the data folder or a URL
    * @see JSONObject
    * @see JSONArray

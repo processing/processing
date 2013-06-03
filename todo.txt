@@ -766,15 +766,18 @@ How the environment gets packed up, downloaded, and installed.
 
 DIST / General 
 
+_ should be able to build p5 without a JDK install, just a JRE
+_   https://github.com/processing/processing/issues/1840
+_   need to have ecj.jar accessible to ant, then modify build.xml to use this:
+_   <property name="build.compiler" 
+_             value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
+_ Update Java version in the download to be the latest Java 6
+_   https://github.com/processing/processing/issues/1841
 _ line ending issues
 _   doesn't really help on Windows since we use Cygwin
 _     but it would be helpful for people not using it (ant/other LF issues)
 _   https://help.github.com/articles/dealing-with-line-endings
 _   http://stackoverflow.com/questions/170961/whats-the-best-crlf-handling-strategy-with-git
-_ should be able to build p5 without a JDK install, just a JRE
-_   need to have ecj.jar accessible to ant, then modify build.xml to use this:
-_   <property name="build.compiler" 
-_             value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
 _ add means to move changes from desktop to Android (and vice-versa)
 _ add bootclasspath for 1.6
 _   would require --install for command line on OS X
