@@ -17,6 +17,8 @@ X change to the binary table file format
 X   not backwards compatible, b/c this feature is unannounced
 X parse exception thrown when using getChildren() on an XML object
 X   https://github.com/processing/processing/issues/1796
+X change XML.toString() to just send a single line of text
+X   instead of a full XML-formatted beastie
 
 andres
 A PImage not drawn after resize()/get() in P2D/P3D
