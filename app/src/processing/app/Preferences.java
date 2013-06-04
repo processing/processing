@@ -261,7 +261,7 @@ public class Preferences {
         public void actionPerformed(ActionEvent e) {
           File dflt = new File(sketchbookLocationField.getText());
           PApplet.selectFolder("Select new sketchbook location",
-                               "sketchbookCallback", dflt,
+                               "sketchbookCallback", null, dflt,
                                Preferences.this, dialog);
 //          File file =
 //            Base.selectFolder("Select new sketchbook location", dflt, dialog);
