@@ -104,6 +104,7 @@ public class Commander implements RunnerListener {
     String pdePath = null;  // path to the .pde file
     String outputPath = null;
     File outputFolder = null;
+    boolean outputSet = false;
     boolean force = false;  // replace that no good output folder
 //    String preferencesPath = null;
     int platform = PApplet.platform; // default to this platform
@@ -181,6 +182,7 @@ public class Commander implements RunnerListener {
 
       } else if (arg.startsWith(outputArg)) {
         outputPath = arg.substring(outputArg.length());
+        outputSet = true;
 
       } else if (arg.equals(forceArg)) {
         force = true;
@@ -202,22 +204,38 @@ public class Commander implements RunnerListener {
       System.exit(0);
     }
 
-    if (outputPath == null) {
+    if (outputPath == null && outputSet) {
       complainAndQuit("An output path must be specified.", true);
     }
 
-    outputFolder = new File(outputPath);
-    if (outputFolder.exists()) {
-      if (force) {
-        Base.removeDir(outputFolder);
-      } else {
-        complainAndQuit("The output folder already exists. " +
-        		            "Use --force to remove it.", false);
+    if(outputSet){
+      outputFolder = new File(outputPath);
+      if (outputFolder.exists()) {
+        if (force) {
+          Base.removeDir(outputFolder);
+        } else {
+          complainAndQuit("The output folder already exists. " +
+          		            "Use --force to remove it.", false);
+        }
       }
-    }
+    }/*else{
+      System.out.println("try to make temp folder...");
+      try {
+        System.out.println(sketch.getName());
+        File buildFolder = Base.createTempFolder(sketch.getName(), "temp", null);
+        outputFolder = buildFolder;
+      } catch (IOException e) {
+        Base.showWarning("Build folder bad",
+                         "Could not find a place to build the sketch.", e);
+      }
+      //outputFolder = sketch.makeTempFolder();
+      System.out.println("made temp folder");
+    }*/
 
-    if (!outputFolder.mkdirs()) {
-      complainAndQuit("Could not create the output folder.", false);
+    if (outputSet){
+      if(!outputFolder.mkdirs()) {
+        complainAndQuit("Could not create the output folder.", false);
+      }
     }
 
 //    // run static initialization that grabs all the prefs
@@ -232,8 +250,10 @@ public class Commander implements RunnerListener {
     if (sketchPath == null) {
       complainAndQuit("No sketch path specified.", true);
 
-    } else if (outputPath.equals(sketchPath)) {
-      complainAndQuit("The sketch path and output path cannot be identical.", false);
+    } else if (outputSet){
+      if(outputPath.equals(sketchPath)) {
+        complainAndQuit("The sketch path and output path cannot be identical.", false);
+      }
 
 //    } else if (!pdePath.toLowerCase().endsWith(".pde")) {
 //      complainAndQuit("Sketch path must point to the main .pde file.", false);
@@ -248,6 +268,10 @@ public class Commander implements RunnerListener {
                               "processing.mode.java.JavaMode").getMode();
       try {
         sketch = new Sketch(pdePath, javaMode);
+        
+        if(!outputSet)
+          outputFolder = sketch.makeTempFolder();
+        
         if (task == BUILD || task == RUN || task == PRESENT) {
           JavaBuild build = new JavaBuild(sketch);
           File srcFolder = new File(outputFolder, "source");
