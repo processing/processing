@@ -219,7 +219,7 @@ public class Commander implements RunnerListener {
         }
       }
       
-      if(!outputFolder.mkdirs()) {
+      if (!outputFolder.mkdirs()) {
         complainAndQuit("Could not create the output folder.", false);
       }
     }
@@ -236,15 +236,17 @@ public class Commander implements RunnerListener {
     if (sketchPath == null) {
       complainAndQuit("No sketch path specified.", true);
 
-    } else if (outputSet) {
-      if (outputPath.equals(sketchPath)) {
-        complainAndQuit("The sketch path and output path cannot be identical.", false);
-      }
-
 //    } else if (!pdePath.toLowerCase().endsWith(".pde")) {
 //      complainAndQuit("Sketch path must point to the main .pde file.", false);
 
     } else {
+      
+      if (outputSet) {
+        if (outputPath.equals(sketchPath)) {
+          complainAndQuit("The sketch path and output path cannot be identical.", false);
+        }
+      }
+      
       boolean success = false;
 
 //      JavaMode javaMode =
