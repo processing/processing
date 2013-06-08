@@ -341,7 +341,8 @@ public class ErrorCheckerService implements Runnable{
     // CompilationChecker class(from CompilationChecker.jar) that houses the
     // Eclispe JDT compiler and call its getErrorsAsObj method to obtain
     // errors. This way, I'm able to add the paths of contributed libraries
-    // to the classpath of CompilationChecker, dynamically.
+    // to the classpath of CompilationChecker, dynamically. The eclipse compiler
+    // needs all referenced libraries in the classpath.
 
     try {
 
@@ -375,7 +376,7 @@ public class ErrorCheckerService implements Runnable{
         //for (File jarFile : jarFiles) {
           //classpathJars.add(jarFile.toURI().toURL());
         //}
-
+        
         classpath = new URL[classpathJars.size() + jarFiles.length]; 
         int ii = 0;
         for (; ii < classpathJars.size(); ii++) {
@@ -392,6 +393,8 @@ public class ErrorCheckerService implements Runnable{
             classLoader);
         // System.out.println("2.");
         compilationChecker = checkerClass.newInstance();
+        
+        astGenerator.loadJars(); // Update jar files for completition list
         loadCompClass = false;
       }
 

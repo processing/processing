@@ -176,7 +176,7 @@ public class ASTGenerator {
     }
   }
 
-  private DefaultMutableTreeNode buildAST2(String source, CompilationUnit cu) {
+  private DefaultMutableTreeNode buildAST(String source, CompilationUnit cu) {
     if (cu == null) {
       ASTParser parser = ASTParser.newParser(AST.JLS4);
       parser.setSource(source.toCharArray());
@@ -219,18 +219,18 @@ public class ASTGenerator {
 //            frameAutoComp.setVisible(true);
 //            
 //          }
-          if (!jdocWindow.isVisible()) {
-            long t = System.currentTimeMillis();
-            loadJars();
-            loadJavaDoc();
-            System.out.println("Time taken: "
-                + (System.currentTimeMillis() - t));
-            jdocWindow.setBounds(new Rectangle(errorCheckerService.getEditor()
-                .getX() + errorCheckerService.getEditor().getWidth(),
-                                               errorCheckerService.getEditor()
-                                                   .getY(), 450, 600));
-            jdocWindow.setVisible(true);
-          }
+//          if (!jdocWindow.isVisible()) {
+//            long t = System.currentTimeMillis();
+//            loadJars();
+//            loadJavaDoc();
+//            System.out.println("Time taken: "
+//                + (System.currentTimeMillis() - t));
+//            jdocWindow.setBounds(new Rectangle(errorCheckerService.getEditor()
+//                .getX() + errorCheckerService.getEditor().getWidth(),
+//                                               errorCheckerService.getEditor()
+//                                                   .getY(), 450, 600));
+//            jdocWindow.setVisible(true);
+//          }
           jtree.validate();
         }
       }
@@ -248,45 +248,63 @@ public class ASTGenerator {
 
   private JFrame jdocWindow;
 
-  private void loadJars() {
-    try {
-      factory = new ClassPathFactory();
+  /**
+   * Loads up .jar files and classes defined in it for completion lookup
+   */
+  protected void loadJars() {
+//    SwingWorker worker = new SwingWorker() {
+//      protected void done(){        
+//      }
+//      protected Object doInBackground() throws Exception {
+//        return null;        
+//      }
+//    };    
+//    worker.execute();
+    
+    Thread t = new Thread(new Runnable() {
 
-      StringBuffer tehPath = new StringBuffer(
-                                              System
-                                                  .getProperty("java.class.path"));
-      tehPath.append(File.pathSeparatorChar + System.getProperty("java.home")
-          + "/lib/rt.jar" + File.pathSeparatorChar);
-      if (errorCheckerService.classpathJars != null) {
-        for (URL jarPath : errorCheckerService.classpathJars) {
-          tehPath.append(jarPath.getPath() + File.pathSeparatorChar);
+      public void run() {
+        try {
+          factory = new ClassPathFactory();
+
+          StringBuffer tehPath = new StringBuffer(System
+              .getProperty("java.class.path"));
+          tehPath.append(File.pathSeparatorChar
+              + System.getProperty("java.home") + "/lib/rt.jar"
+              + File.pathSeparatorChar);
+          if (errorCheckerService.classpathJars != null) {
+            for (URL jarPath : errorCheckerService.classpathJars) {
+              System.out.println(jarPath.getPath());
+              tehPath.append(jarPath.getPath() + File.pathSeparatorChar);
+            }
+          }
+
+//          String paths[] = tehPath.toString().split(File.separatorChar +"");
+          StringTokenizer st = new StringTokenizer(tehPath.toString(),
+                                                   File.pathSeparatorChar + "");
+          while (st.hasMoreElements()) {
+            String sstr = (String) st.nextElement();
+            System.out.println(sstr);
+          }
+
+          classPath = factory.createFromPath(tehPath.toString());
+//          for (String packageName : classPath.listPackages("")) {
+//            System.out.println(packageName);
+//          }
+//          RegExpResourceFilter regExpResourceFilter = new RegExpResourceFilter(
+//                                                                               ".*",
+//                                                                               "ArrayList.class");
+//          String[] resources = classPath.findResources("", regExpResourceFilter);
+//          for (String className : resources) {
+//            System.out.println("-> " + className);
+//          }
+          System.out.println("jars loaded.");
+        } catch (Exception e) {
+          e.printStackTrace();
         }
       }
-
-//      String paths[] = tehPath.toString().split(File.separatorChar +"");
-      StringTokenizer st = new StringTokenizer(tehPath.toString(),
-                                               File.pathSeparatorChar + "");
-      while (st.hasMoreElements()) {
-        String sstr = (String) st.nextElement();
-        System.out.println(sstr);
-      }
-
-      classPath = factory.createFromPath(tehPath.toString());
-//      for (String packageName : classPath.listPackages("")) {
-//        System.out.println(packageName);
-//      }
-//      RegExpResourceFilter regExpResourceFilter = new RegExpResourceFilter(
-//                                                                           ".*",
-//                                                                           "ArrayList.class");
-//      String[] resources = classPath.findResources("", regExpResourceFilter);
-//      for (String className : resources) {
-//        System.out.println("-> " + className);
-//      }
-      System.out.println("jars loaded.");
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-
+    });
+    t.start();
   }
 
   private TreeMap<String, String> jdocMap;
@@ -298,7 +316,7 @@ public class ASTGenerator {
 
       @Override
       public void run() {
-        JavadocHelper.loadJavaDoc(jdocMap,editor.mode().getReferenceFolder());
+        JavadocHelper.loadJavaDoc(jdocMap, editor.mode().getReferenceFolder());
       }
     });
     t.start();
@@ -306,7 +324,7 @@ public class ASTGenerator {
   }
 
   public DefaultMutableTreeNode buildAST(CompilationUnit cu) {
-    return buildAST2(errorCheckerService.sourceCode, cu);
+    return buildAST(errorCheckerService.sourceCode, cu);
   }
 
   public String[] checkForTypes2(ASTNode node) {
@@ -376,7 +394,10 @@ public class ASTGenerator {
 
     case ASTNode.SINGLE_VARIABLE_DECLARATION:
       return new CompletionCandidate[] { new CompletionCandidate(
-                                                                 getNodeAsString2(node),"","",CompletionCandidate.LOCAL_VAR) };
+                                                                 getNodeAsString2(node),
+                                                                 "",
+                                                                 "",
+                                                                 CompletionCandidate.LOCAL_VAR) };
 
     case ASTNode.FIELD_DECLARATION:
       vdfs = ((FieldDeclaration) node).fragments();
@@ -395,7 +416,8 @@ public class ASTGenerator {
       CompletionCandidate ret[] = new CompletionCandidate[vdfs.size()];
       int i = 0;
       for (VariableDeclarationFragment vdf : vdfs) {
-        ret[i++] = new CompletionCandidate(getNodeAsString2(vdf),"","",CompletionCandidate.LOCAL_VAR);
+        ret[i++] = new CompletionCandidate(getNodeAsString2(vdf), "", "",
+                                           CompletionCandidate.LOCAL_VAR);
       }
       return ret;
     }
@@ -496,6 +518,8 @@ public class ASTGenerator {
       protected void done() {
 
         String word2 = word;
+
+        //After typing 'arg.' all members of arg type are to be listed. This one is a flag for it        
         boolean noCompare = false;
         if (word2.endsWith(".")) {
           // return all matches
@@ -668,7 +692,7 @@ public class ASTGenerator {
             }
 
           } else if (word.length() - word2.length() == 1) {
-            System.out.println(word +" w2 " + word2);
+            System.out.println(word + " w2 " + word2);
 //            int dC = 0;
 //            for (int i = 0; i < word.length(); i++) {
 //              if(word.charAt(i) == '.')
@@ -678,12 +702,13 @@ public class ASTGenerator {
             System.out.println("All members of " + word2);
             candidates = getMembersForType(word2, "", true, true);
 //            }
-          }
-          else{
+          } else {
             System.out.println("Some members of " + word2);
             int x = word2.indexOf('.');
-            if(x != -1){
-              candidates = getMembersForType(word2.substring(0, x), word2.substring(x+1), false, true);
+            if (x != -1) {
+              candidates = getMembersForType(word2.substring(0, x),
+                                             word2.substring(x + 1), false,
+                                             true);
             }
           }
 
@@ -763,7 +788,7 @@ public class ASTGenerator {
           if (!Modifier.isStatic(field.getModifiers()) && staticOnly)
             continue;
           if (noCompare)
-            candidates.add(new CompletionCandidate(field));            
+            candidates.add(new CompletionCandidate(field));
           else if (field.getName().startsWith(child.toString()))
             candidates.add(new CompletionCandidate(field));
         }
