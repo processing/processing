@@ -104,7 +104,7 @@ public class Commander implements RunnerListener {
     String pdePath = null;  // path to the .pde file
     String outputPath = null;
     File outputFolder = null;
-    boolean outputSet = false;
+    boolean outputSet = false;  // set an output folder
     boolean force = false;  // replace that no good output folder
 //    String preferencesPath = null;
     int platform = PApplet.platform; // default to this platform
