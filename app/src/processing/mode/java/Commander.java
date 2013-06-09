@@ -363,7 +363,7 @@ public class Commander implements RunnerListener {
     out.println("--help               Show this help text. Congratulations.");
     out.println();
     out.println("--sketch=<name>      Specify the sketch folder (required)");
-    out.println("--output=<name>      Specify the output folder (required and");
+    out.println("--output=<name>      Specify the output folder (optional and");
     out.println("                     cannot be the same as the sketch folder.)");
     out.println();
     out.println("--force              The sketch will not build if the output");
