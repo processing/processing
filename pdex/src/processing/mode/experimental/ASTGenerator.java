@@ -1,12 +1,8 @@
 package processing.mode.experimental;
 
-import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -21,12 +17,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTree;
@@ -34,7 +27,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.text.BadLocationException;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
@@ -62,18 +54,12 @@ import org.eclipse.jdt.core.dom.VariableDeclarationExpression;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.internal.compiler.problem.DefaultProblem;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import processing.app.Base;
 import processing.app.SketchCode;
-import processing.app.syntax.JEditTextArea;
 
 import com.google.classpath.ClassPath;
 import com.google.classpath.ClassPathFactory;
-import com.google.classpath.DirectoryClassPath.FileFileFilter;
 import com.google.classpath.RegExpResourceFilter;
 import com.ibm.icu.util.StringTokenizer;
 
@@ -275,30 +261,30 @@ public class ASTGenerator {
               + File.pathSeparatorChar);
           if (errorCheckerService.classpathJars != null) {
             for (URL jarPath : errorCheckerService.classpathJars) {
-              System.out.println(jarPath.getPath());
+              //System.out.println(jarPath.getPath());
               tehPath.append(jarPath.getPath() + File.pathSeparatorChar);
             }
           }
 
 //          String paths[] = tehPath.toString().split(File.separatorChar +"");
-          StringTokenizer st = new StringTokenizer(tehPath.toString(),
-                                                   File.pathSeparatorChar + "");
-          while (st.hasMoreElements()) {
-            String sstr = (String) st.nextElement();
-            System.out.println(sstr);
-          }
+//          StringTokenizer st = new StringTokenizer(tehPath.toString(),
+//                                                   File.pathSeparatorChar + "");
+//          while (st.hasMoreElements()) {
+//            String sstr = (String) st.nextElement();
+//            System.out.println(sstr);
+//          }
 
           classPath = factory.createFromPath(tehPath.toString());
 //          for (String packageName : classPath.listPackages("")) {
 //            System.out.println(packageName);
 //          }
-//          RegExpResourceFilter regExpResourceFilter = new RegExpResourceFilter(
-//                                                                               ".*",
-//                                                                               "ArrayList.class");
-//          String[] resources = classPath.findResources("", regExpResourceFilter);
-//          for (String className : resources) {
-//            System.out.println("-> " + className);
-//          }
+          RegExpResourceFilter regExpResourceFilter = new RegExpResourceFilter(
+                                                                               ".*",
+                                                                               "ArrayList.class");
+          String[] resources = classPath.findResources("", regExpResourceFilter);
+          for (String className : resources) {
+            System.out.println("-> " + className);
+          }
           System.out.println("jars loaded.");
         } catch (Exception e) {
           e.printStackTrace();
@@ -544,7 +530,7 @@ public class ASTGenerator {
         }
 
         // Now parse the expression into an ASTNode object
-        ASTNode anode = null;
+        ASTNode nearestNode = null;
         ASTParser parser = ASTParser.newParser(AST.JLS4);
         parser.setKind(ASTParser.K_EXPRESSION);
         parser.setSource(word2.toCharArray());
@@ -552,13 +538,13 @@ public class ASTGenerator {
 
         // Find closest ASTNode of the document to this word
         System.err.print("Typed: " + word2 + "|");
-        anode = findClosestNode(lineNumber, (ASTNode) compilationUnit.types()
+        nearestNode = findClosestNode(lineNumber, (ASTNode) compilationUnit.types()
             .get(0));
-        if (anode == null)
-          //Make sure anode is not NULL if couldn't find a closeset node
-          anode = (ASTNode) compilationUnit.types().get(0);
+        if (nearestNode == null)
+          //Make sure nearestNode is not NULL if couldn't find a closeset node
+          nearestNode = (ASTNode) compilationUnit.types().get(0);
         System.err.println(lineNumber + " Nearest ASTNode to PRED "
-            + getNodeAsString(anode));
+            + getNodeAsString(nearestNode));
 
         ArrayList<CompletionCandidate> candidates = new ArrayList<CompletionCandidate>();
 
@@ -567,12 +553,16 @@ public class ASTGenerator {
         if (testnode instanceof SimpleName && !noCompare) {
           System.err
               .println("One word expression " + getNodeAsString(testnode));
-          // Simple one word exprssion - so is just an identifier
-          anode = anode.getParent();
-          while (anode != null) {
-
-            if (anode instanceof TypeDeclaration) {
-              TypeDeclaration td = (TypeDeclaration) anode;
+          //==> Simple one word exprssion - so is just an identifier
+          
+          // Bottom up traversal of the AST to look for possible definitions at 
+          // higher levels.
+          nearestNode = nearestNode.getParent();
+          while (nearestNode != null) {
+            // If the current class has a super class, look inside it for
+            // definitions.
+            if (nearestNode instanceof TypeDeclaration) {
+              TypeDeclaration td = (TypeDeclaration) nearestNode;
               if (td
                   .getStructuralProperty(TypeDeclaration.SUPERCLASS_TYPE_PROPERTY) != null) {
                 SimpleType st = (SimpleType) td
@@ -586,13 +576,13 @@ public class ASTGenerator {
 
               }
             }
-            List<StructuralPropertyDescriptor> sprops = anode
+            List<StructuralPropertyDescriptor> sprops = nearestNode
                 .structuralPropertiesForType();
             for (StructuralPropertyDescriptor sprop : sprops) {
               ASTNode cnode = null;
               if (!sprop.isChildListProperty()) {
-                if (anode.getStructuralProperty(sprop) instanceof ASTNode) {
-                  cnode = (ASTNode) anode.getStructuralProperty(sprop);
+                if (nearestNode.getStructuralProperty(sprop) instanceof ASTNode) {
+                  cnode = (ASTNode) nearestNode.getStructuralProperty(sprop);
                   CompletionCandidate[] types = checkForTypes(cnode);
                   if (types != null) {
                     for (int i = 0; i < types.length; i++) {
@@ -603,7 +593,7 @@ public class ASTGenerator {
                 }
               } else {
                 // Childlist prop
-                List<ASTNode> nodelist = (List<ASTNode>) anode
+                List<ASTNode> nodelist = (List<ASTNode>) nearestNode
                     .getStructuralProperty(sprop);
                 for (ASTNode clnode : nodelist) {
                   CompletionCandidate[] types = checkForTypes(clnode);
@@ -616,16 +606,33 @@ public class ASTGenerator {
                 }
               }
             }
-            anode = anode.getParent();
+            nearestNode = nearestNode.getParent();
+          }
+          if(candidates.isEmpty()){
+            // We're seeing a simple name that's not defined locally or in
+            // the parent class. So most probably a pre-defined type.
+            System.out.println("Empty can. " + word2);
+            RegExpResourceFilter regExpResourceFilter;
+            regExpResourceFilter = new RegExpResourceFilter(".*", word2 + "[a-zA-Z_0-9]*.class");
+            String[] resources = classPath.findResources("", regExpResourceFilter);
+            for (String matchedClass : resources) {
+              matchedClass = matchedClass.substring(0,
+                                                    matchedClass.length() - 6);
+              matchedClass = matchedClass.replace('/', '.');
+              int d = matchedClass.lastIndexOf('.');
+              matchedClass = matchedClass.substring(d + 1);
+              candidates.add(new CompletionCandidate(matchedClass));
+              //System.out.println("-> " + className);
+            }
           }
 
         } else {
 
-          // Complex expression of type blah.blah2().doIt,etc
+          // ==> Complex expression of type blah.blah2().doIt,etc
           // Have to resolve it by carefully traversing AST of testNode
           System.err.println("Complex expression " + getNodeAsString(testnode));
 
-          ASTNode det = resolveExpression(anode, testnode);
+          ASTNode det = resolveExpression(nearestNode, testnode);
           // Find the parent of the expression
           // in a().b, this would give me the return type of a(), so that we can 
           // find all children of a() begininng with b
@@ -760,11 +767,11 @@ public class ASTGenerator {
     for (String className : resources) {
       System.out.println("-> " + className);
     }
-    if (resources.length > 0) {
+    if (resources.length > 0) { //TODO: Multiple matched classes? What about 'em?
       String matchedClass = resources[0];
       matchedClass = matchedClass.substring(0, matchedClass.length() - 6);
       matchedClass = matchedClass.replace('/', '.');
-      System.out.println("Matched class: " + matchedClass);
+      System.out.println("In GMFT(), Matched class: " + matchedClass);
       System.out.println("Looking for match " + child.toString());
       try {
         Class<?> probableClass = Class.forName(matchedClass, false,
