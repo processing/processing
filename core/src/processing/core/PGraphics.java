@@ -5539,7 +5539,7 @@ public class PGraphics extends PImage implements PConstants {
    * @see PGraphics#camera(float, float, float, float, float, float, float, float, float)
    */
   public void printProjection() {
-    showMethodWarning("printCamera");
+    showMethodWarning("printProjection");
   }
 
 
