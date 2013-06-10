@@ -7,7 +7,7 @@ import java.util.List;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 
-public class CompletionCandidate {
+public class CompletionCandidate implements Comparable<CompletionCandidate>{
 
   private String definingClass;
 
@@ -117,6 +117,14 @@ public class CompletionCandidate {
 
   public int getType() {
     return type;
+  }
+
+  public int compareTo(CompletionCandidate cc) {
+    if(type != cc.getType()){
+      return cc.getType() - type;
+    }
+
+    return (elementName.compareTo(cc.getElementName()));
   }
 
 }

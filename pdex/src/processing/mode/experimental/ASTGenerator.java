@@ -16,6 +16,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -714,6 +715,7 @@ public class ASTGenerator {
 
         }
 
+        Collections.sort(candidates);
         CompletionCandidate[][] candi = new CompletionCandidate[candidates
             .size()][1];
 
