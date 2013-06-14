@@ -335,17 +335,18 @@ public class Table {
       setRowCount(10);
     }
     //int prev = 0;  //-1;
-    while ((line = reader.readLine()) != null) {
-      if (row == getRowCount()) {
-        setRowCount(row << 1);
-      }
-      if (row == 0 && header) {
-        setColumnTitles(tsv ? PApplet.split(line, '\t') : splitLineCSV(line));
-        header = false;
-      } else {
-        setRow(row, tsv ? PApplet.split(line, '\t') : splitLineCSV(line));
-        row++;
-      }
+    try {
+      while ((line = reader.readLine()) != null) {
+        if (row == getRowCount()) {
+          setRowCount(row << 1);
+        }
+        if (row == 0 && header) {
+          setColumnTitles(tsv ? PApplet.split(line, '\t') : splitLineCSV(line));
+          header = false;
+        } else {
+          setRow(row, tsv ? PApplet.split(line, '\t') : splitLineCSV(line));
+          row++;
+        }
 
       /*
       // this is problematic unless we're going to calculate rowCount first
@@ -364,6 +365,9 @@ public class Table {
         }
       }
       */
+      }
+    } catch (Exception e) {
+      throw new RuntimeException("Error reading table on line " + row, e);
     }
     // shorten or lengthen based on what's left
     if (row != getRowCount()) {

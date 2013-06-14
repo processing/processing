@@ -1,4 +1,6 @@
 0219 core (2.0.1)
+X add error message for what line was bad while parsing a table
+X   otherwise confusing ArrayIndexOutOfBoundsException while parsing bad CSV
 
 
 high
@@ -371,6 +373,9 @@ _   i.e. M with several coords means moveto followed by many linetos
 _   also curveto with multiple sets of points is ignored
 _ document somehow.. svg viewer will be discontinued
 _   http://www.adobe.com/svg/eol.html
+_ PShape getVertex() not implemented properly for SVG files
+X   https://code.google.com/p/processing/issues/detail?id=1558
+_   https://github.com/processing/processing/issues/1596
 
 
 CORE / PVector
@@ -446,7 +451,9 @@ _ shared intf for 3D view data across PGraphicsOpenGL and PGraphicsAndroid3D
 _   libraries have to do a lot of casting
 _ opengl isn't drawing rectangles out to raw properly with fonts
 _   when not in textMode(SHAPE) should have rects
-
+_ InvScreenX, Y, Z to convert screen (mouse) coordinates to model coordinates
+_   https://github.com/processing/processing/issues/1609
+X   https://code.google.com/p/processing/issues/detail?id=1571
 
 CORE / Mac OS X
 
@@ -458,6 +465,9 @@ _   -Xdock:icon=<path to icon file>
 
 CORE / Events
 
+_ Implement a way to disable automatic key repeat
+_   https://github.com/processing/processing/issues/1622
+X   https://code.google.com/p/processing/issues/detail?id=1584
 _ touch events.. can't do MouseEvent et al with Android
 _   http://dvcs.w3.org/hg/webevents/raw-file/tip/touchevents.html
 _   http://www.html5rocks.com/en/mobile/touch.html
