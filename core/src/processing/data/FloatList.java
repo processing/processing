@@ -16,6 +16,8 @@ import processing.core.PApplet;
  * a sorted copy, use list.copy().sort().
  *
  * @webref data:composite
+ * @see IntList
+ * @see StringList
  */
 public class FloatList implements Iterable<Float> {
   int count;
