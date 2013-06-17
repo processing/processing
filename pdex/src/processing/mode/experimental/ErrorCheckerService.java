@@ -25,6 +25,7 @@ import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
 import org.eclipse.jdt.internal.compiler.problem.DefaultProblem;
 
 import processing.app.Base;
+import processing.app.Editor;
 import processing.app.Library;
 import processing.app.SketchCode;
 import processing.core.PApplet;
@@ -1050,34 +1051,63 @@ public class ErrorCheckerService implements Runnable{
   }
   
   public void scrollToErrorLine(Problem p) {
-	    if (editor == null) {
-	      return;
-	    }
-	    if(p==null)
-	    	return;	   
-	      try {
-	        editor.toFront();
-	        editor.getSketch().setCurrentCode(p.tabIndex);
-	        
-	        editor.setSelection(editor.getTextArea()
-	            .getLineStartNonWhiteSpaceOffset(p.lineNumber - 1)
-	            + editor.getTextArea().getLineText(p.lineNumber - 1)
-	                .trim().length(), editor.getTextArea()
-	            .getLineStartNonWhiteSpaceOffset(p.lineNumber - 1));
-	        editor.getTextArea().scrollTo(p.lineNumber - 1, 0);
-	        editor.repaint();
-	      } catch (Exception e) {
-	        System.err
-	            .println(e
-	                + " : Error while selecting text in scrollToErrorLine()");
-	         e.printStackTrace();
-	      }
-	      // System.out.println("---");
+    if (editor == null) {
+      return;
+    }
+    if (p == null)
+      return;
+    try {
+      editor.toFront();
+      editor.getSketch().setCurrentCode(p.tabIndex);
 
-	    
-	  }
+      editor
+          .setSelection(editor.getTextArea()
+                            .getLineStartNonWhiteSpaceOffset(p.lineNumber - 1)
+                            + editor.getTextArea()
+                                .getLineText(p.lineNumber - 1).trim().length(),
+                        editor.getTextArea()
+                            .getLineStartNonWhiteSpaceOffset(p.lineNumber - 1));
+      editor.getTextArea().scrollTo(p.lineNumber - 1, 0);
+      editor.repaint();
+    } catch (Exception e) {
+      System.err.println(e
+          + " : Error while selecting text in scrollToErrorLine()");
+      e.printStackTrace();
+    }
+    // System.out.println("---");
+  }
   
-  
+  /**
+   * Static method for scroll to a particular line in the PDE. Requires 
+   * the editor instance as arguement. About time this went static.
+   * @param edt
+   * @param tabIndex
+   * @param lineNoInTab - line number in the corresponding tab
+   * @return - true, if scroll was successful
+   */
+  public static boolean scrollToErrorLine(Editor edt, int tabIndex, int lineNoInTab) {
+    if (edt == null) {
+      return false;
+    }
+    try {
+      edt.toFront();
+      edt.getSketch().setCurrentCode(tabIndex);
+
+      edt.setSelection(edt.getTextArea()
+                           .getLineStartNonWhiteSpaceOffset(lineNoInTab - 1)
+                           + edt.getTextArea().getLineText(lineNoInTab - 1)
+                               .trim().length(), edt.getTextArea()
+                           .getLineStartNonWhiteSpaceOffset(lineNoInTab - 1));
+      edt.getTextArea().scrollTo(lineNoInTab - 1, 0);
+      edt.repaint();
+    } catch (Exception e) {
+      System.err.println(e
+          + " : Error while selecting text in scrollToErrorLine()");
+      e.printStackTrace();
+      return false;
+    }
+    return true;
+  }
   
   /**
    * Checks if import statements in the sketch have changed. If they have,
