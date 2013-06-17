@@ -33,7 +33,6 @@ import javax.swing.text.Utilities;
 
 import processing.app.syntax.TextAreaDefaults;
 import processing.app.syntax.TokenMarker;
-import processing.mode.experimental.ASTGenerator.ASTNodeWrapper;
 
 /**
  * Customized line painter. Adds support for background colors, left hand gutter

@@ -1,6 +1,8 @@
 package processing.mode.experimental;
 
 import java.awt.Rectangle;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,6 +28,8 @@ import javax.swing.JTree;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.UIManager;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -73,8 +77,16 @@ public class ASTGenerator {
 
   private DefaultMutableTreeNode currentParent = null;
 
-  private JFrame frame2, frameAutoComp;
+  /**
+   * AST Window
+   */
+  private JFrame frame2;
+  
+  private JFrame frameAutoComp;
 
+  /**
+   * Swing component wrapper for AST, used for internal testing
+   */
   private JTree jtree;
 
   private CompilationUnit compilationUnit;
@@ -121,48 +133,6 @@ public class ASTGenerator {
     //addCompletionPopupListner();
   }
 
-  public class ASTNodeWrapper {
-    private ASTNode node;
-
-    private String label;
-
-    private int lineNumber;
-
-    private int apiLevel;
-
-    public ASTNodeWrapper(ASTNode node) {
-      if (node == null)
-        return;
-      this.node = node;
-      label = getNodeAsString(node);
-      if (label == null)
-        label = node.toString();
-      lineNumber = compilationUnit.getLineNumber(node.getStartPosition());
-      label += " | Line " + lineNumber;
-      apiLevel = 0;
-    }
-
-    public String toString() {
-      return label;
-    }
-
-    public ASTNode getNode() {
-      return node;
-    }
-
-    public String getLabel() {
-      return label;
-    }
-
-    public int getNodeType() {
-      return node.getNodeType();
-    }
-
-    public int getLineNumber() {
-      return lineNumber;
-    }
-  }
-
   private DefaultMutableTreeNode buildAST(String source, CompilationUnit cu) {
     if (cu == null) {
       ASTParser parser = ASTParser.newParser(AST.JLS4);
@@ -181,10 +151,10 @@ public class ASTGenerator {
     }
 //    OutlineVisitor visitor = new OutlineVisitor();
 //    compilationUnit.accept(visitor);
-//    codeTree = new DefaultMutableTreeNode(
-//                                          getNodeAsString((ASTNode) compilationUnit
-//                                              .types().get(0)));
-//    visitRecur((ASTNode) compilationUnit.types().get(0), codeTree);
+    codeTree = new DefaultMutableTreeNode(
+                                          getNodeAsString((ASTNode) compilationUnit
+                                              .types().get(0)));
+    visitRecur((ASTNode) compilationUnit.types().get(0), codeTree);
     SwingWorker worker = new SwingWorker() {
 
       @Override
@@ -194,13 +164,13 @@ public class ASTGenerator {
 
       protected void done() {
         if (codeTree != null) {
-//					if (jtree.hasFocus() || frame2.hasFocus())
-//						return;
+					if (jtree.hasFocus() || frame2.hasFocus())
+						return;
           jtree.setModel(new DefaultTreeModel(codeTree));
           ((DefaultTreeModel) jtree.getModel()).reload();
-//          if (!frame2.isVisible()) {
-//            frame2.setVisible(true);
-//          }
+          if (!frame2.isVisible()) {
+            frame2.setVisible(true);
+          }
 //          if (!frameAutoComp.isVisible()) {
 //
 //            frameAutoComp.setVisible(true);
@@ -438,6 +408,14 @@ public class ASTGenerator {
     return names;
   }
 
+  /**
+   * Find the parent of the expression in a().b, this would give me the return
+   * type of a(), so that we can find all children of a() begininng with b
+   * 
+   * @param nearestNode
+   * @param expression
+   * @return
+   */
   public static ASTNode resolveExpression(ASTNode nearestNode,
                                           ASTNode expression) {
 //    ASTNode anode = null;
@@ -1117,8 +1095,37 @@ public class ASTGenerator {
       System.out.println(found);
     }
   }
+  
+  private void addTreeListner(){
+    jtree.addTreeSelectionListener(new TreeSelectionListener() {
+      
+      @Override
+      public void valueChanged(TreeSelectionEvent e) {
+        SwingWorker worker = new SwingWorker() {
+
+          @Override
+          protected Object doInBackground() throws Exception {
+            return null;
+          }
+
+          protected void done() {
+            DefaultMutableTreeNode tnode = (DefaultMutableTreeNode) jtree
+                .getLastSelectedPathComponent();        
+            ASTNodeWrapper awrap = (ASTNodeWrapper) tnode.getUserObject();
+            
+          }
+        };
+        worker.execute();
+      }
+    });
+  }
 
   @SuppressWarnings({ "unchecked" })
+  /**
+   * Generates AST Swing component 
+   * @param node
+   * @param tnode
+   */
   public static void visitRecur(ASTNode node, DefaultMutableTreeNode tnode) {
     Iterator<StructuralPropertyDescriptor> it = node
         .structuralPropertiesForType().iterator();
@@ -1136,7 +1143,7 @@ public class ASTGenerator {
             ASTNode cnode = (ASTNode) node.getStructuralProperty(prop);
             if (isAddableASTNode(cnode)) {
               ctnode = new DefaultMutableTreeNode(
-                                                  getNodeAsString((ASTNode) node
+                                                  new ASTNodeWrapper((ASTNode) node
                                                       .getStructuralProperty(prop)));
               tnode.add(ctnode);
               visitRecur(cnode, ctnode);
@@ -1153,7 +1160,7 @@ public class ASTGenerator {
             .getStructuralProperty(prop);
         for (ASTNode cnode : nodelist) {
           if (isAddableASTNode(cnode)) {
-            ctnode = new DefaultMutableTreeNode(getNodeAsString(cnode));
+            ctnode = new DefaultMutableTreeNode(new ASTNodeWrapper(cnode));
             tnode.add(ctnode);
             visitRecur(cnode, ctnode);
           } else
@@ -1736,6 +1743,45 @@ public class ASTGenerator {
   public static boolean isAddableASTNode(ASTNode node) {
     return true;
   }
+  
+  /**
+   * For any line or expression, finds the line start offset(java code).
+   * @param node
+   * @return
+   */
+  public int getASTNodeLineStartOffset(ASTNode node){
+    int nodeLineNo = getLineNumber(node);
+    while(node.getParent() != null){
+      if (getLineNumber(node.getParent()) == nodeLineNo) {
+        node = node.getParent();
+      } else {
+        break;
+      }
+    }    
+    return node.getStartPosition();
+  }
+  
+  /**
+   * For any node, finds various offsets (java code).
+   * 
+   * @param node
+   * @return int[]{line number, line number start offset, node start offset,
+   *         node length}
+   */
+  public int[] getASTNodeAllOffsets(ASTNode node){
+    int nodeLineNo = getLineNumber(node), nodeOffset = node.getStartPosition(), nodeLength = node
+        .getLength();
+    while(node.getParent() != null){
+      if (getLineNumber(node.getParent()) == nodeLineNo) {
+        node = node.getParent();
+      } else {
+        break;
+      }
+    }    
+    return new int[]{nodeLineNo, node.getStartPosition(), nodeOffset,nodeLength};
+  }
+  
+  
 
   static private String getNodeAsString(ASTNode node) {
     if (node == null)

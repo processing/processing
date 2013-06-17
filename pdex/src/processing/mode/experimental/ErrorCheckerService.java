@@ -726,6 +726,89 @@ public class ErrorCheckerService implements Runnable{
   }
   
   /**
+   * Maps offset from java code to pde code. Returns a bunch of offsets as array
+   * 
+   * @param line
+   *          - line number in java code
+   * @param offset
+   *          - offset from the start of the 'line'
+   * @return int[0] - tab number, int[1] - line number, int[2] - line start
+   *         offset, int[3] - offset from line start int[2] and int[3] are on
+   *         TODO
+   */
+  public int[] JavaToPdeOffsets(int line, int offset){
+    int codeIndex = 0;
+
+    int x = line - mainClassOffset;
+    if (x < 0) {
+      // System.out.println("Negative line number "
+      // + problem.getSourceLineNumber() + " , offset "
+      // + mainClassOffset);
+      x = line - 2; // Another -1 for 0 index
+      if (x < programImports.size() && x >= 0) {
+        ImportStatement is = programImports.get(x);
+        // System.out.println(is.importName + ", " + is.tab + ", "
+        // + is.lineNumber);
+        return new int[] { is.tab, is.lineNumber };
+      } else {
+
+        // Some seriously ugly stray error, just can't find the source
+        // line! Simply return first line for first tab.
+        return  new int[] { 0, 1 };
+      }
+
+    }
+
+    try {
+      for (SketchCode sc : editor.getSketch().getCode()) {
+        if (sc.isExtension("pde")) {
+          int len = 0;
+          if (editor.getSketch().getCurrentCode().equals(sc)) {
+            len = Base.countLines(sc.getDocument().getText(0,
+                sc.getDocument().getLength())) + 1;
+          } else {
+            len = Base.countLines(sc.getProgram()) + 1;
+          }
+
+          // System.out.println("x,len, CI: " + x + "," + len + ","
+          // + codeIndex);
+
+          if (x >= len) {
+
+            // We're in the last tab and the line count is greater
+            // than the no.
+            // of lines in the tab,
+            if (codeIndex >= editor.getSketch().getCodeCount() - 1) {
+              // System.out.println("Exceeds lc " + x + "," + len
+              // + problem.toString());
+              // x = len
+              x = editor.getSketch().getCode(codeIndex)
+                  .getLineCount();
+              // TODO: Obtain line having last non-white space
+              // character in the code.
+              break;
+            } else {
+              x -= len;
+              codeIndex++;
+            }
+          } else {
+
+            if (codeIndex >= editor.getSketch().getCodeCount()) {
+              codeIndex = editor.getSketch().getCodeCount() - 1;
+            }
+            break;
+          }
+
+        }
+      }
+    } catch (Exception e) {
+      System.err
+          .println("Things got messed up in ErrorCheckerService.JavaToPdeOffset()");
+    }
+    return new int[] { codeIndex, x };
+  }
+  
+  /**
    * Calculates the tab number and line number of the error in that particular
    * tab. Provides mapping between pure java and pde code.
    * 
