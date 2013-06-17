@@ -66,9 +66,12 @@ public class ASTNodeWrapper {
    * 
    * @param ecs
    *          - ErrorCheckerService instance
+   * @return int[0] - tab number, int[1] - line number in the int[0] tab, int[2]
+   *         - line start offset, int[3] - offset from line start int[2] and
+   *         int[3] are on TODO
    */
   public int[] getPDECodeOffsets(ErrorCheckerService ecs) {
-    return ecs.JavaToPdeOffsets(lineNumber, node.getStartPosition());
+    return ecs.JavaToPdeOffsets(lineNumber + 1, node.getStartPosition());
   }
 
   public String toString() {

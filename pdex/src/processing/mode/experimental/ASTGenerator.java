@@ -131,6 +131,7 @@ public class ASTGenerator {
     //loadJars();
 
     //addCompletionPopupListner();
+    addTreeListner();
   }
 
   private DefaultMutableTreeNode buildAST(String source, CompilationUnit cu) {
@@ -1101,6 +1102,7 @@ public class ASTGenerator {
       
       @Override
       public void valueChanged(TreeSelectionEvent e) {
+        System.out.println(e);
         SwingWorker worker = new SwingWorker() {
 
           @Override
@@ -1109,10 +1111,23 @@ public class ASTGenerator {
           }
 
           protected void done() {
+            if(jtree
+                .getLastSelectedPathComponent() == null){
+              return;
+            }
             DefaultMutableTreeNode tnode = (DefaultMutableTreeNode) jtree
-                .getLastSelectedPathComponent();        
-            ASTNodeWrapper awrap = (ASTNodeWrapper) tnode.getUserObject();
+                .getLastSelectedPathComponent();    
+            if(tnode.getUserObject() == null){
+              return;
+            }
             
+            if (tnode.getUserObject() instanceof ASTNodeWrapper) {
+              // 3 friggin casts. Javaaargh.
+              ASTNodeWrapper awrap = (ASTNodeWrapper) tnode.getUserObject();
+              int offsets[] = awrap.getPDECodeOffsets(errorCheckerService);
+              ErrorCheckerService.scrollToErrorLine(editor, offsets[0],
+                                                    offsets[1]);
+            }
           }
         };
         worker.execute();

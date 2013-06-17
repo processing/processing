@@ -265,11 +265,12 @@ public class ErrorCheckerService implements Runnable{
     lastTimeStamp = System.currentTimeMillis();
     try {
       sourceCode = preprocessCode(editor.getSketch().getMainProgram());
-      
+
       syntaxCheck();
-       System.err.println(editor.getSketch().getName()+ "1 MCO " + mainClassOffset);
+      System.out.println(editor.getSketch().getName() + "1 MCO "
+          + mainClassOffset);
       // No syntax errors, proceed for compilation check, Stage 2.
-       
+
       if (problems.length == 0 && editor.compilationCheckEnabled) {
         //mainClassOffset++; // just a hack.
         astGenerator.buildAST(cu);
@@ -283,9 +284,9 @@ public class ErrorCheckerService implements Runnable{
         //         System.out.println(sourceCode);
         //         System.out.println("--------------------------");
         compileCheck();
-        System.err.println(editor.getSketch().getName()+ "2 MCO " + mainClassOffset);
+        System.out.println(editor.getSketch().getName() + "2 MCO "
+            + mainClassOffset);
       }
-      
       
       updateErrorTable();
       editor.updateErrorBar(problemsList);
@@ -734,7 +735,7 @@ public class ErrorCheckerService implements Runnable{
    * @param offset
    *          - offset from the start of the 'line'
    * @return int[0] - tab number, int[1] - line number in the int[0] tab, int[2]
-   *         - line start offset, int[3] - offset from line start int[2] and
+   *         - line start offset, int[3] - offset from line start. int[2] and
    *         int[3] are on TODO
    */
   public int[] JavaToPdeOffsets(int line, int offset){
@@ -1019,7 +1020,9 @@ public class ErrorCheckerService implements Runnable{
         mainClassOffset++;
       }
     }
-    if(staticMode) mainClassOffset++;
+    if(staticMode) {
+      mainClassOffset++;
+    }
     //mainClassOffset += 2;
     // Handle unicode characters
     sourceAlt = substituteUnicode(sourceAlt);
