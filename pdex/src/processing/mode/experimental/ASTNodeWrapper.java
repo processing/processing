@@ -48,18 +48,18 @@ public class ASTNodeWrapper {
    *         node length}
    */
   public int[] getJavaCodeOffsets() {
-    int nodeLineNo = getLineNumber(node), nodeOffset = node.getStartPosition(), nodeLength = node
+    int nodeOffset = node.getStartPosition(), nodeLength = node
         .getLength();
     ASTNode thisNode = node;
     while (thisNode.getParent() != null) {
-      if (getLineNumber(node.getParent()) == nodeLineNo) {
+      if (getLineNumber(node.getParent()) == lineNumber) {
         node = node.getParent();
       } else {
         break;
       }
     }
     return new int[] {
-      nodeLineNo, node.getStartPosition(), nodeOffset, nodeLength };
+      lineNumber, node.getStartPosition(), nodeOffset, nodeLength };
   }
 
   /**
@@ -67,8 +67,8 @@ public class ASTNodeWrapper {
    * @param ecs
    *          - ErrorCheckerService instance
    */
-  public void getPDECodeOffsets(ErrorCheckerService ecs) {
-
+  public int[] getPDECodeOffsets(ErrorCheckerService ecs) {
+    return ecs.JavaToPdeOffsets(lineNumber, node.getStartPosition());
   }
 
   public String toString() {

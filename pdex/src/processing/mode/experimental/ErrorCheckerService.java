@@ -732,9 +732,9 @@ public class ErrorCheckerService implements Runnable{
    *          - line number in java code
    * @param offset
    *          - offset from the start of the 'line'
-   * @return int[0] - tab number, int[1] - line number, int[2] - line start
-   *         offset, int[3] - offset from line start int[2] and int[3] are on
-   *         TODO
+   * @return int[0] - tab number, int[1] - line number in the int[0] tab, int[2]
+   *         - line start offset, int[3] - offset from line start int[2] and
+   *         int[3] are on TODO
    */
   public int[] JavaToPdeOffsets(int line, int offset){
     int codeIndex = 0;
@@ -1045,24 +1045,7 @@ public class ErrorCheckerService implements Runnable{
     
     if (errorIndex < problemsList.size() && errorIndex >= 0) {
       Problem p = problemsList.get(errorIndex);
-      try {
-        editor.toFront();
-        editor.getSketch().setCurrentCode(p.tabIndex);
-        editor.getTextArea().scrollTo(p.lineNumber - 1, 0);
-        editor.setSelection(editor.getTextArea()
-            .getLineStartNonWhiteSpaceOffset(p.lineNumber - 1)
-            + editor.getTextArea().getLineText(p.lineNumber - 1)
-                .trim().length(), editor.getTextArea()
-            .getLineStartNonWhiteSpaceOffset(p.lineNumber - 1));
-        editor.repaint();
-      } catch (Exception e) {
-        System.err
-            .println(e
-                + " : Error while selecting text in scrollToErrorLine()");
-        // e.printStackTrace();
-      }
-      // System.out.println("---");
-
+      scrollToErrorLine(p);
     }
   }
   
