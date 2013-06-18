@@ -1,6 +1,6 @@
 TODO List for Experimental Mode Plus- GSOC 2013
 
-This would also be a break down of my thought process and ideas as I tackle various tasks.
+This would also be a break down of my thought process and ideas as I tackle various tasks. Also lines are fairly long. Make sure you turn on word wrap. ;)
 
 Manindra Moharana (me@mkmoharana.com)
 
@@ -34,7 +34,7 @@ First major hurdle is offset mapping
 x for the above, I've decide to first implement a sketch outline like feature, which would highlight an AST element precisely in the pde code. This would ensure I've got the mapping working properly. And may lead to a future feature.
 * This is precise upto a certain line. Once on a line, pde stuff have to be taken into consideration.
 x Edge case - multiple staetments in a single line
-* PDE specific enhancements will also have to be tackled like int(), # literals.
+* PDE specific enhancements will also have to be tackled like int(), # literals. Although after being able to precisely locate ast nodes in a single line(with multiple statements per line), it seems this problem might not occur at all! Need to examine test cases further.
 
 Refactoring would work only when code is compiler error free. I plan to do a find replace type op on the compile ready code. 
 1. First identify the declaration of the variable in the AST. 
