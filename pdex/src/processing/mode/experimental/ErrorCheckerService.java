@@ -1081,7 +1081,7 @@ public class ErrorCheckerService implements Runnable{
   }
   
   /**
-   * /** Static method for scroll to a particular line in the PDE. Requires the
+   * Static method for scroll to a particular line in the PDE. Requires the
    * editor instance as arguement.
    * 
    * @param edt
