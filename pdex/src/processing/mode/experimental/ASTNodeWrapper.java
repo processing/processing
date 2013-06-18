@@ -1,5 +1,8 @@
 package processing.mode.experimental;
 
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.ExpressionStatement;
@@ -9,6 +12,7 @@ import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.QualifiedName;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
+import org.eclipse.jdt.core.dom.StructuralPropertyDescriptor;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 public class ASTNodeWrapper {
@@ -58,8 +62,40 @@ public class ASTNodeWrapper {
         break;
       }
     }
-    return new int[] {
-      lineNumber, thisNode.getStartPosition(), nodeOffset, nodeLength };
+    /*
+     *  There's an edge case here - multiple staetments in a single line.
+     *  After identifying the statement with the line number, I'll have to 
+     *  look at previous tree nodes in the same level for same line number.
+     *  The correct line start offset would be the line start offset of
+     *  the first node with this line number.
+     *  
+     *  Using linear search for now. P.S: Eclipse AST iterators are messy. 
+     *  TODO: binary search might improve speed by 0.001%?
+     */
+    
+    int altStartPos = thisNode.getStartPosition();
+    thisNode = thisNode.getParent();
+    
+    Iterator<StructuralPropertyDescriptor> it = thisNode
+        .structuralPropertiesForType().iterator();
+    
+    while (it.hasNext()) {
+      StructuralPropertyDescriptor prop = (StructuralPropertyDescriptor) it
+          .next();
+      if (prop.isChildListProperty()) {
+        List<ASTNode> nodelist = (List<ASTNode>) thisNode
+            .getStructuralProperty(prop);
+        for (ASTNode cnode : nodelist) {
+          if (getLineNumber(cnode) == lineNumber) {
+            altStartPos = cnode.getStartPosition();
+            // System.out.println("multi...");
+            break;
+          }
+        }
+      }
+    }
+    // System.out.println("Altspos " + altStartPos);
+    return new int[] { lineNumber,altStartPos , nodeOffset, nodeLength };
   }
 
   /**

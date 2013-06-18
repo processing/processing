@@ -52,6 +52,7 @@ import org.eclipse.jdt.core.dom.QualifiedName;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SimpleType;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
+import org.eclipse.jdt.core.dom.StringLiteral;
 import org.eclipse.jdt.core.dom.StructuralPropertyDescriptor;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationExpression;
@@ -1760,7 +1761,15 @@ public class ASTGenerator {
   }
 
   public static boolean isAddableASTNode(ASTNode node) {
-    return true;
+    switch (node.getNodeType()) {
+//    case ASTNode.STRING_LITERAL:
+//    case ASTNode.NUMBER_LITERAL:
+//    case ASTNode.BOOLEAN_LITERAL:
+//    case ASTNode.NULL_LITERAL:
+//      return false;
+    default:
+      return true;
+    }
   }
   
   /**
