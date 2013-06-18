@@ -1124,9 +1124,13 @@ public class ASTGenerator {
             if (tnode.getUserObject() instanceof ASTNodeWrapper) {
               // 3 friggin casts. Javaaargh.
               ASTNodeWrapper awrap = (ASTNodeWrapper) tnode.getUserObject();
-              int offsets[] = awrap.getPDECodeOffsets(errorCheckerService);
-              ErrorCheckerService.scrollToErrorLine(editor, offsets[0],
-                                                    offsets[1]);
+              int pdeoffsets[] = awrap.getPDECodeOffsets(errorCheckerService);
+              int javaoffsets[] = awrap.getJavaCodeOffsets();
+              ErrorCheckerService.scrollToErrorLine(editor, pdeoffsets[0],
+                                                    pdeoffsets[1],
+                                                    javaoffsets[2]
+                                                        - javaoffsets[1],
+                                                    javaoffsets[3]);
             }
           }
         };

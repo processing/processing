@@ -43,7 +43,7 @@ public class ASTNodeWrapper {
 
   /**
    * For this node, finds various offsets (java code).
-   * 
+   * Note that line start offset for this node is int[2] - int[1]
    * @return int[]{line number, line number start offset, node start offset,
    *         node length}
    */
@@ -52,14 +52,14 @@ public class ASTNodeWrapper {
         .getLength();
     ASTNode thisNode = node;
     while (thisNode.getParent() != null) {
-      if (getLineNumber(node.getParent()) == lineNumber) {
-        node = node.getParent();
+      if (getLineNumber(thisNode.getParent()) == lineNumber) {
+        thisNode = thisNode.getParent();
       } else {
         break;
       }
     }
     return new int[] {
-      lineNumber, node.getStartPosition(), nodeOffset, nodeLength };
+      lineNumber, thisNode.getStartPosition(), nodeOffset, nodeLength };
   }
 
   /**

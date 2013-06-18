@@ -1081,31 +1081,35 @@ public class ErrorCheckerService implements Runnable{
   }
   
   /**
-   * Static method for scroll to a particular line in the PDE. Requires 
-   * the editor instance as arguement. About time this went static.
+   * /** Static method for scroll to a particular line in the PDE. Requires the
+   * editor instance as arguement.
+   * 
    * @param edt
    * @param tabIndex
-   * @param lineNoInTab - line number in the corresponding tab
+   * @param lineNoInTab
+   *          - line number in the corresponding tab
+   * @param lineStartOffset
+   *          - selection start offset(from line start non-whitespace offset)
+   * @param length
+   *          - length of selection
    * @return - true, if scroll was successful
    */
-  public static boolean scrollToErrorLine(Editor edt, int tabIndex, int lineNoInTab) {
+  public static boolean scrollToErrorLine(Editor edt, int tabIndex, int lineNoInTab, int lineStartOffset, int length) {
     if (edt == null) {
       return false;
     }
     try {
       edt.toFront();
       edt.getSketch().setCurrentCode(tabIndex);
-
-      edt.setSelection(edt.getTextArea()
-                           .getLineStartNonWhiteSpaceOffset(lineNoInTab - 1)
-                           + edt.getTextArea().getLineText(lineNoInTab - 1)
-                               .trim().length(), edt.getTextArea()
-                           .getLineStartNonWhiteSpaceOffset(lineNoInTab - 1));
+      int lsno = edt.getTextArea()
+          .getLineStartNonWhiteSpaceOffset(lineNoInTab - 1) + lineStartOffset;
+      edt.setSelection(lsno, lsno + length);
       edt.getTextArea().scrollTo(lineNoInTab - 1, 0);
       edt.repaint();
+      System.out.println(lineStartOffset + " LSO,len " + length);
     } catch (Exception e) {
       System.err.println(e
-          + " : Error while selecting text in scrollToErrorLine()");
+          + " : Error while selecting text in static scrollToErrorLine()");
       e.printStackTrace();
       return false;
     }
