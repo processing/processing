@@ -16,7 +16,7 @@ x Completion for external classes - ArrayList, HashMap, etc.
 *! Library CC for nested would be tricky. Need to jump from local->compiled code while searching recursively. Recursive find's current implementation is based on ASTNode return type. Afaik, no way to instantiate orphaned 
 ASTNode objects(or did I miss it?). ASTNode objects have to be created only from the main ast instance. But I need to find a way to switch to compiled instances from local class instance.
 *! May be I should just implement recursive find for compiled code first, see how it goes and hopefully it would give me some ideas about how to integrating the two. 
-*! Should I implement wrapper for ASTNode? - possibly needed for code completion with compiled and non-compiled code.
+x! Should I implement wrapper for ASTNode? - possibly needed for code completion with compiled and non-compiled code. Done.
 * Trie implementation would be lower priority, "premature optimisation is pure evil". Get all features of CC working good enough and then plan this. 
 *+ Differentiating between multiple statements on the same line. How to?
 
@@ -34,7 +34,8 @@ First major hurdle is offset mapping
 x for the above, I've decide to first implement a sketch outline like feature, which would highlight an AST element precisely in the pde code. This would ensure I've got the mapping working properly. And may lead to a future feature.
 * This is precise upto a certain line. Once on a line, pde stuff have to be taken into consideration.
 x Edge case - multiple staetments in a single line
-* PDE specific enhancements will also have to be tackled like int(), # literals. Although after being able to precisely locate ast nodes in a single line(with multiple statements per line), it seems this problem might not occur at all! Need to examine test cases further.
+* PDE specific enhancements will also have to be tackled like int(), # literals. The length of the node returned needs to be modified to make up for extra chars added like PApplet.parseFloat, etc. Also the 2nd or futher pde enhancements in the same line means even the beginning offset would need adjustment. Meh.   
+
 
 Refactoring would work only when code is compiler error free. I plan to do a find replace type op on the compile ready code. 
 1. First identify the declaration of the variable in the AST. 

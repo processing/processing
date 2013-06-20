@@ -897,7 +897,7 @@ public class ErrorCheckerService implements Runnable{
    * java source. And there's a difference between parsable and compilable.
    * XQPrerocessor.java makes this code compilable. <br>
    * Handles: <li>Removal of import statements <li>Conversion of int(),
-   * char(), etc to (int)(), (char)(), etc. <li>Replacing '#' with 0xff for
+   * char(), etc to PApplet.parseInt(), etc. <li>Replacing '#' with 0xff for
    * color representation<li>Converts all 'color' datatypes to int
    * (experimental) <li>Appends class declaration statement after determining
    * the mode the sketch is in - ACTIVE or STATIC

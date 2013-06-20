@@ -2,6 +2,8 @@ package processing.mode.experimental;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -16,7 +18,7 @@ import org.eclipse.jdt.core.dom.StructuralPropertyDescriptor;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 public class ASTNodeWrapper {
-  private ASTNode node;
+  private ASTNode Node;
 
   private String label;
 
@@ -36,7 +38,7 @@ public class ASTNodeWrapper {
   public ASTNodeWrapper(ASTNode node) {
     if (node == null)
       return;
-    this.node = node;
+    this.Node = node;
     label = getNodeAsString(node);
     if (label == null)
       label = node.toString();
@@ -52,9 +54,9 @@ public class ASTNodeWrapper {
    *         node length}
    */
   public int[] getJavaCodeOffsets() {
-    int nodeOffset = node.getStartPosition(), nodeLength = node
+    int nodeOffset = Node.getStartPosition(), nodeLength = Node
         .getLength();
-    ASTNode thisNode = node;
+    ASTNode thisNode = Node;
     while (thisNode.getParent() != null) {
       if (getLineNumber(thisNode.getParent()) == lineNumber) {
         thisNode = thisNode.getParent();
@@ -63,7 +65,7 @@ public class ASTNodeWrapper {
       }
     }
     /*
-     *  There's an edge case here - multiple staetments in a single line.
+     *  There's an edge case here - multiple statements in a single line.
      *  After identifying the statement with the line number, I'll have to 
      *  look at previous tree nodes in the same level for same line number.
      *  The correct line start offset would be the line start offset of
@@ -78,7 +80,7 @@ public class ASTNodeWrapper {
     
     Iterator<StructuralPropertyDescriptor> it = thisNode
         .structuralPropertiesForType().iterator();
-    
+    boolean flag = true;
     while (it.hasNext()) {
       StructuralPropertyDescriptor prop = (StructuralPropertyDescriptor) it
           .next();
@@ -87,15 +89,80 @@ public class ASTNodeWrapper {
             .getStructuralProperty(prop);
         for (ASTNode cnode : nodelist) {
           if (getLineNumber(cnode) == lineNumber) {
-            altStartPos = cnode.getStartPosition();
-            // System.out.println("multi...");
-            break;
+            if (flag) {
+              altStartPos = cnode.getStartPosition();
+              // System.out.println("multi...");
+
+              flag = false;
+            } else {
+              if(cnode == Node){
+                // loop only till the current node.
+                break;
+              }
+              // We've located the first node in the line.
+              // Now normalize offsets till Node
+              //altStartPos += normalizeOffsets(cnode);
+              
+            }
+            
           }
         }
       }
     }
     // System.out.println("Altspos " + altStartPos);
-    return new int[] { lineNumber,altStartPos , nodeOffset, nodeLength };
+    return new int[] { lineNumber,altStartPos , nodeOffset, nodeLength + normalizeOffsets(Node) };
+  }
+  
+  /**
+   * Returns the difference in offsets between pde and java versions of the ast
+   * node
+   * 
+   * @param anode
+   * @return offset adjustment
+   */
+  private int normalizeOffsets(ASTNode anode){
+    String source = anode.toString().trim();
+    System.out.println("Src: " + source);
+    int offset = 0;
+    String dataTypeFunc[] = { "Int", "Char", "Float", "Boolean", "Byte" };
+
+    for (String dataType : dataTypeFunc) {
+      String dataTypeRegexp = "\\bPApplet.parse" + dataType + "\\s*\\(";
+      Pattern pattern = Pattern.compile(dataTypeRegexp);
+      Matcher matcher = pattern.matcher(source);
+
+      while (matcher.find()) {
+        System.out.print("Start index: " + matcher.start());
+        System.out.println(" End index: " + matcher.end() + " ");
+        System.out.println("-->" + matcher.group() + "<--");
+        offset = offset - ("PApplet.parse(").length();
+      }
+      
+      
+    }
+    
+    // Find all #[web color] and replace with 0xff[webcolor]
+    // Should be 6 digits only.
+    final String webColorRegexp = "#{1}[A-F|a-f|0-9]{6}\\W";
+    Pattern webPattern = Pattern.compile(webColorRegexp);
+    Matcher webMatcher = webPattern.matcher(source);
+    while (webMatcher.find()) {
+      // System.out.println("Found at: " + webMatcher.start());
+      String found = source.substring(webMatcher.start(), webMatcher.end());
+      // System.out.println("-> " + found);
+      source = webMatcher.replaceFirst("0xff" + found.substring(1));
+      webMatcher = webPattern.matcher(source);
+      offset += 3;
+    }
+
+    // Replace all color data types with int
+    // Regex, Y U SO powerful?
+    final String colorTypeRegex = "color(?![a-zA-Z0-9_])(?=\\[*)(?!(\\s*\\())";
+    Pattern colorPattern = Pattern.compile(colorTypeRegex);
+    Matcher colorMatcher = colorPattern.matcher(source);
+    source = colorMatcher.replaceAll("int");
+    System.out.println(source + "-Norm offset " + offset);
+    return offset;
   }
 
   /**
@@ -107,7 +174,7 @@ public class ASTNodeWrapper {
    *         int[3] are on TODO
    */
   public int[] getPDECodeOffsets(ErrorCheckerService ecs) {
-    return ecs.JavaToPdeOffsets(lineNumber + 1, node.getStartPosition());
+    return ecs.JavaToPdeOffsets(lineNumber + 1, Node.getStartPosition());
   }
 
   public String toString() {
@@ -115,7 +182,7 @@ public class ASTNodeWrapper {
   }
 
   public ASTNode getNode() {
-    return node;
+    return Node;
   }
 
   public String getLabel() {
@@ -123,7 +190,7 @@ public class ASTNodeWrapper {
   }
 
   public int getNodeType() {
-    return node.getNodeType();
+    return Node.getNodeType();
   }
 
   public int getLineNumber() {
