@@ -1126,7 +1126,7 @@ public class ASTGenerator {
               // 3 friggin casts. Javaaargh.
               ASTNodeWrapper awrap = (ASTNodeWrapper) tnode.getUserObject();
               int pdeoffsets[] = awrap.getPDECodeOffsets(errorCheckerService);
-              int javaoffsets[] = awrap.getJavaCodeOffsets();
+              int javaoffsets[] = awrap.getJavaCodeOffsets(errorCheckerService);
               ErrorCheckerService.scrollToErrorLine(editor, pdeoffsets[0],
                                                     pdeoffsets[1],
                                                     javaoffsets[2]

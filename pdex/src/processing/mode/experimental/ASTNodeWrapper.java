@@ -2,6 +2,7 @@ package processing.mode.experimental;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -53,7 +54,7 @@ public class ASTNodeWrapper {
    * @return int[]{line number, line number start offset, node start offset,
    *         node length}
    */
-  public int[] getJavaCodeOffsets() {
+  public int[] getJavaCodeOffsets(ErrorCheckerService ecs) {
     int nodeOffset = Node.getStartPosition(), nodeLength = Node
         .getLength();
     ASTNode thisNode = Node;
@@ -110,59 +111,82 @@ public class ASTNodeWrapper {
       }
     }
     // System.out.println("Altspos " + altStartPos);
-    return new int[] { lineNumber,altStartPos , nodeOffset, nodeLength + normalizeOffsets(Node) };
+    int pdeoffsets[] = getPDECodeOffsets(ecs);
+//    System.out.println("Line: "+ ecs.getPDECode(pdeoffsets[1] - 1));
+    int x = normalizeOffsets(ecs.getPDECode(pdeoffsets[1] - 1), nodeOffset
+        - altStartPos);
+    int xlen = normalizeOffsets(Node.toString(),nodeLength);
+    System.out.println("X="+x + " xlen=" + xlen);
+    
+    return new int[] { lineNumber,altStartPos, nodeOffset+x, nodeLength+xlen};
   }
   
-  /**
-   * Returns the difference in offsets between pde and java versions of the ast
-   * node
-   * 
-   * @param anode
-   * @return offset adjustment
-   */
-  private int normalizeOffsets(ASTNode anode){
-    String source = anode.toString().trim();
+ private int normalizeOffsets(String source, int inpOffset){
     System.out.println("Src: " + source);
+    String sourceAlt = new String(source);
     int offset = 0;
-    String dataTypeFunc[] = { "Int", "Char", "Float", "Boolean", "Byte" };
+    TreeMap<Integer, Integer> offsetmap = new TreeMap<Integer, Integer>();
+    String dataTypeFunc[] = { "int", "char", "float", "boolean", "byte" };
 
     for (String dataType : dataTypeFunc) {
-      String dataTypeRegexp = "\\bPApplet.parse" + dataType + "\\s*\\(";
+      String dataTypeRegexp = "\\b" + dataType + "\\s*\\(";
       Pattern pattern = Pattern.compile(dataTypeRegexp);
-      Matcher matcher = pattern.matcher(source);
+      Matcher matcher = pattern.matcher(sourceAlt);
 
       while (matcher.find()) {
         System.out.print("Start index: " + matcher.start());
         System.out.println(" End index: " + matcher.end() + " ");
         System.out.println("-->" + matcher.group() + "<--");
-        offset = offset - ("PApplet.parse(").length();
+        offsetmap.put(matcher.end(), ("PApplet.parse").length());
       }
-      
-      
+      matcher.reset();
+      sourceAlt = matcher.replaceAll("PApplet.parse"
+        + Character.toUpperCase(dataType.charAt(0))
+        + dataType.substring(1) + "(");
+
     }
-    
+
     // Find all #[web color] and replace with 0xff[webcolor]
     // Should be 6 digits only.
     final String webColorRegexp = "#{1}[A-F|a-f|0-9]{6}\\W";
     Pattern webPattern = Pattern.compile(webColorRegexp);
-    Matcher webMatcher = webPattern.matcher(source);
+    Matcher webMatcher = webPattern.matcher(sourceAlt);
     while (webMatcher.find()) {
       // System.out.println("Found at: " + webMatcher.start());
-      String found = source.substring(webMatcher.start(), webMatcher.end());
+      String found = sourceAlt.substring(webMatcher.start(),
+                                         webMatcher.end());
       // System.out.println("-> " + found);
-      source = webMatcher.replaceFirst("0xff" + found.substring(1));
-      webMatcher = webPattern.matcher(source);
-      offset += 3;
+      sourceAlt = webMatcher.replaceFirst("0xff" + found.substring(1));
+      webMatcher = webPattern.matcher(sourceAlt);
+      offsetmap.put(webMatcher.end(), 3);
     }
 
     // Replace all color data types with int
     // Regex, Y U SO powerful?
     final String colorTypeRegex = "color(?![a-zA-Z0-9_])(?=\\[*)(?!(\\s*\\())";
     Pattern colorPattern = Pattern.compile(colorTypeRegex);
-    Matcher colorMatcher = colorPattern.matcher(source);
-    source = colorMatcher.replaceAll("int");
-    System.out.println(source + "-Norm offset " + offset);
-    return offset;
+    Matcher colorMatcher = colorPattern.matcher(sourceAlt);
+    sourceAlt = colorMatcher.replaceAll("int");
+    while (colorMatcher.find()) {
+      System.out.print("Start index: " + colorMatcher.start());
+      System.out.println(" End index: " + colorMatcher.end() + " ");
+      System.out.println("-->" + colorMatcher.group() + "<--");
+      offsetmap.put(colorMatcher.end(), -2);
+    }
+    colorMatcher.reset();
+    sourceAlt = colorMatcher.replaceAll("int");
+    for (Integer key : offsetmap.keySet()) {
+      if(key < inpOffset){
+        offset -= offsetmap.get(key);
+      }
+      else{
+        break;
+      }
+      System.out.println(key + ":" + offsetmap.get(key));
+    }
+    System.out.println(source);
+    System.out.println(sourceAlt);
+    return offset;    
   }
 
   /**

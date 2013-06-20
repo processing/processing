@@ -810,6 +810,10 @@ public class ErrorCheckerService implements Runnable{
     return new int[] { codeIndex, x };
   }
   
+  public String getPDECode(int linenumber){
+    return editor.ta.getLineText(linenumber);
+  }
+  
   /**
    * Calculates the tab number and line number of the error in that particular
    * tab. Provides mapping between pure java and pde code.
