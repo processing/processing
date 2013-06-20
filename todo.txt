@@ -1,4 +1,20 @@
 0219 pde (2.0.1)
+X modes, tools, libraries not copying/moving properly on Windows
+X   https://github.com/processing/processing/issues/1781
+X undo seems to not be going to the right location (now with example)
+X   https://github.com/processing/processing/issues/707
+X   http://code.google.com/p/processing/issues/detail?id=668
+X   fixes from Josh Giesbrecht
+X line ending problem with args.txt for Windows when exporting from others
+X   (exporting from OS X to Windows)
+X   https://github.com/processing/processing/issues/1890
+
+_ half-installed mode causes a lot of trouble
+_   https://github.com/processing/processing/issues/1875
+
+_ mode install requires restart *and* still doesn't show as installed
+_   even though it gets added to the modes menu properly after the restart
+_   https://github.com/processing/processing/issues/1782
 
 
 high
@@ -303,8 +319,6 @@ _ 'recent' menu doesn't respect examples folder of other p5 versions
 _   could write that into the file, that it's an example
 _   or write the path as shown in the PDE to the file as simpler
 _ 'recent' menu paths can get enormous
-_ temporary files (for sketches and logs) are not deleted
-_   http://code.google.com/p/processing/issues/detail?id=562
 _ don't let people into the /tmp folder for sketches
 o   don't use tmp folder for sketches? 
 _   restrict more things like "show sketch folder"
@@ -325,9 +339,6 @@ _   where the active editor is not being set null
 _ the PDE uses 15% of CPU while just sitting idle
 _   https://github.com/processing/processing/issues/1561
 _ renaming RGB (.pde) to Rgb.java says "a file named RGB.pde already exists"
-_ undo seems to not be going to the right location (now with example)
-_   https://github.com/processing/processing/issues/707
-X   http://code.google.com/p/processing/issues/detail?id=668
 _ improve update check message "a new release (1.0.1) is available"
 _   be more descriptive, use a second line in latest.txt
 _   maybe just include the full text of the update message there?

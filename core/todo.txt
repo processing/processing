@@ -2,7 +2,10 @@
 X add error message for what line was bad while parsing a table
 X   otherwise confusing ArrayIndexOutOfBoundsException while parsing bad CSV
 X getVertex() trying to get three values when no Z-coord is available
+X   "PShape getVertex() not implemented properly for SVG files"
 X   https://github.com/processing/processing/issues/1596
+X typo in printProjection() method
+X   https://github.com/processing/processing/issues/1863
 
 
 high
@@ -14,6 +17,12 @@ _ Linux sometimes not responding correctly w/ the size() command
 _   https://github.com/processing/processing/issues/1672
 _ clean up requestFocus() stuff
 _   make sure it works with retina/canvas/strategy as well
+_ freeze after splash screen on OS X (looks like core.jar in the path)
+_   https://github.com/processing/processing/issues/1872
+
+andres
+_ pixels[] array not updated with Capture and P2D/P3D
+_   https://github.com/processing/processing/issues/1852
 
 
 decisions/misc

@@ -1,3 +1,36 @@
+PROCESSING 2.0.1 (REV 0219) - XX June 2013
+
+Bug fixes for some of what ailed the Processing 2.0 release, including
+two contributed from Josh Giesbrecht. Thanks Josh!
+
+[ bug fixes ] 
+
++ Modes, Tools, Libraries not moving properly on Windows
+  https://github.com/processing/processing/issues/1781
+
++ Undo seems to not be going to the right location (now with example)
+  https://github.com/processing/processing/issues/707
+  http://code.google.com/p/processing/issues/detail?id=668
+
++ Fix a problem with exporting Windows applications from OS X and Linux. 
+  https://github.com/processing/processing/issues/1890
+
++ getVertex() trying to get three values when no Z-coord is available
+  "PShape getVertex() not implemented properly for SVG files"
+  https://github.com/processing/processing/issues/1596
+
++ Fix typo in default printProjection() method
+  https://github.com/processing/processing/issues/1863
+
+[ additions ] 
+
++ Add error message for that reports what line was bad while parsing a table.
+  (Otherwise confusing ArrayIndexOutOfBoundsException while parsing bad CSV.)
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING 2.0 (REV 0218) - 3 June 2013
 
 And just like that, here we are at 2.0. 
