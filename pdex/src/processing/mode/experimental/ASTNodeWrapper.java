@@ -113,16 +113,31 @@ public class ASTNodeWrapper {
     // System.out.println("Altspos " + altStartPos);
     int pdeoffsets[] = getPDECodeOffsets(ecs);
 //    System.out.println("Line: "+ ecs.getPDECode(pdeoffsets[1] - 1));
-    int x = normalizeOffsets(ecs.getPDECode(pdeoffsets[1] - 1), nodeOffset
-        - altStartPos);
-    int xlen = normalizeOffsets(Node.toString(),nodeLength);
-    System.out.println("X="+x + " xlen=" + xlen);
-    
-    return new int[] { lineNumber,altStartPos, nodeOffset+x, nodeLength+xlen};
+
+    TreeMap<Integer, Integer> offsetmap = createOffsetMapping(ecs.getPDECode(pdeoffsets[1] - 1),
+                                                           nodeOffset
+                                                               - altStartPos);
+    int x = 0, xlen = 0;
+    for (Integer key : offsetmap.keySet()) {
+      System.out.println(key + ":" + offsetmap.get(key));
+    }
+    for (Integer key : offsetmap.keySet()) {
+      if (key < nodeOffset - altStartPos) {
+        x -= offsetmap.get(key);
+      }
+      if (key >= nodeOffset - altStartPos && key <= nodeOffset - altStartPos + nodeLength) {
+        xlen -= offsetmap.get(key);
+      }
+      System.out.println(key + ":" + offsetmap.get(key));
+    }
+    System.out.println("X=" + x + " xlen=" + xlen);
+
+    return new int[] {
+      lineNumber, altStartPos, nodeOffset + x, nodeLength + xlen };
   }
   
- private int normalizeOffsets(String source, int inpOffset){
-    System.out.println("Src: " + source);
+ private TreeMap<Integer, Integer> createOffsetMapping(String source, int inpOffset){
+    System.out.println("Src: " + source + " inpoff" + inpOffset);
     String sourceAlt = new String(source);
     int offset = 0;
     TreeMap<Integer, Integer> offsetmap = new TreeMap<Integer, Integer>();
@@ -156,8 +171,7 @@ public class ASTNodeWrapper {
       String found = sourceAlt.substring(webMatcher.start(),
                                          webMatcher.end());
       // System.out.println("-> " + found);
-      sourceAlt = webMatcher.replaceFirst("0xff" + found.substring(1));
-      webMatcher = webPattern.matcher(sourceAlt);
+      
       offsetmap.put(webMatcher.end(), 3);
     }
 
@@ -166,7 +180,6 @@ public class ASTNodeWrapper {
     final String colorTypeRegex = "color(?![a-zA-Z0-9_])(?=\\[*)(?!(\\s*\\())";
     Pattern colorPattern = Pattern.compile(colorTypeRegex);
     Matcher colorMatcher = colorPattern.matcher(sourceAlt);
-    sourceAlt = colorMatcher.replaceAll("int");
     while (colorMatcher.find()) {
       System.out.print("Start index: " + colorMatcher.start());
       System.out.println(" End index: " + colorMatcher.end() + " ");
@@ -175,18 +188,9 @@ public class ASTNodeWrapper {
     }
     colorMatcher.reset();
     sourceAlt = colorMatcher.replaceAll("int");
-    for (Integer key : offsetmap.keySet()) {
-      if(key < inpOffset){
-        offset -= offsetmap.get(key);
-      }
-      else{
-        break;
-      }
-      System.out.println(key + ":" + offsetmap.get(key));
-    }
-    System.out.println(source);
+    
     System.out.println(sourceAlt);
-    return offset;    
+    return offsetmap;    
   }
 
   /**
