@@ -1448,10 +1448,10 @@ public class JavaBuild {
       File argsFile = new File(destFolder + "/lib/args.txt");
       PrintWriter pw = PApplet.createWriter(argsFile);
 
-      pw.println(runOptions);
-
-      pw.println(sketch.getName());
-      pw.println(exportClassPath);
+      // Since this is only on Windows, make sure we use Windows CRLF
+      pw.print(runOptions + "\r\n");
+      pw.print(sketch.getName() + "\r\n");
+      pw.print(exportClassPath);
 
       pw.flush();
       pw.close();
