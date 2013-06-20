@@ -121,10 +121,30 @@ class AvailableContribution extends Contribution {
         LocalContribution newContrib =
           type.load(editor.getBase(), contribFolder);
         
+        // 1.1. get info we need to delete the newContrib folder later
+        File newContribFolder = newContrib.getFolder();
+        
         // 2. Check to make sure nothing has the same name already, 
         // backup old if needed, then move things into place and reload.
         installedContrib = 
-          newContrib.moveAndLoad(editor, confirmReplace, status);
+          newContrib.copyAndLoad(editor, confirmReplace, status);
+        
+        // 3. Delete the newContrib, do a garbage collection, hope and pray
+        // that Java will unlock the temp folder on Windows now
+        newContrib = null;
+        System.gc();
+        
+        // we'll even give it a second to finish up ... because file ops are
+        // just that flaky on Windows.
+        
+        try {
+          Thread.sleep(1000);
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
+
+        // 4. Okay, now actually delete that temp folder
+        Base.removeDir(newContribFolder);
         
       } else {
         status.setErrorMessage("Error overwriting .properties file.");

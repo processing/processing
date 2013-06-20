@@ -184,7 +184,7 @@ public abstract class LocalContribution extends Contribution {
 //  }
   
   
-  LocalContribution moveAndLoad(Editor editor, 
+  LocalContribution copyAndLoad(Editor editor, 
                                     boolean confirmReplace, 
                                     StatusPanel status) {
     ArrayList<LocalContribution> oldContribs = 
@@ -243,12 +243,28 @@ public abstract class LocalContribution extends Contribution {
     if (contribFolder.exists()) {
       Base.removeDir(contribFolder);
     }
+    
 
+    File oldFolder = getFolder();
+
+    try {
+      Base.copyDir(oldFolder,  contribFolder);
+    } catch (IOException e) {
+      status.setErrorMessage("Could not copy " + getTypeName() +
+                             " \"" + getName() + "\" to the sketchbook.");
+      e.printStackTrace();
+      return null;
+    }
+
+
+    /*
     if (!getFolder().renameTo(contribFolder)) {
       status.setErrorMessage("Could not move " + getTypeName() + 
                                 " \"" + getName() + "\" to the sketchbook.");
       return null;
     }
+    */
+    
     return getType().load(editor.getBase(), contribFolder);
   }
 
