@@ -276,7 +276,7 @@ private int[] createOffsetMapping(String source, int inpOffset, int nodeLen){
     System.out.println();
     pj = 0;
     pi = 0;
-    int count = 0;
+    int count = 1;
     // first find the java code index
 //    while(javaCodeMap[pj] != inpOffset && pj < javaCodeMap.length)
 //      pj++;
@@ -290,7 +290,7 @@ private int[] createOffsetMapping(String source, int inpOffset, int nodeLen){
     int startoffDif = pi - pj;
 //    while((javaCodeMap[pj] != inpOffset + nodeLen) && pj < javaCodeMap.length)
 //      pj++;
-    int stopindex = javaCodeMap[pj+nodeLen];
+    int stopindex = javaCodeMap[pj+nodeLen-1];
     System.out.println(startIndex+"SI,St"+stopindex + "sod " +startoffDif);
     // Use this index in the pdemap
     
