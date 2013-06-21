@@ -109,9 +109,8 @@ public class Preferences {
 
   JTextField sketchbookLocationField;
   JCheckBox editorAntialiasBox;
-//  JCheckBox exportSeparateBox;
   JCheckBox deletePreviousBox;
-//  JCheckBox externalEditorBox;
+  JCheckBox whinyBox;
   JCheckBox memoryOverrideBox;
   JTextField memoryField;
   JCheckBox checkUpdatesBox;
@@ -390,6 +389,16 @@ public class Preferences {
 //    right = Math.max(right, left + d.width);
 //    top += d.height + GUI_BETWEEN;
 
+    
+    // [ ] Use external editor
+
+    whinyBox = new JCheckBox("Hide tab/toolbar background image (requires restart)");
+    pain.add(whinyBox);
+    d = whinyBox.getPreferredSize();
+    whinyBox.setBounds(left, top, d.width + 10, d.height);
+    right = Math.max(right, left + d.width);
+    top += d.height + GUI_BETWEEN;
+
 
     // [ ] Check for updates on startup
 
@@ -602,15 +611,15 @@ public class Preferences {
   protected void applyFrame() {
     setBoolean("editor.antialias", editorAntialiasBox.isSelected()); //$NON-NLS-1$
 
-//    setBoolean("export.applet.separate_jar_files",
-//               exportSeparateBox.isSelected());
     setBoolean("export.delete_target_folder", //$NON-NLS-1$
                deletePreviousBox.isSelected());
 
-//    setBoolean("sketchbook.closing_last_window_quits",
-//               closingLastQuitsBox.isSelected());
-    //setBoolean("sketchbook.prompt", sketchPromptBox.isSelected());
-    //setBoolean("sketchbook.auto_clean", sketchCleanBox.isSelected());
+    boolean wine = whinyBox.isSelected();
+    setBoolean("header.hide.image", wine); //$NON-NLS-1$
+    setBoolean("buttons.hide.image", wine); //$NON-NLS-1$
+    // Could iterate through editors here and repaint them all, but probably 
+    // requires a doLayout() call, and that may have different effects on
+    // each platform, and nobody wants to debug/support that.
 
     // if the sketchbook path has changed, rebuild the menus
     String oldPath = get("sketchbook.path"); //$NON-NLS-1$
@@ -720,6 +729,9 @@ public class Preferences {
 //      setSelected(getBoolean("editor.external"));
     checkUpdatesBox.
       setSelected(getBoolean("update.check")); //$NON-NLS-1$
+
+    whinyBox.setSelected(getBoolean("header.hide.image") || //$NON-NLS-1$
+                         getBoolean("buttons.hide.image")); //$NON-NLS-1$
 
     updateDisplayList();
     int displayNum = getInteger("run.display"); //$NON-NLS-1$

@@ -27,6 +27,8 @@ two contributed from Josh Giesbrecht. Thanks Josh!
 + Add error message for that reports what line was bad while parsing a table.
   (Otherwise confusing ArrayIndexOutOfBoundsException while parsing bad CSV.)
 
++ Added option to remove the background image at the top of the window.
+
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 

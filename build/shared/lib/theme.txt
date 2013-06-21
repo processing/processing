@@ -13,6 +13,8 @@ status.font = processing.sans,plain,13
 # TABS
 # Settings for the tab area at the top.
 header.bgcolor = #000000
+#header.hide.image = false # in preferences.txt
+header.hide.color = #0E1B25
 header.text.selected.color = #000000
 header.text.unselected.color = #ffffff
 header.text.font = processing.sans,plain,14
@@ -26,8 +28,10 @@ console.output.color = #cccccc
 console.error.color = #ff3000
 
 # TOOLBAR BUTTONS
-#buttons.bgcolor = #4a545e
 buttons.bgcolor = #000000
+#buttons.hide.image = false # in preferences.txt
+buttons.hide.color = #0E1B25
+buttons.bgimage = true
 
 # TOOLBAR BUTTON TEXT
 buttons.status.font = processing.sans,plain,13

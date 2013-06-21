@@ -8,13 +8,7 @@ X   fixes from Josh Giesbrecht
 X line ending problem with args.txt for Windows when exporting from others
 X   (exporting from OS X to Windows)
 X   https://github.com/processing/processing/issues/1890
-
-_ half-installed mode causes a lot of trouble
-_   https://github.com/processing/processing/issues/1875
-
-_ mode install requires restart *and* still doesn't show as installed
-_   even though it gets added to the modes menu properly after the restart
-_   https://github.com/processing/processing/issues/1782
+X add option to remove the background image at the top of the window
 
 
 high
@@ -35,6 +29,11 @@ _ figure out Android build w/o javac so we can remove tools.jar and javac
 _   also to the p5 repo with just a JRE
 _   remove initRequirements from Base (no longer need JDI)
 _     move this into Android mode?
+_ half-installed mode causes a lot of trouble
+_   https://github.com/processing/processing/issues/1875
+_ mode install requires restart *and* still doesn't show as installed
+_   even though it gets added to the modes menu properly after the restart
+_   https://github.com/processing/processing/issues/1782
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 

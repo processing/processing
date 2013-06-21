@@ -56,7 +56,9 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
   Image offscreen;
   int width, height;
 
-  Color bgcolor;
+  Color bgColor;
+  boolean hiding;
+  Color hideColor;
 
   protected Button rollover;
 
@@ -92,13 +94,16 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
     rollover = null;
 
     mode = editor.getMode();
-    bgcolor = mode.getColor("buttons.bgcolor");
+    bgColor = mode.getColor("buttons.bgcolor");
     statusFont = mode.getFont("buttons.status.font");
     statusColor = mode.getColor("buttons.status.color");
 //    modeTitle = mode.getTitle().toUpperCase();
     modeTitle = mode.getTitle();
     modeTextFont = mode.getFont("mode.button.font");
     modeButtonColor = mode.getColor("mode.button.color");
+    
+    hiding = Preferences.getBoolean("buttons.hide.image");
+    hideColor = mode.getColor("buttons.hide.color");
 
     if (modeArrow == null) {
       String suffix = Toolkit.highResDisplay() ? "-2x.png" : ".png";
@@ -212,12 +217,14 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
                           RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
     }
 
-    g.setColor(bgcolor); //getBackground());
+    g.setColor(hiding ? hideColor : bgColor);
     g.fillRect(0, 0, width, height);
 //    if (backgroundImage != null) {
 //      g.drawImage(backgroundImage, 0, 0, BACKGROUND_WIDTH, BACKGROUND_HEIGHT, null);
 //    }
-    mode.drawBackground(g, 0);
+    if (!hiding) {
+      mode.drawBackground(g, 0);
+    }
 
 //    for (int i = 0; i < buttonCount; i++) {
 //      g.drawImage(stateImage[i], x1[i], y1, null);
