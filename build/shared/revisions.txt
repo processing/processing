@@ -1,4 +1,4 @@
-PROCESSING 2.0.1 (REV 0219) - XX June 2013
+PROCESSING 2.0.1 (REV 0219) - 21 June 2013
 
 Bug fixes for some of what ailed the Processing 2.0 release, including
 two contributed from Josh Giesbrecht. Thanks Josh!

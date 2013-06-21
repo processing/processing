@@ -12,6 +12,8 @@ X add option to remove the background image at the top of the window
 
 
 high
+_ Add "Processing Foundation" to the Help menu
+_   https://github.com/processing/processing/issues/1908
 _ move old Google Code SVN back to processing.org
 _   then cull out the old branches/tags from the Github repo
 _ UnsatisfiedLinkError causes huge message... 
@@ -34,6 +36,9 @@ _   https://github.com/processing/processing/issues/1875
 _ mode install requires restart *and* still doesn't show as installed
 _   even though it gets added to the modes menu properly after the restart
 _   https://github.com/processing/processing/issues/1782
+_ classpath conflicts.. 
+_   really need to make sure that a weird core.jar isn't being imported
+_   coffeescript was doing this and breaking the pde
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -524,6 +529,8 @@ _ Contributed modes should show up in mode menu after installation
 _   waiting for fixed CoffeeScript mode to test this one
 _   https://github.com/processing/processing/issues/1504
 X   http://code.google.com/p/processing/issues/detail?id=1466
+_ Update example list when library is installed
+_   https://github.com/processing/processing/issues/1909
 _ new libraries not picked up when changing sketchbook location
 _ make sure contrib manager can run w/o a network connection
 _   or if a bad document comes through, it can recover
