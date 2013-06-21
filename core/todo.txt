@@ -1,11 +1,4 @@
-0219 core (2.0.1)
-X add error message for what line was bad while parsing a table
-X   otherwise confusing ArrayIndexOutOfBoundsException while parsing bad CSV
-X getVertex() trying to get three values when no Z-coord is available
-X   "PShape getVertex() not implemented properly for SVG files"
-X   https://github.com/processing/processing/issues/1596
-X typo in printProjection() method
-X   https://github.com/processing/processing/issues/1863
+0220 core
 
 
 high

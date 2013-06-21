@@ -1,14 +1,4 @@
-0219 pde (2.0.1)
-X modes, tools, libraries not copying/moving properly on Windows
-X   https://github.com/processing/processing/issues/1781
-X undo seems to not be going to the right location (now with example)
-X   https://github.com/processing/processing/issues/707
-X   http://code.google.com/p/processing/issues/detail?id=668
-X   fixes from Josh Giesbrecht
-X line ending problem with args.txt for Windows when exporting from others
-X   (exporting from OS X to Windows)
-X   https://github.com/processing/processing/issues/1890
-X add option to remove the background image at the top of the window
+0220 pde
 
 
 high
