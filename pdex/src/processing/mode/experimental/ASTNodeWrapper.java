@@ -113,19 +113,68 @@ public class ASTNodeWrapper {
     // System.out.println("Altspos " + altStartPos);
     int pdeoffsets[] = getPDECodeOffsets(ecs);
 //    System.out.println("Line: "+ ecs.getPDECode(pdeoffsets[1] - 1));
-
-    TreeMap<Integer, Integer> offsetmap = createOffsetMapping(ecs.getPDECode(pdeoffsets[1] - 1),
+    String pdeCode = ecs.getPDECode(pdeoffsets[1] - 1);
+    int ws = 0;//leftWS(pdeCode);
+    TreeMap<Integer, Integer> offsetmap = createOffsetMapping(pdeCode,
                                                            nodeOffset
                                                                - altStartPos);
     int x = 0, xlen = 0;
+    System.out.println("Map:");
     for (Integer key : offsetmap.keySet()) {
       System.out.println(key + ":" + offsetmap.get(key));
     }
+    System.out.println((nodeOffset - altStartPos) + ",range, " +(nodeOffset - altStartPos + nodeLength));
+    
+    int pdeCodeMap[] = new int[pdeCode.length()*2];
+    int javaCodeMap[] = new int[pdeCode.length()*2];
+    int pi = 1,pj = 1;
+    
+    for (Integer key : offsetmap.keySet()) {
+      for (; pi  < key; pi++) {
+        pdeCodeMap[pi] = pdeCodeMap[pi-1] + 1;
+      }
+      for (; pj  < key; pj++) {
+        javaCodeMap[pj] = javaCodeMap[pj-1] + 1;
+      }
+      
+      System.out.println(key + ":" + offsetmap.get(key));
+      int kval =offsetmap.get(key); 
+      if(kval > 0){
+        // repeat pde offsets
+        pi--;
+        pj--;
+        for (int i = 0; i < kval; i++,pi++,pj++) {
+          pdeCodeMap[pi] = pdeCodeMap[pi-1];
+          javaCodeMap[pj] = javaCodeMap[pj-1] + 1;  
+        }
+      }
+      else
+      {
+        // repeat java offsets
+        pi--;
+        pj--;
+        for (int i = 0; i < -kval; i++,pi++,pj++) {
+          pdeCodeMap[pi] = pdeCodeMap[pi-1] + 1;
+          javaCodeMap[pj] = javaCodeMap[pj-1] ;  
+        }
+      }
+    }
+    pdeCodeMap[pi] = pdeCodeMap[pi-1] + 1;
+    javaCodeMap[pj] = javaCodeMap[pj-1] + 1;
+//    for (int i = 0; i < javaCodeMap.length; i++) {
+//      if(javaCodeMap[i] > 0 || pdeCodeMap[i] > 0 || i==0)
+//      System.out.println(javaCodeMap[i] + " - " + pdeCodeMap[i]);
+//    }
+//    System.out.println();
+//    for (int i = 0; i < javaCodeMap.length; i++) {
+//      System.out.println(pdeCodeMap[i] + " ");
+//    }
+    
     for (Integer key : offsetmap.keySet()) {
       if (key < nodeOffset - altStartPos) {
         x -= offsetmap.get(key);
       }
-      if (key >= nodeOffset - altStartPos && key <= nodeOffset - altStartPos + nodeLength) {
+      if (key >= nodeOffset - altStartPos +  ws && key <= nodeOffset - altStartPos + nodeLength+ws) {
         xlen -= offsetmap.get(key);
       }
       System.out.println(key + ":" + offsetmap.get(key));
@@ -136,13 +185,14 @@ public class ASTNodeWrapper {
       lineNumber, altStartPos, nodeOffset + x, nodeLength + xlen };
   }
   
- private TreeMap<Integer, Integer> createOffsetMapping(String source, int inpOffset){
+ @SuppressWarnings("unused")
+private TreeMap<Integer, Integer> createOffsetMapping(String source, int inpOffset){
     System.out.println("Src: " + source + " inpoff" + inpOffset);
     String sourceAlt = new String(source);
     int offset = 0;
     TreeMap<Integer, Integer> offsetmap = new TreeMap<Integer, Integer>();
     String dataTypeFunc[] = { "int", "char", "float", "boolean", "byte" };
-
+    
     for (String dataType : dataTypeFunc) {
       String dataTypeRegexp = "\\b" + dataType + "\\s*\\(";
       Pattern pattern = Pattern.compile(dataTypeRegexp);
@@ -152,7 +202,7 @@ public class ASTNodeWrapper {
         System.out.print("Start index: " + matcher.start());
         System.out.println(" End index: " + matcher.end() + " ");
         System.out.println("-->" + matcher.group() + "<--");
-        offsetmap.put(matcher.end(), ("PApplet.parse").length());
+        offsetmap.put(matcher.end()-1, ("PApplet.parse").length());
       }
       matcher.reset();
       sourceAlt = matcher.replaceAll("PApplet.parse"
@@ -171,8 +221,9 @@ public class ASTNodeWrapper {
       String found = sourceAlt.substring(webMatcher.start(),
                                          webMatcher.end());
       // System.out.println("-> " + found);
-      
-      offsetmap.put(webMatcher.end(), 3);
+      offsetmap.put(webMatcher.end()-1, 3);
+      sourceAlt = webMatcher.replaceFirst("0xff" + found.substring(1));
+      webMatcher = webPattern.matcher(sourceAlt);
     }
 
     // Replace all color data types with int
@@ -184,14 +235,87 @@ public class ASTNodeWrapper {
       System.out.print("Start index: " + colorMatcher.start());
       System.out.println(" End index: " + colorMatcher.end() + " ");
       System.out.println("-->" + colorMatcher.group() + "<--");
-      offsetmap.put(colorMatcher.end(), -2);
+      offsetmap.put(colorMatcher.end()-1, -2);
     }
     colorMatcher.reset();
     sourceAlt = colorMatcher.replaceAll("int");
     
+    
+    
     System.out.println(sourceAlt);
+    
+    int pdeCodeMap[] = new int[source.length()*2];
+    int javaCodeMap[] = new int[source.length()*2];
+    int pi = 1,pj = 1;
+    
+    for (Integer key : offsetmap.keySet()) {
+      for (; pi  < key; pi++) {
+        pdeCodeMap[pi] = pdeCodeMap[pi-1] + 1;
+      }
+      for (; pj  < key; pj++) {
+        javaCodeMap[pj] = javaCodeMap[pj-1] + 1;
+      }
+      
+      System.out.println(key + ":" + offsetmap.get(key));
+      int kval =offsetmap.get(key); 
+      if(kval > 0){
+        // repeat pde offsets
+        pi--;
+        pj-=2;
+        for (int i = 0; i < kval; i++,pi++,pj++) {
+          pdeCodeMap[pi] = pdeCodeMap[pi-1];
+          javaCodeMap[pj] = javaCodeMap[pj-1] + 1;  
+        }
+      }
+      else
+      {
+        // repeat java offsets
+        pi--;
+        pj--;
+        for (int i = 0; i < -kval; i++,pi++,pj++) {
+          pdeCodeMap[pi] = pdeCodeMap[pi-1] + 1;
+          javaCodeMap[pj] = javaCodeMap[pj-1] ;  
+        }
+      }
+    }
+    
+    
+    pdeCodeMap[pi] = pdeCodeMap[pi-1] + 1;
+    javaCodeMap[pj] = javaCodeMap[pj-1] + 1;
+    
+    
+    while (pi < sourceAlt.length()) {
+      pdeCodeMap[pi] = pdeCodeMap[pi-1] + 1;
+      pi++;
+    }
+    while (pj < source.length()) {
+      javaCodeMap[pj] = javaCodeMap[pj-1] + 1;  
+      pj++;
+    }
+    
+    for (int i = 0; i < javaCodeMap.length; i++) {
+      if(javaCodeMap[i] > 0 || pdeCodeMap[i] > 0 || i==0)
+      if(i < source.length())
+        System.out.print(source.charAt(i));
+      System.out.print(javaCodeMap[i] + " - " + pdeCodeMap[i]);
+      if(i < sourceAlt.length())
+        System.out.print(sourceAlt.charAt(i));
+      System.out.println();
+    }
+    System.out.println();
     return offsetmap;    
   }
+ 
+  private int leftWS(String s) {
+    int i = 0;
+    for (; i < s.length(); i++) {
+      if (s.charAt(i) == ' ')
+        continue;
+      else
+        break;
+    }
+    return i;
+ }
 
   /**
    * 
