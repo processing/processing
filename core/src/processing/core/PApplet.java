@@ -10640,14 +10640,15 @@ public class PApplet extends Applet
     } else {  // if not presenting
       // can't do pack earlier cuz present mode don't like it
       // (can't go full screen with a frame after calling pack)
-      //        frame.pack();  // get insets. get more.
+      //        frame.pack();  
+
+      // get insets. get more.
       Insets insets = frame.getInsets();
       int windowW = Math.max(applet.width, MIN_WINDOW_WIDTH) +
         insets.left + insets.right;
       int windowH = Math.max(applet.height, MIN_WINDOW_HEIGHT) +
         insets.top + insets.bottom;
-//      int windowW = Math.max(applet.width, MIN_WINDOW_WIDTH);
-//      int windowH = Math.max(applet.height, MIN_WINDOW_HEIGHT);
+
       int contentW = Math.max(applet.width, MIN_WINDOW_WIDTH);
       int contentH = Math.max(applet.height, MIN_WINDOW_HEIGHT);
 
@@ -10728,6 +10729,21 @@ public class PApplet extends Applet
       // all set for rockin
       if (applet.displayable()) {
         frame.setVisible(true);
+
+        // Linux doesn't deal with insets the same way. We get fake insets
+        // earlier, and then the window manager will slap its own insets
+        // onto things once the frame is realized on the screen. Awzm.
+        if (platform == LINUX) {
+          Insets irlInsets = frame.getInsets();
+          if (!irlInsets.equals(insets)) {
+            insets = irlInsets;
+            windowW = Math.max(applet.width, MIN_WINDOW_WIDTH) +
+              insets.left + insets.right;
+            windowH = Math.max(applet.height, MIN_WINDOW_HEIGHT) +
+              insets.top + insets.bottom;
+            frame.setSize(windowW, windowH);
+          }
+        }
       }
     }
 
