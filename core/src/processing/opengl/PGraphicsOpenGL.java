@@ -5768,6 +5768,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   /**
+   * Not an approved function, this will change or be removed in the future.
    * This utility method returns the texture associated to the renderer's.
    * drawing surface, making sure is updated to reflect the current contents
    * off the screen (or offscreen drawing surface).
@@ -5779,6 +5780,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   /**
+   * Not an approved function, this will change or be removed in the future.
    * This utility method returns the texture associated to the image.
    * creating and/or updating it if needed.
    *
