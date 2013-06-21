@@ -112,40 +112,48 @@ public class ASTNodeWrapper {
     }
     // System.out.println("Altspos " + altStartPos);
     int pdeoffsets[] = getPDECodeOffsets(ecs);
-//    System.out.println("Line: "+ ecs.getPDECode(pdeoffsets[1] - 1));
     String pdeCode = ecs.getPDECode(pdeoffsets[1] - 1).trim();
-//    int ws = 0;//leftWS(pdeCode);
     int vals[] = createOffsetMapping(pdeCode,nodeOffset - altStartPos,nodeLength);
-//    int x = 0, xlen = 0;
-//    System.out.println("Map:");
-//    for (Integer key : offsetmap.keySet()) {
-//      System.out.println(key + ":" + offsetmap.get(key));
-//    }
-//    System.out.println((nodeOffset - altStartPos) + ",range, " +(nodeOffset - altStartPos + nodeLength));
-//    
-//    
-//    for (Integer key : offsetmap.keySet()) {
-//      if (key < nodeOffset - altStartPos) {
-//        x -= offsetmap.get(key);
-//      }
-//      if (key >= nodeOffset - altStartPos +  ws && key <= nodeOffset - altStartPos + nodeLength+ws) {
-//        xlen -= offsetmap.get(key);
-//      }
-//      System.out.println(key + ":" + offsetmap.get(key));
-//    }
-//    System.out.println("X=" + x + " xlen=" + xlen);
-
     return new int[] {
       lineNumber, altStartPos, nodeOffset + vals[0], vals[1]};
   }
   
- @SuppressWarnings("unused")
-private int[] createOffsetMapping(String source, int inpOffset, int nodeLen){
-    System.out.println("Src:" + source + "\ninpoff" + inpOffset + " nodelen " + nodeLen);
-    String sourceAlt = new String(source);
-    int offset = 0;
-    TreeMap<Integer, Integer> offsetmap = new TreeMap<Integer, Integer>();
+ 
+  private int[] createOffsetMapping(String source, int inpOffset, int nodeLen) {
     
+    /*
+     * This is some tricky shiz. So detailed explanation follows:
+     * 
+     * The main issue here is that pde enhancements like color vars, # literals
+     * and int() type casting deviate from standard java. But I need to exact
+     * index matching for pde and java versions of snippets.For ex:
+     * "color col = #ffaadd;" <-PDE version "int col = 0xffffaadd;" <-Converted
+     * to Java
+     * 
+     * For exact index mapping, I need to know at what indices either is
+     * deviating from the other and by what amount. Turns out, it isn't quite
+     * easy.(1) First I take the pde version of the code as an argument(pde
+     * version fetched from the editor directly). I then find all instances
+     * which need to be converted to pure java, marking those indices and the
+     * index correction needed. (2) Now all java conversions are applied after
+     * marking the offsets. This ensures that the index order isn't disturbed by
+     * one at a time conversions as done in preprocessCode() in ECS. Took me
+     * sometime to figure out this was a bug. (3) Next I create a tables(two
+     * separate arrays) which allows me to look it up for matching any index
+     * between pde or java version of the snippet. This also lets me find out
+     * any difference in length between both versions.
+     * 
+     * Keep in mind though, dark magic was involved in creating the final lookup
+     * table.
+     * 
+     * TODO: This is a work in progress. There may be more bugs here in hiding.
+     */
+    
+    
+    System.out.println("Src:" + source + "\ninpoff" + inpOffset + " nodelen "
+        + nodeLen);
+    String sourceAlt = new String(source);
+    TreeMap<Integer, Integer> offsetmap = new TreeMap<Integer, Integer>();
 
     // Find all #[web color] 
     // Should be 6 digits only.
@@ -154,26 +162,22 @@ private int[] createOffsetMapping(String source, int inpOffset, int nodeLen){
     Matcher webMatcher = webPattern.matcher(sourceAlt);
     while (webMatcher.find()) {
       // System.out.println("Found at: " + webMatcher.start());
-      String found = sourceAlt.substring(webMatcher.start(),
-                                         webMatcher.end());
       // System.out.println("-> " + found);
-      offsetmap.put(webMatcher.end()-1, 3);
+      offsetmap.put(webMatcher.end() - 1, 3);
     }
-    
 
-    // Replace all color data types with int
-    // Regex, Y U SO powerful?
+    // Find all color data types
     final String colorTypeRegex = "color(?![a-zA-Z0-9_])(?=\\[*)(?!(\\s*\\())";
     Pattern colorPattern = Pattern.compile(colorTypeRegex);
     Matcher colorMatcher = colorPattern.matcher(sourceAlt);
     while (colorMatcher.find()) {
-      System.out.print("Start index: " + colorMatcher.start());
-      System.out.println(" End index: " + colorMatcher.end() + " ");
-      System.out.println("-->" + colorMatcher.group() + "<--");
-      offsetmap.put(colorMatcher.end()-1, -2);
+//      System.out.print("Start index: " + colorMatcher.start());
+//      System.out.println(" End index: " + colorMatcher.end() + " ");
+//      System.out.println("-->" + colorMatcher.group() + "<--");
+      offsetmap.put(colorMatcher.end() - 1, -2);
     }
-    
-    
+
+    // Find all int(), char()
     String dataTypeFunc[] = { "int", "char", "float", "boolean", "byte" };
 
     for (String dataType : dataTypeFunc) {
@@ -182,9 +186,9 @@ private int[] createOffsetMapping(String source, int inpOffset, int nodeLen){
       Matcher matcher = pattern.matcher(sourceAlt);
 
       while (matcher.find()) {
-        System.out.print("Start index: " + matcher.start());
-        System.out.println(" End index: " + matcher.end() + " ");
-        System.out.println("-->" + matcher.group() + "<--");
+//        System.out.print("Start index: " + matcher.start());
+//        System.out.println(" End index: " + matcher.end() + " ");
+//        System.out.println("-->" + matcher.group() + "<--");
         offsetmap.put(matcher.end() - 1, ("PApplet.parse").length());
       }
       matcher.reset();
@@ -193,83 +197,76 @@ private int[] createOffsetMapping(String source, int inpOffset, int nodeLen){
           + "(");
 
     }
-    
-    // replace with 0xff[webcolor]
+
+    // replace with 0xff[webcolor] and others
     webMatcher = webPattern.matcher(sourceAlt);
     while (webMatcher.find()) {
       // System.out.println("Found at: " + webMatcher.start());
-      String found = sourceAlt.substring(webMatcher.start(),
-                                         webMatcher.end());
+      String found = sourceAlt.substring(webMatcher.start(), webMatcher.end());
       // System.out.println("-> " + found);
       sourceAlt = webMatcher.replaceFirst("0xff" + found.substring(1));
       webMatcher = webPattern.matcher(sourceAlt);
     }
-    
+
     colorMatcher = colorPattern.matcher(sourceAlt);
     sourceAlt = colorMatcher.replaceAll("int");
-    
+
     System.out.println(sourceAlt);
-    
-    int javaCodeMap[] = new int[source.length()*2];
-    int pdeeCodeMap[] = new int[source.length()*2];
-    int pi = 1,pj = 1;
-    int keySum = 0;
+
+    // Create code map. Beware! Dark magic ahead.
+    int javaCodeMap[] = new int[source.length() * 2];
+    int pdeCodeMap[] = new int[source.length() * 2];
+    int pi = 1, pj = 1;
     for (Integer key : offsetmap.keySet()) {
-      for (; pi  < key; pi++) {
-        javaCodeMap[pi] = javaCodeMap[pi-1] + 1;
+      for (; pi < key; pi++) {
+        javaCodeMap[pi] = javaCodeMap[pi - 1] + 1;
       }
-      for (; pj  < key; pj++) {
-        pdeeCodeMap[pj] = pdeeCodeMap[pj-1] + 1;
+      for (; pj < key; pj++) {
+        pdeCodeMap[pj] = pdeCodeMap[pj - 1] + 1;
       }
-      
+
       System.out.println(key + ":" + offsetmap.get(key));
-      
-      int kval =offsetmap.get(key); 
-      if(kval > 0){
+
+      int kval = offsetmap.get(key);
+      if (kval > 0) {
         // repeat java offsets
         pi--;
         pj--;
-        for (int i = 0; i < kval; i++,pi++,pj++) {
-          javaCodeMap[pi] = javaCodeMap[pi-1];
-          pdeeCodeMap[pj] = pdeeCodeMap[pj-1] + 1;  
+        for (int i = 0; i < kval; i++, pi++, pj++) {
+          javaCodeMap[pi] = javaCodeMap[pi - 1];
+          pdeCodeMap[pj] = pdeCodeMap[pj - 1] + 1;
         }
-      }
-      else
-      {
+      } else {
         // repeat pde offsets
         pi--;
         pj--;
-        for (int i = 0; i < -kval; i++,pi++,pj++) {
-          javaCodeMap[pi] = javaCodeMap[pi-1] + 1;
-          pdeeCodeMap[pj] = pdeeCodeMap[pj-1] ;  
+        for (int i = 0; i < -kval; i++, pi++, pj++) {
+          javaCodeMap[pi] = javaCodeMap[pi - 1] + 1;
+          pdeCodeMap[pj] = pdeCodeMap[pj - 1];
         }
       }
-      keySum+=offsetmap.get(key);
-      System.out.println("==");
     }
-    
-    
-    javaCodeMap[pi] = javaCodeMap[pi-1] + 1;
-    pdeeCodeMap[pj] = pdeeCodeMap[pj-1] + 1;
-    
-    
+
+    javaCodeMap[pi] = javaCodeMap[pi - 1] + 1;
+    pdeCodeMap[pj] = pdeCodeMap[pj - 1] + 1;
+
     while (pi < sourceAlt.length()) {
-      javaCodeMap[pi] = javaCodeMap[pi-1] + 1;
+      javaCodeMap[pi] = javaCodeMap[pi - 1] + 1;
       pi++;
     }
     while (pj < source.length()) {
-      pdeeCodeMap[pj] = pdeeCodeMap[pj-1] + 1;  
+      pdeCodeMap[pj] = pdeCodeMap[pj - 1] + 1;
       pj++;
     }
-    
-    for (int i = 0; i < pdeeCodeMap.length; i++) {
-      if (pdeeCodeMap[i] > 0 || javaCodeMap[i] > 0 || i == 0) {
+
+    for (int i = 0; i < pdeCodeMap.length; i++) {
+      if (pdeCodeMap[i] > 0 || javaCodeMap[i] > 0 || i == 0) {
         if (i < source.length())
           System.out.print(source.charAt(i));
-        System.out.print(pdeeCodeMap[i] + " - " + javaCodeMap[i]);
+        System.out.print(pdeCodeMap[i] + " - " + javaCodeMap[i]);
         if (i < sourceAlt.length())
           System.out.print(sourceAlt.charAt(i));
-        System.out.print(" <-["+i+"]");
+        System.out.print(" <-[" + i + "]");
         System.out.println();
       }
     }
@@ -278,34 +275,27 @@ private int[] createOffsetMapping(String source, int inpOffset, int nodeLen){
     pi = 0;
     int count = 1;
     // first find the java code index
-//    while(javaCodeMap[pj] != inpOffset && pj < javaCodeMap.length)
-//      pj++;
-    pj=inpOffset;
-    
+    pj = inpOffset;
+
     int startIndex = javaCodeMap[pj];
-    
- // find beginning
-    while(pdeeCodeMap[pi] != startIndex && pi < pdeeCodeMap.length)
+
+    // find beginning
+    while (pdeCodeMap[pi] != startIndex && pi < pdeCodeMap.length)
       pi++;
     int startoffDif = pi - pj;
-//    while((javaCodeMap[pj] != inpOffset + nodeLen) && pj < javaCodeMap.length)
-//      pj++;
-    int stopindex = javaCodeMap[pj+nodeLen-1];
-    System.out.println(startIndex+"SI,St"+stopindex + "sod " +startoffDif);
-    // Use this index in the pdemap
-    
-    
-    
+    int stopindex = javaCodeMap[pj + nodeLen - 1];
+    System.out.println(startIndex + "SI,St" + stopindex + "sod " + startoffDif);
+
     // count till stopindex
-    while(pdeeCodeMap[pi] < stopindex && pi < pdeeCodeMap.length){
+    while (pdeCodeMap[pi] < stopindex && pi < pdeCodeMap.length) {
       pi++;
       count++;
     }
-    
+
 //    System.out.println("PDE maps from " + pdeeCodeMap[pi]);
-    
+
     System.out.println("pde len " + count);
-    return new int[] { startoffDif,count };
+    return new int[] { startoffDif, count };
   }
  
   /**
