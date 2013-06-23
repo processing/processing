@@ -1007,19 +1007,57 @@ public class ASTGenerator {
     }
     System.out.println("FLON: " + lineNumber);
     ASTNode lineNode = findLineOfNode(compilationUnit, lineNumber, offset, name);
+    
     System.out.println("+> " + lineNode);
     ASTNode decl = null;
     if (lineNode != null) {
       ASTNodeWrapper lineNodeWrap = new ASTNodeWrapper(lineNode);
       int ret[][] = lineNodeWrap.getOffsetMapping(errorCheckerService);
-      int javaCodeMap[] = ret[0];
+      int javaCodeMap[] = ret[0], pdeCodeMap[] = ret[1];
       int altOff = 0;
       for (; altOff < javaCodeMap.length; altOff++) {
-        if(javaCodeMap[altOff] == offset)
+        if(javaCodeMap[altOff] == pdeCodeMap[offset]){
+          //altOff = javaCodeMap[altOff];
           break;
+        }      
       }
       System.out.println("FLON2: " + lineNumber + " LN spos "
           + lineNode.getStartPosition() + " off " + offset + " alt off" + altOff);
+      /* 
+       * Now I need to see if multiple statements exist with this same line number
+       * If that's the case, I need to ensure the offset is right. 
+       */
+      ASTNode parLineNode = lineNode.getParent(); 
+      
+      Iterator<StructuralPropertyDescriptor> it = parLineNode
+          .structuralPropertiesForType().iterator();
+      boolean flag = true;
+      int lineStartPos = lineNode.getStartPosition(), offAdjust = 0;
+      while (it.hasNext() && flag) {
+        StructuralPropertyDescriptor prop = (StructuralPropertyDescriptor) it
+            .next();
+        if (prop.isChildListProperty()) {
+          List<ASTNode> nodelist = (List<ASTNode>) parLineNode
+              .getStructuralProperty(prop);
+          for (ASTNode cnode : nodelist) {
+            if (getLineNumber(cnode) == lineNumber) {
+              if (cnode.getStartPosition() <= lineNode.getStartPosition()
+                  + altOff
+                  && cnode.getStartPosition() + cnode.getLength() > lineNode
+                      .getStartPosition() + altOff) {
+                System.out.println(cnode);
+                offAdjust = cnode.getStartPosition() - lineNode.getStartPosition();
+                lineNode = cnode;
+                altOff -= offAdjust;
+                flag = false;
+                break;
+              }
+              
+            }
+          }
+        }
+      }
+      System.out.println("FLON3 "+lineNode.getStartPosition() + " off " + offset + " alt off" + altOff);
       ASTNode simpName = pinpointOnLine(lineNode, altOff,
                                         lineNode.getStartPosition(), name);
       System.out.println("+++> " + simpName);
@@ -1235,14 +1273,14 @@ public class ASTGenerator {
 //    System.out.println("Inside "+getNodeAsString(node) + " | " + root.getLineNumber(node.getStartPosition()));
     if (root.getLineNumber(node.getStartPosition()) == lineNumber) {
       System.err
-          .println(3 + getNodeAsString(node) + " len " + node.getLength());
-
-      if (offset < node.getLength())
-        return node;
-      else {
-        System.err.println(-11);
-        return null;
-      }
+          .println(3 + getNodeAsString(node) + " len " + node.getLength());      
+      return node;
+//      if (offset < node.getLength())
+//        return node;
+//      else {
+//        System.err.println(-11);
+//        return null;
+//      }
     }
     for (Object oprop : node.structuralPropertiesForType()) {
       StructuralPropertyDescriptor prop = (StructuralPropertyDescriptor) oprop;
