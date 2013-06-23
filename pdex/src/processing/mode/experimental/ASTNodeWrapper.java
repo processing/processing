@@ -149,7 +149,7 @@ public class ASTNodeWrapper {
      * TODO: This is a work in progress. There may be more bugs here in hiding.
      */
     
-    
+    /*
     System.out.println("Src:" + source + "\ninpoff" + inpOffset + " nodelen "
         + nodeLen);
     String sourceAlt = new String(source);
@@ -246,6 +246,9 @@ public class ASTNodeWrapper {
           pdeCodeMap[pj] = pdeCodeMap[pj - 1];
         }
       }
+      
+      // after each adjustment, the key values need to keep 
+      // up with changed offset
       keySum += kval;
     }
 
@@ -273,6 +276,11 @@ public class ASTNodeWrapper {
       }
     }
     System.out.println();
+    */
+    int ret[][] = getOffsetMapping(source);
+    int javaCodeMap[] = ret[0];
+    int pdeCodeMap[] = ret[1];
+    int pi = 1, pj = 1;
     pj = 0;
     pi = 0;
     int count = 1;
@@ -298,6 +306,143 @@ public class ASTNodeWrapper {
 
     System.out.println("pde len " + count);
     return new int[] { startoffDif, count };
+  }
+  
+  /**
+   * Generates offset mapping between java and pde code
+   * 
+   * @param source
+   * @return int[0] - java code offsets, int[1] = pde code offsets
+   */
+  public int[][] getOffsetMapping(String source){
+    System.out.println("Src:" + source);
+    String sourceAlt = new String(source);
+    TreeMap<Integer, Integer> offsetmap = new TreeMap<Integer, Integer>();
+
+    // Find all #[web color] 
+    // Should be 6 digits only.
+    final String webColorRegexp = "#{1}[A-F|a-f|0-9]{6}\\W";
+    Pattern webPattern = Pattern.compile(webColorRegexp);
+    Matcher webMatcher = webPattern.matcher(sourceAlt);
+    while (webMatcher.find()) {
+      // System.out.println("Found at: " + webMatcher.start());
+      // System.out.println("-> " + found);
+      offsetmap.put(webMatcher.end() - 1, 3);
+    }
+
+    // Find all color data types
+    final String colorTypeRegex = "color(?![a-zA-Z0-9_])(?=\\[*)(?!(\\s*\\())";
+    Pattern colorPattern = Pattern.compile(colorTypeRegex);
+    Matcher colorMatcher = colorPattern.matcher(sourceAlt);
+    while (colorMatcher.find()) {
+//      System.out.print("Start index: " + colorMatcher.start());
+//      System.out.println(" End index: " + colorMatcher.end() + " ");
+//      System.out.println("-->" + colorMatcher.group() + "<--");
+      offsetmap.put(colorMatcher.end() - 1, -2);
+    }
+
+    // Find all int(), char()
+    String dataTypeFunc[] = { "int", "char", "float", "boolean", "byte" };
+
+    for (String dataType : dataTypeFunc) {
+      String dataTypeRegexp = "\\b" + dataType + "\\s*\\(";
+      Pattern pattern = Pattern.compile(dataTypeRegexp);
+      Matcher matcher = pattern.matcher(sourceAlt);
+
+      while (matcher.find()) {
+//        System.out.print("Start index: " + matcher.start());
+//        System.out.println(" End index: " + matcher.end() + " ");
+//        System.out.println("-->" + matcher.group() + "<--");
+        offsetmap.put(matcher.end() - 1, ("PApplet.parse").length());
+      }
+      matcher.reset();
+      sourceAlt = matcher.replaceAll("PApplet.parse"
+          + Character.toUpperCase(dataType.charAt(0)) + dataType.substring(1)
+          + "(");
+
+    }
+
+    // replace with 0xff[webcolor] and others
+    webMatcher = webPattern.matcher(sourceAlt);
+    while (webMatcher.find()) {
+      // System.out.println("Found at: " + webMatcher.start());
+      String found = sourceAlt.substring(webMatcher.start(), webMatcher.end());
+      // System.out.println("-> " + found);
+      sourceAlt = webMatcher.replaceFirst("0xff" + found.substring(1));
+      webMatcher = webPattern.matcher(sourceAlt);
+    }
+
+    colorMatcher = colorPattern.matcher(sourceAlt);
+    sourceAlt = colorMatcher.replaceAll("int");
+
+    System.out.println(sourceAlt);
+
+    // Create code map. Beware! Dark magic ahead.
+    int javaCodeMap[] = new int[source.length() * 2];
+    int pdeCodeMap[] = new int[source.length() * 2];
+    int pi = 1, pj = 1;
+    int keySum = 0;
+    for (Integer key : offsetmap.keySet()) {
+      for (; pi < key +keySum; pi++) {
+        javaCodeMap[pi] = javaCodeMap[pi - 1] + 1;
+      }
+      for (; pj < key; pj++) {
+        pdeCodeMap[pj] = pdeCodeMap[pj - 1] + 1;
+      }
+
+      System.out.println(key + ":" + offsetmap.get(key));
+
+      int kval = offsetmap.get(key);
+      if (kval > 0) {
+        // repeat java offsets
+        pi--;
+        pj--;
+        for (int i = 0; i < kval; i++, pi++, pj++) {
+          javaCodeMap[pi] = javaCodeMap[pi - 1];
+          pdeCodeMap[pj] = pdeCodeMap[pj - 1] + 1;
+        }
+      } else {
+        // repeat pde offsets
+        pi--;
+        pj--;
+        for (int i = 0; i < -kval; i++, pi++, pj++) {
+          javaCodeMap[pi] = javaCodeMap[pi - 1] + 1;
+          pdeCodeMap[pj] = pdeCodeMap[pj - 1];
+        }
+      }
+      
+      // after each adjustment, the key values need to keep 
+      // up with changed offset
+      keySum += kval;
+    }
+
+    javaCodeMap[pi] = javaCodeMap[pi - 1] + 1;
+    pdeCodeMap[pj] = pdeCodeMap[pj - 1] + 1;
+
+    while (pi < sourceAlt.length()) {
+      javaCodeMap[pi] = javaCodeMap[pi - 1] + 1;
+      pi++;
+    }
+    while (pj < source.length()) {
+      pdeCodeMap[pj] = pdeCodeMap[pj - 1] + 1;
+      pj++;
+    }
+    
+    // deubg o/p
+    for (int i = 0; i < pdeCodeMap.length; i++) {
+      if (pdeCodeMap[i] > 0 || javaCodeMap[i] > 0 || i == 0) {
+        if (i < source.length())
+          System.out.print(source.charAt(i));
+        System.out.print(pdeCodeMap[i] + " - " + javaCodeMap[i]);
+        if (i < sourceAlt.length())
+          System.out.print(sourceAlt.charAt(i));
+        System.out.print(" <-[" + i + "]");
+        System.out.println();
+      }
+    }
+    System.out.println();
+    
+    return new int[][]{javaCodeMap,pdeCodeMap};
   }
  
   /**
