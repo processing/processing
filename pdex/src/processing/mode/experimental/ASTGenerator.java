@@ -1010,16 +1010,20 @@ public class ASTGenerator {
     
     System.out.println("+> " + lineNode);
     ASTNode decl = null;
+    String nameOfNode = null; // The node name which is to be scrolled to
     if (lineNode != null) {
       ASTNodeWrapper lineNodeWrap = new ASTNodeWrapper(lineNode);
+      int altOff = offset;
       int ret[][] = lineNodeWrap.getOffsetMapping(errorCheckerService);
-      int javaCodeMap[] = ret[0], pdeCodeMap[] = ret[1];
-      int altOff = 0;
-      for (; altOff < javaCodeMap.length; altOff++) {
-        if(javaCodeMap[altOff] == pdeCodeMap[offset]){
-          //altOff = javaCodeMap[altOff];
-          break;
-        }      
+      if(ret != null){
+        altOff = 0;
+        int javaCodeMap[] = ret[0], pdeCodeMap[] = ret[1];
+
+        for (; altOff < javaCodeMap.length; altOff++) {
+          if (javaCodeMap[altOff] == pdeCodeMap[offset]) {
+            break;
+          }
+        }
       }
       System.out.println("FLON2: " + lineNumber + " LN spos "
           + lineNode.getStartPosition() + " off " + offset + " alt off" + altOff);
@@ -1032,7 +1036,7 @@ public class ASTGenerator {
       Iterator<StructuralPropertyDescriptor> it = parLineNode
           .structuralPropertiesForType().iterator();
       boolean flag = true;
-      int lineStartPos = lineNode.getStartPosition(), offAdjust = 0;
+      int offAdjust = 0;
       while (it.hasNext() && flag) {
         StructuralPropertyDescriptor prop = (StructuralPropertyDescriptor) it
             .next();
@@ -1062,6 +1066,7 @@ public class ASTGenerator {
                                         lineNode.getStartPosition(), name);
       System.out.println("+++> " + simpName);
       if (simpName instanceof SimpleName) {
+        nameOfNode = simpName.toString();
         System.out.println(getNodeAsString(simpName));
         decl = findDeclaration((SimpleName) simpName);
         if (decl != null) {
@@ -1077,18 +1082,62 @@ public class ASTGenerator {
 //    
 //    retStr = "";
     if (decl != null && scrollOnly) {
-      System.err.println("FINAL String label: " + getNodeAsString(decl));
-
-      DefaultProblem dpr = new DefaultProblem(null, null, -1, null, -1,
-                                              decl.getStartPosition(),
-                                              decl.getStartPosition(),
-                                              getLineNumber(decl) + 1, 0);
-      int[] position = errorCheckerService.calculateTabIndexAndLineNumber(dpr);
-      System.out.println("Tab " + position[0] + ", Line: " + (position[1]));
-      Problem p = new Problem(dpr, position[0], position[1]);
-      errorCheckerService.scrollToErrorLine(p);
+      ASTNode simpName2 = getNodeName(decl,nameOfNode);
+      System.err.println("FINAL String decl: " + getNodeAsString(decl));
+      System.err.println("FINAL String label: " + getNodeAsString(simpName2));
+      ASTNodeWrapper awrap = new ASTNodeWrapper(simpName2);
+      int pdeoffsets[] = awrap .getPDECodeOffsets(errorCheckerService);
+      int javaoffsets[] = awrap.getJavaCodeOffsets(errorCheckerService);
+      ErrorCheckerService.scrollToErrorLine(editor, pdeoffsets[0],
+                                            pdeoffsets[1],javaoffsets[1],
+                                            javaoffsets[2]);
+      // Now highlight the SimpleName
+      
+      
+      
+//      DefaultProblem dpr = new DefaultProblem(null, null, -1, null, -1,
+//                                              decl.getStartPosition(),
+//                                              decl.getStartPosition(),
+//                                              getLineNumber(decl) + 1, 0);
+//      int[] position = errorCheckerService.calculateTabIndexAndLineNumber(dpr);
+//      System.out.println("Tab " + position[0] + ", Line: " + (position[1]));
+//      Problem p = new Problem(dpr, position[0], position[1]);
+//      errorCheckerService.scrollToErrorLine(p);
     } // uncomment this one, it works
 
+    return null;
+  }
+  
+  private ASTNode getNodeName(ASTNode node, String name){
+    List<VariableDeclarationFragment> vdfs = null;
+    switch (node.getNodeType()) {
+    case ASTNode.TYPE_DECLARATION:
+      return ((TypeDeclaration) node).getName();
+    case ASTNode.METHOD_DECLARATION:
+      return ((MethodDeclaration) node).getName();
+    case ASTNode.SINGLE_VARIABLE_DECLARATION:
+      return ((SingleVariableDeclaration) node).getName();
+    case ASTNode.FIELD_DECLARATION:
+      vdfs = ((FieldDeclaration) node).fragments();
+      break;
+    case ASTNode.VARIABLE_DECLARATION_STATEMENT:
+      vdfs = ((VariableDeclarationStatement) node).fragments();
+      break;
+    case ASTNode.VARIABLE_DECLARATION_EXPRESSION:
+      vdfs = ((VariableDeclarationExpression) node).fragments();
+      break;
+    default:
+      break;
+    }
+
+    if (vdfs != null) {
+      for (VariableDeclarationFragment vdf : vdfs) {
+        if (vdf.getName().toString().equals(name)) {
+          return vdf.getName();
+        }
+      }
+
+    }
     return null;
   }
 
@@ -1330,15 +1379,19 @@ public class ASTGenerator {
 
     if (node instanceof SimpleName) {
       SimpleName sn = (SimpleName) node;
+      System.out.println(offset+ "off,pol " + getNodeAsString(sn));
       if ((lineStartOffset + offset) >= sn.getStartPosition()
           && (lineStartOffset + offset) <= sn.getStartPosition()
               + sn.getLength()) {
-        if (sn.toString().equals(name))
+        if (sn.toString().equals(name)) {
           return sn;
-        else
+        }
+        else {
           return null;
-      } else
+        } 
+      } else {
         return null;
+      }
     }
     for (Object oprop : node.structuralPropertiesForType()) {
       StructuralPropertyDescriptor prop = (StructuralPropertyDescriptor) oprop;

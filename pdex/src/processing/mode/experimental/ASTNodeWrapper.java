@@ -110,18 +110,32 @@ public class ASTNodeWrapper {
         }
       }
     }
-    // System.out.println("Altspos " + altStartPos);
+    System.out.println("Altspos " + altStartPos);
     int pdeoffsets[] = getPDECodeOffsets(ecs);
     String pdeCode = ecs.getPDECode(pdeoffsets[1] - 1).trim();
     int vals[] = createOffsetMapping(pdeCode,nodeOffset - altStartPos,nodeLength);
-    return new int[] {
-      lineNumber, nodeOffset + vals[0] - altStartPos, vals[1]};
+    if(vals != null)
+      return new int[] {
+        lineNumber, nodeOffset + vals[0] - altStartPos, vals[1] };
+    else
+      return new int[] { lineNumber, nodeOffset - altStartPos, nodeLength };
   }
   
  
+  /**
+   * 
+   * @param source
+   * @param inpOffset
+   * @param nodeLen
+   * @return int[0] - difference in start offset, int[1] - node length
+   */
   private int[] createOffsetMapping(String source, int inpOffset, int nodeLen) {
    
     int ret[][] = getOffsetMapping(source);
+    if(ret == null){
+      // no offset mapping needed
+      return null;
+    }
     int javaCodeMap[] = ret[0];
     int pdeCodeMap[] = ret[1];
     int pi = 1, pj = 1;
@@ -234,7 +248,10 @@ public class ASTNodeWrapper {
           + "(");
 
     }
-
+    if(offsetmap.isEmpty()){
+      System.out.println("No offset matching needed.");
+      return null;
+    }
     // replace with 0xff[webcolor] and others
     webMatcher = webPattern.matcher(sourceAlt);
     while (webMatcher.find()) {
