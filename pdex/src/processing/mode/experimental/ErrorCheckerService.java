@@ -810,7 +810,8 @@ public class ErrorCheckerService implements Runnable{
     return new int[] { codeIndex, x };
   }
   
-  public String getPDECode(int linenumber){
+  public String getPDECodeAtLine(int tab, int linenumber){
+    editor.getSketch().setCurrentCode(tab);
     return editor.ta.getLineText(linenumber);
   }
   
