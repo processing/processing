@@ -52,5 +52,5 @@ x Local Methods
 x Local Classes
 x Recursive lookup, a.b().c()
 x Now highlihgting the declaration name, rather than the whole declaration.
-*+ A silly bug where the name of the first field declaration isn't highlighted correctly.
+*+ A silly bug where the name of the first field declaration isn't highlighted correctly. Seems to be happening if there's a javadoc or multiline comment near about the top.
 

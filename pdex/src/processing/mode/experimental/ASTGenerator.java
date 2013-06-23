@@ -1012,6 +1012,8 @@ public class ASTGenerator {
     ASTNode decl = null;
     String nameOfNode = null; // The node name which is to be scrolled to
     if (lineNode != null) {
+      
+      // Some delicate offset handling follows.
       ASTNodeWrapper lineNodeWrap = new ASTNodeWrapper(lineNode);
       int altOff = offset;
       int ret[][] = lineNodeWrap.getOffsetMapping(errorCheckerService);
@@ -1079,36 +1081,30 @@ public class ASTGenerator {
       }
     }
 
-//    
-//    retStr = "";
     if (decl != null && scrollOnly) {
+      /*
+       * For scrolling, we highlight just the name of the node, 
+       * i.e., a SimpleName instance. But the declared node always 
+       * points to the declared node itself, like TypeDecl, MethodDecl, etc.
+       * This is important since it contains all the properties.
+       */
       ASTNode simpName2 = getNodeName(decl,nameOfNode);
       System.err.println("FINAL String decl: " + getNodeAsString(decl));
       System.err.println("FINAL String label: " + getNodeAsString(simpName2));
-      ASTNodeWrapper awrap = new ASTNodeWrapper(simpName2);
-      int pdeoffsets[] = awrap .getPDECodeOffsets(errorCheckerService);
-      int javaoffsets[] = awrap.getJavaCodeOffsets(errorCheckerService);
-      ErrorCheckerService.scrollToErrorLine(editor, pdeoffsets[0],
-                                            pdeoffsets[1],javaoffsets[1],
-                                            javaoffsets[2]);
-      // Now highlight the SimpleName
-      
-      
-      
-//      DefaultProblem dpr = new DefaultProblem(null, null, -1, null, -1,
-//                                              decl.getStartPosition(),
-//                                              decl.getStartPosition(),
-//                                              getLineNumber(decl) + 1, 0);
-//      int[] position = errorCheckerService.calculateTabIndexAndLineNumber(dpr);
-//      System.out.println("Tab " + position[0] + ", Line: " + (position[1]));
-//      Problem p = new Problem(dpr, position[0], position[1]);
-//      errorCheckerService.scrollToErrorLine(p);
-    } // uncomment this one, it works
+      errorCheckerService.highlightNode(simpName2);
+    } 
 
     return null;
   }
   
-  private ASTNode getNodeName(ASTNode node, String name){
+  /**
+   * Given a declaration type astnode, returns the SimpleName peroperty
+   * of that node.
+   * @param node
+   * @param name - The name we're looking for.
+   * @return SimpleName
+   */
+  private static ASTNode getNodeName(ASTNode node, String name){
     List<VariableDeclarationFragment> vdfs = null;
     switch (node.getNodeType()) {
     case ASTNode.TYPE_DECLARATION:
@@ -1141,6 +1137,11 @@ public class ASTGenerator {
     return null;
   }
 
+  /**
+   * Fetches line number of the node in its CompilationUnit.
+   * @param node
+   * @return
+   */
   private static int getLineNumber(ASTNode node) {
     return ((CompilationUnit) node.getRoot()).getLineNumber(node
         .getStartPosition());
@@ -1148,7 +1149,6 @@ public class ASTGenerator {
 
   public static void main(String[] args) {
     traversal2();
-//    ASTParserd
   }
 
   public static void traversal2() {
@@ -1218,13 +1218,8 @@ public class ASTGenerator {
             }
             
             if (tnode.getUserObject() instanceof ASTNodeWrapper) {
-              // 3 friggin casts. Javaaargh.
               ASTNodeWrapper awrap = (ASTNodeWrapper) tnode.getUserObject();
-              int pdeoffsets[] = awrap.getPDECodeOffsets(errorCheckerService);
-              int javaoffsets[] = awrap.getJavaCodeOffsets(errorCheckerService);
-              ErrorCheckerService.scrollToErrorLine(editor, pdeoffsets[0],
-                                                    pdeoffsets[1],javaoffsets[1],
-                                                    javaoffsets[2]);
+              errorCheckerService.highlightNode(awrap);
             }
           }
         };

@@ -19,6 +19,7 @@ import javax.swing.table.DefaultTableModel;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.compiler.IProblem;
 import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
@@ -1041,6 +1042,31 @@ public class ErrorCheckerService implements Runnable{
   }
   
   /**
+   * The super method that highlights any ASTNode in the pde editor =D
+   * @param node
+   * @return true - if highlighting happened correctly.
+   */
+  public boolean highlightNode(ASTNodeWrapper awrap){
+    int pdeoffsets[] = awrap.getPDECodeOffsets(this);
+    int javaoffsets[] = awrap.getJavaCodeOffsets(this);
+    try {
+      scrollToErrorLine(editor, pdeoffsets[0],
+                                            pdeoffsets[1],javaoffsets[1],
+                                            javaoffsets[2]);
+      return true;
+    } catch (Exception e) {
+      
+      e.printStackTrace();
+    }
+    return false;
+  }
+  
+  public boolean highlightNode(ASTNode node){
+    ASTNodeWrapper awrap = new ASTNodeWrapper(node);
+    return highlightNode(awrap);
+  }
+  
+  /**
    * Scrolls to the error source in code. And selects the line text. Used by
    * XQErrorTable and ErrorBar
    * 
@@ -1086,8 +1112,8 @@ public class ErrorCheckerService implements Runnable{
   }
   
   /**
-   * Static method for scroll to a particular line in the PDE. Requires the
-   * editor instance as arguement.
+   * Static method for scroll to a particular line in the PDE. Also highlights
+   * the length of the text. Requires the editor instance as arguement.
    * 
    * @param edt
    * @param tabIndex
