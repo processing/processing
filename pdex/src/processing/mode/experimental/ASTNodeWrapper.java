@@ -115,7 +115,7 @@ public class ASTNodeWrapper {
     String pdeCode = ecs.getPDECode(pdeoffsets[1] - 1).trim();
     int vals[] = createOffsetMapping(pdeCode,nodeOffset - altStartPos,nodeLength);
     return new int[] {
-      lineNumber, altStartPos, nodeOffset + vals[0], vals[1]};
+      lineNumber, nodeOffset + vals[0] - altStartPos, vals[1]};
   }
   
  
@@ -127,10 +127,10 @@ public class ASTNodeWrapper {
      * The main issue here is that pde enhancements like color vars, # literals
      * and int() type casting deviate from standard java. But I need to exact
      * index matching for pde and java versions of snippets.For ex:
-     * "color col = #ffaadd;" <-PDE version "int col = 0xffffaadd;" <-Converted
-     * to Java
+     * "color col = #ffaadd;" <-PDE version 
+     * "int col = 0xffffaadd;" <-Converted to Java
      * 
-     * For exact index mapping, I need to know at what indices either is
+     * For exact index mapping, I need to know at which indices either is
      * deviating from the other and by what amount. Turns out, it isn't quite
      * easy.(1) First I take the pde version of the code as an argument(pde
      * version fetched from the editor directly). I then find all instances
@@ -217,11 +217,12 @@ public class ASTNodeWrapper {
     int javaCodeMap[] = new int[source.length() * 2];
     int pdeCodeMap[] = new int[source.length() * 2];
     int pi = 1, pj = 1;
+    int keySum = 0;
     for (Integer key : offsetmap.keySet()) {
-      for (; pi < key; pi++) {
+      for (; pi < key +keySum; pi++) {
         javaCodeMap[pi] = javaCodeMap[pi - 1] + 1;
       }
-      for (; pj < key; pj++) {
+      for (; pj < key+keySum; pj++) {
         pdeCodeMap[pj] = pdeCodeMap[pj - 1] + 1;
       }
 
@@ -245,6 +246,7 @@ public class ASTNodeWrapper {
           pdeCodeMap[pj] = pdeCodeMap[pj - 1];
         }
       }
+      keySum += kval;
     }
 
     javaCodeMap[pi] = javaCodeMap[pi - 1] + 1;

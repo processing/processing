@@ -1010,8 +1010,9 @@ public class ASTGenerator {
     System.out.println("+> " + lineNode);
     ASTNode decl = null;
     if (lineNode != null) {
-      System.out.println("FLON2: " + lineNumber + " LN O "
-          + lineNode.getStartPosition());
+      ASTNodeWrapper lineNodeWrap = new ASTNodeWrapper(lineNode);
+      System.out.println("FLON2: " + lineNumber + " LN spos "
+          + lineNode.getStartPosition() + " off " + offset);
       ASTNode simpName = pinpointOnLine(lineNode, offset,
                                         lineNode.getStartPosition(), name);
       System.out.println("+++> " + simpName);
@@ -1128,10 +1129,8 @@ public class ASTGenerator {
               int pdeoffsets[] = awrap.getPDECodeOffsets(errorCheckerService);
               int javaoffsets[] = awrap.getJavaCodeOffsets(errorCheckerService);
               ErrorCheckerService.scrollToErrorLine(editor, pdeoffsets[0],
-                                                    pdeoffsets[1],
-                                                    javaoffsets[2]
-                                                        - javaoffsets[1],
-                                                    javaoffsets[3]);
+                                                    pdeoffsets[1],javaoffsets[1],
+                                                    javaoffsets[2]);
             }
           }
         };
