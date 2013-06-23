@@ -1011,9 +1011,16 @@ public class ASTGenerator {
     ASTNode decl = null;
     if (lineNode != null) {
       ASTNodeWrapper lineNodeWrap = new ASTNodeWrapper(lineNode);
+      int ret[][] = lineNodeWrap.getOffsetMapping(errorCheckerService);
+      int javaCodeMap[] = ret[0];
+      int altOff = 0;
+      for (; altOff < javaCodeMap.length; altOff++) {
+        if(javaCodeMap[altOff] == offset)
+          break;
+      }
       System.out.println("FLON2: " + lineNumber + " LN spos "
-          + lineNode.getStartPosition() + " off " + offset);
-      ASTNode simpName = pinpointOnLine(lineNode, offset,
+          + lineNode.getStartPosition() + " off " + offset + " alt off" + altOff);
+      ASTNode simpName = pinpointOnLine(lineNode, altOff,
                                         lineNode.getStartPosition(), name);
       System.out.println("+++> " + simpName);
       if (simpName instanceof SimpleName) {
