@@ -3087,6 +3087,8 @@ public class PGL {
   public static final int STENCIL_INDEX4 = GL.GL_STENCIL_INDEX4;
   public static final int STENCIL_INDEX8 = GL.GL_STENCIL_INDEX8;
 
+  public static final int DEPTH_STENCIL = GL.GL_DEPTH_STENCIL;
+
   public static final int FRAMEBUFFER_COMPLETE                      = GL.GL_FRAMEBUFFER_COMPLETE;
   public static final int FRAMEBUFFER_INCOMPLETE_ATTACHMENT         = GL.GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT;
   public static final int FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT = GL.GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT;
@@ -3263,11 +3265,15 @@ public class PGL {
   // Reading Pixels
 
   public void readPixels(int x, int y, int width, int height, int format, int type, Buffer buffer) {
-    // The beginPixelsOp/endPixelsOp calls are needed to properly setup the
-    // framebuffers to read from.
-    PGraphicsOpenGL.pgCurrent.beginPixelsOp(PGraphicsOpenGL.OP_READ);
+    boolean needBeginOp = format != STENCIL_INDEX &&
+                          format != DEPTH_COMPONENT && format != DEPTH_STENCIL;
+    if (needBeginOp) {
+      PGraphicsOpenGL.pgCurrent.beginPixelsOp(PGraphicsOpenGL.OP_READ);
+    }
     readPixelsImpl(x, y, width, height, format, type, buffer);
-    PGraphicsOpenGL.pgCurrent.endPixelsOp();
+    if (needBeginOp) {
+      PGraphicsOpenGL.pgCurrent.endPixelsOp();
+    }
   }
 
   protected void readPixelsImpl(int x, int y, int width, int height, int format, int type, Buffer buffer) {
