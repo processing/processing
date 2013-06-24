@@ -2,6 +2,7 @@ package processing.mode.experimental;
 
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -25,11 +26,14 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.TreeMap;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
@@ -112,6 +116,8 @@ public class ASTGenerator {
 
   private JButton renameButton;
   
+  private JTextField renameTextField;
+  
   public ASTGenerator(ErrorCheckerService ecs) {
     this.errorCheckerService = ecs;
     this.editor = ecs.getEditor();
@@ -127,17 +133,22 @@ public class ASTGenerator {
     renameButton = new JButton("Rename");
     JFrame frame3 = new JFrame();
     frame3.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    frame3.setBounds(new Rectangle(680, 50, 100, 50));
+    frame3.setBounds(new Rectangle(680, 50, 150, 100));
+    frame3.setLayout(new GridLayout(2, 1));
     frame3.add(renameButton);
+    renameTextField = new JTextField();
+    renameTextField.setPreferredSize(new Dimension(150, 60));
+    frame3.add(renameTextField);
     frame3.setVisible(true);
     
     JFrame frame4 = new JFrame();
     frame4.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     frame4.setBounds(new Rectangle(1100, 50, 350, 500));
+    
     JScrollPane sp2 = new JScrollPane();
     renameTree = new JTree();
-    sp2.setViewportView(renameTree);
-    frame4.add(sp2);
+    sp2.setViewportView(renameTree);    
+    frame4.add(sp2);    
     frame4.setVisible(true);
     
 //    frameAutoComp = new JFrame();
@@ -1272,6 +1283,9 @@ public class ASTGenerator {
           protected void done() {
             if (editor.ta.getSelectedText() == null)
               return;
+            if(renameTextField.getText().length() == 0)
+              return;
+            String newName = renameTextField.getText();
             String selText = editor.ta.getSelectedText();
             int line = editor.ta.getSelectionStartLine();
             System.out.println(editor.ta.getSelectedText()
@@ -1296,6 +1310,18 @@ public class ASTGenerator {
             System.out.println(wnode);
             renameTree.setModel(new DefaultTreeModel(defCU));
             ((DefaultTreeModel) renameTree.getModel()).reload();
+            for (int i = 0; i < defCU.getChildCount(); i++) {
+              ASTNodeWrapper awrap = (ASTNodeWrapper) ((DefaultMutableTreeNode) (defCU
+                  .getChildAt(i))).getUserObject();
+              int pdeoffsets[] = awrap.getPDECodeOffsets(errorCheckerService);
+              int javaoffsets[] = awrap.getJavaCodeOffsets(errorCheckerService);
+
+              ErrorCheckerService.scrollToErrorLine(editor, pdeoffsets[0],
+                                                    pdeoffsets[1],
+                                                    javaoffsets[1],
+                                                    javaoffsets[2]);
+              editor.ta.setSelectedText(newName);
+            }
           }
         };
         worker.execute();
