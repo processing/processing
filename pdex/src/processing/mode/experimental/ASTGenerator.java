@@ -1,6 +1,10 @@
 package processing.mode.experimental;
 
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
@@ -18,8 +22,10 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 import java.util.TreeMap;
 
+import javax.swing.JButton;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
@@ -67,6 +73,7 @@ import com.google.classpath.ClassPath;
 import com.google.classpath.ClassPathFactory;
 import com.google.classpath.RegExpResourceFilter;
 import com.ibm.icu.util.StringTokenizer;
+import com.sun.org.apache.bcel.internal.generic.GETSTATIC;
 
 public class ASTGenerator {
 
@@ -89,6 +96,11 @@ public class ASTGenerator {
    * Swing component wrapper for AST, used for internal testing
    */
   private JTree jtree;
+  
+  /**
+   * JTree used for testing refactoring operations
+   */
+  private JTree renameTree;
 
   private CompilationUnit compilationUnit;
 
@@ -98,6 +110,8 @@ public class ASTGenerator {
 
   private JScrollPane scrollPane;
 
+  private JButton renameButton;
+  
   public ASTGenerator(ErrorCheckerService ecs) {
     this.errorCheckerService = ecs;
     this.editor = ecs.getEditor();
@@ -105,34 +119,50 @@ public class ASTGenerator {
 
     jtree = new JTree();
     frame2.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    frame2.setBounds(new Rectangle(100, 100, 460, 620));
+    frame2.setBounds(new Rectangle(680, 100, 460, 620));
     JScrollPane sp = new JScrollPane();
     sp.setViewportView(jtree);
     frame2.add(sp);
 
-    frameAutoComp = new JFrame();
-    frameAutoComp.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    frameAutoComp.setBounds(new Rectangle(1280, 100, 460, 620));
-    tableAuto = new JTable();
+    renameButton = new JButton("Rename");
+    JFrame frame3 = new JFrame();
+    frame3.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    frame3.setBounds(new Rectangle(680, 50, 100, 50));
+    frame3.add(renameButton);
+    frame3.setVisible(true);
+    
+    JFrame frame4 = new JFrame();
+    frame4.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    frame4.setBounds(new Rectangle(1100, 50, 350, 500));
     JScrollPane sp2 = new JScrollPane();
-    sp2.setViewportView(tableAuto);
-    frameAutoComp.add(sp2);
+    renameTree = new JTree();
+    sp2.setViewportView(renameTree);
+    frame4.add(sp2);
+    frame4.setVisible(true);
+    
+//    frameAutoComp = new JFrame();
+//    frameAutoComp.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+//    frameAutoComp.setBounds(new Rectangle(1280, 100, 460, 620));
+//    tableAuto = new JTable();
+//    JScrollPane sp2 = new JScrollPane();
+//    sp2.setViewportView(tableAuto);
+//    frameAutoComp.add(sp2);
 
-    jdocWindow = new JFrame();
-    jdocWindow.setTitle("P5 InstaHelp");
-    //jdocWindow.setUndecorated(true);
-    jdocWindow.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-    javadocPane = new JEditorPane();
-    javadocPane.setContentType("text/html");
-    javadocPane.setEditable(false);
-    scrollPane = new JScrollPane();
-    scrollPane.setViewportView(javadocPane);
-    jdocWindow.add(scrollPane);
-    jdocMap = new TreeMap<String, String>();
-    //loadJars();
+//    jdocWindow = new JFrame();
+//    jdocWindow.setTitle("P5 InstaHelp");
+//    //jdocWindow.setUndecorated(true);
+//    jdocWindow.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+//    javadocPane = new JEditorPane();
+//    javadocPane.setContentType("text/html");
+//    javadocPane.setEditable(false);
+//    scrollPane = new JScrollPane();
+//    scrollPane.setViewportView(javadocPane);
+//    jdocWindow.add(scrollPane);
+//    jdocMap = new TreeMap<String, String>();
+////    loadJars();
 
     //addCompletionPopupListner();
-    addTreeListner();
+    addListners();
   }
 
   private DefaultMutableTreeNode buildAST(String source, CompilationUnit cu) {
@@ -992,7 +1022,8 @@ public class ASTGenerator {
 
   public ASTNodeWrapper getASTNodeAt(int lineNumber, String name, int offset,
                                      boolean scrollOnly) {
-    System.out.println("--------");
+    
+    System.out.println("----getASTNodeAt----");
     if (errorCheckerService != null) {
       editor = errorCheckerService.getEditor();
       int codeIndex = editor.getSketch().getCodeIndex(editor.getCurrentTab());
@@ -1094,7 +1125,7 @@ public class ASTGenerator {
       errorCheckerService.highlightNode(simpName2);
     } 
 
-    return null;
+    return new ASTNodeWrapper(decl);
   }
   
   /**
@@ -1193,7 +1224,7 @@ public class ASTGenerator {
     }
   }
   
-  private void addTreeListner(){
+  private void addListners(){
     jtree.addTreeSelectionListener(new TreeSelectionListener() {
       
       @Override
@@ -1212,6 +1243,83 @@ public class ASTGenerator {
               return;
             }
             DefaultMutableTreeNode tnode = (DefaultMutableTreeNode) jtree
+                .getLastSelectedPathComponent();    
+            if(tnode.getUserObject() == null){
+              return;
+            }
+            
+            if (tnode.getUserObject() instanceof ASTNodeWrapper) {
+              ASTNodeWrapper awrap = (ASTNodeWrapper) tnode.getUserObject();
+              errorCheckerService.highlightNode(awrap);
+            }
+          }
+        };
+        worker.execute();
+      }
+    });
+    
+    renameButton.addActionListener(new ActionListener() {
+      
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        SwingWorker worker = new SwingWorker() {
+
+          @Override
+          protected Object doInBackground() throws Exception {
+            return null;
+          }
+
+          protected void done() {
+            if (editor.ta.getSelectedText() == null)
+              return;
+            String selText = editor.ta.getSelectedText();
+            int line = editor.ta.getSelectionStartLine();
+            System.out.println(editor.ta.getSelectedText()
+                + "<- offsets "
+                + (line)
+                + ", "
+                + (editor.ta.getSelectionStart() - editor.ta
+                    .getLineStartOffset(line))
+                + ", "
+                + (editor.ta.getSelectionStop() - editor.ta
+                    .getLineStartOffset(line)));
+            ASTNodeWrapper wnode = getASTNodeAt(line
+                                                    + errorCheckerService.mainClassOffset,
+                                                selText,
+                                                editor.ta.getSelectionStart()
+                                                    - editor.ta
+                                                        .getLineStartOffset(line),
+                                                false);
+            
+            DefaultMutableTreeNode defCU = new DefaultMutableTreeNode(wnode);
+            visitRecurNameOnly(defCU, wnode.getNode(), selText);
+            System.out.println(wnode);
+            renameTree.setModel(new DefaultTreeModel(defCU));
+            ((DefaultTreeModel) renameTree.getModel()).reload();
+          }
+        };
+        worker.execute();
+      }
+    });
+    
+    renameTree.addTreeSelectionListener(new TreeSelectionListener() {
+      
+      @Override
+      public void valueChanged(TreeSelectionEvent e) {
+        System.out.println(e);
+        SwingWorker worker = new SwingWorker() {
+
+          @Override
+          protected Object doInBackground() throws Exception {
+            return null;
+          }
+
+          protected void done() {
+            if(renameTree
+                .getLastSelectedPathComponent() == null){
+              return;
+            }
+            DefaultMutableTreeNode tnode = (DefaultMutableTreeNode) renameTree
                 .getLastSelectedPathComponent();    
             if(tnode.getUserObject() == null){
               return;
@@ -1277,6 +1385,41 @@ public class ASTGenerator {
       }
     }
   }
+  
+  public void visitRecurNameOnly(DefaultMutableTreeNode tnode,ASTNode decl, String name) {
+    Stack temp = new Stack<DefaultMutableTreeNode>();
+    temp.push(codeTree);
+    
+    while(!temp.isEmpty()){
+      DefaultMutableTreeNode cnode = (DefaultMutableTreeNode) temp.pop();
+      for (int i = 0; i < cnode.getChildCount(); i++) {
+        temp.push(cnode.getChildAt(i));
+      }
+      
+      if(!(cnode.getUserObject() instanceof ASTNodeWrapper))
+        continue;
+      ASTNodeWrapper awnode = (ASTNodeWrapper) cnode.getUserObject();
+//      System.out.println("Visiting: " + getNodeAsString(awnode.getNode()));
+      if(isInstanceOfType(awnode.getNode(), decl, name)){
+        tnode.add(new DefaultMutableTreeNode(awnode));
+      }
+      
+    }
+  }
+  
+  private boolean isInstanceOfType(ASTNode node,ASTNode decl, String name){
+    if(node instanceof SimpleName){
+      SimpleName sn = (SimpleName) node;
+      System.out.println("Visiting: " + getNodeAsString(node));
+      if (sn.toString().equals(name)) {
+        if (findDeclaration(sn).equals(decl))
+          return true;
+      }
+    }
+    return false;
+  }
+  
+  
 
   public static void printRecur(ASTNode node) {
     Iterator<StructuralPropertyDescriptor> it = node
