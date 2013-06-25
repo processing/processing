@@ -137,7 +137,8 @@ public class PdeKeywords extends TokenMarker {
               lastOffset = lastKeyword = mlength;
               break loop;
             }
-            i++;  // http://processing.org/bugs/bugzilla/609.html [jdf] 
+            if(array[i1]!=' ')
+              i++;  // http://processing.org/bugs/bugzilla/609.html [jdf] 
           }
           break;
         default:
