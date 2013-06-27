@@ -1,4 +1,11 @@
 0220 core
+X basic getShape(ch) implementation for font glyph shapes
+X change QUAD_BEZIER_VERTEX to QUADRATIC_VERTEX to match the API call
+X   because this lives inside PConstants
+
+_ finish PFont.getShape() implementation
+_   needs to have a way to set width/height properly
+_   draw(s) doesn't work on the returned PShape
 
 
 high
