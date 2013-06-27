@@ -147,6 +147,7 @@ public class ContributionManager {
 
   static public void refreshInstalled(Editor editor) {
     editor.getMode().rebuildImportMenu();
+    editor.getMode().resetExamples();
     editor.rebuildToolMenu();
   }
 
