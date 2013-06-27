@@ -24,6 +24,9 @@
 package processing.core;
 
 import java.awt.*;
+import java.awt.font.FontRenderContext;
+import java.awt.font.GlyphVector;
+import java.awt.geom.PathIterator;
 import java.awt.image.*;
 import java.io.*;
 import java.util.Arrays;
@@ -680,6 +683,95 @@ public class PFont implements PConstants {
 
   public Glyph getGlyph(int i)  {
     return glyphs[i];
+  }
+
+
+  public PShape getShape(char ch) {
+    return getShape(ch, 0);
+  }
+
+
+  public PShape getShape(char ch, float detail) {
+    Font font = (Font) getNative();
+    if (font == null) {
+      throw new IllegalArgumentException("getShape() only works on fonts loaded with createFont()");
+    }
+
+    PShape s = new PShape(PShape.PATH);
+
+    // six element array received from the Java2D path iterator
+    float[] iterPoints = new float[6];
+    // array passed to createGylphVector
+    char[] textArray = new char[] { ch };
+
+    //Graphics2D graphics = (Graphics2D) this.getGraphics();
+    //FontRenderContext frc = graphics.getFontRenderContext();
+    @SuppressWarnings("deprecation")
+    FontRenderContext frc =
+      Toolkit.getDefaultToolkit().getFontMetrics(font).getFontRenderContext();
+    GlyphVector gv = font.createGlyphVector(frc, textArray);
+    Shape shp = gv.getOutline();
+    // make everything into moveto and lineto
+    PathIterator iter = (detail == 0) ?
+      shp.getPathIterator(null) :  // maintain curves
+      shp.getPathIterator(null, detail);  // convert to line segments
+
+    int contours = 0;
+    //boolean outer = true;
+//    boolean contour = false;
+    while (!iter.isDone()) {
+      int type = iter.currentSegment(iterPoints);
+      switch (type) {
+      case PathIterator.SEG_MOVETO:   // 1 point (2 vars) in textPoints
+//        System.out.println("moveto");
+//        if (!contour) {
+        if (contours == 0) {
+          s.beginShape();
+        } else {
+          s.beginContour();
+//          contour = true;
+        }
+        contours++;
+        s.vertex(iterPoints[0], iterPoints[1]);
+        break;
+
+      case PathIterator.SEG_LINETO:   // 1 point
+//        System.out.println("lineto");
+//        PApplet.println(PApplet.subset(iterPoints, 0, 2));
+        s.vertex(iterPoints[0], iterPoints[1]);
+        break;
+
+      case PathIterator.SEG_QUADTO:   // 2 points
+//        System.out.println("quadto");
+//        PApplet.println(PApplet.subset(iterPoints, 0, 4));
+        s.quadraticVertex(iterPoints[0], iterPoints[1],
+                          iterPoints[2], iterPoints[3]);
+        break;
+
+      case PathIterator.SEG_CUBICTO:  // 3 points
+//        System.out.println("cubicto");
+//        PApplet.println(iterPoints);
+        s.quadraticVertex(iterPoints[0], iterPoints[1],
+                          iterPoints[2], iterPoints[3],
+                          iterPoints[4], iterPoints[5]);
+        break;
+
+      case PathIterator.SEG_CLOSE:
+//        System.out.println("close");
+        if (contours > 1) {
+//        contours--;
+//        if (contours == 0) {
+////          s.endShape();
+//        } else {
+          s.endContour();
+        }
+        break;
+      }
+//      PApplet.println(iterPoints);
+      iter.next();
+    }
+    s.endShape(CLOSE);
+    return s;
   }
 
 

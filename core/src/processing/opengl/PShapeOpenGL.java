@@ -953,11 +953,19 @@ public class PShapeOpenGL extends PShape {
   }
 
 
+//public void beginContour() {
+//super.beginContour();
+
   @Override
-  public void beginContour() {
-    super.beginContour();
+  protected void beginContourImpl() {
     breakShape = true;
   }
+
+
+  @Override
+  protected void endContourImpl() {
+  }
+
 
 
   @Override
@@ -2825,7 +2833,7 @@ public class PShapeOpenGL extends PShape {
             idx++;
             break;
 
-          case QUAD_BEZIER_VERTEX:
+          case QUADRATIC_VERTEX:
             inGeo.addQuadraticVertex(vertices[idx+0][X], vertices[idx+0][Y], 0,
                                      vertices[idx+1][X], vertices[idx+1][Y], 0,
                                      fill, stroke, bezierDetail, code);
@@ -2864,7 +2872,7 @@ public class PShapeOpenGL extends PShape {
             idx++;
             break;
 
-          case QUAD_BEZIER_VERTEX:
+          case QUADRATIC_VERTEX:
             inGeo.addQuadraticVertex(vertices[idx+0][X],
                                      vertices[idx+0][Y],
                                      vertices[idx+0][Z],
