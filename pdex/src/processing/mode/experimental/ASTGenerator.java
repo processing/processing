@@ -1307,19 +1307,17 @@ public class ASTGenerator {
                 - editor.ta.getSelectedText().length();
             HashMap<Integer, Integer> lineOffsetDisplacement = new HashMap<Integer, Integer>();
 
-            for (int i = 0; i < defCU.getChildCount(); i++) {
+            for (int i = defCU.getChildCount() - 1; i >= 0; i--) {
               ASTNodeWrapper awrap = (ASTNodeWrapper) ((DefaultMutableTreeNode) (defCU
                   .getChildAt(i))).getUserObject();
               int pdeoffsets[] = awrap.getPDECodeOffsets(errorCheckerService);
               int javaoffsets[] = awrap.getJavaCodeOffsets(errorCheckerService);
 
-              ErrorCheckerService.scrollToErrorLine(editor, pdeoffsets[0],
-                                                    pdeoffsets[1],
-                                                    javaoffsets[1],
-                                                    javaoffsets[2]);
-              editor.ta.setSelectedText(newName);
+              // correction for pde enhancements related displacement on a line
+              int off = 0;
               if(lineOffsetDisplacement.get(javaoffsets[0]) != null){
-                int off = lineOffsetDisplacement.get(javaoffsets[0]);
+                off = lineOffsetDisplacement.get(javaoffsets[0]);
+                
                 lineOffsetDisplacement.put(javaoffsets[0],
                                            lineOffsetDisplacementConst + off);
               }
@@ -1327,6 +1325,12 @@ public class ASTGenerator {
                 lineOffsetDisplacement.put(javaoffsets[0],
                                            lineOffsetDisplacementConst);                
               }
+              
+              ErrorCheckerService.scrollToErrorLine(editor, pdeoffsets[0],
+                                                    pdeoffsets[1],
+                                                    javaoffsets[1] + off,
+                                                    javaoffsets[2]);
+              editor.ta.setSelectedText(newName);
             }
             for (Integer lineNum : lineOffsetDisplacement.keySet()) {
               System.out.println(lineNum + "line, disp"
