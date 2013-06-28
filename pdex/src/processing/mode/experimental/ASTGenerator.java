@@ -20,6 +20,7 @@ import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -178,7 +179,7 @@ public class ASTGenerator {
 ////    loadJars();
 
     //addCompletionPopupListner();
-    addListenrs();
+    addListeners();
   }
 
   private DefaultMutableTreeNode buildAST(String source, CompilationUnit cu) {
@@ -1248,7 +1249,7 @@ public class ASTGenerator {
     }
   }
   
-  private void addListenrs(){
+  private void addListeners(){
     jtree.addTreeSelectionListener(new TreeSelectionListener() {
       
       @Override
@@ -1302,6 +1303,10 @@ public class ASTGenerator {
             DefaultMutableTreeNode defCU = findAllOccurrences();
             renameTree.setModel(new DefaultTreeModel(defCU));
             ((DefaultTreeModel) renameTree.getModel()).reload();
+            int lineOffsetDisplacementConst = newName.length()
+                - editor.ta.getSelectedText().length();
+            HashMap<Integer, Integer> lineOffsetDisplacement = new HashMap<Integer, Integer>();
+
             for (int i = 0; i < defCU.getChildCount(); i++) {
               ASTNodeWrapper awrap = (ASTNodeWrapper) ((DefaultMutableTreeNode) (defCU
                   .getChildAt(i))).getUserObject();
@@ -1313,6 +1318,19 @@ public class ASTGenerator {
                                                     javaoffsets[1],
                                                     javaoffsets[2]);
               editor.ta.setSelectedText(newName);
+              if(lineOffsetDisplacement.get(javaoffsets[0]) != null){
+                int off = lineOffsetDisplacement.get(javaoffsets[0]);
+                lineOffsetDisplacement.put(javaoffsets[0],
+                                           lineOffsetDisplacementConst + off);
+              }
+              else{
+                lineOffsetDisplacement.put(javaoffsets[0],
+                                           lineOffsetDisplacementConst);                
+              }
+            }
+            for (Integer lineNum : lineOffsetDisplacement.keySet()) {
+              System.out.println(lineNum + "line, disp"
+                  + lineOffsetDisplacement.get(lineNum));
             }
             editor.getSketch().setModified(true);
           }
@@ -1399,6 +1417,26 @@ public class ASTGenerator {
                                         - offwhitespace, false);
     System.err.println("Gonna find all occurrences of "
         + getNodeAsString(wnode.getNode()));
+    
+    //If wnode is a constructor, find the TD instead.
+    if (wnode.getNodeType() == ASTNode.METHOD_DECLARATION) {
+      MethodDeclaration md = (MethodDeclaration) wnode.getNode();
+      ASTNode node = md.getParent();
+      while (node != null) {
+        if (node instanceof TypeDeclaration) {
+          // System.out.println("Parent class " + getNodeAsString(node));
+          break;
+        }
+        node = node.getParent();
+      }
+      if(node != null && node instanceof TypeDeclaration){
+        TypeDeclaration td = (TypeDeclaration) node;
+        if(td.getName().toString().equals(md.getName().toString())){
+          System.err.println("Renaming constructor of " + getNodeAsString(td));
+          wnode = new ASTNodeWrapper(td);
+        }
+      }
+    }
     
     DefaultMutableTreeNode defCU = new DefaultMutableTreeNode(wnode);
     dfsNameOnly(defCU, wnode.getNode(), selText);
@@ -1933,7 +1971,8 @@ public class ASTGenerator {
 //      constrains.add(ASTNode.TYPE_DECLARATION);
 //      constrains.add(ASTNode.METHOD_DECLARATION);
 //      constrains.add(ASTNode.FIELD_DECLARATION);      
-    }
+    } // TODO: in findDec, we also have a case where parent of type TD is handled.
+      // Figure out if needed here as well.
     System.out.println("Alternate parent: " + getNodeAsString(alternateParent));
     while (alternateParent != null) {
 //      System.out.println("findDeclaration2 -> "
