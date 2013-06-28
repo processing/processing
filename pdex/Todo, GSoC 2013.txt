@@ -29,7 +29,7 @@ Finer details
 * Need to add offset correction to ASTGenerator and its lookup methods. Or leave it for later?
 
 Offset Mapping & Refactoring 
-===========
+============================
 First major hurdle is offset mapping
 *! pde<->java code offset : precise conversion needed
 x for the above, I've decide to first implement a sketch outline like feature, which would highlight an AST element precisely in the pde code. This would ensure I've got the mapping working properly. And may lead to a future feature.

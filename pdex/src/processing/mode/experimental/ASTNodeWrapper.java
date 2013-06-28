@@ -37,8 +37,9 @@ public class ASTNodeWrapper {
    */
   
   public ASTNodeWrapper(ASTNode node) {
-    if (node == null)
+    if (node == null){
       return;
+    }
     this.Node = node;
     label = getNodeAsString(node);
     if (label == null)

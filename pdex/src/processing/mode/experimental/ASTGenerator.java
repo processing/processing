@@ -78,6 +78,7 @@ import com.google.classpath.ClassPathFactory;
 import com.google.classpath.RegExpResourceFilter;
 import com.ibm.icu.util.StringTokenizer;
 import com.sun.org.apache.bcel.internal.generic.GETSTATIC;
+import com.sun.xml.internal.bind.v2.schemagen.xmlschema.Occurs;
 
 public class ASTGenerator {
 
@@ -116,6 +117,8 @@ public class ASTGenerator {
 
   private JButton renameButton;
   
+  private JButton listOccurrence;
+  
   private JTextField renameTextField;
   
   public ASTGenerator(ErrorCheckerService ecs) {
@@ -131,11 +134,13 @@ public class ASTGenerator {
     frame2.add(sp);
 
     renameButton = new JButton("Rename");
+    listOccurrence = new JButton("Find All");
     JFrame frame3 = new JFrame();
     frame3.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    frame3.setBounds(new Rectangle(680, 50, 150, 100));
-    frame3.setLayout(new GridLayout(2, 1));
+    frame3.setBounds(new Rectangle(680, 50, 150, 150));
+    frame3.setLayout(new GridLayout(3, 1));
     frame3.add(renameButton);
+    frame3.add(listOccurrence);
     renameTextField = new JTextField();
     renameTextField.setPreferredSize(new Dimension(150, 60));
     frame3.add(renameTextField);
@@ -173,7 +178,7 @@ public class ASTGenerator {
 ////    loadJars();
 
     //addCompletionPopupListner();
-    addListners();
+    addListenrs();
   }
 
   private DefaultMutableTreeNode buildAST(String source, CompilationUnit cu) {
@@ -1031,6 +1036,14 @@ public class ASTGenerator {
 
   String retLabelString;
 
+  /**
+   * 
+   * @param lineNumber
+   * @param name
+   * @param offset - line start nonwhitespace offset
+   * @param scrollOnly
+   * @return
+   */
   public ASTNodeWrapper getASTNodeAt(int lineNumber, String name, int offset,
                                      boolean scrollOnly) {
     
@@ -1235,7 +1248,7 @@ public class ASTGenerator {
     }
   }
   
-  private void addListners(){
+  private void addListenrs(){
     jtree.addTreeSelectionListener(new TreeSelectionListener() {
       
       @Override
@@ -1286,28 +1299,7 @@ public class ASTGenerator {
             if(renameTextField.getText().length() == 0)
               return;
             String newName = renameTextField.getText();
-            String selText = editor.ta.getSelectedText();
-            int line = editor.ta.getSelectionStartLine();
-            System.out.println(editor.ta.getSelectedText()
-                + "<- offsets "
-                + (line)
-                + ", "
-                + (editor.ta.getSelectionStart() - editor.ta
-                    .getLineStartOffset(line))
-                + ", "
-                + (editor.ta.getSelectionStop() - editor.ta
-                    .getLineStartOffset(line)));
-            ASTNodeWrapper wnode = getASTNodeAt(line
-                                                    + errorCheckerService.mainClassOffset,
-                                                selText,
-                                                editor.ta.getSelectionStart()
-                                                    - editor.ta
-                                                        .getLineStartOffset(line),
-                                                false);
-            
-            DefaultMutableTreeNode defCU = new DefaultMutableTreeNode(wnode);
-            visitRecurNameOnly(defCU, wnode.getNode(), selText);
-            System.out.println(wnode);
+            DefaultMutableTreeNode defCU = findAllOccurrences();
             renameTree.setModel(new DefaultTreeModel(defCU));
             ((DefaultTreeModel) renameTree.getModel()).reload();
             for (int i = 0; i < defCU.getChildCount(); i++) {
@@ -1322,12 +1314,36 @@ public class ASTGenerator {
                                                     javaoffsets[2]);
               editor.ta.setSelectedText(newName);
             }
+            editor.getSketch().setModified(true);
           }
         };
         worker.execute();
       }
     });
-    
+    // TODO: Diable this listner at deployment
+    listOccurrence.addActionListener(new ActionListener() {
+
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        SwingWorker worker = new SwingWorker() {
+
+          @Override
+          protected Object doInBackground() throws Exception {
+            return null;
+          }
+
+          protected void done() {
+            if (editor.ta.getSelectedText() == null)
+              return;            
+            DefaultMutableTreeNode defCU = findAllOccurrences();
+            renameTree.setModel(new DefaultTreeModel(defCU));
+            ((DefaultTreeModel) renameTree.getModel()).reload();            
+          }
+        };
+        worker.execute();
+      }
+    });
+        
     renameTree.addTreeSelectionListener(new TreeSelectionListener() {
       
       @Override
@@ -1360,6 +1376,34 @@ public class ASTGenerator {
         worker.execute();
       }
     });
+  }
+  
+  private DefaultMutableTreeNode findAllOccurrences(){
+    String selText = editor.ta.getSelectedText();
+    int line = editor.ta.getSelectionStartLine();
+    System.out.println(editor.ta.getSelectedText()
+        + "<- offsets "
+        + (line)
+        + ", "
+        + (editor.ta.getSelectionStart() - editor.ta
+            .getLineStartOffset(line))
+        + ", "
+        + (editor.ta.getSelectionStop() - editor.ta
+            .getLineStartOffset(line)));
+    int offwhitespace = editor.ta
+        .getLineStartNonWhiteSpaceOffset(line);
+    ASTNodeWrapper wnode = getASTNodeAt(line
+                                            + errorCheckerService.mainClassOffset,
+                                        selText,
+                                        editor.ta.getSelectionStart()
+                                        - offwhitespace, false);
+    System.err.println("Gonna find all occurrences of "
+        + getNodeAsString(wnode.getNode()));
+    
+    DefaultMutableTreeNode defCU = new DefaultMutableTreeNode(wnode);
+    dfsNameOnly(defCU, wnode.getNode(), selText);
+    System.out.println(wnode);
+    return defCU;
   }
 
   @SuppressWarnings({ "unchecked" })
@@ -1412,7 +1456,7 @@ public class ASTGenerator {
     }
   }
   
-  public void visitRecurNameOnly(DefaultMutableTreeNode tnode,ASTNode decl, String name) {
+  public void dfsNameOnly(DefaultMutableTreeNode tnode,ASTNode decl, String name) {
     Stack temp = new Stack<DefaultMutableTreeNode>();
     temp.push(codeTree);
     
@@ -1436,10 +1480,29 @@ public class ASTGenerator {
   private boolean isInstanceOfType(ASTNode node,ASTNode decl, String name){
     if(node instanceof SimpleName){
       SimpleName sn = (SimpleName) node;
-      System.out.println("Visiting: " + getNodeAsString(node));
+      
       if (sn.toString().equals(name)) {
-        if (findDeclaration(sn).equals(decl))
-          return true;
+        ArrayList<ASTNode> nodesToBeMatched = new ArrayList<ASTNode>();
+        nodesToBeMatched.add(decl);
+        if(decl instanceof TypeDeclaration){
+          System.out.println("decl is a TD");
+          TypeDeclaration td = (TypeDeclaration)decl;
+          MethodDeclaration[] mlist = td.getMethods();
+          for (MethodDeclaration md : mlist) {
+            if(md.getName().toString().equals(name)){
+              nodesToBeMatched.add(md);
+            }
+          }
+        }
+        System.out.println("Visiting: " + getNodeAsString(node));
+        ASTNode decl2 = findDeclaration(sn);
+        System.err.println("It's decl: " + getNodeAsString(decl2));
+        System.out.println("But we need: "+getNodeAsString(decl));
+        for (ASTNode astNode : nodesToBeMatched) {
+          if(astNode.equals(decl2)){
+            return true;
+          }
+        }
       }
     }
     return false;
@@ -1701,7 +1764,15 @@ public class ASTGenerator {
       constrains.add(ASTNode.TYPE_DECLARATION);
       if (parent.getParent().getNodeType() == ASTNode.CLASS_INSTANCE_CREATION)
         constrains.add(ASTNode.CLASS_INSTANCE_CREATION);
-    } else if (parent instanceof Expression) {
+    } else if(parent.getNodeType() == ASTNode.TYPE_DECLARATION){
+      // The condition where we look up the name of a class decl
+      TypeDeclaration td = (TypeDeclaration) parent;
+      if(findMe.equals(td.getName()))
+      {
+        return parent; 
+      }
+    }
+    else if (parent instanceof Expression) {
 //      constrains.add(ASTNode.TYPE_DECLARATION);
 //      constrains.add(ASTNode.METHOD_DECLARATION);
 //      constrains.add(ASTNode.FIELD_DECLARATION);      
@@ -1957,6 +2028,7 @@ public class ASTGenerator {
           MethodDeclaration[] methods = td.getMethods();
           for (MethodDeclaration md : methods) {
             if (md.getName().toString().equals(name)) {
+              System.out.println("Found a constructor.");
               return md;
             }
           }
