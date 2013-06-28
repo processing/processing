@@ -617,7 +617,11 @@ public class PShape implements PConstants {
   public void normal(float nx, float ny, float nz) {
   }
 
-
+  /**
+   * @webref pshape:method
+   * @brief Starts the creation of a new PShape
+   * @see PApplet#endShape()
+   */
   public void beginShape() {
     beginShape(POLYGON);
   }
@@ -631,7 +635,7 @@ public class PShape implements PConstants {
   /**
    * @webref pshape:method
    * @brief Finishes the creation of a new PShape
-   * @see PApplet#createShape()
+   * @see PApplet#beginShape()
    */
   public void endShape() {
     endShape(OPEN);
