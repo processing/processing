@@ -25,6 +25,8 @@ import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -153,7 +155,21 @@ public class DebugEditor extends JavaEditor implements ActionListener {
 
         // access to customized (i.e. subclassed) text area
         ta = (TextArea) textarea;
-
+        
+        // add refactor option
+        JMenuItem renameItem = new JMenuItem("Rename..");
+        renameItem.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            handleRefactor();
+          }
+        });
+        // TODO: Add support for word select on right click and rename.
+//        ta.customPainter.addMouseListener(new MouseAdapter() {
+//          public void mouseClicked(MouseEvent evt) {
+//            System.out.println(evt);
+//          }
+//        });
+        ta.getRightClickPopup().add(renameItem);
         // set action on frame close
 //        addWindowListener(new WindowAdapter() {
 //            @Override
@@ -179,7 +195,9 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         checkForJavaTabs();
         initializeErrorChecker();
         ta.setECSandThemeforTextArea(errorCheckerService, dmode);
-        addXQModeUI();        
+        addXQModeUI();    
+        //TODO: Remove this later
+        setBounds(160, 300, getWidth(), getHeight());
     }
     
     private void addXQModeUI(){
@@ -1118,6 +1136,12 @@ public class DebugEditor extends JavaEditor implements ActionListener {
      */
     synchronized public boolean updateTable(final TableModel tableModel) {
       return errorTable.updateTable(tableModel);
+    }
+    
+    private void handleRefactor() {
+      System.out.println("Caret at:");
+      System.out.println(ta.getLineText(ta.getCaretLine()));
+      errorCheckerService.astGenerator.handleRefactor();
     }
     
     /**

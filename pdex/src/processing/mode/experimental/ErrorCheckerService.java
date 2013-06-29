@@ -19,15 +19,18 @@ import javax.swing.table.DefaultTableModel;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.compiler.IProblem;
 import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
 import org.eclipse.jdt.internal.compiler.problem.DefaultProblem;
 
 import processing.app.Base;
+import processing.app.Editor;
 import processing.app.Library;
 import processing.app.SketchCode;
 import processing.core.PApplet;
+import processing.mode.java.preproc.PdePreprocessor;
 
 public class ErrorCheckerService implements Runnable{
   
@@ -87,6 +90,11 @@ public class ErrorCheckerService implements Runnable{
    */
   public int mainClassOffset;
 
+  /**
+   * Fixed p5 offsets for all sketches
+   */
+  public int defaultImportsOffset;
+  
   /**
    * Is the sketch running in static mode or active mode?
    */
@@ -173,6 +181,10 @@ public class ErrorCheckerService implements Runnable{
     initParser();
     initializeErrorWindow();
     xqpreproc = new XQPreprocessor();
+    PdePreprocessor pdePrepoc = new PdePreprocessor(null);
+    defaultImportsOffset = pdePrepoc.getCoreImports().length + 
+        pdePrepoc.getDefaultImports().length + 1;
+    astGenerator = new ASTGenerator(this);
   }
   
   /**
@@ -222,11 +234,6 @@ public class ErrorCheckerService implements Runnable{
     });
   }
 
-  /**
-   * checkCode() only on text area update
-   */
-  protected AtomicInteger textModified = new AtomicInteger(0);
-  
   public void run() {
     stopThread = false;
     
@@ -239,62 +246,64 @@ public class ErrorCheckerService implements Runnable{
         System.out.println("Oops! [ErrorCheckerThreaded]: " + e);
         // e.printStackTrace();
       }
-
+      
+      updatePaintedThingys();
+      
       if (pauseThread)
         continue;
-
-      updatePaintedThingy();
-      
       if(textModified.get() == 0)
     	  continue;
-      
       // Check every x seconds
       checkCode();
      
     }
   }
   
-  
-  
-  
+  protected ASTGenerator astGenerator;
+  AtomicInteger textModified = new AtomicInteger();
   private boolean checkCode() {
-    
+    System.out.println("checkCode() " + textModified.get() );
     lastTimeStamp = System.currentTimeMillis();
     try {
       sourceCode = preprocessCode(editor.getSketch().getMainProgram());
-      
+
       syntaxCheck();
-      
+      System.out.println(editor.getSketch().getName() + "1 MCO "
+          + mainClassOffset);
       // No syntax errors, proceed for compilation check, Stage 2.
+
       if (problems.length == 0 && editor.compilationCheckEnabled) {
+        //mainClassOffset++; // just a hack.
+        astGenerator.buildAST(cu);
         sourceCode = xqpreproc.doYourThing(sourceCode, programImports);
         prepareCompilerClasspath();
-        mainClassOffset = xqpreproc.mainClassOffset; // tiny, but
-                                // significant
-        if (staticMode) {
-        	mainClassOffset++; // Extra line for setup() decl.
-        }
+//        mainClassOffset = xqpreproc.mainClassOffset; // tiny, but
+//                                // significant
+//        if (staticMode) {
+//        	mainClassOffset++; // Extra line for setup() decl.
+//        }
         //         System.out.println(sourceCode);
         //         System.out.println("--------------------------");
         compileCheck();
+        System.out.println(editor.getSketch().getName() + "2 MCO "
+            + mainClassOffset);
       }
-      
       
       updateErrorTable();
       editor.updateErrorBar(problemsList);
       updateEditorStatus();
-      // updatePaintedThingy();
+      updatePaintedThingys();
       int x = textModified.get();
       //System.out.println("TM " + x);
       if(x>=3){
-    	  textModified.set(3);
-    	  x = 3;
+        textModified.set(3);
+        x = 3;
       }
       
       if(x>0)
-    	  textModified.set(x - 1);
+        textModified.set(x - 1);
       else
-    	  textModified.set(0);
+        textModified.set(0);
       return true;
 
     } catch (Exception e) {
@@ -328,14 +337,15 @@ public class ErrorCheckerService implements Runnable{
       // System.out.println(p.toString());
     }
   }
-  
+  protected URLClassLoader classLoader;
   private void compileCheck() {
 
     // Currently (Sept, 2012) I'm using Java's reflection api to load the
     // CompilationChecker class(from CompilationChecker.jar) that houses the
     // Eclispe JDT compiler and call its getErrorsAsObj method to obtain
     // errors. This way, I'm able to add the paths of contributed libraries
-    // to the classpath of CompilationChecker, dynamically.
+    // to the classpath of CompilationChecker, dynamically. The eclipse compiler
+    // needs all referenced libraries in the classpath.
 
     try {
 
@@ -366,24 +376,28 @@ public class ErrorCheckerService implements Runnable{
 
         File[] jarFiles = f.listFiles(fileFilter);
         // System.out.println( "Jar files found? " + (jarFiles != null));
-        for (File jarFile : jarFiles) {
-          classpathJars.add(jarFile.toURI().toURL());
+        //for (File jarFile : jarFiles) {
+          //classpathJars.add(jarFile.toURI().toURL());
+        //}
+        
+        classpath = new URL[classpathJars.size() + jarFiles.length]; 
+        int ii = 0;
+        for (; ii < classpathJars.size(); ii++) {
+          classpath[ii] = classpathJars.get(ii);
         }
-
-        classpath = new URL[classpathJars.size()]; // + 1 for
-                              // Compilation
-                              // Checker class
-        for (int i = 0; i < classpathJars.size(); i++) {
-          classpath[i] = classpathJars.get(i);
+        for (int i = 0; i < jarFiles.length; i++) {
+          classpath[ii++] = jarFiles[i].toURI().toURL();
         }
 
         // System.out.println("CP Len -- " + classpath.length);
-        URLClassLoader classLoader = new URLClassLoader(classpath);
+        classLoader = new URLClassLoader(classpath);
         // System.out.println("1.");
         checkerClass = Class.forName("CompilationChecker", true,
             classLoader);
         // System.out.println("2.");
         compilationChecker = checkerClass.newInstance();
+        
+        astGenerator.loadJars(); // Update jar files for completition list
         loadCompClass = false;
       }
 
@@ -675,14 +689,15 @@ public class ErrorCheckerService implements Runnable{
   /**
    * Repaints the textarea if required
    */
-  public void updatePaintedThingy() {
+  public void updatePaintedThingys() {
     editor.getTextArea().repaint();
     updateEditorStatus();
     currentTab = editor.getSketch().getCodeIndex(
         editor.getSketch().getCurrentCode());
+    //System.out.println("awesome! " + currentTab + " LT " + lastTab);
     if (currentTab != lastTab) {
+      textModified.incrementAndGet();
       lastTab = currentTab;
-      editor.updateErrorBar(problemsList);      
       return;
     }
 
@@ -711,6 +726,94 @@ public class ErrorCheckerService implements Runnable{
     if (notFound) {
       editor.statusEmpty();
     }
+  }
+  
+  /**
+   * Maps offset from java code to pde code. Returns a bunch of offsets as array
+   * 
+   * @param line
+   *          - line number in java code
+   * @param offset
+   *          - offset from the start of the 'line'
+   * @return int[0] - tab number, int[1] - line number in the int[0] tab, int[2]
+   *         - line start offset, int[3] - offset from line start. int[2] and
+   *         int[3] are on TODO
+   */
+  public int[] JavaToPdeOffsets(int line, int offset){
+    int codeIndex = 0;
+
+    int x = line - mainClassOffset;
+    if (x < 0) {
+      // System.out.println("Negative line number "
+      // + problem.getSourceLineNumber() + " , offset "
+      // + mainClassOffset);
+      x = line - 2; // Another -1 for 0 index
+      if (x < programImports.size() && x >= 0) {
+        ImportStatement is = programImports.get(x);
+        // System.out.println(is.importName + ", " + is.tab + ", "
+        // + is.lineNumber);
+        return new int[] { is.tab, is.lineNumber };
+      } else {
+
+        // Some seriously ugly stray error, just can't find the source
+        // line! Simply return first line for first tab.
+        return  new int[] { 0, 1 };
+      }
+
+    }
+
+    try {
+      for (SketchCode sc : editor.getSketch().getCode()) {
+        if (sc.isExtension("pde")) {
+          int len = 0;
+          if (editor.getSketch().getCurrentCode().equals(sc)) {
+            len = Base.countLines(sc.getDocument().getText(0,
+                sc.getDocument().getLength())) + 1;
+          } else {
+            len = Base.countLines(sc.getProgram()) + 1;
+          }
+
+          // System.out.println("x,len, CI: " + x + "," + len + ","
+          // + codeIndex);
+
+          if (x >= len) {
+
+            // We're in the last tab and the line count is greater
+            // than the no.
+            // of lines in the tab,
+            if (codeIndex >= editor.getSketch().getCodeCount() - 1) {
+              // System.out.println("Exceeds lc " + x + "," + len
+              // + problem.toString());
+              // x = len
+              x = editor.getSketch().getCode(codeIndex)
+                  .getLineCount();
+              // TODO: Obtain line having last non-white space
+              // character in the code.
+              break;
+            } else {
+              x -= len;
+              codeIndex++;
+            }
+          } else {
+
+            if (codeIndex >= editor.getSketch().getCodeCount()) {
+              codeIndex = editor.getSketch().getCodeCount() - 1;
+            }
+            break;
+          }
+
+        }
+      }
+    } catch (Exception e) {
+      System.err
+          .println("Things got messed up in ErrorCheckerService.JavaToPdeOffset()");
+    }
+    return new int[] { codeIndex, x };
+  }
+  
+  public String getPDECodeAtLine(int tab, int linenumber){
+    editor.getSketch().setCurrentCode(tab);
+    return editor.ta.getLineText(linenumber);
   }
   
   /**
@@ -800,7 +903,7 @@ public class ErrorCheckerService implements Runnable{
    * java source. And there's a difference between parsable and compilable.
    * XQPrerocessor.java makes this code compilable. <br>
    * Handles: <li>Removal of import statements <li>Conversion of int(),
-   * char(), etc to (int)(), (char)(), etc. <li>Replacing '#' with 0xff for
+   * char(), etc to PApplet.parseInt(), etc. <li>Replacing '#' with 0xff for
    * color representation<li>Converts all 'color' datatypes to int
    * (experimental) <li>Appends class declaration statement after determining
    * the mode the sketch is in - ACTIVE or STATIC
@@ -900,23 +1003,33 @@ public class ErrorCheckerService implements Runnable{
     className = (editor == null) ? "DefaultClass" : editor.getSketch()
       .getName();
 
+    
     // Check whether the code is being written in STATIC mode(no function
     // declarations) - append class declaration and void setup() declaration
     Matcher matcher = FUNCTION_DECL.matcher(sourceAlt);
     if (!matcher.find()) {
-      sourceAlt = "public class " + className + " extends PApplet {\n"
+      sourceAlt = xqpreproc.prepareImports(programImports) + "public class " + className + " extends PApplet {\n"
         + "public void setup() {\n" + sourceAlt
         + "\nnoLoop();\n}\n" + "\n}\n";
-      staticMode = true;
-      mainClassOffset = 2;
+      staticMode = true;           
 
     } else {
-      sourceAlt = "public class " + className + " extends PApplet {\n"
+      sourceAlt = xqpreproc.prepareImports(programImports) + "public class " + className + " extends PApplet {\n"
         + sourceAlt + "\n}";
-      staticMode = false;
-      mainClassOffset = 1;
+      staticMode = false;     
     }
-
+    
+    int position = sourceAlt.indexOf("{") + 1;
+    mainClassOffset = 1;
+    for (int i = 0; i <= position; i++) {
+      if (sourceAlt.charAt(i) == '\n') {
+        mainClassOffset++;
+      }
+    }
+    if(staticMode) {
+      mainClassOffset++;
+    }
+    //mainClassOffset += 2;
     // Handle unicode characters
     sourceAlt = substituteUnicode(sourceAlt);
 
@@ -926,6 +1039,31 @@ public class ErrorCheckerService implements Runnable{
     sourceCode = sourceAlt;
     return sourceAlt;  
 
+  }
+  
+  /**
+   * The super method that highlights any ASTNode in the pde editor =D
+   * @param node
+   * @return true - if highlighting happened correctly.
+   */
+  public boolean highlightNode(ASTNodeWrapper awrap){
+    int pdeoffsets[] = awrap.getPDECodeOffsets(this);
+    int javaoffsets[] = awrap.getJavaCodeOffsets(this);
+    try {
+      scrollToErrorLine(editor, pdeoffsets[0],
+                                            pdeoffsets[1],javaoffsets[1],
+                                            javaoffsets[2]);
+      return true;
+    } catch (Exception e) {
+      
+      e.printStackTrace();
+    }
+    return false;
+  }
+  
+  public boolean highlightNode(ASTNode node){
+    ASTNodeWrapper awrap = new ASTNodeWrapper(node);
+    return highlightNode(awrap);
   }
   
   /**
@@ -942,25 +1080,71 @@ public class ErrorCheckerService implements Runnable{
     
     if (errorIndex < problemsList.size() && errorIndex >= 0) {
       Problem p = problemsList.get(errorIndex);
-      try {
-        editor.toFront();
-        editor.getSketch().setCurrentCode(p.tabIndex);
-        editor.getTextArea().scrollTo(p.lineNumber - 1, 0);
-        editor.setSelection(editor.getTextArea()
-            .getLineStartNonWhiteSpaceOffset(p.lineNumber - 1)
-            + editor.getTextArea().getLineText(p.lineNumber - 1)
-                .trim().length(), editor.getTextArea()
-            .getLineStartNonWhiteSpaceOffset(p.lineNumber - 1));
-        editor.repaint();
-      } catch (Exception e) {
-        System.err
-            .println(e
-                + " : Error while selecting text in scrollToErrorLine()");
-        // e.printStackTrace();
-      }
-      // System.out.println("---");
-
+      scrollToErrorLine(p);
     }
+  }
+  
+  public void scrollToErrorLine(Problem p) {
+    if (editor == null) {
+      return;
+    }
+    if (p == null)
+      return;
+    try {
+      editor.toFront();
+      editor.getSketch().setCurrentCode(p.tabIndex);
+
+      editor
+          .setSelection(editor.getTextArea()
+                            .getLineStartNonWhiteSpaceOffset(p.lineNumber - 1)
+                            + editor.getTextArea()
+                                .getLineText(p.lineNumber - 1).trim().length(),
+                        editor.getTextArea()
+                            .getLineStartNonWhiteSpaceOffset(p.lineNumber - 1));
+      editor.getTextArea().scrollTo(p.lineNumber - 1, 0);
+      editor.repaint();
+    } catch (Exception e) {
+      System.err.println(e
+          + " : Error while selecting text in scrollToErrorLine()");
+      e.printStackTrace();
+    }
+    // System.out.println("---");
+  }
+  
+  /**
+   * Static method for scroll to a particular line in the PDE. Also highlights
+   * the length of the text. Requires the editor instance as arguement.
+   * 
+   * @param edt
+   * @param tabIndex
+   * @param lineNoInTab
+   *          - line number in the corresponding tab
+   * @param lineStartOffset
+   *          - selection start offset(from line start non-whitespace offset)
+   * @param length
+   *          - length of selection
+   * @return - true, if scroll was successful
+   */
+  public static boolean scrollToErrorLine(Editor edt, int tabIndex, int lineNoInTab, int lineStartOffset, int length) {
+    if (edt == null) {
+      return false;
+    }
+    try {
+      edt.toFront();
+      edt.getSketch().setCurrentCode(tabIndex);
+      int lsno = edt.getTextArea()
+          .getLineStartNonWhiteSpaceOffset(lineNoInTab - 1) + lineStartOffset;
+      edt.setSelection(lsno, lsno + length);
+      edt.getTextArea().scrollTo(lineNoInTab - 1, 0);
+      edt.repaint();
+      System.out.println(lineStartOffset + " LSO,len " + length);
+    } catch (Exception e) {
+      System.err.println(e
+          + " : Error while selecting text in static scrollToErrorLine()");
+      e.printStackTrace();
+      return false;
+    }
+    return true;
   }
   
   /**
@@ -1000,7 +1184,7 @@ public class ErrorCheckerService implements Runnable{
    * @return String - Tab code with imports replaced with white spaces
    */
   private String scrapImportStatements(String tabProgram, int tabNumber) {
-
+	//TODO: Commented out imports are still detected as main imports.
     String tabSource = new String(tabProgram);
     do {
       // System.out.println("-->\n" + sourceAlt + "\n<--");
@@ -1025,7 +1209,7 @@ public class ErrorCheckerService implements Runnable{
       programImports.add(new ImportStatement(piece, tabNumber, Base
         .countLines(tabSource.substring(0, idx))));
       // Remove the import from the main program
-      // Substitue with white spaces
+      // Substitute with white spaces
       String whiteSpace = "";
       for (int j = 0; j < piece.length(); j++) {
         whiteSpace += " ";
