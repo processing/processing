@@ -110,9 +110,11 @@ public class ASTGenerator {
 
   private JButton renameButton;
   
-  private JButton listOccurrence;
+  private JButton btnListOccurrence;
   
   private JTextField renameTextField;
+  
+  private JFrame occurenceListFrame;
   
   public ASTGenerator(ErrorCheckerService ecs) {
     this.errorCheckerService = ecs;
@@ -120,35 +122,35 @@ public class ASTGenerator {
     frame2 = new JFrame();
 
     jtree = new JTree();
-    frame2.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    frame2.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
     frame2.setBounds(new Rectangle(680, 100, 460, 620));
     JScrollPane sp = new JScrollPane();
     sp.setViewportView(jtree);
     frame2.add(sp);
 
     renameButton = new JButton("Rename");
-    listOccurrence = new JButton("Find All");
+    btnListOccurrence = new JButton("Find All");
     renameWindow = new JFrame();
-    renameWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    renameWindow.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
     renameWindow.setBounds(new Rectangle(680, 50, 150, 150));
     renameWindow.setLayout(new GridLayout(3, 1));
     renameWindow.add(renameButton);
-    renameWindow.add(listOccurrence);
+    renameWindow.add(btnListOccurrence);
     renameWindow.setTitle("Rename..");
     renameTextField = new JTextField();
     renameTextField.setPreferredSize(new Dimension(150, 60));
     renameWindow.add(renameTextField);
-    renameWindow.setVisible(true);
+    //renameWindow.setVisible(true);
     
-    JFrame frame4 = new JFrame();
-    frame4.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    frame4.setBounds(new Rectangle(1100, 50, 350, 500));
+    occurenceListFrame = new JFrame();
+    occurenceListFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+    occurenceListFrame.setBounds(new Rectangle(1100, 50, 350, 500));
     
     JScrollPane sp2 = new JScrollPane();
     renameTree = new JTree();
     sp2.setViewportView(renameTree);    
-    frame4.add(sp2);    
-    frame4.setVisible(true);
+    occurenceListFrame.add(sp2);    
+    //occurenceListFrame.setVisible(true);
     
 //    frameAutoComp = new JFrame();
 //    frameAutoComp.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -1296,6 +1298,7 @@ public class ASTGenerator {
             DefaultMutableTreeNode defCU = findAllOccurrences();
             renameTree.setModel(new DefaultTreeModel(defCU));
             ((DefaultTreeModel) renameTree.getModel()).reload();
+            occurenceListFrame.setVisible(true);
             int lineOffsetDisplacementConst = newName.length()
                 - editor.ta.getSelectedText().length();
             HashMap<Integer, Integer> lineOffsetDisplacement = new HashMap<Integer, Integer>();
@@ -1336,13 +1339,16 @@ public class ASTGenerator {
                   + lineOffsetDisplacement.get(lineNum));
             }
             editor.getSketch().setModified(true);
+            errorCheckerService.runManualErrorCheck();
+            occurenceListFrame.setVisible(false);
+            renameWindow.setVisible(false);
           }
         };
         worker.execute();
       }
     });
     // TODO: Diable this listner at deployment
-    listOccurrence.addActionListener(new ActionListener() {
+    btnListOccurrence.addActionListener(new ActionListener() {
 
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -1356,9 +1362,10 @@ public class ASTGenerator {
           protected void done() {
             if (editor.ta.getSelectedText() == null)
               return;            
-            DefaultMutableTreeNode defCU = findAllOccurrences();
+            DefaultMutableTreeNode defCU = findAllOccurrences();            
             renameTree.setModel(new DefaultTreeModel(defCU));
-            ((DefaultTreeModel) renameTree.getModel()).reload();            
+            ((DefaultTreeModel) renameTree.getModel()).reload();
+            occurenceListFrame.setVisible(true);
           }
         };
         worker.execute();

@@ -260,7 +260,15 @@ public class ErrorCheckerService implements Runnable{
   }
   
   protected ASTGenerator astGenerator;
-  AtomicInteger textModified = new AtomicInteger();
+  private AtomicInteger textModified = new AtomicInteger();
+  
+  /**
+   * Triggers error check
+   */
+  public void runManualErrorCheck() {
+    textModified.incrementAndGet();
+  }
+
   private boolean checkCode() {
     System.out.println("checkCode() " + textModified.get() );
     lastTimeStamp = System.currentTimeMillis();

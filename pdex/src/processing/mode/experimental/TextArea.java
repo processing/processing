@@ -166,7 +166,7 @@ public class TextArea extends JEditTextArea {
 
     super.processKeyEvent(evt);
     if (evt.getID() == KeyEvent.KEY_TYPED) {
-      errorCheckerService.textModified.incrementAndGet();
+      errorCheckerService.runManualErrorCheck();
       System.out.println(" Typing: " + fetchPhrase(evt) + " "
           + (evt.getKeyChar() == KeyEvent.VK_BACK_SPACE));
 
