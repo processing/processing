@@ -24,9 +24,14 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.TreeMap;
 
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -106,15 +111,17 @@ public class ASTGenerator {
 
   private JScrollPane scrollPane;
   
-  private JFrame renameWindow;
+  private JFrame frmRename;
 
   private JButton btnRename;
   
   private JButton btnListOccurrence;
   
-  private JTextField renameTextField;
+  private JTextField txtRenameField;
   
   private JFrame frmOccurenceList;
+  
+  private JLabel lblRefactorOldName;
   
   public ASTGenerator(ErrorCheckerService ecs) {
     this.errorCheckerService = ecs;
@@ -136,17 +143,32 @@ public class ASTGenerator {
 
     btnRename = new JButton("Rename");
     btnListOccurrence = new JButton("Find All");
-    renameWindow = new JFrame();
-    renameWindow.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-    renameWindow.setBounds(new Rectangle(680, 50, 150, 150));
-    renameWindow.setLayout(new GridLayout(3, 1));
-    renameWindow.add(btnRename);
-    renameWindow.add(btnListOccurrence);
-    renameWindow.setTitle("Rename..");
-    renameTextField = new JTextField();
-    renameTextField.setPreferredSize(new Dimension(150, 60));
-    renameWindow.add(renameTextField);
+    frmRename = new JFrame();    
+    frmRename.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+    frmRename.setBounds(new Rectangle(680, 50, 250, 130));
+    frmRename.setLayout(new BoxLayout(frmRename.getContentPane(), BoxLayout.Y_AXIS));
+    JPanel panelTop = new JPanel(), panelBottom = new JPanel();
+    panelTop.setLayout(new BoxLayout(panelTop, BoxLayout.Y_AXIS));
+    panelTop.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+    panelBottom.setLayout(new BoxLayout(panelBottom, BoxLayout.X_AXIS));
+    panelBottom.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+    panelBottom.add(Box.createHorizontalGlue());
+    panelBottom.add(btnListOccurrence);
+    panelBottom.add(Box.createRigidArea(new Dimension(15, 0)));
+    panelBottom.add(btnRename);    
+    frmRename.setTitle("Enter new name:");
+    txtRenameField = new JTextField();
+    txtRenameField.setPreferredSize(new Dimension(150, 60));
+    panelTop.add(txtRenameField);
     //renameWindow.setVisible(true);
+    lblRefactorOldName = new JLabel();
+    lblRefactorOldName.setText("Old Name: ");
+    panelTop.add(Box.createRigidArea(new Dimension(0, 10)));
+    panelTop.add(lblRefactorOldName);
+    frmRename.add(panelTop);
+    frmRename.add(panelBottom);
+    
+    frmRename.setMinimumSize(frmRename.getSize());
     
     frmOccurenceList = new JFrame();
     frmOccurenceList.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
@@ -1284,7 +1306,9 @@ public class ASTGenerator {
     btnRename.addActionListener(new ActionListener() {
       
       @Override
-      public void actionPerformed(ActionEvent e) {
+      public void actionPerformed(ActionEvent e) {       
+        if(txtRenameField.getText().length() == 0)
+          return;
         SwingWorker worker = new SwingWorker() {
 
           @Override
@@ -1293,11 +1317,8 @@ public class ASTGenerator {
           }
 
           protected void done() {
-            if (editor.ta.getSelectedText() == null)
-              return;
-            if(renameTextField.getText().length() == 0)
-              return;
-            String newName = renameTextField.getText();
+            
+            String newName = txtRenameField.getText();
             DefaultMutableTreeNode defCU = findAllOccurrences();
             treeRename.setModel(new DefaultTreeModel(defCU));
             ((DefaultTreeModel) treeRename.getModel()).reload();
@@ -1344,7 +1365,7 @@ public class ASTGenerator {
             editor.getSketch().setModified(true);
             errorCheckerService.runManualErrorCheck();
             frmOccurenceList.setVisible(false);
-            renameWindow.setVisible(false);
+            frmRename.setVisible(false);
           }
         };
         worker.execute();
@@ -1363,8 +1384,6 @@ public class ASTGenerator {
           }
 
           protected void done() {
-            if (editor.ta.getSelectedText() == null)
-              return;            
             DefaultMutableTreeNode defCU = findAllOccurrences();            
             treeRename.setModel(new DefaultTreeModel(defCU));
             ((DefaultTreeModel) treeRename.getModel()).reload();
@@ -1560,9 +1579,21 @@ public class ASTGenerator {
   }
   
   public void handleRefactor(){
-    if (!renameWindow.isVisible())
-      renameWindow.setVisible(true);
-    renameWindow.toFront();
+    if(editor.ta.getSelectedText() == null){
+      return;
+    }
+    if (!frmRename.isVisible()){
+      frmRename.setVisible(true);
+      SwingUtilities.invokeLater(new Runnable() {          
+        @Override
+        public void run() {
+          lblRefactorOldName.setText("Current name: "
+              + editor.ta.getSelectedText());
+          txtRenameField.requestFocus();
+        }
+      });
+    }
+    frmRename.toFront();
   }
   
 
