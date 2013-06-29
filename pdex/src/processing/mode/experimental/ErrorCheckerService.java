@@ -300,6 +300,7 @@ public class ErrorCheckerService implements Runnable{
       updateErrorTable();
       editor.updateErrorBar(problemsList);
       updateEditorStatus();
+      editor.getTextArea().repaint();
       updatePaintedThingys();
       int x = textModified.get();
       //System.out.println("TM " + x);
@@ -698,15 +699,15 @@ public class ErrorCheckerService implements Runnable{
   /**
    * Repaints the textarea if required
    */
-  public void updatePaintedThingys() {
-    editor.getTextArea().repaint();
-    updateEditorStatus();
+  public void updatePaintedThingys() {    
     currentTab = editor.getSketch().getCodeIndex(
         editor.getSketch().getCurrentCode());
-    //System.out.println("awesome! " + currentTab + " LT " + lastTab);
+    //System.out.println("Tab changed " + currentTab + " LT " + lastTab);
     if (currentTab != lastTab) {
-      textModified.incrementAndGet();
+      textModified.set(5);
       lastTab = currentTab;
+      editor.getTextArea().repaint();
+      updateEditorStatus();
       return;
     }
 

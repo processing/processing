@@ -1580,6 +1580,7 @@ public class ASTGenerator {
   
   public void handleRefactor(){
     if(editor.ta.getSelectedText() == null){
+      editor.statusError("Highlight the class/function/variable name first");
       return;
     }
     if (!frmRename.isVisible()){
