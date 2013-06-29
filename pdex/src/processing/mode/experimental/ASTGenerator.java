@@ -115,6 +115,8 @@ public class ASTGenerator {
   private JEditorPane javadocPane;
 
   private JScrollPane scrollPane;
+  
+  private JFrame renameWindow;
 
   private JButton renameButton;
   
@@ -136,16 +138,16 @@ public class ASTGenerator {
 
     renameButton = new JButton("Rename");
     listOccurrence = new JButton("Find All");
-    JFrame frame3 = new JFrame();
-    frame3.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    frame3.setBounds(new Rectangle(680, 50, 150, 150));
-    frame3.setLayout(new GridLayout(3, 1));
-    frame3.add(renameButton);
-    frame3.add(listOccurrence);
+    renameWindow = new JFrame();
+    renameWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    renameWindow.setBounds(new Rectangle(680, 50, 150, 150));
+    renameWindow.setLayout(new GridLayout(3, 1));
+    renameWindow.add(renameButton);
+    renameWindow.add(listOccurrence);
     renameTextField = new JTextField();
     renameTextField.setPreferredSize(new Dimension(150, 60));
-    frame3.add(renameTextField);
-    frame3.setVisible(true);
+    renameWindow.add(renameTextField);
+    renameWindow.setVisible(true);
     
     JFrame frame4 = new JFrame();
     frame4.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -1550,6 +1552,11 @@ public class ASTGenerator {
     return false;
   }
   
+  public void handleRefactor(){
+    if (!renameWindow.isVisible())
+      renameWindow.setVisible(true);
+    renameWindow.toFront();
+  }
   
 
   public static void printRecur(ASTNode node) {
