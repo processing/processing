@@ -1583,6 +1583,11 @@ public class ASTGenerator {
       editor.statusError("Highlight the class/function/variable name first");
       return;
     }
+    
+    if(errorCheckerService.hasSyntaxErrors()){
+      editor.statusError("Can't rename until syntax errors are fixed :(");
+      return;
+    }
     if (!frmRename.isVisible()){
       frmRename.setVisible(true);
       SwingUtilities.invokeLater(new Runnable() {          

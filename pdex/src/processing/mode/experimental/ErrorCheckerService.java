@@ -185,6 +185,7 @@ public class ErrorCheckerService implements Runnable{
     defaultImportsOffset = pdePrepoc.getCoreImports().length + 
         pdePrepoc.getDefaultImports().length + 1;
     astGenerator = new ASTGenerator(this);
+    syntaxErrors = true;
   }
   
   /**
@@ -321,6 +322,12 @@ public class ErrorCheckerService implements Runnable{
     }
     return false;
   }
+  
+  private boolean syntaxErrors;
+  
+  public boolean hasSyntaxErrors(){
+    return syntaxErrors;
+  }
 
   private void syntaxCheck() {
     parser.setSource(sourceCode.toCharArray());
@@ -346,6 +353,8 @@ public class ErrorCheckerService implements Runnable{
       problemsList.add(p);
       // System.out.println(p.toString());
     }
+    
+    syntaxErrors = problems.length == 0 ? false : true;
   }
   protected URLClassLoader classLoader;
   private void compileCheck() {
