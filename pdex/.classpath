@@ -19,5 +19,7 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/processing-app"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/processing-core"/>
 	<classpathentry kind="lib" path="/processing-app/lib/org-netbeans-swing-outline.jar"/>
+	<classpathentry kind="lib" path="mode/classpath-explorer-1.0.jar"/>
+	<classpathentry kind="lib" path="mode/jsoup-1.7.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

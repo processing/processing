@@ -359,7 +359,8 @@ public class ErrorCheckerService implements Runnable{
         // System.out
         // .println("Experimental Mode: Loading contributed libraries referenced by import statements.");
         
-        File f = Base.getContentFile("modes" + File.separator + "experimental"
+        // The folder SketchBook/modes/ExperimentalMode/mode
+        File f = new File(Base.getSketchbookModesFolder().getAbsolutePath() + File.separator + "ExperimentalMode"
             + File.separator + "mode");
         
         if(!f.exists()) {
@@ -370,7 +371,7 @@ public class ErrorCheckerService implements Runnable{
         FileFilter fileFilter = new FileFilter() {
           public boolean accept(File file) {
             return (file.getName().endsWith(".jar") && !file
-                .getName().startsWith("experimental"));
+                .getName().startsWith("ExperimentalMode"));
           }
         };
 

@@ -1,6 +1,8 @@
 <?xml version="1.0"?>
 <project name="Processing PDE" default="build">
 
+	<property file="build.properties" />
+	
   <target name="clean" description="Clean the build directories">
     <delete dir="bin" />
     <delete file="mode/experimental.jar" />
@@ -8,7 +10,7 @@
 
   <target name="compile" description="Compile sources">
     <condition property="core-built">
-      <available file="../core/library/core.jar" />
+      <available file="${core.library.location}/core.jar" />
     </condition>
     <fail unless="core-built" 
 	  message="Please build the core library first and make sure it sits in ../core/library/core.jar" />
@@ -47,19 +49,20 @@
 	   destdir="bin" 
 	   encoding="UTF-8" 
 	   includeAntRuntime="false" 
-	   classpath="../core/library/core.jar; ${env.JAVA_HOME}/lib/tools.jar; ../app/lib/ant.jar; ../app/lib/ant-launcher.jar; ../app/lib/antlr.jar; ../app/lib/apple.jar; ../app/lib/jdt-core.jar; ../app/lib/jna.jar; ../app/lib/org-netbeans-swing-outline.jar; ../app/pde.jar; mode/CompilationChecker.jar; mode/com.ibm.icu_4.4.2.v20110823.jar; mode/jdi.jar; mode/jdimodel.jar; mode/org.eclipse.core.contenttype_3.4.200.v20120523-2004.jar; mode/org.eclipse.core.jobs_3.5.300.v20120622-204750.jar; mode/org.eclipse.core.resources_3.8.1.v20120802-154922.jar; mode/org.eclipse.core.runtime_3.8.0.v20120521-2346.jar; mode/org.eclipse.equinox.common_3.6.100.v20120522-1841.jar; mode/org.eclipse.equinox.preferences_3.5.0.v20120522-1841.jar; mode/org.eclipse.jdt.core_3.8.2.v20120814-155456.jar; mode/org.eclipse.jdt.debug_3.7.101.v20120725-115645.jar; mode/org.eclipse.osgi_3.8.1.v20120830-144521.jar; mode/org.eclipse.text_3.5.200.v20120523-1310.jar;mode/classpath-explorer-1.0.jar; mode/jsoup-1.7.1.jar;"
+	   classpath="${core.library.location}/core.jar; ${env.JAVA_HOME}/lib/tools.jar; ${app.library.location}/lib/ant.jar; ${app.library.location}/lib/ant-launcher.jar; ${app.library.location}/lib/antlr.jar; ${app.library.location}/lib/apple.jar; ${app.library.location}/lib/jdt-core.jar; ${app.library.location}/lib/jna.jar; ${app.library.location}/lib/org-netbeans-swing-outline.jar; ${app.library.location}/pde.jar; mode/CompilationChecker.jar; mode/com.ibm.icu_4.4.2.v20110823.jar; mode/jdi.jar; mode/jdimodel.jar; mode/org.eclipse.core.contenttype_3.4.200.v20120523-2004.jar; mode/org.eclipse.core.jobs_3.5.300.v20120622-204750.jar; mode/org.eclipse.core.resources_3.8.1.v20120802-154922.jar; mode/org.eclipse.core.runtime_3.8.0.v20120521-2346.jar; mode/org.eclipse.equinox.common_3.6.100.v20120522-1841.jar; mode/org.eclipse.equinox.preferences_3.5.0.v20120522-1841.jar; mode/org.eclipse.jdt.core_3.8.2.v20120814-155456.jar; mode/org.eclipse.jdt.debug_3.7.101.v20120725-115645.jar; mode/org.eclipse.osgi_3.8.1.v20120830-144521.jar; mode/org.eclipse.text_3.5.200.v20120523-1310.jar;mode/classpath-explorer-1.0.jar; mode/jsoup-1.7.1.jar;"
+
 	   debug="off">
       <src path="src" />
     </javac>
   </target>
-
+	<!-- classpath="${core.library.location}/core.jar; ${env.JAVA_HOME}/lib/tools.jar; ../app/lib/ant.jar; ../app/lib/ant-launcher.jar; ../app/lib/antlr.jar; ../app/lib/apple.jar; ../app/lib/jdt-core.jar; ../app/lib/jna.jar; ../app/lib/org-netbeans-swing-outline.jar; ../app/pde.jar; mode/CompilationChecker.jar; mode/com.ibm.icu_4.4.2.v20110823.jar; mode/jdi.jar; mode/jdimodel.jar; mode/org.eclipse.core.contenttype_3.4.200.v20120523-2004.jar; mode/org.eclipse.core.jobs_3.5.300.v20120622-204750.jar; mode/org.eclipse.core.resources_3.8.1.v20120802-154922.jar; mode/org.eclipse.core.runtime_3.8.0.v20120521-2346.jar; mode/org.eclipse.equinox.common_3.6.100.v20120522-1841.jar; mode/org.eclipse.equinox.preferences_3.5.0.v20120522-1841.jar; mode/org.eclipse.jdt.core_3.8.2.v20120814-155456.jar; mode/org.eclipse.jdt.debug_3.7.101.v20120725-115645.jar; mode/org.eclipse.osgi_3.8.1.v20120830-144521.jar; mode/org.eclipse.text_3.5.200.v20120523-1310.jar;mode/classpath-explorer-1.0.jar; mode/jsoup-1.7.1.jar;"-->
   <target name="build" depends="compile" description="Build Experimental mode">
-    <jar basedir="bin" destfile="mode/experimental.jar" />
+    <jar basedir="bin" destfile="mode/ExperimentalMode.jar" />
   </target>
 	
   <target name="install" depends="build">  	
-	<copy todir="../app/modes/experimental/mode">
-	<fileset file="mode/experimental.jar" />
+	<copy todir="${sketchbook.location}/modes/ExperimentalMode/mode">
+	<fileset file="mode/ExperimentalMode.jar" />
 	</copy>
   </target>
 </project>
