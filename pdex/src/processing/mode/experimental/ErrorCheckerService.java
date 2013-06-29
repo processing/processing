@@ -249,7 +249,7 @@ public class ErrorCheckerService implements Runnable{
       }
       
       updatePaintedThingys();
-      
+      updateEditorStatus();
       if (pauseThread)
         continue;
       if(textModified.get() == 0)
@@ -717,7 +717,7 @@ public class ErrorCheckerService implements Runnable{
       textModified.set(5);
       lastTab = currentTab;
       editor.getTextArea().repaint();
-      updateEditorStatus();
+      editor.statusEmpty();
       return;
     }
 
