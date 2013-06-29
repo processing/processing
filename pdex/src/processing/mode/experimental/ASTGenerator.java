@@ -134,6 +134,7 @@ public class ASTGenerator {
     renameWindow.setLayout(new GridLayout(3, 1));
     renameWindow.add(renameButton);
     renameWindow.add(listOccurrence);
+    renameWindow.setTitle("Rename..");
     renameTextField = new JTextField();
     renameTextField.setPreferredSize(new Dimension(150, 60));
     renameWindow.add(renameTextField);
@@ -1299,25 +1300,31 @@ public class ASTGenerator {
                 - editor.ta.getSelectedText().length();
             HashMap<Integer, Integer> lineOffsetDisplacement = new HashMap<Integer, Integer>();
 
+            // I need to store the pde and java offsets beforehand because once
+            // the replace starts, all offsets returned are affected
+            int offsetsMap[][][] = new int[defCU.getChildCount()][2][];
             for (int i = defCU.getChildCount() - 1; i >= 0; i--) {
               ASTNodeWrapper awrap = (ASTNodeWrapper) ((DefaultMutableTreeNode) (defCU
                   .getChildAt(i))).getUserObject();
-              int pdeoffsets[] = awrap.getPDECodeOffsets(errorCheckerService);
-              int javaoffsets[] = awrap.getJavaCodeOffsets(errorCheckerService);
-
+              offsetsMap[i][0] = awrap.getPDECodeOffsets(errorCheckerService);
+              offsetsMap[i][1] = awrap.getJavaCodeOffsets(errorCheckerService);
+            }
+            
+            for (int i = defCU.getChildCount() - 1; i >= 0; i--) {
+              int pdeoffsets[] = offsetsMap[i][0];
+              int javaoffsets[] = offsetsMap[i][1];
               // correction for pde enhancements related displacement on a line
               int off = 0;
-              if(lineOffsetDisplacement.get(javaoffsets[0]) != null){
+              if (lineOffsetDisplacement.get(javaoffsets[0]) != null) {
                 off = lineOffsetDisplacement.get(javaoffsets[0]);
-                
+
                 lineOffsetDisplacement.put(javaoffsets[0],
                                            lineOffsetDisplacementConst + off);
-              }
-              else{
+              } else {
                 lineOffsetDisplacement.put(javaoffsets[0],
-                                           lineOffsetDisplacementConst);                
+                                           lineOffsetDisplacementConst);
               }
-              
+
               ErrorCheckerService.scrollToErrorLine(editor, pdeoffsets[0],
                                                     pdeoffsets[1],
                                                     javaoffsets[1] + off,
