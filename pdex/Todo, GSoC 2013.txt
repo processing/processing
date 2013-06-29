@@ -50,7 +50,8 @@ x Edge Case: Need to take displaced offsets on a line, due to pde enhancements, 
 4. All the changes in code would be made in a separate copy of the code(?). After all the renaming is done, allow it only if the new code compiles. Basically an undo should be possible in case of conflicts.
 * Undo misbehaves here, handle carefully.
 * Handle saving. If sketch closed after renaming w/o saving find bugs.
-* Refactoring ui
+x Refactoring ui
+x For now, user needs to highlight the name of the var, and then right-click -> Rename..
 * Add support for word select on right click and rename, mouse co-ordinates need to obtained carefully
 
 Quick Navigation
