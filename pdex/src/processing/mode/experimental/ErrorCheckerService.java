@@ -341,7 +341,8 @@ public class ErrorCheckerService implements Runnable{
     problemsList = new ArrayList<Problem>();
     for (int i = 0; i < problems.length; i++) {
       int a[] = calculateTabIndexAndLineNumber(problems[i]);
-      Problem p = new Problem(problems[i], a[0], a[1]);
+      Problem p = new Problem(problems[i], a[0], a[1] + 1);
+      //TODO: ^Why do cheeky stuff?
       problemsList.add(p);
       // System.out.println(p.toString());
     }
