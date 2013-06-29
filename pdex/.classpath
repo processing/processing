@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="mode/com.ibm.icu_4.4.2.v20110823.jar"/>
+	<classpathentry kind="lib" path="mode/CompilationChecker.jar"/>
+	<classpathentry kind="lib" path="mode/jdi.jar"/>
+	<classpathentry kind="lib" path="mode/jdimodel.jar"/>
+	<classpathentry kind="lib" path="mode/org.eclipse.core.contenttype_3.4.200.v20120523-2004.jar"/>
+	<classpathentry kind="lib" path="mode/org.eclipse.core.jobs_3.5.300.v20120622-204750.jar"/>
+	<classpathentry kind="lib" path="mode/org.eclipse.core.resources_3.8.1.v20120802-154922.jar"/>
+	<classpathentry kind="lib" path="mode/org.eclipse.core.runtime_3.8.0.v20120521-2346.jar"/>
+	<classpathentry kind="lib" path="mode/org.eclipse.equinox.common_3.6.100.v20120522-1841.jar"/>
+	<classpathentry kind="lib" path="mode/org.eclipse.equinox.preferences_3.5.0.v20120522-1841.jar"/>
+	<classpathentry kind="lib" path="mode/org.eclipse.jdt.core_3.8.2.v20120814-155456.jar"/>
+	<classpathentry kind="lib" path="mode/org.eclipse.jdt.debug_3.7.101.v20120725-115645.jar"/>
+	<classpathentry kind="lib" path="mode/org.eclipse.osgi_3.8.1.v20120830-144521.jar"/>
+	<classpathentry kind="lib" path="mode/org.eclipse.text_3.5.200.v20120523-1310.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/processing-app"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/processing-core"/>
+	<classpathentry kind="lib" path="/processing-app/lib/org-netbeans-swing-outline.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
