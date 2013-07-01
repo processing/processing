@@ -1,4 +1,7 @@
 0220 pde
+X change location of the manager download
+X fix "less less" typo 
+X   https://github.com/processing/processing/issues/1928
 
 
 high

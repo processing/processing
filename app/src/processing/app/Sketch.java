@@ -70,7 +70,7 @@ public class Sketch {
    */
   private int codeCount;
   private SketchCode[] code;
-  
+
   /** Moved out of Editor and into here for cleaner access. */
   private boolean untitled;
 
@@ -1420,7 +1420,7 @@ public class Sketch {
       String msg =
         "The sketch name had to be modified. Sketch names can only consist\n" +
         "of ASCII characters and numbers (but cannot start with a number).\n" +
-        "They should also be less less than 64 characters long.";
+        "They should also be less than 64 characters long.";
       System.out.println(msg);
     }
     return newName;
@@ -1441,8 +1441,8 @@ public class Sketch {
   static final boolean asciiLetter(char c) {
     return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
   }
-  
-  
+
+
   /**
    * Produce a sanitized name that fits our standards for likely to work.
    * <p/>
@@ -1457,14 +1457,14 @@ public class Sketch {
    * underscores. Also disallows starting the sketch name with a digit
    * or underscore.
    * <p/>
-   * In Processing 2.0, sketches can no longer begin with an underscore, 
+   * In Processing 2.0, sketches can no longer begin with an underscore,
    * because these aren't valid class names on Android.
    */
   static public String sanitizeName(String origName) {
     char orig[] = origName.toCharArray();
     StringBuffer buffer = new StringBuffer();
 
-    // Can't lead with a digit (or anything besides a letter), so prefix with 
+    // Can't lead with a digit (or anything besides a letter), so prefix with
     // "sketch_". In 1.x this prefixed with an underscore, but those get shaved
     // off later, since you can't start a sketch name with underscore anymore.
     if (!asciiLetter(orig[0])) {
@@ -1476,8 +1476,8 @@ public class Sketch {
         buffer.append(c);
 
       } else {
-        // Tempting to only add if prev char is not underscore, but that 
-        // might be more confusing if lots of chars are converted and the 
+        // Tempting to only add if prev char is not underscore, but that
+        // might be more confusing if lots of chars are converted and the
         // result is a very short string thats nothing like the original.
         buffer.append('_');
       }
