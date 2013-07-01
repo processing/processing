@@ -15,7 +15,7 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License along 
+  You should have received a copy of the GNU General Public License along
   with this program; if not, write to the Free Software Foundation, Inc.
   59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
@@ -31,11 +31,11 @@ import processing.core.PApplet;
 
 
 public class ContributionListing {
-  static final String LISTING_URL = 
-    "https://raw.github.com/processing/processing-web/master/contrib_generate/contributions.txt";
+  static final String LISTING_URL =
+    "http://processing.org/contrib_generate/contributions.txt"
 
   static ContributionListing singleInstance;
-  
+
   File listingFile;
   ArrayList<ContributionChangeListener> listeners;
   ArrayList<AvailableContribution> advertisedContributions;
@@ -45,9 +45,9 @@ public class ContributionListing {
   ReentrantLock downloadingListingLock;
 
   static final String[] validCategories = {
-    "3D", "Animation", "Compilations", "Data", "Geometry", "GUI", 
+    "3D", "Animation", "Compilations", "Data", "Geometry", "GUI",
     "Hardware", "I/O", "Math", "Simulation", "Sound", "Typography",
-    "Utilities", "Video & Vision" 
+    "Utilities", "Video & Vision"
   };
 
 
@@ -85,7 +85,7 @@ public class ContributionListing {
     Collections.sort(allContributions, nameComparator);
   }
 
-  
+
   /**
    * Adds the installed libraries to the listing of libraries, replacing any
    * pre-existing libraries by the same name as one in the list.
@@ -132,7 +132,7 @@ public class ContributionListing {
       List<Contribution> list = librariesByCategory.get(contribution.getCategory());
       list.add(contribution);
       Collections.sort(list, nameComparator);
-      
+
     } else {
       ArrayList<Contribution> list = new ArrayList<Contribution>();
       list.add(contribution);
@@ -155,7 +155,7 @@ public class ContributionListing {
 
   private Contribution getContribution(Contribution contribution) {
     for (Contribution c : allContributions) {
-      if (c.getName().equals(contribution.getName()) && 
+      if (c.getName().equals(contribution.getName()) &&
           c.getType() == contribution.getType()) {
         return c;
       }
@@ -166,7 +166,7 @@ public class ContributionListing {
 
   protected AvailableContribution getAvailableContribution(Contribution info) {
     for (AvailableContribution advertised : advertisedContributions) {
-      if (advertised.getType() == info.getType() && 
+      if (advertised.getType() == info.getType() &&
           advertised.getName().equals(info.getName())) {
         return advertised;
       }
@@ -174,7 +174,7 @@ public class ContributionListing {
     return null;
   }
 
-  
+
   protected Set<String> getCategories(ContributionFilter filter) {
     Set<String> outgoing = new HashSet<String>();
 
@@ -194,12 +194,12 @@ public class ContributionListing {
     return outgoing;
   }
 
-  
+
 //  public List<Contribution> getAllContributions() {
 //    return new ArrayList<Contribution>(allContributions);
 //  }
 
-  
+
 //  public List<Contribution> getLibararies(String category) {
 //    ArrayList<Contribution> libinfos =
 //        new ArrayList<Contribution>(librariesByCategory.get(category));
@@ -207,7 +207,7 @@ public class ContributionListing {
 //    return libinfos;
 //  }
 
-  
+
   protected List<Contribution> getFilteredLibraryList(String category, List<String> filters) {
     ArrayList<Contribution> filteredList = new ArrayList<Contribution>(allContributions);
 
@@ -267,9 +267,9 @@ public class ContributionListing {
   }
 
 
-  /** 
+  /**
    * Returns true if the contribution fits the given property, false otherwise.
-   * If the property is invalid, returns false. 
+   * If the property is invalid, returns false.
    */
   private boolean hasProperty(Contribution contrib, String property) {
     // update, updates, updatable, upgrade
@@ -318,7 +318,7 @@ public class ContributionListing {
     }
   }
 
-  
+
   protected void addContributionListener(ContributionChangeListener listener) {
     for (Contribution contrib : allContributions) {
       listener.contributionAdded(contrib);
@@ -326,21 +326,21 @@ public class ContributionListing {
     listeners.add(listener);
   }
 
-  
+
   /*
   private void removeContributionListener(ContributionChangeListener listener) {
     listeners.remove(listener);
   }
 
-  
+
   private ArrayList<ContributionChangeListener> getContributionListeners() {
     return new ArrayList<ContributionChangeListener>(listeners);
   }
   */
 
-  
+
   /**
-   * Starts a new thread to download the advertised list of contributions. 
+   * Starts a new thread to download the advertised list of contributions.
    * Only one instance will run at a time.
    */
   protected void downloadAvailableList(final ProgressMonitor progress) {
@@ -367,8 +367,8 @@ public class ContributionListing {
       }
     }).start();
   }
-  
-  
+
+
   boolean hasUpdates() {
     for (Contribution info : allContributions) {
       if (hasUpdates(info)) {
@@ -390,12 +390,12 @@ public class ContributionListing {
     return false;
   }
 
-  
+
   boolean hasDownloadedLatestList() {
     return hasDownloadedLatestList;
   }
 
-  
+
   /**
    * @return a lowercase string with all non-alphabetic characters removed
    */
@@ -403,7 +403,7 @@ public class ContributionListing {
     return s.toLowerCase().replaceAll("^\\p{Lower}", "");
   }
 
-  
+
   /**
    * @return the proper, valid name of this category to be displayed in the UI
    *         (e.g. "Typography / Geometry"). "Unknown" if the category null.
@@ -423,7 +423,7 @@ public class ContributionListing {
     return category;
   }
 
-  
+
   ArrayList<AvailableContribution> parseContribList(File file) {
     ArrayList<AvailableContribution> outgoing = new ArrayList<AvailableContribution>();
 
@@ -454,7 +454,7 @@ public class ContributionListing {
 
         HashMap<String,String> contribParams = new HashMap<String,String>();
         Base.readSettings(file.getName(), contribLines, contribParams);
-        
+
         outgoing.add(new AvailableContribution(contribType, contribParams));
         start = end + 1;
 //        } else {
@@ -465,17 +465,17 @@ public class ContributionListing {
     return outgoing;
   }
 
-  
+
 //  boolean isDownloadingListing() {
 //    return downloadingListingLock.isLocked();
 //  }
 
-  
+
   public Comparator<? super Contribution> getComparator() {
     return nameComparator;
   }
 
-  
+
   static Comparator<Contribution> nameComparator = new Comparator<Contribution>() {
     public int compare(Contribution o1, Contribution o2) {
       return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
