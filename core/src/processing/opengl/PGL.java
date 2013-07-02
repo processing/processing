@@ -2813,10 +2813,10 @@ public class PGL {
     public void keyReleased(com.jogamp.newt.event.KeyEvent e) {
       nativeKeyEvent(e, KeyEvent.RELEASE);
     }
-    @Override
-    public void keyTyped(com.jogamp.newt.event.KeyEvent e)  {
-      nativeKeyEvent(e, KeyEvent.TYPE);
-    }
+//    @Override
+//    public void keyTyped(com.jogamp.newt.event.KeyEvent e)  {
+//      nativeKeyEvent(e, KeyEvent.TYPE);
+//    }
   }
 
 
