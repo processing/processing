@@ -32,7 +32,7 @@ import processing.core.PApplet;
 
 public class ContributionListing {
   static final String LISTING_URL =
-    "http://processing.org/contrib_generate/contributions.txt"
+    "http://processing.org/contrib_generate/contributions.txt";
 
   static ContributionListing singleInstance;
 

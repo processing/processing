@@ -780,6 +780,9 @@ _   In regedit: Navigate to Computer\HKEY_CLASSES_ROOT\Applications and find you
 
 
 DIST / Mac OS X
+
+_ package Java 7 version of the app
+_   docs.oracle.com/javase/7/docs/technotes/guides/jweb/packagingAppsForMac.html
 _ blank sketch opened even if another opened by double-click
 _   add a 150 ms or more lag before opening the untitled window (on os x)
 _   https://github.com/processing/processing/issues/218
