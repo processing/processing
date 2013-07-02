@@ -102,6 +102,7 @@ public class Texture implements PConstants {
 
   protected Object bufferSource;
   protected LinkedList<BufferData> bufferCache = null;
+  protected LinkedList<BufferData> usedBuffers = null;
   protected Method disposeBufferMethod;
   public static final int MAX_BUFFER_CACHE_SIZE = 3;
 
@@ -153,7 +154,6 @@ public class Texture implements PConstants {
   @Override
   protected void finalize() throws Throwable {
     try {
-//      PApplet.println("finalize texture");
       if (glName != 0) {
         PGraphicsOpenGL.finalizeTextureObject(glName, context);
       }
@@ -520,27 +520,6 @@ public class Texture implements PConstants {
   }
 
 
-  /**
-   * Copies the contents of the texture to the pixels array.
-   * @param pixels
-   */
-//  public void loadPixels(int[] pixels) {
-//    if (hasBuffers()) {
-//      // Updates the texture AND the pixels array of the image at the same time,
-//      // getting the pixels directly from the buffer data (and thus avoiding
-//      // expensive transfer between video and main memory).
-//      bufferUpdate(pixels);
-//    }
-//
-//    if (isModified()) {
-//      // Regular pixel copy from texture.
-//      get(pixels);
-//    }
-//
-//    setModified(false);
-//  }
-
-
   ////////////////////////////////////////////////////////////
 
   // Put methods (the source texture is not resized to cover the entire
@@ -861,12 +840,49 @@ public class Texture implements PConstants {
       bufferCache.add(new BufferData(natRef, byteBuf.asIntBuffer(), w, h));
     } else {
       // The buffer cache reached the maximum size, so we just dispose
-      // the new buffer.
+      // the new buffer by adding it to the list of used buffers.
       try {
-        disposeBufferMethod.invoke(bufferSource, new Object[] { natRef });
+        usedBuffers.add(new BufferData(natRef, byteBuf.asIntBuffer(), w, h));
       } catch (Exception e) {
         e.printStackTrace();
       }
+    }
+  }
+
+
+  public void disposeSourceBuffer() {
+    System.out.println(" in disposeSourceBuffer");
+    if (usedBuffers == null) return;
+
+    while (0 < usedBuffers.size()) {
+      BufferData data = null;
+      try {
+        data = usedBuffers.remove(0);
+        System.out.println("Disposing " + data + " in disposeSourceBuffer");
+      } catch (NoSuchElementException ex) {
+        PGraphics.showWarning("Cannot remove used buffer");
+      }
+      if (data != null) {
+        data.dispose();
+      }
+    }
+  }
+
+  public void getBufferPixels(int[] pixels) {
+    BufferData data = null;
+    if (usedBuffers != null && 0 < usedBuffers.size()) {
+      // the last used buffer is the one currently stored in the opengl the
+      // texture
+      data = usedBuffers.getLast();
+    } else if (bufferCache != null && 0 < bufferCache.size()) {
+      // The first buffer in the cache will be uploaded to the opengl texture
+      // the next time it is rendered
+      data = bufferCache.getFirst();
+    }
+    if (data != null) {
+      data.rgbBuf.rewind();
+      data.rgbBuf.get(pixels);
+      convertToARGB(pixels);
     }
   }
 
@@ -894,35 +910,15 @@ public class Texture implements PConstants {
       if ((data.w != width) || (data.h != height)) {
         init(data.w, data.h);
       }
+      data.rgbBuf.rewind();
       setNative(data.rgbBuf, 0, 0, width, height);
 
-      data.dispose();
-
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-
-  protected boolean bufferUpdate(int[] pixels) {
-    BufferData data = null;
-    try {
-      data = bufferCache.remove(0);
-    } catch (NoSuchElementException ex) {
-      PGraphics.showWarning("Don't have pixel data to copy to texture");
-    }
-
-    if (data != null) {
-      if ((data.w != width) || (data.h != height)) {
-        init(data.w, data.h);
+      // Putting the buffer in the used buffers list to dispose at the end of
+      // draw.
+      if (usedBuffers == null) {
+        usedBuffers = new LinkedList<BufferData>();
       }
-      setNative(data.rgbBuf, 0, 0, width, height);
-
-      data.rgbBuf.get(pixels);
-      convertToARGB(pixels);
-
-      data.dispose();
+      usedBuffers.add(data);
 
       return true;
     } else {
@@ -1115,8 +1111,8 @@ public class Texture implements PConstants {
         for (int x = 0; x < width; x++) {
           int pixel = intArray[p++];
           intArray[t++] = ((pixel & 0xFF) << 16) |
-                           ((pixel & 0xFF0000) >> 16) |
-                           (pixel & 0xFF00FF00);
+                          ((pixel & 0xFF0000) >> 16) |
+                          (pixel & 0xFF00FF00);
 
         }
       }

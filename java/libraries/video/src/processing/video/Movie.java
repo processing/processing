@@ -82,6 +82,8 @@ public class Movie extends PImage implements PConstants {
   protected Object bufferSink;
   protected Method sinkCopyMethod;
   protected Method sinkSetMethod;
+  protected Method sinkDisposeMethod;
+  protected Method sinkGetMethod;  
   protected String copyMask;
   protected Buffer natBuffer = null;
   protected BufferDataAppSink natSink = null;
@@ -542,6 +544,28 @@ public class Movie extends PImage implements PConstants {
   }
 
 
+  public synchronized void loadPixels() {
+    super.loadPixels();
+    if (useBufferSink) {      
+      if (natBuffer != null) {
+        // This means that the OpenGL texture hasn't been created so far (the
+        // video frame not drawn using image()), but the user wants to use the
+        // pixel array, which we can just get from natBuffer.
+        IntBuffer buf = natBuffer.getByteBuffer().asIntBuffer();
+        buf.rewind();
+        buf.get(pixels);
+        Video.convertToARGB(pixels, width, height);        
+      } else if (sinkGetMethod != null) {
+        try {
+          sinkGetMethod.invoke(bufferSink, new Object[] { pixels });
+        } catch (Exception e) {
+          e.printStackTrace();
+        }        
+      }      
+    }
+  }
+  
+  
   ////////////////////////////////////////////////////////////
 
   // Initialization methods.
@@ -609,11 +633,11 @@ public class Movie extends PImage implements PConstants {
 
     // we've got a valid movie! let's rock.
     try {
-      // PApplet.println("we've got a valid movie! let's rock.");
       this.filename = filename; // for error messages
 
       // register methods
       parent.registerMethod("dispose", this);
+      parent.registerMethod("post", this);
 
       setEventHandlerObject(parent);
 
@@ -742,6 +766,13 @@ public class Movie extends PImage implements PConstants {
     available = true;
     bufWidth = w;
     bufHeight = h;
+    if (natBuffer != null) {
+      // To handle the situation where read() is not called in the sketch, so 
+      // that the native buffers are not being sent to the sinke, and therefore, not disposed
+      // by it.
+      System.out.println("  disposing nat buffer before reading new one");
+      natBuffer.dispose(); 
+    }
     natBuffer = buffer;
 
     if (playing) {
@@ -894,6 +925,22 @@ public class Movie extends PImage implements PConstants {
       throw new RuntimeException("Movie: provided sink object doesn't have a " +
                                  "setBufferSource method.");
     }
+    
+    try {
+      sinkDisposeMethod = bufferSink.getClass().getMethod("disposeSourceBuffer", 
+        new Class[] { });
+    } catch (Exception e) {
+      throw new RuntimeException("Movie: provided sink object doesn't have " +
+                                 "a disposeSourceBuffer method.");
+    }
+        
+    try {
+      sinkGetMethod = bufferSink.getClass().getMethod("getBufferPixels", 
+        new Class[] { int[].class });
+    } catch (Exception e) {
+      throw new RuntimeException("Movie: provided sink object doesn't have " +
+                                 "a getBufferPixels method.");
+    }    
   }
 
 
@@ -902,6 +949,17 @@ public class Movie extends PImage implements PConstants {
       copyMask = "red_mask=(int)0xFF000000, green_mask=(int)0xFF0000, blue_mask=(int)0xFF00";
     } else {
       copyMask = "red_mask=(int)0xFF, green_mask=(int)0xFF00, blue_mask=(int)0xFF0000";
+    }    
+  }    
+  
+  
+  public synchronized void post() {
+    if (useBufferSink && sinkDisposeMethod != null) {
+      try {
+        sinkDisposeMethod.invoke(bufferSink, new Object[] {});
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
     }
   }
 }
