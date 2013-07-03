@@ -4511,7 +4511,7 @@ public class PGraphics extends PImage implements PConstants {
     int index = start;
     while (index <= stop) {
       // boundary of a word or end of this sentence
-      if ((buffer[index] == ' ') || (index == stop)) {
+      if ((index == stop)) {
         float wordWidth = textWidthImpl(buffer, wordStart, index);
 
         if (runningX + wordWidth > boxWidth) {
