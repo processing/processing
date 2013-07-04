@@ -4511,13 +4511,17 @@ public class PGraphics extends PImage implements PConstants {
     int index = start;
     while (index <= stop) {
       // boundary of a word or end of this sentence
-      if ((index == stop)) {
+      if ((buffer[index]==' ')||(index == stop)) {
         float wordWidth = textWidthImpl(buffer, wordStart, index);
 
         if (runningX + wordWidth > boxWidth) {
           if (runningX != 0) {
             // Next word is too big, output the current line and advance
-            index = wordStart;
+            //index = wordStart;
+             do {
+              index--;
+              wordWidth = textWidthImpl(buffer, wordStart, index);
+            } while ((wordWidth+runningX > boxWidth)&& (index>wordStart));
             textSentenceBreak(lineStart, index);
             // Eat whitespace because multiple spaces don't count for s*
             // when they're at the end of a line.
