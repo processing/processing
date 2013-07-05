@@ -183,7 +183,7 @@ public class ASTGenerator {
 //    frameAutoComp = new JFrame();
 //    frameAutoComp.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 //    frameAutoComp.setBounds(new Rectangle(1280, 100, 460, 620));
-//    tableAuto = new JTable();
+    tableAuto = new JTable();
 //    JScrollPane sp2 = new JScrollPane();
 //    sp2.setViewportView(tableAuto);
 //    frameAutoComp.add(sp2);
@@ -1593,6 +1593,8 @@ public class ASTGenerator {
       SwingUtilities.invokeLater(new Runnable() {          
         @Override
         public void run() {
+          frmOccurenceList.setTitle("All occurrences of "
+              + editor.ta.getSelectedText());
           lblRefactorOldName.setText("Current name: "
               + editor.ta.getSelectedText());
           txtRenameField.requestFocus();
