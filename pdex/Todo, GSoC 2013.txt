@@ -27,6 +27,10 @@ Finer details
 * Reflection API - getMethods vs getDeclaredMethods.
 * Need to add offset correction to ASTGenerator and its lookup methods. Or leave it for later? All set to implement
 
+Completion List
+* Dynamically update the list instead of recreating on every keystroke(new list data, pos, etc.)
+* List should get hidden on hitting esc key
+
 Offset Mapping  
 ==============
 First major hurdle is offset mapping

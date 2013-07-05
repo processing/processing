@@ -133,10 +133,23 @@ public class TextArea extends JEditTextArea {
         if(suggestion.isVisible()){
           System.out.println("esc key");
           hideSuggestion();
+          evt.consume();
           return;
         }
       }
     }
+    if(evt.getKeyCode() == KeyEvent.VK_ENTER){
+      if (suggestion != null) {
+        if (suggestion.isVisible()) {
+          if (suggestion.insertSelection()) {
+            hideSuggestion(); // Kill it!  
+            evt.consume();
+            return;
+          }
+        }
+      }
+    }
+    
     
     if (evt.getID() == KeyEvent.KEY_PRESSED) {
       switch (evt.getKeyCode()) {
@@ -156,26 +169,27 @@ public class TextArea extends JEditTextArea {
             return;
           }
         break;
-      case KeyEvent.VK_ENTER:
-        if (suggestion != null) {
-          if (suggestion.isVisible()) {
-            if (suggestion.insertSelection()) {
-              //final int position = getCaretPosition();
-              SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                  try {
-                    //getDocument().remove(position - 1, 1);
-                  } catch (Exception e) {
-                    e.printStackTrace();
-                  }
-                }
-              });
-              return;
-            }
-          }
-        }
-        break;
+//      case KeyEvent.VK_ENTER:
+//        if (suggestion != null) {
+//          if (suggestion.isVisible()) {
+//            if (suggestion.insertSelection()) {
+//              hideSuggestion(); // Kill it!
+//              //final int position = getCaretPosition();
+//              SwingUtilities.invokeLater(new Runnable() {
+//                @Override
+//                public void run() {
+//                  try {
+//                    //getDocument().remove(position - 1, 1);
+//                  } catch (Exception e) {
+//                    e.printStackTrace();
+//                  }
+//                }
+//              });
+//              return;
+//            }
+//          }
+//        }
+//        break;
       case KeyEvent.VK_BACK_SPACE:
         System.out.println("BK Key");
         break;
@@ -227,7 +241,7 @@ public class TextArea extends JEditTextArea {
       if (evt.getID() == KeyEvent.KEY_TYPED) {
         errorCheckerService.runManualErrorCheck();
         System.out.println(" Typing: " + fetchPhrase(evt) + " "
-            + (evt.getKeyChar() == KeyEvent.VK_BACK_SPACE));
+            + (evt.getKeyChar() == KeyEvent.VK_ENTER));
 
       }
 
@@ -256,6 +270,10 @@ public class TextArea extends JEditTextArea {
     System.out.print(" x char: " + s.charAt(x));
     //int xLS = off - getLineStartNonWhiteSpaceOffset(line);
     char keyChar = evt.getKeyChar();
+    if(keyChar == KeyEvent.VK_ENTER){
+      System.out.println("Enter consumed.");
+      return null;
+    }
     if (keyChar == KeyEvent.VK_BACK_SPACE || keyChar == KeyEvent.VK_DELETE)
       ; // accepted these keys
     else if (keyChar == KeyEvent.CHAR_UNDEFINED)

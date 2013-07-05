@@ -2,6 +2,7 @@ package processing.mode.experimental;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -45,18 +46,19 @@ public class CompletionPanel {
     scrollPane = new JScrollPane();
     scrollPane.setViewportView(completionList = createSuggestionList(position, items));
     popupMenu.add(scrollPane, BorderLayout.CENTER);
+    popupMenu.setPopupSize(200, 250); //TODO: Eradicate this evil
     this.textarea.errorCheckerService.astGenerator
         .updateJavaDoc((CompletionCandidate) completionList.getSelectedValue());
     popupMenu.show(textarea, location.x, textarea.getBaseline(0, 0)
         + location.y);
-    System.out.println("Suggestion shown");
+    System.out.println("Suggestion constructed" + System.nanoTime());
   }
 
   public boolean isVisible() {
     return popupMenu.isVisible();
   }
 
-  public JList createSuggestionList(final int position,
+  private JList createSuggestionList(final int position,
                                     final DefaultListModel items) {
 
     JList list = new JList(items);
@@ -75,15 +77,21 @@ public class CompletionPanel {
     return list;
   }
   
-  public boolean updateList(final DefaultListModel items, String newSubword, int position){    
+  public boolean updateList(final DefaultListModel items, String newSubword, int position){
+    scrollPane.getViewport().removeAll();    
+    Dimension dimen = popupMenu.getSize();
     completionList.setModel(items);
-    completionList.validate();
-    completionList.repaint();
+    completionList.validate();    
     completionList.setSelectedIndex(0);
+    scrollPane.setViewportView(completionList);
+    scrollPane.validate();
+    popupMenu.setSize(dimen);
+    
     this.subWord = new String(newSubword);
     if (subWord.indexOf('.') != -1)
       this.subWord = subWord.substring(subWord.lastIndexOf('.') + 1);
     insertionPosition = position;
+    System.out.println("Suggestion updated" + System.nanoTime());
     return true;
   }
 
@@ -107,7 +115,7 @@ public class CompletionPanel {
 
   public void hideSuggestion() {
     popupMenu.setVisible(false);
-    System.out.println("Suggestion hidden");
+    System.out.println("Suggestion hidden" + System.nanoTime());
     //textarea.errorCheckerService.astGenerator.jdocWindowVisible(false);
   }
 
