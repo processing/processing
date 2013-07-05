@@ -7,16 +7,18 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.BorderFactory;
+import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.text.BadLocationException;
 
 import processing.app.syntax.JEditTextArea;
 
 public class CompletionPanel {
-  private JList list;
+  private JList completionList;
 
   private JPopupMenu popupMenu;
 
@@ -29,7 +31,7 @@ public class CompletionPanel {
   private JScrollPane scrollPane;
 
   public CompletionPanel(JEditTextArea textarea, int position, String subWord,
-                         CompletionCandidate[] items, Point location) {
+                         DefaultListModel items, Point location) {
     this.textarea = (TextArea) textarea;
     this.insertionPosition = position;
     if (subWord.indexOf('.') != -1)
@@ -41,17 +43,13 @@ public class CompletionPanel {
     popupMenu.setOpaque(false);
     popupMenu.setBorder(null);
     scrollPane = new JScrollPane();
-    scrollPane.setViewportView(list = createSuggestionList(position, items));
+    scrollPane.setViewportView(completionList = createSuggestionList(position, items));
     popupMenu.add(scrollPane, BorderLayout.CENTER);
     this.textarea.errorCheckerService.astGenerator
-        .updateJavaDoc((CompletionCandidate) list.getSelectedValue());
+        .updateJavaDoc((CompletionCandidate) completionList.getSelectedValue());
     popupMenu.show(textarea, location.x, textarea.getBaseline(0, 0)
         + location.y);
-
-  }
-
-  public void hide() {
-    popupMenu.setVisible(false);
+    System.out.println("Suggestion shown");
   }
 
   public boolean isVisible() {
@@ -59,7 +57,7 @@ public class CompletionPanel {
   }
 
   public JList createSuggestionList(final int position,
-                                    final CompletionCandidate[] items) {
+                                    final DefaultListModel items) {
 
     JList list = new JList(items);
     list.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY, 1));
@@ -76,11 +74,18 @@ public class CompletionPanel {
     });
     return list;
   }
+  
+  public boolean updateList(final CompletionCandidate[] items){
+    ListModel lm = completionList.getModel();
+    DefaultListModel dlm = new DefaultListModel();
+    
+    return true;
+  }
 
   public boolean insertSelection() {
-    if (list.getSelectedValue() != null) {
+    if (completionList.getSelectedValue() != null) {
       try {
-        final String selectedSuggestion = ((CompletionCandidate) list
+        final String selectedSuggestion = ((CompletionCandidate) completionList
             .getSelectedValue()).getCompletionString().substring(subWord.length());
         textarea.getDocument().insertString(insertionPosition,
                                             selectedSuggestion, null);
@@ -96,44 +101,45 @@ public class CompletionPanel {
   }
 
   public void hideSuggestion() {
-    hide();
+    popupMenu.setVisible(false);
+    System.out.println("Suggestion hidden");
     //textarea.errorCheckerService.astGenerator.jdocWindowVisible(false);
   }
 
   public void moveUp() {
-    if (list.getSelectedIndex() == 0) {
+    if (completionList.getSelectedIndex() == 0) {
       scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
-      selectIndex(list.getModel().getSize() - 1);
+      selectIndex(completionList.getModel().getSize() - 1);
       return;
     } else {
-      int index = Math.max(list.getSelectedIndex() - 1, 0);
+      int index = Math.max(completionList.getSelectedIndex() - 1, 0);
       selectIndex(index);
     }
     int step = scrollPane.getVerticalScrollBar().getMaximum()
-        / list.getModel().getSize();
+        / completionList.getModel().getSize();
     scrollPane.getVerticalScrollBar().setValue(scrollPane
                                                    .getVerticalScrollBar()
                                                    .getValue()
                                                    - step);
     textarea.errorCheckerService.astGenerator
-        .updateJavaDoc((CompletionCandidate) list.getSelectedValue());
+        .updateJavaDoc((CompletionCandidate) completionList.getSelectedValue());
 
   }
 
   public void moveDown() {
-    if (list.getSelectedIndex() == list.getModel().getSize() - 1) {
+    if (completionList.getSelectedIndex() == completionList.getModel().getSize() - 1) {
       scrollPane.getVerticalScrollBar().setValue(0);
       selectIndex(0);
       return;
     } else {
-      int index = Math.min(list.getSelectedIndex() + 1, list.getModel()
+      int index = Math.min(completionList.getSelectedIndex() + 1, completionList.getModel()
           .getSize() - 1);
       selectIndex(index);
     }
     textarea.errorCheckerService.astGenerator
-        .updateJavaDoc((CompletionCandidate) list.getSelectedValue());
+        .updateJavaDoc((CompletionCandidate) completionList.getSelectedValue());
     int step = scrollPane.getVerticalScrollBar().getMaximum()
-        / list.getModel().getSize();
+        / completionList.getModel().getSize();
     scrollPane.getVerticalScrollBar().setValue(scrollPane
                                                    .getVerticalScrollBar()
                                                    .getValue()
@@ -141,7 +147,7 @@ public class CompletionPanel {
   }
 
   private void selectIndex(int index) {
-    list.setSelectedIndex(index);
+    completionList.setSelectedIndex(index);
 //      final int position = textarea.getCaretPosition();
 //      SwingUtilities.invokeLater(new Runnable() {
 //        @Override

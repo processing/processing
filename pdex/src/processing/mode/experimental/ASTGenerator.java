@@ -27,6 +27,7 @@ import java.util.TreeMap;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
@@ -180,13 +181,13 @@ public class ASTGenerator {
     frmOccurenceList.add(sp2);    
     //occurenceListFrame.setVisible(true);
     
-//    frameAutoComp = new JFrame();
-//    frameAutoComp.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-//    frameAutoComp.setBounds(new Rectangle(1280, 100, 460, 620));
+    frameAutoComp = new JFrame();
+    frameAutoComp.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    frameAutoComp.setBounds(new Rectangle(1280, 100, 460, 620));
     tableAuto = new JTable();
-//    JScrollPane sp2 = new JScrollPane();
-//    sp2.setViewportView(tableAuto);
-//    frameAutoComp.add(sp2);
+    JScrollPane sp3 = new JScrollPane();
+    sp3.setViewportView(tableAuto);
+    frameAutoComp.add(sp3);
 
 //    jdocWindow = new JFrame();
 //    jdocWindow.setTitle("P5 InstaHelp");
@@ -240,11 +241,11 @@ public class ASTGenerator {
           if (!frame2.isVisible()) {
             frame2.setVisible(true);
           }
-//          if (!frameAutoComp.isVisible()) {
-//
-//            frameAutoComp.setVisible(true);
-//            
-//          }
+          if (!frameAutoComp.isVisible()) {
+
+            frameAutoComp.setVisible(true);
+            
+          }
 //          if (!jdocWindow.isVisible()) {
 //            long t = System.currentTimeMillis();
 //            loadJars();
@@ -772,9 +773,12 @@ public class ASTGenerator {
         Collections.sort(candidates);
         CompletionCandidate[][] candi = new CompletionCandidate[candidates
             .size()][1];
+        
+        DefaultListModel defListModel = new DefaultListModel();
 
         for (int i = 0; i < candi.length; i++) {
           candi[i][0] = candidates.get(i);
+          defListModel.addElement(candidates.get(i));
         }
         System.out.println("K = " + candidates.size());
         DefaultTableModel tm = new DefaultTableModel(
@@ -783,11 +787,10 @@ public class ASTGenerator {
         tableAuto.setModel(tm);
         tableAuto.validate();
         tableAuto.repaint();
-        //String[] items = 
-        CompletionCandidate[] candi2 = candidates
-            .toArray(new CompletionCandidate[candidates.size()]);
-        if (candidates.size() > 0)
-          errorCheckerService.getEditor().textArea().showSuggestion(candi2);
+//        CompletionCandidate[] candidatesArray = candidates
+//            .toArray(new CompletionCandidate[candidates.size()]);
+        errorCheckerService.getEditor().textArea()
+            .showSuggestion(defListModel);
       }
     };
 
@@ -859,7 +862,9 @@ public class ASTGenerator {
   }
 
   public void updateJavaDoc(final CompletionCandidate candidate) {
-    String methodmatch = candidate.toString();
+    //TODO: Work on this later.
+    return;
+    /*String methodmatch = candidate.toString();
     if (methodmatch.indexOf('(') != -1) {
       methodmatch = methodmatch.substring(0, methodmatch.indexOf('('));
     }
@@ -886,7 +891,7 @@ public class ASTGenerator {
         });
         break;
       }
-    }
+    }*/
     //jdocWindow.setVisible(false);
 
   }

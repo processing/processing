@@ -30,6 +30,7 @@ import java.awt.event.MouseMotionListener;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.DefaultListModel;
 import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
 
@@ -126,7 +127,65 @@ public class TextArea extends JEditTextArea {
   }
 
   public void processKeyEvent(KeyEvent evt) {
+    
+    if(evt.getKeyCode() == KeyEvent.VK_ESCAPE){
+      if(suggestion != null){
+        if(suggestion.isVisible()){
+          System.out.println("esc key");
+          hideSuggestion();
+          return;
+        }
+      }
+    }
+    
     if (evt.getID() == KeyEvent.KEY_PRESSED) {
+      switch (evt.getKeyCode()) {
+      case KeyEvent.VK_DOWN:
+        if (suggestion != null)
+          if (suggestion.isVisible()) {
+            //System.out.println("KeyDown");
+            suggestion.moveDown();
+            return;
+          }
+        break;
+      case KeyEvent.VK_UP:
+        if (suggestion != null)
+          if (suggestion.isVisible()) {
+            //System.out.println("KeyUp");
+            suggestion.moveUp();
+            return;
+          }
+        break;
+      case KeyEvent.VK_ENTER:
+        if (suggestion != null) {
+          if (suggestion.isVisible()) {
+            if (suggestion.insertSelection()) {
+              //final int position = getCaretPosition();
+              SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                  try {
+                    //getDocument().remove(position - 1, 1);
+                  } catch (Exception e) {
+                    e.printStackTrace();
+                  }
+                }
+              });
+              return;
+            }
+          }
+        }
+        break;
+      case KeyEvent.VK_BACK_SPACE:
+        System.out.println("BK Key");
+        break;
+      default:
+        break;
+      }
+    }
+      super.processKeyEvent(evt);
+      
+      /*
       if (evt.getKeyCode() == KeyEvent.VK_DOWN && suggestion != null) {
         if (suggestion.isVisible()) {
           //System.out.println("KeyDown");
@@ -162,16 +221,17 @@ public class TextArea extends JEditTextArea {
       } else if (evt.getKeyChar() == KeyEvent.VK_BACK_SPACE) {
         System.out.println("BK Key");
       }
-    }
+      
+    }*/
 
-    super.processKeyEvent(evt);
-    if (evt.getID() == KeyEvent.KEY_TYPED) {
-      errorCheckerService.runManualErrorCheck();
-      System.out.println(" Typing: " + fetchPhrase(evt) + " "
-          + (evt.getKeyChar() == KeyEvent.VK_BACK_SPACE));
+      if (evt.getID() == KeyEvent.KEY_TYPED) {
+        errorCheckerService.runManualErrorCheck();
+        System.out.println(" Typing: " + fetchPhrase(evt) + " "
+            + (evt.getKeyChar() == KeyEvent.VK_BACK_SPACE));
 
-    }
+      }
 
+    
   }
 
   private String fetchPhrase(KeyEvent evt) {
@@ -560,7 +620,8 @@ public class TextArea extends JEditTextArea {
 //            }
 //
 //          });
-        } else if (Character.isWhitespace(e.getKeyChar())) {
+        } else if (Character.isWhitespace(e.getKeyChar())
+            || e.getKeyChar() == KeyEvent.VK_ESCAPE) {
           hideSuggestion();
         }
       }
@@ -571,18 +632,22 @@ public class TextArea extends JEditTextArea {
     });
   }
 
-  public void showSuggestionLater(final CompletionCandidate[] items) {
+  public void showSuggestionLater(final DefaultListModel defListModel) {
     SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
-        showSuggestion(items);
+        showSuggestion(defListModel);
       }
 
     });
   }
 
-  protected void showSuggestion(CompletionCandidate[] items) {
-    hideSuggestion();
+  protected void showSuggestion(DefaultListModel defListModel) {
+    if(defListModel.size() == 0){
+      return;
+    }
+    
+    hideSuggestion();    
     final int position = getCaretPosition();
     Point location = new Point();
     try {
@@ -594,6 +659,7 @@ public class TextArea extends JEditTextArea {
       e2.printStackTrace();
       return;
     }
+    
     String text = getText();
     int start = Math.max(0, position - 1);
     while (start > 0) {
@@ -604,14 +670,17 @@ public class TextArea extends JEditTextArea {
         break;
       }
     }
+    
     if (start > position) {
       return;
     }
+    
     final String subWord = text.substring(start, position);
     if (subWord.length() < 2) {
       return;
     }
-    suggestion = new CompletionPanel(this, position, subWord, items, location);
+    
+    suggestion = new CompletionPanel(this, position, subWord, defListModel, location);
 //    requestFocusInWindow();
     SwingUtilities.invokeLater(new Runnable() {
       @Override
@@ -623,7 +692,7 @@ public class TextArea extends JEditTextArea {
 
   private void hideSuggestion() {
     if (suggestion != null) {
-      suggestion.hide();
+      suggestion.hideSuggestion();
     }
   }
 
