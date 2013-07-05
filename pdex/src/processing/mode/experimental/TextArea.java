@@ -249,6 +249,17 @@ public class TextArea extends JEditTextArea {
   }
 
   private String fetchPhrase(KeyEvent evt) {
+    char keyChar = evt.getKeyChar();
+    if (keyChar == KeyEvent.VK_ENTER) {
+      System.out.println("Enter consumed.");
+      return null;
+    }
+//    if (keyChar == KeyEvent.VK_BACK_SPACE || keyChar == KeyEvent.VK_DELETE)
+//      ; // accepted these keys
+    else if (keyChar == KeyEvent.CHAR_UNDEFINED) {
+      return null;
+    }
+    
     int off = getCaretPosition();
     System.out.print("off " + off);
     if (off < 0)
@@ -268,17 +279,7 @@ public class TextArea extends JEditTextArea {
     if(x >= s.length() || x < 0)
       return null; //TODO: Does this check cause problems? Verify.
     System.out.print(" x char: " + s.charAt(x));
-    //int xLS = off - getLineStartNonWhiteSpaceOffset(line);
-    char keyChar = evt.getKeyChar();
-    if(keyChar == KeyEvent.VK_ENTER){
-      System.out.println("Enter consumed.");
-      return null;
-    }
-    if (keyChar == KeyEvent.VK_BACK_SPACE || keyChar == KeyEvent.VK_DELETE)
-      ; // accepted these keys
-    else if (keyChar == KeyEvent.CHAR_UNDEFINED)
-
-      return null;
+    //int xLS = off - getLineStartNonWhiteSpaceOffset(line);    
 
     String word = (x < s.length() ? s.charAt(x) : "") + "";
     if (s.trim().length() == 1) {
@@ -651,58 +652,38 @@ public class TextArea extends JEditTextArea {
     });
   }
 
-  public void showSuggestionLater(final DefaultListModel defListModel) {
+  public void showSuggestionLater(final DefaultListModel defListModel, final String word) {
     SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
-        showSuggestion(defListModel);
+        showSuggestion(defListModel,word);
       }
 
     });
   }
 
-  protected void showSuggestion(DefaultListModel defListModel) {
-    if(defListModel.size() == 0){
+  protected void showSuggestion(DefaultListModel defListModel,String subWord) {
+    if (defListModel.size() == 0) {
       return;
     }
-    String subWord = null;
     int position = getCaretPosition();
-//    if (suggestion == null || !suggestion.isVisible()) {
-      Point location = new Point();
-      try {
-        location.x = offsetToX(getCaretLine(), position
-            - getLineStartOffset(getCaretLine()));
-        location.y = lineToY(getCaretLine())
-            + getPainter().getFontMetrics().getHeight();
-      } catch (Exception e2) {
-        e2.printStackTrace();
-        return;
-      }
-      
-//    }
-    
-    String text = getText();
-    int start = Math.max(0, position - 1);
-    while (start > 0) {
-      if (!Character.isWhitespace(text.charAt(start))) {
-        start--;
-      } else {
-        start++;
-        break;
-      }
-    }
-
-    if (start > position) {
+    Point location = new Point();
+    try {
+      location.x = offsetToX(getCaretLine(), position
+          - getLineStartOffset(getCaretLine()));
+      location.y = lineToY(getCaretLine())
+          + getPainter().getFontMetrics().getHeight();
+    } catch (Exception e2) {
+      e2.printStackTrace();
       return;
     }
 
-    subWord = text.substring(start, position);
     if (subWord.length() < 2) {
       return;
     }
-    if(suggestion == null)
+    if (suggestion == null)
       suggestion = new CompletionPanel(this, position, subWord, defListModel,
-                                     location);
+                                       location);
     else
       suggestion.updateList(defListModel, subWord, position);
 

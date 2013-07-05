@@ -790,7 +790,7 @@ public class ASTGenerator {
 //        CompletionCandidate[] candidatesArray = candidates
 //            .toArray(new CompletionCandidate[candidates.size()]);
         errorCheckerService.getEditor().textArea()
-            .showSuggestion(defListModel);
+            .showSuggestion(defListModel,word);
       }
     };
 
@@ -1376,7 +1376,7 @@ public class ASTGenerator {
         worker.execute();
       }
     });
-    // TODO: Diable this listner at deployment
+
     btnListOccurrence.addActionListener(new ActionListener() {
 
       @Override

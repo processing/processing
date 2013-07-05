@@ -98,8 +98,9 @@ public class CompletionPanel {
   public boolean insertSelection() {
     if (completionList.getSelectedValue() != null) {
       try {
-        final String selectedSuggestion = ((CompletionCandidate) completionList
+        String selectedSuggestion = ((CompletionCandidate) completionList
             .getSelectedValue()).getCompletionString().substring(subWord.length());
+        System.err.println(subWord+" <= subword,Inserting suggestion=> " + selectedSuggestion);
         textarea.getDocument().insertString(insertionPosition,
                                             selectedSuggestion, null);
         textarea.setCaretPosition(insertionPosition
