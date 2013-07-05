@@ -1751,8 +1751,18 @@ public class ASTGenerator {
     return null;
   }
 
+  /**
+   * Give this thing a {@link Name} instance - a {@link SimpleName} from the
+   * ASTNode for ex, and it tries its level best to locate its declaration in
+   * the AST. It really does.
+   * 
+   * @param findMe
+   * @return
+   */
   @SuppressWarnings("unchecked")
   private static ASTNode findDeclaration(Name findMe) {
+    // WARNING: You're entering the Rube Goldberg territory of Experimental Mode.
+    // To debug this code, thou must take take the Recursive Leap of Faith.
     ASTNode declaringClass = null;
     ASTNode parent = findMe.getParent();
     ASTNode ret = null;
@@ -1908,6 +1918,12 @@ public class ASTGenerator {
     return null;
   }
 
+  /**
+   * A variation of findDeclaration() but accepts an alternate parent ASTNode
+   * @param findMe
+   * @param alternateParent
+   * @return
+   */
   private static ASTNode findDeclaration2(Name findMe, ASTNode alternateParent) {
     ASTNode declaringClass = null;
     ASTNode parent = findMe.getParent();
