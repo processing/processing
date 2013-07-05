@@ -24,7 +24,7 @@ public class CompletionPanel {
 
   private String subWord;
 
-  private final int insertionPosition;
+  private int insertionPosition;
 
   private TextArea textarea;
 
@@ -75,10 +75,15 @@ public class CompletionPanel {
     return list;
   }
   
-  public boolean updateList(final CompletionCandidate[] items){
-    ListModel lm = completionList.getModel();
-    DefaultListModel dlm = new DefaultListModel();
-    
+  public boolean updateList(final DefaultListModel items, String newSubword, int position){    
+    completionList.setModel(items);
+    completionList.validate();
+    completionList.repaint();
+    completionList.setSelectedIndex(0);
+    this.subWord = new String(newSubword);
+    if (subWord.indexOf('.') != -1)
+      this.subWord = subWord.substring(subWord.lastIndexOf('.') + 1);
+    insertionPosition = position;
     return true;
   }
 

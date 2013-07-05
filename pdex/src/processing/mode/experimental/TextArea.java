@@ -100,7 +100,7 @@ public class TextArea extends JEditTextArea {
     MouseHandler mouseHandler = new MouseHandler();
     painter.addMouseListener(mouseHandler);
     painter.addMouseMotionListener(mouseHandler);
-    addCompletionPopupListner();
+    //addCompletionPopupListner();
     add(CENTER, painter);
 
     // load settings from theme.txt
@@ -600,6 +600,7 @@ public class TextArea extends JEditTextArea {
 
   //JEditTextArea textarea;
 
+  // worthless
   private void addCompletionPopupListner() {
     this.addKeyListener(new KeyListener() {
 
@@ -646,19 +647,21 @@ public class TextArea extends JEditTextArea {
     if(defListModel.size() == 0){
       return;
     }
-    
-    hideSuggestion();    
-    final int position = getCaretPosition();
-    Point location = new Point();
-    try {
-      location.x = offsetToX(getCaretLine(), position
-          - getLineStartOffset(getCaretLine()));
-      location.y = lineToY(getCaretLine())
-          + getPainter().getFontMetrics().getHeight();
-    } catch (Exception e2) {
-      e2.printStackTrace();
-      return;
-    }
+    String subWord = null;
+    int position = getCaretPosition();
+//    if (suggestion == null || !suggestion.isVisible()) {
+      Point location = new Point();
+      try {
+        location.x = offsetToX(getCaretLine(), position
+            - getLineStartOffset(getCaretLine()));
+        location.y = lineToY(getCaretLine())
+            + getPainter().getFontMetrics().getHeight();
+      } catch (Exception e2) {
+        e2.printStackTrace();
+        return;
+      }
+      
+//    }
     
     String text = getText();
     int start = Math.max(0, position - 1);
@@ -670,17 +673,21 @@ public class TextArea extends JEditTextArea {
         break;
       }
     }
-    
+
     if (start > position) {
       return;
     }
-    
-    final String subWord = text.substring(start, position);
+
+    subWord = text.substring(start, position);
     if (subWord.length() < 2) {
       return;
     }
-    
-    suggestion = new CompletionPanel(this, position, subWord, defListModel, location);
+    if(suggestion == null)
+      suggestion = new CompletionPanel(this, position, subWord, defListModel,
+                                     location);
+    else
+      suggestion.updateList(defListModel, subWord, position);
+
 //    requestFocusInWindow();
     SwingUtilities.invokeLater(new Runnable() {
       @Override
@@ -693,6 +700,7 @@ public class TextArea extends JEditTextArea {
   private void hideSuggestion() {
     if (suggestion != null) {
       suggestion.hideSuggestion();
+      suggestion = null;
     }
   }
 
