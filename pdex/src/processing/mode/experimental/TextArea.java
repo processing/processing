@@ -664,6 +664,8 @@ public class TextArea extends JEditTextArea {
 
   protected void showSuggestion(DefaultListModel defListModel,String subWord) {
     if (defListModel.size() == 0) {
+      System.out.println("No suggestions to show.");
+      hideSuggestion();
       return;
     }
     int position = getCaretPosition();
