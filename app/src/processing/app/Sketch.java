@@ -536,6 +536,14 @@ public class Sketch {
       return;
     }
 
+    // don't allow if untitled
+    if ((currentIndex == 0) && (isUntitled())) {  
+      Base.showMessage("Cannot Delete" ,
+                       "You can't delete a sketch " +
+                       "that has not been saved.");
+      return;
+    }
+
     // confirm deletion with user, yes/no
     Object[] options = { "OK", "Cancel" };
     String prompt = (currentIndex == 0) ?

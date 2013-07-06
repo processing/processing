@@ -529,7 +529,6 @@ public class EditorHeader extends JComponent {
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           Sketch sketch = editor.getSketch();
-          if (!sketch.isUntitled()) {  // don't bother if untitled
             if (!Base.isMacOS() &&  // ok on OS X
                 editor.base.editors.size() == 1 &&  // mmm! accessor
                 sketch.getCurrentCodeIndex() == 0) {
@@ -539,7 +538,6 @@ public class EditorHeader extends JComponent {
             } else {
               editor.getSketch().handleDeleteCode();
             }
-          }
         }
       });
     menu.add(item);
