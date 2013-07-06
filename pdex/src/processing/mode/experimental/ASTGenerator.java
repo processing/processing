@@ -11,6 +11,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -511,6 +512,40 @@ public class ASTGenerator {
 
     return null;
   }
+  
+  /**
+   * Find the parent of the expression in a().b, this would give me the return
+   * type of a(), so that we can find all children of a() begininng with b
+   * This is the 3rd party variant, for .jar files.
+   * @param nearestNode
+   * @param expression
+   * @return
+   */
+  public static ASTNode resolveExpression3rdParty(ASTNode nearestNode,
+                                          ASTNode expression) {
+//    ASTNode anode = null;
+    System.out.println("Resolving " + getNodeAsString(expression));
+    if (expression instanceof SimpleName) {
+      return findDeclaration2(((SimpleName) expression), nearestNode);
+    } else if (expression instanceof MethodInvocation) {
+      return findDeclaration2(((MethodInvocation) expression).getName(),
+                              nearestNode);
+    } else if (expression instanceof FieldAccess) {
+      System.out.println("2. Field access "
+          + getNodeAsString(((FieldAccess) expression).getExpression()));
+      return resolveExpression(nearestNode,
+                               ((FieldAccess) expression).getExpression());
+      //return findDeclaration2(((FieldAccess) expression).getExpression(), nearestNode);
+    } else if (expression instanceof QualifiedName) {
+      System.out.println("1. Resolving "
+          + ((QualifiedName) expression).getQualifier() + " ||| "
+          + ((QualifiedName) expression).getName());
+      return findDeclaration2(((QualifiedName) expression).getQualifier(),
+                              nearestNode);
+    }
+
+    return null;
+  }
 
   /**
    * For a().abc.a123 this would return a123
@@ -817,48 +852,106 @@ public class ASTGenerator {
     for (String className : resources) {
       System.out.println("-> " + className);
     }
-    if (resources.length > 0) { //TODO: Multiple matched classes? What about 'em?
-      String matchedClass = resources[0];
-      matchedClass = matchedClass.substring(0, matchedClass.length() - 6);
-      matchedClass = matchedClass.replace('/', '.');
-      System.out.println("In GMFT(), Matched class: " + matchedClass);
-      System.out.println("Looking for match " + child.toString());
-      try {
-        Class<?> probableClass = Class.forName(matchedClass, false,
-                                               errorCheckerService.classLoader);
-
-        for (Method method : probableClass.getMethods()) {
-          if (!Modifier.isStatic(method.getModifiers()) && staticOnly)
-            continue;
-          StringBuffer label = new StringBuffer(method.getName() + "(");
-          for (int i = 0; i < method.getParameterTypes().length; i++) {
-            label.append(method.getParameterTypes()[i].getSimpleName());
-            if (i < method.getParameterTypes().length - 1)
-              label.append(",");
-          }
-
-          label.append(")");
-          if (noCompare)
-            candidates.add(new CompletionCandidate(method));
-          else if (label.toString().startsWith(child.toString()))
-            candidates.add(new CompletionCandidate(method));
-        }
-        for (Field field : probableClass.getFields()) {
-          if (!Modifier.isStatic(field.getModifiers()) && staticOnly)
-            continue;
-          if (noCompare)
-            candidates.add(new CompletionCandidate(field));
-          else if (field.getName().startsWith(child.toString()))
-            candidates.add(new CompletionCandidate(field));
-        }
-      } catch (ClassNotFoundException e) {
-        e.printStackTrace();
-        System.out.println("Couldn't load " + matchedClass);
-      }
+    if (resources.length == 0) {
+      System.out.println("In GMFT(), couldn't find class: " + typeName);
+      return candidates;
     }
+    //TODO: Multiple matched classes? What about 'em?
+    String matchedClass = resources[0];
+    matchedClass = matchedClass.substring(0, matchedClass.length() - 6);
+    matchedClass = matchedClass.replace('/', '.');
+    System.out.println("In GMFT(), Matched class: " + matchedClass);
+    System.out.println("Looking for match " + child.toString());
+    try {
+      Class<?> probableClass = Class.forName(matchedClass, false,
+                                             errorCheckerService.classLoader);
+
+      for (Method method : probableClass.getMethods()) {
+        if (!Modifier.isStatic(method.getModifiers()) && staticOnly) {
+          continue;
+        }
+        
+        StringBuffer label = new StringBuffer(method.getName() + "(");
+        for (int i = 0; i < method.getParameterTypes().length; i++) {
+          label.append(method.getParameterTypes()[i].getSimpleName());
+          if (i < method.getParameterTypes().length - 1)
+            label.append(",");
+        }
+        label.append(")");
+        
+        if (noCompare) {
+          candidates.add(new CompletionCandidate(method));
+        }
+        else if (label.toString().startsWith(child.toString())) {
+          candidates.add(new CompletionCandidate(method));
+        }
+      }
+      for (Field field : probableClass.getFields()) {
+        if (!Modifier.isStatic(field.getModifiers()) && staticOnly) {
+          continue;
+        }
+        if (noCompare) {
+          candidates.add(new CompletionCandidate(field));
+        }
+        else if (field.getName().startsWith(child.toString())) {
+          candidates.add(new CompletionCandidate(field));
+        }
+      }
+    } catch (ClassNotFoundException e) {
+      e.printStackTrace();
+      System.out.println("Couldn't load " + matchedClass);
+    }
+
     //updateJavaDoc(methodmatch)
 
     return candidates;
+  }
+  
+  public ClassMember definedIn3rdPartyClass(String className,String memberName){
+    RegExpResourceFilter regExpResourceFilter;
+    regExpResourceFilter = new RegExpResourceFilter(".*", className + ".class");
+    String[] resources = classPath.findResources("", regExpResourceFilter);
+    for (String cn : resources) {
+      System.out.println("-> " + cn);
+    }
+    if (resources.length == 0) {
+      System.out.println("In GMFT(), couldn't find class: " + className);
+      return null;
+    }
+    //TODO: Multiple matched classes? What about 'em?
+    String matchedClass = resources[0];
+    matchedClass = matchedClass.substring(0, matchedClass.length() - 6);
+    matchedClass = matchedClass.replace('/', '.');
+    System.out.println("In GMFT(), Matched class: " + matchedClass);
+    System.out.println("Looking for match " + memberName.toString());
+    try {
+      Class<?> probableClass = Class.forName(matchedClass, false,
+                                             errorCheckerService.classLoader);
+
+      for (Method method : probableClass.getMethods()) {
+        
+        
+        StringBuffer label = new StringBuffer(method.getName() + "(");
+        for (int i = 0; i < method.getParameterTypes().length; i++) {
+          label.append(method.getParameterTypes()[i].getSimpleName());
+          if (i < method.getParameterTypes().length - 1)
+            label.append(",");
+        }
+        label.append(")");
+        if (label.toString().startsWith(memberName)) {
+          return new ClassMember(method);
+        }
+      }
+      for (Field field : probableClass.getFields()) {
+        if (field.getName().startsWith(memberName)) {
+          return new ClassMember(field);
+        }
+      }
+    } catch (ClassNotFoundException e) {
+      e.printStackTrace();
+      System.out.println("Couldn't load " + matchedClass);
+    }
+    return null;
   }
 
   public void updateJavaDoc(final CompletionCandidate candidate) {
@@ -1762,7 +1855,7 @@ public class ASTGenerator {
   @SuppressWarnings("unchecked")
   private static ASTNode findDeclaration(Name findMe) {
     // WARNING: You're entering the Rube Goldberg territory of Experimental Mode.
-    // To debug this code, thou must take take the Recursive Leap of Faith.
+    // To debug this code, thou must take the Recursive Leap of Faith.
     ASTNode declaringClass = null;
     ASTNode parent = findMe.getParent();
     ASTNode ret = null;
@@ -2081,6 +2174,197 @@ public class ASTGenerator {
         }
       }
       alternateParent = alternateParent.getParent();
+    }
+    return null;
+  }
+  
+  /**
+   * A wrapper for java.lang.reflect types
+   * Will see if the usage turns out to be internal only here or not
+   * and then accordingly decide where to place this class. TODO
+   * @author quarkninja
+   *
+   */
+  public class ClassMember {
+    private Field field;
+    private Method method;
+    private Constructor cons;
+    public ClassMember(Method m){
+      method = m;
+    }
+    public ClassMember(Field m){
+      field = m;
+    }
+    public ClassMember(Constructor m){
+      cons = m;
+    }
+    public Field getField() {
+      return field;
+    }
+    public Method getMethod() {
+      return method;
+    }
+    public Constructor getCons() {
+      return cons;
+    }
+  }
+  
+  private CompletionCandidate findDeclaration3rdParty(Name findMe, String parentClass){
+    CompletionCandidate declaringClass = null;
+    ASTNode parent = findMe.getParent();
+    ArrayList<Integer> constrains = new ArrayList<Integer>();
+    if (parent.getNodeType() == ASTNode.METHOD_INVOCATION) {
+      Expression exp = (Expression) ((MethodInvocation) parent)
+          .getStructuralProperty(MethodInvocation.EXPRESSION_PROPERTY);
+      //TODO: Note the imbalance of constrains.add(ASTNode.METHOD_DECLARATION);
+      // Possibly a bug here. Investigate later.
+      if (((MethodInvocation) parent).getName().toString()
+          .equals(findMe.toString())) {
+        constrains.add(ASTNode.METHOD_DECLARATION);
+
+        if (exp != null) {
+          constrains.add(ASTNode.TYPE_DECLARATION);
+          System.out.println("MI EXP: " + exp.toString() + " of type "
+              + exp.getClass().getName() + " parent: " + exp.getParent());
+          if (exp instanceof MethodInvocation) {
+            SimpleType stp = extracTypeInfo(findDeclaration(((MethodInvocation) exp)
+                .getName()));
+            if (stp == null)
+              return null;
+            //declaringClass = findDeclaration(stp.getName());
+//            return definedIn(declaringClass, ((MethodInvocation) parent)
+//                .getName().toString(), constrains, declaringClass);
+          } else if (exp instanceof FieldAccess) {
+            SimpleType stp = extracTypeInfo(findDeclaration(((FieldAccess) exp)
+                .getName()));
+            if (stp == null)
+              return null;
+            //declaringClass = findDeclaration((stp.getName()));
+//            return definedIn(declaringClass, ((MethodInvocation) parent)
+//                .getName().toString(), constrains, declaringClass);
+          }
+          if (exp instanceof SimpleName) {
+            SimpleType stp = extracTypeInfo(findDeclaration(((SimpleName) exp)));
+            if (stp == null)
+              return null;
+            //declaringClass = findDeclaration(stp.getName());
+            //System.out.println("MI.SN " + getNodeAsString(declaringClass));
+            constrains.add(ASTNode.METHOD_DECLARATION);
+//            return definedIn(declaringClass, ((MethodInvocation) parent)
+//                .getName().toString(), constrains, declaringClass);
+          }
+
+        }
+      } else {
+        parent = parent.getParent(); // Move one up the ast. V V IMP!!
+      }
+    } else if (parent.getNodeType() == ASTNode.FIELD_ACCESS) {
+      FieldAccess fa = (FieldAccess) parent;
+      Expression exp = fa.getExpression();
+      if (fa.getName().toString().equals(findMe.toString())) {
+        constrains.add(ASTNode.FIELD_DECLARATION);
+
+        if (exp != null) {
+          constrains.add(ASTNode.TYPE_DECLARATION);
+          System.out.println("FA EXP: " + exp.toString() + " of type "
+              + exp.getClass().getName() + " parent: " + exp.getParent());
+          if (exp instanceof MethodInvocation) {
+            SimpleType stp = extracTypeInfo(findDeclaration(((MethodInvocation) exp)
+                .getName()));
+            if (stp == null)
+              return null;
+            //declaringClass = findDeclaration(stp.getName());
+//            return definedIn(declaringClass, fa.getName().toString(),
+//                             constrains, declaringClass);
+          } else if (exp instanceof FieldAccess) {
+            SimpleType stp = extracTypeInfo(findDeclaration(((FieldAccess) exp)
+                .getName()));
+            if (stp == null)
+              return null;
+            //declaringClass = findDeclaration((stp.getName()));
+            constrains.add(ASTNode.TYPE_DECLARATION);
+//            return definedIn(declaringClass, fa.getName().toString(),
+//                             constrains, declaringClass);
+          }
+          if (exp instanceof SimpleName) {
+            SimpleType stp = extracTypeInfo(findDeclaration(((SimpleName) exp)));
+            if (stp == null)
+              return null;
+            //declaringClass = findDeclaration(stp.getName());
+           // System.out.println("FA.SN " + getNodeAsString(declaringClass));
+            constrains.add(ASTNode.METHOD_DECLARATION);
+//            return definedIn(declaringClass, fa.getName().toString(),
+//                             constrains, declaringClass);
+          }
+        }
+
+      } else {
+        parent = parent.getParent(); // Move one up the ast. V V IMP!!
+      }
+    } else if (parent.getNodeType() == ASTNode.QUALIFIED_NAME) {
+
+      QualifiedName qn = (QualifiedName) parent;
+      if (!findMe.toString().equals(qn.getQualifier().toString())) {
+
+        SimpleType stp = extracTypeInfo(findDeclaration((qn.getQualifier())));
+       // declaringClass = findDeclaration(stp.getName());
+        System.out.println(qn.getQualifier() + "->" + qn.getName());
+       // System.out.println("QN decl class: " + getNodeAsString(declaringClass));
+        constrains.clear();
+        constrains.add(ASTNode.TYPE_DECLARATION);
+        constrains.add(ASTNode.FIELD_DECLARATION);
+//        return definedIn(declaringClass, qn.getName().toString(), constrains,
+//                         null);
+      }
+    } else if (parent.getNodeType() == ASTNode.SIMPLE_TYPE) {
+//      constrains.add(ASTNode.TYPE_DECLARATION);
+//      if (parent.getParent().getNodeType() == ASTNode.CLASS_INSTANCE_CREATION)
+//        constrains.add(ASTNode.CLASS_INSTANCE_CREATION);
+      // If it's a simple type, simply locate it within the list of imports
+      ArrayList<CompletionCandidate> retList = getMembersForType(findMe.toString(), "", true, false);
+      if(retList.size() > 0)
+        return retList.get(0);
+    } else if(parent.getNodeType() == ASTNode.TYPE_DECLARATION){
+      // The condition where we look up the name of a class decl
+/*      TypeDeclaration td = (TypeDeclaration) parent;
+      if(findMe.equals(td.getName()))
+      {
+        return parent; 
+      }
+    }
+    else if (parent instanceof Expression) {
+//      constrains.add(ASTNode.TYPE_DECLARATION);
+//      constrains.add(ASTNode.METHOD_DECLARATION);
+//      constrains.add(ASTNode.FIELD_DECLARATION);      
+    }
+    while (parent != null) {
+      System.out.println("findDeclaration1 -> " + getNodeAsString(parent));
+      for (Object oprop : parent.structuralPropertiesForType()) {
+        StructuralPropertyDescriptor prop = (StructuralPropertyDescriptor) oprop;
+        if (prop.isChildProperty() || prop.isSimpleProperty()) {
+          if (parent.getStructuralProperty(prop) instanceof ASTNode) {
+//            System.out.println(prop + " C/S Prop of -> "
+//                + getNodeAsString(parent));
+            ret = definedIn((ASTNode) parent.getStructuralProperty(prop),
+                            findMe.toString(), constrains, declaringClass);
+            if (ret != null)
+              return ret;
+          }
+        } else if (prop.isChildListProperty()) {
+//          System.out.println((prop) + " ChildList props of "
+//              + getNodeAsString(parent));
+          List<ASTNode> nodelist = (List<ASTNode>) parent
+              .getStructuralProperty(prop);
+          for (ASTNode retNode : nodelist) {
+            ret = definedIn(retNode, findMe.toString(), constrains,
+                            declaringClass);
+            if (ret != null)
+              return ret;
+          }
+        }
+      }
+      parent = parent.getParent();
+      */
     }
     return null;
   }
