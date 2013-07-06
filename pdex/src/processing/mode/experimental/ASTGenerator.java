@@ -915,41 +915,41 @@ public class ASTGenerator {
       System.out.println("-> " + cn);
     }
     if (resources.length == 0) {
-      System.out.println("In GMFT(), couldn't find class: " + className);
+      System.out.println("In defIn3rdPar(), couldn't find class: " + className);
       return null;
     }
     //TODO: Multiple matched classes? What about 'em?
     String matchedClass = resources[0];
     matchedClass = matchedClass.substring(0, matchedClass.length() - 6);
     matchedClass = matchedClass.replace('/', '.');
-    System.out.println("In GMFT(), Matched class: " + matchedClass);
+    System.out.println("In defIn3rdPar(), Matched class: " + matchedClass);
     System.out.println("Looking for match " + memberName.toString());
+    
     try {
       Class<?> probableClass = Class.forName(matchedClass, false,
                                              errorCheckerService.classLoader);
-
-      for (Method method : probableClass.getMethods()) {
-        
-        
-        StringBuffer label = new StringBuffer(method.getName() + "(");
-        for (int i = 0; i < method.getParameterTypes().length; i++) {
-          label.append(method.getParameterTypes()[i].getSimpleName());
-          if (i < method.getParameterTypes().length - 1)
-            label.append(",");
-        }
-        label.append(")");
-        if (label.toString().startsWith(memberName)) {
-          return new ClassMember(method);
-        }
+      if(memberName.equals("THIS")){
+        return new ClassMember(probableClass); 
       }
-      for (Field field : probableClass.getFields()) {
-        if (field.getName().startsWith(memberName)) {
-          return new ClassMember(field);
-        }
-      }
+      return definedIn3rdPartyClass(new ClassMember(probableClass), memberName);
     } catch (ClassNotFoundException e) {
       e.printStackTrace();
       System.out.println("Couldn't load " + matchedClass);
+    }
+    return null;
+  }
+  
+  public ClassMember definedIn3rdPartyClass(ClassMember tehClass,String memberName){
+    Class probableClass = tehClass.getClass_();
+    for (Method method : probableClass.getMethods()) {        
+      if (method.getName().equals(memberName)) {
+        return new ClassMember(method);
+      }
+    }
+    for (Field field : probableClass.getFields()) {
+      if (field.getName().equals(memberName)) {
+        return new ClassMember(field);
+      }
     }
     return null;
   }
@@ -2179,8 +2179,8 @@ public class ASTGenerator {
   }
   
   /**
-   * A wrapper for java.lang.reflect types
-   * Will see if the usage turns out to be internal only here or not
+   * A wrapper for java.lang.reflect types.
+   * Will have to see if the usage turns out to be internal only here or not
    * and then accordingly decide where to place this class. TODO
    * @author quarkninja
    *
@@ -2189,6 +2189,10 @@ public class ASTGenerator {
     private Field field;
     private Method method;
     private Constructor cons;
+    private Class thisclass;
+    public ClassMember(Class m){
+      thisclass = m;
+    }
     public ClassMember(Method m){
       method = m;
     }
@@ -2197,6 +2201,9 @@ public class ASTGenerator {
     }
     public ClassMember(Constructor m){
       cons = m;
+    }
+    public Class getClass_(){
+      return thisclass;
     }
     public Field getField() {
       return field;
@@ -2209,8 +2216,8 @@ public class ASTGenerator {
     }
   }
   
-  private CompletionCandidate findDeclaration3rdParty(Name findMe, String parentClass){
-    CompletionCandidate declaringClass = null;
+  private ClassMember findDeclaration3rdParty(Name findMe, String parentClass){
+    ClassMember declaringClass = null;
     ASTNode parent = findMe.getParent();
     ArrayList<Integer> constrains = new ArrayList<Integer>();
     if (parent.getNodeType() == ASTNode.METHOD_INVOCATION) {
@@ -2227,13 +2234,19 @@ public class ASTGenerator {
           System.out.println("MI EXP: " + exp.toString() + " of type "
               + exp.getClass().getName() + " parent: " + exp.getParent());
           if (exp instanceof MethodInvocation) {
-            SimpleType stp = extracTypeInfo(findDeclaration(((MethodInvocation) exp)
-                .getName()));
-            if (stp == null)
-              return null;
+//            SimpleType stp = extracTypeInfo(findDeclaration(((MethodInvocation) exp)
+//                .getName()));
+//            if (stp == null)
+//              return null;
             //declaringClass = findDeclaration(stp.getName());
+            declaringClass = findDeclaration3rdParty(((MethodInvocation) exp)
+                                                         .getName(),
+                                                     parentClass);
 //            return definedIn(declaringClass, ((MethodInvocation) parent)
 //                .getName().toString(), constrains, declaringClass);
+            return definedIn3rdPartyClass(declaringClass,
+                                          ((MethodInvocation) parent).getName()
+                                              .toString());
           } else if (exp instanceof FieldAccess) {
             SimpleType stp = extracTypeInfo(findDeclaration(((FieldAccess) exp)
                 .getName()));
@@ -2321,9 +2334,7 @@ public class ASTGenerator {
 //      if (parent.getParent().getNodeType() == ASTNode.CLASS_INSTANCE_CREATION)
 //        constrains.add(ASTNode.CLASS_INSTANCE_CREATION);
       // If it's a simple type, simply locate it within the list of imports
-      ArrayList<CompletionCandidate> retList = getMembersForType(findMe.toString(), "", true, false);
-      if(retList.size() > 0)
-        return retList.get(0);
+        return definedIn3rdPartyClass(findMe.toString(), "THIS");
     } else if(parent.getNodeType() == ASTNode.TYPE_DECLARATION){
       // The condition where we look up the name of a class decl
 /*      TypeDeclaration td = (TypeDeclaration) parent;
