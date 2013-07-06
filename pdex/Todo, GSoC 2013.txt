@@ -20,6 +20,7 @@ x! Should I implement wrapper for ASTNode? - possibly needed for code completion
 x Differentiating between multiple statements on the same line. How to? Done with offset handling.
 
 Finer details
+* - Multiple 3rd party classes found in various packages
 x Obj a1; a1.-> completion doesn't work before it is instantiated. Look into that. Began working again by itself. Yay!
 * printStuff(int,float,String)  - completion endings have to be appropriate. Right now it's just printStuff(,,). Cursor positioning also needs to be taken care of. Argument list as tooltip if possible?
 * Sorted list of completion candidates - fields, then methods. It's unsorted presently.
