@@ -1384,7 +1384,7 @@ public class Base {
         }
       }
     }
-    return found;  // actually ignored, but..
+    return found;
   }
 
 
