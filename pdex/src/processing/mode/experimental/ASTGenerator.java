@@ -1865,6 +1865,7 @@ public class ASTGenerator {
    */
   @SuppressWarnings("unchecked")
   private static ASTNode findDeclaration(Name findMe) {
+    
     // WARNING: You're entering the Rube Goldberg territory of Experimental Mode.
     // To debug this code, thou must take the Recursive Leap of Faith.
     
@@ -1978,7 +1979,6 @@ public class ASTGenerator {
                          null);
       }
       else{
-        System.out.println("hereeee.");
         if(findMe instanceof QualifiedName){
           QualifiedName qnn = (QualifiedName) findMe;
           System.out.println("findMe is a QN, "
@@ -2175,6 +2175,26 @@ public class ASTGenerator {
         constrains.add(ASTNode.FIELD_DECLARATION);
         return definedIn(declaringClass, qn.getName().toString(), constrains,
                          null);
+      }
+      else{
+        if(findMe instanceof QualifiedName){
+          QualifiedName qnn = (QualifiedName) findMe;
+          System.out.println("findMe is a QN, "
+              + (qnn.getQualifier().toString() + " other " + qnn.getName()
+                  .toString()));
+
+          SimpleType stp = extracTypeInfo(findDeclaration2((qnn.getQualifier()), alternateParent));
+          System.out.println(qnn.getQualifier() + "->" + qnn.getName());
+          declaringClass = findDeclaration2(stp.getName(), alternateParent);
+
+          System.out.println("QN decl class: "
+              + getNodeAsString(declaringClass));
+          constrains.clear();
+          constrains.add(ASTNode.TYPE_DECLARATION);
+          constrains.add(ASTNode.FIELD_DECLARATION);
+          return definedIn(declaringClass, qnn.getName().toString(), constrains,
+                           null);
+        }
       }
     } else if (parent.getNodeType() == ASTNode.SIMPLE_TYPE) {
       constrains.add(ASTNode.TYPE_DECLARATION);
