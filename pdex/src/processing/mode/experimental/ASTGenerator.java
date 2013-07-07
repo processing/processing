@@ -488,26 +488,58 @@ public class ASTGenerator {
    * @return
    */
   public static ASTNode resolveExpression(ASTNode nearestNode,
-                                          ASTNode expression) {
-//    ASTNode anode = null;
-    System.out.println("Resolving " + getNodeAsString(expression));
+                                          ASTNode expression, boolean noCompare) {
+    System.out.println("Resolving " + getNodeAsString(expression) + " noComp "
+        + noCompare);
     if (expression instanceof SimpleName) {
       return findDeclaration2(((SimpleName) expression), nearestNode);
     } else if (expression instanceof MethodInvocation) {
+      System.out.println("3. Method Invo "
+          + ((MethodInvocation) expression).getName());
       return findDeclaration2(((MethodInvocation) expression).getName(),
                               nearestNode);
     } else if (expression instanceof FieldAccess) {
       System.out.println("2. Field access "
-          + getNodeAsString(((FieldAccess) expression).getExpression()));
-      return resolveExpression(nearestNode,
-                               ((FieldAccess) expression).getExpression());
+          + getNodeAsString(((FieldAccess) expression).getExpression()) + "|||"
+          + getNodeAsString(((FieldAccess) expression).getName()));
+      if (noCompare) {
+        /*
+         * ASTNode ret = findDeclaration2(((FieldAccess) expression).getName(),
+         * nearestNode); System.out.println("Found as ->"+getNodeAsString(ret));
+         * return ret;
+         */
+        return findDeclaration2(((FieldAccess) expression).getName(),
+                                nearestNode);
+      } else {
+
+        /*
+         * Note how for the next recursion, noCompare is reversed. Let's say
+         * I've typed getABC().quark.nin where nin is incomplete(ninja being the
+         * field), when execution first enters here, it calls resolveExpr again
+         * for "getABC().quark" where we know that quark field must be complete,
+         * so we toggle noCompare. And kaboom.
+         */
+        return resolveExpression(nearestNode,
+                                 ((FieldAccess) expression).getExpression(),
+                                 !noCompare);
+      }
       //return findDeclaration2(((FieldAccess) expression).getExpression(), nearestNode);
     } else if (expression instanceof QualifiedName) {
+      QualifiedName qn = (QualifiedName) expression;
       System.out.println("1. Resolving "
           + ((QualifiedName) expression).getQualifier() + " ||| "
           + ((QualifiedName) expression).getName());
-      return findDeclaration2(((QualifiedName) expression).getQualifier(),
-                              nearestNode);
+//      ASTNode declaringClass = null;
+//      if(qn.getQualifier() instanceof QualifiedName)
+//        declaringClass = resolveExpression(nearestNode, qn);
+      if (noCompare) { // no compare, as in "abc.hello." need to resolve hello here
+        return findDeclaration2(((QualifiedName) expression).getName(),
+                                nearestNode);
+      } else { 
+        //User typed "abc.hello.by" (bye being complete), so need to resolve "abc.hello." only
+        return findDeclaration2(((QualifiedName) expression).getQualifier(),
+                          nearestNode);
+      }
     }
 
     return null;
@@ -534,7 +566,7 @@ public class ASTGenerator {
       System.out.println("2. Field access "
           + getNodeAsString(((FieldAccess) expression).getExpression()));
       return resolveExpression(nearestNode,
-                               ((FieldAccess) expression).getExpression());
+                               ((FieldAccess) expression).getExpression(),false);
       //return findDeclaration2(((FieldAccess) expression).getExpression(), nearestNode);
     } else if (expression instanceof QualifiedName) {
       System.out.println("1. Resolving "
@@ -715,7 +747,7 @@ public class ASTGenerator {
           // Have to resolve it by carefully traversing AST of testNode
           System.err.println("Complex expression " + getNodeAsString(testnode));
 
-          ASTNode det = resolveExpression(nearestNode, testnode);
+          ASTNode det = resolveExpression(nearestNode, testnode,noCompare);
           // Find the parent of the expression
           // in a().b, this would give me the return type of a(), so that we can 
           // find all children of a() begininng with b
@@ -2451,6 +2483,25 @@ public class ASTGenerator {
 //                         null);
         return definedIn3rdPartyClass(declaringClass, qn.getName().toString());
       }
+      else{
+        if(findMe instanceof QualifiedName){
+          QualifiedName qnn = (QualifiedName) findMe;
+          System.out.println("findMe is a QN, "
+              + (qnn.getQualifier().toString() + " other " + qnn.getName()
+                  .toString()));
+
+          SimpleType stp = extracTypeInfo(findDeclaration((qnn.getQualifier())));
+          System.out.println(qnn.getQualifier() + "->" + qnn.getName());
+          declaringClass = definedIn3rdPartyClass(stp.getName().toString(),
+              "THIS");
+//          System.out.println("QN decl class: "
+//              + getNodeAsString(declaringClass));
+          constrains.clear();
+          constrains.add(ASTNode.TYPE_DECLARATION);
+          constrains.add(ASTNode.FIELD_DECLARATION);
+          return definedIn3rdPartyClass(declaringClass, qnn.getName().toString());
+        }
+      }
     } else if (parent.getNodeType() == ASTNode.SIMPLE_TYPE) {
 //      constrains.add(ASTNode.TYPE_DECLARATION);
 //      if (parent.getParent().getNodeType() == ASTNode.CLASS_INSTANCE_CREATION)
@@ -2710,6 +2761,8 @@ public class ASTGenerator {
       value = ((SimpleName) node).getFullyQualifiedName() + " | " + className;
     else if (node instanceof QualifiedName)
       value = node.toString() + " | " + className;
+    else if(node instanceof FieldAccess)
+      value = node.toString() + " | ";
     else if (className.startsWith("Variable"))
       value = node.toString() + " | " + className;
     else if (className.endsWith("Type"))

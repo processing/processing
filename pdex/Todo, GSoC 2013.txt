@@ -10,6 +10,7 @@ Code Completion
 ==============
 The big stuff:
 x! Code competition for local code is working with recursive look up. 
+x Completion doesn't seem to show up for fields of a type defined locally. But works for methods with return type defined locally. Take ideas. Some case missing most probably. Fixed
 x! Code completion with library code, non-nested seems to be broken, fix it. Fixed.
 x Completion for external classes - ArrayList, HashMap, etc.
 *! Recursive lookup for compiled(library) code!
