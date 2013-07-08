@@ -783,6 +783,7 @@ DIST / Mac OS X
 
 _ package Java 7 version of the app
 _   docs.oracle.com/javase/7/docs/technotes/guides/jweb/packagingAppsForMac.html
+_   http://www.intransitione.com/blog/take-java-to-app-store/
 _ blank sketch opened even if another opened by double-click
 _   add a 150 ms or more lag before opening the untitled window (on os x)
 _   https://github.com/processing/processing/issues/218
