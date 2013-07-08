@@ -628,14 +628,16 @@ public class ASTGenerator {
             System.out.println("resolve 3rd par, Can't resolve " + qn.getQualifier());
             return null;
           }
-          System.out.println("QN, SN Type " + getNodeAsString(stp));
-          scopeParent = definedIn3rdPartyClass(stp.getName().toString(), "THIS");
+          System.out.println("QN, SN Local Type " + getNodeAsString(stp));
+          //scopeParent = definedIn3rdPartyClass(stp.getName().toString(), "THIS");
+          return new ClassMember(qn.getName());
         } else {
           scopeParent = resolveExpression3rdParty(nearestNode,
                                                   qn.getQualifier(), noCompare);
+          System.out.println("QN, ScopeParent " + scopeParent);
+          return definedIn3rdPartyClass(scopeParent, qn.getName().toString());
         }
-        System.out.println("QN, ScopeParent " + scopeParent);
-        return definedIn3rdPartyClass(scopeParent, qn.getName().toString());
+        
       }
     default:
       System.out.println("Unaccounted type " + getNodeAsString(astNode));
@@ -712,7 +714,7 @@ public class ASTGenerator {
       }
 
       protected void done() {
-
+        // If the parsed code contains pde enhancements, take 'em out.
         String word2 = ASTNodeWrapper.getJavaCode(word);
 
         //After typing 'arg.' all members of arg type are to be listed. This one is a flag for it        
@@ -1051,7 +1053,40 @@ public class ASTGenerator {
   
   public ArrayList<CompletionCandidate> getMembersForType(ClassMember tehClass, String child,boolean noCompare, boolean staticOnly){
     ArrayList<CompletionCandidate> candidates = new ArrayList<CompletionCandidate>();
-    System.out.println("Looking for match " + child.toString());
+    System.out.println("getMemFoType-> Looking for match " + child.toString() + " inside " + tehClass);
+    
+    if(tehClass.getASTNode() instanceof TypeDeclaration){
+      
+      TypeDeclaration td = (TypeDeclaration) tehClass.getASTNode();
+      for (int i = 0; i < td.getFields().length; i++) {
+        List<VariableDeclarationFragment> vdfs = td.getFields()[i]
+            .fragments();
+        for (VariableDeclarationFragment vdf : vdfs) {
+          if (noCompare) {
+            candidates
+                .add(new CompletionCandidate(getNodeAsString2(vdf)));
+          } else if (vdf.getName().toString()
+              .startsWith(child.toString()))
+            candidates
+                .add(new CompletionCandidate(getNodeAsString2(vdf)));
+        }
+
+      }
+      for (int i = 0; i < td.getMethods().length; i++) {
+        if (noCompare) {
+          candidates
+              .add(new CompletionCandidate(getNodeAsString2(td
+                  .getMethods()[i]), td.getName().toString(), "",
+                                           CompletionCandidate.METHOD));
+        } else if (td.getMethods()[i].getName().toString()
+            .startsWith(child.toString()))
+          candidates
+              .add(new CompletionCandidate(getNodeAsString2(td
+                  .getMethods()[i]), td.getName().toString(), "",
+                                           CompletionCandidate.METHOD));
+      }
+      return candidates;
+    }
     try {
       Class<?> probableClass;
       if(tehClass.getClass_() != null){
@@ -2418,6 +2453,8 @@ public class ASTGenerator {
     private String stringVal;
     
     private String classType;
+    
+    private ASTNode astNode;
 
     public ClassMember(Class m) {
       thisclass = m;
@@ -2444,6 +2481,11 @@ public class ASTGenerator {
       stringVal = "Cons " + " " + m.getName() + " defined in "
           + m.getDeclaringClass().getName();
     }
+    
+    public ClassMember(ASTNode node){
+      astNode = node;
+      stringVal = getNodeAsString(node);
+    }
 
     public Class getClass_() {
       return thisclass;
@@ -2459,6 +2501,10 @@ public class ASTGenerator {
 
     public Constructor getCons() {
       return cons;
+    }
+    
+    public ASTNode getASTNode(){
+      return astNode;
     }
 
     public String toString() {
