@@ -1005,7 +1005,6 @@ public class Capture extends PImage implements PConstants {
       // To handle the situation where read() is not called in the sketch, so 
       // that the native buffers are not being sent to the sinke, and therefore, not disposed
       // by it.
-      System.out.println("  disposing nat buffer before reading new one");
       natBuffer.dispose(); 
     }    
     natBuffer = buffer;

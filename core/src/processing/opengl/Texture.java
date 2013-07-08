@@ -851,14 +851,12 @@ public class Texture implements PConstants {
 
 
   public void disposeSourceBuffer() {
-    System.out.println(" in disposeSourceBuffer");
     if (usedBuffers == null) return;
 
     while (0 < usedBuffers.size()) {
       BufferData data = null;
       try {
         data = usedBuffers.remove(0);
-        System.out.println("Disposing " + data + " in disposeSourceBuffer");
       } catch (NoSuchElementException ex) {
         PGraphics.showWarning("Cannot remove used buffer");
       }
