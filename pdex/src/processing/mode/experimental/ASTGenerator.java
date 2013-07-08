@@ -602,15 +602,17 @@ public class ASTGenerator {
             return null;
           }
           System.out.println("MI, SN Type " + getNodeAsString(stp));
-          scopeParent = definedIn3rdPartyClass(stp.getName().toString(), "THIS");
+          //scopeParent = definedIn3rdPartyClass(stp.getName().toString(), "THIS");
+          return new ClassMember(findDeclaration2(stp.getName(),nearestNode));
         } else {
           System.out.println("MI EXP.."+getNodeAsString(mi.getExpression()));
 //          return null;
           scopeParent = resolveExpression3rdParty(nearestNode,
                                                   mi.getExpression(), noCompare);
+          System.out.println("MI, ScopeParent " + scopeParent);
+          return definedIn3rdPartyClass(scopeParent, mi.getName().toString());
         }
-        System.out.println("MI, ScopeParent " + scopeParent);
-        return definedIn3rdPartyClass(scopeParent, mi.getName().toString());
+        
       }
     case ASTNode.QUALIFIED_NAME:
       QualifiedName qn = (QualifiedName) astNode;
@@ -630,7 +632,7 @@ public class ASTGenerator {
           }
           System.out.println("QN, SN Local Type " + getNodeAsString(stp));
           //scopeParent = definedIn3rdPartyClass(stp.getName().toString(), "THIS");
-          return new ClassMember(qn.getName());
+          return new ClassMember(findDeclaration2(qn.getName(),nearestNode));
         } else {
           scopeParent = resolveExpression3rdParty(nearestNode,
                                                   qn.getQualifier(), noCompare);
@@ -1171,6 +1173,31 @@ public class ASTGenerator {
   public ClassMember definedIn3rdPartyClass(ClassMember tehClass,String memberName){
     if(tehClass == null)
       return null;
+    System.out.println("definedIn3rdPartyClass-> Looking for " + memberName
+        + " in " + tehClass);
+    if(tehClass.getASTNode() instanceof TypeDeclaration){
+      
+      TypeDeclaration td = (TypeDeclaration) tehClass.getASTNode();
+      for (int i = 0; i < td.getFields().length; i++) {
+        List<VariableDeclarationFragment> vdfs = td.getFields()[i]
+            .fragments();
+        for (VariableDeclarationFragment vdf : vdfs) {
+          if (vdf.getName().toString()
+              .startsWith(memberName))
+            return new ClassMember(vdf);
+        }
+
+      }
+      for (int i = 0; i < td.getMethods().length; i++) {
+       if (td.getMethods()[i].getName().toString()
+            .startsWith(memberName))
+         return new ClassMember(td.getMethods()[i]);
+      }
+      return null;
+    }
+    else if (tehClass.getASTNode() instanceof FieldDeclaration){
+      System.out.println(((FieldDeclaration)tehClass.getASTNode()).getType());
+    }
     
     Class probableClass = null;
     if(tehClass.getClass_() != null){
@@ -1211,13 +1238,15 @@ public class ASTGenerator {
 //    matchedClass = matchedClass.replace('/', '.');
 //    System.out.println("In defIn3rdPar(), Matched class: " + matchedClass);
 //    
+    System.out.println("Trying to load class " + className);
     try {
       Class<?> probableClass = Class.forName(className, false,
                                              errorCheckerService.classLoader);
         return new ClassMember(probableClass); 
     } catch (ClassNotFoundException e) {
-      e.printStackTrace();
+      
       System.out.println("Couldn't load " + className);
+      e.printStackTrace();
     }
     return null;
   }
@@ -2485,6 +2514,42 @@ public class ASTGenerator {
     public ClassMember(ASTNode node){
       astNode = node;
       stringVal = getNodeAsString(node);
+      SimpleType stp = extracTypeInfo(node);
+      if(stp != null){
+        if(findDeclaration(stp.getName()) == null){
+          String typeName = stp.getName().toString();
+        
+          RegExpResourceFilter regExpResourceFilter;
+          regExpResourceFilter = new RegExpResourceFilter(".*", typeName + ".class");
+          String[] resources = classPath.findResources("", regExpResourceFilter);
+          for (String className : resources) {
+            System.out.println("-> " + className);
+          }
+          if (resources.length == 0) {
+            System.out.println("In ClassMember(ASTNode), couldn't find class: " + typeName);
+          }
+          else{
+          //TODO: Multiple matched classes? What about 'em?
+          String matchedClass = resources[0];
+          matchedClass = matchedClass.substring(0, matchedClass.length() - 6);
+          matchedClass = matchedClass.replace('/', '.');
+          System.out.println("In ClassMember(ASTNode), Matched class: " + matchedClass);
+          
+            try {
+              Class<?> probableClass = Class.forName(matchedClass, false,
+                                                     errorCheckerService.classLoader);
+              thisclass = probableClass; // Chzech out teh mutation!
+            } catch (ClassNotFoundException e) {
+              // TODO Auto-generated catch block
+              e.printStackTrace();
+            }
+          
+          }
+        }
+      }
+//      if(findDeclaration(findMe)extracTypeInfo(node) == null){
+//        
+//      }
     }
 
     public Class getClass_() {
