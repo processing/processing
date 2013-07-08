@@ -290,7 +290,7 @@ public class TextArea extends JEditTextArea {
       if (word.endsWith("."))
         word = word.substring(0, word.length() - 1);
       errorCheckerService.astGenerator.updatePredictions(word, line
-          + errorCheckerService.mainClassOffset);
+          + errorCheckerService.mainClassOffset,0);
       return word;
     }
 //    if (keyChar == KeyEvent.VK_BACK_SPACE || keyChar == KeyEvent.VK_DELETE)
@@ -353,8 +353,9 @@ public class TextArea extends JEditTextArea {
     word = word.trim();
 //    if (word.endsWith("."))
 //      word = word.substring(0, word.length() - 1);
+    int lineStartNonWSOffset = 0;
     errorCheckerService.astGenerator.updatePredictions(word, line
-        + errorCheckerService.mainClassOffset);
+        + errorCheckerService.mainClassOffset,lineStartNonWSOffset);
     //showSuggestionLater();
     return word;
 

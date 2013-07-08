@@ -373,6 +373,72 @@ public class ASTNodeWrapper {
   public int getLineNumber() {
     return lineNumber;
   }
+  
+  /**
+   * Applies pde enhancements to code.
+   * TODO: Code reuse happening here. :\
+   * @param source
+   * @return
+   */
+  public static String getJavaCode(String source){
+    System.out.println("Src:" + source);
+    String sourceAlt = new String(source);
+
+    // Find all #[web color] 
+    // Should be 6 digits only.
+    final String webColorRegexp = "#{1}[A-F|a-f|0-9]{6}\\W";
+    Pattern webPattern = Pattern.compile(webColorRegexp);
+    Matcher webMatcher = webPattern.matcher(sourceAlt);
+    while (webMatcher.find()) {
+      // System.out.println("Found at: " + webMatcher.start());
+      // System.out.println("-> " + found);
+    }
+
+    // Find all color data types
+    final String colorTypeRegex = "color(?![a-zA-Z0-9_])(?=\\[*)(?!(\\s*\\())";
+    Pattern colorPattern = Pattern.compile(colorTypeRegex);
+    Matcher colorMatcher = colorPattern.matcher(sourceAlt);
+    while (colorMatcher.find()) {
+//      System.out.print("Start index: " + colorMatcher.start());
+//      System.out.println(" End index: " + colorMatcher.end() + " ");
+//      System.out.println("-->" + colorMatcher.group() + "<--");
+    }
+
+    // Find all int(), char()
+    String dataTypeFunc[] = { "int", "char", "float", "boolean", "byte" };
+
+    for (String dataType : dataTypeFunc) {
+      String dataTypeRegexp = "\\b" + dataType + "\\s*\\(";
+      Pattern pattern = Pattern.compile(dataTypeRegexp);
+      Matcher matcher = pattern.matcher(sourceAlt);
+
+      while (matcher.find()) {
+//        System.out.print("Start index: " + matcher.start());
+//        System.out.println(" End index: " + matcher.end() + " ");
+//        System.out.println("-->" + matcher.group() + "<--");
+      }
+      matcher.reset();
+      sourceAlt = matcher.replaceAll("PApplet.parse"
+          + Character.toUpperCase(dataType.charAt(0)) + dataType.substring(1)
+          + "(");
+
+    }
+    // replace with 0xff[webcolor] and others
+    webMatcher = webPattern.matcher(sourceAlt);
+    while (webMatcher.find()) {
+      // System.out.println("Found at: " + webMatcher.start());
+      String found = sourceAlt.substring(webMatcher.start(), webMatcher.end());
+      // System.out.println("-> " + found);
+      sourceAlt = webMatcher.replaceFirst("0xff" + found.substring(1));
+      webMatcher = webPattern.matcher(sourceAlt);
+    }
+
+    colorMatcher = colorPattern.matcher(sourceAlt);
+    sourceAlt = colorMatcher.replaceAll("int");
+
+    System.out.println("Converted:"+sourceAlt);
+    return sourceAlt;
+  }
 
   private static int getLineNumber(ASTNode node) {
     return ((CompilationUnit) node.getRoot()).getLineNumber(node

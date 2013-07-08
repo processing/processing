@@ -669,11 +669,29 @@ public class ASTGenerator {
       return ((FieldAccess) expression).getName();
     } else if (expression instanceof QualifiedName) {
       return ((QualifiedName) expression).getName();
+    }else if (expression instanceof MethodInvocation) {
+      return ((MethodInvocation) expression).getName();
     }
     System.out.println(" resolveChildExpression returning NULL for "
         + getNodeAsString(expression));
     return null;
   }
+  
+  public static ASTNode resolveParentExpression(ASTNode expression) {
+//  ASTNode anode = null;
+  if (expression instanceof SimpleName) {
+    return expression;
+  } else if (expression instanceof FieldAccess) {
+    return ((FieldAccess) expression).getExpression();
+  } else if (expression instanceof QualifiedName) {
+    return ((QualifiedName) expression).getQualifier();
+  } else if (expression instanceof MethodInvocation) {
+    return ((MethodInvocation) expression).getExpression();
+  }
+  System.out.println("resolveParentExpression returning NULL for "
+      + getNodeAsString(expression));
+  return null;
+}
 
   public static TypeDeclaration getDefiningNode(ASTNode node) {
     ASTNode parent = node.getParent();
@@ -685,7 +703,7 @@ public class ASTGenerator {
     return (TypeDeclaration) parent;
   }
 
-  public void updatePredictions(final String word, final int line) {
+  public void updatePredictions(final String word, final int line, final int lineStartNonWSOffset) {
     SwingWorker worker = new SwingWorker() {
 
       @Override
@@ -695,16 +713,16 @@ public class ASTGenerator {
 
       protected void done() {
 
-        String word2 = word;
+        String word2 = ASTNodeWrapper.getJavaCode(word);
 
         //After typing 'arg.' all members of arg type are to be listed. This one is a flag for it        
         boolean noCompare = false;
         if (word2.endsWith(".")) {
           // return all matches
-          word2 = word2.substring(0, word.length() - 1);
+          word2 = word2.substring(0, word2.length() - 1);
           noCompare = true;
         }
-
+        
         int lineNumber = line;
         // Adjust line number for tabbed sketches
         if (errorCheckerService != null) {
@@ -726,7 +744,7 @@ public class ASTGenerator {
         parser.setKind(ASTParser.K_EXPRESSION);
         parser.setSource(word2.toCharArray());
         ASTNode testnode = parser.createAST(null);
-
+        //System.err.println("PREDICTION PARSER PROBLEMS: " + parser);
         // Find closest ASTNode of the document to this word
         System.err.print("Typed: " + word2 + "|");
         nearestNode = findClosestNode(lineNumber, (ASTNode) compilationUnit.types()
@@ -912,10 +930,17 @@ public class ASTGenerator {
           }
           if(candidates.size() == 0){
             System.out.println("candidates empty");
-            ClassMember expr = resolveExpression3rdParty(nearestNode, testnode, true);          
+            String childExpr = resolveChildExpression(testnode)
+                .toString();
+            System.out.println("Child expression : " + childExpr);
+            if(!noCompare){
+              System.out.println("Original testnode " + getNodeAsString(testnode));
+              testnode = resolveParentExpression(testnode);
+              System.out.println("Corrected testnode " + getNodeAsString(testnode));
+            }
+            ClassMember expr = resolveExpression3rdParty(nearestNode, testnode, noCompare);          
             candidates = getMembersForType(expr,
-                                           resolveChildExpression(testnode)
-                                               .toString(), true, false);
+                                           childExpr, noCompare, false);
           }
         }
         
@@ -1201,7 +1226,7 @@ public class ASTGenerator {
   private static ASTNode findClosestParentNode(int lineNumber, ASTNode node) {
     Iterator<StructuralPropertyDescriptor> it = node
         .structuralPropertiesForType().iterator();
-    //System.err.println("Props of " + node.getClass().getName());
+    System.err.println("Props of " + node.getClass().getName());
     while (it.hasNext()) {
       StructuralPropertyDescriptor prop = (StructuralPropertyDescriptor) it
           .next();
@@ -1212,7 +1237,7 @@ public class ASTGenerator {
 //              .println(node.getStructuralProperty(prop) + " -> " + (prop));
           if (node.getStructuralProperty(prop) instanceof ASTNode) {
             ASTNode cnode = (ASTNode) node.getStructuralProperty(prop);
-//            System.out.println("Looking at " + getNodeAsString(cnode));
+//            System.out.println("Looking at " + getNodeAsString(cnode)+ " for line num " + lineNumber);
             int cLineNum = ((CompilationUnit) cnode.getRoot())
                 .getLineNumber(cnode.getStartPosition() + cnode.getLength());
             if (getLineNumber(cnode) <= lineNumber && lineNumber <= cLineNum) {
@@ -1228,7 +1253,7 @@ public class ASTGenerator {
         for (ASTNode cnode : nodelist) {
           int cLineNum = ((CompilationUnit) cnode.getRoot())
               .getLineNumber(cnode.getStartPosition() + cnode.getLength());
-//          System.out.println("Looking at " + getNodeAsString(cnode));
+//          System.out.println("Looking at " + getNodeAsString(cnode)+ " for line num " + lineNumber);
           if (getLineNumber(cnode) <= lineNumber && lineNumber <= cLineNum) {
             return findClosestParentNode(lineNumber, cnode);
           }
@@ -1271,81 +1296,6 @@ public class ASTGenerator {
     }
     return null;
   }
-
-//  static DefaultMutableTreeNode findNodeBS(DefaultMutableTreeNode tree,
-//                                           int lineNumber, String name,
-//                                           int elementOffset) {
-//    if (tree.getUserObject() == null)
-//      return null;
-//
-//    ASTNodeWrapper node = ((ASTNodeWrapper) tree.getUserObject());
-//
-//    if (node.getLineNumber() == lineNumber) {
-//      System.out.println("Located line " + lineNumber + " , " + tree);
-//      if (name == null)
-//        return tree;
-//      else
-//        return findOnLine(tree, lineNumber, name, elementOffset, node.getNode()
-//            .getStartPosition());
-//    }
-//
-//    int low = 0, high = tree.getChildCount() - 1, mid = (high + low) / 2;
-//    DefaultMutableTreeNode tnode = null;
-//    while (low <= high) {
-//      mid = (high + low) / 2;
-//      tnode = (DefaultMutableTreeNode) tree.getChildAt(mid);
-//      node = ((ASTNodeWrapper) tnode.getUserObject());
-//      if (node.getLineNumber() == lineNumber) {
-//        System.out.println("Located line " + lineNumber + " , " + tnode);
-//        if (name == null)
-//          return tnode;
-//        else
-//          return findOnLine(tnode, lineNumber, name, elementOffset, node
-//              .getNode().getStartPosition());
-//      } else if (lineNumber < node.getLineNumber()) {
-//        high = mid - 1;
-//      } else {
-//        if (high - mid <= 1) {
-//          if (lineNumber > ((ASTNodeWrapper) ((DefaultMutableTreeNode) tree
-//              .getChildAt(high)).getUserObject()).getLineNumber()) //high l no.
-//            low = mid + 1;
-//          else
-//
-//            high = mid - 1;
-//        }
-//        low = mid + 1;
-//      }
-//
-//    }
-//
-//    if (!tnode.isLeaf())
-//      return findNodeBS(tnode, lineNumber, name, elementOffset);
-//    else
-//      return tnode;
-//
-//      //System.out.println("visiting: " + getNodeAsString(node.getNode()) + " on  line "+node.getLineNumber());
-//      if (node.getLineNumber() == lineNumber) {
-//        System.err.println("Located line: " + node.toString());
-//        if (name == null) // name ==null, finds any node equal to line
-//        // number
-//        {
-//          System.out.println("Closest node at line: " + lineNumber);
-//          return tree;
-//        } else
-//          return findOnLine(tree, lineNumber, name, elementOffset, node.getNode()
-//              .getStartPosition());
-//
-//      } else if (!tree.isLeaf()) {
-//        for (int i = 0; i < tree.getChildCount(); i++) {
-//                                                      .getChildAt(i),
-//                                                  lineNumber, name, elementOffset);
-//          if (node2 != null)
-//            return node2;
-//        }
-//      }
-//
-//    return null;
-//  }
 
   public DefaultMutableTreeNode getAST() {
     return codeTree;
