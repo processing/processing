@@ -550,29 +550,7 @@ public class ASTGenerator {
    * @return
    */
   public ClassMember resolveExpression3rdParty(ASTNode nearestNode,
-                                          ASTNode astNode) {
-//    ASTNode anode = null;
-    /*System.out.println("Resolving " + getNodeAsString(astNode));
-    if (astNode instanceof SimpleName) {
-      return findDeclaration2(((SimpleName) astNode), nearestNode);
-    } else if (astNode instanceof MethodInvocation) {
-      return findDeclaration2(((MethodInvocation) astNode).getName(),
-                              nearestNode);
-    } else if (astNode instanceof FieldAccess) {
-      System.out.println("2. Field access "
-          + getNodeAsString(((FieldAccess) astNode).getExpression()));
-      return resolveExpression(nearestNode,
-                               ((FieldAccess) astNode).getExpression(),false);
-      //return findDeclaration2(((FieldAccess) expression).getExpression(), nearestNode);
-    } else if (astNode instanceof QualifiedName) {
-      System.out.println("1. Resolving "
-          + ((QualifiedName) astNode).getQualifier() + " ||| "
-          + ((QualifiedName) astNode).getName());
-      return findDeclaration2(((QualifiedName) astNode).getQualifier(),
-                              nearestNode);
-    }*/
-
-    
+                                          ASTNode astNode, boolean noCompare) {
     System.out.println("Resolve 3rdParty expr-- " + getNodeAsString(astNode)
         + " nearest node " + getNodeAsString(nearestNode));
     
@@ -591,11 +569,18 @@ public class ASTGenerator {
         if (fa.getExpression() instanceof SimpleName) {
           stp = extracTypeInfo(findDeclaration2((SimpleName) fa.getExpression(),
                                                 nearestNode));
+          if(stp == null){
+            /*The type wasn't found in local code, so it might be something like
+             * System.out.println(), or maybe belonging to super class, etc.
+             */
+            System.out.println("resolve 3rd par, Can't resolve " + fa.getExpression());
+            return null;
+          }
           System.out.println("FA, SN Type " + getNodeAsString(stp));
           scopeParent = definedIn3rdPartyClass(stp.getName().toString(), "THIS");
         } else {
           scopeParent = resolveExpression3rdParty(nearestNode,
-                                                  fa.getExpression());
+                                                  fa.getExpression(), noCompare);
         }
         System.out.println("FA, ScopeParent " + scopeParent);
         return definedIn3rdPartyClass(scopeParent, fa.getName().toString());
@@ -609,13 +594,20 @@ public class ASTGenerator {
         if (mi.getExpression() instanceof SimpleName) {
           stp = extracTypeInfo(findDeclaration2((SimpleName) mi.getExpression(),
                                                 nearestNode));
+          if(stp == null){
+            /*The type wasn't found in local code, so it might be something like
+             * System.out.println(), or maybe belonging to super class, etc.
+             */
+            System.out.println("resolve 3rd par, Can't resolve " + mi.getExpression());
+            return null;
+          }
           System.out.println("MI, SN Type " + getNodeAsString(stp));
           scopeParent = definedIn3rdPartyClass(stp.getName().toString(), "THIS");
         } else {
           System.out.println("MI EXP.."+getNodeAsString(mi.getExpression()));
 //          return null;
           scopeParent = resolveExpression3rdParty(nearestNode,
-                                                  mi.getExpression());
+                                                  mi.getExpression(), noCompare);
         }
         System.out.println("MI, ScopeParent " + scopeParent);
         return definedIn3rdPartyClass(scopeParent, mi.getName().toString());
@@ -629,11 +621,18 @@ public class ASTGenerator {
         
         if (qn.getQualifier() instanceof SimpleName) {
           stp = extracTypeInfo(findDeclaration2(qn.getQualifier(), nearestNode));
+          if(stp == null){
+            /*The type wasn't found in local code, so it might be something like
+             * System.out.println(), or maybe belonging to super class, etc.
+             */
+            System.out.println("resolve 3rd par, Can't resolve " + qn.getQualifier());
+            return null;
+          }
           System.out.println("QN, SN Type " + getNodeAsString(stp));
           scopeParent = definedIn3rdPartyClass(stp.getName().toString(), "THIS");
         } else {
           scopeParent = resolveExpression3rdParty(nearestNode,
-                                                  qn.getQualifier());
+                                                  qn.getQualifier(), noCompare);
         }
         System.out.println("QN, ScopeParent " + scopeParent);
         return definedIn3rdPartyClass(scopeParent, qn.getName().toString());
@@ -641,6 +640,16 @@ public class ASTGenerator {
     default:
       System.out.println("Unaccounted type " + getNodeAsString(astNode));
       break;
+    }
+    
+    return null;
+  }
+  
+  private ClassMember findDeclarationInSuperClasses(ASTNode astNode){
+    while(astNode != null){
+      astNode = astNode.getParent();
+      if(astNode instanceof TypeDeclaration)
+        break;
     }
     
     return null;
@@ -901,9 +910,17 @@ public class ASTGenerator {
                                              true);
             }
           }
-
+          if(candidates.size() == 0){
+            System.out.println("candidates empty");
+            ClassMember expr = resolveExpression3rdParty(nearestNode, testnode, true);          
+            candidates = getMembersForType(expr,
+                                           resolveChildExpression(testnode)
+                                               .toString(), true, false);
+          }
         }
-
+        
+       
+        
         Collections.sort(candidates);
         CompletionCandidate[][] candi = new CompletionCandidate[candidates
             .size()][1];
@@ -996,6 +1013,7 @@ public class ASTGenerator {
           candidates.add(new CompletionCandidate(field));
         }
       }
+      return candidates;
     } catch (ClassNotFoundException e) {
       e.printStackTrace();
       System.out.println("Couldn't load " + matchedClass);
@@ -1003,7 +1021,59 @@ public class ASTGenerator {
 
     //updateJavaDoc(methodmatch)
 
-    return candidates;
+    return null;
+  }
+  
+  public ArrayList<CompletionCandidate> getMembersForType(ClassMember tehClass, String child,boolean noCompare, boolean staticOnly){
+    ArrayList<CompletionCandidate> candidates = new ArrayList<CompletionCandidate>();
+    System.out.println("Looking for match " + child.toString());
+    try {
+      Class<?> probableClass;
+      if(tehClass.getClass_() != null){
+        probableClass = tehClass.getClass_();
+      }
+      else
+      {
+        probableClass = loadClass(tehClass.getTypeAsString()).getClass_();
+        System.out.println("Loaded " + probableClass.toString());
+      }
+      for (Method method : probableClass.getMethods()) {
+        if (!Modifier.isStatic(method.getModifiers()) && staticOnly) {
+          continue;
+        }
+        
+        StringBuffer label = new StringBuffer(method.getName() + "(");
+        for (int i = 0; i < method.getParameterTypes().length; i++) {
+          label.append(method.getParameterTypes()[i].getSimpleName());
+          if (i < method.getParameterTypes().length - 1)
+            label.append(",");
+        }
+        label.append(")");
+        
+        if (noCompare) {
+          candidates.add(new CompletionCandidate(method));
+        }
+        else if (label.toString().startsWith(child.toString())) {
+          candidates.add(new CompletionCandidate(method));
+        }
+      }
+      for (Field field : probableClass.getFields()) {
+        if (!Modifier.isStatic(field.getModifiers()) && staticOnly) {
+          continue;
+        }
+        if (noCompare) {
+          candidates.add(new CompletionCandidate(field));
+        }
+        else if (field.getName().startsWith(child.toString())) {
+          candidates.add(new CompletionCandidate(field));
+        }
+      }
+      return candidates;
+    } catch (Exception e) {
+      e.printStackTrace();
+      System.out.println("Couldn't load " + tehClass);
+    }
+    return null;
   }
   
   public ClassMember definedIn3rdPartyClass(String className,String memberName){
@@ -1396,7 +1466,7 @@ public class ASTGenerator {
         ASTNode nearestNode = findClosestNode(lineNumber, (ASTNode) compilationUnit.types()
                                               .get(0));
         ClassMember cmem = resolveExpression3rdParty(nearestNode,
-                                                     (SimpleName) simpName);
+                                                     (SimpleName) simpName, false);
         if(cmem != null){
           System.out.println("CMEM-> "+cmem);
         }
