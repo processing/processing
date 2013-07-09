@@ -5,6 +5,7 @@ X   because this lives inside PConstants
 X Error in IntList and FloatList insert()
 X   https://github.com/processing/processing/issues/1929
 
+_ implement version of Table that takes a dictionary file
 
 _ finish PFont.getShape() implementation
 _   needs to have a way to set width/height properly

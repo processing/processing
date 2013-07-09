@@ -2,9 +2,19 @@
 X change location of the manager download
 X fix "less less" typo 
 X   https://github.com/processing/processing/issues/1928
+X slash breaks syntax highlighting (with spaces)
+X   https://github.com/processing/processing/issues/1681
+X   Fix from Github user hamzaissa
+X 
+
+andres
+X pixels[] not working with Capture
+X   https://github.com/processing/processing/issues/1852
 
 
 high
+_ Present Mode trouble on Windows 7 (64-bit)? 
+_   https://github.com/processing/processing/issues/1955
 _ Add "Processing Foundation" to the Help menu
 _   https://github.com/processing/processing/issues/1908
 _ move old Google Code SVN back to processing.org
@@ -278,6 +288,8 @@ _ enums not supported properly
 _   http://code.google.com/p/processing/issues/detail?id=1352
 
 low (features)
+_ combining char/int/etc casts in one statement causes preproc trouble
+_   https://github.com/processing/processing/issues/1936
 _ copy running code from /tmp/buildXXxxx on crash of p5
 _   should probably make a way to save/recover code
 _   make the buildXxxx folders relate to time/date?
@@ -327,8 +339,6 @@ _ remove sketch.properties when moving back to the default?
 _   or can we not do this, because it's used to set the 'next' mode
 _ add means to import .zip files from file/url into sketchbook, library, etc.
 _   super easy given current code implementation, might help usability
-_ / breaks syntax highlighting
-_   https://github.com/processing/processing/issues/1681
 _ active editor not being set null
 _   in Base.nextEditorLocation(), changed to "editors.size() == 0" 
 _   instead of (activeEditor == null), but that's papering over a problem
