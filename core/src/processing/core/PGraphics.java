@@ -4381,8 +4381,13 @@ public class PGraphics extends PImage implements PConstants {
    * @param y1 by default, the x-coordinate of text, see rectMode() for more info
    * @param x2 by default, the width of the text box, see rectMode() for more info
    * @param y2 by default, the height of the text box, see rectMode() for more info
+   * 
    */
-  public void text(String str, float x1, float y1, float x2, float y2) {
+    public void text(String str, float x1, float y1, float x2, float y2){
+    int wrapTextMode=1;//default= Word
+    text(str, x1, y1, x2, y2, wrapTextMode);
+  }
+  public void text(String str, float x1, float y1, float x2, float y2, int wrapTextMode) {
     if (textFont == null) {
       defaultFontOrDeath("text");
     }
@@ -4445,7 +4450,7 @@ public class PGraphics extends PImage implements PConstants {
 //        currentY = textSentence(textBuffer, sentenceStart, i,
 //                                lineX, boxWidth, currentY, y2, spaceWidth);
         boolean legit =
-          textSentence(textBuffer, sentenceStart, i, boxWidth, spaceWidth);
+          textSentence(textBuffer, sentenceStart, i, boxWidth, spaceWidth,wrapTextMode);
         if (!legit) break;
 //      if (Float.isNaN(currentY)) break;  // word too big (or error)
 //      if (currentY > y2) break;  // past the box
@@ -4501,7 +4506,7 @@ public class PGraphics extends PImage implements PConstants {
    * @param stop non-inclusive, the end of the text in question
    */
   protected boolean textSentence(char[] buffer, int start, int stop,
-                                 float boxWidth, float spaceWidth) {
+                                 float boxWidth, float spaceWidth, int wrapTextMode) {
     float runningX = 0;
 
     // Keep track of this separately from index, since we'll need to back up
@@ -4511,13 +4516,19 @@ public class PGraphics extends PImage implements PConstants {
     int index = start;
     while (index <= stop) {
       // boundary of a word or end of this sentence
-      if ((buffer[index] == ' ') || (index == stop)) {
+      if ((buffer[index]==' ')||(index == stop)) {
         float wordWidth = textWidthImpl(buffer, wordStart, index);
 
         if (runningX + wordWidth > boxWidth) {
           if (runningX != 0) {
             // Next word is too big, output the current line and advance
-            index = wordStart;
+             if(wrapTextMode==1)//wrapTextMode==Word
+              index = wordStart;
+            else if (wrapTextMode==0)//wrapTextMode==letter
+              do {
+                index--;
+                wordWidth = textWidthImpl(buffer, wordStart, index);
+              } while ((wordWidth+runningX > boxWidth)&& (index>wordStart));
             textSentenceBreak(lineStart, index);
             // Eat whitespace because multiple spaces don't count for s*
             // when they're at the end of a line.

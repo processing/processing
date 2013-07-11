@@ -12879,6 +12879,10 @@ public class PApplet extends Applet
     g.text(str, x1, y1, x2, y2);
   }
 
+public void text(String str, float x1, float y1, float x2, float y2, int wrapTextMode) {
+    if (recorder != null) recorder.text(str, x1, y1, x2, y2, wrapTextMode);
+    g.text(str, x1, y1, x2, y2, wrapTextMode);
+  }
 
   public void text(int num, float x, float y) {
     if (recorder != null) recorder.text(num, x, y);
