@@ -63,8 +63,14 @@
 	<string>true</string>
 	<key>com.apple.hwaccel</key>
 	<string>true</string>
+	<!-- 
+	     As of 2.0.1, this was set to 'false', but not sure why. 
+	     Now changed to 'true', otherwise it shows .app packages 
+	     as folders when using selectInput() and others. 
+	     https://github.com/processing/processing/issues/1959
+	-->
 	<key>apple.awt.use-file-dialog-packages</key>
-	<string>false</string>
+	<string>true</string>
       </dict>
     </dict>
   </dict>

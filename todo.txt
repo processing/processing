@@ -5,7 +5,8 @@ X   https://github.com/processing/processing/issues/1928
 X slash breaks syntax highlighting (with spaces)
 X   https://github.com/processing/processing/issues/1681
 X   Fix from Github user hamzaissa
-X 
+X selectInput() in exported OS X sketch treats .app package as a folder
+X   https://github.com/processing/processing/issues/1959
 
 andres
 X pixels[] not working with Capture

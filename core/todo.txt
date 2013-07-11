@@ -5,6 +5,11 @@ X   because this lives inside PConstants
 X Error in IntList and FloatList insert()
 X   https://github.com/processing/processing/issues/1929
 
+_ selectInput() in exported OS X sketch treats .app package as a folder
+_   Oracle Java 7 problem, but maybe a workaround?
+_   might be a problem with awt dialogs for directories? 
+_   https://github.com/processing/processing/issues/1959
+
 _ implement version of Table that takes a dictionary file
 
 _ finish PFont.getShape() implementation
