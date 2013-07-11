@@ -4,14 +4,18 @@ X change QUAD_BEZIER_VERTEX to QUADRATIC_VERTEX to match the API call
 X   because this lives inside PConstants
 X Error in IntList and FloatList insert()
 X   https://github.com/processing/processing/issues/1929
+X selectInput() in exported OS X sketch treats .app package as a folder
+o   Oracle Java 7 problem, but maybe a workaround?
+o   might be a problem with awt dialogs for directories? 
+X   https://github.com/processing/processing/issues/1959
+X   turns out this is an apple.awt tweak for the exported Info.plist
 
-_ selectInput() in exported OS X sketch treats .app package as a folder
-_   Oracle Java 7 problem, but maybe a workaround?
-_   might be a problem with awt dialogs for directories? 
-_   https://github.com/processing/processing/issues/1959
+andres
+X pixels[] array not updated with Capture and P2D/P3D
+X   https://github.com/processing/processing/issues/1852
+
 
 _ implement version of Table that takes a dictionary file
-
 _ finish PFont.getShape() implementation
 _   needs to have a way to set width/height properly
 _   draw(s) doesn't work on the returned PShape
@@ -28,10 +32,6 @@ _ clean up requestFocus() stuff
 _   make sure it works with retina/canvas/strategy as well
 _ freeze after splash screen on OS X (looks like core.jar in the path)
 _   https://github.com/processing/processing/issues/1872
-
-andres
-_ pixels[] array not updated with Capture and P2D/P3D
-_   https://github.com/processing/processing/issues/1852
 
 
 decisions/misc

@@ -8,10 +8,6 @@ X   Fix from Github user hamzaissa
 X selectInput() in exported OS X sketch treats .app package as a folder
 X   https://github.com/processing/processing/issues/1959
 
-andres
-X pixels[] not working with Capture
-X   https://github.com/processing/processing/issues/1852
-
 
 high
 _ Present Mode trouble on Windows 7 (64-bit)? 
