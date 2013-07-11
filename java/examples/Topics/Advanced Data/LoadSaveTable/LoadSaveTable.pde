@@ -42,9 +42,6 @@ void loadData() {
   // Load CSV file into a Table object
   // "header" option indicates the file has a header row
   table = loadTable("data.csv", "header");
-  
-  TableRow r = table.getRow(2);
-  int val1 = r.getInt("y");
 
   // The size of the array of Bubble objects is determined by the total number of rows in the CSV
   bubbles = new Bubble[table.getRowCount()]; 
