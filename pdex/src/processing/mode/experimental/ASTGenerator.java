@@ -609,8 +609,13 @@ public class ASTGenerator {
             return null;
           }
           System.out.println("MI, SN Type " + getNodeAsString(stp));
+          ASTNode typeDec = findDeclaration2(stp.getName(),nearestNode);
+          if(typeDec == null){
+            System.out.println(stp.getName() + " couldn't be found locally..");
+            return new ClassMember(findClassIfExists(stp.getName().toString()));
+          }
           //scopeParent = definedIn3rdPartyClass(stp.getName().toString(), "THIS");
-          return new ClassMember(findDeclaration2(stp.getName(),nearestNode));
+          return new ClassMember(typeDec);
         } else {
           System.out.println("MI EXP.."+getNodeAsString(mi.getExpression()));
 //          return null;
@@ -639,7 +644,14 @@ public class ASTGenerator {
           }
           System.out.println("QN, SN Local Type " + getNodeAsString(stp));
           //scopeParent = definedIn3rdPartyClass(stp.getName().toString(), "THIS");
-          return new ClassMember(findDeclaration2(qn.getName(),nearestNode));
+          ASTNode typeDec = findDeclaration2(stp.getName(),nearestNode);
+          if(typeDec == null){
+            System.out.println(stp.getName() + " couldn't be found locally..");
+            return new ClassMember(findClassIfExists(stp.getName().toString()));
+          }
+          //scopeParent = definedIn3rdPartyClass(stp.getName().toString(), "THIS");
+          return new ClassMember(typeDec);
+          //return new ClassMember(findDeclaration2(qn.getName(),nearestNode));
         } else {
           scopeParent = resolveExpression3rdParty(nearestNode,
                                                   qn.getQualifier(), noCompare);
