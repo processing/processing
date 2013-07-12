@@ -560,8 +560,14 @@ public class ASTGenerator {
     
     ClassMember scopeParent = null;
     SimpleType stp = null;
-    if(astNode instanceof SimpleName)
+    if(astNode instanceof SimpleName){
+      ASTNode decl = findDeclaration2(((SimpleName)astNode),nearestNode);
+      if(decl != null){
+        System.out.println(getNodeAsString(astNode)+" found decl -> " + getNodeAsString(decl));
+        return new ClassMember(extracTypeInfo(decl));
+      }
       astNode = astNode.getParent();
+    }
     switch (astNode.getNodeType()) {
     
     case ASTNode.FIELD_ACCESS:
@@ -791,7 +797,7 @@ public class ASTGenerator {
         ArrayList<CompletionCandidate> candidates = new ArrayList<CompletionCandidate>();
 
         // Determine the expression typed
-
+        
         if (testnode instanceof SimpleName && !noCompare) {
           System.err
               .println("One word expression " + getNodeAsString(testnode));
@@ -873,15 +879,33 @@ public class ASTGenerator {
           // ==> Complex expression of type blah.blah2().doIt,etc
           // Have to resolve it by carefully traversing AST of testNode
           System.err.println("Complex expression " + getNodeAsString(testnode));
-
-          ASTNode det = resolveExpression(nearestNode, testnode,noCompare);
+          System.out.println("candidates empty");
+          String childExpr = resolveChildExpression(testnode)
+              .toString();
+          System.out.println("Parent expression : " + resolveParentExpression(testnode));
+          System.out.println("Child expression : " + childExpr);
+          
+          if(!noCompare){
+            System.out.println("Original testnode " + getNodeAsString(testnode));
+            testnode = resolveParentExpression(testnode);
+            System.out.println("Corrected testnode " + getNodeAsString(testnode));
+          }
+          ClassMember expr = resolveExpression3rdParty(nearestNode, testnode, noCompare);
+          if(expr == null){
+            System.out.println("Expr is null");
+          }else {
+            System.out.println("Expr is " + expr.toString());
+            candidates = getMembersForType(expr,
+                                         childExpr, noCompare, false);
+          }
+          /*ASTNode det = resolveExpression(nearestNode, testnode,noCompare);
           // Find the parent of the expression
           // in a().b, this would give me the return type of a(), so that we can 
           // find all children of a() begininng with b
           System.err.println("DET " + getNodeAsString(det));
           if (det != null) {
             TypeDeclaration td = null;
-            SimpleType stp = null;
+            SimpleType stp = extracTypeInfo(det);
             if (det instanceof MethodDeclaration) {
               if (((MethodDeclaration) det).getReturnType2() instanceof SimpleType) {
                 stp = (SimpleType) (((MethodDeclaration) det).getReturnType2());
@@ -981,7 +1005,7 @@ public class ASTGenerator {
               candidates = getMembersForType(expr,
                                            childExpr, noCompare, false);
             }
-          }
+          }*/
         }
         
        
@@ -1095,9 +1119,9 @@ public class ASTGenerator {
         + " inside " + tehClass + " noCompare " + noCompare + " staticOnly "
         + staticOnly);
 
-    if(tehClass.getASTNode() instanceof TypeDeclaration){
+    if(tehClass.getDeclaringNode() instanceof TypeDeclaration){
       
-      TypeDeclaration td = (TypeDeclaration) tehClass.getASTNode();
+      TypeDeclaration td = (TypeDeclaration) tehClass.getDeclaringNode();
       for (int i = 0; i < td.getFields().length; i++) {
         List<VariableDeclarationFragment> vdfs = td.getFields()[i]
             .fragments();
@@ -1276,9 +1300,9 @@ public class ASTGenerator {
       return null;
     System.out.println("definedIn3rdPartyClass-> Looking for " + memberName
         + " in " + tehClass);
-    if(tehClass.getASTNode() instanceof TypeDeclaration){
+    if(tehClass.getDeclaringNode() instanceof TypeDeclaration){
       
-      TypeDeclaration td = (TypeDeclaration) tehClass.getASTNode();
+      TypeDeclaration td = (TypeDeclaration) tehClass.getDeclaringNode();
       for (int i = 0; i < td.getFields().length; i++) {
         List<VariableDeclarationFragment> vdfs = td.getFields()[i]
             .fragments();
@@ -2582,6 +2606,8 @@ public class ASTGenerator {
     private String classType;
     
     private ASTNode astNode;
+    
+    private ASTNode declaringNode;
 
     public ClassMember(Class m) {
       thisclass = m;
@@ -2615,21 +2641,30 @@ public class ASTGenerator {
       if(node instanceof SimpleType){
         classType = ((SimpleType)node).getName().toString();
       }
-      SimpleType stp = extracTypeInfo(node);
+      SimpleType stp = (node instanceof SimpleType) ? (SimpleType) node
+          : extracTypeInfo(node);
       if(stp != null){
-        if(findDeclaration(stp.getName()) == null){
+        ASTNode decl =findDeclaration(stp.getName());
+        // Czech out teh mutation
+        if(decl == null){
+          // a predefined type
           classType = stp.getName().toString();
           Class<?> probableClass = findClassIfExists(classType);
-          thisclass = probableClass; // Czech out teh mutation!
+          thisclass = probableClass; 
+        }
+        else{
+          // a local type
+          declaringNode = decl;
         }
       }
-//      if(findDeclaration(findMe)extracTypeInfo(node) == null){
-//        
-//      }
     }
 
     public Class getClass_() {
       return thisclass;
+    }
+    
+    public ASTNode getDeclaringNode(){
+      return declaringNode;
     }
 
     public Field getField() {
@@ -2862,20 +2897,17 @@ public class ASTGenerator {
       return null;
     switch (node.getNodeType()) {
     case ASTNode.METHOD_DECLARATION:
-      return (SimpleType) ((MethodDeclaration) node)
-          .getStructuralProperty(MethodDeclaration.RETURN_TYPE2_PROPERTY);
+      return (SimpleType) ((MethodDeclaration) node).getReturnType2();
     case ASTNode.FIELD_DECLARATION:
-      return (SimpleType) ((FieldDeclaration) node)
-          .getStructuralProperty(FieldDeclaration.TYPE_PROPERTY);
+      return (SimpleType) ((FieldDeclaration) node).getType();
     case ASTNode.VARIABLE_DECLARATION_EXPRESSION:
-      return (SimpleType) ((VariableDeclarationExpression) node)
-          .getStructuralProperty(VariableDeclarationExpression.TYPE_PROPERTY);
+      return (SimpleType) ((VariableDeclarationExpression) node).getType();
     case ASTNode.VARIABLE_DECLARATION_STATEMENT:
-      return (SimpleType) ((VariableDeclarationStatement) node)
-          .getStructuralProperty(VariableDeclarationStatement.TYPE_PROPERTY);
+      return (SimpleType) ((VariableDeclarationStatement) node).getType();
     case ASTNode.SINGLE_VARIABLE_DECLARATION:
-      return (SimpleType) ((SingleVariableDeclaration) node)
-          .getStructuralProperty(SingleVariableDeclaration.TYPE_PROPERTY);
+      return (SimpleType) ((SingleVariableDeclaration) node).getType();
+    case ASTNode.VARIABLE_DECLARATION_FRAGMENT:
+      return extracTypeInfo(node.getParent());
     }
     return null;
   }
