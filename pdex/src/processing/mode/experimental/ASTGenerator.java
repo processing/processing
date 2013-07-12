@@ -593,6 +593,12 @@ public class ASTGenerator {
       }
     case ASTNode.METHOD_INVOCATION:
       MethodInvocation mi = (MethodInvocation) astNode;
+      ASTNode temp = findDeclaration2(mi.getName(), nearestNode);
+      if(temp instanceof MethodDeclaration){
+        // method is locally defined
+        System.out.println(mi.getName() + " was found locally," + getNodeAsString(extracTypeInfo(temp)));
+        return new ClassMember(extracTypeInfo(temp));
+      }
       if (mi.getExpression() == null) {
         //Local code or belongs to super class
         System.out.println("MI,Not implemented.");
@@ -649,9 +655,7 @@ public class ASTGenerator {
             System.out.println(stp.getName() + " couldn't be found locally..");
             return new ClassMember(findClassIfExists(stp.getName().toString()));
           }
-          //scopeParent = definedIn3rdPartyClass(stp.getName().toString(), "THIS");
           return new ClassMember(typeDec);
-          //return new ClassMember(findDeclaration2(qn.getName(),nearestNode));
         } else {
           scopeParent = resolveExpression3rdParty(nearestNode,
                                                   qn.getQualifier(), noCompare);
@@ -955,7 +959,9 @@ public class ASTGenerator {
             System.out.println("candidates empty");
             String childExpr = resolveChildExpression(testnode)
                 .toString();
+            System.out.println("Parent expression : " + resolveParentExpression(testnode));
             System.out.println("Child expression : " + childExpr);
+            
             if(!noCompare){
               System.out.println("Original testnode " + getNodeAsString(testnode));
               testnode = resolveParentExpression(testnode);
@@ -1033,7 +1039,8 @@ public class ASTGenerator {
 //    matchedClass = matchedClass.replace('/', '.');
 //    System.out.println("In GMFT(), Matched class: " + matchedClass);
     System.out.println("In GMFT(), Looking for match " + child.toString()
-        + " in class " + typeName);
+        + " in class " + typeName + " noCompare " + noCompare + " staticOnly "
+        + staticOnly);
 
     Class<?> probableClass = findClassIfExists(typeName);
     if(probableClass == null){
@@ -1073,10 +1080,15 @@ public class ASTGenerator {
    
   }
   
-  public ArrayList<CompletionCandidate> getMembersForType(ClassMember tehClass, String child,boolean noCompare, boolean staticOnly){
+  public ArrayList<CompletionCandidate> getMembersForType(ClassMember tehClass,
+                                                          String child,
+                                                          boolean noCompare,
+                                                          boolean staticOnly) {
     ArrayList<CompletionCandidate> candidates = new ArrayList<CompletionCandidate>();
-    System.out.println("getMemFoType-> Looking for match " + child.toString() + " inside " + tehClass);
-    
+    System.out.println("getMemFoType-> Looking for match " + child.toString()
+        + " inside " + tehClass + " noCompare " + noCompare + " staticOnly "
+        + staticOnly);
+
     if(tehClass.getASTNode() instanceof TypeDeclaration){
       
       TypeDeclaration td = (TypeDeclaration) tehClass.getASTNode();
@@ -1116,7 +1128,7 @@ public class ASTGenerator {
       }
       else
       {
-        probableClass = loadClass(tehClass.getTypeAsString()).getClass_();
+        probableClass = findClassIfExists(tehClass.getTypeAsString());
         System.out.println("Loaded " + probableClass.toString());
       }
       for (Method method : probableClass.getMethods()) {
@@ -1222,7 +1234,7 @@ public class ASTGenerator {
     for (String impS : p.getDefaultImports()) {
       try {        
         if(className.equals(impS) || impS.endsWith(className)){
-          tehClass = Class.forName(className, false, errorCheckerService.getSketchClassLoader());                    
+          tehClass = Class.forName(impS, false, errorCheckerService.getSketchClassLoader());                    
           System.out.println(tehClass.getName() + " located.");
           return tehClass;
         }
@@ -1285,7 +1297,7 @@ public class ASTGenerator {
     }
     else
     {
-      probableClass = loadClass(tehClass.getTypeAsString()).getClass_();
+      probableClass = findClassIfExists(tehClass.getTypeAsString());
       System.out.println("Loaded " + probableClass.toString());
     }
     for (Method method : probableClass.getMethods()) {        
@@ -1301,7 +1313,7 @@ public class ASTGenerator {
     return null;
   }
   
-  private ClassMember loadClass(String className){
+//  private ClassMember loadClass(String className){
 //    RegExpResourceFilter regExpResourceFilter;
 //    regExpResourceFilter = new RegExpResourceFilter(".*", className + ".class");
 //    String[] resources = classPath.findResources("", regExpResourceFilter);
@@ -1318,18 +1330,18 @@ public class ASTGenerator {
 //    matchedClass = matchedClass.replace('/', '.');
 //    System.out.println("In defIn3rdPar(), Matched class: " + matchedClass);
 //    
-    System.out.println("Trying to load class " + className);
-    try {
-      Class<?> probableClass = Class.forName(className, false,
-                                             errorCheckerService.classLoader);
-        return new ClassMember(probableClass); 
-    } catch (ClassNotFoundException e) {
-      
-      System.out.println("Couldn't load " + className);
-      e.printStackTrace();
-    }
-    return null;
-  }
+//    System.out.println("Trying to load class " + className);
+//    try {
+//      Class<?> probableClass = Class.forName(className, false,
+//                                             errorCheckerService.classLoader);
+//        return new ClassMember(probableClass); 
+//    } catch (ClassNotFoundException e) {
+//      
+//      System.out.println("Couldn't load " + className);
+//      e.printStackTrace();
+//    }
+//    return null;
+//  }
 
   public void updateJavaDoc(final CompletionCandidate candidate) {
     //TODO: Work on this later.
@@ -2594,32 +2606,15 @@ public class ASTGenerator {
     public ClassMember(ASTNode node){
       astNode = node;
       stringVal = getNodeAsString(node);
+      if(node instanceof SimpleType){
+        classType = ((SimpleType)node).getName().toString();
+      }
       SimpleType stp = extracTypeInfo(node);
       if(stp != null){
         if(findDeclaration(stp.getName()) == null){
-          String typeName = stp.getName().toString();
-//        
-//          RegExpResourceFilter regExpResourceFilter;
-//          regExpResourceFilter = new RegExpResourceFilter(".*", typeName + ".class");
-//          String[] resources = classPath.findResources("", regExpResourceFilter);
-//          for (String className : resources) {
-//            System.out.println("-> " + className);
-//          }
-//          if (resources.length == 0) {
-//            System.out.println("In ClassMember(ASTNode), couldn't find class: " + typeName);
-//          }
-//          else{
-//          //TODO: Multiple matched classes? What about 'em?
-//          String matchedClass = resources[0];
-//          matchedClass = matchedClass.substring(0, matchedClass.length() - 6);
-//          matchedClass = matchedClass.replace('/', '.');
-//          System.out.println("In ClassMember(ASTNode), Matched class: " + matchedClass);
-//          
-            
-          Class<?> probableClass = findClassIfExists(typeName);
-          thisclass = probableClass; // Czech out teh mutation!  
-          
-          
+          classType = stp.getName().toString();
+          Class<?> probableClass = findClassIfExists(classType);
+          thisclass = probableClass; // Czech out teh mutation!
         }
       }
 //      if(findDeclaration(findMe)extracTypeInfo(node) == null){
