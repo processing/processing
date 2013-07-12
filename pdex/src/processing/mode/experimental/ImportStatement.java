@@ -59,6 +59,15 @@ public class ImportStatement {
 	public String getImportName() {
     return importName;
   }
+	
+	public String getPackageName(){
+	  String ret = new String(importName.trim());
+	  if(ret.startsWith("import "))
+	    ret = ret.substring(7);
+	  if(ret.endsWith(";"))
+	    ret = ret.substring(0, ret.length() - 1);	  
+	  return ret;
+	}
 
   public int getTab() {
     return tab;

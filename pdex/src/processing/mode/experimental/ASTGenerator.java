@@ -73,6 +73,7 @@ import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 
 import processing.app.Base;
 import processing.app.SketchCode;
+import processing.mode.java.preproc.PdePreprocessor;
 
 import com.google.classpath.ClassPath;
 import com.google.classpath.ClassPathFactory;
@@ -948,9 +949,14 @@ public class ASTGenerator {
               testnode = resolveParentExpression(testnode);
               System.out.println("Corrected testnode " + getNodeAsString(testnode));
             }
-            ClassMember expr = resolveExpression3rdParty(nearestNode, testnode, noCompare);          
-            candidates = getMembersForType(expr,
+            ClassMember expr = resolveExpression3rdParty(nearestNode, testnode, noCompare);
+            if(expr == null){
+              System.out.println("Expr is null");
+            }else {
+              System.out.println("Expr is " + expr.toString());
+              candidates = getMembersForType(expr,
                                            childExpr, noCompare, false);
+            }
           }
         }
         
@@ -996,68 +1002,63 @@ public class ASTGenerator {
                                                           String child,
                                                           boolean noCompare,
                                                           boolean staticOnly) {
+    
     ArrayList<CompletionCandidate> candidates = new ArrayList<CompletionCandidate>();
-    RegExpResourceFilter regExpResourceFilter;
-    regExpResourceFilter = new RegExpResourceFilter(".*", typeName + ".class");
-    String[] resources = classPath.findResources("", regExpResourceFilter);
-    for (String className : resources) {
-      System.out.println("-> " + className);
-    }
-    if (resources.length == 0) {
-      System.out.println("In GMFT(), couldn't find class: " + typeName);
+//    RegExpResourceFilter regExpResourceFilter;
+//    regExpResourceFilter = new RegExpResourceFilter(".*", typeName + ".class");
+//    String[] resources = classPath.findResources("", regExpResourceFilter);
+//    for (String className : resources) {
+//      System.out.println("-> " + className);
+//    }
+//    if (resources.length == 0) {
+//      System.out.println("In GMFT(), couldn't find class: " + typeName);
+//      return candidates;
+//    }
+//    // TODO: This method is getting redundant
+//    //TODO: Multiple matched classes? What about 'em?
+//    String matchedClass = resources[0];
+//    matchedClass = matchedClass.substring(0, matchedClass.length() - 6);
+//    matchedClass = matchedClass.replace('/', '.');
+//    System.out.println("In GMFT(), Matched class: " + matchedClass);
+    System.out.println("In GMFT(), Looking for match " + child.toString()
+        + " in class " + typeName);
+
+    Class<?> probableClass = findClassIfExists(typeName);
+    if(probableClass == null){
+      System.out.println("In GMFT(), class not found.");
       return candidates;
     }
-    // TODO: This method is getting redundant
-    //TODO: Multiple matched classes? What about 'em?
-    String matchedClass = resources[0];
-    matchedClass = matchedClass.substring(0, matchedClass.length() - 6);
-    matchedClass = matchedClass.replace('/', '.');
-    System.out.println("In GMFT(), Matched class: " + matchedClass);
-    System.out.println("Looking for match " + child.toString());
-    try {
-      Class<?> probableClass = Class.forName(matchedClass, false,
-                                             errorCheckerService.classLoader);
+    for (Method method : probableClass.getMethods()) {
+      if (!Modifier.isStatic(method.getModifiers()) && staticOnly) {
+        continue;
+      }
 
-      for (Method method : probableClass.getMethods()) {
-        if (!Modifier.isStatic(method.getModifiers()) && staticOnly) {
-          continue;
-        }
-        
-        StringBuffer label = new StringBuffer(method.getName() + "(");
-        for (int i = 0; i < method.getParameterTypes().length; i++) {
-          label.append(method.getParameterTypes()[i].getSimpleName());
-          if (i < method.getParameterTypes().length - 1)
-            label.append(",");
-        }
-        label.append(")");
-        
-        if (noCompare) {
-          candidates.add(new CompletionCandidate(method));
-        }
-        else if (label.toString().startsWith(child.toString())) {
-          candidates.add(new CompletionCandidate(method));
-        }
+      StringBuffer label = new StringBuffer(method.getName() + "(");
+      for (int i = 0; i < method.getParameterTypes().length; i++) {
+        label.append(method.getParameterTypes()[i].getSimpleName());
+        if (i < method.getParameterTypes().length - 1)
+          label.append(",");
       }
-      for (Field field : probableClass.getFields()) {
-        if (!Modifier.isStatic(field.getModifiers()) && staticOnly) {
-          continue;
-        }
-        if (noCompare) {
-          candidates.add(new CompletionCandidate(field));
-        }
-        else if (field.getName().startsWith(child.toString())) {
-          candidates.add(new CompletionCandidate(field));
-        }
+      label.append(")");
+
+      if (noCompare) {
+        candidates.add(new CompletionCandidate(method));
+      } else if (label.toString().startsWith(child.toString())) {
+        candidates.add(new CompletionCandidate(method));
       }
-      return candidates;
-    } catch (ClassNotFoundException e) {
-      e.printStackTrace();
-      System.out.println("Couldn't load " + matchedClass);
     }
-
-    //updateJavaDoc(methodmatch)
-
-    return null;
+    for (Field field : probableClass.getFields()) {
+      if (!Modifier.isStatic(field.getModifiers()) && staticOnly) {
+        continue;
+      }
+      if (noCompare) {
+        candidates.add(new CompletionCandidate(field));
+      } else if (field.getName().startsWith(child.toString())) {
+        candidates.add(new CompletionCandidate(field));
+      }
+    }
+    return candidates;
+   
   }
   
   public ArrayList<CompletionCandidate> getMembersForType(ClassMember tehClass, String child,boolean noCompare, boolean staticOnly){
@@ -1145,44 +1146,99 @@ public class ASTGenerator {
     return null;
   }
   
-  private Class getClassIfExists(String className){
-    ArrayList<ImportStatement> imports = errorCheckerService.getProgramImports();
-    for (ImportStatement impS : imports) {
-      //impS.
+  /**
+   * Searches for the particular class in the default list of imports as well as
+   * the Sketch classpath
+   * @param className
+   * @return
+   */
+  private Class findClassIfExists(String className){
+    Class tehClass = null;
+    // First, see if the classname is a fully qualified name and loads straightaway
+    try {      
+      tehClass = Class.forName(className, false,
+                                     errorCheckerService
+                                         .getSketchClassLoader());
+      System.out.println(tehClass.getName() + " located straightaway");
+      return tehClass;
+    } catch (ClassNotFoundException e) {
+      //System.out.println("Doesn't exist in package: ");
     }
-    return null;
+    
+    System.out.println("Looking in the classloader for " + className);
+    ArrayList<ImportStatement> imports = errorCheckerService
+        .getProgramImports();
+
+    for (ImportStatement impS : imports) {
+      String temp = impS.getPackageName();
+      try {        
+        if(temp.endsWith("*")){
+          temp = temp.substring(0, temp.length()-1) + className;
+        }
+        else {
+          int x = temp.lastIndexOf('.');
+          if(temp.substring(x).equals(className)){
+            // Well, we've found the class.
+          }
+        }
+        tehClass = Class.forName(temp, false,
+                                       errorCheckerService
+                                           .getSketchClassLoader());
+        System.out.println(tehClass.getName() + " located.");
+        return tehClass;
+      } catch (ClassNotFoundException e) {
+        // it does not exist on the classpath
+        System.out.println("Doesn't exist in package: " + impS.getImportName());
+      }
+    }
+    
+    PdePreprocessor p = new PdePreprocessor(null);
+    for (String impS : p.getCoreImports()) {
+      try {        
+       
+        tehClass = Class.forName(impS.substring(0,impS.length()-1) + className, false,
+                                       errorCheckerService
+                                           .getSketchClassLoader());
+        System.out.println(tehClass.getName() + " located.");
+        return tehClass;
+      } catch (ClassNotFoundException e) {
+        // it does not exist on the classpath
+        System.out.println("Doesn't exist in package: " + impS);
+      }
+    }
+    
+    for (String impS : p.getDefaultImports()) {
+      try {        
+        if(className.equals(impS) || impS.endsWith(className)){
+          tehClass = Class.forName(className, false, errorCheckerService.getSketchClassLoader());                    
+          System.out.println(tehClass.getName() + " located.");
+          return tehClass;
+        }
+//        else if(impS.endsWith(className)){
+//          tehClass = Class.forName(impS, false, errorCheckerService.getSketchClassLoader());                    
+//          System.out.println(tehClass.getName() + " located.");
+//          return tehClass;
+//        }
+        
+      } catch (ClassNotFoundException e) {
+        // it does not exist on the classpath
+        System.out.println("Doesn't exist in package: " + impS);
+      }
+    }
+    return tehClass;
   }
   
   public ClassMember definedIn3rdPartyClass(String className,String memberName){
-    RegExpResourceFilter regExpResourceFilter;
-    regExpResourceFilter = new RegExpResourceFilter(".*", className + ".class");
-    String[] resources = classPath.findResources("", regExpResourceFilter);
-    for (String cn : resources) {
-      System.out.println("-> " + cn);
-    }
-    if (resources.length == 0) {
-      System.out.println("In defIn3rdPar(), couldn't find class: " + className);
+    Class<?> probableClass = findClassIfExists(className);
+    if (probableClass == null) {
+      System.out.println("Couldn't load " + className);
       return null;
     }
-    //TODO: Multiple matched classes? What about 'em?
-    String matchedClass = resources[0];
-    matchedClass = matchedClass.substring(0, matchedClass.length() - 6);
-    matchedClass = matchedClass.replace('/', '.');
-    System.out.println("In defIn3rdPar(), Matched class: " + matchedClass);
-    System.out.println("Looking for match " + memberName.toString());
-    
-    try {
-      Class<?> probableClass = Class.forName(matchedClass, false,
-                                             errorCheckerService.classLoader);
-      if(memberName.equals("THIS")){
-        return new ClassMember(probableClass); 
-      }
+    if (memberName.equals("THIS")) {
+      return new ClassMember(probableClass);
+    } else {
       return definedIn3rdPartyClass(new ClassMember(probableClass), memberName);
-    } catch (ClassNotFoundException e) {
-      e.printStackTrace();
-      System.out.println("Couldn't load " + matchedClass);
     }
-    return null;
   }
   
   public ClassMember definedIn3rdPartyClass(ClassMember tehClass,String memberName){
@@ -2530,33 +2586,28 @@ public class ASTGenerator {
       if(stp != null){
         if(findDeclaration(stp.getName()) == null){
           String typeName = stp.getName().toString();
-        
-          RegExpResourceFilter regExpResourceFilter;
-          regExpResourceFilter = new RegExpResourceFilter(".*", typeName + ".class");
-          String[] resources = classPath.findResources("", regExpResourceFilter);
-          for (String className : resources) {
-            System.out.println("-> " + className);
-          }
-          if (resources.length == 0) {
-            System.out.println("In ClassMember(ASTNode), couldn't find class: " + typeName);
-          }
-          else{
-          //TODO: Multiple matched classes? What about 'em?
-          String matchedClass = resources[0];
-          matchedClass = matchedClass.substring(0, matchedClass.length() - 6);
-          matchedClass = matchedClass.replace('/', '.');
-          System.out.println("In ClassMember(ASTNode), Matched class: " + matchedClass);
+//        
+//          RegExpResourceFilter regExpResourceFilter;
+//          regExpResourceFilter = new RegExpResourceFilter(".*", typeName + ".class");
+//          String[] resources = classPath.findResources("", regExpResourceFilter);
+//          for (String className : resources) {
+//            System.out.println("-> " + className);
+//          }
+//          if (resources.length == 0) {
+//            System.out.println("In ClassMember(ASTNode), couldn't find class: " + typeName);
+//          }
+//          else{
+//          //TODO: Multiple matched classes? What about 'em?
+//          String matchedClass = resources[0];
+//          matchedClass = matchedClass.substring(0, matchedClass.length() - 6);
+//          matchedClass = matchedClass.replace('/', '.');
+//          System.out.println("In ClassMember(ASTNode), Matched class: " + matchedClass);
+//          
+            
+          Class<?> probableClass = findClassIfExists(typeName);
+          thisclass = probableClass; // Czech out teh mutation!  
           
-            try {
-              Class<?> probableClass = Class.forName(matchedClass, false,
-                                                     errorCheckerService.classLoader);
-              thisclass = probableClass; // Chzech out teh mutation!
-            } catch (ClassNotFoundException e) {
-              // TODO Auto-generated catch block
-              e.printStackTrace();
-            }
           
-          }
         }
       }
 //      if(findDeclaration(findMe)extracTypeInfo(node) == null){

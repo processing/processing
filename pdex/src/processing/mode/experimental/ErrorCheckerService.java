@@ -496,6 +496,10 @@ public class ErrorCheckerService implements Runnable{
     // System.out.println("Compilecheck, Done.");
   }
   
+  public URLClassLoader getSketchClassLoader() {
+    return classLoader;
+  }
+
   /**
    * Processes import statements to obtain classpaths of contributed
    * libraries. This would be needed for compilation check. Also, adds
