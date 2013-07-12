@@ -32,16 +32,17 @@ public class ImportStatement {
 	/**
 	 * Ex: processing.opengl.*, java.util.* 
 	 */
-	String importName;
-	/**
+	private String importName;	
+
+  /**
 	 * Which tab does it belong to?
 	 */
-	int tab;
+  private int tab;
 
 	/**
 	 * Line number(pde code) of the import
 	 */
-	int lineNumber;
+  private int lineNumber;
 
 	/**
 	 * 
@@ -54,4 +55,16 @@ public class ImportStatement {
 		this.tab = tab;
 		this.lineNumber = lineNumber;
 	}
+	
+	public String getImportName() {
+    return importName;
+  }
+
+  public int getTab() {
+    return tab;
+  }
+
+  public int getLineNumber() {
+    return lineNumber;
+  }
 }

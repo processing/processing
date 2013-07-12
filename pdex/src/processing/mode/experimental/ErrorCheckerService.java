@@ -150,7 +150,7 @@ public class ErrorCheckerService implements Runnable{
    * Stores the current import statements in the program. Used to compare for
    * changed import statements and update classpath if needed.
    */
-  protected ArrayList<ImportStatement> programImports;
+  private ArrayList<ImportStatement> programImports;
 
   /**
    * List of imports when sketch was last checked. Used for checking for
@@ -513,7 +513,7 @@ public class ErrorCheckerService implements Runnable{
     String entry = "";
     boolean codeFolderChecked = false;
     for (ImportStatement impstat : programImports) {
-      String item = impstat.importName;
+      String item = impstat.getImportName();
       int dot = item.lastIndexOf('.');
       entry = (dot == -1) ? item : item.substring(0, dot);
 
@@ -557,9 +557,9 @@ public class ErrorCheckerService implements Runnable{
               System.err.println("Experimental Mode: Yikes! Can't find \""
                   + entry
                   + "\" library! Line: "
-                  + impstat.lineNumber
+                  + impstat.getLineNumber()
                   + " in tab: "
-                  + editor.getSketch().getCode(impstat.tab)
+                  + editor.getSketch().getCode(impstat.getTab())
                       .getPrettyName());
               System.out
                   .println("Please make sure that the library is present in <sketchbook "
@@ -584,9 +584,9 @@ public class ErrorCheckerService implements Runnable{
             System.err.println("Experimental Mode: Yikes! Can't find \""
                 + entry
                 + "\" library! Line: "
-                + impstat.lineNumber
+                + impstat.getLineNumber()
                 + " in tab: "
-                + editor.getSketch().getCode(impstat.tab)
+                + editor.getSketch().getCode(impstat.getTab())
                     .getPrettyName());
             System.out
                 .println("Please make sure that the library is present in <sketchbook "
@@ -772,7 +772,7 @@ public class ErrorCheckerService implements Runnable{
         ImportStatement is = programImports.get(x);
         // System.out.println(is.importName + ", " + is.tab + ", "
         // + is.lineNumber);
-        return new int[] { is.tab, is.lineNumber };
+        return new int[] { is.getTab(), is.getLineNumber() };
       } else {
 
         // Some seriously ugly stray error, just can't find the source
@@ -858,7 +858,7 @@ public class ErrorCheckerService implements Runnable{
         ImportStatement is = programImports.get(x);
         // System.out.println(is.importName + ", " + is.tab + ", "
         // + is.lineNumber);
-        return new int[] { is.tab, is.lineNumber };
+        return new int[] { is.getTab(), is.getLineNumber() };
       } else {
 
         // Some seriously ugly stray error, just can't find the source
@@ -1181,8 +1181,8 @@ public class ErrorCheckerService implements Runnable{
       previousImports = programImports;
     } else {
       for (int i = 0; i < programImports.size(); i++) {
-        if (!programImports.get(i).importName.equals(previousImports
-            .get(i).importName)) {
+        if (!programImports.get(i).getImportName().equals(previousImports
+            .get(i).getImportName())) {
           // System.out.println(2);
           loadCompClass = true;
           previousImports = programImports;
@@ -1313,5 +1313,9 @@ public class ErrorCheckerService implements Runnable{
 
   public DebugEditor getEditor() {
     return editor;
+  }
+  
+  public ArrayList<ImportStatement> getProgramImports() {
+    return programImports;
   }
 }

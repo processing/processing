@@ -272,6 +272,9 @@ public class ASTGenerator {
 
   private ClassPathFactory factory;
 
+  /**
+   * Used for searching for package declaration of a class 
+   */
   private ClassPath classPath;
 
   private JFrame jdocWindow;
@@ -563,6 +566,7 @@ public class ASTGenerator {
     case ASTNode.FIELD_ACCESS:
       FieldAccess fa = (FieldAccess) astNode;
       if (fa.getExpression() == null) {
+        // Local code or belongs to super class
         System.out.println("FA,Not implemented.");
         return null;
       } else { 
@@ -578,6 +582,7 @@ public class ASTGenerator {
           }
           System.out.println("FA, SN Type " + getNodeAsString(stp));
           scopeParent = definedIn3rdPartyClass(stp.getName().toString(), "THIS");
+          
         } else {
           scopeParent = resolveExpression3rdParty(nearestNode,
                                                   fa.getExpression(), noCompare);
@@ -588,6 +593,7 @@ public class ASTGenerator {
     case ASTNode.METHOD_INVOCATION:
       MethodInvocation mi = (MethodInvocation) astNode;
       if (mi.getExpression() == null) {
+        //Local code or belongs to super class
         System.out.println("MI,Not implemented.");
         return null;
       } else { 
@@ -1001,6 +1007,7 @@ public class ASTGenerator {
       System.out.println("In GMFT(), couldn't find class: " + typeName);
       return candidates;
     }
+    // TODO: This method is getting redundant
     //TODO: Multiple matched classes? What about 'em?
     String matchedClass = resources[0];
     matchedClass = matchedClass.substring(0, matchedClass.length() - 6);
@@ -1138,6 +1145,14 @@ public class ASTGenerator {
     return null;
   }
   
+  private Class getClassIfExists(String className){
+    ArrayList<ImportStatement> imports = errorCheckerService.getProgramImports();
+    for (ImportStatement impS : imports) {
+      //impS.
+    }
+    return null;
+  }
+  
   public ClassMember definedIn3rdPartyClass(String className,String memberName){
     RegExpResourceFilter regExpResourceFilter;
     regExpResourceFilter = new RegExpResourceFilter(".*", className + ".class");
@@ -1194,9 +1209,6 @@ public class ASTGenerator {
          return new ClassMember(td.getMethods()[i]);
       }
       return null;
-    }
-    else if (tehClass.getASTNode() instanceof FieldDeclaration){
-      System.out.println(((FieldDeclaration)tehClass.getASTNode()).getType());
     }
     
     Class probableClass = null;
