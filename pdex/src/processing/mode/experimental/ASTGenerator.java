@@ -634,6 +634,12 @@ public class ASTGenerator {
       }
     case ASTNode.QUALIFIED_NAME:
       QualifiedName qn = (QualifiedName) astNode;
+      ASTNode temp2 = findDeclaration2(qn.getName(), nearestNode);
+      if(temp2 instanceof FieldDeclaration){
+        // field is locally defined
+        System.out.println(qn.getName() + " was found locally," + getNodeAsString(extracTypeInfo(temp2)));
+        return new ClassMember(extracTypeInfo(temp2));
+      }
       if (qn.getQualifier() == null) {
         System.out.println("MI,Not implemented.");
         return null;
