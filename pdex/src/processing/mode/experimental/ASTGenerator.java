@@ -563,8 +563,16 @@ public class ASTGenerator {
     if(astNode instanceof SimpleName){
       ASTNode decl = findDeclaration2(((SimpleName)astNode),nearestNode);
       if(decl != null){
+        // see if locally defined
         System.out.println(getNodeAsString(astNode)+" found decl -> " + getNodeAsString(decl));
         return new ClassMember(extracTypeInfo(decl));
+      }
+      else {
+        // or in a predefined class?
+        Class tehClass = findClassIfExists(((SimpleName) astNode).toString());
+        if (tehClass != null) {
+          return new ClassMember(tehClass);
+        }
       }
       astNode = astNode.getParent();
     }
@@ -585,6 +593,7 @@ public class ASTGenerator {
              * System.out.println(), or maybe belonging to super class, etc.
              */
             System.out.println("resolve 3rd par, Can't resolve " + fa.getExpression());
+            
             return null;
           }
           System.out.println("FA, SN Type " + getNodeAsString(stp));
@@ -657,6 +666,11 @@ public class ASTGenerator {
             /*The type wasn't found in local code, so it might be something like
              * System.out.println(), or maybe belonging to super class, etc.
              */
+            Class tehClass = findClassIfExists(qn.getQualifier().toString());
+            if (tehClass != null) {
+              return definedIn3rdPartyClass(new ClassMember(tehClass), qn
+                  .getName().toString());
+            }
             System.out.println("resolve 3rd par, Can't resolve " + qn.getQualifier());
             return null;
           }
@@ -1268,16 +1282,23 @@ public class ASTGenerator {
           System.out.println(tehClass.getName() + " located.");
           return tehClass;
         }
-//        else if(impS.endsWith(className)){
-//          tehClass = Class.forName(impS, false, errorCheckerService.getSketchClassLoader());                    
-//          System.out.println(tehClass.getName() + " located.");
-//          return tehClass;
-//        }
         
       } catch (ClassNotFoundException e) {
         // it does not exist on the classpath
         System.out.println("Doesn't exist in package: " + impS);
       }
+    }
+    
+    // And finally, the daddy
+    String daddy = "java.lang." + className;
+    try {
+      tehClass = Class.forName(daddy, false,
+                               errorCheckerService.getSketchClassLoader());
+      System.out.println(tehClass.getName() + " located.");
+      return tehClass;
+    } catch (ClassNotFoundException e) {
+      // it does not exist on the classpath
+      System.out.println("Doesn't exist in package: " + daddy);
     }
     return tehClass;
   }
@@ -2512,6 +2533,8 @@ public class ASTGenerator {
 
         SimpleType stp = extracTypeInfo(findDeclaration2((qn.getQualifier()),
                                                          alternateParent));
+        if(stp == null)
+          return null;
         declaringClass = findDeclaration2(stp.getName(), alternateParent);
         System.out.println(qn.getQualifier() + "->" + qn.getName());
         System.out.println("QN decl class: " + getNodeAsString(declaringClass));
@@ -2909,6 +2932,7 @@ public class ASTGenerator {
     case ASTNode.VARIABLE_DECLARATION_FRAGMENT:
       return extracTypeInfo(node.getParent());
     }
+    System.out.println("Unknown type info request " + getNodeAsString(node));
     return null;
   }
 
