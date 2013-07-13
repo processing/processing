@@ -16,6 +16,12 @@ X   https://github.com/processing/processing/issues/1852
 
 
 _ implement version of Table that takes a dictionary file
+_ addRow() is not efficient, probably need to do the doubling
+_   or have a setIncrement() function?
+_   it would default to 1 on tables loaded from a file
+_   and default to doubling when created with "new Table"
+_ constructing table from an iterator is missing
+_   https://github.com/processing/processing/issues/1956
 _ finish PFont.getShape() implementation
 _   needs to have a way to set width/height properly
 _   draw(s) doesn't work on the returned PShape

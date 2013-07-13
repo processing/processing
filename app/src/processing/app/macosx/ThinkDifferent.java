@@ -81,6 +81,8 @@ public class ThinkDifferent implements ApplicationListener {
     // Only available since Java for Mac OS X 10.6 Update 1, and
     // Java for Mac OS X 10.5 Update 6, so need to load this dynamically
     if (PApplet.javaVersion <= 1.6f) {  // doesn't work on Oracle's Java
+//    if (System.getProperty("java.vendor").contains("Apple") ||
+//        Base.isUsableOracleJava()) {
       try {
         // com.apple.eawt.Application.setDefaultMenuBar(JMenuBar)
         Class<?> appClass = Application.class;
@@ -101,7 +103,8 @@ public class ThinkDifferent implements ApplicationListener {
       }
     } else {
       // http://java.net/jira/browse/MACOSX_PORT-775?page=com.atlassian.jira.plugin.system.issuetabpanels%3Aall-tabpanel
-      System.out.println("Skipping default menu bar due to apparent Oracle Java bug.");
+      System.err.println("Skipping default menu bar due to Oracle Java 7 bug:");
+      System.err.println("http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=8007267");
     }
   }
 

@@ -27,6 +27,8 @@ import java.awt.FontFormatException;
 import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.datatransfer.Clipboard;
 import java.awt.event.ActionEvent;
@@ -38,6 +40,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
@@ -216,24 +219,58 @@ public class Toolkit {
     return awtToolkit.getSystemClipboard();
   }
 
+  
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
-  static Boolean retinaProp;
+
+  static Boolean highResProp;
+
 
   static public boolean highResDisplay() {
+    if (highResProp == null) {
+      highResProp = checkRetina();
+    }
+    return highResProp;
+  }
+  
+  
+  static private boolean checkRetina() {
     if (Base.isMacOS()) {
-      // This should probably be reset each time there's a display change.
-      // A 5-minute search didn't turn up any such event in the Java API.
-      // Also, should we use the Toolkit associated with the editor window?
-      if (retinaProp == null) {
+    // This should probably be reset each time there's a display change.
+    // A 5-minute search didn't turn up any such event in the Java API.
+    // Also, should we use the Toolkit associated with the editor window?
+//      String javaVendor = System.getProperty("java.vendor");
+//      if (javaVendor.contains("Apple")) {
+      if (System.getProperty("java.vendor").contains("Apple")) {
         Float prop = (Float)
           awtToolkit.getDesktopProperty("apple.awt.contentScaleFactor");
         if (prop != null) {
-          retinaProp = prop == 2;
-        } else {
-          retinaProp = false;
+          return prop == 2;
         }
+//      } else if (javaVendor.contains("Oracle")) {
+//        String version = System.getProperty("java.version");  // 1.7.0_40
+//        String[] m = PApplet.match(version, "1.(\\d).*_(\\d+)");
+//        
+//        // Make sure this is Oracle Java 7u40 or later
+//        if (m != null && 
+//            PApplet.parseInt(m[1]) >= 7 && 
+//            PApplet.parseInt(m[1]) >= 40) {
+      } else if (Base.isUsableOracleJava()) {
+        GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice device = env.getDefaultScreenDevice();
+
+        try {
+          Field field = device.getClass().getDeclaredField("scale");
+          if (field != null) {
+            field.setAccessible(true);
+            Object scale = field.get(device);
+
+            if (scale instanceof Integer && ((Integer)scale).intValue() == 2) {
+              return true;
+            }
+          }
+        } catch (Exception ignore) { } 
       }
-      return retinaProp;
     }
     return false;
   }

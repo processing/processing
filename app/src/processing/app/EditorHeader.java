@@ -259,8 +259,13 @@ public class EditorHeader extends JComponent {
     if (Toolkit.highResDisplay()) {
       // scale everything 2x, will be scaled down when drawn to the screen
       g2.scale(2, 2);
+      if (Base.isUsableOracleJava()) {
+        // Oracle Java looks better with anti-aliasing turned on
+        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                            RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+      }
     } else {
-      // don't anti-alias text in retina mode
+      // don't anti-alias text in retina mode w/ Apple Java
       g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
                           RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
     }

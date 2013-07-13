@@ -1640,6 +1640,29 @@ public class Base {
     //return PApplet.platform == PConstants.MACOSX;
     return System.getProperty("os.name").indexOf("Mac") != -1; //$NON-NLS-1$ //$NON-NLS-2$
   }
+  
+  
+  static private Boolean usableOracleJava;
+  
+  // Make sure this is Oracle Java 7u40 or later. This is temporary.
+  static public boolean isUsableOracleJava() {
+    if (usableOracleJava == null) {
+      usableOracleJava = false;
+      
+      if (Base.isMacOS() && 
+          System.getProperty("java.vendor").contains("Oracle")) {
+        String version = System.getProperty("java.version");  // 1.7.0_40
+        String[] m = PApplet.match(version, "1.(\\d).*_(\\d+)");
+      
+        if (m != null && 
+          PApplet.parseInt(m[1]) >= 7 && 
+          PApplet.parseInt(m[2]) >= 40) {
+          usableOracleJava = true;
+        }
+      }
+    }
+    return usableOracleJava;
+  }
 
 
   /**
@@ -2316,13 +2339,20 @@ public class Base {
       // Path may have URL encoding, so remove it
       String decodedPath = PApplet.urlDecode(path);
       // The .jar file will be in the lib folder
-      File libFolder = new File(decodedPath).getParentFile();
-      if (libFolder.getName().equals("lib")) {
-        // The main Processing installation directory
-        processingRoot = libFolder.getParentFile();
-      } else {
-        Base.log("Could not find lib in " +
-          libFolder.getAbsolutePath() + ", switching to user.dir");
+      File jarFolder = new File(decodedPath).getParentFile();
+      if (jarFolder.getName().equals("lib")) {   
+        // The main Processing installation directory.
+        // This works for Windows, Linux, and Apple's Java 6 on OS X. 
+        processingRoot = jarFolder.getParentFile();
+      } else if (Base.isMacOS()) {
+        // This works for Java 7 on OS X.
+        processingRoot = jarFolder;
+      }
+      if (processingRoot == null || !processingRoot.exists()) {
+        // Try working directory instead (user.dir, different from user.home)
+        Base.log("Could not find lib folder via " + 
+                 jarFolder.getAbsolutePath() + 
+                 ", switching to user.dir");
         processingRoot = new File(System.getProperty("user.dir"));
       }
     }

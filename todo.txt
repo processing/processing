@@ -7,10 +7,15 @@ X   https://github.com/processing/processing/issues/1681
 X   Fix from Github user hamzaissa
 X selectInput() in exported OS X sketch treats .app package as a folder
 X   https://github.com/processing/processing/issues/1959
+X waiting on retina support for JDK 7
+o   b86 supposed to have some support (not available yet)
+o     http://jdk8.java.net/download.html
 
 
 high
-_ Present Mode trouble on Windows 7 (64-bit)? 
+_ libraries need to support multiple categories
+_   https://github.com/processing/processing/issues/1970
+_ Present Mode trouble on Windows 7 (64-bit) completely broken
 _   https://github.com/processing/processing/issues/1955
 _ Add "Processing Foundation" to the Help menu
 _   https://github.com/processing/processing/issues/1908
@@ -791,14 +796,17 @@ DIST / Mac OS X
 _ package Java 7 version of the app
 _   docs.oracle.com/javase/7/docs/technotes/guides/jweb/packagingAppsForMac.html
 _   http://www.intransitione.com/blog/take-java-to-app-store/
+X   retina support http://bugs.sun.com/view_bug.do?bug_id=8009754
+_   useful retina digging/findings for Oracle Java
+_     http://bulenkov.com/2013/06/23/retina-support-in-oracle-jdk-1-7/
+_   7u40 target release is "late August"
+_     http://openjdk.java.net/projects/jdk7u/releases/7u40.html
+_   but default menu bar is still broken
+_     http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=8007267
 _ blank sketch opened even if another opened by double-click
 _   add a 150 ms or more lag before opening the untitled window (on os x)
 _   https://github.com/processing/processing/issues/218
 _ OS X not opening a sketch at all on pde double-click? (though opening the app)
-_ waiting on retina support for JDK 7
-_   http://bugs.sun.com/view_bug.do?bug_id=8009754
-_   b86 supposed to have some support (not available yet)
-_     http://jdk8.java.net/download.html
 _ "Are you sure you want to quit?" when switching modes on Oracle JVM
 _   because it's OS X, but menubar isn't available
 _ LWJGL forum discussion 
