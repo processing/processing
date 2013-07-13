@@ -1284,36 +1284,6 @@ public class ASTGenerator {
     return null;
   }
   
-//  private ClassMember loadClass(String className){
-//    RegExpResourceFilter regExpResourceFilter;
-//    regExpResourceFilter = new RegExpResourceFilter(".*", className + ".class");
-//    String[] resources = classPath.findResources("", regExpResourceFilter);
-//    for (String cn : resources) {
-//      System.out.println("-> " + cn);
-//    }
-//    if (resources.length == 0) {
-//      System.out.println("In defIn3rdPar(), couldn't find class: " + className);
-//      return null;
-//    }
-//    //TODO: Multiple matched classes? What about 'em?
-//    String matchedClass = resources[0];
-//    matchedClass = matchedClass.substring(0, matchedClass.length() - 6);
-//    matchedClass = matchedClass.replace('/', '.');
-//    System.out.println("In defIn3rdPar(), Matched class: " + matchedClass);
-//    
-//    System.out.println("Trying to load class " + className);
-//    try {
-//      Class<?> probableClass = Class.forName(className, false,
-//                                             errorCheckerService.classLoader);
-//        return new ClassMember(probableClass); 
-//    } catch (ClassNotFoundException e) {
-//      
-//      System.out.println("Couldn't load " + className);
-//      e.printStackTrace();
-//    }
-//    return null;
-//  }
-
   public void updateJavaDoc(final CompletionCandidate candidate) {
     //TODO: Work on this later.
     return;
