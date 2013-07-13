@@ -635,7 +635,15 @@ public class ASTGenerator {
           ASTNode typeDec = findDeclaration2(stp.getName(),nearestNode);
           if(typeDec == null){
             System.out.println(stp.getName() + " couldn't be found locally..");
-            return new ClassMember(findClassIfExists(stp.getName().toString()));
+            
+            Class tehClass = findClassIfExists(stp.getName().toString());
+            if (tehClass != null) {
+              // note how similar thing is called on line 690. Check check.
+              return definedIn3rdPartyClass(new ClassMember(tehClass), qn
+                  .getName().toString());
+            }
+            System.out.println("QN resolve 3rd par, Can't resolve " + qn.getQualifier());
+            return null;
           }
           return new ClassMember(typeDec);
         } else {
