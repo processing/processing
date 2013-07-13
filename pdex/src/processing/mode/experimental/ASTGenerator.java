@@ -511,7 +511,7 @@ public class ASTGenerator {
       astNode = astNode.getParent();
     }
     switch (astNode.getNodeType()) {
-    
+    //TODO: Notice the redundancy in the 3 cases, you can simplify things even more.
     case ASTNode.FIELD_ACCESS:
       FieldAccess fa = (FieldAccess) astNode;
       if (fa.getExpression() == null) {
@@ -526,7 +526,14 @@ public class ASTGenerator {
             /*The type wasn't found in local code, so it might be something like
              * System.out.println(), or maybe belonging to super class, etc.
              */
-            System.out.println("resolve 3rd par, Can't resolve " + fa.getExpression());
+            Class tehClass = findClassIfExists(((SimpleName)fa.getExpression()).toString());
+            if (tehClass != null) {
+              // Method Expression is a simple name and wasn't located locally, but found in a class
+              // so look for method in this class.
+              return definedIn3rdPartyClass(new ClassMember(tehClass), fa
+                  .getName().toString());
+            }
+            System.out.println("FA resolve 3rd par, Can't resolve " + fa.getExpression());
             
             return null;
           }
@@ -558,9 +565,16 @@ public class ASTGenerator {
                                                 nearestNode));
           if(stp == null){
             /*The type wasn't found in local code, so it might be something like
-             * System.out.println(), or maybe belonging to super class, etc.
+             * System.console()., or maybe belonging to super class, etc.
              */
-            System.out.println("resolve 3rd par, Can't resolve " + mi.getExpression());
+            Class tehClass = findClassIfExists(((SimpleName)mi.getExpression()).toString());
+            if (tehClass != null) {
+              // Method Expression is a simple name and wasn't located locally, but found in a class
+              // so look for method in this class.
+              return definedIn3rdPartyClass(new ClassMember(tehClass), mi
+                  .getName().toString());
+            }
+            System.out.println("MI resolve 3rd par, Can't resolve " + mi.getExpression());
             return null;
           }
           System.out.println("MI, SN Type " + getNodeAsString(stp));
@@ -606,7 +620,7 @@ public class ASTGenerator {
               return definedIn3rdPartyClass(new ClassMember(tehClass), qn
                   .getName().toString());
             }
-            System.out.println("resolve 3rd par, Can't resolve " + qn.getQualifier());
+            System.out.println("QN resolve 3rd par, Can't resolve " + qn.getQualifier());
             return null;
           }
           System.out.println("QN, SN Local Type " + getNodeAsString(stp));
