@@ -581,7 +581,14 @@ public class ASTGenerator {
           ASTNode typeDec = findDeclaration2(stp.getName(),nearestNode);
           if(typeDec == null){
             System.out.println(stp.getName() + " couldn't be found locally..");
-            return new ClassMember(findClassIfExists(stp.getName().toString()));
+            Class tehClass = findClassIfExists(stp.getName().toString());
+            if (tehClass != null) {
+              // Method Expression is a simple name and wasn't located locally, but found in a class
+              // so look for method in this class.
+              return definedIn3rdPartyClass(new ClassMember(tehClass), mi
+                  .getName().toString());
+            }
+            //return new ClassMember(findClassIfExists(stp.getName().toString()));
           }
           //scopeParent = definedIn3rdPartyClass(stp.getName().toString(), "THIS");
           return new ClassMember(typeDec);
@@ -653,7 +660,7 @@ public class ASTGenerator {
    * @param expression
    * @return
    */
-  public static ASTNode resolveChildExpression(ASTNode expression) {
+  public static ASTNode getChildExpression(ASTNode expression) {
 //    ASTNode anode = null;
     if (expression instanceof SimpleName) {
       return expression;
@@ -664,12 +671,12 @@ public class ASTGenerator {
     }else if (expression instanceof MethodInvocation) {
       return ((MethodInvocation) expression).getName();
     }
-    System.out.println(" resolveChildExpression returning NULL for "
+    System.out.println(" getChildExpression returning NULL for "
         + getNodeAsString(expression));
     return null;
   }
   
-  public static ASTNode resolveParentExpression(ASTNode expression) {
+  public static ASTNode getParentExpression(ASTNode expression) {
 //  ASTNode anode = null;
   if (expression instanceof SimpleName) {
     return expression;
@@ -680,7 +687,7 @@ public class ASTGenerator {
   } else if (expression instanceof MethodInvocation) {
     return ((MethodInvocation) expression).getExpression();
   }
-  System.out.println("resolveParentExpression returning NULL for "
+  System.out.println("getParentExpression returning NULL for "
       + getNodeAsString(expression));
   return null;
 }
@@ -823,14 +830,14 @@ public class ASTGenerator {
           // Have to resolve it by carefully traversing AST of testNode
           System.err.println("Complex expression " + getNodeAsString(testnode));
           System.out.println("candidates empty");
-          String childExpr = resolveChildExpression(testnode)
+          String childExpr = getChildExpression(testnode)
               .toString();
-          System.out.println("Parent expression : " + resolveParentExpression(testnode));
+          System.out.println("Parent expression : " + getParentExpression(testnode));
           System.out.println("Child expression : " + childExpr);
           
           if(!noCompare){
             System.out.println("Original testnode " + getNodeAsString(testnode));
-            testnode = resolveParentExpression(testnode);
+            testnode = getParentExpression(testnode);
             System.out.println("Corrected testnode " + getNodeAsString(testnode));
           }
           ClassMember expr = resolveExpression3rdParty(nearestNode, testnode, noCompare);
@@ -1089,7 +1096,6 @@ public class ASTGenerator {
             label.append(",");
         }
         label.append(")");
-        
         if (noCompare) {
           candidates.add(new CompletionCandidate(method));
         }
@@ -1125,14 +1131,10 @@ public class ASTGenerator {
   private Class findClassIfExists(String className){
     Class tehClass = null;
     // First, see if the classname is a fully qualified name and loads straightaway
-    try {      
-      tehClass = Class.forName(className, false,
-                                     errorCheckerService
-                                         .getSketchClassLoader());
+    tehClass = loadClass(className);
+    if(tehClass instanceof Class){
       System.out.println(tehClass.getName() + " located straightaway");
       return tehClass;
-    } catch (ClassNotFoundException e) {
-      //System.out.println("Doesn't exist in package: ");
     }
     
     System.out.println("Looking in the classloader for " + className);
@@ -1141,66 +1143,66 @@ public class ASTGenerator {
 
     for (ImportStatement impS : imports) {
       String temp = impS.getPackageName();
-      try {        
-        if(temp.endsWith("*")){
-          temp = temp.substring(0, temp.length()-1) + className;
+
+      if (temp.endsWith("*")) {
+        temp = temp.substring(0, temp.length() - 1) + className;
+      } else {
+        int x = temp.lastIndexOf('.');
+        if (temp.substring(x).equals(className)) {
+          // Well, we've found the class.
         }
-        else {
-          int x = temp.lastIndexOf('.');
-          if(temp.substring(x).equals(className)){
-            // Well, we've found the class.
-          }
-        }
-        tehClass = Class.forName(temp, false,
-                                       errorCheckerService
-                                           .getSketchClassLoader());
+      }
+      tehClass = loadClass(temp);
+      if (tehClass instanceof Class) {
         System.out.println(tehClass.getName() + " located.");
         return tehClass;
-      } catch (ClassNotFoundException e) {
-        // it does not exist on the classpath
-        System.out.println("Doesn't exist in package: " + impS.getImportName());
       }
+
+      System.out.println("Doesn't exist in package: " + impS.getImportName());
+
     }
     
     PdePreprocessor p = new PdePreprocessor(null);
     for (String impS : p.getCoreImports()) {
-      try {        
-       
-        tehClass = Class.forName(impS.substring(0,impS.length()-1) + className, false,
-                                       errorCheckerService
-                                           .getSketchClassLoader());
+      tehClass = loadClass(impS.substring(0,impS.length()-1) + className);
+      if (tehClass instanceof Class) {
         System.out.println(tehClass.getName() + " located.");
         return tehClass;
-      } catch (ClassNotFoundException e) {
-        // it does not exist on the classpath
-        System.out.println("Doesn't exist in package: " + impS);
       }
+      System.out.println("Doesn't exist in package: " + impS);
     }
     
     for (String impS : p.getDefaultImports()) {
-      try {        
-        if(className.equals(impS) || impS.endsWith(className)){
-          tehClass = Class.forName(impS, false, errorCheckerService.getSketchClassLoader());                    
+      if(className.equals(impS) || impS.endsWith(className)){
+        tehClass = loadClass(impS);                    
+        if (tehClass instanceof Class) {
           System.out.println(tehClass.getName() + " located.");
           return tehClass;
         }
-        
-      } catch (ClassNotFoundException e) {
-        // it does not exist on the classpath
         System.out.println("Doesn't exist in package: " + impS);
       }
     }
     
     // And finally, the daddy
     String daddy = "java.lang." + className;
-    try {
-      tehClass = Class.forName(daddy, false,
-                               errorCheckerService.getSketchClassLoader());
+    tehClass = loadClass(daddy);                    
+    if (tehClass instanceof Class) {
       System.out.println(tehClass.getName() + " located.");
       return tehClass;
+    }
+    System.out.println("Doesn't exist in java.lang");
+    
+    return tehClass;
+  }
+  
+  private Class loadClass(String className){
+    Class tehClass = null;
+    try {      
+      tehClass = Class.forName(className, false,
+                                     errorCheckerService
+                                         .getSketchClassLoader());
     } catch (ClassNotFoundException e) {
-      // it does not exist on the classpath
-      System.out.println("Doesn't exist in package: " + daddy);
+      //System.out.println("Doesn't exist in package: ");
     }
     return tehClass;
   }
@@ -2536,7 +2538,7 @@ public class ASTGenerator {
 
     public ClassMember(Class m) {
       thisclass = m;
-      stringVal = "Class " + m.getName();
+      stringVal = "Predefined Class " + m.getName();
       classType = m.getName();
     }
 
