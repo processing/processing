@@ -21,8 +21,7 @@ x! Library CC for nested would be tricky. Need to jump from local->compiled code
  - Making very good progress here. The elegance of recurion - Hats off!
  - Many of the cases seem to have been covered, and I'm achieving more and more code unification as I'm working through the problem step by step
  - Looks almost complete now, nearly all cases covered(July 13th)
-* Scope handling? Static/non static scope? 
-x Display the type of Completion(method return type, variable type) in the popup.
+* Scope handling? Static/non static scope?
 x! Should I implement wrapper for ASTNode? - possibly needed for code completion with compiled and non-compiled code. Done.
 * Trie implementation would be lower priority, "premature optimisation is pure evil". Get all features of CC working good enough and then plan this. 
 x Differentiating between multiple statements on the same line. How to? Done with offset handling.
@@ -31,10 +30,13 @@ Finer details
 * - Multiple 3rd party classes found in various packages
 x Obj a1; a1.-> completion doesn't work before it is instantiated. Look into that. Began working again by itself. Yay!
 * printStuff(int,float,String)  - completion endings have to be appropriate. Right now it's just printStuff(,,). Cursor positioning also needs to be taken care of. Argument list as tooltip if possible?
+x Cursor positioning should be after the first ( if arguments present, else after ()
+* Display the type of Completion(method return type, variable type) in the popup.
+ - facing some issues for local types
 * Sorted list of completion candidates - fields, then methods. It's unsorted presently.
 *! p5 enhanced stuff in java, how does it fit in with everything else, and edge cases. Possibly add support for them. Offset handling improvements should help here.
-* Reflection API - getMethods vs getDeclaredMethods.
-* Need to add offset correction to ASTGenerator and its lookup methods. Or leave it for later? All set to implement
+x Reflection API - getMethods vs getDeclaredMethods. declared.
+x Need to add offset correction to ASTGenerator and its lookup methods. Or leave it for later? All set to implement
 
 Completion List
 x Dynamically update the list instead of recreating on every keystroke(new list data, pos, etc.)

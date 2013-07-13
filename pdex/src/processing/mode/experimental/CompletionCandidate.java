@@ -51,7 +51,9 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
         cstr.append(",");
       }
     }
-
+    if(method.getParameterTypes().length == 1) {
+      cstr.append(' ');
+    }
     label.append(")");
     label.append(" : "+method.getReturnType().getSimpleName());
     cstr.append(")");
@@ -87,6 +89,9 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
         label.append(",");
         cstr.append(",");
       }
+    }
+    if(params.size() == 1) {
+      cstr.append(' ');
     }
     label.append(")");
     label.append(" : "+method.getReturnType2());

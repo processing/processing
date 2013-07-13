@@ -107,8 +107,19 @@ public class CompletionPanel {
         System.err.println(subWord+" <= subword,Inserting suggestion=> " + selectedSuggestion);
         textarea.getDocument().insertString(insertionPosition,
                                             selectedSuggestion, null);
-        textarea.setCaretPosition(insertionPosition
-            + selectedSuggestion.length());
+        if(selectedSuggestion.endsWith(")"))
+        {
+          if(!selectedSuggestion.endsWith("()")){
+            int x = selectedSuggestion.indexOf('(');
+            if(x != -1){
+              //System.out.println("X................... " + x);
+              textarea.setCaretPosition(insertionPosition + (x+1));
+            }
+          }
+        }
+        else {
+          textarea.setCaretPosition(insertionPosition + selectedSuggestion.length());
+        }
         return true;
       } catch (BadLocationException e1) {
         e1.printStackTrace();

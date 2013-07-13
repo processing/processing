@@ -242,14 +242,14 @@ public class ASTGenerator {
 						return;
           jtree.setModel(new DefaultTreeModel(codeTree));
           ((DefaultTreeModel) jtree.getModel()).reload();
-          if (!frame2.isVisible()) {
-            frame2.setVisible(true);
-          }
-          if (!frameAutoComp.isVisible()) {
-
-            frameAutoComp.setVisible(true);
-            
-          }
+//          if (!frame2.isVisible()) {
+//            frame2.setVisible(true);
+//          }
+//          if (!frameAutoComp.isVisible()) {
+//
+//            frameAutoComp.setVisible(true);
+//            
+//          }
 //          if (!jdocWindow.isVisible()) {
 //            long t = System.currentTimeMillis();
 //            loadJars();
@@ -764,7 +764,7 @@ public class ASTGenerator {
           
           // Bottom up traversal of the AST to look for possible definitions at 
           // higher levels.
-          nearestNode = nearestNode.getParent();
+          //nearestNode = nearestNode.getParent();
           while (nearestNode != null) {
             // If the current class has a super class, look inside it for
             // definitions.
@@ -991,11 +991,11 @@ public class ASTGenerator {
         DefaultTableModel tm = new DefaultTableModel(
                                                      candi,
                                                      new String[] { "Suggestions" });
-        tableAuto.setModel(tm);
-        tableAuto.validate();
-        tableAuto.repaint();
-//        CompletionCandidate[] candidatesArray = candidates
-//            .toArray(new CompletionCandidate[candidates.size()]);
+        if(tableAuto.isVisible()){
+          tableAuto.setModel(tm);
+          tableAuto.validate();
+          tableAuto.repaint();
+        }
         errorCheckerService.getEditor().textArea()
             .showSuggestion(defListModel,word);
       }
