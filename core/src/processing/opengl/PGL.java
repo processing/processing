@@ -1121,16 +1121,16 @@ public class PGL {
 
     // call (gl)finish() only if the rendering of each frame is taking too long,
     // to make sure that commands are not accumulating in the GL command queue.
-    fcount += 1;
-    int m = pg.parent.millis();
-    if (m - lastm > 1000 * fint) {
-      currentFps = (float)(fcount) / fint;
-      fcount = 0;
-      lastm = m;
-    }
-    if (currentFps < targetFps/2) {
-      finish();
-    }
+//    fcount += 1;
+//    int m = pg.parent.millis();
+//    if (m - lastm > 1000 * fint) {
+//      currentFps = (float)(fcount) / fint;
+//      fcount = 0;
+//      lastm = m;
+//    }
+//    if (currentFps < targetFps/2) {
+//      finish();
+//    }
   }
 
 
@@ -1492,17 +1492,17 @@ public class PGL {
   }
 
 
-  protected void drawTexture(int target, int id, int width, int height,
-                             int X0, int Y0, int X1, int Y1) {
+  public void drawTexture(int target, int id, int width, int height,
+                          int X0, int Y0, int X1, int Y1) {
     drawTexture(target, id, width, height, width, height,
                             X0, Y0, X1, Y1, X0, Y0, X1, Y1);
   }
 
 
-  protected void drawTexture(int target, int id,
-                             int texW, int texH, int scrW, int scrH,
-                             int texX0, int texY0, int texX1, int texY1,
-                             int scrX0, int scrY0, int scrX1, int scrY1) {
+  public void drawTexture(int target, int id,
+                          int texW, int texH, int scrW, int scrH,
+                          int texX0, int texY0, int texX1, int texY1,
+                          int scrX0, int scrY0, int scrX1, int scrY1) {
     if (target == TEXTURE_2D) {
       drawTexture2D(id, texW, texH, scrW, scrH,
                     texX0, texY0, texX1, texY1,

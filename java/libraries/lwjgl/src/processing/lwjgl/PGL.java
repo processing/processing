@@ -1072,15 +1072,15 @@ public class PGL extends processing.opengl.PGL {
   }
 
 
-  protected void drawTexture(int target, int id, int width, int height,
-                             int X0, int Y0, int X1, int Y1) {
+  public void drawTexture(int target, int id, int width, int height,
+                          int X0, int Y0, int X1, int Y1) {
     drawTexture(target, id, width, height, X0, Y0, X1, Y1, X0, Y0, X1, Y1);
   }
 
 
-  protected void drawTexture(int target, int id, int width, int height,
-                             int texX0, int texY0, int texX1, int texY1,
-                             int scrX0, int scrY0, int scrX1, int scrY1) {
+  public void drawTexture(int target, int id, int width, int height,
+                          int texX0, int texY0, int texX1, int texY1,
+                          int scrX0, int scrY0, int scrX1, int scrY1) {
     if (target == TEXTURE_2D) {
       drawTexture2D(id, width, height,
                     texX0, texY0, texX1, texY1,
