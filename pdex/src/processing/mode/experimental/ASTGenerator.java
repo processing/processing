@@ -66,6 +66,7 @@ import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SimpleType;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.StructuralPropertyDescriptor;
+import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationExpression;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
@@ -358,48 +359,7 @@ public class ASTGenerator {
   public DefaultMutableTreeNode buildAST(CompilationUnit cu) {
     return buildAST(errorCheckerService.sourceCode, cu);
   }
-
-  public String[] checkForTypes2(ASTNode node) {
-
-    List<VariableDeclarationFragment> vdfs = null;
-    switch (node.getNodeType()) {
-    case ASTNode.TYPE_DECLARATION:
-      return new String[] { ((TypeDeclaration) node).getName().toString() };
-
-    case ASTNode.METHOD_DECLARATION:
-      String[] ret1 = new String[] { ((MethodDeclaration) node).getName()
-          .toString() };
-      return ret1;
-
-    case ASTNode.SINGLE_VARIABLE_DECLARATION:
-      return new String[] { ((SingleVariableDeclaration) node).getName()
-          .toString() };
-
-    case ASTNode.FIELD_DECLARATION:
-      vdfs = ((FieldDeclaration) node).fragments();
-      break;
-    case ASTNode.VARIABLE_DECLARATION_STATEMENT:
-      vdfs = ((VariableDeclarationStatement) node).fragments();
-      break;
-    case ASTNode.VARIABLE_DECLARATION_EXPRESSION:
-      vdfs = ((VariableDeclarationExpression) node).fragments();
-      break;
-    default:
-      break;
-    }
-
-    if (vdfs != null) {
-      String ret[] = new String[vdfs.size()];
-      int i = 0;
-      for (VariableDeclarationFragment vdf : vdfs) {
-        ret[i++] = vdf.getName().toString();
-      }
-      return ret;
-    }
-
-    return null;
-  }
-
+  
   public static CompletionCandidate[] checkForTypes(ASTNode node) {
 
     List<VariableDeclarationFragment> vdfs = null;
@@ -455,32 +415,6 @@ public class ASTGenerator {
     }
 
     return null;
-  }
-
-  @SuppressWarnings("unchecked")
-  public ArrayList<String> getNameIfType(ASTNode astnode) {
-
-    ArrayList<String> names = new ArrayList<String>();
-    List<StructuralPropertyDescriptor> sprops = astnode
-        .structuralPropertiesForType();
-    for (StructuralPropertyDescriptor sprop : sprops) {
-      ASTNode cnode = null;
-      if (!sprop.isChildListProperty()) {
-        if (astnode.getStructuralProperty(sprop) instanceof ASTNode) {
-          cnode = (ASTNode) astnode.getStructuralProperty(sprop);
-          //if(cnode)
-        }
-      } else {
-        // Childlist prop
-        List<ASTNode> nodelist = (List<ASTNode>) astnode
-            .getStructuralProperty(sprop);
-        for (ASTNode clnode : nodelist) {
-
-        }
-      }
-    }
-
-    return names;
   }
 
   /**
@@ -546,9 +480,9 @@ public class ASTGenerator {
   }
   
   /**
-   * Find the parent of the expression in a().b, this would give me the return
-   * type of a(), so that we can find all children of a() begininng with b
-   * This is the 3rd party variant, for .jar files.
+   * Finds the type of the expression in foo.bar().a().b, this would give me the
+   * type of b if it exists in return type of a(). If noCompare is true,
+   * it'll return type of a()
    * @param nearestNode
    * @param astNode
    * @return
@@ -668,6 +602,7 @@ public class ASTGenerator {
              */
             Class tehClass = findClassIfExists(qn.getQualifier().toString());
             if (tehClass != null) {
+              // note how similar thing is called on line 690. Check check.
               return definedIn3rdPartyClass(new ClassMember(tehClass), qn
                   .getName().toString());
             }
@@ -698,16 +633,6 @@ public class ASTGenerator {
     return null;
   }
   
-  private ClassMember findDeclarationInSuperClasses(ASTNode astNode){
-    while(astNode != null){
-      astNode = astNode.getParent();
-      if(astNode instanceof TypeDeclaration)
-        break;
-    }
-    
-    return null;
-  }
-
   /**
    * For a().abc.a123 this would return a123
    * 
@@ -745,16 +670,6 @@ public class ASTGenerator {
       + getNodeAsString(expression));
   return null;
 }
-
-  public static TypeDeclaration getDefiningNode(ASTNode node) {
-    ASTNode parent = node.getParent();
-    while (!(parent instanceof TypeDeclaration)) {
-      parent = parent.getParent();
-      if (parent instanceof CompilationUnit)
-        return null;
-    }
-    return (TypeDeclaration) parent;
-  }
 
   public void updatePredictions(final String word, final int line, final int lineStartNonWSOffset) {
     SwingWorker worker = new SwingWorker() {
@@ -1066,61 +981,15 @@ public class ASTGenerator {
                                                           boolean staticOnly) {
     
     ArrayList<CompletionCandidate> candidates = new ArrayList<CompletionCandidate>();
-//    RegExpResourceFilter regExpResourceFilter;
-//    regExpResourceFilter = new RegExpResourceFilter(".*", typeName + ".class");
-//    String[] resources = classPath.findResources("", regExpResourceFilter);
-//    for (String className : resources) {
-//      System.out.println("-> " + className);
-//    }
-//    if (resources.length == 0) {
-//      System.out.println("In GMFT(), couldn't find class: " + typeName);
-//      return candidates;
-//    }
-//    // TODO: This method is getting redundant
-//    //TODO: Multiple matched classes? What about 'em?
-//    String matchedClass = resources[0];
-//    matchedClass = matchedClass.substring(0, matchedClass.length() - 6);
-//    matchedClass = matchedClass.replace('/', '.');
-//    System.out.println("In GMFT(), Matched class: " + matchedClass);
     System.out.println("In GMFT(), Looking for match " + child.toString()
         + " in class " + typeName + " noCompare " + noCompare + " staticOnly "
         + staticOnly);
-
     Class<?> probableClass = findClassIfExists(typeName);
     if(probableClass == null){
       System.out.println("In GMFT(), class not found.");
       return candidates;
     }
-    for (Method method : probableClass.getMethods()) {
-      if (!Modifier.isStatic(method.getModifiers()) && staticOnly) {
-        continue;
-      }
-
-      StringBuffer label = new StringBuffer(method.getName() + "(");
-      for (int i = 0; i < method.getParameterTypes().length; i++) {
-        label.append(method.getParameterTypes()[i].getSimpleName());
-        if (i < method.getParameterTypes().length - 1)
-          label.append(",");
-      }
-      label.append(")");
-
-      if (noCompare) {
-        candidates.add(new CompletionCandidate(method));
-      } else if (label.toString().startsWith(child.toString())) {
-        candidates.add(new CompletionCandidate(method));
-      }
-    }
-    for (Field field : probableClass.getFields()) {
-      if (!Modifier.isStatic(field.getModifiers()) && staticOnly) {
-        continue;
-      }
-      if (noCompare) {
-        candidates.add(new CompletionCandidate(field));
-      } else if (field.getName().startsWith(child.toString())) {
-        candidates.add(new CompletionCandidate(field));
-      }
-    }
-    return candidates;
+   return getMembersForType(new ClassMember(probableClass), child, noCompare, staticOnly);
    
   }
   
@@ -1133,6 +1002,7 @@ public class ASTGenerator {
         + " inside " + tehClass + " noCompare " + noCompare + " staticOnly "
         + staticOnly);
 
+    // tehClass will either be a TypeDecl defined locally
     if(tehClass.getDeclaringNode() instanceof TypeDeclaration){
       
       TypeDeclaration td = (TypeDeclaration) tehClass.getDeclaringNode();
@@ -1163,8 +1033,26 @@ public class ASTGenerator {
                   .getMethods()[i]), td.getName().toString(), "",
                                            CompletionCandidate.METHOD));
       }
+      
+      ArrayList<CompletionCandidate> superClassCandidates = new ArrayList<CompletionCandidate>();
+      if(td.getSuperclassType() instanceof Type){
+        System.out.println(getNodeAsString(td.getSuperclassType()) + " <-Looking into superclass of " + tehClass);
+        superClassCandidates = getMembersForType(new ClassMember(td
+                                                     .getSuperclassType()),
+                                                 child, noCompare, staticOnly);        
+      }
+      else
+      {
+        superClassCandidates = getMembersForType(new ClassMember(Object.class),
+                                                 child, noCompare, staticOnly);
+      }
+      for (CompletionCandidate cc : superClassCandidates) {
+        candidates.add(cc);
+      }
       return candidates;
     }
+    
+    // Or tehClass will be a predefined class
     try {
       Class<?> probableClass;
       if(tehClass.getClass_() != null){
@@ -2715,200 +2603,7 @@ public class ASTGenerator {
     }
   }
   
-  private ClassMember findDeclaration3rdParty(Name findMe, String parentClass){
-    System.out.println("--findDec 3rd-- " + findMe + " , " + parentClass);
-    ClassMember declaringClass = null;
-    ASTNode parent = findMe.getParent();
-    ArrayList<Integer> constrains = new ArrayList<Integer>();
-    if (parent.getNodeType() == ASTNode.METHOD_INVOCATION) {
-      Expression exp = (Expression) ((MethodInvocation) parent)
-          .getStructuralProperty(MethodInvocation.EXPRESSION_PROPERTY);
-      //TODO: Note the imbalance of constrains.add(ASTNode.METHOD_DECLARATION);
-      // Possibly a bug here. Investigate later.
-      if (((MethodInvocation) parent).getName().toString()
-          .equals(findMe.toString())) {
-        constrains.add(ASTNode.METHOD_DECLARATION);
-
-        if (exp != null) {
-          constrains.add(ASTNode.TYPE_DECLARATION);
-          System.out.println("3rd Par MI EXP: " + exp.toString() + " of type "
-              + exp.getClass().getName() + " parent: " + exp.getParent());
-          if (exp instanceof MethodInvocation) {
-//            SimpleType stp = extracTypeInfo(findDeclaration(((MethodInvocation) exp)
-//                .getName()));
-//            if (stp == null)
-//              return null;
-            //declaringClass = findDeclaration(stp.getName());
-            declaringClass = findDeclaration3rdParty(((MethodInvocation) exp)
-                                                         .getName(),
-                                                     parentClass);
-//            return definedIn(declaringClass, ((MethodInvocation) parent)
-//                .getName().toString(), constrains, declaringClass);
-            return definedIn3rdPartyClass(declaringClass,
-                                          ((MethodInvocation) parent).getName()
-                                              .toString());
-          } else if (exp instanceof FieldAccess) {
-//            SimpleType stp = extracTypeInfo(findDeclaration(((FieldAccess) exp)
-//                .getName()));
-//            if (stp == null)
-//              return null;
-            declaringClass = findDeclaration3rdParty(((FieldAccess) exp)
-                                                     .getName(),
-                                                 parentClass);
-            return definedIn3rdPartyClass(declaringClass,
-                                          ((MethodInvocation) parent).getName()
-                                              .toString());
-            //declaringClass = findDeclaration((stp.getName()));
-//            return definedIn(declaringClass, ((MethodInvocation) parent)
-//                .getName().toString(), constrains, declaringClass);
-          } else if (exp instanceof QualifiedName) {
-            QualifiedName qnn = (QualifiedName)exp;
-            System.out.println("exp is a QN, "
-                + (qnn.getQualifier().toString() + " other " + qnn.getName()
-                    .toString()));
-
-            SimpleType stp = extracTypeInfo(findDeclaration((qnn.getQualifier())));
-            System.out.println(qnn.getQualifier() + "->" + qnn.getName());
-            declaringClass = findDeclaration3rdParty(stp.getName(),
-                parentClass);
-//            System.out.println("QN decl class: "
-//                + getNodeAsString(declaringClass));
-            System.out.println("Decl class " + declaringClass);
-            return definedIn3rdPartyClass(declaringClass,((MethodInvocation) parent).getName()
-                                          .toString());
-          }
-          if (exp instanceof SimpleName) {
-            SimpleType stp = extracTypeInfo(findDeclaration(((SimpleName) exp)));
-            if (stp == null)
-              return null;
-            System.out.println("3rdPa "+stp.getName());
-            declaringClass = definedIn3rdPartyClass(stp.getName().toString(),
-                                                 "THIS");
-            //declaringClass = findDeclaration(stp.getName());
-            //System.out.println("MI.SN " + getNodeAsString(declaringClass));
-            constrains.add(ASTNode.METHOD_DECLARATION);
-            return definedIn3rdPartyClass(declaringClass,
-                                          ((MethodInvocation) parent).getName()
-                                              .toString());
-//            return definedIn(declaringClass, ((MethodInvocation) parent)
-//                .getName().toString(), constrains, declaringClass);
-          }
-
-        }
-      } else {
-        parent = parent.getParent(); // Move one up the ast. V V IMP!!
-      }
-    } else if (parent.getNodeType() == ASTNode.FIELD_ACCESS) {
-      FieldAccess fa = (FieldAccess) parent;
-      Expression exp = fa.getExpression();
-      if (fa.getName().toString().equals(findMe.toString())) {
-        constrains.add(ASTNode.FIELD_DECLARATION);
-
-        if (exp != null) {
-          constrains.add(ASTNode.TYPE_DECLARATION);
-          System.out.println("FA EXP: " + exp.toString() + " of type "
-              + exp.getClass().getName() + " parent: " + exp.getParent());
-          if (exp instanceof MethodInvocation) {
-            
-            declaringClass = findDeclaration3rdParty(((MethodInvocation) exp)
-                                                     .getName(),
-                                                 parentClass);
-//        return definedIn(declaringClass, ((MethodInvocation) parent)
-//            .getName().toString(), constrains, declaringClass);
-        return definedIn3rdPartyClass(declaringClass,
-                                      fa.getName().toString());
-            /*SimpleType stp = extracTypeInfo(findDeclaration(((MethodInvocation) exp)
-                .getName()));
-            if (stp == null)
-              return null;*/
-            //declaringClass = findDeclaration(stp.getName());
-//            return definedIn(declaringClass, fa.getName().toString(),
-//                             constrains, declaringClass);
-          } else if (exp instanceof FieldAccess) {
-//            SimpleType stp = extracTypeInfo(findDeclaration(((FieldAccess) exp)
-//                .getName()));
-//            if (stp == null)
-//              return null;
-            //declaringClass = findDeclaration((stp.getName()));
-            declaringClass = findDeclaration3rdParty(((FieldAccess) exp)
-                                                     .getName(),
-                                                 parentClass);
-            constrains.add(ASTNode.TYPE_DECLARATION);
-//            return definedIn(declaringClass, fa.getName().toString(),
-//                             constrains, declaringClass);
-            return definedIn3rdPartyClass(declaringClass,
-                                          fa.getName().toString());
-          }
-          if (exp instanceof SimpleName) {
-            SimpleType stp = extracTypeInfo(findDeclaration(((SimpleName) exp)));
-            if (stp == null)
-              return null;
-            System.out.println("3rdPa "+stp.getName());
-            declaringClass = definedIn3rdPartyClass(stp.getName().toString(),
-                                                 "THIS");
-            //declaringClass = findDeclaration(stp.getName());
-           // System.out.println("FA.SN " + getNodeAsString(declaringClass));
-            constrains.add(ASTNode.METHOD_DECLARATION);
-//            return definedIn(declaringClass, fa.getName().toString(),
-//                             constrains, declaringClass);
-            return definedIn3rdPartyClass(declaringClass,
-                                          fa.getName()
-                                              .toString());
-          }
-        }
-
-      } else {
-        parent = parent.getParent(); // Move one up the ast. V V IMP!!
-      }
-    } else if (parent.getNodeType() == ASTNode.QUALIFIED_NAME) {
-
-      QualifiedName qn = (QualifiedName) parent;
-      if (!findMe.toString().equals(qn.getQualifier().toString())) {
-
-        SimpleType stp = extracTypeInfo(findDeclaration((qn.getQualifier())));
-        
-       // declaringClass = findDeclaration(stp.getName());
-        System.out.println(qn.getQualifier() + "->" + qn.getName());
-       // System.out.println("QN decl class: " + getNodeAsString(declaringClass));
-        constrains.clear();
-        constrains.add(ASTNode.TYPE_DECLARATION);
-        constrains.add(ASTNode.FIELD_DECLARATION);
-        declaringClass = definedIn3rdPartyClass(stp.getName().toString(),
-            "THIS");
-//        return definedIn(declaringClass, qn.getName().toString(), constrains,
-//                         null);
-        return definedIn3rdPartyClass(declaringClass, qn.getName().toString());
-      }
-      else{
-        if(findMe instanceof QualifiedName){
-          QualifiedName qnn = (QualifiedName) findMe;
-          System.out.println("findMe is a QN, "
-              + (qnn.getQualifier().toString() + " other " + qnn.getName()
-                  .toString()));
-
-          SimpleType stp = extracTypeInfo(findDeclaration((qnn.getQualifier())));
-          System.out.println(qnn.getQualifier() + "->" + qnn.getName());
-          declaringClass = definedIn3rdPartyClass(stp.getName().toString(),
-              "THIS");
-//          System.out.println("QN decl class: "
-//              + getNodeAsString(declaringClass));
-          constrains.clear();
-          constrains.add(ASTNode.TYPE_DECLARATION);
-          constrains.add(ASTNode.FIELD_DECLARATION);
-          return definedIn3rdPartyClass(declaringClass, qnn.getName().toString());
-        }
-      }
-    } else if (parent.getNodeType() == ASTNode.SIMPLE_TYPE) {
-//      constrains.add(ASTNode.TYPE_DECLARATION);
-//      if (parent.getParent().getNodeType() == ASTNode.CLASS_INSTANCE_CREATION)
-//        constrains.add(ASTNode.CLASS_INSTANCE_CREATION);
-      // If it's a simple type, simply locate it within the list of imports
-        return definedIn3rdPartyClass(findMe.toString(), "THIS");
-    } 
-    
-    return definedIn3rdPartyClass(parentClass,findMe.toString());
-  }
-
+  
   /**
    * Find the SimpleType from FD, SVD, VDS, etc
    * 
