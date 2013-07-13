@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
+import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
 public class CompletionCandidate implements Comparable<CompletionCandidate>{
 
@@ -51,11 +53,26 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
     }
 
     label.append(")");
+    label.append(" : "+method.getReturnType().getSimpleName());
     cstr.append(")");
     this.label = label.toString();
     this.completionString = cstr.toString();
   }
-
+  
+  public CompletionCandidate(SingleVariableDeclaration svd) {
+    completionString = svd.getName().toString();
+    elementName = svd.getName().toString();
+    type = LOCAL_VAR;
+    label = svd.getName() + " : " + svd.getType();
+  }
+  
+  public CompletionCandidate(VariableDeclarationFragment  vdf) {
+    completionString = vdf.getName().toString();
+    elementName = vdf.getName().toString();
+    type = LOCAL_VAR;
+    label = vdf.getName() + " : " + ASTGenerator.extracTypeInfo2(vdf);
+  }
+  
   public CompletionCandidate(MethodDeclaration method) {
     definingClass = "";
     elementName = method.getName().toString();
@@ -72,6 +89,7 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
       }
     }
     label.append(")");
+    label.append(" : "+method.getReturnType2());
     cstr.append(")");
     this.label = label.toString();
     this.completionString = cstr.toString();
@@ -81,7 +99,7 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
     definingClass = f.getDeclaringClass().getName();
     elementName = f.getName();
     type = FIELD;
-    label = f.getName();
+    label = f.getName() + " : " + f.getType().getSimpleName();
     completionString = elementName;
   }
 

@@ -379,17 +379,14 @@ public class ASTGenerator {
       CompletionCandidate[] cand = new CompletionCandidate[params.size() + 1];
       cand[0] = new CompletionCandidate(md);
       for (int i = 0; i < params.size(); i++) {
-        cand[i + 1] = new CompletionCandidate(params.get(i).toString(), "", "",
-                                              CompletionCandidate.LOCAL_VAR);
+//        cand[i + 1] = new CompletionCandidate(params.get(i).toString(), "", "",
+//                                              CompletionCandidate.LOCAL_VAR);
+        cand[i + 1] = new CompletionCandidate((SingleVariableDeclaration)params.get(i));
       }
       return cand;
 
     case ASTNode.SINGLE_VARIABLE_DECLARATION:
-      return new CompletionCandidate[] { new CompletionCandidate(
-                                                                 getNodeAsString2(node),
-                                                                 "",
-                                                                 "",
-                                                                 CompletionCandidate.LOCAL_VAR) };
+      return new CompletionCandidate[] { new CompletionCandidate((SingleVariableDeclaration)node) };
 
     case ASTNode.FIELD_DECLARATION:
       vdfs = ((FieldDeclaration) node).fragments();
@@ -408,8 +405,9 @@ public class ASTGenerator {
       CompletionCandidate ret[] = new CompletionCandidate[vdfs.size()];
       int i = 0;
       for (VariableDeclarationFragment vdf : vdfs) {
-        ret[i++] = new CompletionCandidate(getNodeAsString2(vdf), "", "",
-                                           CompletionCandidate.LOCAL_VAR);
+//        ret[i++] = new CompletionCandidate(getNodeAsString2(vdf), "", "",
+//                                           CompletionCandidate.LOCAL_VAR);
+        ret[i++] = new CompletionCandidate(vdf);
       }
       return ret;
     }
@@ -591,7 +589,8 @@ public class ASTGenerator {
             //return new ClassMember(findClassIfExists(stp.getName().toString()));
           }
           //scopeParent = definedIn3rdPartyClass(stp.getName().toString(), "THIS");
-          return new ClassMember(typeDec);
+          return definedIn3rdPartyClass(new ClassMember(typeDec), mi
+                                        .getName().toString());
         } else {
           System.out.println("MI EXP.."+getNodeAsString(mi.getExpression()));
 //          return null;
@@ -611,7 +610,7 @@ public class ASTGenerator {
         return new ClassMember(extracTypeInfo(temp2));
       }
       if (qn.getQualifier() == null) {
-        System.out.println("MI,Not implemented.");
+        System.out.println("QN,Not implemented.");
         return null;
       } else  {
         
@@ -645,7 +644,8 @@ public class ASTGenerator {
             System.out.println("QN resolve 3rd par, Can't resolve " + qn.getQualifier());
             return null;
           }
-          return new ClassMember(typeDec);
+          return definedIn3rdPartyClass(new ClassMember(typeDec), qn
+                                        .getName().toString());
         } else {
           scopeParent = resolveExpression3rdParty(nearestNode,
                                                   qn.getQualifier(), noCompare);
@@ -1251,7 +1251,15 @@ public class ASTGenerator {
             .startsWith(memberName))
          return new ClassMember(td.getMethods()[i]);
       }
-      return null;
+      if(td.getSuperclassType() instanceof Type){
+        System.out.println(getNodeAsString(td.getSuperclassType()) + " <-Looking into superclass of " + tehClass);
+        return definedIn3rdPartyClass(new ClassMember(td
+                                                     .getSuperclassType()),memberName);        
+      }
+      else
+      {
+        return definedIn3rdPartyClass(new ClassMember(Object.class),memberName);
+      }
     }
     
     Class probableClass = null;
@@ -2573,6 +2581,9 @@ public class ASTGenerator {
     public ClassMember(ASTNode node){
       astNode = node;
       stringVal = getNodeAsString(node);
+      if(node instanceof TypeDeclaration){
+        declaringNode = node;
+      }
       if(node instanceof SimpleType){
         classType = ((SimpleType)node).getName().toString();
       }
@@ -2634,7 +2645,7 @@ public class ASTGenerator {
    * @param node
    * @return
    */
-  private static SimpleType extracTypeInfo(ASTNode node) {
+  public static SimpleType extracTypeInfo(ASTNode node) {
     if (node == null)
       return null;
     switch (node.getNodeType()) {
@@ -2650,6 +2661,27 @@ public class ASTGenerator {
       return (SimpleType) ((SingleVariableDeclaration) node).getType();
     case ASTNode.VARIABLE_DECLARATION_FRAGMENT:
       return extracTypeInfo(node.getParent());
+    }
+    System.out.println("Unknown type info request " + getNodeAsString(node));
+    return null;
+  }
+  
+  public static Type extracTypeInfo2(ASTNode node) {
+    if (node == null)
+      return null;
+    switch (node.getNodeType()) {
+    case ASTNode.METHOD_DECLARATION:
+      return ((MethodDeclaration) node).getReturnType2();
+    case ASTNode.FIELD_DECLARATION:
+      return ((FieldDeclaration) node).getType();
+    case ASTNode.VARIABLE_DECLARATION_EXPRESSION:
+      return  ((VariableDeclarationExpression) node).getType();
+    case ASTNode.VARIABLE_DECLARATION_STATEMENT:
+      return  ((VariableDeclarationStatement) node).getType();
+    case ASTNode.SINGLE_VARIABLE_DECLARATION:
+      return  ((SingleVariableDeclaration) node).getType();
+    case ASTNode.VARIABLE_DECLARATION_FRAGMENT:
+      return extracTypeInfo2(node.getParent());
     }
     System.out.println("Unknown type info request " + getNodeAsString(node));
     return null;
