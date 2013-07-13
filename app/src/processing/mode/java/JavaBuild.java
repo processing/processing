@@ -454,6 +454,12 @@ public class JavaBuild {
       javaClassPath = javaClassPath.substring(1, javaClassPath.length() - 1);
     }
     classPath += File.pathSeparator + javaClassPath;
+    
+    // But make sure that there isn't anything in there that's missing, 
+    // otherwise ECJ will complain and die. For instance, Java 1.7 (or maybe
+    // it's appbundler?) adds Java/Classes to the path, which kills us.
+    //String[] classPieces = PApplet.split(classPath, File.pathSeparator);
+    // Nah, nevermind... we'll just create the @!#$! folder until they fix it.
 
 
     // 3. then loop over the code[] and save each .java file

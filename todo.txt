@@ -803,6 +803,9 @@ _   7u40 target release is "late August"
 _     http://openjdk.java.net/projects/jdk7u/releases/7u40.html
 _   but default menu bar is still broken
 _     http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=8007267
+_   Contents/Java/Classes folder is added to java.class.path
+_     so the folder must exist otherwise the ECJ compiler will crash
+_     once fixed, remove notes from JavaBuild.java
 _ blank sketch opened even if another opened by double-click
 _   add a 150 ms or more lag before opening the untitled window (on os x)
 _   https://github.com/processing/processing/issues/218

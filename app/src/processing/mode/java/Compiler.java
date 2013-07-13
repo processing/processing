@@ -100,7 +100,7 @@ public class Compiler {
 //    System.arraycopy(sourceFiles, 0, command, baseCommand.length, sourceCount);
     String[] command = PApplet.concat(baseCommand, sourceFiles);
 
-    //PApplet.println(command);
+//    PApplet.println(command);
 
     try {
       // Load errors into a local StringBuffer
