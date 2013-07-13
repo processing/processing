@@ -46,7 +46,7 @@ public class CompletionPanel {
     scrollPane = new JScrollPane();
     scrollPane.setViewportView(completionList = createSuggestionList(position, items));
     popupMenu.add(scrollPane, BorderLayout.CENTER);
-    popupMenu.setPopupSize(200, 250); //TODO: Eradicate this evil
+    popupMenu.setPopupSize(280, 250); //TODO: Eradicate this evil
     this.textarea.errorCheckerService.astGenerator
         .updateJavaDoc((CompletionCandidate) completionList.getSelectedValue());
     popupMenu.show(textarea, location.x, textarea.getBaseline(0, 0)
@@ -56,6 +56,10 @@ public class CompletionPanel {
 
   public boolean isVisible() {
     return popupMenu.isVisible();
+  }
+  
+  public void setVisible(boolean v){
+    popupMenu.setVisible(v);
   }
 
   private JList createSuggestionList(final int position,

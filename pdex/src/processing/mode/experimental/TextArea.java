@@ -689,7 +689,7 @@ public class TextArea extends JEditTextArea {
                                        location);
     else
       suggestion.updateList(defListModel, subWord, position);
-
+    suggestion.setVisible(true);
 //    requestFocusInWindow();
     SwingUtilities.invokeLater(new Runnable() {
       @Override

@@ -61,6 +61,7 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.Name;
 import org.eclipse.jdt.core.dom.NodeFinder;
+import org.eclipse.jdt.core.dom.PrimitiveType;
 import org.eclipse.jdt.core.dom.QualifiedName;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SimpleType;
@@ -838,23 +839,31 @@ public class ASTGenerator {
           // Have to resolve it by carefully traversing AST of testNode
           System.err.println("Complex expression " + getNodeAsString(testnode));
           System.out.println("candidates empty");
-          String childExpr = getChildExpression(testnode)
-              .toString();
+          ASTNode childExpr = getChildExpression(testnode);
           System.out.println("Parent expression : " + getParentExpression(testnode));
           System.out.println("Child expression : " + childExpr);
-          
-          if(!noCompare){
-            System.out.println("Original testnode " + getNodeAsString(testnode));
-            testnode = getParentExpression(testnode);
-            System.out.println("Corrected testnode " + getNodeAsString(testnode));
+          if (childExpr instanceof ASTNode) {
+            if (!noCompare) {
+              System.out.println("Original testnode "
+                  + getNodeAsString(testnode));
+              testnode = getParentExpression(testnode);
+              System.out.println("Corrected testnode "
+                  + getNodeAsString(testnode));
+            }
+            ClassMember expr = resolveExpression3rdParty(nearestNode, testnode,
+                                                         noCompare);
+            if (expr == null) {
+              System.out.println("Expr is null");
+            } else {
+              System.out.println("Expr is " + expr.toString());
+
+              candidates = getMembersForType(expr, childExpr.toString(),
+                                             noCompare, false);
+            }
           }
-          ClassMember expr = resolveExpression3rdParty(nearestNode, testnode, noCompare);
-          if(expr == null){
-            System.out.println("Expr is null");
-          }else {
-            System.out.println("Expr is " + expr.toString());
-            candidates = getMembersForType(expr,
-                                         childExpr, noCompare, false);
+          else
+          {
+            System.out.println("ChildExpr is null");
           }
           /*ASTNode det = resolveExpression(nearestNode, testnode,noCompare);
           // Find the parent of the expression
@@ -1030,7 +1039,9 @@ public class ASTGenerator {
     System.out.println("getMemFoType-> Looking for match " + child.toString()
         + " inside " + tehClass + " noCompare " + noCompare + " staticOnly "
         + staticOnly);
-
+    if(tehClass == null){
+      return candidates;
+    }
     // tehClass will either be a TypeDecl defined locally
     if(tehClass.getDeclaringNode() instanceof TypeDeclaration){
       
@@ -1082,52 +1093,48 @@ public class ASTGenerator {
     }
     
     // Or tehClass will be a predefined class
-    try {
-      Class<?> probableClass;
-      if(tehClass.getClass_() != null){
-        probableClass = tehClass.getClass_();
+   
+    Class<?> probableClass;
+    if (tehClass.getClass_() != null) {
+      probableClass = tehClass.getClass_();
+    } else {
+      probableClass = findClassIfExists(tehClass.getTypeAsString());
+      if (probableClass == null) {
+        System.out.println("Couldn't find class " + tehClass.getTypeAsString());
+        return candidates;
       }
-      else
-      {
-        probableClass = findClassIfExists(tehClass.getTypeAsString());
-        System.out.println("Loaded " + probableClass.toString());
-      }
-      for (Method method : probableClass.getMethods()) {
-        if (!Modifier.isStatic(method.getModifiers()) && staticOnly) {
-          continue;
-        }
-        
-        StringBuffer label = new StringBuffer(method.getName() + "(");
-        for (int i = 0; i < method.getParameterTypes().length; i++) {
-          label.append(method.getParameterTypes()[i].getSimpleName());
-          if (i < method.getParameterTypes().length - 1)
-            label.append(",");
-        }
-        label.append(")");
-        if (noCompare) {
-          candidates.add(new CompletionCandidate(method));
-        }
-        else if (label.toString().startsWith(child.toString())) {
-          candidates.add(new CompletionCandidate(method));
-        }
-      }
-      for (Field field : probableClass.getFields()) {
-        if (!Modifier.isStatic(field.getModifiers()) && staticOnly) {
-          continue;
-        }
-        if (noCompare) {
-          candidates.add(new CompletionCandidate(field));
-        }
-        else if (field.getName().startsWith(child.toString())) {
-          candidates.add(new CompletionCandidate(field));
-        }
-      }
-      return candidates;
-    } catch (Exception e) {
-      e.printStackTrace();
-      System.out.println("Couldn't load " + tehClass);
+      System.out.println("Loaded " + probableClass.toString());
     }
-    return null;
+    for (Method method : probableClass.getMethods()) {
+      if (!Modifier.isStatic(method.getModifiers()) && staticOnly) {
+        continue;
+      }
+
+      StringBuffer label = new StringBuffer(method.getName() + "(");
+      for (int i = 0; i < method.getParameterTypes().length; i++) {
+        label.append(method.getParameterTypes()[i].getSimpleName());
+        if (i < method.getParameterTypes().length - 1)
+          label.append(",");
+      }
+      label.append(")");
+      if (noCompare) {
+        candidates.add(new CompletionCandidate(method));
+      } else if (label.toString().startsWith(child.toString())) {
+        candidates.add(new CompletionCandidate(method));
+      }
+    }
+    for (Field field : probableClass.getFields()) {
+      if (!Modifier.isStatic(field.getModifiers()) && staticOnly) {
+        continue;
+      }
+      if (noCompare) {
+        candidates.add(new CompletionCandidate(field));
+      } else if (field.getName().startsWith(child.toString())) {
+        candidates.add(new CompletionCandidate(field));
+      }
+    }
+    return candidates;
+   
   }
   
   /**
@@ -1137,6 +1144,9 @@ public class ASTGenerator {
    * @return
    */
   private Class findClassIfExists(String className){
+    if(className == null){
+      return null;
+    }
     Class tehClass = null;
     // First, see if the classname is a fully qualified name and loads straightaway
     tehClass = loadClass(className);
@@ -1205,12 +1215,13 @@ public class ASTGenerator {
   
   private Class loadClass(String className){
     Class tehClass = null;
-    try {      
-      tehClass = Class.forName(className, false,
-                                     errorCheckerService
-                                         .getSketchClassLoader());
-    } catch (ClassNotFoundException e) {
-      //System.out.println("Doesn't exist in package: ");
+    if(className instanceof String){
+      try {
+        tehClass = Class.forName(className, false,
+                                 errorCheckerService.getSketchClassLoader());
+      } catch (ClassNotFoundException e) {
+        //System.out.println("Doesn't exist in package: ");
+      }
     }
     return tehClass;
   }
@@ -1323,7 +1334,7 @@ public class ASTGenerator {
   private static ASTNode findClosestParentNode(int lineNumber, ASTNode node) {
     Iterator<StructuralPropertyDescriptor> it = node
         .structuralPropertiesForType().iterator();
-    System.err.println("Props of " + node.getClass().getName());
+    // System.err.println("Props of " + node.getClass().getName());
     while (it.hasNext()) {
       StructuralPropertyDescriptor prop = (StructuralPropertyDescriptor) it
           .next();
@@ -2618,22 +2629,10 @@ public class ASTGenerator {
   public static SimpleType extracTypeInfo(ASTNode node) {
     if (node == null)
       return null;
-    switch (node.getNodeType()) {
-    case ASTNode.METHOD_DECLARATION:
-      return (SimpleType) ((MethodDeclaration) node).getReturnType2();
-    case ASTNode.FIELD_DECLARATION:
-      return (SimpleType) ((FieldDeclaration) node).getType();
-    case ASTNode.VARIABLE_DECLARATION_EXPRESSION:
-      return (SimpleType) ((VariableDeclarationExpression) node).getType();
-    case ASTNode.VARIABLE_DECLARATION_STATEMENT:
-      return (SimpleType) ((VariableDeclarationStatement) node).getType();
-    case ASTNode.SINGLE_VARIABLE_DECLARATION:
-      return (SimpleType) ((SingleVariableDeclaration) node).getType();
-    case ASTNode.VARIABLE_DECLARATION_FRAGMENT:
-      return extracTypeInfo(node.getParent());
-    }
-    System.out.println("Unknown type info request " + getNodeAsString(node));
-    return null;
+    Type t = extracTypeInfo2(node);    
+    if (t instanceof PrimitiveType)
+      return null;    
+    return (SimpleType) t;
   }
   
   public static Type extracTypeInfo2(ASTNode node) {
