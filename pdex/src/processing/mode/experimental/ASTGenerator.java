@@ -1032,9 +1032,10 @@ public class ASTGenerator {
   }
   
   public ArrayList<CompletionCandidate> getMembersForType(ClassMember tehClass,
-                                                          String child,
+                                                          String childToLookFor,
                                                           boolean noCompare,
                                                           boolean staticOnly) {
+    String child = childToLookFor.toLowerCase();
     ArrayList<CompletionCandidate> candidates = new ArrayList<CompletionCandidate>();
     System.out.println("getMemFoType-> Looking for match " + child.toString()
         + " inside " + tehClass + " noCompare " + noCompare + " staticOnly "
@@ -1052,26 +1053,20 @@ public class ASTGenerator {
         for (VariableDeclarationFragment vdf : vdfs) {
           if (noCompare) {
             candidates
-                .add(new CompletionCandidate(getNodeAsString2(vdf)));
-          } else if (vdf.getName().toString()
-              .startsWith(child.toString()))
+                .add(new CompletionCandidate(vdf));
+          } else if (vdf.getName().toString().toLowerCase()
+              .startsWith(child))
             candidates
-                .add(new CompletionCandidate(getNodeAsString2(vdf)));
+                .add(new CompletionCandidate(vdf));
         }
 
       }
       for (int i = 0; i < td.getMethods().length; i++) {
         if (noCompare) {
-          candidates
-              .add(new CompletionCandidate(getNodeAsString2(td
-                  .getMethods()[i]), td.getName().toString(), "",
-                                           CompletionCandidate.METHOD));
-        } else if (td.getMethods()[i].getName().toString()
-            .startsWith(child.toString()))
-          candidates
-              .add(new CompletionCandidate(getNodeAsString2(td
-                  .getMethods()[i]), td.getName().toString(), "",
-                                           CompletionCandidate.METHOD));
+          candidates.add(new CompletionCandidate(td.getMethods()[i]));
+        } else if (td.getMethods()[i].getName().toString().toLowerCase()
+            .startsWith(child))
+          candidates.add(new CompletionCandidate(td.getMethods()[i]));
       }
       
       ArrayList<CompletionCandidate> superClassCandidates = new ArrayList<CompletionCandidate>();
@@ -1079,12 +1074,12 @@ public class ASTGenerator {
         System.out.println(getNodeAsString(td.getSuperclassType()) + " <-Looking into superclass of " + tehClass);
         superClassCandidates = getMembersForType(new ClassMember(td
                                                      .getSuperclassType()),
-                                                 child, noCompare, staticOnly);        
+                                                 childToLookFor, noCompare, staticOnly);        
       }
       else
       {
         superClassCandidates = getMembersForType(new ClassMember(Object.class),
-                                                 child, noCompare, staticOnly);
+                                                 childToLookFor, noCompare, staticOnly);
       }
       for (CompletionCandidate cc : superClassCandidates) {
         candidates.add(cc);
@@ -1119,7 +1114,7 @@ public class ASTGenerator {
       label.append(")");
       if (noCompare) {
         candidates.add(new CompletionCandidate(method));
-      } else if (label.toString().startsWith(child.toString())) {
+      } else if (label.toString().toLowerCase().startsWith(child)) {
         candidates.add(new CompletionCandidate(method));
       }
     }
@@ -1129,7 +1124,7 @@ public class ASTGenerator {
       }
       if (noCompare) {
         candidates.add(new CompletionCandidate(field));
-      } else if (field.getName().startsWith(child.toString())) {
+      } else if (field.getName().toLowerCase().startsWith(child)) {
         candidates.add(new CompletionCandidate(field));
       }
     }
@@ -1244,6 +1239,7 @@ public class ASTGenerator {
       return null;
     System.out.println("definedIn3rdPartyClass-> Looking for " + memberName
         + " in " + tehClass);
+    String memberNameL = memberName.toLowerCase();
     if(tehClass.getDeclaringNode() instanceof TypeDeclaration){
       
       TypeDeclaration td = (TypeDeclaration) tehClass.getDeclaringNode();
@@ -1251,15 +1247,15 @@ public class ASTGenerator {
         List<VariableDeclarationFragment> vdfs = td.getFields()[i]
             .fragments();
         for (VariableDeclarationFragment vdf : vdfs) {
-          if (vdf.getName().toString()
-              .startsWith(memberName))
+          if (vdf.getName().toString().toLowerCase()
+              .startsWith(memberNameL))
             return new ClassMember(vdf);
         }
 
       }
       for (int i = 0; i < td.getMethods().length; i++) {
-       if (td.getMethods()[i].getName().toString()
-            .startsWith(memberName))
+       if (td.getMethods()[i].getName().toString().toLowerCase()
+            .startsWith(memberNameL))
          return new ClassMember(td.getMethods()[i]);
       }
       if(td.getSuperclassType() instanceof Type){
@@ -1283,12 +1279,12 @@ public class ASTGenerator {
       System.out.println("Loaded " + probableClass.toString());
     }
     for (Method method : probableClass.getMethods()) {        
-      if (method.getName().equals(memberName)) {
+      if (method.getName().equalsIgnoreCase(memberName)) {
         return new ClassMember(method);
       }
     }
     for (Field field : probableClass.getFields()) {
-      if (field.getName().equals(memberName)) {
+      if (field.getName().equalsIgnoreCase(memberName)) {
         return new ClassMember(field);
       }
     }
@@ -2686,7 +2682,7 @@ public class ASTGenerator {
           // look for constructor;
           MethodDeclaration[] methods = td.getMethods();
           for (MethodDeclaration md : methods) {
-            if (md.getName().toString().equals(name)) {
+            if (md.getName().toString().equalsIgnoreCase(name)) {
               System.out.println("Found a constructor.");
               return md;
             }
@@ -2702,7 +2698,7 @@ public class ASTGenerator {
           for (FieldDeclaration fd : fields) {
             List<VariableDeclarationFragment> fragments = fd.fragments();
             for (VariableDeclarationFragment vdf : fragments) {
-              if (vdf.getName().toString().equals(name))
+              if (vdf.getName().toString().equalsIgnoreCase(name))
                 return fd;
             }
           }
@@ -2710,7 +2706,7 @@ public class ASTGenerator {
           // look for methods
           MethodDeclaration[] methods = td.getMethods();
           for (MethodDeclaration md : methods) {
-            if (md.getName().toString().equals(name)) {
+            if (md.getName().toString().equalsIgnoreCase(name)) {
               return md;
             }
           }
@@ -2719,12 +2715,12 @@ public class ASTGenerator {
       break;
     case ASTNode.METHOD_DECLARATION:
       System.err.println(getNodeAsString(node));
-      if (((MethodDeclaration) node).getName().toString().equals(name))
+      if (((MethodDeclaration) node).getName().toString().equalsIgnoreCase(name))
         return node;
       break;
     case ASTNode.SINGLE_VARIABLE_DECLARATION:
       System.err.println(getNodeAsString(node));
-      if (((SingleVariableDeclaration) node).getName().toString().equals(name))
+      if (((SingleVariableDeclaration) node).getName().toString().equalsIgnoreCase(name))
         return node;
       break;
     case ASTNode.FIELD_DECLARATION:
@@ -2745,7 +2741,7 @@ public class ASTGenerator {
     }
     if (vdfList != null) {
       for (VariableDeclarationFragment vdf : vdfList) {
-        if (vdf.getName().toString().equals(name))
+        if (vdf.getName().toString().equalsIgnoreCase(name))
           return node;
       }
     }

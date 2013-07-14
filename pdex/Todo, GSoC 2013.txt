@@ -27,6 +27,7 @@ x! Should I implement wrapper for ASTNode? - possibly needed for code completion
 x Differentiating between multiple statements on the same line. How to? Done with offset handling.
 
 Finer details
+*! - Ignore String case while finding completion candidates
 * - Multiple 3rd party classes found in various packages
 x Obj a1; a1.-> completion doesn't work before it is instantiated. Look into that. Began working again by itself. Yay!
 * printStuff(int,float,String)  - completion endings have to be appropriate. Right now it's just printStuff(,,). Cursor positioning also needs to be taken care of. Argument list as tooltip if possible?
@@ -35,6 +36,7 @@ x Cursor positioning should be after the first ( if arguments present, else afte
  - facing some issues for local types
 * Sorted list of completion candidates - fields, then methods. It's unsorted presently.
 *! p5 enhanced stuff in java, how does it fit in with everything else, and edge cases. Possibly add support for them. Offset handling improvements should help here.
+* - Diamond opertaor isn't supported for now. Bummer.
 x Reflection API - getMethods vs getDeclaredMethods. declared.
 x Need to add offset correction to ASTGenerator and its lookup methods. Or leave it for later? All set to implement
 
@@ -76,5 +78,6 @@ x Local Methods
 x Local Classes
 x Recursive lookup, a.b().c()
 x Now highlihgting the declaration name, rather than the whole declaration.
+* On OS X, Ctrl + Click is right mouse click, so implement Cmd + Click instead. isMetaDown()?
 *+ A silly bug where the name of the first field declaration isn't highlighted correctly. Seems to be happening if there's a javadoc or multiline comment near about the top.
 

@@ -75,7 +75,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter {
     addMouseListener(new MouseAdapter() {
       public void mouseClicked(MouseEvent evt) {
 //        		System.out.println( " Meta,Ctrl "+ (evt.getModifiers() & ctrlMask));
-        if (evt.isControlDown())
+        if (evt.isControlDown() || evt.isMetaDown())
           handleCtrlClick(evt);
       }
     });

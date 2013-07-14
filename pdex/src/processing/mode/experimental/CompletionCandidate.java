@@ -76,6 +76,7 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
   }
   
   public CompletionCandidate(MethodDeclaration method) {
+    System.out.println("ComCan " + method.getName());
     definingClass = "";
     elementName = method.getName().toString();
     type = METHOD;
