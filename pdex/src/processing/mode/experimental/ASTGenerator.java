@@ -308,9 +308,17 @@ public class ASTGenerator {
 
           StringBuffer tehPath = new StringBuffer(System
               .getProperty("java.class.path"));
+          if(Base.isMacOS()){
+            // rt.jar equivalent on OS X is JAVA_HOME/bundle/Classes/classes.jar
+            tehPath.append(File.pathSeparatorChar
+                           + System.getProperty("java.home") + File.separator + "bundle"
+                + File.separator + "Classes" + File.separator + "classes.jar"
+                + File.pathSeparatorChar);
+          }else{
           tehPath.append(File.pathSeparatorChar
-              + System.getProperty("java.home") + "/lib/rt.jar"
-              + File.pathSeparatorChar);
+              + System.getProperty("java.home") + File.separator + "lib"
+              + File.separator + "rt.jar" + File.pathSeparatorChar);
+          }
           if (errorCheckerService.classpathJars != null) {
             for (URL jarPath : errorCheckerService.classpathJars) {
               //System.out.println(jarPath.getPath());
@@ -338,6 +346,18 @@ public class ASTGenerator {
             System.out.println("-> " + className);
           }
           System.out.println("jars loaded.");
+          if (Base.isMacOS()) {
+            File f = new File(System.getProperty("java.home") + File.separator + "bundle"
+                + File.separator + "Classes" + File.separator + "classes.jar");
+            System.out.println(f.getAbsolutePath() + " | classes.jar found?"
+                + f.exists());
+          } else {
+            File f = new File(System.getProperty("java.home") + File.separator
+                + "lib" + File.separator + "rt.jar" + File.separator);
+            System.out.println(f.getAbsolutePath() + " | rt.jar found?"
+                + f.exists());
+          }
+          
         } catch (Exception e) {
           e.printStackTrace();
         }
