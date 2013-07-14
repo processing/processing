@@ -1189,8 +1189,9 @@ public class ASTGenerator {
         temp = temp.substring(0, temp.length() - 1) + className;
       } else {
         int x = temp.lastIndexOf('.');
-        if (temp.substring(x).equals(className)) {
-          // Well, we've found the class.
+        //System.out.println("fclife " + temp.substring(x + 1));
+        if (!temp.substring(x + 1).equals(className)) {
+          continue;
         }
       }
       tehClass = loadClass(temp);
