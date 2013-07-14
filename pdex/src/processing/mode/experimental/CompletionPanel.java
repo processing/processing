@@ -105,8 +105,10 @@ public class CompletionPanel {
         String selectedSuggestion = ((CompletionCandidate) completionList
             .getSelectedValue()).getCompletionString().substring(subWord.length());
         System.err.println(subWord+" <= subword,Inserting suggestion=> " + selectedSuggestion);
-        textarea.getDocument().insertString(insertionPosition,
-                                            selectedSuggestion, null);
+        textarea.getDocument().remove(insertionPosition-subWord.length(), subWord.length());
+        textarea.getDocument().insertString(insertionPosition-subWord.length(),
+                                            ((CompletionCandidate) completionList
+                                            .getSelectedValue()).getCompletionString(), null);
         if(selectedSuggestion.endsWith(")"))
         {
           if(!selectedSuggestion.endsWith("()")){

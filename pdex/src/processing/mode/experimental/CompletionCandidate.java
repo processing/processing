@@ -7,11 +7,10 @@ import java.util.List;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
+import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
 public class CompletionCandidate implements Comparable<CompletionCandidate>{
-
-  private String definingClass;
 
   private String elementName; //
 
@@ -21,27 +20,28 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
 
   private int type;
 
-  public static final int METHOD = 0, FIELD = 1, LOCAL_VAR = 3;
+  public static final int PREDEF_CLASS = 0, PREDEF_FIELD = 1,
+      PREDEF_METHOD = 2, LOCAL_CLASS = 3, LOCAL_METHOD = 4, LOCAL_FIELD = 5,
+      LOCAL_VAR = 6;
 
-  public CompletionCandidate(String name, String className, String label,
-                             int TYPE) {
-    definingClass = className;
-    elementName = name;
-    if (label.length() > 0)
-      this.label = label;
-    else
-      this.label = name;
-    this.type = TYPE;
-    if (type == METHOD) {
-      this.label += "()";
-    }
-    completionString = this.label;
-  }
+//  public CompletionCandidate(String name, String className, String label,
+//                             int TYPE) {
+//    elementName = name;
+//    if (label.length() > 0)
+//      this.label = label;
+//    else
+//      this.label = name;
+//    this.type = TYPE;
+//    if (type == LOCAL_METHOD) {
+//      this.label += "()";
+//    }
+//    completionString = this.label;
+//  }
 
   public CompletionCandidate(Method method) {
-    definingClass = method.getDeclaringClass().getName();
+    method.getDeclaringClass().getName();
     elementName = method.getName();
-    type = METHOD;
+    type = LOCAL_METHOD;
     StringBuffer label = new StringBuffer(method.getName() + "(");
     StringBuffer cstr = new StringBuffer(method.getName() + "(");
     for (int i = 0; i < method.getParameterTypes().length; i++) {
@@ -59,13 +59,14 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
     cstr.append(")");
     this.label = label.toString();
     this.completionString = cstr.toString();
+    type = PREDEF_METHOD;
   }
   
   public CompletionCandidate(SingleVariableDeclaration svd) {
     completionString = svd.getName().toString();
     elementName = svd.getName().toString();
     type = LOCAL_VAR;
-    label = svd.getName() + " : " + svd.getType();
+    label = svd.getName() + " : " + svd.getType();    
   }
   
   public CompletionCandidate(VariableDeclarationFragment  vdf) {
@@ -77,9 +78,8 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
   
   public CompletionCandidate(MethodDeclaration method) {
     System.out.println("ComCan " + method.getName());
-    definingClass = "";
     elementName = method.getName().toString();
-    type = METHOD;
+    type = LOCAL_METHOD;
     List<ASTNode> params = (List<ASTNode>) method
         .getStructuralProperty(MethodDeclaration.PARAMETERS_PROPERTY);
     StringBuffer label = new StringBuffer(elementName + "(");
@@ -100,31 +100,34 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
     this.label = label.toString();
     this.completionString = cstr.toString();
   }
+  
+  public CompletionCandidate(TypeDeclaration td){
+    type = LOCAL_CLASS;
+    elementName = td.getName().toString();
+    label = elementName;
+    completionString = elementName;
+  }
 
   public CompletionCandidate(Field f) {
-    definingClass = f.getDeclaringClass().getName();
+    f.getDeclaringClass().getName();
     elementName = f.getName();
-    type = FIELD;
+    type = PREDEF_FIELD;
     label = f.getName() + " : " + f.getType().getSimpleName();
     completionString = elementName;
   }
 
-  public CompletionCandidate(String name, String className) {
-    definingClass = className;
+  public CompletionCandidate(String name, String labelStr, String completionStr, int type) {    
+    elementName = name;
+    label = labelStr;
+    completionString = completionStr;
+    this.type = type;    
+  }
+
+  public CompletionCandidate(String name, int type) {
     elementName = name;
     label = name;
     completionString = name;
-  }
-
-  public CompletionCandidate(String name) {
-    definingClass = "";
-    elementName = name;
-    label = name;
-    completionString = name;
-  }
-
-  public String getDefiningClass() {
-    return definingClass;
+    this.type = type;
   }
 
   public String getElementName() {

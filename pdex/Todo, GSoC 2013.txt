@@ -27,13 +27,13 @@ x! Should I implement wrapper for ASTNode? - possibly needed for code completion
 x Differentiating between multiple statements on the same line. How to? Done with offset handling.
 
 Finer details
-*! - Ignore String case while finding completion candidates
-* - Multiple 3rd party classes found in various packages
+x! - Ignore String case while finding completion candidates
+x - Multiple 3rd party classes found in various packages. Not a chance no more.
 x Obj a1; a1.-> completion doesn't work before it is instantiated. Look into that. Began working again by itself. Yay!
 * printStuff(int,float,String)  - completion endings have to be appropriate. Right now it's just printStuff(,,). Cursor positioning also needs to be taken care of. Argument list as tooltip if possible?
 x Cursor positioning should be after the first ( if arguments present, else after ()
-* Display the type of Completion(method return type, variable type) in the popup.
- - facing some issues for local types
+x Display the type of Completion(method return type, variable type) in the popup.
+ - facing some issues for local types. Fixed.
 * Sorted list of completion candidates - fields, then methods. It's unsorted presently.
 *! p5 enhanced stuff in java, how does it fit in with everything else, and edge cases. Possibly add support for them. Offset handling improvements should help here.
 * - Diamond opertaor isn't supported for now. Bummer.

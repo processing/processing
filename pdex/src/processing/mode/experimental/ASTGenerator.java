@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.TreeMap;
+import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -366,11 +367,7 @@ public class ASTGenerator {
     List<VariableDeclarationFragment> vdfs = null;
     switch (node.getNodeType()) {
     case ASTNode.TYPE_DECLARATION:
-      return new CompletionCandidate[] { new CompletionCandidate(
-                                                                 getNodeAsString2(node),
-                                                                 ((TypeDeclaration) node)
-                                                                     .getName()
-                                                                     .toString()) };
+      return new CompletionCandidate[] { new CompletionCandidate((TypeDeclaration) node) };
 
     case ASTNode.METHOD_DECLARATION:
       MethodDeclaration md = (MethodDeclaration) node;
@@ -793,7 +790,7 @@ public class ASTGenerator {
                   CompletionCandidate[] types = checkForTypes(cnode);
                   if (types != null) {
                     for (int i = 0; i < types.length; i++) {
-                      if (types[i].getElementName().startsWith(word2))
+                      if (types[i].getElementName().toLowerCase().startsWith(word2.toLowerCase()))
                         candidates.add(types[i]);
                     }
                   }
@@ -806,7 +803,7 @@ public class ASTGenerator {
                   CompletionCandidate[] types = checkForTypes(clnode);
                   if (types != null) {
                     for (int i = 0; i < types.length; i++) {
-                      if (types[i].getElementName().startsWith(word2))
+                      if (types[i].getElementName().toLowerCase().startsWith(word2.toLowerCase()))
                         candidates.add(types[i]);
                     }
                   }
@@ -815,22 +812,29 @@ public class ASTGenerator {
             }
             nearestNode = nearestNode.getParent();
           }
-          if(candidates.isEmpty()){
-            // We're seeing a simple name that's not defined locally or in
-            // the parent class. So most probably a pre-defined type.
-            System.out.println("Empty can. " + word2);
-            RegExpResourceFilter regExpResourceFilter;
-            regExpResourceFilter = new RegExpResourceFilter(".*", word2 + "[a-zA-Z_0-9]*.class");
-            String[] resources = classPath.findResources("", regExpResourceFilter);
-            for (String matchedClass : resources) {
-              matchedClass = matchedClass.substring(0,
-                                                    matchedClass.length() - 6);
-              matchedClass = matchedClass.replace('/', '.');
-              int d = matchedClass.lastIndexOf('.');
-              matchedClass = matchedClass.substring(d + 1);
-              candidates.add(new CompletionCandidate(matchedClass));
-              //System.out.println("-> " + className);
-            }
+          // We're seeing a simple name that's not defined locally or in
+          // the parent class. So most probably a pre-defined type.
+          System.out.println("Empty can. " + word2);
+          RegExpResourceFilter regExpResourceFilter;
+          regExpResourceFilter = new RegExpResourceFilter(
+                                                          Pattern.compile(".*"),
+                                                          Pattern
+                                                              .compile(word2
+                                                                           + "[a-zA-Z_0-9]*.class",
+                                                                       Pattern.CASE_INSENSITIVE));
+          String[] resources = classPath
+              .findResources("", regExpResourceFilter);
+          for (String matchedClass2 : resources) {
+            matchedClass2 = matchedClass2.replace('/', '.');
+            String matchedClass = matchedClass2.substring(0, matchedClass2
+                .length() - 6);            
+            int d = matchedClass.lastIndexOf('.');
+            matchedClass = matchedClass.substring(d + 1);
+            candidates
+                .add(new CompletionCandidate(matchedClass, matchedClass + " : "
+                    + matchedClass2.substring(0, d), matchedClass,
+                                             CompletionCandidate.PREDEF_CLASS));
+            //System.out.println("-> " + className);
           }
 
         } else {
