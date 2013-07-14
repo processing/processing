@@ -28,8 +28,10 @@ x Differentiating between multiple statements on the same line. How to? Done wit
 * - Add a static debug field, disable debugging info on console. 
 * - update build.xml to produce dists
 * - Make this a contributed mode - mode.txt, github releases feature, version numbering, git tags, etc
+* - Parameterized type support is broken.
 
 Finer details
+
 x! - Ignore String case while finding completion candidates
 x - Multiple 3rd party classes found in various packages. Not a chance no more.
 x Obj a1; a1.-> completion doesn't work before it is instantiated. Look into that. Began working again by itself. Yay!
@@ -89,4 +91,6 @@ Suggestion for missing imports
 ==============================
 1. In compileCheck() in ECS, check if error message is of the type "__" cannot be resolved to a type.
 2. Find the class name via astGen, and suggest import as a popup.
-
+x Barebones functionality done.
+* Find a more subtle way to suggest for imports. The current method is too troublesome.
+x Add imports only to beginning of first tab.

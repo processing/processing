@@ -2818,7 +2818,7 @@ public class ASTGenerator {
             try {
               String impString = "import " + classList.getSelectedValue()
                   + ";\n";
-              int ct = editor.getSketch().getCurrentCodeIndex(), coff = editor.textArea().getCaretPosition();
+              int ct = editor.getSketch().getCurrentCodeIndex();
               editor.getSketch().setCurrentCode(0);
               editor.textArea().getDocument().insertString(0, impString, null);
               editor.getSketch().setCurrentCode(ct);
