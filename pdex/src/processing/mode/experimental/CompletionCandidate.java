@@ -24,20 +24,6 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
       PREDEF_METHOD = 2, LOCAL_CLASS = 3, LOCAL_METHOD = 4, LOCAL_FIELD = 5,
       LOCAL_VAR = 6;
 
-//  public CompletionCandidate(String name, String className, String label,
-//                             int TYPE) {
-//    elementName = name;
-//    if (label.length() > 0)
-//      this.label = label;
-//    else
-//      this.label = name;
-//    this.type = TYPE;
-//    if (type == LOCAL_METHOD) {
-//      this.label += "()";
-//    }
-//    completionString = this.label;
-//  }
-
   public CompletionCandidate(Method method) {
     method.getDeclaringClass().getName();
     elementName = method.getName();
@@ -150,7 +136,6 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
     if(type != cc.getType()){
       return cc.getType() - type;
     }
-
     return (elementName.compareTo(cc.getElementName()));
   }
 
