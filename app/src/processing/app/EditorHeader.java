@@ -303,8 +303,18 @@ public class EditorHeader extends JComponent {
         font.getStringBounds(tab.text, g2.getFontRenderContext()).getWidth();
     }
 
+    // draw the dropdown menu target
+    menuLeft = MARGIN_WIDTH;
+    menuRight = menuLeft + ARROW_WIDTH;
+    int arrowY = (getHeight() - TAB_HEIGHT - TAB_STRETCH) + (TAB_HEIGHT - ARROW_HEIGHT)/2;
+    g.drawImage(tabArrow, menuLeft, arrowY,
+                ARROW_WIDTH, ARROW_HEIGHT, null);
+//    g.drawImage(pieces[popup.isVisible() ? SELECTED : UNSELECTED][MENU],
+//                menuLeft, 0, null);
+    int firstTabLeft = menuRight + ARROW_GAP_WIDTH;
+
     // make sure everything can fit
-    if (!placeTabs(MARGIN_WIDTH, tabMax, null)) {
+    if (!placeTabs(firstTabLeft, tabMax, null)) {
       //System.arraycopy(tabs, 0, visitOrder, 0, tabs.length);
       // always show the tab with the sketch's name
 //      System.arraycopy(tabs, 1, visitOrder, 0, tabs.length - 1);
@@ -322,23 +332,14 @@ public class EditorHeader extends JComponent {
       // Keep shrinking the tabs one-by-one until things fit properly
       for (int i = 0; i < visitOrder.length; i++) {
         tabs[visitOrder[i].index].textVisible = false;
-        if (placeTabs(MARGIN_WIDTH, tabMax, null)) {
+        if (placeTabs(firstTabLeft, tabMax, null)) {
           break;
         }
       }
     }
 
     // now actually draw the tabs
-    placeTabs(MARGIN_WIDTH, tabMax, g2);
-
-    // draw the dropdown menu target
-    menuLeft = tabs[tabs.length - 1].right + ARROW_GAP_WIDTH;
-    menuRight = menuLeft + ARROW_WIDTH;
-    int arrowY = (getHeight() - TAB_HEIGHT - TAB_STRETCH) + (TAB_HEIGHT - ARROW_HEIGHT)/2;
-    g.drawImage(tabArrow, menuLeft, arrowY,
-                ARROW_WIDTH, ARROW_HEIGHT, null);
-//    g.drawImage(pieces[popup.isVisible() ? SELECTED : UNSELECTED][MENU],
-//                menuLeft, 0, null);
+    placeTabs(firstTabLeft, tabMax, g2);
 
     screen.drawImage(offscreen, 0, 0, imageW, imageH, null);
   }
