@@ -2798,20 +2798,7 @@ public class ASTGenerator {
       resources[i] = resources[i].replace('/', '.')
           .substring(0, resources[i].length() - 6);
     }
-//    if(resources.length == 1){
-//      System.out.println("Found import: " + resources[0]);
-//      String impS = resources[0].substring(0, resources[0]
-//                              .length() - 6);            
-//      String impString = "import " + impS.replace('/','.') + ";\n";      
-//      try {
-//        editor.textArea().getDocument().insertString(0, impString, null);
-//        errorCheckerService.runManualErrorCheck();
-//      } catch (BadLocationException e) {
-//        System.out.println("Failed to insert import for " + className);
-//        e.printStackTrace();
-//      }
-//    } else 
-      if (resources.length >= 1) {
+    if (resources.length >= 1) {
       final JList classList = new JList(resources);
       classList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
       frmImportSuggest = new JFrame();
@@ -2831,7 +2818,10 @@ public class ASTGenerator {
             try {
               String impString = "import " + classList.getSelectedValue()
                   + ";\n";
+              int ct = editor.getSketch().getCurrentCodeIndex(), coff = editor.textArea().getCaretPosition();
+              editor.getSketch().setCurrentCode(0);
               editor.textArea().getDocument().insertString(0, impString, null);
+              editor.getSketch().setCurrentCode(ct);
               errorCheckerService.runManualErrorCheck();
               frmImportSuggest.setVisible(false);
               frmImportSuggest = null;
