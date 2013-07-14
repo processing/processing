@@ -251,7 +251,7 @@ public class TextArea extends JEditTextArea {
   private String fetchPhrase(KeyEvent evt) {
     char keyChar = evt.getKeyChar();
     if (keyChar == KeyEvent.VK_ENTER) {
-      System.out.println("Enter consumed.");
+      //System.out.println("Enter keypress.");
       return null;
     }
 //    if (keyChar == KeyEvent.VK_BACK_SPACE || keyChar == KeyEvent.VK_DELETE)
@@ -306,7 +306,7 @@ public class TextArea extends JEditTextArea {
       if (x1 >= 0) {
 //        if (s.charAt(x1) != ';' && s.charAt(x1) != ',' && s.charAt(x1) != '(')
         if (Character.isLetterOrDigit(s.charAt(x1)) || s.charAt(x1) == '_'
-            || s.charAt(x1) == '.' || s.charAt(x1) == ')') {
+            || s.charAt(x1) == '.' || s.charAt(x1) == ')' || s.charAt(x1) == ']') {
 
           if (s.charAt(x1) == ')') {
             word = s.charAt(x1--) + word;
@@ -319,7 +319,20 @@ public class TextArea extends JEditTextArea {
                 closeB++;
               x1--;
             }
-          } else {
+          }
+          else if (s.charAt(x1) == ']') {
+            word = s.charAt(x1--) + word;
+            closeB++;
+            while (x1 >= 0 && closeB > 0) {
+              word = s.charAt(x1) + word;
+              if (s.charAt(x1) == '[')
+                closeB--;
+              if (s.charAt(x1) == ']')
+                closeB++;
+              x1--;
+            }
+          }
+          else {
             word = s.charAt(x1--) + word;
           }
         } else {

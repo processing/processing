@@ -56,6 +56,8 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
+import org.eclipse.jdt.core.dom.ArrayAccess;
+import org.eclipse.jdt.core.dom.ArrayType;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Expression;
@@ -66,6 +68,7 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.Name;
 import org.eclipse.jdt.core.dom.NodeFinder;
+import org.eclipse.jdt.core.dom.ParameterizedType;
 import org.eclipse.jdt.core.dom.PrimitiveType;
 import org.eclipse.jdt.core.dom.QualifiedName;
 import org.eclipse.jdt.core.dom.SimpleName;
@@ -247,9 +250,9 @@ public class ASTGenerator {
 						return;
           jtree.setModel(new DefaultTreeModel(codeTree));
           ((DefaultTreeModel) jtree.getModel()).reload();
-//          if (!frame2.isVisible()) {
-//            frame2.setVisible(true);
-//          }
+          if (!frame2.isVisible()) {
+            frame2.setVisible(true);
+          }
 //          if (!frameAutoComp.isVisible()) {
 //
 //            frameAutoComp.setVisible(true);
@@ -676,6 +679,9 @@ public class ASTGenerator {
         }
         
       }
+    case ASTNode.ARRAY_ACCESS:
+      ArrayAccess arac = (ArrayAccess)astNode;
+      return resolveExpression3rdParty(nearestNode, arac.getArray(), noCompare);
     default:
       System.out.println("Unaccounted type " + getNodeAsString(astNode));
       break;
@@ -700,6 +706,8 @@ public class ASTGenerator {
       return ((QualifiedName) expression).getName();
     }else if (expression instanceof MethodInvocation) {
       return ((MethodInvocation) expression).getName();
+    }else if(expression instanceof ArrayAccess){
+      return ((ArrayAccess)expression).getArray();
     }
     System.out.println(" getChildExpression returning NULL for "
         + getNodeAsString(expression));
@@ -716,6 +724,8 @@ public class ASTGenerator {
     return ((QualifiedName) expression).getQualifier();
   } else if (expression instanceof MethodInvocation) {
     return ((MethodInvocation) expression).getExpression();
+  }else if(expression instanceof ArrayAccess){
+    return ((ArrayAccess)expression).getArray();
   }
   System.out.println("getParentExpression returning NULL for "
       + getNodeAsString(expression));
@@ -2652,11 +2662,31 @@ public class ASTGenerator {
    * @return
    */
   public static SimpleType extracTypeInfo(ASTNode node) {
-    if (node == null)
+    if (node == null) {
       return null;
-    Type t = extracTypeInfo2(node);    
-    if (t instanceof PrimitiveType)
-      return null;    
+    }
+    Type t = extracTypeInfo2(node);
+    if (t instanceof PrimitiveType) {
+      return null;
+    } else if (t instanceof ArrayType) {
+      ArrayType at = (ArrayType) t;
+      System.out.println(at.getComponentType() + " <-comp type, ele type-> "
+          + at.getElementType() + ", "
+          + at.getElementType().getClass().getName());
+      if (at.getElementType() instanceof PrimitiveType) {
+        return null;
+      } else if (at.getElementType() instanceof SimpleType) {
+        return (SimpleType) at.getElementType();
+      } else
+        return null;
+    } else if (t instanceof ParameterizedType) {
+      ParameterizedType pmt = (ParameterizedType) t;
+      System.out.println(pmt.getType() + ", " + pmt.getType().getClass());
+      if (pmt.getType() instanceof SimpleType) {
+        return (SimpleType) pmt.getType();
+      } else
+        return null;
+    }
     return (SimpleType) t;
   }
   

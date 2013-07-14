@@ -28,7 +28,9 @@ x Differentiating between multiple statements on the same line. How to? Done wit
 * - Add a static debug field, disable debugging info on console. 
 * - update build.xml to produce dists
 * - Make this a contributed mode - mode.txt, github releases feature, version numbering, git tags, etc
-* - Parameterized type support is broken.
+x - Parameterized type support is broken.
+x - Array types, all all other types support broken. :\
+x - Completion for array access, strings[0].
 
 Finer details
 
