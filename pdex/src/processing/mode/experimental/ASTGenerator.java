@@ -34,17 +34,20 @@ import javax.swing.JButton;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTree;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.text.BadLocationException;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
@@ -2750,6 +2753,76 @@ public class ASTGenerator {
       }
     }
     return null;
+  }
+  JFrame frmImportSuggest;
+  public void suggestImports(final String className){
+    if(frmImportSuggest != null)
+      return;
+    System.out.println("Looking for class " + className);
+    RegExpResourceFilter regf = new RegExpResourceFilter(
+                                                         Pattern.compile(".*"),
+                                                         Pattern
+                                                             .compile(className
+                                                                          + ".class",
+                                                                      Pattern.CASE_INSENSITIVE));
+    String[] resources = classPath
+        .findResources("", regf);
+    if(resources.length == 0){
+      System.out.println("Couldn't find import for class " + className);
+      return;
+    }
+    for (int i = 0; i < resources.length; i++) {
+      resources[i] = resources[i].replace('/', '.')
+          .substring(0, resources[i].length() - 6);
+    }
+    if(resources.length == 1){
+      System.out.println("Found import: " + resources[0]);
+      String impS = resources[0].substring(0, resources[0]
+                              .length() - 6);            
+      String impString = "import " + impS.replace('/','.') + ";\n";      
+      try {
+        editor.textArea().getDocument().insertString(0, impString, null);
+      } catch (BadLocationException e) {
+        System.out.println("Failed to insert import for " + className);
+        e.printStackTrace();
+      }
+    }
+    else if(resources.length > 1){
+      final JList classList = new JList(resources);
+      classList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);      
+      frmImportSuggest = new JFrame();
+      frmImportSuggest.setBounds(300, 300, 400, 300);
+      frmImportSuggest.setLayout(new BoxLayout(frmImportSuggest.getContentPane(), BoxLayout.Y_AXIS));
+      JLabel lbl = new JLabel(
+                              "<html>The class \""
+                                  + className
+                                  + "\" couldn't be found.<br>Choose the import you want.</html>");      
+      JScrollPane jsp = new JScrollPane();
+      jsp.setViewportView(classList);
+      JButton btnInsertImport = new JButton("Insert import");
+      btnInsertImport.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent evt) {
+          if(classList.getSelectedValue() != null){
+            try {
+              String impString = "import " + classList.getSelectedValue() + ";\n"; 
+              editor.textArea().getDocument().insertString(0, impString, null);
+              frmImportSuggest.setVisible(false);
+              frmImportSuggest = null;
+            } catch (BadLocationException e) {
+              System.out.println("Failed to insert import for " + className);
+              e.printStackTrace();
+            }
+          }
+        }
+      });
+      
+      frmImportSuggest.add(lbl);
+      frmImportSuggest.add(jsp);
+      frmImportSuggest.add(btnInsertImport);
+      frmImportSuggest.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+      frmImportSuggest.setVisible(true);
+    }
+      
   }
 
   public static boolean isAddableASTNode(ASTNode node) {

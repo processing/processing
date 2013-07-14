@@ -85,3 +85,8 @@ x Now highlihgting the declaration name, rather than the whole declaration.
 * On OS X, Ctrl + Click is right mouse click, so implement Cmd + Click instead. isMetaDown()?
 *+ A silly bug where the name of the first field declaration isn't highlighted correctly. Seems to be happening if there's a javadoc or multiline comment near about the top.
 
+Suggestion for missing imports
+==============================
+1. In compileCheck() in ECS, check if error message is of the type "__" cannot be resolved to a type.
+2. Find the class name via astGen, and suggest import as a popup.
+

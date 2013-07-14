@@ -250,16 +250,31 @@ public class ErrorCheckerService implements Runnable{
       
       updatePaintedThingys();
       updateEditorStatus();
+      
       if (pauseThread)
         continue;
       if(textModified.get() == 0)
     	  continue;
       // Check every x seconds
       checkCode();
-     
+      checkForMissingImports();
     }
   }
   
+  private void checkForMissingImports() {
+    for (Problem p : problemsList) {
+      if(p.getMessage().endsWith(" cannot be resolved to a type"));{
+        int idx = p.getMessage().indexOf(" cannot be resolved to a type");
+        if(idx > 1){
+          String missingClass = p.getMessage().substring(0, idx);
+          System.out.println("Will suggest for type:" + missingClass);
+          astGenerator.suggestImports(missingClass);
+          runManualErrorCheck();
+        }
+      }
+    }
+  }
+
   protected ASTGenerator astGenerator;
   private AtomicInteger textModified = new AtomicInteger();
   
