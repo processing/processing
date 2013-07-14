@@ -31,6 +31,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -2757,6 +2758,7 @@ public class ASTGenerator {
   JFrame frmImportSuggest;
   public void suggestImports(final String className){
     if(frmImportSuggest != null)
+      if(frmImportSuggest.isVisible())
       return;
     System.out.println("Looking for class " + className);
     RegExpResourceFilter regf = new RegExpResourceFilter(
@@ -2775,37 +2777,41 @@ public class ASTGenerator {
       resources[i] = resources[i].replace('/', '.')
           .substring(0, resources[i].length() - 6);
     }
-    if(resources.length == 1){
-      System.out.println("Found import: " + resources[0]);
-      String impS = resources[0].substring(0, resources[0]
-                              .length() - 6);            
-      String impString = "import " + impS.replace('/','.') + ";\n";      
-      try {
-        editor.textArea().getDocument().insertString(0, impString, null);
-      } catch (BadLocationException e) {
-        System.out.println("Failed to insert import for " + className);
-        e.printStackTrace();
-      }
-    }
-    else if(resources.length > 1){
+//    if(resources.length == 1){
+//      System.out.println("Found import: " + resources[0]);
+//      String impS = resources[0].substring(0, resources[0]
+//                              .length() - 6);            
+//      String impString = "import " + impS.replace('/','.') + ";\n";      
+//      try {
+//        editor.textArea().getDocument().insertString(0, impString, null);
+//        errorCheckerService.runManualErrorCheck();
+//      } catch (BadLocationException e) {
+//        System.out.println("Failed to insert import for " + className);
+//        e.printStackTrace();
+//      }
+//    } else 
+      if (resources.length >= 1) {
       final JList classList = new JList(resources);
-      classList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);      
+      classList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
       frmImportSuggest = new JFrame();
       frmImportSuggest.setBounds(300, 300, 400, 300);
-      frmImportSuggest.setLayout(new BoxLayout(frmImportSuggest.getContentPane(), BoxLayout.Y_AXIS));
-      JLabel lbl = new JLabel(
-                              "<html>The class \""
-                                  + className
-                                  + "\" couldn't be found.<br>Choose the import you want.</html>");      
+      frmImportSuggest.setLayout(new BoxLayout(frmImportSuggest
+          .getContentPane(), BoxLayout.Y_AXIS));
+      ((JComponent) frmImportSuggest.getContentPane()).setBorder(BorderFactory
+          .createEmptyBorder(5, 5, 5, 5));
+      JLabel lbl = new JLabel("<html>The class \"" + className
+          + "\" couldn't be determined, choose the import you need from the following list.</html>");
       JScrollPane jsp = new JScrollPane();
       jsp.setViewportView(classList);
       JButton btnInsertImport = new JButton("Insert import");
       btnInsertImport.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent evt) {
-          if(classList.getSelectedValue() != null){
+          if (classList.getSelectedValue() != null) {
             try {
-              String impString = "import " + classList.getSelectedValue() + ";\n"; 
+              String impString = "import " + classList.getSelectedValue()
+                  + ";\n";
               editor.textArea().getDocument().insertString(0, impString, null);
+              errorCheckerService.runManualErrorCheck();
               frmImportSuggest.setVisible(false);
               frmImportSuggest = null;
             } catch (BadLocationException e) {
@@ -2815,14 +2821,14 @@ public class ASTGenerator {
           }
         }
       });
-      
+
       frmImportSuggest.add(lbl);
       frmImportSuggest.add(jsp);
       frmImportSuggest.add(btnInsertImport);
-      frmImportSuggest.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+      frmImportSuggest.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
       frmImportSuggest.setVisible(true);
     }
-      
+
   }
 
   public static boolean isAddableASTNode(ASTNode node) {

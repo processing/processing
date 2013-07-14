@@ -267,9 +267,8 @@ public class ErrorCheckerService implements Runnable{
         int idx = p.getMessage().indexOf(" cannot be resolved to a type");
         if(idx > 1){
           String missingClass = p.getMessage().substring(0, idx);
-          System.out.println("Will suggest for type:" + missingClass);
+          //System.out.println("Will suggest for type:" + missingClass);
           astGenerator.suggestImports(missingClass);
-          runManualErrorCheck();
         }
       }
     }
