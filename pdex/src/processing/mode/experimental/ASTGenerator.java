@@ -83,6 +83,7 @@ import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 
 import processing.app.Base;
 import processing.app.SketchCode;
+import processing.app.Toolkit;
 import processing.mode.java.preproc.PdePreprocessor;
 
 import com.google.classpath.ClassPath;
@@ -160,6 +161,7 @@ public class ASTGenerator {
     frmRename.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
     frmRename.setBounds(new Rectangle(680, 50, 250, 130));
     frmRename.setLayout(new BoxLayout(frmRename.getContentPane(), BoxLayout.Y_AXIS));
+    Toolkit.setIcon(frmRename);
     JPanel panelTop = new JPanel(), panelBottom = new JPanel();
     panelTop.setLayout(new BoxLayout(panelTop, BoxLayout.Y_AXIS));
     panelTop.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -186,7 +188,7 @@ public class ASTGenerator {
     frmOccurenceList = new JFrame();
     frmOccurenceList.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
     frmOccurenceList.setBounds(new Rectangle(1100, 50, 350, 500));
-    
+    Toolkit.setIcon(frmOccurenceList);
     JScrollPane sp2 = new JScrollPane();
     treeRename = new JTree();
     sp2.setViewportView(treeRename);    
@@ -196,6 +198,7 @@ public class ASTGenerator {
     frameAutoComp = new JFrame();
     frameAutoComp.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     frameAutoComp.setBounds(new Rectangle(1280, 100, 460, 620));
+    Toolkit.setIcon(frameAutoComp);
     tableAuto = new JTable();
     JScrollPane sp3 = new JScrollPane();
     sp3.setViewportView(tableAuto);
@@ -250,9 +253,9 @@ public class ASTGenerator {
 						return;
           jtree.setModel(new DefaultTreeModel(codeTree));
           ((DefaultTreeModel) jtree.getModel()).reload();
-          if (!frame2.isVisible()) {
-            frame2.setVisible(true);
-          }
+//          if (!frame2.isVisible()) {
+//            frame2.setVisible(true);
+//          }
 //          if (!frameAutoComp.isVisible()) {
 //
 //            frameAutoComp.setVisible(true);
