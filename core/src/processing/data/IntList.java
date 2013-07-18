@@ -704,11 +704,9 @@ public class IntList implements Iterable<Integer> {
 
 
   public IntList getSubset(int start, int num) {
-    IntList outgoing = new IntList(num);
-    for (int i = 0; i < num; i++) {
-      System.arraycopy(data, start, outgoing.data, 0, num);
-    }
-    return outgoing;
+    int[] subset = new int[num];
+    System.arraycopy(data, start, subset, 0, num);
+    return new IntList(subset);
   }
 
 
