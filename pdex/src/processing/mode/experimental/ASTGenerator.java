@@ -17,6 +17,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -198,7 +199,7 @@ public class ASTGenerator {
     frameAutoComp = new JFrame();
     frameAutoComp.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     frameAutoComp.setBounds(new Rectangle(1280, 100, 460, 620));
-    Toolkit.setIcon(frameAutoComp);
+    Toolkit.setIcon(frameAutoComp); 
     tableAuto = new JTable();
     JScrollPane sp3 = new JScrollPane();
     sp3.setViewportView(tableAuto);
@@ -344,14 +345,14 @@ public class ASTGenerator {
 //          for (String packageName : classPath.listPackages("")) {
 //            System.out.println(packageName);
 //          }
-          RegExpResourceFilter regExpResourceFilter = new RegExpResourceFilter(
-                                                                               ".*",
-                                                                               "ArrayList.class");
-          String[] resources = classPath.findResources("", regExpResourceFilter);
-          for (String className : resources) {
-            System.out.println("-> " + className);
-          }
-          System.out.println("jars loaded.");
+//          RegExpResourceFilter regExpResourceFilter = new RegExpResourceFilter(
+//                                                                               ".*",
+//                                                                               "ArrayList.class");
+//          String[] resources = classPath.findResources("", regExpResourceFilter);
+//          for (String className : resources) {
+//            System.out.println("-> " + className);
+//          }
+          System.out.println("Sketch classpath jars loaded.");
           if (Base.isMacOS()) {
             File f = new File(System.getProperty("java.home") + File.separator + "bundle"
                 + File.separator + "Classes" + File.separator + "classes.jar");
@@ -864,7 +865,9 @@ public class ASTGenerator {
           for (String matchedClass2 : resources) {
             matchedClass2 = matchedClass2.replace('/', '.');
             String matchedClass = matchedClass2.substring(0, matchedClass2
-                .length() - 6);            
+                .length() - 6);
+            if(ignorableImport(matchedClass2))
+              continue;
             int d = matchedClass.lastIndexOf('.');
             matchedClass = matchedClass.substring(d + 1);
             candidates
@@ -1632,7 +1635,7 @@ public class ASTGenerator {
    * @param node
    * @return
    */
-  private static int getLineNumber(ASTNode node) {
+  public static int getLineNumber(ASTNode node) {
     return ((CompilationUnit) node.getRoot()).getLineNumber(node
         .getStartPosition());
   }
@@ -2875,6 +2878,23 @@ public class ASTGenerator {
 
   }
 
+  public static final String ignoredImports[] = {
+    "com.oracle.", "sun.", "sunw.", "com.sun.", "javax.", "sunw.", "org.ietf.",
+    "org.jcp.", "org.omg.", "org.w3c.", "org.xml.", "org.eclipse.", "com.ibm.",
+    "org.netbeans.", "org.jsoup.", "org.junit.", "org.apache.", "antlr." };
+  private boolean ignorableImport(String impName) {
+    //TODO: Trie man.
+    for (ImportStatement impS : errorCheckerService.getProgramImports()) {
+      if(impName.startsWith(impS.getPackageName()))
+        return false;
+    }
+    for (String impS : ignoredImports) {
+      if(impName.startsWith(impS))
+        return true;
+    }
+    return false;
+  }
+  
   public static boolean isAddableASTNode(ASTNode node) {
     switch (node.getNodeType()) {
 //    case ASTNode.STRING_LITERAL:

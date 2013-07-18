@@ -352,6 +352,7 @@ public class ErrorCheckerService implements Runnable{
 
     JavaCore.setComplianceOptions(JavaCore.VERSION_1_6, options);
     options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_6);
+    options.put(JavaCore.COMPILER_DOC_COMMENT_SUPPORT, JavaCore.ENABLED);
     parser.setCompilerOptions(options);
     cu = (CompilationUnit) parser.createAST(null);
 
