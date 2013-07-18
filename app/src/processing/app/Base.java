@@ -1236,6 +1236,15 @@ public class Base {
       empty.setEnabled(false);
       menu.add(empty);
     }
+    menu.addSeparator();
+    JMenuItem refresh = new JMenuItem("Refresh");
+    ActionListener listener = new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        rebuildSketchbookMenu();
+      }
+    };
+    refresh.addActionListener(listener);
+    menu.add(refresh);
   }
 
 
@@ -1324,8 +1333,7 @@ public class Base {
           } else {
             showWarning("Sketch Disappeared",
                         "The selected sketch no longer exists.\n" +
-                        "You may need to restart Processing to update\n" +
-                        "the sketchbook menu.", null);
+                        "Please refresh the sketchbook menu.", null);
           }
         }
       };
