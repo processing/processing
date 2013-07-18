@@ -577,17 +577,18 @@ public class FloatList implements Iterable<Float> {
 //  }
 
 
-  public void subset(int start) {
-    subset(start, count - start);
-  }
+//  public void subset(int start) {
+//    subset(start, count - start);
+//  }
 
 
-  public void subset(int start, int num) {
-    for (int i = 0; i < num; i++) {
-      data[i] = data[i+start];
-    }
-    count = num;
-  }
+//  public void subset(int start, int num) {
+//    for (int i = 0; i < num; i++) {
+//      data[i] = data[i+start];
+//    }
+//    count = num;
+//  }
+
 
   /**
    * @webref floatlist:method
@@ -704,6 +705,18 @@ public class FloatList implements Iterable<Float> {
     }
     System.arraycopy(data, 0, array, 0, count);
     return array;
+  }
+
+
+  public FloatList getSubset(int start) {
+    return getSubset(start, count - start);
+  }
+
+
+  public FloatList getSubset(int start, int num) {
+    float[] subset = new float[num];
+    System.arraycopy(data, start, subset, 0, num);
+    return new FloatList(subset);
   }
 
 
