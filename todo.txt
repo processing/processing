@@ -11,6 +11,12 @@ X waiting on retina support for JDK 7
 o   b86 supposed to have some support (not available yet)
 o     http://jdk8.java.net/download.html
 
+_ check to see if manager items from the download can be updated
+_   oops, probably not, because they're part of the distribution
+_   and folks won't be able to write to those directories
+
+_ code with a NUL character causes an error
+_   https://github.com/processing/processing/issues/1973
 
 high
 _ libraries need to support multiple categories
@@ -44,6 +50,8 @@ _   https://github.com/processing/processing/issues/1782
 _ classpath conflicts.. 
 _   really need to make sure that a weird core.jar isn't being imported
 _   coffeescript was doing this and breaking the pde
+_ init() not called on tools until later 
+_   https://github.com/processing/processing/issues/1859
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 

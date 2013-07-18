@@ -413,7 +413,12 @@
       <fileset refid="runtime.jars"/>
     </copy>
     -->
-    
+
+    <!-- workaround for apparent appbundler bug -->
+    <copy todir=".">
+      <fileset dir="macosx/template.app/Contents/Resources/" 
+	       includes="*.icns" />
+    </copy>
 
     <!--icon="macosx/processing.icns"-->
     <bundleapp outputDirectory="macosx/work"
@@ -421,12 +426,14 @@
 	       displayName="Processing"
 	       executableName="Processing"
 	       identifier="org.processing.app"
-	       icon="macosx/template.app/Contents/Resources/processing.icns"
+	       icon="processing.icns"
 	       copyright="© 2013 The Processing Foundation"
 	       shortVersion="${version}"
 	       version="Revision ${revision}"
 	       mainClassName="processing.app.Base">
 
+      <!-- Even though the JRE is a subfolder in this dir, 
+	   it seems to be what's picked up (vs the full JDK). -->
       <runtime dir="/Library/Java/JavaVirtualMachines/jdk1.7.0_40.jdk/Contents/Home" />
 
       <!-- Same as runtime.jars, seen above; plus core.jar. -->
@@ -448,15 +455,25 @@
       <!-- no support for this with Java 7 from Oracle -->
       <!--<arch name="i386"/>-->
 
+      <!--icon="macosx/template.app/Contents/Resources/pde.icns"-->
       <!--icon="${bundle.icon}"-->
       <bundledocument extensions="pde"
-		      icon="macosx/template.app/Contents/Resources/pde.icns"
+		      icon="pde.icns"
 		      name="Processing Source Code"
 		      role="Editor">
       </bundledocument>
 
       <!-- Workaround because the icon parameter for bundleapp doesn't work -->
-      <option value="-Xdock:icon=Contents/Resources/${bundle.icon}"/>
+      <option value="-Xdock:icon=Contents/Resources/${bundle.icon}" />
+      <!--<option value="-Xdock:icon=Contents/Resources/processing.icns" />-->
+      <!--<option value="-Xdock:icon=${bundle.icon}" />-->
+      <!--<option value="-Xdock:icon=processing.icns" />-->
+      <!-- this one actually works -->
+      <!--<option value="-Xdock:icon=/Users/fry/coconut/processing/build/macosx/work/Processing.app/Contents/Resources/processing.icns" />-->
+      <!--<option value="-Xdock:icon=Processing.app/Contents/Resources/processing.icns" />-->
+
+      <!-- set the name for what's in the dock -->
+      <option value="-Xdock:name=Processing" />
 
 <!--
     the old options; most of these are probably no longer useful
@@ -487,6 +504,10 @@
       <option value="-Xms128M" />
       <option value="-Xmx256M" />
     </bundleapp>
+
+    <!-- workaround for apparent appbundler bug -->
+    <delete file="processing.icns" />
+    <delete file="pde.icns" />
 
     <!-- Work around auto-included folder (from appbundler? or Oracle Java?) 
          that causes the p5 Compiler to crash if it doesn't exist. -->

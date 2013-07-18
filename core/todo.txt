@@ -9,12 +9,17 @@ o   Oracle Java 7 problem, but maybe a workaround?
 o   might be a problem with awt dialogs for directories? 
 X   https://github.com/processing/processing/issues/1959
 X   turns out this is an apple.awt tweak for the exported Info.plist
+X getSubset() broken in IntList, StringList, and missing from FloatList
+X   https://github.com/processing/processing/issues/1979
+
+
+_ retain blendMode() between frames (get bug #)
 
 andres
 X pixels[] array not updated with Capture and P2D/P3D
 X   https://github.com/processing/processing/issues/1852
 
-
+table
 _ implement version of Table that takes a dictionary file
 _ addRow() is not efficient, probably need to do the doubling
 _   or have a setIncrement() function?
@@ -22,10 +27,10 @@ _   it would default to 1 on tables loaded from a file
 _   and default to doubling when created with "new Table"
 _ constructing table from an iterator is missing
 _   https://github.com/processing/processing/issues/1956
-_ finish PFont.getShape() implementation
-_   needs to have a way to set width/height properly
-_   draw(s) doesn't work on the returned PShape
-
+_ match and iterators
+_   add match version that returns table that's only a pointer to original
+_   save the constructor for the version that actually copies data
+_   the table pointer version will be speedy and allow chaining 
 
 high
 _ draw() called again before finishing on OS X (retina issue)
@@ -38,6 +43,9 @@ _ clean up requestFocus() stuff
 _   make sure it works with retina/canvas/strategy as well
 _ freeze after splash screen on OS X (looks like core.jar in the path)
 _   https://github.com/processing/processing/issues/1872
+_ finish PFont.getShape() implementation
+_   needs to have a way to set width/height properly
+_   draw(s) doesn't work on the returned PShape
 
 
 decisions/misc
