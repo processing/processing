@@ -648,9 +648,11 @@ public class StringList implements Iterable<String> {
 
 
   public StringList getSubset(int start, int num) {
-    String[] subset = new String[num];
-    System.arraycopy(data, start, subset, 0, num);
-    return new StringList(subset);
+    StringList outgoing = new StringList(num);
+    for (int i = 0; i < num; i++) {
+      System.arraycopy(data, start, outgoing.data, 0, num);
+    }
+    return outgoing;
   }
 
 
