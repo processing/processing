@@ -160,22 +160,30 @@ public class Runner implements MessageConsumer {
       // OS X at this point, because we require 10.6.8 and higher. That also
       // means we don't need to check for any other OS versions, the user is 
       // a douchebag and modifies Info.plist to get around the restriction.
-      if (System.getProperty("os.version").startsWith("10.6")) {
-        commandArgs = new String[] {
-          "/usr/libexec/java_home",
-          "--version", "1.6",
-          "--exec", "java",
-          "-d" + Base.getNativeBits(),
-          jdwpArg
-        };
-      } else {  // for 10.7, 10.8, etc
-        commandArgs = new String[] {
-          "/usr/libexec/java_home",
-          "--request",  // install on-demand
-          "--version", "1.6",
-          "--exec", "java",
-          "-d" + Base.getNativeBits(),
+      if (true) {
+        if (System.getProperty("os.version").startsWith("10.6")) {
+          commandArgs = new String[] {
+            "/usr/libexec/java_home",
+            "--version", "1.6",
+            "--exec", "java",
+            "-d" + Base.getNativeBits(),
+            jdwpArg
+          };
+        } else {  // for 10.7, 10.8, etc
+          commandArgs = new String[] {
+            "/usr/libexec/java_home",
+            "--request",  // install on-demand
+            "--version", "1.6",
+            "--exec", "java",
+            "-d" + Base.getNativeBits(),
 //          debugArg,
+            jdwpArg
+          };
+        }
+      } else {
+        // testing jdk-7u40
+        commandArgs = new String[] { 
+          "/Library/Java/JavaVirtualMachines/jdk1.7.0_40.jdk/Contents/Home/bin/java",
           jdwpArg
         };
       }

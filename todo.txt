@@ -10,13 +10,26 @@ X   https://github.com/processing/processing/issues/1959
 X waiting on retina support for JDK 7
 o   b86 supposed to have some support (not available yet)
 o     http://jdk8.java.net/download.html
+X code with a NUL character causes an error
+X   https://github.com/processing/processing/issues/1973
 
 _ check to see if manager items from the download can be updated
 _   oops, probably not, because they're part of the distribution
 _   and folks won't be able to write to those directories
 
-_ code with a NUL character causes an error
-_   https://github.com/processing/processing/issues/1973
+_ appbundler fixes/changes
+_   icon location uses path, even when embedded
+_   add indents to the Info.plist output file
+_     inside writeInfoPlist from AppBundlerTask.java
+_   use Contents/Resources/Java instead of Contents/Java?
+_     this is in main.m. why the change?
+_   any missing args from our app (copyrights/versions?)
+_   make sure it's only running on 64-bit machines? 
+_   add MinimumSystemVersion?
+_   the "Classes" folder is included
+_     appears to be line 138 of main.m
+_     maybe this is a holdover from OS X Java?
+_   bring back the splash screen?
 
 high
 _ libraries need to support multiple categories

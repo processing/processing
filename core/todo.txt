@@ -18,6 +18,8 @@ _ retain blendMode() between frames (get bug #)
 andres
 X pixels[] array not updated with Capture and P2D/P3D
 X   https://github.com/processing/processing/issues/1852
+_ Unable to get TAB key event with P2D/P3D renderer
+_   https://github.com/processing/processing/issues/1967
 
 table
 _ implement version of Table that takes a dictionary file
