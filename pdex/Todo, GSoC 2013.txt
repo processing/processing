@@ -16,8 +16,8 @@ The big stuff:
  - Many of the cases seem to have been covered, and I'm achieving more and more code unification as I'm working through the problem step by step
  - Looks almost complete now, nearly all cases covered(July 13th)
 * Scope handling? Static/non static scope?
-* - Disable completions on comment line 
-* - Add a static debug field, disable debugging info on console.
+* Disable completions on comment line 
+* Add a static debug field, disable debugging info on console.
 * Trie implementation would be lower priority, "premature optimisation is pure evil". Get all features of CC working good enough and then plan this.
 
 x! Code competition for local code is working with recursive look up. 
@@ -31,20 +31,20 @@ x! Library CC for nested would be tricky. Need to jump from local->compiled code
 x! Should I implement wrapper for ASTNode? - possibly needed for code completion with compiled and non-compiled code. Done. 
 x Differentiating between multiple statements on the same line. How to? Done with offset handling.
 x - Cache predictions if current 'word' is increasing in length. If already showing predictions beginning with 's', for 'sa', remove extra completions, rather than recalculating predictions. Performance increase.
-x - Parameterized type support is broken.
-x - Array types, all all other types support broken. :\
-x - Completion for array access, strings[0].
+x Parameterized type support is broken.
+x Array types, all all other types support broken. :\
+x Completion for array access, strings[0].
 
 Finer details
 
 * printStuff(int,float,String)  - completion endings have to be appropriate. Right now it's just printStuff(,,). Cursor positioning also needs to be taken care of(done). Argument list as tooltip if possible?
-* - Show declaring class for completions
+* Show declaring class for completions
 *! p5 enhanced stuff in java, how does it fit in with everything else, and edge cases. Possibly add support for them. Offset handling improvements should help here.
-* - Diamond operator isn't supported for now. Bummer.
-* - Icons for completions? Or overkill right now?
+* Diamond operator isn't supported for now. Bummer.
+* Icons for completions? Or overkill right now?
 
-x! - Ignore String case while finding completion candidates
-x - Multiple 3rd party classes found in various packages. Not a chance no more.
+x! Ignore String case while finding completion candidates
+x Multiple 3rd party classes found in various packages. Not a chance no more.
 x Obj a1; a1.-> completion doesn't work before it is instantiated. Look into that. Began working again by itself. Yay!
 x Cursor positioning should be after the first ( if arguments present, else after ()
 x Display the type of Completion(method return type, variable type) in the popup.
@@ -98,6 +98,7 @@ x Now highlihgting the declaration name, rather than the whole declaration.
 
 Suggestion for missing imports
 ==============================
+
 * Find a more subtle way to suggest for imports. The current method is too troublesome. Randomly pops up offering suggestions. May intimidate beginners.
 
 1. In compileCheck() in ECS, check if error message is of the type "__" cannot be resolved to a type.
@@ -108,6 +109,6 @@ x Add imports only to beginning of first tab.
 General Stuff
 =============
 
-* - Add option for toggling debug output
-* - update build.xml to produce dists
-* - Make this a contributed mode - mode.txt, github releases feature, version numbering, git tags, etc
+* Add option for toggling debug output
+* update build.xml to produce dists
+* Make this a contributed mode - mode.txt, github releases feature, version numbering, git tags, etc
