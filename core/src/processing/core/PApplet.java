@@ -54,6 +54,7 @@ import java.util.regex.*;
 import java.util.zip.*;
 
 import javax.imageio.ImageIO;
+import javax.swing.JFrame;
 import javax.swing.JFileChooser;
 
 
@@ -10378,7 +10379,10 @@ public class PApplet extends Applet
       displayDevice = environment.getDefaultScreenDevice();
     }
 
-    Frame frame = new Frame(displayDevice.getDefaultConfiguration());
+    // Using a JFrame fixes a Windows problem with Present mode.
+    // This might be our error, but usually this is the sort of crap
+    // we usually get from OS X.
+    Frame frame = new JFrame(displayDevice.getDefaultConfiguration());
     frame.setBackground(new Color(0xCC, 0xCC, 0xCC)); // default Processing gray
 //    JFrame frame = new JFrame(displayDevice.getDefaultConfiguration());
       /*
@@ -10499,6 +10503,9 @@ public class PApplet extends Applet
 //        japplemenubar.JAppleMenuBar.hide();
 //      }
 
+      // Tried to use this to fix the 'present' mode issue.
+      // Did not help, and the screenRect setup seems to work fine.
+      //frame.setExtendedState(Frame.MAXIMIZED_BOTH);
       frame.setUndecorated(true);
       if (backgroundColor != null) {
         frame.setBackground(backgroundColor);
@@ -10520,6 +10527,7 @@ public class PApplet extends Applet
     } else {
       frame.pack();
     }
+
     // insufficient, places the 100x100 sketches offset strangely
     //frame.validate();
 

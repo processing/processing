@@ -607,8 +607,10 @@
     <property name="jre.file" 
 	      value="jre-tools-6u37-linux${sun.arch.data.model}.tgz" />
 
+    <!-- See notes in Windows section about ignoreerrors and the JRE. -->
     <get src="http://processing.googlecode.com/files/${jre.file}" 
 	 dest="linux/jre.tgz" 
+	 ignoreerrors="true"
 	 usetimestamp="true" />
 
 <!--	   
@@ -777,10 +779,16 @@
     <property name="jre.file" 
 	      value="jre-tools-6u37-windows${sun.arch.data.model}.zip" />
 
+    <!-- Added ignoreerrors so we can build even if no network connection.
+	 This will allow us to build so long as a version of jre.zip 
+	 has downloaded, even though it may not be up to date. -->
     <get src="http://processing.googlecode.com/files/${jre.file}" 
 	 dest="windows/jre.zip" 
+	 ignoreerrors="true"
 	 usetimestamp="true" />
 
+    <!-- If no version of jre.zip is available (see above), 
+	 this should give us an error. -->
     <unzip dest="windows/work" src="windows/jre.zip" overwrite="false"/>
   </target>
   
