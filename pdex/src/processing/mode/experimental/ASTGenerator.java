@@ -720,23 +720,41 @@ public class ASTGenerator {
   
   public static ASTNode getParentExpression(ASTNode expression) {
 //  ASTNode anode = null;
-  if (expression instanceof SimpleName) {
-    return expression;
-  } else if (expression instanceof FieldAccess) {
-    return ((FieldAccess) expression).getExpression();
-  } else if (expression instanceof QualifiedName) {
-    return ((QualifiedName) expression).getQualifier();
-  } else if (expression instanceof MethodInvocation) {
-    return ((MethodInvocation) expression).getExpression();
-  }else if(expression instanceof ArrayAccess){
-    return ((ArrayAccess)expression).getArray();
+    if (expression instanceof SimpleName) {
+      return expression;
+    } else if (expression instanceof FieldAccess) {
+      return ((FieldAccess) expression).getExpression();
+    } else if (expression instanceof QualifiedName) {
+      return ((QualifiedName) expression).getQualifier();
+    } else if (expression instanceof MethodInvocation) {
+      return ((MethodInvocation) expression).getExpression();
+    } else if (expression instanceof ArrayAccess) {
+      return ((ArrayAccess) expression).getArray();
+    }
+    System.out.println("getParentExpression returning NULL for "
+        + getNodeAsString(expression));
+    return null;
   }
-  System.out.println("getParentExpression returning NULL for "
-      + getNodeAsString(expression));
-  return null;
-}
 
-  public void updatePredictions(final String word, final int line, final int lineStartNonWSOffset) {
+  private void trimCandidates(String newWord){
+    ArrayList<CompletionCandidate> newCandidate = new ArrayList<CompletionCandidate>();
+    newWord = newWord.toLowerCase();
+    for (CompletionCandidate comp : candidates) {
+      if(comp.toString().toLowerCase().startsWith(newWord)){
+        System.out.println("Adding " + comp);
+        newCandidate.add(comp);
+      }
+    }
+    candidates = newCandidate;
+  }
+  
+  /**
+   * List of CompletionCandidates
+   */
+  private ArrayList<CompletionCandidate> candidates;
+  private String lastPredictedWord = " ";
+  
+  public void preparePredictions(final String word, final int line, final int lineStartNonWSOffset) {
     SwingWorker worker = new SwingWorker() {
 
       @Override
@@ -754,6 +772,23 @@ public class ASTGenerator {
           // return all matches
           word2 = word2.substring(0, word2.length() - 1);
           noCompare = true;
+        }
+        
+        if (word2.length() > 2 && !noCompare
+            && word2.length() > lastPredictedWord.length()) {
+          if (word2.startsWith(lastPredictedWord)) {
+            System.out.println(word + " starts with " + lastPredictedWord);
+            System.out.println("Don't recalc");
+            if (word2.contains(".")) {
+              int x = word2.lastIndexOf('.');
+              trimCandidates(word2.substring(x + 1));
+            } else {
+              trimCandidates(word2);
+            }
+            updatePredictions(word);
+            lastPredictedWord = word2;
+            return;
+          }
         }
         
         int lineNumber = line;
@@ -788,8 +823,8 @@ public class ASTGenerator {
         System.err.println(lineNumber + " Nearest ASTNode to PRED "
             + getNodeAsString(nearestNode));
 
-        ArrayList<CompletionCandidate> candidates = new ArrayList<CompletionCandidate>();
-
+        candidates = new ArrayList<CompletionCandidate>();
+        lastPredictedWord = word2;
         // Determine the expression typed
         
         if (testnode instanceof SimpleName && !noCompare) {
@@ -1019,34 +1054,34 @@ public class ASTGenerator {
           }*/
         }
         
+       updatePredictions(word);
        
-        
-        Collections.sort(candidates);
-        CompletionCandidate[][] candi = new CompletionCandidate[candidates
-            .size()][1];
-        
-        DefaultListModel defListModel = new DefaultListModel();
-
-        for (int i = 0; i < candi.length; i++) {
-          candi[i][0] = candidates.get(i);
-          defListModel.addElement(candidates.get(i));
-        }
-        System.out.println("K = " + candidates.size());
-        DefaultTableModel tm = new DefaultTableModel(
-                                                     candi,
-                                                     new String[] { "Suggestions" });
-        if(tableAuto.isVisible()){
-          tableAuto.setModel(tm);
-          tableAuto.validate();
-          tableAuto.repaint();
-        }
-        errorCheckerService.getEditor().textArea()
-            .showSuggestion(defListModel,word);
       }
     };
 
     worker.execute();
 
+  }
+  
+  private void updatePredictions(final String word) {
+    Collections.sort(candidates);
+    CompletionCandidate[][] candi = new CompletionCandidate[candidates.size()][1];
+    DefaultListModel defListModel = new DefaultListModel();
+
+    for (int i = 0; i < candi.length; i++) {
+      candi[i][0] = candidates.get(i);
+      defListModel.addElement(candidates.get(i));
+    }
+    System.out.println("Total preds = " + candidates.size());
+    DefaultTableModel tm = new DefaultTableModel(candi,
+                                                 new String[] { "Suggestions" });
+    if (tableAuto.isVisible()) {
+      tableAuto.setModel(tm);
+      tableAuto.validate();
+      tableAuto.repaint();
+    }
+    errorCheckerService.getEditor().textArea()
+        .showSuggestion(defListModel, word);
   }
 
   /**

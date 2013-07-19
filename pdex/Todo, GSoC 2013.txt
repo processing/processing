@@ -25,6 +25,8 @@ x! Library CC for nested would be tricky. Need to jump from local->compiled code
 x! Should I implement wrapper for ASTNode? - possibly needed for code completion with compiled and non-compiled code. Done.
 * Trie implementation would be lower priority, "premature optimisation is pure evil". Get all features of CC working good enough and then plan this. 
 x Differentiating between multiple statements on the same line. How to? Done with offset handling.
+x - Cache predictions if current 'word' is increasing in length. If already showing predictions beginning with 's', for 'sa', remove extra completions, rather than recalculating predictions. Performance increase.
+* - Disable completions on comment line 
 * - Add a static debug field, disable debugging info on console. 
 * - update build.xml to produce dists
 * - Make this a contributed mode - mode.txt, github releases feature, version numbering, git tags, etc
@@ -42,6 +44,7 @@ x Cursor positioning should be after the first ( if arguments present, else afte
 x Display the type of Completion(method return type, variable type) in the popup.
  - facing some issues for local types. Fixed.
 x Sorted list of completion candidates - fields, then methods. It's unsorted presently.
+* - Show declaring class for completions
 *! p5 enhanced stuff in java, how does it fit in with everything else, and edge cases. Possibly add support for them. Offset handling improvements should help here.
 * - Diamond operator isn't supported for now. Bummer.
 x Reflection API - getMethods vs getDeclaredMethods. declared.

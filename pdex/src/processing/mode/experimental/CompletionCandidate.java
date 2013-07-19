@@ -41,7 +41,8 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
       cstr.append(' ');
     }
     label.append(")");
-    label.append(" : "+method.getReturnType().getSimpleName());
+    label.append(" : " + method.getReturnType().getSimpleName() + " - "
+        + method.getDeclaringClass().getSimpleName());
     cstr.append(")");
     this.label = label.toString();
     this.completionString = cstr.toString();
@@ -98,7 +99,8 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
     f.getDeclaringClass().getName();
     elementName = f.getName();
     type = PREDEF_FIELD;
-    label = f.getName() + " : " + f.getType().getSimpleName();
+    label = f.getName() + " : " + f.getType().getSimpleName()
+        + f.getDeclaringClass().getSimpleName();
     completionString = elementName;
   }
 
