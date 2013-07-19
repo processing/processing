@@ -32,7 +32,7 @@ import javax.swing.*;
 
 
 /**
- * Stores information about files in the current sketch
+ * Stores information about files in the current sketch.
  */
 public class Sketch {
   private Editor editor;
