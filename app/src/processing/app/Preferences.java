@@ -50,15 +50,14 @@ import processing.core.*;
  * being lectured by strangers who feel that it doesn't look like what they
  * learned in CS class.
  * <p>
- * Would also be possible to change this to use the Java Preferences API.
- * Some useful articles
- * <a href="http://www.onjava.com/pub/a/onjava/synd/2001/10/17/j2se.html">here</a> and
- * <a href="http://www.particle.kth.se/~lindsey/JavaCourse/Book/Part1/Java/Chapter10/Preferences.html">here</a>.
- * However, haven't implemented this yet for lack of time, but more
- * importantly, because it would entail writing to the registry (on Windows),
- * or an obscure file location (on Mac OS X) and make it far more difficult to
- * find the preferences to tweak them by hand (no! stay out of regedit!)
- * or to reset the preferences by simply deleting the preferences.txt file.
+ * We don't use the Java Preferences API because it would entail writing to 
+ * the registry (on Windows), or an obscure file location (on Mac OS X) and 
+ * make it far more difficult (impossible) to remove the preferences.txt to 
+ * reset them (when they become corrupt), or to find the the file to make 
+ * edits for numerous obscure preferences that are not part of the preferences
+ * window. If we added a generic editor (e.g. about:config in Mozilla) for 
+ * such things, we could start using the Java Preferences API. But wow, that
+ * sounds like a lot of work. Not unlike writing this paragraph. 
  */
 public class Preferences {
 

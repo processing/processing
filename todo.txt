@@ -12,10 +12,55 @@ o   b86 supposed to have some support (not available yet)
 o     http://jdk8.java.net/download.html
 X code with a NUL character causes an error
 X   https://github.com/processing/processing/issues/1973
+X Add "Processing Foundation" to the Help menu
+X   https://github.com/processing/processing/issues/1908
 
-_ check to see if manager items from the download can be updated
-_   oops, probably not, because they're part of the distribution
-_   and folks won't be able to write to those directories
+cleaning/earlier
+X common error messages
+X   with a proper list, we can add links when throwing an error in the PDE
+X   Dan started this on the Wiki
+
+manager
+X check to see if manager items from the download can be updated
+X   oops, probably not, because they're part of the distribution
+X   and folks won't be able to write to those directories
+_ libraries need to support multiple categories
+_   https://github.com/processing/processing/issues/1970
+_ send info on 'check for updates' so we know about libs/modes/etc?
+_   how to disclose to users?
+_   only send for items that are part of the public list 
+_     otherwise we're sending private libraries/installs
+_     although this won't pick up old libraries not on the new system
+_ half-installed mode causes a lot of trouble
+_   https://github.com/processing/processing/issues/1875
+_ mode install requires restart *and* still doesn't show as installed
+_   even though it gets added to the modes menu properly after the restart
+_   https://github.com/processing/processing/issues/1782
+_ classpath conflicts.. 
+_   really need to make sure that a weird core.jar isn't being imported
+_   coffeescript was doing this and breaking the pde
+_ init() not called on tools until later 
+_   https://github.com/processing/processing/issues/1859
+
+high
+_ Present Mode trouble on Windows 7 (64-bit) completely broken
+_   https://github.com/processing/processing/issues/1955
+_ move old Google Code SVN back to processing.org
+_   then cull out the old branches/tags from the Github repo
+_ UnsatisfiedLinkError causes huge message... 
+_   error report cleanups haven't been fixed yet
+_   reported by Dan
+_ proxy server requirement causes problems
+_   contrib manager, update checks are broken
+_   https://github.com/processing/processing/issues/1476
+_   might be able to fix this with something in preferences.txt?
+_ figure out Android build w/o javac so we can remove tools.jar and javac
+_   also to the p5 repo with just a JRE
+_   remove initRequirements from Base (no longer need JDI)
+_     move this into Android mode?
+
+_ "String index out of range" error
+_   https://github.com/processing/processing/issues/1940
 
 _ appbundler fixes/changes
 _   icon location uses path, even when embedded
@@ -30,41 +75,6 @@ _   the "Classes" folder is included
 _     appears to be line 138 of main.m
 _     maybe this is a holdover from OS X Java?
 _   bring back the splash screen?
-
-high
-_ libraries need to support multiple categories
-_   https://github.com/processing/processing/issues/1970
-_ Present Mode trouble on Windows 7 (64-bit) completely broken
-_   https://github.com/processing/processing/issues/1955
-_ Add "Processing Foundation" to the Help menu
-_   https://github.com/processing/processing/issues/1908
-_ move old Google Code SVN back to processing.org
-_   then cull out the old branches/tags from the Github repo
-_ UnsatisfiedLinkError causes huge message... 
-_   error report cleanups haven't been fixed yet
-_   reported by Dan
-_ proxy server requirement causes problems
-_   contrib manager, update checks are broken
-_   https://github.com/processing/processing/issues/1476
-_ send info on 'check for updates' so we know about libs/modes/etc?
-_   how to disclose to users?
-_   only send for items that are part of the public list 
-_     otherwise we're sending private libraries/installs
-_     although this won't pick up old libraries not on the new system
-_ figure out Android build w/o javac so we can remove tools.jar and javac
-_   also to the p5 repo with just a JRE
-_   remove initRequirements from Base (no longer need JDI)
-_     move this into Android mode?
-_ half-installed mode causes a lot of trouble
-_   https://github.com/processing/processing/issues/1875
-_ mode install requires restart *and* still doesn't show as installed
-_   even though it gets added to the modes menu properly after the restart
-_   https://github.com/processing/processing/issues/1782
-_ classpath conflicts.. 
-_   really need to make sure that a weird core.jar isn't being imported
-_   coffeescript was doing this and breaking the pde
-_ init() not called on tools until later 
-_   https://github.com/processing/processing/issues/1859
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -94,8 +104,6 @@ _ go through examples, figure out how to do many on the site w/ js instead
 
 DOC / Write Me
 
-_ common error messages
-_   with a proper list, we can add links when throwing an error in the PDE
 _ stop() to shut down a sketch (but not quit/close window)
 _   actually pause/resume
 _ MIN_FLOAT, MAX_FLOAT, also the difference from the Java functions
