@@ -1660,55 +1660,7 @@ public class ASTGenerator {
           }
 
           protected void done() {
-            
-            String newName = txtRenameField.getText();
-            DefaultMutableTreeNode defCU = findAllOccurrences();
-            treeRename.setModel(new DefaultTreeModel(defCU));
-            ((DefaultTreeModel) treeRename.getModel()).reload();
-            frmOccurenceList.setVisible(true);
-            int lineOffsetDisplacementConst = newName.length()
-                - editor.ta.getSelectedText().length();
-            HashMap<Integer, Integer> lineOffsetDisplacement = new HashMap<Integer, Integer>();
-
-            // I need to store the pde and java offsets beforehand because once
-            // the replace starts, all offsets returned are affected
-            int offsetsMap[][][] = new int[defCU.getChildCount()][2][];
-            for (int i = defCU.getChildCount() - 1; i >= 0; i--) {
-              ASTNodeWrapper awrap = (ASTNodeWrapper) ((DefaultMutableTreeNode) (defCU
-                  .getChildAt(i))).getUserObject();
-              offsetsMap[i][0] = awrap.getPDECodeOffsets(errorCheckerService);
-              offsetsMap[i][1] = awrap.getJavaCodeOffsets(errorCheckerService);
-            }
-            
-            for (int i = defCU.getChildCount() - 1; i >= 0; i--) {
-              int pdeoffsets[] = offsetsMap[i][0];
-              int javaoffsets[] = offsetsMap[i][1];
-              // correction for pde enhancements related displacement on a line
-              int off = 0;
-              if (lineOffsetDisplacement.get(javaoffsets[0]) != null) {
-                off = lineOffsetDisplacement.get(javaoffsets[0]);
-
-                lineOffsetDisplacement.put(javaoffsets[0],
-                                           lineOffsetDisplacementConst + off);
-              } else {
-                lineOffsetDisplacement.put(javaoffsets[0],
-                                           lineOffsetDisplacementConst);
-              }
-
-              ErrorCheckerService.scrollToErrorLine(editor, pdeoffsets[0],
-                                                    pdeoffsets[1],
-                                                    javaoffsets[1] + off,
-                                                    javaoffsets[2]);
-              editor.ta.setSelectedText(newName);
-            }
-            for (Integer lineNum : lineOffsetDisplacement.keySet()) {
-              System.out.println(lineNum + "line, disp"
-                  + lineOffsetDisplacement.get(lineNum));
-            }
-            editor.getSketch().setModified(true);
-            errorCheckerService.runManualErrorCheck();
-            frmOccurenceList.setVisible(false);
-            frmRename.setVisible(false);
+           handleRename();
           }
         };
         worker.execute();
@@ -1769,6 +1721,57 @@ public class ASTGenerator {
         worker.execute();
       }
     });
+  }
+  
+  private void handleRename(){
+    String newName = txtRenameField.getText();
+    DefaultMutableTreeNode defCU = findAllOccurrences();
+    treeRename.setModel(new DefaultTreeModel(defCU));
+    ((DefaultTreeModel) treeRename.getModel()).reload();
+    frmOccurenceList.setVisible(true);
+    int lineOffsetDisplacementConst = newName.length()
+        - editor.ta.getSelectedText().length();
+    HashMap<Integer, Integer> lineOffsetDisplacement = new HashMap<Integer, Integer>();
+
+    // I need to store the pde and java offsets beforehand because once
+    // the replace starts, all offsets returned are affected
+    int offsetsMap[][][] = new int[defCU.getChildCount()][2][];
+    for (int i = defCU.getChildCount() - 1; i >= 0; i--) {
+      ASTNodeWrapper awrap = (ASTNodeWrapper) ((DefaultMutableTreeNode) (defCU
+          .getChildAt(i))).getUserObject();
+      offsetsMap[i][0] = awrap.getPDECodeOffsets(errorCheckerService);
+      offsetsMap[i][1] = awrap.getJavaCodeOffsets(errorCheckerService);
+    }
+    
+    for (int i = defCU.getChildCount() - 1; i >= 0; i--) {
+      int pdeoffsets[] = offsetsMap[i][0];
+      int javaoffsets[] = offsetsMap[i][1];
+      // correction for pde enhancements related displacement on a line
+      int off = 0;
+      if (lineOffsetDisplacement.get(javaoffsets[0]) != null) {
+        off = lineOffsetDisplacement.get(javaoffsets[0]);
+
+        lineOffsetDisplacement.put(javaoffsets[0],
+                                   lineOffsetDisplacementConst + off);
+      } else {
+        lineOffsetDisplacement.put(javaoffsets[0],
+                                   lineOffsetDisplacementConst);
+      }
+
+      ErrorCheckerService.scrollToErrorLine(editor, pdeoffsets[0],
+                                            pdeoffsets[1],
+                                            javaoffsets[1] + off,
+                                            javaoffsets[2]);
+      editor.ta.setSelectedText(newName);
+    }
+    for (Integer lineNum : lineOffsetDisplacement.keySet()) {
+      System.out.println(lineNum + "line, disp"
+          + lineOffsetDisplacement.get(lineNum));
+    }
+    editor.getSketch().setModified(true);
+    errorCheckerService.runManualErrorCheck();
+    frmOccurenceList.setVisible(false);
+    frmRename.setVisible(false);
   }
   
   private DefaultMutableTreeNode findAllOccurrences(){
