@@ -944,123 +944,14 @@ public class ASTGenerator {
           {
             System.out.println("ChildExpr is null");
           }
-          /*ASTNode det = resolveExpression(nearestNode, testnode,noCompare);
-          // Find the parent of the expression
-          // in a().b, this would give me the return type of a(), so that we can 
-          // find all children of a() begininng with b
-          System.err.println("DET " + getNodeAsString(det));
-          if (det != null) {
-            TypeDeclaration td = null;
-            SimpleType stp = extracTypeInfo(det);
-            if (det instanceof MethodDeclaration) {
-              if (((MethodDeclaration) det).getReturnType2() instanceof SimpleType) {
-                stp = (SimpleType) (((MethodDeclaration) det).getReturnType2());
-                td = (TypeDeclaration) findDeclaration(stp.getName());
-              }
-            } else if (det instanceof FieldDeclaration) {
-              if (((FieldDeclaration) det).getType() instanceof SimpleType) {
-                stp = (SimpleType) (((FieldDeclaration) det).getType());
-                td = (TypeDeclaration) findDeclaration(stp.getName());
-              }
-            } else if (det instanceof VariableDeclarationStatement) {
-              stp = (SimpleType) (((VariableDeclarationStatement) det)
-                  .getType());
-              td = (TypeDeclaration) findDeclaration(stp.getName());
-            }
-            System.out.println("ST is " + stp.getName());
-            // Now td contains the type returned by a()
-            System.err.println(getNodeAsString(det) + " defined in "
-                + getNodeAsString(td));
-            ASTNode child = resolveChildExpression(testnode);
-            if (td != null) {
-
-              System.out.println("Completion candidate: "
-                  + getNodeAsString(child));
-              for (int i = 0; i < td.getFields().length; i++) {
-                List<VariableDeclarationFragment> vdfs = td.getFields()[i]
-                    .fragments();
-                for (VariableDeclarationFragment vdf : vdfs) {
-                  if (noCompare) {
-                    candidates
-                        .add(new CompletionCandidate(getNodeAsString2(vdf)));
-                  } else if (vdf.getName().toString()
-                      .startsWith(child.toString()))
-                    candidates
-                        .add(new CompletionCandidate(getNodeAsString2(vdf)));
-                }
-
-              }
-              for (int i = 0; i < td.getMethods().length; i++) {
-                if (noCompare) {
-                  candidates
-                      .add(new CompletionCandidate(getNodeAsString2(td
-                          .getMethods()[i]), td.getName().toString(), "",
-                                                   CompletionCandidate.METHOD));
-                } else if (td.getMethods()[i].getName().toString()
-                    .startsWith(child.toString()))
-                  candidates
-                      .add(new CompletionCandidate(getNodeAsString2(td
-                          .getMethods()[i]), td.getName().toString(), "",
-                                                   CompletionCandidate.METHOD));
-              }
-            } else {
-              if (stp != null) {
-                candidates = getMembersForType(stp.getName().toString(),
-                                               child.toString(), noCompare,
-                                               false);
-              }
-            }
-
-          } else if (word.length() - word2.length() == 1) {
-            System.out.println(word + " w2 " + word2);
-//            int dC = 0;
-//            for (int i = 0; i < word.length(); i++) {
-//              if(word.charAt(i) == '.')
-//                dC++;              
-//            }
-//            if(dC == 1 && word.charAt(word.length() - 1) == '.'){
-            System.out.println("All members of " + word2);
-            candidates = getMembersForType(word2, "", true, true);
-//            }
-          } else {
-            System.out.println("Some members of " + word2);
-            int x = word2.indexOf('.');
-            if (x != -1) {
-              candidates = getMembersForType(word2.substring(0, x),
-                                             word2.substring(x + 1), false,
-                                             true);
-            }
-          }
-          if(candidates.size() == 0){
-            System.out.println("candidates empty");
-            String childExpr = resolveChildExpression(testnode)
-                .toString();
-            System.out.println("Parent expression : " + resolveParentExpression(testnode));
-            System.out.println("Child expression : " + childExpr);
-            
-            if(!noCompare){
-              System.out.println("Original testnode " + getNodeAsString(testnode));
-              testnode = resolveParentExpression(testnode);
-              System.out.println("Corrected testnode " + getNodeAsString(testnode));
-            }
-            ClassMember expr = resolveExpression3rdParty(nearestNode, testnode, noCompare);
-            if(expr == null){
-              System.out.println("Expr is null");
-            }else {
-              System.out.println("Expr is " + expr.toString());
-              candidates = getMembersForType(expr,
-                                           childExpr, noCompare, false);
-            }
-          }*/
         }
         
-       updatePredictions(word);
-       
+        updatePredictions(word);
+        
       }
     };
 
     worker.execute();
-
   }
   
   private void updatePredictions(final String word) {
