@@ -164,6 +164,14 @@ public class JavaEditor extends Editor {
       }
     });
     menu.add(item);
+    
+    item = new JMenuItem("The Processing Foundation");
+    item.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        Base.openURL("http://processing.org/foundation/");
+      }
+    });
+    menu.add(item);
 
     item = new JMenuItem("Visit Processing.org");
     item.addActionListener(new ActionListener() {
