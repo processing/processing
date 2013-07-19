@@ -10379,33 +10379,23 @@ public class PApplet extends Applet
       displayDevice = environment.getDefaultScreenDevice();
     }
 
-    // Using a JFrame fixes a Windows problem with Present mode.
-    // This might be our error, but usually this is the sort of crap
-    // we usually get from OS X.
+    // Using a JFrame fixes a Windows problem with Present mode. This might
+    // be our error, but usually this is the sort of crap we usually get from
+    // OS X. It's time for a turnaround: Redmond is thinking different too!
+    // https://github.com/processing/processing/issues/1955
     Frame frame = new JFrame(displayDevice.getDefaultConfiguration());
-    frame.setBackground(new Color(0xCC, 0xCC, 0xCC)); // default Processing gray
-//    JFrame frame = new JFrame(displayDevice.getDefaultConfiguration());
-      /*
-      Frame frame = null;
-      if (displayDevice != null) {
-        frame = new Frame(displayDevice.getDefaultConfiguration());
-      } else {
-        frame = new Frame();
-      }
-      */
-      //Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-
-    // remove the grow box by default
-    // users who want it back can call frame.setResizable(true)
-//    frame.setResizable(false);
-    // moved later (issue #467)
+    // Default Processing gray, which will be replaced below if another
+    // color is specified on the command line (i.e. in the prefs).
+    frame.setBackground(new Color(0xCC, 0xCC, 0xCC));
+    // Cannot call setResizable(false) until later due to OS X (issue #467)
 
     final PApplet applet;
     if (constructedApplet != null) {
       applet = constructedApplet;
     } else {
       try {
-        Class<?> c = Thread.currentThread().getContextClassLoader().loadClass(name);
+        Class<?> c =
+          Thread.currentThread().getContextClassLoader().loadClass(name);
         applet = (PApplet) c.newInstance();
       } catch (Exception e) {
         throw new RuntimeException(e);

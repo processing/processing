@@ -43,8 +43,6 @@ _ init() not called on tools until later
 _   https://github.com/processing/processing/issues/1859
 
 high
-_ Present Mode trouble on Windows 7 (64-bit) completely broken
-_   https://github.com/processing/processing/issues/1955
 _ move old Google Code SVN back to processing.org
 _   then cull out the old branches/tags from the Github repo
 _ UnsatisfiedLinkError causes huge message... 

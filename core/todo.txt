@@ -11,6 +11,8 @@ X   https://github.com/processing/processing/issues/1959
 X   turns out this is an apple.awt tweak for the exported Info.plist
 X getSubset() broken in IntList, StringList, and missing from FloatList
 X   https://github.com/processing/processing/issues/1979
+X Present Mode trouble on Windows 7 (64-bit) completely broken
+X   https://github.com/processing/processing/issues/1955
 
 
 _ retain blendMode() between frames (get bug #)
