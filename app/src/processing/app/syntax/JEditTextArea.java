@@ -1880,10 +1880,16 @@ public class JEditTextArea extends JComponent
           selection = selection.replaceAll("\t", tabString);
         }
 
-        // particularly on macosx when pasting from safari,
-        // replace unicode x00A0 (non-breaking space)
-        // with just a plain space. [fry 030929]
+        // Replace unicode x00A0 (non-breaking space) with just a plain space.
+        // Seen often on Mac OS X when pasting from Safari. [fry 030929]
         selection = selection.replace('\u00A0', ' ');
+
+        // Remove ASCII NUL characters. Reported when pasting from 
+        // Acrobat Reader and PDF documents. [fry 130719] 
+        // https://github.com/processing/processing/issues/1973
+        if (selection.indexOf('\0') != -1) {
+          selection = selection.replaceAll("\0", "");
+        }
 
         int repeatCount = inputHandler.getRepeatCount();
         StringBuffer buf = new StringBuffer();
