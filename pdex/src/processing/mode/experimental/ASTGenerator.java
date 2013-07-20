@@ -1,7 +1,6 @@
 package processing.mode.experimental;
 
 import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,7 +16,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -54,12 +52,14 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.compiler.IProblem;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.ArrayAccess;
 import org.eclipse.jdt.core.dom.ArrayType;
 import org.eclipse.jdt.core.dom.Block;
+import org.eclipse.jdt.core.dom.Comment;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.ExpressionStatement;
@@ -81,6 +81,7 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationExpression;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
+import org.eclipse.jdt.internal.compiler.problem.DefaultProblem;
 
 import processing.app.Base;
 import processing.app.SketchCode;
@@ -237,6 +238,7 @@ public class ASTGenerator {
     }
 //    OutlineVisitor visitor = new OutlineVisitor();
 //    compilationUnit.accept(visitor);
+    calculateComments();
     codeTree = new DefaultMutableTreeNode(
                                           getNodeAsString((ASTNode) compilationUnit
                                               .types().get(0)));
@@ -254,9 +256,9 @@ public class ASTGenerator {
 						return;
           jtree.setModel(new DefaultTreeModel(codeTree));
           ((DefaultTreeModel) jtree.getModel()).reload();
-//          if (!frame2.isVisible()) {
-//            frame2.setVisible(true);
-//          }
+          if (!frame2.isVisible()) {
+            frame2.setVisible(true);
+          }
 //          if (!frameAutoComp.isVisible()) {
 //
 //            frameAutoComp.setVisible(true);
@@ -785,7 +787,7 @@ public class ASTGenerator {
             } else {
               trimCandidates(word2);
             }
-            updatePredictions(word);
+            showPredictions(word);
             lastPredictedWord = word2;
             return;
           }
@@ -935,7 +937,6 @@ public class ASTGenerator {
               System.out.println("Expr is null");
             } else {
               System.out.println("Expr is " + expr.toString());
-
               candidates = getMembersForType(expr, childExpr.toString(),
                                              noCompare, false);
             }
@@ -946,7 +947,7 @@ public class ASTGenerator {
           }
         }
         
-        updatePredictions(word);
+        showPredictions(word);
         
       }
     };
@@ -954,7 +955,7 @@ public class ASTGenerator {
     worker.execute();
   }
   
-  private void updatePredictions(final String word) {
+  private void showPredictions(final String word) {
     Collections.sort(candidates);
     CompletionCandidate[][] candi = new CompletionCandidate[candidates.size()][1];
     DefaultListModel defListModel = new DefaultListModel();
@@ -1099,7 +1100,6 @@ public class ASTGenerator {
       }
     }
     return candidates;
-   
   }
   
   /**
@@ -1567,7 +1567,19 @@ public class ASTGenerator {
   }
 
   public static void main(String[] args) {
-    traversal2();
+    //traversal2();
+    Class probClass = DefaultProblem.class;
+    Field f[] = probClass.getFields();
+    DefaultProblem def = new DefaultProblem(null, null, 0, null, 0, 0, 0, 0, 0);
+    for (Field field : f) {
+      if(Modifier.isStatic(field.getModifiers()))
+      try {
+        System.out.println(field.getName() + "         :" + field.get(null));
+      } catch (Exception e) {
+        e.printStackTrace();
+        break;
+      } 
+    }
   }
 
   public static void traversal2() {
@@ -1891,6 +1903,45 @@ public class ASTGenerator {
       }
       
     }
+  }
+  
+  public int javaCodeOffsetToLineStartOffset(int line, int jOffset){
+    // Find the first node with this line number, return its offset - jOffset
+    line = PdeToJavaLineNumber(line);
+    System.out.println("Looking for line: " + line + ", jOff " + jOffset);
+    Stack temp = new Stack<DefaultMutableTreeNode>();
+    temp.push(codeTree);
+
+    while (!temp.isEmpty()) {
+      DefaultMutableTreeNode cnode = (DefaultMutableTreeNode) temp.pop();
+      for (int i = 0; i < cnode.getChildCount(); i++) {
+        temp.push(cnode.getChildAt(i));
+      }
+
+      if (!(cnode.getUserObject() instanceof ASTNodeWrapper))
+        continue;
+      ASTNodeWrapper awnode = (ASTNodeWrapper) cnode.getUserObject();
+//      System.out.println("Visiting: " + getNodeAsString(awnode.getNode()));
+      if (awnode.getLineNumber() == line) {
+        System.out.println("First element with this line no is: " + awnode
+            + "LSO: " + (jOffset - awnode.getNode().getStartPosition()));
+        return (jOffset - awnode.getNode().getStartPosition());
+      }
+    }    
+    return -1;
+  }
+  
+  private int PdeToJavaLineNumber(int lineNum){
+    int lineNumber = lineNum + errorCheckerService.getPdeImportsCount();
+    // Adjust line number for tabbed sketches
+    int codeIndex = editor.getSketch().getCodeIndex(editor.getCurrentTab());
+    if (codeIndex > 0)
+      for (int i = 0; i < codeIndex; i++) {
+        SketchCode sc = editor.getSketch().getCode(i);
+        int len = Base.countLines(sc.getProgram()) + 1;
+        lineNumber += len;
+      }
+    return lineNumber;
   }
   
   private boolean isInstanceOfType(ASTNode node,ASTNode decl, String name){
@@ -2477,6 +2528,18 @@ public class ASTGenerator {
       alternateParent = alternateParent.getParent();
     }
     return null;
+  }
+  
+  
+  private void calculateComments(){
+    List<Comment> commentList = compilationUnit.getCommentList();
+    System.out.println("Total comments: " + commentList.size());
+//    int i = 0;
+//    for (Comment comment : commentList) {
+//      System.out.println(++i + ": "+comment + " Line:"
+//          + compilationUnit.getLineNumber(comment.getStartPosition()) + ", "
+//          + comment.getLength());
+//    }
   }
   
   /**

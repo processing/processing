@@ -365,7 +365,11 @@ public class ErrorCheckerService implements Runnable{
       int a[] = calculateTabIndexAndLineNumber(problems[i]);
       Problem p = new Problem(problems[i], a[0], a[1] + 1);
       //TODO: ^Why do cheeky stuff?
-      problemsList.add(p);
+      problemsList.add(p);  
+      System.out.println(problems[i].getMessage());
+      for (String j : problems[i].getArguments()) {
+        System.out.println("arg " + j);
+      }
       // System.out.println(p.toString());
     }
     
@@ -472,7 +476,10 @@ public class ErrorCheckerService implements Runnable{
         // + problems[i].isWarning());
 
         IProblem problem = problems[i];
-
+        System.out.println(problem.getMessage());
+        for (String j : problem.getArguments()) {
+          System.out.println("arg " + j);
+        }
         int a[] = calculateTabIndexAndLineNumber(problem);
         Problem p = new Problem(problem, a[0], a[1]);
         if ((Boolean) errorList[i][8]) {
@@ -1212,6 +1219,12 @@ public class ErrorCheckerService implements Runnable{
     // System.out.println("load..? " + loadCompClass);
   }
 
+  private int pdeImportsCount;
+  
+  public int getPdeImportsCount() {
+    return pdeImportsCount;
+  }
+
   /**
    * Removes import statements from tabSource, replaces each with white spaces
    * and adds the import to the list of program imports
@@ -1223,7 +1236,8 @@ public class ErrorCheckerService implements Runnable{
    * @return String - Tab code with imports replaced with white spaces
    */
   private String scrapImportStatements(String tabProgram, int tabNumber) {
-	//TODO: Commented out imports are still detected as main imports.
+    //TODO: Commented out imports are still detected as main imports.
+    pdeImportsCount = 0;
     String tabSource = new String(tabProgram);
     do {
       // System.out.println("-->\n" + sourceAlt + "\n<--");
@@ -1255,7 +1269,7 @@ public class ErrorCheckerService implements Runnable{
       }
       tabSource = tabSource.substring(0, idx) + whiteSpace
         + tabSource.substring(idx + len);
-
+      pdeImportsCount++;
     } while (true);
     // System.out.println(tabSource);
     return tabSource;
