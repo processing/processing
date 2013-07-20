@@ -176,6 +176,8 @@ public class ErrorCheckerService implements Runnable{
       + "(void|int|float|double|String|char|byte)"
       + "(\\s*\\[\\s*\\])?\\s+[a-zA-Z0-9]+\\s*\\(", Pattern.MULTILINE);
   
+  private ErrorMessageSimplifier errorMsgSimplifier;
+  
   public ErrorCheckerService(DebugEditor debugEditor) {
     this.editor = debugEditor;
     initParser();
@@ -186,6 +188,7 @@ public class ErrorCheckerService implements Runnable{
         pdePrepoc.getDefaultImports().length + 1;
     astGenerator = new ASTGenerator(this);
     syntaxErrors = true;
+    errorMsgSimplifier = new ErrorMessageSimplifier();
   }
   
   /**
@@ -692,7 +695,8 @@ public class ErrorCheckerService implements Runnable{
     try {
       String[][] errorData = new String[problemsList.size()][3];
       for (int i = 0; i < problemsList.size(); i++) {
-        errorData[i][0] = problemsList.get(i).message;
+        errorData[i][0] = problemsList.get(i).message ////TODO: this is temporary
+            + " : " + errorMsgSimplifier.getIDName(problemsList.get(i).getIProblem().getID());
         errorData[i][1] = editor.getSketch()
             .getCode(problemsList.get(i).tabIndex).getPrettyName();
         errorData[i][2] = problemsList.get(i).lineNumber + "";
@@ -761,10 +765,13 @@ public class ErrorCheckerService implements Runnable{
       if (emarker.problem.lineNumber == editor.getTextArea()
           .getCaretLine() + 1) {
         if (emarker.type == ErrorMarker.Warning) {
-          editor.statusNotice(emarker.problem.message);
+          editor.statusNotice(emarker.problem.message 
+                              +  " : " + errorMsgSimplifier.getIDName(emarker.problem.getIProblem().getID()));
+        //TODO: this is temporary
         }
         else {
-          editor.statusError(emarker.problem.message);
+          editor.statusError(emarker.problem.message
+                             +  " : " + errorMsgSimplifier.getIDName(emarker.problem.getIProblem().getID()));
         }
         return;
       }

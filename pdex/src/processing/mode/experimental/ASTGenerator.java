@@ -1568,18 +1568,6 @@ public class ASTGenerator {
 
   public static void main(String[] args) {
     //traversal2();
-    Class probClass = DefaultProblem.class;
-    Field f[] = probClass.getFields();
-    DefaultProblem def = new DefaultProblem(null, null, 0, null, 0, 0, 0, 0, 0);
-    for (Field field : f) {
-      if(Modifier.isStatic(field.getModifiers()))
-      try {
-        System.out.println(field.getName() + "         :" + field.get(null));
-      } catch (Exception e) {
-        e.printStackTrace();
-        break;
-      } 
-    }
   }
 
   public static void traversal2() {
