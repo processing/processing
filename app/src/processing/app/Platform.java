@@ -24,6 +24,7 @@ package processing.app;
 
 import java.awt.Desktop;
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 
 import javax.swing.UIManager;
@@ -141,6 +142,23 @@ public class Platform {
       showLauncherWarning();
     }
     */
+  }
+  
+
+  /**
+   * Attempts to move to the Trash on OS X, or the Recycle Bin on Windows. 
+   * If not possible, just deletes the file or folder instead.  
+   * @param file the folder or file to be removed/deleted
+   * @return true if the folder was successfully removed
+   * @throws IOException 
+   */
+  public boolean deleteFile(File file) throws IOException {
+    if (file.isDirectory()) {
+      Base.removeDir(file);
+    } else {
+      return file.delete();
+    }
+    return true;
   }
 
 

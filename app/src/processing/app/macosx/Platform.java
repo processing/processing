@@ -24,6 +24,7 @@ package processing.app.macosx;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import com.apple.eio.FileManager;
 
@@ -79,8 +80,8 @@ public class Platform extends processing.app.Platform {
     }
     */
   }
-
-
+  
+  
   public File getSettingsFolder() throws Exception {
     return new File(getLibraryFolder(), "Processing");
   }
@@ -100,6 +101,15 @@ public class Platform extends processing.app.Platform {
       sketchbookFolder = promptSketchbookLocation();
     }
     */
+  }
+  
+
+  /** 
+   * Moves the specified File object (which might be a file or folder) 
+   * to the trash.
+   */
+  public boolean deleteFile(File file) throws IOException {
+    return FileManager.moveToTrash(file);
   }
 
 

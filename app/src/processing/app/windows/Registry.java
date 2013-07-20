@@ -22,15 +22,6 @@ public class Registry {
   }
 
   /**
-   * Testing.
-   *
-   * @param args arguments
-   * @throws java.lang.Exception on error
-   */
-  public static void main(String[] args) throws Exception {
-  }
-
-  /**
    * Gets one of the root keys.
    *
    * @param key key type
