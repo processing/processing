@@ -41,7 +41,8 @@ class AvailableContribution extends Contribution {
     this.type = type;
     this.link = params.get("download");
     
-    category = ContributionListing.getCategory(params.get("category"));
+    //category = ContributionListing.getCategory(params.get("category"));
+    categories = parseCategories(params.get("category"));
     name = params.get("name");
     authorList = params.get("authorList");
     url = params.get("url");
@@ -65,12 +66,11 @@ class AvailableContribution extends Contribution {
     // Unzip the file into the modes, tools, or libraries folder inside the 
     // sketchbook. Unzipping to /tmp is problematic because it may be on 
     // another file system, so move/rename operations will break.
-    File sketchbookContribFolder = type.getSketchbookFolder();
+//    File sketchbookContribFolder = type.getSketchbookFolder();
     File tempFolder = null; 
     
     try {
-      tempFolder = 
-        Base.createTempFolder(type.toString(), "tmp", sketchbookContribFolder);
+      tempFolder = type.createTempFolder();
     } catch (IOException e) {
       status.setErrorMessage("Could not create a temporary folder to install.");
       return null;
@@ -183,7 +183,7 @@ class AvailableContribution extends Contribution {
         PrintWriter writer = PApplet.createWriter(propFile);
 
         writer.println("name=" + getName());
-        writer.println("category=" + getCategory());
+        writer.println("category=" + getCategoryStr());
         writer.println("authorList=" + getAuthorList());
         writer.println("url=" + getUrl());
         writer.println("sentence=" + getSentence());

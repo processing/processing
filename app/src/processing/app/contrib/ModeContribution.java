@@ -94,13 +94,13 @@ public class ModeContribution extends LocalContribution {
     File[] potential = ContributionType.MODE.listCandidates(modesFolder);
     for (File folder : potential) {
       if (!existing.containsKey(folder)) {
-          try {
-            contribModes.add(new ModeContribution(base, folder, null));
-          } catch (IgnorableException ig) {
-            Base.log(ig.getMessage());
-          } catch (Exception e) {
-            e.printStackTrace();
-          }
+        try {
+          contribModes.add(new ModeContribution(base, folder, null));
+        } catch (IgnorableException ig) {
+          Base.log(ig.getMessage());
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
       }
     }
   }

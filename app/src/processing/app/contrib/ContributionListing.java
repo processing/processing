@@ -31,8 +31,9 @@ import processing.core.PApplet;
 
 
 public class ContributionListing {
+  // Stable URL that will redirect to wherever we're hosting the file
   static final String LISTING_URL =
-    "http://processing.org/contrib_generate/contributions.txt";
+    "http://download.processing.org/contributions.txt";
 
   static ContributionListing singleInstance;
 
@@ -43,12 +44,6 @@ public class ContributionListing {
   ArrayList<Contribution> allContributions;
   boolean hasDownloadedLatestList;
   ReentrantLock downloadingListingLock;
-
-  static final String[] validCategories = {
-    "3D", "Animation", "Compilations", "Data", "Geometry", "GUI",
-    "Hardware", "I/O", "Math", "Simulation", "Sound", "Typography",
-    "Utilities", "Video & Vision"
-  };
 
 
   private ContributionListing() {
@@ -103,53 +98,57 @@ public class ContributionListing {
 
 
   protected void replaceContribution(Contribution oldLib, Contribution newLib) {
-    if (oldLib == null || newLib == null) {
-      return;
-    }
+    if (oldLib != null && newLib != null) {
+      for (String category : oldLib.getCategories()) {
+        if (librariesByCategory.containsKey(category)) {
+          List<Contribution> list = librariesByCategory.get(category);
 
-    if (librariesByCategory.containsKey(oldLib.getCategory())) {
-      List<Contribution> list = librariesByCategory.get(oldLib.getCategory());
-
-      for (int i = 0; i < list.size(); i++) {
-        if (list.get(i) == oldLib) {
-          list.set(i, newLib);
+          for (int i = 0; i < list.size(); i++) {
+            if (list.get(i) == oldLib) {
+              list.set(i, newLib);
+            }
+          }
         }
       }
-    }
 
-    for (int i = 0; i < allContributions.size(); i++) {
-      if (allContributions.get(i) == oldLib) {
-        allContributions.set(i, newLib);
+      for (int i = 0; i < allContributions.size(); i++) {
+        if (allContributions.get(i) == oldLib) {
+          allContributions.set(i, newLib);
+        }
       }
-    }
 
-    notifyChange(oldLib, newLib);
+      notifyChange(oldLib, newLib);
+    }
   }
 
 
   private void addContribution(Contribution contribution) {
-    if (librariesByCategory.containsKey(contribution.getCategory())) {
-      List<Contribution> list = librariesByCategory.get(contribution.getCategory());
-      list.add(contribution);
-      Collections.sort(list, nameComparator);
+    for (String category : contribution.getCategories()) {
+      if (librariesByCategory.containsKey(category)) {
+        List<Contribution> list = librariesByCategory.get(category);
+        list.add(contribution);
+        Collections.sort(list, nameComparator);
 
-    } else {
-      ArrayList<Contribution> list = new ArrayList<Contribution>();
-      list.add(contribution);
-      librariesByCategory.put(contribution.getCategory(), list);
+      } else {
+        ArrayList<Contribution> list = new ArrayList<Contribution>();
+        list.add(contribution);
+        librariesByCategory.put(category, list);
+      }
+      allContributions.add(contribution);
+      notifyAdd(contribution);
+      Collections.sort(allContributions, nameComparator);
     }
-    allContributions.add(contribution);
-    notifyAdd(contribution);
-    Collections.sort(allContributions, nameComparator);
   }
 
 
-  protected void removeContribution(Contribution info) {
-    if (librariesByCategory.containsKey(info.getCategory())) {
-      librariesByCategory.get(info.getCategory()).remove(info);
+  protected void removeContribution(Contribution contribution) {
+    for (String category : contribution.getCategories()) {
+      if (librariesByCategory.containsKey(category)) {
+        librariesByCategory.get(category).remove(contribution);
+      }
     }
-    allContributions.remove(info);
-    notifyRemove(info);
+    allContributions.remove(contribution);
+    notifyRemove(contribution);
   }
 
 
@@ -209,12 +208,14 @@ public class ContributionListing {
 
 
   protected List<Contribution> getFilteredLibraryList(String category, List<String> filters) {
-    ArrayList<Contribution> filteredList = new ArrayList<Contribution>(allContributions);
+    ArrayList<Contribution> filteredList = 
+      new ArrayList<Contribution>(allContributions);
 
     Iterator<Contribution> it = filteredList.iterator();
     while (it.hasNext()) {
       Contribution libInfo = it.next();
-      if (category != null && !category.equals(libInfo.getCategory())) {
+      //if (category != null && !category.equals(libInfo.getCategory())) {
+      if (category != null && !libInfo.hasCategory(category)) {
         it.remove();
       } else {
         for (String filter : filters) {
@@ -254,7 +255,7 @@ public class ContributionListing {
     return contrib.getAuthorList() != null && contrib.getAuthorList().toLowerCase().matches(filter)
         || contrib.getSentence() != null && contrib.getSentence().toLowerCase().matches(filter)
         || contrib.getParagraph() != null && contrib.getParagraph().toLowerCase().matches(filter)
-        || contrib.getCategory() != null && contrib.getCategory().toLowerCase().matches(filter)
+        || contrib.hasCategory(filter)
         || contrib.getName() != null && contrib.getName().toLowerCase().matches(filter);
   }
 
@@ -396,39 +397,39 @@ public class ContributionListing {
   }
 
 
-  /**
-   * @return a lowercase string with all non-alphabetic characters removed
-   */
-  static protected String normalize(String s) {
-    return s.toLowerCase().replaceAll("^\\p{Lower}", "");
-  }
+//  /**
+//   * @return a lowercase string with all non-alphabetic characters removed
+//   */
+//  static protected String normalize(String s) {
+//    return s.toLowerCase().replaceAll("^\\p{Lower}", "");
+//  }
 
-
-  /**
-   * @return the proper, valid name of this category to be displayed in the UI
-   *         (e.g. "Typography / Geometry"). "Unknown" if the category null.
-   */
-  static public String getCategory(String category) {
-    if (category == null) {
-      return "Unknown";
-    }
-    String normCatName = normalize(category);
-
-    for (String validCatName : validCategories) {
-      String normValidCatName = normalize(validCatName);
-      if (normValidCatName.equals(normCatName)) {
-        return validCatName;
-      }
-    }
-    return category;
-  }
+  
+//  /**
+//   * @return the proper, valid name of this category to be displayed in the UI
+//   *         (e.g. "Typography / Geometry"). "Unknown" if the category null.
+//   */
+//  static public String getCategory(String category) {
+//    if (category == null) {
+//      return "Unknown";
+//    }
+//    String normCatName = normalize(category);
+//
+//    for (String validCatName : validCategories) {
+//      String normValidCatName = normalize(validCatName);
+//      if (normValidCatName.equals(normCatName)) {
+//        return validCatName;
+//      }
+//    }
+//    return category;
+//  }
 
 
   ArrayList<AvailableContribution> parseContribList(File file) {
     ArrayList<AvailableContribution> outgoing = new ArrayList<AvailableContribution>();
 
     if (file != null && file.exists()) {
-      String lines[] = PApplet.loadStrings(file);
+      String[] lines = PApplet.loadStrings(file);
 
       int start = 0;
       while (start < lines.length) {

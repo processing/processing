@@ -57,7 +57,7 @@ public abstract class LocalContribution extends Contribution {
 
       name = properties.get("name");
       id = properties.get("id");
-      category = ContributionListing.getCategory(properties.get("category"));
+      categories = parseCategories(properties.get("category"));
       if (name == null) {
         name = folder.getName();
       }
@@ -71,7 +71,6 @@ public abstract class LocalContribution extends Contribution {
       } catch (NumberFormatException e) {
         System.err.println("The version number for the “" + name + "” library is not set properly.");
         System.err.println("Please contact the library author to fix it according to the guidelines.");
-        //e.printStackTrace();
       }
       prettyVersion = properties.get("prettyVersion");
       
@@ -185,8 +184,8 @@ public abstract class LocalContribution extends Contribution {
   
   
   LocalContribution copyAndLoad(Editor editor, 
-                                    boolean confirmReplace, 
-                                    StatusPanel status) {
+                                boolean confirmReplace, 
+                                StatusPanel status) {
     ArrayList<LocalContribution> oldContribs = 
       getType().listContributions(editor);
     
@@ -283,7 +282,7 @@ public abstract class LocalContribution extends Contribution {
     if (backupFolder != null) {
       String libFolderName = getFolder().getName();
       String prefix = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-      final String backupName = prefix + "_" + libFolderName;
+      final String backupName = prefix + " " + libFolderName;
       File backupSubFolder = ContributionManager.getUniqueName(backupFolder, backupName);
 
       if (deleteOriginal) {
@@ -505,7 +504,7 @@ public abstract class LocalContribution extends Contribution {
   }
 
 
-  class IgnorableException extends Exception {
+  static protected class IgnorableException extends Exception {
     public IgnorableException(String msg) {
       super(msg);
     }
