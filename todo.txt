@@ -18,15 +18,22 @@ X Update JNA from 3.2.4 to 3.5.2
 X   https://maven.java.net/content/repositories/releases/net/java/dev/jna/jna/3.5.2/jna-3.5.2.jar
 X   https://maven.java.net/content/repositories/releases/net/java/dev/jna/platform/3.5.2/platform-3.5.2.jar
 X problem with associating .pde files 
-_   https://github.com/processing/processing/issues/286
+X   https://github.com/processing/processing/issues/286
 X   http://code.google.com/p/processing/issues/detail?id=247
 o   In regedit: Navigate to Computer\HKEY_CLASSES_ROOT\Applications and find your .exe name. Navigate under its name to shell>open>command. In the Default change its location to the actual location of the executable, hit okay and then try and reassociate the file type as you normally would.
 X Add methods to move files to Trash/Recycle Bin where available
+X UnsatisfiedLinkError causes huge message... 
+X   error report cleanups haven't been fixed yet
+X   reported by Dan
+X   this should be better now
 
 cleaning/earlier
 X common error messages
 X   with a proper list, we can add links when throwing an error in the PDE
 X   Dan started this on the Wiki
+o build is currently broken for fresh checkout due to changes to file layout
+o   something that gets fixed by 'make clean'
+o   also test on windows and linux
 
 manager
 X check to see if manager items from the download can be updated
@@ -36,19 +43,19 @@ X changed manager to go to download.processing.org/latest.txt
 X   and uses a redirect from there (hopeully that's followed?)
 X libraries need to support multiple categories
 X   https://github.com/processing/processing/issues/1970
-
+X restrict library categories to the ones in the document
+X   if it's not correct, shows up as 'other'
 _ we shouldn't use .properties for modes et al
 _   because a .properties file is iso8859-1
 _ remove "Compilations" category for libraries
 _ make note that .properties file *must* be utf-8
 _   if not it'll make things gross (andre sier flob library)
-_ restrict library categories to the ones in the document
-_   if it's not correct, shows up as 'other'
 _ argh.. the 'old' folder is really poorly done
 _   attempt to install multiple will cause havoc (fail because 'old' exists)
 _ modes and tools require restart (per ContributionType class)
 _   but no message is provided anywhere?
 _ why wasn't Library moved to LibraryContribution?
+_   or that LibraryContribution needs to be a wrapper around it?
 _ send info on 'check for updates' so we know about libs/modes/etc?
 _   how to disclose to users?
 _   only send for items that are part of the public list 
@@ -71,16 +78,15 @@ _   another point for doing .zip files to prevent overwriting
 _ add BookContribution?
 _ will offer to open the contrib manager even though it's already open
 _   though this was looking at libraries, and there may have been modes
-_ update only showing up when selected is awkward
+_   is there an "all" view for the mgr that shows libs, modes, etc?
+_ update button only showing up when item is selected feels awkward
 _ "update all" would be useful
+_   "Update 4 items" as a button name
 
 high
 _ add .bat file to lib on windows so that we can get better debugging info
 _ move old Google Code SVN back to processing.org
 _   then cull out the old branches/tags from the Github repo
-_ UnsatisfiedLinkError causes huge message... 
-_   error report cleanups haven't been fixed yet
-_   reported by Dan
 _ proxy server requirement causes problems
 _   contrib manager, update checks are broken
 _   https://github.com/processing/processing/issues/1476
@@ -89,7 +95,6 @@ _ figure out Android build w/o javac so we can remove tools.jar and javac
 _   also to the p5 repo with just a JRE
 _   remove initRequirements from Base (no longer need JDI)
 _     move this into Android mode?
-
 _ "String index out of range" error
 _   https://github.com/processing/processing/issues/1940
 
@@ -993,9 +998,6 @@ _   i.e. don't mess with Sketch menu, put it in the mode menu
 _ add notes to build instructions re: building core with eclipse
 _ update the build instructions page
 _   http://code.google.com/p/processing/wiki/BuildInstructions
-_ build is currently broken for fresh checkout due to changes to file layout
-_   something that gets fixed by 'make clean'
-_   also test on windows and linux
 _ p5 assets need to be licensed differently from the source
 
 
