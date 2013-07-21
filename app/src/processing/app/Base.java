@@ -6,9 +6,9 @@
   Copyright (c) 2004-13 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
-  This program is free software; you can redistribute it and/or modify
-  it under the terms of the GNU General Public License version 2
-  as published by the Free Software Foundation.
+  This program is free software; you can redistribute it and/or
+  modify it under the terms of the GNU General Public License
+  version 2, as published by the Free Software Foundation.
 
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -1640,22 +1640,22 @@ public class Base {
     //return PApplet.platform == PConstants.MACOSX;
     return System.getProperty("os.name").indexOf("Mac") != -1; //$NON-NLS-1$ //$NON-NLS-2$
   }
-  
-  
+
+
   static private Boolean usableOracleJava;
-  
+
   // Make sure this is Oracle Java 7u40 or later. This is temporary.
   static public boolean isUsableOracleJava() {
     if (usableOracleJava == null) {
       usableOracleJava = false;
-      
-      if (Base.isMacOS() && 
+
+      if (Base.isMacOS() &&
           System.getProperty("java.vendor").contains("Oracle")) {
         String version = System.getProperty("java.version");  // 1.7.0_40
         String[] m = PApplet.match(version, "1.(\\d).*_(\\d+)");
-      
-        if (m != null && 
-          PApplet.parseInt(m[1]) >= 7 && 
+
+        if (m != null &&
+          PApplet.parseInt(m[1]) >= 7 &&
           PApplet.parseInt(m[2]) >= 40) {
           usableOracleJava = true;
         }
@@ -2340,9 +2340,9 @@ public class Base {
       String decodedPath = PApplet.urlDecode(path);
       // The .jar file will be in the lib folder
       File jarFolder = new File(decodedPath).getParentFile();
-      if (jarFolder.getName().equals("lib")) {   
+      if (jarFolder.getName().equals("lib")) {
         // The main Processing installation directory.
-        // This works for Windows, Linux, and Apple's Java 6 on OS X. 
+        // This works for Windows, Linux, and Apple's Java 6 on OS X.
         processingRoot = jarFolder.getParentFile();
       } else if (Base.isMacOS()) {
         // This works for Java 7 on OS X.
@@ -2350,8 +2350,8 @@ public class Base {
       }
       if (processingRoot == null || !processingRoot.exists()) {
         // Try working directory instead (user.dir, different from user.home)
-        Base.log("Could not find lib folder via " + 
-                 jarFolder.getAbsolutePath() + 
+        Base.log("Could not find lib folder via " +
+                 jarFolder.getAbsolutePath() +
                  ", switching to user.dir");
         processingRoot = new File(System.getProperty("user.dir"));
       }
@@ -2459,12 +2459,21 @@ public class Base {
   }
 
 
-  static public void readSettings(String filename, String lines[],
+  /**
+   * Parse a String array that contains attribute/value pairs separated
+   * by = (the equals sign). The # (hash) symbol is used to denote comments.
+   * Comments can be anywhere on a line. Blank lines are ignored.
+   */
+  static public void readSettings(String filename, String[] lines,
                                   HashMap<String, String> settings) {
-    for (int i = 0; i < lines.length; i++) {
-      int hash = lines[i].indexOf('#');
-      String line = (hash == -1) ?
-        lines[i].trim() : lines[i].substring(0, hash).trim();
+    for (String line : lines) {
+      // Remove comments
+      int commentMarker = line.indexOf('#');
+      if (commentMarker != -1) {
+        line = line.substring(0, commentMarker);
+      }
+      // Remove extra whitespace
+      line = line.trim();
 
       if (line.length() != 0) {
         int equals = line.indexOf('=');
@@ -2575,9 +2584,24 @@ public class Base {
 
 
   /**
+   * Remove a File object (a file or directory) from the system by placing it
+   * in the Trash or Recycle Bin (if available) or simply deleting it (if not).
+   *
+   * When the file/folder is on another file system, it may simply be removed
+   * immediately, without additional warning. So only use this if you want to,
+   * you know, "remove" the subject in question.
+   *
+   * @param file the victim
+   * @return true if all ends well
+   * @throws IOException what went wrong
+   */
+  static public boolean removeFile(File file) throws IOException {
+    return platform.deleteFile(file);
+  }
+
+
+  /**
    * Remove all files in a directory and the directory itself.
-   * TODO implement cross-platform "move to trash" instead of deleting,
-   *      since this is potentially scary if there's a bug.
    */
   static public void removeDir(File dir) {
     if (dir.exists()) {
@@ -2630,7 +2654,8 @@ public class Base {
     if (files == null) return -1;
 
     for (int i = 0; i < files.length; i++) {
-      if (files[i].equals(".") || (files[i].equals("..")) ||
+      if (files[i].equals(".") ||
+          files[i].equals("..") ||
           files[i].equals(".DS_Store")) continue;
       File fella = new File(folder, files[i]);
       if (fella.isDirectory()) {
