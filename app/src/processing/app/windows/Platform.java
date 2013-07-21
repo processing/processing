@@ -6,8 +6,8 @@
   Copyright (c) 2012-2013 The Processing Foundation
   Copyright (c) 2008-2012 Ben Fry and Casey Reas
 
-  This program is free software; you can redistribute it and/or 
-  modify it under the terms of the GNU General Public License 
+  This program is free software; you can redistribute it and/or
+  modify it under the terms of the GNU General Public License
   version 2, as published by the Free Software Foundation.
 
   This program is distributed in the hope that it will be useful,
@@ -43,25 +43,25 @@ import processing.core.PApplet;
 
 /**
  * Platform-specific glue for Windows.
- *  
+ *
  * This is a bit of a hodgepodge of JNA examples and StackOverflow answers,
- * and as a result, is not the prettiest piece of code in this code base. 
- * In fact, an honest man might call it ugly.  
- * 
- * Classes like Advapi32, WINNT, etc could be removed in favor of the 
- * jna-platform.jar, but that would require 1) some cleanup and extensive  
- * testing (across Windows XP, 7, and 8) to make sure everything was still 
+ * and as a result, is not the prettiest piece of code in this code base.
+ * In fact, an honest man might call it ugly.
+ *
+ * Classes like Advapi32, WINNT, etc could be removed in favor of the
+ * jna-platform.jar, but that would require 1) some cleanup and extensive
+ * testing (across Windows XP, 7, and 8) to make sure everything was still
  * working. It would also require adding the new .jar file, and making sure
- * that it was included with the distribution across all of the platforms.   
+ * that it was included with the distribution across all of the platforms.
  */
 public class Platform extends processing.app.Platform {
-  
+
   static final String openCommand =
     System.getProperty("user.dir").replace('/', '\\') +
     "\\processing.exe \"%1\"";
   static final String DOC = "Processing.Document";
 //  static final String DOC = "Processing.exe";
-  
+
   static final String APP_NAME = "Processing";
 
 
@@ -71,7 +71,8 @@ public class Platform extends processing.app.Platform {
     //checkQuickTime();
     checkPath();
 
-    File f = new File("C:\\recycle-test.txt");
+    File f = new File(System.getProperty("user.dir"), "recycle-test.txt");
+    //File f = new File("C:\\recycle-test.txt");
     System.out.println(f.getAbsolutePath());
     java.io.PrintWriter writer = PApplet.createWriter(f);
     writer.println("blah");
@@ -82,7 +83,7 @@ public class Platform extends processing.app.Platform {
     } catch (IOException e) {
       e.printStackTrace();
     }
-    
+
     //findJDK();
     /*
     new Thread(new Runnable() {
@@ -243,8 +244,8 @@ public class Platform extends processing.app.Platform {
     }
     return null;
   }
-  
-  
+
+
   static private String getAppDataPath() throws Exception {
     // HKEY_CURRENT_USER\Software\Microsoft
     //   \Windows\CurrentVersion\Explorer\Shell Folders
@@ -263,10 +264,10 @@ public class Platform extends processing.app.Platform {
     // Using JNA and SHGetFolderPath instead.
 
     // this will be contain the path if SHGetFolderPath is successful
-    char[] pszPath = new char[WinDef.MAX_PATH]; 
-    HRESULT hResult = 
-      Shell32.INSTANCE.SHGetFolderPath(null, ShlObj.CSIDL_APPDATA, 
-                                       null, ShlObj.SHGFP_TYPE_CURRENT, 
+    char[] pszPath = new char[WinDef.MAX_PATH];
+    HRESULT hResult =
+      Shell32.INSTANCE.SHGetFolderPath(null, ShlObj.CSIDL_APPDATA,
+                                       null, ShlObj.SHGFP_TYPE_CURRENT,
                                        pszPath);
 
     if (!hResult.equals(WinError.S_OK)) {
@@ -291,7 +292,7 @@ public class Platform extends processing.app.Platform {
     return null;
   }
 
-  
+
   static private String getDocumentsPath() throws Exception {
     // http://support.microsoft.com/?kbid=221837&sd=RMVP
     // http://support.microsoft.com/kb/242557/en-us
@@ -330,8 +331,8 @@ public class Platform extends processing.app.Platform {
 //    return new File(personalPath, "Processing");
     return personalPath.substring(0, len);
   }
-  
-  
+
+
 //  @Override
 //  public boolean deleteFile(File file) {
 //    try {
@@ -343,15 +344,15 @@ public class Platform extends processing.app.Platform {
 //    }
 //    return true;
 //  }
-  
-  
-//  /** 
+
+
+//  /**
 //   * Move files/folders to the trash. If this file is on another file system
-//   * or on a shared network directory, it will simply be deleted without any 
+//   * or on a shared network directory, it will simply be deleted without any
 //   * additional confirmation. Take that.
 //   * <p>
 //   * Based on JNA source for com.sun.jna.platform.win32.W32FileUtils
-//   * 
+//   *
 //   * @param files array of File objects to be removed
 //   * @return true if no error codes returned
 //   * @throws IOException if something bad happened along the way
@@ -369,9 +370,9 @@ public class Platform extends processing.app.Platform {
 //    fileop.fFlags = ShellAPI.FOF_ALLOWUNDO | ShellAPI.FOF_NO_UI;
 //    int ret = shell.SHFileOperation(fileop);
 //    if (ret != 0) {
-//      throw new IOException("Move to trash failed: " + 
+//      throw new IOException("Move to trash failed: " +
 //                            fileop.pFrom + ": error code " + ret);
-////        throw new IOException("Move to trash failed: " + fileop.pFrom + ": " + 
+////        throw new IOException("Move to trash failed: " + fileop.pFrom + ": " +
 ////                              Kernel32Util.formatMessageFromLastErrorCode(ret));
 //    }
 //    if (fileop.fAnyOperationsAborted) {
@@ -379,23 +380,23 @@ public class Platform extends processing.app.Platform {
 //    }
 //    return true;
 //  }
-  
-  
+
+
 //  /**
 //   * Ported from ShellAPI.h in the Microsoft Windows SDK 6.0A.
-//   * Modified (bastardized) version from the JNA "platform" classes. 
+//   * Modified (bastardized) version from the JNA "platform" classes.
 //   * @author dblock[at]dblock.org
 //   */
 //  public interface ShellAPI extends StdCallLibrary {
 //
-//    int STRUCTURE_ALIGNMENT = com.sun.jna.Platform.is64Bit() ? 
+//    int STRUCTURE_ALIGNMENT = com.sun.jna.Platform.is64Bit() ?
 //      Structure.ALIGN_DEFAULT : Structure.ALIGN_NONE;
-//  
+//
 //    int FO_MOVE = 0x0001;
 //    int FO_COPY = 0x0002;
 //    int FO_DELETE = 0x0003;
 //    int FO_RENAME = 0x0004;
-//    
+//
 //    int FOF_MULTIDESTFILES = 0x0001;
 //    int FOF_CONFIRMMOUSE = 0x0002;
 //    int FOF_SILENT = 0x0004; // don't display progress UI (confirm prompts may be displayed still)
@@ -413,13 +414,13 @@ public class Platform extends processing.app.Platform {
 //    int FOF_WANTNUKEWARNING = 0x4000; // during delete operation, warn if nuking instead of recycling (partially overrides FOF_NOCONFIRMATION)
 //    int FOF_NORECURSEREPARSE = 0x8000; // deprecated; the operations engine always does the right thing on FolderLink objects (symlinks, reparse points, folder shortcuts)
 //    int FOF_NO_UI = (FOF_SILENT | FOF_NOCONFIRMATION | FOF_NOERRORUI | FOF_NOCONFIRMMKDIR); // don't display any UI at all
-//    
+//
 //    int PO_DELETE = 0x0013; // printer is being deleted
 //    int PO_RENAME = 0x0014; // printer is being renamed
 //    int PO_PORTCHANGE = 0x0020; // port this printer connected to is being changed
 //    int PO_REN_PORT = 0x0034; // PO_RENAME and PO_PORTCHANGE at same time.
 //  }
-  
+
 
   /*
   public void openURL(String url) throws Exception {
@@ -506,7 +507,7 @@ public class Platform extends processing.app.Platform {
     return clib._putenv(variable + "=");
   }
 
-  
+
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
   // JNA code for using SHGetFolderPath to fix Issue 410
@@ -521,14 +522,14 @@ public class Platform extends processing.app.Platform {
 //    OPTIONS.put(Library.OPTION_FUNCTION_MAPPER, W32APIFunctionMapper.UNICODE);
 //  }
 //
-//  
-//  static class HANDLE extends PointerType implements NativeMapped { 
+//
+//  static class HANDLE extends PointerType implements NativeMapped {
 //    public HANDLE() { }
 //  }
 //
 //  static class HWND extends HANDLE { }
 //
-//  
+//
 //  public interface Shell32 extends Library {
 //
 //    public static final int MAX_PATH = 260;
@@ -551,12 +552,12 @@ public class Platform extends processing.app.Platform {
 //     */
 //    public int SHGetFolderPath(HWND hwndOwner, int nFolder, HANDLE hToken,
 //                               int dwFlags, char[] pszPath);
-//    
+//
 //    /**
-//     * This function can be used to copy, move, rename, 
+//     * This function can be used to copy, move, rename,
 //     * or delete a file system object.
-//     * @param fileop Address of an SHFILEOPSTRUCT structure that contains 
-//     * information this function needs to carry out the specified operation. 
+//     * @param fileop Address of an SHFILEOPSTRUCT structure that contains
+//     * information this function needs to carry out the specified operation.
 //     * @return Returns zero if successful, or nonzero otherwise.
 //     */
 //    public int SHFileOperation(SHFILEOPSTRUCT fileop);
