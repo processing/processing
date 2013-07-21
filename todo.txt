@@ -14,6 +14,14 @@ X code with a NUL character causes an error
 X   https://github.com/processing/processing/issues/1973
 X Add "Processing Foundation" to the Help menu
 X   https://github.com/processing/processing/issues/1908
+X Update JNA from 3.2.4 to 3.5.2
+X   https://maven.java.net/content/repositories/releases/net/java/dev/jna/jna/3.5.2/jna-3.5.2.jar
+X   https://maven.java.net/content/repositories/releases/net/java/dev/jna/platform/3.5.2/platform-3.5.2.jar
+X problem with associating .pde files 
+_   https://github.com/processing/processing/issues/286
+X   http://code.google.com/p/processing/issues/detail?id=247
+o   In regedit: Navigate to Computer\HKEY_CLASSES_ROOT\Applications and find your .exe name. Navigate under its name to shell>open>command. In the Default change its location to the actual location of the executable, hit okay and then try and reassociate the file type as you normally would.
+X Add methods to move files to Trash/Recycle Bin where available
 
 cleaning/earlier
 X common error messages
@@ -827,20 +835,15 @@ _   https://github.com/processing/processing/issues/1633
 _ updated launch4j 3.1 beta
 _   http://sourceforge.net/projects/launch4j/files/launch4j-3/
 _ does launching p5 from inside the .zip folder cause it to quit immediately?
+_   how can we provide an error message here?
 _ exe instead of bat to make exported apps run in 64-bit
 _   http://code.google.com/p/processing/issues/detail?id=885
 _   might not be necessary with new launch4j!
 _ how to handle double-clicked files on windows?
 _   big deal for psk and others
+_   this may already work with SingleInstance stuff
 _ Update Windows icons for multiple sizes, implement them in the PDE
 _   http://code.google.com/p/processing/issues/detail?id=632
-_ problem with associating .pde files 
-_   http://code.google.com/p/processing/issues/detail?id=247
-_   http://support.microsoft.com/kb/184082
-_   http://msdn.microsoft.com/en-us/library/cc144175%28v=VS.85%29.aspx
-_   http://msdn.microsoft.com/en-us/library/cc144104%28v=VS.85%29.aspx
-_   http://msdn.microsoft.com/en-us/library/cc144067%28v=VS.85%29.aspx
-_   In regedit: Navigate to Computer\HKEY_CLASSES_ROOT\Applications and find your .exe name. Navigate under its name to shell>open>command. In the Default change its location to the actual location of the executable, hit okay and then try and reassociate the file type as you normally would.
 
 
 DIST / Mac OS X

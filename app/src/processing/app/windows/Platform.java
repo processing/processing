@@ -142,13 +142,6 @@ public class Platform extends processing.app.Platform {
    * Make sure that .pde files are associated with processing.exe.
    */
   protected void checkAssociations() {
-//    HKEY_CLASSES_ROOT
-//    MyProgram.exe
-//       shell
-//          open
-//             command
-//                (Default) = C:\MyDir\MyProgram.exe "%1"
-
     try {
       String knownCommand =
         Registry.getStringValue(REGISTRY_ROOT_KEY.CLASSES_ROOT,
@@ -174,6 +167,19 @@ public class Platform extends processing.app.Platform {
    * Associate .pde files with this version of Processing.
    */
   protected void setAssociations() throws UnsupportedEncodingException {
+    // http://support.microsoft.com/kb/184082
+    // http://msdn.microsoft.com/en-us/library/cc144175%28v=VS.85%29.aspx
+    // http://msdn.microsoft.com/en-us/library/cc144104%28v=VS.85%29.aspx
+    // http://msdn.microsoft.com/en-us/library/cc144067%28v=VS.85%29.aspx
+    // msdn.microsoft.com/en-us/library/windows/desktop/ms724475(v=vs.85).aspx
+
+//    HKEY_CLASSES_ROOT
+//    MyProgram.exe
+//       shell
+//          open
+//             command
+//                (Default) = C:\MyDir\MyProgram.exe "%1"
+
     if (Registry.createKey(REGISTRY_ROOT_KEY.CLASSES_ROOT,
                            "", ".pde") &&
         Registry.setStringValue(REGISTRY_ROOT_KEY.CLASSES_ROOT,
