@@ -179,6 +179,9 @@ public class Platform extends processing.app.Platform {
 //          open
 //             command
 //                (Default) = C:\MyDir\MyProgram.exe "%1"
+    
+    REGISTRY_ROOT_KEY rootKey = REGISTRY_ROOT_KEY.CLASSES_ROOT;
+    String parentKey = "";
 
     if (Registry.createKey(REGISTRY_ROOT_KEY.CLASSES_ROOT,
                            "", ".pde") &&

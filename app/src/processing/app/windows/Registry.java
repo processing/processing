@@ -23,7 +23,9 @@ import com.sun.jna.ptr.IntByReference;
  * 20 July 2013 to make updates for use with JNA 3.5.2's platform classes.
  */
 public class Registry {
-  static public enum REGISTRY_ROOT_KEY{CLASSES_ROOT, CURRENT_USER, LOCAL_MACHINE, USERS};
+  static public enum REGISTRY_ROOT_KEY {
+    CLASSES_ROOT, CURRENT_USER, LOCAL_MACHINE, USERS
+  };
   //private final static HashMap<REGISTRY_ROOT_KEY, Integer> rootKeyMap = new HashMap<REGISTRY_ROOT_KEY, Integer>();
   private final static HashMap<REGISTRY_ROOT_KEY, WinReg.HKEY> rootKeyMap =
     new HashMap<REGISTRY_ROOT_KEY, WinReg.HKEY>();
