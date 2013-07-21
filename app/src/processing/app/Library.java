@@ -17,7 +17,8 @@ public class Library extends LocalContribution {
 
   /** 
    * Subfolder for grouping libraries in a menu. Basic subfolder support 
-   * is provided so that basic organization can be done in the import menu. 
+   * is provided so that some organization can be done in the import menu. 
+   * (This is the replacement for the "library compilation" type.)
    */
   protected String group;
 
@@ -83,12 +84,24 @@ public class Library extends LocalContribution {
   };
 
 
-  public Library(File folder) {
+  static public Library load(File folder) {
+    try {
+      return new Library(folder);
+//    } catch (IgnorableException ig) {
+//      Base.log(ig.getMessage());
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return null;
+  }
+  
+  
+  private Library(File folder) {
     this(folder, null);
   }
 
 
-  public Library(File folder, String groupName) {
+  private Library(File folder, String groupName) {
     super(folder);
     this.group = groupName;
 
@@ -196,7 +209,6 @@ public class Library extends LocalContribution {
 
     // get the path for all .jar files in this code folder
     packageList = Base.packageListFromClassPath(getClassPath());
-
   }
 
 
