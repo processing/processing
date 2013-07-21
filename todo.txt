@@ -45,6 +45,8 @@ X libraries need to support multiple categories
 X   https://github.com/processing/processing/issues/1970
 X restrict library categories to the ones in the document
 X   if it's not correct, shows up as 'other'
+X catch Error (not just Exception) objects during load
+X   handles UnsupportedClassVersionError and others
 _ we shouldn't use .properties for modes et al
 _   because a .properties file is iso8859-1
 _ remove "Compilations" category for libraries
@@ -84,6 +86,7 @@ _ "update all" would be useful
 _   "Update 4 items" as a button name
 
 high
+_ MovieMaker needs to be compiling as 1.6
 _ add .bat file to lib on windows so that we can get better debugging info
 _ move old Google Code SVN back to processing.org
 _   then cull out the old branches/tags from the Github repo
