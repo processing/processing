@@ -42,27 +42,16 @@ import processing.core.PApplet;
 
 
 /**
- * Platform-specific glue for Windows.
+ * Platform-specific glue for Windows.  
  *
- * This is a bit of a hodgepodge of JNA examples and StackOverflow answers,
- * and as a result, is not the prettiest piece of code in this code base.
- * In fact, an honest man might call it ugly.
- *
- * Classes like Advapi32, WINNT, etc could be removed in favor of the
- * jna-platform.jar, but that would require 1) some cleanup and extensive
- * testing (across Windows XP, 7, and 8) to make sure everything was still
- * working. It would also require adding the new .jar file, and making sure
- * that it was included with the distribution across all of the platforms.
  */
 public class Platform extends processing.app.Platform {
 
-  static final String openCommand =
-    System.getProperty("user.dir").replace('/', '\\') +
-    "\\processing.exe \"%1\"";
-  static final String DOC = "Processing.Document";
-//  static final String DOC = "Processing.exe";
-
   static final String APP_NAME = "Processing";
+  static final String REG_OPEN_COMMAND =
+    System.getProperty("user.dir").replace('/', '\\') + 
+    "\\" + APP_NAME.toLowerCase() + ".exe \"%1\"";
+  static final String REG_DOC = APP_NAME + ".Document";
 
 
   public void init(Base base) {
@@ -143,17 +132,13 @@ public class Platform extends processing.app.Platform {
    */
   protected void checkAssociations() {
     try {
-      String knownCommand =
-        Registry.getStringValue(REGISTRY_ROOT_KEY.CLASSES_ROOT,
-                                DOC + "\\shell\\open\\command", "");
-      if (knownCommand == null) {
-        if (Preferences.getBoolean("platform.auto_file_type_associations")) {
-          setAssociations();
-        }
-
-      } else if (!knownCommand.equals(openCommand)) {
-        // If the value is set differently, just change the registry setting.
-        if (Preferences.getBoolean("platform.auto_file_type_associations")) {
+      if (Preferences.getBoolean("platform.auto_file_type_associations")) {
+        // Check the key that should be set by a previous run of Processing
+        String knownCommand =
+          Registry.getStringValue(REGISTRY_ROOT_KEY.CURRENT_USER,
+                                  "Software\\Classes\\" + REG_DOC + "\\shell\\open\\command", "");
+        // If the association hasn't been set, or it's not correct, set it.
+        if (knownCommand == null || !knownCommand.equals(REG_OPEN_COMMAND)) {
           setAssociations();
         }
       }
@@ -164,7 +149,9 @@ public class Platform extends processing.app.Platform {
 
 
   /**
-   * Associate .pde files with this version of Processing.
+   * Associate .pde files with this version of Processing. After 2.0.1,  
+   * this was changed to only set the values for the current user, so that  
+   * it would no longer silently fail on systems that have UAC turned on.
    */
   protected void setAssociations() throws UnsupportedEncodingException {
     // http://support.microsoft.com/kb/184082
@@ -179,37 +166,59 @@ public class Platform extends processing.app.Platform {
 //          open
 //             command
 //                (Default) = C:\MyDir\MyProgram.exe "%1"
-    
-    REGISTRY_ROOT_KEY rootKey = REGISTRY_ROOT_KEY.CLASSES_ROOT;
-    String parentKey = "";
 
-    if (Registry.createKey(REGISTRY_ROOT_KEY.CLASSES_ROOT,
+/*
+    REGISTRY_ROOT_KEY rootKey = REGISTRY_ROOT_KEY.CLASSES_ROOT;
+    if (Registry.createKey(rootKey,
                            "", ".pde") &&
-        Registry.setStringValue(REGISTRY_ROOT_KEY.CLASSES_ROOT,
+        Registry.setStringValue(rootKey,
                                 ".pde", "", DOC) &&
 
-        Registry.createKey(REGISTRY_ROOT_KEY.CLASSES_ROOT, "", DOC) &&
-        Registry.setStringValue(REGISTRY_ROOT_KEY.CLASSES_ROOT, DOC, "",
+        Registry.createKey(rootKey, "", DOC) &&
+        Registry.setStringValue(rootKey, DOC, "",
                                 "Processing Source Code") &&
 
-        Registry.createKey(REGISTRY_ROOT_KEY.CLASSES_ROOT,
+        Registry.createKey(rootKey,
                            DOC, "shell") &&
-        Registry.createKey(REGISTRY_ROOT_KEY.CLASSES_ROOT,
+        Registry.createKey(rootKey,
                            DOC + "\\shell", "open") &&
-        Registry.createKey(REGISTRY_ROOT_KEY.CLASSES_ROOT,
+        Registry.createKey(rootKey,
                            DOC + "\\shell\\open", "command") &&
-        Registry.setStringValue(REGISTRY_ROOT_KEY.CLASSES_ROOT,
+        Registry.setStringValue(rootKey,
                                 DOC + "\\shell\\open\\command", "",
                                 openCommand)) {
+*/
+
+    // "To change the settings for the interactive user, store the changes
+    // under HKEY_CURRENT_USER\Software\Classes rather than HKEY_CLASSES_ROOT."
+    // msdn.microsoft.com/en-us/library/windows/desktop/ms724475(v=vs.85).aspx
+    final REGISTRY_ROOT_KEY rootKey = REGISTRY_ROOT_KEY.CURRENT_USER;
+    final String docPrefix = "Software\\Classes\\" + REG_DOC;
+
+    // First create the .pde association
+    if (Registry.createKey(rootKey, "Software\\Classes", ".pde") &&
+        Registry.setStringValue(rootKey, "Software\\Classes\\.pde", "", REG_DOC) &&
+
+        // Now give files with a .pde extension a name for the explorer
+        Registry.createKey(rootKey, "Software\\Classes", REG_DOC) &&
+        Registry.setStringValue(rootKey, docPrefix, "", APP_NAME + " Source Code") &&
+
+        // Now associate the 'open' command with the current processing.exe
+        Registry.createKey(rootKey, docPrefix, "shell") &&
+        Registry.createKey(rootKey, docPrefix + "\\shell", "open") &&
+        Registry.createKey(rootKey, docPrefix + "\\shell\\open", "command") &&
+        Registry.setStringValue(rootKey, docPrefix + "\\shell\\open\\command", "", REG_OPEN_COMMAND)) {
+
       // everything ok
       // hooray!
 
     } else {
+      Base.log("Could not associate files, turning off auto-associate pref.");
       Preferences.setBoolean("platform.auto_file_type_associations", false);
     }
   }
-
-
+  
+  
   /**
    * Remove extra quotes, slashes, and garbage from the Windows PATH.
    */
