@@ -814,18 +814,27 @@ public class Runner implements MessageConsumer {
 //    System.out.println("mess type " + messageValue.type());
     //StringReference messageReference = (StringReference) messageValue.type();
 
-//    System.out.println(or.referenceType().fields());
-//    if (name.startsWith("java.lang.")) {
-//      name = name.substring(10);
-    if (!handleCommonErrors(exceptionName, message, listener)) {
-      reportException(message, or, event.thread());
-    }
+    // First just report the exception and its placement
+    reportException(message, or, event.thread());
+    // Then try to pretty it up with a better message
+    handleCommonErrors(exceptionName, message, listener);
+    
     if (editor != null) {
       editor.deactivateRun();
     }
   }
 
 
+  /**
+   * Provide more useful explanations of common error messages, perhaps with 
+   * a short message in the status area, and (if necessary) a longer message 
+   * in the console.
+   * 
+   * @param exceptionClass Class name causing the error (with full package name)
+   * @param message The message from the exception
+   * @param listener The Editor or command line interface that's listening for errors
+   * @return true if the error was purtified, false otherwise
+   */
   public static boolean handleCommonErrors(final String exceptionClass,
                                            final String message,
                                            final RunnerListener listener) {
@@ -845,6 +854,11 @@ public class Runner implements MessageConsumer {
         System.err.println("If your sketch uses a lot of memory (for instance if it loads a lot of data files)");
         System.err.println("you can increase the memory available to your sketch using the Preferences window.");
       }
+    } else if (exceptionClass.equals("java.lang.UnsatisfiedLinkError")) {
+      listener.statusError("A library used by this sketch is not installed properly.");
+      System.err.println("A library relies on native code that's not available.");
+      System.err.println("Or only works properly when the sketch is run as a " + 
+        ((Base.getNativeBits() == 32) ? "64-bit " : "32-bit ") + " application.");
 
     } else if (exceptionClass.equals("java.lang.StackOverflowError")) {
       listener.statusError("StackOverflowError: This sketch is attempting too much recursion.");
