@@ -15,9 +15,9 @@ public class Library extends LocalContribution {
   protected File examplesFolder;  // shortname/examples
   protected File referenceFile;   // shortname/reference/index.html
 
-  /** 
-   * Subfolder for grouping libraries in a menu. Basic subfolder support 
-   * is provided so that some organization can be done in the import menu. 
+  /**
+   * Subfolder for grouping libraries in a menu. Basic subfolder support
+   * is provided so that some organization can be done in the import menu.
    * (This is the replacement for the "library compilation" type.)
    */
   protected String group;
@@ -89,13 +89,16 @@ public class Library extends LocalContribution {
       return new Library(folder);
 //    } catch (IgnorableException ig) {
 //      Base.log(ig.getMessage());
-    } catch (Exception e) {
-      e.printStackTrace();
+    } catch (Error err) {
+      // Handles UnsupportedClassVersionError and others
+      err.printStackTrace();
+    } catch (Exception ex) {
+      ex.printStackTrace();
     }
     return null;
   }
-  
-  
+
+
   private Library(File folder) {
     this(folder, null);
   }
@@ -432,14 +435,14 @@ public class Library extends LocalContribution {
     }
   };
 
-  
+
   static public ArrayList<File> discover(File folder) {
     ArrayList<File> libraries = new ArrayList<File>();
     discover(folder, libraries);
     return libraries;
   }
 
-  
+
   static public void discover(File folder, ArrayList<File> libraries) {
     String[] list = folder.list(junkFolderFilter);
 
@@ -474,14 +477,14 @@ public class Library extends LocalContribution {
     }
   }
 
-  
+
   static protected ArrayList<Library> list(File folder) {
     ArrayList<Library> libraries = new ArrayList<Library>();
     list(folder, libraries);
     return libraries;
   }
 
-  
+
   static protected void list(File folder, ArrayList<Library> libraries) {
     ArrayList<File> librariesFolders = new ArrayList<File>();
     discover(folder, librariesFolders);
@@ -507,7 +510,7 @@ public class Library extends LocalContribution {
     }
   }
 
-  
+
   public ContributionType getType() {
     return ContributionType.LIBRARY;
   }

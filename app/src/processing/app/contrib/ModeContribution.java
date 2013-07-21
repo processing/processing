@@ -15,7 +15,7 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License along 
+  You should have received a copy of the GNU General Public License along
   with this program; if not, write to the Free Software Foundation, Inc.
   59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
@@ -39,18 +39,21 @@ public class ModeContribution extends LocalContribution {
   }
 
 
-  static public ModeContribution load(Base base, File folder, 
+  static public ModeContribution load(Base base, File folder,
                                       String searchName) {
     try {
       return new ModeContribution(base, folder, searchName);
     } catch (IgnorableException ig) {
       Base.log(ig.getMessage());
+    } catch (Error err) {
+      // Handles UnsupportedClassVersionError and others
+      err.printStackTrace();
     } catch (Exception e) {
       if (searchName == null) {
         e.printStackTrace();
       } else {
-        // For the built-in modes, don't print the exception, just log it 
-        // for debugging. This should be impossible for most users to reach, 
+        // For the built-in modes, don't print the exception, just log it
+        // for debugging. This should be impossible for most users to reach,
         // but it helps us load experimental mode when it's available.
         Base.log("ModeContribution.load() failed for " + searchName, e);
       }

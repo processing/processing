@@ -42,14 +42,14 @@ import processing.core.PApplet;
 
 
 /**
- * Platform-specific glue for Windows.  
+ * Platform-specific glue for Windows.
  *
  */
 public class Platform extends processing.app.Platform {
 
   static final String APP_NAME = "Processing";
   static final String REG_OPEN_COMMAND =
-    System.getProperty("user.dir").replace('/', '\\') + 
+    System.getProperty("user.dir").replace('/', '\\') +
     "\\" + APP_NAME.toLowerCase() + ".exe \"%1\"";
   static final String REG_DOC = APP_NAME + ".Document";
 
@@ -60,6 +60,7 @@ public class Platform extends processing.app.Platform {
     //checkQuickTime();
     checkPath();
 
+    /*
     File f = new File(System.getProperty("user.dir"), "recycle-test.txt");
     //File f = new File("C:\\recycle-test.txt");
     System.out.println(f.getAbsolutePath());
@@ -72,6 +73,7 @@ public class Platform extends processing.app.Platform {
     } catch (IOException e) {
       e.printStackTrace();
     }
+    */
 
     //findJDK();
     /*
@@ -149,8 +151,8 @@ public class Platform extends processing.app.Platform {
 
 
   /**
-   * Associate .pde files with this version of Processing. After 2.0.1,  
-   * this was changed to only set the values for the current user, so that  
+   * Associate .pde files with this version of Processing. After 2.0.1,
+   * this was changed to only set the values for the current user, so that
    * it would no longer silently fail on systems that have UAC turned on.
    */
   protected void setAssociations() throws UnsupportedEncodingException {
@@ -217,8 +219,8 @@ public class Platform extends processing.app.Platform {
       Preferences.setBoolean("platform.auto_file_type_associations", false);
     }
   }
-  
-  
+
+
   /**
    * Remove extra quotes, slashes, and garbage from the Windows PATH.
    */
