@@ -20,7 +20,7 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package processing.app.windows;
+package processing.app.platform;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
@@ -36,7 +36,7 @@ import com.sun.jna.platform.win32.WinNT.HRESULT;
 
 import processing.app.Base;
 import processing.app.Preferences;
-import processing.app.windows.WindowsRegistry.REGISTRY_ROOT_KEY;
+import processing.app.platform.WindowsRegistry.REGISTRY_ROOT_KEY;
 import processing.core.PApplet;
 
 

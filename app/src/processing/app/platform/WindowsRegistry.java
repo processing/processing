@@ -1,4 +1,4 @@
-package processing.app.windows;
+package processing.app.platform;
 
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;

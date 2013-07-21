@@ -20,7 +20,7 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package processing.app.linux;
+package processing.app.platform;
 
 import java.io.File;
 
