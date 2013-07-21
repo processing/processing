@@ -24,7 +24,6 @@ package processing.app.macosx;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 
 import com.apple.eio.FileManager;
 
@@ -104,13 +103,13 @@ public class Platform extends processing.app.Platform {
   }
   
 
-  /** 
-   * Moves the specified File object (which might be a file or folder) 
-   * to the trash.
-   */
-  public boolean deleteFile(File file) throws IOException {
-    return FileManager.moveToTrash(file);
-  }
+//  /** 
+//   * Moves the specified File object (which might be a file or folder) 
+//   * to the trash.
+//   */
+//  public boolean deleteFile(File file) throws IOException {
+//    return FileManager.moveToTrash(file);
+//  }
 
 
   /*

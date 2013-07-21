@@ -28,11 +28,8 @@ import java.io.UnsupportedEncodingException;
 
 import com.sun.jna.Library;
 import com.sun.jna.Native;
-import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Kernel32Util;
 import com.sun.jna.platform.win32.Shell32;
-import com.sun.jna.platform.win32.ShellAPI;
-import com.sun.jna.platform.win32.ShellAPI.SHFILEOPSTRUCT;
 import com.sun.jna.platform.win32.ShlObj;
 import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinError;
@@ -74,15 +71,17 @@ public class Platform extends processing.app.Platform {
     //checkQuickTime();
     checkPath();
 
-    /*
     File f = new File("C:\\recycle-test.txt");
     System.out.println(f.getAbsolutePath());
     java.io.PrintWriter writer = PApplet.createWriter(f);
     writer.println("blah");
     writer.flush();
     writer.close();
-    deleteFile(f);
-    */
+    try {
+      deleteFile(f);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
     
     //findJDK();
     /*
@@ -333,53 +332,53 @@ public class Platform extends processing.app.Platform {
   }
   
   
-  @Override
-  public boolean deleteFile(File file) {
-    try {
-      moveToTrash(new File[] { file });
-    } catch (IOException e) {
-      e.printStackTrace();
-      Base.log("Could not move " + file.getAbsolutePath() + " to the trash.", e);
-      return false;
-    }
-    return true;
-  }
+//  @Override
+//  public boolean deleteFile(File file) {
+//    try {
+//      moveToTrash(new File[] { file });
+//    } catch (IOException e) {
+//      e.printStackTrace();
+//      Base.log("Could not move " + file.getAbsolutePath() + " to the trash.", e);
+//      return false;
+//    }
+//    return true;
+//  }
   
   
-  /** 
-   * Move files/folders to the trash. If this file is on another file system
-   * or on a shared network directory, it will simply be deleted without any 
-   * additional confirmation. Take that.
-   * <p>
-   * Based on JNA source for com.sun.jna.platform.win32.W32FileUtils
-   * 
-   * @param files array of File objects to be removed
-   * @return true if no error codes returned
-   * @throws IOException if something bad happened along the way
-   */
-  static private boolean moveToTrash(File[] files) throws IOException {
-    Shell32 shell = Shell32.INSTANCE;
-    SHFILEOPSTRUCT fileop = new SHFILEOPSTRUCT();
-    fileop.wFunc = ShellAPI.FO_DELETE;
-    String[] paths = new String[files.length];
-    for (int i = 0; i < paths.length; i++) {
-      paths[i] = files[i].getAbsolutePath();
-      System.out.println(paths[i]);
-    }
-    fileop.pFrom = new WString(fileop.encodePaths(paths));
-    fileop.fFlags = ShellAPI.FOF_ALLOWUNDO | ShellAPI.FOF_NO_UI;
-    int ret = shell.SHFileOperation(fileop);
-    if (ret != 0) {
-      throw new IOException("Move to trash failed: " + 
-                            fileop.pFrom + ": error code " + ret);
-//        throw new IOException("Move to trash failed: " + fileop.pFrom + ": " + 
-//                              Kernel32Util.formatMessageFromLastErrorCode(ret));
-    }
-    if (fileop.fAnyOperationsAborted) {
-      throw new IOException("Move to trash aborted");
-    }
-    return true;
-  }
+//  /** 
+//   * Move files/folders to the trash. If this file is on another file system
+//   * or on a shared network directory, it will simply be deleted without any 
+//   * additional confirmation. Take that.
+//   * <p>
+//   * Based on JNA source for com.sun.jna.platform.win32.W32FileUtils
+//   * 
+//   * @param files array of File objects to be removed
+//   * @return true if no error codes returned
+//   * @throws IOException if something bad happened along the way
+//   */
+//  static private boolean moveToTrash(File[] files) throws IOException {
+//    Shell32 shell = Shell32.INSTANCE;
+//    SHFILEOPSTRUCT fileop = new SHFILEOPSTRUCT();
+//    fileop.wFunc = ShellAPI.FO_DELETE;
+//    String[] paths = new String[files.length];
+//    for (int i = 0; i < paths.length; i++) {
+//      paths[i] = files[i].getAbsolutePath();
+//      System.out.println(paths[i]);
+//    }
+//    fileop.pFrom = new WString(fileop.encodePaths(paths));
+//    fileop.fFlags = ShellAPI.FOF_ALLOWUNDO | ShellAPI.FOF_NO_UI;
+//    int ret = shell.SHFileOperation(fileop);
+//    if (ret != 0) {
+//      throw new IOException("Move to trash failed: " + 
+//                            fileop.pFrom + ": error code " + ret);
+////        throw new IOException("Move to trash failed: " + fileop.pFrom + ": " + 
+////                              Kernel32Util.formatMessageFromLastErrorCode(ret));
+//    }
+//    if (fileop.fAnyOperationsAborted) {
+//      throw new IOException("Move to trash aborted");
+//    }
+//    return true;
+//  }
   
   
 //  /**

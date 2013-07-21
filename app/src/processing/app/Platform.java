@@ -31,6 +31,7 @@ import javax.swing.UIManager;
 
 import com.sun.jna.Library;
 import com.sun.jna.Native;
+import com.sun.jna.platform.FileUtils;
 
 
 /**
@@ -152,13 +153,19 @@ public class Platform {
    * @return true if the folder was successfully removed
    * @throws IOException 
    */
-  public boolean deleteFile(File file) throws IOException {
-    if (file.isDirectory()) {
+  final public boolean deleteFile(File file) throws IOException {
+    FileUtils fu = FileUtils.getInstance();
+    if (fu.hasTrash()) {
+      fu.moveToTrash(new File[] { file });
+      return true;
+      
+    } else if (file.isDirectory()) {
       Base.removeDir(file);
+      return true;
+      
     } else {
       return file.delete();
     }
-    return true;
   }
 
 
