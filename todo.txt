@@ -12,6 +12,7 @@ o   b86 supposed to have some support (not available yet)
 o     http://jdk8.java.net/download.html
 X code with a NUL character causes an error
 X   https://github.com/processing/processing/issues/1973
+X   also remove NUL characters when loading a file
 X Add "Processing Foundation" to the Help menu
 X   https://github.com/processing/processing/issues/1908
 X Update JNA from 3.2.4 to 3.5.2

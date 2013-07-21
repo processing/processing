@@ -31,7 +31,7 @@ import javax.swing.undo.*;
 
 
 /**
- * Represents a single tab of a sketch. 
+ * Represents a single tab of a sketch.
  */
 public class SketchCode {
   /** Pretty name (no extension), not the full file name */
@@ -40,12 +40,12 @@ public class SketchCode {
   /** File object for where this code is located */
   private File file;
 
-  /** Extension for this file (no dots, and in lowercase). */ 
+  /** Extension for this file (no dots, and in lowercase). */
   private String extension;
 
   /** Text of the program text for this tab */
   private String program;
-  
+
   /** Last version of the program on disk. */
   private String savedProgram;
 
@@ -54,15 +54,15 @@ public class SketchCode {
 
   /** Last time this tab was visited */
   long visited;
-  
+
   /**
    * Undo Manager for this tab, each tab keeps track of their own
    * Editor.undo will be set to this object when this code is the tab
    * that's currently the front.
    */
   private UndoManager undo = new UndoManager();
-  
-  /** What was on top of the undo stack when last saved. */ 
+
+  /** What was on top of the undo stack when last saved. */
 //  private UndoableEdit lastEdit;
 
   // saved positions from last time this tab was used
@@ -73,9 +73,9 @@ public class SketchCode {
   private boolean modified;
 
   /** name of .java file after preproc */
-//  private String preprocName; 
+//  private String preprocName;
   /** where this code starts relative to the concat'd code */
-  private int preprocOffset;  
+  private int preprocOffset;
 
 
   public SketchCode(File file, String extension) {
@@ -102,23 +102,23 @@ public class SketchCode {
   public File getFile() {
     return file;
   }
-  
-  
+
+
   protected boolean fileExists() {
     return file.exists();
   }
-  
-  
+
+
   protected boolean fileReadOnly() {
     return !file.canWrite();
   }
-  
-  
+
+
   protected boolean deleteFile() {
     return file.delete();
   }
-  
-  
+
+
   protected boolean renameTo(File what, String ext) {
 //    System.out.println("renaming " + file);
 //    System.out.println("      to " + what);
@@ -130,32 +130,32 @@ public class SketchCode {
     }
     return success;
   }
-  
-  
+
+
   public void copyTo(File dest) throws IOException {
     Base.saveFile(program, dest);
   }
-  
+
 
   public String getFileName() {
     return file.getName();
   }
-  
-  
+
+
   public String getPrettyName() {
     return prettyName;
   }
-  
-  
+
+
   public String getExtension() {
     return extension;
   }
-  
-  
+
+
   public boolean isExtension(String what) {
     return extension.equals(what);
   }
-  
+
 
   /** get the current text for this tab */
   public String getProgram() {
@@ -174,12 +174,12 @@ public class SketchCode {
     return savedProgram;
   }
 
-  
+
   public int getLineCount() {
     return Base.countLines(program);
   }
-  
-  
+
+
   public void setModified(boolean modified) {
     this.modified = modified;
   }
@@ -208,8 +208,8 @@ public class SketchCode {
   public int getPreprocOffset() {
     return preprocOffset;
   }
-  
-  
+
+
   public void addPreprocOffset(int extra) {
     preprocOffset += extra;
   }
@@ -218,72 +218,81 @@ public class SketchCode {
   public Document getDocument() {
     return document;
   }
-  
-  
+
+
   public void setDocument(Document d) {
     document = d;
   }
-  
-  
+
+
   public UndoManager getUndo() {
     return undo;
   }
-  
-  
-  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
-  
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
   // TODO these could probably be handled better, since it's a general state
   // issue that's read/write from only one location in Editor (on tab switch.)
-  
-  
+
+
   public int getSelectionStart() {
     return selectionStart;
   }
-  
-  
+
+
   public int getSelectionStop() {
     return selectionStop;
   }
-  
-  
+
+
   public int getScrollPosition() {
     return scrollPosition;
   }
-  
-  
+
+
   protected void setState(String p, int start, int stop, int pos) {
     program = p;
     selectionStart = start;
     selectionStop = stop;
     scrollPosition = pos;
   }
-  
+
 
   public long lastVisited() {
     return visited;
   }
-  
-  
-  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-  
-  
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
   /**
    * Load this piece of code from a file.
    */
   public void load() throws IOException {
     program = Base.loadFile(file);
+
+    // Remove NUL characters because they'll cause problems,
+    // and their presence is very difficult to debug.
+    // https://github.com/processing/processing/issues/1973
+    if (program.indexOf('\0') != -1) {
+      program = program.replaceAll("\0", "");
+    }
     savedProgram = program;
 
+    // This used to be the "Fix Encoding and Reload" warning, but since that
+    // tool has been removed, it just rambles about text editors and encodings.
     if (program.indexOf('\uFFFD') != -1) {
-      System.err.println(file.getName() + " contains unrecognized characters."); 
-      System.err.println("If this code was created with an older version of Processing,");
-      System.err.println("you may need to use Tools -> Fix Encoding & Reload to update");
-      System.err.println("the sketch to use UTF-8 encoding. If not, you may need to");
+      System.err.println(file.getName() + " contains unrecognized characters.");
+      System.err.println("You should re-open " + file.getName() +
+                         " with a text editor,");
+      System.err.println("and re-save it in UTF-8 format. Otherwise, you can");
       System.err.println("delete the bad characters to get rid of this warning.");
       System.err.println();
     }
-    
+
     setModified(false);
   }
 
@@ -312,11 +321,11 @@ public class SketchCode {
     makePrettyName();
     setModified(false);
   }
-  
-  
+
+
   /**
-   * Called when the sketch folder name/location has changed. Called when 
-   * renaming tab 0, the main code. 
+   * Called when the sketch folder name/location has changed. Called when
+   * renaming tab 0, the main code.
    */
   public void setFolder(File sketchFolder) {
     file = new File(sketchFolder, file.getName());

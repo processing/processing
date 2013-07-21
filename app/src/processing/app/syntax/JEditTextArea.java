@@ -78,7 +78,7 @@ public class JEditTextArea extends JComponent
   private InputMethodSupport inputMethodSupport = null;
 
   private Brackets bracketHelper = new Brackets();
-  
+
 
   /**
    * Creates a new JEditTextArea with the specified settings.
@@ -156,8 +156,8 @@ public class JEditTextArea extends JComponent
 //              System.out.println("  mods extext = " + mods + " " + mods.length() + " " + PApplet.hex(mods.charAt(0)));
 //            }
 //            System.out.println("  " + e);
-            
-            // inertia scrolling on OS X will fire several shift-wheel events 
+
+            // inertia scrolling on OS X will fire several shift-wheel events
             // that are negative values.. this makes the scrolling area jump.
             boolean skip = Base.isMacOS() && e.isShiftDown();
             //if (ex == 0) {
@@ -187,7 +187,7 @@ public class JEditTextArea extends JComponent
     return null;
   }
 
-  
+
   /**
    * Get current position of the vertical scroll bar. [fry]
    */
@@ -211,7 +211,7 @@ public class JEditTextArea extends JComponent
     return painter;
   }
 
-  
+
   /**
    * Returns the input handler.
    */
@@ -219,7 +219,7 @@ public class JEditTextArea extends JComponent
     return inputHandler;
   }
 
-  
+
   /**
    * Sets the input handler.
    * @param inputHandler The new input handler
@@ -228,7 +228,7 @@ public class JEditTextArea extends JComponent
     this.inputHandler = inputHandler;
   }
 
-  
+
   /**
    * Returns true if the caret is blinking, false otherwise.
    */
@@ -236,7 +236,7 @@ public class JEditTextArea extends JComponent
     return caretBlinks;
   }
 
-  
+
   /**
    * Toggles caret blinking.
    * @param caretBlinks True if the caret should blink, false otherwise
@@ -249,7 +249,7 @@ public class JEditTextArea extends JComponent
     painter.invalidateSelectedLines();
   }
 
-  
+
   /**
    * Returns true if the caret is visible, false otherwise.
    */
@@ -257,7 +257,7 @@ public class JEditTextArea extends JComponent
     return (!caretBlinks || blink) && caretVisible;
   }
 
-  
+
   /**
    * Sets if the caret should be visible.
    * @param caretVisible True if the caret should be visible, false
@@ -270,7 +270,7 @@ public class JEditTextArea extends JComponent
     painter.invalidateSelectedLines();
   }
 
-  
+
   /**
    * Blinks the caret.
    */
@@ -283,7 +283,7 @@ public class JEditTextArea extends JComponent
     }
   }
 
-  
+
   /**
    * Returns the number of lines from the top and button of the
    * text area that are always visible.
@@ -292,7 +292,7 @@ public class JEditTextArea extends JComponent
     return electricScroll;
   }
 
-  
+
   /**
    * Sets the number of lines from the top and bottom of the text
    * area that are always visible
@@ -349,7 +349,7 @@ public class JEditTextArea extends JComponent
     }
   }
 
-  
+
   /**
    * Returns the line displayed at the text area's origin.
    */
@@ -357,7 +357,7 @@ public class JEditTextArea extends JComponent
     return firstLine;
   }
 
-  
+
   /**
    * Sets the line displayed at the text area's origin without
    * updating the scroll bars.
@@ -371,15 +371,15 @@ public class JEditTextArea extends JComponent
     }
     painter.repaint();
   }
-  
-  
-  /** 
-   * Convenience for checking what's on-screen. [fry] 
+
+
+  /**
+   * Convenience for checking what's on-screen. [fry]
    */
   public final int getLastLine() {
     return getFirstLine() + getVisibleLines();
   }
-  
+
 
   /**
    * Returns the number of lines visible in this text area.
@@ -388,7 +388,7 @@ public class JEditTextArea extends JComponent
     return visibleLines;
   }
 
-  
+
   /**
    * Recalculates the number of visible lines. This should not
    * be called directly.
@@ -402,7 +402,7 @@ public class JEditTextArea extends JComponent
     updateScrollBars();
   }
 
-  
+
   /**
    * Returns the horizontal offset of drawn lines.
    */
@@ -410,7 +410,7 @@ public class JEditTextArea extends JComponent
     return horizontalOffset;
   }
 
-  
+
   /**
    * Sets the horizontal offset of drawn lines. This can be used to
    * implement horizontal scrolling.
@@ -427,7 +427,7 @@ public class JEditTextArea extends JComponent
     painter.repaint();
   }
 
-  
+
   /**
    * A fast way of changing both the first line and horizontal
    * offset.
@@ -442,12 +442,12 @@ public class JEditTextArea extends JComponent
       this.horizontalOffset = horizontalOffset;
       changed = true;
     }
-    
+
     if (firstLine != this.firstLine) {
       this.firstLine = firstLine;
       changed = true;
     }
-    
+
     if (changed) {
       updateScrollBars();
       painter.repaint();
@@ -455,7 +455,7 @@ public class JEditTextArea extends JComponent
     return changed;
   }
 
-  
+
   /**
    * Ensures that the caret is visible by scrolling the text area if
    * necessary.
@@ -471,7 +471,7 @@ public class JEditTextArea extends JComponent
     return scrollTo(line,offset);
   }
 
-  
+
   /**
    * Ensures that the specified line and offset is visible by scrolling
    * the text area if necessary.
@@ -516,7 +516,7 @@ public class JEditTextArea extends JComponent
     return setOrigin(newFirstLine,newHorizontalOffset);
   }
 
-  
+
   /**
    * Converts a line index to a y co-ordinate.
    * @param line The line
@@ -527,7 +527,7 @@ public class JEditTextArea extends JComponent
     - (fm.getLeading() + fm.getMaxDescent());
   }
 
-  
+
   /**
    * Converts a y co-ordinate to a line index.
    * @param y The y co-ordinate
@@ -539,7 +539,7 @@ public class JEditTextArea extends JComponent
         y / height + firstLine));
   }
 
-  
+
   /**
    * Converts an offset in a line into an x co-ordinate. This is a
    * slow version that can be used any time.
@@ -552,7 +552,7 @@ public class JEditTextArea extends JComponent
     return _offsetToX(line,offset);
   }
 
-  
+
   /**
    * Converts an offset in a line into an x coordinate. This is a
    * fast version that should only be used if no changes were made
@@ -575,9 +575,9 @@ public class JEditTextArea extends JComponent
     if (tokenMarker == null) {
       lineSegment.count = offset;
       return x + Utilities.getTabbedTextWidth(lineSegment, fm, x, painter, 0);
-    
+
     } else {
-      // If syntax coloring is enabled, we have to do this 
+      // If syntax coloring is enabled, we have to do this
       // because tokens can vary in width
       Token tokens;
       if (painter.currentLineIndex == line && painter.currentLineTokens != null) {
@@ -1884,11 +1884,15 @@ public class JEditTextArea extends JComponent
         // Seen often on Mac OS X when pasting from Safari. [fry 030929]
         selection = selection.replace('\u00A0', ' ');
 
-        // Remove ASCII NUL characters. Reported when pasting from 
-        // Acrobat Reader and PDF documents. [fry 130719] 
+        // Remove ASCII NUL characters. Reported when pasting from
+        // Acrobat Reader and PDF documents. [fry 130719]
         // https://github.com/processing/processing/issues/1973
         if (selection.indexOf('\0') != -1) {
+          //System.out.println("found NUL charaacters");
+          //int before = selection.length();
           selection = selection.replaceAll("\0", "");
+          //int after = selection.length();
+          //System.out.println(before + " " + after);
         }
 
         int repeatCount = inputHandler.getRepeatCount();
@@ -2329,8 +2333,8 @@ public class JEditTextArea extends JComponent
     }
   }
 
-  
-  class DragHandler implements MouseMotionListener 
+
+  class DragHandler implements MouseMotionListener
   {
     public void mouseDragged(MouseEvent evt) {
       if (popup != null && popup.isVisible()) return;
