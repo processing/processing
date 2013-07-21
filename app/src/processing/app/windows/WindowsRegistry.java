@@ -22,7 +22,7 @@ import com.sun.jna.ptr.IntByReference;
  * Not sure of where this code came from originally, but it was hacked on
  * 20 July 2013 to make updates for use with JNA 3.5.2's platform classes.
  */
-public class Registry {
+public class WindowsRegistry {
   static public enum REGISTRY_ROOT_KEY {
     CLASSES_ROOT, CURRENT_USER, LOCAL_MACHINE, USERS
   };

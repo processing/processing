@@ -19,7 +19,7 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package processing.app.macosx;
+package processing.app.platform;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

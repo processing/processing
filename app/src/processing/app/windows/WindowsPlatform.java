@@ -36,7 +36,7 @@ import com.sun.jna.platform.win32.WinNT.HRESULT;
 
 import processing.app.Base;
 import processing.app.Preferences;
-import processing.app.windows.Registry.REGISTRY_ROOT_KEY;
+import processing.app.windows.WindowsRegistry.REGISTRY_ROOT_KEY;
 import processing.core.PApplet;
 
 
@@ -44,7 +44,7 @@ import processing.core.PApplet;
  * Platform-specific glue for Windows.
  *
  */
-public class Platform extends processing.app.Platform {
+public class WindowsPlatform extends processing.app.Platform {
 
   static final String APP_NAME = "Processing";
   static final String REG_OPEN_COMMAND =
@@ -136,7 +136,7 @@ public class Platform extends processing.app.Platform {
       if (Preferences.getBoolean("platform.auto_file_type_associations")) {
         // Check the key that should be set by a previous run of Processing
         String knownCommand =
-          Registry.getStringValue(REGISTRY_ROOT_KEY.CURRENT_USER,
+          WindowsRegistry.getStringValue(REGISTRY_ROOT_KEY.CURRENT_USER,
                                   "Software\\Classes\\" + REG_DOC + "\\shell\\open\\command", "");
         // If the association hasn't been set, or it's not correct, set it.
         if (knownCommand == null || !knownCommand.equals(REG_OPEN_COMMAND)) {
@@ -197,18 +197,18 @@ public class Platform extends processing.app.Platform {
     final String docPrefix = "Software\\Classes\\" + REG_DOC;
 
     // First create the .pde association
-    if (Registry.createKey(rootKey, "Software\\Classes", ".pde") &&
-        Registry.setStringValue(rootKey, "Software\\Classes\\.pde", "", REG_DOC) &&
+    if (WindowsRegistry.createKey(rootKey, "Software\\Classes", ".pde") &&
+        WindowsRegistry.setStringValue(rootKey, "Software\\Classes\\.pde", "", REG_DOC) &&
 
         // Now give files with a .pde extension a name for the explorer
-        Registry.createKey(rootKey, "Software\\Classes", REG_DOC) &&
-        Registry.setStringValue(rootKey, docPrefix, "", APP_NAME + " Source Code") &&
+        WindowsRegistry.createKey(rootKey, "Software\\Classes", REG_DOC) &&
+        WindowsRegistry.setStringValue(rootKey, docPrefix, "", APP_NAME + " Source Code") &&
 
         // Now associate the 'open' command with the current processing.exe
-        Registry.createKey(rootKey, docPrefix, "shell") &&
-        Registry.createKey(rootKey, docPrefix + "\\shell", "open") &&
-        Registry.createKey(rootKey, docPrefix + "\\shell\\open", "command") &&
-        Registry.setStringValue(rootKey, docPrefix + "\\shell\\open\\command", "", REG_OPEN_COMMAND)) {
+        WindowsRegistry.createKey(rootKey, docPrefix, "shell") &&
+        WindowsRegistry.createKey(rootKey, docPrefix + "\\shell", "open") &&
+        WindowsRegistry.createKey(rootKey, docPrefix + "\\shell\\open", "command") &&
+        WindowsRegistry.setStringValue(rootKey, docPrefix + "\\shell\\open\\command", "", REG_OPEN_COMMAND)) {
 
       // everything ok
       // hooray!

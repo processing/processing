@@ -20,7 +20,7 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package processing.app.macosx;
+package processing.app.platform;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -33,7 +33,7 @@ import processing.app.Base;
 /**
  * Platform handler for Mac OS X.
  */
-public class Platform extends processing.app.Platform {
+public class MacPlatform extends processing.app.Platform {
 
   // Removing for 2.0b8 because Quaqua doesn't have OS X 10.8 version.
   /*

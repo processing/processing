@@ -28,7 +28,7 @@ import processing.app.Base;
 import processing.app.Preferences;
 
 
-public class Platform extends processing.app.Platform {
+public class LinuxPlatform extends processing.app.Platform {
 
   public void init(Base base) {
     super.init(base);
