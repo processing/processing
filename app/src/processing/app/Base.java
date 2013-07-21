@@ -220,11 +220,11 @@ public class Base {
     try {
       Class<?> platformClass = Class.forName("processing.app.Platform"); //$NON-NLS-1$
       if (Base.isMacOS()) {
-        platformClass = Class.forName("processing.app.macosx.Platform"); //$NON-NLS-1$
+        platformClass = Class.forName("processing.app.platform.MacPlatform"); //$NON-NLS-1$
       } else if (Base.isWindows()) {
-        platformClass = Class.forName("processing.app.windows.Platform"); //$NON-NLS-1$
+        platformClass = Class.forName("processing.app.platform.WindowsPlatform"); //$NON-NLS-1$
       } else if (Base.isLinux()) {
-        platformClass = Class.forName("processing.app.linux.Platform"); //$NON-NLS-1$
+        platformClass = Class.forName("processing.app.platform.LinuxPlatform"); //$NON-NLS-1$
       }
       platform = (Platform) platformClass.newInstance();
     } catch (Exception e) {

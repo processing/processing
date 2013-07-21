@@ -3,11 +3,12 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2007-2010 Ben Fry and Casey Reas
+  Copyright (c) 2012-2013 The Processing Foundation
+  Copyright (c) 2007-2012 Ben Fry and Casey Reas
 
-  This program is free software; you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation, version 2.
+  This program is free software; you can redistribute it and/or
+  modify it under the terms of the GNU General Public License
+  version 2, as published by the Free Software Foundation.
 
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of

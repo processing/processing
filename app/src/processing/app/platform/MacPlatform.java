@@ -3,12 +3,12 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2008 Ben Fry and Casey Reas
+  Copyright (c) 2012-2013 The Processing Foundation
+  Copyright (c) 2008-2012 Ben Fry and Casey Reas
 
-  This program is free software; you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation; either version 2 of the License, or
-  (at your option) any later version.
+  This program is free software; you can redistribute it and/or
+  modify it under the terms of the GNU General Public License
+  version 2, as published by the Free Software Foundation.
 
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -28,12 +28,13 @@ import java.io.FileNotFoundException;
 import com.apple.eio.FileManager;
 
 import processing.app.Base;
+import processing.app.Platform;
 
 
 /**
  * Platform handler for Mac OS X.
  */
-public class MacPlatform extends processing.app.Platform {
+public class MacPlatform extends Platform {
 
   // Removing for 2.0b8 because Quaqua doesn't have OS X 10.8 version.
   /*

@@ -19,8 +19,10 @@ import com.sun.jna.ptr.IntByReference;
  * Methods for accessing the Windows Registry. Only String and DWORD values
  * supported at the moment.
  * <p>
- * Not sure of where this code came from originally, but it was hacked on
- * 20 July 2013 to make updates for use with JNA 3.5.2's platform classes.
+ * Not sure where this code came from originally (if you know the reference,
+ * please get in touch so that we can add a proper citation). Several changes 
+ * were made to update it for JNA 3.5.2's platform classes and clean up the 
+ * syntax to make it less like a C program. [fry 130720]
  */
 public class WindowsRegistry {
   static public enum REGISTRY_ROOT_KEY {
@@ -45,16 +47,15 @@ public class WindowsRegistry {
    * @return root key
    */
   private static HKEY getRegistryRootKey(REGISTRY_ROOT_KEY key) {
-    Advapi32 advapi32;
+    //Advapi32 advapi32;
     //IntByReference pHandle;
-    HKEYByReference pHandle;
     //int handle = 0;
-    HKEY handle = null;
 
-    advapi32 = Advapi32.INSTANCE;
+    Advapi32 advapi32 = Advapi32.INSTANCE;
 //    pHandle = new IntByReference();
-    pHandle = new WinReg.HKEYByReference();
+    HKEYByReference pHandle = new WinReg.HKEYByReference();
 
+    HKEY handle = null;
     if (advapi32.RegOpenKeyEx(rootKeyMap.get(key), null, 0, 0, pHandle) == WinError.ERROR_SUCCESS) {
       handle = pHandle.getValue();
     }
@@ -128,13 +129,13 @@ public class WindowsRegistry {
     //IntByReference pType, lpcbData;
     byte[] lpData = new byte[1];
     //int handle = 0;
-    String ret = null;
 
     Advapi32 advapi32 = Advapi32.INSTANCE;
     IntByReference pType = new IntByReference();
     IntByReference lpcbData = new IntByReference();
     HKEY handle = openKey(rootKey, subKeyName, WinNT.KEY_READ);
 
+    String ret = null;
     //if (handle != 0) {
     if (handle != null) {
       //if (advapi32.RegQueryValueEx(handle, name, null, pType, lpData, lpcbData) == WinError.ERROR_MORE_DATA) {
@@ -155,26 +156,19 @@ public class WindowsRegistry {
   /**
    * Read an int value.
    *
-   *
    * @return int or 0
    * @param rootKey root key
    * @param subKeyName key name
    * @param name value name
    */
   static public int getIntValue(REGISTRY_ROOT_KEY rootKey, String subKeyName, String name) {
-    Advapi32 advapi32;
-    IntByReference pType;
-    IntByReference lpcbData;
-    byte[] lpData = new byte[1];
-    //int handle = 0;
-    HKEY handle = null;
+    Advapi32 advapi32 = Advapi32.INSTANCE;
+    IntByReference pType = new IntByReference();
+    IntByReference lpcbData = new IntByReference();
+    HKEY handle = openKey(rootKey, subKeyName, WinNT.KEY_READ);
+
     int ret = 0;
-
-    advapi32 = Advapi32.INSTANCE;
-    pType = new IntByReference();
-    lpcbData = new IntByReference();
-    handle = openKey(rootKey, subKeyName, WinNT.KEY_READ);
-
+    byte[] lpData = new byte[1];
     //if(handle != 0) {
     if (handle != null) {
       //if (advapi32.RegQueryValueEx(handle, name, null, pType, lpData, lpcbData) == WinError.ERROR_MORE_DATA) {
@@ -203,10 +197,10 @@ public class WindowsRegistry {
   static public boolean deleteValue(REGISTRY_ROOT_KEY rootKey, String subKeyName, String name) {
     Advapi32 advapi32 = Advapi32.INSTANCE;
     //int handle;
-    boolean ret = true;
 
     HKEY handle = openKey(rootKey, subKeyName, WinNT.KEY_READ | WinNT.KEY_WRITE);
 
+    boolean ret = true;
     //if(handle != 0) {
     if (handle != null) {
       if (advapi32.RegDeleteValue(handle, name) == WinError.ERROR_SUCCESS) {
@@ -230,18 +224,18 @@ public class WindowsRegistry {
    */
   static public boolean setStringValue(REGISTRY_ROOT_KEY rootKey, String subKeyName, String name, String value) throws UnsupportedEncodingException {
     //int handle;
-    byte[] data;
-    boolean ret = false;
+    //byte[] data;
 
     // appears to be Java 1.6 syntax, removing [fry]
     //data = Arrays.copyOf(value.getBytes("UTF-16LE"), value.length() * 2 + 2);
-    data = new byte[value.length() * 2 + 2];
+    byte[] data = new byte[value.length() * 2 + 2];
     byte[] src = value.getBytes("UTF-16LE");
     System.arraycopy(src, 0, data, 0, src.length);
 
     Advapi32 advapi32 = Advapi32.INSTANCE;
     HKEY handle = openKey(rootKey, subKeyName, WinNT.KEY_READ | WinNT.KEY_WRITE);
 
+    boolean ret = false;
     //if(handle != 0) {
     if (handle != null) {
       if (advapi32.RegSetValueEx(handle, name, 0, WinNT.REG_SZ, data, data.length) == WinError.ERROR_SUCCESS) {
@@ -256,7 +250,6 @@ public class WindowsRegistry {
   /**
    * Writes an int value.
    *
-   *
    * @return true on success
    * @param rootKey root key
    * @param subKeyName key name
@@ -264,19 +257,19 @@ public class WindowsRegistry {
    * @param value value
    */
   static public boolean setIntValue(REGISTRY_ROOT_KEY rootKey, String subKeyName, String name, int value) {
-    Advapi32 advapi32;
+    //Advapi32 advapi32;
     //int handle;
-    byte[] data;
-    boolean ret = false;
+    //byte[] data;
 
-    data = new byte[4];
+    byte[] data = new byte[4];
     data[0] = (byte)(value & 0xff);
     data[1] = (byte)((value >> 8) & 0xff);
     data[2] = (byte)((value >> 16) & 0xff);
     data[3] = (byte)((value >> 24) & 0xff);
-    advapi32 = Advapi32.INSTANCE;
+    Advapi32 advapi32 = Advapi32.INSTANCE;
     HKEY handle = openKey(rootKey, subKeyName, WinNT.KEY_READ | WinNT.KEY_WRITE);
 
+    boolean ret = false;
     //if(handle != 0) {
     if (handle != null) {
       if (advapi32.RegSetValueEx(handle, name, 0, WinNT.REG_DWORD, data, data.length) == WinError.ERROR_SUCCESS) {
@@ -298,16 +291,16 @@ public class WindowsRegistry {
    */
   static public boolean valueExists(REGISTRY_ROOT_KEY rootKey, String subKeyName, String name) {
     //Advapi32 advapi32;
-    IntByReference pType, lpcbData;
-    byte[] lpData = new byte[1];
+    //IntByReference pType, lpcbData;
     //int handle = 0;
-    boolean ret = false;
 
     Advapi32 advapi32 = Advapi32.INSTANCE;
-    pType = new IntByReference();
-    lpcbData = new IntByReference();
+    IntByReference pType = new IntByReference();
+    IntByReference lpcbData = new IntByReference();
     HKEY handle = openKey(rootKey, subKeyName, WinNT.KEY_READ);
 
+    byte[] lpData = new byte[1];
+    boolean ret = false;
     //if(handle != 0) {
     if (handle != null) {
       //if (advapi32.RegQueryValueEx(handle, name, null, pType, lpData, lpcbData) != WinError.ERROR_FILE_NOT_FOUND) {
@@ -335,7 +328,6 @@ public class WindowsRegistry {
     //Advapi32 advapi32;
     //IntByReference hkResult, dwDisposition;
     //int handle = 0;
-    boolean ret = false;
 
     Advapi32 advapi32 = Advapi32.INSTANCE;
     //IntByReference hkResult = new IntByReference();
@@ -343,6 +335,7 @@ public class WindowsRegistry {
     IntByReference dwDisposition = new IntByReference();
     HKEY handle = openKey(rootKey, parent, WinNT.KEY_READ);
 
+    boolean ret = false;
     //if(handle != 0) {
     if (handle != null) {
       if (advapi32.RegCreateKeyEx(handle, name, 0, null, WinNT.REG_OPTION_NON_VOLATILE, WinNT.KEY_READ, null,
@@ -370,11 +363,11 @@ public class WindowsRegistry {
   static public boolean deleteKey(REGISTRY_ROOT_KEY rootKey, String parent, String name) {
     //Advapi32 advapi32;
     //int handle = 0;
-    boolean ret = false;
 
     Advapi32 advapi32 = Advapi32.INSTANCE;
     HKEY handle = openKey(rootKey, parent, WinNT.KEY_READ);
 
+    boolean ret = false;
     //if(handle != 0) {
     if (handle != null) {
       if (advapi32.RegDeleteKey(handle, name) == WinError.ERROR_SUCCESS) {
@@ -399,23 +392,22 @@ public class WindowsRegistry {
   static public String[] getSubKeys(REGISTRY_ROOT_KEY rootKey, String parent) {
     //Advapi32 advapi32;
     //int handle = 0, dwIndex;
-    char[] lpName;
-    IntByReference lpcName;
-    WinBase.FILETIME lpftLastWriteTime;
+    //char[] lpName;
+    //IntByReference lpcName;
+    //WinBase.FILETIME lpftLastWriteTime;
     TreeSet<String> subKeys = new TreeSet<String>();
-
     Advapi32 advapi32 = Advapi32.INSTANCE;
     HKEY handle = openKey(rootKey, parent, WinNT.KEY_READ);
-    lpName = new char[256];
-    lpcName = new IntByReference(256);
-    lpftLastWriteTime = new WinBase.FILETIME();
+    char[] lpName = new char[256];
+    IntByReference lpcName = new IntByReference(256);
+    WinBase.FILETIME lpftLastWriteTime = new WinBase.FILETIME();
 
     //if(handle != 0) {
     if (handle != null) {
       int dwIndex = 0;
 
-      while(advapi32.RegEnumKeyEx(handle, dwIndex, lpName, lpcName, null,
-            null, null, lpftLastWriteTime) == WinError.ERROR_SUCCESS) {
+      while (advapi32.RegEnumKeyEx(handle, dwIndex, lpName, lpcName, null,
+             null, null, lpftLastWriteTime) == WinError.ERROR_SUCCESS) {
         subKeys.add(new String(lpName, 0, lpcName.getValue()));
         lpcName.setValue(256);
         dwIndex++;
@@ -437,25 +429,27 @@ public class WindowsRegistry {
   static public TreeMap<String, Object> getValues(REGISTRY_ROOT_KEY rootKey, String key) throws UnsupportedEncodingException {
     //Advapi32 advapi32;
     //int handle = 0, dwIndex, result = 0;
-    char[] lpValueName;
-    byte[] lpData;
-    IntByReference lpcchValueName, lpType, lpcbData;
-    String name;
-    TreeMap<String, Object> values = new TreeMap<String, Object>(String.CASE_INSENSITIVE_ORDER);
+    //char[] lpValueName;
+    //byte[] lpData;
+    //IntByReference lpcchValueName, lpType, lpcbData;
+    //String name;
+    TreeMap<String, Object> values = 
+      new TreeMap<String, Object>(String.CASE_INSENSITIVE_ORDER);
 
     Advapi32 advapi32 = Advapi32.INSTANCE;
     HKEY handle = openKey(rootKey, key, WinNT.KEY_READ);
-    lpValueName = new char[16384];
-    lpcchValueName = new IntByReference(16384);
-    lpType = new IntByReference();
-    lpData = new byte[1];
-    lpcbData = new IntByReference();
+    char[] lpValueName = new char[16384];
+    IntByReference lpcchValueName = new IntByReference(16384);
+    IntByReference lpType = new IntByReference();
+    byte[] lpData = new byte[1];
+    IntByReference lpcbData = new IntByReference();
 
     //if(handle != 0) {
     if (handle != null) {
       int dwIndex = 0;
       int result = 0;
-
+      String name;
+      
       do {
         lpcbData.setValue(0);
         result = advapi32.RegEnumValue(handle, dwIndex, lpValueName, lpcchValueName, null,

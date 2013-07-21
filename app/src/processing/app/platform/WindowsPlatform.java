@@ -35,6 +35,7 @@ import com.sun.jna.platform.win32.WinError;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 
 import processing.app.Base;
+import processing.app.Platform;
 import processing.app.Preferences;
 import processing.app.platform.WindowsRegistry.REGISTRY_ROOT_KEY;
 import processing.core.PApplet;
@@ -42,9 +43,8 @@ import processing.core.PApplet;
 
 /**
  * Platform-specific glue for Windows.
- *
  */
-public class WindowsPlatform extends processing.app.Platform {
+public class WindowsPlatform extends Platform {
 
   static final String APP_NAME = "Processing";
   static final String REG_OPEN_COMMAND =
