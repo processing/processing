@@ -23,7 +23,6 @@
 package processing.app.windows;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 import com.sun.jna.Library;
