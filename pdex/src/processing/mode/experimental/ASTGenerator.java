@@ -1377,16 +1377,74 @@ public class ASTGenerator {
   }
 
   public String getLabelForASTNode(int lineNumber, String name, int offset) {
-    retLabelString = "";
-    getASTNodeAt(lineNumber, name, offset, false);
-    return retLabelString;
+    return getASTNodeAt(lineNumber, name, offset, false).getLabel();
+    //return "";
+  }
+  
+  private String getLabelIfType(ASTNodeWrapper node, SimpleName sn){
+    String label = "";
+    ASTNode current = node.getNode().getParent();
+    String type = "";
+    StringBuffer fullName = new StringBuffer();
+    Stack<String> parents = new Stack<String>();
+    switch (node.getNodeType()) {
+    case ASTNode.TYPE_DECLARATION:
+    case ASTNode.METHOD_DECLARATION:
+    case ASTNode.FIELD_DECLARATION:
+      while (current != null) {
+        if (current instanceof TypeDeclaration) {
+          parents.push(((TypeDeclaration) current).getName().toString());
+        }
+        current = current.getParent();
+      }
+      while (parents.size() > 0) {
+        fullName.append(parents.pop() + ".");
+      }
+      fullName.append(sn.toString());
+      if (node.getNode() instanceof MethodDeclaration) {
+        MethodDeclaration md = (MethodDeclaration) node.getNode();
+        type = md.getReturnType2().toString();
+        fullName.append('(');
+        if (!md.parameters().isEmpty()) {
+          List<ASTNode> params = md.parameters();
+          for (ASTNode par : params) {
+            if (par instanceof SingleVariableDeclaration) {
+              SingleVariableDeclaration svd = (SingleVariableDeclaration) par;
+              fullName.append(svd.getType() + " " + svd.getName() + ",");
+            }
+          }
+        }
+        if(fullName.charAt(fullName.length() - 1) == ',')
+          fullName.deleteCharAt(fullName.length() - 1);
+        fullName.append(')');
+      }
+      else if(node.getNode() instanceof FieldDeclaration){
+        type = ((FieldDeclaration) node.getNode()).getType().toString();
+      }
+      int x = fullName.indexOf(".");
+      fullName.delete(0, x + 1);
+      return type + " " + fullName;
+    
+    case ASTNode.SINGLE_VARIABLE_DECLARATION:
+      SingleVariableDeclaration svd = (SingleVariableDeclaration)node.getNode();
+      return svd.getType() + " " + svd.getName();
+      
+    case ASTNode.VARIABLE_DECLARATION_STATEMENT:
+      return ((VariableDeclarationStatement)node.getNode()).getType() + " " + sn;
+    case ASTNode.VARIABLE_DECLARATION_EXPRESSION:
+      return ((VariableDeclarationExpression)node.getNode()).getType() + " " + sn;
+    default:
+      break;
+    }
+    
+    
+    return "";
   }
 
   public void scrollToDeclaration(int lineNumber, String name, int offset) {
     getASTNodeAt(lineNumber, name, offset, true);
   }
 
-  String retLabelString;
 
   /**
    * 
@@ -1417,6 +1475,7 @@ public class ASTGenerator {
     
     System.out.println("+> " + lineNode);
     ASTNode decl = null;
+    String nodeLabel = null;
     String nameOfNode = null; // The node name which is to be scrolled to
     if (lineNode != null) {
       
@@ -1474,13 +1533,15 @@ public class ASTGenerator {
       ASTNode simpName = pinpointOnLine(lineNode, altOff,
                                         lineNode.getStartPosition(), name);
       System.out.println("+++> " + simpName);
+      
       if (simpName instanceof SimpleName) {
         nameOfNode = simpName.toString();
         System.out.println(getNodeAsString(simpName));
         decl = findDeclaration((SimpleName) simpName);
         if (decl != null) {
           System.err.println("DECLA: " + decl.getClass().getName());
-          retLabelString = getNodeAsString(decl);
+          nodeLabel = getLabelIfType(new ASTNodeWrapper(decl), (SimpleName) simpName);
+          //retLabelString = getNodeAsString(decl);
         } else
           System.err.println("null");
 
@@ -1513,7 +1574,7 @@ public class ASTGenerator {
       errorCheckerService.highlightNode(simpName2);
     } 
 
-    return new ASTNodeWrapper(decl);
+    return new ASTNodeWrapper(decl,nodeLabel);
   }
   
   /**

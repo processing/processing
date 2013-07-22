@@ -105,6 +105,13 @@ Suggestion for missing imports
 x Barebones functionality done.
 x Add imports only to beginning of first tab.
 
+Labels for Java elements
+========================
+x Working for local code
+* Need to modify getASTNodeAt to also fetch the type for predefined classes.
+* Labels for predefined class objects
+* Chaining support for labels
+
 General Stuff
 =============
 

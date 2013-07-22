@@ -48,6 +48,23 @@ public class ASTNodeWrapper {
     label += " | Line " + lineNumber;
     //apiLevel = 0;
   }
+  
+  public ASTNodeWrapper(ASTNode node, String label){
+    if (node == null){
+      return;
+    }
+    this.Node = node;
+    if(label != null)
+      this.label = label;
+    else{
+      label = getNodeAsString(node);
+      if (label == null)
+        label = node.toString();
+      
+      label += " | Line " + lineNumber;
+    }
+    lineNumber = getLineNumber(node);
+  }
 
   /**
    * For this node, finds various offsets (java code).
