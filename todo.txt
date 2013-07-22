@@ -22,11 +22,13 @@ X problem with associating .pde files
 X   https://github.com/processing/processing/issues/286
 X   http://code.google.com/p/processing/issues/detail?id=247
 o   In regedit: Navigate to Computer\HKEY_CLASSES_ROOT\Applications and find your .exe name. Navigate under its name to shell>open>command. In the Default change its location to the actual location of the executable, hit okay and then try and reassociate the file type as you normally would.
-X Add methods to move files to Trash/Recycle Bin where available
 X UnsatisfiedLinkError causes huge message... 
 X   error report cleanups haven't been fixed yet
 X   reported by Dan
 X   this should be better now
+X Add methods to move files to Trash/Recycle Bin where available
+_   verify that the OS X version uses the real call
+_   and doesn't just look for .Trash
 
 cleaning/earlier
 X common error messages
