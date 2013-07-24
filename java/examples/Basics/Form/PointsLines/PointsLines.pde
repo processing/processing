@@ -13,6 +13,7 @@ int p3 = p2+d;
 int p4 = p3+d;
 
 size(640, 360);
+noSmooth();
 background(0);
 translate(140, 0);
 

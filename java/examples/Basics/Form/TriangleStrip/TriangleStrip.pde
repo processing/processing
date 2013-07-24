@@ -1,43 +1,41 @@
 /**
- * TRIANGLE_STRIP Mode
+ * Triangle Strip 
  * by Ira Greenberg. 
  * 
  * Generate a closed ring using the vertex() function and 
- * beginShape(TRIANGLE_STRIP) mode. The outerRad and innerRad 
+ * beginShape(TRIANGLE_STRIP) mode. The outsideRadius and insideRadius 
  * variables control ring's radii respectively.
  */
 
 int x;
 int y;
-float outerRad;
-float innerRad;
+float outsideRadius = 150;
+float insideRadius = 100;
 
 void setup() {
   size(640, 360);
   background(204);
   x = width/2;
   y = height/2;
-  outerRad = min(width, height) * 0.4;
-  innerRad = outerRad * 0.6;
 }
 
 void draw() {
   background(204);
   
-  int pts = int(map(mouseX, 0, width, 6, 60));
-  float rot = 180.0/pts;
+  int numPoints = int(map(mouseX, 0, width, 6, 60));
   float angle = 0;
-  
+  float angleStep = 180.0/numPoints;
+    
   beginShape(TRIANGLE_STRIP); 
-  for (int i = 0; i <= pts; i++) {
-    float px = x + cos(radians(angle)) * outerRad;
-    float py = y + sin(radians(angle)) * outerRad;
-    angle += rot;
+  for (int i = 0; i <= numPoints; i++) {
+    float px = x + cos(radians(angle)) * outsideRadius;
+    float py = y + sin(radians(angle)) * outsideRadius;
+    angle += angleStep;
     vertex(px, py);
-    px = x + cos(radians(angle)) * innerRad;
-    py = y + sin(radians(angle)) * innerRad;
+    px = x + cos(radians(angle)) * insideRadius;
+    py = y + sin(radians(angle)) * insideRadius;
     vertex(px, py); 
-    angle += rot;
+    angle += angleStep;
   }
   endShape();
 }
