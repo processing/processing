@@ -10596,13 +10596,15 @@ public class PApplet extends Applet
       // can't do pack earlier cuz present mode don't like it
       // (can't go full screen with a frame after calling pack)
       //        frame.pack();  // get insets. get more.
-//      Insets insets = frame.getInsets();
-//      int windowW = Math.max(applet.width, MIN_WINDOW_WIDTH) +
-//        insets.left + insets.right;
-//      int windowH = Math.max(applet.height, MIN_WINDOW_HEIGHT) +
-//        insets.top + insets.bottom;
-      int windowW = Math.max(applet.width, MIN_WINDOW_WIDTH);
-      int windowH = Math.max(applet.height, MIN_WINDOW_HEIGHT);
+      Insets insets = frame.getInsets();
+      int windowW = Math.max(applet.width, MIN_WINDOW_WIDTH) +
+        insets.left + insets.right;
+      int windowH = Math.max(applet.height, MIN_WINDOW_HEIGHT) +
+        insets.top + insets.bottom;
+//      int windowW = Math.max(applet.width, MIN_WINDOW_WIDTH);
+//      int windowH = Math.max(applet.height, MIN_WINDOW_HEIGHT);
+      int contentW = Math.max(applet.width, MIN_WINDOW_WIDTH);
+      int contentH = Math.max(applet.height, MIN_WINDOW_HEIGHT);
 
       frame.setSize(windowW, windowH);
 
@@ -10659,8 +10661,8 @@ public class PApplet extends Applet
 //      applet.setBounds((windowW - applet.width)/2,
 //                       insets.top + (usableWindowH - applet.height)/2,
 //                       applet.width, applet.height);
-      applet.setBounds((windowW - applet.width)/2,
-                       (windowH - applet.height)/2,
+      applet.setBounds((contentW - applet.width)/2,
+                       (contentH - applet.height)/2,
                        applet.width, applet.height);
 
       if (external) {
