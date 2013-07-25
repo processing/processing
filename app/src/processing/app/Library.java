@@ -99,7 +99,7 @@ public class Library extends LocalContribution {
   }
 
 
-  private Library(File folder) {
+  public Library(File folder) {
     this(folder, null);
   }
 

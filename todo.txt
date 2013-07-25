@@ -29,6 +29,8 @@ X   this should be better now
 X Add methods to move files to Trash/Recycle Bin where available
 _   verify that the OS X version uses the real call
 _   and doesn't just look for .Trash
+_ getCoreLibrary() is breaking OpenGL
+_   "new Library()" constructor needs to go back to private
 
 cleaning/earlier
 X common error messages
