@@ -10,6 +10,7 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -187,7 +188,7 @@ public class ErrorCheckerService implements Runnable{
     defaultImportsOffset = pdePrepoc.getCoreImports().length + 
         pdePrepoc.getDefaultImports().length + 1;
     astGenerator = new ASTGenerator(this);
-    syntaxErrors = true;
+    syntaxErrors = new AtomicBoolean(true);
     errorMsgSimplifier = new ErrorMessageSimplifier();
   }
   
@@ -340,13 +341,14 @@ public class ErrorCheckerService implements Runnable{
     return false;
   }
   
-  private boolean syntaxErrors;
+  private AtomicBoolean syntaxErrors;
   
   public boolean hasSyntaxErrors(){
-    return syntaxErrors;
+    return syntaxErrors.get();
   }
 
   private void syntaxCheck() {
+    syntaxErrors.set(true);
     parser.setSource(sourceCode.toCharArray());
     parser.setKind(ASTParser.K_COMPILATION_UNIT);
 
@@ -376,7 +378,10 @@ public class ErrorCheckerService implements Runnable{
       // System.out.println(p.toString());
     }
     
-    syntaxErrors = problems.length == 0 ? false : true;
+    if (problems.length == 0)
+      syntaxErrors.set(false);
+    else
+      syntaxErrors.set(true);
   }
   protected URLClassLoader classLoader;
   private void compileCheck() {
