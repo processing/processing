@@ -310,8 +310,9 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         System.out.println("Writing errors");
         StringBuffer sbuff = new StringBuffer();
       sbuff.append("Sketch: " + getSketch().getFolder() + ", "
-          + new java.sql.Timestamp(new java.util.Date().getTime())+"\n\n");
-        sbuff.append("ERROR ID, ERROR ARGS, ERROR MSG\n");
+          + new java.sql.Timestamp(new java.util.Date().getTime())
+              + "\nComma in error msg is substituted with ^ symbol\nFor separating arguments in error args | symbol is used\n");
+      sbuff.append("ERROR TYPE, ERROR ARGS, ERROR MSG\n");
         for (String errMsg : errorCheckerService.tempErrorLog.keySet()) {
           IProblem ip = errorCheckerService.tempErrorLog.get(errMsg);
           if(ip != null){
@@ -325,7 +326,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
             }
             sbuff.append("}");
             sbuff.append(',');
-            sbuff.append(ip.getMessage().replace(',', ' '));
+            sbuff.append(ip.getMessage().replace(',', '^'));
             sbuff.append("\n");
           }
         }
