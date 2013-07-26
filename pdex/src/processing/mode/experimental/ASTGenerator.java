@@ -50,6 +50,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.text.BadLocationException;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.MutableTreeNode;
 
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.compiler.IProblem;
@@ -1881,9 +1882,12 @@ public class ASTGenerator {
       editor.statusError("Can't locate definition of " + selText);
       return;
     }
+    if(defCU.getChildCount() == 0)
+      return;
     treeRename.setModel(new DefaultTreeModel(defCU));
     ((DefaultTreeModel) treeRename.getModel()).reload();
-    frmOccurenceList.setTitle("Usage of " + selText);
+    treeRename.setRootVisible(false);
+    frmOccurenceList.setTitle("Usage of \"" + selText+ "\"");
     frmOccurenceList.setVisible(true);
     lastClickedWord = null;
     lastClickedWordNode = null;
@@ -1919,7 +1923,7 @@ public class ASTGenerator {
     int offwhitespace = editor.ta
         .getLineStartNonWhiteSpaceOffset(line);
     ASTNodeWrapper wnode;
-    if (lastClickedWord == null) {
+    if (lastClickedWord == null || lastClickedWordNode.getNode() == null) {
       wnode = getASTNodeAt(line + errorCheckerService.mainClassOffset, selText,
                            editor.ta.getSelectionStart() - offwhitespace, false);
     }
@@ -1958,7 +1962,18 @@ public class ASTGenerator {
                                                                                      .getNode(),
                                                                                  selText));
     dfsNameOnly(defCU, wnode.getNode(), selText);
+    
+    // Reverse the list obtained via dfs
+    Stack<Object> tempS = new Stack<Object>();
+    for (int i = 0; i < defCU.getChildCount(); i++) {
+      tempS.push(defCU.getChildAt(i));
+    }
+    defCU.removeAllChildren();
+    while (!tempS.isEmpty()) {
+      defCU.add((MutableTreeNode) tempS.pop());
+    }
     System.out.println(wnode);
+    
     return defCU;
   }
 
