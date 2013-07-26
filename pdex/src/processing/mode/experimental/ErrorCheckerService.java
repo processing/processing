@@ -10,6 +10,7 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
@@ -177,7 +178,7 @@ public class ErrorCheckerService implements Runnable{
       + "(void|int|float|double|String|char|byte)"
       + "(\\s*\\[\\s*\\])?\\s+[a-zA-Z0-9]+\\s*\\(", Pattern.MULTILINE);
   
-  private ErrorMessageSimplifier errorMsgSimplifier;
+  protected ErrorMessageSimplifier errorMsgSimplifier;
   
   public ErrorCheckerService(DebugEditor debugEditor) {
     this.editor = debugEditor;
@@ -190,6 +191,7 @@ public class ErrorCheckerService implements Runnable{
     astGenerator = new ASTGenerator(this);
     syntaxErrors = new AtomicBoolean(true);
     errorMsgSimplifier = new ErrorMessageSimplifier();
+    tempErrorLog = new TreeMap<String, IProblem>();
   }
   
   /**
@@ -346,6 +348,8 @@ public class ErrorCheckerService implements Runnable{
   public boolean hasSyntaxErrors(){
     return syntaxErrors.get();
   }
+  
+  protected TreeMap<String, IProblem> tempErrorLog;
 
   private void syntaxCheck() {
     syntaxErrors.set(true);
@@ -705,8 +709,12 @@ public class ErrorCheckerService implements Runnable{
         errorData[i][1] = editor.getSketch()
             .getCode(problemsList.get(i).tabIndex).getPrettyName();
         errorData[i][2] = problemsList.get(i).lineNumber + "";
+        
+        //TODO: This is temporary
+        if(tempErrorLog.size() < 200)
+        tempErrorLog.put(problemsList.get(i).message,problemsList.get(i).getIProblem());
       }
-
+      
       if (errorWindow != null) {
         DefaultTableModel tm = new DefaultTableModel(errorData,
             XQErrorTable.columnNames);

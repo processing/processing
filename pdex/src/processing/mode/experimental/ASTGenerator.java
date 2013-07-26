@@ -257,9 +257,9 @@ public class ASTGenerator {
 						return;
           jtree.setModel(new DefaultTreeModel(codeTree));
           ((DefaultTreeModel) jtree.getModel()).reload();
-          if (!frame2.isVisible()) {
-            frame2.setVisible(true);
-          }
+//          if (!frame2.isVisible()) {
+//            frame2.setVisible(true);
+//          }
 //          if (!frameAutoComp.isVisible()) {
 //
 //            frameAutoComp.setVisible(true);

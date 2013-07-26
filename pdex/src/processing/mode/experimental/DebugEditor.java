@@ -27,8 +27,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -44,6 +47,9 @@ import javax.swing.JScrollPane;
 import javax.swing.border.EtchedBorder;
 import javax.swing.table.TableModel;
 import javax.swing.text.Document;
+
+import org.eclipse.jdt.core.compiler.IProblem;
+
 import processing.app.*;
 import processing.app.syntax.JEditTextArea;
 import processing.app.syntax.PdeTextAreaDefaults;
@@ -286,8 +292,52 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         dbg.stopDebug();
         // remove var.inspector
         vi.dispose();
+        
         // original dispose
         super.dispose();
+    }
+    
+    // Added temporarily to dump error log. TODO: Remove this later
+    public void internalCloseRunner(){      
+      writeErrorsToFile();
+      super.internalCloseRunner();
+    }
+    
+    private void writeErrorsToFile(){
+    if (errorCheckerService.tempErrorLog.size() == 0)
+      return;
+      try {
+        System.out.println("Writing errors");
+        StringBuffer sbuff = new StringBuffer();
+      sbuff.append("Sketch: " + getSketch().getFolder() + ", "
+          + new java.sql.Timestamp(new java.util.Date().getTime())+"\n\n");
+        sbuff.append("ERROR ID, ERROR ARGS, ERROR MSG\n");
+        for (String errMsg : errorCheckerService.tempErrorLog.keySet()) {
+          IProblem ip = errorCheckerService.tempErrorLog.get(errMsg);
+          if(ip != null){
+            sbuff.append(errorCheckerService.errorMsgSimplifier.getIDName(ip.getID()));
+            sbuff.append(',');
+            sbuff.append("{");
+            for (int i = 0; i < ip.getArguments().length; i++) {
+              sbuff.append(ip.getArguments()[i]);
+              if(i < ip.getArguments().length - 1)
+                sbuff.append('|');
+            }
+            sbuff.append("}");
+            sbuff.append(',');
+            sbuff.append(ip.getMessage().replace(',', ' '));
+            sbuff.append("\n");
+          }
+        }
+        System.out.println(sbuff);
+        File opFile = new File(getSketch().getFolder(), "ErrorLogs"
+          + File.separator + "ErrorLog_" + System.currentTimeMillis() + ".csv");
+        PApplet.saveStream(opFile, new ByteArrayInputStream(sbuff.toString()
+          .getBytes(Charset.defaultCharset())));
+      } catch (Exception e) {
+        System.err.println("Failed to save log file for sketch " + getSketch().getName());
+        e.printStackTrace();
+      }
     }
 
     /**
