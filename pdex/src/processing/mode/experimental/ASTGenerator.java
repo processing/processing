@@ -1422,7 +1422,8 @@ public class ASTGenerator {
       fullName.append(simpleName);
       if (node.getNode() instanceof MethodDeclaration) {
         MethodDeclaration md = (MethodDeclaration) node.getNode();
-        type = md.getReturnType2().toString();
+        if (!md.isConstructor())
+          type = md.getReturnType2().toString();
         fullName.append('(');
         if (!md.parameters().isEmpty()) {
           List<ASTNode> params = md.parameters();
@@ -1761,11 +1762,7 @@ public class ASTGenerator {
           }
 
           protected void done() {
-            DefaultMutableTreeNode defCU = findAllOccurrences();            
-            treeRename.setModel(new DefaultTreeModel(defCU));
-            ((DefaultTreeModel) treeRename.getModel()).reload();
-            frmOccurenceList.setTitle("Usage of " + editor.ta.getSelectedText());
-            frmOccurenceList.setVisible(true);
+            handleShowUsage();
           }
         };
         worker.execute();
@@ -1809,6 +1806,10 @@ public class ASTGenerator {
   private void refactorIt(){
     String newName = txtRenameField.getText();
     DefaultMutableTreeNode defCU = findAllOccurrences();
+    if(defCU == null){
+      editor.statusError("Can't locate definition of " + editor.ta.getSelectedText());
+      return;
+    }
     treeRename.setModel(new DefaultTreeModel(defCU));
     ((DefaultTreeModel) treeRename.getModel()).reload();
     frmOccurenceList.setTitle("Usage of " + editor.ta.getSelectedText());
@@ -1858,6 +1859,27 @@ public class ASTGenerator {
     frmRename.setVisible(false);
   }
   
+  public void handleShowUsage(){
+    if(editor.ta.getSelectedText() == null){
+      editor.statusError("Highlight the class/function/variable name first");
+      return;
+    }
+    
+    if(errorCheckerService.hasSyntaxErrors()){
+      editor.statusError("Can't perform action until syntax errors are fixed :(");
+      return;
+    }
+    DefaultMutableTreeNode defCU = findAllOccurrences();   
+    if(defCU == null){
+      editor.statusError("Can't locate definition of " + editor.ta.getSelectedText());
+      return;
+    }
+    treeRename.setModel(new DefaultTreeModel(defCU));
+    ((DefaultTreeModel) treeRename.getModel()).reload();
+    frmOccurenceList.setTitle("Usage of " + editor.ta.getSelectedText());
+    frmOccurenceList.setVisible(true);
+  }
+  
   private DefaultMutableTreeNode findAllOccurrences(){
     String selText = editor.ta.getSelectedText();
     int line = editor.ta.getSelectionStartLine();
@@ -1877,6 +1899,9 @@ public class ASTGenerator {
                                         selText,
                                         editor.ta.getSelectionStart()
                                         - offwhitespace, false);
+    if(wnode.getNode() == null){
+      return null;
+    }
     System.err.println("Gonna find all occurrences of "
         + getNodeAsString(wnode.getNode()));
     
@@ -1900,7 +1925,11 @@ public class ASTGenerator {
       }
     }
     
-    DefaultMutableTreeNode defCU = new DefaultMutableTreeNode(wnode);
+    DefaultMutableTreeNode defCU = new DefaultMutableTreeNode(
+                                                              new ASTNodeWrapper(
+                                                                                 wnode
+                                                                                     .getNode(),
+                                                                                 selText));
     dfsNameOnly(defCU, wnode.getNode(), selText);
     System.out.println(wnode);
     return defCU;
@@ -1972,7 +2001,7 @@ public class ASTGenerator {
 //      System.out.println("Visiting: " + getNodeAsString(awnode.getNode()));
       if(isInstanceOfType(awnode.getNode(), decl, name)){
         tnode.add(new DefaultMutableTreeNode(new ASTNodeWrapper(awnode
-            .getNode(), name + " | Line " + awnode.getLineNumber())));
+            .getNode(), "Line " + awnode.getLineNumber())));
       }
       
     }
@@ -2055,7 +2084,7 @@ public class ASTGenerator {
     }
     
     if(errorCheckerService.hasSyntaxErrors()){
-      editor.statusError("Can't rename until syntax errors are fixed :(");
+      editor.statusError("Can't perform action until syntax errors are fixed :(");
       return;
     }
     if (!frmRename.isVisible()){

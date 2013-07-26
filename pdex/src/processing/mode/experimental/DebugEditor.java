@@ -156,13 +156,23 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         // access to customized (i.e. subclassed) text area
         ta = (TextArea) textarea;
         
+        // Add show usage option
+        JMenuItem showUsageItem = new JMenuItem("Show Usage..");
+        showUsageItem.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            handleShowUsage();
+          }
+        });
+        ta.getRightClickPopup().add(showUsageItem);
+        
         // add refactor option
         JMenuItem renameItem = new JMenuItem("Rename..");
         renameItem.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
             handleRefactor();
           }
-        });
+        });        
+        
         // TODO: Add support for word select on right click and rename.
 //        ta.customPainter.addMouseListener(new MouseAdapter() {
 //          public void mouseClicked(MouseEvent evt) {
@@ -1142,6 +1152,12 @@ public class DebugEditor extends JavaEditor implements ActionListener {
       System.out.println("Caret at:");
       System.out.println(ta.getLineText(ta.getCaretLine()));
       errorCheckerService.astGenerator.handleRefactor();
+    }
+    
+    private void handleShowUsage() {
+      System.out.println("Caret at:");
+      System.out.println(ta.getLineText(ta.getCaretLine()));
+      errorCheckerService.astGenerator.handleShowUsage();
     }
     
     /**

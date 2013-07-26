@@ -36,6 +36,7 @@ x Completion for array access, strings[0].
 
 Finer details
 
+* findDeclarations should support 3rd party classes too. It's about time. ;)
 * printStuff(int,float,String)  - completion endings have to be appropriate. Right now it's just printStuff(,,). Cursor positioning also needs to be taken care of(done). Argument list as tooltip if possible?
 *! p5 enhanced stuff in java, how does it fit in with everything else, and edge cases. Possibly add support for them. Offset handling improvements should help here.
 * Diamond operator isn't supported for now. Bummer.
