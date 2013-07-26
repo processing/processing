@@ -264,7 +264,7 @@ public class PShader {
    * @param w fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
    */
   public void set(String name, int x, int y, int z, int w) {
-    setUniformImpl(name, UniformValue.INT4, new int[] { x, y, z });
+    setUniformImpl(name, UniformValue.INT4, new int[] { x, y, z, w });
   }
 
 
@@ -293,6 +293,26 @@ public class PShader {
   public void set(String name, PVector vec) {
     setUniformImpl(name, UniformValue.FLOAT3,
                    new float[] { vec.x, vec.y, vec.z });
+  }
+
+
+  public void set(String name, boolean x) {
+    setUniformImpl(name, UniformValue.INT1, new int[] { (x)?1:0 });
+  }
+
+
+  public void set(String name, boolean x, boolean y) {
+    setUniformImpl(name, UniformValue.INT2, new int[] { (x)?1:0, (y)?1:0 });
+  }
+
+
+  public void set(String name, boolean x, boolean y, boolean z) {
+    setUniformImpl(name, UniformValue.INT3, new int[] { (x)?1:0, (y)?1:0, (z)?1:0 });
+  }
+
+
+  public void set(String name, boolean x, boolean y, boolean z, boolean w) {
+    setUniformImpl(name, UniformValue.INT4, new int[] { (x)?1:0, (y)?1:0, (z)?1:0, (w)?1:0 });
   }
 
 
@@ -342,6 +362,20 @@ public class PShader {
       PGraphics.showWarning("Wrong number of coordinates: it is negative!");
     }
   }
+
+  public void set(String name, boolean[] vec) {
+    set(name, vec, 1);
+  }
+
+
+  public void set(String name, boolean[] boolvec, int ncoords) {
+    int[] vec = new int[boolvec.length];
+    for (int i=0; i<boolvec.length; i++) {
+      vec[i] = (boolvec[i])?1:0;
+    }
+    set(name, vec, ncoords);
+  }
+
 
   /**
    * @param mat matrix of values
