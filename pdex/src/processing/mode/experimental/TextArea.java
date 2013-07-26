@@ -247,23 +247,85 @@ public class TextArea extends JEditTextArea {
 
     
   }
-
-  private String fetchPhrase(KeyEvent evt) {
-    char keyChar = evt.getKeyChar();
-    if (keyChar == KeyEvent.VK_ENTER) {
-      //System.out.println("Enter keypress.");
+ 
+  
+  private String fetchPhrase(MouseEvent evt) {
+    System.out.println("--handle Mouse Right Click--");
+    int off = xyToOffset(evt.getX(), evt.getY());
+    if (off < 0)
       return null;
+    int line = getLineOfOffset(off);
+    if (line < 0)
+      return null;
+    String s = getLineText(line);
+    if (s == null)
+      return null;
+    else if (s.length() == 0)
+      return null;
+    else {
+      int x = xToOffset(line, evt.getX()), x2 = x + 1, x1 = x - 1;
+      int xLS = off - getLineStartNonWhiteSpaceOffset(line);
+      System.out.println("x=" + x);
+      if (x < 0 || x >= s.length())
+        return null;
+      String word = s.charAt(x) + "";
+      if (s.charAt(x) == ' ')
+        return null;
+      if (!(Character.isLetterOrDigit(s.charAt(x)) || s.charAt(x) == '_' || s
+          .charAt(x) == '$'))
+        return null;
+      int i = 0;
+      while (true) {
+        i++;
+        if (x1 >= 0 && x1 < s.length()) {
+          if (Character.isLetter(s.charAt(x1)) || s.charAt(x1) == '_') {
+            word = s.charAt(x1--) + word;
+          } else
+            x1 = -1;
+        } else
+          x1 = -1;
+
+        if (x2 >= 0 && x2 < s.length()) {
+          if (Character.isLetterOrDigit(s.charAt(x2)) || s.charAt(x2) == '_'
+              || s.charAt(x2) == '$')
+            word = word + s.charAt(x2++);
+          else
+            x2 = -1;
+        } else
+          x2 = -1;
+
+        if (x1 < 0 && x2 < 0)
+          break;
+        if (i > 200) {
+          // time out!
+          System.err.println("Whoopsy! :P");
+          break;
+        }
+      }
+      if (Character.isDigit(word.charAt(0)))
+        return null;
+      System.out.println("Mouse click, word: " + word.trim());
+      errorCheckerService.astGenerator.setLastClickedWord(line
+          + errorCheckerService.mainClassOffset, word, xLS);
+      return word.trim();
     }
+  }
+  private String fetchPhrase(KeyEvent evt) {
+    if (evt != null) {
+      char keyChar = evt.getKeyChar();
+      if (keyChar == KeyEvent.VK_ENTER) {
+        //System.out.println("Enter keypress.");
+        return null;
+      }
 //    if (keyChar == KeyEvent.VK_BACK_SPACE || keyChar == KeyEvent.VK_DELETE)
 //      ; // accepted these keys
-    else if (keyChar == KeyEvent.VK_ESCAPE) {
-      //System.out.println("ESC keypress.  fetchPhrase()");
-      return null;
+      else if (keyChar == KeyEvent.VK_ESCAPE) {
+        //System.out.println("ESC keypress.  fetchPhrase()");
+        return null;
+      } else if (keyChar == KeyEvent.CHAR_UNDEFINED) {
+        return null;
+      }
     }
-    else if (keyChar == KeyEvent.CHAR_UNDEFINED) {
-      return null;
-    }
-    
     int off = getCaretPosition();
     System.out.print("off " + off);
     if (off < 0)
@@ -579,12 +641,18 @@ public class TextArea extends JEditTextArea {
             editor.gutterDblClicked(line);
           }
         }
-      } else {
-        // forward to standard listeners
-        for (MouseListener ml : mouseListeners) {
-          ml.mousePressed(me);
-        }
+        return;
       }
+      
+      if (me.getButton() == MouseEvent.BUTTON3) {
+        fetchPhrase(me);
+      }
+
+      // forward to standard listeners
+      for (MouseListener ml : mouseListeners) {
+        ml.mousePressed(me);
+      }
+
     }
 
     @Override

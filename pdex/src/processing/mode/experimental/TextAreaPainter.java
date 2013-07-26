@@ -103,6 +103,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter {
       return;
     else {
       int x = ta.xToOffset(line, evt.getX()), x2 = x + 1, x1 = x - 1;
+      System.out.println("x="+x);
       int xLS = off - ta.getLineStartNonWhiteSpaceOffset(line);
       if (x < 0 || x >= s.length())
         return;

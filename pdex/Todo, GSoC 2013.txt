@@ -42,6 +42,7 @@ Finer details
 * Diamond operator isn't supported for now. Bummer.
 * Icons for completions? Or overkill right now?
 
+x 'Show Usage' menu item added
 x Show declaring class for completions
 x! Ignore String case while finding completion candidates
 x Multiple 3rd party classes found in various packages. Not a chance no more.
@@ -69,7 +70,8 @@ Refactoring
 ===========
 
 * Undo misbehaves here, handle carefully.
-* Add support for word select on right click and rename, mouse co-ordinates need to obtained carefully
+
+x Add support for word select on right click and rename, mouse co-ordinates need to obtained carefully
 
 Refactoring would work only when code is compiler error free. I plan to do a find replace type op on the compile ready code. 
 1. First identify the declaration of the variable in the AST. We'll then make a list of all its occurrences. 

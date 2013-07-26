@@ -1805,17 +1805,19 @@ public class ASTGenerator {
   
   private void refactorIt(){
     String newName = txtRenameField.getText();
+    String selText = lastClickedWord == null ? editor.ta.getSelectedText()
+        : lastClickedWord;
     DefaultMutableTreeNode defCU = findAllOccurrences();
     if(defCU == null){
-      editor.statusError("Can't locate definition of " + editor.ta.getSelectedText());
+      editor.statusError("Can't locate definition of " + selText);
       return;
     }
     treeRename.setModel(new DefaultTreeModel(defCU));
     ((DefaultTreeModel) treeRename.getModel()).reload();
-    frmOccurenceList.setTitle("Usage of " + editor.ta.getSelectedText());
+    frmOccurenceList.setTitle("Usage of " + selText);
     frmOccurenceList.setVisible(true);
     int lineOffsetDisplacementConst = newName.length()
-        - editor.ta.getSelectedText().length();
+        - selText.length();
     HashMap<Integer, Integer> lineOffsetDisplacement = new HashMap<Integer, Integer>();
 
     // I need to store the pde and java offsets beforehand because once
@@ -1857,10 +1859,13 @@ public class ASTGenerator {
     errorCheckerService.runManualErrorCheck();
     frmOccurenceList.setVisible(false);
     frmRename.setVisible(false);
+    lastClickedWord = null;
+    lastClickedWordNode = null;
   }
   
   public void handleShowUsage(){
-    if(editor.ta.getSelectedText() == null){
+    System.out.println("Last clicked word:" + lastClickedWord);
+    if(lastClickedWord == null && editor.ta.getSelectedText() == null){
       editor.statusError("Highlight the class/function/variable name first");
       return;
     }
@@ -1870,20 +1875,39 @@ public class ASTGenerator {
       return;
     }
     DefaultMutableTreeNode defCU = findAllOccurrences();   
+    String selText = lastClickedWord == null ? editor.ta.getSelectedText()
+        : lastClickedWord;
     if(defCU == null){
-      editor.statusError("Can't locate definition of " + editor.ta.getSelectedText());
+      editor.statusError("Can't locate definition of " + selText);
       return;
     }
     treeRename.setModel(new DefaultTreeModel(defCU));
     ((DefaultTreeModel) treeRename.getModel()).reload();
-    frmOccurenceList.setTitle("Usage of " + editor.ta.getSelectedText());
+    frmOccurenceList.setTitle("Usage of " + selText);
     frmOccurenceList.setVisible(true);
+    lastClickedWord = null;
+    lastClickedWordNode = null;
   }
   
+  protected String lastClickedWord = null;
+  protected ASTNodeWrapper lastClickedWordNode = null;
+  
+  public String getLastClickedWord() {
+    return lastClickedWord;
+  }
+
+  public void setLastClickedWord(int lineNumber, String lastClickedWord, int offset) {
+    this.lastClickedWord = lastClickedWord;
+    lastClickedWordNode = getASTNodeAt(lineNumber, lastClickedWord, offset, false);
+    System.out.println("Last clicked node: " + lastClickedWordNode);
+  }
+
   private DefaultMutableTreeNode findAllOccurrences(){
-    String selText = editor.ta.getSelectedText();
+    System.out.println("Last clicked word:" + lastClickedWord);
+    String selText = lastClickedWord == null ? editor.ta.getSelectedText()
+        : lastClickedWord;
     int line = editor.ta.getSelectionStartLine();
-    System.out.println(editor.ta.getSelectedText()
+    System.out.println(selText
         + "<- offsets "
         + (line)
         + ", "
@@ -1894,11 +1918,14 @@ public class ASTGenerator {
             .getLineStartOffset(line)));
     int offwhitespace = editor.ta
         .getLineStartNonWhiteSpaceOffset(line);
-    ASTNodeWrapper wnode = getASTNodeAt(line
-                                            + errorCheckerService.mainClassOffset,
-                                        selText,
-                                        editor.ta.getSelectionStart()
-                                        - offwhitespace, false);
+    ASTNodeWrapper wnode;
+    if (lastClickedWord == null) {
+      wnode = getASTNodeAt(line + errorCheckerService.mainClassOffset, selText,
+                           editor.ta.getSelectionStart() - offwhitespace, false);
+    }
+    else{
+      wnode = lastClickedWordNode;
+    }
     if(wnode.getNode() == null){
       return null;
     }
@@ -2080,7 +2107,8 @@ public class ASTGenerator {
   }
   
   public void handleRefactor(){
-    if(editor.ta.getSelectedText() == null){
+    System.out.println("Last clicked word:" + lastClickedWord);
+    if(lastClickedWord == null && editor.ta.getSelectedText() == null){
       editor.statusError("Highlight the class/function/variable name first");
       return;
     }
@@ -2094,10 +2122,12 @@ public class ASTGenerator {
       SwingUtilities.invokeLater(new Runnable() {          
         @Override
         public void run() {
+          String selText = lastClickedWord == null ? editor.ta.getSelectedText()
+              : lastClickedWord;
           frmOccurenceList.setTitle("All occurrences of "
-              + editor.ta.getSelectedText());
+              + selText);
           lblRefactorOldName.setText("Current name: "
-              + editor.ta.getSelectedText());
+              + selText);
           txtRenameField.requestFocus();
         }
       });
