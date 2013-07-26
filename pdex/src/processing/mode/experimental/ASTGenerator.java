@@ -238,7 +238,7 @@ public class ASTGenerator {
     }
 //    OutlineVisitor visitor = new OutlineVisitor();
 //    compilationUnit.accept(visitor);
-    calculateComments();
+    getCodeComments();
     codeTree = new DefaultMutableTreeNode(
                                           getNodeAsString((ASTNode) compilationUnit
                                               .types().get(0)));
@@ -757,6 +757,10 @@ public class ASTGenerator {
   private String lastPredictedWord = " ";
   
   public void preparePredictions(final String word, final int line, final int lineStartNonWSOffset) {
+    if(caretWithinLineComment()){
+      System.out.println("No predictions.");
+      return;
+    }
     SwingWorker worker = new SwingWorker() {
 
       @Override
@@ -807,6 +811,21 @@ public class ASTGenerator {
             }
 
         }
+        
+        // Ensure that we're not inside a comment. TODO: Binary search
+        
+        /*for (Comment comm : getCodeComments()) {
+          int commLineNo = PdeToJavaLineNumber(compilationUnit
+              .getLineNumber(comm.getStartPosition()));
+          if(commLineNo == lineNumber){
+            System.out.println("Found a comment line " + comm);
+            System.out.println("Comment LSO "
+                + javaCodeOffsetToLineStartOffset(compilationUnit
+              .getLineNumber(comm.getStartPosition()),
+                                                  comm.getStartPosition()));
+            break;
+          }
+        }*/        
 
         // Now parse the expression into an ASTNode object
         ASTNode nearestNode = null;
@@ -2580,15 +2599,33 @@ public class ASTGenerator {
   }
   
   
-  private void calculateComments(){
+  private List<Comment> getCodeComments(){
     List<Comment> commentList = compilationUnit.getCommentList();
-    System.out.println("Total comments: " + commentList.size());
+//    System.out.println("Total comments: " + commentList.size());
 //    int i = 0;
 //    for (Comment comment : commentList) {
 //      System.out.println(++i + ": "+comment + " Line:"
 //          + compilationUnit.getLineNumber(comment.getStartPosition()) + ", "
 //          + comment.getLength());
 //    }
+    return commentList;
+  }
+  
+  protected boolean caretWithinLineComment(){
+    String pdeLine = editor.getLineText(editor.textArea().getCaretLine()).trim();
+    int caretPos = editor.textArea().getCaretPosition()
+        - editor.textArea()
+            .getLineStartNonWhiteSpaceOffset(editor.textArea().getCaretLine());
+    int x = pdeLine.indexOf("//");
+    System.out.println(x + " , " + caretPos + ", Checking line for comment " + pdeLine);
+    //lineStartOffset = editor.textArea().
+    
+    if (x >= 0 && caretPos > x) {
+      System.out.println("INSIDE a comment");
+      return true;
+    }
+    System.out.println("not within comment");
+    return false;
   }
   
   /**
