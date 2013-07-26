@@ -158,7 +158,7 @@ public class ASTGenerator {
     frame2.add(sp);
 
     btnRename = new JButton("Rename");
-    btnListOccurrence = new JButton("Find All");
+    btnListOccurrence = new JButton("Show Usage");
     frmRename = new JFrame();    
     frmRename.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
     frmRename.setBounds(new Rectangle(680, 50, 250, 130));
@@ -1401,11 +1401,11 @@ public class ASTGenerator {
   }
   
   private String getLabelIfType(ASTNodeWrapper node, SimpleName sn){
-    String label = "";
     ASTNode current = node.getNode().getParent();
     String type = "";
     StringBuffer fullName = new StringBuffer();
     Stack<String> parents = new Stack<String>();
+    String simpleName = (sn == null) ? node.getNode().toString() : sn.toString();
     switch (node.getNodeType()) {
     case ASTNode.TYPE_DECLARATION:
     case ASTNode.METHOD_DECLARATION:
@@ -1419,7 +1419,7 @@ public class ASTGenerator {
       while (parents.size() > 0) {
         fullName.append(parents.pop() + ".");
       }
-      fullName.append(sn.toString());
+      fullName.append(simpleName);
       if (node.getNode() instanceof MethodDeclaration) {
         MethodDeclaration md = (MethodDeclaration) node.getNode();
         type = md.getReturnType2().toString();
@@ -1449,9 +1449,11 @@ public class ASTGenerator {
       return svd.getType() + " " + svd.getName();
       
     case ASTNode.VARIABLE_DECLARATION_STATEMENT:
-      return ((VariableDeclarationStatement)node.getNode()).getType() + " " + sn;
+      return ((VariableDeclarationStatement) node.getNode()).getType() + " "
+          + simpleName;
     case ASTNode.VARIABLE_DECLARATION_EXPRESSION:
-      return ((VariableDeclarationExpression)node.getNode()).getType() + " " + sn;
+      return ((VariableDeclarationExpression) node.getNode()).getType() + " "
+          + simpleName;
     default:
       break;
     }
@@ -1740,7 +1742,7 @@ public class ASTGenerator {
           }
 
           protected void done() {
-           handleRename();
+           refactorIt();
           }
         };
         worker.execute();
@@ -1762,6 +1764,7 @@ public class ASTGenerator {
             DefaultMutableTreeNode defCU = findAllOccurrences();            
             treeRename.setModel(new DefaultTreeModel(defCU));
             ((DefaultTreeModel) treeRename.getModel()).reload();
+            frmOccurenceList.setTitle("Usage of " + editor.ta.getSelectedText());
             frmOccurenceList.setVisible(true);
           }
         };
@@ -1803,11 +1806,12 @@ public class ASTGenerator {
     });
   }
   
-  private void handleRename(){
+  private void refactorIt(){
     String newName = txtRenameField.getText();
     DefaultMutableTreeNode defCU = findAllOccurrences();
     treeRename.setModel(new DefaultTreeModel(defCU));
     ((DefaultTreeModel) treeRename.getModel()).reload();
+    frmOccurenceList.setTitle("Usage of " + editor.ta.getSelectedText());
     frmOccurenceList.setVisible(true);
     int lineOffsetDisplacementConst = newName.length()
         - editor.ta.getSelectedText().length();
@@ -1967,7 +1971,8 @@ public class ASTGenerator {
       ASTNodeWrapper awnode = (ASTNodeWrapper) cnode.getUserObject();
 //      System.out.println("Visiting: " + getNodeAsString(awnode.getNode()));
       if(isInstanceOfType(awnode.getNode(), decl, name)){
-        tnode.add(new DefaultMutableTreeNode(awnode));
+        tnode.add(new DefaultMutableTreeNode(new ASTNodeWrapper(awnode
+            .getNode(), name + " | Line " + awnode.getLineNumber())));
       }
       
     }
