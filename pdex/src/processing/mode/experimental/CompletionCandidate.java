@@ -100,7 +100,7 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
     elementName = f.getName();
     type = PREDEF_FIELD;
     label = f.getName() + " : " + f.getType().getSimpleName()
-        + f.getDeclaringClass().getSimpleName();
+        + " - " + f.getDeclaringClass().getSimpleName();
     completionString = elementName;
   }
 

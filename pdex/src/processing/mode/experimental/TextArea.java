@@ -238,12 +238,12 @@ public class TextArea extends JEditTextArea {
       
     }*/
 
-      if (evt.getID() == KeyEvent.KEY_TYPED) {
-        errorCheckerService.runManualErrorCheck();
-        System.out.println(" Typing: " + fetchPhrase(evt) + " "
-            + (evt.getKeyChar() == KeyEvent.VK_ENTER));
+    if (evt.getID() == KeyEvent.KEY_TYPED) {
+      errorCheckerService.runManualErrorCheck();
+      System.out.println(" Typing: " + fetchPhrase(evt) + " "
+          + (evt.getKeyChar() == KeyEvent.VK_ENTER));
 
-      }
+    }
 
     
   }
@@ -256,6 +256,10 @@ public class TextArea extends JEditTextArea {
     }
 //    if (keyChar == KeyEvent.VK_BACK_SPACE || keyChar == KeyEvent.VK_DELETE)
 //      ; // accepted these keys
+    else if (keyChar == KeyEvent.VK_ESCAPE) {
+      //System.out.println("ESC keypress.  fetchPhrase()");
+      return null;
+    }
     else if (keyChar == KeyEvent.CHAR_UNDEFINED) {
       return null;
     }

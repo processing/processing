@@ -59,6 +59,7 @@ public class CompletionPanel {
   }
   
   public void setVisible(boolean v){
+    System.out.println("Pred popup visible.");
     popupMenu.setVisible(v);
   }
 
