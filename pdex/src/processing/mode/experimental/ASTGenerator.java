@@ -2000,8 +2000,10 @@ public class ASTGenerator {
       ASTNodeWrapper awnode = (ASTNodeWrapper) cnode.getUserObject();
 //      System.out.println("Visiting: " + getNodeAsString(awnode.getNode()));
       if(isInstanceOfType(awnode.getNode(), decl, name)){
+        int val[] = errorCheckerService.JavaToPdeOffsets(awnode.getLineNumber(), 0);
         tnode.add(new DefaultMutableTreeNode(new ASTNodeWrapper(awnode
-            .getNode(), "Line " + awnode.getLineNumber())));
+            .getNode(), "Line " + (val[1] + 1) + " | Tab: "
+            + editor.getSketch().getCode(val[0]).getPrettyName())));
       }
       
     }
