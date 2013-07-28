@@ -858,18 +858,11 @@ public class PApplet extends Applet
 //    screenWidth = screen.width;
 //    screenHeight = screen.height;
 
-    if (platform == MACOSX) {
-      Float prop = (Float)
-        getToolkit().getDesktopProperty("apple.awt.contentScaleFactor");
-      if (prop != null) {
-        retina = prop == 2;
-        if (retina) {
-          // The active-mode rendering seems to be 2x slower, so disable it
-          // with retina. On a non-retina machine, however, useActive seems
-          // the only (or best?) way to handle the rendering.
-          useActive = false;
-        }
-      }
+    if (checkRetina()) {
+      // The active-mode rendering seems to be 2x slower, so disable it
+      // with retina. On a non-retina machine, however, useActive seems
+      // the only (or best) way to handle the rendering.
+      useActive = false;
     }
 
     // send tab keys through to the PApplet
@@ -958,6 +951,47 @@ public class PApplet extends Applet
     // this is automatically called in applets
     // though it's here for applications anyway
 //    start();
+  }
+
+
+  private boolean checkRetina() {
+    if (platform == MACOSX) {
+    // This should probably be reset each time there's a display change.
+    // A 5-minute search didn't turn up any such event in the Java API.
+    // Also, should we use the Toolkit associated with the editor window?
+      final String javaVendor = System.getProperty("java.vendor");
+      if (javaVendor.contains("Apple")) {
+        Float prop = (Float)
+          getToolkit().getDesktopProperty("apple.awt.contentScaleFactor");
+        if (prop != null) {
+          return prop == 2;
+        }
+      } else if (javaVendor.contains("Oracle")) {
+        String version = System.getProperty("java.version");  // 1.7.0_40
+        String[] m = match(version, "1.(\\d).*_(\\d+)");
+
+        // Make sure this is Oracle Java 7u40 or later
+        if (m != null &&
+          PApplet.parseInt(m[1]) >= 7 &&
+          PApplet.parseInt(m[1]) >= 40) {
+          GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+          GraphicsDevice device = env.getDefaultScreenDevice();
+
+          try {
+            Field field = device.getClass().getDeclaredField("scale");
+            if (field != null) {
+              field.setAccessible(true);
+              Object scale = field.get(device);
+
+              if (scale instanceof Integer && ((Integer)scale).intValue() == 2) {
+                return true;
+              }
+            }
+          } catch (Exception ignore) { }
+        }
+      }
+    }
+    return false;
   }
 
 

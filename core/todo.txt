@@ -13,8 +13,9 @@ X getSubset() broken in IntList, StringList, and missing from FloatList
 X   https://github.com/processing/processing/issues/1979
 X Present Mode does not work properly on Windows
 X   https://github.com/processing/processing/issues/1955
+X add retina switch for PApplet to set useActive with OS X and 7u40
+X   prevents speed/performance issues with old sketches on retina macs
 
-_ 
 _ retain blendMode() between frames (get bug #)
 _   this should actually be in the code.. 
 _   maybe not working on OS X/retina?
