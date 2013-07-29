@@ -10109,15 +10109,20 @@ public class PApplet extends Applet
             if (farm.isVisible()) {
               Insets insets = farm.getInsets();
               Dimension windowSize = farm.getSize();
-            Rectangle newBounds =
-              new Rectangle(insets.left, insets.top,
-                            windowSize.width - insets.left - insets.right,
-                            windowSize.height - insets.top - insets.bottom);
-            Rectangle oldBounds = getBounds();
-            if (!newBounds.equals(oldBounds)) {
-              // the ComponentListener in PApplet will handle calling size()
-              setBounds(newBounds);
-            }
+              // JFrame (unlike java.awt.Frame) doesn't include the left/top
+              // insets for placement (though it does seem to need them for
+              // overall size of the window. Perhaps JFrame sets its coord
+              // system so that (0, 0) is always the upper-left of the content
+              // area. Which seems nice, but breaks any f*ing AWT-based code.
+              Rectangle newBounds =
+                new Rectangle(0, 0, //insets.left, insets.top,
+                              windowSize.width - insets.left - insets.right,
+                              windowSize.height - insets.top - insets.bottom);
+              Rectangle oldBounds = getBounds();
+              if (!newBounds.equals(oldBounds)) {
+                // the ComponentListener in PApplet will handle calling size()
+                setBounds(newBounds);
+              }
             }
           }
         }
