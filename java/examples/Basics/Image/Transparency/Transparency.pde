@@ -22,7 +22,7 @@ void draw() {
   image(img, 0, 0);  // Display at full opacity
   float dx = (mouseX-img.width/2) - offset;
   offset += dx * easing; 
-  tint(255, 126);  // Display at half opacity
+  tint(255, 127);  // Display at half opacity
   image(img, offset, 0);
 }
 
