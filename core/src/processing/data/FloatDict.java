@@ -427,6 +427,7 @@ public class FloatDict {
    * @webref floatlist:method
    * @brief Return the largest value
    */
+  // The index of the entry that has the max value. Reference above is incorrect.
   public int maxIndex() {
     checkMinMax("maxIndex");
     // Will still return NaN if there is 1 or more entries, and they're all NaN
@@ -453,12 +454,14 @@ public class FloatDict {
   }
 
 
+  /** The key for a max value. */
   public String maxKey() {
     checkMinMax("maxKey");
     return keys[maxIndex()];
   }
 
 
+  /** The max value. */
   public float maxValue() {
     checkMinMax("maxValue");
     return values[maxIndex()];
@@ -685,7 +688,7 @@ public class FloatDict {
    * each key, divided by the total sum. The total for all values will be ~1.0.
    * @return a Dict with the original keys, mapped to their pct of the total
    */
-  public FloatDict getPercentages() {
+  public FloatDict getPercent() {
     double sum = 0;
     for (float value : valueArray()) {
       sum += value;

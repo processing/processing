@@ -470,7 +470,7 @@ public class IntDict {
   }
 
 
-  // return the key for the maximum value
+  // return the key corresponding to the maximum value
   public String maxKey() {
     checkMinMax("maxKey");
     return keys[maxIndex()];
@@ -626,7 +626,7 @@ public class IntDict {
    * each key, divided by the total sum. The total for all values will be ~1.0.
    * @return a Dict with the original keys, mapped to their pct of the total
    */
-  public FloatDict getPercentages() {
+  public FloatDict getPercent() {
     double sum = 0;
     for (int value : valueArray()) {
       sum += value;

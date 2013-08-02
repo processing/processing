@@ -28,6 +28,7 @@ _ Unable to get TAB key event with P2D/P3D renderer
 _   https://github.com/processing/processing/issues/1967
 
 table
+X add sort() to Table
 _ implement version of Table that takes a dictionary file
 _ addRow() is not efficient, probably need to do the doubling
 _   or have a setIncrement() function?

@@ -60,6 +60,21 @@ public class IntList implements Iterable<Integer> {
   }
 
 
+  static public IntList fromRange(int stop) {
+    return fromRange(0, stop);
+  }
+
+
+  static public IntList fromRange(int start, int stop) {
+    int count = stop - start;
+    IntList newbie = new IntList(count);
+    for (int i = 0; i < count; i++) {
+      newbie.set(i, start+i);
+    }
+    return newbie;
+  }
+
+
   /**
    * Improve efficiency by removing allocated but unused entries from the
    * internal array used to store the data. Set to private, though it could
@@ -696,6 +711,26 @@ public class IntList implements Iterable<Integer> {
 //    }
 //    return outgoing;
 //  }
+
+
+  /**
+   * Returns a normalized version of this array. Called getPercent() for
+   * consistency with the Dict classes. It's a getter method because it needs
+   * to returns a new list (because IntList/Dict can't do percentages or
+   * normalization in place on int values).
+   */
+  public FloatList getPercent() {
+    double sum = 0;
+    for (float value : array()) {
+      sum += value;
+    }
+    FloatList outgoing = new FloatList(count);
+    for (int i = 0; i < count; i++) {
+      double percent = data[i] / sum;
+      outgoing.set(i, (float) percent);
+    }
+    return outgoing;
+  }
 
 
   public IntList getSubset(int start) {

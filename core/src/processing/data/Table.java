@@ -91,6 +91,10 @@ public class Table {
 
   protected RowIterator rowIterator;
 
+  // 0 for doubling each time, otherwise the number of rows to increment on
+  // each expansion.
+  protected int expandIncrement;
+
 
   /**
    * Creates a new, empty table. Use addRow() to add additional rows.
@@ -1707,6 +1711,7 @@ public class Table {
     return getRowCount() - 1;
   }
 
+
   /**
    * @webref table:method
    * @brief Removes all rows from a table
@@ -1749,6 +1754,7 @@ public class Table {
     rowCount = newCount;
   }
 
+
  /**
    * @webref table:method
    * @brief Adds a row to a table
@@ -1759,6 +1765,7 @@ public class Table {
     setRowCount(rowCount + 1);
     return new RowPointer(this, rowCount - 1);
   }
+
 
  /**
    * @param source a reference to the original row to be duplicated
@@ -1792,6 +1799,7 @@ public class Table {
     }
     return new RowPointer(this, row);
   }
+
 
  /**
    * @nowebref
@@ -3580,7 +3588,119 @@ public class Table {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  // TODO maybe these aren't needed. better to use getStringList().getUnique()?
+  public void sort(String columnName) {
+    sort(getColumnIndex(columnName), false);
+  }
+
+
+  public void sort(int column) {
+    sort(column, false);
+  }
+
+
+  public void sortReverse(String columnName) {
+    sort(getColumnIndex(columnName), true);
+  }
+
+
+  public void sortReverse(int column) {
+    sort(column, true);
+  }
+
+
+  protected void sort(final int column, final boolean reverse) {
+    final int[] order = IntList.fromRange(getRowCount()).array();
+    Sort s = new Sort() {
+
+      @Override
+      public int size() {
+        return getRowCount();
+      }
+
+      @Override
+      public float compare(int index1, int index2) {
+        int a = reverse ? order[index2] : order[index1];
+        int b = reverse ? order[index1] : order[index2];
+
+        switch (getColumnType(column)) {
+        case INT:
+          return getInt(a, column) - getInt(b, column);
+        case LONG:
+          return getLong(a, column) - getLong(b, column);
+        case FLOAT:
+          return getFloat(a, column) - getFloat(b, column);
+        case DOUBLE:
+          return (float) (getDouble(a, column) - getDouble(b, column));
+        case STRING:
+          return getString(a, column).compareToIgnoreCase(getString(b, column));
+        case CATEGORY:
+          return getInt(a, column) - getInt(b, column);
+        default:
+          throw new IllegalArgumentException("Invalid column type: " + getColumnType(column));
+        }
+      }
+
+      @Override
+      public void swap(int a, int b) {
+        int temp = order[a];
+        order[a] = order[b];
+        order[b] = temp;
+      }
+
+    };
+    s.run();
+
+    //Object[] newColumns = new Object[getColumnCount()];
+    for (int col = 0; col < getColumnCount(); col++) {
+      switch (getColumnType(col)) {
+      case INT:
+      case CATEGORY:
+        int[] oldInt = (int[]) columns[col];
+        int[] newInt = new int[rowCount];
+        for (int row = 0; row < getRowCount(); row++) {
+          newInt[row] = oldInt[order[row]];
+        }
+        columns[col] = newInt;
+        break;
+      case LONG:
+        long[] oldLong = (long[]) columns[col];
+        long[] newLong = new long[rowCount];
+        for (int row = 0; row < getRowCount(); row++) {
+          newLong[row] = oldLong[order[row]];
+        }
+        columns[col] = newLong;
+        break;
+      case FLOAT:
+        float[] oldFloat = (float[]) columns[col];
+        float[] newFloat = new float[rowCount];
+        for (int row = 0; row < getRowCount(); row++) {
+          newFloat[row] = oldFloat[order[row]];
+        }
+        columns[col] = newFloat;
+        break;
+      case DOUBLE:
+        double[] oldDouble = (double[]) columns[col];
+        double[] newDouble = new double[rowCount];
+        for (int row = 0; row < getRowCount(); row++) {
+          newDouble[row] = oldDouble[order[row]];
+        }
+        columns[col] = newDouble;
+        break;
+      case STRING:
+        String[] oldString = (String[]) columns[col];
+        String[] newString = new String[rowCount];
+        for (int row = 0; row < getRowCount(); row++) {
+          newString[row] = oldString[order[row]];
+        }
+        columns[col] = newString;
+        break;
+      }
+    }
+  }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
 
   public String[] getUnique(String columnName) {
     return getUnique(getColumnIndex(columnName));
