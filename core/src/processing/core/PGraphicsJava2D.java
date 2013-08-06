@@ -2297,7 +2297,8 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
         // when possible, we'll try VolatileImage
         raster = ((VolatileImage) image).getSnapshot().getRaster();
       }
-    } else {
+    }
+    if (raster == null) {
       raster = ((BufferedImage) image).getRaster();
     }
 
