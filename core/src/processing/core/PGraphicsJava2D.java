@@ -2288,18 +2288,31 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 
 
   protected WritableRaster getRaster() {
+    WritableRaster raster = null;
     if (primarySurface) {
       // 'offscreen' will probably be removed in the next release
       if (useOffscreen) {
-        return ((BufferedImage) offscreen).getRaster();
+        raster = ((BufferedImage) offscreen).getRaster();
+      } else if (image instanceof VolatileImage) {
+        // when possible, we'll try VolatileImage
+        raster = ((VolatileImage) image).getSnapshot().getRaster();
       }
-      // when possible, we'll try VolatileImage
-      if (image instanceof VolatileImage) {
-        return ((VolatileImage) image).getSnapshot().getRaster();
-      }
+    } else {
+      raster = ((BufferedImage) image).getRaster();
     }
-    return ((BufferedImage) image).getRaster();
-    //((BufferedImage) (useOffscreen && primarySurface ? offscreen : image)).getRaster();
+
+    // On Raspberry Pi (and perhaps other platforms, the color buffer won't
+    // necessarily be the int array that we'd like. Need to convert it here.
+    // Not that this would probably mean getRaster() would need to work more
+    // like loadRaster/updateRaster because the pixels will need to be
+    // temporarily moved to (and later from) a buffer that's understood by
+    // the rest of the Processing source.
+    // https://github.com/processing/processing/issues/2010
+    if (raster.getTransferType() != DataBuffer.TYPE_INT) {
+      System.err.println("See https://github.com/processing/processing/issues/2010");
+      throw new RuntimeException("Pixel operations are not supported on this device.");
+    }
+    return raster;
   }
 
 
@@ -2308,10 +2321,11 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
     if ((pixels == null) || (pixels.length != width * height)) {
       pixels = new int[width * height];
     }
-    //((BufferedImage) image).getRGB(0, 0, width, height, pixels, 0, width);
+
+    getRaster().getDataElements(0, 0, width, height, pixels);
+      //((BufferedImage) image).getRGB(0, 0, width, height, pixels, 0, width);
 //    WritableRaster raster = ((BufferedImage) (useOffscreen && primarySurface ? offscreen : image)).getRaster();
 //    WritableRaster raster = image.getRaster();
-    getRaster().getDataElements(0, 0, width, height, pixels);
   }
 
 

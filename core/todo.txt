@@ -15,11 +15,19 @@ X Present Mode does not work properly on Windows
 X   https://github.com/processing/processing/issues/1955
 X add retina switch for PApplet to set useActive with OS X and 7u40
 X   prevents speed/performance issues with old sketches on retina macs
+X add error message for raspberry pi (and others?) about int buffers
+X   https://github.com/processing/processing/issues/2010
+X   not fixed, but made notes there about how to handle
+
+_ add option to have full screen span across screens
 
 _ retain blendMode() between frames (get bug #)
 _   this should actually be in the code.. 
 _   maybe not working on OS X/retina?
 _   perhaps it's a getGraphics() issue?
+
+_ test PGraphicsRetina2D w/ 7u40 
+_ make sure that 7u40 doesn't reintroduce starvation issue on retina Macs
 
 andres
 X pixels[] array not updated with Capture and P2D/P3D

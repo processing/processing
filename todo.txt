@@ -32,6 +32,9 @@ _   and doesn't just look for .Trash
 _ getCoreLibrary() is breaking OpenGL
 _   "new Library()" constructor needs to go back to private
 
+_ remove ability to export cross-platform apps
+_ add ability to embed the current JRE
+
 cleaning/earlier
 X common error messages
 X   with a proper list, we can add links when throwing an error in the PDE
