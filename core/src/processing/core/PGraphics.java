@@ -1836,7 +1836,6 @@ public class PGraphics extends PImage implements PConstants {
    */
   public void blendMode(int mode) {
     this.blendMode = mode;
-    new Exception("setting blend mode to " + mode).printStackTrace();
     blendModeImpl();
   }
 
