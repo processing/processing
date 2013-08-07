@@ -499,6 +499,15 @@ public class IntList implements Iterable<Integer> {
   }
 
 
+  public int sum() {
+    int outgoing = 0;
+    for (int i = 0; i < count; i++) {
+      outgoing += data[i];
+    }
+    return outgoing;
+  }
+
+
   /**
    * Sorts the array in place.
    *

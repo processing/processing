@@ -18,6 +18,8 @@ X   prevents speed/performance issues with old sketches on retina macs
 X add error message for raspberry pi (and others?) about int buffers
 X   https://github.com/processing/processing/issues/2010
 X   not fixed, but made notes there about how to handle
+X add sum() to IntList and FloatList
+X   https://github.com/processing/processing/issues/1893
 
 _ add option to have full screen span across screens
 _   display=all in cmd line

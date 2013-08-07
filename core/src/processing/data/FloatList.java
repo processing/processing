@@ -533,6 +533,15 @@ public class FloatList implements Iterable<Float> {
   }
 
 
+  public float sum() {
+    double outgoing = 0;
+    for (int i = 0; i < count; i++) {
+      outgoing += data[i];
+    }
+    return (float) outgoing;
+  }
+
+
   /**
    * Sorts the array in place.
    *
