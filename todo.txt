@@ -28,9 +28,9 @@ X   reported by Dan
 X   this should be better now
 X add exception wrapper for startup
 X Add methods to move files to Trash/Recycle Bin where available
-
-_ remove ability to export cross-platform apps
-_ add ability to embed the current JRE
+X allow delete of files in unsaved sketches
+X   https://github.com/processing/processing/issues/1942
+X   https://github.com/processing/processing/pull/1945
 
 cleaning/earlier
 X common error messages
@@ -67,12 +67,14 @@ X   but no message is provided anywhere?
 X mode install requires restart *and* still doesn't show as installed
 X   even though it gets added to the modes menu properly after the restart
 X   https://github.com/processing/processing/issues/1782
+X Update example list when library is installed
+X   https://github.com/processing/processing/issues/1909
+X   https://github.com/processing/processing/pull/1925
 
 _ we shouldn't use .properties extension for modes, et al
 _   because a .properties file is iso8859-1
 _ make note that .properties file *must* be utf-8
 _   if not it'll make things gross (andre sier flob library)
-
 _ why wasn't Library moved to LibraryContribution?
 _   or that LibraryContribution needs to be a wrapper around it?
 _ send info on 'check for updates' so we know about libs/modes/etc?
@@ -80,7 +82,6 @@ _   how to disclose to users?
 _   only send for items that are part of the public list 
 _     otherwise we're sending private libraries/installs
 _     although this won't pick up old libraries not on the new system
-
 _ classpath conflicts.. 
 _   getPackageList.. from Library... maybe others?
 _   really need to make sure that a weird core.jar isn't being imported
@@ -98,6 +99,8 @@ _ "update all" would be useful
 _   "Update 4 items" as a button name
 
 high
+_ remove ability to export cross-platform apps
+_ add ability to embed the current JRE
 _ MovieMaker needs to be compiling as 1.6
 _ move old Google Code SVN back to processing.org
 _   then cull out the old branches/tags from the Github repo
@@ -621,8 +624,6 @@ _ Contributed modes should show up in mode menu after installation
 _   waiting for fixed CoffeeScript mode to test this one
 _   https://github.com/processing/processing/issues/1504
 X   http://code.google.com/p/processing/issues/detail?id=1466
-_ Update example list when library is installed
-_   https://github.com/processing/processing/issues/1909
 _ new libraries not picked up when changing sketchbook location
 _ make sure contrib manager can run w/o a network connection
 _   or if a bad document comes through, it can recover

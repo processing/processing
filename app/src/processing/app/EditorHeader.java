@@ -534,16 +534,14 @@ public class EditorHeader extends JComponent {
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           Sketch sketch = editor.getSketch();
-          if (!sketch.isUntitled()) {  // don't bother if untitled
-            if (!Base.isMacOS() &&  // ok on OS X
-                editor.base.editors.size() == 1 &&  // mmm! accessor
-                sketch.getCurrentCodeIndex() == 0) {
+          if (!Base.isMacOS() &&  // ok on OS X
+              editor.base.editors.size() == 1 &&  // mmm! accessor
+              sketch.getCurrentCodeIndex() == 0) {
               Base.showWarning("Yeah, no." ,
                                "You can't delete the last tab " +
                                "of the last open sketch.", null);
-            } else {
-              editor.getSketch().handleDeleteCode();
-            }
+          } else {
+            editor.getSketch().handleDeleteCode();
           }
         }
       });
