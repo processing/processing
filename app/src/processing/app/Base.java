@@ -198,9 +198,19 @@ public class Base {
       }
 
       log("about to create base..."); //$NON-NLS-1$
-      Base base = new Base(args);
-      // Prevent more than one copy of the PDE from running.
-      SingleInstance.startServer(base);
+      try {
+        Base base = new Base(args);
+        // Prevent more than one copy of the PDE from running.
+        SingleInstance.startServer(base);
+        
+      } catch (Exception e) {
+        // Catch-all to hopefully pick up some of the weirdness we've been 
+        // running into lately. 
+        StringWriter sw = new StringWriter();
+        e.printStackTrace(new PrintWriter(sw));
+        Base.showError("We're off on the wrong foot", 
+                       "An error occurred during startup.\n" + sw, e);
+      }
       log("done creating base..."); //$NON-NLS-1$
     }
   }
@@ -324,7 +334,7 @@ public class Base {
   }
 
 
-  public Base(String[] args) {
+  public Base(String[] args) throws Exception {
 //    // Get the sketchbook path, and make sure it's set properly
 //    determineSketchbookFolder();
 
@@ -338,7 +348,7 @@ public class Base {
 //        removeDir(contrib.getFolder());
 //      }
 //    }
-    ContributionManager.deleteFlagged();
+    ContributionManager.cleanup();
     buildCoreModes();
     rebuildContribModes();
 
@@ -354,7 +364,7 @@ public class Base {
     } else {
       for (Mode m : getModeList()) {
         if (m.getIdentifier().equals(lastModeIdentifier)) {
-          log("Setting next mode to " + lastModeIdentifier); //$NON-NLS-1$
+          logf("Setting next mode to {0}.", lastModeIdentifier); //$NON-NLS-1$
           nextMode = m;
         }
       }
@@ -2584,18 +2594,21 @@ public class Base {
 
 
   /**
-   * Remove a File object (a file or directory) from the system by placing it
-   * in the Trash or Recycle Bin (if available) or simply deleting it (if not).
+   * Delete a file or directory in a platform-specific manner. Removes a File 
+   * object (a file or directory) from the system by placing it in the Trash 
+   * or Recycle Bin (if available) or simply deleting it (if not).
    *
    * When the file/folder is on another file system, it may simply be removed
    * immediately, without additional warning. So only use this if you want to,
-   * you know, "remove" the subject in question.
+   * you know, "delete" the subject in question.
+   * 
+   * NOTE: Not yet tested nor ready for prime-time.
    *
-   * @param file the victim
+   * @param file the victim (a directory or individual file)
    * @return true if all ends well
    * @throws IOException what went wrong
    */
-  static public boolean removeFile(File file) throws IOException {
+  static public boolean platformDelete(File file) throws IOException {
     return platform.deleteFile(file);
   }
 

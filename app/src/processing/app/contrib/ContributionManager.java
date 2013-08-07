@@ -202,15 +202,21 @@ public class ContributionManager {
   }
   
   
-  /** Called by Base to clean up entries previously marked for deletion. */
-  static public void deleteFlagged() {
+  /** 
+   * Called by Base to clean up entries previously marked for deletion
+   * and remove any "requires restart" flags.
+   */
+  static public void cleanup() throws Exception {
     deleteFlagged(Base.getSketchbookLibrariesFolder());
     deleteFlagged(Base.getSketchbookModesFolder());
     deleteFlagged(Base.getSketchbookToolsFolder());
+    
+    clearRestartFlags(Base.getSketchbookModesFolder());
+    clearRestartFlags(Base.getSketchbookToolsFolder());
   }
 
   
-  static private void deleteFlagged(File root) {
+  static private void deleteFlagged(File root) throws Exception {
     File[] markedForDeletion = root.listFiles(new FileFilter() {
       public boolean accept(File folder) {
         return (folder.isDirectory() && 
@@ -219,6 +225,18 @@ public class ContributionManager {
     });
     for (File folder : markedForDeletion) {
       Base.removeDir(folder);
+    }
+  }
+  
+  
+  static private void clearRestartFlags(File root) throws Exception {
+    File[] folderList = root.listFiles(new FileFilter() {
+      public boolean accept(File folder) {
+        return folder.isDirectory();
+      }
+    });
+    for (File folder : folderList) {
+      LocalContribution.clearRestartFlags(folder);
     }
   }
 }

@@ -163,6 +163,15 @@ public enum ContributionType {
   }
   
   
+  /** 
+   * Returns true if the type of contribution requires the PDE to restart
+   * when being added or removed. 
+   */
+  boolean requiresRestart() {
+    return this == ContributionType.TOOL || this == ContributionType.MODE;
+  }
+  
+  
   LocalContribution load(Base base, File folder) {
     switch (this) {
     case LIBRARY:
@@ -193,15 +202,20 @@ public enum ContributionType {
     return contribs;
   }
   
+
+  File getBackupFolder() {
+    return new File(getSketchbookFolder(), "old");
+  }
+  
   
   File createBackupFolder(StatusPanel status) {
-    File backupFolder = new File(getSketchbookFolder(), "old");
-    if (backupFolder.isDirectory()) {
-      status.setErrorMessage("First remove the folder named \"old\" from the " + 
-                             getFolderName() + " folder in the sketchbook.");
-      return null;
-    }
-    if (!backupFolder.mkdirs()) {
+    File backupFolder = getBackupFolder(); 
+//    if (backupFolder.isDirectory()) {
+//      status.setErrorMessage("First remove the folder named \"old\" from the " + 
+//                             getFolderName() + " folder in the sketchbook.");
+//      return null;
+//    }
+    if (!backupFolder.exists() && !backupFolder.mkdirs()) {
       status.setErrorMessage("Could not create a backup folder in the " +
       		                   "sketchbook " + toString() + " folder.");
       return null;

@@ -274,11 +274,15 @@ public class ContributionManagerDialog {
 //      }
       Collections.sort(categories);
 //    categories.add(0, ContributionManagerDialog.ANY_CATEGORY);
+      boolean categoriesFound = false;
       categoryChooser.addItem(ContributionManagerDialog.ANY_CATEGORY);
       for (String s : categories) {
         categoryChooser.addItem(s);
+        if (!s.equals("Unknown")) {
+          categoriesFound = true;
+        }
       }
-      categoryChooser.setEnabled(categories.size() != 0);
+      categoryChooser.setEnabled(categoriesFound);
     }
   }
 
@@ -318,7 +322,18 @@ public class ContributionManagerDialog {
   
   protected void updateContributionListing() {
     if (editor != null) {
-      ArrayList<Library> libraries = new ArrayList<Library>(editor.getMode().contribLibraries);
+      ArrayList<Contribution> contributions = new ArrayList<Contribution>();
+
+      ArrayList<Library> libraries = 
+        new ArrayList<Library>(editor.getMode().contribLibraries);
+      contributions.addAll(libraries);
+
+      ArrayList<ToolContribution> tools = editor.contribTools;
+      contributions.addAll(tools);
+      
+      ArrayList<ModeContribution> modes = editor.getBase().getModeContribs();
+      contributions.addAll(modes);
+
 //    ArrayList<LibraryCompilation> compilations = LibraryCompilation.list(libraries);
 //
 //    // Remove libraries from the list that are part of a compilations
@@ -331,11 +346,6 @@ public class ContributionManagerDialog {
 //        }
 //      }
 //    }
-
-      ArrayList<Contribution> contributions = new ArrayList<Contribution>();
-      contributions.addAll(editor.contribTools);
-      contributions.addAll(libraries);
-//    contributions.addAll(compilations);
 
       contribListing.updateInstalledList(contributions);
     }

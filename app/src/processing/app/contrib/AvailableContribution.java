@@ -128,19 +128,25 @@ class AvailableContribution extends Contribution {
         // backup old if needed, then move things into place and reload.
         installedContrib = 
           newContrib.copyAndLoad(editor, confirmReplace, status);
+        if (newContrib != null && type.requiresRestart()) {
+          installedContrib.setRestartFlag();
+          //status.setMessage("Restart Processing to finish the installation.");
+        }
         
         // 3. Delete the newContrib, do a garbage collection, hope and pray
         // that Java will unlock the temp folder on Windows now
         newContrib = null;
         System.gc();
         
-        // we'll even give it a second to finish up ... because file ops are
-        // just that flaky on Windows.
         
-        try {
-          Thread.sleep(1000);
-        } catch (InterruptedException e) {
-          e.printStackTrace();
+        if (Base.isWindows()) {
+          // we'll even give it a second to finish up ... because file ops are
+          // just that flaky on Windows.
+          try {
+            Thread.sleep(1000);
+          } catch (InterruptedException e) {
+            e.printStackTrace();
+          }
         }
 
         // 4. Okay, now actually delete that temp folder

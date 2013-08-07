@@ -26,11 +26,8 @@ X UnsatisfiedLinkError causes huge message...
 X   error report cleanups haven't been fixed yet
 X   reported by Dan
 X   this should be better now
+X add exception wrapper for startup
 X Add methods to move files to Trash/Recycle Bin where available
-_   verify that the OS X version uses the real call
-_   and doesn't just look for .Trash
-_ getCoreLibrary() is breaking OpenGL
-_   "new Library()" constructor needs to go back to private
 
 _ remove ability to export cross-platform apps
 _ add ability to embed the current JRE
@@ -55,15 +52,27 @@ X restrict library categories to the ones in the document
 X   if it's not correct, shows up as 'other'
 X catch Error (not just Exception) objects during load
 X   handles UnsupportedClassVersionError and others
-_ we shouldn't use .properties for modes et al
+X argh.. the 'old' folder is really poorly done
+X   attempt to install multiple will cause havoc (fail because 'old' exists)
+o remove flagging for deletion
+o half-installed mode causes a lot of trouble
+o   maybe it's reading from tmp folders?
+o   https://github.com/processing/processing/issues/1875
+X   can't fix, no response
+X remove "Compilations" category for libraries
+X modes shouldn't have categories?
+X   was counting "Unknown" as a category
+X modes and tools require restart (per ContributionType class)
+X   but no message is provided anywhere?
+X mode install requires restart *and* still doesn't show as installed
+X   even though it gets added to the modes menu properly after the restart
+X   https://github.com/processing/processing/issues/1782
+
+_ we shouldn't use .properties extension for modes, et al
 _   because a .properties file is iso8859-1
-_ remove "Compilations" category for libraries
 _ make note that .properties file *must* be utf-8
 _   if not it'll make things gross (andre sier flob library)
-_ argh.. the 'old' folder is really poorly done
-_   attempt to install multiple will cause havoc (fail because 'old' exists)
-_ modes and tools require restart (per ContributionType class)
-_   but no message is provided anywhere?
+
 _ why wasn't Library moved to LibraryContribution?
 _   or that LibraryContribution needs to be a wrapper around it?
 _ send info on 'check for updates' so we know about libs/modes/etc?
@@ -71,12 +80,7 @@ _   how to disclose to users?
 _   only send for items that are part of the public list 
 _     otherwise we're sending private libraries/installs
 _     although this won't pick up old libraries not on the new system
-_ half-installed mode causes a lot of trouble
-_   maybe it's reading from tmp folders?
-_   https://github.com/processing/processing/issues/1875
-_ mode install requires restart *and* still doesn't show as installed
-_   even though it gets added to the modes menu properly after the restart
-_   https://github.com/processing/processing/issues/1782
+
 _ classpath conflicts.. 
 _   getPackageList.. from Library... maybe others?
 _   really need to make sure that a weird core.jar isn't being imported
@@ -95,7 +99,6 @@ _   "Update 4 items" as a button name
 
 high
 _ MovieMaker needs to be compiling as 1.6
-_ add .bat file to lib on windows so that we can get better debugging info
 _ move old Google Code SVN back to processing.org
 _   then cull out the old branches/tags from the Github repo
 _ proxy server requirement causes problems
@@ -108,6 +111,14 @@ _   remove initRequirements from Base (no longer need JDI)
 _     move this into Android mode?
 _ "String index out of range" error
 _   https://github.com/processing/processing/issues/1940
+
+medium
+_ change to using platformDelete() instead of Base.removeDir() where possible
+_   verify that the OS X version uses the real call
+_   and doesn't just look for .Trash
+_ getCoreLibrary() is breaking OpenGL
+_   "new Library()" constructor needs to go back to private
+_ add .bat file to lib on windows so that we can get better debugging info
 
 _ appbundler fixes/changes
 _   icon location uses path, even when embedded

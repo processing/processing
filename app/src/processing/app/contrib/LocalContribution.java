@@ -38,14 +38,15 @@ import processing.app.*;
  * be installed.
  */
 public abstract class LocalContribution extends Contribution {
-  static public final String DELETION_FLAG = "flagged_for_deletion";
+  static public final String DELETION_FLAG = "marked_for_deletion";
+  static public final String RESTART_FLAG = "requires_restart";
   
   protected String id;          // 1 (unique id for this library)
   protected int latestVersion;  // 103
   protected File folder;
   protected HashMap<String, String> properties;
   protected ClassLoader loader;
-
+  
 
   public LocalContribution(File folder) {
     this.folder = folder;
@@ -198,7 +199,7 @@ public abstract class LocalContribution extends Contribution {
       if ((oldContrib.getFolder().exists() && oldContrib.getFolder().equals(contribFolder)) ||
           (oldContrib.getId() != null && oldContrib.getId().equals(getId()))) {
 
-        if (oldContrib.requiresRestart()) {
+        if (oldContrib.getType().requiresRestart()) {
           // XXX: We can't replace stuff, soooooo.... do something different
           if (!oldContrib.backup(editor, false, status)) {
             return null;
@@ -213,7 +214,7 @@ public abstract class LocalContribution extends Contribution {
                      "A pre-existing copy of the \"" + oldContrib.getName() + "\" library<br>"+
                      "has been found in your sketchbook. Clicking “Yes”<br>"+
                      "will move the existing library to a backup folder<br>" +
-                     " in <i>libraries/old</i> before replacing it.");
+                     "in <i>libraries/old</i> before replacing it.");
               if (result != JOptionPane.YES_OPTION || !oldContrib.backup(editor, true, status)) {
                 return null;
               }
@@ -275,15 +276,15 @@ public abstract class LocalContribution extends Contribution {
    *          should instead be copied, leaving the original in place
    */
   boolean backup(Editor editor, boolean deleteOriginal, StatusPanel status) {
-
-    boolean success = false;
     File backupFolder = getType().createBackupFolder(status);
     
+    boolean success = false;
     if (backupFolder != null) {
       String libFolderName = getFolder().getName();
       String prefix = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
       final String backupName = prefix + " " + libFolderName;
-      File backupSubFolder = ContributionManager.getUniqueName(backupFolder, backupName);
+      File backupSubFolder = 
+        ContributionManager.getUniqueName(backupFolder, backupName);
 
       if (deleteOriginal) {
         success = getFolder().renameTo(backupSubFolder);
@@ -325,9 +326,9 @@ public abstract class LocalContribution extends Contribution {
     pm.startTask("Removing", ProgressMonitor.UNKNOWN);
 
     boolean doBackup = Preferences.getBoolean("contribution.backup.on_remove");
-    if (requiresRestart()) {
+    if (getType().requiresRestart()) {
       if (!doBackup || (doBackup && backup(editor, false, status))) {
-        if (setDeletionFlag()) {
+        if (setDeletionFlag(true)) {
           contribListing.replaceContribution(this, this);
         }
       }
@@ -370,33 +371,6 @@ public abstract class LocalContribution extends Contribution {
     return folder != null;
   }
   
-  
-  boolean setDeletionFlag() {
-    // Only returns false if the file already exists, so we can
-    // ignore the return value.
-    try {
-      new File(getFolder(), DELETION_FLAG).createNewFile();
-      return true;
-    } catch (IOException e) {
-      return false;
-    }
-  }
-
-
-  boolean unsetDeletionFlag() {
-    return new File(getFolder(), DELETION_FLAG).delete();
-  }
-
-
-  boolean isDeletionFlagged() {
-    return isDeletionFlagged(getFolder());
-  }
-
-
-  static boolean isDeletionFlagged(File folder) {
-    return new File(folder, DELETION_FLAG).exists();
-  }
-
 
 //  public String getCategory() {
 //    return category;
@@ -464,8 +438,77 @@ public abstract class LocalContribution extends Contribution {
     return null;
   }
   */
+  
+  
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+  
+  boolean setDeletionFlag(boolean flag) {
+    return setFlag(DELETION_FLAG, flag);
+  }
+  
+  
+  boolean isDeletionFlagged() {
+    return isDeletionFlagged(getFolder());
+  }
 
 
+  static boolean isDeletionFlagged(File folder) {
+    return isFlagged(folder, DELETION_FLAG);
+  }
+  
+  
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+  
+  boolean setRestartFlag() {
+    //System.out.println("setting restart flag for " + folder);
+    return setFlag(RESTART_FLAG, true);
+  }
+  
+  
+  @Override
+  boolean isRestartFlagged() {
+    //System.out.println("checking for restart inside LocalContribution for " + getName());
+    return isFlagged(getFolder(), RESTART_FLAG);
+  }
+  
+  
+  static void clearRestartFlags(File folder) {
+    File restartFlag = new File(folder, RESTART_FLAG);
+    if (restartFlag.exists()) {
+      restartFlag.delete();
+    }
+  }
+
+  
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  private boolean setFlag(String flagFilename, boolean flag) {
+    if (flag) {
+      // Only returns false if the file already exists, so we can
+      // ignore the return value.
+      try {
+        new File(getFolder(), flagFilename).createNewFile();
+        return true;
+      } catch (IOException e) {
+        return false;
+      }
+    } else {
+      return new File(getFolder(), flagFilename).delete();  
+    }
+  }
+  
+  
+  static private boolean isFlagged(File folder, String flagFilename) {
+    return new File(folder, flagFilename).exists(); 
+  }
+
+  
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+  
   /**
    *
    * @param base name of the class, with or without the package

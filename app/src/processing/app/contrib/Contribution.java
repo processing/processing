@@ -133,20 +133,25 @@ abstract public class Contribution {
   abstract public boolean isInstalled();
   
   
-  /** 
-   * Returns true if the type of contribution requires the PDE to restart
-   * when being added or removed. 
-   */
-  public boolean requiresRestart() {
-    return getType() == ContributionType.TOOL || getType() == ContributionType.MODE;
-  }
+//  /** 
+//   * Returns true if the type of contribution requires the PDE to restart
+//   * when being added or removed. 
+//   */
+//  public boolean requiresRestart() {
+//    return getType() == ContributionType.TOOL || getType() == ContributionType.MODE;
+//  }
   
 
-  /** Overridden by InstalledContribution. */
-  boolean isDeletionFlagged() {
+  boolean isRestartFlagged() {
     return false;
   }
   
+  
+  /** Overridden by LocalContribution. */
+  boolean isDeletionFlagged() {
+    return false;
+  }
+
   
   /**
    * @return the list of categories that this contribution is part of
