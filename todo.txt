@@ -31,6 +31,11 @@ X Add methods to move files to Trash/Recycle Bin where available
 X allow delete of files in unsaved sketches
 X   https://github.com/processing/processing/issues/1942
 X   https://github.com/processing/processing/pull/1945
+X proxy server requirement causes problems
+X   contrib manager, update checks are broken
+X   https://github.com/processing/processing/issues/1476
+X   might be able to fix this with something in preferences.txt?
+X   http://docs.oracle.com/javase/6/docs/technotes/guides/net/proxies.html
 
 cleaning/earlier
 X common error messages
@@ -70,44 +75,16 @@ X   https://github.com/processing/processing/issues/1782
 X Update example list when library is installed
 X   https://github.com/processing/processing/issues/1909
 X   https://github.com/processing/processing/pull/1925
-
-_ we shouldn't use .properties extension for modes, et al
-_   because a .properties file is iso8859-1
-_ make note that .properties file *must* be utf-8
-_   if not it'll make things gross (andre sier flob library)
-_ why wasn't Library moved to LibraryContribution?
-_   or that LibraryContribution needs to be a wrapper around it?
-_ send info on 'check for updates' so we know about libs/modes/etc?
-_   how to disclose to users?
-_   only send for items that are part of the public list 
-_     otherwise we're sending private libraries/installs
-_     although this won't pick up old libraries not on the new system
-_ classpath conflicts.. 
-_   getPackageList.. from Library... maybe others?
-_   really need to make sure that a weird core.jar isn't being imported
-_   coffeescript was doing this and breaking the pde
-_ init() not called on tools until later 
-_   https://github.com/processing/processing/issues/1859
-_ contrib library examples are not read-only
-_   another point for doing .zip files to prevent overwriting
-_ add BookContribution?
-_ will offer to open the contrib manager even though it's already open
-_   though this was looking at libraries, and there may have been modes
-_   is there an "all" view for the mgr that shows libs, modes, etc?
-_ update button only showing up when item is selected feels awkward
-_ "update all" would be useful
-_   "Update 4 items" as a button name
+X Contributed modes should show up in mode menu after installation
+X   waiting for fixed CoffeeScript mode to test this one
+X   https://github.com/processing/processing/issues/1504
+X   http://code.google.com/p/processing/issues/detail?id=1466
+X   modes require restart, that's now properly shown as a message
 
 high
-_ remove ability to export cross-platform apps
-_ add ability to embed the current JRE
 _ MovieMaker needs to be compiling as 1.6
 _ move old Google Code SVN back to processing.org
 _   then cull out the old branches/tags from the Github repo
-_ proxy server requirement causes problems
-_   contrib manager, update checks are broken
-_   https://github.com/processing/processing/issues/1476
-_   might be able to fix this with something in preferences.txt?
 _ figure out Android build w/o javac so we can remove tools.jar and javac
 _   also to the p5 repo with just a JRE
 _   remove initRequirements from Base (no longer need JDI)
@@ -123,6 +100,10 @@ _ getCoreLibrary() is breaking OpenGL
 _   "new Library()" constructor needs to go back to private
 _ add .bat file to lib on windows so that we can get better debugging info
 
+7u40 switch
+_ change how export is handled
+_   remove ability to export cross-platform apps
+_   add ability to embed the current JRE
 _ appbundler fixes/changes
 _   icon location uses path, even when embedded
 _   add indents to the Info.plist output file
@@ -620,10 +601,32 @@ _   https://github.com/processing/processing/issues/943
 
 PDE / Manager
 
-_ Contributed modes should show up in mode menu after installation
-_   waiting for fixed CoffeeScript mode to test this one
-_   https://github.com/processing/processing/issues/1504
-X   http://code.google.com/p/processing/issues/detail?id=1466
+_ we shouldn't use .properties extension for modes, et al
+_   because a .properties file is iso8859-1
+_ make note that .properties file *must* be utf-8
+_   if not it'll make things gross (andre sier flob library)
+_ why wasn't Library moved to LibraryContribution?
+_   or that LibraryContribution needs to be a wrapper around it?
+_ send info on 'check for updates' so we know about libs/modes/etc?
+_   how to disclose to users?
+_   only send for items that are part of the public list 
+_     otherwise we're sending private libraries/installs
+_     although this won't pick up old libraries not on the new system
+_ classpath conflicts.. 
+_   getPackageList.. from Library... maybe others?
+_   really need to make sure that a weird core.jar isn't being imported
+_   coffeescript was doing this and breaking the pde
+_ init() not called on tools until later 
+_   https://github.com/processing/processing/issues/1859
+_ contrib library examples are not read-only
+_   another point for doing .zip files to prevent overwriting
+_ add BookContribution?
+_ will offer to open the contrib manager even though it's already open
+_   though this was looking at libraries, and there may have been modes
+_   is there an "all" view for the mgr that shows libs, modes, etc?
+_ update button only showing up when item is selected feels awkward
+_ "update all" would be useful
+_   "Update 4 items" as a button name
 _ new libraries not picked up when changing sketchbook location
 _ make sure contrib manager can run w/o a network connection
 _   or if a bad document comes through, it can recover
@@ -633,11 +636,11 @@ _ alternating blue/white backgrounds aren't updated after changing filter
 _   just need to call a repaint() after a filter change?
 _ check with Casey about coloring for error messages
 _ test on Windows and Linux
-_ scrolls to bottom of window after updating the list
 _ font size for "Downloading" on progress bar is too large
 _   but changing the size breaks the vertical centering
 _ highlight color seems to be incorrect?
 _ after installing, the item in the manager list doesn't change color
+_ scrolls to bottom of window after updating the list
 _ wheel mouse is super jumpy 
 _   something about unit increment in ContributionListPanel
 _ arrow keys up/down move scroll bar, not selection

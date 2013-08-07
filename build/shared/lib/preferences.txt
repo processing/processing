@@ -328,3 +328,11 @@ run.present.stop.color = #cccccc
 #run.present.exclusive = false
 # use this by default to hide the menu bar and dock on osx
 #run.present.exclusive.macosx = true
+
+# HTTP PROXY
+# Set a proxy server for folks that require it. This will allow the update
+# checker and the contrib manager to run properly in those environments.
+#proxy.host=proxy.example.com
+#proxy.port=8080
+proxy.host=
+proxy.port=

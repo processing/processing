@@ -216,7 +216,18 @@ public class Preferences {
 //      }
     }
 
-    PApplet.useNativeSelect = Preferences.getBoolean("chooser.files.native"); //$NON-NLS-1$
+    PApplet.useNativeSelect = 
+      Preferences.getBoolean("chooser.files.native"); //$NON-NLS-1$
+    
+    // Set http proxy for folks that require it. 
+    // http://docs.oracle.com/javase/6/docs/technotes/guides/net/proxies.html
+    String proxyHost = get("proxy.host");
+    String proxyPort = get("proxy.port");
+    if (proxyHost != null && proxyHost.trim().length() != 0 &&
+        proxyPort != null && proxyPort.trim().length() != 0) {
+      System.setProperty("http.proxyHost", proxyHost);
+      System.setProperty("http.proxyPort", proxyPort);
+    }
   }
 
 
