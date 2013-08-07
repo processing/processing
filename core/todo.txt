@@ -20,8 +20,11 @@ X   https://github.com/processing/processing/issues/2010
 X   not fixed, but made notes there about how to handle
 
 _ add option to have full screen span across screens
+_   display=all in cmd line
+_   sketchDisplay() -> 0 for all, or 1, 2, 3...
 
-_ retain blendMode() between frames (get bug #)
+_ retain blendMode() between frames
+_   https://github.com/processing/processing/issues/1962
 _   this should actually be in the code.. 
 _   maybe not working on OS X/retina?
 _   perhaps it's a getGraphics() issue?

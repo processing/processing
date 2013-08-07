@@ -473,6 +473,11 @@ public class PGraphics extends PImage implements PConstants {
   protected float backgroundR, backgroundG, backgroundB, backgroundA;
   protected int backgroundRi, backgroundGi, backgroundBi, backgroundAi;
 
+
+  /** The current blending mode. */
+  protected int blendMode;
+
+
   // ........................................................
 
   /**
@@ -944,6 +949,8 @@ public class PGraphics extends PImage implements PConstants {
       background(backgroundColor);
     }
 
+    blendMode(BLEND);
+
     settingsInited = true;
     // defaultSettings() overlaps reapplySettings(), don't do both
     //reapplySettings = false;
@@ -961,11 +968,10 @@ public class PGraphics extends PImage implements PConstants {
    * called before defaultSettings(), so we should be safe.
    */
   protected void reapplySettings() {
-//    System.out.println("attempting reapplySettings()");
+    // This might be called by allocate... So if beginDraw() has never run,
+    // we don't want to reapply here, we actually just need to let
+    // defaultSettings() get called a little from inside beginDraw().
     if (!settingsInited) return;  // if this is the initial setup, no need to reapply
-
-//    System.out.println("  doing reapplySettings");
-//    new Exception().printStackTrace(System.out);
 
     colorMode(colorMode, colorModeX, colorModeY, colorModeZ);
     if (fill) {
@@ -1012,6 +1018,8 @@ public class PGraphics extends PImage implements PConstants {
     textMode(textMode);
     textAlign(textAlign, textAlignY);
     background(backgroundColor);
+
+    blendMode(blendMode);
 
     reapplySettings = false;
   }
@@ -1827,7 +1835,16 @@ public class PGraphics extends PImage implements PConstants {
    * @param mode the blending mode to use
    */
   public void blendMode(int mode) {
-    showMissingWarning("blendMode");
+    this.blendMode = mode;
+    new Exception("setting blend mode to " + mode).printStackTrace();
+    blendModeImpl();
+  }
+
+
+  protected void blendModeImpl() {
+    if (blendMode != BLEND) {
+      showMissingWarning("blendMode");
+    }
   }
 
 

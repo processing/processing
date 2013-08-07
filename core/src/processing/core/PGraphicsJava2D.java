@@ -52,7 +52,7 @@ import processing.data.XML;
  * any way shape or form. Which just means "have fun, but don't complain
  * if it breaks."</p>
  */
-public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
+public class PGraphicsJava2D extends PGraphics {
   BufferStrategy strategy;
   BufferedImage bimage;
   VolatileImage vimage;
@@ -263,13 +263,15 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
         if (image == null || ((VolatileImage) image).validate(gc) == VolatileImage.IMAGE_INCOMPATIBLE) {
           image = gc.createCompatibleVolatileImage(width, height);
           g2 = (Graphics2D) image.getGraphics();
+          reapplySettings = true;
         }
       } else {
         if (image == null) {
           GraphicsConfiguration gc = parent.getGraphicsConfiguration();
           image = gc.createCompatibleImage(width, height);
-          System.out.println("created new image, type is " + image);
+          PApplet.debug("created new image, type is " + image);
           g2 = (Graphics2D) image.getGraphics();
+          reapplySettings = true;
         }
       }
       //g2 = (Graphics2D) image.getGraphics();
@@ -305,6 +307,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 //        image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         g2 = bimage.createGraphics();
         defaultComposite = g2.getComposite();
+        reapplySettings = true;
       }
     }
 
@@ -691,8 +694,8 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
    * @param mode the blending mode to use
    */
   @Override
-  public void blendMode(final int mode) {
-    if (mode == BLEND) {
+  protected void blendModeImpl() {
+    if (blendMode == BLEND) {
       g2.setComposite(defaultComposite);
 
     } else {
@@ -702,7 +705,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
         public CompositeContext createContext(ColorModel srcColorModel,
                                               ColorModel dstColorModel,
                                               RenderingHints hints) {
-          return new BlendingContext(mode);
+          return new BlendingContext(blendMode);
         }
       });
     }

@@ -390,12 +390,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // ........................................................
 
-  // Blending:
-
-  protected int blendMode;
-
-  // ........................................................
-
   // Clipping
 
   protected boolean clip = false;
@@ -1723,7 +1717,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void restoreGL() {
-    setBlendMode(blendMode);
+//    setBlendMode(blendMode);
+    blendMode(blendMode);  // this should be set by reapplySettings...
 
     if (hints[DISABLE_DEPTH_TEST]) {
       pgl.disable(PGL.DEPTH_TEST);
@@ -5658,44 +5653,49 @@ public class PGraphicsOpenGL extends PGraphics {
    * conditional blending and non-linear blending equations.
    */
   @Override
-  public void blendMode(int mode) {
-    if (blendMode != mode) {
+//  public void blendMode(int mode) {
+  protected void blendModeImpl() {
+    // Need to retain the blendMode between frames
+    // https://github.com/processing/processing/issues/1962
+//    if (blendMode != mode) {
       // Flush any geometry that uses a different blending mode.
-      flush();
-      setBlendMode(mode);
-    }
-  }
-
-
-  protected void setBlendMode(int mode) {
-    blendMode = mode;
+    flush();
+//    setBlendMode(mode);
+//    }
+//  }
+//
+//
+//  protected void setBlendMode(int mode) {
+//    blendMode = mode;
+//  protected void setBlendMode() {
+//    System.out.println("setting blend mode " + blendMode);
     pgl.enable(PGL.BLEND);
 
-    if (mode == REPLACE) {
+    if (blendMode == REPLACE) {
       if (blendEqSupported) {
         pgl.blendEquation(PGL.FUNC_ADD);
       }
       pgl.blendFunc(PGL.ONE, PGL.ZERO);
 
-    } else if (mode == BLEND) {
+    } else if (blendMode == BLEND) {
       if (blendEqSupported) {
         pgl.blendEquation(PGL.FUNC_ADD);
       }
       pgl.blendFunc(PGL.SRC_ALPHA, PGL.ONE_MINUS_SRC_ALPHA);
 
-    } else if (mode == ADD) {
+    } else if (blendMode == ADD) {
       if (blendEqSupported) {
         pgl.blendEquation(PGL.FUNC_ADD);
       }
       pgl.blendFunc(PGL.SRC_ALPHA, PGL.ONE);
 
-    } else if (mode == SUBTRACT) {
+    } else if (blendMode == SUBTRACT) {
       if (blendEqSupported) {
         pgl.blendEquation(PGL.FUNC_ADD);
       }
       pgl.blendFunc(PGL.ONE_MINUS_DST_COLOR, PGL.ZERO);
 
-    } else if (mode == LIGHTEST) {
+    } else if (blendMode == LIGHTEST) {
       if (blendEqSupported) {
         pgl.blendEquation(PGL.FUNC_MAX);
         pgl.blendFunc(PGL.SRC_ALPHA, PGL.DST_ALPHA);
@@ -5703,7 +5703,7 @@ public class PGraphicsOpenGL extends PGraphics {
         PGraphics.showWarning(BLEND_DRIVER_ERROR, "LIGHTEST");
       }
 
-    } else if (mode == DARKEST) {
+    } else if (blendMode == DARKEST) {
       if (blendEqSupported) {
         pgl.blendEquation(PGL.FUNC_MIN);
         pgl.blendFunc(PGL.SRC_ALPHA, PGL.DST_ALPHA);
@@ -5711,7 +5711,7 @@ public class PGraphicsOpenGL extends PGraphics {
         PGraphics.showWarning(BLEND_DRIVER_ERROR, "DARKEST");
       }
 
-    } else if (mode == DIFFERENCE) {
+    } else if (blendMode == DIFFERENCE) {
       if (blendEqSupported) {
         pgl.blendEquation(PGL.FUNC_REVERSE_SUBTRACT);
         pgl.blendFunc(PGL.ONE, PGL.ONE);
@@ -5719,37 +5719,37 @@ public class PGraphicsOpenGL extends PGraphics {
         PGraphics.showWarning(BLEND_DRIVER_ERROR, "DIFFERENCE");
       }
 
-    } else if (mode == EXCLUSION) {
+    } else if (blendMode == EXCLUSION) {
       if (blendEqSupported) {
         pgl.blendEquation(PGL.FUNC_ADD);
       }
       pgl.blendFunc(PGL.ONE_MINUS_DST_COLOR, PGL.ONE_MINUS_SRC_COLOR);
 
-    } else if (mode == MULTIPLY) {
+    } else if (blendMode == MULTIPLY) {
       if (blendEqSupported) {
         pgl.blendEquation(PGL.FUNC_ADD);
       }
       pgl.blendFunc(PGL.DST_COLOR, PGL.SRC_COLOR);
 
-    } else if (mode == SCREEN) {
+    } else if (blendMode == SCREEN) {
       if (blendEqSupported) {
         pgl.blendEquation(PGL.FUNC_ADD);
       }
       pgl.blendFunc(PGL.ONE_MINUS_DST_COLOR, PGL.ONE);
 
-    } else if (mode == OVERLAY) {
+    } else if (blendMode == OVERLAY) {
       PGraphics.showWarning(BLEND_RENDERER_ERROR, "OVERLAY");
 
-    } else if (mode == HARD_LIGHT) {
+    } else if (blendMode == HARD_LIGHT) {
       PGraphics.showWarning(BLEND_RENDERER_ERROR, "HARD_LIGHT");
 
-    } else if (mode == SOFT_LIGHT) {
+    } else if (blendMode == SOFT_LIGHT) {
       PGraphics.showWarning(BLEND_RENDERER_ERROR, "SOFT_LIGHT");
 
-    } else if (mode == DODGE) {
+    } else if (blendMode == DODGE) {
       PGraphics.showWarning(BLEND_RENDERER_ERROR, "DODGE");
 
-    } else if (mode == BURN) {
+    } else if (blendMode == BURN) {
       PGraphics.showWarning(BLEND_RENDERER_ERROR, "BURN");
     }
   }
@@ -6112,7 +6112,8 @@ public class PGraphicsOpenGL extends PGraphics {
     // Using setBlendMode() instead of blendMode() because
     // the latter will set the blend mode only if it is different
     // from current.
-    setBlendMode(BLEND);
+//    setBlendMode(BLEND);
+    // this was resetting the blendMode on each frame. removed after 2.0.1.
 
     // this is necessary for 3D drawing
     if (hints[DISABLE_DEPTH_TEST]) {
