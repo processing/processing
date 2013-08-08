@@ -20,16 +20,22 @@ X   https://github.com/processing/processing/issues/2010
 X   not fixed, but made notes there about how to handle
 X add sum() to IntList and FloatList
 X   https://github.com/processing/processing/issues/1893
+X retain blendMode() between frames
+X   https://github.com/processing/processing/issues/1962
+X   this should actually be in the code.. 
+X   maybe not working on OS X/retina?
+X   perhaps it's a getGraphics() issue?
+
+cleaning
+X load/save methods.. is it save("blah.svg") or saveSVG("blah.svg")
+X   also works that way with tables
+o   decision: useExtension() or something like that
+X   put saveXxxx() methods inside PApplet
+o require people to put things in the data folder
 
 _ add option to have full screen span across screens
 _   display=all in cmd line
 _   sketchDisplay() -> 0 for all, or 1, 2, 3...
-
-_ retain blendMode() between frames
-_   https://github.com/processing/processing/issues/1962
-_   this should actually be in the code.. 
-_   maybe not working on OS X/retina?
-_   perhaps it's a getGraphics() issue?
 
 _ test PGraphicsRetina2D w/ 7u40 
 _ make sure that 7u40 doesn't reintroduce starvation issue on retina Macs
@@ -63,8 +69,6 @@ _ Linux sometimes not responding correctly w/ the size() command
 _   https://github.com/processing/processing/issues/1672
 _ clean up requestFocus() stuff
 _   make sure it works with retina/canvas/strategy as well
-_ freeze after splash screen on OS X (looks like core.jar in the path)
-_   https://github.com/processing/processing/issues/1872
 _ finish PFont.getShape() implementation
 _   needs to have a way to set width/height properly
 _   draw(s) doesn't work on the returned PShape
@@ -103,10 +107,6 @@ _   the registered method for size() also needs to be called
 _ get() or copy()? for vectors, image, etc.
 _ toArray(), toArray(float[]), toVectorArray(), toVectorArray(PVector[])
 _   toColorArray(), toColorArray(float[])...
-_ load/save methods.. is it save("blah.svg") or saveSVG("blah.svg")
-X   also works that way with tables
-X   decision: useExtension() or something like that
-_ require people to put things in the data folder
 _ make sure that loadXxxx() methods are used after init()
 _   nasty errors when loadImage/Font/createFont/etc used outside
 _   decision: add error messages where possible
