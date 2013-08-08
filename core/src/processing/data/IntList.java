@@ -393,6 +393,9 @@ public class IntList implements Iterable<Integer> {
    * @brief Add one to a value
    */
   public void increment(int index) {
+    if (count <= index) {
+      resize(index + 1);
+    }
     data[index]++;
   }
 

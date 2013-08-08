@@ -25,6 +25,9 @@ X   https://github.com/processing/processing/issues/1962
 X   this should actually be in the code.. 
 X   maybe not working on OS X/retina?
 X   perhaps it's a getGraphics() issue?
+X when using increment() on IntList, make sure the index exists
+X   automatically resize the list if necessary
+X   (this is more in keeping with increment() in the Dict classes)
 
 cleaning
 X load/save methods.. is it save("blah.svg") or saveSVG("blah.svg")
@@ -33,6 +36,8 @@ o   decision: useExtension() or something like that
 X   put saveXxxx() methods inside PApplet
 o require people to put things in the data folder
 
+_ blendMode(ADD) is broken with default renderer
+_   https://github.com/processing/processing/issues/2012
 _ add option to have full screen span across screens
 _   display=all in cmd line
 _   sketchDisplay() -> 0 for all, or 1, 2, 3...
