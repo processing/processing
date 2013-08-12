@@ -28,6 +28,7 @@ X   perhaps it's a getGraphics() issue?
 X when using increment() on IntList, make sure the index exists
 X   automatically resize the list if necessary
 X   (this is more in keeping with increment() in the Dict classes)
+X add join() method to Int/Float/StringList
 
 cleaning
 X load/save methods.. is it save("blah.svg") or saveSVG("blah.svg")
@@ -41,6 +42,8 @@ _   https://github.com/processing/processing/issues/2012
 _ add option to have full screen span across screens
 _   display=all in cmd line
 _   sketchDisplay() -> 0 for all, or 1, 2, 3...
+_ add optional/default values for get methods in JSON
+_ add isNull() method back to JSONObject/Array
 
 _ test PGraphicsRetina2D w/ 7u40 
 _ make sure that 7u40 doesn't reintroduce starvation issue on retina Macs
