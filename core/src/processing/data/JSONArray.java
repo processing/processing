@@ -295,6 +295,20 @@ public class JSONArray {
 
 
   /**
+   * Get the optional string associated with an index.
+   * The defaultValue is returned if the key is not found.
+   *
+   * @param index The index must be between 0 and length() - 1.
+   * @param defaultValue     The default value.
+   * @return      A String value.
+   */
+  public String getString(int index, String defaultValue) {
+    Object object = this.opt(index);
+    return JSONObject.NULL.equals(object) ? defaultValue : object.toString();
+  }
+
+
+  /**
    * Get the int value associated with an index.
    *
    * @webref jsonarray:method
@@ -314,6 +328,23 @@ public class JSONArray {
           : Integer.parseInt((String)object);
     } catch (Exception e) {
       throw new RuntimeException("JSONArray[" + index + "] is not a number.");
+    }
+  }
+
+
+  /**
+   * Get the optional int value associated with an index.
+   * The defaultValue is returned if there is no value for the index,
+   * or if the value is not a number and cannot be converted to a number.
+   * @param index The index must be between 0 and length() - 1.
+   * @param defaultValue     The default value.
+   * @return      The value.
+   */
+  public int getInt(int index, int defaultValue) {
+    try {
+      return getInt(index);
+    } catch (Exception e) {
+      return defaultValue;
     }
   }
 
@@ -339,9 +370,26 @@ public class JSONArray {
 
 
   /**
+   * Get the optional long value associated with an index.
+   * The defaultValue is returned if there is no value for the index,
+   * or if the value is not a number and cannot be converted to a number.
+   * @param index The index must be between 0 and length() - 1.
+   * @param defaultValue     The default value.
+   * @return      The value.
+   */
+  public long getLong(int index, long defaultValue) {
+    try {
+      return this.getLong(index);
+    } catch (Exception e) {
+      return defaultValue;
+    }
+  }
+
+
+  /**
    * Get a value from an index as a float. JSON uses 'double' values
    * internally, so this is simply getDouble() cast to a float.
-   * 
+   *
    * @webref jsonarray:method
    * @brief Gets the float value associated with an index
    * @param index must be between 0 and length() - 1
@@ -351,6 +399,15 @@ public class JSONArray {
    */
   public float getFloat(int index) {
     return (float) getDouble(index);
+  }
+
+
+  public float getFloat(int index, float defaultValue) {
+    try {
+      return getFloat(index);
+    } catch (Exception e) {
+      return defaultValue;
+    }
   }
 
 
@@ -370,6 +427,24 @@ public class JSONArray {
           : Double.parseDouble((String)object);
     } catch (Exception e) {
       throw new RuntimeException("JSONArray[" + index + "] is not a number.");
+    }
+  }
+
+
+  /**
+   * Get the optional double value associated with an index.
+   * The defaultValue is returned if there is no value for the index,
+   * or if the value is not a number and cannot be converted to a number.
+   *
+   * @param index subscript
+   * @param defaultValue     The default value.
+   * @return      The value.
+   */
+  public double getDouble(int index, double defaultValue) {
+    try {
+      return this.getDouble(index);
+    } catch (Exception e) {
+      return defaultValue;
     }
   }
 
@@ -404,8 +479,26 @@ public class JSONArray {
 
 
   /**
+   * Get the optional boolean value associated with an index.
+   * It returns the defaultValue if there is no value at that index or if
+   * it is not a Boolean or the String "true" or "false" (case insensitive).
+   *
+   * @param index The index must be between 0 and length() - 1.
+   * @param defaultValue     A boolean default.
+   * @return      The truth.
+   */
+  public boolean getBoolean(int index, boolean defaultValue)  {
+    try {
+      return getBoolean(index);
+    } catch (Exception e) {
+      return defaultValue;
+    }
+  }
+
+
+  /**
    * Get the JSONArray associated with an index.
-   * 
+   *
    * @webref jsonobject:method
    * @brief Gets the JSONArray associated with an index value
    * @param index must be between 0 and length() - 1
@@ -425,9 +518,18 @@ public class JSONArray {
   }
 
 
+  public JSONArray getJSONArray(int index, JSONArray defaultValue) {
+    try {
+      return getJSONArray(index);
+    } catch (Exception e) {
+      return defaultValue;
+    }
+  }
+
+
   /**
    * Get the JSONObject associated with an index.
-   * 
+   *
    * @webref jsonobject:method
    * @brief Gets the JSONObject associated with an index value
    * @param index the index value of the object to get
@@ -447,9 +549,18 @@ public class JSONArray {
   }
 
 
-  /** 
-   * Get this entire array as a String array. 
-   * 
+  public JSONObject getJSONObject(int index, JSONObject defaultValue) {
+    try {
+      return getJSONObject(index);
+    } catch (Exception e) {
+      return defaultValue;
+    }
+  }
+
+
+  /**
+   * Get this entire array as a String array.
+   *
    * @webref jsonarray:method
    * @brief Gets the entire array as an array of Strings
    * @see JSONArray#getIntArray()
@@ -463,9 +574,9 @@ public class JSONArray {
   }
 
 
-  /** 
-   * Get this entire array as an int array. Everything must be an int. 
-   * 
+  /**
+   * Get this entire array as an int array. Everything must be an int.
+   *
    * @webref jsonarray:method
    * @brief Gets the entire array as array of ints
    * @see JSONArray#getStringArray()
@@ -533,24 +644,6 @@ public class JSONArray {
 //
 //
 //  /**
-//   * Get the optional boolean value associated with an index.
-//   * It returns the defaultValue if there is no value at that index or if
-//   * it is not a Boolean or the String "true" or "false" (case insensitive).
-//   *
-//   * @param index The index must be between 0 and length() - 1.
-//   * @param defaultValue     A boolean default.
-//   * @return      The truth.
-//   */
-//  public boolean optBoolean(int index, boolean defaultValue)  {
-//    try {
-//      return this.getBoolean(index);
-//    } catch (Exception e) {
-//      return defaultValue;
-//    }
-//  }
-//
-//
-//  /**
 //   * Get the optional double value associated with an index.
 //   * NaN is returned if there is no value for the index,
 //   * or if the value is not a number and cannot be converted to a number.
@@ -560,24 +653,6 @@ public class JSONArray {
 //   */
 //  public double optDouble(int index) {
 //    return this.optDouble(index, Double.NaN);
-//  }
-//
-//
-//  /**
-//   * Get the optional double value associated with an index.
-//   * The defaultValue is returned if there is no value for the index,
-//   * or if the value is not a number and cannot be converted to a number.
-//   *
-//   * @param index subscript
-//   * @param defaultValue     The default value.
-//   * @return      The value.
-//   */
-//  public double optDouble(int index, double defaultValue) {
-//    try {
-//      return this.getDouble(index);
-//    } catch (Exception e) {
-//      return defaultValue;
-//    }
 //  }
 //
 //
@@ -595,49 +670,6 @@ public class JSONArray {
 //
 //
 //  /**
-//   * Get the optional int value associated with an index.
-//   * The defaultValue is returned if there is no value for the index,
-//   * or if the value is not a number and cannot be converted to a number.
-//   * @param index The index must be between 0 and length() - 1.
-//   * @param defaultValue     The default value.
-//   * @return      The value.
-//   */
-//  public int optInt(int index, int defaultValue) {
-//    try {
-//      return this.getInt(index);
-//    } catch (Exception e) {
-//      return defaultValue;
-//    }
-//  }
-//
-//
-//  /**
-//   * Get the optional JSONArray associated with an index.
-//   * @param index subscript
-//   * @return      A JSONArray value, or null if the index has no value,
-//   * or if the value is not a JSONArray.
-//   */
-//  public JSONArray optJSONArray(int index) {
-//    Object o = this.opt(index);
-//    return o instanceof JSONArray ? (JSONArray)o : null;
-//  }
-//
-//
-//  /**
-//   * Get the optional JSONObject associated with an index.
-//   * Null is returned if the key is not found, or null if the index has
-//   * no value, or if the value is not a JSONObject.
-//   *
-//   * @param index The index must be between 0 and length() - 1.
-//   * @return      A JSONObject value.
-//   */
-//  public JSON optJSONObject(int index) {
-//    Object o = this.opt(index);
-//    return o instanceof JSON ? (JSON)o : null;
-//  }
-//
-//
-//  /**
 //   * Get the optional long value associated with an index.
 //   * Zero is returned if there is no value for the index,
 //   * or if the value is not a number and cannot be converted to a number.
@@ -651,23 +683,6 @@ public class JSONArray {
 //
 //
 //  /**
-//   * Get the optional long value associated with an index.
-//   * The defaultValue is returned if there is no value for the index,
-//   * or if the value is not a number and cannot be converted to a number.
-//   * @param index The index must be between 0 and length() - 1.
-//   * @param defaultValue     The default value.
-//   * @return      The value.
-//   */
-//  public long optLong(int index, long defaultValue) {
-//    try {
-//      return this.getLong(index);
-//    } catch (Exception e) {
-//      return defaultValue;
-//    }
-//  }
-//
-//
-//  /**
 //   * Get the optional string value associated with an index. It returns an
 //   * empty string if there is no value at that index. If the value
 //   * is not a string and is not null, then it is coverted to a string.
@@ -677,22 +692,6 @@ public class JSONArray {
 //   */
 //  public String optString(int index) {
 //    return this.optString(index, "");
-//  }
-//
-//
-//  /**
-//   * Get the optional string associated with an index.
-//   * The defaultValue is returned if the key is not found.
-//   *
-//   * @param index The index must be between 0 and length() - 1.
-//   * @param defaultValue     The default value.
-//   * @return      A String value.
-//   */
-//  public String optString(int index, String defaultValue) {
-//    Object object = this.opt(index);
-//    return JSON.NULL.equals(object)
-//      ? defaultValue
-//        : object.toString();
 //  }
 
 
@@ -1052,15 +1051,14 @@ public class JSONArray {
    * @param index must be between 0 and length() - 1
    * @return true if the value at the index is null, or if there is no value.
    */
-  // TODO not sure on this one
-  protected boolean isNull(int index) {
+  public boolean isNull(int index) {
     return JSONObject.NULL.equals(this.opt(index));
   }
 
 
   /**
    * Remove an index and close the hole.
-   * 
+   *
    * @webref jsonarray:method
    * @brief Removes an element
    * @param index the index value of the element to be removed
@@ -1145,6 +1143,7 @@ public class JSONArray {
     }
   }
 
+
   /**
    * Write the contents of the JSONArray as JSON text to a writer. For
    * compactness, no whitespace is added.
@@ -1156,6 +1155,7 @@ public class JSONArray {
   protected Writer write(Writer writer) {
     return this.write(writer, -1, 0);
   }
+
 
   /**
    * Write the contents of the JSONArray as JSON text to a writer. For

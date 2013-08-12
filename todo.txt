@@ -445,8 +445,10 @@ _ add auto-save to the editor
 _   http://code.google.com/p/processing/issues/detail?id=92
 _ add mnemonics for menus (alt-f to open 'file')
 _   http://code.google.com/p/processing/issues/detail?id=12
+_   https://github.com/processing/processing/issues/51
 _ option to just print all code in project
 _   http://code.google.com/p/processing/issues/detail?id=11
+_   https://github.com/processing/processing/issues/50
 _   or option to export all the code as colored html?
 _ dim edit menus as appropriate during selection/no selection/etc
 _   http://code.google.com/p/processing/issues/detail?id=14

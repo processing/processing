@@ -30,6 +30,10 @@ X   automatically resize the list if necessary
 X   (this is more in keeping with increment() in the Dict classes)
 X add join() method to Int/Float/StringList
 X add getContent(defaultValue) to XML
+X add isNull() (returns boolean) to JSONObject/Array
+X   https://github.com/processing/processing/issues/2009
+X add getXxxx(xxx, defaultValue) methods to JSONObject/Array
+X   https://github.com/processing/processing/issues/2007
 
 cleaning
 X load/save methods.. is it save("blah.svg") or saveSVG("blah.svg")
