@@ -29,6 +29,7 @@ X when using increment() on IntList, make sure the index exists
 X   automatically resize the list if necessary
 X   (this is more in keeping with increment() in the Dict classes)
 X add join() method to Int/Float/StringList
+X add getContent(defaultValue) to XML
 
 cleaning
 X load/save methods.. is it save("blah.svg") or saveSVG("blah.svg")

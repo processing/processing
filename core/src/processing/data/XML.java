@@ -810,6 +810,12 @@ public class XML implements Serializable {
   }
 
 
+  public String getContent(String defaultValue) {
+    String s = node.getTextContent();
+    return (s != null) ? s : defaultValue;
+  }
+
+
   /**
    * @webref xml:method
    * @brief Gets the content of an element as an int
