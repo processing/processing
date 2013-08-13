@@ -42,22 +42,31 @@ o   decision: useExtension() or something like that
 X   put saveXxxx() methods inside PApplet
 o require people to put things in the data folder
 
-_ blendMode(ADD) is broken with default renderer
-_   https://github.com/processing/processing/issues/2012
-_ add option to have full screen span across screens
-_   display=all in cmd line
-_   sketchDisplay() -> 0 for all, or 1, 2, 3...
-_ add optional/default values for get methods in JSON
-_ add isNull() method back to JSONObject/Array
-
-_ test PGraphicsRetina2D w/ 7u40 
-_ make sure that 7u40 doesn't reintroduce starvation issue on retina Macs
-
 andres
 X pixels[] array not updated with Capture and P2D/P3D
 X   https://github.com/processing/processing/issues/1852
 _ Unable to get TAB key event with P2D/P3D renderer
 _   https://github.com/processing/processing/issues/1967
+
+high
+_ blendMode(ADD) is broken with default renderer
+_   https://github.com/processing/processing/issues/2012
+_ add option to have full screen span across screens
+_   display=all in cmd line
+_   sketchDisplay() -> 0 for all, or 1, 2, 3...
+_ test PGraphicsRetina2D w/ 7u40 
+_ make sure that 7u40 doesn't reintroduce starvation issue on retina Macs
+_ draw() called again before finishing on OS X (retina issue)
+_   https://github.com/processing/processing/issues/1709
+_ screen stops updating sometimes with retina
+_   https://github.com/processing/processing/issues/1699
+_ Linux sometimes not responding correctly w/ the size() command
+_   https://github.com/processing/processing/issues/1672
+_ clean up requestFocus() stuff
+_   make sure it works with retina/canvas/strategy as well
+_ finish PFont.getShape() implementation
+_   needs to have a way to set width/height properly
+_   draw(s) doesn't work on the returned PShape
 
 table
 X add sort() to Table
@@ -72,20 +81,6 @@ _ match and iterators
 _   add match version that returns table that's only a pointer to original
 _   save the constructor for the version that actually copies data
 _   the table pointer version will be speedy and allow chaining 
-
-high
-_ draw() called again before finishing on OS X (retina issue)
-_   https://github.com/processing/processing/issues/1709
-_ screen stops updating sometimes with retina
-_   https://github.com/processing/processing/issues/1699
-_ Linux sometimes not responding correctly w/ the size() command
-_   https://github.com/processing/processing/issues/1672
-_ clean up requestFocus() stuff
-_   make sure it works with retina/canvas/strategy as well
-_ finish PFont.getShape() implementation
-_   needs to have a way to set width/height properly
-_   draw(s) doesn't work on the returned PShape
-
 
 decisions/misc
 _ add options for image.save() (or saveImage?)

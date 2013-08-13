@@ -38,6 +38,11 @@ X   might be able to fix this with something in preferences.txt?
 X   http://docs.oracle.com/javase/6/docs/technotes/guides/net/proxies.html
 o Update Java version in the download to be the latest Java 6
 o   https://github.com/processing/processing/issues/1841
+X try to use appbundler to create a version that includes a JRE (JDK)
+X   http://java.net/downloads/appbundler/appbundler.html
+X   docs.oracle.com/javase/7/docs/technotes/guides/jweb/packagingAppsForMac.html
+X   http://www.intransitione.com/blog/take-java-to-app-store/
+X   hobbling along, should be ready soon
 
 cleaning/earlier
 X common error messages
@@ -46,6 +51,16 @@ X   Dan started this on the Wiki
 o build is currently broken for fresh checkout due to changes to file layout
 o   something that gets fixed by 'make clean'
 o   also test on windows and linux
+o add a check to make sure that people aren't running from the dmg
+o   doesn't actually cause any problems, so don't bother?
+o code to hide menubar.. just include JNA and call from there?
+NSMenu.setMenubarVisible(false);
+Then we used Cocoa via JNI:
+if([NSMenu menuBarVisible]){
+	[NSMenu setMenuBarVisible:NO];
+}
+You can't do that from the AWT event thread. You need to do a -performSelectorOnMainThread to do that on the AppKit event thread.
+Please see <http://developer.apple.com/mac/library/technotes/tn2005/tn2147.html> for more information, particularly the section about "Calling AppKit from AWT/Swing".
 
 manager
 X check to see if manager items from the download can be updated
@@ -883,7 +898,7 @@ _   http://code.google.com/p/processing/issues/detail?id=632
 
 DIST / Mac OS X
 
-_ package Java 7 version of the app
+_ package Java 7u40 version of the app
 _   docs.oracle.com/javase/7/docs/technotes/guides/jweb/packagingAppsForMac.html
 _   http://www.intransitione.com/blog/take-java-to-app-store/
 X   retina support http://bugs.sun.com/view_bug.do?bug_id=8009754
@@ -891,17 +906,16 @@ _   useful retina digging/findings for Oracle Java
 _     http://bulenkov.com/2013/06/23/retina-support-in-oracle-jdk-1-7/
 _   7u40 target release is "late August"
 _     http://openjdk.java.net/projects/jdk7u/releases/7u40.html
-_   but default menu bar is still broken
-_     http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=8007267
 _   Contents/Java/Classes folder is added to java.class.path
 _     so the folder must exist otherwise the ECJ compiler will crash
 _     once fixed, remove notes from JavaBuild.java
+_ "Are you sure you want to quit?" when switching modes on Oracle JVM
+_   default menu bar is still broken
+_   http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=8007267
 _ blank sketch opened even if another opened by double-click
 _   add a 150 ms or more lag before opening the untitled window (on os x)
 _   https://github.com/processing/processing/issues/218
 _ OS X not opening a sketch at all on pde double-click? (though opening the app)
-_ "Are you sure you want to quit?" when switching modes on Oracle JVM
-_   because it's OS X, but menubar isn't available
 _ LWJGL forum discussion 
 _   http://lwjgl.org/forum/index.php/topic,4711.225.html
 _ change cmd line for OS X to use symlink? 
@@ -927,21 +941,6 @@ _   also applies to horizontal scrolling on the mouse
 _   http://code.google.com/p/processing/issues/detail?id=141
 _ Exiting a sketch with Command-Q or File > Quit doesn't call stop() on OS X
 _   http://code.google.com/p/processing/issues/detail?id=147
-_ add a check to make sure that people aren't running from the dmg
-_   doesn't actually cause any problems, so don't bother?
-_ code to hide menubar.. just include JNA and call from there?
-NSMenu.setMenubarVisible(false);
-Then we used Cocoa via JNI:
-if([NSMenu menuBarVisible]){
-	[NSMenu setMenuBarVisible:NO];
-}
-You can't do that from the AWT event thread. You need to do a -performSelectorOnMainThread to do that on the AppKit event thread.
-Please see <http://developer.apple.com/mac/library/technotes/tn2005/tn2147.html> for more information, particularly the section about "Calling AppKit from AWT/Swing".
-
-_ try to use appbundler to create a version that includes a JRE (JDK)
-_   http://java.net/downloads/appbundler/appbundler.html
-_   http://docs.oracle.com/javase/7/docs/technotes/guides/jweb/packagingAppsForMac.html
-_   http://www.intransitione.com/blog/take-java-to-app-store/
 _ investigate the sandboxing situation on OS X
 _   http://developer.apple.com/library/mac/#documentation/Miscellaneous/Reference/EntitlementKeyReference/Chapters/EnablingAppSandbox.html#//apple_ref/doc/uid/TP40011195-CH4-SW1
 most sandbox violations are triggered by attempts to read/write to the
@@ -955,7 +954,6 @@ the Apple site(*) you can think whether your application is performing
 an operation that would require enabling a specific entitlement, like
 connecting to a network, printing, interacting with a usb or bluetooth
 device, etc..
-
 I encountered this problem too, I forgot to add it to my guide....
 If you sign all the files in the bundle it won't work as codesign
 doesn't follow the symlinks.
