@@ -702,6 +702,12 @@ public class StringList implements Iterable<String> {
   }
 
 
+//  static public StringList split(String value, char delim) {
+//    String[] array = PApplet.split(value, delim);
+//    return new StringList(array);
+//  }
+
+
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
