@@ -1,5 +1,4 @@
 0220 pde
-X change location of the manager download
 X fix "less less" typo 
 X   https://github.com/processing/processing/issues/1928
 X slash breaks syntax highlighting (with spaces)
@@ -63,6 +62,7 @@ You can't do that from the AWT event thread. You need to do a -performSelectorOn
 Please see <http://developer.apple.com/mac/library/technotes/tn2005/tn2147.html> for more information, particularly the section about "Calling AppKit from AWT/Swing".
 
 manager
+X change location of the manager download
 X check to see if manager items from the download can be updated
 X   oops, probably not, because they're part of the distribution
 X   and folks won't be able to write to those directories
@@ -138,6 +138,25 @@ _     appears to be line 138 of main.m
 _     maybe this is a holdover from OS X Java?
 _   bring back the splash screen?
 
+direct link for download (replace .md5 with .dmg on that page)
+http://www.java.net/download/jdk7u40/archive/b38/binaries/jre-7u40-ea-bin-b38-macosx-x86_64-07_aug_2013.dmg
+needs cookie for proper download
+http://download.oracle.com/otn-pub/java/jdk/7u25-b15/jre-7u25-linux-i586.tar.gz
+
+http://ivan-site.com/2012/05/download-oracle-java-jre-jdk-using-a-script/
+wget --no-cookies --no-check-certificate --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F" http://download.oracle.com/otn-pub/java/jdk/7u25-b15/jre-7u25-linux-i586.tar.gz
+
+http://download.oracle.com/otn-pub/java/jdk/7u25-b15/jre-7u25-linux-i586.tar.gz
+http://download.oracle.com/otn-pub/java/jdk/7u25-b15/jre-7u25-linux-x64.tar.gz
+http://download.oracle.com/otn-pub/java/jdk/7u25-b17/jre-7u25-windows-i586.tar.gz
+http://download.oracle.com/otn-pub/java/jdk/7u25-b17/jre-7u25-windows-x64.tar.gz
+
+or a direct download from http://www.java.com/en/download/manual.jsp
+http://javadl.sun.com/webapps/download/AutoDL?BundleId=78695 Linux i386
+http://javadl.sun.com/webapps/download/AutoDL?BundleId=78697 Linux x64
+http://javadl.sun.com/webapps/download/AutoDL?BundleId=78698 OS X (64-bit)
+http://javadl.sun.com/webapps/download/AutoDL?BundleId=79063 Windows (32?)
+http://javadl.sun.com/webapps/download/AutoDL?BundleId=79065 Windows (64-bit)
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 

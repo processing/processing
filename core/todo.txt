@@ -55,6 +55,11 @@ X   https://github.com/processing/processing/issues/1956
 andres
 X pixels[] array not updated with Capture and P2D/P3D
 X   https://github.com/processing/processing/issues/1852
+X Unable to get TAB key event with P2D/P3D renderer
+X   https://github.com/processing/processing/issues/1967
+X Setting an INT4 uniform in PShader causes an out of bounds exception
+X   https://github.com/processing/processing/issues/1994
+X updated JOGL to 2.0.2
 
 
 high
@@ -76,10 +81,6 @@ _   make sure it works with retina/canvas/strategy as well
 _ finish PFont.getShape() implementation
 _   needs to have a way to set width/height properly
 _   draw(s) doesn't work on the returned PShape
-
-andres
-_ Unable to get TAB key event with P2D/P3D renderer
-_   https://github.com/processing/processing/issues/1967
 
 table
 _ addRow() is not efficient, probably need to do the doubling
