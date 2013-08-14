@@ -152,6 +152,17 @@ public class Table {
   }
 
 
+  public Table(Iterable<TableRow> rows) {
+    boolean typed = false;
+    for (TableRow row : rows) {
+      if (!typed) {
+        setColumnTypes(row.getColumnTypes());
+      }
+      addRow(row);
+    }
+  }
+
+
   /**
    * @nowebref
    */
@@ -1546,6 +1557,13 @@ public class Table {
   }
 
 
+  public void setColumnTypes(int[] types) {
+    for (int col = 0; col < types.length; col++) {
+      setColumnType(col, types[col]);
+    }
+  }
+
+
   /**
    * Set the titles (and if a second column is present) the data types for
    * this table based on a file loaded separately. This will look for the
@@ -1599,6 +1617,11 @@ public class Table {
   /** Returns one of Table.STRING, Table.INT, etc... */
   public int getColumnType(int column) {
     return columnTypes[column];
+  }
+
+
+  public int[] getColumnTypes() {
+    return columnTypes;
   }
 
 
@@ -1776,6 +1799,7 @@ public class Table {
    * @see Table#clearRows()
    */
   public TableRow addRow() {
+    //if (rowIncrement == 0) {
     setRowCount(rowCount + 1);
     return new RowPointer(this, rowCount - 1);
   }
@@ -2229,6 +2253,10 @@ public class Table {
 
     public int getColumnType(int column) {
       return table.getColumnType(column);
+    }
+
+    public int[] getColumnTypes() {
+      return table.getColumnTypes();
     }
   }
 

@@ -42,11 +42,19 @@ o   decision: useExtension() or something like that
 X   put saveXxxx() methods inside PApplet
 o require people to put things in the data folder
 
+table
+X add sort() to Table
+X implement version of Table that takes a dictionary file
+X   dictionary=blah.tsv 
+X   tsv only, ignores extension
+X   if allowed extension, we couldn't use .dict instead
+X   and that's probably the most useful
+X constructing table from an iterator is missing
+X   https://github.com/processing/processing/issues/1956
+
 andres
 X pixels[] array not updated with Capture and P2D/P3D
 X   https://github.com/processing/processing/issues/1852
-_ Unable to get TAB key event with P2D/P3D renderer
-_   https://github.com/processing/processing/issues/1967
 
 high
 _ blendMode(ADD) is broken with default renderer
@@ -68,19 +76,16 @@ _ finish PFont.getShape() implementation
 _   needs to have a way to set width/height properly
 _   draw(s) doesn't work on the returned PShape
 
+andres
+_ Unable to get TAB key event with P2D/P3D renderer
+_   https://github.com/processing/processing/issues/1967
+
 table
-X add sort() to Table
-X implement version of Table that takes a dictionary file
-X   dictionary=blah.tsv 
-X   tsv only, ignores extension
-X   if allowed extension, we couldn't use .dict instead
-X   and that's probably the most useful
 _ addRow() is not efficient, probably need to do the doubling
 _   or have a setIncrement() function?
 _   it would default to 1 on tables loaded from a file
 _   and default to doubling when created with "new Table"
-_ constructing table from an iterator is missing
-_   https://github.com/processing/processing/issues/1956
+_   row count and array size are combined.. need to break apart
 _ match and iterators
 _   add match version that returns table that's only a pointer to original
 _   save the constructor for the version that actually copies data
