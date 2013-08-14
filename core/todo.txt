@@ -70,7 +70,11 @@ _   draw(s) doesn't work on the returned PShape
 
 table
 X add sort() to Table
-_ implement version of Table that takes a dictionary file
+X implement version of Table that takes a dictionary file
+X   dictionary=blah.tsv 
+X   tsv only, ignores extension
+X   if allowed extension, we couldn't use .dict instead
+X   and that's probably the most useful
 _ addRow() is not efficient, probably need to do the doubling
 _   or have a setIncrement() function?
 _   it would default to 1 on tables loaded from a file

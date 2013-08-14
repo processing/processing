@@ -6249,22 +6249,28 @@ public class PApplet extends Applet
 
 
   /**
-   * @param options may contain "header", "tsv", "csv", or "bin" separated by commas
+   * Options may contain "header", "tsv", "csv", or "bin" separated by commas.
+   *
+   * Another option is "dictionary=filename.tsv", which allows users to
+   * specify a "dictionary" file that contains a mapping of the column titles
+   * and the data types used in the table file. This can be far more efficient
+   * (in terms of speed and memory usage) for loading and parsing tables. The
+   * dictionary file can only be tab separated values (.tsv) and its extension
+   * will be ignored. This option was added in Processing 2.0.2.
    */
   public Table loadTable(String filename, String options) {
     try {
-//      String ext = checkExtension(filename);
-//      if (ext != null) {
-//        if (ext.equals("csv") || ext.equals("tsv") || ext.equals("bin")) {
-//          if (options == null) {
-//            options = ext;
-//          } else {
-//            options = ext + "," + options;
-//          }
-//        }
-//      }
-      return new Table(createInput(filename),
-                       Table.extensionOptions(true, filename, options));
+      String optionStr = Table.extensionOptions(true, filename, options);
+      String[] optionList = split(optionStr, ',');
+
+      Table dictionary = null;
+      for (String opt : optionList) {
+        if (opt.startsWith("dictionary=")) {
+          dictionary = loadTable(opt.substring(opt.indexOf('=') + 1), "tsv");
+          return dictionary.typedParse(createInput(filename), optionStr);
+        }
+      }
+      return new Table(createInput(filename), optionStr);
 
     } catch (IOException e) {
       e.printStackTrace();

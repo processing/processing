@@ -119,6 +119,7 @@ public class Table {
    */
   public Table(File file, String options) throws IOException {
     // uses createInput() to handle .gz (and eventually .bz2) files
+    init();
     parse(PApplet.createInput(file),
           extensionOptions(true, file.getName(), options));
   }
@@ -146,8 +147,10 @@ public class Table {
    * @throws IOException
    */
   public Table(InputStream input, String options) throws IOException {
+    init();
     parse(input, options);
   }
+
 
   /**
    * @nowebref
@@ -207,6 +210,14 @@ public class Table {
     } catch (SQLException s) {
       throw new RuntimeException(s);
     }
+  }
+
+
+  public Table typedParse(InputStream input, String options) throws IOException {
+    Table table = new Table();
+    table.setColumnTypes(this);
+    table.parse(input, options);
+    return table;
   }
 
 
@@ -272,7 +283,7 @@ public class Table {
 
 
   protected void parse(InputStream input, String options) throws IOException {
-    init();
+    //init();
 
     boolean awfulCSV = false;
     boolean header = false;
@@ -302,6 +313,8 @@ public class Table {
           header = true;
         } else if (opt.startsWith(sheetParam)) {
           worksheet = opt.substring(sheetParam.length());
+        } else if (opt.startsWith("dictionary=")) {
+          // ignore option, this is only handled by PApplet
         } else {
           throw new IllegalArgumentException("'" + opt + "' is not a valid option for loading a Table");
         }
@@ -352,9 +365,9 @@ public class Table {
           row++;
         }
 
-      /*
-      // this is problematic unless we're going to calculate rowCount first
-      if (row % 10000 == 0) {
+        // this is problematic unless we're going to calculate rowCount first
+        if (row % 10000 == 0) {
+        /*
         if (row < rowCount) {
           int pct = (100 * row) / rowCount;
           if (pct != prev) {  // also prevents "0%" from showing up
@@ -362,13 +375,14 @@ public class Table {
             prev = pct;
           }
         }
-        try {
-          Thread.sleep(5);
-        } catch (InterruptedException e) {
-          e.printStackTrace();
+         */
+          try {
+            // Sleep this thread so that the GC can catch up
+            Thread.sleep(10);
+          } catch (InterruptedException e) {
+            e.printStackTrace();
+          }
         }
-      }
-      */
       }
     } catch (Exception e) {
       throw new RuntimeException("Error reading table on line " + row, e);
