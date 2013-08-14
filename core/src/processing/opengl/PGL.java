@@ -1494,6 +1494,9 @@ public class PGL {
   }
 
 
+  /**
+   * Not an approved function, this will change or be removed in the future.
+   */
   public void drawTexture(int target, int id, int width, int height,
                           int X0, int Y0, int X1, int Y1) {
     drawTexture(target, id, width, height, width, height,
@@ -1501,6 +1504,9 @@ public class PGL {
   }
 
 
+  /**
+   * Not an approved function, this will change or be removed in the future.
+   */
   public void drawTexture(int target, int id,
                           int texW, int texH, int scrW, int scrH,
                           int texX0, int texY0, int texX1, int texY1,
