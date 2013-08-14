@@ -2817,10 +2817,7 @@ public class PGL {
       nativeKeyEvent(e, KeyEvent.RELEASE);
     }
     public void keyTyped(com.jogamp.newt.event.KeyEvent e)  {
-      // TODO: need to re-implement because The key typed event has been
-      // removed from NEWT:
-      // http://forum.jogamp.org/KeyAdapter-gone-from-NEWT-s-KeyAdapter-td4029500.html
-//       nativeKeyEvent(e, KeyEvent.TYPE);
+      nativeKeyEvent(e, KeyEvent.TYPE);
     }
   }
 
