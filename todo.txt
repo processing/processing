@@ -98,6 +98,7 @@ X   https://github.com/processing/processing/issues/1504
 X   http://code.google.com/p/processing/issues/detail?id=1466
 X   modes require restart, that's now properly shown as a message
 
+
 high
 _ MovieMaker needs to be compiling as 1.6
 _ move old Google Code SVN back to processing.org

@@ -56,6 +56,7 @@ andres
 X pixels[] array not updated with Capture and P2D/P3D
 X   https://github.com/processing/processing/issues/1852
 
+
 high
 _ blendMode(ADD) is broken with default renderer
 _   https://github.com/processing/processing/issues/2012
