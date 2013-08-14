@@ -2699,10 +2699,13 @@ public class PGL {
       }
     }
 
-    @SuppressWarnings("deprecation")
-    int peCount = peAction == MouseEvent.WHEEL ?
-      (int) nativeEvent.getWheelRotation() :
-      nativeEvent.getClickCount();
+    int peCount = 0;
+    if (peAction == MouseEvent.WHEEL) {
+      peCount = nativeEvent.isShiftDown() ? (int)nativeEvent.getRotation()[0] :
+                                            (int)nativeEvent.getRotation()[1];
+    } else {
+      peCount = nativeEvent.getClickCount();
+    }
 
     MouseEvent me = new MouseEvent(nativeEvent, nativeEvent.getWhen(),
                                    peAction, peModifiers,
