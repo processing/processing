@@ -604,6 +604,8 @@ public class PGL {
       window.addGLEventListener(listener);
     }
 
+    canvas.setFocusTraversalKeysEnabled(false);
+
     fboLayerCreated = false;
     fboLayerInUse = false;
     firstFrame = true;
