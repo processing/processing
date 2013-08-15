@@ -1,3 +1,104 @@
+0220 pde (2.0.2)
+X fix "less less" typo 
+X   https://github.com/processing/processing/issues/1928
+X slash breaks syntax highlighting (with spaces)
+X   https://github.com/processing/processing/issues/1681
+X   Fix from Github user hamzaissa
+X selectInput() in exported OS X sketch treats .app package as a folder
+X   https://github.com/processing/processing/issues/1959
+X waiting on retina support for JDK 7
+o   b86 supposed to have some support (not available yet)
+o     http://jdk8.java.net/download.html
+X code with a NUL character causes an error
+X   https://github.com/processing/processing/issues/1973
+X   also remove NUL characters when loading a file
+X Add "Processing Foundation" to the Help menu
+X   https://github.com/processing/processing/issues/1908
+X Update JNA from 3.2.4 to 3.5.2
+X   https://maven.java.net/content/repositories/releases/net/java/dev/jna/jna/3.5.2/jna-3.5.2.jar
+X   https://maven.java.net/content/repositories/releases/net/java/dev/jna/platform/3.5.2/platform-3.5.2.jar
+X problem with associating .pde files 
+X   https://github.com/processing/processing/issues/286
+X   http://code.google.com/p/processing/issues/detail?id=247
+o   In regedit: Navigate to Computer\HKEY_CLASSES_ROOT\Applications and find your .exe name. Navigate under its name to shell>open>command. In the Default change its location to the actual location of the executable, hit okay and then try and reassociate the file type as you normally would.
+X UnsatisfiedLinkError causes huge message... 
+X   error report cleanups haven't been fixed yet
+X   reported by Dan
+X   this should be better now
+X add exception wrapper for startup
+X Add methods to move files to Trash/Recycle Bin where available
+X allow delete of files in unsaved sketches
+X   https://github.com/processing/processing/issues/1942
+X   https://github.com/processing/processing/pull/1945
+X proxy server requirement causes problems
+X   contrib manager, update checks are broken
+X   https://github.com/processing/processing/issues/1476
+X   might be able to fix this with something in preferences.txt?
+X   http://docs.oracle.com/javase/6/docs/technotes/guides/net/proxies.html
+o Update Java version in the download to be the latest Java 6
+o   https://github.com/processing/processing/issues/1841
+X try to use appbundler to create a version that includes a JRE (JDK)
+X   http://java.net/downloads/appbundler/appbundler.html
+X   docs.oracle.com/javase/7/docs/technotes/guides/jweb/packagingAppsForMac.html
+X   http://www.intransitione.com/blog/take-java-to-app-store/
+X   hobbling along, should be ready soon
+
+cleaning/earlier
+X common error messages
+X   with a proper list, we can add links when throwing an error in the PDE
+X   Dan started this on the Wiki
+o build is currently broken for fresh checkout due to changes to file layout
+o   something that gets fixed by 'make clean'
+o   also test on windows and linux
+o add a check to make sure that people aren't running from the dmg
+o   doesn't actually cause any problems, so don't bother?
+o code to hide menubar.. just include JNA and call from there?
+NSMenu.setMenubarVisible(false);
+Then we used Cocoa via JNI:
+if([NSMenu menuBarVisible]){
+	[NSMenu setMenuBarVisible:NO];
+}
+You can't do that from the AWT event thread. You need to do a -performSelectorOnMainThread to do that on the AppKit event thread.
+Please see <http://developer.apple.com/mac/library/technotes/tn2005/tn2147.html> for more information, particularly the section about "Calling AppKit from AWT/Swing".
+
+manager
+X change location of the manager download
+X check to see if manager items from the download can be updated
+X   oops, probably not, because they're part of the distribution
+X   and folks won't be able to write to those directories
+X changed manager to go to download.processing.org/latest.txt
+X   and uses a redirect from there (hopeully that's followed?)
+X libraries need to support multiple categories
+X   https://github.com/processing/processing/issues/1970
+X restrict library categories to the ones in the document
+X   if it's not correct, shows up as 'other'
+X catch Error (not just Exception) objects during load
+X   handles UnsupportedClassVersionError and others
+X argh.. the 'old' folder is really poorly done
+X   attempt to install multiple will cause havoc (fail because 'old' exists)
+o remove flagging for deletion
+o half-installed mode causes a lot of trouble
+o   maybe it's reading from tmp folders?
+o   https://github.com/processing/processing/issues/1875
+X   can't fix, no response
+X remove "Compilations" category for libraries
+X modes shouldn't have categories?
+X   was counting "Unknown" as a category
+X modes and tools require restart (per ContributionType class)
+X   but no message is provided anywhere?
+X mode install requires restart *and* still doesn't show as installed
+X   even though it gets added to the modes menu properly after the restart
+X   https://github.com/processing/processing/issues/1782
+X Update example list when library is installed
+X   https://github.com/processing/processing/issues/1909
+X   https://github.com/processing/processing/pull/1925
+X Contributed modes should show up in mode menu after installation
+X   waiting for fixed CoffeeScript mode to test this one
+X   https://github.com/processing/processing/issues/1504
+X   http://code.google.com/p/processing/issues/detail?id=1466
+X   modes require restart, that's now properly shown as a message
+
+
 0219 pde (2.0.1)
 X modes, tools, libraries not copying/moving properly on Windows
 X   https://github.com/processing/processing/issues/1781

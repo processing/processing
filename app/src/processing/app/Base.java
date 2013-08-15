@@ -46,9 +46,9 @@ import processing.core.*;
 public class Base {
   // Added accessors for 0218 because the UpdateCheck class was not properly
   // updating the values, because javac was inlining the static final values.
-  static private final int REVISION = 220;
+  static private final int REVISION = 221;
   /** This might be replaced by main() if there's a lib/version.txt file. */
-  static private String VERSION_NAME = "0220"; //$NON-NLS-1$
+  static private String VERSION_NAME = "0221"; //$NON-NLS-1$
   /** Set true if this a proper release rather than a numbered revision. */
 //  static private boolean RELEASE = false;
 
@@ -202,13 +202,13 @@ public class Base {
         Base base = new Base(args);
         // Prevent more than one copy of the PDE from running.
         SingleInstance.startServer(base);
-        
+
       } catch (Exception e) {
-        // Catch-all to hopefully pick up some of the weirdness we've been 
-        // running into lately. 
+        // Catch-all to hopefully pick up some of the weirdness we've been
+        // running into lately.
         StringWriter sw = new StringWriter();
         e.printStackTrace(new PrintWriter(sw));
-        Base.showError("We're off on the wrong foot", 
+        Base.showError("We're off on the wrong foot",
                        "An error occurred during startup.\n" + sw, e);
       }
       log("done creating base..."); //$NON-NLS-1$
@@ -2594,14 +2594,14 @@ public class Base {
 
 
   /**
-   * Delete a file or directory in a platform-specific manner. Removes a File 
-   * object (a file or directory) from the system by placing it in the Trash 
+   * Delete a file or directory in a platform-specific manner. Removes a File
+   * object (a file or directory) from the system by placing it in the Trash
    * or Recycle Bin (if available) or simply deleting it (if not).
    *
    * When the file/folder is on another file system, it may simply be removed
    * immediately, without additional warning. So only use this if you want to,
    * you know, "delete" the subject in question.
-   * 
+   *
    * NOTE: Not yet tested nor ready for prime-time.
    *
    * @param file the victim (a directory or individual file)
