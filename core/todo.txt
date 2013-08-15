@@ -1,4 +1,4 @@
-0220 core
+0220 core (2.0.2)
 X basic getShape(ch) implementation for font glyph shapes
 X change QUAD_BEZIER_VERTEX to QUADRATIC_VERTEX to match the API call
 X   because this lives inside PConstants

@@ -128,7 +128,7 @@
     <subant buildpath="../java/libraries/pdf" target="clean"/>
     <subant buildpath="../java/libraries/serial" target="clean"/>
     <subant buildpath="../java/libraries/video" target="clean"/>
-    <subant buildpath="../experimental" target="clean"/>
+<!--    <subant buildpath="../experimental" target="clean"/>-->
     <subant buildpath="shared/tools/MovieMaker" target="clean"/>
   </target>
   
@@ -140,7 +140,7 @@
     <subant buildpath="../java/libraries/pdf" target="build"/>
     <subant buildpath="../java/libraries/serial" target="build"/>
     <subant buildpath="../java/libraries/video" target="build"/>
-    <subant buildpath="../experimental" target="build"/>
+<!--    <subant buildpath="../experimental" target="build"/>-->
     <subant buildpath="shared/tools/MovieMaker" target="build"/>
   </target>
   
@@ -152,12 +152,14 @@
 
 <!--  <target name="experimental" unless="version">-->
   <target name="experimental">
+<!--
     <copy todir="${target.path}/modes/experimental">
       <fileset dir="../experimental">
 	<include name="**/mode/*" />
 	<include name="**/theme/*" />
       </fileset>
     </copy>
+-->
   </target>
   
   <target name="assemble" depends="version-clear, version-write, experimental">

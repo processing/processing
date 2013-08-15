@@ -137,6 +137,13 @@ Full screen is back for Windows, and
 + Add error message for raspberry pi (and others?) about int buffers
   https://github.com/processing/processing/issues/2010
 
+
+[ changes ] 
+
++ Experimental Mode has been removed from the default download, 
+  so that it can be updated more frequently. Install it and help us 
+  test what will become the 3.0 release of Processing!
+
 + Add "Processing Foundation" to the Help menu.
   https://github.com/processing/processing/issues/1908
 
