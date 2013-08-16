@@ -471,6 +471,10 @@ public class PGraphicsOpenGL extends PGraphics {
   protected int smoothCallCount = 0;
   protected int lastSmoothCall = -10;
 
+  /** Used to avoid flushing the geometry when blendMode() is called with the
+   * same blend mode as the last */
+  protected int lastBlendMode = -1;
+
   /** Type of pixels operation. */
   static protected final int OP_NONE  = 0;
   static protected final int OP_READ  = 1;
@@ -1639,7 +1643,8 @@ public class PGraphicsOpenGL extends PGraphics {
     } else {
       beginOffscreenDraw();
     }
-    setDrawDefaults();
+    setDrawDefaults(); // TODO: look at using checkSettings() instead...
+
 
     pgCurrent = this;
     drawing = true;
@@ -1717,7 +1722,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void restoreGL() {
-//    setBlendMode(blendMode);
     blendMode(blendMode);  // this should be set by reapplySettings...
 
     if (hints[DISABLE_DEPTH_TEST]) {
@@ -5653,22 +5657,12 @@ public class PGraphicsOpenGL extends PGraphics {
    * conditional blending and non-linear blending equations.
    */
   @Override
-//  public void blendMode(int mode) {
   protected void blendModeImpl() {
-    // Need to retain the blendMode between frames
-    // https://github.com/processing/processing/issues/1962
-//    if (blendMode != mode) {
+    if (blendMode != lastBlendMode) {
       // Flush any geometry that uses a different blending mode.
-    flush();
-//    setBlendMode(mode);
-//    }
-//  }
-//
-//
-//  protected void setBlendMode(int mode) {
-//    blendMode = mode;
-//  protected void setBlendMode() {
-//    System.out.println("setting blend mode " + blendMode);
+      flush();
+    }
+
     pgl.enable(PGL.BLEND);
 
     if (blendMode == REPLACE) {
@@ -5752,6 +5746,7 @@ public class PGraphicsOpenGL extends PGraphics {
     } else if (blendMode == BURN) {
       PGraphics.showWarning(BLEND_RENDERER_ERROR, "BURN");
     }
+    lastBlendMode = blendMode;
   }
 
 
@@ -6110,12 +6105,8 @@ public class PGraphicsOpenGL extends PGraphics {
     // Each frame starts with textures disabled.
     super.noTexture();
 
-    // Screen blend is needed for alpha (i.e. fonts) to work.
-    // Using setBlendMode() instead of blendMode() because
-    // the latter will set the blend mode only if it is different
-    // from current.
-//    setBlendMode(BLEND);
-    // this was resetting the blendMode on each frame. removed after 2.0.1.
+    // Making sure that OpenGL is using the last blend mode set by the user.
+    blendModeImpl();
 
     // this is necessary for 3D drawing
     if (hints[DISABLE_DEPTH_TEST]) {
