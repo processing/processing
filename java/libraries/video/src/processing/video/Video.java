@@ -212,7 +212,7 @@ public class Video implements PConstants {
       for (int y = 0; y < height; y++) {
         for (int x = 0; x < width; x++) {
           int pixel = pixels[p++];
-          pixels[t++] = (pixel >> 8) | ((pixel << 24) & 0xFF000000);
+          pixels[t++] = (pixel << 8) | ((pixel >> 24) & 0xFF);
         }
       }
 
