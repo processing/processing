@@ -160,6 +160,7 @@ public class DebugToolbar extends JavaToolbar {
       break;
     case DEBUG:
       deditor.handleStop(); // Close any running sketches
+      deditor.showProblemListView(XQConsoleToggle.CONSOLE);
       if (shift) {
         Logger.getLogger(DebugToolbar.class.getName()).log(Level.INFO, "Invoked 'Run' toolbar button");
         deditor.handleRun();
