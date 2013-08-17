@@ -16,16 +16,13 @@
  * Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 package processing.mode.experimental;
+import static processing.mode.experimental.ExperimentalMode.log;
 
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Toolkit;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Segment;
@@ -74,7 +71,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter {
     ta = textArea;
     addMouseListener(new MouseAdapter() {
       public void mouseClicked(MouseEvent evt) {
-//        		System.out.println( " Meta,Ctrl "+ (evt.getModifiers() & ctrlMask));
+//        		log( " Meta,Ctrl "+ (evt.getModifiers() & ctrlMask));
         if (evt.getButton() == MouseEvent.BUTTON1) {
           if (evt.isControlDown() || evt.isMetaDown())
             handleCtrlClick(evt);
@@ -85,11 +82,11 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter {
   }
 
 //    public void processKeyEvent(KeyEvent evt) {
-//    	System.out.println(evt);
+//    	log(evt);
 //    }
 
   void handleCtrlClick(MouseEvent evt) {
-    System.out.println("--handleCtrlClick--");
+    log("--handleCtrlClick--");
     int off = ta.xyToOffset(evt.getX(), evt.getY());
     if (off < 0)
       return;
@@ -103,7 +100,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter {
       return;
     else {
       int x = ta.xToOffset(line, evt.getX()), x2 = x + 1, x1 = x - 1;
-      System.out.println("x="+x);
+      log("x="+x);
       int xLS = off - ta.getLineStartNonWhiteSpaceOffset(line);
       if (x < 0 || x >= s.length())
         return;
@@ -144,8 +141,8 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter {
       if (Character.isDigit(word.charAt(0)))
         return;
 
-      System.out.print(errorCheckerService.mainClassOffset + line);
-      System.out.print("|" + line + "| offset " + xLS + word + " <= \n");
+      log(errorCheckerService.mainClassOffset + line +
+      "|" + line + "| offset " + xLS + word + " <= \n");
       errorCheckerService.astGenerator.scrollToDeclaration(line
           + errorCheckerService.mainClassOffset, word, xLS);
     }
@@ -280,7 +277,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter {
     //System.out.print("bg line " + line + ": ");
     // no need to paint anything
     if (col == null) {
-      //System.out.println("none");
+      //log("none");
       return;
     }
     // paint line background
@@ -328,7 +325,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter {
     }
 
     // Determine co-ordinates
-    // System.out.println("Hoff " + ta.getHorizontalOffset() + ", " +
+    // log("Hoff " + ta.getHorizontalOffset() + ", " +
     // horizontalAdjustment);
     int y = ta.lineToY(line);
     y += fm.getLeading() + fm.getMaxDescent();
@@ -346,7 +343,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter {
         // Error in the import statements or end of code.
         // System.out.print("BL caught. " + ta.getLineCount() + " ,"
         // + line + " ,");
-        // System.out.println((ta.getLineStopOffset(line) - start - 1));
+        // log((ta.getLineStopOffset(line) - start - 1));
         return;
       }
 
@@ -479,8 +476,8 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter {
           .getLabelForASTNode(line + errorCheckerService.mainClassOffset, word,
                               xLS);
 
-      System.out.print(errorCheckerService.mainClassOffset + " MCO ");
-      System.out.print("|" + line + "| offset " + xLS + word + " <= offf: "+off+ "\n");
+      log(errorCheckerService.mainClassOffset + " MCO "
+      + "|" + line + "| offset " + xLS + word + " <= offf: "+off+ "\n");
       if (tooltipText != null)
         return tooltipText;
       return word;

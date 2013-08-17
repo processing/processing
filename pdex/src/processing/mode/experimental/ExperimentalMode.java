@@ -94,7 +94,7 @@ public class ExperimentalMode extends JavaMode {
 //    // output version from manifest file
 //    Package p = ExperimentalMode.class.getPackage();
 //    String titleAndVersion = p.getImplementationTitle() + " (v" + p.getImplementationVersion() + ")";
-//    //System.out.println(titleAndVersion);
+//    //log(titleAndVersion);
 //    Logger.getLogger(ExperimentalMode.class.getName()).log(Level.INFO, titleAndVersion);
   }
 
@@ -152,7 +152,7 @@ public class ExperimentalMode extends JavaMode {
     if (newColor != null) {
       return newColor;
     }
-    System.out.println("error loading color: " + attribute);
+    log("error loading color: " + attribute);
     Logger.getLogger(ExperimentalMode.class.getName()).log(Level.WARNING, "Error loading Color: {0}", attribute);
     return defaultValue;
   }
@@ -170,7 +170,7 @@ public class ExperimentalMode extends JavaMode {
   }
   
   /*
-   * System.out.println
+   * log
    */
   public static final void log(Object message){
     if(ExperimentalMode.DEBUG)

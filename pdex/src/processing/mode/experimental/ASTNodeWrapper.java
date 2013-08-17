@@ -1,5 +1,6 @@
 package processing.mode.experimental;
-
+import static processing.mode.experimental.ExperimentalMode.log;
+import static processing.mode.experimental.ExperimentalMode.log2;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TreeMap;
@@ -110,7 +111,7 @@ public class ASTNodeWrapper {
           if (getLineNumber(cnode) == lineNumber) {
             if (flag) {
               altStartPos = cnode.getStartPosition();
-              // System.out.println("multi...");
+              // log("multi...");
 
               flag = false;
             } else {
@@ -128,7 +129,7 @@ public class ASTNodeWrapper {
         }
       }
     }
-    System.out.println("Altspos " + altStartPos);
+    log("Altspos " + altStartPos);
     int pdeoffsets[] = getPDECodeOffsets(ecs);
     String pdeCode = ecs.getPDECodeAtLine(pdeoffsets[0],pdeoffsets[1] - 1).trim();
     int vals[] = createOffsetMapping(pdeCode,nodeOffset - altStartPos,nodeLength);
@@ -170,7 +171,7 @@ public class ASTNodeWrapper {
       pi++;
     int startoffDif = pi - pj;
     int stopindex = javaCodeMap[pj + nodeLen - 1];
-    System.out.println(startIndex + "SI,St" + stopindex + "sod " + startoffDif);
+    log(startIndex + "SI,St" + stopindex + "sod " + startoffDif);
 
     // count till stopindex
     while (pdeCodeMap[pi] < stopindex && pi < pdeCodeMap.length) {
@@ -178,9 +179,9 @@ public class ASTNodeWrapper {
       count++;
     }
 
-//    System.out.println("PDE maps from " + pdeeCodeMap[pi]);
+//    log("PDE maps from " + pdeeCodeMap[pi]);
 
-    System.out.println("pde len " + count);
+    log("pde len " + count);
     return new int[] { startoffDif, count };
   }
   
@@ -220,7 +221,7 @@ public class ASTNodeWrapper {
      * TODO: This is a work in progress. There may be more bugs here in hiding.
      */
         
-    System.out.println("Src:" + source);
+    log("Src:" + source);
     String sourceAlt = new String(source);
     TreeMap<Integer, Integer> offsetmap = new TreeMap<Integer, Integer>();
 
@@ -230,8 +231,8 @@ public class ASTNodeWrapper {
     Pattern webPattern = Pattern.compile(webColorRegexp);
     Matcher webMatcher = webPattern.matcher(sourceAlt);
     while (webMatcher.find()) {
-      // System.out.println("Found at: " + webMatcher.start());
-      // System.out.println("-> " + found);
+      // log("Found at: " + webMatcher.start());
+      // log("-> " + found);
       offsetmap.put(webMatcher.end() - 1, 3);
     }
 
@@ -241,8 +242,8 @@ public class ASTNodeWrapper {
     Matcher colorMatcher = colorPattern.matcher(sourceAlt);
     while (colorMatcher.find()) {
 //      System.out.print("Start index: " + colorMatcher.start());
-//      System.out.println(" End index: " + colorMatcher.end() + " ");
-//      System.out.println("-->" + colorMatcher.group() + "<--");
+//      log(" End index: " + colorMatcher.end() + " ");
+//      log("-->" + colorMatcher.group() + "<--");
       offsetmap.put(colorMatcher.end() - 1, -2);
     }
 
@@ -256,8 +257,8 @@ public class ASTNodeWrapper {
 
       while (matcher.find()) {
 //        System.out.print("Start index: " + matcher.start());
-//        System.out.println(" End index: " + matcher.end() + " ");
-//        System.out.println("-->" + matcher.group() + "<--");
+//        log(" End index: " + matcher.end() + " ");
+//        log("-->" + matcher.group() + "<--");
         offsetmap.put(matcher.end() - 1, ("PApplet.parse").length());
       }
       matcher.reset();
@@ -267,15 +268,15 @@ public class ASTNodeWrapper {
 
     }
     if(offsetmap.isEmpty()){
-      System.out.println("No offset matching needed.");
+      log("No offset matching needed.");
       return null;
     }
     // replace with 0xff[webcolor] and others
     webMatcher = webPattern.matcher(sourceAlt);
     while (webMatcher.find()) {
-      // System.out.println("Found at: " + webMatcher.start());
+      // log("Found at: " + webMatcher.start());
       String found = sourceAlt.substring(webMatcher.start(), webMatcher.end());
-      // System.out.println("-> " + found);
+      // log("-> " + found);
       sourceAlt = webMatcher.replaceFirst("0xff" + found.substring(1));
       webMatcher = webPattern.matcher(sourceAlt);
     }
@@ -283,7 +284,7 @@ public class ASTNodeWrapper {
     colorMatcher = colorPattern.matcher(sourceAlt);
     sourceAlt = colorMatcher.replaceAll("int");
 
-    System.out.println(sourceAlt);
+    log(sourceAlt);
 
     // Create code map. Beware! Dark magic ahead.
     int javaCodeMap[] = new int[source.length() * 2];
@@ -298,7 +299,7 @@ public class ASTNodeWrapper {
         pdeCodeMap[pj] = pdeCodeMap[pj - 1] + 1;
       }
 
-      System.out.println(key + ":" + offsetmap.get(key));
+      log(key + ":" + offsetmap.get(key));
 
       int kval = offsetmap.get(key);
       if (kval > 0) {
@@ -341,14 +342,14 @@ public class ASTNodeWrapper {
       if (pdeCodeMap[i] > 0 || javaCodeMap[i] > 0 || i == 0) {
         if (i < source.length())
           System.out.print(source.charAt(i));
-        System.out.print(pdeCodeMap[i] + " - " + javaCodeMap[i]);
+        log2(pdeCodeMap[i] + " - " + javaCodeMap[i]);
         if (i < sourceAlt.length())
           System.out.print(sourceAlt.charAt(i));
-        System.out.print(" <-[" + i + "]");
-        System.out.println();
+        log2(" <-[" + i + "]");
+        log("");
       }
     }
-    System.out.println();
+    log("");
     
     return new int[][]{javaCodeMap,pdeCodeMap};
   }
@@ -398,7 +399,7 @@ public class ASTNodeWrapper {
    * @return
    */
   public static String getJavaCode(String source){
-    System.out.println("Src:" + source);
+    log("Src:" + source);
     String sourceAlt = new String(source);
 
     // Find all #[web color] 
@@ -407,8 +408,8 @@ public class ASTNodeWrapper {
     Pattern webPattern = Pattern.compile(webColorRegexp);
     Matcher webMatcher = webPattern.matcher(sourceAlt);
     while (webMatcher.find()) {
-      // System.out.println("Found at: " + webMatcher.start());
-      // System.out.println("-> " + found);
+      // log("Found at: " + webMatcher.start());
+      // log("-> " + found);
     }
 
     // Find all color data types
@@ -417,8 +418,8 @@ public class ASTNodeWrapper {
     Matcher colorMatcher = colorPattern.matcher(sourceAlt);
     while (colorMatcher.find()) {
 //      System.out.print("Start index: " + colorMatcher.start());
-//      System.out.println(" End index: " + colorMatcher.end() + " ");
-//      System.out.println("-->" + colorMatcher.group() + "<--");
+//      log(" End index: " + colorMatcher.end() + " ");
+//      log("-->" + colorMatcher.group() + "<--");
     }
 
     // Find all int(), char()
@@ -431,8 +432,8 @@ public class ASTNodeWrapper {
 
       while (matcher.find()) {
 //        System.out.print("Start index: " + matcher.start());
-//        System.out.println(" End index: " + matcher.end() + " ");
-//        System.out.println("-->" + matcher.group() + "<--");
+//        log(" End index: " + matcher.end() + " ");
+//        log("-->" + matcher.group() + "<--");
       }
       matcher.reset();
       sourceAlt = matcher.replaceAll("PApplet.parse"
@@ -443,9 +444,9 @@ public class ASTNodeWrapper {
     // replace with 0xff[webcolor] and others
     webMatcher = webPattern.matcher(sourceAlt);
     while (webMatcher.find()) {
-      // System.out.println("Found at: " + webMatcher.start());
+      // log("Found at: " + webMatcher.start());
       String found = sourceAlt.substring(webMatcher.start(), webMatcher.end());
-      // System.out.println("-> " + found);
+      // log("-> " + found);
       sourceAlt = webMatcher.replaceFirst("0xff" + found.substring(1));
       webMatcher = webPattern.matcher(sourceAlt);
     }
@@ -453,7 +454,7 @@ public class ASTNodeWrapper {
     colorMatcher = colorPattern.matcher(sourceAlt);
     sourceAlt = colorMatcher.replaceAll("int");
 
-    System.out.println("Converted:"+sourceAlt);
+    log("Converted:"+sourceAlt);
     return sourceAlt;
   }
 

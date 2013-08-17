@@ -16,6 +16,7 @@
  * Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 package processing.mode.experimental;
+import static processing.mode.experimental.ExperimentalMode.log;
 
 import java.awt.Color;
 import java.awt.Cursor;
@@ -32,11 +33,9 @@ import java.util.Map;
 
 import javax.swing.DefaultListModel;
 import javax.swing.SwingUtilities;
-import javax.swing.text.BadLocationException;
 
 import processing.app.syntax.JEditTextArea;
 import processing.app.syntax.TextAreaDefaults;
-
 /**
  * Customized text area. Adds support for line background colors.
  * 
@@ -131,7 +130,7 @@ public class TextArea extends JEditTextArea {
     if(evt.getKeyCode() == KeyEvent.VK_ESCAPE){
       if(suggestion != null){
         if(suggestion.isVisible()){
-          System.out.println("esc key");
+          log("esc key");
           hideSuggestion();
           evt.consume();
           return;
@@ -156,7 +155,7 @@ public class TextArea extends JEditTextArea {
       case KeyEvent.VK_DOWN:
         if (suggestion != null)
           if (suggestion.isVisible()) {
-            //System.out.println("KeyDown");
+            //log("KeyDown");
             suggestion.moveDown();
             return;
           }
@@ -164,7 +163,7 @@ public class TextArea extends JEditTextArea {
       case KeyEvent.VK_UP:
         if (suggestion != null)
           if (suggestion.isVisible()) {
-            //System.out.println("KeyUp");
+            //log("KeyUp");
             suggestion.moveUp();
             return;
           }
@@ -191,7 +190,7 @@ public class TextArea extends JEditTextArea {
 //        }
 //        break;
       case KeyEvent.VK_BACK_SPACE:
-        System.out.println("BK Key");
+        log("BK Key");
         break;
       default:
         break;
@@ -202,13 +201,13 @@ public class TextArea extends JEditTextArea {
       /*
       if (evt.getKeyCode() == KeyEvent.VK_DOWN && suggestion != null) {
         if (suggestion.isVisible()) {
-          //System.out.println("KeyDown");
+          //log("KeyDown");
           suggestion.moveDown();
           return;
         }
       } else if (evt.getKeyCode() == KeyEvent.VK_UP && suggestion != null) {
         if (suggestion.isVisible()) {
-          //System.out.println("KeyUp");
+          //log("KeyUp");
           suggestion.moveUp();
           return;
         }
@@ -233,14 +232,14 @@ public class TextArea extends JEditTextArea {
           }
         }
       } else if (evt.getKeyChar() == KeyEvent.VK_BACK_SPACE) {
-        System.out.println("BK Key");
+        log("BK Key");
       }
       
     }*/
 
     if (evt.getID() == KeyEvent.KEY_TYPED) {
       errorCheckerService.runManualErrorCheck();
-      System.out.println(" Typing: " + fetchPhrase(evt) + " "
+      log(" Typing: " + fetchPhrase(evt) + " "
           + (evt.getKeyChar() == KeyEvent.VK_ENTER));
 
     }
@@ -250,7 +249,7 @@ public class TextArea extends JEditTextArea {
  
   
   private String fetchPhrase(MouseEvent evt) {
-    System.out.println("--handle Mouse Right Click--");
+    log("--handle Mouse Right Click--");
     int off = xyToOffset(evt.getX(), evt.getY());
     if (off < 0)
       return null;
@@ -265,7 +264,7 @@ public class TextArea extends JEditTextArea {
     else {
       int x = xToOffset(line, evt.getX()), x2 = x + 1, x1 = x - 1;
       int xLS = off - getLineStartNonWhiteSpaceOffset(line);
-      System.out.println("x=" + x);
+      log("x=" + x);
       if (x < 0 || x >= s.length())
         return null;
       String word = s.charAt(x) + "";
@@ -304,7 +303,7 @@ public class TextArea extends JEditTextArea {
       }
       if (Character.isDigit(word.charAt(0)))
         return null;
-      System.out.println("Mouse click, word: " + word.trim());
+      log("Mouse click, word: " + word.trim());
       errorCheckerService.astGenerator.setLastClickedWord(line
           + errorCheckerService.mainClassOffset, word, xLS);
       return word.trim();
@@ -314,13 +313,13 @@ public class TextArea extends JEditTextArea {
     if (evt != null) {
       char keyChar = evt.getKeyChar();
       if (keyChar == KeyEvent.VK_ENTER) {
-        //System.out.println("Enter keypress.");
+        //log("Enter keypress.");
         return null;
       }
 //    if (keyChar == KeyEvent.VK_BACK_SPACE || keyChar == KeyEvent.VK_DELETE)
 //      ; // accepted these keys
       else if (keyChar == KeyEvent.VK_ESCAPE) {
-        //System.out.println("ESC keypress.  fetchPhrase()");
+        //log("ESC keypress.  fetchPhrase()");
         return null;
       } else if (keyChar == KeyEvent.CHAR_UNDEFINED) {
         return null;
@@ -448,9 +447,9 @@ public class TextArea extends JEditTextArea {
    */
   protected int getGutterWidth() {
     FontMetrics fm = painter.getFontMetrics();
-//        System.out.println("fm: " + (fm == null));
-//        System.out.println("editor: " + (editor == null));
-    //System.out.println("BPBPBPBPB: " + (editor.breakpointMarker == null));
+//        log("fm: " + (fm == null));
+//        log("editor: " + (editor == null));
+    //log("BPBPBPBPB: " + (editor.breakpointMarker == null));
 
     int textWidth = Math.max(fm.stringWidth(breakpointMarker),
                              fm.stringWidth(currentLineMarker));
@@ -750,7 +749,7 @@ public class TextArea extends JEditTextArea {
 
   protected void showSuggestion(DefaultListModel defListModel,String subWord) {
     if (defListModel.size() == 0) {
-      System.out.println("TextArea: No suggestions to show.");
+      log("TextArea: No suggestions to show.");
       hideSuggestion();
       return;
     }

@@ -1,4 +1,5 @@
 package processing.mode.experimental;
+import static processing.mode.experimental.ExperimentalMode.log;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -12,7 +13,6 @@ import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
-import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.text.BadLocationException;
 
@@ -51,7 +51,7 @@ public class CompletionPanel {
         .updateJavaDoc((CompletionCandidate) completionList.getSelectedValue());
     popupMenu.show(textarea, location.x, textarea.getBaseline(0, 0)
         + location.y);
-    System.out.println("Suggestion constructed" + System.nanoTime());
+    log("Suggestion constructed" + System.nanoTime());
   }
 
   public boolean isVisible() {
@@ -59,7 +59,7 @@ public class CompletionPanel {
   }
   
   public void setVisible(boolean v){
-    System.out.println("Pred popup visible.");
+    log("Pred popup visible.");
     popupMenu.setVisible(v);
   }
 
@@ -96,7 +96,7 @@ public class CompletionPanel {
     if (subWord.indexOf('.') != -1)
       this.subWord = subWord.substring(subWord.lastIndexOf('.') + 1);
     insertionPosition = position;
-    System.out.println("Suggestion updated" + System.nanoTime());
+    log("Suggestion updated" + System.nanoTime());
     return true;
   }
 
@@ -115,7 +115,7 @@ public class CompletionPanel {
           if(!selectedSuggestion.endsWith("()")){
             int x = selectedSuggestion.indexOf('(');
             if(x != -1){
-              //System.out.println("X................... " + x);
+              //log("X................... " + x);
               textarea.setCaretPosition(insertionPosition + (x+1));
             }
           }
@@ -134,7 +134,7 @@ public class CompletionPanel {
 
   public void hideSuggestion() {
     popupMenu.setVisible(false);
-    System.out.println("Suggestion hidden" + System.nanoTime());
+    log("Suggestion hidden" + System.nanoTime());
     //textarea.errorCheckerService.astGenerator.jdocWindowVisible(false);
   }
 

@@ -1,5 +1,5 @@
 package processing.mode.experimental;
-
+import static processing.mode.experimental.ExperimentalMode.log;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
@@ -64,7 +64,7 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
   }
   
   public CompletionCandidate(MethodDeclaration method) {
-    System.out.println("ComCan " + method.getName());
+    // log("ComCan " + method.getName());
     elementName = method.getName().toString();
     type = LOCAL_METHOD;
     List<ASTNode> params = (List<ASTNode>) method
