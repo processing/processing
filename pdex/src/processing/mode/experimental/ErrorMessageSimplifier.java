@@ -46,7 +46,7 @@ public class ErrorMessageSimplifier {
           break;
         }
     }
-    System.out.println("Total items: " + constantsMap.size());
+    //System.out.println("Total items: " + constantsMap.size());
   }
 
   public String getIDName(int id) {

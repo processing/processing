@@ -1,5 +1,6 @@
 package processing.mode.experimental;
 import static processing.mode.experimental.ExperimentalMode.log;
+import static processing.mode.experimental.ExperimentalMode.logE;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -105,7 +106,7 @@ public class CompletionPanel {
       try {
         String selectedSuggestion = ((CompletionCandidate) completionList
             .getSelectedValue()).getCompletionString().substring(subWord.length());
-        System.err.println(subWord+" <= subword,Inserting suggestion=> " + selectedSuggestion);
+        logE(subWord+" <= subword,Inserting suggestion=> " + selectedSuggestion);
         textarea.getDocument().remove(insertionPosition-subWord.length(), subWord.length());
         textarea.getDocument().insertString(insertionPosition-subWord.length(),
                                             ((CompletionCandidate) completionList

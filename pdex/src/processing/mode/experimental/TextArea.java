@@ -17,6 +17,7 @@
  */
 package processing.mode.experimental;
 import static processing.mode.experimental.ExperimentalMode.log;
+import static processing.mode.experimental.ExperimentalMode.log2;
 
 import java.awt.Color;
 import java.awt.Cursor;
@@ -297,7 +298,6 @@ public class TextArea extends JEditTextArea {
           break;
         if (i > 200) {
           // time out!
-          System.err.println("Whoopsy! :P");
           break;
         }
       }
@@ -326,24 +326,24 @@ public class TextArea extends JEditTextArea {
       }
     }
     int off = getCaretPosition();
-    System.out.print("off " + off);
+    log2("off " + off);
     if (off < 0)
       return null;
     int line = getCaretLine();
     if (line < 0)
       return null;
     String s = getLineText(line);
-    System.out.print("lin " + line);
+    log2("lin " + line);
     /*
      * if (s == null) return null; else if (s.length() == 0) return null;
      */
 //    else {
-    //System.out.print(s + " len " + s.length());
+    //log2(s + " len " + s.length());
 
     int x = getCaretPosition() - getLineStartOffset(line) - 1, x2 = x + 1, x1 = x - 1;
     if(x >= s.length() || x < 0)
       return null; //TODO: Does this check cause problems? Verify.
-    System.out.print(" x char: " + s.charAt(x));
+    log2(" x char: " + s.charAt(x));
     //int xLS = off - getLineStartNonWhiteSpaceOffset(line);    
 
     String word = (x < s.length() ? s.charAt(x) : "") + "";
@@ -420,7 +420,6 @@ public class TextArea extends JEditTextArea {
 //          break;
       if (i > 200) {
         // time out!
-        System.err.println("Whoopsy! :P");
         break;
       }
     }

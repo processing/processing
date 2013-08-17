@@ -43,7 +43,7 @@ public class ExperimentalMode extends JavaMode {
   public static final boolean VERBOSE_LOGGING = true;
   //public static final boolean VERBOSE_LOGGING = false;  
   public static final int LOG_SIZE = 512 * 1024; // max log file size (in bytes)
-  public static boolean DEBUG = true;
+  public static boolean DEBUG = !true;
   
   public ExperimentalMode(Base base, File folder) {
     super(base, folder);
@@ -169,18 +169,26 @@ public class ExperimentalMode extends JavaMode {
     return null;
   }
   
-  /*
-   * log
+  /**
+   * System.out.println()
    */
   public static final void log(Object message){
     if(ExperimentalMode.DEBUG)
       System.out.println(message);
   }
   
-  /*
+  /**
+   * System.err.println()
+   */
+  public static final void logE(Object message){
+    if(ExperimentalMode.DEBUG)
+      System.err.println(message);
+  }
+  
+  /**
    * System.out.print
    */
-  public static final void log2(String message){
+  public static final void log2(Object message){
     if(ExperimentalMode.DEBUG)
       System.out.print(message);
   }

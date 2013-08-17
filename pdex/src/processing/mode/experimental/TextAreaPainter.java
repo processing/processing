@@ -134,7 +134,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter {
           break;
         if (i > 200) {
           // time out!
-          System.err.println("Whoopsy! :P");
+          // System.err.println("Whoopsy! :P");
           break;
         }
       }
@@ -466,7 +466,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter {
           break;
         if (i > 200) {
           // time out!
-          System.err.println("Whoopsy! :P");
+          // System.err.println("Whoopsy! :P");
           break;
         }
       }

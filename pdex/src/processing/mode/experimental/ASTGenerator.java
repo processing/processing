@@ -1,6 +1,7 @@
 package processing.mode.experimental;
 
 import static processing.mode.experimental.ExperimentalMode.log;
+import static processing.mode.experimental.ExperimentalMode.logE;
 
 import java.awt.Dimension;
 import java.awt.Rectangle;
@@ -282,7 +283,7 @@ public class ASTGenerator {
       }
     };
     worker.execute();
-//    System.err.println("++>" + System.getProperty("java.class.path"));
+//    logE("++>" + System.getProperty("java.class.path"));
 //    log(System.getProperty("java.class.path"));
 //    log("-------------------------------");
     return codeTree;
@@ -834,15 +835,15 @@ public class ASTGenerator {
         parser.setKind(ASTParser.K_EXPRESSION);
         parser.setSource(word2.toCharArray());
         ASTNode testnode = parser.createAST(null);
-        //System.err.println("PREDICTION PARSER PROBLEMS: " + parser);
+        //logE("PREDICTION PARSER PROBLEMS: " + parser);
         // Find closest ASTNode of the document to this word
-        System.err.print("Typed: " + word2 + "|");
+        logE("Typed: " + word2 + "|");
         nearestNode = findClosestNode(lineNumber, (ASTNode) compilationUnit.types()
             .get(0));
         if (nearestNode == null)
           //Make sure nearestNode is not NULL if couldn't find a closeset node
           nearestNode = (ASTNode) compilationUnit.types().get(0);
-        System.err.println(lineNumber + " Nearest ASTNode to PRED "
+        logE(lineNumber + " Nearest ASTNode to PRED "
             + getNodeAsString(nearestNode));
 
         candidates = new ArrayList<CompletionCandidate>();
@@ -850,8 +851,7 @@ public class ASTGenerator {
         // Determine the expression typed
         
         if (testnode instanceof SimpleName && !noCompare) {
-          System.err
-              .println("One word expression " + getNodeAsString(testnode));
+          logE("One word expression " + getNodeAsString(testnode));
           //==> Simple one word exprssion - so is just an identifier
           
           // Bottom up traversal of the AST to look for possible definitions at 
@@ -938,7 +938,7 @@ public class ASTGenerator {
 
           // ==> Complex expression of type blah.blah2().doIt,etc
           // Have to resolve it by carefully traversing AST of testNode
-          System.err.println("Complex expression " + getNodeAsString(testnode));
+          logE("Complex expression " + getNodeAsString(testnode));
           log("candidates empty");
           ASTNode childExpr = getChildExpression(testnode);
           log("Parent expression : " + getParentExpression(testnode));
@@ -1321,7 +1321,7 @@ public class ASTGenerator {
   private static ASTNode findClosestParentNode(int lineNumber, ASTNode node) {
     Iterator<StructuralPropertyDescriptor> it = node
         .structuralPropertiesForType().iterator();
-    // System.err.println("Props of " + node.getClass().getName());
+    // logE("Props of " + node.getClass().getName());
     while (it.hasNext()) {
       StructuralPropertyDescriptor prop = (StructuralPropertyDescriptor) it
           .next();
@@ -1562,11 +1562,11 @@ public class ASTGenerator {
         log(getNodeAsString(simpName));
         decl = findDeclaration((SimpleName) simpName);
         if (decl != null) {
-          System.err.println("DECLA: " + decl.getClass().getName());
+          logE("DECLA: " + decl.getClass().getName());
           nodeLabel = getLabelIfType(new ASTNodeWrapper(decl), (SimpleName) simpName);
           //retLabelString = getNodeAsString(decl);
         } else
-          System.err.println("null");
+          logE("null");
 
         log(getNodeAsString(decl));
         
@@ -1592,8 +1592,8 @@ public class ASTGenerator {
        * This is important since it contains all the properties.
        */
       ASTNode simpName2 = getNodeName(decl,nameOfNode);
-      System.err.println("FINAL String decl: " + getNodeAsString(decl));
-      System.err.println("FINAL String label: " + getNodeAsString(simpName2));
+      logE("FINAL String decl: " + getNodeAsString(decl));
+      logE("FINAL String label: " + getNodeAsString(simpName2));
       errorCheckerService.highlightNode(simpName2);
     } 
 
@@ -1672,7 +1672,7 @@ public class ASTGenerator {
 
     DefaultMutableTreeNode astTree = new DefaultMutableTreeNode(
                                                                 "CompilationUnit");
-    System.err.println("Errors: " + cu.getProblems().length);
+    logE("Errors: " + cu.getProblems().length);
     visitRecur(cu, astTree);
     log(astTree.getChildCount());
 
@@ -1933,7 +1933,7 @@ public class ASTGenerator {
     if(wnode.getNode() == null){
       return null;
     }
-    System.err.println("Gonna find all occurrences of "
+    logE("Gonna find all occurrences of "
         + getNodeAsString(wnode.getNode()));
     
     //If wnode is a constructor, find the TD instead.
@@ -1950,7 +1950,7 @@ public class ASTGenerator {
       if(node != null && node instanceof TypeDeclaration){
         TypeDeclaration td = (TypeDeclaration) node;
         if(td.getName().toString().equals(md.getName().toString())){
-          System.err.println("Renaming constructor of " + getNodeAsString(td));
+          logE("Renaming constructor of " + getNodeAsString(td));
           wnode = new ASTNodeWrapper(td);
         }
       }
@@ -1986,7 +1986,7 @@ public class ASTGenerator {
   public static void visitRecur(ASTNode node, DefaultMutableTreeNode tnode) {
     Iterator<StructuralPropertyDescriptor> it = node
         .structuralPropertiesForType().iterator();
-    //System.err.println("Props of " + node.getClass().getName());
+    //logE("Props of " + node.getClass().getName());
     DefaultMutableTreeNode ctnode = null;
     while (it.hasNext()) {
       StructuralPropertyDescriptor prop = (StructuralPropertyDescriptor) it
@@ -2109,7 +2109,7 @@ public class ASTGenerator {
         }
         log("Visiting: " + getNodeAsString(node));
         ASTNode decl2 = findDeclaration(sn);
-        System.err.println("It's decl: " + getNodeAsString(decl2));
+        logE("It's decl: " + getNodeAsString(decl2));
         log("But we need: "+getNodeAsString(decl));
         for (ASTNode astNode : nodesToBeMatched) {
           if(astNode.equals(decl2)){
@@ -2154,7 +2154,7 @@ public class ASTGenerator {
   public static void printRecur(ASTNode node) {
     Iterator<StructuralPropertyDescriptor> it = node
         .structuralPropertiesForType().iterator();
-    //System.err.println("Props of " + node.getClass().getName());
+    //logE("Props of " + node.getClass().getName());
     while (it.hasNext()) {
       StructuralPropertyDescriptor prop = (StructuralPropertyDescriptor) it
           .next();
@@ -2189,13 +2189,12 @@ public class ASTGenerator {
     CompilationUnit root = (CompilationUnit) node.getRoot();
 //    log("Inside "+getNodeAsString(node) + " | " + root.getLineNumber(node.getStartPosition()));
     if (root.getLineNumber(node.getStartPosition()) == lineNumber) {
-      System.err
-          .println(3 + getNodeAsString(node) + " len " + node.getLength());      
+      logE(3 + getNodeAsString(node) + " len " + node.getLength());      
       return node;
 //      if (offset < node.getLength())
 //        return node;
 //      else {
-//        System.err.println(-11);
+//        logE(-11);
 //        return null;
 //      }
     }
@@ -2208,7 +2207,7 @@ public class ASTGenerator {
                                                  .getStructuralProperty(prop),
                                              lineNumber, offset, name);
             if (retNode != null) {
-//              System.err.println(11 + getNodeAsString(retNode));
+//              logE(11 + getNodeAsString(retNode));
               return retNode;
             }
           }
@@ -2220,13 +2219,13 @@ public class ASTGenerator {
 
           ASTNode rr = findLineOfNode(retNode, lineNumber, offset, name);
           if (rr != null) {
-//              System.err.println(12 + getNodeAsString(rr));
+//              logE(12 + getNodeAsString(rr));
             return rr;
           }
         }
       }
     }
-//    System.err.println("-1");
+//    logE("-1");
     return null;
   }
 
@@ -2270,7 +2269,7 @@ public class ASTGenerator {
                                                  .getStructuralProperty(prop),
                                              offset, lineStartOffset, name);
             if (retNode != null) {
-//              System.err.println(11 + getNodeAsString(retNode));
+//              logE(11 + getNodeAsString(retNode));
               return retNode;
             }
           }
@@ -2282,13 +2281,13 @@ public class ASTGenerator {
 
           ASTNode rr = pinpointOnLine(retNode, offset, lineStartOffset, name);
           if (rr != null) {
-//              System.err.println(12 + getNodeAsString(rr));
+//              logE(12 + getNodeAsString(rr));
             return rr;
           }
         }
       }
     }
-//    System.err.println("-1");
+//    logE("-1");
     return null;
   }
 
@@ -2899,7 +2898,7 @@ public class ASTGenerator {
     switch (node.getNodeType()) {
 
     case ASTNode.TYPE_DECLARATION:
-      //System.err.println(getNodeAsString(node));
+      //logE(getNodeAsString(node));
       TypeDeclaration td = (TypeDeclaration) node;
       if (td.getName().toString().equals(name)) {
         if (constrains.contains(ASTNode.CLASS_INSTANCE_CREATION)) {
@@ -2938,25 +2937,25 @@ public class ASTGenerator {
       }
       break;
     case ASTNode.METHOD_DECLARATION:
-      //System.err.println(getNodeAsString(node));
+      //logE(getNodeAsString(node));
       if (((MethodDeclaration) node).getName().toString().equalsIgnoreCase(name))
         return node;
       break;
     case ASTNode.SINGLE_VARIABLE_DECLARATION:
-      //System.err.println(getNodeAsString(node));
+      //logE(getNodeAsString(node));
       if (((SingleVariableDeclaration) node).getName().toString().equalsIgnoreCase(name))
         return node;
       break;
     case ASTNode.FIELD_DECLARATION:
-      //System.err.println("FD" + node);
+      //logE("FD" + node);
       vdfList = ((FieldDeclaration) node).fragments();
       break;
     case ASTNode.VARIABLE_DECLARATION_EXPRESSION:
-      //System.err.println("VDE" + node);
+      //logE("VDE" + node);
       vdfList = ((VariableDeclarationExpression) node).fragments();
       break;
     case ASTNode.VARIABLE_DECLARATION_STATEMENT:
-      //System.err.println("VDS" + node);
+      //logE("VDS" + node);
       vdfList = ((VariableDeclarationStatement) node).fragments();
       break;
 

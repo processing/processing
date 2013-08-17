@@ -341,10 +341,10 @@ public class ASTNodeWrapper {
     for (int i = 0; i < pdeCodeMap.length; i++) {
       if (pdeCodeMap[i] > 0 || javaCodeMap[i] > 0 || i == 0) {
         if (i < source.length())
-          System.out.print(source.charAt(i));
+          log2(source.charAt(i));
         log2(pdeCodeMap[i] + " - " + javaCodeMap[i]);
         if (i < sourceAlt.length())
-          System.out.print(sourceAlt.charAt(i));
+          log2(sourceAlt.charAt(i));
         log2(" <-[" + i + "]");
         log("");
       }
