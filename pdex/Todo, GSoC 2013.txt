@@ -100,6 +100,12 @@ x Local Classes
 x Recursive lookup, a.b().c()
 x Now highlihgting the declaration name, rather than the whole declaration.
 
+Sketch Outline
+==============
+
+x Show Sketch Outline Tree
+x Filter stuff in text field
+
 Suggestion for missing imports
 ==============================
 
@@ -112,6 +118,7 @@ x Add imports only to beginning of first tab.
 
 Labels for Java elements
 ========================
+
 x Working for local code
 * Need to modify getASTNodeAt to also fetch the type for predefined classes.
 * Labels for predefined class objects

@@ -1,10 +1,7 @@
 package processing.mode.experimental;
 
-import static processing.mode.experimental.ExperimentalMode.log;
-
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.TextField;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
@@ -19,13 +16,8 @@ import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingWorker;
-import javax.swing.event.TreeModelListener;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeModel;
-import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import org.eclipse.jdt.core.dom.FieldDeclaration;
@@ -45,26 +37,34 @@ public class SketchOutline {
   protected final JTree soTree;
 
   protected JTextField searchField;
+  
+  protected DebugEditor editor;
 
   public SketchOutline(DefaultMutableTreeNode codeTree, ErrorCheckerService ecs) {
     errorCheckerService = ecs;
+    editor = ecs.getEditor();
     frmOutlineView = new JFrame();
     frmOutlineView.setAlwaysOnTop(true);
     frmOutlineView.setUndecorated(true);
     Point tp = errorCheckerService.getEditor().ta.getLocationOnScreen();
-    frmOutlineView.setBounds(tp.x
-                                 + errorCheckerService.getEditor().ta
-                                     .getWidth() - 300, tp.y, 300,
-                             errorCheckerService.getEditor().ta.getHeight());
+//    frmOutlineView.setBounds(tp.x
+//                                 + errorCheckerService.getEditor().ta
+//                                     .getWidth() - 300, tp.y, 300,
+//                             errorCheckerService.getEditor().ta.getHeight());
+    
     //TODO: ^Absolute dimensions are bad bro
 
+    int minWidth = 200;
     frmOutlineView.setLayout(new BoxLayout(frmOutlineView.getContentPane(),
                                            BoxLayout.Y_AXIS));
     JPanel panelTop = new JPanel(), panelBottom = new JPanel();
+    panelTop.setLayout(new BoxLayout(panelTop,
+                             BoxLayout.Y_AXIS));
+    panelBottom.setLayout(new BoxLayout(panelBottom,
+                                     BoxLayout.Y_AXIS));
     searchField = new JTextField();
-    searchField.setPreferredSize(new Dimension(frmOutlineView.getWidth(), 25));
-    panelTop.add(searchField);
-    frmOutlineView.add(panelTop);
+    searchField.setMinimumSize(new Dimension(minWidth, 25));
+    panelTop.add(searchField);    
 
     jsp = new JScrollPane();
     soNode = new DefaultMutableTreeNode();
@@ -80,10 +80,28 @@ public class SketchOutline {
     soTree.setSelectionRow(0);
     jsp.setViewportView(soTree);
     jsp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-    jsp.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+    jsp.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+    jsp.setMinimumSize(new Dimension(minWidth, 100));
     panelBottom.add(jsp);
-    frmOutlineView.add(jsp);
+    frmOutlineView.add(panelTop);
+    frmOutlineView.add(panelBottom);
     frmOutlineView.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+//    frmOutlineView.setLocation(tp.x
+//                               + errorCheckerService.getEditor().ta
+//                               .getWidth() - minWidth, tp.y);
+    frmOutlineView.setBounds(tp.x
+                                 + errorCheckerService.getEditor().ta
+                                     .getWidth() - minWidth, tp.y, minWidth,Math
+                                     .min(editor.ta.getHeight(), 150));
+    frmOutlineView.setMinimumSize(new Dimension(minWidth, Math
+        .min(errorCheckerService.getEditor().ta.getHeight(), 150)));
+    frmOutlineView.pack();
+    frmOutlineView.setLocation(tp.x
+                                   + errorCheckerService.getEditor().ta
+                                       .getWidth() - frmOutlineView.getWidth(),
+                               frmOutlineView.getY()
+                                   + (editor.ta.getHeight() - frmOutlineView
+                                       .getHeight()) / 2);
     addListeners();
 
   }
