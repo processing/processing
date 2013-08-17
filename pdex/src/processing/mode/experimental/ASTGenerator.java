@@ -38,6 +38,7 @@ import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -1813,6 +1814,7 @@ public class ASTGenerator {
       editor.statusError("Can't locate definition of " + selText);
       return;
     }
+    errorCheckerService.pauseThread();
     treeRename.setModel(new DefaultTreeModel(defCU));
     ((DefaultTreeModel) treeRename.getModel()).reload();
     frmOccurenceList.setTitle("Usage of " + selText);
@@ -1824,14 +1826,14 @@ public class ASTGenerator {
     // I need to store the pde and java offsets beforehand because once
     // the replace starts, all offsets returned are affected
     int offsetsMap[][][] = new int[defCU.getChildCount()][2][];
-    for (int i = defCU.getChildCount() - 1; i >= 0; i--) {
+    for (int i = 0; i < defCU.getChildCount(); i++) {
       ASTNodeWrapper awrap = (ASTNodeWrapper) ((DefaultMutableTreeNode) (defCU
           .getChildAt(i))).getUserObject();
       offsetsMap[i][0] = awrap.getPDECodeOffsets(errorCheckerService);
       offsetsMap[i][1] = awrap.getJavaCodeOffsets(errorCheckerService);
     }
     
-    for (int i = defCU.getChildCount() - 1; i >= 0; i--) {
+    for (int i = 0; i < defCU.getChildCount(); i++) {
       int pdeoffsets[] = offsetsMap[i][0];
       int javaoffsets[] = offsetsMap[i][1];
       // correction for pde enhancements related displacement on a line
@@ -1845,13 +1847,15 @@ public class ASTGenerator {
         lineOffsetDisplacement.put(javaoffsets[0],
                                    lineOffsetDisplacementConst);
       }
-
       ErrorCheckerService.scrollToErrorLine(editor, pdeoffsets[0],
                                             pdeoffsets[1],
                                             javaoffsets[1] + off,
                                             javaoffsets[2]);
+      //int k = JOptionPane.showConfirmDialog(new JFrame(), "Rename?","", JOptionPane.OK_OPTION));
       editor.ta.setSelectedText(newName);
     }
+    errorCheckerService.resumeThread();
+    errorCheckerService.runManualErrorCheck();
     for (Integer lineNum : lineOffsetDisplacement.keySet()) {
       log(lineNum + "line, disp"
           + lineOffsetDisplacement.get(lineNum));

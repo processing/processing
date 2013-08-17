@@ -378,10 +378,10 @@ public class ErrorCheckerService implements Runnable{
       Problem p = new Problem(problems[i], a[0], a[1] + 1);
       //TODO: ^Why do cheeky stuff?
       problemsList.add(p);  
-      log(problems[i].getMessage());
-      for (String j : problems[i].getArguments()) {
-        log("arg " + j);
-      }
+//      log(problems[i].getMessage());
+//      for (String j : problems[i].getArguments()) {
+//        log("arg " + j);
+//      }
       // log(p.toString());
     }
     
@@ -491,10 +491,10 @@ public class ErrorCheckerService implements Runnable{
         // + problems[i].isWarning());
 
         IProblem problem = problems[i];
-        log(problem.getMessage());
-        for (String j : problem.getArguments()) {
-          log("arg " + j);
-        }
+//        log(problem.getMessage());
+//        for (String j : problem.getArguments()) {
+//          log("arg " + j);
+//        }
         int a[] = calculateTabIndexAndLineNumber(problem);
         Problem p = new Problem(problem, a[0], a[1]);
         if ((Boolean) errorList[i][8]) {

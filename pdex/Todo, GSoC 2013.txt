@@ -119,6 +119,7 @@ x Working for local code
 General Stuff
 =============
 
-* Add option for toggling debug output
+x Add option for toggling debug output
+x On Run/Debug Console is visible(ProblemsList hidden)
 * update build.xml to produce dists
 * Make this a contributed mode - mode.txt, github releases feature, version numbering, git tags, etc
