@@ -4,9 +4,13 @@ import static processing.mode.experimental.ExperimentalMode.log;
 import static processing.mode.experimental.ExperimentalMode.logE;
 
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.ScrollPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -22,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
@@ -45,6 +50,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.ListSelectionModel;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.UIManager;
@@ -242,8 +248,7 @@ public class ASTGenerator {
 //    OutlineVisitor visitor = new OutlineVisitor();
 //    compilationUnit.accept(visitor);
     getCodeComments();
-    codeTree = new DefaultMutableTreeNode(
-                                          getNodeAsString((ASTNode) compilationUnit
+    codeTree = new DefaultMutableTreeNode(new ASTNodeWrapper((ASTNode) compilationUnit
                                               .types().get(0)));
     visitRecur((ASTNode) compilationUnit.types().get(0), codeTree);
     SwingWorker worker = new SwingWorker() {
@@ -1817,7 +1822,8 @@ public class ASTGenerator {
     
     if(!newName.matches("([a-zA-Z][a-zA-Z0-9_]*)|([_][a-zA-Z0-9_]+)"))
     {
-      JOptionPane.showConfirmDialog(new JFrame(), newName + " isn't a valid name.","Uh oh..", JOptionPane.PLAIN_MESSAGE);
+      JOptionPane.showConfirmDialog(new JFrame(), newName
+          + " isn't a valid name.", "Uh oh..", JOptionPane.PLAIN_MESSAGE);
       return;
     }
     //else log("New name looks K.");
@@ -2061,6 +2067,111 @@ public class ASTGenerator {
       }
       
     }
+  }
+  
+  protected JFrame frmOutlineView;
+  protected void showSketchOutline(){
+    frmOutlineView = new JFrame();
+    frmOutlineView.setAlwaysOnTop(true);
+    frmOutlineView.setUndecorated(true);
+    Point tp = editor.ta.getLocationOnScreen();
+    log("TA Co " + tp);
+    frmOutlineView.setBounds(tp.x + editor.ta.getWidth() - 300, tp.y, 300, editor.ta.getHeight());
+    JScrollPane jsp = new JScrollPane();
+    DefaultMutableTreeNode soNode = new DefaultMutableTreeNode();
+    generateSketchOutlineTree(soNode, codeTree);
+    final JTree soTree = new JTree(soNode);
+    soTree.setRootVisible(false);
+    for (int i = 0; i < soTree.getRowCount(); i++) {
+      soTree.expandRow(i);
+    }
+    
+    jsp.setViewportView(soTree);
+    jsp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+    jsp.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+    frmOutlineView.add(jsp);
+    frmOutlineView.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    frmOutlineView.setVisible(true);
+    frmOutlineView.addWindowFocusListener(new WindowFocusListener() {
+      public void windowLostFocus(WindowEvent e) {
+        frmOutlineView.setVisible(false);
+        frmOutlineView.dispose();
+      }
+      public void windowGainedFocus(WindowEvent e) {
+      }
+    });
+
+    soTree.addTreeSelectionListener(new TreeSelectionListener() {
+      public void valueChanged(TreeSelectionEvent e) {
+        log(e);
+        SwingWorker worker = new SwingWorker() {
+          protected Object doInBackground() throws Exception {
+            return null;
+          }
+          protected void done() {
+            if (soTree.getLastSelectedPathComponent() == null) {
+              return;
+            }
+            DefaultMutableTreeNode tnode = (DefaultMutableTreeNode) soTree
+                .getLastSelectedPathComponent();
+            if (tnode.getUserObject() == null) {
+              return;
+            }
+
+            if (tnode.getUserObject() instanceof ASTNodeWrapper) {
+              ASTNodeWrapper awrap = (ASTNodeWrapper) tnode.getUserObject();
+              errorCheckerService.highlightNode(awrap);
+            }
+          }
+        };
+        worker.execute();
+      }
+    });
+    
+  }
+  
+  protected void generateSketchOutlineTree(DefaultMutableTreeNode node, DefaultMutableTreeNode codetree){
+    if (codetree == null)
+      return;
+    //log("Visi " + codetree + codetree.getUserObject().getClass().getSimpleName());
+    if(!(codetree.getUserObject() instanceof ASTNodeWrapper))
+      return;
+    ASTNodeWrapper awnode = (ASTNodeWrapper) codetree.getUserObject(), aw2 = null;
+    
+    if (awnode.getNode() instanceof TypeDeclaration) {
+      aw2 = new ASTNodeWrapper(awnode.getNode(),
+                               ((TypeDeclaration) awnode.getNode()).getName()
+                                   .toString());
+    } else if (awnode.getNode() instanceof MethodDeclaration) {
+      aw2 = new ASTNodeWrapper(
+                               ((MethodDeclaration) awnode
+                                                           .getNode()).getName(),
+                               new CompletionCandidate(
+                                                       ((MethodDeclaration) awnode
+                                                           .getNode()))
+                                   .toString());
+    } 
+    else if (awnode.getNode() instanceof FieldDeclaration) {
+      FieldDeclaration fd = (FieldDeclaration)awnode.getNode();
+      for (VariableDeclarationFragment vdf : (List<VariableDeclarationFragment>)fd.fragments()) {
+        DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(
+                                                                    new ASTNodeWrapper(
+                                                                                       vdf.getName(),
+                                                                                       new CompletionCandidate(
+                                                                                                               vdf)
+                                                                                           .toString()));
+        node.add(newNode);
+      }
+      return;
+    }
+    if(aw2 == null) return;
+      DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(aw2);
+      node.add(newNode);
+      for (int i = 0; i < codetree.getChildCount(); i++) {
+        generateSketchOutlineTree(newNode,
+                                  (DefaultMutableTreeNode) codetree
+                                      .getChildAt(i));
+      }
   }
   
   public int javaCodeOffsetToLineStartOffset(int line, int jOffset){

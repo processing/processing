@@ -16,6 +16,7 @@
  * Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 package processing.mode.experimental;
+import static processing.mode.experimental.ExperimentalMode.log;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
@@ -25,12 +26,9 @@ import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +48,13 @@ import javax.swing.text.Document;
 
 import org.eclipse.jdt.core.compiler.IProblem;
 
-import processing.app.*;
+import processing.app.Base;
+import processing.app.EditorState;
+import processing.app.EditorToolbar;
+import processing.app.Mode;
+import processing.app.Sketch;
+import processing.app.SketchCode;
+import processing.app.Toolkit;
 import processing.app.syntax.JEditTextArea;
 import processing.app.syntax.PdeTextAreaDefaults;
 import processing.core.PApplet;
@@ -151,6 +155,11 @@ public class DebugEditor extends JavaEditor implements ActionListener {
      * Enable/Disable debug ouput
      */
     protected JCheckBoxMenuItem debugMessagesEnabled;
+    
+    /**
+     * Show outline view
+     */
+    protected JMenuItem showOutline;
     
     public DebugEditor(Base base, String path, EditorState state, Mode mode) {
         super(base, path, state, mode);
@@ -511,7 +520,11 @@ public class DebugEditor extends JavaEditor implements ActionListener {
                 .getSource()).isSelected();
           }
         });
-        debugMenu.add(debugMessagesEnabled);        
+        debugMenu.add(debugMessagesEnabled);     
+        
+        showOutline = Toolkit.newJMenuItem("Show Outline", KeyEvent.VK_L);
+        showOutline.addActionListener(this);
+        debugMenu.add(showOutline);
         
         return debugMenu;
     }
@@ -576,6 +589,9 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         } else if (source == toggleVariableInspectorMenuItem) {
             Logger.getLogger(DebugEditor.class.getName()).log(Level.INFO, "Invoked 'Toggle Variable Inspector' menu item");
             toggleVariableInspector();
+        } else if (source.equals(showOutline)){
+            log("Show Outline :D");
+            errorCheckerService.astGenerator.showSketchOutline();
         }
     }
 
