@@ -71,6 +71,7 @@ Refactoring
 
 * Undo misbehaves here, handle carefully.
 
+x New Name is validated.
 x Ordered list in 'Show Usage' window
 x Add support for word select on right click and rename, mouse co-ordinates need to obtained carefully
 

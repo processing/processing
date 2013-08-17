@@ -1806,7 +1806,7 @@ public class ASTGenerator {
   }
   
   private void refactorIt(){
-    String newName = txtRenameField.getText();
+    String newName = txtRenameField.getText().trim();
     String selText = lastClickedWord == null ? editor.ta.getSelectedText()
         : lastClickedWord;
     DefaultMutableTreeNode defCU = findAllOccurrences();
@@ -1814,6 +1814,14 @@ public class ASTGenerator {
       editor.statusError("Can't locate definition of " + selText);
       return;
     }
+    
+    if(!newName.matches("([a-zA-Z][a-zA-Z0-9_]*)|([_][a-zA-Z0-9_]+)"))
+    {
+      JOptionPane.showConfirmDialog(new JFrame(), newName + " isn't a valid name.","Uh oh..", JOptionPane.PLAIN_MESSAGE);
+      return;
+    }
+    //else log("New name looks K.");
+    
     errorCheckerService.pauseThread();
     treeRename.setModel(new DefaultTreeModel(defCU));
     ((DefaultTreeModel) treeRename.getModel()).reload();
@@ -1851,7 +1859,7 @@ public class ASTGenerator {
                                             pdeoffsets[1],
                                             javaoffsets[1] + off,
                                             javaoffsets[2]);
-      //int k = JOptionPane.showConfirmDialog(new JFrame(), "Rename?","", JOptionPane.OK_OPTION));
+      //int k = JOptionPane.showConfirmDialog(new JFrame(), "Rename?","", JOptionPane.INFORMATION_MESSAGE));
       editor.ta.setSelectedText(newName);
     }
     errorCheckerService.resumeThread();
