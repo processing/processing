@@ -246,9 +246,9 @@ public class DebugEditor extends JavaEditor implements ActionListener {
       JPanel lineStatusPanel = new JPanel();
       lineStatusPanel.setLayout(new BorderLayout());
       btnShowConsole = new XQConsoleToggle(this,
-          XQConsoleToggle.text[0], lineStatus.getHeight());
+          XQConsoleToggle.CONSOLE, lineStatus.getHeight());
       btnShowErrors = new XQConsoleToggle(this,
-          XQConsoleToggle.text[1], lineStatus.getHeight());
+          XQConsoleToggle.ERRORSLIST, lineStatus.getHeight());
       btnShowConsole.addMouseListener(btnShowConsole);
 
       // lineStatusPanel.add(btnShowConsole, BorderLayout.EAST);
@@ -268,8 +268,8 @@ public class DebugEditor extends JavaEditor implements ActionListener {
       // Adding JPanel with CardLayout for Console/Problems Toggle
       consolePanel.remove(1);
       consoleProblemsPane = new JPanel(new CardLayout());
-      consoleProblemsPane.add(errorTableScrollPane, XQConsoleToggle.text[1]);
-      consoleProblemsPane.add(console, XQConsoleToggle.text[0]);
+      consoleProblemsPane.add(errorTableScrollPane, XQConsoleToggle.ERRORSLIST);
+      consoleProblemsPane.add(console, XQConsoleToggle.CONSOLE);
       consolePanel.add(consoleProblemsPane, BorderLayout.CENTER);
     }
 
@@ -485,7 +485,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
                 .setVisible(((JCheckBoxMenuItem) e.getSource())
                     .isSelected());
             // switch to console, now that Error Window is open
-            toggleView(XQConsoleToggle.text[0]);
+            showProblemListView(XQConsoleToggle.CONSOLE);
           }
         });
         debugMenu.add(problemWindowMenuCB);
@@ -1200,7 +1200,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
      * @param buttonName
      *            - Button Label
      */
-    public void toggleView(String buttonName) {
+    public void showProblemListView(String buttonName) {
       CardLayout cl = (CardLayout) consoleProblemsPane.getLayout();
       cl.show(consoleProblemsPane, buttonName);
     }

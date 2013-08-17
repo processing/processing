@@ -41,7 +41,7 @@ import javax.swing.JPanel;
  */
 
 public class XQConsoleToggle extends JPanel implements MouseListener {
-	public static final String[] text = { "Console", "Errors" };
+	public static final String CONSOLE = "Console", ERRORSLIST = "Errors" ;
 	
 	private boolean toggleText = true;
 	private boolean toggleBG = true;
@@ -101,7 +101,7 @@ public class XQConsoleToggle extends JPanel implements MouseListener {
 
 		this.repaint();
 		try {
-			editor.toggleView(buttonName);
+			editor.showProblemListView(buttonName);
 		} catch (Exception e) {
 			System.out.println(e);
 			// e.printStackTrace();
