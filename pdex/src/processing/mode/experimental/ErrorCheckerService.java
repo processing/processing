@@ -1,5 +1,7 @@
 package processing.mode.experimental;
 
+import static processing.mode.experimental.ExperimentalMode.log;
+
 import java.awt.EventQueue;
 import java.io.File;
 import java.io.FileFilter;
@@ -250,7 +252,7 @@ public class ErrorCheckerService implements Runnable{
         // Take a nap.
         Thread.sleep(sleepTime);
       } catch (Exception e) {
-        System.out.println("Oops! [ErrorCheckerThreaded]: " + e);
+        log("Oops! [ErrorCheckerThreaded]: " + e);
         // e.printStackTrace();
       }
       
@@ -273,7 +275,7 @@ public class ErrorCheckerService implements Runnable{
         int idx = p.getMessage().indexOf(" cannot be resolved to a type");
         if(idx > 1){
           String missingClass = p.getMessage().substring(0, idx);
-          //System.out.println("Will suggest for type:" + missingClass);
+          //log("Will suggest for type:" + missingClass);
           astGenerator.suggestImports(missingClass);
         }
       }
@@ -291,13 +293,14 @@ public class ErrorCheckerService implements Runnable{
   }
 
   private boolean checkCode() {
-    System.out.println("checkCode() " + textModified.get() );
+    //log("checkCode() " + textModified.get() );
+    log("checkCode() " + textModified.get());
     lastTimeStamp = System.currentTimeMillis();
     try {
       sourceCode = preprocessCode(editor.getSketch().getMainProgram());
 
       syntaxCheck();
-      System.out.println(editor.getSketch().getName() + "1 MCO "
+      log(editor.getSketch().getName() + "1 MCO "
           + mainClassOffset);
       // No syntax errors, proceed for compilation check, Stage 2.
 
@@ -311,10 +314,10 @@ public class ErrorCheckerService implements Runnable{
 //        if (staticMode) {
 //        	mainClassOffset++; // Extra line for setup() decl.
 //        }
-        //         System.out.println(sourceCode);
-        //         System.out.println("--------------------------");
+        //         log(sourceCode);
+        //         log("--------------------------");
         compileCheck();
-        System.out.println(editor.getSketch().getName() + "2 MCO "
+        log(editor.getSketch().getName() + "2 MCO "
             + mainClassOffset);
       }
       
@@ -324,7 +327,7 @@ public class ErrorCheckerService implements Runnable{
       editor.getTextArea().repaint();
       updatePaintedThingys();
       int x = textModified.get();
-      //System.out.println("TM " + x);
+      //log("TM " + x);
       if(x>=3){
         textModified.set(3);
         x = 3;
@@ -337,7 +340,7 @@ public class ErrorCheckerService implements Runnable{
       return true;
 
     } catch (Exception e) {
-      System.out.println("Oops! [ErrorCheckerService.checkCode]: " + e);
+      log("Oops! [ErrorCheckerService.checkCode]: " + e);
       e.printStackTrace();
     }
     return false;
@@ -367,7 +370,7 @@ public class ErrorCheckerService implements Runnable{
 
     // Store errors returned by the ast parser
     problems = cu.getProblems();
-    // System.out.println("Problem Count: " + problems.length);
+    // log("Problem Count: " + problems.length);
     // Populate the probList
     problemsList = new ArrayList<Problem>();
     for (int i = 0; i < problems.length; i++) {
@@ -375,11 +378,11 @@ public class ErrorCheckerService implements Runnable{
       Problem p = new Problem(problems[i], a[0], a[1] + 1);
       //TODO: ^Why do cheeky stuff?
       problemsList.add(p);  
-      System.out.println(problems[i].getMessage());
+      log(problems[i].getMessage());
       for (String j : problems[i].getArguments()) {
-        System.out.println("arg " + j);
+        log("arg " + j);
       }
-      // System.out.println(p.toString());
+      // log(p.toString());
     }
     
     if (problems.length == 0)
@@ -426,7 +429,7 @@ public class ErrorCheckerService implements Runnable{
         };
 
         File[] jarFiles = f.listFiles(fileFilter);
-        // System.out.println( "Jar files found? " + (jarFiles != null));
+        // log( "Jar files found? " + (jarFiles != null));
         //for (File jarFile : jarFiles) {
           //classpathJars.add(jarFile.toURI().toURL());
         //}
@@ -440,12 +443,12 @@ public class ErrorCheckerService implements Runnable{
           classpath[ii++] = jarFiles[i].toURI().toURL();
         }
 
-        // System.out.println("CP Len -- " + classpath.length);
+        // log("CP Len -- " + classpath.length);
         classLoader = new URLClassLoader(classpath);
-        // System.out.println("1.");
+        // log("1.");
         checkerClass = Class.forName("CompilationChecker", true,
             classLoader);
-        // System.out.println("2.");
+        // log("2.");
         compilationChecker = checkerClass.newInstance();
         
         astGenerator.loadJars(); // Update jar files for completition list
@@ -488,9 +491,9 @@ public class ErrorCheckerService implements Runnable{
         // + problems[i].isWarning());
 
         IProblem problem = problems[i];
-        System.out.println(problem.getMessage());
+        log(problem.getMessage());
         for (String j : problem.getArguments()) {
-          System.out.println("arg " + j);
+          log("arg " + j);
         }
         int a[] = calculateTabIndexAndLineNumber(problem);
         Problem p = new Problem(problem, a[0], a[1]);
@@ -527,7 +530,7 @@ public class ErrorCheckerService implements Runnable{
               + " compileCheck() problem. Somebody tried to mess with Experimental Mode files.");
       stopThread();
     }
-    // System.out.println("Compilecheck, Done.");
+    // log("Compilecheck, Done.");
   }
   
   public URLClassLoader getSketchClassLoader() {
@@ -546,7 +549,7 @@ public class ErrorCheckerService implements Runnable{
       return;
     }
     
-    // System.out.println("1..");
+    // log("1..");
     classpathJars = new ArrayList<URL>();
     String entry = "";
     boolean codeFolderChecked = false;
@@ -556,9 +559,9 @@ public class ErrorCheckerService implements Runnable{
       entry = (dot == -1) ? item : item.substring(0, dot);
 
       entry = entry.substring(6).trim();
-      // System.out.println("Entry--" + entry);
+      // log("Entry--" + entry);
       if (ignorableImport(entry)) {
-        // System.out.println("Ignoring: " + entry);
+        // log("Ignoring: " + entry);
         continue;
       }
       Library library = null;
@@ -566,22 +569,22 @@ public class ErrorCheckerService implements Runnable{
       // Try to get the library classpath and add it to the list
       try {
         library = editor.getMode().getLibrary(entry);
-        // System.out.println("lib->" + library.getClassPath() + "<-");
+        // log("lib->" + library.getClassPath() + "<-");
         String libraryPath[] = PApplet.split(library.getClassPath()
             .substring(1).trim(), File.pathSeparatorChar);
         for (int i = 0; i < libraryPath.length; i++) {
-          // System.out.println(entry + " ::"
+          // log(entry + " ::"
           // + new File(libraryPath[i]).toURI().toURL());
           classpathJars.add(new File(libraryPath[i]).toURI().toURL());
         }
-        // System.out.println("-- ");
+        // log("-- ");
         // classpath[count] = (new File(library.getClassPath()
         // .substring(1))).toURI().toURL();
-        // System.out.println("  found ");
-        // System.out.println(library.getClassPath().substring(1));
+        // log("  found ");
+        // log(library.getClassPath().substring(1));
       } catch (Exception e) {
         if (library == null && !codeFolderChecked) {
-          // System.out.println(1);
+          // log(1);
           // Look around in the code folder for jar files
           if (editor.getSketch().hasCodeFolder()) {
             File codeFolder = editor.getSketch().getCodeFolder();
@@ -742,7 +745,7 @@ public class ErrorCheckerService implements Runnable{
       }
 
     } catch (Exception e) {
-      System.out.println("Exception at updateErrorTable() " + e);
+      log("Exception at updateErrorTable() " + e);
       e.printStackTrace();
       stopThread();
     }
@@ -755,7 +758,7 @@ public class ErrorCheckerService implements Runnable{
   public void updatePaintedThingys() {    
     currentTab = editor.getSketch().getCodeIndex(
         editor.getSketch().getCurrentCode());
-    //System.out.println("Tab changed " + currentTab + " LT " + lastTab);
+    //log("Tab changed " + currentTab + " LT " + lastTab);
     if (currentTab != lastTab) {
       textModified.set(5);
       lastTab = currentTab;
@@ -810,13 +813,13 @@ public class ErrorCheckerService implements Runnable{
 
     int x = line - mainClassOffset;
     if (x < 0) {
-      // System.out.println("Negative line number "
+      // log("Negative line number "
       // + problem.getSourceLineNumber() + " , offset "
       // + mainClassOffset);
       x = line - 2; // Another -1 for 0 index
       if (x < programImports.size() && x >= 0) {
         ImportStatement is = programImports.get(x);
-        // System.out.println(is.importName + ", " + is.tab + ", "
+        // log(is.importName + ", " + is.tab + ", "
         // + is.lineNumber);
         return new int[] { is.getTab(), is.getLineNumber() };
       } else {
@@ -839,7 +842,7 @@ public class ErrorCheckerService implements Runnable{
             len = Base.countLines(sc.getProgram()) + 1;
           }
 
-          // System.out.println("x,len, CI: " + x + "," + len + ","
+          // log("x,len, CI: " + x + "," + len + ","
           // + codeIndex);
 
           if (x >= len) {
@@ -848,7 +851,7 @@ public class ErrorCheckerService implements Runnable{
             // than the no.
             // of lines in the tab,
             if (codeIndex >= editor.getSketch().getCodeCount() - 1) {
-              // System.out.println("Exceeds lc " + x + "," + len
+              // log("Exceeds lc " + x + "," + len
               // + problem.toString());
               // x = len
               x = editor.getSketch().getCode(codeIndex)
@@ -896,13 +899,13 @@ public class ErrorCheckerService implements Runnable{
 
     int x = problem.getSourceLineNumber() - mainClassOffset;
     if (x < 0) {
-      // System.out.println("Negative line number "
+      // log("Negative line number "
       // + problem.getSourceLineNumber() + " , offset "
       // + mainClassOffset);
       x = problem.getSourceLineNumber() - 2; // Another -1 for 0 index
       if (x < programImports.size() && x >= 0) {
         ImportStatement is = programImports.get(x);
-        // System.out.println(is.importName + ", " + is.tab + ", "
+        // log(is.importName + ", " + is.tab + ", "
         // + is.lineNumber);
         return new int[] { is.getTab(), is.getLineNumber() };
       } else {
@@ -925,7 +928,7 @@ public class ErrorCheckerService implements Runnable{
             len = Base.countLines(sc.getProgram()) + 1;
           }
 
-          // System.out.println("x,len, CI: " + x + "," + len + ","
+          // log("x,len, CI: " + x + "," + len + ","
           // + codeIndex);
 
           if (x >= len) {
@@ -934,7 +937,7 @@ public class ErrorCheckerService implements Runnable{
             // than the no.
             // of lines in the tab,
             if (codeIndex >= editor.getSketch().getCodeCount() - 1) {
-              // System.out.println("Exceeds lc " + x + "," + len
+              // log("Exceeds lc " + x + "," + len
               // + problem.toString());
               // x = len
               x = editor.getSketch().getCode(codeIndex)
@@ -1015,7 +1018,7 @@ public class ErrorCheckerService implements Runnable{
       }
 
     } catch (Exception e) {
-      System.out.println("Exception in preprocessCode()");
+      log("Exception in preprocessCode()");
     }
     String sourceAlt = rawCode.toString();
     // Replace comments with whitespaces
@@ -1034,8 +1037,8 @@ public class ErrorCheckerService implements Runnable{
 
       // while (matcher.find()) {
       // System.out.print("Start index: " + matcher.start());
-      // System.out.println(" End index: " + matcher.end() + " ");
-      // System.out.println("-->" + matcher.group() + "<--");
+      // log(" End index: " + matcher.end() + " ");
+      // log("-->" + matcher.group() + "<--");
       // }
       sourceAlt = matcher.replaceAll("PApplet.parse"
         + Character.toUpperCase(dataType.charAt(0))
@@ -1049,10 +1052,10 @@ public class ErrorCheckerService implements Runnable{
     Pattern webPattern = Pattern.compile(webColorRegexp);
     Matcher webMatcher = webPattern.matcher(sourceAlt);
     while (webMatcher.find()) {
-      // System.out.println("Found at: " + webMatcher.start());
+      // log("Found at: " + webMatcher.start());
       String found = sourceAlt.substring(webMatcher.start(),
                                          webMatcher.end());
-      // System.out.println("-> " + found);
+      // log("-> " + found);
       sourceAlt = webMatcher.replaceFirst("0xff" + found.substring(1));
       webMatcher = webPattern.matcher(sourceAlt);
     }
@@ -1099,8 +1102,8 @@ public class ErrorCheckerService implements Runnable{
     // Handle unicode characters
     sourceAlt = substituteUnicode(sourceAlt);
 
-//     System.out.println("-->\n" + sourceAlt + "\n<--");
-//     System.out.println("PDE code processed - "
+//     log("-->\n" + sourceAlt + "\n<--");
+//     log("PDE code processed - "
 //     + editor.getSketch().getName());
     sourceCode = sourceAlt;
     return sourceAlt;  
@@ -1174,7 +1177,7 @@ public class ErrorCheckerService implements Runnable{
           + " : Error while selecting text in scrollToErrorLine()");
       e.printStackTrace();
     }
-    // System.out.println("---");
+    // log("---");
   }
   
   /**
@@ -1203,7 +1206,7 @@ public class ErrorCheckerService implements Runnable{
       edt.setSelection(lsno, lsno + length);
       edt.getTextArea().scrollTo(lineNoInTab - 1, 0);
       edt.repaint();
-      System.out.println(lineStartOffset + " LSO,len " + length);
+      log(lineStartOffset + " LSO,len " + length);
     } catch (Exception e) {
       System.err.println(e
           + " : Error while selecting text in static scrollToErrorLine()");
@@ -1218,25 +1221,25 @@ public class ErrorCheckerService implements Runnable{
    * compiler classpath needs to be updated.
    */
   private void checkForChangedImports() {
-    // System.out.println("Imports: " + programImports.size() +
+    // log("Imports: " + programImports.size() +
     // " Prev Imp: "
     // + previousImports.size());
     if (programImports.size() != previousImports.size()) {
-      // System.out.println(1);
+      // log(1);
       loadCompClass = true;
       previousImports = programImports;
     } else {
       for (int i = 0; i < programImports.size(); i++) {
         if (!programImports.get(i).getImportName().equals(previousImports
             .get(i).getImportName())) {
-          // System.out.println(2);
+          // log(2);
           loadCompClass = true;
           previousImports = programImports;
           break;
         }
       }
     }
-    // System.out.println("load..? " + loadCompClass);
+    // log("load..? " + loadCompClass);
   }
 
   private int pdeImportsCount;
@@ -1260,7 +1263,7 @@ public class ErrorCheckerService implements Runnable{
     pdeImportsCount = 0;
     String tabSource = new String(tabProgram);
     do {
-      // System.out.println("-->\n" + sourceAlt + "\n<--");
+      // log("-->\n" + sourceAlt + "\n<--");
       String[] pieces = PApplet.match(tabSource, importRegexp);
 
       // Stop the loop if we've removed all the import lines
@@ -1276,7 +1279,7 @@ public class ErrorCheckerService implements Runnable{
       // find index of this import in the program
       int idx = tabSource.indexOf(piece);
       // System.out.print("Import -> " + piece);
-      // System.out.println(" - "
+      // log(" - "
       // + Base.countLines(tabSource.substring(0, idx)) + " tab "
       // + tabNumber);
       programImports.add(new ImportStatement(piece, tabNumber, Base
@@ -1291,7 +1294,7 @@ public class ErrorCheckerService implements Runnable{
         + tabSource.substring(idx + len);
       pdeImportsCount++;
     } while (true);
-    // System.out.println(tabSource);
+    // log(tabSource);
     return tabSource;
   }
 
@@ -1368,6 +1371,16 @@ public class ErrorCheckerService implements Runnable{
     return editor;
   }
   
+//  public static void log(String message){
+//    if(ExperimentalMode.DEBUG)
+//      log(message);
+//  }
+//  
+//  public static void log2(String message){
+//    if(ExperimentalMode.DEBUG)
+//      System.out.print(message);
+//  }
+
   public ArrayList<ImportStatement> getProgramImports() {
     return programImports;
   }

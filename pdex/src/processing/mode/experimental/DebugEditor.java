@@ -147,6 +147,11 @@ public class DebugEditor extends JavaEditor implements ActionListener {
      */
     public JCheckBoxMenuItem problemWindowMenuCB;
     
+    /**
+     * Enable/Disable debug ouput
+     */
+    protected JCheckBoxMenuItem debugMessagesEnabled;
+    
     public DebugEditor(Base base, String path, EditorState state, Mode mode) {
         super(base, path, state, mode);
 
@@ -322,7 +327,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
             for (int i = 0; i < ip.getArguments().length; i++) {
               sbuff.append(ip.getArguments()[i]);
               if(i < ip.getArguments().length - 1)
-                sbuff.append('|');
+                sbuff.append("| ");
             }
             sbuff.append("}");
             sbuff.append(',');
@@ -497,6 +502,16 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         });
         debugMenu.add(showWarnings);
         
+        debugMessagesEnabled = new JCheckBoxMenuItem("Show Debug Messages");
+        debugMessagesEnabled.setSelected(ExperimentalMode.DEBUG);
+        debugMessagesEnabled.addActionListener(new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            ExperimentalMode.DEBUG = ((JCheckBoxMenuItem) e
+                .getSource()).isSelected();
+          }
+        });
+        debugMenu.add(debugMessagesEnabled);        
         
         return debugMenu;
     }
