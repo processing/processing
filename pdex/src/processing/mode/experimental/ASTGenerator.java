@@ -3017,7 +3017,7 @@ public class ASTGenerator {
     }
     return null;
   }
-  JFrame frmImportSuggest;
+  protected JFrame frmImportSuggest;
   public void suggestImports(final String className){
     if(frmImportSuggest != null)
       if(frmImportSuggest.isVisible())
@@ -3043,7 +3043,8 @@ public class ASTGenerator {
       final JList classList = new JList(resources);
       classList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
       frmImportSuggest = new JFrame();
-      frmImportSuggest.setBounds(300, 300, 400, 300);
+      frmImportSuggest.setSize(350, 200);
+      Toolkit.setIcon(frmImportSuggest);
       frmImportSuggest.setLayout(new BoxLayout(frmImportSuggest
           .getContentPane(), BoxLayout.Y_AXIS));
       ((JComponent) frmImportSuggest.getContentPane()).setBorder(BorderFactory
@@ -3078,6 +3079,11 @@ public class ASTGenerator {
       frmImportSuggest.add(jsp);
       frmImportSuggest.add(btnInsertImport);
       frmImportSuggest.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+      frmImportSuggest.setLocation(editor.getX()
+                            + (editor.getWidth() - frmImportSuggest.getWidth()) / 2,
+                        editor.getY()
+                            + (editor.getHeight() - frmImportSuggest.getHeight())
+                            / 2);
       frmImportSuggest.setVisible(true);
     }
 
