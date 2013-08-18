@@ -710,8 +710,8 @@ public class ErrorCheckerService implements Runnable{
     try {
       String[][] errorData = new String[problemsList.size()][3];
       for (int i = 0; i < problemsList.size(); i++) {
-        errorData[i][0] = problemsList.get(i).message ////TODO: this is temporary
-            + " : " + errorMsgSimplifier.getIDName(problemsList.get(i).getIProblem().getID());
+        errorData[i][0] = problemsList.get(i).message; ////TODO: this is temporary
+            //+ " : " + errorMsgSimplifier.getIDName(problemsList.get(i).getIProblem().getID());
         errorData[i][1] = editor.getSketch()
             .getCode(problemsList.get(i).tabIndex).getPrettyName();
         errorData[i][2] = problemsList.get(i).lineNumber + "";
@@ -783,13 +783,13 @@ public class ErrorCheckerService implements Runnable{
       if (emarker.problem.lineNumber == editor.getTextArea()
           .getCaretLine() + 1) {
         if (emarker.type == ErrorMarker.Warning) {
-          editor.statusNotice(emarker.problem.message 
-                              +  " : " + errorMsgSimplifier.getIDName(emarker.problem.getIProblem().getID()));
+          editor.statusNotice(emarker.problem.message); 
+                              //+  " : " + errorMsgSimplifier.getIDName(emarker.problem.getIProblem().getID()));
         //TODO: this is temporary
         }
         else {
-          editor.statusError(emarker.problem.message
-                             +  " : " + errorMsgSimplifier.getIDName(emarker.problem.getIProblem().getID()));
+          editor.statusError(emarker.problem.message);
+                             //+  " : " + errorMsgSimplifier.getIDName(emarker.problem.getIProblem().getID()));
         }
         return;
       }
