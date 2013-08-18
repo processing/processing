@@ -15,11 +15,11 @@ The big stuff:
  - Making very good progress here. The elegance of recurion - Hats off!
  - Many of the cases seem to have been covered, and I'm achieving more and more code unification as I'm working through the problem step by step
  - Looks almost complete now, nearly all cases covered(July 13th)
-* Ensure that a compilation unit is created at startup!
 * Scope handling? Static/non static scope?
 * Disable completions on comment line
 * Trie implementation would be lower priority, "premature optimisation is pure evil". Get all features of CC working good enough and then plan this.
 
+x Ensure that a compilation unit is created at startup!
 x! Code competition for local code is working with recursive look up. 
 x Completion doesn't seem to show up for fields of a type defined locally. But works for methods with return type defined locally. Take ideas. Some case missing most probably. Fixed
 x Discovered another major issue due to offset differences -> While looking for predictions, if the parsed string contains pde enhancements, predictions FAIL! Zomg.
@@ -131,5 +131,6 @@ General Stuff
 
 x Add option for toggling debug output
 x On Run/Debug Console is visible(ProblemsList hidden)
+* Update wiki for Ctrl + H instead of Ctrl + J shortcuts
 * update build.xml to produce dists
 * Make this a contributed mode - mode.txt, github releases feature, version numbering, git tags, etc
