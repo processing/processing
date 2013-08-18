@@ -10,7 +10,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
@@ -111,66 +110,63 @@ public class SketchOutline {
 
   }
 
-  protected AtomicBoolean internalSelection = new AtomicBoolean();
+  protected boolean internalSelection = false;
 
   protected void addListeners() {
 
     searchField.addKeyListener(new KeyAdapter() {
       public void keyPressed(KeyEvent evt) {
-        internalSelection.set(true);
+        if (soTree.getRowCount() == 0)
+          return;
+
+        internalSelection = true;
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
           if (soTree.getLastSelectedPathComponent() != null) {
             DefaultMutableTreeNode tnode = (DefaultMutableTreeNode) soTree
                 .getLastSelectedPathComponent();
-            if (tnode.getUserObject() != null) {
-              if (tnode.getUserObject() instanceof ASTNodeWrapper) {
-                ASTNodeWrapper awrap = (ASTNodeWrapper) tnode.getUserObject();
-                errorCheckerService.highlightNode(awrap);
-              }
+            if (tnode.getUserObject() instanceof ASTNodeWrapper) {
+              ASTNodeWrapper awrap = (ASTNodeWrapper) tnode.getUserObject();
+              errorCheckerService.highlightNode(awrap);
             }
+
           }
           return;
-        } else if (evt.getKeyCode() == KeyEvent.VK_UP) {
+        } 
+        else if (evt.getKeyCode() == KeyEvent.VK_UP) {
           if (soTree.getLastSelectedPathComponent() == null) {
-            internalSelection.set(true);
             soTree.setSelectionRow(0);
+            return;
           }
+          
           int x = soTree.getLeadSelectionRow() - 1;
-          internalSelection.set(true);
-
           int step = jsp.getVerticalScrollBar().getMaximum()
               / soTree.getRowCount();
-          log("ss " + step);
           if (x == -1) {
-            x = tempNode.getChildCount() - 1;
-            soTree.setSelectionRow(x);
-            jsp.getVerticalScrollBar().setValue(step*soTree.getRowCount());
+            x = soTree.getRowCount() - 1;
+            jsp.getVerticalScrollBar().setValue(jsp.getVerticalScrollBar().getMaximum());
           } else {
-            soTree.setSelectionRow(x);
             jsp.getVerticalScrollBar().setValue((jsp.getVerticalScrollBar()
                                                     .getValue() - step));
-            //jsp.getVerticalScrollBar().setValue(jsp.getVerticalScrollBar().getValue() - jsp.getVerticalScrollBar().getBlockIncrement());
           }
+          soTree.setSelectionRow(x);
           return;
-        } else if (evt.getKeyCode() == KeyEvent.VK_DOWN) {
+        } 
+        else if (evt.getKeyCode() == KeyEvent.VK_DOWN) {
           if (soTree.getLastSelectedPathComponent() == null) {
-            internalSelection.set(true);
             soTree.setSelectionRow(0);
+            return;
           }
           int x = soTree.getLeadSelectionRow() + 1;
-          internalSelection.set(true);
 
           int step = jsp.getVerticalScrollBar().getMaximum()
               / soTree.getRowCount();
-          log("ss" + step);
-          if (x == tempNode.getChildCount()) {
+          if (x == soTree.getRowCount()) {
             x = 0;
-            jsp.getVerticalScrollBar().setValue(0);
+            jsp.getVerticalScrollBar().setValue(jsp.getVerticalScrollBar().getMinimum());
           } else {
             jsp.getVerticalScrollBar().setValue((jsp.getVerticalScrollBar()
                                                     .getValue() + step));
           }
-//          jsp.getVerticalScrollBar().setValue(jsp.getVerticalScrollBar().getValue() + jsp.getVerticalScrollBar().getBlockIncrement());
           soTree.setSelectionRow(x);
           return;
         }
@@ -189,12 +185,11 @@ public class SketchOutline {
             for (int i = 0; i < soTree.getRowCount(); i++) {
               soTree.expandRow(i);
             }
-            internalSelection.set(true);
+            internalSelection = true;
             soTree.setSelectionRow(0);
           }
         };
         worker.execute();
-
       }
     });
 
@@ -212,8 +207,8 @@ public class SketchOutline {
 
       public void valueChanged(TreeSelectionEvent e) {
 
-        if (internalSelection.get()) {
-          internalSelection.set(false);
+        if (internalSelection) {
+          internalSelection = (false);
           return;
         }
         log(e);
