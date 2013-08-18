@@ -105,6 +105,7 @@ Sketch Outline
 
 x Show Sketch Outline Tree
 x Filter stuff in text field
+x Add icons - custom cell renderer
 
 Suggestion for missing imports
 ==============================
