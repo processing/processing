@@ -21,6 +21,8 @@ import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingWorker;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -177,27 +179,43 @@ public class SketchOutline {
           }
           soTree.setSelectionRow(x);
         }
-        else {
-          SwingWorker worker = new SwingWorker() {
-            protected Object doInBackground() throws Exception {
-              return null;
-            }
+      }
+    });
+    
+    searchField.getDocument().addDocumentListener(new DocumentListener() {
 
-            protected void done() {
-              String text = searchField.getText().toLowerCase();
-              tempNode = new DefaultMutableTreeNode();
-              filterTree(text, tempNode, soNode);
-              soTree.setModel(new DefaultTreeModel(tempNode));
-              ((DefaultTreeModel) soTree.getModel()).reload();
-              for (int i = 0; i < soTree.getRowCount(); i++) {
-                soTree.expandRow(i);
-              }
-              internalSelection = true;
-              soTree.setSelectionRow(0);
+      public void insertUpdate(DocumentEvent e) {
+        updateSelection();
+      }
+
+      public void removeUpdate(DocumentEvent e) {
+        updateSelection();
+      }
+
+      public void changedUpdate(DocumentEvent e) {
+        updateSelection();
+      }
+      
+      private void updateSelection(){
+        SwingWorker worker = new SwingWorker() {
+          protected Object doInBackground() throws Exception {
+            return null;
+          }
+
+          protected void done() {
+            String text = searchField.getText().toLowerCase();
+            tempNode = new DefaultMutableTreeNode();
+            filterTree(text, tempNode, soNode);
+            soTree.setModel(new DefaultTreeModel(tempNode));
+            ((DefaultTreeModel) soTree.getModel()).reload();
+            for (int i = 0; i < soTree.getRowCount(); i++) {
+              soTree.expandRow(i);
             }
-          };
-          worker.execute();
-        }
+            internalSelection = true;
+            soTree.setSelectionRow(0);
+          }
+        };
+        worker.execute();
       }
     });
 

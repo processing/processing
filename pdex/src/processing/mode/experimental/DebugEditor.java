@@ -161,6 +161,11 @@ public class DebugEditor extends JavaEditor implements ActionListener {
      */
     protected JMenuItem showOutline;
     
+    /**
+     * Enable/Disable error logging
+     */
+    protected JCheckBoxMenuItem writeErrorLog;
+    
     public DebugEditor(Base base, String path, EditorState state, Mode mode) {
         super(base, path, state, mode);
 
@@ -313,9 +318,11 @@ public class DebugEditor extends JavaEditor implements ActionListener {
     
     // Added temporarily to dump error log. TODO: Remove this later
     public void internalCloseRunner(){      
-      writeErrorsToFile();
+      if(enableErrorLogging) writeErrorsToFile();
       super.internalCloseRunner();
     }
+    
+    protected boolean enableErrorLogging = false;
     
     private void writeErrorsToFile(){
     if (errorCheckerService.tempErrorLog.size() == 0)
@@ -527,6 +534,17 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         showOutline = Toolkit.newJMenuItem("Show Outline", KeyEvent.VK_L);
         showOutline.addActionListener(this);
         debugMenu.add(showOutline);
+        
+        writeErrorLog = new JCheckBoxMenuItem("Write Errors to Log");
+        writeErrorLog.setSelected(enableErrorLogging);
+        writeErrorLog.addActionListener(new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+           enableErrorLogging = !enableErrorLogging;
+          }
+        });
+        debugMenu.add(writeErrorLog);
+        
         
         return debugMenu;
     }

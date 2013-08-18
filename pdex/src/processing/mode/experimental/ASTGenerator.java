@@ -982,7 +982,8 @@ public class ASTGenerator {
   }
   
   private void showPredictions(final String word) {
-    if(sketchOutline.isVisible()) return;
+    if (sketchOutline != null)
+      if (sketchOutline.isVisible()) return;
     Collections.sort(candidates);
     CompletionCandidate[][] candi = new CompletionCandidate[candidates.size()][1];
     DefaultListModel defListModel = new DefaultListModel();
