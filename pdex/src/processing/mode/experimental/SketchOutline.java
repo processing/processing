@@ -203,8 +203,7 @@ public class SketchOutline {
 
     frmOutlineView.addWindowFocusListener(new WindowFocusListener() {
       public void windowLostFocus(WindowEvent e) {
-        frmOutlineView.setVisible(false);
-        frmOutlineView.dispose();
+        close();
       }
 
       public void windowGainedFocus(WindowEvent e) {
@@ -219,7 +218,7 @@ public class SketchOutline {
           internalSelection = (false);
           return;
         }
-        log(e);
+        // log(e);
         SwingWorker worker = new SwingWorker() {
 
           protected Object doInBackground() throws Exception {
@@ -329,21 +328,17 @@ public class SketchOutline {
   
   protected class CustomCellRenderer extends DefaultTreeCellRenderer {
 
-    // ImageIcon icons[];
     protected final ImageIcon classIcon, fieldIcon, methodIcon;
 
     public CustomCellRenderer() {
       String iconPath = "data" + File.separator + "icons";
-      if (editor != null) {
-        iconPath = (Base.getSketchbookFolder().getAbsolutePath())
+      iconPath = (Base.getSketchbookFolder().getAbsolutePath())
+      + File.separator + "modes" + File.separator
+          + editor.getMode().getClass().getSimpleName() + File.separator
+          + "data" + File.separator + "icons";
+      ;
 
-        + File.separator + "modes" + File.separator + editor.getMode().getClass().getSimpleName()
-            + File.separator + "data" + File.separator + "icons";
-        ;
-      }
-
-      classIcon = new ImageIcon(iconPath + File.separator
-          + "class_obj.png");
+      classIcon = new ImageIcon(iconPath + File.separator + "class_obj.png");
       methodIcon = new ImageIcon(iconPath + File.separator
           + "methpub_obj.png");
       fieldIcon = new ImageIcon(iconPath + File.separator
@@ -363,11 +358,8 @@ public class SketchOutline {
     }
 
     public javax.swing.Icon getTreeIcon(Object o) {
-      if (o instanceof DefaultMutableTreeNode) {
+      if (((DefaultMutableTreeNode) o).getUserObject() instanceof ASTNodeWrapper) {
 
-        if(((DefaultMutableTreeNode) o)
-            .getUserObject() instanceof ASTNodeWrapper){
-        
         ASTNodeWrapper awrap = (ASTNodeWrapper) ((DefaultMutableTreeNode) o)
             .getUserObject();
         int type = awrap.getNode().getParent().getNodeType();
@@ -377,7 +369,6 @@ public class SketchOutline {
           return classIcon;
         if (type == ASTNode.VARIABLE_DECLARATION_FRAGMENT)
           return fieldIcon;
-        }
       }
       return null;
     }
