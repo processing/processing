@@ -424,8 +424,7 @@ public class ErrorCheckerService implements Runnable{
         // .println("Experimental Mode: Loading contributed libraries referenced by import statements.");
         
         // The folder SketchBook/modes/ExperimentalMode/mode
-        File f = new File(Base.getSketchbookModesFolder().getAbsolutePath() + File.separator + "ExperimentalMode"
-            + File.separator + "mode");
+        File f = editor.getMode().getContentFile("mode");
         
         if(!f.exists()) {
         	System.err.println("Could not locate the files required for on-the-fly error checking. Bummer.");

@@ -349,13 +349,9 @@ public class SketchOutline {
     protected final ImageIcon classIcon, fieldIcon, methodIcon;
 
     public CustomCellRenderer() {
-      String iconPath = "data" + File.separator + "icons";
-      iconPath = (Base.getSketchbookFolder().getAbsolutePath())
-      + File.separator + "modes" + File.separator
-          + editor.getMode().getClass().getSimpleName() + File.separator
-          + "data" + File.separator + "icons";
-      ;
-
+      String iconPath = editor.getMode().getContentFile("data")
+          .getAbsolutePath()
+          + File.separator + "icons";
       classIcon = new ImageIcon(iconPath + File.separator + "class_obj.png");
       methodIcon = new ImageIcon(iconPath + File.separator
           + "methpub_obj.png");
