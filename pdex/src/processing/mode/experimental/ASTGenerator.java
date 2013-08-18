@@ -250,6 +250,10 @@ public class ASTGenerator {
     getCodeComments();
     codeTree = new DefaultMutableTreeNode(new ASTNodeWrapper((ASTNode) compilationUnit
                                               .types().get(0)));
+    log("Total CU " + compilationUnit.types().size());
+    if(compilationUnit.types() == null || compilationUnit.types().isEmpty()){
+      logE("No CU found!");
+    }
     visitRecur((ASTNode) compilationUnit.types().get(0), codeTree);
     SwingWorker worker = new SwingWorker() {
 
@@ -352,6 +356,7 @@ public class ASTGenerator {
 //          }
 
           classPath = factory.createFromPath(tehPath.toString());
+          log("Classpath created " + (classPath != null));
 //          for (String packageName : classPath.listPackages("")) {
 //            log(packageName);
 //          }
@@ -916,30 +921,32 @@ public class ASTGenerator {
           // We're seeing a simple name that's not defined locally or in
           // the parent class. So most probably a pre-defined type.
           log("Empty can. " + word2);
-          RegExpResourceFilter regExpResourceFilter;
-          regExpResourceFilter = new RegExpResourceFilter(
-                                                          Pattern.compile(".*"),
-                                                          Pattern
-                                                              .compile(word2
-                                                                           + "[a-zA-Z_0-9]*.class",
-                                                                       Pattern.CASE_INSENSITIVE));
-          String[] resources = classPath
-              .findResources("", regExpResourceFilter);
-          for (String matchedClass2 : resources) {
-            matchedClass2 = matchedClass2.replace('/', '.');
-            String matchedClass = matchedClass2.substring(0, matchedClass2
-                .length() - 6);
-            if(ignorableImport(matchedClass2))
-              continue;
-            int d = matchedClass.lastIndexOf('.');
-            matchedClass = matchedClass.substring(d + 1);
-            candidates
-                .add(new CompletionCandidate(matchedClass, matchedClass + " : "
-                    + matchedClass2.substring(0, d), matchedClass,
-                                             CompletionCandidate.PREDEF_CLASS));
-            //log("-> " + className);
+          if (classPath != null) {
+            RegExpResourceFilter regExpResourceFilter;
+            regExpResourceFilter = new RegExpResourceFilter(
+                                                            Pattern
+                                                                .compile(".*"),
+                                                            Pattern
+                                                                .compile(word2
+                                                                             + "[a-zA-Z_0-9]*.class",
+                                                                         Pattern.CASE_INSENSITIVE));
+            String[] resources = classPath.findResources("",
+                                                         regExpResourceFilter);
+            for (String matchedClass2 : resources) {
+              matchedClass2 = matchedClass2.replace('/', '.');
+              String matchedClass = matchedClass2.substring(0, matchedClass2
+                  .length() - 6);
+              if (ignorableImport(matchedClass2))
+                continue;
+              int d = matchedClass.lastIndexOf('.');
+              matchedClass = matchedClass.substring(d + 1);
+              candidates
+                  .add(new CompletionCandidate(matchedClass, matchedClass
+                      + " : " + matchedClass2.substring(0, d), matchedClass,
+                                               CompletionCandidate.PREDEF_CLASS));
+              //log("-> " + className);
+            }
           }
-
         } else {
 
           // ==> Complex expression of type blah.blah2().doIt,etc
@@ -1366,7 +1373,6 @@ public class ASTGenerator {
     return node;
   }
 
-  @SuppressWarnings("unchecked")
   private static ASTNode findClosestNode(int lineNumber, ASTNode node) {
     ASTNode parent = findClosestParentNode(lineNumber, node);
     if (parent == null)
@@ -1387,14 +1393,15 @@ public class ASTGenerator {
     }
 
     if (nodes.size() > 0) {
-      ASTNode retNode = nodes.get(0);
-      for (ASTNode cNode : nodes) {
-        if (getLineNumber(cNode) <= lineNumber
+      ASTNode retNode = parent;
+      for (int i = nodes.size() - 1; i >= 0; i--) {
+        ASTNode cNode = nodes.get(i);
+        if (getLineNumber(cNode) == lineNumber)
+          return cNode;
+        else if (getLineNumber(cNode) <= lineNumber
             && lineNumber <= getLineNumber(cNode, cNode.getStartPosition()
                 + cNode.getLength()))          
           retNode = cNode;
-        else
-          break;
       }
 
       return retNode;

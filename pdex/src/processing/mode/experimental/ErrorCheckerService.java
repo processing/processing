@@ -306,10 +306,11 @@ public class ErrorCheckerService implements Runnable{
       log(editor.getSketch().getName() + "1 MCO "
           + mainClassOffset);
       // No syntax errors, proceed for compilation check, Stage 2.
-
+      
+      astGenerator.buildAST(cu);
       if (problems.length == 0 && editor.compilationCheckEnabled) {
         //mainClassOffset++; // just a hack.
-        astGenerator.buildAST(cu);
+        
         sourceCode = xqpreproc.doYourThing(sourceCode, programImports);
         prepareCompilerClasspath();
 //        mainClassOffset = xqpreproc.mainClassOffset; // tiny, but
@@ -392,6 +393,7 @@ public class ErrorCheckerService implements Runnable{
       syntaxErrors.set(false);
     else
       syntaxErrors.set(true);
+    astGenerator.loadJars();
   }
   protected URLClassLoader classLoader;
   private void compileCheck() {

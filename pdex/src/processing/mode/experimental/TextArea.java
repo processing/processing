@@ -294,6 +294,7 @@ public class TextArea extends JEditTextArea {
       word = word.trim();
       if (word.endsWith("."))
         word = word.substring(0, word.length() - 1);
+      if(word.length() > 1)
       errorCheckerService.astGenerator.preparePredictions(word, line
           + errorCheckerService.mainClassOffset,0);
       return word;
@@ -371,6 +372,7 @@ public class TextArea extends JEditTextArea {
 //    if (word.endsWith("."))
 //      word = word.substring(0, word.length() - 1);
     int lineStartNonWSOffset = 0;
+    if(word.length() > 1)
     errorCheckerService.astGenerator.preparePredictions(word, line
         + errorCheckerService.mainClassOffset,lineStartNonWSOffset);
     //showSuggestionLater();
