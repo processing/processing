@@ -771,7 +771,7 @@ public class ErrorCheckerService implements Runnable{
     }
 
   }
-  
+  protected int lastCaretLine = -1;
   /**
    * Updates editor status bar, depending on whether the caret is on an error
    * line or not
@@ -779,8 +779,6 @@ public class ErrorCheckerService implements Runnable{
   public void updateEditorStatus() {
     // editor.statusNotice("Position: " +
     // editor.getTextArea().getCaretLine());
-    boolean notFound = true;
-    //if(notFound) return;
     for (ErrorMarker emarker : editor.errorBar.errorPoints) {
       if (emarker.problem.lineNumber == editor.getTextArea()
           .getCaretLine() + 1) {
@@ -796,8 +794,9 @@ public class ErrorCheckerService implements Runnable{
         return;
       }
     }
-    if (notFound) {
-      //editor.statusEmpty();
+    if (editor.ta.getCaretLine() != lastCaretLine) {
+      editor.statusEmpty();
+      lastCaretLine = editor.ta.getCaretLine();
     }
   }
   
