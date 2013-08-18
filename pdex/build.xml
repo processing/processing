@@ -2,67 +2,97 @@
 <project name="Processing PDE" default="build">
 
 	<property file="build.properties" />
-	
-  <target name="clean" description="Clean the build directories">
-    <delete dir="bin" />
-    <delete file="mode/experimental.jar" />
-  </target>
 
-  <target name="compile" description="Compile sources">
-    <condition property="core-built">
-      <available file="${core.library.location}/core.jar" />
-    </condition>
-    <fail unless="core-built" 
-	  message="Please build the core library first and make sure it sits in ../core/library/core.jar" />
+	<target name="clean" description="Clean the build directories">
+		<delete dir="bin" />
+		<delete file="mode/${lib.name}.jar" />
+	</target>
 
-    <mkdir dir="bin" />
+	<target name="compile" description="Compile sources">
+		<condition property="core-built">
+			<available file="${core.library.location}/core.jar" />
+		</condition>
+		<fail unless="core-built" message="Please build the core library first and make sure it sits in ../core/library/core.jar" />
 
-    <!-- ant seems to nuke ${java.home} for some reason, pointing at the JRE
+		<mkdir dir="bin" />
+
+		<!-- ant seems to nuke ${java.home} for some reason, pointing at the JRE
 	 subfolder instead of the actual JDK found at JAVA_HOME. 
 	 To avoid this, we grab the actual JAVA_HOME environment variable 
 	 and use that to specify the location of tools.jar. -->
-    <!-- if someone is better with ant please help clean this up -->
-    <property environment="env" />
-    <property name="java_home" value="${env.JAVA_HOME}" />
-    <available file="${env.JAVA_HOME}/lib/tools.jar"
-	       property="java_tools_found" />
+		<!-- if someone is better with ant please help clean this up -->
+		<property environment="env" />
+		<property name="java_home" value="${env.JAVA_HOME}" />
+		<available file="${env.JAVA_HOME}/lib/tools.jar" property="java_tools_found" />
 
-    <condition property="linux">
-      <and>
-	<os family="unix" />
-	<not>
-	  <os family="mac" />
-	</not>
-      </and>
-    </condition>
-    <fail if="linux" unless="java_tools_found" 
-	  message="The JAVA_HOME variable must be set to the location of a full JDK. For instance, on Ubuntu Linux, this might be /usr/lib/jvm/java-6-sun." />
+		<condition property="linux">
+			<and>
+				<os family="unix" />
+				<not>
+					<os family="mac" />
+				</not>
+			</and>
+		</condition>
+		<fail if="linux" unless="java_tools_found" message="The JAVA_HOME variable must be set to the location of a full JDK. For instance, on Ubuntu Linux, this might be /usr/lib/jvm/java-6-sun." />
 
-    <condition property="windows">
-      <os family="windows" />
-    </condition>
-    <fail if="windows" unless="java_tools_found" 
-	  message="The JAVA_HOME variable must be set to the location of a full JDK. For instance, on Windows, this might be c:\jdk1.6.0_19." />
+		<condition property="windows">
+			<os family="windows" />
+		</condition>
+		<fail if="windows" unless="java_tools_found" message="The JAVA_HOME variable must be set to the location of a full JDK. For instance, on Windows, this might be c:\jdk1.6.0_19." />
 
-    <javac source="1.6" 
-	   target="1.6" 
-	   destdir="bin" 
-	   encoding="UTF-8" 
-	   includeAntRuntime="false" 
-	   classpath="${core.library.location}/core.jar; ${env.JAVA_HOME}/lib/tools.jar; ${app.library.location}/lib/ant.jar; ${app.library.location}/lib/ant-launcher.jar; ${app.library.location}/lib/antlr.jar; ${app.library.location}/lib/apple.jar; ${app.library.location}/lib/jdt-core.jar; ${app.library.location}/lib/jna.jar; ${app.library.location}/lib/org-netbeans-swing-outline.jar; ${app.library.location}/pde.jar; mode/CompilationChecker.jar; mode/com.ibm.icu_4.4.2.v20110823.jar; mode/jdi.jar; mode/jdimodel.jar; mode/org.eclipse.core.contenttype_3.4.200.v20120523-2004.jar; mode/org.eclipse.core.jobs_3.5.300.v20120622-204750.jar; mode/org.eclipse.core.resources_3.8.1.v20120802-154922.jar; mode/org.eclipse.core.runtime_3.8.0.v20120521-2346.jar; mode/org.eclipse.equinox.common_3.6.100.v20120522-1841.jar; mode/org.eclipse.equinox.preferences_3.5.0.v20120522-1841.jar; mode/org.eclipse.jdt.core_3.8.2.v20120814-155456.jar; mode/org.eclipse.jdt.debug_3.7.101.v20120725-115645.jar; mode/org.eclipse.osgi_3.8.1.v20120830-144521.jar; mode/org.eclipse.text_3.5.200.v20120523-1310.jar;mode/classpath-explorer-1.0.jar; mode/jsoup-1.7.1.jar;"
-
-	   debug="off">
-      <src path="src" />
-    </javac>
-  </target>
+		<javac source="1.6" target="1.6" destdir="bin" encoding="UTF-8" includeAntRuntime="false" classpath="${core.library.location}/core.jar; ${env.JAVA_HOME}/lib/tools.jar; ${app.library.location}/lib/ant.jar; ${app.library.location}/lib/ant-launcher.jar; ${app.library.location}/lib/antlr.jar; ${app.library.location}/lib/apple.jar; ${app.library.location}/lib/jdt-core.jar; ${app.library.location}/lib/jna.jar; ${app.library.location}/lib/org-netbeans-swing-outline.jar; ${app.library.location}/pde.jar; mode/CompilationChecker.jar; mode/com.ibm.icu_4.4.2.v20110823.jar; mode/jdi.jar; mode/jdimodel.jar; mode/org.eclipse.core.contenttype_3.4.200.v20120523-2004.jar; mode/org.eclipse.core.jobs_3.5.300.v20120622-204750.jar; mode/org.eclipse.core.resources_3.8.1.v20120802-154922.jar; mode/org.eclipse.core.runtime_3.8.0.v20120521-2346.jar; mode/org.eclipse.equinox.common_3.6.100.v20120522-1841.jar; mode/org.eclipse.equinox.preferences_3.5.0.v20120522-1841.jar; mode/org.eclipse.jdt.core_3.8.2.v20120814-155456.jar; mode/org.eclipse.jdt.debug_3.7.101.v20120725-115645.jar; mode/org.eclipse.osgi_3.8.1.v20120830-144521.jar; mode/org.eclipse.text_3.5.200.v20120523-1310.jar;mode/classpath-explorer-1.0.jar; mode/jsoup-1.7.1.jar;" debug="off">
+			<src path="src" />
+		</javac>
+	</target>
 	<!-- classpath="${core.library.location}/core.jar; ${env.JAVA_HOME}/lib/tools.jar; ../app/lib/ant.jar; ../app/lib/ant-launcher.jar; ../app/lib/antlr.jar; ../app/lib/apple.jar; ../app/lib/jdt-core.jar; ../app/lib/jna.jar; ../app/lib/org-netbeans-swing-outline.jar; ../app/pde.jar; mode/CompilationChecker.jar; mode/com.ibm.icu_4.4.2.v20110823.jar; mode/jdi.jar; mode/jdimodel.jar; mode/org.eclipse.core.contenttype_3.4.200.v20120523-2004.jar; mode/org.eclipse.core.jobs_3.5.300.v20120622-204750.jar; mode/org.eclipse.core.resources_3.8.1.v20120802-154922.jar; mode/org.eclipse.core.runtime_3.8.0.v20120521-2346.jar; mode/org.eclipse.equinox.common_3.6.100.v20120522-1841.jar; mode/org.eclipse.equinox.preferences_3.5.0.v20120522-1841.jar; mode/org.eclipse.jdt.core_3.8.2.v20120814-155456.jar; mode/org.eclipse.jdt.debug_3.7.101.v20120725-115645.jar; mode/org.eclipse.osgi_3.8.1.v20120830-144521.jar; mode/org.eclipse.text_3.5.200.v20120523-1310.jar;mode/classpath-explorer-1.0.jar; mode/jsoup-1.7.1.jar;"-->
-  <target name="build" depends="compile" description="Build Experimental mode">
-    <jar basedir="bin" destfile="mode/ExperimentalMode.jar" />
-  </target>
-	
-  <target name="install" depends="build">  	
-	<copy todir="${sketchbook.location}/modes/ExperimentalMode/mode">
-	<fileset file="mode/ExperimentalMode.jar" />
-	</copy>
-  </target>
+	<target name="build" depends="compile" description="Build Experimental mode">
+		<jar basedir="bin" destfile="mode/${lib.name}.jar" />
+	</target>
+
+	<target name="install" depends="build" description="Quick install to sketchbook">
+		<copy todir="${sketchbook.location}/modes/${lib.name}/mode">
+			<fileset file="mode/${lib.name}.jar" />
+		</copy>
+	</target>
+
+	<target name="package" depends="build" description="Package Experimental mode">
+		<delete dir="${dist}" />
+		<property name="bundle" value="${dist}/${lib.name}" />
+		<mkdir dir="${bundle}" />
+
+		<mkdir dir="${bundle}/mode" />
+		<copy todir="${bundle}/mode">
+			<fileset dir="mode" />
+		</copy>
+
+		<mkdir dir="${bundle}/src" />
+		<copy todir="${bundle}/src">
+			<fileset dir="src" />
+		</copy>
+
+		<mkdir dir="${bundle}/data" />
+		<copy todir="${bundle}/data">
+			<fileset dir="data" />
+		</copy>
+
+		<mkdir dir="${bundle}/application" />
+		<copy todir="${bundle}/application">
+			<fileset dir="application" />
+		</copy>
+
+		<mkdir dir="${bundle}/theme" />
+		<copy todir="${bundle}/theme">
+			<fileset dir="theme" />
+		</copy>
+
+	</target>
+
+	<target name="full_install" depends="package" description="Full install to sketchbook">
+		<delete dir="${sketchbook.location}/modes/${lib.name}" />
+		<copy todir="${sketchbook.location}/modes/">
+			<fileset dir="dist" />
+		</copy>
+	</target>
+
+
 </project>
