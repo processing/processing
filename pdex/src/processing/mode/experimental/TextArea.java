@@ -169,27 +169,6 @@ public class TextArea extends JEditTextArea {
             return;
           }
         break;
-//      case KeyEvent.VK_ENTER:
-//        if (suggestion != null) {
-//          if (suggestion.isVisible()) {
-//            if (suggestion.insertSelection()) {
-//              hideSuggestion(); // Kill it!
-//              //final int position = getCaretPosition();
-//              SwingUtilities.invokeLater(new Runnable() {
-//                @Override
-//                public void run() {
-//                  try {
-//                    //getDocument().remove(position - 1, 1);
-//                  } catch (Exception e) {
-//                    e.printStackTrace();
-//                  }
-//                }
-//              });
-//              return;
-//            }
-//          }
-//        }
-//        break;
       case KeyEvent.VK_BACK_SPACE:
         log("BK Key");
         break;
@@ -199,45 +178,6 @@ public class TextArea extends JEditTextArea {
     }
       super.processKeyEvent(evt);
       
-      /*
-      if (evt.getKeyCode() == KeyEvent.VK_DOWN && suggestion != null) {
-        if (suggestion.isVisible()) {
-          //log("KeyDown");
-          suggestion.moveDown();
-          return;
-        }
-      } else if (evt.getKeyCode() == KeyEvent.VK_UP && suggestion != null) {
-        if (suggestion.isVisible()) {
-          //log("KeyUp");
-          suggestion.moveUp();
-          return;
-        }
-      }
-      if (evt.getKeyChar() == KeyEvent.VK_ENTER) {
-        if (suggestion != null) {
-          if (suggestion.isVisible()){
-            if (suggestion.insertSelection()) {
-              final int position = getCaretPosition();
-              SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                  try {
-                    //getDocument().remove(position - 1, 1);
-                  } catch (Exception e) {
-                    e.printStackTrace();
-                  }
-                }
-              });
-              return;
-            }
-          }
-        }
-      } else if (evt.getKeyChar() == KeyEvent.VK_BACK_SPACE) {
-        log("BK Key");
-      }
-      
-    }*/
-
     if (evt.getID() == KeyEvent.KEY_TYPED) {
       errorCheckerService.runManualErrorCheck();
       log(" Typing: " + fetchPhrase(evt) + " "
@@ -321,7 +261,7 @@ public class TextArea extends JEditTextArea {
       else if (keyChar == KeyEvent.VK_ESCAPE) {
         //log("ESC keypress.  fetchPhrase()");
         return null;
-      } else if (keyChar == KeyEvent.CHAR_UNDEFINED) {
+      } else if (keyChar == KeyEvent.VK_TAB || keyChar == KeyEvent.CHAR_UNDEFINED) {
         return null;
       }
     }

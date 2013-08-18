@@ -264,9 +264,9 @@ public class ASTGenerator {
 						return;
           jtree.setModel(new DefaultTreeModel(codeTree));
           ((DefaultTreeModel) jtree.getModel()).reload();
-//          if (!frame2.isVisible()) {
-//            frame2.setVisible(true);
-//          }
+          if (!frame2.isVisible()) {
+            frame2.setVisible(true);
+          }
 //          if (!frameAutoComp.isVisible()) {
 //
 //            frameAutoComp.setVisible(true);
@@ -1389,7 +1389,9 @@ public class ASTGenerator {
     if (nodes.size() > 0) {
       ASTNode retNode = nodes.get(0);
       for (ASTNode cNode : nodes) {
-        if (getLineNumber(cNode) <= lineNumber)
+        if (getLineNumber(cNode) <= lineNumber
+            && lineNumber <= getLineNumber(cNode, cNode.getStartPosition()
+                + cNode.getLength()))          
           retNode = cNode;
         else
           break;
@@ -1397,7 +1399,7 @@ public class ASTGenerator {
 
       return retNode;
     }
-    return null;
+    return parent;
   }
 
   public DefaultMutableTreeNode getAST() {
@@ -1656,6 +1658,10 @@ public class ASTGenerator {
   public static int getLineNumber(ASTNode node) {
     return ((CompilationUnit) node.getRoot()).getLineNumber(node
         .getStartPosition());
+  }
+  
+  public static int getLineNumber(ASTNode node, int pos) {
+    return ((CompilationUnit) node.getRoot()).getLineNumber(pos);
   }
 
   public static void main(String[] args) {

@@ -15,6 +15,7 @@ The big stuff:
  - Making very good progress here. The elegance of recurion - Hats off!
  - Many of the cases seem to have been covered, and I'm achieving more and more code unification as I'm working through the problem step by step
  - Looks almost complete now, nearly all cases covered(July 13th)
+* Ensure that a compilation unit is created at startup!
 * Scope handling? Static/non static scope?
 * Disable completions on comment line
 * Trie implementation would be lower priority, "premature optimisation is pure evil". Get all features of CC working good enough and then plan this.

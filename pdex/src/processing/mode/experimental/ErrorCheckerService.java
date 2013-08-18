@@ -248,6 +248,8 @@ public class ErrorCheckerService implements Runnable{
     stopThread = false;
     
     checkCode();
+    if(!hasSyntaxErrors())
+      editor.showProblemListView(XQConsoleToggle.CONSOLE);
     while (!stopThread) {
       try {
         // Take a nap.
@@ -778,6 +780,7 @@ public class ErrorCheckerService implements Runnable{
     // editor.statusNotice("Position: " +
     // editor.getTextArea().getCaretLine());
     boolean notFound = true;
+    //if(notFound) return;
     for (ErrorMarker emarker : editor.errorBar.errorPoints) {
       if (emarker.problem.lineNumber == editor.getTextArea()
           .getCaretLine() + 1) {
@@ -794,7 +797,7 @@ public class ErrorCheckerService implements Runnable{
       }
     }
     if (notFound) {
-      editor.statusEmpty();
+      //editor.statusEmpty();
     }
   }
   
