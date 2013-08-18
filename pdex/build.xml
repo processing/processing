@@ -85,6 +85,12 @@
 			<fileset dir="theme" />
 		</copy>
 
+		<copy todir="${bundle}">
+			<fileset file="mode.properties" />
+		</copy>
+		<replaceregexp file="${bundle}/mode.properties" flags="g" match="@@version@@" replace="${release}" />
+		<replaceregexp file="${bundle}/mode.properties" flags="g" match="@@pretty-version@@" replace="${prettyVersion}" />
+
 	</target>
 
 	<target name="full_install" depends="package" description="Full install to sketchbook">
