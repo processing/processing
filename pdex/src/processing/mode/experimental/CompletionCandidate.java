@@ -41,8 +41,9 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
       cstr.append(' ');
     }
     label.append(")");
-    label.append(" : " + method.getReturnType().getSimpleName() + " - "
-        + method.getDeclaringClass().getSimpleName());
+    if(method.getReturnType() != null)
+      label.append(" : " + method.getReturnType().getSimpleName());
+    label.append(" - " + method.getDeclaringClass().getSimpleName());
     cstr.append(")");
     this.label = label.toString();
     this.completionString = cstr.toString();
@@ -73,21 +74,22 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
     StringBuffer cstr = new StringBuffer(method.getName() + "(");
     for (int i = 0; i < params.size(); i++) {
       label.append(params.get(i).toString());
-      if (i < params.size() - 1){
+      if (i < params.size() - 1) {
         label.append(",");
         cstr.append(",");
       }
     }
-    if(params.size() == 1) {
+    if (params.size() == 1) {
       cstr.append(' ');
     }
     label.append(")");
-    label.append(" : "+method.getReturnType2());
+    if (method.getReturnType2() != null)
+      label.append(" : " + method.getReturnType2());
     cstr.append(")");
     this.label = label.toString();
     this.completionString = cstr.toString();
   }
-  
+
   public CompletionCandidate(TypeDeclaration td){
     type = LOCAL_CLASS;
     elementName = td.getName().toString();
