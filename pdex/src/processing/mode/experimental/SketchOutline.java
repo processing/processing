@@ -2,16 +2,18 @@ package processing.mode.experimental;
 
 import static processing.mode.experimental.ExperimentalMode.log;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
+import java.io.File;
 import java.util.List;
 
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -22,13 +24,17 @@ import javax.swing.SwingWorker;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
+
+import processing.app.Base;
 
 public class SketchOutline {
   protected JFrame frmOutlineView;
@@ -78,21 +84,21 @@ public class SketchOutline {
     soTree.getSelectionModel()
         .setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
     soTree.setRootVisible(false);
+    soTree.setCellRenderer(new CustomCellRenderer());
     for (int i = 0; i < soTree.getRowCount(); i++) {
       soTree.expandRow(i);
     }
     soTree.setSelectionRow(0);
+    
     jsp.setViewportView(soTree);
     jsp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
     jsp.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
     jsp.setMinimumSize(new Dimension(minWidth, 100));
+    
     panelBottom.add(jsp);
     frmOutlineView.add(panelTop);
     frmOutlineView.add(panelBottom);
     frmOutlineView.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-//    frmOutlineView.setLocation(tp.x
-//                               + errorCheckerService.getEditor().ta
-//                               .getWidth() - minWidth, tp.y);
     frmOutlineView.setBounds(tp.x
                                  + errorCheckerService.getEditor().ta
                                      .getWidth() - minWidth, tp.y, minWidth,
@@ -238,10 +244,6 @@ public class SketchOutline {
         worker.execute();
       }
     });
-
-    soTree.addMouseListener(new MouseAdapter() {
-
-    });
   }
 
   protected boolean filterTree(String prefix, DefaultMutableTreeNode tree,
@@ -276,7 +278,7 @@ public class SketchOutline {
     ASTNodeWrapper awnode = (ASTNodeWrapper) codetree.getUserObject(), aw2 = null;
 
     if (awnode.getNode() instanceof TypeDeclaration) {
-      aw2 = new ASTNodeWrapper(awnode.getNode(),
+      aw2 = new ASTNodeWrapper( ((TypeDeclaration) awnode.getNode()).getName(),
                                ((TypeDeclaration) awnode.getNode()).getName()
                                    .toString());
     } else if (awnode.getNode() instanceof MethodDeclaration) {
@@ -312,5 +314,61 @@ public class SketchOutline {
 
   public void show() {
     frmOutlineView.setVisible(true);
+  }
+  
+  protected class CustomCellRenderer extends DefaultTreeCellRenderer {
+
+    // ImageIcon icons[];
+    protected final ImageIcon classIcon, fieldIcon, methodIcon;
+
+    public CustomCellRenderer() {
+      String iconPath = "data" + File.separator + "icons";
+      if (editor != null) {
+        iconPath = (Base.getSketchbookFolder().getAbsolutePath())
+
+        + File.separator + "modes" + File.separator + "ExperimentalMode"
+            + File.separator + "data" + File.separator + "icons";
+        ;
+      }
+
+      classIcon = new ImageIcon(iconPath + File.separator
+          + "class_obj.png");
+      methodIcon = new ImageIcon(iconPath + File.separator
+          + "methpub_obj.png");
+      fieldIcon = new ImageIcon(iconPath + File.separator
+          + "field_protected_obj.png");
+    }
+
+    public Component getTreeCellRendererComponent(JTree tree, Object value,
+        boolean sel, boolean expanded, boolean leaf, int row,
+        boolean hasFocus) {
+
+      super.getTreeCellRendererComponent(tree, value, sel, expanded,
+          leaf, row, hasFocus);
+      if (value instanceof DefaultMutableTreeNode)
+        setIcon(getTreeIcon(value));
+
+      return this;
+    }
+
+    public javax.swing.Icon getTreeIcon(Object o) {
+      if (o instanceof DefaultMutableTreeNode) {
+
+        if(((DefaultMutableTreeNode) o)
+            .getUserObject() instanceof ASTNodeWrapper){
+        
+        ASTNodeWrapper awrap = (ASTNodeWrapper) ((DefaultMutableTreeNode) o)
+            .getUserObject();
+        int type = awrap.getNode().getParent().getNodeType();
+        if (type == ASTNode.METHOD_DECLARATION)
+          return methodIcon;
+        if (type == ASTNode.TYPE_DECLARATION)
+          return classIcon;
+        if (type == ASTNode.VARIABLE_DECLARATION_FRAGMENT)
+          return fieldIcon;
+        }
+      }
+      return null;
+    }
   }
 }
