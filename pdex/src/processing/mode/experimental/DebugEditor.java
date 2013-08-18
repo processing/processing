@@ -476,6 +476,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
               errorCheckerService.resumeThread();
               System.out.println(thisEditor.getSketch().getName()
                   + " - Error Checker resumed.");
+              errorCheckerService.runManualErrorCheck();
             }
           }
         });
@@ -507,6 +508,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
           public void actionPerformed(ActionEvent e) {
             errorCheckerService.warningsEnabled = ((JCheckBoxMenuItem) e
                 .getSource()).isSelected();
+            errorCheckerService.runManualErrorCheck();
           }
         });
         debugMenu.add(showWarnings);

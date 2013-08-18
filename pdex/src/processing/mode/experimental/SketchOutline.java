@@ -337,7 +337,7 @@ public class SketchOutline {
       if (editor != null) {
         iconPath = (Base.getSketchbookFolder().getAbsolutePath())
 
-        + File.separator + "modes" + File.separator + "ExperimentalMode"
+        + File.separator + "modes" + File.separator + editor.getMode().getClass().getSimpleName()
             + File.separator + "data" + File.separator + "icons";
         ;
       }
