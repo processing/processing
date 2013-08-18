@@ -170,7 +170,7 @@ public class ASTGenerator {
     btnListOccurrence = new JButton("Show Usage");
     frmRename = new JFrame();    
     frmRename.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-    frmRename.setBounds(new Rectangle(680, 50, 250, 130));
+    frmRename.setSize(250, 130);
     frmRename.setLayout(new BoxLayout(frmRename.getContentPane(), BoxLayout.Y_AXIS));
     Toolkit.setIcon(frmRename);
     JPanel panelTop = new JPanel(), panelBottom = new JPanel();
@@ -192,13 +192,18 @@ public class ASTGenerator {
     panelTop.add(Box.createRigidArea(new Dimension(0, 10)));
     panelTop.add(lblRefactorOldName);
     frmRename.add(panelTop);
-    frmRename.add(panelBottom);
-    
+    frmRename.add(panelBottom);    
     frmRename.setMinimumSize(frmRename.getSize());
+    frmRename.setLocation(editor.getX()
+                              + (editor.getWidth() - frmRename.getWidth()) / 2,
+                          editor.getY()
+                              + (editor.getHeight() - frmRename.getHeight())
+                              / 2);
+    
     
     frmOccurenceList = new JFrame();
     frmOccurenceList.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-    frmOccurenceList.setBounds(new Rectangle(1100, 50, 350, 500));
+    frmOccurenceList.setSize(300, 400);
     Toolkit.setIcon(frmOccurenceList);
     JScrollPane sp2 = new JScrollPane();
     treeRename = new JTree();
@@ -1843,6 +1848,7 @@ public class ASTGenerator {
     treeRename.setModel(new DefaultTreeModel(defCU));
     ((DefaultTreeModel) treeRename.getModel()).reload();
     frmOccurenceList.setTitle("Usage of " + selText);
+    frmOccurenceList.setLocation(editor.getX() + editor.getWidth(),editor.getY());
     frmOccurenceList.setVisible(true);
     int lineOffsetDisplacementConst = newName.length()
         - selText.length();
@@ -1917,6 +1923,7 @@ public class ASTGenerator {
     ((DefaultTreeModel) treeRename.getModel()).reload();
     treeRename.setRootVisible(false);
     frmOccurenceList.setTitle("Usage of \"" + selText+ "\"");
+    frmOccurenceList.setLocation(editor.getX() + editor.getWidth(),editor.getY());
     frmOccurenceList.setVisible(true);
     lastClickedWord = null;
     lastClickedWordNode = null;
@@ -2168,6 +2175,11 @@ public class ASTGenerator {
       return;
     }
     if (!frmRename.isVisible()){
+      frmRename.setLocation(editor.getX()
+                            + (editor.getWidth() - frmRename.getWidth()) / 2,
+                        editor.getY()
+                            + (editor.getHeight() - frmRename.getHeight())
+                            / 2);
       frmRename.setVisible(true);
       SwingUtilities.invokeLater(new Runnable() {          
         @Override

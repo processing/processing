@@ -1251,14 +1251,14 @@ public class DebugEditor extends JavaEditor implements ActionListener {
     }
     
     private void handleRefactor() {
-      System.out.println("Caret at:");
-      System.out.println(ta.getLineText(ta.getCaretLine()));
+      log("Caret at:");
+      log(ta.getLineText(ta.getCaretLine()));
       errorCheckerService.astGenerator.handleRefactor();
     }
     
     private void handleShowUsage() {
-      System.out.println("Caret at:");
-      System.out.println(ta.getLineText(ta.getCaretLine()));
+      log("Caret at:");
+      log(ta.getLineText(ta.getCaretLine()));
       errorCheckerService.astGenerator.handleShowUsage();
     }
     

@@ -43,7 +43,7 @@ public class ExperimentalMode extends JavaMode {
   public static final boolean VERBOSE_LOGGING = true;
   //public static final boolean VERBOSE_LOGGING = false;  
   public static final int LOG_SIZE = 512 * 1024; // max log file size (in bytes)
-  public static boolean DEBUG = true;
+  public static boolean DEBUG = !true;
   
   public ExperimentalMode(Base base, File folder) {
     super(base, folder);
