@@ -264,13 +264,13 @@ public class ASTGenerator {
 
       protected void done() {
         if (codeTree != null) {
-					if (jtree.hasFocus() || frame2.hasFocus())
-						return;
-          jtree.setModel(new DefaultTreeModel(codeTree));
-          ((DefaultTreeModel) jtree.getModel()).reload();
-          if (!frame2.isVisible()) {
-            frame2.setVisible(true);
-          }
+//					if (jtree.hasFocus() || frame2.hasFocus())
+//						return;
+//          jtree.setModel(new DefaultTreeModel(codeTree));
+//          ((DefaultTreeModel) jtree.getModel()).reload();
+//          if (!frame2.isVisible()) {
+//            frame2.setVisible(true);
+//          }
 //          if (!frameAutoComp.isVisible()) {
 //
 //            frameAutoComp.setVisible(true);
@@ -288,7 +288,7 @@ public class ASTGenerator {
 //                                                   .getY(), 450, 600));
 //            jdocWindow.setVisible(true);
 //          }
-          jtree.validate();
+//          jtree.validate();
         }
       }
     };

@@ -286,7 +286,13 @@ public class ErrorCheckerService implements Runnable{
   }
 
   protected ASTGenerator astGenerator;
-  private AtomicInteger textModified = new AtomicInteger();
+  /**
+   * This thing acts as an event queue counter of sort.
+   * Since error checking happens on demand, anytime this counter
+   * goes above 0, error check is triggered, and counter reset.
+   * It's thread safe to avoid any mess.
+   */
+  protected AtomicInteger textModified = new AtomicInteger();
   
   /**
    * Triggers error check
@@ -332,12 +338,12 @@ public class ErrorCheckerService implements Runnable{
       updatePaintedThingys();
       int x = textModified.get();
       //log("TM " + x);
-      if(x>=3){
-        textModified.set(3);
-        x = 3;
+      if (x >= 2) {
+        textModified.set(2);
+        x = 2;
       }
-      
-      if(x>0)
+
+      if (x > 0)
         textModified.set(x - 1);
       else
         textModified.set(0);
