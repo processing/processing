@@ -1394,13 +1394,9 @@ public class ASTGenerator {
 
     if (nodes.size() > 0) {
       ASTNode retNode = parent;
-      for (int i = nodes.size() - 1; i >= 0; i--) {
-        ASTNode cNode = nodes.get(i);
-        if (getLineNumber(cNode) == lineNumber)
-          return cNode;
-        else if (getLineNumber(cNode) <= lineNumber
-            && lineNumber <= getLineNumber(cNode, cNode.getStartPosition()
-                + cNode.getLength()))          
+      for (int i = 0; i < nodes.size(); i++) {
+        ASTNode cNode = nodes.get(i);        
+        if (getLineNumber(cNode) <= lineNumber)          
           retNode = cNode;
       }
 
