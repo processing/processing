@@ -982,6 +982,7 @@ public class ASTGenerator {
   }
   
   private void showPredictions(final String word) {
+    if(sketchOutline.isVisible()) return;
     Collections.sort(candidates);
     CompletionCandidate[][] candi = new CompletionCandidate[candidates.size()][1];
     DefaultListModel defListModel = new DefaultListModel();
@@ -2069,10 +2070,10 @@ public class ASTGenerator {
     }
   }
   
-  protected SketchOutline sko;
+  protected SketchOutline sketchOutline;
   protected void showSketchOutline(){
-    sko = new SketchOutline(codeTree, errorCheckerService);
-    sko.show();
+    sketchOutline = new SketchOutline(codeTree, errorCheckerService);
+    sketchOutline.show();
   }
   
   public int javaCodeOffsetToLineStartOffset(int line, int jOffset){

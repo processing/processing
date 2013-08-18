@@ -1,6 +1,7 @@
 package processing.mode.experimental;
 
 import static processing.mode.experimental.ExperimentalMode.log;
+import static processing.mode.experimental.ExperimentalMode.logE;
 
 import java.awt.EventQueue;
 import java.io.File;
@@ -881,6 +882,7 @@ public class ErrorCheckerService implements Runnable{
   }
   
   public String getPDECodeAtLine(int tab, int linenumber){
+    if(linenumber < 0) return null;
     editor.getSketch().setCurrentCode(tab);
     return editor.ta.getLineText(linenumber);
   }
@@ -1116,16 +1118,16 @@ public class ErrorCheckerService implements Runnable{
    * @return true - if highlighting happened correctly.
    */
   public boolean highlightNode(ASTNodeWrapper awrap){
-    int pdeoffsets[] = awrap.getPDECodeOffsets(this);
-    int javaoffsets[] = awrap.getJavaCodeOffsets(this);
     try {
+      int pdeoffsets[] = awrap.getPDECodeOffsets(this);
+      int javaoffsets[] = awrap.getJavaCodeOffsets(this);
       scrollToErrorLine(editor, pdeoffsets[0],
                                             pdeoffsets[1],javaoffsets[1],
                                             javaoffsets[2]);
       return true;
     } catch (Exception e) {
-      
-      e.printStackTrace();
+      logE("Scrolling failed for " + awrap);
+      // e.printStackTrace();
     }
     return false;
   }

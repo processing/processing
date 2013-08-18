@@ -126,17 +126,20 @@ public class SketchOutline {
           return;
 
         internalSelection = true;
-        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+        
+        if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
+         close();
+        }
+        else if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
           if (soTree.getLastSelectedPathComponent() != null) {
             DefaultMutableTreeNode tnode = (DefaultMutableTreeNode) soTree
                 .getLastSelectedPathComponent();
             if (tnode.getUserObject() instanceof ASTNodeWrapper) {
               ASTNodeWrapper awrap = (ASTNodeWrapper) tnode.getUserObject();
               errorCheckerService.highlightNode(awrap);
+              close();
             }
-
           }
-          return;
         } 
         else if (evt.getKeyCode() == KeyEvent.VK_UP) {
           if (soTree.getLastSelectedPathComponent() == null) {
@@ -155,7 +158,6 @@ public class SketchOutline {
                                                     .getValue() - step));
           }
           soTree.setSelectionRow(x);
-          return;
         } 
         else if (evt.getKeyCode() == KeyEvent.VK_DOWN) {
           if (soTree.getLastSelectedPathComponent() == null) {
@@ -174,28 +176,28 @@ public class SketchOutline {
                                                     .getValue() + step));
           }
           soTree.setSelectionRow(x);
-          return;
         }
-
-        SwingWorker worker = new SwingWorker() {
-          protected Object doInBackground() throws Exception {
-            return null;
-          }
-
-          protected void done() {
-            String text = searchField.getText().toLowerCase();
-            tempNode = new DefaultMutableTreeNode();
-            filterTree(text, tempNode, soNode);
-            soTree.setModel(new DefaultTreeModel(tempNode));
-            ((DefaultTreeModel) soTree.getModel()).reload();
-            for (int i = 0; i < soTree.getRowCount(); i++) {
-              soTree.expandRow(i);
+        else {
+          SwingWorker worker = new SwingWorker() {
+            protected Object doInBackground() throws Exception {
+              return null;
             }
-            internalSelection = true;
-            soTree.setSelectionRow(0);
-          }
-        };
-        worker.execute();
+
+            protected void done() {
+              String text = searchField.getText().toLowerCase();
+              tempNode = new DefaultMutableTreeNode();
+              filterTree(text, tempNode, soNode);
+              soTree.setModel(new DefaultTreeModel(tempNode));
+              ((DefaultTreeModel) soTree.getModel()).reload();
+              for (int i = 0; i < soTree.getRowCount(); i++) {
+                soTree.expandRow(i);
+              }
+              internalSelection = true;
+              soTree.setSelectionRow(0);
+            }
+          };
+          worker.execute();
+        }
       }
     });
 
@@ -314,6 +316,15 @@ public class SketchOutline {
 
   public void show() {
     frmOutlineView.setVisible(true);
+  }
+  
+  public void close(){
+    frmOutlineView.setVisible(false);
+    frmOutlineView.dispose();
+  }
+  
+  public boolean isVisible(){
+    return frmOutlineView.isVisible();
   }
   
   protected class CustomCellRenderer extends DefaultTreeCellRenderer {
