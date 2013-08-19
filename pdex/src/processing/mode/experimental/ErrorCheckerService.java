@@ -342,6 +342,7 @@ public class ErrorCheckerService implements Runnable{
       updateEditorStatus();
       editor.getTextArea().repaint();
       updatePaintedThingys();
+      editor.updateErrorToggle();
       int x = textModified.get();
       //log("TM " + x);
       if (x >= 2) {
@@ -371,8 +372,9 @@ public class ErrorCheckerService implements Runnable{
   public boolean hasErrors(){
     synchronized (problemsList) {
       for (Problem p : problemsList) {
-        if (p.isError())
-          return false;
+        if (p.isError()){
+          return true;
+        }
       }
       return false;
     }

@@ -1251,6 +1251,11 @@ public class DebugEditor extends JavaEditor implements ActionListener {
       return errorTable.updateTable(tableModel);
     }
     
+    public void updateErrorToggle(){
+      btnShowErrors.updateMarker(errorCheckerService.hasErrors(),
+                               errorBar.errorColor);
+    }
+    
     private void handleRefactor() {
       log("Caret at:");
       log(ta.getLineText(ta.getCaretLine()));
