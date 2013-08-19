@@ -26,7 +26,6 @@ package processing.opengl;
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PGraphics;
-//import processing.core.PImage;
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
@@ -1007,25 +1006,20 @@ public class Texture implements PConstants {
     if (PGL.BIG_ENDIAN)  {
       switch (arrayFormat) {
       case ALPHA:
-
         // Converting from xxxA into RGBA. RGB is set to white
         // (0xFFFFFF, i.e.: (255, 255, 255))
         for (int i = 0; i< intArray.length; i++) {
           tIntArray[i] = 0xFFFFFF00 | intArray[i];
         }
         break;
-
       case RGB:
-
         // Converting xRGB into RGBA. A is set to 0xFF (255, full opacity).
         for (int i = 0; i< intArray.length; i++) {
           int pixel = intArray[i];
           tIntArray[i] = (pixel << 8) | 0xFF;
         }
         break;
-
       case ARGB:
-
         // Converting ARGB into RGBA. Shifting RGB to 8 bits to the left,
         // and bringing A to the first byte.
         for (int i = 0; i< intArray.length; i++) {
@@ -1034,50 +1028,39 @@ public class Texture implements PConstants {
         }
         break;
       }
-
     } else {
       // LITTLE_ENDIAN
       // ARGB native, and RGBA opengl means ABGR on windows
       // for the most part just need to swap two components here
       // the sun.cpu.endian here might be "false", oddly enough..
       // (that's why just using an "else", rather than check for "little")
-
       switch (arrayFormat)  {
       case ALPHA:
-
         // Converting xxxA into ARGB, with RGB set to white.
         for (int i = 0; i< intArray.length; i++) {
           tIntArray[i] = (intArray[i] << 24) | 0x00FFFFFF;
         }
         break;
-
       case RGB:
-
         // We need to convert xRGB into ABGR,
         // so R and B must be swapped, and the x just made 0xFF.
         for (int i = 0; i< intArray.length; i++) {
           int pixel = intArray[i];
           tIntArray[i] = 0xFF000000 |
-                         ((pixel & 0xFF) << 16) |
-                         ((pixel & 0xFF0000) >> 16) |
+                         ((pixel & 0xFF) << 16) | ((pixel & 0xFF0000) >> 16) |
                          (pixel & 0x0000FF00);
         }
         break;
-
       case ARGB:
-
         // We need to convert ARGB into ABGR,
         // so R and B must be swapped, A and G just brought back in.
         for (int i = 0; i < intArray.length; i++) {
           int pixel = intArray[i];
-          tIntArray[i] = ((pixel & 0xFF) << 16) |
-                         ((pixel & 0xFF0000) >> 16) |
+          tIntArray[i] = ((pixel & 0xFF) << 16) | ((pixel & 0xFF0000) >> 16) |
                          (pixel & 0xFF00FF00);
         }
         break;
-
       }
-
     }
   }
 
@@ -1091,27 +1074,22 @@ public class Texture implements PConstants {
     int t = 0;
     int p = 0;
     if (PGL.BIG_ENDIAN) {
-
       // RGBA to ARGB conversion: shifting RGB 8 bits to the right,
       // and placing A 24 bits to the left.
       for (int y = 0; y < height; y++) {
         for (int x = 0; x < width; x++) {
           int pixel = intArray[p++];
-          intArray[t++] = (pixel >> 8) | ((pixel << 24) & 0xFF000000);
+          intArray[t++] = (pixel >>> 8) | ((pixel << 24) & 0xFF000000);
         }
       }
-
     } else {
-
       // We have to convert ABGR into ARGB, so R and B must be swapped,
       // A and G just brought back in.
       for (int y = 0; y < height; y++) {
         for (int x = 0; x < width; x++) {
           int pixel = intArray[p++];
-          intArray[t++] = ((pixel & 0xFF) << 16) |
-                          ((pixel & 0xFF0000) >> 16) |
+          intArray[t++] = ((pixel & 0xFF) << 16) | ((pixel & 0xFF0000) >> 16) |
                           (pixel & 0xFF00FF00);
-
         }
       }
     }

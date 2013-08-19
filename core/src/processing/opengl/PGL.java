@@ -1779,14 +1779,13 @@ public class PGL {
    * endian) to Java ARGB.
    */
   protected static int nativeToJavaARGB(int color) {
-    if (BIG_ENDIAN) { // RGBA to ARGB
-      return (color & 0xff000000) |
-             ((color >> 8) & 0x00ffffff);
+    if (PGL.BIG_ENDIAN) { // RGBA to ARGB
+      return (color >>> 8) | ((color << 24) & 0xFF000000);
+      // equivalent to
+      // ((color >> 8) & 0x00FFFFFF) | ((color << 24) & 0xFF000000)
     } else { // ABGR to ARGB
-      return (color & 0xff000000) |
-             ((color << 16) & 0xff0000) |
-             (color & 0xff00) |
-             ((color >> 16) & 0xff);
+      return ((color & 0xFF) << 16) | ((color & 0xFF0000) >> 16) |
+             (color & 0xFF00FF00);
     }
   }
 
@@ -1801,51 +1800,35 @@ public class PGL {
     int index = 0;
     int yindex = (height - 1) * width;
     for (int y = 0; y < height / 2; y++) {
-      if (BIG_ENDIAN) { // RGBA to ARGB
-        for (int x = 0; x < width; x++) {
-          int temp = pixels[index];
-          pixels[index] = (pixels[yindex] & 0xff000000) |
-                          ((pixels[yindex] >> 8) & 0x00ffffff);
-          pixels[yindex] = (temp & 0xff000000) |
-                           ((temp >> 8) & 0x00ffffff);
-          index++;
-          yindex++;
+      for (int x = 0; x < width; x++) {
+        int pixy = pixels[yindex];
+        int pixi = pixels[index];
+        if (BIG_ENDIAN) { // RGBA to ARGB
+          pixels[index] = (pixy >>> 8) | ((pixy << 24) & 0xFF000000);
+          pixels[yindex] = (pixi >>> 8) | ((pixi << 24) & 0xFF000000);
+        } else { // ABGR to ARGB
+          pixels[index] = ((pixy & 0xFF) << 16) | ((pixy & 0xFF0000) >> 16) |
+                          (pixy & 0xFF00FF00);
+          pixels[yindex] = ((pixi & 0xFF) << 16) | ((pixi & 0xFF0000) >> 16) |
+                           (pixi & 0xFF00FF00);
         }
-      } else { // ABGR to ARGB
-        for (int x = 0; x < width; x++) {
-          int temp = pixels[index];
-          pixels[index] = (pixels[yindex] & 0xff000000) |
-                          ((pixels[yindex] << 16) & 0xff0000) |
-                          (pixels[yindex] & 0xff00) |
-                          ((pixels[yindex] >> 16) & 0xff);
-          pixels[yindex] = (temp & 0xff000000) |
-                           ((temp << 16) & 0xff0000) |
-                           (temp & 0xff00) |
-                           ((temp >> 16) & 0xff);
-          index++;
-          yindex++;
-        }
+        index++;
+        yindex++;
       }
       yindex -= width * 2;
     }
 
-    // Flips image
-    if ((height % 2) == 1) {
+    if ((height % 2) == 1) { // Converts center row
       index = (height / 2) * width;
-      if (BIG_ENDIAN) { // RGBA to ARGB
-        for (int x = 0; x < width; x++) {
-          pixels[index] = (pixels[index] & 0xff000000) |
-                          ((pixels[index] >> 8) & 0x00ffffff);
-          index++;
+      for (int x = 0; x < width; x++) {
+        int pixi = pixels[index];
+        if (BIG_ENDIAN) { // RGBA to ARGB
+          pixels[index] = (pixi >>> 8) | ((pixi << 24) & 0xFF000000);
+        } else { // ABGR to ARGB
+          pixels[index] = ((pixi & 0xFF) << 16) | ((pixi & 0xFF0000) >> 16) |
+                          (pixi & 0xFF00FF00);
         }
-      } else { // ABGR to ARGB
-        for (int x = 0; x < width; x++) {
-          pixels[index] = (pixels[index] & 0xff000000) |
-                          ((pixels[index] << 16) & 0xff0000) |
-                          (pixels[index] & 0xff00) |
-                          ((pixels[index] >> 16) & 0xff);
-          index++;
-        }
+        index++;
       }
     }
   }
@@ -1858,11 +1841,10 @@ public class PGL {
    */
   protected static int nativeToJavaRGB(int color) {
     if (BIG_ENDIAN) { // RGBA to ARGB
-      return ((color << 8) & 0xffffff00) | 0xff;
+      return (color >>> 8) | 0xFF000000;
     } else { // ABGR to ARGB
-       return 0xff000000 | ((color << 16) & 0xff0000) |
-                           (color & 0xff00) |
-                           ((color >> 16) & 0xff);
+      return ((color & 0xFF) << 16) | ((color & 0xFF0000) >> 16) |
+             (color & 0xFF00FF00) | 0xFF000000;
     }
   }
 
@@ -1878,45 +1860,35 @@ public class PGL {
     int index = 0;
     int yindex = (height - 1) * width;
     for (int y = 0; y < height / 2; y++) {
-      if (BIG_ENDIAN) { // RGBA to ARGB
-        for (int x = 0; x < width; x++) {
-          int temp = pixels[index];
-          pixels[index] = 0xff000000 | ((pixels[yindex] >> 8) & 0x00ffffff);
-          pixels[yindex] = 0xff000000 | ((temp >> 8) & 0x00ffffff);
-          index++;
-          yindex++;
+      for (int x = 0; x < width; x++) {
+        int pixy = pixels[yindex];
+        int pixi = pixels[index];
+        if (BIG_ENDIAN) { // RGBA to ARGB
+          pixels[index] = (pixy >>> 8) | 0xFF000000;
+          pixels[yindex] = (pixi >>> 8) | 0xFF000000;
+        } else { // ABGR to ARGB
+          pixels[index] = ((pixy & 0xFF) << 16) | ((pixy & 0xFF0000) >> 16) |
+                          (pixy & 0xFF00FF00) | 0xFF000000;
+          pixels[yindex] = ((pixi & 0xFF) << 16) | ((pixi & 0xFF0000) >> 16) |
+                           (pixi & 0xFF00FF00) | 0xFF000000;
         }
-      } else { // ABGR to ARGB
-        for (int x = 0; x < width; x++) {
-          int temp = pixels[index];
-          pixels[index] = 0xff000000 | ((pixels[yindex] << 16) & 0xff0000) |
-                                       (pixels[yindex] & 0xff00) |
-                                       ((pixels[yindex] >> 16) & 0xff);
-          pixels[yindex] = 0xff000000 | ((temp << 16) & 0xff0000) |
-                                        (temp & 0xff00) |
-                                        ((temp >> 16) & 0xff);
-          index++;
-          yindex++;
-        }
+        index++;
+        yindex++;
       }
       yindex -= width * 2;
     }
 
-    // Flips image
-    if ((height % 2) == 1) {
+    if ((height % 2) == 1) { // Converts center row
       index = (height / 2) * width;
-      if (BIG_ENDIAN) { // RGBA to ARGB
-        for (int x = 0; x < width; x++) {
-          pixels[index] = 0xff000000 | ((pixels[index] >> 8) & 0x00ffffff);
-          index++;
+      for (int x = 0; x < width; x++) {
+        int pixi = pixels[index];
+        if (BIG_ENDIAN) { // RGBA to ARGB
+          pixels[index] = (pixi >>> 8) | 0xFF000000;
+        } else { // ABGR to ARGB
+          pixels[index] = ((pixi & 0xFF) << 16) | ((pixi & 0xFF0000) >> 16) |
+                          (pixi & 0xFF00FF00) | 0xFF000000;
         }
-      } else { // ABGR to ARGB
-        for (int x = 0; x < width; x++) {
-          pixels[index] = 0xff000000 | ((pixels[index] << 16) & 0xff0000) |
-                                       (pixels[index] & 0xff00) |
-                                       ((pixels[index] >> 16) & 0xff);
-          index++;
-        }
+        index++;
       }
     }
   }
@@ -1928,13 +1900,10 @@ public class PGL {
    */
   protected static int javaToNativeARGB(int color) {
     if (BIG_ENDIAN) { // ARGB to RGBA
-      return ((color >> 24) & 0xff) |
-             ((color << 8) & 0xffffff00);
+      return ((color >> 24) & 0xFF) | ((color << 8) & 0xFFFFFF00);
     } else { // ARGB to ABGR
-      return (color & 0xff000000) |
-             ((color << 16) & 0xff0000) |
-             (color & 0xff00) |
-             ((color >> 16) & 0xff);
+      return (color & 0xFF000000) | ((color << 16) & 0xFF0000) |
+             (color & 0xFF00) | ((color >> 16) & 0xFF);
     }
   }
 
@@ -1949,52 +1918,35 @@ public class PGL {
     int index = 0;
     int yindex = (height - 1) * width;
     for (int y = 0; y < height / 2; y++) {
-      if (BIG_ENDIAN) { // ARGB to RGBA
-        for (int x = 0; x < width; x++) {
-          int temp = pixels[index];
-          pixels[index] = ((pixels[yindex] >> 24) & 0xff) |
-                          ((pixels[yindex] << 8) & 0xffffff00);
-          pixels[yindex] = ((temp >> 24) & 0xff) |
-                           ((temp << 8) & 0xffffff00);
-          index++;
-          yindex++;
+      for (int x = 0; x < width; x++) {
+        int pixy = pixels[yindex];
+        int pixi = pixels[index];
+        if (BIG_ENDIAN) { // ARGB to RGBA
+          pixels[index] = ((pixy >> 24) & 0xFF) | ((pixy << 8) & 0xFFFFFF00);
+          pixels[yindex] = ((pixi >> 24) & 0xFF) | ((pixi << 8) & 0xFFFFFF00);
+        } else { // ARGB to ABGR
+          pixels[index] = (pixy & 0xFF000000) | ((pixy << 16) & 0xFF0000) |
+                          (pixy & 0xFF00) | ((pixy >> 16) & 0xFF);
+          pixels[yindex] = (pixi & 0xFF000000) | ((pixi << 16) & 0xFF0000) |
+                           (pixi & 0xFF00) | ((pixi >> 16) & 0xFF);
         }
-
-      } else { // ARGB to ABGR
-        for (int x = 0; x < width; x++) {
-          int temp = pixels[index];
-          pixels[index] = (pixels[yindex] & 0xff000000) |
-                          ((pixels[yindex] << 16) & 0xff0000) |
-                          (pixels[yindex] & 0xff00) |
-                          ((pixels[yindex] >> 16) & 0xff);
-          pixels[yindex] = (temp & 0xff000000) |
-                           ((temp << 16) & 0xff0000) |
-                           (temp & 0xff00) |
-                           ((temp >> 16) & 0xff);
-          index++;
-          yindex++;
-        }
+        index++;
+        yindex++;
       }
       yindex -= width * 2;
     }
 
-    // Flips image
-    if ((height % 2) == 1) {
+    if ((height % 2) == 1) { // Converts center row
       index = (height / 2) * width;
-      if (BIG_ENDIAN) { // ARGB to RGBA
-        for (int x = 0; x < width; x++) {
-          pixels[index] = ((pixels[index] >> 24) & 0xff) |
-                          ((pixels[index] << 8) & 0xffffff00);
-          index++;
+      for (int x = 0; x < width; x++) {
+        int pixi = pixels[index];
+        if (BIG_ENDIAN) { // ARGB to RGBA
+          pixels[index] = ((pixi >> 24) & 0xFF) | ((pixi << 8) & 0xFFFFFF00);
+        } else { // ARGB to ABGR
+          pixels[index] = (pixi & 0xFF000000) | ((pixi << 16) & 0xFF0000) |
+                          (pixi & 0xFF00) | ((pixi >> 16) & 0xFF);
         }
-      } else { // ARGB to ABGR
-        for (int x = 0; x < width; x++) {
-          pixels[index] = (pixels[index] & 0xff000000) |
-                          ((pixels[index] << 16) & 0xff0000) |
-                          (pixels[index] & 0xff00) |
-                          ((pixels[index] >> 16) & 0xff);
-          index++;
-        }
+        index++;
       }
     }
   }
@@ -2005,12 +1957,11 @@ public class PGL {
    * BGRA on little endian), setting alpha component to opaque (255).
    */
   protected static int javaToNativeRGB(int color) {
-    if (BIG_ENDIAN) { // ARGB to RGBA
-        return ((color << 8) & 0xffffff00) | 0xff;
-    } else { // ARGB to ABGR
-        return 0xff000000 | ((color << 16) & 0xff0000) |
-                            (color & 0xff00) |
-                            ((color >> 16) & 0xff);
+    if (BIG_ENDIAN) { // ARGB to RGB
+      return 0xFF | ((color << 8) & 0xFFFFFF00);
+    } else { // ARGB to BGR
+      return 0xFF000000 | ((color << 16) & 0xFF0000) |
+             (color & 0xFF00) | ((color >> 16) & 0xFF);
     }
   }
 
@@ -2026,46 +1977,35 @@ public class PGL {
     int index = 0;
     int yindex = (height - 1) * width;
     for (int y = 0; y < height / 2; y++) {
-      if (BIG_ENDIAN) { // ARGB to RGBA
-        for (int x = 0; x < width; x++) {
-          int temp = pixels[index];
-          pixels[index] = ((pixels[yindex] << 8) & 0xffffff00) | 0xff;
-          pixels[yindex] = ((temp << 8) & 0xffffff00) | 0xff;
-          index++;
-          yindex++;
+      for (int x = 0; x < width; x++) {
+        int pixy = pixels[yindex];
+        int pixi = pixels[index];
+        if (BIG_ENDIAN) { // ARGB to RGB
+          pixels[index] = 0xFF | ((pixy << 8) & 0xFFFFFF00);
+          pixels[yindex] = 0xFF | ((pixi << 8) & 0xFFFFFF00);
+        } else { // ARGB to BGR
+          pixels[index] = 0xFF000000 | ((pixy << 16) & 0xFF0000) |
+                          (pixy & 0xFF00) | ((pixy >> 16) & 0xFF);
+          pixels[yindex] = 0xFF000000 | ((pixi << 16) & 0xFF0000) |
+                           (pixi & 0xFF00) | ((pixi >> 16) & 0xFF);
         }
-
-      } else {
-        for (int x = 0; x < width; x++) { // ARGB to ABGR
-          int temp = pixels[index];
-          pixels[index] = 0xff000000 | ((pixels[yindex] << 16) & 0xff0000) |
-                                       (pixels[yindex] & 0xff00) |
-                                       ((pixels[yindex] >> 16) & 0xff);
-          pixels[yindex] = 0xff000000 | ((temp << 16) & 0xff0000) |
-                                        (temp & 0xff00) |
-                                        ((temp >> 16) & 0xff);
-          index++;
-          yindex++;
-        }
+        index++;
+        yindex++;
       }
       yindex -= width * 2;
     }
 
-    // Flips image
-    if ((height % 2) == 1) { // ARGB to RGBA
+    if ((height % 2) == 1) { // Converts center row
       index = (height / 2) * width;
-      if (BIG_ENDIAN) {
-        for (int x = 0; x < width; x++) {
-          pixels[index] = ((pixels[index] << 8) & 0xffffff00) | 0xff;
-          index++;
+      for (int x = 0; x < width; x++) {
+        int pixi = pixels[index];
+        if (BIG_ENDIAN) { // ARGB to RGB
+          pixels[index] = 0xFF | ((pixi << 8) & 0xFFFFFF00);
+        } else { // ARGB to BGR
+          pixels[index] = 0xFF000000 | ((pixi << 16) & 0xFF0000) |
+                          (pixi & 0xFF00) | ((pixi >> 16) & 0xFF);
         }
-      } else { // ARGB to ABGR
-        for (int x = 0; x < width; x++) {
-          pixels[index] = 0xff000000 | ((pixels[index] << 16) & 0xff0000) |
-                                       (pixels[index] & 0xff00) |
-                                       ((pixels[index] >> 16) & 0xff);
-          index++;
-        }
+        index++;
       }
     }
   }
