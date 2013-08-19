@@ -399,7 +399,6 @@ public class ErrorCheckerService implements Runnable{
       syntaxErrors.set(false);
     else
       syntaxErrors.set(true);
-    astGenerator.loadJars();
   }
   protected URLClassLoader classLoader;
   private void compileCheck() {
@@ -1250,6 +1249,8 @@ public class ErrorCheckerService implements Runnable{
         }
       }
     }
+    if(loadCompClass)
+      astGenerator.loadJars();
     // log("load..? " + loadCompClass);
   }
 
