@@ -346,19 +346,6 @@ public class SketchOutline {
   
   protected class CustomCellRenderer extends DefaultTreeCellRenderer {
 
-    protected final ImageIcon classIcon, fieldIcon, methodIcon;
-
-    public CustomCellRenderer() {
-      String iconPath = editor.getMode().getContentFile("data")
-          .getAbsolutePath()
-          + File.separator + "icons";
-      classIcon = new ImageIcon(iconPath + File.separator + "class_obj.png");
-      methodIcon = new ImageIcon(iconPath + File.separator
-          + "methpub_obj.png");
-      fieldIcon = new ImageIcon(iconPath + File.separator
-          + "field_protected_obj.png");
-    }
-
     public Component getTreeCellRendererComponent(JTree tree, Object value,
         boolean sel, boolean expanded, boolean leaf, int row,
         boolean hasFocus) {
@@ -378,11 +365,11 @@ public class SketchOutline {
             .getUserObject();
         int type = awrap.getNode().getParent().getNodeType();
         if (type == ASTNode.METHOD_DECLARATION)
-          return methodIcon;
+          return editor.dmode.methodIcon;
         if (type == ASTNode.TYPE_DECLARATION)
-          return classIcon;
+          return editor.dmode.classIcon;
         if (type == ASTNode.VARIABLE_DECLARATION_FRAGMENT)
-          return fieldIcon;
+          return editor.dmode.fieldIcon;
       }
       return null;
     }

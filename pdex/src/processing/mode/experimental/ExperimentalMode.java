@@ -28,6 +28,9 @@ import java.util.logging.FileHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.swing.ImageIcon;
+
 import processing.app.Base;
 import processing.app.Editor;
 import processing.app.EditorState;
@@ -43,7 +46,7 @@ public class ExperimentalMode extends JavaMode {
   public static final boolean VERBOSE_LOGGING = true;
   //public static final boolean VERBOSE_LOGGING = false;  
   public static final int LOG_SIZE = 512 * 1024; // max log file size (in bytes)
-  public static boolean DEBUG = !true;
+  public static boolean DEBUG = true;
   
   public ExperimentalMode(Base base, File folder) {
     super(base, folder);
@@ -96,6 +99,7 @@ public class ExperimentalMode extends JavaMode {
 //    String titleAndVersion = p.getImplementationTitle() + " (v" + p.getImplementationVersion() + ")";
 //    //log(titleAndVersion);
 //    Logger.getLogger(ExperimentalMode.class.getName()).log(Level.INFO, titleAndVersion);
+    loadIcons();
   }
 
 
@@ -155,6 +159,19 @@ public class ExperimentalMode extends JavaMode {
     log("error loading color: " + attribute);
     Logger.getLogger(ExperimentalMode.class.getName()).log(Level.WARNING, "Error loading Color: {0}", attribute);
     return defaultValue;
+  }
+  
+  protected ImageIcon classIcon, fieldIcon, methodIcon;
+  protected void loadIcons(){
+    String iconPath = getContentFile("data")
+        .getAbsolutePath()
+        + File.separator + "icons";
+    classIcon = new ImageIcon(iconPath + File.separator + "class_obj.png");
+    methodIcon = new ImageIcon(iconPath + File.separator
+        + "methpub_obj.png");
+    fieldIcon = new ImageIcon(iconPath + File.separator
+        + "field_protected_obj.png"); 
+    log("Icons loaded");
   }
 
     

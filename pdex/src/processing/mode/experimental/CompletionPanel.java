@@ -4,13 +4,18 @@ import static processing.mode.experimental.ExperimentalMode.logE;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -31,10 +36,13 @@ public class CompletionPanel {
   private TextArea textarea;
 
   private JScrollPane scrollPane;
+  
+  protected DebugEditor editor;
 
   public CompletionPanel(JEditTextArea textarea, int position, String subWord,
-                         DefaultListModel items, Point location) {
+                         DefaultListModel items, Point location, DebugEditor dedit) {
     this.textarea = (TextArea) textarea;
+    editor = dedit;
     this.insertionPosition = position;
     if (subWord.indexOf('.') != -1)
       this.subWord = subWord.substring(subWord.lastIndexOf('.') + 1);
@@ -80,6 +88,7 @@ public class CompletionPanel {
         }
       }
     });
+    list.setCellRenderer(new CustomListRenderer());
     return list;
   }
   
@@ -189,4 +198,42 @@ public class CompletionPanel {
 //        };
 //      });
   }
+  
+  protected class CustomListRenderer extends
+      javax.swing.DefaultListCellRenderer {
+    //protected final ImageIcon classIcon, fieldIcon, methodIcon;    
+   
+    public Component getListCellRendererComponent(JList list, Object value,
+                                                  int index,
+                                                  boolean isSelected,
+                                                  boolean cellHasFocus) {
+      JLabel label = (JLabel) super.getListCellRendererComponent(list, value,
+                                                                 index,
+                                                                 isSelected,
+                                                                 cellHasFocus);
+      if (value instanceof CompletionCandidate) {
+        CompletionCandidate cc = (CompletionCandidate) value;
+        switch (cc.getType()) {
+        case CompletionCandidate.LOCAL_FIELD:
+        case CompletionCandidate.PREDEF_FIELD:
+          label.setIcon(editor.dmode.fieldIcon);
+          break;
+        case CompletionCandidate.LOCAL_METHOD:
+        case CompletionCandidate.PREDEF_METHOD:
+          label.setIcon(editor.dmode.methodIcon);
+          break;
+        case CompletionCandidate.LOCAL_CLASS:
+        case CompletionCandidate.PREDEF_CLASS:
+          label.setIcon(editor.dmode.classIcon);
+          break;
+
+        default:
+          break;
+        }
+
+      }
+      return label;
+    }
+  }
+  
 }

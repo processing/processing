@@ -711,7 +711,7 @@ public class TextArea extends JEditTextArea {
     }
     if (suggestion == null)
       suggestion = new CompletionPanel(this, position, subWord, defListModel,
-                                       location);
+                                       location,editor);
     else
       suggestion.updateList(defListModel, subWord, position);
     suggestion.setVisible(true);
