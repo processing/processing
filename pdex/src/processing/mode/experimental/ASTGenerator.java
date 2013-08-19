@@ -269,13 +269,14 @@ public class ASTGenerator {
 
       protected void done() {
         if (codeTree != null) {
-//					if (jtree.hasFocus() || frame2.hasFocus())
-//						return;
-//          jtree.setModel(new DefaultTreeModel(codeTree));
-//          ((DefaultTreeModel) jtree.getModel()).reload();
-//          if (!frame2.isVisible()) {
-//            frame2.setVisible(true);
-//          }
+					if (jtree.hasFocus() || frame2.hasFocus())
+						return;
+          jtree.setModel(new DefaultTreeModel(codeTree));
+          ((DefaultTreeModel) jtree.getModel()).reload();
+          jtree.validate();
+          if (!frame2.isVisible()) {
+            frame2.setVisible(true);
+          }
 //          if (!frameAutoComp.isVisible()) {
 //
 //            frameAutoComp.setVisible(true);
@@ -293,7 +294,6 @@ public class ASTGenerator {
 //                                                   .getY(), 450, 600));
 //            jdocWindow.setVisible(true);
 //          }
-//          jtree.validate();
         }
       }
     };
@@ -1379,18 +1379,20 @@ public class ASTGenerator {
   }
 
   private static ASTNode findClosestNode(int lineNumber, ASTNode node) {
+    log("findClosestNode to line " + lineNumber);
     ASTNode parent = findClosestParentNode(lineNumber, node);
+    log("findClosestParentNode returned " + getNodeAsString(parent));
     if (parent == null)
       return null;
-    if (getLineNumber(parent) == lineNumber)
+    if (getLineNumber(parent) == lineNumber){
+      log(parent + "|PNode " + getLineNumber(parent) + ", lfor " + lineNumber );
       return parent;
+    }
     List<ASTNode> nodes = null;
     if (parent instanceof TypeDeclaration) {
-      nodes = (List<ASTNode>) ((TypeDeclaration) parent)
-          .getStructuralProperty(TypeDeclaration.BODY_DECLARATIONS_PROPERTY);
+      nodes = (List<ASTNode>) ((TypeDeclaration) parent).bodyDeclarations();
     } else if (parent instanceof Block) {
-      nodes = (List<ASTNode>) ((Block) parent)
-          .getStructuralProperty(Block.STATEMENTS_PROPERTY);
+      nodes = (List<ASTNode>) ((Block) parent).statements();
     } else {
       System.err.println("THIS CONDITION SHOULD NOT OCCUR - findClosestNode "
           + getNodeAsString(parent));
@@ -1401,6 +1403,7 @@ public class ASTGenerator {
       ASTNode retNode = parent;
       for (int i = 0; i < nodes.size(); i++) {
         ASTNode cNode = nodes.get(i);        
+        log(cNode + "|cNode " + getLineNumber(cNode) + ", lfor " + lineNumber );
         if (getLineNumber(cNode) <= lineNumber)          
           retNode = cNode;
       }

@@ -250,6 +250,11 @@ public class ErrorCheckerService implements Runnable{
     checkCode();
     if(!hasSyntaxErrors())
       editor.showProblemListView(XQConsoleToggle.CONSOLE);
+    // Make sure astGen has at least one CU to start with
+    // This is when the loaded sketch already has syntax errors.
+    // Completion wouldn't be complete, but it'd be still something
+    // better than nothing
+    astGenerator.buildAST(cu); 
     while (!stopThread) {
       try {
         // Take a nap.
@@ -313,7 +318,7 @@ public class ErrorCheckerService implements Runnable{
           + mainClassOffset);
       // No syntax errors, proceed for compilation check, Stage 2.
       
-      astGenerator.buildAST(cu);
+      //if(hasSyntaxErrors()) astGenerator.buildAST(null);
       if (problems.length == 0 && editor.compilationCheckEnabled) {
         //mainClassOffset++; // just a hack.
         
@@ -327,6 +332,7 @@ public class ErrorCheckerService implements Runnable{
         //         log(sourceCode);
         //         log("--------------------------");
         compileCheck();
+        astGenerator.buildAST(cu);
         log(editor.getSketch().getName() + "2 MCO "
             + mainClassOffset);
       }
