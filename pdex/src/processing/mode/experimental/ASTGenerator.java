@@ -1744,10 +1744,6 @@ public class ASTGenerator {
             }
             DefaultMutableTreeNode tnode = (DefaultMutableTreeNode) jtree
                 .getLastSelectedPathComponent();    
-            if(tnode.getUserObject() == null){
-              return;
-            }
-            
             if (tnode.getUserObject() instanceof ASTNodeWrapper) {
               ASTNodeWrapper awrap = (ASTNodeWrapper) tnode.getUserObject();
               errorCheckerService.highlightNode(awrap);
@@ -1817,9 +1813,6 @@ public class ASTGenerator {
             }
             DefaultMutableTreeNode tnode = (DefaultMutableTreeNode) treeRename
                 .getLastSelectedPathComponent();    
-            if(tnode.getUserObject() == null){
-              return;
-            }
             
             if (tnode.getUserObject() instanceof ASTNodeWrapper) {
               ASTNodeWrapper awrap = (ASTNodeWrapper) tnode.getUserObject();
@@ -1851,8 +1844,10 @@ public class ASTGenerator {
     //else log("New name looks K.");
     
     errorCheckerService.pauseThread();
-    treeRename.setModel(new DefaultTreeModel(defCU));
-    ((DefaultTreeModel) treeRename.getModel()).reload();
+    if(treeRename.isVisible()){
+      treeRename.setModel(new DefaultTreeModel(defCU));
+      ((DefaultTreeModel) treeRename.getModel()).reload();
+    }
     frmOccurenceList.setTitle("Usage of " + selText);
     frmOccurenceList.setLocation(editor.getX() + editor.getWidth(),editor.getY());
     frmOccurenceList.setVisible(true);
@@ -1892,11 +1887,10 @@ public class ASTGenerator {
       editor.ta.setSelectedText(newName);
     }
     errorCheckerService.resumeThread();
-    errorCheckerService.runManualErrorCheck();
-    for (Integer lineNum : lineOffsetDisplacement.keySet()) {
-      log(lineNum + "line, disp"
-          + lineOffsetDisplacement.get(lineNum));
-    }
+//    for (Integer lineNum : lineOffsetDisplacement.keySet()) {
+//      log(lineNum + "line, disp"
+//          + lineOffsetDisplacement.get(lineNum));
+//    }
     editor.getSketch().setModified(true);
     errorCheckerService.runManualErrorCheck();
     frmOccurenceList.setVisible(false);
