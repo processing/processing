@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
@@ -27,7 +28,6 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
   public CompletionCandidate(Method method) {
     method.getDeclaringClass().getName();
     elementName = method.getName();
-    type = LOCAL_METHOD;
     StringBuffer label = new StringBuffer(method.getName() + "(");
     StringBuffer cstr = new StringBuffer(method.getName() + "(");
     for (int i = 0; i < method.getParameterTypes().length; i++) {
@@ -53,14 +53,20 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
   public CompletionCandidate(SingleVariableDeclaration svd) {
     completionString = svd.getName().toString();
     elementName = svd.getName().toString();
-    type = LOCAL_VAR;
+    if(svd.getParent() instanceof FieldDeclaration)
+      type = LOCAL_FIELD;
+    else
+      type = LOCAL_VAR;
     label = svd.getName() + " : " + svd.getType();    
   }
   
   public CompletionCandidate(VariableDeclarationFragment  vdf) {
     completionString = vdf.getName().toString();
     elementName = vdf.getName().toString();
-    type = LOCAL_VAR;
+    if(vdf.getParent() instanceof FieldDeclaration)
+      type = LOCAL_FIELD;
+    else
+      type = LOCAL_VAR;
     label = vdf.getName() + " : " + ASTGenerator.extracTypeInfo2(vdf);
   }
   

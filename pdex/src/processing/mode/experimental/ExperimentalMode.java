@@ -161,7 +161,7 @@ public class ExperimentalMode extends JavaMode {
     return defaultValue;
   }
   
-  protected ImageIcon classIcon, fieldIcon, methodIcon;
+  protected ImageIcon classIcon, fieldIcon, methodIcon, localVarIcon;
   protected void loadIcons(){
     String iconPath = getContentFile("data")
         .getAbsolutePath()
@@ -171,6 +171,8 @@ public class ExperimentalMode extends JavaMode {
         + "methpub_obj.png");
     fieldIcon = new ImageIcon(iconPath + File.separator
         + "field_protected_obj.png"); 
+    localVarIcon = new ImageIcon(iconPath + File.separator
+                              + "field_default_obj.png");
     log("Icons loaded");
   }
 

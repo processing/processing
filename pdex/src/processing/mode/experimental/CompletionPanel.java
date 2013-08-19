@@ -214,6 +214,9 @@ public class CompletionPanel {
       if (value instanceof CompletionCandidate) {
         CompletionCandidate cc = (CompletionCandidate) value;
         switch (cc.getType()) {
+        case CompletionCandidate.LOCAL_VAR:
+          label.setIcon(editor.dmode.localVarIcon);
+          break;
         case CompletionCandidate.LOCAL_FIELD:
         case CompletionCandidate.PREDEF_FIELD:
           label.setIcon(editor.dmode.fieldIcon);
@@ -228,10 +231,14 @@ public class CompletionPanel {
           break;
 
         default:
+          log("(CustomListRenderer)Unknown CompletionCandidate type " + cc.getType());
           break;
         }
 
       }
+      else
+        log("(CustomListRenderer)Unknown CompletionCandidate object " + value);
+      
       return label;
     }
   }
