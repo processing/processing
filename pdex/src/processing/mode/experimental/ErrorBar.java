@@ -35,6 +35,7 @@ import java.util.ArrayList;
 
 import javax.swing.JPanel;
 import javax.swing.SwingWorker;
+import javax.swing.text.BadLocationException;
 
 import processing.app.Base;
 import processing.app.SketchCode;
@@ -109,12 +110,12 @@ public class ErrorBar extends JPanel {
 		g.fillRect(0, 0, getWidth(), getHeight());
 
 		for (ErrorMarker emarker : errorPoints) {
-			if (emarker.type == ErrorMarker.Error) {
+			if (emarker.getType() == ErrorMarker.Error) {
 				g.setColor(errorColor);
 			} else {
 				g.setColor(warningColor);
 			}
-			g.fillRect(2, emarker.y, (getWidth() - 3), errorMarkerHeight);
+			g.fillRect(2, emarker.getY(), (getWidth() - 3), errorMarkerHeight);
 		}
 	}
 
@@ -152,56 +153,46 @@ public class ErrorBar extends JPanel {
 		final int fheight = this.getHeight();
 		SwingWorker worker = new SwingWorker() {
 
-			protected Object doInBackground() throws Exception {
-				return null;
-			}
+      protected Object doInBackground() throws Exception {
+        SketchCode sc = editor.getSketch().getCurrentCode();
+        int totalLines = 0, currentTab = editor.getSketch()
+            .getCurrentCodeIndex();
+        try {
+          totalLines = Base.countLines(sc.getDocument()
+              .getText(0, sc.getDocument().getLength())) + 1;
+        } catch (BadLocationException e) {
+          e.printStackTrace();
+        }
+        // System.out.println("Total lines: " + totalLines);
 
-			protected void done() {
-				int totalLines = 0;
-				int currentTab = 0;
-				for (SketchCode sc : editor.getSketch().getCode()) {
-					if (sc.isExtension("pde")) {
-						try {
-							if (editor.getSketch().getCurrentCode().equals(sc)) {
-								// Adding + 1 to len because \n gets appended
-								// for each
-								// sketchcode extracted during processPDECode()
-								totalLines = Base.countLines(sc.getDocument()
-										.getText(0,
-												sc.getDocument().getLength())) + 1;
-								break;
-							}
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-					currentTab++;
-				}
-				// System.out.println("Total lines: " + totalLines);
+        errorPointsOld.clear();
+        for (ErrorMarker marker : errorPoints) {
+          errorPointsOld.add(marker);
+        }
+        errorPoints.clear();
 
-				errorPointsOld.clear();
-				for (ErrorMarker marker : errorPoints) {
-					errorPointsOld.add(marker);
-				}
-				errorPoints.clear();
-
-				// Each problem.getSourceLine() will have an extra line added
-				// because of
-				// class declaration in the beginning as well as default imports
-				for (Problem problem : problems) {
-					if (problem.tabIndex == currentTab) {
-						// Ratio of error line to total lines
+        // Each problem.getSourceLine() will have an extra line added
+        // because of
+        // class declaration in the beginning as well as default imports
+        for (Problem problem : problems) {
+          if (problem.tabIndex == currentTab) {
+            // Ratio of error line to total lines
             float y = (problem.lineNumber - errorCheckerService.defaultImportsOffset)
                 / ((float) totalLines);
-						// Ratio multiplied by height of the error bar
-						y *= fheight - 15; // -15 is just a vertical offset
-						errorPoints.add(new ErrorMarker(problem, (int) y,
-								problem.isError() ? ErrorMarker.Error
-										: ErrorMarker.Warning));
-						// System.out.println("Y: " + y);
-					}
-				}
+            // Ratio multiplied by height of the error bar
+            y *= fheight - 15; // -15 is just a vertical offset
+            errorPoints
+                .add(new ErrorMarker(problem, (int) y,
+                                     problem.isError() ? ErrorMarker.Error
+                                         : ErrorMarker.Warning));
+            // System.out.println("Y: " + y);
+          }
+        }
 
+        return null;
+      }
+
+			protected void done() {
 				repaint();
 			}
 		};
@@ -229,7 +220,7 @@ public class ErrorBar extends JPanel {
 
 		else {
 			for (int i = 0; i < errorPoints.size(); i++) {
-				if (errorPoints.get(i).y != errorPointsOld.get(i).y) {
+				if (errorPoints.get(i).getY() != errorPointsOld.get(i).getY()) {
 					editor.getTextArea().repaint();
 					// System.out.println("3 Repaint " +
 					// System.currentTimeMillis());
@@ -262,36 +253,14 @@ public class ErrorBar extends JPanel {
 						for (ErrorMarker eMarker : errorPoints) {
 							// -2 and +2 are extra allowance, clicks in the
 							// vicinity of the markers register that way
-							if (e.getY() >= eMarker.y - 2
-									&& e.getY() <= eMarker.y + 2
+							if (e.getY() >= eMarker.getY() - 2
+									&& e.getY() <= eMarker.getY() + 2
 											+ errorMarkerHeight) {
-								int currentTabErrorIndex = errorPoints
-										.indexOf(eMarker);
-								// System.out.println("Index: " +
-								// currentTabErrorIndex);
-								int currentTab = editor.getSketch()
-										.getCodeIndex(
-												editor.getSketch()
-														.getCurrentCode());
-
-								int totalErrorIndex = currentTabErrorIndex;
-
-								for (int i = 0; i < errorCheckerService.problemsList
-										.size(); i++) {
-									Problem p = errorCheckerService.problemsList
-											.get(i);
-									if (p.tabIndex < currentTab) {
-										totalErrorIndex++;
-									}
-									if (p.tabIndex == currentTab) {
-										break;
-									}
-								}
 								errorCheckerService
-										.scrollToErrorLine(totalErrorIndex);
+										.scrollToErrorLine(eMarker.getProblem());
+								return;
 							}
 						}
-
 					}
 				};
 
@@ -311,7 +280,7 @@ public class ErrorBar extends JPanel {
 
 			@SuppressWarnings("rawtypes")
 			@Override
-			public void mouseMoved(final MouseEvent e) {
+			public void mouseMoved(final MouseEvent evt) {
 				// System.out.println(e);
 				SwingWorker worker = new SwingWorker() {
 
@@ -319,51 +288,22 @@ public class ErrorBar extends JPanel {
 						return null;
 					}
 
-					protected void done() {
-
-						for (ErrorMarker eMarker : errorPoints) {
-							if (e.getY() >= eMarker.y - 2
-									&& e.getY() <= eMarker.y + 2
-											+ errorMarkerHeight) {
-								// System.out.println("Index: " +
-								// errorPoints.indexOf(y));
-								int currentTab = editor.getSketch()
-										.getCodeIndex(
-												editor.getSketch()
-														.getCurrentCode());
-								int currentTabErrorCount = 0;
-
-								for (int i = 0; i < errorPoints.size(); i++) {
-									Problem p = errorPoints.get(i).problem;
-									if (p.tabIndex == currentTab) {
-										if (currentTabErrorCount == errorPoints
-												.indexOf(eMarker)) {
-											// System.out.println("Roger that.");
-											String msg = (p.isError() ? "Error: "
-													: "Warning: ")
-													+ p.message;
-											setToolTipText(msg);
-											setCursor(Cursor
-													.getPredefinedCursor(Cursor.HAND_CURSOR));
-											return;
-										} else {
-											currentTabErrorCount++;
-											// System.out.println("Still looking..");
-										}
-									}
-
-								}
-							}
-							// Reset cursor and tooltip
-							else {
-								setToolTipText("");
-								setCursor(Cursor
-										.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-							}
-						}
-
-					}
+          protected void done() {
+            for (ErrorMarker eMarker : errorPoints) {
+              if (evt.getY() >= eMarker.getY() - 2
+                  && evt.getY() <= eMarker.getY() + 2 + errorMarkerHeight) {
+                Problem p = eMarker.getProblem();
+                String msg = (p.isError() ? "Error: " : "Warning: ")
+                    + p.message;
+                setToolTipText(msg);
+                setCursor(Cursor
+                          .getPredefinedCursor(Cursor.HAND_CURSOR));
+                break;
+              }
+            }
+          }
 				};
+				
 				try {
 					worker.execute();
 				} catch (Exception exp) {

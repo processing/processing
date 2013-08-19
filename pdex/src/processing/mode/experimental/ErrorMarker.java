@@ -6,14 +6,14 @@ package processing.mode.experimental;
 	 * 
 	 */
 	public class ErrorMarker {
-	  /**
+    /**
 	   * y co-ordinate of the marker
 	   */
-	  public int y;
+	  private int y;
 	  /**
 	   * Type of marker: Error or Warning?
 	   */
-	  public int type = -1;
+	  private int type = -1;
 	  /**
 	   * Error Type constant
 	   */
@@ -26,11 +26,34 @@ package processing.mode.experimental;
 	   * Problem that the error marker represents
 	   * @see Problem
 	   */
-	  public Problem problem;
+	  private Problem problem;
 
 	  public ErrorMarker(Problem problem, int y, int type) {
 	    this.problem = problem;
 	    this.y = y;
 	    this.type = type;
 	  }
+	  
+	  /**
+     * y co-ordinate of the marker
+     */
+	  public int getY() {
+	    return y;
+	  }
+
+	  /**
+     * Type of marker: ErrorMarker.Error or ErrorMarker.Warning?
+     */
+	  public int getType() {
+	    return type;
+	  }
+
+	  /**
+     * Problem that the error marker represents
+     * @see Problem
+     */
+	  public Problem getProblem() {
+	    return problem;
+	  }
+	  
 	}

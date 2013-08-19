@@ -787,15 +787,15 @@ public class ErrorCheckerService implements Runnable{
     // editor.statusNotice("Position: " +
     // editor.getTextArea().getCaretLine());
     for (ErrorMarker emarker : editor.errorBar.errorPoints) {
-      if (emarker.problem.lineNumber == editor.getTextArea()
+      if (emarker.getProblem().lineNumber == editor.getTextArea()
           .getCaretLine() + 1) {
-        if (emarker.type == ErrorMarker.Warning) {
-          editor.statusNotice(emarker.problem.message); 
+        if (emarker.getType() == ErrorMarker.Warning) {
+          editor.statusNotice(emarker.getProblem().message); 
                               //+  " : " + errorMsgSimplifier.getIDName(emarker.problem.getIProblem().getID()));
         //TODO: this is temporary
         }
         else {
-          editor.statusError(emarker.problem.message);
+          editor.statusError(emarker.getProblem().message);
                              //+  " : " + errorMsgSimplifier.getIDName(emarker.problem.getIProblem().getID()));
         }
         return;
