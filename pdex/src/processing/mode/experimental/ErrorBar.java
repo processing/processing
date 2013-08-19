@@ -175,9 +175,9 @@ public class ErrorBar extends JPanel {
         // because of
         // class declaration in the beginning as well as default imports
         for (Problem problem : problems) {
-          if (problem.tabIndex == currentTab) {
+          if (problem.getTabIndex() == currentTab) {
             // Ratio of error line to total lines
-            float y = (problem.lineNumber - errorCheckerService.defaultImportsOffset)
+            float y = (problem.getLineNumber() - errorCheckerService.defaultImportsOffset)
                 / ((float) totalLines);
             // Ratio multiplied by height of the error bar
             y *= fheight - 15; // -15 is just a vertical offset
@@ -294,7 +294,7 @@ public class ErrorBar extends JPanel {
                   && evt.getY() <= eMarker.getY() + 2 + errorMarkerHeight) {
                 Problem p = eMarker.getProblem();
                 String msg = (p.isError() ? "Error: " : "Warning: ")
-                    + p.message;
+                    + p.getMessage();
                 setToolTipText(msg);
                 setCursor(Cursor
                           .getPredefinedCursor(Cursor.HAND_CURSOR));

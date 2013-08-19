@@ -717,15 +717,15 @@ public class ErrorCheckerService implements Runnable{
     try {
       String[][] errorData = new String[problemsList.size()][3];
       for (int i = 0; i < problemsList.size(); i++) {
-        errorData[i][0] = problemsList.get(i).message; ////TODO: this is temporary
+        errorData[i][0] = problemsList.get(i).getMessage(); ////TODO: this is temporary
             //+ " : " + errorMsgSimplifier.getIDName(problemsList.get(i).getIProblem().getID());
         errorData[i][1] = editor.getSketch()
-            .getCode(problemsList.get(i).tabIndex).getPrettyName();
-        errorData[i][2] = problemsList.get(i).lineNumber + "";
+            .getCode(problemsList.get(i).getTabIndex()).getPrettyName();
+        errorData[i][2] = problemsList.get(i).getLineNumber() + "";
         
         //TODO: This is temporary
         if(tempErrorLog.size() < 200)
-        tempErrorLog.put(problemsList.get(i).message,problemsList.get(i).getIProblem());
+        tempErrorLog.put(problemsList.get(i).getMessage(),problemsList.get(i).getIProblem());
       }
       
       if (errorWindow != null) {
@@ -787,15 +787,15 @@ public class ErrorCheckerService implements Runnable{
     // editor.statusNotice("Position: " +
     // editor.getTextArea().getCaretLine());
     for (ErrorMarker emarker : editor.errorBar.errorPoints) {
-      if (emarker.getProblem().lineNumber == editor.getTextArea()
+      if (emarker.getProblem().getLineNumber() == editor.getTextArea()
           .getCaretLine() + 1) {
         if (emarker.getType() == ErrorMarker.Warning) {
-          editor.statusNotice(emarker.getProblem().message); 
+          editor.statusNotice(emarker.getProblem().getMessage()); 
                               //+  " : " + errorMsgSimplifier.getIDName(emarker.problem.getIProblem().getID()));
         //TODO: this is temporary
         }
         else {
-          editor.statusError(emarker.getProblem().message);
+          editor.statusError(emarker.getProblem().getMessage());
                              //+  " : " + errorMsgSimplifier.getIDName(emarker.problem.getIProblem().getID()));
         }
         return;
@@ -1172,16 +1172,16 @@ public class ErrorCheckerService implements Runnable{
       return;
     try {
       editor.toFront();
-      editor.getSketch().setCurrentCode(p.tabIndex);
+      editor.getSketch().setCurrentCode(p.getTabIndex());
 
       editor
           .setSelection(editor.getTextArea()
-                            .getLineStartNonWhiteSpaceOffset(p.lineNumber - 1)
+                            .getLineStartNonWhiteSpaceOffset(p.getLineNumber() - 1)
                             + editor.getTextArea()
-                                .getLineText(p.lineNumber - 1).trim().length(),
+                                .getLineText(p.getLineNumber() - 1).trim().length(),
                         editor.getTextArea()
-                            .getLineStartNonWhiteSpaceOffset(p.lineNumber - 1));
-      editor.getTextArea().scrollTo(p.lineNumber - 1, 0);
+                            .getLineStartNonWhiteSpaceOffset(p.getLineNumber() - 1));
+      editor.getTextArea().scrollTo(p.getLineNumber() - 1, 0);
       editor.repaint();
     } catch (Exception e) {
       System.err.println(e

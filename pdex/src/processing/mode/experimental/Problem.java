@@ -44,21 +44,21 @@ public class Problem {
   /**
    * The tab number to which the error belongs to
    */
-  public int tabIndex; 
+  private int tabIndex; 
   /**
    * Line number(pde code) of the error
    */
-  public int lineNumber;
+  private int lineNumber;
 
   /**
    * Error Message. Processed form of IProblem.getMessage()
    */
-  public String message;
+  private String message;
 
   /**
    * The type of error - WARNING or ERROR.
    */
-  public int type;
+  private int type;
 
   public static final int ERROR = 1, WARNING = 2;
 
@@ -100,6 +100,14 @@ public class Problem {
 
   public IProblem getIProblem(){
     return iProblem;
+  }
+  
+  public int getTabIndex(){
+    return tabIndex;
+  }
+  
+  public int getLineNumber(){
+    return lineNumber;
   }
 
   public void setType(int ProblemType){
