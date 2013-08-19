@@ -34,6 +34,7 @@ import java.util.Map;
 
 import javax.swing.DefaultListModel;
 import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 
 import processing.app.syntax.JEditTextArea;
 import processing.app.syntax.TextAreaDefaults;
@@ -179,10 +180,16 @@ public class TextArea extends JEditTextArea {
       super.processKeyEvent(evt);
       
     if (evt.getID() == KeyEvent.KEY_TYPED) {
-      errorCheckerService.runManualErrorCheck();
-      log(" Typing: " + fetchPhrase(evt) + " "
-          + (evt.getKeyChar() == KeyEvent.VK_ENTER));
-
+      final KeyEvent evt2 = evt;
+      SwingWorker worker = new SwingWorker() {
+        protected Object doInBackground() throws Exception {
+          errorCheckerService.runManualErrorCheck();
+          log(" Typing: " + fetchPhrase(evt2) + " "
+              + (evt2.getKeyChar() == KeyEvent.VK_ENTER));
+          return null;
+        }
+      };
+      worker.execute();
     }
 
     
