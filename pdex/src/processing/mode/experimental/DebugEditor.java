@@ -232,7 +232,8 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         ta.setECSandThemeforTextArea(errorCheckerService, dmode);
         addXQModeUI();    
         //TODO: Remove this later
-        setBounds(160, 300, getWidth(), getHeight());
+        if(ExperimentalMode.DEBUG)
+          setBounds(160, 300, getWidth(), getHeight());
     }
     
     private void addXQModeUI(){
