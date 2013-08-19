@@ -243,26 +243,21 @@ public class ErrorBar extends JPanel {
 			@SuppressWarnings("rawtypes")
 			@Override
 			public void mouseClicked(final MouseEvent e) {
-				SwingWorker worker = new SwingWorker() {
+        SwingWorker worker = new SwingWorker() {
 
-					protected Object doInBackground() throws Exception {
-						return null;
-					}
-
-					protected void done() {
-						for (ErrorMarker eMarker : errorPoints) {
-							// -2 and +2 are extra allowance, clicks in the
-							// vicinity of the markers register that way
-							if (e.getY() >= eMarker.getY() - 2
-									&& e.getY() <= eMarker.getY() + 2
-											+ errorMarkerHeight) {
-								errorCheckerService
-										.scrollToErrorLine(eMarker.getProblem());
-								return;
-							}
-						}
-					}
-				};
+          protected Object doInBackground() throws Exception {
+            for (ErrorMarker eMarker : errorPoints) {
+              // -2 and +2 are extra allowance, clicks in the
+              // vicinity of the markers register that way
+              if (e.getY() >= eMarker.getY() - 2
+                  && e.getY() <= eMarker.getY() + 2 + errorMarkerHeight) {
+                errorCheckerService.scrollToErrorLine(eMarker.getProblem());
+                return null;
+              }
+            }
+            return null;
+          }
+        };
 
 				try {
 					worker.execute();
@@ -281,14 +276,10 @@ public class ErrorBar extends JPanel {
 			@SuppressWarnings("rawtypes")
 			@Override
 			public void mouseMoved(final MouseEvent evt) {
-				// System.out.println(e);
-				SwingWorker worker = new SwingWorker() {
+        // System.out.println(e);
+        SwingWorker worker = new SwingWorker() {
 
-					protected Object doInBackground() throws Exception {
-						return null;
-					}
-
-          protected void done() {
+          protected Object doInBackground() throws Exception {
             for (ErrorMarker eMarker : errorPoints) {
               if (evt.getY() >= eMarker.getY() - 2
                   && evt.getY() <= eMarker.getY() + 2 + errorMarkerHeight) {
@@ -296,13 +287,13 @@ public class ErrorBar extends JPanel {
                 String msg = (p.isError() ? "Error: " : "Warning: ")
                     + p.getMessage();
                 setToolTipText(msg);
-                setCursor(Cursor
-                          .getPredefinedCursor(Cursor.HAND_CURSOR));
+                setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                 break;
               }
             }
+            return null;
           }
-				};
+        };
 				
 				try {
 					worker.execute();

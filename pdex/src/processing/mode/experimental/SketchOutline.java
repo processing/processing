@@ -199,13 +199,13 @@ public class SketchOutline {
       private void updateSelection(){
         SwingWorker worker = new SwingWorker() {
           protected Object doInBackground() throws Exception {
-            return null;
-          }
-
-          protected void done() {
             String text = searchField.getText().toLowerCase();
             tempNode = new DefaultMutableTreeNode();
             filterTree(text, tempNode, soNode);
+            return null;
+          }
+
+          protected void done() {            
             soTree.setModel(new DefaultTreeModel(tempNode));
             ((DefaultTreeModel) soTree.getModel()).reload();
             for (int i = 0; i < soTree.getRowCount(); i++) {
@@ -249,10 +249,6 @@ public class SketchOutline {
             }
             DefaultMutableTreeNode tnode = (DefaultMutableTreeNode) soTree
                 .getLastSelectedPathComponent();
-            if (tnode.getUserObject() == null) {
-              return;
-            }
-
             if (tnode.getUserObject() instanceof ASTNodeWrapper) {
               ASTNodeWrapper awrap = (ASTNodeWrapper) tnode.getUserObject();
               // log(awrap);

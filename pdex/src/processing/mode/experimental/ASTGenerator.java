@@ -775,6 +775,8 @@ public class ASTGenerator {
   private String lastPredictedWord = " ";
   
   public void preparePredictions(final String word, final int line, final int lineStartNonWSOffset) {
+    // This method is called from TextArea.fetchPhrase, which is called via a SwingWorker instance
+    // in TextArea.processKeyEvent
     if(caretWithinLineComment()){
       log("No predictions.");
       return;
