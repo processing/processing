@@ -129,6 +129,7 @@ x Working for local code
 General Stuff
 =============
 
+* Ensure all editor windows are closed when editor is closed.
 x Add option for toggling debug output
 x On Run/Debug Console is visible(ProblemsList hidden)
 * Update wiki for Ctrl + H instead of Ctrl + J shortcuts

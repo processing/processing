@@ -269,14 +269,14 @@ public class ASTGenerator {
 
       protected void done() {
         if (codeTree != null) {
-					if (jtree.hasFocus() || frame2.hasFocus())
-						return;
-          jtree.setModel(new DefaultTreeModel(codeTree));
-          ((DefaultTreeModel) jtree.getModel()).reload();
-          jtree.validate();
-          if (!frame2.isVisible()) {
-            frame2.setVisible(true);
-          }
+//					if (jtree.hasFocus() || frame2.hasFocus())
+//						return;
+//          jtree.setModel(new DefaultTreeModel(codeTree));
+//          ((DefaultTreeModel) jtree.getModel()).reload();
+//          jtree.validate();
+//          if (!frame2.isVisible()) {
+//            frame2.setVisible(true);
+//          }
 //          if (!frameAutoComp.isVisible()) {
 //
 //            frameAutoComp.setVisible(true);
