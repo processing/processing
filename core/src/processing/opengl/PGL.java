@@ -1120,19 +1120,6 @@ public class PGL {
         backTex = temp;
       }
     }
-
-    // call (gl)finish() only if the rendering of each frame is taking too long,
-    // to make sure that commands are not accumulating in the GL command queue.
-//    fcount += 1;
-//    int m = pg.parent.millis();
-//    if (m - lastm > 1000 * fint) {
-//      currentFps = (float)(fcount) / fint;
-//      fcount = 0;
-//      lastm = m;
-//    }
-//    if (currentFps < targetFps/2) {
-//      finish();
-//    }
   }
 
 
