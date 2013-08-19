@@ -130,6 +130,7 @@ General Stuff
 =============
 
 * Ensure all editor windows are closed when editor is closed.
+* Add a red marker near Errors label in console toggle, to indicate errors present in sketch.
 x Add option for toggling debug output
 x On Run/Debug Console is visible(ProblemsList hidden)
 * Update wiki for Ctrl + H instead of Ctrl + J shortcuts

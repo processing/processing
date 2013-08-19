@@ -362,10 +362,20 @@ public class ErrorCheckerService implements Runnable{
     return false;
   }
   
-  private AtomicBoolean syntaxErrors;
+  protected AtomicBoolean syntaxErrors;
   
   public boolean hasSyntaxErrors(){
     return syntaxErrors.get();
+  }
+  
+  public boolean hasErrors(){
+    synchronized (problemsList) {
+      for (Problem p : problemsList) {
+        if (p.isError())
+          return false;
+      }
+      return false;
+    }
   }
   
   protected TreeMap<String, IProblem> tempErrorLog;
