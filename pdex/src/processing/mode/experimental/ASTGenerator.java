@@ -211,14 +211,14 @@ public class ASTGenerator {
     frmOccurenceList.add(sp2);    
     //occurenceListFrame.setVisible(true);
     
-    frameAutoComp = new JFrame();
-    frameAutoComp.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    frameAutoComp.setBounds(new Rectangle(1280, 100, 460, 620));
-    Toolkit.setIcon(frameAutoComp); 
-    tableAuto = new JTable();
-    JScrollPane sp3 = new JScrollPane();
-    sp3.setViewportView(tableAuto);
-    frameAutoComp.add(sp3);
+//    frameAutoComp = new JFrame();
+//    frameAutoComp.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+//    frameAutoComp.setBounds(new Rectangle(1280, 100, 460, 620));
+//    Toolkit.setIcon(frameAutoComp); 
+//    tableAuto = new JTable();
+//    JScrollPane sp3 = new JScrollPane();
+//    sp3.setViewportView(tableAuto);
+//    frameAutoComp.add(sp3);
 
 //    jdocWindow = new JFrame();
 //    jdocWindow.setTitle("P5 InstaHelp");
@@ -779,14 +779,15 @@ public class ASTGenerator {
       log("No predictions.");
       return;
     }
-    SwingWorker worker = new SwingWorker() {
-
-      @Override
-      protected Object doInBackground() throws Exception {
-        return null;
-      }
-
-      protected void done() {
+//    SwingWorker worker = new SwingWorker() {
+//
+//      @Override
+//      protected Object doInBackground() throws Exception {
+//        return null;
+//      }
+//
+//      protected void done() {
+    
         // If the parsed code contains pde enhancements, take 'em out.
         String word2 = ASTNodeWrapper.getJavaCode(word);
 
@@ -987,31 +988,31 @@ public class ASTGenerator {
         
         showPredictions(word);
         
-      }
-    };
-
-    worker.execute();
+//      }
+//    };
+//
+//    worker.execute();
   }
   
   private void showPredictions(final String word) {
     if (sketchOutline != null)
       if (sketchOutline.isVisible()) return;
     Collections.sort(candidates);
-    CompletionCandidate[][] candi = new CompletionCandidate[candidates.size()][1];
+//    CompletionCandidate[][] candi = new CompletionCandidate[candidates.size()][1];
     DefaultListModel defListModel = new DefaultListModel();
 
-    for (int i = 0; i < candi.length; i++) {
-      candi[i][0] = candidates.get(i);
+    for (int i = 0; i < candidates.size(); i++) {
+//      candi[i][0] = candidates.get(i);
       defListModel.addElement(candidates.get(i));
     }
     log("Total preds = " + candidates.size());
-    DefaultTableModel tm = new DefaultTableModel(candi,
-                                                 new String[] { "Suggestions" });
-    if (tableAuto.isVisible()) {
-      tableAuto.setModel(tm);
-      tableAuto.validate();
-      tableAuto.repaint();
-    }
+//    DefaultTableModel tm = new DefaultTableModel(candi,
+//                                                 new String[] { "Suggestions" });
+//    if (tableAuto.isVisible()) {
+//      tableAuto.setModel(tm);
+//      tableAuto.validate();
+//      tableAuto.repaint();
+//    }
     errorCheckerService.getEditor().textArea()
         .showSuggestion(defListModel, word);
   }
