@@ -156,7 +156,7 @@ public class PGraphics2D extends PGraphicsOpenGL {
 
   @Override
   protected void defaultCamera() {
-    super.camera(width/2, height/2);
+    super.camera(width/2f, height/2f);
   }
 
 

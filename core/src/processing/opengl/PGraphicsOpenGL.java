@@ -4278,10 +4278,10 @@ public class PGraphicsOpenGL extends PGraphics {
   public void ortho(float left, float right,
                     float bottom, float top,
                     float near, float far) {
-    left   -= width/2;
-    right  -= width/2;
-    bottom -= height/2;
-    top    -= height/2;
+    left   -= width/2f;
+    right  -= width/2f;
+    bottom -= height/2f;
+    top    -= height/2f;
 
     // Flushing geometry with a different perspective configuration.
     flush();
