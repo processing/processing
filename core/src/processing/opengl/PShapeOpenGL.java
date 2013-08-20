@@ -4552,9 +4552,10 @@ public class PShapeOpenGL extends PShape {
         int perim;
         if (0 < size) { // round point
           weight = +size / 0.5f;
-          perim = PApplet.max(PGraphicsOpenGL.MIN_POINT_ACCURACY,
+          perim = PApplet.min(PGraphicsOpenGL.MAX_POINT_ACCURACY,
+                  PApplet.max(PGraphicsOpenGL.MIN_POINT_ACCURACY,
                               (int) (TWO_PI * weight /
-                              PGraphicsOpenGL.POINT_ACCURACY_FACTOR)) + 1;
+                              PGraphicsOpenGL.POINT_ACCURACY_FACTOR))) + 1;
         } else {        // Square point
           weight = -size / 0.5f;
           perim = 5;

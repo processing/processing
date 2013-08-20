@@ -504,15 +504,17 @@ public class PGraphicsOpenGL extends PGraphics {
   /** Used in round point and ellipse tessellation. The
    * number of subdivisions per round point or ellipse is
    * calculated with the following formula:
-   * n = max(N, (TWO_PI * size / F))
+   * n = min(M, max(N, (TWO_PI * size / F)))
    * where size is a measure of the dimensions of the circle
    * when projected on screen coordinates. F just sets the
    * minimum number of subdivisions, while a smaller F
    * would allow to have more detailed circles.
    * N = MIN_POINT_ACCURACY
+   * M = MAX_POINT_ACCURACY
    * F = POINT_ACCURACY_FACTOR
    */
   final static protected int   MIN_POINT_ACCURACY    = 20;
+  final static protected int   MAX_POINT_ACCURACY    = 200;
   final static protected float POINT_ACCURACY_FACTOR = 10.0f;
 
   /** Used in quad point tessellation. */
@@ -2684,8 +2686,8 @@ public class PGraphicsOpenGL extends PGraphics {
         int perim;
         if (0 < size) { // round point
           weight = +size / 0.5f;
-          perim = PApplet.max(MIN_POINT_ACCURACY,
-                           (int) (TWO_PI * weight / POINT_ACCURACY_FACTOR)) + 1;
+          perim = PApplet.min(MAX_POINT_ACCURACY, PApplet.max(MIN_POINT_ACCURACY,
+                              (int) (TWO_PI * weight / POINT_ACCURACY_FACTOR))) + 1;
         } else {        // Square point
           weight = -size / 0.5f;
           perim = 5;
@@ -8811,9 +8813,9 @@ public class PGraphicsOpenGL extends PGraphics {
       float sy2 = pgCurrent.screenY(x + w, y + h);
 
       int accuracy =
-        PApplet.max(MIN_POINT_ACCURACY,
+        PApplet.min(MAX_POINT_ACCURACY, PApplet.max(MIN_POINT_ACCURACY,
                     (int) (TWO_PI * PApplet.dist(sx1, sy1, sx2, sy2) /
-                    POINT_ACCURACY_FACTOR));
+                    POINT_ACCURACY_FACTOR)));
       float inc = (float) SINCOS_LENGTH / accuracy;
 
       if (fill) {
@@ -10647,9 +10649,9 @@ public class PGraphicsOpenGL extends PGraphics {
         // The number of triangles of each fan depends on the
         // stroke weight of the point.
         int nPtVert =
-          PApplet.max(MIN_POINT_ACCURACY,
+          PApplet.min(MAX_POINT_ACCURACY, PApplet.max(MIN_POINT_ACCURACY,
                       (int) (TWO_PI * strokeWeight /
-                      POINT_ACCURACY_FACTOR)) + 1;
+                      POINT_ACCURACY_FACTOR))) + 1;
         if (PGL.MAX_VERTEX_INDEX1 <= nPtVert) {
           throw new RuntimeException("Error in point tessellation.");
         }
