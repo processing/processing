@@ -24,6 +24,8 @@ package processing.opengl;
 
 import processing.core.*;
 
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.net.URL;
 import java.nio.*;
 import java.util.*;
@@ -3271,8 +3273,47 @@ public class PGraphicsOpenGL extends PGraphics {
   // TEXT IMPL
 
 
-  // protected void textLineAlignImpl(char buffer[], int start, int stop,
-  // float x, float y)
+  @Override
+  public float textAscent() {
+    if (textFont == null) {
+      defaultFontOrDeath("textAscent");
+    }
+    Font font = (Font) textFont.getNative();
+    if (font != null) {
+      FontMetrics metrics = parent.getFontMetrics(font);
+      return metrics.getAscent();
+    }
+    return super.textAscent();
+  }
+
+
+  @Override
+  public float textDescent() {
+    if (textFont == null) {
+      defaultFontOrDeath("textAscent");
+    }
+    Font font = (Font) textFont.getNative();
+    if (font != null) {
+      FontMetrics metrics = parent.getFontMetrics(font);
+      return metrics.getDescent();
+    }
+    return super.textDescent();
+  }
+
+
+  @Override
+  protected float textWidthImpl(char buffer[], int start, int stop) {
+    Font font = (Font) textFont.getNative();
+    if (font != null) {
+      // maybe should use one of the newer/fancier functions for this?
+      int length = stop - start;
+      FontMetrics metrics = parent.getFontMetrics(font);
+      return metrics.charsWidth(buffer, start, length);
+    }
+
+    return super.textWidthImpl(buffer, start, stop);
+  }
+
 
   /**
    * Implementation of actual drawing for a line of text.
@@ -3338,7 +3379,6 @@ public class PGraphicsOpenGL extends PGraphics {
   @Override
   protected void textCharImpl(char ch, float x, float y) {
     PFont.Glyph glyph = textFont.getGlyph(ch);
-
     if (glyph != null) {
       if (textMode == MODEL) {
         FontTexture.TextureInfo tinfo = textTex.getTexInfo(glyph);
