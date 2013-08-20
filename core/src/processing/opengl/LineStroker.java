@@ -312,7 +312,8 @@ public class LineStroker  {
     return ncoords / 2;
   }
 
-  private static final long ROUND_JOIN_THRESHOLD = 1000L;
+  //private static final long ROUND_JOIN_THRESHOLD = 1000L;
+  private static final long ROUND_JOIN_THRESHOLD = 100000000L;
 
   private static final long ROUND_JOIN_INTERNAL_THRESHOLD = 1000000000L;
 
