@@ -3372,10 +3372,8 @@ public class PGraphicsOpenGL extends PGraphics {
     if (textTex.currentTex != info.texIndex) {
       textTex.setTexture(info.texIndex);
     }
-    PImage tex = textTex.getCurrentTexture();
-
     beginShape(QUADS);
-    texture(tex);
+    texture(textTex.getCurrentTexture());
     vertex(x0, y0, info.u0, info.v0);
     vertex(x1, y0, info.u1, info.v0);
     vertex(x1, y1, info.u1, info.v1);

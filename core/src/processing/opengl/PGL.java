@@ -407,6 +407,7 @@ public class PGL {
 
   protected ByteBuffer byteBuffer;
   protected IntBuffer intBuffer;
+  protected IntBuffer viewBuffer;
 
   protected IntBuffer colorBuffer;
   protected FloatBuffer depthBuffer;
@@ -465,6 +466,7 @@ public class PGL {
 
     byteBuffer = allocateByteBuffer(1);
     intBuffer = allocateIntBuffer(1);
+    viewBuffer = allocateIntBuffer(4);
   }
 
 
@@ -1448,7 +1450,7 @@ public class PGL {
 
 
   protected void initTexture(int target, int format, int width, int height,
-                             int initColor) {
+                          int initColor) {
     int[] glcolor = new int[16 * 16];
     Arrays.fill(glcolor, javaToNativeARGB(initColor));
     IntBuffer texels = PGL.allocateDirectIntBuffer(16 * 16);
@@ -1544,6 +1546,11 @@ public class PGL {
       boolean depthMask = getDepthWriteMask();
       depthMask(false);
 
+      // Making sure that the viewport matches the provided screen dimensions
+      viewBuffer.rewind();
+      getIntegerv(VIEWPORT, viewBuffer);
+      viewport(0, 0, scrW, scrH);
+
       useProgram(tex2DShaderProgram);
 
       enableVertexAttribArray(tex2DVertLoc);
@@ -1610,6 +1617,9 @@ public class PGL {
         disable(DEPTH_TEST);
       }
       depthMask(depthMask);
+
+      viewport(viewBuffer.get(0), viewBuffer.get(1),
+               viewBuffer.get(2),viewBuffer.get(3));
     }
   }
 
@@ -1648,6 +1658,11 @@ public class PGL {
       // if it is behind it.
       boolean depthMask = getDepthWriteMask();
       depthMask(false);
+
+      // Making sure that the viewport matches the provided screen dimensions
+      viewBuffer.rewind();
+      getIntegerv(VIEWPORT, viewBuffer);
+      viewport(0, 0, scrW, scrH);
 
       useProgram(texRectShaderProgram);
 
@@ -1715,6 +1730,9 @@ public class PGL {
         disable(DEPTH_TEST);
       }
       depthMask(depthMask);
+
+      viewport(viewBuffer.get(0), viewBuffer.get(1),
+               viewBuffer.get(2),viewBuffer.get(3));
     }
   }
 
@@ -2124,12 +2142,14 @@ public class PGL {
 
 
   protected int maxSamples() {
+    intBuffer.rewind();
     getIntegerv(MAX_SAMPLES, intBuffer);
     return intBuffer.get(0);
   }
 
 
   protected int getMaxTexUnits() {
+    intBuffer.rewind();
     getIntegerv(MAX_TEXTURE_IMAGE_UNITS, intBuffer);
     return intBuffer.get(0);
   }

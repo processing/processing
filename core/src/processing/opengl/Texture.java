@@ -1235,7 +1235,8 @@ public class Texture implements PConstants {
     // FBO copy:
     PGraphicsOpenGL.pushFramebuffer();
     PGraphicsOpenGL.setFramebuffer(tempFbo);
-    // Clear the color buffer to make sure that the alpha of the
+    // Clear the color buffer to make sure that the alpha channel is set to
+    // full transparency
     pgl.clearColor(0, 0, 0, 0);
     pgl.clear(PGL.COLOR_BUFFER_BIT);
     if (scale) {
@@ -1254,6 +1255,7 @@ public class Texture implements PConstants {
                       x, y, w, h, x, y, w, h);
     }
     PGraphicsOpenGL.popFramebuffer();
+
     updateTexels(x, y, w, h);
   }
 
