@@ -117,6 +117,9 @@ public class PGraphics3D extends PGraphicsOpenGL {
 
     } else if (extension.equals("objz")) {
       try {
+        // TODO: The obj file can be read from the gzip, but if it refers to
+        // a materials file and texture images, those must be contained in the
+        // data folder, cannot be inside the gzip.
         InputStream input =
           new GZIPInputStream(pg.parent.createInput(filename));
         obj = new PShapeOBJ(pg.parent, PApplet.createReader(input));
