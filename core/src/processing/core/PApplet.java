@@ -6261,7 +6261,7 @@ public class PApplet extends Applet
   public Table loadTable(String filename, String options) {
     try {
       String optionStr = Table.extensionOptions(true, filename, options);
-      String[] optionList = split(optionStr, ',');
+      String[] optionList = trim(split(optionStr, ','));
 
       Table dictionary = null;
       for (String opt : optionList) {
@@ -10640,7 +10640,7 @@ public class PApplet extends Applet
     } else {  // if not presenting
       // can't do pack earlier cuz present mode don't like it
       // (can't go full screen with a frame after calling pack)
-      //        frame.pack();  
+      //        frame.pack();
 
       // get insets. get more.
       Insets insets = frame.getInsets();

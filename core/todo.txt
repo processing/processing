@@ -1,5 +1,19 @@
 0221 core
+X performance issue with shadertoy examples
+X   https://github.com/processing/processing/issues/1714
+X fix options parsing to handle spaces in the names
 
+
+video
+X problem with bit shifting
+X   https://github.com/processing/processing/pull/2023
+X   https://github.com/processing/processing/pull/2022
+X   https://github.com/processing/processing/issues/2021
+
+
+critical
+_ blendMode() change causes OpenGL renderer to be very slow
+_   https://github.com/processing/processing/issues/2021
 
 high
 _ blendMode(ADD) is broken with default renderer

@@ -306,7 +306,7 @@ public class Table {
 
     String[] opts = null;
     if (options != null) {
-      opts = PApplet.splitTokens(options, " ,");
+      opts = PApplet.trim(PApplet.split(options, ','));
       for (String opt : opts) {
         if (opt.equals("tsv")) {
           extension = "tsv";
@@ -915,7 +915,7 @@ public class Table {
       throw new IllegalArgumentException("No extension specified for saving this Table");
     }
 
-    String[] opts = PApplet.splitTokens(options, ", ");
+    String[] opts = PApplet.trim(PApplet.split(options, ','));
     // Only option for save is the extension, so we can safely grab the last
     extension = opts[opts.length - 1];
     boolean found = false;
