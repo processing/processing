@@ -53,6 +53,7 @@ public class EditorState {
 //    int displayW, displayH;
 //    String deviceName;  // not really useful b/c it's more about bounds anyway
   Rectangle deviceBounds;
+  boolean isMaximized;
 
 
   /**
@@ -173,6 +174,7 @@ public class EditorState {
       synchronized (editors) {
         final int OVER = 50;
         Editor lastOpened = editors.get(editors.size() - 1);
+        isMaximized = (lastOpened.getExtendedState() == Editor.MAXIMIZED_BOTH);
         editorBounds = lastOpened.getBounds();
         editorBounds.x += OVER;
         editorBounds.y += OVER;
@@ -182,6 +184,10 @@ public class EditorState {
           // Warp the next window to a randomish location on screen.
           editorBounds.x = deviceBounds.x + (int) (Math.random() * (deviceBounds.width - defaultWidth));
           editorBounds.y = deviceBounds.y + (int) (Math.random() * (deviceBounds.height - defaultHeight));
+        }
+        if (isMaximized) {
+          editorBounds.width = defaultWidth;
+          editorBounds.height = defaultHeight;
         }
       }
     }
@@ -203,6 +209,9 @@ public class EditorState {
     editor.setBounds(editorBounds);
     if (dividerLocation != 0) {
       editor.setDividerLocation(dividerLocation);
+    }
+    if (isMaximized) {
+      editor.setExtendedState(Editor.MAXIMIZED_BOTH);
     }
   }
 
