@@ -420,20 +420,23 @@ public class PGL {
 
   // Error messages
 
+  protected static final String WIKI =
+    " Read http://wiki.processing.org/w/OpenGL_Issues for help.";
+
   protected static final String FRAMEBUFFER_ERROR =
-    "Framebuffer error (%1$s), rendering will probably not work as expected";
+    "Framebuffer error (%1$s), rendering will probably not work as expected" + WIKI;
 
   protected static final String MISSING_FBO_ERROR =
-    "Framebuffer objects are not supported by this hardware (or driver)";
+    "Framebuffer objects are not supported by this hardware (or driver)" + WIKI;
 
   protected static final String MISSING_GLSL_ERROR =
-    "GLSL shaders are not supported by this hardware (or driver)";
+    "GLSL shaders are not supported by this hardware (or driver)" + WIKI;
 
   protected static final String MISSING_GLFUNC_ERROR =
-    "GL function %1$s is not available on this hardware (or driver)";
+    "GL function %1$s is not available on this hardware (or driver)" + WIKI;
 
   protected static final String TEXUNIT_ERROR =
-    "Number of texture units not supported by this hardware (or driver)";
+    "Number of texture units not supported by this hardware (or driver)" + WIKI;
 
 
   ///////////////////////////////////////////////////////////

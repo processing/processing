@@ -1,7 +1,65 @@
+PROCESSING 2.0.3 (REV 0221) - 23 August 2013
+
+Several OpenGL fixes.
+
+
+[ andres vs the volcano ]
+
++ blendMode() change causes OpenGL renderer to be very slow
+  https://github.com/processing/processing/issues/2021
+
++ Serious OpenGL performance issues on OS X, this was fixed 
+  with the JOGL update in 2.0.2, but we neglected to note it.
+  https://github.com/processing/processing/issues/1714
+
++ P2D low quality text rendering
+  https://github.com/processing/processing/issues/1972
+
++ Fix issues with slow text rendering and OpenGL
+  https://github.com/processing/processing/issues/2025
+
++ Corrupted text with large font and OpenGL
+  https://github.com/processing/processing/issues/1869
+
++ loadFont hangs on Processing 2.0 with any OpenGL renderer
+  https://github.com/processing/processing/issues/1854
+
++ Rendering artifacts on the diagonal line (topleft to bottomright) in P2D
+  https://github.com/processing/processing/issues/1964
+
++ loadShape doesn't load OBJ files in subdirectories properly
+  https://github.com/processing/processing/issues/2003
+
++ more OpenGL issues fixed by JOGL or newer drivers
+  https://github.com/processing/processing/issues/1986
+
++ Vertical offset when sketch height is indivisible by 2
+  https://github.com/processing/processing/issues/1985
+
++ ellipse() causes RuntimeException: java.lang.OutOfMemoryError
+  https://github.com/processing/processing/issues/1941
+
++ beginShape()...endShape() lines look wrong at joins/caps with P2D
+  https://github.com/processing/processing/issues/1927
+
++ Problem with bit shifting and video
+  https://github.com/processing/processing/pull/2023
+  https://github.com/processing/processing/pull/2022
+  https://github.com/processing/processing/issues/2021
+
+
+[ other bug fixes ] 
+
++ Fix options parsing on loadTable() to handle spaces.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING 2.0.2 (REV 0220) - 14 August 2013
 
 Many small bug fixes and lots of work on the Library/Tool/Mode Manager. 
-Full screen is back for Windows, and 
+Full screen is back for Windows, and lots more.
 
 
 [ bug fixes ] 

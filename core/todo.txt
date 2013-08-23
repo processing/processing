@@ -1,8 +1,32 @@
 0221 core
-X performance issue with shadertoy examples
-X   https://github.com/processing/processing/issues/1714
-X fix options parsing to handle spaces in the names
+X fix options parsing on loadTable() to handle spaces
 
+andres
+X blendMode() change causes OpenGL renderer to be very slow
+X   https://github.com/processing/processing/issues/2021
+X serious OpenGL performance issues on OS X (fixed earlier?)
+X   https://github.com/processing/processing/issues/1714
+X   fixed with a recent JOGL update
+X P2D low quality text rendering
+X   https://github.com/processing/processing/issues/1972
+X Rendering artifacts on the diagonal line (topleft to bottomright) in P2D
+X   https://github.com/processing/processing/issues/1964
+X Fix issues with slow text rendering and OpenGL
+X   https://github.com/processing/processing/issues/2025
+X loadShape doesn't load OBJ files in subdirectories properly
+X   https://github.com/processing/processing/issues/2003
+X more OpenGL issues fixed by JOGL or newer drivers
+X   https://github.com/processing/processing/issues/1986
+X Vertical offset when sketch height is indivisible by 2
+X   https://github.com/processing/processing/issues/1985
+X ellipse() causes RuntimeException: java.lang.OutOfMemoryError
+X   https://github.com/processing/processing/issues/1941
+X beginShape()..endShape() lines look wrong at joins/caps with P2D
+X   https://github.com/processing/processing/issues/1927
+X Corrupted text with large font and OpenGL
+X   https://github.com/processing/processing/issues/1869
+X loadFont hangs on Processing 2.0 with any OpenGL renderer
+X   https://github.com/processing/processing/issues/1854
 
 video
 X problem with bit shifting
@@ -12,8 +36,8 @@ X   https://github.com/processing/processing/issues/2021
 
 
 critical
-_ blendMode() change causes OpenGL renderer to be very slow
-_   https://github.com/processing/processing/issues/2021
+_ loadPixels doesn't set alpha value for pixels on Java2D
+_   https://github.com/processing/processing/issues/2030
 
 high
 _ blendMode(ADD) is broken with default renderer
