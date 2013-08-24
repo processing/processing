@@ -133,10 +133,11 @@ Gotta do it carefully between main thread, ECS Thread, and SwingWorker threads
 Fields that are concurrently accessed:
 
 ECS members:
-ArrayList<Problem> problems - updated in ECS, accessed by ErrorBar.update()
-ArrayList<URL> classpathJars - updated in ECS, accessed by ASTGenerator.loadJars()
-hasErrors, syntaxErrors - Atomic Boolean
-CompilationUnit cu - updated in ECS, accessed a zillion times in ASTGenerator :'( 
+x ArrayList<Problem> problems - updated in ECS, accessed by ErrorBar.update()
+x ArrayList<URL> classpathJars - updated in ECS, accessed by ASTGenerator.loadJars()
+x hasErrors, syntaxErrors - Atomic Boolean
+x boolean warningsEnabled - made it volatile
+* CompilationUnit cu - updated in ECS, accessed a zillion times in ASTGenerator :'( 
 
 
 General Stuff

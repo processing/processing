@@ -3090,6 +3090,19 @@ public class ASTGenerator {
     }
 
   }
+  
+  public void disposeAllWindows(){
+   disposeWindow(frame2);
+   disposeWindow(frameAutoComp);
+   disposeWindow(frmImportSuggest);
+   disposeWindow(frmOccurenceList);
+   disposeWindow(frmRename);
+  }
+  
+  public static void disposeWindow(JFrame f) {
+    if(f != null)
+      f.dispose();
+  }
 
   public static final String ignoredImports[] = {
     "com.oracle.", "sun.", "sunw.", "com.sun.", "javax.", "sunw.", "org.ietf.",

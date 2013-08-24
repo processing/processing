@@ -183,7 +183,7 @@ public class ErrorWindow extends JFrame {
 			return;
 		}
 
-		thisEditor.addWindowListener(new WindowAdapter() {
+		/*thisEditor.addWindowListener(new WindowAdapter() {
 
 			@Override
 			public void windowClosing(WindowEvent e) {
@@ -207,7 +207,7 @@ public class ErrorWindow extends JFrame {
 				thisErrorWindow.setExtendedState(Frame.NORMAL);
 			}
 
-		});
+		});*/
 
 		thisEditor.addComponentListener(new ComponentListener() {
 

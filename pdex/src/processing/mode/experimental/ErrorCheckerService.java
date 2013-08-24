@@ -282,6 +282,10 @@ public class ErrorCheckerService implements Runnable{
       checkCode();
       checkForMissingImports();
     }
+    checkerClass = null;
+    astGenerator.disposeAllWindows();
+    astGenerator = null;
+    logE("Thread stopped: " + editor.getSketch().getName());
   }
   
   private void checkForMissingImports() {
@@ -559,20 +563,20 @@ public class ErrorCheckerService implements Runnable{
     } catch (ClassNotFoundException e) {
       System.err.println("Compiltation Checker files couldn't be found! "
           + e + " compileCheck() problem.");
-      stopThread();
+      pauseThread();
     } catch (MalformedURLException e) {
       System.err.println("Compiltation Checker files couldn't be found! "
           + e + " compileCheck() problem.");
-      stopThread();
+      pauseThread();
     } catch (Exception e) {
       System.err.println("compileCheck() problem." + e);
       e.printStackTrace();
-      stopThread();
+      pauseThread();
     } catch (NoClassDefFoundError e) {
       System.err
           .println(e
               + " compileCheck() problem. Somebody tried to mess with Experimental Mode files.");
-      stopThread();
+      pauseThread();
     }
     // log("Compilecheck, Done.");
   }
@@ -793,7 +797,7 @@ public class ErrorCheckerService implements Runnable{
     } catch (Exception e) {
       log("Exception at updateErrorTable() " + e);
       e.printStackTrace();
-      stopThread();
+      pauseThread();
     }
 
   }
@@ -1397,6 +1401,7 @@ public class ErrorCheckerService implements Runnable{
    * Stops the Error Checker Service thread
    */
   public void stopThread() {
+    logE("Stopping thread: " + editor.getSketch().getName());
     stopThread.set(true);
   }
 
