@@ -126,6 +126,19 @@ x Working for local code
 * Labels for predefined class objects
 * Chaining support for labels
 
+Synchronization 
+===============
+
+Gotta do it carefully between main thread, ECS Thread, and SwingWorker threads
+Fields that are concurrently accessed:
+
+ECS members:
+ArrayList<Problem> problems - updated in ECS, accessed by ErrorBar.update()
+ArrayList<URL> classpathJars - updated in ECS, accessed by ASTGenerator.loadJars()
+hasErrors, syntaxErrors - Atomic Boolean
+CompilationUnit cu - updated in ECS, accessed a zillion times in ASTGenerator :'( 
+
+
 General Stuff
 =============
 

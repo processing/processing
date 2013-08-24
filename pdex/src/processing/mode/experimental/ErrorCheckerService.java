@@ -510,51 +510,52 @@ public class ErrorCheckerService implements Runnable{
       if (errorList == null) {
         return;
       }
-
-      problems = new DefaultProblem[errorList.length];
-
-      for (int i = 0; i < errorList.length; i++) {
-
-        // for (int j = 0; j < errorList[i].length; j++)
-        // System.out.print(errorList[i][j] + ", ");
-
-        problems[i] = new DefaultProblem((char[]) errorList[i][0],
-            (String) errorList[i][1],
-            ((Integer) errorList[i][2]).intValue(),
-            (String[]) errorList[i][3],
-            ((Integer) errorList[i][4]).intValue(),
-            ((Integer) errorList[i][5]).intValue(),
-            ((Integer) errorList[i][6]).intValue(),
-            ((Integer) errorList[i][7]).intValue(), 0);
-
-        // System.out
-        // .println("ECS: " + problems[i].getMessage() + ","
-        // + problems[i].isError() + ","
-        // + problems[i].isWarning());
-
-        IProblem problem = problems[i];
-//        log(problem.getMessage());
-//        for (String j : problem.getArguments()) {
-//          log("arg " + j);
-//        }
-        int a[] = calculateTabIndexAndLineNumber(problem);
-        Problem p = new Problem(problem, a[0], a[1]);
-        if ((Boolean) errorList[i][8]) {
-          p.setType(Problem.ERROR);
-          containsErrors.set(true); // set flag
+      
+      synchronized (problemsList) {
+        problems = new DefaultProblem[errorList.length];
+  
+        for (int i = 0; i < errorList.length; i++) {
+  
+          // for (int j = 0; j < errorList[i].length; j++)
+          // System.out.print(errorList[i][j] + ", ");
+  
+          problems[i] = new DefaultProblem((char[]) errorList[i][0],
+              (String) errorList[i][1],
+              ((Integer) errorList[i][2]).intValue(),
+              (String[]) errorList[i][3],
+              ((Integer) errorList[i][4]).intValue(),
+              ((Integer) errorList[i][5]).intValue(),
+              ((Integer) errorList[i][6]).intValue(),
+              ((Integer) errorList[i][7]).intValue(), 0);
+  
+          // System.out
+          // .println("ECS: " + problems[i].getMessage() + ","
+          // + problems[i].isError() + ","
+          // + problems[i].isWarning());
+  
+          IProblem problem = problems[i];
+  //        log(problem.getMessage());
+  //        for (String j : problem.getArguments()) {
+  //          log("arg " + j);
+  //        }
+          int a[] = calculateTabIndexAndLineNumber(problem);
+          Problem p = new Problem(problem, a[0], a[1]);
+          if ((Boolean) errorList[i][8]) {
+            p.setType(Problem.ERROR);
+            containsErrors.set(true); // set flag
+          }
+          
+          if ((Boolean) errorList[i][9]) {
+            p.setType(Problem.WARNING);
+          }
+  
+          // If warnings are disabled, skip 'em
+          if (p.isWarning() && !warningsEnabled) {
+            continue;
+          }
+          problemsList.add(p);
         }
-        
-        if ((Boolean) errorList[i][9]) {
-          p.setType(Problem.WARNING);
-        }
-
-        // If warnings are disabled, skip 'em
-        if (p.isWarning() && !warningsEnabled) {
-          continue;
-        }
-        problemsList.add(p);
       }
-
     } catch (ClassNotFoundException e) {
       System.err.println("Compiltation Checker files couldn't be found! "
           + e + " compileCheck() problem.");
@@ -717,7 +718,7 @@ public class ErrorCheckerService implements Runnable{
   /**
    * Enable/Disable warnings from being shown
    */
-  public boolean warningsEnabled = true;
+  volatile public boolean warningsEnabled = true;
 
   /**
    * Sets compiler options for JDT Compiler
@@ -747,7 +748,7 @@ public class ErrorCheckerService implements Runnable{
   /**
    * Updates the error table in the Error Window.
    */
-  synchronized public void updateErrorTable() {
+  public void updateErrorTable() {
 
     try {
       String[][] errorData = new String[problemsList.size()][3];
