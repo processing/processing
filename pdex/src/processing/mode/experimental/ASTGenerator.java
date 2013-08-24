@@ -109,44 +109,44 @@ public class ASTGenerator {
 
   public DefaultMutableTreeNode codeTree = new DefaultMutableTreeNode();
 
-  private DefaultMutableTreeNode currentParent = null;
+  protected DefaultMutableTreeNode currentParent = null;
 
   /**
    * AST Window
    */
-  private JFrame frame2;
+  protected JFrame frame2;
   
-  private JFrame frameAutoComp;
+  protected JFrame frameAutoComp;
 
   /**
    * Swing component wrapper for AST, used for internal testing
    */
-  private JTree jtree;
+  protected JTree jtree;
   
   /**
    * JTree used for testing refactoring operations
    */
-  private JTree treeRename;
+  protected JTree treeRename;
 
-  private CompilationUnit compilationUnit;
+  protected CompilationUnit compilationUnit;
 
-  private JTable tableAuto;
+  protected JTable tableAuto;
 
-  private JEditorPane javadocPane;
+  protected JEditorPane javadocPane;
 
-  private JScrollPane scrollPane;
+  protected JScrollPane scrollPane;
   
-  private JFrame frmRename;
+  protected JFrame frmRename;
 
-  private JButton btnRename;
+  protected JButton btnRename;
   
-  private JButton btnListOccurrence;
+  protected JButton btnListOccurrence;
   
-  private JTextField txtRenameField;
+  protected JTextField txtRenameField;
   
-  private JFrame frmOccurenceList;
+  protected JFrame frmOccurenceList;
   
-  private JLabel lblRefactorOldName;
+  protected JLabel lblRefactorOldName;
   
   public ASTGenerator(ErrorCheckerService ecs) {
     this.errorCheckerService = ecs;
@@ -156,7 +156,7 @@ public class ASTGenerator {
     addListeners();
   }
   
-  private void setupGUI(){
+  protected void setupGUI(){
     frame2 = new JFrame();
 
     jtree = new JTree();
@@ -234,7 +234,7 @@ public class ASTGenerator {
 ////    loadJars();
   }
 
-  private DefaultMutableTreeNode buildAST(String source, CompilationUnit cu) {
+  protected DefaultMutableTreeNode buildAST(String source, CompilationUnit cu) {
     if (cu == null) {
       ASTParser parser = ASTParser.newParser(AST.JLS4);
       parser.setSource(source.toCharArray());
@@ -304,14 +304,14 @@ public class ASTGenerator {
     return codeTree;
   }
 
-  private ClassPathFactory factory;
+  protected ClassPathFactory factory;
 
   /**
    * Used for searching for package declaration of a class 
    */
-  private ClassPath classPath;
+  protected ClassPath classPath;
 
-  private JFrame jdocWindow;
+  protected JFrame jdocWindow;
 
   /**
    * Loads up .jar files and classes defined in it for completion lookup
@@ -395,9 +395,9 @@ public class ASTGenerator {
     t.start();
   }
 
-  private TreeMap<String, String> jdocMap;
+  protected TreeMap<String, String> jdocMap;
 
-  private void loadJavaDoc() {
+  protected void loadJavaDoc() {
 
     // presently loading only p5 reference for PApplet
     Thread t = new Thread(new Runnable() {
@@ -758,7 +758,7 @@ public class ASTGenerator {
     return null;
   }
 
-  private void trimCandidates(String newWord){
+  protected void trimCandidates(String newWord){
     ArrayList<CompletionCandidate> newCandidate = new ArrayList<CompletionCandidate>();
     newWord = newWord.toLowerCase();
     for (CompletionCandidate comp : candidates) {
@@ -773,8 +773,8 @@ public class ASTGenerator {
   /**
    * List of CompletionCandidates
    */
-  private ArrayList<CompletionCandidate> candidates;
-  private String lastPredictedWord = " ";
+  protected ArrayList<CompletionCandidate> candidates;
+  protected String lastPredictedWord = " ";
   
   public void preparePredictions(final String word, final int line, final int lineStartNonWSOffset) {
     // This method is called from TextArea.fetchPhrase, which is called via a SwingWorker instance
@@ -998,7 +998,7 @@ public class ASTGenerator {
 //    worker.execute();
   }
   
-  private void showPredictions(final String word) {
+  protected void showPredictions(final String word) {
     if (sketchOutline != null)
       if (sketchOutline.isVisible()) return;
     Collections.sort(candidates);
@@ -1153,7 +1153,7 @@ public class ASTGenerator {
    * @param className
    * @return
    */
-  private Class findClassIfExists(String className){
+  protected Class findClassIfExists(String className){
     if(className == null){
       return null;
     }
@@ -1224,7 +1224,7 @@ public class ASTGenerator {
     return tehClass;
   }
   
-  private Class loadClass(String className){
+  protected Class loadClass(String className){
     Class tehClass = null;
     if(className instanceof String){
       try {
@@ -1343,7 +1343,7 @@ public class ASTGenerator {
   }
 
   @SuppressWarnings("unchecked")
-  private static ASTNode findClosestParentNode(int lineNumber, ASTNode node) {
+  protected static ASTNode findClosestParentNode(int lineNumber, ASTNode node) {
     Iterator<StructuralPropertyDescriptor> it = node
         .structuralPropertiesForType().iterator();
     // logE("Props of " + node.getClass().getName());
@@ -1383,7 +1383,7 @@ public class ASTGenerator {
     return node;
   }
 
-  private static ASTNode findClosestNode(int lineNumber, ASTNode node) {
+  protected static ASTNode findClosestNode(int lineNumber, ASTNode node) {
     log("findClosestNode to line " + lineNumber);
     ASTNode parent = findClosestParentNode(lineNumber, node);
     log("findClosestParentNode returned " + getNodeAsString(parent));
@@ -1427,7 +1427,7 @@ public class ASTGenerator {
     //return "";
   }
   
-  private String getLabelIfType(ASTNodeWrapper node, SimpleName sn){
+  protected String getLabelIfType(ASTNodeWrapper node, SimpleName sn){
     ASTNode current = node.getNode().getParent();
     String type = "";
     StringBuffer fullName = new StringBuffer();
@@ -1633,7 +1633,7 @@ public class ASTGenerator {
    * @param name - The name we're looking for.
    * @return SimpleName
    */
-  private static ASTNode getNodeName(ASTNode node, String name){
+  protected static ASTNode getNodeName(ASTNode node, String name){
     List<VariableDeclarationFragment> vdfs = null;
     switch (node.getNodeType()) {
     case ASTNode.TYPE_DECLARATION:
@@ -1726,7 +1726,7 @@ public class ASTGenerator {
     }
   }
   
-  private void addListeners(){
+  protected void addListeners(){
     jtree.addTreeSelectionListener(new TreeSelectionListener() {
       
       @Override
@@ -1827,7 +1827,7 @@ public class ASTGenerator {
     });
   }
   
-  private void refactorIt(){
+  protected void refactorIt(){
     String newName = txtRenameField.getText().trim();
     String selText = lastClickedWord == null ? editor.ta.getSelectedText()
         : lastClickedWord;
@@ -1944,7 +1944,7 @@ public class ASTGenerator {
     log("Last clicked node: " + lastClickedWordNode);
   }
 
-  private DefaultMutableTreeNode findAllOccurrences(){
+  protected DefaultMutableTreeNode findAllOccurrences(){
     log("Last clicked word:" + lastClickedWord);
     String selText = lastClickedWord == null ? editor.ta.getSelectedText()
         : lastClickedWord;
@@ -2121,7 +2121,7 @@ public class ASTGenerator {
     return -1;
   }
   
-  private int PdeToJavaLineNumber(int lineNum){
+  protected int PdeToJavaLineNumber(int lineNum){
     int lineNumber = lineNum + errorCheckerService.getPdeImportsCount();
     // Adjust line number for tabbed sketches
     int codeIndex = editor.getSketch().getCodeIndex(editor.getCurrentTab());
@@ -2134,7 +2134,7 @@ public class ASTGenerator {
     return lineNumber;
   }
   
-  private boolean isInstanceOfType(ASTNode node,ASTNode decl, String name){
+  protected boolean isInstanceOfType(ASTNode node,ASTNode decl, String name){
     if(node instanceof SimpleName){
       SimpleName sn = (SimpleName) node;
       
@@ -2232,7 +2232,7 @@ public class ASTGenerator {
   }
 
   @SuppressWarnings("unchecked")
-  private static ASTNode findLineOfNode(ASTNode node, int lineNumber,
+  protected static ASTNode findLineOfNode(ASTNode node, int lineNumber,
                                         int offset, String name) {
 
     CompilationUnit root = (CompilationUnit) node.getRoot();
@@ -2349,7 +2349,7 @@ public class ASTGenerator {
    * @return
    */
   @SuppressWarnings("unchecked")
-  private static ASTNode findDeclaration(Name findMe) {
+  protected static ASTNode findDeclaration(Name findMe) {
     
     // WARNING: You're entering the Rube Goldberg territory of Experimental Mode.
     // To debug this code, thou must take the Recursive Leap of Faith.
@@ -2544,7 +2544,7 @@ public class ASTGenerator {
    * @param alternateParent
    * @return
    */
-  private static ASTNode findDeclaration2(Name findMe, ASTNode alternateParent) {
+  protected static ASTNode findDeclaration2(Name findMe, ASTNode alternateParent) {
     ASTNode declaringClass = null;
     ASTNode parent = findMe.getParent();
     ASTNode ret = null;
@@ -2728,7 +2728,7 @@ public class ASTGenerator {
   }
   
   
-  private List<Comment> getCodeComments(){
+  protected List<Comment> getCodeComments(){
     List<Comment> commentList = compilationUnit.getCommentList();
 //    log("Total comments: " + commentList.size());
 //    int i = 0;
@@ -2925,7 +2925,7 @@ public class ASTGenerator {
   }
 
   @SuppressWarnings("unchecked")
-  private static ASTNode definedIn(ASTNode node, String name,
+  protected static ASTNode definedIn(ASTNode node, String name,
                                    ArrayList<Integer> constrains,
                                    ASTNode declaringClass) {
     if (node == null)
@@ -3108,7 +3108,7 @@ public class ASTGenerator {
     "com.oracle.", "sun.", "sunw.", "com.sun.", "javax.", "sunw.", "org.ietf.",
     "org.jcp.", "org.omg.", "org.w3c.", "org.xml.", "org.eclipse.", "com.ibm.",
     "org.netbeans.", "org.jsoup.", "org.junit.", "org.apache.", "antlr." };
-  private boolean ignorableImport(String impName) {
+  protected boolean ignorableImport(String impName) {
     //TODO: Trie man.
     for (ImportStatement impS : errorCheckerService.getProgramImports()) {
       if(impName.startsWith(impS.getPackageName()))
@@ -3172,7 +3172,7 @@ public class ASTGenerator {
   
   
 
-  static private String getNodeAsString(ASTNode node) {
+  static protected String getNodeAsString(ASTNode node) {
     if (node == null)
       return "NULL";
     String className = node.getClass().getName();
@@ -3224,7 +3224,7 @@ public class ASTGenerator {
    * @param node
    * @return
    */
-  static private String getNodeAsString2(ASTNode node) {
+  static protected String getNodeAsString2(ASTNode node) {
     if (node == null)
       return "NULL";
     String className = node.getClass().getName();
