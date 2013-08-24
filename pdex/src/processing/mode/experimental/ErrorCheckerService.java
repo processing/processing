@@ -193,6 +193,7 @@ public class ErrorCheckerService implements Runnable{
         pdePrepoc.getDefaultImports().length + 1;
     astGenerator = new ASTGenerator(this);
     syntaxErrors = new AtomicBoolean(true);
+    containsErrors = new AtomicBoolean(true);
     errorMsgSimplifier = new ErrorMessageSimplifier();
     tempErrorLog = new TreeMap<String, IProblem>();
   }
@@ -337,6 +338,15 @@ public class ErrorCheckerService implements Runnable{
             + mainClassOffset);
       }
       
+      // Update error flag
+      containsErrors.set(false);
+      for (Problem p : problemsList) {
+        if (p.isError()){
+          containsErrors.set(true);
+          break;
+        }
+      }
+      
       updateErrorTable();
       editor.updateErrorBar(problemsList);
       updateEditorStatus();
@@ -363,31 +373,24 @@ public class ErrorCheckerService implements Runnable{
     return false;
   }
   
-  protected AtomicBoolean syntaxErrors;
+  protected AtomicBoolean syntaxErrors, containsErrors;
   
   public boolean hasSyntaxErrors(){
     return syntaxErrors.get();
   }
   
   public boolean hasErrors(){
-    synchronized (problemsList) {
-      for (Problem p : problemsList) {
-        if (p.isError()){
-          return true;
-        }
-      }
-      return false;
-    }
+    return containsErrors.get();
   }
   
   protected TreeMap<String, IProblem> tempErrorLog;
 
   private void syntaxCheck() {
     syntaxErrors.set(true);
+    containsErrors.set(true);
     parser.setSource(sourceCode.toCharArray());
     parser.setKind(ASTParser.K_COMPILATION_UNIT);
 
-    @SuppressWarnings("unchecked")
     Map<String, String> options = JavaCore.getOptions();
 
     JavaCore.setComplianceOptions(JavaCore.VERSION_1_6, options);
@@ -413,25 +416,31 @@ public class ErrorCheckerService implements Runnable{
       // log(p.toString());
     }
     
-    if (problems.length == 0)
+    if (problems.length == 0) {
       syntaxErrors.set(false);
-    else
+      containsErrors.set(false);
+    } else {
       syntaxErrors.set(true);
+      containsErrors.set(true);
+    }
   }
+  
   protected URLClassLoader classLoader;
+  
   private void compileCheck() {
 
     // Currently (Sept, 2012) I'm using Java's reflection api to load the
     // CompilationChecker class(from CompilationChecker.jar) that houses the
-    // Eclispe JDT compiler and call its getErrorsAsObj method to obtain
+    // Eclispe JDT compiler, and call its getErrorsAsObj method to obtain
     // errors. This way, I'm able to add the paths of contributed libraries
     // to the classpath of CompilationChecker, dynamically. The eclipse compiler
-    // needs all referenced libraries in the classpath.
+    // needs all referenced libraries in the classpath. Totally a hack. If you find
+    // a better method, do let me know.
 
     try {
 
       // NOTE TO SELF: If classpath contains null Strings
-      // URLClassLoader gets angry. Drops NPE bombs.
+      // URLClassLoader shoots NPE bullets.
 
       // If imports have changed, reload classes with new classpath.
       if (loadCompClass) {
@@ -451,7 +460,7 @@ public class ErrorCheckerService implements Runnable{
         FileFilter fileFilter = new FileFilter() {
           public boolean accept(File file) {
             return (file.getName().endsWith(".jar") && !file
-                .getName().startsWith("ExperimentalMode"));
+                .getName().startsWith(editor.getMode().getClass().getSimpleName()));
           }
         };
 
@@ -526,6 +535,7 @@ public class ErrorCheckerService implements Runnable{
         Problem p = new Problem(problem, a[0], a[1]);
         if ((Boolean) errorList[i][8]) {
           p.setType(Problem.ERROR);
+          containsErrors.set(true); // set flag
         }
         
         if ((Boolean) errorList[i][9]) {
