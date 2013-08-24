@@ -612,7 +612,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
             toggleVariableInspector();
         } else if (source.equals(showOutline)){
             log("Show Outline :D");
-            errorCheckerService.astGenerator.showSketchOutline();
+            errorCheckerService.getASTGenerator().showSketchOutline();
         }
     }
 
@@ -1259,13 +1259,13 @@ public class DebugEditor extends JavaEditor implements ActionListener {
     private void handleRefactor() {
       log("Caret at:");
       log(ta.getLineText(ta.getCaretLine()));
-      errorCheckerService.astGenerator.handleRefactor();
+      errorCheckerService.getASTGenerator().handleRefactor();
     }
     
     private void handleShowUsage() {
       log("Caret at:");
       log(ta.getLineText(ta.getCaretLine()));
-      errorCheckerService.astGenerator.handleShowUsage();
+      errorCheckerService.getASTGenerator().handleShowUsage();
     }
     
     /**

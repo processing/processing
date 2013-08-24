@@ -143,7 +143,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter {
 
       log(errorCheckerService.mainClassOffset + line +
       "|" + line + "| offset " + xLS + word + " <= \n");
-      errorCheckerService.astGenerator.scrollToDeclaration(line
+      errorCheckerService.getASTGenerator().scrollToDeclaration(line
           + errorCheckerService.mainClassOffset, word, xLS);
     }
   }
@@ -472,7 +472,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter {
       }
       if (Character.isDigit(word.charAt(0)))
         return null;
-      String tooltipText = errorCheckerService.astGenerator
+      String tooltipText = errorCheckerService.getASTGenerator()
           .getLabelForASTNode(line + errorCheckerService.mainClassOffset, word,
                               xLS);
 

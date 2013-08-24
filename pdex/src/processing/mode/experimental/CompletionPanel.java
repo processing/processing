@@ -56,7 +56,7 @@ public class CompletionPanel {
     scrollPane.setViewportView(completionList = createSuggestionList(position, items));
     popupMenu.add(scrollPane, BorderLayout.CENTER);
     popupMenu.setPopupSize(280, 250); //TODO: Eradicate this evil
-    this.textarea.errorCheckerService.astGenerator
+    this.textarea.errorCheckerService.getASTGenerator()
         .updateJavaDoc((CompletionCandidate) completionList.getSelectedValue());
     popupMenu.show(textarea, location.x, textarea.getBaseline(0, 0)
         + location.y);
@@ -145,7 +145,7 @@ public class CompletionPanel {
   public void hideSuggestion() {
     popupMenu.setVisible(false);
     log("Suggestion hidden" + System.nanoTime());
-    //textarea.errorCheckerService.astGenerator.jdocWindowVisible(false);
+    //textarea.errorCheckerService.getASTGenerator().jdocWindowVisible(false);
   }
 
   public void moveUp() {
@@ -163,7 +163,7 @@ public class CompletionPanel {
                                                    .getVerticalScrollBar()
                                                    .getValue()
                                                    - step);
-    textarea.errorCheckerService.astGenerator
+    textarea.errorCheckerService.getASTGenerator()
         .updateJavaDoc((CompletionCandidate) completionList.getSelectedValue());
 
   }
@@ -178,7 +178,7 @@ public class CompletionPanel {
           .getSize() - 1);
       selectIndex(index);
     }
-    textarea.errorCheckerService.astGenerator
+    textarea.errorCheckerService.getASTGenerator()
         .updateJavaDoc((CompletionCandidate) completionList.getSelectedValue());
     int step = scrollPane.getVerticalScrollBar().getMaximum()
         / completionList.getModel().getSize();

@@ -302,6 +302,11 @@ public class ErrorCheckerService implements Runnable{
   }
 
   protected ASTGenerator astGenerator;
+  
+  public ASTGenerator getASTGenerator() {
+    return astGenerator;
+  }
+
   /**
    * This thing acts as an event queue counter of sort.
    * Since error checking happens on demand, anytime this counter
