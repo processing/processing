@@ -39,7 +39,7 @@ import processing.mode.java.preproc.PdePreprocessor;
 
 public class ErrorCheckerService implements Runnable{
   
-  private DebugEditor editor;
+  protected DebugEditor editor;
   /**
    * Error check happens every sleepTime milliseconds
    */
@@ -48,7 +48,7 @@ public class ErrorCheckerService implements Runnable{
   /**
    * The amazing eclipse ast parser
    */
-  private ASTParser parser;
+  protected ASTParser parser;
  
   /**
    * Used to indirectly stop the Error Checker Thread
@@ -65,7 +65,7 @@ public class ErrorCheckerService implements Runnable{
   /**
    * IProblem[] returned by parser stored in here
    */
-  private IProblem[] problems;
+  protected IProblem[] problems;
 
   /**
    * Class name of current sketch
@@ -114,7 +114,7 @@ public class ErrorCheckerService implements Runnable{
    * If true, compilation checker will be reloaded with updated classpath
    * items.
    */
-  private boolean loadCompClass = true;
+  protected boolean loadCompClass = true;
 
   /**
    * Compiler Checker class. Note that methods for compilation checking are
@@ -136,14 +136,14 @@ public class ErrorCheckerService implements Runnable{
   /**
    * Timestamp - for measuring total overhead
    */
-  private long lastTimeStamp = System.currentTimeMillis();
+  protected long lastTimeStamp = System.currentTimeMillis();
 
   /**
    * Used for displaying the rotating slash on the Problem Window title bar
    */
-  private String[] slashAnimation = { "|", "/", "--", "\\", "|", "/", "--",
+  protected String[] slashAnimation = { "|", "/", "--", "\\", "|", "/", "--",
       "\\" };
-  private int slashAnimationIndex = 0;
+  protected int slashAnimationIndex = 0;
 
   /**
    * Used to detect if the current tab index has changed and thus repaint the
@@ -155,7 +155,7 @@ public class ErrorCheckerService implements Runnable{
    * Stores the current import statements in the program. Used to compare for
    * changed import statements and update classpath if needed.
    */
-  private ArrayList<ImportStatement> programImports;
+  protected ArrayList<ImportStatement> programImports;
 
   /**
    * List of imports when sketch was last checked. Used for checking for
@@ -207,7 +207,7 @@ public class ErrorCheckerService implements Runnable{
   /**
    * Initializes ASTParser
    */
-  private void initParser() {
+  protected void initParser() {
     try {
       parser = ASTParser.newParser(AST.JLS4);
     } catch (Exception e) {
@@ -288,7 +288,7 @@ public class ErrorCheckerService implements Runnable{
     logE("Thread stopped: " + editor.getSketch().getName());
   }
   
-  private void checkForMissingImports() {
+  protected void checkForMissingImports() {
     for (Problem p : problemsList) {
       if(p.getMessage().endsWith(" cannot be resolved to a type"));{
         int idx = p.getMessage().indexOf(" cannot be resolved to a type");
@@ -322,7 +322,7 @@ public class ErrorCheckerService implements Runnable{
     textModified.incrementAndGet();
   }
 
-  private boolean checkCode() {
+  protected boolean checkCode() {
     //log("checkCode() " + textModified.get() );
     log("checkCode() " + textModified.get());
     lastTimeStamp = System.currentTimeMillis();
@@ -391,7 +391,7 @@ public class ErrorCheckerService implements Runnable{
   
   protected TreeMap<String, IProblem> tempErrorLog;
 
-  private void syntaxCheck() {
+  protected void syntaxCheck() {
     syntaxErrors.set(true);
     containsErrors.set(true);
     parser.setSource(sourceCode.toCharArray());
@@ -443,7 +443,7 @@ public class ErrorCheckerService implements Runnable{
   
   protected URLClassLoader classLoader;
   
-  private void compileCheck() {
+  protected void compileCheck() {
 
     // Currently (Sept, 2012) I'm using Java's reflection api to load the
     // CompilationChecker class(from CompilationChecker.jar) that houses the
@@ -597,7 +597,7 @@ public class ErrorCheckerService implements Runnable{
    * messed up.
    * 
    */
-  private void prepareCompilerClasspath() {
+  protected void prepareCompilerClasspath() {
     if (!loadCompClass) {
       return;
     }
@@ -1037,7 +1037,7 @@ public class ErrorCheckerService implements Runnable{
    *         code is not yet compile ready.
    */ 
 
-  private String preprocessCode(String pdeCode) {
+  protected String preprocessCode(String pdeCode) {
     
     programImports = new ArrayList<ImportStatement>();
     
@@ -1276,7 +1276,7 @@ public class ErrorCheckerService implements Runnable{
    * Checks if import statements in the sketch have changed. If they have,
    * compiler classpath needs to be updated.
    */
-  private void checkForChangedImports() {
+  protected void checkForChangedImports() {
     // log("Imports: " + programImports.size() +
     // " Prev Imp: "
     // + previousImports.size());
@@ -1298,7 +1298,7 @@ public class ErrorCheckerService implements Runnable{
     // log("load..? " + loadCompClass);
   }
 
-  private int pdeImportsCount;
+  protected int pdeImportsCount;
   
   public int getPdeImportsCount() {
     return pdeImportsCount;
@@ -1314,7 +1314,7 @@ public class ErrorCheckerService implements Runnable{
    *            - index of the tab
    * @return String - Tab code with imports replaced with white spaces
    */
-  private String scrapImportStatements(String tabProgram, int tabNumber) {
+  protected String scrapImportStatements(String tabProgram, int tabNumber) {
     //TODO: Commented out imports are still detected as main imports.
     pdeImportsCount = 0;
     String tabSource = new String(tabProgram);
