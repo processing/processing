@@ -1,5 +1,6 @@
 0221 core
 X fix options parsing on loadTable() to handle spaces
+X add static versions of loadJSONObject and loadJSONArray that take File inputs
 
 andres
 X blendMode() change causes OpenGL renderer to be very slow

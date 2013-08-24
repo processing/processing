@@ -3,6 +3,9 @@ X add double quotes to readlink call, fixes issue w/ paths and spaces
 X   https://github.com/processing/processing/pull/2027
 X   fix submitted by hamoid
 
+_ changing modes brings the PDE back on the second screen
+_   the Find window (also the save windows) also have the same problem
+
 
 high
 _ MovieMaker needs to be compiling as 1.6
@@ -45,6 +48,8 @@ _   bring back the splash screen?
 
 direct link for download (replace .md5 with .dmg on that page)
 http://www.java.net/download/jdk7u40/archive/b38/binaries/jre-7u40-ea-bin-b38-macosx-x86_64-07_aug_2013.dmg
+http://www.java.net/download/jdk7u40/archive/b40/binaries/jre-7u40-fcs-bin-b40-macosx-x86_64-16_aug_2013.dmg
+
 needs cookie for proper download
 http://download.oracle.com/otn-pub/java/jdk/7u25-b15/jre-7u25-linux-i586.tar.gz
 
