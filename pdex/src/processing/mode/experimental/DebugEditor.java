@@ -312,7 +312,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         dbg.stopDebug();
         // remove var.inspector
         vi.dispose();
-        
+        errorCheckerService.stopThread();
         // original dispose
         super.dispose();
     }

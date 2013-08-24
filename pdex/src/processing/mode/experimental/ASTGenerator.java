@@ -346,9 +346,11 @@ public class ASTGenerator {
               + File.separator + "rt.jar" + File.pathSeparatorChar);
           }
           if (errorCheckerService.classpathJars != null) {
-            for (URL jarPath : errorCheckerService.classpathJars) {
-              //log(jarPath.getPath());
-              tehPath.append(jarPath.getPath() + File.pathSeparatorChar);
+            synchronized (errorCheckerService.classpathJars) {
+              for (URL jarPath : errorCheckerService.classpathJars) {
+                //log(jarPath.getPath());
+                tehPath.append(jarPath.getPath() + File.pathSeparatorChar);
+              }
             }
           }
 

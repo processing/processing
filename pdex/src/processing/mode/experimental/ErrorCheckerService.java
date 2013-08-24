@@ -53,12 +53,12 @@ public class ErrorCheckerService implements Runnable{
   /**
    * Used to indirectly stop the Error Checker Thread
    */
-  public boolean stopThread = false;
+  protected AtomicBoolean stopThread;
 
   /**
    * If true, Error Checking is paused. Calls to checkCode() become useless.
    */
-  private boolean pauseThread = false;
+  protected AtomicBoolean pauseThread;
 
   protected ErrorWindow errorWindow;
 
@@ -185,6 +185,12 @@ public class ErrorCheckerService implements Runnable{
   
   public ErrorCheckerService(DebugEditor debugEditor) {
     this.editor = debugEditor;
+    stopThread = new AtomicBoolean(false);
+    pauseThread = new AtomicBoolean(false);
+    
+    problemsList = new ArrayList<Problem>();
+    classpathJars = new ArrayList<URL>();
+    
     initParser();
     initializeErrorWindow();
     xqpreproc = new XQPreprocessor();
@@ -246,7 +252,7 @@ public class ErrorCheckerService implements Runnable{
   }
 
   public void run() {
-    stopThread = false;
+    stopThread.set(false);
     
     checkCode();
     if(!hasSyntaxErrors())
@@ -256,7 +262,7 @@ public class ErrorCheckerService implements Runnable{
     // Completion wouldn't be complete, but it'd be still something
     // better than nothing
     astGenerator.buildAST(cu); 
-    while (!stopThread) {
+    while (!stopThread.get()) {
       try {
         // Take a nap.
         Thread.sleep(sleepTime);
@@ -268,7 +274,7 @@ public class ErrorCheckerService implements Runnable{
       updatePaintedThingys();
       updateEditorStatus();
       
-      if (pauseThread)
+      if (pauseThread.get())
         continue;
       if(textModified.get() == 0)
     	  continue;
@@ -337,16 +343,7 @@ public class ErrorCheckerService implements Runnable{
         log(editor.getSketch().getName() + "2 MCO "
             + mainClassOffset);
       }
-      
-      // Update error flag
-      containsErrors.set(false);
-      for (Problem p : problemsList) {
-        if (p.isError()){
-          containsErrors.set(true);
-          break;
-        }
-      }
-      
+
       updateErrorTable();
       editor.updateErrorBar(problemsList);
       updateEditorStatus();
@@ -397,31 +394,41 @@ public class ErrorCheckerService implements Runnable{
     options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_6);
     options.put(JavaCore.COMPILER_DOC_COMMENT_SUPPORT, JavaCore.ENABLED);
     parser.setCompilerOptions(options);
-    cu = (CompilationUnit) parser.createAST(null);
-
-    // Store errors returned by the ast parser
-    problems = cu.getProblems();
-    // log("Problem Count: " + problems.length);
-    // Populate the probList
-    problemsList = new ArrayList<Problem>();
-    for (int i = 0; i < problems.length; i++) {
-      int a[] = calculateTabIndexAndLineNumber(problems[i]);
-      Problem p = new Problem(problems[i], a[0], a[1] + 1);
-      //TODO: ^Why do cheeky stuff?
-      problemsList.add(p);  
+    
+    if (cu == null)
+      cu = (CompilationUnit) parser.createAST(null);
+    else {
+      synchronized (cu) {
+        cu = (CompilationUnit) parser.createAST(null);
+      }
+    }
+    
+    synchronized (problemsList) {
+      
+      // Store errors returned by the ast parser
+      problems = cu.getProblems();
+      // log("Problem Count: " + problems.length);
+      // Populate the probList
+      problemsList = new ArrayList<Problem>();
+      for (int i = 0; i < problems.length; i++) {
+        int a[] = calculateTabIndexAndLineNumber(problems[i]);
+        Problem p = new Problem(problems[i], a[0], a[1] + 1);
+        //TODO: ^Why do cheeky stuff?
+        problemsList.add(p);
 //      log(problems[i].getMessage());
 //      for (String j : problems[i].getArguments()) {
 //        log("arg " + j);
 //      }
-      // log(p.toString());
-    }
-    
-    if (problems.length == 0) {
-      syntaxErrors.set(false);
-      containsErrors.set(false);
-    } else {
-      syntaxErrors.set(true);
-      containsErrors.set(true);
+        // log(p.toString());
+      }
+
+      if (problems.length == 0) {
+        syntaxErrors.set(false);
+        containsErrors.set(false);
+      } else {
+        syntaxErrors.set(true);
+        containsErrors.set(true);
+      }
     }
   }
   
@@ -487,7 +494,6 @@ public class ErrorCheckerService implements Runnable{
         // log("2.");
         compilationChecker = checkerClass.newInstance();
         
-        astGenerator.loadJars(); // Update jar files for completition list
         loadCompClass = false;
       }
 
@@ -586,52 +592,80 @@ public class ErrorCheckerService implements Runnable{
       return;
     }
     
-    // log("1..");
-    classpathJars = new ArrayList<URL>();
-    String entry = "";
-    boolean codeFolderChecked = false;
-    for (ImportStatement impstat : programImports) {
-      String item = impstat.getImportName();
-      int dot = item.lastIndexOf('.');
-      entry = (dot == -1) ? item : item.substring(0, dot);
-
-      entry = entry.substring(6).trim();
-      // log("Entry--" + entry);
-      if (ignorableImport(entry)) {
-        // log("Ignoring: " + entry);
-        continue;
-      }
-      Library library = null;
-
-      // Try to get the library classpath and add it to the list
-      try {
-        library = editor.getMode().getLibrary(entry);
-        // log("lib->" + library.getClassPath() + "<-");
-        String libraryPath[] = PApplet.split(library.getClassPath()
-            .substring(1).trim(), File.pathSeparatorChar);
-        for (int i = 0; i < libraryPath.length; i++) {
-          // log(entry + " ::"
-          // + new File(libraryPath[i]).toURI().toURL());
-          classpathJars.add(new File(libraryPath[i]).toURI().toURL());
+    synchronized (classpathJars) {
+      // log("1..");
+      classpathJars = new ArrayList<URL>();
+      String entry = "";
+      boolean codeFolderChecked = false;
+      for (ImportStatement impstat : programImports) {
+        String item = impstat.getImportName();
+        int dot = item.lastIndexOf('.');
+        entry = (dot == -1) ? item : item.substring(0, dot);
+  
+        entry = entry.substring(6).trim();
+        // log("Entry--" + entry);
+        if (ignorableImport(entry)) {
+          // log("Ignoring: " + entry);
+          continue;
         }
-        // log("-- ");
-        // classpath[count] = (new File(library.getClassPath()
-        // .substring(1))).toURI().toURL();
-        // log("  found ");
-        // log(library.getClassPath().substring(1));
-      } catch (Exception e) {
-        if (library == null && !codeFolderChecked) {
-          // log(1);
-          // Look around in the code folder for jar files
-          if (editor.getSketch().hasCodeFolder()) {
-            File codeFolder = editor.getSketch().getCodeFolder();
-
-            // get a list of .jar files in the "code" folder
-            // (class files in subfolders should also be picked up)
-            String codeFolderClassPath = Base
-                .contentsToClassPath(codeFolder);
-            codeFolderChecked = true;
-            if (codeFolderClassPath.equalsIgnoreCase("")) {
+        Library library = null;
+  
+        // Try to get the library classpath and add it to the list
+        try {
+          library = editor.getMode().getLibrary(entry);
+          // log("lib->" + library.getClassPath() + "<-");
+          String libraryPath[] = PApplet.split(library.getClassPath()
+              .substring(1).trim(), File.pathSeparatorChar);
+          for (int i = 0; i < libraryPath.length; i++) {
+            // log(entry + " ::"
+            // + new File(libraryPath[i]).toURI().toURL());
+            classpathJars.add(new File(libraryPath[i]).toURI().toURL());
+          }
+          // log("-- ");
+          // classpath[count] = (new File(library.getClassPath()
+          // .substring(1))).toURI().toURL();
+          // log("  found ");
+          // log(library.getClassPath().substring(1));
+        } catch (Exception e) {
+          if (library == null && !codeFolderChecked) {
+            // log(1);
+            // Look around in the code folder for jar files
+            if (editor.getSketch().hasCodeFolder()) {
+              File codeFolder = editor.getSketch().getCodeFolder();
+  
+              // get a list of .jar files in the "code" folder
+              // (class files in subfolders should also be picked up)
+              String codeFolderClassPath = Base
+                  .contentsToClassPath(codeFolder);
+              codeFolderChecked = true;
+              if (codeFolderClassPath.equalsIgnoreCase("")) {
+                System.err.println("Experimental Mode: Yikes! Can't find \""
+                    + entry
+                    + "\" library! Line: "
+                    + impstat.getLineNumber()
+                    + " in tab: "
+                    + editor.getSketch().getCode(impstat.getTab())
+                        .getPrettyName());
+                System.out
+                    .println("Please make sure that the library is present in <sketchbook "
+                        + "folder>/libraries folder or in the code folder of your sketch");
+  
+              }
+              String codeFolderPath[] = PApplet.split(
+                  codeFolderClassPath.substring(1).trim(),
+                  File.pathSeparatorChar);
+              try {
+                for (int i = 0; i < codeFolderPath.length; i++) {
+                  classpathJars.add(new File(codeFolderPath[i])
+                      .toURI().toURL());
+                }
+  
+              } catch (Exception e2) {
+                System.out
+                    .println("Yikes! codefolder, prepareImports(): "
+                        + e2);
+              }
+            } else {
               System.err.println("Experimental Mode: Yikes! Can't find \""
                   + entry
                   + "\" library! Line: "
@@ -642,47 +676,21 @@ public class ErrorCheckerService implements Runnable{
               System.out
                   .println("Please make sure that the library is present in <sketchbook "
                       + "folder>/libraries folder or in the code folder of your sketch");
-
             }
-            String codeFolderPath[] = PApplet.split(
-                codeFolderClassPath.substring(1).trim(),
-                File.pathSeparatorChar);
-            try {
-              for (int i = 0; i < codeFolderPath.length; i++) {
-                classpathJars.add(new File(codeFolderPath[i])
-                    .toURI().toURL());
-              }
-
-            } catch (Exception e2) {
-              System.out
-                  .println("Yikes! codefolder, prepareImports(): "
-                      + e2);
-            }
+  
           } else {
-            System.err.println("Experimental Mode: Yikes! Can't find \""
-                + entry
-                + "\" library! Line: "
-                + impstat.getLineNumber()
-                + " in tab: "
-                + editor.getSketch().getCode(impstat.getTab())
-                    .getPrettyName());
-            System.out
-                .println("Please make sure that the library is present in <sketchbook "
-                    + "folder>/libraries folder or in the code folder of your sketch");
+            System.err
+                .println("Yikes! There was some problem in prepareImports(): "
+                    + e);
+            System.err.println("I was processing: " + entry);
+  
+            // e.printStackTrace();
           }
-
-        } else {
-          System.err
-              .println("Yikes! There was some problem in prepareImports(): "
-                  + e);
-          System.err.println("I was processing: " + entry);
-
-          // e.printStackTrace();
         }
+  
       }
-
     }
-
+    astGenerator.loadJars(); // update jar file for completion lookup  
   }
   
   /**
@@ -1277,8 +1285,6 @@ public class ErrorCheckerService implements Runnable{
         }
       }
     }
-    if(loadCompClass)
-      astGenerator.loadJars();
     // log("load..? " + loadCompClass);
   }
 
@@ -1390,21 +1396,21 @@ public class ErrorCheckerService implements Runnable{
    * Stops the Error Checker Service thread
    */
   public void stopThread() {
-    stopThread = true;
+    stopThread.set(true);
   }
 
   /**
    * Pauses the Error Checker Service thread
    */
   public void pauseThread() {
-    pauseThread = true;
+    pauseThread.set(true);
   }
 
   /**
    * Resumes the Error Checker Service thread
    */
   public void resumeThread() {
-    pauseThread = false;
+    pauseThread.set(false);
   }
 
   public DebugEditor getEditor() {
