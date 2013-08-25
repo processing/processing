@@ -27,6 +27,7 @@ import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -433,6 +434,17 @@ public class DebugEditor extends JavaEditor implements ActionListener {
           upper.validate();
           nextToolbar.repaint();
           toolbar = nextToolbar;
+          // The toolbar responds to shift down/up events 
+          // in order to show the alt version of toolbar buttons.
+          // With toolbar switch, KeyListener has to be changed as well
+          for (KeyListener kl : textarea.getKeyListeners()) {
+            if(kl instanceof EditorToolbar)
+            {
+              textarea.removeKeyListener(kl);
+              textarea.addKeyListener(toolbar);
+              break;
+            }
+          }
         }
       });
     }
