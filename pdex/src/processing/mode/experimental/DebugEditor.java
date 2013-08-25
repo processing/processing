@@ -21,6 +21,7 @@ import static processing.mode.experimental.ExperimentalMode.log;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
@@ -42,6 +43,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EtchedBorder;
 import javax.swing.table.TableModel;
 import javax.swing.text.Document;
@@ -403,15 +405,36 @@ public class DebugEditor extends JavaEditor implements ActionListener {
     
     boolean debugToolbarShown = false;
     protected EditorToolbar javaToolbar, debugToolbar;
+    
     protected void switchToolbars(){
+      final EditorToolbar nextToolbar;
       if(debugToolbarShown){
         // switch to java
+        if(javaToolbar == null)
+          javaToolbar = createToolbar();
+        nextToolbar = javaToolbar;
+        debugToolbarShown = false;
+        log("Switching to Java Mode Toolbar");
       }
       else{
         // switch to debug
         if(debugToolbar == null)
           debugToolbar = new DebugToolbar(this, getBase());
+        nextToolbar = debugToolbar;
+        debugToolbarShown = true;
+        log("Switching to Debugger Toolbar");
       }
+      
+      SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
+          Box upper = (Box)splitPane.getComponent(0);          
+          upper.remove(0);
+          upper.add(nextToolbar, 0);
+          upper.validate();
+          nextToolbar.repaint();
+          toolbar = nextToolbar;
+        }
+      });
     }
 
     /**
@@ -425,10 +448,9 @@ public class DebugEditor extends JavaEditor implements ActionListener {
 
         JCheckBoxMenuItem toggleDebugger = new JCheckBoxMenuItem("Show Debug Toolbar");
         toggleDebugger.setSelected(false);
-        toggleDebugger.addActionListener(new ActionListener() {
-          
+        toggleDebugger.addActionListener(new ActionListener() {          
           public void actionPerformed(ActionEvent e) {
-            
+            switchToolbars();
           }
         });
         debugMenu.add(toggleDebugger);

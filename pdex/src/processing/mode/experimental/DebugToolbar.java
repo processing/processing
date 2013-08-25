@@ -68,7 +68,7 @@ public class DebugToolbar extends JavaToolbar {
   public DebugToolbar(Editor editor, Base base) {
     super(editor, base);
   }
-  public Image[][] loadImages() {
+  public Image[][] loadDebugImages() {
     int res = Toolkit.highResDisplay() ? 2 : 1;
     
     String suffix = null; 
@@ -91,16 +91,16 @@ public class DebugToolbar extends JavaToolbar {
         allButtons = mode.loadImage("theme/buttons-debug" + suffix);
       }
     }
+    
+    // The following three final fields were not accessible, so just copied the values here
+    // for the time being. TODO: inform Ben, make these fields public
     /** Width of each toolbar button. */
     final int BUTTON_WIDTH = 27;
-    /** Height of each toolbar button. */
-//    static final int BUTTON_HEIGHT = 32;
-    /** The amount of space between groups of buttons on the toolbar. */
-    final int BUTTON_GAP = 5;
     /** Size (both width and height) of the buttons in the source image. */
     final int BUTTON_IMAGE_SIZE = 33;
     int count = allButtons.getWidth(this) / BUTTON_WIDTH*res;
     final int GRID_SIZE = 32;
+    
     Image[][] buttonImages = new Image[count][3];
     
     for (int i = 0; i < count; i++) {
@@ -123,7 +123,7 @@ public class DebugToolbar extends JavaToolbar {
    */
   @Override
   public void init() {
-    Image[][] images = loadImages();
+    Image[][] images = loadDebugImages();
     for (int idx = 0; idx < buttonSequence.length; idx++) {
       int id = buttonId(idx);
       addButton(getTitle(id, false), getTitle(id, true), images[idx], id == NEW || id == TOGGLE_BREAKPOINT);
