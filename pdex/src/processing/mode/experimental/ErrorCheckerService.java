@@ -831,19 +831,21 @@ public class ErrorCheckerService implements Runnable{
   public void updateEditorStatus() {
     // editor.statusNotice("Position: " +
     // editor.getTextArea().getCaretLine());
-    for (ErrorMarker emarker : editor.errorBar.errorPoints) {
-      if (emarker.getProblem().getLineNumber() == editor.getTextArea()
-          .getCaretLine() + 1) {
-        if (emarker.getType() == ErrorMarker.Warning) {
-          editor.statusNotice(emarker.getProblem().getMessage()); 
-                              //+  " : " + errorMsgSimplifier.getIDName(emarker.problem.getIProblem().getID()));
-        //TODO: this is temporary
+    synchronized (editor.errorBar.errorPoints) {
+      for (ErrorMarker emarker : editor.errorBar.errorPoints) {
+        if (emarker.getProblem().getLineNumber() == editor.getTextArea()
+            .getCaretLine() + 1) {
+          if (emarker.getType() == ErrorMarker.Warning) {
+            editor.statusNotice(emarker.getProblem().getMessage()); 
+                                //+  " : " + errorMsgSimplifier.getIDName(emarker.problem.getIProblem().getID()));
+          //TODO: this is temporary
+          }
+          else {
+            editor.statusError(emarker.getProblem().getMessage());
+                               //+  " : " + errorMsgSimplifier.getIDName(emarker.problem.getIProblem().getID()));
+          }
+          return;
         }
-        else {
-          editor.statusError(emarker.getProblem().getMessage());
-                             //+  " : " + errorMsgSimplifier.getIDName(emarker.problem.getIProblem().getID()));
-        }
-        return;
       }
     }
     if (editor.ta.getCaretLine() != lastCaretLine) {

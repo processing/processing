@@ -164,29 +164,30 @@ public class ErrorBar extends JPanel {
           e.printStackTrace();
         }
         // System.out.println("Total lines: " + totalLines);
-
-        errorPointsOld.clear();
-        for (ErrorMarker marker : errorPoints) {
-          errorPointsOld.add(marker);
-        }
-        errorPoints.clear();
-
-        // Each problem.getSourceLine() will have an extra line added
-        // because of
-        // class declaration in the beginning as well as default imports
-        synchronized (problems) {
-          for (Problem problem : problems) {
-            if (problem.getTabIndex() == currentTab) {
-              // Ratio of error line to total lines
-              float y = (problem.getLineNumber() - errorCheckerService.defaultImportsOffset)
-                  / ((float) totalLines);
-              // Ratio multiplied by height of the error bar
-              y *= fheight - 15; // -15 is just a vertical offset
-              errorPoints
-                  .add(new ErrorMarker(problem, (int) y,
-                                       problem.isError() ? ErrorMarker.Error
-                                           : ErrorMarker.Warning));
-              // System.out.println("Y: " + y);
+        synchronized (errorPoints) {
+          errorPointsOld.clear();
+          for (ErrorMarker marker : errorPoints) {
+            errorPointsOld.add(marker);
+          }
+          errorPoints.clear();
+  
+          // Each problem.getSourceLine() will have an extra line added
+          // because of
+          // class declaration in the beginning as well as default imports
+          synchronized (problems) {
+            for (Problem problem : problems) {
+              if (problem.getTabIndex() == currentTab) {
+                // Ratio of error line to total lines
+                float y = (problem.getLineNumber() - errorCheckerService.defaultImportsOffset)
+                    / ((float) totalLines);
+                // Ratio multiplied by height of the error bar
+                y *= fheight - 15; // -15 is just a vertical offset
+                errorPoints
+                    .add(new ErrorMarker(problem, (int) y,
+                                         problem.isError() ? ErrorMarker.Error
+                                             : ErrorMarker.Warning));
+                // System.out.println("Y: " + y);
+              }
             }
           }
         }
