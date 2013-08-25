@@ -154,7 +154,8 @@ public class ASTGenerator {
     this.editor = ecs.getEditor();
     setupGUI();
     //addCompletionPopupListner();
-    addListeners(); loadJavaDoc();
+    addListeners(); 
+    //loadJavaDoc();
     predictionsEnabled = new AtomicBoolean(true);
   }
   
