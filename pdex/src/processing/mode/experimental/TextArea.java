@@ -179,7 +179,7 @@ public class TextArea extends JEditTextArea {
     }
       super.processKeyEvent(evt);
       
-    if (evt.getID() == KeyEvent.KEY_TYPED) {
+    if (evt.getID() == KeyEvent.KEY_TYPED && editor.errorCheckerService.getASTGenerator().predictionsEnabled.get()) {
       final KeyEvent evt2 = evt;
       SwingWorker worker = new SwingWorker() {
         protected Object doInBackground() throws Exception {

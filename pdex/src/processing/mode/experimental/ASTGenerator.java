@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
@@ -154,6 +155,7 @@ public class ASTGenerator {
     setupGUI();
     //addCompletionPopupListner();
     addListeners(); loadJavaDoc();
+    predictionsEnabled = new AtomicBoolean(true);
   }
   
   protected void setupGUI(){
@@ -776,8 +778,10 @@ public class ASTGenerator {
    */
   protected ArrayList<CompletionCandidate> candidates;
   protected String lastPredictedWord = " ";
+  protected AtomicBoolean predictionsEnabled;
   
   public void preparePredictions(final String word, final int line, final int lineStartNonWSOffset) {
+    if(!predictionsEnabled.get()) return;
     // This method is called from TextArea.fetchPhrase, which is called via a SwingWorker instance
     // in TextArea.processKeyEvent
     if(caretWithinLineComment()){

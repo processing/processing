@@ -166,6 +166,11 @@ public class DebugEditor extends JavaEditor implements ActionListener {
      */
     protected JCheckBoxMenuItem writeErrorLog;
     
+    /**
+     * Enable/Disable code completion
+     */
+    protected JCheckBoxMenuItem completionsEnabled;
+    
     public DebugEditor(Base base, String path, EditorState state, Mode mode) {
         super(base, path, state, mode);
 
@@ -520,6 +525,17 @@ public class DebugEditor extends JavaEditor implements ActionListener {
           }
         });
         debugMenu.add(showWarnings);
+        
+        completionsEnabled = new JCheckBoxMenuItem("Code Completion Enabled");
+        completionsEnabled.setSelected(true);
+        completionsEnabled.addActionListener(new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+        errorCheckerService.getASTGenerator().predictionsEnabled
+            .set(((JCheckBoxMenuItem) e.getSource()).isSelected());
+          }
+        });
+        debugMenu.add(completionsEnabled);
         
         debugMessagesEnabled = new JCheckBoxMenuItem("Show Debug Messages");
         debugMessagesEnabled.setSelected(ExperimentalMode.DEBUG);
