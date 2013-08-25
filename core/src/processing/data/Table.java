@@ -60,6 +60,7 @@ import processing.core.PConstants;
  */
 public class Table {
   protected int rowCount;
+  protected int allocCount;
 
 //  protected boolean skipEmptyRows = true;
 //  protected boolean skipCommentLines = true;
@@ -153,6 +154,7 @@ public class Table {
 
 
   public Table(Iterable<TableRow> rows) {
+    init();
     boolean typed = false;
     for (TableRow row : rows) {
       if (!typed) {
@@ -1558,6 +1560,7 @@ public class Table {
 
 
   public void setColumnTypes(int[] types) {
+    ensureColumn(types.length - 1);
     for (int col = 0; col < types.length; col++) {
       setColumnType(col, types[col]);
     }
@@ -1573,6 +1576,7 @@ public class Table {
    * @param dictionary
    */
   public void setColumnTypes(final Table dictionary) {
+    ensureColumn(dictionary.getRowCount() - 1);
     int titleCol = 0;
     int typeCol = 1;
     if (dictionary.hasColumnTitles()) {

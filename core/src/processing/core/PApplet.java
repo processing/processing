@@ -6156,6 +6156,7 @@ public class PApplet extends Applet
     return new JSONObject(new StringReader(input));
   }
 
+
   /**
    * @webref input:files
    * @param filename name of a file in the data folder or a URL
@@ -6168,6 +6169,12 @@ public class PApplet extends Applet
   public JSONObject loadJSONObject(String filename) {
     return new JSONObject(createReader(filename));
   }
+
+
+  static public JSONObject loadJSONObject(File file) {
+    return new JSONObject(createReader(file));
+  }
+
 
   /**
    * @webref output:files
@@ -6191,6 +6198,7 @@ public class PApplet extends Applet
     return new JSONArray(new StringReader(input));
   }
 
+
   /**
    * @webref input:files
    * @param filename name of a file in the data folder or a URL
@@ -6203,6 +6211,12 @@ public class PApplet extends Applet
   public JSONArray loadJSONArray(String filename) {
     return new JSONArray(createReader(filename));
   }
+
+
+  static public JSONArray loadJSONArray(File file) {
+    return new JSONArray(createReader(file));
+  }
+
 
   /**
    * @webref output:files
