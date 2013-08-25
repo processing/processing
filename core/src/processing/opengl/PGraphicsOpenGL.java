@@ -4743,6 +4743,9 @@ public class PGraphicsOpenGL extends PGraphics {
   public void lights() {
     enableLighting();
 
+    // reset number of lights
+    lightCount = 0;
+
     // need to make sure colorMode is RGB 255 here
     int colorModeSaved = colorMode;
     colorMode = RGB;
