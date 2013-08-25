@@ -330,6 +330,9 @@ public class PShapeOpenGL extends PShape {
     emissiveColor = pg.emissiveColor;
     shininess = pg.shininess;
 
+    sphereDetailU = pg.sphereDetailU;
+    sphereDetailV = pg.sphereDetailV;
+
     normalX = normalY = 0;
     normalZ = 1;
 
@@ -2787,12 +2790,17 @@ public class PShapeOpenGL extends PShape {
 
 
   protected void tessellateSphere() {
-    // Getting sphere detail from renderer. Is this correct?
-    int nu = pg.sphereDetailU;
-    int nv = pg.sphereDetailV;
     float r = 0;
-    if (params.length == 1) {
+    int nu = sphereDetailU;
+    int nv = sphereDetailV;
+    if (1 <= params.length) {
       r = params[0];
+      if (params.length == 2) {
+        nu = nv = (int)params[1];
+      } else if (params.length == 3) {
+        nu = (int)params[1];
+        nv = (int)params[2];
+      }
     }
 
     inGeo.setMaterial(fillColor, strokeColor, strokeWeight,

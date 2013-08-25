@@ -277,7 +277,7 @@ public class PGraphics3D extends PGraphicsOpenGL {
       shape = new PShapeOpenGL(parent, PShape.PRIMITIVE);
       shape.setKind(BOX);
     } else if (kind == SPHERE) {
-      if (len != 1) {
+      if (len < 1 || 3 < len) {
         showWarning("Wrong number of parameters");
         return null;
       }
