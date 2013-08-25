@@ -18,6 +18,8 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
   private String label; // the toString value
 
   private String completionString;
+  
+  private Object wrappedObject;
 
   private int type;
 
@@ -48,8 +50,13 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
     this.label = label.toString();
     this.completionString = cstr.toString();
     type = PREDEF_METHOD;
+    wrappedObject = method;
   }
   
+  public Object getWrappedObject() {
+    return wrappedObject;
+  }
+
   public CompletionCandidate(SingleVariableDeclaration svd) {
     completionString = svd.getName().toString();
     elementName = svd.getName().toString();
@@ -110,6 +117,7 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
     label = f.getName() + " : " + f.getType().getSimpleName()
         + " - " + f.getDeclaringClass().getSimpleName();
     completionString = elementName;
+    wrappedObject = f;
   }
 
   public CompletionCandidate(String name, String labelStr, String completionStr, int type) {    

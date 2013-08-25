@@ -153,7 +153,7 @@ public class ASTGenerator {
     this.editor = ecs.getEditor();
     setupGUI();
     //addCompletionPopupListner();
-    addListeners();
+    addListeners(); loadJavaDoc();
   }
   
   protected void setupGUI(){
@@ -220,18 +220,20 @@ public class ASTGenerator {
 //    sp3.setViewportView(tableAuto);
 //    frameAutoComp.add(sp3);
 
-//    jdocWindow = new JFrame();
-//    jdocWindow.setTitle("P5 InstaHelp");
+//    frmJavaDoc = new JFrame();
+//    frmJavaDoc.setTitle("P5 InstaHelp");
 //    //jdocWindow.setUndecorated(true);
-//    jdocWindow.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+//    frmJavaDoc.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 //    javadocPane = new JEditorPane();
 //    javadocPane.setContentType("text/html");
+//    javadocPane.setText("<html> </html>");
 //    javadocPane.setEditable(false);
 //    scrollPane = new JScrollPane();
 //    scrollPane.setViewportView(javadocPane);
-//    jdocWindow.add(scrollPane);
-//    jdocMap = new TreeMap<String, String>();
-////    loadJars();
+//    frmJavaDoc.add(scrollPane);
+    //frmJavaDoc.setUndecorated(true);
+    
+    
   }
 
   protected DefaultMutableTreeNode buildAST(String source, CompilationUnit cu) {
@@ -282,17 +284,16 @@ public class ASTGenerator {
 //            frameAutoComp.setVisible(true);
 //            
 //          }
-//          if (!jdocWindow.isVisible()) {
+//          if (!frmJavaDoc.isVisible()) {
 //            long t = System.currentTimeMillis();
-//            loadJars();
 //            loadJavaDoc();
 //            log("Time taken: "
 //                + (System.currentTimeMillis() - t));
-//            jdocWindow.setBounds(new Rectangle(errorCheckerService.getEditor()
+//            frmJavaDoc.setBounds(new Rectangle(errorCheckerService.getEditor()
 //                .getX() + errorCheckerService.getEditor().getWidth(),
 //                                               errorCheckerService.getEditor()
 //                                                   .getY(), 450, 600));
-//            jdocWindow.setVisible(true);
+//            frmJavaDoc.setVisible(true);
 //          }
         }
       }
@@ -311,7 +312,7 @@ public class ASTGenerator {
    */
   protected ClassPath classPath;
 
-  protected JFrame jdocWindow;
+  //protected JFrame frmJavaDoc;
 
   /**
    * Loads up .jar files and classes defined in it for completion lookup
@@ -398,7 +399,7 @@ public class ASTGenerator {
   protected TreeMap<String, String> jdocMap;
 
   protected void loadJavaDoc() {
-
+    jdocMap = new TreeMap<String, String>();
     // presently loading only p5 reference for PApplet
     Thread t = new Thread(new Runnable() {
 
@@ -763,7 +764,7 @@ public class ASTGenerator {
     newWord = newWord.toLowerCase();
     for (CompletionCandidate comp : candidates) {
       if(comp.toString().toLowerCase().startsWith(newWord)){
-        log("Adding " + comp);
+        // log("Adding " + comp);
         newCandidate.add(comp);
       }
     }
@@ -1309,37 +1310,44 @@ public class ASTGenerator {
   
   public void updateJavaDoc(final CompletionCandidate candidate) {
     //TODO: Work on this later.
-    return;
-    /*String methodmatch = candidate.toString();
+      return;
+  /*  String methodmatch = candidate.toString();
     if (methodmatch.indexOf('(') != -1) {
       methodmatch = methodmatch.substring(0, methodmatch.indexOf('('));
     }
 
     //log("jdoc match " + methodmatch);
+    String temp = "<html> </html>";
     for (final String key : jdocMap.keySet()) {
       if (key.startsWith(methodmatch) && key.length() > 3) {
         log("Matched jdoc " + key);
-
-        //visitRecur((ASTNode) compilationUnit.types().get(0), codeTree);
-        SwingUtilities.invokeLater(new Runnable() {
-          @Override
-          public void run() {
-
-            log("Class: " + candidate.getDefiningClass());
-            if (candidate.getDefiningClass().equals("processing.core.PApplet")) {
-              javadocPane.setText(jdocMap.get(key));
-              //jdocWindow.setVisible(true);
-              //editor.textArea().requestFocus()
-            } else
-              javadocPane.setText("");
-            javadocPane.setCaretPosition(0);
+        if (candidate.getWrappedObject() != null) {
+          String definingClass = "";
+          if (candidate.getWrappedObject() instanceof Field)
+            definingClass = ((Field) candidate.getWrappedObject())
+                .getDeclaringClass().getName();
+          else if (candidate.getWrappedObject() instanceof Method)
+            definingClass = ((Method) candidate.getWrappedObject())
+                .getDeclaringClass().getName();
+          if (definingClass.equals("processing.core.PApplet")) {
+            temp = (jdocMap.get(key));
+            break;
           }
-        });
-        break;
+        } 
       }
-    }*/
-    //jdocWindow.setVisible(false);
-
+    }
+    
+    final String jdocString = temp;
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        javadocPane.setText(jdocString);
+        scrollPane.getVerticalScrollBar().setValue(0);
+        //frmJavaDoc.setVisible(!jdocString.equals("<html> </html>"));
+        editor.toFront();
+        editor.ta.requestFocus();
+      }
+    });
+*/
   }
 
   @SuppressWarnings("unchecked")
@@ -3271,7 +3279,7 @@ public class ASTGenerator {
   }
 
   public void jdocWindowVisible(boolean visible) {
-    jdocWindow.setVisible(visible);
+   // frmJavaDoc.setVisible(visible);
   }
 
   public static String readFile(String path) {
