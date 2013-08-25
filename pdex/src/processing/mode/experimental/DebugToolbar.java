@@ -17,12 +17,16 @@
  */
 package processing.mode.experimental;
 
+import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import processing.app.Base;
 import processing.app.Editor;
+import processing.app.Preferences;
+import processing.app.Toolkit;
 import processing.mode.java.JavaToolbar;
 
 /**
@@ -64,7 +68,55 @@ public class DebugToolbar extends JavaToolbar {
   public DebugToolbar(Editor editor, Base base) {
     super(editor, base);
   }
-
+  public Image[][] loadImages() {
+    int res = Toolkit.highResDisplay() ? 2 : 1;
+    
+    String suffix = null; 
+    Image allButtons = null;
+    // Some modes may not have a 2x version. If a mode doesn't have a 1x 
+    // version, this will cause an error... they should always have 1x.
+    if (res == 2) {
+      suffix = "-2x.png";
+      allButtons = mode.loadImage("theme/buttons-debug" + suffix);
+      if (allButtons == null) {
+        res = 1;  // take him down a notch
+      }
+    }
+    if (res == 1) {
+      suffix = ".png";
+      allButtons = mode.loadImage("theme/buttons-debug" + suffix);
+      if (allButtons == null) {
+        // use the old (pre-2.0b9) file name
+        suffix = ".gif";
+        allButtons = mode.loadImage("theme/buttons-debug" + suffix);
+      }
+    }
+    /** Width of each toolbar button. */
+    final int BUTTON_WIDTH = 27;
+    /** Height of each toolbar button. */
+//    static final int BUTTON_HEIGHT = 32;
+    /** The amount of space between groups of buttons on the toolbar. */
+    final int BUTTON_GAP = 5;
+    /** Size (both width and height) of the buttons in the source image. */
+    final int BUTTON_IMAGE_SIZE = 33;
+    int count = allButtons.getWidth(this) / BUTTON_WIDTH*res;
+    final int GRID_SIZE = 32;
+    Image[][] buttonImages = new Image[count][3];
+    
+    for (int i = 0; i < count; i++) {
+      for (int state = 0; state < 3; state++) {
+        Image image = new BufferedImage(BUTTON_WIDTH*res, GRID_SIZE*res, BufferedImage.TYPE_INT_ARGB);
+        Graphics g = image.getGraphics();
+        g.drawImage(allButtons, 
+                    -(i*BUTTON_IMAGE_SIZE*res) - 3, 
+                    (state-2)*BUTTON_IMAGE_SIZE*res, null);
+        g.dispose();
+        buttonImages[i][state] = image;
+      }
+    }
+    
+    return buttonImages;
+  }
   
   /**
    * Initialize buttons. Loads images and adds the buttons to the toolbar.

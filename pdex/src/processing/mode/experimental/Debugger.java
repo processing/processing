@@ -168,7 +168,7 @@ public class Debugger implements VMEventListener {
 
         // load edits into sketch obj, etc...
         editor.prepareRun();
-
+        if(editor.toolbar() != null)
         editor.toolbar().activate(DebugToolbar.DEBUG); // after prepareRun, since this removes highlights
 
         try {
@@ -236,9 +236,11 @@ public class Debugger implements VMEventListener {
         }
         stopTrackingLineChanges();
         started = false;
-        editor.toolbar().deactivate(DebugToolbar.DEBUG);
-        editor.toolbar().deactivate(DebugToolbar.CONTINUE);
-        editor.toolbar().deactivate(DebugToolbar.STEP);
+        if(editor.toolbar() != null){
+          editor.toolbar().deactivate(DebugToolbar.DEBUG);
+          editor.toolbar().deactivate(DebugToolbar.CONTINUE);
+          editor.toolbar().deactivate(DebugToolbar.STEP);
+        }
         editor.statusEmpty();
     }
 
@@ -246,7 +248,8 @@ public class Debugger implements VMEventListener {
      * Resume paused debugging session. Resumes VM.
      */
     public synchronized void continueDebug() {
-        editor.toolbar().activate(DebugToolbar.CONTINUE);
+        if(editor.toolbar() != null)
+          editor.toolbar().activate(DebugToolbar.CONTINUE);
         editor.variableInspector().lock();
         //editor.clearSelection();
         //clearHighlight();
@@ -271,7 +274,8 @@ public class Debugger implements VMEventListener {
             startDebug();
         } else if (isPaused()) {
             editor.variableInspector().lock();
-            editor.toolbar().activate(DebugToolbar.STEP);
+            if(editor.toolbar() != null)
+              editor.toolbar().activate(DebugToolbar.STEP);
 
             // use global to mark that there is a step request pending
             requestedStep = runtime.vm().eventRequestManager().createStepRequest(currentThread, StepRequest.STEP_LINE, stepDepth);
@@ -588,8 +592,10 @@ public class Debugger implements VMEventListener {
                     @Override
                     public void run() {
                         editor.setCurrentLine(newCurrentLine);
-                        editor.toolbar().deactivate(DebugToolbar.STEP);
-                        editor.toolbar().deactivate(DebugToolbar.CONTINUE);
+                        if(editor.toolbar() != null){
+                          editor.toolbar().deactivate(DebugToolbar.STEP);
+                          editor.toolbar().deactivate(DebugToolbar.CONTINUE);
+                        }
                     }
                 });
 
@@ -616,8 +622,10 @@ public class Debugger implements VMEventListener {
                     @Override
                     public void run() {
                         editor.setCurrentLine(newCurrentLine);
-                        editor.toolbar().deactivate(DebugToolbar.STEP);
-                        editor.toolbar().deactivate(DebugToolbar.CONTINUE);
+                        if(editor.toolbar() != null){
+                          editor.toolbar().deactivate(DebugToolbar.STEP);
+                          editor.toolbar().deactivate(DebugToolbar.CONTINUE);
+                        }
                     }
                 });
 

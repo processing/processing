@@ -373,7 +373,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
      *
      * @return the sketch menu
      */
-    @Override
+    /*@Override
     public JMenu buildSketchMenu() {
         JMenuItem runItem = Toolkit.newJMenuItemShift(DebugToolbar.getTitle(DebugToolbar.RUN, false), KeyEvent.VK_R);
         runItem.addActionListener(new ActionListener() {
@@ -399,6 +399,19 @@ public class DebugEditor extends JavaEditor implements ActionListener {
             }
         });
         return buildSketchMenu(new JMenuItem[]{runItem, presentItem, stopItem});
+    }*/
+    
+    boolean debugToolbarShown = false;
+    protected EditorToolbar javaToolbar, debugToolbar;
+    protected void switchToolbars(){
+      if(debugToolbarShown){
+        // switch to java
+      }
+      else{
+        // switch to debug
+        if(debugToolbar == null)
+          debugToolbar = new DebugToolbar(this, getBase());
+      }
     }
 
     /**
@@ -410,7 +423,16 @@ public class DebugEditor extends JavaEditor implements ActionListener {
     protected JMenu buildDebugMenu() {
         debugMenu = new JMenu("Debug");
 
-        debugMenuItem = Toolkit.newJMenuItem("Debug", KeyEvent.VK_R);
+        JCheckBoxMenuItem toggleDebugger = new JCheckBoxMenuItem("Show Debug Toolbar");
+        toggleDebugger.setSelected(false);
+        toggleDebugger.addActionListener(new ActionListener() {
+          
+          public void actionPerformed(ActionEvent e) {
+            
+          }
+        });
+        debugMenu.add(toggleDebugger);
+        debugMenuItem = Toolkit.newJMenuItemAlt("Debug", KeyEvent.VK_R);
         debugMenuItem.addActionListener(this);
         continueMenuItem = Toolkit.newJMenuItem("Continue", KeyEvent.VK_U);
         continueMenuItem.addActionListener(this);
@@ -921,7 +943,9 @@ public class DebugEditor extends JavaEditor implements ActionListener {
     }
 
     public DebugToolbar toolbar() {
+      if(toolbar instanceof DebugToolbar)
         return (DebugToolbar) toolbar;
+      return null;
     }
 
     /**
@@ -1191,10 +1215,10 @@ public class DebugEditor extends JavaEditor implements ActionListener {
      *
      * @return the toolbar
      */
-    @Override
+    /*@Override
     public EditorToolbar createToolbar() {
         return new DebugToolbar(this, base);
-    }
+    }*/
 
     /**
      * Event Handler for double clicking in the left hand gutter area.
