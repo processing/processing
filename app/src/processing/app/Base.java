@@ -143,6 +143,7 @@ public class Base {
 
 
   static private void createAndShowGUI(String[] args) {
+    long time1 = System.currentTimeMillis();
     try {
       File versionFile = getContentFile("lib/version.txt"); //$NON-NLS-1$
       if (versionFile.exists()) {
@@ -157,7 +158,7 @@ public class Base {
     }
 
     initPlatform();
-
+    log("   initPlatform() took " + ((System.currentTimeMillis()) - time1) + "ms    ");
     // Use native popups so they don't look so crappy on OS X
     JPopupMenu.setDefaultLightWeightPopupEnabled(false);
 
@@ -213,6 +214,8 @@ public class Base {
       }
       log("done creating base..."); //$NON-NLS-1$
     }
+    //System.err.println("   Total startup time: " + ((System.currentTimeMillis()) - time1) + "ms    ");
+    log("   Total startup time: " + ((System.currentTimeMillis()) - time1) + "ms    ");
   }
 
 
@@ -348,10 +351,11 @@ public class Base {
 //        removeDir(contrib.getFolder());
 //      }
 //    }
+    long time1 = System.currentTimeMillis(), time2;
     ContributionManager.cleanup();
     buildCoreModes();
     rebuildContribModes();
-
+    log("   Loading Modes took: " + ((System.currentTimeMillis()) - time1) + "ms    ");
     // Needs to happen after the sketchbook folder has been located.
     // Also relies on the modes to be loaded so it knows what can be
     // marked as an example.
@@ -395,7 +399,7 @@ public class Base {
 //    // Check if there were previously opened sketches to be restored
 //    boolean opened = restoreSketches();
     boolean opened = false;
-
+    time2 = System.currentTimeMillis();
     // Check if any files were passed in on the command line
     for (int i = 0; i < args.length; i++) {
       String path = args[i];
@@ -423,7 +427,7 @@ public class Base {
 //    } else {
 //      System.out.println("something else was opened");
     }
-
+    log("   Editor open took : " + ((System.currentTimeMillis()) - time2) + "ms    ");
     // check for updates
     if (Preferences.getBoolean("update.check")) { //$NON-NLS-1$
       new UpdateCheck(this);
@@ -1250,10 +1254,28 @@ public class Base {
 
 
   public JMenu getSketchbookMenu() {
+    long t1 = System.currentTimeMillis();
     if (sketchbookMenu == null) {
       sketchbookMenu = new JMenu("Sketchbook");
       rebuildSketchbookMenu();
     }
+    log("   getSketchbookMenu() took: " +(System.currentTimeMillis()-t1) + "ms   ");
+    return sketchbookMenu;
+  }
+  
+  public JMenu getSketchbookMenuFast() {
+    final long t1 = System.currentTimeMillis();
+    if (sketchbookMenu == null) {
+      sketchbookMenu = new JMenu("Loading Sketchbook..");
+      // Populate the menu via a separate thread
+      new Thread(new Runnable() {
+        public void run() {
+          rebuildSketchbookMenu();
+          sketchbookMenu.setText("Sketchbook");
+        }
+      }).start();
+    }
+    log("   getSketchbookMenuFast() took: " +(System.currentTimeMillis()-t1) + "ms   ");
     return sketchbookMenu;
   }
 

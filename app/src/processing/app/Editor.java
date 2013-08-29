@@ -119,7 +119,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     this.mode = mode;
 
     Toolkit.setIcon(this);  // TODO should this be per-mode?
-
+    long time1 = System.currentTimeMillis(), time2;
     // Install default actions for Run, Present, etc.
 //    resetHandlers();
 
@@ -278,6 +278,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     if (!loaded) {
       sketch = null;
     }
+    Base.log("   Editor creation took: " + ((System.currentTimeMillis()) - time1) + "ms    ");
   }
 
 
@@ -519,9 +520,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
     menubar.add(buildEditMenu());
     menubar.add(buildSketchMenu());
 //    rebuildToolList();
-    rebuildToolMenu();
-    menubar.add(getToolMenu());
-
+    //rebuildToolMenu(); //Bottle-neck if done in the main thread
+    //menubar.add(getToolMenu());
+    menubar.add(getToolMenuFast()); // Just display the menu, loading it behind the scenes
     JMenu modeMenu = buildModeMenu();
     if (modeMenu != null) {
       menubar.add(modeMenu);
@@ -578,7 +579,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
       });
     fileMenu.add(item);
 
-    fileMenu.add(base.getSketchbookMenu());
+    //fileMenu.add(base.getSketchbookMenu()); //Bottle-neck if done in the main thread, cause of all the I/O
+    fileMenu.add(base.getSketchbookMenuFast()); // Just display the menu, loading happens in a separate thread.
 
 //    fileMenu.add(mode.getExamplesMenu());
     item = Toolkit.newJMenuItemShift("Examples...", 'O');
@@ -899,7 +901,18 @@ public abstract class Editor extends JFrame implements RunnerListener {
     }
     return toolsMenu;
   }
-
+  
+  public JMenu getToolMenuFast() {
+    if (toolsMenu == null) {
+      toolsMenu = new JMenu("Tools");
+      new Thread(new Runnable() {
+        public void run() {
+          rebuildToolMenu();          
+        }
+      }).start();
+    }
+    return toolsMenu;
+  }
 
 //  protected void rebuildToolList() {
 //    coreTools = ToolContribution.list(Base.getToolsFolder(), true);
