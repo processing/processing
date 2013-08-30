@@ -179,13 +179,15 @@ public class TextArea extends JEditTextArea {
     }
       super.processKeyEvent(evt);
       
-    if (evt.getID() == KeyEvent.KEY_TYPED && editor.errorCheckerService.getASTGenerator().predictionsEnabled.get()) {
+    if (evt.getID() == KeyEvent.KEY_TYPED) {
       final KeyEvent evt2 = evt;
       SwingWorker worker = new SwingWorker() {
         protected Object doInBackground() throws Exception {
           errorCheckerService.runManualErrorCheck();
-          log(" Typing: " + fetchPhrase(evt2) + " "
-              + (evt2.getKeyChar() == KeyEvent.VK_ENTER));
+          // Provide completions only if it's enabled
+          if(editor.errorCheckerService.getASTGenerator().predictionsEnabled.get())
+            log(" Typing: " + fetchPhrase(evt2) + " "
+                + (evt2.getKeyChar() == KeyEvent.VK_ENTER));
           return null;
         }
       };
