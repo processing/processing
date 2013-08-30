@@ -952,9 +952,10 @@ public class ASTGenerator {
               matchedClass2 = matchedClass2.replace('/', '.');
               String matchedClass = matchedClass2.substring(0, matchedClass2
                   .length() - 6);
-              if (ignorableImport(matchedClass2))
-                continue;
               int d = matchedClass.lastIndexOf('.');
+              if (ignorableImport(matchedClass2,matchedClass.substring(d + 1)))
+                continue;
+              
               matchedClass = matchedClass.substring(d + 1);
               candidates
                   .add(new CompletionCandidate(matchedClass, matchedClass
@@ -3121,17 +3122,19 @@ public class ASTGenerator {
     "com.oracle.", "sun.", "sunw.", "com.sun.", "javax.", "sunw.", "org.ietf.",
     "org.jcp.", "org.omg.", "org.w3c.", "org.xml.", "org.eclipse.", "com.ibm.",
     "org.netbeans.", "org.jsoup.", "org.junit.", "org.apache.", "antlr." };
-  protected boolean ignorableImport(String impName) {
+  public static final String allowedImports[] = {"java.lang.", "java.util.", "java.io.", 
+    "java.math.", "processing.core.", "processing.data.", "processing.event.", "processing.opengl."};
+  protected boolean ignorableImport(String impName, String className) {
     //TODO: Trie man.
     for (ImportStatement impS : errorCheckerService.getProgramImports()) {
       if(impName.startsWith(impS.getPackageName()))
         return false;
     }
-    for (String impS : ignoredImports) {
-      if(impName.startsWith(impS))
-        return true;
+    for (String impS : allowedImports) {
+      if(impName.startsWith(impS) && className.indexOf('.') == -1)
+        return false;
     }
-    return false;
+    return true;
   }
   
   public static boolean isAddableASTNode(ASTNode node) {
