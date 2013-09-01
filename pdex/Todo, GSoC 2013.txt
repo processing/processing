@@ -42,8 +42,8 @@ Finer details
 * printStuff(int,float,String)  - completion endings have to be appropriate. Right now it's just printStuff(,,). Cursor positioning also needs to be taken care of(done). Argument list as tooltip if possible?
 *! p5 enhanced stuff in java, how does it fit in with everything else, and edge cases. Possibly add support for them. Offset handling improvements should help here.
 * Diamond operator isn't supported for now. Bummer.
-* Icons for completions? Or overkill right now?
 
+x Icons for completions? Or overkill right now?
 x 'Show Usage' menu item added
 x Show declaring class for completions
 x! Ignore String case while finding completion candidates
@@ -144,7 +144,7 @@ x boolean warningsEnabled - made it volatile
 General Stuff
 =============
 
-* Ensure all editor windows are closed when editor is closed.
+x Ensure all editor windows are closed when editor is closed.
 x Add a red marker near Errors label in console toggle, to indicate errors present in sketch.
 x Add option for toggling debug output
 x On Run/Debug Console is visible(ProblemsList hidden)

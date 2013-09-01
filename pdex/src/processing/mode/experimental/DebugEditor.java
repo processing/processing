@@ -456,7 +456,8 @@ public class DebugEditor extends JavaEditor implements ActionListener {
      * @return The debug menu
      */
     protected JMenu buildDebugMenu() {
-        debugMenu = new JMenu("Debug");
+        //debugMenu = new JMenu("Debug");
+        debugMenu = new JMenu("PDE X");
 
         JCheckBoxMenuItem toggleDebugger = new JCheckBoxMenuItem("Show Debug Toolbar");
         toggleDebugger.setSelected(false);
