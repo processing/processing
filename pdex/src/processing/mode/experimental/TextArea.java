@@ -396,6 +396,9 @@ public class TextArea extends JEditTextArea {
    * @return gutter width in pixels
    */
   protected int getGutterWidth() {
+    if(editor.debugToolbarEnabled == null || !editor.debugToolbarEnabled.get()){
+      return 0;
+    }
     FontMetrics fm = painter.getFontMetrics();
 //        log("fm: " + (fm == null));
 //        log("editor: " + (editor == null));
@@ -413,6 +416,9 @@ public class TextArea extends JEditTextArea {
    * @return margins in pixels
    */
   protected int getGutterMargins() {
+    if(editor.debugToolbarEnabled == null || !editor.debugToolbarEnabled.get()){
+      return 0;
+    }
     return gutterPadding;
   }
 

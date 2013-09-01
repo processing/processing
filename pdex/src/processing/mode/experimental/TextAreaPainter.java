@@ -172,19 +172,19 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter {
   @Override
   protected void paintLine(Graphics gfx, TokenMarker tokenMarker, int line,
                            int x) {
-
-    // paint gutter
-    paintGutterBg(gfx, line, x);
-
-    paintLineBgColor(gfx, line, x + ta.getGutterWidth());
-
-    paintGutterLine(gfx, line, x);
-
-    // paint gutter symbol
-    paintGutterText(gfx, line, x);
-
+    if(ta.editor.debugToolbarEnabled != null && ta.editor.debugToolbarEnabled.get()){
+      // paint gutter
+      paintGutterBg(gfx, line, x);
+  
+      paintLineBgColor(gfx, line, x + ta.getGutterWidth());
+  
+      paintGutterLine(gfx, line, x);
+  
+      // paint gutter symbol
+      paintGutterText(gfx, line, x);
+    }
+    
     paintErrorLine(gfx, line, x);
-
     super.paintLine(gfx, tokenMarker, line, x + ta.getGutterWidth());
   }
 
@@ -296,7 +296,6 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter {
    * @param x
    */
   protected void paintErrorLine(Graphics gfx, int line, int x) {
-
     if (errorCheckerService == null) {
       return;
     }
@@ -354,8 +353,8 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter {
       int rw = fm.stringWidth(linetext.trim()); // real width
       int x1 = 0 + (aw - rw), y1 = y + fm.getHeight() - 2, x2 = x1 + rw;
       // Adding offsets for the gutter
-      x1 += 20;
-      x2 += 20;
+      x1 += ta.getGutterWidth();
+      x2 += ta.getGutterWidth();
 
       // gfx.fillRect(x1, y, rw, height);
 

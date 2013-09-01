@@ -144,6 +144,7 @@ x boolean warningsEnabled - made it volatile
 General Stuff
 =============
 
+x Hide breakpoint markers when Debugger isn't active
 x Ensure all editor windows are closed when editor is closed.
 x Add a red marker near Errors label in console toggle, to indicate errors present in sketch.
 x Add option for toggling debug output

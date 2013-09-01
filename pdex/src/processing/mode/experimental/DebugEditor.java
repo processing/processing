@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -239,9 +240,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         initializeErrorChecker();
         ta.setECSandThemeforTextArea(errorCheckerService, dmode);
         addXQModeUI();    
-        //TODO: Remove this later
-        if(ExperimentalMode.DEBUG)
-          setBounds(160, 300, getWidth(), getHeight());
+        debugToolbarEnabled = new AtomicBoolean(false);
     }
     
     private void addXQModeUI(){
@@ -404,17 +403,17 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         return buildSketchMenu(new JMenuItem[]{runItem, presentItem, stopItem});
     }*/
     
-    boolean debugToolbarShown = false;
+    AtomicBoolean debugToolbarEnabled;
     protected EditorToolbar javaToolbar, debugToolbar;
     
     protected void switchToolbars(){
       final EditorToolbar nextToolbar;
-      if(debugToolbarShown){
+      if(debugToolbarEnabled.get()){
         // switch to java
         if(javaToolbar == null)
           javaToolbar = createToolbar();
         nextToolbar = javaToolbar;
-        debugToolbarShown = false;
+        debugToolbarEnabled.set(false);
         log("Switching to Java Mode Toolbar");
       }
       else{
@@ -422,7 +421,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         if(debugToolbar == null)
           debugToolbar = new DebugToolbar(this, getBase());
         nextToolbar = debugToolbar;
-        debugToolbarShown = true;
+        debugToolbarEnabled.set(true);
         log("Switching to Debugger Toolbar");
       }
       
@@ -445,6 +444,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
               break;
             }
           }
+          ta.repaint();
         }
       });
     }
