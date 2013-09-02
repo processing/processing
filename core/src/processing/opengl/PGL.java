@@ -2919,6 +2919,7 @@ public class PGL {
   public static final int TEXTURE_MAG_FILTER = GL.GL_TEXTURE_MAG_FILTER;
   public static final int TEXTURE_WRAP_S     = GL.GL_TEXTURE_WRAP_S;
   public static final int TEXTURE_WRAP_T     = GL.GL_TEXTURE_WRAP_T;
+  public static final int TEXTURE_WRAP_R     = GL2.GL_TEXTURE_WRAP_R;
 
   public static final int TEXTURE_CUBE_MAP = GL.GL_TEXTURE_CUBE_MAP;
   public static final int TEXTURE_CUBE_MAP_POSITIVE_X = GL.GL_TEXTURE_CUBE_MAP_POSITIVE_X;
