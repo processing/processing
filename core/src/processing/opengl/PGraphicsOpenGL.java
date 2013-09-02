@@ -5344,8 +5344,8 @@ public class PGraphicsOpenGL extends PGraphics {
   // LOAD/UPDATE TEXTURE
 
 
-  // Copies the contents of the color buffer into the pixels
-  // array, and then the pixels array into the screen texture.
+  // Loads the current contents of the renderer's drawing surface into the
+  // its texture.
   public void loadTexture() {
     boolean needEndDraw = false;
     if (!drawing) {
@@ -5382,12 +5382,10 @@ public class PGraphicsOpenGL extends PGraphics {
 
         texture.setNative(nativePixelBuffer, 0, 0, width, height);
       }
-    } else {
-      // We need to copy the contents of the multisampled buffer to the
-      // color buffer, so the later is up-to-date with the last drawing.
-      if (offscreenMultisample) {
-        multisampleFramebuffer.copy(offscreenFramebuffer, currentFramebuffer);
-      }
+    } else if (offscreenMultisample) {
+       // We need to copy the contents of the multisampled buffer to the color
+       // buffer, so the later is up-to-date with the last drawing.
+       multisampleFramebuffer.copy(offscreenFramebuffer, currentFramebuffer);
     }
 
     if (needEndDraw) {
