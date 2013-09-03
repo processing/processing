@@ -258,6 +258,30 @@ public class PShapeOpenGL extends PShape {
   protected int firstModifiedPointAttribute;
   protected int lastModifiedPointAttribute;
 
+  // ........................................................
+
+  // Saved style variables to style can be re-enabled after disableStyle,
+  // although it won't work if properties are defined on a per-vertex basis.
+
+  protected boolean savedStroke;
+  protected int savedStrokeColor;
+  protected float savedStrokeWeight;
+  protected int savedStrokeCap;
+  protected int savedStrokeJoin;
+
+  protected boolean savedFill;
+  protected int savedFillColor;
+
+  protected boolean savedTint;
+  protected int savedTintColor;
+
+  protected int savedAmbientColor;
+  protected int savedSpecularColor;
+  protected int savedEmissiveColor;
+  protected float savedShininess;
+
+  protected int savedTextureMode;
+
 
   PShapeOpenGL() {
   }
@@ -4052,7 +4076,60 @@ public class PShapeOpenGL extends PShape {
       return;
     }
 
+    // Saving the current values to use if the style is re-enabled later
+    savedStroke = stroke;
+    savedStrokeColor = strokeColor;
+    savedStrokeWeight = strokeWeight;
+    savedStrokeCap = strokeCap;
+    savedStrokeJoin = strokeJoin;
+    savedFill = fill;
+    savedFillColor = fillColor;
+    savedTint = tint;
+    savedTintColor = tintColor;
+    savedAmbientColor = ambientColor;
+    savedSpecularColor = specularColor;
+    savedEmissiveColor = emissiveColor;
+    savedShininess = shininess;
+    savedTextureMode = textureMode;
+
     super.disableStyle();
+  }
+
+
+  @Override
+  public void enableStyle() {
+    if (savedStroke) {
+      setStroke(true);
+      setStroke(savedStrokeColor);
+      setStrokeWeight(savedStrokeWeight);
+      setStrokeCap(savedStrokeCap);
+      setStrokeJoin(savedStrokeJoin);
+    } else {
+      setStroke(false);
+    }
+
+    if (savedFill) {
+      setFill(true);
+      setFill(savedFillColor);
+    } else {
+      setFill(false);
+    }
+
+    if (savedTint) {
+      setTint(true);
+      setTint(savedTintColor);
+    }
+
+    setAmbient(savedAmbientColor);
+    setSpecular(savedSpecularColor);
+    setEmissive(savedEmissiveColor);
+    setShininess(savedShininess);
+
+    if (image != null) {
+      setTextureMode(savedTextureMode);
+    }
+
+    super.enableStyle();
   }
 
 
