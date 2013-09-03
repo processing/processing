@@ -2908,40 +2908,6 @@ public class PGraphicsOpenGL extends PGraphics {
     endShape();
   }
 
-  //////////////////////////////////////////////////////////////
-
-  // RECT
-
-  // public void rectMode(int mode)
-
-  @Override
-  public void rect(float a, float b, float c, float d) {
-    beginShape(QUADS);
-    defaultEdges = false;
-    normalMode = NORMAL_MODE_SHAPE;
-    inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
-                      ambientColor, specularColor, emissiveColor, shininess);
-    inGeo.setNormal(normalX, normalY, normalZ);
-    inGeo.addRect(a, b, c, d, fill, stroke, rectMode);
-    endShape();
-  }
-
-
-  @Override
-  public void rect(float a, float b, float c, float d,
-                   float tl, float tr, float br, float bl) {
-    beginShape(POLYGON);
-    defaultEdges = false;
-    normalMode = NORMAL_MODE_SHAPE;
-    inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
-                      ambientColor, specularColor, emissiveColor, shininess);
-    inGeo.setNormal(normalX, normalY, normalZ);
-    inGeo.addRect(a, b, c, d, tl, tr, br, bl,
-                  fill, stroke, bezierDetail, rectMode);
-    endShape(CLOSE);
-  }
-
-  // protected void rectImpl(float x1, float y1, float x2, float y2)
 
   //////////////////////////////////////////////////////////////
 
@@ -8634,39 +8600,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     void addRect(float a, float b, float c, float d,
-                 boolean fill, boolean stroke, int rectMode) {
-      float hradius, vradius;
-      switch (rectMode) {
-      case CORNERS:
-        break;
-      case CORNER:
-        c += a; d += b;
-        break;
-      case RADIUS:
-        hradius = c;
-        vradius = d;
-        c = a + hradius;
-        d = b + vradius;
-        a -= hradius;
-        b -= vradius;
-        break;
-      case CENTER:
-        hradius = c / 2.0f;
-        vradius = d / 2.0f;
-        c = a + hradius;
-        d = b + vradius;
-        a -= hradius;
-        b -= vradius;
-      }
-
-      if (a > c) {
-        float temp = a; a = c; c = temp;
-      }
-
-      if (b > d) {
-        float temp = b; b = d; d = temp;
-      }
-
+                 boolean fill, boolean stroke) {
       addQuad(a, b, 0,
               c, b, 0,
               c, d, 0,
@@ -8676,45 +8610,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
     void addRect(float a, float b, float c, float d,
                  float tl, float tr, float br, float bl,
-                 boolean fill, boolean stroke, int detail, int rectMode) {
-      float hradius, vradius;
-      switch (rectMode) {
-      case CORNERS:
-        break;
-      case CORNER:
-        c += a; d += b;
-        break;
-      case RADIUS:
-        hradius = c;
-        vradius = d;
-        c = a + hradius;
-        d = b + vradius;
-        a -= hradius;
-        b -= vradius;
-        break;
-      case CENTER:
-        hradius = c / 2.0f;
-        vradius = d / 2.0f;
-        c = a + hradius;
-        d = b + vradius;
-        a -= hradius;
-        b -= vradius;
-      }
-
-      if (a > c) {
-        float temp = a; a = c; c = temp;
-      }
-
-      if (b > d) {
-        float temp = b; b = d; d = temp;
-      }
-
-      float maxRounding = PApplet.min((c - a) / 2, (d - b) / 2);
-      if (tl > maxRounding) tl = maxRounding;
-      if (tr > maxRounding) tr = maxRounding;
-      if (br > maxRounding) br = maxRounding;
-      if (bl > maxRounding) bl = maxRounding;
-
+                 boolean fill, boolean stroke, int detail) {
       if (nonZero(tr)) {
         addVertex(c-tr, b, VERTEX);
         addQuadraticVertex(c, b, 0, c, b+tr, 0,

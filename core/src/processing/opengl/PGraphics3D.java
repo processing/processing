@@ -217,7 +217,7 @@ public class PGraphics3D extends PGraphicsOpenGL {
       shape = new PShapeOpenGL(parent, PShape.PRIMITIVE);
       shape.setKind(QUAD);
     } else if (kind == RECT) {
-      if (len != 4 && len != 5 && len != 8) {
+      if (len != 4 && len != 5 && len != 8 && len != 9) {
         showWarning("Wrong number of parameters");
         return null;
       }
