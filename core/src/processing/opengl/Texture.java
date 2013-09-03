@@ -413,6 +413,8 @@ public class Texture implements PConstants {
       pgl.disableTexturing(glTarget);
     }
 
+    releaseMemory();
+
     updateTexels(x, y, w, h);
   }
 
@@ -430,6 +432,7 @@ public class Texture implements PConstants {
   public void setNative(int[] pixels, int x, int y, int w, int h) {
     updatePixelBuffer(pixels);
     setNative(pixelBuffer, x, y, w, h);
+    releaseMemory();
   }
 
 
@@ -1319,6 +1322,14 @@ public class Texture implements PConstants {
 
     invertedX = src.invertedX;
     invertedY = src.invertedY;
+  }
+
+
+  protected void releaseMemory() {
+    if (Runtime.getRuntime().freeMemory() / 1E6 < 5) {
+      pixelBuffer = null;
+      rgbaPixels = null;
+    }
   }
 
 
