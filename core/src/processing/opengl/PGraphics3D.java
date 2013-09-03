@@ -178,38 +178,6 @@ public class PGraphics3D extends PGraphicsOpenGL {
     } else if (type == PShape.GEOMETRY) {
       shape = new PShapeOpenGL(parent, PShape.GEOMETRY);
     }
-
-    /*
-    (type == POINTS) {
-      shape = new PShapeOpenGL(parent, PShape.GEOMETRY);
-
-      shape.setKind(POINTS);
-    } else if (type == LINES) {
-      shape = new PShapeOpenGL(parent, PShape.GEOMETRY);
-
-      shape.setKind(LINES);
-    } else if (type == TRIANGLE || type == TRIANGLES) {
-      shape = new PShapeOpenGL(parent, PShape.GEOMETRY);
-
-      shape.setKind(TRIANGLES);
-    } else if (type == TRIANGLE_FAN) {
-      shape = new PShapeOpenGL(parent, PShape.GEOMETRY);
-      shape.setKind(TRIANGLE_FAN);
-    } else if (type == TRIANGLE_STRIP) {
-      shape = new PShapeOpenGL(parent, PShape.GEOMETRY);
-      shape.setKind(TRIANGLE_STRIP);
-    } else if (type == QUAD || type == QUADS) {
-      shape = new PShapeOpenGL(parent, PShape.GEOMETRY);
-      shape.setKind(QUADS);
-    } else if (type == QUAD_STRIP) {
-      shape = new PShapeOpenGL(parent, PShape.GEOMETRY);
-      shape.setKind(QUAD_STRIP);
-    } else if (type == POLYGON) {
-      shape = new PShapeOpenGL(parent, PShape.GEOMETRY);
-      shape.setKind(POLYGON);
-    }
-    */
-
     shape.is3D(true);
     return shape;
   }

@@ -162,12 +162,9 @@ public class PShapeOpenGL extends PShape {
 
   protected boolean tessellated;
   protected boolean needBufferInit = false;
-//  protected boolean polyBuffersCreated = false;
-//  protected boolean lineBuffersCreated = false;
-//  protected boolean pointBuffersCreated = false;
 
-  protected boolean isSolid;
-  protected boolean isClosed;
+  // Flag to indicate if the shape can have holes or not.
+  protected boolean solid;
 
   protected boolean breakShape = false;
   protected boolean shapeCreated = false;
@@ -951,7 +948,7 @@ public class PShapeOpenGL extends PShape {
         child.solid(solid);
       }
     } else {
-      isSolid = solid;
+      this.solid = solid;
     }
   }
 
@@ -1090,7 +1087,7 @@ public class PShapeOpenGL extends PShape {
     // size, which might lead to arrays larger than the vertex counts.
     inGeo.trim();
 
-    isClosed = mode == CLOSE;
+    close = mode == CLOSE;
     markForTessellation();
     shapeCreated = true;
   }
@@ -2531,8 +2528,8 @@ public class PShapeOpenGL extends PShape {
             if (normalMode == NORMAL_MODE_AUTO) inGeo.calcQuadStripNormals();
             tessellator.tessellateQuadStrip();
           } else if (kind == POLYGON) {
-            if (stroke) inGeo.addPolygonEdges(isClosed);
-            tessellator.tessellatePolygon(isSolid, isClosed,
+            if (stroke) inGeo.addPolygonEdges(close);
+            tessellator.tessellatePolygon(solid, close,
                                           normalMode == NORMAL_MODE_AUTO);
           }
         } else if (family == PRIMITIVE) {
@@ -2924,8 +2921,8 @@ public class PShapeOpenGL extends PShape {
       }
     }
 
-    if (stroke) inGeo.addPolygonEdges(isClosed);
-    tessellator.tessellatePolygon(false, isClosed, true);
+    if (stroke) inGeo.addPolygonEdges(close);
+    tessellator.tessellatePolygon(false, close, true);
   }
 
 
