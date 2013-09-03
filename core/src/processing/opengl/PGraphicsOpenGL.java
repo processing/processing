@@ -5585,52 +5585,52 @@ public class PGraphicsOpenGL extends PGraphics {
 
   //////////////////////////////////////////////////////////////
 
-  /**
-   * Extremely slow and not optimized, should use GL methods instead. Currently
-   * calls a beginPixels() on the whole canvas, then does the copy, then it
-   * calls endPixels().
-   */
-  // public void copy(int sx1, int sy1, int sx2, int sy2,
-  // int dx1, int dy1, int dx2, int dy2)
+  // COPY
 
-  // public void copy(PImage src,
-  // int sx1, int sy1, int sx2, int sy2,
-  // int dx1, int dy1, int dx2, int dy2)
+
+  @Override
+  public void copy(int sx, int sy, int sw, int sh,
+                   int dx, int dy, int dw, int dh) {
+    if (primarySurface) pgl.requestFBOLayer();
+    loadTexture();
+    if (filterTexture == null || filterTexture.contextIsOutdated()) {
+      filterTexture = new Texture(texture.width, texture.height,
+                                  texture.getParameters());
+      filterTexture.invertedY(true);
+      filterImage = wrapTexture(filterTexture);
+    }
+    filterTexture.put(texture, sx, height - (sy + sh), sw, height - sy);
+    copy(filterImage, sx, sy, sw, sh, dx, dy, dw, dh);
+  }
+
+
+  @Override
+  public void copy(PImage src,
+                   int sx, int sy, int sw, int sh,
+                   int dx, int dy, int dw, int dh) {
+    boolean needEndDraw = false;
+    if (!drawing) {
+      beginDraw();
+      needEndDraw = true;
+    }
+
+    Texture tex = getTexture(src);
+    pgl.drawTexture(tex.glTarget, tex.glName,
+                    tex.glWidth, tex.glHeight, width, height,
+                    sx, tex.height - (sy + sh),
+                    sx + sw, tex.height - sy,
+                    dx, height - (dy + dh),
+                    dx + dw, height - dy);
+
+    if (needEndDraw) {
+      endDraw();
+    }
+  }
 
 
   //////////////////////////////////////////////////////////////
 
   // BLEND
-
-  // static public int blendColor(int c1, int c2, int mode)
-
-  // public void blend(PImage src,
-  // int sx, int sy, int dx, int dy, int mode) {
-  // set(dx, dy, PImage.blendColor(src.get(sx, sy), get(dx, dy), mode));
-  // }
-
-
-  /**
-   * Extremely slow and not optimized, should use GL methods instead. Currently
-   * calls a beginPixels() on the whole canvas, then does the copy, then it
-   * calls endPixels(). Please help fix: <A
-   * HREF="http://dev.processing.org/bugs/show_bug.cgi?id=941">Bug 941</A>, <A
-   * HREF="http://dev.processing.org/bugs/show_bug.cgi?id=942">Bug 942</A>.
-   */
-  // public void blend(int sx1, int sy1, int sx2, int sy2,
-  // int dx1, int dy1, int dx2, int dy2, int mode) {
-  // loadPixels();
-  // super.blend(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
-  // updatePixels();
-  // }
-
-  // public void blend(PImage src,
-  // int sx1, int sy1, int sx2, int sy2,
-  // int dx1, int dy1, int dx2, int dy2, int mode) {
-  // loadPixels();
-  // super.blend(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
-  // updatePixels();
-  // }
 
 
   /**
