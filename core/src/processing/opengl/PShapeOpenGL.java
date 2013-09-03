@@ -354,6 +354,9 @@ public class PShapeOpenGL extends PShape {
     sphereDetailU = pg.sphereDetailU;
     sphereDetailV = pg.sphereDetailV;
 
+    rectMode = pg.rectMode;
+    ellipseMode = pg.ellipseMode;
+
     normalX = normalY = 0;
     normalZ = 1;
 
@@ -2711,11 +2714,11 @@ public class PShapeOpenGL extends PShape {
     float tl = 0, tr = 0, br = 0, bl = 0;
     boolean rounded = false;
     if (params.length == 4) {
-      rounded = false;
       a = params[0];
       b = params[1];
       c = params[2];
       d = params[3];
+      rounded = false;
     } else if (params.length == 5) {
       a = params[0];
       b = params[1];
@@ -2753,17 +2756,52 @@ public class PShapeOpenGL extends PShape {
 
   protected void tessellateEllipse() {
     float a = 0, b = 0, c = 0, d = 0;
-    if (params.length == 4) {
+    int mode = ellipseMode;
+
+    if (4 <= params.length) {
       a = params[0];
       b = params[1];
       c = params[2];
       d = params[3];
+      if (params.length == 5) {
+        mode = (int)(params[4]);
+      }
+    }
+
+    float x = a;
+    float y = b;
+    float w = c;
+    float h = d;
+
+    if (mode == CORNERS) {
+      w = c - a;
+      h = d - b;
+
+    } else if (mode == RADIUS) {
+      x = a - c;
+      y = b - d;
+      w = c * 2;
+      h = d * 2;
+
+    } else if (mode == DIAMETER) {
+      x = a - c/2f;
+      y = b - d/2f;
+    }
+
+    if (w < 0) {  // undo negative width
+      x += w;
+      w = -w;
+    }
+
+    if (h < 0) {  // undo negative height
+      y += h;
+      h = -h;
     }
 
     inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
                       ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);
-    inGeo.addEllipse(a, b, c, d, fill, stroke, CORNER);
+    inGeo.addEllipse(x, y, w, h, fill, stroke);
     tessellator.tessellateTriangleFan();
   }
 
@@ -2771,25 +2809,61 @@ public class PShapeOpenGL extends PShape {
   protected void tessellateArc() {
     float a = 0, b = 0, c = 0, d = 0;
     float start = 0, stop = 0;
-//    int mode = 0;
-    if (params.length == 6 || params.length == 7) {
+    int mode = ellipseMode;
+
+    if (6 <= params.length) {
       a = params[0];
       b = params[1];
       c = params[2];
       d = params[3];
       start = params[4];
       stop = params[5];
-      // Not using arc mode since PShape only uses CORNER
-//      if (params.length == 7) {
-//        mode = (int)(params[6]);
-//      }
+      if (params.length == 7) {
+        mode = (int)(params[6]);
+      }
     }
 
-    inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
-                      ambientColor, specularColor, emissiveColor, shininess);
-    inGeo.setNormal(normalX, normalY, normalZ);
-    inGeo.addArc(a, b, c, d, start, stop, fill, stroke, CORNER);
-    tessellator.tessellateTriangleFan();
+    float x = a;
+    float y = b;
+    float w = c;
+    float h = d;
+
+    if (mode == CORNERS) {
+      w = c - a;
+      h = d - b;
+
+    } else if (mode == RADIUS) {
+      x = a - c;
+      y = b - d;
+      w = c * 2;
+      h = d * 2;
+
+    } else if (mode == CENTER) {
+      x = a - c/2f;
+      y = b - d/2f;
+    }
+
+    // make sure the loop will exit before starting while
+    if (!Float.isInfinite(start) && !Float.isInfinite(stop)) {
+      // ignore equal and degenerate cases
+      if (stop > start) {
+        // make sure that we're starting at a useful point
+        while (start < 0) {
+          start += TWO_PI;
+          stop += TWO_PI;
+        }
+
+        if (stop - start > TWO_PI) {
+          start = 0;
+          stop = TWO_PI;
+        }
+        inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
+                          ambientColor, specularColor, emissiveColor, shininess);
+        inGeo.setNormal(normalX, normalY, normalZ);
+        inGeo.addArc(x, y, w, h, start, stop, fill, stroke, mode);
+        tessellator.tessellateTriangleFan();
+      }
+    }
   }
 
 

@@ -224,7 +224,7 @@ public class PGraphics3D extends PGraphicsOpenGL {
       shape = new PShapeOpenGL(parent, PShape.PRIMITIVE);
       shape.setKind(RECT);
     } else if (kind == ELLIPSE) {
-      if (len != 4) {
+      if (len != 4 && len != 5) {
         showWarning("Wrong number of parameters");
         return null;
       }

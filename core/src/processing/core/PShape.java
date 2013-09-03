@@ -167,6 +167,8 @@ public class PShape implements PConstants {
   protected float shininess;
 
   protected int sphereDetailU, sphereDetailV;
+  protected int rectMode;
+  protected int ellipseMode;
 
   /** Temporary toggle for whether styles should be honored. */
   protected boolean style = true;

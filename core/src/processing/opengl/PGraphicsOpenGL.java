@@ -2922,8 +2922,7 @@ public class PGraphicsOpenGL extends PGraphics {
     inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
                       ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);
-    inGeo.addRect(a, b, c, d,
-                  fill, stroke, rectMode);
+    inGeo.addRect(a, b, c, d, fill, stroke, rectMode);
     endShape();
   }
 
@@ -2937,8 +2936,7 @@ public class PGraphicsOpenGL extends PGraphics {
     inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
                       ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);
-    inGeo.addRect(a, b, c, d,
-                  tl, tr, br, bl,
+    inGeo.addRect(a, b, c, d, tl, tr, br, bl,
                   fill, stroke, bezierDetail, rectMode);
     endShape(CLOSE);
   }
@@ -2953,14 +2951,14 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   @Override
-  public void ellipse(float a, float b, float c, float d) {
+  public void ellipseImpl(float a, float b, float c, float d) {
      beginShape(TRIANGLE_FAN);
      defaultEdges = false;
      normalMode = NORMAL_MODE_SHAPE;
      inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
                        ambientColor, specularColor, emissiveColor, shininess);
      inGeo.setNormal(normalX, normalY, normalZ);
-     inGeo.addEllipse(a, b, c, d, fill, stroke, ellipseMode);
+     inGeo.addEllipse(a, b, c, d, fill, stroke);
      endShape();
   }
 
@@ -8749,38 +8747,8 @@ public class PGraphicsOpenGL extends PGraphics {
       if (stroke) addPolygonEdges(true);
     }
 
-    void addEllipse(float a, float b, float c, float d,
-                    boolean fill, boolean stroke, int ellipseMode) {
-      float x = a;
-      float y = b;
-      float w = c;
-      float h = d;
-
-      if (ellipseMode == CORNERS) {
-        w = c - a;
-        h = d - b;
-
-      } else if (ellipseMode == RADIUS) {
-        x = a - c;
-        y = b - d;
-        w = c * 2;
-        h = d * 2;
-
-      } else if (ellipseMode == DIAMETER) {
-        x = a - c/2f;
-        y = b - d/2f;
-      }
-
-      if (w < 0) {  // undo negative width
-        x += w;
-        w = -w;
-      }
-
-      if (h < 0) {  // undo negative height
-        y += h;
-        h = -h;
-      }
-
+    void addEllipse(float x, float y, float w, float h,
+                    boolean fill, boolean stroke) {
       float radiusH = w / 2;
       float radiusV = h / 2;
 
