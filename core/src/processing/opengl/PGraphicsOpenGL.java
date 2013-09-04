@@ -5614,6 +5614,8 @@ public class PGraphicsOpenGL extends PGraphics {
       needEndDraw = true;
     }
 
+    flush(); // make sure that the screen contents are up to date.
+
     Texture tex = getTexture(src);
     pgl.drawTexture(tex.glTarget, tex.glName,
                     tex.glWidth, tex.glHeight, width, height,
