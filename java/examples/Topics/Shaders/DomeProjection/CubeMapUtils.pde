@@ -1,8 +1,6 @@
 void initCubeMap() {
-  gridTex = loadImage("grid.png");
   sphereDetail(50);
   domeSphere = createShape(SPHERE, height/2.0f);
-  domeSphere.setTexture(gridTex);
   domeSphere.rotateX(HALF_PI);
   domeSphere.setStroke(false);
 
@@ -42,7 +40,7 @@ void initCubeMap() {
 
   // Load cubemap shader.
   cubemapShader = loadShader("cubemapfrag.glsl", "cubemapvert.glsl");
-  cubemapShader.set("EnvMap", 1);
+  cubemapShader.set("cubemap", 1);
 }
 
 void drawCubeMap() {

@@ -13,7 +13,6 @@ import java.nio.IntBuffer;
 
 PShader cubemapShader;
 PShape domeSphere;
-PImage gridTex;
 
 IntBuffer fbo;
 IntBuffer rbo;
