@@ -80,8 +80,8 @@ public class PGraphicsOpenGL extends PGraphics {
     "Unsupported shape format";
   static final String INVALID_FILTER_SHADER_ERROR =
     "Your shader needs to be of TEXTURE type to be used as a filter";
-  static final String INVALID_PROCESSING_SHADER_ERROR =
-    "The GLSL code doesn't seem to contain a valid shader to use in Processing";
+  static final String INCONSISTENT_SHADER_TYPES =
+    "The vertex and fragment shaders have different types";
   static final String WRONG_SHADER_TYPE_ERROR =
     "shader() called with a wrong shader";
   static final String UNKNOWN_SHADER_KIND_ERROR =
@@ -2400,15 +2400,14 @@ public class PGraphicsOpenGL extends PGraphics {
                                       4 * voffset * PGL.SIZEOF_BYTE);
           shader.setShininessAttribute(glPolyShininess, 1, PGL.FLOAT, 0,
                                        voffset * PGL.SIZEOF_FLOAT);
-        }
-
-        if (tex != null) {
+        } else {
           shader.setNormalAttribute(glPolyNormal, 3, PGL.FLOAT, 0,
                                     3 * voffset * PGL.SIZEOF_FLOAT);
           shader.setTexcoordAttribute(glPolyTexcoord, 2, PGL.FLOAT, 0,
                                       2 * voffset * PGL.SIZEOF_FLOAT);
-          shader.setTexture(tex);
+          if (tex != null) shader.setTexture(tex);
         }
+
 
         pgl.bindBuffer(PGL.ELEMENT_ARRAY_BUFFER, glPolyIndex);
         pgl.drawElements(PGL.TRIANGLES, icount, PGL.INDEX_TYPE,
@@ -6255,10 +6254,7 @@ public class PGraphicsOpenGL extends PGraphics {
   @Override
   public PShader loadShader(String fragFilename) {
     int shaderType = getShaderType(fragFilename);
-    if (shaderType == -1) {
-      PGraphics.showWarning(INVALID_PROCESSING_SHADER_ERROR);
-      return null;
-    }
+    if (shaderType == -1) shaderType = PShader.COLOR;
     PShader shader = null;
     if (shaderType == PShader.POINT) {
       shader = new PointShader(parent);
@@ -6286,12 +6282,20 @@ public class PGraphicsOpenGL extends PGraphics {
 
   @Override
   public PShader loadShader(String fragFilename, String vertFilename) {
-    int shaderType = getShaderType(vertFilename);
-    if (shaderType == -1) {
-      shaderType = getShaderType(fragFilename);
-    }
-    if (shaderType == -1) {
-      PGraphics.showWarning(INVALID_PROCESSING_SHADER_ERROR);
+    int vertType = getShaderType(vertFilename);
+    int fragType = getShaderType(fragFilename);
+
+    int shaderType = -1;
+    if (vertType == -1 && fragType == -1) {
+      shaderType = PShader.COLOR;
+    } else if (vertType == -1) {
+      shaderType = fragType;
+    } else if (fragType == -1) {
+      shaderType = vertType;
+    } else if (fragType == vertType)  {
+      shaderType = vertType;
+    } else {
+      PGraphics.showWarning(INCONSISTENT_SHADER_TYPES);
       return null;
     }
 
@@ -6349,14 +6353,14 @@ public class PGraphicsOpenGL extends PGraphics {
     flush(); // Flushing geometry drawn with a different shader.
 
     if (kind == TRIANGLES || kind == QUADS || kind == POLYGON) {
-      if (shader instanceof TextureShader) {
-        textureShader = (TextureShader) shader;
-      } else if (shader instanceof ColorShader) {
-        colorShader = (ColorShader) shader;
-      } else if (shader instanceof TexlightShader) {
+      if (shader instanceof TexlightShader) {
         texlightShader = (TexlightShader) shader;
+      } else if (shader instanceof TextureShader) {
+        textureShader = (TextureShader) shader;
       } else if (shader instanceof LightShader) {
         lightShader = (LightShader) shader;
+      } else if (shader instanceof ColorShader) {
+        colorShader = (ColorShader) shader;
       } else {
         PGraphics.showWarning(WRONG_SHADER_TYPE_ERROR);
       }
@@ -6684,6 +6688,9 @@ public class PGraphicsOpenGL extends PGraphics {
   protected class ColorShader extends BaseShader {
     protected int vertexLoc;
     protected int colorLoc;
+    protected int normalLoc;
+    protected int texCoordLoc;
+    protected int normalMatrixLoc;
 
     public ColorShader(PApplet parent) {
       super(parent);
@@ -6702,11 +6709,15 @@ public class PGraphicsOpenGL extends PGraphics {
     public void loadAttributes() {
       vertexLoc = getAttributeLoc("vertex");
       colorLoc = getAttributeLoc("color");
+      texCoordLoc = getAttributeLoc("texCoord");
+      normalLoc = getAttributeLoc("normal");
     }
 
     @Override
     public void loadUniforms() {
       super.loadUniforms();
+
+      normalMatrixLoc = getUniformLoc("normalMatrix");
     }
 
     @Override
@@ -6722,6 +6733,18 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     @Override
+    public void setNormalAttribute(int vboId, int size, int type,
+                                   int stride, int offset) {
+      setAttributeVBO(normalLoc, vboId, size, type, false, stride, offset);
+    }
+
+    @Override
+    public void setTexcoordAttribute(int vboId, int size, int type,
+                                     int stride, int offset) {
+      setAttributeVBO(texCoordLoc, vboId, size, type, false, stride, offset);
+    }
+
+    @Override
     public void bind() {
       super.bind();
       if (pgCurrent == null) {
@@ -6729,26 +6752,32 @@ public class PGraphicsOpenGL extends PGraphics {
         loadAttributes();
         loadUniforms();
       }
+      setCommonUniforms();
 
       if (-1 < vertexLoc) pgl.enableVertexAttribArray(vertexLoc);
       if (-1 < colorLoc) pgl.enableVertexAttribArray(colorLoc);
+      if (-1 < texCoordLoc) pgl.enableVertexAttribArray(texCoordLoc);
+      if (-1 < normalLoc) pgl.enableVertexAttribArray(normalLoc);
 
-      setCommonUniforms();
+      if (-1 < normalMatrixLoc) {
+        pgCurrent.updateGLNormal();
+        setUniformMatrix(normalMatrixLoc, pgCurrent.glNormal);
+      }
     }
 
     @Override
     public void unbind() {
       if (-1 < vertexLoc) pgl.disableVertexAttribArray(vertexLoc);
       if (-1 < colorLoc) pgl.disableVertexAttribArray(colorLoc);
+      if (-1 < texCoordLoc) pgl.disableVertexAttribArray(texCoordLoc);
+      if (-1 < normalLoc) pgl.disableVertexAttribArray(normalLoc);
 
       super.unbind();
     }
   }
 
 
-  protected class LightShader extends BaseShader {
-    protected int normalMatrixLoc;
-
+  protected class LightShader extends ColorShader {
     protected int lightCountLoc;
     protected int lightPositionLoc;
     protected int lightNormalLoc;
@@ -6757,10 +6786,6 @@ public class PGraphicsOpenGL extends PGraphics {
     protected int lightSpecularLoc;
     protected int lightFalloffLoc;
     protected int lightSpotLoc;
-
-    protected int vertexLoc;
-    protected int colorLoc;
-    protected int normalLoc;
 
     protected int ambientLoc;
     protected int specularLoc;
@@ -6782,10 +6807,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
     @Override
     public void loadAttributes() {
-      vertexLoc = getAttributeLoc("vertex");
-      colorLoc = getAttributeLoc("color");
-      normalLoc = getAttributeLoc("normal");
-
+      super.loadAttributes();
       ambientLoc = getAttributeLoc("ambient");
       specularLoc = getAttributeLoc("specular");
       emissiveLoc = getAttributeLoc("emissive");
@@ -6796,8 +6818,6 @@ public class PGraphicsOpenGL extends PGraphics {
     public void loadUniforms() {
       super.loadUniforms();
 
-      normalMatrixLoc = getUniformLoc("normalMatrix");
-
       lightCountLoc = getUniformLoc("lightCount");
       lightPositionLoc = getUniformLoc("lightPosition");
       lightNormalLoc = getUniformLoc("lightNormal");
@@ -6806,24 +6826,6 @@ public class PGraphicsOpenGL extends PGraphics {
       lightSpecularLoc = getUniformLoc("lightSpecular");
       lightFalloffLoc = getUniformLoc("lightFalloff");
       lightSpotLoc = getUniformLoc("lightSpot");
-    }
-
-    @Override
-    public void setVertexAttribute(int vboId, int size, int type,
-                                   int stride, int offset) {
-      setAttributeVBO(vertexLoc, vboId, size, type, false, stride, offset);
-    }
-
-    @Override
-    public void setColorAttribute(int vboId, int size, int type,
-                                  int stride, int offset) {
-      setAttributeVBO(colorLoc, vboId, size, type, true, stride, offset);
-    }
-
-    @Override
-    public void setNormalAttribute(int vboId, int size, int type,
-                                   int stride, int offset) {
-      setAttributeVBO(normalLoc, vboId, size, type, false, stride, offset);
     }
 
     @Override
@@ -6853,25 +6855,11 @@ public class PGraphicsOpenGL extends PGraphics {
     @Override
     public void bind() {
       super.bind();
-      if (pgCurrent == null) {
-        setRenderer(PGraphicsOpenGL.pgCurrent);
-        loadAttributes();
-        loadUniforms();
-      }
-
-      if (-1 < vertexLoc) pgl.enableVertexAttribArray(vertexLoc);
-      if (-1 < colorLoc) pgl.enableVertexAttribArray(colorLoc);
-      if (-1 < normalLoc) pgl.enableVertexAttribArray(normalLoc);
 
       if (-1 < ambientLoc) pgl.enableVertexAttribArray(ambientLoc);
       if (-1 < specularLoc) pgl.enableVertexAttribArray(specularLoc);
       if (-1 < emissiveLoc) pgl.enableVertexAttribArray(emissiveLoc);
       if (-1 < shininessLoc) pgl.enableVertexAttribArray(shininessLoc);
-
-      if (-1 < normalMatrixLoc) {
-        pgCurrent.updateGLNormal();
-        setUniformMatrix(normalMatrixLoc, pgCurrent.glNormal);
-      }
 
       int count = pgCurrent.lightCount;
       setUniformValue(lightCountLoc, count);
@@ -6883,16 +6871,10 @@ public class PGraphicsOpenGL extends PGraphics {
       setUniformVector(lightFalloffLoc, pgCurrent.lightFalloffCoefficients,
                        3, count);
       setUniformVector(lightSpotLoc, pgCurrent.lightSpotParameters, 2, count);
-
-      setCommonUniforms();
     }
 
     @Override
     public void unbind() {
-      if (-1 < vertexLoc) pgl.disableVertexAttribArray(vertexLoc);
-      if (-1 < colorLoc) pgl.disableVertexAttribArray(colorLoc);
-      if (-1 < normalLoc) pgl.disableVertexAttribArray(normalLoc);
-
       if (-1 < ambientLoc) pgl.disableVertexAttribArray(ambientLoc);
       if (-1 < specularLoc) pgl.disableVertexAttribArray(specularLoc);
       if (-1 < emissiveLoc) pgl.disableVertexAttribArray(emissiveLoc);
@@ -6906,14 +6888,10 @@ public class PGraphicsOpenGL extends PGraphics {
   protected class TextureShader extends ColorShader {
     protected Texture texture;
     protected int texUnit;
-    protected int texCoordLoc;
 
     protected int textureLoc;
     protected int texMatrixLoc;
     protected int texOffsetLoc;
-
-    protected int normalMatrixLoc;
-    protected int normalLoc;
 
     protected float[] tcmat;
 
@@ -6937,29 +6915,6 @@ public class PGraphicsOpenGL extends PGraphics {
       textureLoc = getUniformLoc("texture");
       texMatrixLoc = getUniformLoc("texMatrix");
       texOffsetLoc = getUniformLoc("texOffset");
-
-      normalMatrixLoc = getUniformLoc("normalMatrix");
-    }
-
-    @Override
-    public void loadAttributes() {
-      super.loadAttributes();
-
-      texCoordLoc = getAttributeLoc("texCoord");
-
-      normalLoc = getAttributeLoc("normal");
-    }
-
-    @Override
-    public void setNormalAttribute(int vboId, int size, int type,
-                                   int stride, int offset) {
-      setAttributeVBO(normalLoc, vboId, size, type, false, stride, offset);
-    }
-
-    @Override
-    public void setTexcoordAttribute(int vboId, int size, int type,
-                                     int stride, int offset) {
-      setAttributeVBO(texCoordLoc, vboId, size, type, false, stride, offset);
     }
 
     @Override
@@ -7012,23 +6967,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     @Override
-    public void bind() {
-      super.bind();
-
-      if (-1 < texCoordLoc) pgl.enableVertexAttribArray(texCoordLoc);
-
-      if (-1 < normalLoc) pgl.enableVertexAttribArray(normalLoc);
-      if (-1 < normalMatrixLoc) {
-        pgCurrent.updateGLNormal();
-        setUniformMatrix(normalMatrixLoc, pgCurrent.glNormal);
-      }
-    }
-
-    @Override
     public void unbind() {
-      if (-1 < texCoordLoc) pgl.disableVertexAttribArray(texCoordLoc);
-      if (-1 < normalLoc) pgl.disableVertexAttribArray(normalLoc);
-
       if (-1 < textureLoc && texture != null) {
         pgl.activeTexture(PGL.TEXTURE0 + texUnit);
         texture.unbind();
@@ -7044,7 +6983,6 @@ public class PGraphicsOpenGL extends PGraphics {
   protected class TexlightShader extends LightShader {
     protected Texture texture;
     protected int texUnit;
-    protected int texCoordLoc;
 
     protected int textureLoc;
     protected int texMatrixLoc;
@@ -7072,19 +7010,6 @@ public class PGraphicsOpenGL extends PGraphics {
       textureLoc = getUniformLoc("texture");
       texMatrixLoc = getUniformLoc("texMatrix");
       texOffsetLoc = getUniformLoc("texOffset");
-    }
-
-    @Override
-    public void loadAttributes() {
-      super.loadAttributes();
-
-      texCoordLoc = getAttributeLoc("texCoord");
-    }
-
-    @Override
-    public void setTexcoordAttribute(int vboId, int size, int type,
-                                     int stride, int offset) {
-      setAttributeVBO(texCoordLoc, vboId, size, type, false, stride, offset);
     }
 
     @Override
@@ -7137,16 +7062,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     @Override
-    public void bind() {
-      super.bind();
-
-      if (-1 < texCoordLoc) pgl.enableVertexAttribArray(texCoordLoc);
-    }
-
-    @Override
     public void unbind() {
-      if (-1 < texCoordLoc) pgl.disableVertexAttribArray(texCoordLoc);
-
       if (-1 < textureLoc && texture != null) {
         pgl.activeTexture(PGL.TEXTURE0 + texUnit);
         texture.unbind();
