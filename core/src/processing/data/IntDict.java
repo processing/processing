@@ -88,6 +88,7 @@ public class IntDict {
       if (pieces.length == 2) {
         keys[count] = pieces[0];
         values[count] = PApplet.parseInt(pieces[1]);
+        indices.put(pieces[0], count);
         count++;
       }
     }
