@@ -2388,6 +2388,10 @@ public class PGraphicsOpenGL extends PGraphics {
                                   4 * voffset * PGL.SIZEOF_FLOAT);
         shader.setColorAttribute(glPolyColor, 4, PGL.UNSIGNED_BYTE, 0,
                                  4 * voffset * PGL.SIZEOF_BYTE);
+        shader.setNormalAttribute(glPolyNormal, 3, PGL.FLOAT, 0,
+                                  3 * voffset * PGL.SIZEOF_FLOAT);
+        shader.setTexcoordAttribute(glPolyTexcoord, 2, PGL.FLOAT, 0,
+                                    2 * voffset * PGL.SIZEOF_FLOAT);
 
         if (lights) {
           shader.setNormalAttribute(glPolyNormal, 3, PGL.FLOAT, 0,
@@ -2400,14 +2404,11 @@ public class PGraphicsOpenGL extends PGraphics {
                                       4 * voffset * PGL.SIZEOF_BYTE);
           shader.setShininessAttribute(glPolyShininess, 1, PGL.FLOAT, 0,
                                        voffset * PGL.SIZEOF_FLOAT);
-        } else {
-          shader.setNormalAttribute(glPolyNormal, 3, PGL.FLOAT, 0,
-                                    3 * voffset * PGL.SIZEOF_FLOAT);
-          shader.setTexcoordAttribute(glPolyTexcoord, 2, PGL.FLOAT, 0,
-                                      2 * voffset * PGL.SIZEOF_FLOAT);
-          if (tex != null) shader.setTexture(tex);
         }
 
+        if (tex != null) {
+          shader.setTexture(tex);
+        }
 
         pgl.bindBuffer(PGL.ELEMENT_ARRAY_BUFFER, glPolyIndex);
         pgl.drawElements(PGL.TRIANGLES, icount, PGL.INDEX_TYPE,
