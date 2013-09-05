@@ -1,6 +1,7 @@
-PROCESSING 2.0.3 (REV 0221) - 23 August 2013
+PROCESSING 2.0.3 (REV 0221) - 5 September 2013
 
-Lots of bug fixes. 
+Lots of bug fixes, primarily a ton of work by Andres to improve 
+OpenGL rendering with P2D and P3D.
 
 
 [ andres vs the volcano ]
