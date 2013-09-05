@@ -3,9 +3,6 @@ X add double quotes to readlink call, fixes issue w/ paths and spaces
 X   https://github.com/processing/processing/pull/2027
 X   fix submitted by hamoid
 
-_ changing modes brings the PDE back on the second screen
-_   the Find window (also the save windows) also have the same problem
-
 
 high
 _ MovieMaker needs to be compiling as 1.6
@@ -27,6 +24,8 @@ _   and doesn't just look for .Trash
 _ getCoreLibrary() is breaking OpenGL
 _   "new Library()" constructor needs to go back to private
 _ add .bat file to lib on windows so that we can get better debugging info
+_ changing modes brings the PDE back on the second screen
+_   the Find window (also the save windows) also have the same problem
 
 7u40 switch
 _ change how export is handled

@@ -1,6 +1,9 @@
 0221 core
 X fix options parsing on loadTable() to handle spaces
 X add static versions of loadJSONObject and loadJSONArray that take File inputs
+X PVector.angleBetween() returns 0 for 3D vectors whenever x and y are both 0
+X   https://github.com/processing/processing/issues/2045
+X   https://github.com/processing/processing/pull/2046
 
 andres
 X blendMode() change causes OpenGL renderer to be very slow
@@ -34,6 +37,11 @@ X Additional improvements to memory handling with images
 X   https://github.com/processing/processing/issues/1975
 X PShape does not draw arc properly
 X   https://github.com/processing/processing/issues/1990
+
+X Additional memory handling changes for render buffers
+X   https://github.com/processing/processing/issues/1776
+X PShape style is not restored after calling enableStyle in P2D/P3D
+X   https://github.com/processing/processing/issues/2061
 
 video
 X problem with bit shifting

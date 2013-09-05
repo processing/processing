@@ -1,6 +1,6 @@
 PROCESSING 2.0.3 (REV 0221) - 23 August 2013
 
-Several OpenGL fixes.
+Lots of bug fixes. 
 
 
 [ andres vs the volcano ]
@@ -53,13 +53,23 @@ Several OpenGL fixes.
 + Additional improvements to memory handling with images
   https://github.com/processing/processing/issues/1975
 
++ Additional memory handling changes for render buffers
+  https://github.com/processing/processing/issues/1776
+
 + PShape does not draw arc properly
   https://github.com/processing/processing/issues/1990
+
++ PShape style is not restored after calling enableStyle in P2D/P3D
+  https://github.com/processing/processing/issues/2061
 
 
 [ other bug fixes ] 
 
 + Fix options parsing on loadTable() to handle spaces.
+
++ PVector.angleBetween() returns 0 for 3D vectors whenever x and y are both 0
+  https://github.com/processing/processing/issues/2045
+  https://github.com/processing/processing/pull/2046
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
