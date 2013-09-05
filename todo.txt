@@ -1,7 +1,4 @@
-0221 pde
-X add double quotes to readlink call, fixes issue w/ paths and spaces
-X   https://github.com/processing/processing/pull/2027
-X   fix submitted by hamoid
+0222 pde
 
 
 high
@@ -44,6 +41,12 @@ _   the "Classes" folder is included
 _     appears to be line 138 of main.m
 _     maybe this is a holdover from OS X Java?
 _   bring back the splash screen?
+
+no good installer, will need JDK anyway for the export
+require that this folder exists:
+/Library/Java/JavaVirtualMachines/jdk1.7.0_40.jdk
+could also require that it's b40, but probably more trouble than it's worth
+that would be 'java -version' for string 'build 1.7.0_40-b40'
 
 direct link for download (replace .md5 with .dmg on that page)
 http://www.java.net/download/jdk7u40/archive/b38/binaries/jre-7u40-ea-bin-b38-macosx-x86_64-07_aug_2013.dmg

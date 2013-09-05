@@ -1,3 +1,9 @@
+0221 pde (2.0.3)
+X add double quotes to readlink call, fixes issue w/ paths and spaces
+X   https://github.com/processing/processing/pull/2027
+X   fix submitted by hamoid
+
+
 0220 pde (2.0.2)
 X fix "less less" typo 
 X   https://github.com/processing/processing/issues/1928
