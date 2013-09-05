@@ -47,6 +47,15 @@ Several OpenGL fixes.
   https://github.com/processing/processing/pull/2022
   https://github.com/processing/processing/issues/2021
 
++ Copy doesn't produce a true copy with P2D and P3D renderers
+  https://github.com/processing/processing/issues/1924
+
++ Additional improvements to memory handling with images
+  https://github.com/processing/processing/issues/1975
+
++ PShape does not draw arc properly
+  https://github.com/processing/processing/issues/1990
+
 
 [ other bug fixes ] 
 

@@ -6198,7 +6198,7 @@ public class PApplet extends Applet
     return new JSONArray(new StringReader(input));
   }
 
-
+  
   /**
    * @webref input:files
    * @param filename name of a file in the data folder or a URL
@@ -6212,7 +6212,7 @@ public class PApplet extends Applet
     return new JSONArray(createReader(filename));
   }
 
-
+  
   static public JSONArray loadJSONArray(File file) {
     return new JSONArray(createReader(file));
   }
