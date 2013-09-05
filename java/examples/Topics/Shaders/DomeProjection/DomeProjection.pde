@@ -2,7 +2,7 @@
  * DomeProjection
  * 
  * This sketch uses use environmental mapping to render the output 
- * on a full spherical come.
+ * on a full spherical dome.
  * 
  * Based on the FullDomeTemplate code from Christopher Warnow: 
  * https://github.com/mphasize/FullDome
