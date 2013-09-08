@@ -22,6 +22,7 @@
 
 package processing.lwjgl;
 
+import processing.opengl.PGL;
 import processing.opengl.PGraphicsOpenGL;
 
 /**
@@ -29,27 +30,8 @@ import processing.opengl.PGraphicsOpenGL;
  *
  */
 public class PGraphicsLWJGL extends PGraphicsOpenGL {
-
-  //////////////////////////////////////////////////////////////
-
-  // INIT/ALLOCATE/FINISH
-
-
-  public PGraphicsLWJGL() {
-    pgl = new PGL(this);
-
-    if (tessellator == null) {
-      tessellator = new Tessellator();
-    }
-
-    intBuffer = PGL.allocateIntBuffer(2);
-    floatBuffer = PGL.allocateFloatBuffer(2);
-    viewport = PGL.allocateIntBuffer(4);
-
-    inGeo = newInGeometry(IMMEDIATE);
-    tessGeo = newTessGeometry(IMMEDIATE);
-    texCache = newTexCache();
-
-    initialized = false;
+  
+  static public PGL createPGL(PGraphicsOpenGL pg) {
+    return new PLWJGL(pg);
   }  
 }

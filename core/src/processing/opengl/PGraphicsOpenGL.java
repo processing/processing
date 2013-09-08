@@ -532,7 +532,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   public PGraphicsOpenGL() {
     if (pgl == null) {
-      pgl = new PGL(this);
+      pgl = createPGL(this);
     }
 
     if (tessellator == null) {
@@ -1699,6 +1699,12 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
+  // Factory method
+  static public PGL createPGL(PGraphicsOpenGL pg) {
+    return new PGL(pg);
+  }
+
+
   @Override
   public PGL beginPGL() {
     flush();
@@ -1768,6 +1774,13 @@ public class PGraphicsOpenGL extends PGraphics {
     pgl.drawBuffer(currentFramebuffer.getDefaultDrawBuffer());
   }
 
+  public void beginReadPixels() {
+    pgCurrent.beginPixelsOp(OP_READ);
+  }
+
+  public void endReadPixels() {
+    pgCurrent.endPixelsOp();
+  }
 
   protected void beginPixelsOp(int op) {
     FrameBuffer pixfb = null;

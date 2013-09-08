@@ -2969,6 +2969,7 @@ public class PGL {
   public static final int VERTEX_ATTRIB_ARRAY_STRIDE         = GL2.GL_VERTEX_ATTRIB_ARRAY_STRIDE;
   public static final int VERTEX_ATTRIB_ARRAY_TYPE           = GL2.GL_VERTEX_ATTRIB_ARRAY_TYPE;
   public static final int VERTEX_ATTRIB_ARRAY_NORMALIZED     = GL2.GL_VERTEX_ATTRIB_ARRAY_NORMALIZED;
+  public static final int VERTEX_ATTRIB_ARRAY_POINTER        = GL2.GL_VERTEX_ATTRIB_ARRAY_POINTER;
 
   public static final int BLEND               = GL.GL_BLEND;
   public static final int ONE                 = GL.GL_ONE;
@@ -3226,15 +3227,11 @@ public class PGL {
   // Reading Pixels
 
   public void readPixels(int x, int y, int width, int height, int format, int type, Buffer buffer) {
-    boolean needBeginOp = format != STENCIL_INDEX &&
-                          format != DEPTH_COMPONENT && format != DEPTH_STENCIL;
-    if (needBeginOp) {
-      PGraphicsOpenGL.pgCurrent.beginPixelsOp(PGraphicsOpenGL.OP_READ);
-    }
+    boolean needEndBegin = format != STENCIL_INDEX &&
+                           format != DEPTH_COMPONENT && format != DEPTH_STENCIL;
+    if (needEndBegin) pg.beginReadPixels();
     readPixelsImpl(x, y, width, height, format, type, buffer);
-    if (needBeginOp) {
-      PGraphicsOpenGL.pgCurrent.endPixelsOp();
-    }
+    if (needEndBegin) pg.endReadPixels();
   }
 
   protected void readPixelsImpl(int x, int y, int width, int height, int format, int type, Buffer buffer) {
@@ -3477,13 +3474,14 @@ public class PGL {
     gl2.glDeleteProgram(program);
   }
 
-  public void getActiveAttrib(int program, int index, int[] size, int[] type, String[] name) {
+  public String glGetActiveAttrib (int program, int index, IntBuffer size, IntBuffer type) {
     int[] tmp = {0, 0, 0};
     byte[] namebuf = new byte[1024];
     gl2.glGetActiveAttrib(program, index, 1024, tmp, 0, tmp, 1, tmp, 2, namebuf, 0);
-    if (size != null && size.length != 0) size[0] = tmp[1];
-    if (type != null && type.length != 0) type[0] = tmp[2];
-    if (name != null && name.length != 0) name[0] = new String(namebuf, 0, tmp[0]);
+    size.put(tmp[1]);
+    type.put(tmp[2]);
+    String name = new String(namebuf, 0, tmp[0]);
+    return name;
   }
 
   public int getAttribLocation(int program, String name) {
@@ -3498,13 +3496,14 @@ public class PGL {
     return gl2.glGetUniformLocation(program, name);
   }
 
-  public void getActiveUniform(int program, int index, int[] size,int[] type, String[] name) {
+  public String getActiveUniform(int program, int index, IntBuffer size, IntBuffer type) {
     int[] tmp= {0, 0, 0};
     byte[] namebuf = new byte[1024];
     gl2.glGetActiveUniform(program, index, 1024, tmp, 0, tmp, 1, tmp, 2, namebuf, 0);
-    if (size != null && size.length != 0) size[0] = tmp[1];
-    if (type != null && type.length != 0) type[0] = tmp[2];
-    if (name != null && name.length != 0) name[0] = new String(namebuf, 0, tmp[0]);
+    size.put(tmp[1]);
+    type.put(tmp[2]);
+    String name = new String(namebuf, 0, tmp[0]);
+    return name;
   }
 
   public void uniform1i(int location, int value) {
@@ -3628,7 +3627,7 @@ public class PGL {
     gl2.glGetVertexAttribiv(index, pname, params);
   }
 
-  public void getVertexAttribPointerv() {
+  public void getVertexAttribPointerv(int index, int pname, ByteBuffer data) {
     throw new RuntimeException(String.format(MISSING_GLFUNC_ERROR, "glGetVertexAttribPointerv()"));
   }
 
