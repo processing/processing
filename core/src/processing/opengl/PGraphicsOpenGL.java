@@ -3446,17 +3446,13 @@ public class PGraphicsOpenGL extends PGraphics {
     beginShape();
     while (!outline.isDone()) {
       int type = outline.currentSegment(textPoints);
-      switch (type) {
-      case PGL.SEG_MOVETO:   // 1 point (2 vars) in textPoints
-      case PGL.SEG_LINETO:   // 1 point
-        if (type == PGL.SEG_MOVETO) {
-          beginContour();
-        }
+      if (type == PGL.SEG_MOVETO) {         // 1 point (2 vars) in textPoints
+      } else if (type == PGL.SEG_LINETO) {  // 1 point
+        if (type == PGL.SEG_MOVETO) beginContour();
         vertex(x + textPoints[0], y + textPoints[1]);
         lastX = textPoints[0];
         lastY = textPoints[1];
-        break;
-      case PGL.SEG_QUADTO:   // 2 points
+      } else if (type == PGL.SEG_QUADTO) {   // 2 points
         for (int i = 1; i < bezierDetail; i++) {
           float t = (float)i / (float)bezierDetail;
           vertex(x + bezierPoint(lastX,
@@ -3470,8 +3466,7 @@ public class PGraphicsOpenGL extends PGraphics {
         }
         lastX = textPoints[2];
         lastY = textPoints[3];
-        break;
-      case PGL.SEG_CUBICTO:  // 3 points
+      } else if (type == PGL.SEG_CUBICTO) {  // 3 points
         for (int i = 1; i < bezierDetail; i++) {
           float t = (float)i / (float)bezierDetail;
           vertex(x + bezierPoint(lastX, textPoints[0],
@@ -3481,10 +3476,8 @@ public class PGraphicsOpenGL extends PGraphics {
         }
         lastX = textPoints[4];
         lastY = textPoints[5];
-        break;
-      case PGL.SEG_CLOSE:
+      } else if (type == PGL.SEG_CLOSE) {
         endContour();
-        break;
       }
       outline.next();
     }
@@ -12045,17 +12038,9 @@ public class PGraphicsOpenGL extends PGraphics {
         vertFirst = cache.vertexCount[cacheIndex];
         vertCount = 0;
 
-        switch (type) {
-        case PGL.TRIANGLE_FAN:
-          primitive = TRIANGLE_FAN;
-          break;
-        case PGL.TRIANGLE_STRIP:
-          primitive = TRIANGLE_STRIP;
-          break;
-        case PGL.TRIANGLES:
-          primitive = TRIANGLES;
-          break;
-        }
+        if (type == PGL.TRIANGLE_FAN) primitive = TRIANGLE_FAN;
+        else if (type == PGL.TRIANGLE_STRIP) primitive = TRIANGLE_STRIP;
+        else if (type == PGL.TRIANGLES) primitive = TRIANGLES;
       }
 
       public void end() {
