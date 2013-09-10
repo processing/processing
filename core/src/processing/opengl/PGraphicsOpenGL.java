@@ -1701,7 +1701,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // Factory method
   static public PGL createPGL(PGraphicsOpenGL pg) {
-    return new PGL(pg);
+    return new PJOGL(pg);
   }
 
 
