@@ -1,8 +1,8 @@
 0222 pde
+X MovieMaker needs to be compiling as 1.6
 
 
 high
-_ MovieMaker needs to be compiling as 1.6
 _ move old Google Code SVN back to processing.org
 _   then cull out the old branches/tags from the Github repo
 _ figure out Android build w/o javac so we can remove tools.jar and javac
@@ -58,17 +58,31 @@ http://download.oracle.com/otn-pub/java/jdk/7u25-b15/jre-7u25-linux-i586.tar.gz
 http://ivan-site.com/2012/05/download-oracle-java-jre-jdk-using-a-script/
 wget --no-cookies --no-check-certificate --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F" http://download.oracle.com/otn-pub/java/jdk/7u25-b15/jre-7u25-linux-i586.tar.gz
 
+wget --no-cookies --no-check-certificate --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F" http://download.oracle.com/otn-pub/java/jdk/7u40-b43/jre-7u40-linux-i586.tar.gz
+
+http://download.oracle.com/otn-pub/java/jdk/7u40-b43/jre-7u40-linux-i586.tar.gz
+
 http://download.oracle.com/otn-pub/java/jdk/7u25-b15/jre-7u25-linux-i586.tar.gz
 http://download.oracle.com/otn-pub/java/jdk/7u25-b15/jre-7u25-linux-x64.tar.gz
 http://download.oracle.com/otn-pub/java/jdk/7u25-b17/jre-7u25-windows-i586.tar.gz
 http://download.oracle.com/otn-pub/java/jdk/7u25-b17/jre-7u25-windows-x64.tar.gz
 
-or a direct download from http://www.java.com/en/download/manual.jsp
+or a direct download from http://www.java.com/en/download/manual.jsp 
+
+for 7u25
 http://javadl.sun.com/webapps/download/AutoDL?BundleId=78695 Linux i386
 http://javadl.sun.com/webapps/download/AutoDL?BundleId=78697 Linux x64
 http://javadl.sun.com/webapps/download/AutoDL?BundleId=78698 OS X (64-bit)
 http://javadl.sun.com/webapps/download/AutoDL?BundleId=79063 Windows (32?)
 http://javadl.sun.com/webapps/download/AutoDL?BundleId=79065 Windows (64-bit)
+
+for 7u40
+http://javadl.sun.com/webapps/download/AutoDL?BundleId=80806 OS X (64-bit)
+http://javadl.sun.com/webapps/download/AutoDL?BundleId=80803 Linux i386
+http://javadl.sun.com/webapps/download/AutoDL?BundleId=80805 Linux x64
+http://javadl.sun.com/webapps/download/AutoDL?BundleId=80812 Windows i586
+http://javadl.sun.com/webapps/download/AutoDL?BundleId=80814 Windows (64-bit)
+
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 

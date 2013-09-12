@@ -18,8 +18,8 @@
 -->
     
     <mkdir dir="bin" />
-    <javac target="1.5" 
-	   source="1.5"
+    <javac target="1.6" 
+	   source="1.6"
 	   srcdir="src" 
 	   destdir="bin" 
 	   encoding="UTF-8"
