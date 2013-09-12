@@ -24,7 +24,11 @@
 	   destdir="bin" 
 	   encoding="UTF-8"
 	   includeAntRuntime="false"
-	   classpath="../../../../app/bin" />
+	   classpath="../../../../app/bin" 
+	   nowarn="true"
+	   compiler="org.eclipse.jdt.core.JDTCompilerAdapter">
+      <compilerclasspath path="../../../../java/mode/ecj.jar" />
+    </javac>
   </target>
 
   <target name="build" depends="compile" description="Build Movie Maker Tool">

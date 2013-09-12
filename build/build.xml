@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <project name="Processing" default="build">
-  
+
   <!-- Sets properties for macosx/windows/linux depending on current system -->
   <condition property="platform" value="macosx">
     <os family="mac" /> 
@@ -36,15 +36,18 @@
 
   <!-- Make sure that we have a legitimate JDK... This was promoted 
        from app/build.xml because we now need this on OS X as well. -->
+  <!--
   <property name="java_home" value="${env.JAVA_HOME}" />
   <available file="${env.JAVA_HOME}/lib/tools.jar"
 	     property="java_tools_found" />
 
   <fail if="windows" unless="java_tools_found" 
 	message="The JAVA_HOME variable must be set to the location of a full JDK. For instance, on Windows, this might be c:\jdk1.6.0_19." />
+  -->
 
   <!-- OS X gets a second chance that covers JDK 6, 
        a necessity for building on OS X 10.6. -->
+  <!--
   <available file="/System/Library/Frameworks/JavaVM.framework/Classes/classes.jar" property="java_tools_found" />
 
   <fail if="macosx" unless="java_tools_found"
@@ -52,6 +55,7 @@
 
   <fail if="linux" unless="java_tools_found" 
 	message="The JAVA_HOME variable must be set to the location of a full JDK. For instance, on Ubuntu Linux, this might be /usr/lib/jvm/java-6-sun." />
+  -->
 	       
   <!-- Figure out the platform-specific output directory for all this work. -->
   <condition property="target.path" 
