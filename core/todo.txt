@@ -1,6 +1,7 @@
 0222 core
 X background color for present mode has no effect
 X   https://github.com/processing/processing/issues/2071
+X   https://github.com/processing/processing/pull/2072
 
 
 high
