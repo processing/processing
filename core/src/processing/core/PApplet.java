@@ -10445,7 +10445,7 @@ public class PApplet extends Applet
     Frame frame = new JFrame(displayDevice.getDefaultConfiguration());
     // Default Processing gray, which will be replaced below if another
     // color is specified on the command line (i.e. in the prefs).
-    frame.setBackground(new Color(0xCC, 0xCC, 0xCC));
+    ((JFrame)frame).getContentPane().setBackground(new Color(0xCC, 0xCC, 0xCC));
     // Cannot call setResizable(false) until later due to OS X (issue #467)
 
     final PApplet applet;
@@ -10557,7 +10557,7 @@ public class PApplet extends Applet
       //frame.setExtendedState(Frame.MAXIMIZED_BOTH);
       frame.setUndecorated(true);
       if (backgroundColor != null) {
-        frame.setBackground(backgroundColor);
+        ((JFrame)frame).getContentPane().setBackground(backgroundColor);
       }
 //      if (exclusive) {
 //        displayDevice.setFullScreenWindow(frame);
@@ -10714,7 +10714,7 @@ public class PApplet extends Applet
 //        // this means no bg color unless specified
 //        backgroundColor = SystemColor.control;
 //      }
-        frame.setBackground(backgroundColor);
+        ((JFrame)frame).getContentPane().setBackground(backgroundColor);
       }
 
 //      int usableWindowH = windowH - insets.top - insets.bottom;
