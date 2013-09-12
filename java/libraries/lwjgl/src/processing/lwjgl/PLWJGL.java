@@ -2529,308 +2529,299 @@ public class PLWJGL extends PGL {
   
   
   
-  
-  //////////////////////////////////////////////////////////////////////////////
-  //
-  // OpenGL ES 2.0 API, with a few additional functions for multisampling and
-  // and buffer mapping from OpenGL 2.1+.
-  //
-  // The functions are organized following the groups in the GLES 2.0 reference
-  // card:
-  // http://www.khronos.org/opengles/sdk/docs/reference_cards/OpenGL-ES-2_0-Reference-card.pdf
-  //
-  // The entire GLES 2.0 specification is available below:
-  // http://www.khronos.org/opengles/2_X/
-  //
-  //////////////////////////////////////////////////////////////////////////////
 
+  
+  
+  
+  
+  
   ///////////////////////////////////////////////////////////
 
   // Constants
 
-  public static final int FALSE = GL11.GL_FALSE;
-  public static final int TRUE  = GL11.GL_TRUE;
+  static {
+    FALSE = GL11.GL_FALSE;
+    TRUE  = GL11.GL_TRUE;
 
-  public static final int INT            = GL11.GL_INT;
-  public static final int BYTE           = GL11.GL_BYTE;
-  public static final int SHORT          = GL11.GL_SHORT;
-  public static final int FLOAT          = GL11.GL_FLOAT;
-  public static final int BOOL           = GL20.GL_BOOL;
-  public static final int UNSIGNED_INT   = GL11.GL_UNSIGNED_INT;
-  public static final int UNSIGNED_BYTE  = GL11.GL_UNSIGNED_BYTE;
-  public static final int UNSIGNED_SHORT = GL11.GL_UNSIGNED_SHORT;
+    INT            = GL11.GL_INT;
+    BYTE           = GL11.GL_BYTE;
+    SHORT          = GL11.GL_SHORT;
+    FLOAT          = GL11.GL_FLOAT;
+    BOOL           = GL20.GL_BOOL;
+    UNSIGNED_INT   = GL11.GL_UNSIGNED_INT;
+    UNSIGNED_BYTE  = GL11.GL_UNSIGNED_BYTE;
+    UNSIGNED_SHORT = GL11.GL_UNSIGNED_SHORT;
 
-  public static final int RGB             = GL11.GL_RGB;
-  public static final int RGBA            = GL11.GL_RGBA;
-  public static final int ALPHA           = GL11.GL_ALPHA;
-  public static final int LUMINANCE       = GL11.GL_LUMINANCE;
-  public static final int LUMINANCE_ALPHA = GL11.GL_LUMINANCE_ALPHA;
+    RGB             = GL11.GL_RGB;
+    RGBA            = GL11.GL_RGBA;
+    ALPHA           = GL11.GL_ALPHA;
+    LUMINANCE       = GL11.GL_LUMINANCE;
+    LUMINANCE_ALPHA = GL11.GL_LUMINANCE_ALPHA;
 
-  public static final int UNSIGNED_SHORT_5_6_5   = GL12.GL_UNSIGNED_SHORT_5_6_5;
-  public static final int UNSIGNED_SHORT_4_4_4_4 = GL12.GL_UNSIGNED_SHORT_4_4_4_4;
-  public static final int UNSIGNED_SHORT_5_5_5_1 = GL12.GL_UNSIGNED_SHORT_5_5_5_1;
+    UNSIGNED_SHORT_5_6_5   = GL12.GL_UNSIGNED_SHORT_5_6_5;
+    UNSIGNED_SHORT_4_4_4_4 = GL12.GL_UNSIGNED_SHORT_4_4_4_4;
+    UNSIGNED_SHORT_5_5_5_1 = GL12.GL_UNSIGNED_SHORT_5_5_5_1;
 
-  public static final int RGBA4   = GL11.GL_RGBA4;
-  public static final int RGB5_A1 = GL11.GL_RGB5_A1;
-  public static final int RGB565  = ARBES2Compatibility.GL_RGB565;
+    RGBA4   = GL11.GL_RGBA4;
+    RGB5_A1 = GL11.GL_RGB5_A1;
+    RGB565  = ARBES2Compatibility.GL_RGB565;
 
-  public static final int READ_ONLY  = GL15.GL_READ_ONLY;
-  public static final int WRITE_ONLY = GL15.GL_WRITE_ONLY;
-  public static final int READ_WRITE = GL15.GL_READ_WRITE;
+    READ_ONLY  = GL15.GL_READ_ONLY;
+    WRITE_ONLY = GL15.GL_WRITE_ONLY;
+    READ_WRITE = GL15.GL_READ_WRITE;
 
-  public static final int TESS_WINDING_NONZERO = GLU.GLU_TESS_WINDING_NONZERO;
-  public static final int TESS_WINDING_ODD     = GLU.GLU_TESS_WINDING_ODD;
+    TESS_WINDING_NONZERO = GLU.GLU_TESS_WINDING_NONZERO;
+    TESS_WINDING_ODD     = GLU.GLU_TESS_WINDING_ODD;
 
-  public static final int GENERATE_MIPMAP_HINT = GL14.GL_GENERATE_MIPMAP_HINT;
-  public static final int FASTEST              = GL11.GL_FASTEST;
-  public static final int NICEST               = GL11.GL_NICEST;
-  public static final int DONT_CARE            = GL11.GL_DONT_CARE;
+    GENERATE_MIPMAP_HINT = GL14.GL_GENERATE_MIPMAP_HINT;
+    FASTEST              = GL11.GL_FASTEST;
+    NICEST               = GL11.GL_NICEST;
+    DONT_CARE            = GL11.GL_DONT_CARE;
 
-  public static final int VENDOR                   = GL11.GL_VENDOR;
-  public static final int RENDERER                 = GL11.GL_RENDERER;
-  public static final int VERSION                  = GL11.GL_VERSION;
-  public static final int EXTENSIONS               = GL11.GL_EXTENSIONS;
-  public static final int SHADING_LANGUAGE_VERSION = GL20.GL_SHADING_LANGUAGE_VERSION;
+    VENDOR                   = GL11.GL_VENDOR;
+    RENDERER                 = GL11.GL_RENDERER;
+    VERSION                  = GL11.GL_VERSION;
+    EXTENSIONS               = GL11.GL_EXTENSIONS;
+    SHADING_LANGUAGE_VERSION = GL20.GL_SHADING_LANGUAGE_VERSION;
 
-  public static final int MAX_SAMPLES = GL30.GL_MAX_SAMPLES;
-  public static final int SAMPLES     = GL13.GL_SAMPLES;
+    MAX_SAMPLES = GL30.GL_MAX_SAMPLES;
+    SAMPLES     = GL13.GL_SAMPLES;
 
-  public static final int ALIASED_LINE_WIDTH_RANGE = GL12.GL_ALIASED_LINE_WIDTH_RANGE;
-  public static final int ALIASED_POINT_SIZE_RANGE = GL12.GL_ALIASED_POINT_SIZE_RANGE;
+    ALIASED_LINE_WIDTH_RANGE = GL12.GL_ALIASED_LINE_WIDTH_RANGE;
+    ALIASED_POINT_SIZE_RANGE = GL12.GL_ALIASED_POINT_SIZE_RANGE;
 
-  public static final int DEPTH_BITS   = GL11.GL_DEPTH_BITS;
-  public static final int STENCIL_BITS = GL11.GL_STENCIL_BITS;
+    DEPTH_BITS   = GL11.GL_DEPTH_BITS;
+    STENCIL_BITS = GL11.GL_STENCIL_BITS;
 
-  public static final int CCW = GL11.GL_CCW;
-  public static final int CW  = GL11.GL_CW;
+    CCW = GL11.GL_CCW;
+    CW  = GL11.GL_CW;
 
-  public static final int VIEWPORT = GL11.GL_VIEWPORT;
+    VIEWPORT = GL11.GL_VIEWPORT;
 
-  public static final int ARRAY_BUFFER         = GL15.GL_ARRAY_BUFFER;
-  public static final int ELEMENT_ARRAY_BUFFER = GL15.GL_ELEMENT_ARRAY_BUFFER;
+    ARRAY_BUFFER         = GL15.GL_ARRAY_BUFFER;
+    ELEMENT_ARRAY_BUFFER = GL15.GL_ELEMENT_ARRAY_BUFFER;
 
-  public static final int MAX_VERTEX_ATTRIBS  = GL20.GL_MAX_VERTEX_ATTRIBS;
+    MAX_VERTEX_ATTRIBS  = GL20.GL_MAX_VERTEX_ATTRIBS;
 
-  public static final int STATIC_DRAW  = GL15.GL_STATIC_DRAW;
-  public static final int DYNAMIC_DRAW = GL15.GL_DYNAMIC_DRAW;
-  public static final int STREAM_DRAW  = GL15.GL_STREAM_DRAW;
+    STATIC_DRAW  = GL15.GL_STATIC_DRAW;
+    DYNAMIC_DRAW = GL15.GL_DYNAMIC_DRAW;
+    STREAM_DRAW  = GL15.GL_STREAM_DRAW;
 
-  public static final int BUFFER_SIZE  = GL15.GL_BUFFER_SIZE;
-  public static final int BUFFER_USAGE = GL15.GL_BUFFER_USAGE;
+    BUFFER_SIZE  = GL15.GL_BUFFER_SIZE;
+    BUFFER_USAGE = GL15.GL_BUFFER_USAGE;
 
-  public static final int POINTS         = GL11.GL_POINTS;
-  public static final int LINE_STRIP     = GL11.GL_LINE_STRIP;
-  public static final int LINE_LOOP      = GL11.GL_LINE_LOOP;
-  public static final int LINES          = GL11.GL_LINES;
-  public static final int TRIANGLE_FAN   = GL11.GL_TRIANGLE_FAN;
-  public static final int TRIANGLE_STRIP = GL11.GL_TRIANGLE_STRIP;
-  public static final int TRIANGLES      = GL11.GL_TRIANGLES;
+    POINTS         = GL11.GL_POINTS;
+    LINE_STRIP     = GL11.GL_LINE_STRIP;
+    LINE_LOOP      = GL11.GL_LINE_LOOP;
+    LINES          = GL11.GL_LINES;
+    TRIANGLE_FAN   = GL11.GL_TRIANGLE_FAN;
+    TRIANGLE_STRIP = GL11.GL_TRIANGLE_STRIP;
+    TRIANGLES      = GL11.GL_TRIANGLES;
 
-  public static final int CULL_FACE      = GL11.GL_CULL_FACE;
-  public static final int FRONT          = GL11.GL_FRONT;
-  public static final int BACK           = GL11.GL_BACK;
-  public static final int FRONT_AND_BACK = GL11.GL_FRONT_AND_BACK;
+    CULL_FACE      = GL11.GL_CULL_FACE;
+    FRONT          = GL11.GL_FRONT;
+    BACK           = GL11.GL_BACK;
+    FRONT_AND_BACK = GL11.GL_FRONT_AND_BACK;
 
-  public static final int POLYGON_OFFSET_FILL = GL11.GL_POLYGON_OFFSET_FILL;
+    POLYGON_OFFSET_FILL = GL11.GL_POLYGON_OFFSET_FILL;
 
-  public static final int UNPACK_ALIGNMENT = GL11.GL_UNPACK_ALIGNMENT;
-  public static final int PACK_ALIGNMENT   = GL11.GL_PACK_ALIGNMENT;
+    UNPACK_ALIGNMENT = GL11.GL_UNPACK_ALIGNMENT;
+    PACK_ALIGNMENT   = GL11.GL_PACK_ALIGNMENT;
 
-  public static final int TEXTURE_2D        = GL11.GL_TEXTURE_2D;
-  public static final int TEXTURE_RECTANGLE = GL31.GL_TEXTURE_RECTANGLE;
+    TEXTURE_2D        = GL11.GL_TEXTURE_2D;
+    TEXTURE_RECTANGLE = GL31.GL_TEXTURE_RECTANGLE;
 
-  public static final int TEXTURE_BINDING_2D        = GL11.GL_TEXTURE_BINDING_2D;
-  public static final int TEXTURE_BINDING_RECTANGLE = GL31.GL_TEXTURE_BINDING_RECTANGLE;
+    TEXTURE_BINDING_2D        = GL11.GL_TEXTURE_BINDING_2D;
+    TEXTURE_BINDING_RECTANGLE = GL31.GL_TEXTURE_BINDING_RECTANGLE;
 
-  public static final int MAX_TEXTURE_SIZE           = GL11.GL_MAX_TEXTURE_SIZE;
-  public static final int TEXTURE_MAX_ANISOTROPY     = EXTTextureFilterAnisotropic.GL_TEXTURE_MAX_ANISOTROPY_EXT;
-  public static final int MAX_TEXTURE_MAX_ANISOTROPY = EXTTextureFilterAnisotropic.GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT;
+    MAX_TEXTURE_SIZE           = GL11.GL_MAX_TEXTURE_SIZE;
+    TEXTURE_MAX_ANISOTROPY     = EXTTextureFilterAnisotropic.GL_TEXTURE_MAX_ANISOTROPY_EXT;
+    MAX_TEXTURE_MAX_ANISOTROPY = EXTTextureFilterAnisotropic.GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT;
 
-  public static final int MAX_VERTEX_TEXTURE_IMAGE_UNITS   = GL20.GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS;
-  public static final int MAX_TEXTURE_IMAGE_UNITS          = GL20.GL_MAX_TEXTURE_IMAGE_UNITS;
-  public static final int MAX_COMBINED_TEXTURE_IMAGE_UNITS = GL20.GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS;
+    MAX_VERTEX_TEXTURE_IMAGE_UNITS   = GL20.GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS;
+    MAX_TEXTURE_IMAGE_UNITS          = GL20.GL_MAX_TEXTURE_IMAGE_UNITS;
+    MAX_COMBINED_TEXTURE_IMAGE_UNITS = GL20.GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS;
 
-  public static final int NUM_COMPRESSED_TEXTURE_FORMATS = GL13.GL_NUM_COMPRESSED_TEXTURE_FORMATS;
-  public static final int COMPRESSED_TEXTURE_FORMATS     = GL13.GL_COMPRESSED_TEXTURE_FORMATS;
+    NUM_COMPRESSED_TEXTURE_FORMATS = GL13.GL_NUM_COMPRESSED_TEXTURE_FORMATS;
+    COMPRESSED_TEXTURE_FORMATS     = GL13.GL_COMPRESSED_TEXTURE_FORMATS;
 
-  public static final int NEAREST               = GL11.GL_NEAREST;
-  public static final int LINEAR                = GL11.GL_LINEAR;
-  public static final int LINEAR_MIPMAP_NEAREST = GL11.GL_LINEAR_MIPMAP_NEAREST;
-  public static final int LINEAR_MIPMAP_LINEAR  = GL11.GL_LINEAR_MIPMAP_LINEAR;
+    NEAREST               = GL11.GL_NEAREST;
+    LINEAR                = GL11.GL_LINEAR;
+    LINEAR_MIPMAP_NEAREST = GL11.GL_LINEAR_MIPMAP_NEAREST;
+    LINEAR_MIPMAP_LINEAR  = GL11.GL_LINEAR_MIPMAP_LINEAR;
 
-  public static final int CLAMP_TO_EDGE = GL12.GL_CLAMP_TO_EDGE;
-  public static final int REPEAT        = GL11.GL_REPEAT;
+    CLAMP_TO_EDGE = GL12.GL_CLAMP_TO_EDGE;
+    REPEAT        = GL11.GL_REPEAT;
 
-  public static final int TEXTURE0           = GL13.GL_TEXTURE0;
-  public static final int TEXTURE1           = GL13.GL_TEXTURE1;
-  public static final int TEXTURE2           = GL13.GL_TEXTURE2;
-  public static final int TEXTURE3           = GL13.GL_TEXTURE3;
-  public static final int TEXTURE_MIN_FILTER = GL11.GL_TEXTURE_MIN_FILTER;
-  public static final int TEXTURE_MAG_FILTER = GL11.GL_TEXTURE_MAG_FILTER;
-  public static final int TEXTURE_WRAP_S     = GL11.GL_TEXTURE_WRAP_S;
-  public static final int TEXTURE_WRAP_T     = GL11.GL_TEXTURE_WRAP_T;
-  public static final int TEXTURE_WRAP_R     = GL12.GL_TEXTURE_WRAP_R;
+    TEXTURE0           = GL13.GL_TEXTURE0;
+    TEXTURE1           = GL13.GL_TEXTURE1;
+    TEXTURE2           = GL13.GL_TEXTURE2;
+    TEXTURE3           = GL13.GL_TEXTURE3;
+    TEXTURE_MIN_FILTER = GL11.GL_TEXTURE_MIN_FILTER;
+    TEXTURE_MAG_FILTER = GL11.GL_TEXTURE_MAG_FILTER;
+    TEXTURE_WRAP_S     = GL11.GL_TEXTURE_WRAP_S;
+    TEXTURE_WRAP_T     = GL11.GL_TEXTURE_WRAP_T;
+    TEXTURE_WRAP_R     = GL12.GL_TEXTURE_WRAP_R;
 
-  public static final int TEXTURE_CUBE_MAP = GL13.GL_TEXTURE_CUBE_MAP;
-  public static final int TEXTURE_CUBE_MAP_POSITIVE_X = GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_X;
-  public static final int TEXTURE_CUBE_MAP_POSITIVE_Y = GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_Y;
-  public static final int TEXTURE_CUBE_MAP_POSITIVE_Z = GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_Z;
-  public static final int TEXTURE_CUBE_MAP_NEGATIVE_X = GL13.GL_TEXTURE_CUBE_MAP_NEGATIVE_X;
-  public static final int TEXTURE_CUBE_MAP_NEGATIVE_Y = GL13.GL_TEXTURE_CUBE_MAP_NEGATIVE_Y;
-  public static final int TEXTURE_CUBE_MAP_NEGATIVE_Z = GL13.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z;
+    TEXTURE_CUBE_MAP = GL13.GL_TEXTURE_CUBE_MAP;
+    TEXTURE_CUBE_MAP_POSITIVE_X = GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_X;
+    TEXTURE_CUBE_MAP_POSITIVE_Y = GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_Y;
+    TEXTURE_CUBE_MAP_POSITIVE_Z = GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_Z;
+    TEXTURE_CUBE_MAP_NEGATIVE_X = GL13.GL_TEXTURE_CUBE_MAP_NEGATIVE_X;
+    TEXTURE_CUBE_MAP_NEGATIVE_Y = GL13.GL_TEXTURE_CUBE_MAP_NEGATIVE_Y;
+    TEXTURE_CUBE_MAP_NEGATIVE_Z = GL13.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z;
 
-  public static final int VERTEX_SHADER        = GL20.GL_VERTEX_SHADER;
-  public static final int FRAGMENT_SHADER      = GL20.GL_FRAGMENT_SHADER;
-  public static final int INFO_LOG_LENGTH      = GL20.GL_INFO_LOG_LENGTH;
-  public static final int SHADER_SOURCE_LENGTH = GL20.GL_SHADER_SOURCE_LENGTH;
-  public static final int COMPILE_STATUS       = GL20.GL_COMPILE_STATUS;
-  public static final int LINK_STATUS          = GL20.GL_LINK_STATUS;
-  public static final int VALIDATE_STATUS      = GL20.GL_VALIDATE_STATUS;
-  public static final int SHADER_TYPE          = GL20.GL_SHADER_TYPE;
-  public static final int DELETE_STATUS        = GL20.GL_DELETE_STATUS;
+    VERTEX_SHADER        = GL20.GL_VERTEX_SHADER;
+    FRAGMENT_SHADER      = GL20.GL_FRAGMENT_SHADER;
+    INFO_LOG_LENGTH      = GL20.GL_INFO_LOG_LENGTH;
+    SHADER_SOURCE_LENGTH = GL20.GL_SHADER_SOURCE_LENGTH;
+    COMPILE_STATUS       = GL20.GL_COMPILE_STATUS;
+    LINK_STATUS          = GL20.GL_LINK_STATUS;
+    VALIDATE_STATUS      = GL20.GL_VALIDATE_STATUS;
+    SHADER_TYPE          = GL20.GL_SHADER_TYPE;
+    DELETE_STATUS        = GL20.GL_DELETE_STATUS;
 
-  public static final int FLOAT_VEC2   = GL20.GL_FLOAT_VEC2;
-  public static final int FLOAT_VEC3   = GL20.GL_FLOAT_VEC3;
-  public static final int FLOAT_VEC4   = GL20.GL_FLOAT_VEC4;
-  public static final int FLOAT_MAT2   = GL20.GL_FLOAT_MAT2;
-  public static final int FLOAT_MAT3   = GL20.GL_FLOAT_MAT3;
-  public static final int FLOAT_MAT4   = GL20.GL_FLOAT_MAT4;
-  public static final int INT_VEC2     = GL20.GL_INT_VEC2;
-  public static final int INT_VEC3     = GL20.GL_INT_VEC3;
-  public static final int INT_VEC4     = GL20.GL_INT_VEC4;
-  public static final int BOOL_VEC2    = GL20.GL_BOOL_VEC2;
-  public static final int BOOL_VEC3    = GL20.GL_BOOL_VEC3;
-  public static final int BOOL_VEC4    = GL20.GL_BOOL_VEC4;
-  public static final int SAMPLER_2D   = GL20.GL_SAMPLER_2D;
-  public static final int SAMPLER_CUBE = GL20.GL_SAMPLER_CUBE;
+    FLOAT_VEC2   = GL20.GL_FLOAT_VEC2;
+    FLOAT_VEC3   = GL20.GL_FLOAT_VEC3;
+    FLOAT_VEC4   = GL20.GL_FLOAT_VEC4;
+    FLOAT_MAT2   = GL20.GL_FLOAT_MAT2;
+    FLOAT_MAT3   = GL20.GL_FLOAT_MAT3;
+    FLOAT_MAT4   = GL20.GL_FLOAT_MAT4;
+    INT_VEC2     = GL20.GL_INT_VEC2;
+    INT_VEC3     = GL20.GL_INT_VEC3;
+    INT_VEC4     = GL20.GL_INT_VEC4;
+    BOOL_VEC2    = GL20.GL_BOOL_VEC2;
+    BOOL_VEC3    = GL20.GL_BOOL_VEC3;
+    BOOL_VEC4    = GL20.GL_BOOL_VEC4;
+    SAMPLER_2D   = GL20.GL_SAMPLER_2D;
+    SAMPLER_CUBE = GL20.GL_SAMPLER_CUBE;
 
-  public static final int LOW_FLOAT    = ARBES2Compatibility.GL_LOW_FLOAT;
-  public static final int MEDIUM_FLOAT = ARBES2Compatibility.GL_MEDIUM_FLOAT;
-  public static final int HIGH_FLOAT   = ARBES2Compatibility.GL_HIGH_FLOAT;
-  public static final int LOW_INT      = ARBES2Compatibility.GL_LOW_INT;
-  public static final int MEDIUM_INT   = ARBES2Compatibility.GL_MEDIUM_INT;
-  public static final int HIGH_INT     = ARBES2Compatibility.GL_HIGH_INT;
+    LOW_FLOAT    = ARBES2Compatibility.GL_LOW_FLOAT;
+    MEDIUM_FLOAT = ARBES2Compatibility.GL_MEDIUM_FLOAT;
+    HIGH_FLOAT   = ARBES2Compatibility.GL_HIGH_FLOAT;
+    LOW_INT      = ARBES2Compatibility.GL_LOW_INT;
+    MEDIUM_INT   = ARBES2Compatibility.GL_MEDIUM_INT;
+    HIGH_INT     = ARBES2Compatibility.GL_HIGH_INT;
 
-  public static final int CURRENT_VERTEX_ATTRIB = GL20.GL_CURRENT_VERTEX_ATTRIB;
+    CURRENT_VERTEX_ATTRIB = GL20.GL_CURRENT_VERTEX_ATTRIB;
 
-  public static final int VERTEX_ATTRIB_ARRAY_BUFFER_BINDING = GL15.GL_VERTEX_ATTRIB_ARRAY_BUFFER_BINDING;
-  public static final int VERTEX_ATTRIB_ARRAY_ENABLED        = GL20.GL_VERTEX_ATTRIB_ARRAY_ENABLED;
-  public static final int VERTEX_ATTRIB_ARRAY_SIZE           = GL20.GL_VERTEX_ATTRIB_ARRAY_SIZE;
-  public static final int VERTEX_ATTRIB_ARRAY_STRIDE         = GL20.GL_VERTEX_ATTRIB_ARRAY_STRIDE;
-  public static final int VERTEX_ATTRIB_ARRAY_TYPE           = GL20.GL_VERTEX_ATTRIB_ARRAY_TYPE;
-  public static final int VERTEX_ATTRIB_ARRAY_NORMALIZED     = GL20.GL_VERTEX_ATTRIB_ARRAY_NORMALIZED;
-  public static final int VERTEX_ATTRIB_ARRAY_POINTER        = GL20.GL_VERTEX_ATTRIB_ARRAY_POINTER;
+    VERTEX_ATTRIB_ARRAY_BUFFER_BINDING = GL15.GL_VERTEX_ATTRIB_ARRAY_BUFFER_BINDING;
+    VERTEX_ATTRIB_ARRAY_ENABLED        = GL20.GL_VERTEX_ATTRIB_ARRAY_ENABLED;
+    VERTEX_ATTRIB_ARRAY_SIZE           = GL20.GL_VERTEX_ATTRIB_ARRAY_SIZE;
+    VERTEX_ATTRIB_ARRAY_STRIDE         = GL20.GL_VERTEX_ATTRIB_ARRAY_STRIDE;
+    VERTEX_ATTRIB_ARRAY_TYPE           = GL20.GL_VERTEX_ATTRIB_ARRAY_TYPE;
+    VERTEX_ATTRIB_ARRAY_NORMALIZED     = GL20.GL_VERTEX_ATTRIB_ARRAY_NORMALIZED;
+    VERTEX_ATTRIB_ARRAY_POINTER        = GL20.GL_VERTEX_ATTRIB_ARRAY_POINTER;
 
-  public static final int BLEND               = GL11.GL_BLEND;
-  public static final int ONE                 = GL11.GL_ONE;
-  public static final int ZERO                = GL11.GL_ZERO;
-  public static final int SRC_ALPHA           = GL11.GL_SRC_ALPHA;
-  public static final int DST_ALPHA           = GL11.GL_DST_ALPHA;
-  public static final int ONE_MINUS_SRC_ALPHA = GL11.GL_ONE_MINUS_SRC_ALPHA;
-  public static final int ONE_MINUS_DST_COLOR = GL11.GL_ONE_MINUS_DST_COLOR;
-  public static final int ONE_MINUS_SRC_COLOR = GL11.GL_ONE_MINUS_SRC_COLOR;
-  public static final int DST_COLOR           = GL11.GL_DST_COLOR;
-  public static final int SRC_COLOR           = GL11.GL_SRC_COLOR;
+    BLEND               = GL11.GL_BLEND;
+    ONE                 = GL11.GL_ONE;
+    ZERO                = GL11.GL_ZERO;
+    SRC_ALPHA           = GL11.GL_SRC_ALPHA;
+    DST_ALPHA           = GL11.GL_DST_ALPHA;
+    ONE_MINUS_SRC_ALPHA = GL11.GL_ONE_MINUS_SRC_ALPHA;
+    ONE_MINUS_DST_COLOR = GL11.GL_ONE_MINUS_DST_COLOR;
+    ONE_MINUS_SRC_COLOR = GL11.GL_ONE_MINUS_SRC_COLOR;
+    DST_COLOR           = GL11.GL_DST_COLOR;
+    SRC_COLOR           = GL11.GL_SRC_COLOR;
 
-  public static final int SAMPLE_ALPHA_TO_COVERAGE = GL13.GL_SAMPLE_ALPHA_TO_COVERAGE;
-  public static final int SAMPLE_COVERAGE          = GL13.GL_SAMPLE_COVERAGE;
+    SAMPLE_ALPHA_TO_COVERAGE = GL13.GL_SAMPLE_ALPHA_TO_COVERAGE;
+    SAMPLE_COVERAGE          = GL13.GL_SAMPLE_COVERAGE;
 
-  public static final int KEEP      = GL11.GL_KEEP;
-  public static final int REPLACE   = GL11.GL_REPLACE;
-  public static final int INCR      = GL11.GL_INCR;
-  public static final int DECR      = GL11.GL_DECR;
-  public static final int INVERT    = GL11.GL_INVERT;
-  public static final int INCR_WRAP = GL14.GL_INCR_WRAP;
-  public static final int DECR_WRAP = GL14.GL_DECR_WRAP;
-  public static final int NEVER     = GL11.GL_NEVER;
-  public static final int ALWAYS    = GL11.GL_ALWAYS;
+    KEEP      = GL11.GL_KEEP;
+    REPLACE   = GL11.GL_REPLACE;
+    INCR      = GL11.GL_INCR;
+    DECR      = GL11.GL_DECR;
+    INVERT    = GL11.GL_INVERT;
+    INCR_WRAP = GL14.GL_INCR_WRAP;
+    DECR_WRAP = GL14.GL_DECR_WRAP;
+    NEVER     = GL11.GL_NEVER;
+    ALWAYS    = GL11.GL_ALWAYS;
 
-  public static final int EQUAL    = GL11.GL_EQUAL;
-  public static final int LESS     = GL11.GL_LESS;
-  public static final int LEQUAL   = GL11.GL_LEQUAL;
-  public static final int GREATER  = GL11.GL_GREATER;
-  public static final int GEQUAL   = GL11.GL_GEQUAL;
-  public static final int NOTEQUAL = GL11.GL_NOTEQUAL;
+    EQUAL    = GL11.GL_EQUAL;
+    LESS     = GL11.GL_LESS;
+    LEQUAL   = GL11.GL_LEQUAL;
+    GREATER  = GL11.GL_GREATER;
+    GEQUAL   = GL11.GL_GEQUAL;
+    NOTEQUAL = GL11.GL_NOTEQUAL;
 
-  public static final int FUNC_ADD              = GL14.GL_FUNC_ADD;
-  public static final int FUNC_MIN              = GL14.GL_MIN;
-  public static final int FUNC_MAX              = GL14.GL_MAX;
-  public static final int FUNC_REVERSE_SUBTRACT = GL14.GL_FUNC_REVERSE_SUBTRACT;
-  public static final int FUNC_SUBTRACT         = GL14.GL_FUNC_SUBTRACT;
+    FUNC_ADD              = GL14.GL_FUNC_ADD;
+    FUNC_MIN              = GL14.GL_MIN;
+    FUNC_MAX              = GL14.GL_MAX;
+    FUNC_REVERSE_SUBTRACT = GL14.GL_FUNC_REVERSE_SUBTRACT;
+    FUNC_SUBTRACT         = GL14.GL_FUNC_SUBTRACT;
 
-  public static final int DITHER = GL11.GL_DITHER;
+    DITHER = GL11.GL_DITHER;
 
-  public static final int CONSTANT_COLOR           = GL11.GL_CONSTANT_COLOR;
-  public static final int CONSTANT_ALPHA           = GL11.GL_CONSTANT_ALPHA;
-  public static final int ONE_MINUS_CONSTANT_COLOR = GL11.GL_ONE_MINUS_CONSTANT_COLOR;
-  public static final int ONE_MINUS_CONSTANT_ALPHA = GL11.GL_ONE_MINUS_CONSTANT_ALPHA;
-  public static final int SRC_ALPHA_SATURATE       = GL11.GL_SRC_ALPHA_SATURATE;
+    CONSTANT_COLOR           = GL11.GL_CONSTANT_COLOR;
+    CONSTANT_ALPHA           = GL11.GL_CONSTANT_ALPHA;
+    ONE_MINUS_CONSTANT_COLOR = GL11.GL_ONE_MINUS_CONSTANT_COLOR;
+    ONE_MINUS_CONSTANT_ALPHA = GL11.GL_ONE_MINUS_CONSTANT_ALPHA;
+    SRC_ALPHA_SATURATE       = GL11.GL_SRC_ALPHA_SATURATE;
 
-  public static final int SCISSOR_TEST    = GL11.GL_SCISSOR_TEST;
-  public static final int DEPTH_TEST      = GL11.GL_DEPTH_TEST;
-  public static final int DEPTH_WRITEMASK = GL11.GL_DEPTH_WRITEMASK;
-  public static final int ALPHA_TEST      = GL11.GL_ALPHA_TEST;
+    SCISSOR_TEST    = GL11.GL_SCISSOR_TEST;
+    DEPTH_TEST      = GL11.GL_DEPTH_TEST;
+    DEPTH_WRITEMASK = GL11.GL_DEPTH_WRITEMASK;
+    ALPHA_TEST      = GL11.GL_ALPHA_TEST;
 
-  public static final int COLOR_BUFFER_BIT   = GL11.GL_COLOR_BUFFER_BIT;
-  public static final int DEPTH_BUFFER_BIT   = GL11.GL_DEPTH_BUFFER_BIT;
-  public static final int STENCIL_BUFFER_BIT = GL11.GL_STENCIL_BUFFER_BIT;
+    COLOR_BUFFER_BIT   = GL11.GL_COLOR_BUFFER_BIT;
+    DEPTH_BUFFER_BIT   = GL11.GL_DEPTH_BUFFER_BIT;
+    STENCIL_BUFFER_BIT = GL11.GL_STENCIL_BUFFER_BIT;
 
-  public static final int FRAMEBUFFER        = GL30.GL_FRAMEBUFFER;
-  public static final int COLOR_ATTACHMENT0  = GL30.GL_COLOR_ATTACHMENT0;
-  public static final int COLOR_ATTACHMENT1  = GL30.GL_COLOR_ATTACHMENT1;
-  public static final int COLOR_ATTACHMENT2  = GL30.GL_COLOR_ATTACHMENT2;
-  public static final int COLOR_ATTACHMENT3  = GL30.GL_COLOR_ATTACHMENT3;
-  public static final int RENDERBUFFER       = GL30.GL_RENDERBUFFER;
-  public static final int DEPTH_ATTACHMENT   = GL30.GL_DEPTH_ATTACHMENT;
-  public static final int STENCIL_ATTACHMENT = GL30.GL_STENCIL_ATTACHMENT;
-  public static final int READ_FRAMEBUFFER   = GL30.GL_READ_FRAMEBUFFER;
-  public static final int DRAW_FRAMEBUFFER   = GL30.GL_DRAW_FRAMEBUFFER;
+    FRAMEBUFFER        = GL30.GL_FRAMEBUFFER;
+    COLOR_ATTACHMENT0  = GL30.GL_COLOR_ATTACHMENT0;
+    COLOR_ATTACHMENT1  = GL30.GL_COLOR_ATTACHMENT1;
+    COLOR_ATTACHMENT2  = GL30.GL_COLOR_ATTACHMENT2;
+    COLOR_ATTACHMENT3  = GL30.GL_COLOR_ATTACHMENT3;
+    RENDERBUFFER       = GL30.GL_RENDERBUFFER;
+    DEPTH_ATTACHMENT   = GL30.GL_DEPTH_ATTACHMENT;
+    STENCIL_ATTACHMENT = GL30.GL_STENCIL_ATTACHMENT;
+    READ_FRAMEBUFFER   = GL30.GL_READ_FRAMEBUFFER;
+    DRAW_FRAMEBUFFER   = GL30.GL_DRAW_FRAMEBUFFER;
 
-  public static final int RGBA8            = GL11.GL_RGBA8;
-  public static final int DEPTH24_STENCIL8 = GL30.GL_DEPTH24_STENCIL8;
+    RGBA8            = GL11.GL_RGBA8;
+    DEPTH24_STENCIL8 = GL30.GL_DEPTH24_STENCIL8;
 
-  public static final int DEPTH_COMPONENT   = GL11.GL_DEPTH_COMPONENT;
-  public static final int DEPTH_COMPONENT16 = GL14.GL_DEPTH_COMPONENT16;
-  public static final int DEPTH_COMPONENT24 = GL14.GL_DEPTH_COMPONENT24;
-  public static final int DEPTH_COMPONENT32 = GL14.GL_DEPTH_COMPONENT32;
+    DEPTH_COMPONENT   = GL11.GL_DEPTH_COMPONENT;
+    DEPTH_COMPONENT16 = GL14.GL_DEPTH_COMPONENT16;
+    DEPTH_COMPONENT24 = GL14.GL_DEPTH_COMPONENT24;
+    DEPTH_COMPONENT32 = GL14.GL_DEPTH_COMPONENT32;
 
-  public static final int STENCIL_INDEX  = GL11.GL_STENCIL_INDEX;
-  public static final int STENCIL_INDEX1 = GL30.GL_STENCIL_INDEX1;
-  public static final int STENCIL_INDEX4 = GL30.GL_STENCIL_INDEX4;
-  public static final int STENCIL_INDEX8 = GL30.GL_STENCIL_INDEX8;
+    STENCIL_INDEX  = GL11.GL_STENCIL_INDEX;
+    STENCIL_INDEX1 = GL30.GL_STENCIL_INDEX1;
+    STENCIL_INDEX4 = GL30.GL_STENCIL_INDEX4;
+    STENCIL_INDEX8 = GL30.GL_STENCIL_INDEX8;
 
-  public static final int DEPTH_STENCIL = GL30.GL_DEPTH_STENCIL;
+    DEPTH_STENCIL = GL30.GL_DEPTH_STENCIL;
 
-  public static final int FRAMEBUFFER_COMPLETE                      = GL30.GL_FRAMEBUFFER_COMPLETE;
-  public static final int FRAMEBUFFER_INCOMPLETE_ATTACHMENT         = GL30.GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT;
-  public static final int FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT = GL30.GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT;
-  public static final int FRAMEBUFFER_INCOMPLETE_DIMENSIONS         = EXTFramebufferObject.GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT;
-  public static final int FRAMEBUFFER_INCOMPLETE_FORMATS            = EXTFramebufferObject.GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT;
-  public static final int FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER        = GL30.GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER;
-  public static final int FRAMEBUFFER_INCOMPLETE_READ_BUFFER        = GL30.GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER;
-  public static final int FRAMEBUFFER_UNSUPPORTED                   = GL30.GL_FRAMEBUFFER_UNSUPPORTED;
+    FRAMEBUFFER_COMPLETE                      = GL30.GL_FRAMEBUFFER_COMPLETE;
+    FRAMEBUFFER_INCOMPLETE_ATTACHMENT         = GL30.GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT;
+    FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT = GL30.GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT;
+    FRAMEBUFFER_INCOMPLETE_DIMENSIONS         = EXTFramebufferObject.GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT;
+    FRAMEBUFFER_INCOMPLETE_FORMATS            = EXTFramebufferObject.GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT;
+    FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER        = GL30.GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER;
+    FRAMEBUFFER_INCOMPLETE_READ_BUFFER        = GL30.GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER;
+    FRAMEBUFFER_UNSUPPORTED                   = GL30.GL_FRAMEBUFFER_UNSUPPORTED;
 
-  public static final int FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE           = GL30.GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE;
-  public static final int FRAMEBUFFER_ATTACHMENT_OBJECT_NAME           = GL30.GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME;
-  public static final int FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL         = GL30.GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL;
-  public static final int FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE = GL30.GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE;
+    FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE           = GL30.GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE;
+    FRAMEBUFFER_ATTACHMENT_OBJECT_NAME           = GL30.GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME;
+    FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL         = GL30.GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL;
+    FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE = GL30.GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE;
 
-  public static final int RENDERBUFFER_WIDTH           = GL30.GL_RENDERBUFFER_WIDTH;
-  public static final int RENDERBUFFER_HEIGHT          = GL30.GL_RENDERBUFFER_HEIGHT;
-  public static final int RENDERBUFFER_RED_SIZE        = GL30.GL_RENDERBUFFER_RED_SIZE;
-  public static final int RENDERBUFFER_GREEN_SIZE      = GL30.GL_RENDERBUFFER_GREEN_SIZE;
-  public static final int RENDERBUFFER_BLUE_SIZE       = GL30.GL_RENDERBUFFER_BLUE_SIZE;
-  public static final int RENDERBUFFER_ALPHA_SIZE      = GL30.GL_RENDERBUFFER_ALPHA_SIZE;
-  public static final int RENDERBUFFER_DEPTH_SIZE      = GL30.GL_RENDERBUFFER_DEPTH_SIZE;
-  public static final int RENDERBUFFER_STENCIL_SIZE    = GL30.GL_RENDERBUFFER_STENCIL_SIZE;
-  public static final int RENDERBUFFER_INTERNAL_FORMAT = GL30.GL_RENDERBUFFER_INTERNAL_FORMAT;
+    RENDERBUFFER_WIDTH           = GL30.GL_RENDERBUFFER_WIDTH;
+    RENDERBUFFER_HEIGHT          = GL30.GL_RENDERBUFFER_HEIGHT;
+    RENDERBUFFER_RED_SIZE        = GL30.GL_RENDERBUFFER_RED_SIZE;
+    RENDERBUFFER_GREEN_SIZE      = GL30.GL_RENDERBUFFER_GREEN_SIZE;
+    RENDERBUFFER_BLUE_SIZE       = GL30.GL_RENDERBUFFER_BLUE_SIZE;
+    RENDERBUFFER_ALPHA_SIZE      = GL30.GL_RENDERBUFFER_ALPHA_SIZE;
+    RENDERBUFFER_DEPTH_SIZE      = GL30.GL_RENDERBUFFER_DEPTH_SIZE;
+    RENDERBUFFER_STENCIL_SIZE    = GL30.GL_RENDERBUFFER_STENCIL_SIZE;
+    RENDERBUFFER_INTERNAL_FORMAT = GL30.GL_RENDERBUFFER_INTERNAL_FORMAT;
 
-  public static final int MULTISAMPLE    = GL13.GL_MULTISAMPLE;
-  public static final int POINT_SMOOTH   = GL11.GL_POINT_SMOOTH;
-  public static final int LINE_SMOOTH    = GL11.GL_LINE_SMOOTH;
-  public static final int POLYGON_SMOOTH = GL11.GL_POLYGON_SMOOTH;
-  
-  
+    MULTISAMPLE    = GL13.GL_MULTISAMPLE;
+    POINT_SMOOTH   = GL11.GL_POINT_SMOOTH;
+    LINE_SMOOTH    = GL11.GL_LINE_SMOOTH;
+    POLYGON_SMOOTH = GL11.GL_POLYGON_SMOOTH;
+  }
   
   ///////////////////////////////////////////////////////////
 
@@ -3000,14 +2991,6 @@ public class PLWJGL extends PGL {
 
   // Reading Pixels
 
-  public void readPixels(int x, int y, int width, int height, int format, int type, Buffer buffer) {
-    boolean needEndBegin = format != STENCIL_INDEX &&
-                           format != DEPTH_COMPONENT && format != DEPTH_STENCIL;
-    if (needEndBegin) pg.beginReadPixels();
-    readPixelsImpl(x, y, width, height, format, type, buffer);
-    if (needEndBegin) pg.endReadPixels();
-  }
-
   protected void readPixelsImpl(int x, int y, int width, int height, int format, int type, Buffer buffer) {
     GL11.glReadPixels(x, y, width, height, format, type, (IntBuffer)buffer);
   }
@@ -3122,11 +3105,6 @@ public class PLWJGL extends PGL {
 
   // Texturing
 
-  public void activeTexture(int texture) {
-    GL13.glActiveTexture(texture);
-    activeTexUnit = texture - TEXTURE0;
-  }
-
   public void texImage2D(int target, int level, int internalFormat, int width, int height, int border, int format, int type, Buffer data) {
     GL11.glTexImage2D(target, level, internalFormat, width, height, border, format, type, (IntBuffer)data);
   }
@@ -3171,25 +3149,6 @@ public class PLWJGL extends PGL {
     GL30.glGenerateMipmap(target);
   }
 
-  public void bindTexture(int target, int texture) {
-    GL11.glBindTexture(target, texture);
-
-    if (boundTextures == null) {
-      maxTexUnits = getMaxTexUnits();
-      boundTextures = new int[maxTexUnits][2];
-    }
-
-    if (maxTexUnits <= activeTexUnit) {
-      throw new RuntimeException(TEXUNIT_ERROR);
-    }
-
-    if (target == TEXTURE_2D) {
-      boundTextures[activeTexUnit][0] = texture;
-    } else if (target == TEXTURE_RECTANGLE) {
-      boundTextures[activeTexUnit][1] = texture;
-    }
-  }
-
   public void genTextures(int n, IntBuffer textures) {
     GL11.glGenTextures(textures);
   }
@@ -3210,6 +3169,14 @@ public class PLWJGL extends PGL {
     return GL11.glIsTexture(texture);
   }
 
+  protected void activeTextureImpl(int texture) {
+    GL13.glActiveTexture(texture);
+  }
+    
+  protected void bindTextureImpl(int target, int texture) {
+    GL11.glBindTexture(target, texture);
+  }
+    
   ///////////////////////////////////////////////////////////
 
   // Shaders and Programs
