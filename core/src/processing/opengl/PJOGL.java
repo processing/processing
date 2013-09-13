@@ -335,7 +335,9 @@ public class PJOGL extends PGL {
       window.addGLEventListener(listener);
     }
 
-    canvas.setFocusTraversalKeysEnabled(false);
+    if (canvas != null) {
+      canvas.setFocusTraversalKeysEnabled(false);
+    }
   }
 
 
