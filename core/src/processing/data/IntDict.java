@@ -527,7 +527,7 @@ public class IntDict {
   }
 
 
-  protected void swap(int a, int b) {
+  public void swap(int a, int b) {
     String tkey = keys[a];
     int tvalue = values[a];
     keys[a] = keys[b];
