@@ -284,14 +284,8 @@ public class PJOGL extends PGL {
       pg.parent.add(canvasAWT, BorderLayout.CENTER);
       canvasAWT.requestFocusInWindow();
 
-      pg.parent.removeListeners(pg.parent);
-      pg.parent.addListeners(canvasAWT);
-
       canvas = canvasAWT;
       canvasNEWT = null;
-
-      listener = new PGLListener();
-      canvasAWT.addGLEventListener(listener);
     } else if (WINDOW_TOOLKIT == NEWT) {
       window = GLWindow.create(caps);
       canvasNEWT = new NewtCanvasAWT(window);
@@ -303,6 +297,28 @@ public class PJOGL extends PGL {
       pg.parent.add(canvasNEWT, BorderLayout.CENTER);
       canvasNEWT.requestFocusInWindow();
 
+      canvas = canvasNEWT;
+      canvasAWT = null;
+    }
+
+    registerListeners();
+
+    fboLayerCreated = false;
+    fboLayerInUse = false;
+    firstFrame = true;
+    setFps = false;
+  }
+
+
+  @Override
+  protected void registerListeners() {
+    if (WINDOW_TOOLKIT == AWT) {
+      pg.parent.removeListeners(pg.parent);
+      pg.parent.addListeners(canvasAWT);
+
+      listener = new PGLListener();
+      canvasAWT.addGLEventListener(listener);
+    } else if (WINDOW_TOOLKIT == NEWT) {
       if (EVENTS_TOOLKIT == NEWT) {
         NEWTMouseListener mouseListener = new NEWTMouseListener();
         window.addMouseListener(mouseListener);
@@ -315,19 +331,11 @@ public class PJOGL extends PGL {
         pg.parent.addListeners(canvasNEWT);
       }
 
-      canvas = canvasNEWT;
-      canvasAWT = null;
-
       listener = new PGLListener();
       window.addGLEventListener(listener);
     }
 
     canvas.setFocusTraversalKeysEnabled(false);
-
-    fboLayerCreated = false;
-    fboLayerInUse = false;
-    firstFrame = true;
-    setFps = false;
   }
 
 
@@ -842,7 +850,7 @@ public class PJOGL extends PGL {
     pg.parent.postEvent(ke);
   }
 
-  class NEWTWindowListener implements com.jogamp.newt.event.WindowListener {
+  protected class NEWTWindowListener implements com.jogamp.newt.event.WindowListener {
     @Override
     public void windowGainedFocus(com.jogamp.newt.event.WindowEvent arg0) {
       pg.parent.focusGained(null);
@@ -874,7 +882,7 @@ public class PJOGL extends PGL {
   }
 
   // NEWT mouse listener
-  class NEWTMouseListener extends com.jogamp.newt.event.MouseAdapter {
+  protected class NEWTMouseListener extends com.jogamp.newt.event.MouseAdapter {
     @Override
     public void mousePressed(com.jogamp.newt.event.MouseEvent e) {
       nativeMouseEvent(e, MouseEvent.PRESS);
@@ -910,7 +918,7 @@ public class PJOGL extends PGL {
   }
 
   // NEWT key listener
-  class NEWTKeyListener extends com.jogamp.newt.event.KeyAdapter {
+  protected class NEWTKeyListener extends com.jogamp.newt.event.KeyAdapter {
     @Override
     public void keyPressed(com.jogamp.newt.event.KeyEvent e) {
       nativeKeyEvent(e, KeyEvent.PRESS);

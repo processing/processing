@@ -206,12 +206,7 @@ public class PLWJGL extends PGL {
     
     glContext = Display.getDrawable().hashCode();
 
-    keyPoller = new KeyPoller(pg.parent);
-    keyPoller.start();
-
-    mousePoller = new MousePoller(pg.parent);
-    mousePoller.start();
-
+    registerListeners();
     
     fboLayerCreated = false;
     fboLayerInUse = false;
@@ -219,6 +214,15 @@ public class PLWJGL extends PGL {
     setFps = false;
   }
 
+  
+  protected void registerListeners() {
+    keyPoller = new KeyPoller(pg.parent);
+    keyPoller.start();
+
+    mousePoller = new MousePoller(pg.parent);
+    mousePoller.start();
+  }  
+  
 
   ///////////////////////////////////////////////////////////
 

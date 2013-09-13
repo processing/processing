@@ -327,6 +327,9 @@ public abstract class PGL {
   protected abstract void initSurface(int antialias);
 
 
+  protected abstract void registerListeners();
+
+
   protected void deleteSurface() {
     if (threadIsCurrent() && fboLayerCreated) {
       deleteTextures(2, glColorTex);
