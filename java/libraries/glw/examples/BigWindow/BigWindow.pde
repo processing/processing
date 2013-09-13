@@ -1,7 +1,7 @@
-import processing.nwin.*;
+import processing.glw.*;
 
 void setup() {
-  size(2560, 1440, NWin.P2D);
+  size(2560, 1440, GLW.P2D);
   frameRate(180);
 }
 
