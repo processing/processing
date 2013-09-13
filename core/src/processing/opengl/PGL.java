@@ -32,26 +32,35 @@ import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 import java.util.Arrays;
 
-
 /**
- * Processing-OpenGL abstraction layer.
+ * Processing-OpenGL abstraction layer. Needs to be implemented by subclasses
+ * using specific OpenGL-Java bindings.
  *
- * Warnings are suppressed for static access because presumably on Android,
- * the GL2 vs GL distinctions are necessary, whereas on desktop they are not.
+ * It includes a full GLES 2.0 interface.
+ *
  */
 public abstract class PGL {
+  // ........................................................
 
-
-
+  // Basic fields
 
   /** The PGraphics object using this interface */
   protected PGraphicsOpenGL pg;
-  protected static int contextID;
 
+  /** OpenGL thread */
+  protected static Thread glThread;
 
-  ///////////////////////////////////////////////////////////
+  /** ID of the GL context associated to the surface **/
+  protected static int glContext;
+
+  // ........................................................
 
   // Parameters
+
+  protected static boolean USE_FBOLAYER_BY_DEFAULT = false;
+  protected static int REQUESTED_DEPTH_BITS   = 24;
+  protected static int REQUESTED_STENCIL_BITS = 8;
+  protected static int REQUESTED_ALPHA_BITS   = 8;
 
   /** Switches between the use of regular and direct buffers. */
   protected static boolean USE_DIRECT_BUFFERS = true;
@@ -114,50 +123,31 @@ public abstract class PGL {
    * order to make sure the lines are always on top of the fill geometry */
   protected static float STROKE_DISPLACEMENT = 0.999f;
 
+  // ........................................................
 
+  // FBO layer
 
+  protected static boolean fboLayerRequested = false;
+  protected static boolean fboLayerCreated = false;
+  protected static boolean fboLayerInUse = false;
+  protected static boolean firstFrame = true;
+  protected static int reqNumSamples;
+  protected static int numSamples;
+  protected static IntBuffer glColorFbo;
+  protected static IntBuffer glMultiFbo;
+  protected static IntBuffer glColorBuf;
+  protected static IntBuffer glColorTex;
+  protected static IntBuffer glDepthStencil;
+  protected static IntBuffer glDepth;
+  protected static IntBuffer glStencil;
+  protected static int fboWidth, fboHeight;
+  protected static int backTex, frontTex;
 
-  /** Size of different types in bytes */
-  protected static int SIZEOF_SHORT = Short.SIZE / 8;
-  protected static int SIZEOF_INT = Integer.SIZE / 8;
-  protected static int SIZEOF_FLOAT = Float.SIZE / 8;
-  protected static int SIZEOF_BYTE = Byte.SIZE / 8;
-  protected static int SIZEOF_INDEX = SIZEOF_SHORT;
-  protected static int INDEX_TYPE = 0x1403; // GL_UNSIGNED_SHORT
+  /** Flags used to handle the creation of a separate front texture */
+  protected boolean usingFrontTex = false;
+  protected boolean needSepFrontTex = false;
 
-  /** Machine Epsilon for float precision. */
-  protected static float FLOAT_EPS = Float.MIN_VALUE;
-  // Calculation of the Machine Epsilon for float precision. From:
-  // http://en.wikipedia.org/wiki/Machine_epsilon#Approximation_using_Java
-  static {
-    float eps = 1.0f;
-
-    do {
-      eps /= 2.0f;
-    } while ((float)(1.0 + (eps / 2.0)) != 1.0);
-
-    FLOAT_EPS = eps;
-  }
-
-
-
-  /**
-   * Set to true if the host system is big endian (PowerPC, MIPS, SPARC), false
-   * if little endian (x86 Intel for Mac or PC).
-   */
-  protected static boolean BIG_ENDIAN =
-    ByteOrder.nativeOrder() == ByteOrder.BIG_ENDIAN;
-
-  protected static final String SHADER_PREPROCESSOR_DIRECTIVE =
-    "#ifdef GL_ES\n" +
-    "precision mediump float;\n" +
-    "precision mediump int;\n" +
-    "#endif\n";
-
-
-
-
-  ///////////////////////////////////////////////////////////
+  // ........................................................
 
   // Texture rendering
 
@@ -186,6 +176,12 @@ public abstract class PGL {
   };
   protected static FloatBuffer texData;
 
+  protected static final String SHADER_PREPROCESSOR_DIRECTIVE =
+    "#ifdef GL_ES\n" +
+    "precision mediump float;\n" +
+    "precision mediump int;\n" +
+    "#endif\n";
+
   protected static String texVertShaderSource =
     "attribute vec2 inVertex;" +
     "attribute vec2 inTexcoord;" +
@@ -211,9 +207,25 @@ public abstract class PGL {
     "  gl_FragColor = texture2DRect(textureSampler, vertTexcoord.st);" +
     "}";
 
-  ///////////////////////////////////////////////////////////
+  /** Which texturing targets are enabled */
+  protected static boolean[] texturingTargets = { false, false };
 
-  // Utilities
+  /** Used to keep track of which textures are bound to each target */
+  protected static int maxTexUnits;
+  protected static int activeTexUnit = 0;
+  protected static int[][] boundTextures;
+
+  // ........................................................
+
+  // Framerate handling
+
+  protected float targetFps = 60;
+  protected float currentFps = 60;
+  protected boolean setFps = false;
+
+  // ........................................................
+
+  // Utility buffers
 
   protected ByteBuffer byteBuffer;
   protected IntBuffer intBuffer;
@@ -223,7 +235,7 @@ public abstract class PGL {
   protected FloatBuffer depthBuffer;
   protected ByteBuffer stencilBuffer;
 
-  ///////////////////////////////////////////////////////////
+  // ........................................................
 
   // Error messages
 
@@ -245,68 +257,47 @@ public abstract class PGL {
   protected static final String TEXUNIT_ERROR =
     "Number of texture units not supported by this hardware (or driver)" + WIKI;
 
+  // ........................................................
 
+  // Constants
 
+  /** Size of different types in bytes */
+  protected static int SIZEOF_SHORT = Short.SIZE / 8;
+  protected static int SIZEOF_INT   = Integer.SIZE / 8;
+  protected static int SIZEOF_FLOAT = Float.SIZE / 8;
+  protected static int SIZEOF_BYTE  = Byte.SIZE / 8;
+  protected static int SIZEOF_INDEX = SIZEOF_SHORT;
+  protected static int INDEX_TYPE   = 0x1403; // GL_UNSIGNED_SHORT
 
+  /** Machine Epsilon for float precision. */
+  protected static float FLOAT_EPS = Float.MIN_VALUE;
+  // Calculation of the Machine Epsilon for float precision. From:
+  // http://en.wikipedia.org/wiki/Machine_epsilon#Approximation_using_Java
+  static {
+    float eps = 1.0f;
 
-  protected static boolean USE_FBOLAYER_BY_DEFAULT;
+    do {
+      eps /= 2.0f;
+    } while ((float)(1.0 + (eps / 2.0)) != 1.0);
 
+    FLOAT_EPS = eps;
+  }
 
-
-
-
-
-
-
-
-
-
-  /** Which texturing targets are enabled */
-  protected static boolean[] texturingTargets = { false, false };
-
-  /** Used to keep track of which textures are bound to each target */
-  protected static int maxTexUnits;
-  protected static int activeTexUnit = 0;
-  protected static int[][] boundTextures;
-
-  ///////////////////////////////////////////////////////////
-
-  // FBO layer
-
-  protected static boolean fboLayerRequested = false;
-  protected static boolean fboLayerCreated = false;
-  protected static boolean fboLayerInUse = false;
-  protected static boolean firstFrame = true;
-  protected static int reqNumSamples;
-  protected static int numSamples;
-  protected static IntBuffer glColorFbo;
-  protected static IntBuffer glMultiFbo;
-  protected static IntBuffer glColorBuf;
-  protected static IntBuffer glColorTex;
-  protected static IntBuffer glDepthStencil;
-  protected static IntBuffer glDepth;
-  protected static IntBuffer glStencil;
-  protected static int fboWidth, fboHeight;
-  protected static int backTex, frontTex;
-
-
-
-  /** Flags used to handle the creation of a separate front texture */
-  protected boolean usingFrontTex = false;
-  protected boolean needSepFrontTex = false;
-
-  /** Flag used to do request final display() call to make sure that the
-   * buffers are properly swapped.
+  /**
+   * Set to true if the host system is big endian (PowerPC, MIPS, SPARC), false
+   * if little endian (x86 Intel for Mac or PC).
    */
-  protected boolean prevCanDraw = false;
+  protected static boolean BIG_ENDIAN =
+    ByteOrder.nativeOrder() == ByteOrder.BIG_ENDIAN;
 
 
-
-  ///////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////////
 
   // Initialization, finalization
 
+
   public PGL() { }
+
 
   public PGL(PGraphicsOpenGL pg) {
     this.pg = pg;
@@ -329,9 +320,12 @@ public abstract class PGL {
     viewBuffer = allocateIntBuffer(4);
   }
 
-  protected void setFps(float fps) { }
 
-  protected void initSurface(int antialias) { }
+  protected abstract void setFps(float fps);
+
+
+  protected abstract void initSurface(int antialias);
+
 
   protected void deleteSurface() {
     if (threadIsCurrent() && fboLayerCreated) {
@@ -349,29 +343,57 @@ public abstract class PGL {
     firstFrame = false;
   }
 
-  protected int getReadFramebuffer()  { return 0; }
 
-  protected int getDrawFramebuffer()  { return 0; }
-
-  protected int getDefaultDrawBuffer()  { return 0; }
-
-  protected int getDefaultReadBuffer()  { return 0; }
+  protected int getReadFramebuffer()  {
+    return fboLayerInUse ? glColorFbo.get(0) : 0;
+  }
 
 
-  protected boolean isFBOBacked()   { return false; }
+  protected int getDrawFramebuffer()  {
+    if (fboLayerInUse) return 1 < numSamples ? glMultiFbo.get(0) :
+                                               glColorFbo.get(0);
+    else return 0;
+  }
+
+
+  protected int getDefaultDrawBuffer()  {
+    return fboLayerInUse ? COLOR_ATTACHMENT0 : FRONT;
+  }
+
+
+  protected int getDefaultReadBuffer()  {
+    return fboLayerInUse ? COLOR_ATTACHMENT0 : FRONT;
+  }
+
+
+  protected boolean isFBOBacked() {
+    return fboLayerInUse;
+  }
 
 
   protected void requestFBOLayer() {
     fboLayerRequested = true;
   }
 
+
   protected boolean isMultisampled() {
     return 1 < numSamples;
   }
 
-  protected int getDepthBits()  { return 0; }
 
-  protected int getStencilBits()  { return 0; }
+  protected int getDepthBits()  {
+    intBuffer.rewind();
+    getIntegerv(DEPTH_BITS, intBuffer);
+    return intBuffer.get(0);
+  }
+
+
+  protected int getStencilBits()  {
+    intBuffer.rewind();
+    getIntegerv(STENCIL_BITS, intBuffer);
+    return intBuffer.get(0);
+  }
+
 
   protected boolean getDepthTest() {
     intBuffer.rewind();
@@ -379,21 +401,82 @@ public abstract class PGL {
     return intBuffer.get(0) == 0 ? false : true;
   }
 
+
   protected boolean getDepthWriteMask() {
     intBuffer.rewind();
     getBooleanv(DEPTH_WRITEMASK, intBuffer);
     return intBuffer.get(0) == 0 ? false : true;
   }
 
-  protected Texture wrapBackTexture(Texture texture) { return null; }
 
-  protected Texture wrapFrontTexture(Texture texture)  { return null; }
+  protected Texture wrapBackTexture(Texture texture) {
+    if (texture == null) {
+      texture = new Texture();
+      texture.init(pg.width, pg.height,
+                   glColorTex.get(backTex), TEXTURE_2D, RGBA,
+                   fboWidth, fboHeight, NEAREST, NEAREST,
+                   CLAMP_TO_EDGE, CLAMP_TO_EDGE);
+      texture.invertedY(true);
+      texture.colorBuffer(true);
+      pg.setCache(pg, texture);
+    } else {
+      texture.glName = glColorTex.get(backTex);
+    }
+    return texture;
+  }
 
-  protected void bindFrontTexture() { }
 
-  protected void unbindFrontTexture() { }
+  protected Texture wrapFrontTexture(Texture texture)  {
+    if (texture == null) {
+      texture = new Texture();
+      texture.init(pg.width, pg.height,
+                   glColorTex.get(frontTex), TEXTURE_2D, RGBA,
+                   fboWidth, fboHeight, NEAREST, NEAREST,
+                   CLAMP_TO_EDGE, CLAMP_TO_EDGE);
+      texture.invertedY(true);
+      texture.colorBuffer(true);
+    } else {
+      texture.glName = glColorTex.get(frontTex);
+    }
+    return texture;
+  }
 
-  protected void syncBackTexture() { }
+
+  protected void bindFrontTexture() {
+    usingFrontTex = true;
+    if (!texturingIsEnabled(TEXTURE_2D)) {
+      enableTexturing(TEXTURE_2D);
+    }
+    bindTexture(TEXTURE_2D, glColorTex.get(frontTex));
+  }
+
+
+  protected void unbindFrontTexture() {
+    if (textureIsBound(TEXTURE_2D, glColorTex.get(frontTex))) {
+      // We don't want to unbind another texture
+      // that might be bound instead of this one.
+      if (!texturingIsEnabled(TEXTURE_2D)) {
+        enableTexturing(TEXTURE_2D);
+        bindTexture(TEXTURE_2D, 0);
+        disableTexturing(TEXTURE_2D);
+      } else {
+        bindTexture(TEXTURE_2D, 0);
+      }
+    }
+  }
+
+
+  protected void syncBackTexture() {
+    if (usingFrontTex) needSepFrontTex = true;
+    if (1 < numSamples) {
+      bindFramebuffer(READ_FRAMEBUFFER, glMultiFbo.get(0));
+      bindFramebuffer(DRAW_FRAMEBUFFER, glColorFbo.get(0));
+      blitFramebuffer(0, 0, fboWidth, fboHeight,
+                      0, 0, fboWidth, fboHeight,
+                      COLOR_BUFFER_BIT, NEAREST);
+    }
+  }
+
 
   protected int qualityToSamples(int quality) {
     if (quality <= 1) {
@@ -628,21 +711,23 @@ public abstract class PGL {
   }
 
 
-
-  protected void requestFocus() { }
-
-
   protected boolean canDraw() {
     return pg.initialized && pg.parent.isDisplayable();
   }
 
 
-  protected void requestDraw() { }
-
-  protected void swapBuffers() { }
+  protected abstract void requestFocus();
 
 
-  protected boolean threadIsCurrent()  { return false; }
+  protected abstract void requestDraw();
+
+
+  protected abstract void swapBuffers();
+
+
+  protected boolean threadIsCurrent()  {
+    return Thread.currentThread() == glThread;
+  }
 
 
   protected boolean needFBOLayer(boolean clear0) {
@@ -667,86 +752,8 @@ public abstract class PGL {
 
 
   protected int getCurrentContext() {
-    return contextID;
+    return glContext;
   }
-
-
-
-
-
-
-
-
-
-
-
-
-  ///////////////////////////////////////////////////////////
-
-  // Tessellator interface
-
-
-  protected Tessellator createTessellator(TessellatorCallback callback) {
-    return null;
-  }
-
-  protected interface Tessellator {
-    public void beginPolygon();
-    public void endPolygon();
-    public void setWindingRule(int rule);
-    public void beginContour();
-    public void endContour();
-    public void addVertex(double[] v);
-  }
-
-  protected interface TessellatorCallback  {
-    public void begin(int type);
-    public void end();
-    public void vertex(Object data);
-    public void combine(double[] coords, Object[] data,
-                        float[] weight, Object[] outData);
-    public void error(int errnum);
-  }
-
-  protected String tessError(int err) {
-    return "";
-   }
-
-
-  ///////////////////////////////////////////////////////////
-
-  // FontOutline interface
-
-
-  protected static boolean SHAPE_TEXT_SUPPORTED;
-
-  protected static int SEG_MOVETO;
-  protected static int SEG_LINETO;
-  protected static int SEG_QUADTO;
-  protected static int SEG_CUBICTO;
-  protected static int SEG_CLOSE;
-
-  protected FontOutline createFontOutline(char ch, Object font) {
-    return null;
-  }
-
-  protected interface FontOutline {
-    public boolean isDone();
-    public int currentSegment(float coords[]);
-    public void next();
-  }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
   ///////////////////////////////////////////////////////////
@@ -755,7 +762,7 @@ public abstract class PGL {
 
 
   protected boolean contextIsCurrent(int other) {
-    return other == -1 || other == contextID;
+    return other == -1 || other == glContext;
   }
 
 
@@ -874,7 +881,7 @@ public abstract class PGL {
   protected void drawTexture2D(int id, int texW, int texH, int scrW, int scrH,
                                int texX0, int texY0, int texX1, int texY1,
                                int scrX0, int scrY0, int scrX1, int scrY1) {
-    if (!loadedTex2DShader || tex2DShaderContext != contextID) {
+    if (!loadedTex2DShader || tex2DShaderContext != glContext) {
       tex2DVertShader = createShader(VERTEX_SHADER, texVertShaderSource);
       tex2DFragShader = createShader(FRAGMENT_SHADER, tex2DFragShaderSource);
       if (0 < tex2DVertShader && 0 < tex2DFragShader) {
@@ -885,7 +892,7 @@ public abstract class PGL {
         tex2DTCoordLoc = getAttribLocation(tex2DShaderProgram, "inTexcoord");
       }
       loadedTex2DShader = true;
-      tex2DShaderContext = contextID;
+      tex2DShaderContext = glContext;
     }
 
     if (texData == null) {
@@ -985,7 +992,7 @@ public abstract class PGL {
   protected void drawTextureRect(int id, int texW, int texH, int scrW, int scrH,
                                  int texX0, int texY0, int texX1, int texY1,
                                  int scrX0, int scrY0, int scrX1, int scrY1) {
-    if (!loadedTexRectShader || texRectShaderContext != contextID) {
+    if (!loadedTexRectShader || texRectShaderContext != glContext) {
       texRectVertShader = createShader(VERTEX_SHADER, texVertShaderSource);
       texRectFragShader = createShader(FRAGMENT_SHADER, texRectFragShaderSource);
       if (0 < texRectVertShader && 0 < texRectFragShader) {
@@ -997,7 +1004,7 @@ public abstract class PGL {
         texRectTCoordLoc = getAttribLocation(texRectShaderProgram, "inTexcoord");
       }
       loadedTexRectShader = true;
-      texRectShaderContext = contextID;
+      texRectShaderContext = glContext;
     }
 
     if (texData == null) {
@@ -1479,10 +1486,10 @@ public abstract class PGL {
     int major = getGLVersion()[0];
     if (major < 2) {
       String ext = getString(EXTENSIONS);
-      return ext.indexOf("_framebuffer_object")  != -1 &&
-             ext.indexOf("_vertex_shader")    != -1 &&
-             ext.indexOf("_shader_objects")   != -1 &&
-             ext.indexOf("_shading_language") != -1;
+      return ext.indexOf("_framebuffer_object") != -1 &&
+             ext.indexOf("_vertex_shader")      != -1 &&
+             ext.indexOf("_shader_objects")     != -1 &&
+             ext.indexOf("_shading_language")   != -1;
     } else {
       return true;
     }
@@ -1874,7 +1881,60 @@ public abstract class PGL {
   }
 
 
+  ///////////////////////////////////////////////////////////
 
+  // Tessellator interface
+
+
+  protected abstract Tessellator createTessellator(TessellatorCallback callback);
+
+
+  protected interface Tessellator {
+    public void beginPolygon();
+    public void endPolygon();
+    public void setWindingRule(int rule);
+    public void beginContour();
+    public void endContour();
+    public void addVertex(double[] v);
+  }
+
+
+  protected interface TessellatorCallback  {
+    public void begin(int type);
+    public void end();
+    public void vertex(Object data);
+    public void combine(double[] coords, Object[] data,
+                        float[] weight, Object[] outData);
+    public void error(int errnum);
+  }
+
+
+  protected String tessError(int err) {
+    return "";
+   }
+
+
+  ///////////////////////////////////////////////////////////
+
+  // FontOutline interface
+
+
+  protected static boolean SHAPE_TEXT_SUPPORTED;
+  protected static int SEG_MOVETO;
+  protected static int SEG_LINETO;
+  protected static int SEG_QUADTO;
+  protected static int SEG_CUBICTO;
+  protected static int SEG_CLOSE;
+
+
+  protected abstract FontOutline createFontOutline(char ch, Object font);
+
+
+  protected interface FontOutline {
+    public boolean isDone();
+    public int currentSegment(float coords[]);
+    public void next();
+  }
 
 
   //////////////////////////////////////////////////////////////////////////////
@@ -1901,7 +1961,7 @@ public abstract class PGL {
 
   // Constants
   // Very important note: set the GL constants in your PGL subclass by using an
-  // initialization block as follows:
+  // static initialization block as follows:
   // static {
   //    FALSE = SUPER_DUPER_JAVA_OPENGL_BINDINGS.GL_FALSE;
   //    TRUE  = SUPER_DUPER_JAVA_OPENGL_BINDINGS.GL_TRUE;

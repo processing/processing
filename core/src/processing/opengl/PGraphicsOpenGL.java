@@ -1583,7 +1583,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   @Override
   public void requestFocus() {  // ignore
-    //pgl.requestFocus();
+    pgl.requestFocus();
   }
 
 
@@ -1700,7 +1700,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   // Factory method
-  static public PGL createPGL(PGraphicsOpenGL pg) {
+  protected PGL createPGL(PGraphicsOpenGL pg) {
     return new PJOGL(pg);
   }
 

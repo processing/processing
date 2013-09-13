@@ -30,8 +30,7 @@ import processing.opengl.PGraphicsOpenGL;
  *
  */
 public class PGraphicsLWJGL extends PGraphicsOpenGL {
-  
-  static public PGL createPGL(PGraphicsOpenGL pg) {
+  protected PGL createPGL(PGraphicsOpenGL pg) {
     return new PLWJGL(pg);
   }  
 }

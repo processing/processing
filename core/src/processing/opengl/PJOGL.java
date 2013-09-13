@@ -47,14 +47,12 @@ import java.awt.geom.PathIterator;
 import javax.media.opengl.glu.GLUtessellator;
 import javax.media.opengl.glu.GLUtessellatorCallbackAdapter;
 
-@SuppressWarnings("static-access")
 public class PJOGL extends PGL {
-  static {
-    INDEX_TYPE = GL.GL_UNSIGNED_SHORT;
-  }
+  // The two windowing toolkits available to use in JOGL:
+  public static final int AWT  = 0; // http://jogamp.org/wiki/index.php/Using_JOGL_in_AWT_SWT_and_Swing
+  public static final int NEWT = 1; // http://jogamp.org/jogl/doc/NEWT-Overview.html
 
-
-  ///////////////////////////////////////////////////////////
+  // ........................................................
 
   // Public members to access the underlying GL objects and context
 
@@ -73,20 +71,22 @@ public class PJOGL extends PGL {
   /** Selected GL profile */
   public static GLProfile profile;
 
+  // ........................................................
 
-  /** JOGL's windowing toolkit */
-  // The two windowing toolkits available to use in JOGL:
-  protected static final int AWT  = 0; // http://jogamp.org/wiki/index.php/Using_JOGL_in_AWT_SWT_and_Swing
-  protected static final int NEWT = 1; // http://jogamp.org/jogl/doc/NEWT-Overview.html
+  // Additional parameters
 
+  /** Time that the Processing's animation thread will wait for JOGL's rendering
+   * thread to be done with a single frame.
+   */
+  protected static int DRAW_TIMEOUT_MILLIS = 500;
 
-  /** OS-specific configuration */
+  // ........................................................
+
+  // OS-specific configuration
+
   protected static int WINDOW_TOOLKIT;
   protected static int EVENTS_TOOLKIT;
   protected static boolean USE_JOGL_FBOLAYER;
-  protected static int REQUESTED_DEPTH_BITS = 24;
-  protected static int REQUESTED_STENCIL_BITS = 8;
-  protected static int REQUESTED_ALPHA_BITS = 8;
   static {
     if (PApplet.platform == PConstants.WINDOWS) {
       // Using AWT on Windows because NEWT displays a black background while
@@ -99,57 +99,28 @@ public class PJOGL extends PGL {
       EVENTS_TOOLKIT = AWT;
       USE_FBOLAYER_BY_DEFAULT = false;
       USE_JOGL_FBOLAYER = false;
-      REQUESTED_DEPTH_BITS = 24;
-      REQUESTED_STENCIL_BITS = 8;
-      REQUESTED_ALPHA_BITS = 8;
     } else if (PApplet.platform == PConstants.MACOSX) {
       // Note: The JOGL FBO layer (in 2.0.2) seems incompatible with NEWT.
       WINDOW_TOOLKIT = AWT;
       EVENTS_TOOLKIT = AWT;
       USE_FBOLAYER_BY_DEFAULT = true;
       USE_JOGL_FBOLAYER = true;
-      REQUESTED_DEPTH_BITS = 24;
-      REQUESTED_STENCIL_BITS = 8;
-      REQUESTED_ALPHA_BITS = 8;
     } else if (PApplet.platform == PConstants.LINUX) {
       WINDOW_TOOLKIT = AWT;
       EVENTS_TOOLKIT = AWT;
       USE_FBOLAYER_BY_DEFAULT = false;
       USE_JOGL_FBOLAYER = false;
-      REQUESTED_DEPTH_BITS = 24;
-      REQUESTED_STENCIL_BITS = 8;
-      REQUESTED_ALPHA_BITS = 8;
     } else if (PApplet.platform == PConstants.OTHER) {
       WINDOW_TOOLKIT = NEWT; // NEWT works on the Raspberry pi?
       EVENTS_TOOLKIT = NEWT;
       USE_FBOLAYER_BY_DEFAULT = false;
       USE_JOGL_FBOLAYER = false;
-      REQUESTED_DEPTH_BITS = 24;
-      REQUESTED_STENCIL_BITS = 8;
-      REQUESTED_ALPHA_BITS = 8;
     }
   }
 
-  /** Time that the Processing's animation thread will wait for JOGL's rendering
-   * thread to be done with a single frame.
-   */
-  protected static int DRAW_TIMEOUT_MILLIS = 500;
+  // ........................................................
 
-
-
-  /** Desired target framerate */
-  protected float targetFps = 60;
-  protected float currentFps = 60;
-  protected boolean setFps = false;
-  protected int fcount, lastm;
-  protected int fint = 3;
-
-
-
-
-
-  /** OpenGL thread */
-  protected static Thread glThread;
+  // Protected JOGL-specific objects needed to access the GL profiles
 
   /** The capabilities of the OpenGL rendering surface */
   protected static GLCapabilitiesImmutable capabilities;
@@ -180,11 +151,14 @@ public class PJOGL extends PGL {
    * Processing's drawing thread and JOGL's rendering thread */
   protected CountDownLatch drawLatch;
 
+  /** Flag used to do request final display() call to make sure that the
+   * buffers are properly swapped.
+   */
+  protected boolean prevCanDraw = false;
 
+  // ........................................................
 
-  protected float[] projMatrix;
-  protected float[] mvMatrix;
-
+  // JOGL's FBO-layer
 
   /** Back (== draw, current frame) buffer */
   protected static FBObject backFBO;
@@ -195,6 +169,30 @@ public class PJOGL extends PGL {
   protected static FBObject.TextureAttachment backTexAttach;
   protected static FBObject.TextureAttachment frontTexAttach;
 
+  protected boolean changedFrontTex = false;
+  protected boolean changedBackTex = false;
+
+  // ........................................................
+
+  // Utility arrays to copy projection/modelview matrices to GL
+
+  protected float[] projMatrix;
+  protected float[] mvMatrix;
+
+  // ........................................................
+
+  // Static initialization for some parameters that need to be different for
+  // JOGL
+
+  static {
+    MIN_DIRECT_BUFFER_SIZE = 2;
+    INDEX_TYPE             = GL.GL_UNSIGNED_SHORT;
+  }
+
+
+  ///////////////////////////////////////////////////////////////
+
+  // Initialization, finalization
 
 
   public PJOGL(PGraphicsOpenGL pg) {
@@ -239,9 +237,9 @@ public class PJOGL extends PGL {
 
     // Setting up the desired capabilities;
     GLCapabilities caps = new GLCapabilities(profile);
+    caps.setAlphaBits(REQUESTED_ALPHA_BITS);
     caps.setDepthBits(REQUESTED_DEPTH_BITS);
     caps.setStencilBits(REQUESTED_STENCIL_BITS);
-    caps.setAlphaBits(REQUESTED_ALPHA_BITS);
 
     caps.setBackgroundOpaque(true);
     caps.setOnscreen(true);
@@ -329,7 +327,6 @@ public class PJOGL extends PGL {
     fboLayerCreated = false;
     fboLayerInUse = false;
     firstFrame = true;
-
     setFps = false;
   }
 
@@ -406,31 +403,21 @@ public class PJOGL extends PGL {
 
   @Override
   protected boolean isFBOBacked() {
-    return fboLayerInUse || capabilities.isFBO();
+    return super.isFBOBacked() || capabilities.isFBO();
   }
 
 
   @Override
   protected int getDepthBits() {
-    if (USE_JOGL_FBOLAYER) {
-      return capabilities.getDepthBits();
-    } else {
-      intBuffer.rewind();
-      getIntegerv(DEPTH_BITS, intBuffer);
-      return intBuffer.get(0);
-    }
+    if (USE_JOGL_FBOLAYER) return capabilities.getDepthBits();
+    else return super.getDepthBits();
   }
 
 
   @Override
   protected int getStencilBits() {
-    if (USE_JOGL_FBOLAYER) {
-      return capabilities.getStencilBits();
-    } else {
-      intBuffer.rewind();
-      getIntegerv(STENCIL_BITS, intBuffer);
-      return intBuffer.get(0);
-    }
+    if (USE_JOGL_FBOLAYER) return capabilities.getStencilBits();
+    else return super.getStencilBits();
   }
 
 
@@ -448,20 +435,13 @@ public class PJOGL extends PGL {
         texture.colorBuffer(true);
         pg.setCache(pg, texture);
       } else {
-        texture = new Texture();
-        texture.init(pg.width, pg.height,
-                     glColorTex.get(backTex), TEXTURE_2D, RGBA,
-                     fboWidth, fboHeight, NEAREST, NEAREST,
-                     CLAMP_TO_EDGE, CLAMP_TO_EDGE);
-        texture.invertedY(true);
-        texture.colorBuffer(true);
-        pg.setCache(pg, texture);
+        texture = super.wrapBackTexture(null);
       }
     } else {
       if (USE_JOGL_FBOLAYER) {
         texture.glName = backTexAttach.getName();
       } else {
-        texture.glName = glColorTex.get(backTex);
+        texture = super.wrapBackTexture(texture);
       }
     }
     return texture;
@@ -481,19 +461,13 @@ public class PJOGL extends PGL {
         texture.invertedY(true);
         texture.colorBuffer(true);
       } else {
-        texture = new Texture();
-        texture.init(pg.width, pg.height,
-                     glColorTex.get(frontTex), TEXTURE_2D, RGBA,
-                     fboWidth, fboHeight, NEAREST, NEAREST,
-                     CLAMP_TO_EDGE, CLAMP_TO_EDGE);
-        texture.invertedY(true);
-        texture.colorBuffer(true);
+        texture = super.wrapFrontTexture(null);
       }
     } else {
       if (USE_JOGL_FBOLAYER) {
         texture.glName = frontTexAttach.getName();
       } else {
-        texture.glName = glColorTex.get(frontTex);
+        texture = super.wrapFrontTexture(texture);
       }
     }
     return texture;
@@ -502,18 +476,13 @@ public class PJOGL extends PGL {
 
   @Override
   protected void bindFrontTexture() {
-    usingFrontTex = true;
     if (USE_JOGL_FBOLAYER) {
+      usingFrontTex = true;
       if (!texturingIsEnabled(TEXTURE_2D)) {
         enableTexturing(TEXTURE_2D);
       }
       bindTexture(TEXTURE_2D, frontTexAttach.getName());
-    } else {
-      if (!texturingIsEnabled(TEXTURE_2D)) {
-        enableTexturing(TEXTURE_2D);
-      }
-      bindTexture(TEXTURE_2D, glColorTex.get(frontTex));
-    }
+    } else super.bindFrontTexture();
   }
 
 
@@ -531,39 +500,19 @@ public class PJOGL extends PGL {
           bindTexture(TEXTURE_2D, 0);
         }
       }
-    } else {
-      if (textureIsBound(TEXTURE_2D, glColorTex.get(frontTex))) {
-        // We don't want to unbind another texture
-        // that might be bound instead of this one.
-        if (!texturingIsEnabled(TEXTURE_2D)) {
-          enableTexturing(TEXTURE_2D);
-          bindTexture(TEXTURE_2D, 0);
-          disableTexturing(TEXTURE_2D);
-        } else {
-          bindTexture(TEXTURE_2D, 0);
-        }
-      }
-    }
+    } else super.unbindFrontTexture();
   }
 
 
   @Override
   protected void syncBackTexture() {
-    if (usingFrontTex) needSepFrontTex = true;
     if (USE_JOGL_FBOLAYER) {
+      if (usingFrontTex) needSepFrontTex = true;
       if (1 < numSamples) {
         backFBO.syncSamplingSink(gl);
         backFBO.bind(gl);
       }
-    } else {
-      if (1 < numSamples) {
-        bindFramebuffer(READ_FRAMEBUFFER, glMultiFbo.get(0));
-        bindFramebuffer(DRAW_FRAMEBUFFER, glColorFbo.get(0));
-        blitFramebuffer(0, 0, fboWidth, fboHeight,
-                        0, 0, fboWidth, fboHeight,
-                        COLOR_BUFFER_BIT, NEAREST);
-      }
-    }
+    } else super.syncBackTexture();
   }
 
 
@@ -597,12 +546,10 @@ public class PJOGL extends PGL {
     }
   }
 
+
   @Override
-  protected void requestFocus() {
-    if (canvas != null) {
-      canvas.requestFocus();
-    }
-  }
+  protected void requestFocus() { }
+
 
   @Override
   protected void requestDraw() {
@@ -635,6 +582,7 @@ public class PJOGL extends PGL {
     }
   }
 
+
   @Override
   protected void swapBuffers() {
     if (WINDOW_TOOLKIT == AWT) {
@@ -642,11 +590,6 @@ public class PJOGL extends PGL {
     } else if (WINDOW_TOOLKIT == NEWT) {
       window.swapBuffers();
     }
-  }
-
-  @Override
-  protected boolean threadIsCurrent() {
-    return Thread.currentThread() == glThread;
   }
 
 
@@ -697,17 +640,431 @@ public class PJOGL extends PGL {
     gl2x.glLoadMatrixf(mvMatrix, 0);
   }
 
+
   @Override
   protected boolean hasFBOs() {
     if (context.hasBasicFBOSupport()) return true;
     else return super.hasFBOs();
   }
 
+
   @Override
   protected boolean hasShaders() {
     if (context.hasGLSL()) return true;
     else return super.hasShaders();
   }
+
+
+  ///////////////////////////////////////////////////////////
+
+  // JOGL event listeners
+
+
+  protected class PGLListener implements GLEventListener {
+    public PGLListener() {}
+
+    @Override
+    public void display(GLAutoDrawable glDrawable) {
+      drawable = glDrawable;
+      context = glDrawable.getContext();
+      glContext = context.hashCode();
+
+      glThread = Thread.currentThread();
+
+      gl = context.getGL();
+      gl2 = gl.getGL2ES2();
+      try {
+        gl2x = gl.getGL2();
+      } catch (javax.media.opengl.GLException e) {
+        gl2x = null;
+      }
+
+      if (USE_JOGL_FBOLAYER && capabilities.isFBO()) {
+        // The onscreen drawing surface is backed by an FBO layer.
+        GLFBODrawable fboDrawable = null;
+
+        if (WINDOW_TOOLKIT == AWT) {
+          GLCanvas glCanvas = (GLCanvas)glDrawable;
+          fboDrawable = (GLFBODrawable)glCanvas.getDelegatedDrawable();
+        } else {
+          GLWindow glWindow = (GLWindow)glDrawable;
+          fboDrawable = (GLFBODrawable)glWindow.getDelegatedDrawable();
+        }
+
+        if (fboDrawable != null) {
+          backFBO = fboDrawable.getFBObject(GL.GL_BACK);
+          if (1 < numSamples) {
+            if (needSepFrontTex) {
+              // When using multisampled FBO, the back buffer is the MSAA
+              // surface so it cannot be read from. The sink buffer contains
+              // the readable 2D texture.
+              // In this case, we create an auxiliary "front" buffer that it is
+              // swapped with the sink buffer at the beginning of each frame.
+              // In this way, we always have a readable copy of the previous
+              // frame in the front texture, while the back is synchronized
+              // with the contents of the MSAA back buffer when requested.
+              if (frontFBO == null) {
+                // init
+                frontFBO = new FBObject();
+                frontFBO.reset(gl, pg.width, pg.height);
+                frontFBO.attachTexture2D(gl, 0, true);
+                sinkFBO = backFBO.getSamplingSinkFBO();
+                changedFrontTex = changedBackTex = true;
+              } else {
+                // swap
+                FBObject temp = sinkFBO;
+                sinkFBO = frontFBO;
+                frontFBO = temp;
+                backFBO.setSamplingSink(sinkFBO);
+                changedFrontTex = changedBackTex = false;
+              }
+              backTexAttach  = (FBObject.TextureAttachment) sinkFBO.
+                               getColorbuffer(0);
+              frontTexAttach = (FBObject.TextureAttachment)frontFBO.
+                               getColorbuffer(0);
+            } else {
+              // Default setting (to save resources): the front and back
+              // textures are the same.
+              sinkFBO = backFBO.getSamplingSinkFBO();
+              backTexAttach = (FBObject.TextureAttachment) sinkFBO.
+                              getColorbuffer(0);
+              frontTexAttach = backTexAttach;
+            }
+
+          } else {
+            // w/out multisampling, rendering is done on the back buffer.
+            frontFBO = fboDrawable.getFBObject(GL.GL_FRONT);
+
+            backTexAttach  = fboDrawable.getTextureBuffer(GL.GL_BACK);
+            frontTexAttach = fboDrawable.getTextureBuffer(GL.GL_FRONT);
+          }
+        }
+      }
+
+      pg.parent.handleDraw();
+      drawLatch.countDown();
+    }
+
+    @Override
+    public void dispose(GLAutoDrawable adrawable) {
+    }
+
+    @Override
+    public void init(GLAutoDrawable adrawable) {
+      drawable = adrawable;
+      context = adrawable.getContext();
+      glContext = context.hashCode();
+      capabilities = adrawable.getChosenGLCapabilities();
+      gl = context.getGL();
+
+      if (!hasFBOs()) {
+        throw new RuntimeException(MISSING_FBO_ERROR);
+      }
+      if (!hasShaders()) {
+        throw new RuntimeException(MISSING_GLSL_ERROR);
+      }
+      if (USE_JOGL_FBOLAYER && capabilities.isFBO()) {
+        int maxs = maxSamples();
+        numSamples = PApplet.min(capabilities.getNumSamples(), maxs);
+      }
+    }
+
+    @Override
+    public void reshape(GLAutoDrawable adrawable, int x, int y, int w, int h) {
+      drawable = adrawable;
+      context = adrawable.getContext();
+      glContext = context.hashCode();
+    }
+  }
+
+  protected void nativeMouseEvent(com.jogamp.newt.event.MouseEvent nativeEvent,
+                                  int peAction) {
+    int modifiers = nativeEvent.getModifiers();
+    int peModifiers = modifiers &
+                      (InputEvent.SHIFT_MASK |
+                       InputEvent.CTRL_MASK |
+                       InputEvent.META_MASK |
+                       InputEvent.ALT_MASK);
+
+    int peButton = 0;
+    if ((modifiers & InputEvent.BUTTON1_MASK) != 0) {
+      peButton = PConstants.LEFT;
+    } else if ((modifiers & InputEvent.BUTTON2_MASK) != 0) {
+      peButton = PConstants.CENTER;
+    } else if ((modifiers & InputEvent.BUTTON3_MASK) != 0) {
+      peButton = PConstants.RIGHT;
+    }
+
+    if (PApplet.platform == PConstants.MACOSX) {
+      //if (nativeEvent.isPopupTrigger()) {
+      if ((modifiers & InputEvent.CTRL_MASK) != 0) {
+        peButton = PConstants.RIGHT;
+      }
+    }
+
+    int peCount = 0;
+    if (peAction == MouseEvent.WHEEL) {
+      peCount = nativeEvent.isShiftDown() ? (int)nativeEvent.getRotation()[0] :
+                                            (int)nativeEvent.getRotation()[1];
+    } else {
+      peCount = nativeEvent.getClickCount();
+    }
+
+    MouseEvent me = new MouseEvent(nativeEvent, nativeEvent.getWhen(),
+                                   peAction, peModifiers,
+                                   nativeEvent.getX(), nativeEvent.getY(),
+                                   peButton,
+                                   peCount);
+
+    pg.parent.postEvent(me);
+  }
+
+  protected void nativeKeyEvent(com.jogamp.newt.event.KeyEvent nativeEvent,
+                                int peAction) {
+    int peModifiers = nativeEvent.getModifiers() &
+                      (InputEvent.SHIFT_MASK |
+                       InputEvent.CTRL_MASK |
+                       InputEvent.META_MASK |
+                       InputEvent.ALT_MASK);
+
+    char keyChar;
+    if ((int)nativeEvent.getKeyChar() == 0) {
+      keyChar = PConstants.CODED;
+    } else {
+      keyChar = nativeEvent.getKeyChar();
+    }
+
+    KeyEvent ke = new KeyEvent(nativeEvent, nativeEvent.getWhen(),
+                               peAction, peModifiers,
+                               keyChar,
+                               nativeEvent.getKeyCode());
+
+    pg.parent.postEvent(ke);
+  }
+
+  class NEWTWindowListener implements com.jogamp.newt.event.WindowListener {
+    @Override
+    public void windowGainedFocus(com.jogamp.newt.event.WindowEvent arg0) {
+      pg.parent.focusGained(null);
+    }
+
+    @Override
+    public void windowLostFocus(com.jogamp.newt.event.WindowEvent arg0) {
+      pg.parent.focusLost(null);
+    }
+
+    @Override
+    public void windowDestroyNotify(com.jogamp.newt.event.WindowEvent arg0) {
+    }
+
+    @Override
+    public void windowDestroyed(com.jogamp.newt.event.WindowEvent arg0) {
+    }
+
+    @Override
+    public void windowMoved(com.jogamp.newt.event.WindowEvent arg0) {
+    }
+
+    @Override
+    public void windowRepaint(com.jogamp.newt.event.WindowUpdateEvent arg0) {
+    }
+
+    @Override
+    public void windowResized(com.jogamp.newt.event.WindowEvent arg0) { }
+  }
+
+  // NEWT mouse listener
+  class NEWTMouseListener extends com.jogamp.newt.event.MouseAdapter {
+    @Override
+    public void mousePressed(com.jogamp.newt.event.MouseEvent e) {
+      nativeMouseEvent(e, MouseEvent.PRESS);
+    }
+    @Override
+    public void mouseReleased(com.jogamp.newt.event.MouseEvent e) {
+      nativeMouseEvent(e, MouseEvent.RELEASE);
+    }
+    @Override
+    public void mouseClicked(com.jogamp.newt.event.MouseEvent e) {
+      nativeMouseEvent(e, MouseEvent.CLICK);
+    }
+    @Override
+    public void mouseDragged(com.jogamp.newt.event.MouseEvent e) {
+      nativeMouseEvent(e, MouseEvent.DRAG);
+    }
+    @Override
+    public void mouseMoved(com.jogamp.newt.event.MouseEvent e) {
+      nativeMouseEvent(e, MouseEvent.MOVE);
+    }
+    @Override
+    public void mouseWheelMoved(com.jogamp.newt.event.MouseEvent e) {
+      nativeMouseEvent(e, MouseEvent.WHEEL);
+    }
+    @Override
+    public void mouseEntered(com.jogamp.newt.event.MouseEvent e) {
+      nativeMouseEvent(e, MouseEvent.ENTER);
+    }
+    @Override
+    public void mouseExited(com.jogamp.newt.event.MouseEvent e) {
+      nativeMouseEvent(e, MouseEvent.EXIT);
+    }
+  }
+
+  // NEWT key listener
+  class NEWTKeyListener extends com.jogamp.newt.event.KeyAdapter {
+    @Override
+    public void keyPressed(com.jogamp.newt.event.KeyEvent e) {
+      nativeKeyEvent(e, KeyEvent.PRESS);
+    }
+    @Override
+    public void keyReleased(com.jogamp.newt.event.KeyEvent e) {
+      nativeKeyEvent(e, KeyEvent.RELEASE);
+    }
+    public void keyTyped(com.jogamp.newt.event.KeyEvent e)  {
+      nativeKeyEvent(e, KeyEvent.TYPE);
+    }
+  }
+
+
+  ///////////////////////////////////////////////////////////
+
+  // Tessellator
+
+
+  @Override
+  protected Tessellator createTessellator(TessellatorCallback callback) {
+    return new Tessellator(callback);
+  }
+
+
+  protected class Tessellator implements PGL.Tessellator {
+    protected GLUtessellator tess;
+    protected TessellatorCallback callback;
+    protected GLUCallback gluCallback;
+
+    public Tessellator(TessellatorCallback callback) {
+      this.callback = callback;
+      tess = GLU.gluNewTess();
+      gluCallback = new GLUCallback();
+
+      GLU.gluTessCallback(tess, GLU.GLU_TESS_BEGIN, gluCallback);
+      GLU.gluTessCallback(tess, GLU.GLU_TESS_END, gluCallback);
+      GLU.gluTessCallback(tess, GLU.GLU_TESS_VERTEX, gluCallback);
+      GLU.gluTessCallback(tess, GLU.GLU_TESS_COMBINE, gluCallback);
+      GLU.gluTessCallback(tess, GLU.GLU_TESS_ERROR, gluCallback);
+    }
+
+    @Override
+    public void beginPolygon() {
+      GLU.gluTessBeginPolygon(tess, null);
+    }
+
+    @Override
+    public void endPolygon() {
+      GLU.gluTessEndPolygon(tess);
+    }
+
+    @Override
+    public void setWindingRule(int rule) {
+      GLU.gluTessProperty(tess, GLU.GLU_TESS_WINDING_RULE, rule);
+    }
+
+    @Override
+    public void beginContour() {
+      GLU.gluTessBeginContour(tess);
+    }
+
+    @Override
+    public void endContour() {
+      GLU.gluTessEndContour(tess);
+    }
+
+    @Override
+    public void addVertex(double[] v) {
+      GLU.gluTessVertex(tess, v, 0, v);
+    }
+
+    protected class GLUCallback extends GLUtessellatorCallbackAdapter {
+      @Override
+      public void begin(int type) {
+        callback.begin(type);
+      }
+
+      @Override
+      public void end() {
+        callback.end();
+      }
+
+      @Override
+      public void vertex(Object data) {
+        callback.vertex(data);
+      }
+
+      @Override
+      public void combine(double[] coords, Object[] data,
+                          float[] weight, Object[] outData) {
+        callback.combine(coords, data, weight, outData);
+      }
+
+      @Override
+      public void error(int errnum) {
+        callback.error(errnum);
+      }
+    }
+  }
+
+
+  @Override
+  protected String tessError(int err) {
+    return glu.gluErrorString(err);
+  }
+
+
+  ///////////////////////////////////////////////////////////
+
+  // Font outline
+
+
+  static {
+    SHAPE_TEXT_SUPPORTED = true;
+    SEG_MOVETO  = PathIterator.SEG_MOVETO;
+    SEG_LINETO  = PathIterator.SEG_LINETO;
+    SEG_QUADTO  = PathIterator.SEG_QUADTO;
+    SEG_CUBICTO = PathIterator.SEG_CUBICTO;
+    SEG_CLOSE   = PathIterator.SEG_CLOSE;
+  }
+
+
+  @Override
+  protected FontOutline createFontOutline(char ch, Object font) {
+    return new FontOutline(ch, font);
+  }
+
+
+  protected class FontOutline implements PGL.FontOutline {
+    PathIterator iter;
+
+    public FontOutline(char ch, Object font) {
+      char textArray[] = new char[] { ch };
+      Graphics2D graphics = (Graphics2D) pg.parent.getGraphics();
+      FontRenderContext frc = graphics.getFontRenderContext();
+      GlyphVector gv = ((Font)font).createGlyphVector(frc, textArray);
+      Shape shp = gv.getOutline();
+      iter = shp.getPathIterator(null);
+    }
+
+    public boolean isDone() {
+      return iter.isDone();
+    }
+
+    public int currentSegment(float coords[]) {
+      return iter.currentSegment(coords);
+    }
+
+    public void next() {
+      iter.next();
+    }
+  }
+
 
   ///////////////////////////////////////////////////////////
 
@@ -996,7 +1353,6 @@ public class PJOGL extends PGL {
     LINE_SMOOTH    = GL.GL_LINE_SMOOTH;
     POLYGON_SMOOTH = GL2GL3.GL_POLYGON_SMOOTH;
   }
-
 
   ///////////////////////////////////////////////////////////
 
@@ -1657,7 +2013,7 @@ public class PJOGL extends PGL {
   @Override
   public String getProgramInfoLog(int program) {
     int[] val = { 0 };
-    gl2.glGetShaderiv(program, GL2.GL_INFO_LOG_LENGTH, val, 0);
+    gl2.glGetShaderiv(program, GL2ES2.GL_INFO_LOG_LENGTH, val, 0);
     int length = val[0];
 
     if (0 < length) {
@@ -1885,410 +2241,4 @@ public class PJOGL extends PGL {
       gl2x.glDrawBuffer(buf);
     }
   }
-
-
-
-
-
-  ///////////////////////////////////////////////////////////
-
-  // JOGL Event listeners
-
-  protected boolean changedFrontTex = false;
-  protected boolean changedBackTex = false;
-
-  protected class PGLListener implements GLEventListener {
-    public PGLListener() {}
-
-    @Override
-    public void display(GLAutoDrawable glDrawable) {
-      drawable = glDrawable;
-      context = glDrawable.getContext();
-      contextID = context.hashCode();
-
-      glThread = Thread.currentThread();
-
-      gl = context.getGL();
-      gl2 = gl.getGL2ES2();
-      try {
-        gl2x = gl.getGL2();
-      } catch (javax.media.opengl.GLException e) {
-        gl2x = null;
-      }
-
-      if (USE_JOGL_FBOLAYER && capabilities.isFBO()) {
-        // The onscreen drawing surface is backed by an FBO layer.
-        GLFBODrawable fboDrawable = null;
-
-        if (WINDOW_TOOLKIT == AWT) {
-          GLCanvas glCanvas = (GLCanvas)glDrawable;
-          fboDrawable = (GLFBODrawable)glCanvas.getDelegatedDrawable();
-        } else {
-          GLWindow glWindow = (GLWindow)glDrawable;
-          fboDrawable = (GLFBODrawable)glWindow.getDelegatedDrawable();
-        }
-
-        if (fboDrawable != null) {
-          backFBO = fboDrawable.getFBObject(GL.GL_BACK);
-          if (1 < numSamples) {
-            if (needSepFrontTex) {
-              // When using multisampled FBO, the back buffer is the MSAA
-              // surface so it cannot be read from. The sink buffer contains
-              // the readable 2D texture.
-              // In this case, we create an auxiliary "front" buffer that it is
-              // swapped with the sink buffer at the beginning of each frame.
-              // In this way, we always have a readable copy of the previous
-              // frame in the front texture, while the back is synchronized
-              // with the contents of the MSAA back buffer when requested.
-              if (frontFBO == null) {
-                // init
-                frontFBO = new FBObject();
-                frontFBO.reset(gl, pg.width, pg.height);
-                frontFBO.attachTexture2D(gl, 0, true);
-                sinkFBO = backFBO.getSamplingSinkFBO();
-                changedFrontTex = changedBackTex = true;
-              } else {
-                // swap
-                FBObject temp = sinkFBO;
-                sinkFBO = frontFBO;
-                frontFBO = temp;
-                backFBO.setSamplingSink(sinkFBO);
-                changedFrontTex = changedBackTex = false;
-              }
-              backTexAttach  = (FBObject.TextureAttachment) sinkFBO.
-                               getColorbuffer(0);
-              frontTexAttach = (FBObject.TextureAttachment)frontFBO.
-                               getColorbuffer(0);
-            } else {
-              // Default setting (to save resources): the front and back
-              // textures are the same.
-              sinkFBO = backFBO.getSamplingSinkFBO();
-              backTexAttach = (FBObject.TextureAttachment) sinkFBO.
-                              getColorbuffer(0);
-              frontTexAttach = backTexAttach;
-            }
-
-          } else {
-            // w/out multisampling, rendering is done on the back buffer.
-            frontFBO = fboDrawable.getFBObject(GL.GL_FRONT);
-
-            backTexAttach  = fboDrawable.getTextureBuffer(GL.GL_BACK);
-            frontTexAttach = fboDrawable.getTextureBuffer(GL.GL_FRONT);
-          }
-        }
-      }
-
-      pg.parent.handleDraw();
-//      clearColor(1, 0, 0, 1);
-//      clear(COLOR_BUFFER_BIT);
-      drawLatch.countDown();
-    }
-
-    @Override
-    public void dispose(GLAutoDrawable adrawable) {
-    }
-
-    @Override
-    public void init(GLAutoDrawable adrawable) {
-      drawable = adrawable;
-      context = adrawable.getContext();
-      contextID = context.hashCode();
-      capabilities = adrawable.getChosenGLCapabilities();
-      gl = context.getGL();
-
-      if (!hasFBOs()) {
-        throw new RuntimeException(MISSING_FBO_ERROR);
-      }
-      if (!hasShaders()) {
-        throw new RuntimeException(MISSING_GLSL_ERROR);
-      }
-      if (USE_JOGL_FBOLAYER && capabilities.isFBO()) {
-        int maxs = maxSamples();
-        numSamples = PApplet.min(capabilities.getNumSamples(), maxs);
-      }
-    }
-
-    @Override
-    public void reshape(GLAutoDrawable adrawable, int x, int y, int w, int h) {
-      drawable = adrawable;
-      context = adrawable.getContext();
-      contextID = context.hashCode();
-    }
-  }
-
-  protected void nativeMouseEvent(com.jogamp.newt.event.MouseEvent nativeEvent,
-                                  int peAction) {
-    int modifiers = nativeEvent.getModifiers();
-    int peModifiers = modifiers &
-                      (InputEvent.SHIFT_MASK |
-                       InputEvent.CTRL_MASK |
-                       InputEvent.META_MASK |
-                       InputEvent.ALT_MASK);
-
-    int peButton = 0;
-    if ((modifiers & InputEvent.BUTTON1_MASK) != 0) {
-      peButton = PConstants.LEFT;
-    } else if ((modifiers & InputEvent.BUTTON2_MASK) != 0) {
-      peButton = PConstants.CENTER;
-    } else if ((modifiers & InputEvent.BUTTON3_MASK) != 0) {
-      peButton = PConstants.RIGHT;
-    }
-
-    if (PApplet.platform == PConstants.MACOSX) {
-      //if (nativeEvent.isPopupTrigger()) {
-      if ((modifiers & InputEvent.CTRL_MASK) != 0) {
-        peButton = PConstants.RIGHT;
-      }
-    }
-
-    int peCount = 0;
-    if (peAction == MouseEvent.WHEEL) {
-      peCount = nativeEvent.isShiftDown() ? (int)nativeEvent.getRotation()[0] :
-                                            (int)nativeEvent.getRotation()[1];
-    } else {
-      peCount = nativeEvent.getClickCount();
-    }
-
-    MouseEvent me = new MouseEvent(nativeEvent, nativeEvent.getWhen(),
-                                   peAction, peModifiers,
-                                   nativeEvent.getX(), nativeEvent.getY(),
-                                   peButton,
-                                   peCount);
-
-    pg.parent.postEvent(me);
-  }
-
-  protected void nativeKeyEvent(com.jogamp.newt.event.KeyEvent nativeEvent,
-                                int peAction) {
-    int peModifiers = nativeEvent.getModifiers() &
-                      (InputEvent.SHIFT_MASK |
-                       InputEvent.CTRL_MASK |
-                       InputEvent.META_MASK |
-                       InputEvent.ALT_MASK);
-
-    char keyChar;
-    if ((int)nativeEvent.getKeyChar() == 0) {
-      keyChar = PConstants.CODED;
-    } else {
-      keyChar = nativeEvent.getKeyChar();
-    }
-
-    KeyEvent ke = new KeyEvent(nativeEvent, nativeEvent.getWhen(),
-                               peAction, peModifiers,
-                               keyChar,
-                               nativeEvent.getKeyCode());
-
-    pg.parent.postEvent(ke);
-  }
-
-  class NEWTWindowListener implements com.jogamp.newt.event.WindowListener {
-    @Override
-    public void windowGainedFocus(com.jogamp.newt.event.WindowEvent arg0) {
-      pg.parent.focusGained(null);
-    }
-
-    @Override
-    public void windowLostFocus(com.jogamp.newt.event.WindowEvent arg0) {
-      pg.parent.focusLost(null);
-    }
-
-    @Override
-    public void windowDestroyNotify(com.jogamp.newt.event.WindowEvent arg0) {
-    }
-
-    @Override
-    public void windowDestroyed(com.jogamp.newt.event.WindowEvent arg0) {
-    }
-
-    @Override
-    public void windowMoved(com.jogamp.newt.event.WindowEvent arg0) {
-    }
-
-    @Override
-    public void windowRepaint(com.jogamp.newt.event.WindowUpdateEvent arg0) {
-    }
-
-    @Override
-    public void windowResized(com.jogamp.newt.event.WindowEvent arg0) { }
-  }
-
-  // NEWT mouse listener
-  class NEWTMouseListener extends com.jogamp.newt.event.MouseAdapter {
-    @Override
-    public void mousePressed(com.jogamp.newt.event.MouseEvent e) {
-      nativeMouseEvent(e, MouseEvent.PRESS);
-    }
-    @Override
-    public void mouseReleased(com.jogamp.newt.event.MouseEvent e) {
-      nativeMouseEvent(e, MouseEvent.RELEASE);
-    }
-    @Override
-    public void mouseClicked(com.jogamp.newt.event.MouseEvent e) {
-      nativeMouseEvent(e, MouseEvent.CLICK);
-    }
-    @Override
-    public void mouseDragged(com.jogamp.newt.event.MouseEvent e) {
-      nativeMouseEvent(e, MouseEvent.DRAG);
-    }
-    @Override
-    public void mouseMoved(com.jogamp.newt.event.MouseEvent e) {
-      nativeMouseEvent(e, MouseEvent.MOVE);
-    }
-    @Override
-    public void mouseWheelMoved(com.jogamp.newt.event.MouseEvent e) {
-      nativeMouseEvent(e, MouseEvent.WHEEL);
-    }
-    @Override
-    public void mouseEntered(com.jogamp.newt.event.MouseEvent e) {
-      nativeMouseEvent(e, MouseEvent.ENTER);
-    }
-    @Override
-    public void mouseExited(com.jogamp.newt.event.MouseEvent e) {
-      nativeMouseEvent(e, MouseEvent.EXIT);
-    }
-  }
-
-  // NEWT key listener
-  class NEWTKeyListener extends com.jogamp.newt.event.KeyAdapter {
-    @Override
-    public void keyPressed(com.jogamp.newt.event.KeyEvent e) {
-      nativeKeyEvent(e, KeyEvent.PRESS);
-    }
-    @Override
-    public void keyReleased(com.jogamp.newt.event.KeyEvent e) {
-      nativeKeyEvent(e, KeyEvent.RELEASE);
-    }
-    public void keyTyped(com.jogamp.newt.event.KeyEvent e)  {
-      nativeKeyEvent(e, KeyEvent.TYPE);
-    }
-  }
-
-
-
-
-  @Override
-  protected Tessellator createTessellator(TessellatorCallback callback) {
-    return new Tessellator(callback);
-  }
-
-  protected class Tessellator implements PGL.Tessellator {
-    protected GLUtessellator tess;
-    protected TessellatorCallback callback;
-    protected GLUCallback gluCallback;
-
-    public Tessellator(TessellatorCallback callback) {
-      this.callback = callback;
-      tess = GLU.gluNewTess();
-      gluCallback = new GLUCallback();
-
-      GLU.gluTessCallback(tess, GLU.GLU_TESS_BEGIN, gluCallback);
-      GLU.gluTessCallback(tess, GLU.GLU_TESS_END, gluCallback);
-      GLU.gluTessCallback(tess, GLU.GLU_TESS_VERTEX, gluCallback);
-      GLU.gluTessCallback(tess, GLU.GLU_TESS_COMBINE, gluCallback);
-      GLU.gluTessCallback(tess, GLU.GLU_TESS_ERROR, gluCallback);
-    }
-
-    @Override
-    public void beginPolygon() {
-      GLU.gluTessBeginPolygon(tess, null);
-    }
-
-    @Override
-    public void endPolygon() {
-      GLU.gluTessEndPolygon(tess);
-    }
-
-    @Override
-    public void setWindingRule(int rule) {
-      GLU.gluTessProperty(tess, GLU.GLU_TESS_WINDING_RULE, rule);
-    }
-
-    @Override
-    public void beginContour() {
-      GLU.gluTessBeginContour(tess);
-    }
-
-    @Override
-    public void endContour() {
-      GLU.gluTessEndContour(tess);
-    }
-
-    @Override
-    public void addVertex(double[] v) {
-      GLU.gluTessVertex(tess, v, 0, v);
-    }
-
-    protected class GLUCallback extends GLUtessellatorCallbackAdapter {
-      @Override
-      public void begin(int type) {
-        callback.begin(type);
-      }
-
-      @Override
-      public void end() {
-        callback.end();
-      }
-
-      @Override
-      public void vertex(Object data) {
-        callback.vertex(data);
-      }
-
-      @Override
-      public void combine(double[] coords, Object[] data,
-                          float[] weight, Object[] outData) {
-        callback.combine(coords, data, weight, outData);
-      }
-
-      @Override
-      public void error(int errnum) {
-        callback.error(errnum);
-      }
-    }
-  }
-
-  @Override
-  protected String tessError(int err) {
-    return glu.gluErrorString(err);
-  }
-
-  static {
-    SHAPE_TEXT_SUPPORTED = true;
-    SEG_MOVETO  = PathIterator.SEG_MOVETO;
-    SEG_LINETO  = PathIterator.SEG_LINETO;
-    SEG_QUADTO  = PathIterator.SEG_QUADTO;
-    SEG_CUBICTO = PathIterator.SEG_CUBICTO;
-    SEG_CLOSE   = PathIterator.SEG_CLOSE;
-  }
-
-  @Override
-  protected FontOutline createFontOutline(char ch, Object font) {
-    return new FontOutline(ch, font);
-  }
-
-  protected class FontOutline implements PGL.FontOutline {
-    PathIterator iter;
-
-    public FontOutline(char ch, Object font) {
-      char textArray[] = new char[] { ch };
-      Graphics2D graphics = (Graphics2D) pg.parent.getGraphics();
-      FontRenderContext frc = graphics.getFontRenderContext();
-      GlyphVector gv = ((Font)font).createGlyphVector(frc, textArray);
-      Shape shp = gv.getOutline();
-      iter = shp.getPathIterator(null);
-    }
-
-    public boolean isDone() {
-      return iter.isDone();
-    }
-
-    public int currentSegment(float coords[]) {
-      return iter.currentSegment(coords);
-    }
-
-    public void next() {
-      iter.next();
-    }
-  }
-
 }
