@@ -74,14 +74,18 @@ public class ToolContribution extends LocalContribution implements Tool {
   static public ArrayList<ToolContribution> loadAll(File toolsFolder) {
     File[] list = ContributionType.TOOL.listCandidates(toolsFolder);
     ArrayList<ToolContribution> outgoing = new ArrayList<ToolContribution>();
-    for (File folder : list) {
-      try {
-        ToolContribution tc = load(folder);
-        if (tc != null) {
-          outgoing.add(tc);
+    // If toolsFolder does not exist or is inaccessible (stranger things have
+    // happened, and are reported as bugs) list will come back null.
+    if (list != null) {
+      for (File folder : list) {
+        try {
+          ToolContribution tc = load(folder);
+          if (tc != null) {
+            outgoing.add(tc);
+          }
+        } catch (Exception e) {
+          e.printStackTrace();
         }
-      } catch (Exception e) {
-        e.printStackTrace();
       }
     }
     return outgoing;

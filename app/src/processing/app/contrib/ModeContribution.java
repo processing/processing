@@ -95,14 +95,18 @@ public class ModeContribution extends LocalContribution {
       existing.put(contrib.getFolder(), contrib);
     }
     File[] potential = ContributionType.MODE.listCandidates(modesFolder);
-    for (File folder : potential) {
-      if (!existing.containsKey(folder)) {
-        try {
-          contribModes.add(new ModeContribution(base, folder, null));
-        } catch (IgnorableException ig) {
-          Base.log(ig.getMessage());
-        } catch (Exception e) {
-          e.printStackTrace();
+    // If modesFolder does not exist or is inaccessible (folks might like to 
+    // mess with folders then report it as a bug) 'potential' will be null.
+    if (potential != null) {
+      for (File folder : potential) {
+        if (!existing.containsKey(folder)) {
+          try {
+            contribModes.add(new ModeContribution(base, folder, null));
+          } catch (IgnorableException ig) {
+            Base.log(ig.getMessage());
+          } catch (Exception e) {
+            e.printStackTrace();
+          }
         }
       }
     }
