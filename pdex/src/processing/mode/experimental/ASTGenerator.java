@@ -780,9 +780,11 @@ public class ASTGenerator {
   protected ArrayList<CompletionCandidate> candidates;
   protected String lastPredictedWord = " ";
   protected AtomicBoolean predictionsEnabled;
+  protected int predictionMinLength = 3;
   
   public void preparePredictions(final String word, final int line, final int lineStartNonWSOffset) {
     if(!predictionsEnabled.get()) return;
+    if(word.length() < predictionMinLength) return; 
     // This method is called from TextArea.fetchPhrase, which is called via a SwingWorker instance
     // in TextArea.processKeyEvent
     if(caretWithinLineComment()){
@@ -809,7 +811,7 @@ public class ASTGenerator {
           noCompare = true;
         }
         
-        if (word2.length() > 2 && !noCompare
+        if (word2.length() >= predictionMinLength && !noCompare
             && word2.length() > lastPredictedWord.length()) {
           if (word2.startsWith(lastPredictedWord)) {
             log(word + " starts with " + lastPredictedWord);

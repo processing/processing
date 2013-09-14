@@ -303,7 +303,7 @@ public class TextArea extends JEditTextArea {
       word = word.trim();
       if (word.endsWith("."))
         word = word.substring(0, word.length() - 1);
-      if(word.length() > 1)
+      
       errorCheckerService.getASTGenerator().preparePredictions(word, line
           + errorCheckerService.mainClassOffset,0);
       return word;
