@@ -559,7 +559,7 @@ public class ErrorCheckerService implements Runnable{
           }
   
           // If warnings are disabled, skip 'em
-          if (p.isWarning() && !warningsEnabled) {
+          if (p.isWarning() && !ExperimentalMode.warningsEnabled) {
             continue;
           }
           problemsList.add(p);
@@ -723,11 +723,6 @@ public class ErrorCheckerService implements Runnable{
    */
   @SuppressWarnings("rawtypes")
   protected Map compilerSettings;
-
-  /**
-   * Enable/Disable warnings from being shown
-   */
-  volatile public boolean warningsEnabled = true;
 
   /**
    * Sets compiler options for JDT Compiler

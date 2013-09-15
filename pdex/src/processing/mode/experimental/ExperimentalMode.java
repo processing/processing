@@ -35,6 +35,7 @@ import processing.app.Base;
 import processing.app.Editor;
 import processing.app.EditorState;
 import processing.app.Mode;
+import processing.app.Preferences;
 import processing.mode.java.JavaMode;
 
 
@@ -113,6 +114,44 @@ public class ExperimentalMode extends JavaMode {
     return new File[] { 
       Base.getContentFile("modes/java/keywords.txt") 
     };
+  }
+  
+  volatile public static boolean errorCheckEnabled = true, warningsEnabled = true,
+      codeCompletionsEnabled = true, debugOutputEnabled = false, errorLogsEnabled = false;
+
+  public final String prefErrorCheck = "pdex.errorCheckEnabled",
+      prefWarnings = "pdex.warningsEnabled",
+      prefCodeCompletionEnabled = "pdex.ccEnabled",
+      prefDebugOP = "pdex.dbgOutput", prefErrorLogs = "pdex.writeErrorLogs";
+  
+  public void loadPreferences(){
+    ensurePrefsExist();
+    errorCheckEnabled = Preferences.getBoolean(prefErrorCheck);
+    warningsEnabled = Preferences.getBoolean(prefWarnings);
+    codeCompletionsEnabled = Preferences.getBoolean(prefCodeCompletionEnabled);
+    debugOutputEnabled = Preferences.getBoolean(prefDebugOP);
+    errorCheckEnabled = Preferences.getBoolean(prefErrorLogs);
+  }
+  
+  public void savePreferences(){
+    Preferences.setBoolean(prefErrorCheck, errorCheckEnabled);
+    Preferences.setBoolean(prefWarnings, warningsEnabled);
+    Preferences.setBoolean(prefCodeCompletionEnabled, codeCompletionsEnabled);
+    Preferences.setBoolean(prefDebugOP, debugOutputEnabled);
+    Preferences.setBoolean(prefErrorLogs,errorLogsEnabled);
+  }
+  
+  public void ensurePrefsExist(){
+    if(Preferences.get(prefErrorCheck) == null) 
+      Preferences.setBoolean(prefErrorCheck,errorCheckEnabled);
+    if(Preferences.get(prefWarnings) == null) 
+      Preferences.setBoolean(prefWarnings,warningsEnabled);
+    if(Preferences.get(prefCodeCompletionEnabled) == null) 
+      Preferences.setBoolean(prefCodeCompletionEnabled,codeCompletionsEnabled);
+    if(Preferences.get(prefDebugOP) == null) 
+      Preferences.setBoolean(prefDebugOP,debugOutputEnabled);
+    if(Preferences.get(prefErrorLogs) == null) 
+      Preferences.setBoolean(prefErrorLogs,errorLogsEnabled);
   }
 
 

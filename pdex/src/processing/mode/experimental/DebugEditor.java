@@ -326,11 +326,9 @@ public class DebugEditor extends JavaEditor implements ActionListener {
     
     // Added temporarily to dump error log. TODO: Remove this later
     public void internalCloseRunner(){      
-      if(enableErrorLogging) writeErrorsToFile();
+      if(ExperimentalMode.errorLogsEnabled) writeErrorsToFile();
       super.internalCloseRunner();
     }
-    
-    protected boolean enableErrorLogging = false;
     
     private void writeErrorsToFile(){
     if (errorCheckerService.tempErrorLog.size() == 0)
@@ -525,12 +523,12 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         JCheckBoxMenuItem item;
         final DebugEditor thisEditor = this;
         item = new JCheckBoxMenuItem("Error Checker Enabled");
-        item.setSelected(true);
+        item.setSelected(ExperimentalMode.errorCheckEnabled);
         item.addActionListener(new ActionListener() {
 
           @Override
           public void actionPerformed(ActionEvent e) {
-            
+            ExperimentalMode.errorCheckEnabled = ((JCheckBoxMenuItem) e.getSource()).isSelected();
             if (!((JCheckBoxMenuItem) e.getSource()).isSelected()) {
               // unticked Menu Item
               errorCheckerService.pauseThread();
@@ -571,12 +569,12 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         debugMenu.add(problemWindowMenuCB);
 
         showWarnings = new JCheckBoxMenuItem("Warnings Enabled");
-        showWarnings.setSelected(true);
+        showWarnings.setSelected(ExperimentalMode.warningsEnabled);
         showWarnings.addActionListener(new ActionListener() {
 
           @Override
           public void actionPerformed(ActionEvent e) {
-            errorCheckerService.warningsEnabled = ((JCheckBoxMenuItem) e
+            ExperimentalMode.warningsEnabled = ((JCheckBoxMenuItem) e
                 .getSource()).isSelected();
             errorCheckerService.runManualErrorCheck();
           }
@@ -588,8 +586,8 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         completionsEnabled.addActionListener(new ActionListener() {
           @Override
           public void actionPerformed(ActionEvent e) {
-        errorCheckerService.getASTGenerator().predictionsEnabled
-            .set(((JCheckBoxMenuItem) e.getSource()).isSelected());
+              ExperimentalMode.codeCompletionsEnabled = (((JCheckBoxMenuItem) e
+                  .getSource()).isSelected());
           }
         });
         debugMenu.add(completionsEnabled);
@@ -610,11 +608,11 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         debugMenu.add(showOutline);
         
         writeErrorLog = new JCheckBoxMenuItem("Write Errors to Log");
-        writeErrorLog.setSelected(enableErrorLogging);
+        writeErrorLog.setSelected(ExperimentalMode.errorLogsEnabled);
         writeErrorLog.addActionListener(new ActionListener() {
           @Override
           public void actionPerformed(ActionEvent e) {
-           enableErrorLogging = !enableErrorLogging;
+            ExperimentalMode.errorLogsEnabled = !ExperimentalMode.errorLogsEnabled;
           }
         });
         debugMenu.add(writeErrorLog);

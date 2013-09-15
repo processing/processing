@@ -185,7 +185,6 @@ public class TextArea extends JEditTextArea {
         protected Object doInBackground() throws Exception {
           errorCheckerService.runManualErrorCheck();
           // Provide completions only if it's enabled
-          if(editor.errorCheckerService.getASTGenerator().predictionsEnabled.get())
             log(" Typing: " + fetchPhrase(evt2) + " "
                 + (evt2.getKeyChar() == KeyEvent.VK_ENTER));
           return null;

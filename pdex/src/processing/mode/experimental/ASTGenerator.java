@@ -779,11 +779,11 @@ public class ASTGenerator {
    */
   protected ArrayList<CompletionCandidate> candidates;
   protected String lastPredictedWord = " ";
-  protected AtomicBoolean predictionsEnabled;
+  //protected AtomicBoolean predictionsEnabled;
   protected int predictionMinLength = 3;
   
   public void preparePredictions(final String word, final int line, final int lineStartNonWSOffset) {
-    if(!predictionsEnabled.get()) return;
+    if(!ExperimentalMode.codeCompletionsEnabled) return;
     if(word.length() < predictionMinLength) return; 
     // This method is called from TextArea.fetchPhrase, which is called via a SwingWorker instance
     // in TextArea.processKeyEvent
