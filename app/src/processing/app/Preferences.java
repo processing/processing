@@ -68,11 +68,11 @@ public class Preferences {
 
   // prompt text stuff
 
-  static final String PROMPT_YES     = "Yes";
-  static final String PROMPT_NO      = "No";
-  static final String PROMPT_CANCEL  = "Cancel";
-  static final String PROMPT_OK      = "OK";
-  static final String PROMPT_BROWSE  = "Browse";
+  static final String PROMPT_YES     = Language.text("prompt.yes");
+  static final String PROMPT_NO      = Language.text("prompt.no");
+  static final String PROMPT_CANCEL  = Language.text("prompt.cancel");
+  static final String PROMPT_OK      = Language.text("prompt.ok");
+  static final String PROMPT_BROWSE  = Language.text("prompt.browse");
 
   /**
    * Standardized width for buttons. Mac OS X 10.3 wants 70 as its default,
