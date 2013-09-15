@@ -27,6 +27,7 @@ import javax.swing.JPopupMenu;
 import processing.app.Base;
 import processing.app.Editor;
 import processing.app.EditorToolbar;
+import processing.app.Language;
 
 
 public class JavaToolbar extends EditorToolbar {
@@ -67,13 +68,13 @@ public class JavaToolbar extends EditorToolbar {
 
   static public String getTitle(int index, boolean shift) {
     switch (index) {
-    case RUN:    return !shift ? "Run" : "Present";
-    case STOP:   return "Stop";
-    case NEW:    return "New";
-    case OPEN:   return "Open";
-    case SAVE:   return "Save";
+    case RUN:    return !shift ? Language.text("toolbar.run") : Language.text("toolbar.present");
+    case STOP:   return Language.text("toolbar.stop");
+    case NEW:    return Language.text("toolbar.new");
+    case OPEN:   return Language.text("toolbar.open");
+    case SAVE:   return Language.text("toolbar.save");
 //    case EXPORT: return !shift ? "Export Application" : "Export Applet";
-    case EXPORT: return "Export Application";
+    case EXPORT: return Language.text("toolbar.export_application");
     }
     return null;
   }

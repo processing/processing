@@ -166,7 +166,9 @@ public class Base {
 
     // Make sure a full JDK is installed
     initRequirements();
-
+    
+    Language.init();
+    
     // run static initialization that grabs all the prefs
     Preferences.init();
 

@@ -119,6 +119,7 @@ public class Preferences {
   JRadioButton bitsThirtyTwoButton;
   JRadioButton bitsSixtyFourButton;
   JComboBox displaySelectionBox;
+  JComboBox languageSelectionBox;
 
   int displayCount;
 
@@ -293,6 +294,32 @@ public class Preferences {
     right = Math.max(right, h + d2.width + GUI_BIG);
     top += vmax + GUI_BETWEEN;
 
+    
+    // Language: [ English ] (requires restart of Processing)
+    
+    Container languageBox = Box.createHorizontalBox();
+    JLabel languageLabel = new JLabel("Language ");
+    languageBox.add(languageLabel);
+    languageSelectionBox = new JComboBox();
+    
+    HashMap<String, String> languages = Language.getLanguages();
+    String[] languageSelection = new String[languages.size()];
+    languageSelection[0] = languages.get(Language.getLanguage());
+    int i = 1;
+    for (Map.Entry<String, String> lang : languages.entrySet()) {
+      if(!lang.getKey().equals(Language.getLanguage())){
+        languageSelection[i++] = lang.getValue();
+      }
+    }
+    languageSelectionBox.setModel(new DefaultComboBoxModel(languageSelection));
+    languageBox.add(languageSelectionBox);
+    label = new JLabel("  (requires restart of Processing)");
+    languageBox.add(label);
+    pain.add(languageBox);
+    d = languageBox.getPreferredSize();
+    languageBox.setBounds(left, top, d.width, d.height);
+    top += d.height + GUI_BETWEEN;
+    
 
     // Editor font size [    ]
 
@@ -438,7 +465,7 @@ public class Preferences {
     d = displayBox.getPreferredSize();
     displayBox.setBounds(left, top, d.width, d.height);
     top += d.height + GUI_BETWEEN;
-
+    
 
     // [ ] Automatically associate .pde files with Processing
 
@@ -640,7 +667,20 @@ public class Preferences {
 
 //    setBoolean("editor.external", externalEditorBox.isSelected());
     setBoolean("update.check", checkUpdatesBox.isSelected()); //$NON-NLS-1$
-
+    
+    // Save Language
+    HashMap<String, String> languages = Language.getLanguages();
+    String language = "";
+    for (Map.Entry<String, String> lang : languages.entrySet()) {
+      if( lang.getValue().equals( String.valueOf(languageSelectionBox.getSelectedItem()) ) ){
+        language = lang.getKey().trim().toLowerCase();
+        break;
+      }
+    }
+    if(!language.equals(Language.getLanguage()) && !language.equals("")){
+      Language.setLanguage(language);
+    }
+    
     int oldDisplayIndex = getInteger("run.display"); //$NON-NLS-1$
     int displayIndex = 0;
     for (int d = 0; d < displaySelectionBox.getItemCount(); d++) {

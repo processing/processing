@@ -44,7 +44,7 @@ public class Archiver implements Tool {
 
 
   public String getMenuTitle() {
-    return "Archive Sketch";
+    return Language.text("menu.tools.archive_sketch");
   }
 
 

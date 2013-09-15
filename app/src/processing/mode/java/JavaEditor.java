@@ -96,12 +96,12 @@ public class JavaEditor extends Editor {
   public JMenu buildHelpMenu() {
     // To deal with a Mac OS X 10.5 bug, add an extra space after the name
     // so that the OS doesn't try to insert its slow help menu.
-    JMenu menu = new JMenu("Help ");
+    JMenu menu = new JMenu(Language.text("menu.help")+" ");
     JMenuItem item;
 
     // macosx already has its own about menu
     if (!Base.isMacOS()) {
-      item = new JMenuItem("About Processing");
+      item = new JMenuItem(Language.text("menu.help.about"));
       item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           new About(JavaEditor.this);
@@ -110,7 +110,7 @@ public class JavaEditor extends Editor {
       menu.add(item);
     }
 
-    item = new JMenuItem("Environment");
+    item = new JMenuItem(Language.text("menu.help.environment"));
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         showReference("environment" + File.separator + "index.html");
@@ -118,7 +118,7 @@ public class JavaEditor extends Editor {
     });
     menu.add(item);
 
-    item = new JMenuItem("Reference");
+    item = new JMenuItem(Language.text("menu.help.reference"));
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         showReference("index.html");
@@ -126,7 +126,7 @@ public class JavaEditor extends Editor {
     });
     menu.add(item);
 
-    item = Toolkit.newJMenuItemShift("Find in Reference", 'F');
+    item = Toolkit.newJMenuItemShift(Language.text("menu.help.find_in_reference"), 'F');
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         if (textarea.isSelectionActive()) {
@@ -137,46 +137,46 @@ public class JavaEditor extends Editor {
     menu.add(item);
 
     menu.addSeparator();
-    item = new JMenuItem("Online");
+    item = new JMenuItem(Language.text("menu.help.online"));
     item.setEnabled(false);
     menu.add(item);
 
-    item = new JMenuItem("Getting Started");
+    item = new JMenuItem(Language.text("menu.help.getting_started"));
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        Base.openURL("http://processing.org/learning/gettingstarted/");
+        Base.openURL(Language.text("menu.help.getting_started.url"));
       }
     });
     menu.add(item);
 
-    item = new JMenuItem("Troubleshooting");
+    item = new JMenuItem(Language.text("menu.help.troubleshooting"));
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        Base.openURL("http://wiki.processing.org/w/Troubleshooting");
+        Base.openURL(Language.text("menu.help.troubleshooting.url"));
       }
     });
     menu.add(item);
 
-    item = new JMenuItem("Frequently Asked Questions");
+    item = new JMenuItem(Language.text("menu.help.faq"));
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        Base.openURL("http://wiki.processing.org/w/FAQ");
+        Base.openURL(Language.text("menu.help.faq.url"));
       }
     });
     menu.add(item);
     
-    item = new JMenuItem("The Processing Foundation");
+    item = new JMenuItem(Language.text("menu.help.foundation"));
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        Base.openURL("http://processing.org/foundation/");
+        Base.openURL(Language.text("menu.help.foundation.url"));
       }
     });
     menu.add(item);
 
-    item = new JMenuItem("Visit Processing.org");
+    item = new JMenuItem(Language.text("menu.help.visit"));
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        Base.openURL("http://processing.org/");
+        Base.openURL(Language.text("menu.help.visit.url"));
       }
     });
     menu.add(item);

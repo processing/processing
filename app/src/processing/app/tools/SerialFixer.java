@@ -27,6 +27,7 @@ import javax.swing.JOptionPane;
 
 import processing.app.Base;
 import processing.app.Editor;
+import processing.app.Language;
 import processing.core.PApplet;
 
 
@@ -35,7 +36,7 @@ public class SerialFixer implements Tool {
 
 
   public String getMenuTitle() {
-    return "Fix the Serial Library";
+    return Language.text("menu.tools.fix_the_serial_lbrary");
   }
 
 
