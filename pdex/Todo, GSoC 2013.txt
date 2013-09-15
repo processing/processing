@@ -145,7 +145,8 @@ x boolean warningsEnabled - made it volatile
 General Stuff
 =============
 
-* Consult Ben on where to save preferences - main preferences.txt or custom one
+x Consult Ben on where to save preferences - main preferences.txt or custom one. - Main prefs file
+x Save preferences to main preference.txt
 x Hide breakpoint markers when Debugger isn't active
 x Ensure gutter mouse handler is taken care of when hiding Debugger breakpoint bar.
 x Ensure all editor windows are closed when editor is closed.

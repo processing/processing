@@ -100,6 +100,7 @@ public class ExperimentalMode extends JavaMode {
 //    String titleAndVersion = p.getImplementationTitle() + " (v" + p.getImplementationVersion() + ")";
 //    //log(titleAndVersion);
 //    Logger.getLogger(ExperimentalMode.class.getName()).log(Level.INFO, titleAndVersion);
+    loadPreferences();
     loadIcons();
   }
 
@@ -125,19 +126,21 @@ public class ExperimentalMode extends JavaMode {
       prefDebugOP = "pdex.dbgOutput", prefErrorLogs = "pdex.writeErrorLogs";
   
   public void loadPreferences(){
+    log("Load PDEX prefs");
     ensurePrefsExist();
     errorCheckEnabled = Preferences.getBoolean(prefErrorCheck);
     warningsEnabled = Preferences.getBoolean(prefWarnings);
     codeCompletionsEnabled = Preferences.getBoolean(prefCodeCompletionEnabled);
-    debugOutputEnabled = Preferences.getBoolean(prefDebugOP);
-    errorCheckEnabled = Preferences.getBoolean(prefErrorLogs);
+    DEBUG = Preferences.getBoolean(prefDebugOP);
+    errorLogsEnabled = Preferences.getBoolean(prefErrorLogs);
   }
   
   public void savePreferences(){
+    log("Saving PDEX prefs");
     Preferences.setBoolean(prefErrorCheck, errorCheckEnabled);
     Preferences.setBoolean(prefWarnings, warningsEnabled);
     Preferences.setBoolean(prefCodeCompletionEnabled, codeCompletionsEnabled);
-    Preferences.setBoolean(prefDebugOP, debugOutputEnabled);
+    Preferences.setBoolean(prefDebugOP, DEBUG);
     Preferences.setBoolean(prefErrorLogs,errorLogsEnabled);
   }
   
@@ -149,7 +152,7 @@ public class ExperimentalMode extends JavaMode {
     if(Preferences.get(prefCodeCompletionEnabled) == null) 
       Preferences.setBoolean(prefCodeCompletionEnabled,codeCompletionsEnabled);
     if(Preferences.get(prefDebugOP) == null) 
-      Preferences.setBoolean(prefDebugOP,debugOutputEnabled);
+      Preferences.setBoolean(prefDebugOP,DEBUG);
     if(Preferences.get(prefErrorLogs) == null) 
       Preferences.setBoolean(prefErrorLogs,errorLogsEnabled);
   }

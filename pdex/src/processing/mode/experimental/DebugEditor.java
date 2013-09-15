@@ -326,6 +326,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
     
     // Added temporarily to dump error log. TODO: Remove this later
     public void internalCloseRunner(){      
+      dmode.savePreferences();
       if(ExperimentalMode.errorLogsEnabled) writeErrorsToFile();
       super.internalCloseRunner();
     }
@@ -521,7 +522,6 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         // XQMode menu items
                 
         JCheckBoxMenuItem item;
-        final DebugEditor thisEditor = this;
         item = new JCheckBoxMenuItem("Error Checker Enabled");
         item.setSelected(ExperimentalMode.errorCheckEnabled);
         item.addActionListener(new ActionListener() {
@@ -529,23 +529,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
           @Override
           public void actionPerformed(ActionEvent e) {
             ExperimentalMode.errorCheckEnabled = ((JCheckBoxMenuItem) e.getSource()).isSelected();
-            if (!((JCheckBoxMenuItem) e.getSource()).isSelected()) {
-              // unticked Menu Item
-              errorCheckerService.pauseThread();
-              System.out.println(thisEditor.getSketch().getName()
-                  + " - Error Checker paused.");
-              errorBar.errorPoints.clear();
-              errorCheckerService.problemsList.clear();
-              errorCheckerService.updateErrorTable();
-              errorCheckerService.updateEditorStatus();
-              getTextArea().repaint();
-              errorBar.repaint();
-            } else {
-              errorCheckerService.resumeThread();
-              System.out.println(thisEditor.getSketch().getName()
-                  + " - Error Checker resumed.");
-              errorCheckerService.runManualErrorCheck();
-            }
+            errorCheckerService.handleErrorCheckingToggle();
           }
         });
         debugMenu.add(item);
@@ -582,7 +566,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         debugMenu.add(showWarnings);
         
         completionsEnabled = new JCheckBoxMenuItem("Code Completion Enabled");
-        completionsEnabled.setSelected(true);
+        completionsEnabled.setSelected(ExperimentalMode.codeCompletionsEnabled);
         completionsEnabled.addActionListener(new ActionListener() {
           @Override
           public void actionPerformed(ActionEvent e) {
@@ -612,7 +596,8 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         writeErrorLog.addActionListener(new ActionListener() {
           @Override
           public void actionPerformed(ActionEvent e) {
-            ExperimentalMode.errorLogsEnabled = !ExperimentalMode.errorLogsEnabled;
+            ExperimentalMode.errorLogsEnabled = ((JCheckBoxMenuItem) e
+                .getSource()).isSelected();
           }
         });
         debugMenu.add(writeErrorLog);

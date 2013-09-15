@@ -156,7 +156,6 @@ public class ASTGenerator {
     //addCompletionPopupListner();
     addListeners(); 
     //loadJavaDoc();
-    predictionsEnabled = new AtomicBoolean(true);
   }
   
   protected void setupGUI(){

@@ -19,6 +19,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.table.DefaultTableModel;
 
 import org.eclipse.jdt.core.JavaCore;
@@ -262,6 +263,7 @@ public class ErrorCheckerService implements Runnable{
     // Completion wouldn't be complete, but it'd be still something
     // better than nothing
     astGenerator.buildAST(cu); 
+    handleErrorCheckingToggle();
     while (!stopThread.get()) {
       try {
         // Take a nap.
@@ -1397,6 +1399,26 @@ public class ErrorCheckerService implements Runnable{
       }
     }
     return new String(p2, 0, index);
+  }
+  
+  public void handleErrorCheckingToggle(){
+    if (!ExperimentalMode.errorCheckEnabled) {
+      // unticked Menu Item
+      pauseThread();
+      log(editor.getSketch().getName()
+          + " - Error Checker paused.");
+      editor.errorBar.errorPoints.clear();
+      problemsList.clear();
+      updateErrorTable();
+      updateEditorStatus();
+      editor.getTextArea().repaint();
+      editor.errorBar.repaint();
+    } else {
+      resumeThread();
+      log(editor.getSketch().getName()
+          + " - Error Checker resumed.");
+      runManualErrorCheck();
+    }
   }
   
   /**
