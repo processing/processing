@@ -173,11 +173,18 @@ public class TextArea extends JEditTextArea {
       case KeyEvent.VK_BACK_SPACE:
         log("BK Key");
         break;
+      case KeyEvent.VK_SPACE:
+        if (suggestion != null)
+          if (suggestion.isVisible()) {
+            log("Space bar, hide completion list");
+            suggestion.hide();
+          }
+        break;
       default:
         break;
       }
     }
-      super.processKeyEvent(evt);
+    super.processKeyEvent(evt);
       
     if (evt.getID() == KeyEvent.KEY_TYPED) {
       final KeyEvent evt2 = evt;
@@ -259,20 +266,14 @@ public class TextArea extends JEditTextArea {
     }
   }
   private String fetchPhrase(KeyEvent evt) {
-    if (evt != null) {
-      char keyChar = evt.getKeyChar();
-      if (keyChar == KeyEvent.VK_ENTER) {
-        //log("Enter keypress.");
-        return null;
-      }
-//    if (keyChar == KeyEvent.VK_BACK_SPACE || keyChar == KeyEvent.VK_DELETE)
-//      ; // accepted these keys
-      else if (keyChar == KeyEvent.VK_ESCAPE) {
-        //log("ESC keypress.  fetchPhrase()");
-        return null;
-      } else if (keyChar == KeyEvent.VK_TAB || keyChar == KeyEvent.CHAR_UNDEFINED) {
-        return null;
-      }
+    char keyChar = evt.getKeyChar();
+    if (keyChar == KeyEvent.VK_ENTER) {
+      return null;
+    } else if (keyChar == KeyEvent.VK_ESCAPE) {
+      return null;
+    } else if (keyChar == KeyEvent.VK_SPACE || keyChar == KeyEvent.VK_TAB
+        || keyChar == KeyEvent.CHAR_UNDEFINED) {
+      return null;
     }
     int off = getCaretPosition();
     log2("off " + off);
@@ -741,7 +742,7 @@ public class TextArea extends JEditTextArea {
 
   private void hideSuggestion() {
     if (suggestion != null) {
-      suggestion.hideSuggestion();
+      suggestion.hide();
       suggestion = null;
     }
   }

@@ -84,7 +84,7 @@ public class CompletionPanel {
       public void mouseClicked(MouseEvent e) {
         if (e.getClickCount() == 2) {
           insertSelection();
-          hideSuggestion();
+          hide();
         }
       }
     });
@@ -137,12 +137,12 @@ public class CompletionPanel {
       } catch (BadLocationException e1) {
         e1.printStackTrace();
       }
-      hideSuggestion();
+      hide();
     }
     return false;
   }
 
-  public void hideSuggestion() {
+  public void hide() {
     popupMenu.setVisible(false);
     log("Suggestion hidden" + System.nanoTime());
     //textarea.errorCheckerService.getASTGenerator().jdocWindowVisible(false);
