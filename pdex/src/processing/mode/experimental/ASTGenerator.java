@@ -779,7 +779,7 @@ public class ASTGenerator {
   protected ArrayList<CompletionCandidate> candidates;
   protected String lastPredictedWord = " ";
   //protected AtomicBoolean predictionsEnabled;
-  protected int predictionMinLength = 3;
+  protected int predictionMinLength = 2;
   
   public void preparePredictions(final String word, final int line, final int lineStartNonWSOffset) {
     if(!ExperimentalMode.codeCompletionsEnabled) return;

@@ -92,7 +92,7 @@ public class CompletionPanel {
     return list;
   }
   
-  public boolean updateList(final DefaultListModel items, String newSubword, int position){
+  public boolean updateList(final DefaultListModel items, String newSubword, Point location, int position){
     scrollPane.getViewport().removeAll();    
     Dimension dimen = popupMenu.getSize();
     completionList.setModel(items);
@@ -101,7 +101,7 @@ public class CompletionPanel {
     scrollPane.setViewportView(completionList);
     scrollPane.validate();
     popupMenu.setSize(dimen);
-    
+    popupMenu.setLocation(location);
     this.subWord = new String(newSubword);
     if (subWord.indexOf('.') != -1)
       this.subWord = subWord.substring(subWord.lastIndexOf('.') + 1);

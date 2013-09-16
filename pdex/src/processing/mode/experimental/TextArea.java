@@ -720,6 +720,7 @@ public class TextArea extends JEditTextArea {
           - getLineStartOffset(getCaretLine()));
       location.y = lineToY(getCaretLine())
           + getPainter().getFontMetrics().getHeight();
+      log("TA position: " + location);
     } catch (Exception e2) {
       e2.printStackTrace();
       return;
@@ -732,7 +733,9 @@ public class TextArea extends JEditTextArea {
       suggestion = new CompletionPanel(this, position, subWord, defListModel,
                                        location,editor);
     else
-      suggestion.updateList(defListModel, subWord, position);
+      suggestion.updateList(defListModel, subWord,
+                            new Point(getLocationOnScreen().x + location.x,
+                                      getLocationOnScreen().y + location.y), position);
     suggestion.setVisible(true);
 //    requestFocusInWindow();
     SwingUtilities.invokeLater(new Runnable() {
