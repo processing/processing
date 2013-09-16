@@ -15,7 +15,7 @@ The big stuff:
  - Making very good progress here. The elegance of recurion - Hats off!
  - Many of the cases seem to have been covered, and I'm achieving more and more code unification as I'm working through the problem step by step
  - Looks almost complete now, nearly all cases covered(July 13th)
-* After popup appears, the popup location is fixed for the current line. So if editor window is moved while staying in the same line, popup appears at the prev location. Need to ensure editor is still at last know location 
+x After popup appears, the popup location is fixed for the current line. So if editor window is moved while staying in the same line, popup appears at the prev location. Need to ensure editor is still at last know location. Fixed. 
 * Keyboard Shortcut for completion popup - Ctrl + Space
 * Scope handling? Static/non static scope?
 * Disable completions on comment line

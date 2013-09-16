@@ -183,12 +183,14 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter {
       // paint gutter symbol
       paintGutterText(gfx, line, x);
       
-      paintErrorLine(gfx, line, x);
-      super.paintLine(gfx, tokenMarker, line, x + ta.getGutterWidth());
     }
-    else {
-      paintErrorLine(gfx, line, x);
+    paintErrorLine(gfx, line, x);
+    try {
+      //TODO: This line is causing NPE's randomly ever since I added the toggle for 
+      //Java Mode/Debugger toolbar.
       super.paintLine(gfx, tokenMarker, line, x);
+    } catch (NullPointerException e) {
+      log(e.getMessage());
     }
   }
 
