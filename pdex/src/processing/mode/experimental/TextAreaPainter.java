@@ -188,8 +188,8 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter {
     try {
       //TODO: This line is causing NPE's randomly ever since I added the toggle for 
       //Java Mode/Debugger toolbar.
-      super.paintLine(gfx, tokenMarker, line, x);
-    } catch (NullPointerException e) {
+      super.paintLine(gfx, tokenMarker, line, x + ta.getGutterWidth());
+    } catch (Exception e) {
       log(e.getMessage());
     }
   }

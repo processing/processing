@@ -86,6 +86,9 @@
 		</copy>
 
 		<copy todir="${bundle}">
+					<fileset file="keywords.txt" />
+		</copy>
+		<copy todir="${bundle}">
 			<fileset file="mode.properties" />
 		</copy>
 		<replaceregexp file="${bundle}/mode.properties" flags="g" match="@@version@@" replace="${release}" />
