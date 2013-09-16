@@ -326,7 +326,6 @@ public class DebugEditor extends JavaEditor implements ActionListener {
     
     // Added temporarily to dump error log. TODO: Remove this later
     public void internalCloseRunner(){      
-      dmode.savePreferences();
       if(ExperimentalMode.errorLogsEnabled) writeErrorsToFile();
       super.internalCloseRunner();
     }
@@ -530,6 +529,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
           public void actionPerformed(ActionEvent e) {
             ExperimentalMode.errorCheckEnabled = ((JCheckBoxMenuItem) e.getSource()).isSelected();
             errorCheckerService.handleErrorCheckingToggle();
+            dmode.savePreferences();
           }
         });
         debugMenu.add(item);
@@ -561,6 +561,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
             ExperimentalMode.warningsEnabled = ((JCheckBoxMenuItem) e
                 .getSource()).isSelected();
             errorCheckerService.runManualErrorCheck();
+            dmode.savePreferences();
           }
         });
         debugMenu.add(showWarnings);
@@ -572,6 +573,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
           public void actionPerformed(ActionEvent e) {
               ExperimentalMode.codeCompletionsEnabled = (((JCheckBoxMenuItem) e
                   .getSource()).isSelected());
+              dmode.savePreferences();
           }
         });
         debugMenu.add(completionsEnabled);
@@ -583,6 +585,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
           public void actionPerformed(ActionEvent e) {
             ExperimentalMode.DEBUG = ((JCheckBoxMenuItem) e
                 .getSource()).isSelected();
+            dmode.savePreferences();
           }
         });
         debugMenu.add(debugMessagesEnabled);     
@@ -598,6 +601,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
           public void actionPerformed(ActionEvent e) {
             ExperimentalMode.errorLogsEnabled = ((JCheckBoxMenuItem) e
                 .getSource()).isSelected();
+            dmode.savePreferences();
           }
         });
         debugMenu.add(writeErrorLog);
