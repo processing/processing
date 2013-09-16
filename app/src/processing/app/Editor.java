@@ -1098,7 +1098,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
   class UndoAction extends AbstractAction {
     public UndoAction() {
-      super("Undo");
+      super(Language.text("menu.edit.undo"));
       this.setEnabled(false);
     }
 
@@ -1137,8 +1137,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
       } else {
         this.setEnabled(false);
         undoItem.setEnabled(false);
-        undoItem.setText("Undo");
-        putValue(Action.NAME, "Undo");
+        undoItem.setText(Language.text("menu.edit.undo"));
+        putValue(Action.NAME, Language.text("menu.edit.undo"));
 //        if (sketch != null) {
 //          sketch.setModified(false);  // 0107
 //        }
@@ -1149,7 +1149,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
   class RedoAction extends AbstractAction {
     public RedoAction() {
-      super("Redo");
+      super(Language.text("menu.edit.redo"));
       this.setEnabled(false);
     }
 
@@ -1183,8 +1183,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
       } else {
         this.setEnabled(false);
         redoItem.setEnabled(false);
-        redoItem.setText("Redo");
-        putValue(Action.NAME, "Redo");
+        redoItem.setText(Language.text("menu.edit.redo"));
+        putValue(Action.NAME, Language.text("menu.edit.redo"));
       }
     }
   }
