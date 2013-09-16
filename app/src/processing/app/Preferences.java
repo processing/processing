@@ -256,7 +256,7 @@ public class Preferences {
     // Sketchbook location:
     // [...............................]  [ Browse ]
 
-    label = new JLabel("Sketchbook location:");
+    label = new JLabel(Language.text("preferences.sketchbook_location")+":");
     pain.add(label);
     d = label.getPreferredSize();
     label.setBounds(left, top, d.width, d.height);
@@ -270,7 +270,7 @@ public class Preferences {
     button.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           File dflt = new File(sketchbookLocationField.getText());
-          PApplet.selectFolder("Select new sketchbook location",
+          PApplet.selectFolder(Language.text("preferences.sketchbook_location.popup"),
                                "sketchbookCallback", dflt,
                                Preferences.this, dialog);
 //          File file =
@@ -298,7 +298,7 @@ public class Preferences {
     // Language: [ English ] (requires restart of Processing)
     
     Container languageBox = Box.createHorizontalBox();
-    JLabel languageLabel = new JLabel("Language ");
+    JLabel languageLabel = new JLabel(Language.text("preferences.language")+": ");
     languageBox.add(languageLabel);
     languageSelectionBox = new JComboBox();
     
@@ -313,7 +313,7 @@ public class Preferences {
     }
     languageSelectionBox.setModel(new DefaultComboBoxModel(languageSelection));
     languageBox.add(languageSelectionBox);
-    label = new JLabel("  (requires restart of Processing)");
+    label = new JLabel(" ("+Language.text("preferences.requires_restart")+")");
     languageBox.add(label);
     pain.add(languageBox);
     d = languageBox.getPreferredSize();
@@ -324,11 +324,11 @@ public class Preferences {
     // Editor font size [    ]
 
     Container box = Box.createHorizontalBox();
-    label = new JLabel("Editor font size: ");
+    label = new JLabel(Language.text("preferences.editor_font_size")+": ");
     box.add(label);
     fontSizeField = new JTextField(4);
     box.add(fontSizeField);
-    label = new JLabel("  (requires restart of Processing)");
+    label = new JLabel(" ("+Language.text("preferences.requires_restart")+")");
     box.add(label);
     pain.add(box);
     d = box.getPreferredSize();
@@ -357,8 +357,8 @@ public class Preferences {
     // [ ] Use smooth text in editor window
 
     editorAntialiasBox =
-      new JCheckBox("Use smooth text in editor window " +
-                    "(requires restart of Processing)");
+      new JCheckBox(Language.text("preferences.use_smooth_text")+
+                    " ("+Language.text("preferences.requires_restart")+")");
     pain.add(editorAntialiasBox);
     d = editorAntialiasBox.getPreferredSize();
     // adding +10 because ubuntu + jre 1.5 truncating items
@@ -370,8 +370,9 @@ public class Preferences {
     // [ ] Enable complex text input (for Japanese et al, requires restart)
 
     inputMethodBox =
-      new JCheckBox("Enable complex text input " +
-                    "(i.e. Japanese, requires restart of Processing)");
+      new JCheckBox(Language.text("preferences.enable_complex_text_input")+
+                    " ("+Language.text("preferences.enable_complex_text_input_example")+
+                    ", "+Language.text("preferences.requires_restart")+")");
     pain.add(inputMethodBox);
     d = inputMethodBox.getPreferredSize();
     inputMethodBox.setBounds(left, top, d.width + 10, d.height);
@@ -382,7 +383,7 @@ public class Preferences {
     // [ ] Increase maximum available memory to [______] MB
 
     Container memoryBox = Box.createHorizontalBox();
-    memoryOverrideBox = new JCheckBox("Increase maximum available memory to ");
+    memoryOverrideBox = new JCheckBox(Language.text("preferences.increase_max_memory")+": ");
     memoryBox.add(memoryOverrideBox);
     memoryField = new JTextField(4);
     memoryBox.add(memoryField);
@@ -409,7 +410,7 @@ public class Preferences {
     // [ ] Delete previous folder on export
 
     deletePreviousBox =
-      new JCheckBox("Delete previous folder on export");
+      new JCheckBox(Language.text("preferences.delete_previous_folder_on_export"));
     pain.add(deletePreviousBox);
     d = deletePreviousBox.getPreferredSize();
     deletePreviousBox.setBounds(left, top, d.width + 10, d.height);
@@ -429,7 +430,8 @@ public class Preferences {
     
     // [ ] Use external editor
 
-    whinyBox = new JCheckBox("Hide tab/toolbar background image (requires restart)");
+    whinyBox = new JCheckBox(Language.text("preferences.hide_toolbar_background_image")+
+                             " ("+Language.text("preferences.requires_restart")+")");
     pain.add(whinyBox);
     d = whinyBox.getPreferredSize();
     whinyBox.setBounds(left, top, d.width + 10, d.height);
@@ -439,7 +441,7 @@ public class Preferences {
 
     // [ ] Check for updates on startup
 
-    checkUpdatesBox = new JCheckBox("Check for updates on startup");
+    checkUpdatesBox = new JCheckBox(Language.text("preferences.check_for_updates_on_startup"));
     pain.add(checkUpdatesBox);
     d = checkUpdatesBox.getPreferredSize();
     checkUpdatesBox.setBounds(left, top, d.width + 10, d.height);
@@ -450,12 +452,8 @@ public class Preferences {
     // Run sketches on display [  1 ]
 
     Container displayBox = Box.createHorizontalBox();
-    JLabel displayLabel = new JLabel("Run sketches on display ");
-    final String tip = "<html>" +
-      "Sets the display where sketches are initially placed.<br>" +
-      "As usual, if the sketch window is moved, it will re-open<br>" +
-      "at the same location, however when running in present<br>" +
-      "(full screen) mode, this display will always be used.";
+    JLabel displayLabel = new JLabel(Language.text("preferences.run_sketches_on_display")+": ");
+    final String tip = "<html>" + Language.text("preferences.run_sketches_on_display.tip");
     displayLabel.setToolTipText(tip);
     displayBox.add(displayLabel);
     displaySelectionBox = new JComboBox();
@@ -471,7 +469,7 @@ public class Preferences {
 
     if (Base.isWindows()) {
       autoAssociateBox =
-        new JCheckBox("Automatically associate .pde files with Processing");
+        new JCheckBox(Language.text("preferences.automatically_associate_pde_files"));
       pain.add(autoAssociateBox);
       d = autoAssociateBox.getPreferredSize();
       autoAssociateBox.setBounds(left, top, d.width + 10, d.height);
@@ -484,11 +482,11 @@ public class Preferences {
 
     if (Base.isMacOS()) {
       box = Box.createHorizontalBox();
-      label = new JLabel("Launch programs in  ");
+      label = new JLabel(Language.text("preferences.launch_programs_in")+" ");
       box.add(label);
-      bitsThirtyTwoButton = new JRadioButton("32-bit mode  ");
+      bitsThirtyTwoButton = new JRadioButton("32-bit "+Language.text("preferences.launch_programs_in.mode")+"  ");
       box.add(bitsThirtyTwoButton);
-      bitsSixtyFourButton = new JRadioButton("64-bit mode");
+      bitsSixtyFourButton = new JRadioButton("64-bit "+Language.text("preferences.launch_programs_in.mode"));
       box.add(bitsSixtyFourButton);
 
       ButtonGroup bg = new ButtonGroup();
@@ -504,7 +502,7 @@ public class Preferences {
 
     // More preferences are in the ...
 
-    label = new JLabel("More preferences can be edited directly in the file");
+    label = new JLabel(Language.text("preferences.file")+":");
     pain.add(label);
     d = label.getPreferredSize();
     label.setForeground(Color.gray);
@@ -533,7 +531,7 @@ public class Preferences {
     right = Math.max(right, left + d.width);
     top += d.height;
 
-    label = new JLabel("(edit only when Processing is not running)");
+    label = new JLabel("("+Language.text("preferences.file.hint")+")");
     pain.add(label);
     d = label.getPreferredSize();
     label.setForeground(Color.gray);
