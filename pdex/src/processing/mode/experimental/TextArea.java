@@ -187,7 +187,18 @@ public class TextArea extends JEditTextArea {
     super.processKeyEvent(evt);
       
     if (evt.getID() == KeyEvent.KEY_TYPED) {
-      final KeyEvent evt2 = evt;
+      
+      char keyChar = evt.getKeyChar();
+      if (keyChar == KeyEvent.VK_ENTER || keyChar == KeyEvent.VK_ESCAPE) {
+        return;
+      } else if (keyChar == KeyEvent.VK_SPACE || keyChar == KeyEvent.VK_TAB
+          || keyChar == KeyEvent.CHAR_UNDEFINED) {
+        return;
+      }
+      if(evt.isAltDown() || evt.isControlDown() || evt.isMetaDown()){
+        return;
+      }
+      final KeyEvent evt2 = evt;      
       SwingWorker worker = new SwingWorker() {
         protected Object doInBackground() throws Exception {
           errorCheckerService.runManualErrorCheck();
@@ -266,15 +277,7 @@ public class TextArea extends JEditTextArea {
     }
   }
   private String fetchPhrase(KeyEvent evt) {
-    char keyChar = evt.getKeyChar();
-    if (keyChar == KeyEvent.VK_ENTER) {
-      return null;
-    } else if (keyChar == KeyEvent.VK_ESCAPE) {
-      return null;
-    } else if (keyChar == KeyEvent.VK_SPACE || keyChar == KeyEvent.VK_TAB
-        || keyChar == KeyEvent.CHAR_UNDEFINED) {
-      return null;
-    }
+   
     int off = getCaretPosition();
     log2("off " + off);
     if (off < 0)
