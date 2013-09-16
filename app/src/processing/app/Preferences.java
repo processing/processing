@@ -236,7 +236,7 @@ public class Preferences {
   public Preferences(Base base) {
     this.base = base;
     //dialog = new JDialog(editor, "Preferences", true);
-    dialog = Language.text("preferences");
+    dialog = new JFrame(Language.text("preferences"));
     dialog.setResizable(false);
 
     Container pain = dialog.getContentPane();
