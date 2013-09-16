@@ -733,9 +733,8 @@ public class TextArea extends JEditTextArea {
       suggestion = new CompletionPanel(this, position, subWord, defListModel,
                                        location,editor);
     else
-      suggestion.updateList(defListModel, subWord,
-                            new Point(getLocationOnScreen().x + location.x,
-                                      getLocationOnScreen().y + location.y), position);
+      suggestion.updateList(defListModel, subWord, location, position);
+    
     suggestion.setVisible(true);
 //    requestFocusInWindow();
     SwingUtilities.invokeLater(new Runnable() {

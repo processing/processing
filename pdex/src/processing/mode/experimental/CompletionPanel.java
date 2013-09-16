@@ -101,12 +101,14 @@ public class CompletionPanel {
     scrollPane.setViewportView(completionList);
     scrollPane.validate();
     popupMenu.setSize(dimen);
-    popupMenu.setLocation(location);
+    //popupMenu.setLocation(location);
     this.subWord = new String(newSubword);
     if (subWord.indexOf('.') != -1)
       this.subWord = subWord.substring(subWord.lastIndexOf('.') + 1);
     insertionPosition = position;
     log("Suggestion updated" + System.nanoTime());
+    popupMenu.show(textarea, location.x, textarea.getBaseline(0, 0)
+                   + location.y);
     return true;
   }
 
