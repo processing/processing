@@ -182,10 +182,14 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter {
   
       // paint gutter symbol
       paintGutterText(gfx, line, x);
+      
+      paintErrorLine(gfx, line, x);
+      super.paintLine(gfx, tokenMarker, line, x + ta.getGutterWidth());
     }
-    
-    paintErrorLine(gfx, line, x);
-    super.paintLine(gfx, tokenMarker, line, x + ta.getGutterWidth());
+    else {
+      paintErrorLine(gfx, line, x);
+      super.paintLine(gfx, tokenMarker, line, x);
+    }
   }
 
   /**
