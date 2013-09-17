@@ -719,7 +719,7 @@ public class TextArea extends JEditTextArea {
       location.x = offsetToX(getCaretLine(), position
           - getLineStartOffset(getCaretLine()));
       location.y = lineToY(getCaretLine())
-          + getPainter().getFontMetrics().getHeight();
+          + getPainter().getFontMetrics().getHeight() + getPainter().getFontMetrics().getDescent();
       log("TA position: " + location);
     } catch (Exception e2) {
       e2.printStackTrace();
