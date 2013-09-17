@@ -345,6 +345,7 @@ public class ErrorCheckerService implements Runnable{
    * Triggers error check
    */
   public void runManualErrorCheck() {
+    log("Error Check.");
     textModified.incrementAndGet();
   }
   
@@ -356,20 +357,26 @@ public class ErrorCheckerService implements Runnable{
 
     @Override
     public void insertUpdate(DocumentEvent e) {
-      runManualErrorCheck();
-      log("doc insert update, man error check..");
+      if (ExperimentalMode.errorCheckEnabled){
+        runManualErrorCheck();
+        log("doc insert update, man error check..");
+      }
     }
 
     @Override
     public void removeUpdate(DocumentEvent e) {
-      runManualErrorCheck();
-      log("doc remove update, man error check..");
+      if (ExperimentalMode.errorCheckEnabled){
+        runManualErrorCheck();
+        log("doc remove update, man error check..");
+      }
     }
 
     @Override
     public void changedUpdate(DocumentEvent e) {
-      runManualErrorCheck();
-      log("doc changed update, man error check..");
+      if (ExperimentalMode.errorCheckEnabled){
+        runManualErrorCheck();
+        log("doc changed update, man error check..");
+      }
     }
     
   }
@@ -404,13 +411,18 @@ public class ErrorCheckerService implements Runnable{
         log(editor.getSketch().getName() + "2 MCO "
             + mainClassOffset);
       }
-
-      updateErrorTable();
-      editor.updateErrorBar(problemsList);
-      updateEditorStatus();
-      editor.getTextArea().repaint();
-      updatePaintedThingys();
-      editor.updateErrorToggle();
+      if(ExperimentalMode.errorCheckEnabled){
+        updateErrorTable();
+        editor.updateErrorBar(problemsList);
+        updateEditorStatus();
+        editor.getTextArea().repaint();
+        updatePaintedThingys();
+        editor.updateErrorToggle();
+      }
+      else
+      {
+        log("Error Check disabled, so not updating UI.");
+      }
       int x = textModified.get();
       //log("TM " + x);
       if (x >= 2) {
@@ -878,6 +890,7 @@ public class ErrorCheckerService implements Runnable{
   public void updateEditorStatus() {
     // editor.statusNotice("Position: " +
     // editor.getTextArea().getCaretLine());
+    if(ExperimentalMode.errorCheckEnabled)
     synchronized (editor.errorBar.errorPoints) {
       for (ErrorMarker emarker : editor.errorBar.errorPoints) {
         if (emarker.getProblem().getLineNumber() == editor.getTextArea()
@@ -1454,7 +1467,7 @@ public class ErrorCheckerService implements Runnable{
   public void handleErrorCheckingToggle(){
     if (!ExperimentalMode.errorCheckEnabled) {
       // unticked Menu Item
-      pauseThread();
+      // pauseThread();
       log(editor.getSketch().getName()
           + " - Error Checker paused.");
       editor.errorBar.errorPoints.clear();
@@ -1464,7 +1477,7 @@ public class ErrorCheckerService implements Runnable{
       editor.getTextArea().repaint();
       editor.errorBar.repaint();
     } else {
-      resumeThread();
+      //resumeThread();
       log(editor.getSketch().getName()
           + " - Error Checker resumed.");
       runManualErrorCheck();

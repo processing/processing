@@ -147,7 +147,7 @@ x boolean warningsEnabled - made it volatile
 General Stuff
 =============
 
-* Disabling Error Checking disables predictions as well!
+x Disabling Error Checking disables predictions as well! Fixed.
 x Added doc listener for text area updates
 x Consult Ben on where to save preferences - main preferences.txt or custom one. - Main prefs file
 x Save preferences to main preference.txt
