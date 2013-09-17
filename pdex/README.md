@@ -21,3 +21,6 @@ Click on the down arrow besides the mode switch button, and select Add Mode. In 
 Manindra Moharana
 
 18 September 2013
+
+--
+PDE X is supported by [Google Summer of Code 2013](http://www.google-melange.com/gsoc/homepage/google/gsoc2013)
