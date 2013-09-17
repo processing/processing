@@ -20,7 +20,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.text.AbstractDocument;
 
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.compiler.IProblem;
@@ -35,6 +38,7 @@ import processing.app.Base;
 import processing.app.Editor;
 import processing.app.Library;
 import processing.app.SketchCode;
+import processing.app.syntax.SyntaxDocument;
 import processing.core.PApplet;
 import processing.mode.java.preproc.PdePreprocessor;
 
@@ -203,6 +207,10 @@ public class ErrorCheckerService implements Runnable{
     containsErrors = new AtomicBoolean(true);
     errorMsgSimplifier = new ErrorMessageSimplifier();
     tempErrorLog = new TreeMap<String, IProblem>();
+    sketchChangedListener = new SketchChangedListener();
+//    for (final SketchCode sc : editor.getSketch().getCode()) {
+//      sc.getDocument().addDocumentListener(sketchChangedListener);
+//    }
   }
   
   /**
@@ -275,7 +283,7 @@ public class ErrorCheckerService implements Runnable{
       
       updatePaintedThingys();
       updateEditorStatus();
-      
+      updateSketchCodeListeners();
       if (pauseThread.get())
         continue;
       if(textModified.get() == 0)
@@ -290,6 +298,22 @@ public class ErrorCheckerService implements Runnable{
     logE("Thread stopped: " + editor.getSketch().getName());
   }
   
+  protected void updateSketchCodeListeners() {
+    for (final SketchCode sc : editor.getSketch().getCode()) {
+      boolean flag = false;
+      for (DocumentListener dl : ((SyntaxDocument)sc.getDocument()).getDocumentListeners()) {
+        if(dl.equals(sketchChangedListener)){
+          flag = true;
+          break;
+        }
+      }
+      if(!flag){
+        log("Adding doc listener to " + sc.getPrettyName());
+        sc.getDocument().addDocumentListener(sketchChangedListener);
+      }
+    }
+  }
+
   protected void checkForMissingImports() {
     for (Problem p : problemsList) {
       if(p.getMessage().endsWith(" cannot be resolved to a type"));{
@@ -322,6 +346,32 @@ public class ErrorCheckerService implements Runnable{
    */
   public void runManualErrorCheck() {
     textModified.incrementAndGet();
+  }
+  
+  protected SketchChangedListener sketchChangedListener;
+  protected class SketchChangedListener implements DocumentListener{
+    
+    private SketchChangedListener(){
+    }
+
+    @Override
+    public void insertUpdate(DocumentEvent e) {
+      runManualErrorCheck();
+      log("doc insert update, man error check..");
+    }
+
+    @Override
+    public void removeUpdate(DocumentEvent e) {
+      runManualErrorCheck();
+      log("doc remove update, man error check..");
+    }
+
+    @Override
+    public void changedUpdate(DocumentEvent e) {
+      runManualErrorCheck();
+      log("doc changed update, man error check..");
+    }
+    
   }
 
   protected boolean checkCode() {

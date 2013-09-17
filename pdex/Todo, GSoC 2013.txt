@@ -119,6 +119,8 @@ Suggestion for missing imports
 2. Find the class name via astGen, and suggest import as a popup.
 x Barebones functionality done.
 x Add imports only to beginning of first tab.
+x Search within contributed libraries folder
+* Search within code folder of sketch
 
 Labels for Java elements
 ========================
@@ -145,6 +147,8 @@ x boolean warningsEnabled - made it volatile
 General Stuff
 =============
 
+* Disabling Error Checking disables predictions as well!
+x Added doc listener for text area updates
 x Consult Ben on where to save preferences - main preferences.txt or custom one. - Main prefs file
 x Save preferences to main preference.txt
 x Hide breakpoint markers when Debugger isn't active
