@@ -95,7 +95,7 @@ public class Archiver implements Tool {
     } while (newbie.exists());
 
     // open up a prompt for where to save this fella
-    PApplet.selectOutput("Archive sketch as...", "fileSelected", newbie, this, editor);
+    PApplet.selectOutput(Language.text("archive_sketch"), "fileSelected", newbie, this, editor);
   }
 
 

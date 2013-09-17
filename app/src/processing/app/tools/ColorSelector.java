@@ -70,7 +70,7 @@ public class ColorSelector implements Tool, DocumentListener {
 
 
   public String getMenuTitle() {
-    return "Color Selector";
+    return Language.text("menu.tools.color_selector");
   }
 
 
@@ -83,7 +83,7 @@ public class ColorSelector implements Tool, DocumentListener {
 
 
   void createFrame() {
-    frame = new JFrame("Color Selector");
+    frame = new JFrame(Language.text("color_selector"));
     frame.getContentPane().setLayout(new BorderLayout());
 
     Box box = Box.createHorizontalBox();

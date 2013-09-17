@@ -74,12 +74,12 @@ public class CreateFont extends JFrame implements Tool {
 
 
   public CreateFont() {
-    super("Create Font");
+    super(Language.text("create_font"));
   }
 
 
   public String getMenuTitle() {
-    return "Create Font...";
+    return Language.text("menu.tools.create_font");
   }
 
 

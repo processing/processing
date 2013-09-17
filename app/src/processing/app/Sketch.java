@@ -934,8 +934,7 @@ public class Sketch {
     }
 
     // get a dialog, select a file to add to the sketch
-    String prompt =
-      "Select an image or other data file to copy to your sketch";
+    String prompt = Language.text("file");
     //FileDialog fd = new FileDialog(new Frame(), prompt, FileDialog.LOAD);
     FileDialog fd = new FileDialog(editor, prompt, FileDialog.LOAD);
     fd.setVisible(true);
