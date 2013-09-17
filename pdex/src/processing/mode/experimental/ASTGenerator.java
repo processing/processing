@@ -94,6 +94,7 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 
 import processing.app.Base;
+import processing.app.Library;
 import processing.app.SketchCode;
 import processing.app.Toolkit;
 import processing.mode.java.preproc.PdePreprocessor;
@@ -3048,13 +3049,26 @@ public class ASTGenerator {
                                                                       Pattern.CASE_INSENSITIVE));
     String[] resources = classPath
         .findResources("", regf);
-    if(resources.length == 0){
-      log("Couldn't find import for class " + className);
-      return;
+    ArrayList<String> candidates = new ArrayList<String>();
+    for (String res : resources) {
+      candidates.add(res);
     }
+    
+    // log("Couldn't find import for class " + className);
+
+    for (Library lib : editor.dmode.contribLibraries) {
+      ClassPath cp = factory.createFromPath(lib.getClassPath());
+      resources = cp.findResources("", regf);
+      for (String res : resources) {
+        candidates.add(res);
+        log("Res: " + res);
+      }
+    }
+
+    resources = new String[candidates.size()];
     for (int i = 0; i < resources.length; i++) {
-      resources[i] = resources[i].replace('/', '.')
-          .substring(0, resources[i].length() - 6);
+      resources[i] = candidates.get(i).replace('/', '.')
+          .substring(0, candidates.get(i).length() - 6);
     }
     if (resources.length >= 1) {
       final JList classList = new JList(resources);
