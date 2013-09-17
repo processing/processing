@@ -56,6 +56,7 @@ public class CompletionPanel {
     popupMenu.setPopupSize(280, setHeight(items.getSize())); //TODO: Eradicate this evil
     this.textarea.errorCheckerService.getASTGenerator()
         .updateJavaDoc((CompletionCandidate) completionList.getSelectedValue());
+    textarea.requestFocusInWindow();
     popupMenu.show(textarea, location.x, textarea.getBaseline(0, 0)
         + location.y);
     log("Suggestion constructed" + System.nanoTime());
@@ -82,7 +83,7 @@ public class CompletionPanel {
                                     final DefaultListModel items) {
 
     JList list = new JList(items);
-    list.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY, 1));
+    //list.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY, 1));
     list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     list.setSelectedIndex(0);
     list.addMouseListener(new MouseAdapter() {
@@ -95,6 +96,7 @@ public class CompletionPanel {
       }
     });
     list.setCellRenderer(new CustomListRenderer());
+    list.setFocusable(false);
     return list;
   }
   
@@ -113,6 +115,7 @@ public class CompletionPanel {
         scrollPane.setViewportView(completionList);
         popupMenu.setPopupSize(popupMenu.getSize().width, setHeight(items.getSize()));
         log("Suggestion updated" + System.nanoTime());
+        textarea.requestFocusInWindow();
         popupMenu.show(textarea, location.x, textarea.getBaseline(0, 0)
             + location.y);
         completionList.validate();
