@@ -825,7 +825,7 @@ public class Base {
       extensions.add(mode.getDefaultExtension());
     }
 
-    final String prompt = "Open a Processing sketch...";
+    final String prompt = Language.text("open");
     if (Preferences.getBoolean("chooser.files.native")) {  // don't use native dialogs on Linux //$NON-NLS-1$
       // get the front-most window frame for placing file dialog
       FileDialog fd = new FileDialog(activeEditor, prompt, FileDialog.LOAD);

@@ -662,7 +662,7 @@ public abstract class Mode {
 
   public void showExamplesFrame() {
     if (examplesFrame == null) {
-      examplesFrame = new JFrame(getTitle() + " Examples");
+      examplesFrame = new JFrame(getTitle() + " "+Language.text("menu.file.examples"));
       Toolkit.setIcon(examplesFrame);
       Toolkit.registerWindowCloseKeys(examplesFrame.getRootPane(), new ActionListener() {
         public void actionPerformed(ActionEvent e) {

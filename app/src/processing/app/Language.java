@@ -50,7 +50,7 @@ public class Language {
     }
     
     // Get bundle with translations (processing.app.language.PDE)
-    this.bundle = ResourceBundle.getBundle("processing.app.language.PDE", new Locale(this.language));
+    this.bundle = ResourceBundle.getBundle("processing.app.languages.PDE", new Locale(this.language));
   }
   
   /**

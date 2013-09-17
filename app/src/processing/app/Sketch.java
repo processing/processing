@@ -714,7 +714,7 @@ public class Sketch {
     String newParentDir = null;
     String newName = null;
     // TODO rewrite this to use shared version from PApplet
-    final String PROMPT = "Save sketch folder as...";
+    final String PROMPT = Language.text("save");
     if (Preferences.getBoolean("chooser.files.native")) {
       // get new name for folder
       FileDialog fd = new FileDialog(editor, PROMPT, FileDialog.SAVE);

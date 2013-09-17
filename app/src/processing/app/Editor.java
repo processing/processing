@@ -2588,7 +2588,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
       this.addSeparator();
 
-      referenceItem = new JMenuItem(Language.text("editor.popup.find_in_reference"));
+      referenceItem = new JMenuItem(Language.text("find_in_reference"));
       referenceItem.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
             handleFindReference();

@@ -265,8 +265,8 @@ public class JavaEditor extends Editor {
 
 //    String msg = "Export to Application creates a standalone, \n" +
 //      "double-clickable application for the selected plaforms.";
-    String line1 = "Export to Application creates double-clickable,";
-    String line2 = "standalone applications for the selected plaforms.";
+    String line1 = Language.text("export.description.line1");
+    String line2 = Language.text("export.description.line2");
     JLabel label1 = new JLabel(line1, SwingConstants.CENTER);
     JLabel label2 = new JLabel(line2, SwingConstants.CENTER);
     label1.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -312,7 +312,7 @@ public class JavaEditor extends Editor {
     platformPanel.add(macosxButton);
     platformPanel.add(Box.createHorizontalStrut(6));
     platformPanel.add(linuxButton);
-    platformPanel.setBorder(new TitledBorder("Platforms"));
+    platformPanel.setBorder(new TitledBorder(Language.text("export.platforms")));
     //Dimension goodIdea = new Dimension(wide, platformPanel.getPreferredSize().height);
     //platformPanel.setMaximumSize(goodIdea);
     wide = Math.max(wide, platformPanel.getPreferredSize().width);
@@ -321,7 +321,7 @@ public class JavaEditor extends Editor {
 
 //  Box indentPanel = Box.createHorizontalBox();
 //  indentPanel.add(Box.createHorizontalStrut(new JCheckBox().getPreferredSize().width));
-    final JCheckBox showStopButton = new JCheckBox("Show a Stop button");
+    final JCheckBox showStopButton = new JCheckBox(Language.text("export.options.show_stop_button"));
     //showStopButton.setMnemonic(KeyEvent.VK_S);
     showStopButton.setSelected(Preferences.getBoolean("export.application.stop"));
     showStopButton.addItemListener(new ItemListener() {
@@ -334,7 +334,7 @@ public class JavaEditor extends Editor {
 //  indentPanel.add(showStopButton);
 //  indentPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-    final JCheckBox fullScreenButton = new JCheckBox("Full Screen (Present mode)");
+    final JCheckBox fullScreenButton = new JCheckBox(Language.text("export.options.fullscreen"));
     //fullscreenButton.setMnemonic(KeyEvent.VK_F);
     fullScreenButton.setSelected(Preferences.getBoolean("export.application.fullscreen"));
     fullScreenButton.addItemListener(new ItemListener() {
@@ -351,7 +351,7 @@ public class JavaEditor extends Editor {
     optionPanel.add(fullScreenButton);
     optionPanel.add(showStopButton);
 //    optionPanel.add(indentPanel);
-    optionPanel.setBorder(new TitledBorder("Options"));
+    optionPanel.setBorder(new TitledBorder(Language.text("export.options")));
     wide = Math.max(wide, platformPanel.getPreferredSize().width);
     //goodIdea = new Dimension(wide, optionPanel.getPreferredSize().height);
     optionPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -391,7 +391,7 @@ public class JavaEditor extends Editor {
 //      optionPanel.add(exportButton);
 //      optionPanel.add(cancelButton);
 //    }
-    String[] options = { "Export", "Cancel" };
+    String[] options = { Language.text("prompt.export"), Language.text("prompt.cancel") };
     final JOptionPane optionPane = new JOptionPane(panel,
                                                    JOptionPane.PLAIN_MESSAGE,
                                                    //JOptionPane.QUESTION_MESSAGE,
@@ -400,7 +400,7 @@ public class JavaEditor extends Editor {
                                                    options,
                                                    options[0]);
 
-    final JDialog dialog = new JDialog(this, "Export Options", true);
+    final JDialog dialog = new JDialog(this, Language.text("export"), true);
     dialog.setContentPane(optionPane);
 
     optionPane.addPropertyChangeListener(new PropertyChangeListener() {
