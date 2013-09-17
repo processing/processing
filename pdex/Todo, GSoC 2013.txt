@@ -161,3 +161,4 @@ x On Run/Debug Console is visible(ProblemsList hidden)
 * Update wiki for Ctrl + H instead of Ctrl + J shortcuts
 x update build.xml to produce dists
 x Make this a contributed mode - mode.txt, github releases feature, version numbering, git tags, etc
+x Add GitHub link to PDE X Menu

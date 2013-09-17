@@ -606,7 +606,16 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         });
         debugMenu.add(writeErrorLog);
         
-        
+        debugMenu.addSeparator();
+        JMenuItem jitem = new JMenuItem("PDE X on GitHub");
+        jitem.addActionListener(new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            Base.openURL("https://github.com/processing/processing-experimental");
+          }
+        });
+        debugMenu.add(jitem);
+
         return debugMenu;
     }
     
