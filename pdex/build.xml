@@ -94,6 +94,14 @@
 		<replaceregexp file="${bundle}/mode.properties" flags="g" match="@@version@@" replace="${release}" />
 		<replaceregexp file="${bundle}/mode.properties" flags="g" match="@@pretty-version@@" replace="${prettyVersion}" />
 
+		<property name="v" value="_v"/>
+		<property name="zipStr" value=".zip"/>
+		<zip destfile="${dist}/${lib.name}${v}${prettyVersion}${zipStr}"
+           basedir="${dist}/"
+           excludes="**/.DS_Store"
+        />
+        <delete dir="${bundle}/" />
+
 	</target>
 
 	<target name="full_install" depends="package" description="Full install to sketchbook">
