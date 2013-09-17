@@ -2209,13 +2209,12 @@ public class Base {
                         "b { font: 13pt \"Lucida Grande\" }"+
                         "p { font: 11pt \"Lucida Grande\"; margin-top: 8px; width: 300px }"+
                         "</style> </head>" +
-                        "<b>Do you want to save changes to this sketch<BR>" +
-                        " before closing?</b>" +
-                        "<p>If you don't save, your changes will be lost.",
+                        "<b>" + Language.text("save.title") + "</b>" +
+                        "<p>" + Language.text("save.hint") + "</p>",
                         JOptionPane.QUESTION_MESSAGE);
 
       String[] options = new String[] {
-          "Save", "Cancel", "Don't Save"
+          Language.text("save.btn.save"), Language.text("prompt.cancel"), Language.text("save.btn.dont_save")
       };
       pane.setOptions(options);
 

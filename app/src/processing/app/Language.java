@@ -25,8 +25,15 @@ public class Language {
     
     // Set available languages
     this.languages = new HashMap<String,String>();
-    this.languages.put("en", "English");
-    this.languages.put("de", "Deutsch");
+    
+    // Language code:
+    // http://en.wikipedia.org/wiki/ISO_639-1
+    // http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
+    
+    // en, English
+    this.languages.put(Locale.ENGLISH.getLanguage(), Locale.ENGLISH.getDisplayLanguage(Locale.ENGLISH));
+    // de, Deutsch
+    this.languages.put(Locale.GERMAN.getLanguage(), Locale.GERMAN.getDisplayLanguage(Locale.GERMAN));
     
     // Set default language
     if(!this.languages.containsKey(this.language)){
