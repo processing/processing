@@ -45,6 +45,7 @@ Finer details
 * Diamond operator isn't supported for now. Bummer.
 
 x Completion popup height is now dynamic, decreases to fit.
+* Completion width can be dynamic, if really needed..  
 x Icons for completions? Or overkill right now?
 x 'Show Usage' menu item added
 x Show declaring class for completions

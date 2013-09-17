@@ -9,6 +9,7 @@ import java.awt.FontMetrics;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Iterator;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
@@ -78,6 +79,20 @@ public class CompletionPanel {
     log("popup height " + Math.min(250,h));
     return Math.min(250,(int)h); // popup menu height
   }
+  
+  /*TODO: Make width dynamic
+   protected int setWidth(){
+    if(scrollPane.getVerticalScrollBar().isVisible()) return 280;
+    float min = 280;
+    FontMetrics fm = textarea.getFontMetrics(textarea.getFont()); 
+    for (int i = 0; i < completionList.getModel().getSize(); i++) {
+      float h = fm.stringWidth(completionList.getModel().getElementAt(i).toString());
+      min = Math.min(min, h);
+    }
+    min += fm.stringWidth("             ");
+    log("popup width " + Math.min(280,min));
+    return Math.min(280,(int)min); // popup menu height
+  }*/
 
   private JList createSuggestionList(final int position,
                                     final DefaultListModel items) {
