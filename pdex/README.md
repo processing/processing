@@ -1,10 +1,23 @@
-Experimental Mode for the PDE
-=========================
+PDE X
+=====
 
-This project is in the process of being moved out of the main project so that it can be developed in parallel with the PDE. Right now, it's in a messy state and not stable, forking isn't recommened. 
+PDE X is a [Processing](http://processing.org/) Mode that brings along powerful new features to the Processing Development Environment: 
 
-Stay tuned for updates.
+* Intelligent Code Completion
+* Quick Renaming(Refactoring)
+* Quick Navigation
+* Import Suggestions
+* Live Error Checker
+* Integrated Debugger 
+
+Find out more at [Getting Started!](https://github.com/processing/processing-experimental/wiki/Getting-Started)
+
+####How to Install
+
+![Mode Button](http://i.imgur.com/cag1y10.png)
+
+Click on the down arrow besides the mode switch button, and select Add Mode. In the Mode Manager window, select PDE X and click 'Install'.
 
 Manindra Moharana
 
-29 June 2013
+18 September 2013
