@@ -5,21 +5,19 @@ import static processing.mode.experimental.ExperimentalMode.logE;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
+import java.awt.FontMetrics;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
 
 import processing.app.syntax.JEditTextArea;
@@ -39,8 +37,8 @@ public class CompletionPanel {
   
   protected DebugEditor editor;
 
-  public CompletionPanel(JEditTextArea textarea, int position, String subWord,
-                         DefaultListModel items, Point location, DebugEditor dedit) {
+  public CompletionPanel(final JEditTextArea textarea, int position, String subWord,
+                         DefaultListModel items, final Point location, DebugEditor dedit) {
     this.textarea = (TextArea) textarea;
     editor = dedit;
     this.insertionPosition = position;
@@ -55,7 +53,7 @@ public class CompletionPanel {
     scrollPane = new JScrollPane();
     scrollPane.setViewportView(completionList = createSuggestionList(position, items));
     popupMenu.add(scrollPane, BorderLayout.CENTER);
-    popupMenu.setPopupSize(280, 250); //TODO: Eradicate this evil
+    popupMenu.setPopupSize(280, setHeight(items.getSize())); //TODO: Eradicate this evil
     this.textarea.errorCheckerService.getASTGenerator()
         .updateJavaDoc((CompletionCandidate) completionList.getSelectedValue());
     popupMenu.show(textarea, location.x, textarea.getBaseline(0, 0)
@@ -70,6 +68,14 @@ public class CompletionPanel {
   public void setVisible(boolean v){
     log("Pred popup visible.");
     popupMenu.setVisible(v);
+  }
+  
+  protected int setHeight(int itemCount){
+    if(scrollPane.getHorizontalScrollBar().isVisible()) itemCount++;
+    FontMetrics fm = textarea.getFontMetrics(textarea.getFont()); 
+    float h = (fm.getHeight() +  fm.getDescent()*0.5f) * (itemCount + 1);
+    log("popup height " + Math.min(250,h));
+    return Math.min(250,(int)h); // popup menu height
   }
 
   private JList createSuggestionList(final int position,
@@ -92,23 +98,28 @@ public class CompletionPanel {
     return list;
   }
   
-  public boolean updateList(final DefaultListModel items, String newSubword, Point location, int position){
-    scrollPane.getViewport().removeAll();    
-    Dimension dimen = popupMenu.getSize();
-    completionList.setModel(items);
-    completionList.validate();    
-    completionList.setSelectedIndex(0);
-    scrollPane.setViewportView(completionList);
-    scrollPane.validate();
-    popupMenu.setSize(dimen);
-    //popupMenu.setLocation(location);
+  public boolean updateList(final DefaultListModel items, String newSubword,
+                            final Point location, int position) {
     this.subWord = new String(newSubword);
     if (subWord.indexOf('.') != -1)
       this.subWord = subWord.substring(subWord.lastIndexOf('.') + 1);
     insertionPosition = position;
-    log("Suggestion updated" + System.nanoTime());
-    popupMenu.show(textarea, location.x, textarea.getBaseline(0, 0)
-                   + location.y);
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        scrollPane.getViewport().removeAll();
+        completionList.setModel(items);
+        completionList.setSelectedIndex(0);
+        scrollPane.setViewportView(completionList);
+        popupMenu.setPopupSize(popupMenu.getSize().width, setHeight(items.getSize()));
+        log("Suggestion updated" + System.nanoTime());
+        popupMenu.show(textarea, location.x, textarea.getBaseline(0, 0)
+            + location.y);
+        completionList.validate();
+        scrollPane.validate();
+        popupMenu.validate();
+      }
+    });
     return true;
   }
 
