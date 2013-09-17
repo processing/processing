@@ -28,7 +28,14 @@ questions.
 <project name="appbundler" default="package">
     <property environment="env"/>
 
+    <!--
     <property file="build.properties"/>
+    version=1.0ea
+    -->
+    <property name="arch64" value="-arch x86_64" />
+    <property name="arch32" value="-arch i386" />
+    <property name="archppc" value="-arch ppc" />
+    <property name="cc" value="gcc" />
 
     <property name="folder.src" value="src"/>
     <property name="folder.native" value="native"/>
@@ -98,7 +105,7 @@ questions.
             <fileset dir="${folder.res}"/>
         </zip>
 
-        <jar destfile="../${ant.project.name}-${version}.jar" index="true">
+        <jar destfile="../${ant.project.name}.jar" index="true">
             <manifest>
                 <attribute name="Implementation-Vendor-Id" value="com.oracle"/>
                 <attribute name="Implementation-Vendor" value="Oracle"/>
@@ -116,7 +123,7 @@ questions.
     <!-- Test targets -->
     <target name="test" depends="package">
         <taskdef name="bundleapp" classname="com.oracle.appbundler.AppBundlerTask"
-            classpath="${folder.bin}/${ant.project.name}-${version}.jar"/>
+            classpath="${folder.bin}/${ant.project.name}.jar"/>
 
         <bundleapp outputdirectory="."
             name="Test"
@@ -134,7 +141,7 @@ questions.
 
     <target name="test-plugin" depends="package">
         <taskdef name="bundleapp" classname="com.oracle.appbundler.AppBundlerTask"
-            classpath="${folder.bin}/${ant.project.name}-${version}.jar"/>
+            classpath="${folder.bin}/${ant.project.name}.jar"/>
 
         <bundleapp outputdirectory="."
             name="TestPlugin"

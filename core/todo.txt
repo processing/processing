@@ -3,6 +3,8 @@ X background color for present mode has no effect
 X   https://github.com/processing/processing/issues/2071
 X   https://github.com/processing/processing/pull/2072
 
+_ Sort out blending differences with P2D/P3D
+_   https://github.com/processing/processing/issues/1844
 
 high
 _ loadPixels doesn't set alpha value for pixels on Java2D
