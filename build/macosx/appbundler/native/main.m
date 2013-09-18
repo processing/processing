@@ -143,7 +143,13 @@ int launch(char *commandName) {
     // Set the class path
     NSString *mainBundlePath = [mainBundle bundlePath];
     NSString *javaPath = [mainBundlePath stringByAppendingString:@"/Contents/Java"];
-    NSMutableString *classPath = [NSMutableString stringWithFormat:@"-Djava.class.path=%@/Classes", javaPath];
+    //NSMutableString *classPath = [NSMutableString stringWithFormat:@"-Djava.class.path=%@/Classes", javaPath];
+    // Removed the /Classes, because the P5 compiler (ECJ?) will throw an 
+    // error if it doesn't exist. But it's harmless to leave this as including
+    // the root dir, since it will always exist, and I guess if you wanted to
+    // put .class files in there, they'd work. If I knew more Cocoa, I'd just 
+    // make this an empty string to start, to be appended a few lines later.
+    NSMutableString *classPath = [NSMutableString stringWithFormat:@"-Djava.class.path=%@", javaPath];
 
     NSFileManager *defaultFileManager = [NSFileManager defaultManager];
     NSArray *javaDirectoryContents = [defaultFileManager contentsOfDirectoryAtPath:javaPath error:nil];

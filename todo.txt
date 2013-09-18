@@ -33,7 +33,6 @@ _ change how export is handled
 _   remove ability to export cross-platform apps
 _   add ability to embed the current JRE
 _ appbundler fixes/changes
-_   don't re-copy jre into work folder if already exists
 _   icon location uses path, even when embedded
 _   add indents to the Info.plist output file
 _     inside writeInfoPlist from AppBundlerTask.java
@@ -46,6 +45,7 @@ _   the "Classes" folder is included
 _     appears to be line 138 of main.m
 _     maybe this is a holdover from OS X Java?
 _   bring back the splash screen?
+_   don't re-copy jre into work folder if already exists
 
 no good installer, will need JDK anyway for the export
 require that this folder exists:
