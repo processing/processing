@@ -745,7 +745,7 @@ public class TextArea extends JEditTextArea {
 //    });
   }
 
-  private void hideSuggestion() {
+  protected void hideSuggestion() {
     if (suggestion != null) {
       suggestion.hide();
       suggestion = null;

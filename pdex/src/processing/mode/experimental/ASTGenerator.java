@@ -3064,6 +3064,19 @@ public class ASTGenerator {
         log("Res: " + res);
       }
     }
+    
+    if (editor.getSketch().hasCodeFolder()) {
+      File codeFolder = editor.getSketch().getCodeFolder();
+      // get a list of .jar files in the "code" folder
+      // (class files in subfolders should also be picked up)
+      ClassPath cp = factory.createFromPath(Base
+                                            .contentsToClassPath(codeFolder));
+      resources = cp.findResources("", regf);
+      for (String res : resources) {
+        candidates.add(res);
+        log("Res: " + res);
+      }
+    }
 
     resources = new String[candidates.size()];
     for (int i = 0; i < resources.length; i++) {
@@ -3115,6 +3128,7 @@ public class ASTGenerator {
                         editor.getY()
                             + (editor.getHeight() - frmImportSuggest.getHeight())
                             / 2);
+      editor.ta.hideSuggestion();
       frmImportSuggest.setVisible(true);
     }
 
