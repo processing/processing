@@ -414,9 +414,6 @@
     </copy>
     -->
 
-    <!-- if loading JRE directly from .tgz, it's in a folder called 
-	 jre1.7.0_40.jre, so we'll need to strip that out. -->
-
     <!-- workaround for apparent appbundler bug -->
     <copy todir=".">
       <fileset dir="macosx/template.app/Contents/Resources/" 
@@ -435,9 +432,13 @@
 	       version="Revision ${revision}"
 	       mainClassName="processing.app.Base">
 
-      <!-- Even though the JRE is a subfolder in this dir, 
-	   it seems to be what's picked up (vs the full JDK). -->
+      <!-- The appbundler task needs a couple files (the Info.plist and
+           anything else outside /jre) from the full JDK, even though 
+	   it's primarily copying over the JRE folder. -->
       <runtime dir="/Library/Java/JavaVirtualMachines/jdk1.7.0_40.jdk/Contents/Home" />
+      <!-- Eventually we'll want to load the JRE directly from 
+	   the .tgz on the Oracle site, though it's in a folder called 
+	   jre1.7.0_40.jre, so we'll need to strip that out. -->
 
       <!-- Same as runtime.jars, seen above; plus core.jar. -->
       <classpath file="../app/pde.jar" />
@@ -467,8 +468,8 @@
       </bundledocument>
 
       <!-- Workaround because the icon parameter for bundleapp doesn't work -->
-      <option value="-Xdock:icon=Contents/Resources/${bundle.icon}" />
-      <!--<option value="-Xdock:icon=Contents/Resources/processing.icns" />-->
+      <!--<option value="-Xdock:icon=Contents/Resources/${bundle.icon}" />-->
+      <option value="-Xdock:icon=Contents/Resources/processing.icns" />
       <!--<option value="-Xdock:icon=${bundle.icon}" />-->
       <!--<option value="-Xdock:icon=processing.icns" />-->
       <!-- this one actually works -->
@@ -504,8 +505,10 @@
       <option value="-Dcom.apple.mrj.application.apple.menu.about.name=${bundle.name}"/>
       <option value="-Dcom.apple.smallTabs=true"/>
 
+      <!-- Probably no longer needed? [fry 130917]
       <option value="-Xms128M" />
       <option value="-Xmx256M" />
+      -->
     </bundleapp>
 
     <!-- workaround for apparent appbundler bug -->

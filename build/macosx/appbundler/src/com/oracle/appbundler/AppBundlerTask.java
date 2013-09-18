@@ -48,6 +48,7 @@ import java.util.zip.ZipInputStream;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+import javax.xml.transform.OutputKeys;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
@@ -485,6 +486,8 @@ public class AppBundlerTask extends Task {
     private void writeInfoPlist(File file) throws IOException {
         Writer out = new BufferedWriter(new FileWriter(file));
         XMLOutputFactory output = XMLOutputFactory.newInstance();
+//        output.setProperty("indent-number", 2);
+        output.setProperty(OutputKeys.INDENT, "yes");
 
         try {
             XMLStreamWriter xout = output.createXMLStreamWriter(out);
@@ -535,11 +538,11 @@ public class AppBundlerTask extends Task {
                 writeProperty(xout, "JVMRuntime", runtime.getDir().getParentFile().getParentFile().getName());
             }
             
-            if ( privileged != null ) {
+            if (privileged != null) {
                 writeProperty(xout, "JVMRunPrivileged", privileged);
             }
             
-            if ( workingDirectory != null ) {
+            if (workingDirectory != null) {
                 writeProperty(xout, "WorkingDirectory", workingDirectory);
             }
 
@@ -553,20 +556,20 @@ public class AppBundlerTask extends Task {
             xout.writeStartElement(ARRAY_TAG);
             xout.writeCharacters("\n");
             
-            for(BundleDocument bundleDocument: bundleDocuments) {
+            for (BundleDocument bundleDocument: bundleDocuments) {
                 xout.writeStartElement(DICT_TAG);
                 xout.writeCharacters("\n");
                 
                 writeKey(xout, "CFBundleTypeExtensions");
                 xout.writeStartElement(ARRAY_TAG);
                 xout.writeCharacters("\n");
-                for(String extension : bundleDocument.getExtensions()) {
+                for (String extension : bundleDocument.getExtensions()) {
                     writeString(xout, extension);
                 }
                 xout.writeEndElement();
                 xout.writeCharacters("\n");
                 
-                if(bundleDocument.hasIcon()) {
+                if (bundleDocument.hasIcon()) {
                     writeKey(xout, "CFBundleTypeIconFile");
                     writeString(xout, bundleDocument.getIcon());
                 }
