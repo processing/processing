@@ -3,14 +3,11 @@ package processing.mode.experimental;
 import static processing.mode.experimental.ExperimentalMode.log;
 import static processing.mode.experimental.ExperimentalMode.logE;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.ScrollPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowFocusListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,12 +23,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.TreeMap;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
@@ -51,13 +46,11 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.ListSelectionModel;
-import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.text.BadLocationException;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -2208,6 +2201,7 @@ public class ASTGenerator {
               + selText);
           lblRefactorOldName.setText("Current name: "
               + selText);
+          txtRenameField.setText("");
           txtRenameField.requestFocus();
         }
       });
@@ -3094,7 +3088,7 @@ public class ASTGenerator {
       ((JComponent) frmImportSuggest.getContentPane()).setBorder(BorderFactory
           .createEmptyBorder(5, 5, 5, 5));
       JLabel lbl = new JLabel("<html>The class \"" + className
-          + "\" couldn't be determined, choose the import you need from the following list.</html>");
+          + "\" couldn't be determined. You are probably missing one of the following imports:</html>");
       JScrollPane jsp = new JScrollPane();
       jsp.setViewportView(classList);
       JButton btnInsertImport = new JButton("Insert import");
@@ -3118,11 +3112,38 @@ public class ASTGenerator {
           }
         }
       });
+      
+      JButton btnCancel = new JButton("Cancel");
+      btnCancel.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          frmImportSuggest.setVisible(false);
+        }
+      });
+      
+      JPanel panelTop = new JPanel(), panelBottom = new JPanel(), panelLabel = new JPanel();
+      panelTop.setLayout(new BoxLayout(panelTop, BoxLayout.Y_AXIS));
+      panelTop.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+      panelLabel.setLayout(new BorderLayout());
+      panelLabel.add(lbl,BorderLayout.CENTER);
+      panelTop.add(panelLabel);
+      panelTop.add(Box.createRigidArea(new Dimension(1, 5)));
+      panelTop.add(jsp);
+      panelBottom.setLayout(new BoxLayout(panelBottom, BoxLayout.X_AXIS));
+      panelBottom.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+      panelBottom .setLayout(new BoxLayout(panelBottom, BoxLayout.X_AXIS));
+      panelBottom.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+      panelBottom.add(Box.createHorizontalGlue());
+      panelBottom.add(btnInsertImport);
+      panelBottom.add(Box.createRigidArea(new Dimension(15, 0)));
+      panelBottom.add(btnCancel);    
 
-      frmImportSuggest.add(lbl);
-      frmImportSuggest.add(jsp);
-      frmImportSuggest.add(btnInsertImport);
+//      frmImportSuggest.add(lbl);
+//      frmImportSuggest.add(jsp);
+//      frmImportSuggest.add(btnInsertImport);
+      frmImportSuggest.add(panelTop);
+      frmImportSuggest.add(panelBottom);
       frmImportSuggest.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+      frmImportSuggest.setTitle("Import Suggestion");
       frmImportSuggest.setLocation(editor.getX()
                             + (editor.getWidth() - frmImportSuggest.getWidth()) / 2,
                         editor.getY()

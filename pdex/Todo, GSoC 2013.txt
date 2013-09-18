@@ -75,7 +75,7 @@ Refactoring
 ===========
 
 * Undo misbehaves here, handle carefully.
-
+* Fails to rename the first defined global variable, if a javadoc comment precedes it. But owrds for single/multiline comments. Wth!
 x New Name is validated.
 x Ordered list in 'Show Usage' window
 x Add support for word select on right click and rename, mouse co-ordinates need to obtained carefully
