@@ -23,7 +23,6 @@
 
 package com.oracle.appbundler;
 
-import java.io.File;
 import org.apache.tools.ant.BuildException;
 
 

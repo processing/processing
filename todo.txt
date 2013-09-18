@@ -29,10 +29,10 @@ _ changing modes brings the PDE back on the second screen
 _   the Find window (also the save windows) also have the same problem
 
 7u40 switch
-_ change how export is handled
-_   remove ability to export cross-platform apps
-_   add ability to embed the current JRE
 _ appbundler fixes/changes
+X   the "Classes" folder is included
+X     appears to be line 138 of main.m
+o     maybe this is a holdover from OS X Java? don't know.
 _   icon location uses path, even when embedded
 _   add indents to the Info.plist output file
 _     inside writeInfoPlist from AppBundlerTask.java
@@ -41,11 +41,11 @@ _     this is in main.m. why the change?
 _   any missing args from our app (copyrights/versions?)
 _   make sure it's only running on 64-bit machines? 
 _   add MinimumSystemVersion?
-_   the "Classes" folder is included
-_     appears to be line 138 of main.m
-_     maybe this is a holdover from OS X Java?
 _   bring back the splash screen?
 _   don't re-copy jre into work folder if already exists
+_ change how export is handled
+_   remove ability to export cross-platform apps
+_   add ability to embed the current JRE
 
 no good installer, will need JDK anyway for the export
 require that this folder exists:
