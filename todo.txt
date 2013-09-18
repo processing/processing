@@ -3,6 +3,8 @@ X MovieMaker needs to be compiling as 1.6
 X deal with null/missing folders for Tools and Modes
 X   https://github.com/processing/processing/issues/2068
 
+_ add pref to select PDE font (so that CJKV languages work better)
+_   https://github.com/processing/processing/issues/2078
 
 high
 _ move old Google Code SVN back to processing.org
@@ -31,6 +33,7 @@ _ change how export is handled
 _   remove ability to export cross-platform apps
 _   add ability to embed the current JRE
 _ appbundler fixes/changes
+_   don't re-copy jre into work folder if already exists
 _   icon location uses path, even when embedded
 _   add indents to the Info.plist output file
 _     inside writeInfoPlist from AppBundlerTask.java

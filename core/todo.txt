@@ -11,6 +11,7 @@ _ loadPixels doesn't set alpha value for pixels on Java2D
 _   https://github.com/processing/processing/issues/2030
 _ blendMode(ADD) is broken with default renderer
 _   https://github.com/processing/processing/issues/2012
+_   may have been introduced between 2.0b7 and 2.0b8
 _ add option to have full screen span across screens
 _   display=all in cmd line
 _   sketchDisplay() -> 0 for all, or 1, 2, 3...

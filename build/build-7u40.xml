@@ -414,6 +414,9 @@
     </copy>
     -->
 
+    <!-- if loading JRE directly from .tgz, it's in a folder called 
+	 jre1.7.0_40.jre, so we'll need to strip that out. -->
+
     <!-- workaround for apparent appbundler bug -->
     <copy todir=".">
       <fileset dir="macosx/template.app/Contents/Resources/" 
