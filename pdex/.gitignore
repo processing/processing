@@ -5,3 +5,4 @@
 bin
 mode/ExperimentalMode.jar
 dist
+build.properties
