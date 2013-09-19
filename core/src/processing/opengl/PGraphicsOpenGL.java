@@ -23,9 +23,6 @@
 package processing.opengl;
 
 import processing.core.*;
-
-import java.awt.Font;
-import java.awt.FontMetrics;
 import java.net.URL;
 import java.nio.*;
 import java.util.*;
@@ -3254,43 +3251,33 @@ public class PGraphicsOpenGL extends PGraphics {
 
   @Override
   public float textAscent() {
-    if (textFont == null) {
-      defaultFontOrDeath("textAscent");
-    }
-    Font font = (Font) textFont.getNative();
-    if (font != null) {
-      FontMetrics metrics = parent.getFontMetrics(font);
-      return metrics.getAscent();
-    }
-    return super.textAscent();
+    if (textFont == null) defaultFontOrDeath("textAscent");
+    Object font = textFont.getNative();
+    float ascent = 0;
+    if (font != null) ascent = pgl.getFontAscent(font);
+    if (ascent == 0) ascent = super.textAscent();
+    return ascent;
   }
 
 
   @Override
   public float textDescent() {
-    if (textFont == null) {
-      defaultFontOrDeath("textAscent");
-    }
-    Font font = (Font) textFont.getNative();
-    if (font != null) {
-      FontMetrics metrics = parent.getFontMetrics(font);
-      return metrics.getDescent();
-    }
-    return super.textDescent();
+    if (textFont == null) defaultFontOrDeath("textAscent");
+    Object font = textFont.getNative();
+    float descent = 0;
+    if (font != null) descent = pgl.getFontDescent(font);
+    if (descent == 0) descent = super.textDescent();
+    return descent;
   }
 
 
   @Override
   protected float textWidthImpl(char buffer[], int start, int stop) {
-    Font font = (Font) textFont.getNative();
-    if (font != null) {
-      // maybe should use one of the newer/fancier functions for this?
-      int length = stop - start;
-      FontMetrics metrics = parent.getFontMetrics(font);
-      return metrics.charsWidth(buffer, start, length);
-    }
-
-    return super.textWidthImpl(buffer, start, stop);
+    Object font = textFont.getNative();
+    float twidth = 0;
+    if (font != null) twidth = pgl.getTextWidth(font, buffer, start, stop);
+    if (twidth == 0) twidth = super.textWidthImpl(buffer, start, stop);
+    return twidth;
   }
 
 

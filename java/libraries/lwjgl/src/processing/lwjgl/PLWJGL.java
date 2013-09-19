@@ -27,6 +27,7 @@ import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.font.FontRenderContext;
@@ -331,6 +332,29 @@ public class PLWJGL extends PGL {
     return BufferUtils.createFloatBuffer(size);
   }
   
+  
+  @Override
+  protected int getFontAscent(Object font) {
+    FontMetrics metrics = pg.parent.getFontMetrics((Font)font);
+    return metrics.getAscent();
+  }
+
+
+  @Override
+  protected int getFontDescent(Object font) {
+    FontMetrics metrics = pg.parent.getFontMetrics((Font)font);
+    return metrics.getDescent();
+  }
+
+
+  @Override
+  protected int getTextWidth(Object font, char buffer[], int start, int stop) {
+    // maybe should use one of the newer/fancier functions for this?
+    int length = stop - start;
+    FontMetrics metrics = pg.parent.getFontMetrics((Font)font);
+    return metrics.charsWidth(buffer, start, length);
+  }
+ 
   
   ///////////////////////////////////////////////////////////
 
@@ -1598,7 +1622,7 @@ public class PLWJGL extends PGL {
     GL20.glDeleteProgram(program);
   }
 
-  public String glGetActiveAttrib (int program, int index, IntBuffer size, IntBuffer type) {
+  public String getActiveAttrib (int program, int index, IntBuffer size, IntBuffer type) {
     IntBuffer typeTmp = BufferUtils.createIntBuffer(2);
     String name = GL20.glGetActiveAttrib(program, index, 256, typeTmp);
     size.put(typeTmp.get(0));

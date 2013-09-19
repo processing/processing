@@ -3,6 +3,7 @@ package processing.opengl;
 import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Color;
+import java.awt.FontMetrics;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -943,6 +944,34 @@ public class PJOGL extends PGL {
 
   ///////////////////////////////////////////////////////////
 
+  // Utility functions
+
+
+  @Override
+  protected int getFontAscent(Object font) {
+    FontMetrics metrics = pg.parent.getFontMetrics((Font)font);
+    return metrics.getAscent();
+  }
+
+
+  @Override
+  protected int getFontDescent(Object font) {
+    FontMetrics metrics = pg.parent.getFontMetrics((Font)font);
+    return metrics.getDescent();
+  }
+
+
+  @Override
+  protected int getTextWidth(Object font, char buffer[], int start, int stop) {
+    // maybe should use one of the newer/fancier functions for this?
+    int length = stop - start;
+    FontMetrics metrics = pg.parent.getFontMetrics((Font)font);
+    return metrics.charsWidth(buffer, start, length);
+  }
+
+
+  ///////////////////////////////////////////////////////////
+
   // Tessellator
 
 
@@ -1816,7 +1845,7 @@ public class PJOGL extends PGL {
   }
 
   @Override
-  public String glGetActiveAttrib (int program, int index, IntBuffer size, IntBuffer type) {
+  public String getActiveAttrib(int program, int index, IntBuffer size, IntBuffer type) {
     int[] tmp = {0, 0, 0};
     byte[] namebuf = new byte[1024];
     gl2.glGetActiveAttrib(program, index, 1024, tmp, 0, tmp, 1, tmp, 2, namebuf, 0);
