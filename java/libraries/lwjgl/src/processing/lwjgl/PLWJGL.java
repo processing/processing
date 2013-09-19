@@ -229,6 +229,11 @@ public class PLWJGL extends PGL {
   // Frame rendering
 
 
+  protected boolean canDraw() {
+    return pg.initialized && pg.parent.isDisplayable();
+  }
+  
+  
   protected void requestFocus() { }  
   
 

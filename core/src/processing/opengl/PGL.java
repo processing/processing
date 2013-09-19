@@ -714,9 +714,7 @@ public abstract class PGL {
   }
 
 
-  protected boolean canDraw() {
-    return pg.initialized && pg.parent.isDisplayable();
-  }
+  protected abstract boolean canDraw();
 
 
   protected abstract void requestFocus();

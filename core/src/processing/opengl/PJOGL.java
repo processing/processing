@@ -558,6 +558,12 @@ public class PJOGL extends PGL {
 
 
   @Override
+  protected boolean canDraw() {
+    return pg.initialized && pg.parent.isDisplayable();
+  }
+
+
+  @Override
   protected void requestFocus() { }
 
 
