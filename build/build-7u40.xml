@@ -19,6 +19,14 @@
     </and>
   </condition>
 
+  <!-- Figure out the JRE download location for Linux and Windows. -->
+  <condition property="jre.file" value="jre-7u40-${platform}-i586.tgz"> 
+    <equals arg1="${sun.arch.data.model}" arg2="32" />
+  </condition>
+  <condition property="jre.file" value="jre-7u40-${platform}-x64.tgz"> 
+    <equals arg1="${sun.arch.data.model}" arg2="64" />
+  </condition>
+
   <!--
   <echo message="${java.class.path}" />
   -->
@@ -682,8 +690,10 @@
     <copy file="linux/processing" tofile="linux/work/processing-java" />
     <chmod perm="ugo+x" file="linux/work/processing-java" />
 
+    <!--
     <property name="jre.file" 
 	      value="jre-tools-6u37-linux${sun.arch.data.model}.tgz" />
+    -->
 
     <get src="http://processing.googlecode.com/files/${jre.file}" 
 	 dest="linux/jre.tgz" 
@@ -706,7 +716,7 @@
       <arg value="-xzpf" />
       <arg value="linux/jre.tgz"/>
     </exec>
-
+    <move file="linux/work/jre1.7.0_40" tofile="linux/work/java" />
   </target>
   
   <target name="linux-run" depends="linux-build" 
@@ -879,14 +889,24 @@
     </chmod>
 
     <!-- starting with 2.0a7, require the local JRE + tools.jar -->
+    <!--
     <property name="jre.file" 
 	      value="jre-tools-6u37-windows${sun.arch.data.model}.zip" />
-
+    -->
     <get src="http://processing.googlecode.com/files/${jre.file}" 
-	 dest="windows/jre.zip" 
+	 dest="windows/jre.tgz" 
 	 usetimestamp="true" />
 
+    <!--
     <unzip dest="windows/work" src="windows/jre.zip" overwrite="false"/>
+    -->
+    <!-- Hopefully this is OK with the permissions (unlike Linux), 
+	 since those shouldn't matter on Windows. -->
+    <untar compression="gzip"
+	   dest="windows/work" 
+	   src="windows/jre.tgz" 
+	   overwrite="false" />
+    <move file="windows/work/jre1.7.0_40" tofile="windows/work/java" />
   </target>
   
   <target name="windows-run" depends="windows-build" 
