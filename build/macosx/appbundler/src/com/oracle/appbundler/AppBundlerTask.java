@@ -34,9 +34,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.URL;
 import java.nio.file.Files;
@@ -45,7 +42,6 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Stack;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -96,14 +92,6 @@ public class AppBundlerTask extends Task {
   private static final String EXECUTABLE_NAME = "JavaAppLauncher";
   private static final String DEFAULT_ICON_NAME = "GenericApp.icns";
   private static final String OS_TYPE_CODE = "APPL";
-
-  private static final String PLIST_DTD = "<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">";
-  private static final String PLIST_TAG = "plist";
-  private static final String PLIST_VERSION_ATTRIBUTE = "version";
-  private static final String DICT_TAG = "dict";
-  private static final String KEY_TAG = "key";
-  private static final String ARRAY_TAG = "array";
-  private static final String STRING_TAG = "string";
 
   private static final int BUFFER_SIZE = 2048;
 
@@ -514,113 +502,15 @@ public class AppBundlerTask extends Task {
   }
 
 
-  class PropertyLister {
-    PrintWriter writer;
-//    int indentSpaces = 2;
-    String indentSpaces = "  ";
-//    int indentLevel;
-    Stack<String> elements = new Stack<>();
-    
-    public PropertyLister(OutputStream output) throws UnsupportedEncodingException {
-      OutputStreamWriter osw = new OutputStreamWriter(output, "UTF-8");
-      writer = new PrintWriter(osw);
-    }
-    
-    void writeStartDocument() {
-      writer.println("<?xml version=\"1.0\" ?>");
-    }
-    
-    void writeEndDocument() {
-      writer.flush();
-      writer.close();
-    }
-    
-    void println(String line) {
-      writer.println(line);
-    }
-    
-    void writeStartElement(String element, String... args) {
-      emitIndent();
-      writer.print("<" + element);
-      
-      for (int i = 0; i < args.length; i += 2) {
-        String attr = args[i];
-        String value = args[i+1];
-        writer.print(" " + attr + "=\"" + value + "\"");
-      }
-      writer.println(">");
-//      indentLevel++;
-      elements.push(element);
-    }
-    
-    void writeStartElement(String element) {
-      emitIndent();
-      writer.println("<" + element + ">");
-//      indentLevel++;
-      elements.push(element);
-    }
-    
-    void writeEndElement() {
-      emitOutdent();
-      writer.println("</" + elements.pop() + ">");
-    }
-    
-    void writeKey(String key) {
-      emitSingle(KEY_TAG, key);
-//      emitIndent();
-//      writer.println("<key>" + key + "</key>");
-    }
-    
-    void writeString(String value) {
-//      emitIndent();
-//      writer.println("<string>" + value + "</string>");
-      emitSingle(STRING_TAG, value);
-    }
-    
-    void writeBoolean(boolean value) {
-      emitIndent();
-      writer.println("<" + (value ? "true" : "false") + "/>");
-    }
-    
-    void writeProperty(String property, String value) {
-      writeKey(property);
-      writeString(value);
-    }
-    
-    private void emitSingle(String tag, String content) {
-      emitIndent();
-      writer.println("<" + tag + ">" + content + "</" + tag + ">");
-    }
-    
-    private void emitIndent() {
-      for (int i = 0; i < elements.size(); i++) {
-//        for (int j = 0; j < indentSpaces; j++) {
-//          writer.print(' ');
-//        }
-        writer.print(indentSpaces);
-      }
-    }
-
-    private void emitOutdent() {
-      for (int i = 0; i < elements.size() - 1; i++) {
-        writer.print(indentSpaces);
-      }
-    }
-  }
-  
-  
   private void writeInfoPlist(File file) throws IOException {
     FileOutputStream output = new FileOutputStream(file);
     PropertyLister xout = new PropertyLister(output);
+    
+    // Get started, write all necessary header info and open plist element
     xout.writeStartDocument();
 
-    xout.println(PLIST_DTD);
-
-    // Begin root element
-    xout.writeStartElement(PLIST_TAG, PLIST_VERSION_ATTRIBUTE, "1.0");
-
     // Begin root dictionary
-    xout.writeStartElement(DICT_TAG);
+    xout.writeStartDictElement();
 
     // Write bundle properties
     xout.writeProperty("CFBundleDevelopmentRegion", "English");
@@ -665,13 +555,13 @@ public class AppBundlerTask extends Task {
     // Write CFBundleDocument entries
     xout.writeKey("CFBundleDocumentTypes");
 
-    xout.writeStartElement(ARRAY_TAG);
+    xout.writeStartArrayElement();
 
     for (BundleDocument bundleDocument: bundleDocuments) {
-      xout.writeStartElement(DICT_TAG);
+      xout.writeStartDictElement();
 
       xout.writeKey("CFBundleTypeExtensions");
-      xout.writeStartElement(ARRAY_TAG);
+      xout.writeStartArrayElement();
       for (String extension : bundleDocument.getExtensions()) {
         xout.writeString(extension);
       }
@@ -699,7 +589,7 @@ public class AppBundlerTask extends Task {
     // Write architectures
     xout.writeKey("LSArchitecturePriority");
 
-    xout.writeStartElement(ARRAY_TAG);
+    xout.writeStartArrayElement();
 
     for (String architecture : architectures) {
       xout.writeString(architecture);
@@ -709,7 +599,7 @@ public class AppBundlerTask extends Task {
 
     // Write Environment
     xout.writeKey("LSEnvironment");
-    xout.writeStartElement(DICT_TAG);
+    xout.writeStartDictElement();
     xout.writeKey("LC_CTYPE");
     xout.writeString("UTF-8");
     xout.writeEndElement();
@@ -717,7 +607,7 @@ public class AppBundlerTask extends Task {
     // Write options
     xout.writeKey("JVMOptions");
 
-    xout.writeStartElement(ARRAY_TAG);
+    xout.writeStartArrayElement();
 
     for (String option : options) {
       xout.writeString(option);
@@ -728,7 +618,7 @@ public class AppBundlerTask extends Task {
     // Write arguments
     xout.writeKey("JVMArguments");
 
-    xout.writeStartElement(ARRAY_TAG);
+    xout.writeStartArrayElement();
 
     for (String argument : arguments) {
       xout.writeString(argument);
@@ -739,10 +629,7 @@ public class AppBundlerTask extends Task {
     // End root dictionary
     xout.writeEndElement();
 
-    // End root element
-    xout.writeEndElement();
-
-    // Close document
+    // Close out the plist
     xout.writeEndDocument();
   }
 
