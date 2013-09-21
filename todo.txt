@@ -39,17 +39,16 @@ _ appbundler fixes/changes
 X   the "Classes" folder is included
 X     appears to be line 138 of main.m
 o     maybe this is a holdover from OS X Java? don't know.
-_   icon location uses path, even when embedded
+X   icon location uses path, even when embedded
 X   add indents to the Info.plist output file
 X     inside writeInfoPlist from AppBundlerTask.java
 o   use Contents/Resources/Java instead of Contents/Java?
 o     this is in main.m. why the change?
 X     doesn't make any difference, just use Contents/Java
-_   any missing args from our app (copyrights/versions?)
-_   make sure it's only running on 64-bit machines? 
-_   add MinimumSystemVersion?
-_   bring back the splash screen?
-_   don't re-copy jre into work folder if already exists
+X   any missing args from our app (copyrights/versions?)
+X copy GenericDocumentIcon.icns for placeholder icon
+X   from /System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/
+_ don't re-copy jre into work folder if already exists
 _ change how export is handled
 _   remove ability to export cross-platform apps
 _   add ability to embed the current JRE
@@ -57,6 +56,13 @@ _ change app stub in OS X exported application
 _ we become full 64-bit on OS X
 _   meaning that the macosx32 video library goes away
 _   and the preference for launching in 32- or 64-bit mode
+_ try the bundle on Mac Mini running 10.6
+_   make sure it's only running on 64-bit machines? 
+_   add MinimumSystemVersion?
+_ remove javafx from the embed
+_   more about optional files:
+_   http://www.oracle.com/technetwork/java/javase/jdk-7-readme-429198.html
+_ bring back the splash screen
 
 no good installer, will need JDK anyway for the export
 require that this folder exists:
