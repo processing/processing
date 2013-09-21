@@ -24,6 +24,7 @@
 package processing.opengl;
 
 import processing.core.PApplet;
+
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -714,9 +715,7 @@ public abstract class PGL {
   }
 
 
-  protected boolean canDraw() {
-    return pg.initialized && pg.parent.isDisplayable();
-  }
+  protected abstract boolean canDraw();
 
 
   protected abstract void requestFocus();
@@ -1884,6 +1883,23 @@ public abstract class PGL {
   }
 
 
+  // TODO: the next three functions shouldn't be here...
+
+  protected int getFontAscent(Object font) {
+    return 0;
+  }
+
+
+  protected int getFontDescent(Object font) {
+    return 0;
+  }
+
+
+  protected int getTextWidth(Object font, char buffer[], int start, int stop) {
+    return 0;
+  }
+
+
   ///////////////////////////////////////////////////////////
 
   // Tessellator interface
@@ -1914,7 +1930,7 @@ public abstract class PGL {
 
   protected String tessError(int err) {
     return "";
-   }
+  }
 
 
   ///////////////////////////////////////////////////////////
@@ -2426,7 +2442,7 @@ public abstract class PGL {
   public abstract void linkProgram(int program);
   public abstract void useProgram(int program);
   public abstract void deleteProgram(int program);
-  public abstract String glGetActiveAttrib (int program, int index, IntBuffer size, IntBuffer type);
+  public abstract String getActiveAttrib(int program, int index, IntBuffer size, IntBuffer type);
   public abstract int getAttribLocation(int program, String name);
   public abstract void bindAttribLocation(int program, int index, String name);
   public abstract int getUniformLocation(int program, String name);
