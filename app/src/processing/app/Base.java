@@ -2355,14 +2355,16 @@ public class Base {
         // This works for Windows, Linux, and Apple's Java 6 on OS X.
         processingRoot = jarFolder.getParentFile();
       } else if (Base.isMacOS()) {
-        // This works for Java 7 on OS X.
+        // This works for Java 7 on OS X. The 'lib' folder is not part of the
+        // classpath on OS X, and adding it creates more problems than it's 
+        // worth.
         processingRoot = jarFolder;
       }
       if (processingRoot == null || !processingRoot.exists()) {
         // Try working directory instead (user.dir, different from user.home)
-        Base.log("Could not find lib folder via " +
-                 jarFolder.getAbsolutePath() +
-                 ", switching to user.dir");
+        System.err.println("Could not find lib folder via " +
+                           jarFolder.getAbsolutePath() +
+                           ", switching to user.dir");
         processingRoot = new File(System.getProperty("user.dir"));
       }
     }

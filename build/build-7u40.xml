@@ -408,7 +408,7 @@
 
     <chmod file="macosx/work/Processing.app/Contents/MacOS/JavaApplicationStub" perm="ugo+x" />
       
-    <copy todir="macosx/work/Processing.app/Contents/Resources/Java/lib" 
+    <copy todir="macosx/work/Processing.app/Contents/Java/lib" 
 	  flatten="true">
       <fileset refid="runtime.jars"/>
     </copy>
@@ -514,12 +514,6 @@
     <!-- workaround for apparent appbundler bug -->
     <delete file="processing.icns" />
     <delete file="pde.icns" />
-
-    <!-- Work around auto-included folder (from appbundler? or Oracle Java?) 
-         that causes the p5 Compiler to crash if it doesn't exist. -->
-    <!--
-    <mkdir dir="macosx/work/Processing.app/Contents/Java/Classes" />
-    -->
 
     <copy todir="macosx/work/Processing.app/Contents/Java">
       <fileset dir=".." includes="core/library/**" />

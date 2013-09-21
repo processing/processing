@@ -142,17 +142,21 @@ int launch(char *commandName) {
 
     // Set the class path
     NSString *mainBundlePath = [mainBundle bundlePath];
-    NSString *javaPath = [mainBundlePath stringByAppendingString:@"/Contents/Java"];
-    //NSMutableString *classPath = [NSMutableString stringWithFormat:@"-Djava.class.path=%@/Classes", javaPath];
+    NSString *javaPath = 
+        [mainBundlePath stringByAppendingString:@"/Contents/Java"];
+        // Changed Contents/Java to the old Contents/Resources/Java [fry]
+        //[mainBundlePath stringByAppendingString:@"/Contents/Resources/Java"];
     // Removed the /Classes, because the P5 compiler (ECJ?) will throw an 
-    // error if it doesn't exist. But it's harmless to leave this as including
-    // the root dir, since it will always exist, and I guess if you wanted to
-    // put .class files in there, they'd work. If I knew more Cocoa, I'd just 
-    // make this an empty string to start, to be appended a few lines later.
+    // error if it doesn't exist. But it's harmless to leave the root dir, 
+    // since it will always exist, and I guess if you wanted to put .class 
+    // files in there, they'd work. If I knew more Cocoa, I'd just make this
+    // an empty string to start, to be appended a few lines later. [fry]
+    //NSMutableString *classPath = [NSMutableString stringWithFormat:@"-Djava.class.path=%@/Classes", javaPath];
     NSMutableString *classPath = [NSMutableString stringWithFormat:@"-Djava.class.path=%@", javaPath];
 
     NSFileManager *defaultFileManager = [NSFileManager defaultManager];
-    NSArray *javaDirectoryContents = [defaultFileManager contentsOfDirectoryAtPath:javaPath error:nil];
+    NSArray *javaDirectoryContents = 
+        [defaultFileManager contentsOfDirectoryAtPath:javaPath error:nil];
     if (javaDirectoryContents == nil) {
         [[NSException exceptionWithName:@JAVA_LAUNCH_ERROR
             reason:NSLocalizedString(@"JavaDirectoryNotFound", @UNSPECIFIED_ERROR)
@@ -164,6 +168,21 @@ int launch(char *commandName) {
             [classPath appendFormat:@":%@/%@", javaPath, file];
         }
     }
+
+    /*
+    // search the 'lib' subfolder as well [fry]
+    NSString *libPath = 
+      [mainBundlePath stringByAppendingString:@"/Contents/Resources/Java/lib"];
+    NSArray *libDirectoryContents = 
+      [defaultFileManager contentsOfDirectoryAtPath:libPath error:nil];
+    if (libDirectoryContents != nil) {
+      for (NSString *file in libDirectoryContents) {
+        if ([file hasSuffix:@".jar"]) {
+	  [classPath appendFormat:@":%@/%@", libPath, file];
+        }
+      }
+    }
+    */
 
     // Set the library path
     NSString *libraryPath = [NSString stringWithFormat:@"-Djava.library.path=%@/Contents/MacOS", mainBundlePath];

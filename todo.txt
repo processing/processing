@@ -2,6 +2,9 @@
 X MovieMaker needs to be compiling as 1.6
 X deal with null/missing folders for Tools and Modes
 X   https://github.com/processing/processing/issues/2068
+o bad JS mode causing crash on startup
+X   https://github.com/processing/processing/issues/2088
+X   looks like issue that was covered in 2.0.3 changes
 
 high
 _ remove video library for other platforms in download
@@ -35,10 +38,11 @@ X   the "Classes" folder is included
 X     appears to be line 138 of main.m
 o     maybe this is a holdover from OS X Java? don't know.
 _   icon location uses path, even when embedded
-_   add indents to the Info.plist output file
-_     inside writeInfoPlist from AppBundlerTask.java
-_   use Contents/Resources/Java instead of Contents/Java?
-_     this is in main.m. why the change?
+X   add indents to the Info.plist output file
+X     inside writeInfoPlist from AppBundlerTask.java
+o   use Contents/Resources/Java instead of Contents/Java?
+o     this is in main.m. why the change?
+X     doesn't make any difference, just use Contents/Java
 _   any missing args from our app (copyrights/versions?)
 _   make sure it's only running on 64-bit machines? 
 _   add MinimumSystemVersion?

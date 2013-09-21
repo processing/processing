@@ -330,6 +330,10 @@ public class AppBundlerTask extends Task {
       File resourcesDirectory = new File(contentsDirectory, "Resources");
       resourcesDirectory.mkdir();
 
+//      // Move back to Contents/Resources/Java instead of Contents/Java [fry]
+//      File javaDirectory = new File(resourcesDirectory, "Java");
+//      javaDirectory.mkdir();
+
       // Generate Info.plist
       File infoPlistFile = new File(contentsDirectory, "Info.plist");
       infoPlistFile.createNewFile();
