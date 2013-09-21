@@ -811,8 +811,12 @@
 
     <delete dir="${target.path}/modes/java/libraries/video/library/macosx32" />
     <delete dir="${target.path}/modes/java/libraries/video/library/macosx64" />
-
 <!--
+    <echo message="the path is ${target.path}" />
+    <delete dir="${target.path}/modes/java/libraries/video/library/macosx32" failonerror="true" />
+    <delete dir="${target.path}/modes/java/libraries/video/library/macosx64" />
+    <exec executable="ls" dir="${target.path}/modes/java/libraries/video/library" />
+
     <condition property="delete32"> 
       <equals arg1="${sun.arch.data.model}" arg2="64" />
     </condition>
