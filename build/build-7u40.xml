@@ -1,10 +1,5 @@
 <?xml version="1.0"?>
 <project name="Processing" default="build">
-
-  <!-- app bundler for OS X and Java 1.7 -->
-  <taskdef name="bundleapp"
-           classname="com.oracle.appbundler.AppBundlerTask"   
-           classpath="macosx/appbundler.jar" />
   
   <!-- Sets properties for macosx/windows/linux depending on current system -->
   <condition property="platform" value="macosx">
@@ -406,6 +401,11 @@
 	       includes="*.icns" />
     </copy>
     -->
+
+    <!-- app bundler for OS X and Java 1.7 -->
+    <taskdef name="bundleapp"
+             classname="com.oracle.appbundler.AppBundlerTask"   
+             classpath="macosx/appbundler.jar" />
 
     <!--icon="macosx/processing.icns"-->
     <bundleapp outputDirectory="macosx/work"
