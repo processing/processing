@@ -98,13 +98,13 @@ int launch(char *commandName) {
            
     // execute privileged
     NSString *privileged = [infoDictionary objectForKey:@JVM_RUN_PRIVILEGED];
-    if ( privileged != nil && getuid() != 0 ) {
+    if (privileged != nil && getuid() != 0) {
         NSDictionary *error = [NSDictionary new];
         NSString *script =  [NSString stringWithFormat:@"do shell script \"\\\"%@\\\" > /dev/null 2>&1 &\" with administrator privileges", [NSString stringWithCString:commandName encoding:NSASCIIStringEncoding]];
         NSAppleScript *appleScript = [[NSAppleScript new] initWithSource:script];
         if ([appleScript executeAndReturnError:&error]) {
             // This means we successfully elevated the application and can stop in here.
-            return;
+	    return 0;  // Should this return 'error' instead? [fry]
         }
     }
     
