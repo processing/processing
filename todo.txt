@@ -3,10 +3,8 @@ X MovieMaker needs to be compiling as 1.6
 X deal with null/missing folders for Tools and Modes
 X   https://github.com/processing/processing/issues/2068
 
-_ add pref to select PDE font (so that CJKV languages work better)
-_   https://github.com/processing/processing/issues/2078
-
 high
+_ remove video library for other platforms in download
 _ move old Google Code SVN back to processing.org
 _   then cull out the old branches/tags from the Github repo
 _ figure out Android build w/o javac so we can remove tools.jar and javac
@@ -17,8 +15,11 @@ _ "String index out of range" error
 _   https://github.com/processing/processing/issues/1940
 _ freeze after splash screen on OS X (looks like core.jar in the path)
 _   https://github.com/processing/processing/issues/1872
+_ add pref to select PDE font (so that CJKV languages work better)
+_   https://github.com/processing/processing/issues/2078
 
 medium
+_ use platformDelete() to remove untitled sketches?
 _ change to using platformDelete() instead of Base.removeDir() where possible
 _   verify that the OS X version uses the real call
 _   and doesn't just look for .Trash

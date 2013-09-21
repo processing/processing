@@ -34,6 +34,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.URL;
 import java.nio.file.Files;
@@ -42,6 +47,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Stack;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -49,6 +55,12 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
@@ -61,674 +73,804 @@ import org.apache.tools.ant.types.resources.FileResource;
  * App bundler Ant task.
  */
 public class AppBundlerTask extends Task {
-    // Output folder for generated bundle
-    private File outputDirectory = null;
+  // Output folder for generated bundle
+  private File outputDirectory = null;
 
-    // General bundle properties
-    private String name = null;
-    private String displayName = null;
-    private String identifier = null;
-    private File icon = null;
-    private String executableName = EXECUTABLE_NAME;
+  // General bundle properties
+  private String name = null;
+  private String displayName = null;
+  private String identifier = null;
+  private File icon = null;
+  private String executableName = EXECUTABLE_NAME;
 
-    private String shortVersion = "1.0";
-    private String version = "1.0";
-    private String signature = "????";
-    private String copyright = "";
-    private String privileged = null;
-    private String workingDirectory = null;
+  private String shortVersion = "1.0";
+  private String version = "1.0";
+  private String signature = "????";
+  private String copyright = "";
+  private String privileged = null;
+  private String workingDirectory = null;
 
-    private String applicationCategory = null;
+  private String applicationCategory = null;
 
-    private boolean highResolutionCapable = true;
+  private boolean highResolutionCapable = true;
 
-    // JVM info properties
-    private String mainClassName = null;
-    private FileSet runtime = null;
-    private ArrayList<FileSet> classPath = new ArrayList<>();
-    private ArrayList<FileSet> libraryPath = new ArrayList<>();
-    private ArrayList<String> options = new ArrayList<>();
-    private ArrayList<String> arguments = new ArrayList<>();
-    private ArrayList<String> architectures = new ArrayList<>();
-    private ArrayList<BundleDocument> bundleDocuments = new ArrayList<>();
-    
-    private Reference classPathRef;
+  // JVM info properties
+  private String mainClassName = null;
+  private FileSet runtime = null;
+  private ArrayList<FileSet> classPath = new ArrayList<>();
+  private ArrayList<FileSet> libraryPath = new ArrayList<>();
+  private ArrayList<String> options = new ArrayList<>();
+  private ArrayList<String> arguments = new ArrayList<>();
+  private ArrayList<String> architectures = new ArrayList<>();
+  private ArrayList<BundleDocument> bundleDocuments = new ArrayList<>();
 
-    private static final String EXECUTABLE_NAME = "JavaAppLauncher";
-    private static final String DEFAULT_ICON_NAME = "GenericApp.icns";
-    private static final String OS_TYPE_CODE = "APPL";
+  private Reference classPathRef;
 
-    private static final String PLIST_DTD = "<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">";
-    private static final String PLIST_TAG = "plist";
-    private static final String PLIST_VERSION_ATTRIBUTE = "version";
-    private static final String DICT_TAG = "dict";
-    private static final String KEY_TAG = "key";
-    private static final String ARRAY_TAG = "array";
-    private static final String STRING_TAG = "string";
-    
-    private static final int BUFFER_SIZE = 2048;
+  private static final String EXECUTABLE_NAME = "JavaAppLauncher";
+  private static final String DEFAULT_ICON_NAME = "GenericApp.icns";
+  private static final String OS_TYPE_CODE = "APPL";
 
-    public void setOutputDirectory(File outputDirectory) {
-        this.outputDirectory = outputDirectory;
+  private static final String PLIST_DTD = "<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">";
+  private static final String PLIST_TAG = "plist";
+  private static final String PLIST_VERSION_ATTRIBUTE = "version";
+  private static final String DICT_TAG = "dict";
+  private static final String KEY_TAG = "key";
+  private static final String ARRAY_TAG = "array";
+  private static final String STRING_TAG = "string";
+
+  private static final int BUFFER_SIZE = 2048;
+
+
+  public void setOutputDirectory(File outputDirectory) {
+    this.outputDirectory = outputDirectory;
+  }
+
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+
+  public void setDisplayName(String displayName) {
+    this.displayName = displayName;
+  }
+
+
+  public void setIdentifier(String identifier) {
+    this.identifier = identifier;
+  }
+
+
+  public void setIcon(File icon) {
+    this.icon = icon;
+  }
+
+
+  public void setExecutableName(String executable) {
+    this.executableName = executable;
+  }
+
+
+  public void setShortVersion(String shortVersion) {
+    this.shortVersion = shortVersion;
+  }
+
+
+  public void setVersion(String version) {
+    this.version = version;
+  }
+
+
+  public void setSignature(String signature) {
+    this.signature = signature;
+  }
+
+
+  public void setCopyright(String copyright) {
+    this.copyright = copyright;
+  }
+
+
+  public void setPrivileged(String privileged) {
+    this.privileged = privileged;
+  }
+
+
+  public void setWorkingDirectory(String workingDirectory) {
+    this.workingDirectory = workingDirectory;
+  }
+
+
+  public void setApplicationCategory(String applicationCategory) {
+    this.applicationCategory = applicationCategory;
+  }
+
+
+  public void setHighResolutionCapable(boolean highResolutionCapable) {
+    this.highResolutionCapable = highResolutionCapable;
+  }
+
+
+  public void setMainClassName(String mainClassName) {
+    this.mainClassName = mainClassName;
+  }
+
+
+  public void addConfiguredRuntime(FileSet runtime) throws BuildException {
+    if (this.runtime != null) {
+      throw new BuildException("Runtime already specified.");
     }
 
-    public void setName(String name) {
-        this.name = name;
+    this.runtime = runtime;
+
+    runtime.appendIncludes(new String[] {
+      "jre/",
+    });
+
+    runtime.appendExcludes(new String[] {
+      "bin/",
+      "jre/bin/",
+      "jre/lib/deploy/",
+      "jre/lib/deploy.jar",
+      "jre/lib/javaws.jar",
+      "jre/lib/libdeploy.dylib",
+      "jre/lib/libnpjp2.dylib",
+      "jre/lib/plugin.jar",
+      "jre/lib/security/javaws.policy"
+    });
+  }
+
+
+  public void setClasspathRef(Reference ref) {
+    this.classPathRef = ref;
+  }
+
+
+  public void addConfiguredClassPath(FileSet classPath) {
+    this.classPath.add(classPath);
+  }
+
+
+  public void addConfiguredLibraryPath(FileSet libraryPath) {
+    this.libraryPath.add(libraryPath);
+  }
+
+
+  public void addConfiguredBundleDocument(BundleDocument document) {
+    this.bundleDocuments.add(document);
+  }
+
+
+  public void addConfiguredOption(Option option) throws BuildException {
+    String value = option.getValue();
+
+    if (value == null) {
+      throw new BuildException("Value is required.");
     }
 
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
+    options.add(value);
+  }
+
+
+  public void addConfiguredArgument(Argument argument) throws BuildException {
+    String value = argument.getValue();
+
+    if (value == null) {
+      throw new BuildException("Value is required.");
     }
 
-    public void setIdentifier(String identifier) {
-        this.identifier = identifier;
+    arguments.add(value);
+  }
+
+
+  public void addConfiguredArch(Architecture architecture) throws BuildException {
+    String name = architecture.getName();
+
+    if (name == null) {
+      throw new BuildException("Name is required.");
     }
 
-    public void setIcon(File icon) {
-        this.icon = icon;
-    }
-    
-    public void setExecutableName(String executable) {
-    	this.executableName = executable;
-    }
+    architectures.add(name);
+  }
 
-    public void setShortVersion(String shortVersion) {
-        this.shortVersion = shortVersion;
-    }
 
-    public void setVersion(String version) {
-        this.version = version;    
+  @Override
+  public void execute() throws BuildException {
+    // Validate required properties
+    if (outputDirectory == null) {
+      throw new IllegalStateException("Output directory is required.");
     }
 
-    public void setSignature(String signature) {
-        this.signature = signature;
+    if (!outputDirectory.exists()) {
+      throw new IllegalStateException("Output directory does not exist.");
     }
 
-    public void setCopyright(String copyright) {
-        this.copyright = copyright;
-    }
-    
-    public void setPrivileged(String privileged) {
-        this.privileged = privileged;
-    }
-    
-    public void setWorkingDirectory(String workingDirectory) {
-        this.workingDirectory = workingDirectory;
-    }
-    
-    public void setApplicationCategory(String applicationCategory) {
-        this.applicationCategory = applicationCategory;
+    if (!outputDirectory.isDirectory()) {
+      throw new IllegalStateException("Invalid output directory.");
     }
 
-    public void setHighResolutionCapable(boolean highResolutionCapable) {
-        this.highResolutionCapable = highResolutionCapable;
+    if (name == null) {
+      throw new IllegalStateException("Name is required.");
     }
 
-    public void setMainClassName(String mainClassName) {
-        this.mainClassName = mainClassName;
+    if (displayName == null) {
+      throw new IllegalStateException("Display name is required.");
     }
 
-    public void addConfiguredRuntime(FileSet runtime) throws BuildException {
-        if (this.runtime != null) {
-            throw new BuildException("Runtime already specified.");
-        }
-
-        this.runtime = runtime;
-
-        runtime.appendIncludes(new String[] {
-            "jre/",
-        });
-
-        runtime.appendExcludes(new String[] {
-            "bin/",
-            "jre/bin/",
-            "jre/lib/deploy/",
-            "jre/lib/deploy.jar",
-            "jre/lib/javaws.jar",
-            "jre/lib/libdeploy.dylib",
-            "jre/lib/libnpjp2.dylib",
-            "jre/lib/plugin.jar",
-            "jre/lib/security/javaws.policy"
-        });
-    }
-             
-    public void setClasspathRef(Reference ref) {   
-        this.classPathRef = ref;                                         
+    if (identifier == null) {
+      throw new IllegalStateException("Identifier is required.");
     }
 
-    public void addConfiguredClassPath(FileSet classPath) {
-        this.classPath.add(classPath);
+    if (icon != null) {
+      if (!icon.exists()) {
+        throw new IllegalStateException("Icon does not exist.");
+      }
+
+      if (icon.isDirectory()) {
+        throw new IllegalStateException("Invalid icon.");
+      }
     }
 
-    public void addConfiguredLibraryPath(FileSet libraryPath) {
-        this.libraryPath.add(libraryPath);
-    }
-    
-    public void addConfiguredBundleDocument(BundleDocument document) {
-        this.bundleDocuments.add(document);
+    if (shortVersion == null) {
+      throw new IllegalStateException("Short version is required.");
     }
 
-    public void addConfiguredOption(Option option) throws BuildException {
-        String value = option.getValue();
-
-        if (value == null) {
-            throw new BuildException("Value is required.");
-        }
-
-        options.add(value);
+    if (signature == null) {
+      throw new IllegalStateException("Signature is required.");
     }
 
-    public void addConfiguredArgument(Argument argument) throws BuildException {
-        String value = argument.getValue();
-
-        if (value == null) {
-            throw new BuildException("Value is required.");
-        }
-
-        arguments.add(value);
+    if (signature.length() != 4) {
+      throw new IllegalStateException("Invalid signature.");
     }
 
-    public void addConfiguredArch(Architecture architecture) throws BuildException {
-        String name = architecture.getName();
-
-        if (name == null) {
-            throw new BuildException("Name is required.");
-        }
-
-        architectures.add(name);   
+    if (copyright == null) {
+      throw new IllegalStateException("Copyright is required.");
     }
 
-    @Override
-    public void execute() throws BuildException {
-        // Validate required properties
-        if (outputDirectory == null) {
-            throw new IllegalStateException("Output directory is required.");
-        }
-
-        if (!outputDirectory.exists()) {
-            throw new IllegalStateException("Output directory does not exist.");
-        }
-
-        if (!outputDirectory.isDirectory()) {
-            throw new IllegalStateException("Invalid output directory.");
-        }
-
-        if (name == null) {
-            throw new IllegalStateException("Name is required.");
-        }
-
-        if (displayName == null) {
-            throw new IllegalStateException("Display name is required.");
-        }
-
-        if (identifier == null) {
-            throw new IllegalStateException("Identifier is required.");
-        }
-
-        if (icon != null) {
-            if (!icon.exists()) {
-                throw new IllegalStateException("Icon does not exist.");
-            }
-
-            if (icon.isDirectory()) {
-                throw new IllegalStateException("Invalid icon.");
-            }
-        }
-
-        if (shortVersion == null) {
-            throw new IllegalStateException("Short version is required.");
-        }
-
-        if (signature == null) {
-            throw new IllegalStateException("Signature is required.");
-        }
-
-        if (signature.length() != 4) {
-            throw new IllegalStateException("Invalid signature.");
-        }
-
-        if (copyright == null) {
-            throw new IllegalStateException("Copyright is required.");
-        }
-
-        if (mainClassName == null) {
-            throw new IllegalStateException("Main class name is required.");
-        }
-
-        // Create the app bundle
-        try {
-            System.out.println("Creating app bundle: " + name);
-
-            // Create directory structure
-            File rootDirectory = new File(outputDirectory, name + ".app");
-            delete(rootDirectory);
-            rootDirectory.mkdir();
-
-            File contentsDirectory = new File(rootDirectory, "Contents");
-            contentsDirectory.mkdir();
-
-            File macOSDirectory = new File(contentsDirectory, "MacOS");
-            macOSDirectory.mkdir();
-
-            File javaDirectory = new File(contentsDirectory, "Java");
-            javaDirectory.mkdir();
-
-            File plugInsDirectory = new File(contentsDirectory, "PlugIns");
-            plugInsDirectory.mkdir();
-
-            File resourcesDirectory = new File(contentsDirectory, "Resources");
-            resourcesDirectory.mkdir();
-
-            // Generate Info.plist
-            File infoPlistFile = new File(contentsDirectory, "Info.plist");
-            infoPlistFile.createNewFile();
-            writeInfoPlist(infoPlistFile);
-
-            // Generate PkgInfo
-            File pkgInfoFile = new File(contentsDirectory, "PkgInfo");
-            pkgInfoFile.createNewFile();
-            writePkgInfo(pkgInfoFile);
-
-            // Copy executable to MacOS folder
-            File executableFile = new File(macOSDirectory, executableName);
-            copy(getClass().getResource(EXECUTABLE_NAME), executableFile);
-
-            executableFile.setExecutable(true, false);
-
-            // Copy localized resources to Resources folder
-            copyResources(resourcesDirectory);
-            
-            // Copy runtime to PlugIns folder
-            copyRuntime(plugInsDirectory);
-
-            // Copy class path entries to Java folder
-            copyClassPathEntries(javaDirectory);
-
-            // Copy class path ref entries to Java folder
-            copyClassPathRefEntries(javaDirectory);            
-
-            // Copy library path entries to MacOS folder
-            copyLibraryPathEntries(macOSDirectory);
-
-            // Copy icon to Resources folder
-            copyIcon(resourcesDirectory);
-        } catch (IOException exception) {
-            throw new BuildException(exception);
-        }
-    }
-    
-    private void copyResources(File resourcesDirectory) throws IOException {
-        // Unzip res.zip into resources directory
-        InputStream inputStream = getClass().getResourceAsStream("res.zip");
-        ZipInputStream zipInputStream = new ZipInputStream(inputStream);
-
-        try {
-            ZipEntry zipEntry = zipInputStream.getNextEntry();
-            while (zipEntry != null) {
-                File file = new File(resourcesDirectory, zipEntry.getName());
-
-                if (zipEntry.isDirectory()) {
-                    file.mkdir();
-                } else {
-                    OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file), BUFFER_SIZE);
-
-                    try {
-                        int b = zipInputStream.read();
-                        while (b != -1) {
-                            outputStream.write(b);
-                            b = zipInputStream.read();
-                        }
-
-                        outputStream.flush();
-                    } finally {
-                        outputStream.close();
-                    }
-
-                }
-
-                zipEntry = zipInputStream.getNextEntry();
-            }
-        } finally {
-            zipInputStream.close();
-        }
+    if (mainClassName == null) {
+      throw new IllegalStateException("Main class name is required.");
     }
 
-    private void copyRuntime(File plugInsDirectory) throws IOException {
-        if (runtime != null) {
-            File runtimeHomeDirectory = runtime.getDir();
-            File runtimeContentsDirectory = runtimeHomeDirectory.getParentFile();
-            File runtimeDirectory = runtimeContentsDirectory.getParentFile();
+    // Create the app bundle
+    try {
+      System.out.println("Creating app bundle: " + name);
 
-            // Create root plug-in directory
-            File pluginDirectory = new File(plugInsDirectory, runtimeDirectory.getName());
-            pluginDirectory.mkdir();
+      // Create directory structure
+      File rootDirectory = new File(outputDirectory, name + ".app");
+      delete(rootDirectory);
+      rootDirectory.mkdir();
 
-            // Create Contents directory
-            File pluginContentsDirectory = new File(pluginDirectory, runtimeContentsDirectory.getName());
-            pluginContentsDirectory.mkdir();
+      File contentsDirectory = new File(rootDirectory, "Contents");
+      contentsDirectory.mkdir();
 
-            // Copy MacOS directory
-            File runtimeMacOSDirectory = new File(runtimeContentsDirectory, "MacOS");
-            copy(runtimeMacOSDirectory, new File(pluginContentsDirectory, runtimeMacOSDirectory.getName()));
+      File macOSDirectory = new File(contentsDirectory, "MacOS");
+      macOSDirectory.mkdir();
 
-            // Copy Info.plist file
-            File runtimeInfoPlistFile = new File(runtimeContentsDirectory, "Info.plist");
-            copy(runtimeInfoPlistFile, new File(pluginContentsDirectory, runtimeInfoPlistFile.getName()));
+      File javaDirectory = new File(contentsDirectory, "Java");
+      javaDirectory.mkdir();
 
-            // Copy included contents of Home directory
-            File pluginHomeDirectory = new File(pluginContentsDirectory, runtimeHomeDirectory.getName());
+      File plugInsDirectory = new File(contentsDirectory, "PlugIns");
+      plugInsDirectory.mkdir();
 
-            DirectoryScanner directoryScanner = runtime.getDirectoryScanner(getProject());
-            String[] includedFiles = directoryScanner.getIncludedFiles();
+      File resourcesDirectory = new File(contentsDirectory, "Resources");
+      resourcesDirectory.mkdir();
 
-            for (int i = 0; i < includedFiles.length; i++) {
-                String includedFile = includedFiles[i];
-                File source = new File(runtimeHomeDirectory, includedFile);
-                File destination = new File(pluginHomeDirectory, includedFile);
-                copy(source, destination);
-            }
-        }
+      // Generate Info.plist
+      File infoPlistFile = new File(contentsDirectory, "Info.plist");
+      infoPlistFile.createNewFile();
+      writeInfoPlist(infoPlistFile);
+
+      // Generate PkgInfo
+      File pkgInfoFile = new File(contentsDirectory, "PkgInfo");
+      pkgInfoFile.createNewFile();
+      writePkgInfo(pkgInfoFile);
+
+      // Copy executable to MacOS folder
+      File executableFile = new File(macOSDirectory, executableName);
+      copy(getClass().getResource(EXECUTABLE_NAME), executableFile);
+
+      executableFile.setExecutable(true, false);
+
+      // Copy localized resources to Resources folder
+      copyResources(resourcesDirectory);
+
+      // Copy runtime to PlugIns folder
+      copyRuntime(plugInsDirectory);
+
+      // Copy class path entries to Java folder
+      copyClassPathEntries(javaDirectory);
+
+      // Copy class path ref entries to Java folder
+      copyClassPathRefEntries(javaDirectory);
+
+      // Copy library path entries to MacOS folder
+      copyLibraryPathEntries(macOSDirectory);
+
+      // Copy icon to Resources folder
+      copyIcon(resourcesDirectory);
+
+    } catch (IOException exception) {
+      throw new BuildException(exception);
     }
+  }
 
-    private void copyClassPathRefEntries(File javaDirectory) throws IOException {
-        if(classPathRef != null) {
-            org.apache.tools.ant.types.Path classpath = 
-                    (org.apache.tools.ant.types.Path) classPathRef.getReferencedObject(getProject());
-            
-            Iterator<FileResource> iter = (Iterator<FileResource>)(Object)classpath.iterator();
-            while(iter.hasNext()) {
-                FileResource resource = iter.next();
-                File source = resource.getFile();
-                File destination = new File(javaDirectory, source.getName());
-                copy(source, destination);
-            }
-        }
-    }
 
-    private void copyClassPathEntries(File javaDirectory) throws IOException {
-        for (FileSet fileSet : classPath) {
-            File classPathDirectory = fileSet.getDir();
-            DirectoryScanner directoryScanner = fileSet.getDirectoryScanner(getProject());
-            String[] includedFiles = directoryScanner.getIncludedFiles();
+  private void copyResources(File resourcesDirectory) throws IOException {
+    // Unzip res.zip into resources directory
+    InputStream inputStream = getClass().getResourceAsStream("res.zip");
+    ZipInputStream zipInputStream = new ZipInputStream(inputStream);
 
-            for (int i = 0; i < includedFiles.length; i++) {
-                String includedFile = includedFiles[i];
-                File source = new File(classPathDirectory, includedFile);
-                File destination = new File(javaDirectory, new File(includedFile).getName());
-                copy(source, destination);
-            }
-        }
-    }
+    try {
+      ZipEntry zipEntry = zipInputStream.getNextEntry();
+      while (zipEntry != null) {
+        File file = new File(resourcesDirectory, zipEntry.getName());
 
-    private void copyLibraryPathEntries(File macOSDirectory) throws IOException {
-        for (FileSet fileSet : libraryPath) {
-            File libraryPathDirectory = fileSet.getDir();
-            DirectoryScanner directoryScanner = fileSet.getDirectoryScanner(getProject());
-            String[] includedFiles = directoryScanner.getIncludedFiles();
-
-            for (int i = 0; i < includedFiles.length; i++) {
-                String includedFile = includedFiles[i];
-                File source = new File(libraryPathDirectory, includedFile);
-                File destination = new File(macOSDirectory, new File(includedFile).getName());
-                copy(source, destination);
-            }
-        }
-    }
-
-    private void copyIcon(File resourcesDirectory) throws IOException {
-        if (icon == null) {
-            copy(getClass().getResource(DEFAULT_ICON_NAME), new File(resourcesDirectory, DEFAULT_ICON_NAME));
+        if (zipEntry.isDirectory()) {
+          file.mkdir();
         } else {
-            copy(icon, new File(resourcesDirectory, icon.getName()));
+          OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file), BUFFER_SIZE);
+
+          try {
+            int b = zipInputStream.read();
+            while (b != -1) {
+              outputStream.write(b);
+              b = zipInputStream.read();
+            }
+
+            outputStream.flush();
+          } finally {
+            outputStream.close();
+          }
+
         }
+
+        zipEntry = zipInputStream.getNextEntry();
+      }
+    } finally {
+      zipInputStream.close();
     }
-
-    private void writeInfoPlist(File file) throws IOException {
-        Writer out = new BufferedWriter(new FileWriter(file));
-        XMLOutputFactory output = XMLOutputFactory.newInstance();
-//        output.setProperty("indent-number", 2);
-        output.setProperty(OutputKeys.INDENT, "yes");
-
-        try {
-            XMLStreamWriter xout = output.createXMLStreamWriter(out);
-
-            // Write XML declaration
-            xout.writeStartDocument();
-            xout.writeCharacters("\n");
-
-            // Write plist DTD declaration
-            xout.writeDTD(PLIST_DTD);
-            xout.writeCharacters("\n");
-
-            // Begin root element
-            xout.writeStartElement(PLIST_TAG);
-            xout.writeAttribute(PLIST_VERSION_ATTRIBUTE, "1.0");
-            xout.writeCharacters("\n");
-
-            // Begin root dictionary
-            xout.writeStartElement(DICT_TAG);
-            xout.writeCharacters("\n");
-
-            // Write bundle properties
-            writeProperty(xout, "CFBundleDevelopmentRegion", "English");
-            writeProperty(xout, "CFBundleExecutable", executableName);
-            writeProperty(xout, "CFBundleIconFile", (icon == null) ? DEFAULT_ICON_NAME : icon.getName());
-            writeProperty(xout, "CFBundleIdentifier", identifier);
-            writeProperty(xout, "CFBundleDisplayName", displayName);
-            writeProperty(xout, "CFBundleInfoDictionaryVersion", "6.0");
-            writeProperty(xout, "CFBundleName", name);
-            writeProperty(xout, "CFBundlePackageType", OS_TYPE_CODE);
-            writeProperty(xout, "CFBundleShortVersionString", shortVersion);
-            writeProperty(xout, "CFBundleVersion", version);
-            writeProperty(xout, "CFBundleSignature", signature);
-            writeProperty(xout, "NSHumanReadableCopyright", copyright);
-
-            if (applicationCategory != null) {
-                writeProperty(xout, "LSApplicationCategoryType", applicationCategory);
-            }
-
-            if (highResolutionCapable) {
-                writeKey(xout, "NSHighResolutionCapable");
-                writeBoolean(xout, true); 
-                xout.writeCharacters("\n");
-            }
-
-            // Write runtime
-            if (runtime != null) {
-                writeProperty(xout, "JVMRuntime", runtime.getDir().getParentFile().getParentFile().getName());
-            }
-            
-            if (privileged != null) {
-                writeProperty(xout, "JVMRunPrivileged", privileged);
-            }
-            
-            if (workingDirectory != null) {
-                writeProperty(xout, "WorkingDirectory", workingDirectory);
-            }
-
-            // Write main class name
-            writeProperty(xout, "JVMMainClassName", mainClassName);
+  }
 
 
-            // Write CFBundleDocument entries
-            writeKey(xout, "CFBundleDocumentTypes");
-            
-            xout.writeStartElement(ARRAY_TAG);
-            xout.writeCharacters("\n");
-            
-            for (BundleDocument bundleDocument: bundleDocuments) {
-                xout.writeStartElement(DICT_TAG);
-                xout.writeCharacters("\n");
-                
-                writeKey(xout, "CFBundleTypeExtensions");
-                xout.writeStartElement(ARRAY_TAG);
-                xout.writeCharacters("\n");
-                for (String extension : bundleDocument.getExtensions()) {
-                    writeString(xout, extension);
-                }
-                xout.writeEndElement();
-                xout.writeCharacters("\n");
-                
-                if (bundleDocument.hasIcon()) {
-                    writeKey(xout, "CFBundleTypeIconFile");
-                    writeString(xout, bundleDocument.getIcon());
-                }
-                
-                writeKey(xout, "CFBundleTypeName");
-                writeString(xout, bundleDocument.getName());
-                    
-                writeKey(xout, "CFBundleTypeRole");
-                writeString(xout, bundleDocument.getRole());
-                
-                writeKey(xout, "LSTypeIsPackage");
-                writeBoolean(xout, bundleDocument.isPackage());
-                
-                xout.writeEndElement();
-                xout.writeCharacters("\n");
-            }
-            
-            xout.writeEndElement();
-            xout.writeCharacters("\n");
-            
-            // Write architectures
-            writeKey(xout, "LSArchitecturePriority");
+  private void copyRuntime(File plugInsDirectory) throws IOException {
+    if (runtime != null) {
+      File runtimeHomeDirectory = runtime.getDir();
+      File runtimeContentsDirectory = runtimeHomeDirectory.getParentFile();
+      File runtimeDirectory = runtimeContentsDirectory.getParentFile();
 
-            xout.writeStartElement(ARRAY_TAG);
-            xout.writeCharacters("\n");
+      // Create root plug-in directory
+      File pluginDirectory = new File(plugInsDirectory, runtimeDirectory.getName());
+      pluginDirectory.mkdir();
 
-            for (String architecture : architectures) {
-                writeString(xout, architecture);
-            }
+      // Create Contents directory
+      File pluginContentsDirectory = new File(pluginDirectory, runtimeContentsDirectory.getName());
+      pluginContentsDirectory.mkdir();
 
-            xout.writeEndElement();
-            xout.writeCharacters("\n");
+      // Copy MacOS directory
+      File runtimeMacOSDirectory = new File(runtimeContentsDirectory, "MacOS");
+      copy(runtimeMacOSDirectory, new File(pluginContentsDirectory, runtimeMacOSDirectory.getName()));
 
-            // Write Environment
-            writeKey(xout, "LSEnvironment");
-            xout.writeStartElement(DICT_TAG);
-            xout.writeCharacters("\n");
-            writeKey(xout, "LC_CTYPE");
-            writeString(xout, "UTF-8");
-            xout.writeEndElement();
-            xout.writeCharacters("\n");
+      // Copy Info.plist file
+      File runtimeInfoPlistFile = new File(runtimeContentsDirectory, "Info.plist");
+      copy(runtimeInfoPlistFile, new File(pluginContentsDirectory, runtimeInfoPlistFile.getName()));
 
-            // Write options
-            writeKey(xout, "JVMOptions");
+      // Copy included contents of Home directory
+      File pluginHomeDirectory = new File(pluginContentsDirectory, runtimeHomeDirectory.getName());
 
-            xout.writeStartElement(ARRAY_TAG);
-            xout.writeCharacters("\n");
+      DirectoryScanner directoryScanner = runtime.getDirectoryScanner(getProject());
+      String[] includedFiles = directoryScanner.getIncludedFiles();
 
-            for (String option : options) {
-                writeString(xout, option);
-            }
-
-            xout.writeEndElement();
-            xout.writeCharacters("\n");
-
-            // Write arguments
-            writeKey(xout, "JVMArguments");
-
-            xout.writeStartElement(ARRAY_TAG);
-            xout.writeCharacters("\n");
-
-            for (String argument : arguments) {
-                writeString(xout, argument);
-            }
-
-            xout.writeEndElement();
-            xout.writeCharacters("\n");
-
-            // End root dictionary
-            xout.writeEndElement();
-            xout.writeCharacters("\n");
-
-            // End root element
-            xout.writeEndElement();
-            xout.writeCharacters("\n");
-
-            // Close document
-            xout.writeEndDocument();
-            xout.writeCharacters("\n");
-
-            out.flush();
-        } catch (XMLStreamException exception) {
-            throw new IOException(exception);
-        } finally {
-            out.close();
-        }
+      for (int i = 0; i < includedFiles.length; i++) {
+        String includedFile = includedFiles[i];
+        File source = new File(runtimeHomeDirectory, includedFile);
+        File destination = new File(pluginHomeDirectory, includedFile);
+        copy(source, destination);
+      }
     }
+  }
 
-    private void writeKey(XMLStreamWriter xout, String key) throws XMLStreamException {
-        xout.writeStartElement(KEY_TAG);
-        xout.writeCharacters(key);
-        xout.writeEndElement();
-        xout.writeCharacters("\n");
+
+  private void copyClassPathRefEntries(File javaDirectory) throws IOException {
+    if(classPathRef != null) {
+      org.apache.tools.ant.types.Path classpath =
+          (org.apache.tools.ant.types.Path) classPathRef.getReferencedObject(getProject());
+
+      Iterator<FileResource> iter = (Iterator<FileResource>)(Object)classpath.iterator();
+      while(iter.hasNext()) {
+        FileResource resource = iter.next();
+        File source = resource.getFile();
+        File destination = new File(javaDirectory, source.getName());
+        copy(source, destination);
+      }
     }
+  }
 
-    private void writeString(XMLStreamWriter xout, String value) throws XMLStreamException {
-        xout.writeStartElement(STRING_TAG);
-        xout.writeCharacters(value);
-        xout.writeEndElement();
-        xout.writeCharacters("\n");
+
+  private void copyClassPathEntries(File javaDirectory) throws IOException {
+    for (FileSet fileSet : classPath) {
+      File classPathDirectory = fileSet.getDir();
+      DirectoryScanner directoryScanner = fileSet.getDirectoryScanner(getProject());
+      String[] includedFiles = directoryScanner.getIncludedFiles();
+
+      for (int i = 0; i < includedFiles.length; i++) {
+        String includedFile = includedFiles[i];
+        File source = new File(classPathDirectory, includedFile);
+        File destination = new File(javaDirectory, new File(includedFile).getName());
+        copy(source, destination);
+      }
+    }
+  }
+
+
+  private void copyLibraryPathEntries(File macOSDirectory) throws IOException {
+    for (FileSet fileSet : libraryPath) {
+      File libraryPathDirectory = fileSet.getDir();
+      DirectoryScanner directoryScanner = fileSet.getDirectoryScanner(getProject());
+      String[] includedFiles = directoryScanner.getIncludedFiles();
+
+      for (int i = 0; i < includedFiles.length; i++) {
+        String includedFile = includedFiles[i];
+        File source = new File(libraryPathDirectory, includedFile);
+        File destination = new File(macOSDirectory, new File(includedFile).getName());
+        copy(source, destination);
+      }
+    }
+  }
+
+
+  private void copyIcon(File resourcesDirectory) throws IOException {
+    if (icon == null) {
+      copy(getClass().getResource(DEFAULT_ICON_NAME), new File(resourcesDirectory, DEFAULT_ICON_NAME));
+    } else {
+      copy(icon, new File(resourcesDirectory, icon.getName()));
+    }
+  }
+
+
+  class SimpleXML {
+    PrintWriter writer;
+    int indentSpaces;
+//    int indentLevel;
+    Stack<String> elements = new Stack<>();
+    
+    public SimpleXML(OutputStream output) throws UnsupportedEncodingException {
+      OutputStreamWriter osw = new OutputStreamWriter(output, "UTF-8");
+      writer = new PrintWriter(osw);
     }
     
-    private void writeBoolean(XMLStreamWriter xout, boolean value) throws XMLStreamException {
-        xout.writeEmptyElement(value ? "true" : "false");
+    void writeStartDocument() {
+      writer.println("<?xml version=\"1.0\" ?>");
     }
-
-    private void writeProperty(XMLStreamWriter xout, String key, String value) throws XMLStreamException {
-        writeKey(xout, key);
-        writeString(xout, value);
+    
+    void writeEndDocument() {
+      writer.flush();
+      writer.close();
     }
-
-    private void writePkgInfo(File file) throws IOException {
-        Writer out = new BufferedWriter(new FileWriter(file));
-
-        try {
-            out.write(OS_TYPE_CODE + signature);
-            out.flush();
-        } finally {
-            out.close();
+    
+    void println(String line) {
+      writer.println(line);
+    }
+    
+    void writeStartElement(String element, String... args) {
+      emitIndent();
+      writer.print("<" + element);
+      
+      for (int i = 0; i < args.length; i += 2) {
+        String attr = args[i];
+        String value = args[i+1];
+        writer.print(" " + attr + "=\"" + value + "\"");
+      }
+      writer.println(">");
+//      indentLevel++;
+      elements.push(element);
+    }
+    
+    void writeStartElement(String element) {
+      writer.println("<" + element + ">");
+//      indentLevel++;
+      elements.push(element);
+    }
+    
+    void writeEndElement() {
+      emitIndent();
+      writer.println("</" + elements.pop() + ">");
+    }
+    
+    void writeKey(String key) {
+      emitIndent();
+      writer.println("<key>" + key + "</key>");
+    }
+    
+    void writeString(String value) {
+      emitIndent();
+      writer.println("<string>" + value + "</string>");
+    }
+    
+    void writeBoolean(boolean value) {
+      emitIndent();
+      writer.println("<" + (value ? "true" : "false") + "/>");
+    }
+    
+    void writeProperty(String property, String value) {
+      writeKey(property);
+      writeString(value);
+    }
+    
+    void emitIndent() {
+      for (int i = 0; i < elements.size(); i++) {
+        for (int j = 0; j < indentSpaces; j++) {
+          writer.print(' ');
         }
+      }
     }
+  }
+  
+  
+  private void writeInfoPlist(File file) throws IOException {
+//    Writer out = new BufferedWriter(new FileWriter(file));
+////    StringWriter out = new StringWriter();
+//    XMLOutputFactory output = XMLOutputFactory.newInstance();
+//
+//    try {
+//      XMLStreamWriter xout = output.createXMLStreamWriter(out);
+    FileOutputStream output = new FileOutputStream(file);
+    SimpleXML xout = new SimpleXML(output);
 
-    private static void delete(File file) throws IOException {
-        Path filePath = file.toPath();
+      // Write XML declaration
+//      xout.writeStartDocument();
+//      xout.writeCharacters("\n");
 
-        if (Files.exists(filePath, LinkOption.NOFOLLOW_LINKS)) {
-            if (Files.isDirectory(filePath, LinkOption.NOFOLLOW_LINKS)) {
-                File[] files = file.listFiles();
+      // Write plist DTD declaration
+//      xout.writeDTD(PLIST_DTD);
+//      xout.writeCharacters("\n");
+      xout.println(PLIST_DTD);
 
-                for (int i = 0; i < files.length; i++) {
-                    delete(files[i]);
-                }
-            }
+      // Begin root element
+//      xout.writeStartElement(PLIST_TAG);
+//      xout.writeAttribute(PLIST_VERSION_ATTRIBUTE, "1.0");
+//      xout.writeCharacters("\n");
+      xout.writeStartElement(PLIST_TAG, PLIST_VERSION_ATTRIBUTE, "1.0");
 
-            Files.delete(filePath);
+      // Begin root dictionary
+      xout.writeStartElement(DICT_TAG);
+//      xout.writeCharacters("\n");
+
+      // Write bundle properties
+      xout.writeProperty("CFBundleDevelopmentRegion", "English");
+      xout.writeProperty("CFBundleExecutable", executableName);
+      xout.writeProperty("CFBundleIconFile", (icon == null) ? DEFAULT_ICON_NAME : icon.getName());
+      xout.writeProperty("CFBundleIdentifier", identifier);
+      xout.writeProperty("CFBundleDisplayName", displayName);
+      xout.writeProperty("CFBundleInfoDictionaryVersion", "6.0");
+      xout.writeProperty("CFBundleName", name);
+      xout.writeProperty("CFBundlePackageType", OS_TYPE_CODE);
+      xout.writeProperty("CFBundleShortVersionString", shortVersion);
+      xout.writeProperty("CFBundleVersion", version);
+      xout.writeProperty("CFBundleSignature", signature);
+      xout.writeProperty("NSHumanReadableCopyright", copyright);
+
+      if (applicationCategory != null) {
+        xout.writeProperty("LSApplicationCategoryType", applicationCategory);
+      }
+
+      if (highResolutionCapable) {
+        xout.writeKey("NSHighResolutionCapable");
+        xout.writeBoolean(true);
+      }
+
+      // Write runtime
+      if (runtime != null) {
+        xout.writeProperty("JVMRuntime", runtime.getDir().getParentFile().getParentFile().getName());
+      }
+
+      if (privileged != null) {
+        xout.writeProperty("JVMRunPrivileged", privileged);
+      }
+
+      if (workingDirectory != null) {
+        xout.writeProperty("WorkingDirectory", workingDirectory);
+      }
+
+      // Write main class name
+      xout.writeProperty("JVMMainClassName", mainClassName);
+
+
+      // Write CFBundleDocument entries
+      xout.writeKey("CFBundleDocumentTypes");
+
+      xout.writeStartElement(ARRAY_TAG);
+
+      for (BundleDocument bundleDocument: bundleDocuments) {
+        xout.writeStartElement(DICT_TAG);
+
+        xout.writeKey("CFBundleTypeExtensions");
+        xout.writeStartElement(ARRAY_TAG);
+        for (String extension : bundleDocument.getExtensions()) {
+          xout.writeString(extension);
         }
-    }
+        xout.writeEndElement();
 
-    private static void copy(URL location, File file) throws IOException {
-        try (InputStream in = location.openStream()) {
-            Files.copy(in, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        if (bundleDocument.hasIcon()) {
+          xout.writeKey("CFBundleTypeIconFile");
+          xout.writeString(bundleDocument.getIcon());
         }
+
+        xout.writeKey("CFBundleTypeName");
+        xout.writeString(bundleDocument.getName());
+
+        xout.writeKey("CFBundleTypeRole");
+        xout.writeString(bundleDocument.getRole());
+
+        xout.writeKey("LSTypeIsPackage");
+        xout.writeBoolean(bundleDocument.isPackage());
+
+        xout.writeEndElement();
+      }
+
+      xout.writeEndElement();
+
+      // Write architectures
+      xout.writeKey("LSArchitecturePriority");
+
+      xout.writeStartElement(ARRAY_TAG);
+
+      for (String architecture : architectures) {
+        xout.writeString(architecture);
+      }
+
+      xout.writeEndElement();
+
+      // Write Environment
+      xout.writeKey("LSEnvironment");
+      xout.writeStartElement(DICT_TAG);
+      xout.writeKey("LC_CTYPE");
+      xout.writeString("UTF-8");
+      xout.writeEndElement();
+
+      // Write options
+      xout.writeKey("JVMOptions");
+
+      xout.writeStartElement(ARRAY_TAG);
+
+      for (String option : options) {
+        xout.writeString(option);
+      }
+
+      xout.writeEndElement();
+
+      // Write arguments
+      xout.writeKey("JVMArguments");
+
+      xout.writeStartElement(ARRAY_TAG);
+      
+      for (String argument : arguments) {
+        xout.writeString(argument);
+      }
+
+      xout.writeEndElement();
+      
+      // End root dictionary
+      xout.writeEndElement();
+      
+      // End root element
+      xout.writeEndElement();
+      
+      // Close document
+      xout.writeEndDocument();
+
+//      out.flush();
+//    } catch (XMLStreamException exception) {
+//      throw new IOException(exception);
+//    } finally {
+//      out.close();
+//    }
+//    try {
+////      TransformerFactory factory = TransformerFactory.newInstance();
+////      Transformer transformer = factory.newTransformer();
+//////      transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+//////      transformer.setOutputProperty(OutputKeys.ENCODING,"UTF-8");
+////      transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+//////      transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+////
+////      StringWriter formatted = new StringWriter();
+////      transformer.transform(new StreamSource(new StringReader(out.toString())),
+////                            new StreamResult(formatted));
+////      System.out.println(formatted);
+//      
+//      FileWriter fw = new FileWriter(file);
+////      fw.write(formatted.toString());
+//      fw.write(out.toString());
+//      fw.flush();
+//      fw.close();
+//      
+//    } catch (Exception e) {
+//      
+////    } catch (TransformerConfigurationException tce) {
+////      throw new IOException(tce);
+////    } catch (TransformerException te) {
+////      throw new IOException(te);
+//    }
+  }
+
+
+  private void writeKey(XMLStreamWriter xout, String key) throws XMLStreamException {
+    xout.writeStartElement(KEY_TAG);
+    xout.writeCharacters(key);
+    xout.writeEndElement();
+    xout.writeCharacters("\n");
+  }
+
+
+  private void writeString(XMLStreamWriter xout, String value) throws XMLStreamException {
+    xout.writeStartElement(STRING_TAG);
+    xout.writeCharacters(value);
+    xout.writeEndElement();
+    xout.writeCharacters("\n");
+  }
+
+
+  private void writeBoolean(XMLStreamWriter xout, boolean value) throws XMLStreamException {
+    xout.writeEmptyElement(value ? "true" : "false");
+  }
+
+
+  private void writeProperty(XMLStreamWriter xout, String key, String value) throws XMLStreamException {
+    writeKey(xout, key);
+    writeString(xout, value);
+  }
+
+
+  private void writePkgInfo(File file) throws IOException {
+    Writer out = new BufferedWriter(new FileWriter(file));
+
+    try {
+      out.write(OS_TYPE_CODE + signature);
+      out.flush();
+    } finally {
+      out.close();
     }
+  }
 
-    private static void copy(File source, File destination) throws IOException {
-        Path sourcePath = source.toPath();
-        Path destinationPath = destination.toPath();
 
-        destination.getParentFile().mkdirs();
+  private static void delete(File file) throws IOException {
+    Path filePath = file.toPath();
 
-        Files.copy(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING, LinkOption.NOFOLLOW_LINKS);
+    if (Files.exists(filePath, LinkOption.NOFOLLOW_LINKS)) {
+      if (Files.isDirectory(filePath, LinkOption.NOFOLLOW_LINKS)) {
+        File[] files = file.listFiles();
 
-        if (Files.isDirectory(sourcePath, LinkOption.NOFOLLOW_LINKS)) {
-            String[] files = source.list();
-
-            for (int i = 0; i < files.length; i++) {
-                String file = files[i];
-                copy(new File(source, file), new File(destination, file));
-            }
+        for (int i = 0; i < files.length; i++) {
+          delete(files[i]);
         }
+      }
+
+      Files.delete(filePath);
     }
+  }
+
+
+  private static void copy(URL location, File file) throws IOException {
+    try (InputStream in = location.openStream()) {
+      Files.copy(in, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+    }
+  }
+
+
+  private static void copy(File source, File destination) throws IOException {
+    Path sourcePath = source.toPath();
+    Path destinationPath = destination.toPath();
+
+    destination.getParentFile().mkdirs();
+
+    Files.copy(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING, LinkOption.NOFOLLOW_LINKS);
+
+    if (Files.isDirectory(sourcePath, LinkOption.NOFOLLOW_LINKS)) {
+      String[] files = source.list();
+
+      for (int i = 0; i < files.length; i++) {
+        String file = files[i];
+        copy(new File(source, file), new File(destination, file));
+      }
+    }
+  }
 }
