@@ -446,7 +446,7 @@ public class AppBundlerTask extends Task {
 
 
   private void copyClassPathRefEntries(File javaDirectory) throws IOException {
-    if(classPathRef != null) {
+    if (classPathRef != null) {
       org.apache.tools.ant.types.Path classpath =
           (org.apache.tools.ant.types.Path) classPathRef.getReferencedObject(getProject());
 
@@ -467,8 +467,7 @@ public class AppBundlerTask extends Task {
       DirectoryScanner directoryScanner = fileSet.getDirectoryScanner(getProject());
       String[] includedFiles = directoryScanner.getIncludedFiles();
 
-      for (int i = 0; i < includedFiles.length; i++) {
-        String includedFile = includedFiles[i];
+      for (String includedFile : includedFiles) {
         File source = new File(classPathDirectory, includedFile);
         File destination = new File(javaDirectory, new File(includedFile).getName());
         copy(source, destination);
@@ -483,8 +482,7 @@ public class AppBundlerTask extends Task {
       DirectoryScanner directoryScanner = fileSet.getDirectoryScanner(getProject());
       String[] includedFiles = directoryScanner.getIncludedFiles();
 
-      for (int i = 0; i < includedFiles.length; i++) {
-        String includedFile = includedFiles[i];
+      for (String includedFile : includedFiles) {
         File source = new File(libraryPathDirectory, includedFile);
         File destination = new File(macOSDirectory, new File(includedFile).getName());
         copy(source, destination);
@@ -504,133 +502,119 @@ public class AppBundlerTask extends Task {
 
   private void writeInfoPlist(File file) throws IOException {
     FileOutputStream output = new FileOutputStream(file);
-    PropertyLister xout = new PropertyLister(output);
+    PropertyLister plist = new PropertyLister(output);
     
     // Get started, write all necessary header info and open plist element
-    xout.writeStartDocument();
+    plist.writeStartDocument();
 
     // Begin root dictionary
-    xout.writeStartDictElement();
+    plist.writeStartDictElement();
 
     // Write bundle properties
-    xout.writeProperty("CFBundleDevelopmentRegion", "English");
-    xout.writeProperty("CFBundleExecutable", executableName);
-    xout.writeProperty("CFBundleIconFile", (icon == null) ? DEFAULT_ICON_NAME : icon.getName());
-    xout.writeProperty("CFBundleIdentifier", identifier);
-    xout.writeProperty("CFBundleDisplayName", displayName);
-    xout.writeProperty("CFBundleInfoDictionaryVersion", "6.0");
-    xout.writeProperty("CFBundleName", name);
-    xout.writeProperty("CFBundlePackageType", OS_TYPE_CODE);
-    xout.writeProperty("CFBundleShortVersionString", shortVersion);
-    xout.writeProperty("CFBundleVersion", version);
-    xout.writeProperty("CFBundleSignature", signature);
-    xout.writeProperty("NSHumanReadableCopyright", copyright);
+    plist.writeProperty("CFBundleDevelopmentRegion", "English");
+    plist.writeProperty("CFBundleExecutable", executableName);
+    plist.writeProperty("CFBundleIconFile", (icon == null) ? DEFAULT_ICON_NAME : icon.getName());
+    plist.writeProperty("CFBundleIdentifier", identifier);
+    plist.writeProperty("CFBundleDisplayName", displayName);
+    plist.writeProperty("CFBundleInfoDictionaryVersion", "6.0");
+    plist.writeProperty("CFBundleName", name);
+    plist.writeProperty("CFBundlePackageType", OS_TYPE_CODE);
+    plist.writeProperty("CFBundleShortVersionString", shortVersion);
+    plist.writeProperty("CFBundleVersion", version);
+    plist.writeProperty("CFBundleSignature", signature);
+    plist.writeProperty("NSHumanReadableCopyright", copyright);
 
     if (applicationCategory != null) {
-      xout.writeProperty("LSApplicationCategoryType", applicationCategory);
+      plist.writeProperty("LSApplicationCategoryType", applicationCategory);
     }
 
     if (highResolutionCapable) {
-      xout.writeKey("NSHighResolutionCapable");
-      xout.writeBoolean(true);
+      plist.writeKey("NSHighResolutionCapable");
+      plist.writeBoolean(true);
     }
 
-    // Write runtime
     if (runtime != null) {
-      xout.writeProperty("JVMRuntime", runtime.getDir().getParentFile().getParentFile().getName());
+      plist.writeProperty("JVMRuntime", runtime.getDir().getParentFile().getParentFile().getName());
     }
 
     if (privileged != null) {
-      xout.writeProperty("JVMRunPrivileged", privileged);
+      plist.writeProperty("JVMRunPrivileged", privileged);
     }
 
     if (workingDirectory != null) {
-      xout.writeProperty("WorkingDirectory", workingDirectory);
+      plist.writeProperty("WorkingDirectory", workingDirectory);
     }
 
     // Write main class name
-    xout.writeProperty("JVMMainClassName", mainClassName);
-
+    plist.writeProperty("JVMMainClassName", mainClassName);
 
     // Write CFBundleDocument entries
-    xout.writeKey("CFBundleDocumentTypes");
-
-    xout.writeStartArrayElement();
-
+    plist.writeKey("CFBundleDocumentTypes");
+    plist.writeStartArrayElement();
     for (BundleDocument bundleDocument: bundleDocuments) {
-      xout.writeStartDictElement();
+      plist.writeStartDictElement();
 
-      xout.writeKey("CFBundleTypeExtensions");
-      xout.writeStartArrayElement();
+      plist.writeKey("CFBundleTypeExtensions");
+      plist.writeStartArrayElement();
       for (String extension : bundleDocument.getExtensions()) {
-        xout.writeString(extension);
+        plist.writeString(extension);
       }
-      xout.writeEndElement();
+      plist.writeEndElement();
 
       if (bundleDocument.hasIcon()) {
-        xout.writeKey("CFBundleTypeIconFile");
-        xout.writeString(bundleDocument.getIcon());
+        plist.writeKey("CFBundleTypeIconFile");
+        plist.writeString(bundleDocument.getIcon());
       }
 
-      xout.writeKey("CFBundleTypeName");
-      xout.writeString(bundleDocument.getName());
+      plist.writeKey("CFBundleTypeName");
+      plist.writeString(bundleDocument.getName());
 
-      xout.writeKey("CFBundleTypeRole");
-      xout.writeString(bundleDocument.getRole());
+      plist.writeKey("CFBundleTypeRole");
+      plist.writeString(bundleDocument.getRole());
 
-      xout.writeKey("LSTypeIsPackage");
-      xout.writeBoolean(bundleDocument.isPackage());
+      plist.writeKey("LSTypeIsPackage");
+      plist.writeBoolean(bundleDocument.isPackage());
 
-      xout.writeEndElement();
+      plist.writeEndElement();
     }
-
-    xout.writeEndElement();
+    plist.writeEndElement();
 
     // Write architectures
-    xout.writeKey("LSArchitecturePriority");
-
-    xout.writeStartArrayElement();
-
+    plist.writeKey("LSArchitecturePriority");
+    plist.writeStartArrayElement();
     for (String architecture : architectures) {
-      xout.writeString(architecture);
+      plist.writeString(architecture);
     }
-
-    xout.writeEndElement();
+    plist.writeEndElement();
 
     // Write Environment
-    xout.writeKey("LSEnvironment");
-    xout.writeStartDictElement();
-    xout.writeKey("LC_CTYPE");
-    xout.writeString("UTF-8");
-    xout.writeEndElement();
+    plist.writeKey("LSEnvironment");
+    plist.writeStartDictElement();
+    plist.writeKey("LC_CTYPE");
+    plist.writeString("UTF-8");
+    plist.writeEndElement();
 
     // Write options
-    xout.writeKey("JVMOptions");
-
-    xout.writeStartArrayElement();
-
+    plist.writeKey("JVMOptions");
+    plist.writeStartArrayElement();
     for (String option : options) {
-      xout.writeString(option);
+      plist.writeString(option);
     }
-
-    xout.writeEndElement();
+    plist.writeEndElement();
 
     // Write arguments
-    xout.writeKey("JVMArguments");
-
-    xout.writeStartArrayElement();
-
+    plist.writeKey("JVMArguments");
+    plist.writeStartArrayElement();
     for (String argument : arguments) {
-      xout.writeString(argument);
+      plist.writeString(argument);
     }
-
-    xout.writeEndElement();
+    plist.writeEndElement();
 
     // End root dictionary
-    xout.writeEndElement();
+    plist.writeEndElement();
 
     // Close out the plist
-    xout.writeEndDocument();
+    plist.writeEndDocument();
   }
 
 
