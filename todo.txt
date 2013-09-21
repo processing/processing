@@ -33,9 +33,10 @@ _ changing modes brings the PDE back on the second screen
 _   the Find window (also the save windows) also have the same problem
 
 7u40 switch
-_ remove Mangler from tools/Mangler
-_ update tools/howto.txt to just point at the correct online location
-_ appbundler fixes/changes
+X remove Mangler from tools/Mangler
+o update tools/howto.txt to just point at the correct online location
+X   just remove the howto file
+X appbundler fixes/changes
 X   the "Classes" folder is included
 X     appears to be line 138 of main.m
 o     maybe this is a holdover from OS X Java? don't know.
@@ -63,6 +64,10 @@ _ remove javafx from the embed
 _   more about optional files:
 _   http://www.oracle.com/technetwork/java/javase/jdk-7-readme-429198.html
 _ bring back the splash screen
+_ update github instructions
+_   only JRE needed at this point
+_   switched over to Java 7
+_   https://github.com/processing/processing/wiki/Build-Instructions
 
 no good installer, will need JDK anyway for the export
 require that this folder exists:
