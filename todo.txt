@@ -33,6 +33,8 @@ _ changing modes brings the PDE back on the second screen
 _   the Find window (also the save windows) also have the same problem
 
 7u40 switch
+_ remove Mangler from tools/Mangler
+_ update tools/howto.txt to just point at the correct online location
 _ appbundler fixes/changes
 X   the "Classes" folder is included
 X     appears to be line 138 of main.m
@@ -51,6 +53,10 @@ _   don't re-copy jre into work folder if already exists
 _ change how export is handled
 _   remove ability to export cross-platform apps
 _   add ability to embed the current JRE
+_ change app stub in OS X exported application
+_ we become full 64-bit on OS X
+_   meaning that the macosx32 video library goes away
+_   and the preference for launching in 32- or 64-bit mode
 
 no good installer, will need JDK anyway for the export
 require that this folder exists:

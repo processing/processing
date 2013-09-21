@@ -134,7 +134,6 @@
     <subant buildpath="../java/libraries/pdf" target="clean"/>
     <subant buildpath="../java/libraries/serial" target="clean"/>
     <subant buildpath="../java/libraries/video" target="clean"/>
-    <subant buildpath="../experimental" target="clean"/>
     <subant buildpath="shared/tools/MovieMaker" target="clean"/>
   </target>
   
@@ -146,7 +145,6 @@
     <subant buildpath="../java/libraries/pdf" target="build"/>
     <subant buildpath="../java/libraries/serial" target="build"/>
     <subant buildpath="../java/libraries/video" target="build"/>
-    <subant buildpath="../experimental" target="build"/>
     <subant buildpath="shared/tools/MovieMaker" target="build"/>
   </target>
   
@@ -154,19 +152,8 @@
   <!-- - - - - - - - - -->
   <!-- Basic Assembly  -->
   <!-- - - - - - - - - -->
-
-
-<!--  <target name="experimental" unless="version">-->
-  <target name="experimental">
-    <copy todir="${target.path}/modes/experimental">
-      <fileset dir="../experimental">
-	<include name="**/mode/*" />
-	<include name="**/theme/*" />
-      </fileset>
-    </copy>
-  </target>
-  
-  <target name="assemble" depends="version-clear, version-write, experimental">
+ 
+  <target name="assemble" depends="version-clear, version-write">
     <fail unless="target.path" 
 	  message="Do not call assemble from the command line." />
     
@@ -378,8 +365,6 @@
 
   <target name="macosx-clean" depends="subprojects-clean" description="Clean Mac OS X build">
     <delete dir="macosx/work" />
-    <delete dir="macosx/working_dir" />
-    <delete dir="macosx/working.dmg" />
     <delete file="macosx/processing-*.dmg" />
   </target>
   
@@ -415,10 +400,12 @@
     -->
 
     <!-- workaround for apparent appbundler bug -->
+    <!--
     <copy todir=".">
       <fileset dir="macosx/template.app/Contents/Resources/" 
 	       includes="*.icns" />
     </copy>
+    -->
 
     <!--icon="macosx/processing.icns"-->
     <bundleapp outputDirectory="macosx/work"
@@ -426,10 +413,12 @@
 	       displayName="Processing"
 	       executableName="Processing"
 	       identifier="org.processing.app"
-	       icon="processing.icns"
-	       copyright="© 2013 The Processing Foundation"
+	       signature="Pde2"
+	       icon="macosx/processing.icns"
+	       copyright="© The Processing Foundation"
+	       getInfo="${version}, Copyright © The Processing Foundation"
 	       shortVersion="${version}"
-	       version="Revision ${revision}"
+	       version="${revision}"
 	       mainClassName="processing.app.Base">
 
       <!-- The appbundler task needs a couple files (the Info.plist and
@@ -462,7 +451,7 @@
       <!--icon="macosx/template.app/Contents/Resources/pde.icns"-->
       <!--icon="${bundle.icon}"-->
       <bundledocument extensions="pde"
-		      icon="pde.icns"
+		      icon="macosx/pde.icns"
 		      name="Processing Source Code"
 		      role="Editor">
       </bundledocument>
@@ -512,14 +501,15 @@
     </bundleapp>
 
     <!-- workaround for apparent appbundler bug -->
+    <!--
     <delete file="processing.icns" />
     <delete file="pde.icns" />
+    -->
 
     <copy todir="macosx/work/Processing.app/Contents/Java">
       <fileset dir=".." includes="core/library/**" />
       <fileset dir="shared" includes="launch4j/**" />
       <fileset dir="shared" includes="lib/**" />
-      <fileset dir="shared" includes="modes/**" />
       <fileset file="shared/revisions.txt" />
     </copy>
 
@@ -538,7 +528,8 @@
       <string>$JAVAROOT/lib/about.jpg</string>
     -->
 
-    <property name="launch4j.dir" value="macosx/work/Processing.app/Contents/Java/launch4j" />
+    <property name="launch4j.dir" 
+	      value="macosx/work/Processing.app/Contents/Java/launch4j" />
 
     <!-- rename the version we need -->
     <move file="${launch4j.dir}/bin/windres-macosx"
@@ -557,9 +548,13 @@
     </delete>
 
     <antcall target="assemble">
-      <!-- do we still use /Java for this? -->
-      <param name="target.path" value="macosx/work/Processing.app/Contents/Java" />
+      <param name="target.path" 
+	     value="macosx/work/Processing.app/Contents/Java" />
     </antcall>
+
+    <delete dir="${target.path}/modes/java/libraries/video/library/macosx32" />
+    <delete dir="${target.path}/modes/java/libraries/video/library/windows32" />
+    <delete dir="${target.path}/modes/java/libraries/video/library/windows64" />
   </target>
   
   <target name="macosx-run" depends="macosx-build" 
@@ -594,10 +589,13 @@
     <!-- The ant copy command does not preserve permissions. -->
     <chmod file="macosx/work/Processing.app/Contents/MacOS/JavaApplicationStub" perm="ugo+x" />
 
+    <!-- Now handled by the app bundler -->
+    <!--
     <replace file="macosx/work/Processing.app/Contents/Info.plist"
 	     token="VERSION" value="${version}" />
     <replace file="macosx/work/Processing.app/Contents/Info.plist"
 	     token="REVISION" value="${revision}" />
+    -->
 
     <antcall target="macosx-dist-sign" />
 
@@ -610,57 +608,6 @@
       Processing for Mac OS X was built. Grab it from
       
       macosx/processing-${version}-macosx.zip
-      =======================================================
-    </echo>
-  </target>
-
-  <target name="macosx-dist-old" if="macosx" depends="macosx-build" description="Create a .dmg of the Mac OS X version">
-    <!-- now build the dmg -->
-    <gunzip src="macosx/template.dmg.gz" dest="macosx/working.dmg" />
-    
-    <mkdir dir="macosx/working_dir" />
-    <exec executable="hdiutil">
-      <arg line="attach macosx/working.dmg -noautoopen -mountpoint macosx/working_dir" />
-      <!--<arg line="attach macosx/working.dmg -noautoopen -quiet -mountpoint macosx/working_dir" />-->
-    </exec>
-    
-    <copy todir="macosx/working_dir">
-      <fileset dir="macosx/work" />
-    </copy>
-
-    <!-- The ant copy command does not preserve permissions. -->
-    <chmod file="macosx/working_dir/Processing.app/Contents/MacOS/JavaApplicationStub" perm="ugo+x" />
-
-    <!-- Pause briefly for the OS to catch up with the DMG changes. 
-	 This prevents "hdiutil: couldn't eject "disk3" - Resource busy"
-	 errors when ejecting the disk in the next step.
-         You may need to set this value higher for your system. -->
-<!--    <sleep seconds="5" />-->
-
-    <!-- while building 0182, had a lot of trouble with the disk eject -->
-    <input message="Manually eject the Processing volume and hit return." />
-
-    <!-- used -quiet -force in the dist.sh version -->
-<!--    
-    <exec executable="hdiutil">
-      <arg line="detach macosx/working_dir" />
-    </exec>
--->
-
-    <delete file="macosx/processing-*.dmg" />
-    <exec executable="hdiutil">
-      <arg line="convert macosx/working.dmg -format UDZO -imagekey zlib-level=9 -o macosx/processing-${version}.dmg" />
-    </exec>
-
-    <!-- Clean up the interim files. -->
-    <delete file="macosx/working.dmg" />
-    <delete dir="macosx/working_dir" />
-    
-    <echo>
-      =======================================================
-      Processing for Mac OS X was built. Grab the image from   
-      
-      macosx/processing-${version}.dmg
       =======================================================
     </echo>
   </target>
@@ -722,6 +669,11 @@
     <antcall target="assemble">
       <param name="target.path" value="linux/work" />
     </antcall>
+
+    <delete dir="${target.path}/modes/java/libraries/video/library/macosx32" />
+    <delete dir="${target.path}/modes/java/libraries/video/library/macosx64" />
+    <delete dir="${target.path}/modes/java/libraries/video/library/windows32" />
+    <delete dir="${target.path}/modes/java/libraries/video/library/windows64" />
 
     <copy file="linux/processing" todir="linux/work" />
     <chmod perm="ugo+x" file="linux/work/processing" />
@@ -856,6 +808,29 @@
     <antcall target="assemble">
       <param name="target.path" value="windows/work" />
     </antcall>
+
+    <delete dir="${target.path}/modes/java/libraries/video/library/macosx32" />
+    <delete dir="${target.path}/modes/java/libraries/video/library/macosx64" />
+
+<!--
+    <condition property="delete32"> 
+      <equals arg1="${sun.arch.data.model}" arg2="64" />
+    </condition>
+    <delete dir="${target.path}/modes/java/libraries/video/library/windows32" />
+
+    <condition property="delete64"> 
+      <equals arg1="${sun.arch.data.model}" arg2="32" />
+    </condition>
+    <delete dir="${target.path}/modes/java/libraries/video/library/windows64" />
+-->
+
+    <condition property="video.delete" value="32"> 
+      <equals arg1="${sun.arch.data.model}" arg2="64" />
+    </condition>
+    <condition property="video.delete" value="64"> 
+      <equals arg1="${sun.arch.data.model}" arg2="32" />
+    </condition>
+    <delete dir="${target.path}/modes/java/libraries/video/library/windows${video.delete}" />
     
     <taskdef name="launch4j" 
 	     classname="net.sf.launch4j.ant.Launch4jTask" 

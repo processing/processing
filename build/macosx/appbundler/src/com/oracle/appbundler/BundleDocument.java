@@ -23,6 +23,8 @@
 
 package com.oracle.appbundler;
 
+import java.io.File;
+
 import org.apache.tools.ant.BuildException;
 
 
@@ -33,6 +35,7 @@ public class BundleDocument {
     private String name = "editor";
     private String role = "";
     private String icon = null;
+    private File iconFile;
     private String[] extensions;
     private boolean isPackage = false;
 
@@ -55,8 +58,9 @@ public class BundleDocument {
     
     public void setIcon(String icon) {
       this.icon = icon;
+      this.iconFile = new File(icon);
     }
-
+    
     public void setName(String name) {
       this.name = name;
     }
@@ -73,10 +77,19 @@ public class BundleDocument {
         }
     }
     
-    public String getIcon() {
-        return icon;
+//    public String getIcon() {
+//        return icon;
+//    }
+    
+    public String getIconName() {
+        return iconFile.getName();
     }
-
+    
+    
+    public File getIconFile() {
+        return iconFile;
+    }
+    
     public String getName() {
         return name;
     }
@@ -100,7 +113,7 @@ public class BundleDocument {
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder(getName());
-        s.append(" ").append(getRole()).append(" ").append(getIcon()). append(" ");
+        s.append(" ").append(getRole()).append(" ").append(getIconName()). append(" ");
         for(String extension : extensions) {
             s.append(extension).append(" ");
         }

@@ -66,10 +66,11 @@ public class AppBundlerTask extends Task {
   private File icon = null;
   private String executableName = EXECUTABLE_NAME;
 
-  private String shortVersion = "1.0";
-  private String version = "1.0";
+  private String shortVersion = null; //"1.0";
+  private String version = null; //"1.0";
   private String signature = "????";
-  private String copyright = "";
+  private String copyright = null; //"";
+  private String getInfo = null;
   private String privileged = null;
   private String workingDirectory = null;
 
@@ -143,6 +144,11 @@ public class AppBundlerTask extends Task {
 
   public void setCopyright(String copyright) {
     this.copyright = copyright;
+  }
+
+
+  public void setGetInfo(String getInfo) {
+    this.getInfo = getInfo;
   }
 
 
@@ -367,6 +373,9 @@ public class AppBundlerTask extends Task {
 
       // Copy icon to Resources folder
       copyIcon(resourcesDirectory);
+      
+      // Copy the bundle/document icons as well
+      copyBundleIcons(resourcesDirectory);
 
     } catch (IOException exception) {
       throw new BuildException(exception);
@@ -387,22 +396,19 @@ public class AppBundlerTask extends Task {
         if (zipEntry.isDirectory()) {
           file.mkdir();
         } else {
-          OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file), BUFFER_SIZE);
-
+          OutputStream outputStream = 
+            new BufferedOutputStream(new FileOutputStream(file), BUFFER_SIZE);
           try {
             int b = zipInputStream.read();
             while (b != -1) {
               outputStream.write(b);
               b = zipInputStream.read();
             }
-
             outputStream.flush();
           } finally {
             outputStream.close();
           }
-
         }
-
         zipEntry = zipInputStream.getNextEntry();
       }
     } finally {
@@ -497,12 +503,23 @@ public class AppBundlerTask extends Task {
 
   private void copyIcon(File resourcesDirectory) throws IOException {
     if (icon == null) {
-      copy(getClass().getResource(DEFAULT_ICON_NAME), new File(resourcesDirectory, DEFAULT_ICON_NAME));
+      copy(getClass().getResource(DEFAULT_ICON_NAME), 
+           new File(resourcesDirectory, DEFAULT_ICON_NAME));
     } else {
       copy(icon, new File(resourcesDirectory, icon.getName()));
     }
   }
-
+  
+  
+  private void copyBundleIcons(File resourcesDirectory) throws IOException {
+    for (BundleDocument bundleDocument : bundleDocuments) {
+      if (bundleDocument.hasIcon()) {
+        File iconFile = bundleDocument.getIconFile();
+        copy(iconFile, new File(resourcesDirectory, iconFile.getName()));
+      }
+    }
+  }
+  
 
   private void writeInfoPlist(File file) throws IOException {
     FileOutputStream output = new FileOutputStream(file);
@@ -527,6 +544,10 @@ public class AppBundlerTask extends Task {
     plist.writeProperty("CFBundleVersion", version);
     plist.writeProperty("CFBundleSignature", signature);
     plist.writeProperty("NSHumanReadableCopyright", copyright);
+    
+    if (getInfo != null) {
+      plist.writeProperty("CFBundleGetInfoString", getInfo);
+    }
 
     if (applicationCategory != null) {
       plist.writeProperty("LSApplicationCategoryType", applicationCategory);
@@ -567,7 +588,7 @@ public class AppBundlerTask extends Task {
 
       if (bundleDocument.hasIcon()) {
         plist.writeKey("CFBundleTypeIconFile");
-        plist.writeString(bundleDocument.getIcon());
+        plist.writeString(bundleDocument.getIconName());
       }
 
       plist.writeKey("CFBundleTypeName");
