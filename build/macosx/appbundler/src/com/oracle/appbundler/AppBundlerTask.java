@@ -516,7 +516,8 @@ public class AppBundlerTask extends Task {
 
   class PropertyLister {
     PrintWriter writer;
-    int indentSpaces = 2;
+//    int indentSpaces = 2;
+    String indentSpaces = "  ";
 //    int indentLevel;
     Stack<String> elements = new Stack<>();
     
@@ -553,23 +554,19 @@ public class AppBundlerTask extends Task {
     }
     
     void writeStartElement(String element) {
+      emitIndent();
       writer.println("<" + element + ">");
 //      indentLevel++;
       elements.push(element);
     }
     
     void writeEndElement() {
-      emitIndent();
+      emitOutdent();
       writer.println("</" + elements.pop() + ">");
     }
     
-    void writeSingle(String tag, String content) {
-      emitIndent();
-      writer.println("<" + tag + ">" + content + "</" + tag + ">");
-    }
-    
     void writeKey(String key) {
-      writeSingle(KEY_TAG, key);
+      emitSingle(KEY_TAG, key);
 //      emitIndent();
 //      writer.println("<key>" + key + "</key>");
     }
@@ -577,7 +574,7 @@ public class AppBundlerTask extends Task {
     void writeString(String value) {
 //      emitIndent();
 //      writer.println("<string>" + value + "</string>");
-      writeSingle(STRING_TAG, value);
+      emitSingle(STRING_TAG, value);
     }
     
     void writeBoolean(boolean value) {
@@ -590,11 +587,23 @@ public class AppBundlerTask extends Task {
       writeString(value);
     }
     
-    void emitIndent() {
+    private void emitSingle(String tag, String content) {
+      emitIndent();
+      writer.println("<" + tag + ">" + content + "</" + tag + ">");
+    }
+    
+    private void emitIndent() {
       for (int i = 0; i < elements.size(); i++) {
-        for (int j = 0; j < indentSpaces; j++) {
-          writer.print(' ');
-        }
+//        for (int j = 0; j < indentSpaces; j++) {
+//          writer.print(' ');
+//        }
+        writer.print(indentSpaces);
+      }
+    }
+
+    private void emitOutdent() {
+      for (int i = 0; i < elements.size() - 1; i++) {
+        writer.print(indentSpaces);
       }
     }
   }
@@ -603,6 +612,7 @@ public class AppBundlerTask extends Task {
   private void writeInfoPlist(File file) throws IOException {
     FileOutputStream output = new FileOutputStream(file);
     PropertyLister xout = new PropertyLister(output);
+    xout.writeStartDocument();
 
     xout.println(PLIST_DTD);
 
