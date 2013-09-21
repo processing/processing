@@ -36,8 +36,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.URL;
@@ -50,17 +48,6 @@ import java.util.Iterator;
 import java.util.Stack;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
@@ -527,13 +514,13 @@ public class AppBundlerTask extends Task {
   }
 
 
-  class SimpleXML {
+  class PropertyLister {
     PrintWriter writer;
-    int indentSpaces;
+    int indentSpaces = 2;
 //    int indentLevel;
     Stack<String> elements = new Stack<>();
     
-    public SimpleXML(OutputStream output) throws UnsupportedEncodingException {
+    public PropertyLister(OutputStream output) throws UnsupportedEncodingException {
       OutputStreamWriter osw = new OutputStreamWriter(output, "UTF-8");
       writer = new PrintWriter(osw);
     }
@@ -576,14 +563,21 @@ public class AppBundlerTask extends Task {
       writer.println("</" + elements.pop() + ">");
     }
     
-    void writeKey(String key) {
+    void writeSingle(String tag, String content) {
       emitIndent();
-      writer.println("<key>" + key + "</key>");
+      writer.println("<" + tag + ">" + content + "</" + tag + ">");
+    }
+    
+    void writeKey(String key) {
+      writeSingle(KEY_TAG, key);
+//      emitIndent();
+//      writer.println("<key>" + key + "</key>");
     }
     
     void writeString(String value) {
-      emitIndent();
-      writer.println("<string>" + value + "</string>");
+//      emitIndent();
+//      writer.println("<string>" + value + "</string>");
+      writeSingle(STRING_TAG, value);
     }
     
     void writeBoolean(boolean value) {
@@ -607,216 +601,139 @@ public class AppBundlerTask extends Task {
   
   
   private void writeInfoPlist(File file) throws IOException {
-//    Writer out = new BufferedWriter(new FileWriter(file));
-////    StringWriter out = new StringWriter();
-//    XMLOutputFactory output = XMLOutputFactory.newInstance();
-//
-//    try {
-//      XMLStreamWriter xout = output.createXMLStreamWriter(out);
     FileOutputStream output = new FileOutputStream(file);
-    SimpleXML xout = new SimpleXML(output);
+    PropertyLister xout = new PropertyLister(output);
 
-      // Write XML declaration
-//      xout.writeStartDocument();
-//      xout.writeCharacters("\n");
+    xout.println(PLIST_DTD);
 
-      // Write plist DTD declaration
-//      xout.writeDTD(PLIST_DTD);
-//      xout.writeCharacters("\n");
-      xout.println(PLIST_DTD);
+    // Begin root element
+    xout.writeStartElement(PLIST_TAG, PLIST_VERSION_ATTRIBUTE, "1.0");
 
-      // Begin root element
-//      xout.writeStartElement(PLIST_TAG);
-//      xout.writeAttribute(PLIST_VERSION_ATTRIBUTE, "1.0");
-//      xout.writeCharacters("\n");
-      xout.writeStartElement(PLIST_TAG, PLIST_VERSION_ATTRIBUTE, "1.0");
+    // Begin root dictionary
+    xout.writeStartElement(DICT_TAG);
 
-      // Begin root dictionary
+    // Write bundle properties
+    xout.writeProperty("CFBundleDevelopmentRegion", "English");
+    xout.writeProperty("CFBundleExecutable", executableName);
+    xout.writeProperty("CFBundleIconFile", (icon == null) ? DEFAULT_ICON_NAME : icon.getName());
+    xout.writeProperty("CFBundleIdentifier", identifier);
+    xout.writeProperty("CFBundleDisplayName", displayName);
+    xout.writeProperty("CFBundleInfoDictionaryVersion", "6.0");
+    xout.writeProperty("CFBundleName", name);
+    xout.writeProperty("CFBundlePackageType", OS_TYPE_CODE);
+    xout.writeProperty("CFBundleShortVersionString", shortVersion);
+    xout.writeProperty("CFBundleVersion", version);
+    xout.writeProperty("CFBundleSignature", signature);
+    xout.writeProperty("NSHumanReadableCopyright", copyright);
+
+    if (applicationCategory != null) {
+      xout.writeProperty("LSApplicationCategoryType", applicationCategory);
+    }
+
+    if (highResolutionCapable) {
+      xout.writeKey("NSHighResolutionCapable");
+      xout.writeBoolean(true);
+    }
+
+    // Write runtime
+    if (runtime != null) {
+      xout.writeProperty("JVMRuntime", runtime.getDir().getParentFile().getParentFile().getName());
+    }
+
+    if (privileged != null) {
+      xout.writeProperty("JVMRunPrivileged", privileged);
+    }
+
+    if (workingDirectory != null) {
+      xout.writeProperty("WorkingDirectory", workingDirectory);
+    }
+
+    // Write main class name
+    xout.writeProperty("JVMMainClassName", mainClassName);
+
+
+    // Write CFBundleDocument entries
+    xout.writeKey("CFBundleDocumentTypes");
+
+    xout.writeStartElement(ARRAY_TAG);
+
+    for (BundleDocument bundleDocument: bundleDocuments) {
       xout.writeStartElement(DICT_TAG);
-//      xout.writeCharacters("\n");
 
-      // Write bundle properties
-      xout.writeProperty("CFBundleDevelopmentRegion", "English");
-      xout.writeProperty("CFBundleExecutable", executableName);
-      xout.writeProperty("CFBundleIconFile", (icon == null) ? DEFAULT_ICON_NAME : icon.getName());
-      xout.writeProperty("CFBundleIdentifier", identifier);
-      xout.writeProperty("CFBundleDisplayName", displayName);
-      xout.writeProperty("CFBundleInfoDictionaryVersion", "6.0");
-      xout.writeProperty("CFBundleName", name);
-      xout.writeProperty("CFBundlePackageType", OS_TYPE_CODE);
-      xout.writeProperty("CFBundleShortVersionString", shortVersion);
-      xout.writeProperty("CFBundleVersion", version);
-      xout.writeProperty("CFBundleSignature", signature);
-      xout.writeProperty("NSHumanReadableCopyright", copyright);
-
-      if (applicationCategory != null) {
-        xout.writeProperty("LSApplicationCategoryType", applicationCategory);
-      }
-
-      if (highResolutionCapable) {
-        xout.writeKey("NSHighResolutionCapable");
-        xout.writeBoolean(true);
-      }
-
-      // Write runtime
-      if (runtime != null) {
-        xout.writeProperty("JVMRuntime", runtime.getDir().getParentFile().getParentFile().getName());
-      }
-
-      if (privileged != null) {
-        xout.writeProperty("JVMRunPrivileged", privileged);
-      }
-
-      if (workingDirectory != null) {
-        xout.writeProperty("WorkingDirectory", workingDirectory);
-      }
-
-      // Write main class name
-      xout.writeProperty("JVMMainClassName", mainClassName);
-
-
-      // Write CFBundleDocument entries
-      xout.writeKey("CFBundleDocumentTypes");
-
+      xout.writeKey("CFBundleTypeExtensions");
       xout.writeStartElement(ARRAY_TAG);
+      for (String extension : bundleDocument.getExtensions()) {
+        xout.writeString(extension);
+      }
+      xout.writeEndElement();
 
-      for (BundleDocument bundleDocument: bundleDocuments) {
-        xout.writeStartElement(DICT_TAG);
-
-        xout.writeKey("CFBundleTypeExtensions");
-        xout.writeStartElement(ARRAY_TAG);
-        for (String extension : bundleDocument.getExtensions()) {
-          xout.writeString(extension);
-        }
-        xout.writeEndElement();
-
-        if (bundleDocument.hasIcon()) {
-          xout.writeKey("CFBundleTypeIconFile");
-          xout.writeString(bundleDocument.getIcon());
-        }
-
-        xout.writeKey("CFBundleTypeName");
-        xout.writeString(bundleDocument.getName());
-
-        xout.writeKey("CFBundleTypeRole");
-        xout.writeString(bundleDocument.getRole());
-
-        xout.writeKey("LSTypeIsPackage");
-        xout.writeBoolean(bundleDocument.isPackage());
-
-        xout.writeEndElement();
+      if (bundleDocument.hasIcon()) {
+        xout.writeKey("CFBundleTypeIconFile");
+        xout.writeString(bundleDocument.getIcon());
       }
 
-      xout.writeEndElement();
+      xout.writeKey("CFBundleTypeName");
+      xout.writeString(bundleDocument.getName());
 
-      // Write architectures
-      xout.writeKey("LSArchitecturePriority");
+      xout.writeKey("CFBundleTypeRole");
+      xout.writeString(bundleDocument.getRole());
 
-      xout.writeStartElement(ARRAY_TAG);
-
-      for (String architecture : architectures) {
-        xout.writeString(architecture);
-      }
+      xout.writeKey("LSTypeIsPackage");
+      xout.writeBoolean(bundleDocument.isPackage());
 
       xout.writeEndElement();
+    }
 
-      // Write Environment
-      xout.writeKey("LSEnvironment");
-      xout.writeStartElement(DICT_TAG);
-      xout.writeKey("LC_CTYPE");
-      xout.writeString("UTF-8");
-      xout.writeEndElement();
-
-      // Write options
-      xout.writeKey("JVMOptions");
-
-      xout.writeStartElement(ARRAY_TAG);
-
-      for (String option : options) {
-        xout.writeString(option);
-      }
-
-      xout.writeEndElement();
-
-      // Write arguments
-      xout.writeKey("JVMArguments");
-
-      xout.writeStartElement(ARRAY_TAG);
-      
-      for (String argument : arguments) {
-        xout.writeString(argument);
-      }
-
-      xout.writeEndElement();
-      
-      // End root dictionary
-      xout.writeEndElement();
-      
-      // End root element
-      xout.writeEndElement();
-      
-      // Close document
-      xout.writeEndDocument();
-
-//      out.flush();
-//    } catch (XMLStreamException exception) {
-//      throw new IOException(exception);
-//    } finally {
-//      out.close();
-//    }
-//    try {
-////      TransformerFactory factory = TransformerFactory.newInstance();
-////      Transformer transformer = factory.newTransformer();
-//////      transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-//////      transformer.setOutputProperty(OutputKeys.ENCODING,"UTF-8");
-////      transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-//////      transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
-////
-////      StringWriter formatted = new StringWriter();
-////      transformer.transform(new StreamSource(new StringReader(out.toString())),
-////                            new StreamResult(formatted));
-////      System.out.println(formatted);
-//      
-//      FileWriter fw = new FileWriter(file);
-////      fw.write(formatted.toString());
-//      fw.write(out.toString());
-//      fw.flush();
-//      fw.close();
-//      
-//    } catch (Exception e) {
-//      
-////    } catch (TransformerConfigurationException tce) {
-////      throw new IOException(tce);
-////    } catch (TransformerException te) {
-////      throw new IOException(te);
-//    }
-  }
-
-
-  private void writeKey(XMLStreamWriter xout, String key) throws XMLStreamException {
-    xout.writeStartElement(KEY_TAG);
-    xout.writeCharacters(key);
     xout.writeEndElement();
-    xout.writeCharacters("\n");
-  }
 
+    // Write architectures
+    xout.writeKey("LSArchitecturePriority");
 
-  private void writeString(XMLStreamWriter xout, String value) throws XMLStreamException {
-    xout.writeStartElement(STRING_TAG);
-    xout.writeCharacters(value);
+    xout.writeStartElement(ARRAY_TAG);
+
+    for (String architecture : architectures) {
+      xout.writeString(architecture);
+    }
+
     xout.writeEndElement();
-    xout.writeCharacters("\n");
-  }
 
+    // Write Environment
+    xout.writeKey("LSEnvironment");
+    xout.writeStartElement(DICT_TAG);
+    xout.writeKey("LC_CTYPE");
+    xout.writeString("UTF-8");
+    xout.writeEndElement();
 
-  private void writeBoolean(XMLStreamWriter xout, boolean value) throws XMLStreamException {
-    xout.writeEmptyElement(value ? "true" : "false");
-  }
+    // Write options
+    xout.writeKey("JVMOptions");
 
+    xout.writeStartElement(ARRAY_TAG);
 
-  private void writeProperty(XMLStreamWriter xout, String key, String value) throws XMLStreamException {
-    writeKey(xout, key);
-    writeString(xout, value);
+    for (String option : options) {
+      xout.writeString(option);
+    }
+
+    xout.writeEndElement();
+
+    // Write arguments
+    xout.writeKey("JVMArguments");
+
+    xout.writeStartElement(ARRAY_TAG);
+
+    for (String argument : arguments) {
+      xout.writeString(argument);
+    }
+
+    xout.writeEndElement();
+
+    // End root dictionary
+    xout.writeEndElement();
+
+    // End root element
+    xout.writeEndElement();
+
+    // Close document
+    xout.writeEndDocument();
   }
 
 
