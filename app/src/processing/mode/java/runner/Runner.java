@@ -142,7 +142,9 @@ public class Runner implements MessageConsumer {
     String[] commandArgs = null;
     if (!Base.isMacOS()) {
       commandArgs = new String[] {
-        "java", jdwpArg
+        //"java",
+        Base.getJavaPath(),
+        jdwpArg
       };
     } else {
       // Decided to just set this to 1.6 only, because otherwise it's gonna
@@ -160,7 +162,7 @@ public class Runner implements MessageConsumer {
       // OS X at this point, because we require 10.6.8 and higher. That also
       // means we don't need to check for any other OS versions, the user is 
       // a douchebag and modifies Info.plist to get around the restriction.
-      if (true) {
+      if (false) {
         if (System.getProperty("os.version").startsWith("10.6")) {
           commandArgs = new String[] {
             "/usr/libexec/java_home",
@@ -183,7 +185,8 @@ public class Runner implements MessageConsumer {
       } else {
         // testing jdk-7u40
         commandArgs = new String[] { 
-          "/Library/Java/JavaVirtualMachines/jdk1.7.0_40.jdk/Contents/Home/bin/java",
+          //"/Library/Java/JavaVirtualMachines/jdk1.7.0_40.jdk/Contents/Home/bin/java",
+          Base.getJavaPath(),
           jdwpArg
         };
       }

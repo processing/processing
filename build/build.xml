@@ -473,31 +473,6 @@
   <target name="macosx-build" if="macosx" depends="revision-check, macosx-checkos, subprojects-build" description="Build Mac OS X version">
     <mkdir dir="macosx/work" />
     
-    <!-- assemble the pde -->
-    <!--
-    <copy todir="macosx/work">
-      <fileset dir="macosx/" includes="template.app/**"/>
-    </copy>
-    
-    <move file="macosx/work/template.app" 
-	  tofile="macosx/work/Processing.app" />
-
-    <chmod file="macosx/work/Processing.app/Contents/MacOS/JavaApplicationStub" perm="ugo+x" />
-      
-    <copy todir="macosx/work/Processing.app/Contents/Java/lib" 
-	  flatten="true">
-      <fileset refid="runtime.jars"/>
-    </copy>
-    -->
-
-    <!-- workaround for apparent appbundler bug -->
-    <!--
-    <copy todir=".">
-      <fileset dir="macosx/template.app/Contents/Resources/" 
-	       includes="*.icns" />
-    </copy>
-    -->
-
     <!-- app bundler for OS X and Java 1.7 -->
     <taskdef name="bundleapp"
              classname="com.oracle.appbundler.AppBundlerTask"   
@@ -552,17 +527,22 @@
 		      role="Editor">
       </bundledocument>
 
-      <!-- Workaround because the icon parameter for bundleapp doesn't work -->
-      <!--<option value="-Xdock:icon=Contents/Resources/${bundle.icon}" />-->
+      <!-- Don't think these actually make any difference. -->
+      <!--
       <option value="-Xdock:icon=Contents/Resources/processing.icns" />
-      <!--<option value="-Xdock:icon=${bundle.icon}" />-->
-      <!--<option value="-Xdock:icon=processing.icns" />-->
-      <!-- this one actually works -->
-      <!--<option value="-Xdock:icon=/Users/fry/coconut/processing/build/macosx/work/Processing.app/Contents/Resources/processing.icns" />-->
-      <!--<option value="-Xdock:icon=Processing.app/Contents/Resources/processing.icns" />-->
-
-      <!-- set the name for what's in the dock -->
       <option value="-Xdock:name=Processing" />
+      -->
+
+      <!-- Probably no longer needed? [fry 130917]
+      <option value="-Xms128M" />
+      <option value="-Xmx256M" />
+      -->
+
+      <option value="-Dapple.laf.useScreenMenuBar=true"/>
+      <option value="-Dcom.apple.macos.use-file-dialog-packages=true"/>
+      <option value="-Dcom.apple.macos.useScreenMenuBar=true"/>
+      <option value="-Dcom.apple.mrj.application.apple.menu.about.name=${bundle.name}"/>
+      <option value="-Dcom.apple.smallTabs=true"/>
 
 <!--
     the old options; most of these are probably no longer useful
@@ -583,24 +563,7 @@
 	<key>apple.awt.graphics.UseQuartz</key>
 	<string>true</string>
 -->
-
-      <option value="-Dapple.laf.useScreenMenuBar=true"/>
-      <option value="-Dcom.apple.macos.use-file-dialog-packages=true"/>
-      <option value="-Dcom.apple.macos.useScreenMenuBar=true"/>
-      <option value="-Dcom.apple.mrj.application.apple.menu.about.name=${bundle.name}"/>
-      <option value="-Dcom.apple.smallTabs=true"/>
-
-      <!-- Probably no longer needed? [fry 130917]
-      <option value="-Xms128M" />
-      <option value="-Xmx256M" />
-      -->
     </bundleapp>
-
-    <!-- workaround for apparent appbundler bug -->
-    <!--
-    <delete file="processing.icns" />
-    <delete file="pde.icns" />
-    -->
 
     <copy todir="macosx/work/Processing.app/Contents/Java">
       <fileset dir=".." includes="core/library/**" />
@@ -608,21 +571,6 @@
       <fileset dir="shared" includes="lib/**" />
       <fileset file="shared/revisions.txt" />
     </copy>
-
-    <!--
-	others.. can we set these?
-
-    <key>LSMinimumSystemVersion</key>
-    <string>10.6.8</string>
-
-    <key>NSHighResolutionCapable</key>
-    <true/>
-
-    <key>Java</key>
-    <dict>
-      <key>SplashFile</key>
-      <string>$JAVAROOT/lib/about.jpg</string>
-    -->
 
     <property name="launch4j.dir" 
 	      value="macosx/work/Processing.app/Contents/Java/launch4j" />

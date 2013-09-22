@@ -2384,6 +2384,24 @@ public class Base {
     */
     return new File(processingRoot, name);
   }
+  
+  
+  /** Get the path to the embedded Java executable. */
+  static public String getJavaPath() {
+    if (isMacOS()) {
+      //return "Contents/PlugIns/jdk1.7.0_40.jdk/Contents/Home/jre/bin/java";
+      return getContentFile("../PlugIns/jdk1.7.0_40.jdk/Contents/Home/jre/bin/java").getAbsolutePath();
+      
+    } else if (isLinux()) {
+      return getContentFile("../java/bin/java").getAbsolutePath();
+      
+    } else if (isWindows()) {
+      return getContentFile("../java/bin/java.exe").getAbsolutePath();      
+    } 
+    System.err.println("No appropriate platform found. " +
+                       "Hoping that Java is in the path.");
+    return Base.isWindows() ? "java.exe" : "java";
+  }
 
 
 //  /**

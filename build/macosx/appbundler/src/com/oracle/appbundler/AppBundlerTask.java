@@ -203,7 +203,21 @@ public class AppBundlerTask extends Task {
 
     runtime.appendExcludes(new String[] {
       "bin/",
-      "jre/bin/",
+      
+      // original version, removed entire bin folder
+//      "jre/bin/",
+      
+      // remove everything except 'java'
+      "jre/bin/keytool",
+      "jre/bin/orbd",
+      "jre/bin/pack200",
+      "jre/bin/policytool",
+      "jre/bin/rmid",
+      "jre/bin/rmiregistry",
+      "jre/bin/servertool",
+      "jre/bin/tnameserv",
+      "jre/bin/unpack200",
+
       "jre/lib/deploy/",
       "jre/lib/deploy.jar",
       "jre/lib/javaws.jar",
