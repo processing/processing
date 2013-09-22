@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <project name="Processing" default="build">
-
+  
   <!-- Sets properties for macosx/windows/linux depending on current system -->
   <condition property="platform" value="macosx">
     <os family="mac" /> 
@@ -17,6 +17,14 @@
 	<os family="mac" />
       </not>
     </and>
+  </condition>
+
+  <!-- Figure out the JRE download location for Linux and Windows. -->
+  <condition property="jre.file" value="jre-7u40-${platform}-i586.tgz"> 
+    <equals arg1="${sun.arch.data.model}" arg2="32" />
+  </condition>
+  <condition property="jre.file" value="jre-7u40-${platform}-x64.tgz"> 
+    <equals arg1="${sun.arch.data.model}" arg2="64" />
   </condition>
 
   <!--
@@ -36,18 +44,15 @@
 
   <!-- Make sure that we have a legitimate JDK... This was promoted 
        from app/build.xml because we now need this on OS X as well. -->
-  <!--
   <property name="java_home" value="${env.JAVA_HOME}" />
   <available file="${env.JAVA_HOME}/lib/tools.jar"
 	     property="java_tools_found" />
 
   <fail if="windows" unless="java_tools_found" 
 	message="The JAVA_HOME variable must be set to the location of a full JDK. For instance, on Windows, this might be c:\jdk1.6.0_19." />
-  -->
 
   <!-- OS X gets a second chance that covers JDK 6, 
        a necessity for building on OS X 10.6. -->
-  <!--
   <available file="/System/Library/Frameworks/JavaVM.framework/Classes/classes.jar" property="java_tools_found" />
 
   <fail if="macosx" unless="java_tools_found"
@@ -55,11 +60,10 @@
 
   <fail if="linux" unless="java_tools_found" 
 	message="The JAVA_HOME variable must be set to the location of a full JDK. For instance, on Ubuntu Linux, this might be /usr/lib/jvm/java-6-sun." />
-  -->
 	       
   <!-- Figure out the platform-specific output directory for all this work. -->
   <condition property="target.path" 
-	     value="macosx/work/Processing.app/Contents/Resources/Java">
+	     value="macosx/work/Processing.app/Contents/Java">
     <os family="mac" /> 
   </condition>
 
@@ -72,6 +76,7 @@
   </condition>
 
   <!-- Libraries required for running processing -->
+  <!-- also need to copy these to the bundleapp task for macosx -->
   <fileset dir=".." id="runtime.jars">
     <include name="app/pde.jar" />
     <include name="app/lib/antlr.jar" />
@@ -132,7 +137,6 @@
     <subant buildpath="../java/libraries/pdf" target="clean"/>
     <subant buildpath="../java/libraries/serial" target="clean"/>
     <subant buildpath="../java/libraries/video" target="clean"/>
-<!--    <subant buildpath="../experimental" target="clean"/>-->
     <subant buildpath="shared/tools/MovieMaker" target="clean"/>
   </target>
   
@@ -144,7 +148,6 @@
     <subant buildpath="../java/libraries/pdf" target="build"/>
     <subant buildpath="../java/libraries/serial" target="build"/>
     <subant buildpath="../java/libraries/video" target="build"/>
-<!--    <subant buildpath="../experimental" target="build"/>-->
     <subant buildpath="shared/tools/MovieMaker" target="build"/>
   </target>
   
@@ -152,21 +155,8 @@
   <!-- - - - - - - - - -->
   <!-- Basic Assembly  -->
   <!-- - - - - - - - - -->
-
-
-<!--  <target name="experimental" unless="version">-->
-  <target name="experimental">
-<!--
-    <copy todir="${target.path}/modes/experimental">
-      <fileset dir="../experimental">
-	<include name="**/mode/*" />
-	<include name="**/theme/*" />
-      </fileset>
-    </copy>
--->
-  </target>
-  
-  <target name="assemble" depends="version-clear, version-write, experimental">
+ 
+  <target name="assemble" depends="version-clear, version-write">
     <fail unless="target.path" 
 	  message="Do not call assemble from the command line." />
     
@@ -396,6 +386,7 @@
     <mkdir dir="macosx/work" />
     
     <!-- assemble the pde -->
+    <!--
     <copy todir="macosx/work">
       <fileset dir="macosx/" includes="template.app/**"/>
     </copy>
@@ -405,20 +396,148 @@
 
     <chmod file="macosx/work/Processing.app/Contents/MacOS/JavaApplicationStub" perm="ugo+x" />
       
-    <copy todir="macosx/work/Processing.app/Contents/Resources/Java">
-      <fileset dir=".." includes="core/library/**" />
-      <fileset dir="shared" includes="launch4j/**" />
-      <fileset dir="shared" includes="lib/**" />
-      <fileset dir="shared" includes="modes/**" />
-      <fileset file="shared/revisions.txt" />
-    </copy>
-
-    <copy todir="macosx/work/Processing.app/Contents/Resources/Java/lib" 
+    <copy todir="macosx/work/Processing.app/Contents/Java/lib" 
 	  flatten="true">
       <fileset refid="runtime.jars"/>
     </copy>
+    -->
 
-    <property name="launch4j.dir" value="macosx/work/Processing.app/Contents/Resources/Java/launch4j" />
+    <!-- workaround for apparent appbundler bug -->
+    <!--
+    <copy todir=".">
+      <fileset dir="macosx/template.app/Contents/Resources/" 
+	       includes="*.icns" />
+    </copy>
+    -->
+
+    <!-- app bundler for OS X and Java 1.7 -->
+    <taskdef name="bundleapp"
+             classname="com.oracle.appbundler.AppBundlerTask"   
+             classpath="macosx/appbundler.jar" />
+
+    <!--icon="macosx/processing.icns"-->
+    <bundleapp outputDirectory="macosx/work"
+	       name="Processing"
+	       displayName="Processing"
+	       executableName="Processing"
+	       identifier="org.processing.app"
+	       signature="Pde2"
+	       icon="macosx/processing.icns"
+	       copyright="© The Processing Foundation"
+	       getInfo="${version}, Copyright © The Processing Foundation"
+	       shortVersion="${version}"
+	       version="${revision}"
+	       mainClassName="processing.app.Base">
+
+      <!-- The appbundler task needs a couple files (the Info.plist and
+           anything else outside /jre) from the full JDK, even though 
+	   it's primarily copying over the JRE folder. -->
+      <runtime dir="/Library/Java/JavaVirtualMachines/jdk1.7.0_40.jdk/Contents/Home" />
+      <!-- Eventually we'll want to load the JRE directly from 
+	   the .tgz on the Oracle site, though it's in a folder called 
+	   jre1.7.0_40.jre, so we'll need to strip that out. -->
+
+      <!-- Same as runtime.jars, seen above; plus core.jar. -->
+      <classpath file="../app/pde.jar" />
+      <classpath file="../app/lib/antlr.jar" />
+      <classpath file="../app/lib/jna.jar" />
+      <classpath file="../app/lib/ant.jar" />
+      <classpath file="../app/lib/ant-launcher.jar" />
+      <classpath file="../app/lib/org-netbeans-swing-outline.jar" />
+      <classpath file="../app/lib/jdi.jar" />
+      <classpath file="../app/lib/jdimodel.jar" />
+      <classpath file="../app/lib/org.eclipse.osgi_3.8.1.v20120830-144521.jar" />
+      <classpath file="../app/lib/com.ibm.icu_4.4.2.v20110823.jar" />
+
+      <!-- plus core.jar... note that this is no longer shared -->
+      <classpath file="../core/library/core.jar" />
+
+      <arch name="x86_64"/>
+      <!-- no support for this with Java 7 from Oracle -->
+      <!--<arch name="i386"/>-->
+
+      <!--icon="macosx/template.app/Contents/Resources/pde.icns"-->
+      <!--icon="${bundle.icon}"-->
+      <bundledocument extensions="pde"
+		      icon="macosx/pde.icns"
+		      name="Processing Source Code"
+		      role="Editor">
+      </bundledocument>
+
+      <!-- Workaround because the icon parameter for bundleapp doesn't work -->
+      <!--<option value="-Xdock:icon=Contents/Resources/${bundle.icon}" />-->
+      <option value="-Xdock:icon=Contents/Resources/processing.icns" />
+      <!--<option value="-Xdock:icon=${bundle.icon}" />-->
+      <!--<option value="-Xdock:icon=processing.icns" />-->
+      <!-- this one actually works -->
+      <!--<option value="-Xdock:icon=/Users/fry/coconut/processing/build/macosx/work/Processing.app/Contents/Resources/processing.icns" />-->
+      <!--<option value="-Xdock:icon=Processing.app/Contents/Resources/processing.icns" />-->
+
+      <!-- set the name for what's in the dock -->
+      <option value="-Xdock:name=Processing" />
+
+<!--
+    the old options; most of these are probably no longer useful
+        <key>apple.laf.useScreenMenuBar</key>
+        <string>true</string>
+	<key>apple.awt.showGrowBox</key>
+	<string>true</string>
+	<key>com.apple.smallTabs</key>
+	<string>true</string>
+	<key>apple.awt.Antialiasing</key>
+	<string>false</string>
+	<key>apple.awt.TextAntialiasing</key>
+	<string>true</string>
+	<key>com.apple.hwaccel</key>
+	<string>true</string>
+	<key>apple.awt.use-file-dialog-packages</key>
+	<string>false</string>
+	<key>apple.awt.graphics.UseQuartz</key>
+	<string>true</string>
+-->
+
+      <option value="-Dapple.laf.useScreenMenuBar=true"/>
+      <option value="-Dcom.apple.macos.use-file-dialog-packages=true"/>
+      <option value="-Dcom.apple.macos.useScreenMenuBar=true"/>
+      <option value="-Dcom.apple.mrj.application.apple.menu.about.name=${bundle.name}"/>
+      <option value="-Dcom.apple.smallTabs=true"/>
+
+      <!-- Probably no longer needed? [fry 130917]
+      <option value="-Xms128M" />
+      <option value="-Xmx256M" />
+      -->
+    </bundleapp>
+
+    <!-- workaround for apparent appbundler bug -->
+    <!--
+    <delete file="processing.icns" />
+    <delete file="pde.icns" />
+    -->
+
+    <copy todir="macosx/work/Processing.app/Contents/Java">
+      <fileset dir=".." includes="core/library/**" />
+      <fileset dir="shared" includes="launch4j/**" />
+      <fileset dir="shared" includes="lib/**" />
+      <fileset file="shared/revisions.txt" />
+    </copy>
+
+    <!--
+	others.. can we set these?
+
+    <key>LSMinimumSystemVersion</key>
+    <string>10.6.8</string>
+
+    <key>NSHighResolutionCapable</key>
+    <true/>
+
+    <key>Java</key>
+    <dict>
+      <key>SplashFile</key>
+      <string>$JAVAROOT/lib/about.jpg</string>
+    -->
+
+    <property name="launch4j.dir" 
+	      value="macosx/work/Processing.app/Contents/Java/launch4j" />
 
     <!-- rename the version we need -->
     <move file="${launch4j.dir}/bin/windres-macosx"
@@ -437,8 +556,13 @@
     </delete>
 
     <antcall target="assemble">
-      <param name="target.path" value="macosx/work/Processing.app/Contents/Resources/Java" />
+      <param name="target.path" 
+	     value="macosx/work/Processing.app/Contents/Java" />
     </antcall>
+
+    <delete dir="${target.path}/modes/java/libraries/video/library/macosx32" />
+    <delete dir="${target.path}/modes/java/libraries/video/library/windows32" />
+    <delete dir="${target.path}/modes/java/libraries/video/library/windows64" />
   </target>
   
   <target name="macosx-run" depends="macosx-build" 
@@ -446,7 +570,8 @@
     <exec executable="open" dir="macosx/work" spawn="true">
       <arg value="-a" />
       <arg value="/Applications/Utilities/Terminal.app" />
-      <arg value="Processing.app/Contents/MacOS/JavaApplicationStub" />
+<!--      <arg value="Processing.app/Contents/MacOS/JavaApplicationStub" />-->
+      <arg value="Processing.app/Contents/MacOS/Processing" />
     </exec>
   </target>
 
@@ -472,10 +597,13 @@
     <!-- The ant copy command does not preserve permissions. -->
     <chmod file="macosx/work/Processing.app/Contents/MacOS/JavaApplicationStub" perm="ugo+x" />
 
+    <!-- Now handled by the app bundler -->
+    <!--
     <replace file="macosx/work/Processing.app/Contents/Info.plist"
 	     token="VERSION" value="${version}" />
     <replace file="macosx/work/Processing.app/Contents/Info.plist"
 	     token="REVISION" value="${revision}" />
+    -->
 
     <antcall target="macosx-dist-sign" />
 
@@ -550,6 +678,11 @@
       <param name="target.path" value="linux/work" />
     </antcall>
 
+    <delete dir="${target.path}/modes/java/libraries/video/library/macosx32" />
+    <delete dir="${target.path}/modes/java/libraries/video/library/macosx64" />
+    <delete dir="${target.path}/modes/java/libraries/video/library/windows32" />
+    <delete dir="${target.path}/modes/java/libraries/video/library/windows64" />
+
     <copy file="linux/processing" todir="linux/work" />
     <chmod perm="ugo+x" file="linux/work/processing" />
 
@@ -557,13 +690,13 @@
     <copy file="linux/processing" tofile="linux/work/processing-java" />
     <chmod perm="ugo+x" file="linux/work/processing-java" />
 
+    <!--
     <property name="jre.file" 
 	      value="jre-tools-6u37-linux${sun.arch.data.model}.tgz" />
+    -->
 
-    <!-- See notes in Windows section about ignoreerrors and the JRE. -->
     <get src="http://processing.googlecode.com/files/${jre.file}" 
 	 dest="linux/jre.tgz" 
-	 ignoreerrors="true"
 	 usetimestamp="true" />
 
 <!--	   
@@ -577,13 +710,17 @@
 <!--
     http://www.gnu.org/software/tar/manual/html_section/transform.html
 -->
-    <exec executable="tar">
-      <arg value="-C" /> <!-- Change directory -->
+    <exec executable="tar" dir="linux">
+      <!-- Change directory -->
+      <!--
+      <arg value="-C" /> 
       <arg value="linux/work" />
       <arg value="-xzpf" />
-      <arg value="linux/jre.tgz"/>
+      -->
+      <arg value="xfz" />
+      <arg value="jre.tgz"/>
     </exec>
-
+    <move file="linux/jre1.7.0_40" tofile="linux/work/java" />
   </target>
   
   <target name="linux-run" depends="linux-build" 
@@ -685,6 +822,33 @@
     <antcall target="assemble">
       <param name="target.path" value="windows/work" />
     </antcall>
+
+    <delete dir="${target.path}/modes/java/libraries/video/library/macosx32" />
+    <delete dir="${target.path}/modes/java/libraries/video/library/macosx64" />
+<!--
+    <echo message="the path is ${target.path}" />
+    <delete dir="${target.path}/modes/java/libraries/video/library/macosx32" failonerror="true" />
+    <delete dir="${target.path}/modes/java/libraries/video/library/macosx64" />
+    <exec executable="ls" dir="${target.path}/modes/java/libraries/video/library" />
+
+    <condition property="delete32"> 
+      <equals arg1="${sun.arch.data.model}" arg2="64" />
+    </condition>
+    <delete dir="${target.path}/modes/java/libraries/video/library/windows32" />
+
+    <condition property="delete64"> 
+      <equals arg1="${sun.arch.data.model}" arg2="32" />
+    </condition>
+    <delete dir="${target.path}/modes/java/libraries/video/library/windows64" />
+-->
+
+    <condition property="video.delete" value="32"> 
+      <equals arg1="${sun.arch.data.model}" arg2="64" />
+    </condition>
+    <condition property="video.delete" value="64"> 
+      <equals arg1="${sun.arch.data.model}" arg2="32" />
+    </condition>
+    <delete dir="${target.path}/modes/java/libraries/video/library/windows${video.delete}" />
     
     <taskdef name="launch4j" 
 	     classname="net.sf.launch4j.ant.Launch4jTask" 
@@ -729,20 +893,24 @@
     </chmod>
 
     <!-- starting with 2.0a7, require the local JRE + tools.jar -->
+    <!--
     <property name="jre.file" 
 	      value="jre-tools-6u37-windows${sun.arch.data.model}.zip" />
-
-    <!-- Added ignoreerrors so we can build even if no network connection.
-	 This will allow us to build so long as a version of jre.zip 
-	 has downloaded, even though it may not be up to date. -->
+    -->
     <get src="http://processing.googlecode.com/files/${jre.file}" 
-	 dest="windows/jre.zip" 
-	 ignoreerrors="true"
+	 dest="windows/jre.tgz" 
 	 usetimestamp="true" />
 
-    <!-- If no version of jre.zip is available (see above), 
-	 this should give us an error. -->
+    <!--
     <unzip dest="windows/work" src="windows/jre.zip" overwrite="false"/>
+    -->
+    <!-- Hopefully this is OK with the permissions (unlike Linux), 
+	 since those shouldn't matter on Windows. -->
+    <untar compression="gzip"
+	   dest="windows/work" 
+	   src="windows/jre.tgz" 
+	   overwrite="false" />
+    <move file="windows/work/jre1.7.0_40" tofile="windows/work/java" />
   </target>
   
   <target name="windows-run" depends="windows-build" 
