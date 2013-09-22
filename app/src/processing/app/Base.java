@@ -2393,10 +2393,10 @@ public class Base {
       return getContentFile("../PlugIns/jdk1.7.0_40.jdk/Contents/Home/jre/bin/java").getAbsolutePath();
       
     } else if (isLinux()) {
-      return getContentFile("../java/bin/java").getAbsolutePath();
+      return getContentFile("java/bin/java").getAbsolutePath();
       
     } else if (isWindows()) {
-      return getContentFile("../java/bin/java.exe").getAbsolutePath();      
+      return getContentFile("java/bin/java.exe").getAbsolutePath();      
     } 
     System.err.println("No appropriate platform found. " +
                        "Hoping that Java is in the path.");
