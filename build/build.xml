@@ -27,6 +27,58 @@
     <equals arg1="${sun.arch.data.model}" arg2="64" />
   </condition>
 
+  <!-- Unused JavaFX files that can be removed from the JRE on Windows 
+       and Linux. On Mac OS X, this is removed by the appbundler task.
+       www.oracle.com/technetwork/java/javase/jdk-7-readme-429198.html -->
+  <fileset dir="${platform}/work/java" id="javafx-basics">
+    <include name="THIRDPARTYLICENSEREADME-JAVAFX.txt" />
+    <include name="lib/javafx.properties" />
+    <include name="lib/jfxrt.jar" />
+    <include name="lib/security/javafx.policy" />
+  </fileset>
+
+  <fileset dir="windows/work/java" id="javafx-windows">
+    <include name="bin/decora-sse.dll" />
+    <include name="bin/fxplugins.dll" />
+    <include name="bin/glass.dll" />
+    <include name="bin/glib-lite.dll" />
+    <include name="bin/gstreamer-lite.dll" />
+    <include name="bin/javafx-font.dll" />
+    <include name="bin/javafx-iio.dll" />
+    <include name="bin/jfxmedia.dll" />
+    <include name="bin/jfxwebkit.dll" />
+    <include name="bin/libxml2.dll" />
+    <include name="bin/libxslt.dll" />
+  </fileset>
+
+  <fileset dir="linux/work/java" id="javafx-linux-32">
+    <include name="lib/i386/fxavcodecplugin-52.so" />
+    <include name="lib/i386/fxavcodecplugin-53.so" />
+    <include name="lib/i386/fxplugins.so" />
+    <include name="lib/i386/libglass.so" />
+    <include name="lib/i386/libgstplugins-lite.so" />
+    <include name="lib/i386/libgstreamer-lite.so" />
+    <include name="lib/i386/libjavafx-font.so" />
+    <include name="lib/i386/libjavafx-iio.so" />
+    <include name="lib/i386/libjfxmedia.so" />
+    <include name="lib/i386/libjfxwebkit.so" />
+    <include name="lib/i386/libprism-es2.so" />
+  </fileset>
+
+  <fileset dir="linux/work/java" id="javafx-linux-64">
+    <include name="lib/amd64/fxavcodecplugin-52.so" />
+    <include name="lib/amd64/fxavcodecplugin-53.so" />
+    <include name="lib/amd64/fxplugins.so" />
+    <include name="lib/amd64/libglass.so" />
+    <include name="lib/amd64/libgstplugins-lite.so" />
+    <include name="lib/amd64/libgstreamer-lite.so" />
+    <include name="lib/amd64/libjavafx-font.so" />
+    <include name="lib/amd64/libjavafx-iio.so" />
+    <include name="lib/amd64/libjfxmedia.so" />
+    <include name="lib/amd64/libjfxwebkit.so" />
+    <include name="lib/amd64/libprism-es2.so" />
+  </fileset>
+
   <!--
   <echo message="${java.class.path}" />
   -->
@@ -721,6 +773,13 @@
       <arg value="jre.tgz"/>
     </exec>
     <move file="linux/jre1.7.0_40" tofile="linux/work/java" />
+
+    <!-- Remove unused JavaFX crap. -->
+    <delete> 
+      <fileset refid="javafx-basics" />
+      <fileset refid="javafx-linux-${sun.arch.data.model}" />
+    </delete>
+
   </target>
   
   <target name="linux-run" depends="linux-build" 
@@ -911,6 +970,12 @@
 	   src="windows/jre.tgz" 
 	   overwrite="false" />
     <move file="windows/work/jre1.7.0_40" tofile="windows/work/java" />
+
+    <!-- Remove space-wasting JavaFX garbage. -->
+    <delete> 
+      <fileset refid="javafx-basics" />
+      <fileset refid="javafx-windows" />
+    </delete>
   </target>
   
   <target name="windows-run" depends="windows-build" 
