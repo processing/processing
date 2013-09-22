@@ -27,9 +27,53 @@
     <equals arg1="${sun.arch.data.model}" arg2="64" />
   </condition>
 
+  <fileset dir="windows/work/java" id="jre-optional-windows">
+    <include name="bin/dtplugin" />
+    <include name="bin/plugin2" />
+
+    <include name="bin/kinit.exe" />
+    <include name="bin/klist.exe" />
+    <include name="bin/ktab.exe" />
+
+    <include name="bin/keytool" />
+    <include name="bin/orbd" />
+    <include name="bin/policytool" />
+    <include name="bin/rmid" />
+    <include name="bin/rmiregistry" />
+    <include name="bin/servertool" />
+    <include name="bin/tnameserv" />
+
+    <include name="bin/javaws.exe" />
+    <include name="lib/javaws.jar" />
+
+    <include name="lib/ext/dnsns.jar" />
+    <include name="lib/cmm/PYCC.pf" />
+  </fileset>
+
+  <fileset dir="linux/work/java" id="jre-optional-linux">
+    <include name="bin/keytool" />
+    <include name="bin/orbd" />
+    <include name="bin/policytool" />
+    <include name="bin/rmid" />
+    <include name="bin/rmiregistry" />
+    <include name="bin/servertool" />
+    <include name="bin/tnameserv" />
+
+    <include name="bin/javaws" />
+    <include name="lib/javaws.jar" />
+
+    <include name="lib/ext/dnsns.jar" />
+    <include name="lib/cmm/PYCC.pf" />
+  </fileset>
+
+  <!-- There might be others, based on what was in the Java 6 docs, 
+       but that info isn't part of the Java 7 instructions.
+       http://www.oracle.com/technetwork/java/javase/jrereadme-182762.html -->
+
   <!-- Unused JavaFX files that can be removed from the JRE on Windows 
        and Linux. On Mac OS X, this is removed by the appbundler task.
        www.oracle.com/technetwork/java/javase/jdk-7-readme-429198.html -->
+
   <fileset dir="${platform}/work/java" id="javafx-basics">
     <include name="THIRDPARTYLICENSEREADME-JAVAFX.txt" />
     <include name="lib/javafx.properties" />
@@ -157,18 +201,6 @@
 	   defaultvalue="${revision}" />
     <antcall target="${platform}-dist" />
   </target>
-
-<!--
-  <target name="android-dist-check">
--->
-    <!-- ensure that the android-core.zip file has been built -->
-<!--
-    <available file="${target.path}/modes/android/android-core.zip" 
-	       property="android-core-present" />
-    <fail unless="android-core-present" 
-	  message="android-core.zip was not built, but is required for dist. Install the Android tools, set ANDROID_SDK, and try again." />
-  </target>
--->
 
   <!-- "§$§$&, ant doesn't have a built-in help target :(  -->
   <target name="help" description="Show project help">
@@ -774,10 +806,11 @@
     </exec>
     <move file="linux/jre1.7.0_40" tofile="linux/work/java" />
 
-    <!-- Remove unused JavaFX crap. -->
+    <!-- Remove unused JRE bloat. -->
     <delete> 
       <fileset refid="javafx-basics" />
       <fileset refid="javafx-linux-${sun.arch.data.model}" />
+      <fileset refid="jre-optional-linux" />
     </delete>
 
   </target>
@@ -975,6 +1008,7 @@
     <delete> 
       <fileset refid="javafx-basics" />
       <fileset refid="javafx-windows" />
+      <fileset refid="jre-optional-windows" />
     </delete>
   </target>
   

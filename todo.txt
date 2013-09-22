@@ -29,17 +29,20 @@ X   any missing args from our app (copyrights/versions?)
 X   add MinimumSystemVersion for 10.7.3
 X copy GenericDocumentIcon.icns for placeholder icon
 X   from /System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/
-X remove Java FX from OS X build
+_ remove JAVA_HOME requirement from build.xml
+_   what's needed on OS X? just the JDK 7u40?
 
-_ remove Java FX during Linux builds
-_ remove Java FX during Windows builds
-_ remove javafx from the embed
-_   more about optional files:
-_   http://www.oracle.com/technetwork/java/javase/jdk-7-readme-429198.html
+jre work
+X remove Java FX from OS X build
+X remove Java FX during Linux builds
+X remove Java FX during Windows builds
+X remove javafx from the embed
+X   more about optional files:
+X   http://www.oracle.com/technetwork/java/javase/jdk-7-readme-429198.html
 
 7u40 switch
 _ make OS X launch from its local JRE
-_ don't re-copy jre into work folder if already exists
+
 _ change how export is handled
 _   remove ability to export cross-platform apps
 _   add ability to embed the current JRE
@@ -53,11 +56,17 @@ _   requires 10.7.3 or later (which can be specified in min sys version)
 _   https://developer.apple.com/library/ios/documentation/general/Reference/InfoPlistKeyReference/Articles/LaunchServicesKeys.html#//apple_ref/doc/uid/20001431-113253
 _ try the bundle on Mac Mini running 10.6
 _   make sure it's only running on 64-bit machines? 
+_ try installing 10.7.3 on Mac Mini and check whether things run
 _ bring back the splash screen
 _ update github instructions
 _   only JRE needed at this point
 _   switched over to Java 7
 _   https://github.com/processing/processing/wiki/Build-Instructions
+_   "unable to locate tools.jar" (Windows) can be ignored
+_   JAVA_HOME warnings from Ant can also be ignored
+
+_ appbundler improvements
+_   don't re-copy JRE into work folder if already exists
 
 high
 _ move old Google Code SVN back to processing.org
