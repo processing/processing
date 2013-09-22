@@ -75,8 +75,11 @@ public class AppBundlerTask extends Task {
   private String workingDirectory = null;
 
   private String applicationCategory = null;
-
   private boolean highResolutionCapable = true;
+  // Oracle Java 7 requires 10.7.3 or later, so require it here.
+  private String minimumSystem = "10.7.3";
+  // By default, don't embed Java FX. 
+  private boolean javafx = false;
 
   // JVM info properties
   private String mainClassName = null;
@@ -167,8 +170,18 @@ public class AppBundlerTask extends Task {
   }
 
 
+  public void setMinimumSystem(String minimumSystem) {
+    this.minimumSystem = minimumSystem;
+  }
+
+  
   public void setHighResolutionCapable(boolean highResolutionCapable) {
     this.highResolutionCapable = highResolutionCapable;
+  }
+  
+  
+  public void setJavaFX(boolean javafx) {
+    this.javafx = javafx;
   }
 
 
@@ -199,6 +212,29 @@ public class AppBundlerTask extends Task {
       "jre/lib/plugin.jar",
       "jre/lib/security/javaws.policy"
     });
+    
+    if (!javafx) {
+      // http://www.oracle.com/technetwork/java/javase/jdk-7-readme-429198.html
+      runtime.appendExcludes(new String[] {
+        "jre/THIRDPARTYLICENSEREADME-JAVAFX.txt",
+        
+        "jre/lib/javafx.properties",
+        "jre/lib/jfxrt.jar",
+        "jre/lib/security/javafx.policy",
+
+        "jre/lib/fxplugins.dylib",
+        "jre/lib/libdecora-sse.dylib",
+        "jre/lib/libglass.dylib",
+        "jre/lib/libglib-2.0.0.dylib",
+        "jre/lib/libgstplugins-lite.dylib",
+        "jre/lib/libgstreamer-lite.dylib",
+        "jre/lib/libjavafx-font.dylib",
+        "jre/lib/libjavafx-iio.dylib",
+        "jre/lib/libjfxmedia.dylib",
+        "jre/lib/libjfxwebkit.dylib",
+        "jre/lib/libprism-es2.dylib"
+      });
+    }
   }
 
 
@@ -551,6 +587,10 @@ public class AppBundlerTask extends Task {
 
     if (applicationCategory != null) {
       plist.writeProperty("LSApplicationCategoryType", applicationCategory);
+    }
+    
+    if (minimumSystem != null) {
+      plist.writeProperty("LSMinimumSystemVersion", minimumSystem);
     }
 
     if (highResolutionCapable) {
