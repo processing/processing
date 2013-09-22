@@ -100,8 +100,10 @@
   <available file="${env.JAVA_HOME}/lib/tools.jar"
 	     property="java_tools_found" />
 
+  <!--
   <fail if="windows" unless="java_tools_found" 
 	message="The JAVA_HOME variable must be set to the location of a full JDK. For instance, on Windows, this might be c:\jdk1.6.0_19." />
+  -->
 
   <!-- OS X gets a second chance that covers JDK 6, 
        a necessity for building on OS X 10.6. -->
@@ -110,8 +112,10 @@
   <fail if="macosx" unless="java_tools_found"
 	message="To build on OS X, you must install both Apple's Java 6 and Oracle's JDK 7 (not just the plugin). Then add this line: ${line.separator}export JAVA_HOME=`/usr/libexec/java_home`${line.separator}to ~/.profile and open a new Terminal window." />
 
+  <!--
   <fail if="linux" unless="java_tools_found" 
 	message="The JAVA_HOME variable must be set to the location of a full JDK. For instance, on Ubuntu Linux, this might be /usr/lib/jvm/java-6-sun." />
+  -->
 	       
   <!-- Figure out the platform-specific output directory for all this work. -->
   <condition property="target.path" 
