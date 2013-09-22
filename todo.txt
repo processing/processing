@@ -6,6 +6,8 @@ o bad JS mode causing crash on startup
 X   https://github.com/processing/processing/issues/2088
 X   looks like issue that was covered in 2.0.3 changes
 
+_ Windows and 7u40 has some sort of font problem w/ the console
+
 build
 X remove video library for other platforms in download
 X update apple.jar file with new version
@@ -57,10 +59,14 @@ _ don't re-copy jre into work folder if already exists
 _ change how export is handled
 _   remove ability to export cross-platform apps
 _   add ability to embed the current JRE
+_ change Windows export to use launch4j instead of the launcher.cpp file
+_   actually call ant from inside p5?
 _ change app stub in OS X exported application
 _ we become full 64-bit on OS X
 _   meaning that the macosx32 video library goes away
 _   and the preference for launching in 32- or 64-bit mode
+_   requires 10.7.3 or later (which can be specified in min sys version)
+_   https://developer.apple.com/library/ios/documentation/general/Reference/InfoPlistKeyReference/Articles/LaunchServicesKeys.html#//apple_ref/doc/uid/20001431-113253
 _ try the bundle on Mac Mini running 10.6
 _   make sure it's only running on 64-bit machines? 
 _   add MinimumSystemVersion?
@@ -72,6 +78,10 @@ _ update github instructions
 _   only JRE needed at this point
 _   switched over to Java 7
 _   https://github.com/processing/processing/wiki/Build-Instructions
+
+HKEY_LOCAL_MACHINE
+SOFTWARE\JavaSoft\Java Runtime Environment\CurrentVersion -> 1.7
+SOFTWARE\JavaSoft\Java Runtime Environment\CurrentVersion\1.7
 
 no good installer, will need JDK anyway for the export
 require that this folder exists:
@@ -890,6 +900,7 @@ _     once fixed, remove notes from JavaBuild.java
 _ "Are you sure you want to quit?" when switching modes on Oracle JVM
 _   default menu bar is still broken
 _   http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=8007267
+_   fixed for 7u60 http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=8022667
 _ blank sketch opened even if another opened by double-click
 _   add a 150 ms or more lag before opening the untitled window (on os x)
 _   https://github.com/processing/processing/issues/218

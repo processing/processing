@@ -710,13 +710,17 @@
 <!--
     http://www.gnu.org/software/tar/manual/html_section/transform.html
 -->
-    <exec executable="tar">
-      <arg value="-C" /> <!-- Change directory -->
+    <exec executable="tar" dir="linux">
+      <!-- Change directory -->
+      <!--
+      <arg value="-C" /> 
       <arg value="linux/work" />
       <arg value="-xzpf" />
-      <arg value="linux/jre.tgz"/>
+      -->
+      <arg value="xfz" />
+      <arg value="jre.tgz"/>
     </exec>
-    <move file="linux/work/jre1.7.0_40" tofile="linux/work/java" />
+    <move file="linux/jre1.7.0_40" tofile="linux/work/java" />
   </target>
   
   <target name="linux-run" depends="linux-build" 
