@@ -56,6 +56,7 @@ import java.util.zip.*;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileSystemView;
 
 
 /**
@@ -7726,6 +7727,32 @@ public class PApplet extends Applet
    */
   public File saveFile(String where) {
     return new File(savePath(where));
+  }
+
+
+  static File desktopFolder;
+
+  /** Not a supported function. For testing use only. */
+  static public File desktopFile(String what) {
+    if (desktopFolder == null) {
+      // Should work on Linux and OS X (on OS X, even with the localized version).
+      desktopFolder = new File(System.getProperty("user.home"), "Desktop");
+      if (!desktopFolder.exists()) {
+        if (platform == WINDOWS) {
+          FileSystemView filesys = FileSystemView.getFileSystemView();
+          desktopFolder = filesys.getHomeDirectory();
+        } else {
+          throw new UnsupportedOperationException("Could not find a suitable desktop foldder");
+        }
+      }
+    }
+    return new File(desktopFolder, what);
+  }
+
+
+  /** Not a supported function. For testing use only. */
+  static public String desktopPath(String what) {
+    return desktopFile(what).getAbsolutePath();
   }
 
 

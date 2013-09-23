@@ -2,6 +2,7 @@
 X background color for present mode has no effect
 X   https://github.com/processing/processing/issues/2071
 X   https://github.com/processing/processing/pull/2072
+X add desktopPath() and desktopFile() methods for testing
 
 _ Sort out blending differences with P2D/P3D
 _   https://github.com/processing/processing/issues/1844

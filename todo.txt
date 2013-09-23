@@ -6,7 +6,8 @@ o bad JS mode causing crash on startup
 X   https://github.com/processing/processing/issues/2088
 X   looks like issue that was covered in 2.0.3 changes
 
-_ Windows and 7u40 has some sort of font problem w/ the console
+_ fix console font on Windows and Linux with 7u40
+_   the message area text also looks ugly.. can we fix?
 
 build
 X remove video library for other platforms in download
