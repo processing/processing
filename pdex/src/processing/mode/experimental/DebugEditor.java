@@ -241,6 +241,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         ta.setECSandThemeforTextArea(errorCheckerService, dmode);
         addXQModeUI();    
         debugToolbarEnabled = new AtomicBoolean(false);
+        log("Sketch Path: " + path);
     }
     
     private void addXQModeUI(){
