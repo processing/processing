@@ -1,0 +1,17 @@
+PDE X v1.0.1b - 25 September, 2013
+
+Bug fix
+
++ Fixed a major issue where completion list was going blank. 
+  https://github.com/processing/processing-experimental/issues/19
+
+Changes
+
+- Removed the tiny markers shown at the start of error lines. Too. Much. Red.
+
+ . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .    
+
+PDE X v1.0.0b - 22 September, 2013
+
+Boom! First Public Beta Release!
+
