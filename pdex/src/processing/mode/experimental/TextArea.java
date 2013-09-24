@@ -708,9 +708,9 @@ public class TextArea extends JEditTextArea {
   }
 
   protected void showSuggestion(DefaultListModel defListModel,String subWord) {
+    hideSuggestion();
     if (defListModel.size() == 0) {
       log("TextArea: No suggestions to show.");
-      hideSuggestion();
       return;
     }
     int position = getCaretPosition();
@@ -729,13 +729,13 @@ public class TextArea extends JEditTextArea {
     if (subWord.length() < 2) {
       return;
     }
-    if (suggestion == null)
-      suggestion = new CompletionPanel(this, position, subWord, defListModel,
-                                       location,editor);
-    else
-      suggestion.updateList(defListModel, subWord, location, position);
-    
-    suggestion.setVisible(true);
+    //if (suggestion == null)
+    suggestion = new CompletionPanel(this, position, subWord, defListModel,
+                      location,editor);
+//    else
+//      suggestion.updateList(defListModel, subWord, location, position);
+//    
+//    suggestion.setVisible(true);
     requestFocusInWindow();
 //    SwingUtilities.invokeLater(new Runnable() {
 //      @Override
@@ -748,6 +748,7 @@ public class TextArea extends JEditTextArea {
   protected void hideSuggestion() {
     if (suggestion != null) {
       suggestion.hide();
+      log("Suggestion hidden.");
       suggestion = null;
     }
   }

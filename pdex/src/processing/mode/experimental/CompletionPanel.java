@@ -115,6 +115,7 @@ public class CompletionPanel {
     return list;
   }
   
+  // possibly defunct
   public boolean updateList(final DefaultListModel items, String newSubword,
                             final Point location, int position) {
     this.subWord = new String(newSubword);
