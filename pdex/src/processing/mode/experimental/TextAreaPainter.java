@@ -365,12 +365,15 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter {
       // gfx.fillRect(x1, y, rw, height);
 
       // Let the painting begin!
-      gfx.setColor(errorMarkerColor);
-      if (isWarning) {
-        gfx.setColor(warningMarkerColor);
-      }
-      gfx.fillRect(1, y + 2, 3, height - 2);
+      
+      // Little rect at starting of a line containing errors - disabling it for now
+//      gfx.setColor(errorMarkerColor);
+//      if (isWarning) {
+//        gfx.setColor(warningMarkerColor);
+//      }
+//      gfx.fillRect(1, y + 2, 3, height - 2);
 
+      
       gfx.setColor(errorColor);
       if (isWarning) {
         gfx.setColor(warningColor);
