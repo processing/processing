@@ -13,6 +13,7 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/processing-net"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/processing-pdf"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/processing-serial"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/processing-serialold"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/processing-video"/>
 	<classpathentry kind="lib" path="lib/antlr.jar" sourcepath="lib/antlr-src.zip"/>
 	<classpathentry kind="lib" path="lib/jna.jar"/>

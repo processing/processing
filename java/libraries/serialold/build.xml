@@ -3,7 +3,7 @@
   
   <target name="clean" description="Clean the build directories">
     <delete dir="bin" />
-    <delete file="library/serial.jar" />
+    <delete file="library/serialold.jar" />
   </target>
 
   <target name="compile" description="Compile sources">
@@ -18,7 +18,7 @@
 	   srcdir="src" destdir="bin" 
 	   encoding="UTF-8"
 	   includeAntRuntime="false"
-	   classpath="../../../core/library/core.jar; library/jssc.jar"
+	   classpath="../../../core/library/core.jar; library/RXTXcomm.jar"
 	   nowarn="true"
 	   compiler="org.eclipse.jdt.core.JDTCompilerAdapter">
       <compilerclasspath path="../../mode/ecj.jar" />
@@ -26,6 +26,6 @@
   </target>
   
   <target name="build" depends="compile" description="Build serial library">
-    <jar basedir="bin" destfile="library/serial.jar" />
+    <jar basedir="bin" destfile="library/serialold.jar" />
   </target>
 </project>
