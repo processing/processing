@@ -6,6 +6,8 @@ X add desktopPath() and desktopFile() methods for testing
 
 _ Sort out blending differences with P2D/P3D
 _   https://github.com/processing/processing/issues/1844
+_ 'collector' class.. Dict that points to a list
+_   String as a key, int/float/string list as values
 
 high
 _ loadPixels doesn't set alpha value for pixels on Java2D

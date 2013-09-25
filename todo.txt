@@ -5,6 +5,13 @@ X   https://github.com/processing/processing/issues/2068
 o bad JS mode causing crash on startup
 X   https://github.com/processing/processing/issues/2088
 X   looks like issue that was covered in 2.0.3 changes
+X non-compliant libraries cause crash on "Add Library"
+X   https://github.com/processing/processing/issues/2026
+
+_ incorporate the new serial library
+_   https://github.com/processing/processing/pull/2093
+_ moviemaker problem with tga files
+_   maybe same as the OS X problem?
 
 _ fix console font on Windows and Linux with 7u40
 _   the message area text also looks ugly.. can we fix?

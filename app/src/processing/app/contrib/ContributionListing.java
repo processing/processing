@@ -87,9 +87,10 @@ public class ContributionListing {
    */
   protected void updateInstalledList(List<Contribution> installedContributions) {
     for (Contribution contribution : installedContributions) {
-      Contribution preexistingContribution = getContribution(contribution);
-      if (preexistingContribution != null) {
-        replaceContribution(preexistingContribution, contribution);
+      Contribution existingContribution = getContribution(contribution);
+      if (existingContribution != null) {
+        replaceContribution(existingContribution, contribution);
+      //} else if (contribution != null) {  // 130925 why would this be necessary?
       } else {
         addContribution(contribution);
       }
