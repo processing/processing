@@ -24,13 +24,16 @@
 */
 
 package processing.serial;
+
 import processing.core.*;
+
 import java.lang.reflect.*;
 import java.util.Map;
+
 import jssc.*;
 
-public class Serial implements SerialPortEventListener {
 
+public class Serial implements SerialPortEventListener {
   PApplet parent;
   public SerialPort port;
   Method serialAvailableMethod;
@@ -50,22 +53,27 @@ public class Serial implements SerialPortEventListener {
   // * state of the RING, RLSD line
   // * sending breaks
 
+  
   public Serial(PApplet parent) {
     this(parent, "COM1", 9600, 'N', 8, 1);
   }
 
+  
   public Serial(PApplet parent, int baudRate) {
     this(parent, "COM1", baudRate, 'N', 8, 1);
   }
 
+  
   public Serial(PApplet parent, String portName) {
     this(parent, portName, 9600, 'N', 8, 1);
   }
 
+  
   public Serial(PApplet parent, String portName, int baudRate) {
     this(parent, portName, baudRate, 'N', 8, 1);
   }
 
+  
   public Serial(PApplet parent, String portName, int baudRate, char parity, int dataBits, float stopBits) {
     this.parent = parent;
     parent.registerMethod("dispose", this);
@@ -101,7 +109,7 @@ public class Serial implements SerialPortEventListener {
       port.addEventListener(this, SerialPort.MASK_RXCHAR);
     } catch (SerialPortException e) {
       // this used to be a RuntimeException before, so stick with it
-      throw new RuntimeException("Error opening serial port "+e.getPortName()+": "+e.getExceptionType());
+      throw new RuntimeException("Error opening serial port " + e.getPortName() + ": " + e.getExceptionType());
     }
 
     try {
@@ -115,10 +123,12 @@ public class Serial implements SerialPortEventListener {
     }
   }
 
+  
   public void dispose() {
     stop();
   }
 
+  
   public void pre() {
     if (serialAvailableMethod != null && invokeSerialAvailable) {
       invokeSerialAvailable = false;
@@ -137,15 +147,18 @@ public class Serial implements SerialPortEventListener {
     return (inBuffer-readOffset);
   }
 
+  
   public void buffer(int size) {
     bufferUntilSize = size;
   }
 
+  
   public void bufferUntil(int inByte) {
     bufferUntilSize = 0;
     bufferUntilByte = (byte)inByte;
   }
 
+  
   public void clear() {
     synchronized (buffer) {
       inBuffer = 0;
@@ -153,27 +166,32 @@ public class Serial implements SerialPortEventListener {
     }
   }
 
+  
   public boolean getCTS() {
     try {
       return port.isCTS();
     } catch (SerialPortException e) {
-      throw new RuntimeException("Error reading the CTS line: "+e.getExceptionType());
+      throw new RuntimeException("Error reading the CTS line: " + e.getExceptionType());
     }
   }
 
+  
   public boolean getDSR() {
     try {
       return port.isDSR();
     } catch (SerialPortException e) {
-      throw new RuntimeException("Error reading the DSR line: "+e.getExceptionType());
+      throw new RuntimeException("Error reading the DSR line: " + e.getExceptionType());
     }
   }
 
+  
   public static Map<String, String> getProperties(String portName) {
-    SerialPortList list = new SerialPortList();
-    return list.getPortProperties(portName);
+    //SerialPortList list = new SerialPortList();
+    //return list.getPortProperties(portName);
+    return SerialPortList.getPortProperties(portName);
   }
 
+  
   public int last() {
     if (inBuffer == readOffset) {
       return -1;
@@ -187,17 +205,21 @@ public class Serial implements SerialPortEventListener {
     }
   }
 
+  
   public char lastChar() {
     return (char)last();
   }
 
+  
   public static String[] list() {
-    SerialPortList list = new SerialPortList();
     // returns list sorted alphabetically, thus cu.* comes before tty.*
     // this was different with RXTX
-    return list.getPortNames();
+    //SerialPortList list = new SerialPortList();
+    //return list.getPortNames();
+    return SerialPortList.getPortNames();
   }
 
+  
   public int read() {
     if (inBuffer == readOffset) {
       return -1;
@@ -213,6 +235,7 @@ public class Serial implements SerialPortEventListener {
     }
   }
 
+  
   public byte[] readBytes() {
     if (inBuffer == readOffset) {
       return null;
@@ -226,6 +249,7 @@ public class Serial implements SerialPortEventListener {
       return ret;
     }
   }
+  
 
   public int readBytes(byte[] dest) {
     if (inBuffer == readOffset) {
@@ -246,6 +270,7 @@ public class Serial implements SerialPortEventListener {
       return toCopy;
     }
   }
+  
 
   public byte[] readBytesUntil(int inByte) {
     if (inBuffer == readOffset) {
@@ -277,6 +302,7 @@ public class Serial implements SerialPortEventListener {
     }
   }
 
+  
   public int readBytesUntil(int inByte, byte[] dest) {
     if (inBuffer == readOffset) {
       return 0;
@@ -313,18 +339,20 @@ public class Serial implements SerialPortEventListener {
     }
   }
 
+  
   public char readChar() {
-    return (char)read();
+    return (char) read();
   }
 
+  
   public String readString() {
     if (inBuffer == readOffset) {
       return null;
     }
-
     return new String(readBytes());
   }
 
+  
   public void serialEvent(SerialPortEvent event) {
     if (event.getEventType() == SerialPortEvent.RXCHAR) {
       int toRead;
@@ -365,61 +393,68 @@ public class Serial implements SerialPortEventListener {
           }
         }
       } catch (SerialPortException e) {
-        throw new RuntimeException("Error reading from serial port "+e.getPortName()+": "+e.getExceptionType());
+        throw new RuntimeException("Error reading from serial port " + e.getPortName() + ": " + e.getExceptionType());
       }
     }
   }
 
+  
   public void setDTR(boolean state) {
     // there is no way to influence the behavior of the DTR line when opening the serial port
     // this means that at least on Linux and OS X, Arduino devices are always reset
     try {
       port.setDTR(state);
     } catch (SerialPortException e) {
-      throw new RuntimeException("Error setting the DTR line: "+e.getExceptionType());
+      throw new RuntimeException("Error setting the DTR line: " + e.getExceptionType());
     }
   }
 
+  
   public void setRTS(boolean state) {
     try {
       port.setRTS(state);
     } catch (SerialPortException e) {
-      throw new RuntimeException("Error setting the RTS line: "+e.getExceptionType());
+      throw new RuntimeException("Error setting the RTS line: " + e.getExceptionType());
     }
   }
 
+  
   public void stop() {
     try {
       port.closePort();
     } catch (SerialPortException e) {
+      // ignored
     }
     inBuffer = 0;
     readOffset = 0;
   }
 
+  
   public void write(byte[] src) {
     try {
       // this might block if the serial device is not yet ready (esp. tty devices under OS X)
       port.writeBytes(src);
       // we used to call flush() here
     } catch (SerialPortException e) {
-      throw new RuntimeException("Error writing to serial port "+e.getPortName()+": "+e.getExceptionType());
+      throw new RuntimeException("Error writing to serial port " + e.getPortName() + ": " + e.getExceptionType());
     }
   }
 
+  
   public void write(int src) {
     try {
       port.writeInt(src);
     } catch (SerialPortException e) {
-      throw new RuntimeException("Error writing to serial port "+e.getPortName()+": "+e.getExceptionType());
+      throw new RuntimeException("Error writing to serial port " + e.getPortName() + ": " + e.getExceptionType());
     }
   }
 
+  
   public void write(String src) {
     try {
       port.writeString(src);
     } catch (SerialPortException e) {
-      throw new RuntimeException("Error writing to serial port "+e.getPortName()+": "+e.getExceptionType());
+      throw new RuntimeException("Error writing to serial port " + e.getPortName() + ": " + e.getExceptionType());
     }
   }
 }
