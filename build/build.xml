@@ -224,6 +224,7 @@
     <subant buildpath="../java/libraries/net" target="clean"/>
     <subant buildpath="../java/libraries/pdf" target="clean"/>
     <subant buildpath="../java/libraries/serial" target="clean"/>
+    <subant buildpath="../java/libraries/serialold" target="clean"/>
     <subant buildpath="../java/libraries/video" target="clean"/>
     <subant buildpath="shared/tools/MovieMaker" target="clean"/>
   </target>
@@ -235,6 +236,7 @@
     <subant buildpath="../java/libraries/net" target="build"/>
     <subant buildpath="../java/libraries/pdf" target="build"/>
     <subant buildpath="../java/libraries/serial" target="build"/>
+    <subant buildpath="../java/libraries/serialold" target="build"/>
     <subant buildpath="../java/libraries/video" target="build"/>
     <subant buildpath="shared/tools/MovieMaker" target="build"/>
   </target>
@@ -1042,7 +1044,7 @@
       <arg line="everything -type f -exec rm -rf {} ';'" />
     </exec>
 
-    <javadoc access="public" author="false" classpath="../java/libraries/video/library/jna.jar:../java/libraries/serial/bin:lib/antlr.jar:../core/library/jogl-all.jar:../java/libraries/video/bin:lib/apple.jar:lib/jna.jar:lib/ant-launcher.jar:../java/libraries/pdf/bin:lib/ant.jar:../core/bin:../java/libraries/pdf/library/itext.jar:../java/libraries/video/library/gstreamer-java.jar:lib/org-netbeans-swing-outline.jar:../java/libraries/dxf/bin:bin:../java/libraries/net/bin:../java/libraries/serial/library/RXTXcomm.jar:../core/library/gluegen-rt.jar:${java.home}/lib/tools.jar" destdir="javadoc/everything" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" source="1.6" splitindex="false" use="false" version="false">
+    <javadoc access="public" author="false" classpath="../java/libraries/video/library/jna.jar:../java/libraries/serial/bin:lib/antlr.jar:../core/library/jogl-all.jar:../java/libraries/video/bin:lib/apple.jar:lib/jna.jar:lib/ant-launcher.jar:../java/libraries/pdf/bin:lib/ant.jar:../core/bin:../java/libraries/pdf/library/itext.jar:../java/libraries/video/library/gstreamer-java.jar:lib/org-netbeans-swing-outline.jar:../java/libraries/dxf/bin:bin:../java/libraries/net/bin:../java/libraries/serial/library/jssc.jar:../core/library/gluegen-rt.jar:${java.home}/lib/tools.jar" destdir="javadoc/everything" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" source="1.6" splitindex="false" use="false" version="false">
 
       <arg value="-notimestamp" />
       
