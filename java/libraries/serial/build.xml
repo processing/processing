@@ -3,7 +3,7 @@
   
   <target name="clean" description="Clean the build directories">
     <delete dir="bin" />
-    <delete file="library/pdf.jar" />
+    <delete file="library/serial.jar" />
   </target>
 
   <target name="compile" description="Compile sources">
@@ -18,7 +18,7 @@
 	   srcdir="src" destdir="bin" 
 	   encoding="UTF-8"
 	   includeAntRuntime="false"
-	   classpath="../../../core/library/core.jar; library/RXTXcomm.jar"
+	   classpath="../../../core/library/core.jar; library/jssc.jar"
 	   nowarn="true"
 	   compiler="org.eclipse.jdt.core.JDTCompilerAdapter">
       <compilerclasspath path="../../mode/ecj.jar" />

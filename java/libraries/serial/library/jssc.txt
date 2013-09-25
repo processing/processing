@@ -1,0 +1,1 @@
+This is using a modified version of Java Simple Serial Connector by Alexey Sokolov. See https://github.com/gohai/java-simple-serial-connector for details on the modifications.
