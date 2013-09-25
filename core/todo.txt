@@ -31,6 +31,10 @@ _   make sure it works with retina/canvas/strategy as well
 _ finish PFont.getShape() implementation
 _   needs to have a way to set width/height properly
 _   draw(s) doesn't work on the returned PShape
+_ TGA files writing strangely
+_   https://github.com/processing/processing/issues/2096
+_   also causes Movie Maker to not work properly
+_   https://github.com/processing/processing/issues/1933
 
 table
 _ addRow() is not efficient, probably need to do the doubling
