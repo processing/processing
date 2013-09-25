@@ -527,9 +527,10 @@
 		      role="Editor">
       </bundledocument>
 
+      <!-- Sets dock icon when debugging (not launched via launch svcs) -->
+      <option value="-Xdock:icon=Contents/Resources/processing.icns" />
       <!-- Don't think these actually make any difference. -->
       <!--
-      <option value="-Xdock:icon=Contents/Resources/processing.icns" />
       <option value="-Xdock:name=Processing" />
       -->
 
