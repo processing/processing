@@ -3,6 +3,8 @@ X background color for present mode has no effect
 X   https://github.com/processing/processing/issues/2071
 X   https://github.com/processing/processing/pull/2072
 X add desktopPath() and desktopFile() methods for testing
+X screen stops updating sometimes with retina
+X   https://github.com/processing/processing/issues/1699
 
 _ Sort out blending differences with P2D/P3D
 _   https://github.com/processing/processing/issues/1844
@@ -22,8 +24,6 @@ _ test PGraphicsRetina2D w/ 7u40
 _ make sure that 7u40 doesn't reintroduce starvation issue on retina Macs
 _ draw() called again before finishing on OS X (retina issue)
 _   https://github.com/processing/processing/issues/1709
-_ screen stops updating sometimes with retina
-_   https://github.com/processing/processing/issues/1699
 _ Linux sometimes not responding correctly w/ the size() command
 _   https://github.com/processing/processing/issues/1672
 _ clean up requestFocus() stuff

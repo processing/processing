@@ -12,6 +12,12 @@ X   https://github.com/processing/processing/pull/2037
 X incorporate the new serial library
 X   https://github.com/processing/processing/pull/2093
 
+add appbundler.jar, otherwise folks have to include Xcode
+if they want to build appbundler, they'll need Xcode
+  and the command line tools, from Preferences > Downloads > Command Line Tools
+appbundler will have an NPE if the osx binary isn't built
+also need to have 10.8 version of the SDK (old Xcode won't work)
+
 _ fix console font on Windows and Linux with 7u40
 _   the message area text also looks ugly.. can we fix?
 
