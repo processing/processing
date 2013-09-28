@@ -6104,6 +6104,7 @@ public class PApplet extends Applet
   public XML loadXML(String filename, String options) {
     try {
       return new XML(createReader(filename), options);
+//      return new XML(createInput(filename), options);
     } catch (Exception e) {
       e.printStackTrace();
       return null;

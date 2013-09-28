@@ -22,6 +22,13 @@ also need to have 10.8 version of the SDK (old Xcode won't work)
 
 _ fix console font on Windows and Linux with 7u40
 _   the message area text also looks ugly.. can we fix?
+_ add pref to select PDE font (so that CJKV languages work better)
+_   https://github.com/processing/processing/issues/2078
+_ should we embed the PDE font into the JRE?
+_   this would allow it to show up in the menus, etc
+_   but might be a problem on Linux
+_     where the JRE is often replaced
+_     and where the font is needed most
 
 build
 X remove video library for other platforms in download
@@ -93,8 +100,6 @@ _ "String index out of range" error
 _   https://github.com/processing/processing/issues/1940
 _ freeze after splash screen on OS X (looks like core.jar in the path)
 _   https://github.com/processing/processing/issues/1872
-_ add pref to select PDE font (so that CJKV languages work better)
-_   https://github.com/processing/processing/issues/2078
 
 medium
 _ use platformDelete() to remove untitled sketches?
@@ -511,6 +516,8 @@ _   mark examples as untitled (rather than read-only)
 _   maybe even pull these directly from the zip file?
 _ load examples from zip files
 _   http://code.google.com/p/processing/issues/detail?id=143
+_ don't make examples read-only
+_   just do them from psk files
 _ disallow add file to sketch, export, export application
 _   pretty much anything inside the sketch?
 _   but don't do this with untitled, cuz it kinda stinks
@@ -519,8 +526,6 @@ _   mark example files as untitled
 _   though will that require the sketch to be saved before export?
 _ examples window sketches should load in proper environment
 _ write build.xml file to automatically update the examples
-_ don't make examples read-only
-_   just do them from psk files
 _ sketch.isReadOnly returns false for examples coming from multiple modes
 _   http://code.google.com/p/processing/issues/detail?id=734
 _ see how library installation goes, then possibly do same w/ examples
