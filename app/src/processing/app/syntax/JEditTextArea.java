@@ -2403,19 +2403,22 @@ public class JEditTextArea extends JComponent
         // the problem, though it's not clear why the wrong Document data was
         // being using regardless of the focusedComponent.
 //        if (focusedComponent != JEditTextArea.this) return;
-        if (!hasFocus()) {
+      if (!hasFocus()) {
 //          System.out.println("requesting focus in window");
-          requestFocusInWindow();
-          return;
-        }
+        requestFocusInWindow();
+        return;
+      }
 
-      // isPopupTrigger wasn't working for danh on windows
-      boolean trigger = (evt.getModifiers() & InputEvent.BUTTON3_MASK) != 0;
-      // but it's required for macosx, since control-click does
-      // the same thing as a right-mouse click
-      if (!trigger && evt.isPopupTrigger()) trigger = true;
-
-      if (trigger && (popup != null)) {
+      // Disabling this block since it was a workaround for old buggy Java,
+      // and is now causing problems b/c cmd-click was opening popups on OS X.
+      // https://github.com/processing/processing/issues/2103
+//      // isPopupTrigger wasn't working for danh on windows
+//      boolean trigger = (evt.getModifiers() & InputEvent.BUTTON3_MASK) != 0;
+//      // but it's required for macosx, since control-click does
+//      // the same thing as a right-mouse click
+//      if (!trigger && evt.isPopupTrigger()) trigger = true;
+//      if (trigger && (popup != null)) {
+      if (evt.isPopupTrigger() && (popup != null)) {
         popup.show(painter,evt.getX(),evt.getY());
         return;
       }

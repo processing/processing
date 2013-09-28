@@ -21,6 +21,7 @@
 
 package processing.app;
 
+import java.awt.Frame;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
@@ -174,7 +175,7 @@ public class EditorState {
       synchronized (editors) {
         final int OVER = 50;
         Editor lastOpened = editors.get(editors.size() - 1);
-        isMaximized = (lastOpened.getExtendedState() == Editor.MAXIMIZED_BOTH);
+        isMaximized = (lastOpened.getExtendedState() == Frame.MAXIMIZED_BOTH);
         editorBounds = lastOpened.getBounds();
         editorBounds.x += OVER;
         editorBounds.y += OVER;
@@ -182,8 +183,10 @@ public class EditorState {
 
         if (!deviceBounds.contains(editorBounds)) {
           // Warp the next window to a randomish location on screen.
-          editorBounds.x = deviceBounds.x + (int) (Math.random() * (deviceBounds.width - defaultWidth));
-          editorBounds.y = deviceBounds.y + (int) (Math.random() * (deviceBounds.height - defaultHeight));
+          editorBounds.x = deviceBounds.x + 
+            (int) (Math.random() * (deviceBounds.width - defaultWidth));
+          editorBounds.y = deviceBounds.y + 
+            (int) (Math.random() * (deviceBounds.height - defaultHeight));
         }
         if (isMaximized) {
           editorBounds.width = defaultWidth;
@@ -211,7 +214,7 @@ public class EditorState {
       editor.setDividerLocation(dividerLocation);
     }
     if (isMaximized) {
-      editor.setExtendedState(Editor.MAXIMIZED_BOTH);
+      editor.setExtendedState(Frame.MAXIMIZED_BOTH);
     }
   }
 

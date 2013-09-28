@@ -11,6 +11,8 @@ X Open new PDE maximized when current PDE is maximized
 X   https://github.com/processing/processing/pull/2037
 X incorporate the new serial library
 X   https://github.com/processing/processing/pull/2093
+X cmd-left is bringing up the text area popup
+X   https://github.com/processing/processing/issues/2103
 
 add appbundler.jar, otherwise folks have to include Xcode
 if they want to build appbundler, they'll need Xcode
