@@ -5,12 +5,11 @@ X   https://github.com/processing/processing/pull/2072
 X add desktopPath() and desktopFile() methods for testing
 X screen stops updating sometimes with retina
 X   https://github.com/processing/processing/issues/1699
-
-_ Unicode NLF causing problems in XML files
-_   https://github.com/processing/processing/issues/2100
-_   not handled by BufferedReader (or XML parser)
-_   http://stackoverflow.com/questions/10556875/list-of-unicode-characters-that-should-be-filtered-in-output
-_   http://stackoverflow.com/questions/3072152/what-is-unicode-character-2028-ls-line-separator-used-for
+X Unicode NLF causing problems in XML files
+X   https://github.com/processing/processing/issues/2100
+X   not handled by BufferedReader (or XML parser)
+X   http://stackoverflow.com/questions/10556875/list-of-unicode-characters-that-should-be-filtered-in-output
+X   http://stackoverflow.com/questions/3072152/what-is-unicode-character-2028-ls-line-separator-used-for
 
 _ Sort out blending differences with P2D/P3D
 _   https://github.com/processing/processing/issues/1844

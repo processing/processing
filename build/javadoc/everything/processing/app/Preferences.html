@@ -81,10 +81,10 @@
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
-<li>java.lang.Object</li>
+<li><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></li>
 <li>
 <ul class="inheritance">
-<li>processing.app.Preferences</li>
+<li>Preferences</li>
 </ul>
 </li>
 </ul>
@@ -94,7 +94,7 @@
 <hr>
 <br>
 <pre>public class <span class="strong">Preferences</span>
-extends java.lang.Object</pre>
+extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></pre>
 <div class="block">Storage class for user preferences and environment settings.
  <P>
  This class no longer uses the Properties class, since
@@ -111,15 +111,14 @@ extends java.lang.Object</pre>
  being lectured by strangers who feel that it doesn't look like what they
  learned in CS class.
  <p>
- Would also be possible to change this to use the Java Preferences API.
- Some useful articles
- <a href="http://www.onjava.com/pub/a/onjava/synd/2001/10/17/j2se.html">here</a> and
- <a href="http://www.particle.kth.se/~lindsey/JavaCourse/Book/Part1/Java/Chapter10/Preferences.html">here</a>.
- However, haven't implemented this yet for lack of time, but more
- importantly, because it would entail writing to the registry (on Windows),
- or an obscure file location (on Mac OS X) and make it far more difficult to
- find the preferences to tweak them by hand (no! stay out of regedit!)
- or to reset the preferences by simply deleting the preferences.txt file.</div>
+ We don't use the Java Preferences API because it would entail writing to 
+ the registry (on Windows), or an obscure file location (on Mac OS X) and 
+ make it far more difficult (impossible) to remove the preferences.txt to 
+ reset them (when they become corrupt), or to find the the file to make 
+ edits for numerous obscure preferences that are not part of the preferences
+ window. If we added a generic editor (e.g. about:config in Mozilla) for 
+ such things, we could start using the Java Preferences API. But wow, that
+ sounds like a lot of work. Not unlike writing this paragraph.</div>
 </li>
 </ul>
 </div>
@@ -183,36 +182,36 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>static java.lang.String</code></td>
-<td class="colLast"><code><strong><a href="../../processing/app/Preferences.html#get(java.lang.String)">get</a></strong>(java.lang.String&nbsp;attribute)</code>&nbsp;</td>
+<td class="colFirst"><code>static <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><strong><a href="../../processing/app/Preferences.html#get(java.lang.String)">get</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;attribute)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static boolean</code></td>
-<td class="colLast"><code><strong><a href="../../processing/app/Preferences.html#getBoolean(java.lang.String)">getBoolean</a></strong>(java.lang.String&nbsp;attribute)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../processing/app/Preferences.html#getBoolean(java.lang.String)">getBoolean</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;attribute)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>static java.awt.Color</code></td>
-<td class="colLast"><code><strong><a href="../../processing/app/Preferences.html#getColor(java.lang.String)">getColor</a></strong>(java.lang.String&nbsp;name)</code>&nbsp;</td>
+<td class="colFirst"><code>static <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a></code></td>
+<td class="colLast"><code><strong><a href="../../processing/app/Preferences.html#getColor(java.lang.String)">getColor</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;name)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>static java.lang.String</code></td>
-<td class="colLast"><code><strong><a href="../../processing/app/Preferences.html#getDefault(java.lang.String)">getDefault</a></strong>(java.lang.String&nbsp;attribute)</code>&nbsp;</td>
+<td class="colFirst"><code>static <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><strong><a href="../../processing/app/Preferences.html#getDefault(java.lang.String)">getDefault</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;attribute)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>static java.awt.Font</code></td>
-<td class="colLast"><code><strong><a href="../../processing/app/Preferences.html#getFont(java.lang.String)">getFont</a></strong>(java.lang.String&nbsp;attr)</code>&nbsp;</td>
+<td class="colFirst"><code>static <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Font.html?is-external=true" title="class or interface in java.awt">Font</a></code></td>
+<td class="colLast"><code><strong><a href="../../processing/app/Preferences.html#getFont(java.lang.String)">getFont</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;attr)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
-<td class="colLast"><code><strong><a href="../../processing/app/Preferences.html#getInteger(java.lang.String)">getInteger</a></strong>(java.lang.String&nbsp;attribute)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../processing/app/Preferences.html#getInteger(java.lang.String)">getInteger</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;attribute)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>java.awt.Dimension</code></td>
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Dimension.html?is-external=true" title="class or interface in java.awt">Dimension</a></code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Preferences.html#getPreferredSize()">getPreferredSize</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../processing/app/syntax/SyntaxStyle.html" title="class in processing.app.syntax">SyntaxStyle</a></code></td>
-<td class="colLast"><code><strong><a href="../../processing/app/Preferences.html#getStyle(java.lang.String)">getStyle</a></strong>(java.lang.String&nbsp;what)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../processing/app/Preferences.html#getStyle(java.lang.String)">getStyle</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;what)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
@@ -220,43 +219,43 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/app/Preferences.html#load(java.io.InputStream)">load</a></strong>(java.io.InputStream&nbsp;input)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../processing/app/Preferences.html#load(java.io.InputStream)">load</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/InputStream.html?is-external=true" title="class or interface in java.io">InputStream</a>&nbsp;input)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/app/Preferences.html#set(java.lang.String, java.lang.String)">set</a></strong>(java.lang.String&nbsp;attribute,
-   java.lang.String&nbsp;value)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../processing/app/Preferences.html#set(java.lang.String, java.lang.String)">set</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;attribute,
+   <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;value)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/app/Preferences.html#setBoolean(java.lang.String, boolean)">setBoolean</a></strong>(java.lang.String&nbsp;attribute,
+<td class="colLast"><code><strong><a href="../../processing/app/Preferences.html#setBoolean(java.lang.String, boolean)">setBoolean</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;attribute,
           boolean&nbsp;value)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/app/Preferences.html#setColor(java.lang.String, java.awt.Color)">setColor</a></strong>(java.lang.String&nbsp;attr,
-        java.awt.Color&nbsp;what)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../processing/app/Preferences.html#setColor(java.lang.String, java.awt.Color)">setColor</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;attr,
+        <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a>&nbsp;what)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/app/Preferences.html#setInteger(java.lang.String, int)">setInteger</a></strong>(java.lang.String&nbsp;key,
+<td class="colLast"><code><strong><a href="../../processing/app/Preferences.html#setInteger(java.lang.String, int)">setInteger</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;key,
           int&nbsp;value)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/app/Preferences.html#sketchbookCallback(java.io.File)">sketchbookCallback</a></strong>(java.io.File&nbsp;file)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../processing/app/Preferences.html#sketchbookCallback(java.io.File)">sketchbookCallback</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;file)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/app/Preferences.html#unset(java.lang.String)">unset</a></strong>(java.lang.String&nbsp;attribute)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../processing/app/Preferences.html#unset(java.lang.String)">unset</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;attribute)</code>&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
-<li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
+<li class="blockList"><a name="methods_inherited_from_class_Object">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>equals, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
+<h3>Methods inherited from class&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></h3>
+<code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#equals(java.lang.Object)" title="class or interface in java.lang">equals</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#getClass()" title="class or interface in java.lang">getClass</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#hashCode()" title="class or interface in java.lang">hashCode</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#notify()" title="class or interface in java.lang">notify</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#notifyAll()" title="class or interface in java.lang">notifyAll</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#toString()" title="class or interface in java.lang">toString</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait()" title="class or interface in java.lang">wait</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait(long)" title="class or interface in java.lang">wait</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait(long, int)" title="class or interface in java.lang">wait</a></code></li>
 </ul>
 </li>
 </ul>
@@ -337,7 +336,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>sketchbookCallback</h4>
-<pre>public&nbsp;void&nbsp;sketchbookCallback(java.io.File&nbsp;file)</pre>
+<pre>public&nbsp;void&nbsp;sketchbookCallback(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;file)</pre>
 </li>
 </ul>
 <a name="getPreferredSize()">
@@ -346,7 +345,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getPreferredSize</h4>
-<pre>public&nbsp;java.awt.Dimension&nbsp;getPreferredSize()</pre>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Dimension.html?is-external=true" title="class or interface in java.awt">Dimension</a>&nbsp;getPreferredSize()</pre>
 </li>
 </ul>
 <a name="load(java.io.InputStream)">
@@ -355,10 +354,10 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>load</h4>
-<pre>public static&nbsp;void&nbsp;load(java.io.InputStream&nbsp;input)
-                 throws java.io.IOException</pre>
+<pre>public static&nbsp;void&nbsp;load(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/InputStream.html?is-external=true" title="class or interface in java.io">InputStream</a>&nbsp;input)
+                 throws <a href="http://docs.oracle.com/javase/7/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</a></pre>
 <dl><dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd></dl>
+<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</a></code></dd></dl>
 </li>
 </ul>
 <a name="get(java.lang.String)">
@@ -367,7 +366,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>get</h4>
-<pre>public static&nbsp;java.lang.String&nbsp;get(java.lang.String&nbsp;attribute)</pre>
+<pre>public static&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;get(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;attribute)</pre>
 </li>
 </ul>
 <a name="getDefault(java.lang.String)">
@@ -376,7 +375,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getDefault</h4>
-<pre>public static&nbsp;java.lang.String&nbsp;getDefault(java.lang.String&nbsp;attribute)</pre>
+<pre>public static&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;getDefault(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;attribute)</pre>
 </li>
 </ul>
 <a name="set(java.lang.String, java.lang.String)">
@@ -385,8 +384,8 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>set</h4>
-<pre>public static&nbsp;void&nbsp;set(java.lang.String&nbsp;attribute,
-       java.lang.String&nbsp;value)</pre>
+<pre>public static&nbsp;void&nbsp;set(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;attribute,
+       <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;value)</pre>
 </li>
 </ul>
 <a name="unset(java.lang.String)">
@@ -395,7 +394,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>unset</h4>
-<pre>public static&nbsp;void&nbsp;unset(java.lang.String&nbsp;attribute)</pre>
+<pre>public static&nbsp;void&nbsp;unset(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;attribute)</pre>
 </li>
 </ul>
 <a name="getBoolean(java.lang.String)">
@@ -404,7 +403,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getBoolean</h4>
-<pre>public static&nbsp;boolean&nbsp;getBoolean(java.lang.String&nbsp;attribute)</pre>
+<pre>public static&nbsp;boolean&nbsp;getBoolean(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;attribute)</pre>
 </li>
 </ul>
 <a name="setBoolean(java.lang.String, boolean)">
@@ -413,7 +412,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>setBoolean</h4>
-<pre>public static&nbsp;void&nbsp;setBoolean(java.lang.String&nbsp;attribute,
+<pre>public static&nbsp;void&nbsp;setBoolean(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;attribute,
               boolean&nbsp;value)</pre>
 </li>
 </ul>
@@ -423,7 +422,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getInteger</h4>
-<pre>public static&nbsp;int&nbsp;getInteger(java.lang.String&nbsp;attribute)</pre>
+<pre>public static&nbsp;int&nbsp;getInteger(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;attribute)</pre>
 </li>
 </ul>
 <a name="setInteger(java.lang.String, int)">
@@ -432,7 +431,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>setInteger</h4>
-<pre>public static&nbsp;void&nbsp;setInteger(java.lang.String&nbsp;key,
+<pre>public static&nbsp;void&nbsp;setInteger(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;key,
               int&nbsp;value)</pre>
 </li>
 </ul>
@@ -442,7 +441,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getColor</h4>
-<pre>public static&nbsp;java.awt.Color&nbsp;getColor(java.lang.String&nbsp;name)</pre>
+<pre>public static&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a>&nbsp;getColor(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;name)</pre>
 </li>
 </ul>
 <a name="setColor(java.lang.String, java.awt.Color)">
@@ -451,8 +450,8 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>setColor</h4>
-<pre>public static&nbsp;void&nbsp;setColor(java.lang.String&nbsp;attr,
-            java.awt.Color&nbsp;what)</pre>
+<pre>public static&nbsp;void&nbsp;setColor(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;attr,
+            <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a>&nbsp;what)</pre>
 </li>
 </ul>
 <a name="getFont(java.lang.String)">
@@ -461,7 +460,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getFont</h4>
-<pre>public static&nbsp;java.awt.Font&nbsp;getFont(java.lang.String&nbsp;attr)</pre>
+<pre>public static&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Font.html?is-external=true" title="class or interface in java.awt">Font</a>&nbsp;getFont(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;attr)</pre>
 </li>
 </ul>
 <a name="getStyle(java.lang.String)">
@@ -470,7 +469,7 @@ extends java.lang.Object</pre>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>getStyle</h4>
-<pre>public static&nbsp;<a href="../../processing/app/syntax/SyntaxStyle.html" title="class in processing.app.syntax">SyntaxStyle</a>&nbsp;getStyle(java.lang.String&nbsp;what)</pre>
+<pre>public static&nbsp;<a href="../../processing/app/syntax/SyntaxStyle.html" title="class in processing.app.syntax">SyntaxStyle</a>&nbsp;getStyle(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;what)</pre>
 </li>
 </ul>
 </li>

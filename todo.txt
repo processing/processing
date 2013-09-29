@@ -52,6 +52,9 @@ X   add MinimumSystemVersion for 10.7.3
 X   https://developer.apple.com/library/ios/documentation/general/Reference/InfoPlistKeyReference/Articles/LaunchServicesKeys.html#//apple_ref/doc/uid/20001431-113253
 X copy GenericDocumentIcon.icns for placeholder icon
 X   from /System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/
+X the javadoc includes java.io.* and java.lang.* prefixes.. why?
+X   re-run and and check in
+X   upload javadoc updates
 _ remove JAVA_HOME requirement from build.xml
 _   what's needed on OS X? just the JDK 7u40?
 

@@ -2,13 +2,13 @@
 <!-- NewPage -->
 <html lang="en">
 <head>
-<title>Advapi32.SERVICE_MAIN_FUNCTION</title>
+<title>WindowsPlatform.WinLibC</title>
 <link rel="stylesheet" type="text/css" href="../../../stylesheet.css" title="Style">
 </head>
 <body>
 <script type="text/javascript"><!--
     if (location.href.indexOf('is-external=true') == -1) {
-        parent.document.title="Advapi32.SERVICE_MAIN_FUNCTION";
+        parent.document.title="WindowsPlatform.WinLibC";
     }
 //-->
 </script>
@@ -33,12 +33,12 @@
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../processing/app/windows/Advapi32.SERVICE_DESCRIPTION.html" title="class in processing.app.windows"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../../processing/app/windows/Advapi32.SERVICE_STATUS.html" title="class in processing.app.windows"><span class="strong">Next Class</span></a></li>
+<li><a href="../../../processing/app/platform/WindowsPlatform.html" title="class in processing.app.platform"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../../processing/app/platform/WindowsRegistry.html" title="class in processing.app.platform"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
-<li><a href="../../../index.html?processing/app/windows/Advapi32.SERVICE_MAIN_FUNCTION.html" target="_top">Frames</a></li>
-<li><a href="Advapi32.SERVICE_MAIN_FUNCTION.html" target="_top">No Frames</a></li>
+<li><a href="../../../index.html?processing/app/platform/WindowsPlatform.WinLibC.html" target="_top">Frames</a></li>
+<li><a href="WindowsPlatform.WinLibC.html" target="_top">No Frames</a></li>
 </ul>
 <ul class="navList" id="allclasses_navbar_top">
 <li><a href="../../../allclasses-noframe.html">All Classes</a></li>
@@ -76,8 +76,8 @@
 <!-- ========= END OF TOP NAVBAR ========= -->
 <!-- ======== START OF CLASS DATA ======== -->
 <div class="header">
-<div class="subTitle">processing.app.windows</div>
-<h2 title="Interface Advapi32.SERVICE_MAIN_FUNCTION" class="title">Interface Advapi32.SERVICE_MAIN_FUNCTION</h2>
+<div class="subTitle">processing.app.platform</div>
+<h2 title="Interface WindowsPlatform.WinLibC" class="title">Interface WindowsPlatform.WinLibC</h2>
 </div>
 <div class="contentContainer">
 <div class="description">
@@ -85,16 +85,16 @@
 <li class="blockList">
 <dl>
 <dt>All Superinterfaces:</dt>
-<dd>com.sun.jna.AltCallingConvention, com.sun.jna.Callback, com.sun.jna.win32.StdCall, com.sun.jna.win32.StdCallLibrary.StdCallCallback</dd>
+<dd>Library</dd>
 </dl>
 <dl>
-<dt>Enclosing interface:</dt>
-<dd><a href="../../../processing/app/windows/Advapi32.html" title="interface in processing.app.windows">Advapi32</a></dd>
+<dt>Enclosing class:</dt>
+<dd><a href="../../../processing/app/platform/WindowsPlatform.html" title="class in processing.app.platform">WindowsPlatform</a></dd>
 </dl>
 <hr>
 <br>
-<pre>public static interface <span class="strong">Advapi32.SERVICE_MAIN_FUNCTION</span>
-extends com.sun.jna.win32.StdCallLibrary.StdCallCallback</pre>
+<pre>public static interface <span class="strong">WindowsPlatform.WinLibC</span>
+extends Library</pre>
 </li>
 </ul>
 </div>
@@ -108,11 +108,11 @@ extends com.sun.jna.win32.StdCallLibrary.StdCallCallback</pre>
 </a>
 <h3>Nested Class Summary</h3>
 <ul class="blockList">
-<li class="blockList"><a name="nested_classes_inherited_from_class_com.sun.jna.Callback">
+<li class="blockList"><a name="nested_classes_inherited_from_class_com.sun.jna.Library">
 <!--   -->
 </a>
-<h3>Nested classes/interfaces inherited from interface&nbsp;com.sun.jna.Callback</h3>
-<code>com.sun.jna.Callback.UncaughtExceptionHandler</code></li>
+<h3>Nested classes/interfaces inherited from interface&nbsp;Library</h3>
+<code>Library.Handler</code></li>
 </ul>
 </li>
 </ul>
@@ -123,11 +123,11 @@ extends com.sun.jna.win32.StdCallLibrary.StdCallCallback</pre>
 </a>
 <h3>Field Summary</h3>
 <ul class="blockList">
-<li class="blockList"><a name="fields_inherited_from_class_com.sun.jna.Callback">
+<li class="blockList"><a name="fields_inherited_from_class_Library">
 <!--   -->
 </a>
-<h3>Fields inherited from interface&nbsp;com.sun.jna.Callback</h3>
-<code>FORBIDDEN_NAMES, METHOD_NAME</code></li>
+<h3>Fields inherited from interface&nbsp;Library</h3>
+<code>OPTION_ALLOW_OBJECTS, OPTION_CALLING_CONVENTION, OPTION_FUNCTION_MAPPER, OPTION_INVOCATION_MAPPER, OPTION_STRUCTURE_ALIGNMENT, OPTION_TYPE_MAPPER</code></li>
 </ul>
 </li>
 </ul>
@@ -144,9 +144,8 @@ extends com.sun.jna.win32.StdCallLibrary.StdCallCallback</pre>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../processing/app/windows/Advapi32.SERVICE_MAIN_FUNCTION.html#callback(int, com.sun.jna.Pointer)">callback</a></strong>(int&nbsp;dwArgc,
-        com.sun.jna.Pointer&nbsp;lpszArgv)</code>&nbsp;</td>
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../../processing/app/platform/WindowsPlatform.WinLibC.html#_putenv(java.lang.String)">_putenv</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;name)</code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -163,14 +162,13 @@ extends com.sun.jna.win32.StdCallLibrary.StdCallCallback</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="callback(int, com.sun.jna.Pointer)">
+<a name="_putenv(java.lang.String)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>callback</h4>
-<pre>void&nbsp;callback(int&nbsp;dwArgc,
-            com.sun.jna.Pointer&nbsp;lpszArgv)</pre>
+<h4>_putenv</h4>
+<pre>int&nbsp;_putenv(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;name)</pre>
 </li>
 </ul>
 </li>
@@ -198,12 +196,12 @@ extends com.sun.jna.win32.StdCallLibrary.StdCallCallback</pre>
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../processing/app/windows/Advapi32.SERVICE_DESCRIPTION.html" title="class in processing.app.windows"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../../processing/app/windows/Advapi32.SERVICE_STATUS.html" title="class in processing.app.windows"><span class="strong">Next Class</span></a></li>
+<li><a href="../../../processing/app/platform/WindowsPlatform.html" title="class in processing.app.platform"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../../processing/app/platform/WindowsRegistry.html" title="class in processing.app.platform"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
-<li><a href="../../../index.html?processing/app/windows/Advapi32.SERVICE_MAIN_FUNCTION.html" target="_top">Frames</a></li>
-<li><a href="Advapi32.SERVICE_MAIN_FUNCTION.html" target="_top">No Frames</a></li>
+<li><a href="../../../index.html?processing/app/platform/WindowsPlatform.WinLibC.html" target="_top">Frames</a></li>
+<li><a href="WindowsPlatform.WinLibC.html" target="_top">No Frames</a></li>
 </ul>
 <ul class="navList" id="allclasses_navbar_bottom">
 <li><a href="../../../allclasses-noframe.html">All Classes</a></li>

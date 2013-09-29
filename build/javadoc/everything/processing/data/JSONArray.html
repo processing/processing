@@ -81,10 +81,10 @@
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
-<li>java.lang.Object</li>
+<li><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></li>
 <li>
 <ul class="inheritance">
-<li>processing.data.JSONArray</li>
+<li>JSONArray</li>
 </ul>
 </li>
 </ul>
@@ -94,7 +94,7 @@
 <hr>
 <br>
 <pre>public class <span class="strong">JSONArray</span>
-extends java.lang.Object</pre>
+extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></pre>
 <div class="block">A JSONArray is an ordered sequence of values. Its external text form is a
  string wrapped in square brackets with commas separating the values. The
  internal form is an object having <code>get</code> and <code>opt</code>
@@ -136,6 +136,11 @@ extends java.lang.Object</pre>
  <li>Values can be separated by <code>;</code> <small>(semicolon)</small> as
  well as by <code>,</code> <small>(comma)</small>.</li>
  </ul></div>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../processing/data/JSONObject.html" title="class in processing.data"><code>JSONObject</code></a>, 
+<a href="../../processing/core/PApplet.html#loadJSONObject(java.lang.String)"><code>PApplet.loadJSONObject(String)</code></a>, 
+<a href="../../processing/core/PApplet.html#loadJSONArray(java.lang.String)"><code>PApplet.loadJSONArray(String)</code></a>, 
+<a href="../../processing/core/PApplet.html#saveJSONObject(processing.data.JSONObject, java.lang.String)"><code>PApplet.saveJSONObject(JSONObject, String)</code></a>, 
+<a href="../../processing/core/PApplet.html#saveJSONArray(processing.data.JSONArray, java.lang.String)"><code>PApplet.saveJSONArray(JSONArray, String)</code></a></dd></dl>
 </li>
 </ul>
 </div>
@@ -165,7 +170,7 @@ extends java.lang.Object</pre>
 <td class="colOne"><code><strong><a href="../../processing/data/JSONArray.html#JSONArray(processing.data.IntList)">JSONArray</a></strong>(<a href="../../processing/data/IntList.html" title="class in processing.data">IntList</a>&nbsp;list)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><strong><a href="../../processing/data/JSONArray.html#JSONArray(java.io.Reader)">JSONArray</a></strong>(java.io.Reader&nbsp;reader)</code>&nbsp;</td>
+<td class="colOne"><code><strong><a href="../../processing/data/JSONArray.html#JSONArray(java.io.Reader)">JSONArray</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/Reader.html?is-external=true" title="class or interface in java.io">Reader</a>&nbsp;reader)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colOne"><code><strong><a href="../../processing/data/JSONArray.html#JSONArray(processing.data.StringList)">JSONArray</a></strong>(<a href="../../processing/data/StringList.html" title="class in processing.data">StringList</a>&nbsp;list)</code>&nbsp;</td>
@@ -225,12 +230,12 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../processing/data/JSONArray.html" title="class in processing.data">JSONArray</a></code></td>
-<td class="colLast"><code><strong><a href="../../processing/data/JSONArray.html#append(java.lang.String)">append</a></strong>(java.lang.String&nbsp;value)</code>
+<td class="colLast"><code><strong><a href="../../processing/data/JSONArray.html#append(java.lang.String)">append</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;value)</code>
 <div class="block">Append an String value.</div>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><strong><a href="../../processing/data/JSONArray.html#format(int)">format</a></strong>(int&nbsp;indentFactor)</code>
 <div class="block">Make a pretty-printed JSON text of this JSONArray.</div>
 </td>
@@ -242,15 +247,29 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/JSONArray.html#getBoolean(int, boolean)">getBoolean</a></strong>(int&nbsp;index,
+          boolean&nbsp;defaultValue)</code>
+<div class="block">Get the optional boolean value associated with an index.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>boolean[]</code></td>
 <td class="colLast"><code><strong><a href="../../processing/data/JSONArray.html#getBooleanArray()">getBooleanArray</a></strong>()</code>
 <div class="block">Get this entire array as a boolean array.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../processing/data/JSONArray.html#getDouble(int)">getDouble</a></strong>(int&nbsp;index)</code>
 <div class="block">Get the double value associated with an index.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>double</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/JSONArray.html#getDouble(int, double)">getDouble</a></strong>(int&nbsp;index,
+         double&nbsp;defaultValue)</code>
+<div class="block">Get the optional double value associated with an index.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -266,15 +285,27 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>float</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/JSONArray.html#getFloat(int, float)">getFloat</a></strong>(int&nbsp;index,
+        float&nbsp;defaultValue)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>float[]</code></td>
 <td class="colLast"><code><strong><a href="../../processing/data/JSONArray.html#getFloatArray()">getFloatArray</a></strong>()</code>
 <div class="block">Get this entire array as a float array.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../processing/data/JSONArray.html#getInt(int)">getInt</a></strong>(int&nbsp;index)</code>
 <div class="block">Get the int value associated with an index.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/JSONArray.html#getInt(int, int)">getInt</a></strong>(int&nbsp;index,
+      int&nbsp;defaultValue)</code>
+<div class="block">Get the optional int value associated with an index.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -290,10 +321,20 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code><a href="../../processing/data/JSONArray.html" title="class in processing.data">JSONArray</a></code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/JSONArray.html#getJSONArray(int, processing.data.JSONArray)">getJSONArray</a></strong>(int&nbsp;index,
+            <a href="../../processing/data/JSONArray.html" title="class in processing.data">JSONArray</a>&nbsp;defaultValue)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../processing/data/JSONObject.html" title="class in processing.data">JSONObject</a></code></td>
 <td class="colLast"><code><strong><a href="../../processing/data/JSONArray.html#getJSONObject(int)">getJSONObject</a></strong>(int&nbsp;index)</code>
 <div class="block">Get the JSONObject associated with an index.</div>
 </td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../processing/data/JSONObject.html" title="class in processing.data">JSONObject</a></code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/JSONArray.html#getJSONObject(int, processing.data.JSONObject)">getJSONObject</a></strong>(int&nbsp;index,
+             <a href="../../processing/data/JSONObject.html" title="class in processing.data">JSONObject</a>&nbsp;defaultValue)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>long</code></td>
@@ -302,121 +343,141 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>long</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/JSONArray.html#getLong(int, long)">getLong</a></strong>(int&nbsp;index,
+       long&nbsp;defaultValue)</code>
+<div class="block">Get the optional long value associated with an index.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>long[]</code></td>
 <td class="colLast"><code><strong><a href="../../processing/data/JSONArray.html#getLongArray()">getLongArray</a></strong>()</code>
 <div class="block">Get this entire array as a long array.</div>
 </td>
 </tr>
-<tr class="rowColor">
-<td class="colFirst"><code>java.lang.String</code></td>
+<tr class="altColor">
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><strong><a href="../../processing/data/JSONArray.html#getString(int)">getString</a></strong>(int&nbsp;index)</code>
 <div class="block">Get the string associated with an index.</div>
 </td>
 </tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/JSONArray.html#getString(int, java.lang.String)">getString</a></strong>(int&nbsp;index,
+         <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;defaultValue)</code>
+<div class="block">Get the optional string associated with an index.</div>
+</td>
+</tr>
 <tr class="altColor">
-<td class="colFirst"><code>java.lang.String[]</code></td>
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]</code></td>
 <td class="colLast"><code><strong><a href="../../processing/data/JSONArray.html#getStringArray()">getStringArray</a></strong>()</code>
 <div class="block">Get this entire array as a String array.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><strong><a href="../../processing/data/JSONArray.html#join(java.lang.String)">join</a></strong>(java.lang.String&nbsp;separator)</code>
-<div class="block">Make a string from the contents of this JSONArray.</div>
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/JSONArray.html#isNull(int)">isNull</a></strong>(int&nbsp;index)</code>
+<div class="block">Determine if the value is null.</div>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>static <a href="../../processing/data/JSONArray.html" title="class in processing.data">JSONArray</a></code></td>
-<td class="colLast"><code><strong><a href="../../processing/data/JSONArray.html#parse(java.lang.String)">parse</a></strong>(java.lang.String&nbsp;source)</code>
-<div class="block">Construct a JSONArray from a source JSON text.</div>
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/JSONArray.html#join(java.lang.String)">join</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;separator)</code>
+<div class="block">Make a string from the contents of this JSONArray.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>java.lang.Object</code></td>
+<td class="colFirst"><code>static <a href="../../processing/data/JSONArray.html" title="class in processing.data">JSONArray</a></code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/JSONArray.html#parse(java.lang.String)">parse</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;source)</code>
+<div class="block">Construct a JSONArray from a source JSON text.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></code></td>
 <td class="colLast"><code><strong><a href="../../processing/data/JSONArray.html#remove(int)">remove</a></strong>(int&nbsp;index)</code>
 <div class="block">Remove an index and close the hole.</div>
 </td>
 </tr>
-<tr class="altColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><strong><a href="../../processing/data/JSONArray.html#save(java.io.File, java.lang.String)">save</a></strong>(java.io.File&nbsp;file,
-    java.lang.String&nbsp;options)</code>&nbsp;</td>
-</tr>
 <tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><strong><a href="../../processing/data/JSONArray.html#save(java.io.PrintWriter)">save</a></strong>(java.io.PrintWriter&nbsp;output)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../processing/data/JSONArray.html#save(java.io.File, java.lang.String)">save</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;file,
+    <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;options)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/JSONArray.html#save(java.io.PrintWriter)">save</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/PrintWriter.html?is-external=true" title="class or interface in java.io">PrintWriter</a>&nbsp;output)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../processing/data/JSONArray.html" title="class in processing.data">JSONArray</a></code></td>
 <td class="colLast"><code><strong><a href="../../processing/data/JSONArray.html#setBoolean(int, boolean)">setBoolean</a></strong>(int&nbsp;index,
           boolean&nbsp;value)</code>
 <div class="block">Put or replace a boolean value in the JSONArray.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../processing/data/JSONArray.html" title="class in processing.data">JSONArray</a></code></td>
 <td class="colLast"><code><strong><a href="../../processing/data/JSONArray.html#setDouble(int, double)">setDouble</a></strong>(int&nbsp;index,
          double&nbsp;value)</code>
 <div class="block">Put or replace a double value.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../processing/data/JSONArray.html" title="class in processing.data">JSONArray</a></code></td>
 <td class="colLast"><code><strong><a href="../../processing/data/JSONArray.html#setFloat(int, float)">setFloat</a></strong>(int&nbsp;index,
         float&nbsp;value)</code>
 <div class="block">Put or replace a float value.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../processing/data/JSONArray.html" title="class in processing.data">JSONArray</a></code></td>
 <td class="colLast"><code><strong><a href="../../processing/data/JSONArray.html#setInt(int, int)">setInt</a></strong>(int&nbsp;index,
       int&nbsp;value)</code>
 <div class="block">Put or replace an int value.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../processing/data/JSONArray.html" title="class in processing.data">JSONArray</a></code></td>
 <td class="colLast"><code><strong><a href="../../processing/data/JSONArray.html#setJSONArray(int, processing.data.JSONArray)">setJSONArray</a></strong>(int&nbsp;index,
             <a href="../../processing/data/JSONArray.html" title="class in processing.data">JSONArray</a>&nbsp;value)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../processing/data/JSONArray.html" title="class in processing.data">JSONArray</a></code></td>
 <td class="colLast"><code><strong><a href="../../processing/data/JSONArray.html#setJSONObject(int, processing.data.JSONObject)">setJSONObject</a></strong>(int&nbsp;index,
              <a href="../../processing/data/JSONObject.html" title="class in processing.data">JSONObject</a>&nbsp;value)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../processing/data/JSONArray.html" title="class in processing.data">JSONArray</a></code></td>
 <td class="colLast"><code><strong><a href="../../processing/data/JSONArray.html#setLong(int, long)">setLong</a></strong>(int&nbsp;index,
        long&nbsp;value)</code>
 <div class="block">Put or replace a long value.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../processing/data/JSONArray.html" title="class in processing.data">JSONArray</a></code></td>
 <td class="colLast"><code><strong><a href="../../processing/data/JSONArray.html#setString(int, java.lang.String)">setString</a></strong>(int&nbsp;index,
-         java.lang.String&nbsp;value)</code>
+         <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;value)</code>
 <div class="block">Put or replace a String value.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../processing/data/JSONArray.html#size()">size</a></strong>()</code>
 <div class="block">Get the number of elements in the JSONArray, included nulls.</div>
 </td>
 </tr>
-<tr class="rowColor">
-<td class="colFirst"><code>java.lang.String</code></td>
+<tr class="altColor">
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><strong><a href="../../processing/data/JSONArray.html#toString()">toString</a></strong>()</code>
 <div class="block">Return the JSON data formatted with two spaces for indents.</div>
 </td>
 </tr>
 </table>
 <ul class="blockList">
-<li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
+<li class="blockList"><a name="methods_inherited_from_class_Object">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>equals, getClass, hashCode, notify, notifyAll, wait, wait, wait</code></li>
+<h3>Methods inherited from class&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></h3>
+<code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#equals(java.lang.Object)" title="class or interface in java.lang">equals</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#getClass()" title="class or interface in java.lang">getClass</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#hashCode()" title="class or interface in java.lang">hashCode</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#notify()" title="class or interface in java.lang">notify</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#notifyAll()" title="class or interface in java.lang">notifyAll</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait()" title="class or interface in java.lang">wait</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait(long)" title="class or interface in java.lang">wait</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait(long, int)" title="class or interface in java.lang">wait</a></code></li>
 </ul>
 </li>
 </ul>
@@ -448,7 +509,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>JSONArray</h4>
-<pre>public&nbsp;JSONArray(java.io.Reader&nbsp;reader)</pre>
+<pre>public&nbsp;JSONArray(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/Reader.html?is-external=true" title="class or interface in java.io">Reader</a>&nbsp;reader)</pre>
 </li>
 </ul>
 <a name="JSONArray(processing.data.IntList)">
@@ -492,7 +553,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>parse</h4>
-<pre>public static&nbsp;<a href="../../processing/data/JSONArray.html" title="class in processing.data">JSONArray</a>&nbsp;parse(java.lang.String&nbsp;source)</pre>
+<pre>public static&nbsp;<a href="../../processing/data/JSONArray.html" title="class in processing.data">JSONArray</a>&nbsp;parse(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;source)</pre>
 <div class="block">Construct a JSONArray from a source JSON text.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>source</code> - A string that begins with
  <code>[</code>&nbsp;<small>(left bracket)</small>
@@ -507,12 +568,28 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getString</h4>
-<pre>public&nbsp;java.lang.String&nbsp;getString(int&nbsp;index)</pre>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;getString(int&nbsp;index)</pre>
 <div class="block">Get the string associated with an index.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - The index must be between 0 and length() - 1.</dd>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - must be between 0 and length() - 1</dd>
 <dt><span class="strong">Returns:</span></dt><dd>A string value.</dd>
 <dt><span class="strong">Throws:</span></dt>
-<dd><code>JSONException</code> - If there is no string value for the index.</dd></dl>
+<dd><code>JSONException</code> - If there is no string value for the index.</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../processing/data/JSONArray.html#getInt(int)"><code>getInt(int)</code></a>, 
+<a href="../../processing/data/JSONArray.html#getFloat(int)"><code>getFloat(int)</code></a>, 
+<a href="../../processing/data/JSONArray.html#getBoolean(int)"><code>getBoolean(int)</code></a></dd></dl>
+</li>
+</ul>
+<a name="getString(int, java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getString</h4>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;getString(int&nbsp;index,
+               <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;defaultValue)</pre>
+<div class="block">Get the optional string associated with an index.
+ The defaultValue is returned if the key is not found.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - The index must be between 0 and length() - 1.</dd><dd><code>defaultValue</code> - The default value.</dd>
+<dt><span class="strong">Returns:</span></dt><dd>A String value.</dd></dl>
 </li>
 </ul>
 <a name="getInt(int)">
@@ -523,10 +600,27 @@ extends java.lang.Object</pre>
 <h4>getInt</h4>
 <pre>public&nbsp;int&nbsp;getInt(int&nbsp;index)</pre>
 <div class="block">Get the int value associated with an index.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - The index must be between 0 and length() - 1.</dd>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - must be between 0 and length() - 1</dd>
 <dt><span class="strong">Returns:</span></dt><dd>The value.</dd>
 <dt><span class="strong">Throws:</span></dt>
-<dd><code>JSONException</code> - If the key is not found or if the value is not a number.</dd></dl>
+<dd><code>JSONException</code> - If the key is not found or if the value is not a number.</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../processing/data/JSONArray.html#getFloat(int)"><code>getFloat(int)</code></a>, 
+<a href="../../processing/data/JSONArray.html#getString(int)"><code>getString(int)</code></a>, 
+<a href="../../processing/data/JSONArray.html#getBoolean(int)"><code>getBoolean(int)</code></a></dd></dl>
+</li>
+</ul>
+<a name="getInt(int, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getInt</h4>
+<pre>public&nbsp;int&nbsp;getInt(int&nbsp;index,
+         int&nbsp;defaultValue)</pre>
+<div class="block">Get the optional int value associated with an index.
+ The defaultValue is returned if there is no value for the index,
+ or if the value is not a number and cannot be converted to a number.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - The index must be between 0 and length() - 1.</dd><dd><code>defaultValue</code> - The default value.</dd>
+<dt><span class="strong">Returns:</span></dt><dd>The value.</dd></dl>
 </li>
 </ul>
 <a name="getLong(int)">
@@ -537,11 +631,26 @@ extends java.lang.Object</pre>
 <h4>getLong</h4>
 <pre>public&nbsp;long&nbsp;getLong(int&nbsp;index)</pre>
 <div class="block">Get the long value associated with an index.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - The index must be between 0 and length() - 1.</dd>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - The index must be between 0 and length() - 1</dd>
 <dt><span class="strong">Returns:</span></dt><dd>The value.</dd>
 <dt><span class="strong">Throws:</span></dt>
 <dd><code>JSONException</code> - If the key is not found or if the value cannot
   be converted to a number.</dd></dl>
+</li>
+</ul>
+<a name="getLong(int, long)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getLong</h4>
+<pre>public&nbsp;long&nbsp;getLong(int&nbsp;index,
+           long&nbsp;defaultValue)</pre>
+<div class="block">Get the optional long value associated with an index.
+ The defaultValue is returned if there is no value for the index,
+ or if the value is not a number and cannot be converted to a number.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - The index must be between 0 and length() - 1.</dd><dd><code>defaultValue</code> - The default value.</dd>
+<dt><span class="strong">Returns:</span></dt><dd>The value.</dd></dl>
 </li>
 </ul>
 <a name="getFloat(int)">
@@ -553,6 +662,19 @@ extends java.lang.Object</pre>
 <pre>public&nbsp;float&nbsp;getFloat(int&nbsp;index)</pre>
 <div class="block">Get a value from an index as a float. JSON uses 'double' values
  internally, so this is simply getDouble() cast to a float.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - must be between 0 and length() - 1</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../processing/data/JSONArray.html#getInt(int)"><code>getInt(int)</code></a>, 
+<a href="../../processing/data/JSONArray.html#getString(int)"><code>getString(int)</code></a>, 
+<a href="../../processing/data/JSONArray.html#getBoolean(int)"><code>getBoolean(int)</code></a></dd></dl>
+</li>
+</ul>
+<a name="getFloat(int, float)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getFloat</h4>
+<pre>public&nbsp;float&nbsp;getFloat(int&nbsp;index,
+             float&nbsp;defaultValue)</pre>
 </li>
 </ul>
 <a name="getDouble(int)">
@@ -563,11 +685,26 @@ extends java.lang.Object</pre>
 <h4>getDouble</h4>
 <pre>public&nbsp;double&nbsp;getDouble(int&nbsp;index)</pre>
 <div class="block">Get the double value associated with an index.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - The index must be between 0 and length() - 1.</dd>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - must be between 0 and length() - 1</dd>
 <dt><span class="strong">Returns:</span></dt><dd>The value.</dd>
 <dt><span class="strong">Throws:</span></dt>
 <dd><code>JSONException</code> - If the key is not found or if the value cannot
   be converted to a number.</dd></dl>
+</li>
+</ul>
+<a name="getDouble(int, double)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getDouble</h4>
+<pre>public&nbsp;double&nbsp;getDouble(int&nbsp;index,
+               double&nbsp;defaultValue)</pre>
+<div class="block">Get the optional double value associated with an index.
+ The defaultValue is returned if there is no value for the index,
+ or if the value is not a number and cannot be converted to a number.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - subscript</dd><dd><code>defaultValue</code> - The default value.</dd>
+<dt><span class="strong">Returns:</span></dt><dd>The value.</dd></dl>
 </li>
 </ul>
 <a name="getBoolean(int)">
@@ -579,11 +716,28 @@ extends java.lang.Object</pre>
 <pre>public&nbsp;boolean&nbsp;getBoolean(int&nbsp;index)</pre>
 <div class="block">Get the boolean value associated with an index.
  The string values "true" and "false" are converted to boolean.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - The index must be between 0 and length() - 1.</dd>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - must be between 0 and length() - 1</dd>
 <dt><span class="strong">Returns:</span></dt><dd>The truth.</dd>
 <dt><span class="strong">Throws:</span></dt>
 <dd><code>JSONException</code> - If there is no value for the index or if the
-  value is not convertible to boolean.</dd></dl>
+  value is not convertible to boolean.</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../processing/data/JSONArray.html#getInt(int)"><code>getInt(int)</code></a>, 
+<a href="../../processing/data/JSONArray.html#getFloat(int)"><code>getFloat(int)</code></a>, 
+<a href="../../processing/data/JSONArray.html#getString(int)"><code>getString(int)</code></a></dd></dl>
+</li>
+</ul>
+<a name="getBoolean(int, boolean)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getBoolean</h4>
+<pre>public&nbsp;boolean&nbsp;getBoolean(int&nbsp;index,
+                 boolean&nbsp;defaultValue)</pre>
+<div class="block">Get the optional boolean value associated with an index.
+ It returns the defaultValue if there is no value at that index or if
+ it is not a Boolean or the String "true" or "false" (case insensitive).</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - The index must be between 0 and length() - 1.</dd><dd><code>defaultValue</code> - A boolean default.</dd>
+<dt><span class="strong">Returns:</span></dt><dd>The truth.</dd></dl>
 </li>
 </ul>
 <a name="getJSONArray(int)">
@@ -594,11 +748,23 @@ extends java.lang.Object</pre>
 <h4>getJSONArray</h4>
 <pre>public&nbsp;<a href="../../processing/data/JSONArray.html" title="class in processing.data">JSONArray</a>&nbsp;getJSONArray(int&nbsp;index)</pre>
 <div class="block">Get the JSONArray associated with an index.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - The index must be between 0 and length() - 1.</dd>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - must be between 0 and length() - 1</dd>
 <dt><span class="strong">Returns:</span></dt><dd>A JSONArray value.</dd>
 <dt><span class="strong">Throws:</span></dt>
 <dd><code>JSONException</code> - If there is no value for the index. or if the
- value is not a JSONArray</dd></dl>
+ value is not a JSONArray</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../processing/data/JSONArray.html#getJSONObject(int)"><code>getJSONObject(int)</code></a>, 
+<a href="../../processing/data/JSONArray.html#setJSONObject(int, processing.data.JSONObject)"><code>setJSONObject(int, JSONObject)</code></a>, 
+<a href="../../processing/data/JSONArray.html#setJSONArray(int, processing.data.JSONArray)"><code>setJSONArray(int, JSONArray)</code></a></dd></dl>
+</li>
+</ul>
+<a name="getJSONArray(int, processing.data.JSONArray)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getJSONArray</h4>
+<pre>public&nbsp;<a href="../../processing/data/JSONArray.html" title="class in processing.data">JSONArray</a>&nbsp;getJSONArray(int&nbsp;index,
+                     <a href="../../processing/data/JSONArray.html" title="class in processing.data">JSONArray</a>&nbsp;defaultValue)</pre>
 </li>
 </ul>
 <a name="getJSONObject(int)">
@@ -609,11 +775,23 @@ extends java.lang.Object</pre>
 <h4>getJSONObject</h4>
 <pre>public&nbsp;<a href="../../processing/data/JSONObject.html" title="class in processing.data">JSONObject</a>&nbsp;getJSONObject(int&nbsp;index)</pre>
 <div class="block">Get the JSONObject associated with an index.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - subscript</dd>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - the index value of the object to get</dd>
 <dt><span class="strong">Returns:</span></dt><dd>A JSONObject value.</dd>
 <dt><span class="strong">Throws:</span></dt>
 <dd><code>JSONException</code> - If there is no value for the index or if the
- value is not a JSONObject</dd></dl>
+ value is not a JSONObject</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../processing/data/JSONArray.html#getJSONArray(int)"><code>getJSONArray(int)</code></a>, 
+<a href="../../processing/data/JSONArray.html#setJSONObject(int, processing.data.JSONObject)"><code>setJSONObject(int, JSONObject)</code></a>, 
+<a href="../../processing/data/JSONArray.html#setJSONArray(int, processing.data.JSONArray)"><code>setJSONArray(int, JSONArray)</code></a></dd></dl>
+</li>
+</ul>
+<a name="getJSONObject(int, processing.data.JSONObject)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getJSONObject</h4>
+<pre>public&nbsp;<a href="../../processing/data/JSONObject.html" title="class in processing.data">JSONObject</a>&nbsp;getJSONObject(int&nbsp;index,
+                       <a href="../../processing/data/JSONObject.html" title="class in processing.data">JSONObject</a>&nbsp;defaultValue)</pre>
 </li>
 </ul>
 <a name="getStringArray()">
@@ -622,8 +800,9 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getStringArray</h4>
-<pre>public&nbsp;java.lang.String[]&nbsp;getStringArray()</pre>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]&nbsp;getStringArray()</pre>
 <div class="block">Get this entire array as a String array.</div>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../processing/data/JSONArray.html#getIntArray()"><code>getIntArray()</code></a></dd></dl>
 </li>
 </ul>
 <a name="getIntArray()">
@@ -634,6 +813,7 @@ extends java.lang.Object</pre>
 <h4>getIntArray</h4>
 <pre>public&nbsp;int[]&nbsp;getIntArray()</pre>
 <div class="block">Get this entire array as an int array. Everything must be an int.</div>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../processing/data/JSONArray.html#getStringArray()"><code>getStringArray()</code></a></dd></dl>
 </li>
 </ul>
 <a name="getLongArray()">
@@ -682,10 +862,11 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>append</h4>
-<pre>public&nbsp;<a href="../../processing/data/JSONArray.html" title="class in processing.data">JSONArray</a>&nbsp;append(java.lang.String&nbsp;value)</pre>
+<pre>public&nbsp;<a href="../../processing/data/JSONArray.html" title="class in processing.data">JSONArray</a>&nbsp;append(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;value)</pre>
 <div class="block">Append an String value. This increases the array's length by one.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>value</code> - A String value.</dd>
-<dt><span class="strong">Returns:</span></dt><dd>this.</dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>value</code> - a String value</dd>
+<dt><span class="strong">Returns:</span></dt><dd>this.</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../processing/data/JSONArray.html#size()"><code>size()</code></a>, 
+<a href="../../processing/data/JSONArray.html#remove(int)"><code>remove(int)</code></a></dd></dl>
 </li>
 </ul>
 <a name="append(int)">
@@ -696,7 +877,7 @@ extends java.lang.Object</pre>
 <h4>append</h4>
 <pre>public&nbsp;<a href="../../processing/data/JSONArray.html" title="class in processing.data">JSONArray</a>&nbsp;append(int&nbsp;value)</pre>
 <div class="block">Append an int value. This increases the array's length by one.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>value</code> - An int value.</dd>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>value</code> - an int value</dd>
 <dt><span class="strong">Returns:</span></dt><dd>this.</dd></dl>
 </li>
 </ul>
@@ -721,7 +902,7 @@ extends java.lang.Object</pre>
 <pre>public&nbsp;<a href="../../processing/data/JSONArray.html" title="class in processing.data">JSONArray</a>&nbsp;append(float&nbsp;value)</pre>
 <div class="block">Append a float value. This increases the array's length by one.
  This will store the value as a double, since there are no floats in JSON.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>value</code> - A float value.</dd>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>value</code> - a float value</dd>
 <dt><span class="strong">Returns:</span></dt><dd>this.</dd>
 <dt><span class="strong">Throws:</span></dt>
 <dd><code>JSONException</code> - if the value is not finite.</dd></dl>
@@ -749,7 +930,7 @@ extends java.lang.Object</pre>
 <h4>append</h4>
 <pre>public&nbsp;<a href="../../processing/data/JSONArray.html" title="class in processing.data">JSONArray</a>&nbsp;append(boolean&nbsp;value)</pre>
 <div class="block">Append a boolean value. This increases the array's length by one.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>value</code> - A boolean value.</dd>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>value</code> - a boolean value</dd>
 <dt><span class="strong">Returns:</span></dt><dd>this.</dd></dl>
 </li>
 </ul>
@@ -760,6 +941,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>append</h4>
 <pre>public&nbsp;<a href="../../processing/data/JSONArray.html" title="class in processing.data">JSONArray</a>&nbsp;append(<a href="../../processing/data/JSONArray.html" title="class in processing.data">JSONArray</a>&nbsp;value)</pre>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>value</code> - a JSONArray value</dd></dl>
 </li>
 </ul>
 <a name="append(processing.data.JSONObject)">
@@ -769,6 +951,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>append</h4>
 <pre>public&nbsp;<a href="../../processing/data/JSONArray.html" title="class in processing.data">JSONArray</a>&nbsp;append(<a href="../../processing/data/JSONObject.html" title="class in processing.data">JSONObject</a>&nbsp;value)</pre>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>value</code> - a JSONObject value</dd></dl>
 </li>
 </ul>
 <a name="setString(int, java.lang.String)">
@@ -778,14 +961,16 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>setString</h4>
 <pre>public&nbsp;<a href="../../processing/data/JSONArray.html" title="class in processing.data">JSONArray</a>&nbsp;setString(int&nbsp;index,
-                  java.lang.String&nbsp;value)</pre>
+                  <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;value)</pre>
 <div class="block">Put or replace a String value. If the index is greater than the length of
   the JSONArray, then null elements will be added as necessary to pad
   it out.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - The subscript.</dd><dd><code>value</code> - A String value.</dd>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - an index value</dd><dd><code>value</code> - the value to assign</dd>
 <dt><span class="strong">Returns:</span></dt><dd>this.</dd>
 <dt><span class="strong">Throws:</span></dt>
-<dd><code>JSONException</code> - If the index is negative.</dd></dl>
+<dd><code>JSONException</code> - If the index is negative.</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../processing/data/JSONArray.html#setInt(int, int)"><code>setInt(int, int)</code></a>, 
+<a href="../../processing/data/JSONArray.html#setFloat(int, float)"><code>setFloat(int, float)</code></a>, 
+<a href="../../processing/data/JSONArray.html#setBoolean(int, boolean)"><code>setBoolean(int, boolean)</code></a></dd></dl>
 </li>
 </ul>
 <a name="setInt(int, int)">
@@ -799,10 +984,12 @@ extends java.lang.Object</pre>
 <div class="block">Put or replace an int value. If the index is greater than the length of
   the JSONArray, then null elements will be added as necessary to pad
   it out.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - The subscript.</dd><dd><code>value</code> - An int value.</dd>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - an index value</dd><dd><code>value</code> - the value to assign</dd>
 <dt><span class="strong">Returns:</span></dt><dd>this.</dd>
 <dt><span class="strong">Throws:</span></dt>
-<dd><code>JSONException</code> - If the index is negative.</dd></dl>
+<dd><code>JSONException</code> - If the index is negative.</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../processing/data/JSONArray.html#setFloat(int, float)"><code>setFloat(int, float)</code></a>, 
+<a href="../../processing/data/JSONArray.html#setString(int, java.lang.String)"><code>setString(int, String)</code></a>, 
+<a href="../../processing/data/JSONArray.html#setBoolean(int, boolean)"><code>setBoolean(int, boolean)</code></a></dd></dl>
 </li>
 </ul>
 <a name="setLong(int, long)">
@@ -834,11 +1021,13 @@ extends java.lang.Object</pre>
  of the JSONArray, then null elements will be added as necessary to pad
  it out. There are no 'double' values in JSON, so this is passed to
  setDouble(value).</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - The subscript.</dd><dd><code>value</code> - A float value.</dd>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - an index value</dd><dd><code>value</code> - the value to assign</dd>
 <dt><span class="strong">Returns:</span></dt><dd>this.</dd>
 <dt><span class="strong">Throws:</span></dt>
-<dd><code>java.lang.RuntimeException</code> - If the index is negative or if the value is
- not finite.</dd></dl>
+<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/RuntimeException.html?is-external=true" title="class or interface in java.lang">RuntimeException</a></code> - If the index is negative or if the value is
+ not finite.</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../processing/data/JSONArray.html#setInt(int, int)"><code>setInt(int, int)</code></a>, 
+<a href="../../processing/data/JSONArray.html#setString(int, java.lang.String)"><code>setString(int, String)</code></a>, 
+<a href="../../processing/data/JSONArray.html#setBoolean(int, boolean)"><code>setBoolean(int, boolean)</code></a></dd></dl>
 </li>
 </ul>
 <a name="setDouble(int, double)">
@@ -870,10 +1059,12 @@ extends java.lang.Object</pre>
 <div class="block">Put or replace a boolean value in the JSONArray. If the index is greater
  than the length of the JSONArray, then null elements will be added as
  necessary to pad it out.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - The subscript.</dd><dd><code>value</code> - A boolean value.</dd>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - an index value</dd><dd><code>value</code> - the value to assign</dd>
 <dt><span class="strong">Returns:</span></dt><dd>this.</dd>
 <dt><span class="strong">Throws:</span></dt>
-<dd><code>JSONException</code> - If the index is negative.</dd></dl>
+<dd><code>JSONException</code> - If the index is negative.</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../processing/data/JSONArray.html#setInt(int, int)"><code>setInt(int, int)</code></a>, 
+<a href="../../processing/data/JSONArray.html#setFloat(int, float)"><code>setFloat(int, float)</code></a>, 
+<a href="../../processing/data/JSONArray.html#setString(int, java.lang.String)"><code>setString(int, String)</code></a></dd></dl>
 </li>
 </ul>
 <a name="setJSONArray(int, processing.data.JSONArray)">
@@ -884,6 +1075,9 @@ extends java.lang.Object</pre>
 <h4>setJSONArray</h4>
 <pre>public&nbsp;<a href="../../processing/data/JSONArray.html" title="class in processing.data">JSONArray</a>&nbsp;setJSONArray(int&nbsp;index,
                      <a href="../../processing/data/JSONArray.html" title="class in processing.data">JSONArray</a>&nbsp;value)</pre>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - the index value to target</dd><dd><code>value</code> - the value to assign</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../processing/data/JSONArray.html#setJSONObject(int, processing.data.JSONObject)"><code>setJSONObject(int, JSONObject)</code></a>, 
+<a href="../../processing/data/JSONArray.html#getJSONObject(int)"><code>getJSONObject(int)</code></a>, 
+<a href="../../processing/data/JSONArray.html#getJSONArray(int)"><code>getJSONArray(int)</code></a></dd></dl>
 </li>
 </ul>
 <a name="setJSONObject(int, processing.data.JSONObject)">
@@ -894,6 +1088,9 @@ extends java.lang.Object</pre>
 <h4>setJSONObject</h4>
 <pre>public&nbsp;<a href="../../processing/data/JSONArray.html" title="class in processing.data">JSONArray</a>&nbsp;setJSONObject(int&nbsp;index,
                       <a href="../../processing/data/JSONObject.html" title="class in processing.data">JSONObject</a>&nbsp;value)</pre>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - the index value to target</dd><dd><code>value</code> - the value to assign</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../processing/data/JSONArray.html#setJSONArray(int, processing.data.JSONArray)"><code>setJSONArray(int, JSONArray)</code></a>, 
+<a href="../../processing/data/JSONArray.html#getJSONObject(int)"><code>getJSONObject(int)</code></a>, 
+<a href="../../processing/data/JSONArray.html#getJSONArray(int)"><code>getJSONArray(int)</code></a></dd></dl>
 </li>
 </ul>
 <a name="size()">
@@ -904,7 +1101,20 @@ extends java.lang.Object</pre>
 <h4>size</h4>
 <pre>public&nbsp;int&nbsp;size()</pre>
 <div class="block">Get the number of elements in the JSONArray, included nulls.</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd>The length (or size).</dd></dl>
+<dl><dt><span class="strong">Returns:</span></dt><dd>The length (or size).</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../processing/data/JSONArray.html#append(java.lang.String)"><code>append(String)</code></a>, 
+<a href="../../processing/data/JSONArray.html#remove(int)"><code>remove(int)</code></a></dd></dl>
+</li>
+</ul>
+<a name="isNull(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isNull</h4>
+<pre>public&nbsp;boolean&nbsp;isNull(int&nbsp;index)</pre>
+<div class="block">Determine if the value is null.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - must be between 0 and length() - 1</dd>
+<dt><span class="strong">Returns:</span></dt><dd>true if the value at the index is null, or if there is no value.</dd></dl>
 </li>
 </ul>
 <a name="remove(int)">
@@ -913,11 +1123,11 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>remove</h4>
-<pre>public&nbsp;java.lang.Object&nbsp;remove(int&nbsp;index)</pre>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;remove(int&nbsp;index)</pre>
 <div class="block">Remove an index and close the hole.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - The index of the element to be removed.</dd>
-<dt><span class="strong">Returns:</span></dt><dd>The value that was associated with the index,
- or null if there was no value.</dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - the index value of the element to be removed</dd>
+<dt><span class="strong">Returns:</span></dt><dd>The value that was associated with the index, or null if there was no value.</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../processing/data/JSONArray.html#size()"><code>size()</code></a>, 
+<a href="../../processing/data/JSONArray.html#append(java.lang.String)"><code>append(String)</code></a></dd></dl>
 </li>
 </ul>
 <a name="save(java.io.File, java.lang.String)">
@@ -926,8 +1136,8 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>save</h4>
-<pre>public&nbsp;boolean&nbsp;save(java.io.File&nbsp;file,
-           java.lang.String&nbsp;options)</pre>
+<pre>public&nbsp;boolean&nbsp;save(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;file,
+           <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;options)</pre>
 </li>
 </ul>
 <a name="save(java.io.PrintWriter)">
@@ -936,7 +1146,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>save</h4>
-<pre>public&nbsp;boolean&nbsp;save(java.io.PrintWriter&nbsp;output)</pre>
+<pre>public&nbsp;boolean&nbsp;save(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/PrintWriter.html?is-external=true" title="class or interface in java.io">PrintWriter</a>&nbsp;output)</pre>
 </li>
 </ul>
 <a name="toString()">
@@ -945,13 +1155,13 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>toString</h4>
-<pre>public&nbsp;java.lang.String&nbsp;toString()</pre>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;toString()</pre>
 <div class="block">Return the JSON data formatted with two spaces for indents.
  Chosen to do this since it's the most common case (e.g. with println()).
  Same as format(2). Use the format() function for more options.</div>
 <dl>
 <dt><strong>Overrides:</strong></dt>
-<dd><code>toString</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
+<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#toString()" title="class or interface in java.lang">toString</a></code>&nbsp;in class&nbsp;<code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></code></dd>
 </dl>
 </li>
 </ul>
@@ -961,7 +1171,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>format</h4>
-<pre>public&nbsp;java.lang.String&nbsp;format(int&nbsp;indentFactor)</pre>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;format(int&nbsp;indentFactor)</pre>
 <div class="block">Make a pretty-printed JSON text of this JSONArray.
  Warning: This method assumes that the data structure is acyclical.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>indentFactor</code> - The number of spaces to add to each level of
@@ -978,7 +1188,7 @@ extends java.lang.Object</pre>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>join</h4>
-<pre>public&nbsp;java.lang.String&nbsp;join(java.lang.String&nbsp;separator)</pre>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;join(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;separator)</pre>
 <div class="block">Make a string from the contents of this JSONArray. The
  <code>separator</code> string is inserted between each element.
  Warning: This method assumes that the data structure is acyclic.</div>
