@@ -72,6 +72,8 @@ X make OS X launch from its local JRE
 _ change how export is handled
 _   remove ability to export cross-platform apps
 _   add ability to embed the current JRE
+_ the case for the embedded JRE
+_   https://github.com/processing/processing/issues/2104
 _ change Windows export to use launch4j instead of the launcher.cpp file
 _   actually call ant from inside p5?
 _ change app stub in OS X exported application
