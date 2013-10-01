@@ -161,7 +161,7 @@
 	     property="macosx_jdk_found" />
 
   <fail if="macosx" unless="macosx_jdk_found"
-	message="To build on OS X, you must install Oracle's JDK 7u40. You can find it at http://www.oracle.com/technetwork/java/javase/downloads Note that only 7u40 (not a later or earlier version) will work. And it needs to be the JDK, not the JRE." />
+	message="JDK 7u40 required.${line.separator}To build on OS X, you must install Oracle's JDK 7u40 from${line.separator}http://www.oracle.com/technetwork/java/javase/downloads${line.separator}Note that only 7u40 (not a later or earlier version) will work. ${line.separator}And it must be the JDK, not the JRE. And do not try to defy me again." />
   <!--
   <fail if="linux" unless="java_tools_found" 
 	message="The JAVA_HOME variable must be set to the location of a full JDK. For instance, on Ubuntu Linux, this might be /usr/lib/jvm/java-6-sun." />
