@@ -14,11 +14,11 @@ X   https://github.com/processing/processing/pull/2093
 X cmd-left is bringing up the text area popup
 X   https://github.com/processing/processing/issues/2103
 
-add appbundler.jar, otherwise folks have to include Xcode
-if they want to build appbundler, they'll need Xcode
-  and the command line tools, from Preferences > Downloads > Command Line Tools
-appbundler will have an NPE if the osx binary isn't built
-also need to have 10.8 version of the SDK (old Xcode won't work)
+X add appbundler.jar, otherwise folks have to include Xcode
+_ if they want to build appbundler, they'll need Xcode
+_   and the command line tools Preferences > Downloads > Command Line Tools
+_ appbundler will have an NPE if the osx binary isn't built
+_ also need to have 10.8 version of the SDK (old Xcode won't work)
 
 _ fix console font on Windows and Linux with 7u40
 _   the message area text also looks ugly.. can we fix?
@@ -55,8 +55,9 @@ X   from /System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/
 X the javadoc includes java.io.* and java.lang.* prefixes.. why?
 X   re-run and and check in
 X   upload javadoc updates
-_ remove JAVA_HOME requirement from build.xml
-_   what's needed on OS X? just the JDK 7u40?
+X need to require JDK 7u40 to be installed on OS X
+X remove JAVA_HOME requirement from build.xml
+X   what's needed on OS X? just the JDK 7u40?
 
 jre work
 X remove Java FX from OS X build
