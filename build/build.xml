@@ -19,6 +19,19 @@
     </and>
   </condition>
 
+  <!-- Require Java 7 to bootstrap, otherwise there will be sadness. 
+       And I guess Java 8 should work too? Sorta? --> 
+  <fail message="Unsupported Java version: ${java.version}. Make sure that Java 7 (aka Java 1.7) is installed."> 
+    <condition> 
+      <not> 
+        <or> 
+          <contains string="${java.version}" substring="1.7" /> 
+          <contains string="${java.version}" substring="1.8" /> 
+        </or> 
+      </not> 
+    </condition> 
+  </fail> 
+
   <!-- Figure out the JRE download location for Linux and Windows. -->
   <condition property="jre.file" value="jre-7u40-${platform}-i586.tgz"> 
     <equals arg1="${sun.arch.data.model}" arg2="32" />
