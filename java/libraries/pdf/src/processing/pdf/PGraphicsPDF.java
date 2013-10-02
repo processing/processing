@@ -413,7 +413,13 @@ public class PGraphicsPDF extends PGraphicsJava2D {
     int imageHeight = image.height;
     scale((x2 - x1) / (float)imageWidth,
           (y2 - y1) / (float)imageHeight);
-    g2.drawImage(image.getImage(), u1, v1, null);
+    if (u2-u1 != imageWidth || v2-v1 != imageHeight) {
+      PImage tmp = new PImage(u2-u1, v2-v1, ARGB);
+      tmp.copy(image, u1, v1, u2, v2, 0, 0, u2-u1, v2-v1);
+      g2.drawImage(image.getImage(), 0, 0, null);
+    } else {
+      g2.drawImage(image.getImage(), u1, v1, null);
+    }
     popMatrix();
   }
 
