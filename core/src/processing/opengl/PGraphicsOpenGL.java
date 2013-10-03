@@ -5690,9 +5690,11 @@ public class PGraphicsOpenGL extends PGraphics {
 
     } else if (blendMode == SUBTRACT) {
       if (blendEqSupported) {
-        pgl.blendEquation(PGL.FUNC_ADD);
+        pgl.blendEquation(PGL.FUNC_REVERSE_SUBTRACT);
+        pgl.blendFunc(PGL.ONE, PGL.SRC_ALPHA);
+      } else {
+        PGraphics.showWarning(BLEND_DRIVER_ERROR, "SUBTRACT");
       }
-      pgl.blendFunc(PGL.ONE_MINUS_DST_COLOR, PGL.ZERO);
 
     } else if (blendMode == LIGHTEST) {
       if (blendEqSupported) {
@@ -5712,11 +5714,9 @@ public class PGraphicsOpenGL extends PGraphics {
 
     } else if (blendMode == DIFFERENCE) {
       if (blendEqSupported) {
-        pgl.blendEquation(PGL.FUNC_REVERSE_SUBTRACT);
-        pgl.blendFunc(PGL.ONE, PGL.ONE);
-      } else {
-        PGraphics.showWarning(BLEND_DRIVER_ERROR, "DIFFERENCE");
+        pgl.blendEquation(PGL.FUNC_ADD);
       }
+      pgl.blendFunc(PGL.ONE_MINUS_DST_COLOR, PGL.ZERO);
 
     } else if (blendMode == EXCLUSION) {
       if (blendEqSupported) {
