@@ -4519,7 +4519,19 @@ public class PGraphicsOpenGL extends PGraphics {
     return nonZero(ow) ? oz / ow : oz;
   }
 
+  //////////////////////////////////////////////////////////////
+
   // STYLES
+
+  @Override
+  public void popStyle() {
+    // popStyle() sets ambient to true (because it calls ambient() in style())
+    // and so setting the setAmbient flag to true, even if the user didn't call
+    // ambient, so need to revert to false.
+    boolean savedSetAmbient = setAmbient;
+    super.popStyle();
+    if (!savedSetAmbient) setAmbient = false;
+  }
 
   // public void pushStyle()
   // public void popStyle()
