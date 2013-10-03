@@ -354,6 +354,12 @@ public class PLWJGL extends PGL {
     FontMetrics metrics = pg.parent.getFontMetrics((Font)font);
     return metrics.charsWidth(buffer, start, length);
   }
+  
+  
+  @Override
+  protected Object getDerivedFont(Object font, float size) {
+    return ((Font)font).deriveFont(size);
+  } 
  
   
   ///////////////////////////////////////////////////////////

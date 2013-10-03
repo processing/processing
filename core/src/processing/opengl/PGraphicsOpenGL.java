@@ -23,6 +23,7 @@
 package processing.opengl;
 
 import processing.core.*;
+
 import java.net.URL;
 import java.nio.*;
 import java.util.*;
@@ -3278,6 +3279,18 @@ public class PGraphicsOpenGL extends PGraphics {
     if (font != null) twidth = pgl.getTextWidth(font, buffer, start, stop);
     if (twidth == 0) twidth = super.textWidthImpl(buffer, start, stop);
     return twidth;
+  }
+
+
+  @Override
+  public void textSize(float size) {
+    if (textFont == null) defaultFontOrDeath("textSize", size);
+    Object font = textFont.getNative();
+    if (font != null) {
+      Object dfont = pgl.getDerivedFont(font, size);
+      textFont.setNative(dfont);
+    }
+    super.textSize(size);
   }
 
 

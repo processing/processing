@@ -1900,6 +1900,11 @@ public abstract class PGL {
   }
 
 
+  protected Object getDerivedFont(Object font, float size) {
+    return null;
+  }
+
+
   ///////////////////////////////////////////////////////////
 
   // Tessellator interface

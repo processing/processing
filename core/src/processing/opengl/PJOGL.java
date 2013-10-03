@@ -968,6 +968,12 @@ public class PJOGL extends PGL {
   }
 
 
+  @Override
+  protected Object getDerivedFont(Object font, float size) {
+    return ((Font)font).deriveFont(size);
+  }
+
+
   ///////////////////////////////////////////////////////////
 
   // Tessellator
