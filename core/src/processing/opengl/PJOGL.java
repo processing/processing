@@ -682,19 +682,7 @@ public class PJOGL extends PGL {
 
     @Override
     public void display(GLAutoDrawable glDrawable) {
-      drawable = glDrawable;
-      context = glDrawable.getContext();
-      glContext = context.hashCode();
-
-      glThread = Thread.currentThread();
-
-      gl = context.getGL();
-      gl2 = gl.getGL2ES2();
-      try {
-        gl2x = gl.getGL2();
-      } catch (javax.media.opengl.GLException e) {
-        gl2x = null;
-      }
+      getGL(glDrawable);
 
       if (USE_JOGL_FBOLAYER && capabilities.isFBO()) {
         // The onscreen drawing surface is backed by an FBO layer.
@@ -767,13 +755,10 @@ public class PJOGL extends PGL {
     }
 
     @Override
-    public void init(GLAutoDrawable adrawable) {
-      drawable = adrawable;
-      context = adrawable.getContext();
-      glContext = context.hashCode();
-      capabilities = adrawable.getChosenGLCapabilities();
-      gl = context.getGL();
+    public void init(GLAutoDrawable glDrawable) {
+      getGL(glDrawable);
 
+      capabilities = glDrawable.getChosenGLCapabilities();
       if (!hasFBOs()) {
         throw new RuntimeException(MISSING_FBO_ERROR);
       }
@@ -787,10 +772,23 @@ public class PJOGL extends PGL {
     }
 
     @Override
-    public void reshape(GLAutoDrawable adrawable, int x, int y, int w, int h) {
-      drawable = adrawable;
-      context = adrawable.getContext();
+    public void reshape(GLAutoDrawable glDrawable, int x, int y, int w, int h) {
+      getGL(glDrawable);
+    }
+
+    private void getGL(GLAutoDrawable glDrawable) {
+      drawable = glDrawable;
+      context = glDrawable.getContext();
       glContext = context.hashCode();
+      glThread = Thread.currentThread();
+
+      gl = context.getGL();
+      gl2 = gl.getGL2ES2();
+      try {
+        gl2x = gl.getGL2();
+      } catch (javax.media.opengl.GLException e) {
+        gl2x = null;
+      }
     }
   }
 
