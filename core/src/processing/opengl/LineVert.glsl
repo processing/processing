@@ -31,7 +31,7 @@ attribute vec4 position;
 attribute vec4 color;
 attribute vec4 direction;
 
-varying vec4 varColor;
+varying vec4 vertColor;
 
 vec3 clipToWindow(vec4 clip, vec4 viewport) {
   vec3 post_div = clip.xyz / clip.w;
@@ -81,5 +81,5 @@ void main() {
     gl_Position = clipp;
   }
   
-  varColor = color;
+  vertColor = color;
 }

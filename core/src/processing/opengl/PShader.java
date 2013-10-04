@@ -43,11 +43,11 @@ public class PShader {
   // shaders constants
   static protected final int LINE     = 0;
   static protected final int POINT    = 1;
-  static protected final int POLY     = 3;
-  static protected final int COLOR    = 4;
-  static protected final int LIGHT    = 5;
-  static protected final int TEXTURE  = 6;
-  static protected final int TEXLIGHT = 7;
+  static protected final int POLY     = 2;
+  static protected final int COLOR    = 3;
+  static protected final int LIGHT    = 4;
+  static protected final int TEXTURE  = 5;
+  static protected final int TEXLIGHT = 6;
 
   protected PApplet parent;
   // The main renderer associated to the parent PApplet.

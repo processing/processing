@@ -18,7 +18,7 @@
   Boston, MA  02111-1307  USA
  */
 
-#define PROCESSING_TEXTURE_SHADER
+//#define PROCESSING_TEXTURE_SHADER
 
 uniform mat4 transformMatrix;
 uniform mat4 texMatrix;
@@ -27,12 +27,12 @@ attribute vec4 position;
 attribute vec4 color;
 attribute vec2 texCoord;
 
-varying vec4 varColor;
-varying vec4 varTexCoord;
+varying vec4 vertColor;
+varying vec4 vertTexCoord;
 
 void main() {
   gl_Position = transformMatrix * position;
     
-  varColor = color;
-  varTexCoord = texMatrix * vec4(texCoord, 1.0, 1.0);
+  vertColor = color;
+  vertTexCoord = texMatrix * vec4(texCoord, 1.0, 1.0);
 }

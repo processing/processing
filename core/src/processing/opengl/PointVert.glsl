@@ -30,7 +30,7 @@ attribute vec4 position;
 attribute vec4 color;
 attribute vec2 offset;
 
-varying vec4 varColor;
+varying vec4 vertColor;
 
 vec4 windowToClipVector(vec2 window, vec4 viewport, float clipw) {
   vec2 xypos = (window / viewport.zw) * 2.0;
@@ -51,5 +51,5 @@ void main() {
     gl_Position = clip + offset;
   }
   
-  varColor = color;
+  vertColor = color;
 }

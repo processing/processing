@@ -84,18 +84,12 @@ public class PGraphicsOpenGL extends PGraphics {
     "shader() called with a wrong shader";
   static final String UNKNOWN_SHADER_KIND_ERROR =
     "Unknown shader kind";
-  static final String NO_TEXLIGHT_SHADER_ERROR =
-    "Your shader needs to be of TEXLIGHT type " +
-    "to render this geometry properly, using default shader instead.";
-  static final String NO_LIGHT_SHADER_ERROR =
-    "Your shader needs to be of LIGHT type " +
-    "to render this geometry properly, using default shader instead.";
-  static final String NO_TEXTURE_SHADER_ERROR =
-    "Your shader needs to be of TEXTURE type " +
-    "to render this geometry properly, using default shader instead.";
-  static final String NO_COLOR_SHADER_ERROR =
-    "Your shader needs to be of COLOR type " +
-    "to render this geometry properly, using default shader instead.";
+  static final String LIGHT_SHADER_ERROR =
+    "The shader expects lights but it is beging used to draw an unlit scene, " +
+    "this might lead to unexpected rendering errors.";
+  static final String TEXTURE_SHADER_ERROR =
+    "The shader expects textures but it is being used to draw an untextured scene, " +
+    "this might lead to unexpected rendering errors.";
   static final String TOO_LONG_STROKE_PATH_ERROR =
     "Stroke path is too long, some bevel triangles won't be added";
   static final String TESSELLATION_ERROR =
@@ -230,10 +224,6 @@ public class PGraphicsOpenGL extends PGraphics {
   static protected URL defPointShaderFragURL =
     PGraphicsOpenGL.class.getResource("PointFrag.glsl");
 
-//  static protected ColorShader defColorShader;
-//  static protected TextureShader defTextureShader;
-//  static protected LightShader defLightShader;
-//  static protected TexlightShader defTexlightShader;
   static protected PolyShader defColorShader;
   static protected PolyShader defTextureShader;
   static protected PolyShader defLightShader;
@@ -243,25 +233,11 @@ public class PGraphicsOpenGL extends PGraphics {
 
   static protected URL maskShaderFragURL =
     PGraphicsOpenGL.class.getResource("MaskFrag.glsl");
-//  static protected TextureShader maskShader;
   static protected PolyShader maskShader;
 
-//  protected ColorShader colorShader;
-//  protected TextureShader textureShader;
-//  protected LightShader lightShader;
-//  protected TexlightShader texlightShader;
   protected PolyShader polyShader;
   protected LineShader lineShader;
   protected PointShader pointShader;
-
-
-  // When shader warnings are enabled, the renderer is strict in regards to the
-  // use of the polygon shaders. For instance, if a light shader is set to
-  // render lit geometry, but the geometry is mixed with some pieces of unlit or
-  // textured geometry, then it will warn that the set shader cannot be used for
-  // that other type of geometry, even though Processing will use the correct,
-  // built-in shaders to handle it.
-//  protected boolean shaderWarningsEnabled = true;
 
   // ........................................................
 
@@ -2389,7 +2365,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
       // If the renderer is 2D, then lights should always be false,
       // so no need to worry about that.
-      BaseShader shader = getPolyShader(lights, tex != null);
+      PolyShader shader = getPolyShader(lights, tex != null);
       shader.bind();
 
       int first = texCache.firstCache[i];
@@ -2422,10 +2398,14 @@ public class PGraphicsOpenGL extends PGraphics {
                                       4 * voffset * PGL.SIZEOF_BYTE);
           shader.setShininessAttribute(glPolyShininess, 1, PGL.FLOAT, 0,
                                        voffset * PGL.SIZEOF_FLOAT);
+        } else if (shader.supportLighting()) {
+          PGraphics.showWarning(LIGHT_SHADER_ERROR);
         }
 
         if (tex != null) {
           shader.setTexture(tex);
+        } else if (shader.supportsTexturing()) {
+          PGraphics.showWarning(TEXTURE_SHADER_ERROR);
         }
 
         pgl.bindBuffer(PGL.ELEMENT_ARRAY_BUFFER, glPolyIndex);
@@ -5536,7 +5516,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   @Override
   public void filter(PShader shader) {
-    if (!(shader instanceof PolyShader) || !((PolyShader)shader).hasTexture()) {
+    if (!(shader instanceof PolyShader) || !((PolyShader)shader).supportsTexturing()) {
       PGraphics.showWarning(INVALID_FILTER_SHADER_ERROR);
       return;
     }
@@ -5582,7 +5562,6 @@ public class PGraphicsOpenGL extends PGraphics {
 //    textureShader = (TextureShader) shader;
     PolyShader prevShader = polyShader;
     polyShader = (PolyShader)shader;
-
 
     beginShape(QUADS);
     texture(filterImage);
@@ -6307,7 +6286,7 @@ public class PGraphicsOpenGL extends PGraphics {
       shader.setVertexShader(defColorShaderVertURL);
     } else {
       shader = new PolyShader(parent);
-      shader.setVertexShader(defTexlightShaderVertURL);
+      shader.setVertexShader(defTextureShaderVertURL);
     }
     shader.setFragmentShader(fragFilename);
     return shader;
@@ -6328,6 +6307,8 @@ public class PGraphicsOpenGL extends PGraphics {
       shaderType = vertType;
     } else if (fragType == vertType)  {
       shaderType = vertType;
+    } else if (2 <= fragType && 2 <= vertType) {
+      shaderType = PShader.POLY;
     } else {
       PGraphics.showWarning(INCONSISTENT_SHADER_TYPES);
       return null;
@@ -6355,7 +6336,7 @@ public class PGraphicsOpenGL extends PGraphics {
         shader.setFragmentShader(defColorShaderFragURL);
       } else {
         shader = new PolyShader(parent);
-        shader.setVertexShader(defTexlightShaderVertURL);
+        shader.setVertexShader(defTextureShaderVertURL);
       }
       if (shader != null) {
         shader.setVertexShader(vertFilename);
@@ -6368,15 +6349,6 @@ public class PGraphicsOpenGL extends PGraphics {
       } else {
         shader = new PolyShader(parent, vertFilename, fragFilename);
       }
-//      if (shaderType == PShader.TEXLIGHT) {
-//        shader = new TexlightShader(parent, vertFilename, fragFilename);
-//      } else if (shaderType == PShader.LIGHT) {
-//        shader = new LightShader(parent, vertFilename, fragFilename);
-//      } else if (shaderType == PShader.TEXTURE) {
-//        shader = new TextureShader(parent, vertFilename, fragFilename);
-//      } else if (shaderType == PShader.COLOR) {
-//        shader = new ColorShader(parent, vertFilename, fragFilename);
-//      }
     }
     return shader;
   }
@@ -6395,14 +6367,6 @@ public class PGraphicsOpenGL extends PGraphics {
     if (kind == TRIANGLES || kind == QUADS || kind == POLYGON) {
       if (shader instanceof PolyShader) {
         polyShader = (PolyShader) shader;
-//      if (shader instanceof TexlightShader) {
-//        texlightShader = (TexlightShader) shader;
-//      } else if (shader instanceof TextureShader) {
-//        textureShader = (TextureShader) shader;
-//      } else if (shader instanceof LightShader) {
-//        lightShader = (LightShader) shader;
-//      } else if (shader instanceof ColorShader) {
-//        colorShader = (ColorShader) shader;
       } else {
         PGraphics.showWarning(WRONG_SHADER_TYPE_ERROR);
       }
@@ -6435,10 +6399,6 @@ public class PGraphicsOpenGL extends PGraphics {
     flush(); // Flushing geometry drawn with a different shader.
 
     if (kind == TRIANGLES || kind == QUADS || kind == POLYGON) {
-//      textureShader = null;
-//      colorShader = null;
-//      texlightShader = null;
-//      lightShader = null;
       polyShader = null;
     } else if (kind == LINES) {
       lineShader = null;
@@ -6448,11 +6408,6 @@ public class PGraphicsOpenGL extends PGraphics {
       PGraphics.showWarning(UNKNOWN_SHADER_KIND_ERROR);
     }
   }
-
-
-//  public void shaderWarnings(boolean enable) {
-//    shaderWarningsEnabled = enable;
-//  }
 
 
   protected int getShaderType(String filename) {
@@ -6510,7 +6465,6 @@ public class PGraphicsOpenGL extends PGraphics {
                                                defTextureShaderFragURL);
           }
           shader = defTexlightShader;
-//          texlightShaderCheck();
         } else {
           shader = polyShader;
         }
@@ -6522,7 +6476,6 @@ public class PGraphicsOpenGL extends PGraphics {
                                             defColorShaderFragURL);
           }
           shader = defLightShader;
-//          lightShaderCheck();
         } else {
           shader = polyShader;
         }
@@ -6536,7 +6489,6 @@ public class PGraphicsOpenGL extends PGraphics {
                                               defTextureShaderFragURL);
           }
           shader = defTextureShader;
-//          textureShaderCheck();
         } else {
           shader = polyShader;
         }
@@ -6548,7 +6500,6 @@ public class PGraphicsOpenGL extends PGraphics {
                                             defColorShaderFragURL);
           }
           shader = defColorShader;
-//          colorShaderCheck();
         } else {
           shader = polyShader;
         }
@@ -6559,46 +6510,6 @@ public class PGraphicsOpenGL extends PGraphics {
     shader.loadUniforms();
     return shader;
   }
-
-
-//  protected void texlightShaderCheck() {
-//    if (shaderWarningsEnabled &&
-//        (lightShader != null ||
-//         textureShader != null ||
-//         colorShader != null)) {
-//      PGraphics.showWarning(NO_TEXLIGHT_SHADER_ERROR);
-//    }
-//  }
-//
-//
-//  protected void lightShaderCheck() {
-//    if (shaderWarningsEnabled &&
-//        (texlightShader != null ||
-//         textureShader != null ||
-//         colorShader != null)) {
-//      PGraphics.showWarning(NO_LIGHT_SHADER_ERROR);
-//    }
-//  }
-//
-//
-//  protected void textureShaderCheck() {
-//    if (shaderWarningsEnabled &&
-//        (texlightShader != null ||
-//         lightShader != null ||
-//         colorShader != null)) {
-//      PGraphics.showWarning(NO_TEXTURE_SHADER_ERROR);
-//    }
-//  }
-//
-//
-//  protected void colorShaderCheck() {
-//    if (shaderWarningsEnabled &&
-//        (texlightShader != null ||
-//         lightShader != null ||
-//         textureShader != null)) {
-//      PGraphics.showWarning(NO_COLOR_SHADER_ERROR);
-//    }
-//  }
 
 
   protected LineShader getLineShader() {
@@ -6720,7 +6631,11 @@ public class PGraphicsOpenGL extends PGraphics {
       }
     }
 
-    public boolean hasTexture() {
+    public boolean supportsTexturing() {
+      return false;
+    }
+
+    public boolean supportLighting() {
       return false;
     }
 
@@ -6743,396 +6658,6 @@ public class PGraphicsOpenGL extends PGraphics {
     public void setTexture(Texture tex) { }
   }
 
-/*
-  protected class ColorShader extends BaseShader {
-    protected int vertexLoc;
-    protected int colorLoc;
-    protected int normalLoc;
-    protected int texCoordLoc;
-    protected int normalMatLoc;
-
-    public ColorShader(PApplet parent) {
-      super(parent);
-    }
-
-    public ColorShader(PApplet parent, String vertFilename,
-                                          String fragFilename) {
-      super(parent, vertFilename, fragFilename);
-    }
-
-    public ColorShader(PApplet parent, URL vertURL, URL fragURL) {
-      super(parent, vertURL, fragURL);
-    }
-
-    @Override
-    public void loadAttributes() {
-      vertexLoc = getAttributeLoc("vertex");
-      colorLoc = getAttributeLoc("color");
-      texCoordLoc = getAttributeLoc("texCoord");
-      normalLoc = getAttributeLoc("normal");
-    }
-
-    @Override
-    public void loadUniforms() {
-      super.loadUniforms();
-
-      normalMatLoc = getUniformLoc("normalMatrix");
-    }
-
-    @Override
-    public void setVertexAttribute(int vboId, int size, int type,
-                                   int stride, int offset) {
-      setAttributeVBO(vertexLoc, vboId, size, type, false, stride, offset);
-    }
-
-    @Override
-    public void setColorAttribute(int vboId, int size, int type,
-                                  int stride, int offset) {
-      setAttributeVBO(colorLoc, vboId, size, type, true, stride, offset);
-    }
-
-    @Override
-    public void setNormalAttribute(int vboId, int size, int type,
-                                   int stride, int offset) {
-      setAttributeVBO(normalLoc, vboId, size, type, false, stride, offset);
-    }
-
-    @Override
-    public void setTexcoordAttribute(int vboId, int size, int type,
-                                     int stride, int offset) {
-      setAttributeVBO(texCoordLoc, vboId, size, type, false, stride, offset);
-    }
-
-    @Override
-    public void bind() {
-      super.bind();
-      if (pgCurrent == null) {
-        setRenderer(PGraphicsOpenGL.pgCurrent);
-        loadAttributes();
-        loadUniforms();
-      }
-      setCommonUniforms();
-
-      if (-1 < vertexLoc) pgl.enableVertexAttribArray(vertexLoc);
-      if (-1 < colorLoc) pgl.enableVertexAttribArray(colorLoc);
-      if (-1 < texCoordLoc) pgl.enableVertexAttribArray(texCoordLoc);
-      if (-1 < normalLoc) pgl.enableVertexAttribArray(normalLoc);
-
-      if (-1 < normalMatLoc) {
-        pgCurrent.updateGLNormal();
-        setUniformMatrix(normalMatLoc, pgCurrent.glNormal);
-      }
-    }
-
-    @Override
-    public void unbind() {
-      if (-1 < vertexLoc) pgl.disableVertexAttribArray(vertexLoc);
-      if (-1 < colorLoc) pgl.disableVertexAttribArray(colorLoc);
-      if (-1 < texCoordLoc) pgl.disableVertexAttribArray(texCoordLoc);
-      if (-1 < normalLoc) pgl.disableVertexAttribArray(normalLoc);
-
-      super.unbind();
-    }
-  }
-
-
-  protected class LightShader extends ColorShader {
-    protected int lightCountLoc;
-    protected int lightPositionLoc;
-    protected int lightNormalLoc;
-    protected int lightAmbientLoc;
-    protected int lightDiffuseLoc;
-    protected int lightSpecularLoc;
-    protected int lightFalloffLoc;
-    protected int lightSpotLoc;
-
-    protected int ambientLoc;
-    protected int specularLoc;
-    protected int emissiveLoc;
-    protected int shininessLoc;
-
-    public LightShader(PApplet parent) {
-      super(parent);
-    }
-
-    public LightShader(PApplet parent, String vertFilename,
-                                           String fragFilename) {
-      super(parent, vertFilename, fragFilename);
-    }
-
-    public LightShader(PApplet parent, URL vertURL, URL fragURL) {
-      super(parent, vertURL, fragURL);
-    }
-
-    @Override
-    public void loadAttributes() {
-      super.loadAttributes();
-      ambientLoc = getAttributeLoc("ambient");
-      specularLoc = getAttributeLoc("specular");
-      emissiveLoc = getAttributeLoc("emissive");
-      shininessLoc = getAttributeLoc("shininess");
-    }
-
-    @Override
-    public void loadUniforms() {
-      super.loadUniforms();
-
-      lightCountLoc = getUniformLoc("lightCount");
-      lightPositionLoc = getUniformLoc("lightPosition");
-      lightNormalLoc = getUniformLoc("lightNormal");
-      lightAmbientLoc = getUniformLoc("lightAmbient");
-      lightDiffuseLoc = getUniformLoc("lightDiffuse");
-      lightSpecularLoc = getUniformLoc("lightSpecular");
-      lightFalloffLoc = getUniformLoc("lightFalloff");
-      lightSpotLoc = getUniformLoc("lightSpot");
-    }
-
-    @Override
-    public void setAmbientAttribute(int vboId, int size, int type,
-                                    int stride, int offset) {
-      setAttributeVBO(ambientLoc, vboId, size, type, true, stride, offset);
-    }
-
-    @Override
-    public void setSpecularAttribute(int vboId, int size, int type,
-                                     int stride, int offset) {
-      setAttributeVBO(specularLoc, vboId, size, type, true, stride, offset);
-    }
-
-    @Override
-    public void setEmissiveAttribute(int vboId, int size, int type,
-                                     int stride, int offset) {
-      setAttributeVBO(emissiveLoc, vboId, size, type, true, stride, offset);
-    }
-
-    @Override
-    public void setShininessAttribute(int vboId, int size, int type,
-                                      int stride, int offset) {
-      setAttributeVBO(shininessLoc, vboId, size, type, false, stride, offset);
-    }
-
-    @Override
-    public void bind() {
-      super.bind();
-
-      if (-1 < ambientLoc) pgl.enableVertexAttribArray(ambientLoc);
-      if (-1 < specularLoc) pgl.enableVertexAttribArray(specularLoc);
-      if (-1 < emissiveLoc) pgl.enableVertexAttribArray(emissiveLoc);
-      if (-1 < shininessLoc) pgl.enableVertexAttribArray(shininessLoc);
-
-      int count = pgCurrent.lightCount;
-      setUniformValue(lightCountLoc, count);
-      setUniformVector(lightPositionLoc, pgCurrent.lightPosition, 4, count);
-      setUniformVector(lightNormalLoc, pgCurrent.lightNormal, 3, count);
-      setUniformVector(lightAmbientLoc, pgCurrent.lightAmbient, 3, count);
-      setUniformVector(lightDiffuseLoc, pgCurrent.lightDiffuse, 3, count);
-      setUniformVector(lightSpecularLoc, pgCurrent.lightSpecular, 3, count);
-      setUniformVector(lightFalloffLoc, pgCurrent.lightFalloffCoefficients,
-                       3, count);
-      setUniformVector(lightSpotLoc, pgCurrent.lightSpotParameters, 2, count);
-    }
-
-    @Override
-    public void unbind() {
-      if (-1 < ambientLoc) pgl.disableVertexAttribArray(ambientLoc);
-      if (-1 < specularLoc) pgl.disableVertexAttribArray(specularLoc);
-      if (-1 < emissiveLoc) pgl.disableVertexAttribArray(emissiveLoc);
-      if (-1 < shininessLoc) pgl.disableVertexAttribArray(shininessLoc);
-
-      super.unbind();
-    }
-  }
-
-
-  protected class TextureShader extends ColorShader {
-    protected Texture texture;
-    protected int texUnit;
-
-    protected int textureLoc;
-    protected int texMatrixLoc;
-    protected int texOffsetLoc;
-
-    protected float[] tcmat;
-
-    public TextureShader(PApplet parent) {
-      super(parent);
-    }
-
-    public TextureShader(PApplet parent, String vertFilename,
-                                         String fragFilename) {
-      super(parent, vertFilename, fragFilename);
-    }
-
-    public TextureShader(PApplet parent, URL vertURL, URL fragURL) {
-      super(parent, vertURL, fragURL);
-    }
-
-    @Override
-    public void loadUniforms() {
-      super.loadUniforms();
-
-      textureLoc = getUniformLoc("texture");
-      texMatrixLoc = getUniformLoc("texMatrix");
-      texOffsetLoc = getUniformLoc("texOffset");
-    }
-
-    @Override
-    public int getLastTexUnit() {
-      return -1 < bufferUnit ? bufferUnit : super.getLastTexUnit();
-    }
-
-    @Override
-    public void setTexture(Texture tex) {
-      float scaleu = 1;
-      float scalev = 1;
-      float dispu  = 0;
-      float dispv  = 0;
-
-      if (tex.invertedX()) {
-        scaleu = -1;
-        dispu  = 1;
-      }
-
-      if (tex.invertedY()) {
-        scalev = -1;
-        dispv  = 1;
-      }
-
-      scaleu *= tex.maxTexcoordU();
-      dispu  *= tex.maxTexcoordU();
-      scalev *= tex.maxTexcoordV();
-      dispv  *= tex.maxTexcoordV();
-
-      if (-1 < texMatrixLoc) {
-        if (tcmat == null) {
-          tcmat = new float[16];
-        }
-        tcmat[0] = scaleu; tcmat[4] = 0;      tcmat[ 8] = 0; tcmat[12] = dispu;
-        tcmat[1] = 0;      tcmat[5] = scalev; tcmat[ 9] = 0; tcmat[13] = dispv;
-        tcmat[2] = 0;      tcmat[6] = 0;      tcmat[10] = 0; tcmat[14] = 0;
-        tcmat[3] = 0;      tcmat[7] = 0;      tcmat[11] = 0; tcmat[15] = 0;
-        setUniformMatrix(texMatrixLoc, tcmat);
-      }
-
-      setUniformValue(texOffsetLoc, 1.0f / tex.width, 1.0f / tex.height);
-
-      if (-1 < textureLoc) {
-        texUnit = getLastTexUnit() + 1;
-        setUniformValue(textureLoc, texUnit);
-        pgl.activeTexture(PGL.TEXTURE0 + texUnit);
-        tex.bind();
-        texture = tex;
-      }
-    }
-
-    @Override
-    public void unbind() {
-      if (-1 < textureLoc && texture != null) {
-        pgl.activeTexture(PGL.TEXTURE0 + texUnit);
-        texture.unbind();
-        pgl.activeTexture(PGL.TEXTURE0);
-        texture = null;
-      }
-
-      super.unbind();
-    }
-  }
-
-
-  protected class TexlightShader extends LightShader {
-    protected Texture texture;
-    protected int texUnit;
-
-    protected int textureLoc;
-    protected int texMatrixLoc;
-    protected int texOffsetLoc;
-
-    protected float[] tcmat;
-
-    public TexlightShader(PApplet parent) {
-      super(parent);
-    }
-
-    public TexlightShader(PApplet parent, String vertFilename,
-                                          String fragFilename) {
-      super(parent, vertFilename, fragFilename);
-    }
-
-    public TexlightShader(PApplet parent, URL vertURL, URL fragURL) {
-      super(parent, vertURL, fragURL);
-    }
-
-    @Override
-    public void loadUniforms() {
-      super.loadUniforms();
-
-      textureLoc = getUniformLoc("texture");
-      texMatrixLoc = getUniformLoc("texMatrix");
-      texOffsetLoc = getUniformLoc("texOffset");
-    }
-
-    @Override
-    public int getLastTexUnit() {
-      return -1 < bufferUnit ? bufferUnit : super.getLastTexUnit();
-    }
-
-    @Override
-    public void setTexture(Texture tex) {
-      float scaleu = 1;
-      float scalev = 1;
-      float dispu  = 0;
-      float dispv  = 0;
-
-      if (tex.invertedX()) {
-        scaleu = -1;
-        dispu  = 1;
-      }
-
-      if (tex.invertedY()) {
-        scalev = -1;
-        dispv  = 1;
-      }
-
-      scaleu *= tex.maxTexcoordU;
-      dispu  *= tex.maxTexcoordU;
-      scalev *= tex.maxTexcoordV;
-      dispv  *= tex.maxTexcoordV;
-
-      if (-1 < texMatrixLoc) {
-        if (tcmat == null) {
-          tcmat = new float[16];
-        }
-        tcmat[0] = scaleu; tcmat[4] = 0;      tcmat[ 8] = 0; tcmat[12] = dispu;
-        tcmat[1] = 0;      tcmat[5] = scalev; tcmat[ 9] = 0; tcmat[13] = dispv;
-        tcmat[2] = 0;      tcmat[6] = 0;      tcmat[10] = 0; tcmat[14] = 0;
-        tcmat[3] = 0;      tcmat[7] = 0;      tcmat[11] = 0; tcmat[15] = 0;
-        setUniformMatrix(texMatrixLoc, tcmat);
-      }
-
-      setUniformValue(texOffsetLoc, 1.0f / tex.width, 1.0f / tex.height);
-
-      if (-1 < textureLoc) {
-        texUnit = getLastTexUnit() + 1;
-        setUniformValue(textureLoc, texUnit);
-        pgl.activeTexture(PGL.TEXTURE0 + texUnit);
-        tex.bind();
-        texture = tex;
-      }
-    }
-
-    @Override
-    public void unbind() {
-      if (-1 < textureLoc && texture != null) {
-        pgl.activeTexture(PGL.TEXTURE0 + texUnit);
-        texture.unbind();
-        pgl.activeTexture(PGL.TEXTURE0);
-        texture = null;
-      }
-
-      super.unbind();
-    }
-  }
-*/
 
   protected class PolyShader extends BaseShader {
     protected int vertexLoc;
@@ -7190,10 +6715,6 @@ public class PGraphicsOpenGL extends PGraphics {
       specularLoc = getAttributeLoc("specular");
       emissiveLoc = getAttributeLoc("emissive");
       shininessLoc = getAttributeLoc("shininess");
-
-      textureLoc = getUniformLoc("texture");
-      texMatrixLoc = getUniformLoc("texMatrix");
-      texOffsetLoc = getUniformLoc("texOffset");
     }
 
     @Override
@@ -7216,10 +6737,10 @@ public class PGraphicsOpenGL extends PGraphics {
       texOffsetLoc = getUniformLoc("texOffset");
     }
 
-    @Override
-    public int getLastTexUnit() {
-      return -1 < bufferUnit ? bufferUnit : super.getLastTexUnit();
-    }
+//    @Override
+//    public int getLastTexUnit() {
+//      return -1 < bufferUnit ? bufferUnit : super.getLastTexUnit();
+//    }
 
     @Override
     public void setTexture(Texture tex) {
@@ -7266,8 +6787,13 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     @Override
-    public boolean hasTexture() {
+    public boolean supportsTexturing() {
       return -1 < textureLoc;
+    }
+
+    @Override
+    public boolean supportLighting() {
+      return -1 < lightCountLoc || -1 < lightPositionLoc || -1 < lightNormalLoc;
     }
 
     @Override

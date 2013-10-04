@@ -28,11 +28,11 @@ precision mediump int;
 uniform sampler2D texture;
 uniform sampler2D mask;
 
-varying vec4 varTexCoord;
+varying vec4 vertTexCoord;
 
 void main() {
-  vec3 texColor = texture2D(texture, varTexCoord.st).rgb;
-  vec3 maskColor = texture2D(mask, varTexCoord.st).rgb;
+  vec3 texColor = texture2D(texture, vertTexCoord.st).rgb;
+  vec3 maskColor = texture2D(mask, vertTexCoord.st).rgb;
   float luminance = dot(maskColor, vec3(0.2126, 0.7152, 0.0722));
   gl_FragColor = vec4(texColor, luminance);  
 }

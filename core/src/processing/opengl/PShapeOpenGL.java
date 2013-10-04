@@ -4479,10 +4479,14 @@ public class PShapeOpenGL extends PShape {
                                     0, 4 * voffset * PGL.SIZEOF_BYTE);
         shader.setShininessAttribute(root.glPolyShininess, 1, PGL.FLOAT,
                                      0, voffset * PGL.SIZEOF_FLOAT);
+      } else if (shader.supportLighting()) {
+        PGraphics.showWarning(PGraphicsOpenGL.LIGHT_SHADER_ERROR);
       }
 
       if (tex != null) {
         shader.setTexture(tex);
+      } else if (shader.supportsTexturing()) {
+        PGraphics.showWarning(PGraphicsOpenGL.TEXTURE_SHADER_ERROR);
       }
 
       pgl.bindBuffer(PGL.ELEMENT_ARRAY_BUFFER, root.glPolyIndex);
