@@ -20,8 +20,8 @@
 
 #define PROCESSING_LIGHT_SHADER
 
-uniform mat4 modelview;
-uniform mat4 transform;
+uniform mat4 modelviewMatrix;
+uniform mat4 transformMatrix;
 uniform mat3 normalMatrix;
 
 uniform int lightCount;
@@ -33,7 +33,7 @@ uniform vec3 lightSpecular[8];
 uniform vec3 lightFalloff[8];
 uniform vec2 lightSpot[8];
 
-attribute vec4 vertex;
+attribute vec4 position;
 attribute vec4 color;
 attribute vec3 normal;
 
@@ -42,7 +42,7 @@ attribute vec4 specular;
 attribute vec4 emissive;
 attribute float shininess;
 
-varying vec4 vertColor;
+varying vec4 varColor;
 
 const float zero_float = 0.0;
 const float one_float = 1.0;
@@ -75,10 +75,10 @@ float blinnPhongFactor(vec3 lightDir, vec3 vertPos, vec3 vecNormal, float shine)
 
 void main() {
   // Vertex in clip coordinates
-  gl_Position = transform * vertex;
+  gl_Position = transformMatrix * position;
     
   // Vertex in eye coordinates
-  vec3 ecVertex = vec3(modelview * vertex);
+  vec3 ecVertex = vec3(modelviewMatrix * position);
   
   // Normal vector in eye coordinates
   vec3 ecNormal = normalize(normalMatrix * normal);
@@ -134,8 +134,8 @@ void main() {
 
   // Calculating final color as result of all lights (plus emissive term).
   // Transparency is determined exclusively by the diffuse component.
-  vertColor = vec4(totalAmbient, 0) * ambient + 
-              vec4(totalDiffuse, 1) * color + 
-              vec4(totalSpecular, 0) * specular + 
-              vec4(emissive.rgb, 0);              
+  varColor = vec4(totalAmbient, 0) * ambient + 
+             vec4(totalDiffuse, 1) * color + 
+             vec4(totalSpecular, 0) * specular + 
+             vec4(emissive.rgb, 0);              
 }

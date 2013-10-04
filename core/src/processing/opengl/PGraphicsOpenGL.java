@@ -7180,6 +7180,8 @@ public class PGraphicsOpenGL extends PGraphics {
     @Override
     public void loadAttributes() {
       vertexLoc = getAttributeLoc("vertex");
+      if (vertexLoc == -1) vertexLoc = getAttributeLoc("position");
+
       colorLoc = getAttributeLoc("color");
       texCoordLoc = getAttributeLoc("texCoord");
       normalLoc = getAttributeLoc("normal");
@@ -7401,6 +7403,8 @@ public class PGraphicsOpenGL extends PGraphics {
     @Override
     public void loadAttributes() {
       vertexLoc = getAttributeLoc("vertex");
+      if (vertexLoc == -1) vertexLoc = getAttributeLoc("position");
+
       colorLoc = getAttributeLoc("color");
       directionLoc = getAttributeLoc("direction");
     }
@@ -7499,6 +7503,8 @@ public class PGraphicsOpenGL extends PGraphics {
     @Override
     public void loadAttributes() {
       vertexLoc = getAttributeLoc("vertex");
+      if (vertexLoc == -1) vertexLoc = getAttributeLoc("position");
+
       colorLoc = getAttributeLoc("color");
       offsetLoc = getAttributeLoc("offset");
     }
