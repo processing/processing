@@ -41,12 +41,13 @@ import java.util.HashMap;
  */
 public class PShader {
   // shaders constants
-  static protected final int COLOR    = 0;
-  static protected final int LIGHT    = 1;
-  static protected final int TEXTURE  = 2;
-  static protected final int TEXLIGHT = 3;
-  static protected final int LINE     = 4;
-  static protected final int POINT    = 5;
+  static protected final int LINE     = 0;
+  static protected final int POINT    = 1;
+  static protected final int POLY     = 3;
+  static protected final int COLOR    = 4;
+  static protected final int LIGHT    = 5;
+  static protected final int TEXTURE  = 6;
+  static protected final int TEXLIGHT = 7;
 
   protected PApplet parent;
   // The main renderer associated to the parent PApplet.
