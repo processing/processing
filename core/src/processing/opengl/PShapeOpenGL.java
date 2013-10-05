@@ -1261,19 +1261,7 @@ public class PShapeOpenGL extends PShape {
 
 
   protected void transform(int type, float... args) {
-    int dimensions;
-    if (type == ROTATE) {
-      dimensions = args.length == 1 ? 2 : 3;
-    } else if (type == MATRIX) {
-      dimensions = args.length == 6 ? 2 : 3;
-    } else {
-      dimensions = args.length;
-    }
-    transformImpl(type, dimensions, args);
-  }
-
-
-  protected void transformImpl(int type, int ncoords, float... args) {
+    int ncoords = is3D ? 3 : 2;
     checkMatrix(ncoords);
     calcTransform(type, ncoords, args);
     if (tessellated) {
@@ -1397,9 +1385,9 @@ public class PShapeOpenGL extends PShape {
                       ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);
     inGeo.addBezierVertex(x2, y2, z2,
-                       x3, y3, z3,
-                       x4, y4, z4,
-                       fill, stroke, bezierDetail, vertexCode(), kind);
+                          x3, y3, z3,
+                          x4, y4, z4,
+                          fill, stroke, bezierDetail, vertexCode(), kind);
   }
 
 
@@ -1425,8 +1413,8 @@ public class PShapeOpenGL extends PShape {
                       ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);
     inGeo.addQuadraticVertex(cx, cy, cz,
-                          x3, y3, z3,
-                          fill, stroke, bezierDetail, vertexCode(), kind);
+                             x3, y3, z3,
+                             fill, stroke, bezierDetail, vertexCode(), kind);
   }
 
 
