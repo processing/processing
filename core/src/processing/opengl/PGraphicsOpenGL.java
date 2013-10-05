@@ -559,22 +559,6 @@ public class PGraphicsOpenGL extends PGraphics {
     width = iwidth;
     height = iheight;
 
-    allocate();
-    reapplySettings();
-
-    // init perspective projection based on new dimensions
-    cameraFOV = 60 * DEG_TO_RAD; // at least for now
-    cameraX = width / 2.0f;
-    cameraY = height / 2.0f;
-    cameraZ = cameraY / ((float) Math.tan(cameraFOV / 2.0f));
-    cameraNear = cameraZ / 10.0f;
-    cameraFar = cameraZ * 10.0f;
-    cameraAspect = (float) width / (float) height;
-
-    // Forces a restart of OpenGL so the canvas has the right size.
-    restartPGL();
-
-    // set this flag so that beginDraw() will do an update to the camera.
     sized = true;
   }
 
@@ -1582,6 +1566,8 @@ public class PGraphicsOpenGL extends PGraphics {
   public void requestDraw() {
     if (primarySurface) {
       if (initialized) {
+        if (sized) reinitPrimary();
+
         pgl.requestDraw();
       } else {
         initPrimary();
@@ -5958,6 +5944,32 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     pgPrimary = this;
     initialized = true;
+  }
+
+
+  protected void reinitPrimary() {
+    lightsAllocated = false;
+    matricesAllocated = false;
+
+    allocate();
+
+    reapplySettings();
+
+    // init perspective projection based on new dimensions
+    cameraFOV = 60 * DEG_TO_RAD; // at least for now
+    cameraX = width / 2.0f;
+    cameraY = height / 2.0f;
+    cameraZ = cameraY / ((float) Math.tan(cameraFOV / 2.0f));
+    cameraNear = cameraZ / 10.0f;
+    cameraFar = cameraZ * 10.0f;
+    cameraAspect = (float) width / (float) height;
+
+    // Forces a restart of OpenGL so the canvas has the right size.
+    // restartPGL();
+
+    // System.out.println("hasbeenSized");
+
+    pgl.reinitSurface();
   }
 
 
