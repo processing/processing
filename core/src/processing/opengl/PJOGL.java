@@ -312,6 +312,15 @@ public class PJOGL extends PGL {
 
 
   @Override
+  protected void reinitSurface() {
+    sinkFBO = backFBO = frontFBO = null;
+    fboLayerCreated = false;
+    fboLayerInUse = false;
+    firstFrame = true;
+  }
+
+
+  @Override
   protected void registerListeners() {
     if (WINDOW_TOOLKIT == AWT) {
       pg.parent.removeListeners(pg.parent);

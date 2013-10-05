@@ -328,6 +328,9 @@ public abstract class PGL {
   protected abstract void initSurface(int antialias);
 
 
+  protected abstract void reinitSurface();
+
+
   protected abstract void registerListeners();
 
 
