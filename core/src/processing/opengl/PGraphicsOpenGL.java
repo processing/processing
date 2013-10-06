@@ -27,7 +27,6 @@ import processing.core.*;
 import java.net.URL;
 import java.nio.*;
 import java.util.*;
-import java.util.regex.Pattern;
 
 /**
  * OpenGL renderer.
