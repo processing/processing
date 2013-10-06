@@ -204,6 +204,29 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // Shaders
 
+  static protected String pointShaderAttrRegexp =
+    "attribute *vec2 *offset";
+  static protected String lineShaderAttrRegexp =
+    "attribute *vec4 *direction";
+  static protected String pointShaderDefRegexp =
+    "#define *PROCESSING_POINT_SHADER";
+  static protected String lineShaderDefRegexp =
+    "#define *PROCESSING_LINE_SHADER";
+  static protected String colorShaderDefRegexp =
+    "#define *PROCESSING_COLOR_SHADER";
+  static protected String lightShaderDefRegexp =
+    "#define *PROCESSING_LIGHT_SHADER";
+  static protected String texShaderDefRegexp =
+    "#define *PROCESSING_TEXTURE_SHADER";
+  static protected String texlightShaderDefRegexp =
+    "#define *PROCESSING_TEXLIGHT_SHADER";
+  static protected String polyShaderDefRegexp =
+    "#define *PROCESSING_POLYGON_SHADER";
+  static protected String triShaderAttrRegexp =
+    "#define *PROCESSING_TRIANGLES_SHADER";
+  static protected String quadShaderAttrRegexp =
+    "#define *PROCESSING_QUADS_SHADER";
+
   static protected URL defColorShaderVertURL =
     PGraphicsOpenGL.class.getResource("ColorVert.glsl");
   static protected URL defTextureShaderVertURL =
@@ -6412,30 +6435,30 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected int getShaderType(String filename) {
     String[] source = parent.loadStrings(filename);
-    Pattern pointAttr = Pattern.compile("attribute *vec2 *offset");
-    Pattern lineAttr = Pattern.compile("attribute *vec4 *direction");
-    Pattern pointDef = Pattern.compile("#define *PROCESSING_POINT_SHADER");
-    Pattern lineDef = Pattern.compile("#define *PROCESSING_LINE_SHADER");
-    Pattern colorDef = Pattern.compile("#define *PROCESSING_COLOR_SHADER");
-    Pattern lightDef = Pattern.compile("#define *PROCESSING_LIGHT_SHADER");
-    Pattern texDef = Pattern.compile("#define *PROCESSING_TEXTURE_SHADER");
-    Pattern texlightDef = Pattern.compile("#define *PROCESSING_TEXLIGHT_SHADER");
-    Pattern polyDef = Pattern.compile("#define *PROCESSING_POLYGON_SHADER");
-    Pattern triDef = Pattern.compile("#define *PROCESSING_TRIANGLES_SHADER");
-    Pattern quadDef = Pattern.compile("#define *PROCESSING_QUADS_SHADER");
     for (int i = 0; i < source.length; i++) {
       String line = source[i].trim();
-      if (pointAttr.matcher(line).find()) return PShader.POINT;
-      else if (lineAttr.matcher(line).find()) return PShader.LINE;
-      else if (pointDef.matcher(line).find()) return PShader.POINT;
-      else if (lineDef.matcher(line).find()) return PShader.LINE;
-      else if (colorDef.matcher(line).find()) return PShader.COLOR;
-      else if (lightDef.matcher(line).find()) return PShader.LIGHT;
-      else if (texDef.matcher(line).find()) return PShader.TEXTURE;
-      else if (texlightDef.matcher(line).find()) return PShader.TEXLIGHT;
-      else if (polyDef.matcher(line).find()) return PShader.POLY;
-      else if (triDef.matcher(line).find()) return PShader.POLY;
-      else if (quadDef.matcher(line).find()) return PShader.POLY;
+      if (PApplet.match(line, pointShaderAttrRegexp) != null)
+        return PShader.POINT;
+      else if (PApplet.match(line, lineShaderAttrRegexp) != null)
+        return PShader.LINE;
+      else if (PApplet.match(line, pointShaderDefRegexp) != null)
+        return PShader.POINT;
+      else if (PApplet.match(line, lineShaderDefRegexp) != null)
+        return PShader.LINE;
+      else if (PApplet.match(line, colorShaderDefRegexp) != null)
+        return PShader.COLOR;
+      else if (PApplet.match(line, lightShaderDefRegexp) != null)
+        return PShader.LIGHT;
+      else if (PApplet.match(line, texShaderDefRegexp) != null)
+        return PShader.TEXTURE;
+      else if (PApplet.match(line, texlightShaderDefRegexp) != null)
+        return PShader.TEXLIGHT;
+      else if (PApplet.match(line, polyShaderDefRegexp) != null)
+        return PShader.POLY;
+      else if (PApplet.match(line, triShaderAttrRegexp) != null)
+        return PShader.POLY;
+      else if (PApplet.match(line, quadShaderAttrRegexp) != null)
+        return PShader.POLY;
     }
     return PShader.POLY;
   }
