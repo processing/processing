@@ -10,6 +10,8 @@ X   https://github.com/processing/processing/issues/2100
 X   not handled by BufferedReader (or XML parser)
 X   http://stackoverflow.com/questions/10556875/list-of-unicode-characters-that-should-be-filtered-in-output
 X   http://stackoverflow.com/questions/3072152/what-is-unicode-character-2028-ls-line-separator-used-for
+X fix image transparency in PDF output
+X   https://github.com/processing/processing/pull/2070
 
 _ Sort out blending differences with P2D/P3D
 _   https://github.com/processing/processing/issues/1844

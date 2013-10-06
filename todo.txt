@@ -14,12 +14,20 @@ X   https://github.com/processing/processing/pull/2093
 X cmd-left is bringing up the text area popup
 X   https://github.com/processing/processing/issues/2103
 
+_ still having right-click issues
+_   https://github.com/processing/processing/issues/2103
+
 X add appbundler.jar, otherwise folks have to include Xcode
 _ if they want to build appbundler, they'll need Xcode
 _   and the command line tools Preferences > Downloads > Command Line Tools
 _ appbundler will have an NPE if the osx binary isn't built
 _ also need to have 10.8 version of the SDK (old Xcode won't work)
 
+_ type looks a little feeble on OS X
+_   retina problem? may need to turn off (on?) smoothing
+_ also need to have a central menubar
+_   add the offscreen window hack
+_   otherwise mode change causes "do you want to quit?" on OS X
 _ fix console font on Windows and Linux with 7u40
 _   the message area text also looks ugly.. can we fix?
 _ add pref to select PDE font (so that CJKV languages work better)

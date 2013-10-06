@@ -22,15 +22,12 @@ package processing.pdf;
 
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.io.*;
 import java.util.*;
 
 import com.lowagie.text.*;
 import com.lowagie.text.pdf.*;
-
-// Tried iText 5, but it was too slow
-//import com.itextpdf.text.*;
-//import com.itextpdf.text.pdf.*;
 
 import processing.core.*;
 
@@ -405,20 +402,19 @@ public class PGraphicsPDF extends PGraphicsJava2D {
 
 
   protected void imageImpl(PImage image,
-                              float x1, float y1, float x2, float y2,
-                              int u1, int v1, int u2, int v2) {
+                           float x1, float y1, float x2, float y2,
+                           int u1, int v1, int u2, int v2) {
     pushMatrix();
     translate(x1, y1);
     int imageWidth = image.width;
     int imageHeight = image.height;
     scale((x2 - x1) / (float)imageWidth,
           (y2 - y1) / (float)imageHeight);
-    if (u2-u1 != imageWidth || v2-v1 != imageHeight) {
-      PImage tmp = new PImage(u2-u1, v2-v1, ARGB);
-      tmp.copy(image, u1, v1, u2, v2, 0, 0, u2-u1, v2-v1);
-      g2.drawImage(image.getImage(), 0, 0, null);
+    if (u2-u1 == imageWidth && v2-v1 == imageHeight) {
+      g2.drawImage((Image) image.getNative(), 0, 0, null);
     } else {
-      g2.drawImage(image.getImage(), u1, v1, null);
+      PImage tmp = image.get(u1, v1, u2-u1, v2-v1);
+      g2.drawImage((Image) tmp.getNative(), 0, 0, null);
     }
     popMatrix();
   }
