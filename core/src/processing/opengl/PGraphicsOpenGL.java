@@ -27,6 +27,7 @@ import processing.core.*;
 import java.net.URL;
 import java.nio.*;
 import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * OpenGL renderer.
@@ -6264,7 +6265,6 @@ public class PGraphicsOpenGL extends PGraphics {
   @Override
   public PShader loadShader(String fragFilename) {
     int shaderType = getShaderType(fragFilename);
-    //if (shaderType == -1) shaderType = PShader.COLOR;
     PShader shader = null;
     if (shaderType == PShader.POINT) {
       shader = new PointShader(parent);
@@ -6412,31 +6412,32 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected int getShaderType(String filename) {
     String[] source = parent.loadStrings(filename);
-    int type = PShader.POLY;
+    Pattern pointAttr = Pattern.compile("attribute *vec2 *offset");
+    Pattern lineAttr = Pattern.compile("attribute *vec4 *direction");
+    Pattern pointDef = Pattern.compile("#define *PROCESSING_POINT_SHADER");
+    Pattern lineDef = Pattern.compile("#define *PROCESSING_LINE_SHADER");
+    Pattern colorDef = Pattern.compile("#define *PROCESSING_COLOR_SHADER");
+    Pattern lightDef = Pattern.compile("#define *PROCESSING_LIGHT_SHADER");
+    Pattern texDef = Pattern.compile("#define *PROCESSING_TEXTURE_SHADER");
+    Pattern texlightDef = Pattern.compile("#define *PROCESSING_TEXLIGHT_SHADER");
+    Pattern polyDef = Pattern.compile("#define *PROCESSING_POLYGON_SHADER");
+    Pattern triDef = Pattern.compile("#define *PROCESSING_TRIANGLES_SHADER");
+    Pattern quadDef = Pattern.compile("#define *PROCESSING_QUADS_SHADER");
     for (int i = 0; i < source.length; i++) {
       String line = source[i].trim();
-
-      if (line.indexOf("#define PROCESSING_POINT_SHADER") == 0) {
-        type = PShader.POINT;
-      } else if (line.indexOf("#define PROCESSING_LINE_SHADER") == 0) {
-        type = PShader.LINE;
-      } else if (line.indexOf("#define PROCESSING_COLOR_SHADER") == 0) {
-        type = PShader.COLOR;
-      } else if (line.indexOf("#define PROCESSING_LIGHT_SHADER") == 0) {
-        type = PShader.LIGHT;
-      } else if (line.indexOf("#define PROCESSING_TEXTURE_SHADER") == 0) {
-        type = PShader.TEXTURE;
-      } else if (line.indexOf("#define PROCESSING_TEXLIGHT_SHADER") == 0) {
-        type = PShader.TEXLIGHT;
-      } else if (line.indexOf("#define PROCESSING_POLYGON_SHADER") == 0) {
-        type = PShader.POLY;
-      } else if (line.indexOf("#define PROCESSING_TRIANGLES_SHADER") == 0) {
-        type = PShader.POLY;
-      } else if (line.indexOf("#define PROCESSING_QUADS_SHADER") == 0) {
-        type = PShader.POLY;
-      }
+      if (pointAttr.matcher(line).find()) return PShader.POINT;
+      else if (lineAttr.matcher(line).find()) return PShader.LINE;
+      else if (pointDef.matcher(line).find()) return PShader.POINT;
+      else if (lineDef.matcher(line).find()) return PShader.LINE;
+      else if (colorDef.matcher(line).find()) return PShader.COLOR;
+      else if (lightDef.matcher(line).find()) return PShader.LIGHT;
+      else if (texDef.matcher(line).find()) return PShader.TEXTURE;
+      else if (texlightDef.matcher(line).find()) return PShader.TEXLIGHT;
+      else if (polyDef.matcher(line).find()) return PShader.POLY;
+      else if (triDef.matcher(line).find()) return PShader.POLY;
+      else if (quadDef.matcher(line).find()) return PShader.POLY;
     }
-    return type;
+    return PShader.POLY;
   }
 
 
