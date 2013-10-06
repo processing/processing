@@ -5948,9 +5948,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void reinitPrimary() {
-    lightsAllocated = false;
-    matricesAllocated = false;
-
     allocate();
 
     // init perspective projection based on new dimensions
