@@ -186,8 +186,6 @@ public class Serial implements SerialPortEventListener {
 
   
   public static Map<String, String> getProperties(String portName) {
-    //SerialPortList list = new SerialPortList();
-    //return list.getPortProperties(portName);
     return SerialPortList.getPortProperties(portName);
   }
 
@@ -214,8 +212,6 @@ public class Serial implements SerialPortEventListener {
   public static String[] list() {
     // returns list sorted alphabetically, thus cu.* comes before tty.*
     // this was different with RXTX
-    //SerialPortList list = new SerialPortList();
-    //return list.getPortNames();
     return SerialPortList.getPortNames();
   }
 
