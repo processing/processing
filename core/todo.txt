@@ -26,6 +26,8 @@ X incorrectly applied transformations in retained mode
 X   https://github.com/processing/processing/issues/2097
 X push/popStyle() causes color problems with P2D/P3D
 X   https://github.com/processing/processing/issues/2102
+X child SVG elements misplaced when rendering with P2D/P3D
+X   https://github.com/processing/processing/issues/2086
 
 _ Sort out blending differences with P2D/P3D
 _   https://github.com/processing/processing/issues/1844

@@ -25,6 +25,11 @@ _ also need to have 10.8 version of the SDK (old Xcode won't work)
 
 _ type looks a little feeble on OS X
 _   retina problem? may need to turn off (on?) smoothing
+_ type cut off in dialog boxes on OS X retina machines
+_   https://github.com/processing/processing/issues/2116
+_ dialog box icon is fuzzy on OS X retina machines
+_   https://github.com/processing/processing/issues/2117
+
 _ also need to have a central menubar
 _   add the offscreen window hack
 _   otherwise mode change causes "do you want to quit?" on OS X
