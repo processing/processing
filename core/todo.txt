@@ -12,6 +12,20 @@ X   http://stackoverflow.com/questions/10556875/list-of-unicode-characters-that-
 X   http://stackoverflow.com/questions/3072152/what-is-unicode-character-2028-ls-line-separator-used-for
 X fix image transparency in PDF output
 X   https://github.com/processing/processing/pull/2070
+X Java2D images crash after being resized
+X   https://github.com/processing/processing/issues/2113
+
+opengl
+X fix inconsistency with P2D and resetMatrix()
+X   https://github.com/processing/processing/issues/2087
+X text rendering problems
+X   https://github.com/processing/processing/issues/2109
+X textSize() not working properly in P2D
+X   https://github.com/processing/processing/issues/2073
+X incorrectly applied transformations in retained mode
+X   https://github.com/processing/processing/issues/2097
+X push/popStyle() causes color problems with P2D/P3D
+X   https://github.com/processing/processing/issues/2102
 
 _ Sort out blending differences with P2D/P3D
 _   https://github.com/processing/processing/issues/1844
@@ -19,6 +33,8 @@ _ 'collector' class.. Dict that points to a list
 _   String as a key, int/float/string list as values
 
 high
+_ custom DPI settings with PDF
+_   https://github.com/processing/processing/pull/2069
 _ loadPixels doesn't set alpha value for pixels on Java2D
 _   https://github.com/processing/processing/issues/2030
 _ blendMode(ADD) is broken with default renderer

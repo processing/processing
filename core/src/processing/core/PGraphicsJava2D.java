@@ -1247,15 +1247,25 @@ public class PGraphicsJava2D extends PGraphics {
     // Image not ready yet, or an error
     if (who.width <= 0 || who.height <= 0) return;
 
-    if (getCache(who) == null) {
+    ImageCache cash = (ImageCache) getCache(who);
+
+    // Nuke the cache if the image was resized
+    if (cash != null) {
+      if (who.width != cash.image.getWidth() ||
+          who.height != cash.image.getHeight()) {
+        cash = null;
+      }
+    }
+
+    if (cash == null) {
       //System.out.println("making new image cache");
-      this.setCache(who, new ImageCache(who));
+      cash = new ImageCache(who);
+      setCache(who, cash);
       who.updatePixels();  // mark the whole thing for update
       who.modified = true;
     }
 
-    ImageCache cash = (ImageCache) getCache(who);
-    // if image previously was tinted, or the color changed
+    // If image previously was tinted, or the color changed
     // or the image was tinted, and tint is now disabled
     if ((tint && !cash.tinted) ||
         (tint && (cash.tintedColor != tintColor)) ||
@@ -1273,8 +1283,8 @@ public class PGraphicsJava2D extends PGraphics {
                  (int) x1, (int) y1, (int) x2, (int) y2,
                  u1, v1, u2, v2, null);
 
-    // every few years I think "nah, Java2D couldn't possibly be that
-    // f*king slow, why are we doing this by hand? then comes the affirmation.
+    // Every few years I think "nah, Java2D couldn't possibly be that f*king
+    // slow, why are we doing this by hand?" then comes the affirmation:
 //    Composite oldComp = null;
 //    if (false && tint) {
 //      oldComp = g2.getComposite();
