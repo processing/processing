@@ -41,6 +41,7 @@ import processing.opengl.PGraphicsOpenGL.Tessellator;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Stack;
 
 /**
  * This class holds a 3D model composed of vertices, normals, colors
@@ -155,6 +156,7 @@ public class PShapeOpenGL extends PShape {
   // Geometric transformations.
 
   protected PMatrix transform;
+  protected Stack<PMatrix> transformStack;
 
   // ........................................................
 
@@ -1243,34 +1245,31 @@ public class PShapeOpenGL extends PShape {
 
   @Override
   public void resetMatrix() {
-    if (shapeCreated && matrix != null) {
+    if (shapeCreated && matrix != null && transformStack != null) {
       if (family == GROUP) {
         updateTessellation();
       }
-      boolean res = matrix.invert();
-      if (res) {
-        if (tessellated) {
-          applyMatrixImpl(matrix);
+      if (tessellated) {
+        PMatrix mat = popTransform();
+        while (mat != null) {
+          boolean res = mat.invert();
+          if (res) {
+            applyMatrixImpl(mat);
+          } else {
+            PGraphics.showWarning("Transformation applied on the shape cannot be inverted");
+          }
+          mat = popTransform();
         }
-        matrix = null;
-      } else {
-        PGraphics.showWarning("The transformation matrix cannot be inverted");
       }
+      matrix.reset();
+      transformStack.clear();
     }
   }
 
 
   protected void transform(int type, float... args) {
-    int ncoords = is3D ? 3 : 2;
-    checkMatrix(ncoords);
-    calcTransform(type, ncoords, args);
-    if (tessellated) {
-      applyMatrixImpl(transform);
-    }
-  }
-
-
-  protected void calcTransform(int type, int dimensions, float... args) {
+    int dimensions = is3D ? 3 : 2;
+    checkMatrix(dimensions);
     if (transform == null) {
       if (dimensions == 2) {
         transform = new PMatrix2D();
@@ -1281,30 +1280,37 @@ public class PShapeOpenGL extends PShape {
       transform.reset();
     }
 
+    int ncoords = args.length;
+    if (type == ROTATE) {
+      ncoords = args.length == 1 ? 2 : 3;
+    } else if (type == MATRIX) {
+      ncoords = args.length == 6 ? 2 : 3;
+    }
+
     switch (type) {
     case TRANSLATE:
-      if (dimensions == 3) {
+      if (ncoords == 3) {
         transform.translate(args[0], args[1], args[2]);
       } else {
         transform.translate(args[0], args[1]);
       }
       break;
     case ROTATE:
-      if (dimensions == 3) {
+      if (ncoords == 3) {
         transform.rotate(args[0], args[1], args[2], args[3]);
       } else {
         transform.rotate(args[0]);
       }
       break;
     case SCALE:
-      if (dimensions == 3) {
+      if (ncoords == 3) {
         transform.scale(args[0], args[1], args[2]);
       } else {
         transform.scale(args[0], args[1]);
       }
       break;
     case MATRIX:
-      if (dimensions == 3) {
+      if (ncoords == 3) {
         transform.set(args[ 0], args[ 1], args[ 2], args[ 3],
                       args[ 4], args[ 5], args[ 6], args[ 7],
                       args[ 8], args[ 9], args[10], args[11],
@@ -1316,8 +1322,28 @@ public class PShapeOpenGL extends PShape {
       break;
     }
     matrix.apply(transform);
+    pushTransform();
+    if (tessellated) applyMatrixImpl(transform);
   }
 
+
+  protected void pushTransform() {
+    if (transformStack == null) transformStack = new Stack<PMatrix>();
+    PMatrix mat;
+    if (transform instanceof PMatrix2D) {
+      mat = new PMatrix2D();
+    } else {
+      mat = new PMatrix3D();
+    }
+    mat.set(transform);
+    transformStack.push(mat);
+  }
+
+
+  protected PMatrix popTransform() {
+    if (transformStack == null || transformStack.size() == 0) return null;
+    return transformStack.pop();
+  }
 
   protected void applyMatrixImpl(PMatrix matrix) {
     if (hasPolys) {
@@ -3138,7 +3164,6 @@ public class PShapeOpenGL extends PShape {
     if (matrix != null) {
       // Some geometric transformations were applied on
       // this shape before tessellation, so they are applied now.
-      //applyMatrixImpl(matrix);
       if (hasPolys) {
         tessGeo.applyMatrixOnPolyGeometry(matrix,
                                           firstPolyVertex, lastPolyVertex);
