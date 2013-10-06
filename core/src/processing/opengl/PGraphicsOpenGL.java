@@ -5953,8 +5953,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
     allocate();
 
-    reapplySettings();
-
     // init perspective projection based on new dimensions
     cameraFOV = 60 * DEG_TO_RAD; // at least for now
     cameraX = width / 2.0f;
@@ -6148,6 +6146,8 @@ public class PGraphicsOpenGL extends PGraphics {
     pgl.disable(PGL.POLYGON_SMOOTH);
 
     if (sized) {
+      reapplySettings();
+
       // To avoid having garbage in the screen after a resize,
       // in the case background is not called in draw().
       background(backgroundColor);
