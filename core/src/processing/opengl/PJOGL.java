@@ -782,7 +782,7 @@ public class PJOGL extends PGL {
 
     @Override
     public void reshape(GLAutoDrawable glDrawable, int x, int y, int w, int h) {
-      getGL(glDrawable);
+      //getGL(glDrawable);
     }
 
     private void getGL(GLAutoDrawable glDrawable) {
