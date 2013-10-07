@@ -265,7 +265,7 @@ public class PShader {
    * @param w fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
    */
   public void set(String name, int x, int y, int z, int w) {
-    setUniformImpl(name, UniformValue.INT4, new int[] { x, y, z });
+    setUniformImpl(name, UniformValue.INT4, new int[] { x, y, z, w });
   }
 
 

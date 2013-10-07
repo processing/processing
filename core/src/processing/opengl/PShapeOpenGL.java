@@ -33,9 +33,9 @@ import processing.core.PShape;
 import processing.core.PVector;
 import processing.opengl.PGraphicsOpenGL.LineShader;
 import processing.opengl.PGraphicsOpenGL.PointShader;
-import processing.opengl.PGraphicsOpenGL.BaseShader;
 import processing.opengl.PGraphicsOpenGL.IndexCache;
 import processing.opengl.PGraphicsOpenGL.InGeometry;
+import processing.opengl.PGraphicsOpenGL.PolyShader;
 import processing.opengl.PGraphicsOpenGL.TessGeometry;
 import processing.opengl.PGraphicsOpenGL.Tessellator;
 
@@ -4432,10 +4432,14 @@ public class PShapeOpenGL extends PShape {
 
 
   protected void renderPolys(PGraphicsOpenGL g, PImage textureImage) {
+    boolean customShader = g.polyShader != null;
+    boolean needNormals = customShader ? g.polyShader.accessNormals() : false;
+    boolean needTexCoords = customShader ? g.polyShader.accessTexCoords() : false;
+
     Texture tex = textureImage != null ? g.getTexture(textureImage) : null;
 
     boolean renderingFill = false, renderingStroke = false;
-    BaseShader shader = null;
+    PolyShader shader = null;
     IndexCache cache = tessGeo.polyIndexCache;
     for (int n = firstPolyIndexCache; n <= lastPolyIndexCache; n++) {
       if (is3D() || (tex != null && (firstLineIndexCache == -1 ||
@@ -4478,10 +4482,6 @@ public class PShapeOpenGL extends PShape {
                                 0, 4 * voffset * PGL.SIZEOF_FLOAT);
       shader.setColorAttribute(root.glPolyColor, 4, PGL.UNSIGNED_BYTE,
                                0, 4 * voffset * PGL.SIZEOF_BYTE);
-      shader.setNormalAttribute(root.glPolyNormal, 3, PGL.FLOAT,
-                                0, 3 * voffset * PGL.SIZEOF_FLOAT);
-      shader.setTexcoordAttribute(root.glPolyTexcoord, 2, PGL.FLOAT,
-                                  0, 2 * voffset * PGL.SIZEOF_FLOAT);
 
       if (g.lights) {
         shader.setNormalAttribute(root.glPolyNormal, 3, PGL.FLOAT,
@@ -4494,14 +4494,16 @@ public class PShapeOpenGL extends PShape {
                                     0, 4 * voffset * PGL.SIZEOF_BYTE);
         shader.setShininessAttribute(root.glPolyShininess, 1, PGL.FLOAT,
                                      0, voffset * PGL.SIZEOF_FLOAT);
-      } else if (shader.supportLighting()) {
-        PGraphics.showWarning(PGraphicsOpenGL.LIGHT_SHADER_ERROR);
+      }
+      if (g.lights || needNormals) {
+        shader.setNormalAttribute(root.glPolyNormal, 3, PGL.FLOAT,
+                                  0, 3 * voffset * PGL.SIZEOF_FLOAT);
       }
 
-      if (tex != null) {
+      if (tex != null || needTexCoords) {
+        shader.setTexcoordAttribute(root.glPolyTexcoord, 2, PGL.FLOAT,
+                                    0, 2 * voffset * PGL.SIZEOF_FLOAT);
         shader.setTexture(tex);
-      } else if (shader.supportsTexturing()) {
-        PGraphics.showWarning(PGraphicsOpenGL.TEXTURE_SHADER_ERROR);
       }
 
       pgl.bindBuffer(PGL.ELEMENT_ARRAY_BUFFER, root.glPolyIndex);
