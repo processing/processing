@@ -6143,7 +6143,7 @@ public class PGraphicsOpenGL extends PGraphics {
     pgl.disable(PGL.POLYGON_SMOOTH);
 
     if (sized) {
-      reapplySettings();
+      //reapplySettings();
 
       // To avoid having garbage in the screen after a resize,
       // in the case background is not called in draw().
