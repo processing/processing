@@ -84,12 +84,6 @@ public class PGraphicsOpenGL extends PGraphics {
     "shader() called with a wrong shader";
   static final String UNKNOWN_SHADER_KIND_ERROR =
     "Unknown shader kind";
-  static final String LIGHT_SHADER_ERROR =
-    "The shader expects lights but it is beging used to draw an unlit scene, " +
-    "this might lead to unexpected rendering errors.";
-  static final String TEXTURE_SHADER_ERROR =
-    "The shader expects textures but it is being used to draw an untextured scene, " +
-    "this might lead to unexpected rendering errors.";
   static final String TOO_LONG_STROKE_PATH_ERROR =
     "Stroke path is too long, some bevel triangles won't be added";
   static final String TESSELLATION_ERROR =
@@ -1294,7 +1288,8 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  protected void updatePolyBuffers(boolean lit, boolean tex) {
+  protected void updatePolyBuffers(boolean lit, boolean tex,
+                                   boolean needNormals, boolean needTexCoords) {
     createPolyBuffers();
 
     int size = tessGeo.polyVertexCount;
@@ -1312,11 +1307,6 @@ public class PGraphicsOpenGL extends PGraphics {
                    tessGeo.polyColorsBuffer, PGL.STATIC_DRAW);
 
     if (lit) {
-      tessGeo.updatePolyNormalsBuffer();
-      pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolyNormal);
-      pgl.bufferData(PGL.ARRAY_BUFFER, 3 * sizef,
-                     tessGeo.polyNormalsBuffer, PGL.STATIC_DRAW);
-
       tessGeo.updatePolyAmbientBuffer();
       pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolyAmbient);
       pgl.bufferData(PGL.ARRAY_BUFFER, sizei,
@@ -1337,8 +1327,14 @@ public class PGraphicsOpenGL extends PGraphics {
       pgl.bufferData(PGL.ARRAY_BUFFER, sizef,
                      tessGeo.polyShininessBuffer, PGL.STATIC_DRAW);
     }
+    if (lit || needNormals) {
+      tessGeo.updatePolyNormalsBuffer();
+      pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolyNormal);
+      pgl.bufferData(PGL.ARRAY_BUFFER, 3 * sizef,
+                     tessGeo.polyNormalsBuffer, PGL.STATIC_DRAW);
+    }
 
-    if (tex) {
+    if (tex || needTexCoords) {
       tessGeo.updatePolyTexCoordsBuffer();
       pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolyTexcoord);
       pgl.bufferData(PGL.ARRAY_BUFFER, 2 * sizef,
@@ -2381,7 +2377,11 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void flushPolys() {
-    updatePolyBuffers(lights, texCache.hasTextures);
+    boolean customShader = polyShader != null;
+    boolean needNormals = customShader ? polyShader.accessNormals() : false;
+    boolean needTexCoords = customShader ? polyShader.accessTexCoords() : false;
+
+    updatePolyBuffers(lights, texCache.hasTextures, needNormals, needTexCoords);
 
     for (int i = 0; i < texCache.size; i++) {
       Texture tex = texCache.getTexture(i);
@@ -2405,10 +2405,6 @@ public class PGraphicsOpenGL extends PGraphics {
                                   4 * voffset * PGL.SIZEOF_FLOAT);
         shader.setColorAttribute(glPolyColor, 4, PGL.UNSIGNED_BYTE, 0,
                                  4 * voffset * PGL.SIZEOF_BYTE);
-        shader.setNormalAttribute(glPolyNormal, 3, PGL.FLOAT, 0,
-                                  3 * voffset * PGL.SIZEOF_FLOAT);
-        shader.setTexcoordAttribute(glPolyTexcoord, 2, PGL.FLOAT, 0,
-                                    2 * voffset * PGL.SIZEOF_FLOAT);
 
         if (lights) {
           shader.setNormalAttribute(glPolyNormal, 3, PGL.FLOAT, 0,
@@ -2421,14 +2417,17 @@ public class PGraphicsOpenGL extends PGraphics {
                                       4 * voffset * PGL.SIZEOF_BYTE);
           shader.setShininessAttribute(glPolyShininess, 1, PGL.FLOAT, 0,
                                        voffset * PGL.SIZEOF_FLOAT);
-        } else if (shader.supportLighting()) {
-          PGraphics.showWarning(LIGHT_SHADER_ERROR);
         }
 
-        if (tex != null) {
+        if (lights || needNormals) {
+          shader.setNormalAttribute(glPolyNormal, 3, PGL.FLOAT, 0,
+                                    3 * voffset * PGL.SIZEOF_FLOAT);
+        }
+
+        if (tex != null || needTexCoords) {
+          shader.setTexcoordAttribute(glPolyTexcoord, 2, PGL.FLOAT, 0,
+                                      2 * voffset * PGL.SIZEOF_FLOAT);
           shader.setTexture(tex);
-        } else if (shader.supportsTexturing()) {
-          PGraphics.showWarning(TEXTURE_SHADER_ERROR);
         }
 
         pgl.bindBuffer(PGL.ELEMENT_ARRAY_BUFFER, glPolyIndex);
@@ -5539,7 +5538,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
   @Override
   public void filter(PShader shader) {
-    if (!(shader instanceof PolyShader) || !((PolyShader)shader).supportsTexturing()) {
+    if (!(shader instanceof PolyShader) ||
+        !((PolyShader)shader).supportsTexturing()) {
       PGraphics.showWarning(INVALID_FILTER_SHADER_ERROR);
       return;
     }
@@ -5671,7 +5671,7 @@ public class PGraphicsOpenGL extends PGraphics {
    * Allows to set custom blend modes for the entire scene, using openGL.
    * Reference article about blending modes:
    * http://www.pegtop.net/delphi/articles/blendmodes/
-   * HARD_LIGHT, SOFT_LIGHT, OVERLAY, DODGE, BURN modes cannot be
+   * DIFFERENCE, HARD_LIGHT, SOFT_LIGHT, OVERLAY, DODGE, BURN modes cannot be
    * implemented in fixed-function pipeline because they require
    * conditional blending and non-linear blending equations.
    */
@@ -5726,12 +5726,6 @@ public class PGraphicsOpenGL extends PGraphics {
         PGraphics.showWarning(BLEND_DRIVER_ERROR, "DARKEST");
       }
 
-    } else if (blendMode == DIFFERENCE) {
-      if (blendEqSupported) {
-        pgl.blendEquation(PGL.FUNC_ADD);
-      }
-      pgl.blendFunc(PGL.ONE_MINUS_DST_COLOR, PGL.ZERO);
-
     } else if (blendMode == EXCLUSION) {
       if (blendEqSupported) {
         pgl.blendEquation(PGL.FUNC_ADD);
@@ -5749,6 +5743,9 @@ public class PGraphicsOpenGL extends PGraphics {
         pgl.blendEquation(PGL.FUNC_ADD);
       }
       pgl.blendFunc(PGL.ONE_MINUS_DST_COLOR, PGL.ONE);
+
+    } else if (blendMode == DIFFERENCE) {
+      PGraphics.showWarning(BLEND_RENDERER_ERROR, "DIFFERENCE");
 
     } else if (blendMode == OVERLAY) {
       PGraphics.showWarning(BLEND_RENDERER_ERROR, "OVERLAY");
@@ -6645,7 +6642,7 @@ public class PGraphicsOpenGL extends PGraphics {
       }
 
       if (-1 < bufferLoc) {
-        bufferUnit = getLastTexUnit() + 1;
+        bufferUnit = super.getLastTexUnit() + 1;
         setUniformValue(bufferLoc, bufferUnit);
         pgl.activeTexture(PGL.TEXTURE0 + bufferUnit);
         pgCurrent.bindFrontTexture();
@@ -6654,11 +6651,24 @@ public class PGraphicsOpenGL extends PGraphics {
       }
     }
 
+    @Override
+    public int getLastTexUnit() {
+      return -1 < bufferUnit ? bufferUnit : super.getLastTexUnit();
+    }
+
     public boolean supportsTexturing() {
       return false;
     }
 
     public boolean supportLighting() {
+      return false;
+    }
+
+    public boolean accessTexCoords() {
+      return false;
+    }
+
+    public boolean accessNormals() {
       return false;
     }
 
@@ -6760,32 +6770,40 @@ public class PGraphicsOpenGL extends PGraphics {
       texOffsetLoc = getUniformLoc("texOffset");
     }
 
-//    @Override
-//    public int getLastTexUnit() {
-//      return -1 < bufferUnit ? bufferUnit : super.getLastTexUnit();
-//    }
-
     @Override
     public void setTexture(Texture tex) {
+      texture = tex;
+
       float scaleu = 1;
       float scalev = 1;
       float dispu  = 0;
       float dispv  = 0;
 
-      if (tex.invertedX()) {
-        scaleu = -1;
-        dispu  = 1;
-      }
+      if (tex != null) {
+        if (tex.invertedX()) {
+          scaleu = -1;
+          dispu  = 1;
+        }
 
-      if (tex.invertedY()) {
-        scalev = -1;
-        dispv  = 1;
-      }
+        if (tex.invertedY()) {
+          scalev = -1;
+          dispv  = 1;
+        }
 
-      scaleu *= tex.maxTexcoordU();
-      dispu  *= tex.maxTexcoordU();
-      scalev *= tex.maxTexcoordV();
-      dispv  *= tex.maxTexcoordV();
+        scaleu *= tex.maxTexcoordU();
+        dispu  *= tex.maxTexcoordU();
+        scalev *= tex.maxTexcoordV();
+        dispv  *= tex.maxTexcoordV();
+
+        setUniformValue(texOffsetLoc, 1.0f / tex.width, 1.0f / tex.height);
+
+        if (-1 < textureLoc) {
+          texUnit = getLastTexUnit() + 1;
+          setUniformValue(textureLoc, texUnit);
+          pgl.activeTexture(PGL.TEXTURE0 + texUnit);
+          tex.bind();
+        }
+      }
 
       if (-1 < texMatrixLoc) {
         if (tcmat == null) {
@@ -6797,16 +6815,6 @@ public class PGraphicsOpenGL extends PGraphics {
         tcmat[3] = 0;      tcmat[7] = 0;      tcmat[11] = 0; tcmat[15] = 0;
         setUniformMatrix(texMatrixLoc, tcmat);
       }
-
-      setUniformValue(texOffsetLoc, 1.0f / tex.width, 1.0f / tex.height);
-
-      if (-1 < textureLoc) {
-        texUnit = getLastTexUnit() + 1;
-        setUniformValue(textureLoc, texUnit);
-        pgl.activeTexture(PGL.TEXTURE0 + texUnit);
-        tex.bind();
-        texture = tex;
-      }
     }
 
     @Override
@@ -6817,6 +6825,16 @@ public class PGraphicsOpenGL extends PGraphics {
     @Override
     public boolean supportLighting() {
       return -1 < lightCountLoc || -1 < lightPositionLoc || -1 < lightNormalLoc;
+    }
+
+    @Override
+    public boolean accessTexCoords() {
+      return -1 < texCoordLoc;
+    }
+
+    @Override
+    public boolean accessNormals() {
+      return -1 < normalLoc;
     }
 
     @Override
@@ -6894,14 +6912,16 @@ public class PGraphicsOpenGL extends PGraphics {
 
       int count = pgCurrent.lightCount;
       setUniformValue(lightCountLoc, count);
-      setUniformVector(lightPositionLoc, pgCurrent.lightPosition, 4, count);
-      setUniformVector(lightNormalLoc, pgCurrent.lightNormal, 3, count);
-      setUniformVector(lightAmbientLoc, pgCurrent.lightAmbient, 3, count);
-      setUniformVector(lightDiffuseLoc, pgCurrent.lightDiffuse, 3, count);
-      setUniformVector(lightSpecularLoc, pgCurrent.lightSpecular, 3, count);
-      setUniformVector(lightFalloffLoc, pgCurrent.lightFalloffCoefficients,
-                       3, count);
-      setUniformVector(lightSpotLoc, pgCurrent.lightSpotParameters, 2, count);
+      if (0 < count) {
+        setUniformVector(lightPositionLoc, pgCurrent.lightPosition, 4, count);
+        setUniformVector(lightNormalLoc, pgCurrent.lightNormal, 3, count);
+        setUniformVector(lightAmbientLoc, pgCurrent.lightAmbient, 3, count);
+        setUniformVector(lightDiffuseLoc, pgCurrent.lightDiffuse, 3, count);
+        setUniformVector(lightSpecularLoc, pgCurrent.lightSpecular, 3, count);
+        setUniformVector(lightFalloffLoc, pgCurrent.lightFalloffCoefficients,
+                         3, count);
+        setUniformVector(lightSpotLoc, pgCurrent.lightSpotParameters, 2, count);
+      }
     }
 
     @Override
@@ -8008,24 +8028,6 @@ public class PGraphicsOpenGL extends PGraphics {
         vert[SA] = ((strokeColors[i] >> 24) & 0xFF) / 255.0f;
 
         vert[SW] = strokeWeights[i];
-
-        /*
-        // Android doesn't have these:
-        vert[AR] = ((ambient[i] >> 16) & 0xFF) / 255.0f;
-        vert[AG] = ((ambient[i] >>  8) & 0xFF) / 255.0f;
-        vert[AB] = ((ambient[i] >>  0) & 0xFF) / 255.0f;
-
-        vert[SPR] = ((specular[i] >> 16) & 0xFF) / 255.0f;
-        vert[SPG] = ((specular[i] >>  8) & 0xFF) / 255.0f;
-        vert[SPB] = ((specular[i] >>  0) & 0xFF) / 255.0f;
-
-        vert[ER] = ((emissive[i] >> 16) & 0xFF) / 255.0f;
-        vert[EG] = ((emissive[i] >>  8) & 0xFF) / 255.0f;
-        vert[EB] = ((emissive[i] >>  0) & 0xFF) / 255.0f;
-
-        vert[SHINE] = shininess[i];
-        */
-
       }
 
       return data;
