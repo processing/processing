@@ -2369,28 +2369,21 @@ public class JEditTextArea extends JComponent
   }
 
 
-  class FocusHandler implements FocusListener
-  {
-    public void focusGained(FocusEvent evt)
-    {
-//      System.out.println("JEditTextArea: focusGained");
+  class FocusHandler implements FocusListener {
+    
+    public void focusGained(FocusEvent evt) {
       setCaretVisible(true);
-//      focusedComponent = JEditTextArea.this;
     }
 
-    public void focusLost(FocusEvent evt)
-    {
-//      System.out.println("JEditTextArea: focusLost");
+    public void focusLost(FocusEvent evt) {
       setCaretVisible(false);
-//      focusedComponent = null;
     }
   }
 
 
-  class MouseHandler extends MouseAdapter
-  {
-    public void mousePressed(MouseEvent evt)
-    {
+  class MouseHandler extends MouseAdapter {
+    
+    public void mousePressed(MouseEvent event) {
 //      try {
 //      requestFocus();
 //      // Focus events not fired sometimes?
@@ -2409,45 +2402,36 @@ public class JEditTextArea extends JComponent
         return;
       }
 
-      // Disabling this block since it was a workaround for old buggy Java,
-      // and is now causing problems b/c cmd-click was opening popups on OS X.
-      // https://github.com/processing/processing/issues/2103
-//      // isPopupTrigger wasn't working for danh on windows
-//      boolean trigger = (evt.getModifiers() & InputEvent.BUTTON3_MASK) != 0;
-//      // but it's required for macosx, since control-click does
-//      // the same thing as a right-mouse click
-//      if (!trigger && evt.isPopupTrigger()) trigger = true;
-//      if (trigger && (popup != null)) {
-      if (evt.isPopupTrigger() && (popup != null)) {
-        popup.show(painter,evt.getX(),evt.getY());
+      if (event.isPopupTrigger() && (popup != null)) {
+        System.out.println("firing popup press");
+        popup.show(painter, event.getX(), event.getY());
         return;
       }
 
-      int line = yToLine(evt.getY());
-      int offset = xToOffset(line,evt.getX());
+      int line = yToLine(event.getY());
+      int offset = xToOffset(line, event.getX());
       int dot = getLineStartOffset(line) + offset;
 
       selectLine = false;
       selectWord = false;
 
-      switch(evt.getClickCount()) {
+      switch (event.getClickCount()) {
 
       case 1:
-        doSingleClick(evt,line,offset,dot);
+        doSingleClick(event,line,offset,dot);
         break;
 
       case 2:
-        // It uses the bracket matching stuff, so
-        // it can throw a BLE
+        // It uses the bracket matching stuff, so it can throw a BLE
         try {
-          doDoubleClick(evt,line,offset,dot);
-        } catch(BadLocationException bl) {
+          doDoubleClick(event, line, offset, dot);
+        } catch (BadLocationException bl) {
           bl.printStackTrace();
         }
         break;
 
       case 3:
-        doTripleClick(evt,line,offset,dot);
+        doTripleClick(event,line,offset,dot);
         break;
       }
 //      } catch (ArrayIndexOutOfBoundsException aioobe) {
@@ -2458,8 +2442,18 @@ public class JEditTextArea extends JComponent
     }
 
 
-    private void doSingleClick(MouseEvent evt, int line,
-        int offset, int dot) {
+    // Because isPopupTrigger() is handled differently across platforms, 
+    // it may fire during release, or during the press.
+    // http://docs.oracle.com/javase/7/docs/api/java/awt/event/MouseEvent.html#isPopupTrigger()
+    public void mouseReleased(MouseEvent event) {
+      if (event.isPopupTrigger() && (popup != null)) {
+        System.out.println("firing popup release");
+        popup.show(painter, event.getX(), event.getY());
+      }
+    }
+    
+    
+    private void doSingleClick(MouseEvent evt, int line, int offset, int dot) {
       if ((evt.getModifiers() & InputEvent.SHIFT_MASK) != 0) {
         rectSelect = (evt.getModifiers() & InputEvent.CTRL_MASK) != 0;
         select(getMarkPosition(),dot);
@@ -2469,35 +2463,32 @@ public class JEditTextArea extends JComponent
     }
 
 
-    private void doDoubleClick(MouseEvent evt, int line,
-        int offset, int dot) throws BadLocationException
-        {
+    private void doDoubleClick(MouseEvent evt, int line, int offset, 
+                               int dot) throws BadLocationException {
       // Ignore empty lines
-      if (getLineLength(line) == 0)
-        return;
-
-      try {
-        int bracket = bracketHelper.findMatchingBracket(document.getText(0, document.getLength()),
-            Math.max(0,dot - 1));
-        if (bracket != -1) {
-          int mark = getMarkPosition();
-          // Hack
-          if (bracket > mark) {
-            bracket++;
-            mark--;
+      if (getLineLength(line) != 0) {
+        try {
+          String text = document.getText(0, document.getLength());
+          int bracket = bracketHelper.findMatchingBracket(text, Math.max(0, dot - 1));
+          if (bracket != -1) {
+            int mark = getMarkPosition();
+            // Hack
+            if (bracket > mark) {
+              bracket++;
+              mark--;
+            }
+            select(mark,bracket);
+            return;
           }
-          select(mark,bracket);
-          return;
+        } catch(BadLocationException bl) {
+          bl.printStackTrace();
         }
-      } catch(BadLocationException bl) {
-        bl.printStackTrace();
-      }
 
-      setNewSelectionWord( line, offset );
-      select(newSelectionStart,newSelectionEnd);
-      selectWord = true;
-      selectionAncorStart = selectionStart;
-      selectionAncorEnd = selectionEnd;
+        setNewSelectionWord( line, offset );
+        select(newSelectionStart,newSelectionEnd);
+        selectWord = true;
+        selectionAncorStart = selectionStart;
+        selectionAncorEnd = selectionEnd;
 
       /*
         String lineText = getLineText(line);
@@ -2508,11 +2499,11 @@ public class JEditTextArea extends JComponent
         int lineStart = getLineStartOffset(line);
         select(lineStart + wordStart,lineStart + wordEnd);
        */
-        }
+      }
+    }
 
-    private void doTripleClick(MouseEvent evt, int line,
-        int offset, int dot)
-    {
+    
+    private void doTripleClick(MouseEvent evt, int line, int offset, int dot) {
       selectLine = true;
       select(getLineStartOffset(line),getLineSelectionStopOffset(line));
       selectionAncorStart = selectionStart;
@@ -2520,61 +2511,43 @@ public class JEditTextArea extends JComponent
     }
   }
 
-  class CaretUndo extends AbstractUndoableEdit
-  {
+  
+  class CaretUndo extends AbstractUndoableEdit {
     private int start;
     private int end;
 
-    CaretUndo(int start, int end)
-    {
+    CaretUndo(int start, int end) {
       this.start = start;
       this.end = end;
     }
 
-    public boolean isSignificant()
-    {
+    public boolean isSignificant() {
       return false;
     }
 
-    public String getPresentationName()
-    {
+    public String getPresentationName() {
       return "caret move";
     }
 
-    public void undo() throws CannotUndoException
-    {
+    public void undo() throws CannotUndoException {
       super.undo();
-
       select(start,end);
     }
 
-    public void redo() throws CannotRedoException
-    {
+    public void redo() throws CannotRedoException {
       super.redo();
-
       select(start,end);
     }
 
-    public boolean addEdit(UndoableEdit edit)
-    {
-      if(edit instanceof CaretUndo)
-      {
+    public boolean addEdit(UndoableEdit edit) {
+      if (edit instanceof CaretUndo) {
         CaretUndo cedit = (CaretUndo)edit;
         start = cedit.start;
         end = cedit.end;
         cedit.die();
-
         return true;
       }
-      else
-        return false;
+      return false;
     }
   }
-
-//  static
-//  {
-//    caretTimer = new Timer(500, new CaretBlinker());
-//    caretTimer.setInitialDelay(500);
-//    caretTimer.start();
-//  }
 }
