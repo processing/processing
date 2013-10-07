@@ -2403,7 +2403,6 @@ public class JEditTextArea extends JComponent
       }
 
       if (event.isPopupTrigger() && (popup != null)) {
-        System.out.println("firing popup press");
         popup.show(painter, event.getX(), event.getY());
         return;
       }
@@ -2447,7 +2446,6 @@ public class JEditTextArea extends JComponent
     // http://docs.oracle.com/javase/7/docs/api/java/awt/event/MouseEvent.html#isPopupTrigger()
     public void mouseReleased(MouseEvent event) {
       if (event.isPopupTrigger() && (popup != null)) {
-        System.out.println("firing popup release");
         popup.show(painter, event.getX(), event.getY());
       }
     }

@@ -13,9 +13,8 @@ X incorporate the new serial library
 X   https://github.com/processing/processing/pull/2093
 X cmd-left is bringing up the text area popup
 X   https://github.com/processing/processing/issues/2103
-
-_ still having right-click issues
-_   https://github.com/processing/processing/issues/2103
+X still having right-click issues (re-opened)
+X   https://github.com/processing/processing/issues/2103
 
 X add appbundler.jar, otherwise folks have to include Xcode
 _ if they want to build appbundler, they'll need Xcode
@@ -119,6 +118,8 @@ _ "String index out of range" error
 _   https://github.com/processing/processing/issues/1940
 _ freeze after splash screen on OS X (looks like core.jar in the path)
 _   https://github.com/processing/processing/issues/1872
+_ look through all isPopupTrigger() code 
+_   make sure both press/release are implemented
 
 medium
 _ use platformDelete() to remove untitled sketches?
