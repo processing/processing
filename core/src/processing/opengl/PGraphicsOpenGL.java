@@ -6500,6 +6500,11 @@ public class PGraphicsOpenGL extends PGraphics {
   protected PolyShader getPolyShader(boolean lit, boolean tex) {
     PolyShader shader;
     boolean useDefault = polyShader == null;
+    if (polyShader != null) {
+      polyShader.setRenderer(this);
+      polyShader.loadAttributes();
+      polyShader.loadUniforms();
+    }
     if (lit) {
       if (tex) {
         if (useDefault || !polyShader.checkType(PShader.TEXLIGHT)) {
@@ -6554,9 +6559,11 @@ public class PGraphicsOpenGL extends PGraphics {
         }
       }
     }
-    shader.setRenderer(this);
-    shader.loadAttributes();
-    shader.loadUniforms();
+    if (shader != polyShader) {
+      shader.setRenderer(this);
+      shader.loadAttributes();
+      shader.loadUniforms();
+    }
     return shader;
   }
 
