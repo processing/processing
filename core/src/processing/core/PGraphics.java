@@ -7635,6 +7635,9 @@ public class PGraphics extends PImage implements PConstants {
    * individual color components of a color supplied as an int value.
    */
   static public int lerpColor(int c1, int c2, float amt, int mode) {
+    if (amt < 0) amt = 0;
+    if (amt > 1) amt = 1;
+
     if (mode == RGB) {
       float a1 = ((c1 >> 24) & 0xff);
       float r1 = (c1 >> 16) & 0xff;

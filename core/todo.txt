@@ -14,6 +14,10 @@ X fix image transparency in PDF output
 X   https://github.com/processing/processing/pull/2070
 X Java2D images crash after being resized
 X   https://github.com/processing/processing/issues/2113
+X constrain lerpColor() between 0 and 1
+
+_ JSONObject/Array.format(-1) not working on embedded JSONObjects
+_   https://github.com/processing/processing/issues/2119
 
 opengl
 X fix inconsistency with P2D and resetMatrix()
@@ -28,6 +32,8 @@ X push/popStyle() causes color problems with P2D/P3D
 X   https://github.com/processing/processing/issues/2102
 X child SVG elements misplaced when rendering with P2D/P3D
 X   https://github.com/processing/processing/issues/2086
+X SUBTRACT and DIFFERENCE blend modes are swapped
+X   https://github.com/processing/processing/issues/2075
 
 _ Sort out blending differences with P2D/P3D
 _   https://github.com/processing/processing/issues/1844
