@@ -11,11 +11,13 @@
       
   Broken out as a separate project because the license probably isn't 
   compatible with the rest of Processing and we don't want any confusion.
+  
+  Added JAI ImageIO to support lots of other image file formats [131008].
   -->
   
   <target name="clean" description="Clean the build directories">
     <delete dir="bin" />
-    <delete dir="tool" />
+    <delete file="tool/MovieMaker.jar" />
   </target>
 
   <target name="compile" description="Compile sources">   

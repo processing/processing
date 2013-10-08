@@ -26,11 +26,15 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
+import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.prefs.Preferences;
+
 import javax.imageio.ImageIO;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -231,17 +235,18 @@ public class MovieMaker extends JFrame implements Tool {
                  "<b>This tool creates a QuickTime movie from a sequence of images.</b><br> " +
                  "<br>" +
                  "To avoid artifacts caused by re-compressing images as video,<br> " +
-                 "use uncompressed TIFF or (lossless) PNG images as the source.<br>" +
+                 "use TIFF, TGA (from Processing), or PNG images as the source.<br>" +
                  "<br>" +
-                 "TIFF images will write more quickly, but require more disk space:<br>" +
+                 "TIFF and TGA images will write more quickly, but require more disk:<br>" +
                  "<tt>saveFrame(\"frames/####.tif\");</tt><br>" +
+                 "<tt>saveFrame(\"frames/####.tga\");</tt><br>" +
                  "<br>" +
                  "PNG images are smaller, but your sketch will run more slowly:<br>" +
                  "<tt>saveFrame(\"frames/####.png\");</tt><br>" +
                  "<br>" +
                  "<font color=#808080>This code is based on QuickTime Movie Maker 1.5.1 2011-01-17.<br>" +
-                 "Copyright © 2010-2011 Werner Randelshofer. All rights reserved.<br>" +
-      "This software is licensed under Creative Commons Atribution 3.0.");
+                 "Copyright \u00A9 2010-2011 Werner Randelshofer. All rights reserved.<br>" +
+                 "This software is licensed under Creative Commons Atribution 3.0.");
 
     imageFolderHelpLabel.setText("Drag a folder with image files into the field below:");
     chooseImageFolderButton.setText("Choose...");
@@ -544,21 +549,32 @@ public class MovieMaker extends JFrame implements Tool {
           File[] imgFiles = null;
           if (imageFolder != null) {
             imgFiles = imageFolder.listFiles(new FileFilter() {
-
               FileSystemView fsv = FileSystemView.getFileSystemView();
 
               public boolean accept(File f) {
                 return f.isFile() && !fsv.isHiddenFile(f) && !f.getName().equals("Thumbs.db");
               }
             });
+            if (imgFiles == null || imgFiles.length == 0) {
+              return new RuntimeException("No image files found.");
+            }
             Arrays.sort(imgFiles);
           }
 
           // Check on first image, if we can actually do pass through
           if (originalSize) {
-            ImageIcon temp = new ImageIcon(imgFiles[0].getAbsolutePath());
-            width = temp.getIconWidth();
-            height = temp.getIconHeight();
+            // This was using ImageIcon, which can't handle some file types.
+            // For 2.1, switching to ImageIO (which is used for movie 
+            // generation anyway) [fry 131008]
+            BufferedImage temp = readImage(imgFiles[0]);
+            if (temp == null) {
+              return new RuntimeException("Coult not read " + imgFiles[0].getAbsolutePath());
+            }
+            width = temp.getWidth();
+            height = temp.getHeight();
+            if (width <= 0 || height <= 0) {
+              return new RuntimeException("Could not read " + imgFiles[0].getName() + ", it may be bad.");
+            }
           }
 
           // Delete movie file if it already exists.
@@ -572,9 +588,9 @@ public class MovieMaker extends JFrame implements Tool {
             writeVideoOnlyVFR(movieFile, imgFiles, width, height, fps, videoFormat, /*passThrough,*/ streaming);
           } else {
             writeAudioOnly(movieFile, soundFile, streaming);
-
           }
           return null;
+          
         } catch (Throwable t) {
           return t;
         }
@@ -600,6 +616,232 @@ public class MovieMaker extends JFrame implements Tool {
 
 
   }//GEN-LAST:event_createMovie
+  
+  
+  private BufferedImage readImage(File file) throws IOException {
+    BufferedImage image = ImageIO.read(file);
+
+    /*
+    String[] loadImageFormats = ImageIO.getReaderFormatNames();
+    if (loadImageFormats != null) {
+      for (String format : loadImageFormats) {
+        System.out.println(format);
+      }
+    }
+    */
+    
+    if (image == null) {
+      String path = file.getAbsolutePath();
+      // Might be an incompatible TGA or TIFF created by Processing
+      if (path.toLowerCase().endsWith(".tga")) {
+        return loadImageTGA(file);
+        
+      } else if (path.toLowerCase().endsWith(".tif")) {
+        throw new IOException("Try TGA or PNG images instead of TIFF.");
+      }
+    }
+    return image;
+  }
+  
+  
+  /**
+   * Targa image loader for RLE-compressed TGA files.
+   * <p>
+   * Rewritten for 0115 to read/write RLE-encoded targa images.
+   * For 0125, non-RLE encoded images are now supported, along with
+   * images whose y-order is reversed (which is standard for TGA files).
+   */
+  static protected BufferedImage loadImageTGA(File file) throws IOException {
+    InputStream is = new FileInputStream(file);
+    if (is == null) return null;
+
+    byte header[] = new byte[18];
+    int offset = 0;
+    do {
+      int count = is.read(header, offset, header.length - offset);
+      if (count == -1) return null;
+      offset += count;
+    } while (offset < 18);
+
+    /*
+      header[2] image type code
+      2  (0x02) - Uncompressed, RGB images.
+      3  (0x03) - Uncompressed, black and white images.
+      10 (0x0A) - Runlength encoded RGB images.
+      11 (0x0B) - Compressed, black and white images. (grayscale?)
+
+      header[16] is the bit depth (8, 24, 32)
+
+      header[17] image descriptor (packed bits)
+      0x20 is 32 = origin upper-left
+      0x28 is 32 + 8 = origin upper-left + 32 bits
+
+        7  6  5  4  3  2  1  0
+      128 64 32 16  8  4  2  1
+    */
+
+    int format = 0;
+    final int RGB = 1;
+    final int ARGB = 2;
+    final int ALPHA = 4;
+
+    if (((header[2] == 3) || (header[2] == 11)) &&  // B&W, plus RLE or not
+        (header[16] == 8) &&  // 8 bits
+        ((header[17] == 0x8) || (header[17] == 0x28))) {  // origin, 32 bit
+      format = ALPHA;
+
+    } else if (((header[2] == 2) || (header[2] == 10)) &&  // RGB, RLE or not
+               (header[16] == 24) &&  // 24 bits
+               ((header[17] == 0x20) || (header[17] == 0))) {  // origin
+      format = RGB;
+
+    } else if (((header[2] == 2) || (header[2] == 10)) &&
+               (header[16] == 32) &&
+               ((header[17] == 0x8) || (header[17] == 0x28))) {  // origin, 32
+      format = ARGB;
+    }
+
+    if (format == 0) {
+      throw new IOException("Unknown .tga file format for " + file.getName());
+    }
+
+    int w = ((header[13] & 0xff) << 8) + (header[12] & 0xff);
+    int h = ((header[15] & 0xff) << 8) + (header[14] & 0xff);
+    //PImage outgoing = createImage(w, h, format);
+    int[] pixels = new int[w * h];
+    
+    // where "reversed" means upper-left corner (normal for most of
+    // the modernized world, but "reversed" for the tga spec)
+    //boolean reversed = (header[17] & 0x20) != 0;
+    // https://github.com/processing/processing/issues/1682
+    boolean reversed = (header[17] & 0x20) == 0;
+
+    if ((header[2] == 2) || (header[2] == 3)) {  // not RLE encoded
+      if (reversed) {
+        int index = (h-1) * w;
+        switch (format) {
+        case ALPHA:
+          for (int y = h-1; y >= 0; y--) {
+            for (int x = 0; x < w; x++) {
+              pixels[index + x] = is.read();
+            }
+            index -= w;
+          }
+          break;
+        case RGB:
+          for (int y = h-1; y >= 0; y--) {
+            for (int x = 0; x < w; x++) {
+              pixels[index + x] =
+                is.read() | (is.read() << 8) | (is.read() << 16) |
+                0xff000000;
+            }
+            index -= w;
+          }
+          break;
+        case ARGB:
+          for (int y = h-1; y >= 0; y--) {
+            for (int x = 0; x < w; x++) {
+              pixels[index + x] =
+                is.read() | (is.read() << 8) | (is.read() << 16) |
+                (is.read() << 24);
+            }
+            index -= w;
+          }
+        }
+      } else {  // not reversed
+        int count = w * h;
+        switch (format) {
+        case ALPHA:
+          for (int i = 0; i < count; i++) {
+            pixels[i] = is.read();
+          }
+          break;
+        case RGB:
+          for (int i = 0; i < count; i++) {
+            pixels[i] =
+              is.read() | (is.read() << 8) | (is.read() << 16) |
+              0xff000000;
+          }
+          break;
+        case ARGB:
+          for (int i = 0; i < count; i++) {
+            pixels[i] =
+              is.read() | (is.read() << 8) | (is.read() << 16) |
+              (is.read() << 24);
+          }
+          break;
+        }
+      }
+
+    } else {  // header[2] is 10 or 11
+      int index = 0;
+
+      while (index < pixels.length) {
+        int num = is.read();
+        boolean isRLE = (num & 0x80) != 0;
+        if (isRLE) {
+          num -= 127;  // (num & 0x7F) + 1
+          int pixel = 0;
+          switch (format) {
+          case ALPHA:
+            pixel = is.read();
+            break;
+          case RGB:
+            pixel = 0xFF000000 |
+              is.read() | (is.read() << 8) | (is.read() << 16);
+            //(is.read() << 16) | (is.read() << 8) | is.read();
+            break;
+          case ARGB:
+            pixel = is.read() |
+              (is.read() << 8) | (is.read() << 16) | (is.read() << 24);
+            break;
+          }
+          for (int i = 0; i < num; i++) {
+            pixels[index++] = pixel;
+            if (index == pixels.length) break;
+          }
+        } else {  // write up to 127 bytes as uncompressed
+          num += 1;
+          switch (format) {
+          case ALPHA:
+            for (int i = 0; i < num; i++) {
+              pixels[index++] = is.read();
+            }
+            break;
+          case RGB:
+            for (int i = 0; i < num; i++) {
+              pixels[index++] = 0xFF000000 |
+                is.read() | (is.read() << 8) | (is.read() << 16);
+            }
+            break;
+          case ARGB:
+            for (int i = 0; i < num; i++) {
+              pixels[index++] = is.read() | 
+                (is.read() << 8) | (is.read() << 16) | (is.read() << 24);
+            }
+            break;
+          }
+        }
+      }
+
+      if (!reversed) {
+        int[] temp = new int[w];
+        for (int y = 0; y < h/2; y++) {
+          int z = (h-1) - y;
+          System.arraycopy(pixels, y*w, temp, 0, w);
+          System.arraycopy(pixels, z*w, pixels, y*w, w);
+          System.arraycopy(temp, 0, pixels, z*w, w);
+        }
+      }
+    }
+    int type = (format == RGB) ?
+        BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
+    BufferedImage image = new BufferedImage(w, h, type);
+    WritableRaster wr = image.getRaster();
+    wr.setDataElements(0, 0, w, h, pixels);
+    return image;
+  }
+  
 
 //  private void streamingRadioPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_streamingRadioPerformed
 //    prefs.put("movie.streaming", evt.getActionCommand());
@@ -937,20 +1179,20 @@ public class MovieMaker extends JFrame implements Tool {
     }
   }
 
-//  /**
-//   * @param args the command line arguments
-//   */
-//  public static void main(String args[]) {
-//    EventQueue.invokeLater(new Runnable() {
-//      public void run() {
-//        MovieMakerFrame m = new MovieMakerFrame();
-////        m.init(null);
+  /**
+   * @param args the command line arguments
+   */
+  public static void main(String args[]) {
+    java.awt.EventQueue.invokeLater(new Runnable() {
+      public void run() {
+        MovieMaker m = new MovieMaker();
+        m.init(null);
 //        m.init();
-//        m.setVisible(true);
-////        m.pack();
-//      }
-//    });
-//  }
+        m.setVisible(true);
+//        m.pack();
+      }
+    });
+  }
 
   private JLabel aboutLabel;
   private JButton chooseImageFolderButton;
