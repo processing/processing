@@ -26,8 +26,8 @@ o move Movie Maker out to its own separate tool package (with separate build)
 X   http://code.google.com/p/processing/issues/detail?id=837
 X   https://github.com/processing/processing/issues/875
 X   basically done in more recent releases
-
-_ fix file selection dialog (just import PApplet) with MovieMaker
+X fix file selection dialog with MovieMaker
+X   copied from PApplet, but not importing PApplet
 
 X add appbundler.jar, otherwise folks have to include Xcode
 _ if they want to build appbundler, they'll need Xcode

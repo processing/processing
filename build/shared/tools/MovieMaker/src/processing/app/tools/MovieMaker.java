@@ -11,10 +11,6 @@ package processing.app.tools;
  * For details see accompanying license terms.
  */
 
-import ch.randelshofer.gui.datatransfer.FileTextFieldTransferHandler;
-import ch.randelshofer.media.mp3.MP3AudioInputStream;
-import ch.randelshofer.media.quicktime.QuickTimeWriter;
-
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -40,11 +36,30 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
-import javax.swing.*;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.GroupLayout;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JRootPane;
+import javax.swing.JTextField;
+import javax.swing.KeyStroke;
+import javax.swing.LayoutStyle;
+import javax.swing.ProgressMonitor;
+import javax.swing.SwingWorker;
+import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileSystemView;
 
 import processing.app.Editor;
+import ch.randelshofer.gui.datatransfer.FileTextFieldTransferHandler;
+import ch.randelshofer.media.mp3.MP3AudioInputStream;
+import ch.randelshofer.media.quicktime.QuickTimeWriter;
 
 
 // TODO [fry 2011-09-06]
@@ -63,9 +78,9 @@ import processing.app.Editor;
  * can be found <a href="http://www.randelshofer.ch/blog/2010/10/writing-quicktime-movies-in-pure-java/">here</a>.
  */
 public class MovieMaker extends JFrame implements Tool {
-  private JFileChooser imageFolderChooser;
-  private JFileChooser soundFileChooser;
-  private JFileChooser movieFileChooser;
+//  private JFileChooser imageFolderChooser;
+//  private JFileChooser soundFileChooser;
+//  private JFileChooser movieFileChooser;
   private Preferences prefs;
 
 //  private Editor editor;
@@ -213,7 +228,7 @@ public class MovieMaker extends JFrame implements Tool {
 //    fastStartRadio = new JRadioButton();
 //    fastStartCompressedRadio = new JRadioButton();
 
-    FormListener formListener = new FormListener();
+//    FormListener formListener = new FormListener();
 
     setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
     addWindowListener(new WindowAdapter() {
@@ -250,14 +265,72 @@ public class MovieMaker extends JFrame implements Tool {
 
     imageFolderHelpLabel.setText("Drag a folder with image files into the field below:");
     chooseImageFolderButton.setText("Choose...");
-    chooseImageFolderButton.addActionListener(formListener);
+    //chooseImageFolderButton.addActionListener(formListener);
+    chooseImageFolderButton.addActionListener(new ActionListener() {
+      
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        Chooser.selectFolder(MovieMaker.this, 
+                             "Select image folder...", 
+                             new File(imageFolderField.getText()),
+                             new Chooser.Callback() {
+          void select(File file) {
+            if (file != null) {
+              imageFolderField.setText(file.getAbsolutePath());
+            }
+          }
+        });
+      }
+    });
+
 
     soundFileHelpLabel.setText("Drag a sound file into the field below (.au, .aiff, .wav, .mp3):");
     chooseSoundFileButton.setText("Choose...");
-    chooseSoundFileButton.addActionListener(formListener);
+    //chooseSoundFileButton.addActionListener(formListener);
+    chooseSoundFileButton.addActionListener(new ActionListener() {
+      
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        Chooser.selectInput(MovieMaker.this, 
+                            "Select sound file...", 
+                            new File(soundFileField.getText()),
+                            new Chooser.Callback() {
+
+          void select(File file) {
+            if (file != null) {
+              soundFileField.setText(file.getAbsolutePath());
+            }
+          }
+        });
+      }
+    });
 
     createMovieButton.setText("Create Movie...");
-    createMovieButton.addActionListener(formListener);
+//    createMovieButton.addActionListener(formListener);
+    createMovieButton.addActionListener(new ActionListener() {
+      
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        String lastPath = prefs.get("movie.outputFile", null);
+        File lastFile = lastPath == null ? null : new File(lastPath);
+        Chooser.selectOutput(MovieMaker.this, 
+                             "Save movie as...",
+                             lastFile, 
+                             new Chooser.Callback() {
+          @Override
+          void select(File file) {
+            if (file != null) {
+              String path = file.getAbsolutePath();
+              if (!path.toLowerCase().endsWith(".mov")) {
+                path += ".mov";
+              }
+              prefs.put("movie.outputFile", path);
+              createMovie(new File(path));
+            }
+          }
+        });
+      }
+    });
 
     Font font = new Font("Dialog", Font.PLAIN, 11);
 
@@ -394,58 +467,58 @@ public class MovieMaker extends JFrame implements Tool {
 
   // Code for dispatching events from components to event handlers.
 
-  private class FormListener implements java.awt.event.ActionListener {
-    FormListener() {}
-    public void actionPerformed(java.awt.event.ActionEvent evt) {
-      if (evt.getSource() == chooseImageFolderButton) {
-        MovieMaker.this.chooseImageFolder(evt);
-      }
-      else if (evt.getSource() == chooseSoundFileButton) {
-        MovieMaker.this.chooseSoundFile(evt);
-      }
-      else if (evt.getSource() == createMovieButton) {
-        MovieMaker.this.createMovie(evt);
-      }
-//      else if (evt.getSource() == fastStartCompressedRadio) {
-//        MovieMaker.this.streamingRadioPerformed(evt);
+//  private class FormListener implements java.awt.event.ActionListener {
+//    FormListener() {}
+//    public void actionPerformed(java.awt.event.ActionEvent evt) {
+//      if (evt.getSource() == chooseImageFolderButton) {
+//        MovieMaker.this.chooseImageFolder(evt);
 //      }
-//      else if (evt.getSource() == fastStartRadio) {
-//        MovieMaker.this.streamingRadioPerformed(evt);
+//      else if (evt.getSource() == chooseSoundFileButton) {
+//        MovieMaker.this.chooseSoundFile(evt);
 //      }
-//      else if (evt.getSource() == noPreparationRadio) {
-//        MovieMaker.this.streamingRadioPerformed(evt);
+//      else if (evt.getSource() == createMovieButton) {
+//        MovieMaker.this.createMovie(evt);
 //      }
-    }
-  }
+////      else if (evt.getSource() == fastStartCompressedRadio) {
+////        MovieMaker.this.streamingRadioPerformed(evt);
+////      }
+////      else if (evt.getSource() == fastStartRadio) {
+////        MovieMaker.this.streamingRadioPerformed(evt);
+////      }
+////      else if (evt.getSource() == noPreparationRadio) {
+////        MovieMaker.this.streamingRadioPerformed(evt);
+////      }
+//    }
+//  }
 
-  private void chooseImageFolder(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chooseImageFolder
-    if (imageFolderChooser == null) {
-      imageFolderChooser = new JFileChooser();
-      imageFolderChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-      if (imageFolderField.getText().length() > 0) {
-        imageFolderChooser.setSelectedFile(new File(imageFolderField.getText()));
-      } else if (soundFileField.getText().length() > 0) {
-        imageFolderChooser.setCurrentDirectory(new File(soundFileField.getText()).getParentFile());
-      }
-    }
-    if (JFileChooser.APPROVE_OPTION == imageFolderChooser.showOpenDialog(this)) {
-      imageFolderField.setText(imageFolderChooser.getSelectedFile().getPath());
-    }
-  }
-
-  private void chooseSoundFile(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chooseSoundFile
-    if (soundFileChooser == null) {
-      soundFileChooser = new JFileChooser();
-      if (soundFileField.getText().length() > 0) {
-        soundFileChooser.setSelectedFile(new File(soundFileField.getText()));
-      } else if (imageFolderField.getText().length() > 0) {
-        soundFileChooser.setCurrentDirectory(new File(imageFolderField.getText()));
-      }
-    }
-    if (JFileChooser.APPROVE_OPTION == soundFileChooser.showOpenDialog(this)) {
-      soundFileField.setText(soundFileChooser.getSelectedFile().getPath());
-    }
-  }
+//  private void chooseImageFolder(ActionEvent evt) {
+//    if (imageFolderChooser == null) {
+//      imageFolderChooser = new JFileChooser();
+//      imageFolderChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+//      if (imageFolderField.getText().length() > 0) {
+//        imageFolderChooser.setSelectedFile(new File(imageFolderField.getText()));
+//      } else if (soundFileField.getText().length() > 0) {
+//        imageFolderChooser.setCurrentDirectory(new File(soundFileField.getText()).getParentFile());
+//      }
+//    }
+//    if (JFileChooser.APPROVE_OPTION == imageFolderChooser.showOpenDialog(this)) {
+//      imageFolderField.setText(imageFolderChooser.getSelectedFile().getPath());
+//    }
+//  }
+//
+//  private void chooseSoundFile(ActionEvent evt) {
+//    if (soundFileChooser == null) {
+//      soundFileChooser = new JFileChooser();
+//      if (soundFileField.getText().length() > 0) {
+//        soundFileChooser.setSelectedFile(new File(soundFileField.getText()));
+//      } else if (imageFolderField.getText().length() > 0) {
+//        soundFileChooser.setCurrentDirectory(new File(imageFolderField.getText()));
+//      }
+//    }
+//    if (JFileChooser.APPROVE_OPTION == soundFileChooser.showOpenDialog(this)) {
+//      soundFileField.setText(soundFileChooser.getSelectedFile().getPath());
+//    }
+//  }
 
 
   // this is super naughty, and shouldn't be out here. it's a hack to get the
@@ -453,7 +526,9 @@ public class MovieMaker extends JFrame implements Tool {
   // given a bit of time. you know, time? the infinite but non-renewable resource?
   int width, height;
 
-  private void createMovie(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createMovie
+  private void createMovie(final File movieFile) {
+    createMovieButton.setEnabled(false);
+
     // ---------------------------------
     // Check input
     // ---------------------------------
@@ -512,6 +587,7 @@ public class MovieMaker extends JFrame implements Tool {
     // ---------------------------------
     // Choose an output file
     // ---------------------------------
+    /*
     if (movieFileChooser == null) {
       movieFileChooser = new JFileChooser();
       if (prefs.get("movie.outputFile", null) != null) {
@@ -533,6 +609,7 @@ public class MovieMaker extends JFrame implements Tool {
         : new File(movieFileChooser.getSelectedFile().getPath() + ".mov");
     prefs.put("movie.outputFile", movieFile.getPath());
     createMovieButton.setEnabled(false);
+    */
 
     final boolean originalSize = originalSizeCheckBox.isSelected();
 
@@ -668,29 +745,26 @@ public class MovieMaker extends JFrame implements Tool {
   
   
   /**
-   * Targa image loader for RLE-compressed TGA files.
-   * <p>
-   * Rewritten for 0115 to read/write RLE-encoded targa images.
-   * For 0125, non-RLE encoded images are now supported, along with
-   * images whose y-order is reversed (which is standard for TGA files).
+   * Targa image loader for RLE-compressed TGA files.  
+   * Code taken from PApplet, any changes here should lead to updates there. 
    */
   static protected BufferedImage loadImageTGA(File file) throws IOException {
     InputStream is = new FileInputStream(file);
-    if (is == null) return null;
-
-    byte header[] = new byte[18];
-    int offset = 0;
-    do {
-      int count = is.read(header, offset, header.length - offset);
-      if (count == -1) return null;
-      offset += count;
-    } while (offset < 18);
+    
+    try {
+      byte header[] = new byte[18];
+      int offset = 0;
+      do {
+        int count = is.read(header, offset, header.length - offset);
+        if (count == -1) return null;
+        offset += count;
+      } while (offset < 18);
 
     /*
       header[2] image type code
       2  (0x02) - Uncompressed, RGB images.
       3  (0x03) - Uncompressed, black and white images.
-      10 (0x0A) - Runlength encoded RGB images.
+      10 (0x0A) - Run-length encoded RGB images.
       11 (0x0B) - Compressed, black and white images. (grayscale?)
 
       header[16] is the bit depth (8, 24, 32)
@@ -703,167 +777,235 @@ public class MovieMaker extends JFrame implements Tool {
       128 64 32 16  8  4  2  1
     */
 
-    int format = 0;
-    final int RGB = 1;
-    final int ARGB = 2;
-    final int ALPHA = 4;
+      int format = 0;
+      final int RGB = 1;
+      final int ARGB = 2;
+      final int ALPHA = 4;
 
-    if (((header[2] == 3) || (header[2] == 11)) &&  // B&W, plus RLE or not
-        (header[16] == 8) &&  // 8 bits
-        ((header[17] == 0x8) || (header[17] == 0x28))) {  // origin, 32 bit
-      format = ALPHA;
+      if (((header[2] == 3) || (header[2] == 11)) &&  // B&W, plus RLE or not
+          (header[16] == 8) &&  // 8 bits
+          ((header[17] == 0x8) || (header[17] == 0x28))) {  // origin, 32 bit
+        format = ALPHA;
 
-    } else if (((header[2] == 2) || (header[2] == 10)) &&  // RGB, RLE or not
-               (header[16] == 24) &&  // 24 bits
-               ((header[17] == 0x20) || (header[17] == 0))) {  // origin
-      format = RGB;
+      } else if (((header[2] == 2) || (header[2] == 10)) &&  // RGB, RLE or not
+          (header[16] == 24) &&  // 24 bits
+          ((header[17] == 0x20) || (header[17] == 0))) {  // origin
+        format = RGB;
 
-    } else if (((header[2] == 2) || (header[2] == 10)) &&
-               (header[16] == 32) &&
-               ((header[17] == 0x8) || (header[17] == 0x28))) {  // origin, 32
-      format = ARGB;
-    }
-
-    if (format == 0) {
-      throw new IOException("Unknown .tga file format for " + file.getName());
-    }
-
-    int w = ((header[13] & 0xff) << 8) + (header[12] & 0xff);
-    int h = ((header[15] & 0xff) << 8) + (header[14] & 0xff);
-    //PImage outgoing = createImage(w, h, format);
-    int[] pixels = new int[w * h];
-    
-    // where "reversed" means upper-left corner (normal for most of
-    // the modernized world, but "reversed" for the tga spec)
-    //boolean reversed = (header[17] & 0x20) != 0;
-    // https://github.com/processing/processing/issues/1682
-    boolean reversed = (header[17] & 0x20) == 0;
-
-    if ((header[2] == 2) || (header[2] == 3)) {  // not RLE encoded
-      if (reversed) {
-        int index = (h-1) * w;
-        switch (format) {
-        case ALPHA:
-          for (int y = h-1; y >= 0; y--) {
-            for (int x = 0; x < w; x++) {
-              pixels[index + x] = is.read();
-            }
-            index -= w;
-          }
-          break;
-        case RGB:
-          for (int y = h-1; y >= 0; y--) {
-            for (int x = 0; x < w; x++) {
-              pixels[index + x] =
-                is.read() | (is.read() << 8) | (is.read() << 16) |
-                0xff000000;
-            }
-            index -= w;
-          }
-          break;
-        case ARGB:
-          for (int y = h-1; y >= 0; y--) {
-            for (int x = 0; x < w; x++) {
-              pixels[index + x] =
-                is.read() | (is.read() << 8) | (is.read() << 16) |
-                (is.read() << 24);
-            }
-            index -= w;
-          }
-        }
-      } else {  // not reversed
-        int count = w * h;
-        switch (format) {
-        case ALPHA:
-          for (int i = 0; i < count; i++) {
-            pixels[i] = is.read();
-          }
-          break;
-        case RGB:
-          for (int i = 0; i < count; i++) {
-            pixels[i] =
-              is.read() | (is.read() << 8) | (is.read() << 16) |
-              0xff000000;
-          }
-          break;
-        case ARGB:
-          for (int i = 0; i < count; i++) {
-            pixels[i] =
-              is.read() | (is.read() << 8) | (is.read() << 16) |
-              (is.read() << 24);
-          }
-          break;
-        }
+      } else if (((header[2] == 2) || (header[2] == 10)) &&
+          (header[16] == 32) &&
+          ((header[17] == 0x8) || (header[17] == 0x28))) {  // origin, 32
+        format = ARGB;
       }
 
-    } else {  // header[2] is 10 or 11
-      int index = 0;
+      if (format == 0) {
+        throw new IOException("Unknown .tga file format for " + file.getName());
+      }
 
-      while (index < pixels.length) {
-        int num = is.read();
-        boolean isRLE = (num & 0x80) != 0;
-        if (isRLE) {
-          num -= 127;  // (num & 0x7F) + 1
-          int pixel = 0;
+      int w = ((header[13] & 0xff) << 8) + (header[12] & 0xff);
+      int h = ((header[15] & 0xff) << 8) + (header[14] & 0xff);
+      //PImage outgoing = createImage(w, h, format);
+      int[] pixels = new int[w * h];
+
+      // where "reversed" means upper-left corner (normal for most of
+      // the modernized world, but "reversed" for the tga spec)
+      //boolean reversed = (header[17] & 0x20) != 0;
+      // https://github.com/processing/processing/issues/1682
+      boolean reversed = (header[17] & 0x20) == 0;
+
+      if ((header[2] == 2) || (header[2] == 3)) {  // not RLE encoded
+        if (reversed) {
+          int index = (h-1) * w;
           switch (format) {
           case ALPHA:
-            pixel = is.read();
+            for (int y = h-1; y >= 0; y--) {
+              for (int x = 0; x < w; x++) {
+                pixels[index + x] = is.read();
+              }
+              index -= w;
+            }
             break;
           case RGB:
-            pixel = 0xFF000000 |
+            for (int y = h-1; y >= 0; y--) {
+              for (int x = 0; x < w; x++) {
+                pixels[index + x] =
+                    is.read() | (is.read() << 8) | (is.read() << 16) |
+                    0xff000000;
+              }
+              index -= w;
+            }
+            break;
+          case ARGB:
+            for (int y = h-1; y >= 0; y--) {
+              for (int x = 0; x < w; x++) {
+                pixels[index + x] =
+                    is.read() | (is.read() << 8) | (is.read() << 16) |
+                    (is.read() << 24);
+              }
+              index -= w;
+            }
+          }
+        } else {  // not reversed
+          int count = w * h;
+          switch (format) {
+          case ALPHA:
+            for (int i = 0; i < count; i++) {
+              pixels[i] = is.read();
+            }
+            break;
+          case RGB:
+            for (int i = 0; i < count; i++) {
+              pixels[i] =
+                  is.read() | (is.read() << 8) | (is.read() << 16) |
+                  0xff000000;
+            }
+            break;
+          case ARGB:
+            for (int i = 0; i < count; i++) {
+              pixels[i] =
+                  is.read() | (is.read() << 8) | (is.read() << 16) |
+                  (is.read() << 24);
+            }
+            break;
+          }
+        }
+
+      } else {  // header[2] is 10 or 11
+        int index = 0;
+
+        while (index < pixels.length) {
+          int num = is.read();
+          boolean isRLE = (num & 0x80) != 0;
+          if (isRLE) {
+            num -= 127;  // (num & 0x7F) + 1
+            int pixel = 0;
+            switch (format) {
+            case ALPHA:
+              pixel = is.read();
+              break;
+            case RGB:
+              pixel = 0xFF000000 |
               is.read() | (is.read() << 8) | (is.read() << 16);
-            //(is.read() << 16) | (is.read() << 8) | is.read();
-            break;
-          case ARGB:
-            pixel = is.read() |
+              //(is.read() << 16) | (is.read() << 8) | is.read();
+              break;
+            case ARGB:
+              pixel = is.read() |
               (is.read() << 8) | (is.read() << 16) | (is.read() << 24);
-            break;
-          }
-          for (int i = 0; i < num; i++) {
-            pixels[index++] = pixel;
-            if (index == pixels.length) break;
-          }
-        } else {  // write up to 127 bytes as uncompressed
-          num += 1;
-          switch (format) {
-          case ALPHA:
-            for (int i = 0; i < num; i++) {
-              pixels[index++] = is.read();
+              break;
             }
-            break;
-          case RGB:
             for (int i = 0; i < num; i++) {
-              pixels[index++] = 0xFF000000 |
-                is.read() | (is.read() << 8) | (is.read() << 16);
+              pixels[index++] = pixel;
+              if (index == pixels.length) break;
             }
-            break;
-          case ARGB:
-            for (int i = 0; i < num; i++) {
-              pixels[index++] = is.read() | 
-                (is.read() << 8) | (is.read() << 16) | (is.read() << 24);
+          } else {  // write up to 127 bytes as uncompressed
+            num += 1;
+            switch (format) {
+            case ALPHA:
+              for (int i = 0; i < num; i++) {
+                pixels[index++] = is.read();
+              }
+              break;
+            case RGB:
+              for (int i = 0; i < num; i++) {
+                pixels[index++] = 0xFF000000 |
+                    is.read() | (is.read() << 8) | (is.read() << 16);
+              }
+              break;
+            case ARGB:
+              for (int i = 0; i < num; i++) {
+                pixels[index++] = is.read() | 
+                    (is.read() << 8) | (is.read() << 16) | (is.read() << 24);
+              }
+              break;
             }
-            break;
           }
         }
+
+        if (!reversed) {
+          int[] temp = new int[w];
+          for (int y = 0; y < h/2; y++) {
+            int z = (h-1) - y;
+            System.arraycopy(pixels, y*w, temp, 0, w);
+            System.arraycopy(pixels, z*w, pixels, y*w, w);
+            System.arraycopy(temp, 0, pixels, z*w, w);
+          }
+        }
+      }
+      is.close();
+      int type = (format == RGB) ?
+          BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
+      BufferedImage image = new BufferedImage(w, h, type);
+      WritableRaster wr = image.getRaster();
+      wr.setDataElements(0, 0, w, h, pixels);
+      return image;
+      
+    } finally {
+      is.close();
+    }
+  }
+  
+  
+  /*
+  static public void selectFolder(final Frame parentFrame, 
+                                  final String prompt,
+//                                  final String callbackMethod,
+                                  final File defaultSelection,
+//                                  final Object callbackObject,
+                                  final SelectCallback callback) {
+//    EventQueue.invokeLater(new Runnable() {
+//      public void run() {
+    File selectedFile = null;
+
+    if (System.getProperty("os.name").contains("Mac")) {
+      FileDialog fileDialog =
+          new FileDialog(parentFrame, prompt, FileDialog.LOAD);
+      System.setProperty("apple.awt.fileDialogForDirectories", "true");
+      fileDialog.setVisible(true);
+      System.setProperty("apple.awt.fileDialogForDirectories", "false");
+      String filename = fileDialog.getFile();
+      if (filename != null) {
+        selectedFile = new File(fileDialog.getDirectory(), fileDialog.getFile());
+      }
+    } else {
+      JFileChooser fileChooser = new JFileChooser();
+      fileChooser.setDialogTitle(prompt);
+      fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+      if (defaultSelection != null) {
+        fileChooser.setSelectedFile(defaultSelection);
       }
 
-      if (!reversed) {
-        int[] temp = new int[w];
-        for (int y = 0; y < h/2; y++) {
-          int z = (h-1) - y;
-          System.arraycopy(pixels, y*w, temp, 0, w);
-          System.arraycopy(pixels, z*w, pixels, y*w, w);
-          System.arraycopy(temp, 0, pixels, z*w, w);
-        }
+      int result = fileChooser.showOpenDialog(parentFrame);
+      if (result == JFileChooser.APPROVE_OPTION) {
+        selectedFile = fileChooser.getSelectedFile();
       }
     }
-    int type = (format == RGB) ?
-        BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
-    BufferedImage image = new BufferedImage(w, h, type);
-    WritableRaster wr = image.getRaster();
-    wr.setDataElements(0, 0, w, h, pixels);
-    return image;
+    //selectCallback(selectedFile, callbackMethod, callbackObject);
+    callback.select(selectedFile);
+//      }
+//    });
   }
+  */
+  
+  
+//  static private void selectCallback(File selectedFile,
+//                                     String callbackMethod,
+//                                     Object callbackObject) {
+//    try {
+//      Class<?> callbackClass = callbackObject.getClass();
+//      Method selectMethod =
+//        callbackClass.getMethod(callbackMethod, new Class[] { File.class });
+//      selectMethod.invoke(callbackObject, new Object[] { selectedFile });
+//
+//    } catch (IllegalAccessException iae) {
+//      System.err.println(callbackMethod + "() must be public");
+//
+//    } catch (InvocationTargetException ite) {
+//      ite.printStackTrace();
+//
+//    } catch (NoSuchMethodException nsme) {
+//      System.err.println(callbackMethod + "() could not be found");
+//    }
+//  }
   
 
 //  private void streamingRadioPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_streamingRadioPerformed

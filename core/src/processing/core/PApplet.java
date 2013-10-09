@@ -5864,6 +5864,13 @@ public class PApplet extends Applet
    * Rewritten for 0115 to read/write RLE-encoded targa images.
    * For 0125, non-RLE encoded images are now supported, along with
    * images whose y-order is reversed (which is standard for TGA files).
+   * <p>
+   * A version of this function is in MovieMaker.java. Any fixes here
+   * should be applied over in MovieMaker as well.
+   * <p>
+   * Known issue with RLE encoding and odd behavior in some apps:
+   * https://github.com/processing/processing/issues/2096
+   * Please help!
    */
   protected PImage loadImageTGA(String filename) throws IOException {
     InputStream is = createInput(filename);
@@ -5881,7 +5888,7 @@ public class PApplet extends Applet
       header[2] image type code
       2  (0x02) - Uncompressed, RGB images.
       3  (0x03) - Uncompressed, black and white images.
-      10 (0x0A) - Runlength encoded RGB images.
+      10 (0x0A) - Run-length encoded RGB images.
       11 (0x0B) - Compressed, black and white images. (grayscale?)
 
       header[16] is the bit depth (8, 24, 32)
