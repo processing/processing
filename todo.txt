@@ -16,11 +16,17 @@ X   https://github.com/processing/processing/issues/2103
 X still having right-click issues (re-opened)
 X   https://github.com/processing/processing/issues/2103
 
-cleaning
+movie maker
 o moviemaker video sizes / usability
 o   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Exhibition;action=display;num=1211318862
-
 X add gamma, better image options, etc to MovieMaker
+X TGA files cause Movie Maker to not work properly
+X   https://github.com/processing/processing/issues/1933
+o move Movie Maker out to its own separate tool package (with separate build)
+X   http://code.google.com/p/processing/issues/detail?id=837
+X   https://github.com/processing/processing/issues/875
+X   basically done in more recent releases
+
 _ fix file selection dialog (just import PApplet) with MovieMaker
 
 X add appbundler.jar, otherwise folks have to include Xcode
@@ -766,12 +772,6 @@ _ need a proper means to handle command keys for tools (?)
 _   http://code.google.com/p/processing/issues/detail?id=44
 _ handle native code for tools menu (?)
 _   http://code.google.com/p/processing/issues/detail?id=109
-
-
-TOOLS / Movie Maker
-
-_ move Movie Maker out to its own separate tool package (with separate build)
-_   http://code.google.com/p/processing/issues/detail?id=837
 
 
 TOOLS / Ideas 
