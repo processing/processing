@@ -8,7 +8,8 @@ import java.io.File;
 import javax.swing.JFileChooser;
 
 
-public class Chooser {
+/** File chooser additions, cannibalized from PApplet. */
+class Chooser {
   static final boolean useNativeSelect = true;
 
   

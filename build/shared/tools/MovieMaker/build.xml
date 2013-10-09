@@ -1,19 +1,5 @@
 <?xml version="1.0"?>
 <project name="Movie Maker Tool" default="build">
-
-  <!--  
-  Originally based on code from this post:
-  http://www.randelshofer.ch/blog/2010/10/writing-quicktime-movies-in-pure-java
-
-  A more up-to-date version of the project seems to be here:
-  http://www.randelshofer.ch/monte/
-  If someone would like to help us update the encoder, that'd be great!
-      
-  Broken out as a separate project because the license probably isn't 
-  compatible with the rest of Processing and we don't want any confusion.
-  
-  Added JAI ImageIO to support lots of other image file formats [131008].
-  -->
   
   <target name="clean" description="Clean the build directories">
     <delete dir="bin" />
