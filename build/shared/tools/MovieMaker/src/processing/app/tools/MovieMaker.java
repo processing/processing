@@ -32,6 +32,7 @@ import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.prefs.Preferences;
 
@@ -619,16 +620,37 @@ public class MovieMaker extends JFrame implements Tool {
   
   
   private BufferedImage readImage(File file) throws IOException {
+    /*
+    BufferedImage image = null;
+    try {
+      Class<?> iio = getClass().getClassLoader().loadClass("javax.imageio.ImageIO");
+      Method readMethod = iio.getMethod("read", new Class[] { File.class });
+      image = (BufferedImage) readMethod.invoke(null, file);
+      
+      Method scanMethod = iio.getMethod("scanForPlugins", new Class[] { });
+      scanMethod.invoke(null);
+      
+      Method formatMethod = iio.getMethod("getReaderFormatNames", new Class[] { });
+      String[] formats = (String[]) formatMethod.invoke(null);
+      for (String f : formats) {
+        System.out.println("dynamically found " + f);
+      }
+      
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+    */
+    Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+//    System.out.println("reading image with CL " + getClass().getClassLoader());
+    
     BufferedImage image = ImageIO.read(file);
 
-    /*
     String[] loadImageFormats = ImageIO.getReaderFormatNames();
     if (loadImageFormats != null) {
       for (String format : loadImageFormats) {
         System.out.println(format);
       }
     }
-    */
     
     if (image == null) {
       String path = file.getAbsolutePath();

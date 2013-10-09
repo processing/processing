@@ -16,6 +16,9 @@ X   https://github.com/processing/processing/issues/2103
 X still having right-click issues (re-opened)
 X   https://github.com/processing/processing/issues/2103
 
+X add gamma, better image options, etc to MovieMaker
+_ fix file selection dialog (just import PApplet) with MovieMaker
+
 X add appbundler.jar, otherwise folks have to include Xcode
 _ if they want to build appbundler, they'll need Xcode
 _   and the command line tools Preferences > Downloads > Command Line Tools
