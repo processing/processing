@@ -16,6 +16,10 @@ X   https://github.com/processing/processing/issues/2103
 X still having right-click issues (re-opened)
 X   https://github.com/processing/processing/issues/2103
 
+cleaning
+o moviemaker video sizes / usability
+o   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Exhibition;action=display;num=1211318862
+
 X add gamma, better image options, etc to MovieMaker
 _ fix file selection dialog (just import PApplet) with MovieMaker
 
@@ -179,8 +183,6 @@ _   and that java2d should complain if people try it
 _ method to go from function name to the included examples where used?
 _ encourage use of set() instead of point() in the drawing api
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114204116
-_ moviemaker video sizes / usability
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Exhibition;action=display;num=1211318862
 _ other projects on which p5 is built 
 _   no longer oro matcher and jikes
 _   add: quaqua, jna, registry stuff, .. ?

@@ -645,12 +645,14 @@ public class MovieMaker extends JFrame implements Tool {
     
     BufferedImage image = ImageIO.read(file);
 
+    /*
     String[] loadImageFormats = ImageIO.getReaderFormatNames();
     if (loadImageFormats != null) {
       for (String format : loadImageFormats) {
         System.out.println(format);
       }
     }
+    */
     
     if (image == null) {
       String path = file.getAbsolutePath();
