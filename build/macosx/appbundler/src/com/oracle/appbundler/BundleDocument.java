@@ -34,8 +34,7 @@ import org.apache.tools.ant.BuildException;
 public class BundleDocument {
     private String name = "editor";
     private String role = "";
-    private String icon = null;
-    private File iconFile;
+    private File icon = null;
     private String[] extensions;
     private boolean isPackage = false;
 
@@ -56,9 +55,8 @@ public class BundleDocument {
         }
     }
     
-    public void setIcon(String icon) {
+    public void setIcon(File icon) {
       this.icon = icon;
-      this.iconFile = new File(icon);
     }
     
     public void setName(String name) {
@@ -82,12 +80,12 @@ public class BundleDocument {
 //    }
     
     public String getIconName() {
-        return iconFile.getName();
+        return icon.getName();
     }
     
     
     public File getIconFile() {
-        return iconFile;
+        return icon;
     }
     
     public String getName() {
