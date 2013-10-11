@@ -16,7 +16,8 @@ X Java2D images crash after being resized
 X   https://github.com/processing/processing/issues/2113
 X constrain lerpColor() between 0 and 1
 X allow println() and print() to take varargs 
-X   https://github.com/processing/processing/issues/2056
+o   https://github.com/processing/processing/issues/2056
+_   causes conflict with printing arrays
 
 _ JSONObject/Array.format(-1) not working on embedded JSONObjects
 _   should be a quick fix, notes are in the report

@@ -4431,7 +4431,7 @@ public class PApplet extends Applet
     System.out.println();
   }
 
-  //
+
 /**
  * @param what boolean, byte, char, color, int, float, String, Object
  */
@@ -4477,9 +4477,23 @@ public class PApplet extends Applet
 
 
   static public void println(Object... variables) {
+//    System.out.println("got " + variables.length + " variables");
     print(variables);
     println();
   }
+
+
+  /*
+  // Breaking this out since the compiler doesn't know the difference between
+  // Object... and just Object (with an array passed in). This should take care
+  // of the confusion for at least the most common case (a String array).
+  static public void println(String[] array) {
+    for (int i = 0; i < array.length; i++) {
+      System.out.println("[" + i + "] \"" + array[i] + "\"");
+    }
+    System.out.flush();
+  }
+  */
 
 
   static public void println(Object what) {
