@@ -4380,6 +4380,23 @@ public class PApplet extends Applet
     System.out.flush();
   }
 
+
+  static public void print(Object... variables) {
+    StringBuilder sb = new StringBuilder();
+    for (Object o : variables) {
+      if (sb.length() != 0) {
+        sb.append(" ");
+      }
+      if (o == null) {
+        sb.append("null");
+      } else {
+        sb.append(o.toString());
+      }
+    }
+    System.out.print(sb.toString());
+  }
+
+
   static public void print(Object what) {
     if (what == null) {
       // special case since this does fuggly things on > 1.1
@@ -4389,8 +4406,8 @@ public class PApplet extends Applet
     }
   }
 
-  //
-/**
+
+  /**
    * ( begin auto-generated from println.xml )
    *
    * Writes to the text area of the Processing environment's console. This is
@@ -4457,6 +4474,13 @@ public class PApplet extends Applet
     System.out.println(what);
     System.out.flush();
   }
+
+
+  static public void println(Object... variables) {
+    print(variables);
+    println();
+  }
+
 
   static public void println(Object what) {
     if (what == null) {
