@@ -63,7 +63,7 @@ public class AppBundlerTask extends Task {
   private String name = null;
   private String displayName = null;
   private String identifier = null;
-  private File icon = null;
+  private File iconFile = null;
   private String executableName = EXECUTABLE_NAME;
 
   private String shortVersion = null; //"1.0";
@@ -121,7 +121,7 @@ public class AppBundlerTask extends Task {
 
 
   public void setIcon(File icon) {
-    this.icon = icon;
+    this.iconFile = icon;
   }
 
 
@@ -332,12 +332,12 @@ public class AppBundlerTask extends Task {
       throw new IllegalStateException("Identifier is required.");
     }
 
-    if (icon != null) {
-      if (!icon.exists()) {
+    if (iconFile != null) {
+      if (!iconFile.exists()) {
         throw new IllegalStateException("Icon does not exist.");
       }
 
-      if (icon.isDirectory()) {
+      if (iconFile.isDirectory()) {
         throw new IllegalStateException("Invalid icon.");
       }
     }
@@ -552,11 +552,11 @@ public class AppBundlerTask extends Task {
 
 
   private void copyIcon(File resourcesDirectory) throws IOException {
-    if (icon == null) {
+    if (iconFile == null) {
       copy(getClass().getResource(DEFAULT_ICON_NAME), 
            new File(resourcesDirectory, DEFAULT_ICON_NAME));
     } else {
-      copy(icon, new File(resourcesDirectory, icon.getName()));
+      copy(iconFile, new File(resourcesDirectory, iconFile.getName()));
     }
   }
   
@@ -584,7 +584,7 @@ public class AppBundlerTask extends Task {
     // Write bundle properties
     plist.writeProperty("CFBundleDevelopmentRegion", "English");
     plist.writeProperty("CFBundleExecutable", executableName);
-    plist.writeProperty("CFBundleIconFile", (icon == null) ? DEFAULT_ICON_NAME : icon.getName());
+    plist.writeProperty("CFBundleIconFile", (iconFile == null) ? DEFAULT_ICON_NAME : iconFile.getName());
     plist.writeProperty("CFBundleIdentifier", identifier);
     plist.writeProperty("CFBundleDisplayName", displayName);
     plist.writeProperty("CFBundleInfoDictionaryVersion", "6.0");
