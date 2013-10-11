@@ -53,8 +53,8 @@ public class Base {
 //  static private boolean RELEASE = false;
 
   /** True if heavy debugging error/log messages are enabled */
-//  static public boolean DEBUG = false;
-  static public boolean DEBUG = true;
+  static public boolean DEBUG = false;
+//  static public boolean DEBUG = true;
 
   static HashMap<Integer, String> platformNames =
     new HashMap<Integer, String>();

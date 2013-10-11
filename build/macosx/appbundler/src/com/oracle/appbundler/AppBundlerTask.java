@@ -508,11 +508,11 @@ public class AppBundlerTask extends Task {
   private void copyClassPathRefEntries(File javaDirectory) throws IOException {
     if (classPathRef != null) {
       org.apache.tools.ant.types.Path classpath =
-          (org.apache.tools.ant.types.Path) classPathRef.getReferencedObject(getProject());
+        (org.apache.tools.ant.types.Path) classPathRef.getReferencedObject(getProject());
 
-      Iterator<FileResource> iter = (Iterator<FileResource>)(Object)classpath.iterator();
-      while(iter.hasNext()) {
-        FileResource resource = iter.next();
+      Iterator<?> iter = classpath.iterator();
+      while (iter.hasNext()) {
+        FileResource resource = (FileResource) iter.next();
         File source = resource.getFile();
         File destination = new File(javaDirectory, source.getName());
         copy(source, destination);
