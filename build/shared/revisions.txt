@@ -1,3 +1,10 @@
+PROCESSING 2.1 beta 1 (REV 0222) - XX October 2013
+
++ Added printArray() function for people who want to avoid the compiler warnings with Eclipse or whatever else, and deprecating the old println(Object) in favor of people using printArray(). In the PDE, this should be transparent (the warnings are not shown). 
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING 2.0.3 (REV 0221) - 5 September 2013
 
 Lots of bug fixes, primarily a ton of work by Andres to improve 

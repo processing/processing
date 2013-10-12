@@ -19,7 +19,8 @@ X JSONObject/Array.format(-1) not working on embedded JSONObjects
 X   https://github.com/processing/processing/issues/2119
 X allow println() and print() to take varargs 
 o   https://github.com/processing/processing/issues/2056
-_   causes conflict with printing arrays
+X   causes conflict with printing arrays
+X   added printArray() function instead
 
 opengl
 X fix inconsistency with P2D and resetMatrix()

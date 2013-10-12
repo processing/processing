@@ -470,7 +470,7 @@ public class Runner implements MessageConsumer {
 //            PApplet.println("launchJava stderr:");
 //            PApplet.println(errorStrings);
 //            PApplet.println("launchJava stdout:");
-            PApplet.println(inputStrings);
+            PApplet.printArray(inputStrings);
             
             if (errorStrings != null && errorStrings.length > 1) {
               if (errorStrings[0].indexOf("Invalid maximum heap size") != -1) {

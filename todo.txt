@@ -588,6 +588,8 @@ _ see how library installation goes, then possibly do same w/ examples
 
 PDE / Libraries
 
+_ Add a means to specify packages to import in library.properties
+_   https://github.com/processing/processing/issues/2134
 _ need to deal with classpath conflicts
 _   avoid garbage that people have installed on their machines
 _   antlr.jar in the classpath will cause trouble.. 
@@ -632,7 +634,8 @@ _   String osName = System.getProperty("os.name");
 _   String osArch = System.getProperty("os.arch");
 _   http://stackoverflow.com/questions/1611357/how-to-make-a-jar-file-that-include-dll-files
 _ add control for dependencies (i.e. svg needs xml), needed for export
-_   http://code.google.com/p/processing/issues/detail?id=70
+X   http://code.google.com/p/processing/issues/detail?id=70
+_   https://github.com/processing/processing/issues/109
 _ need better platform designation setup for libs
 _ library installation should use the sketchbook folder, not the p5 folder
 _   actually enforce this, give users a warning about other libs

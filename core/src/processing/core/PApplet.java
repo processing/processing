@@ -4397,6 +4397,7 @@ public class PApplet extends Applet
   }
 
 
+  /*
   static public void print(Object what) {
     if (what == null) {
       // special case since this does fuggly things on > 1.1
@@ -4405,6 +4406,7 @@ public class PApplet extends Applet
       System.out.println(what.toString());
     }
   }
+  */
 
 
   /**
@@ -4487,6 +4489,8 @@ public class PApplet extends Applet
   // Breaking this out since the compiler doesn't know the difference between
   // Object... and just Object (with an array passed in). This should take care
   // of the confusion for at least the most common case (a String array).
+  // On second thought, we're going the printArray() route, since the other
+  // object types are also used frequently.
   static public void println(String[] array) {
     for (int i = 0; i < array.length; i++) {
       System.out.println("[" + i + "] \"" + array[i] + "\"");
@@ -4496,7 +4500,18 @@ public class PApplet extends Applet
   */
 
 
+  /**
+   * Use printArray() instead. This function causes a warning because the new
+   * print(Object...) and println(Object...) functions can't be reliably
+   * bound by the compiler.
+   */
+  @Deprecated
   static public void println(Object what) {
+    printArray(what);
+  }
+
+
+  static public void printArray(Object what) {
     if (what == null) {
       // special case since this does fuggly things on > 1.1
       System.out.println("null");
