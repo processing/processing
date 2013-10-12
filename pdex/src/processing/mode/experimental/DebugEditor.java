@@ -28,6 +28,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -294,6 +296,16 @@ public class DebugEditor extends JavaEditor implements ActionListener {
       consoleProblemsPane.add(errorTableScrollPane, XQConsoleToggle.ERRORSLIST);
       consoleProblemsPane.add(console, XQConsoleToggle.CONSOLE);
       consolePanel.add(consoleProblemsPane, BorderLayout.CENTER);
+      
+      // ensure completion gets hidden on editor losing focus
+      addWindowFocusListener(new WindowFocusListener() {        
+        public void windowLostFocus(WindowEvent e) {
+         ta.hideSuggestion();
+        }        
+        public void windowGainedFocus(WindowEvent e) {
+          
+        }
+      });
     }
 
 //    /**
