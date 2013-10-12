@@ -59,6 +59,8 @@ public class PGraphicsPDF extends PGraphicsJava2D {
   static protected DefaultFontMapper mapper;
   static protected String[] fontList;
 
+  private float dpi = 72;
+
 
   /*
   public PGraphicsPDF() {
@@ -77,6 +79,17 @@ public class PGraphicsPDF extends PGraphicsJava2D {
     if (file == null) {
       throw new RuntimeException("PGraphicsPDF requires an absolute path " +
                                  "for the location of the output file.");
+    }
+  }
+
+
+  /**
+   *  Set the number of Dots per inch in the output PDF
+   *  Defaults to 72
+   */
+  protected void setDpi(float dpi) {
+    if (0.0f < dpi) {
+      this.dpi = dpi;
     }
   }
 
@@ -110,7 +123,7 @@ public class PGraphicsPDF extends PGraphicsJava2D {
 //    long t0 = System.currentTimeMillis();
 
     if (document == null) {
-      document = new Document(new Rectangle(width, height));
+      document = new Document(new Rectangle((float)(width*(72.0f/this.dpi)), (float)(height*(72.0/this.dpi))));
       try {
         if (file != null) {
           //BufferedOutputStream output = new BufferedOutputStream(stream, 16384);
@@ -133,7 +146,7 @@ public class PGraphicsPDF extends PGraphicsJava2D {
 //      System.out.println("beginDraw fonts " + (System.currentTimeMillis() - t));
 //      g2 = content.createGraphics(width, height, getMapper());
 //      if (textMode == SHAPE) {
-      g2 = content.createGraphicsShapes(width, height);
+      g2 = content.createGraphicsShapes((float)(width*(72.0f/this.dpi)), (float)(height*(72.0/this.dpi)));
 //      } else if (textMode == MODEL) {
 //        g2 = content.createGraphics(width, height, getMapper());
 //      }
@@ -146,6 +159,7 @@ public class PGraphicsPDF extends PGraphicsJava2D {
 //    super.beginDraw();
     checkSettings();
     resetMatrix(); // reset model matrix
+    g2.scale(72.0f/this.dpi, 72.0f/this.dpi);
     vertexCount = 0;
 
     // Also need to push the matrix since the matrix doesn't reset on each run

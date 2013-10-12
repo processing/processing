@@ -10901,6 +10901,18 @@ public class PApplet extends Applet
 
 
   /**
+   *  Same as above, but also set the DPI before calling beginRecord()
+   */
+  public PGraphics beginRecord(String renderer, String filename, float dpi) {
+    filename = insertFrame(filename);
+    PGraphics rec = createGraphics(width, height, renderer, filename);
+    rec.setDpi(dpi);
+    beginRecord(rec);
+    return rec; 
+  }
+
+
+  /**
    * @nowebref
    * Begin recording (echoing) commands to the specified PGraphics object.
    */

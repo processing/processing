@@ -855,6 +855,14 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
+   *  Dummy implementation, classes overwrite this if needed
+   *  See PApplet.beginRecord(String, String, float)
+   */
+  protected void setDpi(float dpi) {
+  }
+
+
+  /**
    * ( begin auto-generated from PGraphics_endDraw.xml )
    *
    * Finalizes the rendering of a PGraphics object so that it can be shown on screen.
