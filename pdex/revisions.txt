@@ -1,3 +1,19 @@
+
+PDE X v1.0.2b - October, 2013
+
+Bug fixes
+
++ Code completion window gets stuck when Processing loses focus
+  https://github.com/processing/processing-experimental/issues/21
+
++ Live-error checker in the experimental mode is inefficient with memory.
+  https://github.com/processing/processing-experimental/issues/1
+  
++ Cmd + Left Click should be working again in OS X with Processing 2.1
+  https://github.com/processing/processing-experimental/issues/11
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
 PDE X v1.0.1b - 25 September, 2013
 
 Bug fix
@@ -9,7 +25,7 @@ Changes
 
 - Removed the tiny markers shown at the start of error lines. Too. Much. Red.
 
- . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .    
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .    
 
 PDE X v1.0.0b - 22 September, 2013
 
