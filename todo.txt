@@ -16,6 +16,29 @@ X   https://github.com/processing/processing/issues/2103
 X still having right-click issues (re-opened)
 X   https://github.com/processing/processing/issues/2103
 
+serial
+X closing several bugs because no longer relevant
+X need 64-bit version of RXTX library
+X   http://code.google.com/p/processing/issues/detail?id=1237
+X   https://github.com/processing/processing/issues/1275
+X serial still causing problems on OS X
+X   http://code.google.com/p/processing/issues/detail?id=52
+X   had already been closed
+X serial ports missing from list (OS X)
+X   http://code.google.com/p/processing/issues/detail?id=52
+X   also was marked fixed...
+X Serial.write problem with Bluetooth SPP virtual serial port 
+X   http://code.google.com/p/processing/issues/detail?id=318
+X   was marked duplicate of #52
+X Serial silently fails when invalid port entered as string
+o   https://github.com/processing/processing/issues/2114
+X Serial Issue for RPi (and others)
+o   https://github.com/processing/processing/issues/2066
+X RXTX-2.1-7 doesn't list ports created in /dev with VirtualSerialPortApp
+o   https://github.com/processing/processing/issues/1460
+X Bluetooth serial problems on Windows when connecting to Arduino device
+o   https://github.com/processing/processing/issues/1374
+
 movie maker
 o moviemaker video sizes / usability
 o   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Exhibition;action=display;num=1211318862
@@ -813,18 +836,6 @@ LIBRARIES / General
 
 _ need to unpack InvocationTargetException in xxxxxxEvent calls
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=display;num=1116850328#3
-
-
-LIBRARIES / Serial
-
-_ need 64-bit version of RXTX library
-_   http://code.google.com/p/processing/issues/detail?id=1237
-_ serial still causing problems on OS X
-_   http://code.google.com/p/processing/issues/detail?id=52
-_ serial ports missing from list (OS X)
-_   http://code.google.com/p/processing/issues/detail?id=52
-_ Serial.write problem with Bluetooth SPP virtual serial port 
-_   http://code.google.com/p/processing/issues/detail?id=318
 
 
 
