@@ -150,6 +150,10 @@ x boolean warningsEnabled - made it volatile
 General Stuff
 =============
 
+* [Critical] PermGen out of memory bug. Manually triggering GC after making the classloader null ensures permgen memory is reclaimed on editor exit. Max open window still limited by max permgen size. Also, added a classloadcounter in ECS to trigger GC periodically.
+https://github.com/processing/processing-experimental/issues/1 
+See: http://stackoverflow.com/questions/2095974/how-to-unload-a-already-loaded-class-in-java
+I'm making the classLoader null, but what about the classes loaded by ASTGen? Investigate.
 x Disabling Error Checking disables predictions as well! Fixed.
 x Added doc listener for text area updates
 x Consult Ben on where to save preferences - main preferences.txt or custom one. - Main prefs file

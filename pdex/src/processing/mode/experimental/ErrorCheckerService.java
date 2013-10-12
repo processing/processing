@@ -292,10 +292,14 @@ public class ErrorCheckerService implements Runnable{
       checkCode();
       checkForMissingImports();
     }
-    checkerClass = null;
+    
     astGenerator.disposeAllWindows();
-    astGenerator = null;
+    compilationChecker = null;
+    checkerClass = null;
+    classLoader = null;
+    System.gc();
     logE("Thread stopped: " + editor.getSketch().getName());
+    System.gc();
   }
   
   protected void updateSketchCodeListeners() {
@@ -558,7 +562,11 @@ public class ErrorCheckerService implements Runnable{
         for (int i = 0; i < jarFiles.length; i++) {
           classpath[ii++] = jarFiles[i].toURI().toURL();
         }
-
+        
+        compilationChecker = null;
+        checkerClass = null;
+        classLoader = null;
+        System.gc();
         // log("CP Len -- " + classpath.length);
         classLoader = new URLClassLoader(classpath);
         // log("1.");
@@ -650,7 +658,15 @@ public class ErrorCheckerService implements Runnable{
     // log("Compilecheck, Done.");
   }
   
+  private int loadClassCounter = 0;
   public URLClassLoader getSketchClassLoader() {
+    loadClassCounter++;
+    if(loadClassCounter > 100){
+      loadClassCounter = 0;
+      classLoader = null;
+      System.gc();
+      classLoader = new URLClassLoader(classpath);
+    }
     return classLoader;
   }
 
