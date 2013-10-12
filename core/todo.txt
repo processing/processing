@@ -36,6 +36,8 @@ X child SVG elements misplaced when rendering with P2D/P3D
 X   https://github.com/processing/processing/issues/2086
 X SUBTRACT and DIFFERENCE blend modes are swapped
 X   https://github.com/processing/processing/issues/2075
+X throw an error for textureMode(REPEAT) [fry]
+X   https://github.com/processing/processing/issues/2052
 
 _ Sort out blending differences with P2D/P3D
 _   https://github.com/processing/processing/issues/1844

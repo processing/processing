@@ -1224,6 +1224,9 @@ public class PGraphics extends PImage implements PConstants {
    * @see PGraphics#textureWrap(int)
    */
   public void textureMode(int mode) {
+    if (mode != IMAGE && mode != NORMAL) {
+      throw new RuntimeException("textureMode() only supports IMAGE and NORMAL");
+    }
     this.textureMode = mode;
   }
 
