@@ -61,6 +61,7 @@ import processing.core.*;
  */
 public class Preferences {
 
+  static final Integer[] FONT_SIZES = { 10, 12, 14, 18, 24, 36, 48 }; 
   // what to call the feller
 
   static final String PREFS_FILE = "preferences.txt"; //$NON-NLS-1$
@@ -113,7 +114,8 @@ public class Preferences {
   JCheckBox memoryOverrideBox;
   JTextField memoryField;
   JCheckBox checkUpdatesBox;
-  JTextField fontSizeField;
+  //JTextField fontSizeField;
+  JComboBox fontSizeField;
   JCheckBox inputMethodBox;
   JCheckBox autoAssociateBox;
   
@@ -340,7 +342,9 @@ public class Preferences {
     Container box = Box.createHorizontalBox();
     label = new JLabel("Editor font size: ");
     box.add(label);
-    fontSizeField = new JTextField(4);
+    //fontSizeField = new JTextField(4);
+    fontSizeField = new JComboBox<Integer>(FONT_SIZES);
+    fontSizeField.setEditable(true);
     box.add(fontSizeField);
     label = new JLabel("  (requires restart of Processing)");
     box.add(label);
@@ -348,7 +352,8 @@ public class Preferences {
     d = box.getPreferredSize();
     box.setBounds(left, top, d.width, d.height);
     Font editorFont = Preferences.getFont("editor.font");
-    fontSizeField.setText(String.valueOf(editorFont.getSize()));
+    //fontSizeField.setText(String.valueOf(editorFont.getSize()));
+    fontSizeField.setSelectedItem(editorFont.getSize());
     top += d.height + GUI_BETWEEN;
     
     
@@ -722,18 +727,39 @@ public class Preferences {
     }
     */
 
-    //set("editor.font", fontSelectionBox.getSelectedItem());
-    String fontFamily = (String) fontSelectionBox.getSelectedItem();
-        
+    // Don't change anything if the user closes the window before fonts load
+    if (fontSelectionBox.isEnabled()) {
+      String fontFamily = (String) fontSelectionBox.getSelectedItem();
+      set("editor.font.family", fontFamily);
+    }
+
+    /*
     String newSizeText = fontSizeField.getText();
     try {
       int newSize = Integer.parseInt(newSizeText.trim());
-      String pieces[] = PApplet.split(get("editor.font"), ','); //$NON-NLS-1$
-      pieces[2] = String.valueOf(newSize);
-      set("editor.font", PApplet.join(pieces, ',')); //$NON-NLS-1$
+      //String pieces[] = PApplet.split(get("editor.font"), ','); //$NON-NLS-1$
+      //pieces[2] = String.valueOf(newSize);
+      //set("editor.font", PApplet.join(pieces, ',')); //$NON-NLS-1$
+      set("editor.font.size", String.valueOf(newSize));
 
     } catch (Exception e) {
-      Base.log("ignoring invalid font size " + newSizeText); //$NON-NLS-1$
+      Base.log("Ignoring invalid font size " + newSizeText); //$NON-NLS-1$
+    }
+    */
+    try {
+      Object selection = fontSizeField.getSelectedItem();
+      if (selection instanceof String) {
+        // Replace with Integer version
+        selection = Integer.parseInt((String) selection);
+      }
+      //Integer newSize = (Integer) selection;
+      //Integer newSize = Integer.valueOf(selection);
+      //System.out.println("setting size to " + selection + " " + selection.getClass());
+      set("editor.font.size", String.valueOf(selection));
+
+    } catch (NumberFormatException e) {
+      Base.log("Ignoring invalid font size " + fontSizeField); //$NON-NLS-1$
+      fontSizeField.setSelectedItem(getInteger("editor.font.size"));
     }
     
     setBoolean("editor.input_method_support", inputMethodBox.isSelected()); //$NON-NLS-1$
@@ -784,14 +810,14 @@ public class Preferences {
       displaySelectionBox.setSelectedIndex(displayNum);
     }
     
+    // This takes a while to load, so run it from a separate thread
     new Thread(new Runnable() {
       public void run() {
         initFontList();
-//      while (monoFontList == null) {
-//        System.out.println("Waiting for font list to finish loading...");
-//      }
       }
     }).start();
+    
+    fontSizeField.setSelectedItem(getInteger("editor.font.size"));
 
     memoryOverrideBox.
       setSelected(getBoolean("run.options.memory")); //$NON-NLS-1$
