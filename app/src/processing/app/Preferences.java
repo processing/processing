@@ -116,8 +116,8 @@ public class Preferences {
   JTextField fontSizeField;
   JCheckBox inputMethodBox;
   JCheckBox autoAssociateBox;
-  JRadioButton bitsThirtyTwoButton;
-  JRadioButton bitsSixtyFourButton;
+  //JRadioButton bitsThirtyTwoButton;
+  //JRadioButton bitsSixtyFourButton;
   JComboBox displaySelectionBox;
 
   int displayCount;
@@ -455,6 +455,7 @@ public class Preferences {
 
     // Launch programs as [ ] 32-bit [ ] 64-bit (Mac OS X only)
 
+    /*
     if (Base.isMacOS()) {
       box = Box.createHorizontalBox();
       label = new JLabel("Launch programs in  ");
@@ -473,6 +474,7 @@ public class Preferences {
       box.setBounds(left, top, d.width, d.height);
       top += d.height + GUI_BETWEEN;
     }
+    */
 
 
     // More preferences are in the ...
@@ -679,6 +681,7 @@ public class Preferences {
     }
     */
 
+    /*
     // If a change has been made between 32- and 64-bit, the libraries need
     // to be reloaded so that their native paths are set correctly.
     if (Base.isMacOS()) {
@@ -691,6 +694,7 @@ public class Preferences {
         }
       }
     }
+    */
 
     String newSizeText = fontSizeField.getText();
     try {
@@ -756,6 +760,7 @@ public class Preferences {
     memoryField.
       setText(get("run.options.memory.maximum")); //$NON-NLS-1$
 
+    /*
     if (Base.isMacOS()) {
       String bits = Preferences.get("run.options.bits"); //$NON-NLS-1$
       if (bits.equals("32")) { //$NON-NLS-1$
@@ -769,6 +774,7 @@ public class Preferences {
         bitsThirtyTwoButton.setEnabled(false);
       }
     }
+    */
 
     if (autoAssociateBox != null) {
       autoAssociateBox.

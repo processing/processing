@@ -16,6 +16,11 @@ X   https://github.com/processing/processing/issues/2103
 X still having right-click issues (re-opened)
 X   https://github.com/processing/processing/issues/2103
 
+cleaning
+o the first time someone hides a tab, put up a msg explaining what it does
+o   "don't warn me about this anymore"
+X   removed this feature a while back
+
 serial
 X closing several bugs because no longer relevant
 X need 64-bit version of RXTX library
@@ -58,16 +63,14 @@ _   and the command line tools Preferences > Downloads > Command Line Tools
 _ appbundler will have an NPE if the osx binary isn't built
 _ also need to have 10.8 version of the SDK (old Xcode won't work)
 
-_ type looks a little feeble on OS X
-_   retina problem? may need to turn off (on?) smoothing
+_ type looks a little feeble on OS X with non-retina machines
+_   https://github.com/processing/processing/issues/2135
 _ type cut off in dialog boxes on OS X retina machines
 _   https://github.com/processing/processing/issues/2116
 _ dialog box icon is fuzzy on OS X retina machines
 _   https://github.com/processing/processing/issues/2117
+_ solution might be our own dialog boxes (see 'dialogs' section)
 
-_ also need to have a central menubar
-_   add the offscreen window hack
-_   otherwise mode change causes "do you want to quit?" on OS X
 _ fix console font on Windows and Linux with 7u40
 _   the message area text also looks ugly.. can we fix?
 _ add pref to select PDE font (so that CJKV languages work better)
@@ -117,6 +120,11 @@ X   http://www.oracle.com/technetwork/java/javase/jdk-7-readme-429198.html
 
 7u40 switch
 X make OS X launch from its local JRE
+X also need to have a central menubar
+X   add the offscreen window hack
+X   otherwise mode change causes "do you want to quit?" on OS X
+X remove 32- and 64-bit preference from Preferences on OS X
+o try the bundle on Mac Mini running 10.6
 
 _ change how export is handled
 _   remove ability to export cross-platform apps
@@ -129,9 +137,8 @@ _ change app stub in OS X exported application
 _ we become full 64-bit on OS X
 _   meaning that the macosx32 video library goes away
 _   and the preference for launching in 32- or 64-bit mode
-_ try the bundle on Mac Mini running 10.6
-_   make sure it's only running on 64-bit machines? 
-_   try installing 10.7.3 on Mac Mini and check whether things run
+_ make sure it's only running on 64-bit machines? 
+_ try installing 10.7.3 on Mac Mini and check whether things run
 _ bring back the splash screen
 _ update github instructions
 _   only JRE needed at this point
@@ -358,15 +365,11 @@ PDE - Processing Development Environment
 
 PDE / Dialogs
 
-_ proper dialog support
-_   http://javagraphics.blogspot.com/2008/06/joptionpane-making-alternative.html
 _ two-tiered dialogs for everything - use big font/little font style throughout
 _   http://javagraphics.blogspot.com/2008/06/joptionpane-making-alternative.html
 _ option to suppress warning dialogs
 _   starting with the one about modifying the sketch name for spaces
 _   http://code.google.com/p/processing/issues/detail?id=7
-_ the first time someone hides a tab, put up a msg explaining what it does
-_   "don't warn me about this anymore"
 _ add "don't warn me about this" for sketch renaming
 _   make sure renamed version doesn't exist already
 _ prompt user before nuking applet or application folders
@@ -406,7 +409,8 @@ _ missing brackets, unmatched brackets
 _   examples added to the bug report
 _   http://code.google.com/p/processing/issues/detail?id=6
 _ enums not supported properly
-_   http://code.google.com/p/processing/issues/detail?id=1352
+_   https://github.com/processing/processing/issues/1390
+X   http://code.google.com/p/processing/issues/detail?id=1352
 
 low (features)
 _ combining char/int/etc casts in one statement causes preproc trouble

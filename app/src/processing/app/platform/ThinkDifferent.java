@@ -22,7 +22,9 @@
 
 package processing.app.platform;
 
+import java.awt.Dimension;
 import java.awt.event.*;
+
 import javax.swing.*;
 
 import processing.app.About;
@@ -74,27 +76,37 @@ public class ThinkDifferent implements ApplicationListener {
     // Set the menubar to be used when nothing else is open. http://j.mp/dkZmka
     // Only available since Java for Mac OS X 10.6 Update 1, but removed
     // dynamic loading code because that should be installed in 10.6.8, and
-    // we may be dropped 10.6 really soon anyway.
+    // we may be dropped 10.6 really soon anyway
+    
+    JMenuBar defaultMenuBar = new JMenuBar();
+    JMenu fileMenu = buildFileMenu(base);
+    defaultMenuBar.add(fileMenu);
+    // This is kind of a gross way to do this, but the alternatives? Hrm.
+    Base.defaultFileMenu = fileMenu;
+
     if (PApplet.javaVersion <= 1.6f) {  // doesn't work on Oracle's Java
-//    if (System.getProperty("java.vendor").contains("Apple") ||
-//        Base.isUsableOracleJava()) {
       try {
-        JMenuBar defaultMenuBar = new JMenuBar();
-        JMenu fileMenu = buildFileMenu(base);
-        defaultMenuBar.add(fileMenu);
-        application.setDefaultMenuBar(new JMenuBar());
-        // This is kind of a gross way to do this, but the alternatives? Hrm.
-        Base.defaultFileMenu = fileMenu;
+        application.setDefaultMenuBar(defaultMenuBar);
+        
       } catch (Exception e) {
         e.printStackTrace();  // oh well nevermind
       }
     } else {
-      // http://java.net/jira/browse/MACOSX_PORT-775?page=com.atlassian.jira.plugin.system.issuetabpanels%3Aall-tabpanel
-      System.err.println("Skipping default menu bar due to Oracle Java 7 bug:");
-      System.err.println("http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=8007267");
+      // The douchebags at Oracle didn't feel that a working f*king menubar 
+      // on OS X was important enough to make it into the 7u40 release. 
+      //http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=8007267
+      // It languished in the JDK 8 source and has been backported for 7u60:
+      //http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=8022667
+      
+      JFrame offscreen = new JFrame();
+      offscreen.setUndecorated(true);
+      offscreen.setJMenuBar(defaultMenuBar);
+      Dimension screen = Toolkit.getScreenSize();
+      offscreen.setLocation(screen.width, screen.height);
+      offscreen.setVisible(true);
     }
   }
-
+  
 
   public ThinkDifferent(Base base) {
     this.base = base;

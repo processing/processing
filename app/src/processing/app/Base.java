@@ -1038,6 +1038,7 @@ public class Base {
     // Close the running window, avoid window boogers with multiple sketches
     editor.internalCloseRunner();
 
+//    System.out.println("editors size is " + editors.size());
     if (editors.size() == 1) {
       // For 0158, when closing the last window /and/ it was already an
       // untitled sketch, just give up and let the user quit.
@@ -1077,6 +1078,7 @@ public class Base {
 
       // This will store the sketch count as zero
       editors.remove(editor);
+//      System.out.println("editors size now " + editors.size());
 //      storeSketches();
 
       // Save out the current prefs state

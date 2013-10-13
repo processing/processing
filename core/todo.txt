@@ -21,6 +21,12 @@ X allow println() and print() to take varargs
 o   https://github.com/processing/processing/issues/2056
 X   causes conflict with printing arrays
 X   added printArray() function instead
+o custom DPI settings with PDF
+X   https://github.com/processing/processing/pull/2069
+X pdf not rendering unicode with beginRecord()
+X   seems to have fixed itself / can't reproduce
+X   http://code.google.com/p/processing/issues/detail?id=90
+X   https://github.com/processing/processing/issues/129
 
 opengl
 X fix inconsistency with P2D and resetMatrix()
@@ -46,8 +52,6 @@ _ 'collector' class.. Dict that points to a list
 _   String as a key, int/float/string list as values
 
 high
-_ custom DPI settings with PDF
-_   https://github.com/processing/processing/pull/2069
 _ loadPixels doesn't set alpha value for pixels on Java2D
 _   https://github.com/processing/processing/issues/2030
 _ blendMode(ADD) is broken with default renderer
@@ -540,8 +544,6 @@ _   touchEvent(), gestureEvent()?
 
 LIBRARIES / PDF
 
-_ pdf not rendering unicode with beginRecord()
-_   http://code.google.com/p/processing/issues/detail?id=90
 _ beginRecord() doesn't use current settings of the sketch
 _   sometimes reported as a bug, but probably not a good way to 
 _   consistently carry these over
