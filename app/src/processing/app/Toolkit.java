@@ -36,12 +36,14 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
+import java.awt.geom.AffineTransform;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBoxMenuItem;
@@ -320,12 +322,56 @@ public class Toolkit {
 //  }
 
 
+  static public List<Font> getMonoFontList() {
+    GraphicsEnvironment ge =
+      GraphicsEnvironment.getLocalGraphicsEnvironment();
+    Font[] fonts = ge.getAllFonts();
+    ArrayList<Font> outgoing = new ArrayList<Font>();
+    // Using AffineTransform.getScaleInstance(100, 100) doesn't change sizes
+    FontRenderContext frc = 
+      new FontRenderContext(new AffineTransform(),
+                            Preferences.getBoolean("editor.antialias"), 
+                            true);  // use fractional metrics 
+    for (Font font : fonts) {
+      if (font.canDisplay('i') && font.canDisplay('M') &&
+          font.canDisplay(' ') && font.canDisplay('.')) {
+        
+        // The old method just returns 1 or 0, and using deriveFont(size)  
+        // is overkill. It also causes deprecation warnings
+//        @SuppressWarnings("deprecation")
+//        FontMetrics fm = awtToolkit.getFontMetrics(font);
+        //FontMetrics fm = awtToolkit.getFontMetrics(font.deriveFont(24));
+//        System.out.println(fm.charWidth('i') + " " + fm.charWidth('M'));
+//        if (fm.charWidth('i') == fm.charWidth('M') &&
+//            fm.charWidth('M') == fm.charWidth(' ') && 
+//            fm.charWidth(' ') == fm.charWidth('.')) {
+        double w = font.getStringBounds(" ", frc).getWidth();
+        if (w == font.getStringBounds("i", frc).getWidth() && 
+            w == font.getStringBounds("M", frc).getWidth() &&
+            w == font.getStringBounds(".", frc).getWidth()) {
+          outgoing.add(font);
+//          System.out.println("  good " + w);
+        }
+      }
+    }
+    return outgoing;
+  }
+
+
   static Font monoFont;
   static Font monoBoldFont;
   static Font sansFont;
   static Font sansBoldFont;
 
 
+  static public String getMonoFontName() {
+    if (monoFont == null) {
+      getMonoFont(12, Font.PLAIN);  // load a dummy version
+    }
+    return monoFont.getName();
+  }
+  
+  
   static public Font getMonoFont(int size, int style) {
     if (monoFont == null) {
       try {

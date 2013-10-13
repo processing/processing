@@ -592,6 +592,13 @@
       <fileset file="shared/revisions.txt" />
     </copy>
 
+    <!--
+    Processing.app/Contents/PlugIns/jdk1.7.0_40.jdk/Contents/Home/jre/lib/fonts
+    <copy todir="macosx/work/Processing.app/Contents/PlugIns/jdk1.7.0_40.jdk/Contents/Home/jre/lib/fonts">
+      <fileset dir="shared/lib/fonts" includes="*" />
+    </copy>
+    -->
+
     <property name="launch4j.dir" 
 	      value="macosx/work/Processing.app/Contents/Java/launch4j" />
 

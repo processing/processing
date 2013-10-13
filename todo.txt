@@ -71,6 +71,8 @@ _ dialog box icon is fuzzy on OS X retina machines
 _   https://github.com/processing/processing/issues/2117
 _ solution might be our own dialog boxes (see 'dialogs' section)
 
+_ console font in EditorConsole
+_   Font font = Preferences.getFont("console.font");
 _ fix console font on Windows and Linux with 7u40
 _   the message area text also looks ugly.. can we fix?
 _ add pref to select PDE font (so that CJKV languages work better)

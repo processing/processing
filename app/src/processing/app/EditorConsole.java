@@ -176,6 +176,7 @@ public class EditorConsole extends JScrollPane {
     consoleDoc.setParagraphAttributes(0, 0, standard, true);
 
     Font font = Preferences.getFont("console.font");
+    //Font font = Toolkit.getMonoFont(size, style);
 
     // build styles for different types of console output
     Color bgColor = mode.getColor("console.color");

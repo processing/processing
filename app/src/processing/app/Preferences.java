@@ -26,6 +26,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
+import java.util.List;
 
 import javax.swing.*;
 
@@ -116,15 +117,18 @@ public class Preferences {
   JTextField fontSizeField;
   JCheckBox inputMethodBox;
   JCheckBox autoAssociateBox;
+  
   //JRadioButton bitsThirtyTwoButton;
   //JRadioButton bitsSixtyFourButton;
+  
   JComboBox displaySelectionBox;
-
   int displayCount;
+  
+  //List<Font> monoFontList;
+  Font[] monoFontList;
+  JComboBox fontSelectionBox;
 
-  // the calling editor, so updates can be applied
-
-//  Editor editor;
+  /** Base object so that updates can be applied to the list of editors. */
   Base base;
 
 
@@ -294,6 +298,39 @@ public class Preferences {
     top += vmax + GUI_BETWEEN;
 
 
+    // Editor and console font [ Source Code Pro ]
+
+    // Nevermind on this for now.. Java doesn't seem to have a method for 
+    // enumerating only the fixed-width (monospaced) fonts. To do this 
+    // properly, we'd need to list the fonts, and compare the metrics of 
+    // i and M for each. When they're identical (and not degenerate), 
+    // we'd call that font fixed width. That's all a very expensive set of 
+    // operations, so it should also probably be cached between runs and 
+    // updated in the background.
+
+    Container fontBox = Box.createHorizontalBox();
+    JLabel fontLabel = new JLabel("Editor and Console font ");
+    final String fontTip = "<html>" +
+      "Select the font used in the Editor and the Console.<br/>" +
+      "Only monospaced (fixed-width) fonts may be used, <br/>" +
+      "though the list may be imperfect.";
+    fontLabel.setToolTipText(fontTip);
+    fontBox.add(fontLabel);
+    // needs to happen here for getPreferredSize()
+    fontSelectionBox = new JComboBox(new Object[] { Toolkit.getMonoFontName() });
+    fontSelectionBox.setToolTipText(fontTip);
+//    fontSelectionBox.addItem(Toolkit.getMonoFont(size, style));
+    //updateDisplayList();  
+    fontSelectionBox.setEnabled(false);  // don't enable until fonts are loaded
+    fontBox.add(fontSelectionBox);
+//    fontBox.add(Box.createHorizontalGlue());
+    pain.add(fontBox);
+    d = fontBox.getPreferredSize();
+    fontBox.setBounds(left, top, d.width + 150, d.height);
+//    fontBox.setBounds(left, top, dialog.getWidth() - left*2, d.height);
+    top += d.height + GUI_BETWEEN;
+    
+    
     // Editor font size [    ]
 
     Container box = Box.createHorizontalBox();
@@ -310,23 +347,7 @@ public class Preferences {
     fontSizeField.setText(String.valueOf(editorFont.getSize()));
     top += d.height + GUI_BETWEEN;
     
-
-    // Nevermind on this for now.. Java doesn't seem to have a method for 
-    // enumerating only the fixed-width (monospaced) fonts. To do this 
-    // properly, we'd need to list the fonts, and compare the metrics of 
-    // i and M for each. When they're identical (and not degenerate), 
-    // we'd call that font fixed width. That's all a very expensive set of 
-    // operations, so it should also probably be cached between runs and 
-    // updated in the background.
     
-//    // Editor font
-//    
-//    GraphicsEnvironment ge =
-//      GraphicsEnvironment.getLocalGraphicsEnvironment();
-//    Font fonts[] = ge.getAllFonts();
-//    ArrayList<Font> monoFonts = new ArrayList<Font>();
-
-
     // [ ] Use smooth text in editor window
 
     editorAntialiasBox =
@@ -754,6 +775,15 @@ public class Preferences {
 //      System.out.println("setting num to " + displayNum);
       displaySelectionBox.setSelectedIndex(displayNum);
     }
+    
+    new Thread(new Runnable() {
+      public void run() {
+        initFontList();
+//      while (monoFontList == null) {
+//        System.out.println("Waiting for font list to finish loading...");
+//      }
+      }
+    }).start();
 
     memoryOverrideBox.
       setSelected(getBoolean("run.options.memory")); //$NON-NLS-1$
@@ -785,6 +815,39 @@ public class Preferences {
   }
 
 
+  /** 
+   * I have some ideas on how we could make Swing even more obtuse for the
+   * most basic usage scenarios. Is there someone on the team I can contact?
+   * Oracle, are you listening?
+   */
+  class FontNamer extends JLabel implements ListCellRenderer<Font> {
+    public Component getListCellRendererComponent(JList<? extends Font> list,
+                                                  Font value, int index,
+                                                  boolean isSelected,
+                                                  boolean cellHasFocus) {
+      setText(value.getName());
+      return this;
+    }
+  }
+  
+
+  void initFontList() {
+    if (monoFontList == null) {
+      Font[] list = Toolkit.getMonoFontList().toArray(new Font[0]);
+      fontSelectionBox.setModel(new DefaultComboBoxModel(list));
+      fontSelectionBox.setRenderer(new FontNamer());
+      // Preferred size just makes it extend to the container
+      //fontSelectionBox.setSize(fontSelectionBox.getPreferredSize());
+      // Minimum size is better, but cuts things off (on OS X), so we add 20
+      //Dimension minSize = fontSelectionBox.getMinimumSize();
+      //Dimension minSize = fontSelectionBox.getPreferredSize();
+      //fontSelectionBox.setSize(minSize.width + 20, minSize.height);
+      fontSelectionBox.setEnabled(true);
+      monoFontList = list;  // signal that we're finished
+    }
+  }
+  
+  
   void updateDisplayList() {
     GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
     displayCount = ge.getScreenDevices().length;

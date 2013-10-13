@@ -112,9 +112,11 @@ public class CreateFont extends JFrame implements Tool {
     // also ignore dialog, dialoginput, monospaced, serif, sansserif
 
     // getFontList is deprecated in 1.4, so this has to be used
+    //long t = System.currentTimeMillis(); 
     GraphicsEnvironment ge =
       GraphicsEnvironment.getLocalGraphicsEnvironment();
-    Font fonts[] = ge.getAllFonts();
+    Font[] fonts = ge.getAllFonts();
+    //System.out.println("font startup took " + (System.currentTimeMillis() - t) + " ms");
     
     if (false) {
       ArrayList<Font> fontList = new ArrayList<Font>();
