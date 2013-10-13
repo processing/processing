@@ -26,7 +26,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
-import java.util.List;
 
 import javax.swing.*;
 
@@ -400,10 +399,10 @@ public class Preferences {
 //    top += d.height + GUI_BETWEEN;
 
 
-    // [ ] Delete previous folder on export
+    // [ ] Delete previous application folder on export
 
     deletePreviousBox =
-      new JCheckBox("Delete previous folder on export");
+      new JCheckBox("Delete previous application folder on export");
     pain.add(deletePreviousBox);
     d = deletePreviousBox.getPreferredSize();
     deletePreviousBox.setBounds(left, top, d.width + 10, d.height);
