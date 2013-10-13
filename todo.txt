@@ -136,7 +136,7 @@ _   actually call ant from inside p5?
 _ change app stub in OS X exported application
 _ we become full 64-bit on OS X
 _   meaning that the macosx32 video library goes away
-_   and the preference for launching in 32- or 64-bit mode
+X   and the preference for launching in 32- or 64-bit mode
 _ make sure it's only running on 64-bit machines? 
 _ try installing 10.7.3 on Mac Mini and check whether things run
 _ bring back the splash screen
@@ -175,6 +175,10 @@ _ add .bat file to lib on windows so that we can get better debugging info
 _ changing modes brings the PDE back on the second screen
 _   the Find window (also the save windows) also have the same problem
 
+post 2.1 cleaning
+_ remove video for macosx32 from the repo permanently
+_ remove the prefs for 32/64-bit from Preferences
+_ remove the extra OS X cruft inside Runner.java
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
