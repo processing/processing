@@ -376,7 +376,8 @@ public class Toolkit {
     if (monoFont == null) {
       try {
         monoFont = createFont("SourceCodePro-Regular.ttf", size);
-        monoBoldFont = createFont("SourceCodePro-Semibold.ttf", size);
+        //monoBoldFont = createFont("SourceCodePro-Semibold.ttf", size);
+        monoBoldFont = createFont("SourceCodePro-Bold.ttf", size);
       } catch (Exception e) {
         Base.log("Could not load mono font", e);
         monoFont = new Font("Monospaced", Font.PLAIN, size);
