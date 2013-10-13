@@ -594,10 +594,10 @@
 
     <!--
     Processing.app/Contents/PlugIns/jdk1.7.0_40.jdk/Contents/Home/jre/lib/fonts
+    -->
     <copy todir="macosx/work/Processing.app/Contents/PlugIns/jdk1.7.0_40.jdk/Contents/Home/jre/lib/fonts">
       <fileset dir="shared/lib/fonts" includes="*" />
     </copy>
-    -->
 
     <property name="launch4j.dir" 
 	      value="macosx/work/Processing.app/Contents/Java/launch4j" />
@@ -803,6 +803,10 @@
       <fileset refid="jre-optional-linux" />
     </delete>
 
+    <copy todir="linux/work/java/lib/fonts">
+      <fileset dir="shared/lib/fonts" includes="*" />
+    </copy>
+
   </target>
   
   <target name="linux-run" depends="linux-build" 
@@ -1000,6 +1004,10 @@
       <fileset refid="javafx-windows" />
       <fileset refid="jre-optional-windows" />
     </delete>
+
+    <copy todir="linux/work/java/lib/fonts">
+      <fileset dir="shared/lib/fonts" includes="*" />
+    </copy>
   </target>
   
   <target name="windows-run" depends="windows-build" 
