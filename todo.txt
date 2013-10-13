@@ -125,21 +125,18 @@ X   add the offscreen window hack
 X   otherwise mode change causes "do you want to quit?" on OS X
 X remove 32- and 64-bit preference from Preferences on OS X
 o try the bundle on Mac Mini running 10.6
+X we become full 64-bit on OS X
+X   meaning that the macosx32 video library goes away
+X   and the preference for launching in 32- or 64-bit mode
 
 _ change how export is handled
 _   remove ability to export cross-platform apps
 _   add ability to embed the current JRE
 _ the case for the embedded JRE
 _   https://github.com/processing/processing/issues/2104
-_ change Windows export to use launch4j instead of the launcher.cpp file
-_   actually call ant from inside p5?
 _ change app stub in OS X exported application
-_ we become full 64-bit on OS X
-_   meaning that the macosx32 video library goes away
-X   and the preference for launching in 32- or 64-bit mode
-_ make sure it's only running on 64-bit machines? 
 _ try installing 10.7.3 on Mac Mini and check whether things run
-_ bring back the splash screen
+_   make sure it's only running on 64-bit machines? 
 _ update github instructions
 _   only JRE needed at this point
 _   switched over to Java 7
@@ -149,6 +146,10 @@ _   JAVA_HOME warnings from Ant can also be ignored
 
 _ appbundler improvements
 _   don't re-copy JRE into work folder if already exists
+_   implement a splash screen
+
+_ change Windows export to use launch4j instead of the launcher.cpp file
+_   actually call ant from inside p5?
 
 high
 _ move old Google Code SVN back to processing.org
