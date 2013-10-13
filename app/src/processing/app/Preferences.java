@@ -123,8 +123,8 @@ public class Preferences {
   JComboBox displaySelectionBox;
   int displayCount;
   
-  //List<Font> monoFontList;
-  Font[] monoFontList;
+  //Font[] monoFontList;
+  String[] monoFontFamilies;
   JComboBox fontSelectionBox;
 
   /** Base object so that updates can be applied to the list of editors. */
@@ -320,7 +320,7 @@ public class Preferences {
       "though the list may be imperfect.";
     fontLabel.setToolTipText(fontTip);
     fontBox.add(fontLabel);
-    // needs to happen here for getPreferredSize()
+    // get a wide name in there before getPreferredSize() is called
     fontSelectionBox = new JComboBox(new Object[] { Toolkit.getMonoFontName() });
     fontSelectionBox.setToolTipText(fontTip);
 //    fontSelectionBox.addItem(Toolkit.getMonoFont(size, style));
@@ -646,7 +646,8 @@ public class Preferences {
    * then send a message to the editor saying that it's time to do the same.
    */
   protected void applyFrame() {
-    setBoolean("editor.antialias", editorAntialiasBox.isSelected()); //$NON-NLS-1$
+    setBoolean("editor.antialias", //$NON-NLS-1$
+               editorAntialiasBox.isSelected());
 
     setBoolean("export.delete_target_folder", //$NON-NLS-1$
                deletePreviousBox.isSelected());
@@ -721,6 +722,9 @@ public class Preferences {
     }
     */
 
+    //set("editor.font", fontSelectionBox.getSelectedItem());
+    String fontFamily = (String) fontSelectionBox.getSelectedItem();
+        
     String newSizeText = fontSizeField.getText();
     try {
       int newSize = Integer.parseInt(newSizeText.trim());
@@ -837,10 +841,12 @@ public class Preferences {
   
 
   void initFontList() {
+    /*
     if (monoFontList == null) {
-      Font[] list = Toolkit.getMonoFontList().toArray(new Font[0]);
-      fontSelectionBox.setModel(new DefaultComboBoxModel(list));
+      monoFontList = Toolkit.getMonoFontList().toArray(new Font[0]);
+      fontSelectionBox.setModel(new DefaultComboBoxModel(monoFontList));
       fontSelectionBox.setRenderer(new FontNamer());
+      
       // Preferred size just makes it extend to the container
       //fontSelectionBox.setSize(fontSelectionBox.getPreferredSize());
       // Minimum size is better, but cuts things off (on OS X), so we add 20
@@ -848,7 +854,28 @@ public class Preferences {
       //Dimension minSize = fontSelectionBox.getPreferredSize();
       //fontSelectionBox.setSize(minSize.width + 20, minSize.height);
       fontSelectionBox.setEnabled(true);
-      monoFontList = list;  // signal that we're finished
+    }
+    */
+    if (monoFontFamilies == null) {
+      monoFontFamilies = Toolkit.getMonoFontFamilies();
+      fontSelectionBox.setModel(new DefaultComboBoxModel(monoFontFamilies));
+      String family = get("editor.font.family");
+//      System.out.println("family is " + family);
+//      System.out.println("font sel items = " + fontSelectionBox.getItemCount());
+//      for (int i = 0; i < fontSelectionBox.getItemCount(); i++) {
+//        String item = (String) fontSelectionBox.getItemAt(i);
+//        if (fontSelectionBox.getItemAt(i) == family) {
+//          System.out.println("found at index " + i);
+//        } else if (item.equals(family)) {
+//          System.out.println("equals at index " + i);
+//        } else {
+//          System.out.println("nothing doing: " + item);
+//        }
+//      }
+      // Set a reasonable default, in case selecting the family fails 
+      fontSelectionBox.setSelectedItem("Monospaced");
+      fontSelectionBox.setSelectedItem(family);
+      fontSelectionBox.setEnabled(true);
     }
   }
   

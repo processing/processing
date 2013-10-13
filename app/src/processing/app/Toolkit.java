@@ -43,6 +43,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.swing.ImageIcon;
@@ -322,7 +323,8 @@ public class Toolkit {
 //  }
 
 
-  static public List<Font> getMonoFontList() {
+  // Gets the plain (not bold, not italic) version of each
+  static private List<Font> getMonoFontList() {
     GraphicsEnvironment ge =
       GraphicsEnvironment.getLocalGraphicsEnvironment();
     Font[] fonts = ge.getAllFonts();
@@ -333,7 +335,8 @@ public class Toolkit {
                             Preferences.getBoolean("editor.antialias"), 
                             true);  // use fractional metrics 
     for (Font font : fonts) {
-      if (font.canDisplay('i') && font.canDisplay('M') &&
+      if (font.getStyle() == Font.PLAIN &&
+          font.canDisplay('i') && font.canDisplay('M') &&
           font.canDisplay(' ') && font.canDisplay('.')) {
         
         // The old method just returns 1 or 0, and using deriveFont(size)  
@@ -349,12 +352,29 @@ public class Toolkit {
         if (w == font.getStringBounds("i", frc).getWidth() && 
             w == font.getStringBounds("M", frc).getWidth() &&
             w == font.getStringBounds(".", frc).getWidth()) {
+          
+//          //PApplet.printArray(font.getAvailableAttributes());
+//          Map<TextAttribute,?> attr = font.getAttributes();
+//          System.out.println(font.getFamily() + " > " + font.getName());
+//          System.out.println(font.getAttributes());
+//          System.out.println("  " + attr.get(TextAttribute.WEIGHT));
+//          System.out.println("  " + attr.get(TextAttribute.POSTURE));
+          
           outgoing.add(font);
 //          System.out.println("  good " + w);
         }
       }
     }
     return outgoing;
+  }
+  
+  
+  static public String[] getMonoFontFamilies() {
+    HashSet<String> families = new HashSet<String>();
+    for (Font font : getMonoFontList()) {
+      families.add(font.getFamily());
+    }
+    return families.toArray(new String[0]);
   }
 
 

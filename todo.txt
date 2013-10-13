@@ -16,6 +16,9 @@ X   https://github.com/processing/processing/issues/2103
 X still having right-click issues (re-opened)
 X   https://github.com/processing/processing/issues/2103
 
+X update with bold version of Source Code Pro
+X   http://www.google.com/fonts#UsePlace:use/Collection:Source+Code+Pro
+
 cleaning
 o the first time someone hides a tab, put up a msg explaining what it does
 o   "don't warn me about this anymore"
