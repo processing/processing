@@ -776,7 +776,18 @@
       <arg value="xfz" />
       <arg value="jre.tgz"/>
     </exec>
+
+    <!--
+    We only want to move when the folder didn't exist before
     <move file="linux/jre1.7.0_40" tofile="linux/work/java" />
+    -->
+    <exec executable="rsync" dir="linux">
+      <arg value="-a" />
+      <arg value="--delete" />
+      <arg value="jre1.7.0_40/" />
+      <arg value="work/java" />
+    </exec>
+    <delete dir="linux/jre1.7.0_40" />
 
     <!-- Remove unused JRE bloat. -->
     <delete> 
