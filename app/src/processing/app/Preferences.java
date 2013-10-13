@@ -241,6 +241,11 @@ public class Preferences {
     dialog = new JFrame("Preferences");
     dialog.setResizable(false);
 
+//    GroupLayout layout = new GroupLayout(getContentPane());
+//    dialog.getContentPane().setLayout(layout);
+//    layout.setAutoCreateGaps(true);
+//    layout.setAutoCreateContainerGaps(true);
+    
     Container pain = dialog.getContentPane();
     pain.setLayout(null);
 
@@ -824,7 +829,8 @@ public class Preferences {
                                                   Font value, int index,
                                                   boolean isSelected,
                                                   boolean cellHasFocus) {
-      setText(value.getName());
+      //if (Base.isMacOS()) {
+      setText(value.getFamily() + " / " + value.getName() + " (" + value.getPSName() + ")");
       return this;
     }
   }

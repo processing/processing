@@ -107,6 +107,7 @@ editor.window.height.min.windows = 530
 #editor.font.macosx = Monaco,plain,10
 # trying for a built-in, consistent monospace for 2.0
 editor.font = processing.mono,plain,12
+#editor.font.size=12
 
 # anti-aliased text, turned off by default
 #editor.antialias=false

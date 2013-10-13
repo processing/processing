@@ -387,20 +387,15 @@ public class Toolkit {
       if (size == monoBoldFont.getSize()) {
         return monoBoldFont;
       } else {
-//        System.out.println("deriving new font");
         return monoBoldFont.deriveFont((float) size);
       }
     } else {
       if (size == monoFont.getSize()) {
         return monoFont;
       } else {
-//        System.out.println("deriving new font");
         return monoFont.deriveFont((float) size);
       }
     }
-//    return style == Font.BOLD ?
-//      monoBoldFont.deriveFont((float) size) :
-//      monoFont.deriveFont((float) size);
   }
 
 
@@ -411,26 +406,20 @@ public class Toolkit {
         sansBoldFont = createFont("SourceSansPro-Semibold.ttf", size);
       } catch (Exception e) {
         Base.log("Could not load sans font", e);
-        sansFont = new Font("Monospaced", Font.PLAIN, size);
-        sansBoldFont = new Font("Monospaced", Font.BOLD, size);
+        sansFont = new Font("SansSerif", Font.PLAIN, size);
+        sansBoldFont = new Font("SansSerif", Font.BOLD, size);
       }
     }
-//    System.out.println("deriving new font");
-//    return style == Font.BOLD ?
-//      sansBoldFont.deriveFont((float) size) :
-//      sansFont.deriveFont((float) size);
     if (style == Font.BOLD) {
       if (size == sansBoldFont.getSize()) {
         return sansBoldFont;
       } else {
-//        System.out.println("deriving new font");
         return sansBoldFont.deriveFont((float) size);
       }
     } else {
       if (size == sansFont.getSize()) {
         return sansFont;
       } else {
-//        System.out.println("deriving new font");
         return sansFont.deriveFont((float) size);
       }
     }

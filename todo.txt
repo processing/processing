@@ -718,6 +718,14 @@ _   move styling to separate constants that are more accessible
 
 PDE / Preferences
 
+_ control text size in console
+o   why aren't prefs from theme.txt showing up in preferences.txt? hrm
+o   or rather, why can't they be overridden? 
+X     because theme.txt data is a different animal / that's part of the point
+_   should fonts at least be in prefs.txt?
+_   http://code.google.com/p/processing/issues/detail?id=226
+_   https://github.com/processing/processing/issues/265
+
 _ the .macosx, .linux, etc prefs should be stripped
 _   only use them on first load, and merge into preferences.txt
 _ Editor.applyFrame() may not have a valid 'editor' object to work with
@@ -728,12 +736,6 @@ _ clear up prefs so that multiple editors don't trash each other's prefs
 _   when are prefs saved? could instead save whenever changes are made
 _   and then if the file gets modified, it'll put up an error message
 _   also, this may be part of why other sketches aren't reloading properly
-_ control text size in console
-o   why aren't prefs from theme.txt showing up in preferences.txt? hrm
-o   or rather, why can't they be overridden? 
-X     because theme.txt data is a different animal / that's part of the point
-_   should fonts at least be in prefs.txt?
-_   http://code.google.com/p/processing/issues/detail?id=226
 _ simple prefs implementation to set key/value pairs using a JTable
 _ separate prefs and sketch state info?
 _   this would mean prefs being rewritten far less
@@ -748,6 +750,7 @@ _ preferences window has been hit with the ugly stick
 _   redo panel to use proper Box layout etc
 _   also needs to look good across all platforms
 _   http://code.google.com/p/processing/issues/detail?id=28
+_   https://github.com/processing/processing/issues/67
 _ make available the background colors for present mode, stop button color
 _   isolate color chooser into a simpler/smaller class outside tools
 _   then can also use from inside processing applications as well

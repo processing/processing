@@ -46,6 +46,8 @@ X   https://github.com/processing/processing/issues/2075
 X throw an error for textureMode(REPEAT) [fry]
 X   https://github.com/processing/processing/issues/2052
 
+_ insertRow() bug
+_   https://github.com/processing/processing/issues/2137
 _ Sort out blending differences with P2D/P3D
 _   https://github.com/processing/processing/issues/1844
 _ 'collector' class.. Dict that points to a list
