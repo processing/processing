@@ -1005,7 +1005,7 @@
       <fileset refid="jre-optional-windows" />
     </delete>
 
-    <copy todir="linux/work/java/lib/fonts">
+    <copy todir="windows/work/java/lib/fonts">
       <fileset dir="shared/lib/fonts" includes="*" />
     </copy>
   </target>
