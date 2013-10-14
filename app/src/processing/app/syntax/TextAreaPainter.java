@@ -384,11 +384,15 @@ public class TextAreaPainter extends JComponent implements TabExpander {
 //  }
 
   
-  /**
-   * Returns the font metrics used by this component.
-   */
+  /** Returns the font metrics used by this component. */
   public FontMetrics getFontMetrics() {
     return fm;
+  }
+
+  
+  public FontMetrics getFontMetrics(SyntaxStyle style) {
+    return getFontMetrics(style.isBold() ? 
+                          defaults.boldFont : defaults.plainFont);
   }
 
 
@@ -669,7 +673,7 @@ public class TextAreaPainter extends JComponent implements TabExpander {
    * @param y The y co-ordinate
    * @return The x co-ordinate, plus the width of the painted string
    */
-  static public int paintSyntaxLine(Segment line, Token tokens,
+  public int paintSyntaxLine(Segment line, Token tokens,
                                     SyntaxStyle[] styles,
                                     TabExpander expander, Graphics gfx,
                                     int x, int y) {
@@ -688,7 +692,10 @@ public class TextAreaPainter extends JComponent implements TabExpander {
         if(!defaultFont.equals(gfx.getFont()))
           gfx.setFont(defaultFont);
       } else {
-        styles[id].setGraphicsFlags(gfx,defaultFont);
+        //styles[id].setGraphicsFlags(gfx,defaultFont);
+        SyntaxStyle ss = styles[id];
+        gfx.setColor(ss.getColor());
+        gfx.setFont(ss.isBold() ? defaults.boldFont : defaults.plainFont);
       }
       line.count = length;
       x = Utilities.drawTabbedText(line,x,y,gfx,expander,0);

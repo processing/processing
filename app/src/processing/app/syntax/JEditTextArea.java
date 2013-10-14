@@ -594,7 +594,7 @@ public class JEditTextArea extends JComponent
         tokens = painter.currentLineTokens = tokenMarker.markTokens(lineSegment, line);
       }
 
-      Font defaultFont = painter.getFont();
+//      Font defaultFont = painter.getFont();
       SyntaxStyle[] styles = painter.getStyles();
 
       for (;;) {
@@ -606,7 +606,8 @@ public class JEditTextArea extends JComponent
         if (id == Token.NULL) {
           fm = painter.getFontMetrics();
         } else {
-          fm = styles[id].getFontMetrics(defaultFont, this);
+          //fm = styles[id].getFontMetrics(defaultFont, this);
+          fm = painter.getFontMetrics(styles[id]);
         }
 
         int length = tokens.length;
@@ -681,19 +682,21 @@ public class JEditTextArea extends JComponent
       }
 
       int offset = 0;
-      Font defaultFont = painter.getFont();
+//      Font defaultFont = painter.getFont();
       SyntaxStyle[] styles = painter.getStyles();
 //      System.out.println("painter is " + painter + ", doc is " + document);
 
-      for(;;) {
+      for (;;) {
         byte id = tokens.id;
         if(id == Token.END)
           return offset;
 
-        if(id == Token.NULL)
+        if (id == Token.NULL) {
           fm = painter.getFontMetrics();
-        else
-          fm = styles[id].getFontMetrics(defaultFont, this);
+        } else {
+          //fm = styles[id].getFontMetrics(defaultFont, this);
+          fm = painter.getFontMetrics(styles[id]);
+        }
 
         int length = tokens.length;
 
