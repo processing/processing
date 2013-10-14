@@ -55,6 +55,7 @@ implements TabExpander, Printable {
 
     // unfortunately probably can't just do setDefaults() since things aren't quite set up
     setFont(defaults.font);
+//    System.out.println("defaults font is " + defaults.font);
     setForeground(defaults.fgcolor);
     setBackground(defaults.bgcolor);
 
@@ -75,6 +76,7 @@ implements TabExpander, Printable {
   }
   
   
+  /*
   public void setDefaults(TextAreaDefaults defaults) {
     setFont(defaults.font);
     setForeground(defaults.fgcolor);
@@ -96,6 +98,7 @@ implements TabExpander, Printable {
     cols = defaults.cols;
     rows = defaults.rows;
   }
+  */
 
 
   /**

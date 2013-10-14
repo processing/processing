@@ -1162,9 +1162,10 @@ public class Preferences {
 
     s = st.nextToken();
     boolean bold = (s.indexOf("bold") != -1); //$NON-NLS-1$
-    boolean italic = (s.indexOf("italic") != -1); //$NON-NLS-1$
+//    boolean italic = (s.indexOf("italic") != -1); //$NON-NLS-1$
     //System.out.println(what + " = " + str + " " + bold + " " + italic);
 
-    return new SyntaxStyle(color, italic, bold);
+//    return new SyntaxStyle(color, italic, bold);
+    return new SyntaxStyle(color, bold);
   }
 }
