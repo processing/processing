@@ -14,8 +14,8 @@ import javax.swing.JComponent;
 
 
 /**
- * A simple text style class. It can specify the color, italic flag,
- * and bold flag of a run of text.
+ * A simple text style class. 
+ * It can specify the color and bold flag of a run of text.
  * @author Slava Pestov
  * @version $Id$
  */
@@ -27,6 +27,7 @@ public class SyntaxStyle {
   private Font lastStyledFont;
   private FontMetrics fontMetrics;
 
+  
   /**
    * Creates a new SyntaxStyle.
    * @param color The text color

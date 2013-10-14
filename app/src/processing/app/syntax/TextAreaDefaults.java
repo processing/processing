@@ -41,7 +41,8 @@ public class TextAreaDefaults {
   public boolean paintInvalid;
 
   // moved from TextAreaPainter [fry]
-  public Font font;
+  public Font plainFont;
+  public Font boldFont;
   public Color fgcolor;
   public Color bgcolor;
   public boolean antialias;

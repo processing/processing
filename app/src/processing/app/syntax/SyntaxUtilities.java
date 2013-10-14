@@ -22,64 +22,34 @@ import java.awt.*;
  */
 public class SyntaxUtilities {
   
-  /**
-   * Checks if a subregion of a <code>Segment</code> is equal to a
-   * string.
-   * @param ignoreCase True if case should be ignored, false otherwise
-   * @param text The segment
-   * @param offset The offset into the segment
-   * @param match The string to match
-   */
-  public static boolean regionMatches(boolean ignoreCase, Segment text,
-                                      int offset, String match) {
-    int length = offset + match.length();
-    char[] textArray = text.array;
-    if(length > text.offset + text.count)
-      return false;
-    for(int i = offset, j = 0; i < length; i++, j++)
-      {
-        char c1 = textArray[i];
-        char c2 = match.charAt(j);
-        if(ignoreCase)
-          {
-            c1 = Character.toUpperCase(c1);
-            c2 = Character.toUpperCase(c2);
-          }
-        if(c1 != c2)
-          return false;
-      }
-    return true;
-  }
-
-
-  /**
-   * Checks if a subregion of a <code>Segment</code> is equal to a
-   * character array.
-   * @param ignoreCase True if case should be ignored, false otherwise
-   * @param text The segment
-   * @param offset The offset into the segment
-   * @param match The character array to match
-   */
-  public static boolean regionMatches(boolean ignoreCase, Segment text,
-                                      int offset, char[] match) {
-    int length = offset + match.length;
-    char[] textArray = text.array;
-    if(length > text.offset + text.count)
-      return false;
-    for(int i = offset, j = 0; i < length; i++, j++)
-      {
-        char c1 = textArray[i];
-        char c2 = match[j];
-        if(ignoreCase)
-          {
-            c1 = Character.toUpperCase(c1);
-            c2 = Character.toUpperCase(c2);
-          }
-        if(c1 != c2)
-          return false;
-      }
-    return true;
-  }
+//  /**
+//   * Checks if a subregion of a <code>Segment</code> is equal to a
+//   * string.
+//   * @param ignoreCase True if case should be ignored, false otherwise
+//   * @param text The segment
+//   * @param offset The offset into the segment
+//   * @param match The string to match
+//   */
+//  public static boolean regionMatches(boolean ignoreCase, Segment text,
+//                                      int offset, String match) {
+//    int length = offset + match.length();
+//    char[] textArray = text.array;
+//    if(length > text.offset + text.count)
+//      return false;
+//    for(int i = offset, j = 0; i < length; i++, j++)
+//      {
+//        char c1 = textArray[i];
+//        char c2 = match.charAt(j);
+//        if(ignoreCase)
+//          {
+//            c1 = Character.toUpperCase(c1);
+//            c2 = Character.toUpperCase(c2);
+//          }
+//        if(c1 != c2)
+//          return false;
+//      }
+//    return true;
+//  }
 
 
 //  /**
@@ -107,50 +77,7 @@ public class SyntaxUtilities {
 //  }
 
 
-  /**
-   * Paints the specified line onto the graphics context. Note that this
-   * method munges the offset and count values of the segment.
-   * @param line The line segment
-   * @param tokens The token list for the line
-   * @param styles The syntax style list
-   * @param expander The tab expander used to determine tab stops. May
-   * be null
-   * @param gfx The graphics context
-   * @param x The x co-ordinate
-   * @param y The y co-ordinate
-   * @return The x co-ordinate, plus the width of the painted string
-   */
-  public static int paintSyntaxLine(Segment line, Token tokens,
-                                    SyntaxStyle[] styles,
-                                    TabExpander expander, Graphics gfx,
-                                    int x, int y) {
-    Font defaultFont = gfx.getFont();
-    Color defaultColor = gfx.getColor();
-
-    for (;;) {
-      byte id = tokens.id;
-      if(id == Token.END)
-        break;
-
-      int length = tokens.length;
-      if (id == Token.NULL) {
-        if(!defaultColor.equals(gfx.getColor()))
-          gfx.setColor(defaultColor);
-        if(!defaultFont.equals(gfx.getFont()))
-          gfx.setFont(defaultFont);
-      } else {
-        styles[id].setGraphicsFlags(gfx,defaultFont);
-      }
-      line.count = length;
-      x = Utilities.drawTabbedText(line,x,y,gfx,expander,0);
-      line.offset += length;
-
-      tokens = tokens.next;
-    }
-
-    return x;
-  }
 
   // private members
-  private SyntaxUtilities() {}
+//  private SyntaxUtilities() {}
 }

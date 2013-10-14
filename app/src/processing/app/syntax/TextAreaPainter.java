@@ -15,6 +15,7 @@ import processing.app.syntax.im.CompositionTextPainter;
 import javax.swing.ToolTipManager;
 import javax.swing.text.*;
 import javax.swing.JComponent;
+
 import java.awt.event.MouseEvent;
 import java.awt.*;
 import java.awt.print.*;
@@ -54,7 +55,7 @@ implements TabExpander, Printable {
     setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
 
     // unfortunately probably can't just do setDefaults() since things aren't quite set up
-    setFont(defaults.font);
+    setFont(defaults.plainFont);
 //    System.out.println("defaults font is " + defaults.font);
     setForeground(defaults.fgcolor);
     setBackground(defaults.bgcolor);
@@ -611,6 +612,7 @@ implements TabExpander, Printable {
       gfx.drawString(".",x,y);
     }
   }
+  
 
   protected void paintSyntaxLine(Graphics gfx, TokenMarker tokenMarker,
                                  int line, Font defaultFont,
@@ -624,7 +626,7 @@ implements TabExpander, Printable {
     gfx.setFont(defaultFont);
     gfx.setColor(defaultColor);
     y += fm.getHeight();
-    x = SyntaxUtilities.paintSyntaxLine(currentLine,
+    x = paintSyntaxLine(currentLine,
                                         currentLineTokens,
                                         styles, this, gfx, x, y);
     /*
@@ -637,6 +639,51 @@ implements TabExpander, Printable {
       gfx.setColor(eolMarkerColor);
       gfx.drawString(".",x,y);
     }
+  }
+  
+  
+  /**
+   * Paints the specified line onto the graphics context. Note that this
+   * method munges the offset and count values of the segment.
+   * @param line The line segment
+   * @param tokens The token list for the line
+   * @param styles The syntax style list
+   * @param expander The tab expander used to determine tab stops. May
+   * be null
+   * @param gfx The graphics context
+   * @param x The x co-ordinate
+   * @param y The y co-ordinate
+   * @return The x co-ordinate, plus the width of the painted string
+   */
+  static public int paintSyntaxLine(Segment line, Token tokens,
+                                    SyntaxStyle[] styles,
+                                    TabExpander expander, Graphics gfx,
+                                    int x, int y) {
+    Font defaultFont = gfx.getFont();
+    Color defaultColor = gfx.getColor();
+
+    for (;;) {
+      byte id = tokens.id;
+      if(id == Token.END)
+        break;
+
+      int length = tokens.length;
+      if (id == Token.NULL) {
+        if(!defaultColor.equals(gfx.getColor()))
+          gfx.setColor(defaultColor);
+        if(!defaultFont.equals(gfx.getFont()))
+          gfx.setFont(defaultFont);
+      } else {
+        styles[id].setGraphicsFlags(gfx,defaultFont);
+      }
+      line.count = length;
+      x = Utilities.drawTabbedText(line,x,y,gfx,expander,0);
+      line.offset += length;
+
+      tokens = tokens.next;
+    }
+
+    return x;
   }
 
 
