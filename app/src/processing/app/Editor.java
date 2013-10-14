@@ -942,16 +942,29 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
     for (final ToolContribution tool : tools) {
       String title = tool.getMenuTitle();
-      JMenuItem item = new JMenuItem(title);
+      final JMenuItem item = new JMenuItem(title);
       item.addActionListener(new ActionListener() {
         boolean inited;
 
         public void actionPerformed(ActionEvent e) {
-          if (!inited) {
-            tool.init(Editor.this);
-            inited = true;
+          try {
+            if (!inited) {
+              tool.init(Editor.this);
+            // even if an error, don't keep trying to re-init the tool
+              inited = true;
+            }
+            EventQueue.invokeLater(tool);
+            
+          } catch (NoSuchMethodError nsme) {
+            statusError("\"" + tool.getMenuTitle() + "\" " +
+                        "is not compatible with this version of Processing");
+            nsme.printStackTrace();
+            item.setEnabled(false);  // don't you try that again
+            
+          } catch (Exception ex) {
+            statusError("An error occurred inside \"" + tool.getMenuTitle() + "\"");
+            ex.printStackTrace();
           }
-          EventQueue.invokeLater(tool);
         }
       });
       //menu.add(item);
@@ -988,7 +1001,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
       item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          SwingUtilities.invokeLater(tool);
+          EventQueue.invokeLater(tool);
         }
       });
       menu.add(item);

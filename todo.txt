@@ -201,8 +201,8 @@ _ import p5 reference into the javadoc
 _ local web server to run reference from .zip?
 _   no more gazillion file nastiness
 _ yahoo search example is out of date (included in the examples? the book?)
-_ document the move of the auto format menu
-_   in the book(s)? in the reference?
+o document the move of the auto format menu
+o   in the book(s)? in the reference?
 _ improve documentation of the pdf stuff
 _   be clearer about the font setup stuff
 _   fonts by default not working that well?
@@ -838,10 +838,12 @@ _   update will update classes from shared in the current folder
 
 TOOLS / Auto Format
 
+_ for() loop with nothing inside parens crashes Auto Format
+_   https://github.com/processing/processing/issues/2141
 _ extra indent found
-_   http://code.google.com/p/processing/issues/detail?id=1003
+_   https://github.com/processing/processing/issues/1041
 _ Switch block cases not indented
-_   http://code.google.com/p/processing/issues/detail?id=1004
+_   https://github.com/processing/processing/issues/1042
 _ do a better job of maintaining cursor 
 _ only auto-format a particular section of code
 _   set the 'tabs' var based on how many spaces on previous line
