@@ -428,7 +428,6 @@ public class TextAreaPainter extends JComponent implements TabExpander {
    */
   public void paint(Graphics gfx) {
     Graphics2D g2 = (Graphics2D) gfx;
-    defaults.antialias = true;
     g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
                         defaults.antialias ?
                         RenderingHints.VALUE_TEXT_ANTIALIAS_ON :
