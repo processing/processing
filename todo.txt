@@ -18,6 +18,8 @@ X   https://github.com/processing/processing/issues/2103
 
 X update with bold version of Source Code Pro
 X   http://www.google.com/fonts#UsePlace:use/Collection:Source+Code+Pro
+_ Editor.applyPreferences() -> painter.setFont() removed
+_   need to instead update defaults, then run from there
 
 cleaning
 o the first time someone hides a tab, put up a msg explaining what it does

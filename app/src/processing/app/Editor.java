@@ -472,6 +472,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
    * with things in the Preferences window.
    */
   protected void applyPreferences() {
+    // All of this code was specific to using an external editor.  
+    // Keeping this around so we can update fonts.
+    /*
 //    // apply the setting for 'use external editor'
 //    boolean external = Preferences.getBoolean("editor.external");
 //    textarea.setEditable(!external);
@@ -494,7 +497,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 //    }
 
     // apply changes to the font size for the editor
-    painter.setFont(Preferences.getFont("editor.font"));
+//    painter.setFont(Preferences.getFont("editor.font"));
 
     // in case tab expansion stuff has changed
     // removing this, just checking prefs directly instead
@@ -505,6 +508,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     //sketchbook.rebuildMenus();
     // For 0126, moved into Base, which will notify all editors.
     //base.rebuildMenusAsync();
+     */
   }
 
 
@@ -2007,6 +2011,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
     // As of Processing 1.0.10, this always happens immediately.
     // http://dev.processing.org/bugs/show_bug.cgi?id=1456
 
+    // With Java 7u40 on OS X, need to bring the window forward.
+    toFront();
+    
     String prompt = "Save changes to " + sketch.getName() + "?  ";
 
     if (!Base.isMacOS()) {
