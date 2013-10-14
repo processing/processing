@@ -2082,7 +2082,7 @@ public class Base {
   /**
    * Non-fatal error message with optional stack trace side dish.
    */
-  static public void showWarning(String title, String message, Exception e) {
+  static public void showWarning(String title, String message, Throwable e) {
     if (title == null) title = "Warning";
 
     if (commandLine) {
@@ -2101,7 +2101,7 @@ public class Base {
    */
   static public void showWarningTiered(String title,
                                        String primary, String secondary,
-                                       Exception e) {
+                                       Throwable e) {
     if (title == null) title = "Warning";
 
     final String message = primary + "\n" + secondary;
@@ -3007,7 +3007,7 @@ public class Base {
   }
 
 
-  static public void log(String message, Exception e) {
+  static public void log(String message, Throwable e) {
     if (DEBUG) {
       System.out.println(message);
       e.printStackTrace();

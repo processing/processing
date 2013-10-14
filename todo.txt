@@ -15,6 +15,9 @@ X cmd-left is bringing up the text area popup
 X   https://github.com/processing/processing/issues/2103
 X still having right-click issues (re-opened)
 X   https://github.com/processing/processing/issues/2103
+X bad tool brings down the environment
+X   http://code.google.com/p/processing/issues/detail?id=798
+X   https://github.com/processing/processing/issues/836
 
 X update with bold version of Source Code Pro
 X   http://www.google.com/fonts#UsePlace:use/Collection:Source+Code+Pro
@@ -811,8 +814,6 @@ TOOLS / General
 _ create default tools folder (just like libraries)
 _ for tools, maybe don't run on event thread? (makes the gui hang)
 _   but instead, things that affect gui need to be called w/ invokeLater?
-_ bad tool brings down the environment
-_   http://code.google.com/p/processing/issues/detail?id=798
 _ need a proper means to handle command keys for tools (?)
 _   http://code.google.com/p/processing/issues/detail?id=44
 _ handle native code for tools menu (?)

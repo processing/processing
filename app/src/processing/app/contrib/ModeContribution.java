@@ -43,19 +43,19 @@ public class ModeContribution extends LocalContribution {
                                       String searchName) {
     try {
       return new ModeContribution(base, folder, searchName);
+      
     } catch (IgnorableException ig) {
       Base.log(ig.getMessage());
-    } catch (Error err) {
-      // Handles UnsupportedClassVersionError and others
-      err.printStackTrace();
-    } catch (Exception e) {
+      
+    } catch (Throwable err) {  
+      // Throwable to catch Exceptions or UnsupportedClassVersionError et al
       if (searchName == null) {
-        e.printStackTrace();
+        err.printStackTrace();
       } else {
         // For the built-in modes, don't print the exception, just log it
         // for debugging. This should be impossible for most users to reach,
         // but it helps us load experimental mode when it's available.
-        Base.log("ModeContribution.load() failed for " + searchName, e);
+        Base.log("ModeContribution.load() failed for " + searchName, err);
       }
     }
     return null;
@@ -104,7 +104,7 @@ public class ModeContribution extends LocalContribution {
             contribModes.add(new ModeContribution(base, folder, null));
           } catch (IgnorableException ig) {
             Base.log(ig.getMessage());
-          } catch (Exception e) {
+          } catch (Throwable e) {
             e.printStackTrace();
           }
         }

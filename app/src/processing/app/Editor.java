@@ -970,26 +970,56 @@ public abstract class Editor extends JFrame implements RunnerListener {
   }
   
   
+  void addToolItem(final Tool tool, HashMap<String, JMenuItem> toolItems) {
+    String title = tool.getMenuTitle();
+    final JMenuItem item = new JMenuItem(title);
+    item.addActionListener(new ActionListener() {
+
+      public void actionPerformed(ActionEvent e) {
+        try {
+          tool.run();
+
+        } catch (NoSuchMethodError nsme) {
+          statusError("\"" + tool.getMenuTitle() + "\" is not" +
+                      "compatible with this version of Processing");
+          nsme.printStackTrace();
+          item.setEnabled(false);
+
+        } catch (Exception ex) {
+          statusError("An error occurred inside \"" + tool.getMenuTitle() + "\"");
+          ex.printStackTrace();
+          item.setEnabled(false);
+        }          
+      }
+    });
+    //menu.add(item);
+    toolItems.put(title, item);
+  }
+
+  
   protected void addTools(JMenu menu, ArrayList<ToolContribution> tools) {
     HashMap<String, JMenuItem> toolItems = new HashMap<String, JMenuItem>();
 
     for (final ToolContribution tool : tools) {
-      if (safeTool(tool, null)) {
-//      tool.init(Editor.this);
-      
-        String title = tool.getMenuTitle();
-        final JMenuItem item = new JMenuItem(title);
-        item.addActionListener(new ActionListener() {
-//        boolean inited;
+      try {
+        tool.init(Editor.this);
+        // If init() fails, the item won't be added to the menu
+        addToolItem(tool, toolItems);
+        
+        // With the exceptions, we can't call statusError because the window 
+        // isn't completely set up yet. Also not gonna pop up a warning because
+        // people may still be running different versions of Processing. 
+        // TODO Once the dust settles on 2.x, change this to Base.showError()
+        // and open the Tools folder instead of showing System.err.println().
+        
+      } catch (NoSuchMethodError nsme) {
+        System.err.println("\"" + tool.getMenuTitle() + "\" is not " +
+                           "compatible with this version of Processing");
+        nsme.printStackTrace();
 
-          public void actionPerformed(ActionEvent e) {
-            //EventQueue.invokeLater(tool);
-            //tool.run();
-            safeTool(tool, item);
-          }
-        });
-        //menu.add(item);
-        toolItems.put(title, item);
+      } catch (Exception ex) {
+        System.err.println("An error occurred inside \"" + tool.getMenuTitle() + "\"");
+        ex.printStackTrace();
       }
     }
 
