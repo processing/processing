@@ -29,7 +29,6 @@ import java.util.*;
 
 import javax.swing.*;
 
-import processing.app.syntax.*;
 import processing.core.*;
 
 
@@ -1148,6 +1147,7 @@ public class Preferences {
   }
 
 
+  /*
   static public SyntaxStyle getStyle(String what) {
     String str = get("editor." + what + ".style"); //, dflt); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -1168,4 +1168,5 @@ public class Preferences {
 //    return new SyntaxStyle(color, italic, bold);
     return new SyntaxStyle(color, bold);
   }
+  */
 }

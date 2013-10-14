@@ -2326,9 +2326,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
     }
     if (pageFormat != null) {
       //System.out.println("setting page format " + pageFormat);
-      printerJob.setPrintable(textarea.getPainter(), pageFormat);
+      printerJob.setPrintable(textarea.getPrintable(), pageFormat);
     } else {
-      printerJob.setPrintable(textarea.getPainter());
+      printerJob.setPrintable(textarea.getPrintable());
     }
     // set the name of the job to the code name
     printerJob.setJobName(sketch.getCurrentCode().getPrettyName());

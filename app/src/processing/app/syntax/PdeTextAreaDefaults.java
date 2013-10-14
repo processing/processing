@@ -202,7 +202,7 @@ public class PdeTextAreaDefaults extends TextAreaDefaults {
     plainFont = new Font(fontFamily, Font.PLAIN, fontSize);
     boldFont = new Font(fontFamily, Font.BOLD, fontSize);
     //System.out.println("font is " + plainFont.getFamily() + " / " + plainFont.getName() + " / " + plainFont.getFontName() + " / " + plainFont.getPSName());
-    antialias = Preferences.getBoolean("editor.antialias");
+//    antialias = Preferences.getBoolean("editor.antialias");
 
     styles = new SyntaxStyle[Token.ID_COUNT];
 

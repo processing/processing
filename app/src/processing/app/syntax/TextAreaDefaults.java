@@ -40,7 +40,6 @@ public class TextAreaDefaults {
   public boolean eolMarkers;
   public boolean paintInvalid;
 
-  // moved from TextAreaPainter [fry]
   public Font plainFont;
   public Font boldFont;
   public Color fgcolor;
