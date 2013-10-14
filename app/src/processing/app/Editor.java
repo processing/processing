@@ -472,8 +472,11 @@ public abstract class Editor extends JFrame implements RunnerListener {
    * with things in the Preferences window.
    */
   protected void applyPreferences() {
+    // Update fonts and other items controllable from the prefs
+    textarea.getPainter().updateAppearance();
+    textarea.repaint();
+    
     // All of this code was specific to using an external editor.  
-    // Keeping this around so we can update fonts.
     /*
 //    // apply the setting for 'use external editor'
 //    boolean external = Preferences.getBoolean("editor.external");

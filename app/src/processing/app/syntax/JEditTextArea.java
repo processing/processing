@@ -131,7 +131,7 @@ public class JEditTextArea extends JComponent
     // Load the defaults
     setInputHandler(defaults.inputHandler);
     setDocument(defaults.document);
-    editable = defaults.editable;
+//    editable = defaults.editable;
     caretVisible = defaults.caretVisible;
     caretBlinks = defaults.caretBlinks;
     electricScroll = defaults.electricScroll;
@@ -1405,30 +1405,23 @@ public class JEditTextArea extends JComponent
    * Replaces the selection with the specified text.
    * @param selectedText The replacement text for the selection
    */
-  public void setSelectedText(String selectedText)
-  {
-    if(!editable)
-    {
-      throw new InternalError("Text component"
-          + " read only");
+  public void setSelectedText(String selectedText) {
+    if (!editable) {
+      throw new InternalError("Text component read only");
     }
-
     document.beginCompoundEdit();
 
-    try
-    {
-      if(rectSelect)
-      {
+    try {
+      if (rectSelect) {
         Element map = document.getDefaultRootElement();
 
-        int start = selectionStart - map.getElement(selectionStartLine)
-        .getStartOffset();
-        int end = selectionEnd - map.getElement(selectionEndLine)
-        .getStartOffset();
+        int start = selectionStart - 
+          map.getElement(selectionStartLine).getStartOffset();
+        int end = selectionEnd - 
+          map.getElement(selectionEndLine).getStartOffset();
 
         // Certain rectangles satisfy this condition...
-        if(end < start)
-        {
+        if (end < start) {
           int tmp = end;
           end = start;
           start = tmp;
@@ -1437,123 +1430,102 @@ public class JEditTextArea extends JComponent
         int lastNewline = 0;
         int currNewline = 0;
 
-        for(int i = selectionStartLine; i <= selectionEndLine; i++)
-        {
+        for (int i = selectionStartLine; i <= selectionEndLine; i++) {
           Element lineElement = map.getElement(i);
           int lineStart = lineElement.getStartOffset();
           int lineEnd = lineElement.getEndOffset() - 1;
           int rectStart = Math.min(lineEnd,lineStart + start);
 
-          document.remove(rectStart,Math.min(lineEnd - rectStart,
-              end - start));
+          document.remove(rectStart,Math.min(lineEnd - rectStart, end - start));
 
-          if(selectedText == null)
-            continue;
-
-          currNewline = selectedText.indexOf('\n',lastNewline);
-          if(currNewline == -1)
-            currNewline = selectedText.length();
-
-          document.insertString(rectStart,selectedText
-              .substring(lastNewline,currNewline),null);
-
-          lastNewline = Math.min(selectedText.length(),
-              currNewline + 1);
+          if (selectedText != null) {
+            currNewline = selectedText.indexOf('\n', lastNewline);
+            if (currNewline == -1) {
+              currNewline = selectedText.length();
+            }
+            document.insertString(rectStart, selectedText.substring(lastNewline, currNewline), null);
+            lastNewline = Math.min(selectedText.length(), currNewline + 1);
+          }
         }
 
-        if(selectedText != null &&
-            currNewline != selectedText.length())
-        {
-          int offset = map.getElement(selectionEndLine)
-          .getEndOffset() - 1;
-          document.insertString(offset,"\n",null);
-          document.insertString(offset + 1,selectedText
-              .substring(currNewline + 1),null);
+        if (selectedText != null &&
+            currNewline != selectedText.length()) {
+          int offset = map.getElement(selectionEndLine).getEndOffset() - 1;
+          document.insertString(offset, "\n", null);
+          document.insertString(offset + 1,selectedText.substring(currNewline + 1), null);
+        }
+      } else {
+        document.remove(selectionStart, selectionEnd - selectionStart);
+        if (selectedText != null) {
+          document.insertString(selectionStart, selectedText,null);
         }
       }
-      else
-      {
-        document.remove(selectionStart,
-            selectionEnd - selectionStart);
-        if(selectedText != null)
-        {
-          document.insertString(selectionStart,
-              selectedText,null);
-        }
-      }
-    }
-    catch(BadLocationException bl)
-    {
+    } catch(BadLocationException bl) {
       bl.printStackTrace();
-      throw new InternalError("Cannot replace"
-          + " selection");
-    }
-    // No matter what happends... stops us from leaving document
-    // in a bad state
-    finally
-    {
+      throw new InternalError("Cannot replace selection");
+    
+    } finally {
+      // No matter what happens... stops us from leaving document in a bad state
       document.endCompoundEdit();
     }
-
     setCaretPosition(selectionEnd);
   }
+  
 
   /**
    * Returns true if this text area is editable, false otherwise.
    */
-  public final boolean isEditable()
-  {
+  public final boolean isEditable() {
     return editable;
   }
 
+  
   /**
    * Sets if this component is editable.
    * @param editable True if this text area should be editable,
    * false otherwise
    */
-  public final void setEditable(boolean editable)
-  {
+  public final void setEditable(boolean editable) {
     this.editable = editable;
   }
 
+  
   /**
    * Returns the right click popup menu.
    */
-  public final JPopupMenu getRightClickPopup()
-  {
+  public final JPopupMenu getRightClickPopup() {
     return popup;
   }
 
+  
   /**
    * Sets the right click popup menu.
    * @param popup The popup
    */
-  //public final void setRightClickPopup(EditPopupMenu popup)
-  public final void setRightClickPopup(JPopupMenu popup)
-  {
+  public final void setRightClickPopup(JPopupMenu popup) {
     this.popup = popup;
   }
 
 
   /**
-   * Returns the `magic' caret position. This can be used to preserve
+   * Returns the 'magic' caret position. This can be used to preserve
    * the column position when moving up and down lines.
    */
-  public final int getMagicCaretPosition()
-  {
+  public final int getMagicCaretPosition() {
     return magicCaret;
   }
+  
 
   /**
-   * Sets the `magic' caret position. This can be used to preserve
+   * Sets the 'magic' caret position. This can be used to preserve
    * the column position when moving up and down lines.
    * @param magicCaret The magic caret position
    */
-  public final void setMagicCaretPosition(int magicCaret)
-  {
+  public final void setMagicCaretPosition(int magicCaret) {
     this.magicCaret = magicCaret;
   }
 
+  
   /**
    * Similar to <code>setSelectedText()</code>, but overstrikes the
    * appropriate number of characters if overwrite mode is enabled.
@@ -1993,7 +1965,7 @@ public class JEditTextArea extends JComponent
   protected boolean caretVisible;
   protected boolean blink;
 
-  protected boolean editable;
+  protected boolean editable = true;
 
   protected int firstLine;
   protected int visibleLines;

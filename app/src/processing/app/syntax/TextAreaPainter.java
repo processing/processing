@@ -18,6 +18,7 @@ import javax.swing.ToolTipManager;
 import javax.swing.text.*;
 import javax.swing.JComponent;
 
+import processing.app.Preferences;
 import processing.app.syntax.im.CompositionTextPainter;
 
 
@@ -52,6 +53,13 @@ public class TextAreaPainter extends JComponent implements TabExpander {
 //  protected int cols;
 //  protected int rows;
 
+  // moved from TextAreaDefaults
+  private Font plainFont;
+  private Font boldFont;
+  private boolean antialias;
+//  private Color fgcolor;
+//  private Color bgcolor;
+
   protected int tabSize;
   protected FontMetrics fm;
 
@@ -70,7 +78,7 @@ public class TextAreaPainter extends JComponent implements TabExpander {
     this.defaults = defaults;
 
     setAutoscrolls(true);
-//    setDoubleBuffered(true);  // breaks retina with 7u40 
+//    setDoubleBuffered(true);
     setOpaque(true);
 
     ToolTipManager.sharedInstance().registerComponent(this);
@@ -85,7 +93,7 @@ public class TextAreaPainter extends JComponent implements TabExpander {
 ////    System.out.println("defaults font is " + defaults.font);
 //    setForeground(defaults.fgcolor);
 //    setBackground(defaults.bgcolor);
-    applyDefaults();
+    updateAppearance();
 
 //    blockCaret = defaults.blockCaret;
 //    styles = defaults.styles;
@@ -104,12 +112,25 @@ public class TextAreaPainter extends JComponent implements TabExpander {
   }
   
   
-  public void applyDefaults() {
-    // unfortunately probably can't just do setDefaults() since things aren't quite set up
-    setFont(defaults.plainFont);
-//    System.out.println("defaults font is " + defaults.font);
-    setForeground(defaults.fgcolor);
-    setBackground(defaults.bgcolor);
+  public void updateAppearance() {
+//    // unfortunately probably can't just do setDefaults() since things aren't quite set up
+//    setFont(defaults.plainFont);
+////    System.out.println("defaults font is " + defaults.font);
+//    setForeground(defaults.fgcolor);
+//    setBackground(defaults.bgcolor);
+    
+    String fontFamily = Preferences.get("editor.font.family");
+    int fontSize = Preferences.getInteger("editor.font.size");
+    plainFont = new Font(fontFamily, Font.PLAIN, fontSize);
+    boldFont = new Font(fontFamily, Font.BOLD, fontSize);
+    antialias = Preferences.getBoolean("editor.antialias");
+
+    // moved from setFont() override (never quite comfortable w/ that override)
+    fm = super.getFontMetrics(plainFont);
+    textArea.recalculateVisibleLines();
+
+//    fgcolor = mode.getColor("editor.fgcolor");
+//    bgcolor = mode.getColor("editor.bgcolor");
   }
   
   
@@ -404,22 +425,23 @@ public class TextAreaPainter extends JComponent implements TabExpander {
 
   
   public FontMetrics getFontMetrics(SyntaxStyle style) {
-    return getFontMetrics(style.isBold() ? 
-                          defaults.boldFont : defaults.plainFont);
+//    return getFontMetrics(style.isBold() ? 
+//                          defaults.boldFont : defaults.plainFont);
+    return getFontMetrics(style.isBold() ? boldFont : plainFont);
   }
 
 
-  /**
-   * Sets the font for this component. This is overridden to update the
-   * cached font metrics and to recalculate which lines are visible.
-   * @param font The font
-   */
-  public void setFont(Font font) {
-//    new Exception().printStackTrace(System.out);
-    super.setFont(font);
-    fm = super.getFontMetrics(font);
-    textArea.recalculateVisibleLines();
-  }
+//  /**
+//   * Sets the font for this component. This is overridden to update the
+//   * cached font metrics and to recalculate which lines are visible.
+//   * @param font The font
+//   */
+//  public void setFont(Font font) {
+////    new Exception().printStackTrace(System.out);
+//    super.setFont(font);
+//    fm = super.getFontMetrics(font);
+//    textArea.recalculateVisibleLines();
+//  }
 
 
   /**
@@ -429,9 +451,12 @@ public class TextAreaPainter extends JComponent implements TabExpander {
   public void paint(Graphics gfx) {
     Graphics2D g2 = (Graphics2D) gfx;
     g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-                        defaults.antialias ?
+                        antialias ?
                         RenderingHints.VALUE_TEXT_ANTIALIAS_ON :
                         RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
+    
+    g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
+                        RenderingHints.VALUE_FRACTIONALMETRICS_ON);
 
     tabSize = fm.charWidth(' ') * ((Integer)textArea.getDocument().getProperty(PlainDocument.tabSizeAttribute)).intValue();
 
@@ -700,12 +725,12 @@ public class TextAreaPainter extends JComponent implements TabExpander {
 //        if(!defaultFont.equals(gfx.getFont()))
 //          gfx.setFont(defaultFont);
         gfx.setColor(defaults.fgcolor);
-        gfx.setFont(defaults.plainFont);
+        gfx.setFont(plainFont);
       } else {
         //styles[id].setGraphicsFlags(gfx,defaultFont);
         SyntaxStyle ss = styles[id];
         gfx.setColor(ss.getColor());
-        gfx.setFont(ss.isBold() ? defaults.boldFont : defaults.plainFont);
+        gfx.setFont(ss.isBold() ? boldFont : plainFont);
       }
       line.count = length;
       x = Utilities.drawTabbedText(line, x, y, gfx, this, 0);

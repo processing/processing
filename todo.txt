@@ -21,8 +21,12 @@ X   https://github.com/processing/processing/issues/836
 
 X update with bold version of Source Code Pro
 X   http://www.google.com/fonts#UsePlace:use/Collection:Source+Code+Pro
+_ does editor line status work?
 _ Editor.applyPreferences() -> painter.setFont() removed
 _   need to instead update defaults, then run from there
+_   then call repaint() on the text area? or invalidate()? or the painter?
+_ make sure font family change is working
+_ make sure fonts can actually update size/etc in prefs
 
 cleaning
 o the first time someone hides a tab, put up a msg explaining what it does
@@ -65,21 +69,16 @@ X   basically done in more recent releases
 X fix file selection dialog with MovieMaker
 X   copied from PApplet, but not importing PApplet
 
-X add appbundler.jar, otherwise folks have to include Xcode
-_ if they want to build appbundler, they'll need Xcode
-_   and the command line tools Preferences > Downloads > Command Line Tools
-_ appbundler will have an NPE if the osx binary isn't built
-_ also need to have 10.8 version of the SDK (old Xcode won't work)
-
-_ type in the status area is gross on retina displays and 7u40
-_ type looks a little feeble on OS X with non-retina machines
-_   https://github.com/processing/processing/issues/2135
-_ type cut off in dialog boxes on OS X retina machines
-_   https://github.com/processing/processing/issues/2116
-_ dialog box icon is fuzzy on OS X retina machines
-_   https://github.com/processing/processing/issues/2117
-_ solution might be our own dialog boxes (see 'dialogs' section)
-
+fonts and prefs
+_ slightly gray background
+_ spacing problem with large sizes (on retina?)
+_ control text size in console
+o   why aren't prefs from theme.txt showing up in preferences.txt? hrm
+o   or rather, why can't they be overridden? 
+X     because theme.txt data is a different animal / that's part of the point
+_   should fonts at least be in prefs.txt?
+_   http://code.google.com/p/processing/issues/detail?id=226
+_   https://github.com/processing/processing/issues/265
 _ console font in EditorConsole
 _   Font font = Preferences.getFont("console.font");
 _ fix console font on Windows and Linux with 7u40
@@ -91,6 +90,15 @@ _   this would allow it to show up in the menus, etc
 _   but might be a problem on Linux
 _     where the JRE is often replaced
 _     and where the font is needed most
+
+_ type in the status area is gross on retina displays and 7u40
+_ type looks a little feeble on OS X with non-retina machines
+_   https://github.com/processing/processing/issues/2135
+_ type cut off in dialog boxes on OS X retina machines
+_   https://github.com/processing/processing/issues/2116
+_ dialog box icon is fuzzy on OS X retina machines
+_   https://github.com/processing/processing/issues/2117
+_ solution might be our own dialog boxes (see 'dialogs' section)
 
 build
 X remove video library for other platforms in download
@@ -153,6 +161,11 @@ X     once fixed, remove notes from JavaBuild.java
 X "Are you sure you want to quit?" when switching modes on Oracle JVM
 X   default menu bar is still broken
 X   http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=8007267
+X add appbundler.jar, otherwise folks have to include Xcode
+_ if they want to build appbundler, they'll need Xcode
+_   and the command line tools Preferences > Downloads > Command Line Tools
+_ appbundler will have an NPE if the osx binary isn't built
+_ also need to have 10.8 version of the SDK (old Xcode won't work)
 
 _ change how export is handled
 _   remove ability to export cross-platform apps
@@ -740,14 +753,6 @@ _   move styling to separate constants that are more accessible
 
 
 PDE / Preferences
-
-_ control text size in console
-o   why aren't prefs from theme.txt showing up in preferences.txt? hrm
-o   or rather, why can't they be overridden? 
-X     because theme.txt data is a different animal / that's part of the point
-_   should fonts at least be in prefs.txt?
-_   http://code.google.com/p/processing/issues/detail?id=226
-_   https://github.com/processing/processing/issues/265
 
 _ the .macosx, .linux, etc prefs should be stripped
 _   only use them on first load, and merge into preferences.txt
