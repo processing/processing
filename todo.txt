@@ -71,6 +71,7 @@ _   and the command line tools Preferences > Downloads > Command Line Tools
 _ appbundler will have an NPE if the osx binary isn't built
 _ also need to have 10.8 version of the SDK (old Xcode won't work)
 
+_ type in the status area is gross on retina displays and 7u40
 _ type looks a little feeble on OS X with non-retina machines
 _   https://github.com/processing/processing/issues/2135
 _ type cut off in dialog boxes on OS X retina machines
@@ -128,7 +129,7 @@ X remove javafx from the embed
 X   more about optional files:
 X   http://www.oracle.com/technetwork/java/javase/jdk-7-readme-429198.html
 
-7u40 switch
+7u40 macosx
 X make OS X launch from its local JRE
 X also need to have a central menubar
 X   add the offscreen window hack
@@ -138,6 +139,20 @@ o try the bundle on Mac Mini running 10.6
 X we become full 64-bit on OS X
 X   meaning that the macosx32 video library goes away
 X   and the preference for launching in 32- or 64-bit mode
+X package Java 7u40 version of the app
+X   docs.oracle.com/javase/7/docs/technotes/guides/jweb/packagingAppsForMac.html
+X   http://www.intransitione.com/blog/take-java-to-app-store/
+X   retina support http://bugs.sun.com/view_bug.do?bug_id=8009754
+_   useful retina digging/findings for Oracle Java
+_     http://bulenkov.com/2013/06/23/retina-support-in-oracle-jdk-1-7/
+X   7u40 target release is "late August"
+X     http://openjdk.java.net/projects/jdk7u/releases/7u40.html
+X   Contents/Java/Classes folder is added to java.class.path
+X     so the folder must exist otherwise the ECJ compiler will crash
+X     once fixed, remove notes from JavaBuild.java
+X "Are you sure you want to quit?" when switching modes on Oracle JVM
+X   default menu bar is still broken
+X   http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=8007267
 
 _ change how export is handled
 _   remove ability to export cross-platform apps
@@ -935,21 +950,8 @@ _   http://code.google.com/p/processing/issues/detail?id=632
 
 DIST / Mac OS X
 
-_ package Java 7u40 version of the app
-_   docs.oracle.com/javase/7/docs/technotes/guides/jweb/packagingAppsForMac.html
-_   http://www.intransitione.com/blog/take-java-to-app-store/
-X   retina support http://bugs.sun.com/view_bug.do?bug_id=8009754
-_   useful retina digging/findings for Oracle Java
-_     http://bulenkov.com/2013/06/23/retina-support-in-oracle-jdk-1-7/
-_   7u40 target release is "late August"
-_     http://openjdk.java.net/projects/jdk7u/releases/7u40.html
-_   Contents/Java/Classes folder is added to java.class.path
-_     so the folder must exist otherwise the ECJ compiler will crash
-_     once fixed, remove notes from JavaBuild.java
-_ "Are you sure you want to quit?" when switching modes on Oracle JVM
-_   default menu bar is still broken
-_   http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=8007267
-_   fixed for 7u60 http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=8022667
+_ remove default menu bar hack when 7u60 arrives
+_   http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=8022667
 _ blank sketch opened even if another opened by double-click
 _   add a 150 ms or more lag before opening the untitled window (on os x)
 _   https://github.com/processing/processing/issues/218

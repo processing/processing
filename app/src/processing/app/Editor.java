@@ -937,37 +937,37 @@ public abstract class Editor extends JFrame implements RunnerListener {
   }
 
 
-  /**
-   * Attempt to init or run a Tool from the safety of a try/catch block that
-   * will report errors to the user.
-   * @param tool The Tool object to be inited or run
-   * @param item null to call init(), or the existing JMenuItem for run()
-   * @return
-   */
-  protected boolean safeTool(Tool tool, JMenuItem item) {
-    try {
-      if (item == null) {
-        tool.init(Editor.this);
-      } else {
-        tool.run();
-      }
-      return true;
-      
-    } catch (NoSuchMethodError nsme) {
-      System.out.println("tool is " + tool + " ");
-      statusError("\"" + tool.getMenuTitle() + "\" " +
-                  "is not compatible with this version of Processing");
-      nsme.printStackTrace();
-      
-    } catch (Exception ex) {
-      statusError("An error occurred inside \"" + tool.getMenuTitle() + "\"");
-      ex.printStackTrace();
-    }
-    if (item != null) {
-      item.setEnabled(false);  // don't you try that again
-    }
-    return false;
-  }
+//  /**
+//   * Attempt to init or run a Tool from the safety of a try/catch block that
+//   * will report errors to the user.
+//   * @param tool The Tool object to be inited or run
+//   * @param item null to call init(), or the existing JMenuItem for run()
+//   * @return
+//   */
+//  protected boolean safeTool(Tool tool, JMenuItem item) {
+//    try {
+//      if (item == null) {
+//        tool.init(Editor.this);
+//      } else {
+//        tool.run();
+//      }
+//      return true;
+//      
+//    } catch (NoSuchMethodError nsme) {
+//      System.out.println("tool is " + tool + " ");
+//      statusError("\"" + tool.getMenuTitle() + "\" " +
+//                  "is not compatible with this version of Processing");
+//      nsme.printStackTrace();
+//      
+//    } catch (Exception ex) {
+//      statusError("An error occurred inside \"" + tool.getMenuTitle() + "\"");
+//      ex.printStackTrace();
+//    }
+//    if (item != null) {
+//      item.setEnabled(false);  // don't you try that again
+//    }
+//    return false;
+//  }
   
   
   void addToolItem(final Tool tool, HashMap<String, JMenuItem> toolItems) {
@@ -982,7 +982,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
         } catch (NoSuchMethodError nsme) {
           statusError("\"" + tool.getMenuTitle() + "\" is not" +
                       "compatible with this version of Processing");
-          nsme.printStackTrace();
+          //nsme.printStackTrace();
+          Base.log("Incompatible tool found during tool.run()", nsme);
           item.setEnabled(false);
 
         } catch (Exception ex) {
@@ -1015,7 +1016,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
       } catch (NoSuchMethodError nsme) {
         System.err.println("\"" + tool.getMenuTitle() + "\" is not " +
                            "compatible with this version of Processing");
-        nsme.printStackTrace();
+        System.err.println("This method no longer exists: " + nsme.getMessage());
+        Base.log("Incompatible Tool found during tool.init()", nsme);
 
       } catch (Exception ex) {
         System.err.println("An error occurred inside \"" + tool.getMenuTitle() + "\"");
