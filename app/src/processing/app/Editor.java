@@ -937,38 +937,60 @@ public abstract class Editor extends JFrame implements RunnerListener {
   }
 
 
+  /**
+   * Attempt to init or run a Tool from the safety of a try/catch block that
+   * will report errors to the user.
+   * @param tool The Tool object to be inited or run
+   * @param item null to call init(), or the existing JMenuItem for run()
+   * @return
+   */
+  protected boolean safeTool(Tool tool, JMenuItem item) {
+    try {
+      if (item == null) {
+        tool.init(Editor.this);
+      } else {
+        tool.run();
+      }
+      return true;
+      
+    } catch (NoSuchMethodError nsme) {
+      System.out.println("tool is " + tool + " ");
+      statusError("\"" + tool.getMenuTitle() + "\" " +
+                  "is not compatible with this version of Processing");
+      nsme.printStackTrace();
+      
+    } catch (Exception ex) {
+      statusError("An error occurred inside \"" + tool.getMenuTitle() + "\"");
+      ex.printStackTrace();
+    }
+    if (item != null) {
+      item.setEnabled(false);  // don't you try that again
+    }
+    return false;
+  }
+  
+  
   protected void addTools(JMenu menu, ArrayList<ToolContribution> tools) {
     HashMap<String, JMenuItem> toolItems = new HashMap<String, JMenuItem>();
 
     for (final ToolContribution tool : tools) {
-      String title = tool.getMenuTitle();
-      final JMenuItem item = new JMenuItem(title);
-      item.addActionListener(new ActionListener() {
-        boolean inited;
+      if (safeTool(tool, null)) {
+//      tool.init(Editor.this);
+      
+        String title = tool.getMenuTitle();
+        final JMenuItem item = new JMenuItem(title);
+        item.addActionListener(new ActionListener() {
+//        boolean inited;
 
-        public void actionPerformed(ActionEvent e) {
-          try {
-            if (!inited) {
-              tool.init(Editor.this);
-            // even if an error, don't keep trying to re-init the tool
-              inited = true;
-            }
-            EventQueue.invokeLater(tool);
-            
-          } catch (NoSuchMethodError nsme) {
-            statusError("\"" + tool.getMenuTitle() + "\" " +
-                        "is not compatible with this version of Processing");
-            nsme.printStackTrace();
-            item.setEnabled(false);  // don't you try that again
-            
-          } catch (Exception ex) {
-            statusError("An error occurred inside \"" + tool.getMenuTitle() + "\"");
-            ex.printStackTrace();
+          public void actionPerformed(ActionEvent e) {
+            //EventQueue.invokeLater(tool);
+            //tool.run();
+            safeTool(tool, item);
           }
-        }
-      });
-      //menu.add(item);
-      toolItems.put(title, item);
+        });
+        //menu.add(item);
+        toolItems.put(title, item);
+      }
     }
 
     ArrayList<String> toolList = new ArrayList<String>(toolItems.keySet());
