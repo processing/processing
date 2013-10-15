@@ -2350,24 +2350,39 @@ public class Base {
       String path = Base.class.getProtectionDomain().getCodeSource().getLocation().getPath();
       // Path may have URL encoding, so remove it
       String decodedPath = PApplet.urlDecode(path);
-      // The .jar file will be in the lib folder
-      File jarFolder = new File(decodedPath).getParentFile();
-      if (jarFolder.getName().equals("lib")) {
-        // The main Processing installation directory.
-        // This works for Windows, Linux, and Apple's Java 6 on OS X.
-        processingRoot = jarFolder.getParentFile();
-      } else if (Base.isMacOS()) {
-        // This works for Java 7 on OS X. The 'lib' folder is not part of the
-        // classpath on OS X, and adding it creates more problems than it's 
-        // worth.
-        processingRoot = jarFolder;
-      }
-      if (processingRoot == null || !processingRoot.exists()) {
-        // Try working directory instead (user.dir, different from user.home)
-        System.err.println("Could not find lib folder via " +
-                           jarFolder.getAbsolutePath() +
-                           ", switching to user.dir");
-        processingRoot = new File(System.getProperty("user.dir"));
+      
+      //if (decodedPath.contains(PApplet.platformNames[PApplet.platform]
+      System.out.println("path is " + decodedPath);
+      if (decodedPath.contains("/app/bin")) {
+        if (Base.isMacOS()) {
+          processingRoot = 
+            new File(path, "../../build/macosx/work/Processing.app/Contents/Java");
+        } else if (Base.isWindows()) {
+          processingRoot =  new File(path, "../../build/windows/work");
+        } else if (Base.isLinux()) {
+          processingRoot =  new File(path, "../../build/linux/work");
+        }
+      } else {
+        // The .jar file will be in the lib folder
+        File jarFolder = new File(decodedPath).getParentFile();
+        if (jarFolder.getName().equals("lib")) {
+          // The main Processing installation directory.
+          // This works for Windows, Linux, and Apple's Java 6 on OS X.
+          processingRoot = jarFolder.getParentFile();
+        } else if (Base.isMacOS()) {
+          // This works for Java 7 on OS X. The 'lib' folder is not part of the
+          // classpath on OS X, and adding it creates more problems than it's 
+          // worth.
+          processingRoot = jarFolder;
+
+        }
+        if (processingRoot == null || !processingRoot.exists()) {
+          // Try working directory instead (user.dir, different from user.home)
+          System.err.println("Could not find lib folder via " +
+            jarFolder.getAbsolutePath() +
+            ", switching to user.dir");
+          processingRoot = new File(System.getProperty("user.dir"));
+        }
       }
     }
 /*
