@@ -21,6 +21,7 @@ X   https://github.com/processing/processing/issues/836
 
 X update with bold version of Source Code Pro
 X   http://www.google.com/fonts#UsePlace:use/Collection:Source+Code+Pro
+X   instead of semibold, which wouldn't correctly connect to the other fonts
 _ does editor line status work?
 _ Editor.applyPreferences() -> painter.setFont() removed
 _   need to instead update defaults, then run from there

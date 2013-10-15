@@ -480,7 +480,7 @@ public class TextAreaPainter extends JComponent implements TabExpander {
       int x = textArea.getHorizontalOffset();
 
       for (int line = firstInvalid; line <= lastInvalid; line++) {
-        paintLine(gfx, tokenMarker, line, x);
+        paintLine(gfx, line, x, tokenMarker);
       }
 
       if (tokenMarker != null && tokenMarker.isNextLineRequested()) {
@@ -517,7 +517,7 @@ public class TextAreaPainter extends JComponent implements TabExpander {
                         pageFormat.getImageableY() - firstLine*lineHeight);
           printing = true;
           for (int line = firstLine; line < firstLine + linesPerPage; line++) {
-            paintLine(g2, tokenMarker, line, 0);
+            paintLine(g2, line, 0, tokenMarker);
           }
           printing = false;
           return PAGE_EXISTS;
@@ -618,8 +618,8 @@ public class TextAreaPainter extends JComponent implements TabExpander {
   }
 
 
-  protected void paintLine(Graphics gfx, TokenMarker tokenMarker,
-                           int line, int x) {
+  protected void paintLine(Graphics gfx, int line, int x,
+                           TokenMarker tokenMarker) {
 //    Font defaultFont = getFont();
 //    Color defaultColor = getForeground();
 
