@@ -38,7 +38,7 @@ buttons.status.font = processing.sans,plain,13
 buttons.status.color = #ffffff
 
 # MODE SELECTOR
-mode.button.font = processing.sans,plain,12
+mode.button.font = processing.sans,plain,13
 # outline color of the mode button
 mode.button.color = #ffffff
 
@@ -46,7 +46,7 @@ mode.button.color = #ffffff
 # The editor line number status bar at the bottom of the screen
 linestatus.color = #ffffff
 linestatus.bgcolor = #29333d
-linestatus.font = processing.sans,plain,12
+linestatus.font = processing.sans,plain,13
 linestatus.height  = 20
 
 

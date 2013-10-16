@@ -149,6 +149,7 @@ X remove Java FX during Windows builds
 X remove javafx from the embed
 X   more about optional files:
 X   http://www.oracle.com/technetwork/java/javase/jdk-7-readme-429198.html
+_ exclude 'fonts' folder from build (since it's going into the JRE)
 _ update github instructions
 _   only JRE needed at this point
 _   switched over to Java 7

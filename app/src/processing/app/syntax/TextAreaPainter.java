@@ -462,9 +462,10 @@ public class TextAreaPainter extends JComponent implements TabExpander {
                         antialias ?
                         RenderingHints.VALUE_TEXT_ANTIALIAS_ON :
                         RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
-    
-    g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
-                        RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+
+    // no effect, one way or the other
+//    g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
+//                        RenderingHints.VALUE_FRACTIONALMETRICS_ON);
 
     tabSize = fm.charWidth(' ') * ((Integer)textArea.getDocument().getProperty(PlainDocument.tabSizeAttribute)).intValue();
 
