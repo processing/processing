@@ -2350,12 +2350,7 @@ public class PShapeOpenGL extends PShape {
   public int[] getVertexCodes() {
     if (family == GROUP) return null;
     else {
-      if (inGeo.codes == null) {
-        return null;
-      }
-      if (inGeo.codes.length != inGeo.codeCount) {
-        inGeo.codes = PApplet.subset(inGeo.codes, 0, inGeo.codeCount);
-      }
+      if (inGeo.codes == null) return null;
       return inGeo.codes;
     }
   }
@@ -2364,9 +2359,7 @@ public class PShapeOpenGL extends PShape {
   @Override
   public int getVertexCodeCount() {
     if (family == GROUP) return 0;
-    else {
-      return inGeo.codeCount;
-    }
+    else return inGeo.codeCount;
   }
 
 

@@ -7497,7 +7497,7 @@ public class PGraphicsOpenGL extends PGraphics {
     int[] strokeColors;
     float[] strokeWeights;
 
-    // codes
+    // vertex codes
     int[] codes;
     boolean[] breaks;
 
@@ -7789,6 +7789,10 @@ public class PGraphicsOpenGL extends PGraphics {
         trimBreaks();
       }
 
+      if (0 < codeCount && codeCount < codes.length) {
+        trimCodes();
+      }
+
       if (0 < edgeCount && edgeCount < edges.length) {
         trimEdges();
       }
@@ -7854,11 +7858,11 @@ public class PGraphicsOpenGL extends PGraphics {
       shininess = temp;
     }
 
-//    void trimCodes() {
-//      int temp[] = new int[vertexCount];
-//      PApplet.arrayCopy(codes, 0, temp, 0, vertexCount);
-//      codes = temp;
-//    }
+    void trimCodes() {
+      int temp[] = new int[codeCount];
+      PApplet.arrayCopy(codes, 0, temp, 0, codeCount);
+      codes = temp;
+    }
 
     void trimBreaks() {
       boolean temp[] = new boolean[vertexCount];
@@ -7982,22 +7986,24 @@ public class PGraphicsOpenGL extends PGraphics {
 
       breaks[vertexCount] = brk;
 
-      if (code == BEZIER_VERTEX || code == QUADRATIC_VERTEX ||
-          code == CURVE_VERTEX || (code == VERTEX && codes != null) || brk) {
+      if (brk || (code == VERTEX && codes != null) ||
+          code == BEZIER_VERTEX ||
+          code == QUADRATIC_VERTEX ||
+          code == CURVE_VERTEX) {
         if (codes == null) {
-          codes = new int[vertexCount];
-          Arrays.fill(codes, 0, vertexCount, VERTEX);
+          codes = new int[PApplet.max(PGL.DEFAULT_IN_VERTICES, vertexCount)];
+          Arrays.fill(codes, 0, codes.length, VERTEX);
         }
 
         if (brk) {
           codeCheck();
-          codes[vertexCount] = BREAK;
+          codes[codeCount] = BREAK;
           codeCount++;
         }
 
         if (code != -1) {
           codeCheck();
-          codes[vertexCount] = code;
+          codes[codeCount] = code;
           codeCount++;
         }
       }
