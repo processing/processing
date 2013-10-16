@@ -11901,14 +11901,15 @@ public class PGraphicsOpenGL extends PGraphics {
         int vidx = 0;
         int cidx = 0;
         while (vidx < in.vertexCount) {
-          boolean brk = in.breaks[vidx];
-
           int code = VERTEX;
+          boolean brk = false;
           if (in.codes != null) {
-
+            code = in.codes[cidx];
+            if (code == BREAK) {
+              brk = true;
+              code = in.codes[cidx++];
+            }
           }
-
-           // in.codes[cidx];
 
           if (brk) {
             gluTess.endContour();
