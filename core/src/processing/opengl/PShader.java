@@ -51,13 +51,12 @@ public class PShader {
 
   protected PApplet parent;
   // The main renderer associated to the parent PApplet.
-  protected PGraphicsOpenGL pgMain;
+  //protected PGraphicsOpenGL pgMain;
   // We need a reference to the renderer since a shader might
   // be called by different renderers within a single application
   // (the one corresponding to the main surface, or other offscreen
   // renderers).
-  protected PGraphicsOpenGL pgCurrent;
-
+  protected PGraphicsOpenGL pg;
   protected PGL pgl;
   protected int context;      // The context that created this shader.
 
@@ -87,7 +86,7 @@ public class PShader {
 
   public PShader() {
     parent = null;
-    pgMain = null;
+//    pgMain = null;
     pgl = null;
     context = -1;
 
@@ -110,7 +109,7 @@ public class PShader {
   public PShader(PApplet parent) {
     this();
     this.parent = parent;
-    pgMain = (PGraphicsOpenGL) parent.g;
+//    pgMain = (PGraphicsOpenGL) parent.g;
     pgl = PGraphicsOpenGL.pgl;
     context = pgl.createEmptyContext();
   }
@@ -126,7 +125,7 @@ public class PShader {
    */
   public PShader(PApplet parent, String vertFilename, String fragFilename) {
     this.parent = parent;
-    pgMain = (PGraphicsOpenGL) parent.g;
+//    pgMain = (PGraphicsOpenGL) parent.g;
     pgl = PGraphicsOpenGL.pgl;
 
     this.vertexURL = null;
@@ -149,7 +148,7 @@ public class PShader {
    */
   public PShader(PApplet parent, URL vertURL, URL fragURL) {
     this.parent = parent;
-    pgMain = (PGraphicsOpenGL) parent.g;
+//    pgMain = (PGraphicsOpenGL) parent.g;
     pgl = PGraphicsOpenGL.pgl;
 
     this.vertexURL = vertURL;
@@ -623,7 +622,7 @@ public class PShader {
           pgl.uniformMatrix4fv(loc, 1, false, floatBuffer);
         } else if (val.type == UniformValue.SAMPLER2D) {
           PImage img = (PImage)val.value;
-          Texture tex = pgMain.getTexture(img);
+          Texture tex = PGraphicsOpenGL.pgPrimary.getTexture(img);
 
           if (textures == null) textures = new HashMap<Integer, Texture>();
           textures.put(loc, tex);
@@ -869,7 +868,7 @@ public class PShader {
 
 
   protected void setRenderer(PGraphicsOpenGL pg) {
-    pgCurrent = pg;
+    this.pg = pg;
   }
 
   protected void loadAttributes() { }
