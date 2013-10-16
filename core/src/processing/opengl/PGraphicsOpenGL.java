@@ -2067,7 +2067,6 @@ public class PGraphicsOpenGL extends PGraphics {
   @Override
   public void beginShape(int kind) {
     shape = kind;
-//    curveVertexCount = 0;
     inGeo.clear();
 
     breakShape = true;
@@ -12186,10 +12185,6 @@ public class PGraphicsOpenGL extends PGraphics {
       float zplot2 = draw.m20*z1 + draw.m21*z2 + draw.m22*z3 + draw.m23*z4;
       float zplot3 = draw.m30*z1 + draw.m31*z2 + draw.m32*z3 + draw.m33*z4;
 
-      // addVertex() will reset curveVertexCount, so save it
-//      int savedCount = pg.curveVertexCount;
-
-      //addVertex(x0, y0, z0, code == BREAK ? BREAK : VERTEX);
       double[] vertex0 = new double[] {
         x0, y0, z0,
         fa, fr, fg, fb,
@@ -12210,8 +12205,6 @@ public class PGraphicsOpenGL extends PGraphics {
           aa, ar, ag, ab, sa, sr, sg, sb, ea, er, eg, eb, sh};
         gluTess.addVertex(vertex1);
       }
-
-//      pg.curveVertexCount = savedCount;
     }
 
     void addVertex(int i) {
