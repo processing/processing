@@ -4501,13 +4501,17 @@ public class PApplet extends Applet
 
 
   /**
-   * Use printArray() instead. This function causes a warning because the new
-   * print(Object...) and println(Object...) functions can't be reliably
-   * bound by the compiler.
+   * For arrays, use printArray() instead. This function causes a warning
+   * because the new print(Object...) and println(Object...) functions can't
+   * be reliably bound by the compiler.
    */
-  @Deprecated
   static public void println(Object what) {
-    printArray(what);
+    if (what != null && what.getClass().isArray()) {
+      printArray(what);
+    } else {
+      System.out.println(what.toString());
+      System.out.flush();
+    }
   }
 
 
