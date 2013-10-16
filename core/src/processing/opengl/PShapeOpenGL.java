@@ -2346,6 +2346,7 @@ public class PShapeOpenGL extends PShape {
 
   // Vertex codes
 
+
   @Override
   public int[] getVertexCodes() {
     if (family == GROUP) return null;
