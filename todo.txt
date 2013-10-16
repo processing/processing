@@ -66,12 +66,11 @@ X add pref to select PDE font (so that CJKV languages work better)
 X   https://github.com/processing/processing/issues/2078
 X should we embed the PDE font into the JRE?
 X   this would allow it to show up in the menus, etc
-_   but might be a problem on Linux
-_     where the JRE is often replaced
-_     and where the font is needed most
-_     make note of this on the platforms page
 X type in the status area is gross on retina displays and 7u40
 X no longer require restart of Processing when changing the font
+_ type looks a little feeble on OS X with non-retina machines
+_   https://github.com/processing/processing/issues/2135
+_   should we increase the size of the mode dropdown?
 
 serial
 X closing several bugs because no longer relevant
@@ -108,16 +107,6 @@ X   https://github.com/processing/processing/issues/875
 X   basically done in more recent releases
 X fix file selection dialog with MovieMaker
 X   copied from PApplet, but not importing PApplet
-
-_ type looks a little feeble on OS X with non-retina machines
-_   https://github.com/processing/processing/issues/2135
-_   should we increase the size of the mode dropdown?
-_ type cut off in dialog boxes on OS X retina machines
-_   https://github.com/processing/processing/issues/2116
-_   add spaces to the end of the text?
-_ dialog box icon is fuzzy on OS X retina machines
-_   https://github.com/processing/processing/issues/2117
-_ solution might be our own dialog boxes (see 'dialogs' section)
 
 build
 X remove video library for other platforms in download
@@ -165,6 +154,12 @@ _   to build appbundler, you'll need Xcode
 _     and the command line tools Preferences > Downloads > Command Line Tools
 _   appbundler will have an NPE if the osx binary isn't built
 _   also need to have 10.8 version of the SDK (old Xcode won't work)
+_ changing JRE might be a problem for fonts on Linux
+_   where the JRE is often replaced
+_   and where the font is needed most
+_   make note of this on the platforms page
+_   also make note re: only JRE needed (instead of JDK)
+_   http://wiki.processing.org/index.php?title=Supported_Platforms&action=edit&section=4
 
 7u40 macosx
 X make OS X launch from its local JRE
@@ -239,9 +234,6 @@ _   i.e. PVector.copy() not in the reference
 _ local web server to run reference from .zip?
 _   no more gazillion file nastiness
 _ yahoo search example is out of date (included in the examples? the book?)
-_ improve documentation of the pdf stuff
-_   be clearer about the font setup stuff
-_   fonts by default not working that well?
 _ stop() to shut down a sketch (but not quit/close window)
 _   actually pause/resume
 _ MIN_FLOAT, MAX_FLOAT, also the difference from the Java functions
@@ -301,6 +293,9 @@ _   3) use createFont() (which you already are)
 _   this will convert all the shape data from the fonts for writing. 
 _   it will be *extremely* slow, which is part of why it's not documented yet. 
 _   but it will work with beginRaw().
+_ improve documentation of the pdf stuff
+_   be clearer about the font setup stuff
+_   fonts by default not working that well?
 
 
 DOC / Other
@@ -404,6 +399,12 @@ PDE - Processing Development Environment
 
 PDE / Dialogs
 
+_ type cut off in dialog boxes on OS X retina machines
+_   https://github.com/processing/processing/issues/2116
+_   add spaces to the end of the text?
+_ dialog box icon is fuzzy on OS X retina machines
+_   https://github.com/processing/processing/issues/2117
+_ solution might be our own dialog boxes
 _ two-tiered dialogs for everything - use big font/little font style throughout
 _   http://javagraphics.blogspot.com/2008/06/joptionpane-making-alternative.html
 _ option to suppress warning dialogs
