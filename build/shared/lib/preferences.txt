@@ -107,7 +107,6 @@ editor.window.height.min.windows = 530
 #editor.font.macosx = Monaco,plain,10
 # trying for a built-in, consistent monospace for 2.0
 #editor.font = processing.mono,plain,12
-
 editor.font.family = Source Code Pro
 editor.font.size = 12
 
@@ -168,7 +167,8 @@ toolbar.hide.image = false
 # font choice and size for the console
 #console.font = Monospaced,plain,11
 #console.font.macosx = Monaco,plain,10
-console.font = processing.mono,plain,12
+#console.font = processing.mono,plain,12
+console.font.size = 12
 
 # number of lines to show by default
 console.lines = 4

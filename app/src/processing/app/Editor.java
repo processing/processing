@@ -476,6 +476,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
     textarea.getPainter().updateAppearance();
     textarea.repaint();
     
+    console.updateAppearance();
+    
     // All of this code was specific to using an external editor.  
     /*
 //    // apply the setting for 'use external editor'

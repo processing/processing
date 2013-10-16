@@ -2351,8 +2351,6 @@ public class Base {
       // Path may have URL encoding, so remove it
       String decodedPath = PApplet.urlDecode(path);
       
-      //if (decodedPath.contains(PApplet.platformNames[PApplet.platform]
-      System.out.println("path is " + decodedPath);
       if (decodedPath.contains("/app/bin")) {
         if (Base.isMacOS()) {
           processingRoot = 

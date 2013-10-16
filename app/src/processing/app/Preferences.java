@@ -115,6 +115,7 @@ public class Preferences {
   JCheckBox checkUpdatesBox;
   //JTextField fontSizeField;
   JComboBox fontSizeField;
+  JComboBox consoleSizeField;
   JCheckBox inputMethodBox;
   JCheckBox autoAssociateBox;
   
@@ -336,31 +337,41 @@ public class Preferences {
     top += d.height + GUI_BETWEEN;
     
     
-    // Editor font size [    ]
+    // Editor font size [ 12 ]  Console font size [ 10 ]
 
     Container box = Box.createHorizontalBox();
+    
     label = new JLabel("Editor font size: ");
     box.add(label);
     //fontSizeField = new JTextField(4);
     fontSizeField = new JComboBox<Integer>(FONT_SIZES);
     fontSizeField.setEditable(true);
     box.add(fontSizeField);
-    label = new JLabel("  (requires restart of Processing)");
+//    label = new JLabel("  (requires restart of Processing)");
+//    box.add(label);
+    box.add(Box.createHorizontalStrut(GUI_BETWEEN));
+
+    label = new JLabel("Console font size: ");
     box.add(label);
+    consoleSizeField = new JComboBox<Integer>(FONT_SIZES);
+    consoleSizeField.setEditable(true);
+    box.add(consoleSizeField);
+    
     pain.add(box);
     d = box.getPreferredSize();
     box.setBounds(left, top, d.width, d.height);
-    Font editorFont = Preferences.getFont("editor.font");
+//    Font editorFont = Preferences.getFont("editor.font");
     //fontSizeField.setText(String.valueOf(editorFont.getSize()));
-    fontSizeField.setSelectedItem(editorFont.getSize());
+//    fontSizeField.setSelectedItem(editorFont.getSize());
+    fontSizeField.setSelectedItem(Preferences.getFont("editor.font.size"));
     top += d.height + GUI_BETWEEN;
     
     
     // [ ] Use smooth text in editor window
 
-    editorAntialiasBox =
-      new JCheckBox("Use smooth text in editor window " +
-                    "(requires restart of Processing)");
+    editorAntialiasBox = new JCheckBox("Use smooth text in editor window");
+//      new JCheckBox("Use smooth text in editor window " +
+//                    "(requires restart of Processing)");
     pain.add(editorAntialiasBox);
     d = editorAntialiasBox.getPreferredSize();
     // adding +10 because ubuntu + jre 1.5 truncating items
@@ -751,14 +762,24 @@ public class Preferences {
         // Replace with Integer version
         selection = Integer.parseInt((String) selection);
       }
-      //Integer newSize = (Integer) selection;
-      //Integer newSize = Integer.valueOf(selection);
-      //System.out.println("setting size to " + selection + " " + selection.getClass());
       set("editor.font.size", String.valueOf(selection));
 
     } catch (NumberFormatException e) {
       Base.log("Ignoring invalid font size " + fontSizeField); //$NON-NLS-1$
       fontSizeField.setSelectedItem(getInteger("editor.font.size"));
+    }
+    
+    try {
+      Object selection = consoleSizeField.getSelectedItem();
+      if (selection instanceof String) {
+        // Replace with Integer version
+        selection = Integer.parseInt((String) selection);
+      }
+      set("console.font.size", String.valueOf(selection));
+
+    } catch (NumberFormatException e) {
+      Base.log("Ignoring invalid font size " + consoleSizeField); //$NON-NLS-1$
+      consoleSizeField.setSelectedItem(getInteger("console.font.size"));
     }
     
     setBoolean("editor.input_method_support", inputMethodBox.isSelected()); //$NON-NLS-1$
@@ -817,6 +838,7 @@ public class Preferences {
     }).start();
     
     fontSizeField.setSelectedItem(getInteger("editor.font.size"));
+    consoleSizeField.setSelectedItem(getInteger("console.font.size"));
 
     memoryOverrideBox.
       setSelected(getBoolean("run.options.memory")); //$NON-NLS-1$

@@ -19,20 +19,55 @@ X bad tool brings down the environment
 X   http://code.google.com/p/processing/issues/detail?id=798
 X   https://github.com/processing/processing/issues/836
 
-X update with bold version of Source Code Pro
-X   http://www.google.com/fonts#UsePlace:use/Collection:Source+Code+Pro
-X   instead of semibold, which wouldn't correctly connect to the other fonts
-_ does editor line status work?
-_ Editor.applyPreferences() -> painter.setFont() removed
-_   need to instead update defaults, then run from there
-_   then call repaint() on the text area? or invalidate()? or the painter?
-_ make sure font family change is working
-_ make sure fonts can actually update size/etc in prefs
-
 cleaning
 o the first time someone hides a tab, put up a msg explaining what it does
 o   "don't warn me about this anymore"
 X   removed this feature a while back
+o document the move of the auto format menu
+o   in the book(s)? in the reference?
+o jer: opengl2 tutorial
+o jer: android tutorial
+o probably later: examples into categories based on difficulty
+o   add ratings/difficult level to examples online and in the pde
+o go through examples, figure out how to do many on the site w/ js instead
+X import p5 reference into the javadoc
+
+fonts/prefs
+X update with bold version of Source Code Pro
+X   http://www.google.com/fonts#UsePlace:use/Collection:Source+Code+Pro
+X   instead of semibold, which wouldn't correctly connect to the other fonts
+_ does editor line status work?
+X Editor.applyPreferences() -> painter.setFont() removed
+X   need to instead update defaults, then run from there
+X   then call repaint() on the text area? or invalidate()? or the painter?
+X make sure font family change is working
+X make sure fonts can actually update size/etc in prefs
+X slightly gray background
+X   bgcolor wasn't getting set (since fgcolor was set elsewhere)
+X spacing problem with large sizes (on retina?)
+X   not just retina, was problem with non-mono text from Java
+X control text size in console
+o   why aren't prefs from theme.txt showing up in preferences.txt? hrm
+o   or rather, why can't they be overridden? 
+X     because theme.txt data is a different animal / that's part of the point
+X   should fonts at least be in prefs.txt?
+_   http://code.google.com/p/processing/issues/detail?id=226
+_   https://github.com/processing/processing/issues/265
+X console font in EditorConsole
+X   Font font = Preferences.getFont("console.font");
+o fix console font on Windows and Linux with 7u40
+X   couldn't reproduce, but shouldn't be a problem with the rewrite
+X the message area text also looks ugly.. can we fix?
+X add pref to select PDE font (so that CJKV languages work better)
+_   https://github.com/processing/processing/issues/2078
+X should we embed the PDE font into the JRE?
+X   this would allow it to show up in the menus, etc
+_   but might be a problem on Linux
+_     where the JRE is often replaced
+_     and where the font is needed most
+_     make note of this on the platforms page
+X type in the status area is gross on retina displays and 7u40
+X no longer require restart of Processing when changing the font
 
 serial
 X closing several bugs because no longer relevant
@@ -70,33 +105,12 @@ X   basically done in more recent releases
 X fix file selection dialog with MovieMaker
 X   copied from PApplet, but not importing PApplet
 
-fonts and prefs
-_ slightly gray background
-_ spacing problem with large sizes (on retina?)
-_ control text size in console
-o   why aren't prefs from theme.txt showing up in preferences.txt? hrm
-o   or rather, why can't they be overridden? 
-X     because theme.txt data is a different animal / that's part of the point
-_   should fonts at least be in prefs.txt?
-_   http://code.google.com/p/processing/issues/detail?id=226
-_   https://github.com/processing/processing/issues/265
-_ console font in EditorConsole
-_   Font font = Preferences.getFont("console.font");
-_ fix console font on Windows and Linux with 7u40
-_   the message area text also looks ugly.. can we fix?
-_ add pref to select PDE font (so that CJKV languages work better)
-_   https://github.com/processing/processing/issues/2078
-_ should we embed the PDE font into the JRE?
-_   this would allow it to show up in the menus, etc
-_   but might be a problem on Linux
-_     where the JRE is often replaced
-_     and where the font is needed most
-
-_ type in the status area is gross on retina displays and 7u40
 _ type looks a little feeble on OS X with non-retina machines
 _   https://github.com/processing/processing/issues/2135
+_   should we increase the size of the mode dropdown?
 _ type cut off in dialog boxes on OS X retina machines
 _   https://github.com/processing/processing/issues/2116
+_   add spaces to the end of the text?
 _ dialog box icon is fuzzy on OS X retina machines
 _   https://github.com/processing/processing/issues/2117
 _ solution might be our own dialog boxes (see 'dialogs' section)
@@ -129,14 +143,23 @@ X   upload javadoc updates
 X need to require JDK 7u40 to be installed on OS X
 X remove JAVA_HOME requirement from build.xml
 X   what's needed on OS X? just the JDK 7u40?
-
-jre work
 X remove Java FX from OS X build
 X remove Java FX during Linux builds
 X remove Java FX during Windows builds
 X remove javafx from the embed
 X   more about optional files:
 X   http://www.oracle.com/technetwork/java/javase/jdk-7-readme-429198.html
+_ update github instructions
+_   only JRE needed at this point
+_   switched over to Java 7
+_   https://github.com/processing/processing/wiki/Build-Instructions
+_   "unable to locate tools.jar" (Windows) can be ignored
+_   JAVA_HOME warnings from Ant can also be ignored
+_ updates for macosx instructions
+_   to build appbundler, you'll need Xcode
+_     and the command line tools Preferences > Downloads > Command Line Tools
+_   appbundler will have an NPE if the osx binary isn't built
+_   also need to have 10.8 version of the SDK (old Xcode won't work)
 
 7u40 macosx
 X make OS X launch from its local JRE
@@ -152,8 +175,8 @@ X package Java 7u40 version of the app
 X   docs.oracle.com/javase/7/docs/technotes/guides/jweb/packagingAppsForMac.html
 X   http://www.intransitione.com/blog/take-java-to-app-store/
 X   retina support http://bugs.sun.com/view_bug.do?bug_id=8009754
-_   useful retina digging/findings for Oracle Java
-_     http://bulenkov.com/2013/06/23/retina-support-in-oracle-jdk-1-7/
+X   useful retina digging/findings for Oracle Java
+X     http://bulenkov.com/2013/06/23/retina-support-in-oracle-jdk-1-7/
 X   7u40 target release is "late August"
 X     http://openjdk.java.net/projects/jdk7u/releases/7u40.html
 X   Contents/Java/Classes folder is added to java.class.path
@@ -163,40 +186,22 @@ X "Are you sure you want to quit?" when switching modes on Oracle JVM
 X   default menu bar is still broken
 X   http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=8007267
 X add appbundler.jar, otherwise folks have to include Xcode
-_ if they want to build appbundler, they'll need Xcode
-_   and the command line tools Preferences > Downloads > Command Line Tools
-_ appbundler will have an NPE if the osx binary isn't built
-_ also need to have 10.8 version of the SDK (old Xcode won't work)
+_ try installing 10.7.3 on Mac Mini and check whether things run
+_   make sure it's only running on 64-bit machines? 
 
+export
 _ change how export is handled
 _   remove ability to export cross-platform apps
 _   add ability to embed the current JRE
 _ the case for the embedded JRE
 _   https://github.com/processing/processing/issues/2104
 _ change app stub in OS X exported application
-_ try installing 10.7.3 on Mac Mini and check whether things run
-_   make sure it's only running on 64-bit machines? 
-_ update github instructions
-_   only JRE needed at this point
-_   switched over to Java 7
-_   https://github.com/processing/processing/wiki/Build-Instructions
-_   "unable to locate tools.jar" (Windows) can be ignored
-_   JAVA_HOME warnings from Ant can also be ignored
-
-_ appbundler improvements
-_   don't re-copy JRE into work folder if already exists
-_   implement a splash screen
-
 _ change Windows export to use launch4j instead of the launcher.cpp file
 _   actually call ant from inside p5?
 
 high
 _ move old Google Code SVN back to processing.org
 _   then cull out the old branches/tags from the Github repo
-_ figure out Android build w/o javac so we can remove tools.jar and javac
-_   also to the p5 repo with just a JRE
-_   remove initRequirements from Base (no longer need JDI)
-_     move this into Android mode?
 _ "String index out of range" error
 _   https://github.com/processing/processing/issues/1940
 _ freeze after splash screen on OS X (looks like core.jar in the path)
@@ -220,33 +225,22 @@ _ remove video for macosx32 from the repo permanently
 _ remove the prefs for 32/64-bit from Preferences
 _ remove the extra OS X cruft inside Runner.java
 
+
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-DOC / Mess
+DOC / Misc
 
 _ find in reference for copy() (on image) tries to open PVector.copy()
 _   might need disambiguation pages?
 _   if a reference page is missing, throws a bunch of exceptions
 _   i.e. PVector.copy() not in the reference
-_ import p5 reference into the javadoc
 _ local web server to run reference from .zip?
 _   no more gazillion file nastiness
 _ yahoo search example is out of date (included in the examples? the book?)
-o document the move of the auto format menu
-o   in the book(s)? in the reference?
 _ improve documentation of the pdf stuff
 _   be clearer about the font setup stuff
 _   fonts by default not working that well?
-_ jer: opengl2 tutorial
-_ jer: android tutorial
-_ probably later: examples into categories based on difficulty
-_   add ratings/difficult level to examples online and in the pde
-_ go through examples, figure out how to do many on the site w/ js instead
-
-
-DOC / Write Me
-
 _ stop() to shut down a sketch (but not quit/close window)
 _   actually pause/resume
 _ MIN_FLOAT, MAX_FLOAT, also the difference from the Java functions
@@ -956,6 +950,9 @@ _   http://code.google.com/p/processing/issues/detail?id=632
 
 DIST / Mac OS X
 
+_ appbundler improvements
+_   don't re-copy JRE into work folder if already exists
+_   implement a splash screen
 _ remove default menu bar hack when 7u60 arrives
 _   http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=8022667
 _ blank sketch opened even if another opened by double-click

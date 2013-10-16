@@ -116,14 +116,22 @@ public class TextAreaPainter extends JComponent implements TabExpander {
 //    // unfortunately probably can't just do setDefaults() since things aren't quite set up
 //    setFont(defaults.plainFont);
 ////    System.out.println("defaults font is " + defaults.font);
-//    setForeground(defaults.fgcolor);
-//    setBackground(defaults.bgcolor);
+    setForeground(defaults.fgcolor);
+    setBackground(defaults.bgcolor);
     
     String fontFamily = Preferences.get("editor.font.family");
     int fontSize = Preferences.getInteger("editor.font.size");
     plainFont = new Font(fontFamily, Font.PLAIN, fontSize);
+    if (!fontFamily.equals(plainFont.getFamily())) {
+      System.err.println("Primary font not available, resetting to monospaced");
+      fontFamily = "Monospaced";
+      Preferences.set("editor.font.family", fontFamily);
+      plainFont = new Font(fontFamily, Font.PLAIN, fontSize);
+    }
     boldFont = new Font(fontFamily, Font.BOLD, fontSize);
     antialias = Preferences.getBoolean("editor.antialias");
+//    System.out.println(plainFont.getFamily());
+//    System.out.println(plainFont);
 
     // moved from setFont() override (never quite comfortable w/ that override)
     fm = super.getFontMetrics(plainFont);
