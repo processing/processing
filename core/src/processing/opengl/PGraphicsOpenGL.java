@@ -2069,7 +2069,7 @@ public class PGraphicsOpenGL extends PGraphics {
     shape = kind;
     inGeo.clear();
 
-    breakShape = true;
+    breakShape = false;
     defaultEdges = true;
 
     textureImage0 = textureImage;
@@ -7973,7 +7973,8 @@ public class PGraphicsOpenGL extends PGraphics {
           code == CURVE_VERTEX) {
         if (codes == null) {
           codes = new int[PApplet.max(PGL.DEFAULT_IN_VERTICES, vertexCount)];
-          Arrays.fill(codes, 0, codes.length, VERTEX);
+          Arrays.fill(codes, 0, vertexCount, VERTEX);
+          codeCount = vertexCount;
         }
 
         if (brk) {
@@ -8325,19 +8326,27 @@ public class PGraphicsOpenGL extends PGraphics {
     void addPolygonEdges(boolean closed) {
       int start = 0;
       boolean begin = true;
-      int i = 0;
-      int c = 0;
+      int i = 1;
+
+      int c = 1;
+
+      // The following line handles the situation when the vertex codes start
+      // with a BREAK. This can only be the result of starting a shape with a
+      // contour, which doesn't work on JAVA2D.
+      // In order to mantain consistency between renderers, it is disabled.
+      // if (0 < codeCount && codes[0] == BREAK) c++;
+
       while (i < vertexCount) {
         int code = VERTEX;
         boolean brk = false;
         boolean brk1 = false;
-        if (codes != null && c < codes.length) {
+        if (codes != null && c < codeCount) {
           code = codes[c++];
-          if (code == BREAK && c < codes.length) {
+          if (code == BREAK && c < codeCount) {
             brk = true;
             code = codes[c++];
           }
-          if (c < codes.length) brk1 = codes[c] == BREAK;
+          if (c < codeCount) brk1 = codes[c] == BREAK;
         }
 
         if (brk) {
@@ -11967,9 +11976,9 @@ public class PGraphicsOpenGL extends PGraphics {
         while (i < in.vertexCount) {
           int code = VERTEX;
           boolean brk = false;
-          if (in.codes != null && c < in.codes.length) {
+          if (in.codes != null && c < in.codeCount) {
             code = in.codes[c++];
-            if (code == BREAK && c < in.codes.length) {
+            if (code == BREAK && c < in.codeCount) {
               brk = true;
               code = in.codes[c++];
             }

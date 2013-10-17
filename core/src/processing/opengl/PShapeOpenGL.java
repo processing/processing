@@ -376,7 +376,7 @@ public class PShapeOpenGL extends PShape {
 
     // To make sure that the first vertex is marked as a break.
     // Same behavior as in the immediate mode.
-    breakShape = true;
+    breakShape = false;
 
     if (family == GROUP) {
       // GROUP shapes are always marked as ended.
@@ -992,9 +992,6 @@ public class PShapeOpenGL extends PShape {
   }
 
 
-//public void beginContour() {
-//super.beginContour();
-
   @Override
   protected void beginContourImpl() {
     breakShape = true;
@@ -1004,7 +1001,6 @@ public class PShapeOpenGL extends PShape {
   @Override
   protected void endContourImpl() {
   }
-
 
 
   @Override
