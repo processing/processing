@@ -54,9 +54,9 @@ void setup() {
 
 void loop() {
   if (digitalRead(switchPin) == HIGH) {  // If switch is ON,
-    Serial.print(1, BYTE);               // send 1 to Processing
+    Serial.write(1);               // send 1 to Processing
   } else {                               // If the switch is not ON,
-    Serial.print(0, BYTE);               // send 0 to Processing
+    Serial.write(0);               // send 0 to Processing
   }
   delay(100);                            // Wait 100 milliseconds
 }

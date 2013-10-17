@@ -77,7 +77,7 @@ void setup()
 void loop() {
   // read analog input, divide by 4 to make the range 0-255:
   int analogValue = analogRead(0)/4; 
-  Serial.print(analogValue, BYTE);
+  Serial.write(analogValue);
   // pause for 10 milliseconds:
   delay(10);                 
 }
