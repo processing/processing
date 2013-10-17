@@ -7498,7 +7498,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
     // vertex codes
     int[] codes;
-    boolean[] breaks;
 
     // Stroke edges
     int[][] edges;
@@ -7550,7 +7549,6 @@ public class PGraphicsOpenGL extends PGraphics {
       specular = new int[PGL.DEFAULT_IN_VERTICES];
       emissive = new int[PGL.DEFAULT_IN_VERTICES];
       shininess = new float[PGL.DEFAULT_IN_VERTICES];
-      breaks = new boolean[PGL.DEFAULT_IN_VERTICES];
       edges = new int[PGL.DEFAULT_IN_EDGES][3];
 
       clear();
@@ -7570,7 +7568,6 @@ public class PGraphicsOpenGL extends PGraphics {
         expandSpecular(newSize);
         expandEmissive(newSize);
         expandShininess(newSize);
-        expandBreaks(newSize);
       }
     }
 
@@ -7757,12 +7754,6 @@ public class PGraphicsOpenGL extends PGraphics {
       codes = temp;
     }
 
-    void expandBreaks(int n) {
-      boolean temp[] = new boolean[n];
-      PApplet.arrayCopy(breaks, 0, temp, 0, vertexCount);
-      breaks = temp;
-    }
-
     void expandEdges(int n) {
       int temp[][] = new int[n][3];
       PApplet.arrayCopy(edges, 0, temp, 0, edgeCount);
@@ -7785,7 +7776,6 @@ public class PGraphicsOpenGL extends PGraphics {
         trimSpecular();
         trimEmissive();
         trimShininess();
-        trimBreaks();
       }
 
       if (0 < codeCount && codeCount < codes.length) {
@@ -7861,12 +7851,6 @@ public class PGraphicsOpenGL extends PGraphics {
       int temp[] = new int[codeCount];
       PApplet.arrayCopy(codes, 0, temp, 0, codeCount);
       codes = temp;
-    }
-
-    void trimBreaks() {
-      boolean temp[] = new boolean[vertexCount];
-      PApplet.arrayCopy(breaks, 0, temp, 0, vertexCount);
-      breaks = temp;
     }
 
     void trimEdges() {
@@ -7982,8 +7966,6 @@ public class PGraphicsOpenGL extends PGraphics {
       specular[vertexCount] = PGL.javaToNativeARGB(sp);
       emissive[vertexCount] = PGL.javaToNativeARGB(em);
       shininess[vertexCount] = shine;
-
-      breaks[vertexCount] = brk;
 
       if (brk || (code == VERTEX && codes != null) ||
           code == BEZIER_VERTEX ||
@@ -8341,7 +8323,84 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     void addPolygonEdges(boolean closed) {
-      // TODO: need to expand bezier, quadratic and curve vertices...crap.
+      int start = 0;
+      boolean begin = true;
+      int i = 0;
+      int c = 0;
+      while (i < vertexCount) {
+        int code = VERTEX;
+        boolean brk = false;
+        boolean brk1 = false;
+        if (codes != null && c < codes.length) {
+          code = codes[c++];
+          if (code == BREAK && c < codes.length) {
+            brk = true;
+            code = codes[c++];
+          }
+          if (c < codes.length) brk1 = codes[c] == BREAK;
+        }
+
+        if (brk) {
+          if (closed) {
+            // Closing previous contour.
+            addEdge(i - 1, start, begin, false);
+            closeEdge(i - 1, start);
+          }
+
+          // Starting new contour.
+          start = i;
+          begin = true;
+        } else {
+          if (i == vertexCount - 1) {
+            if (closed && start + 1 < i) {
+              // Closing the end of the last contour, if it
+              // has more than 1 segment.
+              addEdge(i - 1, i, begin, false);
+              addEdge(i, start, false, false);
+              closeEdge(i, start);
+            } else {
+              // Leaving the last contour open.
+              addEdge(i - 1, i, begin, true);
+            }
+          } else {
+
+            if ((i < vertexCount - 1) && brk1 && !closed) {
+              // A new contour starts at the next vertex and
+              // the polygon is not closed, so this is the last
+              // segment of the current contour.
+              addEdge(i - 1, i, begin, true);
+            } else {
+              // The current contour does not end at vertex i.
+              addEdge(i - 1, i, begin, false);
+            }
+          }
+
+          begin = false;
+        }
+
+
+
+
+
+
+
+        if (code == BEZIER_VERTEX) {
+          i += 3;
+        } else if (code == QUADRATIC_VERTEX) {
+          i += 2;
+        } else if (code == CURVE_VERTEX) {
+          i++;
+        } else {
+          i++;
+        }
+      }
+
+      //for (int j = 0; j < pg.bezierDetail; j++) {
+      //for (int j = 0; j < pg.curveDetail; j++) {
+
+
+
+/*
 
       int start = 0;
       boolean begin = true;
@@ -8384,7 +8443,7 @@ public class PGraphicsOpenGL extends PGraphics {
           begin = false;
         }
       }
-
+*/
 
     }
 
@@ -11903,16 +11962,16 @@ public class PGraphicsOpenGL extends PGraphics {
         gluTess.beginContour();
 
         // Now, iterate over all input data and send to GLU tessellator..
-        int vidx = 0;
-        int cidx = 0;
-        while (vidx < in.vertexCount) {
+        int i = 0;
+        int c = 0;
+        while (i < in.vertexCount) {
           int code = VERTEX;
           boolean brk = false;
-          if (in.codes != null) {
-            code = in.codes[cidx];
-            if (code == BREAK) {
+          if (in.codes != null && c < in.codes.length) {
+            code = in.codes[c++];
+            if (code == BREAK && c < in.codes.length) {
               brk = true;
-              code = in.codes[cidx++];
+              code = in.codes[c++];
             }
           }
 
@@ -11922,17 +11981,17 @@ public class PGraphicsOpenGL extends PGraphics {
           }
 
           if (code == BEZIER_VERTEX) {
-            addBezierVertex(vidx);
-            vidx += 3;
+            addBezierVertex(i);
+            i += 3;
           } else if (code == QUADRATIC_VERTEX) {
-            addQuadraticVertex(vidx);
-            vidx += 2;
+            addQuadraticVertex(i);
+            i += 2;
           } else if (code == CURVE_VERTEX) {
-            addCurveVertex(vidx);
-            vidx++;
+            addCurveVertex(i);
+            i++;
           } else {
-            addVertex(vidx);
-            vidx++;
+            addVertex(i);
+            i++;
           }
         }
         gluTess.endContour();
