@@ -2069,6 +2069,7 @@ public class PGraphicsOpenGL extends PGraphics {
     shape = kind;
     inGeo.clear();
 
+    curveVertexCount = 0;
     breakShape = false;
     defaultEdges = true;
 
@@ -10249,6 +10250,10 @@ public class PGraphicsOpenGL extends PGraphics {
       transformScale = -1;
     }
 
+    void resetCurveVertexCount() {
+      pg.curveVertexCount = 0;
+    }
+
     // -----------------------------------------------------------------
     //
     // Point tessellation
@@ -11983,7 +11988,6 @@ public class PGraphicsOpenGL extends PGraphics {
       vertex[X] = in.vertices[3*i + 0];
       vertex[Y] = in.vertices[3*i + 1];
       vertex[Z] = in.vertices[3*i + 2];
-
       pg.curveVertexCount++;
 
       // draw a segment if there are enough points
