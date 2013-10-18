@@ -10344,7 +10344,6 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
   // Generates tessellated geometry given a batch of input vertices.
-  // Generates tessellated geometry given a batch of input vertices.
   static protected class Tessellator {
     InGeometry in;
     TessGeometry tess;
@@ -10381,6 +10380,21 @@ public class PGraphicsOpenGL extends PGraphics {
     int lastLineIndexCache;
     int firstPointIndexCache;
     int lastPointIndexCache;
+
+    // Accessor arrays to get the geometry data needed to tessellate the
+    // strokes, it can point to either the input geometry, or the internal
+    // path vertices generated in the polygon discretization.
+    float[] strokeVertices;
+    int[] strokeColors;
+    float[] strokeWeights;
+
+    // Path vertex data that results from discretizing a polygon (i.e.: turning
+    // bezier, quadratic, and curve vertices into "regular" vertices).
+    int pathVertexCount;
+    float[] pathVertices;
+    int[] pathColors;
+    float[] pathWeights;
+    int beginPath;
 
     public Tessellator() {
       callback = new TessellatorCallback();
@@ -11978,7 +11992,7 @@ public class PGraphicsOpenGL extends PGraphics {
     void addBezierVertex(int i) {
       pg.curveVertexCount = 0;
       pg.bezierInitCheck();
-      pg.bezierVertexCheck(pg.shape, i);
+      pg.bezierVertexCheck(POLYGON, i);
 
       PMatrix3D draw = pg.bezierDrawMatrix;
 
@@ -12168,7 +12182,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     void addCurveVertex(int i) {
-      pg.curveVertexCheck(pg.shape);
+      pg.curveVertexCheck(POLYGON);
 
       float[] vertex = pg.curveVertices[pg.curveVertexCount];
       vertex[X] = in.vertices[3*i + 0];
@@ -12325,21 +12339,6 @@ public class PGraphicsOpenGL extends PGraphics {
       if (stroke) addStrokeVertex(x, y, z, strokeColor, strokeWeight);
     }
 
-    // Accessor arrays to get the geometry data needed to tessellate the
-    // strokes, it can point to either the input geometry, or the internal
-    // path vertices generated in the polygon discretization.
-    float[] strokeVertices;
-    int[] strokeColors;
-    float[] strokeWeights;
-
-    // Path vertex data that results from discretizing a polygon (i.e.: turning
-    // bezier, quadratic, and curve vertices into "regular" vertices).
-    int pathVertexCount;
-    float[] pathVertices;
-    int[] pathColors;
-    float[] pathWeights;
-    int beginPath;
-
     void beginPolygonStroke() {
       pathVertexCount = 0;
       if (pathVertices == null) {
@@ -12384,11 +12383,11 @@ public class PGraphicsOpenGL extends PGraphics {
         pathVertices = vtemp;
 
         int ctemp[] = new int[newSize];
-        PApplet.arrayCopy(pathColors, 0, ctemp, 0, newSize);
+        PApplet.arrayCopy(pathColors, 0, ctemp, 0, pathVertexCount);
         pathColors = ctemp;
 
         float wtemp[] = new float[newSize];
-        PApplet.arrayCopy(pathWeights, 0, wtemp, 0, newSize);
+        PApplet.arrayCopy(pathWeights, 0, wtemp, 0, pathVertexCount);
         pathWeights = wtemp;
       }
 
