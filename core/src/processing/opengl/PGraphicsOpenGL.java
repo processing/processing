@@ -10765,6 +10765,9 @@ public class PGraphicsOpenGL extends PGraphics {
     void tessellateLines() {
       int nInVert = in.vertexCount;
       if (stroke && 2 <= nInVert) {
+        strokeVertices = in.vertices;
+        strokeColors = in.strokeColors;
+        strokeWeights = in.strokeWeights;
         updateTex();
         int lineCount = nInVert / 2; // Each individual line is formed by two consecutive input vertices.
         if (is3D) {
@@ -10845,6 +10848,9 @@ public class PGraphicsOpenGL extends PGraphics {
     void tessellateLineStrip() {
       int nInVert = in.vertexCount;
       if (stroke && 2 <= nInVert) {
+        strokeVertices = in.vertices;
+        strokeColors = in.strokeColors;
+        strokeWeights = in.strokeWeights;
         updateTex();
         int lineCount = nInVert - 1;
         if (is3D) {
@@ -10926,6 +10932,9 @@ public class PGraphicsOpenGL extends PGraphics {
     void tessellateLineLoop() {
       int nInVert = in.vertexCount;
       if (stroke && 2 <= nInVert) {
+        strokeVertices = in.vertices;
+        strokeColors = in.strokeColors;
+        strokeWeights = in.strokeWeights;
         updateTex();
         int lineCount = nInVert;
         if (is3D) {
