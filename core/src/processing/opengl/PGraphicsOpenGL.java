@@ -2286,7 +2286,6 @@ public class PGraphicsOpenGL extends PGraphics {
       if (normalMode == NORMAL_MODE_AUTO) inGeo.calcQuadStripNormals();
       tessellator.tessellateQuadStrip();
     } else if (shape == POLYGON) {
-//      if (stroke && defaultEdges) inGeo.addPolygonEdges(mode == CLOSE);
       tessellator.tessellatePolygon(false, mode == CLOSE,
                                     normalMode == NORMAL_MODE_AUTO);
     }
@@ -8013,151 +8012,6 @@ public class PGraphicsOpenGL extends PGraphics {
       addVertex(x, y, z, CURVE_VERTEX, brk);
     }
 
-    /*
-    void addBezierVertex(float x2, float y2, float z2,
-                         float x3, float y3, float z3,
-                         float x4, float y4, float z4,
-                         boolean fill, boolean stroke, int detail, int code) {
-      addBezierVertex(x2, y2, z2,
-                      x3, y3, z3,
-                      x4, y4, z4,
-                      fill, stroke, detail, code, POLYGON);
-    }
-
-    void addBezierVertex(float x2, float y2, float z2,
-                         float x3, float y3, float z3,
-                         float x4, float y4, float z4,
-                         boolean fill, boolean stroke, int detail, int code, // this should be break flag
-                         int shape) {
-      bezierInitCheck();
-      bezierVertexCheck(shape, vertexCount);
-
-      PMatrix3D draw = bezierDrawMatrix;
-
-      float x1 = getLastVertexX();
-      float y1 = getLastVertexY();
-      float z1 = getLastVertexZ();
-
-      float xplot1 = draw.m10*x1 + draw.m11*x2 + draw.m12*x3 + draw.m13*x4;
-      float xplot2 = draw.m20*x1 + draw.m21*x2 + draw.m22*x3 + draw.m23*x4;
-      float xplot3 = draw.m30*x1 + draw.m31*x2 + draw.m32*x3 + draw.m33*x4;
-
-      float yplot1 = draw.m10*y1 + draw.m11*y2 + draw.m12*y3 + draw.m13*y4;
-      float yplot2 = draw.m20*y1 + draw.m21*y2 + draw.m22*y3 + draw.m23*y4;
-      float yplot3 = draw.m30*y1 + draw.m31*y2 + draw.m32*y3 + draw.m33*y4;
-
-      float zplot1 = draw.m10*z1 + draw.m11*z2 + draw.m12*z3 + draw.m13*z4;
-      float zplot2 = draw.m20*z1 + draw.m21*z2 + draw.m22*z3 + draw.m23*z4;
-      float zplot3 = draw.m30*z1 + draw.m31*z2 + draw.m32*z3 + draw.m33*z4;
-
-      for (int j = 0; j < detail; j++) {
-        x1 += xplot1; xplot1 += xplot2; xplot2 += xplot3;
-        y1 += yplot1; yplot1 += yplot2; yplot2 += yplot3;
-        z1 += zplot1; zplot1 += zplot2; zplot2 += zplot3;
-        addVertex(x1, y1, z1, j == 0 && code == BREAK ? BREAK : VERTEX);
-      }
-    }
-    */
-
-    /*
-    public void addQuadraticVertex(float cx, float cy, float cz,
-                                   float x3, float y3, float z3,
-                                   boolean fill, boolean stroke, int detail,
-                                   int code) {
-    addVertex(cx, cy, cz, QUADRATIC_VERTEX, brk);
-    addVertex(x3, y3, z3, QUADRATIC_VERTEX, false);
-
-
-      addQuadraticVertex(cx, cy, cz,
-                         x3, y3, z3,
-                         fill, stroke, detail, code, POLYGON);
-    }
-
-    public void addQuadraticVertex(float cx, float cy, float cz,
-                                   float x3, float y3, float z3,
-                                   boolean fill, boolean stroke, int detail,
-                                   int code, int shape) {
-      float x1 = getLastVertexX();
-      float y1 = getLastVertexY();
-      float z1 = getLastVertexZ();
-      addBezierVertex(
-        x1 + ((cx-x1)*2/3.0f), y1 + ((cy-y1)*2/3.0f), z1 + ((cz-z1)*2/3.0f),
-        x3 + ((cx-x3)*2/3.0f), y3 + ((cy-y3)*2/3.0f), z3 + ((cz-z3)*2/3.0f),
-        x3, y3, z3,
-        fill, stroke, detail, code, shape);
-    }
-    */
-
-    /*
-    void addCurveVertex(float x, float y, float z,
-                        boolean fill, boolean stroke, int detail, int code) {
-      addCurveVertex(x, y, z,
-                     fill, stroke, detail, code, POLYGON);
-    }
-
-    void addCurveVertex(float x, float y, float z,
-                        boolean fill, boolean stroke, int detail, int code,
-                        int shape) {
-      curveVertexCheck(shape);
-
-      float[] vertex = curveVertices[curveVertexCount];
-      vertex[X] = x;
-      vertex[Y] = y;
-      vertex[Z] = z;
-      curveVertexCount++;
-
-      // draw a segment if there are enough points
-      if (curveVertexCount > 3) {
-        float[] v1 = curveVertices[curveVertexCount-4];
-        float[] v2 = curveVertices[curveVertexCount-3];
-        float[] v3 = curveVertices[curveVertexCount-2];
-        float[] v4 = curveVertices[curveVertexCount-1];
-        addCurveVertexSegment(v1[X], v1[Y], v1[Z],
-                              v2[X], v2[Y], v2[Z],
-                              v3[X], v3[Y], v3[Z],
-                              v4[X], v4[Y], v4[Z],
-                              detail, code);
-      }
-    }
-
-    void addCurveVertexSegment(float x1, float y1, float z1,
-                               float x2, float y2, float z2,
-                               float x3, float y3, float z3,
-                               float x4, float y4, float z4,
-                               int detail, int code) {
-      float x0 = x2;
-      float y0 = y2;
-      float z0 = z2;
-
-      PMatrix3D draw = curveDrawMatrix;
-
-      float xplot1 = draw.m10*x1 + draw.m11*x2 + draw.m12*x3 + draw.m13*x4;
-      float xplot2 = draw.m20*x1 + draw.m21*x2 + draw.m22*x3 + draw.m23*x4;
-      float xplot3 = draw.m30*x1 + draw.m31*x2 + draw.m32*x3 + draw.m33*x4;
-
-      float yplot1 = draw.m10*y1 + draw.m11*y2 + draw.m12*y3 + draw.m13*y4;
-      float yplot2 = draw.m20*y1 + draw.m21*y2 + draw.m22*y3 + draw.m23*y4;
-      float yplot3 = draw.m30*y1 + draw.m31*y2 + draw.m32*y3 + draw.m33*y4;
-
-      float zplot1 = draw.m10*z1 + draw.m11*z2 + draw.m12*z3 + draw.m13*z4;
-      float zplot2 = draw.m20*z1 + draw.m21*z2 + draw.m22*z3 + draw.m23*z4;
-      float zplot3 = draw.m30*z1 + draw.m31*z2 + draw.m32*z3 + draw.m33*z4;
-
-      // addVertex() will reset curveVertexCount, so save it
-      int savedCount = curveVertexCount;
-
-      addVertex(x0, y0, z0, code == BREAK ? BREAK : VERTEX);
-      for (int j = 0; j < detail; j++) {
-        x0 += xplot1; xplot1 += xplot2; xplot2 += xplot3;
-        y0 += yplot1; yplot1 += yplot2; yplot2 += yplot3;
-        z0 += zplot1; zplot1 += zplot2; zplot2 += zplot3;
-        addVertex(x0, y0, z0, VERTEX);
-      }
-
-      curveVertexCount = savedCount;
-    }
-*/
-
     // Returns the vertex data in the PGraphics double array format.
     float[][] getVertexData() {
       float[][] data = new float[vertexCount][VERTEX_FIELD_COUNT];
@@ -8322,84 +8176,6 @@ public class PGraphicsOpenGL extends PGraphics {
         closeEdge(i3, i0);
       }
     }
-
-    /*
-    void addPolygonEdges(boolean closed) {
-      int start = 0;
-      boolean begin = true;
-      int i = 1;
-
-      int c = 1;
-
-      // The following line handles the situation when the vertex codes start
-      // with a BREAK. This can only be the result of starting a shape with a
-      // contour, which doesn't work on JAVA2D.
-      // In order to mantain consistency between renderers, it is disabled.
-      // if (0 < codeCount && codes[0] == BREAK) c++;
-
-      while (i < vertexCount) {
-        int code = VERTEX;
-        boolean brk = false;
-        boolean brk1 = false;
-        if (codes != null && c < codeCount) {
-          code = codes[c++];
-          if (code == BREAK && c < codeCount) {
-            brk = true;
-            code = codes[c++];
-          }
-          if (c < codeCount) brk1 = codes[c] == BREAK;
-        }
-
-        if (brk) {
-          if (closed) {
-            // Closing previous contour.
-            addEdge(i - 1, start, begin, false);
-            closeEdge(i - 1, start);
-          }
-
-          // Starting new contour.
-          start = i;
-          begin = true;
-        } else {
-          if (i == vertexCount - 1) {
-            if (closed && start + 1 < i) {
-              // Closing the end of the last contour, if it
-              // has more than 1 segment.
-              addEdge(i - 1, i, begin, false);
-              addEdge(i, start, false, false);
-              closeEdge(i, start);
-            } else {
-              // Leaving the last contour open.
-              addEdge(i - 1, i, begin, true);
-            }
-          } else {
-
-            if ((i < vertexCount - 1) && brk1 && !closed) {
-              // A new contour starts at the next vertex and
-              // the polygon is not closed, so this is the last
-              // segment of the current contour.
-              addEdge(i - 1, i, begin, true);
-            } else {
-              // The current contour does not end at vertex i.
-              addEdge(i - 1, i, begin, false);
-            }
-          }
-
-          begin = false;
-        }
-
-        if (code == BEZIER_VERTEX) {
-          i += 3;
-        } else if (code == QUADRATIC_VERTEX) {
-          i += 2;
-        } else if (code == CURVE_VERTEX) {
-          i++;
-        } else {
-          i++;
-        }
-      }
-    }
-*/
 
     // -----------------------------------------------------------------
     //
@@ -8623,8 +8399,6 @@ public class PGraphicsOpenGL extends PGraphics {
       } else {
         addVertex(a, b, VERTEX, false);
       }
-
-//      if (stroke) addPolygonEdges(true);
     }
 
     void addEllipse(float x, float y, float w, float h,
@@ -12200,17 +11974,6 @@ public class PGraphicsOpenGL extends PGraphics {
         }
         if (stroke) addStrokeVertex(x1, y1, z1, strokeColor, strokeWeight);
       }
-
-/*
-      float x1 = getLastVertexX();
-      float y1 = getLastVertexY();
-      float z1 = getLastVertexZ();
-      addBezierVertex(
-        x1 + ((cx-x1)*2/3.0f), y1 + ((cy-y1)*2/3.0f), z1 + ((cz-z1)*2/3.0f),
-        x3 + ((cx-x3)*2/3.0f), y3 + ((cy-y3)*2/3.0f), z3 + ((cz-z3)*2/3.0f),
-        x3, y3, z3,
-        fill, stroke, detail, code, shape);
-  */
     }
 
     void addCurveVertex(int i) {

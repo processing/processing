@@ -2663,7 +2663,6 @@ public class PShapeOpenGL extends PShape {
             boolean curv = inGeo.hasCurveVertex();
             if (bez || quad) saveBezierVertexSettings();
             if (curv) saveCurveVertexSettings();
-//            if (stroke) inGeo.addPolygonEdges(close);
             tessellator.tessellatePolygon(solid, close,
                                           normalMode == NORMAL_MODE_AUTO);
             if (bez ||quad) restoreBezierVertexSettings();
@@ -3184,7 +3183,6 @@ public class PShapeOpenGL extends PShape {
     boolean curv = inGeo.hasCurveVertex();
     if (bez || quad) saveBezierVertexSettings();
     if (curv) saveCurveVertexSettings();
-//    if (stroke) inGeo.addPolygonEdges(close);
     tessellator.tessellatePolygon(false, close, true);
     if (bez || quad) restoreBezierVertexSettings();
     if (curv) restoreCurveVertexSettings();
