@@ -31,11 +31,8 @@ import processing.core.PMatrix2D;
 import processing.core.PMatrix3D;
 import processing.core.PShape;
 import processing.core.PVector;
-import processing.opengl.PGraphicsOpenGL.LineShader;
-import processing.opengl.PGraphicsOpenGL.PointShader;
 import processing.opengl.PGraphicsOpenGL.IndexCache;
 import processing.opengl.PGraphicsOpenGL.InGeometry;
-import processing.opengl.PGraphicsOpenGL.PolyShader;
 import processing.opengl.PGraphicsOpenGL.TessGeometry;
 import processing.opengl.PGraphicsOpenGL.Tessellator;
 
@@ -4601,7 +4598,7 @@ public class PShapeOpenGL extends PShape {
     Texture tex = textureImage != null ? g.getTexture(textureImage) : null;
 
     boolean renderingFill = false, renderingStroke = false;
-    PolyShader shader = null;
+    PShader shader = null;
     IndexCache cache = tessGeo.polyIndexCache;
     for (int n = firstPolyIndexCache; n <= lastPolyIndexCache; n++) {
       if (is3D() || (tex != null && (firstLineIndexCache == -1 ||
@@ -4776,7 +4773,7 @@ public class PShapeOpenGL extends PShape {
 
 
   protected void renderLines(PGraphicsOpenGL g) {
-    LineShader shader = g.getLineShader();
+    PShader shader = g.getLineShader();
     shader.bind();
 
     IndexCache cache = tessGeo.lineIndexCache;
@@ -4876,7 +4873,7 @@ public class PShapeOpenGL extends PShape {
 
 
   protected void renderPoints(PGraphicsOpenGL g) {
-    PointShader shader = g.getPointShader();
+    PShader shader = g.getPointShader();
     shader.bind();
 
     IndexCache cache = tessGeo.pointIndexCache;
