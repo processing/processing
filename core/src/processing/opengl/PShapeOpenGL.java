@@ -2347,6 +2347,11 @@ public class PShapeOpenGL extends PShape {
   public int[] getVertexCodes() {
     if (family == GROUP) return null;
     else {
+      if (family == PRIMITIVE || family == PATH) {
+        // the input geometry of primitive and path shapes is built during
+        // tessellation
+        updateTessellation();
+      }
       if (inGeo.codes == null) return null;
       return inGeo.codes;
     }
@@ -2356,7 +2361,14 @@ public class PShapeOpenGL extends PShape {
   @Override
   public int getVertexCodeCount() {
     if (family == GROUP) return 0;
-    else return inGeo.codeCount;
+    else {
+      if (family == PRIMITIVE || family == PATH) {
+        // the input geometry of primitive and path shapes is built during
+        // tessellation
+        updateTessellation();
+      }
+      return inGeo.codeCount;
+    }
   }
 
 
