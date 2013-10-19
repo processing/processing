@@ -2405,7 +2405,16 @@ public class Base {
   static public String getJavaPath() {
     if (isMacOS()) {
       //return "Contents/PlugIns/jdk1.7.0_40.jdk/Contents/Home/jre/bin/java";
-      return getContentFile("../PlugIns/jdk1.7.0_40.jdk/Contents/Home/jre/bin/java").getAbsolutePath();
+      File[] plugins = getContentFile("../PlugIns").listFiles(new FilenameFilter() {
+        public boolean accept(File dir, String name) {
+          return name.endsWith(".jdk") && dir.isDirectory();
+        }
+      });
+      //PApplet.printArray(plugins);
+      File javaBinary = new File(plugins[0], "Contents/Home/jre/bin/java");
+      //return getContentFile(plugins[0].getAbsolutePath() + "/Contents/Home/jre/bin/java").getAbsolutePath();
+      //return getContentFile("../PlugIns/jdk1.7.0_40.jdk/Contents/Home/jre/bin/java").getAbsolutePath();
+      return javaBinary.getAbsolutePath();
       
     } else if (isLinux()) {
       return getContentFile("java/bin/java").getAbsolutePath();

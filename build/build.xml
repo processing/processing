@@ -151,30 +151,14 @@
     <equals arg1="${env.USER}" arg2="fry" />
   </condition>
 
-  <!-- Make sure that we have a legitimate JDK... This was promoted 
-       from app/build.xml because we now need this on OS X as well. -->
-  <!-- No longer necessary, because we only require a JRE. -->
-  <!--
-  <property name="java_home" value="${env.JAVA_HOME}" />
-  <available file="${env.JAVA_HOME}/lib/tools.jar"
-	     property="java_tools_found" />
-  -->
+  <!-- Set the version of Java that must be present to build. -->
+  <property name="jdk.update.macosx" value="45" />
+  <property name="jdk.path.macosx" value="/Library/Java/JavaVirtualMachines/jdk1.7.0_${jdk.update.macosx}.jdk" />
 
-  <!--
-  <fail if="windows" unless="java_tools_found" 
-	message="The JAVA_HOME variable must be set to the location of a full JDK. For instance, on Windows, this might be c:\jdk1.6.0_19." />
-  -->
-
-  <!-- OS X gets a second chance that covers JDK 6, 
-       a necessity for building on OS X 10.6. -->
-  <!--
-  <available file="/System/Library/Frameworks/JavaVM.framework/Classes/classes.jar" property="java_tools_found" />
-  -->
-  <available file="/Library/Java/JavaVirtualMachines/jdk1.7.0_40.jdk" 
-	     property="macosx_jdk_found" />
+  <available file="${jdk.path.macosx}" property="macosx_jdk_found" />
 
   <fail if="macosx" unless="macosx_jdk_found"
-	message="JDK 7u40 required.${line.separator}To build on OS X, you must install Oracle's JDK 7u40 from${line.separator}http://www.oracle.com/technetwork/java/javase/downloads${line.separator}Note that only 7u40 (not a later or earlier version) will work. ${line.separator}And it must be the JDK, not the JRE. And do not try to defy me again." />
+	message="JDK 7u${jdk.update.macosx} required.${line.separator}To build on OS X, you must install Oracle's JDK 7u${jdk.update.macosx} from${line.separator}http://www.oracle.com/technetwork/java/javase/downloads${line.separator}Note that only 7u${jdk.update.macosx} (not a later or earlier version) will work. ${line.separator}And it must be the JDK, not the JRE. And do not try to defy me again." />
   <!--
   <fail if="linux" unless="java_tools_found" 
 	message="The JAVA_HOME variable must be set to the location of a full JDK. For instance, on Ubuntu Linux, this might be /usr/lib/jvm/java-6-sun." />
@@ -514,7 +498,7 @@
       <!-- The appbundler task needs a couple files (the Info.plist and
            anything else outside /jre) from the full JDK, even though 
 	   it's primarily copying over the JRE folder. -->
-      <runtime dir="/Library/Java/JavaVirtualMachines/jdk1.7.0_40.jdk/Contents/Home" />
+      <runtime dir="${jdk.path.macosx}/Contents/Home" />
       <!-- Eventually we'll want to load the JRE directly from 
 	   the .tgz on the Oracle site, though it's in a folder called 
 	   jre1.7.0_40.jre, so we'll need to strip that out. -->
@@ -595,7 +579,7 @@
     <!--
     Processing.app/Contents/PlugIns/jdk1.7.0_40.jdk/Contents/Home/jre/lib/fonts
     -->
-    <copy todir="macosx/work/Processing.app/Contents/PlugIns/jdk1.7.0_40.jdk/Contents/Home/jre/lib/fonts">
+    <copy todir="macosx/work/Processing.app/Contents/PlugIns/jdk1.7.0_${jdk.update.macosx}.jdk/Contents/Home/jre/lib/fonts">
       <fileset dir="shared/lib/fonts" includes="*" />
     </copy>
 
