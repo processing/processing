@@ -15,6 +15,7 @@ import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2ES2;
+import javax.media.opengl.GL2ES3;
 import javax.media.opengl.GL2GL3;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCapabilities;
@@ -45,6 +46,7 @@ import java.awt.Shape;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.awt.geom.PathIterator;
+
 import javax.media.opengl.glu.GLUtessellator;
 import javax.media.opengl.glu.GLUtessellatorCallbackAdapter;
 
@@ -1164,7 +1166,7 @@ public class PJOGL extends PGL {
     EXTENSIONS               = GL.GL_EXTENSIONS;
     SHADING_LANGUAGE_VERSION = GL2ES2.GL_SHADING_LANGUAGE_VERSION;
 
-    MAX_SAMPLES = GL2.GL_MAX_SAMPLES;
+    MAX_SAMPLES = GL2ES3.GL_MAX_SAMPLES;
     SAMPLES     = GL.GL_SAMPLES;
 
     ALIASED_LINE_WIDTH_RANGE = GL.GL_ALIASED_LINE_WIDTH_RANGE;
@@ -1325,8 +1327,8 @@ public class PJOGL extends PGL {
     NOTEQUAL = GL.GL_NOTEQUAL;
 
     FUNC_ADD              = GL.GL_FUNC_ADD;
-    FUNC_MIN              = GL2.GL_MIN;
-    FUNC_MAX              = GL2.GL_MAX;
+    FUNC_MIN              = GL2ES3.GL_MIN;
+    FUNC_MAX              = GL2ES3.GL_MAX;
     FUNC_REVERSE_SUBTRACT = GL.GL_FUNC_REVERSE_SUBTRACT;
     FUNC_SUBTRACT         = GL.GL_FUNC_SUBTRACT;
 
@@ -1355,8 +1357,8 @@ public class PJOGL extends PGL {
     RENDERBUFFER       = GL.GL_RENDERBUFFER;
     DEPTH_ATTACHMENT   = GL.GL_DEPTH_ATTACHMENT;
     STENCIL_ATTACHMENT = GL.GL_STENCIL_ATTACHMENT;
-    READ_FRAMEBUFFER   = GL2.GL_READ_FRAMEBUFFER;
-    DRAW_FRAMEBUFFER   = GL2.GL_DRAW_FRAMEBUFFER;
+    READ_FRAMEBUFFER   = GL2ES3.GL_READ_FRAMEBUFFER;
+    DRAW_FRAMEBUFFER   = GL2ES3.GL_DRAW_FRAMEBUFFER;
 
     RGBA8            = GL.GL_RGBA8;
     DEPTH24_STENCIL8 = GL.GL_DEPTH24_STENCIL8;
@@ -1629,7 +1631,7 @@ public class PJOGL extends PGL {
 
   @Override
   public void vertexAttribPointer(int index, int size, int type, boolean normalized, int stride, Buffer data) {
-    gl2.glVertexAttribPointer(index, size, type, normalized, stride, data);
+    gl2x.glVertexAttribPointer(index, size, type, normalized, stride, data);
   }
 
   @Override
@@ -1654,7 +1656,7 @@ public class PJOGL extends PGL {
 
   @Override
   public void drawElements(int mode, int count, int type, Buffer indices) {
-    gl.glDrawElements(mode, count, type, indices);
+    gl2x.glDrawElements(mode, count, type, indices);
   }
 
   //////////////////////////////////////////////////////////////////////////////
