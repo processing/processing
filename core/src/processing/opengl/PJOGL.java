@@ -17,6 +17,7 @@ import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2ES2;
 import javax.media.opengl.GL2ES3;
 import javax.media.opengl.GL2GL3;
+import javax.media.opengl.GL3bc;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLCapabilitiesImmutable;
@@ -51,6 +52,9 @@ import javax.media.opengl.glu.GLUtessellator;
 import javax.media.opengl.glu.GLUtessellatorCallbackAdapter;
 
 public class PJOGL extends PGL {
+  // OpenGL profile to use (2, 3 or 4)
+  public static int PROFILE = 2;
+
   // The two windowing toolkits available to use in JOGL:
   public static final int AWT  = 0; // http://jogamp.org/wiki/index.php/Using_JOGL_in_AWT_SWT_and_Swing
   public static final int NEWT = 1; // http://jogamp.org/jogl/doc/NEWT-Overview.html
@@ -133,6 +137,9 @@ public class PJOGL extends PGL {
 
   /** GLES2 functionality (shaders, etc) */
   protected static GL2ES2 gl2;
+
+  /** GL3 with backward compatibility */
+  protected static GL3bc gl3bc;
 
   /** GL2 desktop functionality (blit framebuffer, map buffer range,
    * multisampled renerbuffers) */
@@ -224,7 +231,11 @@ public class PJOGL extends PGL {
   @Override
   protected void initSurface(int antialias) {
     if (profile == null) {
-      profile = GLProfile.getDefault();
+      if (PROFILE == 2) profile = GLProfile.getGL2ES1();
+      else if (PROFILE == 3) profile = GLProfile.getGL2GL3();
+      else if (PROFILE == 4) profile = GLProfile.getGL4ES3();
+      else throw new RuntimeException("Unsupported profile.");
+      System.out.println(profile);
     } else {
       // Restarting...
       if (canvasAWT != null) {
@@ -623,11 +634,12 @@ public class PJOGL extends PGL {
 
   @Override
   protected void beginGL() {
-    if (gl2x != null) {
+    GL2 glfixfunc = gl2x != null ? gl2x : gl3bc;
+    if (glfixfunc != null) {
       if (projMatrix == null) {
         projMatrix = new float[16];
       }
-      gl2x.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
+      glfixfunc.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
       projMatrix[ 0] = pg.projection.m00;
       projMatrix[ 1] = pg.projection.m10;
       projMatrix[ 2] = pg.projection.m20;
@@ -644,12 +656,12 @@ public class PJOGL extends PGL {
       projMatrix[13] = pg.projection.m13;
       projMatrix[14] = pg.projection.m23;
       projMatrix[15] = pg.projection.m33;
-      gl2x.glLoadMatrixf(projMatrix, 0);
+      glfixfunc.glLoadMatrixf(projMatrix, 0);
 
       if (mvMatrix == null) {
         mvMatrix = new float[16];
       }
-      gl2x.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
+      glfixfunc.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
       mvMatrix[ 0] = pg.modelview.m00;
       mvMatrix[ 1] = pg.modelview.m10;
       mvMatrix[ 2] = pg.modelview.m20;
@@ -666,7 +678,7 @@ public class PJOGL extends PGL {
       mvMatrix[13] = pg.modelview.m13;
       mvMatrix[14] = pg.modelview.m23;
       mvMatrix[15] = pg.modelview.m33;
-      gl2x.glLoadMatrixf(mvMatrix, 0);
+      glfixfunc.glLoadMatrixf(mvMatrix, 0);
     }
   }
 
@@ -802,6 +814,16 @@ public class PJOGL extends PGL {
       } catch (javax.media.opengl.GLException e) {
         gl2x = null;
       }
+      try {
+        gl3bc = gl.getGL3bc();
+      } catch (javax.media.opengl.GLException e) {
+        gl3bc = null;
+      }
+      System.out.println("************");
+      System.out.println("gl: " + gl);
+      System.out.println("gl2: " + gl2);
+      System.out.println("gl2x: " + gl2x);
+      System.out.println("gl3: " + gl3bc);
     }
   }
 
@@ -1559,6 +1581,8 @@ public class PJOGL extends PGL {
   public ByteBuffer mapBufferRange(int target, int offset, int length, int access) {
     if (gl2x != null) {
       return gl2x.glMapBufferRange(target, offset, length, access);
+    } else if (gl3bc != null) {
+      return gl3bc.glMapBufferRange(target, offset, length, access);
     } else {
       return null;
     }
@@ -1645,6 +1669,8 @@ public class PJOGL extends PGL {
   public void vertexAttribPointer(int index, int size, int type, boolean normalized, int stride, Buffer data) {
     if (gl2x != null) {
       gl2x.glVertexAttribPointer(index, size, type, normalized, stride, data);
+    } else if (gl3bc != null) {
+      gl3bc.glVertexAttribPointer(index, size, type, normalized, stride, data);
     }
   }
 
@@ -1672,6 +1698,8 @@ public class PJOGL extends PGL {
   public void drawElements(int mode, int count, int type, Buffer indices) {
     if (gl2x != null) {
       gl2x.glDrawElements(mode, count, type, indices);
+    } else if (gl3bc != null) {
+      gl3bc.glDrawElements(mode, count, type, indices);
     }
   }
 
@@ -2160,6 +2188,8 @@ public class PJOGL extends PGL {
   public void alphaFunc(int func, float ref) {
     if (gl2x != null) {
       gl2x.glAlphaFunc(func, ref);
+    } else if (gl3bc != null) {
+      gl3bc.glAlphaFunc(func, ref);
     }
   }
 
@@ -2285,6 +2315,8 @@ public class PJOGL extends PGL {
   public void blitFramebuffer(int srcX0, int srcY0, int srcX1, int srcY1, int dstX0, int dstY0, int dstX1, int dstY1, int mask, int filter) {
     if (gl2x != null) {
       gl2x.glBlitFramebuffer(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);
+    } else if (gl3bc != null) {
+      gl3bc.glBlitFramebuffer(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);
     }
   }
 
@@ -2292,6 +2324,8 @@ public class PJOGL extends PGL {
   public void renderbufferStorageMultisample(int target, int samples, int format, int width, int height) {
     if (gl2x != null) {
       gl2x.glRenderbufferStorageMultisample(target, samples, format, width, height);
+    } else if (gl3bc != null) {
+      gl3bc.glRenderbufferStorageMultisample(target, samples, format, width, height);
     }
   }
 
@@ -2299,6 +2333,8 @@ public class PJOGL extends PGL {
   public void readBuffer(int buf) {
     if (gl2x != null) {
       gl2x.glReadBuffer(buf);
+    } else if (gl3bc != null) {
+      gl3bc.glReadBuffer(buf);
     }
   }
 
@@ -2306,6 +2342,8 @@ public class PJOGL extends PGL {
   public void drawBuffer(int buf) {
     if (gl2x != null) {
       gl2x.glDrawBuffer(buf);
+    } else if (gl3bc != null) {
+      gl3bc.glDrawBuffer(buf);
     }
   }
 }
