@@ -3082,7 +3082,11 @@ public class PGraphicsOpenGL extends PGraphics {
 
   @Override
   public void smooth() {
-    smooth(2);
+    if (quality < 2) {
+      smooth(2);
+    } else {
+      smooth(quality);
+    }
   }
 
 
@@ -3110,6 +3114,7 @@ public class PGraphicsOpenGL extends PGraphics {
       lastSmoothCall = parent.frameCount;
 
       quality = level;
+      
       if (quality == 1) {
         quality = 0;
       }

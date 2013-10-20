@@ -215,6 +215,9 @@ public class PLWJGL extends PGL {
     setFps = false;
   }
 
+    
+  protected void reinitSurface() { }
+  
   
   protected void registerListeners() {
     keyPoller = new KeyPoller(pg.parent);
@@ -1158,6 +1161,7 @@ public class PLWJGL extends PGL {
     SRC_ALPHA_SATURATE       = GL11.GL_SRC_ALPHA_SATURATE;
 
     SCISSOR_TEST    = GL11.GL_SCISSOR_TEST;
+    STENCIL_TEST    = GL11.GL_STENCIL_TEST;
     DEPTH_TEST      = GL11.GL_DEPTH_TEST;
     DEPTH_WRITEMASK = GL11.GL_DEPTH_WRITEMASK;
     ALPHA_TEST      = GL11.GL_ALPHA_TEST;
