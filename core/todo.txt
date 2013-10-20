@@ -45,6 +45,12 @@ X SUBTRACT and DIFFERENCE blend modes are swapped
 X   https://github.com/processing/processing/issues/2075
 X throw an error for textureMode(REPEAT) [fry]
 X   https://github.com/processing/processing/issues/2052
+X Updated to JOGL 2.1.0
+X   https://github.com/processing/processing/issues/2136
+X vertex codes not being properly set in P2D/P3D
+X   https://github.com/processing/processing/issues/2131
+X some box normals are inverted
+X   https://github.com/processing/processing/issues/2151
 
 _ insertRow() bug
 _   https://github.com/processing/processing/issues/2137

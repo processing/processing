@@ -2401,6 +2401,10 @@ public class Base {
   }
   
   
+//  static public File getJavaHome() {
+//  }
+  
+  
   /** Get the path to the embedded Java executable. */
   static public String getJavaPath() {
     if (isMacOS()) {

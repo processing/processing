@@ -495,8 +495,9 @@ public class AppBundlerTask extends Task {
       DirectoryScanner directoryScanner = runtime.getDirectoryScanner(getProject());
       String[] includedFiles = directoryScanner.getIncludedFiles();
 
-      for (int i = 0; i < includedFiles.length; i++) {
-        String includedFile = includedFiles[i];
+      for (String includedFile : includedFiles) {
+      //for (int i = 0; i < includedFiles.length; i++) {
+        //String includedFile = includedFiles[i];
         File source = new File(runtimeHomeDirectory, includedFile);
         File destination = new File(pluginHomeDirectory, includedFile);
         copy(source, destination);

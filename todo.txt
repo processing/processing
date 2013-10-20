@@ -150,6 +150,7 @@ _   https://github.com/processing/processing/wiki/Build-Instructions
 _   "unable to locate tools.jar" (Windows) can be ignored
 _   JAVA_HOME warnings from Ant can also be ignored
 _ updates for macosx instructions
+_   JDK 7u45 is needed (or whatever version currently in the build)
 _   to build appbundler, you'll need Xcode
 _     and the command line tools Preferences > Downloads > Command Line Tools
 _   appbundler will have an NPE if the osx binary isn't built
