@@ -2,9 +2,6 @@ PROCESSING 2.1 beta 1 (REV 0222) - 20 October 2013
 
 This release contains major changes. The big ones:
 
-+ A new serial library has been added! The results of Gottfried Haider's
-  Google Summer of Code project now replaces the old serial library.
-
 + Java 7 is now used across all platforms. On Mac OS X, 
   we're now embedding Java 7u45. More info here:
   http://wiki.processing.org/w/Supported_Platforms#Java_Versions
@@ -20,10 +17,13 @@ This release contains major changes. The big ones:
   No more println(x + " " +  y + " " + mouseX + " " + mouseY);
   that was for suckers!
 
-And everyone should wish Casey Reas happy birthday today! 
-This is mybirthday present for him. What did you get him?
++ A new serial library has been added! The results of Gottfried Haider's
+  Google Summer of Code project now replaces the old serial library.
 
-Here's a more detailed rundown:
+And everyone should wish Casey Reas happy birthday today! 
+This release is my birthday present for him. What did you get him?
+
+Here's a more detailed rundown of what else is in this release:
 
 
 [ new features and additions ] 
@@ -32,8 +32,8 @@ Here's a more detailed rundown:
   some quirks because of how println() works for arrays in previous
   versions of Processing. When printing an array, you should instead use
   the new printArray() function, which works the same as the old println().
-  This will help avoid the compiler warnings with Eclipse or whatever else.
-  In the PDE, this should be transparent (the warnings are not shown). 
+  This will help avoid the compiler warnings with Eclipse and others.
+  In the PDE, this should be transparent, because warnings are not shown.
   https://github.com/processing/processing/issues/2056
 
 + Update the JavaDoc, remove java.* package prefix ugliness. Also link

@@ -46,9 +46,9 @@ import processing.core.*;
 public class Base {
   // Added accessors for 0218 because the UpdateCheck class was not properly
   // updating the values, due to javac inlining the static final values.
-  static private final int REVISION = 222;
+  static private final int REVISION = 223;
   /** This might be replaced by main() if there's a lib/version.txt file. */
-  static private String VERSION_NAME = "0222"; //$NON-NLS-1$
+  static private String VERSION_NAME = "0223"; //$NON-NLS-1$
   /** Set true if this a proper release rather than a numbered revision. */
 //  static private boolean RELEASE = false;
 
@@ -2350,10 +2350,10 @@ public class Base {
       String path = Base.class.getProtectionDomain().getCodeSource().getLocation().getPath();
       // Path may have URL encoding, so remove it
       String decodedPath = PApplet.urlDecode(path);
-      
+
       if (decodedPath.contains("/app/bin")) {
         if (Base.isMacOS()) {
-          processingRoot = 
+          processingRoot =
             new File(path, "../../build/macosx/work/Processing.app/Contents/Java");
         } else if (Base.isWindows()) {
           processingRoot =  new File(path, "../../build/windows/work");
@@ -2369,7 +2369,7 @@ public class Base {
           processingRoot = jarFolder.getParentFile();
         } else if (Base.isMacOS()) {
           // This works for Java 7 on OS X. The 'lib' folder is not part of the
-          // classpath on OS X, and adding it creates more problems than it's 
+          // classpath on OS X, and adding it creates more problems than it's
           // worth.
           processingRoot = jarFolder;
 
@@ -2399,8 +2399,8 @@ public class Base {
     */
     return new File(processingRoot, name);
   }
-  
-  
+
+
   static public File getJavaHome() {
     if (isMacOS()) {
       //return "Contents/PlugIns/jdk1.7.0_40.jdk/Contents/Home/jre/bin/java";
@@ -2410,12 +2410,12 @@ public class Base {
         }
       });
       return new File(plugins[0], "Contents/Home/jre");
-    } 
+    }
     // On all other platforms, it's the 'java' folder adjacent to Processing
     return getContentFile("java");
   }
-  
-  
+
+
   /** Get the path to the embedded Java executable. */
   static public String getJavaPath() {
     String javaPath = "bin/java" + (isWindows() ? ".exe" : "");
@@ -2433,13 +2433,13 @@ public class Base {
       //return getContentFile(plugins[0].getAbsolutePath() + "/Contents/Home/jre/bin/java").getAbsolutePath();
       //return getContentFile("../PlugIns/jdk1.7.0_40.jdk/Contents/Home/jre/bin/java").getAbsolutePath();
       return javaBinary.getAbsolutePath();
-      
+
     } else if (isLinux()) {
       return getContentFile("java/bin/java").getAbsolutePath();
-      
+
     } else if (isWindows()) {
-      return getContentFile("java/bin/java.exe").getAbsolutePath();      
-    } 
+      return getContentFile("java/bin/java.exe").getAbsolutePath();
+    }
     System.err.println("No appropriate platform found. " +
                        "Hoping that Java is in the path.");
     return Base.isWindows() ? "java.exe" : "java";
@@ -2655,13 +2655,13 @@ public class Base {
       }
     }
   }
-  
-  
+
+
   static public void copyDirNative(File sourceDir,
                                    File targetDir) throws IOException {
     Process process = null;
     if (Base.isMacOS() || Base.isLinux()) {
-      process = Runtime.getRuntime().exec(new String[] { 
+      process = Runtime.getRuntime().exec(new String[] {
         "cp", "-a", sourceDir.getAbsolutePath(), targetDir.getAbsolutePath()
       });
     } else {
