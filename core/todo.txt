@@ -27,6 +27,8 @@ X pdf not rendering unicode with beginRecord()
 X   seems to have fixed itself / can't reproduce
 X   http://code.google.com/p/processing/issues/detail?id=90
 X   https://github.com/processing/processing/issues/129
+X insertRow() bug
+X   https://github.com/processing/processing/issues/2137
 
 opengl
 X fix inconsistency with P2D and resetMatrix()
@@ -52,8 +54,6 @@ X   https://github.com/processing/processing/issues/2131
 X some box normals are inverted
 X   https://github.com/processing/processing/issues/2151
 
-_ insertRow() bug
-_   https://github.com/processing/processing/issues/2137
 _ Sort out blending differences with P2D/P3D
 _   https://github.com/processing/processing/issues/1844
 _ 'collector' class.. Dict that points to a list
