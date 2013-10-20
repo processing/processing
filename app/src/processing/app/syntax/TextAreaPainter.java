@@ -631,12 +631,6 @@ public class TextAreaPainter extends JComponent implements TabExpander {
   @Deprecated
   protected void paintLine(Graphics gfx, TokenMarker tokenMarker, 
                            int line, int x) {
-    paintLine(gfx, line, x, tokenMarker);
-  }
-  
-
-  protected void paintLine(Graphics gfx, int line, int x, 
-                           TokenMarker tokenMarker) {
 //    Font defaultFont = getFont();
 //    Color defaultColor = getForeground();
 
@@ -650,6 +644,12 @@ public class TextAreaPainter extends JComponent implements TabExpander {
       //paintSyntaxLine(gfx, tokenMarker, line, defaultFont, defaultColor, x, y);
       paintSyntaxLine(gfx, line, x, y, tokenMarker);
     }
+  }
+  
+  
+  protected void paintLine(Graphics gfx, int line, int x, 
+                           TokenMarker tokenMarker) {
+    paintLine(gfx, tokenMarker, line, x);
   }
 
   
