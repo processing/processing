@@ -1162,11 +1162,42 @@ public class JavaBuild {
     File dotAppFolder = null;
     if (exportPlatform == PConstants.MACOSX) {
       dotAppFolder = new File(destFolder, sketch.getName() + ".app");
-//      String APP_SKELETON = "skeleton.app";
-      //File dotAppSkeleton = new File(folder, APP_SKELETON);
-      File dotAppSkeleton = mode.getContentFile("application/template.app");
-      Base.copyDir(dotAppSkeleton, dotAppFolder);
 
+      File contentsOrig = new File(Base.getJavaHome(), "../../../../..");
+
+//      File dotAppSkeleton = mode.getContentFile("application/template.app");
+//      Base.copyDir(dotAppSkeleton, dotAppFolder);
+      File contentsFolder = new File(dotAppFolder, "Contents");
+      contentsFolder.mkdirs();
+
+      // Info.plist will be written later
+      
+      // set the jar folder to a different location than windows/linux
+      //jarFolder = new File(dotAppFolder, "Contents/Resources/Java");
+      jarFolder = new File(contentsFolder, "Java");
+
+      File macosFolder = new File(contentsFolder, "MacOS");
+      macosFolder.mkdirs();
+      Base.copyFile(new File(contentsOrig, "MacOS/Processing"), 
+                    new File(contentsFolder, "MacOS/" + sketch.getName()));
+      
+      File pkgInfo = new File(contentsFolder, "PkgInfo");
+      PrintWriter writer = PApplet.createWriter(pkgInfo);
+      writer.println("APPL????");
+      writer.flush();
+      writer.close();
+      
+      // Use faster(?) native copy here (also to do sym links)
+      Base.copyDirNative(new File(contentsOrig, "PlugIns"),
+                         new File(contentsFolder, "PlugIns"));
+      
+      File resourcesFolder = new File(contentsFolder, "Resources");
+      Base.copyDir(new File(contentsOrig, "Resources/en.lproj"), 
+                   new File(resourcesFolder, "en.lproj"));
+      Base.copyFile(mode.getContentFile("application/sketch.icns"),
+                    new File(resourcesFolder, "sketch.icns"));
+      
+      /*
       String stubName = "Contents/MacOS/JavaApplicationStub";
       // need to set the stub to executable
       // will work on osx or *nix, but just dies on windows, oh well..
@@ -1189,13 +1220,11 @@ public class JavaBuild {
         String stubPath = stubFile.getAbsolutePath();
         Runtime.getRuntime().exec(new String[] { "chmod", "+x", stubPath });
       }
-
-      // set the jar folder to a different location than windows/linux
-      jarFolder = new File(dotAppFolder, "Contents/Resources/Java");
+      */
     }
 
 
-    /// make the jar folder (windows and linux)
+    /// make the jar folder (all platforms)
 
     if (!jarFolder.exists()) jarFolder.mkdirs();
 

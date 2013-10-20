@@ -2401,12 +2401,26 @@ public class Base {
   }
   
   
-//  static public File getJavaHome() {
-//  }
+  static public File getJavaHome() {
+    if (isMacOS()) {
+      //return "Contents/PlugIns/jdk1.7.0_40.jdk/Contents/Home/jre/bin/java";
+      File[] plugins = getContentFile("../PlugIns").listFiles(new FilenameFilter() {
+        public boolean accept(File dir, String name) {
+          return name.endsWith(".jdk") && dir.isDirectory();
+        }
+      });
+      return new File(plugins[0], "Contents/Home/jre");
+    } 
+    // On all other platforms, it's the 'java' folder adjacent to Processing
+    return getContentFile("java");
+  }
   
   
   /** Get the path to the embedded Java executable. */
   static public String getJavaPath() {
+    String javaPath = "bin/java" + (isWindows() ? ".exe" : "");
+    return new File(getJavaHome(), javaPath).getAbsolutePath();
+    /*
     if (isMacOS()) {
       //return "Contents/PlugIns/jdk1.7.0_40.jdk/Contents/Home/jre/bin/java";
       File[] plugins = getContentFile("../PlugIns").listFiles(new FilenameFilter() {
@@ -2429,6 +2443,7 @@ public class Base {
     System.err.println("No appropriate platform found. " +
                        "Hoping that Java is in the path.");
     return Base.isWindows() ? "java.exe" : "java";
+    */
   }
 
 
@@ -2569,6 +2584,7 @@ public class Base {
     to = null;
 
     targetFile.setLastModified(sourceFile.lastModified());
+    targetFile.setExecutable(sourceFile.canExecute());
   }
 
 
@@ -2637,6 +2653,28 @@ public class Base {
       } else {
         copyFile(source, target);
       }
+    }
+  }
+  
+  
+  static public void copyDirNative(File sourceDir,
+                                   File targetDir) throws IOException {
+    Process process = null;
+    if (Base.isMacOS() || Base.isLinux()) {
+      process = Runtime.getRuntime().exec(new String[] { 
+        "cp", "-a", sourceDir.getAbsolutePath(), targetDir.getAbsolutePath()
+      });
+    } else {
+      // TODO implement version that uses XCOPY here on Windows
+      throw new RuntimeException("Not yet implemented on Windows");
+    }
+    try {
+      int result = process.waitFor();
+      if (result != 0) {
+        throw new IOException("Error while copying (result " + result + ")");
+      }
+    } catch (InterruptedException e) {
+      e.printStackTrace();
     }
   }
 

@@ -542,11 +542,11 @@
       <option value="-Xmx256M" />
       -->
 
-      <option value="-Dapple.laf.useScreenMenuBar=true"/>
-      <option value="-Dcom.apple.macos.use-file-dialog-packages=true"/>
-      <option value="-Dcom.apple.macos.useScreenMenuBar=true"/>
-      <option value="-Dcom.apple.mrj.application.apple.menu.about.name=${bundle.name}"/>
-      <option value="-Dcom.apple.smallTabs=true"/>
+      <option value="-Dapple.laf.useScreenMenuBar=true" />
+      <option value="-Dcom.apple.macos.use-file-dialog-packages=true" />
+      <option value="-Dcom.apple.macos.useScreenMenuBar=true" />
+      <option value="-Dcom.apple.mrj.application.apple.menu.about.name=${bundle.name}" />
+      <option value="-Dcom.apple.smallTabs=true" />
 
 <!--
     the old options; most of these are probably no longer useful
