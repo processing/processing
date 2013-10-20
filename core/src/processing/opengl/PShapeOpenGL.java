@@ -1160,7 +1160,11 @@ public class PShapeOpenGL extends PShape {
 
   @Override
   public void translate(float tx, float ty) {
-    transform(TRANSLATE, tx, ty);
+    if (is3D) {
+      transform(TRANSLATE, tx, ty, 0);
+    } else {
+      transform(TRANSLATE, tx, ty);
+    }
   }
 
 
@@ -1202,13 +1206,21 @@ public class PShapeOpenGL extends PShape {
 
   @Override
   public void scale(float s) {
-    transform(SCALE, s, s);
+    if (is3D) {
+      transform(SCALE, s, s, s);
+    } else {
+      transform(SCALE, s, s);
+    }
   }
 
 
   @Override
   public void scale(float x, float y) {
-    transform(SCALE, x, y);
+    if (is3D) {
+      transform(SCALE, x, y, 1);
+    } else {
+      transform(SCALE, x, y);
+    }
   }
 
 
