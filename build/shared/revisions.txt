@@ -2,9 +2,6 @@ PROCESSING 2.1 beta 1 (REV 0222) - 20 October 2013
 
 This release contains major changes. The big ones:
 
-+ A new serial library has been added! The results of Gottfried Haider's
-  Google Summer of Code project now replaces the old serial library.
-
 + Java 7 is now used across all platforms. On Mac OS X, 
   we're now embedding Java 7u45. More info here:
   http://wiki.processing.org/w/Supported_Platforms#Java_Versions
@@ -19,6 +16,9 @@ This release contains major changes. The big ones:
   3 5 142 220
   No more println(x + " " +  y + " " + mouseX + " " + mouseY);
   that was for suckers!
+
++ A new serial library has been added! The results of Gottfried Haider's
+  Google Summer of Code project now replaces the old serial library.
 
 And everyone should wish Casey Reas happy birthday today! 
 This release is my birthday present for him. What did you get him?
