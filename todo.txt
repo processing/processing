@@ -68,9 +68,6 @@ X should we embed the PDE font into the JRE?
 X   this would allow it to show up in the menus, etc
 X type in the status area is gross on retina displays and 7u40
 X no longer require restart of Processing when changing the font
-_ type looks a little feeble on OS X with non-retina machines
-_   https://github.com/processing/processing/issues/2135
-_   should we increase the size of the mode dropdown?
 
 serial
 X closing several bugs because no longer relevant
@@ -142,28 +139,33 @@ X remove Java FX during Windows builds
 X remove javafx from the embed
 X   more about optional files:
 X   http://www.oracle.com/technetwork/java/javase/jdk-7-readme-429198.html
-_ exclude 'fonts' folder from build (since it's going into the JRE)
-_ update github instructions
-_   only JRE needed at this point
-_   switched over to Java 7
-_   https://github.com/processing/processing/wiki/Build-Instructions
-_   "unable to locate tools.jar" (Windows) can be ignored
-_   JAVA_HOME warnings from Ant can also be ignored
-_ updates for macosx instructions
-_   JDK 7u45 is needed (or whatever version currently in the build)
-_   to build appbundler, you'll need Xcode
-_     and the command line tools Preferences > Downloads > Command Line Tools
-_   appbundler will have an NPE if the osx binary isn't built
-_   also need to have 10.8 version of the SDK (old Xcode won't work)
-_ changing JRE might be a problem for fonts on Linux
-_   where the JRE is often replaced
-_   and where the font is needed most
-_   make note of this on the platforms page
-_   also make note re: only JRE needed (instead of JDK)
-_   http://wiki.processing.org/index.php?title=Supported_Platforms&action=edit&section=4
-_ now Info.plist.tmpl instead of template.plist
-_   can be embedded in a sketch
-_   name change due to major modifications
+
+build instructions and other doc
+X update the build instructions page
+X   http://code.google.com/p/processing/wiki/BuildInstructions
+X update github instructions
+X   https://github.com/processing/processing/issues/1629
+X   https://github.com/processing/processing/wiki/Build-Instructions
+X   only JRE needed at this point
+X   switched over to Java 7
+o   "unable to locate tools.jar" (Windows) can be ignored
+X   JAVA_HOME warnings from Ant can also be ignored
+X updates for macosx instructions
+X   JDK 7u45 is needed (or whatever version currently in the build)
+X   to build appbundler, you'll need Xcode
+X     and the command line tools Preferences > Downloads > Command Line Tools
+X   appbundler will have an NPE if the osx binary isn't built
+X   also need to have 10.8 version of the SDK (old Xcode won't work)
+o add notes to build instructions re: building core with eclipse
+X changing JRE might be a problem for fonts on Linux
+X   where the JRE is often replaced
+X   and where the font is needed most
+X   make note of this on the platforms page
+X   also make note re: only JRE needed (instead of JDK)
+X   http://wiki.processing.org/index.php?title=Supported_Platforms&action=edit&section=4
+X now Info.plist.tmpl instead of template.plist
+X   can be embedded in a sketch
+X   name change due to major modifications
 
 7u40 macosx
 X make OS X launch from its local JRE
@@ -195,15 +197,19 @@ _   make sure it's only running on 64-bit machines?
 
 export
 X change app stub in OS X exported application
-_ make note re: app export being slower, and resulting app much larger
+X make note re: app export being slower, and resulting app much larger
 X change how export is handled
 X   remove ability to export cross-platform apps
 X   add ability to embed the current JRE
 X   only going to embed always... consider option to disable it later
 o   the case for the embedded JRE
 o     https://github.com/processing/processing/issues/2104
+X major edits to http://wiki.processing.org/w/Export_Info_and_Tips
 
 medium
+_ type looks a little feeble on OS X with non-retina machines
+_   https://github.com/processing/processing/issues/2135
+_   should we increase the size of the mode dropdown?
 _ use platformDelete() to remove untitled sketches?
 _ change to using platformDelete() instead of Base.removeDir() where possible
 _   verify that the OS X version uses the real call
@@ -226,6 +232,7 @@ post 2.1 cleaning
 _ remove video for macosx32 from the repo permanently
 _ remove the prefs for 32/64-bit from Preferences
 _ remove the extra OS X cruft inside Runner.java
+_ exclude 'fonts' folder from build (since it's going into the JRE)
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -1074,9 +1081,6 @@ _ write up code guidelines for project
 _   make proper Eclipse style prefs to reinforce
 _ write up guidelines for modes
 _   i.e. don't mess with Sketch menu, put it in the mode menu
-_ add notes to build instructions re: building core with eclipse
-_ update the build instructions page
-_   http://code.google.com/p/processing/wiki/BuildInstructions
 _ p5 assets need to be licensed differently from the source
 
 

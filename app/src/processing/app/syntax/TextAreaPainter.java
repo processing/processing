@@ -540,7 +540,7 @@ public class TextAreaPainter extends JComponent implements TabExpander {
    * Marks a line as needing a repaint.
    * @param line The line to invalidate
    */
-  final void invalidateLine(int line) {
+  final public void invalidateLine(int line) {
     repaint(0, textArea.lineToY(line) + fm.getMaxDescent() + fm.getLeading(),
             getWidth(), fm.getHeight());
   }
@@ -627,7 +627,15 @@ public class TextAreaPainter extends JComponent implements TabExpander {
   }
 
 
-  protected void paintLine(Graphics gfx, int line, int x,
+  /** Old paintLine() method with kooky args order, kept around for X Mode. */
+  @Deprecated
+  protected void paintLine(Graphics gfx, TokenMarker tokenMarker, 
+                           int line, int x) {
+    paintLine(gfx, line, x, tokenMarker);
+  }
+  
+
+  protected void paintLine(Graphics gfx, int line, int x, 
                            TokenMarker tokenMarker) {
 //    Font defaultFont = getFont();
 //    Color defaultColor = getForeground();
