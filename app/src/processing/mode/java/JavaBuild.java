@@ -1119,15 +1119,18 @@ public class JavaBuild {
     File folder = null;
     String platformName = Base.getPlatformName();
     if (Library.hasMultipleArch(PApplet.platform, importedLibraries)) {
-      // export the 32-bit version
-      folder = new File(sketch.getFolder(), "application." + platformName + "32");
-      if (!exportApplication(folder, PApplet.platform, 32)) {
-        return false;
-      }
-      // export the 64-bit version
-      folder = new File(sketch.getFolder(), "application." + platformName + "64");
-      if (!exportApplication(folder, PApplet.platform, 64)) {
-        return false;
+      if (Base.getNativeBits() == 32) {
+        // export the 32-bit version
+        folder = new File(sketch.getFolder(), "application." + platformName + "32");
+        if (!exportApplication(folder, PApplet.platform, 32)) {
+          return false;
+        }
+      } else if (Base.getNativeBits() == 64) {
+        // export the 64-bit version
+        folder = new File(sketch.getFolder(), "application." + platformName + "64");
+        if (!exportApplication(folder, PApplet.platform, 64)) {
+          return false;
+        }
       }
     } else { // just make a single one for this platform
       folder = new File(sketch.getFolder(), "application." + platformName);
