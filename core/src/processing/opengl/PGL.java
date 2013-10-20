@@ -328,6 +328,9 @@ public abstract class PGL {
   protected abstract void initSurface(int antialias);
 
 
+  protected abstract void reinitSurface();
+
+
   protected abstract void registerListeners();
 
 
@@ -2215,6 +2218,7 @@ public abstract class PGL {
   public static int SRC_ALPHA_SATURATE;
 
   public static int SCISSOR_TEST;
+  public static int STENCIL_TEST;
   public static int DEPTH_TEST;
   public static int DEPTH_WRITEMASK;
   public static int ALPHA_TEST;

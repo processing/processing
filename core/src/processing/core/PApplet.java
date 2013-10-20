@@ -10234,6 +10234,7 @@ public class PApplet extends Applet
               if (!newBounds.equals(oldBounds)) {
                 // the ComponentListener in PApplet will handle calling size()
                 setBounds(newBounds);
+                revalidate();   // let the layout manager do its work
               }
             }
           }
