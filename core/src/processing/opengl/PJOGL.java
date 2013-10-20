@@ -986,6 +986,29 @@ public class PJOGL extends PGL {
 
 
   @Override
+  protected void enableTexturing(int target) {
+    if (PROFILE == 2) enable(target);
+    if (target == TEXTURE_2D) {
+      texturingTargets[0] = true;
+    } else if (target == TEXTURE_RECTANGLE) {
+      texturingTargets[1] = true;
+    }
+  }
+
+
+  @Override
+  protected void disableTexturing(int target) {
+    if (PROFILE == 2) disable(target);
+    if (target == TEXTURE_2D) {
+      texturingTargets[0] = false;
+    } else if (target == TEXTURE_RECTANGLE) {
+      texturingTargets[1] = false;
+    }
+  }
+
+
+
+  @Override
   protected int getFontAscent(Object font) {
     FontMetrics metrics = pg.parent.getFontMetrics((Font)font);
     return metrics.getAscent();
@@ -1670,14 +1693,14 @@ public class PJOGL extends PGL {
     gl2.glVertexAttribPointer(index, size, type, normalized, stride, offset);
   }
 
-  @Override
-  public void vertexAttribPointer(int index, int size, int type, boolean normalized, int stride, Buffer data) {
-    if (gl2x != null) {
-      gl2x.glVertexAttribPointer(index, size, type, normalized, stride, data);
-    } else if (gl3bc != null) {
-      gl3bc.glVertexAttribPointer(index, size, type, normalized, stride, data);
-    }
-  }
+//  @Override
+//  public void vertexAttribPointer(int index, int size, int type, boolean normalized, int stride, Buffer data) {
+//    if (gl2x != null) {
+//      gl2x.glVertexAttribPointer(index, size, type, normalized, stride, data);
+//    } else if (gl3bc != null) {
+//      gl3bc.glVertexAttribPointer(index, size, type, normalized, stride, data);
+//    }
+//  }
 
   @Override
   public void enableVertexAttribArray(int index) {
@@ -1699,14 +1722,14 @@ public class PJOGL extends PGL {
     gl.glDrawElements(mode, count, type, offset);
   }
 
-  @Override
-  public void drawElements(int mode, int count, int type, Buffer indices) {
-    if (gl2x != null) {
-      gl2x.glDrawElements(mode, count, type, indices);
-    } else if (gl3bc != null) {
-      gl3bc.glDrawElements(mode, count, type, indices);
-    }
-  }
+//  @Override
+//  public void drawElements(int mode, int count, int type, Buffer indices) {
+//    if (gl2x != null) {
+//      gl2x.glDrawElements(mode, count, type, indices);
+//    } else if (gl3bc != null) {
+//      gl3bc.glDrawElements(mode, count, type, indices);
+//    }
+//  }
 
   //////////////////////////////////////////////////////////////////////////////
 

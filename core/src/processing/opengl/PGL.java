@@ -911,7 +911,7 @@ public abstract class PGL {
     }
   }
 
-
+  int texGeoVBO;
   protected void drawTexture2D(int id, int texW, int texH, int scrW, int scrH,
                                int texX0, int texY0, int texX1, int texY1,
                                int scrX0, int scrY0, int scrX1, int scrY1) {
@@ -927,6 +927,11 @@ public abstract class PGL {
       }
       loadedTex2DShader = true;
       tex2DShaderContext = glContext;
+
+      genBuffers(1, intBuffer);
+      texGeoVBO = intBuffer.get(0);
+      bindBuffer(ARRAY_BUFFER, texGeoVBO);
+      bufferData(ARRAY_BUFFER, 16 * SIZEOF_FLOAT, null, STATIC_DRAW);
     }
 
     if (texData == null) {
@@ -989,16 +994,27 @@ public abstract class PGL {
       }
       bindTexture(TEXTURE_2D, id);
 
-      bindBuffer(ARRAY_BUFFER, 0); // Making sure that no VBO is bound at this point.
-
       texData.position(0);
-      vertexAttribPointer(tex2DVertLoc, 2, FLOAT, false, 4 * SIZEOF_FLOAT,
-                          texData);
-      texData.position(2);
-      vertexAttribPointer(tex2DTCoordLoc, 2, FLOAT, false, 4 * SIZEOF_FLOAT,
-                          texData);
+      bindBuffer(PGL.ARRAY_BUFFER, texGeoVBO);
+      bufferData(PGL.ARRAY_BUFFER, 16 * SIZEOF_FLOAT, texData, PGL.STATIC_DRAW);
+
+      pg.report("HERE 1");
+      vertexAttribPointer(tex2DVertLoc, 2, FLOAT, false, 4 * SIZEOF_FLOAT, 0);
+      vertexAttribPointer(tex2DTCoordLoc, 2, FLOAT, false, 4 * SIZEOF_FLOAT, 2 * SIZEOF_FLOAT);
+
+
+//      texData.position(0);
+//      vertexAttribPointer(tex2DVertLoc, 2, FLOAT, false, 4 * SIZEOF_FLOAT,
+//                          texData);
+//      texData.position(2);
+//      vertexAttribPointer(tex2DTCoordLoc, 2, FLOAT, false, 4 * SIZEOF_FLOAT,
+//                          texData);
+//      pg.report("HERE 2");
 
       drawArrays(TRIANGLE_STRIP, 0, 4);
+      pg.report("HERE 3");
+
+      bindBuffer(ARRAY_BUFFER, 0); // Making sure that no VBO is bound at this point.
 
       bindTexture(TEXTURE_2D, 0);
       if (enabledTex) {
@@ -1039,6 +1055,11 @@ public abstract class PGL {
       }
       loadedTexRectShader = true;
       texRectShaderContext = glContext;
+
+      genBuffers(1, intBuffer);
+      texGeoVBO = intBuffer.get(0);
+      bindBuffer(ARRAY_BUFFER, texGeoVBO);
+      bufferData(ARRAY_BUFFER, 16 * SIZEOF_FLOAT, null, STATIC_DRAW);
     }
 
     if (texData == null) {
@@ -1101,16 +1122,25 @@ public abstract class PGL {
       }
       bindTexture(TEXTURE_RECTANGLE, id);
 
-      bindBuffer(ARRAY_BUFFER, 0); // Making sure that no VBO is bound at this point.
-
       texData.position(0);
-      vertexAttribPointer(texRectVertLoc, 2, FLOAT, false, 4 * SIZEOF_FLOAT,
-                          texData);
-      texData.position(2);
-      vertexAttribPointer(texRectTCoordLoc, 2, FLOAT, false, 4 * SIZEOF_FLOAT,
-                          texData);
+      bindBuffer(PGL.ARRAY_BUFFER, texGeoVBO);
+      bufferData(PGL.ARRAY_BUFFER, 16 * SIZEOF_FLOAT, texData, PGL.STATIC_DRAW);
+
+      pg.report("HERE 1");
+      vertexAttribPointer(texRectVertLoc, 2, FLOAT, false, 4 * SIZEOF_FLOAT, 0);
+      vertexAttribPointer(texRectTCoordLoc, 2, FLOAT, false, 4 * SIZEOF_FLOAT, 2 * SIZEOF_FLOAT);
+
+
+//      texData.position(0);
+//      vertexAttribPointer(texRectVertLoc, 2, FLOAT, false, 4 * SIZEOF_FLOAT,
+//                          texData);
+//      texData.position(2);
+//      vertexAttribPointer(texRectTCoordLoc, 2, FLOAT, false, 4 * SIZEOF_FLOAT,
+//                          texData);
 
       drawArrays(TRIANGLE_STRIP, 0, 4);
+
+      bindBuffer(ARRAY_BUFFER, 0); // Making sure that no VBO is bound at this point.
 
       bindTexture(TEXTURE_RECTANGLE, 0);
       if (enabledTex) {
@@ -2391,12 +2421,12 @@ public abstract class PGL {
   public abstract void vertexAttrib3fv(int index, FloatBuffer values);
   public abstract void vertexAttri4fv(int index, FloatBuffer values);
   public abstract void vertexAttribPointer(int index, int size, int type, boolean normalized, int stride, int offset);
-  public abstract void vertexAttribPointer(int index, int size, int type, boolean normalized, int stride, Buffer data);
+  //public abstract void vertexAttribPointer(int index, int size, int type, boolean normalized, int stride, Buffer data);
   public abstract void enableVertexAttribArray(int index);
   public abstract void disableVertexAttribArray(int index);
   public abstract void drawArrays(int mode, int first, int count);
   public abstract void drawElements(int mode, int count, int type, int offset);
-  public abstract void drawElements(int mode, int count, int type, Buffer indices);
+  //public abstract void drawElements(int mode, int count, int type, Buffer indices);
 
   //////////////////////////////////////////////////////////////////////////////
 

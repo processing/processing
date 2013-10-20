@@ -1629,7 +1629,6 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     setDrawDefaults(); // TODO: look at using checkSettings() instead...
 
-
     pgCurrent = this;
     drawing = true;
 
@@ -5259,7 +5258,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
       // First, copy the pixels to the texture. We don't need to invert the
       // pixel copy because the texture will be drawn inverted.
-
       pgl.copyToTexture(texture.glTarget, texture.glFormat, texture.glName,
                         x, y, w, h, nativePixelBuffer);
       beginPixelsOp(OP_WRITE);
@@ -6211,9 +6209,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
     if (restoreSurface) {
       restoreSurfaceFromPixels();
-      //if (1 < parent.frameCount) {
       restoreSurface = false;
-      //}
     }
 
     if (hints[DISABLE_DEPTH_MASK]) {
