@@ -1,58 +1,5 @@
-0222 core (2.1b1)
-X background color for present mode has no effect
-X   https://github.com/processing/processing/issues/2071
-X   https://github.com/processing/processing/pull/2072
-X add desktopPath() and desktopFile() methods for testing
-X screen stops updating sometimes with retina
-X   https://github.com/processing/processing/issues/1699
-X Unicode NLF causing problems in XML files
-X   https://github.com/processing/processing/issues/2100
-X   not handled by BufferedReader (or XML parser)
-X   http://stackoverflow.com/questions/10556875/list-of-unicode-characters-that-should-be-filtered-in-output
-X   http://stackoverflow.com/questions/3072152/what-is-unicode-character-2028-ls-line-separator-used-for
-X fix image transparency in PDF output
-X   https://github.com/processing/processing/pull/2070
-X Java2D images crash after being resized
-X   https://github.com/processing/processing/issues/2113
-X constrain lerpColor() between 0 and 1
-X JSONObject/Array.format(-1) not working on embedded JSONObjects
-X   https://github.com/processing/processing/issues/2119
-X allow println() and print() to take varargs 
-o   https://github.com/processing/processing/issues/2056
-X   causes conflict with printing arrays
-X   added printArray() function instead
-o custom DPI settings with PDF
-X   https://github.com/processing/processing/pull/2069
-X pdf not rendering unicode with beginRecord()
-X   seems to have fixed itself / can't reproduce
-X   http://code.google.com/p/processing/issues/detail?id=90
-X   https://github.com/processing/processing/issues/129
-X insertRow() bug
-X   https://github.com/processing/processing/issues/2137
+0223 core
 
-opengl
-X fix inconsistency with P2D and resetMatrix()
-X   https://github.com/processing/processing/issues/2087
-X text rendering problems
-X   https://github.com/processing/processing/issues/2109
-X textSize() not working properly in P2D
-X   https://github.com/processing/processing/issues/2073
-X incorrectly applied transformations in retained mode
-X   https://github.com/processing/processing/issues/2097
-X push/popStyle() causes color problems with P2D/P3D
-X   https://github.com/processing/processing/issues/2102
-X child SVG elements misplaced when rendering with P2D/P3D
-X   https://github.com/processing/processing/issues/2086
-X SUBTRACT and DIFFERENCE blend modes are swapped
-X   https://github.com/processing/processing/issues/2075
-X throw an error for textureMode(REPEAT) [fry]
-X   https://github.com/processing/processing/issues/2052
-X Updated to JOGL 2.1.0
-X   https://github.com/processing/processing/issues/2136
-X vertex codes not being properly set in P2D/P3D
-X   https://github.com/processing/processing/issues/2131
-X some box normals are inverted
-X   https://github.com/processing/processing/issues/2151
 
 high
 _ Sort out blending differences with P2D/P3D
