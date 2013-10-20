@@ -48,6 +48,29 @@ public class PShader implements PConstants {
   static protected final int TEXTURE  = 5;
   static protected final int TEXLIGHT = 6;
 
+  static protected String pointShaderAttrRegexp =
+    "attribute *vec2 *offset";
+  static protected String lineShaderAttrRegexp =
+    "attribute *vec4 *direction";
+  static protected String pointShaderDefRegexp =
+    "#define *PROCESSING_POINT_SHADER";
+  static protected String lineShaderDefRegexp =
+    "#define *PROCESSING_LINE_SHADER";
+  static protected String colorShaderDefRegexp =
+    "#define *PROCESSING_COLOR_SHADER";
+  static protected String lightShaderDefRegexp =
+    "#define *PROCESSING_LIGHT_SHADER";
+  static protected String texShaderDefRegexp =
+    "#define *PROCESSING_TEXTURE_SHADER";
+  static protected String texlightShaderDefRegexp =
+    "#define *PROCESSING_TEXLIGHT_SHADER";
+  static protected String polyShaderDefRegexp =
+    "#define *PROCESSING_POLYGON_SHADER";
+  static protected String triShaderAttrRegexp =
+    "#define *PROCESSING_TRIANGLES_SHADER";
+  static protected String quadShaderAttrRegexp =
+    "#define *PROCESSING_QUADS_SHADER";
+
   protected PApplet parent;
   // The main renderer associated to the parent PApplet.
   //protected PGraphicsOpenGL pgMain;
@@ -184,8 +207,8 @@ public class PShader implements PConstants {
     intBuffer = PGL.allocateIntBuffer(1);
     floatBuffer = PGL.allocateFloatBuffer(1);
 
-    int vertType = PGraphicsOpenGL.pgPrimary.getShaderType(vertFilename, -1);
-    int fragType = PGraphicsOpenGL.pgPrimary.getShaderType(fragFilename, -1);
+    int vertType = getShaderType(parent.loadStrings(vertFilename), -1);
+    int fragType = getShaderType(parent.loadStrings(fragFilename), -1);
     if (vertType == -1 && fragType == -1) {
       type = PShader.POLY;
     } else if (vertType == -1) {
@@ -222,12 +245,14 @@ public class PShader implements PConstants {
 
     int vertType = -1, fragType = -1;
     try {
-      vertType = PGraphicsOpenGL.pgPrimary.getShaderType(vertURL, -1);
+      String[] source = PApplet.loadStrings(vertURL.openStream());
+      vertType = getShaderType(source, -1);
     } catch (IOException e) {
       PGraphics.showException("Vertex URL cannot be accessed both null!");
     }
     try {
-      fragType = PGraphicsOpenGL.pgPrimary.getShaderType(fragURL, -1);
+      String[] source = PApplet.loadStrings(fragURL.openStream());
+      fragType = getShaderType(source, -1);
     } catch (IOException e) {
       PGraphics.showException("Fragment URL cannot be accessed both null!");
     }
@@ -971,6 +996,36 @@ public class PShader implements PConstants {
       glProgram = 0;
     }
   }
+
+  static protected int getShaderType(String[] source, int defaultType) {
+    for (int i = 0; i < source.length; i++) {
+      String line = source[i].trim();
+      if (PApplet.match(line, pointShaderAttrRegexp) != null)
+        return PShader.POINT;
+      else if (PApplet.match(line, lineShaderAttrRegexp) != null)
+        return PShader.LINE;
+      else if (PApplet.match(line, pointShaderDefRegexp) != null)
+        return PShader.POINT;
+      else if (PApplet.match(line, lineShaderDefRegexp) != null)
+        return PShader.LINE;
+      else if (PApplet.match(line, colorShaderDefRegexp) != null)
+        return PShader.COLOR;
+      else if (PApplet.match(line, lightShaderDefRegexp) != null)
+        return PShader.LIGHT;
+      else if (PApplet.match(line, texShaderDefRegexp) != null)
+        return PShader.TEXTURE;
+      else if (PApplet.match(line, texlightShaderDefRegexp) != null)
+        return PShader.TEXLIGHT;
+      else if (PApplet.match(line, polyShaderDefRegexp) != null)
+        return PShader.POLY;
+      else if (PApplet.match(line, triShaderAttrRegexp) != null)
+        return PShader.POLY;
+      else if (PApplet.match(line, quadShaderAttrRegexp) != null)
+        return PShader.POLY;
+    }
+    return defaultType;
+  }
+
 
   // ***************************************************************************
   //

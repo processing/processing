@@ -24,7 +24,6 @@ package processing.opengl;
 
 import processing.core.*;
 
-import java.io.IOException;
 import java.net.URL;
 import java.nio.*;
 import java.util.*;
@@ -214,29 +213,6 @@ public class PGraphicsOpenGL extends PGraphics {
   // ........................................................
 
   // Shaders
-
-  static protected String pointShaderAttrRegexp =
-    "attribute *vec2 *offset";
-  static protected String lineShaderAttrRegexp =
-    "attribute *vec4 *direction";
-  static protected String pointShaderDefRegexp =
-    "#define *PROCESSING_POINT_SHADER";
-  static protected String lineShaderDefRegexp =
-    "#define *PROCESSING_LINE_SHADER";
-  static protected String colorShaderDefRegexp =
-    "#define *PROCESSING_COLOR_SHADER";
-  static protected String lightShaderDefRegexp =
-    "#define *PROCESSING_LIGHT_SHADER";
-  static protected String texShaderDefRegexp =
-    "#define *PROCESSING_TEXTURE_SHADER";
-  static protected String texlightShaderDefRegexp =
-    "#define *PROCESSING_TEXLIGHT_SHADER";
-  static protected String polyShaderDefRegexp =
-    "#define *PROCESSING_POLYGON_SHADER";
-  static protected String triShaderAttrRegexp =
-    "#define *PROCESSING_TRIANGLES_SHADER";
-  static protected String quadShaderAttrRegexp =
-    "#define *PROCESSING_QUADS_SHADER";
 
   static protected URL defColorShaderVertURL =
     PGraphicsOpenGL.class.getResource("ColorVert.glsl");
@@ -6311,7 +6287,8 @@ public class PGraphicsOpenGL extends PGraphics {
       return null;
     }
 
-    int type = getShaderType(fragFilename, PShader.POLY);
+    int type = PShader.getShaderType(parent.loadStrings(fragFilename),
+                                     PShader.POLY);
     PShader shader = new PShader(parent);
     shader.setType(type);
     shader.setFragmentShader(fragFilename);
@@ -6385,48 +6362,6 @@ public class PGraphicsOpenGL extends PGraphics {
     } else {
       PGraphics.showWarning(UNKNOWN_SHADER_KIND_ERROR);
     }
-  }
-
-
-  protected int getShaderType(String filename, int defaulType) {
-    String[] source = parent.loadStrings(filename);
-    return getShaderTypeImpl(source, defaulType);
-  }
-
-
-  protected int getShaderType(URL url, int defaultType) throws IOException {
-    String[] source = PApplet.loadStrings(url.openStream());
-    return getShaderTypeImpl(source, defaultType);
-  }
-
-
-  protected int getShaderTypeImpl(String[] source, int defaultType) {
-    for (int i = 0; i < source.length; i++) {
-      String line = source[i].trim();
-      if (PApplet.match(line, pointShaderAttrRegexp) != null)
-        return PShader.POINT;
-      else if (PApplet.match(line, lineShaderAttrRegexp) != null)
-        return PShader.LINE;
-      else if (PApplet.match(line, pointShaderDefRegexp) != null)
-        return PShader.POINT;
-      else if (PApplet.match(line, lineShaderDefRegexp) != null)
-        return PShader.LINE;
-      else if (PApplet.match(line, colorShaderDefRegexp) != null)
-        return PShader.COLOR;
-      else if (PApplet.match(line, lightShaderDefRegexp) != null)
-        return PShader.LIGHT;
-      else if (PApplet.match(line, texShaderDefRegexp) != null)
-        return PShader.TEXTURE;
-      else if (PApplet.match(line, texlightShaderDefRegexp) != null)
-        return PShader.TEXLIGHT;
-      else if (PApplet.match(line, polyShaderDefRegexp) != null)
-        return PShader.POLY;
-      else if (PApplet.match(line, triShaderAttrRegexp) != null)
-        return PShader.POLY;
-      else if (PApplet.match(line, quadShaderAttrRegexp) != null)
-        return PShader.POLY;
-    }
-    return defaultType;
   }
 
 
