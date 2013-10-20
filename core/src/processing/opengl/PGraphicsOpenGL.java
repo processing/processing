@@ -181,8 +181,6 @@ public class PGraphicsOpenGL extends PGraphics {
   /** Some hardware limits */
   static public int maxTextureSize;
   static public int maxSamples;
-  static public float maxPointSize;
-  static public float maxLineWidth;
   static public float maxAnisoAmount;
   static public int depthBits;
   static public int stencilBits;
@@ -1751,8 +1749,6 @@ public class PGraphicsOpenGL extends PGraphics {
       pgl.disable(PGL.MULTISAMPLE);
     } else {
       pgl.enable(PGL.MULTISAMPLE);
-      pgl.disable(PGL.POINT_SMOOTH);
-      pgl.disable(PGL.LINE_SMOOTH);
       pgl.disable(PGL.POLYGON_SMOOTH);
     }
 
@@ -3114,7 +3110,7 @@ public class PGraphicsOpenGL extends PGraphics {
       lastSmoothCall = parent.frameCount;
 
       quality = level;
-      
+
       if (quality == 1) {
         quality = 0;
       }
@@ -6184,8 +6180,6 @@ public class PGraphicsOpenGL extends PGraphics {
     } else {
       pgl.enable(PGL.MULTISAMPLE);
     }
-    pgl.disable(PGL.POINT_SMOOTH);
-    pgl.disable(PGL.LINE_SMOOTH);
     pgl.disable(PGL.POLYGON_SMOOTH);
 
     if (sized) {
@@ -6295,12 +6289,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
     pgl.getIntegerv(PGL.MAX_SAMPLES, intBuffer);
     maxSamples = intBuffer.get(0);
-
-    pgl.getIntegerv(PGL.ALIASED_LINE_WIDTH_RANGE, intBuffer);
-    maxLineWidth = intBuffer.get(0);
-
-    pgl.getIntegerv(PGL.ALIASED_POINT_SIZE_RANGE, intBuffer);
-    maxPointSize = intBuffer.get(0);
 
     if (anisoSamplingSupported) {
       pgl.getFloatv(PGL.MAX_TEXTURE_MAX_ANISOTROPY, floatBuffer);
