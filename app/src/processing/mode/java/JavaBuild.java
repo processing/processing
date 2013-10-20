@@ -1239,6 +1239,11 @@ public class JavaBuild {
         Runtime.getRuntime().exec(new String[] { "chmod", "+x", stubPath });
       }
       */
+    } else if (exportPlatform == PConstants.LINUX) {
+      Base.copyDirNative(Base.getJavaHome(), new File(destFolder, "java"));
+      
+    } else if (exportPlatform == PConstants.WINDOWS) {
+      Base.copyDir(Base.getJavaHome(), new File(destFolder, "java"));
     }
 
 
