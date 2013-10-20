@@ -183,30 +183,59 @@ public abstract class PGL {
     "precision mediump int;\n" +
     "#endif\n";
 
-  protected static String texVertShaderSource =
-    "attribute vec2 inVertex;" +
-    "attribute vec2 inTexcoord;" +
-    "varying vec2 vertTexcoord;" +
-    "void main() {" +
-    "  gl_Position = vec4(inVertex, 0, 1);" +
-    "  vertTexcoord = inTexcoord;" +
-    "}";
+  protected static String[] texVertShaderSource = {
+    "attribute vec2 inVertex;\n" +
+    "attribute vec2 inTexcoord;\n" +
+    "varying vec2 vertTexcoord;\n" +
+    "void main() {\n" +
+    "  gl_Position = vec4(inVertex, 0, 1);\n" +
+    "  vertTexcoord = inTexcoord;\n" +
+    "}\n",
+    "#version 150\n" +
+    "in vec2 inVertex;\n" +
+    "in vec2 inTexcoord;\n" +
+    "out vec2 vertTexcoord;" +
+    "void main() {\n" +
+    "  gl_Position = vec4(inVertex, 0, 1);\n" +
+    "  vertTexcoord = inTexcoord;\n" +
+    "}\n"
+  };
 
-  protected static String tex2DFragShaderSource =
+  protected static String[] tex2DFragShaderSource = {
     SHADER_PREPROCESSOR_DIRECTIVE +
-    "uniform sampler2D textureSampler;" +
-    "varying vec2 vertTexcoord;" +
-    "void main() {" +
-    "  gl_FragColor = texture2D(textureSampler, vertTexcoord.st);" +
-    "}";
+    "uniform sampler2D textureSampler;\n" +
+    "varying vec2 vertTexcoord;\n" +
+    "void main() {\n" +
+    "  gl_FragColor = texture2D(textureSampler, vertTexcoord.st);\n" +
+    "}\n",
+    "#version 150\n" +
+    SHADER_PREPROCESSOR_DIRECTIVE +
+    "uniform sampler2D textureSampler;\n" +
+    "in vec2 vertTexcoord;\n" +
+    "out vec4 fragColor;\n" +
+    "void main() {\n" +
+    "  fragColor = texture(textureSampler, vertTexcoord.st);\n" +
+    "}\n"
+  };
 
-  protected static String texRectFragShaderSource =
+  protected static String[] texRectFragShaderSource = {
     SHADER_PREPROCESSOR_DIRECTIVE +
     "uniform sampler2DRect textureSampler;" +
     "varying vec2 vertTexcoord;" +
     "void main() {" +
     "  gl_FragColor = texture2DRect(textureSampler, vertTexcoord.st);" +
-    "}";
+    "}",
+    "#version 150\n" +
+    SHADER_PREPROCESSOR_DIRECTIVE +
+    "uniform sampler2DRect textureSampler;\n" +
+    "in vec2 vertTexcoord;\n" +
+    "out vec4 fragColor;\n" +
+    "void main() {\n" +
+    "  fragColor = texture(textureSampler, vertTexcoord.st);\n" +
+    "}\n"
+  };
+
+  protected static int shaderSource = 0;
 
   /** Which texturing targets are enabled */
   protected static boolean[] texturingTargets = { false, false };
@@ -887,8 +916,8 @@ public abstract class PGL {
                                int texX0, int texY0, int texX1, int texY1,
                                int scrX0, int scrY0, int scrX1, int scrY1) {
     if (!loadedTex2DShader || tex2DShaderContext != glContext) {
-      tex2DVertShader = createShader(VERTEX_SHADER, texVertShaderSource);
-      tex2DFragShader = createShader(FRAGMENT_SHADER, tex2DFragShaderSource);
+      tex2DVertShader = createShader(VERTEX_SHADER, texVertShaderSource[shaderSource]);
+      tex2DFragShader = createShader(FRAGMENT_SHADER, tex2DFragShaderSource[shaderSource]);
       if (0 < tex2DVertShader && 0 < tex2DFragShader) {
         tex2DShaderProgram = createProgram(tex2DVertShader, tex2DFragShader);
       }
@@ -998,8 +1027,8 @@ public abstract class PGL {
                                  int texX0, int texY0, int texX1, int texY1,
                                  int scrX0, int scrY0, int scrX1, int scrY1) {
     if (!loadedTexRectShader || texRectShaderContext != glContext) {
-      texRectVertShader = createShader(VERTEX_SHADER, texVertShaderSource);
-      texRectFragShader = createShader(FRAGMENT_SHADER, texRectFragShaderSource);
+      texRectVertShader = createShader(VERTEX_SHADER, texVertShaderSource[shaderSource]);
+      texRectFragShader = createShader(FRAGMENT_SHADER, texRectFragShaderSource[shaderSource]);
       if (0 < texRectVertShader && 0 < texRectFragShader) {
         texRectShaderProgram = createProgram(texRectVertShader,
                                              texRectFragShader);

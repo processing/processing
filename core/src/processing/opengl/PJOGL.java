@@ -53,7 +53,7 @@ import javax.media.opengl.glu.GLUtessellatorCallbackAdapter;
 
 public class PJOGL extends PGL {
   // OpenGL profile to use (2, 3 or 4)
-  public static int PROFILE = 2;
+  public static int PROFILE = 3;
 
   // The two windowing toolkits available to use in JOGL:
   public static final int AWT  = 0; // http://jogamp.org/wiki/index.php/Using_JOGL_in_AWT_SWT_and_Swing
@@ -231,10 +231,15 @@ public class PJOGL extends PGL {
   @Override
   protected void initSurface(int antialias) {
     if (profile == null) {
-      if (PROFILE == 2) profile = GLProfile.getGL2ES1();
-      else if (PROFILE == 3) profile = GLProfile.getGL2GL3();
-      else if (PROFILE == 4) profile = GLProfile.getGL4ES3();
-      else throw new RuntimeException("Unsupported profile.");
+      if (PROFILE == 2) {
+        profile = GLProfile.getGL2ES1();
+      } else if (PROFILE == 3) {
+        profile = GLProfile.getGL2GL3();
+        shaderSource = 1;
+      } else if (PROFILE == 4) {
+        profile = GLProfile.getGL4ES3();
+        shaderSource = 1;
+      } else throw new RuntimeException("Unsupported profile.");
       System.out.println(profile);
     } else {
       // Restarting...
