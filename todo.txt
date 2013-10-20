@@ -192,8 +192,6 @@ X "Are you sure you want to quit?" when switching modes on Oracle JVM
 X   default menu bar is still broken
 X   http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=8007267
 X add appbundler.jar, otherwise folks have to include Xcode
-_ try installing 10.7.3 on Mac Mini and check whether things run
-_   make sure it's only running on 64-bit machines? 
 
 export
 X change app stub in OS X exported application
@@ -207,6 +205,8 @@ o     https://github.com/processing/processing/issues/2104
 X major edits to http://wiki.processing.org/w/Export_Info_and_Tips
 
 medium
+_ try installing 10.7.3 on Mac Mini and check whether things run
+_   make sure it's only running on 64-bit machines? 
 _ type looks a little feeble on OS X with non-retina machines
 _   https://github.com/processing/processing/issues/2135
 _   should we increase the size of the mode dropdown?

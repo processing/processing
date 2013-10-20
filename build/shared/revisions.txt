@@ -12,69 +12,204 @@ This release contains major changes. The big ones:
 + Major changes have been made to Export to Application. 
   Read here: http://wiki.processing.org/w/Export_Info_and_Tips
 
++ print() and println() now make debugging fun! They can now take any 
+  number of parameters, which means that code like:
+  println(x, y, mouseX, mouseY);
+  will print out
+  3 5 142 220
+  No more println(x + " " +  y + " " + mouseX + " " + mouseY);
+  that was for suckers!
+
 And everyone should wish Casey Reas happy birthday today! 
 This is mybirthday present for him. What did you get him?
 
+Here's a more detailed rundown:
 
-+ Added printArray() function for people who want to avoid the compiler warnings with Eclipse or whatever else, and deprecating the old println(Object) in favor of people using printArray(). In the PDE, this should be transparent (the warnings are not shown). 
+
+[ new features and additions ] 
+
++ For people using Eclipse, the new print() and println() methods add
+  some quirks because of how println() works for arrays in previous
+  versions of Processing. When printing an array, you should instead use
+  the new printArray() function, which works the same as the old println().
+  This will help avoid the compiler warnings with Eclipse or whatever else.
+  In the PDE, this should be transparent (the warnings are not shown). 
+  https://github.com/processing/processing/issues/2056
+
++ Update the JavaDoc, remove java.* package prefix ugliness. Also link
+  out to the online version of the Oracle documentation. 
+
++ Major work on the source and the build scripts as we completed the 
+  transition to Java 7, and away from Apple's deprecated Java 6.
+  http://wiki.processing.org/w/Supported_Platforms#Mac_OS_X
+
++ Incorporated a version of Oracle's appbundler for OS X build. Made heavy
+  modifications to the original version to add features and simplify.
+
++ Culled un-needed resources from the Java 7 runtime to save space.
+  Unfortunately Java 7 is also much larger than Java 6, so the size change
+  isn't as considerable as we would hope.
+
++ Remove unused/outdated 'Mangler' Tool example
+
++ Remove video library for other platforms in download. This saves 
+  significant space because we're not doing cross-platform export anymore.
+
++ Update apple.jar file with new version
+  https://developer.apple.com/legacy/library/samplecode/AppleJavaExtensions/Introduction/Intro.html
+
++ Update build instructions on Github
+  https://github.com/processing/processing/wiki/Build-Instructions
+  https://github.com/processing/processing/issues/1629
+
++ Many changes to the Supported Platforms page
+  http://wiki.processing.org/w/Supported_Platforms
+
++ Updates to the Export page to cover changes in this release
+  http://wiki.processing.org/w/Export_Info_and_Tips
+
++ Removed the 32- and 64-bit selector from the Preferences on OS X.
+  Java 7 on OS X only supports 64-bit, so 32-bit is no longer available.
 
 
-0222 core
-X background color for present mode has no effect
-X   https://github.com/processing/processing/issues/2071
-X   https://github.com/processing/processing/pull/2072
-X add desktopPath() and desktopFile() methods for testing
-X screen stops updating sometimes with retina
-X   https://github.com/processing/processing/issues/1699
-X Unicode NLF causing problems in XML files
-X   https://github.com/processing/processing/issues/2100
-X   not handled by BufferedReader (or XML parser)
-X   http://stackoverflow.com/questions/10556875/list-of-unicode-characters-that-should-be-filtered-in-output
-X   http://stackoverflow.com/questions/3072152/what-is-unicode-character-2028-ls-line-separator-used-for
-X fix image transparency in PDF output
-X   https://github.com/processing/processing/pull/2070
-X Java2D images crash after being resized
-X   https://github.com/processing/processing/issues/2113
-X constrain lerpColor() between 0 and 1
-X JSONObject/Array.format(-1) not working on embedded JSONObjects
-X   https://github.com/processing/processing/issues/2119
-X allow println() and print() to take varargs 
-o   https://github.com/processing/processing/issues/2056
-X   causes conflict with printing arrays
-X   added printArray() function instead
-o custom DPI settings with PDF
-X   https://github.com/processing/processing/pull/2069
-X pdf not rendering unicode with beginRecord()
-X   seems to have fixed itself / can't reproduce
-X   http://code.google.com/p/processing/issues/detail?id=90
-X   https://github.com/processing/processing/issues/129
-X insertRow() bug
-X   https://github.com/processing/processing/issues/2137
+[ editor fixes ] 
 
-opengl
-X fix inconsistency with P2D and resetMatrix()
-X   https://github.com/processing/processing/issues/2087
-X text rendering problems
-X   https://github.com/processing/processing/issues/2109
-X textSize() not working properly in P2D
-X   https://github.com/processing/processing/issues/2073
-X incorrectly applied transformations in retained mode
-X   https://github.com/processing/processing/issues/2097
-X push/popStyle() causes color problems with P2D/P3D
-X   https://github.com/processing/processing/issues/2102
-X child SVG elements misplaced when rendering with P2D/P3D
-X   https://github.com/processing/processing/issues/2086
-X SUBTRACT and DIFFERENCE blend modes are swapped
-X   https://github.com/processing/processing/issues/2075
-X throw an error for textureMode(REPEAT) [fry]
-X   https://github.com/processing/processing/issues/2052
-X Updated to JOGL 2.1.0
-X   https://github.com/processing/processing/issues/2136
-X vertex codes not being properly set in P2D/P3D
-X   https://github.com/processing/processing/issues/2131
-X some box normals are inverted
-X   https://github.com/processing/processing/issues/2151
++ Deal with null/missing folders for Tools and Modes
+  https://github.com/processing/processing/issues/2068
 
++ Non-compliant libraries cause crash on "Add Library"
+  https://github.com/processing/processing/issues/2026
+
++ Bad tools could bring down the environment
+  http://code.google.com/p/processing/issues/detail?id=798
+  https://github.com/processing/processing/issues/836
+
++ Open new PDE maximized when current PDE is maximized
+  https://github.com/processing/processing/pull/2037
+
++ cmd-left was bringing up the text area popup, causing X Mode weirdness
+  https://github.com/processing/processing/issues/2103
+
+
+[ core bug fixes ]
+
++ Screen stops updating sometimes with retina displays on OS X
+  https://github.com/processing/processing/issues/1699
+  This was an Apple bug, and is fixed by our switch to Oracle's Java 7.
+
++ Background color for present mode had no effect
+  https://github.com/processing/processing/issues/2071
+  https://github.com/processing/processing/pull/2072
+
++ Add desktopPath() and desktopFile() methods for testing (not finished)
+
++ Unicode NLF causing problems in XML files
+  https://github.com/processing/processing/issues/2100
+
++ Fix image transparency in PDF output
+  https://github.com/processing/processing/pull/2070
+
++ Java2D images crash after being resized
+  https://github.com/processing/processing/issues/2113
+
++ Constrain lerpColor() between 0 and 1. Unlike lerp(), where it might 
+  make mathematical sense, going outside the boundary colors produces 
+  really messy results.
+
++ JSONObject/Array.format(-1) not working on embedded JSONObjects
+  https://github.com/processing/processing/issues/2119
+
++ Fix insertRow() bug with Table
+  https://github.com/processing/processing/issues/2137
+
+
+[ opengl updates ]
+
++ Updated to JOGL 2.1.0
+  https://github.com/processing/processing/issues/2136
+
++ Fixed inconsistency with P2D and resetMatrix()
+  https://github.com/processing/processing/issues/2087
+
++ Deal with text rendering problems
+  https://github.com/processing/processing/issues/2109
+
++ Fix textSize() problem with P2D
+  https://github.com/processing/processing/issues/2073
+
++ Repair incorrectly applied transformations in retained mode
+  https://github.com/processing/processing/issues/2097
+
++ push/popStyle() was causing color problems with P2D/P3D
+  https://github.com/processing/processing/issues/2102
+
++ Child SVG elements were misplaced when rendering with P2D/P3D
+  https://github.com/processing/processing/issues/2086
+
++ SUBTRACT and DIFFERENCE blend modes are swapped
+  https://github.com/processing/processing/issues/2075
+
++ Throw an error for textureMode(REPEAT)
+  https://github.com/processing/processing/issues/2052
+
++ Vertex codes were not being properly set in P2D/P3D
+  https://github.com/processing/processing/issues/2131
+
++ Some box normals were inverted
+  https://github.com/processing/processing/issues/2151
+
+
+[ new serial library ] 
+
++ Incorporate the new serial library. Woohoo!
+  https://github.com/processing/processing/pull/2093
+
++ 64-bit version of serial library
+  http://code.google.com/p/processing/issues/detail?id=1237
+  https://github.com/processing/processing/issues/1275
+
++ Closed several serial bugs because they're no longer relevant:
+  http://code.google.com/p/processing/issues/detail?id=52
+  http://code.google.com/p/processing/issues/detail?id=318
+  https://github.com/processing/processing/issues/2114
+  https://github.com/processing/processing/issues/2066
+  https://github.com/processing/processing/issues/1460
+  https://github.com/processing/processing/issues/1374
+
+
+[ font fixes and changes ] 
+
++ Add ability to change the editor (and console) font from a menu 
+  in the Preferences window.
+  https://github.com/processing/processing/issues/2078
+
++ Add ability to change the console font size from the Preferences window.
+  http://code.google.com/p/processing/issues/detail?id=226
+  https://github.com/processing/processing/issues/265
+
++ Allow editor and console font changes without restart.
+
++ Anti-aliasing fix for the editor line status. 
+
++ Change to bold instead of semibold version of Source Code Pro. 
+  The semibold wasn't mapping properly as the same family.
+
++ Use the same font in the console as the editor.
+
++ Fix Windows/Linux console font issues.
+
+
+[ movie maker ]
+
++ Fix default gamma issues inside MovieMaker by adding extra atom
+
++ TGA files cause Movie Maker to not work properly
+  https://github.com/processing/processing/issues/1933
+
++ Fix file selection dialog with MovieMaker (instead of the nasty
+  Swing-based version that was in use)
+
++ Add support for many other image file types to Movie Maker
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
