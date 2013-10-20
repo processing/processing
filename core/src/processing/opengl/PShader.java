@@ -59,6 +59,9 @@ public class PShader implements PConstants {
   protected PGL pgl;
   protected int context;      // The context that created this shader.
 
+  // The shader type: POINT, LINE, POLY, etc.
+  protected int type;
+
   public int glProgram;
   public int glVertex;
   public int glFragment;
@@ -83,9 +86,7 @@ public class PShader implements PConstants {
   protected IntBuffer intBuffer;
   protected FloatBuffer floatBuffer;
 
-
-
-  protected int type;
+  // Uniforms common to all shader types
   protected int transformMatLoc;
   protected int modelviewMatLoc;
   protected int projectionMatLoc;
@@ -93,20 +94,11 @@ public class PShader implements PConstants {
   protected int bufferUnit;
   protected int viewportLoc;
 
-  protected int vertexLoc;
-  protected int colorLoc;
-  protected int normalLoc;
-  protected int texCoordLoc;
-  protected int normalMatLoc;
-
-  // For lines
+  // Uniforms only for lines and points
   protected int perspectiveLoc;
   protected int scaleLoc;
-  protected int directionLoc;
 
-  // For points
-  protected int offsetLoc;
-
+  // Lighting uniforms
   protected int lightCountLoc;
   protected int lightPositionLoc;
   protected int lightNormalLoc;
@@ -116,20 +108,26 @@ public class PShader implements PConstants {
   protected int lightFalloffLoc;
   protected int lightSpotLoc;
 
+  // Texturing uniforms
+  protected Texture texture;
+  protected int texUnit;
+  protected int textureLoc;
+  protected int texMatrixLoc;
+  protected int texOffsetLoc;
+  protected float[] tcmat;
+
+  // Vertex attributes
+  protected int vertexLoc;
+  protected int colorLoc;
+  protected int normalLoc;
+  protected int texCoordLoc;
+  protected int normalMatLoc;
+  protected int directionLoc;
+  protected int offsetLoc;
   protected int ambientLoc;
   protected int specularLoc;
   protected int emissiveLoc;
   protected int shininessLoc;
-
-  protected Texture texture;
-  protected int texUnit;
-
-  protected int textureLoc;
-  protected int texMatrixLoc;
-  protected int texOffsetLoc;
-
-  protected float[] tcmat;
-
 
   public PShader() {
     parent = null;
@@ -470,12 +468,14 @@ public class PShader implements PConstants {
   }
 
 
-
-  protected boolean setup() {
-
-    return true;
+  /**
+   * Extra initialization method that can be used by subclasses, called after
+   * compiling and attaching the vertex and fragment shaders, and before
+   * linking the shader program.
+   *
+   */
+  protected void setup() {
   }
-
 
 
   /**
