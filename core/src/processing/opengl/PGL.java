@@ -284,6 +284,9 @@ public abstract class PGL {
   protected static final String MISSING_GLFUNC_ERROR =
     "GL function %1$s is not available on this hardware (or driver)" + WIKI;
 
+  protected static final String UNSUPPORTED_GLPROF_ERROR =
+    "Unsupported OpenGL profile.";
+
   protected static final String TEXUNIT_ERROR =
     "Number of texture units not supported by this hardware (or driver)" + WIKI;
 
@@ -2421,12 +2424,12 @@ public abstract class PGL {
   public abstract void vertexAttrib3fv(int index, FloatBuffer values);
   public abstract void vertexAttri4fv(int index, FloatBuffer values);
   public abstract void vertexAttribPointer(int index, int size, int type, boolean normalized, int stride, int offset);
-  //public abstract void vertexAttribPointer(int index, int size, int type, boolean normalized, int stride, Buffer data);
+  public abstract void vertexAttribPointer(int index, int size, int type, boolean normalized, int stride, Buffer data);
   public abstract void enableVertexAttribArray(int index);
   public abstract void disableVertexAttribArray(int index);
   public abstract void drawArrays(int mode, int first, int count);
   public abstract void drawElements(int mode, int count, int type, int offset);
-  //public abstract void drawElements(int mode, int count, int type, Buffer indices);
+  public abstract void drawElements(int mode, int count, int type, Buffer indices);
 
   //////////////////////////////////////////////////////////////////////////////
 
