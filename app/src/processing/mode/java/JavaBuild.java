@@ -1090,6 +1090,7 @@ public class JavaBuild {
       return false;
     }
 
+    /*
     File folder = null;
     for (String platformName : PConstants.platformNames) {
       int platform = Base.getPlatformIndex(platformName);
@@ -1113,15 +1114,29 @@ public class JavaBuild {
         }
       }
     }
+    */
+    
+    File folder = null;
+    String platformName = Base.getPlatformName();
+    if (Library.hasMultipleArch(PApplet.platform, importedLibraries)) {
+      // export the 32-bit version
+      folder = new File(sketch.getFolder(), "application." + platformName + "32");
+      if (!exportApplication(folder, PApplet.platform, 32)) {
+        return false;
+      }
+      // export the 64-bit version
+      folder = new File(sketch.getFolder(), "application." + platformName + "64");
+      if (!exportApplication(folder, PApplet.platform, 64)) {
+        return false;
+      }
+    } else { // just make a single one for this platform
+      folder = new File(sketch.getFolder(), "application." + platformName);
+      if (!exportApplication(folder, PApplet.platform, 0)) {
+        return false;
+      }
+    }
     return true;  // all good
   }
-
-
-//  public boolean exportApplication(String destPath,
-//                                   String platformName,
-//                                   int exportBits) throws IOException, RunnerException {
-//    return exportApplication(destPath, Base.getPlatformIndex(platformName), exportBits);
-//  }
 
 
   /**

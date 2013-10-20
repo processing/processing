@@ -194,14 +194,14 @@ _ try installing 10.7.3 on Mac Mini and check whether things run
 _   make sure it's only running on 64-bit machines? 
 
 export
-_ change how export is handled
-_   remove ability to export cross-platform apps
-_   add ability to embed the current JRE
-_ the case for the embedded JRE
-_   https://github.com/processing/processing/issues/2104
-_ change app stub in OS X exported application
-_ change Windows export to use launch4j instead of the launcher.cpp file
-_   actually call ant from inside p5?
+X change app stub in OS X exported application
+_ make note re: app export being slower, and resulting app much larger
+X change how export is handled
+X   remove ability to export cross-platform apps
+X   add ability to embed the current JRE
+X   only going to embed always... consider option to disable it later
+o   the case for the embedded JRE
+o     https://github.com/processing/processing/issues/2104
 
 medium
 _ use platformDelete() to remove untitled sketches?
@@ -219,6 +219,8 @@ _ "String index out of range" error
 _   https://github.com/processing/processing/issues/1940
 _ look through all isPopupTrigger() code 
 _   make sure both press/release are implemented
+_ change Windows export to use launch4j instead of the launcher.cpp file
+_   actually call ant from inside p5?
 
 post 2.1 cleaning
 _ remove video for macosx32 from the repo permanently
