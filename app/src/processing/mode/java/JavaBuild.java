@@ -1160,10 +1160,13 @@ public class JavaBuild {
     /// on macosx, need to copy .app skeleton since that's
     /// also where the jar files will be placed
     File dotAppFolder = null;
+    String jdkFolderName = null;
     if (exportPlatform == PConstants.MACOSX) {
       dotAppFolder = new File(destFolder, sketch.getName() + ".app");
 
       File contentsOrig = new File(Base.getJavaHome(), "../../../../..");
+      File jdkFolder = new File(Base.getJavaHome(), "../../..");
+      jdkFolderName = jdkFolder.getCanonicalFile().getName();
 
 //      File dotAppSkeleton = mode.getContentFile("application/template.app");
 //      Base.copyDir(dotAppSkeleton, dotAppFolder);
@@ -1409,13 +1412,22 @@ public class JavaBuild {
 
     /// figure out run options for the VM
 
-    String runOptions = Preferences.get("run.options");
+    // this is too vague. if anyone is using it, we can bring it back
+//    String runOptions = Preferences.get("run.options");
+    List<String> runOptions = new ArrayList<String>();
     if (Preferences.getBoolean("run.options.memory")) {
-      runOptions += " -Xms" +
-        Preferences.get("run.options.memory.initial") + "m";
-      runOptions += " -Xmx" +
-        Preferences.get("run.options.memory.maximum") + "m";
+      runOptions.add("-Xms" + Preferences.get("run.options.memory.initial") + "m");
+      runOptions.add("-Xmx" + Preferences.get("run.options.memory.maximum") + "m");
     }
+    
+    StringBuilder jvmOptionsList = new StringBuilder();
+    for (String opt : runOptions) {
+      jvmOptionsList.append("      <string>");
+      jvmOptionsList.append(opt);
+      jvmOptionsList.append("</string>");
+      jvmOptionsList.append('\n');
+    }
+    
 //    if (exportPlatform == PConstants.MACOSX) {
 //      // If no bits specified (libs are all universal, or no native libs)
 //      // then exportBits will be 0, and can be controlled via "Get Info".
@@ -1430,10 +1442,12 @@ public class JavaBuild {
     /// macosx: write out Info.plist (template for classpath, etc)
 
     if (exportPlatform == PConstants.MACOSX) {
-      String PLIST_TEMPLATE = "template.plist";
+      //String PLIST_TEMPLATE = "template.plist";
+      String PLIST_TEMPLATE = "Info.plist.tmpl";
       File plistTemplate = new File(sketch.getFolder(), PLIST_TEMPLATE);
       if (!plistTemplate.exists()) {
-        plistTemplate = mode.getContentFile("application/template.plist");
+        //plistTemplate = mode.getContentFile("application/template.plist");
+        plistTemplate = mode.getContentFile("application/Info.plist.tmpl");
       }
       File plistFile = new File(dotAppFolder, "Contents/Info.plist");
       PrintWriter pw = PApplet.createWriter(plistFile);
@@ -1443,33 +1457,37 @@ public class JavaBuild {
         if (lines[i].indexOf("@@") != -1) {
           StringBuffer sb = new StringBuffer(lines[i]);
           int index = 0;
-          while ((index = sb.indexOf("@@vmoptions@@")) != -1) {
-            sb.replace(index, index + "@@vmoptions@@".length(),
-                       runOptions);
+          while ((index = sb.indexOf("@@jdk_folder@@")) != -1) {
+            sb.replace(index, index + "@@jdk_folder@@".length(),
+                       jdkFolderName);
+          }
+          while ((index = sb.indexOf("@@jvm_options_list@@")) != -1) {
+            sb.replace(index, index + "@@jvm_options_list@@".length(),
+                       jvmOptionsList.toString());
           }
           while ((index = sb.indexOf("@@sketch@@")) != -1) {
             sb.replace(index, index + "@@sketch@@".length(),
                        sketch.getName());
           }
-          while ((index = sb.indexOf("@@classpath@@")) != -1) {
-            sb.replace(index, index + "@@classpath@@".length(),
-                       exportClassPath.toString());
-          }
+//          while ((index = sb.indexOf("@@classpath@@")) != -1) {
+//            sb.replace(index, index + "@@classpath@@".length(),
+//                       exportClassPath.toString());
+//          }
           while ((index = sb.indexOf("@@lsuipresentationmode@@")) != -1) {
             sb.replace(index, index + "@@lsuipresentationmode@@".length(),
                        Preferences.getBoolean("export.application.fullscreen") ? "4" : "0");
           }
-          while ((index = sb.indexOf("@@lsarchitecturepriority@@")) != -1) {
-            // More about this mess: http://support.apple.com/kb/TS2827
-            // First default to exportBits == 0 case
-            String arch = "<string>x86_64</string>\n      <string>i386</string>";
-            if (exportBits == 32) {
-              arch = "<string>i386</string>";
-            } else if (exportBits == 64) {
-              arch = "<string>x86_64</string>";
-            }
-            sb.replace(index, index + "@@lsarchitecturepriority@@".length(), arch);
-          }
+//          while ((index = sb.indexOf("@@lsarchitecturepriority@@")) != -1) {
+//            // More about this mess: http://support.apple.com/kb/TS2827
+//            // First default to exportBits == 0 case
+//            String arch = "<string>x86_64</string>\n      <string>i386</string>";
+//            if (exportBits == 32) {
+//              arch = "<string>i386</string>";
+//            } else if (exportBits == 64) {
+//              arch = "<string>x86_64</string>";
+//            }
+//            sb.replace(index, index + "@@lsarchitecturepriority@@".length(), arch);
+//          }
 
           lines[i] = sb.toString();
         }

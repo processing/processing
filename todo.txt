@@ -161,6 +161,9 @@ _   and where the font is needed most
 _   make note of this on the platforms page
 _   also make note re: only JRE needed (instead of JDK)
 _   http://wiki.processing.org/index.php?title=Supported_Platforms&action=edit&section=4
+_ now Info.plist.tmpl instead of template.plist
+_   can be embedded in a sketch
+_   name change due to major modifications
 
 7u40 macosx
 X make OS X launch from its local JRE
