@@ -18,9 +18,11 @@ Find out more at [Getting Started](https://github.com/processing/processing-expe
 
 Click on the down arrow besides the mode switch button, and select Add Mode. In the Mode Manager window, select PDE X and click 'Install'. You'll need Processing 2.0.2 or higher.
 
+For installing it manually, download the latest version from [here](http://download.processing.org/pdeX.zip). Extract the zip contents into `<your sketchbook folder>/modes` folder. Restart Processing.
+
 Manindra Moharana
 
-25 September 2013
+21 October 2013
 
 --
 PDE X is supported by [Google Summer of Code 2013](http://www.google-melange.com/gsoc/homepage/google/gsoc2013)
