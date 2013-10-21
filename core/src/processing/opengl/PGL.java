@@ -24,7 +24,10 @@
 package processing.opengl;
 
 import processing.core.PApplet;
+import processing.core.PGraphics;
 
+import java.io.IOException;
+import java.net.URL;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -1445,6 +1448,57 @@ public abstract class PGL {
       }
     }
   }
+
+  /**
+   * Loads and compiles the vertex shader contained in file.
+   *
+   * @param file String
+   */
+  protected String[] loadVertexShader(String filename) {
+    return pg.parent.loadStrings(filename);
+    //PApplet.join(parent.loadStrings(filename), "\n");
+  }
+
+  /**
+   * Loads and compiles the fragment shader contained in file.
+   *
+   * @param file String
+   */
+  protected String[] loadFragmentShader(String filename) {
+    return pg.parent.loadStrings(filename);
+    // PApplet.join(parent.loadStrings(filename), "\n");
+  }
+
+  /**
+   * Loads and compiles the fragment shader contained in the URL.
+   *
+   * @param url URL
+   */
+  protected String[] loadFragmentShader(URL url) {
+    try {
+      return PApplet.loadStrings(url.openStream());
+      // PApplet.join(PApplet.loadStrings(url.openStream()), "\n");
+    } catch (IOException e) {
+      PGraphics.showException("Cannot load fragment shader " + url.getFile());
+    }
+    return null;
+  }
+
+  /**
+   * Loads and compiles the vertex shader contained in the URL.
+   *
+   * @param file String
+   */
+  protected String[] loadVertexShader(URL url) {
+    try {
+      return PApplet.loadStrings(url.openStream());
+      //PApplet.join(PApplet.loadStrings(url.openStream()), "\n");
+    } catch (IOException e) {
+      PGraphics.showException("Cannot load vertex shader " + url.getFile());
+    }
+    return null;
+  }
+
 
 
   protected int createShader(int shaderType, String source) {

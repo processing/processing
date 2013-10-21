@@ -199,8 +199,8 @@ public class PShader implements PConstants {
     this.fragmentURL = null;
     this.vertexFilename = vertFilename;
     this.fragmentFilename = fragFilename;
-    loadFragmentShader(fragFilename);
-    loadVertexShader(vertFilename);
+    fragmentShaderSource = pgl.loadFragmentShader(fragFilename);
+    vertexShaderSource = pgl.loadVertexShader(vertFilename);
 
     glProgram = 0;
     glVertex = 0;
@@ -237,8 +237,41 @@ public class PShader implements PConstants {
     this.fragmentURL = fragURL;
     this.vertexFilename = null;
     this.fragmentFilename = null;
-    loadFragmentShader(fragURL);
-    loadVertexShader(vertURL);
+    fragmentShaderSource = pgl.loadFragmentShader(fragURL);
+    vertexShaderSource = pgl.loadVertexShader(vertURL);
+
+    glProgram = 0;
+    glVertex = 0;
+    glFragment = 0;
+
+    intBuffer = PGL.allocateIntBuffer(1);
+    floatBuffer = PGL.allocateFloatBuffer(1);
+
+    int vertType = getShaderType(vertexShaderSource, -1);
+    int fragType = getShaderType(fragmentShaderSource, -1);
+    if (vertType == -1 && fragType == -1) {
+      type = PShader.POLY;
+    } else if (vertType == -1) {
+      type = fragType;
+    } else if (fragType == -1) {
+      type = vertType;
+    } else if (fragType == vertType)  {
+      type = vertType;
+    } else {
+      PGraphics.showWarning(PGraphicsOpenGL.INCONSISTENT_SHADER_TYPES);
+    }
+  }
+
+  public PShader(PApplet parent, String[] vertSource, String[] fragSource) {
+    this.parent = parent;
+    pgl = PGraphicsOpenGL.pgl;
+
+    this.vertexURL = null;
+    this.fragmentURL = null;
+    this.vertexFilename = null;
+    this.fragmentFilename = null;
+    vertexShaderSource = vertSource;
+    fragmentShaderSource = fragSource;
 
     glProgram = 0;
     glVertex = 0;
@@ -856,58 +889,9 @@ public class PShader implements PConstants {
   }
 
 
-  /**
-   * Loads and compiles the vertex shader contained in file.
-   *
-   * @param file String
-   */
-  protected void loadVertexShader(String filename) {
-    vertexShaderSource = parent.loadStrings(filename);
-    //PApplet.join(parent.loadStrings(filename), "\n");
-  }
-
-
-  /**
-   * Loads and compiles the vertex shader contained in the URL.
-   *
-   * @param file String
-   */
-  protected void loadVertexShader(URL url) {
-    try {
-      vertexShaderSource = PApplet.loadStrings(url.openStream());
-      //PApplet.join(PApplet.loadStrings(url.openStream()), "\n");
-    } catch (IOException e) {
-      PGraphics.showException("Cannot load vertex shader " + url.getFile());
-    }
-  }
 
   protected boolean hasVertexShader() {
     return vertexShaderSource != null && 0 < vertexShaderSource.length;
-  }
-
-
-  /**
-   * Loads and compiles the fragment shader contained in file.
-   *
-   * @param file String
-   */
-  protected void loadFragmentShader(String filename) {
-    fragmentShaderSource = parent.loadStrings(filename);
-    // PApplet.join(parent.loadStrings(filename), "\n");
-  }
-
-  /**
-   * Loads and compiles the fragment shader contained in the URL.
-   *
-   * @param url URL
-   */
-  protected void loadFragmentShader(URL url) {
-    try {
-      fragmentShaderSource = PApplet.loadStrings(url.openStream());
-      // PApplet.join(PApplet.loadStrings(url.openStream()), "\n");
-    } catch (IOException e) {
-      PGraphics.showException("Cannot load fragment shader " + url.getFile());
-    }
   }
 
   protected boolean hasFragmentShader() {
