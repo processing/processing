@@ -100,7 +100,7 @@
            basedir="${dist}/"
            excludes="**/.DS_Store"
         />
-        <delete dir="${bundle}/" />
+        
 
 	</target>
 

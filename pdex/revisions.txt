@@ -1,12 +1,13 @@
 
-PDE X v1.0.2b - October, 2013
+PDE X v1.0.2b - October 21, 2013
 
 Bug fixes
 
 + Code completion window gets stuck when Processing loses focus
   https://github.com/processing/processing-experimental/issues/21
 
-+ Live-error checker in the experimental mode is inefficient with memory.
++ Live-error checker in the experimental mode is a bit more efficient with memory now.
+  You can have upto 7 editor windows open at a time with PDE X.
   https://github.com/processing/processing-experimental/issues/1
   
 + Cmd + Left Click should be working again in OS X with Processing 2.1

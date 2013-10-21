@@ -654,7 +654,12 @@ public class ErrorCheckerService implements Runnable{
           .println(e
               + " compileCheck() problem. Somebody tried to mess with Experimental Mode files.");
       pauseThread();
+    } catch(OutOfMemoryError e) {
+      System.err.println("Processing has used up its maximum alloted memory. Please close some Processing " +
+    " windows and then reopen this sketch.");
+      pauseThread();
     }
+    
     // log("Compilecheck, Done.");
   }
   
