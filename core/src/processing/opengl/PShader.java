@@ -25,7 +25,6 @@ package processing.opengl;
 
 import processing.core.*;
 
-import java.io.IOException;
 import java.net.URL;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -1090,9 +1089,11 @@ public class PShader implements PConstants {
     lightSpotLoc = getUniformLoc("lightSpot");
 
     textureLoc = getUniformLoc("texture");
+    if (textureLoc == -1) {
+      textureLoc = getUniformLoc("texSampler");
+    }
     texMatrixLoc = getUniformLoc("texMatrix");
     texOffsetLoc = getUniformLoc("texOffset");
-
 
     perspectiveLoc = getUniformLoc("perspective");
     scaleLoc = getUniformLoc("scale");

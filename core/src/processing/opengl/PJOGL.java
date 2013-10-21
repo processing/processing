@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.FontMetrics;
+import java.io.IOException;
+import java.net.URL;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -32,6 +34,7 @@ import javax.media.opengl.glu.GLU;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
+import processing.core.PGraphics;
 import processing.event.KeyEvent;
 import processing.event.MouseEvent;
 
@@ -52,7 +55,7 @@ import javax.media.opengl.glu.GLUtessellatorCallbackAdapter;
 
 public class PJOGL extends PGL {
   // OpenGL profile to use (2, 3 or 4)
-  public static int PROFILE = 2;
+  public static int PROFILE = 3;
 
   // The two windowing toolkits available to use in JOGL:
   public static final int AWT  = 0; // http://jogamp.org/wiki/index.php/Using_JOGL_in_AWT_SWT_and_Swing
@@ -822,11 +825,11 @@ public class PJOGL extends PGL {
       } catch (javax.media.opengl.GLException e) {
         gl3 = null;
       }
-      System.out.println("************");
-      System.out.println("gl: " + gl);
-      System.out.println("gl2: " + gl2);
-      System.out.println("gl2x: " + gl2x);
-      System.out.println("gl3: " + gl3);
+//      System.out.println("************");
+//      System.out.println("gl: " + gl);
+//      System.out.println("gl2: " + gl2);
+//      System.out.println("gl2x: " + gl2x);
+//      System.out.println("gl3: " + gl3);
     }
   }
 
@@ -1032,6 +1035,61 @@ public class PJOGL extends PGL {
   @Override
   protected Object getDerivedFont(Object font, float size) {
     return ((Font)font).deriveFont(size);
+  }
+
+
+  @Override
+  protected String[] loadFragmentShader(URL url) {
+    try {
+      String[] fragSrc0 = PApplet.loadStrings(url.openStream());
+      // PApplet.join(PApplet.loadStrings(url.openStream()), "\n");
+      String[] fragSrc = new String[fragSrc0.length + 2];
+      fragSrc[0] = "#version 150";
+      fragSrc[1] = "out vec4 fragColor;";
+
+      for (int i = 0; i < fragSrc0.length; i++) {
+        String line = fragSrc0[i];
+        System.out.print(line + " ---> ");
+
+        line = line.replace("varying", "in");
+        line = line.replace("attribute", "in");
+        line = line.replace("gl_FragColor", "fragColor");
+        line = line.replace("texture", "texSampler");
+        line = line.replace("texSampler2D(", "texture(");
+
+        fragSrc[i + 2] = line;
+        System.out.println(line);
+      }
+
+      return fragSrc;
+    } catch (IOException e) {
+      PGraphics.showException("Cannot load fragment shader " + url.getFile());
+    }
+    return null;
+  }
+
+  @Override
+  protected String[] loadVertexShader(URL url) {
+    try {
+      String[] vertSrc0 = PApplet.loadStrings(url.openStream());
+      String[] vertSrc = new String[vertSrc0.length + 1];
+      vertSrc[0] = "#version 150";
+
+      for (int i = 0; i < vertSrc0.length; i++) {
+        String line = vertSrc0[i];
+        System.out.print(line + " ---> ");
+        line = line.replace("attribute", "in");
+        line = line.replace("varying", "out");
+        vertSrc[i + 1] = line;
+        System.out.println(line);
+      }
+
+      return vertSrc;
+      //PApplet.join(PApplet.loadStrings(url.openStream()), "\n");
+    } catch (IOException e) {
+      PGraphics.showException("Cannot load vertex shader " + url.getFile());
+    }
+    return null;
   }
 
 
