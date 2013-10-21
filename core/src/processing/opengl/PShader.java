@@ -1039,7 +1039,10 @@ public class PShader implements PConstants {
     this.pg = pg;
   }
 
+  boolean loadedAttributes = false;
   protected void loadAttributes() {
+    if (loadedAttributes) return;
+
     vertexLoc = getAttributeLoc("vertex");
     if (vertexLoc == -1) vertexLoc = getAttributeLoc("position");
 
@@ -1058,10 +1061,14 @@ public class PShader implements PConstants {
 
     directionLoc = getAttributeLoc("direction");
     offsetLoc = getAttributeLoc("offset");
+
+    loadedAttributes = true;
   }
 
 
+  boolean loadedUniforms = false;
   protected void loadUniforms() {
+    if (loadedUniforms) return;
     transformMatLoc = getUniformLoc("transform");
     if (transformMatLoc == -1)
       transformMatLoc = getUniformLoc("transformMatrix");
@@ -1092,11 +1099,13 @@ public class PShader implements PConstants {
     if (textureLoc == -1) {
       textureLoc = getUniformLoc("texSampler");
     }
+    System.err.println("textureLoc: " + textureLoc);
     texMatrixLoc = getUniformLoc("texMatrix");
     texOffsetLoc = getUniformLoc("texOffset");
 
     perspectiveLoc = getUniformLoc("perspective");
     scaleLoc = getUniformLoc("scale");
+    loadedUniforms = true;
   }
 
 
@@ -1136,6 +1145,7 @@ public class PShader implements PConstants {
 
   protected void bindTyped() {
     if (pg == null) {
+      System.out.println(" setting pg and uniforms " + pg);
       setRenderer(PGraphicsOpenGL.pgCurrent);
       loadAttributes();
       loadUniforms();
