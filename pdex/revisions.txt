@@ -6,7 +6,7 @@ Bug fixes
 + Code completion window gets stuck when Processing loses focus
   https://github.com/processing/processing-experimental/issues/21
 
-+ Live-error checker in the experimental mode is a bit more efficient with memory now.
++ Live-error checker is more efficient with memory now.
   You can have upto 7 editor windows open at a time with PDE X.
   https://github.com/processing/processing-experimental/issues/1
   
