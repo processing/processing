@@ -12,6 +12,8 @@ Bug fixes
 + Cmd + Left Click should be working again in OS X with Processing 2.1
   https://github.com/processing/processing-experimental/issues/11
 
++ TextAreaPainter updated for Processing 2.1
+
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 PDE X v1.0.1b - 25 September, 2013

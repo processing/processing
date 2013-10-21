@@ -172,19 +172,6 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter {
   @Override
   protected void paintLine(Graphics gfx, TokenMarker tokenMarker, int line,
                            int x) {
-    if(ta.editor.debugToolbarEnabled != null && ta.editor.debugToolbarEnabled.get()){
-      // paint gutter
-      paintGutterBg(gfx, line, x);
-  
-      paintLineBgColor(gfx, line, x + ta.getGutterWidth());
-  
-      paintGutterLine(gfx, line, x);
-  
-      // paint gutter symbol
-      paintGutterText(gfx, line, x);
-      
-    }
-    paintErrorLine(gfx, line, x);
     try {
       //TODO: This line is causing NPE's randomly ever since I added the toggle for 
       //Java Mode/Debugger toolbar.
@@ -192,6 +179,20 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter {
     } catch (Exception e) {
       log(e.getMessage());
     }
+    if(ta.editor.debugToolbarEnabled != null && ta.editor.debugToolbarEnabled.get()){
+      // paint gutter
+      paintGutterBg(gfx, line, x);
+  
+      // disabled line background after P5 2.1, since it adds highlight by default
+      //paintLineBgColor(gfx, line, x + ta.getGutterWidth()); 
+  
+      paintGutterLine(gfx, line, x);
+  
+      // paint gutter symbol
+      paintGutterText(gfx, line, x);
+      
+    }   
+    paintErrorLine(gfx, line, x);
   }
 
   /**
