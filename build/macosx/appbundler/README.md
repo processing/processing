@@ -1,5 +1,11 @@
 appbundler
-=============
+==========
+
+This is a fork of the [infinitekind fork](https://bitbucket.org/infinitekind/appbundler) of Oracle's appbundler. 
+(Many thanks for their additional work!) This fork covers several additional features (ability to remove JavaFX
+binaries, a rewritten Info.plist writer, etc). See changes in the commits to this source.
+
+And here's the README from the [infinitekind fork](https://bitbucket.org/infinitekind/appbundler):
 
 A fork of the [Java Application Bundler](https://svn.java.net/svn/appbundler~svn) 
 with the following changes:
