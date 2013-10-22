@@ -55,7 +55,7 @@ import javax.media.opengl.glu.GLUtessellatorCallbackAdapter;
 
 public class PJOGL extends PGL {
   // OpenGL profile to use (2, 3 or 4)
-  public static int PROFILE = 3;
+  public static int PROFILE = 2;
 
   // The two windowing toolkits available to use in JOGL:
   public static final int AWT  = 0; // http://jogamp.org/wiki/index.php/Using_JOGL_in_AWT_SWT_and_Swing
@@ -988,7 +988,7 @@ public class PJOGL extends PGL {
 
   @Override
   protected void enableTexturing(int target) {
-    if (PROFILE == 2) enable(target);
+    //if (PROFILE == 2) enable(target);
     if (target == TEXTURE_2D) {
       texturingTargets[0] = true;
     } else if (target == TEXTURE_RECTANGLE) {
@@ -999,7 +999,7 @@ public class PJOGL extends PGL {
 
   @Override
   protected void disableTexturing(int target) {
-    if (PROFILE == 2) disable(target);
+    //if (PROFILE == 2) disable(target);
     if (target == TEXTURE_2D) {
       texturingTargets[0] = false;
     } else if (target == TEXTURE_RECTANGLE) {
@@ -1041,27 +1041,31 @@ public class PJOGL extends PGL {
   @Override
   protected String[] loadFragmentShader(URL url) {
     try {
-      String[] fragSrc0 = PApplet.loadStrings(url.openStream());
-      // PApplet.join(PApplet.loadStrings(url.openStream()), "\n");
-      String[] fragSrc = new String[fragSrc0.length + 2];
-      fragSrc[0] = "#version 150";
-      fragSrc[1] = "out vec4 fragColor;";
+      if (2 < PROFILE) {
+        String[] fragSrc0 = PApplet.loadStrings(url.openStream());
+        // PApplet.join(PApplet.loadStrings(url.openStream()), "\n");
+        String[] fragSrc = new String[fragSrc0.length + 2];
+        fragSrc[0] = "#version 150";
+        fragSrc[1] = "out vec4 fragColor;";
 
-      for (int i = 0; i < fragSrc0.length; i++) {
-        String line = fragSrc0[i];
-        System.out.print(line + " ---> ");
+        for (int i = 0; i < fragSrc0.length; i++) {
+          String line = fragSrc0[i];
+          System.out.print(line + " ---> ");
 
-        line = line.replace("varying", "in");
-        line = line.replace("attribute", "in");
-        line = line.replace("gl_FragColor", "fragColor");
-        line = line.replace("texture", "texSampler");
-        line = line.replace("texSampler2D(", "texture(");
+          line = line.replace("varying", "in");
+          line = line.replace("attribute", "in");
+          line = line.replace("gl_FragColor", "fragColor");
+          line = line.replace("texture", "texSampler");
+          line = line.replace("texSampler2D(", "texture(");
 
-        fragSrc[i + 2] = line;
-        System.out.println(line);
+          fragSrc[i + 2] = line;
+          System.out.println(line);
+        }
+
+        return fragSrc;
+      } else {
+        return PApplet.loadStrings(url.openStream());
       }
-
-      return fragSrc;
     } catch (IOException e) {
       PGraphics.showException("Cannot load fragment shader " + url.getFile());
     }
@@ -1071,21 +1075,24 @@ public class PJOGL extends PGL {
   @Override
   protected String[] loadVertexShader(URL url) {
     try {
-      String[] vertSrc0 = PApplet.loadStrings(url.openStream());
-      String[] vertSrc = new String[vertSrc0.length + 1];
-      vertSrc[0] = "#version 150";
+      if (2 < PROFILE) {
+        String[] vertSrc0 = PApplet.loadStrings(url.openStream());
+        String[] vertSrc = new String[vertSrc0.length + 1];
+        vertSrc[0] = "#version 150";
 
-      for (int i = 0; i < vertSrc0.length; i++) {
-        String line = vertSrc0[i];
-        System.out.print(line + " ---> ");
-        line = line.replace("attribute", "in");
-        line = line.replace("varying", "out");
-        vertSrc[i + 1] = line;
-        System.out.println(line);
+        for (int i = 0; i < vertSrc0.length; i++) {
+          String line = vertSrc0[i];
+          System.out.print(line + " ---> ");
+          line = line.replace("attribute", "in");
+          line = line.replace("varying", "out");
+          vertSrc[i + 1] = line;
+          System.out.println(line);
+        }
+
+        return vertSrc;
+      } else {
+        return PApplet.loadStrings(url.openStream());
       }
-
-      return vertSrc;
-      //PApplet.join(PApplet.loadStrings(url.openStream()), "\n");
     } catch (IOException e) {
       PGraphics.showException("Cannot load vertex shader " + url.getFile());
     }
