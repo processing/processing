@@ -30,8 +30,6 @@ import processing.app.syntax.im.CompositionTextPainter;
 public class TextAreaPainter extends JComponent implements TabExpander {
   /** True if inside printing, will handle disabling the highlight */
   boolean printing;
-  /** Current setting for editor.antialias preference */
-//  boolean antialias;
 
   /** A specific painter composed by the InputMethod.*/
   protected CompositionTextPainter compositionTextPainter;
@@ -129,7 +127,7 @@ public class TextAreaPainter extends JComponent implements TabExpander {
       plainFont = new Font(fontFamily, Font.PLAIN, fontSize);
     }
     boldFont = new Font(fontFamily, Font.BOLD, fontSize);
-    antialias = Preferences.getBoolean("editor.antialias");
+    antialias = Preferences.getBoolean("editor.smooth");
 //    System.out.println(plainFont.getFamily());
 //    System.out.println(plainFont);
 

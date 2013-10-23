@@ -110,12 +110,10 @@ editor.window.height.min.windows = 530
 editor.font.family = Source Code Pro
 editor.font.size = 12
 
-# anti-aliased text, turned off by default
-#editor.antialias=false
-# linux fonts are hideous without anti-aliasing [0191]
-#editor.antialias.linux=true
-# turning anti-aliasing on by default for 2.0
-editor.antialias=true
+# To reset everyone's default, replaced editor.antialias with editor.smooth 
+# for 2.1. Fonts are unusably gross on OS X (and Linux) w/o smoothing and 
+# the Oracle JVM, and many longtime users have anti-aliasing turned off.
+editor.smooth = true
 
 # blink the caret by default
 editor.caret.blink = true
