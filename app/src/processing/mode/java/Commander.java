@@ -156,14 +156,15 @@ public class Commander implements RunnerListener {
 //        }
 
       } else if (arg.startsWith(bitsArg)) {
-        String bitsStr = arg.substring(bitsArg.length());
-        if (bitsStr.equals("32")) {
-          platformBits = 32;
-        } else if (bitsStr.equals("64")) {
-          platformBits = 64;
-        } else {
-          complainAndQuit("Bits should be either 32 or 64, not " + bitsStr, true);
-        }
+        complainAndQuit("The --platform option has been removed from Processing 2.1.", false);
+//        String bitsStr = arg.substring(bitsArg.length());
+//        if (bitsStr.equals("32")) {
+//          platformBits = 32;
+//        } else if (bitsStr.equals("64")) {
+//          platformBits = 64;
+//        } else {
+//          complainAndQuit("Bits should be either 32 or 64, not " + bitsStr, true);
+//        }
 
       } else if (arg.startsWith(sketchArg)) {
         sketchPath = arg.substring(sketchArg.length());
@@ -290,6 +291,7 @@ public class Commander implements RunnerListener {
 
       } catch (SketchException re) {
         statusError(re);
+        System.exit(1);
 
       } catch (IOException e) {
         e.printStackTrace();
@@ -317,13 +319,16 @@ public class Commander implements RunnerListener {
       if (codeIndex != -1) {
         // format the runner exception like emacs
         //blah.java:2:10:2:13: Syntax Error: This is a big error message
+        // Emacs doesn't like the double line thing coming from Java
+        // https://github.com/processing/processing/issues/2158
         String filename = sketch.getCode(codeIndex).getFileName();
         int line = re.getCodeLine() + 1;
         int column = re.getCodeColumn() + 1;
         //if (column == -1) column = 0;
         // TODO if column not specified, should just select the whole line.
+        // But what's the correct syntax for that?
         systemErr.println(filename + ":" +
-          line + ":" + column + ":" +
+          line + ":" + column + ":" + 
           line + ":" + column + ":" + " " + re.getMessage());
         
       } else {  // no line number, pass the trace along to the user
@@ -366,9 +371,9 @@ public class Commander implements RunnerListener {
     out.println("--export             Export an application.");
 //    out.println("--platform           Specify the platform (export to application only).");
 //    out.println("                     Should be one of 'windows', 'macosx', or 'linux'.");
-    out.println("--bits               Must be specified if libraries are used that are");
-    out.println("                     32- or 64-bit specific such as the OpenGL library.");
-    out.println("                     Otherwise specify 0 or leave it out.");
+//    out.println("--bits               Must be specified if libraries are used that are");
+//    out.println("                     32- or 64-bit specific such as the OpenGL library.");
+//    out.println("                     Otherwise specify 0 or leave it out.");
     out.println();
   }
 
