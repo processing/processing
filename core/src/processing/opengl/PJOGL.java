@@ -314,6 +314,15 @@ public class PJOGL extends PGL {
 
 
   @Override
+  protected void reinitSurface() {
+    sinkFBO = backFBO = frontFBO = null;
+    fboLayerCreated = false;
+    fboLayerInUse = false;
+    firstFrame = true;
+  }
+
+
+  @Override
   protected void registerListeners() {
     if (WINDOW_TOOLKIT == AWT) {
       pg.parent.removeListeners(pg.parent);
@@ -777,7 +786,7 @@ public class PJOGL extends PGL {
 
     @Override
     public void reshape(GLAutoDrawable glDrawable, int x, int y, int w, int h) {
-      getGL(glDrawable);
+      //getGL(glDrawable);
     }
 
     private void getGL(GLAutoDrawable glDrawable) {
@@ -1343,6 +1352,7 @@ public class PJOGL extends PGL {
     SRC_ALPHA_SATURATE       = GL.GL_SRC_ALPHA_SATURATE;
 
     SCISSOR_TEST    = GL.GL_SCISSOR_TEST;
+    STENCIL_TEST    = GL.GL_STENCIL_TEST;
     DEPTH_TEST      = GL.GL_DEPTH_TEST;
     DEPTH_WRITEMASK = GL.GL_DEPTH_WRITEMASK;
     ALPHA_TEST      = GL2ES1.GL_ALPHA_TEST;
