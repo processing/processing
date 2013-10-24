@@ -661,7 +661,7 @@ public class Preferences {
    * then send a message to the editor saying that it's time to do the same.
    */
   protected void applyFrame() {
-    setBoolean("editor.antialias", //$NON-NLS-1$
+    setBoolean("editor.smooth", //$NON-NLS-1$
                editorAntialiasBox.isSelected());
 
     setBoolean("export.delete_target_folder", //$NON-NLS-1$
@@ -796,7 +796,7 @@ public class Preferences {
 
 
   protected void showFrame() {
-    editorAntialiasBox.setSelected(getBoolean("editor.antialias")); //$NON-NLS-1$
+    editorAntialiasBox.setSelected(getBoolean("editor.smooth")); //$NON-NLS-1$
     inputMethodBox.setSelected(getBoolean("editor.input_method_support")); //$NON-NLS-1$
 
     // set all settings entry boxes to their actual status
