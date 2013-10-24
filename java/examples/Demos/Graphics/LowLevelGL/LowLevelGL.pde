@@ -2,7 +2,7 @@
 import java.nio.*;
 
 PGL pgl;
-PShader flatShader;
+PShader sh;
 
 int vertLoc;
 int colorLoc;
@@ -18,7 +18,7 @@ void setup() {
   
   // Loads a shader to render geometry w/out
   // textures and lights.
-  flatShader = loadShader("frag.glsl", "vert.glsl");
+  sh = loadShader("frag.glsl", "vert.glsl");
 
   vertices = new float[12];
   vertData = allocateDirectFloatBuffer(12);
@@ -37,10 +37,10 @@ void draw() {
   updateGeometry();
   
   pgl = beginPGL();
-  flatShader.bind();
+  sh.bind();
   
-  vertLoc = pgl.getAttribLocation(flatShader.glProgram, "vertex");
-  colorLoc = pgl.getAttribLocation(flatShader.glProgram, "color");
+  vertLoc = pgl.getAttribLocation(sh.glProgram, "vertex");
+  colorLoc = pgl.getAttribLocation(sh.glProgram, "color");
   
   pgl.enableVertexAttribArray(vertLoc);
   pgl.enableVertexAttribArray(colorLoc);
@@ -53,7 +53,7 @@ void draw() {
   pgl.disableVertexAttribArray(vertLoc);
   pgl.disableVertexAttribArray(colorLoc);
   
-  flatShader.unbind();  
+  sh.unbind();  
 
   endPGL();
 }
