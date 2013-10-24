@@ -6235,16 +6235,11 @@ public class PGraphicsOpenGL extends PGraphics {
     OPENGL_EXTENSIONS = pgl.getString(PGL.EXTENSIONS);
     GLSL_VERSION      = pgl.getString(PGL.SHADING_LANGUAGE_VERSION);
 
-    npotTexSupported =
-      -1 < OPENGL_EXTENSIONS.indexOf("_texture_non_power_of_two");
-    autoMipmapGenSupported =
-      -1 < OPENGL_EXTENSIONS.indexOf("_generate_mipmap");
-    fboMultisampleSupported =
-      -1 < OPENGL_EXTENSIONS.indexOf("_framebuffer_multisample");
-    packedDepthStencilSupported =
-      -1 < OPENGL_EXTENSIONS.indexOf("_packed_depth_stencil");
-    anisoSamplingSupported =
-      -1 < OPENGL_EXTENSIONS.indexOf("_texture_filter_anisotropic");
+    npotTexSupported = pgl.hasNpotTexSupport();
+    autoMipmapGenSupported = pgl.hasAutoMipmapGenSupport();
+    fboMultisampleSupported = pgl.hasFboMultisampleSupport();
+    packedDepthStencilSupported = pgl.hasPackedDepthStencilSupport();
+    anisoSamplingSupported = pgl.hasAnisoSamplingSupport();
 
     try {
       pgl.blendEquation(PGL.FUNC_ADD);

@@ -36,8 +36,6 @@ import java.util.NoSuchElementException;
  *
  */
 public class Texture implements PConstants {
-  // texture constants
-
   /**
    * Texture with normalized UV.
    */
@@ -1438,21 +1436,27 @@ public class Texture implements PConstants {
       throw new RuntimeException("Unknown texture format");
     }
 
+    boolean mipmaps = params.mipmaps && PGL.MIPMAPS_ENABLED;
+    if (mipmaps && !PGraphicsOpenGL.autoMipmapGenSupported) {
+      PGraphics.showWarning("Mipmaps were requested but automatic mipmap " +
+                            "generation is not supported and manual " +
+                            "generation still not implemented, so mipmaps " +
+                            "will be disabled.");
+      mipmaps = false;
+    }
+
     if (params.sampling == POINT) {
       glMagFilter = PGL.NEAREST;
       glMinFilter = PGL.NEAREST;
     } else if (params.sampling == LINEAR)  {
       glMagFilter = PGL.NEAREST;
-      glMinFilter = params.mipmaps && PGL.MIPMAPS_ENABLED ?
-        PGL.LINEAR_MIPMAP_NEAREST : PGL.LINEAR;
+      glMinFilter = mipmaps ? PGL.LINEAR_MIPMAP_NEAREST : PGL.LINEAR;
     } else if (params.sampling == BILINEAR)  {
       glMagFilter = PGL.LINEAR;
-      glMinFilter = params.mipmaps && PGL.MIPMAPS_ENABLED ?
-        PGL.LINEAR_MIPMAP_NEAREST : PGL.LINEAR;
+      glMinFilter = mipmaps ? PGL.LINEAR_MIPMAP_NEAREST : PGL.LINEAR;
     } else if (params.sampling == TRILINEAR)  {
       glMagFilter = PGL.LINEAR;
-      glMinFilter = params.mipmaps && PGL.MIPMAPS_ENABLED ?
-        PGL.LINEAR_MIPMAP_LINEAR : PGL.LINEAR;
+      glMinFilter = mipmaps ? PGL.LINEAR_MIPMAP_LINEAR : PGL.LINEAR;
     } else {
       throw new RuntimeException("Unknown texture filtering mode");
     }

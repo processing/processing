@@ -162,6 +162,7 @@ public abstract class PGL {
   protected static int tex2DShaderContext;
   protected static int tex2DVertLoc;
   protected static int tex2DTCoordLoc;
+  protected static int tex2DSamplerLoc;
 
   protected static boolean loadedTexRectShader = false;
   protected static int texRectShaderProgram;
@@ -170,6 +171,7 @@ public abstract class PGL {
   protected static int texRectShaderContext;
   protected static int texRectVertLoc;
   protected static int texRectTCoordLoc;
+  protected static int texRectSamplerLoc;
 
   protected static float[] texCoords = {
     //  X,     Y,    U,    V
@@ -209,7 +211,8 @@ public abstract class PGL {
     "uniform sampler2D textureSampler;\n" +
     "varying vec2 vertTexcoord;\n" +
     "void main() {\n" +
-    "  gl_FragColor = texture2D(textureSampler, vertTexcoord.st);\n" +
+   "  gl_FragColor = texture2D(textureSampler, vertTexcoord.st);\n" +
+//    "  gl_FragColor = vec4(vertTexcoord.st, 0, 1);\n" +
     "}\n",
     "#version 150\n" +
     SHADER_PREPROCESSOR_DIRECTIVE +
@@ -217,7 +220,8 @@ public abstract class PGL {
     "in vec2 vertTexcoord;\n" +
     "out vec4 fragColor;\n" +
     "void main() {\n" +
-    "  fragColor = texture(textureSampler, vertTexcoord.st);\n" +
+//    "  fragColor = texture(textureSampler, vertTexcoord.st);\n" +
+    "  fragColor = vec4(vertTexcoord.st, 0, 1);\n" +
     "}\n"
   };
 
@@ -930,6 +934,7 @@ public abstract class PGL {
       if (0 < tex2DShaderProgram) {
         tex2DVertLoc = getAttribLocation(tex2DShaderProgram, "inVertex");
         tex2DTCoordLoc = getAttribLocation(tex2DShaderProgram, "inTexcoord");
+        tex2DSamplerLoc = getUniformLocation(tex2DShaderProgram, "textureSampler");
       }
       loadedTex2DShader = true;
       tex2DShaderContext = glContext;
@@ -999,15 +1004,14 @@ public abstract class PGL {
         enabledTex = true;
       }
       bindTexture(TEXTURE_2D, id);
+      uniform1i(tex2DSamplerLoc, 0);
 
       texData.position(0);
       bindBuffer(PGL.ARRAY_BUFFER, texGeoVBO);
       bufferData(PGL.ARRAY_BUFFER, 16 * SIZEOF_FLOAT, texData, PGL.STATIC_DRAW);
 
-      pg.report("HERE 1");
       vertexAttribPointer(tex2DVertLoc, 2, FLOAT, false, 4 * SIZEOF_FLOAT, 0);
       vertexAttribPointer(tex2DTCoordLoc, 2, FLOAT, false, 4 * SIZEOF_FLOAT, 2 * SIZEOF_FLOAT);
-
 
 //      texData.position(0);
 //      vertexAttribPointer(tex2DVertLoc, 2, FLOAT, false, 4 * SIZEOF_FLOAT,
@@ -1018,7 +1022,6 @@ public abstract class PGL {
 //      pg.report("HERE 2");
 
       drawArrays(TRIANGLE_STRIP, 0, 4);
-      pg.report("HERE 3");
 
       bindBuffer(ARRAY_BUFFER, 0); // Making sure that no VBO is bound at this point.
 
@@ -1058,6 +1061,7 @@ public abstract class PGL {
       if (0 < texRectShaderProgram) {
         texRectVertLoc = getAttribLocation(texRectShaderProgram, "inVertex");
         texRectTCoordLoc = getAttribLocation(texRectShaderProgram, "inTexcoord");
+        texRectSamplerLoc = getUniformLocation(texRectShaderProgram, "textureSampler");
       }
       loadedTexRectShader = true;
       texRectShaderContext = glContext;
@@ -1127,12 +1131,13 @@ public abstract class PGL {
         enabledTex = true;
       }
       bindTexture(TEXTURE_RECTANGLE, id);
+      uniform1i(texRectSamplerLoc, 0);
 
       texData.position(0);
       bindBuffer(PGL.ARRAY_BUFFER, texGeoVBO);
       bufferData(PGL.ARRAY_BUFFER, 16 * SIZEOF_FLOAT, texData, PGL.STATIC_DRAW);
 
-      pg.report("HERE 1");
+//      pg.report("HERE 1");
       vertexAttribPointer(texRectVertLoc, 2, FLOAT, false, 4 * SIZEOF_FLOAT, 0);
       vertexAttribPointer(texRectTCoordLoc, 2, FLOAT, false, 4 * SIZEOF_FLOAT, 2 * SIZEOF_FLOAT);
 
@@ -1628,6 +1633,61 @@ public abstract class PGL {
              ext.indexOf("_vertex_shader")    != -1 &&
              ext.indexOf("_shader_objects")   != -1 &&
              ext.indexOf("_shading_language") != -1;
+    } else {
+      return true;
+    }
+  }
+
+
+  protected boolean hasNpotTexSupport() {
+    int major = getGLVersion()[0];
+    if (major < 3) {
+      String ext = getString(EXTENSIONS);
+      return -1 < ext.indexOf("_texture_non_power_of_two");
+    } else {
+      return true;
+    }
+  }
+
+
+  protected boolean hasAutoMipmapGenSupport() {
+    int major = getGLVersion()[0];
+    if (major < 3) {
+      String ext = getString(EXTENSIONS);
+      return -1 < ext.indexOf("_generate_mipmap");
+    } else {
+      return true;
+    }
+  }
+
+
+  protected boolean hasFboMultisampleSupport() {
+    int major = getGLVersion()[0];
+    if (major < 3) {
+      String ext = getString(EXTENSIONS);
+      return -1 < ext.indexOf("_framebuffer_multisample");
+    } else {
+      return true;
+    }
+  }
+
+
+  protected boolean hasPackedDepthStencilSupport() {
+    int major = getGLVersion()[0];
+    if (major < 3) {
+      String ext = getString(EXTENSIONS);
+      return -1 < ext.indexOf("_packed_depth_stencil");
+    } else {
+      return true;
+    }
+  }
+
+
+  protected boolean hasAnisoSamplingSupport() {
+    int major = getGLVersion()[0];
+    if (major < 3) {
+      String ext = getString(EXTENSIONS);
+      return -1 < ext.indexOf("_texture_filter_anisotropic");
     } else {
       return true;
     }
@@ -2140,6 +2200,9 @@ public abstract class PGL {
   public static int RGBA4;
   public static int RGB5_A1;
   public static int RGB565;
+  public static int RGB8;
+  public static int RGBA8;
+  public static int ALPHA8;
 
   public static int READ_ONLY;
   public static int WRITE_ONLY;
@@ -2354,7 +2417,6 @@ public abstract class PGL {
   public static int READ_FRAMEBUFFER;
   public static int DRAW_FRAMEBUFFER;
 
-  public static int RGBA8;
   public static int DEPTH24_STENCIL8;
 
   public static int DEPTH_COMPONENT;

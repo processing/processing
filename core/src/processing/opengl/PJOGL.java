@@ -988,7 +988,7 @@ public class PJOGL extends PGL {
 
   @Override
   protected void enableTexturing(int target) {
-    //if (PROFILE == 2) enable(target);
+    if (PROFILE == 2) enable(target);
     if (target == TEXTURE_2D) {
       texturingTargets[0] = true;
     } else if (target == TEXTURE_RECTANGLE) {
@@ -999,7 +999,7 @@ public class PJOGL extends PGL {
 
   @Override
   protected void disableTexturing(int target) {
-    //if (PROFILE == 2) disable(target);
+    if (PROFILE == 2) disable(target);
     if (target == TEXTURE_2D) {
       texturingTargets[0] = false;
     } else if (target == TEXTURE_RECTANGLE) {
@@ -1042,6 +1042,7 @@ public class PJOGL extends PGL {
   protected String[] loadFragmentShader(URL url) {
     try {
       if (2 < PROFILE) {
+//      if (false) {
         String[] fragSrc0 = PApplet.loadStrings(url.openStream());
         // PApplet.join(PApplet.loadStrings(url.openStream()), "\n");
         String[] fragSrc = new String[fragSrc0.length + 2];
@@ -1076,6 +1077,7 @@ public class PJOGL extends PGL {
   protected String[] loadVertexShader(URL url) {
     try {
       if (2 < PROFILE) {
+//      if (false) {
         String[] vertSrc0 = PApplet.loadStrings(url.openStream());
         String[] vertSrc = new String[vertSrc0.length + 1];
         vertSrc[0] = "#version 150";
@@ -1271,6 +1273,9 @@ public class PJOGL extends PGL {
     RGBA4   = GL.GL_RGBA4;
     RGB5_A1 = GL.GL_RGB5_A1;
     RGB565  = GL.GL_RGB565;
+    RGB8    = GL.GL_RGB8;
+    RGBA8   = GL.GL_RGBA8;
+    ALPHA8  = GL.GL_ALPHA8;
 
     READ_ONLY  = GL2GL3.GL_READ_ONLY;
     WRITE_ONLY = GL.GL_WRITE_ONLY;
