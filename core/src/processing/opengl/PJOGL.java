@@ -237,12 +237,15 @@ public class PJOGL extends PGL {
         profile = GLProfile.getGL2ES1();
       } else if (PROFILE == 3) {
         profile = GLProfile.getGL2GL3();
-        shaderSource = 1;
       } else if (PROFILE == 4) {
         profile = GLProfile.getGL4ES3();
-        shaderSource = 1;
       } else throw new RuntimeException(UNSUPPORTED_GLPROF_ERROR);
-      System.out.println(profile);
+
+      if (2 < PROFILE) {
+        texVertShaderSource = convertVertexSource(texVertShaderSource, 120, 150);
+        tex2DFragShaderSource = convertFragmentSource(tex2DFragShaderSource, 120, 150);
+        texRectFragShaderSource = convertFragmentSource(texRectFragShaderSource, 120, 150);
+      }
     } else {
       // Restarting...
       if (canvasAWT != null) {
@@ -825,11 +828,6 @@ public class PJOGL extends PGL {
       } catch (javax.media.opengl.GLException e) {
         gl3 = null;
       }
-//      System.out.println("************");
-//      System.out.println("gl: " + gl);
-//      System.out.println("gl2: " + gl2);
-//      System.out.println("gl2x: " + gl2x);
-//      System.out.println("gl3: " + gl3);
     }
   }
 
@@ -1105,6 +1103,7 @@ public class PJOGL extends PGL {
       line = line.replace("gl_FragColor", "fragColor");
       line = line.replace("texture", "texSampler");
       line = line.replace("texSampler2D(", "texture(");
+      line = line.replace("texSampler2DRect(", "texture(");
       fragSrc[i + 2] = line;
     }
     return fragSrc;

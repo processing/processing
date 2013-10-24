@@ -160,6 +160,7 @@ public abstract class PGL {
   protected static int tex2DVertShader;
   protected static int tex2DFragShader;
   protected static int tex2DShaderContext;
+  protected static int texGeoVBO;
   protected static int tex2DVertLoc;
   protected static int tex2DTCoordLoc;
   protected static int tex2DSamplerLoc;
@@ -189,58 +190,32 @@ public abstract class PGL {
     "#endif\n";
 
   protected static String[] texVertShaderSource = {
-    "attribute vec2 inVertex;\n" +
-    "attribute vec2 inTexcoord;\n" +
-    "varying vec2 vertTexcoord;\n" +
-    "void main() {\n" +
-    "  gl_Position = vec4(inVertex, 0, 1);\n" +
-    "  vertTexcoord = inTexcoord;\n" +
-    "}\n",
-    "#version 150\n" +
-    "in vec2 inVertex;\n" +
-    "in vec2 inTexcoord;\n" +
-    "out vec2 vertTexcoord;" +
-    "void main() {\n" +
-    "  gl_Position = vec4(inVertex, 0, 1);\n" +
-    "  vertTexcoord = inTexcoord;\n" +
-    "}\n"
+    "attribute vec2 position;",
+    "attribute vec2 texCoord;",
+    "varying vec2 vertTexCoord;",
+    "void main() {",
+    "  gl_Position = vec4(position, 0, 1);",
+    "  vertTexCoord = texCoord;",
+    "}"
   };
 
   protected static String[] tex2DFragShaderSource = {
-    SHADER_PREPROCESSOR_DIRECTIVE +
-    "uniform sampler2D textureSampler;\n" +
-    "varying vec2 vertTexcoord;\n" +
-    "void main() {\n" +
-   "  gl_FragColor = texture2D(textureSampler, vertTexcoord.st);\n" +
-    "}\n",
-    "#version 150\n" +
-    SHADER_PREPROCESSOR_DIRECTIVE +
-    "uniform sampler2D textureSampler;\n" +
-    "in vec2 vertTexcoord;\n" +
-    "out vec4 fragColor;\n" +
-    "void main() {\n" +
-    "  fragColor = texture(textureSampler, vertTexcoord.st);\n" +
-    "}\n"
+    SHADER_PREPROCESSOR_DIRECTIVE,
+    "uniform sampler2D texSampler;",
+    "varying vec2 vertTexCoord;",
+    "void main() {",
+   "  gl_FragColor = texture2D(texSampler, vertTexCoord.st);",
+    "}"
   };
 
   protected static String[] texRectFragShaderSource = {
-    SHADER_PREPROCESSOR_DIRECTIVE +
-    "uniform sampler2DRect textureSampler;" +
-    "varying vec2 vertTexcoord;" +
-    "void main() {" +
-    "  gl_FragColor = texture2DRect(textureSampler, vertTexcoord.st);" +
-    "}",
-    "#version 150\n" +
-    SHADER_PREPROCESSOR_DIRECTIVE +
-    "uniform sampler2DRect textureSampler;\n" +
-    "in vec2 vertTexcoord;\n" +
-    "out vec4 fragColor;\n" +
-    "void main() {\n" +
-    "  fragColor = texture(textureSampler, vertTexcoord.st);\n" +
-    "}\n"
+    SHADER_PREPROCESSOR_DIRECTIVE,
+    "uniform sampler2DRect texSampler;",
+    "varying vec2 vertTexCoord;",
+    "void main() {",
+    "  gl_FragColor = texture2DRect(texSampler, vertTexCoord.st);",
+    "}"
   };
-
-  protected static int shaderSource = 0;
 
   /** Which texturing targets are enabled */
   protected static boolean[] texturingTargets = { false, false };
@@ -919,20 +894,20 @@ public abstract class PGL {
     }
   }
 
-  int texGeoVBO;
-  protected void drawTexture2D(int id, int texW, int texH, int scrW, int scrH,
-                               int texX0, int texY0, int texX1, int texY1,
-                               int scrX0, int scrY0, int scrX1, int scrY1) {
+
+  protected void initTex2DShader() {
     if (!loadedTex2DShader || tex2DShaderContext != glContext) {
-      tex2DVertShader = createShader(VERTEX_SHADER, texVertShaderSource[shaderSource]);
-      tex2DFragShader = createShader(FRAGMENT_SHADER, tex2DFragShaderSource[shaderSource]);
+      String vertSource = PApplet.join(texVertShaderSource, "\n");
+      String fragSource = PApplet.join(tex2DFragShaderSource, "\n");
+      tex2DVertShader = createShader(VERTEX_SHADER, vertSource);
+      tex2DFragShader = createShader(FRAGMENT_SHADER, fragSource);
       if (0 < tex2DVertShader && 0 < tex2DFragShader) {
         tex2DShaderProgram = createProgram(tex2DVertShader, tex2DFragShader);
       }
       if (0 < tex2DShaderProgram) {
-        tex2DVertLoc = getAttribLocation(tex2DShaderProgram, "inVertex");
-        tex2DTCoordLoc = getAttribLocation(tex2DShaderProgram, "inTexcoord");
-        tex2DSamplerLoc = getUniformLocation(tex2DShaderProgram, "textureSampler");
+        tex2DVertLoc = getAttribLocation(tex2DShaderProgram, "position");
+        tex2DTCoordLoc = getAttribLocation(tex2DShaderProgram, "texCoord");
+        tex2DSamplerLoc = getUniformLocation(tex2DShaderProgram, "texSampler");
       }
       loadedTex2DShader = true;
       tex2DShaderContext = glContext;
@@ -946,6 +921,13 @@ public abstract class PGL {
     if (texData == null) {
       texData = allocateDirectFloatBuffer(texCoords.length);
     }
+  }
+
+
+  protected void drawTexture2D(int id, int texW, int texH, int scrW, int scrH,
+                               int texX0, int texY0, int texX1, int texY1,
+                               int scrX0, int scrY0, int scrX1, int scrY1) {
+    initTex2DShader();
 
     if (0 < tex2DShaderProgram) {
       // The texture overwrites anything drawn earlier.
@@ -1011,14 +993,6 @@ public abstract class PGL {
       vertexAttribPointer(tex2DVertLoc, 2, FLOAT, false, 4 * SIZEOF_FLOAT, 0);
       vertexAttribPointer(tex2DTCoordLoc, 2, FLOAT, false, 4 * SIZEOF_FLOAT, 2 * SIZEOF_FLOAT);
 
-//      texData.position(0);
-//      vertexAttribPointer(tex2DVertLoc, 2, FLOAT, false, 4 * SIZEOF_FLOAT,
-//                          texData);
-//      texData.position(2);
-//      vertexAttribPointer(tex2DTCoordLoc, 2, FLOAT, false, 4 * SIZEOF_FLOAT,
-//                          texData);
-//      pg.report("HERE 2");
-
       drawArrays(TRIANGLE_STRIP, 0, 4);
 
       bindBuffer(ARRAY_BUFFER, 0); // Making sure that no VBO is bound at this point.
@@ -1046,20 +1020,20 @@ public abstract class PGL {
   }
 
 
-  protected void drawTextureRect(int id, int texW, int texH, int scrW, int scrH,
-                                 int texX0, int texY0, int texX1, int texY1,
-                                 int scrX0, int scrY0, int scrX1, int scrY1) {
+  protected void initTexRectShader() {
     if (!loadedTexRectShader || texRectShaderContext != glContext) {
-      texRectVertShader = createShader(VERTEX_SHADER, texVertShaderSource[shaderSource]);
-      texRectFragShader = createShader(FRAGMENT_SHADER, texRectFragShaderSource[shaderSource]);
+      String vertSource = PApplet.join(texVertShaderSource, "\n");
+      String fragSource = PApplet.join(texRectFragShaderSource, "\n");
+      texRectVertShader = createShader(VERTEX_SHADER, vertSource);
+      texRectFragShader = createShader(FRAGMENT_SHADER, fragSource);
       if (0 < texRectVertShader && 0 < texRectFragShader) {
         texRectShaderProgram = createProgram(texRectVertShader,
                                              texRectFragShader);
       }
       if (0 < texRectShaderProgram) {
-        texRectVertLoc = getAttribLocation(texRectShaderProgram, "inVertex");
-        texRectTCoordLoc = getAttribLocation(texRectShaderProgram, "inTexcoord");
-        texRectSamplerLoc = getUniformLocation(texRectShaderProgram, "textureSampler");
+        texRectVertLoc = getAttribLocation(texRectShaderProgram, "position");
+        texRectTCoordLoc = getAttribLocation(texRectShaderProgram, "texCoord");
+        texRectSamplerLoc = getUniformLocation(texRectShaderProgram, "texSampler");
       }
       loadedTexRectShader = true;
       texRectShaderContext = glContext;
@@ -1069,6 +1043,13 @@ public abstract class PGL {
       bindBuffer(ARRAY_BUFFER, texGeoVBO);
       bufferData(ARRAY_BUFFER, 16 * SIZEOF_FLOAT, null, STATIC_DRAW);
     }
+  }
+
+
+  protected void drawTextureRect(int id, int texW, int texH, int scrW, int scrH,
+                                 int texX0, int texY0, int texX1, int texY1,
+                                 int scrX0, int scrY0, int scrX1, int scrY1) {
+    initTexRectShader();
 
     if (texData == null) {
       texData = allocateDirectFloatBuffer(texCoords.length);
@@ -1135,17 +1116,8 @@ public abstract class PGL {
       bindBuffer(PGL.ARRAY_BUFFER, texGeoVBO);
       bufferData(PGL.ARRAY_BUFFER, 16 * SIZEOF_FLOAT, texData, PGL.STATIC_DRAW);
 
-//      pg.report("HERE 1");
       vertexAttribPointer(texRectVertLoc, 2, FLOAT, false, 4 * SIZEOF_FLOAT, 0);
       vertexAttribPointer(texRectTCoordLoc, 2, FLOAT, false, 4 * SIZEOF_FLOAT, 2 * SIZEOF_FLOAT);
-
-
-//      texData.position(0);
-//      vertexAttribPointer(texRectVertLoc, 2, FLOAT, false, 4 * SIZEOF_FLOAT,
-//                          texData);
-//      texData.position(2);
-//      vertexAttribPointer(texRectTCoordLoc, 2, FLOAT, false, 4 * SIZEOF_FLOAT,
-//                          texData);
 
       drawArrays(TRIANGLE_STRIP, 0, 4);
 
