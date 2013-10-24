@@ -527,8 +527,8 @@ public abstract class PGL {
     boolean multisample = 1 < numSamples;
 
     boolean packed = ext.indexOf("packed_depth_stencil") != -1;
-    int depthBits = getDepthBits();
-    int stencilBits = getStencilBits();
+    int depthBits = PApplet.min(REQUESTED_DEPTH_BITS, getDepthBits());
+    int stencilBits = PApplet.min(REQUESTED_STENCIL_BITS, getStencilBits());
 
     genTextures(2, glColorTex);
     for (int i = 0; i < 2; i++) {

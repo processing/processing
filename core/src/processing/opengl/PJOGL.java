@@ -452,15 +452,13 @@ public class PJOGL extends PGL {
 
   @Override
   protected int getDepthBits() {
-    if (USE_JOGL_FBOLAYER) return capabilities.getDepthBits();
-    else return super.getDepthBits();
+    return capabilities.getDepthBits();
   }
 
 
   @Override
   protected int getStencilBits() {
-    if (USE_JOGL_FBOLAYER) return capabilities.getStencilBits();
-    else return super.getStencilBits();
+    return capabilities.getStencilBits();
   }
 
 
