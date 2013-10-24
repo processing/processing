@@ -1039,31 +1039,33 @@ public class PJOGL extends PGL {
 
 
   @Override
-  protected String[] loadFragmentShader(URL url) {
+  protected String[] loadVertexShader(String filename, int version) {
+    if (2 < PROFILE && version < 150) {
+      String[] fragSrc0 = pg.parent.loadStrings(filename);
+      return convertFragmentSource(fragSrc0, version, 150);
+    } else {
+      return pg.parent.loadStrings(filename);
+    }
+  }
+
+
+  @Override
+  protected String[] loadFragmentShader(String filename, int version) {
+    if (2 < PROFILE && version < 150) {
+      String[] vertSrc0 = pg.parent.loadStrings(filename);
+      return convertVertexSource(vertSrc0, version, 150);
+    } else {
+      return pg.parent.loadStrings(filename);
+    }
+  }
+
+
+  @Override
+  protected String[] loadFragmentShader(URL url, int version) {
     try {
-      if (2 < PROFILE) {
-//      if (false) {
+      if (2 < PROFILE && version < 150) {
         String[] fragSrc0 = PApplet.loadStrings(url.openStream());
-        // PApplet.join(PApplet.loadStrings(url.openStream()), "\n");
-        String[] fragSrc = new String[fragSrc0.length + 2];
-        fragSrc[0] = "#version 150";
-        fragSrc[1] = "out vec4 fragColor;";
-
-        for (int i = 0; i < fragSrc0.length; i++) {
-          String line = fragSrc0[i];
-          System.out.print(line + " ---> ");
-
-          line = line.replace("varying", "in");
-          line = line.replace("attribute", "in");
-          line = line.replace("gl_FragColor", "fragColor");
-          line = line.replace("texture", "texSampler");
-          line = line.replace("texSampler2D(", "texture(");
-
-          fragSrc[i + 2] = line;
-          System.out.println(line);
-        }
-
-        return fragSrc;
+        return convertFragmentSource(fragSrc0, version, 150);
       } else {
         return PApplet.loadStrings(url.openStream());
       }
@@ -1073,25 +1075,13 @@ public class PJOGL extends PGL {
     return null;
   }
 
+
   @Override
-  protected String[] loadVertexShader(URL url) {
+  protected String[] loadVertexShader(URL url, int version) {
     try {
-      if (2 < PROFILE) {
-//      if (false) {
+      if (2 < PROFILE && version < 150) {
         String[] vertSrc0 = PApplet.loadStrings(url.openStream());
-        String[] vertSrc = new String[vertSrc0.length + 1];
-        vertSrc[0] = "#version 150";
-
-        for (int i = 0; i < vertSrc0.length; i++) {
-          String line = vertSrc0[i];
-          System.out.print(line + " ---> ");
-          line = line.replace("attribute", "in");
-          line = line.replace("varying", "out");
-          vertSrc[i + 1] = line;
-          System.out.println(line);
-        }
-
-        return vertSrc;
+        return convertVertexSource(vertSrc0, version, 150);
       } else {
         return PApplet.loadStrings(url.openStream());
       }
@@ -1099,6 +1089,40 @@ public class PJOGL extends PGL {
       PGraphics.showException("Cannot load vertex shader " + url.getFile());
     }
     return null;
+  }
+
+
+  @Override
+  protected String[] convertFragmentSource(String[] fragSrc0,
+                                           int version0, int version1) {
+    String[] fragSrc = new String[fragSrc0.length + 2];
+    fragSrc[0] = "#version 150";
+    fragSrc[1] = "out vec4 fragColor;";
+    for (int i = 0; i < fragSrc0.length; i++) {
+      String line = fragSrc0[i];
+      line = line.replace("varying", "in");
+      line = line.replace("attribute", "in");
+      line = line.replace("gl_FragColor", "fragColor");
+      line = line.replace("texture", "texSampler");
+      line = line.replace("texSampler2D(", "texture(");
+      fragSrc[i + 2] = line;
+    }
+    return fragSrc;
+  }
+
+
+  @Override
+  protected String[] convertVertexSource(String[] vertSrc0,
+                                         int version0, int version1) {
+    String[] vertSrc = new String[vertSrc0.length + 1];
+    vertSrc[0] = "#version 150";
+    for (int i = 0; i < vertSrc0.length; i++) {
+      String line = vertSrc0[i];
+      line = line.replace("attribute", "in");
+      line = line.replace("varying", "out");
+      vertSrc[i + 1] = line;
+    }
+    return vertSrc;
   }
 
 

@@ -6284,19 +6284,26 @@ public class PGraphicsOpenGL extends PGraphics {
     shader.setType(type);
     shader.setFragmentShader(fragFilename);
     if (type == PShader.POINT) {
-      shader.setVertexShader(defPointShaderVertURL);
+      String[] vertSource = pgl.loadVertexShader(defPointShaderVertURL, 120);
+      shader.setVertexShader(vertSource);
     } else if (type == PShader.LINE) {
-      shader.setVertexShader(defLineShaderVertURL);
+      String[] vertSource = pgl.loadVertexShader(defLineShaderVertURL, 120);
+      shader.setVertexShader(vertSource);
     } else if (type == PShader.TEXLIGHT) {
-      shader.setVertexShader(defTexlightShaderVertURL);
+      String[] vertSource = pgl.loadVertexShader(defTexlightShaderVertURL, 120);
+      shader.setVertexShader(vertSource);
     } else if (type == PShader.LIGHT) {
-      shader.setVertexShader(defLightShaderVertURL);
+      String[] vertSource = pgl.loadVertexShader(defLightShaderVertURL, 120);
+      shader.setVertexShader(vertSource);
     } else if (type == PShader.TEXTURE) {
-      shader.setVertexShader(defTextureShaderVertURL);
+      String[] vertSource = pgl.loadVertexShader(defTextureShaderVertURL, 120);
+      shader.setVertexShader(vertSource);
     } else if (type == PShader.COLOR) {
-      shader.setVertexShader(defColorShaderVertURL);
+      String[] vertSource = pgl.loadVertexShader(defColorShaderVertURL, 120);
+      shader.setVertexShader(vertSource);
     } else {
-      shader.setVertexShader(defTextureShaderVertURL);
+      String[] vertSource = pgl.loadVertexShader(defTextureShaderVertURL, 120);
+      shader.setVertexShader(vertSource);
     }
     return shader;
   }
@@ -6382,8 +6389,8 @@ public class PGraphicsOpenGL extends PGraphics {
       if (tex) {
         if (useDefault || !polyShader.checkPolyType(PShader.TEXLIGHT)) {
           if (defTexlightShader == null) {
-            String[] vertSource = pgl.loadVertexShader(defTexlightShaderVertURL);
-            String[] fragSource = pgl.loadFragmentShader(defTextureShaderFragURL);
+            String[] vertSource = pgl.loadVertexShader(defTexlightShaderVertURL, 120);
+            String[] fragSource = pgl.loadFragmentShader(defTextureShaderFragURL, 120);
             defTexlightShader = new PShader(parent, vertSource, fragSource);
           }
           shader = defTexlightShader;
@@ -6393,8 +6400,8 @@ public class PGraphicsOpenGL extends PGraphics {
       } else {
         if (useDefault || !polyShader.checkPolyType(PShader.LIGHT)) {
           if (defLightShader == null) {
-            String[] vertSource = pgl.loadVertexShader(defLightShaderVertURL);
-            String[] fragSource = pgl.loadFragmentShader(defColorShaderFragURL);
+            String[] vertSource = pgl.loadVertexShader(defLightShaderVertURL, 120);
+            String[] fragSource = pgl.loadFragmentShader(defColorShaderFragURL, 120);
             defLightShader = new PShader(parent, vertSource, fragSource);
           }
           shader = defLightShader;
@@ -6411,8 +6418,8 @@ public class PGraphicsOpenGL extends PGraphics {
       if (tex) {
         if (useDefault || !polyShader.checkPolyType(PShader.TEXTURE)) {
           if (defTextureShader == null) {
-            String[] vertSource = pgl.loadVertexShader(defTextureShaderVertURL);
-            String[] fragSource = pgl.loadFragmentShader(defTextureShaderFragURL);
+            String[] vertSource = pgl.loadVertexShader(defTextureShaderVertURL, 120);
+            String[] fragSource = pgl.loadFragmentShader(defTextureShaderFragURL, 120);
             defTextureShader = new PShader(parent, vertSource, fragSource);
           }
           shader = defTextureShader;
@@ -6422,8 +6429,8 @@ public class PGraphicsOpenGL extends PGraphics {
       } else {
         if (useDefault || !polyShader.checkPolyType(PShader.COLOR)) {
           if (defColorShader == null) {
-            String[] vertSource = pgl.loadVertexShader(defColorShaderVertURL);
-            String[] fragSource = pgl.loadFragmentShader(defColorShaderFragURL);
+            String[] vertSource = pgl.loadVertexShader(defColorShaderVertURL, 120);
+            String[] fragSource = pgl.loadFragmentShader(defColorShaderFragURL, 120);
             defColorShader = new PShader(parent, vertSource, fragSource);
           }
           shader = defColorShader;
@@ -6445,8 +6452,8 @@ public class PGraphicsOpenGL extends PGraphics {
     PShader shader;
     if (lineShader == null) {
       if (defLineShader == null) {
-        String[] vertSource = pgl.loadVertexShader(defLineShaderVertURL);
-        String[] fragSource = pgl.loadFragmentShader(defLineShaderFragURL);
+        String[] vertSource = pgl.loadVertexShader(defLineShaderVertURL, 120);
+        String[] fragSource = pgl.loadFragmentShader(defLineShaderFragURL, 120);
         defLineShader = new PShader(parent, vertSource, fragSource);
       }
       shader = defLineShader;
@@ -6464,8 +6471,8 @@ public class PGraphicsOpenGL extends PGraphics {
     PShader shader;
     if (pointShader == null) {
       if (defPointShader == null) {
-        String[] vertSource = pgl.loadVertexShader(defPointShaderVertURL);
-        String[] fragSource = pgl.loadFragmentShader(defPointShaderFragURL);
+        String[] vertSource = pgl.loadVertexShader(defPointShaderVertURL, 120);
+        String[] fragSource = pgl.loadFragmentShader(defPointShaderFragURL, 120);
         defPointShader = new PShader(parent, vertSource, fragSource);
       }
       shader = defPointShader;

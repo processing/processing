@@ -315,21 +315,34 @@ public class PShader implements PConstants {
 
   public void setVertexShader(String vertFilename) {
     this.vertexFilename = vertFilename;
+    vertexShaderSource = pgl.loadFragmentShader(vertFilename);
   }
 
 
   public void setVertexShader(URL vertURL) {
     this.vertexURL = vertURL;
+    vertexShaderSource = pgl.loadVertexShader(vertURL);
+  }
+
+
+  public void setVertexShader(String[] vertSource) {
+    vertexShaderSource = vertSource;
   }
 
 
   public void setFragmentShader(String fragFilename) {
     this.fragmentFilename = fragFilename;
+    fragmentShaderSource = pgl.loadVertexShader(fragFilename);
   }
 
 
   public void setFragmentShader(URL fragURL) {
     this.fragmentURL = fragURL;
+    fragmentShaderSource = pgl.loadVertexShader(fragURL);
+  }
+
+  public void setFragmentShader(String[] fragSource) {
+    fragmentShaderSource = fragSource;
   }
 
 
@@ -1099,7 +1112,7 @@ public class PShader implements PConstants {
     if (textureLoc == -1) {
       textureLoc = getUniformLoc("texSampler");
     }
-    System.err.println("textureLoc: " + textureLoc);
+
     texMatrixLoc = getUniformLoc("texMatrix");
     texOffsetLoc = getUniformLoc("texOffset");
 
@@ -1145,7 +1158,6 @@ public class PShader implements PConstants {
 
   protected void bindTyped() {
     if (pg == null) {
-      System.out.println(" setting pg and uniforms " + pg);
       setRenderer(PGraphicsOpenGL.pgCurrent);
       loadAttributes();
       loadUniforms();

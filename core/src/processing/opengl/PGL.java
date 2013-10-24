@@ -212,7 +212,6 @@ public abstract class PGL {
     "varying vec2 vertTexcoord;\n" +
     "void main() {\n" +
    "  gl_FragColor = texture2D(textureSampler, vertTexcoord.st);\n" +
-//    "  gl_FragColor = vec4(vertTexcoord.st, 0, 1);\n" +
     "}\n",
     "#version 150\n" +
     SHADER_PREPROCESSOR_DIRECTIVE +
@@ -220,8 +219,7 @@ public abstract class PGL {
     "in vec2 vertTexcoord;\n" +
     "out vec4 fragColor;\n" +
     "void main() {\n" +
-//    "  fragColor = texture(textureSampler, vertTexcoord.st);\n" +
-    "  fragColor = vec4(vertTexcoord.st, 0, 1);\n" +
+    "  fragColor = texture(textureSampler, vertTexcoord.st);\n" +
     "}\n"
   };
 
@@ -1454,56 +1452,67 @@ public abstract class PGL {
     }
   }
 
-  /**
-   * Loads and compiles the vertex shader contained in file.
-   *
-   * @param file String
-   */
+
   protected String[] loadVertexShader(String filename) {
     return pg.parent.loadStrings(filename);
-    //PApplet.join(parent.loadStrings(filename), "\n");
   }
 
-  /**
-   * Loads and compiles the fragment shader contained in file.
-   *
-   * @param file String
-   */
+
   protected String[] loadFragmentShader(String filename) {
     return pg.parent.loadStrings(filename);
-    // PApplet.join(parent.loadStrings(filename), "\n");
   }
 
-  /**
-   * Loads and compiles the fragment shader contained in the URL.
-   *
-   * @param url URL
-   */
+
   protected String[] loadFragmentShader(URL url) {
     try {
       return PApplet.loadStrings(url.openStream());
-      // PApplet.join(PApplet.loadStrings(url.openStream()), "\n");
     } catch (IOException e) {
       PGraphics.showException("Cannot load fragment shader " + url.getFile());
     }
     return null;
   }
 
-  /**
-   * Loads and compiles the vertex shader contained in the URL.
-   *
-   * @param file String
-   */
+
   protected String[] loadVertexShader(URL url) {
     try {
       return PApplet.loadStrings(url.openStream());
-      //PApplet.join(PApplet.loadStrings(url.openStream()), "\n");
     } catch (IOException e) {
       PGraphics.showException("Cannot load vertex shader " + url.getFile());
     }
     return null;
   }
 
+
+  protected String[] loadVertexShader(String filename, int version) {
+    return loadVertexShader(filename);
+  }
+
+
+  protected String[] loadFragmentShader(String filename, int version) {
+    return loadFragmentShader(filename);
+  }
+
+
+  protected String[] loadFragmentShader(URL url, int version) {
+    return loadFragmentShader(url);
+  }
+
+
+  protected String[] loadVertexShader(URL url, int version) {
+    return loadVertexShader(url);
+  }
+
+
+  protected String[] convertFragmentSource(String[] fragSrc0,
+                                           int version0, int version1) {
+    return fragSrc0;
+  }
+
+
+  protected String[] convertVertexSource(String[] vertSrc0,
+                                         int version0, int version1) {
+    return vertSrc0;
+  }
 
 
   protected int createShader(int shaderType, String source) {
