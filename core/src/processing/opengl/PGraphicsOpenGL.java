@@ -76,6 +76,8 @@ public class PGraphicsOpenGL extends PGraphics {
     "for the rest of the sketch's execution";
   static final String UNSUPPORTED_SHAPE_FORMAT_ERROR =
     "Unsupported shape format";
+  static final String MISSING_UV_TEXCOORDS_ERROR =
+    "No uv texture coordinates supplied with vertex() call";
   static final String INVALID_FILTER_SHADER_ERROR =
     "Your shader needs to be of TEXTURE type to be used as a filter";
   static final String INCONSISTENT_SHADER_TYPES =
@@ -2114,6 +2116,7 @@ public class PGraphicsOpenGL extends PGraphics {
   @Override
   public void vertex(float x, float y) {
     vertexImpl(x, y, 0, 0, 0);
+    if (textureImage != null) PGraphics.showWarning(MISSING_UV_TEXCOORDS_ERROR);
   }
 
 
@@ -2126,6 +2129,7 @@ public class PGraphicsOpenGL extends PGraphics {
   @Override
   public void vertex(float x, float y, float z) {
     vertexImpl(x, y, z, 0, 0);
+    if (textureImage != null) PGraphics.showWarning(MISSING_UV_TEXCOORDS_ERROR);
   }
 
 
@@ -5036,6 +5040,11 @@ public class PGraphicsOpenGL extends PGraphics {
     if (0 < parent.frameCount) {
       clearColorBuffer = true;
     }
+    // Setting the background as opaque. If this an offscreen surface, the
+    // alpha channel will be set to 1 in endOffscreenDraw(), even if
+    // blending operations during draw create translucent areas in the
+    // color buffer.
+    backgroundA = 1;
   }
 
 
@@ -5324,17 +5333,17 @@ public class PGraphicsOpenGL extends PGraphics {
     setgetPixels = true;
     super.setImpl(sourceImage, sourceX, sourceY, sourceWidth, sourceHeight,
                   targetX, targetY);
-// do we need this?
-// see https://github.com/processing/processing/issues/2125
-//    if (sourceImage.format == RGB) {
-//      int targetOffset = targetY * width + targetX;
-//      for (int y = sourceY; y < sourceY + sourceHeight; y++) {
-//        for (int x = targetOffset; x < targetOffset + sourceWidth; x++) {
-//          pixels[x] |= 0xff000000;
-//        }
-//        targetOffset += width;
-//      }
-//    }
+ // do we need this?
+ // see https://github.com/processing/processing/issues/2125
+//     if (sourceImage.format == RGB) {
+//       int targetOffset = targetY * width + targetX;
+//       for (int y = sourceY; y < sourceY + sourceHeight; y++) {
+//         for (int x = targetOffset; x < targetOffset + sourceWidth; x++) {
+//           pixels[x] |= 0xff000000;
+//         }
+//         targetOffset += width;
+//       }
+//     }
   }
 
 
@@ -6097,6 +6106,15 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void endOffscreenDraw() {
+    // Set alpha channel to opaque in order to match behavior of JAVA2D:
+    // https://github.com/processing/processing/issues/1844
+    // but still not working as expected. Some strange artifacts with multismapled
+    // surfaces (see second code example in the issue above).
+//    pgl.colorMask(false, false, false, true);
+//    pgl.clearColor(0, 0, 0, 1);
+//    pgl.clear(PGL.COLOR_BUFFER_BIT);
+//    pgl.colorMask(true, true, true, true);
+
     if (offscreenMultisample) {
       multisampleFramebuffer.copy(offscreenFramebuffer, currentFramebuffer);
     }

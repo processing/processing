@@ -245,11 +245,17 @@ public class PJOGL extends PGL {
         } catch (GLException ex) {
           profile = GLProfile.getMaxProgrammable(true);
         }
+        if (!profile.isGL3()) {
+          PGraphics.showWarning("Requested profile GL3 but is not available, got: " + profile);
+        }
       } else if (PROFILE == 4) {
         try {
           profile = GLProfile.getGL4ES3();
         } catch (GLException ex) {
           profile = GLProfile.getMaxProgrammable(true);
+        }
+        if (!profile.isGL4()) {
+          PGraphics.showWarning("Requested profile GL4 but is not available, got: " + profile);
         }
       } else throw new RuntimeException(UNSUPPORTED_GLPROF_ERROR);
 
