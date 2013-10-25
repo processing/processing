@@ -10197,6 +10197,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
       color0 = color = constStroke ? strokeColor : strokeColors[i0];
       weight = constStroke ? strokeWeight : strokeWeights[i0];
+      weight *= transformScale();
 
       tess.setLineVertex(vidx++, strokeVertices, i0, i1, color, +weight/2);
       tess.lineIndices[iidx++] = (short) (count + 0);
@@ -10206,6 +10207,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
       color = constStroke ? strokeColor : strokeColors[i1];
       weight = constStroke ? strokeWeight : strokeWeights[i1];
+      weight *= transformScale();
 
       tess.setLineVertex(vidx++, strokeVertices, i1, i0, color, -weight/2);
       tess.lineIndices[iidx++] = (short) (count + 2);
@@ -10433,7 +10435,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     boolean noCapsJoins() {
-      // The stroke weight is scaled so it correspons to the current
+      // The stroke weight is scaled so it corresponds to the current
       // "zoom level" being applied on the geometry due to scaling:
       return tess.renderMode == IMMEDIATE &&
              transformScale() * strokeWeight < PGL.MIN_CAPS_JOINS_WEIGHT;
