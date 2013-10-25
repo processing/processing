@@ -1,5 +1,11 @@
 0223 core
 
+opengl 
+X Using sketchQuality() does not work properly with P3D, OPENGL, P2D
+X   https://github.com/processing/processing/pull/2157
+X Fix crashes when the sketch window is resized
+X   https://github.com/processing/processing/issues/1880
+X   https://github.com/processing/processing/pull/2156
 
 high
 _ Sort out blending differences with P2D/P3D

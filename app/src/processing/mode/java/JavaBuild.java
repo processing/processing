@@ -1118,23 +1118,24 @@ public class JavaBuild {
     
     File folder = null;
     String platformName = Base.getPlatformName();
+    boolean embedJava = Preferences.getBoolean("export.application.embed_java");
     if (Library.hasMultipleArch(PApplet.platform, importedLibraries)) {
       if (Base.getNativeBits() == 32) {
         // export the 32-bit version
         folder = new File(sketch.getFolder(), "application." + platformName + "32");
-        if (!exportApplication(folder, PApplet.platform, 32)) {
+        if (!exportApplication(folder, PApplet.platform, 32, embedJava)) {
           return false;
         }
       } else if (Base.getNativeBits() == 64) {
         // export the 64-bit version
         folder = new File(sketch.getFolder(), "application." + platformName + "64");
-        if (!exportApplication(folder, PApplet.platform, 64)) {
+        if (!exportApplication(folder, PApplet.platform, 64, embedJava)) {
           return false;
         }
       }
     } else { // just make a single one for this platform
       folder = new File(sketch.getFolder(), "application." + platformName);
-      if (!exportApplication(folder, PApplet.platform, 0)) {
+      if (!exportApplication(folder, PApplet.platform, 0, embedJava)) {
         return false;
       }
     }
@@ -1147,7 +1148,8 @@ public class JavaBuild {
    */
   protected boolean exportApplication(File destFolder,
                                       int exportPlatform,
-                                      int exportBits) throws IOException, SketchException {
+                                      int exportBits,
+                                      boolean embedJava) throws IOException, SketchException {
     // TODO this should probably be a dialog box instead of a warning
     // on the terminal. And the message should be written better than this.
     // http://code.google.com/p/processing/issues/detail?id=884
@@ -1178,13 +1180,18 @@ public class JavaBuild {
     /// on macosx, need to copy .app skeleton since that's
     /// also where the jar files will be placed
     File dotAppFolder = null;
-    String jdkFolderName = null;
+//    String jdkFolderName = null;
+    String jvmRuntime = "";
     if (exportPlatform == PConstants.MACOSX) {
       dotAppFolder = new File(destFolder, sketch.getName() + ".app");
 
       File contentsOrig = new File(Base.getJavaHome(), "../../../../..");
-      File jdkFolder = new File(Base.getJavaHome(), "../../..");
-      jdkFolderName = jdkFolder.getCanonicalFile().getName();
+
+      if (embedJava) {
+        File jdkFolder = new File(Base.getJavaHome(), "../../..");
+        String jdkFolderName = jdkFolder.getCanonicalFile().getName();
+        jvmRuntime = "<key>JVMRuntime</key>\n    <string>" + jdkFolderName + "</string>";
+      }
 
 //      File dotAppSkeleton = mode.getContentFile("application/template.app");
 //      Base.copyDir(dotAppSkeleton, dotAppFolder);
@@ -1209,8 +1216,10 @@ public class JavaBuild {
       writer.close();
       
       // Use faster(?) native copy here (also to do sym links)
-      Base.copyDirNative(new File(contentsOrig, "PlugIns"),
-                         new File(contentsFolder, "PlugIns"));
+      if (embedJava) {
+        Base.copyDirNative(new File(contentsOrig, "PlugIns"),
+                           new File(contentsFolder, "PlugIns"));
+      }
       
       File resourcesFolder = new File(contentsFolder, "Resources");
       Base.copyDir(new File(contentsOrig, "Resources/en.lproj"), 
@@ -1243,10 +1252,14 @@ public class JavaBuild {
       }
       */
     } else if (exportPlatform == PConstants.LINUX) {
-      Base.copyDirNative(Base.getJavaHome(), new File(destFolder, "java"));
+      if (embedJava) {
+        Base.copyDirNative(Base.getJavaHome(), new File(destFolder, "java"));
+      }
       
     } else if (exportPlatform == PConstants.WINDOWS) {
-      Base.copyDir(Base.getJavaHome(), new File(destFolder, "java"));
+      if (embedJava) {
+        Base.copyDir(Base.getJavaHome(), new File(destFolder, "java"));
+      }
     }
 
 
@@ -1480,9 +1493,9 @@ public class JavaBuild {
         if (lines[i].indexOf("@@") != -1) {
           StringBuffer sb = new StringBuffer(lines[i]);
           int index = 0;
-          while ((index = sb.indexOf("@@jdk_folder@@")) != -1) {
-            sb.replace(index, index + "@@jdk_folder@@".length(),
-                       jdkFolderName);
+          while ((index = sb.indexOf("@@jvm_runtime@@")) != -1) {
+            sb.replace(index, index + "@@jvm_runtime@@".length(),
+                       jvmRuntime);
           }
           while ((index = sb.indexOf("@@jvm_options_list@@")) != -1) {
             sb.replace(index, index + "@@jvm_options_list@@".length(),
