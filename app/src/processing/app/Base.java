@@ -1592,17 +1592,28 @@ public class Base {
   }
 
 
-  /**
-   * Return whether sketches will run as 32- or 64-bits. On Linux and Windows,
-   * this is the bit depth of the machine, while on OS X it's determined by the
-   * setting from preferences, since both 32- and 64-bit are supported.
+  // Because the Oracle JDK is 64-bit only, we lose this ability, feature, 
+  // edge case, headache.
+//  /**
+//   * Return whether sketches will run as 32- or 64-bits. On Linux and Windows,
+//   * this is the bit depth of the machine, while on OS X it's determined by the
+//   * setting from preferences, since both 32- and 64-bit are supported.
+//   */
+//  static public int getNativeBits() {
+//    if (Base.isMacOS()) {
+//      return Preferences.getInteger("run.options.bits"); //$NON-NLS-1$
+//    }
+//    return nativeBits;
+//  }
+  
+  /** 
+   * Return whether sketches will run as 32- or 64-bits based 
+   * on the JVM that's in use. 
    */
   static public int getNativeBits() {
-    if (Base.isMacOS()) {
-      return Preferences.getInteger("run.options.bits"); //$NON-NLS-1$
-    }
     return nativeBits;
   }
+
 
   /*
   static public String getPlatformName() {
@@ -2419,7 +2430,12 @@ public class Base {
   /** Get the path to the embedded Java executable. */
   static public String getJavaPath() {
     String javaPath = "bin/java" + (isWindows() ? ".exe" : "");
-    return new File(getJavaHome(), javaPath).getAbsolutePath();
+    File javaFile = new File(getJavaHome(), javaPath);
+    try {
+      return javaFile.getCanonicalPath();
+    } catch (IOException e) {
+      return javaFile.getAbsolutePath();
+    }
     /*
     if (isMacOS()) {
       //return "Contents/PlugIns/jdk1.7.0_40.jdk/Contents/Home/jre/bin/java";

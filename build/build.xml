@@ -570,7 +570,7 @@
     </bundleapp>
 
     <copy todir="macosx/work/Processing.app/Contents/Java">
-      <fileset dir=".." includes="core/library/**" />
+      <fileset dir=".." includes="core/library/**" /> <!-- why this? -->
       <fileset dir="shared" includes="launch4j/**" />
       <fileset dir="shared" includes="lib/**" />
       <fileset file="shared/revisions.txt" />

@@ -67,26 +67,7 @@ public class Commander implements RunnerListener {
   PrintStream systemErr;
 
 
-  static public void main(String[] args) {
-    /*
-    if (args == null || args.length == 0) {
-//      System.out.println(System.getProperty("user.dir"));
-      args = new String[] {
-        "--export",
-//        "--build",
-//        "--run",
-//        "--present",
-        "--force",
-//        "--platform=windows",
-        "--platform=macosx",
-        "--bits=64",
-        "--sketch=/Users/fry/coconut/processing/java/examples/Basics/Lights/Directional",
-//        "--sketch=/Users/fry/coconut/sketchbook/sketchbook_libraries_test",
-        "--output=/Users/fry/Desktop/test-build"
-      };
-    }
-    */
-    
+  static public void main(String[] args) {    
     // Do this early so that error messages go to the console
     Base.setCommandLine();
     // init the platform so that prefs and other native code is ready to go
@@ -108,7 +89,8 @@ public class Commander implements RunnerListener {
     boolean force = false;  // replace that no good output folder
 //    String preferencesPath = null;
     int platform = PApplet.platform; // default to this platform
-    int platformBits = 0;
+//    int platformBits = 0;
+    int platformBits = Base.getNativeBits();
     int task = HELP;
     boolean embedJava = true; 
 
@@ -122,6 +104,9 @@ public class Commander implements RunnerListener {
       e.printStackTrace();
       System.exit(1);
     }
+    
+//    File preferencesFile = Base.getSettingsFile("preferences.txt");
+//    System.out.println("Preferences file at " + preferencesFile.getAbsolutePath());
     
     for (String arg : args) {
       if (arg.length() == 0) {
@@ -280,10 +265,10 @@ public class Commander implements RunnerListener {
 //              if (platformBits == 0) {
 //                platformBits = Base.getNativeBits();
 //              }
-              if (platformBits == 0 &&
-                Library.hasMultipleArch(platform, build.getImportedLibraries())) {
-                complainAndQuit("This sketch can be exported for 32- or 64-bit, please specify one.", true);
-              }
+//              if (platformBits == 0 &&
+//                Library.hasMultipleArch(platform, build.getImportedLibraries())) {
+//                complainAndQuit("This sketch can be exported for 32- or 64-bit, please specify one.", true);
+//              }
               success = build.exportApplication(outputFolder, platform, platformBits, embedJava);
             }
           }

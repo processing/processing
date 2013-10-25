@@ -80,30 +80,28 @@ public class InstallCommander implements Tool {
       writer.println("#!/bin/sh");
 
       String[] jarList = new String[] {
-        "lib/pde.jar",
-        "lib/antlr.jar",
-        "lib/jna.jar",
-        "lib/ant.jar",
-        "lib/ant-launcher.jar",
+        "pde.jar",
+        "antlr.jar",
+        "jna.jar",
+        "ant.jar",
+        "ant-launcher.jar",
 
         // extra libraries for new JDI setup
-        "lib/org-netbeans-swing-outline.jar",
-        "lib/com.ibm.icu_4.4.2.v20110823.jar",
-        "lib/jdi.jar",
-        "lib/jdimodel.jar",
-        "lib/org.eclipse.osgi_3.8.1.v20120830-144521.jar",
+        "org-netbeans-swing-outline.jar",
+        "com.ibm.icu_4.4.2.v20110823.jar",
+        "jdi.jar",
+        "jdimodel.jar",
+        "org.eclipse.osgi_3.8.1.v20120830-144521.jar",
 
         "core/library/core.jar"        
       };
       String classPath = PApplet.join(jarList, ":");
 
-      String javaRoot = System.getProperty("javaroot");
+      //String javaRoot = System.getProperty("javaroot");
+      String javaRoot = Base.getContentFile(".").getCanonicalPath();
       writer.println("cd \"" + javaRoot + "\" && " +
-      		           "/usr/libexec/java_home " +
-      		           "--request " +
-      		           "--version 1.6 " +
-      		           "--exec java " +
-      		           "-cp " + classPath +
+                     Base.getJavaPath() + 
+      		           " -cp \"" + classPath + "\"" +
       		           " processing.mode.java.Commander \"$@\"");
       writer.flush();
       writer.close();

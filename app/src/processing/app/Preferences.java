@@ -145,7 +145,9 @@ public class Preferences {
     // start by loading the defaults, in case something
     // important was deleted from the user prefs
     try {
-      load(Base.getLibStream("preferences.txt")); //$NON-NLS-1$
+      // Name changed for 2.1b2 to avoid problems with users modifying or 
+      // replacing the file after doing a search for "preferences.txt".
+      load(Base.getLibStream("defaults.txt")); //$NON-NLS-1$
     } catch (Exception e) {
       Base.showError(null, "Could not read default settings.\n" +
                            "You'll need to reinstall Processing.", e);
