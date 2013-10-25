@@ -6,11 +6,12 @@ X reset font smoothing for everyone to its default by changing the pref
 X   https://github.com/processing/processing/issues/2164
 X   https://github.com/processing/processing/issues/2160
 X Add option to not embed the Java runtime (saves space, but breakage)
-
-_ emacs style errors in commander aren't quite right
-_   https://github.com/processing/processing/issues/2158
-_ return code needs to be 1 instead of 0
-_   https://github.com/processing/processing/issues/1798#issuecomment-26711847
+X return code needs to be 1 instead of 0 w/ Commander
+X   https://github.com/processing/processing/issues/1798#issuecomment-26711847
+_ processing-java broken in 2.1 beta 1 on OS X
+_   https://github.com/processing/processing/issues/2159
+_   need to use the embedded Java, different classpath, etc
+_   also might be time to put something in to check the version
 
 
 medium
@@ -36,6 +37,8 @@ _ look through all isPopupTrigger() code
 _   make sure both press/release are implemented
 _ change Windows export to use launch4j instead of the launcher.cpp file
 _   actually call ant from inside p5?
+_ emacs style errors in commander aren't quite right
+_   https://github.com/processing/processing/issues/2158
 
 post 2.1 cleaning
 _ remove video for macosx32 from the repo permanently
