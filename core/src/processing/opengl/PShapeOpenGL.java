@@ -1003,6 +1003,8 @@ public class PShapeOpenGL extends PShape {
   @Override
   public void vertex(float x, float y) {
     vertexImpl(x, y, 0, 0, 0);
+    if (image != null)
+      PGraphics.showWarning(PGraphicsOpenGL.MISSING_UV_TEXCOORDS_ERROR);
   }
 
 
@@ -1015,6 +1017,8 @@ public class PShapeOpenGL extends PShape {
   @Override
   public void vertex(float x, float y, float z) {
     vertexImpl(x, y, z, 0, 0);
+    if (image != null)
+      PGraphics.showWarning(PGraphicsOpenGL.MISSING_UV_TEXCOORDS_ERROR);
   }
 
 
