@@ -449,23 +449,27 @@ public class PShader implements PConstants {
 
 
   public void set(String name, boolean x, boolean y) {
-    setUniformImpl(name, UniformValue.INT2, new int[] { (x)?1:0, (y)?1:0 });
+    setUniformImpl(name, UniformValue.INT2,
+                   new int[] { (x)?1:0, (y)?1:0 });
   }
 
 
   public void set(String name, boolean x, boolean y, boolean z) {
-    setUniformImpl(name, UniformValue.INT3, new int[] { (x)?1:0, (y)?1:0, (z)?1:0 });
+    setUniformImpl(name, UniformValue.INT3,
+                   new int[] { (x)?1:0, (y)?1:0, (z)?1:0 });
   }
 
 
   public void set(String name, boolean x, boolean y, boolean z, boolean w) {
-    setUniformImpl(name, UniformValue.INT4, new int[] { (x)?1:0, (y)?1:0, (z)?1:0, (w)?1:0 });
+    setUniformImpl(name, UniformValue.INT4,
+                   new int[] { (x)?1:0, (y)?1:0, (z)?1:0, (w)?1:0 });
   }
 
 
   public void set(String name, int[] vec) {
     set(name, vec, 1);
   }
+
 
   /**
    * @param ncoords number of coordinates per element, max 4
@@ -510,6 +514,7 @@ public class PShader implements PConstants {
     }
   }
 
+
   public void set(String name, boolean[] vec) {
     set(name, vec, 1);
   }
@@ -517,7 +522,7 @@ public class PShader implements PConstants {
 
   public void set(String name, boolean[] boolvec, int ncoords) {
     int[] vec = new int[boolvec.length];
-    for (int i=0; i<boolvec.length; i++) {
+    for (int i = 0; i < boolvec.length; i++) {
       vec[i] = (boolvec[i])?1:0;
     }
     set(name, vec, ncoords);

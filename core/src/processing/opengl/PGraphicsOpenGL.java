@@ -5230,9 +5230,9 @@ public class PGraphicsOpenGL extends PGraphics {
 
     try {
       if (0 < x || 0 < y || w < width || h < height) {
-        // The pixels to copy to the texture need to be consecutive, and they
-        // are not in the pixels array, so putting each row one after another
-        // in nativePixels.
+        // The pixels to be copied to the texture need to be consecutive, and
+        // they are not in the pixels array, so putting each row one after
+        // another in nativePixels.
         int offset0 = y * width + x;
         int offset1 = 0;
 
@@ -5324,6 +5324,17 @@ public class PGraphicsOpenGL extends PGraphics {
     setgetPixels = true;
     super.setImpl(sourceImage, sourceX, sourceY, sourceWidth, sourceHeight,
                   targetX, targetY);
+// do we need this?
+// see https://github.com/processing/processing/issues/2125
+//    if (sourceImage.format == RGB) {
+//      int targetOffset = targetY * width + targetX;
+//      for (int y = sourceY; y < sourceY + sourceHeight; y++) {
+//        for (int x = targetOffset; x < targetOffset + sourceWidth; x++) {
+//          pixels[x] |= 0xff000000;
+//        }
+//        targetOffset += width;
+//      }
+//    }
   }
 
 
