@@ -48,6 +48,7 @@ public class Commander implements RunnerListener {
   static final String forceArg = "--force";
   static final String outputArg = "--output=";
   static final String exportApplicationArg = "--export";
+  static final String noJavaArg = "--export";
   static final String platformArg = "--platform=";
   static final String bitsArg = "--bits=";
 //  static final String preferencesArg = "--preferences=";
@@ -109,6 +110,7 @@ public class Commander implements RunnerListener {
     int platform = PApplet.platform; // default to this platform
     int platformBits = 0;
     int task = HELP;
+    boolean embedJava = true; 
 
     // Turns out the output goes as MacRoman or something else useless.
     // http://code.google.com/p/processing/issues/detail?id=1418
@@ -145,6 +147,9 @@ public class Commander implements RunnerListener {
 
       } else if (arg.equals(exportApplicationArg)) {
         task = EXPORT;
+        
+      } else if (arg.equals(noJavaArg)) {
+        embedJava = false;
 
       } else if (arg.startsWith(platformArg)) {
         complainAndQuit("The --platform option has been removed from Processing 2.1.", false);
@@ -156,7 +161,7 @@ public class Commander implements RunnerListener {
 //        }
 
       } else if (arg.startsWith(bitsArg)) {
-        complainAndQuit("The --platform option has been removed from Processing 2.1.", false);
+        complainAndQuit("The --bits option has been removed from Processing 2.1.", false);
 //        String bitsStr = arg.substring(bitsArg.length());
 //        if (bitsStr.equals("32")) {
 //          platformBits = 32;
@@ -279,7 +284,7 @@ public class Commander implements RunnerListener {
                 Library.hasMultipleArch(platform, build.getImportedLibraries())) {
                 complainAndQuit("This sketch can be exported for 32- or 64-bit, please specify one.", true);
               }
-              success = build.exportApplication(outputFolder, platform, platformBits);
+              success = build.exportApplication(outputFolder, platform, platformBits, embedJava);
             }
           }
         }
@@ -369,6 +374,7 @@ public class Commander implements RunnerListener {
     out.println("--present            Preprocess, compile, and run a sketch full screen.");
     out.println();
     out.println("--export             Export an application.");
+    out.println("--no-java            Do not embed Java. Use at your own risk!");
 //    out.println("--platform           Specify the platform (export to application only).");
 //    out.println("                     Should be one of 'windows', 'macosx', or 'linux'.");
 //    out.println("--bits               Must be specified if libraries are used that are");
