@@ -1,3 +1,40 @@
+PROCESSING 2.1 beta 2 (REV 0223) - 2X October 2013
+
++ Added an option to not embed the Java runtime into an exported application.
+  This saves you the 100 MB footprint, but requires your users to install
+  Java 7u45 or later. Details on the same page that nobody read last time:
+  http://wiki.processing.org/w/Export_Info_and_Tips
+
++ The new println() (see the beta 1 notes) makes some old code behave a 
+  little differently. In the past, println() with an array would write 
+  out the array, one element per line, with the index in the front. i.e.:
+  PFont.list()) would write something like this to the console:
+
+  [0] "Serif"
+  [1] "SansSerif"
+  [2] "Monospaced"
+  [3] "Dialog"
+  [4] "DialogInput"
+  [5] "ACaslonPro-Bold"
+  [6] "ACaslonPro-BoldItalic"
+  ...and so on
+
+  Now it's going to write out something like:
+
+  Serif SansSerif Monospaced Dialog DialogInput ACaslonPro-Bold...
+
+  To get the old behavior, use printArray(). It's the price of progress, 
+  and shouldn't really "break" anyone's code since it's just writing to the
+  console. We think the new syntax outweighs the downside of the change. 
+
+  With arrays of primitive types (int[], float[], anything that's not an
+  object), we've added code so that println() works as before. But we
+  can't do the same for arrays of objects, such as String. 
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING 2.1 beta 1 (REV 0222) - 20 October 2013
 
 This release contains major changes. The big ones:

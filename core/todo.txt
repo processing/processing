@@ -16,6 +16,10 @@ X   https://github.com/processing/processing/pull/2146
 X   https://github.com/processing/processing/issues/2145
 X updated to another version of JOGL
 X   updated to jogl-2.1-b1115, gluegen-2.1-b735 for OSX 10.9 support
+X Add warning when no uv texture coordinates are supplied
+X   https://github.com/processing/processing/issues/2034
+X threading/flicker issues when resizing P2D/P3D/OPENGL
+X   https://github.com/processing/processing/issues/15
 
 high
 _ Sort out blending differences with P2D/P3D
@@ -336,6 +340,8 @@ _   http://code.google.com/p/processing/issues/detail?id=182
 
 CORE / PShape
 
+_ major refactoring for PShape/PShapeOpenGL
+_   https://github.com/processing/processing/issues/1623
 _ PShape should be cached as well
 _ major surgery to put loadShape() back into PApplet/PGraphics
 _   then have the OpenGL or Java2D versions as cached objects

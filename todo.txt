@@ -12,13 +12,14 @@ X additional font tweaks due to decreased legibility with Oracle Java
 X type looks a little feeble on OS X with non-retina machines
 X   https://github.com/processing/processing/issues/2135
 X   should we increase the size of the mode dropdown?
-_ processing-java broken in 2.1 beta 1 on OS X
-_   https://github.com/processing/processing/issues/2159
-_   need to use the embedded Java, different classpath, etc
-_   also might be time to put something in to check the version
+X processing-java broken in 2.1 beta 1 on OS X
+X   https://github.com/processing/processing/issues/2159
+X   need to use the embedded Java, different classpath, etc
+X   also might be time to put something in to check the version
 
 
 medium
+_ should default to the local Java on Windows and Linux
 _ try installing 10.7.3 on Mac Mini and check whether things run
 _   make sure it's only running on 64-bit machines? 
 _ use platformDelete() to remove untitled sketches?
