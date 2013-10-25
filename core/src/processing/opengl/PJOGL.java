@@ -234,11 +234,23 @@ public class PJOGL extends PGL {
   protected void initSurface(int antialias) {
     if (profile == null) {
       if (PROFILE == 2) {
-        profile = GLProfile.getGL2ES1();
+        try {
+          profile = GLProfile.getGL2ES1();
+        } catch (GLException ex) {
+          profile = GLProfile.getMaxFixedFunc(true);
+        }
       } else if (PROFILE == 3) {
-        profile = GLProfile.getGL2GL3();
+        try {
+          profile = GLProfile.getGL2GL3();
+        } catch (GLException ex) {
+          profile = GLProfile.getMaxProgrammable(true);
+        }
       } else if (PROFILE == 4) {
-        profile = GLProfile.getGL4ES3();
+        try {
+          profile = GLProfile.getGL4ES3();
+        } catch (GLException ex) {
+          profile = GLProfile.getMaxProgrammable(true);
+        }
       } else throw new RuntimeException(UNSUPPORTED_GLPROF_ERROR);
 
       if (2 < PROFILE) {
