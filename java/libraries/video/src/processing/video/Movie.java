@@ -135,6 +135,10 @@ public class Movie extends PImage implements PConstants {
 
       playbin.dispose();
       playbin = null;
+      
+      parent.g.removeCache(this);
+      parent.unregisterMethod("dispose", this);
+      parent.unregisterMethod("post", this);      
     }
   }
 

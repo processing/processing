@@ -270,6 +270,10 @@ public class Capture extends PImage implements PConstants {
 
       pipeline.dispose();
       pipeline = null;
+      
+      parent.g.removeCache(this);
+      parent.unregisterMethod("dispose", this);
+      parent.unregisterMethod("post", this);      
     }
   }
 
