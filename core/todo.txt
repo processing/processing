@@ -1,7 +1,4 @@
 0223 core
-X add PMatrix.preApply(PMatrix)
-X   https://github.com/processing/processing/pull/2146
-X   https://github.com/processing/processing/issues/2145
 
 opengl 
 X Using sketchQuality() does not work properly with P3D, OPENGL, P2D
@@ -14,8 +11,11 @@ X   https://github.com/processing/processing/issues/2162
 X add set(boolean) to PShader
 X   https://github.com/processing/processing/issues/1991
 X   https://github.com/processing/processing/pull/1993
+X add PMatrix.preApply(PMatrix)
+X   https://github.com/processing/processing/pull/2146
+X   https://github.com/processing/processing/issues/2145
 X updated to another version of JOGL
-_   what version is this?
+X   updated to jogl-2.1-b1115, gluegen-2.1-b735 for OSX 10.9 support
 
 high
 _ Sort out blending differences with P2D/P3D
