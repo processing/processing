@@ -626,13 +626,15 @@ public class PGraphicsOpenGL extends PGraphics {
   public void dispose() { // PGraphics
     super.dispose();
 
-    // Swap buffers the end to make sure that no
-    // garbage is shown on the screen, this particularly
-    // affects non-interactive sketches on windows that
-    // render only 1 frame, so no enough rendering
-    // iterations have been conducted so far to properly
-    // initialize all the buffers.
-    pgl.swapBuffers();
+    if (primarySurface) {
+      // Swap buffers the end to make sure that no
+      // garbage is shown on the screen, this particularly
+      // affects non-interactive sketches on windows that
+      // render only 1 frame, so no enough rendering
+      // iterations have been conducted so far to properly
+      // initialize all the buffers.
+      pgl.swapBuffers();
+    }
 
     deletePolyBuffers();
     deleteLineBuffers();
