@@ -8,6 +8,10 @@ X   https://github.com/processing/processing/issues/2160
 X Add option to not embed the Java runtime (saves space, but breakage)
 X return code needs to be 1 instead of 0 w/ Commander
 X   https://github.com/processing/processing/issues/1798#issuecomment-26711847
+X additional font tweaks due to decreased legibility with Oracle Java
+X type looks a little feeble on OS X with non-retina machines
+X   https://github.com/processing/processing/issues/2135
+X   should we increase the size of the mode dropdown?
 _ processing-java broken in 2.1 beta 1 on OS X
 _   https://github.com/processing/processing/issues/2159
 _   need to use the embedded Java, different classpath, etc
@@ -17,9 +21,6 @@ _   also might be time to put something in to check the version
 medium
 _ try installing 10.7.3 on Mac Mini and check whether things run
 _   make sure it's only running on 64-bit machines? 
-_ type looks a little feeble on OS X with non-retina machines
-_   https://github.com/processing/processing/issues/2135
-_   should we increase the size of the mode dropdown?
 _ use platformDelete() to remove untitled sketches?
 _ change to using platformDelete() instead of Base.removeDir() where possible
 _   verify that the OS X version uses the real call
