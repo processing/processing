@@ -1035,8 +1035,23 @@
       ${windows.dist}
       =======================================================
     </echo>
+  </target> 
+
+
+  <!-- - - - - - - - - - - - - - - - - - -->
+  <!-- Package source 'n tag the release -->
+  <!-- - - - - - - - - - - - - - - - - - -->
+
+<!--
+not ready to automate this yet, since we often have to reset the tag
+  <target name="dist-src" depends="dist">
+    <exec executable="git">
+remove the spaces for depth since it should be double dash, but screws up comments
+      <arg line="clone - -depth 1 git@github.com:processing/processing.git /tmp/processing-${version}-src" />
+    </exec>
   </target>
-  
+-->
+
 
   <!-- - - - - - - - - -->
   <!-- Developer Docs -->
