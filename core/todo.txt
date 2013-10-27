@@ -1,4 +1,9 @@
 0223 core
+X fix 
+
+X Zero Alpha Values from Pixels Array (fixed in previous?)
+X   https://github.com/processing/processing/issues/2030
+_   only tested on background(), not image()
 
 opengl 
 X Using sketchQuality() does not work properly with P3D, OPENGL, P2D
@@ -20,6 +25,8 @@ X Add warning when no uv texture coordinates are supplied
 X   https://github.com/processing/processing/issues/2034
 X threading/flicker issues when resizing P2D/P3D/OPENGL
 X   https://github.com/processing/processing/issues/15
+X additional flicker avoidance
+X   https://github.com/processing/processing/commit/cca2f08a24ef892c494f5a75aa0e4b01de7e5d8a
 
 high
 _ Sort out blending differences with P2D/P3D

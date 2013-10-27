@@ -7844,7 +7844,7 @@ public class PApplet extends Applet
    * This is only available with applications, not applets or Android.
    * On Windows and Linux, this is simply the data folder, which is located
    * in the same directory as the EXE file and lib folders. On Mac OS X, this
-   * is a path to the data folder buried inside Contents/Resources/Java.
+   * is a path to the data folder buried inside Contents/Java.
    * For the latter point, that also means that the data folder should not be
    * considered writable. Use sketchPath() for now, or inputPath() and
    * outputPath() once they're available in the 2.0 release.
@@ -7871,11 +7871,12 @@ public class PApplet extends Applet
 
     String jarPath =
       getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
-    if (jarPath.contains("Contents/Resources/Java/")) {
+    if (jarPath.contains("Contents/Java/")) {
       // The path will be URL encoded (%20 for spaces) coming from above
       // http://code.google.com/p/processing/issues/detail?id=1073
       File containingFolder = new File(urlDecode(jarPath)).getParentFile();
       File dataFolder = new File(containingFolder, "data");
+      System.out.println(dataFolder);
       return new File(dataFolder, where);
     }
     // Windows, Linux, or when not using a Mac OS X .app file
@@ -7885,7 +7886,7 @@ public class PApplet extends Applet
 
   /**
    * On Windows and Linux, this is simply the data folder. On Mac OS X, this is
-   * the path to the data folder buried inside Contents/Resources/Java
+   * the path to the data folder buried inside Contents/Java
    */
 //  public File inputFile(String where) {
 //  }
