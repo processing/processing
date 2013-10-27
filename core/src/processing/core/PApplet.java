@@ -4336,8 +4336,9 @@ public class PApplet extends Applet
    * ( end auto-generated )
  * @webref output:text_area
  * @usage IDE
- * @param what boolean, byte, char, color, int, float, String, Object
- * @see PApplet#println(byte)
+ * @param what data to print to console
+ * @see PApplet#println()
+ * @see PApplet#printArray(Object)
  * @see PApplet#join(String[], char)
  */
   static public void print(byte what) {
@@ -4380,7 +4381,9 @@ public class PApplet extends Applet
     System.out.flush();
   }
 
-
+  /**
+   * @param variables list of data, separated by commas
+   */
   static public void print(Object... variables) {
     StringBuilder sb = new StringBuilder();
     for (Object o : variables) {
@@ -4428,6 +4431,7 @@ public class PApplet extends Applet
  * @webref output:text_area
  * @usage IDE
  * @see PApplet#print(byte)
+ * @see PApplet#printArray(Object)
  */
   static public void println() {
     System.out.println();
@@ -4435,7 +4439,7 @@ public class PApplet extends Applet
 
 
 /**
- * @param what boolean, byte, char, color, int, float, String, Object
+ * @param what data to print to console
  */
   static public void println(byte what) {
     System.out.println(what);
@@ -4477,7 +4481,9 @@ public class PApplet extends Applet
     System.out.flush();
   }
 
-
+  /**
+   * @param variables list of data, separated by commas
+   */
   static public void println(Object... variables) {
 //    System.out.println("got " + variables.length + " variables");
     print(variables);
@@ -4514,7 +4520,18 @@ public class PApplet extends Applet
     }
   }
 
-
+  /**
+   * ( begin auto-generated from printArray.xml )
+   *
+   * To come...
+   *
+   * ( end auto-generated )
+ * @webref output:text_area
+ * @param what one-dimensional array
+ * @usage IDE
+ * @see PApplet#print(byte)
+ * @see PApplet#println()
+ */
   static public void printArray(Object what) {
     if (what == null) {
       // special case since this does fuggly things on > 1.1
