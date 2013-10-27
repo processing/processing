@@ -1,8 +1,8 @@
 0223 pde
 X reset font smoothing for everyone to its default by changing the pref
-# To reset everyone's default, replaced editor.antialias with editor.smooth 
-# for 2.1. Fonts are unusably gross on OS X (and Linux) w/o smoothing and 
-# the Oracle JVM, and many longtime users have anti-aliasing turned off.
+X   To reset everyone's default, replaced editor.antialias with editor.smooth 
+X   for 2.1. Fonts are unusably gross on OS X (and Linux) w/o smoothing and 
+X   the Oracle JVM, and many longtime users have anti-aliasing turned off.
 X   https://github.com/processing/processing/issues/2164
 X   https://github.com/processing/processing/issues/2160
 X Add option to not embed the Java runtime (saves space, but breakage)
