@@ -1,31 +1,4 @@
-0223 core
-X fix dataPath() problem with OS X (was breaking Movie)
-X alpha values from the pixels array coming back as 0
-X   only tested on background(), not image()
-X   https://github.com/processing/processing/issues/2030
-
-opengl 
-X Using sketchQuality() does not work properly with P3D, OPENGL, P2D
-X   https://github.com/processing/processing/pull/2157
-X Fix crashes when the sketch window is resized
-X   https://github.com/processing/processing/issues/1880
-X   https://github.com/processing/processing/pull/2156
-X scale() wasn't affecting stroke weight in P3D
-X   https://github.com/processing/processing/issues/2162
-X add set(boolean) to PShader
-X   https://github.com/processing/processing/issues/1991
-X   https://github.com/processing/processing/pull/1993
-X add PMatrix.preApply(PMatrix)
-X   https://github.com/processing/processing/pull/2146
-X   https://github.com/processing/processing/issues/2145
-X updated to another version of JOGL
-X   updated to jogl-2.1-b1115, gluegen-2.1-b735 for OSX 10.9 support
-X Add warning when no uv texture coordinates are supplied
-X   https://github.com/processing/processing/issues/2034
-X threading/flicker issues when resizing P2D/P3D/OPENGL
-X   https://github.com/processing/processing/issues/15
-X additional flicker avoidance
-X   https://github.com/processing/processing/commit/cca2f08a24ef892c494f5a75aa0e4b01de7e5d8a
+0224 core
 
 
 high

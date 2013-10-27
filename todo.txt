@@ -1,25 +1,11 @@
-0223 pde
-X reset font smoothing for everyone to its default by changing the pref
-X   To reset everyone's default, replaced editor.antialias with editor.smooth 
-X   for 2.1. Fonts are unusably gross on OS X (and Linux) w/o smoothing and 
-X   the Oracle JVM, and many longtime users have anti-aliasing turned off.
-X   https://github.com/processing/processing/issues/2164
-X   https://github.com/processing/processing/issues/2160
-X Add option to not embed the Java runtime (saves space, but breakage)
-X return code needs to be 1 instead of 0 w/ Commander
-X   https://github.com/processing/processing/issues/1798#issuecomment-26711847
-X additional font tweaks due to decreased legibility with Oracle Java
-X type looks a little feeble on OS X with non-retina machines
-X   https://github.com/processing/processing/issues/2135
-X   should we increase the size of the mode dropdown?
-X processing-java broken in 2.1 beta 1 on OS X
-X   https://github.com/processing/processing/issues/2159
-X   need to use the embedded Java, different classpath, etc
-X   also might be time to put something in to check the version
+0224 pde
 
 
 medium
 _ should default to the local Java on Windows and Linux
+_   have export apps default to the local JRE
+_   Linux is probably using the system JRE if available
+_   launch4j may be all set, but double-check
 _ try installing 10.7.3 on Mac Mini and check whether things run
 _   make sure it's only running on 64-bit machines? 
 _ use platformDelete() to remove untitled sketches?
@@ -33,6 +19,7 @@ _ changing modes brings the PDE back on the second screen
 _   the Find window (also the save windows) also have the same problem
 _ move old Google Code SVN back to processing.org
 _   then cull out the old branches/tags from the Github repo
+_   and/or start bundling separate source downloads
 _ "String index out of range" error
 _   https://github.com/processing/processing/issues/1940
 _ look through all isPopupTrigger() code 
