@@ -1,9 +1,8 @@
 0223 core
-X fix 
-
-X Zero Alpha Values from Pixels Array (fixed in previous?)
+X fix dataPath() problem with OS X (was breaking Movie)
+X alpha values from the pixels array coming back as 0
+X   only tested on background(), not image()
 X   https://github.com/processing/processing/issues/2030
-_   only tested on background(), not image()
 
 opengl 
 X Using sketchQuality() does not work properly with P3D, OPENGL, P2D
@@ -28,13 +27,14 @@ X   https://github.com/processing/processing/issues/15
 X additional flicker avoidance
 X   https://github.com/processing/processing/commit/cca2f08a24ef892c494f5a75aa0e4b01de7e5d8a
 
+
 high
+_ zero alpha values still a problem with retina renderer
+_   https://github.com/processing/processing/issues/2030
 _ Sort out blending differences with P2D/P3D
 _   https://github.com/processing/processing/issues/1844
 _ 'collector' class.. Dict that points to a list
 _   String as a key, int/float/string list as values
-_ loadPixels doesn't set alpha value for pixels on Java2D
-_   https://github.com/processing/processing/issues/2030
 _ blendMode(ADD) is broken with default renderer
 _   https://github.com/processing/processing/issues/2012
 _   may have been introduced between 2.0b7 and 2.0b8
