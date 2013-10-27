@@ -1117,9 +1117,9 @@ public class PJOGL extends PGL {
       line = line.replace("varying", "in");
       line = line.replace("attribute", "in");
       line = line.replace("gl_FragColor", "fragColor");
-      line = line.replace("texture", "texSampler");
-      line = line.replace("texSampler2D(", "texture(");
-      line = line.replace("texSampler2DRect(", "texture(");
+      line = line.replace("texture", "texMap");
+      line = line.replace("texMap2D(", "texture(");
+      line = line.replace("texMap2DRect(", "texture(");
       fragSrc[i + 2] = line;
     }
     return fragSrc;

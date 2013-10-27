@@ -201,19 +201,19 @@ public abstract class PGL {
 
   protected static String[] tex2DFragShaderSource = {
     SHADER_PREPROCESSOR_DIRECTIVE,
-    "uniform sampler2D texSampler;",
+    "uniform sampler2D texMap;",
     "varying vec2 vertTexCoord;",
     "void main() {",
-   "  gl_FragColor = texture2D(texSampler, vertTexCoord.st);",
+   "  gl_FragColor = texture2D(texMap, vertTexCoord.st);",
     "}"
   };
 
   protected static String[] texRectFragShaderSource = {
     SHADER_PREPROCESSOR_DIRECTIVE,
-    "uniform sampler2DRect texSampler;",
+    "uniform sampler2DRect texMap;",
     "varying vec2 vertTexCoord;",
     "void main() {",
-    "  gl_FragColor = texture2DRect(texSampler, vertTexCoord.st);",
+    "  gl_FragColor = texture2DRect(texMap, vertTexCoord.st);",
     "}"
   };
 
@@ -907,7 +907,7 @@ public abstract class PGL {
       if (0 < tex2DShaderProgram) {
         tex2DVertLoc = getAttribLocation(tex2DShaderProgram, "position");
         tex2DTCoordLoc = getAttribLocation(tex2DShaderProgram, "texCoord");
-        tex2DSamplerLoc = getUniformLocation(tex2DShaderProgram, "texSampler");
+        tex2DSamplerLoc = getUniformLocation(tex2DShaderProgram, "texMap");
       }
       loadedTex2DShader = true;
       tex2DShaderContext = glContext;
@@ -1033,7 +1033,7 @@ public abstract class PGL {
       if (0 < texRectShaderProgram) {
         texRectVertLoc = getAttribLocation(texRectShaderProgram, "position");
         texRectTCoordLoc = getAttribLocation(texRectShaderProgram, "texCoord");
-        texRectSamplerLoc = getUniformLocation(texRectShaderProgram, "texSampler");
+        texRectSamplerLoc = getUniformLocation(texRectShaderProgram, "texMap");
       }
       loadedTexRectShader = true;
       texRectShaderContext = glContext;

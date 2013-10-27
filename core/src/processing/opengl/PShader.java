@@ -1149,7 +1149,7 @@ public class PShader implements PConstants {
 
     textureLoc = getUniformLoc("texture");
     if (textureLoc == -1) {
-      textureLoc = getUniformLoc("texSampler");
+      textureLoc = getUniformLoc("texMap");
     }
 
     texMatrixLoc = getUniformLoc("texMatrix");
