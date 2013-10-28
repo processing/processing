@@ -449,7 +449,7 @@ public abstract class Mode {
         JMenuItem item = new JMenuItem(library.getName());
         item.addActionListener(listener);
         
-        // changed to library-name to facilitate specification if imports from properties file
+        // changed to library-name to facilitate specification of imports from properties file
         item.setActionCommand(library.getName());
         
         importMenu.add(item);
