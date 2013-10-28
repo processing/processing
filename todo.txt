@@ -1,4 +1,19 @@
 0224 pde
+X readStringUntil() missing from new serial library
+X   https://github.com/processing/processing/issues/2174
+
+fixed in 2.1
+X init() not called on tools until later 
+X   https://github.com/processing/processing/issues/1859
+X Finish changes so the PDE can use an unmodified JRE
+X   https://github.com/processing/processing/issues/1840
+
+
+high
+_ adding characters doesn't happen on position of cursor
+_   https://github.com/processing/processing/issues/2180
+_ Chinese text is overlapped in Processing 2.1 editor
+_   https://github.com/processing/processing/issues/2173
 
 
 medium
@@ -527,8 +542,6 @@ _ classpath conflicts..
 _   getPackageList.. from Library... maybe others?
 _   really need to make sure that a weird core.jar isn't being imported
 _   coffeescript was doing this and breaking the pde
-_ init() not called on tools until later 
-_   https://github.com/processing/processing/issues/1859
 _ contrib library examples are not read-only
 _   another point for doing .zip files to prevent overwriting
 _ add BookContribution?

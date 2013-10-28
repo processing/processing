@@ -1447,8 +1447,16 @@ public class PGraphicsJava2D extends PGraphics {
 //          op.filter(image, image);
         }
       } else {  // !tint
+        if (targetType == RGB && (source.pixels[0] >> 24 == 0)) {
+          // If it's an RGB image and the high bits aren't set, need to set
+          // the high bits to opaque because we're drawing ARGB images.
+          source.filter(OPAQUE);
+          // Opting to just manipulate the image here, since it shouldn't
+          // affect anything else (and alpha(get(x, y)) should return 0xff).
+          // Wel also make no guarantees about the values of the pixels array
+          // in a PImage and how the high bits will be set.
+        }
         // If no tint, just shove the pixels on in there verbatim
-//        System.out.println("!tint source.pixels[0] alpha is " + (source.pixels[0] >>> 24));
         wr.setDataElements(0, 0, source.width, source.height, source.pixels);
       }
       this.tinted = tint;
