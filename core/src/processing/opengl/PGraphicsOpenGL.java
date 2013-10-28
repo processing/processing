@@ -2420,10 +2420,7 @@ public class PGraphicsOpenGL extends PGraphics {
           shader.setTexture(tex);
         }
 
-        pgl.bindBuffer(PGL.ELEMENT_ARRAY_BUFFER, glPolyIndex);
-        pgl.drawElements(PGL.TRIANGLES, icount, PGL.INDEX_TYPE,
-                         ioffset * PGL.SIZEOF_INDEX);
-        pgl.bindBuffer(PGL.ELEMENT_ARRAY_BUFFER, 0);
+        shader.draw(glPolyIndex, icount, ioffset);
       }
 
       shader.unbind();
@@ -2557,10 +2554,7 @@ public class PGraphicsOpenGL extends PGraphics {
       shader.setLineAttribute(glLineAttrib, 4, PGL.FLOAT, 0,
                               4 * voffset * PGL.SIZEOF_FLOAT);
 
-      pgl.bindBuffer(PGL.ELEMENT_ARRAY_BUFFER, glLineIndex);
-      pgl.drawElements(PGL.TRIANGLES, icount, PGL.INDEX_TYPE,
-                       ioffset * PGL.SIZEOF_INDEX);
-      pgl.bindBuffer(PGL.ELEMENT_ARRAY_BUFFER, 0);
+      shader.draw(glLineIndex, icount, ioffset);
     }
 
     shader.unbind();
@@ -2661,10 +2655,7 @@ public class PGraphicsOpenGL extends PGraphics {
       shader.setPointAttribute(glPointAttrib, 2, PGL.FLOAT, 0,
                                2 * voffset * PGL.SIZEOF_FLOAT);
 
-      pgl.bindBuffer(PGL.ELEMENT_ARRAY_BUFFER, glPointIndex);
-      pgl.drawElements(PGL.TRIANGLES, icount, PGL.INDEX_TYPE,
-                       ioffset * PGL.SIZEOF_INDEX);
-      pgl.bindBuffer(PGL.ELEMENT_ARRAY_BUFFER, 0);
+      shader.draw(glPointIndex, icount, ioffset);
     }
 
     shader.unbind();
