@@ -4,14 +4,12 @@ import java.awt.*;
 import java.awt.event.*;
 import java.beans.*;
 import java.io.*;
-import java.util.Arrays;
 
 import javax.swing.*;
 import javax.swing.border.*;
 
 import processing.app.*;
 import processing.app.Toolkit;
-import processing.app.contrib.LocalContribution;
 import processing.mode.java.runner.Runner;
 
 
@@ -268,7 +266,9 @@ public class JavaEditor extends Editor {
     label2.setAlignmentX(Component.LEFT_ALIGNMENT);
     panel.add(label1);
     panel.add(label2);
-    int wide = label1.getPreferredSize().width;
+    // The longer line is different between Windows and OS X.
+    int wide = Math.max(label1.getPreferredSize().width,
+                        label2.getPreferredSize().width);
     panel.add(Box.createVerticalStrut(12));
 
     /*
@@ -314,6 +314,9 @@ public class JavaEditor extends Editor {
     panel.add(platformPanel);
     */
 
+    //int indent = new JCheckBox().getPreferredSize().width;
+    int indent = 0;
+    
     final JCheckBox showStopButton = new JCheckBox("Show a Stop button");
     showStopButton.setSelected(Preferences.getBoolean("export.application.stop"));
     showStopButton.addItemListener(new ItemListener() {
@@ -322,7 +325,7 @@ public class JavaEditor extends Editor {
       }
     });
     showStopButton.setEnabled(Preferences.getBoolean("export.application.fullscreen"));
-    showStopButton.setBorder(new EmptyBorder(3, 13, 6, 13));
+    showStopButton.setBorder(new EmptyBorder(3, 13 + indent, 6, 13));
 
     final JCheckBox fullScreenButton = new JCheckBox("Full Screen (Present mode)");
     fullScreenButton.setSelected(Preferences.getBoolean("export.application.fullscreen"));
@@ -335,10 +338,33 @@ public class JavaEditor extends Editor {
     });
     fullScreenButton.setBorder(new EmptyBorder(3, 13, 3, 13));
 
+    boolean embed = Preferences.getBoolean("export.application.embed_java");
+    final String embedWarning = "Embedding Java makes larger applications";
+    final String nopeWarning = "Users will have to install the latest Java 7";
+    final JLabel warningLabel = new JLabel(embed ? embedWarning : nopeWarning);
+    warningLabel.setBorder(new EmptyBorder(3, 13 + indent, 3, 13));
+    
+    final JCheckBox embedJavaButton = new JCheckBox("Embed Java");
+    embedJavaButton.setSelected(embed);
+    embedJavaButton.addItemListener(new ItemListener() {
+      public void itemStateChanged(ItemEvent e) {
+        boolean selected = embedJavaButton.isSelected();
+        Preferences.setBoolean("export.application.embed_java", selected);
+        if (selected) {
+          warningLabel.setText(embedWarning);
+        } else {
+          warningLabel.setText(nopeWarning);
+        }
+      }
+    });
+    embedJavaButton.setBorder(new EmptyBorder(3, 13, 3, 13));
+    
     JPanel optionPanel = new JPanel();
     optionPanel.setLayout(new BoxLayout(optionPanel, BoxLayout.Y_AXIS));
     optionPanel.add(fullScreenButton);
     optionPanel.add(showStopButton);
+    optionPanel.add(embedJavaButton);
+    optionPanel.add(warningLabel);
     optionPanel.setBorder(new TitledBorder("Options"));
 //    wide = Math.max(wide, platformPanel.getPreferredSize().width);
     optionPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -353,7 +379,7 @@ public class JavaEditor extends Editor {
 //    good = new Dimension(wide, platformPanel.getPreferredSize().height);
 //    platformPanel.setMaximumSize(good);
     good = new Dimension(wide, optionPanel.getPreferredSize().height);
-    optionPanel.setMaximumSize(good);
+//    optionPanel.setMaximumSize(good);
 
     String[] options = { "Export", "Cancel" };
     final JOptionPane optionPane = new JOptionPane(panel,
@@ -510,15 +536,6 @@ public class JavaEditor extends Editor {
    */
   public void handleImportLibrary(String libraryName) {
 
-    Library lib = mode.findLibraryByName(libraryName);
-    
-    if (lib == null) {
-      statusError("Unable to locate library: "+libraryName);
-      return;
-    }
-
-    String jarPath = lib.getJarPath();
-
     // make sure the user didn't hide the sketch folder
     sketch.ensureExistence();
 
@@ -526,31 +543,31 @@ public class JavaEditor extends Editor {
     // if the current code is a .java file, insert into current
     //if (current.flavor == PDE) {
     if (mode.isDefaultExtension(sketch.getCurrentCode())) {
-      
       sketch.setCurrentCode(0);
+    }
+    
+    Library lib = mode.findLibraryByName(libraryName);
+    if (lib == null) {
+      statusError("Unable to locate library: "+libraryName);
+      return;
     }
 
     // could also scan the text in the file to see if each import
     // statement is already in there, but if the user has the import
     // commented out, then this will be a problem.
-    
-    String[] libImports = lib.getSpecifiedImports(); // ask the library for its imports 
-    
-    if (libImports == null) {
+    String[] list = lib.getSpecifiedImports(); // ask the library for its imports 
+    if (list == null) {
       
       // Default to old behavior and load every package in the primary jar
-      libImports = Base.packageListFromClassPath(jarPath);
+      list = Base.packageListFromClassPath(lib.getJarPath());
     }
-       
-    //System.out.println("JavaEditor.packageListFromClassPath("+libraryName+") -> "+Arrays.asList(plcp));
-    
+
     StringBuffer buffer = new StringBuffer();
-    for (int i = 0; i < libImports.length; i++) {
+    for (int i = 0; i < list.length; i++) {
       buffer.append("import ");
-      buffer.append(libImports[i]);
+      buffer.append(list[i]);
       buffer.append(".*;\n");
     }
-    
     buffer.append('\n');
     buffer.append(getText());
     setText(buffer.toString());
