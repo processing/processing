@@ -349,6 +349,16 @@ public class Serial implements SerialPortEventListener {
   }
 
   
+  public String readStringUntil(int inByte) {
+    byte temp[] = readBytesUntil(inByte);
+    if (temp == null) {
+      return null;
+    } else {
+      return new String(temp);
+    }
+  }
+
+
   public void serialEvent(SerialPortEvent event) {
     if (event.getEventType() == SerialPortEvent.RXCHAR) {
       int toRead;
