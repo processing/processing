@@ -26,6 +26,8 @@
 # You'll have problems running Processing if you incorrectly 
 # modify lines in this file. It will probably not start at all.
 
+# AGAIN, DO NOT ALTER THIS FILE! I'M ONLY YELLING BECAUSE I LOVE YOU!
+
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -265,9 +267,9 @@ editor.token.invalid.style = #666666,bold
 
 
 # which platforms to export by default
-export.application.platform.windows = true
-export.application.platform.macosx = true
-export.application.platform.linux = true
+#export.application.platform.windows = true
+#export.application.platform.macosx = true
+#export.application.platform.linux = true
 
 # whether or not to export as full screen (present) mode
 export.application.fullscreen = false
@@ -275,8 +277,8 @@ export.application.fullscreen = false
 # whether to show the stop button when exporting to application
 export.application.stop = true
 
-# false will place all exported files into a single .jar
-#export.applet.separate_jar_files = false
+# embed Java by default for lower likelihood of problems
+export.application.embed_java = true
 
 # set to false to no longer delete applet or application folders before export
 export.delete_target_folder = true

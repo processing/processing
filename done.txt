@@ -1,3 +1,23 @@
+0223 pde (2.1)
+X reset font smoothing for everyone to its default by changing the pref
+X   To reset everyone's default, replaced editor.antialias with editor.smooth 
+X   for 2.1. Fonts are unusably gross on OS X (and Linux) w/o smoothing and 
+X   the Oracle JVM, and many longtime users have anti-aliasing turned off.
+X   https://github.com/processing/processing/issues/2164
+X   https://github.com/processing/processing/issues/2160
+X Add option to not embed the Java runtime (saves space, but breakage)
+X return code needs to be 1 instead of 0 w/ Commander
+X   https://github.com/processing/processing/issues/1798#issuecomment-26711847
+X additional font tweaks due to decreased legibility with Oracle Java
+X type looks a little feeble on OS X with non-retina machines
+X   https://github.com/processing/processing/issues/2135
+X   should we increase the size of the mode dropdown?
+X processing-java broken in 2.1 beta 1 on OS X
+X   https://github.com/processing/processing/issues/2159
+X   need to use the embedded Java, different classpath, etc
+X   also might be time to put something in to check the version
+
+
 0222 pde (2.1b1)
 X MovieMaker needs to be compiling as 1.6
 X deal with null/missing folders for Tools and Modes

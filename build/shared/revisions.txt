@@ -1,4 +1,10 @@
-PROCESSING 2.1 beta 2 (REV 0223) - 2X October 2013
+PROCESSING 2.1 (REV 0223) - 27 October 2013
+
+There have been major changes since 2.0.3, most of them are outlined in 
+the release notes for 2.1 beta 1 (look down a few dozen lines).
+
+This release includes a few updates to fix problems introduced in the beta 
+release, as well as additional general bug fixes, especially for OpenGL.
 
 + Added an option to not embed the Java runtime into an exported application.
   This saves you the 100 MB footprint, but requires your users to install
@@ -30,6 +36,64 @@ PROCESSING 2.1 beta 2 (REV 0223) - 2X October 2013
   With arrays of primitive types (int[], float[], anything that's not an
   object), we've added code so that println() works as before. But we
   can't do the same for arrays of objects, such as String. 
+
++ The preference for font smoothing (anti-aliasing) in the editor has been
+  reset in this release. Fonts are unusably gross on OS X (and Linux) 
+  without smoothing and Oracle's version of Java (now in use with 2.1),
+  and many longtime users have anti-aliasing turned off. You can still 
+  turn off smoothing in the Preferences window, but the results may be poor.
+  https://github.com/processing/processing/issues/2164
+  https://github.com/processing/processing/issues/2160
+
+
+[ bug fixes ]
+
++ Fix dataPath() problem with OS X (was breaking Movie on export)
+
++ Command line processing-java was broken in 2.1 beta 1 on OS X
+  https://github.com/processing/processing/issues/2159
+
++ Fix a situation where processing-java would return 0 instead of 1 on errors
+  https://github.com/processing/processing/issues/1798#issuecomment-26711847
+
++ Alpha values from the pixels array were coming back as 0
+  https://github.com/processing/processing/issues/2030
+
++ Additional UI font tweaks due to decreased legibility with Oracle Java
+  https://github.com/processing/processing/issues/2135
+
+
+[ OpenGL updates ] 
+
++ Using sketchQuality() does not work properly with P3D, OPENGL, P2D
+  https://github.com/processing/processing/pull/2157
+
++ Fix crashes when the sketch window is resized
+  https://github.com/processing/processing/issues/1880
+  https://github.com/processing/processing/pull/2156
+
++ scale() wasn't affecting stroke weight in P3D
+  https://github.com/processing/processing/issues/2162
+
++ Add set(boolean) to PShader
+  https://github.com/processing/processing/issues/1991
+  https://github.com/processing/processing/pull/1993
+
++ Add PMatrix.preApply(PMatrix)
+  https://github.com/processing/processing/pull/2146
+  https://github.com/processing/processing/issues/2145
+
++ Updated to another version of JOGL (jogl-2.1-b1115, gluegen-2.1-b735)
+  for OS X 10.9 support.
+
++ Add warning when no uv texture coordinates are supplied
+  https://github.com/processing/processing/issues/2034
+
++ Flicker issues when resizing P2D/P3D/OPENGL
+  https://github.com/processing/processing/issues/15
+
++ Additional fix for occasional flash/flicker with drawing complex scenes
+  https://github.com/processing/processing/commit/cca2f08a24ef892c494f5a75aa0e4b01de7e5d8a
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
