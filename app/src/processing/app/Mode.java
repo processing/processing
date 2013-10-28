@@ -1039,9 +1039,8 @@ public abstract class Mode {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
   /**
-   * Checks coreLibraries and contribLibraries in 'mode' for a library whose name is 'libName'  
-   * @param mode the mode to check
-   * @param libName the name of the library
+   * Checks coreLibraries and contribLibraries for a library with the specified name  
+   * @param libName the name of the library to find
    * @return the Library or null if not found
    */
   public Library findLibraryByName(String libName) {
