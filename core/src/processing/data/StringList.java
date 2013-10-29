@@ -15,6 +15,8 @@ import processing.core.PApplet;
  * a sorted copy, use list.copy().sort().
  *
  * @webref data:composite
+ * @see IntList
+ * @see FloatList
  */
 public class StringList implements Iterable<String> {
   int count;
@@ -646,11 +648,9 @@ public class StringList implements Iterable<String> {
 
 
   public StringList getSubset(int start, int num) {
-    StringList outgoing = new StringList(num);
-    for (int i = 0; i < num; i++) {
-      System.arraycopy(data, start, outgoing.data, 0, num);
-    }
-    return outgoing;
+    String[] subset = new String[num];
+    System.arraycopy(data, start, subset, 0, num);
+    return new StringList(subset);
   }
 
 
@@ -685,6 +685,26 @@ public class StringList implements Iterable<String> {
 //      System.out.println("[" + i + "] " + data[i]);
 //    }
 //    System.out.flush();
+//  }
+
+
+  public String join(String separator) {
+    if (count == 0) {
+      return "";
+    }
+    StringBuilder sb = new StringBuilder();
+    sb.append(data[0]);
+    for (int i = 1; i < count; i++) {
+      sb.append(separator);
+      sb.append(data[i]);
+    }
+    return sb.toString();
+  }
+
+
+//  static public StringList split(String value, char delim) {
+//    String[] array = PApplet.split(value, delim);
+//    return new StringList(array);
 //  }
 
 

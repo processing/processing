@@ -55,7 +55,10 @@ public class EditorHeader extends JComponent {
   // (total tab width will be this plus TEXT_MARGIN*2)
   static final int NO_TEXT_WIDTH = 10;
 
-  Color backgroundColor;
+  Color bgColor;
+  boolean hiding;
+  Color hideColor;
+  
   Color textColor[] = new Color[2];
   Color tabColor[] = new Color[2];
   Color modifiedColor;
@@ -194,7 +197,11 @@ public class EditorHeader extends JComponent {
       tabArrow = Toolkit.getLibImage("tab-arrow" + suffix);
     }
 
-    backgroundColor = mode.getColor("header.bgcolor");
+    bgColor = mode.getColor("header.bgcolor");
+    
+    hiding = Preferences.getBoolean("buttons.hide.image");
+    hideColor = mode.getColor("buttons.hide.color");
+
     textColor[SELECTED] = mode.getColor("header.text.selected.color");
     textColor[UNSELECTED] = mode.getColor("header.text.unselected.color");
     font = mode.getFont("header.text.font");
@@ -252,31 +259,25 @@ public class EditorHeader extends JComponent {
     if (Toolkit.highResDisplay()) {
       // scale everything 2x, will be scaled down when drawn to the screen
       g2.scale(2, 2);
+      if (Base.isUsableOracleJava()) {
+        // Oracle Java looks better with anti-aliasing turned on
+        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                            RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+      }
     } else {
-      // don't anti-alias text in retina mode
+      // don't anti-alias text in retina mode w/ Apple Java
       g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
                           RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
     }
 
     // set the background for the offscreen
-    g.setColor(backgroundColor);
+    g.setColor(hiding ? hideColor : bgColor);
     g.fillRect(0, 0, imageW, imageH);
 
-//    EditorToolbar toolbar = editor.toolbar;
-//    if (toolbar != null && toolbar.backgroundImage != null) {
-//      g.drawImage(toolbar.backgroundImage,
-//                  0, -toolbar.getHeight(),
-//                  EditorToolbar.BACKGROUND_WIDTH,
-//                  EditorToolbar.BACKGROUND_HEIGHT, null);
-//    }
-    //editor.getMode().drawBackground(g, EditorToolbar.BUTTON_HEIGHT);
-    editor.getMode().drawBackground(g, Preferences.GRID_SIZE);
+    if (!hiding) {
+      editor.getMode().drawBackground(g, Preferences.GRID_SIZE);
+    }
 
-//    int codeCount = sketch.getCodeCount();
-//    if ((tabLeft == null) || (tabLeft.length < codeCount)) {
-//      tabLeft = new int[codeCount];
-//      tabRight = new int[codeCount];
-//    }
     if (tabs.length != sketch.getCodeCount()) {
       tabs = new Tab[sketch.getCodeCount()];
       for (int i = 0; i < tabs.length; i++) {
@@ -285,9 +286,6 @@ public class EditorHeader extends JComponent {
       visitOrder = new Tab[sketch.getCodeCount() - 1];
     }
 
-//    menuRight = sizeW - 16;
-//    menuLeft = menuRight - pieces[0][MENU].getWidth(this);
-//    menuLeft = menuRight - 50;  // FIXME!!
     int leftover =
       ARROW_GAP_WIDTH + ARROW_WIDTH + MARGIN_WIDTH; // + SCROLLBAR_WIDTH;
     int tabMax = getWidth() - leftover;
@@ -536,16 +534,14 @@ public class EditorHeader extends JComponent {
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           Sketch sketch = editor.getSketch();
-          if (!sketch.isUntitled()) {  // don't bother if untitled
-            if (!Base.isMacOS() &&  // ok on OS X
-                editor.base.editors.size() == 1 &&  // mmm! accessor
-                sketch.getCurrentCodeIndex() == 0) {
+          if (!Base.isMacOS() &&  // ok on OS X
+              editor.base.editors.size() == 1 &&  // mmm! accessor
+              sketch.getCurrentCodeIndex() == 0) {
               Base.showWarning("Yeah, no." ,
                                "You can't delete the last tab " +
                                "of the last open sketch.", null);
-            } else {
-              editor.getSketch().handleDeleteCode();
-            }
+          } else {
+            editor.getSketch().handleDeleteCode();
           }
         }
       });

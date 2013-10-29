@@ -473,6 +473,11 @@ public class PGraphics extends PImage implements PConstants {
   protected float backgroundR, backgroundG, backgroundB, backgroundA;
   protected int backgroundRi, backgroundGi, backgroundBi, backgroundAi;
 
+
+  /** The current blending mode. */
+  protected int blendMode;
+
+
   // ........................................................
 
   /**
@@ -944,6 +949,8 @@ public class PGraphics extends PImage implements PConstants {
       background(backgroundColor);
     }
 
+    blendMode(BLEND);
+
     settingsInited = true;
     // defaultSettings() overlaps reapplySettings(), don't do both
     //reapplySettings = false;
@@ -961,11 +968,10 @@ public class PGraphics extends PImage implements PConstants {
    * called before defaultSettings(), so we should be safe.
    */
   protected void reapplySettings() {
-//    System.out.println("attempting reapplySettings()");
+    // This might be called by allocate... So if beginDraw() has never run,
+    // we don't want to reapply here, we actually just need to let
+    // defaultSettings() get called a little from inside beginDraw().
     if (!settingsInited) return;  // if this is the initial setup, no need to reapply
-
-//    System.out.println("  doing reapplySettings");
-//    new Exception().printStackTrace(System.out);
 
     colorMode(colorMode, colorModeX, colorModeY, colorModeZ);
     if (fill) {
@@ -1012,6 +1018,8 @@ public class PGraphics extends PImage implements PConstants {
     textMode(textMode);
     textAlign(textAlign, textAlignY);
     background(backgroundColor);
+
+    blendMode(blendMode);
 
     reapplySettings = false;
   }
@@ -1216,6 +1224,9 @@ public class PGraphics extends PImage implements PConstants {
    * @see PGraphics#textureWrap(int)
    */
   public void textureMode(int mode) {
+    if (mode != IMAGE && mode != NORMAL) {
+      throw new RuntimeException("textureMode() only supports IMAGE and NORMAL");
+    }
     this.textureMode = mode;
   }
 
@@ -1827,7 +1838,15 @@ public class PGraphics extends PImage implements PConstants {
    * @param mode the blending mode to use
    */
   public void blendMode(int mode) {
-    showMissingWarning("blendMode");
+    this.blendMode = mode;
+    blendModeImpl();
+  }
+
+
+  protected void blendModeImpl() {
+    if (blendMode != BLEND) {
+      showMissingWarning("blendMode");
+    }
   }
 
 
@@ -5539,7 +5558,7 @@ public class PGraphics extends PImage implements PConstants {
    * @see PGraphics#camera(float, float, float, float, float, float, float, float, float)
    */
   public void printProjection() {
-    showMethodWarning("printCamera");
+    showMethodWarning("printProjection");
   }
 
 
@@ -7619,6 +7638,9 @@ public class PGraphics extends PImage implements PConstants {
    * individual color components of a color supplied as an int value.
    */
   static public int lerpColor(int c1, int c2, float amt, int mode) {
+    if (amt < 0) amt = 0;
+    if (amt > 1) amt = 1;
+
     if (mode == RGB) {
       float a1 = ((c1 >> 24) & 0xff);
       float r1 = (c1 >> 16) & 0xff;

@@ -81,10 +81,10 @@
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
-<li>java.lang.Object</li>
+<li><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></li>
 <li>
 <ul class="inheritance">
-<li>processing.data.StringList</li>
+<li>StringList</li>
 </ul>
 </li>
 </ul>
@@ -93,13 +93,21 @@
 <li class="blockList">
 <dl>
 <dt>All Implemented Interfaces:</dt>
-<dd>java.lang.Iterable&lt;java.lang.String&gt;</dd>
+<dd><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.html?is-external=true" title="class or interface in java.lang">Iterable</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;</dd>
 </dl>
 <hr>
 <br>
 <pre>public class <span class="strong">StringList</span>
-extends java.lang.Object
-implements java.lang.Iterable&lt;java.lang.String&gt;</pre>
+extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>
+implements <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.html?is-external=true" title="class or interface in java.lang">Iterable</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;</pre>
+<div class="block">Helper class for a list of Strings. Lists are designed to have some of the
+ features of ArrayLists, but to maintain the simplicity and efficiency of
+ working with arrays.
+
+ Functions like sort() and shuffle() always act on the list itself. To get
+ a sorted copy, use list.copy().sort().</div>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../processing/data/IntList.html" title="class in processing.data"><code>IntList</code></a>, 
+<a href="../../processing/data/FloatList.html" title="class in processing.data"><code>FloatList</code></a></dd></dl>
 </li>
 </ul>
 </div>
@@ -124,10 +132,13 @@ implements java.lang.Iterable&lt;java.lang.String&gt;</pre>
 <td class="colOne"><code><strong><a href="../../processing/data/StringList.html#StringList(int)">StringList</a></strong>(int&nbsp;length)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../processing/data/StringList.html#StringList(java.lang.Iterable)">StringList</a></strong>(java.lang.Iterable&lt;java.lang.String&gt;&nbsp;iter)</code>&nbsp;</td>
+<td class="colOne"><code><strong><a href="../../processing/data/StringList.html#StringList(java.lang.Iterable)">StringList</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.html?is-external=true" title="class or interface in java.lang">Iterable</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;iter)</code>
+<div class="block">Create from something iterable, for instance:
+ StringList list = new StringList(hashMap.keySet());</div>
+</td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><strong><a href="../../processing/data/StringList.html#StringList(java.lang.String[])">StringList</a></strong>(java.lang.String[]&nbsp;list)</code>&nbsp;</td>
+<td class="colOne"><code><strong><a href="../../processing/data/StringList.html#StringList(java.lang.String[])">StringList</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]&nbsp;list)</code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -146,27 +157,27 @@ implements java.lang.Iterable&lt;java.lang.String&gt;</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/data/StringList.html#append(java.lang.String)">append</a></strong>(java.lang.String&nbsp;value)</code>
+<td class="colLast"><code><strong><a href="../../processing/data/StringList.html#append(java.lang.String)">append</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;value)</code>
 <div class="block">Add a new entry to the list.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/data/StringList.html#append(java.lang.String[])">append</a></strong>(java.lang.String[]&nbsp;values)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../processing/data/StringList.html#append(java.lang.String[])">append</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]&nbsp;values)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/data/StringList.html#append(processing.data.StringList)">append</a></strong>(<a href="../../processing/data/StringList.html" title="class in processing.data">StringList</a>&nbsp;list)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>java.lang.String[]</code></td>
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]</code></td>
 <td class="colLast"><code><strong><a href="../../processing/data/StringList.html#array()">array</a></strong>()</code>
 <div class="block">Create a new array with a copy of all the values.</div>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>java.lang.String[]</code></td>
-<td class="colLast"><code><strong><a href="../../processing/data/StringList.html#array(java.lang.String[])">array</a></strong>(java.lang.String[]&nbsp;array)</code>
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/StringList.html#array(java.lang.String[])">array</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]&nbsp;array)</code>
 <div class="block">Copy as many values as possible into the specified array.</div>
 </td>
 </tr>
@@ -181,7 +192,7 @@ implements java.lang.Iterable&lt;java.lang.String&gt;</pre>
 <td class="colLast"><code><strong><a href="../../processing/data/StringList.html#copy()">copy</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><strong><a href="../../processing/data/StringList.html#get(int)">get</a></strong>(int&nbsp;index)</code>
 <div class="block">Get an entry at a particular index.</div>
 </td>
@@ -208,25 +219,25 @@ implements java.lang.Iterable&lt;java.lang.String&gt;</pre>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>java.lang.String[]</code></td>
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]</code></td>
 <td class="colLast"><code><strong><a href="../../processing/data/StringList.html#getUnique()">getUnique</a></strong>()</code>
 <div class="block">Get a list of all unique entries.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><strong><a href="../../processing/data/StringList.html#hasValue(java.lang.String)">hasValue</a></strong>(java.lang.String&nbsp;value)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../processing/data/StringList.html#hasValue(java.lang.String)">hasValue</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;value)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><strong><a href="../../processing/data/StringList.html#index(java.lang.String)">index</a></strong>(java.lang.String&nbsp;what)</code>
+<td class="colLast"><code><strong><a href="../../processing/data/StringList.html#index(java.lang.String)">index</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;what)</code>
 <div class="block">Return the first index of a particular value.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/data/StringList.html#insert(int, java.lang.String[])">insert</a></strong>(int&nbsp;index,
-      java.lang.String[]&nbsp;values)</code>&nbsp;</td>
+      <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]&nbsp;values)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
@@ -234,112 +245,112 @@ implements java.lang.Iterable&lt;java.lang.String&gt;</pre>
       <a href="../../processing/data/StringList.html" title="class in processing.data">StringList</a>&nbsp;list)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>java.util.Iterator&lt;java.lang.String&gt;</code></td>
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/util/Iterator.html?is-external=true" title="class or interface in java.util">Iterator</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../processing/data/StringList.html#iterator()">iterator</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/StringList.html#join(java.lang.String)">join</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;separator)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/data/StringList.html#lower()">lower</a></strong>()</code>
 <div class="block">Make the entire list lower case.</div>
 </td>
 </tr>
-<tr class="rowColor">
-<td class="colFirst"><code>void</code></td>
+<tr class="altColor">
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><strong><a href="../../processing/data/StringList.html#remove(int)">remove</a></strong>(int&nbsp;index)</code>
-<div class="block">remove an element from the specified index</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><strong><a href="../../processing/data/StringList.html#removeValue(java.lang.String)">removeValue</a></strong>(java.lang.String&nbsp;value)</code>
-<div class="block">Remove the first instance of a particular value</div>
+<div class="block">Remove an element from the specified index.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><strong><a href="../../processing/data/StringList.html#removeValues(java.lang.String)">removeValues</a></strong>(java.lang.String&nbsp;value)</code>
-<div class="block">Remove all instances of a particular value</div>
-</td>
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/StringList.html#removeValue(java.lang.String)">removeValue</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;value)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><strong><a href="../../processing/data/StringList.html#replaceValue(java.lang.String, java.lang.String)">replaceValue</a></strong>(java.lang.String&nbsp;value,
-            java.lang.String&nbsp;newValue)</code>&nbsp;</td>
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/StringList.html#removeValues(java.lang.String)">removeValues</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;value)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><strong><a href="../../processing/data/StringList.html#replaceValues(java.lang.String, java.lang.String)">replaceValues</a></strong>(java.lang.String&nbsp;value,
-             java.lang.String&nbsp;newValue)</code>&nbsp;</td>
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/StringList.html#replaceValue(java.lang.String, java.lang.String)">replaceValue</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;value,
+            <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;newValue)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../processing/data/StringList.html#replaceValues(java.lang.String, java.lang.String)">replaceValues</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;value,
+             <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;newValue)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/data/StringList.html#resize(int)">resize</a></strong>(int&nbsp;length)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/data/StringList.html#reverse()">reverse</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/data/StringList.html#set(int, java.lang.String)">set</a></strong>(int&nbsp;index,
-   java.lang.String&nbsp;what)</code>
+   <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;what)</code>
 <div class="block">Set the entry at a particular index.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/data/StringList.html#shuffle()">shuffle</a></strong>()</code>
 <div class="block">Randomize the order of the list elements.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/data/StringList.html#shuffle(processing.core.PApplet)">shuffle</a></strong>(<a href="../../processing/core/PApplet.html" title="class in processing.core">PApplet</a>&nbsp;sketch)</code>
 <div class="block">Randomize the list order using the random() function from the specified
  sketch, allowing shuffle() to use its current randomSeed() setting.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../processing/data/StringList.html#size()">size</a></strong>()</code>
 <div class="block">Get the length of the list.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/data/StringList.html#sort()">sort</a></strong>()</code>
 <div class="block">Sorts the array in place.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/data/StringList.html#sortReverse()">sortReverse</a></strong>()</code>
-<div class="block">reverse sort, orders values from highest to lowest</div>
+<div class="block">Reverse sort, orders values from highest to lowest.</div>
 </td>
 </tr>
-<tr class="altColor">
-<td class="colFirst"><code>java.lang.String</code></td>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><strong><a href="../../processing/data/StringList.html#toString()">toString</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/data/StringList.html#upper()">upper</a></strong>()</code>
 <div class="block">Make the entire list upper case.</div>
 </td>
 </tr>
-<tr class="altColor">
-<td class="colFirst"><code>java.lang.String[]</code></td>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]</code></td>
 <td class="colLast"><code><strong><a href="../../processing/data/StringList.html#values()">values</a></strong>()</code>
 <div class="block">Returns the actual array being used to store the data.</div>
 </td>
 </tr>
 </table>
 <ul class="blockList">
-<li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
+<li class="blockList"><a name="methods_inherited_from_class_Object">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>equals, getClass, hashCode, notify, notifyAll, wait, wait, wait</code></li>
+<h3>Methods inherited from class&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></h3>
+<code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#equals(java.lang.Object)" title="class or interface in java.lang">equals</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#getClass()" title="class or interface in java.lang">getClass</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#hashCode()" title="class or interface in java.lang">hashCode</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#notify()" title="class or interface in java.lang">notify</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#notifyAll()" title="class or interface in java.lang">notifyAll</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait()" title="class or interface in java.lang">wait</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait(long)" title="class or interface in java.lang">wait</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait(long, int)" title="class or interface in java.lang">wait</a></code></li>
 </ul>
 </li>
 </ul>
@@ -379,7 +390,7 @@ implements java.lang.Iterable&lt;java.lang.String&gt;</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>StringList</h4>
-<pre>public&nbsp;StringList(java.lang.String[]&nbsp;list)</pre>
+<pre>public&nbsp;StringList(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]&nbsp;list)</pre>
 </li>
 </ul>
 <a name="StringList(java.lang.Iterable)">
@@ -388,7 +399,9 @@ implements java.lang.Iterable&lt;java.lang.String&gt;</pre>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>StringList</h4>
-<pre>public&nbsp;StringList(java.lang.Iterable&lt;java.lang.String&gt;&nbsp;iter)</pre>
+<pre>public&nbsp;StringList(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.html?is-external=true" title="class or interface in java.lang">Iterable</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;iter)</pre>
+<div class="block">Create from something iterable, for instance:
+ StringList list = new StringList(hashMap.keySet());</div>
 </li>
 </ul>
 </li>
@@ -434,7 +447,7 @@ implements java.lang.Iterable&lt;java.lang.String&gt;</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>get</h4>
-<pre>public&nbsp;java.lang.String&nbsp;get(int&nbsp;index)</pre>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;get(int&nbsp;index)</pre>
 <div class="block">Get an entry at a particular index.</div>
 </li>
 </ul>
@@ -445,7 +458,7 @@ implements java.lang.Iterable&lt;java.lang.String&gt;</pre>
 <li class="blockList">
 <h4>set</h4>
 <pre>public&nbsp;void&nbsp;set(int&nbsp;index,
-       java.lang.String&nbsp;what)</pre>
+       <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;what)</pre>
 <div class="block">Set the entry at a particular index. If the index is past the length of
  the list, it'll expand the list to accommodate, and fill the intermediate
  entries with 0s.</div>
@@ -457,8 +470,8 @@ implements java.lang.Iterable&lt;java.lang.String&gt;</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>remove</h4>
-<pre>public&nbsp;void&nbsp;remove(int&nbsp;index)</pre>
-<div class="block">remove an element from the specified index</div>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;remove(int&nbsp;index)</pre>
+<div class="block">Remove an element from the specified index.</div>
 </li>
 </ul>
 <a name="removeValue(java.lang.String)">
@@ -467,8 +480,7 @@ implements java.lang.Iterable&lt;java.lang.String&gt;</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>removeValue</h4>
-<pre>public&nbsp;boolean&nbsp;removeValue(java.lang.String&nbsp;value)</pre>
-<div class="block">Remove the first instance of a particular value</div>
+<pre>public&nbsp;int&nbsp;removeValue(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;value)</pre>
 </li>
 </ul>
 <a name="removeValues(java.lang.String)">
@@ -477,8 +489,7 @@ implements java.lang.Iterable&lt;java.lang.String&gt;</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>removeValues</h4>
-<pre>public&nbsp;boolean&nbsp;removeValues(java.lang.String&nbsp;value)</pre>
-<div class="block">Remove all instances of a particular value</div>
+<pre>public&nbsp;int&nbsp;removeValues(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;value)</pre>
 </li>
 </ul>
 <a name="replaceValue(java.lang.String, java.lang.String)">
@@ -487,8 +498,8 @@ implements java.lang.Iterable&lt;java.lang.String&gt;</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>replaceValue</h4>
-<pre>public&nbsp;boolean&nbsp;replaceValue(java.lang.String&nbsp;value,
-                   java.lang.String&nbsp;newValue)</pre>
+<pre>public&nbsp;int&nbsp;replaceValue(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;value,
+               <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;newValue)</pre>
 </li>
 </ul>
 <a name="replaceValues(java.lang.String, java.lang.String)">
@@ -497,8 +508,8 @@ implements java.lang.Iterable&lt;java.lang.String&gt;</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>replaceValues</h4>
-<pre>public&nbsp;boolean&nbsp;replaceValues(java.lang.String&nbsp;value,
-                    java.lang.String&nbsp;newValue)</pre>
+<pre>public&nbsp;int&nbsp;replaceValues(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;value,
+                <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;newValue)</pre>
 </li>
 </ul>
 <a name="append(java.lang.String)">
@@ -507,7 +518,7 @@ implements java.lang.Iterable&lt;java.lang.String&gt;</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>append</h4>
-<pre>public&nbsp;void&nbsp;append(java.lang.String&nbsp;value)</pre>
+<pre>public&nbsp;void&nbsp;append(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;value)</pre>
 <div class="block">Add a new entry to the list.</div>
 </li>
 </ul>
@@ -517,7 +528,7 @@ implements java.lang.Iterable&lt;java.lang.String&gt;</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>append</h4>
-<pre>public&nbsp;void&nbsp;append(java.lang.String[]&nbsp;values)</pre>
+<pre>public&nbsp;void&nbsp;append(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]&nbsp;values)</pre>
 </li>
 </ul>
 <a name="append(processing.data.StringList)">
@@ -536,7 +547,7 @@ implements java.lang.Iterable&lt;java.lang.String&gt;</pre>
 <li class="blockList">
 <h4>insert</h4>
 <pre>public&nbsp;void&nbsp;insert(int&nbsp;index,
-          java.lang.String[]&nbsp;values)</pre>
+          <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]&nbsp;values)</pre>
 </li>
 </ul>
 <a name="insert(int, processing.data.StringList)">
@@ -555,7 +566,7 @@ implements java.lang.Iterable&lt;java.lang.String&gt;</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>index</h4>
-<pre>public&nbsp;int&nbsp;index(java.lang.String&nbsp;what)</pre>
+<pre>public&nbsp;int&nbsp;index(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;what)</pre>
 <div class="block">Return the first index of a particular value.</div>
 </li>
 </ul>
@@ -565,7 +576,7 @@ implements java.lang.Iterable&lt;java.lang.String&gt;</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>hasValue</h4>
-<pre>public&nbsp;boolean&nbsp;hasValue(java.lang.String&nbsp;value)</pre>
+<pre>public&nbsp;boolean&nbsp;hasValue(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;value)</pre>
 </li>
 </ul>
 <a name="sort()">
@@ -585,7 +596,7 @@ implements java.lang.Iterable&lt;java.lang.String&gt;</pre>
 <li class="blockList">
 <h4>sortReverse</h4>
 <pre>public&nbsp;void&nbsp;sortReverse()</pre>
-<div class="block">reverse sort, orders values from highest to lowest</div>
+<div class="block">Reverse sort, orders values from highest to lowest.</div>
 </li>
 </ul>
 <a name="reverse()">
@@ -654,7 +665,7 @@ implements java.lang.Iterable&lt;java.lang.String&gt;</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>values</h4>
-<pre>public&nbsp;java.lang.String[]&nbsp;values()</pre>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]&nbsp;values()</pre>
 <div class="block">Returns the actual array being used to store the data. Suitable for
  iterating with a for() loop, but modifying the list could cause terrible
  things to happen.</div>
@@ -666,10 +677,10 @@ implements java.lang.Iterable&lt;java.lang.String&gt;</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>iterator</h4>
-<pre>public&nbsp;java.util.Iterator&lt;java.lang.String&gt;&nbsp;iterator()</pre>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Iterator.html?is-external=true" title="class or interface in java.util">Iterator</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;iterator()</pre>
 <dl>
 <dt><strong>Specified by:</strong></dt>
-<dd><code>iterator</code>&nbsp;in interface&nbsp;<code>java.lang.Iterable&lt;java.lang.String&gt;</code></dd>
+<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.html?is-external=true#iterator()" title="class or interface in java.lang">iterator</a></code>&nbsp;in interface&nbsp;<code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.html?is-external=true" title="class or interface in java.lang">Iterable</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;</code></dd>
 </dl>
 </li>
 </ul>
@@ -679,7 +690,7 @@ implements java.lang.Iterable&lt;java.lang.String&gt;</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>array</h4>
-<pre>public&nbsp;java.lang.String[]&nbsp;array()</pre>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]&nbsp;array()</pre>
 <div class="block">Create a new array with a copy of all the values.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd>an array sized by the length of the list with each of the values.</dd></dl>
 </li>
@@ -690,7 +701,7 @@ implements java.lang.Iterable&lt;java.lang.String&gt;</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>array</h4>
-<pre>public&nbsp;java.lang.String[]&nbsp;array(java.lang.String[]&nbsp;array)</pre>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]&nbsp;array(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]&nbsp;array)</pre>
 <div class="block">Copy as many values as possible into the specified array.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>array</code> - </dd></dl>
 </li>
@@ -720,7 +731,7 @@ implements java.lang.Iterable&lt;java.lang.String&gt;</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getUnique</h4>
-<pre>public&nbsp;java.lang.String[]&nbsp;getUnique()</pre>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]&nbsp;getUnique()</pre>
 <div class="block">Get a list of all unique entries.</div>
 </li>
 </ul>
@@ -744,16 +755,25 @@ implements java.lang.Iterable&lt;java.lang.String&gt;</pre>
 <div class="block">Create a dictionary associating each entry in this list to its index.</div>
 </li>
 </ul>
+<a name="join(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>join</h4>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;join(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;separator)</pre>
+</li>
+</ul>
 <a name="toString()">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>toString</h4>
-<pre>public&nbsp;java.lang.String&nbsp;toString()</pre>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;toString()</pre>
 <dl>
 <dt><strong>Overrides:</strong></dt>
-<dd><code>toString</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
+<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#toString()" title="class or interface in java.lang">toString</a></code>&nbsp;in class&nbsp;<code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></code></dd>
 </dl>
 </li>
 </ul>

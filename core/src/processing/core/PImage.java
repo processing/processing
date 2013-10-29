@@ -54,7 +54,7 @@ import javax.imageio.metadata.*;
    *
  * @webref image
  * @usage Web &amp; Application
- * @instanceName img any object of type PImage
+ * @instanceName pimg any object of type PImage
  * @see PApplet#loadImage(String)
  * @see PApplet#imageMode(int)
  * @see PApplet#createImage(int, int, int)

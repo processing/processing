@@ -29,7 +29,6 @@ import java.util.*;
 
 import javax.swing.*;
 
-import processing.app.syntax.*;
 import processing.core.*;
 
 
@@ -50,18 +49,18 @@ import processing.core.*;
  * being lectured by strangers who feel that it doesn't look like what they
  * learned in CS class.
  * <p>
- * Would also be possible to change this to use the Java Preferences API.
- * Some useful articles
- * <a href="http://www.onjava.com/pub/a/onjava/synd/2001/10/17/j2se.html">here</a> and
- * <a href="http://www.particle.kth.se/~lindsey/JavaCourse/Book/Part1/Java/Chapter10/Preferences.html">here</a>.
- * However, haven't implemented this yet for lack of time, but more
- * importantly, because it would entail writing to the registry (on Windows),
- * or an obscure file location (on Mac OS X) and make it far more difficult to
- * find the preferences to tweak them by hand (no! stay out of regedit!)
- * or to reset the preferences by simply deleting the preferences.txt file.
+ * We don't use the Java Preferences API because it would entail writing to 
+ * the registry (on Windows), or an obscure file location (on Mac OS X) and 
+ * make it far more difficult (impossible) to remove the preferences.txt to 
+ * reset them (when they become corrupt), or to find the the file to make 
+ * edits for numerous obscure preferences that are not part of the preferences
+ * window. If we added a generic editor (e.g. about:config in Mozilla) for 
+ * such things, we could start using the Java Preferences API. But wow, that
+ * sounds like a lot of work. Not unlike writing this paragraph. 
  */
 public class Preferences {
 
+  static final Integer[] FONT_SIZES = { 10, 12, 14, 18, 24, 36, 48 }; 
   // what to call the feller
 
   static final String PREFS_FILE = "preferences.txt"; //$NON-NLS-1$
@@ -109,24 +108,28 @@ public class Preferences {
 
   JTextField sketchbookLocationField;
   JCheckBox editorAntialiasBox;
-//  JCheckBox exportSeparateBox;
   JCheckBox deletePreviousBox;
-//  JCheckBox externalEditorBox;
+  JCheckBox whinyBox;
   JCheckBox memoryOverrideBox;
   JTextField memoryField;
   JCheckBox checkUpdatesBox;
-  JTextField fontSizeField;
+  //JTextField fontSizeField;
+  JComboBox fontSizeField;
+  JComboBox consoleSizeField;
   JCheckBox inputMethodBox;
   JCheckBox autoAssociateBox;
-  JRadioButton bitsThirtyTwoButton;
-  JRadioButton bitsSixtyFourButton;
+  
+  //JRadioButton bitsThirtyTwoButton;
+  //JRadioButton bitsSixtyFourButton;
+  
   JComboBox displaySelectionBox;
-
   int displayCount;
+  
+  //Font[] monoFontList;
+  String[] monoFontFamilies;
+  JComboBox fontSelectionBox;
 
-  // the calling editor, so updates can be applied
-
-//  Editor editor;
+  /** Base object so that updates can be applied to the list of editors. */
   Base base;
 
 
@@ -142,7 +145,9 @@ public class Preferences {
     // start by loading the defaults, in case something
     // important was deleted from the user prefs
     try {
-      load(Base.getLibStream("preferences.txt")); //$NON-NLS-1$
+      // Name changed for 2.1b2 to avoid problems with users modifying or 
+      // replacing the file after doing a search for "preferences.txt".
+      load(Base.getLibStream("defaults.txt")); //$NON-NLS-1$
     } catch (Exception e) {
       Base.showError(null, "Could not read default settings.\n" +
                            "You'll need to reinstall Processing.", e);
@@ -218,7 +223,18 @@ public class Preferences {
 //      }
     }
 
-    PApplet.useNativeSelect = Preferences.getBoolean("chooser.files.native"); //$NON-NLS-1$
+    PApplet.useNativeSelect = 
+      Preferences.getBoolean("chooser.files.native"); //$NON-NLS-1$
+    
+    // Set http proxy for folks that require it. 
+    // http://docs.oracle.com/javase/6/docs/technotes/guides/net/proxies.html
+    String proxyHost = get("proxy.host");
+    String proxyPort = get("proxy.port");
+    if (proxyHost != null && proxyHost.trim().length() != 0 &&
+        proxyPort != null && proxyPort.trim().length() != 0) {
+      System.setProperty("http.proxyHost", proxyHost);
+      System.setProperty("http.proxyPort", proxyPort);
+    }
   }
 
 
@@ -229,6 +245,11 @@ public class Preferences {
     dialog = new JFrame("Preferences");
     dialog.setResizable(false);
 
+//    GroupLayout layout = new GroupLayout(getContentPane());
+//    dialog.getContentPane().setLayout(layout);
+//    layout.setAutoCreateGaps(true);
+//    layout.setAutoCreateContainerGaps(true);
+    
     Container pain = dialog.getContentPane();
     pain.setLayout(null);
 
@@ -285,22 +306,7 @@ public class Preferences {
     top += vmax + GUI_BETWEEN;
 
 
-    // Editor font size [    ]
-
-    Container box = Box.createHorizontalBox();
-    label = new JLabel("Editor font size: ");
-    box.add(label);
-    fontSizeField = new JTextField(4);
-    box.add(fontSizeField);
-    label = new JLabel("  (requires restart of Processing)");
-    box.add(label);
-    pain.add(box);
-    d = box.getPreferredSize();
-    box.setBounds(left, top, d.width, d.height);
-    Font editorFont = Preferences.getFont("editor.font");
-    fontSizeField.setText(String.valueOf(editorFont.getSize()));
-    top += d.height + GUI_BETWEEN;
-    
+    // Editor and console font [ Source Code Pro ]
 
     // Nevermind on this for now.. Java doesn't seem to have a method for 
     // enumerating only the fixed-width (monospaced) fonts. To do this 
@@ -309,20 +315,65 @@ public class Preferences {
     // we'd call that font fixed width. That's all a very expensive set of 
     // operations, so it should also probably be cached between runs and 
     // updated in the background.
+
+    Container fontBox = Box.createHorizontalBox();
+    JLabel fontLabel = new JLabel("Editor and Console font ");
+    final String fontTip = "<html>" +
+      "Select the font used in the Editor and the Console.<br/>" +
+      "Only monospaced (fixed-width) fonts may be used, <br/>" +
+      "though the list may be imperfect.";
+    fontLabel.setToolTipText(fontTip);
+    fontBox.add(fontLabel);
+    // get a wide name in there before getPreferredSize() is called
+    fontSelectionBox = new JComboBox(new Object[] { Toolkit.getMonoFontName() });
+    fontSelectionBox.setToolTipText(fontTip);
+//    fontSelectionBox.addItem(Toolkit.getMonoFont(size, style));
+    //updateDisplayList();  
+    fontSelectionBox.setEnabled(false);  // don't enable until fonts are loaded
+    fontBox.add(fontSelectionBox);
+//    fontBox.add(Box.createHorizontalGlue());
+    pain.add(fontBox);
+    d = fontBox.getPreferredSize();
+    fontBox.setBounds(left, top, d.width + 150, d.height);
+//    fontBox.setBounds(left, top, dialog.getWidth() - left*2, d.height);
+    top += d.height + GUI_BETWEEN;
     
-//    // Editor font
-//    
-//    GraphicsEnvironment ge =
-//      GraphicsEnvironment.getLocalGraphicsEnvironment();
-//    Font fonts[] = ge.getAllFonts();
-//    ArrayList<Font> monoFonts = new ArrayList<Font>();
+    
+    // Editor font size [ 12 ]  Console font size [ 10 ]
 
+    Container box = Box.createHorizontalBox();
+    
+    label = new JLabel("Editor font size: ");
+    box.add(label);
+    //fontSizeField = new JTextField(4);
+    fontSizeField = new JComboBox<Integer>(FONT_SIZES);
+    fontSizeField.setEditable(true);
+    box.add(fontSizeField);
+//    label = new JLabel("  (requires restart of Processing)");
+//    box.add(label);
+    box.add(Box.createHorizontalStrut(GUI_BETWEEN));
 
+    label = new JLabel("Console font size: ");
+    box.add(label);
+    consoleSizeField = new JComboBox<Integer>(FONT_SIZES);
+    consoleSizeField.setEditable(true);
+    box.add(consoleSizeField);
+    
+    pain.add(box);
+    d = box.getPreferredSize();
+    box.setBounds(left, top, d.width, d.height);
+//    Font editorFont = Preferences.getFont("editor.font");
+    //fontSizeField.setText(String.valueOf(editorFont.getSize()));
+//    fontSizeField.setSelectedItem(editorFont.getSize());
+    fontSizeField.setSelectedItem(Preferences.getFont("editor.font.size"));
+    top += d.height + GUI_BETWEEN;
+    
+    
     // [ ] Use smooth text in editor window
 
-    editorAntialiasBox =
-      new JCheckBox("Use smooth text in editor window " +
-                    "(requires restart of Processing)");
+    editorAntialiasBox = new JCheckBox("Use smooth text in editor window");
+//      new JCheckBox("Use smooth text in editor window " +
+//                    "(requires restart of Processing)");
     pain.add(editorAntialiasBox);
     d = editorAntialiasBox.getPreferredSize();
     // adding +10 because ubuntu + jre 1.5 truncating items
@@ -370,10 +421,10 @@ public class Preferences {
 //    top += d.height + GUI_BETWEEN;
 
 
-    // [ ] Delete previous folder on export
+    // [ ] Delete previous application folder on export
 
     deletePreviousBox =
-      new JCheckBox("Delete previous folder on export");
+      new JCheckBox("Delete previous application folder on export");
     pain.add(deletePreviousBox);
     d = deletePreviousBox.getPreferredSize();
     deletePreviousBox.setBounds(left, top, d.width + 10, d.height);
@@ -389,6 +440,16 @@ public class Preferences {
 //    externalEditorBox.setBounds(left, top, d.width + 10, d.height);
 //    right = Math.max(right, left + d.width);
 //    top += d.height + GUI_BETWEEN;
+
+    
+    // [ ] Use external editor
+
+    whinyBox = new JCheckBox("Hide tab/toolbar background image (requires restart)");
+    pain.add(whinyBox);
+    d = whinyBox.getPreferredSize();
+    whinyBox.setBounds(left, top, d.width + 10, d.height);
+    right = Math.max(right, left + d.width);
+    top += d.height + GUI_BETWEEN;
 
 
     // [ ] Check for updates on startup
@@ -436,6 +497,7 @@ public class Preferences {
 
     // Launch programs as [ ] 32-bit [ ] 64-bit (Mac OS X only)
 
+    /*
     if (Base.isMacOS()) {
       box = Box.createHorizontalBox();
       label = new JLabel("Launch programs in  ");
@@ -454,6 +516,7 @@ public class Preferences {
       box.setBounds(left, top, d.width, d.height);
       top += d.height + GUI_BETWEEN;
     }
+    */
 
 
     // More preferences are in the ...
@@ -600,17 +663,18 @@ public class Preferences {
    * then send a message to the editor saying that it's time to do the same.
    */
   protected void applyFrame() {
-    setBoolean("editor.antialias", editorAntialiasBox.isSelected()); //$NON-NLS-1$
+    setBoolean("editor.smooth", //$NON-NLS-1$
+               editorAntialiasBox.isSelected());
 
-//    setBoolean("export.applet.separate_jar_files",
-//               exportSeparateBox.isSelected());
     setBoolean("export.delete_target_folder", //$NON-NLS-1$
                deletePreviousBox.isSelected());
 
-//    setBoolean("sketchbook.closing_last_window_quits",
-//               closingLastQuitsBox.isSelected());
-    //setBoolean("sketchbook.prompt", sketchPromptBox.isSelected());
-    //setBoolean("sketchbook.auto_clean", sketchCleanBox.isSelected());
+    boolean wine = whinyBox.isSelected();
+    setBoolean("header.hide.image", wine); //$NON-NLS-1$
+    setBoolean("buttons.hide.image", wine); //$NON-NLS-1$
+    // Could iterate through editors here and repaint them all, but probably 
+    // requires a doLayout() call, and that may have different effects on
+    // each platform, and nobody wants to debug/support that.
 
     // if the sketchbook path has changed, rebuild the menus
     String oldPath = get("sketchbook.path"); //$NON-NLS-1$
@@ -660,6 +724,7 @@ public class Preferences {
     }
     */
 
+    /*
     // If a change has been made between 32- and 64-bit, the libraries need
     // to be reloaded so that their native paths are set correctly.
     if (Base.isMacOS()) {
@@ -672,16 +737,51 @@ public class Preferences {
         }
       }
     }
+    */
 
+    // Don't change anything if the user closes the window before fonts load
+    if (fontSelectionBox.isEnabled()) {
+      String fontFamily = (String) fontSelectionBox.getSelectedItem();
+      set("editor.font.family", fontFamily);
+    }
+
+    /*
     String newSizeText = fontSizeField.getText();
     try {
       int newSize = Integer.parseInt(newSizeText.trim());
-      String pieces[] = PApplet.split(get("editor.font"), ','); //$NON-NLS-1$
-      pieces[2] = String.valueOf(newSize);
-      set("editor.font", PApplet.join(pieces, ',')); //$NON-NLS-1$
+      //String pieces[] = PApplet.split(get("editor.font"), ','); //$NON-NLS-1$
+      //pieces[2] = String.valueOf(newSize);
+      //set("editor.font", PApplet.join(pieces, ',')); //$NON-NLS-1$
+      set("editor.font.size", String.valueOf(newSize));
 
     } catch (Exception e) {
-      Base.log("ignoring invalid font size " + newSizeText); //$NON-NLS-1$
+      Base.log("Ignoring invalid font size " + newSizeText); //$NON-NLS-1$
+    }
+    */
+    try {
+      Object selection = fontSizeField.getSelectedItem();
+      if (selection instanceof String) {
+        // Replace with Integer version
+        selection = Integer.parseInt((String) selection);
+      }
+      set("editor.font.size", String.valueOf(selection));
+
+    } catch (NumberFormatException e) {
+      Base.log("Ignoring invalid font size " + fontSizeField); //$NON-NLS-1$
+      fontSizeField.setSelectedItem(getInteger("editor.font.size"));
+    }
+    
+    try {
+      Object selection = consoleSizeField.getSelectedItem();
+      if (selection instanceof String) {
+        // Replace with Integer version
+        selection = Integer.parseInt((String) selection);
+      }
+      set("console.font.size", String.valueOf(selection));
+
+    } catch (NumberFormatException e) {
+      Base.log("Ignoring invalid font size " + consoleSizeField); //$NON-NLS-1$
+      consoleSizeField.setSelectedItem(getInteger("console.font.size"));
     }
     
     setBoolean("editor.input_method_support", inputMethodBox.isSelected()); //$NON-NLS-1$
@@ -698,7 +798,7 @@ public class Preferences {
 
 
   protected void showFrame() {
-    editorAntialiasBox.setSelected(getBoolean("editor.antialias")); //$NON-NLS-1$
+    editorAntialiasBox.setSelected(getBoolean("editor.smooth")); //$NON-NLS-1$
     inputMethodBox.setSelected(getBoolean("editor.input_method_support")); //$NON-NLS-1$
 
     // set all settings entry boxes to their actual status
@@ -721,6 +821,9 @@ public class Preferences {
     checkUpdatesBox.
       setSelected(getBoolean("update.check")); //$NON-NLS-1$
 
+    whinyBox.setSelected(getBoolean("header.hide.image") || //$NON-NLS-1$
+                         getBoolean("buttons.hide.image")); //$NON-NLS-1$
+
     updateDisplayList();
     int displayNum = getInteger("run.display"); //$NON-NLS-1$
 //    System.out.println("display is " + displayNum + ", d count is " + displayCount);
@@ -728,12 +831,23 @@ public class Preferences {
 //      System.out.println("setting num to " + displayNum);
       displaySelectionBox.setSelectedIndex(displayNum);
     }
+    
+    // This takes a while to load, so run it from a separate thread
+    new Thread(new Runnable() {
+      public void run() {
+        initFontList();
+      }
+    }).start();
+    
+    fontSizeField.setSelectedItem(getInteger("editor.font.size"));
+    consoleSizeField.setSelectedItem(getInteger("console.font.size"));
 
     memoryOverrideBox.
       setSelected(getBoolean("run.options.memory")); //$NON-NLS-1$
     memoryField.
       setText(get("run.options.memory.maximum")); //$NON-NLS-1$
 
+    /*
     if (Base.isMacOS()) {
       String bits = Preferences.get("run.options.bits"); //$NON-NLS-1$
       if (bits.equals("32")) { //$NON-NLS-1$
@@ -747,6 +861,7 @@ public class Preferences {
         bitsThirtyTwoButton.setEnabled(false);
       }
     }
+    */
 
     if (autoAssociateBox != null) {
       autoAssociateBox.
@@ -757,6 +872,63 @@ public class Preferences {
   }
 
 
+  /** 
+   * I have some ideas on how we could make Swing even more obtuse for the
+   * most basic usage scenarios. Is there someone on the team I can contact?
+   * Oracle, are you listening?
+   */
+  class FontNamer extends JLabel implements ListCellRenderer<Font> {
+    public Component getListCellRendererComponent(JList<? extends Font> list,
+                                                  Font value, int index,
+                                                  boolean isSelected,
+                                                  boolean cellHasFocus) {
+      //if (Base.isMacOS()) {
+      setText(value.getFamily() + " / " + value.getName() + " (" + value.getPSName() + ")");
+      return this;
+    }
+  }
+  
+
+  void initFontList() {
+    /*
+    if (monoFontList == null) {
+      monoFontList = Toolkit.getMonoFontList().toArray(new Font[0]);
+      fontSelectionBox.setModel(new DefaultComboBoxModel(monoFontList));
+      fontSelectionBox.setRenderer(new FontNamer());
+      
+      // Preferred size just makes it extend to the container
+      //fontSelectionBox.setSize(fontSelectionBox.getPreferredSize());
+      // Minimum size is better, but cuts things off (on OS X), so we add 20
+      //Dimension minSize = fontSelectionBox.getMinimumSize();
+      //Dimension minSize = fontSelectionBox.getPreferredSize();
+      //fontSelectionBox.setSize(minSize.width + 20, minSize.height);
+      fontSelectionBox.setEnabled(true);
+    }
+    */
+    if (monoFontFamilies == null) {
+      monoFontFamilies = Toolkit.getMonoFontFamilies();
+      fontSelectionBox.setModel(new DefaultComboBoxModel(monoFontFamilies));
+      String family = get("editor.font.family");
+//      System.out.println("family is " + family);
+//      System.out.println("font sel items = " + fontSelectionBox.getItemCount());
+//      for (int i = 0; i < fontSelectionBox.getItemCount(); i++) {
+//        String item = (String) fontSelectionBox.getItemAt(i);
+//        if (fontSelectionBox.getItemAt(i) == family) {
+//          System.out.println("found at index " + i);
+//        } else if (item.equals(family)) {
+//          System.out.println("equals at index " + i);
+//        } else {
+//          System.out.println("nothing doing: " + item);
+//        }
+//      }
+      // Set a reasonable default, in case selecting the family fails 
+      fontSelectionBox.setSelectedItem("Monospaced");
+      fontSelectionBox.setSelectedItem(family);
+      fontSelectionBox.setEnabled(true);
+    }
+  }
+  
+  
   void updateDisplayList() {
     GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
     displayCount = ge.getScreenDevices().length;
@@ -999,6 +1171,7 @@ public class Preferences {
   }
 
 
+  /*
   static public SyntaxStyle getStyle(String what) {
     String str = get("editor." + what + ".style"); //, dflt); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -1013,9 +1186,11 @@ public class Preferences {
 
     s = st.nextToken();
     boolean bold = (s.indexOf("bold") != -1); //$NON-NLS-1$
-    boolean italic = (s.indexOf("italic") != -1); //$NON-NLS-1$
+//    boolean italic = (s.indexOf("italic") != -1); //$NON-NLS-1$
     //System.out.println(what + " = " + str + " " + bold + " " + italic);
 
-    return new SyntaxStyle(color, italic, bold);
+//    return new SyntaxStyle(color, italic, bold);
+    return new SyntaxStyle(color, bold);
   }
+  */
 }

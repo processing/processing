@@ -36,7 +36,7 @@ public interface TableRow {
    * @param columnName title of the column to reference
    */
   public int getInt(String columnName);
-  
+
   public long getLong(int column);
   public long getLong(String columnName);
 
@@ -52,7 +52,7 @@ public interface TableRow {
    * @param columnName title of the column to reference
    */
   public float getFloat(String columnName);
-  
+
   public double getDouble(int column);
   public double getDouble(String columnName);
 
@@ -107,4 +107,6 @@ public interface TableRow {
   public int getColumnCount();
   public int getColumnType(String columnName);
   public int getColumnType(int column);
+
+  public int[] getColumnTypes();
 }

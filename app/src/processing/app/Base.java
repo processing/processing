@@ -6,9 +6,9 @@
   Copyright (c) 2004-13 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
-  This program is free software; you can redistribute it and/or modify
-  it under the terms of the GNU General Public License version 2
-  as published by the Free Software Foundation.
+  This program is free software; you can redistribute it and/or
+  modify it under the terms of the GNU General Public License
+  version 2, as published by the Free Software Foundation.
 
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -45,10 +45,10 @@ import processing.core.*;
  */
 public class Base {
   // Added accessors for 0218 because the UpdateCheck class was not properly
-  // updating the values, because javac was inlining the static final values.
-  static private final int REVISION = 219;
+  // updating the values, due to javac inlining the static final values.
+  static private final int REVISION = 224;
   /** This might be replaced by main() if there's a lib/version.txt file. */
-  static private String VERSION_NAME = "0219"; //$NON-NLS-1$
+  static private String VERSION_NAME = "0224"; //$NON-NLS-1$
   /** Set true if this a proper release rather than a numbered revision. */
 //  static private boolean RELEASE = false;
 
@@ -198,9 +198,19 @@ public class Base {
       }
 
       log("about to create base..."); //$NON-NLS-1$
-      Base base = new Base(args);
-      // Prevent more than one copy of the PDE from running.
-      SingleInstance.startServer(base);
+      try {
+        Base base = new Base(args);
+        // Prevent more than one copy of the PDE from running.
+        SingleInstance.startServer(base);
+
+      } catch (Exception e) {
+        // Catch-all to hopefully pick up some of the weirdness we've been
+        // running into lately.
+        StringWriter sw = new StringWriter();
+        e.printStackTrace(new PrintWriter(sw));
+        Base.showError("We're off on the wrong foot",
+                       "An error occurred during startup.\n" + sw, e);
+      }
       log("done creating base..."); //$NON-NLS-1$
     }
   }
@@ -220,11 +230,11 @@ public class Base {
     try {
       Class<?> platformClass = Class.forName("processing.app.Platform"); //$NON-NLS-1$
       if (Base.isMacOS()) {
-        platformClass = Class.forName("processing.app.macosx.Platform"); //$NON-NLS-1$
+        platformClass = Class.forName("processing.app.platform.MacPlatform"); //$NON-NLS-1$
       } else if (Base.isWindows()) {
-        platformClass = Class.forName("processing.app.windows.Platform"); //$NON-NLS-1$
+        platformClass = Class.forName("processing.app.platform.WindowsPlatform"); //$NON-NLS-1$
       } else if (Base.isLinux()) {
-        platformClass = Class.forName("processing.app.linux.Platform"); //$NON-NLS-1$
+        platformClass = Class.forName("processing.app.platform.LinuxPlatform"); //$NON-NLS-1$
       }
       platform = (Platform) platformClass.newInstance();
     } catch (Exception e) {
@@ -324,7 +334,7 @@ public class Base {
   }
 
 
-  public Base(String[] args) {
+  public Base(String[] args) throws Exception {
 //    // Get the sketchbook path, and make sure it's set properly
 //    determineSketchbookFolder();
 
@@ -338,7 +348,7 @@ public class Base {
 //        removeDir(contrib.getFolder());
 //      }
 //    }
-    ContributionManager.deleteFlagged();
+    ContributionManager.cleanup();
     buildCoreModes();
     rebuildContribModes();
 
@@ -354,7 +364,7 @@ public class Base {
     } else {
       for (Mode m : getModeList()) {
         if (m.getIdentifier().equals(lastModeIdentifier)) {
-          log("Setting next mode to " + lastModeIdentifier); //$NON-NLS-1$
+          logf("Setting next mode to {0}.", lastModeIdentifier); //$NON-NLS-1$
           nextMode = m;
         }
       }
@@ -1028,6 +1038,7 @@ public class Base {
     // Close the running window, avoid window boogers with multiple sketches
     editor.internalCloseRunner();
 
+//    System.out.println("editors size is " + editors.size());
     if (editors.size() == 1) {
       // For 0158, when closing the last window /and/ it was already an
       // untitled sketch, just give up and let the user quit.
@@ -1067,6 +1078,7 @@ public class Base {
 
       // This will store the sketch count as zero
       editors.remove(editor);
+//      System.out.println("editors size now " + editors.size());
 //      storeSketches();
 
       // Save out the current prefs state
@@ -1384,7 +1396,7 @@ public class Base {
         }
       }
     }
-    return found;  // actually ignored, but..
+    return found;
   }
 
 
@@ -1580,17 +1592,28 @@ public class Base {
   }
 
 
+  // Because the Oracle JDK is 64-bit only, we lose this ability, feature,
+  // edge case, headache.
+//  /**
+//   * Return whether sketches will run as 32- or 64-bits. On Linux and Windows,
+//   * this is the bit depth of the machine, while on OS X it's determined by the
+//   * setting from preferences, since both 32- and 64-bit are supported.
+//   */
+//  static public int getNativeBits() {
+//    if (Base.isMacOS()) {
+//      return Preferences.getInteger("run.options.bits"); //$NON-NLS-1$
+//    }
+//    return nativeBits;
+//  }
+
   /**
-   * Return whether sketches will run as 32- or 64-bits. On Linux and Windows,
-   * this is the bit depth of the machine, while on OS X it's determined by the
-   * setting from preferences, since both 32- and 64-bit are supported.
+   * Return whether sketches will run as 32- or 64-bits based
+   * on the JVM that's in use.
    */
   static public int getNativeBits() {
-    if (Base.isMacOS()) {
-      return Preferences.getInteger("run.options.bits"); //$NON-NLS-1$
-    }
     return nativeBits;
   }
+
 
   /*
   static public String getPlatformName() {
@@ -1639,6 +1662,29 @@ public class Base {
   static public boolean isMacOS() {
     //return PApplet.platform == PConstants.MACOSX;
     return System.getProperty("os.name").indexOf("Mac") != -1; //$NON-NLS-1$ //$NON-NLS-2$
+  }
+
+
+  static private Boolean usableOracleJava;
+
+  // Make sure this is Oracle Java 7u40 or later. This is temporary.
+  static public boolean isUsableOracleJava() {
+    if (usableOracleJava == null) {
+      usableOracleJava = false;
+
+      if (Base.isMacOS() &&
+          System.getProperty("java.vendor").contains("Oracle")) {
+        String version = System.getProperty("java.version");  // 1.7.0_40
+        String[] m = PApplet.match(version, "1.(\\d).*_(\\d+)");
+
+        if (m != null &&
+          PApplet.parseInt(m[1]) >= 7 &&
+          PApplet.parseInt(m[2]) >= 40) {
+          usableOracleJava = true;
+        }
+      }
+    }
+    return usableOracleJava;
   }
 
 
@@ -2047,7 +2093,7 @@ public class Base {
   /**
    * Non-fatal error message with optional stack trace side dish.
    */
-  static public void showWarning(String title, String message, Exception e) {
+  static public void showWarning(String title, String message, Throwable e) {
     if (title == null) title = "Warning";
 
     if (commandLine) {
@@ -2066,7 +2112,7 @@ public class Base {
    */
   static public void showWarningTiered(String title,
                                        String primary, String secondary,
-                                       Exception e) {
+                                       Throwable e) {
     if (title == null) title = "Warning";
 
     final String message = primary + "\n" + secondary;
@@ -2315,15 +2361,37 @@ public class Base {
       String path = Base.class.getProtectionDomain().getCodeSource().getLocation().getPath();
       // Path may have URL encoding, so remove it
       String decodedPath = PApplet.urlDecode(path);
-      // The .jar file will be in the lib folder
-      File libFolder = new File(decodedPath).getParentFile();
-      if (libFolder.getName().equals("lib")) {
-        // The main Processing installation directory
-        processingRoot = libFolder.getParentFile();
+
+      if (decodedPath.contains("/app/bin")) {
+        if (Base.isMacOS()) {
+          processingRoot =
+            new File(path, "../../build/macosx/work/Processing.app/Contents/Java");
+        } else if (Base.isWindows()) {
+          processingRoot =  new File(path, "../../build/windows/work");
+        } else if (Base.isLinux()) {
+          processingRoot =  new File(path, "../../build/linux/work");
+        }
       } else {
-        Base.log("Could not find lib in " +
-          libFolder.getAbsolutePath() + ", switching to user.dir");
-        processingRoot = new File(System.getProperty("user.dir"));
+        // The .jar file will be in the lib folder
+        File jarFolder = new File(decodedPath).getParentFile();
+        if (jarFolder.getName().equals("lib")) {
+          // The main Processing installation directory.
+          // This works for Windows, Linux, and Apple's Java 6 on OS X.
+          processingRoot = jarFolder.getParentFile();
+        } else if (Base.isMacOS()) {
+          // This works for Java 7 on OS X. The 'lib' folder is not part of the
+          // classpath on OS X, and adding it creates more problems than it's
+          // worth.
+          processingRoot = jarFolder;
+
+        }
+        if (processingRoot == null || !processingRoot.exists()) {
+          // Try working directory instead (user.dir, different from user.home)
+          System.err.println("Could not find lib folder via " +
+            jarFolder.getAbsolutePath() +
+            ", switching to user.dir");
+          processingRoot = new File(System.getProperty("user.dir"));
+        }
       }
     }
 /*
@@ -2341,6 +2409,57 @@ public class Base {
     File working = new File(path);
     */
     return new File(processingRoot, name);
+  }
+
+
+  static public File getJavaHome() {
+    if (isMacOS()) {
+      //return "Contents/PlugIns/jdk1.7.0_40.jdk/Contents/Home/jre/bin/java";
+      File[] plugins = getContentFile("../PlugIns").listFiles(new FilenameFilter() {
+        public boolean accept(File dir, String name) {
+          return name.endsWith(".jdk") && dir.isDirectory();
+        }
+      });
+      return new File(plugins[0], "Contents/Home/jre");
+    }
+    // On all other platforms, it's the 'java' folder adjacent to Processing
+    return getContentFile("java");
+  }
+
+
+  /** Get the path to the embedded Java executable. */
+  static public String getJavaPath() {
+    String javaPath = "bin/java" + (isWindows() ? ".exe" : "");
+    File javaFile = new File(getJavaHome(), javaPath);
+    try {
+      return javaFile.getCanonicalPath();
+    } catch (IOException e) {
+      return javaFile.getAbsolutePath();
+    }
+    /*
+    if (isMacOS()) {
+      //return "Contents/PlugIns/jdk1.7.0_40.jdk/Contents/Home/jre/bin/java";
+      File[] plugins = getContentFile("../PlugIns").listFiles(new FilenameFilter() {
+        public boolean accept(File dir, String name) {
+          return name.endsWith(".jdk") && dir.isDirectory();
+        }
+      });
+      //PApplet.printArray(plugins);
+      File javaBinary = new File(plugins[0], "Contents/Home/jre/bin/java");
+      //return getContentFile(plugins[0].getAbsolutePath() + "/Contents/Home/jre/bin/java").getAbsolutePath();
+      //return getContentFile("../PlugIns/jdk1.7.0_40.jdk/Contents/Home/jre/bin/java").getAbsolutePath();
+      return javaBinary.getAbsolutePath();
+
+    } else if (isLinux()) {
+      return getContentFile("java/bin/java").getAbsolutePath();
+
+    } else if (isWindows()) {
+      return getContentFile("java/bin/java.exe").getAbsolutePath();
+    }
+    System.err.println("No appropriate platform found. " +
+                       "Hoping that Java is in the path.");
+    return Base.isWindows() ? "java.exe" : "java";
+    */
   }
 
 
@@ -2429,12 +2548,21 @@ public class Base {
   }
 
 
-  static public void readSettings(String filename, String lines[],
+  /**
+   * Parse a String array that contains attribute/value pairs separated
+   * by = (the equals sign). The # (hash) symbol is used to denote comments.
+   * Comments can be anywhere on a line. Blank lines are ignored.
+   */
+  static public void readSettings(String filename, String[] lines,
                                   HashMap<String, String> settings) {
-    for (int i = 0; i < lines.length; i++) {
-      int hash = lines[i].indexOf('#');
-      String line = (hash == -1) ?
-        lines[i].trim() : lines[i].substring(0, hash).trim();
+    for (String line : lines) {
+      // Remove comments
+      int commentMarker = line.indexOf('#');
+      if (commentMarker != -1) {
+        line = line.substring(0, commentMarker);
+      }
+      // Remove extra whitespace
+      line = line.trim();
 
       if (line.length() != 0) {
         int equals = line.indexOf('=');
@@ -2472,6 +2600,7 @@ public class Base {
     to = null;
 
     targetFile.setLastModified(sourceFile.lastModified());
+    targetFile.setExecutable(sourceFile.canExecute());
   }
 
 
@@ -2544,10 +2673,50 @@ public class Base {
   }
 
 
+  static public void copyDirNative(File sourceDir,
+                                   File targetDir) throws IOException {
+    Process process = null;
+    if (Base.isMacOS() || Base.isLinux()) {
+      process = Runtime.getRuntime().exec(new String[] {
+        "cp", "-a", sourceDir.getAbsolutePath(), targetDir.getAbsolutePath()
+      });
+    } else {
+      // TODO implement version that uses XCOPY here on Windows
+      throw new RuntimeException("Not yet implemented on Windows");
+    }
+    try {
+      int result = process.waitFor();
+      if (result != 0) {
+        throw new IOException("Error while copying (result " + result + ")");
+      }
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+  }
+
+
+  /**
+   * Delete a file or directory in a platform-specific manner. Removes a File
+   * object (a file or directory) from the system by placing it in the Trash
+   * or Recycle Bin (if available) or simply deleting it (if not).
+   *
+   * When the file/folder is on another file system, it may simply be removed
+   * immediately, without additional warning. So only use this if you want to,
+   * you know, "delete" the subject in question.
+   *
+   * NOTE: Not yet tested nor ready for prime-time.
+   *
+   * @param file the victim (a directory or individual file)
+   * @return true if all ends well
+   * @throws IOException what went wrong
+   */
+  static public boolean platformDelete(File file) throws IOException {
+    return platform.deleteFile(file);
+  }
+
+
   /**
    * Remove all files in a directory and the directory itself.
-   * TODO implement cross-platform "move to trash" instead of deleting,
-   *      since this is potentially scary if there's a bug.
    */
   static public void removeDir(File dir) {
     if (dir.exists()) {
@@ -2600,7 +2769,8 @@ public class Base {
     if (files == null) return -1;
 
     for (int i = 0; i < files.length; i++) {
-      if (files[i].equals(".") || (files[i].equals("..")) ||
+      if (files[i].equals(".") ||
+          files[i].equals("..") ||
           files[i].equals(".DS_Store")) continue;
       File fella = new File(folder, files[i]);
       if (fella.isDirectory()) {
@@ -2917,7 +3087,7 @@ public class Base {
   }
 
 
-  static public void log(String message, Exception e) {
+  static public void log(String message, Throwable e) {
     if (DEBUG) {
       System.out.println(message);
       e.printStackTrace();

@@ -164,6 +164,14 @@ public class JavaEditor extends Editor {
       }
     });
     menu.add(item);
+    
+    item = new JMenuItem("The Processing Foundation");
+    item.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        Base.openURL("http://processing.org/foundation/");
+      }
+    });
+    menu.add(item);
 
     item = new JMenuItem("Visit Processing.org");
     item.addActionListener(new ActionListener() {
@@ -249,27 +257,21 @@ public class JavaEditor extends Editor {
     panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
     panel.add(Box.createVerticalStrut(6));
 
-    //Box panel = Box.createVerticalBox();
-
-    //Box labelBox = Box.createHorizontalBox();
-//    String msg = "<html>Click Export to Application to create a standalone, " +
-//      "double-clickable application for the selected plaforms.";
-
-//    String msg = "Export to Application creates a standalone, \n" +
-//      "double-clickable application for the selected plaforms.";
     String line1 = "Export to Application creates double-clickable,";
-    String line2 = "standalone applications for the selected plaforms.";
+    //String line2 = "standalone applications for the selected plaforms.";
+    String line2 = "standalone application for the current plaform.";
     JLabel label1 = new JLabel(line1, SwingConstants.CENTER);
     JLabel label2 = new JLabel(line2, SwingConstants.CENTER);
     label1.setAlignmentX(Component.LEFT_ALIGNMENT);
     label2.setAlignmentX(Component.LEFT_ALIGNMENT);
-//    label1.setAlignmentX();
-//    label2.setAlignmentX(0);
     panel.add(label1);
     panel.add(label2);
-    int wide = label2.getPreferredSize().width;
+    // The longer line is different between Windows and OS X.
+    int wide = Math.max(label1.getPreferredSize().width,
+                        label2.getPreferredSize().width);
     panel.add(Box.createVerticalStrut(12));
 
+    /*
     final JCheckBox windowsButton = new JCheckBox("Windows");
     //windowsButton.setMnemonic(KeyEvent.VK_W);
     windowsButton.setSelected(Preferences.getBoolean("export.application.platform.windows"));
@@ -310,11 +312,12 @@ public class JavaEditor extends Editor {
     wide = Math.max(wide, platformPanel.getPreferredSize().width);
     platformPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
     panel.add(platformPanel);
+    */
 
-//  Box indentPanel = Box.createHorizontalBox();
-//  indentPanel.add(Box.createHorizontalStrut(new JCheckBox().getPreferredSize().width));
+    //int indent = new JCheckBox().getPreferredSize().width;
+    int indent = 0;
+    
     final JCheckBox showStopButton = new JCheckBox("Show a Stop button");
-    //showStopButton.setMnemonic(KeyEvent.VK_S);
     showStopButton.setSelected(Preferences.getBoolean("export.application.stop"));
     showStopButton.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
@@ -322,12 +325,9 @@ public class JavaEditor extends Editor {
       }
     });
     showStopButton.setEnabled(Preferences.getBoolean("export.application.fullscreen"));
-    showStopButton.setBorder(new EmptyBorder(3, 13, 6, 13));
-//  indentPanel.add(showStopButton);
-//  indentPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+    showStopButton.setBorder(new EmptyBorder(3, 13 + indent, 6, 13));
 
     final JCheckBox fullScreenButton = new JCheckBox("Full Screen (Present mode)");
-    //fullscreenButton.setMnemonic(KeyEvent.VK_F);
     fullScreenButton.setSelected(Preferences.getBoolean("export.application.fullscreen"));
     fullScreenButton.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
@@ -338,16 +338,36 @@ public class JavaEditor extends Editor {
     });
     fullScreenButton.setBorder(new EmptyBorder(3, 13, 3, 13));
 
+    boolean embed = Preferences.getBoolean("export.application.embed_java");
+    final String embedWarning = "Embedding Java makes larger applications";
+    final String nopeWarning = "Users will have to install the latest Java 7";
+    final JLabel warningLabel = new JLabel(embed ? embedWarning : nopeWarning);
+    warningLabel.setBorder(new EmptyBorder(3, 13 + indent, 3, 13));
+    
+    final JCheckBox embedJavaButton = new JCheckBox("Embed Java");
+    embedJavaButton.setSelected(embed);
+    embedJavaButton.addItemListener(new ItemListener() {
+      public void itemStateChanged(ItemEvent e) {
+        boolean selected = embedJavaButton.isSelected();
+        Preferences.setBoolean("export.application.embed_java", selected);
+        if (selected) {
+          warningLabel.setText(embedWarning);
+        } else {
+          warningLabel.setText(nopeWarning);
+        }
+      }
+    });
+    embedJavaButton.setBorder(new EmptyBorder(3, 13, 3, 13));
+    
     JPanel optionPanel = new JPanel();
     optionPanel.setLayout(new BoxLayout(optionPanel, BoxLayout.Y_AXIS));
     optionPanel.add(fullScreenButton);
     optionPanel.add(showStopButton);
-//    optionPanel.add(indentPanel);
+    optionPanel.add(embedJavaButton);
+    optionPanel.add(warningLabel);
     optionPanel.setBorder(new TitledBorder("Options"));
-    wide = Math.max(wide, platformPanel.getPreferredSize().width);
-    //goodIdea = new Dimension(wide, optionPanel.getPreferredSize().height);
+//    wide = Math.max(wide, platformPanel.getPreferredSize().width);
     optionPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-    //optionPanel.setMaximumSize(goodIdea);
     panel.add(optionPanel);
 
     Dimension good;
@@ -356,43 +376,20 @@ public class JavaEditor extends Editor {
     label1.setMaximumSize(good);
     good = new Dimension(wide, label2.getPreferredSize().height);
     label2.setMaximumSize(good);
-    good = new Dimension(wide, platformPanel.getPreferredSize().height);
-    platformPanel.setMaximumSize(good);
+//    good = new Dimension(wide, platformPanel.getPreferredSize().height);
+//    platformPanel.setMaximumSize(good);
     good = new Dimension(wide, optionPanel.getPreferredSize().height);
-    optionPanel.setMaximumSize(good);
+//    optionPanel.setMaximumSize(good);
 
-//    JPanel actionPanel = new JPanel();
-//    optionPanel.setLayout(new BoxLayout(optionPanel, BoxLayout.X_AXIS));
-//    optionPanel.add(Box.createHorizontalGlue());
-
-//    final JDialog frame = new JDialog(editor, "Export to Application");
-
-//    JButton cancelButton = new JButton("Cancel");
-//    cancelButton.addActionListener(new ActionListener() {
-//      public void actionPerformed(ActionEvent e) {
-//        frame.dispose();
-//        return false;
-//      }
-//    });
-
-    // Add the buttons in platform-specific order
-//    if (PApplet.platform == PConstants.MACOSX) {
-//      optionPanel.add(cancelButton);
-//      optionPanel.add(exportButton);
-//    } else {
-//      optionPanel.add(exportButton);
-//      optionPanel.add(cancelButton);
-//    }
     String[] options = { "Export", "Cancel" };
     final JOptionPane optionPane = new JOptionPane(panel,
                                                    JOptionPane.PLAIN_MESSAGE,
-                                                   //JOptionPane.QUESTION_MESSAGE,
                                                    JOptionPane.YES_NO_OPTION,
                                                    null,
                                                    options,
                                                    options[0]);
 
-    final JDialog dialog = new JDialog(this, "Export Options", true);
+    final JDialog dialog = new JDialog(this, "Export Application", true);
     dialog.setContentPane(optionPane);
 
     optionPane.addPropertyChangeListener(new PropertyChangeListener() {
@@ -402,9 +399,8 @@ public class JavaEditor extends Editor {
         if (dialog.isVisible() &&
             (e.getSource() == optionPane) &&
             (prop.equals(JOptionPane.VALUE_PROPERTY))) {
-          //If you were going to check something
-          //before closing the window, you'd do
-          //it here.
+          // If you were going to check something before  
+          // closing the window, you'd do it here.
           dialog.setVisible(false);
         }
       }

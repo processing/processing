@@ -13,13 +13,17 @@
     <methods dir="${basedir}/src/processing/core" recorder="true" />
 
     <mkdir dir="bin" />
-    <javac source="1.6"
-	   target="1.6" 
+    <javac source="1.7"
+	   target="1.7" 
 	   encoding="UTF-8"
 	   includeAntRuntime="false"
 	   debug="true"
 	   srcdir="src" destdir="bin"
-	   classpath="library/jogl-all.jar; library/gluegen-rt.jar" />
+	   classpath="library/jogl-all.jar; library/gluegen-rt.jar"
+	   nowarn="true"
+	   compiler="org.eclipse.jdt.core.JDTCompilerAdapter">
+      <compilerclasspath path="../java/mode/ecj.jar" />
+    </javac>
     
     <!-- Copy the jnilib to the bin folder so it's included. -->
     <copy todir="bin/japplemenubar" 

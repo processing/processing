@@ -44,6 +44,12 @@ import processing.app.Base;
  * Panel that expands and gives a brief overview of a library when clicked.
  */
 class ContributionPanel extends JPanel {
+  static public final String REMOVE_RESTART_MESSAGE =
+    "<i>Please restart Processing to finish removing this item.</i>";
+
+  static public final String INSTALL_RESTART_MESSAGE =
+    "<i>Please restart Processing to finish installing this item.</i>";
+
   private final ContributionListPanel listPanel;
   private final ContributionListing contribListing = ContributionListing.getInstance();
 
@@ -95,6 +101,7 @@ class ContributionPanel extends JPanel {
       public void actionPerformed(ActionEvent e) {
         if (contrib instanceof AvailableContribution) {
           installContribution((AvailableContribution) contrib);
+          contribListing.replaceContribution(contrib, contrib);
         }
       }
     };
@@ -103,7 +110,7 @@ class ContributionPanel extends JPanel {
       public void actionPerformed(ActionEvent e) {
         if (contrib instanceof LocalContribution) {
           LocalContribution installed = (LocalContribution) contrib;
-          installed.unsetDeletionFlag();
+          installed.setDeletionFlag(false);
           contribListing.replaceContribution(contrib, contrib);  // ?? 
         }
       }
@@ -336,9 +343,11 @@ class ContributionPanel extends JPanel {
     }
     description.append("<br/>");
 
-    boolean isFlagged = contrib.isDeletionFlagged();
-    if (isFlagged) {
-      description.append(ContributionListPanel.DELETION_MESSAGE);
+    //System.out.println("checking restart flag for " + contrib + " " + contrib.getName() + " and it's " + contrib.isRestartFlagged());
+    if (contrib.isDeletionFlagged()) {
+      description.append(REMOVE_RESTART_MESSAGE);
+    } else if (contrib.isRestartFlagged()) {
+      description.append(INSTALL_RESTART_MESSAGE);
     } else {
       String sentence = contrib.getSentence();
       if (sentence == null || sentence.isEmpty()) {
@@ -357,11 +366,14 @@ class ContributionPanel extends JPanel {
     if (contribListing.hasUpdates(contrib)) {
       StringBuilder versionText = new StringBuilder();
       versionText.append("<html><body><i>");
-      if (isFlagged) {
-        versionText.append("To finish an update, reinstall this contribution after the restart.");
+      if (contrib.isDeletionFlagged()) {
+        // Already marked for deletion, see requiresRestart() notes below.
+        versionText.append("To finish an update, reinstall this contribution after restarting.");
       } else {
         versionText.append("New version available!");
-        if (contrib.requiresRestart()) {
+        if (contrib.getType().requiresRestart()) {
+          // If a contribution can't be reinstalled in-place, the user may need
+          // to remove the current version, restart Processing, then install.
           versionText.append(" To update, first remove the current version.");
         }
       }
@@ -374,7 +386,7 @@ class ContributionPanel extends JPanel {
     }
 
     updateButton.setEnabled(true);
-    if (contrib != null && !contrib.requiresRestart()) {
+    if (contrib != null && !contrib.getType().requiresRestart()) {
       updateButton.setVisible(isSelected() && contribListing.hasUpdates(contrib));
     }
 
@@ -382,7 +394,7 @@ class ContributionPanel extends JPanel {
     installRemoveButton.removeActionListener(removeActionListener);
     installRemoveButton.removeActionListener(undoActionListener);
 
-    if (isFlagged) {
+    if (contrib.isDeletionFlagged()) {
       installRemoveButton.addActionListener(undoActionListener);
       installRemoveButton.setText("Undo");
     } else if (contrib.isInstalled()) {
@@ -449,7 +461,8 @@ class ContributionPanel extends JPanel {
     } catch (MalformedURLException e) {
       Base.showWarning(ContributionListPanel.INSTALL_FAILURE_TITLE,
                        ContributionListPanel.MALFORMED_URL_MESSAGE, e);
-      installRemoveButton.setEnabled(true);
+      // not sure why we'd re-enable the button if it had an error...
+//      installRemoveButton.setEnabled(true);
     }
   }
 
@@ -487,7 +500,7 @@ class ContributionPanel extends JPanel {
     // now a hyperlink, it will be opened as the mouse is released.
     enableHyperlinks = alreadySelected;
 
-    if (contrib != null && !contrib.requiresRestart()) {
+    if (contrib != null && !contrib.getType().requiresRestart()) {
       updateButton.setVisible(isSelected() && contribListing.hasUpdates(contrib));
     }
     installRemoveButton.setVisible(isSelected() || installRemoveButton.getText().equals("Remove"));

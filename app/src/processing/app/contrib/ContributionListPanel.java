@@ -36,13 +36,10 @@ import processing.app.Base;
 
 // The "Scrollable" implementation and its methods here take care of preventing
 // the scrolling area from running exceptionally slowly. Not sure why they're
-// necessary in the first place, however; seems like odd behavior.
+// necessary in the first place, however; seems like odd behavior.  
+// It also allows the description text in the panels to wrap properly.
 
 public class ContributionListPanel extends JPanel implements Scrollable, ContributionChangeListener {
-
-  static public final String DELETION_MESSAGE = 
-    "<i>This tool has been flagged for deletion. " +
-    "Restart Proessing to finalize the removal process.</i>";
 
   static public final String INSTALL_FAILURE_TITLE = "Install Failed";
 

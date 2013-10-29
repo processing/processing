@@ -41,7 +41,8 @@ class AvailableContribution extends Contribution {
     this.type = type;
     this.link = params.get("download");
     
-    category = ContributionListing.getCategory(params.get("category"));
+    //category = ContributionListing.getCategory(params.get("category"));
+    categories = parseCategories(params.get("category"));
     name = params.get("name");
     authorList = params.get("authorList");
     url = params.get("url");
@@ -65,12 +66,11 @@ class AvailableContribution extends Contribution {
     // Unzip the file into the modes, tools, or libraries folder inside the 
     // sketchbook. Unzipping to /tmp is problematic because it may be on 
     // another file system, so move/rename operations will break.
-    File sketchbookContribFolder = type.getSketchbookFolder();
+//    File sketchbookContribFolder = type.getSketchbookFolder();
     File tempFolder = null; 
     
     try {
-      tempFolder = 
-        Base.createTempFolder(type.toString(), "tmp", sketchbookContribFolder);
+      tempFolder = type.createTempFolder();
     } catch (IOException e) {
       status.setErrorMessage("Could not create a temporary folder to install.");
       return null;
@@ -121,10 +121,36 @@ class AvailableContribution extends Contribution {
         LocalContribution newContrib =
           type.load(editor.getBase(), contribFolder);
         
+        // 1.1. get info we need to delete the newContrib folder later
+        File newContribFolder = newContrib.getFolder();
+        
         // 2. Check to make sure nothing has the same name already, 
         // backup old if needed, then move things into place and reload.
         installedContrib = 
-          newContrib.moveAndLoad(editor, confirmReplace, status);
+          newContrib.copyAndLoad(editor, confirmReplace, status);
+        if (newContrib != null && type.requiresRestart()) {
+          installedContrib.setRestartFlag();
+          //status.setMessage("Restart Processing to finish the installation.");
+        }
+        
+        // 3. Delete the newContrib, do a garbage collection, hope and pray
+        // that Java will unlock the temp folder on Windows now
+        newContrib = null;
+        System.gc();
+        
+        
+        if (Base.isWindows()) {
+          // we'll even give it a second to finish up ... because file ops are
+          // just that flaky on Windows.
+          try {
+            Thread.sleep(1000);
+          } catch (InterruptedException e) {
+            e.printStackTrace();
+          }
+        }
+
+        // 4. Okay, now actually delete that temp folder
+        Base.removeDir(newContribFolder);
         
       } else {
         status.setErrorMessage("Error overwriting .properties file.");
@@ -163,7 +189,7 @@ class AvailableContribution extends Contribution {
         PrintWriter writer = PApplet.createWriter(propFile);
 
         writer.println("name=" + getName());
-        writer.println("category=" + getCategory());
+        writer.println("category=" + getCategoryStr());
         writer.println("authorList=" + getAuthorList());
         writer.println("url=" + getUrl());
         writer.println("sentence=" + getSentence());

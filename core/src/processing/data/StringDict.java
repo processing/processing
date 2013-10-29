@@ -316,7 +316,7 @@ public class StringDict {
   }
 
 
-  protected void swap(int a, int b) {
+  public void swap(int a, int b) {
     String tkey = keys[a];
     String tvalue = values[a];
     keys[a] = keys[b];

@@ -574,6 +574,20 @@ public class JSONObject {
 
 
   /**
+   * Get an optional string associated with a key.
+   * It returns the defaultValue if there is no such key.
+   *
+   * @param key   A key string.
+   * @param defaultValue     The default.
+   * @return      A string which is the value.
+   */
+  public String getString(String key, String defaultValue) {
+    Object object = this.opt(key);
+    return NULL.equals(object) ? defaultValue : object.toString();
+  }
+
+
+  /**
    * Gets the int value associated with a key
    *
    * @webref jsonobject:method
@@ -599,6 +613,25 @@ public class JSONObject {
 
 
   /**
+   * Get an optional int value associated with a key,
+   * or the default if there is no such key or if the value is not a number.
+   * If the value is a string, an attempt will be made to evaluate it as
+   * a number.
+   *
+   * @param key   A key string.
+   * @param defaultValue     The default.
+   * @return      An object which is the value.
+   */
+  public int getInt(String key, int defaultValue) {
+    try {
+      return this.getInt(key);
+    } catch (Exception e) {
+      return defaultValue;
+    }
+  }
+
+
+  /**
    * Get the long value associated with a key.
    *
    * @param key   A key string.
@@ -617,6 +650,26 @@ public class JSONObject {
     }
   }
 
+
+  /**
+   * Get an optional long value associated with a key,
+   * or the default if there is no such key or if the value is not a number.
+   * If the value is a string, an attempt will be made to evaluate it as
+   * a number.
+   *
+   * @param key          A key string.
+   * @param defaultValue The default.
+   * @return             An object which is the value.
+   */
+  public long getLong(String key, long defaultValue) {
+    try {
+      return this.getLong(key);
+    } catch (Exception e) {
+      return defaultValue;
+    }
+  }
+
+
   /**
    * @webref jsonobject:method
    * @brief Gets the float value associated with a key
@@ -627,6 +680,15 @@ public class JSONObject {
    */
   public float getFloat(String key) {
     return (float) getDouble(key);
+  }
+
+
+  public float getFloat(String key, float defaultValue) {
+    try {
+      return getFloat(key);
+    } catch (Exception e) {
+      return defaultValue;
+    }
   }
 
 
@@ -645,6 +707,25 @@ public class JSONObject {
           : Double.parseDouble((String)object);
     } catch (Exception e) {
       throw new RuntimeException("JSONObject[" + quote(key) + "] is not a number.");
+    }
+  }
+
+
+  /**
+   * Get an optional double associated with a key, or the
+   * defaultValue if there is no such key or if its value is not a number.
+   * If the value is a string, an attempt will be made to evaluate it as
+   * a number.
+   *
+   * @param key   A key string.
+   * @param defaultValue     The default.
+   * @return      An object which is the value.
+   */
+  public double getDouble(String key, double defaultValue) {
+    try {
+      return this.getDouble(key);
+    } catch (Exception e) {
+      return defaultValue;
     }
   }
 
@@ -673,6 +754,24 @@ public class JSONObject {
       return true;
     }
     throw new RuntimeException("JSONObject[" + quote(key) + "] is not a Boolean.");
+  }
+
+
+  /**
+   * Get an optional boolean associated with a key.
+   * It returns the defaultValue if there is no such key, or if it is not
+   * a Boolean or the String "true" or "false" (case insensitive).
+   *
+   * @param key              A key string.
+   * @param defaultValue     The default.
+   * @return      The truth.
+   */
+  public boolean getBoolean(String key, boolean defaultValue) {
+    try {
+      return this.getBoolean(key);
+    } catch (Exception e) {
+      return defaultValue;
+    }
   }
 
 
@@ -807,7 +906,7 @@ public class JSONObject {
    * @return      true if there is no value associated with the key or if
    *  the value is the JSONObject.NULL object.
    */
-  protected boolean isNull(String key) {
+  public boolean isNull(String key) {
     return JSONObject.NULL.equals(this.opt(key));
   }
 
@@ -911,24 +1010,6 @@ public class JSONObject {
 
 
 //  /**
-//   * Get an optional boolean associated with a key.
-//   * It returns the defaultValue if there is no such key, or if it is not
-//   * a Boolean or the String "true" or "false" (case insensitive).
-//   *
-//   * @param key              A key string.
-//   * @param defaultValue     The default.
-//   * @return      The truth.
-//   */
-//  private boolean optBoolean(String key, boolean defaultValue) {
-//    try {
-//      return this.getBoolean(key);
-//    } catch (Exception e) {
-//      return defaultValue;
-//    }
-//  }
-
-
-//  /**
 //   * Get an optional double associated with a key,
 //   * or NaN if there is no such key or if its value is not a number.
 //   * If the value is a string, an attempt will be made to evaluate it as
@@ -943,25 +1024,6 @@ public class JSONObject {
 
 
 //  /**
-//   * Get an optional double associated with a key, or the
-//   * defaultValue if there is no such key or if its value is not a number.
-//   * If the value is a string, an attempt will be made to evaluate it as
-//   * a number.
-//   *
-//   * @param key   A key string.
-//   * @param defaultValue     The default.
-//   * @return      An object which is the value.
-//   */
-//  private double optDouble(String key, double defaultValue) {
-//    try {
-//      return this.getDouble(key);
-//    } catch (Exception e) {
-//      return defaultValue;
-//    }
-//  }
-
-
-//  /**
 //   * Get an optional int value associated with a key,
 //   * or zero if there is no such key or if the value is not a number.
 //   * If the value is a string, an attempt will be made to evaluate it as
@@ -972,25 +1034,6 @@ public class JSONObject {
 //   */
 //  private int optInt(String key) {
 //    return this.optInt(key, 0);
-//  }
-
-
-//  /**
-//   * Get an optional int value associated with a key,
-//   * or the default if there is no such key or if the value is not a number.
-//   * If the value is a string, an attempt will be made to evaluate it as
-//   * a number.
-//   *
-//   * @param key   A key string.
-//   * @param defaultValue     The default.
-//   * @return      An object which is the value.
-//   */
-//  private int optInt(String key, int defaultValue) {
-//    try {
-//      return this.getInt(key);
-//    } catch (Exception e) {
-//      return defaultValue;
-//    }
 //  }
 
 
@@ -1037,25 +1080,6 @@ public class JSONObject {
 
 
 //  /**
-//   * Get an optional long value associated with a key,
-//   * or the default if there is no such key or if the value is not a number.
-//   * If the value is a string, an attempt will be made to evaluate it as
-//   * a number.
-//   *
-//   * @param key          A key string.
-//   * @param defaultValue The default.
-//   * @return             An object which is the value.
-//   */
-//  public long optLong(String key, long defaultValue) {
-//    try {
-//      return this.getLong(key);
-//    } catch (Exception e) {
-//      return defaultValue;
-//    }
-//  }
-
-
-//  /**
 //   * Get an optional string associated with a key.
 //   * It returns an empty string if there is no such key. If the value is not
 //   * a string and is not null, then it is converted to a string.
@@ -1065,20 +1089,6 @@ public class JSONObject {
 //   */
 //  public String optString(String key) {
 //    return this.optString(key, "");
-//  }
-
-
-//  /**
-//   * Get an optional string associated with a key.
-//   * It returns the defaultValue if there is no such key.
-//   *
-//   * @param key   A key string.
-//   * @param defaultValue     The default.
-//   * @return      A string which is the value.
-//   */
-//  public String optString(String key, String defaultValue) {
-//    Object object = this.opt(key);
-//    return NULL.equals(object) ? defaultValue : object.toString();
 //  }
 
 
@@ -1780,9 +1790,10 @@ public class JSONObject {
         if (actualFactor > 0) {
           writer.write(' ');
         }
-        writeValue(writer, this.map.get(key), actualFactor, indent);
+        //writeValue(writer, this.map.get(key), actualFactor, indent);
+        writeValue(writer, this.map.get(key), indentFactor, indent);
       } else if (length != 0) {
-        final int newindent = indent + actualFactor;
+        final int newIndent = indent + actualFactor;
         while (keys.hasNext()) {
           Object key = keys.next();
           if (commanate) {
@@ -1791,14 +1802,14 @@ public class JSONObject {
           if (indentFactor != -1) {
             writer.write('\n');
           }
-          indent(writer, newindent);
+          indent(writer, newIndent);
           writer.write(quote(key.toString()));
           writer.write(':');
           if (actualFactor > 0) {
             writer.write(' ');
           }
-          writeValue(writer, this.map.get(key), actualFactor,
-                     newindent);
+          //writeValue(writer, this.map.get(key), actualFactor, newIndent);
+          writeValue(writer, this.map.get(key), indentFactor, newIndent);
           commanate = true;
         }
         if (indentFactor != -1) {

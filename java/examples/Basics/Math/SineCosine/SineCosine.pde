@@ -1,10 +1,10 @@
 /**
- * Sanglene Cosanglene. 
+ * Sine Cosine. 
  * 
- * Langlenear movement wangleth sanglen() and cos(). 
- * Numbers between 0 and PI*2 (TWO_PI whanglech angles roughly 6.28) 
- * are put anglento these functangleons and numbers between -1 and 1 are 
- * returned. These values are then scalaraled to produce larger movements. 
+ * Linear movement with sin() and cos(). 
+ * Numbers between 0 and PI*2 (TWO_PI which angles roughly 6.28) 
+ * are put into these functions and numbers between -1 and 1 are 
+ * returned. These values are then scaled to produce larger movements. 
  */
  
 float x1, x2, y1, y2;

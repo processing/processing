@@ -180,7 +180,7 @@ public class PdeTextAreaDefaults extends TextAreaDefaults {
     inputHandler.addKeyBinding(mod + "+ENTER", InputHandler.REPEAT);
 
     document = new SyntaxDocument();
-    editable = true;
+//    editable = true;
 
     // Set to 0 for revision 0215 because it causes strange jumps
     // http://code.google.com/p/processing/issues/detail?id=1055
@@ -194,8 +194,16 @@ public class PdeTextAreaDefaults extends TextAreaDefaults {
     // http://code.google.com/p/processing/issues/detail?id=1275
     rows = 5;
 
-    font = Preferences.getFont("editor.font");
+    /*
+    String fontFamily = Preferences.get("editor.font.family");
+    int fontSize = Preferences.getInteger("editor.font.size");
+    plainFont = new Font(fontFamily, Font.PLAIN, fontSize);
+    boldFont = new Font(fontFamily, Font.BOLD, fontSize);
     antialias = Preferences.getBoolean("editor.antialias");
+     */
+
+    fgcolor = mode.getColor("editor.fgcolor");
+    bgcolor = mode.getColor("editor.bgcolor");
 
     styles = new SyntaxStyle[Token.ID_COUNT];
 
@@ -221,9 +229,6 @@ public class PdeTextAreaDefaults extends TextAreaDefaults {
 
     // area that's not in use by the text (replaced with tildes)
     styles[Token.INVALID] = mode.getStyle("invalid");
-
-    fgcolor = mode.getColor("editor.fgcolor");
-    bgcolor = mode.getColor("editor.bgcolor");
 
     caretColor = mode.getColor("editor.caret.color");
     selectionColor = mode.getColor("editor.selection.color");

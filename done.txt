@@ -1,3 +1,351 @@
+0223 pde (2.1)
+X reset font smoothing for everyone to its default by changing the pref
+X   To reset everyone's default, replaced editor.antialias with editor.smooth 
+X   for 2.1. Fonts are unusably gross on OS X (and Linux) w/o smoothing and 
+X   the Oracle JVM, and many longtime users have anti-aliasing turned off.
+X   https://github.com/processing/processing/issues/2164
+X   https://github.com/processing/processing/issues/2160
+X Add option to not embed the Java runtime (saves space, but breakage)
+X return code needs to be 1 instead of 0 w/ Commander
+X   https://github.com/processing/processing/issues/1798#issuecomment-26711847
+X additional font tweaks due to decreased legibility with Oracle Java
+X type looks a little feeble on OS X with non-retina machines
+X   https://github.com/processing/processing/issues/2135
+X   should we increase the size of the mode dropdown?
+X processing-java broken in 2.1 beta 1 on OS X
+X   https://github.com/processing/processing/issues/2159
+X   need to use the embedded Java, different classpath, etc
+X   also might be time to put something in to check the version
+
+
+0222 pde (2.1b1)
+X MovieMaker needs to be compiling as 1.6
+X deal with null/missing folders for Tools and Modes
+X   https://github.com/processing/processing/issues/2068
+o bad JS mode causing crash on startup
+X   https://github.com/processing/processing/issues/2088
+X   looks like issue that was covered in 2.0.3 changes
+X non-compliant libraries cause crash on "Add Library"
+X   https://github.com/processing/processing/issues/2026
+X Open new PDE maximized when current PDE is maximized
+X   https://github.com/processing/processing/issues/1984
+X   https://github.com/processing/processing/pull/2037
+X incorporate the new serial library
+X   https://github.com/processing/processing/pull/2093
+X cmd-left is bringing up the text area popup
+X   https://github.com/processing/processing/issues/2103
+X still having right-click issues (re-opened)
+X   https://github.com/processing/processing/issues/2103
+X bad tool brings down the environment
+X   http://code.google.com/p/processing/issues/detail?id=798
+X   https://github.com/processing/processing/issues/836
+
+cleaning
+o the first time someone hides a tab, put up a msg explaining what it does
+o   "don't warn me about this anymore"
+X   removed this feature a while back
+o document the move of the auto format menu
+o   in the book(s)? in the reference?
+o jer: opengl2 tutorial
+o jer: android tutorial
+o probably later: examples into categories based on difficulty
+o   add ratings/difficult level to examples online and in the pde
+o go through examples, figure out how to do many on the site w/ js instead
+X import p5 reference into the javadoc
+o freeze after splash screen on OS X (looks like core.jar in the path)
+X   https://github.com/processing/processing/issues/1872
+X   can't really fix this
+
+fonts/prefs
+X update with bold version of Source Code Pro
+X   http://www.google.com/fonts#UsePlace:use/Collection:Source+Code+Pro
+X   instead of semibold, which wouldn't correctly connect to the other fonts
+X does editor line status work?
+X   not sure what this one was, but added anti-aliasing to the status
+X Editor.applyPreferences() -> painter.setFont() removed
+X   need to instead update defaults, then run from there
+X   then call repaint() on the text area? or invalidate()? or the painter?
+X make sure font family change is working
+X make sure fonts can actually update size/etc in prefs
+X slightly gray background
+X   bgcolor wasn't getting set (since fgcolor was set elsewhere)
+X spacing problem with large sizes (on retina?)
+X   not just retina, was problem with non-mono text from Java
+X control text size in console
+o   why aren't prefs from theme.txt showing up in preferences.txt? hrm
+o   or rather, why can't they be overridden? 
+X     because theme.txt data is a different animal / that's part of the point
+X   should fonts at least be in prefs.txt?
+X   http://code.google.com/p/processing/issues/detail?id=226
+X   https://github.com/processing/processing/issues/265
+X console font in EditorConsole
+X   Font font = Preferences.getFont("console.font");
+o fix console font on Windows and Linux with 7u40
+X   couldn't reproduce, but shouldn't be a problem with the rewrite
+X the message area text also looks ugly.. can we fix?
+X add pref to select PDE font (so that CJKV languages work better)
+X   https://github.com/processing/processing/issues/2078
+X should we embed the PDE font into the JRE?
+X   this would allow it to show up in the menus, etc
+X type in the status area is gross on retina displays and 7u40
+X no longer require restart of Processing when changing the font
+
+serial
+X closing several bugs because no longer relevant
+X need 64-bit version of RXTX library
+X   http://code.google.com/p/processing/issues/detail?id=1237
+X   https://github.com/processing/processing/issues/1275
+X serial still causing problems on OS X
+X   http://code.google.com/p/processing/issues/detail?id=52
+X   had already been closed
+X serial ports missing from list (OS X)
+X   http://code.google.com/p/processing/issues/detail?id=52
+X   also was marked fixed...
+X Serial.write problem with Bluetooth SPP virtual serial port 
+X   http://code.google.com/p/processing/issues/detail?id=318
+X   was marked duplicate of #52
+X Serial silently fails when invalid port entered as string
+o   https://github.com/processing/processing/issues/2114
+X Serial Issue for RPi (and others)
+o   https://github.com/processing/processing/issues/2066
+X RXTX-2.1-7 doesn't list ports created in /dev with VirtualSerialPortApp
+o   https://github.com/processing/processing/issues/1460
+X Bluetooth serial problems on Windows when connecting to Arduino device
+o   https://github.com/processing/processing/issues/1374
+
+movie maker
+o moviemaker video sizes / usability
+o   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Exhibition;action=display;num=1211318862
+X add gamma, better image options, etc to MovieMaker
+X TGA files cause Movie Maker to not work properly
+X   https://github.com/processing/processing/issues/1933
+o move Movie Maker out to its own separate tool package (with separate build)
+X   http://code.google.com/p/processing/issues/detail?id=837
+X   https://github.com/processing/processing/issues/875
+X   basically done in more recent releases
+X fix file selection dialog with MovieMaker
+X   copied from PApplet, but not importing PApplet
+
+build
+X remove video library for other platforms in download
+X update apple.jar file with new version
+X   https://developer.apple.com/legacy/library/samplecode/AppleJavaExtensions/Introduction/Intro.html
+X remove Mangler from tools/Mangler
+o update tools/howto.txt to just point at the correct online location
+X   just remove the howto file
+X appbundler fixes/changes
+X   the "Classes" folder is included
+X     appears to be line 138 of main.m
+o     maybe this is a holdover from OS X Java? don't know.
+X   icon location uses path, even when embedded
+X   add indents to the Info.plist output file
+X     inside writeInfoPlist from AppBundlerTask.java
+o   use Contents/Resources/Java instead of Contents/Java?
+o     this is in main.m. why the change?
+X     doesn't make any difference, just use Contents/Java
+X   any missing args from our app (copyrights/versions?)
+X   add MinimumSystemVersion for 10.7.3
+X   https://developer.apple.com/library/ios/documentation/general/Reference/InfoPlistKeyReference/Articles/LaunchServicesKeys.html#//apple_ref/doc/uid/20001431-113253
+X copy GenericDocumentIcon.icns for placeholder icon
+X   from /System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/
+X the javadoc includes java.io.* and java.lang.* prefixes.. why?
+X   re-run and and check in
+X   upload javadoc updates
+X need to require JDK 7u40 to be installed on OS X
+X remove JAVA_HOME requirement from build.xml
+X   what's needed on OS X? just the JDK 7u40?
+X remove Java FX from OS X build
+X remove Java FX during Linux builds
+X remove Java FX during Windows builds
+X remove javafx from the embed
+X   more about optional files:
+X   http://www.oracle.com/technetwork/java/javase/jdk-7-readme-429198.html
+
+build instructions and other doc
+X update the build instructions page
+X   http://code.google.com/p/processing/wiki/BuildInstructions
+X update github instructions
+X   https://github.com/processing/processing/issues/1629
+X   https://github.com/processing/processing/wiki/Build-Instructions
+X   only JRE needed at this point
+X   switched over to Java 7
+o   "unable to locate tools.jar" (Windows) can be ignored
+X   JAVA_HOME warnings from Ant can also be ignored
+X updates for macosx instructions
+X   JDK 7u45 is needed (or whatever version currently in the build)
+X   to build appbundler, you'll need Xcode
+X     and the command line tools Preferences > Downloads > Command Line Tools
+X   appbundler will have an NPE if the osx binary isn't built
+X   also need to have 10.8 version of the SDK (old Xcode won't work)
+o add notes to build instructions re: building core with eclipse
+X changing JRE might be a problem for fonts on Linux
+X   where the JRE is often replaced
+X   and where the font is needed most
+X   make note of this on the platforms page
+X   also make note re: only JRE needed (instead of JDK)
+X   http://wiki.processing.org/index.php?title=Supported_Platforms&action=edit&section=4
+X now Info.plist.tmpl instead of template.plist
+X   can be embedded in a sketch
+X   name change due to major modifications
+
+7u40 macosx
+X make OS X launch from its local JRE
+X also need to have a central menubar
+X   add the offscreen window hack
+X   otherwise mode change causes "do you want to quit?" on OS X
+X remove 32- and 64-bit preference from Preferences on OS X
+o try the bundle on Mac Mini running 10.6
+X we become full 64-bit on OS X
+X   meaning that the macosx32 video library goes away
+X   and the preference for launching in 32- or 64-bit mode
+X package Java 7u40 version of the app
+X   docs.oracle.com/javase/7/docs/technotes/guides/jweb/packagingAppsForMac.html
+X   http://www.intransitione.com/blog/take-java-to-app-store/
+X   retina support http://bugs.sun.com/view_bug.do?bug_id=8009754
+X   useful retina digging/findings for Oracle Java
+X     http://bulenkov.com/2013/06/23/retina-support-in-oracle-jdk-1-7/
+X   7u40 target release is "late August"
+X     http://openjdk.java.net/projects/jdk7u/releases/7u40.html
+X   Contents/Java/Classes folder is added to java.class.path
+X     so the folder must exist otherwise the ECJ compiler will crash
+X     once fixed, remove notes from JavaBuild.java
+X "Are you sure you want to quit?" when switching modes on Oracle JVM
+X   default menu bar is still broken
+X   http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=8007267
+X add appbundler.jar, otherwise folks have to include Xcode
+
+export
+X change app stub in OS X exported application
+X make note re: app export being slower, and resulting app much larger
+X change how export is handled
+X   remove ability to export cross-platform apps
+X   add ability to embed the current JRE
+X   only going to embed always... consider option to disable it later
+o   the case for the embedded JRE
+o     https://github.com/processing/processing/issues/2104
+X major edits to http://wiki.processing.org/w/Export_Info_and_Tips
+
+
+0221 pde (2.0.3)
+X add double quotes to readlink call, fixes issue w/ paths and spaces
+X   https://github.com/processing/processing/pull/2027
+X   fix submitted by hamoid
+
+
+0220 pde (2.0.2)
+X fix "less less" typo 
+X   https://github.com/processing/processing/issues/1928
+X slash breaks syntax highlighting (with spaces)
+X   https://github.com/processing/processing/issues/1681
+X   Fix from Github user hamzaissa
+X selectInput() in exported OS X sketch treats .app package as a folder
+X   https://github.com/processing/processing/issues/1959
+X waiting on retina support for JDK 7
+o   b86 supposed to have some support (not available yet)
+o     http://jdk8.java.net/download.html
+X code with a NUL character causes an error
+X   https://github.com/processing/processing/issues/1973
+X   also remove NUL characters when loading a file
+X Add "Processing Foundation" to the Help menu
+X   https://github.com/processing/processing/issues/1908
+X Update JNA from 3.2.4 to 3.5.2
+X   https://maven.java.net/content/repositories/releases/net/java/dev/jna/jna/3.5.2/jna-3.5.2.jar
+X   https://maven.java.net/content/repositories/releases/net/java/dev/jna/platform/3.5.2/platform-3.5.2.jar
+X problem with associating .pde files 
+X   https://github.com/processing/processing/issues/286
+X   http://code.google.com/p/processing/issues/detail?id=247
+o   In regedit: Navigate to Computer\HKEY_CLASSES_ROOT\Applications and find your .exe name. Navigate under its name to shell>open>command. In the Default change its location to the actual location of the executable, hit okay and then try and reassociate the file type as you normally would.
+X UnsatisfiedLinkError causes huge message... 
+X   error report cleanups haven't been fixed yet
+X   reported by Dan
+X   this should be better now
+X add exception wrapper for startup
+X Add methods to move files to Trash/Recycle Bin where available
+X allow delete of files in unsaved sketches
+X   https://github.com/processing/processing/issues/1942
+X   https://github.com/processing/processing/pull/1945
+X proxy server requirement causes problems
+X   contrib manager, update checks are broken
+X   https://github.com/processing/processing/issues/1476
+X   might be able to fix this with something in preferences.txt?
+X   http://docs.oracle.com/javase/6/docs/technotes/guides/net/proxies.html
+o Update Java version in the download to be the latest Java 6
+o   https://github.com/processing/processing/issues/1841
+X try to use appbundler to create a version that includes a JRE (JDK)
+X   http://java.net/downloads/appbundler/appbundler.html
+X   docs.oracle.com/javase/7/docs/technotes/guides/jweb/packagingAppsForMac.html
+X   http://www.intransitione.com/blog/take-java-to-app-store/
+X   hobbling along, should be ready soon
+
+cleaning/earlier
+X common error messages
+X   with a proper list, we can add links when throwing an error in the PDE
+X   Dan started this on the Wiki
+o build is currently broken for fresh checkout due to changes to file layout
+o   something that gets fixed by 'make clean'
+o   also test on windows and linux
+o add a check to make sure that people aren't running from the dmg
+o   doesn't actually cause any problems, so don't bother?
+o code to hide menubar.. just include JNA and call from there?
+NSMenu.setMenubarVisible(false);
+Then we used Cocoa via JNI:
+if([NSMenu menuBarVisible]){
+	[NSMenu setMenuBarVisible:NO];
+}
+You can't do that from the AWT event thread. You need to do a -performSelectorOnMainThread to do that on the AppKit event thread.
+Please see <http://developer.apple.com/mac/library/technotes/tn2005/tn2147.html> for more information, particularly the section about "Calling AppKit from AWT/Swing".
+
+manager
+X change location of the manager download
+X check to see if manager items from the download can be updated
+X   oops, probably not, because they're part of the distribution
+X   and folks won't be able to write to those directories
+X changed manager to go to download.processing.org/latest.txt
+X   and uses a redirect from there (hopeully that's followed?)
+X libraries need to support multiple categories
+X   https://github.com/processing/processing/issues/1970
+X restrict library categories to the ones in the document
+X   if it's not correct, shows up as 'other'
+X catch Error (not just Exception) objects during load
+X   handles UnsupportedClassVersionError and others
+X argh.. the 'old' folder is really poorly done
+X   attempt to install multiple will cause havoc (fail because 'old' exists)
+o remove flagging for deletion
+o half-installed mode causes a lot of trouble
+o   maybe it's reading from tmp folders?
+o   https://github.com/processing/processing/issues/1875
+X   can't fix, no response
+X remove "Compilations" category for libraries
+X modes shouldn't have categories?
+X   was counting "Unknown" as a category
+X modes and tools require restart (per ContributionType class)
+X   but no message is provided anywhere?
+X mode install requires restart *and* still doesn't show as installed
+X   even though it gets added to the modes menu properly after the restart
+X   https://github.com/processing/processing/issues/1782
+X Update example list when library is installed
+X   https://github.com/processing/processing/issues/1909
+X   https://github.com/processing/processing/pull/1925
+X Contributed modes should show up in mode menu after installation
+X   waiting for fixed CoffeeScript mode to test this one
+X   https://github.com/processing/processing/issues/1504
+X   http://code.google.com/p/processing/issues/detail?id=1466
+X   modes require restart, that's now properly shown as a message
+
+
+0219 pde (2.0.1)
+X modes, tools, libraries not copying/moving properly on Windows
+X   https://github.com/processing/processing/issues/1781
+X undo seems to not be going to the right location (now with example)
+X   https://github.com/processing/processing/issues/707
+X   http://code.google.com/p/processing/issues/detail?id=668
+X   fixes from Josh Giesbrecht
+X line ending problem with args.txt for Windows when exporting from others
+X   (exporting from OS X to Windows)
+X   https://github.com/processing/processing/issues/1890
+X add option to remove the background image at the top of the window
+
+
 0218 pde (2.0)
 X Example window has the Java application icon
 X   https://github.com/processing/processing/issues/1800

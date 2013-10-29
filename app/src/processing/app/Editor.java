@@ -472,6 +472,14 @@ public abstract class Editor extends JFrame implements RunnerListener {
    * with things in the Preferences window.
    */
   protected void applyPreferences() {
+    // Update fonts and other items controllable from the prefs
+    textarea.getPainter().updateAppearance();
+    textarea.repaint();
+    
+    console.updateAppearance();
+    
+    // All of this code was specific to using an external editor.  
+    /*
 //    // apply the setting for 'use external editor'
 //    boolean external = Preferences.getBoolean("editor.external");
 //    textarea.setEditable(!external);
@@ -494,7 +502,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 //    }
 
     // apply changes to the font size for the editor
-    painter.setFont(Preferences.getFont("editor.font"));
+//    painter.setFont(Preferences.getFont("editor.font"));
 
     // in case tab expansion stuff has changed
     // removing this, just checking prefs directly instead
@@ -505,6 +513,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     //sketchbook.rebuildMenus();
     // For 0126, moved into Base, which will notify all editors.
     //base.rebuildMenusAsync();
+     */
   }
 
 
@@ -933,25 +942,92 @@ public abstract class Editor extends JFrame implements RunnerListener {
   }
 
 
+//  /**
+//   * Attempt to init or run a Tool from the safety of a try/catch block that
+//   * will report errors to the user.
+//   * @param tool The Tool object to be inited or run
+//   * @param item null to call init(), or the existing JMenuItem for run()
+//   * @return
+//   */
+//  protected boolean safeTool(Tool tool, JMenuItem item) {
+//    try {
+//      if (item == null) {
+//        tool.init(Editor.this);
+//      } else {
+//        tool.run();
+//      }
+//      return true;
+//      
+//    } catch (NoSuchMethodError nsme) {
+//      System.out.println("tool is " + tool + " ");
+//      statusError("\"" + tool.getMenuTitle() + "\" " +
+//                  "is not compatible with this version of Processing");
+//      nsme.printStackTrace();
+//      
+//    } catch (Exception ex) {
+//      statusError("An error occurred inside \"" + tool.getMenuTitle() + "\"");
+//      ex.printStackTrace();
+//    }
+//    if (item != null) {
+//      item.setEnabled(false);  // don't you try that again
+//    }
+//    return false;
+//  }
+  
+  
+  void addToolItem(final Tool tool, HashMap<String, JMenuItem> toolItems) {
+    String title = tool.getMenuTitle();
+    final JMenuItem item = new JMenuItem(title);
+    item.addActionListener(new ActionListener() {
+
+      public void actionPerformed(ActionEvent e) {
+        try {
+          tool.run();
+
+        } catch (NoSuchMethodError nsme) {
+          statusError("\"" + tool.getMenuTitle() + "\" is not" +
+                      "compatible with this version of Processing");
+          //nsme.printStackTrace();
+          Base.log("Incompatible tool found during tool.run()", nsme);
+          item.setEnabled(false);
+
+        } catch (Exception ex) {
+          statusError("An error occurred inside \"" + tool.getMenuTitle() + "\"");
+          ex.printStackTrace();
+          item.setEnabled(false);
+        }          
+      }
+    });
+    //menu.add(item);
+    toolItems.put(title, item);
+  }
+
+  
   protected void addTools(JMenu menu, ArrayList<ToolContribution> tools) {
     HashMap<String, JMenuItem> toolItems = new HashMap<String, JMenuItem>();
 
     for (final ToolContribution tool : tools) {
-      String title = tool.getMenuTitle();
-      JMenuItem item = new JMenuItem(title);
-      item.addActionListener(new ActionListener() {
-        boolean inited;
+      try {
+        tool.init(Editor.this);
+        // If init() fails, the item won't be added to the menu
+        addToolItem(tool, toolItems);
+        
+        // With the exceptions, we can't call statusError because the window 
+        // isn't completely set up yet. Also not gonna pop up a warning because
+        // people may still be running different versions of Processing. 
+        // TODO Once the dust settles on 2.x, change this to Base.showError()
+        // and open the Tools folder instead of showing System.err.println().
+        
+      } catch (NoSuchMethodError nsme) {
+        System.err.println("\"" + tool.getMenuTitle() + "\" is not " +
+                           "compatible with this version of Processing");
+        System.err.println("This method no longer exists: " + nsme.getMessage());
+        Base.log("Incompatible Tool found during tool.init()", nsme);
 
-        public void actionPerformed(ActionEvent e) {
-          if (!inited) {
-            tool.init(Editor.this);
-            inited = true;
-          }
-          EventQueue.invokeLater(tool);
-        }
-      });
-      //menu.add(item);
-      toolItems.put(title, item);
+      } catch (Exception ex) {
+        System.err.println("An error occurred inside \"" + tool.getMenuTitle() + "\"");
+        ex.printStackTrace();
+      }
     }
 
     ArrayList<String> toolList = new ArrayList<String>(toolItems.keySet());
@@ -984,7 +1060,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
       item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          SwingUtilities.invokeLater(tool);
+          EventQueue.invokeLater(tool);
         }
       });
       menu.add(item);
@@ -1009,9 +1085,6 @@ public abstract class Editor extends JFrame implements RunnerListener {
     addToolMenuItem(menu, "processing.app.tools.Archiver");
 
     if (Base.isMacOS()) {
-      if (SerialFixer.isNeeded()) {
-        addToolMenuItem(menu, "processing.app.tools.SerialFixer");
-      }
       addToolMenuItem(menu, "processing.app.tools.InstallCommander");
     }
 
@@ -1409,6 +1482,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
     if (compoundEdit != null) {
       compoundEdit.end();
       undo.addEdit(compoundEdit);
+      caretUndoStack.push(textarea.getCaretPosition());
+      caretRedoStack.clear();
       undoAction.updateUndoState();
       redoAction.updateRedoState();
       compoundEdit = null;
@@ -2008,6 +2083,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
     // As of Processing 1.0.10, this always happens immediately.
     // http://dev.processing.org/bugs/show_bug.cgi?id=1456
 
+    // With Java 7u40 on OS X, need to bring the window forward.
+    toFront();
+    
     String prompt = "Save changes to " + sketch.getName() + "?  ";
 
     if (!Base.isMacOS()) {
@@ -2327,9 +2405,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
     }
     if (pageFormat != null) {
       //System.out.println("setting page format " + pageFormat);
-      printerJob.setPrintable(textarea.getPainter(), pageFormat);
+      printerJob.setPrintable(textarea.getPrintable(), pageFormat);
     } else {
-      printerJob.setPrintable(textarea.getPainter());
+      printerJob.setPrintable(textarea.getPrintable());
     }
     // set the name of the job to the code name
     printerJob.setJobName(sketch.getCurrentCode().getPrettyName());

@@ -52,7 +52,7 @@ import processing.data.XML;
  * any way shape or form. Which just means "have fun, but don't complain
  * if it breaks."</p>
  */
-public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
+public class PGraphicsJava2D extends PGraphics {
   BufferStrategy strategy;
   BufferedImage bimage;
   VolatileImage vimage;
@@ -263,13 +263,15 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
         if (image == null || ((VolatileImage) image).validate(gc) == VolatileImage.IMAGE_INCOMPATIBLE) {
           image = gc.createCompatibleVolatileImage(width, height);
           g2 = (Graphics2D) image.getGraphics();
+          reapplySettings = true;
         }
       } else {
         if (image == null) {
           GraphicsConfiguration gc = parent.getGraphicsConfiguration();
           image = gc.createCompatibleImage(width, height);
-          System.out.println("created new image, type is " + image);
+          PApplet.debug("created new image, type is " + image);
           g2 = (Graphics2D) image.getGraphics();
+          reapplySettings = true;
         }
       }
       //g2 = (Graphics2D) image.getGraphics();
@@ -305,6 +307,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 //        image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         g2 = bimage.createGraphics();
         defaultComposite = g2.getComposite();
+        reapplySettings = true;
       }
     }
 
@@ -373,7 +376,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
       PApplet.debug("PGraphicsJava2D.redraw() top of outer do { } block");
       do {
         PApplet.debug("PGraphicsJava2D.redraw() top of inner do { } block");
-        System.out.println("strategy is " + strategy);
+        PApplet.debug("strategy is " + strategy);
         Graphics bsg = strategy.getDrawGraphics();
         if (vimage != null) {
           bsg.drawImage(vimage, 0, 0, null);
@@ -691,8 +694,8 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
    * @param mode the blending mode to use
    */
   @Override
-  public void blendMode(final int mode) {
-    if (mode == BLEND) {
+  protected void blendModeImpl() {
+    if (blendMode == BLEND) {
       g2.setComposite(defaultComposite);
 
     } else {
@@ -702,7 +705,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
         public CompositeContext createContext(ColorModel srcColorModel,
                                               ColorModel dstColorModel,
                                               RenderingHints hints) {
-          return new BlendingContext(mode);
+          return new BlendingContext(blendMode);
         }
       });
     }
@@ -1244,15 +1247,25 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
     // Image not ready yet, or an error
     if (who.width <= 0 || who.height <= 0) return;
 
-    if (getCache(who) == null) {
+    ImageCache cash = (ImageCache) getCache(who);
+
+    // Nuke the cache if the image was resized
+    if (cash != null) {
+      if (who.width != cash.image.getWidth() ||
+          who.height != cash.image.getHeight()) {
+        cash = null;
+      }
+    }
+
+    if (cash == null) {
       //System.out.println("making new image cache");
-      this.setCache(who, new ImageCache(who));
+      cash = new ImageCache(); //who);
+      setCache(who, cash);
       who.updatePixels();  // mark the whole thing for update
       who.modified = true;
     }
 
-    ImageCache cash = (ImageCache) getCache(who);
-    // if image previously was tinted, or the color changed
+    // If image previously was tinted, or the color changed
     // or the image was tinted, and tint is now disabled
     if ((tint && !cash.tinted) ||
         (tint && (cash.tintedColor != tintColor)) ||
@@ -1270,8 +1283,8 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
                  (int) x1, (int) y1, (int) x2, (int) y2,
                  u1, v1, u2, v2, null);
 
-    // every few years I think "nah, Java2D couldn't possibly be that
-    // f*king slow, why are we doing this by hand? then comes the affirmation.
+    // Every few years I think "nah, Java2D couldn't possibly be that f*king
+    // slow, why are we doing this by hand?" then comes the affirmation:
 //    Composite oldComp = null;
 //    if (false && tint) {
 //      oldComp = g2.getComposite();
@@ -1297,17 +1310,17 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   class ImageCache {
     boolean tinted;
     int tintedColor;
-    int tintedPixels[];  // one row of tinted pixels
+    int[] tintedTemp;  // one row of tinted pixels
     BufferedImage image;
 
-    public ImageCache(PImage source) {
-//      this.source = source;
-      // even if RGB, set the image type to ARGB, because the
-      // image may have an alpha value for its tint().
-//      int type = BufferedImage.TYPE_INT_ARGB;
-      //System.out.println("making new buffered image");
-//      image = new BufferedImage(source.width, source.height, type);
-    }
+//    public ImageCache(PImage source) {
+////      this.source = source;
+//      // even if RGB, set the image type to ARGB, because the
+//      // image may have an alpha value for its tint().
+////      int type = BufferedImage.TYPE_INT_ARGB;
+//      //System.out.println("making new buffered image");
+////      image = new BufferedImage(source.width, source.height, type);
+//    }
 
     /**
      * Update the pixels of the cache image. Already determined that the tint
@@ -1315,29 +1328,41 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
      * with the update without further checks.
      */
     public void update(PImage source, boolean tint, int tintColor) {
-      int bufferType = BufferedImage.TYPE_INT_ARGB;
+      //int bufferType = BufferedImage.TYPE_INT_ARGB;
+      int targetType = ARGB;
       boolean opaque = (tintColor & 0xFF000000) == 0xFF000000;
       if (source.format == RGB) {
         if (!tint || (tint && opaque)) {
-          bufferType = BufferedImage.TYPE_INT_RGB;
+          //bufferType = BufferedImage.TYPE_INT_RGB;
+          targetType = RGB;
         }
       }
-      boolean wrongType = (image != null) && (image.getType() != bufferType);
-      if ((image == null) || wrongType) {
-        image = new BufferedImage(source.width, source.height, bufferType);
+//      boolean wrongType = (image != null) && (image.getType() != bufferType);
+//      if ((image == null) || wrongType) {
+//        image = new BufferedImage(source.width, source.height, bufferType);
+//      }
+      // Must always use an ARGB image, otherwise will write zeros
+      // in the alpha channel when drawn to the screen.
+      // https://github.com/processing/processing/issues/2030
+      if (image == null) {
+        image = new BufferedImage(source.width, source.height,
+                                  BufferedImage.TYPE_INT_ARGB);
       }
 
       WritableRaster wr = image.getRaster();
       if (tint) {
-        if (tintedPixels == null || tintedPixels.length != source.width) {
-          tintedPixels = new int[source.width];
+        if (tintedTemp == null || tintedTemp.length != source.width) {
+          tintedTemp = new int[source.width];
         }
         int a2 = (tintColor >> 24) & 0xff;
+//        System.out.println("tint color is " + a2);
+//        System.out.println("source.pixels[0] alpha is " + (source.pixels[0] >>> 24));
         int r2 = (tintColor >> 16) & 0xff;
         int g2 = (tintColor >> 8) & 0xff;
         int b2 = (tintColor) & 0xff;
 
-        if (bufferType == BufferedImage.TYPE_INT_RGB) {
+        //if (bufferType == BufferedImage.TYPE_INT_RGB) {
+        if (targetType == RGB) {
           // The target image is opaque, meaning that the source image has no
           // alpha (is not ARGB), and the tint has no alpha.
           int index = 0;
@@ -1348,12 +1373,15 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
               int g1 = (argb1 >> 8) & 0xff;
               int b1 = (argb1) & 0xff;
 
-              tintedPixels[x] = //0xFF000000 |
+              // Prior to 2.1, the alpha channel was commented out here,
+              // but can't remember why (just thought unnecessary b/c of RGB?)
+              // https://github.com/processing/processing/issues/2030
+              tintedTemp[x] = 0xFF000000 |
                   (((r2 * r1) & 0xff00) << 8) |
                   ((g2 * g1) & 0xff00) |
                   (((b2 * b1) & 0xff00) >> 8);
             }
-            wr.setDataElements(0, y, source.width, 1, tintedPixels);
+            wr.setDataElements(0, y, source.width, 1, tintedTemp);
           }
           // could this be any slower?
 //          float[] scales = { tintR, tintG, tintB };
@@ -1361,16 +1389,17 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 //          RescaleOp op = new RescaleOp(scales, offsets, null);
 //          op.filter(image, image);
 
-        } else if (bufferType == BufferedImage.TYPE_INT_ARGB) {
+        //} else if (bufferType == BufferedImage.TYPE_INT_ARGB) {
+        } else if (targetType == ARGB) {
           if (source.format == RGB &&
               (tintColor & 0xffffff) == 0xffffff) {
             int hi = tintColor & 0xff000000;
             int index = 0;
             for (int y = 0; y < source.height; y++) {
               for (int x = 0; x < source.width; x++) {
-                tintedPixels[x] = hi | (source.pixels[index++] & 0xFFFFFF);
+                tintedTemp[x] = hi | (source.pixels[index++] & 0xFFFFFF);
               }
-              wr.setDataElements(0, y, source.width, 1, tintedPixels);
+              wr.setDataElements(0, y, source.width, 1, tintedTemp);
             }
           } else {
             int index = 0;
@@ -1382,7 +1411,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
                   int r1 = (argb1 >> 16) & 0xff;
                   int g1 = (argb1 >> 8) & 0xff;
                   int b1 = (argb1) & 0xff;
-                  tintedPixels[x] = alpha |
+                  tintedTemp[x] = alpha |
                       (((r2 * r1) & 0xff00) << 8) |
                       ((g2 * g1) & 0xff00) |
                       (((b2 * b1) & 0xff00) >> 8);
@@ -1394,7 +1423,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
                   int r1 = (argb1 >> 16) & 0xff;
                   int g1 = (argb1 >> 8) & 0xff;
                   int b1 = (argb1) & 0xff;
-                  tintedPixels[x] =
+                  tintedTemp[x] =
                       (((a2 * a1) & 0xff00) << 16) |
                       (((r2 * r1) & 0xff00) << 8) |
                       ((g2 * g1) & 0xff00) |
@@ -1404,11 +1433,11 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
                 int lower = tintColor & 0xFFFFFF;
                 for (int x = 0; x < source.width; x++) {
                   int a1 = source.pixels[index++];
-                  tintedPixels[x] =
+                  tintedTemp[x] =
                       (((a2 * a1) & 0xff00) << 16) | lower;
                 }
               }
-              wr.setDataElements(0, y, source.width, 1, tintedPixels);
+              wr.setDataElements(0, y, source.width, 1, tintedTemp);
             }
           }
           // Not sure why ARGB images take the scales in this order...
@@ -1417,7 +1446,17 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 //          RescaleOp op = new RescaleOp(scales, offsets, null);
 //          op.filter(image, image);
         }
-      } else {
+      } else {  // !tint
+        if (targetType == RGB && (source.pixels[0] >> 24 == 0)) {
+          // If it's an RGB image and the high bits aren't set, need to set
+          // the high bits to opaque because we're drawing ARGB images.
+          source.filter(OPAQUE);
+          // Opting to just manipulate the image here, since it shouldn't
+          // affect anything else (and alpha(get(x, y)) should return 0xff).
+          // Wel also make no guarantees about the values of the pixels array
+          // in a PImage and how the high bits will be set.
+        }
+        // If no tint, just shove the pixels on in there verbatim
         wr.setDataElements(0, 0, source.width, source.height, source.pixels);
       }
       this.tinted = tint;
@@ -2288,18 +2327,32 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 
 
   protected WritableRaster getRaster() {
+    WritableRaster raster = null;
     if (primarySurface) {
       // 'offscreen' will probably be removed in the next release
       if (useOffscreen) {
-        return ((BufferedImage) offscreen).getRaster();
-      }
-      // when possible, we'll try VolatileImage
-      if (image instanceof VolatileImage) {
-        return ((VolatileImage) image).getSnapshot().getRaster();
+        raster = ((BufferedImage) offscreen).getRaster();
+      } else if (image instanceof VolatileImage) {
+        // when possible, we'll try VolatileImage
+        raster = ((VolatileImage) image).getSnapshot().getRaster();
       }
     }
-    return ((BufferedImage) image).getRaster();
-    //((BufferedImage) (useOffscreen && primarySurface ? offscreen : image)).getRaster();
+    if (raster == null) {
+      raster = ((BufferedImage) image).getRaster();
+    }
+
+    // On Raspberry Pi (and perhaps other platforms, the color buffer won't
+    // necessarily be the int array that we'd like. Need to convert it here.
+    // Not that this would probably mean getRaster() would need to work more
+    // like loadRaster/updateRaster because the pixels will need to be
+    // temporarily moved to (and later from) a buffer that's understood by
+    // the rest of the Processing source.
+    // https://github.com/processing/processing/issues/2010
+    if (raster.getTransferType() != DataBuffer.TYPE_INT) {
+      System.err.println("See https://github.com/processing/processing/issues/2010");
+      throw new RuntimeException("Pixel operations are not supported on this device.");
+    }
+    return raster;
   }
 
 
@@ -2308,10 +2361,19 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
     if ((pixels == null) || (pixels.length != width * height)) {
       pixels = new int[width * height];
     }
-    //((BufferedImage) image).getRGB(0, 0, width, height, pixels, 0, width);
+
+    WritableRaster raster = getRaster();
+    raster.getDataElements(0, 0, width, height, pixels);
+    if (raster.getNumBands() == 3) {
+      // Java won't set the high bits when RGB, returns 0 for alpha
+      // https://github.com/processing/processing/issues/2030
+      for (int i = 0; i < pixels.length; i++) {
+        pixels[i] = 0xff000000 | pixels[i];
+      }
+    }
+      //((BufferedImage) image).getRGB(0, 0, width, height, pixels, 0, width);
 //    WritableRaster raster = ((BufferedImage) (useOffscreen && primarySurface ? offscreen : image)).getRaster();
 //    WritableRaster raster = image.getRaster();
-    getRaster().getDataElements(0, 0, width, height, pixels);
   }
 
 
@@ -2377,8 +2439,12 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
     if ((x < 0) || (y < 0) || (x >= width) || (y >= height)) return 0;
     //return ((BufferedImage) image).getRGB(x, y);
 //    WritableRaster raster = ((BufferedImage) (useOffscreen && primarySurface ? offscreen : image)).getRaster();
-//    WritableRaster raster = image.getRaster();
-    getRaster().getDataElements(x, y, getset);
+    WritableRaster raster = getRaster();
+    raster.getDataElements(x, y, getset);
+    if (raster.getNumBands() == 3) {
+      // https://github.com/processing/processing/issues/2030
+      return getset[0] | 0xff000000;
+    }
     return getset[0];
   }
 
@@ -2404,6 +2470,10 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 
     if (sourceWidth == target.width && sourceHeight == target.height) {
       raster.getDataElements(sourceX, sourceY, sourceWidth, sourceHeight, target.pixels);
+      // https://github.com/processing/processing/issues/2030
+      if (raster.getNumBands() == 3) {
+        target.filter(OPAQUE);
+      }
 
     } else {
       // TODO optimize, incredibly inefficient to reallocate this much memory
@@ -2414,7 +2484,15 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
       int sourceOffset = 0;
       int targetOffset = targetY*target.width + targetX;
       for (int y = 0; y < sourceHeight; y++) {
-        System.arraycopy(temp, sourceOffset, target.pixels, targetOffset, sourceWidth);
+        if (raster.getNumBands() == 3) {
+          for (int i = 0; i < sourceWidth; i++) {
+            // Need to set the high bits for this feller
+            // https://github.com/processing/processing/issues/2030
+            target.pixels[targetOffset + i] = 0xFF000000 | temp[sourceOffset + i];
+          }
+        } else {
+          System.arraycopy(temp, sourceOffset, target.pixels, targetOffset, sourceWidth);
+        }
         sourceOffset += sourceWidth;
         targetOffset += target.width;
       }

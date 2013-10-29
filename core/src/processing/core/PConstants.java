@@ -92,9 +92,12 @@ public interface PConstants {
 
   static public final int VERTEX = 0;
   static public final int BEZIER_VERTEX = 1;
-  static public final int QUAD_BEZIER_VERTEX = 2;
+  static public final int QUADRATIC_VERTEX = 2;
   static public final int CURVE_VERTEX = 3;
   static public final int BREAK = 4;
+
+  @Deprecated
+  static public final int QUAD_BEZIER_VERTEX = 2;  // should not have been exposed
 
   // useful goodness
 

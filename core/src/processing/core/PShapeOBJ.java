@@ -1,6 +1,7 @@
 package processing.core;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
@@ -22,17 +23,21 @@ public class PShapeOBJ extends PShape {
    * Initializes a new OBJ Object with the given filename.
    */
   public PShapeOBJ(PApplet parent, String filename) {
-    this(parent, parent.createReader(filename));
+    this(parent, parent.createReader(filename), getBasePath(parent, filename));
   }
 
-
   public PShapeOBJ(PApplet parent, BufferedReader reader) {
+    this(parent, reader, "");
+  }
+
+  public PShapeOBJ(PApplet parent, BufferedReader reader, String basePath) {
     ArrayList<OBJFace> faces = new ArrayList<OBJFace>();
     ArrayList<OBJMaterial> materials = new ArrayList<OBJMaterial>();
     ArrayList<PVector> coords = new ArrayList<PVector>();
     ArrayList<PVector> normals = new ArrayList<PVector>();
     ArrayList<PVector> texcoords = new ArrayList<PVector>();
-    parseOBJ(parent, reader, faces, materials, coords, normals, texcoords);
+    parseOBJ(parent, basePath, reader,
+             faces, materials, coords, normals, texcoords);
 
     // The OBJ geometry is stored with each face in a separate child shape.
     parent = null;
@@ -147,7 +152,7 @@ public class PShapeOBJ extends PShape {
   }
 
 
-  static protected void parseOBJ(PApplet parent,
+  static protected void parseOBJ(PApplet parent, String path,
                                  BufferedReader reader,
                                  ArrayList<OBJFace> faces,
                                  ArrayList<OBJMaterial> materials,
@@ -218,9 +223,14 @@ public class PShapeOBJ extends PShape {
             // Object name is ignored, for now.
           } else if (parts[0].equals("mtllib")) {
             if (parts[1] != null) {
-              BufferedReader mreader = parent.createReader(parts[1]);
+              String fn = parts[1];
+              if (fn.indexOf(File.separator) == -1 && !path.equals("")) {
+                // Relative file name, adding the base path.
+                fn = path + File.separator + fn;
+              }
+              BufferedReader mreader = parent.createReader(fn);
               if (mreader != null) {
-                parseMTL(parent, mreader, materials, mtlTable);
+                parseMTL(parent, path, mreader, materials, mtlTable);
               }
             }
           } else if (parts[0].equals("g")) {
@@ -308,7 +318,7 @@ public class PShapeOBJ extends PShape {
   }
 
 
-  static protected void parseMTL(PApplet parent,
+  static protected void parseMTL(PApplet parent, String path,
                                  BufferedReader reader,
                                  ArrayList<OBJMaterial> materials,
                                  Hashtable<String, Integer> materialsHash) {
@@ -330,6 +340,10 @@ public class PShapeOBJ extends PShape {
           } else if (parts[0].equals("map_Kd") && parts.length > 1) {
             // Loading texture map.
             String texname = parts[1];
+            if (texname.indexOf(File.separator) == -1 && !path.equals("")) {
+              // Relative file name, adding the base path.
+              texname = path + File.separator + texname;
+            }
             currentMtl.kdMap = parent.loadImage(texname);
           } else if (parts[0].equals("Ka") && parts.length > 3) {
             // The ambient color of the material
@@ -392,6 +406,18 @@ public class PShapeOBJ extends PShape {
       matIdx = -1;
       name = "";
     }
+  }
+
+
+  static protected String getBasePath(PApplet parent, String filename) {
+    // Obtaining the path
+    File file = new File(parent.dataPath(filename));
+    if (!file.exists()) {
+      file = parent.sketchFile(filename);
+    }
+    String absolutePath = file.getAbsolutePath();
+    return absolutePath.substring(0,
+            absolutePath.lastIndexOf(File.separator));
   }
 
 

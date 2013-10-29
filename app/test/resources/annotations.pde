@@ -1,3 +1,5 @@
+import java.io.Serializable;
+
 void setup() {
     size(200,200);
 }

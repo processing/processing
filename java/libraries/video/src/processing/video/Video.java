@@ -26,7 +26,9 @@ package processing.video;
 import org.gstreamer.*;
 import processing.core.PApplet;
 import processing.core.PConstants;
+
 import java.io.File;
+import java.nio.ByteOrder;
 import java.util.List;
 
 /**
@@ -192,5 +194,36 @@ public class Video implements PConstants {
   static protected long secToNanoLong(float sec) {
     Float f = new Float(sec * 1E9);
     return f.longValue();
+  }
+  
+  
+  /**
+   * Reorders an OpenGL pixel array (RGBA) into ARGB. The array must be
+   * of size width * height.
+   * @param pixels int[]
+   */
+  static protected void convertToARGB(int[] pixels, int width, int height) {
+    int t = 0;
+    int p = 0;
+    if (ByteOrder.nativeOrder() == ByteOrder.BIG_ENDIAN) {
+      // RGBA to ARGB conversion: shifting RGB 8 bits to the right,
+      // and placing A 24 bits to the left.
+      for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+          int pixel = pixels[p++];
+          pixels[t++] = (pixel >>> 8) | ((pixel << 24) & 0xFF000000);
+        }
+      }
+    } else {
+      // We have to convert ABGR into ARGB, so R and B must be swapped,
+      // A and G just brought back in.
+      for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+          int pixel = pixels[p++];
+          pixels[t++] = ((pixel & 0xFF) << 16) | ((pixel & 0xFF0000) >> 16) |
+                        (pixel & 0xFF00FF00);
+        }
+      }
+    }
   }  
 }

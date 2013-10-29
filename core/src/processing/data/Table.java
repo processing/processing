@@ -60,6 +60,7 @@ import processing.core.PConstants;
  */
 public class Table {
   protected int rowCount;
+  protected int allocCount;
 
 //  protected boolean skipEmptyRows = true;
 //  protected boolean skipCommentLines = true;
@@ -91,6 +92,10 @@ public class Table {
 
   protected RowIterator rowIterator;
 
+  // 0 for doubling each time, otherwise the number of rows to increment on
+  // each expansion.
+  protected int expandIncrement;
+
 
   /**
    * Creates a new, empty table. Use addRow() to add additional rows.
@@ -115,6 +120,7 @@ public class Table {
    */
   public Table(File file, String options) throws IOException {
     // uses createInput() to handle .gz (and eventually .bz2) files
+    init();
     parse(PApplet.createInput(file),
           extensionOptions(true, file.getName(), options));
   }
@@ -142,8 +148,22 @@ public class Table {
    * @throws IOException
    */
   public Table(InputStream input, String options) throws IOException {
+    init();
     parse(input, options);
   }
+
+
+  public Table(Iterable<TableRow> rows) {
+    init();
+    boolean typed = false;
+    for (TableRow row : rows) {
+      if (!typed) {
+        setColumnTypes(row.getColumnTypes());
+      }
+      addRow(row);
+    }
+  }
+
 
   /**
    * @nowebref
@@ -203,6 +223,14 @@ public class Table {
     } catch (SQLException s) {
       throw new RuntimeException(s);
     }
+  }
+
+
+  public Table typedParse(InputStream input, String options) throws IOException {
+    Table table = new Table();
+    table.setColumnTypes(this);
+    table.parse(input, options);
+    return table;
   }
 
 
@@ -268,7 +296,7 @@ public class Table {
 
 
   protected void parse(InputStream input, String options) throws IOException {
-    init();
+    //init();
 
     boolean awfulCSV = false;
     boolean header = false;
@@ -280,7 +308,7 @@ public class Table {
 
     String[] opts = null;
     if (options != null) {
-      opts = PApplet.splitTokens(options, " ,");
+      opts = PApplet.trim(PApplet.split(options, ','));
       for (String opt : opts) {
         if (opt.equals("tsv")) {
           extension = "tsv";
@@ -298,6 +326,8 @@ public class Table {
           header = true;
         } else if (opt.startsWith(sheetParam)) {
           worksheet = opt.substring(sheetParam.length());
+        } else if (opt.startsWith("dictionary=")) {
+          // ignore option, this is only handled by PApplet
         } else {
           throw new IllegalArgumentException("'" + opt + "' is not a valid option for loading a Table");
         }
@@ -335,21 +365,22 @@ public class Table {
       setRowCount(10);
     }
     //int prev = 0;  //-1;
-    while ((line = reader.readLine()) != null) {
-      if (row == getRowCount()) {
-        setRowCount(row << 1);
-      }
-      if (row == 0 && header) {
-        setColumnTitles(tsv ? PApplet.split(line, '\t') : splitLineCSV(line));
-        header = false;
-      } else {
-        setRow(row, tsv ? PApplet.split(line, '\t') : splitLineCSV(line));
-        row++;
-      }
+    try {
+      while ((line = reader.readLine()) != null) {
+        if (row == getRowCount()) {
+          setRowCount(row << 1);
+        }
+        if (row == 0 && header) {
+          setColumnTitles(tsv ? PApplet.split(line, '\t') : splitLineCSV(line));
+          header = false;
+        } else {
+          setRow(row, tsv ? PApplet.split(line, '\t') : splitLineCSV(line));
+          row++;
+        }
 
-      /*
-      // this is problematic unless we're going to calculate rowCount first
-      if (row % 10000 == 0) {
+        // this is problematic unless we're going to calculate rowCount first
+        if (row % 10000 == 0) {
+        /*
         if (row < rowCount) {
           int pct = (100 * row) / rowCount;
           if (pct != prev) {  // also prevents "0%" from showing up
@@ -357,13 +388,17 @@ public class Table {
             prev = pct;
           }
         }
-        try {
-          Thread.sleep(5);
-        } catch (InterruptedException e) {
-          e.printStackTrace();
+         */
+          try {
+            // Sleep this thread so that the GC can catch up
+            Thread.sleep(10);
+          } catch (InterruptedException e) {
+            e.printStackTrace();
+          }
         }
       }
-      */
+    } catch (Exception e) {
+      throw new RuntimeException("Error reading table on line " + row, e);
     }
     // shorten or lengthen based on what's left
     if (row != getRowCount()) {
@@ -882,7 +917,7 @@ public class Table {
       throw new IllegalArgumentException("No extension specified for saving this Table");
     }
 
-    String[] opts = PApplet.splitTokens(options, ", ");
+    String[] opts = PApplet.trim(PApplet.split(options, ','));
     // Only option for save is the extension, so we can safely grab the last
     extension = opts[opts.length - 1];
     boolean found = false;
@@ -1524,6 +1559,14 @@ public class Table {
   }
 
 
+  public void setColumnTypes(int[] types) {
+    ensureColumn(types.length - 1);
+    for (int col = 0; col < types.length; col++) {
+      setColumnType(col, types[col]);
+    }
+  }
+
+
   /**
    * Set the titles (and if a second column is present) the data types for
    * this table based on a file loaded separately. This will look for the
@@ -1533,6 +1576,7 @@ public class Table {
    * @param dictionary
    */
   public void setColumnTypes(final Table dictionary) {
+    ensureColumn(dictionary.getRowCount() - 1);
     int titleCol = 0;
     int typeCol = 1;
     if (dictionary.hasColumnTitles()) {
@@ -1577,6 +1621,11 @@ public class Table {
   /** Returns one of Table.STRING, Table.INT, etc... */
   public int getColumnType(int column) {
     return columnTypes[column];
+  }
+
+
+  public int[] getColumnTypes() {
+    return columnTypes;
   }
 
 
@@ -1703,6 +1752,7 @@ public class Table {
     return getRowCount() - 1;
   }
 
+
   /**
    * @webref table:method
    * @brief Removes all rows from a table
@@ -1745,6 +1795,7 @@ public class Table {
     rowCount = newCount;
   }
 
+
  /**
    * @webref table:method
    * @brief Adds a row to a table
@@ -1752,9 +1803,11 @@ public class Table {
    * @see Table#clearRows()
    */
   public TableRow addRow() {
+    //if (rowIncrement == 0) {
     setRowCount(rowCount + 1);
     return new RowPointer(this, rowCount - 1);
   }
+
 
  /**
    * @param source a reference to the original row to be duplicated
@@ -1789,6 +1842,7 @@ public class Table {
     return new RowPointer(this, row);
   }
 
+
  /**
    * @nowebref
    */
@@ -1805,35 +1859,35 @@ public class Table {
         case INT: {
           int[] intTemp = new int[rowCount+1];
           System.arraycopy(columns[col], 0, intTemp, 0, insert);
-          System.arraycopy(columns[col], insert, intTemp, insert+1, (rowCount - insert) + 1);
+          System.arraycopy(columns[col], insert, intTemp, insert+1, rowCount - insert);
           columns[col] = intTemp;
           break;
         }
         case LONG: {
           long[] longTemp = new long[rowCount+1];
           System.arraycopy(columns[col], 0, longTemp, 0, insert);
-          System.arraycopy(columns[col], insert, longTemp, insert+1, (rowCount - insert) + 1);
+          System.arraycopy(columns[col], insert, longTemp, insert+1, rowCount - insert);
           columns[col] = longTemp;
           break;
         }
         case FLOAT: {
           float[] floatTemp = new float[rowCount+1];
           System.arraycopy(columns[col], 0, floatTemp, 0, insert);
-          System.arraycopy(columns[col], insert, floatTemp, insert+1, (rowCount - insert) + 1);
+          System.arraycopy(columns[col], insert, floatTemp, insert+1, rowCount - insert);
           columns[col] = floatTemp;
           break;
         }
         case DOUBLE: {
           double[] doubleTemp = new double[rowCount+1];
           System.arraycopy(columns[col], 0, doubleTemp, 0, insert);
-          System.arraycopy(columns[col], insert, doubleTemp, insert+1, (rowCount - insert) + 1);
+          System.arraycopy(columns[col], insert, doubleTemp, insert+1, rowCount - insert);
           columns[col] = doubleTemp;
           break;
         }
         case STRING: {
           String[] stringTemp = new String[rowCount+1];
           System.arraycopy(columns[col], 0, stringTemp, 0, insert);
-          System.arraycopy(columns[col], insert, stringTemp, insert+1, (rowCount - insert) + 1);
+          System.arraycopy(columns[col], insert, stringTemp, insert+1, rowCount - insert);
           columns[col] = stringTemp;
           break;
         }
@@ -2203,6 +2257,10 @@ public class Table {
 
     public int getColumnType(int column) {
       return table.getColumnType(column);
+    }
+
+    public int[] getColumnTypes() {
+      return table.getColumnTypes();
     }
   }
 
@@ -3576,7 +3634,119 @@ public class Table {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  // TODO maybe these aren't needed. better to use getStringList().getUnique()?
+  public void sort(String columnName) {
+    sort(getColumnIndex(columnName), false);
+  }
+
+
+  public void sort(int column) {
+    sort(column, false);
+  }
+
+
+  public void sortReverse(String columnName) {
+    sort(getColumnIndex(columnName), true);
+  }
+
+
+  public void sortReverse(int column) {
+    sort(column, true);
+  }
+
+
+  protected void sort(final int column, final boolean reverse) {
+    final int[] order = IntList.fromRange(getRowCount()).array();
+    Sort s = new Sort() {
+
+      @Override
+      public int size() {
+        return getRowCount();
+      }
+
+      @Override
+      public float compare(int index1, int index2) {
+        int a = reverse ? order[index2] : order[index1];
+        int b = reverse ? order[index1] : order[index2];
+
+        switch (getColumnType(column)) {
+        case INT:
+          return getInt(a, column) - getInt(b, column);
+        case LONG:
+          return getLong(a, column) - getLong(b, column);
+        case FLOAT:
+          return getFloat(a, column) - getFloat(b, column);
+        case DOUBLE:
+          return (float) (getDouble(a, column) - getDouble(b, column));
+        case STRING:
+          return getString(a, column).compareToIgnoreCase(getString(b, column));
+        case CATEGORY:
+          return getInt(a, column) - getInt(b, column);
+        default:
+          throw new IllegalArgumentException("Invalid column type: " + getColumnType(column));
+        }
+      }
+
+      @Override
+      public void swap(int a, int b) {
+        int temp = order[a];
+        order[a] = order[b];
+        order[b] = temp;
+      }
+
+    };
+    s.run();
+
+    //Object[] newColumns = new Object[getColumnCount()];
+    for (int col = 0; col < getColumnCount(); col++) {
+      switch (getColumnType(col)) {
+      case INT:
+      case CATEGORY:
+        int[] oldInt = (int[]) columns[col];
+        int[] newInt = new int[rowCount];
+        for (int row = 0; row < getRowCount(); row++) {
+          newInt[row] = oldInt[order[row]];
+        }
+        columns[col] = newInt;
+        break;
+      case LONG:
+        long[] oldLong = (long[]) columns[col];
+        long[] newLong = new long[rowCount];
+        for (int row = 0; row < getRowCount(); row++) {
+          newLong[row] = oldLong[order[row]];
+        }
+        columns[col] = newLong;
+        break;
+      case FLOAT:
+        float[] oldFloat = (float[]) columns[col];
+        float[] newFloat = new float[rowCount];
+        for (int row = 0; row < getRowCount(); row++) {
+          newFloat[row] = oldFloat[order[row]];
+        }
+        columns[col] = newFloat;
+        break;
+      case DOUBLE:
+        double[] oldDouble = (double[]) columns[col];
+        double[] newDouble = new double[rowCount];
+        for (int row = 0; row < getRowCount(); row++) {
+          newDouble[row] = oldDouble[order[row]];
+        }
+        columns[col] = newDouble;
+        break;
+      case STRING:
+        String[] oldString = (String[]) columns[col];
+        String[] newString = new String[rowCount];
+        for (int row = 0; row < getRowCount(); row++) {
+          newString[row] = oldString[order[row]];
+        }
+        columns[col] = newString;
+        break;
+      }
+    }
+  }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
 
   public String[] getUnique(String columnName) {
     return getUnique(getColumnIndex(columnName));

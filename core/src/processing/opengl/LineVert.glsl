@@ -20,14 +20,14 @@
 
 #define PROCESSING_LINE_SHADER
 
-uniform mat4 modelview;
-uniform mat4 projection;
+uniform mat4 modelviewMatrix;
+uniform mat4 projectionMatrix;
 
 uniform vec4 viewport;
 uniform int perspective;
 uniform vec3 scale;
 
-attribute vec4 vertex;
+attribute vec4 position;
 attribute vec4 color;
 attribute vec4 direction;
 
@@ -45,20 +45,20 @@ vec4 windowToClipVector(vec2 window, vec4 viewport, float clip_w) {
 }  
   
 void main() {
-  vec4 posp = modelview * vertex;
+  vec4 posp = modelviewMatrix * position;
     
   // Moving vertices slightly toward the camera
   // to avoid depth-fighting with the fill triangles.
   // Discussed here:
   // http://www.opengl.org/discussion_boards/ubbthreads.php?ubb=showflat&Number=252848  
   posp.xyz = posp.xyz * scale;
-  vec4 clipp = projection * posp;
+  vec4 clipp = projectionMatrix * posp;
   float thickness = direction.w;
   
   if (thickness != 0.0) {  
-    vec4 posq = posp + modelview * vec4(direction.xyz, 0);
+    vec4 posq = posp + modelviewMatrix * vec4(direction.xyz, 0);
     posq.xyz = posq.xyz * scale;  
-    vec4 clipq = projection * posq; 
+    vec4 clipq = projectionMatrix * posq; 
   
     vec3 window_p = clipToWindow(clipp, viewport); 
     vec3 window_q = clipToWindow(clipq, viewport); 

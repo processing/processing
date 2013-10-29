@@ -1,3 +1,216 @@
+0223 core (2.1)
+X fix dataPath() problem with OS X (was breaking Movie)
+X alpha values from the pixels array coming back as 0
+X   only tested on background(), not image()
+X   https://github.com/processing/processing/issues/2030
+
+opengl 
+X Using sketchQuality() does not work properly with P3D, OPENGL, P2D
+X   https://github.com/processing/processing/pull/2157
+X Fix crashes when the sketch window is resized
+X   https://github.com/processing/processing/issues/1880
+X   https://github.com/processing/processing/pull/2156
+X scale() wasn't affecting stroke weight in P3D
+X   https://github.com/processing/processing/issues/2162
+X add set(boolean) to PShader
+X   https://github.com/processing/processing/issues/1991
+X   https://github.com/processing/processing/pull/1993
+X add PMatrix.preApply(PMatrix)
+X   https://github.com/processing/processing/pull/2146
+X   https://github.com/processing/processing/issues/2145
+X updated to another version of JOGL
+X   updated to jogl-2.1-b1115, gluegen-2.1-b735 for OSX 10.9 support
+X Add warning when no uv texture coordinates are supplied
+X   https://github.com/processing/processing/issues/2034
+X threading/flicker issues when resizing P2D/P3D/OPENGL
+X   https://github.com/processing/processing/issues/15
+X additional flicker avoidance
+X   https://github.com/processing/processing/commit/cca2f08a24ef892c494f5a75aa0e4b01de7e5d8a
+
+
+0222 core (2.1b1)
+X background color for present mode has no effect
+X   https://github.com/processing/processing/issues/2071
+X   https://github.com/processing/processing/pull/2072
+X add desktopPath() and desktopFile() methods for testing
+X screen stops updating sometimes with retina
+X   https://github.com/processing/processing/issues/1699
+X Unicode NLF causing problems in XML files
+X   https://github.com/processing/processing/issues/2100
+X   not handled by BufferedReader (or XML parser)
+X   http://stackoverflow.com/questions/10556875/list-of-unicode-characters-that-should-be-filtered-in-output
+X   http://stackoverflow.com/questions/3072152/what-is-unicode-character-2028-ls-line-separator-used-for
+X fix image transparency in PDF output
+X   https://github.com/processing/processing/pull/2070
+X Java2D images crash after being resized
+X   https://github.com/processing/processing/issues/2113
+X constrain lerpColor() between 0 and 1
+X JSONObject/Array.format(-1) not working on embedded JSONObjects
+X   https://github.com/processing/processing/issues/2119
+X allow println() and print() to take varargs 
+o   https://github.com/processing/processing/issues/2056
+X   causes conflict with printing arrays
+X   added printArray() function instead
+o custom DPI settings with PDF
+X   https://github.com/processing/processing/pull/2069
+X pdf not rendering unicode with beginRecord()
+X   seems to have fixed itself / can't reproduce
+X   http://code.google.com/p/processing/issues/detail?id=90
+X   https://github.com/processing/processing/issues/129
+X insertRow() bug
+X   https://github.com/processing/processing/issues/2137
+
+opengl
+X fix inconsistency with P2D and resetMatrix()
+X   https://github.com/processing/processing/issues/2087
+X text rendering problems
+X   https://github.com/processing/processing/issues/2109
+X textSize() not working properly in P2D
+X   https://github.com/processing/processing/issues/2073
+X incorrectly applied transformations in retained mode
+X   https://github.com/processing/processing/issues/2097
+X push/popStyle() causes color problems with P2D/P3D
+X   https://github.com/processing/processing/issues/2102
+X child SVG elements misplaced when rendering with P2D/P3D
+X   https://github.com/processing/processing/issues/2086
+X SUBTRACT and DIFFERENCE blend modes are swapped
+X   https://github.com/processing/processing/issues/2075
+X throw an error for textureMode(REPEAT) [fry]
+X   https://github.com/processing/processing/issues/2052
+X Updated to JOGL 2.1.0
+X   https://github.com/processing/processing/issues/2136
+X vertex codes not being properly set in P2D/P3D
+X   https://github.com/processing/processing/issues/2131
+X some box normals are inverted
+X   https://github.com/processing/processing/issues/2151
+
+
+0221 core (2.0.3)
+X fix options parsing on loadTable() to handle spaces
+X add static versions of loadJSONObject and loadJSONArray that take File inputs
+X PVector.angleBetween() returns 0 for 3D vectors whenever x and y are both 0
+X   https://github.com/processing/processing/issues/2045
+X   https://github.com/processing/processing/pull/2046
+
+andres
+X blendMode() change causes OpenGL renderer to be very slow
+X   https://github.com/processing/processing/issues/2021
+X serious OpenGL performance issues on OS X (fixed earlier?)
+X   https://github.com/processing/processing/issues/1714
+X   fixed with a recent JOGL update
+X P2D low quality text rendering
+X   https://github.com/processing/processing/issues/1972
+X Rendering artifacts on the diagonal line (topleft to bottomright) in P2D
+X   https://github.com/processing/processing/issues/1964
+X Fix issues with slow text rendering and OpenGL
+X   https://github.com/processing/processing/issues/2025
+X loadShape doesn't load OBJ files in subdirectories properly
+X   https://github.com/processing/processing/issues/2003
+X more OpenGL issues fixed by JOGL or newer drivers
+X   https://github.com/processing/processing/issues/1986
+X Vertical offset when sketch height is indivisible by 2
+X   https://github.com/processing/processing/issues/1985
+X ellipse() causes RuntimeException: java.lang.OutOfMemoryError
+X   https://github.com/processing/processing/issues/1941
+X beginShape()..endShape() lines look wrong at joins/caps with P2D
+X   https://github.com/processing/processing/issues/1927
+X Corrupted text with large font and OpenGL
+X   https://github.com/processing/processing/issues/1869
+X loadFont hangs on Processing 2.0 with any OpenGL renderer
+X   https://github.com/processing/processing/issues/1854
+X copy doesn't produce a true copy with P2D and P3D renderers
+X   https://github.com/processing/processing/issues/1924
+X Additional improvements to memory handling with images
+X   https://github.com/processing/processing/issues/1975
+X PShape does not draw arc properly
+X   https://github.com/processing/processing/issues/1990
+
+X Additional memory handling changes for render buffers
+X   https://github.com/processing/processing/issues/1776
+X PShape style is not restored after calling enableStyle in P2D/P3D
+X   https://github.com/processing/processing/issues/2061
+
+video
+X problem with bit shifting
+X   https://github.com/processing/processing/pull/2023
+X   https://github.com/processing/processing/pull/2022
+X   https://github.com/processing/processing/issues/2021
+
+
+0220 core (2.0.2)
+X basic getShape(ch) implementation for font glyph shapes
+X change QUAD_BEZIER_VERTEX to QUADRATIC_VERTEX to match the API call
+X   because this lives inside PConstants
+X Error in IntList and FloatList insert()
+X   https://github.com/processing/processing/issues/1929
+X selectInput() in exported OS X sketch treats .app package as a folder
+o   Oracle Java 7 problem, but maybe a workaround?
+o   might be a problem with awt dialogs for directories? 
+X   https://github.com/processing/processing/issues/1959
+X   turns out this is an apple.awt tweak for the exported Info.plist
+X getSubset() broken in IntList, StringList, and missing from FloatList
+X   https://github.com/processing/processing/issues/1979
+X Present Mode does not work properly on Windows
+X   https://github.com/processing/processing/issues/1955
+X add retina switch for PApplet to set useActive with OS X and 7u40
+X   prevents speed/performance issues with old sketches on retina macs
+X add error message for raspberry pi (and others?) about int buffers
+X   https://github.com/processing/processing/issues/2010
+X   not fixed, but made notes there about how to handle
+X add sum() to IntList and FloatList
+X   https://github.com/processing/processing/issues/1893
+X retain blendMode() between frames
+X   https://github.com/processing/processing/issues/1962
+X   this should actually be in the code.. 
+X   maybe not working on OS X/retina?
+X   perhaps it's a getGraphics() issue?
+X when using increment() on IntList, make sure the index exists
+X   automatically resize the list if necessary
+X   (this is more in keeping with increment() in the Dict classes)
+X add join() method to Int/Float/StringList
+X add getContent(defaultValue) to XML
+X add isNull() (returns boolean) to JSONObject/Array
+X   https://github.com/processing/processing/issues/2009
+X add getXxxx(xxx, defaultValue) methods to JSONObject/Array
+X   https://github.com/processing/processing/issues/2007
+
+cleaning
+X load/save methods.. is it save("blah.svg") or saveSVG("blah.svg")
+X   also works that way with tables
+o   decision: useExtension() or something like that
+X   put saveXxxx() methods inside PApplet
+o require people to put things in the data folder
+
+table
+X add sort() to Table
+X implement version of Table that takes a dictionary file
+X   dictionary=blah.tsv 
+X   tsv only, ignores extension
+X   if allowed extension, we couldn't use .dict instead
+X   and that's probably the most useful
+X constructing table from an iterator is missing
+X   https://github.com/processing/processing/issues/1956
+
+andres
+X pixels[] array not updated with Capture and P2D/P3D
+X   https://github.com/processing/processing/issues/1852
+X Unable to get TAB key event with P2D/P3D renderer
+X   https://github.com/processing/processing/issues/1967
+X Setting an INT4 uniform in PShader causes an out of bounds exception
+X   https://github.com/processing/processing/issues/1994
+X updated JOGL to 2.0.2
+
+
+0219 core (2.0.1)
+X add error message for what line was bad while parsing a table
+X   otherwise confusing ArrayIndexOutOfBoundsException while parsing bad CSV
+X getVertex() trying to get three values when no Z-coord is available
+X   "PShape getVertex() not implemented properly for SVG files"
+X   https://github.com/processing/processing/issues/1596
+X typo in printProjection() method
+X   https://github.com/processing/processing/issues/1863
+
+
 0218 core (2.0)
 X textureWrap(REPEAT) + textureMode(IMAGE) clamps positive coordinates
 X   https://github.com/processing/processing/issues/1809

@@ -166,6 +166,10 @@ public class PShape implements PConstants {
   protected int emissiveColor;
   protected float shininess;
 
+  protected int sphereDetailU, sphereDetailV;
+  protected int rectMode;
+  protected int ellipseMode;
+
   /** Temporary toggle for whether styles should be honored. */
   protected boolean style = true;
 
@@ -510,9 +514,11 @@ public class PShape implements PConstants {
     image = null;
   }
 
+
   // TODO unapproved
   protected void solid(boolean solid) {
   }
+
 
   /**
    * @webref shape:vertex
@@ -535,7 +541,17 @@ public class PShape implements PConstants {
       return;
     }
     openContour = true;
+    beginContourImpl();
   }
+
+
+  protected void beginContourImpl() {
+    if (vertexCodes.length == vertexCodeCount) {
+      vertexCodes = PApplet.expand(vertexCodes);
+    }
+    vertexCodes[vertexCodeCount++] = BREAK;
+  }
+
 
   /**
    * @webref shape:vertex
@@ -557,27 +573,63 @@ public class PShape implements PConstants {
       PGraphics.showWarning("Need to call beginContour() first.");
       return;
     }
+    endContourImpl();
     openContour = false;
   }
 
-  public void vertex(float x, float y) {
+
+  protected void endContourImpl() {
   }
+
+
+  public void vertex(float x, float y) {
+    if (vertices == null) {
+      vertices = new float[10][2];
+    } else if (vertices.length == vertexCount) {
+      vertices = (float[][]) PApplet.expand(vertices);
+    }
+    vertices[vertexCount++] = new float[] { x, y };
+
+    if (vertexCodes == null) {
+      vertexCodes = new int[10];
+    } else if (vertexCodes.length == vertexCodeCount) {
+      vertexCodes = PApplet.expand(vertexCodes);
+    }
+    vertexCodes[vertexCodeCount++] = VERTEX;
+
+    if (x > width) {
+      width = x;
+    }
+    if (y > height) {
+      height = y;
+    }
+  }
+
 
   public void vertex(float x, float y, float u, float v) {
   }
 
+
   public void vertex(float x, float y, float z) {
   }
+
 
   public void vertex(float x, float y, float z, float u, float v) {
   }
 
+
   public void normal(float nx, float ny, float nz) {
   }
 
+  /**
+   * @webref pshape:method
+   * @brief Starts the creation of a new PShape
+   * @see PApplet#endShape()
+   */
   public void beginShape() {
     beginShape(POLYGON);
   }
+
 
   public void beginShape(int kind) {
     this.kind = kind;
@@ -587,11 +639,12 @@ public class PShape implements PConstants {
   /**
    * @webref pshape:method
    * @brief Finishes the creation of a new PShape
-   * @see PApplet#createShape()
+   * @see PApplet#beginShape()
    */
   public void endShape() {
     endShape(OPEN);
   }
+
 
   public void endShape(int mode) {
     if (family == GROUP) {
@@ -1073,23 +1126,69 @@ public class PShape implements PConstants {
   public void bezierDetail(int detail) {
   }
 
+
   public void bezierVertex(float x2, float y2,
                            float x3, float y3,
                            float x4, float y4) {
+    if (vertices == null) {
+      vertices = new float[10][];
+    } else if (vertexCount + 2 >= vertices.length) {
+      vertices = (float[][]) PApplet.expand(vertices);
+    }
+    vertices[vertexCount++] = new float[] { x2, y2 };
+    vertices[vertexCount++] = new float[] { x3, y3 };
+    vertices[vertexCount++] = new float[] { x4, y4 };
+
+    // vertexCodes must be allocated because a vertex() call is required
+    if (vertexCodes.length == vertexCodeCount) {
+      vertexCodes = PApplet.expand(vertexCodes);
+    }
+    vertexCodes[vertexCodeCount++] = BEZIER_VERTEX;
+
+    if (x4 > width) {
+      width = x4;
+    }
+    if (y4 > height) {
+      height = y4;
+    }
   }
+
 
   public void bezierVertex(float x2, float y2, float z2,
                            float x3, float y3, float z3,
                            float x4, float y4, float z4) {
   }
 
+
   public void quadraticVertex(float cx, float cy,
                               float x3, float y3) {
+    if (vertices == null) {
+      vertices = new float[10][];
+    } else if (vertexCount + 1 >= vertices.length) {
+      vertices = (float[][]) PApplet.expand(vertices);
+    }
+    vertices[vertexCount++] = new float[] { cx, cy };
+    vertices[vertexCount++] = new float[] { x3, y3 };
+
+    // vertexCodes must be allocated because a vertex() call is required
+    if (vertexCodes.length == vertexCodeCount) {
+      vertexCodes = PApplet.expand(vertexCodes);
+    }
+    vertexCodes[vertexCodeCount++] = QUADRATIC_VERTEX;
+
+    if (x3 > width) {
+      width = x3;
+    }
+    if (y3 > height) {
+      height = y3;
+    }
   }
+
 
   public void quadraticVertex(float cx, float cy, float cz,
                               float x3, float y3, float z3) {
   }
+
 
   ///////////////////////////////////////////////////////////
 
@@ -1550,23 +1649,12 @@ public class PShape implements PConstants {
 
           case VERTEX:
             g.vertex(vertices[index][X], vertices[index][Y]);
-//            cx = vertices[index][X];
-//            cy = vertices[index][Y];
             index++;
             break;
 
-          case QUAD_BEZIER_VERTEX:
+          case QUADRATIC_VERTEX:
             g.quadraticVertex(vertices[index+0][X], vertices[index+0][Y],
-                         vertices[index+1][X], vertices[index+1][Y]);
-//            float x1 = vertices[index+0][X];
-//            float y1 = vertices[index+0][Y];
-//            float x2 = vertices[index+1][X];
-//            float y2 = vertices[index+1][Y];
-//            g.bezierVertex(x1 + ((cx-x1)*2/3.0f), y1 + ((cy-y1)*2/3.0f),
-//                           x2 + ((cx-x2)*2/3.0f), y2 + ((cy-y2)*2/3.0f),
-//                           x2, y2);
-//            cx = vertices[index+1][X];
-//            cy = vertices[index+1][Y];
+                              vertices[index+1][X], vertices[index+1][Y]);
             index += 2;
             break;
 
@@ -1574,8 +1662,6 @@ public class PShape implements PConstants {
             g.bezierVertex(vertices[index+0][X], vertices[index+0][Y],
                            vertices[index+1][X], vertices[index+1][Y],
                            vertices[index+2][X], vertices[index+2][Y]);
-//            cx = vertices[index+2][X];
-//            cy = vertices[index+2][Y];
             index += 3;
             break;
 
@@ -1598,13 +1684,10 @@ public class PShape implements PConstants {
 
           case VERTEX:
             g.vertex(vertices[index][X], vertices[index][Y], vertices[index][Z]);
-//            cx = vertices[index][X];
-//            cy = vertices[index][Y];
-//            cz = vertices[index][Z];
             index++;
             break;
 
-          case QUAD_BEZIER_VERTEX:
+          case QUADRATIC_VERTEX:
             g.quadraticVertex(vertices[index+0][X], vertices[index+0][Y], vertices[index+0][Z],
                          vertices[index+1][X], vertices[index+1][Y], vertices[index+0][Z]);
             index += 2;
@@ -1904,6 +1987,7 @@ public class PShape implements PConstants {
     return getVertex(index, null);
   }
 
+
   /**
    * @param vec PVector to assign the data to
    */
@@ -1911,9 +1995,14 @@ public class PShape implements PConstants {
     if (vec == null) {
       vec = new PVector();
     }
-    vec.x = vertices[index][X];
-    vec.y = vertices[index][Y];
-    vec.z = vertices[index][Z];
+    float[] vert = vertices[index];
+    vec.x = vert[X];
+    vec.y = vert[Y];
+    if (vert.length > 2) {
+      vec.z = vert[Z];
+    } else {
+      vec.z = 0;  // in case this isn't a new vector
+    }
     return vec;
   }
 

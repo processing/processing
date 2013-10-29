@@ -20,15 +20,17 @@ import java.awt.*;
 public class TextAreaDefaults {
   public InputHandler inputHandler;
   public SyntaxDocument document;
-  public boolean editable;
+//  public boolean editable;
 
   public boolean caretVisible;
   public boolean caretBlinks;
   public boolean blockCaret;
   public int electricScroll;
 
+  // default/preferred number of rows/cols 
   public int cols;
   public int rows;
+  
   public SyntaxStyle[] styles;
   public Color caretColor;
   public Color selectionColor;
@@ -40,9 +42,11 @@ public class TextAreaDefaults {
   public boolean eolMarkers;
   public boolean paintInvalid;
 
-  // moved from TextAreaPainter [fry]
-  public Font font;
+  /*
+  public Font plainFont;
+  public Font boldFont;
+  public boolean antialias;
+  */
   public Color fgcolor;
   public Color bgcolor;
-  public boolean antialias;
 }

@@ -88,6 +88,7 @@ public class IntDict {
       if (pieces.length == 2) {
         keys[count] = pieces[0];
         values[count] = PApplet.parseInt(pieces[1]);
+        indices.put(pieces[0], count);
         count++;
       }
     }
@@ -470,7 +471,7 @@ public class IntDict {
   }
 
 
-  // return the key for the maximum value
+  // return the key corresponding to the maximum value
   public String maxKey() {
     checkMinMax("maxKey");
     return keys[maxIndex()];
@@ -526,7 +527,7 @@ public class IntDict {
   }
 
 
-  protected void swap(int a, int b) {
+  public void swap(int a, int b) {
     String tkey = keys[a];
     int tvalue = values[a];
     keys[a] = keys[b];
@@ -618,6 +619,25 @@ public class IntDict {
       }
     };
     s.run();
+  }
+
+
+  /**
+   * Sum all of the values in this dictionary, then return a new FloatDict of
+   * each key, divided by the total sum. The total for all values will be ~1.0.
+   * @return a Dict with the original keys, mapped to their pct of the total
+   */
+  public FloatDict getPercent() {
+    double sum = 0;
+    for (int value : valueArray()) {
+      sum += value;
+    }
+    FloatDict outgoing = new FloatDict();
+    for (int i = 0; i < size(); i++) {
+      double percent = value(i) / sum;
+      outgoing.set(key(i), (float) percent);
+    }
+    return outgoing;
   }
 
 

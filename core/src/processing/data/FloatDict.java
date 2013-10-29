@@ -427,6 +427,7 @@ public class FloatDict {
    * @webref floatlist:method
    * @brief Return the largest value
    */
+  // The index of the entry that has the max value. Reference above is incorrect.
   public int maxIndex() {
     checkMinMax("maxIndex");
     // Will still return NaN if there is 1 or more entries, and they're all NaN
@@ -453,12 +454,14 @@ public class FloatDict {
   }
 
 
+  /** The key for a max value. */
   public String maxKey() {
     checkMinMax("maxKey");
     return keys[maxIndex()];
   }
 
 
+  /** The max value. */
   public float maxValue() {
     checkMinMax("maxValue");
     return values[maxIndex()];
@@ -515,7 +518,7 @@ public class FloatDict {
   }
 
 
-  protected void swap(int a, int b) {
+  public void swap(int a, int b) {
     String tkey = keys[a];
     float tvalue = values[a];
     keys[a] = keys[b];
@@ -677,6 +680,25 @@ public class FloatDict {
       }
     };
     s.run();
+  }
+
+
+  /**
+   * Sum all of the values in this dictionary, then return a new FloatDict of
+   * each key, divided by the total sum. The total for all values will be ~1.0.
+   * @return a Dict with the original keys, mapped to their pct of the total
+   */
+  public FloatDict getPercent() {
+    double sum = 0;
+    for (float value : valueArray()) {
+      sum += value;
+    }
+    FloatDict outgoing = new FloatDict();
+    for (int i = 0; i < size(); i++) {
+      double percent = value(i) / sum;
+      outgoing.set(key(i), (float) percent);
+    }
+    return outgoing;
   }
 
 

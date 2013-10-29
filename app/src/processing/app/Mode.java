@@ -959,9 +959,10 @@ public abstract class Mode {
 
     s = st.nextToken();
     boolean bold = (s.indexOf("bold") != -1);
-    boolean italic = (s.indexOf("italic") != -1);
+//    boolean italic = (s.indexOf("italic") != -1);
 
-    return new SyntaxStyle(color, italic, bold);
+//    return new SyntaxStyle(color, italic, bold);
+    return new SyntaxStyle(color, bold);
   }
 
 

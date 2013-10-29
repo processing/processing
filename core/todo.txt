@@ -1,16 +1,47 @@
-0219 core (2.0.1)
+0224 core
+X PImage resize() causes PImage not to be rendered in JAVA2D
+X   https://github.com/processing/processing/issues/2179
+
+fixed in 2.1
+X draw() called again before finishing on OS X (retina issue)
+X   https://github.com/processing/processing/issues/1709
 
 
 high
-_ draw() called again before finishing on OS X (retina issue)
-_   https://github.com/processing/processing/issues/1709
-_ screen stops updating sometimes with retina
-_   https://github.com/processing/processing/issues/1699
+_ zero alpha values still a problem with retina renderer
+_   https://github.com/processing/processing/issues/2030
+_ Sort out blending differences with P2D/P3D
+_   https://github.com/processing/processing/issues/1844
+_ 'collector' class.. Dict that points to a list
+_   String as a key, int/float/string list as values
+_ blendMode(ADD) is broken with default renderer
+_   https://github.com/processing/processing/issues/2012
+_   may have been introduced between 2.0b7 and 2.0b8
+_ add option to have full screen span across screens
+_   display=all in cmd line
+_   sketchDisplay() -> 0 for all, or 1, 2, 3...
+_ test PGraphicsRetina2D w/ 7u40 
+_ make sure that 7u40 doesn't reintroduce starvation issue on retina Macs
 _ Linux sometimes not responding correctly w/ the size() command
 _   https://github.com/processing/processing/issues/1672
 _ clean up requestFocus() stuff
 _   make sure it works with retina/canvas/strategy as well
+_ finish PFont.getShape() implementation
+_   needs to have a way to set width/height properly
+_   draw(s) doesn't work on the returned PShape
+_ TGA files writing strangely
+_   https://github.com/processing/processing/issues/2096
 
+table
+_ addRow() is not efficient, probably need to do the doubling
+_   or have a setIncrement() function?
+_   it would default to 1 on tables loaded from a file
+_   and default to doubling when created with "new Table"
+_   row count and array size are combined.. need to break apart
+_ match and iterators
+_   add match version that returns table that's only a pointer to original
+_   save the constructor for the version that actually copies data
+_   the table pointer version will be speedy and allow chaining 
 
 decisions/misc
 _ add options for image.save() (or saveImage?)
@@ -45,10 +76,6 @@ _   the registered method for size() also needs to be called
 _ get() or copy()? for vectors, image, etc.
 _ toArray(), toArray(float[]), toVectorArray(), toVectorArray(PVector[])
 _   toColorArray(), toColorArray(float[])...
-_ load/save methods.. is it save("blah.svg") or saveSVG("blah.svg")
-X   also works that way with tables
-X   decision: useExtension() or something like that
-_ require people to put things in the data folder
 _ make sure that loadXxxx() methods are used after init()
 _   nasty errors when loadImage/Font/createFont/etc used outside
 _   decision: add error messages where possible
@@ -297,6 +324,8 @@ _   http://code.google.com/p/processing/issues/detail?id=182
 
 CORE / PShape
 
+_ major refactoring for PShape/PShapeOpenGL
+_   https://github.com/processing/processing/issues/1623
 _ PShape should be cached as well
 _ major surgery to put loadShape() back into PApplet/PGraphics
 _   then have the OpenGL or Java2D versions as cached objects
@@ -371,6 +400,9 @@ _   i.e. M with several coords means moveto followed by many linetos
 _   also curveto with multiple sets of points is ignored
 _ document somehow.. svg viewer will be discontinued
 _   http://www.adobe.com/svg/eol.html
+_ PShape getVertex() not implemented properly for SVG files
+X   https://code.google.com/p/processing/issues/detail?id=1558
+_   https://github.com/processing/processing/issues/1596
 
 
 CORE / PVector
@@ -446,7 +478,9 @@ _ shared intf for 3D view data across PGraphicsOpenGL and PGraphicsAndroid3D
 _   libraries have to do a lot of casting
 _ opengl isn't drawing rectangles out to raw properly with fonts
 _   when not in textMode(SHAPE) should have rects
-
+_ InvScreenX, Y, Z to convert screen (mouse) coordinates to model coordinates
+_   https://github.com/processing/processing/issues/1609
+X   https://code.google.com/p/processing/issues/detail?id=1571
 
 CORE / Mac OS X
 
@@ -458,6 +492,9 @@ _   -Xdock:icon=<path to icon file>
 
 CORE / Events
 
+_ Implement a way to disable automatic key repeat
+_   https://github.com/processing/processing/issues/1622
+X   https://code.google.com/p/processing/issues/detail?id=1584
 _ touch events.. can't do MouseEvent et al with Android
 _   http://dvcs.w3.org/hg/webevents/raw-file/tip/touchevents.html
 _   http://www.html5rocks.com/en/mobile/touch.html
@@ -467,8 +504,6 @@ _   touchEvent(), gestureEvent()?
 
 LIBRARIES / PDF
 
-_ pdf not rendering unicode with beginRecord()
-_   http://code.google.com/p/processing/issues/detail?id=90
 _ beginRecord() doesn't use current settings of the sketch
 _   sometimes reported as a bug, but probably not a good way to 
 _   consistently carry these over

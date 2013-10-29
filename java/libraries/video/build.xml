@@ -18,7 +18,11 @@
 	   srcdir="src" destdir="bin" 
 	   encoding="UTF-8"
 	   includeAntRuntime="false"
-	   classpath="../../../core/library/core.jar; library/gstreamer-java.jar; library/jna.jar" />
+	   classpath="../../../core/library/core.jar; library/gstreamer-java.jar; library/jna.jar"
+	   nowarn="true"
+	   compiler="org.eclipse.jdt.core.JDTCompilerAdapter">
+      <compilerclasspath path="../../mode/ecj.jar" />
+    </javac>
   </target>
   
   <target name="build" depends="compile" description="Build video library">

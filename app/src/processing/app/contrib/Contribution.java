@@ -21,9 +21,21 @@
 */
 package processing.app.contrib;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import processing.core.PApplet;
+
 
 abstract public class Contribution {
-  protected String category;      // "Sound"
+  static final List validCategories = 
+    Arrays.asList("3D", "Animation", "Data", "Geometry", "GUI", "Hardware", 
+                  "I/O", "Math", "Simulation", "Sound", "Typography", 
+                  "Utilities", "Video & Vision", "Other");
+
+  //protected String category;      // "Sound"
+  protected List<String> categories;  // "Sound", "Typography"
   protected String name;          // "pdf" or "PDF Export"
   protected String authorList;    // Ben Fry
   protected String url;           // http://processing.org
@@ -34,8 +46,37 @@ abstract public class Contribution {
   
   
   // "Sound"
-  public String getCategory() {
-    return category;
+//  public String getCategory() {
+//    return category;
+//  }
+
+  
+  // "Sound", "Utilities"... see valid list in ContributionListing
+  protected List<String> getCategories() {
+    return categories;
+  }
+  
+  
+  protected String getCategoryStr() {
+    StringBuilder sb = new StringBuilder();
+    for (String category : categories) {
+      sb.append(category);
+      sb.append(',');
+    }
+    sb.deleteCharAt(sb.length()-1);  // delete last comma
+    return sb.toString();
+  }
+  
+  
+  protected boolean hasCategory(String category) {
+    if (category != null) {
+      for (String c : categories) {
+        if (category.equalsIgnoreCase(c)) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
 
@@ -92,17 +133,54 @@ abstract public class Contribution {
   abstract public boolean isInstalled();
   
   
-  /** 
-   * Returns true if the type of contribution requires the PDE to restart
-   * when being added or removed. 
-   */
-  public boolean requiresRestart() {
-    return getType() == ContributionType.TOOL || getType() == ContributionType.MODE;
-  }
+//  /** 
+//   * Returns true if the type of contribution requires the PDE to restart
+//   * when being added or removed. 
+//   */
+//  public boolean requiresRestart() {
+//    return getType() == ContributionType.TOOL || getType() == ContributionType.MODE;
+//  }
   
 
-  /** Overridden by InstalledContribution. */
+  boolean isRestartFlagged() {
+    return false;
+  }
+  
+  
+  /** Overridden by LocalContribution. */
   boolean isDeletionFlagged() {
     return false;
+  }
+
+
+  /** 
+   * @return a single element list with "Unknown" as the category.
+   */
+  static List<String> defaultCategory() {
+    List<String> outgoing = new ArrayList<String>();
+    outgoing.add("Unknown");
+    return outgoing;
+  }
+  
+  
+  /**
+   * @return the list of categories that this contribution is part of
+   *         (e.g. "Typography / Geometry"). "Unknown" if the category null.
+   */
+  static List<String> parseCategories(String categoryStr) {
+    List<String> outgoing = new ArrayList<String>();
+    
+    if (categoryStr != null) {
+      String[] listing = PApplet.trim(PApplet.split(categoryStr, ','));
+      for (String category : listing) {
+        if (validCategories.contains(category)) {
+          outgoing.add(category);
+        }
+      }
+    }
+    if (outgoing.size() == 0) {
+      return defaultCategory();
+    }
+    return outgoing;
   }
 }

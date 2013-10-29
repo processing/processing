@@ -123,11 +123,7 @@ public class Runner implements MessageConsumer {
   }
   
   
-//  public void launch(String appletClassName, boolean presenting) {
-//    this.appletClassName = appletClassName;
   public boolean launchVirtualMachine(boolean presenting) {
-//    this.presenting = presenting;
-
     String[] vmParams = getMachineParams();
     String[] sketchParams = getSketchParams(presenting);
     int port = 8000 + (int) (Math.random() * 1000);
@@ -139,10 +135,15 @@ public class Runner implements MessageConsumer {
     // Newer (Java 1.5+) version that uses JVMTI
     String jdwpArg = "-agentlib:jdwp=transport=dt_socket,address=" + portStr + ",server=y,suspend=y";
 
+    // Everyone works the same under Java 7 (also on OS X) 
+    String[] commandArgs = new String[] { Base.getJavaPath(), jdwpArg };
+    
+    /*
     String[] commandArgs = null;
     if (!Base.isMacOS()) {
       commandArgs = new String[] {
-        "java", jdwpArg
+        Base.getJavaPath(),
+        jdwpArg
       };
     } else {
       // Decided to just set this to 1.6 only, because otherwise it's gonna
@@ -160,56 +161,42 @@ public class Runner implements MessageConsumer {
       // OS X at this point, because we require 10.6.8 and higher. That also
       // means we don't need to check for any other OS versions, the user is 
       // a douchebag and modifies Info.plist to get around the restriction.
-      if (System.getProperty("os.version").startsWith("10.6")) {
-        commandArgs = new String[] {
-          "/usr/libexec/java_home",
-          "--version", "1.6",
-          "--exec", "java",
-          "-d" + Base.getNativeBits(),
-          jdwpArg
-        };
-      } else {  // for 10.7, 10.8, etc
-        commandArgs = new String[] {
-          "/usr/libexec/java_home",
-          "--request",  // install on-demand
-          "--version", "1.6",
-          "--exec", "java",
-          "-d" + Base.getNativeBits(),
+      if (false) {
+        if (System.getProperty("os.version").startsWith("10.6")) {
+          commandArgs = new String[] {
+            "/usr/libexec/java_home",
+            "--version", "1.6",
+            "--exec", "java",
+            "-d" + Base.getNativeBits(),
+            jdwpArg
+          };
+        } else {  // for 10.7, 10.8, etc
+          commandArgs = new String[] {
+            "/usr/libexec/java_home",
+            "--request",  // install on-demand
+            "--version", "1.6",
+            "--exec", "java",
+            "-d" + Base.getNativeBits(),
 //          debugArg,
+            jdwpArg
+          };
+        }
+      } else {
+        // testing jdk-7u40
+        commandArgs = new String[] { 
+          //"/Library/Java/JavaVirtualMachines/jdk1.7.0_40.jdk/Contents/Home/bin/java",
+          Base.getJavaPath(),
           jdwpArg
         };
       }
     }
+    */
 
     commandArgs = PApplet.concat(commandArgs, vmParams);
     commandArgs = PApplet.concat(commandArgs, sketchParams);
 //  PApplet.println(commandArgs);
 //  commandArg.setValue(commandArgs);
     launchJava(commandArgs);
-//    try {
-//      Thread.sleep(2000);
-//    } catch (InterruptedException e) {
-//      e.printStackTrace();
-//    }
-
-//    boolean available = false;
-//    while (!available) {
-//      try {
-//        Socket socket = new Socket((String) null, port);
-////        socket.close();
-//        // this should mean we're all set?
-//        available = true;
-//
-//      } catch (IOException e) {
-//        System.out.println("waiting");
-//        //e.printStackTrace();
-//        try {
-//          Thread.sleep(100);
-//        } catch (InterruptedException e1) {
-//          e1.printStackTrace();
-//        }
-//      }
-//    }
     
     AttachingConnector connector = (AttachingConnector) 
       findConnector("com.sun.jdi.SocketAttach");
@@ -459,7 +446,7 @@ public class Runner implements MessageConsumer {
 //            PApplet.println("launchJava stderr:");
 //            PApplet.println(errorStrings);
 //            PApplet.println("launchJava stdout:");
-            PApplet.println(inputStrings);
+            PApplet.printArray(inputStrings);
             
             if (errorStrings != null && errorStrings.length > 1) {
               if (errorStrings[0].indexOf("Invalid maximum heap size") != -1) {
@@ -806,18 +793,27 @@ public class Runner implements MessageConsumer {
 //    System.out.println("mess type " + messageValue.type());
     //StringReference messageReference = (StringReference) messageValue.type();
 
-//    System.out.println(or.referenceType().fields());
-//    if (name.startsWith("java.lang.")) {
-//      name = name.substring(10);
-    if (!handleCommonErrors(exceptionName, message, listener)) {
-      reportException(message, or, event.thread());
-    }
+    // First just report the exception and its placement
+    reportException(message, or, event.thread());
+    // Then try to pretty it up with a better message
+    handleCommonErrors(exceptionName, message, listener);
+    
     if (editor != null) {
       editor.deactivateRun();
     }
   }
 
 
+  /**
+   * Provide more useful explanations of common error messages, perhaps with 
+   * a short message in the status area, and (if necessary) a longer message 
+   * in the console.
+   * 
+   * @param exceptionClass Class name causing the error (with full package name)
+   * @param message The message from the exception
+   * @param listener The Editor or command line interface that's listening for errors
+   * @return true if the error was purtified, false otherwise
+   */
   public static boolean handleCommonErrors(final String exceptionClass,
                                            final String message,
                                            final RunnerListener listener) {
@@ -837,6 +833,11 @@ public class Runner implements MessageConsumer {
         System.err.println("If your sketch uses a lot of memory (for instance if it loads a lot of data files)");
         System.err.println("you can increase the memory available to your sketch using the Preferences window.");
       }
+    } else if (exceptionClass.equals("java.lang.UnsatisfiedLinkError")) {
+      listener.statusError("A library used by this sketch is not installed properly.");
+      System.err.println("A library relies on native code that's not available.");
+      System.err.println("Or only works properly when the sketch is run as a " + 
+        ((Base.getNativeBits() == 32) ? "64-bit " : "32-bit ") + " application.");
 
     } else if (exceptionClass.equals("java.lang.StackOverflowError")) {
       listener.statusError("StackOverflowError: This sketch is attempting too much recursion.");

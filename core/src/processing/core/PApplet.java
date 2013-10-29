@@ -54,7 +54,9 @@ import java.util.regex.*;
 import java.util.zip.*;
 
 import javax.imageio.ImageIO;
+import javax.swing.JFrame;
 import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileSystemView;
 
 
 /**
@@ -857,18 +859,11 @@ public class PApplet extends Applet
 //    screenWidth = screen.width;
 //    screenHeight = screen.height;
 
-    if (platform == MACOSX) {
-      Float prop = (Float)
-        getToolkit().getDesktopProperty("apple.awt.contentScaleFactor");
-      if (prop != null) {
-        retina = prop == 2;
-        if (retina) {
-          // The active-mode rendering seems to be 2x slower, so disable it
-          // with retina. On a non-retina machine, however, useActive seems
-          // the only (or best?) way to handle the rendering.
-          useActive = false;
-        }
-      }
+    if (checkRetina()) {
+      // The active-mode rendering seems to be 2x slower, so disable it
+      // with retina. On a non-retina machine, however, useActive seems
+      // the only (or best) way to handle the rendering.
+      useActive = false;
     }
 
     // send tab keys through to the PApplet
@@ -957,6 +952,47 @@ public class PApplet extends Applet
     // this is automatically called in applets
     // though it's here for applications anyway
 //    start();
+  }
+
+
+  private boolean checkRetina() {
+    if (platform == MACOSX) {
+    // This should probably be reset each time there's a display change.
+    // A 5-minute search didn't turn up any such event in the Java API.
+    // Also, should we use the Toolkit associated with the editor window?
+      final String javaVendor = System.getProperty("java.vendor");
+      if (javaVendor.contains("Apple")) {
+        Float prop = (Float)
+          getToolkit().getDesktopProperty("apple.awt.contentScaleFactor");
+        if (prop != null) {
+          return prop == 2;
+        }
+      } else if (javaVendor.contains("Oracle")) {
+        String version = System.getProperty("java.version");  // 1.7.0_40
+        String[] m = match(version, "1.(\\d).*_(\\d+)");
+
+        // Make sure this is Oracle Java 7u40 or later
+        if (m != null &&
+          PApplet.parseInt(m[1]) >= 7 &&
+          PApplet.parseInt(m[1]) >= 40) {
+          GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+          GraphicsDevice device = env.getDefaultScreenDevice();
+
+          try {
+            Field field = device.getClass().getDeclaredField("scale");
+            if (field != null) {
+              field.setAccessible(true);
+              Object scale = field.get(device);
+
+              if (scale instanceof Integer && ((Integer)scale).intValue() == 2) {
+                return true;
+              }
+            }
+          } catch (Exception ignore) { }
+        }
+      }
+    }
+    return false;
   }
 
 
@@ -4300,8 +4336,9 @@ public class PApplet extends Applet
    * ( end auto-generated )
  * @webref output:text_area
  * @usage IDE
- * @param what boolean, byte, char, color, int, float, String, Object
- * @see PApplet#println(byte)
+ * @param what data to print to console
+ * @see PApplet#println()
+ * @see PApplet#printArray(Object)
  * @see PApplet#join(String[], char)
  */
   static public void print(byte what) {
@@ -4344,6 +4381,26 @@ public class PApplet extends Applet
     System.out.flush();
   }
 
+  /**
+   * @param variables list of data, separated by commas
+   */
+  static public void print(Object... variables) {
+    StringBuilder sb = new StringBuilder();
+    for (Object o : variables) {
+      if (sb.length() != 0) {
+        sb.append(" ");
+      }
+      if (o == null) {
+        sb.append("null");
+      } else {
+        sb.append(o.toString());
+      }
+    }
+    System.out.print(sb.toString());
+  }
+
+
+  /*
   static public void print(Object what) {
     if (what == null) {
       // special case since this does fuggly things on > 1.1
@@ -4352,9 +4409,10 @@ public class PApplet extends Applet
       System.out.println(what.toString());
     }
   }
+  */
 
-  //
-/**
+
+  /**
    * ( begin auto-generated from println.xml )
    *
    * Writes to the text area of the Processing environment's console. This is
@@ -4373,14 +4431,15 @@ public class PApplet extends Applet
  * @webref output:text_area
  * @usage IDE
  * @see PApplet#print(byte)
+ * @see PApplet#printArray(Object)
  */
   static public void println() {
     System.out.println();
   }
 
-  //
+
 /**
- * @param what boolean, byte, char, color, int, float, String, Object
+ * @param what data to print to console
  */
   static public void println(byte what) {
     System.out.println(what);
@@ -4422,7 +4481,58 @@ public class PApplet extends Applet
     System.out.flush();
   }
 
+  /**
+   * @param variables list of data, separated by commas
+   */
+  static public void println(Object... variables) {
+//    System.out.println("got " + variables.length + " variables");
+    print(variables);
+    println();
+  }
+
+
+  /*
+  // Breaking this out since the compiler doesn't know the difference between
+  // Object... and just Object (with an array passed in). This should take care
+  // of the confusion for at least the most common case (a String array).
+  // On second thought, we're going the printArray() route, since the other
+  // object types are also used frequently.
+  static public void println(String[] array) {
+    for (int i = 0; i < array.length; i++) {
+      System.out.println("[" + i + "] \"" + array[i] + "\"");
+    }
+    System.out.flush();
+  }
+  */
+
+
+  /**
+   * For arrays, use printArray() instead. This function causes a warning
+   * because the new print(Object...) and println(Object...) functions can't
+   * be reliably bound by the compiler.
+   */
   static public void println(Object what) {
+    if (what != null && what.getClass().isArray()) {
+      printArray(what);
+    } else {
+      System.out.println(what.toString());
+      System.out.flush();
+    }
+  }
+
+  /**
+   * ( begin auto-generated from printArray.xml )
+   *
+   * To come...
+   *
+   * ( end auto-generated )
+ * @webref output:text_area
+ * @param what one-dimensional array
+ * @usage IDE
+ * @see PApplet#print(byte)
+ * @see PApplet#println()
+ */
+  static public void printArray(Object what) {
     if (what == null) {
       // special case since this does fuggly things on > 1.1
       System.out.println("null");
@@ -5828,6 +5938,13 @@ public class PApplet extends Applet
    * Rewritten for 0115 to read/write RLE-encoded targa images.
    * For 0125, non-RLE encoded images are now supported, along with
    * images whose y-order is reversed (which is standard for TGA files).
+   * <p>
+   * A version of this function is in MovieMaker.java. Any fixes here
+   * should be applied over in MovieMaker as well.
+   * <p>
+   * Known issue with RLE encoding and odd behavior in some apps:
+   * https://github.com/processing/processing/issues/2096
+   * Please help!
    */
   protected PImage loadImageTGA(String filename) throws IOException {
     InputStream is = createInput(filename);
@@ -5845,7 +5962,7 @@ public class PApplet extends Applet
       header[2] image type code
       2  (0x02) - Uncompressed, RGB images.
       3  (0x03) - Uncompressed, black and white images.
-      10 (0x0A) - Runlength encoded RGB images.
+      10 (0x0A) - Run-length encoded RGB images.
       11 (0x0B) - Compressed, black and white images. (grayscale?)
 
       header[16] is the bit depth (8, 24, 32)
@@ -6068,6 +6185,7 @@ public class PApplet extends Applet
   public XML loadXML(String filename, String options) {
     try {
       return new XML(createReader(filename), options);
+//      return new XML(createInput(filename), options);
     } catch (Exception e) {
       e.printStackTrace();
       return null;
@@ -6121,6 +6239,7 @@ public class PApplet extends Applet
     return new JSONObject(new StringReader(input));
   }
 
+
   /**
    * @webref input:files
    * @param filename name of a file in the data folder or a URL
@@ -6133,6 +6252,12 @@ public class PApplet extends Applet
   public JSONObject loadJSONObject(String filename) {
     return new JSONObject(createReader(filename));
   }
+
+
+  static public JSONObject loadJSONObject(File file) {
+    return new JSONObject(createReader(file));
+  }
+
 
   /**
    * @webref output:files
@@ -6156,6 +6281,7 @@ public class PApplet extends Applet
     return new JSONArray(new StringReader(input));
   }
 
+
   /**
    * @webref input:files
    * @param filename name of a file in the data folder or a URL
@@ -6168,6 +6294,12 @@ public class PApplet extends Applet
   public JSONArray loadJSONArray(String filename) {
     return new JSONArray(createReader(filename));
   }
+
+
+  static public JSONArray loadJSONArray(File file) {
+    return new JSONArray(createReader(file));
+  }
+
 
   /**
    * @webref output:files
@@ -6214,22 +6346,28 @@ public class PApplet extends Applet
 
 
   /**
-   * @param options may contain "header", "tsv", "csv", or "bin" separated by commas
+   * Options may contain "header", "tsv", "csv", or "bin" separated by commas.
+   *
+   * Another option is "dictionary=filename.tsv", which allows users to
+   * specify a "dictionary" file that contains a mapping of the column titles
+   * and the data types used in the table file. This can be far more efficient
+   * (in terms of speed and memory usage) for loading and parsing tables. The
+   * dictionary file can only be tab separated values (.tsv) and its extension
+   * will be ignored. This option was added in Processing 2.0.2.
    */
   public Table loadTable(String filename, String options) {
     try {
-//      String ext = checkExtension(filename);
-//      if (ext != null) {
-//        if (ext.equals("csv") || ext.equals("tsv") || ext.equals("bin")) {
-//          if (options == null) {
-//            options = ext;
-//          } else {
-//            options = ext + "," + options;
-//          }
-//        }
-//      }
-      return new Table(createInput(filename),
-                       Table.extensionOptions(true, filename, options));
+      String optionStr = Table.extensionOptions(true, filename, options);
+      String[] optionList = trim(split(optionStr, ','));
+
+      Table dictionary = null;
+      for (String opt : optionList) {
+        if (opt.startsWith("dictionary=")) {
+          dictionary = loadTable(opt.substring(opt.indexOf('=') + 1), "tsv");
+          return dictionary.typedParse(createInput(filename), optionStr);
+        }
+      }
+      return new Table(createInput(filename), optionStr);
 
     } catch (IOException e) {
       e.printStackTrace();
@@ -7674,13 +7812,39 @@ public class PApplet extends Applet
   }
 
 
+  static File desktopFolder;
+
+  /** Not a supported function. For testing use only. */
+  static public File desktopFile(String what) {
+    if (desktopFolder == null) {
+      // Should work on Linux and OS X (on OS X, even with the localized version).
+      desktopFolder = new File(System.getProperty("user.home"), "Desktop");
+      if (!desktopFolder.exists()) {
+        if (platform == WINDOWS) {
+          FileSystemView filesys = FileSystemView.getFileSystemView();
+          desktopFolder = filesys.getHomeDirectory();
+        } else {
+          throw new UnsupportedOperationException("Could not find a suitable desktop foldder");
+        }
+      }
+    }
+    return new File(desktopFolder, what);
+  }
+
+
+  /** Not a supported function. For testing use only. */
+  static public String desktopPath(String what) {
+    return desktopFile(what).getAbsolutePath();
+  }
+
+
   /**
    * Return a full path to an item in the data folder.
    * <p>
    * This is only available with applications, not applets or Android.
    * On Windows and Linux, this is simply the data folder, which is located
    * in the same directory as the EXE file and lib folders. On Mac OS X, this
-   * is a path to the data folder buried inside Contents/Resources/Java.
+   * is a path to the data folder buried inside Contents/Java.
    * For the latter point, that also means that the data folder should not be
    * considered writable. Use sketchPath() for now, or inputPath() and
    * outputPath() once they're available in the 2.0 release.
@@ -7707,11 +7871,12 @@ public class PApplet extends Applet
 
     String jarPath =
       getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
-    if (jarPath.contains("Contents/Resources/Java/")) {
+    if (jarPath.contains("Contents/Java/")) {
       // The path will be URL encoded (%20 for spaces) coming from above
       // http://code.google.com/p/processing/issues/detail?id=1073
       File containingFolder = new File(urlDecode(jarPath)).getParentFile();
       File dataFolder = new File(containingFolder, "data");
+      System.out.println(dataFolder);
       return new File(dataFolder, where);
     }
     // Windows, Linux, or when not using a Mac OS X .app file
@@ -7721,7 +7886,7 @@ public class PApplet extends Applet
 
   /**
    * On Windows and Linux, this is simply the data folder. On Mac OS X, this is
-   * the path to the data folder buried inside Contents/Resources/Java
+   * the path to the data folder buried inside Contents/Java
    */
 //  public File inputFile(String where) {
 //  }
@@ -10074,15 +10239,21 @@ public class PApplet extends Applet
             if (farm.isVisible()) {
               Insets insets = farm.getInsets();
               Dimension windowSize = farm.getSize();
-            Rectangle newBounds =
-              new Rectangle(insets.left, insets.top,
-                            windowSize.width - insets.left - insets.right,
-                            windowSize.height - insets.top - insets.bottom);
-            Rectangle oldBounds = getBounds();
-            if (!newBounds.equals(oldBounds)) {
-              // the ComponentListener in PApplet will handle calling size()
-              setBounds(newBounds);
-            }
+              // JFrame (unlike java.awt.Frame) doesn't include the left/top
+              // insets for placement (though it does seem to need them for
+              // overall size of the window. Perhaps JFrame sets its coord
+              // system so that (0, 0) is always the upper-left of the content
+              // area. Which seems nice, but breaks any f*ing AWT-based code.
+              Rectangle newBounds =
+                new Rectangle(0, 0, //insets.left, insets.top,
+                              windowSize.width - insets.left - insets.right,
+                              windowSize.height - insets.top - insets.bottom);
+              Rectangle oldBounds = getBounds();
+              if (!newBounds.equals(oldBounds)) {
+                // the ComponentListener in PApplet will handle calling size()
+                setBounds(newBounds);
+                revalidate();   // let the layout manager do its work
+              }
             }
           }
         }
@@ -10378,30 +10549,24 @@ public class PApplet extends Applet
       displayDevice = environment.getDefaultScreenDevice();
     }
 
-    Frame frame = new Frame(displayDevice.getDefaultConfiguration());
-    frame.setBackground(new Color(0xCC, 0xCC, 0xCC)); // default Processing gray
-//    JFrame frame = new JFrame(displayDevice.getDefaultConfiguration());
-      /*
-      Frame frame = null;
-      if (displayDevice != null) {
-        frame = new Frame(displayDevice.getDefaultConfiguration());
-      } else {
-        frame = new Frame();
-      }
-      */
-      //Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-
-    // remove the grow box by default
-    // users who want it back can call frame.setResizable(true)
-//    frame.setResizable(false);
-    // moved later (issue #467)
+    // Using a JFrame fixes a Windows problem with Present mode. This might
+    // be our error, but usually this is the sort of crap we usually get from
+    // OS X. It's time for a turnaround: Redmond is thinking different too!
+    // https://github.com/processing/processing/issues/1955
+    Frame frame = new JFrame(displayDevice.getDefaultConfiguration());
+    // Default Processing gray, which will be replaced below if another
+    // color is specified on the command line (i.e. in the prefs).
+    final Color defaultGray = new Color(0xCC, 0xCC, 0xCC);
+    ((JFrame) frame).getContentPane().setBackground(defaultGray);
+    // Cannot call setResizable(false) until later due to OS X (issue #467)
 
     final PApplet applet;
     if (constructedApplet != null) {
       applet = constructedApplet;
     } else {
       try {
-        Class<?> c = Thread.currentThread().getContextClassLoader().loadClass(name);
+        Class<?> c =
+          Thread.currentThread().getContextClassLoader().loadClass(name);
         applet = (PApplet) c.newInstance();
       } catch (Exception e) {
         throw new RuntimeException(e);
@@ -10499,9 +10664,12 @@ public class PApplet extends Applet
 //        japplemenubar.JAppleMenuBar.hide();
 //      }
 
+      // Tried to use this to fix the 'present' mode issue.
+      // Did not help, and the screenRect setup seems to work fine.
+      //frame.setExtendedState(Frame.MAXIMIZED_BOTH);
       frame.setUndecorated(true);
       if (backgroundColor != null) {
-        frame.setBackground(backgroundColor);
+        ((JFrame) frame).getContentPane().setBackground(backgroundColor);
       }
 //      if (exclusive) {
 //        displayDevice.setFullScreenWindow(frame);
@@ -10520,6 +10688,7 @@ public class PApplet extends Applet
     } else {
       frame.pack();
     }
+
     // insufficient, places the 100x100 sketches offset strangely
     //frame.validate();
 
@@ -10597,13 +10766,17 @@ public class PApplet extends Applet
     } else {  // if not presenting
       // can't do pack earlier cuz present mode don't like it
       // (can't go full screen with a frame after calling pack)
-      //        frame.pack();  // get insets. get more.
-      Insets insets = frame.getInsets();
+      //        frame.pack();
 
+      // get insets. get more.
+      Insets insets = frame.getInsets();
       int windowW = Math.max(applet.width, MIN_WINDOW_WIDTH) +
         insets.left + insets.right;
       int windowH = Math.max(applet.height, MIN_WINDOW_HEIGHT) +
         insets.top + insets.bottom;
+
+      int contentW = Math.max(applet.width, MIN_WINDOW_WIDTH);
+      int contentH = Math.max(applet.height, MIN_WINDOW_HEIGHT);
 
       frame.setSize(windowW, windowH);
 
@@ -10653,12 +10826,15 @@ public class PApplet extends Applet
 //        // this means no bg color unless specified
 //        backgroundColor = SystemColor.control;
 //      }
-        frame.setBackground(backgroundColor);
+        ((JFrame) frame).getContentPane().setBackground(backgroundColor);
       }
 
-      int usableWindowH = windowH - insets.top - insets.bottom;
-      applet.setBounds((windowW - applet.width)/2,
-                       insets.top + (usableWindowH - applet.height)/2,
+//      int usableWindowH = windowH - insets.top - insets.bottom;
+//      applet.setBounds((windowW - applet.width)/2,
+//                       insets.top + (usableWindowH - applet.height)/2,
+//                       applet.width, applet.height);
+      applet.setBounds((contentW - applet.width)/2,
+                       (contentH - applet.height)/2,
                        applet.width, applet.height);
 
       if (external) {
@@ -10679,6 +10855,21 @@ public class PApplet extends Applet
       // all set for rockin
       if (applet.displayable()) {
         frame.setVisible(true);
+
+        // Linux doesn't deal with insets the same way. We get fake insets
+        // earlier, and then the window manager will slap its own insets
+        // onto things once the frame is realized on the screen. Awzm.
+        if (platform == LINUX) {
+          Insets irlInsets = frame.getInsets();
+          if (!irlInsets.equals(insets)) {
+            insets = irlInsets;
+            windowW = Math.max(applet.width, MIN_WINDOW_WIDTH) +
+              insets.left + insets.right;
+            windowH = Math.max(applet.height, MIN_WINDOW_HEIGHT) +
+              insets.top + insets.bottom;
+            frame.setSize(windowW, windowH);
+          }
+        }
       }
     }
 
