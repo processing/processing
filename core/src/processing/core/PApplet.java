@@ -6377,7 +6377,7 @@ public class PApplet extends Applet
 
 
   /**
-   * @webref input:files
+   * @webref output:files
    * @param table the Table object to save to a file
    * @param filename the filename to which the Table should be saved
    * @see Table
