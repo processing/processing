@@ -163,6 +163,8 @@
 </dd>
 <dt><span class="strong"><a href="./processing/opengl/PGL.html#ALPHA">ALPHA</a></span> - Static variable in class processing.opengl.<a href="./processing/opengl/PGL.html" title="class in processing.opengl">PGL</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./processing/opengl/PGL.html#ALPHA8">ALPHA8</a></span> - Static variable in class processing.opengl.<a href="./processing/opengl/PGL.html" title="class in processing.opengl">PGL</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./processing/core/PImage.html#ALPHA_MASK">ALPHA_MASK</a></span> - Static variable in class processing.core.<a href="./processing/core/PImage.html" title="class in processing.core">PImage</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./processing/opengl/PGL.html#ALPHA_TEST">ALPHA_TEST</a></span> - Static variable in class processing.opengl.<a href="./processing/opengl/PGL.html" title="class in processing.opengl">PGL</a></dt>
@@ -1472,6 +1474,8 @@
  Constrains a value to not exceed a maximum and minimum value.</div>
 </dd>
 <dt><span class="strong"><a href="./processing/core/PShape.html#contains(float, float)">contains(float, float)</a></span> - Method in class processing.core.<a href="./processing/core/PShape.html" title="class in processing.core">PShape</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./processing/opengl/PShapeOpenGL.html#contains(float, float)">contains(float, float)</a></span> - Method in class processing.opengl.<a href="./processing/opengl/PShapeOpenGL.html" title="class in processing.opengl">PShapeOpenGL</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./processing/opengl/PJOGL.html#context">context</a></span> - Static variable in class processing.opengl.<a href="./processing/opengl/PJOGL.html" title="class in processing.opengl">PJOGL</a></dt>
 <dd>
@@ -3910,9 +3914,17 @@
 <dd>
 <div class="block">One of VERTEX, BEZIER_VERTEX, CURVE_VERTEX, or BREAK.</div>
 </dd>
+<dt><span class="strong"><a href="./processing/opengl/PShapeOpenGL.html#getVertexCode(int)">getVertexCode(int)</a></span> - Method in class processing.opengl.<a href="./processing/opengl/PShapeOpenGL.html" title="class in processing.opengl">PShapeOpenGL</a></dt>
+<dd>
+<div class="block">One of VERTEX, BEZIER_VERTEX, CURVE_VERTEX, or BREAK.</div>
+</dd>
 <dt><span class="strong"><a href="./processing/core/PShape.html#getVertexCodeCount()">getVertexCodeCount()</a></span> - Method in class processing.core.<a href="./processing/core/PShape.html" title="class in processing.core">PShape</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./processing/opengl/PShapeOpenGL.html#getVertexCodeCount()">getVertexCodeCount()</a></span> - Method in class processing.opengl.<a href="./processing/opengl/PShapeOpenGL.html" title="class in processing.opengl">PShapeOpenGL</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./processing/core/PShape.html#getVertexCodes()">getVertexCodes()</a></span> - Method in class processing.core.<a href="./processing/core/PShape.html" title="class in processing.core">PShape</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./processing/opengl/PShapeOpenGL.html#getVertexCodes()">getVertexCodes()</a></span> - Method in class processing.opengl.<a href="./processing/opengl/PShapeOpenGL.html" title="class in processing.opengl">PShapeOpenGL</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./processing/core/PShape.html#getVertexCount()">getVertexCount()</a></span> - Method in class processing.core.<a href="./processing/core/PShape.html" title="class in processing.core">PShape</a></dt>
 <dd>&nbsp;</dd>
@@ -5445,10 +5457,6 @@
 </dd>
 <dt><span class="strong"><a href="./processing/data/IntDict.html#maxKey()">maxKey()</a></span> - Method in class processing.data.<a href="./processing/data/IntDict.html" title="class in processing.data">IntDict</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./processing/opengl/PGraphicsOpenGL.html#maxLineWidth">maxLineWidth</a></span> - Static variable in class processing.opengl.<a href="./processing/opengl/PGraphicsOpenGL.html" title="class in processing.opengl">PGraphicsOpenGL</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./processing/opengl/PGraphicsOpenGL.html#maxPointSize">maxPointSize</a></span> - Static variable in class processing.opengl.<a href="./processing/opengl/PGraphicsOpenGL.html" title="class in processing.opengl">PGraphicsOpenGL</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./processing/opengl/PGraphicsOpenGL.html#maxSamples">maxSamples</a></span> - Static variable in class processing.opengl.<a href="./processing/opengl/PGraphicsOpenGL.html" title="class in processing.opengl">PGraphicsOpenGL</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./processing/opengl/Texture.html#maxTexcoordU()">maxTexcoordU()</a></span> - Method in class processing.opengl.<a href="./processing/opengl/Texture.html" title="class in processing.opengl">Texture</a></dt>
@@ -6665,6 +6673,8 @@
  <b>popStyle()</b> restores the prior settings; these functions are
  always used together.</div>
 </dd>
+<dt><span class="strong"><a href="./processing/opengl/PGraphicsOpenGL.html#popStyle()">popStyle()</a></span> - Method in class processing.opengl.<a href="./processing/opengl/PGraphicsOpenGL.html" title="class in processing.opengl">PGraphicsOpenGL</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./processing/core/PConstants.html#PORTRAIT">PORTRAIT</a></span> - Static variable in interface processing.core.<a href="./processing/core/PConstants.html" title="interface in processing.core">PConstants</a></dt>
 <dd>
 <div class="block">Screen orientation constant for portrait (the hamburger way).</div>
@@ -6682,20 +6692,24 @@
 
  Facilitates exponential expressions.</div>
 </dd>
-<dt><span class="strong"><a href="./processing/core/PMatrix.html#preApply(processing.core.PMatrix2D)">preApply(PMatrix2D)</a></span> - Method in interface processing.core.<a href="./processing/core/PMatrix.html" title="interface in processing.core">PMatrix</a></dt>
+<dt><span class="strong"><a href="./processing/core/PMatrix.html#preApply(processing.core.PMatrix)">preApply(PMatrix)</a></span> - Method in interface processing.core.<a href="./processing/core/PMatrix.html" title="interface in processing.core">PMatrix</a></dt>
 <dd>
 <div class="block">Apply another matrix to the left of this one.</div>
 </dd>
+<dt><span class="strong"><a href="./processing/core/PMatrix.html#preApply(processing.core.PMatrix2D)">preApply(PMatrix2D)</a></span> - Method in interface processing.core.<a href="./processing/core/PMatrix.html" title="interface in processing.core">PMatrix</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./processing/core/PMatrix.html#preApply(processing.core.PMatrix3D)">preApply(PMatrix3D)</a></span> - Method in interface processing.core.<a href="./processing/core/PMatrix.html" title="interface in processing.core">PMatrix</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./processing/core/PMatrix.html#preApply(float, float, float, float, float, float)">preApply(float, float, float, float, float, float)</a></span> - Method in interface processing.core.<a href="./processing/core/PMatrix.html" title="interface in processing.core">PMatrix</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./processing/core/PMatrix.html#preApply(float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float)">preApply(float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float)</a></span> - Method in interface processing.core.<a href="./processing/core/PMatrix.html" title="interface in processing.core">PMatrix</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./processing/core/PMatrix2D.html#preApply(processing.core.PMatrix2D)">preApply(PMatrix2D)</a></span> - Method in class processing.core.<a href="./processing/core/PMatrix2D.html" title="class in processing.core">PMatrix2D</a></dt>
+<dt><span class="strong"><a href="./processing/core/PMatrix2D.html#preApply(processing.core.PMatrix)">preApply(PMatrix)</a></span> - Method in class processing.core.<a href="./processing/core/PMatrix2D.html" title="class in processing.core">PMatrix2D</a></dt>
 <dd>
 <div class="block">Apply another matrix to the left of this one.</div>
 </dd>
+<dt><span class="strong"><a href="./processing/core/PMatrix2D.html#preApply(processing.core.PMatrix2D)">preApply(PMatrix2D)</a></span> - Method in class processing.core.<a href="./processing/core/PMatrix2D.html" title="class in processing.core">PMatrix2D</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./processing/core/PMatrix2D.html#preApply(processing.core.PMatrix3D)">preApply(PMatrix3D)</a></span> - Method in class processing.core.<a href="./processing/core/PMatrix2D.html" title="class in processing.core">PMatrix2D</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./processing/core/PMatrix2D.html#preApply(float, float, float, float, float, float)">preApply(float, float, float, float, float, float)</a></span> - Method in class processing.core.<a href="./processing/core/PMatrix2D.html" title="class in processing.core">PMatrix2D</a></dt>
@@ -6704,10 +6718,12 @@
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./processing/core/PMatrix3D.html#preApply(processing.core.PMatrix2D)">preApply(PMatrix2D)</a></span> - Method in class processing.core.<a href="./processing/core/PMatrix3D.html" title="class in processing.core">PMatrix3D</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./processing/core/PMatrix3D.html#preApply(processing.core.PMatrix3D)">preApply(PMatrix3D)</a></span> - Method in class processing.core.<a href="./processing/core/PMatrix3D.html" title="class in processing.core">PMatrix3D</a></dt>
+<dt><span class="strong"><a href="./processing/core/PMatrix3D.html#preApply(processing.core.PMatrix)">preApply(PMatrix)</a></span> - Method in class processing.core.<a href="./processing/core/PMatrix3D.html" title="class in processing.core">PMatrix3D</a></dt>
 <dd>
 <div class="block">Apply another matrix to the left of this one.</div>
 </dd>
+<dt><span class="strong"><a href="./processing/core/PMatrix3D.html#preApply(processing.core.PMatrix3D)">preApply(PMatrix3D)</a></span> - Method in class processing.core.<a href="./processing/core/PMatrix3D.html" title="class in processing.core">PMatrix3D</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./processing/core/PMatrix3D.html#preApply(float, float, float, float, float, float)">preApply(float, float, float, float, float, float)</a></span> - Method in class processing.core.<a href="./processing/core/PMatrix3D.html" title="class in processing.core">PMatrix3D</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./processing/core/PMatrix3D.html#preApply(float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float)">preApply(float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float)</a></span> - Method in class processing.core.<a href="./processing/core/PMatrix3D.html" title="class in processing.core">PMatrix3D</a></dt>
@@ -6740,7 +6756,7 @@
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./processing/core/PApplet.html#print(java.lang.String)">print(String)</a></span> - Static method in class processing.core.<a href="./processing/core/PApplet.html" title="class in processing.core">PApplet</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./processing/core/PApplet.html#print(java.lang.Object)">print(Object)</a></span> - Static method in class processing.core.<a href="./processing/core/PApplet.html" title="class in processing.core">PApplet</a></dt>
+<dt><span class="strong"><a href="./processing/core/PApplet.html#print(java.lang.Object...)">print(Object...)</a></span> - Static method in class processing.core.<a href="./processing/core/PApplet.html" title="class in processing.core">PApplet</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./processing/core/PMatrix2D.html#print()">print()</a></span> - Method in class processing.core.<a href="./processing/core/PMatrix2D.html" title="class in processing.core">PMatrix2D</a></dt>
 <dd>&nbsp;</dd>
@@ -6749,6 +6765,12 @@
 <dt><span class="strong"><a href="./processing/core/PShapeSVG.html#print()">print()</a></span> - Method in class processing.core.<a href="./processing/core/PShapeSVG.html" title="class in processing.core">PShapeSVG</a></dt>
 <dd>
 <div class="block">Prints out the SVG document.</div>
+</dd>
+<dt><span class="strong"><a href="./processing/core/PApplet.html#printArray(java.lang.Object)">printArray(Object)</a></span> - Static method in class processing.core.<a href="./processing/core/PApplet.html" title="class in processing.core">PApplet</a></dt>
+<dd>
+<div class="block">( begin auto-generated from printArray.xml )
+
+ To come...</div>
 </dd>
 <dt><span class="strong"><a href="./processing/core/PApplet.html#printCamera()">printCamera()</a></span> - Method in class processing.core.<a href="./processing/core/PApplet.html" title="class in processing.core">PApplet</a></dt>
 <dd>
@@ -6790,8 +6812,12 @@
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./processing/core/PApplet.html#println(java.lang.String)">println(String)</a></span> - Static method in class processing.core.<a href="./processing/core/PApplet.html" title="class in processing.core">PApplet</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./processing/core/PApplet.html#println(java.lang.Object)">println(Object)</a></span> - Static method in class processing.core.<a href="./processing/core/PApplet.html" title="class in processing.core">PApplet</a></dt>
+<dt><span class="strong"><a href="./processing/core/PApplet.html#println(java.lang.Object...)">println(Object...)</a></span> - Static method in class processing.core.<a href="./processing/core/PApplet.html" title="class in processing.core">PApplet</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./processing/core/PApplet.html#println(java.lang.Object)">println(Object)</a></span> - Static method in class processing.core.<a href="./processing/core/PApplet.html" title="class in processing.core">PApplet</a></dt>
+<dd>
+<div class="block">For arrays, use printArray() instead.</div>
+</dd>
 <dt><span class="strong"><a href="./processing/core/PApplet.html#printMatrix()">printMatrix()</a></span> - Method in class processing.core.<a href="./processing/core/PApplet.html" title="class in processing.core">PApplet</a></dt>
 <dd>
 <div class="block">( begin auto-generated from printMatrix.xml )
@@ -6840,6 +6866,8 @@
 <dd>&nbsp;</dd>
 <dt><a href="./processing/opengl/package-summary.html">processing.opengl</a> - package processing.opengl</dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./processing/opengl/PJOGL.html#PROFILE">PROFILE</a></span> - Static variable in class processing.opengl.<a href="./processing/opengl/PJOGL.html" title="class in processing.opengl">PJOGL</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./processing/opengl/PJOGL.html#profile">profile</a></span> - Static variable in class processing.opengl.<a href="./processing/opengl/PJOGL.html" title="class in processing.opengl">PJOGL</a></dt>
 <dd>
 <div class="block">Selected GL profile</div>
@@ -6867,6 +6895,8 @@
  shaders.</div>
 </dd>
 <dt><span class="strong"><a href="./processing/opengl/PShader.html#PShader(processing.core.PApplet, java.net.URL, java.net.URL)">PShader(PApplet, URL, URL)</a></span> - Constructor for class processing.opengl.<a href="./processing/opengl/PShader.html" title="class in processing.opengl">PShader</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./processing/opengl/PShader.html#PShader(processing.core.PApplet, java.lang.String[], java.lang.String[])">PShader(PApplet, String[], String[])</a></span> - Constructor for class processing.opengl.<a href="./processing/opengl/PShader.html" title="class in processing.opengl">PShader</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="./processing/core/PShape.html" title="class in processing.core"><span class="strong">PShape</span></a> - Class in <a href="./processing/core/package-summary.html">processing.core</a></dt>
 <dd>
@@ -7535,6 +7565,8 @@
 <dt><span class="strong"><a href="./processing/opengl/PGL.html#RGB565">RGB565</a></span> - Static variable in class processing.opengl.<a href="./processing/opengl/PGL.html" title="class in processing.opengl">PGL</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./processing/opengl/PGL.html#RGB5_A1">RGB5_A1</a></span> - Static variable in class processing.opengl.<a href="./processing/opengl/PGL.html" title="class in processing.opengl">PGL</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./processing/opengl/PGL.html#RGB8">RGB8</a></span> - Static variable in class processing.opengl.<a href="./processing/opengl/PGL.html" title="class in processing.opengl">PGL</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./processing/opengl/PGL.html#RGBA">RGBA</a></span> - Static variable in class processing.opengl.<a href="./processing/opengl/PGL.html" title="class in processing.opengl">PGL</a></dt>
 <dd>&nbsp;</dd>
@@ -8208,6 +8240,14 @@
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./processing/opengl/PShader.html#set(java.lang.String, processing.core.PVector)">set(String, PVector)</a></span> - Method in class processing.opengl.<a href="./processing/opengl/PShader.html" title="class in processing.opengl">PShader</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./processing/opengl/PShader.html#set(java.lang.String, boolean)">set(String, boolean)</a></span> - Method in class processing.opengl.<a href="./processing/opengl/PShader.html" title="class in processing.opengl">PShader</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./processing/opengl/PShader.html#set(java.lang.String, boolean, boolean)">set(String, boolean, boolean)</a></span> - Method in class processing.opengl.<a href="./processing/opengl/PShader.html" title="class in processing.opengl">PShader</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./processing/opengl/PShader.html#set(java.lang.String, boolean, boolean, boolean)">set(String, boolean, boolean, boolean)</a></span> - Method in class processing.opengl.<a href="./processing/opengl/PShader.html" title="class in processing.opengl">PShader</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./processing/opengl/PShader.html#set(java.lang.String, boolean, boolean, boolean, boolean)">set(String, boolean, boolean, boolean, boolean)</a></span> - Method in class processing.opengl.<a href="./processing/opengl/PShader.html" title="class in processing.opengl">PShader</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./processing/opengl/PShader.html#set(java.lang.String, int[])">set(String, int[])</a></span> - Method in class processing.opengl.<a href="./processing/opengl/PShader.html" title="class in processing.opengl">PShader</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./processing/opengl/PShader.html#set(java.lang.String, int[], int)">set(String, int[], int)</a></span> - Method in class processing.opengl.<a href="./processing/opengl/PShader.html" title="class in processing.opengl">PShader</a></dt>
@@ -8215,6 +8255,10 @@
 <dt><span class="strong"><a href="./processing/opengl/PShader.html#set(java.lang.String, float[])">set(String, float[])</a></span> - Method in class processing.opengl.<a href="./processing/opengl/PShader.html" title="class in processing.opengl">PShader</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./processing/opengl/PShader.html#set(java.lang.String, float[], int)">set(String, float[], int)</a></span> - Method in class processing.opengl.<a href="./processing/opengl/PShader.html" title="class in processing.opengl">PShader</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./processing/opengl/PShader.html#set(java.lang.String, boolean[])">set(String, boolean[])</a></span> - Method in class processing.opengl.<a href="./processing/opengl/PShader.html" title="class in processing.opengl">PShader</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./processing/opengl/PShader.html#set(java.lang.String, boolean[], int)">set(String, boolean[], int)</a></span> - Method in class processing.opengl.<a href="./processing/opengl/PShader.html" title="class in processing.opengl">PShader</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./processing/opengl/PShader.html#set(java.lang.String, processing.core.PMatrix2D)">set(String, PMatrix2D)</a></span> - Method in class processing.opengl.<a href="./processing/opengl/PShader.html" title="class in processing.opengl">PShader</a></dt>
 <dd>&nbsp;</dd>
@@ -8376,6 +8420,8 @@
 <dt><span class="strong"><a href="./processing/opengl/PShader.html#setFragmentShader(java.lang.String)">setFragmentShader(String)</a></span> - Method in class processing.opengl.<a href="./processing/opengl/PShader.html" title="class in processing.opengl">PShader</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./processing/opengl/PShader.html#setFragmentShader(java.net.URL)">setFragmentShader(URL)</a></span> - Method in class processing.opengl.<a href="./processing/opengl/PShader.html" title="class in processing.opengl">PShader</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./processing/opengl/PShader.html#setFragmentShader(java.lang.String[])">setFragmentShader(String[])</a></span> - Method in class processing.opengl.<a href="./processing/opengl/PShader.html" title="class in processing.opengl">PShader</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./processing/core/PGraphics.html#setFrameRate(float)">setFrameRate(float)</a></span> - Method in class processing.core.<a href="./processing/core/PGraphics.html" title="class in processing.core">PGraphics</a></dt>
 <dd>&nbsp;</dd>
@@ -8682,6 +8728,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./processing/opengl/PShader.html#setVertexShader(java.net.URL)">setVertexShader(URL)</a></span> - Method in class processing.opengl.<a href="./processing/opengl/PShader.html" title="class in processing.opengl">PShader</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./processing/opengl/PShader.html#setVertexShader(java.lang.String[])">setVertexShader(String[])</a></span> - Method in class processing.opengl.<a href="./processing/opengl/PShader.html" title="class in processing.opengl">PShader</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./processing/core/PShape.html#setVisible(boolean)">setVisible(boolean)</a></span> - Method in class processing.core.<a href="./processing/core/PShape.html" title="class in processing.core">PShape</a></dt>
 <dd>
 <div class="block">( begin auto-generated from PShape_setVisible.xml )
@@ -8727,8 +8775,6 @@
 <dt><span class="strong"><a href="./processing/opengl/PGL.html#shaderSource(int, java.lang.String)">shaderSource(int, String)</a></span> - Method in class processing.opengl.<a href="./processing/opengl/PGL.html" title="class in processing.opengl">PGL</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./processing/opengl/PJOGL.html#shaderSource(int, java.lang.String)">shaderSource(int, String)</a></span> - Method in class processing.opengl.<a href="./processing/opengl/PJOGL.html" title="class in processing.opengl">PJOGL</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./processing/opengl/PGraphicsOpenGL.html#shaderWarnings(boolean)">shaderWarnings(boolean)</a></span> - Method in class processing.opengl.<a href="./processing/opengl/PGraphicsOpenGL.html" title="class in processing.opengl">PGraphicsOpenGL</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./processing/opengl/PGL.html#SHADING_LANGUAGE_VERSION">SHADING_LANGUAGE_VERSION</a></span> - Static variable in class processing.opengl.<a href="./processing/opengl/PGL.html" title="class in processing.opengl">PGL</a></dt>
 <dd>&nbsp;</dd>
@@ -9377,6 +9423,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./processing/opengl/PGL.html#STENCIL_INDEX8">STENCIL_INDEX8</a></span> - Static variable in class processing.opengl.<a href="./processing/opengl/PGL.html" title="class in processing.opengl">PGL</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./processing/opengl/PGL.html#STENCIL_TEST">STENCIL_TEST</a></span> - Static variable in class processing.opengl.<a href="./processing/opengl/PGL.html" title="class in processing.opengl">PGL</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./processing/opengl/PGraphicsOpenGL.html#stencilBits">stencilBits</a></span> - Static variable in class processing.opengl.<a href="./processing/opengl/PGraphicsOpenGL.html" title="class in processing.opengl">PGraphicsOpenGL</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./processing/opengl/PGL.html#stencilFunc(int, int, int)">stencilFunc(int, int, int)</a></span> - Method in class processing.opengl.<a href="./processing/opengl/PGL.html" title="class in processing.opengl">PGL</a></dt>
@@ -9979,6 +10027,8 @@
 <div class="block">Same as parent, but override for native version of the font.</div>
 </dd>
 <dt><span class="strong"><a href="./processing/core/PStyle.html#textSize">textSize</a></span> - Variable in class processing.core.<a href="./processing/core/PStyle.html" title="class in processing.core">PStyle</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./processing/opengl/PGraphicsOpenGL.html#textSize(float)">textSize(float)</a></span> - Method in class processing.opengl.<a href="./processing/opengl/PGraphicsOpenGL.html" title="class in processing.opengl">PGraphicsOpenGL</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./processing/core/PApplet.html#texture(processing.core.PImage)">texture(PImage)</a></span> - Method in class processing.core.<a href="./processing/core/PApplet.html" title="class in processing.core">PApplet</a></dt>
 <dd>

@@ -180,12 +180,6 @@ public class PGraphics2D extends PGraphicsOpenGL {
     popProjection();
   }
 
-//  @Override
-//  public void resetMatrix() {
-//    super.resetMatrix();
-//    defaultCamera();
-//  }
-
 
   //////////////////////////////////////////////////////////////
 

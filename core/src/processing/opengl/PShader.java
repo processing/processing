@@ -108,6 +108,9 @@ public class PShader implements PConstants {
   protected IntBuffer intBuffer;
   protected FloatBuffer floatBuffer;
 
+  protected boolean loadedAttributes = false;
+  protected boolean loadedUniforms = false;
+
   // Uniforms common to all shader types
   protected int transformMatLoc;
   protected int modelviewMatLoc;
@@ -1048,29 +1051,36 @@ public class PShader implements PConstants {
   //
   // Processing specific
 
+
   protected int getType() {
     return type;
   }
+
 
   protected void setType(int type) {
     this.type = type;
   }
 
+
   protected boolean hasType() {
     return POINT <= type && type <= TEXLIGHT;
   }
+
 
   protected boolean isPointShader() {
     return type == POINT;
   }
 
+
   protected boolean isLineShader() {
     return type == LINE;
   }
 
+
   protected boolean isPolyShader() {
     return POLY <= type && type <= TEXLIGHT;
   }
+
 
   protected boolean checkPolyType(int type) {
     if (getType() == PShader.POLY) return true;
@@ -1091,15 +1101,17 @@ public class PShader implements PConstants {
     return true;
   }
 
+
   protected int getLastTexUnit() {
     return texUnits == null ? -1 : texUnits.size() - 1;
   }
+
 
   protected void setRenderer(PGraphicsOpenGL pg) {
     this.pg = pg;
   }
 
-  boolean loadedAttributes = false;
+
   protected void loadAttributes() {
     if (loadedAttributes) return;
 
@@ -1126,7 +1138,6 @@ public class PShader implements PConstants {
   }
 
 
-  boolean loadedUniforms = false;
   protected void loadUniforms() {
     if (loadedUniforms) return;
     transformMatLoc = getUniformLoc("transform");

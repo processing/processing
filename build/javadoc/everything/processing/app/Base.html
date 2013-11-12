@@ -183,17 +183,22 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/app/Base.html#copyDirNative(java.io.File, java.io.File)">copyDirNative</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;sourceDir,
+             <a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;targetDir)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Base.html#copyFile(java.io.File, java.io.File)">copyFile</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;sourceFile,
         <a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;targetFile)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Base.html#countLines(java.lang.String)">countLines</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;what)</code>
 <div class="block">Get the number of lines in a file by counting the number of newline
  characters inside a String (and adding 1).</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static <a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a></code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Base.html#createTempFolder(java.lang.String, java.lang.String, java.io.File)">createTempFolder</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;prefix,
                 <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;suffix,
@@ -203,21 +208,25 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
  that was provided.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../processing/app/Editor.html" title="class in processing.app">Editor</a></code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Base.html#getActiveEditor()">getActiveEditor</a></strong>()</code>
 <div class="block">Returns the front most, active editor window.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static <a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a></code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Base.html#getContentFile(java.lang.String)">getContentFile</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;name)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../processing/app/Editor.html" title="class in processing.app">Editor</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Base.html#getEditors()">getEditors</a></strong>()</code>
 <div class="block">Get the list of currently active editor windows.</div>
 </td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a></code></td>
+<td class="colLast"><code><strong><a href="../../processing/app/Base.html#getJavaHome()">getJavaHome</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
@@ -242,7 +251,8 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Base.html#getNativeBits()">getNativeBits</a></strong>()</code>
-<div class="block">Return whether sketches will run as 32- or 64-bits.</div>
+<div class="block">Return whether sketches will run as 32- or 64-bits based
+ on the JVM that's in use.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -462,8 +472,8 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/app/Base.html#log(java.lang.String, java.lang.Exception)">log</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;message,
-   <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Exception.html?is-external=true" title="class or interface in java.lang">Exception</a>&nbsp;e)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../processing/app/Base.html#log(java.lang.String, java.lang.Throwable)">log</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;message,
+   <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Throwable.html?is-external=true" title="class or interface in java.lang">Throwable</a>&nbsp;e)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
@@ -574,18 +584,18 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/app/Base.html#showWarning(java.lang.String, java.lang.String, java.lang.Exception)">showWarning</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;title,
+<td class="colLast"><code><strong><a href="../../processing/app/Base.html#showWarning(java.lang.String, java.lang.String, java.lang.Throwable)">showWarning</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;title,
            <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;message,
-           <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Exception.html?is-external=true" title="class or interface in java.lang">Exception</a>&nbsp;e)</code>
+           <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Throwable.html?is-external=true" title="class or interface in java.lang">Throwable</a>&nbsp;e)</code>
 <div class="block">Non-fatal error message with optional stack trace side dish.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/app/Base.html#showWarningTiered(java.lang.String, java.lang.String, java.lang.String, java.lang.Exception)">showWarningTiered</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;title,
+<td class="colLast"><code><strong><a href="../../processing/app/Base.html#showWarningTiered(java.lang.String, java.lang.String, java.lang.String, java.lang.Throwable)">showWarningTiered</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;title,
                  <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;primary,
                  <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;secondary,
-                 <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Exception.html?is-external=true" title="class or interface in java.lang">Exception</a>&nbsp;e)</code>
+                 <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Throwable.html?is-external=true" title="class or interface in java.lang">Throwable</a>&nbsp;e)</code>
 <div class="block">Non-fatal error message with optional stack trace side dish.</div>
 </td>
 </tr>
@@ -983,9 +993,8 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <li class="blockList">
 <h4>getNativeBits</h4>
 <pre>public static&nbsp;int&nbsp;getNativeBits()</pre>
-<div class="block">Return whether sketches will run as 32- or 64-bits. On Linux and Windows,
- this is the bit depth of the machine, while on OS X it's determined by the
- setting from preferences, since both 32- and 64-bit are supported.</div>
+<div class="block">Return whether sketches will run as 32- or 64-bits based
+ on the JVM that's in use.</div>
 </li>
 </ul>
 <a name="getPlatformName(int)">
@@ -1193,7 +1202,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
  much of a bummer, but something to notify the user about.</div>
 </li>
 </ul>
-<a name="showWarning(java.lang.String, java.lang.String, java.lang.Exception)">
+<a name="showWarning(java.lang.String, java.lang.String, java.lang.Throwable)">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -1201,11 +1210,11 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <h4>showWarning</h4>
 <pre>public static&nbsp;void&nbsp;showWarning(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;title,
                <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;message,
-               <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Exception.html?is-external=true" title="class or interface in java.lang">Exception</a>&nbsp;e)</pre>
+               <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Throwable.html?is-external=true" title="class or interface in java.lang">Throwable</a>&nbsp;e)</pre>
 <div class="block">Non-fatal error message with optional stack trace side dish.</div>
 </li>
 </ul>
-<a name="showWarningTiered(java.lang.String, java.lang.String, java.lang.String, java.lang.Exception)">
+<a name="showWarningTiered(java.lang.String, java.lang.String, java.lang.String, java.lang.Throwable)">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -1214,7 +1223,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <pre>public static&nbsp;void&nbsp;showWarningTiered(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;title,
                      <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;primary,
                      <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;secondary,
-                     <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Exception.html?is-external=true" title="class or interface in java.lang">Exception</a>&nbsp;e)</pre>
+                     <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Throwable.html?is-external=true" title="class or interface in java.lang">Throwable</a>&nbsp;e)</pre>
 <div class="block">Non-fatal error message with optional stack trace side dish.</div>
 </li>
 </ul>
@@ -1263,6 +1272,15 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <li class="blockList">
 <h4>getContentFile</h4>
 <pre>public static&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;getContentFile(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;name)</pre>
+</li>
+</ul>
+<a name="getJavaHome()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getJavaHome</h4>
+<pre>public static&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;getJavaHome()</pre>
 </li>
 </ul>
 <a name="getJavaPath()">
@@ -1389,6 +1407,19 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <div class="block">Copy a folder from one place to another. This ignores all dot files and
  folders found in the source directory, to avoid copying silly .DS_Store
  files and potentially troublesome .svn folders.</div>
+<dl><dt><span class="strong">Throws:</span></dt>
+<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</a></code></dd></dl>
+</li>
+</ul>
+<a name="copyDirNative(java.io.File, java.io.File)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>copyDirNative</h4>
+<pre>public static&nbsp;void&nbsp;copyDirNative(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;sourceDir,
+                 <a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;targetDir)
+                          throws <a href="http://docs.oracle.com/javase/7/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</a></pre>
 <dl><dt><span class="strong">Throws:</span></dt>
 <dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</a></code></dd></dl>
 </li>
@@ -1558,14 +1589,14 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
         <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>...&nbsp;args)</pre>
 </li>
 </ul>
-<a name="log(java.lang.String, java.lang.Exception)">
+<a name="log(java.lang.String, java.lang.Throwable)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>log</h4>
 <pre>public static&nbsp;void&nbsp;log(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;message,
-       <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Exception.html?is-external=true" title="class or interface in java.lang">Exception</a>&nbsp;e)</pre>
+       <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Throwable.html?is-external=true" title="class or interface in java.lang">Throwable</a>&nbsp;e)</pre>
 </li>
 </ul>
 </li>

@@ -79,7 +79,7 @@ public class PGraphicsOpenGL extends PGraphics {
   static final String MISSING_UV_TEXCOORDS_ERROR =
     "No uv texture coordinates supplied with vertex() call";
   static final String INVALID_FILTER_SHADER_ERROR =
-    "Your shader needs to be of TEXTURE type to be used as a filter";
+    "Your shader cannot be used as a filter because is of type POINT or LINES";
   static final String INCONSISTENT_SHADER_TYPES =
     "The vertex and fragment shaders have different types";
   static final String WRONG_SHADER_TYPE_ERROR =
@@ -5546,7 +5546,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   @Override
   public void filter(PShader shader) {
-    if (!shader.isPolyShader() || !shader.supportsTexturing()) {
+    if (!shader.isPolyShader()) {
       PGraphics.showWarning(INVALID_FILTER_SHADER_ERROR);
       return;
     }
