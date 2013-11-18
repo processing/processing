@@ -26,7 +26,7 @@ import processing.opengl.PGL;
 import processing.opengl.PGraphicsOpenGL;
 
 /**
- * LWJGL renderer.
+ * GLW renderer.
  *
  */
 public class PGraphicsGLW extends PGraphicsOpenGL {

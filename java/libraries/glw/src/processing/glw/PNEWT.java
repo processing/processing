@@ -25,12 +25,14 @@ package processing.glw;
 
 
 import javax.media.opengl.GLCapabilities;
+import javax.media.opengl.GLException;
 import javax.media.opengl.GLProfile;
 
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.newt.event.WindowAdapter;
 import com.jogamp.newt.event.WindowEvent;
 
+import processing.core.PGraphics;
 import processing.opengl.PGraphicsOpenGL;
 import processing.opengl.PJOGL;
 
@@ -49,9 +51,43 @@ public class PNEWT extends PJOGL {
   }
   
   
+  static public GLWindow getWindow() {
+    return window;
+  }
+  
   protected void initSurface(int antialias) {
     if (profile == null) {
-      profile = GLProfile.getDefault();
+      if (PROFILE == 2) {
+        try {
+          profile = GLProfile.getGL2ES1();
+        } catch (GLException ex) {
+          profile = GLProfile.getMaxFixedFunc(true);
+        }
+      } else if (PROFILE == 3) {
+        try {
+          profile = GLProfile.getGL2GL3();
+        } catch (GLException ex) {
+          profile = GLProfile.getMaxProgrammable(true);
+        }
+        if (!profile.isGL3()) {
+          PGraphics.showWarning("Requested profile GL3 but is not available, got: " + profile);
+        }
+      } else if (PROFILE == 4) {
+        try {
+          profile = GLProfile.getGL4ES3();
+        } catch (GLException ex) {
+          profile = GLProfile.getMaxProgrammable(true);
+        }
+        if (!profile.isGL4()) {
+          PGraphics.showWarning("Requested profile GL4 but is not available, got: " + profile);
+        }
+      } else throw new RuntimeException(UNSUPPORTED_GLPROF_ERROR);
+
+      if (2 < PROFILE) {
+        texVertShaderSource = convertVertexSource(texVertShaderSource, 120, 150);
+        tex2DFragShaderSource = convertFragmentSource(tex2DFragShaderSource, 120, 150);
+        texRectFragShaderSource = convertFragmentSource(texRectFragShaderSource, 120, 150);
+      }
     } else {
       window.removeGLEventListener(listener);
       pg.parent.remove(canvasNEWT);      
@@ -74,6 +110,8 @@ public class PNEWT extends PJOGL {
     window = GLWindow.create(caps);
     window.setSize(pg.width, pg.height);
     window.setVisible(true);
+    window.setTitle(pg.parent.frame.getTitle());
+    //window.setUndecorated(true);
     pg.parent.frame.setVisible(false);
     
     canvas = canvasNEWT;
@@ -88,6 +126,18 @@ public class PNEWT extends PJOGL {
     
     registerListeners();
   }
+  
+  protected int getCurrentWidth() {
+    if (window == null) return 0; 
+    else return window.getWidth();
+  }
 
+  protected int getCurrentHeight() {
+    if (window == null) return 0;
+    else return window.getHeight();
+  }
 
+  protected boolean displayable() {
+    return false;
+  } 
 }
