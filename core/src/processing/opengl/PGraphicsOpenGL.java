@@ -56,10 +56,6 @@ public class PGraphicsOpenGL extends PGraphics {
     "blendMode(%1$s) is not supported by this hardware (or driver)";
   static final String BLEND_RENDERER_ERROR =
     "blendMode(%1$s) is not supported by this renderer";
-  static final String ALREADY_DRAWING_ERROR =
-    "Already called beginDraw()";
-  static final String NO_BEGIN_DRAW_ERROR =
-  "Cannot call endDraw() before beginDraw()";
   static final String NESTED_DRAW_ERROR =
     "Already called drawing on another PGraphicsOpenGL object";
   static final String ALREADY_BEGAN_CONTOUR_ERROR =
@@ -1612,7 +1608,6 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     if (drawing) {
-      PGraphics.showWarning(ALREADY_DRAWING_ERROR);
       return;
     }
 
@@ -1655,7 +1650,6 @@ public class PGraphicsOpenGL extends PGraphics {
     report("top endDraw()");
 
     if (!drawing) {
-      PGraphics.showWarning(NO_BEGIN_DRAW_ERROR);
       return;
     }
 
