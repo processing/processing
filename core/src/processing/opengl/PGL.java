@@ -334,6 +334,13 @@ public abstract class PGL {
   }
 
 
+  /**
+   * Return the native canvas the OpenGL context associated to this PGL object
+   * is rendering to (if any).
+   */
+  public abstract Object getCanvas();
+
+
   protected abstract void setFps(float fps);
 
 
