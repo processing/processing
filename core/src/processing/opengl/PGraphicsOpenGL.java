@@ -7732,13 +7732,10 @@ public class PGraphicsOpenGL extends PGraphics {
       int startLUT = (int) (0.5f + (start / TWO_PI) * SINCOS_LENGTH);
       int stopLUT = (int) (0.5f + (stop / TWO_PI) * SINCOS_LENGTH);
 
-      if (fill) {
-        addVertex(centerX, centerY, VERTEX, true);
-      }
+      int idx0 = addVertex(centerX, centerY, VERTEX, true);
 
       int increment = 1; // what's a good algorithm? stopLUT - startLUT;
-      int idx0, pidx, idx;
-      idx0 = pidx = idx = 0;
+      int pidx = 0, idx = 0;
       for (int i = startLUT; i < stopLUT; i += increment) {
         int ii = i % SINCOS_LENGTH;
         // modulo won't make the value positive
@@ -7752,11 +7749,10 @@ public class PGraphicsOpenGL extends PGraphics {
             addEdge(pidx, idx, i == startLUT, false);
           } else if (startLUT < i) {
             addEdge(pidx, idx, i == startLUT + 1, arcMode == 0 &&
-                                                  i == stopLUT - 1);
+                               i == stopLUT - 1);
           }
         }
 
-        if (startLUT == i) idx0 = idx;
         pidx = idx;
       }
       // draw last point explicitly for accuracy
