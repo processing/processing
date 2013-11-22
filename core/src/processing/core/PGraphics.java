@@ -5817,6 +5817,8 @@ public class PGraphics extends PImage implements PConstants {
     ellipseMode(s.ellipseMode);
     shapeMode(s.shapeMode);
 
+    blendMode(s.blendMode);
+
     if (s.tint) {
       tint(s.tintColor);
     } else {
@@ -5894,6 +5896,8 @@ public class PGraphics extends PImage implements PConstants {
     s.rectMode = rectMode;
     s.ellipseMode = ellipseMode;
     s.shapeMode = shapeMode;
+
+    s.blendMode = blendMode;
 
     s.colorMode = colorMode;
     s.colorModeX = colorModeX;
