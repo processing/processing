@@ -125,6 +125,11 @@ public class PLWJGL extends PGL {
     if (glu == null) glu = new GLU();
   }
 
+  
+  public Canvas getCanvas() {
+    return canvas;
+  } 
+  
 
   protected void setFps(float fps) {
     if (!setFps || targetFps != fps) {
