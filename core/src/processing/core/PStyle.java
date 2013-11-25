@@ -30,6 +30,8 @@ public class PStyle implements PConstants {
   public int ellipseMode;
   public int shapeMode;
 
+  public int blendMode;
+
   public int colorMode;
   public float colorModeX;
   public float colorModeY;

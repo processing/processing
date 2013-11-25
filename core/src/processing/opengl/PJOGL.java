@@ -214,6 +214,17 @@ public class PJOGL extends PGL {
 
 
   @Override
+  public Canvas getCanvas() {
+    return canvas;
+  }
+
+
+//  public Object getCanvas() {
+//    return canvas;
+//  }
+
+
+  @Override
   protected void setFps(float fps) {
     if (!setFps || targetFps != fps) {
       if (60 < fps) {
