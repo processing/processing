@@ -10115,7 +10115,7 @@ public class PApplet extends Applet
       int alpha = (int) falpha;
       if (gray > 255) gray = 255; else if (gray < 0) gray = 0;
       if (alpha > 255) alpha = 255; else if (alpha < 0) alpha = 0;
-      return 0xff000000 | (gray << 16) | (gray << 8) | gray;
+      return (alpha << 24) | (gray << 16) | (gray << 8) | gray;
     }
     return g.color(fgray, falpha);
   }
