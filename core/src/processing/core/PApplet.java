@@ -14195,7 +14195,9 @@ public class PApplet extends Applet
    * ( end auto-generated )
    *
    * @webref color:setting
-   * @see PGraphics#stroke(float, float, float, float)
+   * @see PGraphics#stroke(int, float)
+   * @see PGraphics#fill(float, float, float, float)
+   * @see PGraphics#noFill()
    */
   public void noStroke() {
     if (recorder != null) recorder.noStroke();
@@ -14228,6 +14230,7 @@ public class PApplet extends Applet
    * @param rgb color value in hexadecimal notation
    * @see PGraphics#noStroke()
    * @see PGraphics#fill(int, float)
+   * @see PGraphics#noFill()
    * @see PGraphics#tint(int, float)
    * @see PGraphics#background(float, float, float, float)
    * @see PGraphics#colorMode(int, float, float, float, float)
@@ -14391,6 +14394,8 @@ public class PApplet extends Applet
    * @webref color:setting
    * @usage web_application
    * @see PGraphics#fill(float, float, float, float)
+   * @see PGraphics#stroke(int, float)
+   * @see PGraphics#noStroke()
    */
   public void noFill() {
     if (recorder != null) recorder.noFill();
@@ -14428,6 +14433,7 @@ public class PApplet extends Applet
    * @param rgb color variable or hex value
    * @see PGraphics#noFill()
    * @see PGraphics#stroke(int, float)
+   * @see PGraphics#noStroke()
    * @see PGraphics#tint(int, float)
    * @see PGraphics#background(float, float, float, float)
    * @see PGraphics#colorMode(int, float, float, float, float)
