@@ -563,7 +563,9 @@ public class TextAreaPainter extends JComponent implements TabExpander {
   }
 
   
-  /** Returns next tab stop after a specified point. */
+  /** Returns next tab stop after a specified point.
+   * NB: rounded by paintSyntaxLine and paintPlainLine.
+   * Modify them if returning a non-int here. */
 //  TabExpander tabExpander = new TabExpander() {    
   @Override
   public float nextTabStop(float x, int tabOffset) {
@@ -655,7 +657,7 @@ public class TextAreaPainter extends JComponent implements TabExpander {
 //                                Color defaultColor, int x, int y) {
   protected void paintPlainLine(Graphics gfx, int line, int x, int y) {
     if (!printing) {
-      paintHighlight(gfx,line,y);
+      paintHighlight(gfx, line, y);
     }
     textArea.getLineText(line, currentLine);
 
@@ -664,12 +666,12 @@ public class TextAreaPainter extends JComponent implements TabExpander {
 //    gfx.setColor(defaultColor);
 
     y += fm.getHeight();
-    // doesn't respect fixed width like it should
+//    doesn't respect fixed width like it should
 //    x = Utilities.drawTabbedText(currentLine, x, y, gfx, this, 0);
     int w = fm.charWidth(' ');
     for (int i = 0; i < currentLine.count; i++) {
       gfx.drawChars(currentLine.array, currentLine.offset+i, 1, x, y);
-      x += w;
+      x = currentLine.array[currentLine.offset + i] == '\t' ? (int)nextTabStop(x, i) : x + w;
     }
 
     // Draw characters via input method. 
@@ -758,13 +760,15 @@ public class TextAreaPainter extends JComponent implements TabExpander {
         gfx.setFont(ss.isBold() ? boldFont : plainFont);
       }
       line.count = length;  // huh? suspicious
-      // doesn't respect mono metrics, insists on spacing w/ fractional or something
+
+//      doesn't respect mono metrics, insists on spacing w/ fractional or something
 //      x = Utilities.drawTabbedText(line, x, y, gfx, this, 0);
 //      gfx.drawChars(line.array, line.offset, line.count, x, y);
+
       int w = fm.charWidth(' ');
       for (int i = 0; i < line.count; i++) {
-        gfx.drawChars(line.array, line.offset+i, 1, x, y);
-        x += w;
+        gfx.drawChars(line.array, line.offset + i, 1, x, y);
+        x = line.array[line.offset + i] == '\t' ? (int)nextTabStop(x, i) : w + x;
       }
       //x += fm.charsWidth(line.array, line.offset, line.count);
       //x += fm.charWidth(' ') * line.count;
