@@ -2384,7 +2384,9 @@ public class JEditTextArea extends JComponent
         return;
       }
 
-      if (event.isPopupTrigger() && (popup != null)) {
+      if ((event.isPopupTrigger() ||
+      ((event.getButton() == MouseEvent.BUTTON3) && (System.getProperty("os.name").contains("Windows")))) 
+      && (popup != null)) {
         popup.show(painter, event.getX(), event.getY());
         return;
       }
