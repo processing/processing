@@ -10,6 +10,9 @@
  * If you load WAV file or other non-tagged file, most of the metadata 
  * will be empty, but you will still have information like the filename 
  * and the length.
+ * <p>
+ * For more information about Minim and additional features, 
+ * visit http://code.compartmental.net/minim/ 
  */
 
 import ddf.minim.*;
@@ -51,15 +54,4 @@ void draw()
   text("Orchestra: " + meta.orchestra(), 5, y+=yi);
   text("Publisher: " + meta.publisher(), 5, y+=yi);
   text("Encoded: " + meta.encoded(), 5, y+=yi);
-}
-
-
-void stop()
-{
-  // always close Minim audio classes when you are done with them
-  groove.close();
-  // always stop Minim before exiting
-  minim.stop();
-  
-  super.stop();
 }
