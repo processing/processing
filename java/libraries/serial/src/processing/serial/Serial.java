@@ -200,7 +200,7 @@ public class Serial implements SerialPortEventListener {
 
   public void debug() {
     float secs = (System.nanoTime()-firstEvent)/1000000000.0f;
-    System.out.println("\nSerial: test #3");
+    System.out.println("\nSerial: test #4");
     System.out.println(port.getPortName()+" @ "+baudRate+" bps");
     System.out.println(secs+" sec receiving data:");
     System.out.println(countEvents+" events, "+(countEvents/secs)+" per sec");
@@ -461,6 +461,7 @@ public class Serial implements SerialPortEventListener {
           long start = System.nanoTime();
           // this method can be called from the context of another thread
           synchronized (buffer) {
+            toRead = 1;
             long len = System.nanoTime()-start;
             if (maxReadSyncTime < len) {
               maxReadSyncTime = len;
