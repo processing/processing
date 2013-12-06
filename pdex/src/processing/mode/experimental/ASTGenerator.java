@@ -109,7 +109,7 @@ public class ASTGenerator {
   /**
    * AST Window
    */
-  protected JFrame frame2;
+  protected JFrame frmASTView;
   
   protected JFrame frameAutoComp;
 
@@ -153,14 +153,15 @@ public class ASTGenerator {
   }
   
   protected void setupGUI(){
-    frame2 = new JFrame();
+    frmASTView = new JFrame();
 
     jtree = new JTree();
-    frame2.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-    frame2.setBounds(new Rectangle(680, 100, 460, 620));
+    frmASTView.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+    frmASTView.setBounds(new Rectangle(680, 100, 460, 620));
+    frmASTView.setTitle("AST View - " + editor.getSketch().getName());
     JScrollPane sp = new JScrollPane();
     sp.setViewportView(jtree);
-    frame2.add(sp);
+    frmASTView.add(sp);
 
     btnRename = new JButton("Rename");
     btnListOccurrence = new JButton("Show Usage");
@@ -231,6 +232,8 @@ public class ASTGenerator {
     
     
   }
+  
+  public static final boolean SHOWAST = true;
 
   protected DefaultMutableTreeNode buildAST(String source, CompilationUnit cu) {
     if (cu == null) {
@@ -267,14 +270,16 @@ public class ASTGenerator {
 
       protected void done() {
         if (codeTree != null) {
-//					if (jtree.hasFocus() || frame2.hasFocus())
-//						return;
-//          jtree.setModel(new DefaultTreeModel(codeTree));
-//          ((DefaultTreeModel) jtree.getModel()).reload();
-//          jtree.validate();
-//          if (!frame2.isVisible()) {
-//            frame2.setVisible(true);
-//          }
+          if(SHOWAST){
+  					if (jtree.hasFocus() || frmASTView.hasFocus())
+  						return;
+            jtree.setModel(new DefaultTreeModel(codeTree));
+            ((DefaultTreeModel) jtree.getModel()).reload();
+            jtree.validate();
+            if (!frmASTView.isVisible()) {
+              frmASTView.setVisible(true);
+            }
+          }
 //          if (!frameAutoComp.isVisible()) {
 //
 //            frameAutoComp.setVisible(true);
@@ -3156,7 +3161,7 @@ public class ASTGenerator {
   }
   
   public void disposeAllWindows(){
-   disposeWindow(frame2);
+   disposeWindow(frmASTView);
    disposeWindow(frameAutoComp);
    disposeWindow(frmImportSuggest);
    disposeWindow(frmOccurenceList);

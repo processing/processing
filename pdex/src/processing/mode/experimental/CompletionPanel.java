@@ -60,7 +60,7 @@ public class CompletionPanel {
     textarea.requestFocusInWindow();
     popupMenu.show(textarea, location.x, textarea.getBaseline(0, 0)
         + location.y);
-    log("Suggestion constructed" + System.nanoTime());
+    //log("Suggestion constructed" + System.nanoTime());
   }
 
   public boolean isVisible() {
@@ -130,7 +130,7 @@ public class CompletionPanel {
         completionList.setSelectedIndex(0);
         scrollPane.setViewportView(completionList);
         popupMenu.setPopupSize(popupMenu.getSize().width, setHeight(items.getSize()));
-        log("Suggestion updated" + System.nanoTime());
+        //log("Suggestion updated" + System.nanoTime());
         textarea.requestFocusInWindow();
         popupMenu.show(textarea, location.x, textarea.getBaseline(0, 0)
             + location.y);
@@ -176,7 +176,7 @@ public class CompletionPanel {
 
   public void hide() {
     popupMenu.setVisible(false);
-    log("Suggestion hidden" + System.nanoTime());
+    //log("Suggestion hidden" + System.nanoTime());
     //textarea.errorCheckerService.getASTGenerator().jdocWindowVisible(false);
   }
 
