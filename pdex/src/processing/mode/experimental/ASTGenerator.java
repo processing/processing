@@ -566,6 +566,9 @@ public class ASTGenerator {
     case ASTNode.FIELD_ACCESS:
       FieldAccess fa = (FieldAccess) astNode;
       if (fa.getExpression() == null) {
+        
+        // TODO: Check for existence of 'new' keyword. Could be a ClassInstanceCreation
+        
         // Local code or belongs to super class
         log("FA,Not implemented.");
         return null;
@@ -607,6 +610,7 @@ public class ASTGenerator {
         return new ClassMember(extracTypeInfo(temp));
       }
       if (mi.getExpression() == null) {
+//        if()
         //Local code or belongs to super class
         log("MI,Not implemented.");
         return null;
@@ -864,7 +868,11 @@ public class ASTGenerator {
         ASTNode testnode = parser.createAST(null);
         //logE("PREDICTION PARSER PROBLEMS: " + parser);
         // Find closest ASTNode of the document to this word
-        logE("Typed: " + word2 + "|");
+        logE("Typed: " + word2 + "|" + " temp Node type: " + testnode.getClass().getSimpleName());
+        if(testnode instanceof MethodInvocation){
+          MethodInvocation mi = (MethodInvocation)testnode;
+          System.out.println(mi.getName() + "," + mi.getExpression() + "," + mi.typeArguments().size());
+        }
         nearestNode = findClosestNode(lineNumber, (ASTNode) compilationUnit.types()
             .get(0));
         if (nearestNode == null)
