@@ -1,10 +1,12 @@
-/* delayExample
-   is an example of using the Delay UGen in a continuous sound example.
-   Use the mouse to control the delay time and the amount of feedback
-   in the delay unit.
-   author: Anderson Mills
-   Anderson Mills's work was supported by numediart (www.numediart.org)
-*/
+/* delayExample<br/>
+ * is an example of using the Delay UGen in a continuous sound example.
+ * <p>
+ * For more information about Minim and additional features, 
+ * visit http://code.compartmental.net/minim/
+ * <p>
+ * author: Anderson Mills<br/>
+ * Anderson Mills's work was supported by numediart (www.numediart.org)
+ */
 
 // import everything necessary to make sound.
 import ddf.minim.*;
@@ -14,47 +16,44 @@ import ddf.minim.ugens.*;
 // more than one methods (setup(), draw(), stop()).
 Minim minim;
 AudioOutput out;
-Delay myDelay1;
+Delay myDelay;
 
 // setup is run once at the beginning
 void setup()
 {
   // initialize the drawing window
-  size( 512, 200, P2D );
+  size( 512, 200 );
 
   // initialize the minim and out objects
   minim = new Minim(this);
-  out = minim.getLineOut( Minim.MONO, 2048 );
+  out = minim.getLineOut();
   
-  // initialize myDelay1 with continual feedback and no audio passthrough
-  myDelay1 = new Delay( 0.6, 0.9, true, false );
+  // initialize myDelay with continual feedback and audio passthrough
+  myDelay = new Delay( 0.4, 0.5, true, true );
+  
+  // sawh will create a Sawtooth wave with the requested number of harmonics.
+  // like with Waves.randomNHarms for sine waves, 
+  // you can create a richer sounding sawtooth this way.
+  Waveform saw = Waves.sawh( 15 );
   // create the Blip that will be used
-  Oscil myBlip = new Oscil( 245.0, 0.3, Waves.saw( 15 ) );
+  Oscil myBlip = new Oscil( 245.0, 0.3, saw );
   
+  // Waves.square will create a square wave with an uneven duty-cycle,
+  // also known as a pulse wave. a square wave has only two values, 
+  // either -1 or 1 and the duty cycle indicates how much of the wave 
+  // should -1 and how much 1. in this case, we are asking for a square 
+  // wave that is -1 90% of the time, and 1 10% of the time. 
+  Waveform square = Waves.square( 0.9 );
   // create an LFO to be used for an amplitude envelope
-  Oscil myLFO = new Oscil( 0.5, 0.3, Waves.square( 0.005 ) );
-  // our LFO will operate on a base amplitude
-  Constant baseAmp = new Constant(0.3);
-  // we get the final amplitude by summing the two
-  Summer ampSum = new Summer();
-  
-  Summer sum = new Summer();
-  
-  // patch everything together
-  // the LFO is patched into a summer along with a constant value
-  // and that sum is used to drive the amplitude of myBlip
-  baseAmp.patch( ampSum );
-  myLFO.patch( ampSum );
-  ampSum.patch( myBlip.amplitude );
+  Oscil myLFO = new Oscil( 1, 0.3, square );
+  // offset the center value of the LFO so that it outputs 0 
+  // for the long portion of the duty cycle
+  myLFO.offset.setLastValue( 0.3 );
 
-  // the Blip is patched directly into the sum 
-  myBlip.patch( sum );
+  myLFO.patch( myBlip.amplitude );
   
- // and the Blip is patched through the delay into the sum.
-  myBlip.patch( myDelay1 ).patch( sum );
-
-  // patch the sum into the output
-  sum.patch( out );
+  // and the Blip is patched through the delay into the output
+  myBlip.patch( myDelay ).patch( out );
 }
 
 // draw is run many times
@@ -73,7 +72,10 @@ void draw()
     // draw a line from one buffer position to the next for both channels
     line( x1, 50 + out.left.get(i)*50, x2, 50 + out.left.get(i+1)*50);
     line( x1, 150 + out.right.get(i)*50, x2, 150 + out.right.get(i+1)*50);
-  }  
+  }
+  
+  text( "Delay time is " + myDelay.delTime.getLastValue(), 5, 15 );
+  text( "Delay amplitude (feedback) is " + myDelay.delAmp.getLastValue(), 5, 30 );
 }
 
 // when the mouse is moved, change the delay parameters
@@ -81,8 +83,8 @@ void mouseMoved()
 {
   // set the delay time by the horizontal location
   float delayTime = map( mouseX, 0, width, 0.0001, 0.5 );
-  myDelay1.setDelTime( delayTime );
+  myDelay.setDelTime( delayTime );
   // set the feedback factor by the vertical location
-  float feedbackFactor = map( mouseY, 0, height, 0.0, 0.99 );
-  myDelay1.setDelAmp( feedbackFactor );
+  float feedbackFactor = map( mouseY, 0, height, 0.99, 0.0 );
+  myDelay.setDelAmp( feedbackFactor );
 }
