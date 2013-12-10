@@ -232,22 +232,22 @@ public interface PConstants {
   // blend mode keyword definitions
   // @see processing.core.PImage#blendColor(int,int,int)
 
-  public final static int REPLACE    = 0;
-  public final static int BLEND      = 1 << 0;
-  public final static int ADD        = 1 << 1;
-  public final static int SUBTRACT   = 1 << 2;
-  public final static int LIGHTEST   = 1 << 3;
-  public final static int DARKEST    = 1 << 4;
-  public final static int DIFFERENCE = 1 << 5;
-  public final static int EXCLUSION  = 1 << 6;
-  public final static int MULTIPLY   = 1 << 7;
-  public final static int SCREEN     = 1 << 8;
-  public final static int OVERLAY    = 1 << 9;
-  public final static int HARD_LIGHT = 1 << 10;
-  public final static int SOFT_LIGHT = 1 << 11;
-  public final static int DODGE      = 1 << 12;
-  public final static int BURN       = 1 << 13;
-
+  public final static int REPLACE     = 0;
+  public final static int BLEND       = 1 << 0;
+  public final static int ADD         = 1 << 1;
+  public final static int SUBTRACT    = 1 << 2;
+  public final static int LIGHTEST    = 1 << 3;
+  public final static int DARKEST     = 1 << 4;
+  public final static int DIFFERENCE  = 1 << 5;
+  public final static int EXCLUSION   = 1 << 6;
+  public final static int MULTIPLY    = 1 << 7;
+  public final static int SCREEN      = 1 << 8;
+  public final static int OVERLAY     = 1 << 9;
+  public final static int HARD_LIGHT  = 1 << 10;
+  public final static int SOFT_LIGHT  = 1 << 11;
+  public final static int DODGE       = 1 << 12;
+  public final static int BURN        = 1 << 13;
+  public final static int PREMULTIPLY = 1 << 14;
   // for messages
 
   static final int CHATTER   = 0;

@@ -5945,7 +5945,11 @@ public class PGraphicsOpenGL extends PGraphics {
         pgl.blendEquation(PGL.FUNC_ADD);
       }
       pgl.blendFunc(PGL.ONE_MINUS_DST_COLOR, PGL.ONE);
-
+    } else if (blendMode == PREMULTIPLY) {
+      if (blendEqSupported) {
+        pgl.blendEquationSeparate(PGL.FUNC_ADD, PGL.FUNC_ADD);
+      }
+      pgl.blendFuncSeparate(PGL.ONE, PGL.ONE_MINUS_SRC_ALPHA, PGL.ONE, PGL.ZERO);
     } else if (blendMode == DIFFERENCE) {
       PGraphics.showWarning(BLEND_RENDERER_ERROR, "DIFFERENCE");
 
