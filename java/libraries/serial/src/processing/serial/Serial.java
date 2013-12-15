@@ -461,7 +461,10 @@ public class Serial implements SerialPortEventListener {
           long start = System.nanoTime();
           // this method can be called from the context of another thread
           synchronized (buffer) {
-            toRead = 1;
+            // read one byte at a time if the sketch is using serialEvent
+            if (serialEventMethod != null) {
+              toRead = 1;
+            }
             long len = System.nanoTime()-start;
             if (maxReadSyncTime < len) {
               maxReadSyncTime = len;
