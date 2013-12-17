@@ -119,7 +119,8 @@ public class PGraphics2D extends PGraphicsOpenGL {
 
   @Override
   protected void defaultPerspective() {
-    super.ortho(width/2f, (3f/2f) * width, -height/2f, height/2f, -1, +1);
+//    super.ortho(width/2f, (3f/2f) * width, -height/2f, height/2f, -1, +1);
+    super.ortho(0, width, 0, height, -1, +1);
   }
 
 
@@ -156,7 +157,8 @@ public class PGraphics2D extends PGraphicsOpenGL {
 
   @Override
   protected void defaultCamera() {
-    resetMatrix();
+    super.camera(width/2f, height/2f);
+//    resetMatrix();
   }
 
 
@@ -180,6 +182,11 @@ public class PGraphics2D extends PGraphicsOpenGL {
     popProjection();
   }
 
+  @Override
+  public void resetMatrix() {
+    super.resetMatrix();
+    defaultCamera();
+  }
 
   //////////////////////////////////////////////////////////////
 

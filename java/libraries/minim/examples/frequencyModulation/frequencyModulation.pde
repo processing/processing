@@ -1,10 +1,12 @@
 /* frequencyModulation
-<p>
-  A simple example for doing FM (frequency modulation) using two Oscils. 
-  Use the mouse to control the speed and range of the frequency modulation.
-<p>  
-  Author: Damien Di Fede
-*/
+   <p>
+   A simple example for doing FM (frequency modulation) using two Oscils.
+   <p>
+   For more information about Minim and additional features, 
+   visit http://code.compartmental.net/minim/
+   <p>  
+   Author: Damien Di Fede
+ */
 
 // import everything necessary to make sound.
 import ddf.minim.*;
@@ -62,6 +64,9 @@ void draw()
     line( x1, 50 + out.left.get(i)*50, x2, 50 + out.left.get(i+1)*50);
     line( x1, 150 + out.right.get(i)*50, x2, 150 + out.right.get(i+1)*50);
   }  
+  
+  text( "Modulation frequency: " + fm.frequency.getLastValue(), 5, 15 );
+  text( "Modulation amplitude: " + fm.amplitude.getLastValue(), 5, 30 );
 }
 
 // we can change the parameters of the frequency modulation Oscil
@@ -71,6 +76,6 @@ void mouseMoved()
   float modulateAmount = map( mouseY, 0, height, 220, 1 );
   float modulateFrequency = map( mouseX, 0, width, 0.1, 100 );
   
-  fm.frequency.setLastValue( modulateFrequency );
-  fm.amplitude.setLastValue( modulateAmount );
+  fm.setFrequency( modulateFrequency );
+  fm.setAmplitude( modulateAmount );
 }

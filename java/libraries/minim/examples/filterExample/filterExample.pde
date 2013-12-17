@@ -1,10 +1,13 @@
-/* filterExample
-   is an example of using the different filters
-   in continuous sound.
-   
-   author: Damien Di Fede, Anderson Mills
-   Anderson Mills's work was supported by numediart (www.numediart.org)
-*/
+/* filterExample<br/>
+ * is an example of using the different filters
+ * in continuous sound.
+ * <p>
+ * For more information about Minim and additional features, 
+ * visit http://code.compartmental.net/minim/
+ * <p> 
+ * author: Damien Di Fede, Anderson Mills<br/>
+ * Anderson Mills's work was supported by numediart (www.numediart.org)
+ */
 
 // import everything necessary to make sound.
 import ddf.minim.*;

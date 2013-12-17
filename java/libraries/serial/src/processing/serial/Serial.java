@@ -48,28 +48,6 @@ public class Serial implements SerialPortEventListener {
 
   volatile boolean invokeSerialAvailable = false;
 
-  // DEBUG
-  int baudRate = 0;
-  int countEvents = 0;      // number of event handler invocations
-  int countFuncs = 0;       // number of SerialEvent invocations
-  int countReads = 0;       // number of read operations
-  int countSyncs = 0;       // number of synchronizations
-  int countWrites = 0;      // number of write operations
-  long firstEvent = 0;      // timestamp of first event handler invocation
-  int maxBufferLength = 0;  // maximum size of input buffer
-  long maxFuncTime = 0;     // maximum time spend invoking SerialEvent
-  int maxRead = 0;          // maximum number of bytes read
-  long maxReadTime = 0;     // maximum time spent on read operations
-  long maxReadSyncTime = 0; // maximum time spent on a synchronization in the event handler
-  long maxSyncTime = 0;     // maximum time spent on a synchronization elsewhere
-  long maxWriteTime = 0;    // maximum time spent on a write operation
-  long sumFuncTime = 0;     // sum of time spent in SerialEvent
-  int sumRead = 0;          // sum of bytes read
-  long sumReadSyncTime = 0; // sum of time spent on synchonizations in the event handler
-  long sumReadTime = 0;     // sum of time spent on read operations
-  long sumSyncTime = 0;     // sum of time spent on synchonizations elsewhere
-  long sumWriteTime = 0;    // sum of time spent on write operations
-
   // Things we are currently not exposing:
   // * hardware flow control
   // * state of the RING, RLSD line
@@ -100,8 +78,6 @@ public class Serial implements SerialPortEventListener {
     this.parent = parent;
     parent.registerMethod("dispose", this);
     parent.registerMethod("pre", this);
-
-    this.baudRate = baudRate;
 
     // setup parity
     if (parity == 'O') {
@@ -184,34 +160,10 @@ public class Serial implements SerialPortEventListener {
 
   
   public void clear() {
-    long start = System.nanoTime();
     synchronized (buffer) {
-      long len = System.nanoTime()-start;
-      if (maxSyncTime < len) {
-        maxSyncTime = len;
-      }
-      sumSyncTime += len;
-      countSyncs++;
       inBuffer = 0;
       readOffset = 0;
     }
-  }
-
-
-  public void debug() {
-    float secs = (System.nanoTime()-firstEvent)/1000000000.0f;
-    System.out.println("\nSerial: test #4");
-    System.out.println(port.getPortName()+" @ "+baudRate+" bps");
-    System.out.println(secs+" sec receiving data:");
-    System.out.println(countEvents+" events, "+(countEvents/secs)+" per sec");
-    System.out.println(countReads+" reads, "+(countReads/secs)+" per sec, "+(sumReadTime/(float)countReads)+" ns avg, "+maxReadTime+" ns max");
-    System.out.println((sumRead/(float)countReads)+" bytes avg per read, "+(sumRead/secs)+" per sec, "+maxRead+" bytes max");
-    System.out.println("Max buffer length: "+maxBufferLength);
-    System.out.println(sumReadSyncTime/(float)countReads+" ns avg read synchronizations, "+maxReadSyncTime+" ns max");
-    System.out.println(countFuncs+" callbacks, "+(sumFuncTime/(float)countFuncs)+" ns avg, "+maxFuncTime+" ns max");
-    System.out.println(countWrites+" writes, "+(sumWriteTime/(float)countWrites)+" ns avg, "+maxWriteTime+" ns max");
-    System.out.println(countSyncs+" synchonizations, "+(sumSyncTime/(float)countSyncs)+" ns avg, "+maxSyncTime+" ns max");
-    port.debug();
   }
 
 
@@ -243,14 +195,7 @@ public class Serial implements SerialPortEventListener {
       return -1;
     }
 
-    long start = System.nanoTime();
     synchronized (buffer) {
-      long len = System.nanoTime()-start;
-      if (maxSyncTime < len) {
-        maxSyncTime = len;
-      }
-      sumSyncTime += len;
-      countSyncs++;
       int ret = buffer[inBuffer-1] & 0xFF;
       inBuffer = 0;
       readOffset = 0;
@@ -276,14 +221,7 @@ public class Serial implements SerialPortEventListener {
       return -1;
     }
 
-    long start = System.nanoTime();
     synchronized (buffer) {
-      long len = System.nanoTime()-start;
-      if (maxSyncTime < len) {
-        maxSyncTime = len;
-      }
-      sumSyncTime += len;
-      countSyncs++;
       int ret = buffer[readOffset++] & 0xFF;
       if (inBuffer == readOffset) {
         inBuffer = 0;
@@ -299,14 +237,7 @@ public class Serial implements SerialPortEventListener {
       return null;
     }
 
-    long start = System.nanoTime();
     synchronized (buffer) {
-      long len = System.nanoTime()-start;
-      if (maxSyncTime < len) {
-        maxSyncTime = len;
-      }
-      sumSyncTime += len;
-      countSyncs++;
       byte[] ret = new byte[inBuffer-readOffset];
       System.arraycopy(buffer, readOffset, ret, 0, ret.length);
       inBuffer = 0;
@@ -321,14 +252,7 @@ public class Serial implements SerialPortEventListener {
       return 0;
     }
 
-    long start = System.nanoTime();
     synchronized (buffer) {
-      long len = System.nanoTime()-start;
-      if (maxSyncTime < len) {
-        maxSyncTime = len;
-      }
-      sumSyncTime += len;
-      countSyncs++;
       int toCopy = inBuffer-readOffset;
       if (dest.length < toCopy) {
         toCopy = dest.length;
@@ -349,14 +273,7 @@ public class Serial implements SerialPortEventListener {
       return null;
     }
 
-    long start = System.nanoTime();
     synchronized (buffer) {
-      long len = System.nanoTime()-start;
-      if (maxSyncTime < len) {
-        maxSyncTime = len;
-      }
-      sumSyncTime += len;
-      countSyncs++;
       // look for needle in buffer
       int found = -1;
       for (int i=readOffset; i < inBuffer; i++) {
@@ -387,14 +304,7 @@ public class Serial implements SerialPortEventListener {
       return 0;
     }
 
-    long start = System.nanoTime();
     synchronized (buffer) {
-      long len = System.nanoTime()-start;
-      if (maxSyncTime < len) {
-        maxSyncTime = len;
-      }
-      sumSyncTime += len;
-      countSyncs++;
       // look for needle in buffer
       int found = -1;
       for (int i=readOffset; i < inBuffer; i++) {
@@ -452,43 +362,22 @@ public class Serial implements SerialPortEventListener {
   public void serialEvent(SerialPortEvent event) {
     if (event.getEventType() == SerialPortEvent.RXCHAR) {
       int toRead;
-      countEvents++;
-      if (firstEvent == 0) {
-        firstEvent = System.nanoTime();
-      }
       try {
         while (0 < (toRead = port.getInputBufferBytesCount())) {
-          long start = System.nanoTime();
           // this method can be called from the context of another thread
           synchronized (buffer) {
-            toRead = 1;
-            long len = System.nanoTime()-start;
-            if (maxReadSyncTime < len) {
-              maxReadSyncTime = len;
+            // read one byte at a time if the sketch is using serialEvent
+            if (serialEventMethod != null) {
+              toRead = 1;
             }
-            sumReadSyncTime += len;
             // enlarge buffer if necessary
             if (buffer.length < inBuffer+toRead) {
               byte temp[] = new byte[buffer.length<<1];
               System.arraycopy(buffer, 0, temp, 0, inBuffer);
               buffer = temp;
             }
-            if (maxBufferLength < buffer.length) {
-              maxBufferLength = buffer.length;
-            }
             // read an array of bytes and copy it into our buffer
-            start = System.nanoTime();
             byte[] read = port.readBytes(toRead);
-            len = System.nanoTime()-start;
-            if (maxReadTime < len) {
-              maxReadTime = len;
-            }
-            sumReadTime += len;
-            if (maxRead < read.length) {
-              maxRead = read.length;
-            }
-            sumRead += read.length;
-            countReads++;
             System.arraycopy(read, 0, buffer, inBuffer, read.length);
             inBuffer += read.length;
           }
@@ -503,14 +392,7 @@ public class Serial implements SerialPortEventListener {
                 // available() and read() inside draw - but this function has no
                 // thread-safety issues since it's being invoked during pre in the context
                 // of the Processing applet
-                start = System.nanoTime();
                 serialEventMethod.invoke(parent, new Object[] { this });
-                long len = System.nanoTime()-start;
-                if (maxFuncTime < len) {
-                  maxFuncTime = len;
-                }
-                sumFuncTime += len;
-                countFuncs++;
               } catch (Exception e) {
                 System.err.println("Error, disabling serialEvent() for "+port.getPortName());
                 System.err.println(e.getLocalizedMessage());
@@ -561,14 +443,7 @@ public class Serial implements SerialPortEventListener {
   public void write(byte[] src) {
     try {
       // this might block if the serial device is not yet ready (esp. tty devices under OS X)
-      long start = System.nanoTime();
       port.writeBytes(src);
-      long len = System.nanoTime()-start;
-      if (maxWriteTime < len) {
-        maxWriteTime = len;
-      }
-      sumWriteTime += len;
-      countWrites++;
       // we used to call flush() here
     } catch (SerialPortException e) {
       throw new RuntimeException("Error writing to serial port " + e.getPortName() + ": " + e.getExceptionType());
@@ -578,14 +453,7 @@ public class Serial implements SerialPortEventListener {
   
   public void write(int src) {
     try {
-      long start = System.nanoTime();
       port.writeInt(src);
-      long len = System.nanoTime()-start;
-      if (maxWriteTime < len) {
-        maxWriteTime = len;
-      }
-      sumWriteTime += len;
-      countWrites++;
     } catch (SerialPortException e) {
       throw new RuntimeException("Error writing to serial port " + e.getPortName() + ": " + e.getExceptionType());
     }
@@ -594,14 +462,7 @@ public class Serial implements SerialPortEventListener {
   
   public void write(String src) {
     try {
-      long start = System.nanoTime();
       port.writeString(src);
-      long len = System.nanoTime()-start;
-      if (maxWriteTime < len) {
-        maxWriteTime = len;
-      }
-      sumWriteTime += len;
-      countWrites++;
     } catch (SerialPortException e) {
       throw new RuntimeException("Error writing to serial port " + e.getPortName() + ": " + e.getExceptionType());
     }

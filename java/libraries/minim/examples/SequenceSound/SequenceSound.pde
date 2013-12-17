@@ -6,8 +6,11 @@
   * sketch creates a deterministic score, meaning it is the same every time you run the sketch. It also demonstrates 
   * a couple different versions of the <code>playNote</code> method.
   * <p>
-  * For more complex examples of using <code>playNote</code> check out algorithmicCompExample and compositionExample
-  * in the Synthesis folder.
+  * For more complex examples of using <code>playNote</code> check out 
+  * algorithmicCompExample and compositionExample in the Synthesis folder.
+  * <p>
+  * For more information about Minim and additional features, 
+  * visit http://code.compartmental.net/minim/
   */
 
 import ddf.minim.*;
@@ -25,6 +28,20 @@ void setup()
   // use the getLineOut method of the Minim object to get an AudioOutput object
   out = minim.getLineOut();
   
+  // set the tempo of the sequencer
+  // this makes the first argument of playNote 
+  // specify the start time in quarter notes
+  // and the duration becomes relative to the length of a quarter note
+  // by default the tempo is 60 BPM (beats per minute).
+  // at 60 BPM both start time and duration can be interpreted as seconds.
+  // to retrieve the current tempo, use getTempo().
+  out.setTempo( 80 );
+  
+  // pause the sequencer so our note play back will be rock solid
+  // if you don't do this, then tiny bits of error can occur since 
+  // the sequencer is running in parallel with you note queueing.
+  out.pauseNotes();
+  
   // given start time, duration, and frequency
   out.playNote( 0.0, 0.9, 97.99 );
   out.playNote( 1.0, 0.9, 123.47 );
@@ -41,15 +58,17 @@ void setup()
   out.playNote( 7.0, "G4" );
   
   // the note offset is simply added into the start time of 
-  // every subsequenct call to playNote. It's expressed in beats, 
-  // but since the default tempo of an AudioOuput is 60 beats per minute,
-  // this particular call translates to 8.1 seconds, as you might expect.
+  // every subsequenct call to playNote. It's expressed in beats.
+  // to get the current note offset, use getNoteOffset().
   out.setNoteOffset( 8.1 );
   
   // because only given a note name or frequency
   // starttime defaults to 0.0 and duration defaults to 1.0
   out.playNote( "G5" );
   out.playNote( 987.77 );
+  
+  // now we can start the sequencer again to hear our sequence
+  out.resumeNotes();
 }
 
 void draw()
