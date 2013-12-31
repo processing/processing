@@ -339,3 +339,8 @@ run.present.stop.color = #cccccc
 #proxy.port=8080
 proxy.host=
 proxy.port=
+
+# AutoSave
+# Option to enable or disable AutoSave.
+# Refer bug: https://github.com/processing/processing/issues/131
+autosave.set = true
