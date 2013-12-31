@@ -2430,7 +2430,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
   /**
    * Grab current contents of the sketch window, advance the console,
-   * stop any other running sketches... not in that order.
+   * stop any other running sketches, autosave... not in that order.
    */
   public void prepareRun() {
     internalCloseRunner();
