@@ -67,7 +67,8 @@ public class SketchOutline {
 
     //TODO: ^Absolute dimensions are bad bro
 
-    int minWidth = 200;
+    int minWidth = (int) (editor.getMinimumSize().width * 0.7f), 
+        maxWidth = (int) (editor.getMinimumSize().width * 0.9f);
     frmOutlineView.setLayout(new BoxLayout(frmOutlineView.getContentPane(),
                                            BoxLayout.Y_AXIS));
     JPanel panelTop = new JPanel(), panelBottom = new JPanel();
@@ -95,19 +96,20 @@ public class SketchOutline {
     jsp.setViewportView(soTree);
     jsp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
     jsp.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-    jsp.setMinimumSize(new Dimension(minWidth, 100));
+    jsp.setMinimumSize(new Dimension(minWidth, editor.ta.getHeight() - 10));
+    jsp.setMaximumSize(new Dimension(maxWidth, editor.ta.getHeight() - 10));    
     
     panelBottom.add(jsp);
     frmOutlineView.add(panelTop);
     frmOutlineView.add(panelBottom);
     frmOutlineView.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    frmOutlineView.pack();
     frmOutlineView.setBounds(tp.x
                                  + errorCheckerService.getEditor().ta
                                      .getWidth() - minWidth, tp.y, minWidth,
-                             Math.min(editor.ta.getHeight(), 150));
+                             Math.min(editor.ta.getHeight(), frmOutlineView.getHeight()));
     frmOutlineView.setMinimumSize(new Dimension(minWidth, Math
-        .min(errorCheckerService.getEditor().ta.getHeight(), 150)));
-    frmOutlineView.pack();
+        .min(errorCheckerService.getEditor().ta.getHeight(), frmOutlineView.getHeight())));    
     frmOutlineView.setLocation(tp.x
                                    + errorCheckerService.getEditor().ta
                                        .getWidth() - frmOutlineView.getWidth(),
