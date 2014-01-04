@@ -483,7 +483,6 @@ public class PGraphicsOpenGL extends PGraphics {
   protected boolean openContour = false;
   protected boolean breakShape = false;
   protected boolean defaultEdges = false;
-  protected PImage textureImage0;
 
   static protected final int EDGE_MIDDLE = 0;
   static protected final int EDGE_START  = 1;
@@ -2047,7 +2046,6 @@ public class PGraphicsOpenGL extends PGraphics {
     breakShape = false;
     defaultEdges = true;
 
-    textureImage0 = textureImage;
     // The superclass method is called to avoid an early flush.
     super.noTexture();
 
@@ -2224,7 +2222,7 @@ public class PGraphicsOpenGL extends PGraphics {
     tessellator.setInGeometry(inGeo);
     tessellator.setTessGeometry(tessGeo);
     tessellator.setFill(fill || textureImage != null);
-    tessellator.setTexCache(texCache, textureImage0, textureImage);
+    tessellator.setTexCache(texCache, textureImage);
     tessellator.setStroke(stroke);
     tessellator.setStrokeColor(strokeColor);
     tessellator.setStrokeWeight(strokeWeight);
@@ -2278,7 +2276,7 @@ public class PGraphicsOpenGL extends PGraphics {
     tessellator.setStrokeWeight(strokeWeight);
     tessellator.setStrokeCap(strokeCap);
     tessellator.setStrokeJoin(strokeJoin);
-    tessellator.setTexCache(texCache, textureImage0, textureImage);
+    tessellator.setTexCache(texCache, textureImage);
     tessellator.setTransform(modelview);
     tessellator.set3D(is3D());
 
@@ -9670,10 +9668,9 @@ public class PGraphicsOpenGL extends PGraphics {
       this.fill = fill;
     }
 
-    void setTexCache(TexCache texCache, PImage prevTexImage,
-                     PImage newTexImage) {
+    void setTexCache(TexCache texCache, PImage newTexImage) {
       this.texCache = texCache;
-      this.prevTexImage = prevTexImage;
+      //this.prevTexImage = prevTexImage;
       this.newTexImage = newTexImage;
     }
 
@@ -11138,7 +11135,6 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     void beginNoTex() {
-      prevTexImage = newTexImage;
       newTexImage = null;
       setFirstTexIndex(tess.polyIndexCount, tess.polyIndexCache.size - 1);
     }
@@ -11168,6 +11164,7 @@ public class PGraphicsOpenGL extends PGraphics {
           texCache.setLastIndex(lastIndex, lastCache);
         }
       }
+      prevTexImage = newTexImage;
     }
 
     // -----------------------------------------------------------------
