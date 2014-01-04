@@ -651,9 +651,13 @@ public class PGraphicsOpenGL extends PGraphics {
     deleteFinalizedGLResources();
 
     if (primarySurface) pgl.deleteSurface();
+    // This next line is critical to release many static allocations.
+    // This is important in the context of, say, a unit test suite, which
+    // runs more than one OpenGL sketch within the same classloader
+    // (as in the case of processing.py). Please don't remove it!
+    pgl = null;
   }
 
-//  @Override
   @Override
   protected void finalize() throws Throwable {
     try {
