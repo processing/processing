@@ -5841,12 +5841,33 @@ public class PGraphicsOpenGL extends PGraphics {
     flush(); // make sure that the screen contents are up to date.
 
     Texture tex = getTexture(src);
+    boolean invX = tex.invertedX();
+    boolean invY = tex.invertedY();
+    int scrX0, scrX1;
+    int scrY0, scrY1;
+    if (invX) {
+      scrX0 = dx + dw;
+      scrX1 = dx;
+    } else {
+      scrX0 = dx;
+      scrX1 = dx + dw;
+    }
+    if (invY) {
+      scrY0 = height - (dy + dh);
+      scrY1 = height - dy;
+    } else {
+      // Because drawTexture uses bottom-to-top orientation of Y axis.
+      scrY0 = height - dy;
+      scrY1 = height - (dy + dh);
+    }
+
     pgl.drawTexture(tex.glTarget, tex.glName,
                     tex.glWidth, tex.glHeight, width, height,
                     sx, tex.height - (sy + sh),
                     sx + sw, tex.height - sy,
-                    dx, height - (dy + dh),
-                    dx + dw, height - dy);
+                    scrX0, scrY0,
+                    scrX1, scrY1);
+
 
     if (needEndDraw) {
       endDraw();
