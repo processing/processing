@@ -52,13 +52,13 @@ public class Texture implements PConstants {
    * to linear */
   protected static final int LINEAR = 3;
   /** Bilinear sampling: both magnification filtering is set to linear and
-   * minification either to linear-mipmap-nearest (linear interplation is used
+   * minification either to linear-mipmap-nearest (linear interpolation is used
    * within a mipmap, but not between different mipmaps). */
   protected static final int BILINEAR = 4;
   /** Trilinear sampling: magnification filtering set to linear, minification to
    * linear-mipmap-linear, which offers the best mipmap quality since linear
    * interpolation to compute the value in each of two maps and then
-   * interpolates linearly between these two value. */
+   * interpolates linearly between these two values. */
   protected static final int TRILINEAR = 5;
 
 

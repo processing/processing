@@ -6223,7 +6223,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void initOffscreen() {
     // Getting the context and capabilities from the main renderer.
-    loadTextureImpl(Texture.BILINEAR, false);
+    loadTextureImpl(textureSampling, false);
 
     // In case of reinitialization (for example, when the smooth level
     // is changed), we make sure that all the OpenGL resources associated
