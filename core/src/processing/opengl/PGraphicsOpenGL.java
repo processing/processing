@@ -2508,7 +2508,7 @@ public class PGraphicsOpenGL extends PGraphics {
   // an 'in-place' implementation of quick I whipped together late at night
   // based off of the algorithm found on wikipedia: http://en.wikipedia.org/wiki/Quicksort
   private void quickSortTris(int leftI, int rightI) {
-    if(leftI < rightI) {
+    if (leftI < rightI) {
       int pivotIndex = (leftI + rightI)/2;
       int newPivotIndex = partition(leftI,rightI,pivotIndex);
       quickSortTris(leftI, newPivotIndex-1);
@@ -4390,21 +4390,6 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  // Sets a camera for 2D rendering, which only involves centering
-  public void camera(float centerX, float centerY) {
-    modelview.reset();
-    modelview.translate(-centerX, -centerY);
-
-    modelviewInv.set(modelview);
-    modelviewInv.invert();
-
-    camera.set(modelview);
-    cameraInv.set(modelviewInv);
-
-    updateProjmodelview();
-  }
-
-
   /**
    * Print the current camera matrix.
    */
@@ -4453,6 +4438,9 @@ public class PGraphicsOpenGL extends PGraphics {
   public void ortho(float left, float right,
                     float bottom, float top,
                     float near, float far) {
+    // Translating the origin to (widht/2, height/2) since the matrix math
+    // below assumes the center of the screen to be (0, 0), but in Processing
+    // it is (w/2, h/2).
     left   -= width/2f;
     right  -= width/2f;
     bottom -= height/2f;

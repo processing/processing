@@ -119,8 +119,11 @@ public class PGraphics2D extends PGraphicsOpenGL {
 
   @Override
   protected void defaultPerspective() {
-//    super.ortho(width/2f, (3f/2f) * width, -height/2f, height/2f, -1, +1);
-    super.ortho(0, width, 0, height, -1, +1);
+    // The camera part of the modelview is simply the identity matrix, so in
+    // order to the ortho projection to be consistent with this, it needs to be
+    // set as follows, because ortho() will shift the viewing rectangle at
+    // (width/2, height/2) and will also apply the axis inversion along Y:
+    super.ortho(width/2f, (3f/2f) * width, -height/2f, height/2f, -1, +1);
   }
 
 
@@ -157,8 +160,7 @@ public class PGraphics2D extends PGraphicsOpenGL {
 
   @Override
   protected void defaultCamera() {
-    super.camera(width/2f, height/2f);
-//    resetMatrix();
+    resetMatrix();
   }
 
 
@@ -182,11 +184,6 @@ public class PGraphics2D extends PGraphicsOpenGL {
     popProjection();
   }
 
-  @Override
-  public void resetMatrix() {
-    super.resetMatrix();
-    defaultCamera();
-  }
 
   //////////////////////////////////////////////////////////////
 
