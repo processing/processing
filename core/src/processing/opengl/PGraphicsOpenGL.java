@@ -5241,6 +5241,13 @@ public class PGraphicsOpenGL extends PGraphics {
       pgl.depthMask(true);
     }
 
+    // Code to use instead in order to fix
+    // https://github.com/processing/processing/issues/2296
+//    if (!hints[DISABLE_DEPTH_MASK]) {
+//      pgl.clearDepth(1);
+//      pgl.clear(PGL.DEPTH_BUFFER_BIT);
+//    }
+
     pgl.clearColor(backgroundR, backgroundG, backgroundB, backgroundA);
     pgl.clear(PGL.COLOR_BUFFER_BIT);
     if (0 < parent.frameCount) {
