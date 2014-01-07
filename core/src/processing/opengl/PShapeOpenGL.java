@@ -2643,7 +2643,7 @@ public class PShapeOpenGL extends PShape {
         tessellator.setInGeometry(inGeo);
         tessellator.setTessGeometry(tessGeo);
         tessellator.setFill(fill || image != null);
-        tessellator.setTexCache(null, null, null);
+        tessellator.setTexCache(null, null);
         tessellator.setStroke(stroke);
         tessellator.setStrokeColor(strokeColor);
         tessellator.setStrokeWeight(strokeWeight);

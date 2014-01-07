@@ -87,7 +87,20 @@ public class PGraphics3D extends PGraphicsOpenGL {
     pushProjection();
     ortho(0, width, 0, height, -1, +1);
     pushMatrix();
-    camera(width/2, height/2);
+
+    // Set camera for 2D rendering, it simply centers at (width/2, height/2)
+    float centerX = width/2;
+    float centerY = height/2;
+    modelview.reset();
+    modelview.translate(-centerX, -centerY);
+
+    modelviewInv.set(modelview);
+    modelviewInv.invert();
+
+    camera.set(modelview);
+    cameraInv.set(modelviewInv);
+
+    updateProjmodelview();
   }
 
 

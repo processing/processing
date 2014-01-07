@@ -14229,6 +14229,7 @@ public class PApplet extends Applet
    *
    * @param rgb color value in hexadecimal notation
    * @see PGraphics#noStroke()
+   * @see PGraphics#strokeWeight(float)
    * @see PGraphics#fill(int, float)
    * @see PGraphics#noFill()
    * @see PGraphics#tint(int, float)

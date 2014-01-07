@@ -483,7 +483,6 @@ public class PGraphicsOpenGL extends PGraphics {
   protected boolean openContour = false;
   protected boolean breakShape = false;
   protected boolean defaultEdges = false;
-  protected PImage textureImage0;
 
   static protected final int EDGE_MIDDLE = 0;
   static protected final int EDGE_START  = 1;
@@ -650,10 +649,17 @@ public class PGraphicsOpenGL extends PGraphics {
 
     deleteFinalizedGLResources();
 
-    if (primarySurface) pgl.deleteSurface();
+    if (primarySurface) {
+      pgl.deleteSurface();
+
+      // This next line is critical to release many static allocations.
+      // This is important in the context of, say, a unit test suite, which
+      // runs more than one OpenGL sketch within the same classloader
+      // (as in the case of processing.py). Please don't remove it!
+      pgl = null;
+    }
   }
 
-//  @Override
   @Override
   protected void finalize() throws Throwable {
     try {
@@ -2043,7 +2049,6 @@ public class PGraphicsOpenGL extends PGraphics {
     breakShape = false;
     defaultEdges = true;
 
-    textureImage0 = textureImage;
     // The superclass method is called to avoid an early flush.
     super.noTexture();
 
@@ -2220,7 +2225,7 @@ public class PGraphicsOpenGL extends PGraphics {
     tessellator.setInGeometry(inGeo);
     tessellator.setTessGeometry(tessGeo);
     tessellator.setFill(fill || textureImage != null);
-    tessellator.setTexCache(texCache, textureImage0, textureImage);
+    tessellator.setTexCache(texCache, textureImage);
     tessellator.setStroke(stroke);
     tessellator.setStrokeColor(strokeColor);
     tessellator.setStrokeWeight(strokeWeight);
@@ -2274,7 +2279,7 @@ public class PGraphicsOpenGL extends PGraphics {
     tessellator.setStrokeWeight(strokeWeight);
     tessellator.setStrokeCap(strokeCap);
     tessellator.setStrokeJoin(strokeJoin);
-    tessellator.setTexCache(texCache, textureImage0, textureImage);
+    tessellator.setTexCache(texCache, textureImage);
     tessellator.setTransform(modelview);
     tessellator.set3D(is3D());
 
@@ -2506,7 +2511,7 @@ public class PGraphicsOpenGL extends PGraphics {
   // an 'in-place' implementation of quick I whipped together late at night
   // based off of the algorithm found on wikipedia: http://en.wikipedia.org/wiki/Quicksort
   private void quickSortTris(int leftI, int rightI) {
-    if(leftI < rightI) {
+    if (leftI < rightI) {
       int pivotIndex = (leftI + rightI)/2;
       int newPivotIndex = partition(leftI,rightI,pivotIndex);
       quickSortTris(leftI, newPivotIndex-1);
@@ -3113,7 +3118,7 @@ public class PGraphicsOpenGL extends PGraphics {
                       ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);
     inGeo.addRect(x1, y1, x2, y2, tl, tr, br, bl, stroke);
-    endShape();
+    endShape(CLOSE);
   }
 
 
@@ -4388,21 +4393,6 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  // Sets a camera for 2D rendering, which only involves centering
-  public void camera(float centerX, float centerY) {
-    modelview.reset();
-    modelview.translate(-centerX, -centerY);
-
-    modelviewInv.set(modelview);
-    modelviewInv.invert();
-
-    camera.set(modelview);
-    cameraInv.set(modelviewInv);
-
-    updateProjmodelview();
-  }
-
-
   /**
    * Print the current camera matrix.
    */
@@ -4451,6 +4441,9 @@ public class PGraphicsOpenGL extends PGraphics {
   public void ortho(float left, float right,
                     float bottom, float top,
                     float near, float far) {
+    // Translating the origin to (widht/2, height/2) since the matrix math
+    // below assumes the center of the screen to be (0, 0), but in Processing
+    // it is (w/2, h/2).
     left   -= width/2f;
     right  -= width/2f;
     bottom -= height/2f;
@@ -5251,6 +5244,13 @@ public class PGraphicsOpenGL extends PGraphics {
       pgl.depthMask(true);
     }
 
+    // Code to use instead in order to fix
+    // https://github.com/processing/processing/issues/2296
+//    if (!hints[DISABLE_DEPTH_MASK]) {
+//      pgl.clearDepth(1);
+//      pgl.clear(PGL.DEPTH_BUFFER_BIT);
+//    }
+
     pgl.clearColor(backgroundR, backgroundG, backgroundB, backgroundA);
     pgl.clear(PGL.COLOR_BUFFER_BIT);
     if (0 < parent.frameCount) {
@@ -5851,12 +5851,33 @@ public class PGraphicsOpenGL extends PGraphics {
     flush(); // make sure that the screen contents are up to date.
 
     Texture tex = getTexture(src);
+    boolean invX = tex.invertedX();
+    boolean invY = tex.invertedY();
+    int scrX0, scrX1;
+    int scrY0, scrY1;
+    if (invX) {
+      scrX0 = dx + dw;
+      scrX1 = dx;
+    } else {
+      scrX0 = dx;
+      scrX1 = dx + dw;
+    }
+    if (invY) {
+      scrY0 = height - (dy + dh);
+      scrY1 = height - dy;
+    } else {
+      // Because drawTexture uses bottom-to-top orientation of Y axis.
+      scrY0 = height - dy;
+      scrY1 = height - (dy + dh);
+    }
+
     pgl.drawTexture(tex.glTarget, tex.glName,
                     tex.glWidth, tex.glHeight, width, height,
                     sx, tex.height - (sy + sh),
                     sx + sw, tex.height - sy,
-                    dx, height - (dy + dh),
-                    dx + dw, height - dy);
+                    scrX0, scrY0,
+                    scrX1, scrY1);
+
 
     if (needEndDraw) {
       endDraw();
@@ -6212,7 +6233,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void initOffscreen() {
     // Getting the context and capabilities from the main renderer.
-    loadTextureImpl(Texture.BILINEAR, false);
+    loadTextureImpl(textureSampling, false);
 
     // In case of reinitialization (for example, when the smooth level
     // is changed), we make sure that all the OpenGL resources associated
@@ -9666,10 +9687,9 @@ public class PGraphicsOpenGL extends PGraphics {
       this.fill = fill;
     }
 
-    void setTexCache(TexCache texCache, PImage prevTexImage,
-                     PImage newTexImage) {
+    void setTexCache(TexCache texCache, PImage newTexImage) {
       this.texCache = texCache;
-      this.prevTexImage = prevTexImage;
+      //this.prevTexImage = prevTexImage;
       this.newTexImage = newTexImage;
     }
 
@@ -11134,7 +11154,6 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     void beginNoTex() {
-      prevTexImage = newTexImage;
       newTexImage = null;
       setFirstTexIndex(tess.polyIndexCount, tess.polyIndexCache.size - 1);
     }
@@ -11164,6 +11183,7 @@ public class PGraphicsOpenGL extends PGraphics {
           texCache.setLastIndex(lastIndex, lastCache);
         }
       }
+      prevTexImage = newTexImage;
     }
 
     // -----------------------------------------------------------------
